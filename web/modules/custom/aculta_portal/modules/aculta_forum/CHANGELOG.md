@@ -1,3 +1,10 @@
+## 0.1.0-dev.43 — modernizar metadados PHPUnit — 2026-10-20
+
+- Os testes `DiscussionModerationHooksTest` e `ForumReadAccessTest` agora usam
+  atributos PHPUnit para grupo/cobertura, eliminando metadados em docblocks.
+- Suíte Unit completa do Fórum: 54 testes / 379 asserções PASS, sem
+  depreciações PHPUnit. PHPCS PASS. Runtime: DEFERRED (somente testes).
+
 ## 0.1.0-dev.42 — navegação de descoberta na raiz do Growroom — 2026-10-20
 
 - A raiz pública `/` agora mostra a navegação existente de Categorias, Novas,

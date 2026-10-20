@@ -8,12 +8,12 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_forum\Hook\DiscussionModerationHooks;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests access to the moderation rejection marker.
- *
- * @group aculta_forum
  */
+#[Group('aculta_forum')]
 final class DiscussionModerationHooksTest extends UnitTestCase {
 
   /**

@@ -11,15 +11,18 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * @coversDefaultClass \Drupal\aculta_forum\Access\ForumReadAccess */
+ * Tests the public forum read access checker.
+ */
+#[CoversClass(ForumReadAccess::class)]
 final class ForumReadAccessTest extends TestCase {
 
   /**
-   * @covers ::access */
+   * Ensures only authenticated accounts on the forum purpose can read. */
   public function testAccessRequiresAuthenticatedAccountAndForumPurpose(): void {
     $forumDomain = $this->createMock(DomainInterface::class);
     $forumDomain->method('id')->willReturn('forum_aculta_org');
