@@ -17,7 +17,7 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
 | Alertas de falha (`failed_email`, `failed_primary_email`, `failed_backup_email`) | `MailAlerts::failure()`, janela de 5 min, fila | Pronto (desligado até informar destinatários) |
 | Alerta de bounce (`email_hard_bounced`) | `MailAlerts::hardBounce()`, chamado pelo monitor IMAP | Pronto (depende do IMAP) |
 | Resumo semanal por e-mail (Email Reports) | `MailSummary`, cron, 7 dias contra os 7 anteriores | Pronto (desligado até informar destinatários) |
-| Endereço de retorno / bounce | `aculta_mailer.delivery:bounce_address`, cabeçalho `Sender` em SMTP | Pronto; envelope em envio real: verificar |
+| Endereço de retorno / bounce | `aculta_mailer.delivery:bounce_address`, troca do envelope no evento de envio (`ReturnPathSubscriber`), só SMTP | Pronto no código; vazio no runtime: o Hostinger exige envelope da conta SMTP |
 | Failover para transporte de contingência | `TransportFailover` (smtp → smtp2go) e cota diária | Pronto (cota depende do registro) |
 | Limite de envio (Rate Limiting, janelas hora, dia, semana e mês) | `TransportQuota`: `aculta_mailer.policy:rate_limit.<transporte>.<janela>`; sinal do provedor e contagem do registro | Pronto (limite do Brevo a confirmar) |
 | Detecção de erro de cota pelo texto (assinaturas de erro) | `QuotaSignatures` (padrões em inglês e português) e `QuotaSignal` | Pronto (padrões podem crescer com os casos observados) |
@@ -36,7 +36,7 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
 - O WP segura o excedente na fila. Aqui, ao atingir o limite, a mensagem segue pelo transporte de contingência, e o registro mostra o transporte usado.
 - Texto de cota no erro de envio ou no bounce marca o transporte como esgotado por 24 horas, e gera alerta. Cota da caixa do destinatário ("mailbox quota") não conta: é do destinatário.
 - Cota de envio é verificada no envio seguinte; a mensagem que recebeu o erro segue o caminho normal de retry e failover.
-- Limite do Brevo: 200 por dia, valor conservador a confirmar no painel da conta. Os textos de cota do Brevo ainda não foram observados.
+- Limite do Brevo: 300 por dia, conforme a API da conta (plano gratuito, `sendLimit` 300). Os textos de cota do Brevo ainda não foram observados.
 
 ## Decisões
 

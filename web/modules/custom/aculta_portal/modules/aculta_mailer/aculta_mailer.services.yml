@@ -125,3 +125,9 @@ services:
   Drupal\aculta_mailer\Delivery\AdministratorRecipients:
     class: Drupal\aculta_mailer\Delivery\AdministratorRecipients
     arguments: ['@entity_type.manager']
+
+  Drupal\aculta_mailer\EventSubscriber\ReturnPathSubscriber:
+    class: Drupal\aculta_mailer\EventSubscriber\ReturnPathSubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }

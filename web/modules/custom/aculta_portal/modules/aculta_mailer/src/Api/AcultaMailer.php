@@ -100,7 +100,6 @@ final class AcultaMailer implements AcultaMailerInterface {
       'correlation_id' => $message->correlationId,
       'transport' => $transport,
       'priority' => $policy->priority,
-      'return_path' => $this->returnPath($effective),
     ], $policy->replyTo, TRUE);
 
     $transportUsed = $effective;
@@ -125,17 +124,6 @@ final class AcultaMailer implements AcultaMailerInterface {
       '@code' => $code ?? 'sem código',
     ]);
     return SendResult::failed($error, $code);
-  }
-
-  /**
-   * Endereço de retorno para o transporte, ou NULL: transportes por API não usam o envelope (ver DeliverySettings).
-   */
-  private function returnPath(string $transport): ?string {
-    if (in_array($transport, DeliverySettings::API_TRANSPORTS, TRUE)) {
-      return NULL;
-    }
-    $address = trim((string) $this->configFactory->get(DeliverySettings::CONFIG)->get('bounce_address'));
-    return $address !== '' ? $address : NULL;
   }
 
   /**

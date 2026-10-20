@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.21 — endereço de retorno no envelope (corrigido) e limite do Brevo confirmado pela API — 2026-10-20
+
+- Causa do endereço de retorno que não funcionava: o Drupal define o remetente do site depois do cabeçalho `Sender` do módulo, e o sobrescreve. Correção: `ReturnPathSubscriber` troca o envelope no evento de envio do Symfony, só para SMTP. O cabeçalho do módulo foi removido.
+- Teste real: o Hostinger recusou `dmarc@aculta.org` como envelope (`553 5.7.1 Sender address rejected: not owned by user naoresponda@aculta.org`). O SMTP autentica como `naoresponda@`, e o servidor só aceita envelope de endereço da própria conta. Por isso o endereço de retorno está **vazio** no runtime, e os envios SMTP voltaram a ser aceitos. Para usar `dmarc@`, é preciso trocar o login SMTP para `dmarc@` ou criar encaminhamento de `naoresponda@` para `dmarc@`. Decisão do responsável.
+- Limite do Brevo confirmado pela API da conta (`GET /v3/account`): plano gratuito, `sendLimit` de 300. Configurado: 300 por dia. A API não informa a janela; a janela diária é a do plano gratuito.
+- Versão do módulo: `0.1.0-dev.21`. 93 unitários (inclui o assinante do envelope).
+
 ## 0.1.0-dev.20 — limites por transporte e detecção de cota (modelo WP Mail SMTP) — 2026-10-20
 
 - Limites por transporte em janelas de hora, dia, semana e mês (`aculta_mailer.policy:rate_limit`). `quota.<transporte>` continua como limite diário.

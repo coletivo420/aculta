@@ -43,10 +43,6 @@ final class MailHooks {
       // Escolhe o transporte desta mensagem; lido e removido pelo MultiTransport do mailer_transport.
       $message['headers']['X-Transport'] = (string) $params['transport'];
     }
-    if (!empty($params['return_path'])) {
-      // Endereço de retorno (envelope): o Symfony usa o cabeçalho Sender como MAIL FROM. Os bounces voltam a ele.
-      $message['headers']['Sender'] = (string) $params['return_path'];
-    }
   }
 
 }
