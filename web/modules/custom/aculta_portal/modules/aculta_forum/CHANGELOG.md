@@ -1,3 +1,21 @@
+## `0.1.0-dev.69` — smoke X11 de organização administrativa — 2026-10-20
+
+- Criado roteiro automatizado de leitura autenticada no painel: separação entre
+  conteúdo geral e Fórum, três filas de comentários, Revista consolidada e
+  resposta 404 no caminho legado de comentários da Revista.
+- Usa link temporário do administrador por Drush, somente navega por GET e salva
+  capturas fora do checkout. Não altera conteúdo, configuração nem Runtime.
+- Firefox ESR 153.4/geckodriver 0.37.1 no Runtime `toca`, sessão X11: 11/11
+  checks PASS. Conteúdo geral e aba Fórum retornaram 200; as páginas agregada,
+  publicadas, rejeitadas e aguardando moderação retornaram 200 e as três subabas
+  apareceram sob Fórum. `/painel-administrativo/conteudo/revista` retornou 200;
+  `/painel-administrativo/revista/comentarios` retornou 404.
+- Capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev69-20261020/`.
+  Roteiro só usou GET e login ULI temporário; Runtime permaneceu com 0 tópicos
+  e 0 Comments do Fórum. Listas vazias não permitem provar exclusão cruzada de
+  registros reais. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.68` — teclado e limites dos controles em X11 — 2026-10-20
 
 - A suíte visual também envia Enter/ArrowRight pelo endpoint W3C WebDriver Actions

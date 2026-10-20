@@ -1,5 +1,26 @@
 # Matriz de testes por fase
 
+## dev.69 — smoke X11 de organização administrativa
+
+- `node tests/browser/aculta-forum/admin-content-structure.mjs` gera link ULI
+  temporário para uid 1 no host MAIN de teste (resolvido pelo Deployer), abre
+  Firefox visível e navega somente por GET. Não salva conteúdo/configuração.
+- Verifica Conteúdo geral, entrada Fórum, abas publicados/rejeitados/aguardando
+  moderação, Conteúdo da Revista unificado e 404 do caminho Revista legado;
+  grava capturas `0600` e `results.json` fora do checkout.
+- Preflight: `hostname=toca`, branch da PR #297, Drupal 11.4.10, URI MAIN de
+  teste, banco `aculta_runtime`; zero tópicos ACULTA Forum e zero Comments do
+  campo compartilhado. Firefox ESR 153.4/geckodriver 0.37.1 em X11, uid 1
+  autenticado com ULI temporário pelo host ACCOUNT e sessão confirmada no MAIN.
+- 11/11 PASS: Conteúdo geral/aba Fórum 200; links de publicados/rejeitados/
+  aguardando presentes; `/painel-administrativo/conteudo/forum/comentarios` e
+  as três filas de estado 200; Revista consolidada 200; rota antiga de
+  comentários da Revista 404. Capturas `0600` fora do checkout em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev69-20261020/`.
+- Somente GETs e link temporário; nenhum Node/Comment foi criado. Como os dados
+  do Fórum estão vazios, não foi possível confirmar exclusão de conteúdo cruzado
+  nas linhas de resultado. RUNTIME STATUS: PARTIAL.
+
 ## dev.68 — teclado e estados de limite
 
 - A suíte usa WebDriver Actions para enviar Enter à ação Próxima e ArrowRight ao

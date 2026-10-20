@@ -38,3 +38,17 @@ PNG e `results.json` ficam no diretório indicado.
 Ela não substitui inspeção com leitor de tela, dispositivo físico ou validação
 de comentários reais autenticados pelo History. A página deve ser de teste e
 somente leitura; a suíte encerra sua própria sessão WebDriver ao terminar.
+
+## Smoke de organização administrativa
+
+`admin-content-structure.mjs` autentica temporariamente o uid 1 com um link
+único gerado por `drush uli --no-browser` no host ACCOUNT, depois confirma a
+sessão compartilhada e navega somente por GET no MAIN de teste. Não salva
+configuração, conteúdo ou comentários. Verifica `/painel-administrativo/conteudo`,
+a aba `/painel-administrativo/conteudo/forum`, as abas de comentários publicados,
+rejeitados e aguardando moderação, a área consolidada da Revista e a remoção da
+rota antiga `/painel-administrativo/revista/comentarios`.
+
+Use o mesmo procedimento para iniciar geckodriver e defina `DISPLAY` e `SUITE_OUT`
+fora do checkout. Capturas e resultados são privados; não copie o link único de
+login nem dados de usuário para o relatório.
