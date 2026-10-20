@@ -58,8 +58,10 @@ responsiva do tema administrativo; não aplica CSS nem altera o tema/contrib.
 ## Movimentação de comentário no Runtime de teste
 
 `comment-move-runtime.mjs` faz um smoke autenticado do formulário real, inclusive
-token CSRF e POST, e limpa seus dois tópicos e um Comment pendente pela Entity
-API em `finally`. A operação exige explicitamente
+token CSRF e POST, e limpa seus dois tópicos e uma árvore de três Comments
+pendentes pela Entity API em `finally`. A prova confirma a raiz e dois níveis de
+respostas descendentes, preservando CID, autoria, texto, estado, `pid`/`thread`
+e destino. A operação exige explicitamente
 `ALLOW_RUNTIME_MUTATION=MOVE-COMMENT-FIXTURE-ON-TEST-RUNTIME`, `DISPLAY=:0` e um
 `SUITE_OUT` absoluto privado fora do checkout. O script confirma `hostname=toca`,
 branch dedicada, host MAIN de teste resolvido pelo Deployer, URI Drush e banco

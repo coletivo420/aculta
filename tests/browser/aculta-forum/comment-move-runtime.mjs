@@ -78,7 +78,7 @@ if (baseline.forum_topics !== 0 || baseline.legacy_forum_topics !== 0 || baselin
   throw new Error(`Precondições de isolamento/recuperação não satisfeitas: ${JSON.stringify(baseline)}`);
 }
 
-const marker = `QAM73-${Math.random().toString(16).slice(2, 8)}`;
+const marker = `QAM74-${Math.random().toString(16).slice(2, 8)}`;
 const fixtureCode = `
 $config_storage = \\Drupal::service('config.storage');
 if ($config_storage->exists('aculta_forum.settings')) { throw new \\RuntimeException('O config do mover apareceu durante o preflight; nenhuma alteração foi feita.'); }
@@ -88,7 +88,7 @@ $nodes = [];
 $comments = [];
 $cleanup = static function () use (&$comments, &$nodes, $config_storage): void {
   $comment_storage = \\Drupal::entityTypeManager()->getStorage('comment');
-  foreach ($comments as $cid) { try { $entity = $comment_storage->load($cid); if ($entity) { $comment_storage->delete([$entity]); } } catch (\\Throwable $exception) { print 'ACULTA_CLEANUP_ERROR:comment:' . $exception->getMessage() . PHP_EOL; } }
+  foreach (array_reverse($comments) as $cid) { try { $entity = $comment_storage->load($cid); if ($entity) { $comment_storage->delete([$entity]); } } catch (\\Throwable $exception) { print 'ACULTA_CLEANUP_ERROR:comment:' . $exception->getMessage() . PHP_EOL; } }
   $node_storage = \\Drupal::entityTypeManager()->getStorage('node');
   foreach ($nodes as $nid) { try { $entity = $node_storage->load($nid); if ($entity) { $node_storage->delete([$entity]); } } catch (\\Throwable $exception) { print 'ACULTA_CLEANUP_ERROR:node:' . $exception->getMessage() . PHP_EOL; } }
   if ($config_storage->exists('aculta_forum.settings')) { \\Drupal::configFactory()->getEditable('aculta_forum.settings')->delete(); }
@@ -126,7 +126,24 @@ try {
   ]);
   $comment->save();
   $comments[] = (int) $comment->id();
-  print 'ACULTA_FIXTURE:' . json_encode(['marker' => '${marker}', 'source_nid' => $nodes[0], 'destination_nid' => $nodes[1], 'cid' => (int) $comment->id()], JSON_THROW_ON_ERROR) . PHP_EOL;
+  $parent_id = (int) $comment->id();
+  foreach (['resposta', 'resposta aninhada'] as $label) {
+    $reply = \\Drupal::entityTypeManager()->getStorage('comment')->create([
+      'entity_type' => 'node',
+      'entity_id' => $nodes[0],
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'uid' => 5,
+      'pid' => $parent_id,
+      'status' => 0,
+      'subject' => '${marker} ' . $label,
+      'comment_body' => ['value' => '${marker} conteúdo QA ' . $label, 'format' => 'plain_text'],
+    ]);
+    $reply->save();
+    $parent_id = (int) $reply->id();
+    $comments[] = $parent_id;
+  }
+  print 'ACULTA_FIXTURE:' . json_encode(['marker' => '${marker}', 'source_nid' => $nodes[0], 'destination_nid' => $nodes[1], 'cids' => $comments], JSON_THROW_ON_ERROR) . PHP_EOL;
 }
 catch (\\Throwable $exception) {
   try { $cleanup(); } catch (\\Throwable $cleanup_exception) { print 'ACULTA_CLEANUP_ERROR:' . $cleanup_exception->getMessage() . PHP_EOL; }
@@ -205,7 +222,8 @@ try {
   check('uid 1 autenticado no host MAIN de teste', signedIn);
   if (!signedIn) throw new Error('A sessão administrativa não foi confirmada no MAIN de teste.');
 
-  const route = `/painel-administrativo/conteudo/forum/comentario/${fixture.cid}/mover`;
+  const rootCid = fixture.cids[0];
+  const route = `/painel-administrativo/conteudo/forum/comentario/${rootCid}/mover`;
   for (const width of [390, 768]) {
     await bidiCommand('browsingContext.setViewport', {
       context,
@@ -222,8 +240,8 @@ try {
   await bidiCommand('browsingContext.setViewport', { context, viewport: { width: 1024, height: 768 }, devicePixelRatio: 1 });
   await request('POST', path('/url'), { url: `${uri}${route}` });
   await wait(900);
-  const before = await execute(`const text=document.body.innerText; const select=document.querySelector('select[name="destination"]'); const check=document.querySelector('input[name="confirm_move"]'); return {path:location.pathname,title:document.title,heading:document.querySelector('h1')?.innerText||'',hasMarker:text.includes(${JSON.stringify(fixture.marker)}),singular:text.includes('serão movidos 1 comentário, incluindo'),badSingular:text.includes('serão movidos 1 comentários'),destination:!!select&&[...select.options].some(o=>o.value===${JSON.stringify(String(fixture.destination_nid))}),confirm:!!check,csrf:!!document.querySelector('input[name="form_token"]'),bodyError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
-  check('Formulário mostra singular correto, destino e token CSRF', before.path === route && before.hasMarker && before.singular && !before.badSingular && before.destination && before.confirm && before.csrf && !before.bodyError, JSON.stringify(before));
+  const before = await execute(`const text=document.body.innerText; const select=document.querySelector('select[name="destination"]'); const check=document.querySelector('input[name="confirm_move"]'); return {path:location.pathname,title:document.title,heading:document.querySelector('h1')?.innerText||'',hasMarker:text.includes(${JSON.stringify(fixture.marker)}),subtreeCount:text.includes('serão movidos 3 comentários, incluindo'),wrongCount:/serão movidos [12] comentários/.test(text),destination:!!select&&[...select.options].some(o=>o.value===${JSON.stringify(String(fixture.destination_nid))}),confirm:!!check,csrf:!!document.querySelector('input[name="form_token"]'),bodyError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
+  check('Formulário informa a subárvore de três comentários, destino e token CSRF', before.path === route && before.hasMarker && before.subtreeCount && !before.wrongCount && before.destination && before.confirm && before.csrf && !before.bodyError, JSON.stringify(before));
   writeFileSync(resolve(output, 'forum-comment-move-form.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
   if (!(before.path === route && before.destination && before.confirm && before.csrf && !before.bodyError)) throw new Error('Formulário não ficou pronto para envio.');
 
@@ -231,49 +249,41 @@ try {
   check('Form API recebeu destino e confirmação explícita', submitted);
   if (!submitted) throw new Error('Não foi possível enviar a confirmação pela Form API.');
   await wait(1600);
-  const afterSubmit = await execute(`const text=document.body.innerText; const nav=performance.getEntriesByType('navigation')[0]; return {path:location.pathname,title:document.title,status:nav?.responseStatus||null,success:text.includes('1 comentário foi movido.'),serverError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
-  check('Submissão CSRF movimentou um comentário pela interface', afterSubmit.success && !afterSubmit.serverError, JSON.stringify(afterSubmit));
+  const afterSubmit = await execute(`const text=document.body.innerText; const nav=performance.getEntriesByType('navigation')[0]; return {path:location.pathname,title:document.title,status:nav?.responseStatus||null,success:text.includes('3 comentários foram movidos.'),serverError:/Internal Server Error|The website encountered an unexpected error/i.test(text)};`);
+  check('Submissão CSRF movimentou a árvore pela interface', afterSubmit.success && !afterSubmit.serverError, JSON.stringify(afterSubmit));
   writeFileSync(resolve(output, 'forum-comment-move-result.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
   const verifyCode = `
-$comment = \\Drupal::entityTypeManager()->getStorage('comment')->load(${fixture.cid});
+$comment_storage = \\Drupal::entityTypeManager()->getStorage('comment');
+$loaded = $comment_storage->loadMultiple([${fixture.cids.join(',')}]);
 $source = \\Drupal::entityTypeManager()->getStorage('node')->load(${fixture.source_nid});
 $destination = \\Drupal::entityTypeManager()->getStorage('node')->load(${fixture.destination_nid});
 $count_on = static function (int $nid): int { return (int) \\Drupal::entityTypeManager()->getStorage('comment')->getQuery()->accessCheck(FALSE)->condition('entity_type', 'node')->condition('entity_id', $nid)->condition('field_name', 'field_aculta_discussion')->count()->execute(); };
-$state = [
-  'comment_exists' => $comment instanceof \\Drupal\\comment\\CommentInterface,
-  'source_exists' => $source instanceof \\Drupal\\node\\NodeInterface,
-  'destination_exists' => $destination instanceof \\Drupal\\node\\NodeInterface,
-  'entity_id' => $comment?->getCommentedEntityId(),
-  'entity_type' => $comment?->getCommentedEntityTypeId(),
-  'field_name' => $comment?->getFieldName(),
-  'bundle' => $comment?->bundle(),
-  'uid' => $comment?->getOwnerId(),
-  'status' => $comment?->isPublished(),
-  'subject' => $comment?->getSubject(),
-  'body' => $comment?->get('comment_body')->value,
-  'pid' => (int) ($comment?->get('pid')->target_id ?? 0),
-  'thread' => $comment?->getThread(),
-  'source_count' => $count_on(${fixture.source_nid}),
-  'destination_count' => $count_on(${fixture.destination_nid}),
-];
+$rows = [];
+foreach ([${fixture.cids.join(',')}] as $cid) { $item = $loaded[$cid] ?? NULL; $rows[] = ['cid' => (int) ($item?->id() ?? 0), 'entity_id' => (int) ($item?->getCommentedEntityId() ?? 0), 'uid' => (int) ($item?->getOwnerId() ?? 0), 'status' => $item?->isPublished(), 'subject' => $item?->getSubject(), 'body' => $item?->get('comment_body')->value, 'pid' => (int) ($item?->get('pid')->target_id ?? 0), 'thread' => (string) ($item?->getThread() ?? '')]; }
+$state = ['comments' => $rows, 'source_exists' => $source instanceof \\Drupal\\node\\NodeInterface, 'destination_exists' => $destination instanceof \\Drupal\\node\\NodeInterface, 'source_count' => $count_on(${fixture.source_nid}), 'destination_count' => $count_on(${fixture.destination_nid})];
 print 'ACULTA_MOVE_RESULT:' . json_encode($state, JSON_THROW_ON_ERROR) . PHP_EOL;
 `;
   const moved = parseMarker(evalDrupal(verifyCode), 'ACULTA_MOVE_RESULT');
-  const movedCorrectly = moved.comment_exists && moved.source_exists && moved.destination_exists
-    && Number(moved.entity_id) === fixture.destination_nid
-    && moved.entity_type === 'node'
-    && moved.field_name === 'field_aculta_discussion'
-    && moved.bundle === 'aculta_discussion_post'
-    && Number(moved.uid) === 1
-    && moved.status === false
-    && moved.subject === `${fixture.marker} comentário pendente`
-    && moved.body === `${fixture.marker} conteúdo QA`
-    && moved.pid === 0
-    && moved.thread !== null && moved.thread !== ''
+  const expected = [
+    { uid: 1, subject: `${fixture.marker} comentário pendente`, body: `${fixture.marker} conteúdo QA`, pid: 0 },
+    { uid: 5, subject: `${fixture.marker} resposta`, body: `${fixture.marker} conteúdo QA resposta`, pid: fixture.cids[0] },
+    { uid: 5, subject: `${fixture.marker} resposta aninhada`, body: `${fixture.marker} conteúdo QA resposta aninhada`, pid: fixture.cids[1] },
+  ];
+  const movedCorrectly = moved.source_exists && moved.destination_exists
+    && moved.comments.length === expected.length
+    && moved.comments.every((item, index) => Number(item.cid) === fixture.cids[index]
+      && Number(item.entity_id) === fixture.destination_nid
+      && Number(item.uid) === expected[index].uid
+      && item.status === false
+      && item.subject === expected[index].subject
+      && item.body === expected[index].body
+      && Number(item.pid) === expected[index].pid
+      && item.thread !== '')
+    && moved.comments.slice(1).every((item) => item.thread.startsWith(moved.comments[0].thread.replace(/\/$/, '') + '.'))
     && moved.source_count === 0
-    && moved.destination_count === 1;
-  check('CID, autoria, conteúdo, estado pendente e destino foram preservados', movedCorrectly, JSON.stringify(moved));
+    && moved.destination_count === expected.length;
+  check('Raiz e dois níveis descendentes preservaram CIDs, autoria, conteúdo, estado, pid/thread e destino', movedCorrectly, JSON.stringify(moved));
 }
 finally {
   if (browserSession) await request('DELETE', `/session/${browserSession}`).catch(() => {});
@@ -283,7 +293,7 @@ finally {
     const safeCleanup = `
 $config_storage = \\Drupal::service('config.storage');
 $errors = [];
-try { $comment_storage = \\Drupal::entityTypeManager()->getStorage('comment'); $comment = $comment_storage->load(${fixture.cid}); if ($comment) { $comment_storage->delete([$comment]); } } catch (\\Throwable $e) { $errors[] = 'comment:' . $e->getMessage(); }
+try { $comment_storage = \\Drupal::entityTypeManager()->getStorage('comment'); foreach (array_reverse([${fixture.cids.join(',')}]) as $cid) { $comment = $comment_storage->load($cid); if ($comment) { $comment_storage->delete([$comment]); } } } catch (\\Throwable $e) { $errors[] = 'comments:' . $e->getMessage(); }
 try { $node_storage = \\Drupal::entityTypeManager()->getStorage('node'); foreach ([${fixture.source_nid}, ${fixture.destination_nid}] as $nid) { $node = $node_storage->load($nid); if ($node) { $node_storage->delete([$node]); } } } catch (\\Throwable $e) { $errors[] = 'nodes:' . $e->getMessage(); }
 $active = \\Drupal::config('aculta_forum.settings')->get();
 if ($active === ['comment_move_enabled' => TRUE]) { \\Drupal::configFactory()->getEditable('aculta_forum.settings')->delete(); }
@@ -297,7 +307,7 @@ print 'ACULTA_CLEANUP:' . json_encode(['errors' => $errors, 'config_exists' => $
       execFileSync('php', [drush, 'cr', `--uri=${uri}`], { cwd: root, stdio: 'ignore', timeout: 60000 });
     }
     catch (error) {
-      console.error(`CLEANUP REQUIRED; fixture CIDs/NIDs ${fixture.cid}/${fixture.source_nid}/${fixture.destination_nid}: ${error.message}`);
+      console.error(`CLEANUP REQUIRED; fixture CIDs/NIDs ${fixture.cids.join(',')}/${fixture.source_nid}/${fixture.destination_nid}: ${error.message}`);
       checks.push({ name: 'limpeza e restauração do estado', pass: false, detail: error.message });
     }
   }

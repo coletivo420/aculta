@@ -1,3 +1,21 @@
+## `0.1.0-dev.74` — homologar movimento de subárvore em dois níveis — 2026-10-20
+
+- O roteiro X11 de Runtime agora cria uma raiz e duas respostas descendentes
+  pendentes, executa o Form API com CSRF e verifica a transferência da árvore
+  inteira. CIDs, autores, textos, estados, `pid`, prefixos `thread` e entidade
+  de destino foram preservados; origem terminou com zero Comments e destino
+  com três antes da limpeza.
+- Firefox ESR 153.4/geckodriver 0.37.1: 10/10 verificações PASS. O formulário
+  exibiu “3 comentários foram movidos.”; sem overflow em 390 e 768 CSS px.
+  Capturas e resultados privados em
+  `/home/piradopirata/private/aculta/visual-tests/forum-comment-subtree-dev74-20261020/`.
+- Limpeza reversa removeu respostas, raiz e tópicos, apagou a configuração
+  temporária e confirmou Runtime no baseline: 0 tópicos/Comments, 12 categorias,
+  3 avisos, `aculta_forum.settings` ausente. A movimentação segue desativada por
+  padrão. Limites: árvore linear de três itens, todos pendentes; estados mistos,
+  ramificações, History, flags, anexos `aculta_image`, notificações e concorrência
+  HTTP seguem pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.73` — homologar a movimentação de comentário — 2026-10-20
 
 - O Runtime de teste tinha as duas instâncias `field_autor_legado` do Fórum
