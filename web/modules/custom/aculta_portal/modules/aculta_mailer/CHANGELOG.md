@@ -3,7 +3,7 @@
 ## 0.1.0-dev.31 — fases F3 a F8 e F13 fechadas (exceto decisões e escopo de outros módulos) — 2026-10-20
 
 - F3: modelos, marcas e layouts ganham criação pelo painel (formulário "Adicionar" e lista com botão); antes só existiam por linha de comando.
-- F4: logo da marca enviado pela política do `aculta_image` (`managed_file` com `UploadPolicy`, uso do arquivo registrado); URL no envelope pelo layout ativo; fallback no logo do tema. Envio real com logo aceito.
+- F4: logo da marca enviado pela política do `aculta_image` (`managed_file` com `UploadPolicy`, uso do arquivo registrado); logo embutido na mensagem (cid:) com fallback de URL absoluta do host do ambiente; fallback no logo do tema. Conferido na caixa de entrada do destinatário.
 - F5: tela de política (`/politicas`) para padrão global, sobrescrita por tipo e limites por transporte; Brevo aceito como transporte de política.
 - F6: cota tratada como temporária para o failover; classificação SMTP pelo código.
 - F8: contagens do painel agregadas no banco; rótulos em português. Gráficos ficam fora deste RC (a confirmar).
