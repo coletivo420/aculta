@@ -61,6 +61,13 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       '/painel-administrativo/links/destino/{aculta_link}/revisao/{aculta_link_revision}/visualizar',
       $link_revision_route->getPath(),
     );
+    $item_add_route = $route_provider->getRouteByName('entity.aculta_link_item.add_form');
+    self::assertSame('/painel-administrativo/links/item/adicionar', $item_add_route->getPath());
+    $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
+    self::assertSame(
+      '/painel-administrativo/links/item/{aculta_link_item}/revisao/{aculta_link_item_revision}/visualizar',
+      $item_revision_route->getPath(),
+    );
 
     $owner_role = Role::create(['id' => 'links_owner', 'label' => 'Links owner']);
     $owner_role->grantPermission('manage own aculta links');
@@ -95,6 +102,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $item = LinkItem::create([
       'page' => $page->id(),
       'link' => $link->id(),
+      'uid' => $owner->id(),
       'title' => 'Visite nosso site',
       'weight' => 0,
       'status' => TRUE,

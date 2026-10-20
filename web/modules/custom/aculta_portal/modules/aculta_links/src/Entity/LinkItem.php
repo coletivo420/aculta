@@ -6,9 +6,17 @@ namespace Drupal\aculta_links\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\EditorialContentEntityBase;
+use Drupal\Core\Entity\EntityDeleteForm;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Form\RevisionDeleteForm;
+use Drupal\Core\Entity\Form\RevisionRevertForm;
+use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
+use Drupal\Core\Entity\Routing\RevisionHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\EntityOwnerTrait;
 use Drupal\views\EntityViewsData;
 use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
 
@@ -22,6 +30,18 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
   handlers: [
     'access' => LinkItemAccessControlHandler::class,
     'views_data' => EntityViewsData::class,
+    'form' => [
+      'default' => EntityForm::class,
+      'add' => EntityForm::class,
+      'edit' => EntityForm::class,
+      'delete' => EntityDeleteForm::class,
+      'revision-revert' => RevisionRevertForm::class,
+      'revision-delete' => RevisionDeleteForm::class,
+    ],
+    'route_provider' => [
+      'html' => AdminHtmlRouteProvider::class,
+      'revision' => RevisionHtmlRouteProvider::class,
+    ],
   ],
   base_table: 'aculta_link_item',
   revision_table: 'aculta_link_item_revision',
@@ -31,6 +51,7 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
     'uuid' => 'uuid',
     'label' => 'title',
     'published' => 'status',
+    'owner' => 'uid',
   ],
   revision_metadata_keys: [
     'revision_user' => 'revision_uid',
@@ -39,14 +60,31 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
   ],
   admin_permission: 'administer aculta links',
   common_reference_target: TRUE,
+  show_revision_ui: TRUE,
+  list_cache_contexts: ['user', 'user.permissions'],
+  list_cache_tags: ['aculta_link_item_list'],
+  links: [
+    'canonical' => '/painel-administrativo/links/item/{aculta_link_item}',
+    'add-form' => '/painel-administrativo/links/item/adicionar',
+    'edit-form' => '/painel-administrativo/links/item/{aculta_link_item}/editar',
+    'delete-form' => '/painel-administrativo/links/item/{aculta_link_item}/excluir',
+    'version-history' => '/painel-administrativo/links/item/{aculta_link_item}/revisoes',
+    'revision' => '/painel-administrativo/links/item/{aculta_link_item}/revisao/{aculta_link_item_revision}/visualizar',
+    'revision-revert-form' => '/painel-administrativo/links/item/{aculta_link_item}/revisao/{aculta_link_item_revision}/reverter',
+    'revision-delete-form' => '/painel-administrativo/links/item/{aculta_link_item}/revisao/{aculta_link_item_revision}/excluir',
+  ],
 )]
-final class LinkItem extends EditorialContentEntityBase {
+final class LinkItem extends EditorialContentEntityBase implements EntityOwnerInterface {
+
+  use EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
+    $fields['uid']->setRevisionable(TRUE);
 
     $fields['page'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Micropágina'))

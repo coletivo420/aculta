@@ -43,3 +43,12 @@
 - Permissões de criação consolidadas em `manage own aculta links` ou `administer aculta links`; removida permissão de criação redundante.
 - Sitemap e documentação indicam que as rotas estão declaradas, mas inativas enquanto o módulo estiver desabilitado. A landing pública e configuração de Domain não foram alteradas.
 - Kernel: 1 teste/25 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS e parse YAML PASS em PHP 8.4.26. Runtime e PHP 8.5 DEFERRED.
+
+
+## 0.2.0-dev.3 — gerenciamento de itens de página — 2026-10-20
+
+- Adicionados formulários Core e rotas CRUD/revisão para `aculta_link_item`.
+- Item agora tem proprietário Drupal revisionável; seu acesso requer propriedade simultânea do item, da micropágina e do destino referenciado.
+- Dashboard passou a listar itens com filtro de proprietário e permitir criação pela rota Core.
+- Sitemap atualizado com todas as rotas da entidade; ainda condicionais ao módulo desabilitado.
+- Kernel: 1 teste/27 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS e diff-check PASS em PHP 8.4.26. PHP 8.5 e Runtime DEFERRED.

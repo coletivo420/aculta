@@ -23,7 +23,15 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler {
       return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
     }
 
-    if (!$entity instanceof LinkItem || !in_array($operation, ['view', 'update', 'delete', 'view revision'], TRUE)) {
+    if (!$entity instanceof LinkItem || !in_array($operation, [
+      'view',
+      'update',
+      'delete',
+      'view revision',
+      'view all revisions',
+      'revert',
+      'delete revision',
+    ], TRUE)) {
       return AccessResult::forbidden()->cachePerPermissions()->addCacheableDependency($entity);
     }
 
@@ -34,9 +42,10 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler {
     }
 
     $can_manage = $account->hasPermission('manage own aculta links');
+    $owns_item = (string) $entity->getOwnerId() === (string) $account->id();
     $owns_page = (string) $page->getOwnerId() === (string) $account->id();
     $owns_link = (string) $link->getOwnerId() === (string) $account->id();
-    $result = AccessResult::allowedIf($can_manage && $owns_page && $owns_link)
+    $result = AccessResult::allowedIf($can_manage && $owns_item && $owns_page && $owns_link)
       ->cachePerUser()
       ->cachePerPermissions()
       ->addCacheableDependency($entity)

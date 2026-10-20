@@ -17,7 +17,7 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
    rollback demonstrados antes de corte.
 3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,
    `aculta_link_item`) com revisões e acesso privado; completar formulários e
-   listagem com filtros de proprietário, publicação e histórico.
+   listagem com filtros de proprietário, publicação e histórico para as três entidades.
 4. Fechar a revisão arquivo a arquivo do Linky e a licença por arquivo do
    LinkStack antes de copiar qualquer código/asset.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis

@@ -82,4 +82,4 @@ com dados/editoria antes de qualquer migração.
 
 ## Painel administrativo 0.2.0-dev.2
 
-`aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas e destinos. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main` e não ficam ativas até habilitação do módulo; a landing pública e sua configuração continuam no Portal.
+`aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas, destinos e itens. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main` e não ficam ativas até habilitação do módulo; a landing pública e sua configuração continuam no Portal.

@@ -35,6 +35,6 @@ não estão implementadas nesta versão.
 
 ## Em implementação — 0.2.0-dev.2
 
-- Painel administrativo em `main`, com listas separadas e paginadas para micropáginas e destinos reutilizáveis.
+- Painel administrativo em `main`, com listas separadas e paginadas para micropáginas, destinos reutilizáveis e itens de página.
 - Formulários de entidade Drupal para CRUD e revisões, protegidos pelos handlers de acesso e permissões do módulo.
 - Ainda não existe dashboard público do proprietário nem apresentação pública das novas entidades.

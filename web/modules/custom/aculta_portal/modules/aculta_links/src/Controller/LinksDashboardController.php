@@ -42,6 +42,11 @@ final class LinksDashboardController {
           '#title' => new TranslatableMarkup('Criar destino reutilizável'),
           '#url' => Url::fromRoute('entity.aculta_link.add_form'),
         ],
+        'add_item' => [
+          '#type' => 'link',
+          '#title' => new TranslatableMarkup('Adicionar item a uma micropágina'),
+          '#url' => Url::fromRoute('entity.aculta_link_item.add_form'),
+        ],
       ],
       'pages' => $this->buildTable(
         'aculta_link_page',
@@ -58,6 +63,14 @@ final class LinksDashboardController {
         $admin,
         'uid',
         1,
+      ),
+      'items' => $this->buildTable(
+        'aculta_link_item',
+        'aculta_link_item_list',
+        'Itens de micropágina',
+        $admin,
+        'uid',
+        2,
       ),
       '#cache' => [
         'contexts' => ['user', 'user.permissions'],
@@ -142,7 +155,8 @@ final class LinksDashboardController {
       '#type' => 'details',
       '#title' => match ($heading) {
         'Micropáginas' => new TranslatableMarkup('Micropáginas'),
-        default => new TranslatableMarkup('Destinos reutilizáveis'),
+        'Destinos reutilizáveis' => new TranslatableMarkup('Destinos reutilizáveis'),
+        default => new TranslatableMarkup('Itens de micropágina'),
       },
       '#open' => TRUE,
       'table' => [

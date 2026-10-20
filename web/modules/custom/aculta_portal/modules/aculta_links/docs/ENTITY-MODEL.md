@@ -7,9 +7,7 @@ guarda título, slug, descrição, proprietário e estado de publicação (rascu
 começam despublicados). `aculta_link_item` guarda página/destino referenciados,
 rótulo, descrição, ordem e estado.
 
-Ainda não há rotas, formulários, listagens, restrição de slug único ou
-renderização pública. O handler de itens exige que a página e o destino
-referenciado pertençam à conta que os gerencia. O handler de página/destino
+Há formulários Core e rotas administrativas declaradas para as três entidades, além de um dashboard com listas paginadas. O handler de itens exige que o próprio item, a página e o destino referenciado pertençam à conta que os gerencia. Ainda faltam restrição de slug único e renderização pública. O handler de página/destino
 mantém acesso privado até a integração de publicação/domínio.
 
 | Conceito | Responsabilidade proposta | Relações |
