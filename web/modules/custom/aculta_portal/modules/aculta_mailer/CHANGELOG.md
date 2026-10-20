@@ -1,3 +1,10 @@
+## 0.1.0-dev.54 — RC1; teto de tamanho no webhook — 2026-10-20
+
+- Estado do módulo: **RC1**, com autorização do responsável. Pronto para deploy em Alpha (`docs/operations/RELEASE-LIFECYCLE.md`); o deploy depende de autorização separada.
+- Webhook: pedidos acima de 16 KB recebem 413 antes da verificação de assinatura, e o Content-Length declarado é conferido antes da leitura. Eventos válidos não mudam. Verificado no Runtime de teste: corpo de 20 KB sem token → 413; evento pequeno sem token → 403.
+- Decisão: a verificação TLS do SMTP continua configurável por transporte, pelo administrador (ligar e desligar). Sem aviso extra nesta versão.
+- Evidência: Unit 141/141; Kernel do webhook 5/5.
+
 ## 0.1.0-dev.53 — barra do e-mail em três abas: Painel, Operação e Configuração — 2026-10-20
 
 - Painel do e-mail com três abas: **Painel**; **Operação** (Envios, Falhas, Diagnóstico, Monitoramento); **Configuração** (Entrega, Registro, Políticas, Modelos, Layouts, Marcas, Configurações).
