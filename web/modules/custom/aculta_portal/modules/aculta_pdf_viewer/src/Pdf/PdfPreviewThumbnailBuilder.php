@@ -104,7 +104,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
   }
 
   /**
-   * Avoids invoking PDFPreview/ImageMagick for a missing source file.
+   * Avoids invoking PDFPreview/ImageMagick for a missing or oversized source.
    */
   private function isReadableSourceWithinLimit(File $file): bool {
     $realpath = $this->fileSystem->realpath($file->getFileUri());
