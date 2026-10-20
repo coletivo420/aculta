@@ -73,14 +73,34 @@ else {
         if (!control) {
           continue;
         }
-        control.hidden = true;
-        control.setAttribute('aria-hidden', 'true');
-        control.tabIndex = -1;
+        if (!control.hidden) {
+          control.hidden = true;
+        }
+        if (control.getAttribute('aria-hidden') !== 'true') {
+          control.setAttribute('aria-hidden', 'true');
+        }
+        if (control.tabIndex !== -1) {
+          control.tabIndex = -1;
+        }
       }
     };
     applyHiddenControls();
 
     application.initializedPromise.then(() => {
+      // PDF.js may rebuild toolbar state after `webviewerloaded`, which can
+      // reset the native hidden property on the primary download button.
+      // Reapply the formatter policy after startup and whenever toolbar
+      // controls are inserted or their accessibility/visibility attributes
+      // change. The operation is idempotent, so our own mutations settle.
+      const toolbarObserver = new MutationObserver(applyHiddenControls);
+      toolbarObserver.observe(viewerWindow.document.documentElement, {
+        attributes: true,
+        attributeFilter: ['hidden', 'aria-hidden', 'tabindex'],
+        childList: true,
+        subtree: true,
+      });
+      applyHiddenControls();
+
       const applySpreadMode = () => {
         if (!application.pdfViewer) {
           return;

@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.38 — manter controles do PDF.js após inicialização — 2026-10-20
+
+- A revisão visual X11 encontrou que o PDF.js repunha o botão principal de download durante a inicialização, apesar do formatter desativá-lo.
+- O wrapper agora reaplica as opções quando a aplicação fica pronta e observa alterações posteriores da toolbar; as escritas são idempotentes para evitar ciclos de mutação.
+- Firefox ESR 153.4 no X11 local, contra o Runtime de teste `aculta_runtime`, carregou o PDF público de 14 páginas. Impressão/download desligados: quatro botões primários/secundários ocultos visualmente e com `aria-hidden=true`/`tabindex=-1`; ligados: quatro disponíveis e focáveis. Uma mutação artificial após a inicialização também foi revertida pelo observador. Capturas temporárias ficaram em `/tmp/aculta-pdf-viewer-x11-fixed-{off,on}.png`.
+- Nenhum clique de impressão/download foi executado; a validação observou apresentação e foco. Nenhum dado do Runtime foi alterado.
+
 ## 0.1.0-dev.37 — respeitar controles de download e impressão no PDF.js completo — 2026-10-20
 
 - Corrige a configuração por formatter: os links dedicados já eram ocultados, mas o PDF.js completo mantinha seus próprios botões de imprimir/baixar.
