@@ -1,0 +1,17 @@
+aculta_forum_lms.comments_published:
+  title: 'Comentários publicados'
+  route_name: aculta_forum_lms.comments_published
+  base_route: aculta_forum_lms.comments_published
+  weight: 0
+
+aculta_forum_lms.comments_rejected:
+  title: 'Comentários rejeitados'
+  route_name: aculta_forum_lms.comments_rejected
+  base_route: aculta_forum_lms.comments_published
+  weight: 1
+
+aculta_forum_lms.comments_pending:
+  title: 'Aguardando moderação'
+  route_name: aculta_forum_lms.comments_pending
+  base_route: aculta_forum_lms.comments_published
+  weight: 2

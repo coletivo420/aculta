@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum_lms\Kernel;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider;
+use Drupal\aculta_forum_lms\Access\LmsForumModerationManager;
 use Drupal\aculta_forum_lms\Hook\LmsCommentModerationAccessHooks;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
 use Drupal\comment\CommentingStatus;
@@ -14,6 +15,7 @@ use Drupal\comment\Entity\CommentType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
@@ -21,6 +23,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
+use Drupal\views\ViewExecutableFactory;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
@@ -264,6 +267,94 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $comment->save();
     self::assertSame($topic->id(), $comment->getCommentedEntityId());
     self::assertSame('Student reply', $comment->get('comment_body')->value);
+
+    $pendingComment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'subject' => 'Pending class reply',
+      'comment_body' => ['value' => 'Pending', 'format' => 'plain_text'],
+      'uid' => $student->id(),
+      'status' => 0,
+      'field_aculta_rejected' => 0,
+    ]);
+    $pendingComment->save();
+    $rejectedComment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'subject' => 'Rejected class reply',
+      'comment_body' => ['value' => 'Rejected', 'format' => 'plain_text'],
+      'uid' => $student->id(),
+      'status' => 0,
+      'field_aculta_rejected' => 1,
+    ]);
+    $rejectedComment->save();
+
+    $courseTopic = $this->container->get('entity_type.manager')->getStorage('node')->create([
+      'type' => 'aculta_lms_topic',
+      'title' => 'Private course topic',
+      'status' => 1,
+      'uid' => $educator->id(),
+      'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
+    ]);
+    $courseTopic->save();
+    $course->addRelationship($courseTopic, 'group_node:aculta_lms_topic')->save();
+    Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => $courseTopic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'subject' => 'Course-only reply',
+      'comment_body' => ['value' => 'Course', 'format' => 'plain_text'],
+      'uid' => $student->id(),
+      'status' => 1,
+    ])->save();
+
+    $unassignedCourse = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Course outside educator assignment',
+      'uid' => $classOwner->id(),
+    ]);
+    $unassignedCourse->save();
+
+    $this->container->get('current_user')->setAccount($educator);
+    $moderationManager = new LmsForumModerationManager($this->container->get('entity_type.manager'), $provider);
+    [$moderationGroups] = $moderationManager->getModerationGroups($educator);
+    $moderationGroupIds = array_map(static fn (GroupInterface $group): int => (int) $group->id(), $moderationGroups);
+    self::assertContains((int) $course->id(), $moderationGroupIds);
+    self::assertContains((int) $class->id(), $moderationGroupIds);
+    self::assertNotContains((int) $unassignedCourse->id(), $moderationGroupIds);
+    self::assertTrue($moderationManager->groupAccess($class, $educator)->isAllowed());
+    self::assertTrue($moderationManager->groupAccess($class, $student)->isForbidden());
+    self::assertTrue($moderationManager->groupAccess($class, $outsider)->isForbidden());
+
+    $viewEntity = $this->container->get('entity_type.manager')->getStorage('view')->load('aculta_forum_lms_admin_comments');
+    self::assertNotNull($viewEntity, 'The adapter installs its Group-scoped moderation View.');
+    self::assertArrayHasKey('lms_published', $viewEntity->get('display'));
+    $viewDisplays = $viewEntity->get('display');
+    self::assertEqualsCanonicalizing(['default', 'lms_published', 'lms_rejected', 'lms_pending'], array_keys($viewDisplays));
+    self::assertSame('group_relationship_to_entity_reverse', $viewDisplays['default']['display_options']['relationships']['group_relationship']['plugin_id']);
+    self::assertSame('empty', $viewDisplays['default']['display_options']['arguments']['gid']['default_action']);
+    self::assertSame(['group_node:aculta_lms_topic' => 'group_node:aculta_lms_topic'], $viewDisplays['default']['display_options']['relationships']['group_relationship']['group_relation_plugins']);
+    $viewFactory = $this->container->get('views.executable');
+    self::assertInstanceOf(ViewExecutableFactory::class, $viewFactory);
+    foreach ([
+      'lms_published' => 1,
+      'lms_pending' => 1,
+      'lms_rejected' => 1,
+    ] as $displayId => $expectedRows) {
+      $view = $viewFactory->get($viewEntity);
+      self::assertTrue($view->setDisplay($displayId), sprintf('%s can be selected by Views.', $displayId));
+      $output = $view->preview($displayId, [(string) $class->id()]);
+      self::assertNotNull($output, sprintf('%s is a valid embedded display.', $displayId));
+      self::assertCount($expectedRows, $view->result, sprintf('%s is isolated to the class Group and fixed status.', $displayId));
+    }
+    $courseView = $viewFactory->get($viewEntity);
+    $courseView->preview('lms_published', [(string) $course->id()]);
+    self::assertCount(1, $courseView->result, 'The course queue shows the course topic, not the class topic.');
 
     $resolver = new DiscussionContextResolver([$provider]);
     $commentAccessHook = new LmsCommentModerationAccessHooks($resolver);

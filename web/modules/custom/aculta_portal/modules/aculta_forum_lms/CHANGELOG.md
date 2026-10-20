@@ -1,3 +1,13 @@
+## `0.1.0-dev.16` — criar filas de moderação LMS por contexto — 2026-10-20
+
+- Adiciona painel de cursos/turmas autorizados e três rotas de Comments
+  publicados, rejeitados e pendentes. O acesso exige `grade students` no curso
+  contextual; uma View Embed fixa Group, bundle e estado e não possui página ou
+  bloco global. Kernel verifica curso/turma, status e Group fora da atribuição.
+- Adapter Unit: 17 testes / 182 assertions PASS. Kernel: 2 testes / 102
+  assertions PASS, 40 depreciações de Core/contrib/LMS. Routes/View ainda não
+  atualizadas no Runtime nem testadas por HTTP. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.15` — permitir moderação contextual de Comments no LMS — 2026-10-20
 
 - Educadores com `grade students` no curso contextual podem ver Comments

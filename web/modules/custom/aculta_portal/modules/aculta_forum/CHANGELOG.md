@@ -1,3 +1,12 @@
+## `0.1.0-dev.108` — criar filas de comentários por Group no LMS — 2026-10-20
+
+- O painel `/painel-administrativo/lms/forum` lista apenas cursos e turmas
+  moderáveis pela conta atual; três rotas de status revalidam o Educador via
+  Group. Uma View Embed interna fixa Group, bundle, campo Comment e status, sem
+  página/bloco global. Kernel verifica curso/turma, published/pending/rejected,
+  Group não atribuído e Educador sem membership direto na turma.
+- Runtime/HTTP ainda não revalidado. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.107` — permitir aprovação de comentários por Educadores LMS — 2026-10-20
 
 - O adapter `aculta_forum_lms` agora autoriza `view`/`approve` contextual de

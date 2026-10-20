@@ -43,6 +43,23 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
   }
 
   /**
+   * Checks whether the account may moderate discussions in this LMS Group.
+   *
+   * The class access chain is resolved through its unique parent course, so
+   * an Educator does not need an artificial membership in each class.
+   */
+  public function getGroupModerationAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
+    if (!in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
+      return AccessResult::forbidden()->addCacheableDependency($group);
+    }
+
+    return $group->access('view', $account, TRUE)
+      ->andIf($this->contextMembershipAccess($group, $account))
+      ->andIf($this->educatorAccess($group, $account))
+      ->addCacheableDependency($group);
+  }
+
+  /**
    * Prevents ungrouped or ambiguously grouped LMS topics from being public.
    *
    * Valid Group relationships return neutral so the Group module's own

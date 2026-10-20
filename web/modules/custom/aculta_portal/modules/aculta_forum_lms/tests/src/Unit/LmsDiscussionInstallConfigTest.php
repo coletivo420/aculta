@@ -90,6 +90,35 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
+   * Moderation routes require one Group and expose no global View display.
+   */
+  public function testModerationRoutesAndEmbeddedViewStayContextual(): void {
+    $modulePath = dirname(__DIR__, 3);
+    $routes = Yaml::parseFile($modulePath . '/aculta_forum_lms.routing.yml');
+    self::assertSame('/painel-administrativo/lms/forum', $routes['aculta_forum_lms.moderation_overview']['path']);
+    self::assertSame('aculta_forum_lms.moderation_manager:overviewAccess', $routes['aculta_forum_lms.moderation_overview']['requirements']['_custom_access']);
+
+    $queueRoutes = [
+      'aculta_forum_lms.comments_published' => '/painel-administrativo/lms/forum/{group}/comentarios/publicados',
+      'aculta_forum_lms.comments_rejected' => '/painel-administrativo/lms/forum/{group}/comentarios/rejeitados',
+      'aculta_forum_lms.comments_pending' => '/painel-administrativo/lms/forum/{group}/comentarios/aguardando-moderacao',
+    ];
+    foreach ($queueRoutes as $routeName => $path) {
+      self::assertSame($path, $routes[$routeName]['path']);
+      self::assertSame('aculta_forum_lms.moderation_manager:groupAccess', $routes[$routeName]['requirements']['_custom_access']);
+      self::assertSame('entity:group', $routes[$routeName]['options']['parameters']['group']['type']);
+    }
+
+    $view = $this->config('views.view.aculta_forum_lms_admin_comments');
+    $displayPlugins = array_column($view['display'], 'display_plugin');
+    self::assertSame(['embed'], array_values(array_unique(array_slice($displayPlugins, 1))));
+    self::assertNotContains('page', $displayPlugins);
+    self::assertNotContains('block', $displayPlugins);
+    self::assertSame('empty', $view['display']['default']['display_options']['arguments']['gid']['default_action']);
+    self::assertSame('aculta_lms_topic', $view['display']['default']['display_options']['filters']['type']['value']['aculta_lms_topic']);
+  }
+
+  /**
    * Loads one install config file by its config object name.
    */
   private function config(string $name): array {

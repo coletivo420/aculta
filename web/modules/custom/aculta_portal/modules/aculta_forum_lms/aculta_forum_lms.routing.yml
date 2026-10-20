@@ -1,0 +1,51 @@
+aculta_forum_lms.moderation_overview:
+  path: '/painel-administrativo/lms/forum'
+  defaults:
+    _controller: 'aculta_forum_lms.moderation_controller:overview'
+    _title: 'Fóruns dos cursos'
+  requirements:
+    _custom_access: 'aculta_forum_lms.moderation_manager:overviewAccess'
+  options:
+    _admin_route: true
+
+aculta_forum_lms.comments_published:
+  path: '/painel-administrativo/lms/forum/{group}/comentarios/publicados'
+  defaults:
+    _controller: 'aculta_forum_lms.moderation_controller:comments'
+    _title: 'Comentários publicados'
+    queue: published
+  requirements:
+    _custom_access: 'aculta_forum_lms.moderation_manager:groupAccess'
+  options:
+    _admin_route: true
+    parameters:
+      group:
+        type: entity:group
+
+aculta_forum_lms.comments_rejected:
+  path: '/painel-administrativo/lms/forum/{group}/comentarios/rejeitados'
+  defaults:
+    _controller: 'aculta_forum_lms.moderation_controller:comments'
+    _title: 'Comentários rejeitados'
+    queue: rejected
+  requirements:
+    _custom_access: 'aculta_forum_lms.moderation_manager:groupAccess'
+  options:
+    _admin_route: true
+    parameters:
+      group:
+        type: entity:group
+
+aculta_forum_lms.comments_pending:
+  path: '/painel-administrativo/lms/forum/{group}/comentarios/aguardando-moderacao'
+  defaults:
+    _controller: 'aculta_forum_lms.moderation_controller:comments'
+    _title: 'Comentários aguardando moderação'
+    queue: pending
+  requirements:
+    _custom_access: 'aculta_forum_lms.moderation_manager:groupAccess'
+  options:
+    _admin_route: true
+    parameters:
+      group:
+        type: entity:group

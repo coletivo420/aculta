@@ -5,10 +5,10 @@ privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
-Desde a dev.15, Educadores com `grade students` no curso contextual podem ver
-Comments pendentes/rejeitados e executar a operação Core de aprovação no campo
-compartilhado. Essa concessão não abrange edição, exclusão ou a permissão global
-`administer comments`. A fila ainda não está exposta em rota/View.
+Desde a dev.16, Educadores com `grade students` no curso contextual têm um
+painel com filas separadas de Comments publicados, rejeitados e pendentes por
+curso/turma. O Core `approve` fica permitido apenas no contexto LMS autorizado;
+`update`, `delete` e `administer comments` não são concedidos.
 
 ## Estado
 
@@ -33,8 +33,10 @@ A ativação foi somente no Runtime de teste. A prévia de sincronização integ
 continua exibindo diferenças alheias ao Fórum; não executar importação global.
 Como não há tópicos de teste, não foi feita autorização de conteúdo real no
 Runtime. Kernel prova acesso de membro/Educador, outsider negado e herança de
-Educador sem membership direto na turma. UI, Views, Search API e filas ainda
-não estão homologadas; não copiar o estado Runtime para produção.
+Educador sem membership direto na turma. Rotas e View das filas estão no código,
+mas ainda não foram importadas/rebuildadas nem exercitadas por HTTP no Runtime;
+Search API e notificações LMS também aguardam isolamento/homologação. Não copiar
+configuração para produção.
 
 Em 2026-10-20, `drush config:import --diff` mostrou um diff completo com
 remoções e mudanças alheias ao Fórum (entre elas configurações de blocos,
@@ -49,8 +51,9 @@ Historicamente, a dev.94 adicionou install config do bundle `aculta_lms_topic`, 
 compartilhado e relações `group_node:aculta_lms_topic` para curso/turma. A
 dev.97 acrescenta em Config Sync a herança `grade students` do curso para a
 permission Group Node dos tópicos de turma, validada pelo `ClassPermissionCalculator`
-real. Essas permissões e a herança foram aplicadas por importação parcial. Não
-foram criadas Views, Search API, rotas ou conteúdo.
+real. Essas permissões e a herança foram aplicadas por importação parcial.
+Na dev.16 foi instalada como config padrão do adapter uma View Embed com três
+displays fixos, sem página nem bloco; os caminhos de rota recebem Group explícito.
 `gnode` está listado como dependência do adapter. Um hook
 `entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
 para `lms_class`, também exige uma relação única com um curso. Com relações
@@ -71,7 +74,7 @@ inesperado de relação falha fechado.
 - Cartões educacionais continuam pertencendo ao `aculta_user`.
 - `aculta_messenger`, `aculta_image`, Search API e tema não são alterados aqui.
 
-## Próxima etapa
+## Acesso e testes
 
 Os Kernels `LmsGroupNodeAccessKernelTest` e
 `LmsClassEducatorPermissionKernelTest` usam `aculta_simpletest`: provam acesso
@@ -88,15 +91,15 @@ os quatro YAMLs em Kernel. A dev.100 também verifica os contextos de cache por
 usuário/permissões e a dependência cacheável do tópico para as três decisões
 de acesso. A dev.101 verifica a coerência entre Config Sync e as relationship
 types instaláveis. A dev.102 instala a configuração padrão via `ConfigInstaller`
-na fixture LMS/Group e confirma bundle, campo, relações e formatter, sem
-habilitar o módulo. Próximo: testar ciclo de ativação/desinstalação com o
-grafo completo de dependências, depois revisar rotas, Views, busca e filas.
+na fixture LMS/Group. A dev.16 cobre a View Embed em Kernel: o Educador só vê
+Comments de seu Group e cada aba retorna o status fixo esperado. Views, routes,
+permissões por HTTP, links do painel e cache no Runtime ainda precisam de
+rebuild e smoke autenticado com conteúdo efêmero autorizado.
 
-Na dev.15, Unit (16 testes / 165 assertions) e Kernel (1 teste / 62
-assertions) exercitam acesso `view`/`approve` para Educador e preservam o acesso
-Core para estudante; o Kernel reportou 37 depreciações de Core/contrib/LMS.
-Integração do hook carregado pelo Runtime, filas Views e autorização por
-conteúdo real continuam pendentes. RUNTIME STATUS: DEFERRED.
+Na dev.16, Unit passou com 17 testes / 182 assertions e Kernel com 2 testes /
+102 assertions; o Kernel reportou 40 depreciações de Core/contrib/LMS. O adapter e
+as permissões de Group permanecem ativos no Runtime de teste, mas as rotas e a
+configuração nova da View ainda não foram aplicadas. RUNTIME STATUS: DEFERRED.
 
 Na dev.12, a fixture separa propriedade de membership: curso e turma pertencem
 a uma terceira conta; o Educador é membro com role contextual no curso, não é

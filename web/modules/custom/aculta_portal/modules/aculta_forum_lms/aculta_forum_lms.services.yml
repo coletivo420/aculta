@@ -1,4 +1,10 @@
 services:
+  aculta_forum_lms.moderation_manager:
+    class: Drupal\aculta_forum_lms\Access\LmsForumModerationManager
+    arguments: ['@entity_type.manager', '@Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider']
+  aculta_forum_lms.moderation_controller:
+    class: Drupal\aculta_forum_lms\Controller\LmsForumModerationController
+    arguments: ['@aculta_forum_lms.moderation_manager', '@entity_type.manager', '@views.executable', '@current_user']
   Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider:
     arguments: ['@entity_type.manager']
     tags:

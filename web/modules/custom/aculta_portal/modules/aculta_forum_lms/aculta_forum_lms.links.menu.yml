@@ -1,0 +1,6 @@
+aculta_forum_lms.moderation_overview:
+  title: 'Fóruns dos cursos'
+  description: 'Comentários das discussões dos cursos e turmas sob sua responsabilidade.'
+  route_name: aculta_forum_lms.moderation_overview
+  parent: system.admin_lms
+  weight: 35
