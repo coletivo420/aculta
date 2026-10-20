@@ -106,6 +106,7 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 - Ler/escrever exige autorização do recurso e membership atual para o grupo correto; papel global `estudante` sozinho não autoriza.
 - Nenhuma rota, View, busca, cache, perfil público, sitemap, feed ou notificação pública divulga o conteúdo.
 - Atividade reutilizada por cursos distintos não compartilha conversa sem decisão específica.
+- Na dev.93, um hook `entity_access` impede que Nodes `aculta_lms_topic` sem vínculo Group único herdem a visualização padrão de conteúdo publicado; uma turma também precisa de uma única relação com curso. Com a relação válida, a decisão de papéis continua com o access handler do Group.
 - A fundação opcional `aculta_forum_lms` foi adicionada na dev.92: provider tagueado reconhece `aculta_lms_topic`, exige vínculo Group único com `lms_course`/`lms_class`, aplica Entity Access e membership contextual, e limita moderação a `grade students` no curso pai. A integração permanece fechada até bundle, campo Comment e relationship types específicos estarem instalados e testados.
 - Dev.92 não cria formulário de tópicos, Views administrativas, campos de atividade/aula, Search API privada ou notificações. A delegação de `field_aculta_rejected` está implementada; a prova Kernel e a matriz completa de acesso são obrigatórias antes de habilitar o adapter.
 

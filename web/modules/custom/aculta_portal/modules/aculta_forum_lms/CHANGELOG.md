@@ -1,3 +1,9 @@
+## `0.1.0-dev.2` — acesso direto fail-closed — 2026-10-20
+
+- Protege a visualização direta do Node: exige relação Group única e, para
+  turma, um curso pai único. Com relação válida, delega autorização ao Group.
+- Testes Unit novos: 3 testes / 11 assertions PASS; suíte do adapter: 6 testes / 19 assertions. Não habilitado no Runtime.
+
 ## `0.1.0-dev.1` — contrato inicial do adapter — 2026-10-20
 
 - Implementa resolução fail-closed de tópico LMS vinculado a Group e o acesso

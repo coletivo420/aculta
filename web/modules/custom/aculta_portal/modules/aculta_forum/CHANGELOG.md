@@ -1,3 +1,12 @@
+## `0.1.0-dev.93` — negar acesso direto a tópico LMS sem Group — 2026-10-20
+
+- O hook OOP `entity_access` impede que um Node `aculta_lms_topic` sem Group
+  único, ou ligado a uma turma sem exatamente um curso pai, herde o acesso
+  público padrão de Nodes publicados. Relações válidas retornam neutro e
+  deixam o Group Core/contrib autorizar conforme permissões e membership.
+- A proteção não cria rotas, conteúdo ou configuração Runtime. Adapter Unit total:
+  6 testes / 19 assertions PASS (3 testes / 11 assertions novos). Runtime DEFERRED.
+
 ## `0.1.0-dev.92` — fundação do adapter privado LMS — 2026-10-20
 
 - Criado `aculta_forum_lms` como adapter opcional, dependente de Forum, LMS e

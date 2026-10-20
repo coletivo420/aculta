@@ -43,6 +43,63 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
   }
 
   /**
+   * Prevents ungrouped or ambiguously grouped LMS topics from being public.
+   *
+   * Valid Group relationships return neutral so the Group module's own
+   * entity-access handler remains authoritative for the configured roles.
+   */
+  public function getGroupRelationshipAccess(EntityInterface $entity): AccessResultInterface {
+    if (!$this->supports($entity) || $entity->isNew() || !$entity->uuid()) {
+      return AccessResult::forbidden()->addCacheableDependency($entity);
+    }
+
+    $relationships = $this->relationshipStorage()->loadByEntity($entity, self::NODE_RELATIONSHIP);
+    if (count($relationships) !== 1) {
+      return AccessResult::forbidden()
+        ->addCacheableDependency($entity)
+        ->addCacheTags([
+          'group_relationship_list:plugin:' . self::NODE_RELATIONSHIP,
+          'group_relationship_list:entity:' . $entity->id(),
+        ]);
+    }
+
+    $relationship = reset($relationships);
+    $group = $relationship->getGroup();
+    if (!$group instanceof GroupInterface
+      || !in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
+      return AccessResult::forbidden()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($relationship);
+    }
+
+    $dependencies = [
+      $entity,
+      $relationship,
+      $group,
+    ];
+    if ($group->bundle() === 'lms_class') {
+      $parents = $this->relationshipStorage()->loadByEntity($group, 'lms_classes');
+      $parent = count($parents) === 1 ? reset($parents) : NULL;
+      $course = $parent?->getGroup();
+      if (!$course instanceof CourseInterface) {
+        return AccessResult::forbidden()
+          ->addCacheableDependency($entity)
+          ->addCacheableDependency($relationship)
+          ->addCacheableDependency($group)
+          ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
+      }
+      $dependencies[] = $parent;
+      $dependencies[] = $course;
+    }
+
+    $access = AccessResult::neutral();
+    foreach ($dependencies as $dependency) {
+      $access->addCacheableDependency($dependency);
+    }
+    return $access;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getContext(EntityInterface $entity, AccountInterface $account): DiscussionContextInterface {

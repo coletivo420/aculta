@@ -1,6 +1,5 @@
 services:
-  aculta_forum_lms.discussion_context_provider:
-    class: Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider
+  Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider:
     arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_forum.discussion_context_provider }

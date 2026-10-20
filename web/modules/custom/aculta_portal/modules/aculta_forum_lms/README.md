@@ -11,7 +11,11 @@ O módulo não deve ser habilitado até a instalação versionada do bundle,
 `field_aculta_discussion`, relações `group_node:aculta_lms_topic` e a matriz de
 acesso serem cobertas por testes Kernel. Não foi incluído Config Sync de
 permissões, Views, Search API, rotas ou conteúdo. `gnode` está listado como
-dependência do adapter, não como alteração de `core.extension`.
+dependência do adapter, não como alteração de `core.extension`. Um hook
+`entity_access` nega acesso a Nodes do bundle quando falta relação Group única;
+para `lms_class`, também exige uma relação única com um curso. Com relações
+válidas, o hook retorna neutro e deixa o access handler do Group aplicar os
+papéis.
 
 Discussões de turma exigem exatamente uma relação `lms_classes` para o curso
 pai. A associação de aula/atividade ainda não faz parte desta entrega. Acesso a
