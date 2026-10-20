@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.33 — miniaturas de páginas sob demanda — 2026-10-20
+
+- Inclui miniaturas navegáveis no canvas próprio. Só renderiza ao expandir a seção, limita cada miniatura a 65.536 pixels e a lista a 100 páginas; PDFs maiores informam o limite aplicado.
+- Usa controles Bootstrap e texto acessível; miniatura sem renderização é removida sem interromper o leitor. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.32 — corrigir escala inicial configurada — 2026-10-20
 
 - Distingue “ajustar à largura” de escala real 100%/125%; restaurar zoom volta ao padrão selecionado no formatter.

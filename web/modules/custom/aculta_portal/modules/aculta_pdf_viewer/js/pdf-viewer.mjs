@@ -34,6 +34,9 @@ async function initialize(viewer) {
   const outline = viewer.querySelector('[data-aculta-pdf-control="outline"]');
   const outlineItems = viewer.querySelector('[data-aculta-pdf-control="outline-items"]');
   const outlineStatus = viewer.querySelector('[data-aculta-pdf-control="outline-status"]');
+  const pageThumbnails = viewer.querySelector('[data-aculta-pdf-control="page-thumbnails"]');
+  const pageThumbnailItems = viewer.querySelector('[data-aculta-pdf-control="page-thumbnail-items"]');
+  const pageThumbnailStatus = viewer.querySelector('[data-aculta-pdf-control="page-thumbnail-status"]');
   if (!url || !url.startsWith('/') || url.startsWith('//') || !canvas || !status) {
     return;
   }
@@ -52,6 +55,48 @@ async function initialize(viewer) {
     let searchSequence = 0;
     let matchingPages = [];
     let matchingPageIndex = -1;
+
+    if (pageThumbnails && pageThumbnailItems && pageThumbnailStatus) {
+      let generated = false;
+      pageThumbnails.addEventListener('toggle', async () => {
+        if (!pageThumbnails.open || generated) return;
+        generated = true;
+        const pageLimit = Math.min(pdf.numPages, 100);
+        for (let pageNumber = 1; pageNumber <= pageLimit; pageNumber += 1) {
+          pageThumbnailStatus.textContent = `Preparando miniatura ${pageNumber} de ${pageLimit}…`;
+          const item = document.createElement('li');
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'btn btn-outline-secondary d-inline-flex flex-column align-items-center';
+          button.setAttribute('aria-label', `Abrir página ${pageNumber}`);
+          const thumbnail = document.createElement('canvas');
+          thumbnail.setAttribute('aria-hidden', 'true');
+          const label = document.createElement('span');
+          label.textContent = `Página ${pageNumber}`;
+          button.append(thumbnail, label);
+          button.addEventListener('click', () => goToPage(pageNumber));
+          item.append(button);
+          pageThumbnailItems.append(item);
+          try {
+            const page = await pdf.getPage(pageNumber);
+            const base = page.getViewport({ scale: 1 });
+            const scale = Math.min(0.16, 256 / Math.max(base.width, base.height), Math.sqrt(65_536 / (base.width * base.height)));
+            const viewport = page.getViewport({ scale });
+            thumbnail.width = Math.max(1, Math.ceil(viewport.width));
+            thumbnail.height = Math.max(1, Math.ceil(viewport.height));
+            const thumbnailContext = thumbnail.getContext('2d');
+            if (!thumbnailContext) throw new Error('Canvas context unavailable');
+            await page.render({ canvasContext: thumbnailContext, viewport }).promise;
+          }
+          catch {
+            item.remove();
+          }
+        }
+        pageThumbnailStatus.textContent = pdf.numPages > pageLimit
+          ? `Mostrando ${pageLimit} de ${pdf.numPages} páginas para limitar memória e processamento.`
+          : `${pageLimit} miniaturas prontas.`;
+      }, { once: false });
+    }
 
     if (outline && outlineItems && outlineStatus) {
       const entries = await pdf.getOutline();
