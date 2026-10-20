@@ -625,7 +625,7 @@
         "production": {
           "status": "pendente",
           "registration_id": null,
-          "action": "no deploy do RC: gerar um BREVO_WEBHOOK_TOKEN próprio de produção no arquivo de segredos do servidor, cadastrar o webhook com a URL de produção e remover o cadastro de teste (registration_id da seção test) para não duplicar eventos",
+          "action": "no deploy do RC, o deployer faz: aculta-deployer provision --env=production --secrets=CAMINHO_DO_ARQUIVO_DE_SEGREDOS_DO_SERVIDOR --apply --confirm-production --remove-test=2631443. Gera BREVO_WEBHOOK_TOKEN e MAILER_PAYLOAD_KEY se faltarem, cadastra o webhook de produção e remove o cadastro de teste. Depois, atualizar registration_id aqui com o id devolvido.",
           "decision_pending": [
             "Confirmar com o responsável a data do cadastro de produção (depende da implantação)."
           ]

@@ -1,3 +1,10 @@
+## 0.1.27 — provisionamento de segredos e webhook do Brevo, idempotente
+
+- `aculta-deployer provision --env=production|test --secrets=CAMINHO`: gera `BREVO_WEBHOOK_TOKEN` e `MAILER_PAYLOAD_KEY` se faltarem (nunca sobrescreve), cadastra o webhook transacional ou troca o token do existente, e remove o cadastro de teste quando pedido (`--remove-test=ID`). Dry-run por padrão; produção exige `--confirm-production`.
+- Chamadas ao Brevo: `GET /v3/webhooks`, `POST /v3/webhooks`, `PUT /v3/webhooks/{id}` (atualização do token), `DELETE /v3/webhooks/{id}` (204). Confirmadas na referência oficial.
+- Validado: dry-run do ambiente de teste com o arquivo real de segredos: "webhook já cadastrado; nada a fazer". Recusas de segurança verificadas.
+- `external_webhooks.production.action` descreve o comando do deploy. Testes unitários da lógica (faltantes, plano, gravação sem sobrescrever) incluídos.
+
 ## 0.1.26 — webhooks por ambiente e ferramentas Drush — 2026-10-20
 
 - `external_webhooks` em `config/deploy.json`: webhook do Brevo declarado por ambiente. A URL sai de `environments` + `path`; o segredo é `BREVO_WEBHOOK_TOKEN`. Produção fica `pendente` até o cadastro no deploy do RC (passos em `docs/USO.md`).

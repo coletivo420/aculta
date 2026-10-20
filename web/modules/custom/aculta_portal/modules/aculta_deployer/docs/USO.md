@@ -23,6 +23,7 @@ CLI=web/modules/custom/aculta_portal/modules/aculta_deployer/bin/aculta-deployer
 - `$CLI hostinger-layout --domain-root=DIR`: valida a instalação na raiz da pasta do domínio e simula a mudança da raiz pública. Só altera o servidor com `--apply`.
 - `$CLI verify`: GET somente leitura nas entradas com `probe` e `expect`. Só aceita HTTPS,
   sem credenciais na URL, sem seguir redirecionamentos. Não altera nenhum arquivo nem o registro.
+- `$CLI provision --env=production|test --secrets=CAMINHO [--apply] [--confirm-production] [--remove-test=ID]`: provisiona segredos e o webhook do Brevo, idempotente; dry-run sem `--apply`.
 - `$CLI version`.
 
 ## Ferramentas Drush
@@ -50,7 +51,8 @@ segredo nunca entram no arquivo. `$CLI webhooks` confere a declaração. A `prod
 3. `$CLI build --out=/caminho/de/producao`.
 4. Confira `deploy-report.json`: nenhum `toca.net.br` deve restar nos arquivos gerados.
 5. Aplique a árvore gerada no ambiente de produção, pelo processo do responsável.
-6. Cadastro do webhook de produção, no deploy do RC (passos da seção de webhooks, feitos pelo responsável):
+6. Provisionamento de produção (deployer): `$CLI provision --env=production --secrets=CAMINHO --apply --confirm-production --remove-test=2631443`. Sem `--apply`, mostra só o plano. Gera `BREVO_WEBHOOK_TOKEN` e `MAILER_PAYLOAD_KEY` se faltarem (nunca sobrescreve), cadastra o webhook de produção, troca o token se ele mudou e remove o cadastro de teste. Valores de segredo não são impressos. Depois, atualize `registration_id` em `external_webhooks` no `config/deploy.json`.
+   Passos manuais equivalentes, se o comando não for usado:
    gerar `BREVO_WEBHOOK_TOKEN` de produção no arquivo de segredos do servidor, cadastrar o webhook no Brevo com a URL
    de produção e o token, e remover o cadastro de teste (`registration_id` da seção `test`) para não duplicar eventos.
    Atualizar o `status` no `config/deploy.json` com o novo `registration_id`.

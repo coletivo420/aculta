@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Cli'] as $class) {
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Provision', 'Cli'] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -363,6 +363,24 @@ $assert($brc1 !== 0, 'build recusa --env diferente de --target');
 // Tabela de migração de domínios: somente leitura; a revista está alinhada ao host decidido.
 exec($cli . ' domains 2>&1', $dom, $domrc);
 $assert($domrc === 0 && str_contains(implode("\n", $dom), 'revista420.aculta.org (regra de host)') && str_contains(implode("\n", $dom), '0 pendente(s) de RC'), 'domains: tabela válida; revista alinhada (host de produção decidido)');
+
+// Provisionamento (idempotente): o que falta, o que muda, gravação sem sobrescrever e nomes sem valores.
+$assert(AcultaDeployer\Provision::missing(['A', 'B'], ['B', 'C']) === ['C'], 'provision: só falta o que não está no arquivo');
+$assert(AcultaDeployer\Provision::missing(['A'], ['A']) === [], 'provision: nada falta quando tudo existe');
+$genB64 = AcultaDeployer\Provision::generate('MAILER_PAYLOAD_KEY');
+$genHex = AcultaDeployer\Provision::generate('BREVO_WEBHOOK_TOKEN');
+$assert(strlen(base64_decode($genB64, TRUE) ?: '') === 32 && strlen($genHex) === 64 && ctype_xdigit($genHex), 'provision: chave gerada tem 32 bytes (base64) e token tem 64 hex');
+$assert(AcultaDeployer\Provision::plan([], NULL, FALSE, NULL) === ['cadastrar webhook transacional com a URL do ambiente'], 'provision: sem webhook, cadastra');
+$assert(in_array('atualizar o token do webhook existente (token novo)', AcultaDeployer\Provision::plan(['BREVO_WEBHOOK_TOKEN'], ['id' => 1], TRUE, NULL), true), 'provision: token novo com webhook existente atualiza o cadastro');
+$assert(AcultaDeployer\Provision::plan([], ['id' => 1], FALSE, NULL) === ['webhook já cadastrado; nada a fazer'], 'provision: segunda execução não faz nada');
+$assert(in_array('remover o cadastro de teste 2631443', AcultaDeployer\Provision::plan([], ['id' => 9], FALSE, 2631443), true), 'provision: remove o cadastro de teste quando pedido');
+$tmpSecrets = sys_get_temp_dir() . '/aculta-provision-' . getmypid() . '.env';
+file_put_contents($tmpSecrets, "KEEP=valor-atual\nBREVO_API_KEY=chave-de-teste");
+AcultaDeployer\Provision::append($tmpSecrets, ['MAILER_PAYLOAD_KEY' => 'novo']);
+$afterAppend = (string) file_get_contents($tmpSecrets);
+$assert(str_starts_with($afterAppend, "KEEP=valor-atual\nBREVO_API_KEY=chave-de-teste\n") && str_ends_with($afterAppend, "MAILER_PAYLOAD_KEY=novo\n"), 'provision: acrescenta sem alterar linhas existentes');
+$assert(AcultaDeployer\Provision::namesIn($tmpSecrets) === ['KEEP', 'BREVO_API_KEY', 'MAILER_PAYLOAD_KEY'] && AcultaDeployer\Provision::valueOf($tmpSecrets, 'KEEP') === 'valor-atual', 'provision: lista nomes e lê valor só em memória');
+@unlink($tmpSecrets);
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
 exit($failures === 0 ? 0 : 1);
