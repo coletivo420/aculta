@@ -1,5 +1,17 @@
 # Matriz de testes por fase
 
+## dev.90 — busca textual, categoria e relevância
+
+- `ForumCategorySearchKernelTest` combina `keys` com o ID da categoria e prova
+  que somente os dois tópicos textualmente correspondentes naquela categoria
+  aparecem. Um tópico com a busca apenas no corpo e outros com correspondência
+  no título validam o boost e a relevância padrão.
+- A classe direcionada e a suíte Kernel completa passaram no MariaDB dedicado:
+  26 testes / 513 assertions; 19 depreciações pertencem a Core/contrib.
+- Nenhum dado foi criado no Runtime. Resultado de busca com conteúdo real fica
+  pendente porque o Growroom420 de teste deve permanecer limpo.
+- RUNTIME STATUS: DEFERRED.
+
 ## dev.89 — busca sem correspondências
 
 - A View expõe mensagem neutra de estado vazio com link para `/categorias`;

@@ -18,6 +18,10 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
   decrescente. Esse padrão está definido na `QueryInterface` upstream e no
   código instalado; não se adiciona uma ordenação SQL paralela. Esta entrega não
   oferece escolha entre relevância e atividade.
+- A suíte Kernel do Search API DB valida em conjunto busca textual e filtro de
+  categoria, além de confirmar que o boost configurado no título pontua acima
+  de uma correspondência somente no corpo. O teste cobre o contrato de query e
+  indexação, sem criar conteúdo no Runtime.
 - `ForumSearchQuerySubscriber` usa `search_api.query_pre_execute`. Só modifica o
   índice `aculta_forum`, adicionando o identificador do Domain resolvido para o
   purpose `forum`. Em outro purpose ou sem Domain configurado, adiciona uma

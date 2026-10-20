@@ -1,3 +1,15 @@
+## `0.1.0-dev.90` — validar texto, categoria e relevância da busca — 2026-10-20
+
+- `ForumCategorySearchKernelTest` agora indexa título e corpo com Search API DB;
+  prova que busca textual e filtro de categoria podem ser combinados e que o
+  boost configurado para título pontua acima de uma correspondência apenas no
+  corpo. Também confirma que o padrão de relevância deixa uma correspondência
+  no título antes da correspondência somente no corpo.
+- Suíte Kernel completa: 26 testes / 513 assertions PASS no MariaDB dedicado;
+  19 depreciações de Core/contrib. A suíte Unit não foi alterada nesta entrega.
+  Nenhum conteúdo Runtime foi criado ou alterado; RUNTIME STATUS: DEFERRED para
+  resultados reais publicados, pois o Fórum deve permanecer vazio.
+
 ## `0.1.0-dev.85` — negar formulário de movimento para Growroom histórico — 2026-10-20
 
 - Kernel prova que a imutabilidade do tópico histórico é aplicada também no

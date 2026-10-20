@@ -77,6 +77,18 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
         'handler_settings' => ['target_bundles' => ['aculta_forum_categories' => 'aculta_forum_categories']],
       ],
     ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_search_body',
+      'entity_type' => 'node',
+      'type' => 'text_long',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_search_body',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Search body',
+    ])->save();
 
     Server::create([
       'id' => 'forum_category_test',
@@ -103,6 +115,19 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
       ],
       'tracker_settings' => ['default' => []],
       'field_settings' => [
+        'title' => [
+          'label' => 'Title',
+          'type' => 'text',
+          'datasource_id' => 'entity:node',
+          'property_path' => 'title',
+          'boost' => 5.0,
+        ],
+        'body' => [
+          'label' => 'Body',
+          'type' => 'text',
+          'datasource_id' => 'entity:node',
+          'property_path' => 'field_search_body:value',
+        ],
         'forum_category' => [
           'label' => 'Forum category',
           'type' => 'integer',
@@ -144,15 +169,66 @@ final class ForumCategorySearchKernelTest extends KernelTestBase {
   }
 
   /**
+   * Fulltext combines with category filtering and defaults to relevance order.
+   */
+  public function testFulltextCombinesWithCategoryAndUsesRelevanceByDefault(): void {
+    $category = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Cultivo']);
+    $category->save();
+    $otherCategory = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Cultura']);
+    $otherCategory->save();
+
+    $titleMatch = $this->createTopic('Cultivo medicinal', (int) $category->id());
+    $bodyMatch = $this->createTopic('Discussão recente', (int) $category->id(), 'Cultivo medicinal');
+    $otherCategoryMatch = $this->createTopic('Cultivo medicinal', (int) $otherCategory->id());
+    self::assertSame(3, $this->index->indexItems());
+
+    $combined = $this->index->query()
+      ->keys('medicinal')
+      ->addCondition('forum_category', (int) $category->id())
+      ->execute()
+      ->getResultItems();
+    $combinedIds = array_map(
+      static fn ($item): int => (int) $item->getOriginalObject()->getValue()->id(),
+      array_values($combined),
+    );
+    sort($combinedIds);
+    $expectedIds = [(int) $titleMatch->id(), (int) $bodyMatch->id()];
+    sort($expectedIds);
+    self::assertSame($expectedIds, $combinedIds);
+
+    $unfiltered = $this->index->query()->keys('medicinal')->execute()->getResultItems();
+    $first = reset($unfiltered);
+    $scores = [];
+    foreach ($unfiltered as $item) {
+      $nodeId = (int) $item->getOriginalObject()->getValue()->id();
+      $scores[$nodeId] = $item->getScore();
+    }
+    self::assertGreaterThan(
+      $scores[(int) $bodyMatch->id()],
+      $scores[(int) $titleMatch->id()],
+      'A title match with its configured boost scores above a body-only match.',
+    );
+    self::assertContains(
+      (int) $first->getOriginalObject()->getValue()->id(),
+      [(int) $titleMatch->id(), (int) $otherCategoryMatch->id()],
+      'The default relevance order puts a title match ahead of the body-only result.',
+    );
+  }
+
+  /**
    * Creates a public forum topic assigned to the provided category term.
    */
-  private function createTopic(string $title, int $termId): Node {
-    $node = Node::create([
+  private function createTopic(string $title, int $termId, string $body = ''): Node {
+    $values = [
       'type' => 'aculta_forum_topic',
       'title' => $title,
       'status' => 1,
       'field_aculta_categories' => ['target_id' => $termId],
-    ]);
+    ];
+    if ($body !== '') {
+      $values['field_search_body'] = ['value' => $body];
+    }
+    $node = Node::create($values);
     $node->save();
     return $node;
   }
