@@ -18,6 +18,15 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.8` — limitar tópicos LMS pelos Group roles — 2026-10-20
+
+- Roles de estudante/educador/criador recebem permission Group Node somente
+  nas relações do adapter (curso/turma); herança de `grade students` leva o
+  acesso de Educador às turmas. Outsiders e role global sem membership não
+  acessam tópicos.
+- Kernel lê e cria roles a partir do Config Sync; 2 testes / 63 assertions
+  PASS, 38 depreciações. Config não importada, adapter segue desabilitado.
+
 ## `0.1.0-dev.7` — validar Comment e moderação contextual em Kernel — 2026-10-20
 
 - Kernel cria tópico LMS em Group de turma, persiste Comment compartilhado,

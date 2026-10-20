@@ -114,14 +114,14 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       'id' => 'lms_teacher',
       'label' => 'LMS Educator',
     ])->save();
-    GroupRole::create([
-      'id' => 'lms_course-test_teacher',
-      'label' => 'Course test educator',
-      'group_type' => 'lms_course',
-      'scope' => 'insider',
-      'global_role' => 'lms_teacher',
-      'permissions' => ['grade students', 'view group'],
-    ])->save();
+    foreach ([
+      'group.role.lms_course-teacher',
+      'group.role.lms_course-member',
+      'group.role.lms_course-course_creator',
+      'group.role.lms_class-member',
+    ] as $roleConfigName) {
+      $this->createGroupRoleFromSync($roleConfigName);
+    }
 
     $syncPath = dirname(__DIR__, 9) . '/config/sync/lms_classes.settings.yml';
     self::assertFileExists($syncPath);
@@ -171,23 +171,14 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     ]);
     $class->save();
     $course->addRelationship($class, 'lms_classes')->save();
-    GroupRole::create([
-      'id' => 'lms_class-test_member',
-      'label' => 'Class test member',
-      'group_type' => 'lms_class',
-      'scope' => 'individual',
-      'permissions' => [
-        'view group',
-        'view group_node:aculta_lms_topic entity',
-      ],
-    ])->save();
     $student = User::create([
       'name' => 'lms_class_student',
       'mail' => 'lms-class-student@example.invalid',
       'status' => 1,
     ]);
     $student->save();
-    $class->addMember($student, ['group_roles' => ['lms_class-test_member']]);
+    $course->addMember($student);
+    $class->addMember($student);
 
     $topic = $this->container->get('entity_type.manager')->getStorage('node')->create([
       'type' => 'aculta_lms_topic',
@@ -200,6 +191,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $class->addRelationship($topic, 'group_node:aculta_lms_topic')->save();
 
     self::assertTrue($course->hasPermission('grade students', $educator));
+    self::assertTrue($course->hasPermission('view group_node:aculta_lms_topic entity', $educator));
+    self::assertTrue($course->hasPermission('view group_node:aculta_lms_topic entity', $student));
     self::assertTrue($class->hasPermission('view group_node:aculta_lms_topic entity', $educator));
     self::assertTrue($class->hasPermission('view group_node:aculta_lms_topic entity', $student));
     self::assertTrue($class->access('view', $student));
@@ -241,6 +234,26 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
 
     $topic->set('field_aculta_discussion', ['status' => CommentingStatus::Closed->value])->save();
     self::assertTrue($provider->getContext($topic, $student)->getWriteAccess()->isForbidden());
+  }
+
+  /**
+   * Creates one Group role from the current Config Sync definition.
+   */
+  private function createGroupRoleFromSync(string $configName): void {
+    $configPath = dirname(__DIR__, 9) . '/config/sync/' . $configName . '.yml';
+    self::assertFileExists($configPath);
+    $config = Yaml::parseFile($configPath);
+    $role = array_intersect_key($config, array_flip([
+      'id',
+      'label',
+      'weight',
+      'admin',
+      'scope',
+      'global_role',
+      'group_type',
+      'permissions',
+    ]));
+    GroupRole::create($role)->save();
   }
 
 }

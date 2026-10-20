@@ -47,7 +47,8 @@ combinação de acesso trata membership e permissão contextual como alternativa
 explícitas e nega somente se ambas falharem; `orIf()` não pode ser usado porque
 `forbidden` prevalece sobre uma alternativa permitida. O Kernel também persiste
 Comment publicado, exerce o hook do marcador `field_aculta_rejected`, prova
-Educador versus estudante e recusa escrita quando o campo fecha. Próximo:
-adicionar e testar a permission contextual nos Group roles de curso/turma e
-revisar cache/access de todas as rotas antes das filas administrativas ou da
-habilitação do adapter.
+Educador versus estudante e recusa escrita quando o campo fecha. A dev.99
+adiciona a permission de leitura aos Group roles reais do Config Sync e prova
+os quatro YAMLs em Kernel. Próximo: validar dependências e instalação da
+configuração sem importar no Runtime; revisar cache/access das rotas e filas
+antes de habilitar o adapter.

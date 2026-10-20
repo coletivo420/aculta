@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.8 — roles Group de discussão — 2026-10-20
+
+- Config Sync acrescenta permission Group Node de tópicos aos roles de curso
+  Educador/estudante/criador e estudante de turma, condicionados à relação
+  instalada pelo adapter `aculta_forum_lms`. Sem ativação ou import Runtime.
+- Kernel usa os mesmos YAMLs e verifica acesso contextual, moderação, Comment
+  publicado e negação de pessoa externa. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.7 — permissão de tópico LMS herdada na turma — 2026-10-20
 
 - `lms_classes.settings` mapeia `grade students` do curso para acesso Group

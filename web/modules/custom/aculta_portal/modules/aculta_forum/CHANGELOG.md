@@ -1722,6 +1722,18 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.99` — conceder acesso Group Node por membership — 2026-10-20
+
+- Config Sync concede leitura de tópico aos Group roles course teacher, course
+  member, course creator e class member. Todos dependem das relationship types
+  do adapter; visitante anônimo/outsider e papel global isolado não recebem
+  essa permissão. Educador de curso herda leitura para turmas via
+  `lms_classes.settings`.
+- Kernel cria os Group roles a partir dos arquivos Config Sync e confirma
+  estudante/Educador, moderação e bloqueio externo: suite 2 testes / 63
+  assertions PASS, 38 depreciações Core/contrib. Config Sync não importado e
+  adapter desabilitado. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.98` — provar Comment e moderação em turma LMS — 2026-10-20
 
 - Kernel integrado usa Node/Comment e permissões Group reais, persiste uma

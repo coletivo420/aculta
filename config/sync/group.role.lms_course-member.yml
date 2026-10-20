@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - group.type.lms_course
+    - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
     - user.role.authenticated
   module:
     - aculta_pdf_viewer_group
+    - aculta_forum_lms
 id: lms_course-member
 label: Estudante
 weight: 0
@@ -21,5 +23,6 @@ permissions:
   - 'view aculta_pdf_viewer_group:course_document entity'
   - 'view any unpublished aculta_pdf_viewer_group:course_document entity'
   - 'view aculta_pdf_viewer_group:course_document relationship'
+  - 'view group_node:aculta_lms_topic entity'
   - 'view group'
   - 'view group_membership relationship'
