@@ -17,12 +17,14 @@
   idioma fallback. Backup da View e fonte parcial ficam fora do Git, com
   permissões restritas, em
   `/home/aculta/private/aculta/operations/forum-vbo-dev118-20261020/`. Firefox/X11
-  autenticado como UID 1: 4/5 verificações — ULI e View exibiram as duas fixtures,
-  a Action e os checkboxes; o clique real foi interceptado pelo viewport e não
-  chegou à configuração/Batch API. A rodada foi encerrada sem executar a Action;
-  as duas fixtures exatas foram removidas. Verificação final via Entity API:
-  0 tópicos públicos, 0 tópicos legados, 0 Comments compartilhados/legados e
-  fila Messenger inalterada em 0. RUNTIME STATUS: PARTIAL.
+  autenticado como UID 1: 5/7 verificações — ULI, View, seleção real dos dois
+  tópicos e Action habilitada passaram; a configuração VBO abriu com os títulos,
+  mas a checagem de resumo/seletores não reconheceu o markup e a confirmação não
+  foi submetida. Portanto, o Batch API e a movimentação Runtime continuam sem
+  validação. As fixtures exatas NIDs 476 e 477 foram removidas e o tempstore
+  ficou vazio. Verificação final via Entity API: 0 tópicos públicos, 0 tópicos
+  legados, 0 Comments compartilhados/legados e fila Messenger inalterada em 0.
+  RUNTIME STATUS: PARTIAL.
 
 ## dev.117 — painel central e Conteúdo do Fórum geral
 
