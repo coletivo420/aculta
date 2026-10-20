@@ -5,7 +5,7 @@
 - Validar sintaxe do manifesto YAML.
 - Executar `php scripts/validate-project-status-index.php`.
 - Executar `git diff --check`.
-- Manter módulo desabilitado; sem DB, Config Sync import ou operação no Runtime.
+- O módulo está habilitado no Runtime de teste desde 2026-10-20; a configuração versionada lista a extensão. Não importar globalmente a configuração enquanto existirem diferenças de outras frentes.
 
 ## Entidades 0.2.0 em desenvolvimento
 

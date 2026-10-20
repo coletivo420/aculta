@@ -22,9 +22,11 @@ conteúdo e URL.
   teste Unit/Kernel de storage, referências, revisões e isolamento entre contas.
 - Dashboard e formulários Core para micropáginas/destinos, com listagem por
   proprietário, revisão e cache de usuário. Rotas administrativas pertencem ao
-  MAIN e são condicionais enquanto o módulo estiver desabilitado.
-- Ainda não há editor de itens, preview, temas nem rota pública. O submódulo
-  continua desabilitado.
+  MAIN e estão registradas no Runtime de teste; acesso segue as permissões e o Entity Access.
+- Editor de itens com ordenação e publicação individual, além da rota pública
+  `/pagina/{slug}` no purpose `links`; o módulo foi habilitado no Runtime de
+  teste em 2026-10-20. Preview no editor e migração da landing institucional
+  seguem pendentes.
 
 ## Ainda não disponível
 

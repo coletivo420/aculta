@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.2 — habilitação controlada no Runtime de teste — 2026-10-20
+
+- Habilitado `aculta_links` no Runtime Homelab após confirmar hostname `toca`, checkout/branch e banco `aculta_runtime`; criadas somente as seis tabelas de entidade/revisão do módulo, sem conteúdo existente a migrar ou remover.
+- Adicionado o módulo a `config/sync/core.extension.yml`; nenhuma importação/exportação global foi executada, pois há diferenças de configuração de outras frentes.
+- Drush confirmou Drupal 11.4.10, rota pública `/pagina/{slug}` no purpose `links`; HTTP ao slug inexistente retornou 404 e painel anônimo em `main` retornou 403. Produção não verificada; aparência pública com página publicada permanece pendente.
+- Validação PHP 8.4.26. Não foi executado teste visual no navegador nesta subversão.
+
 ## 0.1.0-dev.1 — fundação e auditoria inicial — 2026-10-20
 
 - Inventariada a implementação atual do purpose `links`, seus consumidores,
