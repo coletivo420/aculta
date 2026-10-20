@@ -1,0 +1,22 @@
+aculta_mailer.transport.*:
+  type: config_entity
+  label: 'Transporte de e-mail do ACULTA Mailer'
+  mapping:
+    plugin:
+      type: string
+      label: 'Tipo (smtp ou brevo)'
+    host:
+      type: string
+      label: 'Servidor'
+    port:
+      type: integer
+      label: 'Porta'
+    user:
+      type: string
+      label: 'Usuário (não secreto)'
+    password_secret:
+      type: string
+      label: 'Nome da credencial da senha no arquivo de segredos'
+    verify_peer:
+      type: boolean
+      label: 'Verificar certificado'

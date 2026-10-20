@@ -40,6 +40,7 @@ $file_secrets = [
   'smtp2go_password' => 'SMTP2GO_PASSWORD',
   'brevo_api_key' => 'BREVO_API_KEY',
   'imap_password' => 'IMAP_PASSWORD',
+  'smtp_password' => 'SMTP_PASSWORD',
 ];
 
 $key_files = glob($root . '/config/sync/key.key.*.yml') ?: [];
