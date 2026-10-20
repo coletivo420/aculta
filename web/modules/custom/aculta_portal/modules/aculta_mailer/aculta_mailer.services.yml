@@ -56,10 +56,10 @@ services:
 
   Drupal\aculta_mailer\Policy\MailPolicyResolver:
     class: Drupal\aculta_mailer\Policy\MailPolicyResolver
-    arguments: ['@config.factory', '@plugin.manager.aculta_mail_adjuster']
+    arguments: ['@config.factory', '@plugin.manager.aculta_mailer_adjuster']
 
-  plugin.manager.aculta_mail_adjuster:
-    class: Drupal\aculta_mailer\Plugin\AcultaMailAdjuster\AcultaMailAdjusterManager
+  plugin.manager.aculta_mailer_adjuster:
+    class: Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster\AcultaMailerAdjusterManager
     arguments: ['@container.namespaces', '@module_handler', '@cache.discovery']
 
   Drupal\aculta_mailer\Webhook\ProviderWebhookRegistry:

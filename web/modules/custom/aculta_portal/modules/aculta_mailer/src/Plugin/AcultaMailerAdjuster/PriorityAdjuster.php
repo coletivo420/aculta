@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Plugin\AcultaMailAdjuster;
+namespace Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster;
 
-use Drupal\aculta_mailer\Attribute\AcultaMailAdjuster;
+use Drupal\aculta_mailer\Attribute\AcultaMailerAdjuster;
 use Drupal\aculta_mailer\Policy\MailPolicy;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -12,12 +12,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Prioridade do envio, de 1 (alta) a 5 (baixa).
  */
-#[AcultaMailAdjuster(
+#[AcultaMailerAdjuster(
   id: 'priority',
   label: new TranslatableMarkup('Prioridade'),
   description: new TranslatableMarkup('Prioridade de 1 (alta) a 5 (baixa).'),
 )]
-final class PriorityAdjuster extends PluginBase implements AcultaMailAdjusterInterface {
+final class PriorityAdjuster extends PluginBase implements AcultaMailerAdjusterInterface {
 
   /**
    * {@inheritdoc}

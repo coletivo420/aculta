@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Plugin\AcultaMailAdjuster;
+namespace Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster;
 
-use Drupal\aculta_mailer\Attribute\AcultaMailAdjuster;
+use Drupal\aculta_mailer\Attribute\AcultaMailerAdjuster;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Gerenciador dos ajustes de política (plugins `AcultaMailAdjuster`).
+ * Gerenciador dos ajustes de política (plugins `AcultaMailerAdjuster`).
  */
-final class AcultaMailAdjusterManager extends DefaultPluginManager {
+final class AcultaMailerAdjusterManager extends DefaultPluginManager {
 
   /**
    * Constructor.
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $moduleHandler, CacheBackendInterface $cacheBackend) {
     parent::__construct(
-      'Plugin/AcultaMailAdjuster',
+      'Plugin/AcultaMailerAdjuster',
       $namespaces,
       $moduleHandler,
-      AcultaMailAdjusterInterface::class,
-      AcultaMailAdjuster::class,
+      AcultaMailerAdjusterInterface::class,
+      AcultaMailerAdjuster::class,
     );
     $this->alterInfo('aculta_mailer_adjuster_info');
     $this->setCacheBackend($cacheBackend, 'aculta_mailer_adjusters');

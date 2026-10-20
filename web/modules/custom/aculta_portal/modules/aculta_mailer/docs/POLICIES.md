@@ -10,7 +10,7 @@ fica para depois.
 
 Cada camada é aplicada em sequência. Um valor inválido é ignorado e não apaga o valor da camada anterior.
 
-## Ajustes (plugins `AcultaMailAdjuster`)
+## Ajustes (plugins `AcultaMailerAdjuster`)
 
 | Chave | Valor aceito | Efeito |
 |---|---|---|
@@ -19,7 +19,7 @@ Cada camada é aplicada em sequência. Um valor inválido é ignorado e não apa
 | `priority` | inteiro de 1 (alta) a 5 (baixa) | Cabeçalho `X-Priority`. |
 | `skip` | booleano | Suspende o envio: registro `cancelled`, sem envio e sem retry. |
 
-Novos ajustes entram como plugins: classe com `#[AcultaMailAdjuster]` em `src/Plugin/AcultaMailAdjuster`.
+Novos ajustes entram como plugins: classe com `#[AcultaMailerAdjuster]` em `src/Plugin/AcultaMailerAdjuster`.
 
 ## Efeito no envio
 

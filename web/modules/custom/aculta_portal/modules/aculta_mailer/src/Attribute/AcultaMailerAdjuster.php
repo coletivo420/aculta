@@ -8,10 +8,10 @@ use Drupal\Component\Plugin\Attribute\Plugin;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Ajuste de política de e-mail (plugin `AcultaMailAdjuster`).
+ * Ajuste de política de e-mail (plugin `AcultaMailerAdjuster`).
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
-final class AcultaMailAdjuster extends Plugin {
+final class AcultaMailerAdjuster extends Plugin {
 
   /**
    * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Plugin\AcultaMailAdjuster;
+namespace Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster;
 
 use Drupal\aculta_mailer\Policy\MailPolicy;
 use Drupal\Component\Plugin\PluginInspectionInterface;
@@ -10,7 +10,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 /**
  * Ajuste de política: valida o valor configurado e aplica-o à política efetiva.
  */
-interface AcultaMailAdjusterInterface extends PluginInspectionInterface {
+interface AcultaMailerAdjusterInterface extends PluginInspectionInterface {
 
   /**
    * Indica se o valor configurado é aceito por este ajuste.

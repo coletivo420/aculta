@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.22 — nomes dos plugins de ajuste e das classes passam a AcultaMailer — 2026-10-20
+
+- Plugins de ajuste: `AcultaMailAdjuster` → `AcultaMailerAdjuster` (atributo, interface, gerenciador, namespace `Plugin\AcultaMailerAdjuster`). Serviço `plugin.manager.aculta_mailer_adjuster`. Ids dos plugins (`skip`, `transport`, `reply_to`, `priority`) não mudam.
+- Sem mudança de banco: a entidade `aculta_mail_log` e as chaves `aculta_mail_redirect` (settings.local.php) não foram renomeadas. Renomear a entidade mexe na tabela de produção; as chaves de redirecionamento de teste ficam fora do repositório e um erro ali pode enviar e-mail real. Decisão do responsável.
+- Verificação: 93 unitários e gates passam. Não foi possível reconstruir o cache do runtime: `LmsForumModerationController` (não rastreado, do módulo `aculta_forum_lms`) quebra o container. Verificação em runtime pendente.
+- Versão do módulo: `0.1.0-dev.22`.
+
 ## 0.1.0-dev.21 — endereço de retorno no envelope (corrigido) e limite do Brevo confirmado pela API — 2026-10-20
 
 - Causa do endereço de retorno que não funcionava: o Drupal define o remetente do site depois do cabeçalho `Sender` do módulo, e o sobrescreve. Correção: `ReturnPathSubscriber` troca o envelope no evento de envio do Symfony, só para SMTP. O cabeçalho do módulo foi removido.

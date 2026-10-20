@@ -57,7 +57,7 @@ final class MailPolicyKernelTest extends KernelTestBase {
    * Ajustes recusam valores fora do contrato.
    */
   public function testAdjustersValidate(): void {
-    $manager = $this->container->get('plugin.manager.aculta_mail_adjuster');
+    $manager = $this->container->get('plugin.manager.aculta_mailer_adjuster');
     $this->assertFalse($manager->createInstance('transport')->validate('hostinger'));
     $this->assertTrue($manager->createInstance('transport')->validate('smtp2go'));
     $this->assertFalse($manager->createInstance('reply_to')->validate('nao-e-email'));

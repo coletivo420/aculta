@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Plugin\AcultaMailAdjuster;
+namespace Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster;
 
-use Drupal\aculta_mailer\Attribute\AcultaMailAdjuster;
+use Drupal\aculta_mailer\Attribute\AcultaMailerAdjuster;
 use Drupal\aculta_mailer\Policy\MailPolicy;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -12,12 +12,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Endereço de resposta (Reply-To) do envio.
  */
-#[AcultaMailAdjuster(
+#[AcultaMailerAdjuster(
   id: 'reply_to',
   label: new TranslatableMarkup('Responder para'),
   description: new TranslatableMarkup('Endereço de resposta. Deve ser um e-mail válido.'),
 )]
-final class ReplyToAdjuster extends PluginBase implements AcultaMailAdjusterInterface {
+final class ReplyToAdjuster extends PluginBase implements AcultaMailerAdjusterInterface {
 
   /**
    * {@inheritdoc}

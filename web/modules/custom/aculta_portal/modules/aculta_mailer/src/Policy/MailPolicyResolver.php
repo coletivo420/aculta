@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Policy;
 
-use Drupal\aculta_mailer\Plugin\AcultaMailAdjuster\AcultaMailAdjusterManager;
+use Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster\AcultaMailerAdjusterManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
@@ -17,7 +17,7 @@ final class MailPolicyResolver {
 
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly AcultaMailAdjusterManager $adjusters,
+    private readonly AcultaMailerAdjusterManager $adjusters,
   ) {}
 
   /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mailer\Plugin\AcultaMailAdjuster;
+namespace Drupal\aculta_mailer\Plugin\AcultaMailerAdjuster;
 
-use Drupal\aculta_mailer\Attribute\AcultaMailAdjuster;
+use Drupal\aculta_mailer\Attribute\AcultaMailerAdjuster;
 use Drupal\aculta_mailer\Policy\MailPolicy;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -12,12 +12,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Transporte do envio. Aceita somente os transportes do projeto (padrão e contingência).
  */
-#[AcultaMailAdjuster(
+#[AcultaMailerAdjuster(
   id: 'transport',
   label: new TranslatableMarkup('Transporte'),
   description: new TranslatableMarkup('Transporte de envio: smtp (padrão) ou smtp2go (contingência).'),
 )]
-final class TransportAdjuster extends PluginBase implements AcultaMailAdjusterInterface {
+final class TransportAdjuster extends PluginBase implements AcultaMailerAdjusterInterface {
 
   /**
    * Transportes aceitos.
