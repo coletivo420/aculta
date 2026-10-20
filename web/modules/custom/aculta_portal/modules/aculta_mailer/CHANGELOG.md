@@ -1,5 +1,12 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.50 — cabeçalhos da tabela sem hifenização; roadmap atualizado — 2026-10-20
+
+- `css/admin.css`: cabeçalhos da tabela de envios sem hifenização e sem quebra de palavra ("Es-tado", "De-ta-lhe" na revisão de 0.1.0-dev.49). A tabela continua rolando dentro do contêiner.
+- Não revisado visualmente nesta versão: a sessão de revisão foi encerrada e reabrir o painel exige nova autorização de acesso.
+- `docs/ROADMAP.md`: situação para RC atualizada (F7, F8 e F11 concluídas; F9 aguarda aprovação dos textos; F16 com o que está pronto). O roadmap estava defasado.
+- Textos de conta: rascunho em `docs/TEXTOS-DE-CONTA-RASCUNHO.md`, sem publicação.
+
 ## 0.1.0-dev.49 — revisão visual do painel de envios; sem hash_salt, nada é enviado — 2026-10-20
 
 - Decisão do responsável: sem `hash_salt` no settings.php, `deliver()` recusa o envio (log de erro, sem registro). Antes, o HMAC do destinatário ficava com chave vazia. Teste Kernel `testMissingHashSaltRefusesSendAndLogsNothing` (falha quando o salt volta a ser usado).

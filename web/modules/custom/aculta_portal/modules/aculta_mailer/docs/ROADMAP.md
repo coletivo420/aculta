@@ -28,8 +28,9 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 ## Situação para RC
 
 - **Não está pronto para RC.** O escopo funcional aberto, gates/testes e revisão visual aplicável precisam ser concluídos antes de classificar o candidato como RC. Não é necessário aguardar merge em `main`; Alpha é etapa pós-deploy no servidor de desenvolvimento.
-- Fases fechadas nesta rodada: F3, F4, F5, F6, F8 (sem gráficos, a confirmar), F13. Abertas por decisão ou escopo de outro módulo: F7 (reenvio), F9 (textos do contrib), F10 (provedor e supressão), F11 (tracking), F12 (integrações de outros módulos).
-- Validação feita até aqui (não substitui as fases em aberto): testes Unit e Kernel passam; painel administrativo revisado no X11; gates de envio, segredos, rotas, papéis, fronteira e endereços passam.
+- Fases concluídas: F2, F3, F4, F5, F6, F7 (reenvio com conteúdo cifrado, 0.1.0-dev.39), F8 (sem gráficos), F11 (ligada no teste e na produção, com consentimento), F13, F15. F16: alertas, resumo, registro, endereço de retorno, diagnóstico (SPF, DKIM, DMARC), estado do envio com eventos do Brevo, reenvio e exportação prontos; alertas e resumo seguem desligados até informar destinatários.
+- Abertas por decisão ou escopo de outro módulo: F8 gráficos (a confirmar); F9 textos de conta (rascunho em `docs/TEXTOS-DE-CONTA-RASCUNHO.md`, aguarda aprovação); F10 e F14/F15 em produção (decisão do responsável); F12 (integrações nos módulos de origem).
+- Validação feita até aqui (não substitui as fases em aberto): Unit 137/137 e Kernel 35/35; revisão visual do painel no Runtime de teste (0.1.0-dev.49, 10 telas em 1270 e 500 px); gates de envio, segredos, rotas, papéis, fronteira, endereços e links de uso único passam.
 
 ## Runtime
 

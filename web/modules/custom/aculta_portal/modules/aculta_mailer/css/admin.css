@@ -6,3 +6,9 @@
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* Cabeçalhos com palavras inteiras: a hifenização do tema quebrava "Estado" e "Detalhe" em sílabas. */
+[data-aculta-mailer-table="rolagem"] th {
+  hyphens: none;
+  white-space: nowrap;
+}
