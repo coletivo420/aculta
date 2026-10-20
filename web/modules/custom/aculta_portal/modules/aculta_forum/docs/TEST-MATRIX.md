@@ -17,10 +17,19 @@
   `/painel-administrativo/conteudo/forum` e todas as seis rotas descendentes
   (mover tópico, mover comentário, consulta agregada e as três filas) retornam
   404. Nenhuma rota do Fórum aparece mais como tarefa local de Conteúdo.
-- Consultas finais: 0 tópicos `aculta_forum_topic`, 0 Comments
-  `aculta_discussion_post`. Nenhuma entidade/conteúdo foi criada ou alterada.
-  Renderização HTML autenticada, browser/X11 e configuração de categorias por
-  interface ainda pendentes. RUNTIME STATUS: PARTIAL.
+- Firefox ESR 153.4/geckodriver 0.37.1 em X11 `:0`, UID 1 de teste, somente
+  GET: 27/27 verificações PASS. `/painel-administrativo/conteudo` responde 200,
+  sem link para a rota antiga nem tópicos do Fórum na tabela; a seção própria e
+  as quatro páginas de comentários respondem 200; sete paths antigos sob
+  Conteúdo respondem 404. A área Revista permanece 200 em seu path atual, e o
+  antigo `/painel-administrativo/revista/comentarios` é 404. Capturas 0600 em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-dev115-20261020/`.
+- Viewport CSS 390 px: a fila vazia renderiza e mantém apenas o excesso conhecido
+  de 3 px da tabela responsiva do admin; 768 px não tem overflow. Consultas finais:
+  0 tópicos `aculta_forum_topic`, 0 Comments `aculta_discussion_post`. Nenhuma
+  entidade/conteúdo foi criada ou alterada. As filas vazias não cobrem operações
+  sobre Comments reais e a navegação visual para gestão de categorias ainda não
+  foi exercitada. RUNTIME STATUS: PARTIAL.
 
 ## dev.114 — transições de moderação LMS e cache do container
 

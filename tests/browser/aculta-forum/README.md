@@ -67,10 +67,11 @@ somente leitura; a suíte encerra sua própria sessão WebDriver ao terminar.
 `admin-content-structure.mjs` autentica temporariamente o uid 1 com um link
 único gerado por `drush uli --no-browser` no host ACCOUNT, depois confirma a
 sessão compartilhada e navega somente por GET no MAIN de teste. Não salva
-configuração, conteúdo ou comentários. Verifica `/painel-administrativo/conteudo`,
-a aba `/painel-administrativo/conteudo/forum`, as abas de comentários publicados,
-rejeitados e aguardando moderação, a área consolidada da Revista e a remoção da
-rota antiga `/painel-administrativo/revista/comentarios`.
+configuração, conteúdo ou comentários. Verifica `/painel-administrativo/conteudo`
+sem a aba nem tópicos do Fórum, a seção `/painel-administrativo/forum`, as filas
+de comentários publicados, rejeitados e aguardando moderação, a área consolidada
+da Revista e os sete caminhos antigos do Fórum retornando 404. Confirma também a
+remoção da rota antiga `/painel-administrativo/revista/comentarios`.
 
 Use o mesmo procedimento para iniciar geckodriver e defina `DISPLAY` e `SUITE_OUT`
 fora do checkout. Capturas e resultados são privados; não copie o link único de

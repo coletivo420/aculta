@@ -1,4 +1,4 @@
-// Read-only X11 smoke test for Forum and comment moderation admin pages.
+// Read-only X11 smoke test for the dedicated Forum admin section.
 // It uses the existing administrator and performs GET navigations only.
 import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -106,27 +106,30 @@ try {
 
   let info = await go('/painel-administrativo/conteudo');
   check('Visão geral de Conteúdo responde sem erro', info.path === '/painel-administrativo/conteudo' && (!info.status || info.status === 200) && info.main && !info.serverError);
-  const forumLink = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/conteudo/forum' && a.innerText.trim()==='Fórum')`);
-  check('Conteúdo oferece uma aba administrativa Fórum própria', forumLink);
+  const oldForumContentLink = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname.startsWith('/painel-administrativo/conteudo/forum'))`);
+  const contentRows = await execute(`return [...document.querySelectorAll('main tbody tr')].map(row=>row.innerText).join(' ').toLowerCase()`);
+  check('Conteúdo não oferece a aba antiga nem lista tópicos do Fórum', !oldForumContentLink && !contentRows.includes('aculta_forum_topic'));
   await execute(`document.querySelector('main')?.scrollIntoView(); return true;`);
   writeFileSync(resolve(output, 'conteudo-geral.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
-  info = await go('/painel-administrativo/conteudo/forum');
-  check('A aba Fórum responde sem erro', info.path === '/painel-administrativo/conteudo/forum' && (!info.status || info.status === 200) && info.main && !info.serverError, JSON.stringify(info));
+  info = await go('/painel-administrativo/forum');
+  check('Seção própria do Fórum responde sem erro', info.path === '/painel-administrativo/forum' && (!info.status || info.status === 200) && info.main && !info.serverError, JSON.stringify(info));
+  const sectionMenu = await execute(`return [...document.querySelectorAll('a')].some(a=>a.pathname==='/painel-administrativo/forum' && a.innerText.replace(/\\s+/g,' ').trim()==='Fórum')`);
+  check('Menu administrativo oferece a seção própria Fórum', sectionMenu);
   const forumTabs = await execute(`const expected=['Comentários publicados','Comentários rejeitados','Aguardando moderação']; const links=[...document.querySelectorAll('a')].map(a=>({text:a.innerText.replace(/\\s+/g,' ').trim(),path:a.pathname})); return JSON.stringify(expected.map(label=>({label,found:links.some(link=>link.text===label)})));`);
   check('A aba Fórum expõe as três filas de comentários', JSON.parse(forumTabs).every((tab) => tab.found), forumTabs);
   writeFileSync(resolve(output, 'forum-topicos.png'), Buffer.from(await request('GET', path('/screenshot')), 'base64'), { mode: 0o600 });
 
   for (const [pathname, label] of [
-    ['/painel-administrativo/conteudo/forum/comentarios', 'Comentários'],
-    ['/painel-administrativo/conteudo/forum/comentarios/publicados', 'Comentários publicados'],
-    ['/painel-administrativo/conteudo/forum/comentarios/rejeitados', 'Comentários rejeitados'],
-    ['/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao', 'Aguardando moderação'],
+    ['/painel-administrativo/forum/comentarios', 'Comentários'],
+    ['/painel-administrativo/forum/comentarios/publicados', 'Comentários publicados'],
+    ['/painel-administrativo/forum/comentarios/rejeitados', 'Comentários rejeitados'],
+    ['/painel-administrativo/forum/comentarios/aguardando-moderacao', 'Aguardando moderação'],
   ]) {
     info = await go(pathname);
     const labelPresent = await execute(`return document.body.innerText.includes(${JSON.stringify(label)})`);
     check(`${pathname} carrega ${label}`, info.path === pathname && (!info.status || info.status === 200) && info.main && !info.serverError && labelPresent, JSON.stringify(info));
-    if (pathname.startsWith('/painel-administrativo/conteudo/forum/comentarios')) {
+    if (pathname.startsWith('/painel-administrativo/forum/comentarios')) {
       const localized = await execute(`const text=document.body.innerText; const headers=[...document.querySelectorAll('thead th')].map(e=>e.innerText.trim()); return text.includes('Atualizado') && text.includes('Não há comentários disponíveis.') && headers.includes('Operações') && !headers.includes('Operations') && !text.includes('No comments available.')`);
       check(`${pathname} apresenta data e lista vazia em português`, localized);
     }
@@ -140,6 +143,19 @@ try {
   info = await go('/painel-administrativo/revista/comentarios');
   check('Rota antiga de comentários da Revista foi removida', info.notFound || info.status === 404, JSON.stringify(info));
 
+  for (const pathname of [
+    '/painel-administrativo/conteudo/forum',
+    '/painel-administrativo/conteudo/forum/1/mover-categoria',
+    '/painel-administrativo/conteudo/forum/comentario/1/mover',
+    '/painel-administrativo/conteudo/forum/comentarios',
+    '/painel-administrativo/conteudo/forum/comentarios/publicados',
+    '/painel-administrativo/conteudo/forum/comentarios/rejeitados',
+    '/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao',
+  ]) {
+    info = await go(pathname);
+    check(`Caminho antigo retorna 404: ${pathname}`, info.notFound || info.status === 404, JSON.stringify(info));
+  }
+
   // Check the Forum moderation queue at narrow CSS viewports without writing
   // content or configuration. Keep the browser visibly attached to X11.
   for (const width of [390, 768]) {
@@ -148,7 +164,7 @@ try {
       viewport: { width, height: width === 390 ? 844 : 1024 },
       devicePixelRatio: 1,
     });
-    info = await go('/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao');
+    info = await go('/painel-administrativo/forum/comentarios/aguardando-moderacao');
     const layout = await execute(`const main=document.querySelector('main'); const overflow=[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:'',right:Math.round(e.getBoundingClientRect().right),width:Math.round(e.getBoundingClientRect().width)})).filter(e=>e.width>0&&e.right>innerWidth+1).slice(0,8); return {innerWidth,documentWidth:document.documentElement.scrollWidth,mainWidth:main?.clientWidth||0,mainScroll:main?.scrollWidth||0,heading:main?.querySelector('h1')?.innerText||'',overflow};`);
     check(`Fila de moderação renderiza em viewport CSS ${width}px`, info.status === 200 && layout.innerWidth === width && layout.heading.includes('Comentários'));
     const confinedTableOverflow = width === 390 && layout.documentWidth === width + 3 && layout.overflow.length > 0 && layout.overflow.every((item) => ['TABLE', 'THEAD', 'TR', 'TH', 'TBODY', 'TD'].includes(item.tag));
