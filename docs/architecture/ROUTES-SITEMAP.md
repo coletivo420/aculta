@@ -118,6 +118,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/criar-conta/janela` | Formulário de cadastro para janela/modal | Condicional ao cadastro; fallback sem JavaScript. |
 | `conta.aculta` | `/confirmar-email/reenviar` | Reenvio de confirmação de e-mail | Ativo conforme estado da conta e access. |
 | `conta.aculta` | `/dados` | Formulário de dados pessoais | Conta autenticada; próprio usuário. |
+| `conta.aculta` | `/atividade/{aba}` | Atividade da própria conta por área (Wiki, Fórum, Revista, comentários e conquistas) | Condicional ao `aculta_user`; exige acesso autenticado e lista somente conteúdo próprio/publicado conforme cada área. |
 | `conta.aculta` | `/dados/endereco` | Cadastro/edição do endereço único | Conta autenticada; próprio usuário. |
 | `conta.aculta` | `/dados/outros-dados` | Dados adicionais de identificação | Condicional ao submódulo de identificação; próprio usuário. |
 | `conta.aculta` | `/foto` | Foto de perfil | Condicional à configuração de perfil/imagens; próprio usuário. |

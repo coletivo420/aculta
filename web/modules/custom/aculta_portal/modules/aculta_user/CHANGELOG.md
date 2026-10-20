@@ -69,8 +69,13 @@
   agregado `comment_entity_statistics`.
 - Kernel: 1 teste / 12 assertions PASS; 5 deprecações originadas pelo Domain
   contrib 3.0.1. Unit de `aculta_user`: 62 testes / 194 assertions PASS.
-- Nenhum conteúdo foi criado no Runtime. A rota autenticada e o browser ainda
-  precisam de homologação integrada.
+- Runtime `toca`: com duas fixtures próprias e uma de outro autor, o controller
+  autenticado retornou somente o tópico da conta QA; o título exibiu “2
+  comentários” para duas respostas publicadas e excluiu uma pendente. Firefox/
+  X11 confirmou a rota `/atividade/forum` em 1024 px e Responsive Design Mode
+  390 × 670 px; a lista continha apenas o tópico próprio, sem overflow visível.
+  As duas fixtures e três Comments foram removidos; estado final do Fórum: zero
+  tópicos e Comments. RUNTIME STATUS: PARTIAL.
 
 ## 0.4.0-dev.40 — ano da conta no cartão público de fórum — 2026-10-20
 
