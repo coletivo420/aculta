@@ -298,6 +298,12 @@ alterado por este teste. Fontes de API: [ciclo CRUD do Drupal](https://api.drupa
 [implementação Search API](https://git.drupalcode.org/project/search_api/-/blob/8.x-1.x/src/Hook/ContentEntityDatasourceHooks.php)
 e [Flag](https://www.drupal.org/project/flag).
 
+A fixture também cria um campo File privado no Comment: depois de mover, o mesmo
+CID continua referenciando o arquivo e o serviço Core `file.usage` mantém o uso.
+Isso prova a preservação genérica de uma referência File; anexos e imagens ACULTA
+continuam sujeitos à ingestão, autorização e limpeza do `aculta_image`. Fonte:
+[FileFieldItemList::postSave](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21Plugin%21Field%21FieldType%21FileFieldItemList.php/class/FileFieldItemList/11.x).
+
 Fontes oficiais consultadas: [Advanced Forum e status da compatibilidade Drupal
 11](https://www.drupal.org/project/issues/advanced_forum), [Author Pane e
 contexto de uso](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-archive/contrib-modules-for-building-the-site-functionality/social-networking-and-collaboration/community-building-and-social-networking-19),

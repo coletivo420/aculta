@@ -7,7 +7,7 @@
 - Preserva Comment IDs, UUIDs, autor, texto, datas e estado de moderação; atualiza
   parent/thread, recalcula estatísticas dos dois Nodes e invalida caches. Lock
   segue o padrão de chave Comment Core e relê o máximo da thread sob lock.
-- Kernel MariaDB dedicado: 9 testes/187 assertions PASS (árvore em três níveis,
+- Kernel MariaDB dedicado: 10 testes/214 assertions PASS (árvore em três níveis,
   estado pendente, legado bloqueado, estatísticas, flag disabled, rollback,
   formulário de resposta/remoção desatualizado e retenção do lock até o callback
   da transação raiz, verificada por uma segunda conexão MariaDB independente).
@@ -42,6 +42,10 @@
   atual `aculta_conteudo` só indexa Nodes dos bundles institucionais definidos e
   não inclui Forum nem Comments; o novo teste cria um índice Kernel isolado e
   não altera essa política de busca.
+- Campo File privado no Comment também foi exercitado: o CID manteve a referência
+  do anexo e seu `file_usage` após a mudança de tópico. O fixture usa arquivo de
+  texto; ingestão e acesso de mídia ACULTA permanecem responsabilidade do
+  `aculta_image` e não foram validados por esse teste.
 
 ## Pesquisa adicional de módulos contrib — 2026-10-19 (documentação)
 
