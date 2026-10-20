@@ -6,8 +6,12 @@
   nenhuma lógica especial de idioma foi adicionada ao mover.
 - `ForumCommentMoverKernelTest`: 15 testes / 315 assertions PASS no MariaDB
   dedicado; 19 depreciações Core/contrib. PHP CLI 8.4.26 abaixo da baseline
-  8.5. PHP lint, PHPCS, gates Portal 975, fronteira 1447, mapa 152 e
+  8.5. PHP lint, PHPCS, gates Portal 975, fronteira 1448, mapa 152 e
   `git diff --check` PASS. Sem alteração do Runtime; RUNTIME STATUS: DEFERRED.
+- Correção documental da evidência do mover: `MOVE-TOOLS.md` e a matriz agora
+  distinguem coberturas Kernel já executadas (flagging, Search API, file usage,
+  History e traduções) das integrações Runtime ainda pendentes (`aculta_image`,
+  avisos com seguidores e concorrência HTTP).
 
 ## `0.1.0-dev.79` — validar transferência de estado não lido — 2026-10-20
 

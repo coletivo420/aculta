@@ -80,8 +80,11 @@ discussão habilitado e aberto, e acesso de leitura/escrita/moderação compatí
 O Kernel comprova CID/UUID, autor, conteúdo, timestamps e estado publicado ou
 pendente; o teste histórico confirma que `field_autor_legado` impede a operação.
 O ID permanece igual, portanto referências de entidade e file usage não são
-recriadas. Anexos reais, flags, idiomas adicionais e histórico de leitura ainda
-precisam de teste integrado. O permalink calculado muda com o Node hospedeiro;
+recriadas. A suíte Kernel também comprova preservação de flagging, reindexação
+Search API, file usage genérico, recibos History e tradução. A prova X11 dev.78
+confirmou a denúncia no `aculta_user.report_queue`. Arquivos/imagens reais via
+`aculta_image` e avisos agrupados a seguidores ainda precisam de homologação
+integrada. O permalink calculado muda com o Node hospedeiro;
 links antigos para âncora do tópico de origem não são redirecionados nesta versão.
 A operação nunca
 aprova, rejeita, reabre ou publica um comentário como efeito colateral. Se
@@ -95,10 +98,12 @@ destino e quantidade de respostas afetadas e oferecer confirmação explícita.
 
 O fluxo atualizado reatribui thread/parent, recalcula estatísticas dos dois
 Nodes, invalida cache tags dos hosts e usa transação para a árvore. Kernel cobre
-árvore de três níveis, estados de moderação, contadores e rollback. Ainda falta
-provar explicitamente atualização de History/estado de leitura, Search API,
-flags, file usage, idiomas, notificações e efeitos de hook na transação. Falha
-em qualquer etapa deve preservar a árvore original;
+árvore de três níveis, estados de moderação, contadores, rollback, Search API,
+flagging, file usage genérico, History e traduções. A suíte confirma que o
+estado não lido acompanha o Comment e os recibos pessoais continuam no mesmo
+Node. Ainda falta provar ingestão real via `aculta_image`, coerência dos avisos
+já agrupados com seguidores e concorrência em requisições HTTP. Falha em
+qualquer etapa deve preservar a árvore original;
 notificações só saem após sucesso e revalidação de acesso. Aviso neutro de
 movimentação pode ser avaliado para origem e destino, mas não deve ser um
 Comment de usuário fabricado nem alterar o histórico autoral.
@@ -240,14 +245,18 @@ do Comment Core; uma segunda consulta `getMaxThread()` sob lock evita colisão
 quando uma criação concorrente termina entre a consulta inicial e a aquisição.
 A transação reverte a árvore inteira se um save falhar. Kernel MariaDB valida
 árvore com três níveis, estado pendente, estatísticas dos dois hosts e rollback.
-Em dev.73–dev.77, smokes X11 autenticados abriram o Form API com CSRF e moveram
+Dev.79–dev.80 ampliaram a classe para 15 testes/315 assertions, incluindo
+History e traduções; flags, Search API e file usage também estão cobertos em
+Kernel. Em dev.73–dev.78, smokes X11 autenticados abriram o Form API com CSRF e moveram
 uma raiz, uma árvore linear e árvores ramificadas em estados pendente/rejeitado,
-conferindo identidade/estado/pid/thread/destino; os fixtures foram removidos. O Runtime
-continua fail-closed por padrão: a opção foi habilitada
-somente durante a prova e removida em seguida. O botão/rota não devem ser
-habilitados por padrão até completar testes de concorrência, History,
-permalink/âncora, busca, notificações com seguidores, anexos reais pela política
-`aculta_image`, flags no Runtime e teste Functional/browser da subárvore.
+conferindo identidade/estado/pid/thread/destino; os fixtures foram removidos. O
+Runtime continua fail-closed por padrão: a opção foi habilitada somente durante
+a prova e removida em seguida. O botão/rota não devem ser habilitados por
+padrão até completar testes de concorrência HTTP, permalink/âncora, busca
+funcional, notificações existentes com seguidores, anexos reais pela política
+`aculta_image` e teste Functional/browser com estados publicados e workflow de
+aprovação. O smoke Runtime confirmou especificamente a Flag de denúncia e sua
+fila; não clicou em seguir/salvar tópico.
 
 O `ForumDiscussionWriteGuard` agora compartilha locks por tópico com gravação e
 exclusão de comentários normais; valida host/thread persistidos e o host do pai
