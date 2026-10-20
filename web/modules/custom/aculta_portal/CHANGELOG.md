@@ -1,3 +1,13 @@
+## 0.4.0-dev.217 — provar acesso contextual de Educador ao fórum de turma — 2026-10-20
+
+- O Kernel do adapter LMS separa propriedade e membership: um Educador membro
+  do curso, sem membership direto na turma e sem ser seu proprietário, consegue
+  visualizar o tópico da turma pelas permissões contextualizadas do Group.
+  Um outsider que possui apenas o papel global `lms_teacher` continua sem
+  acesso; moderação continua restrita ao Educador do curso.
+- `aculta_forum_lms` dev.12; Kernel 2 testes / 74 assertions PASS, com 38
+  depreciações de Core/contrib/LMS. Nenhuma ativação/importação no Runtime.
+
 ## 0.4.0-dev.211 — cadastro com e-mail já usado pelo aculta_mailer — 2026-10-20
 
 ## 0.4.0-dev.216 — provedor de credenciais para o transporte Brevo — 2026-10-20

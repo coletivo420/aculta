@@ -1,3 +1,15 @@
+## `0.1.0-dev.104` — endurecer prova de Educador em turma LMS — 2026-10-20
+
+- O Kernel LMS agora testa curso e turma de propriedade independente. Um
+  Educador membro do curso, sem membership direto na turma, pode acessar o
+  tópico contextual via permissões herdadas; conta externa com papel global
+  `lms_teacher` continua sem acesso. A moderação contextual permanece exclusiva
+  do Educador.
+- Adapter `aculta_forum_lms` dev.12: Kernel 2 testes / 74 assertions PASS; 38
+  depreciações de Core/contrib/LMS. Unit adapter 12/141 PASS. Nenhuma alteração
+  no Runtime; ativação completa aguarda a integração de filas e UI do LMS.
+  RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.94` — configurar o bundle privado LMS — 2026-10-20
 
 - O adapter recebe install config para `aculta_lms_topic`, `body`, Comment
