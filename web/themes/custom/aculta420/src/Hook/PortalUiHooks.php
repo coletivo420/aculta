@@ -56,6 +56,7 @@ final class PortalUiHooks {
     'requirements-indexing-table' => ['aculta-portal-requirements__indexing-table'],
     'requirements-cep' => ['aculta-portal-requirements__cep'],
     'requirements-cep-table' => ['aculta-portal-requirements__cep-table'],
+    'requirements-php-extensions' => ['aculta-portal-requirements__php-extensions'],
     'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],

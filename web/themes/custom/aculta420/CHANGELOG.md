@@ -1,3 +1,11 @@
+## 0.6.0-dev.123 — token de requisitos de extensões PHP — 2026-10-20
+
+- Novo token `requirements-php-extensions` no mapa `PortalUiHooks::TOKENS`
+  (`aculta-portal-requirements__php-extensions`), usado pela tabela de extensões
+  PHP do painel de requisitos do Portal. Corrige a reprovação do gate de fronteira
+  Portal–tema (`validate-module-theme-boundary.php`). Sem CSS novo: a classe é gancho.
+  RUNTIME STATUS: não aplicável (sem mudança visual).
+
 ## 0.6.0-dev.122 — cartão editorial usa view-model compartilhado — 2026-10-20
 
 - O SDC `content/author-card` exibe designation, bio e redes sociais autorizadas

@@ -47,7 +47,7 @@ submódulos e tema.
 | [`aculta_lms`](web/modules/custom/aculta_portal/modules/aculta_lms/README.md) | `0.1.0-dev.8` | Homologar permissões/configuração do Fórum LMS no Runtime ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md)) | Dev |
 | [`aculta_lms_h5p`](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md) | versão não declarada | Fechar regressão multidomínio e ciclo do editor/player no Runtime ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md)) | Dev |
 | [`aculta_magazine`](web/modules/custom/aculta_portal/modules/aculta_magazine/README.md) | `0.1.0-dev.16` | Homologar comentários e moderação no contexto das publicações ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_magazine/CHANGELOG.md)) | Dev |
-| [`aculta_mailer`](web/modules/custom/aculta_portal/modules/aculta_mailer/README.md) | `0.1.0-dev.44` | Avançar fases abertas F7/F9–F12 e resolver entregas/transporte pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_mailer/docs/ROADMAP.md)) | Dev |
+| [`aculta_mailer`](web/modules/custom/aculta_portal/modules/aculta_mailer/README.md) | `0.1.0-dev.46` | Avançar fases abertas F7/F9–F10 e F12 e resolver entregas/transporte pendentes; F11 ligada no teste e na produção (com consentimento) ([roadmap](web/modules/custom/aculta_portal/modules/aculta_mailer/docs/ROADMAP.md)) | Dev |
 | [`aculta_messenger`](web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) | `0.1.1-dev.57` | Continuar eventos, privacidade e homologação da linha 0.1.1 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ROADMAP.md)) | Dev |
 | [`aculta_pagamentos_mercadopago`](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md) | `0.1.0-dev.7` | Homologar sandbox e remover apresentação residual do módulo ([README](web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/README.md)) | Dev |
 | [`aculta_patcher`](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md) | `0.1.0-dev.2` | Validar ciclo completo e idempotência da aplicação de patches ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md)) | Dev |
@@ -56,7 +56,7 @@ submódulos e tema.
 | [`aculta_portal_cep`](web/modules/custom/aculta_portal/modules/aculta_portal_cep/README.md) | `0.3.0-dev.8` | Homologar fontes/ordenação e fallback de CEP no Runtime ([contrato](docs/portal/ACCOUNT-ADDRESS.md)) | Dev |
 | [`aculta_portal_sitemap`](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md) | `0.1.1` | Fechar decisões de indexação e validação externa conforme política ([README](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md)) | Dev |
 | [`aculta_user`](web/modules/custom/aculta_portal/modules/aculta_user/README.md) | `0.4.0-dev.47` | Completar variantes de autoria e validar privacidade/cache com os contextos ([variantes](web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md)) | Dev |
-| [`aculta420`](web/themes/custom/aculta420/README.md) | `0.6.0-dev.122` | Corrigir gates compartilhados e concluir revisão responsiva/acessível das integrações ([roadmap](web/themes/custom/aculta420/docs/roadmap.md)) | Dev |
+| [`aculta420`](web/themes/custom/aculta420/README.md) | `0.6.0-dev.123` | Corrigir gates compartilhados e concluir revisão responsiva/acessível das integrações ([roadmap](web/themes/custom/aculta420/docs/roadmap.md)) | Dev |
 <!-- PROJECT-STATUS-INDEX:END -->
 
 Estados: **Dev** indica trabalho funcional, operacional ou revisão ainda pendente;

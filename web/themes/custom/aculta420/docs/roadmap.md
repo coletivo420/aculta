@@ -2,6 +2,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.123 | Token de extensões PHP do painel de requisitos | Gate de fronteira Portal–tema PASS. Sem mudança visual | Token mapeado para a tabela de extensões PHP; documentado em TOKENS-E-ATRIBUTOS |
 | 0.6.0-dev.122 | Cartão editorial integra autoria compartilhada | Firefox ESR/X11 em 1270/500 px, claro/escuro; fallback de inicial PASS. Foundation/design gates ainda apontam a integração paralela de e-mail. Runtime PARTIAL | SDC `author-card` recebe dados editoriais autorizados; Magazine só fornece Autor/Coautor |
 | 0.6.0-dev.119 | Estado vazio da busca do Fórum | Runtime importou a View; Firefox/X11 1024 px confirmou painel, mensagem, link e formulário. Mobile/AT pendente. SDC, Design Foundations e Shell Contract PASS; Foundation falha na allowlist de Twig do template Mailer `email-wrap.html.twig`. Runtime PASS no estado vazio | Reutiliza o painel semântico do índice público em `.view-aculta-forum-search .view-empty` |
 | 0.6.0-dev.118 | Formulário da busca pública do Fórum | Implementado; X11 a 1024 px confirma correção da descrição que colidia com o botão; Responsive Design Mode 320×480 parcial, viewport maior pendente. SDC, Design Foundations e Shell Contract PASS; Foundation bloqueado pela allowlist incompleta do template paralelo Mailer `email-wrap.html.twig`. Runtime PARTIAL | Colunas responsivas e textos auxiliares contidos em `forum-index.css` |
