@@ -14,15 +14,16 @@
   Form API pelo `FormBuilder::submitForm()` confirma que a movimentação exige
   destino e confirmação explícita; com a caixa ausente, o envio é rejeitado e o
   tópico hospedeiro permanece. Persistem 19 depreciações de Core/Domain/Flag/
-  Search API contrib. No Runtime `toca`,
-  `drush cr` com URI explícita
-  do purpose `forum` e resolução do serviço guard e da classe OOP de hooks
-  PASS; `aculta_forum.settings` segue ausente, portanto o mover permanece
-  desabilitado por padrão. Nenhuma configuração ou entidade foi alterada. A
-  rota HTTP/CSRF, concorrência entre processos e efeitos integrados permanecem
-  DEFERRED; RUNTIME STATUS: PARTIAL.
+  Search API contrib. Runtime de teste `toca`: `drush status` confirmou Drupal
+  11.4.10, URI main explícita e banco `aculta_runtime`; consulta somente leitura
+  confirmou rota, permissão e serviço do mover, com `comment_move_enabled: null`
+  (ausente e portanto fechado). GET ao formulário com Comment inexistente retornou
+  404. Não há Comments publicados desse bundle no Runtime para testar rota com
+  entidade real; nenhum conteúdo/configuração foi alterado. Rota com entidade
+  existente, CSRF, concorrência entre processos e efeitos integrados permanecem
+  DEFERRED; PHP 8.4.26 abaixo da baseline 8.5; RUNTIME STATUS: PARTIAL.
 - Forum Unit: 51 testes/360 assertions PASS; PHPCS nos arquivos novos e gates
-  Drupal 11+ (970), fronteira (1387), mapa (154), slugs (387) e hierarquia de
+  Drupal 11+ (970), fronteira (1388), mapa (154), slugs (387) e hierarquia de
   papéis PASS. PHP CLI 8.4.26 (abaixo da baseline 8.5).
 - Pesquisa contrib expandida: Forum Access (matriz de permissões), Comment Notify
   (preferências de acompanhamento), Achievements/Gamification (marcos e limites)
