@@ -28,10 +28,20 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
 ## Limites atuais
 
 O corpo de Comments não é pesquisado. A interface permite busca textual de
-título e corpo do tópico, com pelo menos três caracteres. Filtros de categoria,
-ordenadores, sugestões e busca contextual de LMS/Wiki/publicações não fazem
-parte desta entrega. A configuração declarada não prova que o índice foi
-instalado ou executado no Runtime.
+título e corpo do tópico, com pelo menos três caracteres, além de filtro por
+categoria. O índice armazena o ID inteiro do termo; um hook de formulário
+substitui o controle numérico da View por um select com rótulos hierárquicos
+atuais, traduzidos e filtrados por Entity Access, incluindo os metadados de
+cache correspondentes. Isso evita depender de um tipo de campo de entidade que
+não existe na versão instalada do Search API. Ordenação por relevância,
+sugestões e busca contextual de LMS/Wiki/publicações continuam fora desta
+entrega. A configuração declarada não prova que o índice está atualizado com
+conteúdo publicado.
+
+A busca `/pesquisar` é somente leitura e usa GET. Como as listagens públicas do
+Growroom420, não renderiza CAPTCHA; essa exceção não se estende a formulários
+que criam ou alteram conteúdo. A política está detalhada em
+[`docs/integrations/CAPTCHA.md`](/docs/integrations/CAPTCHA.md).
 
 Não se usa CTools para montar o formulário ou a consulta: Search API e Views são
 os mecanismos próprios. CTools Views continua disponível para blocos de Views

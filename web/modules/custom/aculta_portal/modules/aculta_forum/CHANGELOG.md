@@ -1607,3 +1607,25 @@
   causa não foi isolada. Mobile DEFERRED; RUNTIME STATUS: PARTIAL. Evidência
   privada e limites em `TEST-MATRIX.md`.
 
+## `0.1.0-dev.87` — filtro de categoria na busca pública — 2026-10-20
+
+- A busca usa o ID inteiro do termo já indexado e troca o campo numérico da
+  View por um select com rótulos hierárquicos atuais. As opções passam por
+  Entity Access e carregam tags/contextos de cache; não há TIDs hardcoded.
+- CAPTCHA foi removido apenas das Views públicas de listagem e da busca GET
+  somente leitura. Formulários que gravam conteúdo mantêm a política global.
+- Search API instalado não reconhece `entity:taxonomy_term`; a tentativa de
+  configuração foi revertida no Runtime com cópia privada e importação parcial
+  dos dois objetos anteriores. `/pesquisar` voltou a HTTP 200, sem mudança de
+  conteúdo. A configuração final mantém `field_aculta_categories:target_id`
+  (`integer`).
+- `PublicForumExposedFormHooksTest` e `ForumSearchConfigTest` passaram; Unit
+  completa do Forum: 87 testes / 553 assertions. Drupal 11+ (979), fronteira
+  (1477), mapa (152), slugs (378) e caminhos/textos PASS.
+- Runtime `toca`: importada somente a View após backup privado; cache rebuild,
+  busca sem filtro e filtro `categoria=76` HTTP 200. 12 categorias acessíveis,
+  nenhum CAPTCHA no HTML de busca GET, 0 tópicos e 0 Comments. X11 desktop
+  1024 px confirmou a correção visual; Responsive Design Mode 320×480 parcial.
+  RUNTIME STATUS: PARTIAL, pois o índice está vazio e não há resultados reais
+  para comprovar o filtro.
+

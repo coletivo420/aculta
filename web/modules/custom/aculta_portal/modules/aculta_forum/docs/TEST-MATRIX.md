@@ -1,5 +1,43 @@
 # Matriz de testes por fase
 
+## dev.87 — filtro de categorias e formulário de busca somente leitura
+
+- Search API instalado no Drupal 11.4.10 rejeitou `entity:taxonomy_term`
+  (`The "entity:taxonomy_term" plugin does not exist.`). O índice voltou ao
+  campo inteiro `field_aculta_categories:target_id`; o rótulo de termo é
+  montado via Taxonomy/Entity Access no formulário da View. A View continua
+  filtrando pelo mesmo ID indexado.
+- Uma importação parcial experimental dos objetos Search API/View foi revertida
+  a partir de backup privado. O endpoint `/pesquisar` recuperou HTTP 200; nenhum
+  conteúdo foi criado, atualizado ou apagado. Runtime permanece com a
+  configuração estável anterior até a importação da View validada.
+- O hook final remove Turnstile somente das Views de listagem pública e da
+  busca GET `/pesquisar`; o HTML anônimo não contém widget/campo CAPTCHA.
+  Formulários de criação e mutação permanecem sujeitos à política global.
+- Runtime `toca`: backup privado da View ativa e importação parcial somente de
+  `views.view.aculta_forum_search`; rebuild PASS. Busca sem filtro e
+  `?keys=teste&categoria=76` retornam HTTP 200. O select mostra 12 categorias
+  hierárquicas atuais. Nenhum conteúdo criado/removido; 0 tópicos e 0 Comments.
+- Firefox ESR/X11 anônimo: 1024 px confirmou campos, descrições e botão sem
+  sobreposição após correção em `aculta420` 0.6.0-dev.118. Captura inicial
+  mostrou colisão da ajuda do filtro com o botão; a captura posterior confirma
+  correção. Responsive Design Mode abriu em 320×480 CSS px e mostrou fluxo
+  vertical sem CAPTCHA, mas a captura ficou parcial abaixo da área visível;
+  inspeção completa em 390/320×844, claro/escuro e acessibilidade pendentes.
+  Capturas privadas em `/home/aculta-system-data/private/aculta-forum-search-dev87/visual/captures/`
+  com modo 0600; perfil isolado encerrado após a inspeção.
+- Unit da suíte completa: 87 testes / 553 assertions PASS. Gates Portal Drupal
+  11+ (979), fronteira (1477), mapa (152), slugs (378), SDC (535), Design
+  Foundations (2100), fixtures (157), Shell Contract (11), equivalência
+  install/sync e diff-check PASS. `validate-aculta420-foundation.php` falhou
+  antes do fim por diferença na allowlist de templates Twig: falta nela
+  `email-wrap.html.twig`, presente no tema pela implementação paralela do
+  Mailer 0.6.0-dev.117. O gate reconhece a versão .118; a allowlist não foi
+  alterada para manter o escopo separado. `validate-unique-paths-texts.php`
+  PASS. Shell Contract (11) executado via Drush, com bootstrap Drupal.
+- RUNTIME STATUS: PARTIAL; Search API tem 0 itens indexados, portanto o filtro
+  ainda não pôde ser validado contra resultados com conteúdo real.
+
 ## dev.86 — busca pública contextual
 
 - Unit da query e do purpose, equivalência de instalação/Config Sync e rota:

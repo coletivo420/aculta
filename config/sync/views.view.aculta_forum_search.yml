@@ -12,7 +12,7 @@ dependencies:
 id: aculta_forum_search
 label: 'Pesquisar discussões do Growroom420'
 module: views
-description: 'Busca pública limitada aos tópicos do purpose Fórum, com filtros fixos de bundle e domínio.'
+description: 'Busca pública de tópicos do Fórum com categoria selecionável e contexto Domain fixo.'
 tag: forum
 base_table: search_api_index_aculta_forum
 base_field: search_api_id
@@ -129,6 +129,50 @@ display:
           group: 1
           exposed: false
           is_grouped: false
+        forum_category:
+          plugin_id: search_api_numeric
+          id: forum_category
+          table: search_api_index_aculta_forum
+          field: forum_category
+          relationship: none
+          group_type: group
+          admin_label: 'Categoria pública do Fórum'
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: forum_category_op
+            label: Categoria
+            description: 'Filtre os resultados por categoria pública do Growroom420.'
+            use_operator: false
+            operator: forum_category_op
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: categoria
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: Categoria
+            description: ''
+            identifier: categoria
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+          reduce_duplicates: false
       sorts: { }
       header:
         result:

@@ -13,6 +13,13 @@
   `authenticated` não a recebe: quem está logado sem e-mail confirmado continua recebendo o desafio.
 - Login e criação de conta via OAuth ocorrem fora dos formulários Drupal
   protegidos; o callback OAuth não exige CAPTCHA. Não há bypass novo no Portal.
+- As Views públicas e somente de leitura do Fórum (listagens Growroom420 e
+  busca GET `/pesquisar`) não exibem CAPTCHA: seus filtros apenas consultam
+  tópicos públicos e não alteram conteúdo. Essa exceção é limitada às displays
+  identificadas em código; não se aplica a criação/edição de tópicos,
+  comentários, denúncias, formulários de conta ou qualquer outra operação que
+  grave dados. Formulários mutáveis continuam sujeitos à política global e às
+  validações do desafio.
 
 ## Configuração
 
