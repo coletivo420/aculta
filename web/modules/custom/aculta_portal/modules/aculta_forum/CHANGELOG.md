@@ -1,3 +1,14 @@
+## 0.1.0-dev.37 — preparar restore point da retirada — 2026-10-19
+
+- Criado dump pré-limpeza do Runtime de teste `aculta_runtime`, privado fora do
+  repositório, modo 0600; validação `gzip -t` PASS. URI explícita
+  `https://revista420.aculta.toca.net.br`, checksum e limites registrados em
+  `docs/MIGRATION-REMOVAL.md`. Não foi restaurado nem usado para alterar dados.
+- O arquivo é um checkpoint de banco, não inclui arquivos públicos/privados.
+  Nenhuma entidade ou configuração foi removida; uninstall permanece bloqueado
+  até migrar consumers e fechar plano de recuperação de arquivos. RUNTIME STATUS:
+  PARTIAL.
+
 ## 0.1.0-dev.36 — retirar hook residual do Magazine — 2026-10-19
 
 - O `aculta_magazine` removeu o único hook restante ligado a Comments

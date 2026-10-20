@@ -70,6 +70,14 @@ com `accessCheck(FALSE)` foram somente de leitura e retornaram:
 | Flagging entities | 2 no total; 0 do Forum | Ambos apontam a `site_alert` (flags `aculta_site_alert_dismissed` e `aculta_site_alert_read`) |
 | Drupal Core `validateUninstall(['forum'])` | Bloqueado | Exige excluir todos os nodes `forum` e todos os termos `forums` antes do uninstall |
 
+Restore point pré-limpeza criado em 2026-10-19 no servidor `toca`, após
+confirmar Drush URI Magazine e banco `aculta_runtime`:
+`/home/piradopirata/.local/share/aculta-private-backups/forum-removal-before-delete-20261019.sql.gz`.
+Arquivo fora do Git, modo `0600`, 5,841,604 bytes; `gzip -t` passou. SHA-256:
+`17ce96d31de417f18892a6366a929162044df30b09dfbff058da77e6451183da`.
+Este ponto recupera o banco, não os arquivos públicos/privados. O dump ainda não
+foi restaurado em uma base isolada; nenhuma exclusão foi executada.
+
 Consulta adicional de 2026-10-19, somente leitura, agrupou os vínculos por
 bundle hospedeiro: 8 publicações `article` e 4 `blog` têm `field_discussao` não
 vazio. Os mesmos 12 Nodes têm também o campo `field_aculta_discussion`; essa
