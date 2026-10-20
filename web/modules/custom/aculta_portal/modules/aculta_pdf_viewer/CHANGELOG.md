@@ -16,6 +16,13 @@
 - No Homelab, a rota administrativa foi carregada após `drush cr`; a configuração ausente foi inicializada somente com o objeto de Config Sync `aculta_pdf_viewer.settings`. Firefox autenticado confirmou a subaba Site → Leitor de PDF e os controles padrão ligados (10 opções); página dupla móvel e desktop permanecem desligadas. O rebuild registrou aviso preexistente de diretório de asset H5P, mas concluiu.
 - Sem mudança de código nesta nota; na ocasião, a versão era `0.1.0-dev.35`. PV7 não estava em RC. O modo de rolagem/página dupla foi concluído para o viewer oficial no dev.36; Kernel/gates finais permanecem abertos.
 
+## Diagnóstico PV7 — repetição das suítes — 2026-10-20
+
+- Unit foi repetido no MariaDB-independent runner: 26 testes e 183 assertions, PASS.
+- A suíte Kernel completa foi repetida no MariaDB dedicado: os quatro cenários de render/Media Embed falham antes das assertions porque a compilação do Portal referencia `agreement.handler`, ausente no fixture; o teste de instalação falha porque a configuração Views de LMS depende de `system.menu.admin`, não instalado no fixture.
+- Uma tentativa local de instalar toda a configuração `system` revelou dependências de ações de outros módulos ausentes; foi revertida. Não foram adicionados mocks nem alteradas as dependências do Portal nesta frente. A correção deve preservar a validade do grafo real de serviços.
+- RC continua bloqueado pelo Kernel, além da investigação acessível e gates compartilhados.
+
 ## 0.1.0-dev.35 — subaba Leitor de PDF em Site — 2026-10-20
 
 - Integra o formulário global como subaba “Leitor de PDF” dentro da aba “Site” do painel ACULTA, mantendo o caminho e a permissão administrativa existentes.
