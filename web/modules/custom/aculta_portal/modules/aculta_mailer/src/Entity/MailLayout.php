@@ -24,8 +24,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'label' => 'label',
   ],
   handlers: [
-    'list_builder' => 'Drupal\Core\Config\Entity\ConfigEntityListBuilder',
+    'list_builder' => MailConfigListBuilder::class,
     'form' => [
+      'add' => MailLayoutForm::class,
       'default' => MailLayoutForm::class,
       'edit' => MailLayoutForm::class,
     ],
@@ -35,6 +36,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   links: [
     'collection' => '/painel-administrativo/configuracoes/aculta/envios-de-email/layouts',
+    'add-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/layouts/add',
     'edit-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/layouts/{aculta_mailer_layout}',
   ],
   admin_permission: 'administer aculta_mailer',

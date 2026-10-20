@@ -22,8 +22,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'label' => 'label',
   ],
   handlers: [
-    'list_builder' => 'Drupal\Core\Config\Entity\ConfigEntityListBuilder',
+    'list_builder' => MailConfigListBuilder::class,
     'form' => [
+      'add' => MailBrandForm::class,
       'default' => MailBrandForm::class,
       'edit' => MailBrandForm::class,
     ],
@@ -33,6 +34,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   ],
   links: [
     'collection' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas',
+    'add-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas/add',
     'edit-form' => '/painel-administrativo/configuracoes/aculta/envios-de-email/marcas/{aculta_mailer_brand}',
   ],
   admin_permission: 'administer aculta_mailer',

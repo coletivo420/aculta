@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Plugin\Mail;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
+use Drupal\aculta_mailer\Api\PublicUrlInterface;
 use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
@@ -41,6 +42,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly LoggerInterface $logger,
     private readonly RendererInterface $renderer,
     private readonly SmtpFailureRegistry $failures,
+    private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
   /**
@@ -55,6 +57,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('logger.channel.aculta_mailer'),
       $container->get('renderer'),
       $container->get('aculta_mailer.smtp_failures'),
+      $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
     );
   }
 
@@ -80,6 +83,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       '#sub_type' => (string) ($message['key'] ?? ''),
       '#is_html' => TRUE,
       '#logo_url' => (string) ($message['params']['brand_logo_url'] ?? ''),
+      '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
     ];
     return (string) $this->renderer->renderInIsolation($build);
   }

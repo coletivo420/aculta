@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
 use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_mailer\Api\PublicUrlInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 
 /**
@@ -26,6 +27,7 @@ final class MailTemplateRenderer {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FileUrlGeneratorInterface $fileUrls,
+    private readonly ?PublicUrlInterface $publicUrls = NULL,
   ) {}
 
   /**
@@ -128,7 +130,12 @@ final class MailTemplateRenderer {
       return '';
     }
     $file = $this->entityTypeManager->getStorage('file')->load($brand->getLogoFid());
-    return $file === NULL ? '' : $this->fileUrls->generateAbsoluteString($file->getFileUri());
+    if ($file === NULL) {
+      return '';
+    }
+    // Host do ambiente pelo aculta_portal; sem ele, a URL gerada pelo Core (pode ser http://default na linha de comando).
+    $absolute = $this->publicUrls?->absolute($this->fileUrls->generateString($file->getFileUri())) ?? '';
+    return $absolute !== '' ? $absolute : $this->fileUrls->generateAbsoluteString($file->getFileUri());
   }
 
   /**

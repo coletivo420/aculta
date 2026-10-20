@@ -36,7 +36,7 @@ services:
 
   Drupal\aculta_mailer\Template\MailTemplateRenderer:
     class: Drupal\aculta_mailer\Template\MailTemplateRenderer
-    arguments: ['@entity_type.manager', '@file_url_generator']
+    arguments: ['@entity_type.manager', '@file_url_generator', '@?Drupal\aculta_mailer\Api\PublicUrlInterface']
 
   aculta_mailer.smtp_failures:
     class: Drupal\aculta_mailer\Delivery\SmtpFailureRegistry
@@ -142,3 +142,10 @@ services:
 
   Drupal\aculta_mailer\Mail\LegacyMessageConverter:
     class: Drupal\aculta_mailer\Mail\LegacyMessageConverter
+
+  Drupal\aculta_mailer\Api\PublicUrl:
+    class: Drupal\aculta_mailer\Api\PublicUrl
+    arguments: ['@?aculta_portal.domain_purpose']
+
+  Drupal\aculta_mailer\Api\PublicUrlInterface:
+    alias: Drupal\aculta_mailer\Api\PublicUrl

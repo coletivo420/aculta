@@ -1,5 +1,18 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.31 — fases F3 a F8 e F13 fechadas (exceto decisões e escopo de outros módulos) — 2026-10-20
+
+- F3: modelos, marcas e layouts ganham criação pelo painel (formulário "Adicionar" e lista com botão); antes só existiam por linha de comando.
+- F4: logo da marca enviado pela política do `aculta_image` (`managed_file` com `UploadPolicy`, uso do arquivo registrado); URL no envelope pelo layout ativo; fallback no logo do tema. Envio real com logo aceito.
+- F5: tela de política (`/politicas`) para padrão global, sobrescrita por tipo e limites por transporte; Brevo aceito como transporte de política.
+- F6: cota tratada como temporária para o failover; classificação SMTP pelo código.
+- F8: contagens do painel agregadas no banco; rótulos em português. Gráficos ficam fora deste RC (a confirmar).
+- F13: system.mail na camada; nenhum envio do projeto contorna o plugin.
+- Gate de fronteira: classes de design removidas do módulo (atributo `data-portal-ui`).
+- Testes: 108 unitários; Kernel com 36 testes (inclui política, logo da marca e painel).
+- Abertas: F7 (decisão sobre reenvio), F9 (textos do contrib), F10 (provedor e supressão), F11 (consentimento), F12 (módulos de outros agentes).
+- Versão do módulo: `0.1.0-dev.31`.
+
 ## 0.1.0-dev.30 — cron único, painel validado visualmente, F14 e F15 em andamento — 2026-10-20
 
 - **Não está em RC.** O RC do submódulo só vale com todas as fases concluídas, revisadas e mescladas, mais validação de código, visual e revisão final (regra em `AGENTS.md`). Este registro não declara RC.
