@@ -1,3 +1,13 @@
+## 0.6.0-dev.112 — evitar sobreposição dos controles no mobile — 2026-10-20
+
+- Em viewports estreitos, os controles de progresso voltam ao fluxo normal do
+  conteúdo em vez de permanecerem sticky sobre as mensagens. Botões e slider
+  continuam disponíveis no início da discussão e mantêm os destinos de salto.
+- Firefox ESR/X11 via WebDriver BiDi revalidou em 390 × 844 CSS px: a barra
+  fica `static`, não cruza a mensagem ativa, o status acompanha 5/6 e
+  documento/corpo medem 390 px. Foundation 365 PASS. Leitor de tela/AT
+  pendente. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.111 — compensar cabeçalho na barra de progresso — 2026-10-20
 
 - A navegação sticky da discussão respeita o deslocamento do toolbar Drupal e

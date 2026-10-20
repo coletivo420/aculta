@@ -23,7 +23,9 @@
   fixtures. Claro/escuro, teclado do slider e IntersectionObserver PASS; 390 px,
   Comments reais e leitor de tela/AT seguem pendentes. Rolagem X11 detectou
   barra sob o cabeçalho; correção de offset do tema dev.111 revalidada a 500 px
-  com a barra visível (topo 56 px) e status 4/6. RUNTIME STATUS: PARTIAL.
+  com a barra visível (topo 56 px) e status 4/6. Teste exato em 390 CSS px
+  encontrou controles sticky cobrindo a mensagem; tema dev.112 remove o sticky
+  no mobile e aguarda revalidação. RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.62` — corrigir filas de moderação do Fórum — 2026-10-20
 

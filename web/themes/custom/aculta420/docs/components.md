@@ -258,9 +258,10 @@ em `discussion.css`; não consulta dados nem decide quais comentários são
 visíveis. Em telas estreitas, o status textual fica disponível a leitores de
 tela e os botões mantêm alvos confortáveis. O Firefox/X11 verificou claro e
 escuro em 1250/500 px e teclado do slider com DOM sintético não persistido;
-leitor de tela e viewport 390 px seguem pendentes. A barra sticky respeita
-`--drupal-displace-offset-top` e o scroll-padding do cabeçalho. Evidências nos
-changelogs `0.6.0-dev.110` e `0.6.0-dev.111`.
+leitor de tela segue pendente. A barra sticky respeita `--drupal-displace-offset-top`
+e o scroll-padding do cabeçalho; em mobile ela fica no fluxo normal para não
+cobrir a mensagem ativa. Evidências nos changelogs `0.6.0-dev.110` a
+`0.6.0-dev.112`.
 
 ## Patterns
 

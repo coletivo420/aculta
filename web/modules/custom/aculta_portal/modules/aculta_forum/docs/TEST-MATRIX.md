@@ -28,6 +28,11 @@
   cabeçalho. Após tema dev.111, Firefox/X11 escuro a 500 px confirmou a barra
   completa com topo 56 px (12 px após o cabeçalho de 44 px), status 4/6 pela
   rolagem e sem overflow; captura `progress-500-dark.png`.
+- WebDriver BiDi aplicou viewport CSS exato de 390 × 844. Antes da correção, a
+  barra tinha 306 px no campo de 330 px, documento/corpo em 390 px e cobria texto
+  ao rolar. Tema dev.112 foi revalidado: `position: static`, status 5/6 pela
+  rolagem, nenhuma interseção com a mensagem ativa, documento/corpo em 390 px.
+  Captura privada `progress-390.png`.
   Runtime global PARTIAL.
 
 ## dev.62 — filas pendente/rejeitada do Fórum

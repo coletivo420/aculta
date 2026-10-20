@@ -67,6 +67,7 @@
 
 @media (max-width: 575.98px) {
   [data-aculta-discussion-progress] {
+    position: static;
     grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto;
     gap: 0.25rem;
     padding: 0.375rem;
