@@ -17,11 +17,19 @@
 - BiDi `browsingContext.setViewport` confirmou 390 × 844 CSS px: a janela mediu
   390 px, documento/corpo 378 px, navegação `static`, status 5/6 e região em
   `aria-live=off`; sem overflow horizontal.
+  Revalidação Firefox ESR 153.4/X11 no Runtime de teste, sessão anônima
+  isolada: seis mensagens sintéticas foram inseridas apenas no DOM da publicação;
+  nada foi gravado. BiDi aplicou viewport CSS exato em 320/360/390/500/1250 px.
+  Após corrigir rótulos comprimidos em 320 px e avanço lateral em 390 px no tema
+  0.6.0-dev.114, barra e controles ficaram no container; documento e corpo
+  mantiveram a largura do viewport. Claro/escuro inspecionados; botão anunciou
+  “Mensagem 3 de 6”, slider mostrou “Mensagem 5 de 6” com `aria-live=off` e
+  `aria-valuetext` sincronizado. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
 - Forum Unit 82/497, `node --check`, Portal Drupal 11+ 975, fronteira 1419,
   mapa 152, UI docs 280 tokens/97 atributos, SDC 535, Design Foundations 2097
   e Foundation Runtime 366 PASS. `drush cr` PASS. PHP CLI 8.4.26 abaixo da
-  baseline 8.5. Browser Firefox foi headless/BiDi; não houve sessão X11 visual
-  deste ajuste nem leitor de tela real nesta validação. RUNTIME STATUS: PARTIAL.
+  baseline 8.5. Leitor de tela real/AT não foi testado. RUNTIME STATUS: PARTIAL.
 - Base normativa consultada: [W3C ARIA22](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA22.html)
   reconhece `role=status` como live region `polite`; [MDN aria-live](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live)
   descreve anúncio de mudanças e priorização não intrusiva.

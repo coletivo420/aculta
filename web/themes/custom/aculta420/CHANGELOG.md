@@ -1,3 +1,15 @@
+## 0.6.0-dev.114 — acomodar controles de progresso em telas estreitas — 2026-10-20
+
+- A barra móvel usa cinco colunas efetivas, reduz os espaçamentos sem diminuir
+  a altura dos alvos de toque e, abaixo de 360 px, organiza as quatro ações em
+  duas linhas com o slider na largura completa. Corrige o botão “Fim” que
+  ultrapassava o fundo da barra em 390 px e rótulos sobrepostos em 320 px.
+- Firefox ESR 153.4/X11 e WebDriver BiDi no Runtime de teste, sessão anônima
+  isolada: viewport CSS 320/360/390/500/1250 px; claro/escuro, botão e slider
+  verificados com seis mensagens sintéticas somente no DOM. Documento/corpo sem
+  overflow; controles dentro da barra. Foundation Runtime e gates direcionados
+  PASS. Leitor de tela real pendente. RUNTIME STATUS: PASS no escopo visual.
+
 ## 0.6.0-dev.113 — manter anúncios de progresso acessíveis sem poluir a leitura — 2026-10-20
 
 - O contador visual não é uma live region. O texto acessível permanece

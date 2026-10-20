@@ -79,12 +79,26 @@
 @media (max-width: 575.98px) {
   [data-aculta-discussion-progress] {
     position: static;
-    grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto;
-    gap: 0.25rem;
+    grid-template-columns: auto auto minmax(2rem, 1fr) auto auto;
+    gap: 0.2rem;
     padding: 0.375rem;
   }
-  [data-aculta-discussion-progress] button { min-block-size: 2.75rem; padding-inline: 0.4rem; }
+  [data-aculta-discussion-progress] button { min-block-size: 2.75rem; padding-inline: 0.25rem; }
+  [data-aculta-discussion-progress] input { min-inline-size: 0; }
   [data-aculta-discussion-status] { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+@media (max-width: 359.98px) {
+  [data-aculta-discussion-progress] {
+    grid-template-areas: "first previous" "next last" "range range";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  [data-aculta-discussion-first] { grid-area: first; }
+  [data-aculta-discussion-previous] { grid-area: previous; }
+  [data-aculta-discussion-range] { grid-area: range; }
+  [data-aculta-discussion-next] { grid-area: next; }
+  [data-aculta-discussion-last] { grid-area: last; }
+  [data-aculta-discussion-progress] button { inline-size: 100%; padding-inline: 0.2rem; }
 }
 
 /* Formulário Core para responder nas entidades com discussão compartilhada. */
