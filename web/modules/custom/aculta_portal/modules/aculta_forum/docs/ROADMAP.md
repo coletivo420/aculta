@@ -156,7 +156,21 @@ bundles e comentários do Fórum; não haverá segunda interface de moderação.
 Na implementação, migrar links e operações sob
 `/painel-administrativo/conteudo/forum` para a nova seção e remover a antiga aba
 de Conteúdo após conferir seus consumidores. Não antecipar subrotas ou
-configurações até inventariar recursos existentes e permissões. Revista fica em
+configurações até inventariar recursos existentes e permissões. O inventário
+atual encontrou: View de tópicos públicos; Views de comentários publicados,
+rejeitados e pendentes; ações para mover tópico e comentário; e gerenciamento
+nativo das categorias Taxonomy e do bundle Node fora da seção de Conteúdo.
+O painel novo deve centralizar links para essas ferramentas existentes e suas
+permissões, sem recriar formulários CRUD do Core. Ainda não existe formulário
+próprio de configuração do Fórum.
+
+A opção de moderação inicial do primeiro comentário está em
+`/painel-administrativo/configuracoes/aculta/portal/participacao`, sob ownership
+do `aculta_user`, pois afeta Fórum, Revista, Wiki e outros hosts, exceto LMS.
+A seção do Growroom pode oferecer um link claro para essa configuração
+compartilhada, mas não duplicar nem restringir seu efeito ao Fórum.
+
+Revista fica em
 `/painel-administrativo/conteudo/revista`; LMS em
 `/painel-administrativo/lms/forum`, moderado por Educadores; Wiki em
 `/painel-administrativo/wiki/forum` quando seu adapter existir. A seção do

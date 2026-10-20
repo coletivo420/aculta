@@ -45,6 +45,24 @@ são a interface administrativa dos contextos de discussão.
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
 | Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
 
+### Inventário administrativo do Growroom420
+
+No estado atual, as ferramentas existentes são a View de tópicos públicos, as
+três filas de Comments (`publicados`, `rejeitados` e `aguardando moderação`), e
+as ações de mover tópico entre categorias e comentário/subárvore entre tópicos.
+Categorias Taxonomy e configuração do bundle Node usam interfaces nativas de
+administração Core e ainda não têm links centralizados na seção do Fórum.
+Planejar o novo painel como índice que reúne essas ferramentas e respeita as
+permissões atuais (`access content overview`, `administer comments`, `move
+aculta forum topics` e `move aculta forum comments`); não criar outro CRUD.
+
+Não há formulário próprio de configuração do Fórum hoje. A moderação do
+primeiro comentário é uma configuração compartilhada do `aculta_user`, em
+`/painel-administrativo/configuracoes/aculta/portal/participacao`, com efeito
+em Fórum, Revista, Wiki e outros hosts, exceto LMS. O painel Growroom poderá
+apresentar um link para essa opção com seu escopo compartilhado explícito, sem
+duplicar o armazenamento nem alterar a política dos outros contextos.
+
 Na dev.105, o adapter `aculta_forum_lms` foi habilitado no Runtime de teste com
 `gnode`, bundle `aculta_lms_topic`, campo compartilhado e relações Group para
 curso/turma. O smoke da raiz pública e de `/categorias` retornou HTTP 200 e as
