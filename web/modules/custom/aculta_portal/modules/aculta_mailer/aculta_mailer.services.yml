@@ -52,7 +52,7 @@ services:
 
   Drupal\aculta_mailer\Diagnostics\MailDiagnostics:
     class: Drupal\aculta_mailer\Diagnostics\MailDiagnostics
-    arguments: ['@entity_type.manager', '@config.factory', '@state', '@queue', '@aculta_mailer.transport_failover']
+    arguments: ['@entity_type.manager', '@config.factory', '@state', '@queue', '@aculta_mailer.transport_failover', '@?Drupal\aculta_mailer\Transport\SecretProviderInterface']
 
   Drupal\aculta_mailer\Policy\MailPolicyResolver:
     class: Drupal\aculta_mailer\Policy\MailPolicyResolver

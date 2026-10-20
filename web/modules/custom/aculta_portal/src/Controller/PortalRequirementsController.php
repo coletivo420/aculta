@@ -157,10 +157,10 @@ final class PortalRequirementsController extends ControllerBase {
     ],
     [
       'name' => 'camada de envio E-Mails ACULTA',
-      'modules' => ['symfony_mailer', 'mailer_override'],
-      'package' => 'drupal/symfony_mailer',
-      'minimum' => '^2.0',
-      'purpose' => 'Transporte de e-mail transacional pelo SMTP2GO, com o envio do Core e do Webform pela camada de envio E-Mails ACULTA.',
+      'modules' => ['aculta_mailer'],
+      'package' => 'módulo do projeto (aculta_portal/aculta_mailer)',
+      'minimum' => '0.1.0',
+      'purpose' => 'Envio de e-mail do site e do Webform pelos transportes aculta_mailer_transport (SMTP Hostinger, SMTP2GO e Brevo).',
       'warning' => 'Entrega em produção depende do RC e do provisionamento das credenciais SMTP2GO.',
     ],
     [

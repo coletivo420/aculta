@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Plugin\Mail;
 
 use Drupal\aculta_mailer\Entity\MailTransport;
+use Drupal\aculta_mailer\Delivery\SmtpFailureRegistry;
 use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
 use Drupal\aculta_mailer\Transport\MailTransportSender;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -39,6 +40,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly ConfigFactoryInterface $configFactory,
     private readonly LoggerInterface $logger,
     private readonly RendererInterface $renderer,
+    private readonly SmtpFailureRegistry $failures,
   ) {}
 
   /**
@@ -52,6 +54,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('config.factory'),
       $container->get('logger.channel.aculta_mailer'),
       $container->get('renderer'),
+      $container->get('aculta_mailer.smtp_failures'),
     );
   }
 
@@ -93,6 +96,8 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     $html = $this->renderHtml($message);
     $result = $this->sender->send($transport, $this->converter->toEmail($message, $from, $html));
     if (!$result['sent']) {
+      // Mesmo registro de falha que o envio do módulo usa para classificar (código SMTP e texto completo).
+      $this->failures->remember((string) ($message['headers']['X-Aculta-Mail-ID'] ?? ''), $result['code'], $result['message']);
       $this->logger->error('Envio pela camada E-Mails ACULTA recusado pelo transporte @id: @message', [
         '@id' => $transport->id(),
         '@message' => $result['message'],

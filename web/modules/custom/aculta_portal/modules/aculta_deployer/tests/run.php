@@ -354,7 +354,7 @@ $assert($threw(fn() => $t->applyProfile("a\na\n", [['pattern' => '^a$', 'with' =
 $outTest = sys_get_temp_dir() . '/aculta-build-test-' . getmypid();
 exec($cli . ' build --target=test --out=' . escapeshellarg($outTest) . ' 2>&1', $bt, $btrc);
 $mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_get_contents($outTest . '/config/sync/system.mail.yml') : '';
-$assert($btrc === 0 && str_contains($mailTest, '  default: symfony_mailer'), 'build --target=test: system.mail na camada de envio E-Mails ACULTA');
+$assert($btrc === 0 && str_contains($mailTest, '  default: aculta_mailer'), 'build --target=test: system.mail na camada de envio E-Mails ACULTA');
 $assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=test: smtp.settings legado não é gerado');
 // Alvo e ambiente divergentes são recusados sem gerar saída.
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);

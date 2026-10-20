@@ -1,5 +1,15 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.27 — F15: `system.mail` trocado para a camada de envio; gates e controlador atualizados — 2026-10-20
+
+- `system.mail` do runtime e da configuração versionada: `aculta_mailer`. Envio do Core e da aplicação aceito no runtime.
+- Código SMTP do envio vai para o registro de falhas (classificação e relatório), como no envio anterior.
+- `Reply-to` do Core lido de `reply-to`; `smtp2go` mapeado no X-Transport.
+- Diagnóstico e prontidão de e-mail do Portal leem `aculta_mailer_transport` e a senha no arquivo de segredos.
+- Gates `validate-mail-transport`, `validate-final-drupal`, `validate-portal-commerce-security` e o teste do deployer atualizados para o estado final.
+- Pendente: desinstalar o contrib de envio no runtime e retirar pacote e configuração. Bloqueado pelo classificador de ações; o estado do repositório fica com o contrib até lá, e os gates de remoção reprovam até a conclusão.
+- Versão do módulo: `0.1.0-dev.27`.
+
 ## 0.1.0-dev.26 — F15: credenciais no arquivo de segredos e transporte SMTP2GO na camada E-Mails ACULTA — 2026-10-20
 
 - Entidade `aculta_mailer_transport` aceita usuário pelo arquivo de segredos (`user_secret`), além da senha (`password_secret`).

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Diagnostics;
 
 use Drupal\aculta_mailer\Delivery\TransportFailover;
+use Drupal\aculta_mailer\Entity\MailTransport;
+use Drupal\aculta_mailer\Mail\LegacyMessageConverter;
+use Drupal\aculta_mailer\Transport\SecretProviderInterface;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Queue\MailQueue;
@@ -26,6 +29,7 @@ final class MailDiagnostics {
     private readonly StateInterface $state,
     private readonly QueueFactory $queues,
     private readonly TransportFailover $failover,
+    private readonly ?SecretProviderInterface $secrets,
   ) {}
 
   /**
@@ -37,7 +41,7 @@ final class MailDiagnostics {
   public function report(): array {
     $cron = (int) $this->state->get('system.cron_last', 0);
     return [
-      'default' => (string) ($this->configFactory->get('mailer_transport.settings')->get('default_transport') ?? ''),
+      'default' => LegacyMessageConverter::DEFAULT_TRANSPORT,
       'failover' => $this->failover->names(),
       'transports' => $this->transports(),
       'queue_items' => $this->queues->get(MailQueue::QUEUE_NAME)->numberOfItems(),
@@ -70,20 +74,16 @@ final class MailDiagnostics {
    *   Linhas por ID do transporte.
    */
   private function transports(): array {
-    if (!$this->entityTypes->hasDefinition('mailer_transport')) {
-      return [];
-    }
     $rows = [];
-    foreach ($this->entityTypes->getStorage('mailer_transport')->loadMultiple() as $transport) {
-      $configuration = (array) $transport->get('configuration');
+    foreach ($this->entityTypes->getStorage(MailTransport::ENTITY_TYPE)->loadMultiple() as $transport) {
       $rows[$transport->id()] = [
         'label' => (string) $transport->label(),
-        'plugin' => (string) $transport->get('plugin'),
-        'host' => (string) ($configuration['host'] ?? ''),
-        'port' => (string) ($configuration['port'] ?? ''),
-        'verify_peer' => !empty($configuration['query']['verify_peer']),
-        'user_set' => (string) ($configuration['user'] ?? '') !== '',
-        'pass_set' => (string) ($configuration['pass'] ?? '') !== '',
+        'plugin' => $transport->plugin(),
+        'host' => $transport->host(),
+        'port' => (string) $transport->port(),
+        'verify_peer' => $transport->verifyPeer(),
+        'user_set' => $transport->user() !== '' || $this->configured($transport->userSecret()),
+        'pass_set' => $this->configured($transport->passwordSecret()),
         'enabled' => (bool) $transport->status(),
       ];
     }
@@ -92,6 +92,13 @@ final class MailDiagnostics {
       $rows[$id] += $events[$id];
     }
     return $rows;
+  }
+
+  /**
+   * Credencial presente no arquivo de segredos (sem o valor). Nome vazio conta como ausente.
+   */
+  private function configured(string $name): bool {
+    return $name !== '' && $this->secrets?->value($name) !== NULL;
   }
 
   /**

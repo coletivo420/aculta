@@ -27,6 +27,7 @@ final class LegacyMessageConverter {
   public const TRANSPORT_IDS = [
     'smtp' => 'smtp_hostinger',
     'brevo' => 'brevo',
+    'smtp2go' => 'smtp2go',
   ];
 
   /**
@@ -62,7 +63,8 @@ final class LegacyMessageConverter {
     }
     $this->attach($email, $message['params']['attachments'] ?? []);
 
-    $replyTo = $headers['Reply-to'] ?? $headers['Reply-To'] ?? NULL;
+    // O Core põe o Reply-To em 'reply-to', fora de 'headers'.
+    $replyTo = $message['reply-to'] ?? $headers['Reply-to'] ?? $headers['Reply-To'] ?? NULL;
     if ($replyTo !== NULL && $replyTo !== '') {
       $email->replyTo(Address::create((string) $replyTo));
     }

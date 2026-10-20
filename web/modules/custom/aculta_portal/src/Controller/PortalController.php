@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
@@ -58,6 +59,7 @@ final class PortalController extends ControllerBase {
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly ?AccountDocumentInterface $accountDocument,
     private readonly ImageRenderer $imageRenderer,
+    private readonly SecretsManager $secrets,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -78,6 +80,7 @@ final class PortalController extends ControllerBase {
       $container->get('commerce_price.currency_formatter'),
       self::accountDocumentService($container),
       $container->get('aculta_image.render'),
+      $container->get('aculta_portal.secrets_manager'),
     );
   }
 
@@ -398,16 +401,22 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * A camada de envio E-Mails ACULTA (mailer_override) é o único controlador de envio: pronto quando existe um transporte padrão e esse
-   * transporte tem usuário e senha configurados na própria camada de envio E-Mails ACULTA. Nenhuma Key participa.
+   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto quando o transporte padrão tem usuário e
+   * senha, e a senha está no arquivo de segredos. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
-    $default = trim((string) $this->configs->get('mailer_transport.settings')->get('default_transport'));
-    $transport = $default !== '' ? ($this->configs->get('mailer_transport.mailer_transport.' . $default)->get('configuration') ?? []) : [];
-    return $this->modules->moduleExists('mailer_override')
-      && trim((string) ($transport['user'] ?? '')) !== ''
-      && trim((string) ($transport['pass'] ?? '')) !== ''
+    $interface = (string) $this->configs->get('system.mail')->get('interface.default');
+    // Sem o módulo de envio habilitado, não há transporte a checar (a referência é por nome, sem classe).
+    if (!$this->modules->moduleExists('aculta_mailer')) {
+      return FALSE;
+    }
+    $transport = $this->entities->getStorage('aculta_mailer_transport')->load('smtp_hostinger');
+    return $interface === 'aculta_mailer'
+      && $transport !== NULL
+      && $transport->get('user') !== ''
+      && $transport->get('password_secret') !== ''
+      && $this->secrets->value((string) $transport->get('password_secret')) !== NULL
       && $site_mail !== '';
   }
 
