@@ -135,7 +135,8 @@ foreach ($manifests as $machine => $manifest) {
 }
 
 // Starting with the commit that adds this guardrail, every component change
-// must update the root table in the same commit. Check history and worktree.
+// must update that component's row in the root table in the same commit.
+// Merely touching README.md is insufficient.
 $git = static function (array $arguments) use ($root): array {
   $command = array_merge(['git', '-C', $root], $arguments);
   $descriptors = [
@@ -152,8 +153,44 @@ $git = static function (array $arguments) use ($root): array {
   fclose($pipes[2]);
   return [proc_close($process), trim((string) $stdout)];
 };
-$extensionPath = static fn(string $path): bool => str_starts_with($path, 'web/modules/custom/aculta_portal/')
-  || str_starts_with($path, 'web/themes/custom/aculta420/');
+$componentRoots = [];
+foreach ($manifests as $machine => $manifest) {
+  $componentRoots[$machine] = substr(dirname($manifest), strlen($root) + 1) . '/';
+}
+// Longest roots first so nested submodules are attributed to their own rows.
+uasort($componentRoots, static fn(string $left, string $right): int => strlen($right) <=> strlen($left));
+$componentForPath = static function (string $path) use ($componentRoots): ?string {
+  foreach ($componentRoots as $machine => $componentRoot) {
+    if (str_starts_with($path, $componentRoot)) {
+      return $machine;
+    }
+  }
+  return NULL;
+};
+$tableRows = static function (string $markdown) use ($begin, $end): array {
+  if (substr_count($markdown, $begin) !== 1 || substr_count($markdown, $end) !== 1) {
+    return [];
+  }
+  $table = substr($markdown, strpos($markdown, $begin) + strlen($begin), strpos($markdown, $end) - strpos($markdown, $begin) - strlen($begin));
+  $rows = [];
+  foreach (preg_split('/\R/', $table) ?: [] as $line) {
+    if (preg_match('/^\|\s*\[`([a-z0-9_]+)`\]/', trim($line), $match)) {
+      $rows[$match[1]] = trim($line);
+    }
+  }
+  return $rows;
+};
+$componentRowsChanged = static function (array $machines, string $before, string $after) use ($tableRows): array {
+  $beforeRows = $tableRows($before);
+  $afterRows = $tableRows($after);
+  return array_values(array_filter($machines, static fn(string $machine): bool =>
+    !isset($beforeRows[$machine], $afterRows[$machine]) || $beforeRows[$machine] === $afterRows[$machine]
+  ));
+};
+$show = static function (string $revision) use ($git): string {
+  [, $contents] = $git(['show', $revision]);
+  return $contents;
+};
 [$markerCode, $markerCommit] = $git([
   'log', '-1', '--format=%H', '-SPROJECT-STATUS-INDEX-GUARD: 2026-10-20', '--', 'AGENTS.md',
 ]);
@@ -166,19 +203,38 @@ if ($markerCode === 0 && $markerCommit !== '') {
     }
     [, $files] = $git(['diff-tree', '--no-commit-id', '--name-only', '-r', $commit]);
     $paths = preg_split('/\R/', $files) ?: [];
-    $componentTouched = array_filter($paths, $extensionPath);
+    $componentTouched = [];
+    foreach ($paths as $path) {
+      $machine = $componentForPath($path);
+      if ($machine !== NULL) {
+        $componentTouched[$machine] = TRUE;
+      }
+    }
     if ($componentTouched !== []) {
-      $message = sprintf('Commit %s changes a module/theme without updating root README.md.', substr($commit, 0, 12));
-      $assert(in_array('README.md', $paths, TRUE), $message);
+      $parent = $git(['rev-parse', $commit . '^']);
+      $before = $parent[0] === 0 ? $show($parent[1] . ':README.md') : '';
+      $after = $show($commit . ':README.md');
+      foreach ($componentRowsChanged(array_keys($componentTouched), $before, $after) as $machine) {
+        $assert(FALSE, sprintf('Commit %s changes %s without changing its root README status row in the same commit.', substr($commit, 0, 12), $machine));
+      }
     }
   }
 }
 [$worktreeCode, $worktree] = $git(['diff', '--name-only', 'HEAD', '--']);
 $assert($worktreeCode === 0, 'Unable to inspect staged/unstaged component changes.');
 $worktreePaths = preg_split('/\R/', $worktree) ?: [];
-$uncommittedComponentChanges = array_filter($worktreePaths, $extensionPath);
-if ($uncommittedComponentChanges !== []) {
-  $assert(in_array('README.md', $worktreePaths, TRUE), 'Uncommitted module/theme changes require an updated root README.md in the same commit.');
+$uncommittedComponents = [];
+foreach ($worktreePaths as $path) {
+  $machine = $componentForPath($path);
+  if ($machine !== NULL) {
+    $uncommittedComponents[$machine] = TRUE;
+  }
+}
+if ($uncommittedComponents !== []) {
+  [, $headReadme] = $git(['show', 'HEAD:README.md']);
+  foreach ($componentRowsChanged(array_keys($uncommittedComponents), $headReadme, (string) $readme) as $machine) {
+    $assert(FALSE, "Uncommitted changes to $machine require changing its root README status row before commit.");
+  }
 }
 
 if ($errors !== []) {

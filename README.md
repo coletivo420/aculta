@@ -27,7 +27,9 @@ Esta tabela fixa a visão geral do módulo, dos submódulos e do tema. Agentes n
 devem removê-la nem retirar linhas: atualize a versão a partir do manifesto e a
 próxima fase a partir do roadmap/changelog canônico no mesmo commit da mudança
 correspondente. O gate `php scripts/validate-project-status-index.php` confere
-presença, cobertura, links e versões; `AGENTS.md` torna a atualização obrigatória.
+presença, cobertura, links, versões e a alteração da linha correspondente no
+mesmo commit; `AGENTS.md` torna a atualização obrigatória para módulos,
+submódulos e tema.
 
 <!-- PROJECT-STATUS-INDEX:BEGIN -->
 | Componente | Última versão declarada | Próxima fase registrada | Estado |

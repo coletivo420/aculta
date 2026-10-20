@@ -32,8 +32,10 @@ PROJECT-STATUS-INDEX-GUARD: 2026-10-20
   seção “Release candidate de submódulos e módulo central” abaixo.
 - Gate obrigatório após qualquer mudança nessas árvores:
   `php scripts/validate-project-status-index.php`. O gate confirma a presença,
-  cobertura completa, links e versões e reprova commits de módulo/tema sem a
-  atualização simultânea do README raiz.
+  cobertura completa, links e versões e exige que a linha exata do componente
+  alterado mude no README raiz no mesmo commit. Uma edição não relacionada no
+  README não satisfaz o guardrail. A mesma regra é aplicada a alterações ainda
+  não commitadas, incluindo alterações no tema `aculta420`.
 
 ## Mapa obrigatório de caminhos
 
