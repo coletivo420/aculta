@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Api;
 
+use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -23,6 +25,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly MailManagerInterface $mailManager,
     private readonly MailTypeRegistry $types,
     private readonly LoggerChannelInterface $logger,
+    private readonly MailLogRecorder $log,
   ) {}
 
   /**
@@ -44,6 +47,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     ], NULL, TRUE);
 
     $sent = (bool) ($result['result'] ?? FALSE);
+    $this->log->record($message, $sent ? MailStatus::Sent : MailStatus::Failed, 1, 'default', $sent ? NULL : 'send_refused');
     if (!$sent) {
       // Sem conteúdo do e-mail nem destinatário no log: só tipo e correlação.
       $this->logger->error('O sistema de e-mail não aceitou a mensagem @type (correlação @id).', [

@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\Plugin\QueueWorker;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\DeliveryPlanner;
+use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Queue\MailQueue;
@@ -40,6 +41,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     private readonly QueueFactory $queues,
     private readonly TimeInterface $time,
     private readonly LoggerChannelInterface $logger,
+    private readonly MailLogRecorder $log,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -55,6 +57,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
       $container->get('queue'),
       $container->get('datetime.time'),
       $container->get('logger.channel.aculta_mailer'),
+      $container->get('aculta_mailer.log_recorder'),
     );
   }
 
@@ -78,6 +81,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
         '@type' => $message->type,
         '@id' => $message->correlationId,
       ]);
+      $this->log->record($message, MailStatus::Failed, $attempt, $transport, 'unregistered_type');
       return;
     }
 
@@ -88,6 +92,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     // O envio não informa o código SMTP ainda (F2): falha tratada como temporária, com retry limitado.
     $decision = $this->planner->afterFailure($attempt, $transport, DeliveryError::Temporary);
     if ($decision->status === MailStatus::Deferred) {
+      $this->log->record($message, MailStatus::Deferred, (int) $decision->nextAttempt, (string) $decision->transport);
       $this->queues->get(MailQueue::QUEUE_NAME)->createItem([
         'message' => $message->toArray(),
         'attempt' => $decision->nextAttempt,
@@ -101,6 +106,7 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
       return;
     }
 
+    $this->log->record($message, MailStatus::Failed, $attempt, $transport, 'retries_exhausted');
     $this->logger->error('Envio encerrado sem sucesso após @n tentativas (correlação @id).', [
       '@n' => $attempt,
       '@id' => $message->correlationId,

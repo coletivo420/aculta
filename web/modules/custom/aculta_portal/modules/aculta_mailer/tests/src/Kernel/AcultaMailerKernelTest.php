@@ -30,6 +30,14 @@ final class AcultaMailerKernelTest extends KernelTestBase {
   private const CORRELATION = '0190a3f2-7c1d-4e8a-9b2f-3d4e5f6a7b8c';
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('aculta_mail_log');
+  }
+
+  /**
    * Envia um tipo registrado e confere assunto, corpo e cabeçalho.
    */
   public function testSendsRegisteredTypeWithCorrelationHeader(): void {

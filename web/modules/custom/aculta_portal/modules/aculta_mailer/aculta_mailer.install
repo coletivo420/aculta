@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Mailer.
+ */
+
+declare(strict_types=1);
+
+/** Instala a entidade de registro de envios (aculta_mail_log). */
+function aculta_mailer_update_10001(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_mail_log'));
+}

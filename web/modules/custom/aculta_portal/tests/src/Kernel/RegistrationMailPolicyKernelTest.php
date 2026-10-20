@@ -25,6 +25,7 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installEntitySchema('aculta_mail_log');
     // O tipo vive no aculta_portal, que não é habilitado aqui; registra-se o mesmo objeto manualmente.
     $this->container->set(MailTypeRegistry::class, new MailTypeRegistry([
       new RegistrationExistingAccountMailType($this->container->get('string_translation')),

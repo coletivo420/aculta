@@ -135,7 +135,12 @@ final class MailMessageTest extends UnitTestCase {
    */
   public function testFromArrayRejectsCorruptData(): void {
     $this->expectException(\InvalidArgumentException::class);
-    MailMessage::fromArray(['type' => 'account_created', 'to' => 'nao-e-email', 'langcode' => 'pt-br', 'correlation_id' => self::CORRELATION]);
+    MailMessage::fromArray([
+      'type' => 'account_created',
+      'to' => 'nao-e-email',
+      'langcode' => 'pt-br',
+      'correlation_id' => self::CORRELATION,
+    ]);
   }
 
 }

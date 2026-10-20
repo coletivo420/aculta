@@ -30,6 +30,14 @@ final class MailQueueKernelTest extends KernelTestBase {
   private const CORRELATION = '0190a3f2-7c1d-4e8a-9b2f-3d4e5f6a7b8c';
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('aculta_mail_log');
+  }
+
+  /**
    * Mensagem enfileirada é enviada pelo worker e sai da fila.
    */
   public function testQueuedMessageIsSentByWorker(): void {
