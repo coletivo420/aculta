@@ -9,6 +9,13 @@
   8.5; PHP lint, PHPCS, gates Portal 975, fronteira 1448, mapa 152 e
   `git diff --check` PASS. Sem mudança de Runtime; ferramenta continua
   fail-closed. RUNTIME STATUS: DEFERRED.
+- Revalidação administrativa X11 autenticada: 19/19 verificações PASS; as
+  quatro filas de comentários retornaram 200, `/painel-administrativo/conteudo`
+  mostrou a aba Fórum, Revista permaneceu consolidada e a rota antiga retornou
+  404. Nenhum 500. Em 768 px sem overflow; em 390 px o excesso de 3 px segue
+  restrito à tabela administrativa. Roteiro só fez GET, sem conteúdo/config
+  alterados; capturas privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-admin-recheck-dev81-20261020/`.
 
 ## `0.1.0-dev.80` — preservar traduções ao mover comentário — 2026-10-20
 

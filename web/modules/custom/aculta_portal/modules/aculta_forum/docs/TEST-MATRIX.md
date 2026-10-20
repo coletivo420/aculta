@@ -8,6 +8,11 @@
 - Classe completa `ForumCommentMoverKernelTest`: 16 testes / 331 assertions
   PASS no MariaDB dedicado; 19 depreciações Core/contrib. PHP 8.4.26 abaixo da
   baseline 8.5. Runtime não foi alterado; RUNTIME STATUS: DEFERRED.
+- Revalidação visual/HTTP administrativa X11: 19/19 PASS. Aba Fórum e as três
+  filas retornam 200 autenticadas; Revista segue em sua área consolidada e rota
+  antiga retorna 404; sem erro 500. 768 px sem overflow; 390 px apresenta os
+  mesmos 3 px de excesso limitados à tabela. Somente GET; sem mutações. Capturas
+  privadas em `/home/piradopirata/private/aculta/visual-tests/forum-admin-recheck-dev81-20261020/`.
 
 ## dev.80 — preservar traduções em comentário movido
 
