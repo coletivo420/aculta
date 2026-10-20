@@ -18,6 +18,15 @@
   contextual de Educador ao marcador de moderação compartilhado.
 - O adapter não possui configuração instalável nem deve ser habilitado antes
   das provas Kernel e da configuração específica de Group Node.
+## `0.1.0-dev.11` — aplicar config padrão em fixture Kernel — 2026-10-20
+
+- Kernel executa o `ConfigInstaller` do Drupal para as configurações padrão do
+  adapter e confirma bundle, campo Comment compartilhado, duas relações Group
+  e formatter. Não habilita o módulo nem testa o ciclo completo do
+  `ModuleInstaller`.
+- Kernel adapter: 2 testes / 72 assertions PASS, 38 depreciações Core/contrib;
+  Unit adapter 12/141 PASS. RUNTIME STATUS: DEFERRED.
+
 ## `0.1.0-dev.10` — validar dependências dos Group roles — 2026-10-20
 
 - Unit confronta os Group roles do Config Sync com as duas relationship types

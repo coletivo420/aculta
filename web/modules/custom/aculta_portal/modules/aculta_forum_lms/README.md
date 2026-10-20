@@ -52,6 +52,7 @@ adiciona a permission de leitura aos Group roles reais do Config Sync e prova
 os quatro YAMLs em Kernel. A dev.100 também verifica os contextos de cache por
 usuário/permissões e a dependência cacheável do tópico para as três decisões
 de acesso. A dev.101 verifica a coerência entre Config Sync e as relationship
-types instaláveis. Próximo: provar a instalação somente com o grafo completo
-de dependências, depois revisar rotas, Views, busca e filas antes de habilitar
-o adapter.
+types instaláveis. A dev.102 instala a configuração padrão via `ConfigInstaller`
+na fixture LMS/Group e confirma bundle, campo, relações e formatter, sem
+habilitar o módulo. Próximo: testar ciclo de ativação/desinstalação com o
+grafo completo de dependências, depois revisar rotas, Views, busca e filas.

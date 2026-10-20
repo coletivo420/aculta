@@ -1722,6 +1722,15 @@
   reconhece a versão .119, mas reprova por divergência da allowlist Twig devido
   a `email-wrap.html.twig` da linha paralela Mailer; nenhum arquivo Mailer/gate
   de allowlist foi alterado.
+## `0.1.0-dev.102` — instalar config padrão LMS em Kernel — 2026-10-20
+
+- Kernel usa o `ConfigInstaller` do Drupal para aplicar o conjunto de config
+  padrão do adapter com os bundles LMS/Group e a storage Comment compartilhada
+  preparados; confirma bundle, campo compartilhado, relationship types e
+  formatter. O teste não habilita o adapter nem executa `ModuleInstaller`.
+- Kernel adapter: 2 testes / 72 assertions PASS, 38 depreciações Core/contrib;
+  Unit adapter 12/141 e Forum 87/556 PASS. Runtime DEFERRED.
+
 ## `0.1.0-dev.101` — validar coerência da configuração LMS — 2026-10-20
 
 - Unit verifica que os quatro Group roles do Config Sync dependem das

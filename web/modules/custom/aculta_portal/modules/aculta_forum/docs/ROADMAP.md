@@ -31,6 +31,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.102` | Aplicar configuração padrão do adapter em Kernel | `ConfigInstaller` instala bundle, Comment compartilhado, relationships Group e formatter na fixture LMS/Group; 2 testes/72 assertions PASS (38 depreciações Core/contrib). Não habilita módulo, não usa ModuleInstaller e não toca Runtime. |
 | `0.1.0-dev.101` | Verificar coerência entre adapter e Config Sync | Unit confirma dependências de relationship types nos quatro Group roles, permission de leitura contextual e herança `grade students`; não habilita módulo nem importa configuração. Próximo: testar a instalação com o grafo completo de dependências. |
 | `0.1.0-dev.100` | Validar cacheabilidade do acesso LMS | Kernel confirma variação de acesso por usuário/permissões e dependência de cache do tópico para o provider de contexto; nenhum comportamento no Runtime. Adapter ainda aguarda revisão integrada de acesso e filas. |
 | `0.1.0-dev.99` | Configurar Group roles do LMS para tópicos | Config Sync limita visualização Group Node de tópico a membership de curso/turma e Educadores com role contextual; educator permission herda para turma. Kernel lê os quatro Group role configs reais e confirma estudante/Educador, outsider global não autorizado, Comment e moderação. Config Sync não importado. |

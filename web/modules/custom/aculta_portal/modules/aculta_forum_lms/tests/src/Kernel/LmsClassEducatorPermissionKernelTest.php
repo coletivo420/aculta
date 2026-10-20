@@ -9,7 +9,7 @@ use Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider;
 use Drupal\aculta_forum_lms\Hook\LmsDiscussionModerationHooks;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
-use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\comment\Entity\CommentType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -30,8 +30,6 @@ use Symfony\Component\Yaml\Yaml;
 #[TestGroup('aculta_forum_lms')]
 #[RunTestsInSeparateProcesses]
 final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
-
-  use CommentTestTrait;
 
   /**
    * {@inheritdoc}
@@ -69,16 +67,42 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
 
-    NodeType::create([
-      'type' => 'aculta_lms_topic',
-      'name' => 'LMS discussion topic',
+    CommentType::create([
+      'id' => 'aculta_discussion_post',
+      'label' => 'Discussion post',
+      'target_entity_type_id' => 'node',
     ])->save();
-    $this->addDefaultCommentField(
-      'node',
-      'aculta_lms_topic',
-      'field_aculta_discussion',
-      CommentingStatus::Open,
+    $this->container->get('comment.manager')->addBodyField('aculta_discussion_post');
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'body',
+      'type' => 'text_with_summary',
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_aculta_discussion',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+    $this->container->get('config.installer')
+      ->installDefaultConfig('module', 'aculta_forum_lms');
+    self::assertInstanceOf(NodeType::class, NodeType::load('aculta_lms_topic'));
+    self::assertSame(
       'aculta_discussion_post',
+      FieldConfig::load('node.aculta_lms_topic.field_aculta_discussion')?->getSetting('comment_type'),
+    );
+    $groupRelationshipStorage = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship_type');
+    self::assertNotNull($groupRelationshipStorage->load('lms_course-3abb8caf7f7d526ecedee'));
+    self::assertNotNull($groupRelationshipStorage->load('lms_class-3abb8caf7f7d526ecedeec'));
+    self::assertSame(
+      'comment_default',
+      $this->config('core.entity_view_display.node.aculta_lms_topic.full')
+        ->get('content.field_aculta_discussion.type'),
     );
     FieldStorageConfig::create([
       'entity_type' => 'comment',
