@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.8 — envio de teste de modelo (F3) — 2026-10-20
+
+- Editor de modelo com link "Enviar e-mail de teste": formulário com destinatário, valores de exemplo do tipo e o caminho real de envio (`deliver`). Ao administrador aparece só o resultado; o motivo completo fica no relatório de falhas.
+- Teste Kernel do formulário (endereço inválido recusado; envio com valores de exemplo). 74 testes no módulo.
+- Runtime: envio real para o destinatário autorizado (4e20coletivo@gmail.com), modelo `registration_existing_mail` com texto padrão. Aceito pelo sistema de e-mail (`sent`, transporte padrão). Entrega na caixa de entrada depende de conferência do destinatário.
+
 ## 0.1.0-dev.7 — modelos, marca, layout e relatório completo de falhas (F3/F4, F7) — 2026-10-20
 
 - F3: tipos declaram variáveis (`variables()`) e texto padrão com `{{ variavel }}`. Config Entity `aculta_mailer_template` com editor, validação (variável desconhecida recusada) e prévia com valores de exemplo. Renderização usa o modelo ativo; sem modelo, o texto padrão.
