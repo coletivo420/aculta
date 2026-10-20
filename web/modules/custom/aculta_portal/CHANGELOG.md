@@ -1,3 +1,15 @@
+## 0.4.0-dev.206 — navegação do Growroom e higiene dos testes do Fórum — 2026-10-20
+
+- A raiz pública do Growroom420 apresenta tabs de descoberta com Discussões
+  ativa, reaproveitando tarefas locais do Drupal Core sem expor `/discussoes`.
+  HTTP Runtime: raiz e rotas irmãs 200; `/discussoes` 404. Cache rebuild PASS.
+- Suíte Unit do `aculta_forum`: 54 testes / 379 asserções PASS, sem
+  depreciações PHPUnit; PHPCS, gates Drupal 11+, módulo/tema e mapa PASS.
+- Auditoria adicional de `forum_access` 2.0.2 documentada no submódulo. Não foi
+  instalada dependência nem copiado código. RUNTIME STATUS: PASS para a
+  navegação da raiz; demais verificações de integração do Fórum permanecem
+  parciais conforme as entradas anteriores.
+
 ## 0.4.0-dev.205 — identidade do último comentarista na lista do Fórum — 2026-10-19
 
 - A View pública de tópicos passa o UID do último comentário publicado por um
