@@ -87,6 +87,11 @@ final class AcultaMailer implements AcultaMailerInterface {
       ]);
       $transport = $fallback;
     }
+    // Brevo desligado na página Entrega: a mensagem segue pelo transporte de contingência, como na cota.
+    if ($transport === 'brevo' && $this->configFactory->get(DeliverySettings::CONFIG)->get('brevo_enabled') === FALSE) {
+      $this->logger->warning('Transporte brevo desligado; usando @f.', ['@f' => $fallback]);
+      $transport = $fallback;
+    }
     $effective = $transport ?? $this->failover->names()['primary'];
     $result = $this->mailManager->mail(self::MODULE, $message->type, $message->to, $langcode, [
       'context' => $message->context,

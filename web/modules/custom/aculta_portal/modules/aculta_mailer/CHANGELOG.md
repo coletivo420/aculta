@@ -1,5 +1,13 @@
 # Changelog — ACULTA Mailer
 
+## 0.1.0-dev.19 — ligar e desligar monitoramento IMAP e Brevo; alertas e resumo para administradores — 2026-10-20
+
+- Página Entrega, alertas e resumo: interruptores "Transporte Brevo ligado" e "Monitoramento IMAP ligado". Desligado o Brevo, mensagens pedidas a ele seguem pelo transporte de contingência. O IMAP só liga com servidor, usuário e senha preenchidos.
+- O interruptor do IMAP saiu do formulário de monitoramento (fica só na página Entrega, para não haver dois lugares).
+- Alertas de falha e resumo semanal podem ir a todos os administradores do site (papel `administrator`, conta ativa), além da lista manual (`AdministratorRecipients`).
+- Runtime de teste: alertas e resumo para administradores ligados; Brevo ligado; IMAP desligado; retenção do registro em 90 dias.
+- Versão do módulo: `0.1.0-dev.19`. 79 unitários. Sem teste para o desvio do Brevo: coberto só pela leitura do código e pelo gate (DEFERRED).
+
 ## 0.1.0-dev.18 — registro de e-mail e mapa do modelo WP Mail SMTP — 2026-10-20
 
 - Página Registro (`.../envios-de-email/registro`): ligar o registro (desligado, nada novo é gravado e a cota diária deixa de valer) e prazo de retenção (30 dias, 3 meses, 6 meses, 1 ano; padrão 90 dias, o comportamento anterior).

@@ -17,3 +17,12 @@ aculta_mailer.delivery:
     summary_recipients:
       type: string
       label: 'Destinatários do resumo semanal'
+    alerts_admins:
+      type: boolean
+      label: 'Alertas também para os administradores do site'
+    summary_admins:
+      type: boolean
+      label: 'Resumo também para os administradores do site'
+    brevo_enabled:
+      type: boolean
+      label: 'Transporte Brevo ligado'

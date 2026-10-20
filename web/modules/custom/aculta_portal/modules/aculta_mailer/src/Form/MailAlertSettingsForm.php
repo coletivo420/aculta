@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Form;
 
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
+use Drupal\aculta_mailer\Monitor\MailMonitor;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -16,11 +17,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class MailAlertSettingsForm extends ConfigFormBase {
 
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typedConfigManager,
+    private readonly MailMonitor $monitor,
+  ) {
+    parent::__construct($config_factory, $typedConfigManager);
+  }
+
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('config.factory'), $container->get('config.typed'));
+    return new static($container->get('config.factory'), $container->get('config.typed'), $container->get(MailMonitor::class));
   }
 
   /**
@@ -42,6 +51,23 @@ final class MailAlertSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config(DeliverySettings::CONFIG);
+    $form['switches'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Ligar e desligar'),
+      '#open' => TRUE,
+      'brevo_enabled' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Transporte Brevo ligado'),
+        '#default_value' => $config->get('brevo_enabled') !== FALSE,
+        '#description' => $this->t('Desligado, mensagens pedidas ao Brevo seguem pelo transporte de contingência.'),
+      ],
+      'imap_enabled' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Monitoramento IMAP ligado (bounces e DMARC)'),
+        '#default_value' => $this->monitor->enabled(),
+        '#description' => $this->t('Só liga com servidor, usuário e senha preenchidos na página de monitoramento IMAP.'),
+      ],
+    ];
     $form['bounce_address'] = [
       '#type' => 'email',
       '#title' => $this->t('Endereço de retorno (bounces) dos transportes SMTP'),
@@ -59,12 +85,18 @@ final class MailAlertSettingsForm extends ConfigFormBase {
         '#default_value' => (bool) $config->get('alerts_enabled'),
         '#description' => $this->t('No máximo um alerta a cada 5 minutos; o restante é contado e aparece no próximo.'),
       ],
+      'alerts_admins' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enviar aos administradores do site'),
+        '#default_value' => (bool) $config->get('alerts_admins'),
+        '#description' => $this->t('Todos os usuários ativos com o papel de administrador. O alerta traz o texto completo do erro.'),
+      ],
       'alerts_recipients' => [
         '#type' => 'textarea',
-        '#title' => $this->t('Destinatários dos alertas'),
+        '#title' => $this->t('Outros destinatários dos alertas'),
         '#default_value' => (string) $config->get('alerts_recipients'),
         '#rows' => 2,
-        '#description' => $this->t('Um ou mais endereços, separados por vírgula ou quebra de linha. O alerta traz o texto completo do erro: envie só a administradores.'),
+        '#description' => $this->t('Opcional. Um ou mais endereços, separados por vírgula ou quebra de linha.'),
       ],
     ];
     $form['summary'] = [
@@ -77,9 +109,14 @@ final class MailAlertSettingsForm extends ConfigFormBase {
         '#default_value' => (bool) $config->get('summary_enabled'),
         '#description' => $this->t('Compara os últimos 7 dias com os 7 anteriores e lista os motivos de falha. Enviado pelo cron, uma vez por semana.'),
       ],
+      'summary_admins' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enviar aos administradores do site'),
+        '#default_value' => (bool) $config->get('summary_admins'),
+      ],
       'summary_recipients' => [
         '#type' => 'textarea',
-        '#title' => $this->t('Destinatários do resumo'),
+        '#title' => $this->t('Outros destinatários do resumo'),
         '#default_value' => (string) $config->get('summary_recipients'),
         '#rows' => 2,
       ],
@@ -101,11 +138,8 @@ final class MailAlertSettingsForm extends ConfigFormBase {
     if (trim((string) $form_state->getValue('bounce_address')) !== '' && DeliverySettings::invalid((string) $form_state->getValue('bounce_address')) !== []) {
       $form_state->setErrorByName('bounce_address', $this->t('Endereço de retorno inválido.'));
     }
-    if ($form_state->getValue('alerts_enabled') && DeliverySettings::recipients((string) $form_state->getValue('alerts_recipients')) === []) {
-      $form_state->setErrorByName('alerts_recipients', $this->t('Com os alertas ativos, informe ao menos um destinatário.'));
-    }
-    if ($form_state->getValue('summary_enabled') && DeliverySettings::recipients((string) $form_state->getValue('summary_recipients')) === []) {
-      $form_state->setErrorByName('summary_recipients', $this->t('Com o resumo ativo, informe ao menos um destinatário.'));
+    if ($form_state->getValue('imap_enabled') && $this->monitor->client() === NULL) {
+      $form_state->setErrorByName('imap_enabled', $this->t('Para ligar o monitoramento, preencha servidor, usuário e senha na página de monitoramento IMAP.'));
     }
   }
 
@@ -114,12 +148,16 @@ final class MailAlertSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(DeliverySettings::CONFIG)
+      ->set('brevo_enabled', (bool) $form_state->getValue('brevo_enabled'))
       ->set('bounce_address', strtolower(trim((string) $form_state->getValue('bounce_address'))))
       ->set('alerts_enabled', (bool) $form_state->getValue('alerts_enabled'))
+      ->set('alerts_admins', (bool) $form_state->getValue('alerts_admins'))
       ->set('alerts_recipients', implode(', ', DeliverySettings::recipients((string) $form_state->getValue('alerts_recipients'))))
       ->set('summary_enabled', (bool) $form_state->getValue('summary_enabled'))
+      ->set('summary_admins', (bool) $form_state->getValue('summary_admins'))
       ->set('summary_recipients', implode(', ', DeliverySettings::recipients((string) $form_state->getValue('summary_recipients'))))
       ->save();
+    $this->config(MailMonitor::CONFIG)->set('enabled', (bool) $form_state->getValue('imap_enabled'))->save();
     parent::submitForm($form, $form_state);
   }
 

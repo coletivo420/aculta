@@ -61,11 +61,9 @@ final class MailImapSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config(MailMonitor::CONFIG);
-    $form['enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Monitoramento IMAP ativo'),
-      '#default_value' => (bool) $config->get('enabled'),
-      '#description' => $this->t('Desligado, nenhuma caixa é lida e o envio segue como antes.'),
+    $state = $this->monitor->enabled() ? $this->t('ligado') : $this->t('desligado');
+    $form['switch'] = [
+      '#markup' => '<p>' . $this->t('Ligar ou desligar o monitoramento: página Entrega, alertas e resumo. Estado atual: @state.', ['@state' => $state]) . '</p>',
     ];
     $form['host'] = [
       '#type' => 'textfield',
@@ -146,16 +144,6 @@ final class MailImapSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
-    if ($form_state->getValue('enabled') && (trim((string) $form_state->getValue('host')) === '' || trim((string) $form_state->getValue('user')) === '')) {
-      $form_state->setErrorByName('host', $this->t('Com o monitoramento ativo, informe servidor e usuário.'));
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $password = (string) $form_state->getValue('password');
     $form_state->setValue('password', '');
@@ -170,7 +158,6 @@ final class MailImapSettingsForm extends ConfigFormBase {
         : $this->messenger()->addError($this->t('Senha IMAP não gravada: @message', ['@message' => $result['message']]));
     }
     $this->config(MailMonitor::CONFIG)
-      ->set('enabled', (bool) $form_state->getValue('enabled'))
       ->set('host', trim((string) $form_state->getValue('host')))
       ->set('port', (int) $form_state->getValue('port'))
       ->set('user', trim((string) $form_state->getValue('user')))

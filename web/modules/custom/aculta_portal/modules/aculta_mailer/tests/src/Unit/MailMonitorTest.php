@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Unit;
 
 use Drupal\aculta_mailer\Alert\MailAlerts;
+use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\ImapClientInterface;
@@ -103,6 +104,7 @@ MAIL;
         $time,
         new MailQueue($this->createMock(QueueFactory::class)),
         $this->createMock(UuidInterface::class),
+        $this->createMock(AdministratorRecipients::class),
       ),
     );
   }

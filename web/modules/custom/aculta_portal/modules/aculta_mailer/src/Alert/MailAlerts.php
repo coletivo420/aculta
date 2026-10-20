@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Alert;
 
+use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Queue\MailQueue;
@@ -37,6 +38,7 @@ final class MailAlerts {
     private readonly TimeInterface $time,
     private readonly MailQueue $queue,
     private readonly UuidInterface $uuid,
+    private readonly AdministratorRecipients $administrators,
   ) {}
 
   /**
@@ -79,6 +81,9 @@ final class MailAlerts {
       return;
     }
     $recipients = DeliverySettings::recipients((string) $settings->get('alerts_recipients'));
+    if ($settings->get('alerts_admins')) {
+      $recipients = array_values(array_unique(array_merge($recipients, $this->administrators->emails())));
+    }
     if ($recipients === []) {
       return;
     }

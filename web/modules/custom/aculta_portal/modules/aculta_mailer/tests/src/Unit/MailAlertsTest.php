@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Unit;
 
 use Drupal\aculta_mailer\Alert\MailAlerts;
+use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\Component\Datetime\TimeInterface;
@@ -65,7 +66,9 @@ final class MailAlertsTest extends UnitTestCase {
     $factory->method('get')->willReturn($queue);
     $uuid = $this->createMock(UuidInterface::class);
     $uuid->method('generate')->willReturn('3f2504e0-4f89-41d3-9a0c-0305e82c3301');
-    return new MailAlerts($configFactory, $state, $time, new MailQueue($factory), $uuid);
+    $administrators = $this->createMock(AdministratorRecipients::class);
+    $administrators->method('emails')->willReturn([]);
+    return new MailAlerts($configFactory, $state, $time, new MailQueue($factory), $uuid, $administrators);
   }
 
   /**

@@ -104,11 +104,11 @@ services:
 
   Drupal\aculta_mailer\Alert\MailAlerts:
     class: Drupal\aculta_mailer\Alert\MailAlerts
-    arguments: ['@config.factory', '@state', '@datetime.time', '@aculta_mailer.queue', '@uuid']
+    arguments: ['@config.factory', '@state', '@datetime.time', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients']
 
   Drupal\aculta_mailer\Report\MailSummary:
     class: Drupal\aculta_mailer\Report\MailSummary
-    arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid']
+    arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients']
 
   Drupal\aculta_mailer\Hook\MailReportHooks:
     class: Drupal\aculta_mailer\Hook\MailReportHooks
@@ -117,3 +117,7 @@ services:
   Drupal\aculta_mailer\Log\MailLogSettings:
     class: Drupal\aculta_mailer\Log\MailLogSettings
     arguments: ['@config.factory']
+
+  Drupal\aculta_mailer\Delivery\AdministratorRecipients:
+    class: Drupal\aculta_mailer\Delivery\AdministratorRecipients
+    arguments: ['@entity_type.manager']

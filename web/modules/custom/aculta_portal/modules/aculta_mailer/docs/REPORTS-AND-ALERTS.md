@@ -39,8 +39,11 @@ que existe no ACULTA Mailer. O roadmap do módulo (`ROADMAP.md`) traz as fases.
   *Soft Bounced*, cadastrados pela API), que é o próximo passo da F10.
 - **Registro desligado** deixa de gravar, e a cota diária por transporte deixa de valer, porque a cota conta o registro.
   A tela avisa.
-- **Retenção padrão de 90 dias**, o comportamento anterior. O WP usa 6 meses; mudar o padrão apagaria menos registros, e
-  por isso fica como decisão do responsável.
+- **Retenção de 90 dias**, gravada no runtime (decisão do responsável). O WP usa 6 meses; o prazo é configurável em
+  Registro, e aumentar o prazo não apaga nada.
+- **Destinatários:** alertas e resumo vão a todos os administradores do site (papel `administrator`, conta ativa) e,
+  opcionalmente, a uma lista manual.
+- **Brevo e IMAP** têm interruptor na página Entrega. Desligar o Brevo desvia as mensagens para a contingência.
 
 ## Fontes
 

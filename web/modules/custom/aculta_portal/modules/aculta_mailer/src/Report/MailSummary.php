@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Report;
 
+use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
@@ -43,6 +44,7 @@ final class MailSummary {
     private readonly EntityTypeManagerInterface $entityTypes,
     private readonly MailQueue $queue,
     private readonly UuidInterface $uuid,
+    private readonly AdministratorRecipients $administrators,
   ) {}
 
   /**
@@ -54,6 +56,9 @@ final class MailSummary {
       return;
     }
     $recipients = DeliverySettings::recipients((string) $settings->get('summary_recipients'));
+    if ($settings->get('summary_admins')) {
+      $recipients = array_values(array_unique(array_merge($recipients, $this->administrators->emails())));
+    }
     $now = $this->time->getRequestTime();
     if ($recipients === [] || $now - (int) $this->state->get(self::STATE_LAST, 0) < self::INTERVAL) {
       return;
