@@ -1,5 +1,21 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.14 — excluir tópicos LMS da conquista pública de Fórum
+
+- `ForumParticipationPolicyTest` prova que uma resposta hospedada por
+  `aculta_lms_topic` não gera a conquista `primeiro_comentario_forum` do
+  Growroom420. O gatilho segue restrito a tópicos públicos ACULTA.
+- Participação LMS aprovada continua válida para a política do `aculta_user`
+  que desbloqueia a criação de tópicos; isso não a converte em participação
+  pública para fins de conquista. Sem mudança na política de moderação LMS ou
+  em concessões existentes.
+- PHPUnit Unit: 10 testes/45 assertions PASS; PHPCS e `php -l` PASS. Drupal 11+
+  gate 988 e mapa módulo/tema 153 PASS. O gate de fronteira falha por uma
+  classe de design `aculta-mailer-scroll` em
+  `aculta_mailer/src/Controller/MailDashboardController.php`, parte do trabalho
+  concorrente no commit `89514dbe`, fora desta alteração. PHP CLI 8.4.26 está
+  abaixo da baseline 8.5. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.13 — avisos de conquista pelo aculta_mailer — 2026-10-20
 
 - `AchievementEmailWorker` envia pela API `AcultaMailerInterface` (tipo `achievement_earned`), sem `plugin.manager.mail`.

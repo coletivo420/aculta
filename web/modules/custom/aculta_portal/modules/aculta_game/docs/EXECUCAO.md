@@ -1,5 +1,23 @@
 # Execução por fases — ACULTA Game
 
+## Dev.14 — manter conquistas públicas isoladas do LMS
+
+- `ForumParticipationPolicyTest::testLmsTopicDoesNotEarnPublicForumParticipation`
+  cobre a fronteira entre participação aprovada no LMS e a conquista pública do
+  Growroom420. A liberação de participação/criação de tópicos pertence à política
+  do `aculta_user`; Game só recebe o trigger de tópicos públicos `aculta_forum_topic`.
+- A versão corrente da policy não precisou de alteração; o teste registra o
+  contrato anti-regressão. Sem fixture, concessão ou alteração no Runtime.
+- PHPUnit Unit: 10 testes/45 assertions PASS. PHPUnit emitiu aviso de que
+  `sites/simpletest/browser_output` não é gravável; este teste Unit não cria
+  saída de navegador. PHPCS Drupal/DrupalPractice e `php -l` PASS; Drupal 11+
+  gate 988 e mapa módulo/tema 153 PASS. O gate de fronteira falhou devido à
+  classe de design `aculta-mailer-scroll` em
+  `aculta_mailer/src/Controller/MailDashboardController.php`, introduzida pelo
+  trabalho concorrente no commit `89514dbe`, fora deste escopo. PHP CLI 8.4.26 permanece abaixo
+  da baseline 8.5. Sem fixture, concessão ou alteração no Runtime.
+  RUNTIME STATUS: DEFERRED.
+
 ## Dev.10 — integração inicial com ACULTA Forum
 
 - `BadgeEvaluationHooks` reusa o trigger `forum_comment` para publicação de

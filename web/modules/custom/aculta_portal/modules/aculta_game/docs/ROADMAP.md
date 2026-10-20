@@ -39,6 +39,10 @@ sem pressionar participação diária.
 - Manter somente fontes contemporâneas. Importação/sync, autorias
   `field_autor_legado`, comentário anônimo, conteúdo não publicado e outros
   contextos não contam.
+- Resposta aprovada no LMS pode contar para a política do `aculta_user` que
+  libera a criação de tópico, mas não concede a conquista pública
+  `primeiro_comentario_forum`. Game avalia somente a resposta publicada no
+  tópico Growroom público; teste de regressão em dev.14.
 - Próximas propostas a avaliar, sem critérios de volume ativados nesta entrega:
   primeira contribuição própria publicada, participação em categorias diversas
   e reconhecimento manual de contribuição comunitária. Critérios devem ser

@@ -78,6 +78,18 @@ final class ForumParticipationPolicyTest extends UnitTestCase {
   }
 
   /**
+   * LMS participation never awards the public Forum achievement.
+   */
+  public function testLmsTopicDoesNotEarnPublicForumParticipation(): void {
+    self::assertFalse(
+      (new ForumParticipationPolicy())->isEligible(
+        $this->comment(),
+        $this->topic('aculta_lms_topic'),
+      ),
+    );
+  }
+
+  /**
    * Either historical author marker excludes a contemporaneous award. */
   public function testLegacyAuthorshipOnEitherEntityIsNotEligible(): void {
     $policy = new ForumParticipationPolicy();
