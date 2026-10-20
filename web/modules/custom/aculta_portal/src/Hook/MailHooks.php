@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\aculta_portal\Email\AccountMailRouter;
 use Drupal\aculta_portal\Mail\TestMailRedirect;
 use Drupal\Core\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -19,6 +20,7 @@ final class MailHooks {
   public function __construct(
     #[Autowire(service: 'settings')]
     private readonly Settings $settings,
+    private readonly AccountMailRouter $accountMail,
   ) {}
 
   /**
@@ -27,6 +29,14 @@ final class MailHooks {
   #[Hook('mail_alter')]
   public function redirecionarTeste(array &$message): void {
     (new TestMailRedirect($this->settings))->aplicar($message);
+  }
+
+  /**
+   * Textos de conta do Core (reset e cadastro) apresentados pela camada do aculta_mailer.
+   */
+  #[Hook('mail_alter')]
+  public function textosDeConta(array &$message): void {
+    $this->accountMail->apply($message);
   }
 
 }

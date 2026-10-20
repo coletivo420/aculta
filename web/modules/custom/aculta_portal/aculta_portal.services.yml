@@ -65,6 +65,24 @@ services:
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountPasswordResetMailType:
+    class: Drupal\aculta_portal\Email\AccountPasswordResetMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountRegisterMailType:
+    class: Drupal\aculta_portal\Email\AccountRegisterMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountRegisterAdminMailType:
+    class: Drupal\aculta_portal\Email\AccountRegisterAdminMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_portal\Email\AccountMailRouter:
+    class: Drupal\aculta_portal\Email\AccountMailRouter
+    arguments: ['@Drupal\aculta_mailer\Type\MailTypeRegistry', '@Drupal\aculta_mailer\Template\MailTemplateRenderer', '@Drupal\user\OneTimeAuthentication', '@config.factory', '@Drupal\aculta_portal\Domain\DomainPurposeManager']
   aculta_portal.email_confirmation_requester:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequester
     arguments: ['@email_confirmer', '@entity_type.manager', '@flood', '@lock.persistent', '@logger.channel.mail', '@aculta_mailer.mailer', '@config.factory', '@uuid', '@url_generator']

@@ -1,3 +1,12 @@
+## 0.4.0-dev.231 — textos de conta aprovados na camada do aculta_mailer — 2026-10-20
+
+- Textos aprovados pelo responsável (2026-10-20) para reset de senha, cadastro concluído, conta criada pelo administrador e confirmação de novo e-mail. Os três primeiros são tipos novos (`account_password_reset`, `account_register`, `account_register_admin`); o de confirmação (`email_confirmation_request`) passa a ter o texto aprovado.
+- `AccountMailRouter` + `hook_mail_alter` (MailHooks): as mensagens do módulo `user` com essas três chaves trocam assunto e corpo pelo tipo da camada. O link de uso único vem do `OneTimeAuthentication`; a entrada vai para o domínio de Conta (`user.login`).
+- Sem links de uso único no registro (o plugin de envio já apaga o conteúdo de chaves de uso único, como antes).
+- Decisões aplicadas: prazo do link de 24 h; login por usuário e e-mail; registro de confirmação com 7 dias (mantido).
+- Evidência: renderização conferida com a conta de teste (uid 5) sem envio; Unit 2/2 (marcadores dos tipos e mapeamento das chaves do Core); a troca no envio foi conferida chamando o roteador com a conta de teste, sem envio; suíte do Portal 263 testes OK com banco de teste.
+- Ativo no Runtime de teste a partir desta versão; em produção, só com o deploy.
+
 ## 0.4.0-dev.230 — preparar CSP Report-Only e ciclo Alpha — 2026-10-20
 
 - Adicionadas dependências Composer oficiais `drupal/csp` e `drupal/reporting` para integrar a política CSP Report-Only do leitor PDF e coletar violações em Alpha; enforcement permanece desligado.

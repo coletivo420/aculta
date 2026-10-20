@@ -1,7 +1,6 @@
 # Textos dos e-mails de conta: rascunho para aprovação
 
-**Status: rascunho. Nada disto foi publicado.** Aguarda aprovação do responsável. Após aprovado, cada texto vira um modelo
-da camada (`aculta_mailer_template`, F3) ou uma configuração de `user.mail` / `email_confirmer.settings`, conforme o tipo.
+**Status: aprovado em 2026-10-20 e implementado no aculta_portal 0.4.0-dev.231** (tipos da camada, sem configuração de `user.mail`). Decisões: prazo de 24 h; login por usuário e e-mail; registro de confirmação com 7 dias (mantido); cancelamento e bloqueio fora desta rodada.
 
 Regras que os textos seguem: prazo de **24 horas** nos links de uso único (`docs/portal/LINKS-DE-USO-UNICO.md`); nenhuma
 senha é enviada por e-mail; cada link serve uma vez.
