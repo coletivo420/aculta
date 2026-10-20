@@ -26,13 +26,18 @@ final class ForumAvisoHooks {
   }
 
   /**
-   * Implements hook_comment_update(). Comentário aprovado depois da criação (moderação) conta na aprovação.
+   * Implements hook_comment_update().
    *
-   * A deduplicação por identificador de comentário impede contagem dupla se a atualização se repetir.
+   * Comentário aprovado depois da criação conta na aprovação.
+   *
+   * A deduplicação por identificador impede contagem dupla se a atualização
+   * se repetir.
    */
   #[Hook('comment_update')]
   public function commentUpdate(CommentInterface $comment): void {
-    if ($comment->isPublished() && $comment->original !== NULL && !$comment->original->isPublished()) {
+    $original = $comment->getOriginal();
+    if ($comment->isPublished() && $original !== NULL
+      && !$original->isPublished()) {
       $this->avisos->registrarResposta($comment);
     }
   }
