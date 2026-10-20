@@ -25,6 +25,32 @@
 
 ## dev.60 — descoberta visual no X11
 
+### Complemento visual mobile e modo escuro — 2026-10-20
+
+- Firefox ESR no X11 Responsive Design Mode confirmou viewport CSS real de
+  390 × 670 px. Raiz, `/discussoes/novas`, `/discussoes/sem-resposta` e
+  `/discussoes/mais-comentadas` retornaram HTTP 200; `document.documentElement`
+  e `body` mediram 390 px de largura em todas. Um tópico temporário apareceu
+  nas listas esperadas. O filtro e as tabs quebraram em linhas; título, autor e
+  categoria permaneceram legíveis sem overflow horizontal.
+- `data-bs-theme="dark"` foi aplicado somente ao DOM local do teste: fundo
+  `rgb(23, 21, 19)`, texto `rgb(244, 239, 232)`, largura 390 px. Nenhuma
+  preferência foi salva na conta nem no Runtime.
+- Comparação no mesmo viewport com Ubuntu Discourse `Support and Help`
+  (`/c/support-and-help/306`): header compacto, navegação por menu, chips de
+  categoria em múltiplas linhas e contagem na linha do tópico. ACULTA mantém o
+  header institucional, filtro select, tabs em duas linhas e card com autoria e
+  categoria. Inspeção visual não indicou corte ou overflow; diferenças de
+  hierarquia e densidade ficam para refinamento posterior. O diálogo de cookies
+  foi fechado no DOM local da referência sem registrar consentimento.
+- Fixture exata NID 418/UUID `7438e2b4-9fa5-4b65-a532-7588a08a5456` e alias
+  removidos via Entity API após conferir proprietário, bundle, categoria e
+  purpose. Estado final: 0 tópicos, 0 Comments compartilhados, 24 History e
+  duas flaggings preexistentes. Capturas privadas mode 0600 em
+  `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`.
+- Teclado, leitor de tela e comparação integral das páginas internas do
+  Discourse continuam pendentes. RUNTIME STATUS: PARTIAL.
+
 - Firefox ESR isolado, visitante anônimo, X11 `DISPLAY=:0`, Runtime Drupal
   11.4.10. As rotas `/discussoes/novas`, `/discussoes/sem-resposta` e
   `/discussoes/mais-comentadas` responderam HTTP 200.

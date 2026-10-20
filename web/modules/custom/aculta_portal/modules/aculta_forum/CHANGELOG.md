@@ -15,8 +15,21 @@
   UUID, título e vínculos; aliases e History específicos também foram limpos.
   Cache rebuild PASS; estado final: 0 tópicos, 0 Comments, 24 History globais
   (baseline) e 2 flaggings de avisos de site preservadas. As três rotas seguem
-  HTTP 200 com lista vazia. A comparação visual completa com Discourse, tema
-  escuro, teclado/leitor de tela e viewport CSS 390 px permanecem pendentes.
+  HTTP 200 com lista vazia.
+- Complemento visual em 2026-10-20: Firefox ESR no X11 Responsive Design Mode
+  confirmou viewport real 390 × 670 px nas quatro rotas (raiz, novas, sem
+  resposta e mais comentadas), todas HTTP 200, com `documentWidth` e
+  `bodyWidth` de 390 px. A raiz e as três listas mostraram o tópico de fixture.
+  Modo escuro foi aplicado somente no DOM local; tokens resultaram em fundo
+  carvão e texto creme, sem salvar preferência Runtime. Comparação da categoria
+  Support and Help do Ubuntu Discourse a 390 px observou header compacto,
+  filtros que quebram em linhas e contagem ao lado do tópico; ACULTA mantém sua
+  identidade, dobra tabs e conserva cartão legível sem overflow. O diálogo de
+  cookies externo foi fechado somente no DOM local, sem aceitar consentimento.
+  Fixture NID 418 e alias removidos; estado final 0 tópicos/Comments, 24 History
+  e duas flaggings existentes preservadas. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-mobile-20261020/`. Comparação
+  completa e testes de teclado/leitor de tela seguem pendentes.
   RUNTIME STATUS: PARTIAL.
 
 ## `0.1.0-dev.59` — homologação isolada da leitura em lote — 2026-10-20
@@ -1023,7 +1036,8 @@
   de conferir que a conta autenticada corresponde à conta capturada na
   confirmação. Node access e History por usuário continuam obrigatórios.
 - Cancelamento e retorno do formulário usam a raiz pública absoluta do purpose
-  Fórum; o redirect `/discussoes` gerado anteriormente respondeu 404 no Runtime.
+  Fórum. O path `/discussoes` é a rota interna que serve a raiz pelo path
+  processor; acesso direto a ele responde 404 conforme a política do Portal.
 - Motivo: rotas Core `_admin_route`, incluindo `/batch`, são centralizadas em
   `main`; tentar forçar o endpoint progressivo ao domínio do Fórum é revertido
   pela política de domínio. O callback anterior falhava fechado no purpose
