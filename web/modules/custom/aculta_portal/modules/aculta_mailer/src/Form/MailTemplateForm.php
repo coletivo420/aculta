@@ -11,6 +11,7 @@ use Drupal\aculta_mailer\Type\MailTypeRegistry;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -109,6 +110,14 @@ final class MailTemplateForm extends EntityForm {
       '#rows' => $rows,
       '#empty' => $this->t('Este tipo não tem variáveis.'),
     ];
+
+    if (!$template->isNew()) {
+      $form['test'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Enviar e-mail de teste'),
+        '#url' => Url::fromRoute('aculta_mailer.template_test', ['aculta_mailer_template' => $template->id()]),
+      ];
+    }
 
     if ($type !== NULL) {
       $preview = $this->renderer->preview($type, (string) ($template->getSubject() ?: $type->defaultSubject()), (string) ($template->getBody() ?: $type->defaultBody()));

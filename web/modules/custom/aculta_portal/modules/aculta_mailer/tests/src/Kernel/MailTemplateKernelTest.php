@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 use Drupal\aculta_mailer\Entity\MailBrand;
 use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
+use Drupal\aculta_mailer\Form\MailTemplateTestForm;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
@@ -117,6 +118,40 @@ final class MailTemplateKernelTest extends KernelTestBase {
     $this->assertStringContainsString('Corpo Maria', $body);
     $this->assertStringNotContainsString('{{', $body);
     $this->assertStringEndsWith('Associação Cultural', trim($body));
+  }
+
+  /**
+   * O envio de teste recusa endereço inválido e, com endereço válido, envia pelo caminho real com valores de exemplo.
+   */
+  public function testTestSendUsesSamplesAndRejectsBadAddress(): void {
+    $template = MailTemplate::create([
+      'id' => 'aculta_mailer_test_message',
+      'label' => 'Modelo',
+      'status' => TRUE,
+      'subject' => 'Oi {{ name }}',
+      'body' => 'Link {{ link }}',
+    ]);
+    $template->save();
+
+    $form = MailTemplateTestForm::create($this->container);
+    $form->setTemplate($template);
+    $bad = new FormState();
+    $built = $form->buildForm([], $bad);
+    $bad->setValue('recipient', 'nao-e-email');
+    $form->validateForm($built, $bad);
+    $this->assertArrayHasKey('recipient', $bad->getErrors());
+
+    $good = new FormState();
+    $built = $form->buildForm([], $good);
+    $good->setValue('recipient', 'destino@example.invalid');
+    $form->validateForm($built, $good);
+    $this->assertSame([], $good->getErrors());
+    $form->submitForm($built, $good);
+
+    $mail = $this->lastMail();
+    $this->assertSame('destino@example.invalid', $mail['to']);
+    $this->assertSame('Oi Maria', $mail['subject']);
+    $this->assertStringContainsString('https://example.invalid/x', (string) $mail['body']);
   }
 
   /**

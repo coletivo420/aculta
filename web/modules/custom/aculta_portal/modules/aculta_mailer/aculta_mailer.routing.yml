@@ -13,3 +13,15 @@ aculta_mailer.failures:
     _title: 'Relatório de falhas de envio'
   requirements:
     _permission: 'administer aculta_mailer'
+
+aculta_mailer.template_test:
+  path: '/painel-administrativo/configuracoes/aculta/envios-de-email/modelos/{aculta_mailer_template}/teste'
+  defaults:
+    _form: '\Drupal\aculta_mailer\Form\MailTemplateTestForm'
+    _title: 'Enviar teste de modelo'
+  requirements:
+    _permission: 'administer aculta_mailer'
+  options:
+    parameters:
+      aculta_mailer_template:
+        type: entity:aculta_mailer_template
