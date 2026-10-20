@@ -33,9 +33,10 @@
   Core, respeitando `Comment::preSave()` para evitar inversão.
 - Revisão dos hooks laterais: `aculta_game` Unit `ForumParticipationPolicyTest`
   (8/35) confirma que update de comentário já publicado não repete o gatilho de
-  conquista; `aculta_messenger` `ForumNoticeAccessPolicyTest` (3/29) passou para
-  os contratos de acesso. A fila/entrega de aviso durante um movimento segue
-  sem teste integrado.
+  conquista. Messenger `ForumAvisoHooksTest` (2/6) confirma que mover comentário
+  publicado não gera novo aviso e que aprovação ainda registra; entrega e fila
+  real permanecem sem teste integrado. Runtime `toca`: cache rebuild e descoberta
+  do serviço OOP PASS; nenhuma ação ou aviso foi submetido.
 - Kernel também instala Flag 5.1.1 e Search API 1.41.0: flagging de usuário em
   Comment permanece ligada ao mesmo CID após a movimentação; um Comment indexado
   é marcado para reindexação após o update, mantendo o mesmo item ID. O índice

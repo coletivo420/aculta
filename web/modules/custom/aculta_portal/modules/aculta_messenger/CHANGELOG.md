@@ -2,6 +2,20 @@
 
 Mudanças relevantes do ACULTA Messenger.
 
+## 0.1.1-dev.55 — evitar avisos duplicados ao mover comentários — 2026-10-19
+
+- `ForumAvisoHooks::commentUpdate()` usa `CommentInterface::getOriginal()` no
+  lugar da propriedade mágica `$comment->original`, depreciada no Drupal 11.2 e
+  removida no Drupal 12.
+- `ForumAvisoHooksTest` confirma que editar/mover um comentário já publicado
+  não registra aviso duplicado e que aprovar um comentário pendente ainda entra
+  no fluxo de registro. Messenger Unit: 43 testes / 151 assertions PASS, com
+  2 testes / 6 assertions específicos do hook.
+- Runtime `toca`: cache rebuild PASS e service container encontra
+  `ForumAvisoHooks`. `aculta_forum.settings` permanece ausente; o mover continua
+  fechado. Nenhum conteúdo/aviso foi criado e nenhum e-mail foi enviado.
+- RUNTIME STATUS: PARTIAL.
+
 ## 0.1.1-dev.54 — testes de política de acesso dos avisos — 2026-10-19
 
 - `ForumNoticeAccessPolicyTest` exercita a checagem com acesso permitido no
