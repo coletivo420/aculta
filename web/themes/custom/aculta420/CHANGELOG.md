@@ -1,3 +1,8 @@
+## 0.6.0-dev.126 — Micropágina pública integrada ao SDC — 2026-10-20
+
+- Template `aculta-links-page.html.twig` reaproveita o SDC `social-links-page` para renderizar páginas públicas preparadas pelo módulo; o tema mantém toda a apresentação.
+- Revisão visual responsiva/acessível ainda pendente; estado Dev.
+
 ## 0.6.0-dev.125 — miniatura PDF responsiva — 2026-10-20
 
 - A miniatura gerada pelo pipeline `aculta_image` respeita a largura do viewer em telas estreitas; tamanho intrínseco de 480 px não causa overflow horizontal.

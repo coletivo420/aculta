@@ -102,7 +102,9 @@ final class Link extends EditorialContentEntityBase implements EntityOwnerInterf
     $fields['uri'] = BaseFieldDefinition::create('link')
       ->setLabel(new TranslatableMarkup('Destino'))
       ->setRequired(TRUE)
-      ->setSetting('link_type', LinkItemInterface::LINK_GENERIC)
+      ->setSetting('link_type', LinkItemInterface::LINK_GENERIC);
+    $fields['uri']->getItemDefinition()->addConstraint('AcultaLinkDestination');
+    $fields['uri']
       ->setSetting('title', DRUPAL_DISABLED)
       ->setRevisionable(TRUE)
       ->setDisplayOptions('form', [

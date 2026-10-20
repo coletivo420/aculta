@@ -5,3 +5,7 @@ services:
   aculta_links.dashboard_controller:
     class: Drupal\aculta_links\Controller\LinksDashboardController
     arguments: ['@entity_type.manager', '@current_user']
+
+  aculta_links.public_page_controller:
+    class: Drupal\aculta_links\Controller\LinkPagePublicController
+    arguments: ['@entity_type.manager', '@current_user']

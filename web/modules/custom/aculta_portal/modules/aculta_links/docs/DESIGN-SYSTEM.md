@@ -14,3 +14,6 @@ pode expor campos privados do `aculta_user`.
 Antes de mudança visual, ler `docs/portal/COMPONENT-DESIGN-SYSTEM.md`,
 `web/themes/custom/aculta420/docs/design-system.md` e regras de versão do tema;
 validar a fronteira Portal–tema. Assets externos exigem licença individual.
+
+
+A rota pública inicial usa o SDC existente `social-links-page` pelo template de micropágina do ACULTA420. Essa reutilização preserva a fronteira neutra; revisão responsiva, claro/escuro, teclado e leitor de tela segue pendente antes de RC.

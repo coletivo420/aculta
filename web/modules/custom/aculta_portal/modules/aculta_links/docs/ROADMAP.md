@@ -29,8 +29,7 @@ O dashboard e CRUD básico existem. Em andamento: editor Form API de composiçã
 
 ## 0.4.0 — interface pública e presets
 
-Evoluir SDC, presets governados, SEO, publicação, acessibilidade, modo claro/
-escuro e revisão de assets/licenças.
+Rota pública inicial e integração ao SDC existente implementadas em 0.4.0-dev.1; faltam preview responsivo no editor, presets governados, SEO, controles de aparência, revisão visual/acessível e migração preservadora da landing antiga antes de RC.
 
 ## 0.5.0 — métricas e ferramentas
 

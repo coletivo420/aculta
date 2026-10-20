@@ -41,6 +41,13 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler {
       return AccessResult::forbidden()->addCacheableDependency($entity);
     }
 
+    if ($operation === 'view' && $entity->isPublished() && $page->isPublished() && $link->isPublished()) {
+      return AccessResult::allowed()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($page)
+        ->addCacheableDependency($link);
+    }
+
     $can_manage = $account->hasPermission('manage own aculta links');
     $owns_item = (string) $entity->getOwnerId() === (string) $account->id();
     $owns_page = (string) $page->getOwnerId() === (string) $account->id();

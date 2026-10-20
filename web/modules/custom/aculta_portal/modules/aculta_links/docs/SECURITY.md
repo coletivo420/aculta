@@ -47,3 +47,8 @@ A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de prop
 
 
 Editor de composição: a rota e a submissão revalidam access da página; a submissão também confirma que cada item pertence à página editada antes de salvar nova revisão. Query declara `accessCheck(TRUE)`.
+
+
+## Publicação 0.4.0-dev.1
+
+Slug tem regex ASCII lowercase e `UniqueField`. A página pública exige status publicado e rota marcada com `_aculta_domain_purpose: links`; o Domain subscriber do Portal aplica 404 em purpose incorreto. A consulta usa `accessCheck(TRUE)` e ainda exige entidade publicada. O handler de item só permite view público quando item, página e destino estão publicados. O campo Link tem constraint própria: HTTPS sem credenciais (443 ou porta omitida), URI `internal:/` sem authority/path network-relative, ou `entity:` limitado a entity type/id simples. Links externos abrem com `noopener noreferrer`. Cache inclui contexto de host, idioma, usuário/permissões e tags de listas/entidades/access.

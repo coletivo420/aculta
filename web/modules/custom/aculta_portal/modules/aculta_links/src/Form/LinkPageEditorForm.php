@@ -75,7 +75,7 @@ final class LinkPageEditorForm extends FormBase {
       '#tabledrag' => [[
         'action' => 'order',
         'relationship' => 'sibling',
-        'group' => 'aculta-links-item-weight',
+        'group' => 'role-weight',
       ],
       ],
     ];
@@ -96,7 +96,7 @@ final class LinkPageEditorForm extends FormBase {
           '#title_display' => 'invisible',
           '#default_value' => (int) $item->get('weight')->value,
           '#delta' => max(10, count($items)),
-          '#attributes' => ['class' => ['aculta-links-item-weight']],
+          '#attributes' => ['class' => ['role-weight']],
         ],
         'status' => [
           '#type' => 'checkbox',

@@ -60,3 +60,12 @@
 - O salvamento revalida a micropágina e cada item, exige correspondência da referência `page` e cria revisão por item alterado. Campo de peso continua disponível como fallback sem JavaScript.
 - Rota adicionada ao sitemap como declarada e inativa enquanto o módulo estiver desabilitado.
 - Kernel: 1 teste/29 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS PASS em PHP 8.4.26. `validate-module-theme-map.php` PASS (162 checks); `validate-public-slugs.php` FAIL por baseline obsoleta em `aculta_user`. PHP 8.5 e Runtime DEFERRED.
+
+
+## 0.4.0-dev.1 — publicação de micropáginas — 2026-10-20
+
+- Rota pública `/pagina/{slug}` limitada ao purpose `links`, com página, item e destino publicados.
+- Slugs exigem palavras ASCII minúsculas separadas por hífen e usam `UniqueField` do Core; destinos aceitam URIs Drupal `internal:/` e `entity:` simples, ou HTTPS sem credenciais na porta padrão.
+- Renderização pública inclui tags das listas e entidades, contextos de host/idioma/usuário/permissões e atributos seguros nos links externos.
+- ACULTA420 sobrepõe o template neutro e reutiliza o SDC `social-links-page`; revisão visual permanece pendente.
+- Kernel: 1 teste/44 asserções PASS; Unit: 1 teste/7 asserções PASS com 2 depreciações PHPUnit; PHPCS PASS em PHP 8.4.26. Mapa módulo/tema (162), fronteira Portal–tema (1696), design foundations (2106), foundation ACULTA420 (366), environment addresses (3011) e public slugs (386) PASS. Drupal 11 gate PASS antes das alterações concorrentes do Portal; a execução atual fica bloqueada por alteração Portal não commitada de outra frente. Runtime funcional/visual e PHP 8.5 DEFERRED.

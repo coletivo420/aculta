@@ -26,3 +26,9 @@ Para entidades: Unit/Kernel/Functional em MariaDB dedicado conforme
 URLs inválidas, isolamento Domain, access, cache e publicação. Runtime é DEFERRED
 até validação autorizada no servidor de testes. Nenhum resultado de Runtime é
 reivindicado nesta fase.
+
+## Interface pública e segurança
+
+- Kernel valida unicidade/gramática do slug, constraint do destino, access publicado e path/purpose declarado.
+- Functional/browser valida `/pagina/{slug}` em links e 404 em outros purposes; inspeciona SDC em tamanhos móveis/desktop, claro/escuro, teclado, contraste e sem overflow.
+- Cache precisa invalidar ao editar/despublicar página, item ou link e ao mudar alias de Domain.

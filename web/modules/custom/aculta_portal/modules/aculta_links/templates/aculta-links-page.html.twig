@@ -1,0 +1,11 @@
+<main aria-labelledby="aculta-links-page-title">
+  <h1 id="aculta-links-page-title">{{ title }}</h1>
+  {% if description %}
+    <p>{{ description }}</p>
+  {% endif %}
+  {% if has_links %}
+    {{ links }}
+  {% else %}
+    <p>{{ 'Esta página ainda não tem links publicados.'|t }}</p>
+  {% endif %}
+</main>

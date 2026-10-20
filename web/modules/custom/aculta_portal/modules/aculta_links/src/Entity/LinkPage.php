@@ -102,6 +102,13 @@ final class LinkPage extends EditorialContentEntityBase implements EntityOwnerIn
       ->setSetting('max_length', 160)
       ->setRequired(TRUE)
       ->setRevisionable(TRUE)
+      ->addConstraint('UniqueField')
+      ->addPropertyConstraints('value', [
+        'Regex' => [
+          'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D',
+          'message' => new TranslatableMarkup('Use letras minúsculas sem acentos, números e hífens entre palavras.'),
+        ],
+      ])
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => 1,

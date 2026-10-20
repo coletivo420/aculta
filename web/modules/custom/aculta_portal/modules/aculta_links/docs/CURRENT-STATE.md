@@ -83,3 +83,8 @@ com dados/editoria antes de qualquer migração.
 ## Painel administrativo 0.2.0-dev.2
 
 `aculta_links` declara painel próprio e formulários Core de criação, edição, exclusão e histórico de revisões para páginas, destinos e itens. O painel filtra por proprietário, pagina resultados e revalida acesso de edição de cada entidade. As rotas ficam em `main` e não ficam ativas até habilitação do módulo; a landing pública e sua configuração continuam no Portal.
+
+
+## Micropáginas públicas 0.4.0-dev.1
+
+`/pagina/{slug}` está declarada para o purpose `links`, com status publicado e acesso revalidado em página, item e destino. Atributos e lista de links são preparados pelo módulo; ACULTA420 apresenta o SDC existente. Ainda não há integração com perfil público/avatares, preview de editor, presets de tema, SEO nem migração da landing `/`. A rota depende do módulo habilitado.

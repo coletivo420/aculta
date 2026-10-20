@@ -36,7 +36,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.125', 'Theme metadata marks the current version 0.6.0-dev.125.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.126', 'Theme metadata marks the current version 0.6.0-dev.126.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -318,8 +318,9 @@ $expectedTemplates = [
   // Wiki article and teaser presenters intentionally omit submitted-byline metadata.
   'node--wiki-entry--full.html.twig',
   'node--wiki-entry--teaser.html.twig',
-  // Página pública LINKS (0.6.0-dev.11): presenter neutro e configuração do Portal.
+  // Página pública LINKS e micropáginas usam presenters neutros e SDCs do tema.
   'node--social-links.html.twig',
+  'aculta-links-page.html.twig',
   // A View Growroom fornece os campos renderizados ao tema.
   'views-view-fields--aculta-forum-public-topics.html.twig',
   // Categories View fields are reassembled through the Forum category SDC.

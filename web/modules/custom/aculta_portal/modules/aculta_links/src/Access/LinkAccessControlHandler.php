@@ -7,6 +7,7 @@ namespace Drupal\aculta_links\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -19,6 +20,11 @@ class LinkAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
+    if ($operation === 'view' && $entity instanceof EntityPublishedInterface && $entity->isPublished()) {
+      return AccessResult::allowed()
+        ->addCacheableDependency($entity);
+    }
+
     if ($account->hasPermission('administer aculta links')) {
       return AccessResult::allowed()
         ->cachePerPermissions()
