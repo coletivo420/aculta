@@ -234,3 +234,8 @@ Portal–tema for atualizado.
   para anônimo, usuário confirmado, moderador e membros de Group.
 - ACULTA420 entrega a sensação visual escolhida sem assumir consulta de
   entidades, permissões, pesquisa ou regra de negócio.
+
+
+### Progresso de leitura implementado em dev.63
+
+O campo Comment compartilhado ganhou navegação por página: início/fim, anterior/próxima e slider que acompanha a mensagem visível. O comportamento usa somente Comments renderizados pelo Core; ACULTA420 apresenta os controles. Firefox/X11 validou a experiência em publicação nos modos claro/escuro e em 1250/500 px usando DOM de teste não persistido. A timeline vertical persistente do Discourse não foi reproduzida; viewport 390 px e avaliação com tecnologias assistivas seguem como refinamentos de homologação.

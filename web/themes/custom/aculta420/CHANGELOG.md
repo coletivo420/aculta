@@ -1,3 +1,16 @@
+## 0.6.0-dev.110 — navegação visual de progresso em discussões — 2026-10-20
+
+- O Portal anexa controles funcionais ao campo de discussão compartilhado; o
+  tema apresenta a barra de progresso com hierarquia compacta, foco visível,
+  alvos de toque e scroll offset para as mensagens.
+- Layout adapta os seis controles a telas estreitas e mantém status acessível
+  para leitor de tela. Tema escuro herda os tokens semânticos existentes.
+- Firefox ESR/X11 validou visualmente barra e quatro controles em 1250/500 px;
+  largura total 500 px sem overflow e avanço/clique de teclado foram verificados
+  com DOM sintético da sessão, sem conteúdo salvo. Claro/escuro inspecionados;
+  gates SDC 535, Design Foundations 2097, Foundation 365, Shell 11, mapa e
+  fronteira PASS. Viewport 390 e assistivas pendentes. RUNTIME STATUS: PARTIAL.
+
 ## 0.6.0-dev.109 — reduzir densidade vertical das listas do Fórum — 2026-10-20
 
 - Depois de comparar a lista X11 do Growroom com a categoria ativa do Ubuntu

@@ -1,3 +1,28 @@
+## `0.1.0-dev.63` — navegação de progresso em discussões — 2026-10-20
+
+- `DiscussionProgressHooks` anexa a biblioteca somente à renderização `full` de
+  Nodes com o campo acessível `field_aculta_discussion`; os controles operam
+  apenas sobre os Comments que já chegaram renderizados à página.
+- A biblioteca permite ir ao início/fim, avançar/voltar e selecionar a posição
+  com teclado. A posição acompanha a leitura por IntersectionObserver; sem
+  JavaScript, os Comments continuam em fluxo linear e paginado pelo Core.
+- A implementação é comum ao Growroom, publicações e futuros providers LMS/Wiki;
+  não consulta entidades, não muda permissões nem expõe conteúdo fora da página.
+- Pesquisa da API oficial Drupal 11: `hook_entity_view_alter` altera a render
+  array consolidada; a biblioteca é anexada ao campo para respeitar o ciclo de
+  render/cache. Fontes: API `hook_entity_view_alter` e `entity_crud`.
+- Forum Unit 82/497, teste de hook 3/13, PHPCS, syntax check JS e gates
+  Drupal11+ (975), fronteira (1419), mapa (152), atributos (280 tokens/96
+  atributos), SDC (535), Design Foundations (2097), Foundation (365) e Shell
+  (11) PASS. Runtime `toca`:
+  cache rebuild e publicação pública HTTP 200; marcador aplicado e biblioteca
+  agregado contém o behavior. Firefox ESR/X11 validou DOM sintético não
+  persistido em 1250/500 px, quatro controles, avanço e ArrowRight no slider
+  para mensagem 2/6 e ausência de overflow (document/body 500 px). Modo escuro
+  forçado somente no DOM da sessão exibiu tokens legíveis. Fórum manteve-se sem
+  fixtures. Claro/escuro e teclado do slider PASS; 390 px, Comments reais e
+  leitor de tela/AT seguem pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.62` — corrigir filas de moderação do Fórum — 2026-10-20
 
 - A consulta da fila pendente/rejeitada falhava fechada em todas as execuções:

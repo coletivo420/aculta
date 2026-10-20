@@ -7,6 +7,7 @@ DI explícita. Não criar service locator ou hook procedural migrável.
 
 | Responsabilidade prevista | Candidato/API | Estado |
 | --- | --- | --- |
+| Navegação progressiva na conversa renderizada | `DiscussionProgressHooks` (`entity_view_alter`) | dev.63 anexa biblioteca neutra somente à renderização full do campo compartilhado; controles limitam-se aos Comments renderizados na página. |
 | Selecionar contexto/provedor | `DiscussionContextResolver` + `DiscussionContextProviderInterface` | Implementado na dev.4; provider via tag `aculta_forum.discussion_context_provider`, duplicidade falha explicitamente. |
 | Identificar topic/thread | `DiscussionContextInterface` + `DiscussionContext` | Implementado para entidade hospedeira, ID estável, URL canônica, access e cacheability; sem storage duplicado. |
 | Consultar regras | `DiscussionAccessPolicy` ou delegação explícita a entity access/Group | Comparar APIs primeiro; `AccessResultInterface` e cacheability obrigatórios. |

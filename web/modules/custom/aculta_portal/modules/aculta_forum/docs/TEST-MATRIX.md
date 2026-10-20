@@ -1,5 +1,31 @@
 # Matriz de testes por fase
 
+## dev.63 — navegação de progresso compartilhada
+
+- `DiscussionProgressHooksTest`: verifica anexação do atributo e biblioteca
+  somente ao campo em renderização completa, preservando teaser, campo ausente,
+  campo explicitamente oculto e entidades que não são Nodes.
+- A biblioteca consulta apenas `article.js-comment[id]` dentro do campo já
+  renderizado; os controles são criados com DOM APIs e texto traduzível, sem
+  HTML de usuário. Sem biblioteca, a navegação linear permanece disponível.
+- Unit do hook 3/13 e suíte Forum 82/497 PASS; PHPCS e `node --check` PASS.
+  Drupal 11+ 975, fronteira 1419, mapa 152, atributos 280 tokens/96
+  atributos, SDC 535, Design Foundations 2097, Foundation 365 e Shell 11 PASS.
+- Runtime `toca`: Drush status confirmou Drupal 11.4.10/DB `aculta_runtime`;
+  cache rebuild PASS. A publicação pública retornou 200, recebeu o marcador e
+  o JS agregado contém o behavior.
+- Firefox ESR 153.4/X11, sessão anônima isolada: seis Comments sintéticos foram
+  inseridos somente no DOM, dentro do campo real da publicação. Quatro
+  controles apareceram; Avançar e ArrowRight no slider atualizaram para
+  “Mensagem 2 de 6 nesta página”. Claro e escuro foram inspecionados (modo
+  escuro ativado só no DOM); viewport 500 px mediu 500 px no documento/corpo,
+  sem overflow. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-progress-20261020/`.
+- Não foram criados ou salvos Nodes/Comments. Claro/escuro e teclado do slider
+  PASS nas larguras X11 1250/500; 390 px, Comments reais, navegação completa por
+  teclado e leitor de tela/AT ficam pendentes.
+  Runtime global PARTIAL.
+
 ## dev.62 — filas pendente/rejeitada do Fórum
 
 - A consulta da View usava `getTableInfo('node_field_data')`, mas o Core 11.4

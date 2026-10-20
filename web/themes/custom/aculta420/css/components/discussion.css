@@ -22,6 +22,59 @@
 .aculta-discussion-comment__body { min-width: 0; overflow-wrap: anywhere; }
 .aculta-discussion-comment__footer { flex-wrap: wrap; color: var(--aculta-text-secondary); font-size: 0.875rem; }
 
+/* Os controles neutros são emitidos pelo Portal; o tema mantém a apresentação. */
+[data-aculta-discussion-progress] {
+  position: sticky;
+  inset-block-start: 0.5rem;
+  z-index: 2;
+  display: grid;
+  inline-size: calc(100% - 1.5rem);
+  max-inline-size: 58rem;
+  grid-template-columns: auto auto minmax(4rem, 1fr) auto auto auto;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block: 0.75rem;
+  margin-inline: auto;
+  padding: 0.625rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius-lg);
+  background: var(--aculta-surface-raised);
+  box-shadow: var(--aculta-shadow-raised);
+}
+[data-aculta-discussion-progress] button {
+  min-block-size: 2.5rem;
+  padding-inline: 0.65rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-page);
+  color: var(--aculta-text-primary);
+}
+[data-aculta-discussion-progress] button:focus-visible,
+[data-aculta-discussion-progress] input:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+[data-aculta-discussion-progress] button:disabled { opacity: 0.55; }
+[data-aculta-discussion-progress] input { inline-size: 100%; accent-color: var(--aculta-border-accent); }
+[data-aculta-discussion-status] {
+  min-inline-size: 6.5rem;
+  color: var(--aculta-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.field--name-field-aculta-discussion article.js-comment { scroll-margin-block-start: 5rem; }
+
+@media (max-width: 575.98px) {
+  [data-aculta-discussion-progress] {
+    grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto;
+    gap: 0.25rem;
+    padding: 0.375rem;
+  }
+  [data-aculta-discussion-progress] button { min-block-size: 2.75rem; padding-inline: 0.4rem; }
+  [data-aculta-discussion-status] { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
 /* Formulário Core para responder nas entidades com discussão compartilhada. */
 .field--name-field-aculta-discussion .comment-comment-form {
   display: grid;

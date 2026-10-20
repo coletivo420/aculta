@@ -252,6 +252,15 @@ corpo, data e identidade sem alterações. Firefox/X11 verificou a listagem em
 1024 e 500 px e o detalhe em 500 px; capturas privadas e limites restantes
 estão no changelog `0.6.0-dev.109`.
 
+O Portal pode anexar ao campo compartilhado a navegação de progresso das
+mensagens. O tema apresenta os controles neutros `[data-aculta-discussion-progress]`
+em `discussion.css`; não consulta dados nem decide quais comentários são
+visíveis. Em telas estreitas, o status textual fica disponível a leitores de
+tela e os botões mantêm alvos confortáveis. O Firefox/X11 verificou claro e
+escuro em 1250/500 px e teclado do slider com DOM sintético não persistido;
+leitor de tela e viewport 390 px seguem pendentes. Evidências no changelog
+`0.6.0-dev.110`.
+
 ## Patterns
 
 Patterns não são engines de dados.

@@ -1,0 +1,6 @@
+discussion-progress:
+  js:
+    js/discussion-progress.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

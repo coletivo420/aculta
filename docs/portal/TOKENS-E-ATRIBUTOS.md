@@ -51,6 +51,14 @@
 | `data-aculta-drawer-count` | exato | sim | 2 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
+| `data-aculta-discussion-first` | exato | sim | 1 |
+| `data-aculta-discussion-last` | exato | sim | 1 |
+| `data-aculta-discussion-next` | exato | sim | 1 |
+| `data-aculta-discussion-previous` | exato | sim | 1 |
+| `data-aculta-discussion-progress` | exato | não | 2 |
+| `data-aculta-discussion-range` | exato | sim | 1 |
+| `data-aculta-discussion-status` | exato | sim | 1 |
+| `data-aculta-discussion-thread` | exato | sim | 1 |
 | `data-aculta-group-max` | exato | sim | 1 |
 | `data-aculta-json-form` | exato | sim | 2 |
 | `data-aculta-legenda` | exato | sim | 2 |
