@@ -136,7 +136,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 3. **Formatos:** os formatos atuais **não serão modificados**. Os quatro perfis são formatos novos, com permissão mínima.
 4. **Recursos:** o responsável escolheu **Media Embed** e **Auto Image**.
    - *Media Embed:* habilitado (submódulo com toolbar `mediaEmbed` em `aculta_editorial`).
-   - *Auto Image:* **não habilitado**. O AGENTS.md proíbe importação de origem externa fora da ingestão do `aculta_image`, e o plugin importa de URL externa. Habilitar exige exceção formal registrada pelo responsável; a escolha foi aplicada como exceção pendente, não como habilitação.
+   - *Auto Image:* **não habilitado (padrão seguro aplicado em 2026-10-22, revogável)**. O AGENTS.md proíbe importação de origem externa fora da ingestão do `aculta_image`, e o plugin importa de URL externa. A escolha do responsável não constitui exceção formal. Habilitar exige registro formal de exceção; até lá o plugin permanece desabilitado, e o editor não importa imagem de URL externa.
    - *Fonte com paleta restrita:* não estava entre as escolhas; foi desabilitada no Runtime.
 
 ## 9. Fases propostas (planejamento, não executadas)
