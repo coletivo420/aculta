@@ -27,6 +27,11 @@
   renderer pronto para anexos do Fórum. A conversão transfere o documento para
   Drive e exige OAuth, política de dados, retenção e revisão LGPD; integração
   permanece fora do escopo sem aprovação explícita do fluxo de dados.
+- Avalia renderização Office local: Mammoth/SheetJS e renderizadores JS são
+  parciais; LibreOffice headless pode produzir PDF para o leitor existente se
+  for executado isoladamente; ONLYOFFICE/Collabora oferecem experiência mais
+  próxima de Docs por WOPI, com serviço e integração adicionais. Nenhuma
+  biblioteca foi adicionada nesta pesquisa.
 
 ## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
 

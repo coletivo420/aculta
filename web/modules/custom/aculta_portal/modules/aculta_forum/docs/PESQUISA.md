@@ -143,6 +143,46 @@ escopo OAuth e da política de retenção. Por ora, manter prévia local somente
 para formatos cobertos por renderer seguro e usar cartão com metadados/download
 nos demais.
 
+### Bibliotecas locais com experiência semelhante a Docs
+
+O PDF.js já embutido no `aculta_pdf_viewer` é um leitor PDF, não importa Office.
+Para exibição de Office, as opções se dividem entre conversores locais e uma
+suíte web separada:
+
+| Opção | Escopo e fidelidade | Custo operacional/risco |
+| --- | --- | --- |
+| Mammoth.js | DOCX → HTML semântico; ignora deliberadamente a maior parte do layout, então serve para leitura textual, não para fidelidade de página | JavaScript no navegador; a saída precisa ser sanitizada e documentos não confiáveis podem causar links `javascript:`, acesso a arquivos externos ou consumo excessivo |
+| SheetJS Community | Lê XLS/XLSX e pode montar tabelas HTML a partir de planilhas | Não é uma suíte que reproduz a planilha como o Excel; limite de estilos/conteúdo exige testes com arquivos reais e limites de células/tempo |
+| `docx-preview` / renderizadores JS de PPTX | Interpretam Office Open XML e montam HTML/CSS/canvas no navegador para formatos específicos | Suporte parcial e fidelidade variam por elementos; dependências, tamanho do pacote, parser e desempenho precisam ser avaliados. A biblioteca `pptx-browser` se declara sem dependências, mas não é renderer oficial do Microsoft Office |
+| LibreOffice headless → PDF.js | Converte os formatos que o LibreOffice importa para PDF; o leitor atual exibe o resultado, preservando melhor paginação que conversão semântica | Requer LibreOffice instalado no servidor/worker e conversão isolada de conteúdo não confiável, com limites de CPU, memória, tempo, páginas, rede e diretório temporário |
+| ONLYOFFICE Docs Community ou Collabora Online | Suíte web separada com visualização e edição de texto, planilhas e apresentações, integrada por API/WOPI; é a opção mais próxima da experiência Google Docs | Serviço adicional auto-hospedado, integração WOPI no Portal, infraestrutura/monitoramento/atualização e revisão de licença. O documento continua armazenado no ACULTA, mas o servidor Office recebe o arquivo para renderizar |
+
+Mammoth declara que não busca fidelidade de layout e não sanitiza conteúdo; não
+injetar a saída diretamente em página Drupal. SheetJS oferece parsing e
+serialização de dados/tabelas HTML, o que não equivale à renderização completa de
+uma planilha. LibreOffice documenta conversão headless pela linha de comando.
+ONLYOFFICE e Collabora oferecem integração de cliente Office via WOPI; os
+exemplos dos fornecedores exigem que o servidor Office consiga chamar o host
+WOPI. Referências primárias: [Mammoth — conversão e segurança](https://github.com/mwilliamson/mammoth.js),
+[SheetJS — leitura em browser e tabela HTML](https://docs.sheetjs.com/docs/demos/net/network/),
+[`docx-preview` (Apache-2.0)](https://github.com/VolodymyrBaydalka/docxjs),
+[`pptx-browser`](https://github.com/bowespublishing/pptx-browser),
+[LibreOffice — conversão headless](https://help.libreoffice.org/latest/en-GB/text/shared/guide/start_parameters.html),
+[ONLYOFFICE — conceitos e auto-hospedagem](https://api.onlyoffice.com/docs/docs-api/get-started/basic-concepts),
+[ONLYOFFICE WOPI](https://api.onlyoffice.com/docs/docs-api/using-wopi/overview),
+[Collabora SDK/WOPI](https://sdk.collaboraonline.com/CO-SDK-manual.pdf).
+
+Recomendação técnica para o Fórum, sujeita à decisão do responsável: não
+embutir uma suíte Office em `aculta_pdf_viewer`, que deve continuar com domínio
+PDF. Compartilhar um contrato neutro de cartão/preview no Portal e adicionar
+uma estratégia Office local isolada no `aculta_forum` ou num submódulo de
+documentos; começar por conversão LibreOffice→PDF apenas se a infraestrutura de
+worker for aprovada e validada. Mammoth/SheetJS podem ser previews auxiliares,
+com escopo explícito e sanitização, enquanto DOC/XLS/PPT binários sem prévia
+segura permanecem com metadados/download. Uma suíte WOPI self-hosted oferece
+maior fidelidade e edição, mas exige decisão de infraestrutura/licença e não é
+uma biblioteca PHP/JS que se instala no Drupal.
+
 Referências upstream: [API do plugin CKEditor 5](https://www.drupal.org/docs/drupal-apis/ckeditor-5-api/overview),
 [Ajax Dialogs](https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes),
 [Core Media Embed 11.x e view modes](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Plugin%21Filter%21MediaEmbed.php/class/MediaEmbed/11.x),
