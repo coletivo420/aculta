@@ -90,6 +90,15 @@ Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor
 - **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`), estado atual por dia de solicitação (decidido em 2026-10-21). Ver `aculta_mailer/docs/ROADMAP.md`.
 - **LMS (pendente):** instantâneo por turma (`lms.students.by_status`), série diária (decidido em 2026-10-21). Ver `aculta_lms/docs/ROADMAP.md`.
 
+## Encerramento do módulo (decisão do responsável, 2026-10-21)
+
+O `aculta_statistics` está concluído no código (fases 0.1 a 0.9). O responsável encerrou o objetivo com estas pendências explícitas:
+
+1. **Validação real do GA4 e do Search Console (0.6):** depende de credenciais da conta de serviço (`GA4_PROPERTY_ID`, `GSC_SITE_URL`, `GA4_SERVICE_ACCOUNT_JSON`) gravadas no arquivo de segredos do servidor de testes. Depois, rodar `aculta-statistics:google-check`.
+2. **Teste automatizado por host (1.0):** precisa de um site de teste com URL base própria. Verificado manualmente no servidor de testes (ver `docs/AUDITORIA-1.0.md`).
+
+Demais itens (validação visual das áreas, auditoria de segurança e privacidade, medição de carga única) estão em `docs/AUDITORIA-1.0.md`.
+
 ## Centralização (decisão de 2026-10-21, ADR-0004)
 
 `aculta_statistics` é a única fonte e central de estatísticas agregadas. Ordem:
