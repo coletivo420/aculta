@@ -728,6 +728,27 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
   visualização de PDF pelo ACULTA Document Viewer é a última etapa dessa frente;
   não duplicar leitor ou conversão de PDF no Fórum.
 
+## ACULTA Studio (regra permanente)
+
+- O Studio (`aculta_studio`, `/studio` no domínio conta) é a ferramenta transversal de trabalho por abas. Agrega
+  ações dos donos e não é dono de conteúdo, permissões, discussões, galerias nem tabelas próprias equivalentes.
+- Cada aba é um plugin `#[StudioTab]` com três contratos: `isAvailable()` (o dono está habilitado), `access()` (a
+  permissão real do dono, nunca nome de papel) e `actions()` (ação com o acesso da rota do dono). Ação para outro
+  domínio usa `DomainPurposeManager::routeUrl()` e avalia o acesso com `runInPurpose()`.
+- Nenhuma rota ou ação do Studio contorna Form API, Entity Access, Content Moderation nem as permissões do dono.
+- Apresentação: o módulo marca as partes com tokens `data-portal-ui` (`studio-*`) e atributos `data-aculta-studio*`
+  de comportamento; classes e aparência ficam no ACULTA420. Navegação AJAX pelo shell da conta (seção por
+  `aculta_portal_account_sections_alter`), sem navegação paralela.
+- Melhoria contínua: toda frente que criar função com potencial de aba ou ação deve investigar o Studio antes de
+  concluir, propor ou implementar a aba dentro desse contrato, e atualizar a matriz em
+  `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`, o README do `aculta_studio` e o status do componente.
+- Guardrails: não adicionar aba sem permissão real e sem teste de acesso; não expor dados de terceiros; não copiar
+  tabela ou fluxo de permissão do dono; não ampliar o acesso de uma aba para contornar o dono; não mover ou apagar
+  dados por ação do Studio sem a operação do dono.
+- Antes de encerrar uma mudança no Studio: `php scripts/validate-module-theme-boundary.php`,
+  `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-project-status-index.php` e a suíte
+  `tests/browser/aculta-studio/visual.mjs`, com o resultado registrado.
+
 ## Wiki (regra permanente)
 
 - **Estado atual (2026-10-20, Runtime de teste):** a Wiki funciona como conteúdo no domínio `wiki420` (`wiki420.aculta.org` em produção), com o tipo de conteúdo `wiki_entry` e o fluxo editorial `wiki_editorial`. Havia 7 verbetes, 6 publicados. Não existe um módulo de Wiki habilitado: a implementação é de conteúdo e configuração.
