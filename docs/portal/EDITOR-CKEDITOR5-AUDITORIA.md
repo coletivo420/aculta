@@ -121,7 +121,8 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 | Formatos `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` | Implementados (formatos e editores criados, `filter_html` explícito) |
 | Templates editoriais (8) | Implementados em `config/install` |
 | Submódulos do Plugin Pack habilitados | 15 gratuitos (lista no README do submódulo) |
-| Auto Image, HTML Embed, WProofreader, Font, Emoji, Todo, Empty Block, Restricted Editing | Não habilitados |
+| Auto Image (exceção formal de 2026-10-22; inerte sem `ckeditor5_image`) | Habilitado |
+| HTML Embed, WProofreader, Font, Emoji, Todo, Empty Block, Restricted Editing | Não habilitados |
 | Premium Features | Instalado no código, não habilitado |
 | Testes Kernel | 6 testes, 93 asserções, OK (`aculta_simpletest`) |
 | Interação no navegador (editar, inserir modelo e tabela, salvar, reabrir, renderizar) | Validada em 2026-10-22 no servidor de testes (Chromium headless), no nó de teste 500, removido ao final |
@@ -136,7 +137,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 3. **Formatos:** os formatos atuais **não serão modificados**. Os quatro perfis são formatos novos, com permissão mínima.
 4. **Recursos:** o responsável escolheu **Media Embed** e **Auto Image**.
    - *Media Embed:* habilitado (submódulo com toolbar `mediaEmbed` em `aculta_editorial`).
-   - *Auto Image:* **não habilitado (padrão seguro aplicado em 2026-10-22, revogável)**. O AGENTS.md proíbe importação de origem externa fora da ingestão do `aculta_image`, e o plugin importa de URL externa. A escolha do responsável não constitui exceção formal. Habilitar exige registro formal de exceção; até lá o plugin permanece desabilitado, e o editor não importa imagem de URL externa.
+   - *Auto Image:* **exceção formal registrada pelo responsável em 2026-10-22; plugin habilitado no Runtime.** Ele só age com `ckeditor5_image`, que os formatos não têm. Adicionar o upload do Core violaria a regra do `aculta_image`, então não será feito sem nova decisão.
    - *Fonte com paleta restrita:* não estava entre as escolhas; foi desabilitada no Runtime.
 
 ## 9. Fases propostas (planejamento, não executadas)
@@ -156,3 +157,8 @@ Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` 
 - `git diff --cached` antes do commit: somente `composer.json` e `composer.lock`.
 - Alterações de outros agentes presentes no checkout (`aculta_lms_h5p`, `aculta_forum_lms`, `web/.htaccess`) não foram incluídas em nenhum commit desta fase.
 - Nenhuma branch nova, nenhuma PR nova, nenhum merge, nenhum force push.
+
+## 11. Decisões de 2026-10-22
+
+- **Auto Image:** exceção formal registrada e plugin habilitado. Inerte até que `ckeditor5_image` seja adicionado aos formatos, o que não foi feito.
+- **Tipos Página e Documento:** formatos novos liberados no campo `body`, por decisão do responsável. Mesma ordem nos arquivos de configuração e no Runtime; sem drift.

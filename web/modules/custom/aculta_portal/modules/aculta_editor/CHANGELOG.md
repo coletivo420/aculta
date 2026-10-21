@@ -1,5 +1,11 @@
 # Changelog — ACULTA Editor
 
+## 0.1.0-dev.2 — 2026-10-22
+
+- Auto Image habilitado por exceção formal do responsável. Inerte sem `ckeditor5_image` nos formatos; a regra do `aculta_image` impede adicionar o upload do Core.
+- Formatos novos liberados nos campos `body` de Página básica e Documento (`field.field.node.page.body` e `document.body`), com a mesma ordem nos arquivos e no Runtime.
+- Validação no navegador do ciclo editar, inserir, salvar, reabrir e renderizar (nó de teste, removido ao final).
+
 ## 0.1.0-dev.1 — 2026-10-21
 
 - Validação no navegador (servidor de testes, Chromium headless): editar, inserir modelo e tabela, salvar, reabrir e renderizar com `aculta_editorial`, no nó de teste 500 (removido ao final).

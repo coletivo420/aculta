@@ -16,7 +16,8 @@ Versão: `0.1.0-dev.1` (estado Dev). Auditoria e decisões: [`docs/portal/EDITOR
 | `aculta_email` | modelos de e-mail | negrito, itálico, sublinhado, links, listas, tabelas de layout, mídia | concedida pelo responsável |
 
 Os formatos `revista_editorial`, `usuario_aculta`, `wiki`, `webform_default`, `restricted_html`, `plain_text` e
-`email_html` **não foram alterados**.
+`email_html` **não foram alterados**. Os novos formatos são oferecidos nos campos `body` de Artigo, Página básica e
+ Documento (o campo do Artigo não restringe a lista; Página e Documento foram ampliados em 0.1.0-dev.2).
 
 Todos os formatos usam `filter_html` com lista explícita de elementos e atributos. O editor visual não substitui
 essa sanitização. O formato `aculta_email` não aceita `style`.
@@ -29,8 +30,9 @@ essa sanitização. O formato `aculta_email` não aceita `style`.
 
 ## Desabilitados por decisão
 
-- **Auto Image:** importa imagem de URL externa, o que exige a ingestão do `aculta_image`. Não habilitado até
-  haver exceção registrada.
+- **Auto Image:** habilitado por exceção formal do responsável (2026-10-22), registrada na auditoria. O plugin só age
+  com o plugin de imagem do Core (`ckeditor5_image`) no formato, que os formatos do `aculta_editor` não têm. Por isso
+  fica inerte: adicionar o upload do Core violaria a regra do `aculta_image`.
 - **HTML Embed:** exige política de segurança própria (desabilitado por padrão).
 - **WProofreader:** envia texto a terceiros e depende do Premium Features.
 - **Fonte e cor (`_font`):** não escolhido pelo responsável nesta fase. Não habilitado no código.
