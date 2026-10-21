@@ -6,10 +6,10 @@ dependencies:
     - field.field.media.course_document.field_media_course_document
     - media.type.course_document
   module:
-    - aculta_pdf_viewer
+    - aculta_document_viewer
   enforced:
     module:
-      - aculta_pdf_viewer_group
+      - aculta_document_viewer_group
 _core:
   default_config_hash: A1M77DsxQn8py1vPkHRo62hUNChAv2GrFhaAR4xtvIo
 id: media.course_document.default
@@ -18,7 +18,7 @@ bundle: course_document
 mode: default
 content:
   field_media_course_document:
-    type: aculta_pdf_media
+    type: aculta_document_pdf_media
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
@@ -31,3 +31,4 @@ hidden:
   search_api_excerpt: true
   thumbnail: true
   uid: true
+

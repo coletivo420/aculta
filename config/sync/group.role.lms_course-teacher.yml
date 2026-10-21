@@ -7,7 +7,7 @@ dependencies:
     - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
     - user.role.lms_teacher
   module:
-    - aculta_pdf_viewer_group
+    - aculta_document_viewer_group
     - aculta_forum_lms
 id: lms_course-teacher
 label: Educador
@@ -22,8 +22,8 @@ permissions:
   - 'view students'
   - 'create lms_classes relationship'
   - 'delete own lms_classes relationship'
-  - 'create aculta_pdf_viewer_group:course_document entity'
-  - 'create aculta_pdf_viewer_group:course_document relationship'
+  - 'create aculta_document_viewer_group:course_document entity'
+  - 'create aculta_document_viewer_group:course_document relationship'
   - 'edit group'
   - 'grade students'
   - 'revert group revisions'
@@ -33,9 +33,9 @@ permissions:
   - 'view lms_classes relationship'
   - 'view all group revisions'
   - 'view any unpublished group'
-  - 'view aculta_pdf_viewer_group:course_document entity'
-  - 'view any unpublished aculta_pdf_viewer_group:course_document entity'
-  - 'view aculta_pdf_viewer_group:course_document relationship'
+  - 'view aculta_document_viewer_group:course_document entity'
+  - 'view any unpublished aculta_document_viewer_group:course_document entity'
+  - 'view aculta_document_viewer_group:course_document relationship'
   - 'view group_node:aculta_lms_topic entity'
   - 'view group'
   - 'view group revisions'

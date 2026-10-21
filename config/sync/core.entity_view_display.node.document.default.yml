@@ -10,7 +10,7 @@ dependencies:
     - field.field.node.document.field_meta_tags
     - node.type.document
   module:
-    - aculta_pdf_viewer
+    - aculta_document_viewer
     - file
     - text
     - user
@@ -36,7 +36,7 @@ content:
     weight: -5
     region: content
   field_document:
-    type: aculta_pdf_file
+    type: aculta_document_pdf_file
     label: above
     settings: {  }
     third_party_settings: {  }
