@@ -2,8 +2,10 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.23`. O módulo possui entidades revisionáveis de destinos, micropáginas
-e itens ordenados, painel administrativo, editor de composição e rota pública
+`0.4.0-dev.24`. Os formulários nativos de destino, micropágina e item usam
+`ContentEntityForm` para renderizar campos de conteúdo; os add forms foram
+verificados no Firefox a 390 × 844. O módulo possui entidades revisionáveis de
+destinos, micropáginas e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
 apresenta os mesmos botões configurados e projetos pela View existente. O caminho

@@ -7,7 +7,7 @@ namespace Drupal\aculta_links\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\EditorialContentEntityBase;
 use Drupal\Core\Entity\EntityDeleteForm;
-use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Form\RevisionDeleteForm;
 use Drupal\Core\Entity\Form\RevisionRevertForm;
@@ -32,9 +32,9 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
     'access' => LinkItemAccessControlHandler::class,
     'views_data' => EntityViewsData::class,
     'form' => [
-      'default' => EntityForm::class,
-      'add' => EntityForm::class,
-      'edit' => EntityForm::class,
+      'default' => ContentEntityForm::class,
+      'add' => ContentEntityForm::class,
+      'edit' => ContentEntityForm::class,
       'delete' => EntityDeleteForm::class,
       'revision-revert' => RevisionRevertForm::class,
       'revision-delete' => RevisionDeleteForm::class,

@@ -10,6 +10,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormState;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\Link;
@@ -351,6 +352,30 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $revision_storage = $this->container->get('entity_type.manager')->getStorage('aculta_link');
     $previous_revision = $revision_storage->loadRevision($first_revision_id);
     self::assertSame('Site institucional', $previous_revision->label());
+  }
+
+  /**
+   * Tests add forms build their configurable content fields.
+   */
+  public function testEntityAddFormsExposeContentFields(): void {
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $form_builder = $this->container->get('form_builder');
+    $expected_fields = [
+      'aculta_link' => ['title', 'uri', 'target_node'],
+      'aculta_link_page' => ['title', 'slug', 'description', 'theme_preset'],
+      'aculta_link_item' => ['title', 'page', 'link'],
+    ];
+
+    foreach ($expected_fields as $entity_type_id => $field_names) {
+      $form_object = $entity_type_manager->getFormObject($entity_type_id, 'add');
+      self::assertInstanceOf(ContentEntityForm::class, $form_object);
+      $form_object->setEntity($entity_type_manager->getStorage($entity_type_id)->create());
+      $form = $form_builder->getForm($form_object);
+
+      foreach ($field_names as $field_name) {
+        self::assertArrayHasKey($field_name, $form, $entity_type_id . ' form should expose ' . $field_name);
+      }
+    }
   }
 
   /**

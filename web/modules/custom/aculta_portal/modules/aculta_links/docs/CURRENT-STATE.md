@@ -166,6 +166,16 @@ por compartilhar o comando. Uma nova tentativa foi bloqueada pela edição
 incompleta de hook LMS; o único destino temporário gravado foi removido por
 identidade exata e sua ausência confirmada. Produção continua não verificada.
 
+## Formulários de conteúdo 0.4.0-dev.24
+
+A inspeção autenticada de `/painel-administrativo/links/pagina/adicionar`
+encontrou somente o botão “Salvar”. Os três tipos de entidade apontavam para o
+handler base `EntityForm`, que monta a estrutura e ações mas não os widgets de
+fields. Foram trocados por `ContentEntityForm`; Kernel e Firefox autenticado
+confirmaram os campos de destino, página e item após `cr`, em 390 × 844 sem
+overflow (`scrollWidth=378`). Capturas revisadas. Nenhum formulário foi enviado
+ou entidade alterada.
+
 ## Dashboard responsivo 0.4.0-dev.23
 
 O dashboard substituiu os links de ação concatenados por uma lista semântica e

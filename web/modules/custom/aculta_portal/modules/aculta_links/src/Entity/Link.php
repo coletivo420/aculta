@@ -11,7 +11,7 @@ use Drupal\Core\Entity\Form\RevisionDeleteForm;
 use Drupal\Core\Entity\Form\RevisionRevertForm;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Drupal\Core\Entity\Routing\RevisionHtmlRouteProvider;
-use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\link\LinkItemInterface;
@@ -32,9 +32,9 @@ use Drupal\views\EntityViewsData;
     'access' => LinkAccessControlHandler::class,
     'views_data' => EntityViewsData::class,
     'form' => [
-      'default' => EntityForm::class,
-      'add' => EntityForm::class,
-      'edit' => EntityForm::class,
+      'default' => ContentEntityForm::class,
+      'add' => ContentEntityForm::class,
+      'edit' => ContentEntityForm::class,
       'delete' => EntityDeleteForm::class,
       'revision-revert' => RevisionRevertForm::class,
       'revision-delete' => RevisionDeleteForm::class,

@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.24 — corrige formulários de entidade vazios — 2026-10-20
+
+- A inspeção autenticada do formulário de micropágina encontrou formulário contendo somente “Salvar”. Os três handlers de criação/edição agora usam `ContentEntityForm`, que constrói os widgets dos campos de conteúdo; o handler base `EntityForm` não o fazia.
+- Kernel verifica os campos principais dos formulários de destino, micropágina e item (4 testes/159 asserções; 7 depreciações upstream); Unit PASS (5/50), PHPCS Drupal/Practice e lint PASS. Runtime `cr` passou, sem updates de banco.
+- Firefox autenticado confirmou a 390 × 844 os formulários de adição de página, destino e item com os campos esperados e sem overflow (`scrollWidth=378`). Capturas revisadas; nenhum formulário foi submetido e nenhum conteúdo foi criado.
+
 ## 0.4.0-dev.23 — melhora legibilidade móvel do dashboard — 2026-10-20
 
 - Ações rápidas agora são uma lista HTML semântica em vez de links concatenados; tabelas usam prioridades responsivas do Core para recolher Estado e Cliques em telas estreitas, preservando Título e Operações.

@@ -211,3 +211,14 @@ contraste computado para título, descrição e botão de 12,95:1, 9,72:1 e
 configuração Runtime. Leitor de tela, troca de modo do Portal e avaliação
 integral de acessibilidade permanecem pendentes. Os gates globais de status e
 mapa falharam por alterações de outras frentes, listadas no changelog.
+
+## Formulários de entidade 0.4.0-dev.24
+
+Kernel PASS (4 testes/159 asserções; 7 depreciações Core/Metatag/Token),
+incluindo presença dos campos principais nos formulários das três entidades.
+Unit PASS (5/50), PHPCS Drupal/Practice, lint, YAML e `git diff --check` PASS.
+Após `cr` no Runtime de teste, Firefox autenticado em viewport CSS 390 × 844
+confirmou os campos das rotas de adição de micropágina, destino e item; cada
+página ficou com `scrollWidth=378`. Capturas revisadas. Nenhum formulário foi
+submetido, nenhum fixture foi criado e nenhuma entidade foi alterada. Edição de
+entidade existente e submissão funcional seguem sem validação visual.

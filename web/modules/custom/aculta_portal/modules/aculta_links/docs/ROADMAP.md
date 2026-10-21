@@ -54,6 +54,12 @@ fluida entre páginas e editor de identidade em uma experiência coesa inspirada
 no LinkStack. Uma conta pode ter várias páginas; equipes complexas não são
 prioridade.
 
+Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram
+corrigidos para `ContentEntityForm` após inspeção autenticada encontrar ausência
+dos widgets. Kernel e Firefox autenticado a 390 × 844 confirmam os campos dos
+três formulários sem overflow. Edição preenchida e submissão funcional ainda
+precisam de validação específica.
+
 ## 0.4.0 — interface pública e presets
 
 Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Em 0.4.0-dev.9, o template da micropágina passou a mostrar seu título e a omitir a marca institucional da ACULTA. Em 0.4.0-dev.12, o alter hook do Metatag fornece metadata por página e canonical via `DomainPurposeManager`; defaults permanecem controlados pela configuração central. Faltam controles adicionais de aparência e revisão visual/acessível antes de RC.
