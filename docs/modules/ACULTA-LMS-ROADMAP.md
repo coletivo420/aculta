@@ -229,6 +229,13 @@ discussão, download após revogação e renderização HTTP/visual seguem pende
 O escopo de Gallery, Magazine e Wiki também precisa ser concretizado em
 integrações específicas, sem CMS paralelo.
 
+**F16 — hardening inicial em curso.** A reemissão de certificados agora usa o
+lock do Core por UUID da conclusão para impedir duas versões ativas em
+requisições concorrentes; uma segunda emissão enquanto o lock está ocupado
+recebe conflito sem persistir. Kernel cobre esse caminho. Permanecem a matriz
+de acesso/cache, revisão de upload/download e revogação, acessibilidade e gates
+completos da fase.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando

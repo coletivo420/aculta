@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms\Certificate;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
@@ -15,6 +16,7 @@ use Drupal\group\Entity\GroupInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -32,6 +34,7 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     private readonly Connection $database,
     private readonly EventDispatcherInterface $eventDispatcher,
     private readonly LoggerInterface $logger,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   public function issue(CourseStatusInterface $status, AccountInterface $issuer): CourseCertificate {
@@ -55,9 +58,15 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       throw new UnprocessableEntityHttpException('The course workload must be greater than zero.');
     }
 
-    $storage = $this->entityTypeManager->getStorage('aculta_lms_certificate');
-    $transaction = $this->database->startTransaction();
+    $lockName = 'aculta_lms_certificate_issue:' . $status->uuid();
+    if (!$this->lock->acquire($lockName, 60.0)) {
+      throw new ConflictHttpException('Certificate issuance is already in progress.');
+    }
+
+    $transaction = NULL;
     try {
+      $storage = $this->entityTypeManager->getStorage('aculta_lms_certificate');
+      $transaction = $this->database->startTransaction();
       $previous = $storage->loadByProperties([
         'course_status_uuid' => $status->uuid(),
         'state' => 'active',
@@ -94,8 +103,11 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       unset($transaction);
     }
     catch (\Throwable $exception) {
-      $transaction->rollBack();
+      $transaction?->rollBack();
       throw $exception;
+    }
+    finally {
+      $this->lock->release($lockName);
     }
 
     try {

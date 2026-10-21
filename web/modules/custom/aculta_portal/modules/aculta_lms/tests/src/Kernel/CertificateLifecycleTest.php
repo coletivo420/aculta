@@ -7,6 +7,8 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Session\UserSession;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
@@ -16,6 +18,7 @@ use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Covers certificate issuance and state changes using real LMS entities.
@@ -145,6 +148,49 @@ final class CertificateLifecycleTest extends KernelTestBase {
       self::fail('An unauthorized issuer must be rejected.');
     }
     catch (AccessDeniedHttpException) {
+      self::assertCount(0, $manager->loadForStudent((int) $student->id()));
+    }
+  }
+
+  /** Tests a concurrent certificate issue request cannot start a second write. */
+  public function testConcurrentIssueIsRejectedByStatusLock(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_lms_certificate_issue:' . $status->uuid(), 60.0)
+      ->willReturn(FALSE);
+    $lock->expects(self::never())->method('release');
+    $manager = new CourseCertificateManager(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('datetime.time'),
+      $this->container->get('database'),
+      $this->container->get('event_dispatcher'),
+      $this->container->get('logger.channel.aculta_lms'),
+      $lock,
+    );
+
+    try {
+      $manager->issue($status, new UserSession(['uid' => 1, 'permissions' => ['administer lms']]));
+      self::fail('A concurrent issue must not create a second active certificate.');
+    }
+    catch (ConflictHttpException) {
       self::assertCount(0, $manager->loadForStudent((int) $student->id()));
     }
   }

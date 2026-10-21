@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.22 — serializar reemissões de certificado — 2026-10-21
+
+- Adquire lock do Core por UUID do status antes de revogar uma emissão anterior
+  e criar a próxima versão; uma emissão concorrente recebe conflito e não grava
+  certificado. O lock é liberado também em falhas transacionais.
+- Kernel cobre a recusa quando o lock está ocupado; suíte de certificados:
+  3 testes / 64 assertions PASS, com 38 depreciações upstream.
+
 ## 0.1.0-dev.21 — Kernel cobre dependência de imagens — 2026-10-21
 
 - Inclui `aculta_image` e o schema de `entity_usage` no Kernel que cobre anexos

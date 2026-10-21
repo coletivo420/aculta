@@ -20,7 +20,7 @@ services:
   Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager: '@aculta_lms.class_activity_deadline_manager'
   aculta_lms.course_certificate_manager:
     class: Drupal\aculta_lms\Certificate\CourseCertificateManager
-    arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms']
+    arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms', '@lock']
   aculta_lms.certificate_issue_access:
     class: Drupal\aculta_lms\Access\CertificateIssueAccessCheck
     arguments: ['@current_user']
