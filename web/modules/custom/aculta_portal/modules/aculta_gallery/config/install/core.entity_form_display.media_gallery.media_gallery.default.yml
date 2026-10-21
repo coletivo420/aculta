@@ -6,7 +6,6 @@ dependencies:
     - field.field.media_gallery.media_gallery.field_editorial_category
     - field.field.media_gallery.media_gallery.field_event_date
     - field.field.media_gallery.media_gallery.field_gallery_cover
-    - field.field.media_gallery.media_gallery.field_project
     - field.field.media_gallery.media_gallery.field_published_at
     - field.field.media_gallery.media_gallery.field_tags
     - field.field.media_gallery.media_gallery.field_usage_rights
@@ -93,16 +92,6 @@ content:
   field_tags:
     type: entity_reference_autocomplete_tags
     weight: 9
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {}
-  field_project:
-    type: entity_reference_autocomplete
-    weight: 10
     region: content
     settings:
       match_operator: CONTAINS

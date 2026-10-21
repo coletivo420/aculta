@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.revista.field_editorial_category
     - field.field.node.revista.field_media_image
     - field.field.node.revista.field_meta_tags
-    - field.field.node.revista.field_project
     - field.field.node.revista.field_published_at
     - field.field.node.revista.field_references
     - field.field.node.revista.field_related_activity
@@ -115,7 +114,6 @@ hidden:
   field_domain_source: true
   field_editorial_author: true
   field_meta_tags: true
-  field_project: true
   field_published_at: true
   field_related_activity: true
   langcode: true

@@ -11,7 +11,6 @@ dependencies:
     - field.field.node.revista.field_editorial_category
     - field.field.node.revista.field_media_image
     - field.field.node.revista.field_meta_tags
-    - field.field.node.revista.field_project
     - field.field.node.revista.field_published_at
     - field.field.node.revista.field_references
     - field.field.node.revista.field_related_activity
@@ -106,16 +105,6 @@ content:
     settings:
       sidebar: true
       use_details: true
-    third_party_settings: {  }
-  field_project:
-    type: entity_reference_autocomplete
-    weight: 15
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_published_at:
     type: datetime_default

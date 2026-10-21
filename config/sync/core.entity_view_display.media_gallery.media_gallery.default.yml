@@ -7,7 +7,6 @@ dependencies:
     - field.field.media_gallery.media_gallery.field_editorial_category
     - field.field.media_gallery.media_gallery.field_event_date
     - field.field.media_gallery.media_gallery.field_gallery_cover
-    - field.field.media_gallery.media_gallery.field_project
     - field.field.media_gallery.media_gallery.field_published_at
     - field.field.media_gallery.media_gallery.field_tags
     - field.field.media_gallery.media_gallery.field_usage_rights
@@ -60,7 +59,6 @@ hidden:
   created: true
   field_editorial_category: true
   field_gallery_cover: true
-  field_project: true
   field_published_at: true
   field_tags: true
   field_usage_rights: true

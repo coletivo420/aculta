@@ -62,7 +62,6 @@ datasource_settings:
         - revista
         - document
         - page
-        - project
     languages:
       default: true
       selected: {  }
