@@ -9,6 +9,7 @@ dependencies:
     - node.type.aculta_forum_topic
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
+    - workflows.workflow.aculta_forum_post
   module:
     - aculta_forum
     - aculta_user
@@ -27,6 +28,7 @@ is_admin: false
 permissions:
   - 'access content'
   - 'create aculta_forum_topic content'
+  - 'create aculta forum posts'
   - 'create email_confirmed profile'
   - 'create wiki_entry content'
   - 'delete own aculta_forum_topic content'
@@ -42,6 +44,9 @@ permissions:
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
+  - 'use aculta_forum_post transition create_draft'
+  - 'use aculta_forum_post transition submit_for_review'
+  - 'use aculta_forum_post transition edit_published'
   - 'view latest version'
   - 'view own email_confirmed profile'
   - 'view own unpublished content'

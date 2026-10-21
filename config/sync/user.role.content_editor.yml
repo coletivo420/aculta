@@ -8,6 +8,7 @@ dependencies:
     - media.type.document
     - node.type.wiki_entry
     - workflows.workflow.wiki_editorial
+    - workflows.workflow.aculta_forum_post
   module:
     - aculta_user
     - comment
@@ -35,6 +36,7 @@ permissions:
   - 'access files overview'
   - 'access navigation'
   - 'administer comments'
+  - 'administer aculta forum posts'
   - 'administer url aliases'
   - 'break content lock'
   - 'create document media'
@@ -51,6 +53,12 @@ permissions:
   - 'use wiki_editorial transition draft_to_review'
   - 'use wiki_editorial transition review_to_draft'
   - 'use wiki_editorial transition review_to_published'
+  - 'use aculta_forum_post transition create_draft'
+  - 'use aculta_forum_post transition submit_for_review'
+  - 'use aculta_forum_post transition approve'
+  - 'use aculta_forum_post transition reject'
+  - 'use aculta_forum_post transition edit_published'
+  - 'use aculta_forum_post transition withdraw'
   - 'view all revisions'
   - 'view any unpublished content'
   - 'view latest version'

@@ -52,6 +52,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.136` | Acesso contextual e permissões do post revisionável | Criação só no purpose `forum`; leitura/edição de autoria limitadas ao tópico público publicado; administração no purpose `main`; papéis recebem permissões Core de transição. Unit access e janela PASS. Leitura integrada, formulários, migração de Comments e corte permanecem pendentes. Dev, cache do Runtime reconstruído sem erros HTTP/PHP novos. |
 | `0.1.0-dev.132` | Transferir aviso agregado ao mover árvore publicada | Evento transacional do Fórum consumido pelo Messenger; transfere o registro inteiro de respostas e mescla no destino. Kernel do mover: 19/391; Unit do consumidor: 2/4 PASS; 19 depreciações Core/contrib. Teste de persistência da transferência e ciclo de anexos seguem pendentes, portanto permanece Dev. |
 | `0.1.0-dev.131` | Foco de teclado no conteúdo principal | `forum-index-visual.mjs`: primeiro Tab revela link de salto com `:focus-visible`, Enter transfere foco a `main#main-content`. Firefox ESR/X11: raiz 15/15, `/categorias` 15/15, 390/768/1024 em claro/escuro (escuro forçado localmente no DOM); nenhum submit ou escrita. Inclui captura do link focado a 390 px. |
 | `0.1.0-dev.130` | Preservar imagem inline ao mover comentário | Kernel integra Editor Core: imagem `data-entity-uuid` mantém `file_usage` associado ao CID depois da mudança de tópico. 19 testes / 386 assertions PASS no MariaDB dedicado; Runtime não alterado. |
