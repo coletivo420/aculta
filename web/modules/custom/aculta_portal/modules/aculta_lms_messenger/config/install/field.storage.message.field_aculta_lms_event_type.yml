@@ -28,6 +28,18 @@ settings:
     -
       value: submission
       label: Resposta para correção
+    -
+      value: course_release
+      label: Curso publicado
+    -
+      value: lesson_release
+      label: Aula liberada
+    -
+      value: activity_release
+      label: Atividade liberada
+    -
+      value: feedback
+      label: Retorno do educador
   allowed_values_function: ''
 module: options
 locked: false

@@ -38,12 +38,14 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 **F13 — notificações educacionais: implementação parcial nesta branch.** Matrícula e certificado passam ao adapter
 `aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
-transacional mínimo via Message Notify. Conclusão, avaliação publicada e respostas abertas pendentes aparecem sempre
-no painel e no resumo diário opt-in já usado pelo Fórum; educadores recebem resposta pendente apenas com permissão
-`grade students` atual no curso. Mensagens não carregam resposta, nota ou anexo; a rota revalida acesso e purpose.
-Unit e Kernel de instalação confirmam eventos, adapter e descoberta dos hooks; integração de Message/digest,
-revisão visual e Runtime seguem DEFERRED. Próximo: eventos adicionais que tenham fonte persistida, teste de
-integração do digest e revisão visual antes de RC.
+transacional mínimo via Message Notify. Conclusão, avaliação publicada, respostas pendentes, conteúdo publicado e
+feedback do educador aparecem no site e no resumo diário opt-in; educadores recebem respostas pendentes somente
+com `grade students` atual. Avisos não incluem resposta, nota, arquivo ou corpo de comentário, e revalidam a fonte
+ao exibir. A decisão é emitir eventos apenas para mudanças acionáveis e persistidas. Prazo será por atividade na
+turma; ainda falta implementar seu armazenamento/UI e o aviso ao definir/alterar. O intervalo do lembrete de
+vencimento aguarda decisão. Unit: `aculta_lms` 29 testes/140 assertions e adapter 11/48; 5 depreciações PHPUnit no LMS. Integração
+Kernel com Message/LMS/Group, revisão visual e Runtime seguem DEFERRED. Próximo: prazos por atividade/turma, Kernel
+integrado e revisão visual antes de RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`

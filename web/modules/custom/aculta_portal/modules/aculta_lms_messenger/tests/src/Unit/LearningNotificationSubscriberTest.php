@@ -10,6 +10,8 @@ use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
+use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms_messenger\EventSubscriber\LearningNotificationSubscriber;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -91,6 +93,31 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
 
     $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
     $subscriber->answerSubmitted(new AnswerSubmittedEvent('answer-uuid', str_repeat('b', 32)));
+  }
+
+  /**
+   * Routes a persisted content release into the learner notice provider.
+   */
+  public function testContentReleaseNotifiesCurrentLearners(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects($this->once())
+      ->method('recordContentReleaseForLearners')
+      ->with('lesson-uuid', 'lms_lesson', str_repeat('c', 32));
+
+    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber->contentReleased(new CourseContentReleasedEvent('lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
+  }
+
+  /**
+   * Published educator feedback is routed to the learner notice provider. */
+  public function testEducatorFeedbackNotifiesAnswerOwner(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects($this->once())
+      ->method('recordEducatorFeedbackForLearner')
+      ->with('comment-uuid', str_repeat('d', 32));
+
+    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber->educatorFeedbackPublished(new EducatorFeedbackPublishedEvent('comment-uuid', str_repeat('d', 32)));
   }
 
   /**

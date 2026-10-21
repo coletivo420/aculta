@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_messenger;
 
+use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Queue\QueueFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupMembership;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\lms\Entity\ActivityInterface;
+use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
@@ -47,6 +53,21 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   private const DIGEST_TYPE = 'aprendizagem';
 
+  /**
+   * Event types that participate in the daily digest.
+   *
+   * @var string[]
+   */
+  private const DIGEST_EVENTS = [
+    'completion',
+    'evaluation',
+    'submission',
+    'course_release',
+    'lesson_release',
+    'activity_release',
+    'feedback',
+  ];
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -58,7 +79,17 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Creates one durable notice per source and recipient; enqueue email once.
    */
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface {
-    if (!in_array($type, ['enrollment', 'certificate', 'completion', 'evaluation', 'submission'], TRUE)) {
+    if (!in_array($type, [
+      'enrollment',
+      'certificate',
+      'completion',
+      'evaluation',
+      'submission',
+      'course_release',
+      'lesson_release',
+      'activity_release',
+      'feedback',
+    ], TRUE)) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
@@ -84,7 +115,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         self::SOURCE_FIELD => $sourceUuid,
         self::EVENT_VERSION_FIELD => $eventVersion,
         self::READ_FIELD => 0,
-        self::DIGEST_FIELD => in_array($type, ['completion', 'evaluation', 'submission'], TRUE) ? 0 : 1,
+        self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) ? 0 : 1,
         self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
@@ -117,6 +148,10 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'completion' => $this->resolveCompletion($sourceUuid, $account),
       'evaluation' => $this->resolveEvaluation($sourceUuid, $account),
       'submission' => $this->resolveSubmission($sourceUuid, $account),
+      'course_release' => $this->resolveContentRelease($sourceUuid, 'group', $account),
+      'lesson_release' => $this->resolveContentRelease($sourceUuid, 'lms_lesson', $account),
+      'activity_release' => $this->resolveContentRelease($sourceUuid, 'lms_activity', $account),
+      'feedback' => $this->resolveEducatorFeedback($sourceUuid, $account),
       default => NULL,
     };
   }
@@ -150,6 +185,83 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       }
       $this->record($answerUuid, 'submission', (int) $educator->id(), FALSE, $eventVersion);
     }
+  }
+
+  /**
+   * Records published course content for currently enrolled learners.
+   */
+  public function recordContentReleaseForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void {
+    if (!isset(CourseContentReleasedEvent::NOTICE_TYPES[$contentEntityType])) {
+      return;
+    }
+    $contentEntities = $this->entityTypeManager->getStorage($contentEntityType)->loadByProperties(['uuid' => $contentUuid]);
+    $content = reset($contentEntities);
+    if (!$content instanceof EntityPublishedInterface || !$content->isPublished()) {
+      return;
+    }
+    $courses = $this->coursesForContent($content);
+    foreach ($courses as $course) {
+      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()) {
+        continue;
+      }
+      foreach ($course->getRelationships('lms_classes') as $relationship) {
+        if (!$relationship instanceof GroupRelationshipInterface) {
+          continue;
+        }
+        $class = $relationship->getEntity();
+        if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
+          continue;
+        }
+        foreach (GroupMembership::loadByGroup($class) as $membership) {
+          if ($membership->getPluginId() !== 'group_membership' || !$membership->hasPermission('take course')) {
+            continue;
+          }
+          $learner = $membership->getEntity();
+          if (!$learner instanceof UserInterface || !$learner->isActive()
+            || !$course->access('view', $learner, TRUE)->isAllowed()) {
+            continue;
+          }
+          $this->record(
+            $contentUuid,
+            CourseContentReleasedEvent::NOTICE_TYPES[$contentEntityType],
+            (int) $learner->id(),
+            FALSE,
+            $eventVersion,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Records published educator feedback for the answer owner.
+   */
+  public function recordEducatorFeedbackForLearner(string $commentUuid, string $eventVersion): void {
+    $comments = $this->entityTypeManager->getStorage('comment')->loadByProperties([
+      'uuid' => $commentUuid,
+      'comment_type' => 'lms_answer_comment',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment = reset($comments);
+    if (!$comment instanceof CommentInterface) {
+      return;
+    }
+    $answer = $comment->getCommentedEntity();
+    if (!$answer instanceof AnswerInterface) {
+      return;
+    }
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $learner = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    $educator = $comment->getOwner();
+    if (!$course instanceof CourseInterface || !$learner instanceof UserInterface || !$learner->isActive()
+      || !$educator || (int) $educator->id() === (int) $learner->id()
+      || !$course->hasPermission('grade students', $educator)
+      || !$this->hasCurrentEnrollment($course, $learner)
+      || !$comment->access('view', $learner, TRUE)->isAllowed()
+      || !$answer->access('see_details', $learner, TRUE)->isAllowed()) {
+      return;
+    }
+    $this->record($commentUuid, 'feedback', (int) $learner->id(), FALSE, $eventVersion);
   }
 
   /**
@@ -248,7 +360,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $ids = $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
+      ->condition(self::EVENT_FIELD, self::DIGEST_EVENTS, 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $uids = [];
@@ -273,7 +385,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
+      ->condition(self::EVENT_FIELD, self::DIGEST_EVENTS, 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $rows = [];
@@ -317,7 +429,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
+      ->condition(self::EVENT_FIELD, self::DIGEST_EVENTS, 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
@@ -506,6 +618,106 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ]),
       'url' => $url,
     ];
+  }
+
+  /**
+   * Resolves a published content release only while the learner stays enrolled.
+   */
+  private function resolveContentRelease(string $sourceUuid, string $entityType, AccountInterface $account): ?array {
+    $entities = $this->entityTypeManager->getStorage($entityType)->loadByProperties(['uuid' => $sourceUuid]);
+    $content = reset($entities);
+    if (!$content instanceof EntityPublishedInterface || !$content->isPublished()) {
+      return NULL;
+    }
+    foreach ($this->coursesForContent($content) as $course) {
+      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()
+        || !$course->access('view', $account, TRUE)->isAllowed() || !$this->hasCurrentEnrollment($course, $account)) {
+        continue;
+      }
+      $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+      if ($url === NULL) {
+        return NULL;
+      }
+      return [
+        'title' => $this->t('Novo conteúdo disponível'),
+        'summary' => $this->t('Há conteúdo novo em um curso no qual você está matriculado.'),
+        'digest_summary' => $this->t('Conteúdo liberado: @content', ['@content' => $content->label()]),
+        'url' => $url,
+      ];
+    }
+    return NULL;
+  }
+
+  /**
+   * Resolves current educator feedback without exposing its body in the notice. */
+  private function resolveEducatorFeedback(string $commentUuid, AccountInterface $account): ?array {
+    $comments = $this->entityTypeManager->getStorage('comment')->loadByProperties([
+      'uuid' => $commentUuid,
+      'comment_type' => 'lms_answer_comment',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment = reset($comments);
+    if (!$comment instanceof CommentInterface || !$comment->access('view', $account, TRUE)->isAllowed()) {
+      return NULL;
+    }
+    $answer = $comment->getCommentedEntity();
+    if (!$answer instanceof AnswerInterface || (int) $answer->getUserId() !== (int) $account->id()
+      || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
+      return NULL;
+    }
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $educator = $comment->getOwner();
+    if (!$course instanceof CourseInterface || !$educator || !$course->hasPermission('grade students', $educator)
+      || !$this->hasCurrentEnrollment($course, $account)) {
+      return NULL;
+    }
+    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.answer.details', [
+      'lms_answer' => $answer->id(),
+      'js' => 'nojs',
+    ]);
+    if ($url === NULL) {
+      return NULL;
+    }
+    return [
+      'title' => $this->t('Retorno do educador'),
+      'summary' => $this->t('Seu educador publicou um retorno para uma atividade.'),
+      'digest_summary' => $this->t('Retorno disponível em uma atividade do curso.'),
+      'url' => $url,
+    ];
+  }
+
+  /**
+   * Finds published courses that currently reference the released content.
+   *
+   * @return \Drupal\group\Entity\GroupInterface[]
+   *   Course groups that contain the lesson or activity.
+   */
+  private function coursesForContent(EntityPublishedInterface $content): array {
+    if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
+      return [$content];
+    }
+    $lessonIds = [];
+    if ($content instanceof LessonInterface) {
+      $lessonIds[] = (int) $content->id();
+    }
+    elseif ($content instanceof ActivityInterface) {
+      $lessonIds = array_map('intval', array_keys($this->entityTypeManager->getStorage('lms_lesson')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition(LessonInterface::ACTIVITIES . '.target_id', (int) $content->id())
+        ->execute()));
+    }
+    if ($lessonIds === []) {
+      return [];
+    }
+    $courseIds = $this->entityTypeManager->getStorage('group')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', 'lms_course')
+      ->condition('lessons.target_id', $lessonIds, 'IN')
+      ->execute();
+    return array_values(array_filter(
+      $this->entityTypeManager->getStorage('group')->loadMultiple($courseIds),
+      static fn ($course): bool => $course instanceof GroupInterface,
+    ));
   }
 
   /**

@@ -9,6 +9,8 @@ use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
+use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
+use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -33,6 +35,8 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
       CourseCompletedEvent::NAME => 'courseCompleted',
       AnswerEvaluatedEvent::NAME => 'answerEvaluated',
       AnswerSubmittedEvent::NAME => 'answerSubmitted',
+      CourseContentReleasedEvent::NAME => 'contentReleased',
+      EducatorFeedbackPublishedEvent::NAME => 'educatorFeedbackPublished',
     ];
   }
 
@@ -77,6 +81,33 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     }
     catch (\Throwable $exception) {
       $this->logger->error('Could not record LMS submission notice: @message', ['@message' => $exception->getMessage()]);
+    }
+  }
+
+  /**
+   * Records newly available published course content for current learners.
+   */
+  public function contentReleased(CourseContentReleasedEvent $event): void {
+    try {
+      $this->notices->recordContentReleaseForLearners(
+        $event->contentUuid,
+        $event->contentEntityType,
+        $event->publicationVersion,
+      );
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error('Could not record LMS content release notice: @message', ['@message' => $exception->getMessage()]);
+    }
+  }
+
+  /**
+   * Records newly published educator feedback for the answer owner. */
+  public function educatorFeedbackPublished(EducatorFeedbackPublishedEvent $event): void {
+    try {
+      $this->notices->recordEducatorFeedbackForLearner($event->commentUuid, $event->publicationVersion);
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error('Could not record LMS educator feedback notice: @message', ['@message' => $exception->getMessage()]);
     }
   }
 

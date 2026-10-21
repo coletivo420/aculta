@@ -1,5 +1,17 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.6 — aviso de conteúdo liberado e retorno — 2026-10-21
+
+- Envia avisos de curso, aula e atividade recém-publicados aos estudantes
+  matriculados; publicação/referência atual, membership e acesso são revalidados
+  ao montar o destino.
+- Aviso de retorno educador vai ao titular da resposta após confirmar comentário
+  publicado, permissão atual de correção, matrícula e acesso. Texto do comentário
+  não é copiado para o aviso.
+- Ambos permanecem no site e entram no resumo diário opt-in, sem e-mail
+  transacional. Unit do LMS e adapter: 40 testes / 188 assertions PASS;
+  armazenamento Kernel integrado, visual e Runtime permanecem DEFERRED.
+
 ## 0.1.0-dev.5 — validação do resumo diário compartilhado — 2026-10-21
 
 - Exercita o serviço real de resumo do `aculta_messenger` com provider

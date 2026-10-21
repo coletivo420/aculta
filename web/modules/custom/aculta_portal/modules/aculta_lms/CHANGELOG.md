@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.16 — avisos de conteúdo liberado e retorno — 2026-10-21
+
+- Publica eventos após publicar curso, aula ou atividade, incluindo atividades
+  adicionadas a uma aula publicada; payload contém somente tipo, UUID e versão
+  opaca.
+- Publica evento para comentário de resposta quando educador com permissão
+  atual publica ou altera o feedback; comentário do estudante não gera aviso.
+- Unit: 29 testes / 140 assertions PASS. Integração com Message real, revisão
+  visual e Runtime permanecem DEFERRED.
+
 ## 0.1.0-dev.15 — evento de resposta pendente — 2026-10-20
 
 - Publica evento mínimo depois de criar/alterar resposta discursiva ou anexo

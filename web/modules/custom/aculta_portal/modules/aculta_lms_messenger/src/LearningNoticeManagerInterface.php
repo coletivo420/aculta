@@ -23,6 +23,15 @@ interface LearningNoticeManagerInterface {
   public function recordSubmissionForEducators(string $answerUuid, string $eventVersion): void;
 
   /**
+   * Records the release of course content for currently enrolled learners.
+   */
+  public function recordContentReleaseForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void;
+
+  /**
+   * Records published educator feedback for the learner who owns the answer. */
+  public function recordEducatorFeedbackForLearner(string $commentUuid, string $eventVersion): void;
+
+  /**
    * Resolves the current target only when access is still valid.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
