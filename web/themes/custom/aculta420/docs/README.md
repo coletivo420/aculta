@@ -17,6 +17,7 @@
 13. [branding-podplant420.md](branding-podplant420.md) — identidade estática e política de imagens do Podplant420.
 14. [branding-baque-sativa.md](branding-baque-sativa.md) — kit de logomarcas do Grupo de Percussão Baque Sativa (cards e páginas do grupo; fora do cabeçalho global).
 15. [branding-bloco-sativa420.md](branding-bloco-sativa420.md) — kit de artes do Bloco Sativa 420 (cards e páginas de projeto; fora do cabeçalho global; autoria e licença pendentes).
+16. [mobile-first-audit.md](mobile-first-audit.md) — inventário responsivo do ACULTA420 e do Studio, com evidências e sequência MF.
 
 Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de releases: Git e changelog.
 

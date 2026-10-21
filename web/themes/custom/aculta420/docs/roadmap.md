@@ -53,6 +53,32 @@
 | 0.6.0-dev.98 | Estado vazio do índice Growroom420 | Gates PASS; raiz HTTP 200 mostra a mensagem | `.view-aculta-forum-public-topics .view-empty` em `forum-index.css`; inspeção visual pendente |
 | 0.6.0-dev.97 | Apresentação de tópicos ACULTA Forum | Gates PASS; render Runtime não salvo PASS; inspeção visual no navegador pendente | `node--aculta-forum-topic.html.twig`; identidade via `aculta_user`; tokens em `forum-index.css` |
 
+## Projeto ACULTA420 Mobile First — MF
+
+Iniciativa autorizada pelo responsável em 2026-10-21. Os identificadores MF
+organizam esta evolução e não são versões SemVer do tema. O Studio é o primeiro
+consumidor de referência; todos os subsistemas continuam donos de seus dados,
+permissões e operações. A decisão arquitetural está em
+[`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md),
+com evidências da MF-0.1 na
+[`auditoria responsiva`](mobile-first-audit.md).
+
+| Fase | Estado | Escopo |
+| --- | --- | --- |
+| MF-0.1 | Concluída — 2026-10-21 | Inventário de CSS, breakpoints, shell, carregamento de assets, Studio, Runtime e cobertura existente; sem refatoração visual. |
+| MF-0.2 | Planejada | Fundamentos responsivos compartilhados sobre tokens, grids, containers, tipografia, formulários, imagens e controles. |
+| MF-0.3 | Planejada | Shell multidomínio, navegação, Conta, Messenger, Carrinho, alertas, diálogos e rodapé. |
+| MF-0.4 | Planejada | Estrutura visual responsiva do Studio em três níveis. Preferência registrada: seletor nativo compacto para área no mobile; validar URL real, fallback sem JavaScript, teclado e leitores de tela. |
+| MF-0.5 | Planejada | AJAX progressivo do Studio: histórico, concorrência, foco, carregamento, erros e formulários com alterações. |
+| MF-0.6 | Planejada | Autoria editorial da Revista, CKEditor 5, Media, validação, workflow e ações de publicação. |
+| MF-0.7 | Planejada | Listagens e moderação dos subsistemas reais, preservando acesso, tabelas e operações em massa. |
+| MF-0.8 | Planejada | SDCs e padrões compartilhados: cards, filtros, comentários, galeria, documento, formulários e notificações. |
+| MF-0.9 | Planejada | Aplicar padrões aprovados ao conteúdo público e aos demais domínios. |
+| MF-0.10 | Planejada | Performance mobile, assets e bibliotecas contextuais; medição antes/depois quando aplicável. |
+| MF-0.11 | Planejada | Acessibilidade WCAG 2.2 AA, teclado, zoom/reflow, foco, contraste e movimento reduzido. |
+| MF-0.12 | Planejada | Homologação em viewports, navegadores e dispositivos disponíveis, com evidências por ambiente. |
+| MF-1.0 | Planejada | Estabilização, documentação, gates existentes e liberação controlada. |
+
 Atualizado em 2026-10-20 (`0.6.0-dev.104`; gates e HTTP de cartões de categoria PASS; inspeção visual DEFERRED). Dívidas e pendências, com evidência,
 estão em [`docs/operations/DEBT-REGISTER.md`](../../../../../docs/operations/DEBT-REGISTER.md).
 Este roadmap planeja o saneamento primeiro e as features de produto depois. Não planeja 1.0.

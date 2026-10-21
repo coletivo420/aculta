@@ -1,3 +1,15 @@
+## 0.6.0-dev.147 — auditoria Mobile First (documental) — 2026-10-21
+
+Classificação: PATCH documental; sem alteração de código ou incremento de versão.
+
+- Criados ADR-012 e inventário MF-0.1 com evidências do CSS, shell, assets e
+  implementação/runtime atual do Studio. Roadmap Mobile First incluído como
+  projeto identificado por fases, sem substituir o SemVer do tema.
+- Preferência registrada para seletor nativo compacto de área no Studio mobile;
+  implementação, fallback e validação permanecem na MF-0.4.
+- Não executada homologação visual nesta fase. PHP CLI do checkout é 8.4.26;
+  compatibilidade com o baseline PHP 8.5 continua pendente.
+
 ## 0.6.0-dev.143 — define tamanho dos modais de anexo e galeria do Fórum — 2026-10-21
 
 ## 0.6.0-dev.146 — grade e abas das planilhas com tokens (homologação RC1) — 2026-10-21

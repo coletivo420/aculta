@@ -18,6 +18,7 @@ recebem props e slots de apresentação e não resolvem regras de domínio.
 
 - [Índice da documentação do tema](docs/README.md)
 - [Design system e tokens](docs/design-system.md)
+- [Auditoria Mobile First](docs/mobile-first-audit.md) — inventário e evidências de responsividade do tema e do Studio.
 - [Catálogo de componentes](docs/component-catalog.md)
 - [Shell multidomínio](docs/shell.md)
 - [Arquitetura](docs/architecture.md)

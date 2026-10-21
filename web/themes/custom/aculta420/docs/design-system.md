@@ -205,6 +205,22 @@ diferentes.
 Referência:
 https://getbootstrap.com/docs/5.3/customize/color-modes/
 
+## Mobile First
+
+ACULTA420 adota implementação mobile-first como decisão arquitetural em
+[`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md).
+O componente começa pelo layout que cabe no menor espaço e ganha colunas e
+navegação simultânea conforme a tarefa e o conteúdo precisem delas. Bootstrap
+5.3.8 fornece breakpoints de referência; não converter media queries locais em
+lote. Grid, Flexbox, `minmax(0, 1fr)` e container queries são técnicas conforme
+o contexto, sem um arquivo global `responsive.css`.
+
+Conteúdo comum deve reflow em 320 CSS px, sem rolagem horizontal da página.
+Exceções bidimensionais mantêm seu próprio contêiner de rolagem. Claro e escuro
+compartilham geometria e markup, conforme o contrato de modos de cor acima. O
+inventário, os limites de evidência e a sequência estão na
+[`auditoria Mobile First`](mobile-first-audit.md).
+
 ## VVJB primeiro (carrossel)
 
 - O carrossel padrão do ACULTA é o VVJB (módulo `vvjb`, estilo de view `views_vvjb`). A home usa essa engine na view `home_editorial_highlights`.
