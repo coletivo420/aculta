@@ -79,12 +79,17 @@ neutros `user-upload-dialog`, `forum-attachment-dialog` e
 `forum-gallery-dialog`, mapeados e estilizados pelo ACULTA420; o Portal não
 depende do tema.
 
-Wiki e LMS migram em seguida; ao integrar cada um, sua aba aparece no mesmo
-formulário central e pode herdar a política global ou configurar valores
-próprios. Cada um preserva as regras de acesso de seu
-conteúdo (incluindo turma, atividade e participação) e reaproveitando a mesma
-política central. Não se deve copiar validadores ou criar limites locais sem uma
-necessidade de domínio documentada.
+O LMS é o segundo consumidor (0.4.0-dev.252). Suas respostas do tipo File Upload
+têm uma aba própria, `lms`, no mesmo formulário central, com herança da política
+global ou override. Como a atividade é configurada pelo educador, a política LMS
+funciona como teto: `UserUploadPolicy::restrictValidators()` remove extensões
+fora da allowlist do consumidor e só reduz o limite de tamanho. O validador
+`AcultaLmsSubmissionImage` do `aculta_image` continua aplicado às imagens. O LMS
+mantém as regras de acesso da turma, da atividade e da participação.
+
+A Wiki ainda não tem consumidor: `wiki_entry` não possui campo de envio por
+usuário. Quando um campo desses existir, ele entra no mesmo formulário central,
+sem copiar validadores ou criar limites locais sem necessidade documentada.
 
 ## Validação automatizada
 

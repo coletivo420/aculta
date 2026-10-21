@@ -41,10 +41,12 @@ Ordem recomendada, com o registro de dívidas como fonte de estado:
 
 Prioridade explícita do responsável em 2026-10-21: tornar `aculta_portal` dono
 da política e da infraestrutura reutilizável para uploads de usuários. O Fórum
-é o primeiro consumidor; a configuração central oferece política global e aba
-por consumidor, com herança global ou override próprio. Migrar Wiki e LMS em
-seguida, auditando acesso privado, vínculo com conteúdo hospedeiro e integração
-com `aculta_image`. O roteiro e a fronteira estão em
+é o primeiro consumidor e o LMS (respostas File Upload) é o segundo, desde
+0.4.0-dev.252: a configuração central oferece política global e aba por
+consumidor, com herança global ou override próprio, e o LMS aplica a política
+como teto às atividades. A Wiki não tem campo de envio por usuário, então ainda
+não tem consumidor; quando tiver, auditar acesso privado, vínculo com conteúdo
+hospedeiro e integração com `aculta_image`. O roteiro e a fronteira estão em
 [`USER-UPLOADS.md`](USER-UPLOADS.md). A entrega segue Dev até concluir testes,
 gates e revisão visual aplicável.
 
