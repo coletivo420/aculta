@@ -1,0 +1,7 @@
+name: 'ACULTA migration spike (new)'
+type: module
+description: 'Fixture de teste da migração de identidade (0.1.0-dev.2). Não instalar em runtime.'
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:field
