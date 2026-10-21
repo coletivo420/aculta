@@ -8,9 +8,11 @@
 - O estudante vê o prazo no fuso de sua conta; o painel do educador informa os
   prazos da turma, e a data usa o fuso de quem a definiu.
 - Publica evento somente ao criar ou mudar a data. Unit LMS/adapter: 43 testes /
-  197 assertions PASS; Kernel de instalação: 4 testes / 34 assertions PASS.
-  Lembrete antecipado depende da decisão de intervalo; Kernel real de Group,
-  revisão visual e Runtime permanecem DEFERRED.
+  197 assertions PASS; Kernel de instalação: 4 testes / 34 assertions e Kernel
+  Group: 1 teste / 33 assertions PASS. O teste com Group real comprova que uma
+  atividade recebe prazos distintos em duas turmas sem ser alterada. Lembrete
+  antecipado depende da decisão de intervalo; Kernel de aviso Message, revisão
+  visual e Runtime permanecem DEFERRED.
 
 ## 0.1.0-dev.16 — avisos de conteúdo liberado e retorno — 2026-10-21
 

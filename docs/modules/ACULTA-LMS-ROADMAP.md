@@ -43,9 +43,11 @@ feedback do educador e definição/alteração de prazo aparecem no site e no re
 respostas pendentes somente com `grade students` atual. Avisos não incluem resposta, nota, arquivo ou corpo de
 comentário, e revalidam a fonte ao exibir. O prazo é salvo por atividade na turma em relação Group, usa o fuso da
 conta e não modifica o conteúdo LMS compartilhado entre turmas. O intervalo do lembrete antecipado aguarda decisão.
-Unit LMS/adapter: 43 testes / 197 assertions PASS; Kernel de instalação `aculta_lms`: 4 testes / 34 assertions
-PASS, com 3 depreciações upstream. Kernel integrado com entidades reais Group/Message, revisão visual e Runtime
-seguem DEFERRED. Próximo: lembrete conforme decisão, Kernel integrado e revisão visual antes de RC.
+Unit LMS/adapter: 43 testes / 197 assertions PASS; Kernel `aculta_lms`: 5 testes / 67 assertions PASS, incluindo
+persistência real da mesma atividade em duas turmas, com prazos distintos. Esses Kernels registraram depreciações
+upstream (3 em instalação/certificado e 40 no teste completo de Group/LMS); a prova Kernel do fluxo de Message
+continua pendente. Revisão visual e Runtime seguem DEFERRED. Próximo: lembrete conforme decisão, Kernel do aviso
+com Message e revisão visual antes de RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
