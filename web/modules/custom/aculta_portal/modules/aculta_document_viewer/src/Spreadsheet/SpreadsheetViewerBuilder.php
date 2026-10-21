@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_document_viewer\Spreadsheet;
 
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
+use Drupal\aculta_document_viewer\Document\DocumentViewerChrome;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Url;
@@ -79,7 +81,7 @@ final class SpreadsheetViewerBuilder {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['aculta-spreadsheet-viewer'],
+        'data-aculta-document-viewer' => 'spreadsheet',
         'data-aculta-sheet' => 'true',
         'data-aculta-sheet-url' => $this->fileUrlGenerator->generateString($uri),
         'data-aculta-sheet-format' => strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)),
@@ -87,10 +89,11 @@ final class SpreadsheetViewerBuilder {
         'data-aculta-sheet-title' => $title,
       ],
       '#attached' => ['library' => [self::LIBRARY]],
+      'chrome' => DocumentViewerChrome::elements($title, new TranslatableMarkup('Planilha')),
       'viewer' => [
         '#type' => 'html_tag',
         '#tag' => 'div',
-        '#attributes' => ['class' => ['aculta-spreadsheet-viewer__frame'], 'role' => 'region', 'aria-label' => $title],
+        '#attributes' => ['data-aculta-document-part' => 'frame', 'role' => 'region', 'aria-label' => $title],
       ],
     ];
   }

@@ -1,5 +1,16 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.7 — interface unificada dos leitores DOCX e planilhas (0.1.0-dev.8 do plano) — 2026-10-21
+
+- `Document\DocumentViewerChrome`: cabeçalho (tipo e título escapados), barra de controles e área de status, com atributos neutros `data-aculta-document-part` e `data-aculta-document-control`. Sem classe de design no módulo.
+- `js/document-chrome.mjs`: zoom em passos fixos (75% a 200%, com `zoom` no quadro de conteúdo), tela cheia do contêiner e status em região `aria-live`. Rótulos por `Drupal.t()`.
+- Leitores DOCX e planilhas usam o cabeçalho e a barra. O modo Planilha/Tabela e o seletor de aba ficam dentro da barra. Mensagens de carregamento, limite e falha são traduzidas.
+- O PDF não foi alterado: continua com a própria barra (`pdf-viewer.css`), conforme o plano.
+- Tema 0.6.0-dev.145: `css/components/document-viewer.css` com tokens semânticos; gate de fundação atualizado.
+- Gates: fronteira módulo-tema sem falha nesse módulo (as falhas restantes são de outras frentes); mapa módulo-tema documenta o módulo e o submódulo Group; atributos documentados em `TOKENS-E-ATRIBUTOS.md`.
+- Testes: Unit 53/53 OK (incluindo escape do título). Runtime (Chromium X11, DOCX e XLSX públicos com título contendo HTML): título como texto; zoom 100% → 115%; tela cheia por clique real; status oculto ao concluir; modos Planilha/Tabela e abas presentes.
+- Pendente: revisão visual em Firefox e em 390/768/1024 px; o gate de design do Mailer falha em três checks que já existiam.
+
 ## 0.1.0-dev.6 — planilhas XLS, ODS e CSV, pt-BR e modo Tabela (0.1.0-dev.7 do plano) — 2026-10-21
 
 - `Spreadsheet\SpreadsheetFileValidator`: valida por formato. XLSX pelo validador OOXML (`forXlsx`), ODS (`mimetype` declarado, `content.xml`, sem `Basic/` ou `Scripts/`), XLS (assinatura OLE2) e CSV (texto, sem bytes NUL). Limite de 25 MiB; extensão fora da lista é recusada.

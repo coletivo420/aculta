@@ -6,12 +6,15 @@
  * disponível.
  */
 import { mountDocxViewer } from './docx-viewer.mjs';
+import { setupDocumentChrome } from './document-chrome.mjs';
+
+const translate = (text) => (Drupal && typeof Drupal.t === 'function' ? Drupal.t(text) : text);
 
 (function (Drupal, once) {
   Drupal.behaviors.acultaDocxViewer = {
     attach(context) {
       once('aculta-docx-viewer', '[data-aculta-docx]', context).forEach((host) => {
-        const frameHost = host.querySelector('.aculta-docx-viewer__frame');
+        const frameHost = host.querySelector('[data-aculta-document-part="frame"]');
         if (!frameHost) {
           return;
         }
@@ -21,15 +24,20 @@ import { mountDocxViewer } from './docx-viewer.mjs';
         } catch (error) {
           libs = [];
         }
+        const chrome = setupDocumentChrome(host, frameHost);
+        chrome.setStatus(translate('Carregando documento…'));
         mountDocxViewer(frameHost, {
           url: host.dataset.acultaDocxUrl,
           frameUrl: host.dataset.acultaDocxFrameUrl,
           libs,
         }).then((result) => {
-          if (result.status !== 'done') {
-            frameHost.hidden = true;
-            host.dataset.acultaDocxStatus = result.status;
+          host.dataset.acultaDocxStatus = result.status;
+          if (result.status === 'done') {
+            chrome.setStatus('');
+            return;
           }
+          frameHost.hidden = true;
+          chrome.setStatus(translate('Não foi possível exibir este arquivo aqui. Use o link de download abaixo.'));
         });
       });
     },

@@ -19,7 +19,7 @@ export function mountDocxViewer(host, { url, frameUrl, libs, timeoutMs = 60000 }
     frame.setAttribute('sandbox', 'allow-scripts');
     frame.setAttribute('title', 'Documento DOCX');
     frame.setAttribute('referrerpolicy', 'no-referrer');
-    frame.className = 'aculta-docx-viewer';
+    frame.dataset.acultaDocumentPart = 'document';
     frame.src = frameUrl;
     host.appendChild(frame);
 

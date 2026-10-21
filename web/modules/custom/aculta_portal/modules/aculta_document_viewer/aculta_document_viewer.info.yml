@@ -2,7 +2,7 @@ name: ACULTA Document Viewer
 type: module
 description: 'Integra o viewer PDF.js aos campos File e Media de PDF, incluindo documentos privados de turma.'
 package: ACULTA Portal
-version: '0.1.0-dev.6'
+version: '0.1.0-dev.7'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal

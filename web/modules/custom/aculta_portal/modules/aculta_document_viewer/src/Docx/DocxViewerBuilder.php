@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_document_viewer\Docx;
 
+use Drupal\aculta_document_viewer\Document\DocumentViewerChrome;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -83,7 +85,7 @@ final class DocxViewerBuilder {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['aculta-docx-viewer'],
+        'data-aculta-document-viewer' => 'docx',
         'data-aculta-docx' => 'true',
         'data-aculta-docx-url' => $this->fileUrlGenerator->generateString($uri),
         'data-aculta-docx-frame-url' => Url::fromUri('base:' . $modulePath . '/docx/docx-frame.html')->toString(),
@@ -91,10 +93,11 @@ final class DocxViewerBuilder {
         'data-aculta-docx-title' => $title,
       ],
       '#attached' => ['library' => [self::LIBRARY]],
+      'chrome' => DocumentViewerChrome::elements($title, new TranslatableMarkup('Documento Word (DOCX)')),
       'viewer' => [
         '#type' => 'html_tag',
         '#tag' => 'div',
-        '#attributes' => ['class' => ['aculta-docx-viewer__frame'], 'role' => 'region', 'aria-label' => $title],
+        '#attributes' => ['data-aculta-document-part' => 'frame', 'role' => 'region', 'aria-label' => $title],
       ],
     ];
   }

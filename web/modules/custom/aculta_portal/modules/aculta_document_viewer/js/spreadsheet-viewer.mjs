@@ -1,3 +1,7 @@
+import { setupDocumentChrome } from './document-chrome.mjs';
+
+const translate = (text) => (window.Drupal && typeof Drupal.t === 'function' ? Drupal.t(text) : text);
+
 /**
  * Leitor de planilhas (somente leitura): SheetJS interpreta o arquivo e o
  * Tabulator mostra as abas em dois modos.
@@ -144,9 +148,9 @@ function tableOptions(XLSX, definition) {
   };
 }
 
-function renderModes(host, frame, sheetTitles, onChange) {
+function renderModes(toolbar, sheetTitles, onChange) {
   const group = document.createElement('div');
-  group.className = 'aculta-spreadsheet-viewer__modes';
+  group.dataset.acultaDocumentPart = 'modes';
   group.setAttribute('role', 'group');
   group.setAttribute('aria-label', 'Modo de leitura');
   const modes = [
@@ -156,7 +160,7 @@ function renderModes(host, frame, sheetTitles, onChange) {
   const buttons = modes.map(([mode, label]) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'aculta-spreadsheet-viewer__mode';
+    button.dataset.acultaDocumentPart = 'mode';
     button.dataset.acultaSheetMode = mode;
     button.textContent = label;
     button.setAttribute('aria-pressed', mode === 'sheet' ? 'true' : 'false');
@@ -169,7 +173,7 @@ function renderModes(host, frame, sheetTitles, onChange) {
     return button;
   });
   const select = document.createElement('select');
-  select.className = 'aculta-spreadsheet-viewer__sheet-select';
+  select.dataset.acultaDocumentPart = 'sheet-select';
   select.setAttribute('aria-label', 'Aba exibida no modo Tabela');
   select.hidden = true;
   sheetTitles.forEach((title, index) => {
@@ -180,7 +184,7 @@ function renderModes(host, frame, sheetTitles, onChange) {
   });
   select.addEventListener('change', () => onChange('table', Number(select.value)));
   group.appendChild(select);
-  host.insertBefore(group, frame);
+  toolbar.append(group);
 }
 
 async function mountSpreadsheet(host, frame) {
@@ -188,6 +192,8 @@ async function mountSpreadsheet(host, frame) {
   if (!XLSX) {
     throw new Error('SheetJS indisponível');
   }
+  const chrome = setupDocumentChrome(host, frame);
+  chrome.setStatus(translate('Carregando planilha…'));
   const workbook = await readWorkbook(XLSX, host.dataset.acultaSheetUrl, host.dataset.acultaSheetFormat);
   const definitions = workbook.SheetNames.map((name) => ({ title: name, ...sheetMatrix(XLSX, workbook.Sheets[name]) }));
   if (definitions.length === 0) {
@@ -210,9 +216,10 @@ async function mountSpreadsheet(host, frame) {
       table = new TabulatorFull(frame, tableOptions(XLSX, definitions[sheetIndex]));
     }
   };
-  renderModes(host, frame, definitions.map((definition) => definition.title), (mode, index) => show(mode, index));
+  renderModes(chrome.toolbar, definitions.map((definition) => definition.title), (mode, index) => show(mode, index));
   show('sheet');
   host.dataset.acultaSheetStatus = definitions.some((definition) => definition.truncated) ? 'truncated' : 'ok';
+  chrome.setStatus(definitions.some((definition) => definition.truncated) ? translate('A planilha foi limitada a 2000 linhas e 100 colunas por aba.') : '');
   host.dataset.acultaSheetCount = String(definitions.length);
   return table;
 }
@@ -221,13 +228,18 @@ async function mountSpreadsheet(host, frame) {
   Drupal.behaviors.acultaSpreadsheetViewer = {
     attach(context) {
       once('aculta-spreadsheet-viewer', '[data-aculta-sheet]', context).forEach((host) => {
-        const frame = host.querySelector('.aculta-spreadsheet-viewer__frame');
+        const frame = host.querySelector('[data-aculta-document-part="frame"]');
         if (!frame) {
           return;
         }
         mountSpreadsheet(host, frame).catch(() => {
           frame.hidden = true;
           host.dataset.acultaSheetStatus = 'error';
+          const status = host.querySelector('[data-aculta-document-control="status"]');
+          if (status) {
+            status.textContent = translate('Não foi possível exibir esta planilha aqui. Use o link de download abaixo.');
+            status.hidden = false;
+          }
         });
       });
     },
