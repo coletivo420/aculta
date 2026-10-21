@@ -89,7 +89,7 @@ if (!empty($state['cms_enhancements'])) {
   if ($webform->getHandlers('email')->count() !== 1) {
     throw new RuntimeException('Expected one institutional email handler.');
   }
-  foreach (['page', 'project', 'activity', 'article', 'document'] as $bundle) {
+  foreach (['page', 'activity', 'article', 'document'] as $bundle) {
     if (!\Drupal\pathauto\Entity\PathautoPattern::load('aculta_' . $bundle) || !\Drupal\field\Entity\FieldConfig::loadByName('node', $bundle, 'field_meta_tags')) {
       throw new RuntimeException('Missing CMS pattern or SEO field: ' . $bundle);
     }
@@ -114,7 +114,7 @@ foreach ($state['blocks'] as $key => $id) {
     throw new RuntimeException('Missing block content: ' . $key);
   }
 }
-foreach (['aculta_projects', 'aculta_news', 'aculta_activities', 'aculta_documents'] as $id) {
+foreach (['aculta_news', 'aculta_activities', 'aculta_documents'] as $id) {
   $view = \Drupal\views\Views::getView($id);
   $view->setDisplay('block_1');
   $view->execute();

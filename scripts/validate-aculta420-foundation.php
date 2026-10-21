@@ -314,7 +314,6 @@ $expectedTemplates = [
   'content/off-canvas-page-wrapper.html.twig',
   'navigation/breadcrumb.html.twig',
   'node--editorial-highlight.html.twig',
-  'node--project--teaser.html.twig',
   // ACULTA Forum topic uses the aculta_user card and omits Core's unfiltered user picture/byline.
   'node--aculta-forum-topic.html.twig',
   // Shared discussion comment presenter added in 0.6.0-dev.96.
@@ -350,7 +349,6 @@ $expectedTemplates = [
   'portal-cart-panel.html.twig',
   'portal-payment-notice.html.twig',
   'portal-search-trigger.html.twig',
-  'views-view-unformatted--aculta-projects.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
   'views-view-vvjb.html.twig',
   // Álbumes: os campos e a View permanecem Drupal; o tema compõe o SDC card overlay.
@@ -387,9 +385,6 @@ $assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers acult
 $componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
 $assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');
 $assert(isset($componentMetadata['slots']) && is_array($componentMetadata['slots']), 'Editorial card exposes renderable content as slots.');
-$projectMetadata = Yaml::parseFile($themeRoot . '/components/content/project-card/project-card.component.yml');
-$assert(($projectMetadata['status'] ?? NULL) === 'experimental', 'Project card is experimental until it proves its contract (0.3.0).');
-$assert($sdc->hasDefinition('aculta420:project-card'), 'Drupal discovers aculta420:project-card.');
 $wikiMetadata = Yaml::parseFile($themeRoot . '/components/patterns/wiki-entry/wiki-entry.component.yml');
 $assert(($wikiMetadata['status'] ?? NULL) === 'experimental', 'Wiki entry pattern remains experimental pending runtime and visual validation.');
 $assert($sdc->hasDefinition('aculta420:wiki-entry'), 'Drupal discovers aculta420:wiki-entry.');
