@@ -15,14 +15,18 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
 use Drupal\user\UserInterface;
 
-/** Grants/revokes Group class memberships from Commerce course orders. */
+/**
+ * Grants and revokes Group class memberships from Commerce course orders.
+ */
 final class CourseOrderEnrollmentManager {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Synchronizes one course order after Commerce saves it. */
+  /**
+   * Synchronizes one course order after Commerce saves it.
+   */
   public function synchronize(OrderInterface $order): void {
     if ($order->bundle() !== 'curso') {
       return;
@@ -36,7 +40,9 @@ final class CourseOrderEnrollmentManager {
     $this->revokeOrderMemberships($order);
   }
 
-  /** Determines whether a completed/paid or partially refunded order still grants access. */
+  /**
+   * Determines whether a completed or partially refunded order grants access.
+   */
   public function hasActiveEntitlement(OrderInterface $order): bool {
     if ($order->getState()->getId() !== 'completed') {
       return FALSE;
@@ -58,6 +64,9 @@ final class CourseOrderEnrollmentManager {
     return FALSE;
   }
 
+  /**
+   * Grants class memberships for eligible course items on an order.
+   */
   private function grantOrderItems(OrderInterface $order): void {
     $uid = (int) $order->getCustomerId();
     if ($uid < 1) {
@@ -85,12 +94,14 @@ final class CourseOrderEnrollmentManager {
         continue;
       }
       $class->addMember($account, [
-        'group_roles' => ['lms_class-member'],
         'field_course_order' => ['target_id' => $order->id()],
       ]);
     }
   }
 
+  /**
+   * Revokes memberships whose order no longer grants an entitlement.
+   */
   private function revokeOrderMemberships(OrderInterface $order): void {
     $storage = $this->entityTypeManager->getStorage('group_relationship');
     $ids = $storage->getQuery()
@@ -117,6 +128,9 @@ final class CourseOrderEnrollmentManager {
     }
   }
 
+  /**
+   * Finds another active order that still grants the same class membership.
+   */
   private function findOtherActiveOrder(GroupInterface $class, int $uid, int $excludedOrderId): ?OrderInterface {
     $itemIds = $this->entityTypeManager->getStorage('commerce_order_item')->getQuery()
       ->accessCheck(FALSE)
@@ -144,6 +158,9 @@ final class CourseOrderEnrollmentManager {
     return NULL;
   }
 
+  /**
+   * Resolves the course associated with a purchased course product.
+   */
   private function courseForItem(OrderItemInterface $item): ?CourseInterface {
     $variation = $item->getPurchasedEntity();
     $product = $variation instanceof ProductVariationInterface ? $variation->getProduct() : NULL;
@@ -162,6 +179,9 @@ final class CourseOrderEnrollmentManager {
     return $course instanceof CourseInterface ? $course : NULL;
   }
 
+  /**
+   * Checks whether a class is linked to the specified course.
+   */
   private function classBelongsToCourse(GroupInterface $class, CourseInterface $course): bool {
     if ($class->bundle() !== 'lms_class') {
       return FALSE;

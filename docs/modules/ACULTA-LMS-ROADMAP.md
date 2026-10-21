@@ -101,7 +101,7 @@ genérico da entidade Lesson não é a autorização contextual da rota. RUNTIME
 STATUS: DEFERRED até smoke test de membro, não membro e visitante; a fase não
 está homologada.
 
-**F7 — Configuração aplicada no Runtime de teste; funcionalidade ainda não homologada.** Config Sync habilita `lms_classes`
+**F7 — integração de pedido concluído validada parcialmente no Runtime de teste.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
 ao educador permissões de criação/gestão; o hook de papel global reconhece
 matrículas em turma. A página do curso oferece produto Commerce próprio, escolha
@@ -115,9 +115,17 @@ de e-mail/termos (aviso por e-mail, entrega reservada à F13). Checkout permite
 cadastro e dispensa confirmação de e-mail, mantendo termos gerais da conta.
 Em 2026-10-18, após backup, `aculta_lms` e `lms_classes` foram habilitados e 29
 objetos F7 entraram por importação parcial; o restante do drift não foi importado.
-`create_default_class` está desligado e o curso existente foi preservado. RUNTIME
-STATUS: CONFIG APLICADA; smoke tests A/B, checkout pago/gratuito e reembolso
-continuam DEFERRED. Backup privado em
+`create_default_class` está desligado e o curso existente foi preservado. Em
+2026-10-21, smoke com entidades temporárias confirmou que pedido gratuito em
+`completed` cria membership, grava a referência do pedido, concede o papel
+global `estudante` e preserva uma membership manual do educador. Pedido,
+produto, variação, turma, curso, contas e aviso temporários foram removidos por
+APIs Drupal; o e-mail foi recusado pelo SMTP porque a conta de teste usa domínio
+reservado. A role insider `lms_class-member` não pode ser enviada no campo de
+roles individuais; o manager foi corrigido para deixar o Group aplicar o escopo
+insider. RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso,
+matrícula manual/removível por educador e isolamento A/B continuam DEFERRED.
+Backup privado em
 `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.
 Detalhes em
 [LMS-GROUP.md](LMS-GROUP.md).

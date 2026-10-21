@@ -1,5 +1,22 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.51 — corrigir role da matrícula por compra — 2026-10-21
+
+- A matrícula por pedido deixa de gravar `lms_class-member` como role
+  individual. Essa role tem escopo `insider` e o Group a aplica pela própria
+  membership; enviá-la no campo `group_roles` fazia o hook de conclusão de
+  pedido falhar antes de concluir a matrícula.
+- Runtime `cursos`: pedido gratuito passou de `draft` a `completed` e criou
+  membership com `field_course_order` apontando para o pedido; o papel global
+  `estudante` foi concedido e uma membership manual do educador foi preservada.
+  Pedido, produto, variação, turma e curso foram removidos via APIs Drupal. A
+  notificação tentou usar o endereço reservado da conta de teste, foi rejeitada
+  pelo SMTP e a Message/fila temporárias foram removidas. Checkout HTTP, pedido
+  pago e reembolso continuam pendentes. Unit LMS/Messenger: 67 testes/347
+  assertions PASS; Kernel: 21/646 PASS, com 92 depreciações upstream. Gate
+  Drupal 11 (1010), índice de estado (29), imagens, slugs (385) e PHPCS
+  passaram. PHP CLI 8.4.26; PHP 8.5 não validado.
+
 ## 0.1.0-dev.50 — negar PDF de certificado revogado — 2026-10-21
 
 - `CertificateLifecycleTest` chama o controlador PDF com um certificado

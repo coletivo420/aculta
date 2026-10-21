@@ -114,10 +114,13 @@ a autoinscrição direta do LMS. Na página do curso, `CourseEnrollmentPurchaseF
 mostra turmas publicadas e o valor do produto Commerce ligado ao curso. Cursos
 pagos e gratuitos passam pelo checkout `curso`; o item registra a turma escolhida.
 `CourseOrderEnrollmentManager` concede membership Group quando o pedido está
-concluído e pago. Reembolso integral revoga somente membership originada pelo
-pedido; outra compra válida mantém acesso e matrícula manual permanece
-independente. Educadores podem remover memberships manuais, mas não memberships
-protegidas por pagamento ativo.
+concluído e pago. A role `lms_class-member` tem escopo insider e é aplicada pelo
+Group, sem ser gravada como role individual. Smoke no Runtime confirmou que um
+pedido gratuito concluído grava a origem em `field_course_order`, concede o
+papel global `estudante` e preserva a membership manual do educador. Reembolso
+integral revoga somente membership originada pelo pedido; outra compra válida
+mantém acesso e matrícula manual permanece independente. Educadores podem
+remover memberships manuais, mas não memberships protegidas por pagamento ativo.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página
@@ -128,9 +131,10 @@ a política geral de aceite de termos. O aviso de matrícula por e-mail integra-
 na F13. No Runtime de teste, `aculta_lms` e `lms_classes` estão habilitados e 29
 objetos de configuração F7 foram aplicados após backup; nenhuma configuração
 ausente foi removida e o curso existente foi preservado. `create_default_class`
-permanece desligado. RUNTIME STATUS: CONFIG APLICADA; a homologação funcional
-segue DEFERRED para matrícula manual/online, turma cruzada, educadores,
-checkout pago/gratuito, estorno/reembolso e isolamento entre usuários A/B.
+permanece desligado. RUNTIME STATUS: configuração aplicada; integração de
+pedido gratuito concluído PASS; fluxo de checkout HTTP, pedido pago, estorno/
+reembolso e isolamento A/B continuam DEFERRED. Matrícula manual e remoção pela
+interface de educador também precisam de smoke HTTP.
 Detalhes, limites e caminho de recuperação estão no [changelog](CHANGELOG.md).
 
 ## F8 — Avaliações e feedback (implementação inicial)

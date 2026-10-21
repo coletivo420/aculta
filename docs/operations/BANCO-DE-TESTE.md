@@ -162,6 +162,15 @@ Após adicionar a recusa de PDF revogado, `CertificateLifecycleTest` passou com
 3 testes / 97 assertions e a suíte Kernel combinada permaneceu em 21 testes,
 agora com 646 assertions; a execução completa acima já inclui essa alteração.
 
+Execução adicional em 2026-10-21 após a correção da matrícula F7: regressão
+combinada `aculta_lms` + `aculta_lms_messenger` passou com 67 testes / 347
+assertions Unit e 21 testes / 646 assertions Kernel no MariaDB dedicado. Foram
+reportadas 8 depreciações PHPUnit e 92 de Core/contrib. PHPCS, Gate Drupal 11+
+(1010 checks), índice do projeto (29 componentes), imagem e slugs passaram. O
+Runtime `cursos` confirmou pedido gratuito concluído, origem da membership e
+papel global estudante; fixtures, aviso e item de e-mail temporários foram
+removidos por APIs Drupal. PHP CLI 8.4.26; PHP 8.5 não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
