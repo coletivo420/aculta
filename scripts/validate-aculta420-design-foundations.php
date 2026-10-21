@@ -96,14 +96,15 @@ foreach ($runtime_files as $path) {
     $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path));
   }
   elseif ($extension === 'twig') {
-    $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
     $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
     $relative = substr($path, strlen($theme) + 1);
     // Envelope de e-mail: clientes de e-mail não carregam tokens.css. As cores são tokens (MailEnvelopeHooks) e o único seletor de modo permitido é o bloco escuro do próprio envelope.
     if ($relative === 'templates/aculta-mailer-wrap.html.twig') {
-      $check(Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source) === 1 && str_contains($source, '{{ d.page }}'), 'Email envelope mode selector is the single dark block fed by token values.');
+      // Contrato do envelope: um único bloco escuro, alimentado por tokens e emitido só no modo automático.
+      $check(preg_match_all('/@media \(prefers-color-scheme: dark\)/', $source) === 1 && str_contains($source, '{{ d.page }}') && str_contains($source, "color_mode == 'auto'"), 'Email envelope: a single prefers-color-scheme dark block, fed by token values and emitted only in auto mode.');
     }
     else {
+      $dark_twig_branches += Aculta420DesignFoundationsAnalyzer::countTwigModeBranches($source);
       $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countTwigInlineCssModeSelectors($source);
     }
     $check(!Aculta420DesignFoundationsAnalyzer::hasTwigInlineRawColorLiteral($source), 'CSS literals in Twig style blocks need semantic tokens: ' . $relative . '.');
@@ -115,6 +116,11 @@ foreach ($runtime_files as $path) {
       // Único ramo de modo permitido: a aplicação do contrato aculta_color_mode do Portal (preprocess_html).
       $contract_branches = Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
       $check($contract_branches === 1 && str_contains($source, "'aculta_color_mode'"), 'PHP color-mode branch is only the Portal contract consumer in ThemeHooks.');
+      continue;
+    }
+    if ($relative === 'src/Hook/MailEnvelopeHooks.php') {
+      // Único ramo de modo do envelope: a resolução do contrato aculta_color_mode (light, dark ou auto).
+      $check(str_contains($source, "'color_mode'") && Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source) === 2, 'Envelope color-mode resolution is the aculta_color_mode contract (light, dark or auto).');
       continue;
     }
     $dark_php_branches += Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
