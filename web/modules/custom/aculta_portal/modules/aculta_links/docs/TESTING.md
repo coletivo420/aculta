@@ -86,3 +86,10 @@ idioma entraram nos cache contexts da lista de micropáginas; o Domain Links é
 dependência cacheável. Não havia páginas em conteúdo de teste para validar
 visualmente o link público ou a prévia autenticada. `cr` completou com aviso
 recorrente de asset H5P sem diretório configurado.
+
+Agendamento 0.4.0-dev.11: Kernel PASS (2 testes/76 asserções), PHPCS Drupal,
+PHP lint dos novos componentes e `git diff --check` PASS. Update `10003` e
+smoke de Runtime permanecem DEFERRED: o preflight Drush falhou durante a
+compilação do container por serviço ausente `entity_print.print_builder`
+introduzido na alteração concorrente do `aculta_lms`; nenhuma operação Runtime
+foi executada.

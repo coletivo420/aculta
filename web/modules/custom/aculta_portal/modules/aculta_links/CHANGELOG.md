@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.11 — agenda disponibilidade de itens — 2026-10-20
+
+- Itens de micropágina agora aceitam início e fim opcionais de disponibilidade em campos revisionáveis; `system.date` define o fuso de edição e o Core armazena UTC.
+- Fim anterior/igual ao início é rejeitado. Prévia privada inclui itens fora da janela; render público oculta-os e reduz max-age até o próximo limite temporal.
+- Update `aculta_links_update_10003()` instala somente as duas definições de campo ausentes; valores vazios preservam a exibição atual.
+- Validação: Kernel 2 testes/76 asserções PASS; Runtime update DEFERRED até preflight e confirmação da única atualização pendente.
+
 ## 0.4.0-dev.10 — disponibiliza QR Code das páginas publicadas — 2026-10-20
 
 - O dashboard oferece download de QR Code SVG em `/pagina/{slug}/codigo-qr.svg` somente para micropáginas publicadas. A carga usa a URL canônica de `DomainPurposeManager`, sem arquivos persistidos, telemetria ou redirect.

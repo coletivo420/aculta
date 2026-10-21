@@ -32,8 +32,8 @@
 
 Dashboard visual equivalente ao LinkStack, identidade herdada explícita do
 `aculta_user`, editor completo de identidade/aparência, SEO via Metatag, mais
-temas, componentes referenciados, links curtos, QR, analytics e agendamento
-ainda precisam ser concluídos. Uma conta Drupal pode possuir várias páginas;
+temas, componentes referenciados, links curtos e analytics ainda precisam ser
+concluídos. QR e agendamento de itens estão disponíveis. Uma conta Drupal pode possuir várias páginas;
 equipes complexas não fazem parte do escopo inicial.
 
 ## Em implementação — 0.2.0-dev.2
@@ -54,3 +54,4 @@ A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/ed
 - Contrato de render é neutro no módulo; ACULTA420 reutiliza o SDC `social-links-page`.
 - Micropáginas exibem o próprio título e não herdam a marca institucional da ACULTA; a landing preserva o logo ACULTA. Identidade Drupal do proprietário ainda não é herdada.
 - Micropágina publicada oferece SVG QR em `/pagina/{slug}/codigo-qr.svg`; codifica a URL canônica gerada por Domain. Sem QR para rascunhos, arquivo persistido ou medição de scans.
+- Itens aceitam `available_from` e `available_until` revisionáveis, com edição no fuso padrão do site e armazenamento UTC. Itens fora da janela não são renderizados na página pública; a prévia privada mantém todos os itens publicados do proprietário visíveis. O cache vence na próxima transição e intervalos inválidos são recusados.

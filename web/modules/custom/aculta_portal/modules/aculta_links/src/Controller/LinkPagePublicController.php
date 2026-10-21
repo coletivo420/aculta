@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_links\Controller;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
@@ -102,10 +103,15 @@ final class LinkPagePublicController {
       $item_storage->getEntityType()->getListCacheTags(),
     );
     $cache_contexts = ['url.site', 'languages:language_interface', 'user', 'user.permissions'];
+    $cache_max_age = Cache::PERMANENT;
 
     foreach ($items as $item) {
-      $access = $item->access('view', $this->currentUser, TRUE);
+      // Preview is authorized by update access to the page. Requiring view
+      // access here would hide scheduled items from their owner before publish.
+      $access = $item->access($published_only ? 'view' : 'update', $this->currentUser, TRUE);
       $cache_tags = array_merge($cache_tags, $item->getCacheTags(), $access->getCacheTags());
+      $cache_contexts = array_merge($cache_contexts, $access->getCacheContexts());
+      $cache_max_age = Cache::mergeMaxAges($cache_max_age, $access->getCacheMaxAge());
       if (!$access->isAllowed()) {
         continue;
       }
@@ -115,6 +121,8 @@ final class LinkPagePublicController {
       }
       $link_access = $link->access('view', $this->currentUser, TRUE);
       $cache_tags = array_merge($cache_tags, $link->getCacheTags(), $link_access->getCacheTags());
+      $cache_contexts = array_merge($cache_contexts, $link_access->getCacheContexts());
+      $cache_max_age = Cache::mergeMaxAges($cache_max_age, $link_access->getCacheMaxAge());
       if (!$link_access->isAllowed()) {
         continue;
       }
@@ -135,7 +143,6 @@ final class LinkPagePublicController {
           ? ['rel' => 'noopener noreferrer', 'target' => '_blank']
           : [],
       ];
-      $cache_contexts = array_merge($cache_contexts, $link_access->getCacheContexts(), $access->getCacheContexts());
     }
 
     $links = [
@@ -156,6 +163,7 @@ final class LinkPagePublicController {
       '#cache' => [
         'contexts' => array_values(array_unique($cache_contexts)),
         'tags' => array_values(array_unique($cache_tags)),
+        'max-age' => $cache_max_age,
       ],
     ];
   }

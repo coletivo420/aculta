@@ -15,6 +15,7 @@ use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Drupal\Core\Entity\Routing\RevisionHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\EntityOwnerTrait;
 use Drupal\views\EntityViewsData;
@@ -59,6 +60,9 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
     'revision_log_message' => 'revision_log',
   ],
   admin_permission: 'administer aculta links',
+  constraints: [
+    'AcultaLinkItemSchedule' => [],
+  ],
   common_reference_target: TRUE,
   show_revision_ui: TRUE,
   list_cache_contexts: ['user', 'user.permissions'],
@@ -124,6 +128,28 @@ final class LinkItem extends EditorialContentEntityBase implements EntityOwnerIn
       ->setDefaultValue(0)
       ->setRevisionable(TRUE);
 
+    $fields['available_from'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(new TranslatableMarkup('Disponível a partir de'))
+      ->setDescription(new TranslatableMarkup('Horário no fuso padrão do portal; vazio deixa o item disponível imediatamente.'))
+      ->setSetting('datetime_type', DateTimeItem::DATETIME_TYPE_DATETIME)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => 3,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['available_until'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(new TranslatableMarkup('Disponível até'))
+      ->setDescription(new TranslatableMarkup('Horário no fuso padrão do portal; vazio mantém o item disponível sem prazo final.'))
+      ->setSetting('datetime_type', DateTimeItem::DATETIME_TYPE_DATETIME)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => 4,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
     $fields['page']->setDisplayOptions('form', [
       'type' => 'entity_reference_autocomplete',
       'weight' => -10,
@@ -137,7 +163,7 @@ final class LinkItem extends EditorialContentEntityBase implements EntityOwnerIn
       'settings' => [
         'display_label' => TRUE,
       ],
-      'weight' => 2,
+      'weight' => 5,
     ])->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')

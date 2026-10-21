@@ -29,6 +29,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'system',
     'user',
     'field',
+    'datetime',
     'link',
     'options',
     'path_alias',
@@ -144,6 +145,32 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     ]);
     $item->save();
 
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $scheduled_item = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Visite o projeto na abertura',
+      'weight' => 1,
+      'status' => TRUE,
+      'available_from' => gmdate('Y-m-d\\TH:i:s', $now + 300),
+      'available_until' => gmdate('Y-m-d\\TH:i:s', $now + 900),
+    ]);
+    $scheduled_item->save();
+
+    $invalid_schedule = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Janela inválida',
+      'available_from' => gmdate('Y-m-d\\TH:i:s', $now + 600),
+      'available_until' => gmdate('Y-m-d\\TH:i:s', $now + 300),
+    ]);
+    self::assertNotEmpty(
+      $invalid_schedule->validate()->getByField('available_until'),
+      'A data final precisa ser posterior à data inicial.',
+    );
+
     self::assertFalse($page->isPublished(), 'Micropáginas começam despublicadas.');
     self::assertSame('soft', $page->get('theme_preset')->value, 'A escolha de preset é persistida na micropágina.');
     self::assertTrue($link->access('update', $owner));
@@ -161,6 +188,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $preview = $this->container->get('aculta_links.public_page_controller')->preview($page);
     self::assertTrue($preview['#has_links'], 'Proprietário pode pré-visualizar itens de um rascunho.');
     self::assertSame('soft', $preview['#theme_preset']);
+    self::assertCount(2, $preview['#links']['#items'], 'A prévia do proprietário inclui itens agendados para o futuro.');
     self::assertSame(0, $preview['#cache']['max-age'], 'Prévia privada nunca pode ser compartilhada em cache.');
     self::assertTrue(
       $this->container->get('aculta_links.public_page_controller')->previewBySlug('pagina-cultural')['#has_links'],
@@ -182,6 +210,8 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertTrue($render['#has_links']);
     self::assertSame('item_list', $render['#links']['#theme']);
     self::assertCount(1, $render['#links']['#items']);
+    self::assertGreaterThan(0, $render['#cache']['max-age']);
+    self::assertLessThanOrEqual(300, $render['#cache']['max-age'], 'A página expira no início da próxima janela agendada.');
 
     $invalid_slug = LinkPage::create([
       'title' => 'Slug inválido',

@@ -44,3 +44,24 @@ function aculta_links_update_10002(): string {
 
   return 'Copied the existing ACULTA social-links values; the legacy configuration was preserved for rollback.';
 }
+
+/**
+ * Installs revisionable availability-window fields on existing page items.
+ */
+function aculta_links_update_10003(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_link_item');
+  foreach (['available_from', 'available_until'] as $field_name) {
+    if ($update_manager->getFieldStorageDefinition($field_name, 'aculta_link_item') === NULL) {
+      $update_manager->installFieldStorageDefinition(
+        $field_name,
+        'aculta_link_item',
+        'aculta_links',
+        $definitions[$field_name],
+      );
+    }
+  }
+
+  return 'Added revisionable availability-window fields to existing ACULTA Links items; existing items remain immediately available with no end date.';
+}

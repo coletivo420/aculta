@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.10`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.11`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
@@ -31,6 +31,12 @@ As redes sociais pessoais pertencem ao `aculta_user` e aos seus contratos de
 perfil e privacidade. Conteúdo de projetos, eventos, cursos e mídia continua sob
 as entidades Drupal que o fornecem. O futuro `aculta_links` poderá consumir
 essas APIs; não passa a ser dono desses dados.
+
+Itens podem ter janela opcional de disponibilidade. Os campos `available_from`
+e `available_until` são revisionáveis, editados no fuso padrão de `system.date`
+e armazenados em UTC. A validação exige que o fim seja posterior ao início. A
+prévia privada mostra itens agendados; a página pública só os inclui dentro da
+janela. A cache expira na próxima transição, sem depender de cron.
 
 ## Documentação
 
