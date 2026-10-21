@@ -6,6 +6,7 @@ dependencies:
     - field.storage.group.field_lms_galleries
     - group.type.lms_course
   module:
+    - aculta_lms_resources
     - media_gallery
 id: group.lms_course.field_lms_galleries
 field_name: field_lms_galleries
@@ -18,7 +19,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:media_gallery'
+  handler: 'aculta_lms_resources:published_gallery'
   handler_settings:
     sort:
       field: _none

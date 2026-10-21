@@ -10,10 +10,15 @@ O builder revalida publicação e Entity Access sob o purpose da origem e agrega
 cacheability das entidades, domínios e resultados de acesso. Não duplica imagens,
 arquivos, conteúdo editorial ou storage.
 
+No caso de galerias, o campo do curso usa uma seleção dedicada: o educador com
+permissão contextual escolhe galerias publicadas no purpose Revista. A galeria
+concede visualização aos membros ativos e educadores do curso somente enquanto
+estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
+
 ## Estado
 
-Dev 0.1.0-dev.1. A cobertura Unit (3 testes / 15 assertions) e Kernel (2 testes /
-46 assertions) passou; Kernel usa o MariaDB dedicado e reporta uma depreciação
-upstream do módulo Domain. PHP CLI 8.4.26; PHP 8.5 não validado. Instalação e
-smoke autenticado no Runtime, formulário de seleção de galerias e revisão visual
-continuam pendentes. Consulte o [roadmap LMS](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
+Dev 0.1.0-dev.2. A cobertura Unit (8 testes / 39 assertions) passou; Kernel
+(2 testes / 46 assertions) já passava na versão anterior e não foi alterado nesta
+subfase. PHP CLI 8.4.26; PHP 8.5 não validado. Instalação e smoke autenticado no
+Runtime e revisão visual continuam pendentes. Consulte o
+[roadmap LMS](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).

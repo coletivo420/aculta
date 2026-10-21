@@ -404,12 +404,15 @@ discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
 Gallery, Magazine e Wiki agora têm referências opcionais no Group de curso e um
 builder que monta links canônicos por purpose, revalidando publicação e Entity
-Access e carregando cacheability da origem. A implementação está isolada em
-`aculta_lms_resources` (0.1.0-dev.1); Unit passou 3/15 e Kernel no MariaDB
-dedicado 2/46, com uma depreciação upstream do Domain. PHP 8.4.26; PHP 8.5 não
-validado. Ainda é necessário confirmar no Runtime que a seleção de galerias no
-formulário administrativo funciona sob o purpose `courses`, instalar os campos,
-fazer smoke autenticado e revisão visual; esses itens bloqueiam RC.
+Access e carregando cacheability da origem. A versão 0.1.0-dev.2 de
+`aculta_lms_resources` acrescenta seleção administrativa de galerias publicadas
+no purpose Revista para educadores com permissão contextual; membros ativos e
+educadores só recebem acesso à galeria enquanto ela estiver vinculada ao curso.
+As permissões gerais da Gallery permanecem inalteradas. Unit passou 8/39; Kernel
+no MariaDB dedicado 2/46 passou na versão anterior e não foi alterado nesta
+subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os campos
+no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
+smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
 **F16 — hardening inicial em curso.** A reemissão de certificados agora usa o
 lock do Core por UUID da conclusão para impedir duas versões ativas em

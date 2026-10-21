@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.2 — acesso pedagógico às galerias — 2026-10-21
+
+- Educadores com permissão contextual podem selecionar somente galerias
+  publicadas. O acesso à galeria publicada é concedido a membros ativos e
+  educadores apenas quando ela está vinculada ao curso; as permissões gerais da
+  Gallery permanecem iguais.
+- Cobertura Unit: 8 testes e 39 assertions. Instalação, smoke autenticado no
+  Runtime e revisão visual continuam pendentes.
+
 ## 0.1.0-dev.1 — referências editoriais por curso — 2026-10-21
 
 - Adiciona referências de curso para artigos, blogs, verbetes Wiki e galerias
