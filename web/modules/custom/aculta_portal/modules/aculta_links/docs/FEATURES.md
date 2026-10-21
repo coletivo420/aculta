@@ -22,6 +22,8 @@
   cache por usuário/query. Rotas administrativas
   pertencem ao MAIN; o acesso revalida permissões e Entity Access. A lista de
   micropáginas inclui endereço publicado ou prévia privada.
+- Navegação interna do dashboard liga as três listas e mantém os filtros
+  válidos da página enquanto remove offsets de paginação.
 - Editor de itens com ordenação, publicação individual e link para prévia
   privada, além da rota pública `/pagina/{slug}` no purpose `links`; o módulo
   foi habilitado no Runtime de teste em 2026-10-20. A prévia pública no host

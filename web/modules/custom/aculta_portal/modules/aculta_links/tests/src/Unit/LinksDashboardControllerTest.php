@@ -60,4 +60,46 @@ final class LinksDashboardControllerTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Ensures dashboard section links retain valid filters and target sections.
+   *
+   * @covers ::buildSectionNavigation
+   */
+  public function testSectionNavigationTargetsListsAndPreservesFilters(): void {
+    $request = Request::create('/painel-administrativo/links', 'GET', [
+      'paginas_estado' => 'publicados',
+      'itens_estado' => 'rascunhos',
+      'destinos_estado' => 'invalid',
+      'page' => '3,2,1',
+    ]);
+    $request_stack = new RequestStack();
+    $request_stack->push($request);
+    $controller = new LinksDashboardController(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AccountProxyInterface::class),
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(LinkAnalytics::class))->newInstanceWithoutConstructor(),
+      $request_stack,
+    );
+    $method = new \ReflectionMethod($controller, 'buildSectionNavigation');
+    $navigation = $method->invoke($controller);
+
+    self::assertSame('nav', $navigation['#tag']);
+    self::assertSame(
+      'Navegação entre listas de links',
+      $navigation['#attributes']['aria-label']->getUntranslatedString(),
+    );
+    self::assertCount(3, $navigation['links']['#items']);
+    self::assertSame('links-pages', $navigation['links']['#items'][0]['#url']->getOption('fragment'));
+    self::assertSame('links-destinations', $navigation['links']['#items'][1]['#url']->getOption('fragment'));
+    self::assertSame('links-items', $navigation['links']['#items'][2]['#url']->getOption('fragment'));
+    foreach ($navigation['links']['#items'] as $item) {
+      self::assertSame(
+        ['paginas_estado' => 'publicados', 'itens_estado' => 'rascunhos'],
+        $item['#url']->getOption('query'),
+      );
+    }
+    self::assertSame(['url.query_args'], $navigation['links']['#cache']['contexts']);
+  }
+
 }

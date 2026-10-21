@@ -566,11 +566,19 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       'uid',
       2,
     );
+    $section_navigation = (new \ReflectionMethod($controller, 'buildSectionNavigation'))
+      ->invoke($controller);
+    $navigation_markup = (string) $this->container->get('renderer')
+      ->renderRoot($section_navigation);
     $request_stack->pop();
 
     self::assertCount(1, $build['table']['#rows']);
     self::assertSame('Botão em rascunho', (string) $build['table']['#rows'][0]['title']->getText());
+    self::assertSame('links-items', $build['#attributes']['id']);
     self::assertContains('url.query_args:itens_estado', $build['table']['#cache']['contexts']);
+    self::assertStringContainsString('<nav aria-label="Navegação entre listas de links">', $navigation_markup);
+    self::assertStringContainsString('#links-items', $navigation_markup);
+    self::assertStringContainsString('itens_estado=rascunhos', $navigation_markup);
     self::assertNotSame($published->id(), $draft->id());
   }
 

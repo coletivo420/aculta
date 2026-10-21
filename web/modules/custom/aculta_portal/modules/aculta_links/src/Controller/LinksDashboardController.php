@@ -36,6 +36,7 @@ final class LinksDashboardController {
     $account = $this->currentUser;
     $admin = $account->hasPermission('administer aculta links');
     $build = [
+      'section_navigation' => $this->buildSectionNavigation(),
       'actions' => [
         '#theme' => 'item_list',
         '#list_type' => 'ul',
@@ -83,6 +84,62 @@ final class LinksDashboardController {
       ],
     ];
     return $build;
+  }
+
+  /**
+   * Builds in-page navigation for the dashboard's three entity lists.
+   *
+   * @return array
+   *   Accessible navigation render array.
+   */
+  private function buildSectionNavigation(): array {
+    $request_query = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
+    $query = [];
+    foreach ([
+      'paginas_estado',
+      'destinos_estado',
+      'itens_estado',
+    ] as $filter_key) {
+      $filter = $request_query[$filter_key] ?? NULL;
+      if (in_array($filter, ['publicados', 'rascunhos'], TRUE)) {
+        $query[$filter_key] = $filter;
+      }
+    }
+    $sections = [
+      'links-pages' => new TranslatableMarkup('Micropáginas'),
+      'links-destinations' => new TranslatableMarkup('Destinos reutilizáveis'),
+      'links-items' => new TranslatableMarkup('Itens de micropágina'),
+    ];
+    $items = [];
+    foreach ($sections as $id => $label) {
+      $options = ['fragment' => $id];
+      if ($query !== []) {
+        $options['query'] = $query;
+      }
+      $items[] = CoreLink::createFromRoute(
+        $label,
+        'aculta_links.dashboard',
+        [],
+        $options,
+      )->toRenderable();
+    }
+
+    return [
+      '#type' => 'html_tag',
+      '#tag' => 'nav',
+      '#attributes' => [
+        'aria-label' => new TranslatableMarkup('Navegação entre listas de links'),
+      ],
+      '#weight' => -20,
+      'links' => [
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#items' => $items,
+        '#cache' => [
+          'contexts' => ['url.query_args'],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -273,6 +330,13 @@ final class LinksDashboardController {
         default => new TranslatableMarkup('Itens de micropágina'),
       },
       '#open' => TRUE,
+      '#attributes' => [
+        'id' => match ($entity_type_id) {
+          'aculta_link_page' => 'links-pages',
+          'aculta_link' => 'links-destinations',
+          default => 'links-items',
+        },
+      ],
       'filters' => [
         '#theme' => 'links',
         '#links' => $this->buildStatusFilterLinks($filter_key, $filter),

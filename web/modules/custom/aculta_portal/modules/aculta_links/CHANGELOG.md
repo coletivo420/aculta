@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.29 — navega entre listas do dashboard — 2026-10-21
+
+- Dashboard ganha navegação semântica por âncoras para micropáginas, destinos e itens; os links preservam filtros válidos e descartam parâmetros inválidos/pager.
+- As seções recebem IDs estáveis. A navegação varia cache pelas query strings e não adiciona classes de apresentação nem JavaScript.
+- Validação: Unit PASS (7 testes/64 asserções; 9 deprecações PHPUnit); Kernel MariaDB PASS (6 testes/212 asserções; 7 deprecações Core/contrib); PHPCS, lint, slugs, fronteira módulo–tema (1865 verificações), mapa módulo–tema (170) e `git diff --check` PASS. Status-index e Drupal 11 gate ficaram bloqueados por alterações não commitadas de `aculta_statistics` em outra frente; PHP local 8.4.26, abaixo do alvo 8.5.
+
 ## 0.4.0-dev.28 — remove classe visual fora do contrato — 2026-10-20
 
 - O filtro de publicação do dashboard mantém os links e seu cache sem emitir classe de apresentação no módulo; não havia consumidor CSS/JavaScript dessa classe.
