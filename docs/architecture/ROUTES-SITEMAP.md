@@ -285,6 +285,18 @@ correspondentes estão habilitados no ambiente.
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
 | `revista.aculta` | `/albuns/{titulo}` | Álbum de galeria | Condicional ao módulo e conteúdo; confirmar estado efetivo do Runtime. |
 
+### Perfil, bio, redes e associados (`aculta_user`)
+
+| Host | Caminho/padrão | Título / objeto | Estado |
+| --- | --- | --- | --- |
+| `conta.aculta` | `/configuracoes/privacidade` | Privacidade do perfil público (formulário) | Exige `access aculta portal`; sem purpose fixo, acessado pela Minha conta. |
+| `conta.aculta` | `/bio/editar` | Editor da bio no cartão da conta (modal) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
+| `conta.aculta` | `/redes/editar/{rede}` | Editor de link de rede social (`instagram`, `facebook` ou `reddit`) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
+| `main.aculta` | `/u/lendashistoricas` | Memorial de legados (página pública) | Purpose `main`; sem restrição de acesso (`_access: TRUE`). |
+| `main.aculta` | `/painel-administrativo/associados/relatorio` | Relatório administrativo de associados | Exige `administer aculta associados`; rota administrativa. |
+| `main.aculta` | `/painel-administrativo/associados/exportar` | Exportação CSV de associados | Exige `export aculta associados` (somente administrador). |
+| `main.aculta` | `/painel-administrativo/associados/{user}/marcar` | Marca ou desmarca associado de uma conta | Exige `administer aculta associados`; confirmação antes de gravar. |
+
 ## Rotas técnicas ativas
 
 Estes padrões não são itens de navegação. Sua existência depende do módulo
@@ -313,6 +325,11 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | `main.aculta` | `/integracoes/pagamentos/{commerce_payment_gateway}/notificacao` | Notificação enviada pelo gateway de pagamento | Callback técnico, sem navegação humana; endereço declarado por ambiente e validado pelo gateway. |
 | `conta.aculta` | `/oauth/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de anexo de resposta | Condicional; verifica access à resposta e matrícula. |
+| `conta.aculta` | `/avatar/foto` | Modal de foto de perfil (formulário de envio, prévia e remoção) | Exige `access aculta portal`; sem purpose fixo, aberto pelo painel da conta. |
+| `conta.aculta` | `/avatar/recortar` | Modal de recorte do arquivo recém-enviado | Exige `access aculta portal`; aceita só o arquivo temporário do próprio usuário. |
+| `conta.aculta` | `/avatar/sortear` | Prévia AJAX de avatar do acervo (não grava até salvar) | Exige `access aculta portal` e token CSRF (`_csrf_token`). |
+| `conta.aculta` | `/bio/salvar` | Gravação AJAX da bio (POST) | Exige `access aculta portal`, token CSRF e purpose `account`. |
+| `conta.aculta` | `/redes/salvar` | Gravação AJAX de link de rede social (POST) | Exige `access aculta portal`, token CSRF e purpose `account`. |
 
 O inventário técnico exaustivo deve ser preenchido a partir do roteador Drupal
 do ambiente validado. Não copiar indiscriminadamente endpoints de todos os
