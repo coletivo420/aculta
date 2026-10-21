@@ -1,3 +1,8 @@
+## 0.1.0-dev.62 — formulário de modelo novo sem erro — 2026-10-22
+
+- Corrige `TypeError` ao abrir o formulário de adicionar modelo (HTTP 500): `MailTypeRegistry::has()` recebia `NULL`, porque o modelo novo ainda não tem ID. A busca do tipo só ocorre quando há ID. O erro já existia antes da 0.1.0-dev.61.
+- Verificado no servidor de testes: o formulário responde 200 e carrega o editor `aculta_email`.
+
 ## 0.1.0-dev.61 — editor visual de modelos com formato HTML restrito — 2026-10-22
 
 - `MailTemplateForm`: o corpo do modelo passa a ser `text_format` com o formato `aculta_email`, no lugar do `textarea`. A validação de variáveis lê o valor do editor e a gravação marca o formato HTML.

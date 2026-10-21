@@ -43,7 +43,9 @@ final class MailTemplateForm extends EntityForm {
     $form = parent::form($form, $form_state);
     /** @var \Drupal\aculta_mailer\Entity\MailTemplate $template */
     $template = $this->entity;
-    $type = $this->types->has($template->id()) ? $this->types->get($template->id()) : NULL;
+    // Modelo novo ainda não tem ID: não há tipo a buscar.
+    $type_id = $template->id();
+    $type = $type_id !== NULL && $this->types->has($type_id) ? $this->types->get($type_id) : NULL;
 
     $options = [];
     foreach ($this->types->ids() as $id) {
