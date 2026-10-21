@@ -1,5 +1,18 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.71 — proteger membership manual com compra ativa — 2026-10-21
+
+- A remoção pelo educador agora consulta pedidos ativos da mesma turma mesmo
+  quando a membership foi criada manualmente antes da compra. A conferência
+  valida estudante, produto associado ao curso, estado do pedido e entitlement;
+  sem compra ativa, a matrícula manual segue removível após revalidação em cada
+  request. `EnrollmentFormHooksTest`: 7/49; `CourseOrderEnrollmentManagerTest`:
+  6/25; Unit LMS/Messenger: 86/460; `AcultaLmsInstallTest`: 4/40;
+  Kernel LMS/Messenger: 23/730 (95 depreciações de Core/contrib). Runtime
+  `cursos`: sem updates; cache rebuild e resolução do manager/hook passaram,
+  com warning preexistente de cópia de assets H5P. Nenhuma configuração foi
+  importada.
+
 ## 0.1.0-dev.70 — invalidar acesso armazenado ao remover vínculo da turma — 2026-10-21
 
 - O resultado positivo do painel de educadores agora depende das listas Group

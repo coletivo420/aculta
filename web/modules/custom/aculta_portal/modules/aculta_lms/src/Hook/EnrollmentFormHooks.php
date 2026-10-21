@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
+use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Access\AccessResult;
@@ -18,9 +19,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\Form\GroupRelationshipDeleteForm;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -35,6 +38,8 @@ final class EnrollmentFormHooks {
     private readonly TranslationInterface $translation,
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'aculta_lms.course_order_enrollment')]
+    private readonly CourseOrderEnrollmentManagerInterface $enrollments,
   ) {}
 
   /**
@@ -44,11 +49,32 @@ final class EnrollmentFormHooks {
   public function protectPaidEnrollment(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
     if ($operation !== 'delete'
       || !$entity instanceof GroupRelationshipInterface
-      || $entity->getPluginId() !== 'group_membership'
-      || $entity->getGroup()?->bundle() !== 'lms_class'
-      || !$entity->hasField('field_course_order')
-      || $entity->get('field_course_order')->isEmpty()) {
+      || $entity->getPluginId() !== 'group_membership') {
       return AccessResult::neutral();
+    }
+
+    $class = $entity->getGroup();
+    if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
+      return AccessResult::neutral();
+    }
+    if (!$entity->hasField('field_course_order') || $entity->get('field_course_order')->isEmpty()) {
+      $student = $entity->getEntity();
+      if (!$student instanceof UserInterface) {
+        return AccessResult::neutral()->addCacheableDependency($entity)->setCacheMaxAge(0);
+      }
+      $result = AccessResult::neutral()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($class)
+        ->addCacheableDependency($student)
+        ->setCacheMaxAge(0);
+      if ($this->enrollments->hasActivePurchaseForClass($class, $student)) {
+        return AccessResult::forbidden('Esta matrícula não pode ser removida enquanto houver uma compra válida para a turma.')
+          ->addCacheableDependency($entity)
+          ->addCacheableDependency($class)
+          ->addCacheableDependency($student)
+          ->setCacheMaxAge(0);
+      }
+      return $result;
     }
 
     $order = $entity->get('field_course_order')->entity;

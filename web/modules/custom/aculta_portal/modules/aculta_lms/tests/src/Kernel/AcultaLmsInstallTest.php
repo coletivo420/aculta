@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
@@ -58,6 +60,11 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
     );
+    $this->assertInstanceOf(
+      CourseOrderEnrollmentManagerInterface::class,
+      $container->get('aculta_lms.course_order_enrollment'),
+    );
+    $this->assertInstanceOf(EnrollmentFormHooks::class, $container->get(EnrollmentFormHooks::class));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');
     $this->assertSame('/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo', $route->getPath());
     $this->assertSame(

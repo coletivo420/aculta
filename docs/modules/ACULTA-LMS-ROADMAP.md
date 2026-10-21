@@ -128,6 +128,15 @@ integral e pedido incompleto, sem gateway remoto. `EnrollmentFormHooksTest`
 confirma que matrículas manuais podem ser removidas, matrículas de compra paga,
 parcialmente reembolsada ou gratuita concluída ficam protegidas, reembolso total
 permite remoção e origem inválida falha fechada (5 testes/32 assertions).
+Em `aculta_lms` dev.71, a política também protege matrícula criada manualmente
+quando o mesmo estudante passa a ter uma compra ativa para a turma; produto,
+curso, turma, estado do pedido e entitlement são conferidos. Sem compra ativa,
+a membership manual permanece removível, e a decisão é revalidada no request de
+remoção. `EnrollmentFormHooksTest`: 7/49; `CourseOrderEnrollmentManagerTest`:
+6/25; Unit LMS/Messenger: 86/460; Kernel de instalação/DI: 4/40; regressão
+Kernel LMS/Messenger: 23/730 assertions PASS (95 depreciações upstream).
+Runtime `cursos`: sem updates, rebuild e resolução do manager/hook passaram;
+houve warning preexistente de cópia dos assets H5P.
 RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso, confirmação da
 interface de remoção e isolamento A/B continuam DEFERRED.
 Backup privado em

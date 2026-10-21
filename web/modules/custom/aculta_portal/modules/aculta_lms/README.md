@@ -166,10 +166,15 @@ Unit testa entitlement de pedido gratuito, pagamento concluído, reembolso parci
 e total e pedido incompleto. `EnrollmentFormHooksTest` também protege contra
 remoção manual de matrículas de compra paga/parcialmente reembolsada ou pedido
 gratuito concluído e falha fechada quando a origem não pode ser lida; matrícula
-manual e pedido totalmente reembolsado seguem removíveis. A confirmação visual
+manual segue removível sem compra ativa, mas fica protegida se a pessoa comprar
+o curso depois da matrícula manual; a elegibilidade da compra é revalidada no
+submit e o estorno integral libera a matrícula manual novamente. A confirmação visual
 da interface ainda aguarda smoke HTTP. O Runtime não foi conectado ao gateway
 para simular uma transação remota. Se o armazenamento retornar um registro de
 pagamento inválido, o acesso também é negado sem erro 500.
+Na dev.71, Unit LMS/Messenger: 86 testes / 460 assertions; o Kernel confirma
+DI do novo verificador de compras (4/40) e a regressão LMS/Messenger passa com
+23 testes / 730 assertions, com 95 depreciações upstream.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página

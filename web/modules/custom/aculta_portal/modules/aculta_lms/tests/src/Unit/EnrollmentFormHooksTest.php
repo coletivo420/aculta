@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
+use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -33,16 +34,49 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
    */
   public function testManualEnrollmentDeletionIsUnrestrictedByPurchasePolicy(): void {
     $relationship = $this->createMock(GroupRelationshipInterface::class);
+    $this->makeCacheable($relationship);
     $relationship->method('getPluginId')->willReturn('group_membership');
-    $relationship->method('getGroup')->willReturn($this->classGroup());
+    $class = $this->classGroup();
+    $relationship->method('getGroup')->willReturn($class);
+    $student = $this->createMock(UserInterface::class);
+    $this->makeCacheable($student);
+    $relationship->method('getEntity')->willReturn($student);
     $relationship->method('hasField')->with('field_course_order')->willReturn(TRUE);
     $reference = $this->createMock(FieldItemListInterface::class);
     $reference->method('isEmpty')->willReturn(TRUE);
     $relationship->method('get')->with('field_course_order')->willReturn($reference);
+    $enrollments = $this->createMock(CourseOrderEnrollmentManagerInterface::class);
+    $enrollments->expects(self::once())->method('hasActivePurchaseForClass')->with($class, $student)->willReturn(FALSE);
 
-    $result = $this->hooks()->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
+    $result = $this->hooks($enrollments)->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
 
     self::assertTrue($result->isNeutral());
+    self::assertSame(0, $result->getCacheMaxAge());
+  }
+
+  /**
+   * A manual enrollment cannot be deleted while its student has paid.
+   */
+  public function testManualEnrollmentDeletionIsBlockedByActivePurchase(): void {
+    $class = $this->classGroup();
+    $student = $this->createMock(UserInterface::class);
+    $this->makeCacheable($student);
+    $relationship = $this->createMock(GroupRelationshipInterface::class);
+    $this->makeCacheable($relationship);
+    $relationship->method('getPluginId')->willReturn('group_membership');
+    $relationship->method('getGroup')->willReturn($class);
+    $relationship->method('getEntity')->willReturn($student);
+    $relationship->method('hasField')->with('field_course_order')->willReturn(TRUE);
+    $reference = $this->createMock(FieldItemListInterface::class);
+    $reference->method('isEmpty')->willReturn(TRUE);
+    $relationship->method('get')->with('field_course_order')->willReturn($reference);
+    $enrollments = $this->createMock(CourseOrderEnrollmentManagerInterface::class);
+    $enrollments->expects(self::once())->method('hasActivePurchaseForClass')->with($class, $student)->willReturn(TRUE);
+
+    $result = $this->hooks($enrollments)->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
+
+    self::assertTrue($result->isForbidden());
+    self::assertSame(0, $result->getCacheMaxAge());
   }
 
   /**
@@ -121,6 +155,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
       $entityTypeManager,
       $this->getStringTranslationStub(),
       $this->createMock(AccountProxyInterface::class),
+      $this->createMock(CourseOrderEnrollmentManagerInterface::class),
     );
 
     return $hooks->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
@@ -168,11 +203,12 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
   /**
    * Builds hooks for testing a non-eligible entity operation.
    */
-  private function hooks(): EnrollmentFormHooks {
+  private function hooks(?CourseOrderEnrollmentManagerInterface $enrollments = NULL): EnrollmentFormHooks {
     return new EnrollmentFormHooks(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->getStringTranslationStub(),
       $this->createMock(AccountProxyInterface::class),
+      $enrollments ?? $this->createMock(CourseOrderEnrollmentManagerInterface::class),
     );
   }
 

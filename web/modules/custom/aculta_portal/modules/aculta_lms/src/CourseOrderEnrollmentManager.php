@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
 /**
  * Grants and revokes Group class memberships from Commerce course orders.
  */
-final class CourseOrderEnrollmentManager {
+final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManagerInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -62,6 +62,13 @@ final class CourseOrderEnrollmentManager {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasActivePurchaseForClass(GroupInterface $class, UserInterface $student): bool {
+    return $this->findActiveOrderForClass($class, (int) $student->id()) !== NULL;
   }
 
   /**
@@ -118,7 +125,7 @@ final class CourseOrderEnrollmentManager {
       if (!$class instanceof GroupInterface || !$account instanceof UserInterface) {
         continue;
       }
-      $alternative = $this->findOtherActiveOrder($class, (int) $account->id(), (int) $order->id());
+      $alternative = $this->findActiveOrderForClass($class, (int) $account->id(), (int) $order->id());
       if ($alternative !== NULL) {
         $membership->set('field_course_order', ['target_id' => $alternative->id()]);
         $membership->save();
@@ -129,9 +136,9 @@ final class CourseOrderEnrollmentManager {
   }
 
   /**
-   * Finds another active order that still grants the same class membership.
+   * Finds an active order for the class, optionally excluding one order.
    */
-  private function findOtherActiveOrder(GroupInterface $class, int $uid, int $excludedOrderId): ?OrderInterface {
+  private function findActiveOrderForClass(GroupInterface $class, int $uid, ?int $excludedOrderId = NULL): ?OrderInterface {
     $itemIds = $this->entityTypeManager->getStorage('commerce_order_item')->getQuery()
       ->accessCheck(FALSE)
       ->condition('type', 'curso')
@@ -145,7 +152,8 @@ final class CourseOrderEnrollmentManager {
       if (!$candidate instanceof OrderInterface) {
         continue;
       }
-      if ((int) $candidate->id() === $excludedOrderId || (int) $candidate->getCustomerId() !== $uid) {
+      if (($excludedOrderId !== NULL && (int) $candidate->id() === $excludedOrderId)
+        || (int) $candidate->getCustomerId() !== $uid) {
         continue;
       }
       $course = $this->courseForItem($item);

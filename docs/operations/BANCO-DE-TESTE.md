@@ -212,6 +212,13 @@ Em 2026-10-21, `ClassDashboardKernelTest` passou com 1 teste / 46 assertions:
 remover a relação curso→turma invalida o grant de acesso do educador já
 armazenado. Kernel combinado LMS/Messenger: 23 testes / 728 assertions PASS.
 
+Em 2026-10-21, a política F7 de remoção foi ampliada para proteger uma
+membership manual quando existe compra ativa para a mesma turma. Unit LMS /
+Messenger: 86 testes / 460 assertions; `EnrollmentFormHooksTest`: 7/49;
+`CourseOrderEnrollmentManagerTest`: 6/25; `AcultaLmsInstallTest`: 4/40. A
+regressão Kernel LMS/Messenger passou com 23 testes / 730 assertions; 95
+depreciações vieram de Core/contrib.
+
 Em 2026-10-21, `ClassActivityDeadlineTest` passou com 1 teste / 49 assertions:
 ao criar o vínculo curso→turma, o cache tag Group invalida a negativa de acesso
 previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /

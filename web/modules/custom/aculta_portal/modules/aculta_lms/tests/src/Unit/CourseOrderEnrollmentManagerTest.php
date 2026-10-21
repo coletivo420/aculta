@@ -6,11 +6,20 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\CourseOrderEnrollmentManager;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 
 /**
@@ -61,6 +70,61 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
     $manager = $this->manager([$payment], FALSE);
 
     self::assertFalse($manager->hasActiveEntitlement($this->createOrder('draft', FALSE)));
+  }
+
+  /**
+   * A manually created class membership is protected by a later active order.
+   */
+  public function testActivePurchaseForClassFindsTheStudentOrder(): void {
+    $class = $this->createMock(GroupInterface::class);
+    $class->method('bundle')->willReturn('lms_class');
+    $class->method('id')->willReturn('77');
+    $course = $this->createMock(CourseInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('44');
+    $classRelationship = $this->createMock(GroupRelationshipInterface::class);
+    $classRelationship->method('getEntity')->willReturn($class);
+    $course->method('getRelationships')->with('lms_classes')->willReturn([$classRelationship]);
+
+    $student = $this->createMock(UserInterface::class);
+    $student->method('id')->willReturn('12');
+    $order = $this->createOrder('completed', TRUE);
+    $order->method('id')->willReturn('19');
+    $order->method('getCustomerId')->willReturn('12');
+    $orderItem = $this->createMock(OrderItemInterface::class);
+    $orderItem->method('bundle')->willReturn('curso');
+    $orderItem->method('getOrder')->willReturn($order);
+    $variation = $this->createMock(ProductVariationInterface::class);
+    $product = $this->createMock(ProductInterface::class);
+    $product->method('bundle')->willReturn('produto_curso');
+    $product->method('id')->willReturn('8');
+    $variation->method('getProduct')->willReturn($product);
+    $orderItem->method('getPurchasedEntity')->willReturn($variation);
+
+    $orderItemQuery = $this->createMock(QueryInterface::class);
+    $orderItemQuery->method('accessCheck')->willReturnSelf();
+    $orderItemQuery->method('condition')->willReturnSelf();
+    $orderItemQuery->method('execute')->willReturn([5]);
+    $orderItemStorage = $this->createMock(EntityStorageInterface::class);
+    $orderItemStorage->method('getQuery')->willReturn($orderItemQuery);
+    $orderItemStorage->method('loadMultiple')->with([5])->willReturn([$orderItem]);
+
+    $courseQuery = $this->createMock(QueryInterface::class);
+    $courseQuery->method('accessCheck')->willReturnSelf();
+    $courseQuery->method('condition')->willReturnSelf();
+    $courseQuery->method('execute')->willReturn([44]);
+    $courseStorage = $this->createMock(EntityStorageInterface::class);
+    $courseStorage->method('getQuery')->willReturn($courseQuery);
+    $courseStorage->method('load')->with(44)->willReturn($course);
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['commerce_order_item', $orderItemStorage],
+      ['group', $courseStorage],
+    ]);
+    $manager = new CourseOrderEnrollmentManager($entityTypeManager);
+
+    self::assertTrue($manager->hasActivePurchaseForClass($class, $student));
   }
 
   /**
