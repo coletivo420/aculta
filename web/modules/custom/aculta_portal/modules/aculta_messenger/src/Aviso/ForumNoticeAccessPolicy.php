@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
 /**
  * Revalidates public forum notice eligibility at creation and delivery time.
  */
-final class ForumNoticeAccessPolicy {
+final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,

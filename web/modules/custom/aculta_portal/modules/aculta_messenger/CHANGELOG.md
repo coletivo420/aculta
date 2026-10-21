@@ -1,3 +1,10 @@
+## 0.1.1-dev.73 — valida transferência de agregados de resposta — 2026-10-21
+
+- Extrai `ForumNoticeAccessPolicyInterface` para permitir cobertura isolada do
+  serviço e testa a mesclagem do agregado completo de respostas: somas dos
+  contadores, maior ID de comentário e exclusão do registro de origem.
+- Unit focal: 1 teste / 13 assertions PASS. Sem alteração de Runtime.
+
 ## 0.1.1-dev.69 — aviso persistente de e-mail não confirmado — 2026-10-21
 
 - Modelo de aviso `aculta_msg_email_pendente` (config em `config/sync`): aviso persistente de quem não confirmou o e-mail, no sistema de avisos (entidade `message`). Sem dados pessoais.

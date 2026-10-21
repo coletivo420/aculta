@@ -24,7 +24,7 @@ final class AvisoService implements ForumNoticeTransferInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
-    private readonly ForumNoticeAccessPolicy $accessPolicy,
+    private readonly ForumNoticeAccessPolicyInterface $accessPolicy,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
