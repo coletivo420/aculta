@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_forum_lms\Context\LmsH5PDiscussionResolver;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
@@ -44,23 +45,45 @@ final class LmsH5PDiscussionResolverTest extends UnitTestCase {
     $topic->method('getCacheMaxAge')->willReturn(-1);
     $topic->method('access')->with('view', $student, TRUE)->willReturn(AccessResult::allowed());
 
+    $otherCourse = $this->createMock(GroupInterface::class);
+    $otherCourse->method('id')->willReturn('13');
+    $otherCourse->method('bundle')->willReturn('lms_course');
+    $otherCourse->method('getCacheContexts')->willReturn([]);
+    $otherCourse->method('getCacheTags')->willReturn([]);
+    $otherCourse->method('getCacheMaxAge')->willReturn(-1);
+    $foreignTopic = $this->createMock(NodeInterface::class);
+    $foreignTopic->method('bundle')->willReturn('aculta_lms_topic');
+    $foreignTopic->method('getCacheContexts')->willReturn([]);
+    $foreignTopic->method('getCacheTags')->willReturn([]);
+    $foreignTopic->method('getCacheMaxAge')->willReturn(-1);
+    $foreignTopic->method('access')->with('view', $student, TRUE)->willReturn(AccessResult::allowed());
+
     $relationship = $this->createMock(GroupRelationshipInterface::class);
     $relationship->method('getGroup')->willReturn($course);
     $relationship->method('getCacheContexts')->willReturn([]);
     $relationship->method('getCacheTags')->willReturn([]);
     $relationship->method('getCacheMaxAge')->willReturn(-1);
+    $foreignRelationship = $this->createMock(GroupRelationshipInterface::class);
+    $foreignRelationship->method('getGroup')->willReturn($otherCourse);
+    $foreignRelationship->method('getCacheContexts')->willReturn([]);
+    $foreignRelationship->method('getCacheTags')->willReturn([]);
+    $foreignRelationship->method('getCacheMaxAge')->willReturn(-1);
     $relationshipStorage = $this->createMock(GroupRelationshipStorageInterface::class);
-    $relationshipStorage->method('loadByEntity')->with($topic, 'group_node:aculta_lms_topic')->willReturn([$relationship]);
+    $relationshipStorage->method('loadByEntity')->willReturnCallback(
+      fn (NodeInterface $entity, string $pluginId): array => $pluginId === 'group_node:aculta_lms_topic'
+        ? ($entity === $topic ? [$relationship] : [$foreignRelationship])
+        : [],
+    );
 
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
     $query->method('sort')->willReturnSelf();
-    $query->method('execute')->willReturn([56]);
+    $query->method('execute')->willReturn([56, 57]);
 
     $nodeStorage = $this->createMock(EntityStorageInterface::class);
     $nodeStorage->method('getQuery')->willReturn($query);
-    $nodeStorage->method('loadMultiple')->with([56])->willReturn([56 => $topic]);
+    $nodeStorage->method('loadMultiple')->with([56, 57])->willReturn([56 => $topic, 57 => $foreignTopic]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type) => match ($type) {
       'node' => $nodeStorage,

@@ -10,7 +10,7 @@ Na dev.27, o adapter também permite associar diretamente um tópico a um
 integração é unidirecional: `aculta_forum_lms` depende do H5P ACULTA, cujo
 formatter oferece o hook sem depender do Fórum. O campo é interno e oculto na
 apresentação pública do tópico; o autocomplete lista conteúdos editáveis do curso contextual e falha fechado
-sem Group. Unit: 24 testes/292 assertions; Kernel da suíte existente: 3 testes/168 assertions. Kernel específico do vínculo, smoke e revisão visual no Runtime continuam pendentes.
+sem Group. Unit: 25 testes/291 assertions; Kernel da suíte existente: 3 testes/168 assertions. Kernel específico do vínculo, smoke e revisão visual no Runtime continuam pendentes.
 
 Na dev.26, um Kernel MariaDB exercita o resolver com uma atividade ligada a uma
 aula e um curso reais: o estudante vê somente o tópico relacionado à atividade

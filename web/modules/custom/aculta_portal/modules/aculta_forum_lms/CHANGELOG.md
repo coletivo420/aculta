@@ -11,11 +11,12 @@
   depende do H5P ACULTA; o H5P não depende do Fórum. Campo permanece oculto no
   tópico público e assuntos genéricos de atividade continuam em
   `field_lms_activity`.
-- Unit do adapter: 25 testes / 293 assertions PASS; inclui o resolver para
-  conteúdo permitido/não pertencente ao curso e transmissão do ID Group ao
-  autocomplete. Kernel existente: 3 testes / 168 assertions PASS, 47
-  depreciações Core/contrib. Kernel específico de associação/seletor e smoke
-  visual/autenticado permanecem pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.
+- Unit do adapter: 25 testes / 291 assertions PASS; inclui o resolver para
+  conteúdo permitido/não pertencente ao curso, tópico de outro curso excluído
+  e transmissão do ID Group ao autocomplete. Kernel existente: 3 testes / 168
+  assertions PASS, 47 depreciações Core/contrib. Kernel específico que exercite
+  associação/seletor e smoke visual/autenticado permanecem pendentes. PHP CLI
+  8.4.26; PHP 8.5 não validado.
 - Runtime de teste `cursos`: campos opcionais instalados e displays existentes
   alterados somente para o novo campo; plugin do seletor resolvido e vazio sem
   Group contextual, como esperado. Não havia tópicos LMS; nenhum conteúdo foi
