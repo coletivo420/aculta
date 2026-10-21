@@ -8,10 +8,12 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Form\FormState;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkItem;
 use Drupal\aculta_links\Entity\LinkPage;
+use Drupal\aculta_links\Form\LinkPageItemAddForm;
 use Drupal\aculta_links\Service\LinkAnalytics;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
@@ -108,6 +110,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertSame('/painel-administrativo/links/item/adicionar', $item_add_route->getPath());
     $editor_route = $route_provider->getRouteByName('aculta_links.page_editor');
     self::assertSame('/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens', $editor_route->getPath());
+    $page_item_add_route = $route_provider->getRouteByName('aculta_links.page_item_add');
+    self::assertSame('/painel-administrativo/links/pagina/{aculta_link_page}/item/adicionar', $page_item_add_route->getPath());
+    self::assertSame('aculta_link_page.update', $page_item_add_route->getRequirement('_entity_access'));
     $preview_route = $route_provider->getRouteByName('aculta_links.page_preview');
     self::assertSame('/pagina/{slug}/previa', $preview_route->getPath());
     self::assertSame('links', $preview_route->getOption('_aculta_domain_purpose'));
@@ -344,7 +349,53 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   }
 
   /**
-   * Tests legacy social-links configuration migration without deleting its source. */
+   * Tests the page-specific item form limits selectable links to the owner.
+   */
+  public function testPageItemAddFormListsOnlySameOwnerDestinations(): void {
+    $role = Role::create(['id' => 'links_item_owner', 'label' => 'Links item owner']);
+    $role->grantPermission('manage own aculta links');
+    $role->save();
+    $owner = User::create(['name' => 'item-form-owner', 'status' => TRUE]);
+    $owner->addRole('links_item_owner');
+    $owner->save();
+    $other = User::create(['name' => 'item-form-other', 'status' => TRUE]);
+    $other->save();
+
+    $owned_link = Link::create([
+      'title' => 'Destino próprio',
+      'uri' => ['uri' => 'https://example.org/owned'],
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $owned_link->save();
+    $foreign_link = Link::create([
+      'title' => 'Destino de outra conta',
+      'uri' => ['uri' => 'https://example.org/foreign'],
+      'uid' => $other->id(),
+      'status' => TRUE,
+    ]);
+    $foreign_link->save();
+    $page = LinkPage::create([
+      'title' => 'Página do formulário',
+      'slug' => 'pagina-do-formulario',
+      'uid' => $owner->id(),
+    ]);
+    $page->save();
+
+    $this->container->get('current_user')->setAccount($owner);
+    $form = new LinkPageItemAddForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('current_user'),
+    );
+    $build = $form->buildForm([], new FormState(), $page);
+
+    self::assertSame([(string) $owned_link->id() => 'Destino próprio'], $build['link']['#options']);
+    self::assertArrayNotHasKey((string) $foreign_link->id(), $build['link']['#options']);
+  }
+
+  /**
+   * Tests legacy social-links configuration migration without deleting source.
+   */
   public function testSocialLinksConfigurationMigrationPreservesLegacySource(): void {
     $this->installConfig(['aculta_links']);
     $config_storage = $this->container->get('config.storage');

@@ -21,6 +21,19 @@ aculta_links.page_editor:
       aculta_link_page:
         type: entity:aculta_link_page
 
+aculta_links.page_item_add:
+  path: '/painel-administrativo/links/pagina/{aculta_link_page}/item/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkPageItemAddForm'
+    _title: 'Adicionar botão à micropágina'
+  requirements:
+    _entity_access: 'aculta_link_page.update'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_link_page:
+        type: entity:aculta_link_page
+
 aculta_links.page_public:
   path: '/pagina/{slug}'
   defaults:

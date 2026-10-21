@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.19 — adiciona botão pelo editor da micropágina — 2026-10-20
+
+- O editor da micropágina oferece ação contextual para adicionar botão a partir de destino reutilizável da mesma conta.
+- O formulário revalida página, destino, proprietário e Entity Access no submit; criação mantém o mesmo proprietário e valida os constraints da entidade.
+- Validação: Kernel PASS (3 testes/114 asserções; 7 depreciações upstream), PHPCS e lint; Runtime/HTTP DEFERRED por updates pendentes incluindo `aculta_lms` de outra frente.
+
 ## 0.4.0-dev.18 — resolve links internos pelo Domain de origem — 2026-10-20
 
 - Destinos `entity:node/{id}` são carregados pelo Storage API; só nodes publicados e visíveis para anônimos entram em página/redirect públicos.

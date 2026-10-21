@@ -100,6 +100,12 @@ final class LinkPageEditorForm extends FormBase {
       ],
       ],
     ];
+    $form['add_item'] = [
+      '#type' => 'link',
+      '#title' => new TranslatableMarkup('Adicionar botão'),
+      '#url' => Url::fromRoute('aculta_links.page_item_add', ['aculta_link_page' => $aculta_link_page->id()]),
+      '#weight' => -5,
+    ];
     foreach ($items as $item) {
       $id = (string) $item->id();
       $form['items'][$id] = [

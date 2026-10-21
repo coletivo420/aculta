@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.18`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.19`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,

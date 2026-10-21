@@ -154,3 +154,9 @@ Drupal, PHP lint, 9 arquivos YAML do módulo, slug, SDC, boundary e `git diff
 concorrente de `aculta_qrcode` (manifesto `0.3.0-dev.1` sem atualização da linha
 no README); o mapa de módulos/tema também acusa esse módulo ainda não listado.
 Nenhum arquivo de outra frente foi alterado para contornar os gates.
+
+Inclusão contextual de botão 0.4.0-dev.19: Kernel PASS (3 testes/114
+asserções; 7 depreciações upstream), incluindo rota, filtragem de destinos por
+proprietário e acesso. PHPCS Drupal, PHP lint e `git diff --check` PASS. Update
+de banco não é necessário para esta mudança; Runtime/HTTP não foi rebuildado
+enquanto há updates pendentes de `aculta_links` e `aculta_lms` no site comum.
