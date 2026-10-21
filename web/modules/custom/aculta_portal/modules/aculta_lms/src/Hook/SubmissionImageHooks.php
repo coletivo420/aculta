@@ -11,8 +11,12 @@ use Drupal\Core\Hook\Attribute\Hook;
 /** Applies the Portal upload policy to LMS File Upload answer forms. */
 final class SubmissionImageHooks {
 
+  /**
+   * The Portal policy is optional at container level, as in other LMS hooks.
+   * aculta_lms requires aculta_portal in production, so the cap always applies there.
+   */
   public function __construct(
-    private readonly UserUploadPolicy $uploadPolicy,
+    private readonly ?UserUploadPolicy $uploadPolicy = NULL,
   ) {}
 
   /**
@@ -30,7 +34,10 @@ final class SubmissionImageHooks {
 
     $validators = $form['file_upload']['#upload_validators'];
     $validators['AcultaLmsSubmissionImage'] = [];
-    $form['file_upload']['#upload_validators'] = $this->uploadPolicy->restrictValidators($validators, 'lms');
+    if ($this->uploadPolicy !== NULL) {
+      $validators = $this->uploadPolicy->restrictValidators($validators, 'lms');
+    }
+    $form['file_upload']['#upload_validators'] = $validators;
   }
 
 }

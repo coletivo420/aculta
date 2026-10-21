@@ -5,7 +5,8 @@
 - `SubmissionImageHooks` recebe `aculta_portal.user_upload_policy` (serviço `aculta_lms.submission_image_hooks`) e aplica `restrictValidators(..., 'lms')` ao campo de envio das atividades File Upload. Educadores continuam escolhendo as extensões de cada atividade, mas só dentro da política LMS; limite de tamanho só diminui.
 - O validador de imagem `AcultaLmsSubmissionImage` continua aplicado às imagens rasters.
 - Testes: `SubmissionImageHooksTest` (Unit, 3 testes, 10 asserções) cobre o acréscimo do validador de imagem, a impossibilidade de ampliar extensões ou tamanho e a não alteração de formulários sem upload. Os testes Kernel de upload no Portal passam (ver CHANGELOG do aculta_portal 0.4.0-dev.252).
-- Runtime de teste: sem alteração de configuração ou de schema; o consumidor `lms` herda a política global até que alguém salve a aba.
+- Correção da própria entrega: a primeira versão injetava `UserUploadPolicy` pelo tipo da classe e quebrava a montagem do container (`drush cr` falhava com "no such service"). Agora o serviço usa o FQCN do hook com `@?aculta_portal.user_upload_policy`, como os demais hooks do LMS. Sem a política, o hook mantém os validadores nativos. Kernel `AttemptArchiveLifecycleTest` (que monta o container) voltou a passar.
+- Runtime de teste: sem alteração de configuração ou de schema; o consumidor `lms` herda a política global até que alguém salve a aba. `drush cr` OK; verificado por leitura no container: a atividade pedindo `png pdf exe txt` recebe `png pdf`, limite de 10 MB e o validador de imagem.
 - Pendente: envio real de arquivo por aluno no Runtime e revisão visual do formulário de resposta.
 
 ## 0.1.0-dev.79 (situação por aluno para a série, sob o aceite único)

@@ -75,6 +75,6 @@ services:
     tags:
       - { name: aculta_portal.helper }
       - { name: aculta_portal.implementation }
-  aculta_lms.submission_image_hooks:
+  Drupal\aculta_lms\Hook\SubmissionImageHooks:
     class: Drupal\aculta_lms\Hook\SubmissionImageHooks
-    arguments: ['@aculta_portal.user_upload_policy']
+    arguments: ['@?aculta_portal.user_upload_policy']

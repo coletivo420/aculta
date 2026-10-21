@@ -64,6 +64,22 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame($original, $form);
   }
 
+  public function testKeepsNativeValidatorsWhenThePortalPolicyIsAbsent(): void {
+    $form = [
+      'file_upload' => [
+        '#type' => 'managed_file',
+        '#upload_validators' => [
+          'FileExtension' => ['extensions' => 'pdf exe'],
+        ],
+      ],
+    ];
+
+    (new SubmissionImageHooks(NULL))->answerFormAlter($form, $this->createMock(FormStateInterface::class));
+
+    self::assertSame('pdf exe', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
+    self::assertArrayHasKey('AcultaLmsSubmissionImage', $form['file_upload']['#upload_validators']);
+  }
+
   /**
    * Builds the hook over the real Portal policy with a fixed site-wide config. */
   private function hooks(string $extensions, int $megabytes): SubmissionImageHooks {
