@@ -1,3 +1,18 @@
+## Revisão visual — listas públicas de atividade (2026-10-21)
+
+- Firefox ESR/X11 anônimo no Runtime de teste: `/discussoes/novas`,
+  `/discussoes/sem-resposta` e `/discussoes/mais-comentadas` responderam HTTP
+  200 e mostraram H1 único, região principal e mensagem de lista vazia.
+- Viewports CSS 390/768/1024: 12/12 verificações de estrutura e enquadramento
+  PASS com WebDriver BiDi. Foram capturadas as três rotas em claro e escuro nos
+  três tamanhos; inspeção manual representativa em 390 px/claro e 1024 px/escuro.
+- Escuro forçado no DOM; consentimento permaneceu sem escolha. Capturas `0600`
+  e `results.json` privados em
+  `/home/aculta/private/aculta/visual-tests/forum-lists-dev132-20261021/`.
+  GET-only, sem formulário submetido ou mutação do Runtime. Como as listas
+  estavam vazias, renderização de linhas com tópicos e leitor de tela não foram
+  avaliados.
+
 ## dev.131 — foco de teclado no conteúdo principal
 
 - `forum-index-visual.mjs` envia Tab e Enter por ações WebDriver na raiz e em

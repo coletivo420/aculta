@@ -1,3 +1,19 @@
+## Revisão visual das listas públicas de atividade (2026-10-21)
+
+- Firefox ESR/X11 anônimo no Runtime de teste: `/discussoes/novas`,
+  `/discussoes/sem-resposta` e `/discussoes/mais-comentadas` responderam HTTP
+  200, com H1 único, região principal e estado vazio esperado (12/12 verificações
+  estruturais e de viewport em 390/768/1024 CSS px).
+- Foram capturadas as três páginas em claro e escuro em cada viewport; o tema
+  escuro foi forçado localmente no DOM. Inspeção manual de capturas representativas
+  a 390 px/claro e 1024 px/escuro não encontrou corte ou sobreposição no conteúdo;
+  o aviso de consentimento permaneceu aberto.
+- Capturas privadas `0600` e resultados em
+  `/home/aculta/private/aculta/visual-tests/forum-lists-dev132-20261021/`.
+  Navegação GET-only; nenhuma escolha de consentimento, submissão ou escrita no
+  Runtime. As listas estavam vazias, portanto linhas com tópicos não foram
+  avaliadas.
+
 ## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
 
 - `forum-index-visual.mjs` usa Tab e Enter via WebDriver no teste anônimo das
