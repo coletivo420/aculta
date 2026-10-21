@@ -194,3 +194,13 @@ confirmada a ausência de página/item associados e esse registro exato foi
 removido junto de sua revisão em transação SQL. A consulta confirmou zero linhas
 restantes. Não houve limpeza geral nem alteração de arquivos LMS. Repetir o
 smoke autenticado e visual quando a edição concorrente estiver estabilizada.
+
+Diagnóstico do primeiro GET da fixture visual: HTTP 500 causado pela classe
+inexistente `Drupal\Core\Utility\Unicode` em `LinkPageMetatagHooks`; o namespace
+correto no Core 11.4.10 é `Drupal\Component\Utility\Unicode`. Em `0.4.0-dev.22`,
+Unit (5/50), Kernel (3/131), PHPCS e lint passaram. Depois do `cr`, a página
+temporária respondeu 200 com metadata e destino Domain corretos. Firefox ESR
+via WebDriver BiDi verificou viewport CSS 390 × 844 e 1440 × 1000 sem overflow;
+teclado alcançou o link com outline sólido de 3 px. Dark mode, leitor de tela e
+contraste formal permanecem pendentes. Fixtures foram excluídas e o slug
+retornou 404. Referência Core: [Unicode::truncate 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x).

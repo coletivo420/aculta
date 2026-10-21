@@ -34,6 +34,12 @@ HTTP no purpose `links`; produção e revisão visual continuam fora do gate
 concluído. A auditoria de licença por arquivo continua pré-requisito para
 qualquer cópia upstream.
 
+Na versão 0.4.0-dev.22, um erro de namespace na truncagem de descrição Metatag
+foi reproduzido como HTTP 500 e corrigido para a API `Unicode` do Drupal
+Component. Após `cr`, Firefox ESR via WebDriver BiDi confirmou 390 × 844 e
+1440 × 1000 sem overflow e foco visível por teclado. A revisão de dark mode,
+leitor de tela, contraste formal e revisão independente ainda precedem RC.
+
 ## 0.3.0 — dashboard e editor (em andamento)
 
 Listas paginadas, CRUD Core, operações por entidade, acesso a página pública/preview,

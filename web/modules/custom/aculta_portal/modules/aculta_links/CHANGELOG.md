@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.22 — corrige metadata pública de micropágina — 2026-10-20
+
+- O Runtime reportou HTTP 500 ao montar metadata porque a classe Unicode estava importada do namespace Core inexistente. A importação agora usa `Drupal\Component\Utility\Unicode`, igual ao Core Drupal 11 instalado ([API Core 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x)).
+- Unit PASS (5 testes/50 asserções), Kernel PASS (3/131; 7 depreciações Core/Metatag/Token), PHPCS Drupal/Practice e PHP lint PASS.
+- Runtime de teste após `cr`: página temporária HTTP 200, title Metatag presente, destino resolve para o canonical `https://aculta.toca.net.br/inicio`. Firefox ESR/Geckodriver WebDriver BiDi confirmou viewport de 390 × 844 e desktop 1440 × 1000, sem overflow horizontal; screenshot revisado. Dois tabs por teclado chegaram ao link institucional com outline visível de 3px. Rascunhos e aparência escura, leitor de tela e contraste formal ainda não foram verificados.
+- Fixture temporária (página/item/destino) removida por Entity API e slug confirmado 404. O `cr` continua emitindo aviso H5P de asset com destino `assets://` sem configuração, não relacionado a Links.
+
 ## 0.4.0-dev.21 — referências Node para destinos de conteúdo — 2026-10-20
 
 - Destinos reutilizáveis agora aceitam uma referência revisionável a Node pelo widget Core `entity_reference_autocomplete`, sem URL duplicada.

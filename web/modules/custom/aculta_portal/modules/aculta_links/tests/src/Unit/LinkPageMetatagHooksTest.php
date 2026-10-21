@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_links\Unit;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -20,6 +21,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @coversDefaultClass \Drupal\aculta_links\Hook\LinkPageMetatagHooks
  */
 final class LinkPageMetatagHooksTest extends UnitTestCase {
+
+  /**
+   * Core's namespaced Unicode helper truncates descriptions within the limit.
+   */
+  public function testCoreUnicodeTruncationApi(): void {
+    $description = Unicode::truncate(str_repeat('palavra ', 50), 300, TRUE, TRUE);
+
+    self::assertLessThanOrEqual(300, mb_strlen($description));
+    self::assertStringEndsWith('…', $description);
+  }
 
   /**
    * A private editing route removes default canonical tags and blocks indexing.

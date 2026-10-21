@@ -60,11 +60,10 @@ com dados/editoria antes de qualquer migração.
   update aditivo LMS 10002 também foi executado por ser parte do mesmo `updb`.
   Um smoke temporário HTTP confirmou destino Node e URL Domain; nenhuma fixture
   permaneceu. Produção não foi alterada nem verificada.
-- No estado atual da branch, uma edição não commitada da frente LMS remove
-  `AnswerEvaluationEventHooks` ainda referenciada pelo container. Drush falha ao
-  executar hooks de save; a tentativa visual abortou antes de criar página/item
-  e o único destino temporário gravado foi removido por ID/título em transação.
-  Repetir Runtime/visual após estabilização da frente. Nenhum arquivo LMS foi
+- Uma mudança não commitada do LMS trocou `AnswerEvaluationEventHooks` por
+  `AnswerLifecycleEventHooks` e causou uma tentativa de save interrompida por
+  cache de discovery antigo; a fixture parcial foi limpa por identidade exata.
+  Após `cr`, Drush voltou a executar normalmente. Nenhum arquivo LMS foi
   alterado por Links.
 
 ## Consumidores e acoplamentos
@@ -166,3 +165,16 @@ headless não terminou. Update LMS 10002 foi aplicado junto, de forma aditiva,
 por compartilhar o comando. Uma nova tentativa foi bloqueada pela edição
 incompleta de hook LMS; o único destino temporário gravado foi removido por
 identidade exata e sua ausência confirmada. Produção continua não verificada.
+
+## Erro de metadata 0.4.0-dev.22
+
+O primeiro GET de uma micropágina temporária, após o hook LMS ser restaurado,
+retornou HTTP 500. O registro `watchdog` identificou `Class
+"Drupal\Core\Utility\Unicode" not found` em `LinkPageMetatagHooks`; a API
+atual do Core fica em `Drupal\Component\Utility\Unicode`. A referência de
+namespace foi corrigida; Unit e Kernel passaram. Após `cr`, a página temporária
+respondeu 200 e exibiu title Metatag e destino canônico esperado. Firefox ESR
+via WebDriver BiDi foi inspecionado em 390 × 844 e 1440 × 1000 sem overflow; o
+focus por teclado mostrou outline de 3 px. Página, item e destino temporários
+foram excluídos pela Entity API, e o slug voltou a 404. Revisão de dark mode,
+leitor de tela e contraste formal continua pendente.
