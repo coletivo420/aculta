@@ -50,10 +50,11 @@ até o módulo ser ativado.
 - Unit: 63 casos (inclui linhas do resumo e conclusão por turma).
 - Kernel: 15 casos, aprovados.
 
-### Pendente de validação
-- O container do Runtime de teste não reconstrói (`cr` falha): `aculta_links` (alterações não commitadas de outra frente)
-  depende de `aculta_qrcode.payload_validator`, e o `aculta_qrcode` está desabilitado no Runtime. Enquanto isso,
-  o resumo no Runtime mostra "estatísticas indisponíveis". A decisão de habilitar o `aculta_qrcode` é do responsável.
+### Validação no Runtime de teste
+- `aculta_qrcode` habilitado (decisão do responsável), sem atualizações de banco pendentes. O `cr` reconstrói.
+- O provedor de linhas e o tipo `aculta_admin_statistics` estão registrados. O texto do resumo sai com os
+  indicadores do intervalo (zerados: o ambiente não tem pedidos nem matrículas). Nenhum e-mail foi enviado na verificação.
+- Home responde 200.
 
 ## 0.4.0-dev.2 (turma nas matrículas e supressão de célula pequena)
 
