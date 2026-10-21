@@ -51,3 +51,9 @@ para centralizar estatísticas (ADR-0004). Não é auditoria externa.
 O módulo está completo no código para as fases 0.1 a 0.9, exceto os itens dependentes de decisão ou de credencial
 listados acima. A fase 1.0 fica aberta até as pendências de testes funcionais, multidomínio e carga, e até o cliente GA4
 ser decidido.
+
+## Verificação de 2026-10-21 (Runtime de teste, somente leitura)
+
+- **Por host (GET em `/painel-administrativo/aculta/estatisticas`, anônimo):** `aculta.toca.net.br` responde 403 (permissão negada). `conta.` e `loja.` respondem 302 para o principal. Ou seja, a rota administrativa só é servida no host principal, como manda a política de domínio. Não há teste automatizado por host.
+- **Visual das áreas (administrador, período de 30 dias):** vendas, cursos e fórum renderizadas com seletor, comparação, gráfico, tabela e rótulos legíveis. As demais áreas (e-mail, links, mídia, wiki) usam o mesmo modelo, e mídia e wiki foram vistas antes da correção do rótulo. Tudo no tema administrativo Claro.
+- **Clientes GA4 e Search Console:** desligados (sem credenciais). A verificação real (`aculta-statistics:google-check`) está pronta e depende das credenciais da conta de serviço.

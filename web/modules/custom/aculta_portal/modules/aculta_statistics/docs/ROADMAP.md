@@ -142,7 +142,7 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Pendente: filtros por domínio e fonte.
 - Feito (0.9.0-dev.1): comparação com o período anterior de mesmo tamanho, com variação percentual e aviso de que não é causa. Comparação entre áreas (métricas lado a lado) fica para o próximo corte.
 - Feito (0.9.0-dev.1): filtro por domínio em pedidos.
-- Pendente: validação visual no navegador (Firefox), com dados reais no Runtime.
+- Verificado visualmente no servidor de testes (2026-10-21): áreas renderizadas; dados reais pendentes.
 
 ## 0.9.0 — Segurança e otimização (feito no código: 0.9.0-dev.1)
 
