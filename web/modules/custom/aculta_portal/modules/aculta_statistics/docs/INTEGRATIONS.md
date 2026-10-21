@@ -38,9 +38,12 @@ o painel de turma do LMS), com as mesmas permissões.
 
 - **Fonte:** nós `wiki_entry` publicados e revisões do Node.
 - **Métricas:** `wiki.entries.published`, `wiki.entries.updated`.
-- **Lacuna:** `wiki.entries.read` não tem fonte. O Core não traz contador de
-  leitura e o módulo `statistics` não está instalado. Decisão necessária antes de
-  criar contador de leitura: custo, privacidade e cache de página.
+- **Leitura (implementada na 0.2.0-dev.3):** o Core não traz contador de leitura e o
+  módulo `statistics` não está instalado. O contador próprio é um beacon
+  `POST /estatisticas/wiki/{node}/leitura`, enviado uma vez por página de verbete publicado
+  (`sendBeacon`), gravando `wiki.entries.read` com o nid. Sem IP, usuário ou cookie. Visitas
+  servidas do cache continuam contadas, porque o beacon é disparado pelo navegador. Retenção
+  configurável por métrica no painel.
 - **Regra:** a Wiki não é módulo. Não reimplementar a Wiki no Fórum; o Statistics
   só lê o conteúdo.
 
