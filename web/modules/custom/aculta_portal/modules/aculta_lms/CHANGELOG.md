@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.18 — versão de prazo acompanha cada alteração — 2026-10-21
+
+- A versão opaca do evento inclui UUID, prazo e horário de alteração da relação
+  Group, impedindo reutilizar um aviso antigo quando o educador volta a uma data
+  anterior. Teste Unit cobre estados iguais e alterações/reversões.
+- Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernel `aculta_lms`: 5
+  testes / 67 assertions PASS. Runtime e verificação de entrega permanecem
+  DEFERRED.
+
 ## 0.1.0-dev.17 — prazos de atividade por turma — 2026-10-21
 
 - Educadores com `grade students` no curso e administradores podem definir,

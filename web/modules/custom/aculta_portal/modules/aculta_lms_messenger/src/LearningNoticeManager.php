@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_messenger;
 
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
+use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -163,7 +164,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'activity_release' => $this->resolveContentRelease($sourceUuid, 'lms_activity', $account),
       'feedback' => $this->resolveEducatorFeedback($sourceUuid, $account),
       'deadline' => $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value),
-      'deadline_reminder' => $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value),
+      'deadline_reminder' => $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, TRUE),
       default => NULL,
     };
   }
@@ -280,12 +281,35 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Records a new or changed activity deadline for current class learners.
    */
   public function recordActivityDeadlineForLearners(string $deadlineUuid, string $eventVersion): void {
+    $this->recordActivityDeadlineNotice($deadlineUuid, $eventVersion, 'deadline');
+  }
+
+  /**
+   * Records a due-date reminder when the deadline remains in the future.
+   */
+  public function recordActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void {
+    $this->recordActivityDeadlineNotice($deadlineUuid, $eventVersion, 'deadline_reminder');
+  }
+
+  /**
+   * Creates a class deadline notice for current learners.
+   */
+  private function recordActivityDeadlineNotice(string $deadlineUuid, string $eventVersion, string $type): void {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'uuid' => $deadlineUuid,
       'plugin_id' => 'lms_class_activity_due',
     ]);
     $deadline = reset($relationships);
     if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
+      return;
+    }
+    $currentVersion = ActivityDeadlineAssignedEvent::versionFor(
+      (string) $deadline->uuid(),
+      (string) $deadline->get('field_activity_due_at')->value,
+      (int) $deadline->getChangedTime(),
+    );
+    $timestamp = strtotime((string) $deadline->get('field_activity_due_at')->value . ' UTC');
+    if (!hash_equals($currentVersion, $eventVersion) || $timestamp === FALSE || $timestamp <= time()) {
       return;
     }
     $class = $deadline->getGroup();
@@ -306,7 +330,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $learner, TRUE)->isAllowed()) {
         continue;
       }
-      $this->record($deadlineUuid, 'deadline', (int) $learner->id(), FALSE, $eventVersion);
+      $this->record($deadlineUuid, $type, (int) $learner->id(), FALSE, $eventVersion);
     }
   }
 
@@ -734,7 +758,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   /**
    * Resolves a current class deadline only for its active class learners. */
-  private function resolveActivityDeadline(string $deadlineUuid, AccountInterface $account, string $eventVersion): ?array {
+  private function resolveActivityDeadline(string $deadlineUuid, AccountInterface $account, string $eventVersion, bool $reminder = FALSE): ?array {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'uuid' => $deadlineUuid,
       'plugin_id' => 'lms_class_activity_due',
@@ -743,10 +767,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
       return NULL;
     }
-    $currentVersion = substr(hash(
-      'sha256',
-      (string) $deadline->uuid() . '|' . (string) $deadline->get('field_activity_due_at')->value,
-    ), 0, 32);
+    $currentVersion = ActivityDeadlineAssignedEvent::versionFor(
+      (string) $deadline->uuid(),
+      (string) $deadline->get('field_activity_due_at')->value,
+      (int) $deadline->getChangedTime(),
+    );
     if (!hash_equals($currentVersion, $eventVersion)) {
       return NULL;
     }
@@ -777,9 +802,13 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return NULL;
     }
     return [
-      'title' => $this->t('Prazo de atividade'),
-      'summary' => $this->t('Uma atividade da turma tem prazo até @date.', ['@date' => $formattedDate]),
-      'digest_summary' => $this->t('Prazo de atividade: @date', ['@date' => $formattedDate]),
+      'title' => $reminder ? $this->t('Lembrete de prazo') : $this->t('Prazo de atividade'),
+      'summary' => $reminder
+        ? $this->t('Uma atividade da turma vence em breve, até @date.', ['@date' => $formattedDate])
+        : $this->t('Uma atividade da turma tem prazo até @date.', ['@date' => $formattedDate]),
+      'digest_summary' => $reminder
+        ? $this->t('Lembrete de prazo: @date', ['@date' => $formattedDate])
+        : $this->t('Prazo de atividade: @date', ['@date' => $formattedDate]),
       'url' => $url,
     ];
   }

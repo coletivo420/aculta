@@ -1,5 +1,15 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.8 — lembrete de prazo em fila — 2026-10-21
+
+- Adota provisoriamente a opção recomendada após o pedido de continuidade:
+  avisar ao definir/alterar e gerar lembrete quando a data entrar nas 24 horas
+  seguintes. Cron enfileira somente UUID/version opacos; worker revalida data,
+  publicação, turma, matrícula e acesso antes de criar aviso.
+- Lembrete aparece no painel e no resumo diário opt-in, sem e-mail transacional.
+  Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernel de Group: 5 testes /
+  67 assertions PASS. Runtime/cron e Kernel do Message real continuam DEFERRED.
+
 ## 0.1.0-dev.7 — aviso de prazo por atividade/turma — 2026-10-21
 
 - Cria aviso de prazo ao definir ou alterar a data por atividade e turma;

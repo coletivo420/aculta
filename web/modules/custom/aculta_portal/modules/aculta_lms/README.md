@@ -217,11 +217,13 @@ fuso da conta que consulta.
 
 Definir ou alterar o prazo gera aviso no painel e no resumo diário opt-in por
 meio de `aculta_lms_messenger`/`aculta_messenger`. A mensagem não envia e-mail
-transacional e é revalidada contra publicação, curso e membership atual. O
-lembrete antecipado aguarda decisão de intervalo. Unit LMS/adapter: 43 testes /
-197 assertions PASS; Kernel de instalação: 4 testes / 34 assertions e Kernel
-Group: 1 teste / 33 assertions PASS. O Kernel do aviso com Message, revisão
-visual e Runtime permanecem DEFERRED.
+transacional e é revalidada contra publicação, curso e membership atual.
+Enquanto se aguarda resposta à pergunta interativa, adotou-se provisoriamente a
+opção recomendada: aviso ao salvar e lembrete durante as 24 horas anteriores,
+enfileirado no cron do Drupal. Unit LMS/adapter: 47 testes / 210 assertions
+PASS; Kernel de instalação: 4 testes / 34 assertions e Kernel Group: 1 teste /
+33 assertions PASS. O Kernel do aviso com Message, revisão visual e Runtime
+permanecem DEFERRED.
 
 ## Testes
 
