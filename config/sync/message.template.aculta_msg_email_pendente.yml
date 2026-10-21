@@ -14,6 +14,9 @@ text:
   -
     value: 'Seu e-mail precisa ser confirmado.'
     format: plain_text
+  -
+    value: 'Enquanto isso, você não pode realizar cursos, editar a wiki, comentar, comprar na loja ou apoiar.'
+    format: plain_text
 settings:
   'token options':
     clear: true

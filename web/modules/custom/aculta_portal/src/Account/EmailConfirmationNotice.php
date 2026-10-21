@@ -49,22 +49,21 @@ final class EmailConfirmationNotice {
       || $this->policy->isConfirmed($this->currentUser)) {
       return NULL;
     }
-    $context = ['title' => (string) $this->translation->translate('Seu e-mail precisa ser confirmado.')];
+    // Título e texto vêm do aviso persistente (aculta_messenger); a página não guarda cópia do texto.
+    $context = ['title' => '', 'detail' => ''];
     $this->moduleHandler->alter('aculta_portal_email_notice', $context, $this->currentUser);
 
     $url = Url::fromRoute('aculta_portal.email_resend')->toString();
-    // Texto padrão do aviso (o mesmo do aviso persistente do aculta_messenger).
-    $detail = (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar.');
     return [
       '#type' => 'container',
       '#weight' => -100,
       '#attributes' => ['data-portal-ui' => 'notice-warning email-notice', 'role' => 'alert'],
       'text' => [
         '#type' => 'inline_template',
-        '#template' => '<p><strong>{{ title }}</strong> {{ detail }} <a href="{{ url }}">{{ label }}</a>.</p>',
+        '#template' => '<p>{% if title %}<strong>{{ title }}</strong> {% endif %}{{ detail }} <a href="{{ url }}">{{ label }}</a>.</p>',
         '#context' => [
           'title' => $context['title'],
-          'detail' => $detail,
+          'detail' => $context['detail'],
           'url' => $url,
           'label' => $this->translation->translate('Clique aqui para solicitar outro link'),
         ],

@@ -708,19 +708,23 @@ final class MessagesController extends ControllerBase {
       $items[] = $item;
     }
 
-    // Aviso permanente de e-mail não confirmado: sem "×", some quando o e-mail é confirmado (EmailPendingAviso).
+    // Aviso permanente de e-mail não confirmado: sem "×", some quando o e-mail é confirmado. Título e texto vêm do
+    // mesmo aviso (EmailPendingAviso), que também alimenta a caixa de atenção de Minha conta.
     if ($this->emailPendingAviso->isPending($this->account)) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
       $aviso = $this->emailPendingAviso->ensure((int) $this->account->id());
-      $items[] = $this->noticeSummary(
-        $this->emailPendingAviso->title($aviso) ?? (string) $this->translation->translate('Seu e-mail precisa ser confirmado.'),
-        (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar. Clique aqui para solicitar outro link.'),
-        Url::fromRoute('aculta_portal.email_resend'),
-        [],
-        (string) $this->translation->translate('Confirmação pendente'),
-        TRUE,
-        NoticeType::WARNING,
-      );
+      $title = $this->emailPendingAviso->title($aviso);
+      if ($title !== NULL) {
+        $items[] = $this->noticeSummary(
+          $title,
+          (string) $this->emailPendingAviso->body($aviso),
+          Url::fromRoute('aculta_portal.email_resend'),
+          [],
+          (string) $this->translation->translate('Confirmação pendente'),
+          TRUE,
+          NoticeType::WARNING,
+        );
+      }
     }
 
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.

@@ -4,6 +4,13 @@
 - `EmailPendingAvisoHooks`: garante o aviso ao exibir o aviso de atenção (`aculta_portal_email_notice_alter`) e remove o aviso quando o e-mail é confirmado (`user_update`).
 - `aculta_messenger.info.yml` 0.1.1-dev.69. RUNTIME STATUS: DEFERRED (teste no X11 registrado no roteiro).
 
+## 0.1.1-dev.71 — texto do aviso de e-mail pendente em uma única origem — 2026-10-21
+
+- Título e corpo do aviso vêm do modelo `aculta_msg_email_pendente` (delta 0 e 1). `EmailPendingAviso::title()` e `body()` leem o modelo e devolvem texto puro (sem `<p>` nem Markup).
+- A lista de avisos e a caixa de atenção de Minha conta usam o mesmo ponto (`aculta_portal_email_notice`, alimentado por `EmailPendingAvisoHooks`). Nenhum dos dois guarda cópia do texto.
+- Sem o modelo, nenhum item é listado e a caixa mostra só o rótulo do link.
+- `aculta_messenger.info.yml` 0.1.1-dev.71. Portal: a caixa de Minha conta (`EmailConfirmationNotice`) deixou de ter texto próprio; o marcador de versão do Portal fica para quem fecha a linha do Portal.
+
 ## 0.1.1-dev.70 — aviso permanente na lista de avisos; texto padronizado — 2026-10-21
 
 - `EmailPendingAviso` (serviço `aculta_messenger.email_pending_aviso`): cria, lê e remove o aviso de e-mail pendente. O hook e a página de avisos usam o mesmo serviço.

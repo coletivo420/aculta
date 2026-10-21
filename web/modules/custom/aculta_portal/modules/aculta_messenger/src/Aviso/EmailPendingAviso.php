@@ -42,16 +42,26 @@ final class EmailPendingAviso {
     return $storage->load(reset($ids));
   }
 
-  /** Texto do modelo, usado como título do aviso. Null se o modelo não existir. */
+  /** Título do aviso (delta 0 do modelo). Null se o modelo não existir. */
   public function title(?object $message): ?string {
+    return $this->text($message, 0);
+  }
+
+  /** Corpo do aviso (delta 1 do modelo). Única fonte do texto que a caixa de Minha conta também mostra. */
+  public function body(?object $message): ?string {
+    return $this->text($message, 1);
+  }
+
+  /** Texto de um delta do modelo do aviso. */
+  private function text(?object $message, int $delta): ?string {
     if ($message === NULL || !method_exists($message, 'getText')) {
       return NULL;
     }
-    $text = $message->getText(NULL, 0);
-    if (is_array($text)) {
-      $text = reset($text);
-    }
-    return is_string($text) && $text !== '' ? $text : NULL;
+    $items = $message->getText(NULL, $delta);
+    // O modelo guarda HTML (<p>) e devolve Markup: o texto de aviso é sempre texto puro.
+    $item = is_array($items) ? reset($items) : $items;
+    $plain = trim(html_entity_decode(strip_tags((string) $item), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    return $plain !== '' ? $plain : NULL;
   }
 
   /** Remove os avisos de e-mail pendente da conta. */
