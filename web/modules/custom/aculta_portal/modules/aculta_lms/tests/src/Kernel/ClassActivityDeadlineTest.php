@@ -121,6 +121,13 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     self::assertNotNull($deadlineB);
     self::assertSame('2026-10-22T12:00:00', $deadlineA->get('field_activity_due_at')->value);
     self::assertSame('2026-10-23T12:00:00', $deadlineB->get('field_activity_due_at')->value);
+    $learner = $this->createUser();
+    $outsider = $this->createUser();
+    $classA->addMember($learner);
+    self::assertTrue($course->hasPermission('take course', $learner), 'A class membership grants take-course permission on its parent course.');
+    self::assertFalse($classA->hasPermission('take course', $learner), 'Take-course permission is evaluated on the parent course, not on the class group.');
+    self::assertSame($deadlineA->id(), $manager->deadlineForLearner($course, $activity, $learner)?->id());
+    self::assertNull($manager->deadlineForLearner($course, $activity, $outsider));
     self::assertSame('Atividade compartilhada', $activity->label());
   }
 

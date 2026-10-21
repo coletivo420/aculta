@@ -226,11 +226,12 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
           continue;
         }
         foreach (GroupMembership::loadByGroup($class) as $membership) {
-          if ($membership->getPluginId() !== 'group_membership' || !$membership->hasPermission('take course')) {
+          if ($membership->getPluginId() !== 'group_membership') {
             continue;
           }
           $learner = $membership->getEntity();
           if (!$learner instanceof UserInterface || !$learner->isActive()
+            || !$course->hasPermission('take course', $learner)
             || !$course->access('view', $learner, TRUE)->isAllowed()) {
             continue;
           }
@@ -322,11 +323,12 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return;
     }
     foreach (GroupMembership::loadByGroup($class) as $membership) {
-      if ($membership->getPluginId() !== 'group_membership' || !$membership->hasPermission('take course')) {
+      if ($membership->getPluginId() !== 'group_membership') {
         continue;
       }
       $learner = $membership->getEntity();
       if (!$learner instanceof UserInterface || !$learner->isActive()
+        || !$course->hasPermission('take course', $learner)
         || !$course->access('view', $learner, TRUE)->isAllowed()) {
         continue;
       }
@@ -517,8 +519,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $membership = reset($relationships);
     $member = $membership instanceof GroupMembership ? $membership->getEntity() : NULL;
     if (!$membership instanceof GroupMembership || $membership->getPluginId() !== 'group_membership'
-      || !$member instanceof UserInterface || (int) $member->id() !== (int) $account->id()
-      || !$membership->hasPermission('take course')) {
+      || !$member instanceof UserInterface || !$member->isActive()
+      || (int) $member->id() !== (int) $account->id()) {
       return NULL;
     }
     $class = $membership->getGroup();
@@ -533,6 +535,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     foreach ($parents as $parent) {
       $course = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
       if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+        || !$course->hasPermission('take course', $account)
         || !$course->access('view', $account, TRUE)->isAllowed()) {
         continue;
       }
@@ -816,11 +819,15 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Checks an active take-course membership in the specific class. */
   private function memberCanTakeCourseInClass(GroupInterface $class, AccountInterface $account): bool {
+    $course = $this->deadlines->courseForClass($class);
+    if (!$course instanceof CourseInterface || !$course->hasPermission('take course', $account)) {
+      return FALSE;
+    }
     foreach (GroupMembership::loadByGroup($class) as $membership) {
       $member = $membership->getEntity();
       if ($member instanceof UserInterface && $member->isActive()
         && (int) $member->id() === (int) $account->id()
-        && $membership->hasPermission('take course')) {
+        && $membership->getPluginId() === 'group_membership') {
         return TRUE;
       }
     }
@@ -864,6 +871,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Checks active take-course permission in any class linked to the course. */
   private function hasCurrentEnrollment(CourseInterface $course, AccountInterface $account): bool {
+    if (!$course->hasPermission('take course', $account)) {
+      return FALSE;
+    }
     $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $course->id(),
       'plugin_id' => 'lms_classes',
@@ -875,8 +885,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       }
       foreach (GroupMembership::loadByGroup($class) as $membership) {
         $member = $membership->getEntity();
-        if ($member instanceof UserInterface && (int) $member->id() === (int) $account->id()
-          && $membership->hasPermission('take course')) {
+        if ($membership->getPluginId() === 'group_membership'
+          && $member instanceof UserInterface && $member->isActive()
+          && (int) $member->id() === (int) $account->id()) {
           return TRUE;
         }
       }

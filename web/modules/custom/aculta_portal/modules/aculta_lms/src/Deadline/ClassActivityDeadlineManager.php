@@ -46,7 +46,7 @@ final class ClassActivityDeadlineManager {
         $member = $membership->getEntity();
         if ($member instanceof UserInterface && $member->isActive()
           && (int) $member->id() === (int) $learner->id()
-          && $membership->hasPermission('take course')) {
+          && $course->hasPermission('take course', $learner)) {
           $isLearner = TRUE;
           break;
         }

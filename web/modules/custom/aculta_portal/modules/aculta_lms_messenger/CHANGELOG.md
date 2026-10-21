@@ -1,5 +1,12 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.11 — validar take-course no curso pai — 2026-10-21
+
+- Valida membership ativa na turma e permissão `take course` herdada no curso
+  pai para avisos de conteúdo, prazos, matrículas e resolução. A verificação na
+  própria turma filtrava estudantes válidos, pois `lms_classes` calcula essa
+  permissão no Group de curso.
+
 ## 0.1.0-dev.10 — injetar QueueFactory do Core — 2026-10-21
 
 - Tipa os produtores de fila com a classe concreta `QueueFactory`, que é o

@@ -16,6 +16,7 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\lms\TrainingManager;
+use Drupal\user\UserInterface;
 
 /**
  * Read-only LMS dashboard data assembled from Group and LMS source entities.
@@ -118,11 +119,12 @@ final class LearningDashboardManager {
 
     $members = [];
     foreach (GroupMembership::loadByGroup($class) as $membership) {
-      if (!$membership->hasPermission('take course')) {
+      if ($membership->getPluginId() !== 'group_membership') {
         continue;
       }
       $member = $membership->getEntity();
-      if ($member !== NULL && $member->id()) {
+      if ($member instanceof UserInterface && $member->isActive()
+        && $course->hasPermission('take course', $member)) {
         $members[(int) $member->id()] = $member;
       }
     }

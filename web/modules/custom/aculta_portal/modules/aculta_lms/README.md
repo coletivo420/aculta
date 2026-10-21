@@ -218,12 +218,15 @@ fuso da conta que consulta.
 Definir ou alterar o prazo gera aviso no painel e no resumo diário opt-in por
 meio de `aculta_lms_messenger`/`aculta_messenger`. A mensagem não envia e-mail
 transacional e é revalidada contra publicação, curso e membership atual.
+O módulo `lms_classes` herda `take course` no curso pai a partir da matrícula na
+turma; os leitores de prazo e avisos conferem essa permissão no curso e exigem
+membership ativa na turma.
 Enquanto se aguarda resposta à pergunta interativa, adotou-se provisoriamente a
 opção recomendada: aviso ao salvar e lembrete durante as 24 horas anteriores,
 enfileirado no cron do Drupal. Unit LMS/adapter: 47 testes / 210 assertions
-PASS; Kernel de instalação: 4 testes / 34 assertions e Kernel Group: 1 teste /
-33 assertions PASS. O Kernel do aviso com Message, revisão visual e Runtime
-permanecem DEFERRED.
+PASS; Kernels de instalação/Group/Message: 6 testes / 85 assertions PASS. O
+Runtime confirma compilação e serviços, mas ainda não tem turma ou prazo para
+testar evento/Cron; a revisão visual permanece DEFERRED.
 
 ## Testes
 

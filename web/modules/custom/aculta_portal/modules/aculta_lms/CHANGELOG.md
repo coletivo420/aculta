@@ -1,5 +1,11 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.19 — autorizar aprendizagem pelo curso pai — 2026-10-21
+
+- Usa `take course` no curso pai junto da membership ativa na turma para
+  resolver prazos de estudante. Group `lms_classes` concede essa permissão no
+  curso, não no grupo de turma; Kernel cobre membro e outsider.
+
 ## 0.1.0-dev.18 — versão de prazo acompanha cada alteração — 2026-10-21
 
 - A versão opaca do evento inclui UUID, prazo e horário de alteração da relação
