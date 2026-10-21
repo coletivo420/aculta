@@ -14,12 +14,17 @@ services:
     class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
     arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
 
+  aculta_statistics.visitor_key:
+    class: Drupal\aculta_statistics\Visitor\VisitorKey
+    factory: ['Drupal\aculta_statistics\Visitor\VisitorKeyFactory', 'create']
+
   aculta_statistics.wiki_read_controller:
     class: Drupal\aculta_statistics\Controller\WikiReadController
-    arguments: ['@aculta_statistics.recorder']
+    arguments: ['@aculta_statistics.recorder', '@flood', '@request_stack', '@aculta_statistics.visitor_key']
 
   # Aliases por classe e interface, para injeção por tipo (autowiring).
   Drupal\aculta_statistics\Catalog\MetricCatalog: '@aculta_statistics.catalog'
   Drupal\aculta_statistics\Storage\AggregateStorageInterface: '@aculta_statistics.storage'
   Drupal\aculta_statistics\Retention\RetentionPolicy: '@aculta_statistics.retention'
   Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
+  Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'

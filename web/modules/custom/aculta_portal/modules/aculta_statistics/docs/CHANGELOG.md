@@ -36,6 +36,21 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.2.0-dev.4 (controle antiabuso do contador da Wiki)
+
+### Código
+- `VisitorKey`: identificador pseudonimo do visitante, HMAC-SHA256 do IP com o `hash_salt` do site e um escopo.
+  O IP não é guardado em claro. `VisitorKeyFactory` lê o salt do bootstrap.
+- Limites no beacon (`WikiReadController`), usando o serviço `flood` do Core:
+  - uma leitura por visitante e verbete a cada 30 min; repetições respondem 204 sem contar;
+  - no máximo 60 leituras contadas por visitante a cada hora; depois disso, 429 com `Retry-After`.
+- Serviços `aculta_statistics.visitor_key` e `aculta_statistics.wiki_read_controller` com as dependências explícitas.
+
+### Testes
+- Unit: 31 casos (controlador com limite por visitante, dedupe, visitantes diferentes e chave pseudonima).
+- Kernel: 14 casos, aprovados.
+- Runtime de teste: duas leituras do mesmo visitante no mesmo verbete contam uma vez; identificadores do `flood` têm 64 caracteres hexadecimais e nenhum contém o IP. Dados de teste removidos depois.
+
 ## 0.2.0-dev.3 (contador de leitura da Wiki)
 
 ### Código

@@ -18,7 +18,8 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 - Painel de retenção em `/painel-administrativo/aculta/estatisticas/retencao`,
   com confirmação antes de reduzir prazo (permissão `administer aculta_statistics`).
 - Contador de leitura da Wiki: beacon `POST /estatisticas/wiki/{node}/leitura` em verbetes publicados
-  (`wiki.entries.read`, dimensão = nid, retenção configurável).
+  (`wiki.entries.read`, dimensão = nid, retenção configurável). Antiabuso: uma leitura por visitante
+  e verbete a cada 30 min, até 60 por visitante por hora, com identificador pseudonimo do visitante.
 - Banner de consentimento para visitante anônimo (`consent_banner.enabled`, desligado por padrão):
   biblioteca `aculta_statistics/consent`; o marcado visual é do tema (`consent-banner`).
 

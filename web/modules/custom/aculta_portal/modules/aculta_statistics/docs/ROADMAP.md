@@ -26,7 +26,7 @@ Pendente nesta fase:
 
 Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e conectores.
 
-## 0.2.0 — Núcleo analítico (em andamento: 0.2.0-dev.3)
+## 0.2.0 — Núcleo analítico (em andamento: 0.2.0-dev.4)
 
 - Ativar o módulo: `*.info.yml`, linha no `PROJECT-STATUS-INDEX` do README raiz, schema. **Feito no código**; ativação no Runtime pendente.
 - Contratos de evento e de provedor.

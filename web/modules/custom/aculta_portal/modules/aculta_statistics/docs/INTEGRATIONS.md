@@ -44,6 +44,9 @@ o painel de turma do LMS), com as mesmas permissões.
   (`sendBeacon`), gravando `wiki.entries.read` com o nid. Sem IP, usuário ou cookie. Visitas
   servidas do cache continuam contadas, porque o beacon é disparado pelo navegador. Retenção
   configurável por métrica no painel.
+- **Antiabuso:** uma leitura por visitante e verbete a cada 30 min; no máximo 60 leituras contadas
+  por visitante por hora (429 depois disso). O visitante é um HMAC do IP com o salt do site, guardado
+  na tabela `flood` só pela janela.
 - **Regra:** a Wiki não é módulo. Não reimplementar a Wiki no Fórum; o Statistics
   só lê o conteúdo.
 
