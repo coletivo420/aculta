@@ -6,14 +6,16 @@
   criado via APIs Drupal permitiu emitir um snapshot elegível e exercitar o
   controlador com os serviços reais. Os dados públicos, QR SVG (`image/svg+xml`,
   13.577 bytes) e PDF (`%PDF`, 919 bytes) foram gerados com sucesso.
-- A emissão usou dispatcher isolado para suprimir efeitos de aviso e métricas.
-  Salvar o `CourseStatus` temporário acionou o evento normal de conclusão; sua
-  Message, chave de deduplicação e agregado estatístico foram identificados e
-  removidos. Todas as entidades temporárias foram excluídas por APIs Drupal;
-  certificados, avisos e fila de e-mail ficaram sem resíduos.
-- Limite: chamadas ao controlador/serviços no Runtime, não navegação HTTP nem
-  submissão do formulário. Emissão pelo formulário e revisão visual seguem
-  pendentes; nenhum e-mail foi enviado.
+- Um segundo fixture isolou temporariamente os listeners de conclusão e
+  certificado e validou as rotas HTTP anônimas: verificação, QR e PDF retornaram
+  200; MIME SVG/PDF e assinatura `%PDF` estavam corretos. A primeira execução
+  havia acionado o evento normal de conclusão ao salvar o `CourseStatus`; a
+  Message, chave de deduplicação e agregado estatístico dessa fixture foram
+  identificados e removidos. Em ambos os testes, as entidades temporárias foram
+  excluídas por APIs Drupal; certificados, avisos e fila de e-mail ficaram sem
+  resíduos.
+- Limite: emissão/revogação pelo formulário e revisão visual seguem pendentes;
+  nenhum e-mail foi enviado.
 
 ## 0.1.0-dev.56 — confirmar dados públicos mínimos do certificado — 2026-10-21
 

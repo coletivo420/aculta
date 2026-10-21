@@ -221,14 +221,16 @@ anônimo inexistente responde 404.
 Em 2026-10-21, fixtures temporárias User/Group/CourseStatus foram criadas por
 APIs Drupal no Runtime e um snapshot foi emitido pelo manager. O controlador
 real apresentou os quatro dados públicos, gerou QR SVG de 13.577 bytes e PDF
-válido de 919 bytes via `aculta_qrcode` e Entity Print/Dompdf. O dispatcher foi
-isolado durante a emissão para suprimir avisos e métricas. O salvamento do status
-temporário disparou o evento normal de conclusão; Message, chave de deduplicação
-e agregado estatístico criados por esse evento foram localizados e removidos. As
-fixtures foram excluídas por APIs Drupal e a fila de e-mail ficou vazia. O smoke
-validou serviços reais, mas não a rota HTTP pública ou o formulário de emissão.
-RUNTIME STATUS: parcial; emissão HTTP pelo formulário, página/QR/PDF por código
-real e revisão visual seguem pendentes.
+válido de 919 bytes via `aculta_qrcode` e Entity Print/Dompdf. Em um segundo
+fixture, listeners de conclusão/certificado foram isolados durante a criação e
+as rotas HTTP anônimas de verificação, QR e PDF retornaram 200, com MIME e
+assinatura `%PDF` corretos. A primeira execução havia acionado o evento normal
+de conclusão ao salvar o status temporário; Message, chave de deduplicação e
+agregado estatístico dessa fixture foram identificados e removidos. Todas as
+fixtures foram excluídas por APIs Drupal e a fila de e-mail ficou vazia. O teste
+cobriu emissão pelo manager e consulta HTTP, mas não o formulário de emissão ou
+revogação. RUNTIME STATUS: parcial; formulário, revisão visual do QR/PDF e aceite
+do modelo seguem pendentes.
 
 Em 0.1.0-dev.45, o campo foi restringido a no mínimo uma hora, mesma condição
 exigida pela emissão. O Kernel de certificados rejeita zero horas (3 testes /

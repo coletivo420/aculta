@@ -234,15 +234,15 @@ existente. O smoke anônimo de código inexistente respondeu 404 após reconstru
 o container. Em 2026-10-21, um fixture temporário real de User, Group e
 CourseStatus aprovado foi criado via APIs Drupal. O manager emitiu o snapshot;
 o controlador real apresentou os quatro dados públicos, gerou QR SVG e PDF
-válidos com o `aculta_qrcode` e Entity Print/Dompdf instalados. O dispatcher de
-eventos do manager foi isolado nessa chamada para não enviar aviso ou alterar
-estatísticas. Salvar o CourseStatus temporário também acionou o evento normal de
-conclusão; a mensagem, a chave de deduplicação e o agregado estatístico dessa
-fixture foram identificados e removidos. User, Group, status e certificado foram
-excluídos por APIs Drupal; a fila de e-mail terminou vazia e os totais de cursos,
-certificados e avisos voltaram ao estado anterior. Este smoke exercitou os
-serviços reais no Runtime, mas não a rota HTTP pública nem o formulário de
-emissão. RUNTIME STATUS: parcial; emissão e visualização HTTP com código real,
+válidos com o `aculta_qrcode` e Entity Print/Dompdf instalados. Em seguida, um
+segundo fixture repetiu a emissão com listeners de conclusão/certificado
+temporariamente removidos e fez GET HTTP anônimo às três rotas: página pública,
+QR SVG (`image/svg+xml`) e PDF (`application/pdf`, assinatura `%PDF`) responderam
+200. Na primeira execução, salvar o CourseStatus temporário acionou o evento
+normal de conclusão; a mensagem, a chave de deduplicação e o agregado estatístico
+dessa fixture foram identificados e removidos. Em ambas as execuções, User,
+Group, status e certificado foram excluídos por APIs Drupal; a fila de e-mail
+terminou vazia e os totais voltaram ao estado anterior. RUNTIME STATUS: parcial;
 emissão/revogação pelo formulário, revisão visual do QR/PDF e aceite do modelo
 permanecem pendentes.
 
