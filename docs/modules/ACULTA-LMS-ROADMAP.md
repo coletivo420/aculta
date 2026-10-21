@@ -343,6 +343,13 @@ regressão LMS/Messenger: 23 testes / 725 assertions PASS, com 95 depreciações
 No Runtime `cursos`, Drush confirmou ausência de updates, rebuild e resolução
 do serviço do painel; houve warning preexistente de cópia dos assets H5P.
 
+Em `aculta_lms` dev.70, o grant positivo do painel depende das listas Group da
+relação curso→turma. O teste apaga a relação real e confirma invalidação do
+grant cacheado. `ClassDashboardKernelTest`: 1 teste / 46 assertions;
+Kernel LMS/Messenger: 23 testes / 728 assertions PASS. Runtime `cursos` não
+tem updates pendentes; rebuild e resolução do manager passaram, com warning
+preexistente de cópia dos assets H5P.
+
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 
 **F14 — escopo de conexão no LMS aguarda decisão de produto.** `aculta_user`

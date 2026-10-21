@@ -128,7 +128,13 @@ final class LearningDashboardManager {
       ->addCacheableDependency($course)
       ->cachePerPermissions()
       ->cachePerUser()
-      ->addCacheContexts(['user.group_permissions']);
+      ->addCacheContexts(['user.group_permissions'])
+      // Removing or changing the class-to-course relation must revoke cached
+      // dashboard access immediately.
+      ->addCacheTags([
+        'group_relationship_list:plugin:lms_classes:entity:' . $class->id(),
+        'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
+      ]);
   }
 
   /**

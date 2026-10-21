@@ -208,6 +208,10 @@ regressão Kernel LMS/Messenger com 23 testes / 725 assertions. Ambas as
 negativas armazenadas (painel e prazo) são invalidadas ao criar a relação
 curso→turma; 95 depreciações de Core/contrib. PHP 8.4.26; PHP 8.5 não validado.
 
+Em 2026-10-21, `ClassDashboardKernelTest` passou com 1 teste / 46 assertions:
+remover a relação curso→turma invalida o grant de acesso do educador já
+armazenado. Kernel combinado LMS/Messenger: 23 testes / 728 assertions PASS.
+
 Em 2026-10-21, `ClassActivityDeadlineTest` passou com 1 teste / 49 assertions:
 ao criar o vínculo curso→turma, o cache tag Group invalida a negativa de acesso
 previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /

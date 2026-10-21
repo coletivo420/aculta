@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
@@ -39,6 +40,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->installConfig(['group', 'lms', 'lms_classes']);
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
@@ -92,7 +94,11 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertTrue($course->hasPermission('grade students', $teacher));
 
     $manager = $this->container->get('aculta_lms.learning_dashboard');
-    self::assertTrue($manager->classDashboardAccess($class, $educator)->isAllowed());
+    $educatorAccess = $manager->classDashboardAccess($class, $educator);
+    self::assertTrue($educatorAccess->isAllowed());
+    $cache = $this->container->get('cache.default');
+    $cache->set('aculta_lms_test.linked_class_dashboard', TRUE, Cache::PERMANENT, $educatorAccess->getCacheTags());
+    self::assertNotFalse($cache->get('aculta_lms_test.linked_class_dashboard'));
     self::assertFalse($manager->classDashboardAccess($class, $memberPending)->isAllowed(), 'A student cannot read educator aggregates.');
     self::assertNull($manager->classDashboard($class, $memberPending));
     $metrics = $manager->classDashboard(
@@ -119,6 +125,15 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
+
+    $classCourseRelationships = $this->container->get('entity_type.manager')->getStorage('group_relationship')->loadByProperties([
+      'entity_id' => $class->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    $classCourseRelationship = reset($classCourseRelationships);
+    self::assertNotFalse($classCourseRelationship);
+    $classCourseRelationship->delete();
+    self::assertFalse($cache->get('aculta_lms_test.linked_class_dashboard'), 'Removing the parent course invalidates cached educator dashboard access.');
   }
 
   /**

@@ -24,6 +24,9 @@ Kernel LMS/Messenger: 23/722 assertions PASS (95 depreciações upstream).
 O mesmo teste comprova a invalidação da negativa do painel de educadores quando
 a relação curso→turma é criada: `ClassActivityDeadlineTest` 1/52; regressão
 Kernel LMS/Messenger 23/725 assertions PASS (95 depreciações upstream).
+O resultado positivo do painel também é invalidado ao remover a relação
+curso→turma: `ClassDashboardKernelTest` 1/46; Kernel LMS/Messenger 23/728
+assertions PASS.
 
 Os hooks do formulário de prazo por atividade e do aviso de feedback do
 educador resolvem curso pelos campos de referência LMS e toleram LessonStatus

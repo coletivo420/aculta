@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.70 — invalidar acesso armazenado ao remover vínculo da turma — 2026-10-21
+
+- O resultado positivo do painel de educadores agora depende das listas Group
+  de relações da turma e do curso. A remoção da relação curso→turma invalida
+  imediatamente o grant armazenado. `ClassDashboardKernelTest`: 1/46; a
+  regressão LMS/Messenger: 23/728 assertions PASS, com depreciações de
+  Core/contrib. Runtime `cursos`: sem updates pendentes; cache rebuild e
+  resolução do manager do painel passaram, com warning preexistente de cópia de
+  assets H5P. Nenhuma configuração foi importada.
+
 ## 0.1.0-dev.69 — invalidar negação do painel de turma sem curso — 2026-10-21
 
 - O controle de acesso do painel de educadores também invalida a negativa
