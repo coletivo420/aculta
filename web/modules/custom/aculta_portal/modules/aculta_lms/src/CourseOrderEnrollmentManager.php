@@ -33,11 +33,12 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
     }
 
     if ($this->hasActiveEntitlement($order)) {
-      $this->grantOrderItems($order);
+      $valid_classes = $this->grantOrderItems($order);
+      $this->reconcileOrderMemberships($order, $valid_classes);
       return;
     }
 
-    $this->revokeOrderMemberships($order);
+    $this->reconcileOrderMemberships($order, []);
   }
 
   /**
@@ -72,18 +73,22 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
   }
 
   /**
-   * Grants class memberships for eligible course items on an order.
+   * Grants memberships and returns classes currently entitled by this order.
+   *
+   * @return array<string, true>
+   *   Class IDs with a valid course product and a current class relationship.
    */
-  private function grantOrderItems(OrderInterface $order): void {
+  private function grantOrderItems(OrderInterface $order): array {
     $uid = (int) $order->getCustomerId();
     if ($uid < 1) {
-      return;
+      return [];
     }
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
     if (!$account instanceof UserInterface) {
-      return;
+      return [];
     }
 
+    $class_ids = [];
     foreach ($order->getItems() as $item) {
       if ($item->bundle() !== 'curso') {
         continue;
@@ -94,6 +99,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
         continue;
       }
 
+      $class_ids[(string) $class->id()] = TRUE;
       $membership = $class->getMember($account);
       if ($membership !== FALSE) {
         // An existing manual enrollment remains manual and is never claimed by
@@ -104,12 +110,19 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
         'field_course_order' => ['target_id' => $order->id()],
       ]);
     }
+
+    return $class_ids;
   }
 
   /**
-   * Revokes memberships whose order no longer grants an entitlement.
+   * Keeps only memberships backed by this order or another active purchase.
+   *
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   The order whose existing memberships are reconciled.
+   * @param array<string, true> $valid_class_ids
+   *   Class IDs currently entitled by this order. Empty when it is inactive.
    */
-  private function revokeOrderMemberships(OrderInterface $order): void {
+  private function reconcileOrderMemberships(OrderInterface $order, array $valid_class_ids): void {
     $storage = $this->entityTypeManager->getStorage('group_relationship');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
@@ -123,6 +136,10 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       $class = $membership->getGroup();
       $account = $membership->getEntity();
       if (!$class instanceof GroupInterface || !$account instanceof UserInterface) {
+        continue;
+      }
+      if ((string) $account->id() === (string) $order->getCustomerId()
+        && isset($valid_class_ids[(string) $class->id()])) {
         continue;
       }
       $alternative = $this->findActiveOrderForClass($class, (int) $account->id(), (int) $order->id());

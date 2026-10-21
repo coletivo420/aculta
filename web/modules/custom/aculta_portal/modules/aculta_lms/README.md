@@ -12,6 +12,11 @@ O novo teste confirma a transferência da origem para o pedido ativo e que a
 membership não é removida. `CourseOrderEnrollmentManagerTest`: 7 testes / 35
 assertions PASS; Unit LMS/Messenger: 87/470 PASS. Checkout HTTP, pagamento
 externo e reembolso no Runtime seguem pendentes.
+Pedidos pagos também reconciliam suas memberships com os itens e turmas atuais:
+turma retirada do pedido perde o vínculo, salvo outra compra ativa; itens ainda
+válidos preservam a membership, e vínculos manuais sem origem não são alterados.
+`CourseOrderEnrollmentManagerTest`: 9 testes / 47 assertions; Unit LMS/Messenger:
+89/482 PASS.
 
 ## F11 — emissão e revogação por educadores
 

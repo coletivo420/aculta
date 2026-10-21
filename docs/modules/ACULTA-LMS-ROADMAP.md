@@ -446,6 +446,13 @@ o acesso é negado enquanto `LessonStatus` e resposta aguardam a fila do LMS:
 PASS, com 95 depreciações upstream. O arquivo de teste foi normalizado para
 PHPCS Drupal/DrupalPractice sem introduzir dívida de estilo.
 
+O sincronizador de pedidos F7 também reconcilia memberships de origem após
+edições do pedido: turma removida/reapontada não conserva acesso sem outra
+compra ativa, enquanto turmas ainda compradas permanecem matriculadas.
+`CourseOrderEnrollmentManagerTest` 9/47; Unit LMS/Messenger 89/482 PASS.
+Kernel LMS/Messenger: 24/770 PASS (95 depreciações upstream); PHPCS
+Drupal/DrupalPractice PASS no manager e nos testes Unit.
+
 Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
 e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de
 curso/estudante são resolvidas pelas listas dos campos; ausência resulta em 422,

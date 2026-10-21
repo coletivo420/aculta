@@ -212,6 +212,121 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
   }
 
   /**
+   * Removes an old order-owned enrollment when its class item was removed.
+   */
+  public function testActiveOrderRevokesMembershipForRemovedClassItem(): void {
+    $student = $this->createMock(UserInterface::class);
+    $student->method('id')->willReturn('77');
+    $class = $this->createMock(GroupInterface::class);
+    $class->method('id')->willReturn('7');
+    $class->expects(self::once())->method('removeMember')->with($student);
+    $order = $this->createOrder('completed', TRUE);
+    $order->method('bundle')->willReturn('curso');
+    $order->method('id')->willReturn('11');
+    $order->method('getCustomerId')->willReturn('77');
+    $order->method('getItems')->willReturn([]);
+
+    $membership = $this->createMock(GroupRelationshipInterface::class);
+    $membership->method('getPluginId')->willReturn('group_membership');
+    $membership->method('getGroup')->willReturn($class);
+    $membership->method('getEntity')->willReturn($student);
+    $relationshipQuery = $this->createMock(QueryInterface::class);
+    $relationshipQuery->method('accessCheck')->willReturnSelf();
+    $relationshipQuery->method('condition')->willReturnSelf();
+    $relationshipQuery->method('execute')->willReturn([21]);
+    $relationshipStorage = $this->createMock(EntityStorageInterface::class);
+    $relationshipStorage->method('getQuery')->willReturn($relationshipQuery);
+    $relationshipStorage->method('loadMultiple')->with([21])->willReturn([$membership]);
+
+    $orderItemQuery = $this->createMock(QueryInterface::class);
+    $orderItemQuery->method('accessCheck')->willReturnSelf();
+    $orderItemQuery->method('condition')->willReturnSelf();
+    $orderItemQuery->method('execute')->willReturn([]);
+    $orderItemStorage = $this->createMock(EntityStorageInterface::class);
+    $orderItemStorage->method('getQuery')->willReturn($orderItemQuery);
+    $orderItemStorage->method('loadMultiple')->with([])->willReturn([]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(77)->willReturn($student);
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['user', $userStorage],
+      ['group_relationship', $relationshipStorage],
+      ['commerce_order_item', $orderItemStorage],
+    ]);
+
+    (new CourseOrderEnrollmentManager($entityTypeManager))->synchronize($order);
+  }
+
+  /**
+   * Keeps an order-owned enrollment while its class item remains valid.
+   */
+  public function testActiveOrderPreservesMembershipForCurrentClassItem(): void {
+    $student = $this->createMock(UserInterface::class);
+    $student->method('id')->willReturn('77');
+    $class = $this->createMock(GroupInterface::class);
+    $class->method('bundle')->willReturn('lms_class');
+    $class->method('id')->willReturn('7');
+    $class->expects(self::once())->method('getMember')->with($student)->willReturn($this->createMock(GroupRelationshipInterface::class));
+    $class->expects(self::never())->method('addMember');
+    $class->expects(self::never())->method('removeMember');
+
+    $order = $this->createOrder('completed', TRUE);
+    $order->method('bundle')->willReturn('curso');
+    $order->method('id')->willReturn('11');
+    $order->method('getCustomerId')->willReturn('77');
+    $item = $this->createMock(OrderItemInterface::class);
+    $item->method('bundle')->willReturn('curso');
+    $item->method('getOrder')->willReturn($order);
+    $product = $this->createMock(ProductInterface::class);
+    $product->method('bundle')->willReturn('produto_curso');
+    $product->method('id')->willReturn('33');
+    $variation = $this->createMock(ProductVariationInterface::class);
+    $variation->method('getProduct')->willReturn($product);
+    $item->method('getPurchasedEntity')->willReturn($variation);
+    $item->method('get')->with('field_course_class')->willReturn((object) ['entity' => $class]);
+    $order->method('getItems')->willReturn([$item]);
+
+    $course = $this->createMock(CourseInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('55');
+    $classRelationship = $this->createMock(GroupRelationshipInterface::class);
+    $classRelationship->method('getEntity')->willReturn($class);
+    $course->method('getRelationships')->with('lms_classes')->willReturn([$classRelationship]);
+    $courseQuery = $this->createMock(QueryInterface::class);
+    $courseQuery->method('accessCheck')->willReturnSelf();
+    $courseQuery->method('condition')->willReturnSelf();
+    $courseQuery->method('execute')->willReturn([55]);
+    $courseStorage = $this->createMock(EntityStorageInterface::class);
+    $courseStorage->method('getQuery')->willReturn($courseQuery);
+    $courseStorage->method('load')->with(55)->willReturn($course);
+
+    $membership = $this->createMock(GroupRelationshipInterface::class);
+    $membership->method('getPluginId')->willReturn('group_membership');
+    $membership->method('getGroup')->willReturn($class);
+    $membership->method('getEntity')->willReturn($student);
+    $relationshipQuery = $this->createMock(QueryInterface::class);
+    $relationshipQuery->method('accessCheck')->willReturnSelf();
+    $relationshipQuery->method('condition')->willReturnSelf();
+    $relationshipQuery->method('execute')->willReturn([21]);
+    $relationshipStorage = $this->createMock(EntityStorageInterface::class);
+    $relationshipStorage->method('getQuery')->willReturn($relationshipQuery);
+    $relationshipStorage->method('loadMultiple')->with([21])->willReturn([$membership]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(77)->willReturn($student);
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['user', $userStorage],
+      ['group_relationship', $relationshipStorage],
+      ['commerce_order_item', $this->createMock(EntityStorageInterface::class)],
+      ['group', $courseStorage],
+    ]);
+
+    (new CourseOrderEnrollmentManager($entityTypeManager))->synchronize($order);
+  }
+
+  /**
    * Creates the manager with a mocked Commerce payment storage.
    *
    * @param \Drupal\commerce_payment\Entity\PaymentInterface[] $payments

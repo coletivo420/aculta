@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.74 — reconciliar memberships com itens atuais do pedido — 2026-10-21
+
+- A sincronização de pedido pago agora reconcilia as memberships marcadas com
+  sua origem: mantém as turmas ainda compradas; revoga turma removida do pedido
+  e transfere a origem se existir outra compra ativa. Matrículas manuais sem
+  origem continuam preservadas. `CourseOrderEnrollmentManagerTest`: 9/47;
+  Unit LMS/Messenger: 89/482 PASS. Kernel LMS/Messenger: 24/770 PASS (95
+  depreciações upstream). PHPCS Drupal/DrupalPractice PASS.
+
 ## 0.1.0-dev.73 — negar download após remoção do CourseStatus — 2026-10-21
 
 - O Kernel agora reproduz o intervalo entre a exclusão do `CourseStatus` e a
