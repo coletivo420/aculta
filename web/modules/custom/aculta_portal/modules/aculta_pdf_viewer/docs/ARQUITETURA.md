@@ -13,7 +13,10 @@ Wiki420, Fórum, projetos e documentos institucionais que referenciem Media.
   esses resultados antes de criar render arrays.
 - PDF.js oficial fixado no Composer lê o arquivo no browser. Para `private://`,
   o File URL Generator aponta à rota privada do Core, que revalida o acesso ao
-  File e às entidades/campos referenciadores a cada requisição.
+  File e às entidades/campos que referenciam diretamente esse File a cada
+  requisição. Isso não percorre automaticamente referências Media → embed em
+  texto → Comment → tópico/host; cada contexto que dependa dessa cadeia precisa
+  proteger o acesso da própria Media e sincronizar seu estado de publicação.
 - O viewer não cria rotas, armazenamento, permissões, dados de LMS ou política
   de autorização independente.
 - O canvas renderiza a página como imagem: `aria-label` identifica a página, mas
@@ -52,7 +55,9 @@ Serviço `aculta_pdf_viewer.builder`, com DI de `file_url_generator`,
    `private://`, MIME e extensão PDF.
 4. Para arquivos privados, limita o cache do render a max-age zero. A entrega
    de bytes permanece na rota Core `system.private_file_download`; não há rota,
-   token ou política paralela no submódulo.
+  token ou política paralela no submódulo. A autorização Core caminha pelos
+  usos diretos do File; ela não infere que uma Media foi embutida em Comment ou
+  que o tópico contextual continua visível.
 5. Opcionalmente inclui miniatura da primeira página somente para arquivo
    público. Se binário, policy,
    formato, tamanho ou conversão falhar, segue com o leitor sem miniatura.

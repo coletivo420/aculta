@@ -92,7 +92,12 @@ exportada e o servidor sejam idênticos em todos os itens.
   administrativa para abrir na mesma janela, sem renderizar o leitor no
   comentário. Para anexos privados, a miniatura só pode ser publicada depois
   do comentário e precisa acompanhar sua retirada; validar acesso e limpeza
-  antes de estender o builder.
+  antes de estender o builder. `private://` sozinho não vincula autorização ao
+  comentário: Core verifica acesso ao Media/File, e Media publicado com
+  `view media` pode permitir o download anônimo do arquivo privado. O ciclo de
+  publicação do Media precisa acompanhar comentário e tópico, e contextos com
+  acesso próprio exigem uma checagem explícita da cadeia de entidades; não
+  considerar o diretório privado como política de autorização.
 
 Não há renderer Office instalado no Portal. Microsoft Office Online Server
 oferece renderização rica, mas requer serviço/farm WOPI; seus online viewers não
@@ -157,6 +162,16 @@ suíte web separada:
 | LibreOffice headless → PDF.js | Converte os formatos que o LibreOffice importa para PDF; o leitor atual exibe o resultado, preservando melhor paginação que conversão semântica | Requer LibreOffice instalado no servidor/worker e conversão isolada de conteúdo não confiável, com limites de CPU, memória, tempo, páginas, rede e diretório temporário |
 | ONLYOFFICE Docs Community ou Collabora Online | Suíte web separada com visualização e edição de texto, planilhas e apresentações, integrada por API/WOPI; é a opção mais próxima da experiência Google Docs | Serviço adicional auto-hospedado, integração WOPI no Portal, infraestrutura/monitoramento/atualização e revisão de licença. O documento continua armazenado no ACULTA, mas o servidor Office recebe o arquivo para renderizar |
 
+ONLYOFFICE Docs Community é AGPL-3.0; a FAQ do fornecedor diz que uso em
+serviço de rede exige disponibilizar o código de modificações e trabalhos
+derivados, manter a marca e não oferece SLA oficial. Collabora Online Development
+Edition (CODE) é gratuita para desenvolvimento/pequenas equipes, mas continua
+sendo um servidor separado integrado por WOPI. Portanto, nenhuma dessas opções
+é uma biblioteca para adicionar ao `aculta_pdf_viewer`, e a licença, escala,
+operação e disponibilidade precisam ser aceitas antes de produção. Isso é
+distinto das bibliotecas de prévia no cliente (Mammoth, `docx-preview` e
+SheetJS), que não fornecem edição colaborativa equivalente ao Google Docs.
+
 Mammoth declara que não busca fidelidade de layout e não sanitiza conteúdo; não
 injetar a saída diretamente em página Drupal. SheetJS oferece parsing e
 serialização de dados/tabelas HTML, o que não equivale à renderização completa de
@@ -169,8 +184,12 @@ WOPI. Referências primárias: [Mammoth — conversão e segurança](https://git
 [`pptx-browser`](https://github.com/bowespublishing/pptx-browser),
 [LibreOffice — conversão headless](https://help.libreoffice.org/latest/en-GB/text/shared/guide/start_parameters.html),
 [ONLYOFFICE — conceitos e auto-hospedagem](https://api.onlyoffice.com/docs/docs-api/get-started/basic-concepts),
+[ONLYOFFICE Community — licença e limites](https://helpcenter.onlyoffice.com/docs/faq/docs-community.aspx),
 [ONLYOFFICE WOPI](https://api.onlyoffice.com/docs/docs-api/using-wopi/overview),
-[Collabora SDK/WOPI](https://sdk.collaboraonline.com/CO-SDK-manual.pdf).
+[Collabora — FAQ sobre CODE e WOPI](https://www.collaboraonline.com/faqs/),
+[Collabora SDK/WOPI](https://sdk.collaboraonline.com/CO-SDK-manual.pdf),
+[Drupal — acesso a Media privado](https://www.drupal.org/docs/8/core/modules/media/setting-up-private-access-to-media-items),
+[Drupal Core — segurança de diretórios](https://www.drupal.org/docs/getting-started/installing-drupal/securing-drupal-file-directories).
 
 Recomendação técnica para o Fórum, sujeita à decisão do responsável: não
 embutir uma suíte Office em `aculta_pdf_viewer`, que deve continuar com domínio
