@@ -4,8 +4,10 @@
 
 - O Runtime reportou HTTP 500 ao montar metadata porque a classe Unicode estava importada do namespace Core inexistente. A importação agora usa `Drupal\Component\Utility\Unicode`, igual ao Core Drupal 11 instalado ([API Core 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x)).
 - Unit PASS (5 testes/50 asserções), Kernel PASS (3/131; 7 depreciações Core/Metatag/Token), PHPCS Drupal/Practice e PHP lint PASS.
-- Runtime de teste após `cr`: página temporária HTTP 200, title Metatag presente, destino resolve para o canonical `https://aculta.toca.net.br/inicio`. Firefox ESR/Geckodriver WebDriver BiDi confirmou viewport de 390 × 844 e desktop 1440 × 1000, sem overflow horizontal; screenshot revisado. Dois tabs por teclado chegaram ao link institucional com outline visível de 3px. Rascunhos e aparência escura, leitor de tela e contraste formal ainda não foram verificados.
+- Runtime de teste após `cr`: página temporária HTTP 200, title Metatag presente, destino resolve para o canonical `https://aculta.toca.net.br/inicio`. Firefox ESR/Geckodriver WebDriver BiDi confirmou viewport de 390 × 844 e desktop 1440 × 1000, sem overflow horizontal; screenshot revisado. Dois tabs por teclado chegaram ao link institucional com outline visível de 3px. Leitor de tela e revisão integral de acessibilidade continuam pendentes.
+- Simulação isolada `data-bs-theme="dark"`: em 390 × 844 não houve overflow; título, descrição e botão mediram contraste 12,95:1, 9,72:1 e 14,50:1 pelos valores CSS computados. Isso testa os tokens escuros, não a troca de modo no Portal nem leitor de tela.
 - Fixture temporária (página/item/destino) removida por Entity API e slug confirmado 404. O `cr` continua emitindo aviso H5P de asset com destino `assets://` sem configuração, não relacionado a Links.
+- Gates transversais: status index/Portal bloqueados pelos commits `4b8d4c83`, `e4182b4d` e `4f9bf03d` sem atualização da linha raiz nos mesmos commits; mapa módulo/tema falha porque `aculta_lms_messenger` e `aculta_qrcode` ainda não estão documentados no mapa. Boundary, slugs, PHPCS, lint e testes de Links passaram; arquivos das outras frentes não foram alterados.
 
 ## 0.4.0-dev.21 — referências Node para destinos de conteúdo — 2026-10-20
 

@@ -193,7 +193,8 @@ Runtime. A gravação abortada deixou apenas o destino temporário `id=5`; foi
 confirmada a ausência de página/item associados e esse registro exato foi
 removido junto de sua revisão em transação SQL. A consulta confirmou zero linhas
 restantes. Não houve limpeza geral nem alteração de arquivos LMS. Repetir o
-smoke autenticado e visual quando a edição concorrente estiver estabilizada.
+smoke foi possível após o hook LMS ser substituído e o cache do Runtime ser
+reconstruído; nenhum arquivo LMS foi alterado por Links.
 
 Diagnóstico do primeiro GET da fixture visual: HTTP 500 causado pela classe
 inexistente `Drupal\Core\Utility\Unicode` em `LinkPageMetatagHooks`; o namespace
@@ -201,6 +202,12 @@ correto no Core 11.4.10 é `Drupal\Component\Utility\Unicode`. Em `0.4.0-dev.22`
 Unit (5/50), Kernel (3/131), PHPCS e lint passaram. Depois do `cr`, a página
 temporária respondeu 200 com metadata e destino Domain corretos. Firefox ESR
 via WebDriver BiDi verificou viewport CSS 390 × 844 e 1440 × 1000 sem overflow;
-teclado alcançou o link com outline sólido de 3 px. Dark mode, leitor de tela e
-contraste formal permanecem pendentes. Fixtures foram excluídas e o slug
-retornou 404. Referência Core: [Unicode::truncate 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x).
+teclado alcançou o link com outline sólido de 3 px. Fixtures foram excluídas e
+o slug retornou 404. Referência Core: [Unicode::truncate 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x).
+
+Simulação isolada do SDC em `data-bs-theme="dark"` e 390 × 844: sem overflow;
+contraste computado para título, descrição e botão de 12,95:1, 9,72:1 e
+14,50:1. O DOM foi alterado somente na sessão do navegador, sem trocar
+configuração Runtime. Leitor de tela, troca de modo do Portal e avaliação
+integral de acessibilidade permanecem pendentes. Os gates globais de status e
+mapa falharam por alterações de outras frentes, listadas no changelog.

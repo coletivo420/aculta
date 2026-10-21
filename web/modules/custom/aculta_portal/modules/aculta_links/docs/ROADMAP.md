@@ -37,8 +37,10 @@ qualquer cópia upstream.
 Na versão 0.4.0-dev.22, um erro de namespace na truncagem de descrição Metatag
 foi reproduzido como HTTP 500 e corrigido para a API `Unicode` do Drupal
 Component. Após `cr`, Firefox ESR via WebDriver BiDi confirmou 390 × 844 e
-1440 × 1000 sem overflow e foco visível por teclado. A revisão de dark mode,
-leitor de tela, contraste formal e revisão independente ainda precedem RC.
+1440 × 1000 sem overflow e foco visível por teclado. Simulação isolada em
+`data-bs-theme="dark"` manteve contraste computado mínimo de 9,72:1 nos textos
+testados. Leitor de tela, troca de modo no Portal, a11y integral e revisão
+independente ainda precedem RC.
 
 ## 0.3.0 — dashboard e editor (em andamento)
 

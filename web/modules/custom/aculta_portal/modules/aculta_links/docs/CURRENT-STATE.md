@@ -175,6 +175,8 @@ atual do Core fica em `Drupal\Component\Utility\Unicode`. A referência de
 namespace foi corrigida; Unit e Kernel passaram. Após `cr`, a página temporária
 respondeu 200 e exibiu title Metatag e destino canônico esperado. Firefox ESR
 via WebDriver BiDi foi inspecionado em 390 × 844 e 1440 × 1000 sem overflow; o
-focus por teclado mostrou outline de 3 px. Página, item e destino temporários
-foram excluídos pela Entity API, e o slug voltou a 404. Revisão de dark mode,
-leitor de tela e contraste formal continua pendente.
+focus por teclado mostrou outline de 3 px. Em sessão isolada com tema escuro, os
+tokens de título, descrição e botão atingiram contraste computado de 12,95:1,
+9,72:1 e 14,50:1. Página, item e destino temporários foram excluídos pela
+Entity API, e o slug voltou a 404. Troca de modo no Portal, leitor de tela e
+revisão completa de acessibilidade continuam pendentes.
