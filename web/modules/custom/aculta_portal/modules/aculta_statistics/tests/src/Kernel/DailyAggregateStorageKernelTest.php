@@ -120,6 +120,21 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Apagar um aluno remove as linhas dele em todos os dias, e só as dele.
+   */
+  public function testPurgeStudentRemovesOnlyThatStudent(): void {
+    $storage = $this->storage();
+    $this->insertRow('lms.student.status', '5/42|passed', 100, 1);
+    $this->insertRow('lms.student.status', '6/42|failed', 101, 1);
+    $this->insertRow('lms.student.status', '5/4|passed', 100, 1);
+    $this->insertRow('lms.student.status', '5/142|passed', 100, 1);
+
+    $this->assertSame(2, $storage->purgeStudent('lms.student.status', 42));
+    $this->assertSame(['5/142|passed', '5/4|passed'], $storage->dimensions('lms.student.status', 100));
+    $this->assertSame(0, $storage->total('lms.student.status', 0, 1000, '5/42|passed'));
+  }
+
+  /**
    * Cria o storage com o dia atual do ambiente de teste.
    */
   private function storage(): DailyAggregateStorage {

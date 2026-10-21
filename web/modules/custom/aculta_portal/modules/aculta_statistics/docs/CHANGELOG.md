@@ -36,6 +36,19 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.5.0-dev.4 (situação por aluno sob o aceite único; purga na exclusão e na revogação)
+
+### Código
+- `lms.student.status` (sensibilidade R, 90 dias): situação de cada aluno por curso e dia, gravada por `LmsStudentStatusSubscriber` a partir do `aculta_lms.student_status_snapshot`. Substitui o dia; idempotente.
+- `StudentDataPurgeSubscriber`: na exclusão da conta (`aculta_user.account_deleted`) e na revogação (`aculta_user.consent_revoked`), apaga as linhas do aluno em todos os dias (`purgeStudent`).
+- Base: aceite único (`aculta_user_agreement_terms`), com a função descrita na política (ver `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`).
+
+### Testes
+- Unit: 78 casos (inclui os dois assinantes). Kernel `DailyAggregateStorageKernelTest`: 8 casos, com a purga por aluno.
+
+### Pendente
+- Publicação da política com as cláusulas, antes de a função valer para usuários reais.
+
 ## 0.5.0-dev.3 (instantâneo de turma no LMS e regra de período em gráficos)
 
 ### Código

@@ -41,6 +41,8 @@ retention:
     days: 90
   - metric: lms.courses.completed
     days: 90
+  - metric: lms.student.status
+    days: 90
   - metric: lms.students.by_status
     days: 90
   - metric: lms.certificates.issued

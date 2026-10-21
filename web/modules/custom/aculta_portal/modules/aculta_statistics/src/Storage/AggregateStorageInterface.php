@@ -42,6 +42,17 @@ interface AggregateStorageInterface {
   public function replaceDay(string $metric, int $day, array $totals): void;
 
   /**
+   * Apaga todas as linhas de uma métrica que identificam um aluno, em todos os dias.
+   *
+   * Usado quando a conta é excluída ou o consentimento é revogado. A dimensão de métricas por aluno tem o formato
+   * `curso/uid|situação`.
+   *
+   * @return int
+   *   Quantidade de linhas removidas.
+   */
+  public function purgeStudent(string $metric, int $uid): int;
+
+  /**
    * Soma uma métrica num intervalo de dias UTC, inclusive.
    *
    * @param string $metric

@@ -101,6 +101,17 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function purgeStudent(string $metric, int $uid): int {
+    $this->assertMetric($metric);
+    return (int) $this->database->delete(self::TABLE)
+      ->condition('metric', $metric)
+      ->condition('dimension', '%/' . $uid . '|%', 'LIKE')
+      ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function total(string $metric, int $fromDay, int $toDay, ?string $dimension = NULL): int {
     $this->assertMetric($metric);
     if ($dimension !== NULL) {

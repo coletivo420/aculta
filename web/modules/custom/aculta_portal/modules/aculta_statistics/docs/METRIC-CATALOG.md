@@ -77,6 +77,7 @@ Pendente (fora da 0.5.0-dev.1): separar devolução `hard` e `soft` (`email.boun
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
 | `lms.students.by_status` | cron do aculta_lms (contagem por turma) | alunos | curso/turma\|situação | 90 dias | I |
+| `lms.student.status` | evento `aculta_lms.student_status_snapshot` (aceite único) | alunos | curso/aluno\|situação | 90 dias | R |
 
 ## Links e QR (fonte: `aculta_links`, `aculta_qrcode`)
 

@@ -74,6 +74,18 @@ services:
     tags:
       - { name: event_subscriber }
 
+  aculta_statistics.lms_student_status_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsStudentStatusSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
+  aculta_statistics.student_data_purge_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\StudentDataPurgeSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
   aculta_statistics.lms_class_status_subscriber:
     class: Drupal\aculta_statistics\EventSubscriber\LmsClassStatusSubscriber
     arguments: ['@aculta_statistics.storage']
