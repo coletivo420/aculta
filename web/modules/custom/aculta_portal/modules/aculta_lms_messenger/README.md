@@ -7,7 +7,7 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão `0.1.0-dev.13`. Matrícula, certificado, conclusão, avaliação publicada,
+Versão `0.1.0-dev.15`. Matrícula, certificado, conclusão, avaliação publicada,
 resposta aberta pendente, conteúdo liberado, retorno do educador e definição ou
 alteração de prazo por atividade/turma geram avisos no painel multidomínio. O
 prazo fica em relação Group específica da turma, não na atividade LMS. Adotou-se
@@ -25,9 +25,11 @@ Avisos que dependem de uma resposta LMS revalidam as referências
 `Answer → LessonStatus → CourseStatus → Course` por campos de referência. Se a
 remoção assíncrona do LMS deixar a resposta sem um desses contextos, o aviso é
 suprimido durante a janela pendente em vez de provocar erro no contador, gaveta
-ou digest. Unit `LearningNoticeStaleAnswerTest`: 1/6; suíte completa: 17/76,
-incluindo revalidação do provider de digest e descarte de referência de
-certificado removida. Kernel Message: 1/12, com 2 depreciações upstream.
+ou digest. Aviso de conclusão também resolve a referência ao curso diretamente
+do campo: se o curso foi removido, a notificação não chama o getter tipado nem
+gera erro 500. A suíte Unit LMS/Messenger passou com 81 testes / 429 assertions
+(8 depreciações PHPUnit); Kernel MariaDB: 23 / 712 assertions PASS (92
+depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
 O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
 persistência e deduplicação em Message real. Smoke com turma temporária no

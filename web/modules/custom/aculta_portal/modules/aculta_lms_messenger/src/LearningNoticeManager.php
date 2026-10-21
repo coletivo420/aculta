@@ -593,7 +593,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$status->isFinished() || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
       return NULL;
     }
-    $course = $status->getCourse();
+    // LMS deletes Course entities asynchronously, so a status can briefly
+    // retain a reference whose typed getter throws while that cleanup runs.
+    $course = $status->get(CourseStatusInterface::COURSE_FIELD)->entity;
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
       || !$course->access('view', $account, TRUE)->isAllowed()) {
       return NULL;

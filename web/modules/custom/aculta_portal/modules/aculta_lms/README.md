@@ -299,7 +299,7 @@ assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
-Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 80 testes/417
+Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 81 testes/429
 assertions; Kernel MariaDB 23 testes/712 assertions PASS. No total, houve 8
 depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 

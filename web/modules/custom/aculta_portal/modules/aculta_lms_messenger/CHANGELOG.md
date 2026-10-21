@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.15 — tolerar conclusão com curso removido — 2026-10-21
+
+- Aviso e digest de conclusão resolvem o curso pela referência do campo de
+  `CourseStatus`; se a limpeza assíncrona já removeu o curso, descartam o aviso
+  sem chamar o getter tipado que lança exceção. Teste do provider real cobre a
+  referência órfã. Unit LMS/Messenger: 81 testes / 429 assertions PASS; Kernel
+  MariaDB: 23 / 712 PASS. PHPCS Drupal/DrupalPractice PASS.
+
 ## 0.1.0-dev.14 — testar revalidação do provider de resumo — 2026-10-21
 
 - Teste Unit percorre o `LearningNoticeManager` real: quando o certificado
