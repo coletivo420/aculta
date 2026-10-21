@@ -20,3 +20,60 @@
 .studio__actions > li {
   margin: 0;
 }
+
+/* Três níveis: áreas no topo (.studio__tabs), submenu à esquerda e abas da seção à direita. */
+.studio__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.studio__sidebar {
+  flex: 0 0 14rem;
+  max-width: 14rem;
+}
+
+.studio__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.studio__sections > li {
+  margin: 0;
+}
+
+.studio__link[aria-current="page"] {
+  font-weight: 700;
+}
+
+.studio__subtabs {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .studio__layout {
+    flex-direction: column;
+  }
+
+  .studio__sidebar {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+}
+
+/* O item_list do tema acrescenta list-group (vertical). Áreas e abas da seção são barras horizontais. */
+.studio__tabs.nav,
+.studio__subtabs.nav {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.studio__tabs > li,
+.studio__subtabs > li {
+  list-style: none;
+}
+
+.studio__sections > li {
+  list-style: none;
+}
