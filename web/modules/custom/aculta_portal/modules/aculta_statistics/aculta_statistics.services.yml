@@ -1,0 +1,4 @@
+services:
+  aculta_statistics.storage:
+    class: Drupal\aculta_statistics\Storage\DailyAggregateStorage
+    arguments: ['@database', '@datetime.time']
