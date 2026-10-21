@@ -25,6 +25,9 @@ resolução de domínio paralelos.
    worker agrega por dia UTC, tabela não guarda visitante, e cron remove linhas
    além da retenção de 90 dias. A métrica é aproximação de requisições de
    redirect, sem page views, atribuição por página ou visitante único.
+5. **QR Code:** validação, preset e geração SVG são delegados ao serviço
+   compartilhado `aculta_qrcode`; Links só prepara a URL canônica e os headers
+   da resposta. Não há gerador ou preset paralelo no submódulo.
 
 Não fundir essas responsabilidades por conveniência. O Linky serviu como
 referência para entidade/revisões; sua dependência Dynamic Entity Reference não

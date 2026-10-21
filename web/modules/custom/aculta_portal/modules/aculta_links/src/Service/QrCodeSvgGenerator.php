@@ -4,31 +4,32 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_links\Service;
 
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Writer\SvgWriter;
+use Drupal\aculta_qrcode\Service\QrCodeGenerator as CentralQrCodeGenerator;
+use Drupal\aculta_qrcode\Service\QrCodePayloadValidator;
+use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
+use Drupal\aculta_qrcode\Value\QrCodeFormat;
 
 /**
  * Generates dependency-free-to-render SVG QR codes for validated URLs.
  */
 final class QrCodeSvgGenerator {
 
+  public function __construct(
+    private readonly QrCodePayloadValidator $payloadValidator,
+    private readonly QrCodePresetRegistry $presetRegistry,
+    private readonly CentralQrCodeGenerator $generator,
+  ) {}
+
   /**
-   * Generates an SVG QR code for a URL already resolved by Drupal.
+   * Generates a default-preset SVG through the shared ACULTA QR service.
    */
   public function generate(string $url): string {
-    $code = new QrCode(
-      data: $url,
-      encoding: new Encoding('UTF-8'),
-      errorCorrectionLevel: ErrorCorrectionLevel::Medium,
-      size: 320,
-      margin: 12,
-      roundBlockSizeMode: RoundBlockSizeMode::Margin,
+    $payload = $this->payloadValidator->validateUrl($url);
+    return $this->generator->generate(
+      $payload,
+      $this->presetRegistry->default(),
+      QrCodeFormat::Svg,
     );
-
-    return (new SvgWriter())->write($code)->getString();
   }
 
 }

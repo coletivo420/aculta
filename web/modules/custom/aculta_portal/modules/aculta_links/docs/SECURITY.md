@@ -46,7 +46,7 @@
   user-agent, referrer, fingerprint ou cookie. Contagens são aproximadas e não
   identificam pessoas únicas. Base legal deve ser validada no inventário LGPD
   antes de habilitar a coleta no Runtime de produção.
-- QR Code é calculado localmente como SVG a partir somente da URL canônica
+- QR Code é validado e calculado localmente pelo `aculta_qrcode` como SVG a partir somente da URL canônica
   HTTPS de página publicada. O endpoint não aceita URL da requisição, não busca
   rede, não persiste arquivo e não registra visualizações ou scans.
 - O QR de link curto aplica as mesmas garantias ao código do destino: somente

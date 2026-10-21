@@ -29,6 +29,7 @@ services:
 
   aculta_links.qr_code_svg_generator:
     class: Drupal\aculta_links\Service\QrCodeSvgGenerator
+    arguments: ['@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.generator']
 
   aculta_links.page_qr_code_controller:
     class: Drupal\aculta_links\Controller\LinkPageQrCodeController

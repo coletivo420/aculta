@@ -74,6 +74,10 @@ dashboard, preservando somente filtros válidos e sem transportar offsets de
 pager. O editor Drupal existente segue como fluxo de identidade/aparência;
 falta sua revisão visual autenticada integrada ao tema antes de RC.
 
+Em 0.4.0-dev.30, geração e validação de QR foram delegadas ao serviço
+`aculta_qrcode`; a extensão foi incluída na configuração exportável. A aplicação
+da configuração e o smoke HTTP no Runtime continuam pendentes.
+
 Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram
 corrigidos para `ContentEntityForm` após inspeção autenticada encontrar ausência
 dos widgets. Kernel e Firefox autenticado a 390 × 844 confirmam os campos dos
@@ -103,7 +107,8 @@ Identidade pública mínima opt-in do proprietário foi conectada a `aculta_user
 ## 0.5.0 — métricas e ferramentas
 
 QR Code SVG da URL canônica para páginas publicadas foi implementado em
-0.4.0-dev.10, com dependência MIT Endroid e licenças transitivas registradas.
+0.4.0-dev.10, originalmente com o gerador Endroid, depois consolidado no
+serviço compartilhado `aculta_qrcode` em 0.4.0-dev.30.
 Janelas de disponibilidade por item foram implementadas em 0.4.0-dev.11 com
 campos revisionáveis, edição no fuso padrão do portal, persistência UTC,
 validação do intervalo e expiração de cache no próximo limite. Redirects curtos

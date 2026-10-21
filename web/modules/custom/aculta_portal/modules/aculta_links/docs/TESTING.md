@@ -38,6 +38,7 @@ estão registrados abaixo.
 - Functional/browser valida `/pagina/{slug}` em links e 404 em outros purposes; inspeciona SDC em tamanhos móveis/desktop, claro/escuro, teclado, contraste e sem overflow.
 - Cache precisa invalidar ao editar/despublicar página, item ou link e ao mudar alias de Domain.
 - QR: rota de página publicada entrega SVG com URL canônica HTTPS; rascunho/inexistente retorna 404; validar headers, cache e ausência de arquivo/telemetria.
+- O adaptador chama os serviços `aculta_qrcode.payload_validator`, `preset_registry` e `generator`; Unit valida URL e SVG e Kernel confirma montagem do serviço. Ativação em Runtime requer aplicação da configuração de extensão e permanece DEFERRED nesta mudança.
 
 Update de entidade `aculta_links_update_10001` aplicado ao Runtime de teste em
 2026-10-20 com zero micropáginas existentes; o schema recebeu o campo

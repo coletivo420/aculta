@@ -75,8 +75,9 @@ janela. A cache expira na próxima transição, sem depender de cron.
 
 ## Estado da implementação
 
-Nenhum código upstream foi copiado. `endroid/qr-code` gera SVG localmente
-(MIT; BaconQrCode e dasprid/enum BSD-2-Clause). `aculta_link` usa o campo Link do Core; `aculta_link_page` guarda
+Nenhum código upstream foi copiado. A geração de QR usa o serviço central
+`aculta_qrcode`, que valida URLs e aplica seus presets acessíveis. `aculta_link`
+usa o campo Link do Core; `aculta_link_page` guarda
 slug, título, apresentação e publicação; `aculta_link_item` ordena referências
 entre página e destino. As três entidades têm revisões Drupal. Access mantém
 destinos e rascunhos privados por proprietário. O editor oferece prévia privada

@@ -21,6 +21,7 @@ module:
   aculta_portal: 0
   aculta_portal_cep: 0
   aculta_portal_sitemap: 0
+  aculta_qrcode: 0
   aculta_user: 0
   address: 0
   announcements_feed: 0

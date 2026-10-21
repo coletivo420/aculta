@@ -47,6 +47,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'options',
     'path_alias',
     'views',
+    'aculta_qrcode',
     'aculta_links',
   ];
 
@@ -354,6 +355,17 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $revision_storage = $this->container->get('entity_type.manager')->getStorage('aculta_link');
     $previous_revision = $revision_storage->loadRevision($first_revision_id);
     self::assertSame('Site institucional', $previous_revision->label());
+  }
+
+  /**
+   * Tests that the Links QR adapter resolves the shared generator services.
+   */
+  public function testQrCodeAdapterUsesSharedQrCodeServices(): void {
+    $svg = $this->container->get('aculta_links.qr_code_svg_generator')
+      ->generate('https://links.example.test/pagina/qr-integrado');
+
+    self::assertStringContainsString('<svg', $svg);
+    self::assertStringContainsString('</svg>', $svg);
   }
 
   /**

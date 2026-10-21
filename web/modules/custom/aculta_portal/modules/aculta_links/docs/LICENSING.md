@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | Drupal Linky | `2.0.0-beta1`, commit `2d70712a854065428faf0228aef96066bd6812f2` | Ecossistema Drupal.org GPL-2.0-or-later; confirmar cada arquivo/cabeçalho antes de copiar. | Nenhum arquivo copiado. |
 | LinkStack | Release mais recente consultada: `v4.8.6`, commit `dca586e8b8946a779cb212d21791cff6308fa7c0`; auditoria anterior em `v4.8.0` | README da tag e `LICENSE` declaram AGPL-3.0; `composer.json` contém metadata divergente `GPL-3.0-or-later`. | Adotar AGPL-3.0 como classificação conservadora do código original. Nenhum código/asset copiado; desenvolvimento ACULTA reimplementa comportamento em Drupal. |
-| Endroid QR Code | `endroid/qr-code` 6.1.3; `bacon/bacon-qr-code` 3.1.1 e `dasprid/enum` 1.0.7 fixados em `composer.lock` | Endroid MIT; BaconQrCode BSD-2-Clause; enum BSD-2-Clause. | Instalado via Composer para gerar SVG local sem serviço externo. |
+| Endroid QR Code | `endroid/qr-code` 6.1.3; `bacon/bacon-qr-code` 3.1.1 e `dasprid/enum` 1.0.7 fixados em `composer.lock` | Endroid MIT; BaconQrCode BSD-2-Clause; enum BSD-2-Clause. | Dependência gerenciada pelo `aculta_qrcode`; Links não chama Endroid diretamente e consome o serviço central. |
 | Drupal/Portal | Repositório ACULTA e Core instalado | Guia oficial Drupal.org indica GPL-2.0-or-later para Core e projetos Drupal.org. | Confirmar licenças locais por arquivo antes de distribuir. |
 
 O README da tag v4.8.6 informa que o projeto usa AGPL-3.0 desde a versão 4.0.0,
