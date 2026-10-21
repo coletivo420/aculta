@@ -1,0 +1,30 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_forum_attachment
+    - field.storage.media.field_media_forum_image
+    - media.type.forum_attachment
+  module:
+    - file
+  enforced:
+    module:
+      - aculta_forum
+id: media.forum_attachment.field_media_forum_attachment
+field_name: field_media_forum_attachment
+entity_type: media
+bundle: forum_attachment
+label: Arquivo
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: forum/anexos
+  file_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
+  max_filesize: ''
+  description_field: false
+field_type: file

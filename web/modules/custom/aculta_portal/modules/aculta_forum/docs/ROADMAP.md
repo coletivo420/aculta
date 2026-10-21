@@ -34,7 +34,9 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 ### Integração de anexos e galerias — ordem aprovada em 2026-10-21
 
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
-   via `aculta_gallery`, com publicação vinculada ao comentário visível.
+   via `aculta_gallery`, consumindo a política central `aculta_portal.user_upload_policy`;
+   a aba do Fórum herda a política global ou configura override, e a publicação
+   dos Media permanece vinculada ao comentário visível.
 2. Cartões/preview local de Office, priorizando DOCX e planilhas, apenas para
    formatos validados em segurança e desempenho; metadados e download seguem
    disponíveis.
@@ -43,6 +45,10 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 Não criar leitor PDF ou serviço de conversão paralelo no Fórum. Cada etapa exige
 respeitar o contrato de acesso e retenção de anexos privados.
+
+Wiki e LMS devem migrar em seguida para a mesma política central, com abas
+próprias no painel de uploads quando suas integrações forem concluídas. O
+roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |

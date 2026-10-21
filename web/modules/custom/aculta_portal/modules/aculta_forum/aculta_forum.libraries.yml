@@ -4,3 +4,13 @@ discussion-progress:
   dependencies:
     - core/drupal
     - core/once
+
+ckeditor5.attachment:
+  js:
+    js/ckeditor5/acultaforum-attachment.js: {}
+  dependencies:
+    - core/ckeditor5
+    - core/drupal.ajax
+    - core/drupal.dialog.ajax
+    - entity_embed/entity_embed
+

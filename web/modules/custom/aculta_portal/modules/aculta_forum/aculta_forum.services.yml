@@ -1,4 +1,17 @@
 services:
+  aculta_forum.attachment_publication:
+    class: Drupal\aculta_forum\Attachment\ForumAttachmentPublication
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_forum.gallery_publication:
+    class: Drupal\aculta_forum\Attachment\ForumGalleryPublication
+    arguments: ['@entity_type.manager', '@aculta_forum.attachment_publication']
+  aculta_forum.attachment_cleanup:
+    class: Drupal\aculta_forum\Attachment\ForumAttachmentCleanup
+    arguments: ['@entity_type.manager', '@entity_usage.usage', '@file.usage', '@database', '@datetime.time', '@aculta_image.file_remover']
+  aculta_forum.attachment_upload_access:
+    class: Drupal\aculta_forum\Access\ForumAttachmentUploadAccess
+    arguments: ['@aculta_portal.domain_purpose']
+
   aculta_forum.search_query_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber
     arguments: ['@aculta_portal.domain_purpose']

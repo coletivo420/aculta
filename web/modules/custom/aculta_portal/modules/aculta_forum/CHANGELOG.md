@@ -2287,3 +2287,9 @@
 - Kernel `ForumCommentMoverKernelTest`: 19 testes / 391 assertions PASS; evento verificado para árvore publicada e ausente em árvore somente pendente. Unit Messenger: 2 testes / 4 assertions PASS (assinatura/condição do consumidor). 19 depreciações Core/contrib no Kernel.
 - Sem deploy. Anexos diretos ainda precisam do modal contextual, armazenamento/publicação vinculados ao comentário, opções administrativas de tipo/tamanho e cartão PDF sem leitor embutido; o módulo permanece Dev.
 
+## `0.1.0-dev.133` — consome política central de upload
+
+- Formulários de anexo e galeria consultam `aculta_portal.user_upload_policy`; extensões e limite deixam a configuração do Fórum.
+- A aba Fórum no painel central herda a política global por padrão e pode receber override próprio. A aba global define padrão de 10 MB.
+- Serviço de publicação continua sendo dono do vínculo entre Media e comentário/galeria; não há validação de Runtime nesta mudança. RUNTIME STATUS: DEFERRED.
+

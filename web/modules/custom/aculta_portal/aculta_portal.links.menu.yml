@@ -18,6 +18,12 @@ aculta_portal.admin:
   route_name: aculta_portal.admin
   parent: system.admin
   weight: 45
+aculta_portal.user_upload_settings:
+  title: 'Envio de arquivos por usuários'
+  description: 'Extensões e tamanho máximo usados pelos formulários de upload do Portal.'
+  route_name: aculta_portal.user_upload_settings
+  parent: aculta_portal.admin
+  weight: 8
 aculta_portal.appearance_settings:
   title: Aparência do site
   description: Cores, logo e opções visuais do site público.

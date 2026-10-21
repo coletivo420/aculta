@@ -5,7 +5,7 @@ dependencies:
   config:
     - comment.type.aculta_discussion_post
     - field.storage.comment.comment_body
-    - filter.format.usuario_aculta
+    - filter.format.forum
   module:
     - text
 id: comment.aculta_discussion_post.comment_body
@@ -20,5 +20,5 @@ default_value: {  }
 default_value_callback: ''
 settings:
   allowed_formats:
-    usuario_aculta: usuario_aculta
+    forum: forum
 field_type: text_long

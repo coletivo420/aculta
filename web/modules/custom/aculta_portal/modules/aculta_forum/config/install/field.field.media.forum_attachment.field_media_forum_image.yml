@@ -1,0 +1,44 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_forum_image
+    - media.type.forum_attachment
+  module:
+    - aculta_image
+    - image
+  enforced:
+    module:
+      - aculta_forum
+third_party_settings:
+  aculta_image:
+    policy: default
+id: media.forum_attachment.field_media_forum_image
+field_name: field_media_forum_image
+entity_type: media
+bundle: forum_attachment
+label: 'Imagem privada da galeria do Fórum'
+description: 'Referência de imagem privada usada pelo PhotoSwipe do ACULTA Gallery.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: forum/anexos
+  file_extensions: 'png jpg jpeg gif webp'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

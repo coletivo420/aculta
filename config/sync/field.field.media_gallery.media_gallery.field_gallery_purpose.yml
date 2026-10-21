@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_gallery_purpose
+  module:
+    - media_gallery
+id: media_gallery.media_gallery.field_gallery_purpose
+field_name: field_gallery_purpose
+entity_type: media_gallery
+bundle: media_gallery
+label: 'Contexto de publicação'
+description: 'Uso contextual, preenchido por integrações do Portal.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  max_length: 32
+  is_ascii: false
+  case_sensitive: false
+field_type: string

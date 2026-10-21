@@ -1,0 +1,157 @@
+uuid: 5c934f21-6861-4aac-8e53-ddbc8230ad4d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_forum_image
+    - image.style.media_gallery_lightbox
+    - image.style.media_gallery_stage
+  module:
+    - media
+    - media_gallery
+    - photoswipe
+    - vvjs
+id: aculta_forum_gallery_slides
+label: 'Fotos da galeria do Fórum (PhotoSwipe)'
+module: views
+description: 'Imagens privadas da galeria do Fórum com PhotoSwipe.'
+tag: ''
+base_table: media_gallery_field_data
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Fotos
+      fields:
+        field_media_forum_image:
+          id: field_media_forum_image
+          table: media__field_media_forum_image
+          field: field_media_forum_image
+          relationship: images_rel
+          group_type: group
+          admin_label: ''
+          entity_type: media
+          entity_field: field_media_forum_image
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+          element_type: div
+          click_sort_column: target_id
+          type: photoswipe_field_formatter
+          settings:
+            photoswipe_thumbnail_style: media_gallery_stage
+            photoswipe_image_style: media_gallery_lightbox
+            photoswipe_remove_gallery_wrapper_class: true
+          field_api_classes: false
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 150
+          total_pages: null
+          id: 0
+          tags:
+            next: Próxima
+            previous: Anterior
+            first: '« Primeira'
+            last: 'Última »'
+          expose:
+            items_per_page: false
+      access:
+        type: none
+      cache:
+        type: tag
+      sorts: {  }
+      arguments:
+        id:
+          id: id
+          table: media_gallery_field_data
+          field: id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: media_gallery
+          entity_field: id
+          plugin_id: numeric
+          default_action: empty
+          exception:
+            value: all
+            title_enable: false
+            title: Tudo
+          default_argument_type: fixed
+          summary:
+            number_of_records: 0
+          specify_validation: true
+          validate:
+            type: numeric
+          break_phrase: false
+          not: false
+          exposed: false
+      filters: {  }
+      style:
+        type: views_vvjs
+        options:
+          grouping: {  }
+          time_in_seconds: 3000
+          navigation: none
+          animation: none
+          arrows: arrows-sides
+          hero_slideshow: false
+          available_breakpoints: '768'
+          enable_css: true
+          show_total_slides: true
+          show_slide_progress: false
+          show_play_pause: true
+          pause_on_hover: true
+          enable_swipe: true
+          enable_keyboard: true
+          enable_looping: true
+          start_index: 1
+          transition_type: crossfade-classic
+          transition_duration: 400
+          scrollable_dots_width: 0
+      row:
+        type: fields
+      query:
+        type: views_query
+        options: {  }
+      relationships:
+        images_rel:
+          id: images_rel
+          table: media_gallery__images
+          field: images_target_id
+          relationship: none
+          group_type: group
+          admin_label: Imagem
+          plugin_id: standard
+          required: true
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+      tags:
+        - 'config:field.storage.media.field_media_forum_image'
+  block_1:
+    id: block_1
+    display_title: Bloco
+    display_plugin: block
+    position: 1
+    display_options:
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+      tags:
+        - 'config:field.storage.media.field_media_forum_image'

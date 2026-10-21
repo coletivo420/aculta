@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.media.forum_attachment.field_media_forum_attachment
+    - media.type.forum_attachment
+  module:
+    - file
+  enforced:
+    module:
+      - aculta_forum
+id: media.forum_attachment.default
+targetEntityType: media
+bundle: forum_attachment
+mode: default
+content:
+  field_media_forum_attachment:
+    type: aculta_forum_attachment
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  thumbnail: true
+  uid: true

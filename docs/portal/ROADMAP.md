@@ -18,7 +18,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual
 
-- Versão: **0.4.0-dev.249** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
+- Versão: **0.4.0-dev.250** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
 - Submódulos: `aculta_deployer` 0.1.21 (`info.yml`, `VERSION` e `CHANGELOG.md`; falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.11, `aculta_gallery` 0.1.0-dev.13 (acesso público global; sem validação Runtime), `aculta_magazine` 0.1.0-dev.5.
 - Tema: `aculta420` 0.6.0-dev.143 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
@@ -36,6 +36,17 @@ Ordem recomendada, com o registro de dívidas como fonte de estado:
 2. **DT-O12 (`aculta_deployer`):** `tests/run.php` aborta no teste de build e `check` avisa sobre `cookie_domain` do `services.local.yml`. Antes da próxima marcação, corrigir os testes.
 3. **Operação (DT-O02, DT-O04, DT-O05):** decisões e ajustes de ambiente, sem mudança de código.
 4. **Features (F1–F4):** só depois dos itens 1 a 3, ou por priorização explícita do responsável.
+
+### Política compartilhada de upload
+
+Prioridade explícita do responsável em 2026-10-21: tornar `aculta_portal` dono
+da política e da infraestrutura reutilizável para uploads de usuários. O Fórum
+é o primeiro consumidor; a configuração central oferece política global e aba
+por consumidor, com herança global ou override próprio. Migrar Wiki e LMS em
+seguida, auditando acesso privado, vínculo com conteúdo hospedeiro e integração
+com `aculta_image`. O roteiro e a fronteira estão em
+[`USER-UPLOADS.md`](USER-UPLOADS.md). A entrega segue Dev até concluir testes,
+gates e revisão visual aplicável.
 
 ## Ordem de execução
 

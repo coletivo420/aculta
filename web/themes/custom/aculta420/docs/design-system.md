@@ -38,10 +38,11 @@ fornecido pelo `aculta_user`, que omite o dado para perfis privados e autoria
 histórica. Stories cobrem separadamente `author_editorial`, `author_comment`,
 `author_lms` e `author_wiki`.
 
-Os modais CKEditor de anexos e galerias do Fórum usam os tokens
-`forum-attachment-dialog` e `forum-gallery-dialog`. `aculta_forum` fornece
-conteúdo e validação; `PortalUiHooks` traduz os tokens e `dialog.css` define
-largura responsiva e rolagem no diálogo Core.
+O modal de upload compartilhado usa o token `user-upload-dialog`, preparado
+pelo `aculta_portal`. O Fórum acrescenta `forum-attachment-dialog` ou
+`forum-gallery-dialog` para os ajustes de largura do contexto. `PortalUiHooks`
+traduz os tokens e `dialog.css` define dimensões responsivas e rolagem no
+diálogo Core.
 
 ## Identidade
 

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - filter.format.usuario_aculta
+    - filter.format.forum
     - filter.format.wiki
     - node.type.aculta_forum_topic
     - node.type.wiki_entry
@@ -36,6 +37,7 @@ permissions:
   - 'skip CAPTCHA'
   - 'update own email_confirmed profile'
   - 'use text format usuario_aculta'
+  - 'use text format forum'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'

@@ -106,7 +106,8 @@ final class PortalUiHooks {
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
     'hint' => ['small', 'text-body-secondary'],
     'hint-muted' => ['text-body-secondary'],
-    // Uploads contextuais do Forum (aculta_forum): o módulo informa a função do modal.
+    // Modal compartilhado de upload do Portal e tokens de contexto do Fórum.
+    'user-upload-dialog' => ['aculta-user-upload-dialog'],
     'forum-attachment-dialog' => ['aculta-forum-attachment-dialog'],
     'forum-gallery-dialog' => ['aculta-forum-gallery-dialog'],
     // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.

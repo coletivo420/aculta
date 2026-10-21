@@ -3610,3 +3610,10 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - O gate `validate-module-theme-boundary.php` permite `h5p-iframe-wrapper` e `h5p-iframe`, exigidos pelo H5P Core para inicialização e apresentação do iframe; não são classes de design do Portal.
 - O mapa Portal–tema registra os contratos `h5p-content`, `h5p-editor`, `h5p-iframe-wrapper` e `h5p-iframe`.
 
+## 0.4.0-dev.250 — política central de upload de usuários
+
+- `aculta_portal.user_upload_policy` concentra extensões, limite padrão de 10 MB, validação de imagem via `aculta_image` e validadores Core reutilizáveis. `user_upload_dialog_builder` compartilha o shell do modal e os controles Managed File.
+- Opções globais e override por consumidor ficam em **ACULTA → Envio de arquivos por usuários**; a aba Fórum herda globalmente por padrão.
+- O modal e a integração de Media permanecem no domínio do consumidor; Wiki e LMS são a próxima etapa de migração.
+- Código e configuração ainda sem validação de Runtime; estado Dev.
+

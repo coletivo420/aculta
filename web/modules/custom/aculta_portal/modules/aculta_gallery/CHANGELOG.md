@@ -1,5 +1,11 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.14 — renderiza imagens anexadas pelo Fórum
+
+- `aculta_gallery` seleciona View contextual para galerias do Fórum e suporta o Media `forum_attachment` usando `field_media_forum_image`.
+- Slides e miniaturas validam acesso a Media, campo e arquivo, acumulam cacheabilidade e renderizam imagens pelo catálogo `aculta_image`.
+- Runtime e revisão visual ainda não validados; estado Dev.
+
 ## Estado atual: Dev — 2026-10-21
 
 `0.1.0-dev.13` registra a reabertura do desenvolvimento para integração global

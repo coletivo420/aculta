@@ -9,19 +9,23 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\media\MediaInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página do álbum: as fotos do álbum atual aparecem numa sequência VVJS (uma por slide).
+ * Página do álbum: as fotos aparecem numa sequência VVJS, uma por slide.
  *
- * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema apresenta o VVJS
- * e a navegação por miniaturas. Aqui só entra o contexto do álbum (argumento da view).
+ * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema
+ * apresenta o VVJS e a navegação por miniaturas. Aqui só entra o contexto do
+ * álbum (argumento da view).
  */
 final class GalleryViewHooks {
 
-  /** View de fotos do álbum (config/sync/views.view.aculta_album_fotos.yml). */
+  /**
+   * View de fotos do álbum (config/sync/views.view.aculta_album_fotos.yml).
+   */
   private const VIEW_ID = 'aculta_album_fotos';
 
   public function __construct(
@@ -41,7 +45,11 @@ final class GalleryViewHooks {
     if (!in_array($view_mode, ['default', 'full'], TRUE)) {
       return;
     }
-    $view = $this->entityTypeManager->getStorage('view')->load(self::VIEW_ID);
+    $view_id = $entity->hasField('field_gallery_purpose')
+      && $entity->get('field_gallery_purpose')->value === 'forum'
+      ? 'aculta_forum_gallery_slides'
+      : self::VIEW_ID;
+    $view = $this->entityTypeManager->getStorage('view')->load($view_id);
     if ($view === NULL) {
       return;
     }
@@ -50,8 +58,8 @@ final class GalleryViewHooks {
     $build['album_stage'] = [
       '#type' => 'container',
       '#weight' => -10,
-      // Comportamento e ligação com o VVJS ficam em data-*; a aparência é do tema.
-      // photoswipe-gallery é classe de comportamento do PhotoSwipe (agrupa as fotos num só lightbox), não de design.
+      // Comportamento e ligação com VVJS usam data-*; aparência é do tema.
+      // photoswipe-gallery agrupa as fotos para o PhotoSwipe.
       '#attributes' => ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']],
       'slideshow' => $slideshow,
       'thumbs' => $this->thumbs($entity),
@@ -63,7 +71,8 @@ final class GalleryViewHooks {
       $access = $media->access('view', NULL, TRUE);
       $cacheability->addCacheableDependency($media);
       $cacheability->addCacheableDependency($access);
-      $file = $media->get('field_media_image')->entity;
+      $field_name = $this->imageFieldName($media);
+      $file = $field_name !== NULL ? $media->get($field_name)->entity : NULL;
       if ($file !== NULL) {
         $cacheability->addCacheableDependency($file);
       }
@@ -89,11 +98,15 @@ final class GalleryViewHooks {
       if (!$access->isAllowed()) {
         continue;
       }
-      $file = $media->get('field_media_image')->entity;
+      $field_name = $this->imageFieldName($media);
+      $file = $field_name !== NULL ? $media->get($field_name)->entity : NULL;
       if ($file === NULL) {
         continue;
       }
       $position++;
+      $image_field = $media->get($field_name);
+      $alt = (string) ($image_field->alt ?? $media->label());
+      $thumb_image = $this->imageRenderer->build('galeria_miniatura', $file->getFileUri(), $alt, ['loading' => 'lazy']);
       $thumbs[$position] = [
         '#type' => 'html_tag',
         '#tag' => 'button',
@@ -102,10 +115,20 @@ final class GalleryViewHooks {
           'data-aculta-album-thumb' => (string) $position,
           'aria-label' => 'Foto ' . $position,
         ],
-        'image' => $this->imageRenderer->build('galeria_miniatura', $file->getFileUri(), (string) ($media->get('field_media_image')->alt ?: $media->label()), ['loading' => 'lazy']),
+        'image' => $thumb_image,
       ];
     }
     return $thumbs;
+  }
+
+  /**
+   * Returns the image field for the supported Gallery Media bundle.
+   */
+  private function imageFieldName(MediaInterface $media): ?string {
+    $field = $media->bundle() === 'forum_attachment'
+      ? 'field_media_forum_image'
+      : 'field_media_image';
+    return $media->hasField($field) && !$media->get($field)->isEmpty() ? $field : NULL;
   }
 
 }

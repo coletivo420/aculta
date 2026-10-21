@@ -430,6 +430,23 @@ Evitar dependências JavaScript desnecessárias.
 - Importação de qualquer origem externa (Wayback, LMS, arquivo recebido) passa pela ingestão do `aculta_image`.
 - Gate: `php scripts/validate-aculta-image.php` (tolerância zero). Plano e fases: `web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md`.
 
+## Uploads de arquivos enviados por usuários
+
+- A política reutilizável para uploads de usuários pertence ao módulo central
+  `aculta_portal`; consumidores devem usar `aculta_portal.user_upload_policy`
+  e não duplicar listas de extensões, limites ou validadores.
+- A configuração central mantém uma política global e abas de override por
+  consumidor integrado. Cada consumidor pode herdar a regra global ou definir
+  opções próprias sob a mesma governança administrativa.
+- O Portal fornece a política comum; cada domínio continua dono da associação
+  do arquivo à entidade Core correspondente, publicação, retenção, acesso e
+  cache. Respeite as regras privadas do conteúdo hospedeiro e `aculta_image`.
+- Wiki e LMS devem integrar-se à mesma política central depois do Fórum. A
+  integração visual e funcional deve reutilizar `aculta_gallery`, `aculta_image`,
+  Document Viewer e componentes ACULTA pertinentes, sem criar leitores ou
+  storage paralelos.
+- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](docs/portal/USER-UPLOADS.md).
+
 ## Segurança
 
 Nunca expor mensagens de erro detalhadas em produção.

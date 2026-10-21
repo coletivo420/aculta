@@ -1933,3 +1933,10 @@ Classificação: PATCH de manutenção do tema e do gate.
 - O SDC `social-links-page` oferece slot opcional `owner_identity`; ACULTA Links envia apenas a identidade pública preparada por `aculta_user`.
 - SDC schema PASS (570 checks), Design Foundations PASS (2109); revisão visual responsiva e acessível ainda pendente, estado Dev.
 
+## 0.6.0-dev.144 — aplica apresentação comum aos modais de upload do Portal
+
+Classificação: PATCH de apresentação; mantém o diálogo Core e acrescenta token neutro compartilhável.
+
+- `user-upload-dialog` recebe classe semântica do ACULTA420 e tamanho responsivo com rolagem; o Fórum preserva tokens contextuais de anexo e galeria.
+- Documentação do design system atualizada. Inspeção visual pré-RC pendente.
+

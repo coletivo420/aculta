@@ -20,6 +20,14 @@ aculta_portal.dashboard:
     _permission: access aculta portal
   options:
     no_cache: true
+
+aculta_portal.user_upload_settings:
+  path: /admin/config/aculta/uploads-usuarios
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\UserUploadSettingsForm'
+    _title: 'Envio de arquivos por usuários'
+  requirements:
+    _permission: 'administer site configuration'
 aculta_portal.my_data:
   path: /dados
   defaults:

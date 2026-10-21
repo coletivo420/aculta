@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.144 | Padrão visual comum para modais de upload do Portal | Inspeção visual pré-RC pendente | Token `user-upload-dialog` com rolagem responsiva; variantes do Fórum continuam reconhecidas |
 | 0.6.0-dev.143 | Tokens e largura responsiva para modais de anexo/galeria do Fórum | Unit 6/29 e Foundation 368 PASS; visual pré-RC pendente; Design Foundations falha em três checks do envelope Mailer fora desta mudança | Dialog Core reutilizado; tema define dimensões e rolagem |
 | 0.6.0-dev.142 | Modo de cor do envelope de e-mail segue o controle de aparência do site | Gate de fundação PASS; render dos três modos PASS | light, dark ou auto, pelo mesmo controle do site.
 | 0.6.0-dev.141 | Rodapé do envelope de e-mail segue o layout de marca do aculta_mailer | Gate de fundação e render local com e sem layout PASS; revisão visual no cliente de e-mail pendente | Sem layout, o rodapé fixo é mantido. Com layout, o rodapé vem da marca. Tokens claro e escuro inalterados.

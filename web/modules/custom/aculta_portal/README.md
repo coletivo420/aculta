@@ -19,6 +19,11 @@ paralelo nem depender do tema para funcionar.
 
 ## Capacidades e extensões ativas
 
+A política reutilizável de upload de usuários pertence ao Portal e é documentada
+em [`docs/portal/USER-UPLOADS.md`](../../../../docs/portal/USER-UPLOADS.md).
+Consumidores reutilizam `aculta_portal.user_upload_policy`; publicação e acesso
+continuam vinculados às entidades de cada domínio.
+
 As extensões próprias incluem o ACULTA Forum com histórico de leitura por conta,
 contexto, descoberta e autoria pública das atividades por meio dos cartões do
 `aculta_user`; o LMS com atividades H5P vinculadas a cursos,

@@ -1,4 +1,10 @@
 services:
+  aculta_portal.user_upload_policy:
+    class: Drupal\aculta_portal\Upload\UserUploadPolicy
+    arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']
+  aculta_portal.user_upload_dialog_builder:
+    class: Drupal\aculta_portal\Upload\UserUploadDialogBuilder
+    arguments: ['@aculta_portal.user_upload_policy', '@string_translation']
   aculta_portal.helper_registry:
     class: Drupal\aculta_portal\Status\PortalHelperRegistry
     autowire: false

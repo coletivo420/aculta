@@ -130,3 +130,31 @@ aculta_forum.settings:
   requirements:
     _permission: 'administer aculta forum settings'
   methods: [GET, HEAD, POST]
+
+aculta_forum.attachment_dialog:
+  path: '/forum/anexos/adicionar/{filter_format}'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumAttachmentUploadDialogForm'
+    _title: 'Adicionar anexo à discussão'
+  requirements:
+    _permission: 'post comments'
+    _custom_access: 'aculta_forum.attachment_upload_access:access'
+  options:
+    parameters:
+      filter_format:
+        type: 'entity:filter_format'
+  methods: [GET, HEAD, POST]
+
+aculta_forum.gallery_dialog:
+  path: '/forum/galerias/adicionar/{filter_format}'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumGalleryUploadDialogForm'
+    _title: 'Criar galeria de imagens'
+  requirements:
+    _permission: 'post comments'
+    _custom_access: 'aculta_forum.attachment_upload_access:access'
+  options:
+    parameters:
+      filter_format:
+        type: 'entity:filter_format'
+  methods: [GET, HEAD, POST]

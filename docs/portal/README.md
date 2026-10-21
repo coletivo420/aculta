@@ -24,6 +24,7 @@
 - [Auditoria do Messenger](MESSENGER-AUDIT.md) — separação entre módulo, submódulo e tema, com os achados.
 - [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — entrada local do submódulo.
 - [PDF global](PDF-VIEWER-INTEGRATION.md) — contrato compartilhado de Media, viewer, acesso a arquivos e previews.
+- [Uploads de arquivos por usuários](USER-UPLOADS.md) — política central, responsabilidades dos consumidores e sequência de migração.
 - [ACULTA PDF Viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md) — documentação do submódulo, formatter, serviço, biblioteca, hooks e testes.
 - [ACULTA PDF Viewer Group](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md) — relação opcional de Media `document` com turmas Group e acesso por membership.
 - [Contratos de integração LMS](LMS-INTEGRATION-CONTRACTS.md) — avaliações, certificados, Messenger, User/conquistas e apresentação.

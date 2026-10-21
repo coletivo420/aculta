@@ -1,0 +1,41 @@
+uuid: 73675b40-115b-4cc9-aeb2-8abca2918f7a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.forum
+  module:
+    - ckeditor5
+format: forum
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - acultaForumAttachment
+      - acultaForumGallery
+  plugins:
+    ckeditor5_list:
+      properties:
+        reversed: true
+        startIndex: true
+        styles: true
+      multiBlock: true
+    media_media:
+      allow_view_mode_override: false
+image_upload:
+  status: false
+  scheme: private
+  directory: forum/anexos
+  max_size: ''
+  max_dimensions:
+    width: null
+    height: null
