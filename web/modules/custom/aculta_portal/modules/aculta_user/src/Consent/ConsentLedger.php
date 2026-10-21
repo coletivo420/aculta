@@ -8,7 +8,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\PrivateKey;
-use Drupal\Core\Path\PathAliasManagerInterface;
+use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /** Append-only evidence of account agreements and optional consents. */
@@ -20,7 +20,7 @@ final class ConsentLedger {
     private readonly TimeInterface $time,
     private readonly PrivateKey $privateKey,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly PathAliasManagerInterface $pathAliasManager,
+    private readonly AliasManagerInterface $pathAliasManager,
   ) {}
 
   /** Records a new event; document metadata must identify the accepted text. */
