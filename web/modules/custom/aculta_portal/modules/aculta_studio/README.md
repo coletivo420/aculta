@@ -10,6 +10,10 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
   aba lista as ações, cada uma com o acesso da rota do dono.
 - Presenter: `StudioPresenter::visibleTabs()` mostra só abas com dono ativo e permissão concedida, em ordem de peso.
 - Aba atual: argumento `aba` (id do plugin). Sem argumento ou com id desconhecido, a primeira aba visível.
+- Quatro URLs: `/studio`, `/studio/{área}`, `/studio/{área}/{seção}` e `/studio/{área}/{seção}/{aba}`. Segmento
+  inexistente ou fora do alcance da conta responde 404. Cada nível é um link real; sem JavaScript, a navegação segue normal.
+- Galerias não aparece para a conta de teste: a rota de criação de galeria do dono fica no painel administrativo do
+  domínio principal. A conta recebe a permissão de mídia pelo papel, mas o acesso à rota continua negado.
 - Três níveis, cada um com navegação AJAX própria (`js/studio-navigation.js`, biblioteca `aculta_studio/navigation`):
   áreas (`aba`), seções do submenu (`secao`) e abas da seção (`sub`). A raiz `#aculta-studio-root` é substituída pela
   resposta `drupal_ajax`; URL, `aria-current` e voltar/avançar acompanham a troca.
