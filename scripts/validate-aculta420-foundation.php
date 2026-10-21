@@ -9,6 +9,19 @@ declare(strict_types=1);
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
+
+// O gate lê o Runtime pela API do Drupal. Chamado com php direto (sem Drupal), delega ao Drush (scr) e repassa
+// a saída e o código de saída, para que `php scripts/validate-aculta420-foundation.php` funcione como os demais gates.
+if (!class_exists(\Drupal::class)) {
+  $drush = $root . '/vendor/drush/drush/drush.php';
+  if (!is_file($drush)) {
+    fwrite(STDERR, "ACULTA420 FOUNDATION FAIL: Drush não instalado (vendor/drush/drush/drush.php ausente).\n");
+    exit(1);
+  }
+  passthru(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($drush) . ' scr ' . escapeshellarg(__FILE__), $codigo);
+  exit($codigo);
+}
+
 $themeRoot = $root . '/web/themes/custom/aculta420';
 $checks = [];
 
