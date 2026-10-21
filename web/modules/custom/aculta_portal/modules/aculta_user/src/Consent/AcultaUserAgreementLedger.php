@@ -8,11 +8,23 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\PrivateKey;
+use Drupal\aculta_user\Event\ConsentRevokedEvent;
 use Drupal\path_alias\AliasManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/** Append-only evidence of ACULTA user agreements and optional consents. */
+/**
+ * Evidência append-only do aceite único de Termos de Uso e Política de Privacidade.
+ *
+ * Existe um único tipo de aceite: `aculta_user_agreement_terms`. Ele cobre todas as funções descritas na política
+ * publicada. Não há aceite opcional por função, nem formulário próprio para isso (ver docs/portal/ACEITE-UNICO.md).
+ */
 final class AcultaUserAgreementLedger {
+
+  /**
+   * Único tipo de aceite aceito pelo ledger.
+   */
+  public const AGREEMENT_TYPE = 'aculta_user_agreement_terms';
 
   public function __construct(
     private readonly Connection $database,
@@ -21,12 +33,16 @@ final class AcultaUserAgreementLedger {
     private readonly PrivateKey $privateKey,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AliasManagerInterface $pathAliasManager,
+    private readonly EventDispatcherInterface $dispatcher,
   ) {}
 
   /** Records a new event; document metadata must identify the accepted text. */
   public function recordAcultaUserAgreement(int $uid, string $agreementType, string $action, array $documents = [], bool $legacy = FALSE, ?int $created = NULL): int {
     if ($uid < 1 || !in_array($action, ['accepted', 'revoked'], TRUE)) {
       throw new \InvalidArgumentException('A valid account and consent action are required.');
+    }
+    if ($agreementType !== self::AGREEMENT_TYPE) {
+      throw new \InvalidArgumentException('Apenas o aceite único (aculta_user_agreement_terms) pode ser gravado.');
     }
     if (!$legacy && $action === 'accepted' && $agreementType === 'aculta_user_agreement_terms' && $documents === []) {
       $documents = $this->currentTermsEvidence();
@@ -50,7 +66,12 @@ final class AcultaUserAgreementLedger {
     ];
     $payload = json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     $values['record_hash'] = hash_hmac('sha256', $payload, $this->privateKey->get());
-    return (int) $this->database->insert('aculta_user_agreement')->fields($values)->execute();
+    $id = (int) $this->database->insert('aculta_user_agreement')->fields($values)->execute();
+    // Revogação dispara a limpeza dos dados que dependiam do consentimento, em qualquer caminho que a grave.
+    if ($action === 'revoked') {
+      $this->dispatcher->dispatch(new ConsentRevokedEvent($uid, $agreementType), ConsentRevokedEvent::NAME);
+    }
+    return $id;
   }
 
   /** Captures stable revision references and content hashes for the current legal documents. */
@@ -83,6 +104,9 @@ final class AcultaUserAgreementLedger {
 
   /** Returns whether the latest event for an agreement is an acceptance. */
   public function hasAcceptedAcultaUserAgreement(int $uid, string $agreementType): bool {
+    if ($agreementType !== self::AGREEMENT_TYPE) {
+      return FALSE;
+    }
     $action = $this->database->select('aculta_user_agreement', 'c')
       ->fields('c', ['action'])->condition('uid', $uid)->condition('aculta_user_agreement_type', $agreementType)
       ->orderBy('id', 'DESC')->range(0, 1)->execute()->fetchField();

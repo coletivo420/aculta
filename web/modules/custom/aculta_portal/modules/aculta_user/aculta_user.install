@@ -47,6 +47,11 @@ function aculta_user_update_10006(): string {
         'default' => 'aculta_user_agreement_default',
         default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', (string) $row->type),
       };
+      // Só o aceite único entra no ledger (decisão 2026-10-21, docs/portal/ACEITE-UNICO.md). Demais tipos legados
+      // não são migrados: o banco de teste não retém esse histórico.
+      if ($type !== 'aculta_user_agreement_terms') {
+        continue;
+      }
       \Drupal::service('aculta_user.aculta_user_agreement_ledger')->recordAcultaUserAgreement((int) $row->uid, $type, (int) $row->agreed ? 'accepted' : 'revoked', [], TRUE, (int) $row->agreed_date);
     }
   }

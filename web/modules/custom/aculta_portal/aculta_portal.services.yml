@@ -93,7 +93,7 @@ services:
     arguments: ['@aculta_portal.email_confirmation_requester', '@entity_type.manager']
     tags:
       - { name: aculta_mailer.link_regenerator }
-  aculta_portal.aculta_user_agreement_tracking:
+  aculta_portal.tracking_consent:
     class: Drupal\aculta_portal\Account\AcultaUserAgreementTrackingConsent
     arguments: ['@aculta_user.aculta_user_agreement_ledger', '@entity_type.manager']
     tags:

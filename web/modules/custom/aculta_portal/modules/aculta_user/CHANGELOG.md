@@ -1,3 +1,11 @@
+## 0.4.0-dev.61 — aceite único: sem formulário de rastreamento e ledger só com os Termos — 2026-10-21
+
+- Removido `AcultaUserAgreementTrackingConsentForm` e a rota `/configuracoes/rastreamento-de-e-mail`. Não há mais segundo aceite.
+- `AcultaUserAgreementLedger` grava e lê só `aculta_user_agreement_terms`. Outro tipo é recusado na gravação e responde falso na leitura.
+- Eventos `ConsentRevokedEvent` (`aculta_user.consent_revoked`) e `AccountDeletedEvent` (`aculta_user.account_deleted`), para os módulos que guardam dado ligado à conta. Sem consumidor ainda.
+- Migração legada do `aculta_user.install`: só o aceite único entra no ledger. Ambiente de teste, sem migração de dados.
+- Regra e gate: `docs/portal/ACEITE-UNICO.md`, `php scripts/validate-single-acceptance.php`.
+
 ## 0.4.0-dev.60 — conclui namespace do ledger e remove o Agreement contrib — 2026-10-21
 
 - Classes, arquivos, hooks, serviços, rotas, formulários e métodos próprios usam `AcultaUserAgreement*` / `aculta_user_agreement_*`; os identificadores antigos sobrevivem apenas nos updates históricos de migração/revogação.

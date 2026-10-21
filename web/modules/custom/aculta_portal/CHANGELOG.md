@@ -1,3 +1,9 @@
+## 0.4.0-dev.247 — aceite único e rastreamento de e-mail desligado (falha fechada) — 2026-10-21
+
+- `aculta_portal.tracking_consent` (antes `aculta_portal.aculta_user_agreement_tracking`): sem aceite próprio. `hasConsent()` responde falso até a função constar da política e haver decisão do responsável.
+- Aceite continua sendo o único `aculta_user_agreement_terms` (`AcultaUserAgreementAcceptForm`, e o checkbox do cadastro, que grava o mesmo tipo).
+- Regra permanente no AGENTS.md (seção Aceite único) e em `docs/portal/ACEITE-UNICO.md`.
+
 ## 0.4.0-dev.246 — prefixa adaptador de consentimento ao ledger ACULTA — 2026-10-21
 
 - O adapter `MailTrackingConsent` foi renomeado para `AcultaUserAgreementTrackingConsent` (arquivo, classe e referência de serviço), completando o prefixo ACULTA nos consumidores do ledger.

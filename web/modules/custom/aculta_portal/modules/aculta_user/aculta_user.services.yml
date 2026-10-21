@@ -4,7 +4,7 @@ services:
     arguments: ['@database']
   aculta_user.aculta_user_agreement_ledger:
     class: Drupal\aculta_user\Consent\AcultaUserAgreementLedger
-    arguments: ['@database', '@request_stack', '@datetime.time', '@private_key', '@entity_type.manager', '@path_alias.manager']
+    arguments: ['@database', '@request_stack', '@datetime.time', '@private_key', '@entity_type.manager', '@path_alias.manager', '@event_dispatcher']
   aculta_user.achievement_definitions:
     class: Drupal\aculta_user\Badge\AchievementDefinitions
     arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']

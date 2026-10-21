@@ -8,13 +8,13 @@ use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use Drupal\aculta_mailer\Tracking\TrackingConsentChecker;
 
 /**
- * Consentimento opcional de rastreamento de e-mails, mantido no ledger aculta_user_agreement.
+ * Rastreamento de e-mails: desligado (falha fechada) até a decisão sobre a função.
  *
- * Quem não tem conta, ou não aceitou, não é rastreado.
+ * Não existe mais aceite próprio de rastreamento: o único aceite é o de Termos e Política
+ * (`aculta_user_agreement_terms`). Enquanto a função não estiver descrita na política e o responsável não
+ * decidir a base legal, nenhum e-mail é rastreado. Ver docs/portal/ACEITE-UNICO.md.
  */
 final class AcultaUserAgreementTrackingConsent implements TrackingConsentChecker {
-
-  private const AGREEMENT_TYPE = 'aculta_user_agreement_email_tracking';
 
   public function __construct(private readonly AcultaUserAgreementLedger $ledger, private readonly \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypes) {}
 
@@ -22,14 +22,7 @@ final class AcultaUserAgreementTrackingConsent implements TrackingConsentChecker
    * {@inheritdoc}
    */
   public function hasConsent(string $recipient): bool {
-    $storage = $this->entityTypes->getStorage('user');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('mail', $recipient)
-      ->range(0, 1)
-      ->execute();
-    $account = $ids === [] ? NULL : $storage->load(reset($ids));
-    return $account !== NULL && $this->ledger->hasAcceptedAcultaUserAgreement((int) $account->id(), self::AGREEMENT_TYPE);
+    return FALSE;
   }
 
 }

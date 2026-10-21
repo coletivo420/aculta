@@ -18,14 +18,6 @@ aculta_user.configuracoes_privacidade:
   requirements:
     _permission: 'access aculta portal'
 
-aculta_user.aculta_user_agreement_tracking:
-  path: '/configuracoes/rastreamento-de-e-mail'
-  defaults:
-    _form: '\Drupal\aculta_user\Form\AcultaUserAgreementTrackingConsentForm'
-    _title: 'Rastreamento de e-mail'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-
 aculta_user.aculta_user_agreement_audit:
   path: '/painel-administrativo/aculta/termos/aceites'
   defaults:
