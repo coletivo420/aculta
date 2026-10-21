@@ -45,7 +45,7 @@ final class SubmissionImageHooks {
       $validators = $this->uploadPolicy->restrictValidators($validators, 'lms');
       // The help text must list what is accepted, not what the activity asked for.
       $form['file_upload']['#description'] = $this->t('Envie um arquivo. Extensões permitidas: @extensions.', [
-        '@extensions' => $validators['FileExtension']['extensions'],
+        '@extensions' => implode(' ', $this->uploadPolicy->allowedExtensions('lms')),
       ]);
     }
     $form['file_upload']['#upload_validators'] = $validators;
