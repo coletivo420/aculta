@@ -64,6 +64,13 @@ Pendente (fora da 0.5.0-dev.1): separar devolução `hard` e `soft` (`email.boun
 `email.bounces.soft`), que depende do código de devolução gravado pelo webhook e pelo monitor IMAP;
 `email.quota.reached`; conector SMTP2GO.
 
+## Fórum (fonte: evento `aculta_forum.*`, aculta_forum 0.1.0-dev.127)
+
+| id | fonte | unidade | dimensões | retenção | sens. |
+|---|---|---|---|---|---|
+| `forum.topics.created` | `ForumActivityEvent` (`topic_created`) | tópicos | — | 90 dias | P |
+| `forum.comments.created` | `ForumActivityEvent` (`comment_created`) | comentários | — | 90 dias | P |
+
 ## Links e QR (fonte: `aculta_links`, `aculta_qrcode`)
 
 | id | fonte | unidade | dimensões | retenção | sens. |

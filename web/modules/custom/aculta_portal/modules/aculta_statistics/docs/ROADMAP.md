@@ -81,6 +81,16 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 - Pendente: validação no Runtime de teste com envios reais.
 - Não iniciado: painel e resumo semanal com séries de e-mail (0.8.0).
 
+## Produtores de eventos (decisão de 2026-10-21)
+
+Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor não conhece o statistics.
+
+- **Fórum (feito, 0.1.0-dev.127 do aculta_forum):** `aculta_forum.topic_created` e `aculta_forum.comment_created`
+  → `forum.topics.created` e `forum.comments.created`. Pendente: validação no Runtime.
+- **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`). Ver
+  `aculta_mailer/docs/ROADMAP.md`.
+- **LMS (pendente):** instantâneo por turma (`lms.students.by_status`). Ver `aculta_lms/docs/ROADMAP.md`.
+
 ## Centralização (decisão de 2026-10-21, ADR-0004)
 
 `aculta_statistics` é a única fonte e central de estatísticas agregadas. Ordem:

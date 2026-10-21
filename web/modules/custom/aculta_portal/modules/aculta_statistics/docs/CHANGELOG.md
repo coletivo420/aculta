@@ -68,6 +68,10 @@ até o módulo ser ativado.
   do `aculta_mail_log` (dia de fora não entra; reconciliar duas vezes não soma; entrega tardia move
   de aceito para entregue sem duplicar).
 
+### Produtor do Fórum (0.5.0-dev.1)
+- `ForumActivitySubscriber` assina `aculta_forum.topic_created` e `aculta_forum.comment_created` e grava `forum.topics.created` (nova métrica, retenção de 90 dias) e `forum.comments.created`. Sem dependência de módulo: os nomes são textos.
+- Testes: `ForumActivitySubscriberTest` (Unit). Unit do módulo: 72/72.
+
 ### Centralização (ADR-0004, aplicada junto)
 - `aculta_links` (0.4.0-dev.31) grava cliques em `links.link.clicks` e lê os totais daqui; a tabela
   `aculta_links_stat_daily`, a fila e o cron próprios foram removidos. Sem migração (banco de teste).

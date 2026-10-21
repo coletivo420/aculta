@@ -31,8 +31,8 @@ o painel de turma do LMS), com as mesmas permissões.
 - **Provedor:** `ForumProvider` consulta contagens; não lê autoria privada.
 - **Regras:** o Fórum não cria builders de perfil; participantes são contados,
   não listados. Comentários de verbete ficam associados à origem.
-- **Pendente:** série temporal de comentários. Hoje há só total atual; o
-  agregado diário nasce com o evento `forum.comment.created` (fase 0.7.0).
+- **Produtor (aculta_forum 0.1.0-dev.127):** `ForumActivityEvent` para tópico e comentário criados. O
+  agregado diário é gravado a partir dele. Pendente: trocar a leitura do painel do Fórum para o agregado.
 
 ## Wiki (conteúdo `wiki420`)
 
