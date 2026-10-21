@@ -823,10 +823,16 @@ function aculta_lms_h5p_update_8007(): void {
   // adapter before dropping the old entity table. Files retained because of
   // other references remain protected by that adapter's normal policy.
   if ($schema->tableExists('h5p_content')) {
-    $storage_path = \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
-    $file_storage = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($storage_path);
-    foreach ($database->select('h5p_content', 'hc')->fields('hc', ['id'])->execute() as $row) {
-      $file_storage->deleteContent(['id' => (int) $row->id]);
+    $content_ids = $database->select('h5p_content', 'hc')
+      ->fields('hc', ['id'])
+      ->execute()
+      ->fetchCol();
+    if ($content_ids !== []) {
+      $storage_path = \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
+      $file_storage = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($storage_path);
+      foreach ($content_ids as $content_id) {
+        $file_storage->deleteContent(['id' => (int) $content_id]);
+      }
     }
   }
 
