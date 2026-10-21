@@ -24,7 +24,7 @@
 
   function numberOptions(format) {
     format = format || '';
-    var decimals = /\.(0+|#+)/.exec(format);
+    var decimals = /\.([0#]+)/.exec(format);
     return {
       minimumFractionDigits: decimals ? decimals[1].replace(/#/g, '').length : 0,
       maximumFractionDigits: decimals ? decimals[1].length : 10,

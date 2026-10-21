@@ -96,12 +96,16 @@ final class SpreadsheetFileValidator {
           throw new DocxValidationException('corrupt_zip', "Entrada {$i} ilegível.");
         }
         $name = (string) $stat['name'];
-        if (preg_match('#^(Basic|Scripts)/#', $name) || str_contains($name, '../')) {
+        if (DocxPackageValidator::isUnsafeEntryName($name) || preg_match('#^(Basic|Scripts)/#', $name)) {
           throw new DocxValidationException('forbidden_part', "Parte não permitida no ODS: {$name}.");
         }
-        $size = (int) $stat['size'];
+        $declared = (int) $stat['size'];
         $compressed = max(1, (int) $stat['comp_size']);
-        if ($size > 1024 * 1024 && intdiv($size, $compressed) > self::MAX_RATIO) {
+        $size = DocxPackageValidator::measureEntry($zip, $name, self::MAX_UNCOMPRESSED_BYTES - $total);
+        if ($size > self::MAX_UNCOMPRESSED_BYTES - $total) {
+          throw new DocxValidationException('uncompressed_too_large', 'ODS descompactado acima do limite.');
+        }
+        if (max($size, $declared) > 1024 * 1024 && intdiv($size, $compressed) > self::MAX_RATIO) {
           throw new DocxValidationException('zip_bomb', "Razão de compressão suspeita em {$name}.");
         }
         $total += $size;
@@ -116,7 +120,8 @@ final class SpreadsheetFileValidator {
   }
 
   /**
-   * XLS é um arquivo OLE2 com a assinatura do Compound File Binary.
+   * XLS é um arquivo OLE2: só a assinatura é verificada aqui. Macros VBA dentro do XLS
+   * não são inspecionadas; o leitor não as executa (SheetJS só lê valores).
    */
   private function validateXls(string $path): void {
     $signature = file_get_contents($path, FALSE, NULL, 0, 8);

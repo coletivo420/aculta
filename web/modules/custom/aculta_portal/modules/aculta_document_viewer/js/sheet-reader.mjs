@@ -12,6 +12,30 @@
  *   timeoutMs: prazo total.
  * @returns {Promise<Array<{title, rows, columns, data, truncated}>>}
  */
+const LIMITS = { sheets: 20, rows: 2000, columns: 100, cellText: 500 };
+
+/**
+ * Reaplica os limites no pai: a mensagem vem de um iframe e não é confiável.
+ */
+function clampSheets(sheets) {
+  return sheets.slice(0, LIMITS.sheets).map((sheet) => {
+    const rows = Math.min(Number(sheet.rows) || 1, LIMITS.rows);
+    const columns = Math.min(Number(sheet.columns) || 1, LIMITS.columns);
+    const data = (Array.isArray(sheet.data) ? sheet.data : []).slice(0, rows).map((line) => (
+      (Array.isArray(line) ? line : []).slice(0, columns).map((cell) => String(cell).slice(0, LIMITS.cellText))
+    ));
+    const clipped = data.length < (Number(sheet.rows) || 0) || (Number(sheet.columns) || 0) > columns
+      || sheet.data.length > rows || sheet.sheets > LIMITS.sheets;
+    return {
+      title: String(sheet.title || '').slice(0, 255),
+      rows,
+      columns,
+      data,
+      truncated: Boolean(sheet.truncated) || clipped,
+    };
+  });
+}
+
 export function readSheetsIsolated({ url, format, frameUrl, libs, timeoutMs = 60000 }) {
   // Caminhos relativos são resolvidos contra a página, não contra este módulo.
   const absoluteFrameUrl = new URL(frameUrl, document.baseURI).href;
@@ -42,7 +66,7 @@ export function readSheetsIsolated({ url, format, frameUrl, libs, timeoutMs = 60
       clearTimeout(timer);
       frame.remove();
       if (error) reject(error);
-      else resolve(sheets);
+      else resolve(clampSheets(sheets));
     };
 
     const onMessage = (event) => {

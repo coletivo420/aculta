@@ -65,6 +65,50 @@ final class DocxPackageValidator {
   ) {}
 
   /**
+   * Nome de entrada inseguro: absoluto, com barra invertida, letra de unidade ou segmento `..`.
+   *
+   * Compartilhado por todos os validadores de ZIP (DOCX, XLSX e ODS).
+   */
+  public static function isUnsafeEntryName(string $name): bool {
+    if ($name === '' || str_starts_with($name, '/') || str_contains($name, '\\') || preg_match('/^[A-Za-z]:/', $name)) {
+      return TRUE;
+    }
+    foreach (explode('/', $name) as $segment) {
+      if ($segment === '..') {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Bytes realmente descompactados de uma entrada, lidos até $budget + 1.
+   *
+   * O tamanho declarado no diretório central pode ser falso; por isso o conteúdo é lido
+   * de fato, com teto. Retorna o número de bytes lidos (pode passar do teto para indicar excesso).
+   */
+  public static function measureEntry(\ZipArchive $zip, string $name, int $budget): int {
+    $stream = $zip->getStream($name);
+    if ($stream === FALSE) {
+      return 0;
+    }
+    $read = 0;
+    try {
+      while (!feof($stream) && $read <= $budget) {
+        $chunk = fread($stream, 65536);
+        if ($chunk === FALSE || $chunk === '') {
+          break;
+        }
+        $read += strlen($chunk);
+      }
+    }
+    finally {
+      fclose($stream);
+    }
+    return $read;
+  }
+
+  /**
    * Creates the validator for XLSX workbooks with the same limits.
    */
   public static function forXlsx(): self {
@@ -123,7 +167,7 @@ final class DocxPackageValidator {
         throw new DocxValidationException('corrupt_zip', "Entrada {$i} ilegível.");
       }
       $name = $stat['name'];
-      if (str_starts_with($name, '/') || str_contains($name, '../') || str_contains($name, '\\') || preg_match('/^[A-Za-z]:/', $name)) {
+      if (self::isUnsafeEntryName($name)) {
         throw new DocxValidationException('unsafe_path', 'Caminho de entrada inseguro.');
       }
       foreach (self::FORBIDDEN_PART_PATTERNS as $pattern) {
@@ -131,9 +175,14 @@ final class DocxPackageValidator {
           throw new DocxValidationException('forbidden_part', "Parte não permitida: {$name}.");
         }
       }
-      $size = (int) $stat['size'];
+      $declared = (int) $stat['size'];
       $compressed = max(1, (int) $stat['comp_size']);
-      if ($size > 1024 * 1024 && intdiv($size, $compressed) > $this->maxRatio) {
+      // Mede o conteúdo real, não o tamanho declarado: o teto de entrada também limita a leitura.
+      $size = self::measureEntry($zip, $name, $this->maxUncompressedBytes - $total);
+      if ($size > $this->maxUncompressedBytes - $total) {
+        throw new DocxValidationException('uncompressed_too_large', 'Conteúdo descompactado acima do limite.');
+      }
+      if (max($size, $declared) > 1024 * 1024 && intdiv($size, $compressed) > $this->maxRatio) {
         throw new DocxValidationException('zip_bomb', "Razão de compressão suspeita em {$name}.");
       }
       $total += $size;

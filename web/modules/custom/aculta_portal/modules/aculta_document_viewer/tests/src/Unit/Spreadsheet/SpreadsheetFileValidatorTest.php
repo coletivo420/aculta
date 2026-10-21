@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_document_viewer\Unit\Spreadsheet;
 
+use Drupal\aculta_document_viewer\Docx\DocxPackageValidator;
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
 use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetFileValidator;
 use Drupal\Tests\UnitTestCase;
@@ -99,6 +100,18 @@ final class SpreadsheetFileValidatorTest extends UnitTestCase {
   public function testOdsWithoutMimetypeIsRejected(): void {
     $path = $this->zip('sem-tipo.ods', ['content.xml' => '<x/>']);
     $this->assertRejected('wrong_content_type', $path, 'ods');
+  }
+
+  /**
+   * Nomes de entrada inseguros são recusados por uma única regra para DOCX, XLSX e ODS.
+   */
+  public function testUnsafeEntryNamesAreRefused(): void {
+    foreach (['/etc/passwd', '..\\x', 'a/..', '..', 'C:/x', 'pasta/../../x'] as $name) {
+      $this->assertTrue(DocxPackageValidator::isUnsafeEntryName($name), "Esperava nome inseguro: {$name}");
+    }
+    foreach (['word/document.xml', 'xl/workbook.xml', 'Pictures/1.png'] as $name) {
+      $this->assertFalse(DocxPackageValidator::isUnsafeEntryName($name), "Nome normal recusado: {$name}");
+    }
   }
 
   /**

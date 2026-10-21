@@ -1,5 +1,20 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.9 — correções da revisão de código da homologação RC1 — 2026-10-21
+
+- **Segurança:** títulos das colunas do modo Tabela agora são texto puro (`titleFormatter: 'plaintext'`). Antes, o Tabulator escrevia o cabeçalho do arquivo com `innerHTML`, e um cabeçalho com HTML executava na origem do site. Verificado no navegador X11: a versão anterior executava (`xssExecutou: true`, `<img>` criado); a corrigida mostra o texto e não executa.
+- **Limites no pai:** o leitor de planilhas reaplica os limites (20 abas, 2000 linhas, 100 colunas, 500 caracteres) às matrizes recebidas do iframe, em vez de confiar no iframe.
+- **Descompactação real:** DOCX, XLSX e ODS medem os bytes realmente descompactados, com teto, em vez de confiar no tamanho declarado no diretório do ZIP.
+- **Nomes de entrada:** uma única regra (`DocxPackageValidator::isUnsafeEntryName`) para os três validadores; recusa também `..` no fim do nome.
+- **Formato decimal:** `0.0#` preserva as casas opcionais.
+- **DOCX:** o iframe é removido em todos os caminhos de saída (timeout e falha inclusive).
+- **Comentário do XLS** corrigido: só a assinatura OLE2 é verificada; macros não são inspecionadas.
+- Testes: Unit 55/55 OK. Regressão no navegador: ODS e XLSX com os mesmos valores de antes.
+- **Achados da revisão deixados para o dono ou para a fase de remoção**, com razão:
+  - `CspReportRequestGuardSubscriber`: cópia do guarda do `aculta_pdf_viewer`. Mantida enquanto os dois módulos coexistem; deve sair do módulo novo na desinstalação do antigo, junto com o guarda do módulo antigo, para não criar duplicidade nem perder a proteção.
+  - Duplicação do fluxo de formatters DOCX e planilha e dos limites entre PHP e JS: refatoração planejada, sem mudança de comportamento agora.
+  - `.htaccess` sem a regra `.mjs` na árvore de trabalho: alteração não commitada de outra frente; decisão do dono.
+
 ## 0.1.0-dev.8 — isolamento do leitor de planilhas e limites de descompactação (0.1.0-dev.10 do plano) — 2026-10-21
 
 - O SheetJS deixa a página principal: roda em `js/sheet-frame.html` + `sheet-frame.js`, em iframe `sandbox="allow-scripts"` sem `allow-same-origin`, com CSP em `<meta>` (`connect-src 'none'`, sem imagens). O pai (`js/sheet-reader.mjs`) só recebe matrizes de texto.

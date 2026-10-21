@@ -43,6 +43,8 @@ function tableOptions(definition) {
     seen.set(base, count);
     return {
       title: count > 1 ? `${base} (${count})` : base,
+      // Título em texto puro: o Tabulator usaria innerHTML sem este formatador.
+      titleFormatter: 'plaintext',
       field: `c${index}`,
       headerFilter: 'input',
       sorter: 'string',
