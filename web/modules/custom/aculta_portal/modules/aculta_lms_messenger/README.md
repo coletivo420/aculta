@@ -25,8 +25,9 @@ Avisos que dependem de uma resposta LMS revalidam as referências
 `Answer → LessonStatus → CourseStatus → Course` por campos de referência. Se a
 remoção assíncrona do LMS deixar a resposta sem um desses contextos, o aviso é
 suprimido durante a janela pendente em vez de provocar erro no contador, gaveta
-ou digest. Unit `LearningNoticeStaleAnswerTest`: 1/6; suíte completa: 16/66.
-Kernel Message: 1/12, com 2 depreciações upstream.
+ou digest. Unit `LearningNoticeStaleAnswerTest`: 1/6; suíte completa: 17/76,
+incluindo revalidação do provider de digest e descarte de referência de
+certificado removida. Kernel Message: 1/12, com 2 depreciações upstream.
 
 O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
 persistência e deduplicação em Message real. Smoke com turma temporária no

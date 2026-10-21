@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.14 — testar revalidação do provider de resumo — 2026-10-21
+
+- Teste Unit percorre o `LearningNoticeManager` real: quando o certificado
+  referenciado já foi removido, a linha não entra no digest e a pendência é
+  descartada. Adapter: 17 testes / 76 assertions PASS; Kernel Message:
+  1 teste / 12 assertions PASS. A integração do resumo compartilhado continua
+  coberta separadamente pelo serviço do Messenger com provider de teste.
+
 ## 0.1.0-dev.13 — ignorar respostas com contexto LMS removido — 2026-10-21
 
 - Avisos e produtores de submissão, avaliação e feedback agora resolvem o curso
