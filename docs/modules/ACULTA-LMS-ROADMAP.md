@@ -284,7 +284,7 @@ Em 0.1.0-dev.50, o Kernel testa diretamente a rota lógica de PDF após revogaç
 retorna 404 e não instancia Entity Print nem o gerador QR. Em 0.1.0-dev.56,
 `CertificateLifecycleTest` também valida os quatro campos públicos contratados
 e a ausência de e-mail/motivo interno: 3 testes / 102 assertions. Suítes
-combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 22/675 assertions
+combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 23/704 assertions
 PASS. As 92 depreciações continuam upstream.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
