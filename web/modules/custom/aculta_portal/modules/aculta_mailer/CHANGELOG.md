@@ -1,3 +1,8 @@
+## 0.1.0-dev.67 — envelope sempre com o tema do site — 2026-10-22
+
+- Envio disparado de página administrativa usava o tema administrativo (`claro`) e saía sem o envelope ACULTA (logo, cores, marca). O envelope agora é renderizado com o tema padrão do site, e o tema anterior é restaurado depois.
+- Reproduzido localmente com o tema `claro` ativo: envelope com cabeçalho, logo e rodapé da marca.
+
 ## 0.1.0-dev.66 — layout de marca no envelope HTML — 2026-10-22
 
 - Com layout, o envelope do tema não repete o rodapé: o rodapé da marca vai no corpo. Sem layout, o rodapé fixo da associação continua. Flag `layout` passado do renderizador ao envelope e declarado no `hook_theme` (variável não declarada não chega ao template).

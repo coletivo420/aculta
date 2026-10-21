@@ -22,6 +22,8 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Theme\ThemeInitializationInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -52,6 +54,8 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly TimeInterface $time,
     private readonly MailTracker $tracker,
     private readonly ?PublicUrlInterface $publicUrls = NULL,
+    private readonly ?ThemeManagerInterface $themeManager = NULL,
+    private readonly ?ThemeInitializationInterface $themeInitialization = NULL,
   ) {}
 
   /**
@@ -71,6 +75,8 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->get('datetime.time'),
       $container->get(MailTracker::class),
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
+      $container->get('theme.manager'),
+      $container->get('theme.initialization'),
     );
   }
 
@@ -100,7 +106,27 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       '#layout' => !empty($message['aculta_layout']),
       '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
     ];
-    return (string) $this->renderer->renderInIsolation($build);
+    return $this->renderInDefaultTheme($build);
+  }
+
+  /**
+   * Renderiza o envelope com o tema padrão do site, não com o tema da página de origem.
+   *
+   * Um envio disparado por página administrativa usaria o tema administrativo, que não tem o envelope ACULTA.
+   */
+  private function renderInDefaultTheme(array $build): string {
+    if ($this->themeManager === NULL || $this->themeInitialization === NULL) {
+      return (string) $this->renderer->renderInIsolation($build);
+    }
+    $previous = $this->themeManager->getActiveTheme();
+    $default = (string) $this->configFactory->get('system.theme')->get('default');
+    $this->themeManager->setActiveTheme($this->themeInitialization->initTheme($default));
+    try {
+      return (string) $this->renderer->renderInIsolation($build);
+    }
+    finally {
+      $this->themeManager->setActiveTheme($previous);
+    }
   }
 
   /**
