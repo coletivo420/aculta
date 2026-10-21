@@ -22,6 +22,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\aculta_portal\Appearance\ColorModePreference;
 use Drupal\Core\Theme\ThemeInitializationInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -56,6 +57,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
     private readonly ?PublicUrlInterface $publicUrls = NULL,
     private readonly ?ThemeManagerInterface $themeManager = NULL,
     private readonly ?ThemeInitializationInterface $themeInitialization = NULL,
+    private readonly ?ColorModePreference $colorModes = NULL,
   ) {}
 
   /**
@@ -77,6 +79,7 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       $container->has(PublicUrlInterface::class) ? $container->get(PublicUrlInterface::class) : NULL,
       $container->get('theme.manager'),
       $container->get('theme.initialization'),
+      $container->has('aculta_portal.color_mode_preference') ? $container->get('aculta_portal.color_mode_preference') : NULL,
     );
   }
 
@@ -104,6 +107,8 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
       '#sub_type' => (string) ($message['key'] ?? ''),
       '#is_html' => TRUE,
       '#layout' => !empty($message['aculta_layout']),
+      // Modo de cor do site (mesmo controle da aparência): light, dark ou auto.
+      '#color_mode' => $this->colorModes?->siteDefault() ?? 'auto',
       '#public_base' => $this->publicUrls !== NULL ? $this->publicUrls->absolute('/') : '',
     ];
     return $this->renderInDefaultTheme($build);

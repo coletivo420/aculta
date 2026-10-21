@@ -29,6 +29,7 @@ final class MailThemeHooks {
           'is_html' => TRUE,
           'public_base' => '',
           'layout' => FALSE,
+          'color_mode' => 'auto',
         ],
       ],
     ];

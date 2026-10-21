@@ -1,3 +1,8 @@
+## 0.1.0-dev.68 — modo de cor do e-mail segue o controle do site — 2026-10-22
+
+- O envelope recebe o modo de cor do site (`aculta_portal.appearance`, o mesmo controle da aparência): light, dark ou auto. Antes seguia só a preferência do sistema.
+- Variável `color_mode` declarada no `hook_theme`. Kernel 41/41; unidade 154/154.
+
 ## 0.1.0-dev.67 — envelope sempre com o tema do site — 2026-10-22
 
 - Envio disparado de página administrativa usava o tema administrativo (`claro`) e saía sem o envelope ACULTA (logo, cores, marca). O envelope agora é renderizado com o tema padrão do site, e o tema anterior é restaurado depois.
