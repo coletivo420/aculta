@@ -398,3 +398,12 @@ Estado: **candidato em homologação, RC não declarado**. Faltam a revisão de 
 2. Revisão visual em Firefox, com as capturas de 390, 768 e 1024 px nos modos claro e escuro.
 3. Resolver o `.htaccess` com o dono da alteração, e rodar `validate-htaccess-directives` na árvore de trabalho.
 4. Depois disso, declarar RC no índice de status e no roadmap, e pedir autorização para o Alpha.
+
+
+### RC1 — revisão visual em Firefox (executada)
+
+- Navegador: Firefox ESR (headless, perfil de teste isolado, sem o perfil do usuário), por WebDriver BiDi, com espera pela renderização. Página de planilha publicada no Runtime, modo claro (o site não tem modo escuro por preferência do sistema; o escuro é `data-bs-theme`, não medido em Firefox).
+- Medições (`script.evaluate` na própria página): 390 px, `scrollWidth` 378 e sem rolagem horizontal; 768 px, `scrollWidth` 768; 1024 px, `scrollWidth` 1012. Nenhuma das três larguras tem rolagem horizontal da página.
+- Capturas: barra com zoom, tela cheia, Planilha e Tabela; grade com rolagem interna no celular; abas legíveis; cartão com tipo e título escapados.
+- Achado de cópia (não alterado): o rótulo "Documento PDF" acima do leitor vem do rótulo do campo `field_document` no display `node.document`, usado para todos os tipos de arquivo. Trocar esse rótulo é decisão de conteúdo e de configuração, não do leitor.
+- Fixtures do Runtime removidos e display restaurado ao formatter PDF.
