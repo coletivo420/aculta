@@ -1,5 +1,16 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.29 — negar entregas sem contexto LMS íntegro — 2026-10-21
+
+- Durante a exclusão assíncrona de statuses pelo Drupal LMS, a resposta pode
+  ficar temporariamente sem LessonStatus/CourseStatus/curso. O download privado
+  agora nega esse estado sem chamar getters tipados sobre referências ausentes.
+- Kernel usa deleção real de LessonStatus, confirma a janela antes do worker e
+  garante negação variada por usuário: 1 teste / 39 assertions PASS; 42
+  depreciações upstream. Suíte Kernel LMS: 19 testes / 559 assertions PASS,
+  com 90 depreciações de Core/contrib. Unit LMS: 38 testes / 181 assertions
+  PASS; 5 avisos de depreciação do PHPUnit.
+
 ## 0.1.0-dev.28 — preservar cache seguro na verificação pública — 2026-10-21
 
 - Corrige a aplicação de metadata do certificado: agora mescla as tags da

@@ -8,6 +8,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\lms\Entity\AnswerInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\Entity\LessonStatusInterface;
+use Drupal\lms\Entity\Bundle\CourseInterface;
 
 /** Tightens uploaded-answer downloads after a student's course access ends. */
 final class UploadedAnswerAccessCheck {
@@ -27,10 +30,34 @@ final class UploadedAnswerAccessCheck {
 
     // LMS currently lets an answer owner see their own answer regardless of
     // current enrollment. Uploaded files need the live course permission too.
-    $course = $lms_answer->getLessonStatus()->getCourseStatus()->getCourse();
+    // LMS deletes statuses asynchronously. During that queue interval, an
+    // answer can temporarily reference a status that is already gone.
+    $lesson_status = $lms_answer->get('lesson_status')->entity;
+    if (!$lesson_status instanceof LessonStatusInterface) {
+      return $this->denyBrokenCourseReference($access, $lms_answer);
+    }
+    $course_status = $lesson_status->get('course_status')->entity;
+    if (!$course_status instanceof CourseStatusInterface) {
+      return $this->denyBrokenCourseReference($access, $lms_answer);
+    }
+    $course = $course_status->get(CourseStatusInterface::COURSE_FIELD)->entity;
+    if (!$course instanceof CourseInterface) {
+      return $this->denyBrokenCourseReference($access, $lms_answer);
+    }
+
     return $access->andIf($course->takeAccess($account))
       ->addCacheableDependency($lms_answer)
       ->addCacheableDependency($course)
+      ->addCacheContexts(['user']);
+  }
+
+  /**
+   * Denies a download when its current LMS course context cannot be resolved.
+   */
+  private function denyBrokenCourseReference(AccessResultInterface $access, AnswerInterface $answer): AccessResultInterface {
+    return AccessResult::forbidden()
+      ->addCacheableDependency($access)
+      ->addCacheableDependency($answer)
       ->addCacheContexts(['user']);
   }
 

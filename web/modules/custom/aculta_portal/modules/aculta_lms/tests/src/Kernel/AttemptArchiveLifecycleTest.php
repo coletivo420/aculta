@@ -288,6 +288,26 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($access_check->access($answer, $teacher)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
   }
 
+  /**
+   * A pending answer whose lesson status was deleted fails closed without an exception.
+   */
+  public function testUploadedAnswerAccessFailsClosedDuringQueuedStatusDeletion(): void {
+    [$student, , $lesson_status, , $answer] = $this->createAttempt('Entrega pendente', 'file_upload');
+    $answer_id = (int) $answer->id();
+    $lesson_status->delete();
+
+    $answer_storage = $this->container->get('entity_type.manager')->getStorage('lms_answer');
+    $answer_storage->resetCache([$answer_id]);
+    $answer = $answer_storage->load($answer_id);
+    self::assertInstanceOf(AnswerInterface::class, $answer, 'LMS queues answer deletion after deleting its lesson status.');
+    self::assertNull($answer->get('lesson_status')->entity, 'The answer reference is temporarily unresolved before the queue runs.');
+
+    $this->setCurrentUser($student);
+    $access = (new UploadedAnswerAccessCheck())->access($answer, $student);
+    self::assertFalse($access->isAllowed(), 'A missing course context never grants a private download.');
+    self::assertContains('user', $access->getCacheContexts());
+  }
+
   public function testPrivateUploadRouteStreamsOnlyWhileCourseAccessIsCurrent(): void {
     [$student, , , , $answer] = $this->createAttempt('Entrega de teste', 'file_upload');
     $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();

@@ -224,12 +224,15 @@ testes/161 assertions; Kernel MariaDB 18 testes/509 assertions. O Kernel
 registrou 90 depreciações de Core/contrib e a Unit, 5 avisos do PHPUnit.
 
 `ClassActivityDeadlineFormTest`: 2 testes/8 assertions PASS para fuso da conta e
-fallback UTC. O total Unit passa a 38 testes/169 assertions.
-O Kernel de entrega privada `AttemptArchiveLifecycleTest` agora tem 8
-testes/324 assertions PASS; a suíte Kernel total fica em 18 testes/520
-assertions. As 42 depreciações nesse Kernel vêm de Core/contrib.
+fallback UTC. Unit total: 38 testes/181 assertions PASS; 5 depreciações do
+PHPUnit.
 `CertificateLifecycleTest`: 3 testes/73 assertions PASS, cobrindo o snapshot
 público e cache; 38 depreciações upstream.
+O download privado também falha fechado durante a exclusão assíncrona de um
+LessonStatus, quando a resposta ainda existe, mas já perdeu o contexto de curso.
+Kernel `AttemptArchiveLifecycleTest`: 9 testes/363 assertions PASS; caso
+dedicado 1/39 assertions. A suíte Kernel totaliza 19 testes/559 assertions,
+com 90 depreciações de Core/contrib.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
