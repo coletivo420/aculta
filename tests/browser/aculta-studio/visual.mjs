@@ -144,6 +144,13 @@ try {
   check('modo escuro aplicado à página', darkMode !== lightMode, `claro=${lightMode} escuro=${darkMode}`);
   check('mesma geometria nos modos claro e escuro', JSON.stringify(lightBoxes) === JSON.stringify(darkBoxes), `${lightBoxes.length} elemento(s) comparado(s)`);
 
+  // Galerias: navegação visual da área (acesso concedido ao papel de editor no Runtime de teste).
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/galerias/criar' });
+  await waitFor(`document.querySelector('[data-aculta-studio="action"]')`, 'Galerias');
+  const gal = await exec(`return [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim());`);
+  check('área Galerias com a ação Nova galeria', gal.includes('Nova galeria'), gal.join(' | '));
+  await shot('04-galerias');
+
   // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
   await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/forum/moderacao/fila' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
