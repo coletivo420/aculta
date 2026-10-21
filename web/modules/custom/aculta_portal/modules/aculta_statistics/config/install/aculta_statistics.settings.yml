@@ -5,7 +5,13 @@ retention:
     days: 90
   - metric: forum.comments.created
     days: 90
+  - metric: email.messages.queued
+    days: 90
   - metric: email.messages.accepted
+    days: 90
+  - metric: email.messages.delivered
+    days: 90
+  - metric: email.messages.bounced
     days: 90
   - metric: email.messages.failed
     days: 90

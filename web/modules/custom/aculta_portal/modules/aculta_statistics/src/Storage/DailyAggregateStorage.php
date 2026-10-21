@@ -66,6 +66,41 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function replaceDay(string $metric, int $day, array $totals): void {
+    $this->assertMetric($metric);
+    foreach ($totals as $dimension => $total) {
+      $this->assertDimension((string) $dimension);
+      if ($total < 0) {
+        throw new \InvalidArgumentException('O total substituído não pode ser negativo.');
+      }
+    }
+
+    // Apagar e regravar na mesma transação: leitor concorrente nunca vê o dia pela metade.
+    $transaction = $this->database->startTransaction();
+    $this->database->delete(self::TABLE)
+      ->condition('metric', $metric)
+      ->condition('day', $day)
+      ->execute();
+    foreach ($totals as $dimension => $total) {
+      if ($total === 0) {
+        continue;
+      }
+      $this->database->insert(self::TABLE)
+        ->fields([
+          'metric' => $metric,
+          'dimension' => (string) $dimension,
+          'day' => $day,
+          'total' => $total,
+          'updated' => $this->time->getRequestTime(),
+        ])
+        ->execute();
+    }
+    unset($transaction);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function total(string $metric, int $fromDay, int $toDay, ?string $dimension = NULL): int {
     $this->assertMetric($metric);
     if ($dimension !== NULL) {

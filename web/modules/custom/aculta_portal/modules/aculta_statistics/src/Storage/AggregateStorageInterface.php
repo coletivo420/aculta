@@ -27,6 +27,21 @@ interface AggregateStorageInterface {
   public function record(string $metric, string $dimension = '', int $amount = 1): void;
 
   /**
+   * Substitui os totais de uma métrica num dia, em vez de somar.
+   *
+   * Usado por conciliações que recalculam um dia a partir da fonte. Linhas do
+   * dia que não estão em `$totals` são removidas; totais zero não são gravados.
+   *
+   * @param string $metric
+   *   Identificador do catálogo.
+   * @param int $day
+   *   Dia UTC (número de dias desde 1970-01-01).
+   * @param array<string, int> $totals
+   *   Total por dimensão. Vazio zera o dia.
+   */
+  public function replaceDay(string $metric, int $day, array $totals): void;
+
+  /**
    * Soma uma métrica num intervalo de dias UTC, inclusive.
    *
    * @param string $metric

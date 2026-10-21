@@ -92,6 +92,34 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Substituir um dia troca os totais, zera dimensões ausentes e não toca outros dias.
+   */
+  public function testReplaceDaySubstitutesOnlyThatDay(): void {
+    $storage = $this->storage();
+    $this->insertRow('email.messages.accepted', 'smtp', 100, 9);
+    $this->insertRow('email.messages.accepted', 'brevo', 100, 4);
+    $this->insertRow('email.messages.accepted', 'smtp', 101, 7);
+
+    $storage->replaceDay('email.messages.accepted', 100, ['smtp' => 2, 'brevo' => 0]);
+
+    $this->assertSame(2, $storage->total('email.messages.accepted', 100, 100, 'smtp'));
+    $this->assertSame(0, $storage->total('email.messages.accepted', 100, 100, 'brevo'));
+    $this->assertSame(7, $storage->total('email.messages.accepted', 101, 101));
+  }
+
+  /**
+   * Substituir com totais vazios apaga o dia (uma conciliação que zera o contador).
+   */
+  public function testReplaceDayWithEmptyTotalsClearsDay(): void {
+    $storage = $this->storage();
+    $this->insertRow('email.messages.failed', 'smtp|timeout', 100, 3);
+
+    $storage->replaceDay('email.messages.failed', 100, []);
+
+    $this->assertSame([], $storage->dimensions('email.messages.failed', 100));
+  }
+
+  /**
    * Cria o storage com o dia atual do ambiente de teste.
    */
   private function storage(): DailyAggregateStorage {

@@ -26,6 +26,14 @@ services:
     class: Drupal\aculta_statistics\Reconciliation\CommerceReconciler
     arguments: ['@entity_type.manager', '@aculta_statistics.storage']
 
+  aculta_statistics.email_provider:
+    class: Drupal\aculta_statistics\Email\EmailProvider
+    arguments: ['@entity_type.manager']
+
+  aculta_statistics.email_reconciler:
+    class: Drupal\aculta_statistics\Reconciliation\EmailReconciler
+    arguments: ['@aculta_statistics.email_provider', '@aculta_statistics.storage']
+
   aculta_statistics.cart_abandonment_cron_hooks:
     class: Drupal\aculta_statistics\Hook\CartAbandonmentCronHooks
     arguments: ['@entity_type.manager', '@aculta_statistics.recorder', '@aculta_statistics.storage', '@module_handler']
@@ -70,6 +78,8 @@ services:
   Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
+  Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
+  Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
   Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
   Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
   Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'
