@@ -276,7 +276,6 @@ final class LinksDashboardController {
       'filters' => [
         '#theme' => 'links',
         '#links' => $this->buildStatusFilterLinks($filter_key, $filter),
-        '#attributes' => ['class' => ['aculta-links-status-filters']],
         '#cache' => [
           'contexts' => ['url.query_args:' . $filter_key],
         ],

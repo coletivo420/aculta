@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.28 — remove classe visual fora do contrato — 2026-10-20
+
+- O filtro de publicação do dashboard mantém os links e seu cache sem emitir classe de apresentação no módulo; não havia consumidor CSS/JavaScript dessa classe.
+- A correção elimina o achado do gate de fronteira módulo–tema sem alterar rotas, dados ou comportamento do filtro.
+- Validação após correção: fronteira módulo–tema PASS (1844 verificações), mapa módulo–tema PASS (170), Drupal 11 PASS (1010), status-index PASS (29 componentes), slugs PASS (385), Unit PASS (6/54), Kernel MariaDB PASS (6/208), PHPCS e PHP lint PASS. PHPUnit reportou 8 depreciações; Kernel, 7 depreciações de Core/contrib. A CLI disponível é PHP 8.4.26, abaixo do alvo 8.5.
+
 ## 0.4.0-dev.27 — edita textos no organizador de página — 2026-10-20
 
 - O editor de composição permite atualizar título e descrição inline junto com ordem e publicação; destino e agendamento continuam no formulário avançado do item.

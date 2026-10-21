@@ -62,6 +62,11 @@ no LinkStack. Em 0.4.0-dev.27, o organizador também edita título e descrição
 inline e pré-valida todas as linhas para impedir submits parciais. Uma conta pode ter várias páginas; equipes complexas não são
 prioridade.
 
+Em 0.4.0-dev.28, o filtro de publicação deixou de emitir uma classe visual do
+módulo que não tinha consumidor; os links e o cache permanecem iguais e o gate
+de fronteira módulo–tema volta a passar. Filtros e editor continuam na fase
+0.3.0; revisão visual autenticada continua pendente antes de RC.
+
 Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram
 corrigidos para `ContentEntityForm` após inspeção autenticada encontrar ausência
 dos widgets. Kernel e Firefox autenticado a 390 × 844 confirmam os campos dos
