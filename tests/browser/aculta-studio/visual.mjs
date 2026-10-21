@@ -155,6 +155,8 @@ try {
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
   const rows = await exec(`return document.querySelectorAll('[data-aculta-studio="listing"] tbody tr').length;`);
   check('listagem da Revista na aba Publicados com linhas', rows >= 1, `${rows} linha(s)`);
+  const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => (a.getAttribute('href') || '').includes('/node/') && (a.getAttribute('href') || '').endsWith('/edit')).length;`);
+  check('edição de publicação pelo formulário do dono (revista420)', editLinks >= 1, `${editLinks} link(s)`);
   await shot('03-listagem-revista');
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);

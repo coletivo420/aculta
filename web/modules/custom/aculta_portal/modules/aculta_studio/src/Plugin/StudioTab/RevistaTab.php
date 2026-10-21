@@ -49,7 +49,7 @@ final class RevistaTab extends StudioTabBase {
       $listTabs[$id] = [
         'label' => $item['label'],
         'weight' => count($listTabs),
-        'listing' => ['bundle' => 'revista', 'state' => $item['state']],
+        'listing' => ['bundle' => 'revista', 'state' => $item['state'], 'editable' => TRUE],
         'actions' => [],
       ];
     }

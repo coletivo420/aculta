@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -27,6 +28,7 @@ final class StudioListingBuilder {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly DomainPurposeManager $domainPurposes,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -76,26 +78,34 @@ final class StudioListingBuilder {
 
     $rows = [];
     foreach ($storage->loadMultiple($nids) as $node) {
-      $rows[] = [
+      $row = [
         'title' => ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]],
         'state' => $stateByNode[(int) $node->id()] ?? '',
         'author' => $node->getOwner()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($node->getChangedTime(), 'short'),
       ];
+      // Edição: o formulário do dono, no domínio do dono, avaliado com o acesso dele.
+      if (!empty($listing['editable'])) {
+        $row['edit'] = $this->editLink($node);
+      }
+      $rows[] = $row;
     }
 
     // A tabela rola dentro do próprio bloco no celular, sem rolagem horizontal da página.
+    $header = ['title' => $this->t('Título'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor'), 'changed' => $this->t('Atualizado em')];
+    if (!empty($listing['editable'])) {
+      $header['edit'] = $this->t('Ações');
+    }
+    $header = ['title' => $this->t('Título'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor'), 'changed' => $this->t('Atualizado em')];
+    if (!empty($listing['editable'])) {
+      $header['edit'] = $this->t('Ações');
+    }
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
       'table' => [
         '#type' => 'table',
-      '#header' => [
-        'title' => $this->t('Título'),
-        'state' => $this->t('Situação'),
-        'author' => $this->t('Autor'),
-        'changed' => $this->t('Atualizado em'),
-      ],
+      '#header' => $header,
       '#rows' => $rows,
       '#empty' => $this->t('Nenhum item nesta aba.'),
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
@@ -246,6 +256,22 @@ final class StudioListingBuilder {
       ],
       '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['node_list:' . $listing['bundle']]],
     ];
+  }
+
+
+  /**
+   * Edit link to the owner's edit form in the owner's domain. Access is the owner's node access, evaluated there.
+   */
+  private function editLink(object $node): array {
+    $url = $this->domainPurposes->routeUrl('magazine', 'entity.node.edit_form', ['node' => $node->id()]);
+    if ($url === NULL) {
+      return ['data' => ''];
+    }
+    $access = $this->domainPurposes->runInPurpose('magazine', static fn (): bool => $node->access('update'));
+    if (!$access) {
+      return ['data' => ''];
+    }
+    return ['data' => ['#type' => 'link', '#title' => $this->t('Editar'), '#url' => $url]];
   }
 
 }
