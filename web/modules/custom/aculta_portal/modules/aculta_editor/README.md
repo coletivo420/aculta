@@ -64,16 +64,30 @@ de existir. Não desinstalar o módulo enquanto houver conteúdo com esses forma
 
 ## Testes
 
-- Kernel: `tests/src/Kernel/AcultaEditorFormatsKernelTest.php` (formatos, editores, permissões, sanitização de script,
+- Kernel: `tests/src/Kernel/AcultaEditorFormatsKernelTest.php` (formatos, editores, permissões, `media_embed`, ciclo de conteúdo, sanitização de script,
   `onclick`, `javascript:` e `iframe`, tabelas e âncoras por perfil, layout de e-mail e templates).
-  Resultado em 2026-10-21 no banco `aculta_simpletest`: 6 testes, 93 asserções, OK. Três avisos de deprecação vêm
+  Resultado em 2026-10-21 no banco `aculta_simpletest`: 8 testes, 140 asserções, OK. Três avisos de deprecação vêm
   de `ckeditor5_plugin_pack_templates` (contrib).
+
+## Integração com aculta_mailer
+
+Contrato, sem código de envio no editor:
+
+- **Ponto de conexão:** o editor visual de modelos de e-mail (passo 4 de `aculta_mailer/docs/CONTROL-SCREENS.md`) deve
+  usar o formato `aculta_email`, como decidido em 2026-10-20 ("HTML restrito").
+- **Responsabilidade do `aculta_mailer`:** tokens, cabeçalho e rodapé, renderização, substituição de tokens, envio, logs e
+  relatórios. O editor só monta o HTML.
+- **Pendente no mailer:** a tela de modelos ainda não existe. Inserção de tokens e pré-visualização dependem dela.
+- Nenhuma dependência de módulo foi criada do `aculta_editor` para o `aculta_mailer`.
 
 ## Limitações conhecidas
 
-- Interação no navegador (inserir, editar, salvar, reabrir e renderizar com os plugins) **não foi validada** nesta fase.
-- Integração com Drupal Media e com `aculta_mailer` **não implementada** além dos itens de toolbar. O `aculta_mailer`
-  continua dono da renderização, dos tokens e do envio.
-- CSS do editor no tema `aculta420` **não implementado**, embora a autorização tenha sido dada, por exigir validação
-  visual e atualização do mapa módulo–tema.
-- O plugin de `pasteFromMarkdown` está habilitado; o comportamento no editor ainda não foi verificado no navegador.
+- **Navegador:** a interação completa (inserir, editar, salvar, reabrir e renderizar pela interface do CKEditor) **não
+  foi validada**. O ciclo de dados (salvar, recarregar, renderizar com sanitização) está coberto pelo Kernel test.
+- **Servidor de testes:** em 2026-10-21, o host principal respondeu HTTP 500 por causa do campo `field_h5p_content`
+  (referência a `h5p_content`, entidade removida no trabalho do H5P em andamento). Enquanto isso não for resolvido por
+  quem o mantém, a validação HTTP e no navegador do conteúdo não é possível.
+- **Media:** `drupalMedia` e `media_embed` estão nos formatos; a inserção pelo editor não foi validada no navegador.
+- **Auto Image:** não habilitado até haver exceção do responsável (ver a auditoria, seção 8).
+- **Deprecações:** três avisos vêm de `ckeditor5_plugin_pack_templates` (contrib).
+- **PasteFromMarkdown:** habilitado; comportamento no editor não verificado no navegador.

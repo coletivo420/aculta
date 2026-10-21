@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_editor\Kernel;
 
 use Drupal\editor\Entity\Editor;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
@@ -26,6 +31,7 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     'user',
     'field',
     'file',
+    'node',
     'image',
     'text',
     'filter',
@@ -45,7 +51,9 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installConfig(['system', 'filter', 'editor', 'ckeditor5', 'ckeditor5_plugin_pack_templates', 'aculta_editor']);
+    $this->installConfig(['system', 'filter', 'editor', 'ckeditor5', 'ckeditor5_plugin_pack_templates', 'aculta_editor', 'node']);
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('node_type');
   }
 
   /**
@@ -142,6 +150,46 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
         $this->assertContains($format, ['aculta_editorial', 'aculta_institucional']);
       }
     }
+  }
+
+  /**
+   * Todo formato do editor renderiza mídia do Drupal (filtro media_embed).
+   */
+  public function testMediaEmbedFilterIsEnabledOnEveryFormat(): void {
+    foreach (self::FORMATS as $id) {
+      $this->assertTrue(FilterFormat::load($id)->filters('media_embed')->status, "$id ativa media_embed.");
+    }
+  }
+
+  /**
+   * Conteúdo salvo com o formato editorial volta do banco e renderiza sem scripts.
+   */
+  public function testContentCycleSavesAndRendersEditorialBody(): void {
+    NodeType::create(['type' => 'article', 'name' => 'Artigo'])->save();
+    FieldStorageConfig::create(['field_name' => 'body', 'entity_type' => 'node', 'type' => 'text_with_summary'])->save();
+    FieldConfig::create(['field_name' => 'body', 'entity_type' => 'node', 'bundle' => 'article', 'label' => 'Corpo'])->save();
+    EntityViewDisplay::create(['targetEntityType' => 'node', 'bundle' => 'article', 'mode' => 'full', 'status' => TRUE])
+      ->setComponent('body', ['type' => 'text_default', 'label' => 'hidden'])
+      ->save();
+
+    $html = '<h2 id="secao">Seção</h2><table><tr><td>1</td></tr></table><script>alert(1)</script><mark class="x">destaque</mark>';
+    $node = Node::create([
+      'type' => 'article',
+      'title' => 'Teste de ciclo',
+      'body' => ['value' => $html, 'format' => 'aculta_editorial'],
+    ]);
+    $node->save();
+
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache();
+    $reloaded = Node::load($node->id());
+    $this->assertSame('aculta_editorial', $reloaded->get('body')->format);
+    $this->assertStringContainsString('<table>', $reloaded->get('body')->value);
+
+    $build = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($reloaded, 'full');
+    $rendered = (string) $this->container->get('renderer')->renderInIsolation($build);
+    $this->assertStringContainsString('<table>', $rendered);
+    $this->assertStringContainsString('id="secao"', $rendered);
+    $this->assertStringNotContainsString('<script', $rendered);
   }
 
   /**

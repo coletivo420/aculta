@@ -22,3 +22,10 @@ filters:
     status: true
     weight: 10
     settings: {}
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 40
+    settings:
+      default_view_mode: default
