@@ -266,7 +266,12 @@ bloqueadas e revalida revogação de membership após limpar o resultado de acce
 da requisição anterior. Tanto histórico quanto download resolvem o User real
 mesmo quando o request fornece AccountProxy/session. Download de arquivo
 privado também nega estudantes e educadores bloqueados antes de delegar ao LMS.
-Unit: 46 testes / 215 assertions PASS (6 depreciações). Verificação de certificado, render
+No Runtime `cursos`, Drush confirmou módulo ativo/sem updates; após `drush cr`,
+serviços carregaram e o loader resolveu os dois usuários de teste via
+`UserSession`. O rebuild emitiu warning preexistente de configuração `assets://h5p`
+e terminou com sucesso. Sem fixture real de resposta, download privado segue
+sem smoke Runtime positivo. Unit: 46 testes / 215 assertions PASS (6 depreciações).
+Verificação de certificado, render
 do snapshot e painéis agora preservam
 `max-age: 0` ao mesclar tags/contextos; `CertificateLifecycleTest`: 3/75,
 `ClassDashboardKernelTest`: 1/43 e `LearningDashboardControllerTest`: 1/4

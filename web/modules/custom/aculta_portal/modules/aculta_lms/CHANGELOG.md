@@ -7,6 +7,12 @@
 - Unit: 46 testes / 215 assertions PASS (6 depreciações); Kernel lifecycle:
   9 testes / 369 assertions PASS (42 depreciações). PHP 8.4.26; PHP 8.5 não
   validado.
+- Runtime de teste `cursos`: Drush confirmou `aculta_runtime`, `aculta_lms`
+  habilitado e sem updates pendentes. `drush cr` concluiu e compilou os serviços;
+  o loader resolveu os dois usuários de teste a partir de sessões `UserSession`.
+  O rebuild registrou warning de diretório `assets://h5p`; H5P não foi alterado.
+  Nenhuma resposta ou fixture do Runtime foi criada; download privado real segue
+  sem smoke positivo.
 
 ## 0.1.0-dev.37 — negar downloads LMS a contas bloqueadas — 2026-10-21
 

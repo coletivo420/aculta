@@ -24,6 +24,10 @@ bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
 369 assertions PASS (42 depreciações); Unit completo: 46 testes / 215
 assertions PASS (6 depreciações). O status ativo é verificado pelo User
 carregado também quando a requisição entrega apenas AccountProxy/session.
+No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
+rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
+O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi
+criada, então o download real de resposta continua sem smoke positivo.
 
 ## Integrações de conteúdo
 
