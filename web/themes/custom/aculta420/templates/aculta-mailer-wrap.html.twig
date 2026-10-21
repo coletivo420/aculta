@@ -10,6 +10,7 @@
  * - body: corpo já escapado (HTML), quando is_html.
  * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
  * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
+* - show_footer: False quando o corpo já traz o rodapé do layout de marca (aculta_mailer).
  * - is_html: True if generating HTML output, false for plain text.
  * - subject: Email subject.
  * - type, sub_type: tipo e subtipo do e-mail.
@@ -65,11 +66,13 @@
               {{ body }}
             </td>
           </tr>
+          {% if show_footer %}
           <tr>
             <td class="aculta-mail-footer" style="padding:16px 24px;background:{{ c.footer }};color:{{ c.footer_text }};font-size:13px;line-height:1.4;border-radius:0 0 8px 8px;">
               Associação Cultural Antiproibicionista
             </td>
           </tr>
+          {% endif %}
         </table>
       </td>
     </tr>

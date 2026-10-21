@@ -1,3 +1,10 @@
+## 0.6.0-dev.141 — rodapé do envelope de e-mail segue o layout de marca — 2026-10-22
+
+Classificação: PATCH (apresentação do envelope do aculta_mailer; sem componente novo, sem cor nova).
+
+- `MailEnvelopeHooks`: `show_footer` é falso quando o e-mail tem layout de marca (o rodapé já vem do corpo). Sem layout, o rodapé fixo da associação continua.
+- `aculta-mailer-wrap.html.twig`: o rodapé fixo só é desenhado quando `show_footer`. Tokens claro e escuro inalterados.
+
 ## 0.6.0-dev.140 — espaçamento para documentos H5P — 2026-10-21
 
 Classificação: PATCH (mapeia um token semântico do Portal para uma primitive Bootstrap existente).

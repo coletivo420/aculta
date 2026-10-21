@@ -53,6 +53,8 @@ final class MailEnvelopeHooks {
       $dark[$role] = $tokens['dark'][$token] ?? $light[$role];
     }
     $variables['mail_colors'] = ['light' => $light, 'dark' => $dark];
+    // Com layout do aculta_mailer, o rodapé da marca já está no corpo: o envelope não repete o rodapé.
+    $variables['show_footer'] = empty($variables['layout']);
   }
 
   /**
