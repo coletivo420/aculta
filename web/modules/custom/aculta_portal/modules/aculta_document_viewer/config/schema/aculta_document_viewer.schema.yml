@@ -1,0 +1,61 @@
+aculta_document_viewer.settings:
+  type: config_object
+  label: 'Configurações do leitor PDF ACULTA'
+  mapping:
+    show_download:
+      type: boolean
+      label: 'Exibir link de download'
+    show_print:
+      type: boolean
+      label: 'Exibir impressão'
+    show_zoom:
+      type: boolean
+      label: 'Exibir controles de zoom'
+    show_rotation:
+      type: boolean
+      label: 'Exibir controle de rotação'
+    show_outline:
+      type: boolean
+      label: 'Exibir contorno do PDF'
+    show_page_thumbnails:
+      type: boolean
+      label: 'Exibir miniaturas de páginas'
+    show_fullscreen:
+      type: boolean
+      label: 'Exibir tela cheia'
+    show_search:
+      type: boolean
+      label: 'Exibir busca'
+    show_page_navigation:
+      type: boolean
+      label: 'Exibir navegação de páginas'
+    show_full_viewer:
+      type: boolean
+      label: 'Exibir link para o leitor completo'
+    default_zoom:
+      type: string
+      label: 'Zoom inicial'
+    default_scroll:
+      type: string
+      label: 'Rolagem inicial'
+    double_page:
+      type: boolean
+      label: 'Ativar página dupla'
+    double_page_mobile:
+      type: boolean
+      label: 'Manter página dupla em telas móveis'
+    language:
+      type: string
+      label: 'Idioma do leitor'
+    embed_title:
+      type: label
+      label: 'Título acessível'
+    link_text:
+      type: label
+      label: 'Texto do link'
+    link_target:
+      type: string
+      label: 'Destino do link'
+    css_class:
+      type: string
+      label: 'Classe CSS adicional'

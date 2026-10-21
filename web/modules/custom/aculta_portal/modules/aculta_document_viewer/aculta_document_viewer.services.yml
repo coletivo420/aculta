@@ -1,0 +1,17 @@
+services:
+  aculta_document_viewer.csp_report_request_guard:
+    class: Drupal\aculta_document_viewer\EventSubscriber\CspReportRequestGuardSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  aculta_document_viewer.builder:
+    class: Drupal\aculta_document_viewer\Pdf\PdfViewerBuilder
+    arguments: ['@file_url_generator', '@url_generator', '@current_user', '@aculta_document_viewer.thumbnail_builder', '@config.factory']
+
+  aculta_document_viewer.thumbnail_builder:
+    class: Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilder
+    arguments: ['@?pdfpreview.generator', '@config.factory', '@aculta_image.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@file_system', '@logger.channel.aculta_document_viewer', '@?Drupal\imagemagick\ImagemagickExecManagerInterface']
+
+  logger.channel.aculta_document_viewer:
+    parent: logger.channel_base
+    arguments: ['aculta_document_viewer']
