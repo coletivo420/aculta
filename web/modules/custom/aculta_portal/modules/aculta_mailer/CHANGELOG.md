@@ -1,3 +1,10 @@
+## 0.1.0-dev.69 (correção de fronteira, sem mudança de versão)
+
+- Prévia do modelo (`MailTemplateForm`) e gráfico de tendência (`MailDashboardController`) deixam de usar classes de design e passam a usar os atributos neutros `data-aculta-mailer-preview` e `data-aculta-mailer-tendencia`. Nenhuma regra CSS dependia das classes antigas, então a aparência não muda.
+- Gate `validate-module-theme-boundary.php`: PASS (2123 verificações; 0 classes de design no módulo).
+- Testes: Unit 154/310 OK; Kernel 41/189 OK (banco `aculta_simpletest`).
+- Versão mantida: a tabela do README raiz registra `0.1.0-dev.69`; subir a versão exige regenerar a tabela junto com as edições de outros componentes.
+
 ## 0.1.0-dev.69 — formato de e-mail unificado — 2026-10-22
 
 - O corpo HTML do modelo usa `email_html` (Aculta Email), no lugar de `aculta_email`, que foi removido na unificação dos formatos. Constante `MailTemplate::BODY_FORMAT_HTML`.

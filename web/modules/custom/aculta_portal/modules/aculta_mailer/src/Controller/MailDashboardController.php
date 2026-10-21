@@ -121,7 +121,7 @@ final class MailDashboardController extends ControllerBase {
       ],
       'tendencia' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-mailer-tendencia']],
+        '#attributes' => ['data-aculta-mailer-tendencia' => 'grafico'],
         'grafico' => [
           '#markup' => Markup::create(MailTrendChart::svg($labels, $series, (string) $this->t('Envios por dia nos últimos @days dias', ['@days' => $days]))),
         ],
