@@ -193,7 +193,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação (`3649a742`), spike (`2c2e1b9c`), renderizador isolado (`bd43fdba`) e formatter integrado com teste no Runtime (`c8bef68c`). Pendente: ativar o formatter nos displays de produção (decisão do responsável) |
 | 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador e no Runtime (XLSX e ODS). Pendentes: isolamento (dev.10), estilo ACULTA420 (dev.8) |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | XLS, ODS e CSV implementados; pt-BR; modo Tabela (`15908959`). Runtime testado com XLSX e ODS; CSV fora do campo de documentos do Runtime |
-| 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
+| 0.1.0-dev.8 | Interface unificada | Título, tipo, barra de zoom e tela cheia, status acessível, cabeçalho e modos com ACULTA420 | Módulo 0.1.0-dev.7 e tema 0.6.0-dev.145; Runtime testado com DOCX e XLSX (zoom, tela cheia por clique real, título escapado). Pendente: revisão em Firefox e viewports, e o PDF segue com a barra própria |
 | 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
 | 0.1.0-dev.10 | Segurança | Arquivos maliciosos, privados, limites e isolamento | Não iniciada |
 | 0.1.0-rc.1 | Homologação | Migração, regressão, acessibilidade | Não iniciada |
@@ -305,3 +305,12 @@ Pendências dessa fase:
 - Browser (Chromium na sessão X11, fixtures gerados com SheetJS 0.20.3): XLS e ODS com valores em pt-BR, percentual, data, booleanos, erro e cabeçalhos no modo Tabela; CSV lido como texto (`25.6%` continua `25.6%`).
 - Runtime: XLSX de três abas e ODS, pelo formatter de planilha no modo full de `node.document`. Display restaurado ao PDF; fixtures removidos.
 - Limites: CSV não passa na validação de extensão do campo de documentos do Runtime, então não foi testado lá; o botão de modo e o seletor ainda não têm estilo ACULTA420; o SheetJS roda sem isolamento (dev.10).
+
+
+## 0.1.0-dev.8 — interface unificada (evidência)
+
+- Módulo `aculta_document_viewer` 0.1.0-dev.7: cabeçalho (tipo e título escapados), barra com zoom em passos fixos, tela cheia e status acessível (`DocumentViewerChrome` e `js/document-chrome.mjs`). Os leitores DOCX e planilhas usam a mesma barra. O PDF não foi alterado.
+- Módulo sem classes de design: a marcação usa `data-aculta-document-part` e `data-aculta-document-control`, estilizados pelo tema em `css/components/document-viewer.css`, tema 0.6.0-dev.145.
+- Gates: fronteira módulo-tema e mapa módulo-tema sem falha nesse módulo; atributos documentados em `TOKENS-E-ATRIBUTOS.md`; gate de fundação do tema atualizado (369 checks). Design foundations falha em três checks do envelope de e-mail do Mailer, já registrados antes desta etapa.
+- Testes: Unit 53/53 OK. Runtime (Chromium X11): DOCX e XLSX públicos com título contendo HTML; título como texto; zoom 100% para 115%; tela cheia por clique real; status oculto ao concluir; modos Planilha e Tabela presentes. Fixtures e display restaurados.
+- Pendente: revisão visual em Firefox e em 390/768/1024 px; o PDF segue com a barra própria, conforme o plano.
