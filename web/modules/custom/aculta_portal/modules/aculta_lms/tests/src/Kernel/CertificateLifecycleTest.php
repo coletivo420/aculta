@@ -131,6 +131,12 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertSame(0, $public['#cache']['max-age']);
     self::assertContains('aculta_lms_certificate:' . $second->id(), $public['#cache']['tags']);
 
+    $student->block();
+    $student->save();
+    $after_block = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('Certificado válido', (string) $after_block['status']['#plain_text'], 'Disabling the student account does not invalidate an immutable issued certificate.');
+    self::assertSame('certificate-student', $after_block['name']['#plain_text']);
+
     $manager->revoke($second, $issuer, 'Correção solicitada pela equipe');
     self::assertSame('revoked', $manager->loadByCode($second->get('verification_code')->value)->get('state')->value);
     self::assertSame('Correção solicitada pela equipe', $second->get('revocation_reason')->value);

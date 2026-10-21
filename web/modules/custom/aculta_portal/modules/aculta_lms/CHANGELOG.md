@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.32 — preservar certificado com conta desativada — 2026-10-21
+
+- Kernel confirma que bloquear a conta do estudante não revoga nem altera o
+  snapshot público de certificado; a revogação explícita continua disponível.
+- `CertificateLifecycleTest`: 3 testes / 77 assertions PASS; 38 depreciações
+  upstream de Core/Group/LMS/Entity Print.
+
 ## 0.1.0-dev.31 — cobrir contas bloqueadas no painel da turma — 2026-10-21
 
 - O Kernel do painel inclui uma matrícula de conta bloqueada e confirma que ela

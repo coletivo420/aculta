@@ -258,7 +258,9 @@ PASS. Verificação de certificado, render do snapshot e painéis agora preserva
 `ClassDashboardKernelTest`: 1/43 e `LearningDashboardControllerTest`: 1/4
 assertions PASS. O painel exclui contas bloqueadas e mantém a dependência da
 entidade User para invalidar a contagem se a conta voltar a ser ativa; o Kernel
-cobre esse caso. Core documenta que `applyTo()` define diretamente o metadata
+cobre esse caso. `CertificateLifecycleTest`: 3/77 confirma que o certificado
+continua verificável quando a conta do estudante é bloqueada, além do teste
+existente após exclusão da conta. Core documenta que `applyTo()` define diretamente o metadata
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
