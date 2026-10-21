@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.27 — cobrir isolamento entre respostas de estudantes — 2026-10-21
+
+- O Kernel confirma que outro estudante, ainda que matriculado no mesmo curso,
+  não pode baixar o arquivo privado de uma resposta alheia. O dono matriculado,
+  a revogação de matrícula e o educador autorizado seguem cobertos.
+- `AttemptArchiveLifecycleTest`: 8 testes / 324 assertions PASS; 42
+  depreciações upstream.
+
 ## 0.1.0-dev.26 — proteger fuso horário de prazos — 2026-10-21
 
 - Adiciona cobertura Unit para garantir que o formulário de prazo interprete a

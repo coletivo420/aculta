@@ -239,9 +239,12 @@ integrações específicas, sem CMS paralelo.
 **F16 — hardening inicial em curso.** A reemissão de certificados agora usa o
 lock do Core por UUID da conclusão para impedir duas versões ativas em
 requisições concorrentes; uma segunda emissão enquanto o lock está ocupado
-recebe conflito sem persistir. Kernel cobre esse caminho. Permanecem a matriz
-de acesso/cache, revisão de upload/download e revogação, acessibilidade e gates
-completos da fase.
+recebe conflito sem persistir. Em arquivos de entrega, o Kernel confirma que
+um estudante matriculado não baixa a resposta de outro estudante; o dono
+matriculado tem acesso, perde-o após revogação e um educador com `grade
+students` continua autorizado. `AttemptArchiveLifecycleTest`: 8 testes / 324
+assertions PASS. O conjunto ainda não completa a matriz de acesso/cache,
+acessibilidade e os gates da fase.
 
 ## Ordem, commits e status
 

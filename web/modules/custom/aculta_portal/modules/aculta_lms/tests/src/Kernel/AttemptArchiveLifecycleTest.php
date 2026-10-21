@@ -273,9 +273,12 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $teacher_role->save();
 
     $course->addMember($student);
+    $other_student = $this->createUser();
+    $course->addMember($other_student);
     $this->setCurrentUser($student);
     $access_check = new UploadedAnswerAccessCheck();
     self::assertTrue($access_check->access($answer, $student)->isAllowed(), 'An enrolled answer owner can download their file.');
+    self::assertFalse($access_check->access($answer, $other_student)->isAllowed(), 'Another enrolled student cannot download a peer submission.');
 
     $course->removeMember($student);
     self::assertFalse($access_check->access($answer, $student)->isAllowed(), 'Revoking membership immediately blocks the answer owner.');

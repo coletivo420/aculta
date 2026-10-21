@@ -216,12 +216,15 @@ assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
-Suítes completas em 2026-10-21 antes do novo teste de prazo: Unit 36
+Suítes completas em 2026-10-21 antes dos testes recentes: Unit 36
 testes/161 assertions; Kernel MariaDB 18 testes/509 assertions. O Kernel
 registrou 90 depreciações de Core/contrib e a Unit, 5 avisos do PHPUnit.
 
 `ClassActivityDeadlineFormTest`: 2 testes/8 assertions PASS para fuso da conta e
 fallback UTC. O total Unit passa a 38 testes/169 assertions.
+O Kernel de entrega privada `AttemptArchiveLifecycleTest` agora tem 8
+testes/324 assertions PASS; a suíte Kernel total fica em 18 testes/511
+assertions. As 42 depreciações nesse Kernel vêm de Core/contrib.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
