@@ -2,7 +2,7 @@
 
 - `aculta_forum_post` agora só é criado no purpose `forum` com permissão dedicada; leitura e edição de autoria exigem tópico público publicado no purpose correto e acesso de leitura ao Node hospedeiro. Administração continua passando pelo handler da entidade no painel `main`; transições seguem as permissões Core de Content Moderation.
 - `email_confirmed` recebe criar/reenviar e editar próprio post publicado; `content_editor` recebe administração e transições de moderação. A janela de edição não concede permissão base e cobre padrão de 10 minutos, vencimento, `0` e exceção administrativa.
-- Unit access: 1 teste / 5 assertions; Unit da janela: 2 / 22. Kernel do workflow: 1 / 35; Kernel da política compartilhada: 8 / 96. PHPCS PASS. PHP CLI 8.4.26 (PHP 8.5 pendente). Runtime testado após `drush cr`: home e rotas Growroom420 HTTP 200; Conta 302 esperado; nenhum erro novo no log nas verificações após o rebuild; erros anteriores a 16:45 permanecem no histórico. Nenhum dado ou configuração do Runtime alterados.
+- Unit access: 2 testes / 9 assertions; Unit da janela: 2 / 22. Kernel do workflow: 1 / 35; Kernel da política compartilhada: 8 / 96. PHPCS PASS. PHP CLI 8.4.26 (PHP 8.5 pendente). Runtime testado após `drush cr`: home e rotas Growroom420 HTTP 200; Conta 302 esperado; nenhum erro novo no log nas verificações após o rebuild; erros anteriores a 16:45 permanecem no histórico. Nenhum dado ou configuração do Runtime alterados.
 
 ## Revisão visual das listas públicas de atividade (2026-10-21)
 

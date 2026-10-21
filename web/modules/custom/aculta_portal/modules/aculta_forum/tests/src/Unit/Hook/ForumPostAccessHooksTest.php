@@ -8,9 +8,14 @@ use Drupal\aculta_forum\Hook\ForumPostAccessHooks;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\node\Entity\Node;
+use Drupal\user\EntityOwnerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,6 +45,23 @@ final class ForumPostAccessHooksTest extends TestCase {
   }
 
   /**
+   * Public owner access requires the matching published Forum context.
+   */
+  public function testOwnerReadAndUpdateAccessIsContextual(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn(17);
+    $account->method('hasPermission')->willReturn(FALSE);
+    $hooks = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $post = $this->post($this->topic(TRUE), 17);
+
+    self::assertTrue($hooks->entityAccess($post, 'update', $account)?->isAllowed());
+    self::assertTrue($hooks->entityAccess($post, 'update', $this->account(18))?->isNeutral());
+    $wrongPurpose = new ForumPostAccessHooks($this->domainPurposeManager('aculta_org'));
+    self::assertTrue($wrongPurpose->entityAccess($post, 'update', $account)?->isForbidden());
+    self::assertTrue($hooks->entityAccess($this->post($this->topic(FALSE), 17), 'update', $account)?->isForbidden());
+  }
+
+  /**
    * Builds the purpose manager around an active Domain ID.
    */
   private function domainPurposeManager(string $domainId): DomainPurposeManager {
@@ -54,6 +76,73 @@ final class ForumPostAccessHooksTest extends TestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
+  }
+
+  /**
+   * Builds a Node topic in the Forum purpose.
+   */
+  private function topic(bool $published): Node {
+    $topic = $this->createMock(Node::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $topic->method('hasField')->with('field_domain_source')->willReturn(TRUE);
+    $topic->method('get')->with('field_domain_source')->willReturn(new ForumPostAccessFieldList('forum_aculta_org'));
+    $topic->method('isPublished')->willReturn($published);
+    $topic->method('access')->willReturn(AccessResult::allowed());
+    $topic->method('getCacheTags')->willReturn([]);
+    $topic->method('getCacheContexts')->willReturn([]);
+    $topic->method('getCacheMaxAge')->willReturn(-1);
+    return $topic;
+  }
+
+  /**
+   * Builds a post entity with a contextual topic and owner.
+   */
+  private function post(Node $topic, int $ownerId): FieldableEntityInterface&EntityOwnerInterface {
+    $post = $this->createMockForIntersectionOfInterfaces([FieldableEntityInterface::class, EntityOwnerInterface::class]);
+    $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
+    $post->method('hasField')->with('topic')->willReturn(TRUE);
+    $post->method('get')->with('topic')->willReturn(new ForumPostAccessFieldList($topic));
+    $post->method('getOwnerId')->willReturn($ownerId);
+    $post->method('getCacheTags')->willReturn([]);
+    $post->method('getCacheContexts')->willReturn([]);
+    $post->method('getCacheMaxAge')->willReturn(-1);
+    return $post;
+  }
+
+  /**
+   * Builds an account with the requested ID and permissions.
+   */
+  private function account(int $uid): AccountInterface {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn($uid);
+    $account->method('hasPermission')->willReturn(FALSE);
+    return $account;
+  }
+
+}
+
+/**
+ * Field item list stand-in exposing a target entity or ID.
+ */
+final class ForumPostAccessFieldList extends FieldItemList {
+
+  public function __construct(private readonly mixed $target) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __get($property_name): mixed {
+    if ($property_name === 'entity' || $property_name === 'target_id') {
+      return $this->target;
+    }
+    return parent::__get($property_name);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEmpty(): bool {
+    return FALSE;
   }
 
 }
