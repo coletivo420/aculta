@@ -1,3 +1,11 @@
+## `0.1.0-dev.127` — produtor de eventos de atividade para estatísticas — 2026-10-21
+
+- `ForumActivityEvent` (`aculta_forum.topic_created` e `aculta_forum.comment_created`) é disparado na criação de tópico (`aculta_forum_topic`) e de comentário em tópico do Fórum. Edição, movimentação e exclusão não emitem evento; comentários de publicações, LMS e Wiki são ignorados.
+- O evento carrega só identificador e instante. Nenhum autor, texto ou e-mail.
+- `aculta_statistics` assina os nomes e grava `forum.topics.created` e `forum.comments.created` (ADR-0004).
+- Testes: `ForumActivityEventHooksTest` (4 casos) passa. A suíte Unit do Fórum tem 1 falha em `ForumSearchConfigTest`, que não é tocado por esta entrega e precisa de investigação separada.
+- Pendente: validar os eventos no Runtime com um tópico e um comentário reais; decidir se o painel do Fórum passa a ler o agregado.
+
 ## `0.1.0-dev.126` — verificar permalink canônico após mover comentário — 2026-10-20
 
 - O Kernel verifica que, depois de mover uma árvore, o permalink gerado pelo

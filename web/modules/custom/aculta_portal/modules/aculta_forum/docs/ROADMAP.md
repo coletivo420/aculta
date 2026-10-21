@@ -181,6 +181,17 @@ Revista fica em
 `/painel-administrativo/wiki/forum` quando seu adapter existir. A seção do
 Fórum geral não incorpora opções desses contextos.
 
+## Produtores de eventos para estatísticas (ADR-0004 do aculta_statistics)
+
+O `aculta_statistics` é a central de estatísticas. Cada módulo produtor emite um evento de atividade e o
+statistics assina. O produtor não conhece o statistics e não envia dado pessoal.
+
+- Feito (0.1.0-dev.127): `ForumActivityEvent` para tópico e comentário criados (`aculta_forum.topic_created`,
+  `aculta_forum.comment_created`). Consumidor: `forum.topics.created` e `forum.comments.created`.
+- Pendente: validação dos eventos no Runtime com conteúdo real.
+- Pendente: série temporal no painel do Fórum, lendo do `aculta_statistics` (bloqueio resolvido com o
+  produtor acima; falta trocar a leitura).
+
 ## `0.1.0-dev.1` — Auditoria e fundação documental (entregue)
 
 - Estado GitHub, branches e PRs; base `main` verificada.
