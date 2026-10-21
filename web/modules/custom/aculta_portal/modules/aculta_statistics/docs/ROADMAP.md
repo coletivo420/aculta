@@ -85,10 +85,9 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 
 `aculta_statistics` é a única fonte e central de estatísticas agregadas. Ordem:
 
-1. **Migração de links (pré-requisito da remoção):** copiar `aculta_links_stat_daily` para
-   `links.link.clicks` (dimensão = destino), conferir totais por dia, manter o registro de origem
-   do `aculta_links`. Só depois, com autorização e backup verificado: remover a tabela, a fila e o
-   painel próprios.
+1. **Links (concluído em 0.4.0-dev.31 do aculta_links):** cliques em `links.link.clicks`; tabela
+   `aculta_links_stat_daily`, fila e cron próprios removidos. Sem migração (banco de teste, sem retenção).
+   Pendente: habilitar este módulo no Runtime antes de rodar a atualização 10008 do aculta_links.
 2. **Fórum:** séries temporais em `forum.*`; a contagem atual passa a ler o `aculta_statistics`.
 3. **E-mail (0.5.0):** resumo semanal e painéis leem `email.*`; o `MailSummary` deixa de ser agregado próprio.
 4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora.
@@ -106,7 +105,7 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 
 ## 0.7.0 — Integrações comunitárias
 
-- Links (convergir com `aculta_links_stat_daily`).
+- Links: convergência concluída antecipadamente (ver Centralização, abaixo).
 - QR dinâmico (decisão sobre estático).
 - Fórum: série temporal de comentários.
 - Wiki: leitura, se a decisão for tomada.

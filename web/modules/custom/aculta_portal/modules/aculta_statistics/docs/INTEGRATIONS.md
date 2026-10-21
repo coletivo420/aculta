@@ -15,7 +15,7 @@ banco nesta fase (fase 0.1.0 não executa migração).
 | Wiki (verbetes, revisões) | Conteúdo `wiki_entry` no domínio `wiki420` | Statistics, via provedor `WikiProvider` |
 | LMS (matrículas, progresso, conclusões) | `aculta_lms` + `lms` + `group` | Statistics, via provedor `LmsProvider` |
 | E-mail | `aculta_mailer` (`aculta_mail_log`) | Statistics, via provedor `EmailProvider` |
-| Links | `aculta_links` (`aculta_links_stat_daily`) | Statistics, após convergência |
+| Links | `aculta_links` (cliques via `links.link.clicks`) | Statistics (convergido em 0.4.0-dev.31 do aculta_links) |
 | Comércio | Commerce | Statistics, via provedor `CommerceProvider` |
 
 Consequência: o módulo que produz o dado não passa a ter painel próprio para
@@ -124,7 +124,7 @@ o painel de turma do LMS), com as mesmas permissões.
 
 ## Links e QR Codes
 
-- **Links:** reutilizar `aculta_links_stat_daily`; retenção de 90 dias.
+- **Links:** cliques gravados em `links.link.clicks` (dimensão = destino) pelo `aculta_links`, que virou fachada sobre o `aculta_statistics`. A tabela própria `aculta_links_stat_daily` foi removida. Retenção de 90 dias.
 - **QR:** só o dinâmico pode ser medido. O estático não tem registro por
   design (`aculta_qrcode/README.md`). Mudar isso exige decisão do responsável.
 
@@ -155,7 +155,7 @@ o painel de turma do LMS), com as mesmas permissões.
 - **QR estático:** só QRs novos passam por rota medida. QRs já impressos seguem
   sem medição, apontando ao destino direto. A medição nova depende de a rota de
   redirecionamento do QR estático ser criada, o que altera a geração do QR (fase 0.7.0).
-- **Links:** `aculta_statistics` assume o agregado de `aculta_links` na fase 0.7.0; `aculta_links` vira provedor.
+- **Links:** convergência concluída antecipadamente (ADR-0004): `aculta_links` grava no `aculta_statistics` e não mantém agregado próprio.
 - **Wiki (leitura):** contador próprio no `aculta_statistics`, métrica
   `wiki.entries.read`, dimensão = identificador do verbete, agregado diário, sem
   IP nem usuário, retenção de 90 dias. Viabilidade verificada: visitas servidas do

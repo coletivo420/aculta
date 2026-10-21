@@ -68,6 +68,10 @@ até o módulo ser ativado.
   do `aculta_mail_log` (dia de fora não entra; reconciliar duas vezes não soma; entrega tardia move
   de aceito para entregue sem duplicar).
 
+### Centralização (ADR-0004, aplicada junto)
+- `aculta_links` (0.4.0-dev.31) grava cliques em `links.link.clicks` e lê os totais daqui; a tabela
+  `aculta_links_stat_daily`, a fila e o cron próprios foram removidos. Sem migração (banco de teste).
+
 ### Não feito
 - Devolução `hard`/`soft` e `email.quota.reached`.
 - Conector SMTP2GO.
