@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.53 — validar painel por papel de turma — 2026-10-21
+
+- O Kernel do painel de turma usa o grant `grade students` no papel Group do
+  educador em vez de permissão administrativa global e confirma que estudante
+  não obtém os agregados. Isso cobre a autorização contextual prevista na
+  matriz F16. `ClassDashboardKernelTest` passou com 1 teste / 43 assertions;
+  Kernel combinado LMS/Messenger revalidado: 21 testes / 646
+  assertions PASS; depreciações upstream registradas.
+
 ## 0.1.0-dev.52 — cobrir estados de pagamento para matrícula — 2026-10-21
 
 - `CourseOrderEnrollmentManagerTest` cobre pedido gratuito concluído, pagamento

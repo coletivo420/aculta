@@ -177,6 +177,12 @@ passou com 72 testes / 368 assertions; Kernel permanece 21 / 646. O novo teste
 Unit valida pedido grátis concluído, pedido incompleto e balanços de pagamentos
 concluídos, parcialmente estornados e estornados, sem invocar gateway remoto.
 
+Após ampliar em 2026-10-21 a matriz de autorização do painel F16, o Kernel focal
+de turma passou com 1 teste / 43 assertions: educador com grant `grade students`
+no Group acessa os agregados e estudante não os recebe. Regressão Kernel
+combinada reexecutada: 21 testes / 646 assertions PASS, com 92 depreciações
+upstream.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

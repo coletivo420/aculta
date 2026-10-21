@@ -15,20 +15,25 @@ use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Verifies LMS class dashboard counts remain scoped to current class members. */
+/**
+ * Verifies LMS class dashboard counts remain scoped to current class members. */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class ClassDashboardKernelTest extends KernelTestBase {
 
   use UserCreationTrait;
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
     'text', 'lms', 'lms_classes', 'aculta_lms',
   ];
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['group', 'lms', 'lms_classes']);
@@ -41,9 +46,12 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->installEntitySchema('lms_course_status');
   }
 
+  /**
+   * Checks contextual educator access and student denial for class metrics.
+   */
   public function testEducatorDashboardAggregatesOnlyCurrentClassMembers(): void {
     $owner = $this->createUser(['administer lms']);
-    $educator = $this->createUser(['administer lms']);
+    $educator = $this->createUser();
     $memberPending = $this->createUser();
     $memberPassed = $this->createUser();
     $memberBlocked = $this->createUser();
@@ -64,6 +72,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
       'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
       'permissions' => ['grade students', 'take course'],
     ])->save();
+    $course->addMember($educator, ['group_roles' => ['lms_course-test_teacher']]);
     $course->addMember($teacher, ['group_roles' => ['lms_course-test_teacher']]);
     $class = Group::create([
       'type' => 'lms_class',
@@ -84,6 +93,8 @@ final class ClassDashboardKernelTest extends KernelTestBase {
 
     $manager = $this->container->get('aculta_lms.learning_dashboard');
     self::assertTrue($manager->classDashboardAccess($class, $educator)->isAllowed());
+    self::assertFalse($manager->classDashboardAccess($class, $memberPending)->isAllowed(), 'A student cannot read educator aggregates.');
+    self::assertNull($manager->classDashboard($class, $memberPending));
     $metrics = $manager->classDashboard(
       $class,
       $educator,
@@ -110,6 +121,9 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
   }
 
+  /**
+   * Creates a course status with the requested state.
+   */
   private function createStatus(Group $course, UserInterface $student, string $status): void {
     CourseStatus::create([
       CourseStatusInterface::COURSE_FIELD => $course->id(),

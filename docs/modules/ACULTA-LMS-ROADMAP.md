@@ -352,6 +352,11 @@ antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
+O painel de turma agora também é testado com `grade students` concedido no
+curso pelo Group, sem grant administrativo global; o mesmo teste prova que
+um estudante não lê os agregados. `ClassDashboardKernelTest`: 1/43 assertions
+PASS (39 depreciações upstream); Kernel combinado LMS/Messenger: 21/646 PASS.
+
 Em 0.1.0-dev.44, a fixture de instalação passou a criar uma entidade User real
 para o access de histórico que valida status ativo via `AccountUserLoader`.
 Kernel completo do `aculta_lms`: 19 testes / 594 assertions PASS no MariaDB
