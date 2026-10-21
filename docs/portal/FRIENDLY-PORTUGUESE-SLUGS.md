@@ -441,3 +441,5 @@ Verificação após cada deploy: `/carrinho` 200 e `/cart` 404 no host principal
 baseline DT-P20 continua cobrindo as rotas dos módulos habilitados e só pode diminuir. Ao habilitar um
 módulo contrib com rota em caminho inglês ou numérico, o gate passa a falhar até que ele receba um
 caminho em português por override do Portal.
+
+- Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.
