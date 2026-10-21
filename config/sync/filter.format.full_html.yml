@@ -6,7 +6,7 @@ dependencies:
     - editor
 name: 'Full HTML'
 format: full_html
-weight: 2
+weight: -6
 filters:
   editor_file_reference:
     id: editor_file_reference
@@ -38,4 +38,3 @@ filters:
     status: true
     weight: 15
     settings: {  }
-

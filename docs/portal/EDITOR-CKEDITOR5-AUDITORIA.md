@@ -195,3 +195,6 @@ Decisão do responsável: os formatos antigos recebem as funções do ACULTA e o
 Campos de conteúdo (página, documento, atividade, projeto, wiki) não listam mais os formatos removidos nem o `email_html`.
 Permissão `use text format restricted_html` revogada do papel anônimo.
 - **Ajuste posterior (2026-10-22):** o Editorial recebeu o filtro de HTML. O HTML completo passou para o tipo `aculta_adm` (formato `full_html`, sem restrição), criado para uso da administração.
+- **Restrição do tipo aculta_adm (verificada):** só o papel `administrator` tem criar, editar, excluir e usar o formato `full_html`.
+- **Drift do full_html (resolvido):** a configuração ativa e o arquivo exportado divergiam no `weight` do formato. O arquivo foi alinhado ao export do Drupal, e a tradução pt-br (`HTML completo`) foi aplicada pela API de idioma.
+- **Papel estudante (resolvido):** o Drupal removeu a única permissão, que era de um módulo inexistente (`view aculta restricted forum estudante`), e recalculou a dependência do papel. O papel exportado não tem permissões funcionais, então nenhum acesso muda.
