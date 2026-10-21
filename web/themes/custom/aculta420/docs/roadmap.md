@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.133 | Contraste do banner corrigido (superfície e texto de tokens, 12,4:1 no claro e 14,5:1 no escuro); revisão visual no claro feita, escuro e clique pendentes | Foundation, design foundations, SDC schema e shell contract PASS | Ajuste do `consent-banner` sem mudança de comportamento. |
 | 0.6.0-dev.132 | Banner de consentimento para visitante anônimo (`consent-banner`), oculto até a decisão | Foundation, SDC schema e fronteira PASS; revisão visual responsiva/acessível e teste com a opção ligada pendentes; estado Dev | Comportamento no módulo `aculta_statistics` (`consent_banner.enabled`, desligado por padrão); mapa em `MAPA-MODULO-TEMA.md`. |
 | 0.6.0-dev.131 | Componentes experimentais do QR Code dinâmico (`qr-preview`, `qr-download`) | SDC schema e Foundation PASS; revisão visual responsiva/acessível pendente; estado Dev | Consumidor público ainda não ligado; o Portal prepara URL e texto |
 | 0.6.0-dev.130 | Identidade pública opcional do proprietário em micropáginas Links | SDC schema e revisão visual responsiva/acessível pendentes; estado Dev | Slot neutro renderizado pelo tema; privacidade e dados preparados pelo Portal |

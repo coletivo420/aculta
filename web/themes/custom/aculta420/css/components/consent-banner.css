@@ -1,4 +1,4 @@
-/* Banner de consentimento (componente consent-banner). Tokens semânticos; sem cor fixa. */
+/* Banner de consentimento (componente consent-banner). Superfície e texto de tokens, com contraste nos dois modos. */
 .aculta-consent {
   position: fixed;
   inset-inline: 0;
@@ -7,9 +7,9 @@
   display: grid;
   gap: 0.5rem;
   padding: 1rem;
-  background: var(--aculta-dialog-surface);
-  color: var(--aculta-dialog-text);
-  border-top: 1px solid var(--aculta-border-default);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  border-top: 1px solid var(--aculta-border-strong);
   box-shadow: var(--aculta-shadow-raised);
 }
 
@@ -35,7 +35,8 @@
 }
 
 .aculta-consent__link {
-  color: var(--aculta-link);
+  color: var(--aculta-text-primary);
+  text-decoration: underline;
 }
 
 .aculta-consent button:focus-visible,

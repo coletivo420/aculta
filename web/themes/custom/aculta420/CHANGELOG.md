@@ -1,3 +1,10 @@
+## 0.6.0-dev.133 — contraste do banner de consentimento corrigido — 2026-10-20
+
+- O banner usa superfície `--aculta-surface-raised` e texto `--aculta-text-primary` (tokens com versão para modo escuro). O fundo verde anterior dava 3,34:1 para texto branco; agora o texto tem 12,4:1 no claro e 14,5:1 no escuro, e os botões 11,0:1.
+- O link de privacidade ficou sublinhado, para não depender só da cor.
+- Revisão visual feita no Firefox headless em 390 px e 1270 px (modo claro). Captura do modo escuro não obtida: o perfil de teste não aplicou o tema escuro. O contraste do escuro foi calculado a partir dos tokens. Teste de clique (aceitar/recusar) e leitor de tela continuam pendentes.
+- Gate de versão de fundação (`validate-aculta420-foundation.php`) atualizado para `0.6.0-dev.133`. Ele estava com `.131` desde o commit `1ac91b22`, que avançou o tema sem atualizá-lo.
+
 ## 0.6.0-dev.132 — banner de consentimento para visitante anônimo — 2026-10-20
 
 - Novo SDC `feedback/consent-banner`: oculto por padrão, marcador `data-portal-ui="consent-banner"`, botões aceitar e recusar e link de privacidade. Estilos em `css/components/consent-banner.css`, só com tokens semânticos. Incluído em `page.html.twig`.
