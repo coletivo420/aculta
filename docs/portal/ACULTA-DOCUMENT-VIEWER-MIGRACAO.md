@@ -237,3 +237,40 @@ Riscos abertos da estado B:
 - **0.1.0-dev.3:** renomeação, após (a) o dono da frente de `aculta_pdf_viewer` commitar ou separar os arquivos alterados e (b) autorização para migração no Runtime.
 - **0.1.0-dev.4 (fechamento):** renderizar um DOCX público de teste no navegador, com `renderAltChunks: false`, e registrar o resultado.
 - **0.1.0-dev.6 (leitor):** integrar Tabulator Spreadsheet e SheetJS (ver manifestos em `web/libraries/tabulator` e `web/libraries/sheetjs`).
+
+## 0.1.0-dev.5 — spike de isolamento do DOCX (evidência)
+
+Medido no Chromium 155 com a sessão X11 do sistema (`DISPLAY=:0`, janela visível, depuração remota
+via CDP). Servidor de teste local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
+resultados foram idênticos.
+
+| Caso | Sandbox | Renderizou | Script do `altChunk` executou | Acesso ao DOM do pai | Requisição a rastreador externo |
+| --- | --- | --- | --- | --- | --- |
+| DOCX válido | `allow-scripts` | sim | — | `SecurityError` | — |
+| DOCX com `altChunk` (HTML com script) | `allow-scripts` | sim | não | `SecurityError` | — |
+| DOCX com imagem externa | `allow-scripts` | sim | — | `SecurityError` | nenhuma |
+| DOCX com `altChunk` (controle) | `allow-scripts allow-same-origin` | sim | não (renderAltChunks: false) | **alcançado** (`parent.document.title` lido) | — |
+
+Leituras:
+
+- Sem `allow-same-origin`, a página filha fica isolada: não acessa o DOM do pai e não dispara violação de CSP.
+- Com `allow-same-origin` o isolamento acaba: o conteúdo lê o DOM do pai. Isso confirma que essa combinação não serve.
+- A ausência de requisição externa não prova bloqueio por CSP. O docx-preview não busca relações externas; o CSP da página filha (`connect-src 'none'`, `img-src blob: data:`) está aplicado, mas não foi exercitado.
+- Não há evidência de que o `altChunk` não execute quando `renderAltChunks` estiver ligado; o caso não foi testado com ele ligado.
+
+Decisão para o viewer (proposta, a ser implementada):
+
+1. Renderização em `<iframe sandbox="allow-scripts">`, sem `allow-same-origin`, apontando para uma página estática do próprio módulo (`docx-frame.html`), com CSP em `<meta>`: `default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src blob: data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`.
+2. O bootstrap da página filha é arquivo externo (`docx-frame.js`). Script inline é bloqueado pelo CSP, o que é o comportamento desejado.
+3. O pai busca os bytes do DOCX pela URL autorizada (Media/File com as checagens do Drupal) e envia um `ArrayBuffer` com `postMessage`. Só aceita `ready` e `done` de `ev.source === iframe.contentWindow`.
+4. O pai nunca lê o conteúdo da filha; só o status. O conteúdo fica no iframe.
+5. `renderAltChunks: false`, `experimental: false`, e `renderAsync` como única API.
+6. O validador `DocxPackageValidator` roda antes do envio dos bytes ao iframe.
+
+Reprodução: os fixtures e os scripts ficam fora do repositório, no scratchpad da sessão (`isolation/`). O harness é `cdp-run.mjs` (Node 22, CDP na porta de depuração do Chromium).
+
+Pendências dessa fase:
+- Implementar `docx-frame.html` e `docx-frame.js` no módulo, com teste de navegador no próprio Drupal (Runtime, Media real, acesso anônimo e autorizado).
+- Testar o caso `renderAltChunks` ligado, para confirmar que o script não executa.
+- Testar CSP real (não só `<meta>`) com `img-src` de referência externa (requisição bloqueada).
+- Confirmar no Drupal que a URL do arquivo privado passa pela rota do Core com a autorização do Media.
