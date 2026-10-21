@@ -2,6 +2,8 @@ services:
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
     arguments: ['@aculta_portal.domain_purpose']
+  Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks:
+    class: Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
   aculta_forum.attachment_publication:
     class: Drupal\aculta_forum\Attachment\ForumAttachmentPublication
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

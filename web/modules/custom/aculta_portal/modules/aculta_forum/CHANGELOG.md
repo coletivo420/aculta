@@ -1,3 +1,10 @@
+## `0.1.0-dev.137` — preserva autoria histórica em posts revisionáveis
+
+- Adiciona o campo-base revisionável `legacy_author` a `aculta_forum_post`, apontando para `aculta_legado_autor`, sem converter autor histórico em conta Drupal.
+- Unit valida tipo, destino, revisionabilidade, somente leitura e escopo exclusivo da entidade do Fórum.
+- Runtime de teste após `drush cr`: definição do campo carregada, sem tabelas de storage da nova entidade; rotas verificadas responderam 200 e Conta 302 esperado. Nenhum conteúdo ou configuração foi alterado.
+- A migração de conteúdo ainda depende de mapear estado de rejeição, relações de mídia/arquivos, flags, busca e notificações; nenhuma cópia ou exclusão de Comments foi executada.
+
 ## `0.1.0-dev.136` — autoriza criação e acesso contextual a posts revisionáveis
 
 - `aculta_forum_post` agora só é criado no purpose `forum` com permissão dedicada; leitura e edição de autoria exigem tópico público publicado no purpose correto e acesso de leitura ao Node hospedeiro. Administração continua passando pelo handler da entidade no painel `main`; transições seguem as permissões Core de Content Moderation.
