@@ -1,0 +1,3 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+next_phase: Serviço compartilhado de geração usado pelo `aculta_links`; componente está na configuração para ativação; validar Runtime e completar preview/logo conforme roadmap ([roadmap](web/modules/custom/aculta_portal/modules/aculta_qrcode/docs/ROADMAP.md))

@@ -1,0 +1,4 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+next_phase: Validar diálogo e galerias no navegador e em aparelho real antes de RC; validar Runtime em Alpha após deploy ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))
+version_note: "`0.1.0-preRC.4` (marcador histórico)"

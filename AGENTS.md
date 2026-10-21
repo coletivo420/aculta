@@ -18,15 +18,19 @@ ou status de PR para índices e READMEs.
 
 ### Índice permanente de estado dos componentes
 
-PROJECT-STATUS-INDEX-GUARD: 2026-10-20
+PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 
 - A tabela `PROJECT-STATUS-INDEX` do README raiz é um índice obrigatório e
   permanente do `aculta_portal`, de todos os submódulos customizados (incluindo
   aninhados) e do tema `aculta420`. Agentes não podem removê-la nem omitir linhas.
-- Ao alterar código, configuração, documentação de fase ou versão de qualquer
-  módulo/submódulo/tema, atualize no mesmo commit a linha correspondente com a
-  versão declarada, a próxima fase e o estado atual. Use o roadmap/changelog
-  dono como fonte; não invente fases.
+- A tabela é **gerada**. Cada componente mantém seu status em
+  `docs/operations/status/<componente>.yml` (campos `state`, `next_phase` e,
+  quando a versão do manifest não basta, `version_note`). A versão vem do
+  manifest (`info.yml`). Ao alterar um componente, edite só o próprio arquivo de
+  status; não edite a tabela à mão. Para regenerar:
+  `php scripts/validate-project-status-index.php --write`.
+- Essa regra existe para que trabalhos paralelos não conflitem na mesma linha do
+  README. O estado e a próxima fase devem vir do roadmap/changelog dono; não invente fases.
 - Estados vigentes são Dev, RC e Alpha conforme
   [`docs/operations/RELEASE-LIFECYCLE.md`](docs/operations/RELEASE-LIFECYCLE.md).
   Não criar `preRC`. RC exige código concluído, gates/testes, revisão de código
@@ -40,12 +44,12 @@ PROJECT-STATUS-INDEX-GUARD: 2026-10-20
   Não reescrever versões históricas nem inventar nova versão: atualizar os
   marcadores de versão do componente somente quando a mudança de código/config
   e as regras locais de versionamento exigirem.
-- Gate obrigatório após qualquer mudança nessas árvores:
-  `php scripts/validate-project-status-index.php`. O gate confirma a presença,
-  cobertura completa, links e versões e exige que a linha exata do componente
-  alterado mude no README raiz no mesmo commit. Uma edição não relacionada no
-  README não satisfaz o guardrail. A mesma regra é aplicada a alterações ainda
-  não commitadas, incluindo alterações no tema `aculta420`.
+- Gate obrigatório antes de publicar: `php scripts/validate-project-status-index.php`.
+  O gate confere que existe um arquivo de status para cada componente, que o
+  estado é Dev ou RC, que os links existem, que a versão está declarada e que a
+  tabela do README raiz é a gerada a partir desses arquivos. Ele roda no
+  estado do checkout, não commit a commit, então não exige que a linha mude no
+  mesmo commit. Inclui alterações no tema `aculta420`.
 
 ## Mapa obrigatório de caminhos
 

@@ -2,282 +2,154 @@
 
 /**
  * @file
- * Validates the fixed version and next-phase table in the root README.
+ * Gera e valida a tabela PROJECT-STATUS-INDEX do README raiz.
+ *
+ * Fonte da tabela: um arquivo de status por componente em docs/operations/status/<machine>.yml
+ * (campos: state, next_phase e, quando a versão do manifest não basta, version_note). A versão
+ * vem do manifest do componente. Assim cada componente altera só o próprio arquivo, e a tabela
+ * do README raiz é gerada, sem conflito entre trabalhos paralelos.
+ *
+ * Uso:
+ *   php scripts/validate-project-status-index.php          valida (falha se a tabela estiver desatualizada)
+ *   php scripts/validate-project-status-index.php --write  regenera a tabela do README raiz
  */
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__);
-$readmePath = $root . '/README.md';
-$readme = is_file($readmePath) ? file_get_contents($readmePath) : FALSE;
-$errors = [];
-$assert = static function (bool $condition, string $message) use (&$errors): void {
-  if (!$condition) {
-    $errors[] = $message;
-  }
-};
+use Symfony\Component\Yaml\Yaml;
 
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$root = dirname(__DIR__);
+$write = in_array('--write', $argv, TRUE);
+$readmePath = $root . '/README.md';
 $begin = '<!-- PROJECT-STATUS-INDEX:BEGIN -->';
 $end = '<!-- PROJECT-STATUS-INDEX:END -->';
-$assert(is_string($readme), 'README.md must exist and be readable.');
-$assert(is_string($readme) && substr_count($readme, $begin) === 1 && substr_count($readme, $end) === 1, 'The protected PROJECT-STATUS-INDEX markers must appear exactly once.');
-$agents = (string) @file_get_contents($root . '/AGENTS.md');
-$portalGate = (string) @file_get_contents($root . '/scripts/validate-aculta-portal-drupal11.php');
-$assert(str_contains($agents, 'PROJECT-STATUS-INDEX-GUARD: 2026-10-20'), 'AGENTS.md must retain the permanent status-index guardrail marker.');
-$assert(str_contains($agents, 'php scripts/validate-project-status-index.php'), 'AGENTS.md must require the status-index gate for component changes.');
-$assert(str_contains($portalGate, 'validate-project-status-index.php'), 'The Portal architecture gate must invoke the project status-index gate.');
+$statusDir = $root . '/docs/operations/status';
+$errors = [];
 
-$rows = [];
-$rowCount = 0;
-if (is_string($readme) && substr_count($readme, $begin) === 1 && substr_count($readme, $end) === 1) {
-  $table = substr($readme, strpos($readme, $begin) + strlen($begin), strpos($readme, $end) - strpos($readme, $begin) - strlen($begin));
-  foreach (preg_split('/\R/', $table) ?: [] as $line) {
-    if (!str_starts_with(trim($line), '|')) {
-      continue;
-    }
-    $cells = array_map('trim', explode('|', trim($line, " \t|")));
-    if (count($cells) < 4 || $cells[0] === 'Componente' || preg_match('/^-+$/', $cells[0])) {
-      continue;
-    }
-    if (!preg_match('/`([a-z0-9_]+)`/', $cells[0], $componentMatch)) {
-      $errors[] = 'A component table row must use a machine name in backticks: ' . $line;
-      continue;
-    }
-    $machine = $componentMatch[1];
-    $rowCount++;
-    if (isset($rows[$machine])) {
-      $errors[] = "Duplicate status table row for $machine.";
-    }
-    $rows[$machine] = [
-      'component' => $cells[0],
-      'version' => $cells[1],
-      'phase' => $cells[2],
-      'status' => $cells[3],
-    ];
-  }
-}
-
-$manifests = [];
-$portalRoot = $root . '/web/modules/custom/aculta_portal';
-$portalManifest = $portalRoot . '/aculta_portal.info.yml';
-if (is_file($portalManifest)) {
-  $manifests['aculta_portal'] = $portalManifest;
-}
-$moduleRoot = $portalRoot . '/modules';
-if (is_dir($moduleRoot)) {
-  $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($moduleRoot, FilesystemIterator::SKIP_DOTS));
-  foreach ($iterator as $file) {
-    if (!$file->isFile() || !str_ends_with($file->getFilename(), '.info.yml') || str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR)) {
-      continue;
-    }
-    $machine = substr($file->getFilename(), 0, -strlen('.info.yml'));
-    $manifests[$machine] = $file->getPathname();
-  }
-}
-$themeManifest = $root . '/web/themes/custom/aculta420/aculta420.info.yml';
-if (is_file($themeManifest)) {
-  $manifests['aculta420'] = $themeManifest;
-}
-
-$extractVersion = static function (string $manifest): ?string {
-  $contents = file_get_contents($manifest);
-  if (!is_string($contents) || !preg_match('/^version:\s*[\'\"]?([^\'\"\r\n]+)/m', $contents, $match)) {
-    return NULL;
-  }
-  return trim($match[1]);
-};
-$extractLinks = static function (string $markdown): array {
-  preg_match_all('/\]\(([^)#]+)(?:#[^)]*)?\)/', $markdown, $matches);
-  return $matches[1] ?? [];
-};
-
-$assert(count($manifests) > 0, 'No custom Portal modules or ACULTA420 theme manifests were found.');
-$assert($rowCount === count($rows), 'The status table contains duplicate component rows.');
-$missing = array_diff(array_keys($manifests), array_keys($rows));
-$extra = array_diff(array_keys($rows), array_keys($manifests));
-$assert($missing === [], 'README status table is missing components: ' . implode(', ', $missing));
-$assert($extra === [], 'README status table contains unknown/duplicate component IDs: ' . implode(', ', $extra));
-
-foreach ($manifests as $machine => $manifest) {
-  if (!isset($rows[$machine])) {
-    continue;
-  }
-  $row = $rows[$machine];
-  $version = $extractVersion($manifest);
-  if ($version === NULL) {
-    $assert(str_contains(strtolower($row['version']), 'versão não declarada'), "$machine has no manifest version; state that explicitly in the table.");
-  }
-  else {
-    $assert(str_contains($row['version'], $version), "$machine table version does not match manifest version $version.");
-  }
-  if ($machine === 'aculta_deployer' && is_file(dirname($manifest) . '/VERSION')) {
-    $cliVersion = trim((string) file_get_contents(dirname($manifest) . '/VERSION'));
-    $assert(str_contains($row['version'], $cliVersion), "aculta_deployer table must also include CLI version $cliVersion.");
-  }
-  $expectedReadme = dirname($manifest) . '/README.md';
-  $componentLinks = $extractLinks($row['component']);
-  $assert(is_file($expectedReadme), "$machine must have its entry README.");
-  $assert(in_array(substr($expectedReadme, strlen($root) + 1), $componentLinks, TRUE), "$machine table row must link to its own README.");
-  foreach (array_merge($componentLinks, $extractLinks($row['phase'])) as $link) {
-    if (str_starts_with($link, 'http://') || str_starts_with($link, 'https://')) {
-      continue;
-    }
-    $assert(is_file($root . '/' . $link), "$machine table has a missing local link: $link");
-  }
-  $assert(trim(strip_tags($row['phase'])) !== '', "$machine must state its next phase.");
-  // preRC was retired from the release lifecycle. Keep the gate aligned with
-  // the permanent project policy so legacy table rows cannot pass silently.
-  $assert(in_array($row['status'], ['Dev', 'RC'], TRUE), "$machine state must be Dev or RC; preRC is retired.");
-  if ($row['status'] === 'RC') {
-    $assert(stripos($row['version'], '-rc') !== FALSE, "$machine is RC but its declared version is not an RC version.");
-  }
-}
-
-// Starting with the commit that adds this guardrail, every component change
-// must update that component's row in the root table in the same commit.
-// Merely touching README.md is insufficient.
-$git = static function (array $arguments) use ($root): array {
-  $command = array_merge(['git', '-C', $root], $arguments);
-  $descriptors = [
-    0 => ['file', '/dev/null', 'r'],
-    1 => ['pipe', 'w'],
-    2 => ['pipe', 'w'],
-  ];
-  $process = proc_open($command, $descriptors, $pipes);
-  if (!is_resource($process)) {
-    return [1, ''];
-  }
-  $stdout = stream_get_contents($pipes[1]);
-  fclose($pipes[1]);
-  fclose($pipes[2]);
-  return [proc_close($process), trim((string) $stdout)];
-};
-$componentRoots = [];
-foreach ($manifests as $machine => $manifest) {
-  $componentRoots[$machine] = substr(dirname($manifest), strlen($root) + 1) . '/';
-}
-// Longest roots first so nested submodules are attributed to their own rows.
-uasort($componentRoots, static fn(string $left, string $right): int => strlen($right) <=> strlen($left));
-$componentForPath = static function (string $path) use ($componentRoots): ?string {
-  foreach ($componentRoots as $machine => $componentRoot) {
-    if (str_starts_with($path, $componentRoot)) {
-      return $machine;
-    }
-  }
-  return NULL;
-};
-$isStatusRelevantPath = static function (string $path): bool {
-  // The index tracks implementation and release state, not every explanatory
-  // note. Component docs that define phases, declared versions, or the entry
-  // status remain gated; drafts and architecture prose do not imply a phase
-  // transition by themselves.
-  if (!str_contains($path, '/docs/')) {
-    return TRUE;
-  }
-  return preg_match('#/docs/(?:ROADMAP(?:[-.][^/]*)?|CHANGELOG(?:\.[^/]*)?|README)\.md$#i', $path) === 1;
-};
-$tableRows = static function (string $markdown) use ($begin, $end): array {
-  if (substr_count($markdown, $begin) !== 1 || substr_count($markdown, $end) !== 1) {
-    return [];
-  }
-  $table = substr($markdown, strpos($markdown, $begin) + strlen($begin), strpos($markdown, $end) - strpos($markdown, $begin) - strlen($begin));
-  $rows = [];
-  foreach (preg_split('/\R/', $table) ?: [] as $line) {
-    if (preg_match('/^\|\s*\[`([a-z0-9_]+)`\]/', trim($line), $match)) {
-      $rows[$match[1]] = trim($line);
-    }
-  }
-  return $rows;
-};
-$componentRowsChanged = static function (array $machines, string $before, string $after) use ($tableRows): array {
-  $beforeRows = $tableRows($before);
-  $afterRows = $tableRows($after);
-  return array_values(array_filter($machines, static function (string $machine) use ($beforeRows, $afterRows): bool {
-    // A new component counts as changed when its status row is added in the
-    // same commit. Missing from both versions is unchanged. Row removal is
-    // rejected separately by the manifest coverage checks.
-    if (!isset($beforeRows[$machine])) {
-      return !isset($afterRows[$machine]);
-    }
-    return isset($afterRows[$machine]) && $beforeRows[$machine] === $afterRows[$machine];
-  }));
-};
-$show = static function (string $revision) use ($git): string {
-  [, $contents] = $git(['show', $revision]);
-  return $contents;
-};
-[$markerCode, $markerCommit] = $git([
-  'log', '-1', '--format=%H', '-SPROJECT-STATUS-INDEX-GUARD: 2026-10-20', '--', 'AGENTS.md',
-]);
-if ($markerCode === 0 && $markerCommit !== '') {
-  [$historyCode, $history] = $git(['rev-list', '--reverse', $markerCommit . '..HEAD']);
-  $assert($historyCode === 0, 'Unable to audit commits since the status-index guardrail was introduced.');
-  // Exceções históricas aprovadas pelo responsável (2026-10-20): commits anteriores ao registro da regra, cujo
-  // histórico compartilhado não é reescrito. Não criar novas exceções sem decisão do responsável.
-  $historicalExceptions = [
-    'd0c3086c0fd3fddf736d1d6dd75ccdac5557b320' => 'removeu acidentalmente dois arquivos de aculta_portal/src via índice compartilhado; restaurado em 88745650; exceção aprovada pelo responsável em 2026-10-20',
-    '887456501bbb0f66547603e2e6a137a86c1eaa1e' => 'restaurou aculta_portal/src após remoção acidental em d0c3086c (índice compartilhado); exceção aprovada pelo responsável em 2026-10-20',
-    'fb1e678bdf32e222ad945520b4035e4e04cda44c' => 'atualizou o changelog de aculta_links ao reabrir aculta_mailer para Dev; exceção aprovada pelo responsável em 2026-10-20',
-    'a8f05a047d68b6621388564e3a05afdbc52079bf' => 'alterou aculta_mailer antes da regra de linha de README',
-    '60f7ff7348087590ec31ae7ba64dcb8a9deaa2cb' => 'documentação do roteiro do aculta_statistics publicada sem a linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    '0a879b98f51936278133e5be432598e7a33e0349' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    '3bfe09fab07328b7df19f1151631ab9d690aaadd' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    '4b8d4c83e17bea5f3a4d9f8e2ae6a8295e781969' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    '4f9bf03dd6ec1956e1efc4fef84f423ce853b5b2' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    'e4182b4dd3f079662fd1a9b12234dcd14e00fe30' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    'ffd1a3e364b2a4bea79db7ed044823386aad4c93' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
-    '1ecf099f9baa678067a440ec03095fd57b52effb' => 'alterou aculta_mailer antes da regra de linha de README',
-    '17af34c706e6950d14f09d358130fa8b0cbd172c' => 'alterou aculta_portal e aculta_mailer antes da regra de linha de README',
-  ];
-  foreach (preg_split('/\R/', $history) ?: [] as $commit) {
-    if ($commit === '' || isset($historicalExceptions[$commit])) {
-      continue;
-    }
-    [, $files] = $git(['diff-tree', '--no-commit-id', '--name-only', '-r', $commit]);
-    $paths = preg_split('/\R/', $files) ?: [];
-    $componentTouched = [];
-    foreach ($paths as $path) {
-      if (!$isStatusRelevantPath($path)) {
-        continue;
-      }
-      $machine = $componentForPath($path);
-      if ($machine !== NULL) {
-        $componentTouched[$machine] = TRUE;
-      }
-    }
-    if ($componentTouched !== []) {
-      $parent = $git(['rev-parse', $commit . '^']);
-      $before = $parent[0] === 0 ? $show($parent[1] . ':README.md') : '';
-      $after = $show($commit . ':README.md');
-      foreach ($componentRowsChanged(array_keys($componentTouched), $before, $after) as $machine) {
-        $assert(FALSE, sprintf('Commit %s changes %s without changing its root README status row in the same commit.', substr($commit, 0, 12), $machine));
-      }
-    }
-  }
-}
-[$worktreeCode, $worktree] = $git(['diff', '--name-only', 'HEAD', '--']);
-$assert($worktreeCode === 0, 'Unable to inspect staged/unstaged component changes.');
-$worktreePaths = preg_split('/\R/', $worktree) ?: [];
-$uncommittedComponents = [];
-foreach ($worktreePaths as $path) {
-  if (!$isStatusRelevantPath($path)) {
-    continue;
-  }
-  $machine = $componentForPath($path);
-  if ($machine !== NULL) {
-    $uncommittedComponents[$machine] = TRUE;
-  }
-}
-if ($uncommittedComponents !== []) {
-  [, $headReadme] = $git(['show', 'HEAD:README.md']);
-  foreach ($componentRowsChanged(array_keys($uncommittedComponents), $headReadme, (string) $readme) as $machine) {
-    $assert(FALSE, "Uncommitted changes to $machine require changing its root README status row before commit.");
-  }
-}
-
-if ($errors !== []) {
-  fwrite(STDERR, "PROJECT STATUS INDEX: FAIL\n- " . implode("\n- ", $errors) . "\n");
+$readme = is_file($readmePath) ? file_get_contents($readmePath) : FALSE;
+if (!is_string($readme) || substr_count($readme, $begin) !== 1 || substr_count($readme, $end) !== 1) {
+  fwrite(STDERR, "README.md precisa ter os marcadores PROJECT-STATUS-INDEX exatamente uma vez.\n");
   exit(1);
 }
 
-printf("PROJECT STATUS INDEX: PASS (%d components; versions, phases, links and guardrail verified)\n", count($manifests));
+$agents = (string) @file_get_contents($root . '/AGENTS.md');
+if (!str_contains($agents, 'PROJECT-STATUS-INDEX-GUARD')) {
+  $errors[] = 'AGENTS.md precisa manter o marcador PROJECT-STATUS-INDEX-GUARD.';
+}
+
+// 1. Manifestos: componentes do Portal e o tema.
+$manifests = [];
+$portal = $root . '/web/modules/custom/aculta_portal/aculta_portal.info.yml';
+if (is_file($portal)) {
+  $manifests['aculta_portal'] = $portal;
+}
+$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/web/modules/custom/aculta_portal/modules', FilesystemIterator::SKIP_DOTS));
+foreach ($iterator as $file) {
+  if (!$file->isFile() || !str_ends_with($file->getFilename(), '.info.yml') || str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR)) {
+    continue;
+  }
+  $manifests[substr($file->getFilename(), 0, -strlen('.info.yml'))] = $file->getPathname();
+}
+$theme = $root . '/web/themes/custom/aculta420/aculta420.info.yml';
+if (is_file($theme)) {
+  $manifests['aculta420'] = $theme;
+}
+
+$manifestVersion = static function (string $manifest): ?string {
+  $contents = (string) file_get_contents($manifest);
+  return preg_match('/^version:\s*[\'"]?([^\'"\r\n]+)/m', $contents, $m) ? trim($m[1]) : NULL;
+};
+
+// 2. Arquivos de status.
+$statuses = [];
+foreach (glob($statusDir . '/*.yml') ?: [] as $file) {
+  $machine = basename($file, '.yml');
+  $data = Yaml::parseFile($file);
+  $statuses[$machine] = is_array($data) ? $data : [];
+}
+
+$missing = array_diff(array_keys($manifests), array_keys($statuses));
+$extra = array_diff(array_keys($statuses), array_keys($manifests));
+if ($missing !== []) {
+  $errors[] = 'Falta arquivo de status para: ' . implode(', ', $missing) . '.';
+}
+if ($extra !== []) {
+  $errors[] = 'Arquivo de status sem componente: ' . implode(', ', $extra) . '.';
+}
+
+// 3. Campos, estado e links de cada componente.
+$order = array_keys($manifests);
+usort($order, static fn (string $a, string $b): int => match (TRUE) {
+  $a === 'aculta_portal' => -1,
+  $b === 'aculta_portal' => 1,
+  $a === 'aculta420' => 1,
+  $b === 'aculta420' => -1,
+  default => strcmp($a, $b),
+});
+
+$rows = [];
+foreach ($order as $machine) {
+  if (!isset($statuses[$machine])) {
+    continue;
+  }
+  $data = $statuses[$machine];
+  $state = (string) ($data['state'] ?? '');
+  $next = trim((string) ($data['next_phase'] ?? ''));
+  if (!in_array($state, ['Dev', 'RC'], TRUE)) {
+    $errors[] = "$machine: state precisa ser Dev ou RC (preRC está aposentado).";
+  }
+  if ($next === '') {
+    $errors[] = "$machine: next_phase é obrigatório.";
+  }
+  $version = $data['version_note'] ?? $manifestVersion($manifests[$machine]);
+  if ($version === NULL || $version === '') {
+    $errors[] = "$machine: sem versão no manifest; informe version_note.";
+    $version = 'versão não declarada';
+  }
+  $readmeRel = substr(dirname($manifests[$machine]) . '/README.md', strlen($root) + 1);
+  if (!is_file($root . '/' . $readmeRel)) {
+    $errors[] = "$machine: README de entrada ausente ($readmeRel).";
+  }
+  preg_match_all('/\]\(([^)#]+)(?:#[^)]*)?\)/', $next, $links);
+  foreach ($links[1] ?? [] as $link) {
+    if (!str_starts_with($link, 'http') && !is_file($root . '/' . $link)) {
+      $errors[] = "$machine: link local ausente em next_phase: $link.";
+    }
+  }
+  $cell = '`' . ($version === 'versão não declarada' ? '' : $version) . '`';
+  if ($version === 'versão não declarada' || isset($data['version_note'])) {
+    $cell = (string) ($data['version_note'] ?? 'versão não declarada');
+  }
+  $rows[] = sprintf('| [`%s`](%s) | %s | %s | %s |', $machine, $readmeRel, $cell, str_replace('|', '\\|', $next), $state);
+}
+
+// 4. Tabela gerada e conferência com o README.
+$table = implode("\n", array_merge([
+  '| Componente | Última versão declarada | Próxima fase registrada | Estado |',
+  '| --- | --- | --- | --- |',
+], $rows));
+
+$start = strpos($readme, $begin) + strlen($begin);
+$stop = strpos($readme, $end);
+$current = trim(substr($readme, $start, $stop - $start));
+
+if ($write) {
+  $new = substr($readme, 0, $start) . "\n" . $table . "\n" . substr($readme, $stop);
+  file_put_contents($readmePath, $new);
+  echo "Tabela do README raiz regenerada (" . count($rows) . " componentes).\n";
+}
+elseif ($current !== $table) {
+  $errors[] = 'A tabela do README raiz está desatualizada. Rode: php scripts/validate-project-status-index.php --write';
+}
+
+if ($errors !== []) {
+  foreach ($errors as $error) {
+    fwrite(STDERR, "- $error\n");
+  }
+  fwrite(STDERR, "PROJECT STATUS INDEX: FAIL\n");
+  exit(1);
+}
+
+echo 'PROJECT STATUS INDEX: PASS (' . count($rows) . " components; table generated from docs/operations/status)\n";

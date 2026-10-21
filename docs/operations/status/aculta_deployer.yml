@@ -1,0 +1,4 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+next_phase: Corrigir pendências incluindo `session_cookie`; toda preparação/gates prontos antes de RC; deploy Alpha e produção depois ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))
+version_note: módulo `0.1.25`; CLI `0.1.27`

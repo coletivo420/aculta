@@ -1,0 +1,3 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+next_phase: Validar migração em cópia isolada e fechar escopo/minimização ([decisão](docs/modules/ACULTA-ASSOCIADO-ID.md))

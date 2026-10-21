@@ -56,9 +56,10 @@ um sufixo histórico no manifesto não transforma sozinho um componente em RC.
   commits pequenos e atômicos; não abrir PR, trocar de branch, fazer merge ou
   criar tag sem pedido explícito. A regra prevalece sobre templates antigos que
   pedem PR próprio para cada fase.
-- Atualizar a linha exata do componente em `README.md` no mesmo commit quando
-  código, configuração, documentação de fase ou versão de componente mudar; rodar
-  `php scripts/validate-project-status-index.php`.
+- Atualizar o arquivo de status do componente em `docs/operations/status/` quando
+  código, configuração, documentação de fase ou versão de componente mudar. A
+  tabela do README raiz é gerada: rodar `php scripts/validate-project-status-index.php --write`
+  e conferir com `php scripts/validate-project-status-index.php`.
 
 ## CSP: estado da decisão para o PDF.js
 
