@@ -60,6 +60,20 @@ final class ParticipationRules {
   }
 
   /**
+   * Whether a new public discussion post from this account needs review.
+   *
+   * This policy is intentionally independent from the storage entity so it can
+   * be shared by the public Forum post workflow and other discussion
+   * consumers. The internal LMS Forum remains outside this policy.
+   */
+  public function requiresFirstDiscussionModeration(AccountInterface $account): bool {
+    $settings = $this->settings();
+    return (bool) $settings['primeiro_comentario_discussao_moderado']
+      && !$this->isExempt($account)
+      && !$this->hasPublishedDiscussionComment((int) $account->id());
+  }
+
+  /**
    * Whether a new shared comment belongs to a non-LMS discussion context.
    */
   public function isNonLmsDiscussionComment(CommentInterface $comment): bool {
@@ -87,7 +101,24 @@ final class ParticipationRules {
    * contexts, even though LMS comments never enter public moderation.
    */
   public function hasPublishedDiscussionComment(int $uid): bool {
-    return $this->discussionCommentQuery($uid, TRUE, TRUE)->range(0, 1)->count()->execute() > 0;
+    if ($this->discussionCommentQuery($uid, TRUE, TRUE)->range(0, 1)->count()->execute() > 0) {
+      return TRUE;
+    }
+
+    // During the Forum cutover, both storage models may temporarily coexist.
+    // Once Forum Comments are removed, this query remains the participation
+    // source for revisionable public posts.
+    if ($this->entityTypeManager->hasDefinition('aculta_forum_post')) {
+      return $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('uid', $uid)
+        ->condition('status', 1)
+        ->range(0, 1)
+        ->count()
+        ->execute() > 0;
+    }
+
+    return FALSE;
   }
 
   /**

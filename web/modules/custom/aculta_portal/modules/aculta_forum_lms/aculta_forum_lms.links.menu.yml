@@ -1,3 +1,10 @@
+aculta_forum_lms.settings:
+  title: 'Configurações das discussões'
+  description: 'Opções dos fóruns de curso e turma.'
+  route_name: aculta_forum_lms.settings
+  parent: system.admin_lms
+  weight: 36
+
 aculta_forum_lms.moderation_overview:
   title: 'Fóruns dos cursos'
   description: 'Comentários das discussões dos cursos e turmas sob sua responsabilidade.'

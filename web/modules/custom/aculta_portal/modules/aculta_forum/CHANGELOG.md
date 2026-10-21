@@ -11,6 +11,13 @@
 - `email_confirmed` recebe criar/reenviar e editar próprio post publicado; `content_editor` recebe administração e transições de moderação. A janela de edição não concede permissão base e cobre padrão de 10 minutos, vencimento, `0` e exceção administrativa.
 - Unit access: 2 testes / 9 assertions; Unit da janela: 2 / 22. Kernel do workflow: 1 / 35; Kernel da política compartilhada: 8 / 96. PHPCS PASS. PHP CLI 8.4.26 (PHP 8.5 pendente). Runtime testado após `drush cr`: home e rotas Growroom420 HTTP 200; Conta 302 esperado; nenhum erro novo no log nas verificações após o rebuild; erros anteriores a 16:45 permanecem no histórico. Nenhum dado ou configuração do Runtime alterados.
 
+## `0.1.0-dev.135` — registra serviços dos hooks e expõe bundle ao workflow
+
+- Todos os hooks OOP do Fórum com construtores passam a ser serviços DI explícitos; `#[Autowire]` isolado não é consumido pelo `ClassResolver` ao instanciar hooks.
+- `ForumPostBundleHooks` declara o bundle fixo `aculta_forum_post`, necessário para o Core Content Moderation associar o workflow e fornecer `moderation_state`.
+- As rotas administrativas automáticas do post revisionável ficam desativadas até schema, formulários e leitura pública estarem integrados; o mapa registra esses caminhos como não ativos.
+- Kernel focal: 1 teste / 35 assertions PASS; uma depreciação Core no setup de `comment.comment_body`. Sem alteração persistente de conteúdo/configuração no Runtime; cache reconstruído para remover o 500 de hook. PHP CLI 8.4.26, abaixo da baseline 8.5. RUNTIME STATUS: serviço Forum não instalado no Runtime.
+
 ## Revisão visual das listas públicas de atividade (2026-10-21)
 
 - Firefox ESR/X11 anônimo no Runtime de teste: `/discussoes/novas`,

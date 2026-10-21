@@ -19,3 +19,9 @@ aculta_user.settings:
       label: 'Papéis isentos das regras'
       sequence:
         type: string
+    wiki_edit_window_minutes:
+      type: integer
+      label: 'Prazo de edição das discussões Wiki em minutos'
+    comment_edit_window_minutes:
+      type: integer
+      label: 'Prazo de edição dos demais comentários compartilhados em minutos'

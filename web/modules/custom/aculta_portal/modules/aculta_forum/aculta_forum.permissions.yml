@@ -8,6 +8,10 @@ administer aculta forum settings:
   title: 'Administrar configurações do ACULTA Forum'
   description: 'Controla opções próprias do Fórum público Growroom420.'
   restrict access: true
+administer aculta forum posts:
+  title: 'Administrar publicações revisionáveis do Fórum'
+  description: 'Acessa e administra revisões das publicações e respostas do Fórum público.'
+  restrict access: true
 create aculta forum posts:
   title: 'Criar publicações nas discussões públicas'
   description: 'Permite criar publicações e respostas nos tópicos do Growroom420.'

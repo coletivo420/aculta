@@ -1,4 +1,8 @@
 services:
+  Drupal\aculta_user\Hook\ParticipationEditWindowHooks:
+    class: Drupal\aculta_user\Hook\ParticipationEditWindowHooks
+    arguments: ['@aculta_user.participation_edit_window']
+
   aculta_user.aculta_user_agreement_hooks:
     class: Drupal\aculta_user\Hook\AcultaUserAgreementHooks
     arguments: ['@database']
@@ -35,6 +39,9 @@ services:
   aculta_user.participation_rules:
     class: Drupal\aculta_user\ParticipationRules
     arguments: ['@config.factory', '@entity_type.manager']
+  aculta_user.participation_edit_window:
+    class: Drupal\aculta_user\ParticipationEditWindow
+    arguments: ['@config.factory', '@datetime.time', !tagged_iterator aculta_user.edit_window_exemption]
   aculta_user.avatar_pool:
     class: Drupal\aculta_user\Avatar\AvatarPool
     arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']

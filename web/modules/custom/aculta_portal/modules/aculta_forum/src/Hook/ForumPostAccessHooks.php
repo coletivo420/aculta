@@ -28,14 +28,45 @@ final class ForumPostAccessHooks {
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
-    if ($entity->getEntityTypeId() !== 'aculta_forum_post' || !in_array($operation, ['view', 'update'], TRUE)) {
+    if ($entity->getEntityTypeId() !== 'aculta_forum_post') {
       return NULL;
     }
 
-    // The administrative panel belongs to MAIN. Administrators continue
-    // through the entity's admin permission and Core's moderation checks.
-    if ($account->hasPermission('administer aculta forum posts')) {
-      return AccessResult::neutral()->cachePerPermissions();
+    if (!$account->hasPermission('administer aculta forum posts')) {
+      return $this->publicAccess($entity, $operation, $account);
+    }
+
+    // The generic entity handler grants every operation to accounts with the
+    // entity admin permission, and it runs only when no hook forbids access.
+    // Without an active purpose (CLI, cron) or in MAIN the grant applies as
+    // before. On any other purpose the grant must not apply, so the public
+    // rules decide and every outcome they do not allow becomes forbidden.
+    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    if ($purpose === NULL || $purpose === 'main') {
+      return AccessResult::neutral()
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['domain'])
+        ->cachePerPermissions();
+    }
+
+    $publicOperation = $operation === 'view label' ? 'view' : $operation;
+    $access = $this->publicAccess($entity, $publicOperation, $account);
+    if ($access?->isAllowed()) {
+      return $access;
+    }
+
+    return AccessResult::forbidden('Administradores só operam publicações pelo domínio principal.')
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['domain'])
+      ->cachePerPermissions();
+  }
+
+  /**
+   * Applies the public Forum rules to view and update access.
+   */
+  private function publicAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
+    if (!in_array($operation, ['view', 'update'], TRUE)) {
+      return NULL;
     }
 
     $topic = $entity instanceof FieldableEntityInterface && $entity->hasField('topic')

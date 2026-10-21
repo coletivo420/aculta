@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Forum.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Adds first-publication timestamps to shared discussion comments.
+ */
+function aculta_forum_update_9001(array &$sandbox): string {
+  if (!isset($sandbox['initialized'])) {
+    if (!FieldStorageConfig::loadByName('comment', 'field_aculta_published_at')) {
+      FieldStorageConfig::create([
+        'entity_type' => 'comment',
+        'field_name' => 'field_aculta_published_at',
+        'type' => 'integer',
+        'settings' => ['unsigned' => TRUE, 'size' => 'big'],
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+    if (!FieldConfig::loadByName('comment', 'aculta_discussion_post', 'field_aculta_published_at')) {
+      FieldConfig::create([
+        'entity_type' => 'comment',
+        'bundle' => 'aculta_discussion_post',
+        'field_name' => 'field_aculta_published_at',
+        'label' => 'Primeira publicação (marcador interno)',
+        'description' => 'Timestamp interno usado para aplicar a janela de edição do autor; não é exibido.',
+      ])->save();
+    }
+    $sandbox['initialized'] = TRUE;
+    $sandbox['last_cid'] = 0;
+    $sandbox['scanned'] = 0;
+    $sandbox['processed'] = 0;
+    $sandbox['total'] = (int) \Drupal::entityQuery('comment')
+      ->accessCheck(FALSE)
+      ->condition('comment_type', 'aculta_discussion_post')
+      ->condition('field_name', 'field_aculta_discussion')
+      ->condition('status', 1)
+      ->count()
+      ->execute();
+  }
+
+  // Writes only the missing marker rows. Saving each comment would run comment
+  // presave and update hooks and bump its changed time, which reorders topics
+  // by last activity and invalidates caches for a data-only backfill.
+  $database = \Drupal::database();
+  $batch = $database->select('comment_field_data', 'c')
+    ->fields('c', ['cid', 'langcode', 'created'])
+    ->condition('c.comment_type', 'aculta_discussion_post')
+    ->condition('c.field_name', 'field_aculta_discussion')
+    ->condition('c.status', 1)
+    ->condition('c.cid', $sandbox['last_cid'], '>')
+    ->orderBy('c.cid')
+    ->range(0, 100)
+    ->execute()
+    ->fetchAll();
+  if ($batch !== []) {
+    $cids = array_map(static fn($row): int => (int) $row->cid, $batch);
+    $marked = array_flip($database->select('comment__field_aculta_published_at', 'm')
+      ->fields('m', ['entity_id'])
+      ->condition('m.deleted', 0)
+      ->condition('m.entity_id', $cids, 'IN')
+      ->execute()
+      ->fetchCol());
+
+    $insert = $database->insert('comment__field_aculta_published_at')
+      ->fields(['bundle', 'deleted', 'entity_id', 'revision_id', 'langcode', 'delta', 'field_aculta_published_at_value']);
+    $missing = 0;
+    foreach ($batch as $row) {
+      if (!isset($marked[(int) $row->cid])) {
+        // Existing content has no recoverable first-published event. The
+        // creation time is the conservative bound: it never grants an author
+        // more time than the policy allows. Non-revisionable comments store
+        // their ID as revision_id.
+        $insert->values([
+          'bundle' => 'aculta_discussion_post',
+          'deleted' => 0,
+          'entity_id' => (int) $row->cid,
+          'revision_id' => (int) $row->cid,
+          'langcode' => $row->langcode,
+          'delta' => 0,
+          'field_aculta_published_at_value' => (int) $row->created,
+        ]);
+        $missing++;
+      }
+    }
+    if ($missing > 0) {
+      $insert->execute();
+    }
+    $sandbox['last_cid'] = end($cids);
+    $sandbox['scanned'] += count($batch);
+    $sandbox['processed'] += $missing;
+  }
+
+  $sandbox['#finished'] = $sandbox['total'] === 0 || count($batch) < 100
+    ? 1
+    : min(1, $sandbox['scanned'] / $sandbox['total']);
+
+  return (string) t('Added first-publication markers to @count existing discussion comments.', [
+    '@count' => $sandbox['processed'],
+  ]);
+}
+
+/**
+ * Installs the schema for the revisionable Forum post entity.
+ */
+function aculta_forum_update_9002(): void {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($definition_update_manager->getEntityType('aculta_forum_post')) {
+    return;
+  }
+
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_forum_post');
+  $field_storage_definitions = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions('aculta_forum_post');
+  $definition_update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
+}

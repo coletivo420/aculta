@@ -56,6 +56,28 @@ final class ParticipationSettingsForm extends ConfigFormBase {
       '#default_value' => (bool) $config->get('bloqueio_ate_aprovacao'),
       '#description' => $this->t('Considera pendências não LMS. Um comentário LMS publicado remove esse bloqueio temporário.'),
     ];
+    $form['janela_edicao'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Prazo de edição das discussões'),
+      '#open' => TRUE,
+      '#description' => $this->t('O prazo conta desde a primeira publicação e não é reiniciado por edições. Zero bloqueia a edição pelo autor; administradores continuam podendo editar.'),
+    ];
+    $form['janela_edicao']['wiki_edit_window_minutes'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Discussões da Wiki (minutos)'),
+      '#default_value' => max(0, (int) ($config->get('wiki_edit_window_minutes') ?? 10)),
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+    ];
+    $form['janela_edicao']['comment_edit_window_minutes'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Comentários em outros conteúdos, incluindo Revista (minutos)'),
+      '#default_value' => max(0, (int) ($config->get('comment_edit_window_minutes') ?? 10)),
+      '#min' => 0,
+      '#step' => 1,
+      '#required' => TRUE,
+    ];
     // Papéis por id => rótulo (user_role_names() era do Drupal 7 e não existe no Drupal 11). O anônimo fica de fora.
     $roles = [];
     foreach (Role::loadMultiple() as $id => $role) {
@@ -81,6 +103,8 @@ final class ParticipationSettingsForm extends ConfigFormBase {
       ->set('topico_comentarios_minimos', max(0, (int) $form_state->getValue('topico_comentarios_minimos')))
       ->set('primeiro_comentario_discussao_moderado', (bool) $form_state->getValue('primeiro_comentario_discussao_moderado'))
       ->set('bloqueio_ate_aprovacao', (bool) $form_state->getValue('bloqueio_ate_aprovacao'))
+      ->set('wiki_edit_window_minutes', max(0, (int) $form_state->getValue('wiki_edit_window_minutes')))
+      ->set('comment_edit_window_minutes', max(0, (int) $form_state->getValue('comment_edit_window_minutes')))
       ->set('papeis_isentos', array_values(array_filter((array) $form_state->getValue('papeis_isentos'))))
       ->save();
     parent::submitForm($form, $form_state);

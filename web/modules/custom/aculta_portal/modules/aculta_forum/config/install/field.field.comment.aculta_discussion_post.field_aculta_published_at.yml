@@ -1,0 +1,25 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_discussion_post
+    - field.storage.comment.field_aculta_published_at
+  module:
+    - comment
+    - aculta_forum
+id: comment.aculta_discussion_post.field_aculta_published_at
+field_name: field_aculta_published_at
+entity_type: comment
+bundle: aculta_discussion_post
+label: 'Primeira publicação (marcador interno)'
+description: 'Timestamp interno usado para aplicar a janela de edição do autor; não é exibido.'
+required: false
+translatable: false
+default_value: [ ]
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

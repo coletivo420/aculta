@@ -62,11 +62,45 @@ final class ForumPostAccessHooksTest extends TestCase {
   }
 
   /**
+   * The entity admin grant applies in MAIN and without a purpose (CLI, cron).
+   *
+   * Outside MAIN the grant does not apply: public rules still allow reading a
+   * published Forum post, and every other operation is forbidden.
+   */
+  public function testAdministratorGrantIsRestrictedOutsideMain(): void {
+    $administrator = $this->createMock(AccountInterface::class);
+    $administrator->method('hasPermission')
+      ->with('administer aculta forum posts')
+      ->willReturn(TRUE);
+    $post = $this->post($this->topic(TRUE), 17);
+
+    foreach (['view', 'update', 'delete', 'view label'] as $operation) {
+      $mainAccess = (new ForumPostAccessHooks($this->domainPurposeManager('aculta_org')))
+        ->entityAccess($post, $operation, $administrator);
+      self::assertTrue($mainAccess?->isNeutral(), $operation . ' remains governed by the entity admin permission in MAIN.');
+      self::assertContains('domain', $mainAccess?->getCacheContexts());
+
+      $withoutPurpose = (new ForumPostAccessHooks($this->domainPurposeManager(NULL)))
+        ->entityAccess($post, $operation, $administrator);
+      self::assertTrue($withoutPurpose?->isNeutral(), $operation . ' keeps the admin grant without a purpose (CLI, cron).');
+    }
+
+    $forum = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    self::assertTrue($forum->entityAccess($post, 'view', $administrator)?->isAllowed(), 'Public view remains allowed on the Forum.');
+    self::assertTrue($forum->entityAccess($post, 'view label', $administrator)?->isAllowed(), 'Public label view remains allowed on the Forum.');
+    self::assertTrue($forum->entityAccess($post, 'update', $administrator)?->isForbidden(), 'Update is denied outside MAIN.');
+    self::assertTrue($forum->entityAccess($post, 'delete', $administrator)?->isForbidden(), 'Delete is denied outside MAIN.');
+  }
+
+  /**
    * Builds the purpose manager around an active Domain ID.
    */
-  private function domainPurposeManager(string $domainId): DomainPurposeManager {
-    $domain = $this->createMock(DomainInterface::class);
-    $domain->method('id')->willReturn($domainId);
+  private function domainPurposeManager(?string $domainId): DomainPurposeManager {
+    $domain = NULL;
+    if ($domainId !== NULL) {
+      $domain = $this->createMock(DomainInterface::class);
+      $domain->method('id')->willReturn($domainId);
+    }
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
 
@@ -98,8 +132,9 @@ final class ForumPostAccessHooksTest extends TestCase {
    * Builds a post entity with a contextual topic and owner.
    */
   private function post(Node $topic, int $ownerId): FieldableEntityInterface&EntityOwnerInterface {
-    $post = $this->createMockForIntersectionOfInterfaces([FieldableEntityInterface::class, EntityOwnerInterface::class]);
+    $post = $this->createMock(Node::class);
     $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
+    $post->method('isPublished')->willReturn(TRUE);
     $post->method('hasField')->with('topic')->willReturn(TRUE);
     $post->method('get')->with('topic')->willReturn(new ForumPostAccessFieldList($topic));
     $post->method('getOwnerId')->willReturn($ownerId);

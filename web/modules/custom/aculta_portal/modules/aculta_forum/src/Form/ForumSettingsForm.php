@@ -42,8 +42,27 @@ final class ForumSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Quando habilitada, pessoas com a permissão específica podem mover um comentário e suas respostas para outro tópico público compatível. A opção permanece desabilitada por padrão; tópicos e comentários do acervo histórico nunca são movidos por esta ferramenta.'),
       '#config_target' => 'aculta_forum.settings:comment_move_enabled',
     ];
+    $form['edit_window_minutes'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Prazo para edição de publicação após a primeira publicação (minutos)'),
+      '#description' => $this->t('Aplica-se às publicações do Growroom420. O prazo padrão é de 10 minutos e não é reiniciado após uma edição. Zero desativa a edição pelo autor; pessoas com permissão administrativa continuam podendo editar.'),
+      '#min' => 0,
+      '#step' => 1,
+      '#default_value' => max(0, (int) ($this->config('aculta_forum.settings')->get('edit_window_minutes') ?? 10)),
+      '#required' => TRUE,
+    ];
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $this->config('aculta_forum.settings')
+      ->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')))
+      ->save();
+    parent::submitForm($form, $form_state);
   }
 
 }

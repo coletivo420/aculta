@@ -1,3 +1,13 @@
+aculta_forum_lms.settings:
+  path: '/painel-administrativo/lms/forum/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_forum_lms\Form\LmsForumSettingsForm'
+    _title: 'Configurações dos fóruns do LMS'
+  requirements:
+    _permission: 'administer aculta forum lms settings'
+  options:
+    _admin_route: true
+
 aculta_forum_lms.moderation_overview:
   path: '/painel-administrativo/lms/forum'
   defaults:

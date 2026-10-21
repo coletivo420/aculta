@@ -20,3 +20,9 @@ services:
     tags:
       - { name: aculta_forum.discussion_context_provider }
 
+  aculta_forum_lms.edit_window_exemption:
+    class: Drupal\aculta_forum_lms\Access\LmsEditWindowExemption
+    arguments: ['@Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider']
+    tags:
+      - { name: aculta_user.edit_window_exemption }
+

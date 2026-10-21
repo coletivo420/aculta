@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.131**. O
+Submódulo de `aculta_portal`. Versão atual: **0.1.0-dev.137**. O
 direcionamento vigente, aprovado pelo responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime
 de teste e removido do Composer após a limpeza autorizada. A dev.4 introduziu o módulo executável e
@@ -38,8 +38,11 @@ motor novo segue por contexto e fases.
 - `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
 - Nas listagens públicas, a última autoria usa o UID agregado pelo Comment Core e o cartão `author_forum` de `aculta_user`. O nome de login e `last_comment_name` não são exibidos; identidade e avatar obedecem à política de perfil e cache do `aculta_user`.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
-- Core/contrib permanecem fonte de verdade para Node, Comment, Taxonomy, Views,
-  Search API, History e Flag. Sem storage paralelo de resposta/categoria.
+- Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
+  API, History, Flag e workflow/revisão. A entidade `aculta_forum_post` passa a
+  guardar novas publicações revisionáveis; os Comments do Fórum seguem como
+  leitura/escrita vigente até a migração e o corte aprovados. Não criar storage
+  paralelo de tópico/categoria.
 - Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
 - O conteúdo antigo permanece ausente no Runtime de teste; somente as categorias
   ACULTA novas foram preservadas. A retirada executável do contrib ocorreu em dev.50.

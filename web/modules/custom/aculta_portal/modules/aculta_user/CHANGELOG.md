@@ -1,3 +1,22 @@
+## 0.4.0-dev.63 — registra DI dos hooks de janela de edição — 2026-10-21
+
+- `ParticipationEditWindowHooks` agora é serviço do módulo com a política central injetada. Sem o registro, o `ClassResolver` tentava instanciar o hook sem argumentos e causava HTTP 500 nas rotas do portal.
+- A janela retorna `neutral` enquanto o prazo está aberto; ela só restringe após o vencimento e não concede edição sem a permissão do handler da entidade.
+- Sem campo/timestamp migrado, preserva o acesso-base até a migração ser aplicada; não bloqueia comentários existentes antes do update de dados.
+- Rebuild de cache no Runtime de teste após confirmar `aculta_runtime`; conta retornou 403 anônimo na rota protegida (sem 500), sem novo erro PHP. PHP CLI 8.4.26; 8.5 não validado. Runtime status: correção de código aplicada no Homelab; validação autenticada pendente.
+
+## 0.4.0-dev.62 — desacopla decisão de primeira moderação do Comment — 2026-10-21
+
+- `ParticipationRules::requiresFirstDiscussionModeration()` expõe a política
+  compartilhada para entidades de discussão futuras. Mantém configuração,
+  papéis isentos e aprovação anterior como fonte única; LMS continua fora do
+  hook de Comment e do workflow público do Fórum.
+- `ParticipationHooks` usa a nova API sem alterar a política observável dos
+  Comments compartilhados.
+- Kernel `PublicDiscussionModerationKernelTest`: cobertura da decisão genérica
+  para conta nova, participante com post publicado e opção administrativa
+  desligada. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.61 — aceite único: sem formulário de rastreamento e ledger só com os Termos — 2026-10-21
 
 - Removido `AcultaUserAgreementTrackingConsentForm` e a rota `/configuracoes/rastreamento-de-e-mail`. Não há mais segundo aceite.

@@ -172,6 +172,27 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
   }
 
   /**
+   * The shared policy exposes the same decision independently of Comment.
+   */
+  public function testFirstDiscussionModerationPolicyCanBeUsedByOtherEntities(): void {
+    $account = $this->createAccount();
+    $rules = $this->createRules();
+
+    self::assertTrue($rules->requiresFirstDiscussionModeration($account));
+
+    $approved = $this->newComment('article', (int) $account->id());
+    $approved->setPublished();
+    $approved->save();
+    self::assertFalse($rules->requiresFirstDiscussionModeration($account));
+
+    $this->container->get('config.factory')->getEditable('aculta_user.settings')
+      ->set('primeiro_comentario_discussao_moderado', FALSE)
+      ->save();
+    $new_account = $this->createAccount();
+    self::assertFalse($rules->requiresFirstDiscussionModeration($new_account));
+  }
+
+  /**
    * Imported Growroom comments bypass first-comment moderation.
    */
   public function testImportedHistoricalCommentsBypassFirstCommentModeration(): void {

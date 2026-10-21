@@ -31,6 +31,23 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 [`DISCOURSE-EXPERIENCE.md`](DISCOURSE-EXPERIENCE.md) e
 [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
 
+### Moderação revisionável de posts — decisão de 2026-10-21
+
+O responsável decidiu substituir os Comments Core das discussões públicas do
+Fórum por uma entidade de post revisionável e workflow completo. Comments do
+Fórum serão migrados e removidos após equivalência validada; Comments dos demais
+contextos ficam fora do corte. O plano arquitetural, contrato, workflow
+proposto, migração e critérios de RC estão em
+[`REVISIONABLE-DISCUSSION-WORKFLOW.md`](REVISIONABLE-DISCUSSION-WORKFLOW.md).
+O post público reutiliza a política compartilhada de primeira participação em
+`aculta_user`; o Fórum interno do LMS continua isento. A integração consulta
+`ParticipationRules::requiresFirstDiscussionModeration()` e não duplica
+configuração. Edição de autor publicada: 10 minutos desde a primeira publicação
+por padrão, configurável em cada consumidor (Growroom420, LMS, Wiki e Comments);
+editar não reinicia a janela e zero desativa edição de autor. Não habilitar
+corte nem apagar dados Runtime antes das provas
+Kernel, migração dry-run, backup e aprovação visual.
+
 ### Integração de anexos e galerias — ordem aprovada em 2026-10-21
 
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
@@ -43,6 +60,11 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 3. Por último, cartão PDF integrado ao ACULTA Document Viewer (`aculta_pdf_viewer`),
    miniatura/metadados e abertura em outra janela conforme opção administrativa.
 
+O `aculta_pdf_viewer` agora reconhece o Media `forum_attachment` e serve seu
+campo PDF pela rota privada do Core (`0.1.0-dev.40`). Isso prepara o contrato de
+acesso; o cartão/formatter ainda não foi ligado à apresentação do post e continua
+na etapa 3.
+
 Não criar leitor PDF ou serviço de conversão paralelo no Fórum. Cada etapa exige
 respeitar o contrato de acesso e retenção de anexos privados.
 
@@ -54,6 +76,7 @@ roadmap Portal descreve a sequência transversal.
 | --- | --- | --- |
 | `0.1.0-dev.137` | Preservar autoria histórica na entidade revisionável | Campo-base revisionável `legacy_author` aponta a `aculta_legado_autor`; Unit e PHPCS PASS. Runtime: cache reconstruído, campo descoberto e sem tabelas da entidade; HTTP 200/302 esperado. Migrador e equivalência pendentes; sem alteração de conteúdo/configuração. |
 | `0.1.0-dev.136` | Acesso contextual e permissões do post revisionável | Criação só no purpose `forum`; leitura/edição de autoria limitadas ao tópico público publicado; administração no purpose `main`; papéis recebem permissões Core de transição. Unit access e janela PASS. Leitura integrada, formulários, migração de Comments e corte permanecem pendentes. Dev, cache do Runtime reconstruído sem erros HTTP/PHP novos. |
+| `0.1.0-dev.135` | Registrar hooks DI e iniciar entidade/workflow de post revisionável | Todos os hooks com construtor passam a serviço explícito; Kernel prova entidade revisionável, associação de bundle/workflow, timestamp imutável e janela de edição sem concessão de acesso. Foram removidas as rotas administrativas auto-geradas antes da migração de schema. Integração das telas, migração e corte continuam pendentes; Runtime HTTP do Fórum voltou a responder 200 sem erro PHP. Dev, sem deploy. |
 | `0.1.0-dev.132` | Transferir aviso agregado ao mover árvore publicada | Evento transacional do Fórum consumido pelo Messenger; transfere o registro inteiro de respostas e mescla no destino. Kernel do mover: 19/391; Unit do consumidor: 2/4 PASS; 19 depreciações Core/contrib. Teste de persistência da transferência e ciclo de anexos seguem pendentes, portanto permanece Dev. |
 | `0.1.0-dev.131` | Foco de teclado no conteúdo principal | `forum-index-visual.mjs`: primeiro Tab revela link de salto com `:focus-visible`, Enter transfere foco a `main#main-content`. Firefox ESR/X11: raiz 15/15, `/categorias` 15/15, 390/768/1024 em claro/escuro (escuro forçado localmente no DOM); nenhum submit ou escrita. Inclui captura do link focado a 390 px. |
 | `0.1.0-dev.130` | Preservar imagem inline ao mover comentário | Kernel integra Editor Core: imagem `data-entity-uuid` mantém `file_usage` associado ao CID depois da mudança de tópico. 19 testes / 386 assertions PASS no MariaDB dedicado; Runtime não alterado. |

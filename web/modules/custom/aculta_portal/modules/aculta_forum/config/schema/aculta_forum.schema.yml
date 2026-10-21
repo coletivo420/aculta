@@ -5,3 +5,6 @@ aculta_forum.settings:
     comment_move_enabled:
       type: boolean
       label: 'Enable moving public Forum comments between topics'
+    edit_window_minutes:
+      type: integer
+      label: 'Minutes an author can edit a Forum post after its first publication'

@@ -33,19 +33,15 @@ final class ParticipationHooks {
     if (!$comment->isNew()) {
       return;
     }
-    $settings = $this->rules->settings();
-
     $isDiscussionComment = $this->rules->isNonLmsDiscussionComment($comment);
     if (!$isDiscussionComment) {
       return;
     }
-    if (!$settings['primeiro_comentario_discussao_moderado'] ||
-      $comment->getOwner() === NULL) {
+    if ($comment->getOwner() === NULL) {
       return;
     }
     $owner = $comment->getOwner();
-    $hasPublishedComment = $this->rules->hasPublishedDiscussionComment((int) $owner->id());
-    if ($this->rules->isExempt($owner) || $hasPublishedComment) {
+    if (!$this->rules->requiresFirstDiscussionModeration($owner)) {
       return;
     }
     $comment->setUnpublished();

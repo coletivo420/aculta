@@ -1,3 +1,8 @@
+## `0.1.0-dev.29` — configura janela de edição das discussões LMS — 2026-10-21
+
+- Adiciona configuração administrativa da janela do autor, padrão de 10 minutos desde a primeira publicação; editar não reinicia o prazo e zero desativa edição do autor.
+- A janela é independente por Fórum LMS e não substitui permissões contextuais de Educadores/administradores. Rota declarada: `/painel-administrativo/lms/forum/configuracoes`; Runtime DEFERRED.
+
 ## F15 — compatibilidade do Kernel com referências H5P–Media — 2026-10-21
 
 - A fixture do Kernel de discussão H5P habilita o módulo Core `media`, agora

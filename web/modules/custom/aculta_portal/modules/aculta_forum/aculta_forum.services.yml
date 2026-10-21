@@ -1,9 +1,55 @@
 services:
+  Drupal\aculta_forum\Hook\ForumActivityEventHooks:
+    class: Drupal\aculta_forum\Hook\ForumActivityEventHooks
+    arguments: ['@event_dispatcher', '@datetime.time']
+  Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks:
+    class: Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks
+    arguments: ['@aculta_forum.attachment_cleanup', '@aculta_forum.gallery_publication', '@datetime.time']
+  Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks:
+    class: Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks
+    arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']
+  Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
+    class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
+    arguments: ['@aculta_forum.comment_mover', '@current_user']
+  Drupal\aculta_forum\Hook\ForumDiscussionWriteHooks:
+    class: Drupal\aculta_forum\Hook\ForumDiscussionWriteHooks
+    arguments: ['@aculta_forum.discussion_write_guard']
+  Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks:
+    class: Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks
+    arguments: ['@database']
+  Drupal\aculta_forum\Hook\ForumPublicationTimeHooks:
+    class: Drupal\aculta_forum\Hook\ForumPublicationTimeHooks
+    arguments: ['@datetime.time', '@aculta_user.participation_rules']
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
     arguments: ['@aculta_portal.domain_purpose']
   Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks:
     class: Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
+  Drupal\aculta_forum\Hook\ForumQuoteHooks:
+    class: Drupal\aculta_forum\Hook\ForumQuoteHooks
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.quote_builder', '@request_stack', '@string_translation']
+  Drupal\aculta_forum\Hook\ForumTopicMoveHooks:
+    class: Drupal\aculta_forum\Hook\ForumTopicMoveHooks
+    arguments: ['@aculta_forum.topic_mover', '@current_user']
+  Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks:
+    class: Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks
+    arguments: ['@entity_type.manager', '@current_user']
+  Drupal\aculta_forum\Hook\PublicForumExposedFormHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumExposedFormHooks
+    arguments: ['@entity_type.manager', '@current_user', '@entity.repository', '@string_translation']
+  Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks
+    arguments: ['@plugin.manager.menu.local_task', '@request_stack', '@aculta_portal.domain_purpose']
+  Drupal\aculta_forum\Hook\PublicForumLastCommentAuthorHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumLastCommentAuthorHooks
+    arguments: ['@entity_type.manager', '@aculta_user.author_card_builder']
+  Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks
+    arguments: ['@access_manager', '@aculta_portal.domain_purpose']
+  Drupal\aculta_forum\Hook\PublicForumTopicHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumTopicHooks
+    arguments: ['@aculta_portal.domain_purpose']
+
   aculta_forum.attachment_publication:
     class: Drupal\aculta_forum\Attachment\ForumAttachmentPublication
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

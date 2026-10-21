@@ -1,0 +1,7 @@
+name: 'ACULTA Forum post test fixture'
+type: module
+description: 'Registers the production ForumPost content entity for isolated Kernel tests.'
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:content_moderation
