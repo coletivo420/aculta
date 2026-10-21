@@ -97,6 +97,6 @@ Observações (decisão pendente, não defeito do ciclo):
 
 - **Auto Image:** não habilitado até haver exceção formal do responsável (ver a auditoria, seção 8).
 - **Deprecações:** três avisos vêm de `ckeditor5_plugin_pack_templates` (contrib).
-- **PasteFromMarkdown:** habilitado; o comportamento de colagem não foi verificado no navegador.
-- **Pré-visualização do modelo de e-mail:** usa o mesmo escape do envio; a tela não foi validada no navegador.
-- **Formulário de modelos do mailer:** coberto por testes de unidade e Kernel; não foi validado no navegador.
+- **Pré-visualização do modelo de e-mail:** validada no navegador: mostra o HTML renderizado, sem script.
+- **Formulário de modelos do mailer:** validado no navegador (corpo com o editor `aculta_email`, prévia renderizada).
+- **Colagem Markdown:** ativa no `aculta_editorial`. Negrito, link e lista convertidos. Título de nível 1 vira parágrafo (títulos 2 a 4).

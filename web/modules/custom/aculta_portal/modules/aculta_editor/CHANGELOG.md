@@ -1,5 +1,10 @@
 # Changelog — ACULTA Editor
 
+## 0.1.0-dev.3 — 2026-10-22
+
+- Colagem Markdown ativada no formato `aculta_editorial` (`ckeditor5_plugin_pack_paste_markdown__paste_markdown`, enabled). O plugin vem desligado por padrão e remove o `PasteFromMarkdownExperimental` sem essa opção.
+- Verificado no navegador: negrito, link e lista convertidos. Título de nível 1 vira parágrafo, pela política de títulos (2 a 4) do perfil.
+
 ## 0.1.0-dev.2 — 2026-10-22
 
 - Auto Image habilitado por exceção formal do responsável. Inerte sem `ckeditor5_image` nos formatos; a regra do `aculta_image` impede adicionar o upload do Core.

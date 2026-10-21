@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Validar no navegador a colagem Markdown, a pré-visualização do modelo de e-mail e o formulário de modelos do aculta_mailer antes de RC; decidir se o Auto Image ganha o plugin de imagem com a regra do aculta_image ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))
+next_phase: Decidir se o título de nível 1 entra no perfil editorial e se o Auto Image ganha o plugin de imagem com a regra do aculta_image; validar o envio de e-mail de teste do modelo antes de RC ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))
