@@ -183,6 +183,12 @@ no Group acessa os agregados e estudante não os recebe. Regressão Kernel
 combinada reexecutada: 21 testes / 646 assertions PASS, com 92 depreciações
 upstream.
 
+Após acrescentar a política de remoção manual de memberships de compra, Unit
+LMS/Messenger passou com 77 testes / 399 assertions; `EnrollmentFormHooksTest`
+passou com 5 testes / 31 assertions. A cobertura distingue matrícula manual,
+pedido pago, reembolso parcial/total, pedido gratuito concluído e origem
+inválida. Não há chamadas a gateway.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.54 — proteger matrícula por compra contra remoção manual — 2026-10-21
+
+- `EnrollmentFormHooksTest` confirma que matrícula manual pode ser removida;
+  pedidos pagos ou parcialmente reembolsados e pedidos gratuitos concluídos
+  continuam protegidos; reembolso total permite remoção; origem quebrada falha
+  fechada. A cobertura focal passou com 5 testes / 31 assertions; Unit combinada
+  LMS/Messenger passou com 77 testes / 399 assertions (8 depreciações PHPUnit).
+
 ## 0.1.0-dev.53 — validar painel por papel de turma — 2026-10-21
 
 - O Kernel do painel de turma usa o grant `grade students` no papel Group do

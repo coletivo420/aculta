@@ -122,8 +122,12 @@ integral revoga somente membership originada pelo pedido; outra compra válida
 mantém acesso e matrícula manual permanece independente. Educadores podem
 remover memberships manuais, mas não memberships protegidas por pagamento ativo.
 Unit testa entitlement de pedido gratuito, pagamento concluído, reembolso parcial
-e total e pedido incompleto. O Runtime não foi conectado ao gateway para simular
-uma transação remota.
+e total e pedido incompleto. `EnrollmentFormHooksTest` também protege contra
+remoção manual de matrículas de compra paga/parcialmente reembolsada ou pedido
+gratuito concluído e falha fechada quando a origem não pode ser lida; matrícula
+manual e pedido totalmente reembolsado seguem removíveis. A confirmação visual
+da interface ainda aguarda smoke HTTP. O Runtime não foi conectado ao gateway
+para simular uma transação remota.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página
@@ -260,7 +264,7 @@ assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
-Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 72 testes/368
+Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 77 testes/399
 assertions; Kernel MariaDB 21 testes/646 assertions PASS. No total, houve 8
 depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 
