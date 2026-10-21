@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Attachment\ForumGalleryPublication;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
 use Drupal\aculta_image\FileRemover;
+use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
@@ -289,7 +290,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   /**
    * Removing an embed unpublishes its Media without Entity Usage tracking.
    */
-  public function testRemovedCommentEmbedUnpublishesMediaWithoutUsageRecord(): void {
+  public function testRemovedCommentEmbedUnpublishesMediaDespiteStaleUsageRecord(): void {
     $topic = $this->createTopic();
     $file = $this->createAttachmentFile('detached.pdf');
     $media = $this->createAttachmentMedia($file, 'detached.pdf', $this->container->get('datetime.time')->getRequestTime());
@@ -297,10 +298,15 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
 
     $this->publication->syncComment($comment);
     self::assertTrue($this->isAttachmentPublished($media));
-    self::assertSame([], $this->container->get('entity_usage.usage')->listSources($media, FALSE));
+    self::assertNotEmpty($this->container->get('entity_usage.usage')->listSources($media, FALSE));
 
+    $original_comment = clone $comment;
     $comment->set('comment_body', ['value' => 'Imagem removida.', 'format' => 'plain_text']);
     $comment->save();
+    $stored_comment = $this->container->get('entity_type.manager')->getStorage('comment')->load($comment->id());
+    self::assertSame('Imagem removida.', $stored_comment->get('comment_body')->value);
+    // The update hook receives this snapshot during the save operation.
+    $comment->setOriginal($original_comment);
     $this->publication->syncComment($comment);
 
     self::assertFalse($this->isAttachmentPublished($media));
@@ -343,6 +349,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
         $this->container->get('file_system'),
         $this->container->get('logger.factory'),
       ),
+      new ImageInspector($this->container->get('image.factory')),
     );
 
     self::assertSame(1, $cleanup->cleanup());
@@ -404,8 +411,12 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $gallery_publication->syncComment($comment);
     self::assertTrue($this->isAttachmentPublished($media));
 
+    $original_gallery = clone $gallery;
     $gallery->set('images', []);
     $gallery->save();
+    self::assertSame([], $gallery->get('images')->getValue());
+    // The update hook receives this snapshot during the save operation.
+    $gallery->setOriginal($original_gallery);
     $gallery_publication->syncGalleryEntity($gallery);
 
     self::assertTrue($gallery->isPublished(), 'The gallery remains published while its comment remains public.');

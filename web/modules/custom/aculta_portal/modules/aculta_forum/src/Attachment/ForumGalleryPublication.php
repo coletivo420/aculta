@@ -75,7 +75,7 @@ final class ForumGalleryPublication {
         if ($media instanceof MediaInterface
           && $media->bundle() === ForumAttachmentPublication::BUNDLE
           && !in_array((string) $media->id(), $current_media_ids, TRUE)) {
-          $this->attachmentPublication->syncMediaEntity($media);
+          $this->attachmentPublication->syncMediaEntity($media, (int) $gallery->id());
         }
       }
     }

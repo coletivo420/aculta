@@ -2293,3 +2293,11 @@
 - A aba Fórum no painel central herda a política global por padrão e pode receber override próprio. A aba global define padrão de 10 MB.
 - Serviço de publicação continua sendo dono do vínculo entre Media e comentário/galeria; não há validação de Runtime nesta mudança. RUNTIME STATUS: DEFERRED.
 
+## `0.1.0-dev.134` — mantém a limpeza de imagens sob aculta_image
+
+- O cleanup agora detecta conteúdo raster além do MIME declarado e encaminha imagens ao `aculta_image.file_remover`; documentos sem referências são excluídos pela Storage Core.
+- O campo File misto declara a política `aculta_image` em `third_party_settings`. O gate documenta a exceção restrita aos validadores Core de documentos PDF/Office.
+- Reconciliação usa o snapshot original disponível durante o hook de atualização para retirar publicação de mídia removida de comentário ou galeria; Entity Usage desatualizado não prevalece sobre o conteúdo atual.
+- `ForumAttachmentPublicationKernelTest`: 6 testes / 148 assertions PASS no MariaDB dedicado (10 depreciações Core/contrib e uma PHP 8.4). PHPCS nos arquivos PHP alterados e gates `validate-aculta-image.php` e `validate-aculta-gallery.php` PASS.
+- Runtime não foi alterado; PHP CLI 8.4.26, abaixo da baseline 8.5. Estado Dev.
+

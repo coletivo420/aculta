@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Attachment;
 
 use Drupal\aculta_image\FileRemover;
+use Drupal\aculta_image\ImageInspector;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
@@ -31,6 +32,7 @@ final class ForumAttachmentCleanup {
     private readonly Connection $database,
     private readonly TimeInterface $time,
     private readonly FileRemover $imageFileRemover,
+    private readonly ImageInspector $imageInspector,
   ) {}
 
   /**
@@ -79,11 +81,11 @@ final class ForumAttachmentCleanup {
       if ($this->hasFileReferences($file)) {
         continue;
       }
-      if (str_starts_with((string) $file->getMimeType(), 'image/')) {
+      if ($this->isImage($file)) {
         $this->imageFileRemover->delete($file, 'anexo órfão do Fórum após uma hora');
       }
       else {
-        $file->delete();
+        $this->entityTypeManager->getStorage('file')->delete([$file]);
       }
       $removed++;
     }
@@ -111,13 +113,13 @@ final class ForumAttachmentCleanup {
       if (!$file instanceof FileInterface || $this->hasFileReferences($file)) {
         continue;
       }
-      if (str_starts_with((string) $file->getMimeType(), 'image/')) {
+      if ($this->isImage($file)) {
         if ($this->imageFileRemover->delete($file, 'upload temporário órfão do Fórum após uma hora')) {
           $removed++;
         }
       }
       else {
-        $file->delete();
+        $this->entityTypeManager->getStorage('file')->delete([$file]);
         $removed++;
       }
     }
@@ -185,6 +187,14 @@ final class ForumAttachmentCleanup {
       ->range(0, 1)
       ->execute()
       ->fetchField();
+  }
+
+  /**
+   * Routes image content through aculta_image even when MIME metadata is weak.
+   */
+  private function isImage(FileInterface $file): bool {
+    return str_starts_with((string) $file->getMimeType(), 'image/')
+      || $this->imageInspector->dimensions($file->getFileUri()) !== NULL;
   }
 
   /**

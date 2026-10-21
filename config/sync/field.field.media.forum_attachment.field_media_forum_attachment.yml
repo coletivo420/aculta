@@ -6,6 +6,7 @@ dependencies:
     - field.storage.media.field_media_forum_image
     - media.type.forum_attachment
   module:
+    - aculta_image
     - file
   enforced:
     module:
@@ -27,4 +28,7 @@ settings:
   file_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
   max_filesize: ''
   description_field: false
+third_party_settings:
+  aculta_image:
+    policy: default
 field_type: file

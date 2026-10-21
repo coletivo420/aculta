@@ -81,9 +81,9 @@ final class ForumAttachmentPublication {
   /**
    * Reconciles a Media update with its current published comment references.
    */
-  public function syncMediaEntity(MediaInterface $media): void {
+  public function syncMediaEntity(MediaInterface $media, ?int $excluded_gallery_id = NULL): void {
     if ($media->bundle() === self::BUNDLE && $media->hasField(self::PDF_FIELD)) {
-      $this->syncMedia($media);
+      $this->syncMedia($media, NULL, NULL, $excluded_gallery_id);
     }
   }
 
@@ -118,6 +118,7 @@ final class ForumAttachmentPublication {
     MediaInterface $media,
     ?CommentInterface $current_comment = NULL,
     ?NodeInterface $current_topic = NULL,
+    ?int $excluded_gallery_id = NULL,
   ): void {
     $is_public = FALSE;
     // Field references are not reported consistently by Entity Usage; discover
@@ -128,6 +129,9 @@ final class ForumAttachmentPublication {
       ->condition('images.target_id', $media->id())
       ->execute();
     foreach ($gallery_ids as $gallery_id) {
+      if ($excluded_gallery_id !== NULL && (int) $gallery_id === $excluded_gallery_id) {
+        continue;
+      }
       $gallery = $this->entityTypeManager->getStorage('media_gallery')->load($gallery_id);
       if ($gallery instanceof MediaGalleryInterface && $this->isPublicGalleryReference($gallery, $media, $current_topic)) {
         $is_public = TRUE;
@@ -144,9 +148,13 @@ final class ForumAttachmentPublication {
       ->condition('comment_body.value', '%' . $media->uuid() . '%', 'LIKE')
       ->execute();
     $comments = $comment_storage->loadMultiple($comment_ids);
-    if ($current_comment instanceof CommentInterface
-      && in_array($media->uuid(), $this->mediaUuids($current_comment), TRUE)) {
-      $comments[$current_comment->id()] = $current_comment;
+    if ($current_comment instanceof CommentInterface) {
+      // EntityQuery may match an older revision of this Comment. Its current
+      // saved object is authoritative for this synchronous reconciliation.
+      unset($comments[$current_comment->id()]);
+      if (in_array($media->uuid(), $this->mediaUuids($current_comment), TRUE)) {
+        $comments[$current_comment->id()] = $current_comment;
+      }
     }
     foreach ($comments as $comment) {
       if ($comment instanceof CommentInterface
