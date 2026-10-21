@@ -61,6 +61,10 @@
 
 ## Matriz de abas do Studio
 
+Estrutura implementada na fase 0.6.0: áreas em abas superiores (uma por dono), submenu à esquerda com as seções de
+cada área e abas próprias de cada seção, com as ações no painel. Cada área implementa `sections()`. As áreas abaixo
+são a matriz-alvo; a presença de uma aba depende do dono estar habilitado e da permissão real de cada ação.
+
 O Studio é frontend integrado à Minha Conta. Itens não autorizados não aparecem; rotas e operações devem também aplicar suas próprias verificações de acesso. **Disponibilidade planejada, não implementação concluída.** As abas seguem a diretiva normativa (`docs/architecture/aculta-kernels.md`); a página agregadora inicial do Studio não é aba e não consta dessa matriz.
 
 | Aba | Dono funcional | Ações previstas | Serviços compartilhados |
