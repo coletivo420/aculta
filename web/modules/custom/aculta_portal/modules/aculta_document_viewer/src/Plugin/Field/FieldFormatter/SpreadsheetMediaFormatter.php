@@ -17,7 +17,7 @@ use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Exibe planilhas XLSX autorizadas em abas (leitor somente leitura) com download.
+ * Exibe planilhas autorizadas (XLSX, ODS, XLS e CSV) em abas, somente leitura, com download.
  *
  * Mesmas checagens do formatter DOCX: entidade hospedeira, campo e download.
  * Sem leitor, o link do Core permanece.
@@ -103,7 +103,7 @@ final class SpreadsheetMediaFormatter extends FormatterBase implements Container
         '#file' => $file,
         '#description' => $items->get($delta)->description ?: NULL,
       ];
-      if ($this->isXlsx($file)) {
+      if ($this->isSupported($file)) {
         $viewer = $this->viewerBuilder->build($file, (string) $host->label());
         if ($viewer !== NULL) {
           $file_cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($viewer));
@@ -118,12 +118,13 @@ final class SpreadsheetMediaFormatter extends FormatterBase implements Container
   }
 
   /**
-   * Confirms MIME and extension of an XLSX candidate (structure is validated later).
+   * Confirms MIME and extension of a supported spreadsheet (structure is validated later).
    */
-  private function isXlsx(FileInterface $file): bool {
+  private function isSupported(FileInterface $file): bool {
     $mime = strtolower((string) $file->getMimeType());
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-    return $mime === SpreadsheetViewerBuilder::XLSX_MIME && $extension === 'xlsx';
+    return isset(SpreadsheetViewerBuilder::FORMATS[$extension])
+      && in_array($mime, SpreadsheetViewerBuilder::FORMATS[$extension], TRUE);
   }
 
 }

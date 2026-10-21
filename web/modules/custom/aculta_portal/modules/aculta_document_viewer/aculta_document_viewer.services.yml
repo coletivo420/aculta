@@ -25,4 +25,7 @@ services:
 
   aculta_document_viewer.spreadsheet_builder:
     class: Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder
-    arguments: ['@file_url_generator', '@file_system', '@logger.channel.aculta_document_viewer']
+    arguments: ['@file_url_generator', '@file_system', '@aculta_document_viewer.spreadsheet_file_validator', '@logger.channel.aculta_document_viewer']
+
+  aculta_document_viewer.spreadsheet_file_validator:
+    class: Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetFileValidator

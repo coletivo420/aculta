@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_document_viewer\Spreadsheet;
 
-use Drupal\aculta_document_viewer\Docx\DocxPackageValidator;
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -31,16 +30,27 @@ final class SpreadsheetViewerBuilder {
   public const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
   /**
+   * Mapa extensão => MIME aceito pelo leitor (CSV aceita text/plain, comum no Drupal).
+   */
+  public const FORMATS = [
+    'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    'ods' => ['application/vnd.oasis.opendocument.spreadsheet'],
+    'xls' => ['application/vnd.ms-excel'],
+    'csv' => ['text/csv', 'text/plain'],
+  ];
+
+  /**
    * Constructs the builder.
    */
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     private readonly FileSystemInterface $fileSystem,
+    private readonly SpreadsheetFileValidator $validator,
     private readonly LoggerInterface $logger,
   ) {}
 
   /**
-   * Builds the viewer for an authorized XLSX, or NULL to use the Core link.
+   * Builds the viewer for an authorized spreadsheet, or NULL to use the Core link.
    *
    * @return array<string, mixed>|null
    *   Render array, or NULL when the file must not be rendered.
@@ -54,11 +64,12 @@ final class SpreadsheetViewerBuilder {
     if ($path === FALSE || $path === '') {
       return NULL;
     }
+    $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
     try {
-      DocxPackageValidator::forXlsx()->validate($path);
+      $this->validator->validate($path, $extension);
     }
     catch (DocxValidationException $exception) {
-      $this->logger->notice('XLSX rejeitado pela validação estrutural: @reason (fid @fid).', [
+      $this->logger->notice('Planilha rejeitada pela validação estrutural: @reason (fid @fid).', [
         '@reason' => $exception->getReason(),
         '@fid' => $file->id(),
       ]);
@@ -71,6 +82,7 @@ final class SpreadsheetViewerBuilder {
         'class' => ['aculta-spreadsheet-viewer'],
         'data-aculta-sheet' => 'true',
         'data-aculta-sheet-url' => $this->fileUrlGenerator->generateString($uri),
+        'data-aculta-sheet-format' => strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)),
         'data-aculta-sheet-tabulator' => Url::fromUri('base:libraries/tabulator/dist/tabulator_esm.min.mjs')->toString(),
         'data-aculta-sheet-title' => $title,
       ],

@@ -1,5 +1,15 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.6 — planilhas XLS, ODS e CSV, pt-BR e modo Tabela (0.1.0-dev.7 do plano) — 2026-10-21
+
+- `Spreadsheet\SpreadsheetFileValidator`: valida por formato. XLSX pelo validador OOXML (`forXlsx`), ODS (`mimetype` declarado, `content.xml`, sem `Basic/` ou `Scripts/`), XLS (assinatura OLE2) e CSV (texto, sem bytes NUL). Limite de 25 MiB; extensão fora da lista é recusada.
+- Formatter e builder aceitam XLSX, ODS, XLS e CSV, com MIME por extensão; `data-aculta-sheet-format` informa o formato ao leitor.
+- Formatação pt-BR: números com vírgula decimal e casas do formato da célula; percentuais; datas `dd/mm/aaaa` a partir dos componentes da data (sem depender do fuso); hora com segundos só quando pedidos; booleanos como VERDADEIRO/FALSO; erros como texto.
+- CSV é lido como texto (`raw`): o SheetJS não converte "25.6%" em número.
+- Modo Tabela: uma aba por vez, com seletor de aba, primeira linha como cabeçalho, filtros por coluna e paginação local. Somente leitura. Modo Planilha segue igual.
+- Testes: Unit 52/52 OK (inclui validação por formato). Browser (Chromium na sessão X11, fixtures ODS, XLS, CSV e XLSX gerados com SheetJS 0.20.3): status ok em todos; XLS e ODS com pt-BR, percentual, data, booleanos e cabeçalhos; CSV como texto; modo Tabela com títulos e filtros.
+- Pendências: integração no Runtime (criação de nó e arquivo bloqueada pelo hook do Fórum, outra frente); isolamento do SheetJS (0.1.0-dev.10); formato de data e número vindo do arquivo para locales além de pt-BR; recorte de módulos do Tabulator.
+
 ## 0.1.0-dev.5 — leitor de planilhas com SheetJS e Tabulator (0.1.0-dev.6 do plano) — 2026-10-21
 
 - Bibliotecas locais e vendorizadas: SheetJS CE 0.20.3 (`web/libraries/sheetjs`) e Tabulator 6.5.3 (`web/libraries/tabulator`), com manifestos.
