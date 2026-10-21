@@ -9,7 +9,8 @@
 - Runtime de teste: sem alteração de configuração ou de schema; o consumidor `lms` herda a política global até que alguém salve a aba. `drush cr` OK; verificado por leitura no container: a atividade pedindo `png pdf exe txt` recebe `png pdf`, limite de 10 MB e o validador de imagem.
 - Smoke HTTP autenticado no Runtime (conta de teste `teste.comum`, login único gerado por Drush, sem senha no repositório): a atividade File Upload com `png exe pdf txt` recebe, pelo formulário real, a recusa do `.exe` com a mensagem "Apenas arquivos com as seguintes extensões são permitidos: png pdf" (teto da política LMS), e o PNG é aceito e gravado na resposta (`private://lms_file_upload`).
 - Cenário criado só para o smoke (tipo `smoke_upload`, campo `field_file_extensions`, aula, curso e matrícula) e removido ao final, com as respostas e arquivos de teste. O Runtime voltou aos tipos de atividade originais.
-- Pendente: revisão visual do formulário de resposta (exige navegador com sessão autenticada).
+- Correção da revisão visual: o texto de ajuda do campo mostrava as extensões da atividade ("png exe pdf txt") e não o teto. O hook agora reescreve a ajuda com a lista efetiva ("Envie um arquivo. Extensões permitidas: png pdf."). `SubmissionImageHooks` recebe a tradução por injeção (`string_translation`). Unit 74/408 OK.
+- Revisão visual com sessão autenticada no Firefox (X11, `tests/browser/aculta-lms/answer-upload-visual.mjs`): 8/8 verificações OK, incluindo o `.exe` recusado com "Somente arquivos com as seguintes extensões são permitidos: png, pdf", o PNG aceito, sem erros de JavaScript e sem rolagem horizontal. Limite: a janela não reduz abaixo de 500 px, então o celular foi verificado em 500 px.
 
 ## 0.1.0-dev.79 (situação por aluno para a série, sob o aceite único)
 

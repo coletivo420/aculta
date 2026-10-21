@@ -7,17 +7,24 @@ namespace Drupal\aculta_lms\Hook;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 
 /** Applies the Portal upload policy to LMS File Upload answer forms. */
 final class SubmissionImageHooks {
+
+  use StringTranslationTrait;
 
   /**
    * The Portal policy is optional at container level, as in other LMS hooks.
    * aculta_lms requires aculta_portal in production, so the cap always applies there.
    */
   public function __construct(
+    TranslationInterface $stringTranslation,
     private readonly ?UserUploadPolicy $uploadPolicy = NULL,
-  ) {}
+  ) {
+    $this->stringTranslation = $stringTranslation;
+  }
 
   /**
    * Caps the contrib managed upload element to the LMS upload policy.
@@ -36,6 +43,10 @@ final class SubmissionImageHooks {
     $validators['AcultaLmsSubmissionImage'] = [];
     if ($this->uploadPolicy !== NULL) {
       $validators = $this->uploadPolicy->restrictValidators($validators, 'lms');
+      // The help text must list what is accepted, not what the activity asked for.
+      $form['file_upload']['#description'] = $this->t('Envie um arquivo. Extensões permitidas: @extensions.', [
+        '@extensions' => $validators['FileExtension']['extensions'],
+      ]);
     }
     $form['file_upload']['#upload_validators'] = $validators;
   }

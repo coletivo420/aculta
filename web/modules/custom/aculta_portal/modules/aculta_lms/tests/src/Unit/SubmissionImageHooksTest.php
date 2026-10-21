@@ -38,6 +38,22 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame('png jpg pdf', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
   }
 
+  public function testHelpTextListsOnlyTheExtensionsAccepted(): void {
+    $form = [
+      'file_upload' => [
+        '#type' => 'managed_file',
+        '#description' => 'Envie um arquivo. Extensões permitidas: png exe pdf txt.',
+        '#upload_validators' => [
+          'FileExtension' => ['extensions' => 'png exe pdf txt'],
+        ],
+      ],
+    ];
+
+    $this->hooks('png pdf docx', 10)->answerFormAlter($form, $this->createMock(FormStateInterface::class));
+
+    self::assertSame('Envie um arquivo. Extensões permitidas: png pdf.', (string) $form['file_upload']['#description']);
+  }
+
   public function testActivityCannotWidenExtensionsOrSizeBeyondTheLmsPolicy(): void {
     $form = [
       'file_upload' => [
@@ -74,7 +90,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
       ],
     ];
 
-    (new SubmissionImageHooks(NULL))->answerFormAlter($form, $this->createMock(FormStateInterface::class));
+    (new SubmissionImageHooks($this->getStringTranslationStub(), NULL))->answerFormAlter($form, $this->createMock(FormStateInterface::class));
 
     self::assertSame('pdf exe', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
     self::assertArrayHasKey('AcultaLmsSubmissionImage', $form['file_upload']['#upload_validators']);
@@ -93,7 +109,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     $configFactory->method('get')->with('aculta_portal.user_upload')->willReturn($config);
 
     $policy = new UserUploadPolicy($configFactory, new ImageUploadPolicy(), new ImageInspector($this->createMock(ImageFactory::class)));
-    return new SubmissionImageHooks($policy);
+    return new SubmissionImageHooks($this->getStringTranslationStub(), $policy);
   }
 
 }
