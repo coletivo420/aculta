@@ -1,3 +1,11 @@
+## 0.6.0-dev.137 — painéis de estatísticas por área com tokens data-portal-ui — 2026-10-21
+
+Classificação: PATCH (estilo de painel com tokens semânticos; sem contrato de componente novo, sem cor nova).
+
+- `PortalUiHooks`: tokens `statistics-panel`, `statistics-areas`, `statistics-controls`, `statistics-form`, `statistics-summary`, `statistics-comparison`, `statistics-chart`, `statistics-table` e `statistics-note` mapeados para classes BEM `aculta-statistics__*`.
+- `css/components/statistics.css` (biblioteca global): navegação por área, formulário de período e métrica, resumo, gráfico com rolagem horizontal, tabela e foco visível. Usa só tokens semânticos (`--aculta-*`), válidos no claro e no escuro. Responsivo: campos em largura total abaixo de 576px.
+- Autorizado pelo responsável em 2026-10-21 para os painéis de estatísticas.
+
 ## 0.6.0-dev.136 — caixa de atenção para e-mail não confirmado — 2026-10-21
 
 Classificação: PATCH (classe de aviso com tokens de estado de atenção já existentes).

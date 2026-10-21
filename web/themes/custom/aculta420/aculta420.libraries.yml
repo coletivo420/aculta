@@ -38,6 +38,7 @@ global:
       css/components/portal-payment-notice.css: {}
       css/components/portal-requirements-report.css: {}
       css/components/sales-panel.css: {}
+      css/components/statistics.css: {}
       css/components/portal-support.css: {}
       css/components/auth.css: {}
   js:

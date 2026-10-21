@@ -262,6 +262,8 @@ Nenhuma destas fases tem versão alvo de 1.0.
 
 - **Registro histórico (2026-10-09):** a validação de produção era adiada até o primeiro RC. Pelo fluxo vigente, concluir todos os requisitos em RC, validar o deploy Alpha no servidor de desenvolvimento e, após aprovação, migrar o candidato a produção.
 
+- **Painéis de estatísticas (0.6.0-dev.137):** tokens `statistics-*` e `css/components/statistics.css`, para o painel central e as áreas do `aculta_statistics` (período 7/14/30, comparação, CSV). Autorizado pelo responsável em 2026-10-21. Pendente: validação visual no navegador (Firefox), no servidor de testes.
+
 ## Critério para encerrar o saneamento do tema
 
 Todos os itens de DEBT-REGISTER do tema estão em Resolvida, Decisão registrada ou Aberta com

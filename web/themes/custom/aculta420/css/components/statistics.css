@@ -1,0 +1,113 @@
+/*
+ * Painéis de estatísticas (aculta_statistics). O módulo emite só tokens data-portal-ui; PortalUiHooks
+ * troca cada um por estas classes. Cores e superfícies vêm de tokens semânticos, válidos no claro e no escuro.
+ */
+
+.aculta-statistics {
+  display: grid;
+  gap: 1rem;
+  color: var(--aculta-text-primary);
+}
+
+.aculta-statistics__areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-statistics__areas a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  text-decoration: none;
+}
+
+.aculta-statistics__areas a:hover,
+.aculta-statistics__areas a:focus-visible {
+  background: var(--aculta-interactive-hover-bg);
+  color: var(--aculta-interactive-hover-text);
+}
+
+.aculta-statistics__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.aculta-statistics__form label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--aculta-text-secondary);
+  font-weight: 600;
+}
+
+.aculta-statistics__form select {
+  min-width: 12rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-statistics__form select:focus-visible,
+.aculta-statistics__form button:focus-visible,
+.aculta-statistics__areas a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-statistics__summary,
+.aculta-statistics__comparison,
+.aculta-statistics__note {
+  color: var(--aculta-text-secondary);
+}
+
+.aculta-statistics__chart {
+  padding: 0.75rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-muted);
+  overflow-x: auto;
+}
+
+.aculta-statistics__chart svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.aculta-statistics__table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--aculta-text-primary);
+}
+
+.aculta-statistics__table th,
+.aculta-statistics__table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--aculta-border-subtle);
+  text-align: left;
+}
+
+.aculta-statistics__table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  color: var(--aculta-text-secondary);
+}
+
+@media (max-width: 575.98px) {
+  .aculta-statistics__form label,
+  .aculta-statistics__form select {
+    width: 100%;
+    min-width: 0;
+  }
+}

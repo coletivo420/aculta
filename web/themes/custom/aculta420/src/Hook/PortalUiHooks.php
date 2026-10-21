@@ -44,6 +44,16 @@ final class PortalUiHooks {
     // Cartão do produto: caixa com borda neutra (sem cor de botão), texto alinhado à esquerda.
     'shop-product-card' => ['d-block', 'border', 'border-2', 'rounded-3', 'text-start', 'p-3', 'text-decoration-none'],
     // Relatórios de requisitos e segredos (administração do Portal).
+    // Estatísticas (aculta_statistics): painel central e por área. O módulo envia só tokens; o tema define o visual.
+    'statistics-panel' => ['aculta-statistics'],
+    'statistics-areas' => ['aculta-statistics__areas'],
+    'statistics-controls' => ['aculta-statistics__controls'],
+    'statistics-form' => ['aculta-statistics__form'],
+    'statistics-summary' => ['aculta-statistics__summary'],
+    'statistics-comparison' => ['aculta-statistics__comparison'],
+    'statistics-chart' => ['aculta-statistics__chart'],
+    'statistics-table' => ['aculta-statistics__table'],
+    'statistics-note' => ['aculta-statistics__note'],
     'requirements' => ['aculta-portal-requirements'],
     'requirements-legend' => ['aculta-portal-requirements__legend'],
     'requirements-status' => ['aculta-portal-requirements__status'],
