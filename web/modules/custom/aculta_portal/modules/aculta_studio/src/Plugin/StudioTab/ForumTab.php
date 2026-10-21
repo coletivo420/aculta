@@ -12,7 +12,10 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Fórum tab. The owner is aculta_forum; the permission is create aculta forum posts.
+ * Fórum tab. The owner is aculta_forum (discussions, topics and moderation of reports).
+ *
+ * The area is shown to accounts with the forum posting or moderation permission. Each action still goes to
+ * the owner's route in the forum domain, and the owner's access decides whether the action is offered.
  */
 #[StudioTab(
   id: 'forum',
@@ -28,21 +31,55 @@ final class ForumTab extends StudioTabBase {
 
   /** {@inheritdoc} */
   public function access(AccountInterface $account): AccessResultInterface {
-    return AccessResult::allowedIfHasPermission($account, 'create aculta forum posts');
+    return AccessResult::allowedIfHasPermission($account, 'create aculta forum posts')
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'moderar denuncias do forum'));
   }
 
   /** {@inheritdoc} */
   public function sections(AccountInterface $account): array {
     return [
-      'criar' => [
-        'label' => $this->t('Criar'),
+      'discussoes' => [
+        'label' => $this->t('Discussões'),
         'weight' => 0,
         'tabs' => [
-          'novotopico' => [
-            'label' => $this->t('Novo tópico'),
+          'publicas' => [
+            'label' => $this->t('Todas'),
+            'weight' => 0,
+            'actions' => [
+              $this->routeAction($this->t('Discussões'), 'view.aculta_forum_public_topics.page_discussions', [], $account, 'forum'),
+            ],
+          ],
+          'novas' => [
+            'label' => $this->t('Novas'),
+            'weight' => 10,
+            'actions' => [
+              $this->routeAction($this->t('Discussões novas'), 'view.aculta_forum_public_topics.page_new_topics', [], $account, 'forum'),
+            ],
+          ],
+        ],
+      ],
+      'criar' => [
+        'label' => $this->t('Criar'),
+        'weight' => 10,
+        'tabs' => [
+          'topico' => [
+            'label' => $this->t('Tópico'),
             'weight' => 0,
             'actions' => [
               $this->routeAction($this->t('Novo tópico'), 'aculta_forum.topic_add', [], $account, 'forum'),
+            ],
+          ],
+        ],
+      ],
+      'moderacao' => [
+        'label' => $this->t('Moderação'),
+        'weight' => 20,
+        'tabs' => [
+          'denuncias' => [
+            'label' => $this->t('Denúncias'),
+            'weight' => 0,
+            'actions' => [
+              $this->routeAction($this->t('Denúncias do fórum'), 'aculta_user.denuncias_forum', [], $account, 'main'),
             ],
           ],
         ],

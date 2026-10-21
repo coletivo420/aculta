@@ -19,6 +19,7 @@
 - O bloco da fila administrativa de comentários, presente no Config Sync mas ausente do Runtime e de `config/install`, foi incluído no pacote do Magazine e ativado como bloco do tema Claro. A View mantém acesso `administer comments` e visibilidade no purpose `main`.
 - Smoke autenticado com UID 5: `/node/add` HTTP 200 lista Revista e Wiki; há apenas um tipo editorial e `article`/`blog` não aparecem. `/node/add/revista` renderiza título, subtítulo, corpo e moderação; uma publicação renderiza o formulário Comment contextual. Nenhum conteúdo novo foi enviado.
 - Um 500 transitório durante o smoke foi causado por referência de hook obsoleta em cache (`Drupal\aculta_studio\Hook\StudioAccountHooks` ausente), não pelo Magazine. `drush cr` eliminou a referência; as rotas autenticadas da Revista voltaram a HTTP 200.
+- Firefox headless: publicação pública inspecionada visualmente em 1280 e 390 px; título, canonical, descrição e layout público renderizam sem overflow horizontal em mobile. Com sessão editorial, a barra administrativa causa overflow de 78 px em 390 px; isso fica registrado para revisão visual de apresentação antes de RC.
 - Config Sync ainda apresenta diferenças que não foram importadas: campos virtuais `entity_print_*` nos displays ativos, peso do formato editorial, permissões/dependências de workflow do Fórum ainda não disponíveis no Runtime e hostname de Domain específico do ambiente. A importação integral continua bloqueada pelo drift concorrente.
 
 ## 0.3.0-dev.2 — consolida bundle único Revista — 2026-10-21

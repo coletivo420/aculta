@@ -90,7 +90,9 @@ separar formatos; todas as publicações usam `revista`.
 - Vídeo: não há um campo ou contrato editorial específico; usar incorporação
   compatível no corpo quando necessário. Galerias existentes são incorporadas
   pelo CKEditor 5/Entity Embed e continuam sob propriedade de `aculta_gallery`.
-- Concluir inspeção visual humana da página editorial e do formulário no ACULTA420.
+- A captura pública em Firefox não teve overflow em mobile; com sessão editorial,
+  a barra administrativa gera 78 px de overflow em 390 px. Revisar essa
+  apresentação antes de RC.
 - Resolver as diferenças de Config Sync depois que o workflow concorrente do
   Fórum estiver disponível no Runtime. Diferenças de hostname Domain e campos
   virtuais Entity Print devem permanecer separadas desse ajuste.
