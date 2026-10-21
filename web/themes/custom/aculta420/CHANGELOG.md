@@ -1,5 +1,13 @@
 ## 0.6.0-dev.143 — define tamanho dos modais de anexo e galeria do Fórum — 2026-10-21
 
+## 0.6.0-dev.146 — grade e abas das planilhas com tokens (homologação RC1) — 2026-10-21
+
+Classificação: PATCH (correção de apresentação com tokens semânticos).
+
+- A grade (`.tabulator`, cabeçalho, linhas, células, rodapé, filtros e paginação) e as abas da planilha usam tokens de superfície, texto, borda e foco. Antes, a grade ficava branca no modo escuro.
+- A aba ativa usa a cadeia completa de seletores do leitor, porque a regra do Tabulator é mais específica.
+- Medido no Runtime (Chromium X11): modo escuro, grade e abas com contraste; modo claro e modo escuro em 390 px sem rolagem horizontal; alvos de modo com 44 px.
+
 ## 0.6.0-dev.145 — apresentação dos leitores DOCX e planilhas — 2026-10-21
 
 Classificação: MINOR (componente de apresentação novo, com contrato neutro).

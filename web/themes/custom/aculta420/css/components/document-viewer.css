@@ -142,3 +142,62 @@
     min-height: 50vh;
   }
 }
+
+/* Grade do Tabulator (módulo Spreadsheet) com tokens, em claro e escuro. */
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-tableholder,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-header,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-col,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-row,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-row .tabulator-cell,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-footer {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  border-color: var(--aculta-border-default);
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-row.tabulator-row-even,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-row.tabulator-row-odd {
+  background-color: var(--aculta-surface-muted);
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-header .tabulator-col-title,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-col-content {
+  color: var(--aculta-text-primary);
+  font-weight: 600;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-header-filter input {
+  background-color: var(--aculta-surface-page);
+  color: var(--aculta-text-primary);
+  border: 1px solid var(--aculta-border-strong);
+  border-radius: var(--bs-border-radius);
+  min-height: 2.75rem;
+  padding: 0.35rem 0.5rem;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-header-filter input:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-page {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  border: 1px solid var(--aculta-border-default);
+}
+
+/* Abas das planilhas (módulo Spreadsheet). A cadeia completa vence a especificidade do Tabulator. */
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-footer .tabulator-spreadsheet-tabs,
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-footer .tabulator-footer-contents {
+  background-color: var(--aculta-surface-muted);
+  color: var(--aculta-text-primary);
+  border-color: var(--aculta-border-default);
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-accent);
+  font-weight: 700;
+}
