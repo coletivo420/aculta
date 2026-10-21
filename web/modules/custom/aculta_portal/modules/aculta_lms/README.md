@@ -228,6 +228,8 @@ fallback UTC. O total Unit passa a 38 testes/169 assertions.
 O Kernel de entrega privada `AttemptArchiveLifecycleTest` agora tem 8
 testes/324 assertions PASS; a suíte Kernel total fica em 18 testes/511
 assertions. As 42 depreciações nesse Kernel vêm de Core/contrib.
+`CertificateLifecycleTest`: 3 testes/73 assertions PASS, cobrindo o snapshot
+público e cache; 38 depreciações upstream.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;

@@ -74,7 +74,9 @@ final class CertificateVerificationController {
         '#cache' => ['max-age' => 0],
       ];
     }
-    CacheableMetadata::createFromObject($certificate)->applyTo($build);
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($certificate)
+      ->applyTo($build);
     return $build;
   }
 

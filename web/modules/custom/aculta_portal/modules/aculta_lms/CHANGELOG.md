@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.28 — preservar cache seguro na verificação pública — 2026-10-21
+
+- Corrige a aplicação de metadata do certificado: agora mescla as tags da
+  entidade ao render array, preservando `max-age: 0` da verificação pública.
+- Kernel confirma a política sem cache, invalidação por tag, campos públicos e
+  ausência de motivo de revogação/PDF quando revogado. `CertificateLifecycleTest`:
+  3 testes / 73 assertions PASS; 38 depreciações upstream.
+
 ## 0.1.0-dev.27 — cobrir isolamento entre respostas de estudantes — 2026-10-21
 
 - O Kernel confirma que outro estudante, ainda que matriculado no mesmo curso,

@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
+use Drupal\aculta_lms\Controller\CertificateVerificationController;
 use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
@@ -105,9 +106,27 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertSame(2, (int) $second->get('sequence')->value);
     self::assertSame('active', $manager->loadByCode($second->get('verification_code')->value)->get('state')->value);
 
+    $verification = new CertificateVerificationController(
+      $manager,
+      NULL,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+    );
+    $public = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('certificate-student', $public['name']['#plain_text']);
+    self::assertSame('Curso imutável', $public['course']['#plain_text']);
+    self::assertSame('Certificado válido', (string) $public['status']['#plain_text']);
+    self::assertArrayHasKey('pdf', $public);
+    self::assertSame(0, $public['#cache']['max-age']);
+    self::assertContains('aculta_lms_certificate:' . $second->id(), $public['#cache']['tags']);
+
     $manager->revoke($second, $issuer, 'Correção solicitada pela equipe');
     self::assertSame('revoked', $manager->loadByCode($second->get('verification_code')->value)->get('state')->value);
     self::assertSame('Correção solicitada pela equipe', $second->get('revocation_reason')->value);
+    $revoked = $verification->verify((string) $second->get('verification_code')->value);
+    self::assertSame('Certificado revogado', (string) $revoked['status']['#plain_text']);
+    self::assertArrayNotHasKey('pdf', $revoked);
+    self::assertArrayNotHasKey('revocation_reason', $revoked);
     self::assertCount(2, $manager->loadForStudent((int) $student->id()));
   }
 

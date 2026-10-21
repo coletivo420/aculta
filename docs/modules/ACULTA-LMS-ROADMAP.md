@@ -246,7 +246,10 @@ recebe conflito sem persistir. Em arquivos de entrega, o Kernel confirma que
 um estudante matriculado não baixa a resposta de outro estudante; o dono
 matriculado tem acesso, perde-o após revogação e um educador com `grade
 students` continua autorizado. `AttemptArchiveLifecycleTest`: 8 testes / 324
-assertions PASS. O conjunto ainda não completa a matriz de acesso/cache,
+assertions PASS. O verificador público também preserva `max-age: 0` ao mesclar
+as tags de invalidação do snapshot; `CertificateLifecycleTest`: 3 testes / 73
+assertions PASS. Core documenta que `applyTo()` define diretamente o metadata
+do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
 ## Ordem, commits e status
