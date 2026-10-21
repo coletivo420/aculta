@@ -37,7 +37,7 @@ O script termina com código 1 se alguma verificação falhar.
 
 ## Limites conhecidos
 
-- O Firefox não reduz a janela abaixo de 500 px: a verificação "celular" mede 500 px, não 390 px.
+- A janela do Firefox não reduz abaixo de 500 px. Por isso o celular é emulado pelo comando BiDi `browsingContext.setViewport` (390 px), e o script confere `window.innerWidth` antes da captura.
 - Ao mudar a largura, o menu administrativo pode abrir por cima do conteúdo. A verificação recarrega a página
   em largura reduzida para capturar o formulário com o menu fechado.
 - A revisão cobre o formulário e o envio do arquivo; não envia a resposta final.

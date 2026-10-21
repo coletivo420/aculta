@@ -39,11 +39,20 @@ const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 
 
 const moz = { prefs: { 'network.dns.localDomains': [new URL(PAGE).hostname, new URL(LOGIN_URI).hostname].join(',') } };
 if (HEADLESS) moz.args = ['-headless'];
-const { sessionId: sid } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': moz } } });
+const { value: session } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, webSocketUrl: true, 'moz:firefoxOptions': moz } } }).then((v) => ({ value: { sessionId: v.sessionId, webSocketUrl: v.capabilities.webSocketUrl } }));
+const sid = session.sessionId;
 const p = (path) => `/session/${sid}${path}`;
 const exec = (script) => wd('POST', p('/execute/sync'), { script, args: [] });
 const shot = async (name) => writeFileSync(join(OUT, `${name}.png`), Buffer.from(await wd('GET', p('/screenshot')), 'base64'));
-const setSize = (width, height) => wd('POST', p('/window/rect'), { width, height });
+// Viewport emulation through WebDriver BiDi (browsingContext.setViewport): the window itself cannot go below 500 px.
+const bidi = new WebSocket(session.webSocketUrl);
+let bidiId = 0; const bidiPending = new Map();
+bidi.onmessage = (m) => { const d = JSON.parse(m.data); if (d.id && bidiPending.has(d.id)) { bidiPending.get(d.id)(d); bidiPending.delete(d.id); } };
+await new Promise((r) => (bidi.onopen = r));
+const bidiSend = (method, params = {}) => new Promise((res) => { const i = ++bidiId; bidiPending.set(i, res); bidi.send(JSON.stringify({ id: i, method, params })); });
+const tree = await bidiSend('browsingContext.getTree', {});
+const context = tree.result.contexts[0].context;
+const setSize = async (width, height) => { await bidiSend('browsingContext.setViewport', { context, viewport: { width, height } }); };
 async function waitFor(expr, label, ms = 20000) {
   const end = Date.now() + ms;
   while (Date.now() < end) { if (await exec(`return !!(${expr});`)) return true; await sleep(300); }
@@ -76,10 +85,12 @@ try {
 
   await setSize(390, 844);
   await wd('POST', p('/refresh'), {});
+  const vw = await exec('return window.innerWidth;');
+  check('viewport emulado em 390 px', vw === 390, `innerWidth=${vw}`);
   await waitFor(`document.querySelector('#lms-answer-form')`, 'formulário no celular');
   await sleep(800);
   const mobile = JSON.parse(await exec(`return JSON.stringify({ overflow: document.documentElement.scrollWidth > window.innerWidth, width: window.innerWidth })`));
-  check('sem rolagem horizontal na largura menor possível (celular)', !mobile.overflow, `viewport ${mobile.width}px; o Firefox não reduz a janela abaixo de 500 px`);
+  check('sem rolagem horizontal em 390 px (celular)', !mobile.overflow, `viewport ${mobile.width}px`);
   await shot('02-celular-formulario');
   await setSize(1280, 900);
   await sleep(800);
@@ -109,6 +120,7 @@ try {
   check('execução da revisão', false, String(e.message || e));
 } finally {
   writeFileSync(join(OUT, 'results.json'), JSON.stringify(results, null, 2));
+  bidi.close();
   await wd('DELETE', p('')).catch(() => {});
   const failed = results.filter((r) => !r.ok).length;
   console.log(`\n${results.length - failed}/${results.length} verificações OK. Capturas e relatório em ${OUT}`);
