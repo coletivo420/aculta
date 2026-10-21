@@ -36,6 +36,26 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.1 (Commerce: pedidos pagos e receita bruta)
+
+### Código
+- `CommerceOrderPaidSubscriber` escuta `commerce_order.order.paid`, disparado uma única vez por pedido
+  na transição para pago (flag `paid_event_dispatched` do Commerce). Grava `commerce.orders.paid` e
+  `commerce.revenue.gross` (centavos), com a moeda ISO como dimensão. Pedido gratuito conta o pedido sem receita.
+- Falhas de gravação viram aviso/erro no log do canal `aculta_statistics` e não interrompem o pedido.
+- Métrica `commerce.revenue.gross` no catálogo e na configuração de retenção (padrão 90 dias).
+- Dependência `commerce:commerce_order`.
+
+### Pendente nesta fase (não entregue ainda)
+- Reconciliação com os pedidos oficiais do Commerce.
+- Reembolsos e cancelamentos (`commerce.refunds.total`).
+- Carrinho abandonado, produtos mais vendidos, cupons e vendas por domínio.
+
+### Testes
+- Unit: 36 casos (inclui 4 do subscriber de pedido pago).
+- Kernel: 14 casos, aprovados.
+- Runtime de teste: `cr` aplicado; o subscriber aparece como listener de `commerce_order.order.paid`. Nenhum pedido foi criado na verificação (compras de teste seguem o procedimento de `teste.comum`).
+
 ## 0.2.0-dev.4 (controle antiabuso do contador da Wiki)
 
 ### Código

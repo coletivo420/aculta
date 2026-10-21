@@ -27,6 +27,7 @@ final class MetricCatalog {
       new MetricDefinition('email.messages.accepted', 'E-mails aceitos pelo sistema de envio', 'mensagens', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('email.messages.failed', 'E-mails com falha de envio', 'mensagens', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.orders.paid', 'Pedidos pagos', 'pedidos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
+      new MetricDefinition('commerce.revenue.gross', 'Receita bruta paga, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.courses.completed', 'Conclusões de curso', 'conclusões', MetricDefinition::SENSITIVITY_INTERNAL, 90),
     ];
 

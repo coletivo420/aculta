@@ -13,7 +13,8 @@ Sensibilidade: **P** pública (agregado), **I** interna (equipe), **R** restrita
 
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
-| `commerce.orders.paid` | evento `commerce_order.order.paid` | pedidos | domínio, moeda | 90 dias por agregado; receita indefinida | I |
+| `commerce.orders.paid` | evento `commerce_order.order.paid` (uma vez por pedido) | pedidos | moeda | 90 dias | I |
+| `commerce.revenue.gross` (implementada na 0.3.0-dev.1) | mesmo evento, total do pedido | centavos da moeda | moeda | 90 dias | I |
 | `commerce.orders.created` | `commerce_order.commerce_order.insert` | pedidos criados (não são venda) | domínio | 90 dias | I |
 | `commerce.revenue.gross` | pagamentos capturados | moeda (centavos) | moeda, domínio | 90 dias | I |
 | `commerce.refunds.total` | estado de pagamento reembolsado | moeda | moeda | 90 dias | I |

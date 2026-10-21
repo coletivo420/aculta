@@ -15,6 +15,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   sem IP, usuário, referrer ou user-agent.
 - Retenção por métrica (`RetentionPolicy`): 30, 90, 180, 365 dias ou indefinido. Padrão 90.
 - Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
+- Pedidos pagos e receita bruta por moeda, a partir de `commerce_order.order.paid` (fase 0.3.0, em andamento).
 - Painel de retenção em `/painel-administrativo/aculta/estatisticas/retencao`,
   com confirmação antes de reduzir prazo (permissão `administer aculta_statistics`).
 - Contador de leitura da Wiki: beacon `POST /estatisticas/wiki/{node}/leitura` em verbetes publicados
@@ -38,6 +39,6 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 ## Testes
 
-- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki). 25 casos.
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 36 casos.
 - Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 14 casos, executados
   contra `aculta_simpletest`.

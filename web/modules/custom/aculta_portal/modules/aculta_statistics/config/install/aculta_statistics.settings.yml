@@ -11,6 +11,8 @@ retention:
     days: 90
   - metric: commerce.orders.paid
     days: 90
+  - metric: commerce.revenue.gross
+    days: 90
   - metric: lms.courses.completed
     days: 90
 consent_banner:

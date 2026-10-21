@@ -18,6 +18,12 @@ services:
     class: Drupal\aculta_statistics\Visitor\VisitorKey
     factory: ['Drupal\aculta_statistics\Visitor\VisitorKeyFactory', 'create']
 
+  aculta_statistics.commerce_order_paid_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\CommerceOrderPaidSubscriber
+    arguments: ['@aculta_statistics.recorder', '@logger.factory']
+    tags:
+      - { name: event_subscriber }
+
   aculta_statistics.wiki_read_controller:
     class: Drupal\aculta_statistics\Controller\WikiReadController
     arguments: ['@aculta_statistics.recorder', '@flood', '@request_stack', '@aculta_statistics.visitor_key']
