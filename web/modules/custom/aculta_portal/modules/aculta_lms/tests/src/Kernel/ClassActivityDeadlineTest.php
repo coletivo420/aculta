@@ -113,7 +113,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     $unlinkedClass = Group::create(['type' => 'lms_class', 'label' => 'Turma sem vínculo', 'uid' => $owner->id()]);
     $unlinkedClass->save();
     $accessCheck = $this->container->get('aculta_lms.class_activity_deadline_access');
-    $denied = $accessCheck->access($unlinkedClass, $activity);
+    $denied = $accessCheck->access($course, $unlinkedClass, $activity);
     self::assertTrue($denied->isForbidden());
     $cache = $this->container->get('cache.default');
     $cache->set('aculta_lms_test.unlinked_class_access', TRUE, Cache::PERMANENT, $denied->getCacheTags());

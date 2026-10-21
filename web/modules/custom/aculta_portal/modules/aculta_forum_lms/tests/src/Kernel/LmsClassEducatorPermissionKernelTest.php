@@ -361,7 +361,11 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $this->container->get('current_user'),
       $this->container->get('string_translation'),
     );
-    $pendingQueue = $moderationController->comments($class, 'pending');
+    $forumOverview = $moderationController->overview();
+    self::assertSame('Fóruns por curso', (string) $forumOverview['contexts']['#title']);
+    self::assertCount(1, $forumOverview['contexts']['#items']);
+    self::assertNotEmpty($forumOverview['contexts']['#items'][0]['groups']['#items']);
+    $pendingQueue = $moderationController->comments($class, $course, 'pending');
     self::assertSame('view', $pendingQueue['view']['#type']);
     self::assertSame('aculta_forum_lms_admin_comments', $pendingQueue['view']['#name']);
     self::assertSame('lms_pending', $pendingQueue['view']['#display_id']);
@@ -405,14 +409,15 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     // upcast entity parameters and scalar decision defined by the route.
     $routeName = 'aculta_forum_lms.comment_moderate';
     $accessRoute = new Route(
-      '/painel-administrativo/lms/forum/{group}/comentario/{comment}/moderacao/{decision}',
+      '/painel-administrativo/lms/curso/{course}/forum/{group}/comentario/{comment}/moderacao/{decision}',
       [],
       [
-        '_custom_access' => 'aculta_forum_lms.moderation_manager:commentModerationAccess',
+        '_custom_access' => 'aculta_forum_lms.moderation_manager:courseCommentModerationAccess',
         'decision' => 'approve|reject',
       ],
       [
         'parameters' => [
+          'course' => ['type' => 'entity:group'],
           'group' => ['type' => 'entity:group'],
           'comment' => ['type' => 'entity:comment'],
         ],
@@ -422,10 +427,11 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $routeCollection->add($routeName, $accessRoute);
     $parameterConverterManager = $this->container->get('paramconverter_manager');
     $parameterConverterManager->setRouteParameterConverters($routeCollection);
-    $createRouteMatch = static function (GroupInterface $routeGroup) use ($accessRoute, $routeName, $parameterConverterManager, $pendingComment): RouteMatch {
+    $createRouteMatch = static function (GroupInterface $routeCourse, GroupInterface $routeGroup) use ($accessRoute, $routeName, $parameterConverterManager, $pendingComment): RouteMatch {
       $rawParameters = [
         RouteObjectInterface::ROUTE_NAME => $routeName,
         RouteObjectInterface::ROUTE_OBJECT => $accessRoute,
+        'course' => (string) $routeCourse->id(),
         'group' => (string) $routeGroup->id(),
         'comment' => (string) $pendingComment->id(),
         'decision' => 'reject',
@@ -433,7 +439,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $upcastedParameters = $parameterConverterManager->convert($rawParameters + $accessRoute->getDefaults());
       return new RouteMatch($routeName, $accessRoute, $upcastedParameters, $rawParameters);
     };
-    $educatorRouteMatch = $createRouteMatch($class);
+    $educatorRouteMatch = $createRouteMatch($course, $class);
+    self::assertInstanceOf(GroupInterface::class, $educatorRouteMatch->getParameter('course'));
     self::assertInstanceOf(GroupInterface::class, $educatorRouteMatch->getParameter('group'));
     self::assertSame($class->id(), $educatorRouteMatch->getParameter('group')->id());
     self::assertInstanceOf(Comment::class, $educatorRouteMatch->getParameter('comment'));
@@ -458,10 +465,11 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     );
     self::assertTrue($customAccessCheck->access($accessRoute, $educatorRouteMatch, $educator)->isAllowed());
     self::assertTrue($customAccessCheck->access($accessRoute, $educatorRouteMatch, $student)->isForbidden());
-    $wrongGroupRouteMatch = $createRouteMatch($course);
+    $wrongGroupRouteMatch = $createRouteMatch($course, $course);
     self::assertNotSame($class->id(), $course->id());
     self::assertSame($class->id(), $moderationManager->getCommentGroup($pendingComment)?->id());
     self::assertFalse($moderationManager->commentModerationAccess($course, $pendingComment, 'reject', $educator)->isAllowed());
+    self::assertFalse($moderationManager->courseGroupAccess($unassignedCourse, $class, $educator)->isAllowed(), 'A class cannot be moderated through an unrelated course path.');
     self::assertFalse($customAccessCheck->access($accessRoute, $wrongGroupRouteMatch, $educator)->isAllowed());
 
     $moderationForm = new LmsCommentModerationForm(
@@ -472,7 +480,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $moderationForm->setMessenger($this->container->get('messenger'));
     $moderationForm->setStringTranslation($this->container->get('string_translation'));
     $rejectState = new FormState();
-    $rejectForm = $moderationForm->buildForm([], $rejectState, $class, $pendingComment, 'reject');
+    $rejectForm = $moderationForm->buildForm([], $rejectState, $course, $class, $pendingComment, 'reject');
     self::assertArrayHasKey('confirm', $rejectForm);
     $rejectState->setValue('confirm', TRUE);
     $moderationForm->submitForm($rejectForm, $rejectState);
@@ -480,7 +488,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     self::assertFalse($pendingComment->isPublished());
     self::assertSame(1, (int) $pendingComment->get('field_aculta_rejected')->value);
     $approveState = new FormState();
-    $approveForm = $moderationForm->buildForm([], $approveState, $class, $pendingComment, 'approve');
+    $approveForm = $moderationForm->buildForm([], $approveState, $course, $class, $pendingComment, 'approve');
     $approveState->setValue('confirm', TRUE);
     $moderationForm->submitForm($approveForm, $approveState);
     $pendingComment = $this->container->get('entity_type.manager')->getStorage('comment')->load($pendingComment->id());

@@ -14,6 +14,11 @@ As filas agora mostram operações contextuais `Aprovar` e `Rejeitar` apenas par
 transições válidas. Cada operação abre confirmação Form API, revalida o Group,
 o tópico e o papel Educador e atualiza status e marcador de rejeição juntos.
 
+Na dev.23, os caminhos das filas e das operações incluem o curso antes da turma:
+`/painel-administrativo/lms/curso/{course}/forum/{group}/...`. O índice organiza primeiro os cursos e, dentro de cada curso, apresenta o fórum do próprio curso e os das turmas. A autorização
+confere se o Group da discussão é o curso informado ou uma turma vinculada a
+ele. O cache de rotas e menu foi reconstruído no Runtime de teste; os novos caminhos e o índice course-first foram confirmados. O smoke autenticado segue pendente.
+
 ## Estado
 
 Na dev.14 o adapter está listado na Config Sync junto a `gnode`. No Runtime de
@@ -37,10 +42,10 @@ A ativação foi somente no Runtime de teste. A prévia de sincronização integ
 continua exibindo diferenças alheias ao Fórum; não executar importação global.
 Como não há tópicos de teste, não foi feita autorização de conteúdo real no
 Runtime. Kernel prova acesso de membro/Educador, outsider negado e herança de
-Educador sem membership direto na turma. Rotas e View das filas foram aplicadas
-no Runtime; a dev.17 acrescentou a coluna Core `entity_operations` por
+Educador sem membership direto na turma. As rotas e a View das filas foram aplicadas
+no Runtime; na dev.23 as rotas agora incluem o curso. A dev.17 acrescentou a coluna Core `entity_operations` por
 importação parcial de um único View e cache rebuild. `/painel-administrativo/lms/forum`
-continua 403 para anônimo e IDs inválidos da ação retornam 404. Falta smoke com
+continua 403 para anônimo e rotas de fila com Group inválido retornam 404. Falta smoke com
 Educador autenticado e Comment de teste. Search API e notificações LMS aguardam
 isolamento/homologação. Não copiar configuração para produção.
 

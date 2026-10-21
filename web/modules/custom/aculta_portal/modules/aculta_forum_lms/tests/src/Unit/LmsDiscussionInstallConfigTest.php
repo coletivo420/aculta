@@ -107,22 +107,23 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertSame('aculta_forum_lms.moderation_manager:overviewAccess', $routes['aculta_forum_lms.moderation_overview']['requirements']['_custom_access']);
 
     $queueRoutes = [
-      'aculta_forum_lms.comments_published' => '/painel-administrativo/lms/forum/{group}/comentarios/publicados',
-      'aculta_forum_lms.comments_rejected' => '/painel-administrativo/lms/forum/{group}/comentarios/rejeitados',
-      'aculta_forum_lms.comments_pending' => '/painel-administrativo/lms/forum/{group}/comentarios/aguardando-moderacao',
+      'aculta_forum_lms.comments_published' => '/painel-administrativo/lms/curso/{course}/forum/{group}/comentarios/publicados',
+      'aculta_forum_lms.comments_rejected' => '/painel-administrativo/lms/curso/{course}/forum/{group}/comentarios/rejeitados',
+      'aculta_forum_lms.comments_pending' => '/painel-administrativo/lms/curso/{course}/forum/{group}/comentarios/aguardando-moderacao',
     ];
     foreach ($queueRoutes as $routeName => $path) {
       self::assertSame($path, $routes[$routeName]['path']);
-      self::assertSame('aculta_forum_lms.moderation_manager:groupAccess', $routes[$routeName]['requirements']['_custom_access']);
+      self::assertSame('aculta_forum_lms.moderation_manager:courseGroupAccess', $routes[$routeName]['requirements']['_custom_access']);
+      self::assertSame('entity:group', $routes[$routeName]['options']['parameters']['course']['type']);
       self::assertSame('entity:group', $routes[$routeName]['options']['parameters']['group']['type']);
     }
 
     self::assertSame(
-      '/painel-administrativo/lms/forum/{group}/comentario/{comment}/moderacao/{decision}',
+      '/painel-administrativo/lms/curso/{course}/forum/{group}/comentario/{comment}/moderacao/{decision}',
       $routes['aculta_forum_lms.comment_moderate']['path'],
     );
     self::assertSame(
-      'aculta_forum_lms.moderation_manager:commentModerationAccess',
+      'aculta_forum_lms.moderation_manager:courseCommentModerationAccess',
       $routes['aculta_forum_lms.comment_moderate']['requirements']['_custom_access'],
     );
     self::assertSame(
@@ -130,6 +131,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
       $routes['aculta_forum_lms.comment_moderate']['defaults']['_form'],
     );
     self::assertSame('entity:group', $routes['aculta_forum_lms.comment_moderate']['options']['parameters']['group']['type']);
+    self::assertSame('entity:group', $routes['aculta_forum_lms.comment_moderate']['options']['parameters']['course']['type']);
     self::assertSame('entity:comment', $routes['aculta_forum_lms.comment_moderate']['options']['parameters']['comment']['type']);
 
     $view = $this->config('views.view.aculta_forum_lms_admin_comments');

@@ -11,7 +11,7 @@ aculta_lms.student_dashboard:
     _aculta_domain_purpose: account
 
 aculta_lms.class_dashboard:
-  path: '/painel-administrativo/lms/turma/{group}/painel'
+  path: '/painel-administrativo/lms/curso/{course}/turma/{group}/painel'
   defaults:
     _controller: 'aculta_lms.learning_dashboard_controller:class'
     _title: 'Painel da turma'
@@ -21,11 +21,13 @@ aculta_lms.class_dashboard:
     _admin_route: true
     no_cache: true
     parameters:
+      course:
+        type: entity:group
       group:
         type: entity:group
 
 aculta_lms.class_activity_deadline:
-  path: '/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo'
+  path: '/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo'
   defaults:
     _form: '\Drupal\aculta_lms\Form\ClassActivityDeadlineForm'
     _title: 'Prazo da atividade'
@@ -35,6 +37,8 @@ aculta_lms.class_activity_deadline:
     _admin_route: true
     no_cache: true
     parameters:
+      course:
+        type: entity:group
       group:
         type: entity:group
       activity:

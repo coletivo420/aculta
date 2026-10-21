@@ -120,9 +120,9 @@ final class LearningDashboardController {
 
   /**
    * Educator view: status counts for one class, with no student answer data. */
-  public function class(GroupInterface $group): array {
+  public function class(GroupInterface $group, CourseInterface $course): array {
     $data = $this->dashboards->classDashboard($group, $this->currentUser);
-    if ($data === NULL) {
+    if ($data === NULL || (string) $data['course']->id() !== (string) $course->id()) {
       return ['#plain_text' => $this->t('Turma indisponível.')];
     }
     $activityRows = [];
@@ -155,6 +155,7 @@ final class LearningDashboardController {
           Link::fromTextAndUrl(
             $timestamp === NULL ? $this->t('Definir prazo') : $this->t('Alterar prazo'),
             Url::fromRoute('aculta_lms.class_activity_deadline', [
+              'course' => $course->id(),
               'group' => $group->id(),
               'activity' => $activity->id(),
             ]),

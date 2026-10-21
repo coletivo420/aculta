@@ -1,3 +1,10 @@
+## `0.1.0-dev.23` — aninhar moderação de fórum sob o curso — 2026-10-21
+
+- Filas e ações de moderação passaram a exigir o curso na rota, e a autorização
+  confere se o Group da discussão é o próprio curso ou uma turma vinculada a
+  ele. Unit: 18 testes / 194 assertions PASS; Kernel: 1 teste / 115 assertions
+  PASS, com 42 depreciações upstream. rebuild no Runtime de teste confirmou os caminhos com curso explícito e a árvore de cursos; smoke autenticado pendente.
+
 ## `0.1.0-dev.22` — confirmar aprovação e rejeição HTTP no LMS
 
 - Educador submeteu as duas confirmações Form API com sessão de teste

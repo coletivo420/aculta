@@ -52,7 +52,7 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Builds the deadline editor for the activity in the requested class.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    [$class, $activity, $relationship] = $this->routeEntities();
+    [$course, $class, $activity, $relationship] = $this->routeEntities();
     $timezone = $this->accountTimezone();
     $default = NULL;
     if ($relationship instanceof GroupRelationshipInterface && !$relationship->get('field_activity_due_at')->isEmpty()) {
@@ -100,7 +100,7 @@ final class ClassActivityDeadlineForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', ['group' => $class->id()]),
+      '#url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]),
     ];
     return $form;
   }
@@ -126,7 +126,7 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Persists the date on the Group relationship for this class and activity.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    [$class, $activity, $relationship] = $this->routeEntities();
+    [$course, $class, $activity, $relationship] = $this->routeEntities();
     $date = $form_state->getValue(['due_at', 'object']);
     if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
       $this->messenger()->addError($this->t('Informe a data e o horário para salvar o prazo.'));
@@ -143,31 +143,32 @@ final class ClassActivityDeadlineForm extends FormBase {
       ]);
     }
     $this->messenger()->addStatus($this->t('O prazo da atividade foi salvo.'));
-    $form_state->setRedirect('aculta_lms.class_dashboard', ['group' => $class->id()]);
+    $form_state->setRedirect('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]);
   }
 
   /**
    * Clears the deadline relation while preserving the LMS activity. */
   public function clearDeadline(array &$form, FormStateInterface $form_state): void {
-    [$class, , $relationship] = $this->routeEntities();
+    [$course, $class, , $relationship] = $this->routeEntities();
     if ($relationship instanceof GroupRelationshipInterface) {
       $relationship->delete();
       $this->messenger()->addStatus($this->t('O prazo foi removido.'));
     }
-    $form_state->setRedirect('aculta_lms.class_dashboard', ['group' => $class->id()]);
+    $form_state->setRedirect('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]);
   }
 
   /**
    * Returns the route's class, activity, and existing due-date relation. */
   private function routeEntities(): array {
     $class = $this->deadlineRouteMatch->getParameter('group');
+    $course = $this->deadlineRouteMatch->getParameter('course');
     $activity = $this->deadlineRouteMatch->getParameter('activity');
-    if (!$class instanceof GroupInterface || !$activity instanceof ActivityInterface) {
-      throw new \LogicException('The class activity deadline route requires a class and activity.');
+    if (!$course instanceof GroupInterface || !$class instanceof GroupInterface || !$activity instanceof ActivityInterface) {
+      throw new \LogicException('The class activity deadline route requires a course, class and activity.');
     }
     $relationships = $class->getRelationshipsByEntity($activity, 'lms_class_activity_due');
     $relationship = $relationships === [] ? NULL : reset($relationships);
-    return [$class, $activity, $relationship];
+    return [$course, $class, $activity, $relationship];
   }
 
   /**

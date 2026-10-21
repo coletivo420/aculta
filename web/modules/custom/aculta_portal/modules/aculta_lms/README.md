@@ -4,6 +4,16 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## Administração organizada por curso
+
+O curso é o primeiro nível da administração. A sequência de aulas pertence ao
+curso e suas atividades pertencem às aulas, usando as referências nativas do
+Drupal LMS. A navegação não oferece atalhos globais de aulas, atividades ou
+turmas. Painel e prazo de turma usam `/painel-administrativo/lms/curso/{course}/`
+e conferem o vínculo entre curso, turma e atividade. Fóruns e filas de
+moderação também ficam sob o curso; o adapter valida o Group da discussão em
+cada request.
+
 ## F7/F16 — preservação de matrículas por compra
 
 Quando um pedido perde o entitlement por reembolso integral, a matrícula só é
@@ -321,7 +331,7 @@ progresso em aulas, avaliações pendentes e certificados emitidos. A navegaçã
 conta recebe a seção por hook do Portal, sem alterar o shell ou duplicar a rota
 de cursos.
 
-O painel `/painel-administrativo/lms/turma/{group}/painel` exige a permissão
+O painel `/painel-administrativo/lms/curso/{course}/turma/{group}/painel` exige a permissão
 contextual `grade students` no curso associado. Exibe apenas contagens agregadas
 da turma (matrículas, início, andamento, avaliação pendente, aprovação e
 reprovação), sem nomes, respostas ou texto de feedback. Educadores e
@@ -378,7 +388,7 @@ Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
 ## F13 — Avisos e prazos por turma (implementação funcional; revisão visual pendente)
 
 Educadores com `grade students` no curso e administradores podem definir,
-alterar e remover o prazo de uma atividade em `/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo`.
+alterar e remover o prazo de uma atividade em `/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo`.
 O prazo fica na relação Group turma↔atividade (`field_activity_due_at`), então
 uma atividade reutilizada pode ter prazos diferentes em cada turma. A tela usa
 o fuso da conta do educador; a área de atividade do estudante e o aviso usam o

@@ -52,12 +52,37 @@ final class LmsForumModerationController {
    */
   public function overview(): array {
     [$groups, $cacheability] = $this->moderationManager->getModerationGroups($this->currentUser);
-    $items = [];
+    $courses = [];
     foreach ($groups as $group) {
-      $items[] = Link::fromTextAndUrl(
-        $group->label(),
-        Url::fromRoute('aculta_forum_lms.comments_pending', ['group' => $group->id()]),
+      $course = $group->bundle() === 'lms_course'
+        ? $group
+        : $this->entityTypeManager->getStorage('group')->load($this->moderationManager->courseIdForGroup($group));
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+        continue;
+      }
+      $courseId = (string) $course->id();
+      $cacheability->addCacheableDependency($course);
+      $courses[$courseId] ??= [
+        'title' => $course->label(),
+        'classes' => [],
+      ];
+      $courses[$courseId]['classes'][] = Link::fromTextAndUrl(
+        $group->bundle() === 'lms_course' ? $this->t('Fórum do curso') : $group->label(),
+        Url::fromRoute('aculta_forum_lms.comments_pending', [
+          'course' => $courseId,
+          'group' => $group->id(),
+        ]),
       )->toRenderable();
+    }
+    $items = [];
+    foreach ($courses as $course) {
+      $items[] = [
+        'course' => ['#plain_text' => $course['title']],
+        'groups' => [
+          '#theme' => 'item_list',
+          '#items' => $course['classes'],
+        ],
+      ];
     }
 
     $build = [
@@ -65,7 +90,7 @@ final class LmsForumModerationController {
       '#attributes' => ['data-portal-ui' => 'lms-forum-moderation-overview'],
       'contexts' => [
         '#theme' => 'item_list',
-        '#title' => $this->t('Cursos e turmas sob sua responsabilidade'),
+        '#title' => $this->t('Fóruns por curso'),
         '#items' => $items,
         '#empty' => $this->t('Você não tem cursos ou turmas com moderação de discussões.'),
       ],
@@ -77,9 +102,12 @@ final class LmsForumModerationController {
   /**
    * Builds one fixed-status View, restricted to the route's Group ID.
    */
-  public function comments(GroupInterface $group, string $queue): array {
+  public function comments(GroupInterface $group, GroupInterface $course, string $queue): array {
     $display = self::DISPLAYS[$queue] ?? NULL;
     if ($display === NULL) {
+      throw new NotFoundHttpException();
+    }
+    if ((string) $this->moderationManager->courseIdForGroup($group) !== (string) $course->id()) {
       throw new NotFoundHttpException();
     }
 
@@ -102,7 +130,7 @@ final class LmsForumModerationController {
         '#arguments' => [(string) $group->id()],
       ],
     ];
-    CacheableMetadata::createFromObject($group)->applyTo($build);
+    CacheableMetadata::createFromObject($group)->addCacheableDependency($course)->applyTo($build);
     return $build;
   }
 

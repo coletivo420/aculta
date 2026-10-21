@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.76 — organizar a administração pelo curso — 2026-10-21
+
+- Painel da turma e configuração de prazo agora ficam abaixo de
+  `/painel-administrativo/lms/curso/{course}`; acesso confere se a turma e a
+  atividade pertencem ao curso indicado. A navegação remove atalhos globais de
+  aulas, atividades e turmas, mantendo o curso como entrada administrativa.
+- Unit: 71 testes / 394 assertions PASS. Kernel MariaDB: 23 testes / 764
+  assertions PASS; `AcultaLmsInstallTest` focal: 4/44 (93 depreciações upstream). PHP CLI 8.4.26; rebuild no Runtime de teste confirmou os caminhos course-first e a navegação por curso; smoke autenticado pendente.
+
 ## 0.1.0-dev.75 — cobrir hooks Commerce de pedido — 2026-10-21
 
 - `AcultaLmsInstallTest` agora confirma o registro dos hooks de insert e update

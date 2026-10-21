@@ -1,5 +1,5 @@
 aculta_lms.class_dashboard:
   route_name: aculta_lms.class_dashboard
   title: 'Painel da turma'
-  base_route: entity.group.canonical
+  base_route: aculta_lms.class_dashboard
   weight: 5

@@ -50,7 +50,10 @@ final class LmsCommentModerationForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $group = NULL, ?CommentInterface $comment = NULL, string $decision = ''): array {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL, ?GroupInterface $group = NULL, ?CommentInterface $comment = NULL, string $decision = ''): array {
+    if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || (string) $this->moderationManager->courseIdForGroup($group) !== (string) $course->id()) {
+      throw new AccessDeniedHttpException();
+    }
     if (!$group instanceof GroupInterface
       || !$comment instanceof CommentInterface
       || !$this->moderationManager->commentModerationAccess($group, $comment, $decision, $this->account)->isAllowed()) {
@@ -58,6 +61,7 @@ final class LmsCommentModerationForm extends FormBase {
     }
 
     $form_state->set('group_id', (int) $group->id());
+    $form_state->set('course_id', (int) $course->id());
     $form_state->set('comment_id', (int) $comment->id());
     $form_state->set('decision', $decision);
     $approve = $decision === 'approve';
@@ -92,7 +96,7 @@ final class LmsCommentModerationForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_forum_lms.comments_pending', ['group' => $group->id()]),
+      '#url' => Url::fromRoute('aculta_forum_lms.comments_pending', ['course' => $course->id(), 'group' => $group->id()]),
     ];
     return $form;
   }
@@ -111,9 +115,11 @@ final class LmsCommentModerationForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $group = $this->storageManager->getStorage('group')->load($form_state->get('group_id'));
+    $course = $this->storageManager->getStorage('group')->load($form_state->get('course_id'));
     $comment = $this->storageManager->getStorage('comment')->load($form_state->get('comment_id'));
     $decision = $form_state->get('decision');
-    if (!$group instanceof GroupInterface || !$comment instanceof CommentInterface
+    if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || !$comment instanceof CommentInterface
+      || !$this->moderationManager->courseGroupAccess($course, $group, $this->account)->isAllowed()
       || !$this->moderationManager->applyModerationDecision($group, $comment, $decision, $this->account)) {
       throw new AccessDeniedHttpException();
     }
@@ -121,7 +127,7 @@ final class LmsCommentModerationForm extends FormBase {
     $this->messenger()->addStatus($decision === 'approve'
       ? $this->t('Comentário aprovado.')
       : $this->t('Comentário rejeitado.'));
-    $form_state->setRedirect('aculta_forum_lms.comments_pending', ['group' => $group->id()]);
+    $form_state->setRedirect('aculta_forum_lms.comments_pending', ['course' => $course->id(), 'group' => $group->id()]);
   }
 
 }

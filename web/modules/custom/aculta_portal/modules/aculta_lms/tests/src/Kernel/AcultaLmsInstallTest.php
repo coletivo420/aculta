@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
+use Drupal\aculta_lms\Hook\CourseFirstAdminMenuHooks;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
@@ -68,7 +69,17 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     );
     $this->assertInstanceOf(EnrollmentFormHooks::class, $container->get(EnrollmentFormHooks::class));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');
-    $this->assertSame('/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo', $route->getPath());
+    $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo', $route->getPath());
+    $dashboardRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_dashboard');
+    $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/painel', $dashboardRoute->getPath());
+    $menuLinks = [
+      'system.admin_lms.lessons' => [],
+      'system.admin_lms.activities' => [],
+      'views_view:views.classes_admin.page' => [],
+      'views_view:views.courses_admin.page' => [],
+    ];
+    $container->get(CourseFirstAdminMenuHooks::class)->alterMenuLinks($menuLinks);
+    $this->assertSame(['views_view:views.courses_admin.page'], array_keys($menuLinks));
     $this->assertSame(
       $container->get('aculta_lms.class_activity_deadline_manager'),
       $container->get(ClassActivityDeadlineManager::class),

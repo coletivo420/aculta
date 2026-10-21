@@ -55,9 +55,12 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
     $class->method('getRelationshipsByEntity')->willReturn([]);
     $activity = $this->createMock(ActivityInterface::class);
     $activity->method('label')->willReturn('Atividade teste');
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('id')->willReturn('3');
 
     $routeMatch = $this->createMock(CurrentRouteMatch::class);
     $routeMatch->method('getParameter')->willReturnMap([
+      ['course', $course],
       ['group', $class],
       ['activity', $activity],
     ]);

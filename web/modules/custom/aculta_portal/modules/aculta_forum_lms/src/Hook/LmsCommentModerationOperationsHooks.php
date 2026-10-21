@@ -55,6 +55,7 @@ final class LmsCommentModerationOperationsHooks {
         'title' => $label,
         'weight' => $decision === 'approve' ? 20 : 21,
         'url' => Url::fromRoute('aculta_forum_lms.comment_moderate', [
+          'course' => $this->moderationManager->courseIdForGroup($group),
           'group' => $group->id(),
           'comment' => $entity->id(),
           'decision' => $decision,

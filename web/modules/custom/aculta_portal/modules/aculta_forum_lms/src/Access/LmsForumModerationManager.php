@@ -48,6 +48,42 @@ final class LmsForumModerationManager {
   }
 
   /**
+   * Ensures that the route's Group is nested under its stated course.
+   */
+  public function courseGroupAccess(GroupInterface $course, GroupInterface $group, AccountInterface $account): AccessResultInterface {
+    $courseId = $this->courseIdForGroup($group);
+    $membership = AccessResult::allowedIf($course->bundle() === 'lms_course' && $courseId !== NULL && (string) $courseId === (string) $course->id())
+      ->addCacheableDependency($course)
+      ->addCacheableDependency($group)
+      ->addCacheContexts(['user'])
+      ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
+    return $membership->andIf($this->groupAccess($group, $account));
+  }
+
+  /**
+   * Returns the parent course ID for a course itself or one of its classes.
+   */
+  public function courseIdForGroup(GroupInterface $group): ?string {
+    if ($group->bundle() === 'lms_course') {
+      return (string) $group->id();
+    }
+    if ($group->bundle() !== 'lms_class') {
+      return NULL;
+    }
+    $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'entity_id' => $group->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    foreach ($relationships as $relationship) {
+      $course = $relationship->getGroup();
+      if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
+        return (string) $course->id();
+      }
+    }
+    return NULL;
+  }
+
+  /**
    * Returns the one LMS Group that owns a valid discussion Comment.
    */
   public function getCommentGroup(CommentInterface $comment): ?GroupInterface {
@@ -112,6 +148,21 @@ final class LmsForumModerationManager {
       $commentAccess->addCacheableDependency($commentGroup);
     }
     return $contextAccess->andIf($commentAccess);
+  }
+
+  /**
+   * Revalidates comment moderation inside the route's explicit course.
+   */
+  public function courseCommentModerationAccess(
+    GroupInterface $course,
+    GroupInterface $group,
+    CommentInterface $comment,
+    string $decision,
+    AccountInterface $account,
+  ): AccessResultInterface {
+    $courseAccess = $this->courseGroupAccess($course, $group, $account);
+    $commentAccess = $this->commentModerationAccess($group, $comment, $decision, $account);
+    return $courseAccess->andIf($commentAccess);
   }
 
   /**

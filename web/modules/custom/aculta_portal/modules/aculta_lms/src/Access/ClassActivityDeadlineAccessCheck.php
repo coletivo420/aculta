@@ -25,11 +25,13 @@ final class ClassActivityDeadlineAccessCheck {
   /**
    * Grants access only to an educator who can grade the class's course.
    */
-  public function access(GroupInterface $group, ActivityInterface $activity): AccessResult {
+  public function access(CourseInterface $routeCourse, GroupInterface $group, ActivityInterface $activity): AccessResult {
     $course = $this->courseForClass($group);
-    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+    if (!$routeCourse instanceof CourseInterface || $routeCourse->bundle() !== 'lms_course'
+      || !$course instanceof CourseInterface || (string) $routeCourse->id() !== (string) $course->id()
       || !$this->activityBelongsToCourse($activity, $course)) {
       $result = AccessResult::forbidden()
+        ->addCacheableDependency($routeCourse)
         ->addCacheableDependency($group)
         ->addCacheableDependency($activity)
         // A missing parent-course relationship can be added later. Invalidate

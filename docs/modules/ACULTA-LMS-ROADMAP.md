@@ -269,7 +269,7 @@ duplicar estado. Ver contrato em `LMS-INTEGRATION-CONTRACTS.md`.
 
 F12 tem implementação inicial na branch: painel do estudante em
 `/minha-aprendizagem` e contagens do educador por turma sob
-`/painel-administrativo/lms/turma/{group}/painel`. Kernel Group/LMS verifica que
+`/painel-administrativo/lms/curso/{course}/turma/{group}/painel`. Kernel Group/LMS verifica que
 somente estudantes elegíveis e ativos da turma entram nas métricas, exclui
 educador, administrador, conta bloqueada e outsider, e mantém as respostas fora
 do retorno; cache é
@@ -361,11 +361,14 @@ preexistente de cópia dos assets H5P.
 
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 
-**F14 — escopo de conexão no LMS aguarda decisão de produto.** `aculta_user`
-mantém a fonte de amizade e `aculta_messenger` consulta o estado atual para
-conversas; o LMS não tem ação própria na turma. A lista de colegas pode revelar
-matrículas e não será exibida antes de definir o escopo. A dívida DT-O15 de
-pedidos recebidos sem formulário ativo no Messenger também permanece separada.
+**F14 — visibilidade de participantes definida; implementação em andamento.**
+O Educador controla por turma se estudantes podem ver a lista de participantes;
+o padrão é oculto. A lista será limitada à turma atual e não incluirá progresso,
+notas ou respostas. A administração do LMS começa no curso: aulas, atividades,
+turmas, prazos e fóruns ficam no contexto do curso. As rotas de painel/prazo e
+moderação agora exigem curso e turma coerentes. `aculta_user` mantém a fonte de
+amizade e `aculta_messenger` consulta o estado atual para conversas; a dívida
+DT-O15 de pedidos recebidos sem formulário ativo no Messenger permanece separada.
 
 **F15 — integrações parciais; atividade/discussão e homologação ainda abertas.**
 `capa_curso` usa `aculta_image`; imagens do editor H5P passam por

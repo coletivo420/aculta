@@ -243,7 +243,7 @@ final class LearningDashboardManager {
 
   /**
    * Finds the LMS course that owns a class relationship. */
-  private function courseForClass(GroupInterface $class): ?CourseInterface {
+  public function courseForClass(GroupInterface $class): ?CourseInterface {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),
       'plugin_id' => 'lms_classes',

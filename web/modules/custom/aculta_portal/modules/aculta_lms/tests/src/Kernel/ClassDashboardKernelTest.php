@@ -121,7 +121,16 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertContains('user.group_permissions', $metrics['cache']->getCacheContexts());
 
     $this->container->get('current_user')->setAccount($educator);
-    $build = $this->container->get('aculta_lms.learning_dashboard_controller')->class($class);
+    $routeAccess = $this->container->get('aculta_lms.class_dashboard_access');
+    self::assertTrue($routeAccess->access($course, $class)->isAllowed());
+    $unrelatedCourse = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Outro curso',
+      'uid' => $owner->id(),
+    ]);
+    $unrelatedCourse->save();
+    self::assertFalse($routeAccess->access($unrelatedCourse, $class)->isAllowed(), 'The dashboard route cannot pair a class with another course.');
+    $build = $this->container->get('aculta_lms.learning_dashboard_controller')->class($class, $course);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
