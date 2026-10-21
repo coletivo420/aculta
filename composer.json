@@ -286,6 +286,7 @@
         "drupal/flag": "^5.1.1",
         "drupal/flood_control": "^3.0",
         "drupal/freelinking": "^4.0",
+        "drupal/google_tag": "^2.0.9",
         "drupal/group": "^3.3",
         "drupal/history": "^1.0",
         "drupal/image_widget_crop": "^3.0",
