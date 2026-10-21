@@ -205,8 +205,9 @@ strings próprias em português.
 - `core.extension.yml` o ativa na Config Sync para que o formatter seja
   conhecido ao importar o display. Esta mudança versionada não executa a
   importação no Runtime.
-- `drupal/pdf` 1.3 permanece instalado no Composer, mas o formatter dele usa o
-  loader `.js`/API global e não é chamado. O PDF.js `.mjs` é o viewer real.
+- `drupal/pdf` 1.3 foi removido do Composer em 2026-10-21: estava desativado,
+  sem configuração nem consumidores. O PDF.js `.mjs` do `aculta_pdf_viewer`
+  fornece a leitura; PDFPreview continua opcional para miniaturas.
 - Nenhuma chamada a hook `file_download` foi adicionada. Core continua sendo o
   responsável por entregar downloads privados.
 
@@ -275,7 +276,7 @@ strings próprias em português.
 - [Drupal FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/main)
 - [Drupal FileDownloadController](https://api.drupal.org/api/drupal/core%21modules%21system%21src%21FileDownloadController.php/function/FileDownloadController%3A%3Adownload/main) e [hook_file_download](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21File%21file.api.php/function/hook_file_download/main)
 - [Drupal MediaAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21MediaAccessControlHandler.php/main)
-- [PDF 1.3](https://www.drupal.org/project/pdf/releases) e [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
+- Auditoria histórica do [PDF 1.3 removido](https://www.drupal.org/project/pdf/releases) e integração ainda ativa do [PDFPreview 1.2](https://www.drupal.org/project/pdfpreview/releases)
 - [PDF.js 6.4.299](https://github.com/mozilla/pdf.js/releases/tag/v6.4.299)
 - [Drupal 3D Flipbook 11.0.2](https://www.drupal.org/project/flipbook/releases/11.0.2)
 

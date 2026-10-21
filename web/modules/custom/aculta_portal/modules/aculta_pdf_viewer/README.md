@@ -111,10 +111,11 @@ O display padrão `media.document` seleciona `aculta_pdf_media`; os displays
 Config Sync.
 O módulo depende do Portal (painel de administração), aculta_image, Core File e
 Media; PDFPreview e ImageMagick são opcionais no runtime. Não depende do LMS nem
-de PDF contrib. A configuração global é exportável e versionada. O PDF.js é gerenciado pelo Composer do site. O
-contrib `drupal/pdf` não é chamado porque
-seu loader 1.3 usa `pdf.js`/API global, enquanto o pacote escolhido publica ES
-modules `.mjs`.
+de `drupal/pdf`: o contrib foi removido do Composer em 2026-10-21 porque seu
+formatter legado não era usado e o `aculta_pdf_viewer` já cobre essa função com
+PDF.js ESM. PDFPreview permanece porque o adapter o usa opcionalmente para
+miniaturas públicas. A configuração global é exportável e versionada; o PDF.js
+é gerenciado pelo Composer do site.
 
 ## Testes e validação
 

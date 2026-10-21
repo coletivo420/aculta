@@ -1,5 +1,12 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.39 — remover formatter PDF contrib sem uso — 2026-10-21
+
+- `drupal/pdf` 1.3 estava instalado apenas no código, desativado no Runtime, sem referência em Config Sync e sem consumidores fora do próprio contrib. O formatter compartilhado do `aculta_pdf_viewer` substitui sua função de leitura usando PDF.js ESM.
+- Removido `drupal/pdf` pelo Composer do projeto; nenhum uninstall de Runtime foi necessário porque o módulo já estava desativado. `pdfpreview` permanece ativo e no Composer: o adapter ainda usa `pdfpreview.generator` para miniaturas públicas, em conjunto com `aculta_image`.
+- `composer remove` registrou uma operação de remoção do pacote e apagou `web/modules/contrib/pdf`; Composer dry-run apontou somente essa remoção no estado atual. Core extension e displays confirmam ausência de dependência/config do módulo `pdf`.
+- A documentação atual foi alinhada. A análise técnica do loader contrib continua apenas como histórico da decisão de substituição.
+
 ## 0.1.0-dev.38 — manter controles do PDF.js após inicialização — 2026-10-20
 
 - A revisão visual X11 encontrou que o PDF.js repunha o botão principal de download durante a inicialização, apesar do formatter desativá-lo.
