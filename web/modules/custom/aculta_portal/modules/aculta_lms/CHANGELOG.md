@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.78 — instantâneo diário da situação por turma para estatísticas — 2026-10-21
+
+- `ClassStatusSnapshotCronHooks` emite `ClassStatusSnapshotEvent` (`aculta_lms.class_status_snapshot`) no cron, com uma linha por turma e situação (alunos, não iniciados, em andamento, aguardando avaliação, aprovados, reprovados). Só contagens agregadas; nenhum aluno é identificado.
+- `LearningDashboardManager::countClassStatuses()`: contagem extraída do painel da turma, sem checagem de acesso. O painel mantém acesso e cache; os valores não mudam.
+- Alias `Drupal\aculta_lms\LearningDashboardManager` para injeção por tipo.
+- Decisão (2026-10-21): série diária por turma. Série diária **por aluno** não foi criada: exigiria revisão LGPD antes.
+- Testes: Unit 71 e Kernel `ClassDashboardKernelTest` (1 caso) passam, com deprecações já existentes. No Runtime de teste não há turmas (`lms_class` = 0), então o caminho com linhas está coberto só pela unit test do assinante em `aculta_statistics`.
+
 ## 0.1.0-dev.77 — controlar a lista de participantes por turma — 2026-10-21
 
 - Educadores podem exibir ou ocultar, por turma, uma lista limitada aos nomes

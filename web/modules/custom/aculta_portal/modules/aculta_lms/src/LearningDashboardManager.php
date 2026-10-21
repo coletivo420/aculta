@@ -153,6 +153,32 @@ final class LearningDashboardManager {
       return NULL;
     }
 
+    $counts = $this->countClassStatuses($class, $course);
+    $counts['course'] = $course;
+    $counts['cache'] = (new CacheableMetadata())
+      ->addCacheableDependency($access)
+      ->addCacheableDependency($class)
+      ->addCacheableDependency($course)
+      ->merge($counts['cache'])
+      ->addCacheTags([
+        'lms_course_status_list',
+        'group_relationship_list:plugin:group_membership:group:' . $class->id(),
+        'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
+      ]);
+    return $counts;
+  }
+
+  /**
+   * Counts active learners of a class by situation, without checking the viewer's access.
+   *
+   * The dashboard calls it after its access check. The daily class snapshot on cron calls it directly.
+   *
+   * @return array{students: int, not_started: int, in_progress: int, pending_evaluation: int, passed: int, failed: int, cache: \Drupal\Core\Cache\CacheableMetadata}
+   *   Counts by situation and the cache metadata of the membership and status data read.
+   */
+  public function countClassStatuses(GroupInterface $class, CourseInterface $course): array {
+
+
     $members = [];
     $memberAccessCache = new CacheableMetadata();
     foreach (GroupMembership::loadByGroup($class) as $membership) {
@@ -180,23 +206,13 @@ final class LearningDashboardManager {
     }
 
     $result = [
-      'course' => $course,
       'students' => count($members),
       'not_started' => 0,
       'in_progress' => 0,
       'pending_evaluation' => 0,
       'passed' => 0,
       'failed' => 0,
-      'cache' => (new CacheableMetadata())
-        ->addCacheableDependency($access)
-        ->addCacheableDependency($class)
-        ->addCacheableDependency($course)
-        ->merge($memberAccessCache)
-        ->addCacheTags([
-          'lms_course_status_list',
-          'group_relationship_list:plugin:group_membership:group:' . $class->id(),
-          'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
-        ]),
+      'cache' => (new CacheableMetadata())->merge($memberAccessCache),
     ];
     if ($members !== []) {
       if ($this->trainingManager === NULL) {
@@ -240,7 +256,6 @@ final class LearningDashboardManager {
     }
     return $result;
   }
-
   /**
    * Finds the LMS course that owns a class relationship. */
   public function courseForClass(GroupInterface $class): ?CourseInterface {
