@@ -205,3 +205,18 @@ tokens de título, descrição e botão atingiram contraste computado de 12,95:1
 9,72:1 e 14,50:1. Página, item e destino temporários foram excluídos pela
 Entity API, e o slug voltou a 404. Troca de modo no Portal, leitor de tela e
 revisão completa de acessibilidade continuam pendentes.
+
+## Editor de composição em viewport móvel
+
+Em 2026-10-20, Firefox autenticado via WebDriver BiDi abriu
+`/painel-administrativo/links/pagina/11/editar-itens` em viewport CSS 390 × 844.
+O editor mostrou o item, colunas Texto/Ativo, controle de ordenação, ação de
+adicionar botão e prévia. O controle “Exibir pesos das linhas” revelou o campo
+numérico de posição como fallback; o documento não excedeu o viewport. Para a
+inspeção foram criados via Entity API o destino ID 10, página ID 11 (slug
+`teste-links-ordenacao-20261020`) e item ID 11, todos com título de fixture
+identificável. Nenhum formulário foi submetido. As entidades foram removidas
+via Entity API após conferir identidade/referências e consulta posterior
+confirmou ausência dos IDs, título e slug. Esse resultado valida a composição
+móvel, mas não a edição do formulário individual de página/item, acessibilidade
+por leitor de tela, nem uma gravação de ponta a ponta.

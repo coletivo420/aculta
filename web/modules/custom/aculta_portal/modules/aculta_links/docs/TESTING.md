@@ -225,3 +225,14 @@ destino preexistente também foi inspecionada em 390 × 844 com título, destino
 referência Node, estado e controles de revisão, `scrollWidth=378`; o formulário
 foi fechado sem enviar. Edição de página/item e submissão funcional seguem sem
 validação visual.
+
+## Editor de composição em mobile — 0.4.0-dev.24
+
+Firefox autenticado via WebDriver BiDi verificou a rota de edição de composição
+em viewport CSS 390 × 844. Texto e estado do item foram renderizados; o controle
+de pesos revelou o input numérico de posição que serve de fallback ao arraste.
+`scrollWidth` permaneceu dentro do viewport (390 px). Nenhum formulário foi
+submetido. A fixture (link ID 10, página ID 11, item ID 11) foi removida pela
+Entity API depois de checar IDs, slug/título, proprietário e relações; uma
+consulta posterior confirmou os três registros ausentes. Portanto o smoke não
+alterou entidades preexistentes nem deixou conteúdo temporário no Runtime.

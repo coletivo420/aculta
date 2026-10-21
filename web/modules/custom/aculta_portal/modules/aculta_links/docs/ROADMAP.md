@@ -68,6 +68,14 @@ precisam de validação específica. O formulário de edição de destino preexi
 foi confirmado a 390 × 844 sem salvar; páginas/itens e submissão continuam
 pendentes.
 
+O editor de composição foi inspecionado no mesmo viewport com uma micropágina,
+um item e um destino temporários criados pela Entity API. Tabela, texto, estado,
+controle para revelar pesos numéricos e fallback sem JavaScript foram vistos sem
+overflow; nenhum formulário foi enviado. As três entidades de fixture foram
+removidas pela Entity API após revalidar IDs, proprietário e referências, e a
+consulta posterior confirmou a ausência do título, slug e IDs. Edição visual de
+página/item e submissão real permanecem pendentes.
+
 ## 0.4.0 — interface pública e presets
 
 Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Em 0.4.0-dev.9, o template da micropágina passou a mostrar seu título e a omitir a marca institucional da ACULTA. Em 0.4.0-dev.12, o alter hook do Metatag fornece metadata por página e canonical via `DomainPurposeManager`; defaults permanecem controlados pela configuração central. Faltam controles adicionais de aparência e revisão visual/acessível antes de RC.
