@@ -65,9 +65,8 @@ Pendente. O resumo de envios por estado exato (nove estados) precisa de um consu
 - Produtor proposto: `MailStatusChangedEvent` (`aculta_mailer.status_changed`), disparado após a
   transição gravada em `DeliveryEventApplier` e na gravação de estado de envio. Carrega identificador do
   registro, novo estado e transporte. Sem destinatário, assunto ou corpo.
-- Decisão em aberto: a métrica de estado conta **transições** (evento) ou **estado atual** (conciliação
-  do `aculta_mail_log`)? Recomendação: estado atual por dia de solicitação, pela mesma conciliação do funil,
-  para não contar uma mensagem duas vezes quando muda de estado.
+- Decidido (2026-10-21, responsável): a métrica de estado conta o **estado atual** por dia de solicitação,
+  pela mesma conciliação do funil, sem contar a mesma mensagem duas vezes quando ela muda de estado.
 - Bloqueio resolvido depois: `email.messages.status` (dimensão = estado) no catálogo, depois troca do
   `MailDashboard::summary()` para o `aculta_statistics`.
 

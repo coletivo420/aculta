@@ -11,6 +11,6 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
   aguardando avaliação, aprovados, reprovados). O painel da turma (`LearningDashboardManager::classDashboard()`)
   calcula ao vivo; o produtor proposto é um evento `ClassStatusSnapshotEvent` emitido pelo cron, com
   contagens por turma, sem identificação de aluno.
-- Decisão em aberto: o instantâneo grava por dia (série) ou só o último valor? Recomendação: por dia, com a
-  supressão de célula pequena (menos de 5 alunos) já existente em `CellSuppression`.
+- Decidido (2026-10-21, responsável): série diária por turma, com a supressão de célula pequena (menos de 5
+  alunos) já existente em `CellSuppression`.
 - Não incluir: notas, respostas e progresso individual. O painel individual fica fora da central.
