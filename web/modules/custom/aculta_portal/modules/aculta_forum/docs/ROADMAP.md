@@ -608,6 +608,35 @@ Não reimplementar Wiki nesta fase.
 ## `0.1.0-dev.15` — Integrações gerais
 
 Messenger, Image, Gallery, PDF, Game, eventos, cache e suas políticas de acesso.
+
+### Matriz de integração futura do ecossistema ACULTA
+
+O Fórum deve compor capacidades existentes dos módulos e do tema, sem criar
+armazenamento, políticas de acesso, transporte de mensagens, cartões ou
+renderizadores concorrentes. Cada integração continua condicionada aos contratos
+do módulo dono e à autorização contextual do tópico/comentário; o ACULTA420
+apresenta os dados preparados pelo Portal, sem assumir lógica de domínio.
+
+| Dono da capacidade | Integração planejada no Fórum | Ordem e condição de avanço |
+| --- | --- | --- |
+| `aculta_image` | Upload contextual, ingestão, política de extensão/tamanho, processamento, uso e limpeza segura das imagens anexadas. | Primeiro: validar o modal próprio, 10 MB padrão configurável para valor superior, extensões administrativas e vínculo de publicação ao comentário visível. |
+| `aculta_gallery` + `media_gallery` | Criar/inserir galerias pelo editor do Fórum e reaproveitar o display de slides/PhotoSwipe. Galerias são permitidas em todos os purposes; anexos continuam sujeitos à política contextual do Fórum. | Primeiro, junto com imagens: provar publicação/despublicação sincronizada com comentário e tópico, acesso, remoção órfã após uma hora e compatibilidade com usos editoriais existentes. |
+| ACULTA420 / design system | Aplicar modal, cartões e estados de anexo com tokens e componentes existentes; criar componente por domínio apenas quando não houver composição adequada. | Acompanhar cada integração funcional; revisar teclado, leitor de tela, responsividade e temas claro/escuro antes de RC. |
+| Office local | Pré-visualização progressiva de DOCX e, se a validação confirmar suporte seguro e útil, planilhas; manter metadados e download como fallback. | Depois de imagem/Gallery. Validar bibliotecas locais, sanitização, tamanho/tempo de processamento e acesso privado; não transferir anexos para serviços externos. |
+| `aculta_pdf_viewer` | Cartão com miniatura e metadados, link para abrir o leitor completo em outra janela por padrão, com opção administrativa para mesma janela. O PDF não será embutido no comentário. | Por último: aguardar o módulo ACULTA Document Viewer e integrar seu contrato e API reais; não duplicar reader, thumbnail ou conversão no Fórum. |
+| `aculta_user` | Reutilizar identidade, autoria, perfis/cartões, regras de participação e ferramentas de denúncia/moderação já mantidas pelo módulo. | Consolidação: mapear capacidades ainda não ligadas ao Fórum e validar acesso/cache contextual sem alterar comportamentos de Revista, Wiki ou LMS. |
+| `aculta_messenger` | Reutilizar notificações e avisos a seguidores, incluindo política de transferência ao mover comentários e idempotência dos eventos. | Consolidar com testes de persistência e destinatários, sem criar transporte paralelo nem perder o histórico agregado existente. |
+| `aculta_statistics` e `aculta_game` | Consumir eventos mínimos de atividade e conquistas já aprovadas, sem expor texto/PII nem transformar volume em ranking ou poder de moderação. | Validar eventos reais e agregados no escopo próprio; critérios novos exigem decisão de produto e defesa contra spam. |
+| LMS, Wiki e demais submódulos | Integrar somente por adaptadores/contextos próprios, respeitando Group/membership, bundles e contratos de cada domínio. | Evolução independente; uma integração não amplia permissões globais nem mistura conteúdo entre contextos. |
+
+Os critérios específicos de anexos e referências técnicas estão em
+[`PESQUISA.md`](PESQUISA.md). A documentação de Gallery confirma que galerias
+podem reunir quaisquer bundles Media configurados; acesso e publicação continuam
+sendo contratos locais do Portal e dos módulos ACULTA
+([guia oficial do Media Gallery](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/media-gallery/getting-started-with-media-gallery/creating-and-editing-media-galleries)).
+Esta matriz é planejamento: não declara implementação, cobertura Runtime ou
+estado RC para itens ainda não comprovados.
+
 Integração inicial do gatilho de primeira resposta publicada com `aculta_game`
 foi implementada separadamente em `aculta_game 0.1.0-dev.11`: Game reconhece
 Comment publicado de conta no tópico público novo e rejeita bundles do Drupal
