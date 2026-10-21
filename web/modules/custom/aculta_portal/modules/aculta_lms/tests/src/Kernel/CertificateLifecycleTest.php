@@ -105,7 +105,14 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertSame('Substituído por nova emissão', $first->get('revocation_reason')->value);
     self::assertSame((int) $first->id(), (int) $second->get('supersedes_id')->value);
     self::assertSame(2, (int) $second->get('sequence')->value);
-    self::assertSame('active', $manager->loadByCode($second->get('verification_code')->value)->get('state')->value);
+    $firstCode = (string) $first->get('verification_code')->value;
+    $secondCode = (string) $second->get('verification_code')->value;
+    self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/D', $firstCode);
+    self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/D', $secondCode);
+    self::assertNotSame($firstCode, $secondCode, 'A reissued certificate receives a new opaque verification code.');
+    self::assertSame('active', $manager->loadByCode($secondCode)->get('state')->value);
+    self::assertNull($manager->loadByCode(str_repeat('A', 39)), 'Codes below the supported format are rejected before lookup.');
+    self::assertNull($manager->loadByCode(str_repeat('A', 65)), 'Codes above the supported format are rejected before lookup.');
 
     $verification = new CertificateVerificationController(
       $manager,

@@ -227,14 +227,14 @@ registrou 90 depreciações de Core/contrib e a Unit, 5 avisos do PHPUnit.
 fallback UTC. `LearningDashboardControllerTest`: 1/4 assertions PASS. Unit
 total: 39 testes/185 assertions PASS; 5 depreciações do
 PHPUnit.
-`CertificateLifecycleTest`: 3 testes/77 assertions PASS, cobrindo o snapshot
+`CertificateLifecycleTest`: 3 testes/82 assertions PASS, cobrindo o snapshot
 público e cache; 38 depreciações upstream.
 `ClassDashboardKernelTest`: 1 teste/43 assertions PASS, incluindo a política de
 cache do painel educador.
 O download privado também falha fechado durante a exclusão assíncrona de um
 LessonStatus, quando a resposta ainda existe, mas já perdeu o contexto de curso.
 Kernel `AttemptArchiveLifecycleTest`: 9 testes/363 assertions PASS; caso
-dedicado 1/39 assertions. A suíte Kernel totaliza 19 testes/568 assertions,
+dedicado 1/39 assertions. A suíte Kernel totaliza 19 testes/573 assertions,
 com 90 depreciações de Core/contrib.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit

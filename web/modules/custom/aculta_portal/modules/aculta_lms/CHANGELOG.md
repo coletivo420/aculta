@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.33 — verificar formato e unicidade do código de certificado — 2026-10-21
+
+- Kernel confirma códigos de 43 caracteres URL-safe, código novo na reemissão e
+  rejeição de comprimentos fora do formato antes da consulta.
+- `CertificateLifecycleTest`: 3 testes / 82 assertions PASS, 38 depreciações
+  upstream. Unit: 39 testes / 185 assertions PASS. Kernel completo: 19 testes /
+  573 assertions PASS, com 90 depreciações upstream.
+
 ## 0.1.0-dev.32 — preservar certificado com conta desativada — 2026-10-21
 
 - Kernel confirma que bloquear a conta do estudante não revoga nem altera o
