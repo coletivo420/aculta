@@ -318,8 +318,8 @@ acessibilidade e os gates da fase.
 
 Em 0.1.0-dev.44, a fixture de instalação passou a criar uma entidade User real
 para o access de histórico que valida status ativo via `AccountUserLoader`.
-Kernel completo do `aculta_lms`: 19 testes / 584 assertions PASS no MariaDB
-dedicado; 90 depreciações de Core/contrib, sem falhas.
+Kernel completo do `aculta_lms`: 19 testes / 594 assertions PASS no MariaDB
+dedicado; 90 depreciações de Core/contrib e uma de `webform_score`, sem falhas.
 
 Em 0.1.0-dev.40, a autorização contextual para emitir e revogar certificados
 declara também o cache context `user.group_permissions` exigido pelo Group. Isso

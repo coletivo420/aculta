@@ -7,6 +7,9 @@
 - `CertificateLifecycleTest`: 3 testes / 94 assertions PASS; 38 depreciações
   upstream. A validação usa provedor controlado no teste; geração da imagem é
   coberta pela suíte própria de `aculta_qrcode`.
+- Revalidação integral: Kernel `aculta_lms` 19 testes / 594 assertions PASS
+  (90 depreciações upstream e uma de `webform_score`); Unit 48 / 260 PASS (8
+  depreciações do PHPUnit).
 
 ## 0.1.0-dev.45 — validar carga horária mínima — 2026-10-21
 
