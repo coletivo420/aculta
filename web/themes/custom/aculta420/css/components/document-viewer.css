@@ -1,0 +1,144 @@
+/* Theme presentation for the DOCX and spreadsheet readers from aculta_document_viewer. */
+[data-aculta-document-viewer] {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  font-family: var(--aculta-font-body);
+}
+
+[data-aculta-document-viewer]:fullscreen {
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--aculta-surface-page);
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="header"] {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="type"] {
+  margin: 0;
+  color: var(--aculta-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="title"] {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--aculta-text-primary);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="toolbar"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="zoom"] {
+  min-width: 3.5rem;
+  color: var(--aculta-text-secondary);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="status"] {
+  margin: 0;
+  color: var(--aculta-text-muted);
+  font-size: 0.9375rem;
+}
+
+[data-aculta-document-viewer] button[data-aculta-document-part="control"],
+[data-aculta-document-viewer] button[data-aculta-document-part="mode"] {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--aculta-interactive-border);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+  font-family: var(--aculta-font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+[data-aculta-document-viewer] button[data-aculta-document-part="control"]:is(:hover, :active),
+[data-aculta-document-viewer] button[data-aculta-document-part="mode"]:is(:hover, :active) {
+  border-color: var(--aculta-interactive-hover-bg);
+  background-color: var(--aculta-interactive-hover-bg);
+  color: var(--aculta-interactive-hover-text);
+}
+
+[data-aculta-document-viewer] button[data-aculta-document-part="mode"][aria-pressed="true"] {
+  border-color: var(--aculta-interactive-active-bg);
+  background-color: var(--aculta-interactive-active-bg);
+  color: var(--aculta-interactive-active-text);
+}
+
+[data-aculta-document-viewer] select[data-aculta-document-part="sheet-select"] {
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--aculta-border-strong);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  font-family: var(--aculta-font-body);
+  font-size: 0.9375rem;
+}
+
+[data-aculta-document-viewer] button:focus-visible,
+[data-aculta-document-viewer] select:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+[data-aculta-document-viewer] [data-aculta-document-part="frame"] {
+  min-width: 0;
+  overflow: auto;
+}
+
+[data-aculta-document-viewer] iframe[data-aculta-document-part="document"] {
+  display: block;
+  width: 100%;
+  min-height: 60vh;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--aculta-surface-page);
+}
+
+[data-aculta-document-viewer] [data-aculta-document-control="status"][hidden] {
+  display: none;
+}
+
+@media (max-width: 575.98px) {
+  [data-aculta-document-viewer] {
+    padding: 0.75rem;
+  }
+
+  [data-aculta-document-viewer] iframe[data-aculta-document-part="document"] {
+    min-height: 50vh;
+  }
+}

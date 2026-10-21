@@ -1,5 +1,15 @@
 ## 0.6.0-dev.143 — define tamanho dos modais de anexo e galeria do Fórum — 2026-10-21
 
+## 0.6.0-dev.145 — apresentação dos leitores DOCX e planilhas — 2026-10-21
+
+Classificação: MINOR (componente de apresentação novo, com contrato neutro).
+
+- Novo `css/components/document-viewer.css`, carregado pela biblioteca global do tema. Estiliza `[data-aculta-document-viewer]` e as partes `[data-aculta-document-part]` (cabeçalho, tipo, título, barra, zoom, status, quadro, modos e seletor de aba) com tokens semânticos (superfície, interação, foco, borda e tipografia). Sem cor fixa.
+- Tela cheia usa o mesmo contêiner, com fundo de página no modo `:fullscreen`.
+- Largura e altura do iframe do DOCX e do quadro da planilha respeitam o celular (16 px de gutter herdado do layout).
+- Testado no Runtime (Chromium X11) com DOCX e XLSX públicos: título com HTML aparece como texto; zoom 100% → 115%; tela cheia ativada por clique real; status oculto ao concluir.
+- Pendente: revisão visual em Firefox e em 390/768/1024 px; o PDF permanece com a folha `pdf-viewer.css`, sem alteração.
+
 Classificação: PATCH (apresentação responsiva com tokens semânticos e diálogo Core existente).
 
 - `PortalUiHooks` traduz `forum-attachment-dialog` e `forum-gallery-dialog` para classes do ACULTA420.

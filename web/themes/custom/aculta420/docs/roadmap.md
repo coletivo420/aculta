@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.145 | Apresentação compartilhada dos leitores DOCX e planilhas (`aculta_document_viewer`): cabeçalho, barra de zoom e tela cheia, status acessível, abas e modo Tabela | Runtime testado no Chromium X11 com DOCX e XLSX públicos (zoom, tela cheia por clique real, status oculto ao concluir, título escapado); captura confirma tokens; revisão em Firefox e viewports móveis pendente | `css/components/document-viewer.css` com seletores `data-aculta-document-part`; sem classe de design no módulo |
 | 0.6.0-dev.144 | Padrão visual comum para modais de upload do Portal | Fixture X11/Firefox com CSS real passou em 390/768/1024 px; inspeção do modal servido por Drupal no Runtime pendente | Token `user-upload-dialog` com rolagem responsiva; variantes do Fórum continuam reconhecidas |
 | 0.6.0-dev.143 | Tokens e largura responsiva para modais de anexo/galeria do Fórum | Unit 6/29 e Foundation 368 PASS; visual pré-RC pendente; Design Foundations falha em três checks do envelope Mailer fora desta mudança | Dialog Core reutilizado; tema define dimensões e rolagem |
 | 0.6.0-dev.142 | Modo de cor do envelope de e-mail segue o controle de aparência do site | Gate de fundação PASS; render dos três modos PASS | light, dark ou auto, pelo mesmo controle do site.
