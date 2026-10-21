@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.69 — invalidar negação do painel de turma sem curso — 2026-10-21
+
+- O controle de acesso do painel de educadores também invalida a negativa
+  quando a turma recebe relação com o curso. A cobertura Kernel exercita ambas
+  as negativas armazenadas e confirma invalidação pela cache tag Group.
+  `ClassActivityDeadlineTest`: 1/52; regressão Kernel LMS/Messenger: 23/725
+  PASS (95 depreciações upstream). Runtime `cursos`: sem updates pendentes;
+  cache rebuild e resolução do serviço do painel passaram, com warning
+  preexistente de cópia de assets H5P; nenhuma configuração foi importada.
+
 ## 0.1.0-dev.68 — invalidar negativa de acesso quando a turma é vinculada — 2026-10-21
 
 - O access checker de prazo agora inclui a lista de relações Group da turma na

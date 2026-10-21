@@ -118,8 +118,14 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     $cache = $this->container->get('cache.default');
     $cache->set('aculta_lms_test.unlinked_class_access', TRUE, Cache::PERMANENT, $denied->getCacheTags());
     self::assertNotFalse($cache->get('aculta_lms_test.unlinked_class_access'));
+    $dashboardDenied = $this->container->get('aculta_lms.learning_dashboard')
+      ->classDashboardAccess($unlinkedClass, $owner);
+    self::assertTrue($dashboardDenied->isForbidden());
+    $cache->set('aculta_lms_test.unlinked_class_dashboard', TRUE, Cache::PERMANENT, $dashboardDenied->getCacheTags());
+    self::assertNotFalse($cache->get('aculta_lms_test.unlinked_class_dashboard'));
     $course->addRelationship($unlinkedClass, 'lms_classes');
     self::assertFalse($cache->get('aculta_lms_test.unlinked_class_access'), 'Adding the parent course invalidates the cached negative access result.');
+    self::assertFalse($cache->get('aculta_lms_test.unlinked_class_dashboard'), 'Adding the parent course invalidates the cached class-dashboard denial.');
 
     $classA = Group::create(['type' => 'lms_class', 'label' => 'Turma A', 'uid' => $owner->id()]);
     $classA->save();

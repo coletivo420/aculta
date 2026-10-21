@@ -116,7 +116,11 @@ final class LearningDashboardManager {
   public function classDashboardAccess(GroupInterface $class, AccountInterface $account): AccessResult {
     $course = $this->courseForClass($class);
     if ($class->bundle() !== 'lms_class' || !$course instanceof CourseInterface) {
-      return AccessResult::forbidden()->addCacheableDependency($class);
+      return AccessResult::forbidden()
+        ->addCacheableDependency($class)
+        // The class may gain its parent-course relationship after this
+        // negative result has been cached.
+        ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $class->id()]);
     }
     $allowed = $account->hasPermission('administer lms') || $course->hasPermission('grade students', $account);
     return AccessResult::allowedIf($allowed)

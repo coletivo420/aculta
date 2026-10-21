@@ -21,6 +21,9 @@ a ter curso pai; o teste usa uma entrada real de cache e o cache tag de lista
 de relações do Group instalado. Também acompanha alterações do curso quando a
 atividade não está vinculada às aulas dele. `ClassActivityDeadlineTest`: 1/49;
 Kernel LMS/Messenger: 23/722 assertions PASS (95 depreciações upstream).
+O mesmo teste comprova a invalidação da negativa do painel de educadores quando
+a relação curso→turma é criada: `ClassActivityDeadlineTest` 1/52; regressão
+Kernel LMS/Messenger 23/725 assertions PASS (95 depreciações upstream).
 
 Os hooks do formulário de prazo por atividade e do aviso de feedback do
 educador resolvem curso pelos campos de referência LMS e toleram LessonStatus

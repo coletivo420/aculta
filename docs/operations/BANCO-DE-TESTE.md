@@ -202,6 +202,12 @@ regressão Kernel `aculta_lms` + `aculta_lms_messenger` passou com 22 testes /
 testes / 334 assertions e 8 depreciações PHPUnit. PHP CLI 8.4.26; PHP 8.5
 continua não validado.
 
+Em 2026-10-21, a cobertura de cache F16 foi ampliada para o acesso do painel de
+educadores: `ClassActivityDeadlineTest` passou com 1 teste / 52 assertions e a
+regressão Kernel LMS/Messenger com 23 testes / 725 assertions. Ambas as
+negativas armazenadas (painel e prazo) são invalidadas ao criar a relação
+curso→turma; 95 depreciações de Core/contrib. PHP 8.4.26; PHP 8.5 não validado.
+
 Em 2026-10-21, `ClassActivityDeadlineTest` passou com 1 teste / 49 assertions:
 ao criar o vínculo curso→turma, o cache tag Group invalida a negativa de acesso
 previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /
