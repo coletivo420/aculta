@@ -47,8 +47,11 @@ O aculta_portal monta a aba (`PortalController::securitySectionContent`), mostra
 - Validação direta no Runtime (`drush scr`): senha errada recusada; e-mail do usuário não alterado.
 - Navegador X11 (conta de teste `teste.comum`): senha errada com mensagem em português; pedido válido gravado como
   pendente; espaçamento do bloco pendente; celular 390 px sem rolagem horizontal; sem erros de JavaScript.
-- Confirmação real por IMAP: em andamento (ver CHANGELOG do módulo). A confirmação do pedido de troca de e-mail
-  depende da caixa de destino recebendo o link.
+- Confirmação real por IMAP (conta de teste nova, removida ao final):
+  - Confirmação da conta (reenvio pelo aviso de atenção): mensagem recebida em `dmarc@aculta.org`, link aberto no
+    navegador, e-mail marcado como confirmado. O aviso persistente sumiu da lista de avisos e do aviso de atenção.
+  - Troca de e-mail pela aba E-mail: pedido para `naoresponda@aculta.org`, mensagem de confirmação lida por IMAP, link
+    aberto, e-mail da conta atualizado para o novo endereço.
 - Testes Kernel do módulo: bloqueados pela cadeia de serviços do aculta_portal (ver [PENDENCIAS](PENDENCIAS.md)).
 
 ## Aviso relacionado
