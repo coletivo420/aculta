@@ -32,8 +32,6 @@ final class AcultaLinksThemeHooks {
           'description' => NULL,
           'links' => [],
           'has_links' => FALSE,
-          'projects' => [],
-          'has_projects' => FALSE,
           'theme_preset' => 'classic',
         ],
         'template' => 'aculta-links-landing',

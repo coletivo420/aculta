@@ -13,7 +13,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 use Drupal\path_alias\AliasManagerInterface;
-use Drupal\views\ViewExecutable;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -61,18 +60,12 @@ final class LinksLandingController {
     }
 
     $links = $this->pagePresenter->buildSiteButtons();
-    $projects = $this->pagePresenter->buildProjects();
-    $has_projects = isset($projects['#view'])
-      && $projects['#view'] instanceof ViewExecutable
-      && $projects['#view']->result !== [];
     $build = [
       '#theme' => 'aculta_links_landing',
       '#title' => new TranslatableMarkup('ACULTA'),
       '#description' => '',
       '#links' => $links,
       '#has_links' => $links !== [],
-      '#projects' => $projects,
-      '#has_projects' => $has_projects,
       '#theme_preset' => 'classic',
     ];
     (new CacheableMetadata())

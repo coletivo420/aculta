@@ -7,10 +7,8 @@ namespace Drupal\aculta_links\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\views\ViewExecutableFactory;
 
 /**
  * Builds the social channels and project carousel for the LINKS purpose.
@@ -37,8 +35,6 @@ final class SocialLinksPagePresenter {
 
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ViewExecutableFactory $viewExecutableFactory,
     private readonly TranslationInterface $translation,
     private readonly DomainPurposeManager $domainPurpose,
   ) {}
@@ -154,19 +150,6 @@ final class SocialLinksPagePresenter {
       '#cache' => ['tags' => ['config:aculta_links.social_links']],
     ];
     return $list;
-  }
-
-  /**
-   * Renders the existing ACULTA project teaser View through the VVJB display.
-   */
-  public function buildProjects(): array {
-    $view = $this->entityTypeManager->getStorage('view')->load('aculta_projects');
-    if ($view === NULL) {
-      return [];
-    }
-
-    $executable = $this->viewExecutableFactory->get($view);
-    return $executable->render('social_links') ?? [];
   }
 
   /**

@@ -19,7 +19,7 @@ $assert(str_contains($plugin, 'isPurposeFrontNode'), 'página inicial de domíni
 $assert(str_contains($plugin, "const PUBLIC_PATHS = ['main' => ['/contato']];"), 'contato (webform) incluído no MAIN, como no sitemap institucional anterior');
 $assert(str_contains($plugin, 'runInPurpose'), 'acesso avaliado no contexto do purpose de origem (verbetes da WIKI)');
 $assert(str_contains($plugin, 'DomainConfigCollectionUtils'), 'página inicial lida pela coleção de configuração do domínio');
-$assert(str_contains($plugin, "'page', 'project', 'activity', 'document', 'wiki_entry', 'article'"), 'bundles elegíveis conforme a matriz da ADR-009');
+$assert(str_contains($plugin, "'page', 'activity', 'document', 'wiki_entry', 'article'"), 'bundles elegíveis conforme a matriz da ADR-009');
 $assert(str_contains($plugin, "field_domain_source"), 'origem do conteúdo vem de field_domain_source (R1)');
 $assert(str_contains($plugin, 'id = "aculta_purpose_node"'), 'id do plugin declarado na anotação');
 $assert(str_contains($plugin, 'canonicalRouteUrl') || str_contains($plugin, 'canonicalPathUrl'), 'URLs canônicas vêm do DomainPurposeManager (R7)');

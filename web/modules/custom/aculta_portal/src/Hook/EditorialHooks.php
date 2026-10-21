@@ -80,7 +80,7 @@ final class EditorialHooks {
     $node = $entity instanceof NodeInterface ? $entity : NULL;
 
     if ($node !== NULL
-      && in_array($node->bundle(), ['article', 'activity', 'project'], TRUE)
+      && in_array($node->bundle(), ['article', 'activity'], TRUE)
       && $node->get('field_media_image')->isEmpty()) {
       foreach (['schema_article_image', 'schema_event_image', 'schema_web_page_image'] as $id) {
         if (str_contains((string) ($tags[$id] ?? ''), '[node:image]')) {
@@ -181,7 +181,7 @@ final class EditorialHooks {
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $node = $formState->getFormObject()->getEntity();
     // Blog (Revista) tem o mesmo espaço editorial e de SEO que a Notícia.
-    if (!in_array($node->bundle(), ['article', 'blog', 'activity', 'project'], TRUE)) {
+    if (!in_array($node->bundle(), ['article', 'blog', 'activity'], TRUE)) {
       return;
     }
 
@@ -199,7 +199,7 @@ final class EditorialHooks {
       'editorial_relations' => [
         $this->translation->translate('Relacionamentos'),
         -20,
-        ['field_project', 'field_related_activity'],
+        ['field_related_activity'],
       ],
       'editorial_seo' => [
         $this->translation->translate('SEO e compartilhamento'),

@@ -20,7 +20,6 @@ final class RevistaFormHooks {
   /** Fields and properties that support the publication and that are not part of the main writing flow. */
   private const SECONDARY = [
     'field_tags',
-    'field_project',
     'field_references',
     'field_related_activity',
     'field_credits',

@@ -39,7 +39,7 @@ final class AuthorCardVariantResolverTest extends TestCase {
   public function testUnsupportedHostHasNoVariant(): void {
     $resolver = new AuthorCardVariantResolver();
     $node = $this->createMock(NodeInterface::class);
-    $node->method('bundle')->willReturn('project');
+    $node->method('bundle')->willReturn('activity');
     self::assertNull($resolver->forHost($node));
 
     self::assertNull($resolver->forHost($this->createMock(TermInterface::class)));

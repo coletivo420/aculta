@@ -60,7 +60,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
   public const PUBLIC_PATHS = ['main' => ['/contato']];
 
   /** Bundles elegíveis (matriz da política de indexação). */
-  public const BUNDLES = ['page', 'project', 'activity', 'document', 'wiki_entry', 'article'];
+  public const BUNDLES = ['page', 'activity', 'document', 'wiki_entry', 'article'];
 
   public function __construct(
     array $configuration,
