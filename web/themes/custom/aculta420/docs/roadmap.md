@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.140 | Token semântico para documentos PDF em atividade H5P | Runtime Firefox verificou PDF privado e conversas sob atividade; Gate de tokens atualizado | ACULTA420 aplica espaçamento entre player e documentos existentes por `lms-h5p-course-documents`. |
 | 0.6.0-dev.139 | Estilos do conteúdo no CKEditor 5 (`ckeditor5-stylesheets`) | Foundation e revisão visual no editor pendentes; validação do fluxo completo no navegador pendente | Usa só tokens `--aculta-*`; afeta todos os formatos CKEditor 5 do site, não apenas o `aculta_editor`. |
 | 0.6.0-dev.138 | Tokens de apresentação para discussões gerais e H5P do LMS | `PortalUiHooksTest` 5/26; Foundation 368 e design foundations 2132 PASS. Visual de tópico sob player depende de conteúdo H5P no Runtime | O Portal entrega tokens neutros; ACULTA420 mapeia-os para Bootstrap. |
 | 0.6.0-dev.133 | Contraste do banner corrigido (superfície e texto de tokens, 12,4:1 no claro e 14,5:1 no escuro); revisão visual no claro feita, escuro e clique pendentes | Foundation, design foundations, SDC schema e shell contract PASS | Ajuste do `consent-banner` sem mudança de comportamento. |

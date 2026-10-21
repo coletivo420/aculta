@@ -6,15 +6,12 @@ namespace Drupal\aculta_lms_h5p;
 use Composer\InstalledVersions;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\aculta_image\PackagedAssetPublisher;
 
 /**
- * Class AssetFileStorage.
+ * Publishes Composer assets required by the ACULTA H5P integration.
  */
-class AssetFileStorage {
-
-  use LoggerChannelTrait;
+class aculta_H5PAssetFileStorage {
 
   /**
    * Directory to store all the assets in --`h5p`.
@@ -46,31 +43,6 @@ class AssetFileStorage {
     $directory_uri = "assets://{$this->assetPrefix}/";
 
     return $directory_uri;
-  }
-
-  /**
-   * Create file and return internal uri.
-   *
-   * @return string
-   *   Internal file URI using asset:// stream wrapper.
-   */
-  public function prepareFile(string $internal_uri): string {
-    if (!is_file($internal_uri)) {
-      $directory = dirname($internal_uri);
-
-      try {
-        $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
-      }
-      catch (\Throwable $e) {
-        $this->getLogger('h5p')
-          ->error('Failed to create asset file @uri. Ensure directory permissions are correctly configured: @message', [
-            '@uri' => $internal_uri,
-            '@message' => $e->getMessage(),
-          ]);
-      }
-    }
-
-    return $internal_uri;
   }
 
   public function mirrorAssets(): void {
@@ -123,12 +95,45 @@ class AssetFileStorage {
             }
             continue;
           }
-          $this->prepareFile($destination_path);
-          $this->fileSystem->copy($source_path, $destination_path, FileExists::Replace);
+          $local_destination = $this->resolveLocalAssetPath($destination_path);
+          $destination_directory = dirname($local_destination);
+          if (!$this->fileSystem->prepareDirectory($destination_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+            throw new \UnexpectedValueException("Unable to prepare H5P asset directory: {$destination_directory}");
+          }
+          $this->fileSystem->copy($source_path, $local_destination, FileExists::Replace);
 
         }
       }
     }
+  }
+
+  /**
+   * Resolves a trusted assets URI to its local path for a Drupal FileSystem write.
+   *
+   * `assets://` is a hidden stream wrapper. On Linux installations using ACLs,
+   * PHP's stream-wrapper `is_writable()` check can disagree with the actual
+   * filesystem permissions and make Core's `prepareDirectory()` reject a
+   * writable directory. The Core wrapper still supplies the configured root;
+   * writes then use its canonical local path through FileSystemInterface.
+   */
+  private function resolveLocalAssetPath(string $uri): string {
+    $scheme = 'assets://';
+    $relative_path = str_starts_with($uri, $scheme) ? substr($uri, strlen($scheme)) : '';
+    if ($relative_path === '' || str_contains($relative_path, '\\') || preg_match('@(?:^|/)\.{1,2}(?:/|$)@', $relative_path)) {
+      throw new \UnexpectedValueException('Invalid H5P asset destination.');
+    }
+
+    $asset_root = $this->fileSystem->realpath($scheme);
+    if (!is_string($asset_root) || $asset_root === '') {
+      throw new \UnexpectedValueException('Unable to resolve the configured Drupal assets directory.');
+    }
+
+    $local_path = $asset_root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative_path);
+    if (!str_starts_with($local_path, rtrim($asset_root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
+      throw new \UnexpectedValueException('H5P asset destination escapes the configured assets directory.');
+    }
+
+    return $local_path;
   }
 
 }

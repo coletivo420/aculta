@@ -141,8 +141,10 @@ foreach ($files($module . '/js', ['js']) as $path) {
 //     que o tema também estiliza). Lê só o conteúdo de 'class' => [...] e de addClass(...).
 // draggable e role-weight: contrato de comportamento do tabledrag do Core (web/core/misc/tabledrag.js), não design.
 // h5p-content e h5p-editor: contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js:93 e vendor/h5p/h5p-editor/scripts/h5peditor-editor.js:173),
-// que localiza as instâncias por essas classes. Não são classes de design; o tema não as renomeia.
-$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor'];
+// que localiza as instâncias por essas classes. h5p-iframe-wrapper e h5p-iframe seguem o contrato de integração
+// H5P e são consumidas pelo Core JS/CSS (vendor/h5p/h5p-core/js/h5p.js:381 e styles/h5p.css:161,189).
+// Não são classes de design; o tema não as renomeia.
+$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor', 'h5p-iframe-wrapper', 'h5p-iframe'];
 // Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
 // de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];

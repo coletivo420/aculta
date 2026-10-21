@@ -1,3 +1,10 @@
+## 0.6.0-dev.140 — espaçamento para documentos H5P — 2026-10-21
+
+Classificação: PATCH (mapeia um token semântico do Portal para uma primitive Bootstrap existente).
+
+- `PortalUiHooks` mapeia `lms-h5p-course-documents` para `mt-3`, separando visualmente o PDF privado complementar do player.
+- Firefox no X11 (framebuffer 1024×768) confirmou H5P, PDF privado renderizado e Fórum contextual; o wrapper PDF recebeu `mt-3`. A fixture temporária foi removida.
+
 ## 0.6.0-dev.139 — estilos do conteúdo no CKEditor 5 — 2026-10-21
 
 Classificação: PATCH (apresentação do conteúdo dentro do editor; sem componente novo, sem cor nova).
@@ -1903,4 +1910,5 @@ Classificação: PATCH de manutenção do tema e do gate.
 
 - O SDC `social-links-page` oferece slot opcional `owner_identity`; ACULTA Links envia apenas a identidade pública preparada por `aculta_user`.
 - SDC schema PASS (570 checks), Design Foundations PASS (2109); revisão visual responsiva e acessível ainda pendente, estado Dev.
+
 

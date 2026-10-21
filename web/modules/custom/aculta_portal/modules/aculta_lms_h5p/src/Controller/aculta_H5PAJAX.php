@@ -8,7 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager;
-use Drupal\aculta_lms_h5p\Event\FinishedEvent;
+use Drupal\aculta_lms_h5p\Event\aculta_H5PFinishedEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,7 +61,7 @@ final class aculta_H5PAJAX extends ControllerBase {
       $fields['started'] = $opened;
     }
     $this->database->merge('h5p_points')->keys(['uid' => $uid, 'content_id' => $content_id])->fields($fields)->execute();
-    $this->eventDispatcher->dispatch(new FinishedEvent($fields), FinishedEvent::FINISHED_EVENT);
+    $this->eventDispatcher->dispatch(new aculta_H5PFinishedEvent($fields), aculta_H5PFinishedEvent::FINISHED_EVENT);
     return $this->privateResponse(['success' => TRUE]);
   }
 

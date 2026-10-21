@@ -14,8 +14,10 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
+use Drupal\group\Entity\GroupType;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\media\MediaInterface;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -50,6 +52,8 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'views',
     'lms',
     'aculta_image',
+    'aculta_pdf_viewer',
+    'aculta_pdf_viewer_group',
     'aculta_lms',
     'aculta_lms_h5p',
   ];
@@ -80,7 +84,16 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       'aculta_pdf_viewer.builder',
       $this->createMock(PdfViewerBuilderInterface::class),
     );
-    $this->installConfig(['system', 'user', 'filter', 'group', 'lms', 'media']);
+    $this->installConfig([
+      'system',
+      'user',
+      'filter',
+      'group',
+      'lms',
+      'media',
+      'aculta_pdf_viewer',
+      'aculta_pdf_viewer_group',
+    ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
@@ -91,7 +104,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installSchema('aculta_lms_h5p', ['h5p_content_libraries', 'h5p_points', 'h5p_content_user_data']);
+    $this->installSchema('aculta_lms_h5p', ['h5p_content_libraries', 'h5p_libraries', 'h5p_libraries_libraries', 'h5p_points', 'h5p_content_user_data']);
 
     FieldStorageConfig::create([
       'field_name' => 'field_h5p_activities',
@@ -195,12 +208,75 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $course->addMember($otherStudent, ['group_roles' => [$studentRole->id()]]);
     $course->addMember($educator, ['group_roles' => [$educatorRole->id()]]);
 
+    if (!MediaType::load('course_document')) {
+      MediaType::create([
+        'id' => 'course_document',
+        'label' => 'Course document',
+        'source' => 'file',
+        'source_configuration' => ['source_field' => 'field_media_course_document'],
+      ])->save();
+      FieldStorageConfig::create([
+        'field_name' => 'field_media_course_document',
+        'entity_type' => 'media',
+        'type' => 'file',
+        'settings' => [
+          'target_type' => 'file',
+          'uri_scheme' => 'private',
+        ],
+        'cardinality' => 1,
+      ])->save();
+      FieldConfig::create([
+        'field_name' => 'field_media_course_document',
+        'entity_type' => 'media',
+        'bundle' => 'course_document',
+        'label' => 'Course document file',
+      ])->save();
+    }
+    $this->container->get('group_relation_type.manager')->clearCachedDefinitions();
+
+    $relationshipTypes = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship_type');
+    $relationshipTypeId = $relationshipTypes->getRelationshipTypeId(
+      'lms_course',
+      'aculta_pdf_viewer_group:course_document',
+    );
+    if (!$relationshipTypes->load($relationshipTypeId)) {
+      $relationshipTypes->createFromPlugin(
+        GroupType::load('lms_course'),
+        'aculta_pdf_viewer_group:course_document',
+      )->save();
+    }
+
+    // An iframe-only library must render through H5P Core's internal iframe
+    // initializer; it must not require the removed public embed endpoint.
+    $this->container->get('database')->insert('h5p_libraries')->fields([
+      'machine_name' => 'H5P.IframeTest',
+      'title' => 'Iframe test',
+      'major_version' => 1,
+      'minor_version' => 0,
+      'patch_version' => 0,
+      'runnable' => 1,
+      'fullscreen' => 1,
+      'embed_types' => 'iframe',
+      'preloaded_js' => 'js/iframe-test.js',
+      'preloaded_css' => 'css/iframe-test.css',
+      'semantics' => '[]',
+    ])->execute();
+    mkdir($this->siteDirectory . '/private/h5p/libraries/H5P.IframeTest-1.0', 0775, TRUE);
+
     $content = $this->container->get('entity_type.manager')->getStorage('aculta_h5p_content')->create([
       'library_id' => 1,
       'parameters' => '{}',
+      'filtered_parameters' => '{}',
       'title' => 'Atividade vinculada',
+      'a11y_title' => 'Atividade de teste em iframe',
     ]);
     $content->save();
+    $this->container->get('database')->insert('h5p_content_libraries')->fields([
+      'content_id' => $content->id(),
+      'library_id' => 1,
+      'dependency_type' => 'preloaded',
+    ])->execute();
     self::assertSame(
       'media',
       $content->getFieldDefinition('course_documents')->getSetting('target_type'),
@@ -240,6 +316,33 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     $content = $this->container->get('entity_type.manager')
       ->getStorage('aculta_h5p_content')
       ->load($content->id());
+
+    $courseDocument = Media::create([
+      'bundle' => 'course_document',
+      'name' => 'Documento PDF vinculado ao curso',
+      'status' => FALSE,
+    ]);
+    $courseDocument->save();
+    $unlinkedCourseDocument = Media::create([
+      'bundle' => 'course_document',
+      'name' => 'Documento PDF de outro curso',
+      'status' => FALSE,
+    ]);
+    $unlinkedCourseDocument->save();
+    $relationship = $course->addRelationship(
+      $courseDocument,
+      'aculta_pdf_viewer_group:course_document',
+    );
+    $relationship->save();
+    $content->set('course_documents', [
+      ['target_id' => $document->id()],
+      ['target_id' => $courseDocument->id()],
+      ['target_id' => $unlinkedCourseDocument->id()],
+    ]);
+    $content->save();
+    $content = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_h5p_content')
+      ->load($content->id());
     self::assertSame(
       (int) $document->id(),
       (int) $content->get('course_documents')->target_id,
@@ -272,6 +375,48 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertFalse($deniedElements[0]['#access']);
     self::assertContains('user', $deniedElements[0]['#cache']['contexts']);
     $this->container->get('current_user')->setAccount($student);
+
+    $pdfViewerBuild = [
+      '#type' => 'container',
+      '#attributes' => ['data-aculta-pdf-viewer' => 'true'],
+    ];
+    $courseDocumentId = (int) $courseDocument->id();
+    $this->container->get('aculta_pdf_viewer.builder')
+      ->expects(self::once())
+      ->method('build')
+      ->with(
+        self::callback(static fn ($media): bool => $media instanceof MediaInterface && (int) $media->id() === $courseDocumentId),
+        'field_media_course_document',
+      )
+      ->willReturn($pdfViewerBuild);
+
+    $studentElements = $formatter->viewElements($course->get('field_h5p_activities'), 'en');
+    self::assertSame('container', $studentElements[0]['#type']);
+    self::assertSame('h5p-iframe-wrapper', $studentElements[0]['#attributes']['class'][0]);
+    self::assertSame('h5p-iframe-' . $content->id(), $studentElements[0]['iframe']['#attributes']['id']);
+    self::assertSame((string) $content->id(), (string) $studentElements[0]['iframe']['#attributes']['data-content-id']);
+    self::assertSame('Atividade de teste em iframe', $studentElements[0]['iframe']['#attributes']['title']);
+    self::assertSame('allowfullscreen', $studentElements[0]['iframe']['#attributes']['allowfullscreen']);
+    self::assertArrayNotHasKey('src', $studentElements[0]['iframe']['#attributes']);
+    self::assertContains('aculta_lms_h5p/h5p.content', $studentElements[0]['#attached']['library']);
+    self::assertSame(12 * 60 * 60, $studentElements[0]['#cache']['max-age']);
+    $h5pIntegration = $studentElements[0]['#attached']['drupalSettings']['h5p']['H5PIntegration'];
+    self::assertNotEmpty($h5pIntegration['core']['scripts']);
+    self::assertNotEmpty($h5pIntegration['core']['styles']);
+    $contentIntegration = $h5pIntegration['contents']['cid-' . $content->id()];
+    self::assertSame(
+      '/h5p-library-assets/libraries/H5P.IframeTest-1.0/js/iframe-test.js?ver=1.0.0',
+      $contentIntegration['scripts'][0],
+    );
+    self::assertSame(
+      '/h5p-library-assets/libraries/H5P.IframeTest-1.0/css/iframe-test.css?ver=1.0.0',
+      $contentIntegration['styles'][0],
+    );
+    self::assertSame(
+      [$pdfViewerBuild],
+      $studentElements[0]['course_documents']['items'],
+      'Only PDF Media related to the current course is passed to the shared viewer.',
+    );
 
     $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
     $condition->setContextValue('group', $course);

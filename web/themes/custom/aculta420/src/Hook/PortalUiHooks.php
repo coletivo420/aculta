@@ -74,6 +74,7 @@ final class PortalUiHooks {
     'lms-activity-discussions' => ['card', 'card-body', 'mt-3'],
     'lms-h5p-activity' => ['d-grid', 'gap-3'],
     'lms-h5p-discussions' => ['card', 'card-body', 'mt-3'],
+    'lms-h5p-course-documents' => ['mt-3'],
     'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],

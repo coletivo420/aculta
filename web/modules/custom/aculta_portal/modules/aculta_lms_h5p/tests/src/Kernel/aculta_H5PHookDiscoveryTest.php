@@ -24,6 +24,11 @@ final class aculta_H5PHookDiscoveryTest extends KernelTestBase {
     self::assertTrue($moduleHandler->hasImplementations('field_views_data', 'aculta_lms_h5p'));
     $libraryHooks = $this->container->get(\Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks::class);
     self::assertInstanceOf(\Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks::class, $libraryHooks);
+    self::assertInstanceOf(\Drupal\aculta_lms_h5p\aculta_H5PAssetFileStorage::class, $this->container->get('aculta_lms_h5p.asset_file_manager'));
+    self::assertSame(
+      ['score' => 1],
+      (new \Drupal\aculta_lms_h5p\Event\aculta_H5PFinishedEvent(['score' => 1]))->getQuizFields(),
+    );
     $framework = new \ReflectionMethod(\Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal::class, 'framework');
     $framework->setAccessible(TRUE);
     self::assertSame($this->container->get('aculta_lms_h5p.framework'), $framework->invoke(NULL));

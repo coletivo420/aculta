@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Hook;
 
-use Drupal\aculta_lms_h5p\AssetFileStorage;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryIdentifier;
 use Drupal\Core\Database\Connection;
@@ -20,8 +19,6 @@ final class aculta_H5PLibraryHooks {
     private readonly Connection $database,
     #[Autowire(service: 'aculta_lms_h5p.framework')]
     private readonly aculta_H5PDrupal $framework,
-    #[Autowire(service: 'aculta_lms_h5p.asset_file_manager')]
-    private readonly AssetFileStorage $assetManager,
     #[Autowire(service: 'file_url_generator')]
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
   ) {}
@@ -29,7 +26,6 @@ final class aculta_H5PLibraryHooks {
   #[Hook('library_info_build')]
   public function libraryInfoBuild(): array {
     $database = $this->database;
-    $this->assetManager->mirrorAssets();
     $libraries = [];
 
     // Register jQuery version that H5P depends on.

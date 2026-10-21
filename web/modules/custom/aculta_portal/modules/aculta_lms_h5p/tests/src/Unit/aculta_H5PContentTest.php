@@ -13,19 +13,21 @@ use PHPUnit\Framework\Attributes\DataProvider;
 final class aculta_H5PContentTest extends UnitTestCase {
 
   #[DataProvider('embedTypesProvider')]
-  public function testDivPlaybackMatchesExplicitEmbedType(string $embedTypes, bool $expected): void {
+  public function testEmbedModeUsesSupportedH5PCoreEmbedTypes(string $embedTypes, ?string $expected): void {
     $content = (new \ReflectionClass(aculta_H5PContent::class))->newInstanceWithoutConstructor();
     (new \ReflectionProperty(aculta_H5PContent::class, 'library'))->setValue($content, (object) ['embed_types' => $embedTypes]);
 
-    self::assertSame($expected, $content->isDivEmbeddable());
+    self::assertSame($expected, $content->getEmbedType());
+    self::assertSame($expected === 'div', $content->isDivEmbeddable());
   }
 
   public static function embedTypesProvider(): array {
     return [
-      'div only' => ['div', TRUE],
-      'iframe only' => ['iframe', FALSE],
-      'both supported' => ['iframe, div', TRUE],
-      'unknown type' => ['iframe, external', FALSE],
+      'div only' => ['div', 'div'],
+      'iframe only' => ['iframe', 'iframe'],
+      'both supported prefer div' => ['iframe, div', 'div'],
+      'unknown type' => ['external', NULL],
+      'empty type' => ['', NULL],
     ];
   }
 

@@ -12,8 +12,10 @@ instalado pela tela administrativa, uma atividade foi salva pelo editor e
 reproduzida para estudante matriculada no Group. A rota de iframe do módulo de
 origem foi removida porque não validava o acesso ao conteúdo pai. O conteúdo é
 apresentado no contexto do curso, após validação de acesso pelo Drupal e pelo
-LMS. As fixtures temporárias foram removidas; `H5P.HelloWorld`, preexistente,
-foi preservada. Nenhuma alteração de produção foi feita.
+LMS. Bibliotecas que declaram apenas `iframe` usam o iframe interno `about:blank`
+do H5P Core na mesma página autorizada; não há endpoint público de incorporação.
+As fixtures temporárias foram removidas; `H5P.HelloWorld`, preexistente, foi
+preservada. Nenhuma alteração de produção foi feita.
 
 Na F15, o Kernel confirma que o estado de tentativa persiste quando a mesma
 conta retorna em outra sessão e não pode ser lido por outro estudante
@@ -23,16 +25,33 @@ não são convertidos em notas oficiais do LMS. A integração de discussões do
 curso/turma e renderiza conversas sob o player. Unit cobre o resolver; Kernel
 com entidades persistidas valida isolamento por conteúdo, curso e turma,
 permissão do tópico, contexto do Group no autocomplete e composição do player.
-No Runtime de teste, a revisão X11 do painel administrativo passou, mas não há
-conteúdo H5P nem tópico vinculado para smoke autenticado/visual da conversa.
+No Runtime de teste, a revisão visual autenticada confirmou o player iframe-only,
+o PDF privado e a conversa H5P–Fórum sob a atividade; o link do tópico abriu no
+host de cursos com HTTP 200. As fixtures temporárias foram removidas após o
+smoke, sem manter conteúdo H5P ou tópico de validação no Runtime.
 
 Educadores também podem associar PDFs `course_document` existentes a cada
 atividade H5P. A referência aponta para o mesmo Media do curso, sem duplicar o
 arquivo. O formatter valida novamente a relação com o Group e usa
 `aculta_pdf_viewer.builder`, preservando as permissões de arquivo privado. O
 campo de referência foi instalado pelo update `aculta_lms_h5p_update_8006` no
-Runtime de teste. Como não há conteúdo H5P nem documentos `course_document`
-nesse Runtime, a validação visual autenticada do vínculo permanece pendente.
+Runtime de teste. O Kernel verifica que o formatter entrega ao builder somente
+documentos `course_document` relacionados ao mesmo curso. O smoke autenticado
+no Runtime confirmou o PDF privado renderizado pelo PDF.js para estudante
+matriculado; Media, arquivo, relação, atividade e curso temporários foram
+removidos depois da validação. A revisão visual da integração com o Fórum
+confirmou que o estudante vê apenas o tópico vinculado àquela atividade e
+consegue abrir seu Node no mesmo host de cursos; o tópico e o curso temporários
+também foram apagados.
+
+O formatter escolhe `div` quando disponível; para bibliotecas iframe-only, usa o
+inicializador interno do H5P Core com `about:blank`. A suíte Unit cobre a
+seleção dos modos `div` e `iframe`; o Kernel verifica que a reprodução
+iframe-only mantém a autorização do curso, o título acessível e os assets
+associados. Os assets Composer são preparados na instalação/update do módulo,
+sem gravação durante a descoberta de bibliotecas em requisições. O Runtime
+confirmou `H5PIntegration.core`, scripts/estilos do Core e da biblioteca e a
+atividade carregada no iframe autorizado.
 
 ## Painéis e vínculo com cursos
 
@@ -61,8 +80,9 @@ nesse Runtime, a validação visual autenticada do vínculo permanece pendente.
   para discussões gerais de atividade. O adapter lista somente conteúdo H5P do
   curso/turma editável e injeta tópicos permitidos sob o player, revalidando o
   curso, Group, matrícula e Entity Access. O painel administrativo passou por
-  revisão visual X11 no Runtime de teste; ainda não há conteúdo H5P nem tópico
-  vinculado nesse Runtime para validar visualmente o player e a discussão.
+  revisão visual autenticada do player, do PDF e da conversa contextual
+  H5P–Fórum no Runtime de teste. Nenhuma fixture temporária permaneceu no
+  Runtime.
 - Integração com CTools: a condição `Course has interactive activities (H5P)`
   recebe contexto `entity:group` e permite condicionar displays/contextos CTools
   à existência de atividades. O projeto não tem Page Manager instalado; não

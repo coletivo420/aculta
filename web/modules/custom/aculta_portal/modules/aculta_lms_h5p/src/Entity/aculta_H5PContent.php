@@ -163,6 +163,9 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
         ':id' => $this->get('library_id')->value
       ])
       ->fetchObject();
+    if (!$this->library) {
+      $this->library = NULL;
+    }
   }
 
   public function getLibrary($assoc = FALSE) {
@@ -194,13 +197,29 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     return $this->get('library_id')->value;
   }
 
-  public function isDivEmbeddable() {
+  /**
+   * Returns the preferred embed mode supported by the installed library.
+   *
+   * H5P Core supports both modes. Div is preferred when available; iframe-only
+   * libraries use H5P Core's same-origin, about:blank iframe initializer.
+   */
+  public function getEmbedType(): ?string {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
+    if (empty($this->library)) {
+      return NULL;
+    }
 
     $embedTypes = array_map('trim', explode(',', strtolower((string) $this->library->embed_types)));
-    return in_array('div', $embedTypes, TRUE);
+    if (in_array('div', $embedTypes, TRUE)) {
+      return 'div';
+    }
+    return in_array('iframe', $embedTypes, TRUE) ? 'iframe' : NULL;
+  }
+
+  public function isDivEmbeddable(): bool {
+    return $this->getEmbedType() === 'div';
   }
 
   protected function getExportURL() {
@@ -235,7 +254,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       ],
       'params' => $this->get('parameters')->value,
       'filtered' => $this->get('filtered_parameters')->value,
-      'embedType' => 'div',
+      'embedType' => $this->getEmbedType() ?? 'div',
       'metadata' => $this->getMetadata()
     ];
 

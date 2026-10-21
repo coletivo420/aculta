@@ -64,6 +64,16 @@ final class aculta_H5PLibraryPackageInstallerTest extends KernelTestBase {
     );
   }
 
+  /** Verifies Composer assets mirror through the configured Drupal assets path. */
+  public function testComposerAssetsAreMirroredToAssetsDirectory(): void {
+    $this->container->get('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
+
+    $assetPath = $this->container->get('file_system')->realpath('assets://h5p/h5p-core/js/jquery.js');
+    self::assertIsString($assetPath);
+    self::assertFileExists($assetPath);
+    self::assertGreaterThan(0, filesize($assetPath));
+  }
+
   /** Verifies a valid package installs private, managed library files. */
   public function testInstallsValidatedLibrariesAndTracksManagedAssets(): void {
     $package = $this->createPackage([

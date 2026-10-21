@@ -27,6 +27,7 @@ function aculta_lms_h5p_uninstall(): void {
 function aculta_lms_h5p_install(): void {
   // Hub requests and telemetry require explicit opt-in. Both settings default
   // to disabled; local libraries are managed separately.
+  \Drupal::service('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 }
 
 /**
@@ -894,4 +895,9 @@ function aculta_lms_h5p_update_8007(): void {
       $repository->setLastInstalledFieldStorageDefinition($field_definition);
     }
   }
+}
+
+/** Publishes pinned Composer assets outside request-time library discovery. */
+function aculta_lms_h5p_update_8008(): void {
+  \Drupal::service('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 }

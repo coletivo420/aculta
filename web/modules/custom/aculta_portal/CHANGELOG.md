@@ -3605,3 +3605,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
   STATUS: PARTIAL.
 
+## 0.4.0-dev.249 — reconhece contratos de iframe do H5P no gate Portal–tema
+
+- O gate `validate-module-theme-boundary.php` permite `h5p-iframe-wrapper` e `h5p-iframe`, exigidos pelo H5P Core para inicialização e apresentação do iframe; não são classes de design do Portal.
+- O mapa Portal–tema registra os contratos `h5p-content`, `h5p-editor`, `h5p-iframe-wrapper` e `h5p-iframe`.
+

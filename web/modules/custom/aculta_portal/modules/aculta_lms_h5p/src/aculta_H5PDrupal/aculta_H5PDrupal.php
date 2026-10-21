@@ -227,6 +227,10 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       'l10n' => array(
         'H5P' => $core->getLocalization(),
       ),
+      // H5P's internal iframe document loads these same core assets before
+      // initializing its library. The parent page also attaches them through
+      // Drupal's library system.
+      'core' => self::getCoreAssets(),
       'hubIsEnabled' => $h5p_hub_is_enabled,
       'reportingIsEnabled' => FALSE,
       'libraryConfig' => $core->h5pF->getLibraryConfig(),

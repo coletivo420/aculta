@@ -1,9 +1,9 @@
 services:
   Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks:
     class: Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks
-    arguments: ['@database', '@aculta_lms_h5p.framework', '@aculta_lms_h5p.asset_file_manager', '@file_url_generator']
+    arguments: ['@database', '@aculta_lms_h5p.framework', '@file_url_generator']
   aculta_lms_h5p.asset_file_manager:
-    class: Drupal\aculta_lms_h5p\AssetFileStorage
+    class: Drupal\aculta_lms_h5p\aculta_H5PAssetFileStorage
     arguments: ['@file_system', '@aculta_image.packaged_asset_publisher']
   aculta_lms_h5p.framework:
     class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal

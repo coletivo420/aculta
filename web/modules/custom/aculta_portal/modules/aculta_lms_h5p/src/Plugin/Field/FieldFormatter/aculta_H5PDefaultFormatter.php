@@ -121,10 +121,16 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       // Grab generic integration settings
       $course = $item->getEntity();
       $h5p_integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course instanceof CourseInterface ? $course : NULL);
+      $core = aculta_H5PDrupal::getInstance('core');
+      $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
 
       // Add content specific settings
       $content_id_string = 'cid-' . $h5p_content->id();
+      $embedType = $h5p_content->getEmbedType();
       $content_settings = $h5p_content->getaculta_H5PIntegrationSettings($item->getEntity()->access('update'));
+      $dependency_assets = $core->getDependenciesFiles($preloaded_dependencies, 'h5p-library-assets');
+      $content_settings['scripts'] = $core->getAssetsUrls($dependency_assets['scripts']);
+      $content_settings['styles'] = $core->getAssetsUrls($dependency_assets['styles']);
       if ($course instanceof CourseInterface) {
         $content_settings['contentUrl'] = base_path() . 'h5p-content/' . $course->id() . '/' . $h5p_content->id();
       }
@@ -132,9 +138,6 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       $content_settings['displayOptions']['download'] = FALSE;
       $content_settings['displayOptions']['embed'] = FALSE;
       $h5p_integration['contents'][$content_id_string] = $content_settings;
-
-      $core = aculta_H5PDrupal::getInstance('core');
-      $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
 
       $loadpackages = [
         'aculta_lms_h5p/h5p.content',
@@ -147,8 +150,10 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       }
 
       // Render only in-context content. The former public iframe endpoint
-      // loaded H5P by ID without authorizing its parent entity or Group.
-      if (!$h5p_content->isDivEmbeddable()) {
+      // loaded H5P by ID without authorizing its parent entity or Group. H5P
+      // Core's internal iframe mode stays inside this authorized page and
+      // initializes an about:blank document; it does not use that endpoint.
+      if ($embedType === NULL) {
         $element[$delta] = [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'h5p-content-unavailable'],
@@ -158,12 +163,38 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       }
 
       $loadpackages = array_merge($loadpackages, $h5p_packages);
-      // A classe h5p-content é contrato do H5P core (vendor/h5p/h5p-core/js/h5p.js), não de design.
-      $element[$delta] = array(
-        '#type' => 'html_tag',
-        '#tag' => 'div',
-        '#attributes' => ['class' => ['h5p-content'], 'data-content-id' => $h5p_content->id()],
-        '#value' => '',
+      $player = $embedType === 'iframe'
+        ? [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => ['h5p-iframe-wrapper'],
+            'data-content-id' => $h5p_content->id(),
+          ],
+          'iframe' => [
+            '#type' => 'html_tag',
+            '#tag' => 'iframe',
+            '#attributes' => [
+              'id' => 'h5p-iframe-' . $h5p_content->id(),
+              'class' => ['h5p-iframe'],
+              'data-content-id' => $h5p_content->id(),
+              'title' => $h5p_content->get('a11y_title')->value ?: $h5p_content->label(),
+              'allowfullscreen' => 'allowfullscreen',
+              'scrolling' => 'no',
+              'frameborder' => '0',
+              'style' => 'height: 1px',
+            ],
+            '#value' => '',
+          ],
+        ]
+        : [
+          // The h5p-content class is a H5P Core JS contract, not design.
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#attributes' => ['class' => ['h5p-content'], 'data-content-id' => $h5p_content->id()],
+          '#value' => '',
+        ];
+
+      $element[$delta] = $player + [
         '#attached' => [
           'drupalSettings' => [
             'h5p' => [
@@ -172,7 +203,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
           ],
           'library' => $loadpackages,
         ],
-      );
+      ];
 
       // Collect the cacheability metadata for the element.
       $cacheability = CacheableMetadata::createFromObject($h5p_content)

@@ -3,8 +3,47 @@
 - Classes, interfaces, controladores, hooks, formulários, plugins, seletores e arquivos PHP próprios do H5P agora usam `aculta_H5P` no identificador; as pastas/namespaces internos também seguem o prefixo. A integração PHP do Fórum segue a mesma regra.
 - O plugin de entidade e os campos de referência passam a usar `aculta_h5p_content`. O update `8007` descarta conteúdos, tentativas e vínculos H5P legados e recria a entidade sob o ID novo, conforme decisão do responsável; as tabelas e contratos de protocolo exigidos pelo H5P continuam com seus nomes upstream.
 - Interfaces e classes globais definidas pelo H5P permanecem intactas porque são contratos externos implementados pelo adaptador ACULTA.
+- Os nomes próprios restantes `AssetFileStorage` e `FinishedEvent` foram padronizados para `aculta_H5PAssetFileStorage` e `aculta_H5PFinishedEvent`; a descoberta Kernel verifica o serviço e o evento renomeados.
 - Update `8007` aplicado no Runtime `aculta_runtime` em 2026-10-21 após dump íntegro e inventário: zero conteúdos/refs/tentativas legados. A primeira execução revelou que o Entity Reference não recalcula a definição após remover o tipo antigo; o hook foi ajustado para atualizar a configuração e a definição instalada via APIs Core. A segunda execução completou; entidade `aculta_h5p_content` e destino do Fórum confirmados.
-- Smoke HTTP pós-update: catálogo `/` em `cursos` 200; painéis H5P anônimo 403 esperado; nenhum 500 nas rotas verificadas. O rebuild ainda registra `DirectoryNotReadyException` ao copiar `h5p-disable-hub.js` para `assets://h5p/...`; precisa ser corrigido ou explicado antes da validação visual completa.
+- Smoke HTTP pós-update: catálogo `/` em `cursos` 200; painéis H5P anônimo 403 esperado; nenhum 500 nas rotas verificadas.
+
+## F15 — reprodução iframe interna e publicação de assets — 2026-10-21
+
+- O formatter prefere `div` quando a biblioteca oferece esse modo e reproduz
+  bibliotecas `iframe`-only usando o inicializador interno `about:blank` do H5P
+  Core, ainda dentro da página do curso já autorizada. Não restaura a rota
+  pública de incorporação removida.
+- O iframe tem ID e `data-content-id` no formato esperado pelo H5P Core, título
+  acessível, tela cheia habilitada e os mesmos assets, token e controles de
+  cache da reprodução em `div`.
+- A cópia de assets Composer saiu de `library_info_build` e acontece somente
+  na instalação/update `8008`. A resolução do wrapper `assets://` usa o caminho
+  configurado pelo Core e `FileSystemInterface` para gravar arquivos, sem
+  depender da permissão reportada pelo wrapper oculto durante cada requisição.
+- Kernel H5P: 15 testes / 383 asserções; Unit H5P: 24 / 73. O Kernel renderiza
+  uma biblioteca iframe-only e valida a autorização de curso, marcação,
+  título acessível, fullscreen, bibliotecas anexadas e cache por usuário.
+  Foram reportadas 44 depreciações do Core/Group/Views instalados. PHP CLI
+  8.4.26; PHP 8.5 não validado.
+- Rebuild de cache no Runtime de teste deixou as rotas principais e de cursos
+  respondendo HTTP 200; o cache antigo que apontava `field_h5p_content` para a
+  entidade removida foi invalidado. O host principal e o host `cursos` retornam
+  HTTP 200.
+- O Kernel comprova que somente Media `course_document` relacionada à turma é
+  enviada ao `aculta_pdf_viewer.builder`; H5P e o PDF Viewer compartilham a
+  mesma Media e o mesmo arquivo privado.
+- Smoke autenticado de estudante no Runtime: `H5PIntegration.core` e os assets
+  do Core/biblioteca carregaram no iframe; o PDF.js apresentou um PDF privado
+  em canvas. O estudante viu o texto do H5P no iframe e o texto do PDF no
+  canvas. Curso, atividade, Media, relação, arquivo e dados de tentativa
+  temporários foram removidos após o smoke.
+- A discussão H5P–Fórum passou no Kernel (1 teste / 37 asserções) e nos testes
+  Unit dedicados (3 / 15). A revisão visual autenticada em Firefox no X11
+  (framebuffer 1024×768; monitores físicos desconectados) confirmou o tópico
+  correto sob o player, access permitido ao estudante e abertura do Node em
+  `cursos` (HTTP 200). O curso, a atividade e o tópico temporários foram
+  removidos. Após mapear `lms-h5p-course-documents` no ACULTA420, novo smoke X11
+  confirmou a classe `mt-3` no wrapper do PDF junto da atividade e do Fórum.
 
 ## F15 — associação de PDFs existentes a atividades — 2026-10-21
 
