@@ -29,7 +29,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Adapter `aculta_lms_messenger` → avisos globais `aculta_messenger` / Message Notify | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
-| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine e Wiki | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose | `aculta_forum` ainda não tem API executável para vínculo LMS; implementar e testar isolamento por turma antes de dependência/ativação. Não duplicar storage, reader PDF ou entidade de discussão |
+| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine e Wiki | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose; discussão ligada à atividade usa referência LMS e Group do curso/turma | `aculta_forum_lms` já exibe discussões autorizadas dentro da atividade; testar vínculo no Kernel e validar smoke/visual no Runtime antes de RC. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
 | RC — Candidato integrado pronto para deploy | Testes automatizados, config sync estática, navegador pré-deploy, acessibilidade, segurança, documentação, versão e rollback | Todo requisito funcional e visual aplicável passa antes de RC; evidências e limites registrados. Alpha valida o Runtime após deploy | Não implantar automaticamente; se Alpha encontrar divergência, voltar a Dev, corrigir e gerar novo RC |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
@@ -382,16 +382,18 @@ destinatários, deduplicação, conta inativa e formulário de pedidos recebidos
 (6/45). A aba Mensagens já mostra ações e valida novamente o destinatário; a
 dívida DT-O15 foi atualizada para revisão visual autenticada pendente.
 
-**F15 — integrações parciais; atividade/discussão e homologação ainda abertas.**
+**F15 — vínculo da atividade com discussões implementado; homologação e recursos editoriais pendentes.**
 `capa_curso` usa `aculta_image`; imagens do editor H5P passam por
 `ImageUploadIngestor`; anexos raster de respostas passam pela `UploadPolicy` e
 `ImageInspector`; materiais PDF usam `course_document`, Group e
-`aculta_pdf_viewer`. `aculta_forum_lms` e suas permissões estão ativos no
-Runtime de teste e suportam tópicos Node/Comment no Group de curso/turma, mas
-não há tópico/Comment LMS real nesse Runtime, vínculo a atividade, nem discussão
-criada a partir da sala do estudante. Unit do adapter: 18/190 assertions; Kernel
-MariaDB: 2/127 assertions PASS com 43 depreciações upstream; a cobertura é de
-curso/turma e não inclui atividade. O constraint de imagem em entrega é
+`aculta_pdf_viewer`. `aculta_forum_lms` aceita `field_lms_activity` em tópicos
+Node e apresenta ao estudante os tópicos autorizados para a atividade atual, no
+Group do curso ou de uma turma filha. Unit adapter: 22 testes / 250 assertions
+PASS; Kernel MariaDB: 2/132 assertions PASS, com 43 depreciações upstream,
+ainda sem fixture de vínculo atividade-discussão. Config Sync foi aplicado
+parcialmente no Runtime de teste e o resolver/hook foram resolvidos no
+container; não há tópico/Comment LMS real nesse Runtime, então smoke autenticado
+e revisão visual seguem pendentes. O constraint de imagem em entrega é
 exercitado pelo `file.validator` do Core com arquivo válido/inválido, e o
 Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtime,
 anexos de discussão e renderização HTTP/visual seguem pendentes.

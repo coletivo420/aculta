@@ -24,6 +24,7 @@ content:
     weight: 10
     region: content
 hidden:
+  field_lms_activity: true
   field_aculta_discussion: true
   langcode: true
   links: true

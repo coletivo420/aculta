@@ -209,6 +209,11 @@ rota contrib `lms_file_upload.answer_file_download` por
 `/resposta/{lms_answer}/baixar-arquivo` em
 `UploadedAnswerRouteSubscriber`, mantendo o mesmo nome de rota para o plugin e
 aplicando a checagem de matrícula vigente descrita no contrato LMS.
+Tópicos privados do `aculta_forum_lms` usam a rota canônica técnica do Core
+`/node/{node}` somente quando um tópico autorizado é ligado a uma atividade; o
+Entity Access do Node/Group revalida o curso ou turma. Esse caminho não é
+indexado nem aparece em menus públicos. Não criar alias público para a discussão
+privada.
 
 ## FORUM
 

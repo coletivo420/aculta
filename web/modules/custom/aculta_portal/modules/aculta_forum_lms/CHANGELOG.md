@@ -1,3 +1,22 @@
+## `0.1.0-dev.24` — ligar discussões existentes às atividades — 2026-10-21
+
+- Tópicos Node do Forum podem referenciar uma atividade LMS pela entidade
+  nativa `lms_activity`. Na resposta da atividade, o estudante vê tópicos da
+  atividade no curso atual somente quando o Entity Access do Node/Group permite;
+  o vínculo aceita fórum no curso ou em turma pertencente a esse curso.
+- A lista revalida associação da atividade ao curso, cadeia Group turma→curso,
+  relação única do tópico e acesso atual. Tags e contexts de cache incluem
+  usuário, permissões, memberships e relações de turma. Nenhuma entidade ou
+  comentário paralelo foi criado.
+- Unit adapter: 22 testes / 250 assertions PASS, incluindo resolver e contrato
+  de configuração; Kernel existente: 2 testes / 132 assertions PASS, com 43
+  depreciações upstream. Os cinco itens de Config Sync foram aplicados
+  parcialmente no Runtime de teste; cache rebuild e resolução dos serviços do
+  resolver/hook passaram. O Runtime não contém tópico LMS, então smoke
+  autenticado e revisão visual da atividade continuam pendentes. O rebuild
+  reportou o warning preexistente de cópia do asset H5P para `assets://`.
+  PHP CLI 8.4.26; PHP 8.5 não validado. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.23` — aninhar moderação de fórum sob o curso — 2026-10-21
 
 - Filas e ações de moderação passaram a exigir o curso na rota, e a autorização

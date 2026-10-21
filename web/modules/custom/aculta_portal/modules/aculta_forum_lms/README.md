@@ -72,10 +72,22 @@ válidas, o hook retorna neutro e deixa o access handler do Group aplicar os
 papéis.
 
 Discussões de turma exigem exatamente uma relação `lms_classes` para o curso
-pai. A associação de aula/atividade ainda não faz parte desta entrega. Acesso a
+pai. Acesso a
 leitura combina Entity Access do Node, acesso ao Group e membership real na
 turma/curso ou permissão contextual de Educador. Ausência, duplicidade ou tipo
 inesperado de relação falha fechado.
+
+Na dev.24, tópicos podem ter referência opcional `field_lms_activity` para uma
+atividade já existente do LMS. O formulário de resposta mostra links para os
+tópicos ligados àquela atividade no curso atual; o tópico pode pertencer ao
+Group do curso ou a uma turma desse curso. O resolver confirma que a atividade
+continua publicada e relacionada ao curso, exige relação Group única e valida
+Entity Access do Node para a conta atual. Isso permite uma discussão de curso
+compartilhada ou discussões por turma; em ambos os casos cada estudante só vê
+os tópicos autorizados pelo Group. O campo não é exibido no tópico público. O
+adaptador não cria tópicos nem Comments automaticamente: educadores criam e
+associam os tópicos pela administração de conteúdo do Group. Smoke autenticado
+e revisão visual ainda não foram realizados.
 
 ## Ownership
 

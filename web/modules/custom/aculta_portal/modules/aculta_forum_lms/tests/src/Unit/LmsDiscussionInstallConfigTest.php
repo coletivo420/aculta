@@ -42,6 +42,30 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
+   * Activity references reuse the LMS Activity entity and Group access.
+   */
+  public function testActivityAssociationUsesExistingLmsAndForumEntities(): void {
+    $storage = $this->config('field.storage.node.field_lms_activity');
+    $syncStorage = $this->syncConfig('field.storage.node.field_lms_activity');
+    self::assertSame('lms_activity', $storage['settings']['target_type']);
+    self::assertSame($storage['settings'], $syncStorage['settings']);
+    self::assertContains('aculta_forum_lms', $storage['dependencies']['enforced']['module']);
+    self::assertSame(1, $storage['cardinality']);
+    $field = $this->config('field.field.node.aculta_lms_topic.field_lms_activity');
+    $syncField = $this->syncConfig('field.field.node.aculta_lms_topic.field_lms_activity');
+    self::assertSame('entity_reference', $field['field_type']);
+    self::assertSame($field['settings'], $syncField['settings']);
+    self::assertLessThanOrEqual(32, strlen($field['field_name']));
+    self::assertSame('entity_reference_autocomplete', $this->config('core.entity_form_display.node.aculta_lms_topic.default')['content']['field_lms_activity']['type']);
+    self::assertTrue($this->config('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
+    self::assertTrue($this->syncConfig('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
+
+    $services = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum_lms.services.yml')['services'];
+    self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver', $services['aculta_forum_lms.activity_discussion_resolver']['class']);
+    self::assertSame(['@aculta_forum_lms.activity_discussion_resolver', '@current_user'], $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['arguments']);
+  }
+
+  /**
    * Only the course/class Group bundles can contain LMS topic Nodes.
    */
   public function testGroupRelationshipsAreBundleSpecificAndWithinCoreLimits(): void {

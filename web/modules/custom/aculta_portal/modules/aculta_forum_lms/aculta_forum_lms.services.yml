@@ -1,4 +1,9 @@
 services:
+  aculta_forum_lms.activity_discussion_resolver:
+    class: Drupal\aculta_forum_lms\Context\LmsActivityDiscussionResolver
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@string_translation']
+  Drupal\aculta_forum_lms\Hook\LmsActivityDiscussionHooks:
+    arguments: ['@aculta_forum_lms.activity_discussion_resolver', '@current_user']
   aculta_forum_lms.moderation_manager:
     class: Drupal\aculta_forum_lms\Access\LmsForumModerationManager
     arguments: ['@entity_type.manager', '@Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider']

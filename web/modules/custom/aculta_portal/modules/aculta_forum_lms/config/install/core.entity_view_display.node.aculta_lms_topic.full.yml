@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.full
     - field.field.node.aculta_lms_topic.body
     - field.field.node.aculta_lms_topic.field_aculta_discussion
+    - field.field.node.aculta_lms_topic.field_lms_activity
     - node.type.aculta_lms_topic
   module:
     - comment
@@ -33,6 +34,7 @@ content:
     weight: 100
     region: content
 hidden:
+  field_lms_activity: true
   langcode: true
   links: true
   search_api_excerpt: true

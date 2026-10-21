@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.aculta_lms_topic.body
+    - field.field.node.aculta_lms_topic.field_lms_activity
     - node.type.aculta_lms_topic
   module:
     - text
@@ -21,6 +22,16 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: { }
+  field_lms_activity:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: { }
   title:
     type: string_textfield
