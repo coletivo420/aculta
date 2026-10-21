@@ -7,7 +7,7 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão `0.1.0-dev.9`. Matrícula, certificado, conclusão, avaliação publicada,
+Versão `0.1.0-dev.10`. Matrícula, certificado, conclusão, avaliação publicada,
 resposta aberta pendente, conteúdo liberado, retorno do educador e definição ou
 alteração de prazo por atividade/turma geram avisos no painel multidomínio. O
 prazo fica em relação Group específica da turma, não na atividade LMS. Adotou-se

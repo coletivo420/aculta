@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_lms_messenger\Kernel;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms_messenger\LearningNoticeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
@@ -79,7 +79,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
-      $this->createMock(QueueFactoryInterface::class),
+      $this->createMock(QueueFactory::class),
       new NullLogger(),
     );
 

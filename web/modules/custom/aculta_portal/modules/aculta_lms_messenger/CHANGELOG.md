@@ -1,5 +1,11 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.10 — injetar QueueFactory do Core — 2026-10-21
+
+- Tipa os produtores de fila com a classe concreta `QueueFactory`, que é o
+  serviço `queue` no Core instalado; a interface homônima não é implementada
+  por essa fábrica. Corrige falha de construção descoberta no Runtime.
+
 ## 0.1.0-dev.9 — registrar alias DI do manager — 2026-10-21
 
 - Registra a interface `LearningNoticeManagerInterface` como alias do serviço

@@ -8,7 +8,7 @@ use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\aculta_lms_messenger\Plugin\QueueWorker\ActivityDeadlineReminderWorker;
@@ -26,7 +26,7 @@ final class ActivityDeadlineReminderCronHooks {
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'queue')]
-    private readonly QueueFactoryInterface $queueFactory,
+    private readonly QueueFactory $queueFactory,
     #[Autowire(service: 'datetime.time')]
     private readonly TimeInterface $time,
     #[Autowire(service: 'logger.channel.aculta_lms_messenger')]

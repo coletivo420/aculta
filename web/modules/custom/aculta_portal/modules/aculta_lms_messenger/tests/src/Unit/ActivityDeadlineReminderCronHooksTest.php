@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\aculta_lms_messenger\Hook\ActivityDeadlineReminderCronHooks;
@@ -53,7 +53,7 @@ final class ActivityDeadlineReminderCronHooksTest extends UnitTestCase {
         'deadline_uuid' => 'deadline-uuid',
         'event_version' => substr(hash('sha256', 'deadline-uuid|2026-10-21T23:00:00|1792589100'), 0, 32),
       ]);
-    $queueFactory = $this->createMock(QueueFactoryInterface::class);
+    $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->method('get')->willReturn($queue);
     $time = $this->createConfiguredMock(TimeInterface::class, ['getRequestTime' => 1_792_589_200]);
     $hooks = new ActivityDeadlineReminderCronHooks(

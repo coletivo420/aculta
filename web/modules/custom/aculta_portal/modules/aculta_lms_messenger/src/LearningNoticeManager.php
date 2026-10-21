@@ -12,7 +12,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Queue\QueueFactoryInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
@@ -80,7 +80,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly ClassActivityDeadlineManager $deadlines,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly QueueFactoryInterface $queueFactory,
+    private readonly QueueFactory $queueFactory,
     private readonly LoggerInterface $logger,
   ) {}
 
