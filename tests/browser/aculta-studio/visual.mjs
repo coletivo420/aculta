@@ -99,6 +99,23 @@ try {
   check('sem rolagem horizontal em 390 px', !m.overflow, offenders.join(' | '));
   await shot('02-celular');
 
+  // Teclado: o link de uma seção recebe foco e Enter (tecla real do WebDriver) troca o nível pela URL dele.
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas da seção');
+  const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"]' });
+  const subId = Object.values(subLink)[0];
+  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
+  await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
+  await sleep(2500);
+  const kbPath = await exec(`return window.location.pathname;`);
+  check('Enter no teclado troca a aba pela URL dela', kbPath === '/studio/revista/criar/nova-publicacao' || kbPath.startsWith('/studio/revista/criar/'), kbPath);
+
+  // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/forum/moderacao/fila' });
+  await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
+  const queueRows = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] tr')].filter((r) => r.querySelector('td')).length;`);
+  check('fila de moderação do Fórum lista comentários aguardando moderação', queueRows >= 1, `${queueRows} linha(s)`);
+
   // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
   await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/publicacoes/publicados' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
