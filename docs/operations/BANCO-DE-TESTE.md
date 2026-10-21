@@ -232,6 +232,15 @@ outro curso. A suíte Kernel de `aculta_forum_lms` passou com 3 testes / 168
 assertions e 46 depreciações upstream; Unit passou com 22 testes / 256
 assertions. PHP CLI 8.4.26; PHP 8.5 não validado.
 
+Em 2026-10-21, as suítes completas `aculta_lms_h5p` passaram com 37 testes /
+337 assertions (Unit 23/67; Kernel 14/270; 43 depreciações Core/contrib). A
+regressão completa `aculta_forum_lms` passou com 29 testes / 496 assertions,
+incluindo vínculo H5P–Fórum persistido no Kernel; 47 depreciações Core/contrib.
+`PortalUiHooksTest` passou com 5 testes / 26 assertions. Gate Drupal 11+
+(1007 checks), Foundation ACULTA420 (368), Design Foundations (2132), SDC
+schemas (593), Shell Contract (11), imagem e slugs passaram. PHP CLI 8.4.26;
+PHP 8.5 não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

@@ -12,7 +12,7 @@
   disponível para inspeção visual; também não há tópicos H5P do Fórum para um
   smoke de conteúdo real.
 - A integração de discussões com `aculta_forum_lms` está coberta pelos testes
-  próprios do adapter e por `LmsH5PDiscussionResolverKernelTest`: 1 teste / 34
+  próprios do adapter e por `LmsH5PDiscussionResolverKernelTest`: 1 teste / 36
   assertions PASS no MariaDB dedicado. O Kernel persiste H5P, curso, turma,
   tópicos e memberships reais; verifica isolamento por conteúdo/curso/turma,
   acesso ao tópico, parâmetro de Group no autocomplete e composição do player.

@@ -407,7 +407,7 @@ com a mesma conta e isolamento frente a outro membro matriculado (3 testes /
 85 assertions, 43 depreciações de Core/contrib). A ligação direta está implementada no adapter: `field_h5p_content` referencia
 o conteúdo H5P e os tópicos autorizados aparecem sob o player; seleção e acesso
 revalidam o Group do curso/turma. Unit cobre resolver e transporte de contexto.
-O Kernel `LmsH5PDiscussionResolverKernelTest` (1 teste / 34 assertions PASS,
+O Kernel `LmsH5PDiscussionResolverKernelTest` (1 teste / 36 assertions PASS,
 45 depreciações upstream) persiste conteúdo, curso, turma, tópicos e memberships
 e verifica isolamento por curso/turma, acesso, autocomplete e composição do
 player. Runtime `cursos` tem o campo instalado, mas não tem atividade/tópico
