@@ -75,6 +75,12 @@ final class ForumTab extends StudioTabBase {
         'label' => $this->t('Moderação'),
         'weight' => 20,
         'tabs' => [
+          'fila' => [
+            'label' => $this->t('Fila de moderação'),
+            'weight' => 0,
+            'listing' => ['entity' => 'comment', 'bundle' => 'aculta_discussion_post', 'status' => 0],
+            'actions' => [],
+          ],
           'denuncias' => [
             'label' => $this->t('Denúncias'),
             'weight' => 0,
