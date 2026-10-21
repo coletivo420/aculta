@@ -1,0 +1,35 @@
+# ADR-0006 — Dependência google/apiclient para GA4 e Search Console (proposta)
+
+Status: **proposta** (2026-10-21). Não instalada. Aguarda decisão do responsável sobre instalação e sobre o conflito
+com alterações de outra frente em `composer.json` e `composer.lock`.
+
+## Necessidade
+
+- **GA4 Data API (v1beta), `runReport`**: consulta agregada das métricas do site (fase 0.6.0). Usa conta de serviço, com
+  autenticação OAuth2 por JWT, e chamadas REST autenticadas.
+- **Search Console, Search Analytics**: consulta de cliques e impressões por consulta e página (mesma fase). Usa a mesma
+  autenticação.
+
+Sem a biblioteca, seria preciso implementar JWT, troca de token, paginação e tratamento de erro do Google. Isso é
+risco de segurança e de manutenção. A biblioteca oficial mantém esses pontos.
+
+## Alternativas consideradas
+
+- **google/analytics-data** (cliente oficial só do GA4 Data API): dependência menor e focada, mas não cobre o Search
+  Console. Seriam duas bibliotecas se o Search Console também for implementado.
+- **Cliente HTTP do Drupal com JWT próprio**: sem dependência nova, mas mais código de autenticação para manter.
+
+## Decisão pedida
+
+O responsável escolheu `google/apiclient` (2026-10-21). Esta ADR registra a justificativa exigida pelo AGENTS.md (item
+14, dependência Composer). A instalação só acontece depois de:
+
+1. resolver as alterações não commitadas de outra frente em `composer.json` e `composer.lock`, para que o commit leve só
+   esta dependência (`composer require google/apiclient`, com `--minimal-changes`);
+2. credencial da conta de serviço, lida pelo `aculta_portal.secrets_manager` (AGENTS.md, segredos);
+3. ID da propriedade GA4 e domínio verificado no Search Console (preferência por DNS, `docs/integrations/GOOGLE.md`).
+
+## Efeitos
+
+- Sem credencial, o cliente continua o nulo (`NullGa4ReportClient`) e nenhum pedido sai do servidor.
+- A biblioteca só é carregada pelo cliente real, que fica desligado por padrão.
