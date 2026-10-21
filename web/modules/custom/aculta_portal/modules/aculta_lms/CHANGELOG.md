@@ -1,5 +1,21 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.66 — cobrir resposta aberta sem atividade — 2026-10-21
+
+- `FreeTextReviewFeedback` mantém o campo de resposta sem os controles de
+  feedback dependentes da atividade removida; a tela de correção informa que a
+  atividade não está disponível e o score formativo falha fechado em zero.
+  Unit focal: 4/20; combinado LMS/Messenger: 84/445, com 8 depreciações
+  PHPUnit. PHPCS Drupal/DrupalPractice PASS.
+
+## 0.1.0-dev.65 — tolerar atividade removida em respostas abertas — 2026-10-21
+
+- O plugin de resposta aberta não chama `Answer::getActivity()` quando a
+  referência foi removida na limpeza assíncrona. Score formativo retorna zero,
+  o formulário mantém a resposta sem o widget de feedback e a avaliação mostra
+  que a atividade não está disponível. Unit focal: 3/15; combinada LMS/
+  Messenger: 83/440, com 8 depreciações PHPUnit.
+
 ## 0.1.0-dev.64 — tolerar atividade removida no aviso de prazo — 2026-10-21
 
 - O formulário da resposta resolve a atividade pela referência do campo. Se a

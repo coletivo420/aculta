@@ -286,7 +286,7 @@ Em 0.1.0-dev.50, o Kernel testa diretamente a rota lógica de PDF após revogaç
 retorna 404 e não instancia Entity Print nem o gerador QR. Em 0.1.0-dev.56,
 `CertificateLifecycleTest` também valida os quatro campos públicos contratados
 e a ausência de e-mail/motivo interno: 3 testes / 102 assertions. Suítes
-combinadas atuais: Unit LMS + Messenger 82/433; Kernel MariaDB 23/712 assertions
+combinadas atuais: Unit LMS + Messenger 84/445; Kernel MariaDB 23/712 assertions
 PASS. As 92 depreciações continuam upstream.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
@@ -294,10 +294,10 @@ PASS. As 92 depreciações continuam upstream.
 Em `0.1.0-dev.63`, `CourseContentEventHooksTest` prova que uma edição editorial
 de atividade já publicada, sem transição de publicação ou novo conteúdo
 vinculado, não produz aviso, conforme decisão do responsável. Focal: 4/11;
-Unit LMS/Messenger: 82/433 PASS, com 8 depreciações PHPUnit.
+Unit LMS/Messenger: 84/445 PASS, com 8 depreciações PHPUnit.
 
 Regressão combinada atual de `aculta_lms` e `aculta_lms_messenger` (2026-10-21):
-Unit 82 testes / 433 assertions e Kernel MariaDB 23 testes / 712 assertions
+Unit 84 testes / 445 assertions e Kernel MariaDB 23 testes / 712 assertions
 PASS; 8 depreciações PHPUnit e 92 de Core/contrib. A Unit cobre estados de
 entitlement Commerce e a política de remoção de membership por compra,
 adicionados em `dev.52` e `dev.54`.
@@ -312,12 +312,12 @@ passou a ler a referência de curso pelo campo de `CourseStatus`. Se o curso
 estiver ausente durante a limpeza assíncrona, o provider do resumo descarta a
 linha sem invocar `getCourse()` e sem erro 500. O teste percorre o
 `LearningNoticeManager` real e comprova o descarte. PHPCS Drupal e
-DrupalPractice passou; Unit combinada: 82/433; Kernel MariaDB: 23/712.
+DrupalPractice passou; Unit combinada: 84/445; Kernel MariaDB: 23/712.
 
 Em `aculta_lms` dev.64, o formulário de prazo obtém a atividade pela referência
 do campo da resposta. Se a atividade já foi removida, omite o rótulo do prazo
 sem chamar `Answer::getActivity()`. O teste focal cobre referência ausente;
-Unit combinada LMS/Messenger: 82/433.
+Unit combinada LMS/Messenger: 84/445.
 
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 

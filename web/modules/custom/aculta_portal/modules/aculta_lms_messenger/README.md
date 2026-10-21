@@ -27,7 +27,7 @@ remoção assíncrona do LMS deixar a resposta sem um desses contextos, o aviso 
 suprimido durante a janela pendente em vez de provocar erro no contador, gaveta
 ou digest. Aviso de conclusão também resolve a referência ao curso diretamente
 do campo: se o curso foi removido, a notificação não chama o getter tipado nem
-gera erro 500. A suíte Unit LMS/Messenger passou com 82 testes / 433 assertions
+gera erro 500. A suíte Unit LMS/Messenger passou com 84 testes / 445 assertions
 (8 depreciações PHPUnit); Kernel MariaDB: 23 / 712 assertions PASS (92
 depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
