@@ -19,7 +19,10 @@ aculta_mailer.template.*:
       label: 'Assunto'
     body:
       type: text
-      label: 'Corpo (texto simples)'
+      label: 'Corpo'
+    body_format:
+      type: string
+      label: 'Formato do corpo (vazio = texto simples)'
 
 aculta_mailer.brand.*:
   type: config_entity

@@ -46,6 +46,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'layout',
     'subject',
     'body',
+    'body_format',
   ],
 )]
 final class MailTemplate extends ConfigEntityBase {
@@ -66,9 +67,19 @@ final class MailTemplate extends ConfigEntityBase {
   protected string $subject = '';
 
   /**
-   * Corpo em texto simples, com placeholders.
+   * Corpo com placeholders. Texto simples quando o formato está vazio.
    */
   protected string $body = '';
+
+  /**
+   * Formato do corpo: vazio (texto simples) ou o formato HTML restrito do editor.
+   */
+  protected string $body_format = '';
+
+  /**
+   * Formato HTML restrito do editor de modelos (criado pelo aculta_editor).
+   */
+  public const BODY_FORMAT_HTML = 'aculta_email';
 
   /**
    * ID do layout, ou vazio.
@@ -110,6 +121,28 @@ final class MailTemplate extends ConfigEntityBase {
   /**
    * Define o corpo do modelo.
    */
+  /**
+   * Formato do corpo ('' = texto simples).
+   */
+  public function getBodyFormat(): string {
+    return $this->body_format;
+  }
+
+  /**
+   * Corpo em HTML restrito (formato do editor de modelos).
+   */
+  public function isHtmlBody(): bool {
+    return $this->body_format === self::BODY_FORMAT_HTML;
+  }
+
+  /**
+   * Grava o formato do corpo.
+   */
+  public function setBodyFormat(string $format): static {
+    $this->body_format = $format;
+    return $this;
+  }
+
   public function setBody(string $body): static {
     $this->body = $body;
     return $this;

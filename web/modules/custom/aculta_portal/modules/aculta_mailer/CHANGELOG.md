@@ -1,3 +1,12 @@
+## 0.1.0-dev.61 — editor visual de modelos com formato HTML restrito — 2026-10-22
+
+- `MailTemplateForm`: o corpo do modelo passa a ser `text_format` com o formato `aculta_email`, no lugar do `textarea`. A validação de variáveis lê o valor do editor e a gravação marca o formato HTML.
+- `MailTemplate`: nova propriedade `body_format` (vazio = texto simples; `aculta_email` = HTML restrito), exportada e descrita no schema. Modelos existentes continuam em texto simples.
+- `MailTemplateRenderer`: em corpo HTML, cada valor de variável é escapado (`fill()` com escape) e o corpo final passa pelos filtros habilitados do formato `aculta_email`. Sem o formato, a falha é fechada: o texto sai escapado. Substitui o uso de `check_markup()`, deprecado no Core 11.4.
+- Envio: `MailHooks` guarda o HTML do modelo e `AcultaMailerMail` o usa na parte HTML, sem escapar de novo. A parte de texto segue pelo `format()` como antes.
+- Testes: unitários de escape e padrão (154/154); Kernel do mailer 39/39, incluindo o caminho de envio com a parte HTML sanitizada e o valor do usuário escapado.
+- Depende do formato `aculta_email`, criado pelo `aculta_editor`. Sem ele, o corpo HTML é escapado inteiro (falha fechada).
+
 ## 0.1.0-dev.60 — rótulo do último dia do gráfico sem sobreposição — 2026-10-21
 
 - Verificado no navegador (painel de área, período de 30 dias): o rótulo do último dia encostava no penúltimo. O último rótulo só aparece quando há espaço.

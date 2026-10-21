@@ -87,10 +87,12 @@ final class AcultaMailerMail implements MailInterface, ContainerFactoryPluginInt
    * Envelope HTML pelo hook de tema; o logo é a URL absoluta do servidor.
    */
   private function renderHtml(array $message): string {
-    $body = Html::escape((string) ($message['body'] ?? ''));
+    // Modelo HTML restrito (já filtrado pelo renderizador): não escapa de novo.
+    $html = $message['aculta_html_body'] ?? NULL;
+    $body = is_string($html) ? Markup::create($html) : Markup::create(nl2br(Html::escape((string) ($message['body'] ?? '')), FALSE));
     $build = [
       '#theme' => 'aculta_mailer_wrap',
-      '#body' => Markup::create(nl2br($body, FALSE)),
+      '#body' => $body,
       '#subject' => (string) ($message['subject'] ?? ''),
       '#type' => 'core',
       '#sub_type' => (string) ($message['key'] ?? ''),

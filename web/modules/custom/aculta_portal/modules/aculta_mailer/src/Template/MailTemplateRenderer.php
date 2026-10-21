@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
 use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\filter\FilterFormatInterface;
 
 /**
  * Monta assunto e corpo: o modelo salvo quando existe e está ativo; senão, o texto padrão do tipo.
@@ -41,14 +42,20 @@ final class MailTemplateRenderer {
     $template = $this->activeTemplate($type->id());
     $subject = $template?->getSubject() ?? $type->defaultSubject();
     $body = $template?->getBody() ?? $type->defaultBody();
-    $body = self::fill($body, $context);
+    $html = $template?->isHtmlBody() ?? FALSE;
+    $body = self::fill($body, $context, $html);
     $layout = $template !== NULL ? $this->layoutFor($template) : NULL;
     if ($layout !== NULL) {
       $body = $this->wrap($layout, $body);
     }
+    if ($html) {
+      // O corpo HTML vem do editor e não passou pelo filtro no envio: filtra com o formato restrito.
+      $body = $this->sanitizeHtml($body);
+    }
     return [
       'subject' => self::fill($subject, $context),
       'body' => $body,
+      'html' => $html,
     ];
   }
 
@@ -58,14 +65,14 @@ final class MailTemplateRenderer {
    * @return array
    *   Chaves `subject` e `body`, já com exemplos.
    */
-  public function preview(MailTypeInterface $type, string $subject, string $body): array {
+  public function preview(MailTypeInterface $type, string $subject, string $body, bool $html = FALSE): array {
     $samples = [];
     foreach ($type->variables() as $name => $variable) {
       $samples[$name] = $variable['sample'];
     }
     return [
       'subject' => self::fill($subject, $samples),
-      'body' => self::fill($body, $samples),
+      'body' => self::fill($body, $samples, $html),
     ];
   }
 
@@ -76,11 +83,18 @@ final class MailTemplateRenderer {
    *   Texto com placeholders.
    * @param array $context
    *   Valores disponíveis.
+   * @param bool $escape
+   *   TRUE quando o texto é HTML: cada valor é escapado, para que dados do
+   *   usuário nunca entrem como marcação. O conteúdo fixo do modelo não muda.
    */
-  public static function fill(string $text, array $context): string {
-    return (string) preg_replace_callback(self::PLACEHOLDER, static function (array $match) use ($context): string {
+  public static function fill(string $text, array $context, bool $escape = FALSE): string {
+    return (string) preg_replace_callback(self::PLACEHOLDER, static function (array $match) use ($context, $escape): string {
       $value = $context[$match[1]] ?? NULL;
-      return is_scalar($value) ? (string) $value : '';
+      if (!is_scalar($value)) {
+        return '';
+      }
+      $value = (string) $value;
+      return $escape ? htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : $value;
     }, $text);
   }
 
@@ -113,6 +127,25 @@ final class MailTemplateRenderer {
     ];
     $text = $layout->getHeader() . "\n\n{{ content }}\n\n" . $layout->getFooter();
     return self::fill($text, $values + ['content' => $content]);
+  }
+
+  /**
+   * Passa o HTML pelos filtros habilitados do formato restrito do modelo.
+   *
+   * Sem o formato, falha fechada: o texto é escapado inteiro, sem marcação.
+   */
+  private function sanitizeHtml(string $html): string {
+    $format = $this->entityTypeManager->getStorage('filter_format')->load(MailTemplate::BODY_FORMAT_HTML);
+    if (!$format instanceof FilterFormatInterface) {
+      return htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+    $text = $html;
+    foreach ($format->filters() as $filter) {
+      if ($filter->status) {
+        $text = $filter->process($text, '')->getProcessedText();
+      }
+    }
+    return $text;
   }
 
   /**

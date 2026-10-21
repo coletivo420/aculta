@@ -31,6 +31,10 @@ final class MailHooks {
     $rendered = $this->renderer->render($type, $context);
     $message['subject'] = $rendered['subject'];
     $message['body'][] = $rendered['body'];
+    if ($rendered['html']) {
+      // Corpo HTML restrito: o envio o usa na parte HTML; a parte de texto segue pelo format().
+      $message['aculta_html_body'] = $rendered['body'];
+    }
     if (isset($params['correlation_id'])) {
       // Cabeçalho próprio para rastrear a mensagem do Drupal até o provedor (ver docs/ARCHITECTURE.md).
       $message['headers']['X-Aculta-Mail-ID'] = (string) $params['correlation_id'];

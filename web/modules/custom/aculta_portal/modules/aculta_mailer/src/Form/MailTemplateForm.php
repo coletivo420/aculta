@@ -87,9 +87,11 @@ final class MailTemplateForm extends EntityForm {
       '#maxlength' => 255,
     ];
     $form['body'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Corpo (texto simples)'),
+      '#type' => 'text_format',
+      '#title' => $this->t('Corpo'),
       '#default_value' => $template->getBody() !== '' ? $template->getBody() : ($type?->defaultBody() ?? ''),
+      '#format' => MailTemplate::BODY_FORMAT_HTML,
+      '#allowed_formats' => [MailTemplate::BODY_FORMAT_HTML],
       '#required' => TRUE,
       '#rows' => 14,
     ];
@@ -120,7 +122,7 @@ final class MailTemplateForm extends EntityForm {
     }
 
     if ($type !== NULL) {
-      $preview = $this->renderer->preview($type, (string) ($template->getSubject() ?: $type->defaultSubject()), (string) ($template->getBody() ?: $type->defaultBody()));
+      $preview = $this->renderer->preview($type, (string) ($template->getSubject() ?: $type->defaultSubject()), (string) ($template->getBody() ?: $type->defaultBody()), TRUE);
       $form['preview'] = [
         '#type' => 'details',
         '#title' => $this->t('Prévia (valores de exemplo)'),
@@ -143,8 +145,8 @@ final class MailTemplateForm extends EntityForm {
       return;
     }
     $allowed = array_keys($this->types->get($type_id)->variables());
-    foreach (['subject', 'body'] as $field) {
-      $unknown = MailTemplateRenderer::unknownPlaceholders((string) $form_state->getValue($field), $allowed);
+    foreach (['subject' => 'subject', 'body' => ['body', 'value']] as $field => $key) {
+      $unknown = MailTemplateRenderer::unknownPlaceholders((string) $form_state->getValue($key), $allowed);
       if ($unknown !== []) {
         $form_state->setErrorByName($field, $this->t('Variável desconhecida: @names. Use apenas as variáveis listadas.', [
           '@names' => implode(', ', array_map(static fn(string $name): string => '{{ ' . $name . ' }}', $unknown)),
@@ -162,7 +164,8 @@ final class MailTemplateForm extends EntityForm {
     $template->set('label', (string) $form_state->getValue('label'));
     $template->set('status', (bool) $form_state->getValue('status'));
     $template->setSubject((string) $form_state->getValue('subject'));
-    $template->setBody((string) $form_state->getValue('body'));
+    $template->setBody((string) $form_state->getValue(['body', 'value']));
+    $template->setBodyFormat(MailTemplate::BODY_FORMAT_HTML);
     $template->setLayout((string) $form_state->getValue('layout'));
     $status = $template->save();
     $this->messenger()->addStatus($this->t('Modelo salvo.'));
