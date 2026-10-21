@@ -430,7 +430,7 @@ implementação: certificados usam snapshot próprio, Entity Print/Dompdf e
 Views. A matriz também explicita que compra ativa protege matrícula manual e
 que reembolso revoga apenas a matrícula ligada ao pedido, e detalha os pontos
 de cache e isolamento ainda exigidos. Regressão atual LMS/Messenger: Unit 87/470
-e Kernel MariaDB dedicado 23/730 PASS; gate Portal 1010 checks e índice 29
+e Kernel MariaDB dedicado 24/770 PASS; gate Portal 1010 checks e índice 29
 componentes PASS. Permanecem depreciações upstream, visual/Runtime incompletos
 e validação em PHP 8.5.
 
@@ -439,6 +439,12 @@ original com outra compra ativa para a mesma conta, curso e turma: a membership
 é preservada e a proveniência é transferida para o pedido válido. Focal:
 `CourseOrderEnrollmentManagerTest` 7/35; Unit LMS/Messenger 87/470 PASS. O fluxo
 com pagamento externo e reembolso real continua pendente de homologação.
+
+No download privado, o Kernel agora também exclui o `CourseStatus` e prova que
+o acesso é negado enquanto `LessonStatus` e resposta aguardam a fila do LMS:
+`AttemptArchiveLifecycleTest` 10/409; regressão Kernel LMS/Messenger 24/770
+PASS, com 95 depreciações upstream. O arquivo de teste foi normalizado para
+PHPCS Drupal/DrupalPractice sem introduzir dívida de estilo.
 
 Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
 e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de

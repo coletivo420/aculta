@@ -55,6 +55,11 @@ bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
 369 assertions PASS (42 depreciações); Unit completo: 46 testes / 215
 assertions PASS (6 depreciações). O status ativo é verificado pelo User
 carregado também quando a requisição entrega apenas AccountProxy/session.
+O Kernel também apaga o `CourseStatus` real e confirma a negação do download
+enquanto `LessonStatus` e resposta ainda aguardam a fila de limpeza; ver
+`AttemptArchiveLifecycleTest`: 10 testes / 409 assertions PASS; Kernel
+LMS/Messenger: 24/770 PASS (95 depreciações upstream). PHPCS Drupal/
+DrupalPractice PASS.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.

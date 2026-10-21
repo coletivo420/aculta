@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.73 — negar download após remoção do CourseStatus — 2026-10-21
+
+- O Kernel agora reproduz o intervalo entre a exclusão do `CourseStatus` e a
+  limpeza enfileirada do `LessonStatus`/resposta; o download privado falha
+  fechado sem erro 500. `AttemptArchiveLifecycleTest`: 10 testes / 409
+  assertions PASS; Kernel LMS/Messenger: 24/770 PASS, com 95 depreciações
+  upstream. PHPCS Drupal/DrupalPractice PASS no arquivo da suíte.
+
 ## 0.1.0-dev.72 — preservar matrícula após outra compra ativa — 2026-10-21
 
 - `CourseOrderEnrollmentManagerTest` agora cobre a sincronização de um pedido
