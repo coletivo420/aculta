@@ -1,5 +1,12 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.2 — validação estrutural de DOCX (etapa DOCX do plano) — 2026-10-21
+
+- `Docx\DocxPackageValidator` valida o DOCX antes de qualquer renderização: assinatura ZIP, ZIP legível, limite de bytes, número de entradas, soma descompactada, razão de compressão (ZIP bomb), caminhos inseguros, partes obrigatórias (`[Content_Types].xml`, `word/document.xml`), tipo principal WordprocessingML declarado e ausência de `vbaProject.bin` e partes HTML (altChunk).
+- Rejeições têm código estável (`DocxValidationException::getReason()`).
+- Testes Unit: 12 casos com pacotes gerados no teste (válido, não-ZIP, corrompido, ausente, vazio, partes ausentes, tipo errado, macro, HTML, entradas, bomba, tamanho).
+- Ainda não ligado a nenhum formatter: a renderização DOCX depende do spike de isolamento (iframe sem `allow-same-origin` ou origem separada), exigido pelo plano antes de expor HTML gerado.
+
 ## 0.1.0-dev.1 — nova identidade do visualizador (cópia de aculta_pdf_viewer 0.1.0-dev.39) — 2026-10-21
 
 - Criado `aculta_document_viewer` a partir do conteúdo commitado de `aculta_pdf_viewer` (HEAD `d43b9623`), sem alterar o módulo antigo.
