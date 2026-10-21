@@ -191,8 +191,8 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | Executada em estado B: código (`4b170d06`), configuração (`740a0c32`) e Runtime; módulo antigo permanece |
 | 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
 | 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação (`3649a742`), spike (`2c2e1b9c`), renderizador isolado (`bd43fdba`) e formatter integrado com teste no Runtime (`c8bef68c`). Pendente: ativar o formatter nos displays de produção (decisão do responsável) |
-| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador (`6d0fd28c`); Runtime pendente pelo hook do Fórum (outra frente). Pendentes: XLS/ODS/CSV, isolamento e datas pt-BR (dev.7 e dev.10) |
-| 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
+| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador e no Runtime (XLSX e ODS). Pendentes: isolamento (dev.10), estilo ACULTA420 (dev.8) |
+| 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | XLS, ODS e CSV implementados; pt-BR; modo Tabela (`15908959`). Runtime testado com XLSX e ODS; CSV fora do campo de documentos do Runtime |
 | 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
 | 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
 | 0.1.0-dev.10 | Segurança | Arquivos maliciosos, privados, limites e isolamento | Não iniciada |
@@ -297,3 +297,11 @@ Pendências dessa fase:
 - Data: o fixture foi gerado num fuso UTC-3 e grava 20/10/2026 21h. O leitor mostra o que o arquivo guarda (`10/20/26`). Não é defeito do leitor, mas a exibição precisa seguir a localização pt-BR no dev.7.
 - Não testado no Runtime: criação de nó e arquivo falham desde o início desta etapa por `ForumPublicationTimeHooks` (classe nova sem commit na frente do Fórum, sem argumentos de construtor). Nada foi gravado no Runtime.
 - Pendentes: XLS, ODS e CSV (dev.7); isolamento do SheetJS (dev.10); recorte de módulos do Tabulator (`TabulatorFull` hoje).
+
+
+## 0.1.0-dev.7 — planilhas XLS, ODS e CSV, pt-BR e modo Tabela (evidência)
+
+- Módulo versão 0.1.0-dev.6 (`15908959`), com validação por formato e formatação pt-BR.
+- Browser (Chromium na sessão X11, fixtures gerados com SheetJS 0.20.3): XLS e ODS com valores em pt-BR, percentual, data, booleanos, erro e cabeçalhos no modo Tabela; CSV lido como texto (`25.6%` continua `25.6%`).
+- Runtime: XLSX de três abas e ODS, pelo formatter de planilha no modo full de `node.document`. Display restaurado ao PDF; fixtures removidos.
+- Limites: CSV não passa na validação de extensão do campo de documentos do Runtime, então não foi testado lá; o botão de modo e o seletor ainda não têm estilo ACULTA420; o SheetJS roda sem isolamento (dev.10).
