@@ -36,18 +36,15 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**F13 — notificações educacionais: implementação parcial nesta branch.** Matrícula e certificado passam ao adapter
+**F13 — notificações educacionais: implementação funcional; revisão visual pendente.** Matrícula e certificado passam ao adapter
 `aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
 transacional mínimo via Message Notify. Conclusão, avaliação publicada, respostas pendentes, conteúdo publicado,
 feedback do educador e definição/alteração de prazo aparecem no site e no resumo diário opt-in; educadores recebem
 respostas pendentes somente com `grade students` atual. Avisos não incluem resposta, nota, arquivo ou corpo de
 comentário, e revalidam a fonte ao exibir. O prazo é salvo por atividade na turma em relação Group, usa o fuso da
-conta e não modifica o conteúdo LMS compartilhado entre turmas. Após pedido de continuidade sem resposta à
-pergunta interativa, foi adotada provisoriamente a recomendação: avisar ao definir/alterar e enfileirar um lembrete
-quando a data entrar na janela de 24 horas. Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message:
-6 testes / 85 assertions PASS, incluindo persistência real da mesma atividade em duas turmas, permissão `take course` no curso pai e persistência/deduplicação do aviso em Message.
+conta e não modifica o conteúdo LMS compartilhado entre turmas. O educador registra a data por atividade em cada turma; o campo fica na relação Group da turma com a atividade. O lembrete é enfileirado quando a data entra na janela de 24 horas. Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message: 6 testes / 85 assertions PASS, incluindo persistência real da mesma atividade em duas turmas, permissão `take course` no curso pai e persistência/deduplicação do aviso em Message.
 Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 42 nos Kernels recentes de Group/Message).
-No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. O Runtime ainda não tem turmas LMS nem prazos cadastrados; uma tentativa de smoke temporário foi limpa após evidenciar a checagem errada de permissão na turma. A correção agora é coberta por Kernel e precisa ser repetida no Runtime. O intervalo de Cron observado é 3h, portanto o lembrete será processado no próximo ciclo dentro da janela, aproximadamente 21–24h antes do prazo. Revisão visual segue DEFERRED. Próximo: smoke autenticado de prazo/aviso e resumo, revisão visual, depois gates e revisão pré-RC.
+No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. Smoke temporário com turma, membership e prazo confirmou aviso em Message, integração do aviso pessoal, enqueue pelo hook de Cron e persistência do lembrete pelo worker; limpeza removeu todos os dados temporários e filas e restaurou os papéis de teste. Não foi enviado e-mail. Cron do Runtime roda a cada 3h, mas não se aguardou uma execução agendada: o hook e o worker foram invocados diretamente. Revisão visual autenticada segue DEFERRED. Próximo: revisão visual e acessível da gaveta/avisos; depois gates e revisão pré-RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
@@ -210,17 +207,7 @@ acesso/cache específico com fixtures completas, navegador/visual e Runtime
 ainda são pendentes. Os testes unitários dos painéis passam (4/18).
 Runtime status: DEFERRED.
 
-**F13 — em implementação.** Matrícula e certificado geram avisos/e-mails
-transacionais pelo adapter `aculta_lms_messenger`; conclusão de curso e
-avaliação publicada aparecem sempre nos avisos multidomínio e entram no resumo
-diário opt-in. Reavaliações persistidas criam eventos deduplicados por versão,
-inclusive com nota igual. Respostas abertas pendentes avisam educadores com
-permissão atual de correção no curso. O conteúdo, o anexo e a nota nunca entram
-no aviso; destino, membership e acesso são revalidados ao exibir. Testes Unit
-LMS/adapter: 30 passaram (151 assertions; 5 deprecações do PHPUnit). Kernel de instalação passou (4 testes,
-31 assertions; deprecações de `entity_print`). Integração Runtime e
-revisão visual dos avisos: DEFERRED. Permanecem outros eventos de F13, teste do
-digest integrado e os gates/revisões de release.
+**F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 
 ## Ordem, commits e status
 

@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_messenger
 
+## Registro de validação Runtime — 2026-10-21
+
+- Smoke temporário no Runtime de teste confirmou persistência de aviso e
+  lembrete em Message, integração com aviso pessoal, enqueue pelo hook de Cron
+  e processamento pelo worker; dados temporários, memberships, papel concedido
+  pelo teste e filas foram restaurados/limpos. Nenhum e-mail foi enviado.
+- Hook e worker foram invocados diretamente; execução por Cron agendado e
+  revisão visual/autenticada continuam pendentes.
+
 ## 0.1.0-dev.12 — usar DateTimeItemInterface do módulo datetime — 2026-10-21
 
 - Corrige o namespace do formatador de prazo usado ao exibir aviso e lembrete;

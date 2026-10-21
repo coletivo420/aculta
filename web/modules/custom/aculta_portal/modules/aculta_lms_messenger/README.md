@@ -21,14 +21,15 @@ Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
 Matrícula na turma é validada pela permissão `take course` herdada no curso pai
 por `lms_classes`, além da membership ativa na turma.
 
-O módulo está em Dev e está habilitado no Runtime de teste. O Kernel comprova
-persistência e deduplicação em Message real; a compilação e instanciação do
-manager/worker também passaram no Runtime. Foram importadas isoladamente as
-cinco configurações da relação de prazo por turma. O Runtime não tem turmas LMS
-nem prazos cadastrados, então o fluxo acionado por evento/Cron e uma mensagem
-visível ainda não foram exercitados. Revisão visual da gaveta segue pendente. A
-entrega de digest pelo serviço compartilhado foi exercitada com
-providers educacionais no Unit.
+O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
+persistência e deduplicação em Message real. Smoke com turma temporária no
+Runtime confirmou aviso persistido, aviso pessoal integrado, enqueue pelo hook
+de Cron e persistência do lembrete pelo worker; todos os dados temporários e as
+filas foram limpos, sem envio de e-mail. As cinco configurações da relação de
+prazo por turma foram importadas isoladamente. O hook e o worker foram chamados
+diretamente; não se aguardou Cron agendado. Revisão visual/acessível da gaveta
+segue pendente. A entrega de digest pelo serviço compartilhado foi exercitada
+com providers educacionais no Unit.
 
 ## Contratos
 
@@ -46,5 +47,5 @@ providers educacionais no Unit.
 
 ## Validação
 
-Testes unitários locais do subscriber e gates do Portal são registrados no
-CHANGELOG; o smoke de navegador/Runtime continua DEFERRED.
+Testes unitários locais, Kernels, smoke de Runtime e gates do Portal são
+registrados no CHANGELOG. Revisão visual autenticada da gaveta: DEFERRED.
