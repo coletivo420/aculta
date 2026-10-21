@@ -84,7 +84,7 @@ final class StudioListingBuilder {
         'author' => $node->getOwner()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($node->getChangedTime(), 'short'),
       ];
-      // Edição: o formulário do dono, no domínio do dono, avaliado com o acesso dele.
+      // Edição: o formulário administrativo do dono (domínio principal), avaliado com o acesso dele.
       if (!empty($listing['editable'])) {
         $row['edit'] = $this->editLink($node);
       }
@@ -263,11 +263,12 @@ final class StudioListingBuilder {
    * Edit link to the owner's edit form in the owner's domain. Access is the owner's node access, evaluated there.
    */
   private function editLink(object $node): array {
-    $url = $this->domainPurposes->routeUrl('magazine', 'entity.node.edit_form', ['node' => $node->id()]);
+    $url = $this->domainPurposes->routeUrl('main', 'entity.node.edit_form', ['node' => $node->id()]);
     if ($url === NULL) {
       return ['data' => ''];
     }
-    $access = $this->domainPurposes->runInPurpose('magazine', static fn (): bool => $node->access('update'));
+    // The route's own access (admin route, domain and entity checks), not a copy of the rule.
+    $access = $this->domainPurposes->runInPurpose('main', static fn (): bool => $url->access($this->currentAccount()));
     if (!$access) {
       return ['data' => ''];
     }
