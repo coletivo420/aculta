@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.44 — completar schema de usuário na fixture Kernel — 2026-10-21
+
+- O Kernel de instalação agora instala o schema de User e persiste a conta
+  administrativa usada no access do histórico, exercitando o `AccountUserLoader`
+  no contexto correto. Kernel LMS completo: 19 testes / 584 assertions PASS,
+  com 90 depreciações upstream; suíte Unit: 48 / 260 PASS, 8 depreciações.
+
 ## 0.1.0-dev.43 — limitar progresso a aulas acessíveis — 2026-10-21
 
 - O painel do estudante calcula total e aulas concluídas apenas entre aulas que

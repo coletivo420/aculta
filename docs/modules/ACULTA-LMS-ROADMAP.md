@@ -301,6 +301,11 @@ antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
+Em 0.1.0-dev.44, a fixture de instalação passou a criar uma entidade User real
+para o access de histórico que valida status ativo via `AccountUserLoader`.
+Kernel completo do `aculta_lms`: 19 testes / 584 assertions PASS no MariaDB
+dedicado; 90 depreciações de Core/contrib, sem falhas.
+
 Em 0.1.0-dev.40, a autorização contextual para emitir e revogar certificados
 declara também o cache context `user.group_permissions` exigido pelo Group. Isso
 permite variar e invalidar o resultado quando membership ou papéis de turma

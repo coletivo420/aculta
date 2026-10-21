@@ -78,7 +78,14 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testAttemptArchivePersistsIsReadOnlyAndPurgesWithAccount(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_lms_attempt_archive');
+    $administratorEntity = User::create([
+      'name' => 'attempt-archive-admin',
+      'mail' => 'attempt-archive-admin@example.test',
+      'status' => 1,
+    ]);
+    $administratorEntity->save();
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_attempt_archive');
     $archive = $storage->create([
       'uid' => 42,
@@ -103,7 +110,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     ]);
     $archive->save();
 
-    $administrator = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
+    $administrator = new UserSession([
+      'uid' => (int) $administratorEntity->id(),
+      'permissions' => ['administer lms'],
+    ]);
     $this->assertTrue($archive->access('view', $administrator));
     $this->assertFalse($archive->access('update', $administrator));
     $this->assertSame('{"answer":"texto anterior"}', $storage->load($archive->id())->get('answer_data')->value);

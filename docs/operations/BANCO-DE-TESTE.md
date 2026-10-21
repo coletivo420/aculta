@@ -145,6 +145,13 @@ emitidas 40 depreciações de Core/contrib/LMS. PHP CLI 8.4.26, abaixo do alvo
 na MariaDB de teste. Rotas HTTP e View ainda não foram atualizadas no Runtime.
 RUNTIME STATUS: DEFERRED.
 
+Execução adicional em 2026-10-21: suíte Kernel completa do `aculta_lms` passou
+com 19 testes e 584 assertions no banco dedicado; 90 depreciações vieram de
+Core/contrib. A suíte Unit passou com 48 testes / 260 assertions e 8
+depreciações PHPUnit. A fixture do teste de instalação agora instala schema e
+usuário para validar o access de conta ativa via `AccountUserLoader`. PHP CLI
+8.4.26; PHP 8.5 permanece não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
