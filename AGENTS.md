@@ -494,6 +494,41 @@ Homelab/Hostinger no Portal.
 - O Portal prepara dados, URLs, acesso e cache; ACULTA420 seleciona e renderiza a apresentação. O Portal não referencia componentes SDC do tema.
 - Gates de tema e da fronteira Portal–tema permanecem obrigatórios conforme os documentos e scripts de validação correspondentes.
 
+### Integração total orientada por contexto
+
+- Antes de criar uma capacidade, faça inventário de integração no Core/contrib,
+  `aculta_portal`, todos os seus submódulos (inclusive aninhados) e `aculta420`.
+  Identifique dono dos dados e da política, APIs/serviços existentes, campos e
+  entidades, eventos, Views, formatters, cartões, componentes UI, cache, acesso,
+  Domain purpose e consumidores atuais. Consulte código instalado, contratos,
+  roadmaps, CHANGELOGs e frentes/PRs abertas antes de propor código.
+- Reutilize funções existentes quando seus contratos forem compatíveis. Não
+  duplique entidades, storage, processamento, política de upload, renderers,
+  notificações, cartões ou componentes visuais. Quando uma lacuna justificar
+  capacidade nova, construa-a sobre os contratos existentes e declare o dono,
+  consumidores e fronteira. Reuso não pode contornar access/cache, moderação,
+  privacidade, domínio ou política do módulo responsável.
+- Integre por contexto: conecte conteúdo ao purpose/Domain, entidade hospedeira
+  e estado de publicação/moderação corretos. Mantenha isolados dados e ações de
+  outros purposes, grupos/turmas, Wiki, Revista, LMS, Fórum e Loja quando os
+  contratos exigirem essa separação. Dependências opcionais permanecem
+  unidirecionais, não quebram o consumidor quando desabilitadas e não criam
+  ciclos entre módulos.
+- Para apresentação, procure primeiro cartões SDC, slots, UI Patterns/UI Styles,
+  Bootstrap, tokens, diálogos Core, componentes e padrões do tema existentes.
+  Use VVJ somente em Views e finalidades compatíveis com o engine (por exemplo,
+  VVJB para carrossel editorial e VVJS para sequência fotográfica); não o trate
+  como substituto geral de SDC, formulário, view mode ou navegação. Componentes
+  próprios devem ser neutros e reutilizáveis por sessão/contexto quando houver
+  contrato real, preservar render arrays e metadados de access/cache e deixar a
+  escolha visual ao ACULTA420.
+- Ao concluir uma fase, audite a matriz de integrações afetadas e o histórico de
+  trabalho para localizar capacidades anteriores ainda sem consumidor, contrato
+  quebrado ou dívida explicitamente pendente. Integre apenas o que cabe na fase;
+  registre dependências, lacunas e sequência restante no roadmap/CHANGELOG dono.
+  Não misture alterações de outras frentes nem marque como integrada uma
+  capacidade apenas por haver código instalado.
+
 ## Ciclo Dev, RC e Alpha
 
 - Seguir `docs/operations/RELEASE-LIFECYCLE.md` para classificar entregas. RC é
