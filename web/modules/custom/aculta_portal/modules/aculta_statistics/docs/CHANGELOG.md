@@ -36,6 +36,23 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.8.0-dev.1 (painel central de estatísticas, com período e exportação CSV)
+
+### Código
+- `StatisticsDashboardController`: página em `/painel-administrativo/aculta/estatisticas` (permissão `administer aculta_statistics`). Uma métrica por vez, período de 7, 14 ou 30 dias (ADR-0005), gráfico SVG, tabela de valores por dia e total do período.
+- Exportação CSV em `/painel-administrativo/aculta/estatisticas/exportar`: uma linha por dia e dimensão (`dia,dimensao,total`), no mesmo período e métrica da tela.
+- `MetricSeries`: período normalizado (valor fora de 7/14/30 volta a 7) e série diária com zero nos dias sem registro.
+- Métricas de sensibilidade R (dado pessoal por aluno) não aparecem no painel nem no CSV.
+
+### Dados pessoais
+- Nenhum dado novo. A tela e o CSV mostram só agregados P e I. Sem IP, usuário ou identificador de aluno.
+
+### Testes
+- Unit: 81 casos (inclui `MetricSeriesTest`). Kernel `StatisticsDashboardKernelTest`: 2 casos (página com seleção, CSV, métrica restrita fora).
+
+### Pendente (0.8.0)
+- Painéis por módulo, filtros por domínio e fonte, comparações entre áreas, e a leitura de `lms.student.status` em painel próprio do docente (não entra no agregado).
+
 ## 0.5.0-dev.4 (situação por aluno sob o aceite único; purga na exclusão e na revogação)
 
 ### Código

@@ -17,3 +17,19 @@ aculta_statistics.wiki_read:
     parameters:
       node:
         type: entity:node
+
+aculta_statistics.dashboard:
+  path: '/painel-administrativo/aculta/estatisticas'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::overview'
+    _title: 'Estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.dashboard_export:
+  path: '/painel-administrativo/aculta/estatisticas/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::export'
+    _title: 'Exportar estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'
