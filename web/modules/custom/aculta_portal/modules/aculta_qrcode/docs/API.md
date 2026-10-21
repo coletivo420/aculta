@@ -1,6 +1,6 @@
-# API de QR Codes — versão 0.2.0
+# API de QR Codes — versões 0.2.0 e 0.3.0
 
-Contrato dos serviços disponíveis em 0.2.0-dev.1. Registrados em `aculta_qrcode.services.yml`, com injeção de dependência. Nenhum serviço grava arquivo, cria entidade ou consulta serviço externo.
+Contrato dos serviços disponíveis em 0.3.0-dev.1. Registrados em `aculta_qrcode.services.yml`, com injeção de dependência. Geração estática (0.2.0) não grava nada; o código dinâmico (0.3.0) grava a entidade `aculta_qr_code` por meio do `QrCodeManager`.
 
 ## Fluxo
 
@@ -63,8 +63,45 @@ $preset = $presets->get('aculta_padrao');
 $svg = $generator->generate($payload, $preset, QrCodeFormat::Svg);
 ```
 
-## Limites da 0.2.0
+## Código QR dinâmico (0.3.0)
 
-- Sem rota pública, sem entidade, sem redirecionamento dinâmico.
-- Sem logo, sem moldura, sem legenda: essas opções vêm nas fases 0.4.0 e seguintes.
-- Testes Unit apenas; Kernel começa na 0.3.0, quando houver entidade.
+### Entidade `aculta_qr_code`
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `title` | string (255) | Obrigatório; nome administrativo, não aparece no QR. |
+| `code` | string (12) | Gerado pelo manager; `^[a-z0-9]{12}$`; único; não muda depois de criado. |
+| `target_url` | uri | Obrigatório; `http` ou `https`, sem credenciais, até 2048 caracteres (constraint `AcultaQrCodeTarget`). |
+| `preset` | string (32) | Padrão `aculta_padrao`. |
+| `valid_from`, `valid_until` | timestamp | Opcionais; fim deve ser posterior ao início. |
+| `uid`, `status`, `created`, `changed` | — | Dono, publicação e datas. Revisionável, com registro administrativo. |
+
+A entidade não guarda imagem. Acesso: permissão `administer aculta qr codes` (sem acesso por papel).
+
+### `aculta_qrcode.manager` — `QrCodeManager`
+
+| Método | Efeito |
+| --- | --- |
+| `create(title, targetUrl, ?presetId, ?validFrom, ?validUntil, ?log): QrCode` | Valida destino e janela, gera código único e publica. Dono: usuário atual. |
+| `updateTarget(entity, targetUrl, ?log): QrCode` | Troca o destino, mantém o código e cria revisão. |
+| `setPublished(entity, bool, ?log): QrCode` | Ativa ou desativa; desativado responde 404. |
+| `findActive(code, now): ?QrCode` | Busca pública: publicado e dentro da validade. Retorna NULL em qualquer outro caso. |
+
+Toda gravação valida antes de salvar; violação vira `InvalidQrCodeException` com o caminho do campo.
+
+### `aculta_qrcode.url_resolver` — `QrCodeUrlResolver`
+
+`publicUrl(QrCode): ?Url` monta `/qr/{codigo}` no purpose `links` pelo `DomainPurposeManager`. A dependência é opcional no container; sem o Portal, retorna NULL.
+
+### Rota pública
+
+| Rota | Caminho | Comportamento |
+| --- | --- | --- |
+| `aculta_qrcode.redirect` | `/qr/{codigo}` (purpose `links`) | GET/HEAD. 302 ao destino quando ativo; 404 caso contrário. Cache: dependência da entidade, com `max-age` até o fim da validade. Sem registro de leitura. |
+
+## Limites da 0.3.0
+
+- Sem painel administrativo (0.4.0): a entidade é gerida pelo manager e pela API de entidade.
+- Sem logo, moldura, legenda ou exportação de arquivo (0.4.0).
+- Sem estatística de acesso (0.6.0).
+- Kernel: 8 testes, 60 asserções. Não há teste de rota HTTP com domínio real: a validação de purpose e Domain fica para o Runtime.

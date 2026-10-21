@@ -11,7 +11,7 @@ Seguir o ciclo Dev → RC → Alpha ([RELEASE-LIFECYCLE.md](../../../../../../..
 
 Decisões 1 a 4 de `ARQUITETURA.md` registradas pelo responsável em 2026-10-20. A decisão 5 (lote) segue pendente, com a recomendação de Batch API adotada até confirmação.
 
-## 0.2.0 — motor de geração (em andamento: 0.2.0-dev.1)
+## 0.2.0 — motor de geração (concluída em 0.2.0-dev.1)
 
 - Feito: serviço `generator` com Endroid 6.1.3 (já fixado no lock), QR estático em SVG e PNG.
 - Feito: presets `aculta_padrao` e `aculta_impressao` com contraste mínimo de 4,5:1 e margens validadas.
@@ -20,7 +20,11 @@ Decisões 1 a 4 de `ARQUITETURA.md` registradas pelo responsável em 2026-10-20.
 - Sem entidade, rota pública ou gravação de arquivo.
 - Pendente antes de RC: PHPUnit e PHPCS no PHP 8.5 do servidor.
 
-## 0.3.0 — entidade e QR dinâmico
+## 0.3.0 — entidade e QR dinâmico (em andamento: 0.3.0-dev.1)
+
+Feito em 0.3.0-dev.1: entidade `aculta_qr_code`, manager, validade, revisões, redirecionamento `/qr/{codigo}` e Kernel 8/60. Pendente antes de RC: registro do caminho no mapa (feito), validação HTTP e do purpose no Runtime.
+
+Itens originais:
 
 - Entidade `aculta_qr_code` com revisões, código opaco e validade.
 - Serviços `manager`, `resolver` e `redirect`.

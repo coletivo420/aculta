@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Instalação do ACULTA QR Code.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_install().
+ *
+ * Cria o schema da entidade `aculta_qr_code` (tabela base e de revisões).
+ */
+function aculta_qrcode_install(): void {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_qr_code'));
+}

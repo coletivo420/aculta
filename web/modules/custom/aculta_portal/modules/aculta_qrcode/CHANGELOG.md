@@ -1,5 +1,15 @@
 # Changelog — ACULTA QR Code
 
+## 0.3.0-dev.1 — código QR dinâmico com validade e redirecionamento — 2026-10-20
+
+- Entidade `aculta_qr_code` revisionável, com código público de 12 caracteres único, destino `http`/`https` validado por constraint, preset e janela de validade. Instalação pelo `hook_install`.
+- `aculta_qrcode.manager` é o único caminho de gravação: valida destino e janela, gera código sem colisão e cria revisão com mensagem administrativa.
+- Redirecionamento público `/qr/{codigo}` no purpose `links`: 302 ao destino quando publicado e dentro da validade; 404 nos demais casos. Cache dependente da entidade e limitado ao fim da validade. Sem registro de leitura.
+- Acesso por `administer aculta qr codes`; o redirecionamento público não passa pela permissão.
+- `aculta_qrcode.url_resolver` monta a URL pública pelo `DomainPurposeManager`; a dependência é opcional no container.
+- Registro em `ROUTES-SITEMAP.md` e `LGPD-INVENTARIO.md`.
+- Validação: Kernel 8 testes/60 asserções PASS no banco `aculta_simpletest`; Unit 25 testes/38 asserções PASS; PHPCS PASS; gates de fronteira, Portal Drupal 11 e slugs públicos PASS. Runtime, update e HTTP DEFERRED.
+
 ## 0.2.0-dev.1 — geração estática e presets — 2026-10-20
 
 - Gerador `aculta_qrcode.generator` produz SVG e PNG em memória, sem gravar arquivo e sem serviço externo. Usa `endroid/qr-code` 6.1.3, já fixado no lock.

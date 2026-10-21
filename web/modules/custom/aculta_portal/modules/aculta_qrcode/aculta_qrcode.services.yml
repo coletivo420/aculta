@@ -7,3 +7,15 @@ services:
 
   aculta_qrcode.generator:
     class: Drupal\aculta_qrcode\Service\QrCodeGenerator
+
+  aculta_qrcode.manager:
+    class: Drupal\aculta_qrcode\Service\QrCodeManager
+    arguments: ['@entity_type.manager', '@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@current_user']
+
+  aculta_qrcode.url_resolver:
+    class: Drupal\aculta_qrcode\Service\QrCodeUrlResolver
+    arguments: ['@?aculta_portal.domain_purpose']
+
+  aculta_qrcode.redirect_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodeRedirectController
+    arguments: ['@aculta_qrcode.manager', '@datetime.time']

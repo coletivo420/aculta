@@ -1,0 +1,11 @@
+aculta_qrcode.redirect:
+  path: '/qr/{codigo}'
+  defaults:
+    _controller: 'aculta_qrcode.redirect_controller:redirectByCode'
+    _title: 'Redirecionamento de código QR'
+  requirements:
+    _access: 'TRUE'
+    codigo: '[0-9a-z]{12}'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: links
