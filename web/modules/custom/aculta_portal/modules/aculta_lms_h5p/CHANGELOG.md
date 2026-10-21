@@ -1,3 +1,10 @@
+## Padronização do namespace H5P ACULTA — 2026-10-21
+
+- Classes, interfaces, controladores, hooks, formulários, plugins, seletores e arquivos PHP próprios do H5P agora usam `aculta_H5P` no identificador; as pastas/namespaces internos também seguem o prefixo. A integração PHP do Fórum segue a mesma regra.
+- O plugin de entidade e os campos de referência passam a usar `aculta_h5p_content`. O update `8007` descarta conteúdos, tentativas e vínculos H5P legados e recria a entidade sob o ID novo, conforme decisão do responsável; as tabelas e contratos de protocolo exigidos pelo H5P continuam com seus nomes upstream.
+- Interfaces e classes globais definidas pelo H5P permanecem intactas porque são contratos externos implementados pelo adaptador ACULTA.
+- Runtime update: DEFERRED até inspeção e execução no ambiente de testes.
+
 ## F15 — associação de PDFs existentes a atividades — 2026-10-21
 
 - Educadores selecionam, no editor da atividade, documentos `course_document`

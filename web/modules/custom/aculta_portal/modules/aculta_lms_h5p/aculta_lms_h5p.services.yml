@@ -1,12 +1,12 @@
 services:
-  Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks:
-    class: Drupal\aculta_lms_h5p\Hook\H5PLibraryHooks
+  Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks:
+    class: Drupal\aculta_lms_h5p\Hook\aculta_H5PLibraryHooks
     arguments: ['@database', '@aculta_lms_h5p.framework', '@aculta_lms_h5p.asset_file_manager', '@file_url_generator']
   aculta_lms_h5p.asset_file_manager:
     class: Drupal\aculta_lms_h5p\AssetFileStorage
     arguments: ['@file_system', '@aculta_image.packaged_asset_publisher']
   aculta_lms_h5p.framework:
-    class: Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal
+    class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal
     arguments:
       - '@database'
       - '@current_user'
@@ -28,35 +28,35 @@ services:
       - '@asset.js.collection_optimizer'
       - '@asset.css.collection_optimizer'
   aculta_lms_h5p.storage_path:
-    class: Drupal\aculta_lms_h5p\H5PDrupal\H5PStoragePath
+    class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PStoragePath
     arguments: ['@config.factory', '@file_system']
   aculta_lms_h5p.library_cache_invalidator:
-    class: Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryCacheInvalidator
+    class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryCacheInvalidator
     arguments: ['@cache.default', '@library.discovery']
   aculta_lms_h5p.library_package_installer:
-    class: Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryPackageInstaller
+    class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryPackageInstaller
     arguments: ['@file_system', '@aculta_lms_h5p.storage_path', '@aculta_lms_h5p.library_cache_invalidator', '@aculta_lms_h5p.framework']
   aculta_lms_h5p.file_usage_manager:
-    class: Drupal\aculta_lms_h5p\H5PEditor\H5PFileUsageManager
+    class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PFileUsageManager
     arguments: ['@config.factory', '@file_system', '@file.repository', '@file.usage', '@aculta_image.file_usage_manager']
   aculta_lms_h5p.file_storage_factory:
-    class: Drupal\aculta_lms_h5p\H5PDrupal\H5PManagedFileStorageFactory
+    class: Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PManagedFileStorageFactory
     arguments: ['@file_system', '@file.repository', '@entity_type.manager', '@file.usage', '@aculta_image.file_usage_manager', '@aculta_image.file_remover', '@aculta_image.packaged_asset_publisher', '@aculta_lms_h5p.file_usage_manager']
   aculta_lms_h5p.editor_storage:
-    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalStorage
+    class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage
     arguments: ['@database', '@current_user', '@module_handler', '@aculta_lms_h5p.file_usage_manager']
   aculta_lms_h5p.editor_ajax:
-    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorDrupalAjax
+    class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalAjax
     arguments: ['@database', '@current_user']
   aculta_lms_h5p.editor_utilities:
-    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUtilities
+    class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities
     arguments: ['@file_url_generator', '@file_system', '@language_manager', '@asset.query_string', '@database', '@aculta_lms_h5p.editor_storage', '@aculta_lms_h5p.editor_ajax', '@aculta_lms_h5p.framework']
   aculta_lms_h5p.editor_upload_manager:
-    class: Drupal\aculta_lms_h5p\H5PEditor\H5PEditorUploadManager
+    class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUploadManager
     arguments: ['@file.upload_handler', '@aculta_image.upload_ingester', '@aculta_image.inspector', '@file_system', '@config.factory', '@aculta_lms_h5p.framework']
   aculta_lms_h5p.course_access:
-    class: Drupal\aculta_lms_h5p\Access\H5PCourseAccessManager
+    class: Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager
     arguments: ['@entity_type.manager']
   aculta_lms_h5p.library_access:
-    class: Drupal\aculta_lms_h5p\Access\H5PLibraryAccessManager
+    class: Drupal\aculta_lms_h5p\Access\aculta_H5PLibraryAccessManager
     arguments: ['@aculta_lms_h5p.editor_storage']

@@ -3,9 +3,9 @@ services:
     class: Drupal\aculta_forum_lms\Context\LmsActivityDiscussionResolver
     arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@string_translation']
   aculta_forum_lms.h5p_discussion_resolver:
-    class: Drupal\aculta_forum_lms\Context\LmsH5PDiscussionResolver
+    class: Drupal\aculta_forum_lms\Context\Lmsaculta_H5PDiscussionResolver
     arguments: ['@entity_type.manager', '@string_translation']
-  Drupal\aculta_forum_lms\Hook\LmsH5PDiscussionHooks:
+  Drupal\aculta_forum_lms\Hook\Lmsaculta_H5PDiscussionHooks:
     arguments: ['@aculta_forum_lms.h5p_discussion_resolver', '@aculta_lms_h5p.course_access', '@current_user', '@entity_type.manager', '@request_stack']
   Drupal\aculta_forum_lms\Hook\LmsActivityDiscussionHooks:
     arguments: ['@aculta_forum_lms.activity_discussion_resolver', '@current_user']

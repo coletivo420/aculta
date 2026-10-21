@@ -5,7 +5,7 @@
  */
 
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\aculta_lms_h5p\Entity\H5PContent;
+use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
 /**
  * Preserve private content files when the integration is uninstalled.
@@ -798,16 +798,81 @@ function aculta_lms_h5p_update_8005() {
 
 }
 
-/** Adds references from H5P activities to existing course document Media. */
+/**
+ * Historical placeholder. The current entity is installed by update 8007.
+ *
+ * @deprecated in aculta_lms_h5p: The H5P entity ID changed in update 8007.
+ */
 function aculta_lms_h5p_update_8006(): void {
-  $entity_type = \Drupal::entityTypeManager()->getDefinition('h5p_content');
-  $field_definitions = H5PContent::baseFieldDefinitions($entity_type);
-  $storage_definition = $field_definitions['course_documents'];
-  \Drupal::entityDefinitionUpdateManager()
-    ->installFieldStorageDefinition(
-      'course_documents',
-      'h5p_content',
-      'h5p_content',
-      $storage_definition,
-    );
+}
+
+/**
+ * Recreate the H5P content entity under its ACULTA-owned entity type ID.
+ *
+ * Legacy H5P content, completion data, course assignments, and old entity
+ * references are intentionally discarded. H5P library definitions remain.
+ */
+function aculta_lms_h5p_update_8007(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $legacy_definition = $repository->getLastInstalledDefinition('h5p_content');
+
+  // Remove H5P-managed content media through the aculta_image-aware storage
+  // adapter before dropping the old entity table. Files retained because of
+  // other references remain protected by that adapter's normal policy.
+  if ($schema->tableExists('h5p_content')) {
+    $storage_path = \Drupal::service('aculta_lms_h5p.storage_path')->getPath();
+    $file_storage = \Drupal::service('aculta_lms_h5p.file_storage_factory')->create($storage_path);
+    foreach ($database->select('h5p_content', 'hc')->fields('hc', ['id'])->execute() as $row) {
+      $file_storage->deleteContent(['id' => (int) $row->id]);
+    }
+  }
+
+  // Remove references from courses and forum topics before dropping the old
+  // entity storage. The H5P protocol table names remain unchanged.
+  foreach ([
+    'group__field_h5p_activities' => 'h5p_content_id',
+    'group_revision__field_h5p_activities' => 'h5p_content_id',
+    'node__field_h5p_content' => 'field_h5p_content_target_id',
+    'node_revision__field_h5p_content' => 'field_h5p_content_target_id',
+  ] as $table => $column) {
+    if ($schema->tableExists($table) && $schema->fieldExists($table, $column)) {
+      $database->delete($table)->execute();
+    }
+  }
+
+  foreach (['h5p_content_libraries', 'h5p_content_user_data', 'h5p_points'] as $table) {
+    if ($schema->tableExists($table)) {
+      $database->delete($table)->execute();
+    }
+  }
+  if ($schema->tableExists('file_usage')) {
+    $database->delete('file_usage')
+      ->condition('module', 'aculta_lms_h5p')
+      ->condition('type', 'h5p_content')
+      ->execute();
+  }
+
+  if ($legacy_definition) {
+    // Core invokes the old storage schema handler to drop its tables and
+    // installed entity definition. This is an intentional destructive reset.
+    $update_manager->uninstallEntityType($legacy_definition);
+  }
+
+  $entity_type_id = 'aculta_h5p_content';
+  if (!$repository->getLastInstalledDefinition($entity_type_id)) {
+    $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+    $field_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions($entity_type_id);
+    $update_manager->installFieldableEntityType($entity_type, $field_definitions);
+  }
+
+  // Forum's optional entity reference field follows the new entity type ID.
+  $field_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->load('node.field_h5p_content');
+  if ($field_storage && $field_storage->getSetting('target_type') === 'h5p_content') {
+    $field_storage->setSetting('target_type', $entity_type_id)->save();
+  }
 }

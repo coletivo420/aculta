@@ -68,7 +68,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertTrue($this->syncConfig('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
 
     $h5pStorage = $this->optionalConfig('field.storage.node.field_h5p_content');
-    self::assertSame('h5p_content', $h5pStorage['settings']['target_type']);
+    self::assertSame('aculta_h5p_content', $h5pStorage['settings']['target_type']);
     self::assertSame($h5pStorage['settings'], $this->syncConfig('field.storage.node.field_h5p_content')['settings']);
     self::assertContains('aculta_forum_lms', $h5pStorage['dependencies']['enforced']['module']);
     $h5pField = $this->optionalConfig('field.field.node.aculta_lms_topic.field_h5p_content');
@@ -83,7 +83,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     $services = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum_lms.services.yml')['services'];
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver', $services['aculta_forum_lms.activity_discussion_resolver']['class']);
     self::assertSame(['@aculta_forum_lms.activity_discussion_resolver', '@current_user'], $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['arguments']);
-    self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsH5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
+    self::assertSame('Drupal\\aculta_forum_lms\\Context\\Lmsaculta_H5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
     self::assertSame(
       [
         '@aculta_forum_lms.h5p_discussion_resolver',
@@ -92,7 +92,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
         '@entity_type.manager',
         '@request_stack',
       ],
-      $services['Drupal\\aculta_forum_lms\\Hook\\LmsH5PDiscussionHooks']['arguments'],
+      $services['Drupal\\aculta_forum_lms\\Hook\\Lmsaculta_H5PDiscussionHooks']['arguments'],
     );
   }
 

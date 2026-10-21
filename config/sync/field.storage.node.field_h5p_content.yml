@@ -14,7 +14,7 @@ field_name: field_h5p_content
 entity_type: node
 type: entity_reference
 settings:
-  target_type: h5p_content
+  target_type: aculta_h5p_content
 module: core
 locked: false
 cardinality: 1
