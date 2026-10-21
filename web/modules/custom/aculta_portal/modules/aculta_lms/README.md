@@ -227,13 +227,24 @@ sem gravar arquivo e o PDF incorpora PNG gerado em memória. A URL absoluta é
 resolvida pelo `DomainPurposeManager` no purpose `main`; o LMS não mantém geração
 QR própria.
 
-Config Sync declara o campo do curso; seu importe parcial e a instalação do
-storage da entidade ainda não foram aplicados no Runtime. Smoke anônimo de
-código inexistente passou com 404 após reconstruir o container, que ainda
-mantinha a definição anterior do serviço após a inclusão do lock. Não houve
-alteração de entidades ou configuração. RUNTIME STATUS: parcial; código válido,
-emissão/revogação em navegador, revisão visual do QR/PDF e aplicação segura de
-schema/config continuam pendentes.
+Config Sync declara o campo do curso. O storage da entidade e o campo com mínimo
+de uma hora foram aplicados separadamente no Runtime de teste após revisão do
+diff; a configuração ativa do formulário foi preservada e não há valor no curso
+existente. O smoke anônimo de código inexistente respondeu 404 após reconstruir
+o container. Em 2026-10-21, um fixture temporário real de User, Group e
+CourseStatus aprovado foi criado via APIs Drupal. O manager emitiu o snapshot;
+o controlador real apresentou os quatro dados públicos, gerou QR SVG e PDF
+válidos com o `aculta_qrcode` e Entity Print/Dompdf instalados. O dispatcher de
+eventos do manager foi isolado nessa chamada para não enviar aviso ou alterar
+estatísticas. Salvar o CourseStatus temporário também acionou o evento normal de
+conclusão; a mensagem, a chave de deduplicação e o agregado estatístico dessa
+fixture foram identificados e removidos. User, Group, status e certificado foram
+excluídos por APIs Drupal; a fila de e-mail terminou vazia e os totais de cursos,
+certificados e avisos voltaram ao estado anterior. Este smoke exercitou os
+serviços reais no Runtime, mas não a rota HTTP pública nem o formulário de
+emissão. RUNTIME STATUS: parcial; emissão e visualização HTTP com código real,
+emissão/revogação pelo formulário, revisão visual do QR/PDF e aceite do modelo
+permanecem pendentes.
 
 ## F12 — Painéis de aprendizagem (implementação inicial)
 

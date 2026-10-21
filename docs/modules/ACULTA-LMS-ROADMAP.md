@@ -210,20 +210,25 @@ PNG é incorporado ao PDF. No Runtime de teste, a rota pública para código
 inexistente e as rotas de QR e PDF com código inexistente retornam 404. No
 Runtime há zero certificados e zero status aprovado atual. Em 2026-10-21,
 `field_course_hours` não existia na configuração ativa; após revisar o diff
-global (dezenas de itens) e confirmar que o storage ainda não tinha tabela nem
-valores, foi importado parcialmente somente o storage do campo, a definição do
-campo no bundle `lms_course` e seu widget no formulário ativo. A prévia mostrou
-exatamente duas criações e uma atualização; a configuração anterior do formulário
-foi guardada para recuperação e os demais itens locais foram preservados. O
-campo existe agora, mas tem zero valores e não há status aprovado; não foi criada
-uma conclusão artificial nem certificado público. Portanto, ainda não existe
-fixture real elegível para smoke positivo. Após materializar os padrões do Core
-no YAML canônico, `config:status` não aponta diferença na storage nem na
-definição do campo; o display continua com diferenças locais anteriores, que
-foram preservadas. O 404 inicial foi corrigido por
-`drush cr`, que atualizou um container compilado com argumentos antigos do
-serviço. RUNTIME STATUS: parcial; campo e formulário ativos, emissão positiva,
-QR/PDF válidos para código real e revisão visual continuam DEFERRED.
+global e confirmar que o storage ainda não tinha tabela nem valores, foram
+importados parcialmente o storage do campo, sua definição no bundle `lms_course`
+e o widget no formulário ativo. A prévia mostrou duas criações e uma atualização;
+a configuração anterior do formulário foi guardada e os demais itens locais
+preservados. O campo ativo exige mínimo de uma hora e não há valores no curso
+preexistente. Após o `drush cr` corrigir o container compilado antigo, o código
+anônimo inexistente responde 404.
+
+Em 2026-10-21, fixtures temporárias User/Group/CourseStatus foram criadas por
+APIs Drupal no Runtime e um snapshot foi emitido pelo manager. O controlador
+real apresentou os quatro dados públicos, gerou QR SVG de 13.577 bytes e PDF
+válido de 919 bytes via `aculta_qrcode` e Entity Print/Dompdf. O dispatcher foi
+isolado durante a emissão para suprimir avisos e métricas. O salvamento do status
+temporário disparou o evento normal de conclusão; Message, chave de deduplicação
+e agregado estatístico criados por esse evento foram localizados e removidos. As
+fixtures foram excluídas por APIs Drupal e a fila de e-mail ficou vazia. O smoke
+validou serviços reais, mas não a rota HTTP pública ou o formulário de emissão.
+RUNTIME STATUS: parcial; emissão HTTP pelo formulário, página/QR/PDF por código
+real e revisão visual seguem pendentes.
 
 Em 0.1.0-dev.45, o campo foi restringido a no mínimo uma hora, mesma condição
 exigida pela emissão. O Kernel de certificados rejeita zero horas (3 testes /

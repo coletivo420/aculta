@@ -1,5 +1,20 @@
 # Changelog — aculta_lms
 
+## Evidência Runtime F11 — 2026-10-21
+
+- No Runtime `cursos` confirmado em `aculta_runtime`, um fixture temporário
+  criado via APIs Drupal permitiu emitir um snapshot elegível e exercitar o
+  controlador com os serviços reais. Os dados públicos, QR SVG (`image/svg+xml`,
+  13.577 bytes) e PDF (`%PDF`, 919 bytes) foram gerados com sucesso.
+- A emissão usou dispatcher isolado para suprimir efeitos de aviso e métricas.
+  Salvar o `CourseStatus` temporário acionou o evento normal de conclusão; sua
+  Message, chave de deduplicação e agregado estatístico foram identificados e
+  removidos. Todas as entidades temporárias foram excluídas por APIs Drupal;
+  certificados, avisos e fila de e-mail ficaram sem resíduos.
+- Limite: chamadas ao controlador/serviços no Runtime, não navegação HTTP nem
+  submissão do formulário. Emissão pelo formulário e revisão visual seguem
+  pendentes; nenhum e-mail foi enviado.
+
 ## 0.1.0-dev.56 — confirmar dados públicos mínimos do certificado — 2026-10-21
 
 - `CertificateLifecycleTest` valida nome, curso, horas e estado na página por
