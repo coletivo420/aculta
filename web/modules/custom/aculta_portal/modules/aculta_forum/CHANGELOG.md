@@ -1,3 +1,9 @@
+## `0.1.0-dev.138` — prepara view mode de post revisionável
+
+- O view mode `default` renderiza assunto e corpo pelo formatter de texto do Core; campos internos, relações e metadados de revisão ficam ocultos.
+- `aculta_user 0.4.0-dev.64` acrescenta o cartão de autoria User/histórica. A leitura dentro do tópico e os formulários ainda não foram ligados; Comments continuam sendo a apresentação ativa.
+- Nenhuma alteração no Runtime.
+
 ## `0.1.0-dev.137` — preserva autoria histórica em posts revisionáveis
 
 - Adiciona o campo-base revisionável `legacy_author` a `aculta_forum_post`, apontando para `aculta_legado_autor`, sem converter autor histórico em conta Drupal.

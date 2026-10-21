@@ -11,6 +11,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\user\UserInterface;
 
@@ -31,6 +32,22 @@ final class DiscussionCommentAuthorHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+    if ($entity->getEntityTypeId() === 'aculta_forum_post') {
+      if ($entity->hasField('legacy_author') && !$entity->get('legacy_author')->isEmpty()) {
+        $legacyAuthor = $entity->get('legacy_author')->entity;
+        if ($legacyAuthor instanceof LegacyAuthor) {
+          $build['author_card'] = $this->authorCardBuilder->buildLegacy($legacyAuthor) + ['#weight' => -20];
+        }
+        return;
+      }
+
+      $author = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
+      if ($author instanceof UserInterface && ($card = $this->authorCardBuilder->build($author, 'author_forum')) !== NULL) {
+        $build['author_card'] = $card + ['#weight' => -20];
+      }
+      return;
+    }
+
     if (!$entity instanceof CommentInterface ||
       $entity->bundle() !== 'aculta_discussion_post' ||
       $entity->getFieldName() !== 'field_aculta_discussion') {

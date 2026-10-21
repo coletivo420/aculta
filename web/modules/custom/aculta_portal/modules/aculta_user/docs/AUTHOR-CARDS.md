@@ -1,7 +1,7 @@
 # Cartões de identidade e autoria
 
-Status: cartões de `author_forum` integrados aos tópicos e respostas do bundle novo na linha
-`aculta_user 0.4.0-dev.46`. O slot de autoria da Revista agora consome o mesmo builder
+Status: cartões de `author_forum` integrados a tópicos, respostas Comment e posts
+revisionáveis do Fórum na linha `aculta_user 0.4.0-dev.64`. O slot de autoria da Revista agora consome o mesmo builder
 com a variante `author_editorial`; `aculta_user` possui políticas,
 links, perfil, avatar e memória histórica. `AuthorIdentityResolver`,
 `AuthorIdentity` e `AuthorCardBuilder` compõem identidade, avatar cacheável e
@@ -25,6 +25,7 @@ seguem responsabilidade de consumidores autorizados, sem duplicação no Forum.
 | `BadgeService` / `AchievementDefinitions` | Conquistas e fatos | perfil/Game | variantes autorizadas | Reusar sem conceder prémios no render e respeitar privacidade de conquistas. |
 | `DiscussionCommentAuthorHooks` em `aculta_user` | Cartão compartilhado de autoria de Comment | Fórum, Revista e contextos futuros | Variante resolvida pelo host: `author_forum`, `author_comment`, `author_lms` ou `author_wiki` | Contextos desconhecidos não herdam variante. Autoria histórica usa builder separado. |
 | `PublicForumTopicAuthorHooks` | Cartão da autoria User ou histórica nos tópicos novos | Node `aculta_forum_topic`, `full`/`teaser` | `author_forum` / `author_growroom_historico` | Integrado pelo `AuthorCardBuilder`; não consulta campos Profile diretamente e não converte autores históricos em User. |
+| `DiscussionCommentAuthorHooks` | Cartão de autoria User ou histórica de post revisionável | Entidade `aculta_forum_post` | `author_forum` / `author_growroom_historico` | Usa `legacy_author` quando presente; não altera acesso nem decide se o post pode ser renderizado. |
 | `ForumModerationHooks`, `ParticipationRules` | Autoria Growroom histórica em Nodes ACULTA e moderação contextual compartilhada | `aculta_forum_topic` / `aculta_discussion_post` | `author_growroom_historico`, `author_forum` e variantes contextuais | Proteção funciona sobre os bundles ACULTA; sem identidade User para autor histórico. |
 | `RestrictedForumHooks`, `RestrictedForumGrants` | Níveis de acesso na taxonomia do Forum contrib | `taxonomy_term.forums` | Sem variante de cartão | Removidos em `aculta_user 0.4.0-dev.43`; os registros de F-D14 são históricos e estão substituídos. |
 | `ActivityController` | Aba de atividade Wiki/Fórum/Revista/Comentários/conquistas | perfil/conta | `profile_compact` ou list views | Estender a nova fonte de tópico/comentário; não duplicar consulta de perfil. |

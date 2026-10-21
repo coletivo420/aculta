@@ -1,3 +1,9 @@
+## 0.4.0-dev.64 — compartilha autoria com posts revisionáveis do Fórum — 2026-10-21
+
+- `DiscussionCommentAuthorHooks` apresenta posts `aculta_forum_post` pelo `AuthorCardBuilder`: identidade User usa `author_forum`; `legacy_author` continua no cartão histórico, sem conversão para conta.
+- A leitura do corpo e a configuração do view mode permanecem no `aculta_forum`; `aculta_user` entrega somente o slot de autoria neutro e cacheável.
+- Integração preparada para a leitura revisionável; nenhum Runtime foi alterado.
+
 ## 0.4.0-dev.63 — registra DI dos hooks de janela de edição — 2026-10-21
 
 - `ParticipationEditWindowHooks` agora é serviço do módulo com a política central injetada. Sem o registro, o `ClassResolver` tentava instanciar o hook sem argumentos e causava HTTP 500 nas rotas do portal.
