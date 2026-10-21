@@ -36,6 +36,8 @@ $expected = [
 
 // Credenciais de envio ficam no arquivo de segredos do servidor, sem Key (regra de segredos do AGENTS.md).
 $file_secrets = [
+  'ga4_property_id' => 'GA4_PROPERTY_ID',
+  'ga4_service_account_json' => 'GA4_SERVICE_ACCOUNT_JSON',
   'smtp2go_username' => 'SMTP2GO_USERNAME',
   'smtp2go_password' => 'SMTP2GO_PASSWORD',
   'brevo_api_key' => 'BREVO_API_KEY',
