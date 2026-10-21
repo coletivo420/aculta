@@ -75,8 +75,12 @@ final class StudioListingBuilder {
       ];
     }
 
+    // A tabela rola dentro do próprio bloco no celular, sem rolagem horizontal da página.
     $build = [
-      '#type' => 'table',
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
+      'table' => [
+        '#type' => 'table',
       '#header' => [
         'title' => $this->t('Título'),
         'state' => $this->t('Situação'),
@@ -86,6 +90,7 @@ final class StudioListingBuilder {
       '#rows' => $rows,
       '#empty' => $this->t('Nenhum item nesta aba.'),
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+      ],
       '#cache' => [
         'contexts' => ['user.permissions'],
         'tags' => ['node_list:' . $bundle],

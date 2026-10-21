@@ -364,6 +364,7 @@ final class PortalUiHooks {
     'studio-link' => ['nav-link', 'studio__link'],
     'studio-live' => ['studio__live', 'small', 'text-muted'],
     'studio-listing' => ['table', 'table-hover', 'align-middle', 'studio__listing'],
+    'studio-listing-wrap' => ['table-responsive', 'studio__listing-wrap'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */

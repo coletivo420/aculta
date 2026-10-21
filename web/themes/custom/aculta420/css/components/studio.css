@@ -55,9 +55,12 @@
     flex-direction: column;
   }
 
-  .studio__sidebar {
-    flex: 1 1 auto;
-    max-width: none;
+  .studio__sidebar,
+  .studio__main {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 }
 

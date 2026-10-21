@@ -71,7 +71,7 @@ try {
   check('áreas em abas superiores', d.areas >= 1, `${d.areas} área(s)`);
   check('submenu à esquerda com as seções da área', d.sidebar >= 1, `${d.sidebar} seção(ões)`);
   check('abas próprias da seção', d.subtabs >= 1, `${d.subtabs} aba(s)`);
-  check('ação "Nova publicação" no painel', d.actions.includes('Nova publicação'), d.actions.join(' | '));
+  check('abas internas da seção (Todos, Rascunhos, Em revisão, Publicados, Arquivados)', d.subtabs >= 5, `${d.subtabs} aba(s)`);
   check('sem rolagem horizontal em 1280 px', !d.overflow);
   await shot('01-desktop');
 
@@ -94,8 +94,17 @@ try {
   await sleep(1000);
   const m = JSON.parse(await exec(`return JSON.stringify({ w: window.innerWidth, overflow: document.documentElement.scrollWidth > window.innerWidth })`));
   check('celular em 390 px (viewport emulado)', m.w === 390, `innerWidth=${m.w}`);
-  check('sem rolagem horizontal em 390 px', !m.overflow);
+  // Em caso de estouro, o relatório traz os elementos que passam da largura da tela (causa, não só o sintoma).
+  const offenders = m.overflow ? await exec(`return [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1 && !e.closest('.offcanvas, [data-aculta-studio="listing-wrap"]')).slice(0, 6).map((e) => e.tagName + '.' + String(e.className).slice(0, 50) + ' ' + Math.round(e.getBoundingClientRect().right));`) : [];
+  check('sem rolagem horizontal em 390 px', !m.overflow, offenders.join(' | '));
   await shot('02-celular');
+
+  // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/publicacoes/publicados' });
+  await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
+  const rows = await exec(`return document.querySelectorAll('[data-aculta-studio="listing"] tbody tr').length;`);
+  check('listagem da Revista na aba Publicados com linhas', rows >= 1, `${rows} linha(s)`);
+  await shot('03-listagem-revista');
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);
   check('sem erros de JavaScript na página', errs.length === 0, errs.join(' | '));
