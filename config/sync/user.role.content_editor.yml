@@ -7,6 +7,7 @@ dependencies:
     - filter.format.wiki
     - media.type.document
     - node.type.wiki_entry
+    - node.type.project
     - node.type.revista
     - workflows.workflow.revista
     - workflows.workflow.wiki_editorial
@@ -42,6 +43,8 @@ permissions:
   - 'administer url aliases'
   - 'break content lock'
   - 'create document media'
+  - 'create media'
+  - 'create project content'
   - 'create revista content'
   - 'create url aliases'
   - 'create wiki_entry content'
