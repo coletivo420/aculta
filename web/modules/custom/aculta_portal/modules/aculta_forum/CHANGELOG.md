@@ -32,6 +32,10 @@
   for executado isoladamente; ONLYOFFICE/Collabora oferecem experiência mais
   próxima de Docs por WOPI, com serviço e integração adicionais. Nenhuma
   biblioteca foi adicionada nesta pesquisa.
+- Ordem definida pelo responsável: fechar primeiro imagem/Gallery, depois avaliar
+  preview de DOCX e planilhas. A integração do cartão/leitor de PDF com o ACULTA
+  Document Viewer (`aculta_pdf_viewer`) fica por último; nenhum reader é duplicado
+  no Fórum.
 
 ## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
 

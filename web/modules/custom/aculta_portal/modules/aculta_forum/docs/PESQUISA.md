@@ -191,16 +191,14 @@ WOPI. Referências primárias: [Mammoth — conversão e segurança](https://git
 [Drupal — acesso a Media privado](https://www.drupal.org/docs/8/core/modules/media/setting-up-private-access-to-media-items),
 [Drupal Core — segurança de diretórios](https://www.drupal.org/docs/getting-started/installing-drupal/securing-drupal-file-directories).
 
-Recomendação técnica para o Fórum, sujeita à decisão do responsável: não
-embutir uma suíte Office em `aculta_pdf_viewer`, que deve continuar com domínio
-PDF. Compartilhar um contrato neutro de cartão/preview no Portal e adicionar
-uma estratégia Office local isolada no `aculta_forum` ou num submódulo de
-documentos; começar por conversão LibreOffice→PDF apenas se a infraestrutura de
-worker for aprovada e validada. Mammoth/SheetJS podem ser previews auxiliares,
-com escopo explícito e sanitização, enquanto DOC/XLS/PPT binários sem prévia
-segura permanecem com metadados/download. Uma suíte WOPI self-hosted oferece
-maior fidelidade e edição, mas exige decisão de infraestrutura/licença e não é
-uma biblioteca PHP/JS que se instala no Drupal.
+Sequência aprovada pelo responsável: primeiro upload seguro de imagens e
+integração `aculta_gallery`; depois avaliar preview local de DOCX e planilhas,
+com sanitização e limites de processamento. Tipos sem renderer validado mantêm
+cartão com metadados/download. Por último, integrar cartão e abertura de PDF ao
+ACULTA Document Viewer (`aculta_pdf_viewer`), sem duplicar reader/conversão no
+Fórum. Mammoth/SheetJS podem ser previews auxiliares com escopo explícito; uma
+suíte WOPI self-hosted oferece maior fidelidade e edição, mas exige decisão de
+infraestrutura/licença e não é uma biblioteca PHP/JS que se instala no Drupal.
 
 Referências upstream: [API do plugin CKEditor 5](https://www.drupal.org/docs/drupal-apis/ckeditor-5-api/overview),
 [Ajax Dialogs](https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes),

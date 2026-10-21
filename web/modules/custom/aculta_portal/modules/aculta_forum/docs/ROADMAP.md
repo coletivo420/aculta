@@ -31,6 +31,19 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 [`DISCOURSE-EXPERIENCE.md`](DISCOURSE-EXPERIENCE.md) e
 [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
 
+### Integração de anexos e galerias — ordem aprovada em 2026-10-21
+
+1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
+   via `aculta_gallery`, com publicação vinculada ao comentário visível.
+2. Cartões/preview local de Office, priorizando DOCX e planilhas, apenas para
+   formatos validados em segurança e desempenho; metadados e download seguem
+   disponíveis.
+3. Por último, cartão PDF integrado ao ACULTA Document Viewer (`aculta_pdf_viewer`),
+   miniatura/metadados e abertura em outra janela conforme opção administrativa.
+
+Não criar leitor PDF ou serviço de conversão paralelo no Fórum. Cada etapa exige
+respeitar o contrato de acesso e retenção de anexos privados.
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | `0.1.0-dev.132` | Transferir aviso agregado ao mover árvore publicada | Evento transacional do Fórum consumido pelo Messenger; transfere o registro inteiro de respostas e mescla no destino. Kernel do mover: 19/391; Unit do consumidor: 2/4 PASS; 19 depreciações Core/contrib. Teste de persistência da transferência e ciclo de anexos seguem pendentes, portanto permanece Dev. |
