@@ -55,7 +55,7 @@ Imagem grande do lightbox: estilo `media_gallery_lightbox` (1600 px de largura, 
 
 ## 3. Contrato com o tema (Editorial e Notícia)
 
-- Editorial (`blog`) e Notícia (`article`) têm o mesmo modelo visual: visualizações padrão, teaser e completa iguais. Gate: `scripts/validate-content-visual-parity.php`.
+- As publicações usam o bundle único `revista`; notícia, blog/opinião e entrevista são classificações editoriais. O gate `scripts/validate-content-visual-parity.php` verifica o bundle e seus displays.
 - A página do editorial usa o padrão `aculta-revista-publication` (classes `__meta`, `__cover`, `__subtitle`, `__summary`, `__body`, `__authors`, `__footer`). Template: `components/patterns/revista-publication/revista-publication.twig`.
 - Chamada (`field_subtitle`) e resumo (`field_summary`) são campos distintos: a chamada é uma linha, o resumo é uma ou duas frases.
 

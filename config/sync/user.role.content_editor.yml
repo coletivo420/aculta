@@ -7,6 +7,8 @@ dependencies:
     - filter.format.wiki
     - media.type.document
     - node.type.wiki_entry
+    - node.type.revista
+    - workflows.workflow.revista
     - workflows.workflow.wiki_editorial
     - workflows.workflow.aculta_forum_post
   module:
@@ -40,14 +42,25 @@ permissions:
   - 'administer url aliases'
   - 'break content lock'
   - 'create document media'
+  - 'create revista content'
   - 'create url aliases'
   - 'create wiki_entry content'
   - 'delete own files'
   - 'edit any wiki_entry content'
   - 'edit own document media'
+  - 'edit own revista content'
+  - 'edit any revista content'
   - 'moderar denuncias do forum'
   - 'revert all revisions'
   - 'use text format revista_editorial'
+  - 'use revista transition create_new_draft'
+  - 'use revista transition draft_to_review'
+  - 'use revista transition review_to_draft'
+  - 'use revista transition publish'
+  - 'use revista transition review_to_published'
+  - 'use revista transition archive'
+  - 'use revista transition archived_draft'
+  - 'use revista transition archived_published'
   - 'use text format wiki'
   - 'use wiki_editorial transition create_new_draft'
   - 'use wiki_editorial transition draft_to_review'
@@ -61,6 +74,7 @@ permissions:
   - 'use aculta_forum_post transition withdraw'
   - 'view all revisions'
   - 'view any unpublished content'
+  - 'view revista revisions'
   - 'view latest version'
   - 'view own unpublished content'
   - 'view the administration theme'

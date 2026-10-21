@@ -135,8 +135,14 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 
 ## Arquitetura editorial vigente
 
-A Revista será **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes) e `aculta_forum` (discussão contextual via Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
+A Revista é **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes incorporados como entidades existentes pelo CKEditor 5/Entity Embed) e `aculta_forum` (provider contextual de Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
 
-O bundle `revista`, seus campos, displays, Metatag, Pathauto, Views e workflow próprio estão ativos no Runtime de teste. `article` e `blog` foram migrados e aposentados. O workflow `editorial` existente permanece com `aculta_notice`. Procedimento, salvaguardas e rollback estão em [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md). Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+O bundle `revista`, seus campos, displays, Metatag, Pathauto, Views e workflow próprio estão ativos no Runtime de teste. `article` e `blog` foram migrados e aposentados. O workflow `editorial` existente permanece com `aculta_notice`. O provider contextual do Fórum reconhece `revista` e combina acesso do Node e do campo Comment com permissões de escrita/moderação; não cria tópicos públicos. Procedimento, salvaguardas e rollback estão em [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md). Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+
+O papel `content_editor` é concedido manualmente e concentra criação, edição e
+transições do workflow `revista`. O papel `email_confirmed`, sozinho, não tem
+permissão para criar/publicar conteúdo da Revista. O workflow distingue
+rascunho, revisão, publicado e arquivado; a UI autenticada e a moderação de
+comentários ainda precisam de homologação no navegador.
 
 Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).

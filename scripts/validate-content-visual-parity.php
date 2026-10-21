@@ -1,16 +1,10 @@
 <?php
 
 /**
- * Gate: modelo visual idêntico entre Notícia (article) e Editorial (blog).
+ * @file
+ * Gate: the Revista has one canonical Node bundle and complete displays.
  *
- * Regra do responsável (2026-10-14): Editorial/Blog e Notícia têm o mesmo modelo visual. Nas visualizações
- * (padrão, teaser e completa), os campos, a ordem e as configurações de exibição são os mesmos. Diferença
- * visual só é permitida se estiver listada abaixo, com motivo.
- *
- * Diferenças de formulário que são funcionais (não visuais) também ficam listadas: o Editorial passa pelo
- * fluxo de moderação; a Notícia não.
- *
- * Só lê config/sync. Não importa configuração nem consulta o Runtime.
+ * Only reads Config Sync. It does not import configuration or query Runtime.
  */
 
 declare(strict_types=1);
@@ -20,51 +14,51 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
+$config = $root . '/config/sync';
 $errors = [];
 
-// Diferenças permitidas (chave => motivo). Só aceitas com motivo funcional.
-$allowed_form_diffs = [
-  'moderation_state' => 'Editorial passa pelo fluxo de moderação (workflow editorial); Notícia não.',
-];
+$node_types = glob($config . '/node.type.*.yml') ?: [];
+foreach (['article', 'blog'] as $retired_bundle) {
+  if (is_file($config . '/node.type.' . $retired_bundle . '.yml')) {
+    $errors[] = "bundle aposentado '$retired_bundle' ainda existe no Config Sync";
+  }
+}
+if (!is_file($config . '/node.type.revista.yml')) {
+  $errors[] = 'bundle canônico node.type.revista.yml ausente';
+}
 
-$view_modes = ['default', 'teaser', 'full'];
-foreach ($view_modes as $mode) {
-  $article = $root . "/config/sync/core.entity_view_display.node.article.$mode.yml";
-  $blog = $root . "/config/sync/core.entity_view_display.node.blog.$mode.yml";
-  if (!is_file($blog)) {
-    $errors[] = "visualização '$mode' do Editorial (blog) ausente";
+foreach (['default', 'teaser', 'full'] as $mode) {
+  $display = $config . "/core.entity_view_display.node.revista.$mode.yml";
+  if (!is_file($display)) {
+    $errors[] = "display Revista '$mode' ausente";
     continue;
   }
-  if (!is_file($article)) {
-    $errors[] = "visualização '$mode' da Notícia (article) ausente";
-    continue;
-  }
-  $a = Yaml::parseFile($article)['content'] ?? [];
-  $b = Yaml::parseFile($blog)['content'] ?? [];
-  if ($a !== $b) {
-    $only_a = array_diff_key($a, $b);
-    $only_b = array_diff_key($b, $a);
-    $changed = array_keys(array_filter(array_intersect_key($a, $b), fn($k) => $a[$k] !== $b[$k]));
-    $errors[] = "visualização '$mode' difere: só na Notícia=[" . implode(',', array_keys($only_a)) . '] só no Editorial=[' . implode(',', array_keys($only_b)) . '] alterados=[' . implode(',', $changed) . ']';
+  $display_data = Yaml::parseFile($display);
+  if (($display_data['targetEntityType'] ?? NULL) !== 'node'
+    || ($display_data['bundle'] ?? NULL) !== 'revista'
+    || ($display_data['mode'] ?? NULL) !== $mode) {
+    $errors[] = "display Revista '$mode' aponta para entidade, bundle ou modo incorreto";
   }
 }
 
-$form_a = Yaml::parseFile($root . '/config/sync/core.entity_form_display.node.article.default.yml')['content'] ?? [];
-$form_b = Yaml::parseFile($root . '/config/sync/core.entity_form_display.node.blog.default.yml')['content'] ?? [];
-foreach (array_diff_key($form_b, $form_a) as $field => $_) {
-  if (!isset($allowed_form_diffs[$field])) {
-    $errors[] = "formulário do Editorial tem '$field' que a Notícia não tem, sem motivo registrado";
-  }
+$form = $config . '/core.entity_form_display.node.revista.default.yml';
+if (!is_file($form)) {
+  $errors[] = 'form display Revista ausente';
 }
-foreach (array_diff_key($form_a, $form_b) as $field => $_) {
-  $errors[] = "formulário da Notícia tem '$field' que o Editorial não tem";
+else {
+  $form_data = Yaml::parseFile($form);
+  if (($form_data['targetEntityType'] ?? NULL) !== 'node' || ($form_data['bundle'] ?? NULL) !== 'revista') {
+    $errors[] = 'form display aponta para entidade ou bundle incorreto';
+  }
 }
 
 if ($errors !== []) {
-  echo "CONTENT VISUAL PARITY: FAIL\n";
-  foreach ($errors as $e) {
-    echo " - $e\n";
+  echo "REVISTA BUNDLE/DISPLAYS: FAIL\n";
+  foreach ($errors as $error) {
+    echo " - $error\n";
   }
   exit(1);
 }
-echo 'CONTENT VISUAL PARITY: PASS (' . count($view_modes) . ' visualizações iguais; formulário com ' . count($allowed_form_diffs) . " diferença funcional registrada)\n";
+
+echo 'REVISTA BUNDLE/DISPLAYS: PASS (um bundle; 3 displays e formulário presentes; '
+  . count($node_types) . " tipos Node no Config Sync)\n";

@@ -82,12 +82,26 @@ anteriores à migração de conteúdo; não substituem o dump novo exigido acima
 
 A migração foi executada em `toca`, URI `http://revista420.aculta.toca.net.br`,
 com banco `aculta_runtime`, após dump gzip e export completo de configuração
-privados. Foram migrados 16 Nodes e 16 revisões; NID, UUID, VID e os 26 aliases
-foram preservados. Não havia Comments, referências de entrada ou Entity Usage
-nos Nodes inventariados. Nenhum conteúdo ou arquivo compartilhado foi excluído.
+privados. Foram migrados 16 Nodes, preservando NID, UUID, VID original e os 26
+aliases. Não havia Comments, referências de entrada ou Entity Usage nos Nodes
+inventariados. Nenhum conteúdo ou arquivo compartilhado foi excluído.
 
 Após a contagem zero dos bundles antigos, `article` e `blog` foram removidos via
 Entity API. A tela de criação agora tem somente o tipo editorial `revista`.
 Backup do banco: `/tmp/aculta-magazine-before-migration-20261021.sql.gz`;
 backup de configuração: `/tmp/aculta-magazine-before-migration-20261021-config`.
 Esses arquivos são privados do Runtime de teste e não devem ser versionados.
+
+### Correção de estado editorial — 2026-10-21
+
+A inspeção posterior detectou que a recriação dos Nodes havia aplicado o estado
+padrão `draft` do workflow `revista` às 12 publicações que estavam publicadas
+antes da migração. Os mesmos NIDs e UUIDs permaneceram intactos. Após validar
+backup, workflow, permissão de transição e estado de cada Node, a Entity API
+criou uma nova revisão publicada para cada um dos 12 NIDs legítimos. Os quatro
+Nodes identificados como teste continuaram em rascunho. Nada foi excluído.
+
+O migrador agora traduz o status legado para `published`/`draft` quando o bundle
+destino possui workflow e verifica o status no pós-check transacional. O teste
+Kernel instala o workflow e confirma que um Node legado publicado permanece
+publicado após a migração.

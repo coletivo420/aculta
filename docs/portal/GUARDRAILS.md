@@ -238,16 +238,16 @@ Decisão do responsável (2026-10-14). Vale para toda criação e moderação de
 
 Motivo: poucos papéis na criação de conteúdo. Um papel por função evita combinações de permissões difíceis de auditar.
 
-## Modelo visual: Notícia e Editorial são iguais
+## Modelo editorial único da Revista
 
-Regra do responsável (2026-10-14). Vale para toda alteração de exibição dos conteúdos publicados.
+Decisão do responsável (2026-10-21). Vale para toda alteração de exibição das publicações.
 
-- **Notícia (`article`) e Editorial (`blog`) têm o mesmo modelo visual.** As visualizações padrão, teaser e completa têm os mesmos campos, a mesma ordem e as mesmas configurações de exibição.
-- Mudança visual em um dos dois tipos vale para o outro na mesma entrega. Não criar exceção de layout por tipo.
-- **Única diferença permitida de formulário:** o Editorial passa pelo fluxo de moderação (estado de moderação), que é funcional. Não há outra diferença registrada.
-- Gate: `php scripts/validate-content-visual-parity.php` (deve ser PASS em toda mudança de exibição de Notícia ou Editorial).
+- A Revista usa somente o bundle Node `revista`; `article` e `blog` foram aposentados.
+- Formatos como notícia, blog/opinião, entrevista e reportagem são classificações editoriais, não tipos de conteúdo.
+- Formulário e visualizações padrão, teaser e completa pertencem ao bundle `revista` e seguem os campos do Config Sync.
+- Gate: `php scripts/validate-content-visual-parity.php` verifica o bundle canônico e seus displays/formulário em toda mudança editorial.
 
-Motivo: o leitor percebe a mesma página com dois layouts diferentes quando os tipos divergem, e a manutenção dobra.
+Motivo: um bundle mantém criação, workflow, SEO, comentários e apresentação sob a mesma fonte de verdade.
 
 ## Papéis e hierarquia
 

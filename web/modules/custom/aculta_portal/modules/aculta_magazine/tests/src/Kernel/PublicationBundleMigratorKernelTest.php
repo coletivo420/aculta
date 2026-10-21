@@ -8,6 +8,7 @@ use Drupal\aculta_magazine\Migration\PublicationBundleMigrator;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\path_alias\Entity\PathAlias;
+use Drupal\workflows\Entity\Workflow;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
@@ -33,6 +34,8 @@ final class PublicationBundleMigratorKernelTest extends KernelTestBase {
     'path',
     'pathauto',
     'comment',
+    'workflows',
+    'content_moderation',
   ];
 
   /**
@@ -41,16 +44,34 @@ final class PublicationBundleMigratorKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installEntitySchema('node');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('comment');
-    $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'filter', 'node', 'pathauto', 'comment']);
+    $this->installEntitySchema('workflow');
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['system', 'user', 'filter', 'node', 'pathauto', 'comment', 'content_moderation']);
 
     foreach (['article' => 'Article', 'blog' => 'Blog', 'revista' => 'Revista'] as $id => $label) {
       NodeType::create(['type' => $id, 'name' => $label])->save();
     }
+    Workflow::create([
+      'id' => 'revista',
+      'label' => 'Editorial da Revista',
+      'type' => 'content_moderation',
+      'type_settings' => [
+        'states' => [
+          'draft' => ['label' => 'Rascunho', 'published' => FALSE, 'default_revision' => FALSE, 'weight' => 0],
+          'published' => ['label' => 'Publicado', 'published' => TRUE, 'default_revision' => TRUE, 'weight' => 1],
+        ],
+        'transitions' => [
+          'publish' => ['label' => 'Publicar', 'to' => 'published', 'weight' => 0, 'from' => ['draft']],
+        ],
+        'entity_types' => ['node' => ['revista']],
+        'default_moderation_state' => 'draft',
+      ],
+    ])->save();
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
   }
 
   /**
@@ -90,6 +111,8 @@ final class PublicationBundleMigratorKernelTest extends KernelTestBase {
     self::assertSame($uuid, $migrated->uuid());
     self::assertSame($vid, (int) $migrated->getRevisionId());
     self::assertSame('Preserve identity', $migrated->getTitle());
+    self::assertSame('published', $migrated->get('moderation_state')->value);
+    self::assertTrue($migrated->isPublished());
 
     $restored_alias = $this->container->get('entity_type.manager')->getStorage('path_alias')->load($alias_id);
     self::assertSame($alias_uuid, $restored_alias->uuid());

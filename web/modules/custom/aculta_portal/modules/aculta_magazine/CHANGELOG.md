@@ -1,3 +1,21 @@
+## 0.4.0-dev.1 — integrações contextuais Fórum/Galeria — 2026-10-21
+
+- O papel editorial manual `content_editor` recebeu criação/edição do bundle
+  `revista` e permissões explícitas do workflow. Contas `email_confirmed` sem
+  esse papel não ganham acesso de criação nem transições de publicação.
+- Corrigido o migrador para mapear o estado publicado/rascunho ao workflow
+  `revista` e validar a preservação de publicação. Kernel MariaDB: 2 testes / 44
+  assertions PASS; duas depreciações upstream de Token/Pathauto.
+- Na migração de 2026-10-21, 12 publicações legítimas haviam sido preservadas
+  como Nodes, mas ficaram em rascunho devido ao estado padrão do novo workflow.
+  Restauradas por transição Entity API para `published`, com nova revisão e
+  mensagem de revisão; os 4 Nodes de teste permaneceram rascunhos. Nenhum Node
+  ou arquivo foi excluído.
+- O provider de discussão do `aculta_forum` agora reconhece somente Nodes `revista` com `field_aculta_discussion`; `article` e `blog` aposentados deixam de ser contextos suportados.
+- A permissão contextual continua combinando acesso do Node, acesso do campo Comment, estado aberto/fechado e permissões `post comments`/`administer comments`; não cria tópicos públicos.
+- A Revista declara dependência direta do subkernel `aculta_gallery`. O corpo editorial incorpora entidades `media_gallery` existentes pelo CKEditor 5/Entity Embed; upload e apresentação seguem pertencendo à Gallery/Image.
+- Unit do provider: 5 testes / 28 assertions PASS. Drupal Core 11.4.10 instalado; fontes consultadas: `EntityInterface::access()` e `AccessResult::inheritCacheability()` da API oficial.
+
 ## 0.3.0-dev.2 — consolida bundle único Revista — 2026-10-21
 
 - Migração no Runtime de teste: 16 Nodes e suas 16 revisões passaram a `revista`,

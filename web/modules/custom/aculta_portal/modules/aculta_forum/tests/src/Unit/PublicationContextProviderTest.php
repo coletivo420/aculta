@@ -22,17 +22,19 @@ use PHPUnit\Framework\TestCase;
 final class PublicationContextProviderTest extends TestCase {
 
   /**
-   * Only article and blog hosts with the configured field are supported.
+   * Only Revista hosts with the configured field are supported.
    */
   public function testSupportsOnlyPublicationNodesWithTheSharedField(): void {
     $provider = new PublicationContextProvider();
+    $revista = $this->node('revista', TRUE);
     $article = $this->node('article', TRUE);
     $blog = $this->node('blog', TRUE);
-    $withoutField = $this->node('article', FALSE);
+    $withoutField = $this->node('revista', FALSE);
     $topic = $this->node('aculta_forum_topic', TRUE);
 
-    self::assertTrue($provider->supports($article));
-    self::assertTrue($provider->supports($blog));
+    self::assertTrue($provider->supports($revista));
+    self::assertFalse($provider->supports($article));
+    self::assertFalse($provider->supports($blog));
     self::assertFalse($provider->supports($withoutField));
     self::assertFalse($provider->supports($topic));
     self::assertFalse($provider->supports($this->createMock(EntityInterface::class)));
@@ -43,14 +45,14 @@ final class PublicationContextProviderTest extends TestCase {
    */
   public function testContextUsesHostAccessAndCommentPermissions(): void {
     $provider = new PublicationContextProvider();
-    $article = $this->node('article', TRUE);
+    $article = $this->node('revista', TRUE);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('getValue')->willReturn([['status' => CommentingStatus::Open->value]]);
-    $field->method('access')->willReturn(AccessResult::allowed()->addCacheTags(['node:article']));
+    $field->method('access')->willReturn(AccessResult::allowed()->addCacheTags(['node:revista']));
     $article->method('get')->with('field_aculta_discussion')->willReturn($field);
-    $article->method('uuid')->willReturn('article-uuid');
+    $article->method('uuid')->willReturn('revista-uuid');
     $article->method('access')->with('view', $this->isInstanceOf(AccountInterface::class), TRUE)
-      ->willReturn(AccessResult::allowed()->addCacheTags(['node:article']));
+      ->willReturn(AccessResult::allowed()->addCacheTags(['node:revista']));
     $url = $this->createMock(Url::class);
     $article->method('toUrl')->with('canonical')->willReturn($url);
 
@@ -58,12 +60,12 @@ final class PublicationContextProviderTest extends TestCase {
     $context = $provider->getContext($article, $account);
 
     self::assertSame('publication', $context->getType());
-    self::assertSame('publication:node:article-uuid', $context->getStableId());
+    self::assertSame('publication:node:revista-uuid', $context->getStableId());
     self::assertTrue($context->getReadAccess()->isAllowed());
     self::assertTrue($context->getWriteAccess()->isAllowed());
     self::assertFalse($context->getModerationAccess()->isAllowed());
     self::assertContains('user.permissions', $context->getWriteAccess()->getCacheContexts());
-    self::assertContains('node:article', $context->getCacheTags());
+    self::assertContains('node:revista', $context->getCacheTags());
     self::assertSame($url, $context->getCanonicalUrl());
   }
 
@@ -86,13 +88,13 @@ final class PublicationContextProviderTest extends TestCase {
    */
   public function testHostAndFieldAccessRestrictionsArePreserved(): void {
     $provider = new PublicationContextProvider();
-    $node = $this->node('article', TRUE);
+    $node = $this->node('revista', TRUE);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('getValue')->willReturn([['status' => CommentingStatus::Open->value]]);
-    $field->method('access')->willReturn(AccessResult::forbidden()->addCacheTags(['node:article']));
+    $field->method('access')->willReturn(AccessResult::forbidden()->addCacheTags(['node:revista']));
     $node->method('get')->with('field_aculta_discussion')->willReturn($field);
-    $node->method('uuid')->willReturn('article-uuid');
-    $node->method('access')->willReturn(AccessResult::forbidden()->addCacheTags(['node:article']));
+    $node->method('uuid')->willReturn('revista-uuid');
+    $node->method('access')->willReturn(AccessResult::forbidden()->addCacheTags(['node:revista']));
     $node->method('toUrl')->willReturn($this->createMock(Url::class));
 
     $context = $provider->getContext($node, $this->account(['post comments', 'administer comments']));
@@ -107,7 +109,7 @@ final class PublicationContextProviderTest extends TestCase {
    */
   public function testRejectsUnpersistedPublication(): void {
     $provider = new PublicationContextProvider();
-    $node = $this->node('article', TRUE, TRUE);
+    $node = $this->node('revista', TRUE, TRUE);
 
     $this->expectException(\LogicException::class);
     $provider->getContext($node, $this->account([]));
@@ -117,12 +119,12 @@ final class PublicationContextProviderTest extends TestCase {
    * Creates a mock publication with the requested Comment status.
    */
   private function publicationContextNode(int $status): NodeInterface {
-    $node = $this->node('article', TRUE);
+    $node = $this->node('revista', TRUE);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('getValue')->willReturn([['status' => $status]]);
     $field->method('access')->willReturn(AccessResult::allowed());
     $node->method('get')->with('field_aculta_discussion')->willReturn($field);
-    $node->method('uuid')->willReturn('article-uuid');
+    $node->method('uuid')->willReturn('revista-uuid');
     $node->method('access')->willReturn(AccessResult::allowed());
     $node->method('toUrl')->willReturn($this->createMock(Url::class));
     return $node;

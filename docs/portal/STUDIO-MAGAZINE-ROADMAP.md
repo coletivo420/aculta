@@ -33,6 +33,22 @@
   integração compartilhada de Fórum/Galeria, permissões e revisão completa do
   workflow e da apresentação. Studio continua bloqueado até o gate 0.5.0.
 
+## Registro de execução — Magazine 0.4.0 — 2026-10-21
+
+- O provider contextual do `aculta_forum` passa a reconhecer somente `revista`
+  com `field_aculta_discussion`; o teste confirma que os bundles aposentados
+  `article` e `blog` não são mais resolvidos. Acesso continua agregado do Node,
+  do campo Comment, do estado da discussão e das permissões do usuário.
+- A integração de galeria usa as entidades `media_gallery` existentes no corpo
+  CKEditor 5 via Entity Embed, com criação/renderização de propriedade de
+  `aculta_gallery`; a decisão do responsável foi manter esse vínculo existente,
+  sem novo campo de galeria no Node editorial.
+- Unit do provider: 5 testes / 28 assertions PASS. Gate de Revista permanece em
+  andamento: workflow e permissões do papel manual `content_editor` foram
+  configurados; falta validar apresentação e operações autenticadas de revisão,
+  comentários/galerias, regressões e consistência de Config Sync antes de 0.5.0.
+  Studio ainda não iniciado.
+
 ## Gates irrenunciáveis
 
 - Não trocar bundle por SQL direto; não excluir Nodes, comentários, aliases, Media, relações Group ou histórico sem comprovação e reversibilidade.

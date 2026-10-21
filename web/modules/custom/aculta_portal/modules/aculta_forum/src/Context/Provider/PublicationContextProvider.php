@@ -18,7 +18,7 @@ use Drupal\node\NodeInterface;
  */
 final class PublicationContextProvider implements DiscussionContextProviderInterface {
 
-  private const HOST_BUNDLES = ['article', 'blog'];
+  private const HOST_BUNDLES = ['revista'];
 
   private const FIELD = 'field_aculta_discussion';
 
@@ -36,7 +36,7 @@ final class PublicationContextProvider implements DiscussionContextProviderInter
    */
   public function getContext(EntityInterface $entity, AccountInterface $account): DiscussionContextInterface {
     if (!$this->supports($entity)) {
-      throw new \LogicException('Publication discussion context requires an article or blog node with the shared Comment field.');
+      throw new \LogicException('Publication discussion context requires a revista node with the shared Comment field.');
     }
     if ($entity->isNew()) {
       throw new \LogicException('A discussion context requires a persisted host entity.');

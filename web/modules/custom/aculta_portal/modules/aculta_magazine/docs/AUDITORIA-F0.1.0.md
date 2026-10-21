@@ -160,3 +160,13 @@ Outros resultados somente leitura:
 - Conteúdo preservado: os 16 Nodes, seus campos, revisões e aliases. Conteúdo
   excluído: nenhum. Backups privados anteriores à migração estão descritos no
   procedimento e permaneceram fora do checkout.
+
+### Correção de estado publicado — 2026-10-21
+
+A checagem posterior ao corte detectou que os 12 Nodes editoriais legítimos,
+embora mantivessem identidade e conteúdo, haviam recebido `draft` pelo default
+do workflow novo. Foram restaurados como `published` pela Entity API, com uma
+nova revisão e registro explicativo; os quatro Nodes de teste continuam como
+rascunhos. O migrador e o Kernel agora verificam a preservação de publicação.
+Os bundles ativos confirmados são 11 ao todo, com `revista` como o único bundle
+editorial; os tipos e rotas `article`/`blog` não existem no Runtime.

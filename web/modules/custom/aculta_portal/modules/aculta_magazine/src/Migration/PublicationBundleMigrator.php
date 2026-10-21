@@ -150,6 +150,19 @@ final class PublicationBundleMigrator {
           }
           $replacement->set($field_name, $source_values[$field_name] ?? []);
         }
+        // The destination workflow defaults new content to draft. Preserve the
+        // source publication state explicitly when the legacy bundle had no
+        // moderation state of its own.
+        if ($replacement->hasField('moderation_state')) {
+          $source_moderation_state = $source_values['moderation_state'][0]['value'] ?? NULL;
+          $target_states = $this->getRevistaModerationStates();
+          $moderation_state = is_string($source_moderation_state) && isset($target_states[$source_moderation_state])
+            ? $source_moderation_state
+            : ((int) ($source_values['status'][0]['value'] ?? 0) === 1 ? 'published' : 'draft');
+          if (isset($target_states[$moderation_state])) {
+            $replacement->set('moderation_state', $moderation_state);
+          }
+        }
         $replacement->set('vid', $source_values['vid'][0]['value']);
         if ($replacement->hasField('path')) {
           $replacement->set('path', [['pathauto' => 0]]);
@@ -183,6 +196,20 @@ final class PublicationBundleMigrator {
     }
 
     return $plan;
+  }
+
+  /**
+   * Gets the states supported by the configured Revista workflow, if present.
+   *
+   * @return array<string, mixed>
+   *   State plugin configuration keyed by ID.
+   */
+  private function getRevistaModerationStates(): array {
+    if (!$this->entityTypeManager->hasDefinition('workflow')) {
+      return [];
+    }
+    $workflow = $this->entityTypeManager->getStorage('workflow')->load('revista');
+    return $workflow ? $workflow->getTypePlugin()->getStates() : [];
   }
 
   /**
@@ -246,6 +273,9 @@ final class PublicationBundleMigrator {
       $original = $snapshots[$nid]['fields'];
       if ($node->uuid() !== $original['uuid'][0]['value'] || (int) $node->getRevisionId() !== (int) $original['vid'][0]['value']) {
         throw new \RuntimeException(sprintf('O Node %s não preservou NID, UUID e VID.', $nid));
+      }
+      if ((int) $node->isPublished() !== (int) ($original['status'][0]['value'] ?? 0)) {
+        throw new \RuntimeException(sprintf('O Node %s não preservou o estado de publicação.', $nid));
       }
       $revisions = $node_storage->getQuery()->allRevisions()->accessCheck(FALSE)->condition('nid', (int) $nid)->count()->execute();
       if ($revisions !== 1) {

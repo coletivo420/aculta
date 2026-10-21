@@ -23,3 +23,9 @@ como bloco na mesma página e filtra por tipo, campo, entidade e bundles editori
 Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A
 colocação do bloco é configuração de site em Config Sync; a instalação do
 módulo fornece as Views e o caminho editorial.
+
+Comentários contextuais continuam como entidades Comment no Node `revista`.
+`aculta_forum` fornece o contexto compartilhado de leitura, resposta e moderação;
+essa integração não cria tópico público. Galerias são entidades `media_gallery`
+propriedade de `aculta_gallery`, incorporadas no corpo editorial pelo CKEditor 5
+e Entity Embed; imagens continuam sob a política de `aculta_image`.
