@@ -154,7 +154,8 @@ usuário para validar o access de conta ativa via `AccountUserLoader`. PHP CLI
 
 Execução adicional em 2026-10-21: regressão combinada `aculta_lms` e
 `aculta_lms_messenger` passou com 21 testes / 646 assertions Kernel no MariaDB
-dedicado e 67 testes / 347 assertions Unit. Foram reportadas 92 depreciações de
+dedicado e 72 testes / 368 assertions Unit. A Unit inclui os cinco casos novos
+de entitlement Commerce. Foram reportadas 92 depreciações de
 Core/contrib e 8 depreciações PHPUnit; não houve falhas. PHP CLI 8.4.26; PHP
 8.5 continua não validado.
 
@@ -163,7 +164,7 @@ Após adicionar a recusa de PDF revogado, `CertificateLifecycleTest` passou com
 agora com 646 assertions; a execução completa acima já inclui essa alteração.
 
 Execução adicional em 2026-10-21 após a correção da matrícula F7: regressão
-combinada `aculta_lms` + `aculta_lms_messenger` passou com 67 testes / 347
+combinada `aculta_lms` + `aculta_lms_messenger` passou com 72 testes / 368
 assertions Unit e 21 testes / 646 assertions Kernel no MariaDB dedicado. Foram
 reportadas 8 depreciações PHPUnit e 92 de Core/contrib. PHPCS, Gate Drupal 11+
 (1010 checks), índice do projeto (29 componentes), imagem e slugs passaram. O
