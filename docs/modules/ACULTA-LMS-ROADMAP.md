@@ -268,6 +268,8 @@ PASS; 8 depreciações PHPUnit e 92 de Core/contrib. O LMS Unit isolado é 51/28
 e o Kernel isolado é 20/631. O gate geral de endereços de ambiente ainda reprova
 22 literais em testes de `aculta_qrcode` e `aculta_mailer`; o teste QR do LMS
 agora usa domínio `.test` e não aparece mais entre as ocorrências.
+`composer audit --locked` não encontrou advisories. O Homelab executa PHP
+8.4.26 e não tem binário PHP 8.5; a versão alvo continua sem validação.
 
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 

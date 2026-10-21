@@ -9,7 +9,8 @@
   Foram reportadas 8 depreciações PHPUnit e 92 de Core/contrib. O gate geral
   de endereços continua
   apontando literais preexistentes em `aculta_qrcode` e `aculta_mailer`, fora
-  desta alteração.
+  desta alteração. `composer audit --locked` não encontrou advisories; PHP
+  8.5 não está instalado no Homelab e permanece sem validação.
 
 ## 0.1.0-dev.48 — alinhar currículo ao acesso contextual do curso — 2026-10-21
 
