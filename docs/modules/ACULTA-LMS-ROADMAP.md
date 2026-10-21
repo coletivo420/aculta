@@ -123,7 +123,9 @@ produto, variação, turma, curso, contas e aviso temporários foram removidos p
 APIs Drupal; o e-mail foi recusado pelo SMTP porque a conta de teste usa domínio
 reservado. A role insider `lms_class-member` não pode ser enviada no campo de
 roles individuais; o manager foi corrigido para deixar o Group aplicar o escopo
-insider. RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso,
+insider. Unit cobre pedido gratuito, pagamento concluído, reembolso parcial e
+integral e pedido incompleto, sem gateway remoto. RUNTIME STATUS: parcial;
+checkout HTTP, pedido pago, reembolso,
 matrícula manual/removível por educador e isolamento A/B continuam DEFERRED.
 Backup privado em
 `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.

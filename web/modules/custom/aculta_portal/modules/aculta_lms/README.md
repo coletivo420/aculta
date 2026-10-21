@@ -121,6 +121,9 @@ papel global `estudante` e preserva a membership manual do educador. Reembolso
 integral revoga somente membership originada pelo pedido; outra compra válida
 mantém acesso e matrícula manual permanece independente. Educadores podem
 remover memberships manuais, mas não memberships protegidas por pagamento ativo.
+Unit testa entitlement de pedido gratuito, pagamento concluído, reembolso parcial
+e total e pedido incompleto. O Runtime não foi conectado ao gateway para simular
+uma transação remota.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página

@@ -171,6 +171,11 @@ Runtime `cursos` confirmou pedido gratuito concluído, origem da membership e
 papel global estudante; fixtures, aviso e item de e-mail temporários foram
 removidos por APIs Drupal. PHP CLI 8.4.26; PHP 8.5 não validado.
 
+Após ampliar a cobertura de estados de compra F7 em 2026-10-21, Unit LMS/Messenger
+passou com 72 testes / 368 assertions; Kernel permanece 21 / 646. O novo teste
+Unit valida pedido grátis concluído, pedido incompleto e balanços de pagamentos
+concluídos, parcialmente estornados e estornados, sem invocar gateway remoto.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

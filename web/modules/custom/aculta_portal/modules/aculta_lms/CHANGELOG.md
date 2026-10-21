@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.52 — cobrir estados de pagamento para matrícula — 2026-10-21
+
+- `CourseOrderEnrollmentManagerTest` cobre pedido gratuito concluído, pagamento
+  completo, estorno parcial, estorno total e pedido incompleto. Unit combinada
+  LMS/Messenger: 72 testes/368 assertions PASS; os 8 avisos são de metadados
+  PHPUnit antigos em outros testes. PHPCS passou nos arquivos LMS alterados.
+- Essa cobertura testa a decisão local de entitlement, sem chamar gateway nem
+  simular uma transação remota. A homologação Runtime de pagamento/refund real
+  continua pendente.
+
 ## 0.1.0-dev.51 — corrigir role da matrícula por compra — 2026-10-21
 
 - A matrícula por pedido deixa de gravar `lms_class-member` como role
