@@ -41,6 +41,9 @@ final class StudioListingBuilder {
     if (($listing['entity'] ?? 'node') === 'comment') {
       return $this->buildComments($listing);
     }
+    if (($listing['entity'] ?? 'node') === 'group') {
+      return $this->buildGroups($listing);
+    }
     $bundle = $listing['bundle'];
     $state = $listing['state'] ?? NULL;
     $storage = $this->entityTypeManager->getStorage('node');
@@ -146,6 +149,43 @@ final class StudioListingBuilder {
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
       '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['comment_list']],
+    ];
+  }
+
+
+  /**
+   * Table of groups of a type (for example the classes of the LMS), each row checked by the Group access.
+   *
+   * @param array{entity: string, bundle: string} $listing
+   */
+  private function buildGroups(array $listing): array {
+    $storage = $this->entityTypeManager->getStorage('group');
+    $ids = $storage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('type', $listing['bundle'])
+      ->sort('label', 'ASC')
+      ->range(0, self::LIMIT)
+      ->execute();
+    $rows = [];
+    foreach ($storage->loadMultiple($ids) as $group) {
+      $rows[] = [
+        'title' => ['data' => ['#type' => 'link', '#title' => $group->label(), '#url' => $group->toUrl()]],
+        'state' => '',
+        'author' => $group->getOwner()?->getDisplayName() ?? '',
+        'changed' => $this->dateFormatter->format($group->getChangedTime(), 'short'),
+      ];
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
+      'table' => [
+        '#type' => 'table',
+        '#header' => ['title' => $this->t('Turma'), 'state' => $this->t('Situação'), 'author' => $this->t('Criada por'), 'changed' => $this->t('Atualizada em')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum item nesta aba.'),
+        '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+      ],
+      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['group_list']],
     ];
   }
 

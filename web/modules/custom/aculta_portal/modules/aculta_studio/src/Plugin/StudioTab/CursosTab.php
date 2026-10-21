@@ -34,6 +34,18 @@ final class CursosTab extends StudioTabBase {
   /** {@inheritdoc} */
   public function sections(AccountInterface $account): array {
     return [
+      'turmas' => [
+        'label' => $this->t('Turmas'),
+        'weight' => 5,
+        'tabs' => [
+          'todas' => [
+            'label' => $this->t('Todas'),
+            'weight' => 0,
+            'listing' => ['entity' => 'group', 'bundle' => 'lms_class'],
+            'actions' => [],
+          ],
+        ],
+      ],
       'criar' => [
         'label' => $this->t('Criar'),
         'weight' => 0,
