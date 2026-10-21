@@ -1,0 +1,22 @@
+/* ACULTA Studio (aculta_studio): apresentação das abas, do painel e das ações.
+   Marcação neutra vinda do módulo, traduzida em PortalUiHooks::TOKENS. */
+.studio__tabs {
+  border-bottom: 1px solid var(--bs-border-color);
+  margin-bottom: 1.5rem;
+}
+
+.studio__tab[aria-current="page"] {
+  font-weight: 700;
+}
+
+.studio__panel {
+  margin-bottom: 2rem;
+}
+
+.studio__heading {
+  margin-bottom: 1rem;
+}
+
+.studio__actions > li {
+  margin: 0;
+}

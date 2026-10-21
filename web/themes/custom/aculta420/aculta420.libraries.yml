@@ -41,6 +41,7 @@ global:
       css/components/sales-panel.css: {}
       css/components/statistics.css: {}
       css/components/portal-support.css: {}
+      css/components/studio.css: {}
       css/components/auth.css: {}
   js:
     js/navigation.js: {}

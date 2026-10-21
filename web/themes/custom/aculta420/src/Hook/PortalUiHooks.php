@@ -347,6 +347,15 @@ final class PortalUiHooks {
     'sales-state-refunded' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--refunded'],
     'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
     'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
+    // ACULTA Studio (aculta_studio): abas, painel e ações da conta.
+    'studio-shell' => ['studio'],
+    'studio-tabs' => ['nav', 'nav-tabs', 'studio__tabs'],
+    'studio-tab' => ['nav-link', 'studio__tab'],
+    'studio-panel' => ['studio__panel', 'card', 'card-body'],
+    'studio-heading' => ['studio__heading', 'h4'],
+    'studio-actions' => ['studio__actions', 'list-unstyled', 'd-flex', 'flex-wrap', 'gap-2'],
+    'studio-action' => ['btn', 'btn-outline-primary', 'studio__action'],
+    'studio-empty' => ['text-muted'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */
