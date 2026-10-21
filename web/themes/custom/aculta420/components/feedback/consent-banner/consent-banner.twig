@@ -1,0 +1,17 @@
+{#
+/**
+ * Banner de consentimento de medição para visitante anônimo (aculta_statistics).
+ *
+ * Começa oculto. O JavaScript do Portal remove `hidden` só quando ainda não há decisão gravada.
+ * Aceitar e recusar gravam a escolha no cookie; sem JavaScript o banner permanece oculto e nada é medido.
+ */
+#}
+<section class="aculta-consent" data-portal-ui="consent-banner" aria-labelledby="aculta-consent-title" hidden>
+  <h2 id="aculta-consent-title" class="aculta-consent__title">{{ 'Medição de audiência'|t }}</h2>
+  <p class="aculta-consent__text">{{ 'Usamos medição agregada para saber quais conteúdos são lidos. Você escolhe se aceita. A recusa não afeta o uso do site.'|t }}</p>
+  <div class="aculta-consent__actions">
+    <button type="button" class="btn btn-primary btn-sm" data-consent-action="accept">{{ 'Aceitar'|t }}</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-consent-action="reject">{{ 'Recusar'|t }}</button>
+    <a class="aculta-consent__link" href="/politica-de-privacidade" data-consent-privacy>{{ 'Política de privacidade'|t }}</a>
+  </div>
+</section>

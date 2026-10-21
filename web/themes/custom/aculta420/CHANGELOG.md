@@ -1,3 +1,9 @@
+## 0.6.0-dev.132 — banner de consentimento para visitante anônimo — 2026-10-20
+
+- Novo SDC `feedback/consent-banner`: oculto por padrão, marcador `data-portal-ui="consent-banner"`, botões aceitar e recusar e link de privacidade. Estilos em `css/components/consent-banner.css`, só com tokens semânticos. Incluído em `page.html.twig`.
+- O comportamento vem do módulo `aculta_statistics`, desligado por padrão. Com a opção ligada, o JavaScript exibe o banner, grava a escolha em cookie e atualiza o Consent Mode v2.
+- Validação: SDC schema PASS, Foundation PASS (367), Design Foundations PASS (2129), Shell contract PASS (11), fronteira módulo–tema PASS (1835). Runtime de teste: página responde 200 com o banner oculto. Revisão visual responsiva e acessível, e teste com a opção ligada, pendentes antes de RC.
+
 ## 0.6.0-dev.131 — componentes experimentais do QR Code dinâmico — 2026-10-20
 
 - Novos SDCs experimentais `content/qr-preview` (imagem SVG com texto alternativo e legenda opcional) e `content/qr-download` (lista de formatos para baixar). Status `experimental`; o Portal prepara URLs e textos, e o tema só renderiza.

@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.132 | Banner de consentimento para visitante anônimo (`consent-banner`), oculto até a decisão | Foundation, SDC schema e fronteira PASS; revisão visual responsiva/acessível e teste com a opção ligada pendentes; estado Dev | Comportamento no módulo `aculta_statistics` (`consent_banner.enabled`, desligado por padrão); mapa em `MAPA-MODULO-TEMA.md`. |
 | 0.6.0-dev.131 | Componentes experimentais do QR Code dinâmico (`qr-preview`, `qr-download`) | SDC schema e Foundation PASS; revisão visual responsiva/acessível pendente; estado Dev | Consumidor público ainda não ligado; o Portal prepara URL e texto |
 | 0.6.0-dev.130 | Identidade pública opcional do proprietário em micropáginas Links | SDC schema e revisão visual responsiva/acessível pendentes; estado Dev | Slot neutro renderizado pelo tema; privacidade e dados preparados pelo Portal |
 | 0.6.0-dev.129 | Micropáginas separam identidade autoral da marca ACULTA | Validações do SDC, Foundation e visual pendentes; estado Dev | Título público torna-se H1 visível e a landing preserva a marca institucional |
