@@ -38,7 +38,10 @@ atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões
 mantêm a validação nativa do LMS File Upload. Imagens inválidas, com MIME
 incompatível ou acima de 10 MB são recusadas. Unit cobre imagem válida, arquivo
 inválido, limite de tamanho e delegação de arquivos não raster à validação
-nativa. O smoke ponta a ponta de upload e revogação ainda está pendente.
+nativa. Kernel `AttemptArchiveLifecycleTest` passou com 7 testes / 289
+assertions, inclusive download privado, revogação de membership e acesso de
+educador. O smoke ponta a ponta de upload e revogação no Runtime ainda está
+pendente.
 
 ## F1 — Fundação
 

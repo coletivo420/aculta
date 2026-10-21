@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.21 — Kernel cobre dependência de imagens — 2026-10-21
+
+- Inclui `aculta_image` e o schema de `entity_usage` no Kernel que cobre anexos
+  privados, mantendo o lifecycle de limpeza habilitado durante os cenários.
+- Kernel `AttemptArchiveLifecycleTest`: 7 testes / 289 assertions PASS; 42
+  depreciações de Core/contrib upstream.
+
 ## 0.1.0-dev.20 — validar anexos raster de respostas — 2026-10-21
 
 - Adiciona cobertura Unit para imagem válida, imagem inválida, limite de 10 MB e

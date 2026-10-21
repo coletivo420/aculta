@@ -44,6 +44,11 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'system',
     'user',
     'file',
+    'image',
+    'media',
+    'entity_usage',
+    'media_duplicates',
+    'aculta_image',
     'filter',
     'field',
     'flexible_permissions',
@@ -88,6 +93,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig(['file']);
     $this->installEntitySchema('lms_activity');
     $this->installEntitySchema('lms_lesson');
