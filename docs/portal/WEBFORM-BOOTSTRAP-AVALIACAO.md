@@ -1,15 +1,15 @@
 # Webform Bootstrap (3.x) — avaliação de portabilidade
 
-Status: avaliação documental (sem alteração de código, configuração ou Runtime).
-Escopo: verificar o que do submódulo `webform_bootstrap` (3.x, marcado como deprecado) pode ser portado para o tema ACULTA420 e para o `aculta_portal`.
+Status: auditoria concluída em 2026-10-21. O submódulo legado está desativado no Runtime; as regras úteis identificadas foram portadas ao ACULTA420. Não há pacote Composer independente a remover.
+Escopo: inventariar o submódulo `webform_bootstrap` (3.x, marcado como deprecado), conferir sua cobertura no tema ACULTA420 e determinar se há instalação, configuração ou dados para remover.
 Vinculado à PR #297 (linha do ACULTA Forum), por commit no branch da própria PR.
 
 ## Conclusão
 
-- **Não há portagem obrigatória.** O submódulo resolve problemas do Drupal Bootstrap 3. O ACULTA420 usa o Bootstrap 5 (`bootstrap` contrib 5.0.2), e a maior parte do que o submódulo faz já é coberta pelo tema base e pelo Core.
-- **Não habilitar o submódulo.** Ele exige o tema `bootstrap` 8.x-3 e, se ativado, chama `\Drupal\bootstrap\Bootstrap::getTheme()`, classe inexistente no Bootstrap 5. Como a checagem de tema ativo considera também os temas base, o ACULTA420 o acionaria. Risco de erro fatal em todo formulário Webform.
-- **Não portar nada para o `aculta_portal`.** O que o submódulo faz é apresentação (classes, tooltips, CSS, ícones). Pela fronteira "Código no Aculta Portal, Design no ACULTA420", isso pertence ao tema. O Portal só forneceria dados neutros, e nenhum desses dados é necessário hoje.
-- **Itens candidatos ao tema, de baixa prioridade**, dependem de evidência visual no teste e de autorização explícita para alterar `web/themes/custom/aculta420/**` (ver seção 4).
+- **As regras úteis já foram portadas ao ACULTA420**, em `0.6.0-dev.92` e `.93`: estilos de campos e múltiplos, estados de foco e ícones Bootstrap Icons para botões de imagem. O tema e o Bootstrap 5/Core cobrem os demais usos aplicáveis. Nenhuma lógica foi adicionada ao `aculta_portal`.
+- **O módulo legado não está instalado nem habilitado.** Drush reporta `Disabled`; `moduleExists('webform_bootstrap')` é falso; `core.extension` e `system.schema` não têm entrada correspondente. Não há configuração nem schema para desinstalar do Runtime.
+- **O código disponível não é uma dependência separada.** `webform_bootstrap` é um submódulo que vem dentro do pacote `drupal/webform` 6.3.1. Remover somente seus arquivos exigiria editar/patchear código contrib ou retirar o Webform inteiro. Não fazer isso: o projeto proíbe alterações diretas em contrib e o módulo já não executa.
+- **Não instalar outro adaptador.** O projeto separado `drupal/webform_bootstrap` mantém integração Bootstrap 3; o `webform_bootstrap5` não tem release estável no Drupal.org. Nenhum deles é necessário para a apresentação atual do ACULTA420.
 
 ## 1. Estado verificado
 
@@ -47,35 +47,28 @@ Ambiente: `hostname=toca`; Drush alcança o Runtime `aculta_runtime` (`Site URI:
 - Classes, tooltips, CSS e ícones são apresentação. Pela regra "Código no Aculta Portal, Design no ACULTA420", pertencem ao tema e não podem ser emitidos pelo Portal.
 - Se um dia a apresentação de um formulário precisar de dado neutro (por exemplo, um rótulo de botão ou um estado), o contrato é o `aculta_portal` preparar o dado e o tema renderizar, conforme [`FRONTEIRA-MODULO-TEMA.md`](FRONTEIRA-MODULO-TEMA.md).
 
-## 4. Itens candidatos ao tema (somente se o teste visual mostrar necessidade)
+## 4. Cobertura portada ao tema
 
-Não estão autorizados nesta avaliação. Alterar `web/themes/custom/aculta420/**` exige autorização explícita na solicitação.
-
-1. **Classes de botão Drupal → Bootstrap** (`.button` → `.btn`) em `link_alter` ou `file_managed_file`, apenas se houver link ou upload de webform sem estilo.
-2. **Ajuste de `.form-inline`/`.form--inline`**, apenas se uma configuração futura do Webform usar essas classes.
-3. **Ícones de `image_button`** com `bi`, apenas se um formulário passar a usar `image_button`.
-
-Os três itens são de baixa prioridade. Nenhum é necessário para os forms atuais.
+A implementação atual está em `web/themes/custom/aculta420/css/components/webform.css` e `src/Hook/InputHooks.php`, com registro no changelog e roadmap do tema. A matriz atualizada está na seção 7.2. Os estilos e ícones foram implementados sem alterar o módulo contrib. A validação visual específica dos formulários `/contato` e participação permanece identificada no roadmap do tema.
 
 ## 5. Alternativas e riscos
 
-- **`webform_bootstrap5`** (projeto contrib sucessor, no Drupal.org): a busca retornou "no supported stable releases" na página do projeto. Não há versão estável confirmada. Adotar exige decisão do responsável e justificativa de dependência (regra 14 do `AGENTS.md`). **Recomendação: não adotar agora.**
-- **Habilitar `webform_bootstrap` 3.x** no Runtime: falha de requisito no update e risco de erro fatal em formulários. **Não fazer.**
-- **Escrever um submódulo próprio no tema**: possível, mas só se o teste visual mostrar necessidade. Pelo que foi verificado, não há.
+- **`drupal/webform_bootstrap`** é um projeto separado que dá continuidade ao adaptador Bootstrap 3; não confundir com o submódulo homônimo empacotado no Webform. Não é compatível com a arquitetura Bootstrap 5 pretendida sem adaptação e não é necessário aqui.
+- **`webform_bootstrap5`** declara integração com Bootstrap 5, mas não tem release estável suportada no Drupal.org. O tema já fornece a apresentação necessária, portanto não adicionar essa dependência.
+- **Habilitar o submódulo legado 3.x** não é apropriado: exige Bootstrap 3 e usa APIs ausentes no Bootstrap 5. Mantê-lo desativado evita o risco em formulários.
 
-## 6. Próximos passos sugeridos
+## 6. Acompanhamento
 
-1. Validar visualmente `/contato` e a página de participação no teste (Firefox, conforme `docs/portal/TESTES-NAVEGADOR.md`), sem alterar configuração, e registrar se há problema de botão, descrição ou erro de campo.
-2. Só se houver problema: abrir decisão sobre o item correspondente da seção 4 e pedir autorização para o tema.
-3. Acompanhar a migração do Webform 6.x: o submódulo está marcado como deprecado com o link do FAQ do Webform 6.x, e o Core/Webform 7 pode removê-lo.
+1. Validar visualmente `/contato` e a página de participação conforme `docs/portal/TESTES-NAVEGADOR.md`; registrar eventuais problemas concretos no roadmap do tema.
+2. Acompanhar a release do Webform que remova o diretório legado; não criar patch para apagar arquivos de `web/modules/contrib`.
 
 ## Fontes
 
 - Código local: `web/modules/contrib/webform/modules/webform_bootstrap/` (módulo, hooks, `install`, `info.yml`, `README.md`, CSS e JS); `web/modules/contrib/webform/src/WebformThemeManager.php` (`getActiveThemeNames`, `isActiveTheme`); `web/themes/contrib/bootstrap/templates/form/form-element.html.twig` e `fieldset.html.twig`.
 - Runtime de teste (leitura): `drush status` e `php:eval` com `class_exists`, `moduleExists`, tema padrão e base do `aculta420`.
-- Web: FAQ do Webform 6.x sobre bibliotecas externas deprecadas, [drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x](https://www.drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x) (citado pelo `info.yml`; o conteúdo não foi lido diretamente); issue [drupal.org/project/webform/issues/3609423](https://www.drupal.org/project/webform/issues/3609423) (reclamação de requisito Bootstrap 3.x após atualizar para 6.3.0); projeto [drupal.org/project/webform_bootstrap5](https://drupal.org/project/webform_bootstrap5) (sucessor citado; sem release estável no momento da busca).
+- Web: FAQ do Webform 6.x sobre módulos depreciados ([documentação oficial](https://www.drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x)); projeto separado [Webform Bootstrap](https://www.drupal.org/project/webform_bootstrap) (continuidade para Bootstrap 3); [Webform Bootstrap5](https://www.drupal.org/project/webform_bootstrap5) (sem release estável suportada na consulta de 2026-10-21).
 
-## 7. Atualização: portagem autorizada e referência `webform_bootstrap5`
+## 7. Implementação portada e comparação com `webform_bootstrap5`
 
 ### 7.1 Análise do `webform_bootstrap5` (referência, não instalado)
 
@@ -121,6 +114,6 @@ Os formulários atuais (`aculta_contact`: textfield, email, textarea; `aculta_pa
 - Gate de Foundation: versão atualizada e o template `aculta-user-author-card.html.twig` incluído na allowlist de overrides Twig. A reprovação existia desde a 0.6.0-dev.91 e bloqueava a entrega. Gate com 368 checks PASS. Os demais gates (design foundations, SDC schemas, shell contract, fronteira módulo/tema, mapa módulo/tema) passam.
 - Runtime de teste: cache rebuild; `webform.css` confirmado na library `aculta420/global`. Validação visual nos formulários não executada (estado NÃO VALIDADO).
 
-### 7.4 Desinstalação do `webform_bootstrap` 3.x
+### 7.4 Remoção do `webform_bootstrap` 3.x
 
-Verificado no Runtime de teste (2026-10-19): o módulo existe no código do pacote Webform 6.3.1 (`web/modules/contrib/webform/modules/webform_bootstrap/`), mas não está instalado: `moduleExists = false`, sem entrada em `core.extension`, sem schema em `system.schema`. Não há o que desinstalar no banco. O código continua no pacote contrib do Webform, que não pode ser alterado pelo projeto (regra de contrib). A remoção do código acontece com a atualização do Webform que retirar o submódulo.
+Verificado no Runtime de teste em 2026-10-21: o submódulo está `Disabled`; `moduleExists = false`; não há entrada em `core.extension` nem schema em `system.schema`. Portanto, não há instalação no banco para desinstalar. O diretório continua dentro do pacote contrib `drupal/webform` 6.3.1 e não pode ser apagado isoladamente sem alterar o pacote contrib, proibido pelos guardrails. A remoção física virá quando uma versão do Webform retirar o submódulo; até lá, ele permanece inerte e não é incluído como dependência Composer própria.
