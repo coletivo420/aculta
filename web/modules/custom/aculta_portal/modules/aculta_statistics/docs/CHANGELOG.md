@@ -36,6 +36,15 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.9.0-dev.4 (cliente do Search Console e leitura de segredos opcional)
+
+- `GoogleSearchConsoleClient`: Search Analytics (somente leitura) por dia, com cliques e impressões. Posição não é somada. Usa a conta de serviço do GA4.
+- `GSC_SITE_URL` no contrato de segredos (propriedade `sc-domain:` ou URL com prefixo). Desligado sem propriedade ou credencial.
+- Leitura de segredos opcional: sem o `aculta_portal`, o GA4 e o Search Console ficam desligados, sem erro de serviço.
+- Painel mostra o estado do GA4 e do Search Console.
+- Unit: 96 casos. Kernel: 27 casos.
+- Pendente: provisionar as credenciais e validar consultas reais.
+
 ## 0.9.0-dev.3 (cliente GA4 real com google/apiclient, desligado sem credencial)
 
 ### Código

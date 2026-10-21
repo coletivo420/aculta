@@ -12,14 +12,15 @@ use Drupal\aculta_portal\Secrets\SecretsManager;
 final class SecretsGa4Settings implements Ga4Settings {
 
   public function __construct(
-    private readonly SecretsManager $secrets,
+    // Opcional: sem o aculta_portal instalado, o GA4 fica desligado.
+    private readonly ?SecretsManager $secrets = NULL,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public function propertyId(): ?string {
-    $value = trim((string) $this->secrets->value('GA4_PROPERTY_ID'));
+    $value = trim((string) $this->secrets?->value('GA4_PROPERTY_ID'));
     return preg_match('/^\d{3,20}$/', $value) === 1 ? $value : NULL;
   }
 
@@ -27,7 +28,7 @@ final class SecretsGa4Settings implements Ga4Settings {
    * {@inheritdoc}
    */
   public function serviceAccount(): ?array {
-    $raw = trim((string) $this->secrets->value('GA4_SERVICE_ACCOUNT_JSON'));
+    $raw = trim((string) $this->secrets?->value('GA4_SERVICE_ACCOUNT_JSON'));
     if ($raw === '') {
       return NULL;
     }

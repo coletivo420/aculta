@@ -108,7 +108,7 @@ services:
   # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.
   aculta_statistics.ga4_settings:
     class: Drupal\aculta_statistics\Connector\Ga4\SecretsGa4Settings
-    arguments: ['@aculta_portal.secrets_manager']
+    arguments: ['@?aculta_portal.secrets_manager']
   aculta_statistics.ga4_logger:
     class: Psr\Log\LoggerInterface
     factory: ['@logger.factory', 'get']
@@ -117,6 +117,12 @@ services:
     class: Drupal\aculta_statistics\Connector\Ga4\GoogleGa4ReportClient
     arguments: ['@aculta_statistics.ga4_settings', '@aculta_statistics.ga4_logger']
   Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient: '@aculta_statistics.ga4_client'
+  aculta_statistics.gsc_settings:
+    class: Drupal\aculta_statistics\Connector\SearchConsole\SecretsSearchConsoleSettings
+    arguments: ['@?aculta_portal.secrets_manager', '@aculta_statistics.ga4_settings']
+  aculta_statistics.gsc_client:
+    class: Drupal\aculta_statistics\Connector\SearchConsole\GoogleSearchConsoleClient
+    arguments: ['@aculta_statistics.gsc_settings', '@aculta_statistics.ga4_logger']
   Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
   Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
   Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'

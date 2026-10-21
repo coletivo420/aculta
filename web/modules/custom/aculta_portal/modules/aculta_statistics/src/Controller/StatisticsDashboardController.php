@@ -8,6 +8,7 @@ use Drupal\aculta_mailer\Chart\MailTrendChart;
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Catalog\MetricDefinition;
 use Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient;
+use Drupal\aculta_statistics\Connector\SearchConsole\GoogleSearchConsoleClient;
 use Drupal\aculta_statistics\Report\MetricSeries;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Component\Datetime\TimeInterface;
@@ -52,6 +53,7 @@ final class StatisticsDashboardController extends ControllerBase {
     private readonly AggregateStorageInterface $storage,
     private readonly TimeInterface $time,
     private readonly Ga4ReportClient $ga4,
+    private readonly GoogleSearchConsoleClient $searchConsole,
   ) {}
 
   /**
@@ -63,6 +65,7 @@ final class StatisticsDashboardController extends ControllerBase {
       $container->get('aculta_statistics.storage'),
       $container->get('datetime.time'),
       $container->get(Ga4ReportClient::class),
+      $container->get('aculta_statistics.gsc_client'),
     );
   }
 
@@ -141,7 +144,8 @@ final class StatisticsDashboardController extends ControllerBase {
       'integracoes' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-note'],
-        '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $this->ga4->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>',
+        '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $this->ga4->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>'
+          . '<p>' . $this->t('Search Console: @estado.', ['@estado' => $this->searchConsole->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>',
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
