@@ -354,6 +354,8 @@
 .portal-account-bio .form-textarea-wrapper { margin-block-end: 0; }
 
 /* Botões do modal da bio (Limpar e Salvar bio): à direita, como no modal de foto. */
+/* Linha de ações da foto (sortear, remover e salvar): mesma linha, alinhada à direita, quebra só em tela pequena. */
+.portal-account-photo__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
 .portal-account-bio__actions {
   display: flex;
   justify-content: flex-end;

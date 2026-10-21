@@ -7,7 +7,6 @@ report-only:
       base: self
     style-src:
       base: self
-    webrtc: block
     worker-src:
       base: self
     base-uri:
@@ -35,7 +34,6 @@ enforce:
       flags:
         - unsafe-inline
         - report-sample
-    webrtc: block
     worker-src:
       base: self
     base-uri:

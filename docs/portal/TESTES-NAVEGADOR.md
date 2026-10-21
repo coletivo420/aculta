@@ -630,11 +630,12 @@ diretório de trabalho do agente (não versionadas). Esta rodada substitui os pa
 | R10 atividade: abas (Q1/Q2) | cinco abas; Fórum com URL `/atividade/forum` e marcada como atual | OK |
 | R11 conquistas: tooltip (aculta_game) | missão concluída com `title` "Obtida em 16/10/2026" | OK |
 | R12 login com senha errada e certa (O) | senha errada mostra "não reconhecidos" e fica em /entrar; senha certa chega ao painel | OK |
-| R13 erros de JavaScript | nenhum erro de script do site | OK nas rodadas de R1, R7-R12. Na rodada de R3-R6, o console registrou um 403 ao carregar o link de login único na primeira navegação; não há erro de script do site, e a causa do 403 ficou sem reprodução |
+| R13 erros de JavaScript | nenhum erro de script do site | OK após a correção do CSP (abaixo). Antes dela, o console registrava avisos de `webrtc` (erro de configuração, não de script). Um 403 pontual ao carregar o link de login único não reproduziu em repetições (HTTP 302) |
 
-Achados de configuração (não são do módulo): o servidor envia uma diretiva `webrtc` no Content-Security-Policy que o
-navegador não reconhece ("Unrecognized Content-Security-Policy directive"). Corrigir no cabeçalho de segurança do
-ambiente; não afeta a funcionalidade.
+Correção de configuração de segurança (explicada conforme a regra do projeto): o módulo `csp` tinha a diretiva `webrtc: block`
+nos modos somente relatório e de aplicação (`config/sync/csp.settings.yml` e Runtime). `webrtc` não é diretiva de CSP
+padronizada: os navegadores não a reconhecem e a ignoram, então a linha não protegia nada e gerava aviso de console.
+Foi removida dos dois modos. O cabeçalho deixou de conter `webrtc` (conferido por HTTP), e o console ficou sem erros.
 
 Não executado nesta rodada: inspeção visual humana (aparência final, alinhamento e contraste em tela pequena e grande)
 e recorte com a área de seleção movida pelo usuário (o fluxo verificado aplica o recorte padrão).

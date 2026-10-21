@@ -1,3 +1,10 @@
+## 0.6.0-dev.134 — token próprio para as ações da foto de perfil — 2026-10-21
+
+Classificação: PATCH (token novo e regra de linha de ações; sem mudança nos tokens existentes).
+
+- Token `account-photo-actions` (classe `portal-account-photo__actions`) para a linha de ações do popup de foto: sortear, remover e salvar na mesma linha, alinhadas à direita, com quebra em tela pequena.
+- `aculta420.info.yml` 0.6.0-dev.134. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
 ## 0.6.0-dev.133 — contraste do banner de consentimento corrigido — 2026-10-20
 
 - O banner usa superfície `--aculta-surface-raised` e texto `--aculta-text-primary` (tokens com versão para modo escuro). O fundo verde anterior dava 3,34:1 para texto branco; agora o texto tem 12,4:1 no claro e 14,5:1 no escuro, e os botões 11,0:1.

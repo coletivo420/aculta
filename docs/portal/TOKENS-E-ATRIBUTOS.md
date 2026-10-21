@@ -212,6 +212,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-bio-text` | `portal-account-bio__text` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-edit` | `btn`, `btn-link`, `portal-account-bio__edit`, `bi`, `bi-pencil` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-actions` | `portal-account-bio__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
+| `account-photo-actions` | `portal-account-photo__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` | Linha de ações do popup de foto (sortear, remover e salvar). Estilo em `portal-account.css`. |
 | `account-overview-actions` | `portal-account-overview__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
 | `account-view-profile` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
 | `post-meta` | `portal-post__meta` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |

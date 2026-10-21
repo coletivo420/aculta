@@ -123,8 +123,8 @@ final class UserPictureForm extends FormBase {
 
     // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no mesmo lugar,
     // ao lado de "Salvar foto do perfil" (regra de estado, docs/FOTO-PERFIL.md).
-    // Linha de ações: mesmo estilo de linha de ações das telas da conta (token existente; sem token próprio no tema).
-    $form['actions'] = ['#type' => 'actions', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
+    // Linha de ações da foto (sortear, remover e salvar): token próprio do tema (account-photo-actions).
+    $form['actions'] = ['#type' => 'actions', '#attributes' => ['data-portal-ui' => 'account-photo-actions']];
     if ($isAcervo) {
       // Botão de envio (mesma linha de "Salvar"): o sorteio troca só a prévia do modal, por AJAX, e não grava.
       $form['actions']['sortear'] = [

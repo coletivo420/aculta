@@ -124,6 +124,7 @@ final class PortalUiHooks {
     'account-avatar' => ['portal-account__avatar'],
     'account-avatar-empty' => ['portal-account__avatar', 'portal-account__avatar--empty'],
     'account-photo-preview' => ['portal-account-photo__preview'],
+    'account-photo-actions' => ['portal-account-photo__actions'],
     'account-bio-card' => ['card', 'card-body', 'portal-account-bio'],
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],

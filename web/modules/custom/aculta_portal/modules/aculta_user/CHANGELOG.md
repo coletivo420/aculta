@@ -1,3 +1,8 @@
+## 0.4.0-dev.53 — linha de ações da foto com token próprio do tema — 2026-10-21
+
+- Ações do popup de foto (sortear, remover e salvar) usam o token `account-photo-actions` (tema aculta420 0.6.0-dev.134), no lugar do token da bio.
+- `aculta_user.info.yml` 0.4.0-dev.53. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
 ## 0.4.0-dev.52 — botão de sorteio na linha de ações; pedido de adesão atualiza a tela — 2026-10-21
 
 - "Sortear novo avatar" passa a ser botão de envio (AJAX) na mesma linha de "Salvar foto do perfil", no lugar do link. Não grava: troca só a prévia do modal.
