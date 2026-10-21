@@ -21,15 +21,15 @@ use Symfony\Component\Mime\Email;
 final class MailTransportSenderEnvelopeTest extends UnitTestCase {
 
   public function testSmtpUsesTheConfiguredBounceAddressAsEnvelopeSender(): void {
-    $envelope = $this->sender('dmarc@aculta.org')->envelopeFor($this->transport('smtp'), $this->email());
+    $envelope = $this->sender('dmarc@example.invalid')->envelopeFor($this->transport('smtp'), $this->email());
 
     $this->assertNotNull($envelope);
-    $this->assertSame('dmarc@aculta.org', $envelope->getSender()->getAddress());
+    $this->assertSame('dmarc@example.invalid', $envelope->getSender()->getAddress());
     $this->assertSame(['destino@example.invalid'], array_map(static fn($address) => $address->getAddress(), $envelope->getRecipients()));
   }
 
   public function testApiTransportKeepsTheSenderDefault(): void {
-    $this->assertNull($this->sender('dmarc@aculta.org')->envelopeFor($this->transport('brevo'), $this->email()));
+    $this->assertNull($this->sender('dmarc@example.invalid')->envelopeFor($this->transport('brevo'), $this->email()));
   }
 
   public function testEmptyOrInvalidBounceAddressKeepsTheSenderDefault(): void {
@@ -52,7 +52,7 @@ final class MailTransportSenderEnvelopeTest extends UnitTestCase {
   }
 
   private function email(): Email {
-    return (new Email())->from('naoresponda@aculta.org')->to('destino@example.invalid')->subject('teste')->text('teste');
+    return (new Email())->from('naoresponda@example.invalid')->to('destino@example.invalid')->subject('teste')->text('teste');
   }
 
 }
