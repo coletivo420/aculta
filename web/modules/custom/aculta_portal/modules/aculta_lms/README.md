@@ -4,6 +4,15 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## F7/F16 — preservação de matrículas por compra
+
+Quando um pedido perde o entitlement por reembolso integral, a matrícula só é
+revogada se não houver outra compra válida para a mesma conta, turma e curso.
+O novo teste confirma a transferência da origem para o pedido ativo e que a
+membership não é removida. `CourseOrderEnrollmentManagerTest`: 7 testes / 35
+assertions PASS; Unit LMS/Messenger: 87/470 PASS. Checkout HTTP, pagamento
+externo e reembolso no Runtime seguem pendentes.
+
 ## F11 — emissão e revogação por educadores
 
 O Kernel percorre os submits dos formulários de emissão e revogação com um

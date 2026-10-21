@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.72 — preservar matrícula após outra compra ativa — 2026-10-21
+
+- `CourseOrderEnrollmentManagerTest` agora cobre a sincronização de um pedido
+  integralmente reembolsado quando há outra compra ativa para a mesma pessoa,
+  turma e curso: a membership permanece e sua origem muda para o pedido válido.
+  Focal: 7 testes / 35 assertions PASS; Unit LMS/Messenger: 87/470 PASS.
+  Kernel LMS/Messenger: 23/730 PASS (95 depreciações upstream do Core/contrib).
+
 ## 0.1.0-dev.71 — proteger membership manual com compra ativa — 2026-10-21
 
 - A remoção pelo educador agora consulta pedidos ativos da mesma turma mesmo

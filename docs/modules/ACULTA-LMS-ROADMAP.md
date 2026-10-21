@@ -434,6 +434,12 @@ e Kernel MariaDB dedicado 23/730 PASS; gate Portal 1010 checks e índice 29
 componentes PASS. Permanecem depreciações upstream, visual/Runtime incompletos
 e validação em PHP 8.5.
 
+Na regra de entitlement F7, o teste Unit agora cobre reembolso integral do pedido
+original com outra compra ativa para a mesma conta, curso e turma: a membership
+é preservada e a proveniência é transferida para o pedido válido. Focal:
+`CourseOrderEnrollmentManagerTest` 7/35; Unit LMS/Messenger 87/470 PASS. O fluxo
+com pagamento externo e reembolso real continua pendente de homologação.
+
 Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
 e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de
 curso/estudante são resolvidas pelas listas dos campos; ausência resulta em 422,
