@@ -9,6 +9,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\flag\FlagServiceInterface;
@@ -110,7 +111,11 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         default => NULL,
       };
     });
-    $emailPolicy = new EmailConfirmationPolicy($userData, $entityTypeManager);
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $entityTypeManager,
+      $this->createMock(ModuleHandlerInterface::class),
+    );
 
     return new AvisosResumo(
       $entityTypeManager,
