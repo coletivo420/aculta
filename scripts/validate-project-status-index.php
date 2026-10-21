@@ -219,6 +219,7 @@ if ($markerCode === 0 && $markerCommit !== '') {
     '887456501bbb0f66547603e2e6a137a86c1eaa1e' => 'restaurou aculta_portal/src após remoção acidental em d0c3086c (índice compartilhado); exceção aprovada pelo responsável em 2026-10-20',
     'fb1e678bdf32e222ad945520b4035e4e04cda44c' => 'atualizou o changelog de aculta_links ao reabrir aculta_mailer para Dev; exceção aprovada pelo responsável em 2026-10-20',
     'a8f05a047d68b6621388564e3a05afdbc52079bf' => 'alterou aculta_mailer antes da regra de linha de README',
+    '60f7ff7348087590ec31ae7ba64dcb8a9deaa2cb' => 'documentação do roteiro do aculta_statistics publicada sem a linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
     '0a879b98f51936278133e5be432598e7a33e0349' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
     '3bfe09fab07328b7df19f1151631ab9d690aaadd' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
     '4b8d4c83e17bea5f3a4d9f8e2ae6a8295e781969' => 'documentação do aculta_statistics feita antes da linha do componente no README raiz; exceção aprovada pelo responsável em 2026-10-20',
