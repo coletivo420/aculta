@@ -262,6 +262,13 @@ pendentes.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 
+Regressão combinada atual de `aculta_lms` e `aculta_lms_messenger` (2026-10-21):
+Unit 67 testes / 347 assertions e Kernel MariaDB 21 testes / 643 assertions
+PASS; 8 depreciações PHPUnit e 92 de Core/contrib. O LMS Unit isolado é 51/281
+e o Kernel isolado é 20/631. O gate geral de endereços de ambiente ainda reprova
+22 literais em testes de `aculta_qrcode` e `aculta_mailer`; o teste QR do LMS
+agora usa domínio `.test` e não aparece mais entre as ocorrências.
+
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 
 **F14 — escopo de conexão no LMS aguarda decisão de produto.** `aculta_user`

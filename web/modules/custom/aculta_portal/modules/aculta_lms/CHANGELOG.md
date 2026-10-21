@@ -4,7 +4,10 @@
 
 - O teste de integração QR usa um host reservado `.test`, sem fixar domínio
   dependente de ambiente. PHPCS Drupal/DrupalPractice e Unit do módulo:
-  51 testes / 281 assertions PASS. O gate geral de endereços continua
+  51 testes / 281 assertions PASS. Regressão combinada LMS/Messenger:
+  Unit 67 testes / 347 assertions; Kernel 21 testes / 643 assertions PASS.
+  Foram reportadas 8 depreciações PHPUnit e 92 de Core/contrib. O gate geral
+  de endereços continua
   apontando literais preexistentes em `aculta_qrcode` e `aculta_mailer`, fora
   desta alteração.
 

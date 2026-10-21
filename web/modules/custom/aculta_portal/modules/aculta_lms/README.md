@@ -248,10 +248,14 @@ assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
-Suítes completas revalidadas em 2026-10-21: Unit 51 testes/281 assertions;
-Kernel MariaDB 20 testes/631 assertions PASS. O Kernel registrou 90
+Suítes do `aculta_lms` revalidadas em 2026-10-21: Unit 51 testes/281
+assertions; Kernel MariaDB 20 testes/631 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
+
+Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 67 testes/347
+assertions; Kernel MariaDB 21 testes/643 assertions PASS. No total, houve 8
+depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 
 O Kernel `LearningDashboardKernelTest` reproduz o contrato de acesso do LMS:
 `take course` permite o currículo da pessoa matriculada, embora `view` genérico
