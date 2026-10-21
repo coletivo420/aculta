@@ -112,7 +112,9 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 ## 0.6.0 — Google Analytics e Search Console (código desligado: 0.9.0-dev.1)
 
 - Feito (código): `Ga4ReportClient` e cliente nulo padrão. Painel mostra o estado.
-- Pendente: cliente real, com propriedade, credenciais e justificativa de dependência.
+- Decidido (2026-10-21): cliente real com `google/apiclient`. Justificativa em `docs/adr/ADR-0006-dependencia-google-apiclient.md`.
+- Bloqueado: `composer.json` e `composer.lock` têm alterações não commitadas de outra frente. Instalar agora misturaria esse trabalho. Espera a outra frente commitar.
+- Pendente: propriedade GA4, credencial da conta de serviço no `aculta_portal.secrets_manager`, domínio verificado no Search Console.
 
 - GA4 Data API (v1beta) em fila, com cache e quota.
 - Consentimento (Consent Mode v2) antes de qualquer tag.
@@ -152,7 +154,11 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Índices, filas, cache e reconciliação.
 - Revisão de permissões por relatório.
 
-## 1.0.0 — Auditoria final
+## 1.0.0 — Auditoria final (aberta: ver docs/AUDITORIA-1.0.md)
+
+- Feito: auditoria de código, segurança e privacidade, com o que foi e não foi verificado (`docs/AUDITORIA-1.0.md`).
+- Decidido (2026-10-21): painéis de estatísticas ficam no tema administrativo Claro. Ajusta-se só o conteúdo. O CSS do ACULTA420 para estatísticas não se aplica a essas telas.
+- Pendente: testes funcionais e multidomínio; teste de carga; cliente GA4 real (bloqueado pelo composer); revisão visual de todos os painéis por área.
 
 - Testes unitários, Kernel, funcionais e multidomínio.
 - Auditoria de segurança, licenças e dados.
