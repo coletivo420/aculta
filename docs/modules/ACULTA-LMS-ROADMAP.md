@@ -192,10 +192,14 @@ autorização, cadeia de emissão, revogação, retenção após exclusão de co
 headers do PDF. Unit e gates passam. O QR integra `aculta_qrcode` por URL
 absoluta do `DomainPurposeManager`; o SVG é servido sem persistir arquivo e o
 PNG é incorporado ao PDF. No Runtime de teste, a rota pública para código
-inexistente retornou 404 após `drush cr` corrigir um container compilado que
-mantinha os argumentos anteriores do serviço. Não houve alteração de dados nem
-configuração. RUNTIME STATUS: parcial; emissão com conclusão válida, QR/PDF,
-schema/config e revisão visual continuam DEFERRED.
+inexistente e as rotas de QR e PDF com código inexistente retornam 404. No
+Runtime há zero certificados, zero status aprovado atual e o único curso não
+tem carga horária; portanto, não existe fixture real elegível para smoke
+positivo sem alterar conteúdo existente. O 404 inicial foi corrigido por
+`drush cr`, que atualizou um container compilado com argumentos antigos do
+serviço. Não houve alteração de dados nem configuração. RUNTIME STATUS:
+parcial; emissão positiva, QR/PDF válidos, schema/config e revisão visual
+continuam DEFERRED.
 
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
