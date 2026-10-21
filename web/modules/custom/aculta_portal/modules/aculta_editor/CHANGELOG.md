@@ -1,3 +1,10 @@
+## 0.1.0-dev.4 — formatos unificados — 2026-10-22
+
+- Formatos do site reduzidos a cinco com funções definidas: Aculta Básico (texto puro, `plain_text`), Usuário ACULTA (HTML restrito, `usuario_aculta`), Aculta Editorial (HTML completo, `revista_editorial`), Aculta Email (`email_html`) e Aculta Wiki (`wiki`).
+- Removidos da instalação do módulo: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email`, e o hook que concedia o formato básico. Removido do Runtime: `restricted_html`, após migrar o nó 372 (página, sem perda) para `usuario_aculta`.
+- Templates apontam para `revista_editorial`.
+- Kernel 7/7 testes, 87 asserções.
+
 # Changelog — ACULTA Editor
 
 ## 0.1.0-dev.3 — 2026-10-22

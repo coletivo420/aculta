@@ -9,6 +9,5 @@ description: "Conteúdo de campanha com chamada, texto e ação."
 data: "<h2>[Título da campanha]</h2><p><strong>[Chamada principal em uma frase]</strong></p><p>[Texto que explica a campanha e o seu objetivo.]</p><p>[Como participar ou apoiar.]</p>"
 icon: ''
 textFormats:
-  - aculta_editorial
-  - aculta_institucional
+  - revista_editorial
 weight: 7

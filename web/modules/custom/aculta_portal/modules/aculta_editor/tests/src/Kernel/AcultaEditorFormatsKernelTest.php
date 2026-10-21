@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_editor\Kernel;
 
-use Drupal\editor\Entity\Editor;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\user\Entity\Role;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Verifica os formatos editoriais do ACULTA Editor.
+ * Formatos unificados do Portal: funções, editores, sanitização e templates.
  */
 #[Group('aculta_editor')]
 #[RunTestsInSeparateProcesses]
@@ -31,8 +29,8 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     'user',
     'field',
     'file',
-    'node',
     'image',
+    'node',
     'text',
     'filter',
     'editor',
@@ -46,6 +44,17 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   ];
 
   /**
+   * Formatos que o site mantém: o nome de máquina é o do formato existente.
+   */
+  private const FORMATS = [
+    'plain_text',
+    'usuario_aculta',
+    'revista_editorial',
+    'email_html',
+    'wiki',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -54,54 +63,52 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     $this->installConfig(['system', 'filter', 'editor', 'ckeditor5', 'ckeditor5_plugin_pack_templates', 'aculta_editor', 'node']);
     $this->installEntitySchema('node');
     $this->installEntitySchema('node_type');
+    // Os formatos do site vêm de config/sync; a Kernel cria só o filtro de HTML de cada um.
+    FilterFormat::create(['format' => 'revista_editorial', 'name' => 'Aculta Editorial (HTML completo)'])->save();
+    $this->createFilterFormat('usuario_aculta', 'Usuário ACULTA (HTML restrito)');
+    $this->createFilterFormat('wiki', 'Aculta Wiki (somente Wiki)');
+    $this->createFilterFormat('email_html', 'Aculta Email (e-mails)');
   }
 
   /**
-   * Formatos do submódulo.
+   * Cria um formato com os filtros e o HTML permitido declarados em config/sync.
    */
-  private const FORMATS = [
-    'aculta_basico',
-    'aculta_editorial',
-    'aculta_institucional',
-    'aculta_email',
-  ];
+  private function createFilterFormat(string $id, string $label): void {
+    $file = dirname(__DIR__, 9) . '/config/sync/filter.format.' . $id . '.yml';
+    $data = \Symfony\Component\Yaml\Yaml::parseFile($file);
+    $filters = [];
+    foreach (['filter_html', 'filter_htmlcorrector', 'media_embed'] as $name) {
+      if (isset($data['filters'][$name])) {
+        $filters[$name] = $data['filters'][$name];
+      }
+    }
+    FilterFormat::create(['format' => $id, 'name' => $label, 'filters' => $filters])->save();
+  }
 
   /**
-   * Cada formato tem filtro HTML e editor CKEditor 5 próprios.
+   * Cada formato mantido existe.
    */
-  public function testFormatsAndEditorsExist(): void {
+  public function testKeptFormatsExist(): void {
     foreach (self::FORMATS as $id) {
-      $format = FilterFormat::load($id);
-      $this->assertNotNull($format, "Formato $id existe.");
-      $this->assertTrue($format->filters('filter_html')->status, "$id usa filter_html.");
-      $editor = Editor::load($id);
-      $this->assertNotNull($editor, "Editor de $id existe.");
-      $this->assertSame('ckeditor5', $editor->getEditor(), "$id usa CKEditor 5.");
+      $this->assertNotNull(FilterFormat::load($id), "Formato $id existe.");
     }
   }
 
   /**
-   * Somente o formato básico é concedido ao editor de conteúdo.
+   * Os formatos excedentes saíram da configuração de instalação.
    */
-  public function testBasicFormatIsGrantedOnlyToContentEditor(): void {
-    Role::create(['id' => 'content_editor', 'label' => 'Editor de conteúdo'])->save();
-    $role = Role::load('content_editor');
-    $role->grantPermission('use text format aculta_basico');
-    $role->save();
-
-    $this->assertTrue($role->hasPermission('use text format aculta_basico'));
-    $this->assertFalse($role->hasPermission('use text format aculta_editorial'));
-    $this->assertFalse($role->hasPermission('use text format aculta_institucional'));
-    $this->assertFalse($role->hasPermission('use text format aculta_email'));
+  public function testExcessFormatsAreNotInstalled(): void {
+    foreach (['aculta_basico', 'aculta_editorial', 'aculta_institucional', 'aculta_email', 'restricted_html'] as $id) {
+      $this->assertNull(FilterFormat::load($id), "$id foi removido.");
+    }
   }
 
   /**
-   * Scripts, manipuladores de evento e URLs perigosas saem em todos os perfis.
+   * Usuário ACULTA, Wiki e e-mail: script, evento e URL perigosa saem.
    */
-  public function testDangerousMarkupIsRemoved(): void {
-    $payload = '<script>alert(1)</script><p onclick="x()">texto</p>'
-      . '<a href="javascript:alert(1)">link</a><iframe src="https://example.com"></iframe>';
-    foreach (self::FORMATS as $id) {
+  public function testRestrictedFormatsRemoveDangerousMarkup(): void {
+    $payload = '<script>alert(1)</script><p onclick="x()">texto</p><a href="javascript:alert(1)">l</a><iframe src="https://example.com"></iframe>';
+    foreach (['usuario_aculta', 'wiki', 'email_html'] as $id) {
       $output = $this->filter($id, $payload);
       $this->assertStringNotContainsString('<script', $output, "$id remove script.");
       $this->assertStringNotContainsString('onclick', $output, "$id remove onclick.");
@@ -111,58 +118,25 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
   }
 
   /**
-   * O perfil editorial preserva tabelas e âncoras; o básico não as aceita.
+   * O Editorial é HTML completo por decisão do responsável: não tem filtro de HTML.
    */
-  public function testEditorialKeepsTablesAndAnchorsButBasicDoesNot(): void {
-    $html = '<table><tr><td>1</td></tr></table><h2 id="secao">Seção</h2>';
-    $editorial = $this->filter('aculta_editorial', $html);
-    $this->assertStringContainsString('<table>', $editorial);
-    $this->assertStringContainsString('id="secao"', $editorial);
-
-    $basic = $this->filter('aculta_basico', $html);
-    $this->assertStringNotContainsString('<table', $basic);
+  public function testEditorialIsFullHtmlByDecision(): void {
+    $this->assertFalse(FilterFormat::load('revista_editorial')->filters('filter_html')->status);
   }
 
   /**
-   * O e-mail mantém atributos de layout de tabela e remove estilo inline.
+   * E-mail: estilo inline sai; layout de tabela fica.
    */
   public function testEmailKeepsTableLayoutAndDropsStyle(): void {
     $html = '<table width="600" cellpadding="0" style="color:red"><tr><td bgcolor="#fbf4e8">Texto</td></tr></table>';
-    $output = $this->filter('aculta_email', $html);
+    $output = $this->filter('email_html', $html);
     $this->assertStringContainsString('width="600"', $output);
     $this->assertStringContainsString('bgcolor="#fbf4e8"', $output);
     $this->assertStringNotContainsString('style=', $output);
   }
 
   /**
-   * Os oito modelos existem e só usam formatos que os aceitam.
-   */
-  public function testTemplatesAreInstalledWithAllowedFormats(): void {
-    $templates = $this->container->get('entity_type.manager')
-      ->getStorage('ckeditor5_template')
-      ->loadMultiple();
-    $this->assertCount(8, $templates);
-    foreach ($templates as $template) {
-      $values = $template->toArray();
-      $this->assertNotEmpty($values['data'], $template->id() . ' tem HTML.');
-      $this->assertStringNotContainsString('<script', (string) $values['data']);
-      foreach ($values['textFormats'] as $format) {
-        $this->assertContains($format, ['aculta_editorial', 'aculta_institucional']);
-      }
-    }
-  }
-
-  /**
-   * Todo formato do editor renderiza mídia do Drupal (filtro media_embed).
-   */
-  public function testMediaEmbedFilterIsEnabledOnEveryFormat(): void {
-    foreach (self::FORMATS as $id) {
-      $this->assertTrue(FilterFormat::load($id)->filters('media_embed')->status, "$id ativa media_embed.");
-    }
-  }
-
-  /**
-   * Conteúdo salvo com o formato editorial volta do banco e renderiza sem scripts.
+   * O conteúdo do Editorial salvo volta do banco e renderiza.
    */
   public function testContentCycleSavesAndRendersEditorialBody(): void {
     NodeType::create(['type' => 'article', 'name' => 'Artigo'])->save();
@@ -172,24 +146,34 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
       ->setComponent('body', ['type' => 'text_default', 'label' => 'hidden'])
       ->save();
 
-    $html = '<h2 id="secao">Seção</h2><table><tr><td>1</td></tr></table><script>alert(1)</script><mark class="x">destaque</mark>';
     $node = Node::create([
       'type' => 'article',
       'title' => 'Teste de ciclo',
-      'body' => ['value' => $html, 'format' => 'aculta_editorial'],
+      'body' => ['value' => '<h2 id="secao">Seção</h2><p>Texto</p>', 'format' => 'revista_editorial'],
     ]);
     $node->save();
 
     $this->container->get('entity_type.manager')->getStorage('node')->resetCache();
     $reloaded = Node::load($node->id());
-    $this->assertSame('aculta_editorial', $reloaded->get('body')->format);
-    $this->assertStringContainsString('<table>', $reloaded->get('body')->value);
+    $this->assertSame('revista_editorial', $reloaded->get('body')->format);
 
     $build = $this->container->get('entity_type.manager')->getViewBuilder('node')->view($reloaded, 'full');
     $rendered = (string) $this->container->get('renderer')->renderInIsolation($build);
-    $this->assertStringContainsString('<table>', $rendered);
     $this->assertStringContainsString('id="secao"', $rendered);
-    $this->assertStringNotContainsString('<script', $rendered);
+    $this->assertStringContainsString('Texto', $rendered);
+  }
+
+  /**
+   * Os modelos de editorial usam o formato unificado.
+   */
+  public function testTemplatesUseKeptFormats(): void {
+    $templates = $this->container->get('entity_type.manager')->getStorage('ckeditor5_template')->loadMultiple();
+    $this->assertCount(8, $templates);
+    foreach ($templates as $template) {
+      foreach ($template->toArray()['textFormats'] as $format) {
+        $this->assertContains($format, self::FORMATS);
+      }
+    }
   }
 
   /**
@@ -197,8 +181,7 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
    */
   private function filter(string $format_id, string $text): string {
     $format = FilterFormat::load($format_id);
-    $result = $format->filters()->get('filter_html')->process($text, 'pt-br');
-    return $result->getProcessedText();
+    return $format->filters()->get('filter_html')->process($text, 'pt-br')->getProcessedText();
   }
 
 }

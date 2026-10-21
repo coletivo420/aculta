@@ -9,6 +9,5 @@ description: "Notícia com data, título e corpo do texto."
 data: "<h2>[Título da notícia]</h2><p><strong>[Data]</strong> — [Local]</p><p>[Primeiro parágrafo: o que aconteceu, quem participou e quando.]</p><p>[Segundo parágrafo: contexto e desdobramentos.]</p>"
 icon: ''
 textFormats:
-  - aculta_editorial
-  - aculta_institucional
+  - revista_editorial
 weight: 1

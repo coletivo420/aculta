@@ -9,6 +9,5 @@ description: "Texto jurídico com seções numeradas e referências."
 data: "<h2>[Título do texto]</h2><p><strong>Resumo:</strong> [resumo do tema jurídico].</p><h3>1. [Primeiro tópico]</h3><p>[Fundamentação com a norma citada.]</p><h3>2. [Segundo tópico]</h3><p>[Análise.]</p><h3>Referências</h3><ul><li>[Norma ou decisão, com data e número]</li></ul>"
 icon: ''
 textFormats:
-  - aculta_editorial
-  - aculta_institucional
+  - revista_editorial
 weight: 5
