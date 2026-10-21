@@ -160,3 +160,11 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 - Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e recebe configuração de Comment direto.
 - Categoria nova: não cria pasta no vocabulário antigo do Forum.
 - Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem seus contratos contextuais.
+
+## Destino arquitetural aprovado — ainda não migrado
+
+A Revista será **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes) e `aculta_forum` (discussão contextual via Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
+
+O destino editorial aprovado é um único bundle Node `revista`, com Editorial, Blog/Opinião, Notícias etc. como **categorias**. O estado atual continua `article` e `blog`, conforme serviços e Config Sync existentes. Não remover bundles nem executar o `PublicationTypeConverter` em massa: primeiro auditar a migração de histórico, nid/UUID, comentários, URLs/SEO, mídias e referências. Projetos são do domínio principal, Eventos do futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+
+Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).

@@ -293,3 +293,7 @@ A versão de cada fase é marcada no `aculta_gallery.info.yml` (a partir da Fase
 ## 11. Histórico
 
 - 0.1.0-dev.1 (2026-10-14): modelagem e contratos definidos. Nenhuma dependência instalada. Nenhum código de runtime.
+
+## Posição como subkernel compartilhado
+
+`aculta_gallery` mantém estrutura e entidades próprias, independente da Revista e do Studio. Revista, Projetos, Eventos (futuro), Wiki, LMS e Fórum podem consumir os contratos do Gallery por referências de entidade, respeitando acessos; não criar galerias paralelas nos consumidores. O processamento, deduplicação, renderização e limpeza de imagens pertencem a `aculta_image`, e a identidade a `aculta_user`. Studio será somente interface de gerenciamento autorizado. Hierarquia normativa: `docs/architecture/aculta-kernels.md` na raiz.

@@ -56,3 +56,7 @@ descrevem trabalho planejado; `operations/DEBT-REGISTER.md` concentra dívidas e
 pendências. Pull requests, commits e resultados pontuais ficam no Git/GitHub.
 Documentos em `portal/historico/` são snapshots arquivados e nunca substituem as
 referências vigentes.
+
+- [Kernel ACULTA, subkernels e consumidores](architecture/aculta-kernels.md) — contratos normativos de Fórum, Galeria, serviços transversais e Studio.
+- [ADR — Kernel ACULTA e Studio](decisions/ADR-011-aculta-kernels-studio.md) — decisão e limites.
+- [Roadmap Studio/Revista](portal/STUDIO-MAGAZINE-ROADMAP.md) — implementação futura e migração editorial.

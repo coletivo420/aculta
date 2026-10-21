@@ -72,3 +72,9 @@ duplicados neste índice.
 
 Os READMEs dos componentes são a entrada para escopo, contratos e documentação
 específica. O inventário de ativação por ambiente permanece na configuração Drupal.
+
+## Direção arquitetural Studio / Revista / kernels
+
+- [Kernel ACULTA e subkernels](../architecture/aculta-kernels.md) — classificação normativa e contratos dos serviços comuns, Fórum e Galeria.
+- [ADR de arquitetura](../decisions/ADR-011-aculta-kernels-studio.md) — decisão aceita, implementação pendente.
+- [Roadmap Studio e Revista](STUDIO-MAGAZINE-ROADMAP.md) — marcos de migração editorial e interface frontend por abas.

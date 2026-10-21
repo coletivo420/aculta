@@ -34,3 +34,7 @@ infraestrutura, não design system concorrente.
 
 Integrações transversais ficam desacopladas do tema e documentadas em
 [docs/integrations](../integrations/README.md).
+
+## Hierarquia de kernels compartilhados
+
+A descrição acima é uma visão técnica simplificada. A classificação normativa entre **Kernel ACULTA**, **subkernels independentes de Fórum/Galeria**, **consumidores funcionais** e **ACULTA Studio** está em [aculta-kernels.md](aculta-kernels.md). Não representa novas dependências de instalação. A Revista consome a Galeria; projetos são institucionais do domínio principal; eventos terão módulo próprio.

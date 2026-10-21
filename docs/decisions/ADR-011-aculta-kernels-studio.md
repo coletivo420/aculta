@@ -1,0 +1,24 @@
+# ADR — Kernel ACULTA, subkernels compartilhados e Studio
+
+**Estado:** Aceita como direção arquitetural; implementação em fases. **Data:** 2026-10-21.
+
+## Contexto
+
+ACULTA contém serviços transversais (usuários, imagens, documentos, mensagens e confirmação), mecanismos compartilháveis com estruturas próprias (Fórum e Galeria), e consumidores (Revista, Wiki, LMS, Projetos, Eventos). A interface editorial é fragmentada entre rotas administrativas dos subsistemas.
+
+## Decisão
+
+Adotar os níveis **Core/contrib → Kernel ACULTA → subkernels (Fórum/Galeria) → consumidores funcionais**, com **ACULTA Studio** como interface frontend transversal e **ACULTA420** como responsável exclusivo pela apresentação. Esta é uma classificação lógica e não uma cadeia de dependências rígidas. Contratos seletivos e adapters opcionais evitam ciclos.
+
+- Fórum público guarda apenas discussões gerais; discussões em publicação, verbete ou turma pertencem ao contexto original e reutilizam contratos do Fórum.
+- Galeria é kernel compartilhado: independente da Revista e consumido por ela; processamento de imagem continua em `aculta_image`.
+- User, Image, Document Viewer, Messenger, Mail Confirmer e Portal são capacidades comuns, sem duplicar dados Core/contrib.
+- Revista terá **um** tipo de publicação `revista` e categorias editoriais; migração de `article`/`blog` requer plano sem perda de histórico, referências e SEO.
+- Projetos pertencem ao domínio principal. Eventos terão o módulo próprio `aculta_eventos`.
+- Studio oferece abas autorizadas por área (Revista, Fórum, Wiki, Cursos, Galerias, Projetos, Biblioteca, Métricas, Eventos futuro) e reutiliza Views, Form API e workflows dos donos.
+
+## Consequências
+
+Nenhum renomeio de módulo, alteração de esquema ou migração de conteúdo decorre automaticamente deste ADR. Adoção em fases exige inventário, provas de acesso cross-domain/Group, documentação dos providers/consumers e testes. A apresentação continua sob `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+
+Detalhamento normativo: [hierarquia de kernels](../architecture/aculta-kernels.md). Roadmap: [Studio e Revista](../portal/STUDIO-MAGAZINE-ROADMAP.md).

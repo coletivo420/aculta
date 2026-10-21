@@ -35,3 +35,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - Mudanças de módulo que afetem a apresentação também atualizam o
   [mapa módulo–tema](../portal/MAPA-MODULO-TEMA.md) e seguem a
   [fronteira Portal–tema](../portal/FRONTEIRA-MODULO-TEMA.md).
+
+## Kernels e ferramentas transversais
+
+Consultar [hierarquia de kernels](../architecture/aculta-kernels.md), [ADR](../decisions/ADR-011-aculta-kernels-studio.md) e [roadmap Studio/Revista](../portal/STUDIO-MAGAZINE-ROADMAP.md). Fórum e Galeria têm estruturas compartilhadas próprias. User, Image, Document Viewer, Messenger, confirmação de e-mail e Portal compõem serviços comuns. Studio é a interface consumidora por abas; essa nomenclatura não altera as fontes de verdade Core/contrib.

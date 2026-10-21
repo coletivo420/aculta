@@ -123,3 +123,7 @@ de edição de comentário; o acesso ao campo é negado aos demais usuários. A 
 pendente considera não publicados sem a marca; a rejeitada considera não
 publicados com a marca. Publicar um comentário rejeitado tira-o da fila de
 rejeitados. O campo não aparece no display público.
+
+## Posição como subkernel compartilhado
+
+`aculta_forum` possui estrutura própria e contratos reutilizados na Revista, Wiki e LMS. Tópicos gerais ficam exclusivamente no Fórum público; comentários de publicação, discussões de verbetes e de turmas permanecem associados às entidades/contextos de origem, com Group e access revalidados. `aculta_user` centraliza cartões, `aculta_image` processa imagens e `aculta_messenger` fornece avisos; o Studio oferecerá moderação autorizada sem novo storage nem permissão paralela. Veja `docs/architecture/aculta-kernels.md` na raiz.
