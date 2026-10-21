@@ -25,6 +25,12 @@ Contrato futuro:
   reservadas e sitemap antes de declarar caminhos.
 - Resolver destinos internos via Entity URL/Route APIs e purpose canônico; não
   persistir URL absoluta ambiental.
+- Implementado em 0.4.0-dev.18 para destinos Link `entity:node/{id}`: usa o
+  `field_domain_source` do nó e `DomainPurposeManager::routeUrl()`. Página e
+  redirect públicos exigem nó publicado e viewável por anônimo; a prévia usa
+  access no purpose de origem com a conta atual. A renderização inclui tags,
+  contextos e max-age do nó, do Domain e do resultado de acesso. Outros tipos
+  entity e destinos `internal:/` ainda não são roteados entre purposes.
 - Cache público varia/invalida por Domain, path, idioma e entidades dependentes.
 - Redirect entre purposes segue `DomainPurposeManager` e política do Portal;
   mutações no purpose errado falham fechadas.

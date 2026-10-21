@@ -138,3 +138,19 @@ destino de outra conta e negação de view público para composição inconsiste
 Runtime e smoke HTTP DEFERRED pelo bloqueio externo do container Drush; nenhuma
 atualização de banco foi executada. O PHPUnit local está em PHP 8.4.26, abaixo
 do PHP 8.5 declarado como alvo do projeto.
+
+Resolução de destino Domain 0.4.0-dev.18: Unit PASS (1 teste/18 asserções)
+confirma o canonical `entity.node.canonical`, o purpose `courses`, checagem de
+acesso anônimo e dependências de cache. Kernel PASS (2/99; 7 depreciações
+upstream). Runtime HTTP permanece DEFERRED: `updatedb:status` lista quatro
+updates pendentes de `aculta_links` (10003–10006) e um update de entidade
+`aculta_lms` (10002), pertencente a outra frente; não executei `updb` nem `cr`
+para não aplicar mudança de outra frente no Runtime compartilhado.
+
+Última validação de código 0.4.0-dev.18: Unit PASS (4 testes/33 asserções;
+6 depreciações upstream), Kernel PASS (2/99; 7 depreciações upstream), PHPCS
+Drupal, PHP lint, 9 arquivos YAML do módulo, slug, SDC, boundary e `git diff
+--check` PASS. O gate Drupal 11+/status index está bloqueado por alteração
+concorrente de `aculta_qrcode` (manifesto `0.3.0-dev.1` sem atualização da linha
+no README); o mapa de módulos/tema também acusa esse módulo ainda não listado.
+Nenhum arquivo de outra frente foi alterado para contornar os gates.

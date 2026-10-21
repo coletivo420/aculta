@@ -14,7 +14,11 @@ services:
 
   aculta_links.public_page_controller:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver', '@aculta_links.analytics', '@request_stack']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver', '@aculta_links.destination_resolver', '@aculta_links.analytics', '@request_stack']
+
+  aculta_links.destination_resolver:
+    class: Drupal\aculta_links\Service\LinkDestinationResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
 
   aculta_links.analytics:
     class: Drupal\aculta_links\Service\LinkAnalytics

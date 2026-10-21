@@ -12,6 +12,7 @@ use Drupal\Core\Url;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkPage;
+use Drupal\aculta_links\Service\LinkDestinationResolver;
 use Drupal\aculta_links\Service\LinkAnalytics;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -24,6 +25,7 @@ final class LinkPagePublicController {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly AuthorIdentityResolver $authorIdentityResolver,
+    private readonly LinkDestinationResolver $destinationResolver,
     private readonly LinkAnalytics $analytics,
     private readonly RequestStack $requestStack,
   ) {}
@@ -110,7 +112,8 @@ final class LinkPagePublicController {
     }
 
     try {
-      $url = $link->get('uri')->first()?->getUrl();
+      $resolution = $this->destinationResolver->resolve($link->get('uri')->first(), $this->currentUser, TRUE);
+      $url = $resolution->url;
       if (!$url instanceof Url) {
         throw new NotFoundHttpException();
       }
@@ -126,7 +129,8 @@ final class LinkPagePublicController {
 
     return $response
       ->addCacheableDependency($link)
-      ->addCacheableDependency($access);
+      ->addCacheableDependency($access)
+      ->addCacheableDependency($resolution->cacheability);
   }
 
   /**
@@ -223,12 +227,11 @@ final class LinkPagePublicController {
       if (!$link_access->isAllowed()) {
         continue;
       }
-      try {
-        $url = $link->get('uri')->first()?->getUrl();
-      }
-      catch (\InvalidArgumentException) {
-        continue;
-      }
+      $resolution = $this->destinationResolver->resolve($link->get('uri')->first(), $this->currentUser, $published_only);
+      $cache_tags = array_merge($cache_tags, $resolution->cacheability->getCacheTags());
+      $cache_contexts = array_merge($cache_contexts, $resolution->cacheability->getCacheContexts());
+      $cache_max_age = Cache::mergeMaxAges($cache_max_age, $resolution->cacheability->getCacheMaxAge());
+      $url = $resolution->url;
       if (!$url instanceof Url) {
         continue;
       }

@@ -1,5 +1,13 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.18 — resolve links internos pelo Domain de origem — 2026-10-20
+
+- Destinos `entity:node/{id}` são carregados pelo Storage API; só nodes publicados e visíveis para anônimos entram em página/redirect públicos.
+- `field_domain_source` determina o purpose; URL canônica é gerada por `DomainPurposeManager`, com dependências de cache para node, Domain, acesso e `node_list`.
+- Prévia privada verifica acesso no contexto Domain de origem usando a conta atual. Outros URIs mantêm a resolução do campo Link Core.
+- Fontes: [LinkItem::getUrl() Drupal 11](https://api.drupal.org/api/drupal/core%21modules%21link%21src%21Plugin%21Field%21FieldType%21LinkItem.php/function/LinkItem%3A%3AgetUrl/11.x) e documentação [Domain Source](https://www.drupal.org/project/domain).
+- Validação: Unit para resolução `courses`, Kernel 2/99; execução dos gates e estado Runtime registrados em `docs/TESTING.md`.
+
 ## 0.4.0-dev.17 — protege a propriedade da composição — 2026-10-20
 
 - Uma composição exige que item, micropágina e destino compartilhem o mesmo proprietário Drupal; a validação impede gravação de referências cruzadas.

@@ -67,6 +67,14 @@ para não compartilhar renderização privada. O endpoint retorna 404 sem acesso
 o teste Kernel cobre a consulta do proprietário e o limite de cache. Inspeção
 visual autenticada no navegador permanece pendente.
 
+## Destinos de conteúdo 0.4.0-dev.18
+
+URIs `entity:node/{id}` carregam o conteúdo via Entity Storage. Na página pública
+e no redirect, o resolver exige publicação e `view` como anônimo no Domain de
+origem; owners autenticados não ampliam o conteúdo exposto. O resultado de
+acesso e os dados do nó/Domain entram no cache. Tipos entity diferentes de node
+e caminhos `internal:/` ainda não são redirecionados ao purpose de conteúdo.
+
 ## Integridade de propriedade 0.4.0-dev.17
 
 Validação de entidade exige que item, micropágina e destino tenham a mesma

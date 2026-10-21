@@ -55,8 +55,10 @@ dos links diretos continuam fora da métrica. Base legal precisa ser validada.
 
 ## 0.6.0 — integração do ecossistema
 
-Integrações explícitas com `aculta_user`, Domain, conteúdo referenciável, cursos,
-eventos, Commerce, campanhas e mídia. Cada conteúdo permanece sob seu módulo.
+Integração de identidade com `aculta_user`, Domain de páginas e redirects e
+destinos `entity:node/{id}` por `field_domain_source` implementados. Permanecem
+Entity References editáveis para conteúdo, rotas de Group/cursos, Commerce,
+campanhas e mídia; cada conteúdo seguirá sob seu módulo proprietário.
 
 ## 0.7.0 — administração e hardening
 
