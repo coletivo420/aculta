@@ -210,6 +210,14 @@ foram preservadas. O 404 inicial foi corrigido por
 serviço. RUNTIME STATUS: parcial; campo e formulário ativos, emissão positiva,
 QR/PDF válidos para código real e revisão visual continuam DEFERRED.
 
+Em 0.1.0-dev.45, o campo foi restringido a no mínimo uma hora, mesma condição
+exigida pela emissão. O Kernel de certificados rejeita zero horas (3 testes /
+85 assertions PASS; 38 depreciações upstream). Como o campo ainda não tem
+valores, a única definição foi importada parcialmente após revisão da prévia;
+Runtime agora confirma `min: 1`, sem mudanças em outras configurações. Cache foi
+reconstruído e Drush não encontrou updates pendentes. O rebuild registrou o
+aviso conhecido do asset H5P fora desta alteração.
+
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
 agregados por turma, sem respostas abertas nem dados identificáveis na visão

@@ -65,6 +65,12 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_storage' => $storage,
       'bundle' => 'lms_course',
       'label' => 'Carga horária',
+      'settings' => [
+        'min' => 1,
+        'max' => NULL,
+        'prefix' => '',
+        'suffix' => '',
+      ],
     ])->save();
   }
 
@@ -81,6 +87,13 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 14,
     ]);
     $course->save();
+    $course_without_workload = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso sem horas válidas',
+      'uid' => $student->id(),
+      'field_course_hours' => 0,
+    ]);
+    self::assertGreaterThan(0, count($course_without_workload->get('field_course_hours')->validate()));
     $status = CourseStatus::create([
       CourseStatusInterface::COURSE_FIELD => $course->id(),
       'uid' => $student->id(),

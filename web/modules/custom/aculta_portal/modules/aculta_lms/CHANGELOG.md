@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.45 — validar carga horária mínima — 2026-10-21
+
+- O campo de carga horária do curso exige no mínimo uma hora, alinhando a
+  configuração editorial ao requisito da emissão do certificado.
+- `CertificateLifecycleTest`: 3 testes / 85 assertions PASS, com 38
+  depreciações upstream. Runtime de teste recebeu somente a atualização da
+  definição do campo por importação parcial revisada; `min: 1` foi confirmado,
+  zero valores permanecem e não há updates de banco pendentes. `drush cr`
+  concluiu com o aviso conhecido do asset H5P, sem relação com esta mudança.
+
 ## 0.1.0-dev.44 — completar schema de usuário na fixture Kernel — 2026-10-21
 
 - O Kernel de instalação agora instala o schema de User e persiste a conta
