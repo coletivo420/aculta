@@ -39,6 +39,13 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     $display = $this->config('core.entity_view_display.node.aculta_lms_topic.full');
     self::assertSame('comment_default', $display['content']['field_aculta_discussion']['type']);
     self::assertArrayNotHasKey('field_aculta_discussion', $display['hidden']);
+
+    $commentBody = $this->syncConfig('field.field.comment.aculta_discussion_post.comment_body');
+    self::assertSame(['usuario_aculta' => 'usuario_aculta'], $commentBody['settings']['allowed_formats']);
+    $textFormat = $this->syncConfig('filter.format.usuario_aculta');
+    self::assertSame('aculta_image', $textFormat['filters']['aculta_imagem_modelo']['provider']);
+    $editor = $this->syncConfig('editor.editor.usuario_aculta');
+    self::assertSame('inline-images', $editor['image_upload']['directory']);
   }
 
   /**

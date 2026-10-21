@@ -396,7 +396,9 @@ container; não há tópico/Comment LMS real nesse Runtime, então smoke autenti
 e revisão visual seguem pendentes. O constraint de imagem em entrega é
 exercitado pelo `file.validator` do Core com arquivo válido/inválido, e o
 Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtime,
-anexos de discussão e renderização HTTP/visual seguem pendentes.
+renderização HTTP/visual e upload de entrega seguem pendentes. O Comment de
+discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
+`aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
 O escopo de Gallery, Magazine e Wiki também precisa ser concretizado em
 integrações específicas, sem CMS paralelo.
 

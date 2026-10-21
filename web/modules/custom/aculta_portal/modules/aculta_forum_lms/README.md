@@ -95,7 +95,10 @@ e revisão visual ainda não foram realizados.
 - `aculta_forum_lms` resolve contexto e autorização; não duplica matrícula,
   respostas, cartões, busca, notificações ou mídia.
 - Cartões educacionais continuam pertencendo ao `aculta_user`.
-- `aculta_messenger`, `aculta_image`, Search API e tema não são alterados aqui.
+- Imagens digitadas nas respostas Comment usam o formato compartilhado
+  `usuario_aculta`, cujo editor e filtro são fornecidos por `aculta_image`.
+  Não existe anexo separado de arquivo neste adapter.
+- `aculta_messenger`, Search API e tema não são alterados aqui.
 
 ## Acesso e testes
 

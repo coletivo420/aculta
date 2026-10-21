@@ -1,3 +1,12 @@
+## `0.1.0-dev.25` — confirmar imagens inline no Comment compartilhado — 2026-10-21
+
+- O Kernel Unit do adapter verifica que respostas LMS reutilizam o campo
+  Comment `aculta_discussion_post`, o formato `usuario_aculta`, o upload inline
+  CKEditor e o filtro de imagem de `aculta_image`. O LMS não cria campo nem
+  pipeline de imagem duplicado; anexos independentes continuam sem fluxo próprio.
+- Unit adapter: 22 testes / 256 assertions PASS. Gate `validate-aculta-image`
+  confirma o catálogo e o upload compartilhado.
+
 ## `0.1.0-dev.24` — ligar discussões existentes às atividades — 2026-10-21
 
 - Tópicos Node do Forum podem referenciar uma atividade LMS pela entidade
