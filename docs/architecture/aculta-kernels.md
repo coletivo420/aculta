@@ -33,3 +33,45 @@ O destino aprovado é o único bundle Node `revista` para publicações antes di
 ## Fluxo de manutenção
 
 Novos serviços transversais e adaptações devem ter um dono único, contrato documentado, teste de consumo entre subsistemas, cacheability/access e gate módulo–tema. Atualizar este documento, o ADR, documentação do dono e índices no mesmo commit. Não reestruturar pastas PHP por causa dos nomes conceituais.
+
+## Matriz de responsabilidades — referência para agentes
+
+| Camada | Proprietário | Responsabilidade e fronteira |
+| --- | --- | --- |
+| Core/contrib | Drupal User, Profile, Media, File, Node, Comment, Taxonomy, Views, Group, Workflows | Entidades, persistência e access handlers nativos. |
+| Kernel | `aculta_portal` | Integração, Domain purposes e políticas compartilhadas; não substitui o armazenamento especializado. |
+| Kernel | `aculta_user` | Perfis, privacidade, identidade e cartões de autoria/participação; Drupal User/Profile são a fonte de verdade. |
+| Kernel | `aculta_image` | Upload, transformações, compressão, variantes, deduplicação e limpeza de imagens. |
+| Kernel | `aculta_document_viewer` | Leitura autorizada de PDF/DOCX/planilhas conforme implementação real; arquivos pertencem a Media/File. |
+| Kernel | `aculta_messenger` | Experiência de mensagens, avisos e notificações; Private Message/Message continuam fontes de verdade. |
+| Kernel | `aculta_mail_confirmer` e `aculta_mail_confirmer_user` | Confirmação de e-mail e integração com contas; não concedem privilégios de publicação. |
+| Subkernel | `aculta_forum` | Discussões públicas próprias e contratos reutilizados em comentários/discussões contextuais de outros módulos. |
+| Subkernel | `aculta_gallery` | Álbuns próprios, associação de Media e experiências reutilizáveis de galeria; processamento pertence a Image. |
+| Consumidor | `aculta_magazine` | Publicações, categorias, SEO e fluxo editorial da Revista; Gallery/Forum são fornecedores externos. |
+| Consumidor | Wiki atual | Verbetes, revisões e discussão contextual, sem abrir tópicos públicos automaticamente. |
+| Consumidor | `aculta_lms` / Group | Cursos, turmas, avaliação, autorização e discussões de turma. |
+| Consumidor | Projetos (`node.type.project`) | Conteúdo do domínio principal; pode referenciar galerias e publicações. |
+| Consumidor futuro | `aculta_eventos` | Eventos próprios; não criar dados de evento em Magazine. |
+| Ferramenta | `aculta_studio` (planejado) | Painel frontend por abas; opera serviços dos proprietários, não armazena versões paralelas. |
+| Visual | `aculta420` | SDC, UI Patterns, UI Styles, Twig, CSS e tokens. |
+
+## Matriz de consumo transversal
+
+Esta matriz representa o **contrato-alvo**, não a confirmação de que cada integração está implementada. Cada integração deve ser verificada, ativada seletivamente e testada.
+
+| Consumidor | User | Image | Document Viewer | Messenger | Fórum | Galeria |
+| --- | --- | --- | --- | --- | --- | --- |
+| Revista | Autoria/coautoria | Capas | Documentos anexos | Avisos editoriais | Comentários na publicação | Álbuns referenciados |
+| Wiki | Identidade editorial | Imagens | Fontes/documentos | Avisos | Discussão no verbete | Galerias referenciadas |
+| LMS | Educadores/alunos | Capas | Materiais autorizados | Avisos de turma | Discussão sob Group | Galerias didáticas |
+| Projetos | Autoria | Capas | Documentos | Avisos autorizados | Contextual, se previsto | Álbuns relacionados |
+| Eventos (futuro) | Organizadores | Cartazes | Anexos | Avisos | Contextual, se previsto | Fotos/álbuns |
+| Studio (futuro) | Identidade e acesso | Delegação | Delegação | Notificações | Operações de moderação | Operações de gestão |
+
+### Regras de não duplicação
+
+- **Fórum público ≠ discussão contextual**: não copiar comentários de Revista, Wiki ou LMS para tópicos públicos; o subkernel oferece experiência e contratos, não concentração indiscriminada do conteúdo.
+- **Galeria ≠ imagem**: Gallery organiza álbuns; Image gerencia política dos arquivos e derivados. A Revista é consumidora, não dona da Galeria.
+- **Mensagem ≠ confirmação de conta**: Messenger entrega comunicações autorizadas; Mail Confirmer controla confirmação de e-mail; publicação continua condicionada a permissões reais.
+- **Studio ≠ módulo dono do dado**: usar Views/Form API/Entity Access/Workflows do consumidor, sem tabelas próprias equivalentes ou novos fluxos de permissão.
+- **Kernel ≠ dependência obrigatória universal**: modules `*.info.yml` declaram apenas os serviços necessários; providers opcionais evitam ciclos.
