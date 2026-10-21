@@ -372,15 +372,16 @@ parcial revisada e cache rebuild; smoke autenticado e revisão visual continuam
 pendentes antes de RC. A administração do LMS começa pelo curso e inclui aulas,
 atividades, turmas, prazos e fóruns.
 
-**F14 — Conexões: implementação iniciada; validação pendente.**
+**F14 — Conexões: implementação e falhas seguras cobertas; validação pendente.**
 `aculta_user` continua dono do estado de amizade e publica eventos mínimos de
 pedido/aceite; `aculta_messenger` cria Message persistente e enfileira e-mail
 transacional mínimo, sem duplicar o registro de amizade. A implementação entrou
-na branch em `e8da6bb4`, mas ainda falta cobertura focal do subscriber/worker,
-smoke autenticado e teste do worker de e-mail. Unit agora cobre eventos e
-destinatários, deduplicação, conta inativa e formulário de pedidos recebidos
-(6/45). A aba Mensagens já mostra ações e valida novamente o destinatário; a
-dívida DT-O15 foi atualizada para revisão visual autenticada pendente.
+na branch em `e8da6bb4`; Unit cobre eventos e destinatários, deduplicação,
+conta inativa, formulário de pedidos recebidos e falhas seguras do worker
+(8/56). O worker ignora payload inválido e marca falha sem envio quando falta
+conta/Domain; envio bem-sucedido e retentativas seguem sem teste. A aba
+Mensagens já mostra ações e valida novamente o destinatário; ainda faltam smoke
+autenticado e revisão visual (DT-O15).
 
 **F15 — vínculo da atividade com discussões implementado; homologação e recursos editoriais pendentes.**
 `capa_curso` usa `aculta_image`; imagens do editor H5P passam por

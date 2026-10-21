@@ -1,3 +1,11 @@
+## 0.1.1-dev.65 — cobrir falhas seguras do worker de amizade — 2026-10-21
+
+- `FriendshipNoticeEmailWorkerTest` confirma que payload malformado é ignorado
+  e que ausência da conta/Domain registra `failed` sem chamar Message Notify:
+  2 testes / 11 assertions PASS. Nenhum e-mail é enviado pelo teste.
+- Unit Messenger: 53 testes / 214 assertions PASS. Entrega bem-sucedida,
+  retentativas do transporte e revisão visual autenticada ainda faltam.
+
 ## 0.1.1-dev.64 — cobrir transições e deduplicação de amizade — 2026-10-21
 
 - `FriendshipNoticeSubscriberTest` valida que pedidos notificam o destinatário,

@@ -21,7 +21,9 @@ Git, aos commits e ao changelog; esta lista registra sequência e critérios de 
    pedido/aceite, destinatário correto, deduplicação e conta inativa
    (`FriendshipNoticeSubscriberTest`: 4/33), além da lista de pedidos recebidos
    e revalidação do destinatário ao aceitar (`FriendRequestsFormTest`: 2/12).
-   Unit Messenger: 51/203. Ainda faltam teste do worker de e-mail e revisão
+   O worker cobre payload inválido e ausência de conta/Domain sem chamar
+   transporte (`FriendshipNoticeEmailWorkerTest`: 2/11). Unit Messenger:
+   53/214. Ainda faltam teste de entrega bem-sucedida/retentativa e revisão
    visual autenticada; o smoke Runtime em dev.63 confirmou somente persistência
    de Message e enqueue, sem enviar e-mail real. Validação em Alpha ocorre após
    deploy autorizado; Config Sync e testes estáticos devem permanecer prontos
