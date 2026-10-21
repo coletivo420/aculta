@@ -110,6 +110,8 @@
 | `data-aculta-sheet` | exato | sim | 2 |
 | `data-aculta-sheet-count` | exato | sim | 0 |
 | `data-aculta-sheet-format` | exato | sim | 1 |
+| `data-aculta-sheet-frame-url` | exato | sim | 1 |
+| `data-aculta-sheet-libs` | exato | sim | 1 |
 | `data-aculta-sheet-status` | exato | sim | 0 |
 | `data-aculta-sheet-tabulator` | exato | sim | 1 |
 | `data-aculta-sheet-title` | exato | sim | 1 |

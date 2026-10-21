@@ -195,7 +195,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | XLS, ODS e CSV implementados; pt-BR; modo Tabela (`15908959`). Runtime testado com XLSX e ODS; CSV fora do campo de documentos do Runtime |
 | 0.1.0-dev.8 | Interface unificada | Título, tipo, barra de zoom e tela cheia, status acessível, cabeçalho e modos com ACULTA420 | Módulo 0.1.0-dev.7 e tema 0.6.0-dev.145; Runtime testado com DOCX e XLSX (zoom, tela cheia por clique real, título escapado). Pendente: revisão em Firefox e viewports, e o PDF segue com a barra própria |
 | 0.1.0-dev.9 | Integração transversal | Consumidores de documento: displays, editores, Group e Views | Matriz verificada no Runtime (abaixo). Ativação de DOCX e planilhas nos consumidores públicos e no LMS depende de decisão do responsável; teste de revogação de Group bloqueado pelo ambiente de teste |
-| 0.1.0-dev.10 | Segurança | Arquivos maliciosos, privados, limites e isolamento | Não iniciada |
+| 0.1.0-dev.10 | Segurança e desempenho | Arquivos maliciosos, isolamento, limites e CSV | Parser de planilhas isolado em iframe sandbox e limites no servidor e no cliente (módulo 0.1.0-dev.8, `04cab735`). Pendentes: isolamento do DOCX já existe; CSP real com referência externa e testes de DOCX malicioso não exercitados no Runtime |
 | 0.1.0-rc.1 | Homologação | Migração, regressão, acessibilidade | Não iniciada |
 | 0.1.0 | Estável | Implantação após aprovação | — |
 
@@ -332,3 +332,13 @@ Verificação somente de leitura no Runtime (configuração ativa e exportada). 
 | Group (`course_document`, relação `lms_course`) | configuração migrada (`740a0c32`) | sem mudança de acesso | o teste `CourseDocumentAccessTest` (revogação de membership) não roda no ambiente de teste: falha com `aculta_user.aculta_user_agreement_ledger` ausente, a mesma causa da baseline |
 
 Conclusão: a integração técnica está pronta para os consumidores, mas nenhum consumidor público ou de turma recebe DOCX ou planilhas sem uma decisão do responsável. A revogação de acesso de turma não foi verificada nesta etapa; fica como pendência explícita, com a causa.
+
+
+## 0.1.0-dev.10 — segurança do leitor de planilhas (evidência)
+
+- SheetJS saiu da página principal: roda em `js/sheet-frame.js`, em iframe `sandbox="allow-scripts"` sem `allow-same-origin`, com CSP em `<meta>`. O pai (`sheet-reader.mjs`) só recebe matrizes de texto.
+- Limites: 2000 linhas e 100 colunas por aba, 20 abas, 500 caracteres por célula, no iframe e de novo no pai.
+- ODS com limites de descompactação e teste de ZIP bomb; XLSX já tinha limites pelo validador OOXML.
+- Sonda de isolamento durante a leitura (Chromium X11): iframe com `sandbox="allow-scripts"`; página sem acesso ao documento do iframe; célula com `<img ...>` chega como texto; nenhum elemento `img` criado.
+- Runtime (XLSX de três abas no modo full de `node.document`): `status: ok`, abas, modo Tabela com cabeçalhos corretos. Display restaurado; fixtures removidos.
+- Não exercitado no Runtime: DOCX malicioso (HTML embutido, referência externa com CSP real) e arquivo corrompido com fallback no navegador. Permanecem como pendência de homologação.
