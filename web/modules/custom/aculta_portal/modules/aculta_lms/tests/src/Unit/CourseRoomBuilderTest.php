@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\Core\Field\FieldItemList;
 use Drupal\aculta_lms\CourseRoomBuilder;
+use Drupal\aculta_lms\ClassRosterManager;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -45,6 +46,7 @@ final class CourseRoomBuilderTest extends UnitTestCase {
       $account,
       $this->createMock(TranslationInterface::class),
       $formBuilder,
+      $this->createMock(ClassRosterManager::class),
     );
 
     self::assertSame($form, $builder->build($course)['enrollment']);
@@ -81,10 +83,15 @@ final class CourseRoomBuilderTest extends UnitTestCase {
     };
     $course->expects(self::once())->method('get')->with('lessons')->willReturn($lesson_field);
 
+    $rosters = $this->createMock(ClassRosterManager::class);
+    $rosters->expects(self::once())->method('build')->with($course, $account)->willReturn([
+      '#cache' => ['contexts' => ['user'], 'tags' => ['group_relationship_list'], 'max-age' => 3600],
+    ]);
     $builder = new CourseRoomBuilder(
       $account,
       $this->createMock(TranslationInterface::class),
       $this->createMock(FormBuilderInterface::class),
+      $rosters,
     );
 
     $build = $builder->build($course);

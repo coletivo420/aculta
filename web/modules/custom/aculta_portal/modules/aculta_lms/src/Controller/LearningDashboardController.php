@@ -197,6 +197,13 @@ final class LearningDashboardController {
         '#rows' => $activityRows,
         '#empty' => $this->t('Este curso ainda não tem atividades publicadas.'),
       ],
+      'roster_settings' => Link::fromTextAndUrl(
+        $this->t('Lista de participantes'),
+        Url::fromRoute('aculta_lms.class_roster_settings', [
+          'course' => $course->id(),
+          'group' => $group->id(),
+        ]),
+      )->toRenderable(),
       '#cache' => ['max-age' => 0],
     ];
     CacheableMetadata::createFromRenderArray($build)

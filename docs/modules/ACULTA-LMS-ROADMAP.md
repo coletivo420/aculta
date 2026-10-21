@@ -361,14 +361,18 @@ preexistente de cópia dos assets H5P.
 
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 
-**F14 — visibilidade de participantes definida; implementação em andamento.**
-O Educador controla por turma se estudantes podem ver a lista de participantes;
-o padrão é oculto. A lista será limitada à turma atual e não incluirá progresso,
-notas ou respostas. A administração do LMS começa no curso: aulas, atividades,
-turmas, prazos e fóruns ficam no contexto do curso. As rotas de painel/prazo e
-moderação agora exigem curso e turma coerentes. `aculta_user` mantém a fonte de
-amizade e `aculta_messenger` consulta o estado atual para conversas; a dívida
-DT-O15 de pedidos recebidos sem formulário ativo no Messenger permanece separada.
+**F14 — visibilidade de participantes: implementação Dev concluída.**
+O educador controla por turma se estudantes podem ver a lista; o padrão é
+oculto. Cada estudante vê somente nomes de colegas ativos da própria turma, sem
+progresso, notas ou respostas. O formulário exige acesso contextual e confere a
+relação entre curso e turma. Kernel: `ClassRosterVisibilityTest`, 1 teste / 28
+assertions PASS (36 depreciações upstream); `AcultaLmsInstallTest` valida a rota.
+Runtime de teste recebeu apenas as duas configurações do campo por importação
+parcial revisada e cache rebuild; smoke autenticado e revisão visual continuam
+pendentes antes de RC. Administração começa pelo curso e inclui aulas,
+atividades, turmas, prazos e fóruns. `aculta_user` mantém a fonte de amizade e
+`aculta_messenger` consulta o estado atual para conversas; a dívida DT-O15 de
+pedidos recebidos sem formulário ativo no Messenger permanece separada.
 
 **F15 — integrações parciais; atividade/discussão e homologação ainda abertas.**
 `capa_curso` usa `aculta_image`; imagens do editor H5P passam por

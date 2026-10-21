@@ -22,6 +22,7 @@ final class CourseRoomBuilder {
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $translation,
     private readonly FormBuilderInterface $formBuilder,
+    private readonly ClassRosterManager $classRosters,
   ) {}
 
   /**
@@ -84,8 +85,13 @@ final class CourseRoomBuilder {
       '#value' => $this->translation->translate('Conteúdo do curso'),
     ];
     $build['lessons'] = $items === []
-      ? ['#plain_text' => $this->translation->translate('Este curso ainda não tem lições.')]
+      ? ['#plain_text' => $this->translation->translate('Este curso ainda não tem aulas.')]
       : ['#theme' => 'item_list', '#items' => $items];
+    $rosters = $this->classRosters->build($course, $this->currentUser);
+    if (isset($rosters['classes'])) {
+      $build['participant_rosters'] = $rosters;
+    }
+    $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($rosters));
     $cacheability->applyTo($build);
     return $build;
   }

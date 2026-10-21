@@ -1,5 +1,18 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.77 — controlar a lista de participantes por turma — 2026-10-21
+
+- Educadores podem exibir ou ocultar, por turma, uma lista limitada aos nomes
+  de estudantes ativos matriculados naquela mesma turma; o padrão é oculto.
+  Formulário e rota validam o curso/turma e a permissão contextual. O Kernel
+  cobre padrão oculto, isolamento entre turmas e exclusão de contas bloqueadas:
+  1 teste / 28 assertions PASS (36 depreciações upstream de Core/contrib).
+- `AcultaLmsInstallTest` confere a rota administrativa (1/17, com 3
+  depreciações upstream); Unit LMS: 71/397 PASS (8 depreciações PHPUnit);
+  PHPCS Drupal/DrupalPractice PASS. Runtime de teste recebeu somente as duas
+  configurações do campo via importação parcial revisada; cache rebuild passou.
+  Smoke autenticado e revisão visual seguem pendentes.
+
 ## 0.1.0-dev.76 — organizar a administração pelo curso — 2026-10-21
 
 - Painel da turma e configuração de prazo agora ficam abaixo de

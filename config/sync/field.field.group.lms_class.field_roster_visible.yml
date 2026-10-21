@@ -1,0 +1,23 @@
+uuid: c0b5ea6c-3c7c-47a8-985a-0407b38a97c9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_roster_visible
+    - group.type.lms_class
+id: group.lms_class.field_roster_visible
+field_name: field_roster_visible
+entity_type: group
+bundle: lms_class
+label: 'Exibir participantes aos estudantes'
+description: 'Quando ativada, estudantes matriculados nesta turma podem ver os nomes dos colegas da mesma turma na página do curso.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Sim'
+  off_label: 'Não'
+field_type: boolean

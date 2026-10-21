@@ -51,9 +51,12 @@ services:
   Drupal\aculta_lms\Event\CourseCompletionPublisherInterface: '@aculta_lms.course_completion_publisher'
   aculta_lms.course_room_builder:
     class: Drupal\aculta_lms\CourseRoomBuilder
-    arguments: ['@current_user', '@string_translation', '@form_builder']
+    arguments: ['@current_user', '@string_translation', '@form_builder', '@aculta_lms.class_roster_manager']
     tags:
       - { name: aculta_portal.helper }
+  aculta_lms.class_roster_manager:
+    class: Drupal\aculta_lms\ClassRosterManager
+    arguments: ['@entity_type.manager', '@string_translation']
   aculta_lms.course_order_enrollment:
     class: Drupal\aculta_lms\CourseOrderEnrollmentManager
     arguments: ['@entity_type.manager']
