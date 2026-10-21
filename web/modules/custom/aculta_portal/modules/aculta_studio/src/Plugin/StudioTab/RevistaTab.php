@@ -12,7 +12,10 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Revista tab: creating editorial publications. The owner is aculta_magazine.
+ * Revista tab. The owner is aculta_magazine; the states come from the editorial workflow `revista`.
+ *
+ * Publicações lists the nodes by state (Todos, Rascunhos, Em revisão, Publicados, Arquivados) through the
+ * listing of the Studio, which keeps the node access of the owner. Criar gives the owner's create route.
  */
 #[StudioTab(
   id: 'revista',
@@ -28,15 +31,37 @@ final class RevistaTab extends StudioTabBase {
 
   /** {@inheritdoc} */
   public function access(AccountInterface $account): AccessResultInterface {
-    return AccessResult::allowedIfHasPermission($account, 'create revista content');
+    return AccessResult::allowedIfHasPermission($account, 'create revista content')
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'edit any revista content'));
   }
 
   /** {@inheritdoc} */
   public function sections(AccountInterface $account): array {
+    $states = [
+      'todos' => ['label' => $this->t('Todos'), 'state' => NULL],
+      'rascunhos' => ['label' => $this->t('Rascunhos'), 'state' => 'draft'],
+      'em-revisao' => ['label' => $this->t('Em revisão'), 'state' => 'review'],
+      'publicados' => ['label' => $this->t('Publicados'), 'state' => 'published'],
+      'arquivados' => ['label' => $this->t('Arquivados'), 'state' => 'archived'],
+    ];
+    $listTabs = [];
+    foreach ($states as $id => $item) {
+      $listTabs[$id] = [
+        'label' => $item['label'],
+        'weight' => count($listTabs),
+        'listing' => ['bundle' => 'revista', 'state' => $item['state']],
+        'actions' => [],
+      ];
+    }
     return [
+      'publicacoes' => [
+        'label' => $this->t('Publicações'),
+        'weight' => 0,
+        'tabs' => $listTabs,
+      ],
       'criar' => [
         'label' => $this->t('Criar'),
-        'weight' => 0,
+        'weight' => 10,
         'tabs' => [
           'nova-publicacao' => [
             'label' => $this->t('Nova publicação'),

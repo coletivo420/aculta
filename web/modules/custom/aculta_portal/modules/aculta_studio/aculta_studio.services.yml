@@ -7,4 +7,7 @@ services:
     arguments: ['@aculta_studio.tab_manager']
   aculta_studio.controller:
     class: Drupal\aculta_studio\Controller\StudioController
-    arguments: ['@aculta_studio.presenter', '@current_user', '@string_translation']
+    arguments: ['@aculta_studio.presenter', '@current_user', '@aculta_studio.listing', '@string_translation']
+  aculta_studio.listing:
+    class: Drupal\aculta_studio\StudioListingBuilder
+    arguments: ['@entity_type.manager', '@date.formatter', '@string_translation']

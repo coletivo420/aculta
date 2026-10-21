@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\aculta_studio\StudioListingBuilder;
 use Drupal\aculta_studio\StudioPresenter;
 use Drupal\aculta_studio\StudioTabInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -30,6 +31,7 @@ final class StudioController {
   public function __construct(
     private readonly StudioPresenter $presenter,
     private readonly AccountInterface $account,
+    private readonly StudioListingBuilder $listings,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -116,6 +118,10 @@ final class StudioController {
     $actions = [];
     foreach ($tab['actions'] as $action) {
       $actions[] = PortalLinkElement::build($action['title'], $action['url'], ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action']);
+    }
+    // Listagem da aba (quando a aba declara uma): as linhas passam pelo acesso de cada nó.
+    if (!empty($tab['listing'])) {
+      $build['layout']['main']['listing'] = $this->listings->build($tab['listing'], $this->account);
     }
     $build['layout']['main']['panel'] = [
       '#type' => 'container',

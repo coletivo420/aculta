@@ -53,8 +53,9 @@ final class StudioPresenter {
       $tabs = [];
       foreach ($section['tabs'] ?? [] as $tabId => $item) {
         $actions = array_values(array_filter($item['actions'] ?? [], static fn (array $action): bool => (bool) ($action['access'] ?? FALSE)));
-        if ($actions !== []) {
-          $tabs[$tabId] = ['label' => $item['label'], 'weight' => $item['weight'] ?? 0, 'actions' => $actions];
+        // A tab is kept when it has an allowed action or a listing; a listing still applies the node access.
+        if ($actions !== [] || isset($item['listing'])) {
+          $tabs[$tabId] = ['label' => $item['label'], 'weight' => $item['weight'] ?? 0, 'actions' => $actions, 'listing' => $item['listing'] ?? NULL];
         }
       }
       if ($tabs !== []) {
