@@ -110,6 +110,20 @@ try {
   const kbPath = await exec(`return window.location.pathname;`);
   check('Enter no teclado troca a aba pela URL dela', kbPath === '/studio/revista/criar/nova-publicacao' || kbPath.startsWith('/studio/revista/criar/'), kbPath);
 
+  // Contraste WCAG: texto do Studio contra o fundo efetivo, com as cores computadas pelo navegador (claro e escuro).
+  const contrastScript = `
+    const parse = (c) => (c.match(/[\\d.]+/g) || []).slice(0, 3).map(Number);
+    const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+    const bgOf = (el) => { for (let e = el; e; e = e.parentElement) { const c = getComputedStyle(e).backgroundColor; const m = c.match(/rgba?\\(([^)]+)\\)/); if (m && !/rgba\\([^)]*,\\s*0\\)$/.test(c)) return parse(c); } return [255, 255, 255]; };
+    const items = [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="heading"]')];
+    return items.map((el) => { const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return Math.round(ratio * 100) / 100; });
+  `;
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'contraste (claro)');
+  const contrastLight = JSON.parse(JSON.stringify(await exec(contrastScript)));
+  const minLight = Math.min(...contrastLight);
+  check('contraste mínimo do texto do Studio no modo claro (WCAG AA, 4,5:1)', minLight >= 4.5, `mínimo ${minLight}:1 em ${contrastLight.length} elemento(s)`);
+
   // Paridade claro/escuro: mesma geometria nos dois modos. A preferência da conta de teste é trocada e restaurada.
   const boxesFor = () => exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="panel"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]; }));`);
   await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
@@ -123,6 +137,8 @@ try {
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (escuro)');
   await sleep(800);
   const darkBoxes = JSON.parse(await boxesFor());
+  const contrastDark = JSON.parse(JSON.stringify(await exec(contrastScript)));
+  check('contraste mínimo do texto do Studio no modo escuro (WCAG AA, 4,5:1)', Math.min(...contrastDark) >= 4.5, `mínimo ${Math.min(...contrastDark)}:1 em ${contrastDark.length} elemento(s)`);
   const darkMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
   if (original === 'null' || original === '') { drushRun(`\\Drupal::service('user.data')->delete('aculta_portal', 5, 'color_mode'); echo 'ok';`); } else { drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save(5, json_decode('${original}')); echo 'ok';`); }
   check('modo escuro aplicado à página', darkMode !== lightMode, `claro=${lightMode} escuro=${darkMode}`);
