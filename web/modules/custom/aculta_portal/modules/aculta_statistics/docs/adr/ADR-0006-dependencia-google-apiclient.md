@@ -1,7 +1,7 @@
 # ADR-0006 — Dependência google/apiclient para GA4 e Search Console (proposta)
 
-Status: **proposta** (2026-10-21). Não instalada. Aguarda decisão do responsável sobre instalação e sobre o conflito
-com alterações de outra frente em `composer.json` e `composer.lock`.
+Status: **aceita** (2026-10-21). Instalada em `google/apiclient` 2.20.1, com `composer require --minimal-changes --no-scripts`.
+A remoção de `drupal/change_mail_page` (já substituída pelo `aculta_user`) foi commitada antes, em commit próprio.
 
 ## Necessidade
 
@@ -19,14 +19,12 @@ risco de segurança e de manutenção. A biblioteca oficial mantém esses pontos
   Console. Seriam duas bibliotecas se o Search Console também for implementado.
 - **Cliente HTTP do Drupal com JWT próprio**: sem dependência nova, mas mais código de autenticação para manter.
 
-## Decisão pedida
+## Decisão
 
 O responsável escolheu `google/apiclient` (2026-10-21). Esta ADR registra a justificativa exigida pelo AGENTS.md (item
-14, dependência Composer). A instalação só acontece depois de:
+14, dependência Composer). Pré-requisitos para ligar o cliente real:
 
-1. resolver as alterações não commitadas de outra frente em `composer.json` e `composer.lock`, para que o commit leve só
-   esta dependência (`composer require google/apiclient`, com `--minimal-changes`);
-2. credencial da conta de serviço, lida pelo `aculta_portal.secrets_manager` (AGENTS.md, segredos);
+1. credencial da conta de serviço, lida pelo `aculta_portal.secrets_manager` (AGENTS.md, segredos);
 3. ID da propriedade GA4 e domínio verificado no Search Console (preferência por DNS, `docs/integrations/GOOGLE.md`).
 
 ## Efeitos

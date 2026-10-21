@@ -337,6 +337,7 @@
         "drupal/webform_score": "^2.4",
         "drush/drush": "^13.8",
         "endroid/qr-code": "^6.1.3",
+        "google/apiclient": "^2.18",
         "h5p/h5p-core": "^1.28",
         "h5p/h5p-editor": "^1.25",
         "jquery/inputmask": "5.0.9",
