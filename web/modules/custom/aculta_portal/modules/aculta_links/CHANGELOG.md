@@ -4,6 +4,7 @@
 
 - Cada linha de micropágina no dashboard oferece ação direta para adicionar um botão, respeitando o mesmo Entity Access da edição da página.
 - Validação: PHPCS, lint, testes Unit/Kernel e gates locais direcionados; Runtime/HTTP DEFERRED pelas atualizações pendentes compartilhadas com `aculta_lms`.
+- Decisão documental: classificar conservadoramente o LinkStack v4.8.6 como AGPL-3.0 pelo README e `LICENSE`; não copiar código ou assets e reimplementar o comportamento no Drupal até revisão formal da compatibilidade da obra combinada.
 
 ## 0.4.0-dev.19 — adiciona botão pelo editor da micropágina — 2026-10-20
 

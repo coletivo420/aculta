@@ -10,7 +10,10 @@
 - Árvore consultada: controllers Laravel, `resources/views`, CSS/JS,
   `themes` e `blocks` na tag.
 - `composer.json` declara `GPL-3.0-or-later`; o `LICENSE` dessa mesma tag contém
-  AGPL-3.0. Isso é um conflito de licença a resolver por arquivo/upstream.
+  AGPL-3.0. O README versionado também declara que o projeto está sob AGPL-3.0
+  desde a versão 4.0.0 e exige que obras derivadas sigam seus termos. A decisão
+  conservadora é classificar o código original como AGPL-3.0; o campo Composer é
+  metadata divergente, ainda sem correção upstream.
 - O GitHub Advisory Database lista `GHSA-mg7g-g2wv-6mhr` para LinkStack até
   `v4.8.6`: possível bypass de autorização em `UserController::saveLink`. Não
   portar o fluxo nem sua autorização; usar Entity Access e ownership Drupal.
@@ -24,27 +27,27 @@
 
 | Componente | Decisão | Destino previsto |
 | --- | --- | --- |
-| Dashboard/listagem de páginas | PORTAR | Drupal Forms, Views, rotas e access checks. |
-| Editor de links e itens | PORTAR | Form API/AJAX com fallback, ownership Drupal e revisão definida. |
+| Dashboard/listagem de páginas | PORTAR COMPORTAMENTO | Drupal Forms, Views, rotas e access checks, sem copiar implementação Laravel. |
+| Editor de links e itens | REIMPLEMENTAR | Form API/AJAX com fallback, ownership Drupal e revisão definida. |
 | Ordenação/ativação | REIMPLEMENTAR | Entity/Form API; JS mínimo e interação acessível por teclado. |
-| Preview público | PORTAR | SDC/Twig via ACULTA420, dados fornecidos pelo módulo. |
-| Temas/presets | PORTAR/REIMPLEMENTAR | Presets governados por tokens; não executar tema arbitrário. |
+| Preview público | PORTAR COMPORTAMENTO | SDC/Twig via ACULTA420, dados fornecidos pelo módulo. |
+| Temas/presets | REIMPLEMENTAR | Presets governados por tokens; não executar tema arbitrário. |
 | Blocks/extensões de terceiros | ADIAR | Sem contrato de extensão executável nesta fase. |
 | Estatísticas/cliques | REIMPLEMENTAR | Queue/Cron e armazenamento minimizado, após análise LGPD. |
 | QR Code | REIMPLEMENTAR | Endroid QR Code 6.1.3 gera SVG da URL canônica da página publicada; código LinkStack e serviço remoto descartados. |
 | Slugs/redirect curto | REIMPLEMENTAR | APIs Drupal, política de slugs e DomainPurposeManager; proteger open redirect. |
 | Autenticação, instalação, usuários Laravel | DESCARTAR | Drupal User e `aculta_user`. |
 | Backup, editor de ambiente, updater, jobs/config Laravel | DESCARTAR | Operação/deploy e Configuration API Drupal. |
-| Blade/controllers/Eloquent/rotas Laravel | PORTAR comportamento | Twig/SDC, Controllers, Entity API/Storage e Routing Drupal. |
-| CSS/JS/assets | NÃO COPIAR AINDA | Revisão de licença/origem e adaptação ACULTA420 necessárias. |
+| Blade/controllers/Eloquent/rotas Laravel | REIMPLEMENTAR comportamento | Twig/SDC, Controllers, Entity API/Storage e Routing Drupal; sem trechos derivados. |
+| CSS/JS/assets | DESCARTAR | Recriar apresentação em ACULTA420 a partir dos contratos e necessidades funcionais, sem reutilizar expressão original. |
 
-## Bloqueio de licença
+## Decisão operacional de licença
 
-A divergência entre metadado Composer e arquivo LICENSE impede definir a licença
-dos componentes pela raiz do repositório. Antes de cópia, consultar upstream e
-inventariar licenças de código, CSS, JS, fontes, ícones, imagens, temas, blocos e
-dependências. A AGPL tem obrigação de fonte correspondente para interação de
-usuários por rede em versão modificada, além de avisos e condições de interface
-interativa. Compatibilidade e fronteira de obra combinada com Drupal não são
-inferidas nesta auditoria. Nenhum código foi copiado. O aviso de segurança
-também reforça que autorização upstream não deve ser reutilizada.
+O README e o `LICENSE` versionados dão uma classificação conservadora suficiente
+para conduzir o desenvolvimento sem cópia: nenhuma implementação ou asset do
+LinkStack será incorporado. A auditoria por arquivo de assets permanece
+desnecessária para a estratégia vigente, pois CSS, JavaScript, fontes, ícones,
+imagens, temas e blocos são descartados. Se o escopo voltar a incluir código
+original, será necessária revisão formal de compatibilidade e de cada arquivo,
+incluindo dependências e créditos. O aviso de segurança também exclui a
+reutilização do fluxo `UserController::saveLink`.
