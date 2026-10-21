@@ -33,6 +33,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.129` | Contrato de anexos em comentários | Unit verifica formato de texto, embeds existentes de documento e upload inline de imagem pelo CKEditor alinhado ao `aculta_image.UploadPolicy`. Upload direto de PDF/Office permanece pendente de decisão; nenhuma permissão ampliada. |
 | `0.1.0-dev.128` | PHPCS dos docblocks de atividade | Comentários do produtor de eventos compatíveis com Drupal/DrupalPractice; sem alteração funcional. |
 | `0.1.0-dev.127` | Produtor de eventos de atividade para estatísticas | Eventos mínimos de tópico e comentário criados são consumidos por `aculta_statistics`; Unit do Fórum 94/650. Validação dos eventos no Runtime e decisão de apresentar o agregado no painel pendentes. Integração contextual H5P–Fórum validada pela F15 de `aculta_lms_h5p`; ver seção dev.13. |
 | `0.1.0-dev.126` | Verificar estabilidade do permalink canônico Comment após movimento | Kernel `ForumCommentMoverKernelTest`: 18/368 PASS; rota Core e fragmento baseados no CID confirmados após mover. `ForumTopicDisplayConfigTest`: 19/283 PASS após comparar mapas YAML sem depender da ordem das chaves. PHPCS e status-index PASS. O gate Drupal 11+ ainda falha na apresentação de autoria da Wiki, fora da mudança do Fórum. Links antigos ao tópico de origem com fragmento não podem ser redirecionados no servidor. RUNTIME STATUS: DEFERRED. |

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
+use Drupal\aculta_image\UploadPolicy;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
@@ -210,6 +211,35 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
 
     $role = Yaml::parseFile($repository_path . '/config/sync/user.role.email_confirmed.yml');
     self::assertContains('post comments', $role['permissions']);
+  }
+
+  /**
+   * Forum replies use the shared CKEditor image and Media embed policies.
+   */
+  public function testForumCommentAttachmentsUseSharedImageAndMediaPolicies(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    $field_filename = 'field.field.comment.aculta_discussion_post.comment_body.yml';
+    $field = Yaml::parseFile($module_path . '/config/install/' . $field_filename);
+    $field_sync = Yaml::parseFile($repository_path . '/config/sync/' . $field_filename);
+    unset($field_sync['_core']);
+
+    $format = Yaml::parseFile($repository_path . '/config/sync/filter.format.usuario_aculta.yml');
+    $editor = Yaml::parseFile($repository_path . '/config/sync/editor.editor.usuario_aculta.yml');
+
+    self::assertSame($field, $field_sync);
+    self::assertSame(['usuario_aculta' => 'usuario_aculta'], $field['settings']['allowed_formats']);
+    self::assertTrue($format['filters']['media_embed']['status']);
+    self::assertSame(
+      ['document' => 'document'],
+      $format['filters']['media_embed']['settings']['allowed_media_types'],
+      'Participant comments may embed existing public Document media.',
+    );
+    self::assertContains('drupalMedia', $editor['settings']['toolbar']['items']);
+    self::assertTrue($editor['image_upload']['status'], 'Participants can upload inline images through CKEditor.');
+    self::assertSame('public', $editor['image_upload']['scheme']);
+    self::assertSame('inline-images', $editor['image_upload']['directory']);
+    self::assertSame((string) UploadPolicy::MAX_BYTES, $editor['image_upload']['max_size']);
   }
 
   /**

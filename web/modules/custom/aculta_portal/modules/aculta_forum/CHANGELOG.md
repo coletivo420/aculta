@@ -1,3 +1,14 @@
+## `0.1.0-dev.129` — documenta contrato de anexos nos comentários
+
+- `ForumTopicDisplayConfigTest` verifica que a resposta pública usa o formato
+  `usuario_aculta`, que permite embeds do Media `document` e upload inline via
+  CKEditor no diretório `inline-images`.
+- O limite do upload CKEditor é comparado com `aculta_image.UploadPolicy`; a
+  integração usa o processamento existente de imagem, sem campo ou política
+  paralela no Fórum.
+- Upload direto de documentos por participantes segue pendente da decisão de
+  escopo; não houve mudança de permissões nem upload no Runtime.
+
 ## `0.1.0-dev.128` — PHPCS dos docblocks de atividade — 2026-10-21
 
 - Quebra docblocks longos do produtor de eventos em linhas compatíveis com

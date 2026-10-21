@@ -1,3 +1,12 @@
+## dev.129 — contrato de anexos em comentários
+
+- `ForumTopicDisplayConfigTest` confere que o campo compartilhado dos
+  comentários permite o formato `usuario_aculta`, o filtro Media Embed aceita
+  o bundle público `document`, e a toolbar inclui `drupalMedia`.
+- O mesmo teste confirma upload inline do CKEditor em `public://inline-images/`
+  e alinhamento do máximo com `aculta_image.UploadPolicy::MAX_BYTES`. Não há
+  upload direto de documentos habilitado nem alteração Runtime nesta etapa.
+
 ## dev.128 — PHPCS nos docblocks do produtor de eventos
 
 - Ajuste somente de comentários; o comportamento permanece o da dev.127.
