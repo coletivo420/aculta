@@ -76,6 +76,11 @@ removidas pela Entity API após revalidar IDs, proprietário e referências, e a
 consulta posterior confirmou a ausência do título, slug e IDs. Edição visual de
 página/item e submissão real permanecem pendentes.
 
+Em 0.4.0-dev.25, Kernel executa a submissão do editor pela Form API: a ordem e
+o estado do item são persistidos em nova revisão; um item de outra página é
+rejeitado mesmo sob o mesmo proprietário. A validação HTTP/browser do submit e
+a edição visual dos formulários de página/item continuam pendentes.
+
 ## 0.4.0 — interface pública e presets
 
 Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Em 0.4.0-dev.9, o template da micropágina passou a mostrar seu título e a omitir a marca institucional da ACULTA. Em 0.4.0-dev.12, o alter hook do Metatag fornece metadata por página e canonical via `DomainPurposeManager`; defaults permanecem controlados pela configuração central. Faltam controles adicionais de aparência e revisão visual/acessível antes de RC.

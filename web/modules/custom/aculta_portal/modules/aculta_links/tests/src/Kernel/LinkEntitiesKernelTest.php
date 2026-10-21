@@ -17,11 +17,13 @@ use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkItem;
 use Drupal\aculta_links\Entity\LinkPage;
 use Drupal\aculta_links\Form\LinkPageItemAddForm;
+use Drupal\aculta_links\Form\LinkPageEditorForm;
 use Drupal\aculta_links\Service\LinkAnalytics;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Tests storage, ownership, references, and revisions for the Links entities.
@@ -376,6 +378,86 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
         self::assertArrayHasKey($field_name, $form, $entity_type_id . ' form should expose ' . $field_name);
       }
     }
+  }
+
+  /**
+   * Tests the composition editor persists revisions and rejects foreign rows.
+   */
+  public function testPageEditorSubmitSavesAndChecksItemOwnership(): void {
+    $role = Role::create(['id' => 'links_editor_owner', 'label' => 'Links editor owner']);
+    $role->grantPermission('manage own aculta links');
+    $role->save();
+    $owner = User::create(['name' => 'links-editor-owner', 'status' => TRUE]);
+    $owner->addRole('links_editor_owner');
+    $owner->save();
+    $this->container->get('current_user')->setAccount($owner);
+
+    $link = Link::create([
+      'title' => 'Destino do editor',
+      'uri' => ['uri' => 'https://example.org/editor'],
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $link->save();
+    $page = LinkPage::create([
+      'title' => 'Página do editor',
+      'slug' => 'pagina-do-editor',
+      'uid' => $owner->id(),
+    ]);
+    $page->save();
+    $item = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Botão existente',
+      'weight' => 0,
+      'status' => TRUE,
+    ]);
+    $item->save();
+    $original_revision = $item->getRevisionId();
+
+    $editor = new LinkPageEditorForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('current_user'),
+      $this->container->get('aculta_portal.domain_purpose'),
+    );
+    $state = new FormState();
+    $state->set('aculta_link_page_id', (int) $page->id());
+    $state->setValue('items', [
+      (string) $item->id() => ['weight' => 4, 'status' => 0],
+    ]);
+    $form = [];
+    $editor->submitForm($form, $state);
+
+    $saved_item = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_link_item')
+      ->load($item->id());
+    self::assertSame(4, (int) $saved_item->get('weight')->value);
+    self::assertFalse($saved_item->isPublished());
+    self::assertNotSame($original_revision, $saved_item->getRevisionId());
+
+    $other_page = LinkPage::create([
+      'title' => 'Outra página do proprietário',
+      'slug' => 'outra-pagina-do-proprietario',
+      'uid' => $owner->id(),
+    ]);
+    $other_page->save();
+    $foreign_item = LinkItem::create([
+      'page' => $other_page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Item de outra página',
+      'status' => TRUE,
+    ]);
+    $foreign_item->save();
+
+    $malicious_state = new FormState();
+    $malicious_state->set('aculta_link_page_id', (int) $page->id());
+    $malicious_state->setValue('items', [
+      (string) $foreign_item->id() => ['weight' => 99, 'status' => 0],
+    ]);
+    $this->expectException(AccessDeniedHttpException::class);
+    $editor->submitForm($form, $malicious_state);
   }
 
   /**

@@ -1,5 +1,10 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.25 — cobre gravação e isolamento do editor — 2026-10-20
+
+- Kernel agora executa o submit real do editor de composição pela Form API: altera ordem e estado, confirma nova revisão e nega item de outra micropágina mesmo quando o proprietário é o mesmo.
+- A cobertura é em MariaDB dedicada; nenhum Runtime ou conteúdo real foi alterado nesta validação.
+
 ## 0.4.0-dev.24 — corrige formulários de entidade vazios — 2026-10-20
 
 - A inspeção autenticada do formulário de micropágina encontrou formulário contendo somente “Salvar”. Os três handlers de criação/edição agora usam `ContentEntityForm`, que constrói os widgets dos campos de conteúdo; o handler base `EntityForm` não o fazia.

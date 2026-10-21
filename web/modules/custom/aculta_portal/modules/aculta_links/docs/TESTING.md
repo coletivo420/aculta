@@ -236,3 +236,11 @@ submetido. A fixture (link ID 10, página ID 11, item ID 11) foi removida pela
 Entity API depois de checar IDs, slug/título, proprietário e relações; uma
 consulta posterior confirmou os três registros ausentes. Portanto o smoke não
 alterou entidades preexistentes nem deixou conteúdo temporário no Runtime.
+
+## Submissão do editor de composição — 0.4.0-dev.25
+
+Kernel chama `LinkPageEditorForm::submitForm()` com FormState contendo uma
+ordem e um estado alterados; reconsulta o storage e confirma ambos e a criação
+de revisão. O caso também injeta um item pertencente a outra página do mesmo
+proprietário e confirma negação (`AccessDeniedHttpException`). Execução em
+MariaDB dedicado; nenhum Runtime foi alterado.
