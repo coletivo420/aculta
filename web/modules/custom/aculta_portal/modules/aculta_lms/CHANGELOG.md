@@ -1,5 +1,18 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.20 — validar anexos raster de respostas — 2026-10-21
+
+- Adiciona cobertura Unit para imagem válida, imagem inválida, limite de 10 MB e
+  preservação da validação nativa de arquivos não raster.
+- A política continua centralizada em `aculta_image`; o LMS mantém anexos em
+  storage privado e o download revalida resposta e matrícula.
+
+## Decisão F13 — prazo por atividade na turma — 2026-10-21
+
+- O responsável confirmou o prazo por atividade na turma. A implementação já
+  armazena o prazo na relação Group da turma com a atividade, permitindo datas
+  distintas quando a mesma atividade é reutilizada.
+
 ## Registro documental F15 — estado das integrações — 2026-10-21
 
 - Corrige o estado do adapter `aculta_forum_lms`: permissões e módulo estão

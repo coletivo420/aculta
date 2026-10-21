@@ -36,9 +36,9 @@ discussões específicas de atividade.
 O validador da resposta só aplica a política quando a extensão autorizada pela
 atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões
 mantêm a validação nativa do LMS File Upload. Imagens inválidas, com MIME
-incompatível ou acima de 10 MB são recusadas. A validação automatizada e o
-smoke de upload/revogação ainda precisam ser executados antes de homologar a
-integração F15.
+incompatível ou acima de 10 MB são recusadas. Unit cobre imagem válida, arquivo
+inválido, limite de tamanho e delegação de arquivos não raster à validação
+nativa. O smoke ponta a ponta de upload e revogação ainda está pendente.
 
 ## F1 — Fundação
 
@@ -211,7 +211,7 @@ Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 Composer audit sem advisories. O Entity Print 2.19.0 gera três deprecações
 Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
 
-## F13 — Avisos e prazos por turma (implementação parcial)
+## F13 — Avisos e prazos por turma (implementação funcional; revisão visual pendente)
 
 Educadores com `grade students` no curso e administradores podem definir,
 alterar e remover o prazo de uma atividade em `/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo`.
@@ -221,17 +221,19 @@ o fuso da conta do educador; a área de atividade do estudante e o aviso usam o
 fuso da conta que consulta.
 
 Definir ou alterar o prazo gera aviso no painel e no resumo diário opt-in por
-meio de `aculta_lms_messenger`/`aculta_messenger`. A mensagem não envia e-mail
-transacional e é revalidada contra publicação, curso e membership atual.
+meio de `aculta_lms_messenger`/`aculta_messenger`. O lembrete é enfileirado na
+janela de 24 horas antes do prazo. A mensagem não envia e-mail transacional e é
+revalidada contra publicação, curso e membership atual.
 O módulo `lms_classes` herda `take course` no curso pai a partir da matrícula na
 turma; os leitores de prazo e avisos conferem essa permissão no curso e exigem
 membership ativa na turma.
-Enquanto se aguarda resposta à pergunta interativa, adotou-se provisoriamente a
-opção recomendada: aviso ao salvar e lembrete durante as 24 horas anteriores,
-enfileirado no cron do Drupal. Unit LMS/adapter: 47 testes / 210 assertions
-PASS; Kernels de instalação/Group/Message: 6 testes / 85 assertions PASS. O
-Runtime confirma compilação e serviços, mas ainda não tem turma ou prazo para
-testar evento/Cron; a revisão visual permanece DEFERRED.
+O responsável confirmou registrar o prazo por atividade na turma. Unit
+LMS/adapter: 47 testes / 210 assertions PASS; Kernels de instalação/Group/Message:
+6 testes / 85 assertions PASS. Smoke temporário no Runtime confirmou persistência
+do aviso e lembrete, integração com aviso pessoal e worker; as fixtures e filas
+foram removidas. Não houve envio de e-mail nem espera pelo Cron agendado. A
+revisão visual autenticada permanece DEFERRED até o aceite do acordo geral pelo
+responsável.
 
 ## Testes
 
