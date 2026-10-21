@@ -105,3 +105,8 @@ purpose, métodos GET/HEAD, geração opaca de 12 caracteres e resposta 302 para
 destino HTTPS validado. PHPCS, PHP lint e `git diff --check` PASS; há sete
 depreciações de APIs do Core/Metatag/Token no Kernel. Update `10004` e smoke
 HTTP DEFERRED pelo mesmo erro de container externo do `aculta_lms`.
+
+QR de link curto 0.4.0-dev.14: Kernel PASS (2 testes/85 asserções; 7
+depreciações upstream) e confirma a rota, purpose `links` e métodos GET/HEAD;
+PHPCS, lint e `git diff --check` PASS. Renderização do SVG e headers canônicos
+em HTTP permanecem DEFERRED pelo bloqueio do container Runtime.

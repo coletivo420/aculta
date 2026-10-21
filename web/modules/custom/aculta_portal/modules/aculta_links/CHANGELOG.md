@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.14 — gera QR Codes para links curtos — 2026-10-20
+
+- O dashboard oferece QR SVG do redirect curto; o código QR usa URL canônica HTTPS gerada por `DomainPurposeManager` e o endpoint só atende códigos de destino publicado e válido.
+- A resposta não registra scans nem persiste arquivos, reutiliza `QrCodeSvgGenerator` e varia por cache tags do destino, access e Domain.
+- Validação: Kernel 2 testes/85 asserções PASS (7 depreciações upstream), com rota, purpose e métodos GET/HEAD; PHPCS Drupal, PHP lint e diff-check PASS. Download em HTTP e canonical Domain DEFERRED pelo bloqueio externo de container no `aculta_lms`.
+
 ## 0.4.0-dev.13 — publica destinos por links curtos — 2026-10-20
 
 - Destinos reutilizáveis recebem código opaco aleatório de 12 caracteres em alfabeto minúsculo/dígitos, globalmente único e gerado antes do primeiro save. Campo adicionado por update `10004`; destinos antigos recebem código ao serem salvos novamente.

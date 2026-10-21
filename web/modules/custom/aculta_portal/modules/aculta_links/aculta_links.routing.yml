@@ -62,6 +62,17 @@ aculta_links.short_redirect:
   options:
     _aculta_domain_purpose: links
 
+aculta_links.short_qr_code:
+  path: '/redirecionar/{codigo}/codigo-qr.svg'
+  defaults:
+    _controller: 'aculta_links.short_qr_code_controller:download'
+    _title: 'Código QR do link curto'
+  requirements:
+    codigo: '[0-9a-z]{12}'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: links
+
 aculta_links.landing:
   path: '/redes-sociais'
   defaults:

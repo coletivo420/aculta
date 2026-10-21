@@ -189,6 +189,17 @@ final class LinksDashboardController {
               'url' => $short_url,
             ];
           }
+          $qr_url = $this->domainPurpose->routeUrl(
+            'links',
+            'aculta_links.short_qr_code',
+            ['codigo' => $short_code],
+          );
+          if ($qr_url !== NULL) {
+            $operations['short_qr_code'] = [
+              'title' => new TranslatableMarkup('Baixar QR Code do link curto'),
+              'url' => $qr_url,
+            ];
+          }
         }
       }
       $rows[] = [

@@ -119,3 +119,11 @@ dashboard mostra o link curto no host do purpose `links`. O update `10004`
 instala o campo sem reescrever destinos existentes; entidades antigas ganham
 um código quando forem salvas novamente. Runtime/migração estão DEFERRED por
 falha externa do container `aculta_lms`.
+
+## QR de links curtos 0.4.0-dev.14
+
+O dashboard baixa um SVG local que codifica a URL canônica do redirect curto
+no purpose `links`. O endpoint revalida publicação, access e destino; SVG não
+é persistido e nenhum evento de scan é gravado. A existência e o purpose da
+rota são cobertos pelo Kernel; download e headers no Runtime continuam DEFERRED
+devido ao bootstrap compartilhado quebrado do `aculta_lms`.

@@ -42,6 +42,9 @@
 - QR Code é calculado localmente como SVG a partir somente da URL canônica
   HTTPS de página publicada. O endpoint não aceita URL da requisição, não busca
   rede, não persiste arquivo e não registra visualizações ou scans.
+- O QR de link curto aplica as mesmas garantias ao código do destino: somente
+  entidades publicadas e válidas geram uma URL canônica de `DomainPurposeManager`;
+  arquivo SVG é gerado em memória e não cria telemetria.
 - Cache público varia/invalida por Domain, idioma, path e entidades; conteúdo
   privado não é cacheado publicamente.
 - Imagens passam pelo `aculta_image`, `ImageCatalog` e `UploadPolicy`, sem

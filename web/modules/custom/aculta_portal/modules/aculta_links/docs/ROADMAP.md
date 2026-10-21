@@ -47,8 +47,9 @@ campos revisionáveis, edição no fuso padrão do portal, persistência UTC,
 validação do intervalo e expiração de cache no próximo limite. Permanecem
 eventos minimizados, filas/agregação e retenção; redirects curtos foram
 implementados em 0.4.0-dev.13 com códigos opacos, validação de destino e
-TrustedRedirectResponse. Revisar métricas agregadas e política Flood antes de
-registrar eventos; QR para códigos curtos permanece pendente.
+TrustedRedirectResponse. QR SVG de páginas e destinos curtos está implementado
+com o gerador local até 0.4.0-dev.14. Revisar métricas agregadas e política
+Flood antes de registrar eventos.
 
 ## 0.6.0 — integração do ecossistema
 
