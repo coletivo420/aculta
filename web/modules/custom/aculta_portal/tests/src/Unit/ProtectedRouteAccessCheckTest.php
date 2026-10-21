@@ -9,15 +9,13 @@ use Drupal\aculta_portal\Access\ProtectedRouteAccessCheck;
 use Drupal\aculta_portal\Account\AccountTermsPolicy;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface as UserModuleDataInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
-use Drupal\agreement\AgreementHandlerInterface;
+use Drupal\aculta_user\Consent\ConsentLedger;
 use PHPUnit\Framework\Attributes\Group;
 
 /** Verifies LMS participation uses Group access without email verification. */
@@ -37,10 +35,7 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $policy = new EmailConfirmationPolicy($userData, $entityTypeManager);
     $emailCheck = new EmailConfirmedAccessCheck($policy);
 
-    $agreementStorage = $this->createMock(EntityStorageInterface::class);
-    $agreementStorage->method('load')->with(AccountTermsPolicy::AGREEMENT)->willReturn(NULL);
-    $entityTypeManager->method('getStorage')->with('agreement')->willReturn($agreementStorage);
-    $terms = new AccountTermsPolicy($this->createMock(AgreementHandlerInterface::class), $entityTypeManager);
+    $terms = new AccountTermsPolicy($this->createMock(ConsentLedger::class));
 
     $course = $this->createMock(GroupInterface::class);
     $course->expects(self::once())->method('access')->with('take', $student, TRUE)->willReturn(AccessResult::allowed()->cachePerUser());
@@ -62,9 +57,8 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $student->method('isAnonymous')->willReturn(FALSE);
     $student->method('hasPermission')->willReturn(FALSE);
 
-    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $entityTypeManager->method('getStorage')->willReturn($this->createMock(EntityStorageInterface::class));
-    $terms = new AccountTermsPolicy($this->createMock(AgreementHandlerInterface::class), $entityTypeManager);
+    $entityTypeManager = $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class);
+    $terms = new AccountTermsPolicy($this->createMock(ConsentLedger::class));
     $emailCheck = new EmailConfirmedAccessCheck(new EmailConfirmationPolicy(
       $this->createMock(UserModuleDataInterface::class),
       $entityTypeManager,

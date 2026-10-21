@@ -9,6 +9,44 @@ declare(strict_types=1);
 
 use Drupal\aculta_user\Entity\BadgeAward;
 
+/** Implements hook_schema(). */
+function aculta_user_schema(): array {
+  $schema['aculta_user_consent'] = [
+    'description' => 'Append-only consent evidence; retained for the lifetime of the user account.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'agreement' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+      'action' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'ip_address' => ['type' => 'varchar', 'length' => 45, 'not null' => FALSE],
+      'user_agent' => ['type' => 'varchar', 'length' => 2048, 'not null' => FALSE],
+      'documents' => ['type' => 'text', 'size' => 'big', 'not null' => TRUE],
+      'legacy' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      'previous_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+      'record_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+    ],
+    'primary key' => ['id'],
+    'indexes' => ['consent_lookup' => ['uid', 'agreement', 'id']],
+  ];
+  return $schema;
+}
+
+/** Creates the ledger and preserves each Agreement module's current row as incomplete legacy evidence. */
+function aculta_user_update_10006(): string {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_user_consent')) {
+    $schema->createTable('aculta_user_consent', aculta_user_schema()['aculta_user_consent']);
+  }
+  if ($schema->tableExists('agreement')) {
+    $rows = \Drupal::database()->select('agreement', 'a')->fields('a', ['uid', 'type', 'agreed', 'agreed_date'])->execute();
+    foreach ($rows as $row) {
+      \Drupal::service('aculta_user.consent_ledger')->record((int) $row->uid, (string) $row->type, (int) $row->agreed ? 'accepted' : 'revoked', [], TRUE, (int) $row->agreed_date);
+    }
+  }
+  return (string) t('Created the append-only consent ledger and copied current Agreement records as incomplete legacy evidence.');
+}
+
 /**
  * Instala o registro das conquistas concedidas (aculta_badge_award).
  */

@@ -39,12 +39,12 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.registration_terms:
     class: Drupal\aculta_portal\Account\RegistrationTerms
-    arguments: ['@agreement.handler', '@entity_type.manager']
+    arguments: ['@aculta_user.consent_ledger']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.account_terms_policy:
     class: Drupal\aculta_portal\Account\AccountTermsPolicy
-    arguments: ['@agreement.handler', '@entity_type.manager']
+    arguments: ['@aculta_user.consent_ledger']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.access.protected_route:
@@ -95,7 +95,7 @@ services:
       - { name: aculta_mailer.link_regenerator }
   aculta_portal.mail_tracking_consent:
     class: Drupal\aculta_portal\Account\MailTrackingConsent
-    arguments: ['@agreement.handler', '@entity_type.manager']
+    arguments: ['@aculta_user.consent_ledger', '@entity_type.manager']
     tags:
       - { name: aculta_mailer.tracking_consent }
   aculta_portal.email_confirmation_policy:

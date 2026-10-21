@@ -3566,3 +3566,8 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   em 1024 px confirmou a página, mas exibiu a mensagem de validação CAPTCHA;
   formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
   STATUS: PARTIAL.
+## 0.4.0-dev.243 — aceite e consentimento transferidos para aculta_user — 2026-10-21
+
+- Cadastro, bloqueio de Termos e autorização de rastreamento de e-mail passam a usar o ledger `aculta_user.consent_ledger`; removidas dessas integrações as chamadas a `agreement.handler`.
+- A retirada completa do contrib continua pendente: formulário de revogação, leitura das revisões dos documentos, tela de auditoria e limpeza de rotas/configuração/dependências ainda precisam ser entregues antes da desinstalação.
+- Testes: PHP lint dos arquivos novos/refatorados PASS; suíte automatizada e Runtime DEFERRED.

@@ -697,3 +697,9 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   leitura, sem alteração de conteúdo. HTTP/browser autenticado pendente. PHP CLI
   8.4.26, abaixo da baseline requerida 8.5. RUNTIME STATUS: PARTIAL.
 
+## 0.4.0-dev.56 — ledger de aceite e consentimento (em desenvolvimento) — 2026-10-21
+
+- Criado `aculta_user.consent_ledger`: eventos append-only por conta, com encadeamento HMAC verificável usando a chave privada do site; captura IP resolvido pelo Drupal e User-Agent em eventos novos.
+- `aculta_user_update_10006` copia o estado e data atuais do Agreement para evidência legada incompleta. O módulo contrib ainda não foi removido: faltam interface de revogação/auditoria, snapshots das versões dos documentos, limpeza das referências/configuração e validação/migração no Runtime.
+- Evidência pessoal é removida junto com a conta, conforme retenção escolhida pelo responsável. HMAC detecta alterações na aplicação; não protege contra operador com acesso ao banco e à chave privada.
+- PHP lint dos arquivos alterados: PASS. Runtime: DEFERRED.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -13,20 +12,14 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class RegistrationTerms {
 
-  private const AGREEMENT = 'aculta_account_terms';
-
-  public function __construct(
-    private readonly \Drupal\agreement\AgreementHandlerInterface $agreementHandler,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-  ) {}
+  public function __construct(private readonly \Drupal\aculta_user\Consent\ConsentLedger $ledger) {}
 
   /** Grava o aceite do acordo para a conta recém-criada. Retorna TRUE se foi gravado. */
   public function record(AccountInterface $account): bool {
-    $agreement = $this->entityTypeManager->getStorage('agreement')->load(self::AGREEMENT);
-    if ($agreement === NULL || (int) $account->id() <= 0) {
+    if ((int) $account->id() <= 0) {
       return FALSE;
     }
-    $this->agreementHandler->agree($agreement, $account, 1);
+    $this->ledger->record((int) $account->id(), 'aculta_account_terms', 'accepted');
     return TRUE;
   }
 

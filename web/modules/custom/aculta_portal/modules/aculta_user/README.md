@@ -5,6 +5,8 @@ de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
 ## Documentação
 
+- Aceites legais e consentimentos opcionais são mantidos no ledger do `aculta_user`. A implementação está em desenvolvimento: ver entrada corrente no [CHANGELOG](CHANGELOG.md) e tratamento proposto no [inventário LGPD](../../../../../../docs/compliance/LGPD-INVENTARIO.md). O ledger é append-only na aplicação e HMAC torna alterações detectáveis; não oferece imutabilidade contra acesso direto ao banco e à chave privada. Registros duram enquanto a conta existir e são removidos na exclusão da conta.
+
 - [Classes e hooks](docs/CLASSES-E-HOOKS.md)
 - [Hierarquia de funções](docs/HIERARQUIA-DE-FUNCOES.md)
 - [Amizades](docs/AMIZADES.md)
