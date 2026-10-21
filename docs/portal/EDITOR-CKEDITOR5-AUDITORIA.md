@@ -115,24 +115,29 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 
 | Item | Estado |
 | --- | --- |
-| Dependência Composer (`composer.json` e `composer.lock`) | Implementada (lock-only; não instalada) |
+| Dependência Composer (`composer.json` e `composer.lock`) | Implementada e instalada no checkout (`composer install --no-scripts`) |
 | Auditoria (este documento) | Implementada |
-| Submódulo `aculta_editor` | **Não implementado** (depende das decisões da seção 8) |
-| Formatos editoriais (Básico, Editorial, Institucional, Email) | **Não implementados** |
-| Templates editoriais | **Não implementados** |
-| Integração com Media | **Não implementada** |
-| Integração com `aculta_mailer` | **Não implementada** |
-| Estilos e tema | **Não implementados** (sem autorização para o tema) |
-| Testes | **Não executados** (nenhum código novo) |
-| Runtime | **Não alterado** (sem `composer install`, sem `drush en`, sem `updb`, sem import de config) |
+| Submódulo `aculta_editor` (`0.1.0-dev.1`, estado Dev) | Implementado; habilitado no Runtime de teste |
+| Formatos `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` | Implementados (formatos e editores criados, `filter_html` explícito) |
+| Templates editoriais (8) | Implementados em `config/install` |
+| Submódulos do Plugin Pack habilitados | 15 gratuitos (lista no README do submódulo) |
+| Auto Image, HTML Embed, WProofreader, Font, Emoji, Todo, Empty Block, Restricted Editing | Não habilitados |
+| Premium Features | Instalado no código, não habilitado |
+| Testes Kernel | 6 testes, 93 asserções, OK (`aculta_simpletest`) |
+| Interação no navegador (inserir, editar, salvar, reabrir, renderizar) | **Não validada** |
+| Integração com Drupal Media (além de `drupalMedia` na toolbar) | **Não implementada** |
+| Integração com `aculta_mailer` | **Não implementada** (o formato `aculta_email` existe; renderização e envio seguem no `aculta_mailer`) |
+| CSS do editor no tema `aculta420` | **Não implementado** (autorizado; falta fazer e validar visualmente) |
 
-## 8. Decisões pendentes do responsável
+## 8. Decisões do responsável (respondidas em 2026-10-21)
 
-1. Aceitar `ckeditor5_premium_features` como dependência de código instalada, não habilitada (seção 4).
-2. Confirmar na documentação oficial a regra de chave de licença (seção 3).
-3. Autorizar ou não mudanças no tema `aculta420` para o CSS do editor (AGENTS.md).
-4. Definir se os 4 perfis serão **novos formatos** (com novos IDs) ou se algum deles substitui o uso atual. A missão proíbe sobrescrever formatos existentes, então a proposta padrão é formatos novos e sem permissão automática.
-5. Definir a política de `font` (paleta restrita) e de `auto_image`/`media_embed` (não habilitar, ou habilitar só com `aculta_image`).
+1. **Premium Features:** aceito como dependência de código, instalado e **desabilitado**. Ainda pendente: confirmar a regra da chave de licença na documentação oficial (seção 3).
+2. **Tema `aculta420`:** CSS do editor **autorizado**. Ainda não implementado (ver seção 7).
+3. **Formatos:** os formatos atuais **não serão modificados**. Os quatro perfis são formatos novos, com permissão mínima.
+4. **Recursos:** o responsável escolheu **Media Embed** e **Auto Image**.
+   - *Media Embed:* habilitado (submódulo com toolbar `mediaEmbed` em `aculta_editorial`).
+   - *Auto Image:* **não habilitado**. O AGENTS.md proíbe importação de origem externa fora da ingestão do `aculta_image`, e o plugin importa de URL externa. Habilitar exige exceção formal registrada pelo responsável; a escolha foi aplicada como exceção pendente, não como habilitação.
+   - *Fonte com paleta restrita:* não estava entre as escolhas; foi desabilitada no Runtime.
 
 ## 9. Fases propostas (planejamento, não executadas)
 
