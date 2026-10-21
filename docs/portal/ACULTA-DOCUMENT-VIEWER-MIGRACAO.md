@@ -190,7 +190,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.2 | Migração | Estratégia segura e spike | Concluída como evidência (`c23bc37d`, `7f031487`) |
 | 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | Executada em estado B: código (`4b170d06`), configuração (`740a0c32`) e Runtime; módulo antigo permanece |
 | 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
-| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação estrutural concluída (`3649a742`); renderização aguarda spike de isolamento |
+| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação (`3649a742`), spike de isolamento (`2c2e1b9c`) e renderizador isolado testado (`bd43fdba`); falta formatter, acesso Media e teste no Runtime |
 | 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Vendoring concluído (`42042558`, `71545352`); leitor não iniciado |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
 | 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
