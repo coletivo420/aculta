@@ -1,3 +1,14 @@
+## 0.1.1-dev.64 — cobrir transições e deduplicação de amizade — 2026-10-21
+
+- `FriendshipNoticeSubscriberTest` valida que pedidos notificam o destinatário,
+  aceites notificam quem iniciou, transições repetidas não duplicam Message/fila
+  e contas inativas não recebem avisos: 4 testes / 33 assertions PASS.
+- `FriendRequestsFormTest` confirma que a aba de Mensagens mostra ações para
+  pedidos recebidos e revalida o destinatário antes de aceitar: 2/12. Unit
+  Messenger: 51/203 PASS.
+- O smoke Runtime documentado na dev.63 continua limitado à criação do aviso e
+  item de fila; transporte real e revisão visual autenticada permanecem pendentes.
+
 ## 0.1.1-dev.63 — eventos de amizade: aviso persistente e e-mail mínimo — 2026-10-21
 
 - Pedido e aceite de amizade geram um aviso persistente (`aculta_msg_friendship`) para quem recebe o aviso, com dedução por amizade, evento e instante da transição. Pedido avisa quem recebeu; aceite avisa quem pediu.

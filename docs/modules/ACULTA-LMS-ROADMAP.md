@@ -377,8 +377,10 @@ atividades, turmas, prazos e fóruns.
 pedido/aceite; `aculta_messenger` cria Message persistente e enfileira e-mail
 transacional mínimo, sem duplicar o registro de amizade. A implementação entrou
 na branch em `e8da6bb4`, mas ainda falta cobertura focal do subscriber/worker,
-smoke autenticado dos avisos e revisão de como pedidos recebidos aparecem ao
-usuário. A dívida DT-O15 acompanha a tela de pedidos recebidos separadamente.
+smoke autenticado e teste do worker de e-mail. Unit agora cobre eventos e
+destinatários, deduplicação, conta inativa e formulário de pedidos recebidos
+(6/45). A aba Mensagens já mostra ações e valida novamente o destinatário; a
+dívida DT-O15 foi atualizada para revisão visual autenticada pendente.
 
 **F15 — integrações parciais; atividade/discussão e homologação ainda abertas.**
 `capa_curso` usa `aculta_image`; imagens do editor H5P passam por

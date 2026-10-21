@@ -17,10 +17,15 @@ Git, aos commits e ao changelog; esta lista registra sequência e critérios de 
 3. **dev.3 — eventos de amizade (implementado; envio de e-mail pendente de validação):** criar notificações persistentes Message e
    integrar Message Notify para pedido/aceite, com deduplicação e e-mail mínimo,
    sem expor dados privados.
-4. **dev.4 — hardening e homologação:** testes automatizados de acesso/IDOR,
-   transições, isolamento entre contas, rate limit, cache e regressão; validação
-   em Alpha, após o deploy do candidato; revisão do Config Sync e testes estáticos
-   permanecem concluídos antes de RC.
+4. **dev.4 — hardening e homologação (em andamento):** Unit cobre as transições
+   pedido/aceite, destinatário correto, deduplicação e conta inativa
+   (`FriendshipNoticeSubscriberTest`: 4/33), além da lista de pedidos recebidos
+   e revalidação do destinatário ao aceitar (`FriendRequestsFormTest`: 2/12).
+   Unit Messenger: 51/203. Ainda faltam teste do worker de e-mail e revisão
+   visual autenticada; o smoke Runtime em dev.63 confirmou somente persistência
+   de Message e enqueue, sem enviar e-mail real. Validação em Alpha ocorre após
+   deploy autorizado; Config Sync e testes estáticos devem permanecer prontos
+   antes de RC.
 
 Cada incremento registra os testes realmente executados e `RUNTIME STATUS`.
 RC exige testes/gates e revisão visual aplicável pré-deploy; homologação do

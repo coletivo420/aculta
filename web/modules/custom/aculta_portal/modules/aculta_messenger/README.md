@@ -146,4 +146,6 @@ bloqueios nativos do Private Message conservam suas regras.
 Administradores e editores de conteúdo podem iniciar novas conversas apesar
 da preferência, mas continuam sujeitos ao bloqueio. Ver
 [integrações](docs/INTEGRATIONS.md), [segurança](docs/SECURITY.md) e
-[roadmap](docs/ROADMAP.md). RUNTIME STATUS: DEFERRED.
+[roadmap](docs/ROADMAP.md). O smoke Runtime documentado em dev.63 confirmou a
+criação do aviso Message e enqueue para pedido/aceite; entrega real de e-mail e
+revisão visual autenticada permanecem pendentes.
