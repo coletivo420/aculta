@@ -15,6 +15,7 @@
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
+- [EDITOR-CKEDITOR5-AUDITORIA.md](EDITOR-CKEDITOR5-AUDITORIA.md) — auditoria do CKEditor 5 Plugin Pack, dependências, submódulos e decisões pendentes.
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — decisão arquitetural do sitemap.
 - [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada.
 - [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — decisões e contratos de galerias incorporadas.
