@@ -289,7 +289,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/node/add/article` | Formulário Core de criação de conteúdo legado `article` | Condicional ao bundle legado e à permissão de criação. |
 | `main.aculta` | `/node/add/blog` | Formulário Core de criação de conteúdo legado `blog` | Condicional ao bundle legado e à permissão de criação. |
 | `main.aculta` | `/node/add/revista` | Formulário Core de criação de publicação da Revista | Condicional ao bundle `revista` e à permissão de criação. |
-| `main.aculta` | `/{sessao}/{titulo}` | Publicação da Revista (`revista`) e conteúdo legado article/blog | Dinâmico; padrão Pathauto, depende de conteúdo publicado e domínio associado. |
+| `magazine.aculta` | `/{sessao}/{titulo}` | Publicação da Revista (`revista`) e conteúdo legado article/blog | Dinâmico; padrão Pathauto, depende de conteúdo publicado e domínio associado. |
 | `main.aculta` | `/avisos/{titulo}` | Comunicado institucional persistente | Dinâmico; depende de publicação, segmentação de público e access. |
 | `wiki.aculta` | `/verbete/{titulo}` | Verbete da Wiki | Dinâmico; depende de conteúdo e permissão de acesso. |
 | `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
