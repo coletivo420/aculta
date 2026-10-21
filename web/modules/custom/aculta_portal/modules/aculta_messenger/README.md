@@ -5,6 +5,10 @@ mensagem, assinaturas e avisos institucionais. A fonte de verdade de cada
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
 experiência e aplica os contratos de acesso e Domain do Portal.
 
+Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
+deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
+smoke autenticado e revisão visual permanecem pendentes.
+
 ## ACULTA Messenger 0.1.1
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de

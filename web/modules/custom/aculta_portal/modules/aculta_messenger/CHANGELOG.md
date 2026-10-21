@@ -1,3 +1,13 @@
+## 0.1.1-dev.66 — cobrir entrega e retentativas do aviso de amizade — 2026-10-21
+
+- `FriendshipNoticeEmailWorkerTest` confirma envio com URL da conta, marcação
+  `sent`, deduplicação após sucesso e limite de três tentativas quando Message
+  Notify falha. Não há transporte SMTP real nos testes.
+- Teste focal: 4 testes / 54 assertions; Unit Messenger: 55 testes / 257
+  assertions PASS. PHPCS Drupal/DrupalPractice PASS. Smoke autenticado e revisão
+  visual continuam pendentes. Runtime smoke anterior confirmou Message e fila,
+  sem envio de e-mail. RUNTIME STATUS: PARTIAL.
+
 ## 0.1.1-dev.65 — cobrir falhas seguras do worker de amizade — 2026-10-21
 
 - `FriendshipNoticeEmailWorkerTest` confirma que payload malformado é ignorado
