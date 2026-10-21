@@ -10,6 +10,7 @@
  * - body: corpo já escapado (HTML), quando is_html.
  * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
  * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
+* - color_mode: light, dark ou auto (modo de cor do site). Em auto, o bloco prefers-color-scheme é emitido.
 * - show_footer: False quando o corpo já traz o rodapé do layout de marca (aculta_mailer).
  * - is_html: True if generating HTML output, false for plain text.
  * - subject: Email subject.
@@ -32,8 +33,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
+  <meta name="color-scheme" content="{{ color_mode == 'auto' ? 'light dark' : (color_mode == 'dark' ? 'dark' : 'light') }}">
+  <meta name="supported-color-schemes" content="{{ color_mode == 'auto' ? 'light dark' : (color_mode == 'dark' ? 'dark' : 'light') }}">
   <title>{{ subject }}</title>
   <style>
     .aculta-mail-page { background: {{ c.page }}; }
@@ -41,6 +42,7 @@
     .aculta-mail-text { color: {{ c.text }}; }
     .aculta-mail-footer { background: {{ c.footer }}; color: {{ c.footer_text }}; }
     .aculta-mail-header { background: {{ c.header }}; }
+    {% if color_mode == 'auto' %}
     @media (prefers-color-scheme: dark) {
       .aculta-mail-page { background: {{ d.page }} !important; }
       .aculta-mail-card { background: {{ d.card }} !important; }
@@ -48,6 +50,7 @@
       .aculta-mail-footer { background: {{ d.footer }} !important; color: {{ d.footer_text }} !important; }
       .aculta-mail-header { background: {{ d.header }} !important; }
     }
+    {% endif %}
   </style>
 </head>
 <body class="aculta-mail-page" style="margin:0;padding:0;background:{{ c.page }};font-family:Arial,Helvetica,sans-serif;">

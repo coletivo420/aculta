@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.142 | Modo de cor do envelope de e-mail segue o controle de aparência do site | Gate de fundação PASS; render dos três modos PASS | light, dark ou auto, pelo mesmo controle do site.
 | 0.6.0-dev.141 | Rodapé do envelope de e-mail segue o layout de marca do aculta_mailer | Gate de fundação e render local com e sem layout PASS; revisão visual no cliente de e-mail pendente | Sem layout, o rodapé fixo é mantido. Com layout, o rodapé vem da marca. Tokens claro e escuro inalterados.
 | 0.6.0-dev.140 | Token semântico para documentos PDF em atividade H5P | Runtime Firefox verificou PDF privado e conversas sob atividade; Gate de tokens atualizado | ACULTA420 aplica espaçamento entre player e documentos existentes por `lms-h5p-course-documents`. |
 | 0.6.0-dev.139 | Estilos do conteúdo no CKEditor 5 (`ckeditor5-stylesheets`) | Foundation e revisão visual no editor pendentes; validação do fluxo completo no navegador pendente | Usa só tokens `--aculta-*`; afeta todos os formatos CKEditor 5 do site, não apenas o `aculta_editor`. |

@@ -1,3 +1,10 @@
+## 0.6.0-dev.142 — modo de cor do envelope segue o controle do site — 2026-10-22
+
+Classificação: PATCH (apresentação do envelope; sem componente novo, sem cor nova).
+
+- `MailEnvelopeHooks` resolve o modo `light`, `dark` ou `auto` recebido do aculta_mailer. Em `light` não há bloco escuro; em `dark` as cores escuras valem; em `auto` vale `prefers-color-scheme`.
+- O template declara `color-scheme` conforme o modo e emite o bloco escuro só em `auto`.
+
 ## 0.6.0-dev.141 — rodapé do envelope de e-mail segue o layout de marca — 2026-10-22
 
 Classificação: PATCH (apresentação do envelope do aculta_mailer; sem componente novo, sem cor nova).
