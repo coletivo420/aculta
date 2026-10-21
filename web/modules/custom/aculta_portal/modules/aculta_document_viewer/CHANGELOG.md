@@ -1,5 +1,14 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.3 — renderizador isolado do DOCX (etapa de isolamento do plano) — 2026-10-21
+
+- `docx/docx-frame.html` e `docx/docx-frame.js`: página estática do próprio módulo, renderizada em `<iframe sandbox="allow-scripts">` sem `allow-same-origin`. CSP em `<meta>` com `script-src 'self'`, `connect-src 'none'`, `img-src blob: data:`. Bootstrap externo (script inline é bloqueado pelo CSP).
+- Protocolo por `postMessage` com `ev.source` validado: `ready` → `init` (URLs de biblioteca absolutas) → `libs` → `render` (ArrayBuffer) → `done` ou `error` (com motivo e detalhe).
+- Bibliotecas carregadas em sequência (`async = false`). Carregamento paralelo fazia o UMD do docx-preview capturar `JSZip` indefinido e falhar no caminho de `altChunk`; corrigido e verificado.
+- `js/docx-viewer.mjs`: `mountDocxViewer()` busca os bytes autorizados pela URL recebida, envia ao iframe e devolve `{status, reason?}`. Prazo configurável. O pai não lê o conteúdo renderizado.
+- Testes de navegador (Chromium na sessão X11, arquivos reais do módulo via servidor de teste local): DOCX válido e `altChunk` com `done`; DOCX corrompido com `error` e motivo; URL inexistente com `error`. Em todos, o pai não lê o DOM do iframe e o atributo `sandbox` é `allow-scripts`.
+- Ainda não integrado a formatter nem a Drupal: falta o formatter DOCX, a checagem de acesso com a URL do Media e o teste no Runtime.
+
 ## 0.1.0-dev.2 — validação estrutural de DOCX (etapa DOCX do plano) — 2026-10-21
 
 - `Docx\DocxPackageValidator` valida o DOCX antes de qualquer renderização: assinatura ZIP, ZIP legível, limite de bytes, número de entradas, soma descompactada, razão de compressão (ZIP bomb), caminhos inseguros, partes obrigatórias (`[Content_Types].xml`, `word/document.xml`), tipo principal WordprocessingML declarado e ausência de `vbaProject.bin` e partes HTML (altChunk).
