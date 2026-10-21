@@ -14,3 +14,18 @@ docx:
   dependencies:
     - core/drupal
     - core/once
+
+spreadsheet:
+  css:
+    component:
+      /libraries/tabulator/dist/tabulator.min.css: {}
+  js:
+    /libraries/sheetjs/dist/xlsx.full.min.js:
+      minified: true
+      preprocess: false
+    js/spreadsheet-viewer.mjs:
+      attributes:
+        type: module
+  dependencies:
+    - core/drupal
+    - core/once

@@ -1,5 +1,15 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.5 — leitor de planilhas com SheetJS e Tabulator (0.1.0-dev.6 do plano) — 2026-10-21
+
+- Bibliotecas locais e vendorizadas: SheetJS CE 0.20.3 (`web/libraries/sheetjs`) e Tabulator 6.5.3 (`web/libraries/tabulator`), com manifestos.
+- `Docx\DocxPackageValidator`: parâmetros de partes obrigatórias e tipo principal; `forXlsx()` valida `xl/workbook.xml` com os mesmos limites e recusas (macros, HTML).
+- `Spreadsheet\SpreadsheetViewerBuilder` e `Plugin\Field\FieldFormatter\SpreadsheetMediaFormatter` (`aculta_document_spreadsheet_media`): XLSX autorizado, mesmas checagens do formatter DOCX, fallback para o link do Core.
+- Biblioteca `aculta_document_viewer/spreadsheet` com `js/spreadsheet-viewer.mjs`: SheetJS lê o workbook, uma aba do Tabulator Spreadsheet por planilha, coordenada A1 preservada, primeira linha não é cabeçalho, células não editáveis, formatter `plaintext`, limites de 2000 linhas e 100 colunas por aba.
+- Testes: Unit 44/44 OK (inclui validação XLSX). Browser (Chromium na sessão X11, arquivos reais do módulo e bibliotecas vendorizadas): três abas exibidas; coordenadas e primeira linha preservadas; fórmula mostrada pelo valor em cache; HTML de célula exibido como texto e nenhum script executado.
+- Limitações conhecidas, previstas para 0.1.0-dev.7 e 0.1.0-dev.10: o SheetJS roda no contexto da página (não isolado); datas e números usam o formato `m/d/yy` do arquivo, sem a localização pt-BR; XLS, ODS e CSV ainda não; `TabulatorFull` (bundle completo, sem recorte de módulos).
+- Integração no Runtime pendente: a criação de nó e arquivo no Runtime falha desde o início de 0.1.0-dev.5 por um hook do Fórum da outra frente (`ForumPublicationTimeHooks` sem argumentos de construtor, ainda sem commit). Nada foi gravado no Runtime nesta etapa.
+
 ## 0.1.0-dev.4 — formatter DOCX integrado ao Drupal e testado no Runtime (0.1.0-dev.5 do plano) — 2026-10-21
 
 - `Plugin\Field\FieldFormatter\DocxMediaFormatter` (`aculta_document_docx_media`): campos `file` de qualquer entidade (Media ou nó). Verifica a entidade hospedeira, o campo e o arquivo (download) antes de montar o leitor. Sem acesso, o elemento sai com `#access` FALSE.

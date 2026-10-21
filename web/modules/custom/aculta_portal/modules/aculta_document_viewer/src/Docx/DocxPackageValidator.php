@@ -20,9 +20,19 @@ final class DocxPackageValidator {
   public const MAIN_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml';
 
   /**
+   * Tipo de conteúdo do workbook principal SpreadsheetML (XLSX).
+   */
+  public const XLSX_MAIN_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
+
+  /**
    * Partes obrigatórias de um pacote DOCX.
    */
-  private const REQUIRED_PARTS = ['[Content_Types].xml', 'word/document.xml'];
+  public const DOCX_REQUIRED_PARTS = ['[Content_Types].xml', 'word/document.xml'];
+
+  /**
+   * Partes obrigatórias de um pacote XLSX.
+   */
+  public const XLSX_REQUIRED_PARTS = ['[Content_Types].xml', 'xl/workbook.xml'];
 
   /**
    * Partes que nunca devem existir num DOCX visualizado (macros e HTML).
@@ -40,13 +50,26 @@ final class DocxPackageValidator {
    *   Soma máxima dos tamanhos descompactados.
    * @param int $maxRatio
    *   Razão máxima descompactado/compactado por entrada relevante.
+   * @param string[] $requiredParts
+   *   Partes exigidas no pacote (padrão: DOCX).
+   * @param string $mainContentType
+   *   Tipo de conteúdo principal declarado em [Content_Types].xml (padrão: DOCX).
    */
   public function __construct(
     private readonly int $maxBytes = 25 * 1024 * 1024,
     private readonly int $maxEntries = 2000,
     private readonly int $maxUncompressedBytes = 200 * 1024 * 1024,
     private readonly int $maxRatio = 100,
+    private readonly array $requiredParts = self::DOCX_REQUIRED_PARTS,
+    private readonly string $mainContentType = self::MAIN_CONTENT_TYPE,
   ) {}
+
+  /**
+   * Creates the validator for XLSX workbooks with the same limits.
+   */
+  public static function forXlsx(): self {
+    return new self(requiredParts: self::XLSX_REQUIRED_PARTS, mainContentType: self::XLSX_MAIN_CONTENT_TYPE);
+  }
 
   /**
    * Validates the package at the given path.
@@ -119,7 +142,7 @@ final class DocxPackageValidator {
       }
       $names[] = $name;
     }
-    foreach (self::REQUIRED_PARTS as $part) {
+    foreach ($this->requiredParts as $part) {
       if (!in_array($part, $names, TRUE)) {
         throw new DocxValidationException('missing_part', "Parte obrigatória ausente: {$part}.");
       }
@@ -131,8 +154,8 @@ final class DocxPackageValidator {
    */
   private function validateContentTypes(\ZipArchive $zip): void {
     $xml = $zip->getFromName('[Content_Types].xml', 0);
-    if ($xml === FALSE || !str_contains($xml, self::MAIN_CONTENT_TYPE)) {
-      throw new DocxValidationException('wrong_content_type', 'Tipo principal WordprocessingML não declarado.');
+    if ($xml === FALSE || !str_contains($xml, $this->mainContentType)) {
+      throw new DocxValidationException('wrong_content_type', 'Tipo principal do pacote não declarado.');
     }
   }
 
