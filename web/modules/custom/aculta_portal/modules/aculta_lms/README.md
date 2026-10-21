@@ -120,18 +120,21 @@ criada, então o download real de resposta continua sem smoke positivo.
   compartilhado em Group de curso/turma, access contextual, membership
   revalidada e moderação por `grade students` do curso. `lms_classes.settings`
   herda essa permissão Group Node para turmas. O adapter e suas permissões estão
-  ativos no Runtime de teste; ainda não há Node ou Comment LMS real nesse
-  Runtime, então autorização por conteúdo HTTP e visual continuam pendentes.
-  A integração atual não associa uma discussão a uma atividade específica; esse
-  trabalho pertence à F15. O contrato e as condições estão em
+  ativos no Runtime de teste. Desde `aculta_forum_lms` dev.24, tópicos podem
+  referenciar `field_lms_activity`; o formulário de resposta lista discussões
+  autorizadas no Group do curso ou turma da atividade. Config Sync parcial e
+  resolução do serviço/hook foram confirmadas, mas o Runtime ainda não tem
+  tópico/Comment LMS para smoke HTTP ou revisão visual. Respostas Comment usam
+  `usuario_aculta` e o pipeline inline `aculta_image`; anexos separados de
+  arquivo não têm fluxo próprio. O contrato e as condições estão em
   [LMS-INTEGRATION-CONTRACTS.md](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md).
 
 As integrações ainda exigem aceite ponta a ponta no Runtime após a configuração
 de cada fluxo; a dependência do PDF garante disponibilidade do plugin, mas não
 substitui a validação de permissão/cache nem importa conteúdo. Testes atuais do
-adapter Forum LMS: Unit 18/190 assertions e Kernel 2/127 assertions PASS; o
-Kernel registra 43 depreciações upstream e cobre tópicos em curso/turma, não
-discussões específicas de atividade.
+adapter Forum LMS: Unit 22/256 assertions e Kernel 2/132 assertions PASS; o
+Kernel registra 43 depreciações upstream e ainda não contém fixture do vínculo
+atividade-discussão.
 
 O validador da resposta só aplica a política quando a extensão autorizada pela
 atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões

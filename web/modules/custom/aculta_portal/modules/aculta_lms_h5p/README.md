@@ -37,9 +37,11 @@ foi preservada. Nenhuma alteração de produção foi feita.
   LMS. Documentos PDF complementares do curso pertencem à Media
   `course_document` e ao viewer `aculta_pdf_viewer` com controle
   `aculta_pdf_viewer_group`; H5P não cria outro leitor nem converte seus assets
-  internos em Media. Tópicos ligados a atividades serão integrados ao
-  `aculta_forum` quando o módulo possuir API executável e testes de acesso por
-  curso.
+  internos em Media. Como o conteúdo H5P é uma atividade LMS, educadores podem
+  associar a ela um tópico existente do `aculta_forum` por `field_lms_activity`;
+  a tela de resposta mostra apenas tópicos autorizados no Group do curso ou da
+  turma. O resolver revalida vínculo LMS e acesso Group. Runtime ainda sem
+  fixture de tópico/Comment; smoke HTTP e visual pendentes.
 - Integração com CTools: a condição `Course has interactive activities (H5P)`
   recebe contexto `entity:group` e permite condicionar displays/contextos CTools
   à existência de atividades. O projeto não tem Page Manager instalado; não
