@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 use Drupal\aculta_mailer\Entity\MailBrand;
 use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\aculta_mailer\Form\MailTemplateTestForm;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Core\Form\FormState;
@@ -26,7 +27,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test'];
 
   /**
    * Correlation ID fixo usado nas mensagens de teste.
@@ -39,6 +40,9 @@ final class MailTemplateKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('aculta_mail_log');
+    $this->installConfig(['filter']);
+    // Formato do corpo HTML (o aculta_editor o cria em produção).
+    FilterFormat::create(['format' => MailTemplate::BODY_FORMAT_HTML, 'name' => 'Aculta Email (teste)'])->save();
   }
 
   /**
@@ -77,7 +81,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
       'label' => 'Teste',
       'status' => TRUE,
       'subject' => 'Oi {{ senha }}',
-      'body' => 'Corpo {{ name }}',
+      'body' => ['value' => 'Corpo {{ name }}', 'format' => MailTemplate::BODY_FORMAT_HTML],
     ]);
     $formObject->validateForm($form, $state);
 

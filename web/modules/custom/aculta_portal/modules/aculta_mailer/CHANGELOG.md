@@ -1,3 +1,9 @@
+## 0.1.0-dev.63 — prévia do modelo mostra o resultado, não o código — 2026-10-22
+
+- A prévia do formulário de modelo passa a mostrar o corpo HTML renderizado, filtrado pelo mesmo formato do envio. Antes aparecia como código dentro de `pre`.
+- `MailTemplateRenderer::preview()` sanitiza a prévia em HTML. Teste de Kernel: script removido, parágrafo mantido.
+- Testes do formulário de modelo adaptados ao `text_format` (corpo com `value` e `format`). Kernel do mailer 40/40.
+
 ## 0.1.0-dev.62 — formulário de modelo novo sem erro — 2026-10-22
 
 - Corrige `TypeError` ao abrir o formulário de adicionar modelo (HTTP 500): `MailTypeRegistry::has()` recebia `NULL`, porque o modelo novo ainda não tem ID. A busca do tipo só ocorre quando há ID. O erro já existia antes da 0.1.0-dev.61.

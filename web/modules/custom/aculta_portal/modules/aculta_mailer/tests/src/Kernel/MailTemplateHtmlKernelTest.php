@@ -92,6 +92,16 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
   }
 
   /**
+   * A prévia em HTML mostra o resultado sanitizado, sem script.
+   */
+  public function testHtmlPreviewIsSanitized(): void {
+    $type = $this->container->get(MailTypeRegistry::class)->get('aculta_mailer_test_message');
+    $preview = $this->container->get(MailTemplateRenderer::class)->preview($type, 'Assunto', '<p>Olá {{ name }}</p><script>alert(1)</script>', TRUE);
+    $this->assertStringContainsString('<p>Olá ', $preview['body']);
+    $this->assertStringNotContainsString('<script', $preview['body']);
+  }
+
+  /**
    * Modelo em texto simples continua sem filtro HTML e sem escape (regressão).
    */
   public function testPlainTemplateKeepsPreviousBehaviour(): void {

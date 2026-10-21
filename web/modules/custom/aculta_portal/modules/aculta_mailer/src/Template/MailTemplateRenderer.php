@@ -72,7 +72,8 @@ final class MailTemplateRenderer {
     }
     return [
       'subject' => self::fill($subject, $samples),
-      'body' => self::fill($body, $samples, $html),
+      // Prévia em HTML passa pelo mesmo filtro do envio, para mostrar o resultado real.
+      'body' => $html ? $this->sanitizeHtml(self::fill($body, $samples, TRUE)) : self::fill($body, $samples),
     ];
   }
 
