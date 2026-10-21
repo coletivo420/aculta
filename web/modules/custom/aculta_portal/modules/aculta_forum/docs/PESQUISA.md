@@ -39,6 +39,56 @@ somente leitura do Runtime de teste em 2026-10-19 confirmou 8 referências
 `field_discussao` em `article` e 4 em `blog`; isso não afirma que a configuração
 exportada e o servidor sejam idênticos em todos os itens.
 
+## Upload contextual e integração visual (2026-10-21)
+
+- O Fórum e a Wiki usam o formato `usuario_aculta`, com `drupalInsertImage` e
+  `drupalMedia`; o segundo permite somente Media `document` e usa o view mode
+  `default`. Esse display público usa o formatter `aculta_pdf_media`, que
+  embute PDF.js. Não alterar o display compartilhado para mudar somente o
+  Fórum. A permissão de criar mídia e o formato atual também são compartilhados;
+  conceder upload nesse formato libera contextos além do comentário público.
+  A integração precisa escopar plugin, formato e permissão ao Fórum e preservar
+  embeds existentes do bundle `document`.
+- Core 11.4.10 fornece o endpoint `ckeditor5.upload_image`; ele usa as
+  configurações do formato (`scheme`, diretório e `max_size`) e os validadores
+  do plugin Core. `aculta_image.ImageUploadIngestor` já recebe destino
+  `public://` ou `private://`, mas a política de extensões/tamanho é fixa em
+  `UploadPolicy` (10 MB). As opções futuras do Fórum precisam chegar ao
+  validador do servidor e respeitar a política central, inclusive tamanhos
+  acima do valor padrão autorizados pelo painel.
+- `aculta_gallery` já demonstra o padrão do projeto para um botão CKEditor 5
+  customizado que abre o diálogo Core por `Drupal.ckeditor5.openDialog`, recebe
+  um Form API/AJAX e insere o resultado via `EditorDialogSave`. Seu formulário
+  não abre Media Library aninhada: o Core mantém um único `#drupal-modal` e a
+  Library substituiria o primeiro modal. Referências locais:
+  `aculta_gallery/src/Plugin/CKEditor5Plugin/CreateGallery.php`,
+  `aculta_gallery/src/Form/GalleryEmbedDialogForm.php` e
+  `aculta_gallery/docs/ARQUITETURA.md` §4.3.
+- O popup padrão exige modal Core; o módulo fornece comportamento e marca
+  `data-portal-ui`, enquanto o tema controla largura e apresentação em
+  `css/components/dialog.css`. A regra está em
+  `docs/portal/POPUP-PADRAO.md`; UI Suite Bootstrap não está instalado. O
+  Bootstrap 5 do tema é o primitive visual. UI Patterns/SDC só é adequado ao
+  cartão de anexo se houver composição reutilizável. O SDC estável
+  `aculta420:card` já fornece slots de mídia, cabeçalho, conteúdo e rodapé; deve
+  ser avaliado antes de criar outro cartão, mantendo Portal/Core como donos de
+  dados, URL, acesso e cache. UI Styles para CKEditor permanece desativado.
+- O formatter compartilhado e `PdfViewerBuilder` do `aculta_pdf_viewer` já
+  oferecem abertura do leitor completo por link, com `_blank` padrão, e geração
+  de miniatura via `pdfpreview` + ImageMagick + `aculta_image`. O builder atual
+  só gera miniatura de fonte `public://`; documentos privados de turma recebem
+  link protegido sem preview. O cartão do Fórum precisa mostrar miniatura,
+  nome/tamanho e link para o leitor em outra janela por padrão, com opção
+  administrativa para abrir na mesma janela, sem renderizar o leitor no
+  comentário. Para anexos privados, a miniatura só pode ser publicada depois
+  do comentário e precisa acompanhar sua retirada; validar acesso e limpeza
+  antes de estender o builder.
+
+Referências upstream: [API do plugin CKEditor 5](https://www.drupal.org/docs/drupal-apis/ckeditor-5-api/overview),
+[Ajax Dialogs](https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes),
+[Core Media Embed 11.x e view modes](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Plugin%21Filter%21MediaEmbed.php/class/MediaEmbed/11.x),
+[configuração Core da Media Library no CKEditor](https://api.drupal.org/api/drupal/core%21modules%21ckeditor5%21ckeditor5.ckeditor5.yml/main).
+
 ## Auditoria de contrib instalado e portabilidade
 
 Inventário conferido em `composer.lock`, `composer show --locked` e no código
