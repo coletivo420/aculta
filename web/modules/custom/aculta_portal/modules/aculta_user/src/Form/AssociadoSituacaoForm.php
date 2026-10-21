@@ -52,7 +52,8 @@ final class AssociadoSituacaoForm extends FormBase {
       . ($adesao !== NULL ? ' ' . $this->t('Data de adesão: @data.', ['@data' => $this->dateFormatter->format($adesao, 'custom', 'd/m/Y')]) : '')
       . '</p>'];
     $opcoes = [
-      AssociadoMarker::ATIVO => $this->t('Ativo (concede a situação de associado)'),
+      AssociadoMarker::ATIVO => $this->t('Adicionar como associado (ativo, sem convite)'),
+      AssociadoMarker::CONVIDADO => $this->t('Convidar (a pessoa aceita ou recusa em Minha conta)'),
       AssociadoMarker::SUSPENSO => $this->t('Suspenso'),
       AssociadoMarker::DESLIGADO => $this->t('Desligado'),
     ];
@@ -80,7 +81,12 @@ final class AssociadoSituacaoForm extends FormBase {
     $situacao = (string) $form_state->getValue('situacao');
     $motivo = (string) $form_state->getValue('motivo');
     $admin = (int) $this->currentUserService->id();
-    if ($situacao === 'recusar') {
+    if ($situacao === AssociadoMarker::CONVIDADO) {
+      $ok = $this->marker->convidar($uid, $admin, $motivo);
+      $this->logger->notice('Convite de associado enviado à conta @conta por @admin.', ['@conta' => $uid, '@admin' => $admin]);
+      $this->messenger()->addStatus($ok ? $this->t('Convite enviado. A pessoa aceita em Minha conta.') : $this->t('A conta já é associada ou já tem convite.'));
+    }
+    elseif ($situacao === 'recusar') {
       $ok = $this->marker->recusar($uid);
       $this->logger->notice('Pedido de adesão da conta @conta recusado por @admin.', ['@conta' => $uid, '@admin' => $admin]);
       $this->messenger()->addStatus($ok ? $this->t('Pedido de adesão recusado.') : $this->t('Não havia pedido pendente.'));
@@ -102,6 +108,7 @@ final class AssociadoSituacaoForm extends FormBase {
       AssociadoMarker::ATIVO => (string) $this->t('ativo'),
       AssociadoMarker::SUSPENSO => (string) $this->t('suspenso'),
       AssociadoMarker::DESLIGADO => (string) $this->t('desligado'),
+      AssociadoMarker::CONVIDADO => (string) $this->t('convidado (aguardando aceite)'),
       default => (string) $this->t('sem pedido de adesão'),
     };
   }

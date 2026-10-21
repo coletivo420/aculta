@@ -7,6 +7,9 @@ namespace Drupal\aculta_user\Form;
 use Drupal\aculta_image\UploadPolicy;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Access\CsrfTokenGenerator;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -41,6 +44,7 @@ final class UserPictureForm extends FormBase {
     private AvatarPool $avatarPool,
     private readonly ImageRenderer $imageRenderer,
     private readonly UploadPolicy $uploadPolicy,
+    private readonly RendererInterface $renderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -52,6 +56,7 @@ final class UserPictureForm extends FormBase {
       $container->get('aculta_user.avatar_pool'),
       $container->get('aculta_image.render'),
       $container->get('aculta_image.upload_policy'),
+      $container->get('renderer'),
     );
   }
 
@@ -118,14 +123,16 @@ final class UserPictureForm extends FormBase {
 
     // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no mesmo lugar,
     // ao lado de "Salvar foto do perfil" (regra de estado, docs/FOTO-PERFIL.md).
-    $form['actions'] = ['#type' => 'actions'];
+    // Linha de ações: mesmo estilo de linha de ações das telas da conta (token existente; sem token próprio no tema).
+    $form['actions'] = ['#type' => 'actions', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
     if ($isAcervo) {
+      // Botão de envio (mesma linha de "Salvar"): o sorteio troca só a prévia do modal, por AJAX, e não grava.
       $form['actions']['sortear'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Sortear novo avatar'),
-        '#url' => Url::fromRoute('aculta_user.avatar_reroll', [], ['query' => ['csrf_token' => $this->csrfToken->get('/avatar/sortear')]]),
-        '#attributes' => ['class' => ['use-ajax'], 'data-portal-ui' => 'button-secondary'],
-        '#attached' => ['library' => ['core/drupal.ajax']],
+        '#type' => 'submit',
+        '#value' => $this->t('Sortear novo avatar'),
+        '#limit_validation_errors' => [],
+        '#submit' => ['::noSubmit'],
+        '#ajax' => ['callback' => '::sortearPrevia', 'event' => 'click', 'progress' => ['type' => 'none']],
       ];
     }
     if (!$isAcervo && $current > 0) {
@@ -142,6 +149,31 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#action'] = Url::fromRoute('aculta_user.foto')->toString();
     return $form;
+  }
+
+  /** Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending). */
+  public function noSubmit(array &$form, FormStateInterface $form_state): void {}
+
+  /** Callback AJAX do sorteio: troca só a prévia dentro do modal (a visão geral muda ao salvar). */
+  public function sortearPrevia(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+    $account = $this->account();
+    $entry = $account !== NULL ? $this->avatarPool->preview($account) : NULL;
+    if ($entry !== NULL) {
+      $build = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => ['data-aculta-user-avatar' => ''],
+        'image' => [
+          '#theme' => 'image',
+          '#uri' => $this->avatarPool->previewUrl($entry),
+          '#alt' => (string) $account->label(),
+          '#attributes' => ['data-portal-ui' => 'account-avatar'],
+        ],
+      ];
+      $response->addCommand(new ReplaceCommand('.ui-dialog [data-aculta-user-avatar]', (string) $this->renderer->renderInIsolation($build)));
+    }
+    return $response;
   }
 
   /** Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */

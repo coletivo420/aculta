@@ -44,7 +44,15 @@ final class AssociadoRequestForm extends FormBase {
     $uid = (int) $this->currentUserService->id();
     $situacao = $this->marker->situacao($uid);
     $form['descricao'] = ['#markup' => '<p>' . $this->texto($situacao, $uid) . '</p>'];
-    if ($this->podePedir($situacao) && $this->emailConfirmation->isConfirmed($this->currentUserService)) {
+    if ($situacao === AssociadoMarker::CONVIDADO) {
+      // Convite do administrador: só o aceite concede a situação de associado.
+      $form['actions'] = [
+        '#type' => 'actions',
+        'aceitar' => ['#type' => 'submit', '#value' => $this->t('Aceitar convite'), '#name' => 'aceitar'],
+        'recusar' => ['#type' => 'submit', '#value' => $this->t('Recusar convite'), '#name' => 'recusar'],
+      ];
+    }
+    elseif ($this->podePedir($situacao) && $this->emailConfirmation->isConfirmed($this->currentUserService)) {
       $form['actions'] = ['#type' => 'actions', 'submit' => ['#type' => 'submit', '#value' => $this->t('Pedir adesão')]];
     }
     return $form;
@@ -52,12 +60,31 @@ final class AssociadoRequestForm extends FormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUserService->id();
+    // Convite: aceitar ou recusar, sem depender de e-mail confirmado além do que o convite já exige.
+    $acao = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
+    if ($acao === 'aceitar') {
+      $this->messenger()->addStatus($this->marker->aceitarConvite($uid)
+        ? $this->t('Convite aceito. Você agora é associado.')
+        : $this->t('Não há convite para aceitar.'));
+      $form_state->setRedirect('aculta_user.associado_pedido');
+      return;
+    }
+    if ($acao === 'recusar') {
+      $this->messenger()->addStatus($this->marker->recusarConvite($uid)
+        ? $this->t('Convite recusado.')
+        : $this->t('Não há convite para recusar.'));
+      $form_state->setRedirect('aculta_user.associado_pedido');
+      return;
+    }
     // Revalida no envio: o botão não basta, a regra é do servidor.
     if (!$this->emailConfirmation->isConfirmed($this->currentUserService)) {
       $this->messenger()->addError($this->t('Confirme seu e-mail antes de pedir adesão.'));
     }
     elseif ($this->marker->pedir($uid)) {
       $this->messenger()->addStatus($this->t('Pedido de adesão enviado. A associação vai analisar.'));
+      // Reconstrói o formulário com a situação nova: a resposta AJAX da conta devolve o formulário já atualizado.
+      $form_state->setRebuild();
+      return;
     }
     else {
       $this->messenger()->addStatus($this->t('Não foi possível enviar o pedido agora.'));
@@ -80,6 +107,7 @@ final class AssociadoRequestForm extends FormBase {
       AssociadoMarker::ATIVO => (string) $this->t('Você é associado desde @data.', ['@data' => $this->dateFormatter->format($this->marker->dataAdesao($uid) ?? 0, 'custom', 'd/m/Y')]),
       AssociadoMarker::SUSPENSO => (string) $this->t('Sua situação de associado está suspensa. Procure a associação para mais informações.'),
       AssociadoMarker::DESLIGADO => (string) $this->t('Sua situação de associado foi encerrada. Você pode pedir adesão de novo.'),
+      AssociadoMarker::CONVIDADO => (string) $this->t('A associação convidou você a ser associado. Aceite ou recuse o convite abaixo.'),
       default => (string) $this->t('Você ainda não é associado. Pedir adesão envia um pedido para a associação analisar; só a administração concede a situação.'),
     };
   }

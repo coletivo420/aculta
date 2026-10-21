@@ -9,19 +9,21 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
 | --- | --- | --- |
 | (sem situação) | Nunca pediu adesão | Padrão |
 | `pendente` | Pedido em análise | A pessoa pede em `/associado` |
-| `ativo` | Associado | Administrador define `ativo` |
+| `convidado` | Convite do administrador, aguardando aceite | Administrador convida; a pessoa aceita ou recusa em `/associado` |
+| `ativo` | Associado | Administrador adiciona (`ativo`, sem convite) ou a pessoa aceita o convite |
 | `suspenso` | Adesão suspensa | Administrador define `suspenso` |
 | `desligado` | Encerrada | Administrador define `desligado`; a pessoa pode pedir de novo |
 
 - **Data de adesão:** gravada na primeira ativação e não muda depois (suspensão e volta mantêm a data original).
-- **Recusa:** administrador recusa um pedido pendente; a linha é removida.
+- **Recusa:** administrador recusa um pedido pendente; a linha é removida. A pessoa recusa um convite; a linha é removida.
+- **Convite:** só o administrador convida. Quem já é ativo ou suspenso não recebe convite. O convite não concede nada antes do aceite; o aceite grava a data de adesão e garante o perfil.
 - **Autor e motivo:** cada alteração grava quem alterou (`concedido_por`) e o motivo (`motivo`). Não há histórico de
   alterações além da última; o log do Drupal registra cada decisão (`aculta_user`).
 
 ## Quem pode o quê
 
 - **Pessoa com e-mail confirmado:** pedir adesão em `/associado`. O pedido não concede nenhum acesso.
-- **Administrador** (`administer aculta associados`): definir situação e recusar pedido, em
+- **Administrador** (`administer aculta associados`): adicionar, convidar, suspender, desligar e recusar pedido, em
   `/painel-administrativo/associados/{user}/situacao`; ver o relatório em `/painel-administrativo/associados/relatorio`.
 - **Exportação com RG completo:** somente `export aculta associados` (administrador).
 - Nenhum papel concede a situação. Nenhuma checagem de acesso usa o nome "associado" como papel.

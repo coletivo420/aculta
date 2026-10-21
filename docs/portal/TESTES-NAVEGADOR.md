@@ -607,3 +607,34 @@ O objetivo é aproximar a experiência e composição do fórum de referência c
 identidade visual ACULTA420; marcas, logos, ilustrações e folhas de estilo do
 Ubuntu/Discourse não são copiadas. Resultado permanece **planejado** até rodar
 esse roteiro com o Firefox X11 e evidência real.
+
+
+## R. Rodada no X11 local (2026-10-21): foto, associado, atividade e login
+
+Ambiente: Chromium com janela visível no display X11 local (`DISPLAY=:0`), controlado pelo protocolo DevTools; conta de
+teste `teste.comum` (uid 5); administração pelo navegador com link único gerado no servidor de testes. Capturas no
+diretório de trabalho do agente (não versionadas). Esta rodada substitui os passos de envio do roteiro N, que ainda citava
+"Salvar" depois do recorte e o limite de 2 MB (o limite atual é o da `UploadPolicy`, 10 MB).
+
+| Passo | Esperado | Resultado |
+| --- | --- | --- |
+| R1 painel e popup no avatar do sistema (P1) | sem "Remover foto"; "Sortear novo avatar" na mesma linha de "Salvar"; campo de envio; sem "Recortar foto"; popup centralizado | OK |
+| R2 sortear só na prévia (P7) | prévia muda; avatar do painel não muda; fechar sem salvar não recarrega e mantém a foto; reabrir mostra a foto atual | OK |
+| R3 envio com recorte automático (N3) | modal "Recortar foto" abre sozinho; sem abas nem "Crop image"; caixa de recorte; altura limitada e rolagem | OK |
+| R4 aplicar recorte (N4/P2) | uma única requisição de recorte; volta ao painel sem reabrir o popup; foto do painel trocada pelo envio | OK |
+| R5 foto personalizada (P3/P5) | "Remover foto" presente; sem "Sortear novo avatar"; sem "Recortar foto" | OK |
+| R6 remover (P4) | volta a avatar do sistema sorteado; popup mostra "Sortear novo avatar" e sem "Remover foto" | OK |
+| R7 associado: pedido (clique real) | "pedido de adesão está em análise" na tela da pessoa | OK |
+| R8 associado: administrador convida | relatório mostra o pedido; convite enviado | OK |
+| R9 associado: pessoa aceita | "Aceitar convite" e "Recusar convite" visíveis; aceite mostra "Você é associado desde" | OK |
+| R10 atividade: abas (Q1/Q2) | cinco abas; Fórum com URL `/atividade/forum` e marcada como atual | OK |
+| R11 conquistas: tooltip (aculta_game) | missão concluída com `title` "Obtida em 16/10/2026" | OK |
+| R12 login com senha errada e certa (O) | senha errada mostra "não reconhecidos" e fica em /entrar; senha certa chega ao painel | OK |
+| R13 erros de JavaScript | nenhum erro de script do site | OK nas rodadas de R1, R7-R12. Na rodada de R3-R6, o console registrou um 403 ao carregar o link de login único na primeira navegação; não há erro de script do site, e a causa do 403 ficou sem reprodução |
+
+Achados de configuração (não são do módulo): o servidor envia uma diretiva `webrtc` no Content-Security-Policy que o
+navegador não reconhece ("Unrecognized Content-Security-Policy directive"). Corrigir no cabeçalho de segurança do
+ambiente; não afeta a funcionalidade.
+
+Não executado nesta rodada: inspeção visual humana (aparência final, alinhamento e contraste em tela pequena e grande)
+e recorte com a área de seleção movida pelo usuário (o fluxo verificado aplica o recorte padrão).

@@ -25,11 +25,11 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
   (`docs/ASSOCIADO.md`).
 - **Badges:** só administradores concedem (`administer aculta game`; nenhum papel recebe essa permissão).
 - **Tooltip "Obtida em DATA":** fica no `aculta_game` (missões concluídas, `MissionProgress`).
+- **Convite e adição pelo administrador:** sim (situação `convidado`; adicionar direto como ativo).
 - **Não mesclar** esta frente: o branch é compartilhado com outro agente e a PR #297 segue aberta.
 
 ## Pendente de decisão do responsável
 
-1. **Adesão:** pedido pela pessoa com decisão do administrador (decidido) ou também convite direto? Hoje só pedido.
 2. **Badges automáticas na primeira versão:** quais regras entram? (sugestão do plano: verbetes publicados, respostas
    no Fórum, tempo de participação).
 
@@ -37,7 +37,7 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
 
 - Testes de Kernel de rota, privacidade e fluxo de recorte: não executados. Banco de teste dedicado
   `aculta_simpletest` (procedimento em `docs/operations/BANCO-DE-TESTE.md`).
-- Inspeção visual humana do popup de foto, do recorte e da aba Atividade: pendente.
+- Inspeção visual humana do popup de foto, do recorte e da aba Atividade: pendente (a rodada automatizada no X11 passou; ver TESTES-NAVEGADOR, seção R).
 - Google Login: importação OAuth da foto está configurada no código, mas o login não está operacional no servidor de
   testes (`client_id` vazio; `client_secret` na configuração do runtime; risco do módulo `group` em gravação posterior).
   Ver `docs/integrations/GOOGLE.md`.

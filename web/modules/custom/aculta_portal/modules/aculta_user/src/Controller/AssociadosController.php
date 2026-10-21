@@ -123,6 +123,7 @@ final class AssociadosController extends ControllerBase {
       AssociadoMarker::ATIVO => (string) $this->t('Ativo'),
       AssociadoMarker::SUSPENSO => (string) $this->t('Suspenso'),
       AssociadoMarker::DESLIGADO => (string) $this->t('Desligado'),
+      AssociadoMarker::CONVIDADO => (string) $this->t('Convidado (aguardando aceite)'),
       default => $situacao,
     };
   }

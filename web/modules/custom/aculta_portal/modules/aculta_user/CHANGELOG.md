@@ -1,3 +1,16 @@
+## 0.4.0-dev.52 — botão de sorteio na linha de ações; pedido de adesão atualiza a tela — 2026-10-21
+
+- "Sortear novo avatar" passa a ser botão de envio (AJAX) na mesma linha de "Salvar foto do perfil", no lugar do link. Não grava: troca só a prévia do modal.
+- Pedido de adesão reconstrói o formulário: a resposta AJAX mostra "pedido em análise" sem recarregar.
+- Testes de navegador no X11 local (Chromium com janela visível) registrados em `docs/portal/TESTES-NAVEGADOR.md`, seção R.
+- `aculta_user.info.yml` 0.4.0-dev.52. RUNTIME STATUS: DEFERRED (inspeção visual humana pendente).
+
+## 0.4.0-dev.51 — convite de associado pelo administrador — 2026-10-21
+
+- Administrador convida uma pessoa a ser associada (situação `convidado`); a pessoa aceita ou recusa em `/associado`. O aceite grava a data de adesão. Adicionar direto (ativo, sem convite) continua disponível ao administrador.
+- Verificado no servidor de testes: convite, visão da pessoa com "Aceitar convite" e "Recusar convite", aceite com data de adesão.
+- `aculta_user.info.yml` 0.4.0-dev.51. RUNTIME STATUS: DEFERRED (navegador no X11 local pendente de execução).
+
 ## 0.4.0-dev.50 — associado vira situação (não papel); pedido de adesão; só administrador concede — 2026-10-21
 
 - Associado deixa de ser papel. A situação fica na entidade `aculta_associado`: pendente, ativo, suspenso ou desligado, com **data de adesão** (primeira ativação) e autor/motivo da última alteração. Contrato em `docs/ASSOCIADO.md`.

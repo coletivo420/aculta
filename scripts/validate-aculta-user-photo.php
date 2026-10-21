@@ -90,7 +90,7 @@ if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s'
 
 // INV-FOTO-8: sortear só troca a prévia do modal (escolha pendente); a foto só muda ao salvar. Fechar sem salvar não grava.
 $reroll = $read('src/Controller/AvatarRerollController.php');
-if (!str_contains($reroll, "'.ui-dialog [' . self::SLOT_ATTRIBUTE . ']'") || !str_contains($reroll, 'pool->preview(')) {
+if (!str_contains($picture, "'.ui-dialog [data-aculta-user-avatar]'") || !str_contains($picture, 'avatarPool->preview(')) {
   $errors[] = 'INV-FOTO-8: o sorteio não se limita à prévia do modal (ReplaceCommand em .ui-dialog) ou não guarda escolha pendente';
 }
 if (str_contains($reroll, 'data-aculta-avatar-changed') || str_contains($flow, 'reloadAfterAvatarChange')) {

@@ -11,8 +11,9 @@ use Drupal\Component\Datetime\TimeInterface;
 /**
  * Situação de associado: pedido de adesão, concessão, suspensão e desligamento. Só o administrador altera a situação.
  *
- * Situações: pendente (pedido em análise), ativo, suspenso e desligado. A data de adesão é a primeira ativação e não
- * muda depois. Recusar um pedido remove a linha pendente. Idempotente: repetir a mesma situação não faz nada.
+ * Situações: pendente (pedido da pessoa), convidado (convite do administrador, aguardando aceite), ativo, suspenso e
+ * desligado. A data de adesão é a primeira ativação e não muda depois. Recusar um pedido ou convite remove a linha.
+ * Idempotente: repetir a mesma situação não faz nada.
  */
 final class AssociadoMarker {
 
@@ -20,6 +21,7 @@ final class AssociadoMarker {
   public const ATIVO = 'ativo';
   public const SUSPENSO = 'suspenso';
   public const DESLIGADO = 'desligado';
+  public const CONVIDADO = 'convidado';
 
   /** Situações que o administrador pode definir (recusar é tratado à parte). */
   public const SITUACOES = [self::ATIVO, self::SUSPENSO, self::DESLIGADO];
@@ -141,6 +143,55 @@ final class AssociadoMarker {
     if ($conta instanceof \Drupal\user\UserInterface && $storage->loadByUser($conta, 'associado') === NULL) {
       $storage->create(['type' => 'associado', 'uid' => $uid])->save();
     }
+  }
+
+  /**
+   * Convite do administrador: a pessoa aceita ou recusa em Minha conta. Não concede nada antes do aceite.
+   * Quem já é ativo ou suspenso não recebe convite. Retorna TRUE se o convite foi registrado agora.
+   */
+  public function convidar(int $uid, int $alteradoPor, string $motivo = ''): bool {
+    if ($uid <= 0 || $alteradoPor <= 0) {
+      return FALSE;
+    }
+    $storage = $this->entityTypeManager->getStorage('aculta_associado');
+    $marca = $this->marcaDe($uid) ?? $storage->create(['uid' => $uid]);
+    $atual = $marca->isNew() ? NULL : (string) $marca->get('situacao')->value;
+    if (in_array($atual, [self::ATIVO, self::SUSPENSO, self::CONVIDADO], TRUE)) {
+      return FALSE;
+    }
+    $marca->set('situacao', self::CONVIDADO);
+    $marca->set('concedido_por', $alteradoPor);
+    $marca->set('motivo', mb_substr(trim($motivo), 0, 2000));
+    $marca->save();
+    $this->invalidar($uid);
+    return TRUE;
+  }
+
+  /** A pessoa aceita o convite: vira ativo, com data de adesão e perfil. Retorna TRUE se aceitou agora. */
+  public function aceitarConvite(int $uid): bool {
+    $marca = $this->marcaDe($uid);
+    if ($marca === NULL || (string) $marca->get('situacao')->value !== self::CONVIDADO) {
+      return FALSE;
+    }
+    $marca->set('situacao', self::ATIVO);
+    if ($marca->get('data_adesao')->isEmpty()) {
+      $marca->set('data_adesao', $this->time->getRequestTime());
+    }
+    $marca->save();
+    $this->garantirPerfil($uid);
+    $this->invalidar($uid);
+    return TRUE;
+  }
+
+  /** A pessoa recusa o convite: a linha é removida. Retorna TRUE se havia convite. */
+  public function recusarConvite(int $uid): bool {
+    $marca = $this->marcaDe($uid);
+    if ($marca === NULL || (string) $marca->get('situacao')->value !== self::CONVIDADO) {
+      return FALSE;
+    }
+    $marca->delete();
+    $this->invalidar($uid);
+    return TRUE;
   }
 
   /** Recusa um pedido pendente (remove a linha). Retorna TRUE se havia pedido pendente. */
