@@ -24,16 +24,27 @@ display:
     position: 0
     display_options:
       title: 'Pesquisar discussões'
-      access:
-        type: perm
+      pager:
+        type: full
         options:
-          perm: 'access content'
-      cache:
-        type: search_api_none
-        options: { }
-      query:
-        type: search_api_query
-        options: { }
+          offset: 0
+          items_per_page: 20
+          total_pages: null
+          id: 0
+          tags:
+            next: Próxima
+            previous: Anterior
+            first: Primeira
+            last: Última
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 40'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- Todos -'
+            offset: false
+            offset_label: Deslocamento
+          quantity: 9
       exposed_form:
         type: input_required
         options:
@@ -46,35 +57,27 @@ display:
           sort_desc_label: Decrescente
           text_input_required: 'Digite ao menos três caracteres para pesquisar.'
           text_input_required_format: plain_text
-      pager:
-        type: full
+      access:
+        type: perm
         options:
-          items_per_page: 20
-          offset: 0
-          id: 0
-          total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Itens por página'
-            items_per_page_options: '10, 20, 40'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- Todos -'
-            offset: false
-            offset_label: Deslocamento
-          tags:
-            previous: Anterior
-            next: Próxima
-            first: Primeira
-            last: Última
-          quantity: 9
-      style:
-        type: default
-      row:
-        type: search_api
-        options:
-          view_modes:
-            'entity:node':
-              ':default': teaser
+          perm: 'access content'
+      cache:
+        type: search_api_none
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: 'Estado vazio da busca pública'
+          plugin_id: text_custom
+          empty: true
+          content: '<p>Nenhuma discussão corresponde à sua busca. Tente outros termos ou <a href="/categorias">explore as categorias</a>.</p>'
+          tokenize: false
+      sorts: {  }
+      arguments: {  }
       filters:
         search_api_fulltext:
           id: search_api_fulltext
@@ -83,6 +86,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: search_api_fulltext
           operator: and
           value: ''
           group: 1
@@ -99,8 +103,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -111,32 +113,31 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: { }
-            group_items: { }
+            default_group_multiple: {  }
+            group_items: {  }
           parse_mode: terms
           min_length: 3
-          fields: { }
-          plugin_id: search_api_fulltext
+          fields: {  }
         type:
-          plugin_id: search_api_string
           id: type
           table: search_api_index_aculta_forum
           field: type
           relationship: none
           admin_label: 'Isolar tópico público'
+          plugin_id: search_api_string
           operator: '='
           value: aculta_forum_topic
           group: 1
           exposed: false
           is_grouped: false
         forum_category:
-          plugin_id: search_api_numeric
           id: forum_category
           table: search_api_index_aculta_forum
           field: forum_category
           relationship: none
           group_type: group
           admin_label: 'Categoria pública do Fórum'
+          plugin_id: search_api_numeric
           operator: '='
           value:
             min: ''
@@ -151,14 +152,13 @@ display:
             use_operator: false
             operator: forum_category_op
             operator_limit_selection: false
-            operator_list: { }
+            operator_list: {  }
             identifier: categoria
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -170,10 +170,21 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: { }
-            group_items: { }
+            default_group_multiple: {  }
+            group_items: {  }
           reduce_duplicates: false
-      sorts: { }
+      style:
+        type: default
+      row:
+        type: search_api
+        options:
+          view_modes:
+            'entity:node':
+              ':default': teaser
+      query:
+        type: search_api_query
+        options: {  }
+      relationships: {  }
       header:
         result:
           id: result
@@ -182,48 +193,34 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: result
           empty: false
           content: 'Exibindo resultados @start–@end de @total'
-          plugin_id: result
-      footer: { }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: 'Estado vazio da busca pública'
-          plugin_id: text_custom
-          empty: true
-          content: '<p>Nenhuma discussão corresponde à sua busca. Tente outros termos ou <a href="/categorias">explore as categorias</a>.</p>'
-          tokenize: false
-      relationships: { }
-      arguments: { }
-      display_extenders: { }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
+      max-age: 0
       contexts:
-        - languages:language_content
-        - languages:language_interface
+        - 'languages:language_content'
+        - 'languages:language_interface'
         - url
         - url.query_args
+      tags: {  }
       cacheable: false
-      max-age: 0
-      tags: { }
   page_search:
     id: page_search
     display_title: Página
     display_plugin: page
     position: 1
     display_options:
+      display_extenders: {  }
       path: pesquisar
-      display_extenders: { }
     cache_metadata:
+      max-age: 0
       contexts:
-        - languages:language_content
-        - languages:language_interface
+        - 'languages:language_content'
+        - 'languages:language_interface'
         - url
         - url.query_args
+      tags: {  }
       cacheable: false
-      max-age: 0
-      tags: { }
