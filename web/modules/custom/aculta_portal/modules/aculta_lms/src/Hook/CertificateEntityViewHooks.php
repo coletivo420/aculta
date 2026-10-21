@@ -43,7 +43,9 @@ final class CertificateEntityViewHooks {
       'verification' => ['#plain_text' => new TranslatableMarkup('Código de verificação: @code', ['@code' => $entity->get('verification_code')->value])],
       '#cache' => ['max-age' => 0],
     ];
-    CacheableMetadata::createFromObject($entity)->applyTo($build);
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($entity)
+      ->applyTo($build);
   }
 
 }

@@ -10,6 +10,7 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
 use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
@@ -112,6 +113,16 @@ final class CertificateLifecycleTest extends KernelTestBase {
       $this->container->get('date.formatter'),
       $this->container->get('string_translation'),
     );
+    $certificate_build = [];
+    $certificate_view_hook = new CertificateEntityViewHooks($this->createMock(\Drupal\Core\Datetime\DateFormatterInterface::class));
+    $certificate_view_hook->entityView(
+      $certificate_build,
+      $second,
+      $this->createMock(\Drupal\Core\Entity\Display\EntityViewDisplayInterface::class),
+      'default',
+    );
+    self::assertSame(0, $certificate_build['#cache']['max-age']);
+    self::assertContains('aculta_lms_certificate:' . $second->id(), $certificate_build['#cache']['tags']);
     $public = $verification->verify((string) $second->get('verification_code')->value);
     self::assertSame('certificate-student', $public['name']['#plain_text']);
     self::assertSame('Curso imutável', $public['course']['#plain_text']);

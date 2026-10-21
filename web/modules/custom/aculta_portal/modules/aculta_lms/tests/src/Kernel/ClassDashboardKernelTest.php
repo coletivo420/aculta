@@ -97,6 +97,12 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertContains('config:group_role_list', $metrics['cache']->getCacheTags());
     self::assertContains('config:user.role_list', $metrics['cache']->getCacheTags());
     self::assertContains('user.group_permissions', $metrics['cache']->getCacheContexts());
+
+    $this->container->get('current_user')->setAccount($educator);
+    $build = $this->container->get('aculta_lms.learning_dashboard_controller')->class($class);
+    self::assertSame(0, $build['#cache']['max-age']);
+    self::assertContains('user', $build['#cache']['contexts']);
+    self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
   }
 
   private function createStatus(Group $course, UserInterface $student, string $status): void {

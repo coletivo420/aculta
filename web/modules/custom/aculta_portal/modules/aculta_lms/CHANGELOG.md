@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.30 — mesclar cache privado dos painéis LMS — 2026-10-21
+
+- Painéis de estudante/educador e render de entidade do certificado agora
+  mesclam tags/contextos sem apagar `max-age: 0` definido pelo apresentador.
+- Unit: 39 testes / 185 assertions PASS; Kernel MariaDB: 19 testes / 564
+  assertions PASS, com 90 depreciações de Core/contrib.
+- Cobertura inclui `LearningDashboardControllerTest` (1/4), `ClassDashboardKernelTest`
+  (1/41) e `CertificateLifecycleTest` (3/75).
+
 ## 0.1.0-dev.29 — negar entregas sem contexto LMS íntegro — 2026-10-21
 
 - Durante a exclusão assíncrona de statuses pelo Drupal LMS, a resposta pode

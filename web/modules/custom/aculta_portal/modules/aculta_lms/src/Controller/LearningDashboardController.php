@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Controller;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Component\Utility\Html;
@@ -111,7 +112,9 @@ final class LearningDashboardController {
     $build['certificates'] = $certificate_items === []
       ? ['#plain_text' => $this->t('Nenhum certificado emitido ainda.')]
       : ['#theme' => 'item_list', '#items' => $certificate_items];
-    $data['cache']->applyTo($build);
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($data['cache'])
+      ->applyTo($build);
     return $build;
   }
 
@@ -195,7 +198,9 @@ final class LearningDashboardController {
       ],
       '#cache' => ['max-age' => 0],
     ];
-    $data['cache']->applyTo($build);
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($data['cache'])
+      ->applyTo($build);
     return $build;
   }
 
