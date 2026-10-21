@@ -194,7 +194,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador e no Runtime (XLSX e ODS). Pendentes: isolamento (dev.10), estilo ACULTA420 (dev.8) |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | XLS, ODS e CSV implementados; pt-BR; modo Tabela (`15908959`). Runtime testado com XLSX e ODS; CSV fora do campo de documentos do Runtime |
 | 0.1.0-dev.8 | Interface unificada | Título, tipo, barra de zoom e tela cheia, status acessível, cabeçalho e modos com ACULTA420 | Módulo 0.1.0-dev.7 e tema 0.6.0-dev.145; Runtime testado com DOCX e XLSX (zoom, tela cheia por clique real, título escapado). Pendente: revisão em Firefox e viewports, e o PDF segue com a barra própria |
-| 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
+| 0.1.0-dev.9 | Integração transversal | Consumidores de documento: displays, editores, Group e Views | Matriz verificada no Runtime (abaixo). Ativação de DOCX e planilhas nos consumidores públicos e no LMS depende de decisão do responsável; teste de revogação de Group bloqueado pelo ambiente de teste |
 | 0.1.0-dev.10 | Segurança | Arquivos maliciosos, privados, limites e isolamento | Não iniciada |
 | 0.1.0-rc.1 | Homologação | Migração, regressão, acessibilidade | Não iniciada |
 | 0.1.0 | Estável | Implantação após aprovação | — |
@@ -314,3 +314,21 @@ Pendências dessa fase:
 - Gates: fronteira módulo-tema e mapa módulo-tema sem falha nesse módulo; atributos documentados em `TOKENS-E-ATRIBUTOS.md`; gate de fundação do tema atualizado (369 checks). Design foundations falha em três checks do envelope de e-mail do Mailer, já registrados antes desta etapa.
 - Testes: Unit 53/53 OK. Runtime (Chromium X11): DOCX e XLSX públicos com título contendo HTML; título como texto; zoom 100% para 115%; tela cheia por clique real; status oculto ao concluir; modos Planilha e Tabela presentes. Fixtures e display restaurados.
 - Pendente: revisão visual em Firefox e em 390/768/1024 px; o PDF segue com a barra própria, conforme o plano.
+
+
+## 0.1.0-dev.9 — integração transversal (matriz verificada)
+
+Verificação somente de leitura no Runtime (configuração ativa e exportada). Nenhum consumidor foi alterado.
+
+| Consumidor | Estado hoje | Viewer DOCX/planilha | Decisão ou bloqueio |
+| --- | --- | --- | --- |
+| `node.document` (default e full) | formatter PDF (`aculta_document_pdf_file`) | disponível, não ativo | ativar é exposição pública; decisão do responsável |
+| `node.document` (teaser) | `file_default` (link) | não aplicável | correto para resumo; sem mudança |
+| `media.document` (default) | formatter PDF (`aculta_document_pdf_media`) | disponível, não ativo | mesma decisão do `node.document` |
+| `media.course_document` (LMS, privado) | formatter PDF; campo aceita **só PDF** | não aceito no upload | aceitar DOCX/XLSX em turma é decisão de produto e de upload |
+| `media.forum_attachment` (Fórum) | extensões não limitadas no campo; política no Fórum | fora do escopo desta frente | pertence à frente do Fórum |
+| Editores CKEditor (`wiki`, `revista_editorial`, `usuario_aculta`, `email_html`, `webform_default`) | nenhum tem `media_embed` ativo | sem embed de documentos | embed de DOCX/XLSX depende de ativar o plugin, decisão do responsável |
+| Views de documentos | sem Views de planilha/DOCX | não aplicável | sem consumidor real; nenhuma Views criada |
+| Group (`course_document`, relação `lms_course`) | configuração migrada (`740a0c32`) | sem mudança de acesso | o teste `CourseDocumentAccessTest` (revogação de membership) não roda no ambiente de teste: falha com `aculta_user.aculta_user_agreement_ledger` ausente, a mesma causa da baseline |
+
+Conclusão: a integração técnica está pronta para os consumidores, mas nenhum consumidor público ou de turma recebe DOCX ou planilhas sem uma decisão do responsável. A revogação de acesso de turma não foi verificada nesta etapa; fica como pendência explícita, com a causa.
