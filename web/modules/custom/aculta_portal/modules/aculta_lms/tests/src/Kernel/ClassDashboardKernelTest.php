@@ -46,6 +46,9 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $educator = $this->createUser(['administer lms']);
     $memberPending = $this->createUser();
     $memberPassed = $this->createUser();
+    $memberBlocked = $this->createUser();
+    $memberBlocked->block();
+    $memberBlocked->save();
     $outsiderFailed = $this->createUser();
     $teacher = $this->createUser();
     $course = Group::create([
@@ -71,6 +74,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $course->addRelationship($class, 'lms_classes');
     $class->addMember($memberPending);
     $class->addMember($memberPassed);
+    $class->addMember($memberBlocked);
     $class->addMember($teacher);
 
     $this->createStatus($course, $memberPending, CourseStatusInterface::STATUS_NEEDS_EVALUATION);
@@ -90,6 +94,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     self::assertSame(1, $metrics['pending_evaluation']);
     self::assertSame(1, $metrics['passed']);
     self::assertSame(0, $metrics['failed'], 'The failed status belonging to an outsider is excluded.');
+    self::assertContains('user:' . $memberBlocked->id(), $metrics['cache']->getCacheTags(), 'Changing the blocked account invalidates the aggregate so it can be recounted if reactivated.');
     self::assertArrayNotHasKey('answers', $metrics);
     self::assertArrayNotHasKey('student_ids', $metrics);
     self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $metrics['cache']->getCacheTags());

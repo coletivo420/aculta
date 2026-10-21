@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.31 — cobrir contas bloqueadas no painel da turma — 2026-10-21
+
+- O Kernel do painel inclui uma matrícula de conta bloqueada e confirma que ela
+  não compõe as métricas, mantendo a dependência de cache da conta para que uma
+  reativação invalide o agregado.
+- `ClassDashboardKernelTest`: 1 teste / 43 assertions PASS; 39 depreciações
+  upstream de Core/Group/LMS/Views. Unit: 39 testes / 185 assertions PASS.
+
 ## 0.1.0-dev.30 — mesclar cache privado dos painéis LMS — 2026-10-21
 
 - Painéis de estudante/educador e render de entidade do certificado agora

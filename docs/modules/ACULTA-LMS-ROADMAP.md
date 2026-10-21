@@ -206,8 +206,9 @@ duplicar estado. Ver contrato em `LMS-INTEGRATION-CONTRACTS.md`.
 F12 tem implementação inicial na branch: painel do estudante em
 `/minha-aprendizagem` e contagens do educador por turma sob
 `/painel-administrativo/lms/turma/{group}/painel`. Kernel Group/LMS verifica que
-somente estudantes elegíveis da turma entram nas métricas, exclui educador,
-administrador e outsider, e mantém as respostas fora do retorno; cache é
+somente estudantes elegíveis e ativos da turma entram nas métricas, exclui
+educador, administrador, conta bloqueada e outsider, e mantém as respostas fora
+do retorno; cache é
 invalidado por alterações nas memberships/contas consideradas (1 teste/38
 assertions). Unit dos painéis: 4/18 assertions PASS. Revisão visual, fixture
 integrada do painel do estudante e smoke Runtime permanecem pendentes. Runtime
@@ -250,8 +251,10 @@ resposta pendente na fila não mantém contexto de curso; a rota agora nega essa
 janela sem erro 500. `AttemptArchiveLifecycleTest`: 9 testes / 363 assertions
 PASS. Verificação de certificado, render do snapshot e painéis agora preservam
 `max-age: 0` ao mesclar tags/contextos; `CertificateLifecycleTest`: 3/75,
-`ClassDashboardKernelTest`: 1/41 e `LearningDashboardControllerTest`: 1/4
-assertions PASS. Core documenta que `applyTo()` define diretamente o metadata
+`ClassDashboardKernelTest`: 1/43 e `LearningDashboardControllerTest`: 1/4
+assertions PASS. O painel exclui contas bloqueadas e mantém a dependência da
+entidade User para invalidar a contagem se a conta voltar a ser ativa; o Kernel
+cobre esse caso. Core documenta que `applyTo()` define diretamente o metadata
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
