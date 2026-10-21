@@ -44,6 +44,7 @@ permissions:
   - 'break content lock'
   - 'create document media'
   - 'create media'
+  - 'add media gallery entities'
   - 'create project content'
   - 'create revista content'
   - 'create url aliases'
