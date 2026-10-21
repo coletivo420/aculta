@@ -9,7 +9,7 @@ dependencies:
     - media
 name: 'Aculta Editorial'
 format: revista_editorial
-weight: 5
+weight: -7
 filters:
   aculta_imagem_modelo:
     id: aculta_imagem_modelo
