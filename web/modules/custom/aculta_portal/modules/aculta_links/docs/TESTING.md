@@ -110,3 +110,11 @@ QR de link curto 0.4.0-dev.14: Kernel PASS (2 testes/85 asserções; 7
 depreciações upstream) e confirma a rota, purpose `links` e métodos GET/HEAD;
 PHPCS, lint e `git diff --check` PASS. Renderização do SVG e headers canônicos
 em HTTP permanecem DEFERRED pelo bloqueio do container Runtime.
+
+Identidade pública opt-in 0.4.0-dev.15: Kernel PASS (2 testes/87 asserções; 7
+depreciações upstream), incluindo default desativado e prévia sem resolução da
+identidade. PHPCS, lint, SDC schema (570 checks), Design Foundations (2109),
+slugs (385) e índice de status PASS. O gate de fronteira falha somente pelas
+classes de apresentação introduzidas em arquivos concorrentes do `aculta_lms`.
+HTTP no Runtime e revisão visual/acessível permanecem DEFERRED; o bootstrap
+Drush falha pelo serviço ausente `entity_print.print_builder` da alteração LMS.

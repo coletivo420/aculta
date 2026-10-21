@@ -1832,3 +1832,8 @@ Classificação: PATCH de manutenção do tema e do gate.
   inclui `email-wrap.html.twig` da linha paralela Mailer; a allowlist não foi
   alterada aqui. SHA em `main`: pendente de merge da PR #297.
 
+## 0.6.0-dev.130 — recebe identidade pública opcional em micropáginas — 2026-10-20
+
+- O SDC `social-links-page` oferece slot opcional `owner_identity`; ACULTA Links envia apenas a identidade pública preparada por `aculta_user`.
+- SDC schema PASS (570 checks), Design Foundations PASS (2109); revisão visual responsiva e acessível ainda pendente, estado Dev.
+

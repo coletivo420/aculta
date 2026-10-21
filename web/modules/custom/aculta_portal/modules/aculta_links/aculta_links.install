@@ -84,3 +84,22 @@ function aculta_links_update_10004(): string {
 
   return 'Added the opaque short-code field; existing destinations receive a code when next saved.';
 }
+
+/**
+ * Installs the opt-in public owner identity field on existing microsites.
+ */
+function aculta_links_update_10005(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('show_owner_identity', 'aculta_link_page') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_link_page');
+    $update_manager->installFieldStorageDefinition(
+      'show_owner_identity',
+      'aculta_link_page',
+      'aculta_links',
+      $definitions['show_owner_identity'],
+    );
+  }
+
+  return 'Added the opt-in public owner identity field to existing microsites; existing pages keep the default disabled.';
+}

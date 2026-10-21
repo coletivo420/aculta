@@ -12,6 +12,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkItem;
 use Drupal\aculta_links\Entity\LinkPage;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -48,6 +49,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $container->register('aculta_portal.domain_purpose')
       ->setSynthetic(TRUE)
       ->setPublic(TRUE);
+    $container->register('aculta_user.author_identity_resolver')
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE);
   }
 
   /**
@@ -58,6 +62,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $domain_purpose = (new \ReflectionClass(DomainPurposeManager::class))
       ->newInstanceWithoutConstructor();
     $this->container->set('aculta_portal.domain_purpose', $domain_purpose);
+    $identity_resolver = (new \ReflectionClass(AuthorIdentityResolver::class))
+      ->newInstanceWithoutConstructor();
+    $this->container->set('aculta_user.author_identity_resolver', $identity_resolver);
     $this->installEntitySchema('user');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('aculta_link');
@@ -188,6 +195,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     );
 
     self::assertFalse($page->isPublished(), 'Micropáginas começam despublicadas.');
+    self::assertFalse((bool) $page->get('show_owner_identity')->value, 'A identidade do titular começa desativada.');
     self::assertSame('soft', $page->get('theme_preset')->value, 'A escolha de preset é persistida na micropágina.');
     self::assertTrue($link->access('update', $owner));
     self::assertTrue($link->access('view', $other), 'Destinos publicados são públicos.');
@@ -204,6 +212,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $preview = $this->container->get('aculta_links.public_page_controller')->preview($page);
     self::assertTrue($preview['#has_links'], 'Proprietário pode pré-visualizar itens de um rascunho.');
     self::assertSame('soft', $preview['#theme_preset']);
+    self::assertSame([], $preview['#owner_identity'], 'A prévia não tenta herdar identidade sem opção explícita.');
     self::assertCount(2, $preview['#links']['#items'], 'A prévia do proprietário inclui itens agendados para o futuro.');
     self::assertSame(0, $preview['#cache']['max-age'], 'Prévia privada nunca pode ser compartilhada em cache.');
     self::assertTrue(

@@ -139,13 +139,27 @@ final class LinkPage extends EditorialContentEntityBase implements EntityOwnerIn
       ])
       ->setDisplayConfigurable('form', TRUE);
 
-    $fields['status']->setDefaultValue(FALSE)
+    $fields['show_owner_identity'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Apresentar identidade pública do perfil'))
+      ->setDescription(new TranslatableMarkup('Mostra o apelido público do proprietário quando permitido pelas configurações de privacidade do perfil.'))
+      ->setDefaultValue(FALSE)
+      ->setRevisionable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'boolean_checkbox',
         'settings' => [
           'display_label' => TRUE,
         ],
         'weight' => 4,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['status']->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 5,
       ])->setDisplayConfigurable('form', TRUE);
     $fields['uid']->setRevisionable(TRUE);
     $fields['created'] = BaseFieldDefinition::create('created')

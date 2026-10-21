@@ -33,6 +33,9 @@ slots:
   description:
     title: Description
     description: 'Rendered editorial summary from Drupal content.'
+  owner_identity:
+    title: Public owner identity
+    description: 'Optional, privacy-approved identity render array supplied by ACULTA Links.'
   links:
     title: Social links
     description: 'Primary MAIN link and configured additional buttons supplied by ACULTA Portal.'

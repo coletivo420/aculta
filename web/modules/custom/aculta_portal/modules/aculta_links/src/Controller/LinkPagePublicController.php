@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkPage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,6 +21,7 @@ final class LinkPagePublicController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
+    private readonly AuthorIdentityResolver $authorIdentityResolver,
   ) {}
 
   /**
@@ -146,6 +148,34 @@ final class LinkPagePublicController {
     );
     $cache_contexts = ['url.site', 'languages:language_interface', 'user', 'user.permissions'];
     $cache_max_age = Cache::PERMANENT;
+    $owner_identity = [];
+
+    if ((bool) $page->get('show_owner_identity')->value
+      && $page->getOwner() !== NULL) {
+      $identity = $this->authorIdentityResolver->resolve($page->getOwner(), 'author_minimal');
+      if ($identity !== NULL) {
+        $identity_data = $identity->toArray();
+        if (!empty($identity_data['display_name'])) {
+          $identity_name = ['#plain_text' => $identity_data['display_name']];
+          if (!empty($identity_data['profile_url'])) {
+            try {
+              $identity_name = [
+                '#type' => 'link',
+                '#title' => $identity_data['display_name'],
+                '#url' => Url::fromUri($identity_data['profile_url']),
+              ];
+            }
+            catch (\InvalidArgumentException) {
+              // Keep the name as text if Drupal rejects the generated URL.
+            }
+          }
+          $owner_identity = $identity_name;
+          $cache_tags = array_merge($cache_tags, $identity->getCacheTags());
+          $cache_contexts = array_merge($cache_contexts, $identity->getCacheContexts());
+          $cache_max_age = Cache::mergeMaxAges($cache_max_age, $identity->getCacheMaxAge());
+        }
+      }
+    }
 
     // This render output also contains route-specific Metatag output, so
     // invalidate it when the global or entity-type SEO defaults change.
@@ -214,6 +244,7 @@ final class LinkPagePublicController {
       '#theme' => 'aculta_links_page',
       '#title' => $page->label(),
       '#description' => (string) $page->get('description')->value,
+      '#owner_identity' => $owner_identity,
       '#theme_preset' => in_array((string) $page->get('theme_preset')->value, ['classic', 'soft', 'outline'], TRUE)
         ? (string) $page->get('theme_preset')->value
         : 'classic',

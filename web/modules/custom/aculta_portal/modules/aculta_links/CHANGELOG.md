@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.15 — integra identidade pública opt-in — 2026-10-20
+
+- A micropágina pode apresentar apelido e link público do proprietário mediante opção revisionável explícita, desativada por padrão. Usa `aculta_user.author_identity_resolver`, respeita o perfil e a URL canônica, e carrega tags, contextos e max-age retornados pela API.
+- ACULTA420 recebe render array neutro pelo slot `owner_identity`; avatar, bio, e-mail e redes não são herdados. Update `10005` instala o campo sem alterar páginas existentes.
+- Fontes Drupal: [dependências de módulo](https://www.drupal.org/docs/develop/creating-modules/let-drupal-know-about-your-module-with-an-infoyml-file), [definições de campos de entidades](https://www.drupal.org/docs/drupal-apis/entity-api/defining-and-using-content-entity-field-definitions) e [API de campos revisionáveis](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Field%21BaseFieldDefinition.php/function/BaseFieldDefinition%3A%3AisRevisionable/11.x).
+- Validação: Kernel 2 testes/87 asserções PASS (7 depreciações upstream); PHPCS Drupal, PHP lint, SDC schema 570 checks, Design Foundations 2109, slugs 385 e índice de status PASS. O gate da fronteira Portal–tema ainda reporta exclusivamente classes recém-criadas na frente LMS. HTTP/Runtime e revisão visual DEFERRED pelo bloqueio de bootstrap externo no `aculta_lms` e por não haver conteúdo de teste.
+
 ## 0.4.0-dev.14 — gera QR Codes para links curtos — 2026-10-20
 
 - O dashboard oferece QR SVG do redirect curto; o código QR usa URL canônica HTTPS gerada por `DomainPurposeManager` e o endpoint só atende códigos de destino publicado e válido.

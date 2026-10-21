@@ -14,6 +14,9 @@
     {% if description %}
       <div class="aculta-social-links__description aculta-prose">{{ description }}</div>
     {% endif %}
+    {% if owner_identity %}
+      <div class="aculta-social-links__owner">{{ owner_identity }}</div>
+    {% endif %}
   </div>
   {% if has_links %}
     <div class="aculta-social-links__channels">{{ links }}</div>

@@ -14,7 +14,7 @@ services:
 
   aculta_links.public_page_controller:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
-    arguments: ['@entity_type.manager', '@current_user']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver']
 
   aculta_links.short_code_generator:
     class: Drupal\aculta_links\Service\LinkShortCodeGenerator
