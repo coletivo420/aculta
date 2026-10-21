@@ -102,6 +102,7 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     $build = $resolver->build($activity, $course, $account);
 
+    self::assertSame('lms-activity-discussions', $build['#attributes']['data-portal-ui']);
     self::assertCount(1, $build['links']['#items']);
     self::assertSame('Perguntas da atividade', $build['links']['#items'][0]['#title']);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);

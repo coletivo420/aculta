@@ -9,6 +9,28 @@
 > discussões é acompanhado em
 > [LMS-INTEGRATION-CONTRACTS.md](../portal/LMS-INTEGRATION-CONTRACTS.md).
 
+## Estado verificado — 2026-10-21
+
+- A F10 continua homologada ponta a ponta no Runtime de teste conforme o
+  histórico abaixo. No estado atual, o módulo está habilitado e só há a
+  biblioteca preexistente `H5P.HelloWorld` (`embed_types=iframe`); não há
+  conteúdo H5P nem tópico de Fórum associado. O player atual exige conteúdo
+  `div`, então a conversa sob o player não tem fixture para revisão visual no
+  Runtime. Nenhuma alteração de produção foi feita.
+- Suíte própria `aculta_lms_h5p`: **37 testes / 337 assertions PASS** (Unit 23/67;
+  Kernel 14/270), PHP CLI 8.4.26. As 43 depreciações Kernel são do Core/Group/
+  Views instalados. Os Kernels cobrem membership e referência de curso,
+  persistência/isolamento de estado por conta, pacote válido/inválido, ingestão
+  e remoção de mídia/biblioteca gerenciada, cache privado e endpoints.
+- Integração Forum LMS: **29 testes / 496 assertions PASS** (Unit+Kernel),
+  incluindo vínculo H5P–Fórum com 36 assertions no Kernel. ACULTA420 valida
+  os tokens neutros de apresentação (5/26). Gates Drupal 11+ (1007 checks),
+  Foundation do tema (368 checks), imagem e slugs passam. PHP 8.5 e produção
+  não foram validados.
+- Pendência de F15 antes de RC: criar conteúdo H5P `div` e tópico de teste no
+  Runtime para smoke autenticado e revisão visual da conversa. É validação
+  Runtime/visual; a integração funcional e o isolamento têm cobertura Kernel.
+
 Atualização em 2026-10-18. O pacote Drupal contrib `drupal/h5p` foi removido do
 Composer. O código de integração foi copiado para o submódulo próprio
 `aculta_lms_h5p`, com preservação da licença GPL e identificação da origem. Os

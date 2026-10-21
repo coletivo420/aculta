@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'F15: vínculo direto field_h5p_content e integração unidirecional pelo formatter; validar seleção contextual H5P e resolver em Kernel com isolamento course/class, além de smoke/revisão visual autenticados. field_lms_activity permanece para discussões gerais. Busca/notificações e integrações Gallery, Magazine e Wiki continuam pendentes ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'
+next_phase: 'F15: smoke e revisão visual autenticados do vínculo H5P–Fórum ainda dependem de conteúdo/tópico no Runtime; avançar notificações e integrações Gallery, Magazine e Wiki ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'

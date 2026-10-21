@@ -1,3 +1,15 @@
+## `0.1.0-dev.28` — apresentação das discussões do LMS por tokens neutros — 2026-10-21
+
+- Discussões de atividade, wrapper do player H5P e cartão das conversas agora
+  emitem tokens `data-portal-ui`; ACULTA420 mapeia-os para primitives
+  Bootstrap. O módulo não emite classes de apresentação.
+- Kernel H5P–Fórum valida a composição dos tokens junto com associação,
+  autorização e isolamento por curso/turma: 1 teste / 36 assertions PASS. Suíte
+  completa Forum LMS: 29 testes / 496 assertions PASS; 47 depreciações de
+  Core/contrib. PHP 8.4.26; PHP 8.5 não validado.
+- A revisão visual autenticada do player com tópico segue pendente: não há
+  conteúdo H5P/tópico vinculado no Runtime de teste.
+
 ## `0.1.0-dev.27` — vincular discussões diretamente ao H5P — 2026-10-21
 
 - Tópicos LMS podem referenciar diretamente um `h5p_content` do ACULTA H5P.

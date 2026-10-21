@@ -398,6 +398,9 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `requirements-php-extensions` | `aculta-portal-requirements__php-extensions` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (tabela de extensões PHP) |
 | `lms-forum-moderation-overview` | `aculta-lms-forum-moderation__overview` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (resumo da moderação do Fórum no LMS) |
 | `lms-forum-moderation-queue` | `aculta-lms-forum-moderation__queue` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (fila de moderação por grupo) |
+| `lms-activity-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsActivityDiscussionResolver.php` |
+| `lms-h5p-activity` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/LmsH5PDiscussionHooks.php` (player e conversas) |
+| `lms-h5p-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsH5PDiscussionResolver.php` |
 | `status-attention` | `aculta-portal-requirements__status--attention` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (`status-` + `ok`, `attention` ou `error`) |
 | `cep-sources` | `aculta-cep-sources` | `web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Form/CepSettingsForm.php` |
 | `feedback-matched` | `feedback-section`, `matched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |

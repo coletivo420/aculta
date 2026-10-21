@@ -61,7 +61,7 @@ final class LmsH5PDiscussionHooks {
       }
       $wrapped = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-lms-h5p-activity']],
+        '#attributes' => ['data-portal-ui' => 'lms-h5p-activity'],
         'player' => $elements[$delta],
         'discussions' => $discussion,
       ];

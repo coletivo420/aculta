@@ -88,7 +88,7 @@ final class LmsH5PDiscussionResolver {
     }
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-lms-h5p-discussions']],
+      '#attributes' => ['data-portal-ui' => 'lms-h5p-discussions'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',

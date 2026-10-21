@@ -1,3 +1,14 @@
+## 0.6.0-dev.138 — tokens semânticos para discussões do LMS — 2026-10-21
+
+Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar novo componente).
+
+- `PortalUiHooks` traduz `lms-activity-discussions`, `lms-h5p-activity` e
+  `lms-h5p-discussions` para primitives Bootstrap. O adapter LMS emite somente
+  tokens semânticos, conforme a fronteira Portal–ACULTA420.
+- `PortalUiHooksTest` valida as classes geradas e a remoção dos tokens do HTML.
+- O player com tópico real ainda não está disponível no Runtime de teste; a
+  revisão visual permanece pendente.
+
 ## 0.6.0-dev.137 — painéis de estatísticas por área com tokens data-portal-ui — 2026-10-21
 
 Classificação: PATCH (estilo de painel com tokens semânticos; sem contrato de componente novo, sem cor nova).

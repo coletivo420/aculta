@@ -105,7 +105,7 @@ final class LmsActivityDiscussionResolver {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-lms-activity-discussions']],
+      '#attributes' => ['data-portal-ui' => 'lms-activity-discussions'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',

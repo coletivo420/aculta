@@ -70,6 +70,10 @@ final class PortalUiHooks {
     // Painel de moderação do LMS no Fórum (aculta_forum_lms): estrutura por grupo, sem CSS próprio.
     'lms-forum-moderation-overview' => ['aculta-lms-forum-moderation__overview'],
     'lms-forum-moderation-queue' => ['aculta-lms-forum-moderation__queue'],
+    // Discussões LMS no player H5P e sob atividades gerais usam primitives Bootstrap.
+    'lms-activity-discussions' => ['card', 'card-body', 'mt-3'],
+    'lms-h5p-activity' => ['d-grid', 'gap-3'],
+    'lms-h5p-discussions' => ['card', 'card-body', 'mt-3'],
     'cep-sources' => ['aculta-cep-sources'],
     'secrets-section' => ['aculta-portal-secrets-section'],
     'secret-value' => ['aculta-secret-value'],
