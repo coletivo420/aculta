@@ -1,3 +1,29 @@
+aculta_lms.student_dashboard:
+  path: '/minha-aprendizagem'
+  defaults:
+    _controller: 'aculta_lms.learning_dashboard_controller:student'
+    _title: 'Aprendizagem'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account
+
+aculta_lms.class_dashboard:
+  path: '/painel-administrativo/lms/turma/{group}/painel'
+  defaults:
+    _controller: 'aculta_lms.learning_dashboard_controller:class'
+    _title: 'Painel da turma'
+  requirements:
+    _custom_access: 'aculta_lms.class_dashboard_access:access'
+  options:
+    _admin_route: true
+    no_cache: true
+    parameters:
+      group:
+        type: entity:group
+
 aculta_lms.certificate_issue:
   path: '/painel-administrativo/lms/curso/{group}/certificados/emitir'
   defaults:
@@ -38,6 +64,15 @@ aculta_lms.certificate_pdf:
   defaults:
     _controller: 'aculta_lms.certificate_verification_controller:pdf'
     _title: 'Certificado em PDF'
+  requirements:
+    _access: 'TRUE'
+    codigo: '[A-Za-z0-9_-]{40,64}'
+
+aculta_lms.certificate_qr:
+  path: '/verificar-certificado/{codigo}/codigo-qr'
+  defaults:
+    _controller: 'aculta_lms.certificate_verification_controller:qr'
+    _title: 'QR de verificação do certificado'
   requirements:
     _access: 'TRUE'
     codigo: '[A-Za-z0-9_-]{40,64}'

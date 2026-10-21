@@ -1,4 +1,13 @@
 services:
+  aculta_lms.learning_dashboard:
+    class: Drupal\aculta_lms\LearningDashboardManager
+    arguments: ['@?aculta_portal.account_courses', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@?lms.training_manager']
+  aculta_lms.class_dashboard_access:
+    class: Drupal\aculta_lms\Access\ClassDashboardAccessCheck
+    arguments: ['@aculta_lms.learning_dashboard', '@current_user']
+  aculta_lms.learning_dashboard_controller:
+    class: Drupal\aculta_lms\Controller\LearningDashboardController
+    arguments: ['@aculta_lms.learning_dashboard', '@current_user', '@date.formatter', '@string_translation']
   aculta_lms.course_certificate_manager:
     class: Drupal\aculta_lms\Certificate\CourseCertificateManager
     arguments: ['@entity_type.manager', '@datetime.time', '@database']
@@ -7,7 +16,10 @@ services:
     arguments: ['@current_user']
   aculta_lms.certificate_verification_controller:
     class: Drupal\aculta_lms\Controller\CertificateVerificationController
-    arguments: ['@aculta_lms.course_certificate_manager', '@plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation']
+    arguments: ['@aculta_lms.course_certificate_manager', '@?plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation', '@?aculta_lms.certificate_qr_code_provider']
+  aculta_lms.certificate_qr_code_provider:
+    class: Drupal\aculta_lms\Certificate\CertificateQrCodeProvider
+    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_purpose']
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
     arguments: ['@aculta_image.inspector', '@file_system']

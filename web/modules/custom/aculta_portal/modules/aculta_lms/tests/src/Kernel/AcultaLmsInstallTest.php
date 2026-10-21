@@ -4,23 +4,39 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\UserInterface;
 use Drupal\user\Entity\User;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
+use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\entity_print\Plugin\PrintEngineInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Verifies optional installation and DI registration without module-owned data. */
+/**
+ * Verifies optional installation and DI registration without module-owned data.
+ */
 #[Group('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class AcultaLmsInstallTest extends KernelTestBase {
 
-  protected static $modules = ['system', 'user', 'file', 'image', 'media', 'options', 'entity_print', 'entity_usage', 'aculta_image'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system', 'user', 'file', 'image', 'media', 'options', 'entity_print',
+    'entity_usage', 'aculta_image',
+  ];
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('user', ['users_data']);
@@ -28,12 +44,15 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->installSchema('entity_usage', ['entity_usage']);
   }
 
+  /**
+   * Tests the module's optional service integration.
+   */
   public function testInstallRegistersOnlyTheOptionalIntegrationService(): void {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
     $this->assertInstanceOf(
-      \Drupal\aculta_lms\Event\CourseCompletionPublisherInterface::class,
+      CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
     );
     $this->assertFalse($container->get('config.storage')->exists('aculta_lms.settings'));
@@ -41,6 +60,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertFalse($container->get('module_handler')->hasImplementations('schema', ['aculta_lms']));
   }
 
+  /**
+   * Tests that archived attempts are private, immutable, and purged.
+   */
   public function testAttemptArchivePersistsIsReadOnlyAndPurgesWithAccount(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('aculta_lms_attempt_archive');
@@ -79,6 +101,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertNull($storage->load($archive->id()));
   }
 
+  /**
+   * Tests certificate snapshot privacy and retention after account deletion.
+   */
   public function testCertificateSnapshotIsPrivateToGenericRoutesAndSurvivesAccountDeletion(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('user');
@@ -113,7 +138,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       $certificate->set('certificate_name', 'Tentativa de alteração')->save();
       $this->fail('The certificate snapshot must reject changes.');
     }
-    catch (\Drupal\Core\Entity\EntityStorageException $exception) {
+    catch (EntityStorageException $exception) {
       $this->assertInstanceOf(\LogicException::class, $exception->getPrevious());
       $this->assertSame('Issued certificate snapshot fields are immutable.', $exception->getPrevious()->getMessage());
     }
@@ -125,6 +150,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       ->get('certificate_name')->value);
   }
 
+  /**
+   * Tests safe PDF output and inclusion of the generated QR image.
+   */
   public function testCertificatePdfUsesEscapedSnapshotAndPrivateResponse(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('aculta_lms_certificate');
@@ -151,7 +179,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $engine = $this->createMock(PrintEngineInterface::class);
     $engine->expects($this->once())
       ->method('addPage')
-      ->with($this->callback(static fn (string $html): bool => str_contains($html, '&lt;script&gt;alert(1)&lt;/script&gt;') && str_contains($html, 'Curso &amp; pesquisa')));
+      ->with($this->callback(static fn (string $html): bool => str_contains($html, '&lt;script&gt;alert(1)&lt;/script&gt;') && str_contains($html, 'Curso &amp; pesquisa') && str_contains($html, 'data:image/png;base64,cXItcG5n')));
     $engine->method('getBlob')->willReturn('%PDF-test');
     $printEngines = $this->createMock(EntityPrintPluginManagerInterface::class);
     $printEngines->expects($this->once())->method('createInstance')->with('dompdf', [
@@ -159,14 +187,17 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       'embedded_php' => FALSE,
       'disable_log' => TRUE,
     ])->willReturn($engine);
-    $dateFormatter = $this->createMock(\Drupal\Core\Datetime\DateFormatterInterface::class);
+    $dateFormatter = $this->createMock(DateFormatterInterface::class);
     $dateFormatter->method('format')->willReturn('data de teste');
+    $qrCodes = $this->createMock(CertificateQrCodeProviderInterface::class);
+    $qrCodes->expects($this->once())->method('generate')->with($code, QrCodeFormat::Png)->willReturn('qr-png');
 
     $controller = new CertificateVerificationController(
       $this->container->get('aculta_lms.course_certificate_manager'),
       $printEngines,
       $dateFormatter,
       $this->container->get('string_translation'),
+      $qrCodes,
     );
     $response = $controller->pdf($code);
     $this->assertSame('application/pdf', $response->headers->get('Content-Type'));

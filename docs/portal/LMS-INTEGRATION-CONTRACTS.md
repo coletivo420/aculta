@@ -86,6 +86,19 @@ O registro mantém UID numérico sem referência de entidade ao usuário, estado
 
 SDCs planejados após F5: apresentação de curso; sala/índice de lições; lista/estado de atividades; painel de progresso do estudante; painel de correção do educador; status de entrega/feedback; badge/aviso de acesso. São contratos/componentes novos, não substitutos de formulários/rotas contrib. Reusar tokens e SDCs existentes. Não copiar CSS/templates Opigno.
 
+F11 usa `aculta_qrcode.generator` e `payload_validator` com URL absoluta
+resolvida pelo `DomainPurposeManager` no purpose `main`. O SVG público e o PNG
+do PDF são gerados em memória; a rota de QR existe somente para códigos de
+certificados registrados.
+
+Decisão da F12 (2026-10-20): o painel do estudante reúne cursos, progresso,
+avaliações pendentes e certificados próprios. O painel do educador mostra
+indicadores agregados por turma, sem respostas abertas nem dados identificáveis
+de estudantes na visão agregada. Group/LMS e a entidade de certificado seguem
+como fontes de verdade; a camada visual não cria matrícula, progresso, nota ou
+certificado paralelo. Cache deve variar por usuário no painel estudantil e por
+turma/permissão no educador; não compartilhar agregados entre turmas.
+
 ## Segurança, cache e acesso
 
 Cada endpoint, View, download, render array, evento e worker precisa verificar autenticação, Entity Access, access de Group e membership/papel atual; turmas diferentes não compartilham conteúdo privado. Render contexts/tags/max-age vêm das entidades, resultados de access e contexto necessário (`user`, permissions, group ou cache privado). Não reutilizar cache público entre alunos/educadores. URLs cross-purpose resolvidas pelo `DomainPurposeManager`; nenhuma configuração exportada guarda hostname.

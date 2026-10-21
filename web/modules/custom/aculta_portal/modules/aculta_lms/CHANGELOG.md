@@ -1,5 +1,30 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.11 — painéis de aprendizagem F12 (implementação inicial) — 2026-10-20
+
+- Adiciona a seção autenticada `/minha-aprendizagem` à navegação de conta, com
+  cursos próprios, progresso por aulas concluídas, avaliações pendentes e
+  certificados emitidos.
+- Adiciona painel administrativo por turma com contagens agregadas de
+  matrícula, início, andamento, avaliação pendente, aprovação e reprovação.
+  A tela não carrega nem apresenta nomes ou respostas de estudantes.
+- Os dados continuam em Group/LMS e na entidade de certificado. As rotas são
+  sem cache compartilhado e os dados agregados exigem `grade students` no curso
+  associado à turma ou administração LMS.
+- Unit dedicada dos painéis e indisponibilidade do PDF: 4 testes / 18 assertions;
+  cobre o escopo próprio
+  da conta e falha fechada para turma órfã/sem curso. Os Kernel de instalação e
+  certificados também passam (6 testes / 76 assertions).
+- Unit total do módulo: 20 testes / 106 assertions. O gerador Entity Print é
+  opcional no bootstrap; sem ele a rota de PDF responde indisponibilidade
+  controlada em vez de impedir a inicialização do Drupal.
+- RUNTIME STATUS: DEFERRED. Testes reais com fixtures LMS/Group, revisão visual
+  e smoke no navegador/runtime ainda pendentes; validação ocorreu em PHP 8.4.26,
+  não no alvo PHP 8.5.
+- Integra a verificação pública e o PDF ao gerador `aculta_qrcode`: URL absoluta
+  resolvida pelo purpose `main`, SVG servido em endpoint sem armazenamento e QR
+  PNG incorporado ao PDF com remoto/PHP embutido desligados.
+
 ## 0.1.0-dev.10 — certificados imutáveis, emissão e verificação (parcial) — 2026-10-20
 
 - Adiciona armazenamento de snapshots, emissão somente após conclusão aprovada,
@@ -13,9 +38,10 @@
   Config Sync adiciona carga horária inteira ao curso.
 - Decisões de produto e retenção após exclusão de conta registradas no contrato
   e inventário LGPD. RUNTIME STATUS: DEFERRED.
-- Kernel isolado: 4 testes / 28 assertions; valida privacidade do registro,
-  snapshot imutável após exclusão da conta, HTML escapado no PDF e cabeçalhos
-  privados. Unit: 16 testes / 88 assertions. Gates Drupal 11+ (1007 checks),
+- Kernel isolado: 6 testes / 76 assertions; valida elegibilidade, autorização,
+  privacidade do registro, snapshot imutável após exclusão da conta, reemissão,
+  revogação, HTML escapado e cabeçalhos privados do PDF. Unit: 16 testes / 88
+  assertions. Gates Drupal 11+ (1007 checks),
   índice de status, slugs, imagens e Composer audit: PASS. Entity Print 2.19.0
   ainda emite três deprecações Drupal 11.2/11.3 no código upstream; nenhuma
   alteração foi feita em contrib.

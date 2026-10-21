@@ -1,5 +1,5 @@
-aculta_lms.certificate_issue_task:
-  route_name: aculta_lms.certificate_issue
-  title: 'Certificados'
-  base_route: entity.group.canonical
-  weight: 80
+aculta_lms.class_dashboard:
+  route_name: aculta_lms.class_dashboard
+  title: 'Painel da turma'
+  base_route: view.lms_course_students.page
+  weight: 5

@@ -175,6 +175,28 @@ com discussão condicionada à implementação executável do `aculta_forum`. As
 de F6–F9 (funcional, testes, gates e visual aplicável) continuam antes da RC; a
 validação do ambiente Runtime ocorre no Alpha após deploy.
 
+**F11 — implementação parcial na branch atual.** O storage de
+snapshot, emissão/reemissão transacional, revogação com motivo, verificação
+pública e PDF escapado foram adicionados. Kernel dedicado cobre elegibilidade,
+autorização, cadeia de emissão, revogação, retenção após exclusão de conta e
+headers do PDF. Unit e gates passam. O QR integra `aculta_qrcode` por URL
+absoluta do `DomainPurposeManager`; o SVG é servido sem persistir arquivo e o
+PNG é incorporado ao PDF. RUNTIME STATUS: DEFERRED. Smoke visual e validação em
+Runtime ainda não ocorreram.
+
+**F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
+progresso, avaliações pendentes e certificados próprios. Educador: indicadores
+agregados por turma, sem respostas abertas nem dados identificáveis na visão
+agregada. Implementar sobre Group/LMS/Views existentes e a emissão F11, sem
+duplicar estado. Ver contrato em `LMS-INTEGRATION-CONTRACTS.md`.
+
+F12 tem implementação inicial na branch: painel do estudante em
+`/minha-aprendizagem` e contagens do educador por turma sob
+`/painel-administrativo/lms/turma/{group}/painel`. Testes dedicados, revisão de
+acesso/cache específico com fixtures completas, navegador/visual e Runtime
+ainda são pendentes. Os testes unitários dos painéis passam (4/18).
+Runtime status: DEFERRED.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando

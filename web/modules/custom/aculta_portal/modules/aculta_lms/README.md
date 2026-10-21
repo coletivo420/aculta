@@ -170,16 +170,38 @@ equipe no curso. O registro armazena nome de exibição, curso, horas, conclusã
 emissão, versão de modelo, estado e código aleatório opaco. A página pública de
 verificação mostra nome, curso, horas e estado; o código também habilita o PDF
 do certificado. Entity Print 2.19.0/Dompdf gera o PDF a partir do snapshot já
-validado, com escaping e carregamento remoto/PHP embutido desativados. O QR será ligado ao contrato de `aculta_qrcode` assim
-que a API pública dessa frente estiver disponível; o módulo LMS não implementa
-geração QR própria.
+validado, com escaping e carregamento remoto/PHP embutido desativados. A página
+de verificação exibe QR gerado pelo serviço `aculta_qrcode`; o SVG é servido
+sem gravar arquivo e o PDF incorpora PNG gerado em memória. A URL absoluta é
+resolvida pelo `DomainPurposeManager` no purpose `main`; o LMS não mantém geração
+QR própria.
 
 Config Sync declara o campo do curso; seu importe parcial e a instalação do
 storage da entidade ainda não foram aplicados no Runtime. RUNTIME STATUS:
-DEFERRED. A interface/fluxo QR, emissão/revogação em navegador, smoke visual e
-aplicação segura de schema/config no Runtime continuam pendentes.
+DEFERRED. Emissão/revogação em navegador, revisão visual do QR/PDF e aplicação
+segura de schema/config no Runtime continuam pendentes.
 
-Validação desta entrega parcial: Kernel isolado 4 testes/28 assertions; Unit
+## F12 — Painéis de aprendizagem (implementação inicial)
+
+`/minha-aprendizagem` apresenta apenas os cursos autorizados da própria conta,
+progresso em aulas, avaliações pendentes e certificados emitidos. A navegação da
+conta recebe a seção por hook do Portal, sem alterar o shell ou duplicar a rota
+de cursos.
+
+O painel `/painel-administrativo/lms/turma/{group}/painel` exige a permissão
+contextual `grade students` no curso associado. Exibe apenas contagens agregadas
+da turma (matrículas, início, andamento, avaliação pendente, aprovação e
+reprovação), sem nomes, respostas ou texto de feedback. Group/LMS continuam
+fontes de verdade e as páginas não usam cache compartilhado.
+
+Unit dos painéis e do PDF: 4 testes/18 assertions (escopo próprio, menu
+autenticado, PDF indisponível e turma órfã); em conjunto com os Kernel de
+instalação/certificados, 6 testes/76 assertions PASS. Unit total: 20
+testes/106 assertions.
+Faltam fixtures LMS/Group completas, revisão visual/browser e smoke no Runtime;
+RUNTIME STATUS: DEFERRED.
+
+Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
 Composer audit sem advisories. O Entity Print 2.19.0 gera três deprecações
 Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
@@ -194,6 +216,7 @@ Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
 - `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada, registro DI, persistência, bloqueio de edição e limpeza por conta.
+- `tests/src/Unit/LearningDashboardManagerTest.php`: painel pessoal isolado por usuário e negação segura para turma sem curso pai.
 - `tests/src/Kernel/AttemptArchiveLifecycleTest.php`: ciclo real de Answer/Comment, comentários publicados, acesso e cache por turma/permissão, saída em texto e limpeza por progresso/conta/curso.
 - `web/modules/contrib/lms/modules/lms_answer_plugins/tests/src/Unit/SelectBaseAnsweringFormTest.php`: teste upstream do formulário de seleção.
 

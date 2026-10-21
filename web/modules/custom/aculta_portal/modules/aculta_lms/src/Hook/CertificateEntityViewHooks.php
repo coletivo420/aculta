@@ -28,7 +28,6 @@ final class CertificateEntityViewHooks {
     }
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-lms-certificate']],
       'heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h1',
