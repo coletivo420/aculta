@@ -174,9 +174,9 @@ telas estreitas, o padrão responsivo do Core recolhe essas colunas; Título e
 Operações permanecem disponíveis. O Core 11.4.10 foi inspecionado e `cr`/teste
 visual autenticado passaram. Firefox autenticado confirmou os três atalhos como
 itens separados, colunas secundárias recolhidas e largura de documento menor
-que o viewport efetivo de 500 px. Embora a janela do WebDriver tenha sido
-solicitada em 390 px, Firefox manteve `innerWidth` em 500; o breakpoint exato
-390 px segue pendente. Nenhum formulário foi enviado ou entidade alterada.
+que o viewport CSS de 390 px (`scrollWidth=378`, altura 844 px). O WebDriver
+BiDi ajustou o viewport diretamente; screenshot revisado. Nenhum formulário foi
+enviado ou entidade alterada.
 
 ## Erro de metadata 0.4.0-dev.22
 

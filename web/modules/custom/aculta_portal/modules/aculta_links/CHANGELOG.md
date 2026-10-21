@@ -3,7 +3,7 @@
 ## 0.4.0-dev.23 — melhora legibilidade móvel do dashboard — 2026-10-20
 
 - Ações rápidas agora são uma lista HTML semântica em vez de links concatenados; tabelas usam prioridades responsivas do Core para recolher Estado e Cliques em telas estreitas, preservando Título e Operações.
-- API confirmada no Core instalado 11.4.10 e na documentação 11.x (`ThemePreprocess`/`Table`). `cr` passou. Firefox autenticado confirmou lista e colunas compactadas; geckodriver manteve viewport CSS em 500 px apesar da janela de 390 px, logo o breakpoint exato de 390 px permanece pendente. Captura revisada, sem mudança de dados.
+- API confirmada no Core instalado 11.4.10 e na documentação 11.x (`ThemePreprocess`/`Table`). `cr` passou. Firefox autenticado via WebDriver BiDi confirmou viewport CSS 390 × 844, `scrollWidth=378`, lista de ações separada e colunas secundárias recolhidas; captura revisada. Nenhum formulário foi enviado ou entidade alterada.
 
 ## 0.4.0-dev.22 — corrige metadata pública de micropágina — 2026-10-20
 

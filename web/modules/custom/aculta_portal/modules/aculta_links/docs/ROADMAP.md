@@ -48,11 +48,11 @@ Listas paginadas, CRUD Core, operações por entidade, acesso a página pública
 composição ordenável por tabela Drupal, inclusão contextual de botão a partir
 de destino do proprietário e atalho no dashboard estão implementados. Em
 0.4.0-dev.23, as ações rápidas são lista semântica e as tabelas recolhem colunas
-secundárias em telas estreitas. Firefox autenticado confirmou o layout a 500 px;
-geckodriver não permitiu viewport CSS de 390 px, que segue pendente, assim como
-navegação fluida entre páginas e editor de identidade em uma experiência coesa
-inspirada no LinkStack. Uma conta pode ter várias páginas;
-equipes complexas não são prioridade.
+secundárias em telas estreitas. Firefox autenticado via WebDriver BiDi confirmou
+390 × 844, sem overflow horizontal (`scrollWidth=378`). Ainda faltam navegação
+fluida entre páginas e editor de identidade em uma experiência coesa inspirada
+no LinkStack. Uma conta pode ter várias páginas; equipes complexas não são
+prioridade.
 
 ## 0.4.0 — interface pública e presets
 
