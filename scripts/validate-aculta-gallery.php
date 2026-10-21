@@ -1,14 +1,15 @@
 <?php
 
 /**
+ * @file
  * Gate: higiene do submódulo aculta_gallery (fase de hardening, 0.1.0-dev.10).
  *
  * Verifica no código (sem Runtime):
  * - nenhum service locator (\Drupal::) em src/ do submódulo;
  * - toda EntityQuery em src/ declara accessCheck() explicitamente;
  * - hooks de runtime são OOP (#[Hook]) e não procedurais no módulo;
- * - D13: a restrição ao purpose magazine existe na visualização (hook entity_access) e na listagem (views_query_alter);
- * - o plugin do CKEditor e o diálogo estão declarados e exigem permissão de criação.
+ * - galerias não impõem restrição paralela por purpose;
+ * - plugin CKEditor e diálogo são declarados e exigem permissão de criação.
  *
  * Só lê arquivos. Não consulta o Runtime.
  */
@@ -40,13 +41,15 @@ foreach ($files as $path) {
   }
 }
 
-$purpose = file_get_contents($root . '/src/Hook/GalleryPurposeAccessHooks.php');
-if (!str_contains($purpose, "#[Hook('entity_access')]") || !str_contains($purpose, "'magazine'")) {
-  $errors[] = 'D13: restrição de visualização (entity_access, purpose magazine) ausente';
+foreach (['GalleryPurposeAccessHooks.php', 'GalleryListingHooks.php'] as $restricted_hook) {
+  if (is_file($root . '/src/Hook/' . $restricted_hook)) {
+    $errors[] = "$restricted_hook ainda restringe galerias por purpose";
+  }
 }
-$listing = is_file($root . '/src/Hook/GalleryListingHooks.php') ? file_get_contents($root . '/src/Hook/GalleryListingHooks.php') : '';
-if (!str_contains($listing, "#[Hook('views_query_alter')]") || !str_contains($listing, "'aculta_albuns'")) {
-  $errors[] = 'D13: restrição da listagem (views_query_alter em aculta_albuns) ausente';
+
+$list_builder = file_get_contents($root . '/src/ListBuilder/AcultaGalleryListBuilder.php');
+if (str_contains($list_builder, 'DomainPurposeManager') || str_contains($list_builder, "'magazine'")) {
+  $errors[] = 'link da coleção administrativa ainda força o purpose magazine';
 }
 
 foreach (['CreateGallery.php', 'GalleryEmbedDialogForm.php'] as $name) {
@@ -67,4 +70,4 @@ if ($errors !== []) {
   }
   exit(1);
 }
-echo 'ACULTA GALLERY HYGIENE: PASS (' . count($files) . " arquivos em src/; D13 nos dois pontos; sem service locator; EntityQuery com accessCheck)\n";
+echo 'ACULTA GALLERY HYGIENE: PASS (' . count($files) . " arquivos em src/; sem restrição por purpose, service locator ou EntityQuery sem accessCheck)\n";

@@ -9,17 +9,13 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Url;
+use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\media_gallery\MediaGalleryListBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Coleção administrativa de galerias com título apontando para a Revista.
- *
- * Álbuns são publicados somente na Revista (D13). O título da coleção é o link de
- * visualização, então ele é gerado no purpose `magazine` via DomainPurposeManager.
- * Edição e exclusão continuam no painel administrativo do MAIN, como manda a política
- * de domínio administrativo (ADMIN-DOMAIN-POLICY.md).
+ * Administrative gallery list with canonical Portuguese alias links.
  */
 final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
 
@@ -27,7 +23,7 @@ final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
     EntityTypeInterface $entity_type,
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatterInterface $date_formatter,
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly AliasManagerInterface $aliasManager,
   ) {
     parent::__construct($entity_type, $entity_type_manager, $date_formatter);
   }
@@ -40,7 +36,7 @@ final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
       $entity_type,
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('path_alias.manager'),
     );
   }
 
@@ -49,10 +45,12 @@ final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row = parent::buildRow($entity);
-    $path = $entity->toUrl()->toString();
-    $url = $this->purposeManager->pathUrl('magazine', $path);
-    if ($url !== NULL) {
-      $row['title'] = Link::fromTextAndUrl((string) $entity->label(), $url);
+    $path = $this->aliasManager->getAliasByPath('/media_gallery/' . $entity->id());
+    if ($path !== '/media_gallery/' . $entity->id()) {
+      $row['title'] = Link::fromTextAndUrl((string) $entity->label(), Url::fromUserInput($path));
+    }
+    else {
+      $row['title'] = ['data' => ['#plain_text' => (string) $entity->label()]];
     }
     return $row;
   }

@@ -1,11 +1,19 @@
 # Changelog — ACULTA Gallery
 
-## Estado atual: preRC — 2026-10-20
+## Estado atual: Dev — 2026-10-21
 
-A versão declarada passa a `0.1.0-preRC.4`: a validação visual no navegador e
-em aparelho real ainda falta. O código e as fases registradas estão concluídos;
-esta reclassificação preserva abaixo o histórico da decisão RC anterior e não
-cria tag nem declara release final.
+`0.1.0-dev.13` registra a reabertura do desenvolvimento para integração global
+de galerias e a integração contextual do Fórum. RC depende de implementação,
+gates, revisão visual e validação pré-deploy completos.
+
+## 0.1.0-dev.13 — galerias disponíveis em todos os purposes — 2026-10-21
+
+Classificação: MINOR (expande o acesso público transversal; integração Forum em andamento).
+
+- Decisão do responsável: galerias `media_gallery` publicadas podem ser abertas em todos os purposes do Portal. Substitui D13, que havia limitado visualização e listagem à Revista.
+- Removidas as restrições de visualização e listagem por purpose; o list builder usa o alias local da galeria, sem direcionar para a Revista.
+- Mapa de caminhos atualizado para `/albuns/{titulo}` em todos os purposes. Acesso runtime ainda não validado; sem deploy.
+- Gates e testes integrados pendentes antes de RC.
 
 ## 0.1.0-rc.4 — diálogo "Criar galeria" sem tamanho no módulo — 2026-10-19
 

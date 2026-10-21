@@ -687,6 +687,30 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 - LMS exige membership e acesso atual pelo Group/Entity Access; role global de estudante não basta. A Wiki não é parte do Fórum e não deve ser reimplementada dentro dele (ver seção Wiki).
 - Imagens e avisos continuam sob `aculta_image` e `aculta_messenger`; não criar canais paralelos.
 
+## Integração transversal dos módulos ACULTA (regra permanente)
+
+- Antes de implementar uma capacidade, inventariar os módulos ACULTA, submódulos,
+  configuração e tema que já atendem ao mesmo domínio. Consultar seus contratos,
+  APIs, componentes SDC, cartões, view-models, catálogos e políticas antes de
+  criar uma solução local.
+- Reutilizar o dono já estabelecido: `aculta_image` para ingestão e política de
+  imagens; `aculta_gallery` para `media_gallery`, galerias e PhotoSwipe;
+  `aculta_pdf_viewer` para leitura de PDF; `aculta_user` para identidade e
+  autoria; `aculta_messenger` para avisos; ACULTA420 para apresentação. Cada
+  consumidor integra os contratos existentes e preserva acesso, cache, domínio,
+  publicação e retenção do seu próprio contexto.
+- Não duplicar storage, upload, processamento, cartões, identidade visual ou
+  permissões quando já houver componente dono. Capacidades novas devem ter
+  contrato neutro e reutilizável no módulo apropriado; comportamento específico
+  fica no submódulo consumidor.
+- Toda mudança de integração registra a relação entre produtor e consumidor,
+  a política de acesso/publicação e os testes de cada fronteira. Ao concluir uma
+  frente, pesquisar integrações anteriores pendentes e atualizar seus roadmaps.
+- No ACULTA Forum, fechar primeiro upload contextual de imagens, integração
+  Gallery e Office (DOCX e planilhas, conforme extensões habilitadas). A
+  visualização de PDF pelo ACULTA Document Viewer é a última etapa dessa frente;
+  não duplicar leitor ou conversão de PDF no Fórum.
+
 ## Wiki (regra permanente)
 
 - **Estado atual (2026-10-20, Runtime de teste):** a Wiki funciona como conteúdo no domínio `wiki420` (`wiki420.aculta.org` em produção), com o tipo de conteúdo `wiki_entry` e o fluxo editorial `wiki_editorial`. Havia 7 verbetes, 6 publicados. Não existe um módulo de Wiki habilitado: a implementação é de conteúdo e configuração.

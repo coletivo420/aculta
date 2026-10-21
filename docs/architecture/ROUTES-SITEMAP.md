@@ -308,7 +308,8 @@ correspondentes estão habilitados no ambiente.
 | `links.aculta` | `/pagina/{slug}` | Micropágina pública do ACULTA Links | Declarada e ativa no Runtime de teste após habilitação em 2026-10-20; exige página e itens publicados, slug válido e purpose `links`. Produção não confirmada. |
 | `links.aculta` | `/` | Landing pública de perfis e links sociais | Runtime após rebuild: HTTP 200 via fallback e 404 no caminho interno direto; produção não confirmada. |
 | `revista.aculta` | `/u/{apelido}` | Perfil público de autor | Condicional a perfil público habilitado; apelido não canônico responde `404`. |
-| `revista.aculta` | `/albuns/{titulo}` | Álbum de galeria | Condicional ao módulo e conteúdo; confirmar estado efetivo do Runtime. |
+| Todos os purposes | `/albuns` | Catálogo de álbuns publicados | Condicional ao módulo e conteúdo; sem filtro por purpose; confirmar estado efetivo do Runtime. |
+| Todos os purposes | `/albuns/{titulo}` | Álbum de galeria publicado | Condicional ao módulo e conteúdo; acesso segue publicação/permissões de `media_gallery`; confirmar estado efetivo do Runtime. |
 
 ### Perfil, bio, redes e associados (`aculta_user`)
 
@@ -388,7 +389,8 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/pagamentos/{id}/excluir` | `conta.aculta` | Exclusão de meio de pagamento pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
 | `/pagamentos/{id}/padrao` | `conta.aculta` | Seleção de meio de pagamento padrão pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
 | `/aceite-termos` | Todos os purposes | Antiga página dedicada ao aceite dos termos | Removida; `404`. O fluxo atual usa popup e `POST /termos/aceitar`. |
-| `/albuns/{titulo}` | `revista.aculta` | Álbum da galeria | Rota condicional do submódulo; confirmar estado efetivo do Runtime, não inferir pelo YAML. |
+| `/albuns` | Todos os purposes | Catálogo de álbuns publicados | Rota da View, condicional ao módulo; confirmar estado Runtime antes de afirmar ativa. |
+| `/albuns/{titulo}` | Todos os purposes | Álbum da galeria publicado | Rota condicional do submódulo; confirmar estado efetivo do Runtime, não inferir pelo YAML. |
 
 ## Redirecionamentos documentados
 
