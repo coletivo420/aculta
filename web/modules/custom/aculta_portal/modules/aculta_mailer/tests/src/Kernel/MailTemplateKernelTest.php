@@ -7,6 +7,8 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 use Drupal\aculta_mailer\Entity\MailBrand;
 use Drupal\aculta_mailer\Entity\MailLayout;
 use Drupal\aculta_mailer\Entity\MailTemplate;
+use Drupal\aculta_mailer\Type\MailTypeRegistry;
+use Drupal\aculta_mailer\Template\MailTemplateRenderer;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\aculta_mailer\Form\MailTemplateTestForm;
 use Drupal\aculta_mailer\Message\MailMessage;
@@ -92,6 +94,42 @@ final class MailTemplateKernelTest extends KernelTestBase {
   /**
    * Modelo com layout: cabeçalho e rodapé da marca em torno do corpo, e o corpo não é reprocessado.
    */
+  /**
+   * Com corpo HTML, o texto de marca e de layout é escapado e as quebras viram <br>; o HTML do modelo não muda.
+   */
+  public function testLayoutWithHtmlBodyEscapesPlainLayoutText(): void {
+    MailBrand::create([
+      'id' => 'aculta',
+      'label' => 'ACULTA',
+      'name' => 'ACULTA & Amigos',
+      'footer' => "Associação <Cultural>\nCNPJ 00",
+    ])->save();
+    MailLayout::create([
+      'id' => 'transacional',
+      'label' => 'Transacional',
+      'brand' => 'aculta',
+      'header' => '{{ brand_name }}',
+      'footer' => '{{ brand_footer }}',
+    ])->save();
+    MailTemplate::create([
+      'id' => 'aculta_mailer_test_message',
+      'label' => 'Modelo HTML com layout',
+      'status' => TRUE,
+      'layout' => 'transacional',
+      'subject' => 'Oi {{ name }}',
+      'body' => '<p><strong>Corpo</strong> {{ name }}</p>',
+      'body_format' => MailTemplate::BODY_FORMAT_HTML,
+    ])->save();
+    $type = $this->container->get(MailTypeRegistry::class)->get('aculta_mailer_test_message');
+    $rendered = $this->container->get(MailTemplateRenderer::class)->render($type, ['name' => 'Maria']);
+
+    $this->assertStringContainsString('ACULTA &amp; Amigos', $rendered['body']);
+    $this->assertStringContainsString('Associação &lt;Cultural&gt;<br>', $rendered['body']);
+    $this->assertStringContainsString('CNPJ 00', $rendered['body']);
+    $this->assertStringNotContainsString('<Cultural>', $rendered['body']);
+    $this->assertStringContainsString('<p><strong>Corpo</strong> Maria</p>', $rendered['body']);
+  }
+
   public function testLayoutWrapsBodyWithBrand(): void {
     MailBrand::create([
       'id' => 'aculta',

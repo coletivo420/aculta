@@ -1,3 +1,8 @@
+## 0.1.0-dev.65 — layout e marca com corpo HTML — 2026-10-22
+
+- Com corpo HTML, o cabeçalho, o rodapé e a marca do layout são texto simples: passam a ser escapados e as quebras de linha viram `<br>`. Antes, entravam crus no HTML (texto colado, quebras perdidas). O HTML do modelo não muda.
+- Teste de Kernel: marca com `&` e rodapé com `<` e quebra de linha. Kernel do mailer 41/41; unidade 154/154.
+
 ## 0.1.0-dev.64 — script sai com o conteúdo no modelo HTML — 2026-10-22
 
 - Script e estilo são removidos com o conteúdo antes do filtro do formato `aculta_email`. Antes, o filtro tirava só a tag e o texto (por exemplo `alert(1)`) ficava no e-mail e na prévia.

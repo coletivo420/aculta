@@ -46,7 +46,7 @@ final class MailTemplateRenderer {
     $body = self::fill($body, $context, $html);
     $layout = $template !== NULL ? $this->layoutFor($template) : NULL;
     if ($layout !== NULL) {
-      $body = $this->wrap($layout, $body);
+      $body = $this->wrap($layout, $body, $html);
     }
     if ($html) {
       // O corpo HTML vem do editor e não passou pelo filtro no envio: filtra com o formato restrito.
@@ -120,14 +120,29 @@ final class MailTemplateRenderer {
    *
    * O corpo entra como valor: não é reprocessado pelos placeholders.
    */
-  private function wrap(MailLayout $layout, string $content): string {
+  private function wrap(MailLayout $layout, string $content, bool $html = FALSE): string {
     $brand = $this->entityTypeManager->getStorage(MailBrand::ENTITY_TYPE)->load($layout->getBrand());
     $values = [
       'brand_name' => $brand instanceof MailBrand ? $brand->getName() : '',
       'brand_footer' => $brand instanceof MailBrand ? $brand->getFooter() : '',
     ];
-    $text = $layout->getHeader() . "\n\n{{ content }}\n\n" . $layout->getFooter();
+    $header = $layout->getHeader();
+    $footer = $layout->getFooter();
+    if ($html) {
+      // Cabeçalho, rodapé e marca são texto simples: com corpo HTML viram HTML seguro (escape e quebras).
+      $values = array_map([self::class, 'plainToHtml'], $values);
+      $header = self::plainToHtml($header);
+      $footer = self::plainToHtml($footer);
+    }
+    $text = $header . "\n\n{{ content }}\n\n" . $footer;
     return self::fill($text, $values + ['content' => $content]);
+  }
+
+  /**
+   * Texto simples para HTML: escapa a marcação e troca quebras de linha por <br>.
+   */
+  private static function plainToHtml(string $text): string {
+    return nl2br(htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), FALSE);
   }
 
   /**
