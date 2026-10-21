@@ -1,5 +1,12 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.9 — registrar alias DI do manager — 2026-10-21
+
+- Registra a interface `LearningNoticeManagerInterface` como alias do serviço
+  concreto, permitindo autowiring do hook OOP e compilação do container.
+- Encontrado ao habilitar no Runtime; a primeira tentativa abortou a compilação
+  após marcar o módulo ativo, sem instalar configuração nem criar avisos.
+
 ## 0.1.0-dev.8 — lembrete de prazo em fila — 2026-10-21
 
 - Adota provisoriamente a opção recomendada após o pedido de continuidade:
