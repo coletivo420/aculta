@@ -127,3 +127,28 @@ o painel de turma do LMS), com as mesmas permissões.
   `wiki420.aculta`, `forum.aculta`). Nunca hostname de Homelab ou produção.
 - Hosts e purposes vêm de `docs/architecture/multidomain.md` e do `aculta_deployer`.
 - Painel administrativo sempre no purpose `main`.
+
+## Decisões do responsável (2026-10-20)
+
+- **Consentimento (GA4 e rastreamento):** usa o mecanismo existente, não um novo.
+  O aceite é o módulo contrib `agreement`, orquestrado por
+  `aculta_portal/src/Account/` (`MailTrackingConsent`, `AccountTermsPolicy`), com os
+  acordos `aculta_account_terms` (termos, obrigatório) e `aculta_rastreamento`
+  (opcional). O `aculta_user` não tem módulo de consentimento próprio.
+- **GA4 para contas:** acordo do `agreement`, como `aculta_rastreamento`.
+- **GA4 para anônimos:** banner de cookies com Google Consent Mode v2. Exige
+  **autorização explícita** para alterar `web/themes/custom/aculta420/` (AGENTS).
+  Até lá, nenhuma tag de visitante anônimo é carregada.
+- **Tag:** somente `drupal/google_tag`, sem Klaro (consentimento próprio).
+- **QR estático:** só QRs novos passam por rota medida. QRs já impressos seguem
+  sem medição, apontando ao destino direto. A medição nova depende de a rota de
+  redirecionamento do QR estático ser criada, o que altera a geração do QR (fase 0.7.0).
+- **Links:** `aculta_statistics` assume o agregado de `aculta_links` na fase 0.7.0; `aculta_links` vira provedor.
+- **Wiki (leitura):** contador próprio no `aculta_statistics`, métrica
+  `wiki.entries.read`, dimensão = identificador do verbete, agregado diário, sem
+  IP nem usuário, retenção de 90 dias. Viabilidade verificada: visitas servidas do
+  cache só são contadas com beacon JS; e o contador precisa entrar no
+  `LGPD-INVENTARIO.md` antes de ser criado. Alternativa descartada: `drupal/statistics`
+  (contrib), por não ter recorte por domínio e registrar IP no access log se ligado.
+  Como o dado é agregado e sem identificação, a base legal fica a confirmar com o
+  responsável no inventário.

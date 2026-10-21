@@ -98,3 +98,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 - Dev → RC → validação Alpha → produção, conforme `docs/operations/RELEASE-LIFECYCLE.md`.
 - Não criar `preRC`.
 - Não abrir PR nem fazer merge sem pedido explícito do responsável.
+
+## Decisões incorporadas (2026-10-20)
+
+- 0.6.0: GA4 com acordo `agreement` para contas; banner de cookies (Consent Mode v2) para anônimos, sujeito a autorização para o tema ACULTA420. Somente `google_tag`.
+- 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos; contador de leitura da Wiki próprio (`wiki.entries.read`), após inventário LGPD.

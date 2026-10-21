@@ -30,3 +30,7 @@ até o módulo ser ativado.
 - Nenhum `*.info.yml`, schema ou ativação.
 - Nenhuma migração de banco.
 - Nenhuma instalação de módulo contrib.
+
+### Decisões (sem código)
+- Consentimento reutiliza o `agreement` do `aculta_portal` (não há módulo de consentimento no `aculta_user`).
+- Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
