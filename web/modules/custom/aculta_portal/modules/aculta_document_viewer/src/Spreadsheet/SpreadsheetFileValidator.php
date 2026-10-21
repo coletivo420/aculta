@@ -21,6 +21,13 @@ final class SpreadsheetFileValidator {
   public const MAX_BYTES = 25 * 1024 * 1024;
 
   /**
+   * Limites de descompactação do ODS (mesmos do XLSX).
+   */
+  public const MAX_ENTRIES = 2000;
+  public const MAX_UNCOMPRESSED_BYTES = 200 * 1024 * 1024;
+  public const MAX_RATIO = 100;
+
+  /**
    * MIME type do OpenDocument Spreadsheet, gravado no entry `mimetype`.
    */
   public const ODS_MIME = 'application/vnd.oasis.opendocument.spreadsheet';
@@ -79,10 +86,27 @@ final class SpreadsheetFileValidator {
       if ($zip->locateName('content.xml') === FALSE) {
         throw new DocxValidationException('missing_part', 'content.xml ausente no ODS.');
       }
+      if ($zip->numFiles > self::MAX_ENTRIES) {
+        throw new DocxValidationException('too_many_entries', "ODS com {$zip->numFiles} entradas.");
+      }
+      $total = 0;
       for ($i = 0; $i < $zip->numFiles; $i++) {
-        $name = (string) $zip->getNameIndex($i);
+        $stat = $zip->statIndex($i);
+        if ($stat === FALSE) {
+          throw new DocxValidationException('corrupt_zip', "Entrada {$i} ilegível.");
+        }
+        $name = (string) $stat['name'];
         if (preg_match('#^(Basic|Scripts)/#', $name) || str_contains($name, '../')) {
           throw new DocxValidationException('forbidden_part', "Parte não permitida no ODS: {$name}.");
+        }
+        $size = (int) $stat['size'];
+        $compressed = max(1, (int) $stat['comp_size']);
+        if ($size > 1024 * 1024 && intdiv($size, $compressed) > self::MAX_RATIO) {
+          throw new DocxValidationException('zip_bomb', "Razão de compressão suspeita em {$name}.");
+        }
+        $total += $size;
+        if ($total > self::MAX_UNCOMPRESSED_BYTES) {
+          throw new DocxValidationException('uncompressed_too_large', 'ODS descompactado acima do limite.');
         }
       }
     }

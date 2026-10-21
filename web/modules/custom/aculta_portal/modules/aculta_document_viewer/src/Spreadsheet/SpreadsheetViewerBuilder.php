@@ -7,6 +7,7 @@ namespace Drupal\aculta_document_viewer\Spreadsheet;
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
 use Drupal\aculta_document_viewer\Document\DocumentViewerChrome;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Url;
@@ -47,6 +48,7 @@ final class SpreadsheetViewerBuilder {
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
     private readonly FileSystemInterface $fileSystem,
+    private readonly ModuleExtensionList $moduleList,
     private readonly SpreadsheetFileValidator $validator,
     private readonly LoggerInterface $logger,
   ) {}
@@ -78,6 +80,7 @@ final class SpreadsheetViewerBuilder {
       return NULL;
     }
 
+    $modulePath = $this->moduleList->getPath('aculta_document_viewer');
     return [
       '#type' => 'container',
       '#attributes' => [
@@ -86,6 +89,8 @@ final class SpreadsheetViewerBuilder {
         'data-aculta-sheet-url' => $this->fileUrlGenerator->generateString($uri),
         'data-aculta-sheet-format' => strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)),
         'data-aculta-sheet-tabulator' => Url::fromUri('base:libraries/tabulator/dist/tabulator_esm.min.mjs')->toString(),
+        'data-aculta-sheet-frame-url' => Url::fromUri('base:' . $modulePath . '/js/sheet-frame.html')->toString(),
+        'data-aculta-sheet-libs' => json_encode([Url::fromUri('base:libraries/sheetjs/dist/xlsx.full.min.js')->toString()], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
         'data-aculta-sheet-title' => $title,
       ],
       '#attached' => ['library' => [self::LIBRARY]],

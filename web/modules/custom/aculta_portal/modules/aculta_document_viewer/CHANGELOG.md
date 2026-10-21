@@ -1,5 +1,16 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.8 — isolamento do leitor de planilhas e limites de descompactação (0.1.0-dev.10 do plano) — 2026-10-21
+
+- O SheetJS deixa a página principal: roda em `js/sheet-frame.html` + `sheet-frame.js`, em iframe `sandbox="allow-scripts"` sem `allow-same-origin`, com CSP em `<meta>` (`connect-src 'none'`, sem imagens). O pai (`js/sheet-reader.mjs`) só recebe matrizes de texto.
+- O pai não carrega mais o SheetJS: a biblioteca `spreadsheet` tem só o CSS do Tabulator e o módulo JS. O caminho do parser vai por atributos (`data-aculta-sheet-frame-url`, `data-aculta-sheet-libs`).
+- Limites no iframe e no pai: 2000 linhas e 100 colunas por aba, 20 abas, 500 caracteres por célula.
+- ODS passa a ter limites de descompactação (2000 entradas, 200 MiB descompactados, razão 100) e teste de ZIP bomb. XLSX já tinha, pelo validador OOXML.
+- Testes: Unit 54/54 OK. Navegador (Chromium X11, fixtures ODS, XLS, CSV e XLSX): valores idênticos aos da etapa anterior; `window.XLSX` indefinido na página principal; sem iframe residual.
+- Sonda de isolamento durante a leitura: `sandbox="allow-scripts"`; a página não acessa o documento do iframe (origem opaca); célula com `<img ...>` chega como texto, sem elemento `img` na página.
+- Runtime (sessão X11): XLSX de três abas no modo full de `node.document`; `status: ok`, abas listadas, modo Tabela com cabeçalhos corretos. Display restaurado; fixtures removidos.
+- Pendente: o isolamento do PDF continua o do PDF.js (dev.8/PV7). A decisão sobre expor DOCX e planilhas em displays públicos segue com o responsável.
+
 ## 0.1.0-dev.7 — interface unificada dos leitores DOCX e planilhas (0.1.0-dev.8 do plano) — 2026-10-21
 
 - `Document\DocumentViewerChrome`: cabeçalho (tipo e título escapados), barra de controles e área de status, com atributos neutros `data-aculta-document-part` e `data-aculta-document-control`. Sem classe de design no módulo.

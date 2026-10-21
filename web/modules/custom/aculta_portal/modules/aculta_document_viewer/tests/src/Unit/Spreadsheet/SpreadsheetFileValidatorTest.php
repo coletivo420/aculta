@@ -102,6 +102,18 @@ final class SpreadsheetFileValidatorTest extends UnitTestCase {
   }
 
   /**
+   * ODS com conteúdo altamente compressível (ZIP bomb) é recusado pela razão.
+   */
+  public function testOdsZipBombIsRejected(): void {
+    $path = $this->zip('bomba.ods', [
+      'mimetype' => SpreadsheetFileValidator::ODS_MIME,
+      'content.xml' => '<x/>',
+      'Pictures/vazio.bin' => str_repeat("\0", 4 * 1024 * 1024),
+    ]);
+    $this->assertRejected('zip_bomb', $path, 'ods');
+  }
+
+  /**
    * XLS precisa da assinatura OLE2.
    */
   public function testXlsWithoutOle2SignatureIsRejected(): void {

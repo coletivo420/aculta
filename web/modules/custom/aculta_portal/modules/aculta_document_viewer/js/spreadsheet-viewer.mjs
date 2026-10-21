@@ -1,112 +1,27 @@
+/**
+ * Leitor de planilhas (somente leitura).
+ *
+ * O SheetJS roda num iframe isolado (sheet-frame.js). Este módulo recebe matrizes de
+ * texto já formatadas e as apresenta com o Tabulator em dois modos:
+ * - Planilha: módulo Spreadsheet, uma aba por planilha, coordenadas A1, primeira linha como dado.
+ * - Tabela: uma aba por vez como registros, primeira linha como cabeçalho, ordenação e filtros.
+ *
+ * Os valores são sempre texto (formatter `plaintext`, sem editor). Nenhuma fórmula é recalculada.
+ */
 import { setupDocumentChrome } from './document-chrome.mjs';
+import { readSheetsIsolated } from './sheet-reader.mjs';
 
 const translate = (text) => (window.Drupal && typeof Drupal.t === 'function' ? Drupal.t(text) : text);
 
-/**
- * Leitor de planilhas (somente leitura): SheetJS interpreta o arquivo e o
- * Tabulator mostra as abas em dois modos.
- *
- * - Planilha: módulo Spreadsheet do Tabulator, uma aba por planilha, coordenadas
- *   A1 preservadas, a primeira linha é dado (não cabeçalho), sem edição.
- * - Tabela: uma aba por vez como registros, a primeira linha vira cabeçalho, com
- *   ordenação e filtros. Continua somente leitura e não altera o arquivo.
- *
- * Formatação em pt-BR: números com vírgula decimal, datas `dd/mm/aaaa` a partir
- * dos componentes da data (sem depender do fuso do navegador), percentuais e
- * valores lógicos traduzidos. Fórmulas mostram o valor armazenado; nada é recalculado.
- */
-
-const MAX_ROWS = 2000;
-const MAX_COLUMNS = 100;
-const pad = (value) => String(value).padStart(2, '0');
-
-/**
- * Lê casas decimais e agrupamento do código de formato da célula (ex.: `#,##0.00`).
- * Sem código de formato, usa até 10 casas e agrupamento de milhar.
- */
-function numberOptions(format = '') {
-  const decimals = /\.(0+|#+)/.exec(format);
-  return {
-    minimumFractionDigits: decimals ? decimals[1].replace(/#/g, '').length : 0,
-    maximumFractionDigits: decimals ? decimals[1].length : 10,
-    useGrouping: format === '' || format.includes(','),
-  };
-}
-
-function formatDate(XLSX, value, format = '') {
-  const parts = XLSX.SSF.parse_date_code(value);
-  if (!parts) {
-    return '';
+function columnLetter(index) {
+  let letters = '';
+  let number = index + 1;
+  while (number > 0) {
+    const rest = (number - 1) % 26;
+    letters = String.fromCharCode(65 + rest) + letters;
+    number = Math.floor((number - 1) / 26);
   }
-  const date = `${pad(parts.d)}/${pad(parts.m)}/${String(parts.y).padStart(4, '0')}`;
-  const hasTime = parts.H || parts.M || parts.S || /h/i.test(format);
-  if (!hasTime) {
-    return date;
-  }
-  const withSeconds = parts.S > 0 || /:ss/i.test(format);
-  const time = `${pad(parts.H)}:${pad(parts.M)}${withSeconds ? `:${pad(parts.S)}` : ''}`;
-  return `${date} ${time}`;
-}
-
-function formatCell(XLSX, cell) {
-  if (!cell || cell.v === undefined || cell.v === null) {
-    return '';
-  }
-  if (cell.t === 'b') {
-    return cell.v ? 'VERDADEIRO' : 'FALSO';
-  }
-  if (cell.t === 'e') {
-    return cell.w || '#ERRO';
-  }
-  if (cell.t === 'n') {
-    if (cell.z && XLSX.SSF.is_date(cell.z)) {
-      return formatDate(XLSX, cell.v, cell.z);
-    }
-    if (cell.z && cell.z.includes('%')) {
-      return new Intl.NumberFormat('pt-BR', { ...numberOptions(cell.z), style: 'percent' }).format(cell.v);
-    }
-    return new Intl.NumberFormat('pt-BR', numberOptions(cell.z)).format(cell.v);
-  }
-  return String(cell.v);
-}
-
-function sheetMatrix(XLSX, sheet) {
-  const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1');
-  const rows = Math.min(range.e.r + 1, MAX_ROWS);
-  const columns = Math.min(range.e.c + 1, MAX_COLUMNS);
-  const data = [];
-  for (let r = 0; r < rows; r++) {
-    const line = [];
-    for (let c = 0; c < columns; c++) {
-      line.push(formatCell(XLSX, sheet[XLSX.utils.encode_cell({ r, c })]));
-    }
-    data.push(line);
-  }
-  return {
-    data,
-    rows: Math.max(rows, 1),
-    columns: Math.max(columns, 1),
-    truncated: range.e.r + 1 > MAX_ROWS || range.e.c + 1 > MAX_COLUMNS,
-  };
-}
-
-async function readWorkbook(XLSX, url, format) {
-  const response = await fetch(url, { credentials: 'same-origin' });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-  const buffer = await response.arrayBuffer();
-  return XLSX.read(buffer, {
-    type: 'array',
-    // CSV é texto: o SheetJS não deve converter "25.6%" em número.
-    raw: format === 'csv',
-    cellFormula: false,
-    cellHTML: false,
-    cellStyles: false,
-    cellNF: true,
-    dense: false,
-    sheetStubs: true,
-  });
+  return letters;
 }
 
 function spreadsheetOptions(definitions) {
@@ -119,11 +34,11 @@ function spreadsheetOptions(definitions) {
   };
 }
 
-function tableOptions(XLSX, definition) {
+function tableOptions(definition) {
   const [headerRow = [], ...body] = definition.data;
   const seen = new Map();
   const columns = headerRow.map((text, index) => {
-    const base = String(text).trim() || `Coluna ${XLSX.utils.encode_col(index)}`;
+    const base = String(text).trim() || `Coluna ${columnLetter(index)}`;
     const count = (seen.get(base) || 0) + 1;
     seen.set(base, count);
     return {
@@ -144,7 +59,7 @@ function tableOptions(XLSX, definition) {
     layout: 'fitDataStretch',
     pagination: 'local',
     paginationSize: 50,
-    placeholder: 'Nenhum registro nesta aba.',
+    placeholder: translate('Nenhum registro nesta aba.'),
   };
 }
 
@@ -152,16 +67,14 @@ function renderModes(toolbar, sheetTitles, onChange) {
   const group = document.createElement('div');
   group.dataset.acultaDocumentPart = 'modes';
   group.setAttribute('role', 'group');
-  group.setAttribute('aria-label', 'Modo de leitura');
-  const modes = [
-    ['sheet', 'Planilha'],
-    ['table', 'Tabela'],
-  ];
-  const buttons = modes.map(([mode, label]) => {
+  group.setAttribute('aria-label', translate('Modo de leitura'));
+  const buttons = [
+    ['sheet', translate('Planilha')],
+    ['table', translate('Tabela')],
+  ].map(([mode, label]) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.dataset.acultaDocumentPart = 'mode';
-    button.dataset.acultaSheetMode = mode;
     button.textContent = label;
     button.setAttribute('aria-pressed', mode === 'sheet' ? 'true' : 'false');
     button.addEventListener('click', () => {
@@ -174,7 +87,7 @@ function renderModes(toolbar, sheetTitles, onChange) {
   });
   const select = document.createElement('select');
   select.dataset.acultaDocumentPart = 'sheet-select';
-  select.setAttribute('aria-label', 'Aba exibida no modo Tabela');
+  select.setAttribute('aria-label', translate('Aba exibida no modo Tabela'));
   select.hidden = true;
   sheetTitles.forEach((title, index) => {
     const option = document.createElement('option');
@@ -188,17 +101,16 @@ function renderModes(toolbar, sheetTitles, onChange) {
 }
 
 async function mountSpreadsheet(host, frame) {
-  const XLSX = window.XLSX;
-  if (!XLSX) {
-    throw new Error('SheetJS indisponível');
-  }
   const chrome = setupDocumentChrome(host, frame);
   chrome.setStatus(translate('Carregando planilha…'));
-  const workbook = await readWorkbook(XLSX, host.dataset.acultaSheetUrl, host.dataset.acultaSheetFormat);
-  const definitions = workbook.SheetNames.map((name) => ({ title: name, ...sheetMatrix(XLSX, workbook.Sheets[name]) }));
-  if (definitions.length === 0) {
-    throw new Error('Planilha sem abas');
-  }
+
+  const definitions = await readSheetsIsolated({
+    url: host.dataset.acultaSheetUrl,
+    format: host.dataset.acultaSheetFormat,
+    frameUrl: new URL(host.dataset.acultaSheetFrameUrl, document.baseURI).href,
+    libs: JSON.parse(host.dataset.acultaSheetLibs || '[]').map((lib) => new URL(lib, document.baseURI).href),
+  });
+
   // Resolve contra a página: import() usaria o caminho relativo ao módulo.
   const tabulatorUrl = new URL(host.dataset.acultaSheetTabulator, document.baseURI).href;
   const { TabulatorFull } = await import(tabulatorUrl);
@@ -209,18 +121,17 @@ async function mountSpreadsheet(host, frame) {
       table.destroy();
     }
     frame.textContent = '';
-    if (mode === 'sheet') {
-      table = new TabulatorFull(frame, spreadsheetOptions(definitions));
-    }
-    else {
-      table = new TabulatorFull(frame, tableOptions(XLSX, definitions[sheetIndex]));
-    }
+    table = mode === 'sheet'
+      ? new TabulatorFull(frame, spreadsheetOptions(definitions))
+      : new TabulatorFull(frame, tableOptions(definitions[sheetIndex]));
   };
   renderModes(chrome.toolbar, definitions.map((definition) => definition.title), (mode, index) => show(mode, index));
   show('sheet');
-  host.dataset.acultaSheetStatus = definitions.some((definition) => definition.truncated) ? 'truncated' : 'ok';
-  chrome.setStatus(definitions.some((definition) => definition.truncated) ? translate('A planilha foi limitada a 2000 linhas e 100 colunas por aba.') : '');
+
+  const truncated = definitions.some((definition) => definition.truncated);
+  host.dataset.acultaSheetStatus = truncated ? 'truncated' : 'ok';
   host.dataset.acultaSheetCount = String(definitions.length);
+  chrome.setStatus(truncated ? translate('A planilha foi limitada a 2000 linhas e 100 colunas por aba.') : '');
   return table;
 }
 
