@@ -225,6 +225,11 @@ suíte `aculta_qrcode` e a validação HTTP de um certificado real segue pendent
 `CertificateLifecycleTest`: 3 testes / 94 assertions PASS, com 38 depreciações
 upstream.
 
+Em 0.1.0-dev.47, um teste Unit integra `CertificateQrCodeProvider` com o
+`DomainPurposeManager`, o validador, o registry e o gerador `aculta_qrcode`
+reais. Confirma URL absoluta no propósito `main` e falha fechada sem domínio;
+Unit do módulo: 50 testes / 277 assertions PASS, com 8 depreciações do PHPUnit.
+
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
 agregados por turma, sem respostas abertas nem dados identificáveis na visão

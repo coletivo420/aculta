@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.47 — testar integração real de QR com domínio — 2026-10-21
+
+- Teste Unit usa o `DomainPurposeManager`, validador, registry e gerador reais
+  para confirmar que o QR contém a URL absoluta de verificação no propósito
+  `main`; também confirma falha fechada sem o domínio configurado.
+- O teste usa URLGenerator controlado e não faz requisição de rede. Unit do
+  módulo: 50 testes / 277 assertions PASS; 8 depreciações do PHPUnit.
+
 ## 0.1.0-dev.46 — cobrir resposta SVG do QR de certificado — 2026-10-21
 
 - Kernel exercita a resposta positiva do endpoint QR com código emitido e
