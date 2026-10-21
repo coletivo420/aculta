@@ -99,7 +99,7 @@ o painel de turma do LMS), com as mesmas permissões.
 
 ## GA4 (fase 0.6.0): código desligado
 
-- Estado: `NullGa4ReportClient` é o padrão. Nenhum pedido sai do servidor. Cliente real pendente (propriedade, credenciais, justificativa de dependência).
+- Estado: `GoogleGa4ReportClient` com `google/apiclient` (ADR-0006). Desligado sem `GA4_PROPERTY_ID` e `GA4_SERVICE_ACCOUNT_JSON` no arquivo de segredos. Somente leitura, por dia. Pendente: provisionamento e consulta real no servidor de testes.
 
 - **Coleta:** separada da consulta. Coleta só com consentimento
   (Google Consent Mode v2) e pela camada de tag, não pelo Twig do tema.

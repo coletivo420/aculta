@@ -111,10 +111,9 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 
 ## 0.6.0 — Google Analytics e Search Console (código desligado: 0.9.0-dev.1)
 
-- Feito (código): `Ga4ReportClient` e cliente nulo padrão. Painel mostra o estado.
-- Decidido (2026-10-21): cliente real com `google/apiclient`. Justificativa em `docs/adr/ADR-0006-dependencia-google-apiclient.md`.
-- Bloqueado: `composer.json` e `composer.lock` têm alterações não commitadas de outra frente. Instalar agora misturaria esse trabalho. Espera a outra frente commitar.
-- Pendente: propriedade GA4, credencial da conta de serviço no `aculta_portal.secrets_manager`, domínio verificado no Search Console.
+- Feito (código): `Ga4ReportClient` com cliente real (`GoogleGa4ReportClient`, `google/apiclient` 2.20.1, ADR-0006 aceita). Desligado sem propriedade e credencial, que vêm do `aculta_portal.secrets_manager` (`GA4_PROPERTY_ID`, `GA4_SERVICE_ACCOUNT_JSON`, no contrato de segredos).
+- Feito: a remoção pendente de `drupal/change_mail_page` foi commitada antes, em commit próprio, porque a outra frente já a tinha aplicado (0.4.0-dev.240 do portal).
+- Pendente: provisionar as duas variáveis no servidor de testes e validar uma consulta real. Pendente: domínio verificado no Search Console.
 
 - GA4 Data API (v1beta) em fila, com cache e quota.
 - Consentimento (Consent Mode v2) antes de qualquer tag.

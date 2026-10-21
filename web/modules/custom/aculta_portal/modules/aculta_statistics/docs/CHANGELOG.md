@@ -36,6 +36,24 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.9.0-dev.3 (cliente GA4 real com google/apiclient, desligado sem credencial)
+
+### Código
+- `GoogleGa4ReportClient`: runReport da GA4 Data API com `google/apiclient` 2.20.1 (ADR-0006). Pede sessões e usuários ativos por dia, e devolve série `Y-m-d`. Somente leitura.
+- `SecretsGa4Settings` lê `GA4_PROPERTY_ID` e `GA4_SERVICE_ACCOUNT_JSON` pelo `aculta_portal.secrets_manager`. A chave é aceita só com tipo `service_account` e chave privada, em base64.
+- Sem propriedade ou credencial válida, o cliente fica desligado e nenhum pedido sai. Erro da API vira NULL e um aviso só com o tipo da exceção.
+- `aculta_portal` declarado como dependência do módulo.
+
+### Segredos
+- Duas variáveis novas no contrato (`config/secrets-contract.json`), na lista de arquivo do validador (não são Key, conforme AGENTS.md) e em `docs/operations/SECRETS.md`.
+
+### Testes
+- Unit: 93 casos (inclui o cliente GA4: desligado, mapeamento e falha sem vazamento). A chamada à API real não foi executada: sem credencial, não há como.
+
+### Pendente
+- Provisionar `GA4_PROPERTY_ID` e `GA4_SERVICE_ACCOUNT_JSON` no arquivo de segredos do servidor de testes e validar uma consulta real.
+- Verificar o domínio no Search Console (DNS).
+
 ## 0.9.0-dev.2 (painéis por área, com o tema autorizado)
 
 ### Código
