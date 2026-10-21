@@ -170,3 +170,9 @@ Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` 
 - **Envio de e-mail de teste do modelo:** executado em 2026-10-22 com autorização do responsável, para 4e20coletivo@gmail.com (endereço antigo que o AGENTS.md não recomenda; o responsável confirmou). O modelo `avisos_resumo` foi ativado só durante o teste e removido em seguida. **Dois envios saíram** (registro do mailer, ids 77 e 78), por uma tentativa anterior que submeteu sem exibir a mensagem. Não há como desfazer o segundo envio.
 - **Validação no navegador:** ciclo do editor (editar, inserir modelo e tabela, salvar, reabrir, renderizar), colagem Markdown, prévia e formulário de modelos do mailer.
 - **Envelope em modo escuro e automático (2026-10-22):** verificado por envio real a dmarc@aculta.org, com o modo do site trocado por alguns minutos e restaurado em seguida. Escuro: `color-scheme: dark`. Automático: `light dark`, com o bloco `prefers-color-scheme`. A aparência no cliente de e-mail continua sem revisão visual.
+
+## 13. Encerramento técnico (2026-10-22)
+
+- **Título H1:** decidido pelo responsável: fica fora do perfil Editorial (títulos 2 a 4). Não há pendência.
+- **Revisão visual no cliente de e-mail:** pendência do responsável. Foi enviada uma mensagem de revisão a 4e20coletivo@gmail.com (registro do mailer, id 88, status `sent`, layout atual, modo claro). O conteúdo gerado é o mesmo caminho verificado por IMAP no dmarc@, mas não foi lido na caixa do Gmail, que não é acessível pelo sistema.
+- **Escopo técnico:** concluído. Ver as seções 7 e 12.
