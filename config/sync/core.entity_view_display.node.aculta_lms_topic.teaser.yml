@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.aculta_lms_topic.field_aculta_discussion
     - field.field.node.aculta_lms_topic.field_domain_source
     - field.field.node.aculta_lms_topic.field_lms_activity
+    - field.field.node.aculta_lms_topic.field_h5p_content
     - node.type.aculta_lms_topic
   module:
     - text
@@ -28,6 +29,7 @@ content:
     weight: 10
     region: content
 hidden:
+  field_h5p_content: true
   co_authors: true
   field_lms_activity: true
   field_aculta_discussion: true

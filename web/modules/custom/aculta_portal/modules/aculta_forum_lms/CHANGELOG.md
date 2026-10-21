@@ -1,3 +1,27 @@
+## `0.1.0-dev.27` — vincular discussões diretamente ao H5P — 2026-10-21
+
+- Tópicos LMS podem referenciar diretamente um `h5p_content` do ACULTA H5P.
+  O formatter do H5P injeta as discussões abaixo do conteúdo somente quando o
+  acesso atual ao conteúdo no curso é permitido; o resolver consulta por ID,
+  revalida a relação Group única, o curso ou turma filha e o Entity Access do
+  tópico. Cache preserva usuário, permissões, membership e relações Group.
+- A seleção no autocomplete é contextual ao Group do curso/turma e lista só
+  conteúdos H5P pertencentes ao curso que o educador pode editar. Sem Group
+  válido, curso pai único ou permissão, falha fechada. `aculta_forum_lms`
+  depende do H5P ACULTA; o H5P não depende do Fórum. Campo permanece oculto no
+  tópico público e assuntos genéricos de atividade continuam em
+  `field_lms_activity`.
+- Unit do adapter: 25 testes / 293 assertions PASS; inclui o resolver para
+  conteúdo permitido/não pertencente ao curso e transmissão do ID Group ao
+  autocomplete. Kernel existente: 3 testes / 168 assertions PASS, 47
+  depreciações Core/contrib. Kernel específico de associação/seletor e smoke
+  visual/autenticado permanecem pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.
+- Runtime de teste `cursos`: campos opcionais instalados e displays existentes
+  alterados somente para o novo campo; plugin do seletor resolvido e vazio sem
+  Group contextual, como esperado. Não havia tópicos LMS; nenhum conteúdo foi
+  alterado. `drush cr` passou com o aviso preexistente de cópia de asset H5P.
+  RUNTIME STATUS: PARTIAL; produção não alterada.
+
 ## `0.1.0-dev.26` — validar vínculo atividade-discussão no Kernel — 2026-10-21
 
 - Novo Kernel MariaDB exercita atividade publicada, aula, curso, acesso de

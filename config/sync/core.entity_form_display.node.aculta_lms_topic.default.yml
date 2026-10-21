@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.aculta_lms_topic.field_aculta_discussion
     - field.field.node.aculta_lms_topic.field_domain_source
     - field.field.node.aculta_lms_topic.field_lms_activity
+    - field.field.node.aculta_lms_topic.field_h5p_content
     - node.type.aculta_lms_topic
   module:
     - text
@@ -52,6 +53,16 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_h5p_content:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: { }
   title:
     type: string_textfield
     weight: -5

@@ -404,9 +404,13 @@ discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
 O Kernel H5P também confirma persistência do estado de tentativa ao retornar
 com a mesma conta e isolamento frente a outro membro matriculado (3 testes /
-85 assertions, 43 depreciações de Core/contrib). A ligação direta de tópicos
-Forum a conteúdo H5P e seu smoke autenticado/visual continuam pendentes; esse
-vínculo não é representado pelo campo `field_lms_activity` do LMS.
+85 assertions, 43 depreciações de Core/contrib). A ligação direta está implementada no adapter: `field_h5p_content` referencia
+o conteúdo H5P e os tópicos autorizados aparecem sob o player; seleção e acesso
+revalidam o Group do curso/turma. Unit cobre resolver e transporte de contexto. Runtime `cursos` tem o campo
+opcional instalado; seletor fica vazio sem Group e não havia tópicos de teste.
+Kernel específico de associação/isolamento e smoke autenticado/visual ainda
+pendentes. Esse vínculo é distinto de
+`field_lms_activity`.
 Gallery, Magazine e Wiki agora têm referências opcionais no Group de curso e um
 builder que monta links canônicos por purpose, revalidando publicação e Entity
 Access e carregando cacheability da origem. A versão 0.1.0-dev.2 de

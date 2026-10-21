@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.aculta_lms_topic.body
     - field.field.node.aculta_lms_topic.field_lms_activity
+    - field.field.node.aculta_lms_topic.field_h5p_content
     - node.type.aculta_lms_topic
   module:
     - text
@@ -26,6 +27,16 @@ content:
   field_lms_activity:
     type: entity_reference_autocomplete
     weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: { }
+  field_h5p_content:
+    type: entity_reference_autocomplete
+    weight: 6
     region: content
     settings:
       match_operator: CONTAINS

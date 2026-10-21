@@ -18,9 +18,7 @@ foi preservada. Nenhuma alteração de produção foi feita.
 Na F15, o Kernel confirma que o estado de tentativa persiste quando a mesma
 conta retorna em outra sessão e não pode ser lido por outro estudante
 matriculado no curso. O H5P continua dono de seu progresso interno; resultados
-não são convertidos em notas oficiais do LMS. Ainda falta definir e validar o
-vínculo de discussões do Forum diretamente às atividades H5P, além do smoke
-autenticado e visual dessa integração.
+não são convertidos em notas oficiais do LMS. A decisão do vínculo direto de discussões Forum ao conteúdo H5P já foi implementada no adapter `aculta_forum_lms`: tópico e conteúdo usam referência própria, seleção é limitada ao curso/turma e as conversas renderizam sob o player após revalidar acesso. Unit do resolver e do transporte de Group ao autocomplete passaram. Runtime `cursos` tem o campo instalado e o seletor falha fechado sem Group; ainda faltam Kernel específico de integração/seletor e smoke autenticado/visual.
 
 ## Painéis e vínculo com cursos
 
@@ -44,11 +42,12 @@ autenticado e visual dessa integração.
   LMS. Documentos PDF complementares do curso pertencem à Media
   `course_document` e ao viewer `aculta_pdf_viewer` com controle
   `aculta_pdf_viewer_group`; H5P não cria outro leitor nem converte seus assets
-  internos em Media. Como o conteúdo H5P é uma atividade LMS, educadores podem
-  associar a ela um tópico existente do `aculta_forum` por `field_lms_activity`;
-  a tela de resposta mostra apenas tópicos autorizados no Group do curso ou da
-  turma. O resolver revalida vínculo LMS e acesso Group. Runtime ainda sem
-  fixture de tópico/Comment; smoke HTTP e visual pendentes.
+  internos em Media. Educadores associam diretamente um tópico existente de `aculta_forum` ao
+  conteúdo H5P por `field_h5p_content`; `field_lms_activity` continua servindo
+  para discussões gerais de atividade. O adapter lista somente conteúdo H5P do
+  curso/turma editável e injeta tópicos permitidos sob o player, revalidando o
+  curso, Group, matrícula e Entity Access. Smoke HTTP autenticado e visual ainda
+  pendentes.
 - Integração com CTools: a condição `Course has interactive activities (H5P)`
   recebe contexto `entity:group` e permite condicionar displays/contextos CTools
   à existência de atividades. O projeto não tem Page Manager instalado; não

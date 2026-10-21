@@ -1,0 +1,24 @@
+uuid: 8546e51c-c0a6-4d87-a5d2-773803a82d0c
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_lms_h5p
+    - node
+  enforced:
+    module:
+      - aculta_forum_lms
+      - aculta_lms_h5p
+id: node.field_h5p_content
+field_name: field_h5p_content
+entity_type: node
+type: entity_reference
+settings:
+  target_type: h5p_content
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: { }
+persist_with_no_fields: false
+custom_storage: false

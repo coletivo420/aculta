@@ -67,9 +67,33 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertTrue($this->config('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
     self::assertTrue($this->syncConfig('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
 
+    $h5pStorage = $this->optionalConfig('field.storage.node.field_h5p_content');
+    self::assertSame('h5p_content', $h5pStorage['settings']['target_type']);
+    self::assertSame($h5pStorage['settings'], $this->syncConfig('field.storage.node.field_h5p_content')['settings']);
+    self::assertContains('aculta_forum_lms', $h5pStorage['dependencies']['enforced']['module']);
+    $h5pField = $this->optionalConfig('field.field.node.aculta_lms_topic.field_h5p_content');
+    self::assertSame('entity_reference', $h5pField['field_type']);
+    self::assertSame($h5pField['settings'], $this->syncConfig('field.field.node.aculta_lms_topic.field_h5p_content')['settings']);
+    self::assertSame('aculta_forum_lms:course_h5p_content', $h5pField['settings']['handler']);
+    self::assertLessThanOrEqual(32, strlen($h5pField['field_name']));
+    self::assertSame('entity_reference_autocomplete', $this->config('core.entity_form_display.node.aculta_lms_topic.default')['content']['field_h5p_content']['type']);
+    self::assertTrue($this->config('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_h5p_content']);
+    self::assertTrue($this->syncConfig('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_h5p_content']);
+
     $services = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum_lms.services.yml')['services'];
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver', $services['aculta_forum_lms.activity_discussion_resolver']['class']);
     self::assertSame(['@aculta_forum_lms.activity_discussion_resolver', '@current_user'], $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['arguments']);
+    self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsH5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
+    self::assertSame(
+      [
+        '@aculta_forum_lms.h5p_discussion_resolver',
+        '@aculta_lms_h5p.course_access',
+        '@current_user',
+        '@entity_type.manager',
+        '@request_stack',
+      ],
+      $services['Drupal\\aculta_forum_lms\\Hook\\LmsH5PDiscussionHooks']['arguments'],
+    );
   }
 
   /**
@@ -188,6 +212,15 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
    */
   private function config(string $name): array {
     $path = dirname(__DIR__, 3) . '/config/install/' . $name . '.yml';
+    self::assertFileExists($path);
+    return Yaml::parseFile($path);
+  }
+
+  /**
+   * Loads one optional install config file by its config object name.
+   */
+  private function optionalConfig(string $name): array {
+    $path = dirname(__DIR__, 3) . '/config/optional/' . $name . '.yml';
     self::assertFileExists($path);
     return Yaml::parseFile($path);
   }
