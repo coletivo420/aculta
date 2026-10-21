@@ -55,7 +55,7 @@ final class CertificateQrCodeProviderTest extends UnitTestCase {
           && ($options['https'] ?? FALSE) === TRUE
           && ($options['domain'] ?? NULL) instanceof DomainInterface,
       ), FALSE)
-      ->willReturn('https://aculta.org/verificar-certificado/opaque-code');
+      ->willReturn('https://main.example.test/verificar-certificado/opaque-code');
     $container = new ContainerBuilder();
     $container->set('url_generator', $url_generator);
     \Drupal::setContainer($container);

@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.49 — remover domínio real do teste QR — 2026-10-21
+
+- O teste de integração QR usa um host reservado `.test`, sem fixar domínio
+  dependente de ambiente. PHPCS Drupal/DrupalPractice e Unit do módulo:
+  51 testes / 281 assertions PASS. O gate geral de endereços continua
+  apontando literais preexistentes em `aculta_qrcode` e `aculta_mailer`, fora
+  desta alteração.
+
 ## 0.1.0-dev.48 — alinhar currículo ao acesso contextual do curso — 2026-10-21
 
 - Sala de curso e painel do estudante agora usam `take course` no curso pai e
