@@ -299,6 +299,7 @@ correspondentes estão habilitados no ambiente.
 | Host | Caminho/padrão | Título / objeto | Estado |
 | --- | --- | --- | --- |
 | `conta.aculta` | `/configuracoes/privacidade` | Privacidade do perfil público (formulário) | Exige `access aculta portal`; sem purpose fixo, acessado pela Minha conta. |
+| `conta.aculta` | `/configuracoes/rastreamento-de-e-mail` | Preferência pessoal para aceitar ou revogar rastreamento de abertura/cliques de e-mail | Rota declarada em `aculta_user`; exige autenticação; grava evento no ledger append-only. Runtime após rebuild/migração pendente de smoke. |
 | `conta.aculta` | `/bio/editar` | Editor da bio no cartão da conta (modal) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
 | `conta.aculta` | `/redes/editar/{rede}` | Editor de link de rede social (`instagram`, `facebook` ou `reddit`) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
 | `main.aculta` | `/u/lendashistoricas` | Memorial de legados (página pública) | Purpose `main`; sem restrição de acesso (`_access: TRUE`). |

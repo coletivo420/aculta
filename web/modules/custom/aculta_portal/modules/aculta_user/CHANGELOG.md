@@ -1,3 +1,11 @@
+## 0.4.0-dev.56 — ledger de aceite e consentimento (em desenvolvimento) — 2026-10-21
+
+- Criado `aculta_user.consent_ledger`: eventos append-only por conta, com encadeamento HMAC verificável usando a chave privada do site; captura IP resolvido pelo Drupal e User-Agent em eventos novos.
+- Aceites de Termos e Privacidade registram UUID/revisão e hash do conteúdo resolvido pelos aliases atuais. Criado formulário autenticado para aceitar/revogar o rastreamento opcional em `/configuracoes/rastreamento-de-e-mail`.
+- `aculta_user_update_10006` copia o estado e data atuais do Agreement para evidência legada incompleta. O módulo contrib ainda não foi removido: faltam auditoria administrativa, limpeza das referências/configuração e validação antes da desinstalação.
+- Evidência pessoal é removida junto com a conta. HMAC detecta alterações na aplicação; não protege contra operador com acesso ao banco e à chave privada.
+- PHP lint: PASS. Runtime: 37 registros migrados, 34 cadeias verificadas sem divergência; smoke do site e da conta HTTP 200. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.55 — troca de e-mail incorporada (aba E-mail da Segurança) — 2026-10-21
 
 - Pedido de troca de e-mail nasce no aculta_user, no lugar do contrib `change_mail_page` (desinstalado no Runtime e removido do `composer.lock`). Classe `ChangemailForm`, ID de formulário `aculta_user_changemail_form`.
@@ -697,9 +705,3 @@ Classificação: PATCH (correção de texto; sem mudança de contrato).
   leitura, sem alteração de conteúdo. HTTP/browser autenticado pendente. PHP CLI
   8.4.26, abaixo da baseline requerida 8.5. RUNTIME STATUS: PARTIAL.
 
-## 0.4.0-dev.56 — ledger de aceite e consentimento (em desenvolvimento) — 2026-10-21
-
-- Criado `aculta_user.consent_ledger`: eventos append-only por conta, com encadeamento HMAC verificável usando a chave privada do site; captura IP resolvido pelo Drupal e User-Agent em eventos novos.
-- `aculta_user_update_10006` copia o estado e data atuais do Agreement para evidência legada incompleta. O módulo contrib ainda não foi removido: faltam interface de revogação/auditoria, snapshots das versões dos documentos, limpeza das referências/configuração e validação/migração no Runtime.
-- Evidência pessoal é removida junto com a conta, conforme retenção escolhida pelo responsável. HMAC detecta alterações na aplicação; não protege contra operador com acesso ao banco e à chave privada.
-- PHP lint dos arquivos alterados: PASS. Runtime: DEFERRED.
