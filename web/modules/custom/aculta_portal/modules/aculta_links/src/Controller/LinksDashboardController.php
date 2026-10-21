@@ -159,6 +159,10 @@ final class LinksDashboardController {
           'title' => new TranslatableMarkup('Editar itens'),
           'url' => Url::fromRoute('aculta_links.page_editor', ['aculta_link_page' => $entity->id()]),
         ];
+        $operations['add_item'] = [
+          'title' => new TranslatableMarkup('Adicionar botão'),
+          'url' => Url::fromRoute('aculta_links.page_item_add', ['aculta_link_page' => $entity->id()]),
+        ];
         $slug = (string) $entity->get('slug')->value;
         if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug) === 1) {
           $page_path = $entity->isPublished()

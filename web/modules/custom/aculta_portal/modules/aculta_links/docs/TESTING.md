@@ -160,3 +160,9 @@ asserções; 7 depreciações upstream), incluindo rota, filtragem de destinos p
 proprietário e acesso. PHPCS Drupal, PHP lint e `git diff --check` PASS. Update
 de banco não é necessário para esta mudança; Runtime/HTTP não foi rebuildado
 enquanto há updates pendentes de `aculta_links` e `aculta_lms` no site comum.
+
+Atalho contextual no dashboard 0.4.0-dev.20: revisão confirma que a ação usa a
+rota com `_entity_access: aculta_link_page.update`; PHPCS, lint, Unit e Kernel
+PASS. Não adiciona update de banco. HTTP/visual permanece DEFERRED porque as
+atualizações do Runtime de teste incluem o update de `aculta_lms` da frente
+concorrente.

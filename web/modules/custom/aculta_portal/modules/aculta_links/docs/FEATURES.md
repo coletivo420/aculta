@@ -65,3 +65,4 @@ A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/ed
 - A identidade do proprietário pode ser apresentada por opção explícita na micropágina. `aculta_user.author_identity_resolver` prepara somente apelido e URL pública permitida; o perfil privado não recebe link. Avatar, bio, e-mail e redes não são herdados. A opção é revisionável e inicia desligada.
 - URIs `entity:node/{id}` resolvem o canonical no purpose da origem do conteúdo e somente aparecem em páginas/redirects públicos se o node estiver publicado e acessível anonimamente. Commerce e outros tipos de entidade seguem pendentes.
 - O editor de cada micropágina tem ação contextual para criar item a partir de destino reutilizável da mesma conta; o submit revalida propriedade e access.
+- A lista de micropáginas do dashboard inclui atalho direto para adicionar botão à página; a própria rota exige acesso de edição e o formulário revalida a propriedade.

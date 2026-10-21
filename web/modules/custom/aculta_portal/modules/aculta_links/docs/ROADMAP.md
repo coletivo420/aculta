@@ -30,8 +30,8 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 ## 0.3.0 — dashboard e editor (em andamento)
 
 Listas paginadas, CRUD Core, operações por entidade, acesso a página pública/preview,
-composição ordenável por tabela Drupal e inclusão contextual de botão a partir
-de destino do proprietário estão implementados. Ainda faltam
+composição ordenável por tabela Drupal, inclusão contextual de botão a partir
+de destino do proprietário e atalho no dashboard estão implementados. Ainda faltam
 validação visual completa, navegação fluida entre páginas e editor de identidade
 em uma experiência coesa inspirada no LinkStack. Uma conta pode ter várias
 páginas; equipes complexas não são prioridade.
