@@ -47,11 +47,11 @@ final class GoogleSearchConsoleClientTest extends TestCase {
         ['date' => 'nope', 'clicks' => 1, 'impressions' => 1],
       ];
     };
-    $client = new GoogleSearchConsoleClient($this->settings('sc-domain:aculta.org', ['type' => 'service_account', 'private_key' => 'x']), $this->logger(), $runner);
+    $client = new GoogleSearchConsoleClient($this->settings('sc-domain:example.invalid', ['type' => 'service_account', 'private_key' => 'x']), $this->logger(), $runner);
 
     $series = $client->report('2026-10-01', '2026-10-02');
 
-    $this->assertSame('sc-domain:aculta.org', $sent[0]);
+    $this->assertSame('sc-domain:example.invalid', $sent[0]);
     $this->assertSame(['startDate' => '2026-10-01', 'endDate' => '2026-10-02', 'dimensions' => ['date'], 'dataState' => 'all'], $sent[1]);
     $this->assertSame(
       ['2026-10-01' => ['clicks' => 3, 'impressions' => 40], '2026-10-02' => ['clicks' => 7, 'impressions' => 90]],
@@ -71,7 +71,7 @@ final class GoogleSearchConsoleClientTest extends TestCase {
     $runner = static function (): array {
       throw new \RuntimeException('credencial-que-nao-pode-vazar');
     };
-    $client = new GoogleSearchConsoleClient($this->settings('sc-domain:aculta.org', ['type' => 'service_account', 'private_key' => 'x']), $logger, $runner);
+    $client = new GoogleSearchConsoleClient($this->settings('sc-domain:example.invalid', ['type' => 'service_account', 'private_key' => 'x']), $logger, $runner);
 
     $this->assertNull($client->report('2026-10-01', '2026-10-02'));
   }
