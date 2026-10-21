@@ -1940,3 +1940,8 @@ Classificação: PATCH de apresentação; mantém o diálogo Core e acrescenta t
 - `user-upload-dialog` recebe classe semântica do ACULTA420 e tamanho responsivo com rolagem; o Fórum preserva tokens contextuais de anexo e galeria.
 - Documentação do design system atualizada. Inspeção visual pré-RC pendente.
 
+## 0.6.0-dev.144 — inspeção X11 do shell compartilhado de upload — 2026-10-21
+
+- Fixture representativa com o CSS real de `dialog.css` verificada no Firefox/X11 em 390, 768 e 1024 px: modal dentro do viewport, conteúdo com rolagem e rótulo do campo visível. Evidências locais privadas em `~/.local/share/aculta-evidence/user-upload-x11/`.
+- Limite: a fixture não é o formulário renderizado pelo Drupal; inspeção do modal servido no Runtime permanece pendente. Sem mudança de CSS ou versão do tema.
+

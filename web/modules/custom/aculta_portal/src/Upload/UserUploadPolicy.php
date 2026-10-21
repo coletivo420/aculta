@@ -29,26 +29,41 @@ final class UserUploadPolicy {
     private readonly ImageInspector $imageInspector,
   ) {}
 
-  /** Returns the normalized extensions enabled by the Portal administrator. */
+  /**
+   * Returns the normalized extensions enabled by the Portal administrator. */
   public function allowedExtensions(?string $consumer = NULL): array {
-    $configured = (string) ($this->settings($consumer)['allowed_extensions'] ?? self::DEFAULT_EXTENSIONS);
-    $extensions = preg_split('/\s+/', strtolower(trim($configured))) ?: [];
-    $extensions = array_values(array_unique(array_filter($extensions)));
-    return $extensions !== [] && array_diff($extensions, self::SUPPORTED_EXTENSIONS) === []
-      ? $extensions
-      : explode(' ', self::DEFAULT_EXTENSIONS);
+    $configured = $this->settings($consumer)['allowed_extensions'] ?? self::DEFAULT_EXTENSIONS;
+    $extensions = $this->normalizeExtensions((string) $configured);
+    if ($extensions !== NULL) {
+      return $extensions;
+    }
+
+    if ($consumer !== NULL) {
+      $global = $this->normalizeExtensions((string) ($this->configFactory->get('aculta_portal.user_upload')->get('allowed_extensions') ?? self::DEFAULT_EXTENSIONS));
+      if ($global !== NULL) {
+        return $global;
+      }
+    }
+    return explode(' ', self::DEFAULT_EXTENSIONS);
   }
 
-  /** Returns the configured per-file limit in bytes (10 MiB by default). */
+  /**
+   * Returns the configured per-file limit in bytes (10 MiB by default). */
   public function maxBytes(?string $consumer = NULL): int {
     $megabytes = (int) ($this->settings($consumer)['max_size_mb'] ?? 10);
+    if ($megabytes < 1 || $megabytes > intdiv(PHP_INT_MAX, 1048576)) {
+      $megabytes = $consumer !== NULL
+        ? (int) ($this->configFactory->get('aculta_portal.user_upload')->get('max_size_mb') ?? 10)
+        : 10;
+    }
     if ($megabytes < 1 || $megabytes > intdiv(PHP_INT_MAX, 1048576)) {
       $megabytes = 10;
     }
     return $megabytes * 1048576;
   }
 
-  /** Returns enabled raster extensions accepted by aculta_image. */
+  /**
+   * Returns enabled raster extensions accepted by aculta_image. */
   public function imageExtensions(?string $consumer = NULL): string {
     $extensions = array_intersect($this->allowedExtensions($consumer), explode(' ', ImageUploadPolicy::EXTENSIONS));
     if ($extensions === []) {
@@ -59,13 +74,15 @@ final class UserUploadPolicy {
     return $extensions;
   }
 
-  /** Returns File API validators for an image upload. */
+  /**
+   * Returns File API validators for an image upload. */
   public function imageValidators(?string $consumer = NULL): array {
     $extensions = $this->imageExtensions($consumer);
     return $extensions === '' ? [] : $this->imagePolicy->validators($this->maxBytes($consumer), $extensions) + ['FileIsImage' => []];
   }
 
-  /** Confirms extension, size and decoded raster dimensions through aculta_image. */
+  /**
+   * Confirms extension, size and decoded raster dimensions through aculta_image. */
   public function isValidImage(FileInterface $file, ?string $consumer = NULL): bool {
     return in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), explode(' ', $this->imageExtensions($consumer)), TRUE)
       && $file->getSize() > 0
@@ -73,19 +90,22 @@ final class UserUploadPolicy {
       && $this->imageInspector->dimensions($file->getFileUri()) !== NULL;
   }
 
-  /** Confirms an enabled document extension and the consumer's size limit. */
+  /**
+   * Confirms an enabled document extension and the consumer's size limit. */
   public function isValidDocument(FileInterface $file, ?string $consumer = NULL): bool {
     return in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), explode(' ', $this->documentExtensions($consumer)), TRUE)
       && $file->getSize() > 0
       && $file->getSize() <= $this->maxBytes($consumer);
   }
 
-  /** Returns enabled non-image document extensions. */
+  /**
+   * Returns enabled non-image document extensions. */
   public function documentExtensions(?string $consumer = NULL): string {
     return implode(' ', array_diff($this->allowedExtensions($consumer), explode(' ', ImageUploadPolicy::EXTENSIONS)));
   }
 
-  /** Returns File API validators for a non-image file upload. */
+  /**
+   * Returns File API validators for a non-image file upload. */
   public function documentValidators(?string $consumer = NULL): array {
     $extensions = $this->documentExtensions($consumer);
     return $extensions === '' ? [] : [
@@ -94,7 +114,8 @@ final class UserUploadPolicy {
     ];
   }
 
-  /** Resolves consumer overrides, falling back to the site-wide policy. */
+  /**
+   * Resolves consumer overrides, falling back to the site-wide policy. */
   private function settings(?string $consumer): array {
     $config = $this->configFactory->get('aculta_portal.user_upload');
     if ($consumer !== NULL) {
@@ -110,6 +131,16 @@ final class UserUploadPolicy {
       'allowed_extensions' => $config->get('allowed_extensions'),
       'max_size_mb' => $config->get('max_size_mb'),
     ];
+  }
+
+  /**
+   * Returns a configured extension list only when every entry is supported. */
+  private function normalizeExtensions(string $configured): ?array {
+    $extensions = preg_split('/\s+/', strtolower(trim($configured))) ?: [];
+    $extensions = array_values(array_unique(array_filter($extensions)));
+    return $extensions !== [] && array_diff($extensions, self::SUPPORTED_EXTENSIONS) === []
+      ? $extensions
+      : NULL;
   }
 
 }

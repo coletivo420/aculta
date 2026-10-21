@@ -3617,3 +3617,10 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
 - O modal e a integração de Media permanecem no domínio do consumidor; Wiki e LMS são a próxima etapa de migração.
 - Código e configuração ainda sem validação de Runtime; estado Dev.
 
+## 0.4.0-dev.251 — kernel central de upload alinhado às garantias do Fórum — 2026-10-21
+
+- `UserUploadPolicy` preserva as garantias de validação do fluxo antigo com allowlist e limite globais/por consumidor; configuração inválida de consumidor recua para a política global em vez de ampliar permissões. A UI central corrige resolução de tradução e usa os constraints File API de Drupal 11.
+- `UserUploadPolicyKernelTest`: 5 testes, 83 assertions PASS; cobre abas administrativas, fallback, Managed File, inspeção raster por `aculta_image` e restrição contextual de `aculta_gallery`. O Kernel de publicação/limpeza do Fórum permanece como regressão do lifecycle de consumidor.
+- X11 Firefox: fixture representativa do shell de upload com CSS real do ACULTA420 em 390, 768 e 1024 px; largura, rolagem e rótulo acessível PASS. Isso não substitui inspeção do modal servido por Drupal no Runtime, que permanece DEFERRED.
+- Validação: Kernel central 5/83, Kernel do Fórum 6/148, ACULTA420 `PortalUiHooksTest` 6/29, PHPCS e PHP lint PASS; gates `aculta_image` e `aculta_gallery` PASS. `validate-aculta-portal-drupal11` permanece bloqueado pelo índice global de status (faltam status de `aculta_document_viewer` e `aculta_document_viewer_group`; README gerado também desatualizado por frentes concorrentes). Nenhuma mudança de Runtime ou deploy.
+

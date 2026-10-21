@@ -7,7 +7,8 @@ namespace Drupal\aculta_portal\Upload;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
-/** Builds the shared upload dialog shell and Managed File controls. */
+/**
+ * Builds the shared upload dialog shell and Managed File controls. */
 final class UserUploadDialogBuilder {
 
   public function __construct(
@@ -15,7 +16,8 @@ final class UserUploadDialogBuilder {
     private readonly TranslationInterface $translation,
   ) {}
 
-  /** Applies the common dialog wrapper and Drupal editor AJAX libraries. */
+  /**
+   * Applies the common dialog wrapper and Drupal editor AJAX libraries. */
   public function wrap(array &$form, string $dialog_id, string $consumer, ?string $context_token = NULL): void {
     $ui_tokens = ['user-upload-dialog'];
     if ($context_token !== NULL && preg_match('/^[a-z][a-z0-9-]*$/', $context_token)) {
@@ -28,7 +30,8 @@ final class UserUploadDialogBuilder {
     $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
   }
 
-  /** Adds the shared image/document controls using a consumer policy. */
+  /**
+   * Adds the shared image/document controls using a consumer policy. */
   public function addFileControls(
     array &$form,
     string $consumer,
@@ -41,7 +44,7 @@ final class UserUploadDialogBuilder {
     if ($image_extensions !== '') {
       $form[$image_key] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('Imagens'),
+        '#title' => $this->translation->translate('Imagens'),
         '#description' => $this->translation->translate('Extensões: @extensions. Máximo por arquivo: @size.', [
           '@extensions' => $image_extensions,
           '@size' => ByteSizeMarkup::create($this->policy->maxBytes($consumer)),

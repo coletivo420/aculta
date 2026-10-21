@@ -21,8 +21,12 @@ paralelo nem depender do tema para funcionar.
 
 A política reutilizável de upload de usuários pertence ao Portal e é documentada
 em [`docs/portal/USER-UPLOADS.md`](../../../../docs/portal/USER-UPLOADS.md).
-Consumidores reutilizam `aculta_portal.user_upload_policy`; publicação e acesso
-continuam vinculados às entidades de cada domínio.
+Consumidores reutilizam `aculta_portal.user_upload_policy` e
+`aculta_portal.user_upload_dialog_builder`; a política global/per-domain,
+constraints Managed File e modal comum ficam no Portal, enquanto publicação,
+acesso, retenção e apresentação continuam vinculados às entidades de cada
+domínio. O contrato e a matriz de regressão com Fórum, `aculta_image` e
+`aculta_gallery` estão em [`USER-UPLOADS.md`](../../../../docs/portal/USER-UPLOADS.md).
 
 As extensões próprias incluem o ACULTA Forum com histórico de leitura por conta,
 contexto, descoberta e autoria pública das atividades por meio dos cartões do
