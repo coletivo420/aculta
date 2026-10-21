@@ -33,6 +33,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.131` | Foco de teclado no conteúdo principal | `forum-index-visual.mjs`: primeiro Tab revela link de salto com `:focus-visible`, Enter transfere foco a `main#main-content`. Firefox ESR/X11: raiz 15/15, `/categorias` 15/15, 390/768/1024 em claro/escuro (escuro forçado localmente no DOM); nenhum submit ou escrita. Inclui captura do link focado a 390 px. |
 | `0.1.0-dev.130` | Preservar imagem inline ao mover comentário | Kernel integra Editor Core: imagem `data-entity-uuid` mantém `file_usage` associado ao CID depois da mudança de tópico. 19 testes / 386 assertions PASS no MariaDB dedicado; Runtime não alterado. |
 | `0.1.0-dev.129` | Contrato de anexos em comentários | Unit verifica formato de texto, embeds existentes de documento e upload inline de imagem pelo CKEditor alinhado ao `aculta_image.UploadPolicy`. Upload direto de PDF/Office permanece pendente de decisão; nenhuma permissão ampliada. |
 | `0.1.0-dev.128` | PHPCS dos docblocks de atividade | Comentários do produtor de eventos compatíveis com Drupal/DrupalPractice; sem alteração funcional. |

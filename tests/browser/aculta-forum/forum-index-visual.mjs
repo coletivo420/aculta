@@ -53,6 +53,13 @@ const request = async (method, path, body) => {
 };
 const sessionPath = (suffix) => `/session/${session}${suffix}`;
 const execute = (script) => request('POST', sessionPath('/execute/sync'), { script, args: [] });
+const key = (value) => request('POST', sessionPath('/actions'), {
+  actions: [{
+    type: 'key',
+    id: 'forum-keyboard-review',
+    actions: [{ type: 'keyDown', value }, { type: 'keyUp', value }],
+  }],
+});
 const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 const bidiCommand = (method, params = {}) => new Promise((resolveCommand, rejectCommand) => {
   const id = ++bidiId;
@@ -104,6 +111,38 @@ try {
   check('A listagem apresenta categorias sem conteúdo de tópicos', initial.categories > 0 && initial.topics === 0, JSON.stringify(initial));
   check('A página não apresenta bundle do Fórum contrib legado',
     await execute(`return !document.querySelector('.node--type-forum, .node--type-comment-forum')`));
+
+  await bidiCommand('browsingContext.setViewport', { context, viewport: { width: 390, height: 844, devicePixelRatio: 1 } });
+  await key('\uE004');
+  const skipLink = await execute(`
+    const active = document.activeElement;
+    const rect = active.getBoundingClientRect();
+    const style = getComputedStyle(active);
+    return {
+      tag: active.tagName,
+      href: active.getAttribute('href'),
+      text: active.innerText.trim(),
+      focusVisible: active.matches(':focus-visible'),
+      rendered: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0,
+    };
+  `);
+  check('Primeiro Tab revela link visível para pular ao conteúdo',
+    skipLink.tag === 'A' && skipLink.href === '#main-content'
+    && skipLink.focusVisible && skipLink.rendered, JSON.stringify(skipLink));
+  const skipScreenshot = await request('GET', sessionPath('/screenshot'));
+  const skipFilename = `forum-index-${pageUrl.pathname === '/' ? 'home' : 'categorias'}-skip-link-390.png`;
+  writeFileSync(resolve(output, skipFilename), Buffer.from(skipScreenshot, 'base64'), { mode: 0o600 });
+  await key('\uE007');
+  await sleep(100);
+  const skipDestination = await execute(`return {
+    hash: location.hash,
+    activeId: document.activeElement.id,
+    mainTabindex: document.getElementById('main-content')?.getAttribute('tabindex'),
+  };`);
+  check('Enter no link de salto move o foco para a região principal',
+    skipDestination.hash === '#main-content'
+    && skipDestination.activeId === 'main-content'
+    && skipDestination.mainTabindex === '-1', JSON.stringify(skipDestination));
 
   for (const width of [390, 768, 1024]) {
     await bidiCommand('browsingContext.setViewport', { context, viewport: { width, height: 844 }, devicePixelRatio: 1 });

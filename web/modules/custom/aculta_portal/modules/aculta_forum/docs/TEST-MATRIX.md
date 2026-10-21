@@ -1,3 +1,15 @@
+## dev.131 — foco de teclado no conteúdo principal
+
+- `forum-index-visual.mjs` envia Tab e Enter por ações WebDriver na raiz e em
+  `/categorias`. Verifica que o primeiro Tab revela visualmente o link
+  `#main-content`, e Enter coloca o foco em `<main id="main-content" tabindex="-1">`.
+- Firefox ESR/X11: raiz 15/15, `/categorias` 15/15; quatro verificações de
+  teclado PASS, 390/768/1024 CSS px sem overflow em claro/escuro (escuro forçado
+  localmente no DOM). Captura do link focado a 390 px e capturas
+  `0600` em `/home/aculta/private/aculta/visual-tests/forum-rc-dev131-keyboard-home-20261021/`
+  e `/home/aculta/private/aculta/visual-tests/forum-rc-dev131-keyboard-categories-20261021/`.
+  GET-only, sem submissão ou mutação do Runtime.
+
 ## dev.130 — imagem inline preservada no movimento
 
 - `ForumCommentMoverKernelTest::testMovePreservesInlineEditorImageUsage` usa o

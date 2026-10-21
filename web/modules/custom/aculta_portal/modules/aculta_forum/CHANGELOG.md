@@ -1,3 +1,18 @@
+## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
+
+- `forum-index-visual.mjs` usa Tab e Enter via WebDriver no teste anônimo das
+  páginas públicas: o primeiro Tab deve revelar o link de salto com foco visível
+  e Enter deve focar `main#main-content`.
+- `node --check` PASS. Firefox ESR/X11 no Runtime de teste: 30/30 verificações
+  no conjunto (15/15 na raiz e 15/15 em `/categorias`), incluindo 18
+  verificações de viewport/tema e quatro de teclado; capturas nos diretórios
+  privados `forum-rc-dev131-keyboard-home-20261021` e
+  `forum-rc-dev131-keyboard-categories-20261021`.
+- Captura específica do link de salto focado a 390 px também fica em cada
+  diretório; o modo escuro é forçado somente no DOM do navegador.
+- Navegação só com GET, Tab e Enter; nenhum formulário foi submetido e nenhuma
+  configuração foi alterada.
+
 ## `0.1.0-dev.130` — comprova imagem inline após mover comentário
 
 - Kernel `ForumCommentMoverKernelTest` salva uma imagem inline referenciada
