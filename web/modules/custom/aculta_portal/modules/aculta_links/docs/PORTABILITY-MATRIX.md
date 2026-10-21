@@ -9,7 +9,7 @@
 | `SocialLinksSettingsForm.php` e `SocialLinksFormCallbacks.php` | Configuração e botões dinâmicos Form API/AJAX. | Movidos ao `aculta_links` em 0.4.0-dev.6; acesso e fallback preservados. | PORTADO; teste Kernel e formulário no Runtime pendentes. |
 | `aculta_portal.social_links` e `aculta_links.social_links` | Canais e botões configuráveis. | Valores atuais preservados na configuração legada; update `10002` cria chave nova e form dual-write temporário. | Migrar sem excluir a fonte legada; remover compatibilidade somente após rollback aceito. |
 | `SocialLinksThemeSuggestions.php` e preprocess Portal | Escolhe template e injeta dados. | Código específico LINKS. | PORTADO ao submódulo; mantém contrato neutro com ACULTA420. |
-| View `aculta_projects`, display `social_links` | Cards editoriais no landing. | Compartilhada e fonte de verdade editorial. | REUTILIZAR via Views API. |
+| View `aculta_projects`, display `social_links` | Removida com o tipo projeto (2026-10-21). | Não se aplica. | REMOVIDO. |
 | `node.page.field_social_links` e displays | Campo Link multivalorado de páginas. | Uso no template dedicado não localizado. | INVESTIGAR, não remover/migrar. |
 | `node--social-links.html.twig` | Adapta Node ao SDC de links. | Apresentação tema. | PRESERVAR; mudar contrato com revisão/gates. |
 | SDC `social-links-page` | Layout mobile, tokens e apresentação. | Experimental; recebe dados Drupal. | ADAPTAR posteriormente sem lógica de domínio. |

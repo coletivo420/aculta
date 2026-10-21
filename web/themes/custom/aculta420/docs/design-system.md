@@ -300,8 +300,8 @@ O catálogo UI Styles também oferece elevação de superfície por
 tokens de cada modo. A opção é única e não substitui a sombra de foco/interação
 nem permite escolher valores livres.
 
-Os SDCs `project-card` e `course_card` compõem esse pattern em sua variante
-vertical, mantendo seus contratos especializados. Projetos preservam mídia já
+Os SDCs `course_card` compõem esse pattern em sua variante
+vertical, mantendo seus contratos especializados. O antigo `project-card` foi removido com o tipo projeto. Projetos preservam mídia já
 renderizada, categoria, resumo e CTA; o cartão do LMS mantém props/slots,
 marcação de integração e dados/access/cache fornecidos pelo Drupal LMS. A
 variante sobreposta segue reservada a mídias editoriais apropriadas, sem forçar

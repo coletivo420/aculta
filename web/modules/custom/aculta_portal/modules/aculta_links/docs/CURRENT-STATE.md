@@ -39,7 +39,7 @@ com dados/editoria antes de qualquer migração.
 | Domain `links_aculta_org` e mapeamento do purpose | EXISTENTE E FUNCIONAL (config/código; DNS de produção não confirmado) | Preservar; resolução pertence ao Domain e ao `DomainPurposeManager`. |
 | Rota raiz e mapeamento para `/redes-sociais` | RESTAURADA; Runtime HTTP 200 na raiz e 404 no caminho direto após rebuild | Rota preserva Node editorial de origem correta; fallback reutiliza configuração/Views sem editar política compartilhada do Portal. |
 | Canais sociais institucionais e botões configuráveis | EXISTENTE E FUNCIONAL por código; estado visual não revalidado | Portar a propriedade para o submódulo em etapa própria, preservando valores. |
-| View `aculta_projects`, display `social_links` | EXISTENTE E FUNCIONAL como integração editorial compartilhada | Reutilizar via Views; não copiar Nodes nem criar dados espelhados. |
+| View `aculta_projects`, display `social_links` | REMOVIDA em 2026-10-21 com o tipo projeto; a seção de projetos da página de Links saiu junto. | Não há mais integração de projetos. |
 | Pattern `aculta420:social-links-page` e template Node dedicado | EXISTENTE, apresentação experimental | Preservar nesta fase; adaptar quando o contrato de micropágina estiver definido. |
 | `node.page.field_social_links` | EXISTENTE; consumidor no template dedicado não localizado | Investigar preenchimento e referências; não remover nem migrar nesta fase. |
 | Redes pessoais e perfil `/u/{apelido}` do `aculta_user` | EXISTENTE E FUNCIONAL em outro purpose/contrato | Preservar como capacidade compartilhada, com exposição explícita. |

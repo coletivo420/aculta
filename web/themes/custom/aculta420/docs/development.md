@@ -89,7 +89,6 @@ Core/Bootstrap5/contrib:
 | `navigation/breadcrumb.html.twig` | apresentar o título atual preparado pelo Portal |
 | `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |
 | `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
-| `node--project--teaser.html.twig` | teaser de projeto existente até o Card System v1 |
 | `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
 | `views-view-fields--aculta-forum-categories--page-categories.html.twig` | compõe campos Taxonomy já renderizados no SDC `forum-category`; evita duplicar wrappers/markup de campos por fora da estrutura do componente |
 | `views-view-unformatted--aculta-forum-categories--page-categories.html.twig` | adiciona a grade responsiva preservando `row.attributes`, o título de agrupamento e o conteúdo da linha Core |

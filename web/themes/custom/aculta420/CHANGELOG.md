@@ -1,3 +1,10 @@
+## Sem versão — remoção do tipo de conteúdo projeto (2026-10-21)
+
+- Removido o tipo `project` do código e da configuração: campos, displays, view `aculta_projects`, blocos de cabeçalho, pathauto, metatag, captcha, permissão de criação e bundle de busca.
+- Removidos os campos `field_project` de activity, revista e media_gallery, e as views `aculta_related_activities` e `aculta_related_news`.
+- Runtime de teste: 5 nós de projeto excluídos depois de backup do banco; a configuração foi removida pela API do Drupal.
+- Versão e data de release: pendentes de classificação do responsável. O manifesto não foi alterado.
+
 ## 0.6.0-dev.147 — auditoria Mobile First (documental) — 2026-10-21
 
 Classificação: PATCH documental; sem alteração de código ou incremento de versão.

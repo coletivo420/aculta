@@ -33,7 +33,7 @@ components/
 ├── content/
 │   ├── editorial-card/       (stable)
 │   ├── course_card/          (experimental, replaces LMS card)
-│   └── project-card/         (experimental, 0.3.0)
+│   └── (project-card removido com o tipo projeto)
 └── patterns/
     └── social-links-page/    (experimental, 0.6.0)
 ```
@@ -79,7 +79,7 @@ Estado em 0.4.0. Todos experimentais por política, até consumo estável e vali
 | --- | --- | --- | --- |
 | `aculta420:content-section` | `components/patterns/content-section/` | `block--block-content--type--basic.html.twig` | campos `field_section_title`, `field_section_heading`, `field_section_variant` e o corpo |
 | `aculta420:hero` | `components/patterns/hero/` | `ThemeHooks::preprocessNode()` (página `page` na visualização full) | campos `field_hero_*` do nó |
-| `aculta420:content-grid` | `components/patterns/content-grid/` | `views-view-unformatted--aculta-projects.html.twig` | linhas da view (cada uma com seu presenter) |
+| `aculta420:content-grid` | `components/patterns/content-grid/` | (view de projetos removida com o tipo projeto) | linhas de uma view (cada uma com seu presenter) |
 | `aculta420:carousel` | `components/patterns/carousel/` | `views-view-vvjb.html.twig` | engine VVJB, sem alteração |
 | `aculta420:rail` | `components/patterns/rail/` | `views-view-unformatted--courses-catalog.html.twig` | linhas do catálogo de cursos (card do LMS) |
 
@@ -90,7 +90,7 @@ foi conferido contra o original antes da gravação.
 Pendências da 0.4:
 
 - **Seções editoriais** agora são renderizadas pela hook de tema `aculta_section`, declarada pelo `aculta_portal` (`PortalHooks::theme()`). O `EditorialHooks::entityViewAlter()` entrega título, subtítulo, variante e corpo para blocos `basic`. O template `aculta-section.html.twig` do tema monta o `content-section`; o template do módulo é só um fallback neutro.
-- **Cabeçalho de projetos** é um bloco `basic` ("Cabeçalho — Nossos projetos") posicionado por visibilidade de purpose: `aculta_projects_header_home` em `<front>` e `aculta_projects_header_page` em `/projetos`, ambos com `aculta_domain_purpose = main`. A view de projetos não tem mais cabeçalho próprio. Nenhum ramo por purpose existe no tema.
+- **Cabeçalho de projetos** foi removido com o tipo projeto (2026-10-21). Nenhum ramo por purpose existe no tema.
 - **Cabeçalho por domínio** segue a prática do projeto: o Domain Header é único para todos os domínios. Cada seção de subdomínio é um bloco com visibilidade `aculta_domain_purpose`, configurado por placement; o tema apenas apresenta o bloco. Um novo subdomínio recebe seu próprio placement, sem mudança de código.
 - **Carrossel**: o wrapper foi migrado, mas a view da home está desativada no Runtime, então não foi visto em navegador.
 - **Estruturas internas** (`aculta-areas`, `aculta-callout`, `aculta-page-intro`, `aculta-editorial-link`, `aculta-institutional-note`): **decisão registrada (T1): permanecem como rich text no corpo.** São texto editorial sem schema fixo. Virar SDC exigiria um modelo de conteúdo por bloco, o que é decisão de produto e não entra no saneamento. Revisar só se o responsável pedir.
@@ -108,15 +108,9 @@ presenters especializados preservam as linhas e seus attributes e o SDC organiza
 hierarquia/descrição numa grade responsiva. Não carrega entidades, constrói URLs
 ou decide filtros/acesso; isso continua com Drupal Views e o Portal.
 
-### `aculta420:project-card`
+### `aculta420:project-card` (removido)
 
-Status: experimental (0.3.0). Local: `components/content/project-card/`.
-
-Slots: `media` (omitido quando vazio), `category`, `title` (link), `summary`, `cta` (link).
-O presenter `node--project--teaser.html.twig` mantém `<article>`, attributes e links;
-o SDC compõe o pattern `aculta420:card` e mantém os slots e classes semânticas do
-projeto. A mídia continua renderizada pelo Drupal e contida sem recorte. Sem props,
-JavaScript ou consulta de dados.
+O SDC foi removido em 2026-10-21, quando o tipo de conteúdo projeto foi retirado do Runtime e do código. Não há consumidor restante.
 
 ### `aculta420:course_card`
 
@@ -168,7 +162,6 @@ Criar `aculta420:button` agora criaria uma segunda API parcial.
 Roadmap de cards:
 
 - editorial-card;
-- project-card;
 - course-card;
 - product-card somente quando Commerce possuir catálogo real.
 
