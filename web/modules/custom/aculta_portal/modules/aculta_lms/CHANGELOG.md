@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.12 — aba do painel da turma no contexto de Group — 2026-10-20
+
+- Corrige a aba local do painel do educador para pertencer à rota canônica de
+  Group; antes ela usava a tela de estudantes do curso como base e herdava o
+  curso pai no parâmetro `group`, em vez da turma selecionada.
+- A rota do painel continua validando que o Group é turma LMS vinculada a um
+  curso e que a conta tem `grade students` nesse curso ou administra o LMS.
+- Revisão de código identificou a origem do parâmetro herdado; a alteração de
+  base route requer smoke visual em turma real, ainda DEFERRED no Runtime.
+
 ## 0.1.0-dev.11 — painéis de aprendizagem F12 (implementação inicial) — 2026-10-20
 
 - Adiciona a seção autenticada `/minha-aprendizagem` à navegação de conta, com
