@@ -193,13 +193,19 @@ headers do PDF. Unit e gates passam. O QR integra `aculta_qrcode` por URL
 absoluta do `DomainPurposeManager`; o SVG é servido sem persistir arquivo e o
 PNG é incorporado ao PDF. No Runtime de teste, a rota pública para código
 inexistente e as rotas de QR e PDF com código inexistente retornam 404. No
-Runtime há zero certificados, zero status aprovado atual e o único curso não
-tem carga horária; portanto, não existe fixture real elegível para smoke
-positivo sem alterar conteúdo existente. O 404 inicial foi corrigido por
+Runtime há zero certificados e zero status aprovado atual. Em 2026-10-21,
+`field_course_hours` não existia na configuração ativa; após revisar o diff
+global (dezenas de itens) e confirmar que o storage ainda não tinha tabela nem
+valores, foi importado parcialmente somente o storage do campo, a definição do
+campo no bundle `lms_course` e seu widget no formulário ativo. A prévia mostrou
+exatamente duas criações e uma atualização; a configuração anterior do formulário
+foi guardada para recuperação e os demais itens locais foram preservados. O
+campo existe agora, mas tem zero valores e não há status aprovado; não foi criada
+uma conclusão artificial nem certificado público. Portanto, ainda não existe
+fixture real elegível para smoke positivo. O 404 inicial foi corrigido por
 `drush cr`, que atualizou um container compilado com argumentos antigos do
-serviço. Não houve alteração de dados nem configuração. RUNTIME STATUS:
-parcial; emissão positiva, QR/PDF válidos, schema/config e revisão visual
-continuam DEFERRED.
+serviço. RUNTIME STATUS: parcial; campo e formulário ativos, emissão positiva,
+QR/PDF válidos para código real e revisão visual continuam DEFERRED.
 
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
