@@ -67,7 +67,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | `/user/{uid}/edit`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
 | `/user/{uid}`, próprio usuário | `/` (Conta) | 302 | `AccountRouteSubscriber` | Perfil público não existe; a conta é a visão geral |
 | `/user/{uid}`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
-| Rotas de troca de e-mail (`change_mail_page.*`) | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Troca de e-mail fica na segurança |
+| Rotas legadas de troca de e-mail (`aculta_user_changemail.legado`, `aculta_user_changemail.legado_usuario`) | `/seguranca` (Conta) | 302 | `ChangemailRedirectController` (aculta_user) | Troca de e-mail fica na segurança |
 | `/user` (página legada do Core) | raiz da Conta | 302 | `PortalController::legacyUserPageRedirect` | Página do Core sem interface própria |
 | `/carrinho` no host da loja (SHOP) | `/carrinho` no host principal (MAIN) | 302 | `DomainPurposeRequestSubscriber` e política de pagamento | Carrinho e checkout pertencem ao MAIN |
 | `/busca` enviada pelo formulário | `/busca?q=<termo>` | 302 | `SearchPageForm::submitForm` | Busca em GET com o termo na URL |

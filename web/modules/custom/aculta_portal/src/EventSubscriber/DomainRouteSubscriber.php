@@ -66,8 +66,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'entity.aculta_mail_confirmer.response_form' => '/confirmar-email/{aculta_mail_confirmer}/{hash}',
       'entity.aculta_mail_confirmer.resend' => '/confirmar-email/reenviar/{confirmation}',
       'aculta_mail_confirmer_user.cancel_email_change' => '/seguranca/email/cancelar/{user}',
-      'change_mail_page.change_mail' => '/seguranca/email',
-      'change_mail_page.change_mail_form' => '/seguranca/email/{user}',
       'social_auth.network.redirect' => '/oauth/{network}',
       'social_auth.network.callback' => '/oauth/{network}/retorno',
       'commerce_payment.notify' => '/integracoes/pagamentos/{commerce_payment_gateway}/notificacao',

@@ -34,7 +34,7 @@ $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enu
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
 $assert($modules->moduleExists('aculta_mail_confirmer') && $modules->moduleExists('aculta_mail_confirmer_user'), 'ACULTA Mail Confirmer and its user integration are enabled.');
-$assert($modules->moduleExists('change_mail_page'), 'Change Mail Page supplies the canonical new-address form.');
+$assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
 $assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
 // A camada de envio E-Mails ACULTA controla o envio: o transporte padrão (smtp_hostinger) precisa de usuário e de
 // senha, e a senha tem de estar no arquivo de segredos (nenhuma Key, nenhuma senha no banco de configuração).
@@ -47,9 +47,8 @@ $assert(!array_key_exists('pass', $smtp_versioned) && !array_key_exists('passwor
 $login_composer = json_decode(file_get_contents(DRUPAL_ROOT . '/../composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $login_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/login_emailusername'))[0] ?? NULL;
 $assert(($login_package['version'] ?? NULL) === '3.0.1', 'Login Email or Username remains at the audited 3.0.1 release.');
-$change_mail_package = array_values(array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/change_mail_page'))[0] ?? NULL;
 $assert(!array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/email_confirmer'), 'Email Confirmer is incorporated: the contrib package drupal/email_confirmer is no longer in composer.lock.');
-$assert(($change_mail_package['version'] ?? NULL) === '1.0.2', 'Change Mail Page remains on its stable 1.0.2 release.');
+$assert(!array_filter($login_composer['packages'], static fn(array $package): bool => $package['name'] === 'drupal/change_mail_page'), 'Change Mail Page is incorporated: the contrib package drupal/change_mail_page is no longer in composer.lock.');
 $mail_backend = \Drupal::config('system.mail')->get('interface.default');
 $assert($mail_backend === 'aculta_mailer', 'The default mail backend is camada de envio E-Mails ACULTA (aculta_mailer).');
 $assert(\Drupal::moduleHandler()->moduleExists('aculta_mailer') && !\Drupal::moduleHandler()->moduleExists('mailer_override'), 'camada de envio E-Mails ACULTA is enabled and the contrib mailer_override is removed.');

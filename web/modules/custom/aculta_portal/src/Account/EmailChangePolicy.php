@@ -7,8 +7,8 @@ namespace Drupal\aculta_portal\Account;
 /**
  * Onde o e-mail pode ser alterado.
  *
- * Regra do responsável: o formulário de troca de e-mail existe somente dentro de Minha Conta (ChangeMailForm, do
- * change_mail_page). A edição de conta do Core (administrador e conta própria) não oferece o campo de e-mail.
+ * Regra do responsável: o formulário de troca de e-mail existe somente dentro de Minha Conta (aba E-mail da Segurança,
+ * AccountEmailChangeForm, do aculta_user). A edição de conta do Core (administrador e conta própria) não oferece o campo de e-mail.
  * Criar conta, por administrador, continua oferecendo o campo.
  */
 final class EmailChangePolicy {

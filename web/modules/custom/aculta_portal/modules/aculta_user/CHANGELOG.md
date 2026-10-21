@@ -1,3 +1,14 @@
+## 0.4.0-dev.55 — troca de e-mail incorporada (aba E-mail da Segurança) — 2026-10-21
+
+- Pedido de troca de e-mail nasce no aculta_user, no lugar do contrib `change_mail_page` (desinstalado no Runtime e removido do `composer.lock`). Classe `ChangemailForm`, ID de formulário `aculta_user_changemail_form`.
+- O formulário não grava o novo endereço: o `aculta_mail_confirmer_user` intercepta o save e envia o link de uso único de 24 horas. O e-mail só muda após a confirmação.
+- Melhorias sobre o contrib: a senha atual é conferida pelo serviço `password`, com limite de 5 tentativas erradas por hora (`flood`, evento `aculta_user_changemail_password`); e-mail igual ao atual é recusado; o formulário não é pré-preenchido com o e-mail atual; mensagens em português no próprio formulário.
+- Sem confirmação ligada (`aculta_mail_confirmer_user.settings` `user_email_change.enabled`), o formulário não é exibido e recusa o envio: nunca grava direto.
+- Hook `ChangemailHooks` no ponto `aculta_portal_changemail` (alter da aba E-mail; só entrega o formulário quando o envio está pronto).
+- Caminhos legados `/seguranca/email` e `/seguranca/email/{user}` (rotas `aculta_user_changemail.legado` e `aculta_user_changemail.legado_usuario`) viram `302` para a aba E-mail, via `ChangemailRedirectController`. Só a própria conta.
+- Teste: validação direta no Runtime (`drush scr`) confirmou senha errada recusada e nenhuma gravação do e-mail. Pedido válido e confirmação ficam para o teste de navegador.
+- `aculta_user.info.yml` 0.4.0-dev.55. RUNTIME STATUS: DEFERRED (teste de navegador da aba E-mail pendente).
+
 ## 0.4.0-dev.54 — evento de transição de amizade para o Messenger — 2026-10-21
 
 - `FriendshipChangedEvent` (`aculta_user.friendship_changed`) disparado ao registrar um pedido (`requested`) e ao aceitar (`accepted`). Carrega só identificadores e o instante, sem dados pessoais.

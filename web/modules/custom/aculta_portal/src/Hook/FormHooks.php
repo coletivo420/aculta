@@ -100,19 +100,6 @@ final class FormHooks {
       $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
     }
 
-    if ($formId === 'change_mail_form'
-      && $this->routeMatch->getRouteName() === 'aculta_portal.security') {
-      $form['account']['mail']['#title'] = $this->translation->translate('Novo e-mail');
-      $form['account']['mail']['#description'] = $this->translation->translate(
-        'Você precisará confirmar este endereço antes que ele passe a ser usado na sua conta.',
-      );
-      $form['account']['mail']['#attributes']['autocomplete'] = 'email';
-      $form['account']['current_pass']['#title'] = $this->translation->translate('Senha atual');
-      $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
-      $form['actions']['submit']['#value'] = $this->translation->translate('Solicitar alteração de e-mail');
-      $form['#submit'][] = 'aculta_portal.form_callbacks:changeMailConfirmationMessage';
-    }
-
     if ($formId === 'user_form'
       && $this->routeMatch->getRouteName() === 'aculta_portal.security_password'
       && $formObject instanceof AccountForm) {

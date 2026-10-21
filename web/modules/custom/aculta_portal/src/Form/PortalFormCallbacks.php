@@ -156,16 +156,6 @@ final class PortalFormCallbacks {
     }
   }
 
-
-  /** Replaces Change Mail Page's premature success claim. */
-  public function changeMailConfirmationMessage(array &$form, FormStateInterface $formState): void {
-    $this->messenger->deleteByType('status');
-    $this->messenger->addStatus($this->translation->translate(
-      'A solicitação foi registrada. Seu e-mail atual permanece ativo até a confirmação do novo endereço.',
-    ));
-    $formState->setRedirect('aculta_portal.security');
-  }
-
   /** Valida a senha escolhida no cadastro e guarda-a no form state para gravar depois do salvamento. */
   public function validateRegistrationPassword(array &$form, FormStateInterface $formState): void {
     $pass = (string) $formState->getValue('pass');

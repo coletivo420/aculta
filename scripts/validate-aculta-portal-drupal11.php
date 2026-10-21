@@ -441,14 +441,12 @@ $check(
   'P4.1 Hook classes are auto-discovered/autowired; do not add redundant FormHooks YAML service definitions.',
 );
 foreach ([
-  "'change_mail_form'",
   "'user_form'",
   'PaymentGatewayForm',
   "'commerce_donation_pane'",
   "'credentials_test'",
   "'access_token_test'",
   "'client_secret'",
-  "'aculta_portal.form_callbacks:changeMailConfirmationMessage'",
   "'aculta_portal.form_callbacks:securityPasswordAfterBuild'",
   "'aculta_portal.form_callbacks:securityPasswordRedirect'",
   "'aculta_portal.form_callbacks:validateDonationAmount'",
@@ -502,8 +500,7 @@ $check(
   'P4-R removed #[FormAlter] attribute must remain absent.',
 );
 $check(
-  substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:changeMailConfirmationMessage'") === 1
-    && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordAfterBuild'") === 1
+  substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordAfterBuild'") === 1
     && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:securityPasswordRedirect'") === 1
     && substr_count($formHooksSource ?? '', "'aculta_portal.form_callbacks:validateDonationAmount'") === 1,
   'P4-R FormHooks must preserve the four P3 service callbacks exactly once.',
@@ -615,7 +612,6 @@ foreach ([
 
 $formCallbackRegistrations = [
   'validateActivity' => [$editorialHooksSource],
-  'changeMailConfirmationMessage' => [$formHooksSource],
   'securityPasswordRedirect' => [$formHooksSource],
   'securityPasswordAfterBuild' => [$formHooksSource],
   'accountPhotoRedirect' => [$portalHooksSource],

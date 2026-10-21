@@ -119,14 +119,14 @@ try {
   $assert($user_auth->authenticate($user->getAccountName(), 'wrong-' . $suffix) === FALSE, 'Drupal Core rejects an incorrect local password.');
   $switch_depth++;
 
-  $form = \Drupal\change_mail_page\Form\ChangeMailForm::create($container);
+  $form = \Drupal\aculta_user\Form\ChangemailForm::create($container);
   $form_state = new \Drupal\Core\Form\FormState();
   $form_state->set('user', $user);
   $form_state->setValue('mail', $new_email);
   $form_state->setValue('current_pass', $password);
   $form_array = [];
   $form->validateForm($form_array, $form_state);
-  $assert(!$form_state->getErrors(), 'Correct current password passes Change Mail Page validation.');
+  $assert(!$form_state->getErrors(), 'Correct current password passes the account e-mail change validation.');
   $form->submitForm($form_array, $form_state);
 
   $user = $user_storage->load($user->id());

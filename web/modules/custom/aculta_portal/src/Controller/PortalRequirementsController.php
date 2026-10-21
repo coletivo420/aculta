@@ -87,13 +87,6 @@ final class PortalRequirementsController extends ControllerBase {
       'purpose' => 'Autenticação Drupal com username ou e-mail no mesmo campo.',
     ],
     [
-      'name' => 'Change Mail Page',
-      'modules' => ['change_mail_page'],
-      'package' => 'drupal/change_mail_page',
-      'minimum' => '^1.0.2',
-      'purpose' => 'Formulário de solicitação de alteração do e-mail.',
-    ],
-    [
       'name' => 'Social API / Social Auth',
       'modules' => ['social_api', 'social_auth'],
       'package' => 'drupal/social_auth',

@@ -1,3 +1,11 @@
+## 0.4.0-dev.240 — troca de e-mail incorporada ao aculta_user; contrib change_mail_page retirado — 2026-10-21
+
+- Dependência `change_mail_page` removida de `aculta_portal.info.yml`. A aba E-mail da Segurança recebe o formulário pelo ponto `aculta_portal_changemail` (alter), entregue pelo aculta_user (`ChangemailForm`). O Portal só monta a aba e a mensagem de "sem serviço de mensagens".
+- Retirados: `PortalController` (import e montagem do `ChangeMailForm`), `FormHooks` (rótulos e callback do formulário do contrib), `PortalFormCallbacks::changeMailConfirmationMessage`, ramo de rota em `AccountRouteSubscriber`, mapeamento em `DomainRouteSubscriber`, breadcrumb de `AcultaBreadcrumbBuilder` e a entrada em `PortalRequirementsController`.
+- `EmailChangePolicy`: comentário atualizado. A regra não muda: troca de e-mail só na Minha Conta.
+- Gates: `validate-aculta-portal-drupal11`, `validate-public-slugs`, `validate-portal-commerce-security` e `institution/phase6-account-email-test.php` atualizados para a nova classe e para a ausência do contrib.
+- `aculta_portal.info.yml` 0.4.0-dev.240. RUNTIME STATUS: DEFERRED (teste de navegador da aba E-mail pendente).
+
 ## 0.4.0-dev.239 — associado fora da hierarquia de papéis; item Associado na Minha conta — 2026-10-21
 
 - Papel `associado` retirado da cadeia de herança (`aculta_portal.role_hierarchy`) e do formulário da hierarquia. `lms_teacher` herda de `estudante`. Decisão do responsável de 2026-10-21 (associado é situação).

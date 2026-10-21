@@ -228,8 +228,8 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/foto` | Foto de perfil | Condicional à configuração de perfil/imagens; próprio usuário. |
 | `conta.aculta` | `/seguranca` | Painel de segurança e e-mail da conta | Conta autenticada; próprio usuário. |
 | `conta.aculta` | `/seguranca/senha` | Alteração de senha | Conta autenticada; validação de senha vigente. |
-| `conta.aculta` | `/seguranca/email` | Início da alteração de e-mail | Conta autenticada e validações de confirmação. |
-| `conta.aculta` | `/seguranca/email/{user}` | Formulário/token de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
+| `conta.aculta` | `/seguranca/email` | Caminho legado da troca de e-mail (`aculta_user_changemail.legado`) | Sem página própria: `302` para a aba E-mail da Segurança. Conta autenticada. |
+| `conta.aculta` | `/seguranca/email/{user}` | Caminho legado com `{user}` (`aculta_user_changemail.legado_usuario`) | `302` para a aba E-mail da Segurança; `{user}` precisa ser a própria conta (outra conta recebe `403`). |
 | `conta.aculta` | `/seguranca/email/cancelar/{user}` | Cancelamento de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
 | `conta.aculta` | `/identidade/editar` | Edição técnica/legada do perfil próprio | Navegação redirecionada para `/seguranca`; acesso alheio é negado. |
 | `conta.aculta` | `/identidade/{user}` | Perfil técnico/legado de usuário | Para o próprio usuário redireciona à raiz da Conta; perfil alheio não é exibido. |
@@ -382,8 +382,9 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/user/{uid}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para o dono; acesso ao perfil de outra pessoa é negado. |
 | `/identidade/editar` | `conta.aculta:/seguranca` | Edição legada do próprio perfil | `302` para o painel de segurança; usuário alheio recebe negação. |
 | `/identidade/{user}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para a raiz da conta; usuário alheio recebe negação. |
-| `/seguranca/email` | `conta.aculta:/seguranca` | Tela legada de troca de e-mail | `302` para segurança, após validar titularidade. |
-| `/seguranca/email/{user}` | `conta.aculta:/seguranca` | Formulário legado de troca de e-mail | `302` para segurança, após validar titularidade/token. |
+| `/seguranca/email` | `conta.aculta:/seguranca` | Caminho legado da troca de e-mail (`aculta_user_changemail.legado`) | `302` para a aba E-mail da Segurança, após validar login. |
+| `/seguranca/email/{user}` | `conta.aculta:/seguranca` | Caminho legado com `{user}` (`aculta_user_changemail.legado_usuario`) | `302` para a aba E-mail da Segurança, só para a própria conta; outra conta recebe `403`. |
+| `/user/change-mail` e `/user/{user}/change-mail` | — | Caminhos do contrib `change_mail_page`, removido | Sem rota (`404`). Nenhum link do site aponta para eles. |
 | `/carrinho` em `loja.aculta` | `/carrinho` em `main.aculta` | Continuação da compra no domínio responsável pelo checkout | `302` cross-purpose confiável, via política de domínio. |
 | `/enderecos` | `conta.aculta:/dados/endereco` | Lista legada de endereços | `302` para endereço único. |
 | `/enderecos/novo/{tipo}` | `conta.aculta:/dados/endereco` | Criação legada de endereço | `302` para endereço único. |

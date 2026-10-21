@@ -171,3 +171,28 @@ aculta_user.associado_pedido:
     _permission: 'access aculta portal'
   options:
     _aculta_domain_purpose: 'account'
+
+# Caminhos legados da troca de e-mail (antes do contrib change_mail_page): levam à aba E-mail da Segurança.
+aculta_user_changemail.legado:
+  path: '/seguranca/email'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ChangemailRedirectController::redirectToSecurity'
+    _title: 'Segurança'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user_changemail.legado_usuario:
+  path: '/seguranca/email/{user}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ChangemailRedirectController::redirectToSecurity'
+    _title: 'Segurança'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    user: '\d+'
+  options:
+    _aculta_domain_purpose: 'account'
+    parameters:
+      user:
+        type: entity:user

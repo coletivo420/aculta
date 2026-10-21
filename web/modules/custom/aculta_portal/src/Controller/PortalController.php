@@ -13,7 +13,6 @@ use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
-use Drupal\change_mail_page\Form\ChangeMailForm;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -373,8 +372,7 @@ final class PortalController extends ControllerBase {
       'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
       'current_email' => ['#plain_text' => $account->getEmail()],
     ];
-    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user') && $this->modules->moduleExists('change_mail_page')) {
-      $section_content['change_form'] = $this->accountFormBuilder->getForm(ChangeMailForm::class, $account);
+    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user')) {
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $section_content['pending'] = [
@@ -386,7 +384,9 @@ final class PortalController extends ControllerBase {
         ];
       }
     }
-    else {
+    // O formulário de pedido de troca é do aculta_user (ponto aculta_portal_changemail). Sem ele, a aba só informa.
+    $this->modules->alter('aculta_portal_changemail', $section_content, $account, $email_ready);
+    if (!isset($section_content['change_form'])) {
       $section_content['mail_notice'] = ['#plain_text' => $this->t('A alteração de e-mail estará disponível após a ativação do serviço de mensagens da conta.')];
     }
     return $section_content;

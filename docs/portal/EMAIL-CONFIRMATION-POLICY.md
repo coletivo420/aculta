@@ -88,7 +88,7 @@ Decisão do responsável (2026-10-09): a resposta do cadastro não revela se o e
 ## 9. Troca de e-mail (decisão 2, 2026-10-12)
 
 **Decisão do responsável:** a troca de e-mail dispara uma nova confirmação do novo endereço, e o papel
-`email_confirmed` permanece na conta. A troca só existe no formulário de Minha Conta (`change_mail_page`); a edição
+`email_confirmed` permanece na conta. A troca só existe no formulário de Minha Conta (`aculta_user`, `ChangemailForm`, aba E-mail da Segurança); a edição
 de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
 
 **Como funciona hoje (código e configuração verificados):**

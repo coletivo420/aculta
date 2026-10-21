@@ -11,7 +11,7 @@ Data da revisão: 2026-10-07.
 | username_enumeration_prevention | reduz enumeração de contas no fluxo público |
 | social_auth + social_auth_google | OAuth Google e vínculo com Drupal User |
 | email_confirmer + email_confirmer_user | confirmação de alterações de e-mail |
-| change_mail_page | UI para alteração de e-mail |
+| aculta_user (aba E-mail) | Pedido de troca de e-mail; substitui o contrib change_mail_page, desinstalado |
 | captcha + turnstile | proteção de formulários anônimos; Turnstile é o único challenge |
 | aculta_portal | integração, Domain ACCOUNT e apresentação da área de conta |
 
@@ -131,7 +131,7 @@ Nome provisório documental: `aculta_email_verification`.
 
 ### Relação com Email Confirmer e Change Mail
 
-`email_confirmer`, `email_confirmer_user` e `change_mail_page` permanecem o baseline atual.
+`email_confirmer` e `email_confirmer_user` permanecem o baseline atual. O formulário de troca de e-mail é do `aculta_user` (`ChangemailForm`).
 
 A ferramenta própria só deve ser criada se esses módulos deixarem de atender o projeto e nenhuma alternativa Core/contrib melhor existir. Se houver substituição, remover a solução anterior; nunca manter dois sistemas concorrentes de confirmação.
 

@@ -78,10 +78,6 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
         return;
       }
     }
-    elseif ($route === 'change_mail_page.change_mail'
-      || ($route === 'change_mail_page.change_mail_form' && $target_id === $own_uid)) {
-      $destination = 'aculta_portal.security';
-    }
 
     if ($destination !== NULL) {
       $target = $destination === '<front>'
