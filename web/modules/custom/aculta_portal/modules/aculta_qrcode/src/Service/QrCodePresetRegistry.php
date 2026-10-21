@@ -39,6 +39,30 @@ final class QrCodePresetRegistry {
   }
 
   /**
+   * Aplica cores opcionais do código ao preset, validando o contraste.
+   *
+   * Sem cores, devolve o preset. Com cores, cria um preset novo: a validação
+   * de contraste do construtor de `QrCodePreset` recusa combinações que não
+   * sejam legíveis.
+   *
+   * @throws \Drupal\aculta_qrcode\Exception\InvalidQrCodeException
+   */
+  public function customized(string $id, ?string $foreground, ?string $background): QrCodePreset {
+    $base = $this->get($id);
+    if ($foreground === NULL && $background === NULL) {
+      return $base;
+    }
+    return new QrCodePreset(
+      id: $base->id,
+      foreground: $foreground ?? $base->foreground,
+      background: $background ?? $base->background,
+      size: $base->size,
+      margin: $base->margin,
+      errorCorrection: $base->errorCorrection,
+    );
+  }
+
+  /**
    * Lista os identificadores disponíveis.
    *
    * @return string[]

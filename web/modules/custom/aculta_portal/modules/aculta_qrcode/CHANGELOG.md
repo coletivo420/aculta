@@ -1,5 +1,12 @@
 # Changelog — ACULTA QR Code
 
+## 0.4.0-dev.2 — personalização visual do QR dinâmico — 2026-10-20
+
+- Campos opcionais `foreground` e `background` (`#RRGGBB`) sobrescrevem as cores do preset. A cor é validada pelo contraste mínimo de 4,5:1 no formulário e na exportação (`QrCodePresetRegistry::customized()`).
+- Campo `caption` (legenda) e `framed` (moldura) são aplicados na exportação em PDF. PNG, WebP e SVG não recebem legenda nem moldura nesta versão: compor texto ou borda em raster exigiria processamento de imagem fora desta fase.
+- Validação: Unit 27 testes PASS; Kernel 11 testes PASS (84 asserções) no banco `aculta_simpletest`; PHPCS PASS.
+- Logo por arquivo segue pendente: depende da modelagem de campo de imagem com a política do `aculta_image` (bundle ou campo base), a decidir.
+
 ## 0.4.0-dev.1 — painel administrativo e exportação — 2026-10-20
 
 - Painel em `/painel-administrativo/aculta/codigos-qr`: lista com downloads por formato, criação, edição (cada salvamento cria revisão) e exclusão, com permissão `administer aculta qr codes`. O caminho administrativo fica no purpose `main` pelo subscriber do Portal.

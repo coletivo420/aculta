@@ -6,6 +6,7 @@ namespace Drupal\aculta_qrcode\Form;
 
 use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
 use Drupal\aculta_qrcode\Service\QrCodeManager;
+use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,11 +26,17 @@ final class QrCodeForm extends ContentEntityForm {
   private QrCodeManager $manager;
 
   /**
+   * Presets, usados para validar as cores personalizadas.
+   */
+  private QrCodePresetRegistry $presets;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->manager = $container->get('aculta_qrcode.manager');
+    $instance->presets = $container->get('aculta_qrcode.preset_registry');
     return $instance;
   }
 
@@ -55,6 +62,12 @@ final class QrCodeForm extends ContentEntityForm {
     }
     catch (InvalidQrCodeException $exception) {
       $form_state->setErrorByName('valid_until', $exception->getMessage());
+    }
+    try {
+      $this->presets->customized($entity->getPresetId(), $entity->getForeground(), $entity->getBackground());
+    }
+    catch (InvalidQrCodeException $exception) {
+      $form_state->setErrorByName('foreground', $exception->getMessage());
     }
   }
 

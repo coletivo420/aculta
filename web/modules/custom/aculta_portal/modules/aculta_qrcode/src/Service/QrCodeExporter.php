@@ -117,10 +117,16 @@ final class QrCodeExporter {
     $payload = $this->payload($entity);
     $png = $this->generator->generate($payload, $this->preset($entity), QrCodeFormat::Png);
     $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    $frame = $entity->isFramed()
+      ? 'main{border:2px solid #527a61;padding:14mm}'
+      : '';
+    $caption = $entity->getCaption();
     $html = '<!doctype html><html lang="pt-BR"><meta charset="utf-8"><style>'
       . '@page{size:A4;margin:20mm}body{font-family:DejaVu Sans,sans-serif;text-align:center;color:#1b1b1b}'
-      . 'img{width:90mm;height:90mm}.url{font-size:11pt;word-break:break-all}</style><main>'
+      . 'img{width:90mm;height:90mm}.url{font-size:11pt;word-break:break-all}.caption{font-size:16pt}'
+      . $frame . '</style><main>'
       . '<img alt="QR Code" src="data:image/png;base64,' . base64_encode($png) . '">'
+      . ($caption !== NULL ? '<p class="caption">' . $escape($caption) . '</p>' : '')
       . '<p class="url">' . $escape($payload) . '</p></main></html>';
 
     $engine = $this->printEngines->createInstance('dompdf', [
@@ -146,12 +152,12 @@ final class QrCodeExporter {
   }
 
   /**
-   * Preset do código.
+   * Preset do código, com as cores sobrescritas e validadas.
    *
    * @throws \Drupal\aculta_qrcode\Exception\InvalidQrCodeException
    */
   private function preset(QrCode $entity): QrCodePreset {
-    return $this->presets->get($entity->getPresetId());
+    return $this->presets->customized($entity->getPresetId(), $entity->getForeground(), $entity->getBackground());
   }
 
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_qrcode\Unit;
 
 use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
+use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
 use Drupal\aculta_qrcode\Value\QrCodePreset;
 use Drupal\Tests\UnitTestCase;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -34,6 +35,19 @@ final class QrCodePresetTest extends UnitTestCase {
     $this->expectException(InvalidQrCodeException::class);
     $this->expectExceptionMessage('Contraste insuficiente');
     $this->preset(foreground: '#777777');
+  }
+
+  /**
+   * Sobrescreve cores do preset somente quando informadas, com validação.
+   */
+  public function testCustomizedOverridesColorsWithContrastCheck(): void {
+    $registry = new QrCodePresetRegistry();
+    $base = $registry->get('aculta_padrao');
+
+    self::assertEquals($base, $registry->customized('aculta_padrao', NULL, NULL));
+    self::assertSame('#000000', $registry->customized('aculta_padrao', '#000000', NULL)->foreground);
+    $this->expectException(InvalidQrCodeException::class);
+    $registry->customized('aculta_padrao', '#777777', NULL);
   }
 
   /**

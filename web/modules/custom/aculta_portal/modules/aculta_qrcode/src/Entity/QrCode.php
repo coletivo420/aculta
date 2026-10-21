@@ -92,6 +92,37 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
   }
 
   /**
+   * Cor dos módulos sobrescrita (`#RRGGBB`), ou NULL para a do preset.
+   */
+  public function getForeground(): ?string {
+    $value = $this->get('foreground')->value;
+    return $value === NULL || $value === '' ? NULL : (string) $value;
+  }
+
+  /**
+   * Cor de fundo sobrescrita (`#RRGGBB`), ou NULL para a do preset.
+   */
+  public function getBackground(): ?string {
+    $value = $this->get('background')->value;
+    return $value === NULL || $value === '' ? NULL : (string) $value;
+  }
+
+  /**
+   * Legenda exibida na exportação em PDF, ou NULL.
+   */
+  public function getCaption(): ?string {
+    $value = $this->get('caption')->value;
+    return $value === NULL || $value === '' ? NULL : (string) $value;
+  }
+
+  /**
+   * Indica se a exportação em PDF tem moldura.
+   */
+  public function isFramed(): bool {
+    return (bool) $this->get('framed')->value;
+  }
+
+  /**
    * Início da validade em timestamp Unix, ou NULL para sem início.
    */
   public function getValidFrom(): ?int {
@@ -145,6 +176,37 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
       ->setSetting('max_length', 32)
       ->setDefaultValue('aculta_padrao')
       ->setRevisionable(TRUE);
+
+    $fields['foreground'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Cor dos módulos'))
+      ->setDescription(new TranslatableMarkup('Opcional, formato #RRGGBB. Vazio usa a cor do preset. Precisa de contraste mínimo de 4,5:1 com o fundo.'))
+      ->setSetting('max_length', 7)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 15])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['background'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Cor de fundo'))
+      ->setDescription(new TranslatableMarkup('Opcional, formato #RRGGBB. Vazio usa a cor do preset.'))
+      ->setSetting('max_length', 7)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 16])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['caption'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Legenda'))
+      ->setDescription(new TranslatableMarkup('Texto exibido abaixo do QR na exportação em PDF.'))
+      ->setSetting('max_length', 120)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', ['type' => 'string_textfield', 'weight' => 17])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['framed'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Moldura na exportação em PDF'))
+      ->setRevisionable(TRUE)
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', ['type' => 'boolean_checkbox', 'weight' => 18])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['valid_from'] = BaseFieldDefinition::create('datetime')
       ->setLabel(new TranslatableMarkup('Válido a partir de'))
