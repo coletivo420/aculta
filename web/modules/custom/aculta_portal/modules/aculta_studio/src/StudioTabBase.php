@@ -8,6 +8,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -28,6 +29,7 @@ abstract class StudioTabBase extends PluginBase implements StudioTabInterface, C
     protected readonly ModuleHandlerInterface $moduleHandler,
     TranslationInterface $stringTranslation,
     protected readonly DomainPurposeManager $domainPurposes,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->stringTranslation = $stringTranslation;
@@ -63,6 +65,7 @@ abstract class StudioTabBase extends PluginBase implements StudioTabInterface, C
       $container->get('module_handler'),
       $container->get('string_translation'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('entity_type.manager'),
     );
   }
 

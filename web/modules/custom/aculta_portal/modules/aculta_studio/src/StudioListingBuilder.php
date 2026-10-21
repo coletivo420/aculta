@@ -54,7 +54,7 @@ final class StudioListingBuilder {
     $stateQuery = $stateStorage->getQuery()
       ->accessCheck(FALSE)
       ->condition('content_entity_type_id', 'node')
-      ->condition('workflow', 'revista');
+      ->condition('workflow', $listing['workflow'] ?? 'revista');
     if ($state !== NULL) {
       $stateQuery->condition('moderation_state', $state);
     }
