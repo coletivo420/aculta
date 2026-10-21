@@ -109,3 +109,13 @@ incluídos no render da página. Preview, dashboard e rotas de CRUD recebem
 `noindex, nofollow`. A política privada tem teste Unit; headers renderizados,
 canonical em Runtime e integração visual permanecem DEFERRED enquanto o
 container Drush de teste não compilar por alteração externa do `aculta_lms`.
+
+## Links curtos 0.4.0-dev.13
+
+O primeiro save de um destino Drupal atribui um código aleatório de 12
+caracteres; `/redirecionar/{codigo}` consulta exclusivamente entidades
+publicadas, revalida Entity Access e valida a URI antes de responder 302. O
+dashboard mostra o link curto no host do purpose `links`. O update `10004`
+instala o campo sem reescrever destinos existentes; entidades antigas ganham
+um código quando forem salvas novamente. Runtime/migração estão DEFERRED por
+falha externa do container `aculta_lms`.

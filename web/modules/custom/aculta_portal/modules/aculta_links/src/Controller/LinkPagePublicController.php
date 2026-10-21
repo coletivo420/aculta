@@ -6,8 +6,10 @@ namespace Drupal\aculta_links\Controller;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkPage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -75,6 +77,46 @@ final class LinkPagePublicController {
     $build = $this->buildPage($page, FALSE);
     $build['#cache']['max-age'] = 0;
     return $build;
+  }
+
+  /**
+   * Resolves a published reusable destination by its opaque short code.
+   */
+  public function redirectByCode(string $codigo): TrustedRedirectResponse {
+    $storage = $this->entityTypeManager->getStorage('aculta_link');
+    $ids = $storage->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('short_code', $codigo)
+      ->condition('status', TRUE)
+      ->range(0, 2)
+      ->execute();
+    if (count($ids) !== 1) {
+      throw new NotFoundHttpException();
+    }
+
+    $link = $storage->load(reset($ids));
+    if (!$link instanceof Link || !$link->isPublished()) {
+      throw new NotFoundHttpException();
+    }
+    $access = $link->access('view', $this->currentUser, TRUE);
+    if (!$access->isAllowed() || $link->validate()->count() > 0) {
+      throw new NotFoundHttpException();
+    }
+
+    try {
+      $url = $link->get('uri')->first()?->getUrl();
+      if (!$url instanceof Url) {
+        throw new NotFoundHttpException();
+      }
+      $response = new TrustedRedirectResponse($url->setAbsolute()->toString(), 302);
+    }
+    catch (\InvalidArgumentException) {
+      throw new NotFoundHttpException();
+    }
+
+    return $response
+      ->addCacheableDependency($link)
+      ->addCacheableDependency($access);
   }
 
   /**

@@ -51,6 +51,17 @@ aculta_links.page_qr_code:
   options:
     _aculta_domain_purpose: links
 
+aculta_links.short_redirect:
+  path: '/redirecionar/{codigo}'
+  defaults:
+    _controller: 'aculta_links.public_page_controller:redirectByCode'
+    _title: 'Redirecionamento de link'
+  requirements:
+    codigo: '[0-9a-z]{12}'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: links
+
 aculta_links.landing:
   path: '/redes-sociais'
   defaults:

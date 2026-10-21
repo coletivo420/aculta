@@ -65,3 +65,22 @@ function aculta_links_update_10003(): string {
 
   return 'Added revisionable availability-window fields to existing ACULTA Links items; existing items remain immediately available with no end date.';
 }
+
+/**
+ * Installs the generated short-code field on existing reusable destinations.
+ */
+function aculta_links_update_10004(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('short_code', 'aculta_link') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_link');
+    $update_manager->installFieldStorageDefinition(
+      'short_code',
+      'aculta_link',
+      'aculta_links',
+      $definitions['short_code'],
+    );
+  }
+
+  return 'Added the opaque short-code field; existing destinations receive a code when next saved.';
+}

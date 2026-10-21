@@ -78,6 +78,10 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $public_route = $route_provider->getRouteByName('aculta_links.page_public');
     self::assertSame('/pagina/{slug}', $public_route->getPath());
     self::assertSame('links', $public_route->getOption('_aculta_domain_purpose'));
+    $short_redirect_route = $route_provider->getRouteByName('aculta_links.short_redirect');
+    self::assertSame('/redirecionar/{codigo}', $short_redirect_route->getPath());
+    self::assertSame('links', $short_redirect_route->getOption('_aculta_domain_purpose'));
+    self::assertSame(['GET', 'HEAD'], $short_redirect_route->getMethods());
     $page_add_route = $route_provider->getRouteByName('entity.aculta_link_page.add_form');
     self::assertSame('/painel-administrativo/links/pagina/adicionar', $page_add_route->getPath());
     self::assertTrue($page_add_route->getOption('_admin_route'));
@@ -126,6 +130,12 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       'status' => TRUE,
     ]);
     $link->save();
+    $short_code = (string) $link->get('short_code')->value;
+    self::assertMatchesRegularExpression('/^[0-9a-z]{12}$/D', $short_code);
+    $short_response = $this->container->get('aculta_links.public_page_controller')
+      ->redirectByCode($short_code);
+    self::assertSame(302, $short_response->getStatusCode());
+    self::assertSame('https://example.org/', $short_response->getTargetUrl());
     $first_revision_id = $link->getRevisionId();
 
     $page = LinkPage::create([

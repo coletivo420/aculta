@@ -114,6 +114,18 @@ final class Link extends EditorialContentEntityBase implements EntityOwnerInterf
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['short_code'] = BaseFieldDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Código do link curto'))
+      ->setDescription(new TranslatableMarkup('Código público permanente gerado automaticamente para destinos publicados.'))
+      ->setSetting('max_length', 12)
+      ->addConstraint('UniqueField')
+      ->addPropertyConstraints('value', [
+        'Regex' => [
+          'pattern' => '/^[a-z0-9]{12}$/D',
+          'message' => new TranslatableMarkup('O código deve conter 12 letras minúsculas ou números.'),
+        ],
+      ]);
+
     $fields['uid']->setRevisionable(TRUE);
     $fields['status']->setDisplayOptions('form', [
       'type' => 'boolean_checkbox',

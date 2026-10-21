@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.11`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.13`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
@@ -13,6 +13,8 @@ Páginas publicadas têm download de QR Code SVG em
 `links` sem armazenar imagem ou medir visitas.
 Metatag fornece título, descrição, canonical Domain, Open Graph e Schema.org
 por página; rotas privadas de edição e preview são `noindex`.
+Destinos publicados também recebem um código curto aleatório e permanente,
+disponível em `/redirecionar/{codigo}` no purpose `links`.
 
 A configuração e o formulário administrativo dos canais sociais também estão
 no submódulo. Os valores são migrados sem apagar `aculta_portal.social_links`, e

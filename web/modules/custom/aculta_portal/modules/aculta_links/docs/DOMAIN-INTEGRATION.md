@@ -18,8 +18,8 @@ Contrato futuro:
   configuração de hostname.
 - Provisionar aliases `links.aculta.*` pela política Domain/`aculta_deployer`,
   sem resolver hostnames em paralelo.
-- Micropáginas e slugs usam APIs/rotas Drupal; `/pagina/{slug}` e
-  `/redirecionar/{codigo}` são propostas, não rotas existentes. A administração
+- Micropáginas e links curtos usam APIs/rotas Drupal; `/pagina/{slug}` e
+  `/redirecionar/{codigo}` são rotas de `aculta_links` no purpose `links`. A administração
   fica no purpose `main` sob `/painel-administrativo/**`. Verificar palavras
   reservadas e sitemap antes de declarar caminhos.
 - Resolver destinos internos via Entity URL/Route APIs e purpose canônico; não

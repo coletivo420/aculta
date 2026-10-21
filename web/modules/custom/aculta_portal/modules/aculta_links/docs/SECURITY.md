@@ -28,8 +28,11 @@
   inclusive após redirects.
 - Escapar texto; conteúdo rico só por formatos/filtros Drupal permitidos. Nunca
   renderizar HTML arbitrário de tema.
-- Links curtos resolvem códigos publicados e destinos aprovados, evitando open
-  redirect; aplicar Flood/rate limit em criação e cliques.
+- `/redirecionar/{codigo}` resolve apenas um destino publicado, revalida Entity
+  Access e executa a constraint de URL antes de emitir `TrustedRedirectResponse`
+  302. Códigos têm 12 caracteres aleatórios e não aceitam destino na requisição;
+  o endpoint não registra cliques. Monitorar abuso e definir rate limiting se
+  tráfego/anomalias indicarem necessidade, sem limitar visitas legítimas por IP.
 - A auditoria de 2026-10-20 registrou `GHSA-mg7g-g2wv-6mhr` para
   `UserController::saveLink` do LinkStack até v4.8.6. Não portar esse fluxo ou
   sua autorização; revalidar Entity Access e ownership no Drupal.

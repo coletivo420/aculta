@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.13 — publica destinos por links curtos — 2026-10-20
+
+- Destinos reutilizáveis recebem código opaco aleatório de 12 caracteres em alfabeto minúsculo/dígitos, globalmente único e gerado antes do primeiro save. Campo adicionado por update `10004`; destinos antigos recebem código ao serem salvos novamente.
+- `/redirecionar/{codigo}` no purpose `links` só atende GET/HEAD e exige destino publicado, Entity Access público e validação atual do destino. Redirect 302 usa `TrustedRedirectResponse`; respostas variam por tags do destino/access. Nenhuma medição de clique foi adicionada.
+- O dashboard mostra a URL curta para destinos publicados usando `DomainPurposeManager`; hostname não é concatenado no código.
+- Validação: Kernel 2 testes/82 asserções PASS (7 depreciações upstream), PHPCS Drupal, PHP lint e diff-check PASS. Update `10004` e HTTP no Runtime DEFERRED pelo erro externo de container em `aculta_lms`.
+
 ## 0.4.0-dev.12 — fornece SEO nativo para micropáginas — 2026-10-20
 
 - Integração pela API/alter hook do Metatag gera title, description, canonical Domain, Open Graph e Schema.org a partir da micropágina publicada; texto de descrição é convertido para texto simples e limitado a 300 caracteres.

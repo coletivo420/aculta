@@ -99,3 +99,9 @@ canonical nos previews privados; PHPCS e lint PASS. O Kernel manteve 2/76 PASS,
 com 5 depreciações provenientes do Metatag/Token e de APIs do Core acionadas
 pelos contribs. A emissão de metadata em HTTP e a cache no Runtime ficam
 DEFERRED pelo bloqueio do bootstrap Drush descrito acima.
+
+Links curtos 0.4.0-dev.13: Kernel PASS (2 testes/82 asserções), cobrindo rota,
+purpose, métodos GET/HEAD, geração opaca de 12 caracteres e resposta 302 para
+destino HTTPS validado. PHPCS, PHP lint e `git diff --check` PASS; há sete
+depreciações de APIs do Core/Metatag/Token no Kernel. Update `10004` e smoke
+HTTP DEFERRED pelo mesmo erro de container externo do `aculta_lms`.

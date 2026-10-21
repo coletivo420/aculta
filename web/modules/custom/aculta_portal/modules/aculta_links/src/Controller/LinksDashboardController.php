@@ -111,7 +111,7 @@ final class LinksDashboardController {
     }
     $entities = $storage->loadMultiple($query->execute());
     $rows = [];
-    $links_domain = $entity_type_id === 'aculta_link_page'
+    $links_domain = in_array($entity_type_id, ['aculta_link', 'aculta_link_page'], TRUE)
       ? $this->domainPurpose->getDomain('links')
       : NULL;
     $cache_tags = array_merge(
@@ -175,6 +175,22 @@ final class LinksDashboardController {
           }
         }
       }
+      elseif ($entity_type_id === 'aculta_link' && $entity->isPublished()) {
+        $short_code = (string) $entity->get('short_code')->value;
+        if (preg_match('/^[0-9a-z]{12}$/D', $short_code) === 1) {
+          $short_url = $this->domainPurpose->routeUrl(
+            'links',
+            'aculta_links.short_redirect',
+            ['codigo' => $short_code],
+          );
+          if ($short_url !== NULL) {
+            $operations['short_url'] = [
+              'title' => new TranslatableMarkup('Abrir link curto'),
+              'url' => $short_url,
+            ];
+          }
+        }
+      }
       $rows[] = [
         'title' => CoreLink::fromTextAndUrl($entity->label(), Url::fromRoute($edit_route, $route_arguments)),
         'status' => $entity->isPublished()
@@ -211,7 +227,9 @@ final class LinksDashboardController {
             'user',
             'user.permissions',
             'url.query_args:page',
-            ...($entity_type_id === 'aculta_link_page' ? ['url.site', 'languages:language_interface'] : []),
+            ...(in_array($entity_type_id, ['aculta_link', 'aculta_link_page'], TRUE)
+              ? ['url.site', 'languages:language_interface']
+              : []),
           ],
           'tags' => array_values(array_unique($cache_tags)),
         ],

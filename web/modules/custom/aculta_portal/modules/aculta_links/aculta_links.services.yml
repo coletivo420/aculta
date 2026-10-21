@@ -16,6 +16,9 @@ services:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
     arguments: ['@entity_type.manager', '@current_user']
 
+  aculta_links.short_code_generator:
+    class: Drupal\aculta_links\Service\LinkShortCodeGenerator
+
   aculta_links.qr_code_svg_generator:
     class: Drupal\aculta_links\Service\QrCodeSvgGenerator
 

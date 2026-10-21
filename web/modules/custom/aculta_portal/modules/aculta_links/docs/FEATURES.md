@@ -32,7 +32,7 @@
 
 Dashboard visual equivalente ao LinkStack, identidade herdada explícita do
 `aculta_user`, editor completo de identidade/aparência, mais temas, componentes
-referenciados, links curtos e analytics ainda precisam ser concluídos. SEO via
+referenciados e analytics ainda precisam ser concluídos. SEO via
 Metatag, QR e agendamento de itens estão disponíveis. Uma conta Drupal pode possuir várias páginas;
 equipes complexas não fazem parte do escopo inicial.
 
@@ -56,3 +56,4 @@ A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/ed
 - Micropágina publicada oferece SVG QR em `/pagina/{slug}/codigo-qr.svg`; codifica a URL canônica gerada por Domain. Sem QR para rascunhos, arquivo persistido ou medição de scans.
 - Itens aceitam `available_from` e `available_until` revisionáveis, com edição no fuso padrão do site e armazenamento UTC. Itens fora da janela não são renderizados na página pública; a prévia privada mantém todos os itens publicados do proprietário visíveis. O cache vence na próxima transição e intervalos inválidos são recusados.
 - Metatag produz title, description, canonical URL de Domain, Open Graph e Schema.org para a rota pública; rotas de edição, preview e CRUD de entidade são `noindex, nofollow`.
+- Destinos têm códigos curtos gerados automaticamente e estáveis de 12 caracteres. Links publicados resolvem por `/redirecionar/{codigo}` no purpose `links`, após revalidar Entity Access e a constraint de destino. Resposta 302 não grava cliques; analytics segue planejado.
