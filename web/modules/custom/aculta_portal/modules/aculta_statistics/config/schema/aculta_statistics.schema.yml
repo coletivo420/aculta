@@ -15,3 +15,10 @@ aculta_statistics.settings:
           days:
             type: integer
             label: 'Dias de retenção (0 = indefinido)'
+    consent_banner:
+      type: mapping
+      label: 'Banner de consentimento para visitante anônimo'
+      mapping:
+        enabled:
+          type: boolean
+          label: 'Exibir o banner e aplicar o Consent Mode v2 padrão negado'

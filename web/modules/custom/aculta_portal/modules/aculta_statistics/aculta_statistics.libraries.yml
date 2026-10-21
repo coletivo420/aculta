@@ -1,0 +1,6 @@
+consent:
+  js:
+    js/consent.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

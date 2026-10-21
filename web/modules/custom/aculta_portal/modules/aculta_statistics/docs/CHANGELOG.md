@@ -36,6 +36,24 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.2.0-dev.2 (banner de consentimento e testes de formulário e cron)
+
+### Código
+- Opção `consent_banner.enabled` (padrão desligada) em configuração, com schema.
+- `ConsentBannerHooks` (`page_attachments`): anexa a biblioteca `aculta_statistics/consent`
+  e a configuração de cookie e Consent Mode só quando a opção está ligada. A tag
+  `config:aculta_statistics.settings` invalida o cache ao alternar a opção.
+- `js/consent.js`: Consent Mode v2 com padrão negado, cookie `aculta_consent_v1`
+  (180 dias, SameSite=Lax) e atualização ao aceitar ou recusar. Sem banner de terceiros.
+- Aliases `services.yml` por classe, para autowiring do hook.
+
+### Testes
+- Kernel: 11 casos (storage, cron por métrica, formulário de retenção, hook do banner), aprovados contra `aculta_simpletest`.
+- Unit: 21 casos, aprovados.
+
+### Validação
+- Runtime de teste: `drush cr` aplicado; página de `conta.aculta.toca.net.br` responde 200; banner presente com `hidden`; biblioteca não anexada (opção desligada).
+
 ## 0.2.0-dev.1 (núcleo analítico, em andamento)
 
 ### Código

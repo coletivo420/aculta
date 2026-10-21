@@ -13,3 +13,5 @@ retention:
     days: 90
   - metric: lms.courses.completed
     days: 90
+consent_banner:
+  enabled: false
