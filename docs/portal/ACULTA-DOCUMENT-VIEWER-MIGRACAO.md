@@ -191,7 +191,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | Executada em estado B: código (`4b170d06`), configuração (`740a0c32`) e Runtime; módulo antigo permanece |
 | 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
 | 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação (`3649a742`), spike (`2c2e1b9c`), renderizador isolado (`bd43fdba`) e formatter integrado com teste no Runtime (`c8bef68c`). Pendente: ativar o formatter nos displays de produção (decisão do responsável) |
-| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Vendoring concluído (`42042558`, `71545352`); leitor não iniciado |
+| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais e leitor inicial | Leitor testado no navegador (`6d0fd28c`); Runtime pendente pelo hook do Fórum (outra frente). Pendentes: XLS/ODS/CSV, isolamento e datas pt-BR (dev.7 e dev.10) |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
 | 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
 | 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
@@ -288,3 +288,12 @@ Pendências dessa fase:
 - Fixtures criados para o teste (nós 506–508, arquivos 564–567 e pastas `aculta-dev5-teste`) foram removidos. Nenhum resto no ambiente.
 - Não feito: ativar o formatter DOCX nos displays de produção (`media.document`, `node.document`). Isso muda a apresentação pública e depende de decisão do responsável; o dev.8 cuida da apresentação ACULTA420.
 - Não testado: CSP real com referência externa (o docx-preview não busca relações externas), `altChunk` com `renderAltChunks` ligado no Runtime e o caso de acesso autorizado com usuário logado (exige conta de teste conforme o procedimento de `teste.comum`).
+
+
+## 0.1.0-dev.6 — leitor de planilhas (evidência)
+
+- Formatter `aculta_document_spreadsheet_media` (XLSX), builder e biblioteca `spreadsheet` no módulo, versão 0.1.0-dev.5 (`6d0fd28c`).
+- Medição no Chromium da sessão X11 com arquivo de teste de três abas: abas listadas; primeira linha tratada como dado; fórmula exibida pelo valor em cache (`6`); HTML de célula exibido como texto, sem `<img>` criado e sem execução de script; coordenadas preservadas (aba com início em B3).
+- Data: o fixture foi gerado num fuso UTC-3 e grava 20/10/2026 21h. O leitor mostra o que o arquivo guarda (`10/20/26`). Não é defeito do leitor, mas a exibição precisa seguir a localização pt-BR no dev.7.
+- Não testado no Runtime: criação de nó e arquivo falham desde o início desta etapa por `ForumPublicationTimeHooks` (classe nova sem commit na frente do Fórum, sem argumentos de construtor). Nada foi gravado no Runtime.
+- Pendentes: XLS, ODS e CSV (dev.7); isolamento do SheetJS (dev.10); recorte de módulos do Tabulator (`TabulatorFull` hoje).
