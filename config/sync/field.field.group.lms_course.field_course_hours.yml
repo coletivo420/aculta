@@ -1,0 +1,19 @@
+uuid: 1da77790-dd34-4e4d-980a-634f092a043e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_course_hours
+    - group.type.lms_course
+id: group.lms_course.field_course_hours
+field_name: field_course_hours
+entity_type: group
+bundle: lms_course
+label: 'Carga horária certificada (horas)'
+description: 'Número inteiro de horas que será registrado nos certificados emitidos para este curso.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: integer

@@ -12,3 +12,12 @@ function aculta_lms_update_10001(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_attempt_archive'));
 }
+
+/** Installs the certificate storage definition. */
+function aculta_lms_update_10002(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definition = \Drupal::entityTypeManager()->getDefinition('aculta_lms_certificate');
+  if (!$manager->getEntityType('aculta_lms_certificate')) {
+    $manager->installEntityType($definition);
+  }
+}

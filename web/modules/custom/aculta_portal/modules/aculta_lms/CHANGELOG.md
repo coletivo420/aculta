@@ -1,5 +1,27 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.10 — certificados imutáveis, emissão e verificação (parcial) — 2026-10-20
+
+- Adiciona armazenamento de snapshots, emissão somente após conclusão aprovada,
+  reemissão encadeada, revogação e página/PDF público por código opaco.
+- Educador contextual (`grade students`) e administrador podem emitir; a
+  elegibilidade decorre do status LMS aprovado, sem exigir membership atual.
+- Entity Print 2.19.0 e Dompdf 3.1.6 foram instalados; PDF desliga recursos
+  remotos e PHP embutido, renderiza apenas o snapshot autenticado pelo código e
+  retorna sem cache. A emissão é transacional; os campos de snapshot são
+  imutáveis e a tela de educador lista emissões e permite revogar com motivo.
+  Config Sync adiciona carga horária inteira ao curso.
+- Decisões de produto e retenção após exclusão de conta registradas no contrato
+  e inventário LGPD. RUNTIME STATUS: DEFERRED.
+- Kernel isolado: 4 testes / 28 assertions; valida privacidade do registro,
+  snapshot imutável após exclusão da conta, HTML escapado no PDF e cabeçalhos
+  privados. Unit: 16 testes / 88 assertions. Gates Drupal 11+ (1007 checks),
+  índice de status, slugs, imagens e Composer audit: PASS. Entity Print 2.19.0
+  ainda emite três deprecações Drupal 11.2/11.3 no código upstream; nenhuma
+  alteração foi feita em contrib.
+- F11 ainda não concluída: QR depende da API de `aculta_qrcode` da outra frente;
+  runtime/configuração, smoke acessível e revisão visual estão pendentes.
+
 ## 0.1.0-dev.9 — validação ACULTA de imagens em entregas — 2026-10-20
 
 - O formulário `file_upload` do LMS acrescenta constraint do Core que detecta

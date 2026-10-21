@@ -156,6 +156,34 @@ Os testes de plugins F8 devem ser executados a partir de `web/core` com o
 PHPUnit do Composer; os Kernel tests usam exclusivamente o MariaDB dedicado
 descrito em `docs/operations/BANCO-DE-TESTE.md`.
 
+## F11 — Certificados (implementação em andamento)
+
+`CourseCertificateManager` emite um retrato imutável somente para status LMS
+finalizado e aprovado. A emissão exige permissão `grade students` no curso ou
+`administer lms`; o estudante não precisa manter membership depois de ter
+concluído o curso. Reemissão revoga a emissão anterior e cria uma nova versão
+vinculada; reemissão revoga a anterior na mesma transação. Educadores também
+podem revogar com motivo e o histórico permanece. Conta excluída não remove certificado.
+
+O campo numérico `field_course_hours` guarda a carga horária declarada pela
+equipe no curso. O registro armazena nome de exibição, curso, horas, conclusão,
+emissão, versão de modelo, estado e código aleatório opaco. A página pública de
+verificação mostra nome, curso, horas e estado; o código também habilita o PDF
+do certificado. Entity Print 2.19.0/Dompdf gera o PDF a partir do snapshot já
+validado, com escaping e carregamento remoto/PHP embutido desativados. O QR será ligado ao contrato de `aculta_qrcode` assim
+que a API pública dessa frente estiver disponível; o módulo LMS não implementa
+geração QR própria.
+
+Config Sync declara o campo do curso; seu importe parcial e a instalação do
+storage da entidade ainda não foram aplicados no Runtime. RUNTIME STATUS:
+DEFERRED. A interface/fluxo QR, emissão/revogação em navegador, smoke visual e
+aplicação segura de schema/config no Runtime continuam pendentes.
+
+Validação desta entrega parcial: Kernel isolado 4 testes/28 assertions; Unit
+16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
+Composer audit sem advisories. O Entity Print 2.19.0 gera três deprecações
+Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
+
 ## Testes
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de

@@ -25,7 +25,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F8 — Avaliação objetiva | Answer plugins LMS, tentativas, scores e feedback | Cálculo repetível no servidor, regra documentada, audit trail e sem score externo confiado | Remover plugin somente após confirmar atividades referenciadas; preservar respostas existentes |
 | F9 — Webform Score e entregas | Webform Score, LMS File Upload, storage privado | Identidade/autoria e resultados integrados sem gradebook duplicado; revogação de membership corta arquivos | Dependente de APIs Composer e privacidade; desabilitar formulário/integração mantendo submissions e arquivos |
 | F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas, reprodução integrada ao curso e imagens via `aculta_image`; materiais PDF complementares usam `aculta_pdf_viewer` + Group | Bibliotecas, permissões, uploads, imagens, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
-| F11 — Certificados | Entity Print após conclusão LMS aprovada | emissão/autorização, verificação, reemissão, revogação, auditoria, privacidade e template testados | Definir registro imutável/derivado antes de codar. Reverter emissão sem apagar auditoria/artefatos válidos |
+| F11 — Certificados | Entity Print/Dompdf após conclusão LMS aprovada; QR via `aculta_qrcode` | emissão/reemissão transacional por educador/admin, snapshot imutável, verificação pública por código/QR, revogação com motivo, retenção após exclusão de conta, privacidade e template testados | Decisões registradas em `LMS-INTEGRATION-CONTRACTS.md`; reverter código sem apagar auditoria/artefatos válidos |
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Eventos LMS → `aculta_messenger` / Message Notify | dedupe, access atual, preferências, e-mail mínimo e fila testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
@@ -167,7 +167,7 @@ Unit e Kernel LMS/H5P, gates Drupal 11+, imagens e slugs: resultados registrados
 RUNTIME STATUS: HOMOLOGAÇÃO DE TESTE CONCLUÍDA; produção não foi alterada. Detalhes em
 [LMS-H5P-AUDIT.md](LMS-H5P-AUDIT.md) e no [changelog do módulo H5P](../../web/modules/custom/aculta_portal/modules/aculta_lms_h5p/CHANGELOG.md).
 
-As etapas depois da F10 continuam na ordem definida acima: F11 certificados (após decisões de produto), F12
+As etapas depois da F10 continuam na ordem definida acima: F11 certificados, F12
 dashboards, F13 notificações educacionais, F14 conexões, F15 integrações de conteúdo, F16 hardening e RC
 integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. F10 está
 homologada no Runtime de teste; os objetivos de integração de envio de imagem e discussão passam para F15,

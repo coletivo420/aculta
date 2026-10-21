@@ -1,4 +1,13 @@
 services:
+  aculta_lms.course_certificate_manager:
+    class: Drupal\aculta_lms\Certificate\CourseCertificateManager
+    arguments: ['@entity_type.manager', '@datetime.time', '@database']
+  aculta_lms.certificate_issue_access:
+    class: Drupal\aculta_lms\Access\CertificateIssueAccessCheck
+    arguments: ['@current_user']
+  aculta_lms.certificate_verification_controller:
+    class: Drupal\aculta_lms\Controller\CertificateVerificationController
+    arguments: ['@aculta_lms.course_certificate_manager', '@plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation']
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
     arguments: ['@aculta_image.inspector', '@file_system']

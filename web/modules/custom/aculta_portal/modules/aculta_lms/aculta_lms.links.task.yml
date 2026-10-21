@@ -1,0 +1,5 @@
+aculta_lms.certificate_issue_task:
+  route_name: aculta_lms.certificate_issue
+  title: 'Certificados'
+  base_route: entity.group.canonical
+  weight: 80

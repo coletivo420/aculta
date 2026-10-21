@@ -3,12 +3,13 @@ type: module
 description: 'Integra matrículas, avaliações e pedidos ao Drupal LMS e preserva histórico sem duplicar o estado ativo.'
 package: ACULTA Portal
 license: GPL-2.0-or-later
-version: '0.1.0-dev.9'
+version: '0.1.0-dev.10'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_image
   - aculta_portal:aculta_pdf_viewer_group
+  - entity_print:entity_print
   - commerce:commerce_cart
   - commerce:commerce_checkout
   - commerce:commerce_order
@@ -22,4 +23,5 @@ dependencies:
   - lms:lms_answer_plugins
   - lms:lms_classes
   - lms_file_upload:lms_file_upload
+  - drupal:options
   - webform_score:webform_score

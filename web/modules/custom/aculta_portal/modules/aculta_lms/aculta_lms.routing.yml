@@ -1,0 +1,43 @@
+aculta_lms.certificate_issue:
+  path: '/painel-administrativo/lms/curso/{group}/certificados/emitir'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseCertificateIssueForm'
+    _title: 'Emitir certificado'
+  requirements:
+    _custom_access: 'aculta_lms.certificate_issue_access:access'
+  options:
+    parameters:
+      group:
+        type: entity:group
+
+aculta_lms.certificate_revoke:
+  path: '/painel-administrativo/lms/curso/{group}/certificado/{certificate}/revogar'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseCertificateRevokeForm'
+    _title: 'Revogar certificado'
+  requirements:
+    _custom_access: 'aculta_lms.certificate_issue_access:revokeAccess'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      certificate:
+        type: entity:aculta_lms_certificate
+
+aculta_lms.certificate_verify:
+  path: '/verificar-certificado/{codigo}'
+  defaults:
+    _controller: 'aculta_lms.certificate_verification_controller:verify'
+    _title: 'Verificação de certificado'
+  requirements:
+    _access: 'TRUE'
+    codigo: '[A-Za-z0-9_-]{40,64}'
+
+aculta_lms.certificate_pdf:
+  path: '/verificar-certificado/{codigo}/pdf'
+  defaults:
+    _controller: 'aculta_lms.certificate_verification_controller:pdf'
+    _title: 'Certificado em PDF'
+  requirements:
+    _access: 'TRUE'
+    codigo: '[A-Za-z0-9_-]{40,64}'

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.group.lms_course.capa_curso
     - field.field.group.lms_course.field_course_product
+    - field.field.group.lms_course.field_course_hours
     - field.field.group.lms_course.field_description
     - field.field.group.lms_course.field_h5p_activities
     - group.type.lms_course
@@ -59,6 +60,7 @@ hidden:
   changed: true
   created: true
   field_course_product: true
+  field_course_hours: true
   field_h5p_activities: true
   langcode: true
   lessons: true

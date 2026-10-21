@@ -280,6 +280,7 @@
         "drupal/diff": "^2.1",
         "drupal/domain": "^3.0",
         "drupal/entity_embed": "^1.7",
+        "drupal/entity_print": "^2.19",
         "drupal/entity_usage": "^5.0.1",
         "drupal/fences": "^3.0",
         "drupal/flag": "^5.1.1",
