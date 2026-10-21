@@ -1,3 +1,9 @@
+## `0.1.0-dev.140` — renderiza posts revisionáveis na leitura do tópico
+
+- A página canônica em modo `full` consulta `aculta_forum_post` com EntityQuery e `accessCheck(TRUE)`, limita pelo tópico público/purpose `forum`, e renderiza somente revisão default publicada com o view mode `default`.
+- A thread mostra 50 respostas por página com pager Core ID 1 (Comment usa ID 0). Cada resposta recebe fragmento estável `#forum-post-{id}`; referências ao pai só aparecem quando o pai também está visível nessa página. A cache varia por domínio, conta, permissões e página, e invalida pela tag da lista.
+- A saída é acrescentada antes do campo Comment existente; a leitura antiga continua para permitir migração gradual. Nenhuma rota foi criada e nenhum Runtime foi alterado.
+
 ## `0.1.0-dev.139` — prepara formulário da publicação revisionável
 
 - A entidade registra `ContentEntityForm` como handler padrão e define widgets de assunto, corpo e estado de moderação no display `default`. Campos contextuais e metadados permanecem ocultos.
