@@ -284,7 +284,7 @@ Em 0.1.0-dev.50, o Kernel testa diretamente a rota lógica de PDF após revogaç
 retorna 404 e não instancia Entity Print nem o gerador QR. Em 0.1.0-dev.56,
 `CertificateLifecycleTest` também valida os quatro campos públicos contratados
 e a ausência de e-mail/motivo interno: 3 testes / 102 assertions. Suítes
-combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 23/704 assertions
+combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 23/706 assertions
 PASS. As 92 depreciações continuam upstream.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
@@ -373,10 +373,11 @@ usa IDs inexistentes para simular referências removidas e cobre o formulário:
 4 testes / 126 assertions. Unit LMS: 61/334; Kernel combinado LMS/Messenger:
 22/675 PASS, com 92 depreciações upstream. PHP 8.5 não validado.
 
-Em 0.1.0-dev.58, o Kernel também executa os submits dos formulários de emissão e
-revogação do educador: emissão redireciona para a rota pública com código opaco;
-revogação preserva o certificado com estado e motivo. `CertificateLifecycleTest`:
-5 testes / 155 assertions PASS, com 38 depreciações do Core/contrib. Isso valida
+Em 0.1.0-dev.59, o Kernel executa os submits dos formulários com um educador
+real, autorizado por `grade students` no curso e sem permissão administrativa
+global: emissão redireciona para a rota pública com código opaco; revogação
+preserva o certificado com estado e motivo. `CertificateLifecycleTest`: 5 testes
+/ 157 assertions PASS, com 38 depreciações do Core/contrib. Isso valida
 o fluxo de Form API, mas não substitui o smoke HTTP autenticado nem a revisão
 visual no Runtime; ambos seguem pendentes.
 

@@ -23,6 +23,8 @@ use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRole;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
 use Drupal\lms\Entity\CourseStatusInterface;
@@ -61,6 +63,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('action');
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
@@ -339,6 +342,8 @@ final class CertificateLifecycleTest extends KernelTestBase {
   public function testEducatorFormsIssueAndRevokeCertificate(): void {
     $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
     $student->save();
+    $educator = User::create(['name' => 'certificate-educator', 'mail' => 'educator@example.test', 'status' => 1]);
+    $educator->save();
     $course = Group::create([
       'type' => 'lms_course',
       'label' => 'Curso com formulários',
@@ -346,6 +351,14 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 8,
     ]);
     $course->save();
+    GroupRole::create([
+      'id' => 'lms_course-certificate_teacher',
+      'label' => 'Educador de certificados',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students'],
+    ])->save();
+    $course->addMember($educator, ['group_roles' => ['lms_course-certificate_teacher']]);
     $status = CourseStatus::create([
       CourseStatusInterface::COURSE_FIELD => $course->id(),
       'uid' => $student->id(),
@@ -354,8 +367,10 @@ final class CertificateLifecycleTest extends KernelTestBase {
     ]);
     $status->save();
     $manager = $this->createMock(CourseCertificateManagerInterface::class);
-    $account = $this->createMock(AccountProxyInterface::class);
-    $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
+    $account = $this->container->get('current_user');
+    $account->setAccount($educator);
+    self::assertFalse($account->hasPermission('administer lms'));
+    self::assertTrue($course->hasPermission('grade students', $account));
     $certificate = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate')->create([
       'uid' => $student->id(),
       'course_id' => $course->id(),

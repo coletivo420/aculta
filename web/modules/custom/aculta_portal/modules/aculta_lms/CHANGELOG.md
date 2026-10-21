@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.59 — provar emissão por educador de turma — 2026-10-21
+
+- O Kernel usa educador real com papel Group contextual `grade students`, sem
+  permissão administrativa global, e percorre emissão e revogação por formulário.
+  A fixture instala o schema de `entity_usage` usado pela membership. Teste focal:
+  5 testes / 157 assertions PASS; 38 depreciações de Core/contrib.
+
 ## 0.1.0-dev.58 — cobrir emissão e revogação pelos formulários — 2026-10-21
 
 - `CertificateLifecycleTest` percorre os submits dos formulários de educador,
