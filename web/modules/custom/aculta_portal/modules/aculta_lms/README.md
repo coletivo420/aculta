@@ -217,7 +217,9 @@ podem revogar com motivo e o histórico permanece. Conta excluída não remove c
 O campo numérico `field_course_hours` guarda a carga horária declarada pela
 equipe no curso. O registro armazena nome de exibição, curso, horas, conclusão,
 emissão, versão de modelo, estado e código aleatório opaco. A página pública de
-verificação mostra nome, curso, horas e estado; o código também habilita o PDF
+verificação mostra somente os quatro dados públicos aprovados (nome, curso,
+horas e estado); o Kernel confirma que e-mail e motivo interno de revogação não
+aparecem. O código também habilita o PDF
 do certificado. Entity Print 2.19.0/Dompdf gera o PDF a partir do snapshot já
 validado, com escaping e carregamento remoto/PHP embutido desativados. A página
 de verificação exibe QR gerado pelo serviço `aculta_qrcode`; o SVG é servido
@@ -265,7 +267,7 @@ depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
 Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 77 testes/400
-assertions; Kernel MariaDB 21 testes/646 assertions PASS. No total, houve 8
+assertions; Kernel MariaDB 21 testes/651 assertions PASS. No total, houve 8
 depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 
 O Kernel `LearningDashboardKernelTest` reproduz o contrato de acesso do LMS:

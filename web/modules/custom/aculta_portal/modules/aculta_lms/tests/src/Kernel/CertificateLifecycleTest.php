@@ -160,7 +160,12 @@ final class CertificateLifecycleTest extends KernelTestBase {
     $public = $verification->verify((string) $second->get('verification_code')->value);
     self::assertSame('certificate-student', $public['name']['#plain_text']);
     self::assertSame('Curso imutável', $public['course']['#plain_text']);
+    self::assertSame('14 horas', (string) $public['hours']['#plain_text']);
     self::assertSame('Certificado válido', (string) $public['status']['#plain_text']);
+    self::assertArrayNotHasKey('email', $public);
+    self::assertArrayNotHasKey('uid', $public);
+    self::assertArrayNotHasKey('revocation_reason', $public);
+    self::assertStringNotContainsString('certificate@example.test', serialize($public));
     self::assertArrayHasKey('pdf', $public);
     self::assertSame(0, $public['#cache']['max-age']);
     self::assertContains('aculta_lms_certificate:' . $second->id(), $public['#cache']['tags']);

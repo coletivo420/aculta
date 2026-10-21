@@ -189,6 +189,12 @@ passou com 5 testes / 32 assertions. A cobertura distingue matrícula manual,
 pedido pago, reembolso parcial/total, pedido gratuito concluído e origem
 inválida. Não há chamadas a gateway.
 
+Após ampliar em 2026-10-21 o contrato de privacidade pública F11,
+`CertificateLifecycleTest` passou com 3 testes / 102 assertions; a regressão
+Kernel LMS/Messenger passou com 21 testes / 651 assertions e 92 depreciações
+upstream. A renderização por código confirma nome, curso, horas e estado, sem
+email ou motivo interno de revogação.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

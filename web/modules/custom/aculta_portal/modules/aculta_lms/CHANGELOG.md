@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.56 — confirmar dados públicos mínimos do certificado — 2026-10-21
+
+- `CertificateLifecycleTest` valida nome, curso, horas e estado na página por
+  código opaco e confirma que e-mail e motivo interno de revogação não aparecem.
+  Kernel focal: 3 testes / 102 assertions; suíte combinada: 21 testes / 651
+  assertions PASS, com 92 depreciações de Core/contrib upstream.
+
 ## 0.1.0-dev.55 — alinhar teste de matrícula manual ao schema — 2026-10-21
 
 - A fixture de matrícula manual agora mantém `field_course_order` presente e
