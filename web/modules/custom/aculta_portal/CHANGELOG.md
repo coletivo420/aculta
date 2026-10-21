@@ -1,3 +1,29 @@
+## 0.4.0-dev.246 — prefixa adaptador de consentimento ao ledger ACULTA — 2026-10-21
+
+- O adapter `MailTrackingConsent` foi renomeado para `AcultaUserAgreementTrackingConsent` (arquivo, classe e referência de serviço), completando o prefixo ACULTA nos consumidores do ledger.
+- Documentação de integração e inventário de e-mail atualizados; serviço resolvido no Runtime após rebuild.
+- `aculta_portal.info.yml` 0.4.0-dev.246. Estado Dev.
+
+## 0.4.0-dev.245 — remove Agreement contrib e integra aceite ACULTA User — 2026-10-21
+
+- `aculta_portal` passa a consumir o ledger `aculta_user.aculta_user_agreement_ledger`; política, cadastro, aceite modal e hooks usam classes ACULTA prefixadas. Form callback, rota e serviços também adotam `aculta_user_agreement`.
+- O módulo contrib Agreement foi desinstalado no Runtime de testes e removido de `composer.json`/`composer.lock`, Config Sync, Views e referências de interface; o submódulo `aculta_user` mantém o registro append-only e a auditoria somente leitura.
+- Mantidos os registros legados recuperáveis, marcados como incompletos; update 10010 remove as evidências de contas já apagadas conforme a retenção definida pelo responsável.
+- Verificação Runtime: Agreement desativado, 4 eventos para 3 contas existentes, todas as cadeias verificáveis; MAIN e Conta HTTP 200 seguindo canonicalização HTTPS. `drush cr`/`updb` concluíram com aviso H5P não bloqueante.
+- `aculta_portal.info.yml` 0.4.0-dev.245. Estado Dev; validação visual autenticada e gates de RC continuam pendentes.
+
+## 0.4.0-dev.244 — namespaces próprios para aceite de Termos — 2026-10-21
+
+- Classes, serviço, função de callback, form ID e rota de aceite do Portal adotam o prefixo `aculta_user_agreement`; o Portal não referencia classes do módulo contrib.
+- O bypass administrativo do antigo Agreement passa ao permissionamento restrito `administer aculta user agreements`, que também dá acesso à consulta de auditoria.
+- PHP lint PASS. A migração e smoke do ledger estão documentadas em `aculta_user`.
+
+## 0.4.0-dev.243 — aceite e consentimento transferidos para aculta_user — 2026-10-21
+
+- Cadastro, bloqueio de Termos e autorização de rastreamento de e-mail passam a usar o ledger `aculta_user.consent_ledger`; removidas dessas integrações as chamadas a `agreement.handler`.
+- A retirada completa do contrib continua pendente: formulário de revogação, leitura das revisões dos documentos, tela de auditoria e limpeza de rotas/configuração/dependências ainda precisam ser entregues antes da desinstalação.
+- Testes: PHP lint dos arquivos novos/refatorados PASS; suíte automatizada e Runtime DEFERRED.
+
 ## 0.4.0-dev.242 — aviso de e-mail não confirmado: caixa de atenção e título do aviso persistente — 2026-10-21
 
 - `EmailConfirmationNotice` mantém o aviso em "Minha conta", agora como caixa de atenção (`notice-warning`). O título passa pelo ponto `aculta_portal_email_notice` (alter), que o aculta_messenger usa para trazer o aviso persistente do sistema de avisos.
@@ -3566,8 +3592,4 @@ A atualização `aculta_portal_update_11009` migra referências atuais e revisõ
   em 1024 px confirmou a página, mas exibiu a mensagem de validação CAPTCHA;
   formulário não submetido, causa não isolada; ver a matriz do Forum. RUNTIME
   STATUS: PARTIAL.
-## 0.4.0-dev.243 — aceite e consentimento transferidos para aculta_user — 2026-10-21
 
-- Cadastro, bloqueio de Termos e autorização de rastreamento de e-mail passam a usar o ledger `aculta_user.consent_ledger`; removidas dessas integrações as chamadas a `agreement.handler`.
-- A retirada completa do contrib continua pendente: formulário de revogação, leitura das revisões dos documentos, tela de auditoria e limpeza de rotas/configuração/dependências ainda precisam ser entregues antes da desinstalação.
-- Testes: PHP lint dos arquivos novos/refatorados PASS; suíte automatizada e Runtime DEFERRED.

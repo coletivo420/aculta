@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Account\AccountTermsPolicy;
-use Drupal\aculta_portal\Form\AccountTermsAcceptForm;
+use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
+use Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * popup. A página não é negada: o popup (dialog modal, sem fechar sem aceitar) é o bloqueio. Ações protegidas
  * (checkout, cursos) seguem negadas pelo servidor (ProtectedRouteAccessCheck). Ver docs/integrations/AUTHENTICATION.md.
  */
-final class AccountTermsHooks {
+final class AcultaUserAgreementHooks {
 
   /** Rotas de ação que só fazem sentido para usuário logado (criar, editar, responder). */
   private const LOGGED_ONLY_ROUTES = [
@@ -39,12 +39,12 @@ final class AccountTermsHooks {
   /** Rotas em que o popup nunca aparece: login, cadastro, recuperação e o próprio aceite. */
   private const EXEMPT_ROUTES = [
     'user.login', 'user.logout', 'user.register', 'user.pass', 'user.reset', 'user.reset.form', 'user.reset.login',
-    'aculta_portal.account_terms.accept', 'social_auth.network.redirect', 'social_auth.network.callback',
+    'aculta_portal.aculta_user_agreement.accept', 'social_auth.network.redirect', 'social_auth.network.callback',
   ];
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.account_terms_policy')]
-    private readonly AccountTermsPolicy $policy,
+    #[Autowire(service: 'aculta_portal.aculta_user_agreement_policy')]
+    private readonly AcultaUserAgreementPolicy $policy,
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'form_builder')]
@@ -69,8 +69,8 @@ final class AccountTermsHooks {
     if (!$this->isRestrictedToLoggedUsers($routeName)) {
       return;
     }
-    $form = $this->formBuilder->getForm(AccountTermsAcceptForm::class);
-    $page_bottom['aculta_account_terms'] = [
+    $form = $this->formBuilder->getForm(AcultaUserAgreementAcceptForm::class);
+    $page_bottom['aculta_user_agreement_terms'] = [
       '#theme' => 'aculta_portal_account_terms_modal',
       '#title' => $this->translation->translate('Aceite dos termos'),
       '#form' => $form,

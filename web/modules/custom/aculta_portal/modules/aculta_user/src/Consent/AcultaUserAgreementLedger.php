@@ -11,8 +11,8 @@ use Drupal\Core\PrivateKey;
 use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/** Append-only evidence of account agreements and optional consents. */
-final class ConsentLedger {
+/** Append-only evidence of ACULTA user agreements and optional consents. */
+final class AcultaUserAgreementLedger {
 
   public function __construct(
     private readonly Connection $database,
@@ -24,22 +24,22 @@ final class ConsentLedger {
   ) {}
 
   /** Records a new event; document metadata must identify the accepted text. */
-  public function record(int $uid, string $agreement, string $action, array $documents = [], bool $legacy = FALSE, ?int $created = NULL): int {
+  public function recordAcultaUserAgreement(int $uid, string $agreementType, string $action, array $documents = [], bool $legacy = FALSE, ?int $created = NULL): int {
     if ($uid < 1 || !in_array($action, ['accepted', 'revoked'], TRUE)) {
       throw new \InvalidArgumentException('A valid account and consent action are required.');
     }
-    if (!$legacy && $action === 'accepted' && $agreement === 'aculta_account_terms' && $documents === []) {
+    if (!$legacy && $action === 'accepted' && $agreementType === 'aculta_user_agreement_terms' && $documents === []) {
       $documents = $this->currentTermsEvidence();
     }
     $request = $this->requestStack->getCurrentRequest();
-    $previous = $this->database->select('aculta_user_consent', 'c')
+    $previous = $this->database->select('aculta_user_agreement', 'c')
       ->fields('c', ['record_hash'])
       ->condition('uid', $uid)
       ->orderBy('id', 'DESC')
       ->range(0, 1)->execute()->fetchField() ?: '';
     $values = [
       'uid' => $uid,
-      'agreement' => $agreement,
+      'aculta_user_agreement_type' => $agreementType,
       'action' => $action,
       'created' => $created ?? $this->time->getRequestTime(),
       'ip_address' => $legacy || !$request ? NULL : $request->getClientIp(),
@@ -50,7 +50,7 @@ final class ConsentLedger {
     ];
     $payload = json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     $values['record_hash'] = hash_hmac('sha256', $payload, $this->privateKey->get());
-    return (int) $this->database->insert('aculta_user_consent')->fields($values)->execute();
+    return (int) $this->database->insert('aculta_user_agreement')->fields($values)->execute();
   }
 
   /** Captures stable revision references and content hashes for the current legal documents. */
@@ -82,9 +82,9 @@ final class ConsentLedger {
   }
 
   /** Returns whether the latest event for an agreement is an acceptance. */
-  public function hasAccepted(int $uid, string $agreement): bool {
-    $action = $this->database->select('aculta_user_consent', 'c')
-      ->fields('c', ['action'])->condition('uid', $uid)->condition('agreement', $agreement)
+  public function hasAcceptedAcultaUserAgreement(int $uid, string $agreementType): bool {
+    $action = $this->database->select('aculta_user_agreement', 'c')
+      ->fields('c', ['action'])->condition('uid', $uid)->condition('aculta_user_agreement_type', $agreementType)
       ->orderBy('id', 'DESC')->range(0, 1)->execute()->fetchField();
     return $action === 'accepted';
   }
@@ -92,11 +92,11 @@ final class ConsentLedger {
   /** Verifies the per-account chain and HMACs, returning FALSE on any alteration. */
   public function verify(int $uid): bool {
     $previous = '';
-    foreach ($this->database->select('aculta_user_consent', 'c')->fields('c')->condition('uid', $uid)->orderBy('id')->execute() as $row) {
+    foreach ($this->database->select('aculta_user_agreement', 'c')->fields('c')->condition('uid', $uid)->orderBy('id')->execute() as $row) {
       $actual = (string) $row->record_hash;
       $record = [
         'uid' => (int) $row->uid,
-        'agreement' => (string) $row->agreement,
+        'aculta_user_agreement_type' => (string) $row->aculta_user_agreement_type,
         'action' => (string) $row->action,
         'created' => (int) $row->created,
         'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,

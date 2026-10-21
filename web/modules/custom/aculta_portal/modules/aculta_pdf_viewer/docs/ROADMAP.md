@@ -94,7 +94,7 @@ validação de custo, acessibilidade e desempenho em PDFs extensos.
 **Retomada do gate em 2026-10-20 nesta branch:** a suíte Unit passou com 26
 testes e 183 assertions. A suíte Kernel completa repetida no MariaDB dedicado
 falhou antes das assertions nos quatro cenários de render/Media Embed porque o
-container do `aculta_portal` referencia `agreement.handler`, ausente no fixture;
+container do `aculta_portal` ainda dependia do `agreement.handler` contrib, ausente no fixture. A dependência foi removida na integração posterior do ledger `aculta_user_agreement`;
 o teste de instalação também falha porque a View de cursos do LMS depende de
 `system.menu.admin`, que o fixture não instala. Não foram adicionados mocks nem
 alteradas dependências do Portal para ocultar o grafo de serviços. Status-index

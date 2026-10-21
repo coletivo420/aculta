@@ -79,13 +79,6 @@ aculta_portal.config_subtab_opcoes_da_conta:
   base_route: user.admin_index
   weight: 0
 
-aculta_portal.config_subtab_acordos:
-  title: 'Acordos'
-  route_name: entity.agreement.collection
-  parent_id: aculta_portal.config_tab_conta
-  base_route: user.admin_index
-  weight: 1
-
 # Painel ACULTA (/painel-administrativo/aculta): abas do topo e subabas. A base é a visão geral do Portal.
 aculta_portal.admin_tab_overview:
   title: 'Visão geral'

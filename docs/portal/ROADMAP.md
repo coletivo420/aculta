@@ -26,6 +26,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 - Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
 - Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation PASS em 2026-10-15 (341 checks, via Drush; DT-T19 resolvida).
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
+- Integração de Termos/aceites no `aculta_user`: Agreement contrib desinstalado no Runtime de testes e removido de Composer/Config Sync; ledger, auditoria read-only e migrações estão documentados no CHANGELOG do componente. Revisão autenticada e gates antes de RC permanecem pendentes.
 
 ## Próximos passos (replanejamento de 2026-10-15)
 

@@ -62,7 +62,7 @@ Regra: slug publicado é estável. Quando um caminho público muda, o caminho an
 | Origem | Destino | Código | Mecanismo (arquivo) | Motivo |
 | --- | --- | --- | --- | --- |
 | `/` no host de Conta, visitante | `/entrar` | 302 | `DomainPurposeRequestSubscriber` (`TrustedRedirectResponse`) | Raiz da conta exige login |
-| `/aceite-termos` (Conta ou Loja), após aceitar | destino salvo na sessão; sem destino, `<front>` do host onde o aceite foi feito | 302 | Agreement `aculta_account_terms`, `settings.destination` vazio (`config/sync/agreement.agreement.aculta_account_terms.yml`) | Volta à página pedida. Um destino fixo (`/minha-conta`, depois `/`) levava à página errada; corrigido em 0.3.0-dev.12 e 0.3.0-dev.14 (ver `docs/portal/CHECKOUT-BILLING.md`) |
+| `/aceite-termos` (Conta ou Loja), após aceitar | destino salvo na sessão; sem destino, `<front>` do host onde o aceite foi feito | 302 | Fluxo histórico do antigo Agreement; substituído pelo ledger `aculta_user_agreement` e pela rota `POST /termos/aceitar` | Comportamento preservado como referência histórica; a rota dedicada antiga responde 404. |
 | `/user/{uid}/edit`, próprio usuário | `/seguranca` (Conta) | 302 | `AccountRouteSubscriber` | Edição de conta acontece no painel |
 | `/user/{uid}/edit`, outro usuário | — | 403 | `AccountRouteSubscriber` | Sem acesso a conta alheia |
 | `/user/{uid}`, próprio usuário | `/` (Conta) | 302 | `AccountRouteSubscriber` | Perfil público não existe; a conta é a visão geral |

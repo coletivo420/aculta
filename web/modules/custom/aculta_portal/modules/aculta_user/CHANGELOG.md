@@ -1,3 +1,23 @@
+## 0.4.0-dev.60 — conclui namespace do ledger e remove o Agreement contrib — 2026-10-21
+
+- Classes, arquivos, hooks, serviços, rotas, formulários e métodos próprios usam `AcultaUserAgreement*` / `aculta_user_agreement_*`; os identificadores antigos sobrevivem apenas nos updates históricos de migração/revogação.
+- `drupal/agreement` foi desinstalado do Runtime de testes, removido do Composer e de Config Sync. A migração preserva o estado legado disponível, identificado como estado final sem histórico anterior.
+- Update 10010 aplica a retenção escolhida: remove eventos legados de contas que já não existem; a exclusão de uma conta também apaga sua cadeia. Não se conserva dado pessoal após o fim da conta.
+- Runtime: Agreement desativado, 4 eventos/3 contas ativas após retenção, cadeias HMAC válidas. Home MAIN e Conta respondem HTTP 200 após seguir a canonicalização HTTPS. Rebuild de cache concluiu com aviso preexistente de cópia de asset H5P.
+- `aculta_user.info.yml` 0.4.0-dev.60. Estado Dev; revisão autenticada e gates de RC pendentes.
+
+## 0.4.0-dev.59 — preserva tipo fonte da evidência legada — 2026-10-21
+
+- Migration 10009 registra o tipo de origem do Agreement antigo e marca que o ledger preserva somente o último estado, sem IP/UA nem histórico anterior recuperável; reencadeia os HMACs.
+- `aculta_user.info.yml` 0.4.0-dev.59. Runtime update 10009 pendente.
+
+## 0.4.0-dev.58 — padroniza namespace `aculta_user_agreement` — 2026-10-21
+
+- Renomeadas classes, arquivos, serviços, rotas e funções próprias relacionadas aos Termos para `AcultaUserAgreement*` / `aculta_user_agreement_*`.
+- Nova migração 10007 renomeia a tabela/campo do ledger e reencadeia HMAC, preservando os 37 registros e seus timestamps. A leitura da tabela `agreement` fica restrita ao update histórico 10006.
+- Migração 10008 remove o permissionamento legado `bypass agreement` depois da migração do módulo contrib.
+- `aculta_user.info.yml` 0.4.0-dev.58. Runtime update 10007 ainda pendente.
+
 ## 0.4.0-dev.57 — consulta administrativa read-only do ledger — 2026-10-21
 
 - Adicionada permissão restrita e rota em `/painel-administrativo/aculta/termos/aceites` para consultar eventos, IP/User-Agent, evidência legada e integridade HMAC. A tela não inclui operações de edição ou exclusão.

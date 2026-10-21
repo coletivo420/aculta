@@ -13,8 +13,6 @@ if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1', 'default
 
 $names = [
   'aculta_portal.support',
-  'agreement.agreement.aculta_account_terms',
-  'agreement.agreement.default',
   'captcha.settings',
   'core.extension',
   'core.entity_form_display.profile.participante.default',

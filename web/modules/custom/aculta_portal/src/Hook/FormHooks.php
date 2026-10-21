@@ -74,7 +74,7 @@ final class FormHooks {
         $form['actions']['submit']['#submit'] ?? [],
       );
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
-      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:acceptRegistrationTerms';
+      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:recordAcultaUserAgreementAcceptance';
     }
 
     if ($formId === 'user_login_form') {
@@ -207,7 +207,7 @@ final class FormHooks {
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
-    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_account_terms_accept' || $formId === 'aculta_portal_account_password_create'
+    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
       || $formId === 'user_login_form' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
       return;
     }

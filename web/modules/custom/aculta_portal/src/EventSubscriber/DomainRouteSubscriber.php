@@ -42,14 +42,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('commerce_checkout.checkout')) {
       $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:account');
     }
-    // Página do acordo de termos: substituída pelo popup de aceite (AccountTermsHooks). A rota continua existindo
-    // porque o módulo agreement a consulta por nome; o caminho /aceite-termos responde 404.
-    if ($route = $collection->get('agreement.aculta_account_terms')) {
-      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::retiredNotFound');
-      $route->setDefault('_form', NULL);
-      $route->setRequirements(['_access' => 'TRUE']);
-    }
-
     $pathChanges = [
       'user.login' => '/entrar',
       'user.register' => '/criar-conta',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_portal\Account\AccountTermsPolicy;
+use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,29 +14,29 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Aceite dos termos: usado no popup (modal) e na rota /termos/aceitar, que é o retorno sem JavaScript.
  *
- * O aceite é gravado no mesmo registro do cadastro (AccountTermsPolicy). Depois de aceitar, o usuário volta à
+ * O aceite é gravado no mesmo registro do cadastro (AcultaUserAgreementPolicy). Depois de aceitar, o usuário volta à
  * página de onde veio (destino validado como caminho local).
  */
-final class AccountTermsAcceptForm extends FormBase {
+final class AcultaUserAgreementAcceptForm extends FormBase {
 
   public function __construct(
-    private readonly AccountTermsPolicy $policy,
+    private readonly AcultaUserAgreementPolicy $policy,
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.account_terms_policy'),
+      $container->get('aculta_portal.aculta_user_agreement_policy'),
       $container->get('aculta_portal.domain_purpose'),
     );
   }
 
   public function getFormId(): string {
-    return 'aculta_portal_account_terms_accept';
+    return 'aculta_portal_aculta_user_agreement_accept';
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['#action'] = Url::fromRoute('aculta_portal.account_terms.accept', [], [
+    $form['#action'] = Url::fromRoute('aculta_portal.aculta_user_agreement.accept', [], [
       'query' => ['destination' => $this->destination()],
     ])->toString();
 
@@ -61,7 +61,7 @@ final class AccountTermsAcceptForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
-    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom (AccountTermsHooks).
+    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom (AcultaUserAgreementHooks).
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
 
     return $form;

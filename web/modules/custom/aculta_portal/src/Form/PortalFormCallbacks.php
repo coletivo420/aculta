@@ -34,7 +34,7 @@ final class PortalFormCallbacks {
     private readonly UserFloodControlInterface $floodControl,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EmailConfirmationRequester $confirmationRequester,
-    private readonly \Drupal\aculta_portal\Account\RegistrationTerms $registrationTerms,
+    private readonly \Drupal\aculta_portal\Account\AcultaUserAgreementRegistration $userAgreementRegistration,
     private readonly \Drupal\aculta_portal\Account\RegistrationMailPolicy $registrationMail,
   ) {}
 
@@ -66,13 +66,13 @@ final class PortalFormCallbacks {
   }
 
   /** Registra o aceite dos termos do cadastro (checkbox obrigatório no formulário). */
-  public function acceptRegistrationTerms(array &$form, FormStateInterface $formState): void {
+  public function recordAcultaUserAgreementAcceptance(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
       return;
     }
     $account = $formState->get('user') ?? $formState->getFormObject()->getEntity();
     if ($account instanceof \Drupal\user\UserInterface) {
-      $this->registrationTerms->record($account);
+      $this->userAgreementRegistration->record($account);
     }
   }
 

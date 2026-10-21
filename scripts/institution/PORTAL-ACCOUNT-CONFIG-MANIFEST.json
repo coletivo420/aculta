@@ -2,8 +2,6 @@
   "purpose": "Critical Portal/account subset for additional validation only; config/sync is the complete desired deploy configuration.",
   "configs": [
     "aculta_portal.support",
-    "agreement.agreement.aculta_account_terms",
-    "agreement.agreement.default",
     "captcha.captcha_point.contact_message_personal_form",
     "captcha.captcha_point.node_activity_form",
     "captcha.captcha_point.node_article_form",

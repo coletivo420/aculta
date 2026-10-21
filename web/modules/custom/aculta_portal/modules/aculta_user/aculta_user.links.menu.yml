@@ -6,9 +6,9 @@ aculta_user.participacao_settings:
   parent: aculta_portal.admin
   weight: 4
 
-aculta_user.consent_audit:
+aculta_user.aculta_user_agreement_audit:
   title: 'Evidências de aceite'
   description: Consulta read-only de aceites, consentimentos e integridade.
-  route_name: aculta_user.consent_audit
+  route_name: aculta_user.aculta_user_agreement_audit
   parent: aculta_portal.admin
   weight: 5

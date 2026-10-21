@@ -1,9 +1,9 @@
 services:
-  aculta_user.consent_ledger_hooks:
-    class: Drupal\aculta_user\Hook\ConsentLedgerHooks
+  aculta_user.aculta_user_agreement_hooks:
+    class: Drupal\aculta_user\Hook\AcultaUserAgreementHooks
     arguments: ['@database']
-  aculta_user.consent_ledger:
-    class: Drupal\aculta_user\Consent\ConsentLedger
+  aculta_user.aculta_user_agreement_ledger:
+    class: Drupal\aculta_user\Consent\AcultaUserAgreementLedger
     arguments: ['@database', '@request_stack', '@datetime.time', '@private_key', '@entity_type.manager', '@path_alias.manager']
   aculta_user.achievement_definitions:
     class: Drupal\aculta_user\Badge\AchievementDefinitions

@@ -151,13 +151,6 @@ final class PortalRequirementsController extends ControllerBase {
       'warning' => 'Entrega em produção depende do RC e do provisionamento das credenciais SMTP2GO.',
     ],
     [
-      'name' => 'Agreement',
-      'modules' => ['agreement'],
-      'package' => 'drupal/agreement',
-      'minimum' => '^3.0',
-      'purpose' => 'Registro do aceite dos termos no fluxo de conta.',
-    ],
-    [
       'name' => 'Metatag / Schema Metatag',
       'modules' => ['metatag', 'schema_metatag'],
       'package' => 'drupal/metatag',

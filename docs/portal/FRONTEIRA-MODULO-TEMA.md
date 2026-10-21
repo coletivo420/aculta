@@ -81,7 +81,7 @@ manter o design em um só lugar.
   `SearchUtility`/`SearchPreviewController`/`SearchPageController`/`SearchPopupForm` (busca, prévia, popup, dicas),
   `SecretsController` e `SecretsForm*` (tela de segredos), `PortalRequirementsController` e `DeployerStatusController`
   (relatórios), `SupportForm`, `RegistrationController`, `PortalHooks` e `FormHooks` (login, aviso de e-mail),
-  `StreetNumberField` (Número e S/N), `AccountTermsAcceptForm`, `DomainPresentationBuilder` (imagem da marca),
+  `StreetNumberField` (Número e S/N), `AcultaUserAgreementAcceptForm`, `DomainPresentationBuilder` (imagem da marca),
   breadcrumb do AJAX (`AccountAjaxMainContentRenderer`, agora `item_list` com tokens) e o gatilho da busca (template
   `portal-search-trigger` com ícone no tema).
 - JS: o breadcrumb da conta é selecionado por `[data-portal-breadcrumb]` (antes `ol.breadcrumb`, classe do tema).

@@ -28,7 +28,7 @@ $assert($modules->moduleExists('profile') && $modules->moduleExists('address'), 
 $assert($modules->moduleExists('crop') && $modules->moduleExists('image_widget_crop'), 'Core image crop integration is enabled.');
 $assert($modules->moduleExists('social_auth') && $modules->moduleExists('social_auth_google'), 'Social Auth providers are available.');
 $assert($modules->moduleExists('captcha') && $modules->moduleExists('turnstile'), 'CAPTCHA and Turnstile integration are enabled.');
-$assert($modules->moduleExists('agreement') && $modules->moduleExists('key'), 'Agreement and Key infrastructure are enabled.');
+$assert(!$modules->moduleExists('agreement') && $modules->moduleExists('key'), 'ACULTA User replaces Agreement; Key infrastructure remains enabled.');
 $assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user_registrationpassword remains removed.');
 $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
@@ -225,7 +225,6 @@ foreach ([
   'social_auth_google.settings_form',
   'captcha_settings',
   'turnstile.admin_settings_form',
-  'entity.agreement.collection',
   'entity.commerce_payment_gateway.collection',
 ] as $sensitive_admin_route) {
   $admin_route = \Drupal::service('router.route_provider')->getRouteByName($sensitive_admin_route);
@@ -255,8 +254,6 @@ $restricted_permissions = [
   'administer social auth',
   'administer social api authentication',
   'administer turnstile',
-  'administer agreements',
-  'administer agreement types',
   'administer profile types',
 ];
 $assert((bool) $authenticated_role, 'Authenticated role exists.');
@@ -528,9 +525,9 @@ $canonical_sync_path = realpath(dirname(DRUPAL_ROOT) . DIRECTORY_SEPARATOR . 'co
 $effective_sync_path = realpath(\Drupal\Core\Site\Settings::get('config_sync_directory'));
 $assert($canonical_sync_path !== FALSE && $effective_sync_path === $canonical_sync_path, 'Drupal Configuration Sync points at the repository canonical config/sync directory.');
 $sync_storage = \Drupal::service('config.storage.sync');
-// user_registrationpassword was removed (commit b4b4389); its three objects are no longer in the manifest.
+// user_registrationpassword and Agreement were removed; their configuration is no longer in the manifest.
 // F15: o contrib de envio (mailer_transport) saiu; as configurações de envio são de aculta_mailer e não entram no manifesto de conta.
-$assert(count($manifest['configs']) === 40, 'The reviewed account manifest contains 40 intentionally selected config objects.');
+$assert(count($manifest['configs']) === 38, 'The reviewed account manifest contains 38 intentionally selected config objects.');
 $assert(in_array('field.storage.user.user_picture', $manifest['configs'], TRUE), 'Private User picture storage is included in the reviewed manifest.');
 $sort_recursive = static function (array &$data) use (&$sort_recursive): void {
   ksort($data);

@@ -128,9 +128,9 @@ final class PortalHelperRegistry {
       'summary' => 'Monta a estrutura neutra da área Minha Conta e aplica access/cache aos itens.',
       'docs' => 'docs/portal/ACCOUNT-MENU.md',
     ],
-    'aculta_portal.account_terms_policy' => [
+    'aculta_portal.aculta_user_agreement_policy' => [
       'label' => 'Política de termos da conta',
-      'summary' => 'Consulta e valida o aceite dos termos no fluxo da conta.',
+      'summary' => 'Consulta e valida o aceite ACULTA no ledger do aculta_user.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
     'aculta_portal.auth_integration' => [
@@ -208,9 +208,9 @@ final class PortalHelperRegistry {
       'summary' => 'Coordena as mensagens transacionais de cadastro pela infraestrutura de e-mail existente.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
-    'aculta_portal.registration_terms' => [
-      'label' => 'Termos do cadastro',
-      'summary' => 'Fornece os termos vigentes do módulo Agreement ao fluxo de cadastro.',
+    'aculta_portal.aculta_user_agreement_registration' => [
+      'label' => 'Aceite de Termos no cadastro',
+      'summary' => 'Registra o aceite dos Termos ACULTA no ledger do aculta_user.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
     'aculta_portal.search_results' => [

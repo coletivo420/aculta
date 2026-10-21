@@ -6,16 +6,17 @@ namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Access\EmailConfirmedAccessCheck;
 use Drupal\aculta_portal\Access\ProtectedRouteAccessCheck;
-use Drupal\aculta_portal\Account\AccountTermsPolicy;
+use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface as UserModuleDataInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
-use Drupal\aculta_user\Consent\ConsentLedger;
+use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use PHPUnit\Framework\Attributes\Group;
 
 /** Verifies LMS participation uses Group access without email verification. */
@@ -35,7 +36,7 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $policy = new EmailConfirmationPolicy($userData, $entityTypeManager);
     $emailCheck = new EmailConfirmedAccessCheck($policy);
 
-    $terms = new AccountTermsPolicy($this->createMock(ConsentLedger::class));
+    $terms = new AcultaUserAgreementPolicy($this->createMock(AcultaUserAgreementLedger::class));
 
     $course = $this->createMock(GroupInterface::class);
     $course->expects(self::once())->method('access')->with('take', $student, TRUE)->willReturn(AccessResult::allowed()->cachePerUser());
@@ -58,7 +59,7 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $student->method('hasPermission')->willReturn(FALSE);
 
     $entityTypeManager = $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class);
-    $terms = new AccountTermsPolicy($this->createMock(ConsentLedger::class));
+    $terms = new AcultaUserAgreementPolicy($this->createMock(AcultaUserAgreementLedger::class));
     $emailCheck = new EmailConfirmedAccessCheck(new EmailConfirmationPolicy(
       $this->createMock(UserModuleDataInterface::class),
       $entityTypeManager,

@@ -7,19 +7,19 @@ namespace Drupal\aculta_portal\Account;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Registra o aceite dos termos (acordo aculta_account_terms) no momento do cadastro, quando o visitante
+ * Registra o aceite dos termos (acordo aculta_user_agreement_terms) no momento do cadastro, quando o visitante
  * marca o checkbox do formulário. Assim o aceite não depende de uma etapa posterior.
  */
-final class RegistrationTerms {
+final class AcultaUserAgreementRegistration {
 
-  public function __construct(private readonly \Drupal\aculta_user\Consent\ConsentLedger $ledger) {}
+  public function __construct(private readonly \Drupal\aculta_user\Consent\AcultaUserAgreementLedger $ledger) {}
 
   /** Grava o aceite do acordo para a conta recém-criada. Retorna TRUE se foi gravado. */
   public function record(AccountInterface $account): bool {
     if ((int) $account->id() <= 0) {
       return FALSE;
     }
-    $this->ledger->record((int) $account->id(), 'aculta_account_terms', 'accepted');
+    $this->ledger->recordAcultaUserAgreement((int) $account->id(), 'aculta_user_agreement_terms', 'accepted');
     return TRUE;
   }
 

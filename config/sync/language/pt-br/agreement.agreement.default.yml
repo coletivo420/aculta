@@ -1,7 +1,0 @@
-settings:
-  title: 'Nosso acordo'
-  checkbox: 'Li e concordo.'
-  submit: Enviar
-  success: 'Obrigado por aceitar nosso acordo.'
-  revoked: 'Você revogou com sucesso o seu aceite do nosso acordo.'
-  failure: 'Você precisa aceitar nosso acordo para continuar.'

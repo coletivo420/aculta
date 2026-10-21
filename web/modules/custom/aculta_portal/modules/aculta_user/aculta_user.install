@@ -11,12 +11,12 @@ use Drupal\aculta_user\Entity\BadgeAward;
 
 /** Implements hook_schema(). */
 function aculta_user_schema(): array {
-  $schema['aculta_user_consent'] = [
+  $schema['aculta_user_agreement'] = [
     'description' => 'Append-only consent evidence; retained for the lifetime of the user account.',
     'fields' => [
       'id' => ['type' => 'serial', 'not null' => TRUE],
       'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-      'agreement' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+      'aculta_user_agreement_type' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
       'action' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE],
       'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
       'ip_address' => ['type' => 'varchar', 'length' => 45, 'not null' => FALSE],
@@ -27,7 +27,7 @@ function aculta_user_schema(): array {
       'record_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
     ],
     'primary key' => ['id'],
-    'indexes' => ['consent_lookup' => ['uid', 'agreement', 'id']],
+    'indexes' => ['consent_lookup' => ['uid', 'aculta_user_agreement_type', 'id']],
   ];
   return $schema;
 }
@@ -35,16 +35,125 @@ function aculta_user_schema(): array {
 /** Creates the ledger and preserves each Agreement module's current row as incomplete legacy evidence. */
 function aculta_user_update_10006(): string {
   $schema = \Drupal::database()->schema();
-  if (!$schema->tableExists('aculta_user_consent')) {
-    $schema->createTable('aculta_user_consent', aculta_user_schema()['aculta_user_consent']);
+  if (!$schema->tableExists('aculta_user_agreement')) {
+    $schema->createTable('aculta_user_agreement', aculta_user_schema()['aculta_user_agreement']);
   }
   if ($schema->tableExists('agreement')) {
     $rows = \Drupal::database()->select('agreement', 'a')->fields('a', ['uid', 'type', 'agreed', 'agreed_date'])->execute();
     foreach ($rows as $row) {
-      \Drupal::service('aculta_user.consent_ledger')->record((int) $row->uid, (string) $row->type, (int) $row->agreed ? 'accepted' : 'revoked', [], TRUE, (int) $row->agreed_date);
+      $type = match ((string) $row->type) {
+        'aculta_account_terms' => 'aculta_user_agreement_terms',
+        'aculta_rastreamento' => 'aculta_user_agreement_email_tracking',
+        'default' => 'aculta_user_agreement_default',
+        default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', (string) $row->type),
+      };
+      \Drupal::service('aculta_user.aculta_user_agreement_ledger')->recordAcultaUserAgreement((int) $row->uid, $type, (int) $row->agreed ? 'accepted' : 'revoked', [], TRUE, (int) $row->agreed_date);
     }
   }
   return (string) t('Created the append-only consent ledger and copied current Agreement records as incomplete legacy evidence.');
+}
+
+/** Renames the initial generic consent ledger and types to the ACULTA namespace. */
+function aculta_user_update_10007(): string {
+  $db = \Drupal::database();
+  $schema = $db->schema();
+  if ($schema->tableExists('aculta_user_consent') && !$schema->tableExists('aculta_user_agreement')) {
+    $schema->renameTable('aculta_user_consent', 'aculta_user_agreement');
+  }
+  if ($schema->tableExists('aculta_user_agreement') && $schema->fieldExists('aculta_user_agreement', 'agreement')) {
+    if ($schema->indexExists('aculta_user_agreement', 'consent_lookup')) {
+      $schema->dropIndex('aculta_user_agreement', 'consent_lookup');
+    }
+    $schema->changeField('aculta_user_agreement', 'agreement', 'aculta_user_agreement_type', aculta_user_schema()['aculta_user_agreement']['fields']['aculta_user_agreement_type']);
+    $schema->addIndex('aculta_user_agreement', 'consent_lookup', ['uid', 'aculta_user_agreement_type', 'id'], aculta_user_schema()['aculta_user_agreement']);
+  }
+  if ($schema->tableExists('aculta_user_agreement') && $schema->fieldExists('aculta_user_agreement', 'aculta_user_agreement_type')) {
+    $previous = [];
+    foreach ($db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute() as $row) {
+      $oldType = (string) $row->aculta_user_agreement_type;
+      $type = str_starts_with($oldType, 'aculta_user_agreement_') ? $oldType : match ($oldType) {
+        'aculta_account_terms' => 'aculta_user_agreement_terms',
+        'aculta_rastreamento' => 'aculta_user_agreement_email_tracking',
+        'default' => 'aculta_user_agreement_default',
+        default => 'aculta_user_agreement_' . preg_replace('/[^a-z0-9_]+/', '_', $oldType),
+      };
+      $uid = (int) $row->uid;
+      $values = [
+        'uid' => $uid,
+        'aculta_user_agreement_type' => $type,
+        'action' => (string) $row->action,
+        'created' => (int) $row->created,
+        'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,
+        'user_agent' => $row->user_agent === NULL ? NULL : (string) $row->user_agent,
+        'documents' => (string) $row->documents,
+        'legacy' => (int) $row->legacy,
+        'previous_hash' => $previous[$uid] ?? '',
+      ];
+      $hash = hash_hmac('sha256', json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), \Drupal::service('private_key')->get());
+      $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', (int) $row->id)->execute();
+      $previous[$uid] = $hash;
+    }
+  }
+  return (string) t('Renamed the ACULTA user agreement ledger and re-signed its per-account integrity chains.');
+}
+
+/** Replaces the contributed Agreement bypass permission with the ACULTA audit permission. */
+function aculta_user_update_10008(): string {
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+  foreach ($roles as $role) {
+    if ($role->hasPermission('bypass agreement')) {
+      $role->revokePermission('bypass agreement');
+      $role->save();
+    }
+  }
+  return (string) t('Removed the retired Agreement bypass permission from all roles.');
+}
+
+/** Preserves source Agreement type metadata on the incomplete legacy events and refreshes their HMAC chains. */
+function aculta_user_update_10009(): string {
+  $db = \Drupal::database();
+  $previous = [];
+  foreach ($db->select('aculta_user_agreement', 'c')->fields('c')->orderBy('uid')->orderBy('id')->execute() as $row) {
+    $uid = (int) $row->uid;
+    $documents = json_decode((string) $row->documents, TRUE, 512, JSON_THROW_ON_ERROR);
+    if ((int) $row->legacy === 1) {
+      $type = (string) $row->aculta_user_agreement_type;
+      $sourceType = match ($type) {
+        'aculta_user_agreement_terms' => 'aculta_account_terms',
+        'aculta_user_agreement_email_tracking' => 'aculta_rastreamento',
+        'aculta_user_agreement_default' => 'default',
+        default => preg_replace('/^aculta_user_agreement_/', '', $type),
+      };
+      $documents['_legacy_source'] = ['contrib_type' => $sourceType, 'evidence' => 'last_state_only'];
+    }
+    $values = [
+      'uid' => $uid,
+      'aculta_user_agreement_type' => (string) $row->aculta_user_agreement_type,
+      'action' => (string) $row->action,
+      'created' => (int) $row->created,
+      'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,
+      'user_agent' => $row->user_agent === NULL ? NULL : (string) $row->user_agent,
+      'documents' => json_encode($documents, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+      'legacy' => (int) $row->legacy,
+      'previous_hash' => $previous[$uid] ?? '',
+    ];
+    $hash = hash_hmac('sha256', json_encode($values, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), \Drupal::service('private_key')->get());
+    $db->update('aculta_user_agreement')->fields($values + ['record_hash' => $hash])->condition('id', (int) $row->id)->execute();
+    $previous[$uid] = $hash;
+  }
+  return (string) t('Recorded source type and scope on legacy evidence, then re-signed the account chains.');
+}
+
+/** Applies the selected account-lifetime retention period to migrated legacy events. */
+function aculta_user_update_10010(): string {
+  $db = \Drupal::database();
+  $query = $db->select('aculta_user_agreement', 'a');
+  $query->leftJoin('users_field_data', 'u', 'u.uid = a.uid');
+  $uids = $query->isNull('u.uid')->distinct()->fields('a', ['uid'])->execute()->fetchCol();
+  foreach ($uids as $uid) {
+    $db->delete('aculta_user_agreement')->condition('uid', (int) $uid)->execute();
+  }
+  return (string) t('Removed legacy agreement evidence for accounts that no longer exist, according to the account-lifetime retention policy.');
 }
 
 /**

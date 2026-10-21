@@ -7,29 +7,29 @@ namespace Drupal\aculta_user\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\aculta_user\Consent\ConsentLedger;
+use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Read-only administrative view of consent evidence and chain integrity. */
-final class ConsentAuditController extends ControllerBase {
+final class AcultaUserAgreementAuditController extends ControllerBase {
 
   public function __construct(
     private readonly Connection $database,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly ConsentLedger $ledger,
+    private readonly AcultaUserAgreementLedger $ledger,
   ) {}
 
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('database'), $container->get('date.formatter'), $container->get('aculta_user.consent_ledger'));
+    return new static($container->get('database'), $container->get('date.formatter'), $container->get('aculta_user.aculta_user_agreement_ledger'));
   }
 
   public function listing(): array {
     $rows = [];
-    foreach ($this->database->select('aculta_user_consent', 'c')->fields('c')->orderBy('id', 'DESC')->range(0, 200)->execute() as $event) {
+    foreach ($this->database->select('aculta_user_agreement', 'c')->fields('c')->orderBy('id', 'DESC')->range(0, 200)->execute() as $event) {
       $rows[] = [
         $this->dateFormatter->format((int) $event->created, 'short'),
         (string) $event->uid,
-        (string) $event->agreement,
+        (string) $event->aculta_user_agreement_type,
         (string) $event->action,
         $event->ip_address ?: $this->t('Não disponível (registro legado)'),
         $event->user_agent ?: $this->t('Não disponível (registro legado)'),

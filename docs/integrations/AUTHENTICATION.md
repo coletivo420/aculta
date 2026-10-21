@@ -171,12 +171,12 @@ Antes de alterar login/OAuth/Conta, validar pelo menos:
 
 ## Aceite dos termos (popup persistente, 0.3.0-dev.16)
 
-- **Origem do aceite:** o checkbox obrigatório "Li e aceito os Termos de Uso e a Política de Privacidade." do cadastro por e-mail/senha (`user_register_form`, `FormHooks`) grava o aceite em `aculta_account_terms` (`RegistrationTerms::record`). O mesmo registro é lido pelo popup (`AccountTermsPolicy`). Quem se cadastra pelo formulário nunca vê o popup.
+- **Origem do aceite:** o checkbox obrigatório "Li e aceito os Termos de Uso e a Política de Privacidade." do cadastro por e-mail/senha (`user_register_form`, `FormHooks`) grava `aculta_user_agreement_terms` no ledger `aculta_user_agreement` (`AcultaUserAgreementRegistration`). O mesmo ledger é lido pelo popup (`AcultaUserAgreementPolicy`). Quem se cadastra pelo formulário nunca vê o popup.
 - **OAuth (Google) e outras vias sem o checkbox:** não gravam aceite. O popup aparece na primeira página restrita até o aceite.
-- **Onde o popup aparece (usuário logado sem aceite):** em toda página que o anônimo não acessa (conta, edição e criação de conteúdo, área de membro, `AccountTermsHooks::isRestrictedToLoggedUsers`); em nós com campo de comentário (fórum); e na página de acesso negado. Páginas que o anônimo acessa (loja, carrinho, verbetes públicos) não mostram o popup, e o anônimo nunca vê o popup.
+- **Onde o popup aparece (usuário logado sem aceite):** em toda página que o anônimo não acessa (conta, edição e criação de conteúdo, área de membro, `AcultaUserAgreementHooks::isRestrictedToLoggedUsers`); em nós com campo de comentário (fórum); e na página de acesso negado. Páginas que o anônimo acessa (loja, carrinho, verbetes públicos) não mostram o popup, e o anônimo nunca vê o popup.
 - **Comportamento:** sem aceite, a página restrita carrega normalmente, na mesma URL, com o popup por cima (o popup é o bloqueio). Não há redirecionamento para `/aceite-termos` nem resposta 403 de página. As ações protegidas (checkout e cursos) seguem negadas pelo servidor (`ProtectedRouteAccessCheck`); a página de acesso negado também mostra o popup. O popup não tem botão de fechar, Esc é cancelado (`js/account-terms-modal.js`), e clique fora não fecha. O foco fica no modal (`showModal()`).
 - **Após aceitar:** `POST /termos/aceitar` grava o aceite e volta à mesma página (destino validado como caminho local).
-- **Versão dos termos:** alterar `settings.reset_date` do acordo (ou aumentar a frequência) faz todos aceitarem de novo, pelo cálculo de `Agreement::getAgreementFrequencyTimestamp()`.
+- **Versão dos termos:** cada aceite novo guarda UUID, revisão e hash dos textos atuais. Alterar o conteúdo ainda não força automaticamente um novo aceite; a regra para invalidar aceites anteriores precisa ser definida e implementada antes de tratar revisões legais como requisito de reaceite.
 - **Todos os hosts:** o aceite é por usuário no banco, então vale em principal, conta e loja.
-- **Página antiga:** `/aceite-termos` responde 404 (`DomainRouteSubscriber`; a rota do módulo agreement existe só por nome).
+- **Página antiga:** `/aceite-termos` responde 404. O fluxo atual usa o popup e a rota própria `aculta_portal.aculta_user_agreement.accept` (`POST /termos/aceitar`).
 - **Fundo:** `css/account-terms-modal.css` desfoca a página atrás do popup.

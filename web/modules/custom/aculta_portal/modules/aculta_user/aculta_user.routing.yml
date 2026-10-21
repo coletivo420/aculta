@@ -18,21 +18,21 @@ aculta_user.configuracoes_privacidade:
   requirements:
     _permission: 'access aculta portal'
 
-aculta_user.mail_tracking_consent:
+aculta_user.aculta_user_agreement_tracking:
   path: '/configuracoes/rastreamento-de-e-mail'
   defaults:
-    _form: '\Drupal\aculta_user\Form\MailTrackingConsentForm'
+    _form: '\Drupal\aculta_user\Form\AcultaUserAgreementTrackingConsentForm'
     _title: 'Rastreamento de e-mail'
   requirements:
     _user_is_logged_in: 'TRUE'
 
-aculta_user.consent_audit:
+aculta_user.aculta_user_agreement_audit:
   path: '/painel-administrativo/aculta/termos/aceites'
   defaults:
-    _controller: '\Drupal\aculta_user\Controller\ConsentAuditController::listing'
+    _controller: '\Drupal\aculta_user\Controller\AcultaUserAgreementAuditController::listing'
     _title: 'Evidências de aceite e consentimento'
   requirements:
-    _permission: 'administer aculta consent ledger'
+    _permission: 'administer aculta user agreements'
   options:
     _admin_route: true
 

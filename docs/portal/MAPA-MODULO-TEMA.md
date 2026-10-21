@@ -136,7 +136,7 @@ Módulos de API, infraestrutura, segurança, dados ou editor. Não têm marcaç�
 
 - **Entidades e dados:** `entity`, `entity_embed`, `entity_reference_revisions`, `entity_usage`, `inline_entity_form`, `file_mdm`, `physical`, `token`, `key`, `embed`, `freelinking`, `node_co_authors`, `diff`, `content_lock`, `group`, `history`.
 - **Mídia e imagem:** `media_duplicates`, `media_gallery`, `image_widget_crop`, `imageapi_optimize`, `imageapi_optimize_binaries`, `imagemagick` (a política de imagem é do `aculta_image`).
-- **Conta, acesso e segurança:** `agreement`, `email_confirmer`, `flexible_permissions`, `flood_control`, `login_emailusername`, `role_hierarchy`, `role_inheritance`, `username_enumeration_prevention`, `security_review` (busca de CEP é do Portal).
+- **Conta, acesso e segurança:** `email_confirmer`, `flexible_permissions`, `flood_control`, `login_emailusername`, `role_hierarchy`, `role_inheritance`, `username_enumeration_prevention`, `security_review` (Termos e consentimentos ficam no `aculta_user`; busca de CEP é do Portal).
 - **Busca, SEO e rotas:** `metatag`, `schema_metatag`, `pathauto`, `redirect`, `rename_admin_paths`, `simple_sitemap`, `search_api`.
 - **Correio e fila:** `symfony_mailer`, `sophron`, `state_machine`.
 - **Segurança do navegador e relatórios:** `csp` (política Report-Only para o leitor PDF; sem marcação própria) e `reporting` (endpoint local de relatórios, gravado no DBLog). Sem contraparte visual.

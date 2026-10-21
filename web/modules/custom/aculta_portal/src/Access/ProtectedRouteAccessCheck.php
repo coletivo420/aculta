@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Access;
 
-use Drupal\aculta_portal\Account\AccountTermsPolicy;
+use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\commerce_checkout\Controller\CheckoutController;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
@@ -24,7 +24,7 @@ final class ProtectedRouteAccessCheck {
   public function __construct(
     private readonly EmailConfirmedAccessCheck $emailCheck,
     private readonly ClassResolverInterface $classResolver,
-    private readonly AccountTermsPolicy $termsPolicy,
+    private readonly AcultaUserAgreementPolicy $termsPolicy,
   ) {}
 
   /** Checkout do Commerce: rota /checkout/{pedido}/{etapa}. */

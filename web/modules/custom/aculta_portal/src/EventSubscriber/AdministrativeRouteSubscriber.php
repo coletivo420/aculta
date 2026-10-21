@@ -65,7 +65,6 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
     'disable' => 'desativar',
     'enable' => 'ativar',
     'captcha-points' => 'pontos-captcha',
-    'agreement' => 'acordo',
     'flood-control' => 'controle-sobrecarga',
   ];
 
