@@ -1,3 +1,10 @@
+## 0.1.1-dev.62 — idioma preferido no resumo diário — 2026-10-21
+
+- Usa o idioma preferido da conta ao construir `MailMessage`; o idioma Drupal
+  `und` não atende ao contrato BCP 47 do Mailer e fazia o envio do resumo falhar.
+- O adapter LMS cobre entrega, reenvio após falha e opt-out pelo serviço real de
+  resumo diário. Runtime e revisão visual continuam DEFERRED.
+
 ## 0.1.1-dev.61 — providers de resumo diário por tagged iterator — 2026-10-20
 
 - Permite que módulos forneçam linhas ao resumo existente sem substituir

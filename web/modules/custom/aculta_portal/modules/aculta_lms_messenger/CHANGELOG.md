@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.5 — validação do resumo diário compartilhado — 2026-10-21
+
+- Exercita o serviço real de resumo do `aculta_messenger` com provider
+  educacional: confirma envio, preservação de pendências após falha e descarte
+  somente do e-mail quando há opt-out.
+- A prova também detectou e corrigiu o idioma `und` inválido na mensagem do
+  resumo. Persistência/revalidação das entidades LMS no Runtime e inspeção visual
+  permanecem DEFERRED.
+
 ## 0.1.0-dev.4 — aviso de resposta pendente — 2026-10-20
 
 - Cria avisos para educadores com permissão atual de correção no curso quando

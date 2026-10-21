@@ -34,6 +34,9 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - O adapter opcional `aculta_lms_messenger` adiciona avisos de matrícula,
   certificado e conclusão à lista/contador global; conclusão entra no resumo
   diário compartilhado por provider tagged. Não cria central ou storage próprio.
+- O resumo diário cria `MailMessage` no idioma preferido da conta, que segue o
+  contrato de idioma do Mailer; não usar `LanguageInterface::LANGCODE_DEFAULT`
+  (`und`) nesse transporte.
 - Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso. Para tópicos de fórum, a entrega por mensagem foi desligada (F-D21); ver `docs/AVISOS-E-MENSAGENS.md`.
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
