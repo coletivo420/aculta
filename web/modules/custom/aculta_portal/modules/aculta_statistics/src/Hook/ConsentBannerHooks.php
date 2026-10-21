@@ -15,7 +15,7 @@ use Drupal\Core\Url;
  * (componente `consent-banner`, oculto até o JavaScript decidir exibi-lo). Com a
  * opção desabilitada, nenhuma biblioteca é anexada e a página não muda.
  *
- * O consentimento de contas segue o acordo do módulo `agreement` (aculta_portal).
+ * O consentimento opcional de contas segue o ledger aculta_user_agreement.
  */
 final class ConsentBannerHooks {
 
