@@ -1,5 +1,11 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.17 — protege a propriedade da composição — 2026-10-20
+
+- Uma composição exige que item, micropágina e destino compartilhem o mesmo proprietário Drupal; a validação impede gravação de referências cruzadas.
+- Entity Access também nega exibição pública de registros inconsistentes preexistentes, inclusive quando página e destino estão publicados.
+- Validação: Kernel PASS (2 testes/99 asserções; 7 depreciações upstream); runtime DEFERRED pelo bloqueio externo do container Drush. PHPUnit local executado com PHP 8.4.26; alvo de projeto é 8.5.
+
 ## 0.4.0-dev.16 — agrega acessos a links curtos com retenção — 2026-10-20
 
 - Redirects curtos GET aprovados por Entity Access e validação podem enfileirar apenas ID do destino e instante; HEAD não conta. QueueWorker agrega contagem UTC por destino/dia. Dashboard do dono mostra total móvel de 90 dias.

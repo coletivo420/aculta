@@ -130,3 +130,11 @@ o container por serviço ausente `entity_print.print_builder` em alteração
 concorrente de `aculta_lms`; nenhuma operação persistente foi executada. Revisão
 visual e validação legal da base para coleta permanecem pendentes; a coleta
 segue desligada por padrão.
+
+
+Integridade de propriedade 0.4.0-dev.17: Kernel PASS (2 testes/99 asserções;
+7 depreciações upstream). Cobertura inclui rejeição de item que referencia
+destino de outra conta e negação de view público para composição inconsistente.
+Runtime e smoke HTTP DEFERRED pelo bloqueio externo do container Drush; nenhuma
+atualização de banco foi executada. O PHPUnit local está em PHP 8.4.26, abaixo
+do PHP 8.5 declarado como alvo do projeto.

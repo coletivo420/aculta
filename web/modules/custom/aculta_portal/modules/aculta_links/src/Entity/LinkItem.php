@@ -62,6 +62,7 @@ use Drupal\aculta_links\Access\LinkItemAccessControlHandler;
   admin_permission: 'administer aculta links',
   constraints: [
     'AcultaLinkItemSchedule' => [],
+    'AcultaLinkItemOwnership' => [],
   ],
   common_reference_target: TRUE,
   show_revision_ui: TRUE,

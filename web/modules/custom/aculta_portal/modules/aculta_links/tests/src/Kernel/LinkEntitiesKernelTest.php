@@ -207,6 +207,25 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     ]);
     $item->save();
 
+    $other_link = Link::create([
+      'title' => 'Destino de outra conta',
+      'uri' => ['uri' => 'https://other.example/'],
+      'uid' => $other->id(),
+      'status' => TRUE,
+    ]);
+    $other_link->save();
+    $cross_owner_item = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $other_link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Referência cruzada',
+      'status' => TRUE,
+    ]);
+    self::assertNotEmpty(
+      $cross_owner_item->validate()->getByField('link'),
+      'A composição não pode referenciar destino pertencente a outra conta.',
+    );
+
     $now = $this->container->get('datetime.time')->getRequestTime();
     $scheduled_item = LinkItem::create([
       'page' => $page->id(),
@@ -268,6 +287,10 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertTrue($page->isPublished(), 'O estado de publicação da página é persistido.');
     self::assertTrue($page->access('view', $anonymous), 'Páginas publicadas ficam visíveis publicamente.');
     self::assertTrue($item->access('view', $anonymous), 'Itens publicados ligados a página e destino publicados são públicos.');
+    self::assertFalse(
+      $cross_owner_item->access('view', $anonymous),
+      'Um item que cruza proprietários não se torna público mesmo se página e destino estiverem publicados.',
+    );
     self::assertTrue($link->access('view', $anonymous), 'Destinos publicados ficam visíveis publicamente.');
     $render = $this->container->get('aculta_links.public_page_controller')->view('pagina-cultural');
     self::assertSame('aculta_links_page', $render['#theme']);

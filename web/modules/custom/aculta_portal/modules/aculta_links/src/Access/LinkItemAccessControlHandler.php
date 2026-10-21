@@ -66,7 +66,9 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler impl
       return AccessResult::forbidden()->addCacheableDependency($entity);
     }
 
-    if ($operation === 'view' && $entity->isPublished() && $page->isPublished() && $link->isPublished()) {
+    $owners_match = (string) $entity->getOwnerId() === (string) $page->getOwnerId()
+      && (string) $entity->getOwnerId() === (string) $link->getOwnerId();
+    if ($operation === 'view' && $owners_match && $entity->isPublished() && $page->isPublished() && $link->isPublished()) {
       $access = AccessResult::allowed()
         ->addCacheableDependency($entity)
         ->addCacheableDependency($page)

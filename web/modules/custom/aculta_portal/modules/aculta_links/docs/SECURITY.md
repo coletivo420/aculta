@@ -10,7 +10,7 @@
 - Acesso de item revalida a propriedade tanto da micropágina quanto do destino
   referenciado, adicionando ambos como dependências cacheáveis.
 - O handler inclui contextos de cache de usuário/permissões e dependência da
-  entidade no resultado.
+  entidade no resultado; composição pública exige propriedade coincidente.
 - O dashboard limita a EntityQuery pela conta quando não é administração,
   declara `accessCheck(TRUE)` e revalida `update` por entidade antes de montar
   cada linha. As listagens variam por usuário/permissões e invalidam pelo tag de
@@ -49,7 +49,7 @@
   HTTPS de página publicada. O endpoint não aceita URL da requisição, não busca
   rede, não persiste arquivo e não registra visualizações ou scans.
 - O QR de link curto aplica as mesmas garantias ao código do destino: somente
-  entidades publicadas e válidas geram uma URL canônica de `DomainPurposeManager`;
+entidades publicadas e válidas geram uma URL canônica de `DomainPurposeManager`;
   arquivo SVG é gerado em memória e não cria telemetria.
 - Cache público varia/invalida por Domain, idioma, path e entidades; conteúdo
   privado não é cacheado publicamente.
@@ -66,6 +66,14 @@ renderizar rascunhos, links e itens inativos. A resposta declara `max-age: 0`
 para não compartilhar renderização privada. O endpoint retorna 404 sem acesso;
 o teste Kernel cobre a consulta do proprietário e o limite de cache. Inspeção
 visual autenticada no navegador permanece pendente.
+
+## Integridade de propriedade 0.4.0-dev.17
+
+Validação de entidade exige que item, micropágina e destino tenham a mesma
+conta proprietária. Entity Access aplica a mesma condição antes de permitir
+visualização pública; dados inconsistentes existentes não ficam expostos mesmo
+que os três registros estejam publicados. A cobertura Kernel verifica os dois
+caminhos.
 
 
 ## Painel 0.2.0-dev.2
