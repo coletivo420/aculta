@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'F13: avisos de matrícula, certificado, conclusão, avaliação, resposta pendente, conteúdo liberado, retorno, prazo e lembrete de 24h; implementar Kernel com Message real, revisão visual e validação Runtime/cron ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'
+next_phase: 'F13: avisos educacionais e lembrete de 24h; Kernel com Message real passou; falta revisão visual e validação Runtime/cron ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'

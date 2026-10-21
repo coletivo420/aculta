@@ -7,8 +7,9 @@
   seguintes. Cron enfileira somente UUID/version opacos; worker revalida data,
   publicação, turma, matrícula e acesso antes de criar aviso.
 - Lembrete aparece no painel e no resumo diário opt-in, sem e-mail transacional.
-  Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernel de Group: 5 testes /
-  67 assertions PASS. Runtime/cron e Kernel do Message real continuam DEFERRED.
+  Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message:
+  6 testes / 79 assertions PASS, incluindo persistência e deduplicação em Message
+  real. Runtime/cron e revisão visual continuam DEFERRED.
 
 ## 0.1.0-dev.7 — aviso de prazo por atividade/turma — 2026-10-21
 

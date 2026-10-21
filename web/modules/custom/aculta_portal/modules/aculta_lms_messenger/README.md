@@ -19,9 +19,9 @@ pendente entram no resumo diário opt-in. Um link revalida acesso e encaminha ao
 purpose correto. Republicações de avaliação usam versão opaca para deduplicar.
 Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
 
-O módulo está em Dev e não foi habilitado no Runtime nesta entrega. Ainda faltam
-um Kernel com Message real, integração no Runtime/cron e inspeção visual da
-gaveta. A entrega de digest pelo serviço compartilhado foi exercitada com
+O módulo está em Dev e não foi habilitado no Runtime nesta entrega. O Kernel
+comprova persistência e deduplicação em Message real. Ainda faltam integração
+no Runtime/cron e inspeção visual da gaveta. A entrega de digest pelo serviço compartilhado foi exercitada com
 providers educacionais no Unit.
 
 ## Contratos
