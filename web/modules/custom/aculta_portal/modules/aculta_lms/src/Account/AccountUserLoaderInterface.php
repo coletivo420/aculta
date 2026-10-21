@@ -7,7 +7,9 @@ namespace Drupal\aculta_lms\Account;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 
-/** Loads the current User entity for a session account. */
+/**
+ * Loads the current User entity for a session account.
+ */
 interface AccountUserLoaderInterface {
 
   /**

@@ -12,10 +12,15 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 
-/** Tests resolving session accounts to their cacheable user entity. */
+/**
+ * Tests resolving session accounts to their cacheable user entity.
+ */
 #[Group('aculta_lms')]
 final class AccountUserLoaderTest extends UnitTestCase {
 
+  /**
+   * Resolves a session object through User storage.
+   */
   public function testSessionAccountLoadsUserEntity(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn('27');
@@ -28,6 +33,9 @@ final class AccountUserLoaderTest extends UnitTestCase {
     self::assertSame($user, (new AccountUserLoader($entity_type_manager))->load($account));
   }
 
+  /**
+   * Reuses an entity already passed as the session account.
+   */
   public function testUserEntityDoesNotReloadItself(): void {
     $user = $this->createMock(UserInterface::class);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -36,6 +44,9 @@ final class AccountUserLoaderTest extends UnitTestCase {
     self::assertSame($user, (new AccountUserLoader($entity_type_manager))->load($user));
   }
 
+  /**
+   * Returns no entity for the anonymous account.
+   */
   public function testAnonymousSessionHasNoUserEntity(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn(NULL);

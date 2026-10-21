@@ -8,14 +8,18 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 
-/** Resolves session accounts to cacheable Drupal user entities. */
+/**
+ * Resolves session accounts to cacheable Drupal user entities.
+ */
 final class AccountUserLoader implements AccountUserLoaderInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function load(AccountInterface $account): ?UserInterface {
     if ($account instanceof UserInterface) {
       return $account;

@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.39 — tipar resolução de referências LMS — 2026-10-21
+
+- O resolvedor do histórico usa `FieldableEntityInterface`, campos de
+  referência e interfaces LMS importadas; reduz checagens dinâmicas e mantém o
+  fechamento seguro para referências removidas.
+- Unit: 46 testes / 215 assertions PASS (6 depreciações); Kernel lifecycle:
+  9 testes / 369 assertions PASS (42 depreciações), no banco dedicado.
+- PHPCS Drupal/DrupalPractice PASS nos arquivos novos de resolução e no
+  `AttemptArchiveManager`; PHP 8.4.26, PHP 8.5 não validado.
+
 ## 0.1.0-dev.38 — resolver estado ativo da conta de sessão — 2026-10-21
 
 - Access do histórico e dos downloads resolve `AccountInterface`/AccountProxy

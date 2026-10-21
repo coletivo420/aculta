@@ -14,9 +14,9 @@ publicado. Unit do módulo: 41 testes / 192 assertions PASS; 5 depreciações do
 ecossistema de teste. A execução local usa PHP 8.4.26 e não valida PHP 8.5.
 O arquivamento pré-exclusão e a consulta do histórico também deixam de forma
 segura de operar se o LMS já removeu status, curso, aula ou atividade; nesse
-caso não é criado snapshot incompleto. A suíte Unit completa passou com 42
-testes / 197 assertions (5 depreciações). `AttemptArchiveLifecycleTest` passou
-com 9 testes / 366 assertions no banco Kernel dedicado; 42 depreciações vieram
+caso não é criado snapshot incompleto. A suíte Unit completa passou com 46
+testes / 215 assertions (6 depreciações). `AttemptArchiveLifecycleTest` passou
+com 9 testes / 369 assertions no banco Kernel dedicado; 42 depreciações vieram
 do Core e contrib. O access do histórico também nega estudante ou educador
 bloqueado e revalida após bloqueio e revogação da membership.
 O download de arquivo privado de resposta também nega estudante ou educador
@@ -24,6 +24,9 @@ bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
 369 assertions PASS (42 depreciações); Unit completo: 46 testes / 215
 assertions PASS (6 depreciações). O status ativo é verificado pelo User
 carregado também quando a requisição entrega apenas AccountProxy/session.
+O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
+PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
+`AttemptArchiveManager`.
 No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
 rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
 O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi
