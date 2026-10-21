@@ -8,6 +8,9 @@ ACULTA420 apresenta a experiência.
 ## Comece por aqui
 
 - [Documentação do projeto](docs/README.md) — arquitetura, políticas e operação.
+- [Arquitetura dos Kernels ACULTA](docs/architecture/aculta-kernels.md) — Kernel transversal, subkernels Fórum/Galeria e matriz de consumidores.
+- [ADR-011: Kernels e Studio](docs/decisions/ADR-011-aculta-kernels-studio.md) — responsabilidades e fronteiras aprovadas.
+- [Roadmap Studio + Revista](docs/portal/STUDIO-MAGAZINE-ROADMAP.md) — unificação editorial, abas do Studio e fases de implementação.
 - [Mapa de caminhos e redirecionamentos](docs/architecture/ROUTES-SITEMAP.md) — caminhos por domínio, rotas administrativas, estados e redirects.
 - [ACULTA Portal](web/modules/custom/aculta_portal/README.md) — módulo principal
   e índice das extensões próprias.
