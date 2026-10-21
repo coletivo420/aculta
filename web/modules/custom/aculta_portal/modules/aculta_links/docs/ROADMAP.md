@@ -125,8 +125,7 @@ Centralização (ADR-0004 do aculta_statistics, 0.4.0-dev.31): os cliques deixam
 próprias. `LinkAnalytics` grava `links.link.clicks` (dimensão = destino) no `aculta_statistics` e lê
 os totais dos 90 dias por ele. Removidos: `aculta_links_stat_daily` (atualização 10008), worker da fila
 e cron de retenção. Sem migração: o banco é de teste e nenhum agregado precisa ser retido. A
-configuração `analytics_enabled` continua sendo o interruptor. Pendente: a `aculta_statistics` precisa
-estar habilitada no Runtime antes de a 10008 rodar.
+configuração `analytics_enabled` continua sendo o interruptor. Aplicado no Runtime de teste em 2026-10-21 (tabela vazia antes).
 
 ## 0.6.0 — integração do ecossistema
 

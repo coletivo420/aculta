@@ -71,6 +71,7 @@ até o módulo ser ativado.
 ### Centralização (ADR-0004, aplicada junto)
 - `aculta_links` (0.4.0-dev.31) grava cliques em `links.link.clicks` e lê os totais daqui; a tabela
   `aculta_links_stat_daily`, a fila e o cron próprios foram removidos. Sem migração (banco de teste).
+- Validação no Runtime de teste (2026-10-21): `EmailReconciler` na janela de 7 dias gravou 69 envios (igual ao total do `aculta_mail_log`), com aceitos 41, entregues 4, devolvidos 1 e falhos 26. Cron do hook de e-mail ainda não observado no Runtime.
 
 ### Não feito
 - Devolução `hard`/`soft` e `email.quota.reached`.
