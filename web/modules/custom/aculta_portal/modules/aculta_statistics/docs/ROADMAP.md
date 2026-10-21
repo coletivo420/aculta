@@ -26,7 +26,12 @@ Pendente nesta fase:
 
 Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e conectores.
 
-## 0.3.0 — Commerce (em andamento: 0.3.0-dev.1)
+## 0.4.0 — LMS (em andamento: 0.4.0-dev.1)
+
+- Feito: matrículas por curso, conclusões por curso (uma vez por status) e certificados (total), a partir dos eventos do `aculta_lms`.
+- Pendente: recorte por turma; análises pedagógicas agregadas (taxa de conclusão por curso e turma); números mínimos por célula antes de qualquer painel público.
+
+## 0.3.0 — Commerce (concluída no código: 0.3.0-dev.8)
 
 - Feito: pedidos pagos e receita bruta por moeda, a partir do evento `commerce_order.order.paid`.
 - Feito (0.3.0-dev.2): reconciliação diária com pedidos oficiais `completed`, por dia UTC e moeda; doações na mesma contagem; qualquer diferença vai ao log.

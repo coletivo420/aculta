@@ -35,6 +35,12 @@ services:
     class: Drupal\aculta_statistics\Domain\PortalPurposeResolver
     arguments: ['@?Drupal\aculta_portal\Domain\DomainPurposeManager']
 
+  aculta_statistics.lms_events_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsEventsSubscriber
+    arguments: ['@aculta_statistics.recorder', '@keyvalue.expirable']
+    tags:
+      - { name: event_subscriber }
+
   aculta_statistics.commerce_payment_refund_hooks:
     class: Drupal\aculta_statistics\Hook\CommercePaymentRefundHooks
     arguments: ['@aculta_statistics.recorder', '@logger.factory']

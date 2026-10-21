@@ -27,7 +27,11 @@ retention:
     days: 90
   - metric: commerce.refunds.total
     days: 90
+  - metric: lms.enrollments.created
+    days: 90
   - metric: lms.courses.completed
+    days: 90
+  - metric: lms.certificates.issued
     days: 90
 consent_banner:
   enabled: false

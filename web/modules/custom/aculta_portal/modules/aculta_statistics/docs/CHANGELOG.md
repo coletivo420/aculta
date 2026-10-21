@@ -36,6 +36,27 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.4.0-dev.1 (LMS: matrículas, conclusões e certificados, agregados por curso)
+
+### Código
+- `LmsEventsSubscriber` escuta os eventos de domínio do `aculta_lms` (contratos de notificação):
+  - `CourseEnrollmentEvent` → `lms.enrollments.created`, por curso;
+  - `CourseCompletedEvent` → `lms.courses.completed`, por curso, uma vez por status (deduplicado pelo UUID do status);
+  - `CertificateIssuedEvent` → `lms.certificates.issued`, total, uma vez por certificado.
+- Nomes dos eventos são textos: o módulo não depende de `aculta_lms` e segue funcionando sem ele.
+- Deduplicação em `keyvalue.expirable` com validade de 400 dias (acima da retenção de 90 dias).
+- Nenhum aluno, nota, resposta ou progresso é gravado: a dimensão é só o curso (ou nada, no certificado).
+
+### Limites
+- Certificado não traz o curso no evento: contado no total, sem recorte por curso.
+- Recorte por turma não implementado (matrícula registra só o curso).
+- Painel pedagógico e números mínimos por célula ficam para a 0.8.0.
+
+### Testes
+- Unit: 58 casos (inclui matrícula, conclusão repetida e certificado repetido).
+- Kernel: 15 casos, aprovados.
+- Runtime de teste: `cr` aplicado; os três eventos têm o assinante registrado. Sem matrículas reais no ambiente, o efeito real não foi exercitado.
+
 ## 0.3.0-dev.8 (cupons: pedidos com cupom e desconto por moeda)
 
 ### Código
