@@ -282,6 +282,18 @@
     {
       "file": "config/sync/aculta_mailer.delivery.yml",
       "reason": "endereço de retorno e destinatários dos alertas e resumos por ambiente"
+    },
+    {
+      "file": "config/sync/aculta_mailer.brand.aculta.yml",
+      "reason": "rodapé institucional do e-mail (razão social, CNPJ e canal oficial de contato); identidade legal da associação, não muda por ambiente"
+    },
+    {
+      "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
+      "reason": "dados estruturados (JSON-LD) com a identidade institucional de produção; não muda por ambiente"
+    },
+    {
+      "file": "web/modules/custom/aculta_portal/modules/aculta_magazine/src/Drush/Commands/PublicationBundleMigrationCommand.php",
+      "reason": "trava de ambiente do comando de migração: só executa no host de teste da Revista"
     }
   ],
   "profiles": {
