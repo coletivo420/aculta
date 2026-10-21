@@ -75,8 +75,11 @@ pager. O editor Drupal existente segue como fluxo de identidade/aparência;
 falta sua revisão visual autenticada integrada ao tema antes de RC.
 
 Em 0.4.0-dev.30, geração e validação de QR foram delegadas ao serviço
-`aculta_qrcode`; a extensão foi incluída na configuração exportável. A aplicação
-da configuração e o smoke HTTP no Runtime continuam pendentes.
+`aculta_qrcode`; a extensão foi incluída na configuração exportável. No Runtime
+de teste, ambos os módulos estão habilitados e a geração direta pelo container
+produz SVG; landing retorna 200 e QR de slug inexistente, 404. Não há página
+publicada para validar um download HTTP positivo. A divergência restante de
+configuração inclui outros componentes e não foi importada.
 
 Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram
 corrigidos para `ContentEntityForm` após inspeção autenticada encontrar ausência

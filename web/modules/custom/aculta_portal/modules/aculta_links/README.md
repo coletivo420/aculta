@@ -13,6 +13,9 @@ interno `/redes-sociais` continua inacessível diretamente.
 Páginas publicadas têm download de QR Code SVG em
 `/pagina/{slug}/codigo-qr.svg`; a carga codifica a URL canônica do purpose
 `links` sem armazenar imagem ou medir visitas.
+No Runtime de teste, o serviço central já está habilitado e gerou SVG pelo
+container; a rota pública de download aguarda uma micropágina publicada para
+smoke HTTP positivo.
 Metatag fornece título, descrição, canonical Domain, Open Graph e Schema.org
 por página; rotas privadas de edição e preview são `noindex`.
 Destinos publicados também recebem um código curto aleatório e permanente,

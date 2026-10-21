@@ -3,8 +3,8 @@
 ## 0.4.0-dev.30 — reutiliza o serviço central de QR Code — 2026-10-21
 
 - `QrCodeSvgGenerator` agora valida o endereço e delega ao `aculta_qrcode.generator` com o preset central padrão, eliminando o gerador Endroid duplicado em Links.
-- `aculta_qrcode` passa a ser dependência declarada de Links e foi incluído em `config/sync/core.extension.yml`; a ativação no Runtime segue DEFERRED até importação autorizada.
-- Unit PASS (8 testes/65 asserções) verifica SVG e rejeição de esquema inseguro; Kernel MariaDB PASS (7 testes/229 asserções) confirma resolução dos serviços centrais. PHPCS, lint e YAML PASS; fronteira (1870), mapa (170), status-index (29 componentes), Drupal 11 (1010) e slugs (385) PASS. PHPUnit teve 9 depreciações e Kernel 7 depreciações upstream. PHP local 8.4.26, abaixo do alvo 8.5. A configuração está commitável; aplicação no Runtime permanece DEFERRED.
+- `aculta_qrcode` passa a ser dependência declarada de Links e foi incluído em `config/sync/core.extension.yml`. Em 2026-10-21, o Runtime de teste já tinha ambos os módulos habilitados; o adapter resolveu pelo container e gerou SVG (9.056 bytes), a landing respondeu HTTP 200 e QR de slug inexistente respondeu 404. Não havia micropáginas publicadas para validar o download HTTP bem-sucedido; nenhum conteúdo foi criado.
+- Unit PASS (8 testes/65 asserções) verifica SVG e rejeição de esquema inseguro; Kernel MariaDB PASS (7 testes/229 asserções) confirma resolução dos serviços centrais. PHPCS, lint e YAML PASS; fronteira (1870), mapa (170), status-index (29 componentes), Drupal 11 (1010) e slugs (385) PASS. PHPUnit teve 9 depreciações e Kernel 7 depreciações upstream. PHP local 8.4.26, abaixo do alvo 8.5. A divergência de configuração restante no Runtime é de outros componentes e não foi importada.
 
 ## 0.4.0-dev.29 — navega entre listas do dashboard — 2026-10-21
 
