@@ -36,6 +36,26 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.7 (Google Tag com Consent Mode, antecipado da 0.6.0)
+
+### Dependência
+- `drupal/google_tag` 2.0.9 (GPL-2.0). Necessidade: carregar a tag do Google (GA4) pelo mecanismo
+  oficial do Drupal, com Consent Mode, em vez de inserir o script no tema. `GOOGLE.md` recomenda
+  o Google Tag 2.x. Instalado com `--minimal-changes`: só o pacote e os metadados dos mantenedores entram no lock.
+
+### Código
+- `js/consent.js`: quando o Google Tag está em Consent Mode, ele define o padrão negado; o banner só
+  envia a atualização da decisão gravada. Sem o Google Tag, o padrão continua sendo definido aqui.
+
+### Estado no Runtime de teste
+- `google_tag` habilitado. Nenhum contêiner criado: sem o ID do Google, nenhuma tag é carregada.
+- Página responde 200 e não contém script do Google.
+- A propriedade (`G-…`) ainda deve ser informada pelo responsável para ativar a tag.
+
+### Pendente
+- ID da propriedade GA4 e criação do contêiner.
+- Revisão de privacidade com Consent Mode: o `gtag.js` é carregado mesmo com consentimento negado (pings sem cookie).
+
 ## 0.3.0-dev.6 (vendas por domínio: purpose de origem no pedido)
 
 ### Código

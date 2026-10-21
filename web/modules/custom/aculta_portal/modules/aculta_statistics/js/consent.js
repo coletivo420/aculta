@@ -37,14 +37,27 @@
     });
   }
 
-  // Padrão negado até a decisão, antes de qualquer tag.
-  const initial = readDecision();
-  window.gtag('consent', 'default', {
-    analytics_storage: initial || 'denied',
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-  });
+  // Padrão negado até a decisão, antes de qualquer tag. Com o Google Tag em Consent Mode,
+  // ele já define o padrão; repetir aqui poderia sobrescrever a decisão gravada.
+  const tagOwnsDefault = drupalSettings.gtag && drupalSettings.gtag.consentMode === true;
+  if (!tagOwnsDefault) {
+    const initial = readDecision();
+    window.gtag('consent', 'default', {
+      analytics_storage: initial || 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+  }
+
+  if (tagOwnsDefault && readDecision() !== null) {
+    window.gtag('consent', 'update', {
+      analytics_storage: readDecision(),
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+  }
 
   Drupal.behaviors.acultaConsentBanner = {
     attach(context) {
