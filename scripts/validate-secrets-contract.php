@@ -38,6 +38,7 @@ $expected = [
 $file_secrets = [
   'ga4_property_id' => 'GA4_PROPERTY_ID',
   'ga4_service_account_json' => 'GA4_SERVICE_ACCOUNT_JSON',
+  'gsc_site_url' => 'GSC_SITE_URL',
   'smtp2go_username' => 'SMTP2GO_USERNAME',
   'smtp2go_password' => 'SMTP2GO_PASSWORD',
   'brevo_api_key' => 'BREVO_API_KEY',

@@ -70,6 +70,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `brevo_webhook_token` | `BREVO_WEBHOOK_TOKEN` | Produção e testes (obrigatória nos dois; produção pendente no deploy do RC) | Sim, token de portador do webhook do Brevo; um valor por ambiente | plain |
 | `ga4_property_id` | `GA4_PROPERTY_ID` | Produção e testes (opcional; sem ela, o GA4 fica desligado) | Não, identificador da propriedade | plain |
 | `ga4_service_account_json` | `GA4_SERVICE_ACCOUNT_JSON` | Produção e testes (opcional; sem ela, o GA4 fica desligado) | Sim, chave da conta de serviço | Base64 |
+| `gsc_site_url` | `GSC_SITE_URL` | Produção e testes (opcional; sem ela, o Search Console fica desligado) | Não, propriedade do Search Console (`sc-domain:` ou URL com prefixo) | plain |
 | `mailer_payload_key` | `MAILER_PAYLOAD_KEY` | Testes (produção pendente no deploy do RC) | Sim, chave de 32 bytes (base64) que cifra o conteúdo das mensagens com falha guardadas para reenvio | plain |
 | `imap_password` | `IMAP_PASSWORD` | Produção e testes | Sim, senha da caixa de monitoramento de retorno | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
