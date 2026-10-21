@@ -200,6 +200,34 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($archive->access('view', $teacher));
     self::assertFalse($archive->access('view', $outsider));
 
+    $student->block()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $student), 'A blocked student cannot access archived answers.');
+    $student->activate()->save();
+    $teacher->block()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $teacher), 'A blocked educator cannot access archived answers.');
+    $teacher->activate()->save();
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+
+    $course->removeMember($student);
+    // Access results are cached for the current request; force a fresh result
+    // to model the next request after Group invalidates membership caches.
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+    self::assertFalse($archive->access('view', $student), 'Removing the student membership immediately revokes archive access.');
+    $course->addMember($student);
+    $this->container->get('entity_type.manager')
+      ->getAccessControlHandler('aculta_lms_attempt_archive')
+      ->resetCache();
+
     $other_course = Group::create([
       'type' => 'lms_course',
       'label' => 'Outro curso',

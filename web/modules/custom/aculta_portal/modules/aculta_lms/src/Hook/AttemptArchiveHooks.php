@@ -69,6 +69,12 @@ final class AttemptArchiveHooks {
     }
 
     if ($operation === 'view' || $operation === 'view label') {
+      if ($account instanceof UserInterface && !$account->isActive()) {
+        return AccessResult::forbidden()
+          ->cachePerUser()
+          ->addCacheableDependency($account)
+          ->addCacheableDependency($entity);
+      }
       if ($account->hasPermission('administer lms')) {
         return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
       }

@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.36 — negar histórico a contas bloqueadas — 2026-10-21
+
+- Access do histórico de tentativas nega contas bloqueadas, incluindo estudante
+  e educador, e varia cache por usuário com dependência da conta.
+- Kernel prova revogação de membership e bloqueio/desbloqueio sem conceder
+  acesso por resultado de access em cache. `AttemptArchiveLifecycleTest`: 9
+  testes / 366 assertions PASS; 42 depreciações Core/contrib. PHP 8.4.26;
+  PHP 8.5 não validado.
+
 ## 0.1.0-dev.35 — tolerar referências removidas no histórico de tentativas — 2026-10-21
 
 - Arquivamento pré-exclusão e consulta de tentativas resolvem referências do

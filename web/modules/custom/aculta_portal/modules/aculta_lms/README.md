@@ -16,8 +16,9 @@ O arquivamento pré-exclusão e a consulta do histórico também deixam de forma
 segura de operar se o LMS já removeu status, curso, aula ou atividade; nesse
 caso não é criado snapshot incompleto. A suíte Unit completa passou com 42
 testes / 197 assertions (5 depreciações). `AttemptArchiveLifecycleTest` passou
-com 9 testes / 363 assertions no banco Kernel dedicado; 42 depreciações vieram
-do Core e contrib.
+com 9 testes / 366 assertions no banco Kernel dedicado; 42 depreciações vieram
+do Core e contrib. O access do histórico também nega estudante ou educador
+bloqueado e revalida após bloqueio e revogação da membership.
 
 ## Integrações de conteúdo
 
