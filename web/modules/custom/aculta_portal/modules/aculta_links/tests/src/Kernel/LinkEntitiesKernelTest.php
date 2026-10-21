@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_links\Kernel;
 
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
@@ -38,6 +40,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'metatag',
     'datetime',
     'link',
+    'node',
     'options',
     'path_alias',
     'views',
@@ -70,13 +73,15 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       ->newInstanceWithoutConstructor();
     $this->container->set('aculta_user.author_identity_resolver', $identity_resolver);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('aculta_link');
     $this->installEntitySchema('aculta_link_page');
     $this->installEntitySchema('aculta_link_item');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('aculta_links', ['aculta_links_stat_daily']);
-    $this->installConfig(['system', 'user']);
+    $this->installConfig(['system', 'user', 'node']);
+    NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
   }
 
   /**
@@ -361,6 +366,35 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $other = User::create(['name' => 'item-form-other', 'status' => TRUE]);
     $other->save();
 
+    $node = Node::create([
+      'type' => 'article',
+      'title' => 'Conteúdo referenciável',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $node->save();
+    $referenced_link = Link::create([
+      'title' => 'Conteúdo do portal',
+      'target_node' => $node->id(),
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    self::assertEmpty($referenced_link->validate(), 'Um destino pode referenciar conteúdo Drupal sem URL duplicada.');
+    $referenced_link->save();
+
+    $missing_destination = Link::create([
+      'title' => 'Sem destino',
+      'uid' => $owner->id(),
+    ]);
+    self::assertNotEmpty($missing_destination->validate()->getByField('uri'), 'Um destino reutilizável precisa de URL ou referência.');
+    $conflicting_destination = Link::create([
+      'title' => 'Destinos conflitantes',
+      'uri' => ['uri' => 'https://example.org/'],
+      'target_node' => $node->id(),
+      'uid' => $owner->id(),
+    ]);
+    self::assertNotEmpty($conflicting_destination->validate(), 'Um destino não pode combinar URL e referência.');
+
     $owned_link = Link::create([
       'title' => 'Destino próprio',
       'uri' => ['uri' => 'https://example.org/owned'],
@@ -389,8 +423,14 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     );
     $build = $form->buildForm([], new FormState(), $page);
 
-    self::assertSame([(string) $owned_link->id() => 'Destino próprio'], $build['link']['#options']);
+    self::assertArrayHasKey((string) $owned_link->id(), $build['link']['#options']);
     self::assertArrayNotHasKey((string) $foreign_link->id(), $build['link']['#options']);
+    foreach (array_keys($build['link']['#options']) as $link_id) {
+      $candidate = $this->container->get('entity_type.manager')
+        ->getStorage('aculta_link')
+        ->load($link_id);
+      self::assertSame((string) $owner->id(), (string) $candidate->getOwnerId());
+    }
   }
 
   /**

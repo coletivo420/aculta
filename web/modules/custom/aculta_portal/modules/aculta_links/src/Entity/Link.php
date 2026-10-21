@@ -61,6 +61,9 @@ use Drupal\views\EntityViewsData;
   ],
   admin_permission: 'administer aculta links',
   collection_permission: 'access aculta links overview',
+  constraints: [
+    'AcultaLinkDestinationChoice' => [],
+  ],
   show_revision_ui: TRUE,
   common_reference_target: TRUE,
   list_cache_contexts: ['user', 'user.permissions'],
@@ -101,7 +104,6 @@ final class Link extends EditorialContentEntityBase implements EntityOwnerInterf
 
     $fields['uri'] = BaseFieldDefinition::create('link')
       ->setLabel(new TranslatableMarkup('Destino'))
-      ->setRequired(TRUE)
       ->setSetting('link_type', LinkItemInterface::LINK_GENERIC);
     $fields['uri']->getItemDefinition()->addConstraint('AcultaLinkDestination');
     $fields['uri']
@@ -110,6 +112,25 @@ final class Link extends EditorialContentEntityBase implements EntityOwnerInterf
       ->setDisplayOptions('form', [
         'type' => 'link_default',
         'weight' => 1,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['target_node'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Conteúdo do ACULTA'))
+      ->setDescription(new TranslatableMarkup('Opcional: escolha conteúdo Drupal publicado em vez de informar uma URL.'))
+      ->setSetting('target_type', 'node')
+      ->setSetting('handler', 'default')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'match_limit' => 10,
+          'size' => 60,
+          'placeholder' => '',
+        ],
+        'weight' => 2,
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);

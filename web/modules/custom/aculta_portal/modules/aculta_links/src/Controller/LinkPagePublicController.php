@@ -112,7 +112,12 @@ final class LinkPagePublicController {
     }
 
     try {
-      $resolution = $this->destinationResolver->resolve($link->get('uri')->first(), $this->currentUser, TRUE);
+      $resolution = $this->destinationResolver->resolve(
+        $link->get('uri')->first(),
+        $this->currentUser,
+        TRUE,
+        $link->get('target_node')->target_id !== NULL ? (int) $link->get('target_node')->target_id : NULL,
+      );
       $url = $resolution->url;
       if (!$url instanceof Url) {
         throw new NotFoundHttpException();
@@ -227,7 +232,12 @@ final class LinkPagePublicController {
       if (!$link_access->isAllowed()) {
         continue;
       }
-      $resolution = $this->destinationResolver->resolve($link->get('uri')->first(), $this->currentUser, $published_only);
+      $resolution = $this->destinationResolver->resolve(
+        $link->get('uri')->first(),
+        $this->currentUser,
+        $published_only,
+        $link->get('target_node')->target_id !== NULL ? (int) $link->get('target_node')->target_id : NULL,
+      );
       $cache_tags = array_merge($cache_tags, $resolution->cacheability->getCacheTags());
       $cache_contexts = array_merge($cache_contexts, $resolution->cacheability->getCacheContexts());
       $cache_max_age = Cache::mergeMaxAges($cache_max_age, $resolution->cacheability->getCacheMaxAge());

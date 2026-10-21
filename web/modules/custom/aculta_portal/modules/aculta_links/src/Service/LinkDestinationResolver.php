@@ -31,7 +31,10 @@ final class LinkDestinationResolver {
    * redirects check the target as anonymous so an editor's session cannot make
    * private content appear in a public link page.
    */
-  public function resolve(?LinkItemInterface $item, AccountInterface $account, bool $public): LinkDestinationResolution {
+  public function resolve(?LinkItemInterface $item, AccountInterface $account, bool $public, ?int $targetNodeId = NULL): LinkDestinationResolution {
+    if ($targetNodeId !== NULL) {
+      return $this->resolveNode($targetNodeId, $account, $public, NULL);
+    }
     if ($item === NULL) {
       return new LinkDestinationResolution(NULL, new CacheableMetadata());
     }
@@ -46,8 +49,15 @@ final class LinkDestinationResolver {
       }
     }
 
+    return $this->resolveNode((int) $matches[1], $account, $public, $item);
+  }
+
+  /**
+   * Resolves a node using its source Domain and anonymous public access.
+   */
+  private function resolveNode(int $nodeId, AccountInterface $account, bool $public, ?LinkItemInterface $item): LinkDestinationResolution {
     $storage = $this->entityTypeManager->getStorage('node');
-    $node = $storage->load((int) $matches[1]);
+    $node = $storage->load($nodeId);
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['url.site'])
       ->addCacheTags($storage->getEntityType()->getListCacheTags());
@@ -87,10 +97,12 @@ final class LinkDestinationResolver {
     if (!$url instanceof Url) {
       return new LinkDestinationResolution(NULL, $cacheability);
     }
-    $options = $item->getUrl()->getOptions();
-    foreach (['query', 'fragment'] as $option) {
-      if (isset($options[$option])) {
-        $url->setOption($option, $options[$option]);
+    if ($item !== NULL) {
+      $options = $item->getUrl()->getOptions();
+      foreach (['query', 'fragment'] as $option) {
+        if (isset($options[$option])) {
+          $url->setOption($option, $options[$option]);
+        }
       }
     }
     return new LinkDestinationResolution($url, $cacheability);

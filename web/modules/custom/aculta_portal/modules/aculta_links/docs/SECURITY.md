@@ -75,6 +75,11 @@ origem; owners autenticados não ampliam o conteúdo exposto. O resultado de
 acesso e os dados do nó/Domain entram no cache. Tipos entity diferentes de node
 e caminhos `internal:/` ainda não são redirecionados ao purpose de conteúdo.
 
+Em `0.4.0-dev.21`, a referência ao Node é selecionável pelo widget Core e
+validada como única origem do destino em conjunto com o campo Link. Entity
+Reference não contorna a validação de publicação, Domain, access anônimo ou
+cache do resolver.
+
 ## Integridade de propriedade 0.4.0-dev.17
 
 Validação de entidade exige que item, micropágina e destino tenham a mesma

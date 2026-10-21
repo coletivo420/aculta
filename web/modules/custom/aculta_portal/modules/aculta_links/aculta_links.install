@@ -117,6 +117,25 @@ function aculta_links_update_10006(): string {
 }
 
 /**
+ * Installs the Drupal node-reference destination on existing reusable links.
+ */
+function aculta_links_update_10007(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('target_node', 'aculta_link') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_link');
+    $update_manager->installFieldStorageDefinition(
+      'target_node',
+      'aculta_link',
+      'aculta_links',
+      $definitions['target_node'],
+    );
+  }
+
+  return 'Added the revisionable node-reference destination field; existing URI destinations remain unchanged.';
+}
+
+/**
  * Defines storage for daily aggregate analytics.
  */
 function aculta_links_schema(): array {

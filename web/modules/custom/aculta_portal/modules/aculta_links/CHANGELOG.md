@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.21 — referências Node para destinos de conteúdo — 2026-10-20
+
+- Destinos reutilizáveis agora aceitam uma referência revisionável a Node pelo widget Core `entity_reference_autocomplete`, sem URL duplicada.
+- Validação de entidade exige exatamente uma origem: URL/caminho ou referência de conteúdo. Updates instalados preservam destinos URI existentes e adicionam o novo storage revisionável.
+- Resolver usa o mesmo Domain, publicação, acesso anônimo e cache dos destinos `entity:node/{id}`; não amplia o acesso a conteúdo não público.
+- Validação: Unit PASS (4 testes/47 asserções), Kernel PASS (3 testes/131 asserções; 7 depreciações upstream), PHPCS, PHP lint e `git diff --check` PASS. Update `aculta_links` 10007 e smoke Runtime DEFERRED porque `updb` compartilhado também aplicaria `aculta_lms` 10002, de outra frente.
+
 ## 0.4.0-dev.20 — atalhos contextuais no dashboard — 2026-10-20
 
 - Cada linha de micropágina no dashboard oferece ação direta para adicionar um botão, respeitando o mesmo Entity Access da edição da página.

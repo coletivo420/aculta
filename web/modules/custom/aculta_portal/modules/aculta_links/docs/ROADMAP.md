@@ -57,8 +57,10 @@ dos links diretos continuam fora da métrica. Base legal precisa ser validada.
 ## 0.6.0 — integração do ecossistema
 
 Integração de identidade com `aculta_user`, Domain de páginas e redirects e
-destinos `entity:node/{id}` por `field_domain_source` implementados. Permanecem
-Entity References editáveis para conteúdo, rotas de Group/cursos, Commerce,
+destinos `entity:node/{id}` por `field_domain_source` implementados. Em
+0.4.0-dev.21, Entity Reference selecionável para Nodes foi implementado com o
+widget Core e as mesmas regras de resolução segura. Permanecem referências
+editáveis para outras entidades além de Node, rotas de Group/cursos, Commerce,
 campanhas e mídia; cada conteúdo seguirá sob seu módulo proprietário.
 
 ## 0.7.0 — administração e hardening

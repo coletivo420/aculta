@@ -140,3 +140,14 @@ no purpose `links`. O endpoint revalida publicação, access e destino; SVG não
 é persistido e nenhum evento de scan é gravado. A existência e o purpose da
 rota são cobertos pelo Kernel; download e headers no Runtime continuam DEFERRED
 devido ao bootstrap compartilhado quebrado do `aculta_lms`.
+
+## Referência selecionável a Node 0.4.0-dev.21
+
+Destinos reutilizáveis aceitam um Node pelo widget Core `entity_reference_autocomplete`
+ou uma URL/caminho pelo campo Link, nunca ambos. `LinkDestinationChoice` exige
+uma origem, e páginas/redirects passam pela resolução existente de Domain,
+publicação, acesso anônimo e cache. O update 10007 declara a instalação do novo
+campo revisionável sem alterar destinos existentes. No momento desta revisão,
+Drush conecta ao Runtime `aculta_runtime`, porém há updates pendentes de Links
+10003–10007 e LMS 10002; o update LMS pertence a outra frente e não foi aplicado.
+Kernel e Unit passaram; HTTP/visual e schema no Runtime continuam DEFERRED.

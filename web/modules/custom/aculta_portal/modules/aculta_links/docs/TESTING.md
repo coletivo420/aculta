@@ -166,3 +166,14 @@ rota com `_entity_access: aculta_link_page.update`; PHPCS, lint, Unit e Kernel
 PASS. Não adiciona update de banco. HTTP/visual permanece DEFERRED porque as
 atualizações do Runtime de teste incluem o update de `aculta_lms` da frente
 concorrente.
+
+Referência de conteúdo 0.4.0-dev.21: Unit PASS (4 testes/47 asserções) para
+resolução por URI e por ID de Entity Reference. Kernel PASS (3 testes/131
+asserções), incluindo destino Node salvo, validação que exige exatamente uma
+origem (URL ou Node) e filtro de propriedade das opções do formulário; 7
+depreciações vêm de Core/Metatag/Token. PHPCS, lint e `git diff --check` PASS.
+O Runtime está conectado ao banco `aculta_runtime` no host `toca`;
+`updatedb:status` lista `aculta_links` 10003–10007 e `aculta_lms` 10002. O
+Drush não oferece seleção de updates por módulo e `updb` executaria também o
+update da frente LMS; schema, HTTP e visual da versão .21 ficam DEFERRED até
+essa aplicação coordenada. Nenhuma atualização persistente foi feita.

@@ -51,7 +51,7 @@ final class LinkDestinationResolverTest extends UnitTestCase {
     $node->method('hasField')->with('field_domain_source')->willReturn(TRUE);
     $node->method('get')->with('field_domain_source')->willReturn($source_field);
     $node->method('isPublished')->willReturn(TRUE);
-    $node->expects(self::once())
+    $node->expects(self::exactly(2))
       ->method('access')
       ->with('view', self::isInstanceOf(AnonymousUserSession::class), TRUE)
       ->willReturn(AccessResult::allowed());
@@ -89,6 +89,11 @@ final class LinkDestinationResolverTest extends UnitTestCase {
     self::assertSame(['node' => 42], $resolution->url?->getRouteParameters());
     self::assertContains('url.site', $resolution->cacheability->getCacheContexts());
     self::assertNotEmpty($resolution->cacheability->getCacheTags());
+
+    $reference_resolution = $resolver->resolve(NULL, $this->createMock(AccountInterface::class), TRUE, 42);
+    self::assertSame('entity.node.canonical', $reference_resolution->url?->getRouteName());
+    self::assertSame(['node' => 42], $reference_resolution->url?->getRouteParameters());
+    self::assertContains('url.site', $reference_resolution->cacheability->getCacheContexts());
   }
 
 }
