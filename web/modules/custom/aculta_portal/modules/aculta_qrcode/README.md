@@ -13,6 +13,8 @@ Serviço central de QR Codes do ACULTA Portal, planejado para uso por todos os m
 - [Auditoria do código do ACULTA e dos projetos de referência](docs/AUDITORIA.md)
 - [Licenças e atribuições](docs/LICENSING.md)
 - [Arquitetura proposta e decisões pendentes](docs/ARQUITETURA.md)
+- [Matriz de portabilidade por recurso](docs/PORTABILITY-MATRIX.md)
+- [Estado atual de QR no ACULTA](docs/CURRENT-STATE.md)
 - [Roadmap de 0.1.0 a 1.0.0](docs/ROADMAP.md)
 - [Histórico de versões](CHANGELOG.md)
 
