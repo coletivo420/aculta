@@ -8,6 +8,7 @@ use Drupal\aculta_qrcode\Controller\QrCodeRedirectController;
 use Drupal\aculta_qrcode\Entity\QrCode;
 use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
 use Drupal\aculta_qrcode\Service\QrCodeManager;
+use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -30,7 +31,7 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
     'system',
     'user',
     'field',
-    'user',
+    'datetime',
     'aculta_qrcode',
   ];
 
@@ -145,6 +146,43 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
 
     $this->expectException(NotFoundHttpException::class);
     $this->controller()->redirectByCode($entity->getCode());
+  }
+
+  /**
+   * Registra as rotas do painel e o download por formato.
+   */
+  public function testAdministrativeRoutesAreRegistered(): void {
+    $provider = $this->container->get('router.route_provider');
+    $expected = [
+      'entity.aculta_qr_code.collection' => '/painel-administrativo/aculta/codigos-qr',
+      'entity.aculta_qr_code.add_form' => '/painel-administrativo/aculta/codigos-qr/adicionar',
+      'entity.aculta_qr_code.canonical' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}',
+      'entity.aculta_qr_code.edit_form' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}/editar',
+      'aculta_qrcode.download' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}/baixar/{formato}',
+    ];
+    foreach ($expected as $name => $path) {
+      self::assertSame($path, $provider->getRouteByName($name)->getPath(), $name);
+    }
+  }
+
+  /**
+   * Recusa exportação de arquivo sem o aculta_image (falha fechada).
+   */
+  public function testRasterExportRefusedWithoutAcultaImage(): void {
+    $entity = $this->manager->create('Exporta', 'https://aculta.org/');
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('aculta_image indisponível');
+    $this->container->get('aculta_qrcode.exporter')->raster($entity, QrCodeFormat::Png);
+  }
+
+  /**
+   * Sem URL pública (aculta_portal ausente), a exportação não produz arquivo.
+   */
+  public function testSvgExportNeedsPublicUrl(): void {
+    $entity = $this->manager->create('Sem URL', 'https://aculta.org/');
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('URL pública do código QR indisponível');
+    $this->container->get('aculta_qrcode.exporter')->svg($entity);
   }
 
   /**

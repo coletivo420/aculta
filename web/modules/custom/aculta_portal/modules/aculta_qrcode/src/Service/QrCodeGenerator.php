@@ -12,6 +12,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
+use Endroid\QrCode\Writer\WebPWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 
 /**
@@ -65,6 +66,7 @@ final class QrCodeGenerator {
     return match ($format) {
       QrCodeFormat::Svg => new SvgWriter(),
       QrCodeFormat::Png => new PngWriter(),
+      QrCodeFormat::Webp => new WebPWriter(),
     };
   }
 

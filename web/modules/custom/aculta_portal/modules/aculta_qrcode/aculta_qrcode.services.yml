@@ -19,3 +19,11 @@ services:
   aculta_qrcode.redirect_controller:
     class: Drupal\aculta_qrcode\Controller\QrCodeRedirectController
     arguments: ['@aculta_qrcode.manager', '@datetime.time']
+
+  aculta_qrcode.exporter:
+    class: Drupal\aculta_qrcode\Service\QrCodeExporter
+    arguments: ['@aculta_qrcode.generator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.url_resolver', '@file_system', '@?aculta_image.generated_file', '@?plugin.manager.entity_print.print_engine']
+
+  aculta_qrcode.download_controller:
+    class: Drupal\aculta_qrcode\Controller\QrCodeDownloadController
+    arguments: ['@aculta_qrcode.exporter']

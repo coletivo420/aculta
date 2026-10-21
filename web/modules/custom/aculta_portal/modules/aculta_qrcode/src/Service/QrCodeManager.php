@@ -58,15 +58,15 @@ final class QrCodeManager {
    * @throws \Drupal\aculta_qrcode\Exception\InvalidQrCodeException
    */
   public function create(string $title, string $targetUrl, ?string $presetId = NULL, ?int $validFrom = NULL, ?int $validUntil = NULL, ?string $log = NULL): QrCode {
-    $this->assertWindow($validFrom, $validUntil);
+    $this->validateWindow($validFrom, $validUntil);
     $entity = $this->storage()->create([
       'title' => $title,
       'uid' => $this->currentUser->id(),
       'code' => $this->generateCode(),
       'target_url' => [['value' => $this->payloadValidator->validateUrl($targetUrl)]],
       'preset' => $this->presets->get($presetId ?? $this->presets->default()->id)->id,
-      'valid_from' => $validFrom,
-      'valid_until' => $validUntil,
+      'valid_from' => self::toStorage($validFrom),
+      'valid_until' => self::toStorage($validUntil),
       'status' => TRUE,
     ]);
     return $this->save($entity, $log);
@@ -128,7 +128,7 @@ final class QrCodeManager {
    *
    * @throws \RuntimeException
    */
-  private function generateCode(): string {
+  public function generateCode(): string {
     $alphabet_size = strlen(self::CODE_ALPHABET);
     for ($attempt = 0; $attempt < self::CODE_ATTEMPTS; $attempt++) {
       $code = '';
@@ -148,11 +148,11 @@ final class QrCodeManager {
   }
 
   /**
-   * Valida a janela de validade.
+   * Valida a janela de validade (fim posterior ao início).
    *
    * @throws \Drupal\aculta_qrcode\Exception\InvalidQrCodeException
    */
-  private function assertWindow(?int $from, ?int $until): void {
+  public function validateWindow(?int $from, ?int $until): void {
     if ($from !== NULL && $until !== NULL && $until <= $from) {
       throw new InvalidQrCodeException('O fim da validade deve ser posterior ao início.');
     }
@@ -173,6 +173,13 @@ final class QrCodeManager {
     $entity->setRevisionLogMessage($log ?? '');
     $entity->save();
     return $entity;
+  }
+
+  /**
+   * Converte timestamp Unix em valor de campo `datetime` (UTC).
+   */
+  private static function toStorage(?int $timestamp): ?string {
+    return $timestamp === NULL ? NULL : gmdate('Y-m-d\TH:i:s', $timestamp);
   }
 
   /**

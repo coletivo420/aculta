@@ -99,6 +99,29 @@ Toda gravação valida antes de salvar; violação vira `InvalidQrCodeException`
 | --- | --- | --- |
 | `aculta_qrcode.redirect` | `/qr/{codigo}` (purpose `links`) | GET/HEAD. 302 ao destino quando ativo; 404 caso contrário. Cache: dependência da entidade, com `max-age` até o fim da validade. Sem registro de leitura. |
 
+## Exportação e painel (0.4.0)
+
+### `aculta_qrcode.exporter` — `QrCodeExporter`
+
+| Método | Saída | Regra |
+| --- | --- | --- |
+| `svg(QrCode): string` | SVG em memória | Sem arquivo. |
+| `raster(QrCode, QrCodeFormat::Png|Webp): string` | Bytes do PNG ou WebP | Derivado em `public://aculta-qrcode/{hash}.{ext}`, registrado pelo `aculta_image.generated_file` como temporário. Sem `aculta_image`, recusa. |
+| `pdf(QrCode): string` | Bytes do PDF | Entity Print (`dompdf`), sem recursos remotos, sem PHP embutido, sem log. Sem gravação. |
+
+O QR codifica a URL pública `/qr/{codigo}`, não o destino. Sem URL pública (ambiente sem `aculta_portal`), a exportação falha.
+
+### Rotas administrativas
+
+| Rota | Caminho | Permissão |
+| --- | --- | --- |
+| `entity.aculta_qr_code.collection` | `/painel-administrativo/aculta/codigos-qr` | `administer aculta qr codes` |
+| `entity.aculta_qr_code.add_form` | `…/codigos-qr/adicionar` | `administer aculta qr codes` |
+| `entity.aculta_qr_code.canonical` | `…/codigos-qr/{aculta_qr_code}` | `administer aculta qr codes` |
+| `entity.aculta_qr_code.edit_form` | `…/codigos-qr/{aculta_qr_code}/editar` | `administer aculta qr codes` |
+| `entity.aculta_qr_code.delete_form` | `…/codigos-qr/{aculta_qr_code}/excluir` | `administer aculta qr codes` |
+| `aculta_qrcode.download` | `…/codigos-qr/{aculta_qr_code}/baixar/{formato}` (`svg`, `png`, `webp`, `pdf`) | `administer aculta qr codes` |
+
 ## Limites da 0.3.0
 
 - Sem painel administrativo (0.4.0): a entidade é gerida pelo manager e pela API de entidade.

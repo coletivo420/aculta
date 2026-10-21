@@ -9,3 +9,13 @@ aculta_qrcode.redirect:
   methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: links
+
+aculta_qrcode.download:
+  path: '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}/baixar/{formato}'
+  defaults:
+    _controller: 'aculta_qrcode.download_controller:download'
+    _title: 'Baixar código QR'
+  requirements:
+    _permission: 'administer aculta qr codes'
+    formato: 'svg|png|webp|pdf'
+  methods: [GET]

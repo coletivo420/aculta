@@ -40,11 +40,23 @@ final class QrCodeGeneratorTest extends UnitTestCase {
   }
 
   /**
+   * Gera WebP com o contêiner RIFF/WEBP.
+   */
+  public function testGeneratesWebpContainer(): void {
+    $preset = (new QrCodePresetRegistry())->default();
+    $webp = (new QrCodeGenerator())->generate('texto de teste', $preset, QrCodeFormat::Webp);
+
+    self::assertStringStartsWith('RIFF', $webp);
+    self::assertSame('WEBP', substr($webp, 8, 4));
+  }
+
+  /**
    * Associa cada formato ao tipo MIME esperado.
    */
   public function testFormatsDeclareMimeType(): void {
     self::assertSame('image/svg+xml', QrCodeFormat::Svg->mimeType());
     self::assertSame('image/png', QrCodeFormat::Png->mimeType());
+    self::assertSame('image/webp', QrCodeFormat::Webp->mimeType());
   }
 
   /**

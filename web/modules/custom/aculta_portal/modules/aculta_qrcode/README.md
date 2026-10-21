@@ -4,10 +4,11 @@ Serviço central de QR Codes do ACULTA Portal, planejado para uso por todos os m
 
 ## Estado
 
-- Versão: `0.3.0-dev.1`. Estado: **Dev**.
+- Versão: `0.4.0-dev.1`. Estado: **Dev**.
 - Entregue na 0.2.0: geração estática em SVG e PNG em memória, presets com contraste validado (mínimo 4,5:1) e validação de URL e texto.
 - Entregue na 0.3.0: entidade `aculta_qr_code` com validade e histórico revisionável, manager de gravação, redirecionamento público `/qr/{codigo}` e permissão própria. Testes Unit e Kernel em `tests/`.
-- Ainda não existe: painel administrativo, logo, exportação de arquivo, estatística de acesso, integração com outros módulos.
+- Entregue na 0.4.0 (backend): painel administrativo em `/painel-administrativo/aculta/codigos-qr` e exportação SVG, PNG, WebP e PDF.
+- Ainda não existe: personalização visual, logo por arquivo, prévia e componentes do ACULTA420 (tema, exige autorização), estatística de acesso, integração com outros módulos.
 
 ## Documentação
 

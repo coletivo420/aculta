@@ -32,7 +32,11 @@ Itens originais:
 - Caminho público definido (decisão 2) e registrado no mapa de rotas.
 - Testes Kernel de destino, validade, desativação, acesso e cache.
 
-## 0.4.0 — painel e exportação
+## 0.4.0 — painel e exportação (em andamento: 0.4.0-dev.1)
+
+Feito em 0.4.0-dev.1: painel administrativo (lista, criação, edição, exclusão e downloads), exportação SVG/PNG/WebP/PDF pelo exportador, com regras de arquivo do `aculta_image`. Pendente: personalização visual, logo por arquivo do `aculta_image`, prévia e componentes ACULTA420 (tema, exige autorização explícita). Validação no Runtime e download PDF/PNG com `aculta_image` ativo: DEFERRED.
+
+Itens originais:
 
 - Painel administrativo em `main`, com formulários, listagem e prévia.
 - Personalização visual (cores, logo por arquivo, legenda, moldura).

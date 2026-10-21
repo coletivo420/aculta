@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_qrcode\Entity;
 
 use Drupal\aculta_qrcode\Access\QrCodeAccessControlHandler;
+use Drupal\aculta_qrcode\Form\QrCodeForm;
+use Drupal\aculta_qrcode\ListBuilder\QrCodeListBuilder;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
+use Drupal\Core\Entity\ContentEntityDeleteForm;
 use Drupal\Core\Entity\EditorialContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user\EntityOwnerInterface;
@@ -25,6 +29,16 @@ use Drupal\user\EntityOwnerTrait;
   label_collection: new TranslatableMarkup('Códigos QR dinâmicos'),
   handlers: [
     'access' => QrCodeAccessControlHandler::class,
+    'list_builder' => QrCodeListBuilder::class,
+    'form' => [
+      'default' => QrCodeForm::class,
+      'add' => QrCodeForm::class,
+      'edit' => QrCodeForm::class,
+      'delete' => ContentEntityDeleteForm::class,
+    ],
+    'route_provider' => [
+      'html' => AdminHtmlRouteProvider::class,
+    ],
   ],
   base_table: 'aculta_qr_code',
   revision_table: 'aculta_qr_code_revision',
@@ -42,7 +56,15 @@ use Drupal\user\EntityOwnerTrait;
     'revision_log_message' => 'revision_log',
   ],
   admin_permission: 'administer aculta qr codes',
+  collection_permission: 'administer aculta qr codes',
   show_revision_ui: FALSE,
+  links: [
+    'collection' => '/painel-administrativo/aculta/codigos-qr',
+    'add-form' => '/painel-administrativo/aculta/codigos-qr/adicionar',
+    'canonical' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}',
+    'edit-form' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}/editar',
+    'delete-form' => '/painel-administrativo/aculta/codigos-qr/{aculta_qr_code}/excluir',
+  ],
 )]
 final class QrCode extends EditorialContentEntityBase implements EntityOwnerInterface {
 
@@ -73,16 +95,14 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    * Início da validade em timestamp Unix, ou NULL para sem início.
    */
   public function getValidFrom(): ?int {
-    $value = $this->get('valid_from')->value;
-    return $value === NULL ? NULL : (int) $value;
+    return $this->get('valid_from')->date?->getTimestamp();
   }
 
   /**
    * Fim da validade em timestamp Unix, ou NULL para sem fim.
    */
   public function getValidUntil(): ?int {
-    $value = $this->get('valid_until')->value;
-    return $value === NULL ? NULL : (int) $value;
+    return $this->get('valid_until')->date?->getTimestamp();
   }
 
   /**
@@ -126,15 +146,23 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
       ->setDefaultValue('aculta_padrao')
       ->setRevisionable(TRUE);
 
-    $fields['valid_from'] = BaseFieldDefinition::create('timestamp')
+    $fields['valid_from'] = BaseFieldDefinition::create('datetime')
       ->setLabel(new TranslatableMarkup('Válido a partir de'))
       ->setDescription(new TranslatableMarkup('Vazio para válido desde a publicação.'))
-      ->setRevisionable(TRUE);
+      ->setSetting('datetime_type', 'datetime')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', ['type' => 'datetime_default', 'weight' => 30])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
-    $fields['valid_until'] = BaseFieldDefinition::create('timestamp')
+    $fields['valid_until'] = BaseFieldDefinition::create('datetime')
       ->setLabel(new TranslatableMarkup('Válido até'))
       ->setDescription(new TranslatableMarkup('Vazio para sem data de término. Após essa data, o código responde 404.'))
-      ->setRevisionable(TRUE);
+      ->setSetting('datetime_type', 'datetime')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('form', ['type' => 'datetime_default', 'weight' => 31])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['uid']->setRevisionable(TRUE);
     $fields['status']->setRevisionable(TRUE);

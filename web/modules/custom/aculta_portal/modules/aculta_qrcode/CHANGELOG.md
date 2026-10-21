@@ -1,5 +1,15 @@
 # Changelog — ACULTA QR Code
 
+## 0.4.0-dev.1 — painel administrativo e exportação — 2026-10-20
+
+- Painel em `/painel-administrativo/aculta/codigos-qr`: lista com downloads por formato, criação, edição (cada salvamento cria revisão) e exclusão, com permissão `administer aculta qr codes`. O caminho administrativo fica no purpose `main` pelo subscriber do Portal.
+- Validade usa campos `datetime` (widget nativo do Core). O formulário valida a janela pelo mesmo serviço da API.
+- `aculta_qrcode.exporter` exporta o QR que codifica a URL pública `/qr/{codigo}`: SVG em memória; PNG e WebP como derivados temporários do `aculta_image`, com nome derivado do conteúdo (sem acúmulo); PDF pelo Entity Print, sem gravação. Sem `aculta_image`, a exportação de arquivo é recusada.
+- Desvio registrado: o `aculta_image` aceita só imagens, então o PDF não passa por ele. Entregue em stream, sem gravação.
+- Formato WebP adicionado ao gerador.
+- Validação: Kernel 11 testes PASS (84 asserções) no banco `aculta_simpletest`; Unit 26 testes PASS; PHPCS PASS. Não testados: download PNG/WebP com `aculta_image` ativo, PDF com Entity Print, painel no navegador e no Runtime (DEFERRED).
+- Pendente nesta versão: personalização visual (cores/moldura/legenda editáveis), logo por arquivo do `aculta_image`, prévia e componentes do ACULTA420. O tema exige autorização explícita (ver AGENTS.md).
+
 ## 0.3.0-dev.1 — código QR dinâmico com validade e redirecionamento — 2026-10-20
 
 - Entidade `aculta_qr_code` revisionável, com código público de 12 caracteres único, destino `http`/`https` validado por constraint, preset e janela de validade. Instalação pelo `hook_install`.
