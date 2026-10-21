@@ -41,6 +41,9 @@ final class StudioListingBuilder {
     if (($listing['entity'] ?? 'node') === 'comment') {
       return $this->buildComments($listing);
     }
+    if (($listing['entity'] ?? 'node') === 'revision') {
+      return $this->buildRevisions($listing);
+    }
     if (($listing['entity'] ?? 'node') === 'group') {
       return $this->buildGroups($listing);
     }
@@ -160,12 +163,25 @@ final class StudioListingBuilder {
    */
   private function buildGroups(array $listing): array {
     $storage = $this->entityTypeManager->getStorage('group');
-    $ids = $storage->getQuery()
+    $query = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', $listing['bundle'])
       ->sort('label', 'ASC')
-      ->range(0, self::LIMIT)
-      ->execute();
+      ->range(0, self::LIMIT);
+    // Contexto de curso: só as turmas ligadas ao curso pela relação do Group (lms_course-lms_classes).
+    if (isset($listing['course'])) {
+      $classIds = $this->entityTypeManager->getStorage('group_relationship')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('type', 'lms_course-lms_classes')
+        ->condition('gid', (int) $listing['course'])
+        ->execute();
+      $linked = [];
+      foreach ($this->entityTypeManager->getStorage('group_relationship')->loadMultiple($classIds) as $rel) {
+        $linked[] = (int) $rel->get('entity_id')->target_id;
+      }
+      $query->condition('id', $linked ?: [0], 'IN');
+    }
+    $ids = $query->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $group) {
       $rows[] = [
@@ -186,6 +202,49 @@ final class StudioListingBuilder {
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
       '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['group_list']],
+    ];
+  }
+
+
+  /**
+   * Table of the revisions of nodes of a bundle (the Wiki's history), newest first. Each revision row is checked
+   * by the node access of its node through the revision query, with accessCheck(TRUE).
+   *
+   * @param array{entity: string, bundle: string} $listing
+   */
+  private function buildRevisions(array $listing): array {
+    $storage = $this->entityTypeManager->getStorage('node');
+    $ids = $storage->getQuery()
+      ->accessCheck(TRUE)
+      ->allRevisions()
+      ->condition('type', $listing['bundle'])
+      ->sort('revision_timestamp', 'DESC')
+      ->range(0, self::LIMIT)
+      ->execute();
+    $rows = [];
+    foreach ($ids as $vid => $nid) {
+      $revision = $storage->loadRevision($vid);
+      if (!$revision) {
+        continue;
+      }
+      $rows[] = [
+        'title' => ['data' => ['#type' => 'link', '#title' => $revision->label(), '#url' => $revision->toUrl('revision')]],
+        'state' => $revision->get('moderation_state')->value ?? '',
+        'author' => $revision->getRevisionUser()?->getDisplayName() ?? '',
+        'changed' => $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short'),
+      ];
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
+      'table' => [
+        '#type' => 'table',
+        '#header' => ['title' => $this->t('Revisão'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor da revisão'), 'changed' => $this->t('Revisada em')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum item nesta aba.'),
+        '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+      ],
+      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['node_list:' . $listing['bundle']]],
     ];
   }
 

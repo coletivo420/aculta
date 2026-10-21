@@ -37,7 +37,7 @@ final class CursosTab extends StudioTabBase {
       'turmas' => [
         'label' => $this->t('Turmas'),
         'weight' => 5,
-        'tabs' => [
+        'tabs' => $this->classTabs($account) + [
           'todas' => [
             'label' => $this->t('Todas'),
             'weight' => 0,
@@ -60,6 +60,28 @@ final class CursosTab extends StudioTabBase {
         ],
       ],
     ];
+  }
+
+
+  /**
+   * One tab per course the account can see; each lists only the classes linked to that course.
+   *
+   * @return array<string, array{label: \Stringable|string, weight: int, listing: array, actions: array}>
+   */
+  private function classTabs(AccountInterface $account): array {
+    $tabs = [];
+    $courses = $this->entityTypeManager->getStorage('group')->loadMultiple(
+      $this->entityTypeManager->getStorage('group')->getQuery()->accessCheck(TRUE)->condition('type', 'lms_course')->sort('label', 'ASC')->execute(),
+    );
+    foreach ($courses as $course) {
+      $tabs['curso-' . $course->id()] = [
+        'label' => $course->label(),
+        'weight' => 0,
+        'listing' => ['entity' => 'group', 'bundle' => 'lms_class', 'course' => (int) $course->id()],
+        'actions' => [],
+      ];
+    }
+    return $tabs;
   }
 
 }

@@ -52,6 +52,18 @@ final class WikiTab extends StudioTabBase {
       ];
     }
     return [
+      'revisoes' => [
+        'label' => $this->t('Revisões'),
+        'weight' => 10,
+        'tabs' => [
+          'todas' => [
+            'label' => $this->t('Todas'),
+            'weight' => 0,
+            'listing' => ['entity' => 'revision', 'bundle' => 'wiki_entry'],
+            'actions' => [],
+          ],
+        ],
+      ],
       'verbetes' => [
         'label' => $this->t('Verbetes'),
         'weight' => 0,
