@@ -575,6 +575,14 @@ Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420
 
 ## Forma de trabalho esperada do Codex
 
+### Projetos de referência para estudo
+
+- Projetos externos baixados para estudo, análise ou extração de padrões/código devem ficar em `/home/piradopirata/aculta-tools/`, nunca dentro do checkout do site ou em diretórios temporários alternativos.
+- Antes de baixar, pesquisar ou analisar um projeto que já esteja disponível localmente, use a cópia existente nessa pasta. Organize cada referência em subdiretório próprio e mantenha origem, URL e versão/commit identificáveis.
+- Trate esses projetos como material de referência: não os misture ao repositório ACULTA nem altere sua cópia sem necessidade. Código ou funções aproveitados devem ser adaptados ao projeto ACULTA, respeitando licença e atribuição aplicáveis.
+- A pasta pode estar fora dos diretórios graváveis da sessão. Nesse caso, não tente contornar o sandbox: solicite a permissão de escrita necessária pelo mecanismo de aprovação ou prossiga somente com material já acessível.
+- Procedimento e organização: [`docs/operations/PROJETOS-REFERENCIA.md`](docs/operations/PROJETOS-REFERENCIA.md).
+
 ### Diretório de trabalho obrigatório
 
 - Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo o branch atual e as alterações visíveis.
@@ -691,6 +699,10 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
   por tarefa antes de encerrar.
 - **Publicar cada commit** no branch atual com `git push` após concluir a tarefa. Não há commit
   "pendente" depois que a sessão termina.
+- **Usar a PR aberta do branch atual.** Antes de iniciar ou publicar trabalho, verificar se já há
+  PR aberta para o branch. Contribuir nela somente com commits da tarefa autorizada, conferindo
+  o diff e os arquivos staged para não incluir o trabalho de outros agentes. Não abrir outra PR
+  sem pedido explícito do responsável.
 - **Merge só no final.** O PR é mesclado uma única vez, quando a tarefa estiver concluída e o
   responsável autorizar. Não mesclar entregas parciais nem PRs intermediários.
 - **Stash não é entrega.** Não guardar trabalho em `git stash`. Stash temporário só dentro
