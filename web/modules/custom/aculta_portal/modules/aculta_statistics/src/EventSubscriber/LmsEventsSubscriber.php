@@ -50,10 +50,10 @@ final class LmsEventsSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Matrícula nova numa turma: conta por curso.
+   * Matrícula nova numa turma: conta por curso e turma (dimensão `curso/turma`).
    */
   public function onEnrollment(object $event): void {
-    $this->recorder->record(self::METRIC_ENROLLMENTS, (string) $event->courseId);
+    $this->recorder->record(self::METRIC_ENROLLMENTS, $event->courseId . '/' . $event->classId);
   }
 
   /**

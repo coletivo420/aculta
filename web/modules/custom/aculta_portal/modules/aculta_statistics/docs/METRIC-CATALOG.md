@@ -35,7 +35,7 @@ não é venda nova. Cada transição conta uma vez, pelo estado atingido.
 |---|---|---|---|---|---|
 | `lms.enrollments.created` | matrícula em turma (`GroupMembership`) | matrículas | curso, turma | 90 dias | I |
 | `lms.courses.completed` | `CourseCompletedEvent` (uma vez por status) | conclusões | curso | 90 dias | I |
-| `lms.enrollments.created` (implementada na 0.4.0-dev.1) | `CourseEnrollmentEvent` | matrículas | curso | 90 dias | I |
+| `lms.enrollments.created` (implementada na 0.4.0-dev.1; turma na 0.4.0-dev.2) | `CourseEnrollmentEvent` | matrículas | `curso/turma` | 90 dias | I |
 | `lms.certificates.issued` (implementada na 0.4.0-dev.1) | `CertificateIssuedEvent` (uma vez por certificado) | certificados | total | 90 dias | I |
 | `lms.certificates.issued` | `CourseCertificateManager::issue()` | certificados | curso | 90 dias | I |
 | `lms.students.by_status` | painel da turma (contagem) | alunos | curso, turma, status | instantâneo | I |

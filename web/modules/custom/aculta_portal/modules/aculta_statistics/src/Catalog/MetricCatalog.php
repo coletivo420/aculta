@@ -35,7 +35,7 @@ final class MetricCatalog {
       new MetricDefinition('commerce.discounts.total', 'Desconto de promoção concedido, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.items.sold', 'Unidades vendidas, por variação de produto', 'unidades', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.refunds.total', 'Reembolsos, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
-      new MetricDefinition('lms.enrollments.created', 'Matrículas criadas em turma, por curso', 'matrículas', MetricDefinition::SENSITIVITY_INTERNAL, 90),
+      new MetricDefinition('lms.enrollments.created', 'Matrículas criadas em turma, por curso e turma', 'matrículas', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.courses.completed', 'Conclusões de curso, por curso', 'conclusões', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.certificates.issued', 'Certificados emitidos (total)', 'certificados', MetricDefinition::SENSITIVITY_INTERNAL, 90),
     ];

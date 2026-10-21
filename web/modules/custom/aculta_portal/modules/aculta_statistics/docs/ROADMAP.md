@@ -29,7 +29,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 ## 0.4.0 — LMS (em andamento: 0.4.0-dev.1)
 
 - Feito: matrículas por curso, conclusões por curso (uma vez por status) e certificados (total), a partir dos eventos do `aculta_lms`.
-- Pendente: recorte por turma; análises pedagógicas agregadas (taxa de conclusão por curso e turma); números mínimos por célula antes de qualquer painel público.
+- Feito (0.4.0-dev.2): matrículas por curso e turma; supressão de células com menos de 5 alunos para painéis públicos.
+- Pendente: conclusões por turma (o evento de conclusão não traz a turma); taxa de conclusão por curso e turma nos painéis (0.8.0).
 
 ## 0.3.0 — Commerce (concluída no código: 0.3.0-dev.8)
 

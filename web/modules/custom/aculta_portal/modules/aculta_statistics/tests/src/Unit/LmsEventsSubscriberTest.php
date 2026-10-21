@@ -33,13 +33,13 @@ final class LmsEventsSubscriberTest extends TestCase {
   }
 
   /**
-   * Matrícula conta por curso, sem o aluno.
+   * Matrícula conta por curso e turma, sem o aluno.
    */
   public function testEnrollmentIsCountedByCourse(): void {
     $calls = [];
-    $this->subscriber($calls)->onEnrollment((object) ['courseId' => '42', 'studentId' => '99']);
+    $this->subscriber($calls)->onEnrollment((object) ['courseId' => '42', 'classId' => '7', 'accountId' => '99']);
 
-    $this->assertSame([['lms.enrollments.created', '42', 1]], $calls);
+    $this->assertSame([['lms.enrollments.created', '42/7', 1]], $calls);
   }
 
   /**
