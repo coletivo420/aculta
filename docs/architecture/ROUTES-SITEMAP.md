@@ -231,7 +231,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | `conta.aculta` | `/minha-aprendizagem` | Painel pessoal de cursos, progresso, avaliações pendentes e certificados | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; Runtime DEFERRED. |
-| `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; Runtime DEFERRED. |
+| `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; ativa no Runtime de teste após habilitação em 2026-10-21; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; ainda sem mensagem de teste criada. |
 | `conta.aculta` | `/meu-apoio` | Histórico de apoio/doações da pessoa | Conta autenticada; dados próprios. |
 | `conta.aculta` | `/minha-participacao` | Área de participação da pessoa | Condicional a módulos e permissões ativos. |
 | `conta.aculta` | `/pedidos` | Lista de pedidos da pessoa | Conta autenticada; Commerce verifica propriedade. |

@@ -46,9 +46,8 @@ conta e não modifica o conteúdo LMS compartilhado entre turmas. Após pedido d
 pergunta interativa, foi adotada provisoriamente a recomendação: avisar ao definir/alterar e enfileirar um lembrete
 quando a data entrar na janela de 24 horas. Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message:
 6 testes / 79 assertions PASS, incluindo persistência real da mesma atividade em duas turmas, com prazos distintos, e persistência/deduplicação do aviso em Message.
-Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 40 no teste completo de Group/LMS);
-a prova Kernel do fluxo de Message passou. Revisão visual e Runtime/cron seguem DEFERRED. Próximo:
-revisão visual, integração no Runtime/cron e validação dos avisos antes de RC.
+Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 42 nos Kernels recentes de Group/Message).
+No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. O Runtime ainda não tem turmas LMS nem prazos cadastrados; não houve evento real nem execução de Cron específica. O intervalo de Cron observado é 3h, portanto o lembrete será processado no próximo ciclo dentro da janela, aproximadamente 21–24h antes do prazo. Revisão visual segue DEFERRED. Próximo: smoke autenticado de prazo/aviso e resumo, revisão visual, depois gates e revisão pré-RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`

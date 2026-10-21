@@ -5,6 +5,12 @@
 - Tipa os produtores de fila com a classe concreta `QueueFactory`, que é o
   serviço `queue` no Core instalado; a interface homônima não é implementada
   por essa fábrica. Corrige falha de construção descoberta no Runtime.
+- No Runtime de teste foram habilitados `entity_print` (dependência já declarada
+  pelo LMS) e o adapter; importadas somente as cinco configurações Group de
+  prazo. Cache rebuild e construção do manager/worker passam; ainda não há turma
+  ou deadline para smoke de evento/Cron. A ativação de `entity_print` não obteve
+  a tradução pt-br por falha no destino local `translations://`; a ativação
+  concluiu apesar do aviso.
 
 ## 0.1.0-dev.9 — registrar alias DI do manager — 2026-10-21
 

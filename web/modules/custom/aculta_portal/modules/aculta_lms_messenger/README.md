@@ -19,9 +19,13 @@ pendente entram no resumo diário opt-in. Um link revalida acesso e encaminha ao
 purpose correto. Republicações de avaliação usam versão opaca para deduplicar.
 Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
 
-O módulo está em Dev e não foi habilitado no Runtime nesta entrega. O Kernel
-comprova persistência e deduplicação em Message real. Ainda faltam integração
-no Runtime/cron e inspeção visual da gaveta. A entrega de digest pelo serviço compartilhado foi exercitada com
+O módulo está em Dev e está habilitado no Runtime de teste. O Kernel comprova
+persistência e deduplicação em Message real; a compilação e instanciação do
+manager/worker também passaram no Runtime. Foram importadas isoladamente as
+cinco configurações da relação de prazo por turma. O Runtime não tem turmas LMS
+nem prazos cadastrados, então o fluxo acionado por evento/Cron e uma mensagem
+visível ainda não foram exercitados. Revisão visual da gaveta segue pendente. A
+entrega de digest pelo serviço compartilhado foi exercitada com
 providers educacionais no Unit.
 
 ## Contratos
