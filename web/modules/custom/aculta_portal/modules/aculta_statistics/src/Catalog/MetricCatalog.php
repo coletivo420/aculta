@@ -29,6 +29,8 @@ final class MetricCatalog {
       new MetricDefinition('commerce.orders.paid', 'Pedidos pagos', 'pedidos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.revenue.gross', 'Receita bruta paga, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.carts.abandoned', 'Carrinhos abandonados (24 horas sem finalizar)', 'carrinhos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
+      new MetricDefinition('commerce.orders.by_domain', 'Pedidos pagos, por purpose e moeda', 'pedidos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
+      new MetricDefinition('commerce.revenue.by_domain', 'Receita bruta paga, por purpose e moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.items.sold', 'Unidades vendidas, por variação de produto', 'unidades', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('commerce.refunds.total', 'Reembolsos, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.courses.completed', 'Conclusões de curso', 'conclusões', MetricDefinition::SENSITIVITY_INTERNAL, 90),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_statistics\EventSubscriber;
 
+use Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks;
 use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
 use Drupal\commerce_order\Event\OrderEvent;
 use Drupal\commerce_order\Event\OrderEvents;
@@ -38,6 +39,16 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
   public const METRIC_ITEMS = 'commerce.items.sold';
 
   /**
+   * Métrica de pedidos pagos por purpose de origem (dimensão `purpose|moeda`).
+   */
+  public const METRIC_ORDERS_BY_DOMAIN = 'commerce.orders.by_domain';
+
+  /**
+   * Métrica de receita bruta por purpose de origem (dimensão `purpose|moeda`), em centavos.
+   */
+  public const METRIC_REVENUE_BY_DOMAIN = 'commerce.revenue.by_domain';
+
+  /**
    * Código ISO de moeda aceito como dimensão.
    */
   private const CURRENCY_PATTERN = '/^[A-Z]{3}$/';
@@ -56,6 +67,17 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [OrderEvents::ORDER_PAID => 'onOrderPaid'];
+  }
+
+  /**
+   * Dimensão `purpose|moeda` do pedido, ou `sem_dominio` quando o purpose não foi gravado.
+   */
+  private function domainCurrencyKey(object $order, string $currency): string {
+    $purpose = (string) ($order->getData(CommerceOrderDomainHooks::DATA_KEY) ?? '');
+    if (preg_match('/^[a-z0-9_-]{1,32}$/', $purpose) !== 1) {
+      $purpose = 'sem_dominio';
+    }
+    return $purpose . '|' . $currency;
   }
 
   /**
@@ -97,6 +119,11 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
         $this->recorder->record(self::METRIC_REVENUE, $currency, $cents);
       }
       $this->recordItems($order);
+      $key = $this->domainCurrencyKey($order, $currency);
+      $this->recorder->record(self::METRIC_ORDERS_BY_DOMAIN, $key);
+      if ($cents > 0) {
+        $this->recorder->record(self::METRIC_REVENUE_BY_DOMAIN, $key, $cents);
+      }
     }
     catch (\Throwable $exception) {
       $this->logger->error('Falha ao registrar pedido pago: @message', ['@message' => $exception->getMessage()]);

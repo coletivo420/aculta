@@ -36,6 +36,24 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.6 (vendas por domínio: purpose de origem no pedido)
+
+### Código
+- `CommerceOrderDomainHooks` (`commerce_order_presave`): grava o purpose atual nos dados do pedido novo
+  (`getData`, sem alterar o esquema da entidade). Purpose inválido ou ausente não é gravado.
+- `PurposeResolverInterface` com adaptador `PortalPurposeResolver`: lê o purpose do `aculta_portal` quando
+  ele está instalado. A dependência é opcional, então o módulo segue funcionando sem o portal.
+- `CommerceOrderPaidSubscriber` conta `commerce.orders.by_domain` e `commerce.revenue.by_domain` com a
+  dimensão `purpose|moeda`. Pedido sem purpose conta como `sem_dominio`. Os totais por moeda não mudam.
+
+### Decisão
+- O domínio de origem foi gravado no pedido, por decisão do responsável. A alternativa de loja por domínio
+  foi descartada.
+
+### Testes
+- Unit: 53 casos (inclui purpose no pedido pago e no presave).
+- Kernel: 15 casos, aprovados.
+
 ## 0.3.0-dev.5 (carrinhos abandonados, 24 horas)
 
 ### Código

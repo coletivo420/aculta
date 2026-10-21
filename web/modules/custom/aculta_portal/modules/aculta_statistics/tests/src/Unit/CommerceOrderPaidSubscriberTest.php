@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_statistics\Unit;
 
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\EventSubscriber\CommerceOrderPaidSubscriber;
+use Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks;
 use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -41,17 +42,17 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
    */
   public function testPaidOrderCountsOrderAndRevenueInCents(): void {
     $storage = $this->createMock(AggregateStorageInterface::class);
-    $storage->expects($this->exactly(2))->method('record')->willReturnCallback(
-      static function (string $metric, string $dimension, int $amount): void {
-        static $calls = [];
-        $calls[] = [$metric, $dimension, $amount];
-        if (count($calls) === 2) {
-          self::assertSame([['commerce.orders.paid', 'BRL', 1], ['commerce.revenue.gross', 'BRL', 1050]], $calls);
-        }
-      },
-    );
+    $calls = [];
+    $storage->method('record')->willReturnCallback(static function (string $metric, string $dimension, int $amount) use (&$calls): void {
+      $calls[] = [$metric, $dimension, $amount];
+    });
 
     $this->subscriber($storage)->onOrderPaid($this->event('10.50', 'BRL'));
+
+    $this->assertContains(['commerce.orders.paid', 'BRL', 1], $calls);
+    $this->assertContains(['commerce.revenue.gross', 'BRL', 1050], $calls);
+    $this->assertContains(['commerce.orders.by_domain', 'sem_dominio|BRL', 1], $calls);
+    $this->assertContains(['commerce.revenue.by_domain', 'sem_dominio|BRL', 1050], $calls);
   }
 
   /**
@@ -72,13 +73,41 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
   }
 
   /**
+   * Pedido com purpose gravado conta por purpose e moeda.
+   */
+  public function testOrderWithPurposeIsCountedByDomain(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $calls = [];
+    $storage->method('record')->willReturnCallback(static function (string $metric, string $dimension, int $amount) use (&$calls): void {
+      $calls[] = [$metric, $dimension, $amount];
+    });
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(9);
+    $order->method('getTotalPrice')->willReturn(new Price('5.00', 'BRL'));
+    $order->method('getItems')->willReturn([]);
+    $order->method('getData')->with(CommerceOrderDomainHooks::DATA_KEY)->willReturn('main');
+
+    $this->subscriber($storage)->onOrderPaid(new OrderEvent($order));
+
+    $this->assertContains(['commerce.orders.by_domain', 'main|BRL', 1], $calls);
+    $this->assertContains(['commerce.revenue.by_domain', 'main|BRL', 500], $calls);
+  }
+
+  /**
    * Pedido gratuito conta o pedido, sem receita.
    */
   public function testZeroTotalCountsOrderButNoRevenue(): void {
     $storage = $this->createMock(AggregateStorageInterface::class);
-    $storage->expects($this->once())->method('record')->with('commerce.orders.paid', 'BRL', 1);
+    $calls = [];
+    $storage->method('record')->willReturnCallback(static function (string $metric, string $dimension, int $amount) use (&$calls): void {
+      $calls[] = [$metric, $dimension, $amount];
+    });
 
     $this->subscriber($storage)->onOrderPaid($this->event('0.00', 'BRL'));
+
+    $this->assertContains(['commerce.orders.paid', 'BRL', 1], $calls);
+    $this->assertNotContains('commerce.revenue.gross', array_column($calls, 0));
+    $this->assertNotContains('commerce.revenue.by_domain', array_column($calls, 0));
   }
 
   /**

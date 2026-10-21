@@ -33,7 +33,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 - Feito (0.3.0-dev.3): reembolsos por incremento em `commerce.refunds.total`; receita líquida na leitura.
 - Feito (0.3.0-dev.4): unidades vendidas por variação de produto.
 - Feito (0.3.0-dev.5): carrinhos abandonados (24 horas sem alteração), contados no cron.
-- Pendente: cupons; vendas por domínio (bloqueado por decisão sobre loja por domínio); painel de receita líquida.
+- Feito (0.3.0-dev.6): vendas por domínio, com o purpose de origem gravado no pedido.
+- Pendente: cupons; painel de receita líquida.
 
 ## 0.2.0 — Núcleo analítico (concluído no código: 0.2.0-dev.4)
 

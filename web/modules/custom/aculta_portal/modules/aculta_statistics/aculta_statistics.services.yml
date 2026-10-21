@@ -26,6 +26,15 @@ services:
     class: Drupal\aculta_statistics\Hook\CartAbandonmentCronHooks
     arguments: ['@entity_type.manager', '@aculta_statistics.recorder', '@aculta_statistics.storage', '@module_handler']
 
+  aculta_statistics.commerce_order_domain_hooks:
+    class: Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks
+    arguments: ['@aculta_statistics.purpose_resolver']
+
+  # Opcional: sem o portal instalado, pedidos seguem sem purpose (sem_dominio).
+  aculta_statistics.purpose_resolver:
+    class: Drupal\aculta_statistics\Domain\PortalPurposeResolver
+    arguments: ['@?Drupal\aculta_portal\Domain\DomainPurposeManager']
+
   aculta_statistics.commerce_payment_refund_hooks:
     class: Drupal\aculta_statistics\Hook\CommercePaymentRefundHooks
     arguments: ['@aculta_statistics.recorder', '@logger.factory']
@@ -47,3 +56,4 @@ services:
   Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
+  Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
