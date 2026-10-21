@@ -11,6 +11,7 @@ use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\user\UserInterface;
 
 /** Tightens uploaded-answer downloads after a student's course access ends. */
 final class UploadedAnswerAccessCheck {
@@ -19,6 +20,13 @@ final class UploadedAnswerAccessCheck {
    * Checks LMS answer access and revalidates the owner's current course access.
    */
   public function access(AnswerInterface $lms_answer, AccountInterface $account): AccessResultInterface {
+    if ($account instanceof UserInterface && !$account->isActive()) {
+      return AccessResult::forbidden()
+        ->cachePerUser()
+        ->addCacheableDependency($account)
+        ->addCacheableDependency($lms_answer);
+    }
+
     $access = $lms_answer->access('see_details', $account, TRUE);
     if (!$access->isAllowed()) {
       return $access;

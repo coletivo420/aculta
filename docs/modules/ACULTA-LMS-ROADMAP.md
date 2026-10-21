@@ -260,10 +260,11 @@ LessonStatus/CourseStatus já foi removido. `ActivityDeadlineFormHooksTest` e
 PHP 8.4.26; PHP 8.5 não validado. O arquivamento pré-exclusão e a consulta de
 histórico também resolvem relações por campos; status/curso/aula/atividade já
 removidos suprimem o snapshot incompleto ou retornam histórico vazio sem erro.
-`AttemptArchiveLifecycleTest`: 9 testes / 366 assertions PASS no banco Kernel
+`AttemptArchiveLifecycleTest`: 9 testes / 368 assertions PASS no banco Kernel
 dedicado; 42 depreciações de Core/contrib. O access do histórico nega contas
 bloqueadas e revalida revogação de membership após limpar o resultado de access
-da requisição anterior. Verificação de certificado, render
+da requisição anterior. Download de arquivo privado de resposta também nega
+estudantes e educadores bloqueados antes de delegar ao LMS. Verificação de certificado, render
 do snapshot e painéis agora preservam
 `max-age: 0` ao mesclar tags/contextos; `CertificateLifecycleTest`: 3/75,
 `ClassDashboardKernelTest`: 1/43 e `LearningDashboardControllerTest`: 1/4

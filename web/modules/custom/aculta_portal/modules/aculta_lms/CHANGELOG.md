@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.37 — negar downloads LMS a contas bloqueadas — 2026-10-21
+
+- A rota privada de arquivo de resposta nega estudantes e educadores bloqueados
+  antes de delegar ao access do LMS, incluindo conta cujo status muda durante
+  sessão existente; cache varia por usuário e depende de User/Answer.
+- Kernel focal de acesso a arquivo PASS (1 teste / 43 assertions; 42
+  depreciações Core/contrib). Kernel lifecycle completo: 9 testes / 368
+  assertions PASS, 42 depreciações. Unit completo: 42 testes / 197 assertions
+  PASS, 5 depreciações. PHP 8.4.26; PHP 8.5 não validado.
+
 ## 0.1.0-dev.36 — negar histórico a contas bloqueadas — 2026-10-21
 
 - Access do histórico de tentativas nega contas bloqueadas, incluindo estudante

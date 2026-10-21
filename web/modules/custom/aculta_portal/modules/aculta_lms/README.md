@@ -19,6 +19,10 @@ testes / 197 assertions (5 depreciações). `AttemptArchiveLifecycleTest` passou
 com 9 testes / 366 assertions no banco Kernel dedicado; 42 depreciações vieram
 do Core e contrib. O access do histórico também nega estudante ou educador
 bloqueado e revalida após bloqueio e revogação da membership.
+O download de arquivo privado de resposta também nega estudante ou educador
+bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
+368 assertions PASS (42 depreciações); Unit completo: 42 testes / 197
+assertions PASS (5 depreciações).
 
 ## Integrações de conteúdo
 
