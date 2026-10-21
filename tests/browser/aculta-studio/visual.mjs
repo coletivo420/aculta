@@ -156,7 +156,11 @@ try {
   const rows = await exec(`return document.querySelectorAll('[data-aculta-studio="listing"] tbody tr').length;`);
   check('listagem da Revista na aba Publicados com linhas', rows >= 1, `${rows} linha(s)`);
   const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => (a.getAttribute('href') || '').includes('/node/') && (a.getAttribute('href') || '').endsWith('/edit')).length;`);
-  check('edição de publicação pelo formulário do dono (revista420)', editLinks >= 1, `${editLinks} link(s)`);
+  check('edição de publicação pelo formulário do dono (domínio principal)', editLinks >= 1, `${editLinks} link(s)`);
+  const unnamed = await exec(`return [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"]')].filter((a) => !(a.textContent || '').trim()).length;`);
+  check('todo link do Studio tem nome acessível (texto)', unnamed === 0, `${unnamed} sem nome`);
+  const groupsOk = await exec(`return !!document.querySelector('[data-aculta-studio="tabs"][aria-label]') && !!document.querySelector('[data-aculta-studio="live"][role="status"]');`);
+  check('áreas com nome (aria-label) e região de status (role=status, aria-live)', groupsOk);
   await shot('03-listagem-revista');
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);

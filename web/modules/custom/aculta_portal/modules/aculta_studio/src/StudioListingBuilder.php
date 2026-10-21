@@ -29,6 +29,7 @@ final class StudioListingBuilder {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly DomainPurposeManager $domainPurposes,
+    private readonly AccountInterface $account,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
@@ -268,7 +269,8 @@ final class StudioListingBuilder {
       return ['data' => ''];
     }
     // The route's own access (admin route, domain and entity checks), not a copy of the rule.
-    $access = $this->domainPurposes->runInPurpose('main', static fn (): bool => $url->access($this->currentAccount()));
+    $account = $this->account;
+    $access = $this->domainPurposes->runInPurpose('main', static fn (): bool => $url->access($account));
     if (!$access) {
       return ['data' => ''];
     }

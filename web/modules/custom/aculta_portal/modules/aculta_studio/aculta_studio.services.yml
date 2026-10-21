@@ -10,4 +10,4 @@ services:
     arguments: ['@aculta_studio.presenter', '@current_user', '@aculta_studio.listing', '@string_translation']
   aculta_studio.listing:
     class: Drupal\aculta_studio\StudioListingBuilder
-    arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation']
