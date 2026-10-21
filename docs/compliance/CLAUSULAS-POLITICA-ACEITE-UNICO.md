@@ -26,7 +26,13 @@ mensagens chegam e são lidas.
 - **Prazo:** 90 dias. Excluir a conta apaga esses registros.
 - **Base:** aceite único dos Termos e da Política de Privacidade.
 
-## 3. Exclusão da conta
+## 3. Acesso a arquivos de mídia
+
+Registramos, por arquivo, quantas vezes um arquivo privado de mídia foi aberto, sem identificar quem abriu. Serve
+para saber quais materiais são usados. Os registros ficam 90 dias. Este tratamento faz parte do consentimento geral
+ao aceitar os Termos e a Política.
+
+## 4. Exclusão da conta
 
 Ao excluir a conta, apagamos os dados pessoais que a ligam às funções acima, no prazo de até 90 dias. Os dados de
 evidência do aceite (data, versão do texto e identificadores) são mantidos como prova do aceite pelo prazo legal.

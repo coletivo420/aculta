@@ -97,7 +97,9 @@ o painel de turma do LMS), com as mesmas permissões.
 - **Mercado Pago:** é o processador. O Statistics recebe o resultado, não
   armazena cartão nem dado de pagamento individual.
 
-## GA4 (fase 0.6.0)
+## GA4 (fase 0.6.0): código desligado
+
+- Estado: `NullGa4ReportClient` é o padrão. Nenhum pedido sai do servidor. Cliente real pendente (propriedade, credenciais, justificativa de dependência).
 
 - **Coleta:** separada da consulta. Coleta só com consentimento
   (Google Consent Mode v2) e pela camada de tag, não pelo Twig do tema.

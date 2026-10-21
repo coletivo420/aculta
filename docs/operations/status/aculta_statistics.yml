@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Fase 0.8.0 em andamento: painel central com período (7, 14 e 30 dias) e exportação CSV no código; painéis por módulo e filtros por domínio pendentes; validação visual no Runtime pendente ([roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md))'
+next_phase: 'Fases 0.6 (GA4 desligado), 0.7 (mídia), 0.8 (painel com domínio) e 0.9 (auditoria de prazo) no código; pendentes: cliente GA4 real, painéis por módulo, validação visual e auditoria final 1.0 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md))'

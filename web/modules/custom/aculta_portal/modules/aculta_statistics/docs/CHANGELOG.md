@@ -36,6 +36,34 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.9.0-dev.1 (fases 0.6 a 0.9: mídia, GA4 desligado, filtro por domínio, auditoria de prazo)
+
+### 0.7 — Mídia e QR
+- `Hook\MediaFileHooks` (`file_download`): conta aberturas de arquivo privado, por arquivo (`media.files.requests`, dimensão = fid, retenção de 90 dias). Não conta pedido sem permissão de download, nem pedaço do visualizador (`Range` que não começa em 0), nem arquivo público (servido pelo servidor web, fora do PHP).
+- Consentimento: a medição entra no consentimento geral do portal (decisão do responsável, 2026-10-21).
+- QR estático continua sem medição (decisão de 2026-10-20, mantida).
+
+### 0.6 — Google (desligado)
+- `Ga4ReportClient` (interface) e `NullGa4ReportClient` (padrão). Nenhum pedido sai do servidor enquanto não houver propriedade e credencial. Painel mostra o estado.
+- Decisão do responsável: código com integração desligada, sem credencial.
+- Pendente: cliente real, quando a propriedade GA4, as credenciais e a justificativa de dependência forem informadas.
+
+### 0.8 — Painel
+- Filtro por domínio na contagem de pedidos (`commerce.orders.by_domain`). Receita por domínio não tem o filtro: somaria centavos de moedas diferentes.
+- Página e CSV respeitam o domínio escolhido. Cache do painel com `max-age` 0.
+
+### 0.9 — Segurança e otimização
+- Auditoria das alterações de prazo (ADR-0003): cada prazo que muda gera um registro no canal `aculta_statistics` (métrica, valor antigo, novo e usuário).
+- Índices: a tabela já tem `metric_day` e a chave primária `(metric, dimension, day)`. Nada a alterar.
+
+### Testes
+- Unit: 88 casos (inclui hook de mídia e cliente GA4 desligado). Kernel: 24 casos (inclui filtro por domínio e formulário de retenção).
+
+### Pendente
+- 0.6: cliente GA4/GSC real (depende de credenciais e da dependência).
+- 0.8: painéis por módulo, comparações entre áreas, validação visual no navegador.
+- 1.0: auditoria final, testes funcionais e multidomínio, testes de desempenho.
+
 ## 0.8.0-dev.1 (painel central de estatísticas, com período e exportação CSV)
 
 ### Código

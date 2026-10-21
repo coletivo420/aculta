@@ -109,7 +109,10 @@ Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor
 
 Sem remover tabela, dado ou painel antes do passo de migração e da autorização do responsável.
 
-## 0.6.0 — Google Analytics e Search Console
+## 0.6.0 — Google Analytics e Search Console (código desligado: 0.9.0-dev.1)
+
+- Feito (código): `Ga4ReportClient` e cliente nulo padrão. Painel mostra o estado.
+- Pendente: cliente real, com propriedade, credenciais e justificativa de dependência.
 
 - GA4 Data API (v1beta) em fila, com cache e quota.
 - Consentimento (Consent Mode v2) antes de qualquer tag.
@@ -117,7 +120,10 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Propriedades por domínio, sem somar sobreposição.
 - Justificativa escrita para `google/apiclient` antes da instalação.
 
-## 0.7.0 — Integrações comunitárias
+## 0.7.0 — Integrações comunitárias (mídia feita: 0.9.0-dev.1)
+
+- Feito: aberturas de arquivo privado de mídia (`media.files.requests`), sem pedaços e sem arquivo público.
+- Decidido: QR estático segue sem medição; mídia medida, coberta pelo consentimento geral do portal.
 
 - Links: convergência concluída antecipadamente (ver Centralização, abaixo).
 - QR dinâmico (decisão sobre estático).
@@ -134,9 +140,13 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Pendente: painéis por módulo no design system do ACULTA420 (tela própria, sem contrato de cor novo).
 - Pendente: filtros por domínio e fonte.
 - Pendente: comparações entre áreas, sem atribuir causalidade.
+- Feito (0.9.0-dev.1): filtro por domínio em pedidos.
 - Pendente: validação visual no navegador (Firefox), com dados reais no Runtime.
 
-## 0.9.0 — Segurança e otimização
+## 0.9.0 — Segurança e otimização (feito no código: 0.9.0-dev.1)
+
+- Feito: auditoria das alterações de prazo (canal `aculta_statistics`); índices já existentes conferidos.
+- Pendente: revisão do LGPD-INVENTARIO com a métrica de mídia (feita abaixo).
 
 - Retenção, privacidade e revisão do LGPD-INVENTARIO.
 - Índices, filas, cache e reconciliação.
