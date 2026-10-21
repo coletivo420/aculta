@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
@@ -38,11 +39,14 @@ final class ActivityDeadlineFormHooks {
     $answer = $formObject->getEntity();
     $course = $this->courseForAnswer($answer);
     $learner = $answer->getOwner();
-    if (!$course instanceof CourseInterface || !$learner instanceof UserInterface
-      || !$answer->getActivity() instanceof EntityPublishedInterface || !$answer->getActivity()->isPublished()) {
+    if (!$course instanceof CourseInterface || !$learner instanceof UserInterface) {
       return;
     }
-    $deadline = $this->deadlines->deadlineForLearner($course, $answer->getActivity(), $learner);
+    $activity = $answer->get(AnswerInterface::ACTIVITY_FIELD)->entity;
+    if (!$activity instanceof ActivityInterface || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()) {
+      return;
+    }
+    $deadline = $this->deadlines->deadlineForLearner($course, $activity, $learner);
     if ($deadline === NULL || $deadline->get('field_activity_due_at')->isEmpty()) {
       return;
     }

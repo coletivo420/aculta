@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.64 — tolerar atividade removida no aviso de prazo — 2026-10-21
+
+- O formulário da resposta resolve a atividade pela referência do campo. Se a
+  atividade tiver sido removida durante a limpeza assíncrona, omite o prazo sem
+  chamar `Answer::getActivity()`. Teste focal: 2/6; PHPCS Drupal/DrupalPractice
+  PASS. Unit LMS/Messenger: 82 testes / 433 assertions PASS.
+
 ## 0.1.0-dev.63 — suprimir aviso em edição editorial — 2026-10-21
 
 - `CourseContentEventHooksTest` confirma que editar atividade já publicada sem
