@@ -5,6 +5,7 @@ Documentação operacional durável do ACULTA.
 - [TESTING.md](TESTING.md) — matriz de validação funcional e Runtime.
 - [HARDENING.md](HARDENING.md) — segurança, cache, performance e failure modes.
 - [SECRETS.md](SECRETS.md) — contrato portátil de credenciais e provisioning por ambiente.
+- [INSPECAO-VISUAL-EMAIL.md](INSPECAO-VISUAL-EMAIL.md) — como ler a caixa de monitoramento (`dmarc@` é alias de `naoresponda@`) e inspecionar o visual dos e-mails.
 - [ATUALIZACAO-TESTE-2026-10-20.md](ATUALIZACAO-TESTE-2026-10-20.md) — atualização do Runtime de teste com as ferramentas previstas; o que foi aplicado, o que ficou de fora (DT-O10) e o que falta em produção.
 - [RELEASES.md](RELEASES.md) — gates, SemVer, tags e release.
 - [DEPLOYMENT.md](DEPLOYMENT.md) — deployment, conteúdo, homologação e rollback.

@@ -5,6 +5,7 @@
 - [README do projeto](README.md) — entrada geral e índice de módulos/temas.
 - [Mapa de caminhos](docs/architecture/ROUTES-SITEMAP.md) — referência transversal de rotas ativas, administrativas, internas, desabilitadas e redirects.
 - [Índice documental](docs/README.md) — arquitetura, decisões, normas e operação.
+- [Inspeção visual de e-mails](docs/operations/INSPECAO-VISUAL-EMAIL.md) — leitura por IMAP da caixa de monitoramento (`dmarc@` é alias de `naoresponda@`), somente leitura, sem expor senhas.
 - [Normas do Portal](docs/portal/README.md) — padrões, políticas e contratos do `aculta_portal`.
 - [Módulos e integrações](docs/modules/README.md) — referências transversais Core/contrib.
 - [Documentação ACULTA420](web/themes/custom/aculta420/docs/README.md) — tema e design system.
