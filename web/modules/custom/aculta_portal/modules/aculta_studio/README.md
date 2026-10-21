@@ -9,6 +9,9 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
   a permissão de exibição (`access()`) e as ações (`actions()`), cada uma com sua própria checagem de acesso.
 - Presenter: `StudioPresenter::visibleTabs()` mostra só abas com dono ativo e permissão concedida, em ordem de peso.
 - Aba atual: argumento `aba` (id do plugin). Sem argumento ou com id desconhecido, a primeira aba visível.
+- Navegação AJAX como na Minha conta: a seção "Estúdio" entra no shell da conta (hook `aculta_portal_account_sections_alter`,
+  só com aba visível). As abas ficam dentro de `#portal-account-body`, e o `account-navigation.js` troca o conteúdo
+  por `drupal_ajax`, atualizando URL, menu e título.
 
 ## Abas
 
