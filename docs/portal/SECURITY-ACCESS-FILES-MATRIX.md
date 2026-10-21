@@ -12,7 +12,7 @@ Revisado em 2026-10-16. As linhas definem critérios de acesso e homologação.
 | Arquivo de atividade submetido | Media/File privado + LMS File Upload | próprio arquivo; outro estudante matriculado não pode abrir resposta alheia | avaliador da turma, apenas após autorização | privilegiado conforme política | URL direta, outro estudante da mesma turma, status LMS ausente durante exclusão assíncrona, expiração/revogação de membership, MIME/tamanho e upload malicioso |
 | PDF incorporado em aula/revista/wiki | Media + File Access + Portal viewer | acesso definido pela origem/turma | conforme contexto | conforme permissão | preservar access da entidade origem, sem URL arbitrária, fallback seguro |
 | Certificado | status final LMS + Entity Print futuro | próprio certificado | elegibilidade/verificação conforme política | emissão/revogação com permissão auditável | token não enumerável, usuário desativado, reversão de nota e cache |
-| Notificação | Message + Message Notify | somente eventos próprios e ainda permitidos | público definido por evento aprovado | conforme função administrativa | revogar membership antes de queue dispatch, dedupe, e-mail mínimo |
+| Notificação | Message + Message Notify | somente eventos próprios e ainda permitidos | público definido por evento aprovado | conforme função administrativa | revogar membership antes de queue dispatch; revalidar resposta se status foi removido assincronamente; dedupe; e-mail mínimo |
 | Dashboard | Views + serviço LMS + cache metadata | dados próprios | agregado apenas da turma autorizada | agregado conforme grants | verificar queries com `accessCheck` explícito e contextos/cache tags |
 
 ## Controles obrigatórios

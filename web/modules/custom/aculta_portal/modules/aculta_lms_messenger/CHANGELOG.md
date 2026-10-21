@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.13 — ignorar respostas com contexto LMS removido — 2026-10-21
+
+- Avisos e produtores de submissão, avaliação e feedback agora resolvem o curso
+  pelas referências existentes, sem getters tipados quando o LMS remove
+  LessonStatus/CourseStatus de forma assíncrona. Referência ausente suprime o
+  aviso sem 500. Unit `LearningNoticeStaleAnswerTest`: 1 teste / 6 assertions
+  PASS; suíte Unit completa: 16 testes / 66 assertions PASS. Kernel Message:
+  1 teste / 12 assertions PASS, com 2 depreciações upstream de Message/Core.
+
 ## Registro de validação Runtime — 2026-10-21
 
 - Smoke temporário no Runtime de teste confirmou persistência de aviso e

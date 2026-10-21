@@ -24,6 +24,7 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
@@ -178,7 +179,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$answer instanceof AnswerInterface || $answer->isEvaluated() || $answer->getData() === []) {
       return;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course') {
       return;
     }
@@ -264,7 +265,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$answer instanceof AnswerInterface) {
       return;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     $learner = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
     $educator = $comment->getOwner();
     if (!$course instanceof CourseInterface || !$learner instanceof UserInterface || !$learner->isActive()
@@ -614,6 +615,29 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   }
 
   /**
+   * Resolves an answer's current course without typed getters on stale refs.
+   *
+   * LMS deletes status entities asynchronously. A still-persisted answer can
+   * temporarily reference a missing LessonStatus or CourseStatus; notices
+   * should disappear during that interval instead of raising a type error
+   * while their list or counter is being built.
+   */
+  private function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
+    $lessonStatus = $answer->get('lesson_status')->entity;
+    if (!$lessonStatus instanceof LessonStatusInterface) {
+      return NULL;
+    }
+    $courseStatus = $lessonStatus->get('course_status')->entity;
+    if (!$courseStatus instanceof CourseStatusInterface) {
+      return NULL;
+    }
+    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
+    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
+      ? $course
+      : NULL;
+  }
+
+  /**
    * Resolves an evaluated answer without exposing its response or score. */
   private function resolveEvaluation(string $sourceUuid, AccountInterface $account): ?array {
     $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $sourceUuid]);
@@ -623,7 +647,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
       || !$course->access('view', $account, TRUE)->isAllowed()
       || !$this->hasCurrentEnrollment($course, $account)) {
@@ -661,7 +685,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
       || !$course->access('view', $account, TRUE)->isAllowed()
       || !$course->hasPermission('grade students', $account)) {
@@ -738,7 +762,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     $educator = $comment->getOwner();
     if (!$course instanceof CourseInterface || !$educator || !$course->hasPermission('grade students', $educator)
       || !$this->hasCurrentEnrollment($course, $account)) {

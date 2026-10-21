@@ -263,7 +263,7 @@ continua verificável após bloqueio da conta, que a reemissão gera código
 URL-safe diferente de 43 caracteres e que códigos curtos/longos são rejeitados
 antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 `applyTo()` define diretamente o metadata
-do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O conjunto ainda não completa a matriz de acesso/cache,
+do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
 ## Ordem, commits e status
