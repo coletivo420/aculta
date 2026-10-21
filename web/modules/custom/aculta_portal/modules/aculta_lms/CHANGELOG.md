@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.41 — cobrir acesso genérico ao snapshot de certificado — 2026-10-21
+
+- Kernel confirma que até administradores não visualizam nem criam snapshots
+  pela API genérica de entidade; a verificação pública por código opaco continua
+  acessível. `CertificateLifecycleTest`: 3 testes / 84 assertions PASS no
+  MariaDB dedicado, com 38 depreciações upstream.
+
 ## 0.1.0-dev.40 — declarar cache de permissão de turma em certificados — 2026-10-21
 
 - Access de emissão e revogação de certificados agora declara `user.group_permissions`,

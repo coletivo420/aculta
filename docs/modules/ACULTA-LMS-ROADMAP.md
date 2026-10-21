@@ -294,6 +294,11 @@ assertions PASS (8 depreciações PHPUnit); PHPCS Drupal/DrupalPractice, gate do
 `aculta_runtime`, `aculta_lms` está habilitado e não há updates pendentes;
 `drush cr` concluiu com warning conhecido de assets H5P fora do escopo.
 
+Em 0.1.0-dev.41, `CertificateLifecycleTest` verifica também que o handler
+genérico do snapshot nega `view` e `create` mesmo ao administrador, enquanto a
+rota pública por código opaco permanece disponível. Kernel: 3 testes / 84
+assertions PASS no MariaDB dedicado; 38 depreciações upstream.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando

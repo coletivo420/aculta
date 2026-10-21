@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
@@ -113,6 +115,14 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertSame('active', $manager->loadByCode($secondCode)->get('state')->value);
     self::assertNull($manager->loadByCode(str_repeat('A', 39)), 'Codes below the supported format are rejected before lookup.');
     self::assertNull($manager->loadByCode(str_repeat('A', 65)), 'Codes above the supported format are rejected before lookup.');
+    self::assertFalse($second->access('view', $issuer, TRUE)->isAllowed(), 'Generic entity routes must not bypass opaque-code verification.');
+    self::assertFalse(
+      $this->container->get('entity_type.manager')
+        ->getAccessControlHandler('aculta_lms_certificate')
+        ->createAccess(NULL, $issuer, [], TRUE)
+        ->isAllowed(),
+      'Certificate snapshots cannot be created through generic entity routes.',
+    );
 
     $verification = new CertificateVerificationController(
       $manager,
@@ -121,11 +131,11 @@ final class CertificateLifecycleTest extends KernelTestBase {
       $this->container->get('string_translation'),
     );
     $certificate_build = [];
-    $certificate_view_hook = new CertificateEntityViewHooks($this->createMock(\Drupal\Core\Datetime\DateFormatterInterface::class));
+    $certificate_view_hook = new CertificateEntityViewHooks($this->createMock(DateFormatterInterface::class));
     $certificate_view_hook->entityView(
       $certificate_build,
       $second,
-      $this->createMock(\Drupal\Core\Entity\Display\EntityViewDisplayInterface::class),
+      $this->createMock(EntityViewDisplayInterface::class),
       'default',
     );
     self::assertSame(0, $certificate_build['#cache']['max-age']);
@@ -195,7 +205,9 @@ final class CertificateLifecycleTest extends KernelTestBase {
     }
   }
 
-  /** Tests a concurrent certificate issue request cannot start a second write. */
+  /**
+   * Tests a concurrent certificate issue request cannot start a second write.
+   */
   public function testConcurrentIssueIsRejectedByStatusLock(): void {
     $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
     $student->save();
