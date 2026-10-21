@@ -26,8 +26,10 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
    `v4.8.6` está registrado em `LINKSTACK-PORTABILITY.md`, fixado no commit
    `dca586e8b8946a779cb212d21791cff6308fa7c0`. Faltam auditoria de
    licença/proveniência dos assets de terceiros e análise de compatibilidade
-   jurídica antes de qualquer cópia. A auditoria arquivo a arquivo do Linky
-   também segue pendente; nenhum código upstream foi copiado.
+   jurídica antes de qualquer cópia. A auditoria por arquivo do Linky
+   `2.0.0-beta1` está registrada em `LINKY-PORTABILITY.md`; confirmar cabeçalhos
+   individuais e a compatibilidade Drupal 11 antes de eventual reutilização.
+   Nenhum código upstream foi copiado.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
    não recebem permissões automaticamente.
 
