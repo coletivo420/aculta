@@ -41,3 +41,12 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 - Sem Kernel de acesso das abas futuras; cada aba nova precisa do seu teste de acesso.
 - Não substitui Views, Form API, Entity Access nem Workflows dos donos: as ações apenas os invocam.
 - Estado e próximos passos: `docs/operations/status/aculta_studio.yml` e o roadmap em `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`.
+
+## Listagens
+
+- Aba interna de uma seção pode declarar `listing` (`bundle` e `state`, este último do fluxo editorial). A área
+  Revista lista Todos, Rascunhos, Em revisão, Publicados e Arquivados pelo `content_moderation_state` do workflow
+  `revista`. `StudioListingBuilder` lê os nós com `accessCheck(TRUE)`, então cada linha passa pelo acesso do nó.
+- Sem linhas, a aba mostra "Nenhum item nesta aba".
+- Ainda sem listagem: editor de publicação, fila de moderação do Fórum, revisões da Wiki, seleção de turma nos Cursos
+  e navegação visual de Galerias. Cada uma entra quando o dono fornecer a visão correspondente.
