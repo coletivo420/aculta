@@ -124,7 +124,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 | Auto Image, HTML Embed, WProofreader, Font, Emoji, Todo, Empty Block, Restricted Editing | Não habilitados |
 | Premium Features | Instalado no código, não habilitado |
 | Testes Kernel | 6 testes, 93 asserções, OK (`aculta_simpletest`) |
-| Interação no navegador (inserir, editar, salvar, reabrir, renderizar) | **Não validada** |
+| Interação no navegador (editar, inserir modelo e tabela, salvar, reabrir, renderizar) | Validada em 2026-10-22 no servidor de testes (Chromium headless), no nó de teste 500, removido ao final |
 | Integração com Drupal Media (além de `drupalMedia` na toolbar) | **Não implementada** |
 | Integração com `aculta_mailer` | **Não implementada** (o formato `aculta_email` existe; renderização e envio seguem no `aculta_mailer`) |
 | CSS do editor no tema `aculta420` | **Não implementado** (autorizado; falta fazer e validar visualmente) |

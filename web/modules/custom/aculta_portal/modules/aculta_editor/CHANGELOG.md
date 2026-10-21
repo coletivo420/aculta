@@ -2,6 +2,7 @@
 
 ## 0.1.0-dev.1 — 2026-10-21
 
+- Validação no navegador (servidor de testes, Chromium headless): editar, inserir modelo e tabela, salvar, reabrir e renderizar com `aculta_editorial`, no nó de teste 500 (removido ao final).
 - `media_embed` ativado nos quatro formatos (renderização de `<drupal-media>`), com a mesma configuração do `usuario_aculta`.
 - Kernel test do ciclo de conteúdo: salvar, recarregar e renderizar um nó com `aculta_editorial`, com sanitização. 8 testes, 140 asserções, OK.
 - Contrato com o `aculta_mailer` documentado: o editor de modelos usa `aculta_email`.

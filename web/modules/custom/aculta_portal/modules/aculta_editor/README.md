@@ -76,15 +76,25 @@ de existir. Não desinstalar o módulo enquanto houver conteúdo com esses forma
 - Sem o formato `aculta_email` (este submódulo desabilitado), o corpo HTML sai escapado, sem marcação (falha fechada).
 - Tokens, cabeçalho e rodapé, envio, logs e relatórios continuam no `aculta_mailer`. A proposta e o desenho estão em [`docs/PROPOSTA-MAILER.md`](docs/PROPOSTA-MAILER.md).
 
+## Validação no navegador
+
+Em 2026-10-22, no servidor de testes, com Chromium headless e login pelo link de teste da conta uid 1, o ciclo foi executado no nó de teste 500 (artigo não publicado, criado por Drush e removido ao final):
+
+- **Editar:** troca de formato para `aculta_editorial`, com confirmação do Core. A toolbar carregada tem os itens do formato (modelos, tabela, quebra de página, destaque, localizar e substituir, tela cheia, Media Embed).
+- **Inserir:** modelo "Notícia" pelo botão "Inserir modelo", tabela 2×2 e texto digitado.
+- **Salvar:** clique real no botão Salvar; o banco confirmou formato, tabela, modelo e texto.
+- **Reabrir:** formato, tabela, modelo e texto persistidos.
+- **Renderizar:** tabela, modelo e texto na página, sem `<script>` no corpo.
+
+Observações (decisão pendente, não defeito do ciclo):
+
+- Os tipos **Página básica** e **Documento** não oferecem os formatos novos no campo `body`; só o **Artigo** oferece. A diferença está na configuração de cada campo.
+- O **Artigo** exige "Imagem editorial" (mídia). O widget da biblioteca de mídia não aceitou a seleção preenchida por script; por isso o teste usou o nó criado por Drush.
+
 ## Limitações conhecidas
 
-- **Pré-visualização do modelo:** `preview()` usa o mesmo escape do envio; a tela não foi validada no navegador.
-- **Navegador:** a interação completa (inserir, editar, salvar, reabrir e renderizar pela interface do CKEditor) **não
-  foi validada**. O ciclo de dados (salvar, recarregar, renderizar com sanitização) está coberto pelo Kernel test.
-- **Servidor de testes:** em 2026-10-21, o host principal respondeu HTTP 500 por causa do campo `field_h5p_content`
-  (referência a `h5p_content`, entidade removida no trabalho do H5P em andamento). Enquanto isso não for resolvido por
-  quem o mantém, a validação HTTP e no navegador do conteúdo não é possível.
-- **Media:** `drupalMedia` e `media_embed` estão nos formatos; a inserção pelo editor não foi validada no navegador.
-- **Auto Image:** não habilitado até haver exceção do responsável (ver a auditoria, seção 8).
+- **Auto Image:** não habilitado até haver exceção formal do responsável (ver a auditoria, seção 8).
 - **Deprecações:** três avisos vêm de `ckeditor5_plugin_pack_templates` (contrib).
-- **PasteFromMarkdown:** habilitado; comportamento no editor não verificado no navegador.
+- **PasteFromMarkdown:** habilitado; o comportamento de colagem não foi verificado no navegador.
+- **Pré-visualização do modelo de e-mail:** usa o mesmo escape do envio; a tela não foi validada no navegador.
+- **Formulário de modelos do mailer:** coberto por testes de unidade e Kernel; não foi validado no navegador.
