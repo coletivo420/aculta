@@ -89,8 +89,11 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
    `aculta_links_stat_daily`, fila e cron próprios removidos. Sem migração (banco de teste, sem retenção).
    Aplicado no Runtime de teste em 2026-10-21.
 2. **Fórum:** séries temporais em `forum.*`; a contagem atual passa a ler o `aculta_statistics`.
-3. **E-mail (0.5.0):** resumo semanal e painéis leem `email.*`; o `MailSummary` deixa de ser agregado próprio.
-4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora.
+   Bloqueio: produtores `forum.topic.created` e `forum.comment.created` (0.7.0).
+3. **E-mail (0.5.0):** resumo semanal e painéis leem `email.*`. Bloqueio: o painel separa por estado
+   exato (nove estados); falta a métrica `email.messages.status` (dimensão = estado) antes de repontar.
+4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora. Bloqueio: produtor de
+   `lms.students.by_status` (instantâneo) ainda inexistente.
 5. **Gate:** `aculta_statistics` é o único gravador de agregados estatísticos (validação a criar).
 
 Sem remover tabela, dado ou painel antes do passo de migração e da autorização do responsável.
