@@ -1,3 +1,8 @@
+## 0.1.0-dev.59 — legenda e rótulos do gráfico de tendência dentro da área visível — 2026-10-21
+
+- Correção visual verificada no navegador (servidor de testes): a legenda ficava fora da área do SVG e cortava o nome das séries. A altura do gráfico passou de 260 para 292, e a legenda e os rótulos de dia ficaram em posições que não se sobrepõem à linha do zero.
+- Sem mudança de dados nem de contrato. Unit 149/149.
+
 ## 0.1.0-dev.58 — painel de envios com período e tipo nos gráficos — 2026-10-21
 
 - Painel de envios: seletor de período (7, 14 e 30 dias) e de tipo (todos, confirmados, não confirmados, com falha). Valem para o gráfico de tendência, para as contagens e para os quadros de estado, transporte, tipo e motivo. A página usa GET e funciona sem JavaScript.

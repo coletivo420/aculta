@@ -15,7 +15,7 @@ use Drupal\Component\Utility\Html;
 final class MailTrendChart {
 
   private const WIDTH = 640;
-  private const HEIGHT = 260;
+  private const HEIGHT = 292;
   private const LEFT = 40;
   private const RIGHT = 16;
   private const TOP = 16;
@@ -53,7 +53,7 @@ final class MailTrendChart {
       if ($index % $every !== 0 && $index !== $count - 1) {
         continue;
       }
-      $out[] = sprintf('<text x="%.1f" y="%d" text-anchor="middle" font-size="11" fill="#444">%s</text>', $xFor($index), self::HEIGHT - 22, Html::escape($label));
+      $out[] = sprintf('<text x="%.1f" y="%d" text-anchor="middle" font-size="11" fill="#444">%s</text>', $xFor($index), self::HEIGHT - 28, Html::escape($label));
     }
     foreach ($series as $line) {
       $points = [];
@@ -72,7 +72,7 @@ final class MailTrendChart {
     $legend = [];
     $x = self::LEFT;
     foreach ($series as $line) {
-      $legend[] = sprintf('<rect x="%d" y="%d" width="10" height="10" fill="%s" /><text x="%d" y="%d" font-size="12" fill="#222">%s</text>', $x, self::HEIGHT - 8, Html::escape($line['color']), $x + 14, self::HEIGHT, Html::escape($line['label']));
+      $legend[] = sprintf('<rect x="%d" y="%d" width="10" height="10" fill="%s" /><text x="%d" y="%d" font-size="12" fill="#222">%s</text>', $x, self::HEIGHT - 18, Html::escape($line['color']), $x + 14, self::HEIGHT - 9, Html::escape($line['label']));
       $x += 150;
     }
 
