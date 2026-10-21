@@ -120,3 +120,10 @@ Sem fonte hoje: exige instrumentação, decisão sobre consentimento e dimensão
 - Comparação entre fontes não implica causalidade. Sem identificador de campanha ou
   de origem confiável, mostrar só a comparação agregada.
 - Métrica sem fonte confirmada não entra no catálogo como disponível.
+
+## Retenção por métrica
+
+A coluna "retenção" acima é o padrão inicial. O administrador ajusta cada métrica
+no painel (30, 90, 180, 365 dias ou indefinido), conforme ADR-0003. Métricas de
+visita podem ser configuradas como indefinido, por decisão do responsável; o risco
+está registrado na ADR.

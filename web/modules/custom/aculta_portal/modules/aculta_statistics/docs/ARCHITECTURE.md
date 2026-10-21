@@ -95,3 +95,13 @@ GA4 ficam para as fases 0.5.0 e 0.6.0, após justificativa escrita.
 
 Esta fase é documental e não altera versão de manifesto (não existe `info.yml`).
 A versão do componente só será declarada quando o módulo for ativado.
+
+## Retenção configurável (decisão de 2026-10-20)
+
+- Cada métrica tem prazo próprio, escolhido no painel administrativo: 30, 90, 180,
+  365 dias ou **indefinido**. Padrão para a Wiki: 90 dias. Detalhes em
+  [ADR-0003](adr/ADR-0003-retencao-configuravel.md).
+- A redução de prazo mostra o número de linhas a apagar e exige confirmação; a
+  exclusão roda no cron seguinte.
+- Permissão própria para alterar prazos.
+- O cron aplica o prazo de cada métrica, não uma constante única.

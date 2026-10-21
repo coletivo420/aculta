@@ -103,3 +103,4 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 
 - 0.6.0: GA4 com acordo `agreement` para contas; banner de cookies (Consent Mode v2) para anônimos, sujeito a autorização para o tema ACULTA420. Somente `google_tag`.
 - 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos; contador de leitura da Wiki próprio (`wiki.entries.read`), após inventário LGPD.
+- 0.2.0: configuração de retenção por métrica (Configuration API) e permissão própria; 0.9.0: auditoria das alterações de prazo.

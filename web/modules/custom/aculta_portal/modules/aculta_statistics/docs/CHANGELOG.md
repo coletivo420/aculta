@@ -34,3 +34,4 @@ até o módulo ser ativado.
 ### Decisões (sem código)
 - Consentimento reutiliza o `agreement` do `aculta_portal` (não há módulo de consentimento no `aculta_user`).
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
+- Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
