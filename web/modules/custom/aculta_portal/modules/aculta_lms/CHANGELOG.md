@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.61 — manter fail-closed em pagamento inválido — 2026-10-21
+
+- A proteção de matrícula Commerce nega a exclusão quando o armazenamento
+  retorna um registro que não é `PaymentInterface`; agora também evita erro 500
+  ao tentar usá-lo como dependência de cache. `EnrollmentFormHooksTest`: 6 testes
+  / 38 assertions PASS. Unit LMS/Messenger: 78/406; Kernel: 23/708 PASS. Há 92
+  depreciações upstream no Kernel e 8 depreciações PHPUnit na Unit.
+
 ## 0.1.0-dev.60 — exibir conclusão elegível ao educador — 2026-10-21
 
 - O teste Kernel confirma que uma conclusão aprovada aparece no seletor do

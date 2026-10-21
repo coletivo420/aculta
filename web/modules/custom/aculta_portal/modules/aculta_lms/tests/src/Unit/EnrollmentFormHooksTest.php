@@ -84,12 +84,20 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
   }
 
   /**
+   * Malformed payment storage results deny deletion without causing an error.
+   */
+  public function testUnexpectedPaymentRecordFailsClosed(): void {
+    self::assertTrue($this->deleteResult($this->order('placed'), [new \stdClass()])->isForbidden());
+  }
+
+  /**
    * Builds the hook and its payment storage for a specific order state.
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface|null $order
    *   The provenance order, or NULL to simulate a broken reference.
-   * @param \Drupal\commerce_payment\Entity\PaymentInterface[] $payments
-   *   Payments associated with the order.
+   * @param array<array-key, mixed> $payments
+   *   Payment storage results, including malformed values for fail-closed
+   *   tests.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The deletion access decision.

@@ -146,7 +146,8 @@ remoção manual de matrículas de compra paga/parcialmente reembolsada ou pedid
 gratuito concluído e falha fechada quando a origem não pode ser lida; matrícula
 manual e pedido totalmente reembolsado seguem removíveis. A confirmação visual
 da interface ainda aguarda smoke HTTP. O Runtime não foi conectado ao gateway
-para simular uma transação remota.
+para simular uma transação remota. Se o armazenamento retornar um registro de
+pagamento inválido, o acesso também é negado sem erro 500.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página

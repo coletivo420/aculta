@@ -8,6 +8,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,7 +23,9 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Keeps course enrollment attached to a class that belongs to that course. */
+/**
+ * Keeps course enrollment attached to a class that belongs to that course.
+ */
 final class EnrollmentFormHooks {
 
   public function __construct(
@@ -34,7 +37,9 @@ final class EnrollmentFormHooks {
     private readonly AccountProxyInterface $currentUser,
   ) {}
 
-  /** Prevents deleting a class membership granted by a still-paid course order. */
+  /**
+   * Prevents deleting a class membership granted by a still-paid course order.
+   */
   #[Hook('entity_access')]
   public function protectPaidEnrollment(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
     if ($operation !== 'delete'
@@ -71,10 +76,13 @@ final class EnrollmentFormHooks {
       // A partial refund does not revoke a course enrollment. Only an order
       // whose every payment is fully refunded releases the manual-delete lock.
       if (!$payment instanceof PaymentInterface || $payment->getState()->getId() !== 'refunded') {
-        return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
+        $denied = AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
           ->addCacheableDependency($entity)
-          ->addCacheableDependency($order)
-          ->addCacheableDependency($payment);
+          ->addCacheableDependency($order);
+        if ($payment instanceof CacheableDependencyInterface) {
+          $denied->addCacheableDependency($payment);
+        }
+        return $denied;
       }
     }
 
@@ -145,7 +153,9 @@ final class EnrollmentFormHooks {
     }
   }
 
-  /** Reject direct course-only joins and selections from other courses. */
+  /**
+   * Rejects direct course-only joins and selections from other courses.
+   */
   public function validateCourseClassSelection(array &$form, FormStateInterface $form_state): void {
     $course_id = $form_state->get('aculta_lms_enrollment_course_id');
     if (!is_string($course_id) || $course_id === '') {
