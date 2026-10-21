@@ -116,3 +116,26 @@ Outros resultados somente leitura:
 - Durante a visualização de diff com Drush `config:import --diff`, a confirmação
   não interativa foi aceita. O lote aplicado foi revisado e continha somente
   objetos do Magazine; o campo LMS foi retirado antes da aplicação efetiva.
+
+## Fase 0.3.0 — pré-validação da migração editorial (2026-10-21)
+
+- Drupal Runtime 11.4.10 confirmou 16 Nodes (11 `article`, 5 `blog`), cada um
+  com uma revisão e um idioma. As 26 entidades `path_alias` ligadas aos NIDs
+  têm uma revisão cada; nenhuma entidade Comment está hospedada nesses Nodes.
+- Entity Query inspecionou campos de referência de todos os tipos de entidade
+  instalados sem encontrar referências de entrada. Entity Usage também não tem
+  linhas apontando para os 16 Nodes. Os bundles `article`, `blog` e `revista`
+  expõem os mesmos nomes e tipos de campo. Nenhum conteúdo foi alterado nesta
+  pré-validação.
+- A API instalada não oferece conversão suportada de bundle em Node. O método
+  `NodeStorage::updateType()` está deprecado desde Core 11.2 e atualiza somente
+  a tabela base. A migração implementada recria entidades via Entity API e
+  preserva NID, UUID e VID; recria aliases via Path Alias Entity API com ID,
+  UUID e revisão. O comando falha fechado se surgirem Comments, referências,
+  traduções ou revisões adicionais.
+- Kernel MariaDB dedicado: 2 testes/34 assertions PASS, incluindo preservação
+  de identidade e alias e recusa sem apagar a origem quando há revisões
+  múltiplas. Runtime dry run: 16 Nodes, 16 revisões, 26 aliases; nenhum dado
+  escrito. A execução requer dump gzip privado recente e export privado da
+  configuração ativa conforme
+  [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md).
