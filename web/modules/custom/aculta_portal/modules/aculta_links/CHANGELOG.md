@@ -4,9 +4,10 @@
 
 - O editor de composição permite atualizar título e descrição inline junto com ordem e publicação; destino e agendamento continuam no formulário avançado do item.
 - O submit valida acesso, associação à página e título de todas as linhas antes de salvar qualquer uma. Linhas sem mudanças não criam revisão; mudanças criam revisão com mensagem atualizada.
+- O serviço do dashboard injeta `request_stack` para os filtros independentes e a variação de cache pela query.
 - Kernel MariaDB PASS: a estrutura do formulário inclui texto, descrição e edição avançada; a edição inline persiste título/descrição, ordem e estado em revisão; título vazio é rejeitado sem escrita; item de outra página rejeita o submit inteiro sem alteração parcial. Teste direcionado: 1/30; suíte Kernel: 6/208 com 7 depreciações upstream. Unit: 6/54; PHPCS, lint e slugs PASS.
 - Runtime `toca`: sem updates pendentes; cache reconstruído para purpose `links`; raiz HTTP 200 e rota do editor com entidade inexistente HTTP 404. O rebuild repetiu o aviso H5P `assets://`. A inspeção visual autenticada ficou pendente porque o Firefox já estava aberto em outro fluxo; nenhuma sessão foi usada nem conteúdo alterado.
-- Drupal 11 gate e status-index estão bloqueados pelo trabalho não commitado de `aculta_statistics`; nenhum arquivo dessa frente foi incluído. Produção não acessada.
+- Drupal 11 gate e status-index passaram após integração dos commits de `aculta_statistics`; o mapa módulo-tema continua reportando `aculta_lms_messenger` e `aculta_qrcode`, fora do escopo de Links. Produção não acessada.
 
 ## 0.4.0-dev.26 — filtra publicação e atualiza inventário — 2026-10-20
 
