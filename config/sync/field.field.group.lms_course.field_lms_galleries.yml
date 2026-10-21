@@ -1,0 +1,27 @@
+uuid: 51499850-2a3b-409d-9230-2b31dedb92da
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_lms_galleries
+    - group.type.lms_course
+  module:
+    - media_gallery
+id: group.lms_course.field_lms_galleries
+field_name: field_lms_galleries
+entity_type: group
+bundle: lms_course
+label: 'Galerias de imagens do curso'
+description: 'Vincule galerias já existentes e publicadas. As imagens continuam sob responsabilidade de Media Gallery e aculta_image.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media_gallery'
+  handler_settings:
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

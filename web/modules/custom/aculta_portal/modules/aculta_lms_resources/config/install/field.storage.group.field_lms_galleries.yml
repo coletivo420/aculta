@@ -1,0 +1,20 @@
+uuid: 0fac3521-8ad3-4bb8-a120-dfd6b82727d0
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - group
+    - media_gallery
+id: group.field_lms_galleries
+field_name: field_lms_galleries
+entity_type: group
+type: entity_reference
+settings:
+  target_type: media_gallery
+module: core
+locked: false
+cardinality: -1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

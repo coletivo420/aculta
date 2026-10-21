@@ -402,8 +402,14 @@ Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtim
 renderização HTTP/visual e upload de entrega seguem pendentes. O Comment de
 discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
-O escopo de Gallery, Magazine e Wiki também precisa ser concretizado em
-integrações específicas, sem CMS paralelo.
+Gallery, Magazine e Wiki agora têm referências opcionais no Group de curso e um
+builder que monta links canônicos por purpose, revalidando publicação e Entity
+Access e carregando cacheability da origem. A implementação está isolada em
+`aculta_lms_resources` (0.1.0-dev.1); Unit passou 3/15 e Kernel no MariaDB
+dedicado 2/46, com uma depreciação upstream do Domain. PHP 8.4.26; PHP 8.5 não
+validado. Ainda é necessário confirmar no Runtime que a seleção de galerias no
+formulário administrativo funciona sob o purpose `courses`, instalar os campos,
+fazer smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
 **F16 — hardening inicial em curso.** A reemissão de certificados agora usa o
 lock do Core por UUID da conclusão para impedir duas versões ativas em

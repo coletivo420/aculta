@@ -1,0 +1,4 @@
+services:
+  aculta_lms_resources.course_resource_builder:
+    class: Drupal\aculta_lms_resources\CourseResourceBuilder
+    arguments: ['@aculta_portal.domain_purpose', '@current_user', '@string_translation']

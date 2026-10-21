@@ -1,0 +1,34 @@
+uuid: 6fbf75fb-2c95-42ed-a8a7-0db8b7605fd4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_lms_readings
+    - group.type.lms_course
+    - node.type.article
+    - node.type.blog
+    - node.type.wiki_entry
+  module:
+    - node
+id: group.lms_course.field_lms_readings
+field_name: field_lms_readings
+entity_type: group
+bundle: lms_course
+label: 'Leituras e verbetes do curso'
+description: 'Vincule publicações da Revista e verbetes Wiki já existentes e publicados. O conteúdo continua sob responsabilidade e acesso do módulo de origem.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      article: article
+      blog: blog
+      wiki_entry: wiki_entry
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

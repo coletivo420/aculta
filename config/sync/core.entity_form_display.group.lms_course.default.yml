@@ -8,11 +8,14 @@ dependencies:
     - field.field.group.lms_course.field_course_hours
     - field.field.group.lms_course.field_description
     - field.field.group.lms_course.field_h5p_activities
+    - field.field.group.lms_course.field_lms_galleries
+    - field.field.group.lms_course.field_lms_readings
     - group.type.lms_course
     - image.style.thumbnail
   module:
     - image
     - lms
+    - aculta_lms_resources
     - path
     - text
 id: group.lms_course.default
@@ -43,6 +46,26 @@ content:
     weight: 5
     region: content
     settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_lms_readings:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_lms_galleries:
+    type: entity_reference_autocomplete
+    weight: 7
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   field_description:
