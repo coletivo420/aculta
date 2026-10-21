@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.34 — tolerar referências de resposta removidas — 2026-10-21
+
+- Formulário de prazo e aviso de feedback resolvem curso através dos campos de
+  referência e encerram com segurança quando LessonStatus/CourseStatus já foi
+  removido durante limpeza assíncrona; evitam erro 500 em submissão/edição.
+- Unit: 41 testes / 192 assertions PASS; 5 depreciações do ecossistema. PHP
+  local 8.4.26; PHP 8.5 não validado.
+
 ## 0.1.0-dev.33 — verificar formato e unicidade do código de certificado — 2026-10-21
 
 - Kernel confirma códigos de 43 caracteres URL-safe, código novo na reemissão e

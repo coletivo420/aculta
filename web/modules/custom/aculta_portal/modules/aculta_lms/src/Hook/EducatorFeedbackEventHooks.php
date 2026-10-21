@@ -9,6 +9,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\lms\Entity\AnswerInterface;
+use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\Entity\LessonStatusInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -50,14 +53,32 @@ final class EducatorFeedbackEventHooks {
     if (!$answer instanceof AnswerInterface || !$educator || $answer->getUserId() === $educator->id()) {
       return;
     }
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
-    if (!$course || !$course->hasPermission('grade students', $educator)) {
+    $course = $this->courseForAnswer($answer);
+    if (!$course instanceof CourseInterface || !$course->hasPermission('grade students', $educator)) {
       return;
     }
     $this->eventDispatcher->dispatch(new EducatorFeedbackPublishedEvent(
       (string) $comment->uuid(),
       bin2hex(random_bytes(16)),
     ));
+  }
+
+  /**
+   * Resolves the current course without typed getters on stale LMS references.
+   */
+  private function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
+    $lessonStatus = $answer->get('lesson_status')->entity;
+    if (!$lessonStatus instanceof LessonStatusInterface) {
+      return NULL;
+    }
+    $courseStatus = $lessonStatus->get('course_status')->entity;
+    if (!$courseStatus instanceof CourseStatusInterface) {
+      return NULL;
+    }
+    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
+    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
+      ? $course
+      : NULL;
   }
 
 }

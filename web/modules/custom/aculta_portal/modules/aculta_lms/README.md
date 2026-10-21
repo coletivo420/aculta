@@ -4,6 +4,15 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## F16 — referências removidas em respostas
+
+Os hooks do formulário de prazo por atividade e do aviso de feedback do
+educador resolvem curso pelos campos de referência LMS e toleram LessonStatus
+ou CourseStatus removidos durante a limpeza assíncrona. Nesses casos, o
+formulário não recebe configuração de prazo e o evento de feedback não é
+publicado. Unit do módulo: 41 testes / 192 assertions PASS; 5 depreciações do
+ecossistema de teste. A execução local usa PHP 8.4.26 e não valida PHP 8.5.
+
 ## Integrações de conteúdo
 
 - Imagens de capa de curso usam `aculta_image` e sua `UploadPolicy`; imagens

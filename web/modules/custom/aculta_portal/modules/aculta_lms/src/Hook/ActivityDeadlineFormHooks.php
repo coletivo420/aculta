@@ -14,6 +14,8 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -34,7 +36,7 @@ final class ActivityDeadlineFormHooks {
       return;
     }
     $answer = $formObject->getEntity();
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    $course = $this->courseForAnswer($answer);
     $learner = $answer->getOwner();
     if (!$course instanceof CourseInterface || !$learner instanceof UserInterface
       || !$answer->getActivity() instanceof EntityPublishedInterface || !$answer->getActivity()->isPublished()) {
@@ -60,6 +62,24 @@ final class ActivityDeadlineFormHooks {
       ]),
       '#weight' => -100,
     ];
+  }
+
+  /**
+   * Resolves the current course without typed getters on stale LMS references.
+   */
+  private function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
+    $lessonStatus = $answer->get('lesson_status')->entity;
+    if (!$lessonStatus instanceof LessonStatusInterface) {
+      return NULL;
+    }
+    $courseStatus = $lessonStatus->get('course_status')->entity;
+    if (!$courseStatus instanceof CourseStatusInterface) {
+      return NULL;
+    }
+    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
+    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
+      ? $course
+      : NULL;
   }
 
 }

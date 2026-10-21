@@ -252,7 +252,12 @@ um estudante matriculado não baixa a resposta de outro estudante; o dono
 matriculado tem acesso, perde-o após revogação e um educador com `grade
 students` continua autorizado. Quando o Drupal LMS remove um LessonStatus, a
 resposta pendente na fila não mantém contexto de curso; a rota agora nega essa
-janela sem erro 500. `AttemptArchiveLifecycleTest`: 9 testes / 363 assertions
+janela sem erro 500. Formulário de prazo e publicação do evento de feedback
+resolvem relações via campos de referência e encerram sem erro quando
+LessonStatus/CourseStatus já foi removido. `ActivityDeadlineFormHooksTest` e
+`EducatorFeedbackEventHooksTest` cobrem referências ausentes; Unit completo do
+`aculta_lms`: 41 testes / 192 assertions PASS (5 depreciações), executado em
+PHP 8.4.26; PHP 8.5 não validado. `AttemptArchiveLifecycleTest`: 9 testes / 363 assertions
 PASS. Verificação de certificado, render do snapshot e painéis agora preservam
 `max-age: 0` ao mesclar tags/contextos; `CertificateLifecycleTest`: 3/75,
 `ClassDashboardKernelTest`: 1/43 e `LearningDashboardControllerTest`: 1/4
