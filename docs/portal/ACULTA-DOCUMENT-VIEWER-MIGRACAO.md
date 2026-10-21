@@ -188,9 +188,9 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | --- | --- | --- | --- |
 | 0.1.0-dev.1 | Auditoria | Inventário e contratos | Concluída (`25ed3109`) |
 | 0.1.0-dev.2 | Migração | Estratégia segura e spike | Concluída como evidência (`c23bc37d`, `7f031487`) |
-| 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | **Bloqueada** (ver abaixo) |
+| 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | Executada em estado B: código (`4b170d06`), configuração (`740a0c32`) e Runtime; módulo antigo permanece |
 | 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
-| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Não iniciada |
+| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Validação estrutural concluída (`3649a742`); renderização aguarda spike de isolamento |
 | 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Vendoring concluído (`42042558`, `71545352`); leitor não iniciado |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
 | 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
@@ -201,7 +201,22 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 
 O PDF.js, suas configurações, o visualizador completo, as miniaturas PDFPreview e os contratos Group existentes são preservados.
 
-### Bloqueio da 0.1.0-dev.3 (renomeação)
+### Execução da 0.1.0-dev.3 (estado B)
+
+Resolvido o bloqueio anterior: o módulo novo foi criado a partir do conteúdo commitado (`HEAD`), sem mover o diretório do antigo. Os quatro arquivos da outra frente não foram tocados.
+
+- Runtime: backups antes (`sql:dump` em scratchpad, dois arquivos). `pm:install` de `aculta_document_viewer` e `aculta_document_viewer_group`.
+- Displays `media.document`, `media.course_document`, `node.document` (default/full) migrados para os formatters novos. Verificado: nenhum display com formatter antigo.
+- Relação `lms_course`, permissões de `lms_course-member`/`teacher`, dependência imposta da Media `course_document` apontam para o submódulo novo. Verificado após a gravação.
+- `config/sync` espelha o estado ativo (sem divergência nos objetos migrados).
+- Módulo antigo permanece instalado. Desinstalá-lo exige antes ajustar `aculta_forum`, `aculta_lms` e `aculta_lms_h5p` (dependências `info.yml`); `aculta_forum.info.yml` tem alterações de outra frente.
+
+Riscos abertos da estado B:
+1. Hooks e serviços duplicados enquanto os dois módulos coexistem: `entity_presave` do submódulo Group e o guard de CSP. Ambos são idempotentes.
+2. Falha de outra frente no Runtime: `ForumAttachmentPublicationHooks::__construct()` recebe `Hook\ForumGalleryPublication`, mas o serviço instancia `Attachment\ForumGalleryPublication`. Qualquer operação de entidade que dispare esse hook quebra. Não é desta frente; está registrada aqui para o dono.
+3. Smoke de render: o campo da Media de teste 234 é montado pelo formatter novo (`data-aculta-pdf-viewer`). O render de entidade completo volta vazio porque o site não tem a view mode `media.default`; isso é pré-existente.
+
+### Bloqueio anterior (resolvido)
 
 1. **Arquivos de outra frente:** `aculta_pdf_viewer/src/Pdf/DocumentFieldMap.php`, `src/Pdf/PdfViewerBuilder.php` e dois testes Unit têm alterações não commitadas. Renomear o diretório moveria esse trabalho. Pela regra do projeto, isso não é feito sem o dono.
 2. **Runtime:** o Runtime lê o próprio checkout. Renomear o diretório sem executar a migração deixa `core.extension` apontando para um módulo ausente. A migração no Runtime é operação persistente e exige autorização explícita.
