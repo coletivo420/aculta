@@ -4,27 +4,53 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Kernel;
 
+use Drupal\aculta_lms_h5p\Controller\H5PAJAX;
+use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
+use Drupal\Core\Form\FormState;
+use Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
-/** Verifies H5P access against real Group memberships and LMS course entities. */
+/**
+ * Verifies H5P access against real Group memberships and LMS course entities. */
 #[RunTestsInSeparateProcesses]
 final class H5PCourseAccessIntegrationTest extends KernelTestBase {
 
   use UserCreationTrait;
 
-  /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'field', 'file', 'text', 'filter', 'entity', 'options', 'entity_usage', 'flexible_permissions', 'group', 'views', 'lms', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+  /**
+   * {@inheritdoc} */
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'file',
+    'text',
+    'filter',
+    'entity',
+    'options',
+    'entity_usage',
+    'flexible_permissions',
+    'group',
+    'views',
+    'lms',
+    'aculta_image',
+    'aculta_lms',
+    'aculta_lms_h5p',
+  ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function setUpFilesystem(): void {
     mkdir($this->siteDirectory, 0775, TRUE);
     mkdir($this->siteDirectory . '/files', 0775, TRUE);
@@ -33,14 +59,16 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     $this->setSetting('file_private_path', $this->siteDirectory . '/private');
   }
 
-  /** {@inheritdoc} */
-  public function register(\Symfony\Component\DependencyInjection\ContainerBuilder $container): void {
+  /**
+   * {@inheritdoc} */
+  public function register(ContainerBuilder $container): void {
     parent::register($container);
     $container->register('stream_wrapper.private', PrivateStream::class)
       ->addTag('stream_wrapper', ['scheme' => 'private']);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['system', 'user', 'filter', 'group', 'lms']);
@@ -68,7 +96,8 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     ])->save();
   }
 
-  /** Form-cache serialization restores injected widget services. */
+  /**
+   * Form-cache serialization restores injected widget services. */
   public function testEditorWidgetDependenciesSurviveFormSerialization(): void {
     $fieldDefinition = $this->container->get('entity_field.manager')
       ->getFieldDefinitions('group', 'lms_course')['field_h5p_activities'];
@@ -76,10 +105,10 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
       'field_definition' => $fieldDefinition,
       'configuration' => ['type' => 'h5p_editor'],
     ]);
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget::class, $widget);
+    self::assertInstanceOf(H5PEditorWidget::class, $widget);
 
     $restored = unserialize(serialize($widget));
-    self::assertInstanceOf(\Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget::class, $restored);
+    self::assertInstanceOf(H5PEditorWidget::class, $restored);
     foreach ([
       'courseAccess' => 'aculta_lms_h5p.course_access',
       'libraryAccess' => 'aculta_lms_h5p.library_access',
@@ -93,7 +122,8 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     }
   }
 
-  /** An unused unlimited-field editor row passes validation while empty. */
+  /**
+   * An unused unlimited-field editor row passes validation while empty. */
   public function testEmptyEditorWidgetRowIsAllowed(): void {
     $owner = $this->createUser();
     $course = Group::create(['type' => 'lms_course', 'label' => 'Curso H5P vazio', 'uid' => $owner->id()]);
@@ -102,7 +132,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
       'field_definition' => $course->getFieldDefinition('field_h5p_activities'),
       'configuration' => ['type' => 'h5p_editor'],
     ]);
-    $formState = new \Drupal\Core\Form\FormState();
+    $formState = new FormState();
     $formState->setValue(
       ['field_h5p_activities', 0, 'h5p_content'],
       ['library' => '', 'parameters' => ''],
@@ -118,7 +148,8 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertSame([], $formState->getErrors());
   }
 
-  /** A learner can open only H5P content referenced by a course they can take. */
+  /**
+   * A learner can open only H5P content referenced by a course they can take. */
   public function testPlaybackRequiresCurrentCourseMembershipAndFieldReference(): void {
     // Real editorial entry points receive the framework through DI. Bootstrap
     // it explicitly here because this integration test writes the field
@@ -127,6 +158,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
 
     $owner = $this->createUser();
     $student = $this->createUser();
+    $otherStudent = $this->createUser();
     $educator = $this->createUser();
     $outsider = $this->createUser();
     $course = Group::create(['type' => 'lms_course', 'label' => 'Curso H5P', 'uid' => $owner->id()]);
@@ -149,6 +181,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     ]);
     $educatorRole->save();
     $course->addMember($student, ['group_roles' => [$studentRole->id()]]);
+    $course->addMember($otherStudent, ['group_roles' => [$studentRole->id()]]);
     $course->addMember($educator, ['group_roles' => [$educatorRole->id()]]);
 
     $content = $this->container->get('entity_type.manager')->getStorage('h5p_content')->create([
@@ -189,7 +222,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     $condition = $this->container->get('plugin.manager.condition')->createInstance('aculta_lms_h5p_group_has_activities');
     $condition->setContextValue('group', $course);
     self::assertTrue($condition->evaluate());
-    $integration = \Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal::getGenericH5PIntegrationSettings($course);
+    $integration = H5PDrupal::getGenericH5PIntegrationSettings($course);
     self::assertStringContainsString(
       '/h5p-ajax/' . $course->id() . '/content-user-data/:contentId/:dataType/:subContentId?token=',
       $integration['ajax']['contentUserData'],
@@ -199,7 +232,7 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     // Exercise the real progress endpoint and ensure state is scoped to the
     // authenticated student, course membership, and H5P content.
     $this->container->get('current_user')->setAccount($student);
-    $controller = $this->container->get('class_resolver')->getInstanceFromDefinition(\Drupal\aculta_lms_h5p\Controller\H5PAJAX::class);
+    $controller = $this->container->get('class_resolver')->getInstanceFromDefinition(H5PAJAX::class);
     $token = \H5PCore::createToken('contentuserdata');
     $saveRequest = Request::create('/?token=' . $token, 'POST', ['data' => '{"answer":"saved"}']);
     $saved = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $saveRequest);
@@ -209,6 +242,19 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     self::assertSame('{"answer":"saved"}', json_decode((string) $loaded->getContent(), TRUE)['data']);
     self::assertStringContainsString('private', (string) $loaded->headers->get('Cache-Control'));
     self::assertStringContainsString('no-store', (string) $loaded->headers->get('Cache-Control'));
+
+    // H5P attempt state belongs to the Drupal account, not the browser session.
+    // Switching away and back simulates a later login for the same student.
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
+    $this->container->get('current_user')->setAccount($student);
+    $restored = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
+    self::assertSame('{"answer":"saved"}', json_decode((string) $restored->getContent(), TRUE)['data']);
+
+    // Another enrolled account cannot read the first student's saved state.
+    $this->container->get('current_user')->setAccount($otherStudent);
+    $otherStudentState = $controller->contentUserData((int) $course->id(), (int) $content->id(), 'state', 0, $loadRequest);
+    self::assertNull(json_decode((string) $otherStudentState->getContent(), TRUE)['data']);
+    $this->container->get('current_user')->setAccount($student);
 
     $resultToken = \H5PCore::createToken('result');
     $resultRequest = Request::create('/?token=' . $resultToken, 'POST', [

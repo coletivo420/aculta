@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: F15 também liga tópicos Forum a atividades H5P por `field_lms_activity`, respeitando acesso Group; F10 ainda precisa fechar regressão multidomínio e ciclo do editor/player no Runtime ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md))
+next_phase: 'F15: ligar discussões Forum diretamente ao conteúdo H5P, com seleção e acesso limitados ao curso/turma; executar smoke autenticado e revisão visual. F10 permanece homologada no Runtime de teste ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md))'
 version_note: versão não declarada

@@ -402,6 +402,11 @@ Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtim
 renderização HTTP/visual e upload de entrega seguem pendentes. O Comment de
 discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
+O Kernel H5P também confirma persistência do estado de tentativa ao retornar
+com a mesma conta e isolamento frente a outro membro matriculado (3 testes /
+85 assertions, 43 depreciações de Core/contrib). A ligação direta de tópicos
+Forum a conteúdo H5P e seu smoke autenticado/visual continuam pendentes; esse
+vínculo não é representado pelo campo `field_lms_activity` do LMS.
 Gallery, Magazine e Wiki agora têm referências opcionais no Group de curso e um
 builder que monta links canônicos por purpose, revalidando publicação e Entity
 Access e carregando cacheability da origem. A versão 0.1.0-dev.2 de

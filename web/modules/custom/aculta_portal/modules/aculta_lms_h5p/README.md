@@ -15,6 +15,13 @@ apresentado no contexto do curso, após validação de acesso pelo Drupal e pelo
 LMS. As fixtures temporárias foram removidas; `H5P.HelloWorld`, preexistente,
 foi preservada. Nenhuma alteração de produção foi feita.
 
+Na F15, o Kernel confirma que o estado de tentativa persiste quando a mesma
+conta retorna em outra sessão e não pode ser lido por outro estudante
+matriculado no curso. O H5P continua dono de seu progresso interno; resultados
+não são convertidos em notas oficiais do LMS. Ainda falta definir e validar o
+vínculo de discussões do Forum diretamente às atividades H5P, além do smoke
+autenticado e visual dessa integração.
+
 ## Painéis e vínculo com cursos
 
 - Administração: `/painel-administrativo/lms/h5p`, com acesso pela permissão

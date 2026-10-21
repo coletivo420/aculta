@@ -1,3 +1,13 @@
+## F15 — persistência privada de tentativas H5P — 2026-10-21
+
+- O Kernel agora confirma que o estado de uma tentativa H5P continua disponível
+  para a mesma conta após troca de sessão e permanece invisível a outro
+  estudante, mesmo quando ambos têm matrícula ativa no mesmo curso.
+- Kernel focal: 3 testes / 85 assertions PASS no MariaDB dedicado; 43
+  depreciações vêm de Core/contrib instalados. PHP CLI 8.4.26; PHP 8.5 não
+  validado. Integração de discussões H5P com Forum e smoke autenticado/visual
+  continuam pendentes.
+
 ## Navegação multidomínio — 2026-10-19
 
 - Remove os atalhos "Atividades interativas" e "Atividades dos cursos" do menu de conta usado pela barra multidomínio. As rotas dos painéis H5P de estudante e educador permanecem disponíveis no contexto do LMS.
