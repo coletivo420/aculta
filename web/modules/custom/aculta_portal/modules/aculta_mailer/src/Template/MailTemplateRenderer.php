@@ -140,7 +140,8 @@ final class MailTemplateRenderer {
     if (!$format instanceof FilterFormatInterface) {
       return htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
-    $text = $html;
+    // Script e estilo saem com o conteúdo; o filtro só tira a tag e manteria o texto.
+    $text = (string) preg_replace('#<(script|style)\\b[^>]*>.*?</\\1\\s*>#is', '', $html);
     foreach ($format->filters() as $filter) {
       if ($filter->status) {
         $text = $filter->process($text, '')->getProcessedText();

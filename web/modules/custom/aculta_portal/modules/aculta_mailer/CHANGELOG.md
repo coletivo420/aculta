@@ -1,3 +1,8 @@
+## 0.1.0-dev.64 — script sai com o conteúdo no modelo HTML — 2026-10-22
+
+- Script e estilo são removidos com o conteúdo antes do filtro do formato `aculta_email`. Antes, o filtro tirava só a tag e o texto (por exemplo `alert(1)`) ficava no e-mail e na prévia.
+- Verificado no navegador no modelo desabilitado de teste (prévia renderizada, sem texto de script).
+
 ## 0.1.0-dev.63 — prévia do modelo mostra o resultado, não o código — 2026-10-22
 
 - A prévia do formulário de modelo passa a mostrar o corpo HTML renderizado, filtrado pelo mesmo formato do envio. Antes aparecia como código dentro de `pre`.

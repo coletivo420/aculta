@@ -57,6 +57,7 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
     $this->assertTrue($rendered['html']);
     $this->assertStringContainsString('Olá Maria', $rendered['body']);
     $this->assertStringNotContainsString('<script', $rendered['body']);
+    $this->assertStringNotContainsString('alert', $rendered['body']);
     $this->assertStringNotContainsString('onclick', $rendered['body']);
   }
 
@@ -99,6 +100,7 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
     $preview = $this->container->get(MailTemplateRenderer::class)->preview($type, 'Assunto', '<p>Olá {{ name }}</p><script>alert(1)</script>', TRUE);
     $this->assertStringContainsString('<p>Olá ', $preview['body']);
     $this->assertStringNotContainsString('<script', $preview['body']);
+    $this->assertStringNotContainsString('alert', $preview['body']);
   }
 
   /**
