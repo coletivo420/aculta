@@ -373,6 +373,13 @@ usa IDs inexistentes para simular referências removidas e cobre o formulário:
 4 testes / 126 assertions. Unit LMS: 61/334; Kernel combinado LMS/Messenger:
 22/675 PASS, com 92 depreciações upstream. PHP 8.5 não validado.
 
+Em 0.1.0-dev.58, o Kernel também executa os submits dos formulários de emissão e
+revogação do educador: emissão redireciona para a rota pública com código opaco;
+revogação preserva o certificado com estado e motivo. `CertificateLifecycleTest`:
+5 testes / 155 assertions PASS, com 38 depreciações do Core/contrib. Isso valida
+o fluxo de Form API, mas não substitui o smoke HTTP autenticado nem a revisão
+visual no Runtime; ambos seguem pendentes.
+
 O painel de turma agora também é testado com `grade students` concedido no
 curso pelo Group, sem grant administrativo global; o mesmo teste prova que
 um estudante não lê os agregados. `ClassDashboardKernelTest`: 1/43 assertions

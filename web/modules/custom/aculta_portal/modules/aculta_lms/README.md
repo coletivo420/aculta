@@ -4,6 +4,14 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## F11 — emissão e revogação por educadores
+
+O Kernel percorre os submits dos formulários de emissão e revogação: a emissão
+redireciona para a verificação pública pelo código, e a revogação preserva o
+registro e o motivo informado. `CertificateLifecycleTest`: 5 testes / 155
+assertions PASS; 38 depreciações de Core/contrib. Smoke Runtime dos formulários
+e revisão visual permanecem pendentes.
+
 ## F16 — referências removidas em respostas
 
 Os hooks do formulário de prazo por atividade e do aviso de feedback do

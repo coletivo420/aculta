@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.58 — cobrir emissão e revogação pelos formulários — 2026-10-21
+
+- `CertificateLifecycleTest` percorre os submits dos formulários de educador,
+  verifica o redirecionamento público após emissão e a preservação do snapshot
+  com motivo após revogação. Kernel focal: 5 testes / 155 assertions PASS; 38
+  depreciações vêm do Core/contrib carregado no teste. Revisão visual e smoke
+  Runtime dos formulários seguem pendentes.
+
 ## 0.1.0-dev.57 — tratar referências ausentes na emissão de certificado — 2026-10-21
 
 - O manager resolve curso e estudante pelos campos do `CourseStatus` e rejeita

@@ -11,10 +11,14 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\UserSession;
+use Drupal\Core\Url;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
+use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Form\CourseCertificateIssueForm;
+use Drupal\aculta_lms\Form\CourseCertificateRevokeForm;
 use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
@@ -327,6 +331,100 @@ final class CertificateLifecycleTest extends KernelTestBase {
     }
 
     self::assertCount(0, $manager->loadForStudent((int) $student->id()));
+  }
+
+  /**
+   * Tests the educator forms issue and revoke through the certificate manager.
+   */
+  public function testEducatorFormsIssueAndRevokeCertificate(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com formulários',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+    $manager = $this->createMock(CourseCertificateManagerInterface::class);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
+    $certificate = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate')->create([
+      'uid' => $student->id(),
+      'course_id' => $course->id(),
+      'course_status_uuid' => $status->uuid(),
+      'certificate_name' => $student->getDisplayName(),
+      'course_title' => $course->label(),
+      'course_hours' => 8,
+      'completed' => $status->getFinished(),
+      'issued' => 1_700_000_100,
+      'sequence' => 1,
+      'supersedes_id' => 0,
+      'verification_code' => str_repeat('A', 43),
+      'template_version' => '1',
+      'state' => 'active',
+      'revoked' => 0,
+      'revocation_reason' => '',
+    ]);
+    $manager->expects(self::once())
+      ->method('issue')
+      ->willReturn($certificate);
+    $manager->expects(self::once())
+      ->method('revoke')
+      ->with($certificate, $account, 'Correção solicitada pela equipe')
+      ->willReturnCallback(static function (CourseCertificate $issued): void {
+        $issued->set('state', 'revoked');
+        $issued->set('revocation_reason', 'Correção solicitada pela equipe');
+      });
+
+    $issueRoute = $this->createMock(CurrentRouteMatch::class);
+    $issueRoute->method('getParameter')->with('group')->willReturn($course);
+    $issueForm = new CourseCertificateIssueForm(
+      $this->container->get('entity_type.manager'),
+      $manager,
+      $issueRoute,
+      $account,
+      $this->container->get('date.formatter'),
+    );
+    $issueForm->setStringTranslation($this->container->get('string_translation'));
+    $issueForm->setMessenger($this->container->get('messenger'));
+    $issueState = new FormState();
+    $issueState->setValue('course_status', $status->id());
+    $issueBuild = [];
+    $issueForm->submitForm($issueBuild, $issueState);
+
+    self::assertSame('active', $certificate->get('state')->value);
+    $issueRedirect = $issueState->getRedirect();
+    self::assertInstanceOf(Url::class, $issueRedirect);
+    self::assertSame('aculta_lms.certificate_verify', $issueRedirect->getRouteName());
+    self::assertSame($certificate->get('verification_code')->value, $issueRedirect->getRouteParameters()['codigo']);
+
+    $revokeRoute = $this->createMock(CurrentRouteMatch::class);
+    $revokeRoute->method('getParameter')->willReturnMap([
+      ['group', $course],
+      ['certificate', $certificate],
+    ]);
+    $revokeForm = new CourseCertificateRevokeForm($revokeRoute, $manager, $account);
+    $revokeForm->setStringTranslation($this->container->get('string_translation'));
+    $revokeForm->setMessenger($this->container->get('messenger'));
+    $revokeState = new FormState();
+    $revokeState->setValue('reason', 'Correção solicitada pela equipe');
+    $revokeBuild = [];
+    $revokeForm->submitForm($revokeBuild, $revokeState);
+
+    self::assertSame('revoked', $certificate->get('state')->value);
+    self::assertSame('Correção solicitada pela equipe', $certificate->get('revocation_reason')->value);
+    $revokeRedirect = $revokeState->getRedirect();
+    self::assertInstanceOf(Url::class, $revokeRedirect);
+    self::assertSame('aculta_lms.certificate_issue', $revokeRedirect->getRouteName());
+    self::assertSame($course->id(), $revokeRedirect->getRouteParameters()['group']);
   }
 
   /**
