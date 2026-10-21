@@ -47,6 +47,18 @@ com dados/editoria antes de qualquer migração.
 | Analytics de destinos | EXISTENTE PARCIAL e DESATIVADO por padrão: cliques GET em códigos curtos são agregados por link/dia em fila; sem page views, visitantes únicos ou origem | Habilitação administrativa exige validação da base legal; agregados expiram em 90 dias e o painel limita-se às entidades autorizadas. |
 | Linky/LinkStack na instalação | AUSENTE (não são dependências do projeto) | Usar como fontes de estudo; nenhuma dependência Composer adicionada. |
 
+## Hardening atual
+
+- `aculta_link_item` valida em Entity Validation que item, página e destino
+  tenham o mesmo proprietário. O handler também nega a visualização pública de
+  composições inconsistentes antigas.
+- Redirects curtos podem contar GETs válidos com agregação diária sem
+  identificadores de visitante, retenção de 90 dias e coleta explicitamente
+  desativada por padrão. A base legal precisa ser validada antes da ativação.
+- Ainda não há revisão visual completa, rate limiting dedicado nem validação
+  HTTP no Runtime atual; o preflight Drush encontra serviço ausente em mudança
+  concorrente do LMS e nenhuma operação persistente foi feita nesta sequência.
+
 ## Consumidores e acoplamentos
 
 - `DomainPurposeManager`, registro do Domain e processador de raiz pertencem à

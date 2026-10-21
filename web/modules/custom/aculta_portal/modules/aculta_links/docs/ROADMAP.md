@@ -20,6 +20,8 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 3. As três entidades base estão iniciadas (`aculta_link`, `aculta_link_page`,
    `aculta_link_item`) com revisões e acesso privado; completar formulários e
    listagem com filtros de proprietário, publicação e histórico para as três entidades.
+   A integridade de composição em 0.4.0-dev.17 exige proprietário comum entre
+   item, página e destino, tanto na validação quanto na leitura pública.
 4. Fechar a revisão arquivo a arquivo do Linky e a licença por arquivo do
    LinkStack antes de copiar qualquer código/asset.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
@@ -59,7 +61,10 @@ eventos, Commerce, campanhas e mídia. Cada conteúdo permanece sob seu módulo.
 ## 0.7.0 — administração e hardening
 
 Administração global, moderação, limites, observabilidade, cache e proteção contra
-abuso, com configuração ambiental no aculta_deployer.
+abuso, com configuração ambiental no aculta_deployer. A coleta agregada de
+redirects está desligada por padrão (0.4.0-dev.16), e a propriedade das
+composições é validada no save e no Entity Access (0.4.0-dev.17). Ainda faltam
+avaliação de abuso/rate limit, auditoria final de cache e revisão independente.
 
 ## 1.0.0 — revisão e lançamento
 
