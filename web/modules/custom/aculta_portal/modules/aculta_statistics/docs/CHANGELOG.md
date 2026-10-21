@@ -36,6 +36,25 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.4.0-dev.3 (conclusões por turma, resumo de estatísticas no aculta_mailer)
+
+### Código
+- `LmsClassResolver`: resolve a turma da conta no curso (leitura de `lms_classes` e `group_membership`, sem gravar).
+  Conclusões passam a usar `curso/turma`; quando a turma não é única, `curso/sem-turma`.
+- `StatisticsSummaryLines` implementa `StatisticsLinesProviderInterface` (aculta_mailer): linhas com pedidos,
+  receita e reembolsos por moeda (formato brasileiro), cupons, carrinhos, matrículas, conclusões, certificados
+  e leituras da Wiki da semana. Só agregados.
+- Dependência `aculta_mailer:aculta_mailer`.
+
+### Testes
+- Unit: 63 casos (inclui linhas do resumo e conclusão por turma).
+- Kernel: 15 casos, aprovados.
+
+### Pendente de validação
+- O container do Runtime de teste não reconstrói (`cr` falha): `aculta_links` (alterações não commitadas de outra frente)
+  depende de `aculta_qrcode.payload_validator`, e o `aculta_qrcode` está desabilitado no Runtime. Enquanto isso,
+  o resumo no Runtime mostra "estatísticas indisponíveis". A decisão de habilitar o `aculta_qrcode` é do responsável.
+
 ## 0.4.0-dev.2 (turma nas matrículas e supressão de célula pequena)
 
 ### Código

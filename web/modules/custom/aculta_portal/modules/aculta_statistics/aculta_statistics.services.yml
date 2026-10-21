@@ -14,6 +14,10 @@ services:
     class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
     arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
 
+  aculta_statistics.summary_lines:
+    class: Drupal\aculta_statistics\Report\StatisticsSummaryLines
+    arguments: ['@aculta_statistics.storage']
+
   aculta_statistics.visitor_key:
     class: Drupal\aculta_statistics\Visitor\VisitorKey
     factory: ['Drupal\aculta_statistics\Visitor\VisitorKeyFactory', 'create']
@@ -35,9 +39,13 @@ services:
     class: Drupal\aculta_statistics\Domain\PortalPurposeResolver
     arguments: ['@?Drupal\aculta_portal\Domain\DomainPurposeManager']
 
+  aculta_statistics.lms_class_resolver:
+    class: Drupal\aculta_statistics\Lms\LmsClassResolver
+    arguments: ['@entity_type.manager']
+
   aculta_statistics.lms_events_subscriber:
     class: Drupal\aculta_statistics\EventSubscriber\LmsEventsSubscriber
-    arguments: ['@aculta_statistics.recorder', '@keyvalue.expirable']
+    arguments: ['@aculta_statistics.recorder', '@keyvalue.expirable', '@aculta_statistics.lms_class_resolver']
     tags:
       - { name: event_subscriber }
 
@@ -63,3 +71,5 @@ services:
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
   Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
+  Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
+  Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'

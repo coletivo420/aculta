@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_statistics\EventSubscriber;
 
+use Drupal\aculta_statistics\Lms\LmsClassResolverInterface;
 use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,6 +37,7 @@ final class LmsEventsSubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly StatisticsRecorder $recorder,
     private readonly KeyValueExpirableFactoryInterface $keyValueFactory,
+    private readonly LmsClassResolverInterface $classes,
   ) {}
 
   /**
@@ -57,13 +59,14 @@ final class LmsEventsSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Conclusão aprovada: conta por curso, uma vez por status.
+   * Conclusão aprovada: conta por curso e turma (`curso/sem-turma` quando a turma não é única).
    */
   public function onCompleted(object $event): void {
     if (!$this->firstTime('completed:' . $event->sourceStatusUuid)) {
       return;
     }
-    $this->recorder->record(self::METRIC_COMPLETIONS, (string) $event->courseId);
+    $classId = $this->classes->classIdFor((int) $event->courseId, (int) $event->accountId);
+    $this->recorder->record(self::METRIC_COMPLETIONS, $event->courseId . '/' . ($classId ?? 'sem-turma'));
   }
 
   /**

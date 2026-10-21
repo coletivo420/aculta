@@ -30,7 +30,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 
 - Feito: matrículas por curso, conclusões por curso (uma vez por status) e certificados (total), a partir dos eventos do `aculta_lms`.
 - Feito (0.4.0-dev.2): matrículas por curso e turma; supressão de células com menos de 5 alunos para painéis públicos.
-- Pendente: conclusões por turma (o evento de conclusão não traz a turma); taxa de conclusão por curso e turma nos painéis (0.8.0).
+- Feito (0.4.0-dev.3): conclusões por turma, pela matrícula da conta no curso (`curso/sem-turma` quando não é única).
+- Pendente: taxa de conclusão por curso e turma nos painéis (0.8.0); validação no Runtime (bloqueada pelo container, ver CHANGELOG).
 
 ## 0.3.0 — Commerce (concluída no código: 0.3.0-dev.8)
 

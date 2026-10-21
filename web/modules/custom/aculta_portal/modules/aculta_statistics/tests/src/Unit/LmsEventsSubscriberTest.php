@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_statistics\Unit;
 
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\EventSubscriber\LmsEventsSubscriber;
+use Drupal\aculta_statistics\Lms\LmsClassResolverInterface;
 use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
@@ -48,12 +49,12 @@ final class LmsEventsSubscriberTest extends TestCase {
   public function testCompletionIsCountedOncePerStatus(): void {
     $calls = [];
     $subscriber = $this->subscriber($calls);
-    $event = (object) ['sourceStatusUuid' => 'status-1', 'courseId' => '42'];
+    $event = (object) ['sourceStatusUuid' => 'status-1', 'courseId' => '42', 'accountId' => '99'];
 
     $subscriber->onCompleted($event);
     $subscriber->onCompleted($event);
 
-    $this->assertSame([['lms.courses.completed', '42', 1]], $calls);
+    $this->assertSame([['lms.courses.completed', '42/7', 1]], $calls);
   }
 
   /**
@@ -96,7 +97,10 @@ final class LmsEventsSubscriberTest extends TestCase {
       $calls[] = [$metric, $dimension, $amount];
     });
 
-    return new LmsEventsSubscriber(new StatisticsRecorder(new MetricCatalog(), $storage), $factory);
+    $resolver = $this->createMock(LmsClassResolverInterface::class);
+    $resolver->method('classIdFor')->willReturn(7);
+
+    return new LmsEventsSubscriber(new StatisticsRecorder(new MetricCatalog(), $storage), $factory, $resolver);
   }
 
 }
