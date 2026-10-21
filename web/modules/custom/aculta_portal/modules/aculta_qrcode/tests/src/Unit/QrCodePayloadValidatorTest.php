@@ -22,7 +22,7 @@ final class QrCodePayloadValidatorTest extends UnitTestCase {
   public function testAcceptsHttpAndHttpsUrls(): void {
     $validator = new QrCodePayloadValidator();
 
-    self::assertSame('https://aculta.org/qr', $validator->validateUrl('  https://aculta.org/qr '));
+    self::assertSame('https://example.invalid/qr', $validator->validateUrl('  https://example.invalid/qr '));
     self::assertSame('http://exemplo.test/', $validator->validateUrl('http://exemplo.test/'));
   }
 
@@ -46,10 +46,10 @@ final class QrCodePayloadValidatorTest extends UnitTestCase {
       'javascript' => ['javascript:alert(1)'],
       'data' => ['data:text/html;base64,PGgxPg=='],
       'file' => ['file:///etc/passwd'],
-      'credenciais' => ['https://usuario:senha@aculta.org/'],
+      'credenciais' => ['https://usuario:senha@example.invalid/'],
       'relativa' => ['/pagina/projeto'],
       'vazia' => ['   '],
-      'longa demais' => ['https://aculta.org/' . str_repeat('a', 2100)],
+      'longa demais' => ['https://example.invalid/' . str_repeat('a', 2100)],
     ];
   }
 

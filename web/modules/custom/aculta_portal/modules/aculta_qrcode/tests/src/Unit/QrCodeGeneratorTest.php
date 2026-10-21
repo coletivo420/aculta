@@ -21,7 +21,7 @@ final class QrCodeGeneratorTest extends UnitTestCase {
    */
   public function testGeneratesSvgWithPresetColors(): void {
     $preset = (new QrCodePresetRegistry())->default();
-    $svg = (new QrCodeGenerator())->generate('https://aculta.org/', $preset, QrCodeFormat::Svg);
+    $svg = (new QrCodeGenerator())->generate('https://example.invalid/', $preset, QrCodeFormat::Svg);
 
     self::assertStringContainsString('<svg', $svg);
     self::assertStringContainsString('</svg>', $svg);
@@ -67,8 +67,8 @@ final class QrCodeGeneratorTest extends UnitTestCase {
     $generator = new QrCodeGenerator();
 
     self::assertSame(
-      $generator->generate('https://aculta.org/qr', $preset, QrCodeFormat::Svg),
-      $generator->generate('https://aculta.org/qr', $preset, QrCodeFormat::Svg),
+      $generator->generate('https://example.invalid/qr', $preset, QrCodeFormat::Svg),
+      $generator->generate('https://example.invalid/qr', $preset, QrCodeFormat::Svg),
     );
   }
 
