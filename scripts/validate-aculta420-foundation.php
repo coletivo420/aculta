@@ -49,7 +49,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.0-dev.146', 'Theme metadata marks the current version 0.6.0-dev.143.');
+$assert(($info['version'] ?? NULL) === '0.6.0-dev.147', 'Theme metadata marks the current version 0.6.0-dev.147.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -324,6 +324,8 @@ $expectedTemplates = [
   // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.
   'node--article--full.html.twig',
   'node--blog--full.html.twig',
+  // Modelo canônico da Revista reutiliza o componente editorial compartilhado.
+  'node--revista--full.html.twig',
   // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
   'site-alert.html.twig',
   // Private Message thread wrapper exposes only its native rendered content and supplied read state.

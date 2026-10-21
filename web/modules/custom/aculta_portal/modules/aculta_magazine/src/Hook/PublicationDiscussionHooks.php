@@ -29,7 +29,7 @@ final class PublicationDiscussionHooks {
   public function nodeLoad(array $nodes): void {
     foreach ($nodes as $node) {
       if (!$node instanceof NodeInterface ||
-        !in_array($node->bundle(), ['article', 'blog'], TRUE) ||
+        !in_array($node->bundle(), ['revista', 'article', 'blog'], TRUE) ||
         !$node->hasField(self::FIELD)) {
         continue;
       }

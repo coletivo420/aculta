@@ -14,7 +14,9 @@ e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
 
 ## Administração editorial
 
-As publicações `article` e `blog` e seus comentários são organizados juntos em
+O bundle canônico de publicação é `revista`. Durante a migração, os bundles
+legados `article` e `blog` continuam reconhecidos para preservar o conteúdo e
+as referências existentes. Os três e seus comentários são organizados juntos em
 `/painel-administrativo/conteudo/revista`. A View de comentários é renderizada
 como bloco na mesma página e filtra por tipo, campo, entidade e bundles editoriais.
 Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A

@@ -11,7 +11,7 @@ use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Troca o tipo da publicação (Notícia ↔ blog) e mantém referências antigas.
+ * Troca temporariamente o tipo de publicações legadas (Notícia ↔ blog).
  *
  * O Drupal não converte o tipo de um nó no lugar. A troca cria a publicação no
  * tipo de destino, copia os campos compatíveis, mantém o endereço e remove a
@@ -128,7 +128,7 @@ final class PublicationTypeConverter {
    * Validates the source publication and requested target bundle.
    */
   private function assertConvertible(NodeInterface $post, string $target): void {
-    if (!RevistaPublications::isPublication($post->bundle()) || !RevistaPublications::isPublication($target)) {
+    if (!in_array($post->bundle(), ['article', 'blog'], TRUE) || !in_array($target, ['article', 'blog'], TRUE)) {
       throw new \InvalidArgumentException('Só troca entre tipos da Revista (article e blog).');
     }
     if ($post->bundle() === $target) {

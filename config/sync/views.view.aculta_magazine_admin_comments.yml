@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - field.field.node.article.field_aculta_discussion
+    - field.field.node.revista.field_aculta_discussion
     - field.field.node.blog.field_aculta_discussion
     - node.type.article
     - node.type.blog
+    - node.type.revista
   module:
     - comment
     - node
@@ -554,6 +556,7 @@ display:
           operator: in
           value:
             article: article
+            revista: revista
             blog: blog
           group: 1
           exposed: false

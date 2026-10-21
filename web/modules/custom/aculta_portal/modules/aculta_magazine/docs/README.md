@@ -17,7 +17,7 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 
 | Regra | Como | Onde |
 | --- | --- | --- |
-| Publicações da Revista | lista `RevistaPublications::BUNDLES` (hoje `article` e `blog`) | `src/Revista/RevistaPublications.php` |
+| Publicações da Revista | `revista` é o bundle canônico; `article` e `blog` são reconhecidos apenas durante a migração | `src/Revista/RevistaPublications.php` |
 | Chamada | campo `field_subtitle` (rótulo "Chamada" no blog) | exibição do tipo, acima do corpo |
 | Resumo | campo `field_summary` (rótulo "Resumo" no blog); descrição e Open Graph via `[node:editorial-summary]` | metatag `node__<tipo>` |
 | SEO | metatag do tipo (`node__article`, `node__blog`) e campo `field_meta_tags` | config do metatag |
@@ -34,7 +34,7 @@ Coautor; apelido/nome, avatar, biografia e redes públicas são preparados pelo
 User e apresentados pelo SDC compartilhado do ACULTA420. Bio e redes respeitam
 o opt-in do perfil público, e o Magazine não lê campos de perfil diretamente.
 
-`article` e `blog` recebem `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
+`revista`, `article` e `blog` recebem `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
 O full display usa o formatter Core `comment_default`, e o `aculta_user` constrói o cartão `author_comment`; autoria vinculada ao acervo usa `author_growroom_historico` sem conta ativa. A política
 configurável de primeiro comentário do `aculta_user` aplica-se aqui como nos demais contextos públicos; LMS fica
 expressamente fora dessa moderação global. A troca article ↔ blog copia o item do campo e re-hospeda as entidades
@@ -51,18 +51,21 @@ Smoke em memória no Runtime de teste confirmou o field/display e renderizou o
 formulário Comment para um participante de teste com `post comments`. Nenhum
 formulário foi enviado, e a contagem de Comments permaneceu zero.
 
-## Blog é sinônimo de Editorial
+## Categorias editoriais
 
-Decisão do responsável (2026-10-14): na Revista, **blog** e **Editorial** são a mesma coisa. Toda publicação do tipo
-`blog` é conteúdo editorial da Revista, e o conteúdo editorial é publicado como `blog`. "Editorial" é o nome da
-seção que o público vê (sessão em `field_editorial_category`, rota `/editorial/...`); "blog" é o tipo de conteúdo
-que a guarda. Não criar um segundo tipo para editorial, nem uma segunda seção para blog.
+As categorias em `editorial_category` classificam o conteúdo: Editorial, Blog/Opinião, Notícias, Reportagens,
+Entrevistas e outras seções editoriais. Elas não criam bundles de Node. A decisão anterior que associava `blog` à
+categoria Editorial está superada pelo modelo canônico `revista`.
 
-- Ao importar conteúdo editorial, usar o tipo `blog` e a sessão Editorial, salvo decisão expressa em contrário.
-- Notícias seguem o tipo `article` com a sessão Notícias; Notícia não é sinônimo de editorial.
-- O modelo de publicação (`aculta420:revista-publication`) vale para os dois tipos.
+- Novas publicações usam o bundle `revista` e uma categoria editorial apropriada.
+- Enquanto a migração não terminar, `article` e `blog` seguem visíveis nas listagens e preservam suas URLs.
+- O modelo de publicação (`aculta420:revista-publication`) atende o bundle canônico e os legados durante a transição.
 
-## Trocar o tipo de uma publicação (Notícia ↔ blog)
+## Conversão legado article ↔ blog
+
+O serviço `aculta_magazine.publication_type_converter` é legado e não participa da consolidação em `revista`. Ele
+recria a publicação, não preserva NID/UUID/revisões e não reescreve todas as referências externas. Não o use na
+migração editorial; sua remoção será feita após retirar os consumidores antigos.
 
 O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.publication_type_converter` faz a troca
 (é um serviço PHP: pode ser chamado de qualquer código; não há comando Drush nem tela registrados).
@@ -168,6 +171,6 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 
 A Revista será **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes) e `aculta_forum` (discussão contextual via Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
 
-O destino editorial aprovado é um único bundle Node `revista`, com Editorial, Blog/Opinião, Notícias etc. como **categorias**. O estado atual continua `article` e `blog`, conforme serviços e Config Sync existentes. Não remover bundles nem executar o `PublicationTypeConverter` em massa: primeiro auditar a migração de histórico, nid/UUID, comentários, URLs/SEO, mídias e referências. Projetos são do domínio principal, Eventos do futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+O bundle `revista` e seus campos, displays, Metatag, Pathauto, consultas e workflow próprio estão preparados em Config Sync. O workflow `editorial` existente permanece com `aculta_notice`. `article` e `blog` continuam instalados durante esta transição; nenhuma publicação foi migrada ou removida. Permissões de transição precisam ser atribuídas por papel antes da ativação do fluxo. A migração requer preservar NID, UUID, aliases, revisões, comentários, mídia e referências, com rollback recuperável. Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
 
 Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).

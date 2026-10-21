@@ -31,7 +31,7 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
 
     self::assertSame('admin/content/revista', $page['display']['page_magazine']['display_options']['path']);
     self::assertSame(
-      ['article' => 'article', 'blog' => 'blog'],
+      ['article' => 'article', 'revista' => 'revista', 'blog' => 'blog'],
       $page['display']['default']['display_options']['filters']['type']['value'],
     );
     self::assertSame('access content overview', $page['display']['default']['display_options']['access']['options']['perm']);
@@ -39,7 +39,7 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     $options = $comments['display']['default']['display_options'];
     self::assertSame('administer comments', $options['access']['options']['perm']);
     self::assertSame('field_aculta_discussion', $options['filters']['field_name']['value']);
-    self::assertSame(['article' => 'article', 'blog' => 'blog'], $options['filters']['type']['value']);
+    self::assertSame(['article' => 'article', 'revista' => 'revista', 'blog' => 'blog'], $options['filters']['type']['value']);
     self::assertSame('block', $comments['display']['block_comments']['display_plugin']);
 
     $block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_magazine_admin_comments.yml');

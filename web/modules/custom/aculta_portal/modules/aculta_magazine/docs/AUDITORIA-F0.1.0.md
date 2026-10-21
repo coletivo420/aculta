@@ -96,3 +96,23 @@ Outros resultados somente leitura:
 - `src/Presentation/PostPresentation.php`
 - `config/install/*` do Magazine e configurações editoriais relevantes em `config/sync/`
 - Documentação/contratos consultados: ADR-011, hierarquia de kernels, roadmap Studio/Magazine, README/CHANGELOG do Magazine, arquitetura e ownership de Gallery/Forum, mapa módulo-tema, fronteira Portal–tema e contratos de Drupal 11.
+
+## Acompanhamento da fase 0.2.0 (2026-10-21)
+
+- Config Sync e Runtime de desenvolvimento agora incluem o bundle `revista`,
+  campos, displays, Metatag, Pathauto, Views, busca e workflow próprio. O
+  workflow `editorial` ativo continua associado somente a `aculta_notice`.
+- Permanecem 11 Nodes `article`, 5 `blog`, 26 aliases associados aos 16 NIDs
+  inventariados e zero Nodes `revista`. Nenhum Node, Comment, Media, termo,
+  usuário, projeto, alias ou arquivo foi excluído.
+- A importação foi parcial para não aplicar drift concorrente do Config Sync.
+  A configuração `field_lms_readings` não foi importada porque a Field Storage
+  não existe no Runtime; a alteração permanece apenas no Config Sync.
+- Após a importação foi criado o dump
+  `/tmp/aculta-magazine-0.2-runtime-after-config.sql.gz.gz`, com 4,9 MB,
+  permissão 0600 e validação `gzip -t`. O banco consultado tinha 114,4 MB.
+  Este arquivo registra o estado pós-configuração; a fase de migração exigirá
+  novo dump imediatamente antes de alterar conteúdo.
+- Durante a visualização de diff com Drush `config:import --diff`, a confirmação
+  não interativa foi aceita. O lote aplicado foi revisado e continha somente
+  objetos do Magazine; o campo LMS foi retirado antes da aplicação efetiva.

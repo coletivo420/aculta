@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.article
+    - node.type.revista
   module:
     - node
     - user
@@ -61,6 +62,7 @@ display:
           plugin_id: bundle
           value:
             article: article
+            revista: revista
       style:
         type: default
         options:

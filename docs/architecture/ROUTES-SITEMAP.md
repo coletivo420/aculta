@@ -286,7 +286,10 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/projetos/{titulo}` | Página de um projeto cultural/social | Dinâmico; depende de projeto publicado e domínio. |
 | `main.aculta` | `/transparencia/documentos/{titulo}` | Documento institucional público | Dinâmico; depende de documento publicado e access. |
 | `loja.aculta` | `/loja/produto/{categoria}/{titulo}` | Página de produto da loja | Dinâmico; produto publicado; fora do purpose loja responde `404`. |
-| `revista.aculta` | `/{sessao}/{titulo}` | Artigo editorial ou publicação de blog | Dinâmico; padrão Pathauto, depende de conteúdo publicado. |
+| `main.aculta` | `/node/add/article` | Formulário Core de criação de conteúdo legado `article` | Condicional ao bundle legado e à permissão de criação. |
+| `main.aculta` | `/node/add/blog` | Formulário Core de criação de conteúdo legado `blog` | Condicional ao bundle legado e à permissão de criação. |
+| `main.aculta` | `/node/add/revista` | Formulário Core de criação de publicação da Revista | Condicional ao bundle `revista` e à permissão de criação. |
+| `main.aculta` | `/{sessao}/{titulo}` | Publicação da Revista (`revista`) e conteúdo legado article/blog | Dinâmico; padrão Pathauto, depende de conteúdo publicado e domínio associado. |
 | `main.aculta` | `/avisos/{titulo}` | Comunicado institucional persistente | Dinâmico; depende de publicação, segmentação de público e access. |
 | `wiki.aculta` | `/verbete/{titulo}` | Verbete da Wiki | Dinâmico; depende de conteúdo e permissão de acesso. |
 | `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |

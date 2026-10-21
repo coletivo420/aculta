@@ -1,0 +1,25 @@
+uuid: e65775d3-697c-4090-aa41-cdd8f1e2ff52
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_editorial_category
+    - node.type.revista
+    - taxonomy.vocabulary.editorial_category
+id: node.revista.field_editorial_category
+field_name: field_editorial_category
+entity_type: node
+bundle: revista
+label: 'Categoria editorial'
+description: 'Campo editorial administrável: Categoria editorial. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      editorial_category: editorial_category
+    auto_create: false
+field_type: entity_reference

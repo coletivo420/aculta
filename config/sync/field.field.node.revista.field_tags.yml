@@ -1,0 +1,27 @@
+uuid: 8e5d04d6-e6b4-437e-89cd-c505424ef5ac
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.revista
+    - taxonomy.vocabulary.revista_tags
+id: node.revista.field_tags
+field_name: field_tags
+entity_type: node
+bundle: revista
+label: Tags
+description: 'Palavras-chave da publicação.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      revista_tags: revista_tags
+    auto_create: true
+    auto_create_bundle: revista_tags
+field_type: entity_reference
+

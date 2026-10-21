@@ -3,12 +3,13 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-  - node.type.article
-  - node.type.blog
+    - node.type.article
+    - node.type.blog
+    - node.type.revista
   module:
-  - node
-  - user
-  - views
+    - node
+    - user
+    - views
 _core:
   default_config_hash: VhgEYFEzezna1qjycmr6NgssQgyiLfUvOv-iB_a_I6o
 id: aculta_magazine_admin_content
@@ -408,6 +409,7 @@ display:
           operator: in
           value:
             article: article
+            revista: revista
             blog: blog
           group: 1
           exposed: false

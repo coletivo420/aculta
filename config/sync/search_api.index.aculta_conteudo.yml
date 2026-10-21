@@ -60,6 +60,7 @@ datasource_settings:
       selected:
         - activity
         - article
+        - revista
         - document
         - page
         - project

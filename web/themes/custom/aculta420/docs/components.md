@@ -314,14 +314,14 @@ Não usar UI Suite Bootstrap para substituir ACULTA420.
 
 ## Publicação da Revista (`aculta420:revista-publication`, 0.6.0-dev.21)
 
-Modelo padrão de Notícia e blog. Experimental. Os templates `node--article--full` e `node--blog--full` chamam
+Modelo padrão de publicações da Revista. Os templates `node--revista--full`, `node--article--full` e `node--blog--full` chamam
 o mesmo componente; o conteúdo vem do Drupal e a apresentação é deste componente.
 
 Classes (documentadas aqui porque são de apresentação, não do módulo):
 
 | Classe | Onde | Função |
 | --- | --- | --- |
-| `node`, `node--type-article` ou `node--type-blog`, `node--view-mode-full` | raiz do nó (`article`) | Classes padrão do Drupal, mantidas para as regras que dependem delas. |
+| `node`, `node--type-revista`, `node--type-article` ou `node--type-blog`, `node--view-mode-full` | raiz do nó | Classes padrão do Drupal, mantidas para as regras que dependem delas. |
 | `aculta-revista-article` | raiz do nó | Marca a publicação da Revista no tema. |
 | `aculta-revista-publication` | raiz do componente | Coluna de leitura (68ch), centralizada. |
 | `aculta-revista-publication__meta` | cabeçalho (autor, data, compartilhamento) | Faixa de metadados. |

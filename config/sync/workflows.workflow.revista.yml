@@ -1,0 +1,88 @@
+uuid: 71fe6e1b-a373-4c98-a48c-414efac900fb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.revista
+  module:
+    - content_moderation
+id: revista
+label: 'Editorial da Revista'
+type: content_moderation
+type_settings:
+  states:
+    archived:
+      label: Arquivado
+      weight: 5
+      published: false
+      default_revision: true
+    draft:
+      label: Rascunho
+      weight: -5
+      published: false
+      default_revision: false
+    published:
+      label: Publicado
+      weight: 0
+      published: true
+      default_revision: true
+    review:
+      label: 'Em revisão'
+      weight: 1
+      published: false
+      default_revision: false
+  transitions:
+    archive:
+      label: Arquivar
+      from:
+        - published
+      to: archived
+      weight: 2
+    archived_draft:
+      label: Restaurar rascunho
+      from:
+        - archived
+      to: draft
+      weight: 3
+    archived_published:
+      label: Restaurar publicação
+      from:
+        - archived
+      to: published
+      weight: 4
+    create_new_draft:
+      label: 'Salvar rascunho'
+      from:
+        - draft
+        - published
+      to: draft
+      weight: 0
+    draft_to_review:
+      label: 'Enviar para revisão'
+      from:
+        - draft
+      to: review
+      weight: 2
+    publish:
+      label: Publicar
+      from:
+        - published
+        - draft
+      to: published
+      weight: 1
+    review_to_draft:
+      label: 'Devolver para correção'
+      from:
+        - review
+      to: draft
+      weight: 3
+    review_to_published:
+      label: Publicar
+      from:
+        - review
+      to: published
+      weight: 4
+  entity_types:
+    node:
+      - revista
+  default_moderation_state: draft

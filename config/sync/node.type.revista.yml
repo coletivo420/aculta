@@ -1,0 +1,11 @@
+uuid: 5240f1e3-35d2-411e-8d3b-ad58ca5953e0
+langcode: pt-br
+status: true
+dependencies: {  }
+name: Revista
+type: revista
+description: 'Publicações editoriais da Revista ACULTA, classificadas por categoria editorial.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

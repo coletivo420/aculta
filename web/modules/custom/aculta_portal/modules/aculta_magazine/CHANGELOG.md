@@ -1,3 +1,37 @@
+## 0.2.0-dev.1 — bundle editorial `revista` preparado — 2026-10-21
+
+- Config Sync ganha o bundle canônico `revista`, com campos editoriais,
+  comentários, formulários, displays e Metatag derivados do contrato existente
+  de `article`. O storage de campos permanece compartilhado.
+- Pathauto, Views, busca, leituras do LMS e um workflow próprio da Revista
+  reconhecem `revista`; o workflow `editorial` existente permanece limitado a
+  `aculta_notice`. As permissões de transição continuam por atribuir na fase de
+  access/workflow, sem elevar permissões de autor.
+- `RevistaPublications` reconhece o bundle novo e os dois legados durante a
+  transição; os hooks de autoria e discussão podem atendê-lo. O conversor antigo
+  continua restrito a `article` e `blog` e não pode mudar o bundle canônico.
+- Os bundles antigos, URLs e conteúdo não foram removidos nem migrados. A
+  configuração foi aplicada ao Runtime de desenvolvimento por importação
+  parcial de 29 objetos do Magazine. O campo LMS foi excluído porque seu
+  armazenamento ainda não existe no Runtime. A migração de Nodes, revisões,
+  referências, aliases e Comments aguarda desenho validado e dump recuperável
+  imediatamente anterior à alteração de conteúdo.
+- Unit Magazine: 8 testes/37 assertions PASS. Gates Portal (1021), imagem,
+  índice de status (33), ACULTA420 Foundation (369) e SDC (606 verificações)
+  PASS; PHP lint e `git diff --check` PASS. Runtime mantém 11 Nodes `article`,
+  5 `blog`, 26 aliases dos NIDs inventariados e zero `revista`; nenhum conteúdo
+  foi excluído. HTTP HTTPS em `revista420` e `main` retornou 200. Watchdog nas
+  últimas 24 horas não mostra erros de `aculta_magazine`/`revista`; logs do
+  Apache não estão legíveis por este usuário. Gate de shell contract falha ao
+  carregar `TrustedCallbackInterface`; auditoria de design foundation reportou
+  3 questões preexistentes no envelope de e-mail/cores. Sem relação observada
+  com o template da Revista.
+  Dump pós-config: `/tmp/aculta-magazine-0.2-runtime-after-config.sql.gz.gz`
+  (114,4 MB de banco, 4,9 MB comprimido, permissão 0600, `gzip -t` aprovado).
+  Na visualização de diff, o Drush aceitou a confirmação sem TTY; a lista
+  aplicada foi verificada depois e não incluiu objetos alheios ao Magazine.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.16 — autoria editorial usa cartão compartilhado — 2026-10-20
 
 - `ArticleAuthorsHooks` consome `aculta_user.author_card_builder` com a variante
