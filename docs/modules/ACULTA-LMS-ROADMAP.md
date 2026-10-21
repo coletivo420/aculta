@@ -373,7 +373,7 @@ usa IDs inexistentes para simular referências removidas e cobre o formulário:
 4 testes / 126 assertions. Unit LMS: 61/334; Kernel combinado LMS/Messenger:
 22/675 PASS, com 92 depreciações upstream. PHP 8.5 não validado.
 
-Em 0.1.0-dev.59, o Kernel executa os submits dos formulários com um educador
+Em 0.1.0-dev.60, o Kernel executa os submits dos formulários com um educador
 real, autorizado por `grade students` no curso e sem permissão administrativa
 global: emissão redireciona para a rota pública com código opaco; revogação
 preserva o certificado com estado e motivo, e a conclusão elegível aparece na

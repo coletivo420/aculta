@@ -43,9 +43,9 @@ removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
 conclusão, sem erro 500. Kernel focal: 4 testes / 126 assertions; regressão
 Kernel LMS/Messenger: 23 testes / 708 assertions PASS, com 92 depreciações
 upstream. Unit LMS/Messenger: 77 testes / 400 assertions PASS, com 8
-depreciações PHPUnit. F11 também executa os submits de emissão/revogação:
-Kernel focal 5/155; smoke Runtime autenticado e revisão visual permanecem
-pendentes.
+depreciações PHPUnit. F11 executa emissão/revogação com educador contextual e
+confirma a opção elegível no formulário: Kernel focal 5/159. Smoke Runtime
+autenticado e revisão visual permanecem pendentes.
 No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
 rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
 O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi
