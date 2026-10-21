@@ -96,7 +96,8 @@ Não possui `config/install`, schema, entidade, rota ou hook de instalação.
 
 O serviço `aculta_lms.course_room_builder` adiciona à página canônica de Group
 do tipo `lms_course` uma seção configurável de conteúdo do curso. O índice
-respeita `view` de cada lição e o acesso `take course`; links de aula continuam
+respeita o acesso `take course` do curso pai e inclui somente lições publicadas;
+links de aula continuam
 na rota nativa do LMS, com os slugs portugueses do Portal. Sem autorização para
 fazer o curso, a seção fica vazia e não revela os títulos das lições. O módulo
 não cria progresso, matrícula, resposta ou armazenamento.
@@ -247,10 +248,15 @@ assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
-Suítes completas revalidadas em 2026-10-21: Unit 48 testes/260 assertions;
-Kernel MariaDB 19 testes/594 assertions PASS. O Kernel registrou 90
+Suítes completas revalidadas em 2026-10-21: Unit 51 testes/281 assertions;
+Kernel MariaDB 20 testes/631 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
+
+O Kernel `LearningDashboardKernelTest` reproduz o contrato de acesso do LMS:
+`take course` permite o currículo da pessoa matriculada, embora `view` genérico
+da Lesson seja negado. Aula não publicada fica fora do total e do progresso.
+Revisão visual e smoke Runtime seguem pendentes.
 
 `ClassActivityDeadlineFormTest`: 2 testes/8 assertions PASS para fuso da conta e
 fallback UTC. `LearningDashboardControllerTest`: 1/4 assertions PASS. Unit

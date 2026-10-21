@@ -1,5 +1,16 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.48 — alinhar currículo ao acesso contextual do curso — 2026-10-21
+
+- Sala de curso e painel do estudante agora usam `take course` no curso pai e
+  incluem somente aulas referenciadas publicadas. O `view` genérico de Lesson
+  nega estudantes matriculados e não representa a autorização da rota nativa.
+- Kernel com entidades reais confirma o caso: estudante pode entrar no curso,
+  mas não tem `view` genérico da Lesson; aula publicada e conclusão aparecem,
+  aula não publicada não entra no progresso. Unit: 51 testes / 281 assertions;
+  Kernel: 20 testes / 631 assertions PASS. Revisão visual e smoke Runtime
+  continuam pendentes.
+
 ## 0.1.0-dev.47 — testar integração real de QR com domínio — 2026-10-21
 
 - Teste Unit usa o `DomainPurposeManager`, validador, registry e gerador reais

@@ -26,8 +26,8 @@ use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\lms\Entity\Bundle\Course;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\lms\Entity\Lesson;
 use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\lms\TrainingManager;
 use Drupal\Tests\UnitTestCase;
@@ -65,31 +65,28 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   /**
    * Verifies student progress counts only lessons available to the account.
    */
-  public function testStudentProgressExcludesLessonsDeniedByEntityAccess(): void {
+  public function testStudentProgressUsesCourseAccessAndPublishedLessons(): void {
     $account = new UserSession(['uid' => 42]);
-    $visible_lesson = $this->createMock(LessonInterface::class);
+    $visible_lesson = $this->createMock(Lesson::class);
     $visible_lesson->method('id')->willReturn('lesson-visible');
     $visible_lesson->method('getCacheContexts')->willReturn([]);
     $visible_lesson->method('getCacheTags')->willReturn(['lms_lesson:visible']);
     $visible_lesson->method('getCacheMaxAge')->willReturn(-1);
-    $visible_lesson->expects(self::once())
-      ->method('access')
-      ->with('view', $account, TRUE)
-      ->willReturn(AccessResult::allowed()->addCacheContexts(['user.lms_lesson_access']));
+    $visible_lesson->method('isPublished')->willReturn(TRUE);
+    $visible_lesson->expects(self::never())->method('access');
 
-    $restricted_lesson = $this->createMock(LessonInterface::class);
+    $restricted_lesson = $this->createMock(Lesson::class);
     $restricted_lesson->method('id')->willReturn('lesson-restricted');
     $restricted_lesson->method('getCacheContexts')->willReturn([]);
     $restricted_lesson->method('getCacheTags')->willReturn(['lms_lesson:restricted']);
     $restricted_lesson->method('getCacheMaxAge')->willReturn(-1);
-    $restricted_lesson->expects(self::once())
-      ->method('access')
-      ->with('view', $account, TRUE)
-      ->willReturn(AccessResult::forbidden()->addCacheContexts(['user.lms_lesson_access']));
+    $restricted_lesson->method('isPublished')->willReturn(FALSE);
+    $restricted_lesson->expects(self::never())->method('access');
 
     $lesson_list = $this->createMock(EntityReferenceFieldItemListInterface::class);
     $lesson_list->method('referencedEntities')->willReturn([$visible_lesson, $restricted_lesson]);
     $course = $this->createMock(Course::class);
+    $course->method('takeAccess')->with($account)->willReturn(AccessResult::allowed()->addCacheContexts(['user.group_permissions']));
     $course->method('get')->with(CourseInterface::LESSONS)->willReturn($lesson_list);
     $course->method('id')->willReturn('course-1');
     $course->method('getCacheContexts')->willReturn([]);
@@ -158,7 +155,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
 
     self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
     self::assertSame(1, $dashboard['courses'][0]['completed_lessons']);
-    self::assertContains('user.lms_lesson_access', $dashboard['cache']->getCacheContexts());
+    self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
     self::assertContains('lms_lesson:restricted', $dashboard['cache']->getCacheTags());
   }
 

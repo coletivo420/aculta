@@ -9,6 +9,7 @@ use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupInterface;
@@ -49,17 +50,24 @@ final class LearningDashboardManager {
       if (!$course instanceof CourseInterface) {
         continue;
       }
-      $metadata->addCacheableDependency($course);
+      $courseAccess = $course->takeAccess($account);
+      $metadata
+        ->addCacheableDependency($course)
+        ->addCacheableDependency($courseAccess);
+      if (!$courseAccess->isAllowed()) {
+        continue;
+      }
       $availableLessonIds = [];
       foreach ($course->get(CourseInterface::LESSONS)->referencedEntities() as $lesson) {
         if (!$lesson instanceof LessonInterface) {
           continue;
         }
-        $lessonAccess = $lesson->access('view', $account, TRUE);
-        $metadata
-          ->addCacheableDependency($lesson)
-          ->addCacheableDependency($lessonAccess);
-        if ($lessonAccess->isAllowed()) {
+        $metadata->addCacheableDependency($lesson);
+        // LMS lesson routes are protected by takeAccess() on the parent course.
+        // Generic lesson view access is for entity use/edit permissions and
+        // denies enrolled learners even when the lesson is published in their
+        // course curriculum.
+        if ($lesson instanceof EntityPublishedInterface && $lesson->isPublished()) {
           $availableLessonIds[] = (string) $lesson->id();
         }
       }

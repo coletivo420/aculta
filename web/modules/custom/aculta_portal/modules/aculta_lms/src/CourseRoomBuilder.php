@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -13,7 +14,8 @@ use Drupal\Core\Url;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
-/** Builds the learner facing overview on the native course page. */
+/**
+ * Builds the learner facing overview on the native course page. */
 final class CourseRoomBuilder {
 
   public function __construct(
@@ -54,9 +56,10 @@ final class CourseRoomBuilder {
       if ($lesson === NULL) {
         continue;
       }
-      $lessonAccess = $lesson->access('view', $this->currentUser, TRUE);
-      $cacheability->addCacheableDependency($lesson)->addCacheableDependency($lessonAccess);
-      if (!$lessonAccess->isAllowed()) {
+      $cacheability->addCacheableDependency($lesson);
+      // The LMS answer route checks takeAccess() on this parent course. Generic
+      // lesson view access is not the learner's contextual curriculum access.
+      if (!$lesson instanceof EntityPublishedInterface || !$lesson->isPublished()) {
         continue;
       }
       $activity = $lesson->get('activities')->first();

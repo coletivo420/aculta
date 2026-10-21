@@ -94,10 +94,12 @@ negativo da listagem. PHP no Runtime continua em 8.4.26.
 
 **F6 — Página de curso e sala — implementação inicial nesta branch.** O campo
 extra configurável `aculta_lms_course_room` integra um índice na visualização
-canônica do curso. A seção consulta `take course`, verifica `view` por lição e
-gera links para a rota nativa LMS (com slugs portugueses do Portal); não cria
-progresso, matrícula ou status. RUNTIME STATUS: DEFERRED até smoke test de
-membro, não membro e visitante; a fase não está homologada.
+canônica do curso. A seção consulta `take course` no curso pai e lista somente
+lições referenciadas publicadas, com links para a rota nativa LMS (com slugs
+portugueses do Portal); não cria progresso, matrícula ou status. `view`
+genérico da entidade Lesson não é a autorização contextual da rota. RUNTIME
+STATUS: DEFERRED até smoke test de membro, não membro e visitante; a fase não
+está homologada.
 
 **F7 — Configuração aplicada no Runtime de teste; funcionalidade ainda não homologada.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
@@ -247,12 +249,16 @@ assertions). Unit dos painéis: 4/18 assertions PASS. Revisão visual, fixture
 integrada do painel do estudante e smoke Runtime permanecem pendentes. Runtime
 status: DEFERRED.
 
-Em 0.1.0-dev.43, o progresso do estudante usa a mesma decisão de `view` access
-que a sala LMS: apenas aulas acessíveis compõem o total, e a contagem de
-conclusões fica restrita a essas aulas. O resultado de access e cada aula
-entram na metadata de cache. Unit inclui caso com uma aula permitida e outra
-negada; suíte do `aculta_lms`: 48 testes / 260 assertions PASS (8 depreciações).
-Smoke visual/Runtime do painel segue pendente.
+Em 0.1.0-dev.43, o progresso passou a usar `view` genérico de Lesson. A
+verificação com entidades reais demonstrou que esse access nega estudantes
+matriculados, embora a rota nativa permita a participação via `take course` no
+curso pai. Em 0.1.0-dev.48, sala e painel foram alinhados ao contrato correto:
+o curso precisa autorizar `take course` e somente lições publicadas do curso
+entram no currículo e no progresso. Kernel confirma que `view` genérico é
+negado para a estudante matriculada, mas a aula publicada e sua conclusão são
+contadas; a aula não publicada é excluída. Suítes completas: Unit 51/281 e
+Kernel MariaDB 20/631 assertions PASS. Revisão visual e smoke Runtime seguem
+pendentes.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 
