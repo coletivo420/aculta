@@ -77,3 +77,17 @@
 .studio__sections > li {
   list-style: none;
 }
+
+/* Movimento discreto e opcional: quem pede menos movimento não vê transições do Studio. */
+@media (prefers-reduced-motion: reduce) {
+  .studio__tab,
+  .studio__link,
+  .studio__action {
+    transition: none !important;
+  }
+}
+
+/* Região de avisos (aria-live): visualmente discreta, mas presente para leitores de tela. */
+.studio__live:empty {
+  display: none;
+}

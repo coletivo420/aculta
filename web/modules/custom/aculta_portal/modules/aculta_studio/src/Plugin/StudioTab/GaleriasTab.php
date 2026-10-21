@@ -38,7 +38,7 @@ final class GaleriasTab extends StudioTabBase {
         'label' => $this->t('Criar'),
         'weight' => 0,
         'tabs' => [
-          'novagaleria' => [
+          'nova-galeria' => [
             'label' => $this->t('Nova galeria'),
             'weight' => 0,
             'actions' => [

@@ -362,6 +362,7 @@ final class PortalUiHooks {
     'studio-sections' => ['studio__sections', 'list-unstyled'],
     'studio-subtabs' => ['nav', 'nav-tabs', 'studio__subtabs'],
     'studio-link' => ['nav-link', 'studio__link'],
+    'studio-live' => ['studio__live', 'small', 'text-muted'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */

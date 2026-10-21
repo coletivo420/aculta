@@ -76,12 +76,17 @@ try {
   await shot('01-desktop');
 
   // Navegação AJAX: clicar na aba mantém a página (sem recarga) e atualiza a URL.
+  const startPath = await exec(`return window.location.pathname;`);
   await exec(`document.querySelector('[data-aculta-studio="section"]').click(); return 1;`);
   await sleep(2500);
   const after = await exec(`return window.__marker || null;`);
   check('clique no submenu troca o conteúdo sem recarregar a página', after === 'sem-recarga');
   check('seção ativa marcada por aria-current', await exec(`return !!document.querySelector('[data-aculta-studio="section"][aria-current="page"]');`));
-  check('URL acompanha a seção', (await exec(`return window.location.search;`)).includes('secao='));
+  check('URL própria do nível (caminho /studio/área/seção)', (await exec(`return window.location.pathname;`)).startsWith('/studio/'));
+  check('região aria-live presente', await exec(`return !!document.querySelector('[data-aculta-studio="live"][aria-live="polite"]');`));
+  await exec(`history.back(); return 1;`);
+  await sleep(2500);
+  check('voltar do navegador devolve o caminho anterior', (await exec(`return window.location.pathname;`)) === startPath, `${startPath} -> ${await exec(`return window.location.pathname;`)}`);
 
   await setViewport(390, 844);
   await exec(`location.reload(); return 1;`);

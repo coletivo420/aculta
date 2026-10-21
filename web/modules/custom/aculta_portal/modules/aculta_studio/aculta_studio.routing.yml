@@ -1,9 +1,52 @@
+# Contrato de navegação: cada nível do Studio tem URL própria. A ordem é área, seção e aba.
 aculta_studio.home:
   path: /studio
   defaults:
     _controller: 'aculta_studio.controller:page'
     _title: Estúdio
+    aba: ''
+    secao: ''
+    sub: ''
   requirements:
     _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.area:
+  path: /studio/{aba}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: Estúdio
+    secao: ''
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.section:
+  path: /studio/{aba}/{secao}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: Estúdio
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.tab:
+  path: /studio/{aba}/{secao}/{sub}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: Estúdio
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+    sub: '[a-z0-9-]+'
   options:
     _aculta_domain_purpose: account

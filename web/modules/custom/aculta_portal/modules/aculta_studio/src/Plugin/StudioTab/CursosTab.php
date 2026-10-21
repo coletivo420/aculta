@@ -38,7 +38,7 @@ final class CursosTab extends StudioTabBase {
         'label' => $this->t('Criar'),
         'weight' => 0,
         'tabs' => [
-          'novocurso' => [
+          'novo-curso' => [
             'label' => $this->t('Novo curso'),
             'weight' => 0,
             'actions' => [

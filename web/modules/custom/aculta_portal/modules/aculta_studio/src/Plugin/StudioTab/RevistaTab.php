@@ -38,7 +38,7 @@ final class RevistaTab extends StudioTabBase {
         'label' => $this->t('Criar'),
         'weight' => 0,
         'tabs' => [
-          'novapublicacao' => [
+          'nova-publicacao' => [
             'label' => $this->t('Nova publicação'),
             'weight' => 0,
             'actions' => [
