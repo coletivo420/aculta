@@ -23,14 +23,25 @@ Decisão do responsável (2026-10-21). Vale para todo o projeto.
 - Consentimento que o titular precisa dar de forma separada (art. 8º, §4º da LGPD) não cabe num aceite único
   genérico. Por isso uma função desse tipo só entra com decisão explícita do responsável, sem formulário improvisado.
 
+## Funções cobertas pelo aceite único
+
+Decisão do responsável (2026-10-21): as funções são descritas na política e nos termos publicados, e o aceite
+único cobre esse texto. Rascunho das cláusulas em `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`.
+
+- **Progresso por aluno (LMS):** implementado. Situação por curso e dia, 90 dias, apagada na exclusão da conta.
+  Liga com o aceite único vigente (`LearningDashboardManager::countClassStatuses(..., TRUE)`).
+- **Rastreamento de e-mails:** implementado, mas desligado por `AcultaUserAgreementTrackingConsent::FUNCTION_PUBLISHED`
+  (falso). Liga só depois da publicação da política.
+
+## Exceção: cookies de visitante sem conta
+
+O banner de `aculta_statistics` guarda a escolha do visitante em cookie. Visitante sem conta não tem registro no
+ledger. Decisão do responsável (2026-10-21): manter como exceção de cookie, desligado por padrão.
+
 ## Pendências de decisão
 
-- **Rastreamento de e-mail (aberturas e cliques):** desligado (falha fechada) em `aculta_portal`
-  (`AcultaUserAgreementTrackingConsent`). Para ligar, a função precisa estar na política e o responsável decide a base
-  legal. Não há aceite próprio.
-- **Série de progresso por aluno (LMS):** não criada. Depende da mesma decisão de base legal.
-- **Banner de cookies de visitante anônimo (`aculta_statistics`):** decisão de cookie fora da conta. Não há aceite
-  no ledger porque não há conta. Decisão pendente do responsável.
+- **Publicação da política** com as cláusulas (responsável). Só então `FUNCTION_PUBLISHED` pode virar verdadeiro.
+- **Revisão jurídica** do consentimento embutido no aceite único (LGPD art. 8º, §4º).
 
 ## Guardrail
 

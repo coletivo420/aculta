@@ -1,3 +1,9 @@
+## 0.4.0-dev.248 — rastreamento de e-mail sob o aceite único, desligado até publicação
+
+- `AcultaUserAgreementTrackingConsent::hasConsent()` passa a usar o aceite único (`aculta_user_agreement_terms`), mas só responde verdadeiro quando `FUNCTION_PUBLISHED` for verdadeiro. A constante começa falsa.
+- Sem alteração de comportamento enquanto a constante for falsa: nenhum e-mail é rastreado.
+- Rascunho das cláusulas da política em `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`.
+
 ## 0.4.0-dev.247 — aceite único e rastreamento de e-mail desligado (falha fechada) — 2026-10-21
 
 - `aculta_portal.tracking_consent` (antes `aculta_portal.aculta_user_agreement_tracking`): sem aceite próprio. `hasConsent()` responde falso até a função constar da política e haver decisão do responsável.
