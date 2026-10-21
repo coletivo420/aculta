@@ -184,8 +184,8 @@ combinada reexecutada: 21 testes / 646 assertions PASS, com 92 depreciações
 upstream.
 
 Após acrescentar a política de remoção manual de memberships de compra, Unit
-LMS/Messenger passou com 77 testes / 399 assertions; `EnrollmentFormHooksTest`
-passou com 5 testes / 31 assertions. A cobertura distingue matrícula manual,
+LMS/Messenger passou com 77 testes / 400 assertions; `EnrollmentFormHooksTest`
+passou com 5 testes / 32 assertions. A cobertura distingue matrícula manual,
 pedido pago, reembolso parcial/total, pedido gratuito concluído e origem
 inválida. Não há chamadas a gateway.
 

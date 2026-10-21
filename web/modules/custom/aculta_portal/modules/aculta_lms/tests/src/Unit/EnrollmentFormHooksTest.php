@@ -35,7 +35,10 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
     $relationship = $this->createMock(GroupRelationshipInterface::class);
     $relationship->method('getPluginId')->willReturn('group_membership');
     $relationship->method('getGroup')->willReturn($this->classGroup());
-    $relationship->method('hasField')->with('field_course_order')->willReturn(FALSE);
+    $relationship->method('hasField')->with('field_course_order')->willReturn(TRUE);
+    $reference = $this->createMock(FieldItemListInterface::class);
+    $reference->method('isEmpty')->willReturn(TRUE);
+    $relationship->method('get')->with('field_course_order')->willReturn($reference);
 
     $result = $this->hooks()->protectPaidEnrollment($relationship, 'delete', $this->createMock(UserInterface::class));
 

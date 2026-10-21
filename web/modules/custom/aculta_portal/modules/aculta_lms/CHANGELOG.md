@@ -1,5 +1,11 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.55 — alinhar teste de matrícula manual ao schema — 2026-10-21
+
+- A fixture de matrícula manual agora mantém `field_course_order` presente e
+  vazio, como no Group LMS instalado. Teste focal: 5/32 assertions PASS;
+  Unit combinada LMS/Messenger: 77/400 PASS.
+
 ## 0.1.0-dev.54 — proteger matrícula por compra contra remoção manual — 2026-10-21
 
 - `EnrollmentFormHooksTest` confirma que matrícula manual pode ser removida;
