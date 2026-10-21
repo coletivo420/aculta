@@ -5,6 +5,9 @@
   `editor_file_reference` conserva o uso por `editor` no mesmo CID.
 - Suite Kernel: 19 testes / 386 assertions PASS em MariaDB `aculta_simpletest`;
   19 depreciações de Core/contrib. Nenhum dado do Runtime foi alterado.
+- Revisão visual GET-only da raiz e categorias em Firefox/X11: 26/26
+  verificações PASS nos viewports 390/768/1024 px, claro/escuro. Capturas
+  privadas e limites da inspeção estão em `docs/ROADMAP.md`.
 
 ## `0.1.0-dev.129` — documenta contrato de anexos nos comentários
 

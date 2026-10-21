@@ -515,6 +515,25 @@ nesta fase como itens para implementar. A homologação segue parcial: falta
 thread extensa em 390 px, fluxo completo de teclado, leitor de tela, listagem
 com conteúdo e composer.
 
+## Revisão visual pré-RC — índice público — 2026-10-21
+
+- `forum-index-visual.mjs` foi executado em Firefox ESR/X11, anonimamente e
+  somente com navegação/leitura GET, na raiz e em `/categorias` do host de teste
+  do purpose `forum`. Resultado: 13/13 verificações por rota, 26/26 no total.
+- As páginas apresentaram H1 único, região principal, quatro categorias na
+  raiz e os 12 termos em `/categorias`; nenhum tópico de fixture ou bundle do
+  Fórum contrib legado apareceu. Viewports CSS 390/768/1024 passaram sem
+  overflow no documento, corpo, região principal ou cartões; capturas claro e
+  escuro ficaram visualmente legíveis.
+- Capturas em modo `0600`, fora do checkout:
+  `/home/aculta/private/aculta/visual-tests/forum-rc-dev130-20261021/` e
+  `/home/aculta/private/aculta/visual-tests/forum-rc-dev130-categories-20261021/`.
+  Nenhum conteúdo ou configuração foi submetido. O banner de consentimento
+  inicial permaneceu aberto; a inspeção não aceitou nem recusou consentimento.
+- Escopo parcial: a lista estava vazia, então tópico, comentários, composer e
+  estados autenticados não foram revistos nesta rodada. Leitor de tela,
+  navegação completa por teclado e dispositivo físico seguem sem evidência.
+
 ## `0.1.0-dev.12` — Participação e moderação
 
 Flags, denúncias, salvar/seguir, citação, aprovação, edição e bloqueio por APIs

@@ -6,6 +6,16 @@
   CID. Suíte Kernel: 19 testes / 386 assertions PASS, 19 depreciações Core e
   contrib; MariaDB `aculta_simpletest`. Runtime não alterado.
 
+### Revisão visual pré-RC — 2026-10-21
+
+- `forum-index-visual.mjs`: raiz e `/categorias`, Firefox ESR/X11 anônimo,
+  13/13 verificações por rota (26/26), 390/768/1024 CSS px em claro/escuro.
+- H1 e região principal únicos, quatro categorias na raiz, doze em
+  `/categorias`, sem tópicos/fixtures, sem bundle contrib legado e sem overflow.
+  Capturas `0600` nos dois diretórios privados listados em `docs/ROADMAP.md`.
+- GET-only; sem consentimento escolhido, submit ou escrita no Runtime. Leitor de
+  tela, tópico real, comentários e composer continuam fora desta revisão.
+
 ## dev.129 — contrato de anexos em comentários
 
 - `ForumTopicDisplayConfigTest` confere que o campo compartilhado dos
