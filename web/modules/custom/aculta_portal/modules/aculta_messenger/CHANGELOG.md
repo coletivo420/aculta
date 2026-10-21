@@ -1,3 +1,9 @@
+## 0.1.1-dev.67 — verificação de amizade e entrega de e-mail — 2026-10-21
+
+- Endurecimento verificado no servidor de testes: pedido a si mesmo e a conta inativa bloqueados; terceiro não aceita nem cancela pedido alheio; solicitante não aceita o próprio pedido; aceite repetido bloqueado; limite de 10 pedidos por hora (o 11º e o 12º bloqueados). Dados de teste removidos.
+- Caminho de falha do e-mail verificado: endereço não entregável gera nova tentativa, marca a entrega como `failed` na terceira tentativa e não repete depois. Nenhum e-mail real foi enviado (domínio `.invalid`).
+- Envio com destinatário real e aviso visível na lista de notificações continuam pendentes. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.66 — cobrir entrega e retentativas do aviso de amizade — 2026-10-21
 
 - `FriendshipNoticeEmailWorkerTest` confirma envio com URL da conta, marcação
