@@ -35,14 +35,8 @@ final class H5PDashboardController implements ContainerInjectionInterface {
 
   /** Administrative library and configuration hub. */
   public function administrator(): array {
-    $items = [
-      Link::createFromRoute($this->translation->translate('Configurações H5P'), 'aculta_lms_h5p.admin.config.system.h5p')->toRenderable(),
-      Link::createFromRoute($this->translation->translate('Bibliotecas H5P'), 'aculta_lms_h5p.admin.content.h5p')->toRenderable(),
-    ];
     return [
-      '#theme' => 'item_list',
-      '#title' => $this->translation->translate('Administração de conteúdo interativo'),
-      '#items' => $items,
+      '#plain_text' => $this->translation->translate('Gerencie os recursos H5P do LMS usando as abas acima.'),
       '#cache' => ['contexts' => ['user.permissions']],
     ];
   }

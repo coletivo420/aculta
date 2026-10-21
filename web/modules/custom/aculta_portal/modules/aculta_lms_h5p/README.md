@@ -24,7 +24,7 @@ não são convertidos em notas oficiais do LMS. A decisão do vínculo direto de
 
 - Administração: `/painel-administrativo/lms/h5p`, com acesso pela permissão
   `administer h5p libraries` e atalhos para bibliotecas/configuração.
-- Estudante: `/minha-conta/atividades-interativas`, ligado ao papel global
+- Estudante: `/atividades-interativas` no purpose `account`, ligado ao papel global
   `estudante`. Lista apenas cursos em que `CourseInterface::takeAccess()` permite
   entrada e que tenham atividades no campo H5P; o campo pertence ao Group
   `lms_course`, que continua sendo a fonte de verdade do curso e da matrícula.
@@ -46,8 +46,9 @@ não são convertidos em notas oficiais do LMS. A decisão do vínculo direto de
   conteúdo H5P por `field_h5p_content`; `field_lms_activity` continua servindo
   para discussões gerais de atividade. O adapter lista somente conteúdo H5P do
   curso/turma editável e injeta tópicos permitidos sob o player, revalidando o
-  curso, Group, matrícula e Entity Access. Smoke HTTP autenticado e visual ainda
-  pendentes.
+  curso, Group, matrícula e Entity Access. O painel administrativo passou por
+  revisão visual X11 no Runtime de teste; ainda não há conteúdo H5P nem tópico
+  vinculado nesse Runtime para validar visualmente o player e a discussão.
 - Integração com CTools: a condição `Course has interactive activities (H5P)`
   recebe contexto `entity:group` e permite condicionar displays/contextos CTools
   à existência de atividades. O projeto não tem Page Manager instalado; não

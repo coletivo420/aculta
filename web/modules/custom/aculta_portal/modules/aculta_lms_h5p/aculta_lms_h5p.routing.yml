@@ -3,12 +3,12 @@ aculta_lms_h5p.admin_dashboard:
   path: '/painel-administrativo/lms/h5p'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PDashboardController::administrator'
-    _title: 'Conteúdo interativo do LMS'
+    _title: 'Painel H5P do LMS'
   requirements:
     _permission: 'administer h5p libraries'
 
 aculta_lms_h5p.student_dashboard:
-  path: '/minha-conta/atividades-interativas'
+  path: '/atividades-interativas'
   defaults:
     _controller: '\Drupal\aculta_lms_h5p\Controller\H5PDashboardController::student'
     _title: 'Atividades interativas'

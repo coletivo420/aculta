@@ -3,10 +3,22 @@
 - O Kernel agora confirma que o estado de uma tentativa H5P continua disponível
   para a mesma conta após troca de sessão e permanece invisível a outro
   estudante, mesmo quando ambos têm matrícula ativa no mesmo curso.
-- Kernel focal: 3 testes / 85 assertions PASS no MariaDB dedicado; 43
-  depreciações vêm de Core/contrib instalados. PHP CLI 8.4.26; PHP 8.5 não
-  validado. Integração de discussões H5P com Forum e smoke autenticado/visual
-  continuam pendentes.
+- Suítes completas H5P: Unit 23 testes / 67 assertions e Kernel 14 testes /
+  270 assertions PASS no MariaDB dedicado. As 43 depreciações Kernel vêm de
+  Core/Group/Views instalados. PHP CLI 8.4.26; PHP 8.5 não validado.
+- Revisão visual X11 do painel administrativo no Runtime de teste passou. O
+  painel foi simplificado para evitar repetir links já apresentados nas abas e
+  recebeu título curto. O Runtime tem zero conteúdos H5P, então não há player
+  disponível para inspeção visual; também não há tópicos H5P do Fórum para um
+  smoke de conteúdo real.
+- A integração de discussões com `aculta_forum_lms` está coberta pelos testes
+  próprios do adapter; validação visual de tópico sob um player permanece
+  condicionada à existência de atividade e tópico de teste.
+- Corrige a rota do painel estudante para `/atividades-interativas`: o
+  subscriber da Conta remove `/minha-conta` de caminhos antigos, e o endereço
+  anterior terminava em 404. Kernel confirma o caminho canônico; no Runtime de
+  teste o endereço novo agora alcança a checagem de papel (403 anônimo) e o
+  caminho legado redireciona para ele (301).
 
 ## Navegação multidomínio — 2026-10-19
 

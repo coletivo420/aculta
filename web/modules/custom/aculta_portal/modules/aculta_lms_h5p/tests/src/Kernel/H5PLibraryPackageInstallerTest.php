@@ -16,7 +16,10 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
   use UserCreationTrait;
 
   /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'image', 'views', 'entity_usage', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p'];
+  protected static $modules = [
+    'system', 'user', 'field', 'options', 'file', 'image', 'views',
+    'entity_usage', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p',
+  ];
 
   /** {@inheritdoc} */
   protected function setUpFilesystem(): void {

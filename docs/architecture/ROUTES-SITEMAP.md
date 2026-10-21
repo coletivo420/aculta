@@ -74,6 +74,15 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/apoiar/{valor}/agora` | Doação rápida de valor informado | Ativo conforme configuração do fluxo Commerce. |
 | `main.aculta` | `/termos/aceitar` | Ação de aceite dos termos | Endpoint autenticado; `POST` processa e redireciona ao destino seguro. |
 | `main.aculta` | `/painel-administrativo/**` | Árvore do painel administrativo ACULTA | Rotas administrativas; access do Core/contrib decide cada operação. |
+| `main.aculta` | `/painel-administrativo/lms/h5p` | Painel administrativo de H5P do LMS | Ativo no Runtime de teste; exige `administer h5p libraries`; revisão visual X11 em 2026-10-21. |
+| `main.aculta` | `/painel-administrativo/configuracoes/system/h5p` | Configurações do H5P do LMS | Rota Core `/admin/config/system/h5p` canonicalizada pelo Portal; ativa no Runtime de teste, exige `administer h5p libraries`. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p` | Administração das bibliotecas H5P instaladas | Rota Core `/admin/content/h5p` canonicalizada pelo Portal; ativa no Runtime de teste, exige `administer h5p libraries`. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/libraries/{library_id}/upgrade-confirm` | Confirmação de atualização de conteúdos para uma biblioteca H5P | Ativa no Runtime de teste; exige permissão administrativa e ID numérico. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/libraries/{library_id}/upgrade` | Ação POST para atualizar conteúdos para uma biblioteca H5P | Endpoint mutável ativo; exige permissão administrativa, CSRF e ID numérico. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/libraries/{library_id}/restrict` | Restringir conteúdo que usa uma biblioteca H5P | Ativa no Runtime de teste; exige permissão administrativa e ID numérico. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/libraries/{library_id}/delete` | Confirmação de exclusão de biblioteca H5P | Ativa no Runtime de teste; exige permissão administrativa e ID numérico. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/upgrade/library/{name}/{major}/{minor}` | Preparar atualização dos conteúdos para uma versão de biblioteca H5P | Ativa no Runtime de teste; exige permissão administrativa. |
+| `main.aculta` | `/painel-administrativo/conteudo/h5p/rebuild-cache` | Reconstrução do cache de conteúdo H5P | Endpoint POST ativo; exige permissão administrativa e CSRF. |
 | `main.aculta` | `/painel-administrativo/links` | Painel ACULTA Links, com listas de micropáginas, destinos e itens; páginas publicadas têm link público e rascunhos têm prévia privada | Declarada em `aculta_links`; acesso exige gestão própria ou administração global. Os links da página usam `DomainPurposeManager` e variam cache pelo site/idioma. Módulo habilitado no Runtime de teste em 2026-10-20; acesso anônimo recebe 403; produção não confirmada. |
 | `main.aculta` | `/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens` | Editor de ordenação e ativação dos itens de uma micropágina | Formulário Drupal; `_entity_access` exige edição da micropágina e o submit revalida a entidade e os itens. Módulo habilitado no Runtime de teste em 2026-10-20; rotas registradas. Acesso conforme permissões e entidades; produção não confirmada. |
 | `main.aculta` | `/painel-administrativo/links/pagina/{aculta_link_page}/item/adicionar` | Formulário contextual para adicionar destino reutilizável como botão da micropágina | Declarada em `aculta_links`; exige update access da micropágina e restringe destinos à mesma conta proprietária; Runtime DEFERRED. |
@@ -238,6 +247,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | `conta.aculta` | `/minha-aprendizagem` | Painel pessoal de cursos, progresso, avaliações pendentes e certificados | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; Runtime DEFERRED. |
+| `conta.aculta` | `/atividades-interativas` | Atividades H5P dos cursos acessíveis pela pessoa estudante | Rota `aculta_lms_h5p`, purpose `account`, exige papel `estudante`; lista vazia quando não há curso com H5P acessível. Runtime corrigido após detectar o redirect de `/minha-conta/*` sem rota final. |
 | `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; ativa no Runtime de teste após habilitação em 2026-10-21; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; ainda sem mensagem de teste criada. |
 | `conta.aculta` | `/meu-apoio` | Histórico de apoio/doações da pessoa | Conta autenticada; dados próprios. |
 | `conta.aculta` | `/minha-participacao` | Área de participação da pessoa | Condicional a módulos e permissões ativos. |
@@ -278,6 +288,12 @@ correspondentes estão habilitados no ambiente.
 | `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
 | `wiki.aculta` | `/wiki/busca/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
+| `cursos.aculta` | `/educador/atividades-interativas` | Cursos administrados pelo educador que têm atividades H5P | Rota `aculta_lms_h5p`, purpose `courses`, exige papel `lms_teacher`; lista vazia quando os cursos não têm atividades H5P. |
+| `cursos.aculta` | `/h5p-ajax/{group_id}/set-finished.json` | Salvar conclusão e pontuação H5P vinculada à turma | Endpoint POST autenticado; valida matrícula/curso e conteúdo H5P associado ao Group. |
+| `cursos.aculta` | `/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}` | Ler ou salvar estado de tentativa H5P da pessoa na turma | Endpoint GET/POST autenticado; valida curso, conteúdo e titularidade do estado. |
+| `cursos.aculta` | `/h5p-content/{group_id}/{content_id}/{file_path}/{path_2}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}` | Servir arquivo privado de conteúdo H5P no curso | Endpoint técnico; exige acesso ao conteúdo e vínculo ativo entre H5P e Group. |
+| `cursos.aculta` | `/h5p-library-assets/libraries/{library}/{file_path}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}/{path_11}/{path_12}` | Servir assets de bibliotecas H5P instaladas | Endpoint técnico para assets gerenciados; nomes de biblioteca e segmentos são validados. |
+| `main.aculta` | `/h5peditor/{group_id}/{token}/{content_id}/{action}/{arguments}/{argument_2}/{argument_3}/{argument_4}/{argument_5}/{argument_6}/{argument_7}/{argument_8}/{argument_9}/{argument_10}` | Requisições AJAX do editor H5P associado a curso | Endpoint técnico autenticado, purpose `main`; valida token e autorização do educador no Group. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de arquivo anexado a uma resposta LMS | Condicional; valida resposta e matrícula vigente. |
 | `cursos.aculta` | `/node/{node}` | Visualização canônica técnica de tópico privado do Fórum LMS ligado a uma atividade | Condicional ao `aculta_forum_lms` e ao tópico; a rota só é ligada dentro de uma atividade e o access Group revalida membership. Não é rota pública indexável; exceção em `FRIENDLY-PORTUGUESE-SLUGS.md`. |
 | `forum.aculta` | `/topico/{titulo}` | Tópico do fórum | Dinâmico; depende de tópico publicado e access. Caminhos internos `/discussoes` e legado `/forum` respondem `404` diretamente. |
@@ -373,13 +389,13 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/pagamentos/{id}/padrao` | `conta.aculta` | Seleção de meio de pagamento padrão pessoal | `404`; ACULTA não armazena nem exibe meios de pagamento pessoais. |
 | `/aceite-termos` | Todos os purposes | Antiga página dedicada ao aceite dos termos | Removida; `404`. O fluxo atual usa popup e `POST /termos/aceitar`. |
 | `/albuns/{titulo}` | `revista.aculta` | Álbum da galeria | Rota condicional do submódulo; confirmar estado efetivo do Runtime, não inferir pelo YAML. |
-| Rotas `aculta_lms_h5p` | `cursos.aculta` | Editor, player e endpoints de atividades H5P | Módulo desabilitado; endpoints não devem ser considerados ativos até habilitação e validação funcional. |
 
 ## Redirecionamentos documentados
 
 | Origem | Destino | Título / objeto | Código/condição |
 | --- | --- | --- | --- |
 | `/` | `conta.aculta:/entrar` | Entrada da área de conta para visitante anônimo | `302`; usuário autenticado recebe a visão geral da conta. |
+| `/minha-conta/atividades-interativas` | `conta.aculta:/atividades-interativas` | Endereço legado do painel H5P de estudante | `301` aplicado pelo `DomainPurposeRequestSubscriber`; rota final exige papel `estudante`. Runtime de teste confirmado em 2026-10-21. |
 | `/user` | `conta.aculta:/` | Página legada de usuário do Core | `302` para a raiz da Conta. |
 | `/user/{uid}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para o dono; acesso ao perfil de outra pessoa é negado. |
 | `/identidade/editar` | `conta.aculta:/seguranca` | Edição legada do próprio perfil | `302` para o painel de segurança; usuário alheio recebe negação. |

@@ -32,6 +32,10 @@ final class H5PHookDiscoveryTest extends KernelTestBase {
     self::assertSame('h5p_upload', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_upload')['id']);
     self::assertSame('h5p_default', $this->container->get('plugin.manager.field.formatter')->getDefinition('h5p_default')['id']);
     self::assertSame('h5paccessuserpoints', $this->container->get('plugin.manager.views.access')->getDefinition('h5paccessuserpoints')['id']);
+    self::assertSame(
+      '/atividades-interativas',
+      $this->container->get('router.route_provider')->getRouteByName('aculta_lms_h5p.student_dashboard')->getPath(),
+    );
     self::assertInstanceOf(
       \Drupal\aculta_lms_h5p\Plugin\views\access\H5PAccessUserPoints::class,
       $this->container->get('plugin.manager.views.access')->createInstance('h5paccessuserpoints'),
