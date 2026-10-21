@@ -1,5 +1,17 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.40 — declarar cache de permissão de turma em certificados — 2026-10-21
+
+- Access de emissão e revogação de certificados agora declara `user.group_permissions`,
+  além de contexto de usuário/permissões globais. Alterações de papel ou matrícula
+  em Group passam a invalidar corretamente a autorização contextual.
+- Unit focal cobre o contexto; suíte Unit: 47 testes / 219 assertions PASS (8
+  depreciações PHPUnit); PHPCS Drupal/DrupalPractice e gates do índice de estado
+  e Portal Drupal 11+ PASS. PHP 8.4.26; PHP 8.5 não validado.
+- Runtime de teste `cursos` confirmado em `aculta_runtime`, módulo habilitado e
+  sem updates pendentes. `drush cr` concluiu; emitiu o warning conhecido de
+  assets do H5P, fora desta alteração.
+
 ## 0.1.0-dev.39 — tipar resolução de referências LMS — 2026-10-21
 
 - O resolvedor do histórico usa `FieldableEntityInterface`, campos de

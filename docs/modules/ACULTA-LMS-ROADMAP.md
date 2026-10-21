@@ -285,6 +285,15 @@ antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
+Em 0.1.0-dev.40, a autorização contextual para emitir e revogar certificados
+declara também o cache context `user.group_permissions` exigido pelo Group. Isso
+permite variar e invalidar o resultado quando membership ou papéis de turma
+mudam; o teste Unit focal verifica a presença do contexto. Unit: 47 testes / 219
+assertions PASS (8 depreciações PHPUnit); PHPCS Drupal/DrupalPractice, gate do
+índice de estado e gate Drupal 11+ (1010 checks) PASS. Runtime `cursos` usa
+`aculta_runtime`, `aculta_lms` está habilitado e não há updates pendentes;
+`drush cr` concluiu com warning conhecido de assets H5P fora do escopo.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando
