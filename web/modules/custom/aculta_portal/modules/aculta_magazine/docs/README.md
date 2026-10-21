@@ -1,5 +1,8 @@
 # aculta_magazine (Revista)
 
+Auditoria estrutural F0.1.0: [estado do código, Config Sync, Runtime e plano de
+limpeza](AUDITORIA-F0.1.0.md).
+
 > **Transição em andamento:** publicações recebem o campo Comment compartilhado
 > `field_aculta_discussion` em Config Sync e no Runtime de teste. A sincronização automática de tópicos foi
 > removida; serviços de leitura/conversão ainda sustentam vínculos históricos. A remoção
