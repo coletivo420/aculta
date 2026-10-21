@@ -99,8 +99,10 @@ Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor
    Aplicado no Runtime de teste em 2026-10-21.
 2. **Fórum:** séries temporais em `forum.*`; a contagem atual passa a ler o `aculta_statistics`.
    Bloqueio: produtores `forum.topic.created` e `forum.comment.created` (0.7.0).
-3. **E-mail (0.5.0):** resumo semanal e painéis leem `email.*`. Bloqueio: o painel separa por estado
-   exato (nove estados); falta a métrica `email.messages.status` (dimensão = estado) antes de repontar.
+3. **E-mail (0.5.0):** métrica `email.messages.status` criada (dimensão `transporte|estado`, estado atual por
+   dia de solicitação). Backfill de 90 dias disponível por `drush aculta-statistics:backfill-email`.
+   Decidido (2026-10-21): o painel de envios do aculta_mailer **continua ao vivo** (operacional, falhas recentes
+   em tempo real). A central alimenta as séries. Resumo semanal segue no roadmap de 0.8.0.
 4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora. Bloqueio: produtor de
    `lms.students.by_status` (instantâneo) ainda inexistente.
 5. **Gate:** `aculta_statistics` é o único gravador de agregados estatísticos (validação a criar).

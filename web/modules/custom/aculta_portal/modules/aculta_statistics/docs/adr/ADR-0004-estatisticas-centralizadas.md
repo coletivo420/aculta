@@ -54,6 +54,12 @@ donos. Ao verificar o escopo, dois bloqueios foram encontrados e registrados:
 
 Até cada passo existir, o painel atual continua como está; a troca não é feita por partes sem a métrica.
 
+## Decisão final do painel de envios (2026-10-21)
+
+O painel de envios do `aculta_mailer` **continua ao vivo**, lendo o `aculta_mail_log`. Motivo: é uma
+ferramenta operacional, e falhas recentes precisam aparecer na hora; a central recalcula no cron (uma vez
+por dia). A central alimenta as séries e os gráficos. O dado de origem continua no módulo dono.
+
 ## Consequências
 
 - Retenção, permissão e auditoria de estatísticas ficam em um lugar só (ADR-0003).

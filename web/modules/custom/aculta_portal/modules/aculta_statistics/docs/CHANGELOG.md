@@ -36,6 +36,22 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.5.0-dev.2 (estado de envio, backfill e decisão do painel de e-mail)
+
+### Código
+- `email.messages.status` (dimensão `transporte|estado`, estado atual por dia de solicitação): todos os nove estados, o que o painel de envios precisa para `by_status` e `by_transport`.
+- `aculta-statistics:backfill-email --days=90` (Drush): reconcilia até 90 dias com o mesmo reconciliador do cron. Substitui valor por dia; rodar de novo não duplica.
+
+### Decisões (2026-10-21)
+- O painel de envios do `aculta_mailer` continua ao vivo. A central alimenta as séries. Motivo: o cron roda uma vez por dia e o painel precisa de falhas recentes em tempo real.
+- Métrica de estado usa estado atual (não transições), para não contar uma mensagem duas vezes.
+
+### Validação no Runtime de teste (2026-10-21)
+- Backfill de 90 dias: 69 envios no log, 69 na fila e 69 no estado. Aceitos 41, entregues 4, devolvidos 1, falhos 26.
+
+### Testes
+- Unit: 73 casos. Kernel: conciliação inclui a métrica de estado.
+
 ## 0.5.0-dev.1 (e-mail: funil por dia de solicitação, conciliado no cron)
 
 ### Código

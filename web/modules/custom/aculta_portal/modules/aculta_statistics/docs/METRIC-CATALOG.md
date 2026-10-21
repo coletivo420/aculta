@@ -56,6 +56,7 @@ O dia é o da solicitação (`created`); o estado é o atual. Cada envio conta u
 | `email.messages.delivered` | estado `delivered` (confirmado pelo webhook do Brevo) | mensagens | transporte | 90 dias | I |
 | `email.messages.bounced` | estado `bounced` | mensagens | transporte | 90 dias | I |
 | `email.messages.failed` | estado `failed` | mensagens | transporte\|código | 90 dias | I |
+| `email.messages.status` | estado atual de cada envio | mensagens | transporte\|estado | 90 dias | I |
 
 Distinção obrigatória: **aceita** (o sistema de e-mail recebeu) não é **entregue**.
 "Entregue" só aparece quando houver confirmação do provedor.

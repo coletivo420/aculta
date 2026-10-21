@@ -67,8 +67,9 @@ Pendente. O resumo de envios por estado exato (nove estados) precisa de um consu
   registro, novo estado e transporte. Sem destinatário, assunto ou corpo.
 - Decidido (2026-10-21, responsável): a métrica de estado conta o **estado atual** por dia de solicitação,
   pela mesma conciliação do funil, sem contar a mesma mensagem duas vezes quando ela muda de estado.
-- Bloqueio resolvido depois: `email.messages.status` (dimensão = estado) no catálogo, depois troca do
-  `MailDashboard::summary()` para o `aculta_statistics`.
+- Feito (aculta_statistics, 2026-10-21): `email.messages.status` com dimensão `transporte|estado`, backfill de
+  90 dias por Drush. Pode substituir a leitura de série; o painel de envios permanece ao vivo (decisão do
+  responsável em 2026-10-21, por ser operacional e precisar de falhas em tempo real).
 
 ## Telas de controle (planejado)
 
