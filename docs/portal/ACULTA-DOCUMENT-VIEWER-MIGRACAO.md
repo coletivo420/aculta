@@ -176,7 +176,49 @@ O plano pede que `aculta_pdf_media` e `aculta_pdf_file` sejam preservados. Com b
 - O spike cobre o formatter. Não cobre `group.relationship_type`, permissões de papel nem `media.type.course_document`.
 - Os 5 erros Kernel da baseline (ver acima) continuam pré-existentes e não afetam o spike, que roda com módulos mínimos.
 
+### Decisão adotada
+
+Adotada a opção **B** (IDs próprios, troca de componentes antes da desinstalação), por ser a única das duas que a evidência do spike sustenta. A decisão deve ser confirmada pelo responsável antes do Runtime ser alterado.
+
+## Roadmap revisado (plano consolidado)
+
+Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
+
+| Versão | Fase | Entrega | Estado |
+| --- | --- | --- | --- |
+| 0.1.0-dev.1 | Auditoria | Inventário e contratos | Concluída (`25ed3109`) |
+| 0.1.0-dev.2 | Migração | Estratégia segura e spike | Concluída como evidência (`c23bc37d`, `7f031487`) |
+| 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | **Bloqueada** (ver abaixo) |
+| 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
+| 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Não iniciada |
+| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Não iniciada (ver verificação abaixo) |
+| 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
+| 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
+| 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
+| 0.1.0-dev.10 | Segurança | Arquivos maliciosos, privados, limites e isolamento | Não iniciada |
+| 0.1.0-rc.1 | Homologação | Migração, regressão, acessibilidade | Não iniciada |
+| 0.1.0 | Estável | Implantação após aprovação | — |
+
+O PDF.js, suas configurações, o visualizador completo, as miniaturas PDFPreview e os contratos Group existentes são preservados.
+
+### Bloqueio da 0.1.0-dev.3 (renomeação)
+
+1. **Arquivos de outra frente:** `aculta_pdf_viewer/src/Pdf/DocumentFieldMap.php`, `src/Pdf/PdfViewerBuilder.php` e dois testes Unit têm alterações não commitadas. Renomear o diretório moveria esse trabalho. Pela regra do projeto, isso não é feito sem o dono.
+2. **Runtime:** o Runtime lê o próprio checkout. Renomear o diretório sem executar a migração deixa `core.extension` apontando para um módulo ausente. A migração no Runtime é operação persistente e exige autorização explícita.
+
+### Verificação de Tabulator e SheetJS (registro npm, 2026-10-21)
+
+**Tabulator** (`tabulator-tables`, licença MIT):
+- Último da linha 6.5: **6.5.3** (`sha512-nJ2QaqZzQvd9B4rf4LBnRxfb6sSqA/BX2OsXnSJ2d8k21oXDSTtFtOUrDap04a/6BDGivC/MByCxy43ugadJIg==`).
+- Última versão geral no npm: 6.7.0. Usar 6.5.3 respeita o plano, que fixa a linha 6.5.
+
+**SheetJS** (pacote npm `xlsx`, licença Apache-2.0):
+- A última versão publicada no npm é **0.18.5** (`sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==`).
+- As versões mais novas do SheetJS CE não estão no npm; são distribuídas pelo site da SheetJS. Não confirmei aqui o conteúdo nem os avisos de segurança dessas versões.
+- Não confirmei nesta sessão os avisos de segurança da linha 0.18.x. Antes de interpretar arquivos de usuário, é preciso verificar os advisories e escolher a versão. Isso é uma decisão pendente.
+
 ## Próximas etapas
 
-- **0.1.0-dev.3 — Renomeação estrutural:** depende da decisão B/C e da extensão do spike para Group e Media.
-- **0.1.0-dev.4 — docx-preview:** pode começar em paralelo, pois não depende da renomeação, mas o plano manda seguir a ordem das fases. Aguardando confirmação.
+- **0.1.0-dev.3:** renomeação, após (a) o dono da frente de `aculta_pdf_viewer` commitar ou separar os arquivos alterados e (b) autorização para migração no Runtime.
+- **0.1.0-dev.4 (fechamento):** renderizar um DOCX público de teste no navegador, com `renderAltChunks: false`, e registrar o resultado.
+- **0.1.0-dev.6:** escolher a versão do SheetJS e verificar advisories antes de vendorizar.
