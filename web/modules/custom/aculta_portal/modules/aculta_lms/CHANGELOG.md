@@ -384,6 +384,14 @@
   armazena o prazo na relação Group da turma com a atividade, permitindo datas
   distintas quando a mesma atividade é reutilizada.
 
+## Decisão F13 — avisos de mudanças acionáveis — 2026-10-21
+
+- O responsável escolheu notificar eventos acionáveis já persistidos: liberação
+  de conteúdo, novos envios/retornos publicados e criação ou alteração de prazo
+  por atividade/turma. Edições editoriais sem mudança acionável não geram aviso.
+- Mantém o fluxo existente de resumo diário opt-in; a janela atual de 24 horas
+  para lembrete de prazo aguarda confirmação do intervalo.
+
 ## Registro documental F15 — estado das integrações — 2026-10-21
 
 - Corrige o estado do adapter `aculta_forum_lms`: permissões e módulo estão

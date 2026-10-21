@@ -36,7 +36,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**F13 — notificações educacionais: implementação funcional; revisão visual pendente.** Matrícula e certificado passam ao adapter
+**F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado passam ao adapter
 `aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
 transacional mínimo via Message Notify. Conclusão, avaliação publicada, respostas pendentes, conteúdo publicado,
 feedback do educador e definição/alteração de prazo aparecem no site e no resumo diário opt-in; educadores recebem
