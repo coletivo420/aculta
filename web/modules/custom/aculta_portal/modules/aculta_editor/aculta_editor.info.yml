@@ -3,7 +3,7 @@ type: module
 description: 'Formatos e editor do CKEditor 5 para o Portal ACULTA, com o Plugin Pack. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.4'
+version: '0.1.0-dev.5'
 dependencies:
   - ckeditor5:ckeditor5
   - drupal:filter

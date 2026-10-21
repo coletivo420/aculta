@@ -185,7 +185,7 @@ Decisão do responsável: os formatos antigos recebem as funções do ACULTA e o
 | --- | --- | --- |
 | `plain_text` | Aculta Básico (texto puro) | mantido, sem editor |
 | `usuario_aculta` | Usuário ACULTA (HTML restrito) | mantido |
-| `revista_editorial` | Aculta Editorial (HTML completo) | mantido; **sem filtro de HTML**, por decisão; restringir o acesso aos papéis de edição |
+| `revista_editorial` | Aculta Editorial | mantido, **com filtro de HTML de edição** (decisão do responsável) |
 | `email_html` | Aculta Email | mantido; configurado com o filtro e o editor do e-mail |
 | `wiki` | Aculta Wiki (somente Wiki) | mantido |
 | `webform_default` | sistema do Webform | mantido (não alterar) |
@@ -194,3 +194,4 @@ Decisão do responsável: os formatos antigos recebem as funções do ACULTA e o
 
 Campos de conteúdo (página, documento, atividade, projeto, wiki) não listam mais os formatos removidos nem o `email_html`.
 Permissão `use text format restricted_html` revogada do papel anônimo.
+- **Ajuste posterior (2026-10-22):** o Editorial recebeu o filtro de HTML. O HTML completo passou para o tipo `aculta_adm` (formato `full_html`, sem restrição), criado para uso da administração.

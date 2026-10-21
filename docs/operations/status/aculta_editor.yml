@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Formatos unificados e revisão visual aprovada pelo responsável. Próxima decisão: restringir o acesso ao formato Aculta Editorial (HTML completo) aos papéis de edição ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
+next_phase: 'Formatos unificados, Editorial com filtro e tipo aculta_adm com HTML completo. Próximo: restringir a criação de aculta_adm à administração e validar o tipo no navegador ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'

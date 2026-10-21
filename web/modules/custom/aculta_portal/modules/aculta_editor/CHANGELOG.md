@@ -1,3 +1,8 @@
+## 0.1.0-dev.5 — Editorial com filtro e tipo de HTML completo — 2026-10-22
+
+- `revista_editorial` (Aculta Editorial) recebe o filtro de HTML de edição (filter_html, align, caption, htmlcorrector), no lugar do HTML sem filtro.
+- Novo formato `full_html` (HTML completo do Core) e novo tipo de conteúdo `aculta_adm`, sem restrição de tags, com corpo nesse formato.
+
 ## 0.1.0-dev.4 — formatos unificados — 2026-10-22
 
 - Formatos do site reduzidos a cinco com funções definidas: Aculta Básico (texto puro, `plain_text`), Usuário ACULTA (HTML restrito, `usuario_aculta`), Aculta Editorial (HTML completo, `revista_editorial`), Aculta Email (`email_html`) e Aculta Wiki (`wiki`).

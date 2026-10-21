@@ -13,7 +13,7 @@ Os formatos antigos recebem as funções do ACULTA; os excedentes foram removido
 | --- | --- | --- |
 | `plain_text` | **Aculta Básico (texto puro)** | sem editor (texto) |
 | `usuario_aculta` | **Usuário ACULTA (HTML restrito)** | CKEditor 5 |
-| `revista_editorial` | **Aculta Editorial (HTML completo)** | CKEditor 5 |
+| `revista_editorial` | **Aculta Editorial** (HTML com filtro de edição) | CKEditor 5 |
 | `email_html` | **Aculta Email (e-mails)**, usado pelo `aculta_mailer` | CKEditor 5 |
 | `wiki` | **Aculta Wiki (somente Wiki)** | CKEditor 5 |
 | `webform_default` | formato do sistema do Webform (não alterar) | CKEditor 5 |
@@ -21,10 +21,12 @@ Os formatos antigos recebem as funções do ACULTA; os excedentes foram removido
 Removidos: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` (sem conteúdo) e
 `restricted_html` (o único conteúdo, a página 372, foi migrado para `usuario_aculta` sem perda: só `<p>` e `<a>`).
 
-## Riscos conhecidos
+## HTML completo (tipo restrito)
 
-- **Editorial é HTML completo:** `revista_editorial` não tem filtro de HTML, por decisão do responsável. Quem recebe
-  esse formato precisa ser de confiança. O acesso deve ficar restrito aos papéis de edição.
+- **Tipo `aculta_adm` (ACULTA administração):** corpo em `full_html` (HTML completo do Core), sem restrição de tags. É o
+  único lugar com HTML sem filtro. Fica restrito à administração pela permissão de criação do tipo.
+- **Editorial** (`revista_editorial`) passou a ter filtro de HTML (lista de tags de edição, a mesma validada no
+  navegador), por decisão do responsável.
 
 ## Modelos (templates)
 

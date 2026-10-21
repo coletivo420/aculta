@@ -7,7 +7,7 @@ dependencies:
     - editor
     - entity_embed
     - media
-name: 'Aculta Editorial (HTML completo)'
+name: 'Aculta Editorial'
 format: revista_editorial
 weight: 5
 filters:
@@ -33,14 +33,23 @@ filters:
     id: filter_align
     provider: filter
     status: true
-    weight: 8
+    weight: 0
     settings: {  }
   filter_caption:
     id: filter_caption
     provider: filter
     status: true
-    weight: 9
+    weight: 0
     settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<p> <br> <h2 id> <h3 id> <h4 id> <strong> <em> <u> <s> <ul> <ol> <li> <a href hreflang title id target rel class> <blockquote cite> <mark class> <span> <hr> <div class> <table> <caption> <colgroup> <col> <thead> <tbody> <tfoot> <tr> <td colspan rowspan> <th colspan rowspan scope> <oembed url> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align>'
+      filter_html_help: true
+      filter_html_nofollow: false
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
