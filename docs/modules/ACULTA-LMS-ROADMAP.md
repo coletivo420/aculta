@@ -389,9 +389,10 @@ autenticado e revisão visual (DT-O15).
 `ImageInspector`; materiais PDF usam `course_document`, Group e
 `aculta_pdf_viewer`. `aculta_forum_lms` aceita `field_lms_activity` em tópicos
 Node e apresenta ao estudante os tópicos autorizados para a atividade atual, no
-Group do curso ou de uma turma filha. Unit adapter: 22 testes / 250 assertions
-PASS; Kernel MariaDB: 2/132 assertions PASS, com 43 depreciações upstream,
-ainda sem fixture de vínculo atividade-discussão. Config Sync foi aplicado
+Group do curso ou de uma turma filha. Unit adapter: 22 testes / 256 assertions
+PASS; Kernel MariaDB: 3 testes / 168 assertions PASS, incluindo fixture real
+atividade→aula→curso, tópico autorizado por Group e exclusão de tópico em outro
+curso; 46 depreciações upstream. Config Sync foi aplicado
 parcialmente no Runtime de teste e o resolver/hook foram resolvidos no
 container; não há tópico/Comment LMS real nesse Runtime, então smoke autenticado
 e revisão visual seguem pendentes. O constraint de imagem em entrega é

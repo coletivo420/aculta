@@ -225,6 +225,13 @@ previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /
 722 assertions; 95 depreciações vieram de Core/contrib. PHP CLI 8.4.26; PHP 8.5
 continua não validado.
 
+Em 2026-10-21, `LmsActivityDiscussionResolverKernelTest` passou com 1 teste /
+36 assertions. A fixture real confirma a relação atividade→aula→curso, acesso
+do estudante via Group e exclusão do tópico relacionado quando ele pertence a
+outro curso. A suíte Kernel de `aculta_forum_lms` passou com 3 testes / 168
+assertions e 46 depreciações upstream; Unit passou com 22 testes / 256
+assertions. PHP CLI 8.4.26; PHP 8.5 não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

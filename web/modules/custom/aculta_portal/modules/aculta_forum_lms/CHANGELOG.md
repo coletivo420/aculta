@@ -1,3 +1,14 @@
+## `0.1.0-dev.26` — validar vínculo atividade-discussão no Kernel — 2026-10-21
+
+- Novo Kernel MariaDB exercita atividade publicada, aula, curso, acesso de
+  estudante por Group e dois tópicos em cursos diferentes. O resolver exibe
+  somente a discussão autorizada do curso da atividade e preserva metadados de
+  cache de permissões e relações.
+- Kernel Forum LMS: 3 testes / 168 assertions PASS, 46 depreciações upstream;
+  Unit adapter: 22 testes / 256 assertions PASS. PHP CLI 8.4.26; PHP 8.5 não
+  validado. Runtime topic fixture, smoke autenticado e revisão visual seguem
+  pendentes. RUNTIME STATUS: PARTIAL.
+
 ## `0.1.0-dev.25` — confirmar imagens inline no Comment compartilhado — 2026-10-21
 
 - O Kernel Unit do adapter verifica que respostas LMS reutilizam o campo

@@ -5,6 +5,12 @@ privado para Nodes `aculta_lms_topic` e delega a
 autorização do marcador de moderação aos Educadores com `grade students` no
 curso contextual.
 
+Na dev.26, um Kernel MariaDB exercita o resolver com uma atividade ligada a uma
+aula e um curso reais: o estudante vê somente o tópico relacionado à atividade
+no curso atual e permitido pelo Group. A cobertura total do adapter é Unit
+22/256 e Kernel 3/168; o smoke autenticado e a revisão visual no Runtime ainda
+estão pendentes.
+
 Desde a dev.17, Educadores com `grade students` no curso contextual têm um
 painel com filas separadas de Comments publicados, rejeitados e pendentes por
 curso/turma. O Core `approve` fica permitido apenas no contexto LMS autorizado;
