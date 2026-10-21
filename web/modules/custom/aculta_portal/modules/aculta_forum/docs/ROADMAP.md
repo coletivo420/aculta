@@ -545,9 +545,22 @@ A dev.108 acrescenta rotas administrativas com filas isoladas de Comments por
 curso/turma, provadas em Kernel para acesso contextual e estados; suas rotas e
 View foram aplicadas no Runtime de teste. A dev.109 acrescenta ações Form API
 para transições moderadas por Educador; a coluna foi importada parcialmente e
-o cache reconstruído no Runtime de teste. Busca,
-notificações e associação de atividades continuam pendentes; não liberar busca
+o cache reconstruído no Runtime de teste. Busca, notificações e associação de
+atividades gerais (fora do fluxo H5P) continuam pendentes; não liberar busca
 pública para contexto LMS.
+
+Integração com H5P avançou na F15 de `aculta_lms_h5p` (2026-10-21): Educadores
+associam um tópico existente do `aculta_forum` ao conteúdo H5P pelo campo
+`field_h5p_content`; discussões gerais de atividade continuam usando
+`field_lms_activity`. O adapter limita a seleção ao curso/turma autorizado,
+revalida Group, matrícula e Entity Access, e apresenta a discussão sob o player.
+Kernel cobre isolamento por conteúdo/curso/turma e o Runtime de teste confirmou
+visualmente o player, o tópico contextual e a abertura do Node no host `cursos`
+(HTTP 200); as fixtures temporárias foram removidas. Isso conclui a associação
+H5P–Fórum para este fluxo, sem criar tópico automático nem contexto público.
+Busca e notificações privadas LMS continuam pendentes. Evidências completas:
+[`aculta_lms_h5p/CHANGELOG.md`](../../aculta_lms_h5p/CHANGELOG.md) e
+[`aculta_forum_lms/CHANGELOG.md`](../../aculta_forum_lms/CHANGELOG.md).
 
 ## `0.1.0-dev.14` — Contrato Wiki420
 
