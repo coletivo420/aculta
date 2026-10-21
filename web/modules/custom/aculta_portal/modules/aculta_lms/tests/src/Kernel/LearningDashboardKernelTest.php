@@ -114,6 +114,41 @@ final class LearningDashboardKernelTest extends KernelTestBase {
         'finished' => 1_760_000_000,
       ])->save();
     }
+    $other_student = User::create(['name' => 'dashboard-other-student', 'status' => 1]);
+    $other_student->save();
+    $certificate_storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate');
+    $own_certificate = $certificate_storage->create([
+      'uid' => $student->id(),
+      'course_id' => $course->id(),
+      'course_status_uuid' => $course_status->uuid(),
+      'certificate_name' => 'dashboard-student',
+      'course_title' => 'Curso do painel',
+      'course_hours' => 3,
+      'completed' => 1_760_000_000,
+      'issued' => 1_760_000_100,
+      'sequence' => 1,
+      'supersedes_id' => 0,
+      'verification_code' => str_repeat('D', 43),
+      'template_version' => '1',
+      'state' => 'active',
+    ]);
+    $own_certificate->save();
+    $other_certificate = $certificate_storage->create([
+      'uid' => $other_student->id(),
+      'course_id' => $course->id(),
+      'course_status_uuid' => 'other-course-status-uuid',
+      'certificate_name' => 'other-student',
+      'course_title' => 'Curso do painel',
+      'course_hours' => 3,
+      'completed' => 1_760_000_000,
+      'issued' => 1_760_000_100,
+      'sequence' => 1,
+      'supersedes_id' => 0,
+      'verification_code' => str_repeat('E', 43),
+      'template_version' => '1',
+      'state' => 'active',
+    ]);
+    $other_certificate->save();
 
     $domain_storage = $this->createMock(EntityStorageInterface::class);
     $domain_storage->method('load')->willReturn(NULL);
@@ -145,6 +180,11 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
     self::assertSame(1, $dashboard['courses'][0]['completed_lessons']);
     self::assertSame(100, $dashboard['courses'][0]['progress_percent']);
+    self::assertCount(1, $dashboard['certificates']);
+    $visible_certificates = array_values($dashboard['certificates']);
+    self::assertSame((string) $student->id(), (string) $visible_certificates[0]->get('uid')->value);
+    self::assertSame(str_repeat('D', 43), $visible_certificates[0]->get('verification_code')->value);
+    self::assertContains('aculta_lms_certificate:' . $own_certificate->id(), $dashboard['cache']->getCacheTags());
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
     self::assertContains('lms_lesson:' . $restricted_lesson->id(), $dashboard['cache']->getCacheTags());

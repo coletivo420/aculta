@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.62 — isolar certificados no painel do estudante — 2026-10-21
+
+- O Kernel cria certificados de duas contas e confirma que o painel retorna
+  apenas o da pessoa autenticada, preservando a tag de invalidação da entidade.
+  `LearningDashboardKernelTest`: 1 teste / 41 assertions PASS. Kernel combinado
+  LMS/Messenger: 23/712; Unit combinado: 78/406 PASS.
+
 ## 0.1.0-dev.61 — manter fail-closed em pagamento inválido — 2026-10-21
 
 - A proteção de matrícula Commerce nega a exclusão quando o armazenamento

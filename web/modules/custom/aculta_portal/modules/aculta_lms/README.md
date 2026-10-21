@@ -290,15 +290,17 @@ Kernel de Group/LMS comprova contagens para dois estudantes, exclusão de
 educador/admin e outsider e ausência de dados identificáveis (1 teste/38
 assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
-DEFERRED.
+DEFERRED. Em `dev.62`, o Kernel integra o painel estudantil a certificados de
+duas contas e confirma que somente o certificado da pessoa autenticada aparece,
+com a tag de cache dessa entidade. Focal: 1 teste/41 assertions.
 
 Suítes do `aculta_lms` revalidadas em 2026-10-21: Unit 51 testes/281
 assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
-Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 77 testes/400
-assertions; Kernel MariaDB 21 testes/651 assertions PASS. No total, houve 8
+Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 78 testes/406
+assertions; Kernel MariaDB 23 testes/712 assertions PASS. No total, houve 8
 depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 
 O Kernel `LearningDashboardKernelTest` reproduz o contrato de acesso do LMS:
