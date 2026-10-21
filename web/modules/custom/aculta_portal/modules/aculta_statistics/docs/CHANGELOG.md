@@ -36,6 +36,19 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.5.0-dev.3 (instantâneo de turma no LMS e regra de período em gráficos)
+
+### Código
+- `LmsClassStatusSubscriber` assina `aculta_lms.class_status_snapshot` e substitui o dia de `lms.students.by_status` (curso/turma|situação). Idempotente.
+- Métrica `lms.students.by_status` no catálogo e na configuração (retenção de 90 dias).
+
+### Decisões (2026-10-21)
+- Todo gráfico do projeto tem seleção de período (ADR-0005). Gráfico de instantâneo sem eixo de tempo fica fora da regra.
+- Série diária por aluno não foi criada (revisão LGPD pendente).
+
+### Testes
+- Unit: 75 casos (inclui o assinante do LMS).
+
 ## 0.5.0-dev.2 (estado de envio, backfill e decisão do painel de e-mail)
 
 ### Código

@@ -42,6 +42,7 @@ final class MetricCatalog {
       new MetricDefinition('commerce.refunds.total', 'Reembolsos, por moeda', 'centavos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.enrollments.created', 'Matrículas criadas em turma, por curso e turma', 'matrículas', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.courses.completed', 'Conclusões de curso, por curso e turma', 'conclusões', MetricDefinition::SENSITIVITY_INTERNAL, 90),
+      new MetricDefinition('lms.students.by_status', 'Alunos por situação, por curso e turma (instantâneo diário)', 'alunos', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('lms.certificates.issued', 'Certificados emitidos (total)', 'certificados', MetricDefinition::SENSITIVITY_INTERNAL, 90),
     ];
 

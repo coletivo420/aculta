@@ -74,6 +74,12 @@ services:
     tags:
       - { name: event_subscriber }
 
+  aculta_statistics.lms_class_status_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\LmsClassStatusSubscriber
+    arguments: ['@aculta_statistics.storage']
+    tags:
+      - { name: event_subscriber }
+
   aculta_statistics.wiki_read_controller:
     class: Drupal\aculta_statistics\Controller\WikiReadController
     arguments: ['@aculta_statistics.recorder', '@flood', '@request_stack', '@aculta_statistics.visitor_key']

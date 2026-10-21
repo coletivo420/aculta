@@ -128,6 +128,8 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 
 ## 0.8.0 — Dashboards
 
+- Regra (ADR-0005, 2026-10-21): todo gráfico com eixo de tempo tem seletor de período (7, 14 e 30 dias), no mesmo commit do gráfico.
+
 - Visão global e painéis por módulo, no design system do ACULTA420.
 - Filtros por período, domínio, módulo e fonte.
 - Séries temporais e comparações entre áreas, sem atribuir causalidade.

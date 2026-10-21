@@ -72,6 +72,12 @@ Pendente (fora da 0.5.0-dev.1): separar devolução `hard` e `soft` (`email.boun
 | `forum.topics.created` | `ForumActivityEvent` (`topic_created`) | tópicos | — | 90 dias | P |
 | `forum.comments.created` | `ForumActivityEvent` (`comment_created`) | comentários | — | 90 dias | P |
 
+## LMS (instantâneo diário, fonte: evento `aculta_lms.class_status_snapshot`)
+
+| id | fonte | unidade | dimensões | retenção | sens. |
+|---|---|---|---|---|---|
+| `lms.students.by_status` | cron do aculta_lms (contagem por turma) | alunos | curso/turma\|situação | 90 dias | I |
+
 ## Links e QR (fonte: `aculta_links`, `aculta_qrcode`)
 
 | id | fonte | unidade | dimensões | retenção | sens. |
