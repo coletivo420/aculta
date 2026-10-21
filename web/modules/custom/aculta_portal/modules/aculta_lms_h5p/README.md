@@ -18,7 +18,13 @@ foi preservada. Nenhuma alteração de produção foi feita.
 Na F15, o Kernel confirma que o estado de tentativa persiste quando a mesma
 conta retorna em outra sessão e não pode ser lido por outro estudante
 matriculado no curso. O H5P continua dono de seu progresso interno; resultados
-não são convertidos em notas oficiais do LMS. A decisão do vínculo direto de discussões Forum ao conteúdo H5P já foi implementada no adapter `aculta_forum_lms`: tópico e conteúdo usam referência própria, seleção é limitada ao curso/turma e as conversas renderizam sob o player após revalidar acesso. Unit do resolver e do transporte de Group ao autocomplete passaram. Runtime `cursos` tem o campo instalado e o seletor falha fechado sem Group; ainda faltam Kernel específico de integração/seletor e smoke autenticado/visual.
+não são convertidos em notas oficiais do LMS. A integração de discussões do
+`aculta_forum_lms` liga tópicos ao conteúdo H5P, limita seleção e acesso pelo
+curso/turma e renderiza conversas sob o player. Unit cobre o resolver; Kernel
+com entidades persistidas valida isolamento por conteúdo, curso e turma,
+permissão do tópico, contexto do Group no autocomplete e composição do player.
+No Runtime de teste, a revisão X11 do painel administrativo passou, mas não há
+conteúdo H5P nem tópico vinculado para smoke autenticado/visual da conversa.
 
 ## Painéis e vínculo com cursos
 

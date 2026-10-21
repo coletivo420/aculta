@@ -12,8 +12,12 @@
   disponível para inspeção visual; também não há tópicos H5P do Fórum para um
   smoke de conteúdo real.
 - A integração de discussões com `aculta_forum_lms` está coberta pelos testes
-  próprios do adapter; validação visual de tópico sob um player permanece
-  condicionada à existência de atividade e tópico de teste.
+  próprios do adapter e por `LmsH5PDiscussionResolverKernelTest`: 1 teste / 34
+  assertions PASS no MariaDB dedicado. O Kernel persiste H5P, curso, turma,
+  tópicos e memberships reais; verifica isolamento por conteúdo/curso/turma,
+  acesso ao tópico, parâmetro de Group no autocomplete e composição do player.
+  As 45 depreciações são de Core/contrib. Validação visual de tópico sob um
+  player permanece condicionada à existência de atividade e tópico de teste.
 - Corrige a rota do painel estudante para `/atividades-interativas`: o
   subscriber da Conta remove `/minha-conta` de caminhos antigos, e o endereço
   anterior terminava em 404. Kernel confirma o caminho canônico; no Runtime de
