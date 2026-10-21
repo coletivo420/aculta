@@ -99,6 +99,22 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function dimensions(string $metric, int $day): array {
+    $this->assertMetric($metric);
+    $values = $this->database->select(self::TABLE, 'stats')
+      ->fields('stats', ['dimension'])
+      ->distinct()
+      ->condition('metric', $metric)
+      ->condition('day', $day)
+      ->orderBy('dimension')
+      ->execute()
+      ->fetchCol();
+    return array_values(array_map('strval', $values));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function purgeMetricBefore(string $metric, int $day): int {
     $this->assertMetric($metric);
     return (int) $this->database->delete(self::TABLE)

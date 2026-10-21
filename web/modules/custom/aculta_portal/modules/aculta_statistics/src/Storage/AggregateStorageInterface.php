@@ -56,6 +56,14 @@ interface AggregateStorageInterface {
   public function purgeMetricBefore(string $metric, int $day): int;
 
   /**
+   * Dimensões com linha registrada para a métrica no dia informado.
+   *
+   * @return string[]
+   *   Dimensões distintas, ordenadas.
+   */
+  public function dimensions(string $metric, int $day): array;
+
+  /**
    * Número do dia UTC atual, usado como chave de agregação.
    */
   public function currentDay(): int;

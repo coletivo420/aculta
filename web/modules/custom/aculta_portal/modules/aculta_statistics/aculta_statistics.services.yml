@@ -18,6 +18,10 @@ services:
     class: Drupal\aculta_statistics\Visitor\VisitorKey
     factory: ['Drupal\aculta_statistics\Visitor\VisitorKeyFactory', 'create']
 
+  aculta_statistics.commerce_reconciler:
+    class: Drupal\aculta_statistics\Reconciliation\CommerceReconciler
+    arguments: ['@entity_type.manager', '@aculta_statistics.storage']
+
   aculta_statistics.commerce_order_paid_subscriber:
     class: Drupal\aculta_statistics\EventSubscriber\CommerceOrderPaidSubscriber
     arguments: ['@aculta_statistics.recorder', '@logger.factory']
@@ -34,3 +38,4 @@ services:
   Drupal\aculta_statistics\Retention\RetentionPolicy: '@aculta_statistics.retention'
   Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
+  Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'

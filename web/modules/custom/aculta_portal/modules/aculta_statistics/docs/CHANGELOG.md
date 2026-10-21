@@ -36,6 +36,28 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.2 (reconciliação diária com os pedidos do Commerce)
+
+### Código
+- `CommerceReconciler`: totais oficiais por dia UTC e moeda (pedidos `completed` cujo `completed` cai no dia),
+  comparados com os contadores do Statistics. Doações entram na mesma contagem.
+- `ReconciliationDiff`: comparação pura; qualquer diferença em pedidos ou centavos é reportada.
+- `ReconciliationCronHooks` (`#[Hook('cron')]`): reconcilia o dia UTC anterior e registra diferença como
+  `warning` no canal `aculta_statistics`. Não altera contadores nem dados do Commerce. Sem `commerce_order`
+  ativo, não faz nada.
+- `AggregateStorageInterface::dimensions()`: moedas com linha registrada num dia.
+
+### Limites conhecidos
+- Pedidos pagos antes da flag `paid_event_dispatched` do Commerce podem aparecer como diferença. Isso é esperado.
+- A comparação usa o dia do `completed` do pedido; o contador usa o dia do evento. Pedidos pagos num dia
+  e concluídos no dia seguinte aparecem como diferença nos dois dias.
+
+### Testes
+- Unit: 40 casos (inclui 4 da comparação).
+- Kernel: 15 casos (inclui `dimensions()`).
+- Runtime de teste: consultas de reconciliação executam sem erro (sem pedidos no ambiente, resultado vazio).
+  O cron completo não foi executado de propósito, para não disparar tarefas de outros módulos.
+
 ## 0.3.0-dev.1 (Commerce: pedidos pagos e receita bruta)
 
 ### Código

@@ -46,6 +46,19 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Dimensões do dia são devolvidas distintas e ordenadas, só da métrica pedida.
+   */
+  public function testDimensionsListsDistinctValuesForMetricAndDay(): void {
+    $storage = $this->storage();
+    $storage->record('commerce.orders.paid', 'BRL');
+    $storage->record('commerce.orders.paid', 'BRL');
+    $storage->record('commerce.orders.paid', 'USD');
+    $storage->record('wiki.entries.read', 'EUR');
+
+    $this->assertSame(['BRL', 'USD'], $storage->dimensions('commerce.orders.paid', $storage->currentDay()));
+  }
+
+  /**
    * Identificador fora do formato é recusado.
    */
   public function testRejectsInvalidMetric(): void {
