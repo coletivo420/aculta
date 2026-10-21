@@ -1,3 +1,8 @@
+## 0.6.0-dev.131 — componentes experimentais do QR Code dinâmico — 2026-10-20
+
+- Novos SDCs experimentais `content/qr-preview` (imagem SVG com texto alternativo e legenda opcional) e `content/qr-download` (lista de formatos para baixar). Status `experimental`; o Portal prepara URLs e textos, e o tema só renderiza.
+- Validação: SDC schema PASS, Foundation PASS (366 via Runtime de teste após `drush cr`), Shell contract PASS (11). Revisão visual responsiva e acessível dos componentes pendente antes de RC. O Runtime ainda não tem consumidor público destes componentes.
+
 ## 0.6.0-dev.129 — separa a marca institucional da identidade de micropágina — 2026-10-20
 
 - O SDC `social-links-page` aceita `show_brand`; a landing institucional e o Node legado mantêm a marca ACULTA, enquanto micropáginas mostram seu título como H1 visível sem logo institucional indevida.

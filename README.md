@@ -61,7 +61,7 @@ submódulos e tema.
 | [`aculta_portal_sitemap`](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md) | `0.1.1` | Fechar decisões de indexação e validação externa; concluir requisitos antes de RC, depois deploy Alpha e produção ([README](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md)) | Dev |
 | [`aculta_qrcode`](web/modules/custom/aculta_portal/modules/aculta_qrcode/README.md) | `0.4.0-dev.2` | Personalização visual registrada (cores validadas, legenda e moldura em PDF); logo por arquivo pendente de modelagem; validar no ambiente de testes antes de RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_qrcode/docs/ROADMAP.md)) | Dev |
 | [`aculta_user`](web/modules/custom/aculta_portal/modules/aculta_user/README.md) | `0.4.0-dev.49` | Completar variantes, testes/visual de privacidade e cache antes de RC; validar Runtime em Alpha ([variantes](web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md)) | Dev |
-| [`aculta420`](web/themes/custom/aculta420/README.md) | `0.6.0-dev.130` | Validar slot de identidade em micropáginas e landing em responsividade, claro/escuro, teclado e leitor de tela antes de RC ([roadmap](web/themes/custom/aculta420/docs/roadmap.md)) | Dev |
+| [`aculta420`](web/themes/custom/aculta420/README.md) | `0.6.0-dev.131` | Validar componentes QR (`qr-preview`, `qr-download`) e micropáginas ACULTA Links em responsividade, claro/escuro, teclado e leitor de tela antes de RC ([roadmap](web/themes/custom/aculta420/docs/roadmap.md)) | Dev |
 <!-- PROJECT-STATUS-INDEX:END -->
 
 Estados vigentes: **Dev** indica implementação/revisão em andamento; **RC** indica

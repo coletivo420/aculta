@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/sdc/-/raw/1.x/src/metadata.schema.json
+
+name: QR Download
+description: 'Lista de formatos para baixar um código QR (SVG, PNG, WebP e PDF).'
+status: experimental
+group: ACULTA QR
+
+props:
+  type: object
+  properties:
+    title:
+      title: Título do grupo
+      type: string
+    formats:
+      title: Formatos disponíveis
+      type: array
+      items:
+        type: object
+        properties:
+          label:
+            title: Rótulo
+            type: string
+          url:
+            title: URL do download
+            type: string
+        required:
+          - label
+          - url
+  required:
+    - title
+    - formats

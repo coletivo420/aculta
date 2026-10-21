@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/sdc/-/raw/1.x/src/metadata.schema.json
+
+name: QR Preview
+description: 'Prévia de um código QR dinâmico: imagem SVG com texto alternativo e legenda opcional.'
+status: experimental
+group: ACULTA QR
+
+props:
+  type: object
+  properties:
+    src:
+      title: URL da imagem SVG
+      type: string
+    alt:
+      title: Texto alternativo
+      type: string
+    caption:
+      title: Legenda
+      type: string
+  required:
+    - src
+    - alt

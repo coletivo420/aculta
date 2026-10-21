@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.0-dev.131 | Componentes experimentais do QR Code dinâmico (`qr-preview`, `qr-download`) | SDC schema e Foundation PASS; revisão visual responsiva/acessível pendente; estado Dev | Consumidor público ainda não ligado; o Portal prepara URL e texto |
 | 0.6.0-dev.130 | Identidade pública opcional do proprietário em micropáginas Links | SDC schema e revisão visual responsiva/acessível pendentes; estado Dev | Slot neutro renderizado pelo tema; privacidade e dados preparados pelo Portal |
 | 0.6.0-dev.129 | Micropáginas separam identidade autoral da marca ACULTA | Validações do SDC, Foundation e visual pendentes; estado Dev | Título público torna-se H1 visível e a landing preserva a marca institucional |
 | 0.6.0-dev.128 | Template da landing institucional restaurada conectado ao SDC de links | Runtime 200/404 e Firefox 390 × 844 claro conferidos; desktop, dark, teclado e leitor de tela pendentes | Apresenta conteúdo legado/fallback sem adicionar lógica de domínio ao tema |

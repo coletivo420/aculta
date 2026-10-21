@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Prévia de QR Code: imagem com texto alternativo e legenda opcional.
+ *
+ * @ingroup themeable
+ */
+#}
+<figure class="qr-preview">
+  <img class="qr-preview__image" src="{{ src }}" alt="{{ alt }}" width="240" height="240" loading="lazy">
+  {% if caption %}
+    <figcaption class="qr-preview__caption">{{ caption }}</figcaption>
+  {% endif %}
+</figure>
