@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.25 — validar constraint pelo File API do Core — 2026-10-21
+
+- Kernel passa arquivos raster válido e inválido pelo serviço `file.validator`
+  real do Drupal, cobrindo o plugin constraint integrado ao upload gerenciado.
+- `AttemptArchiveLifecycleTest`: 8 testes / 322 assertions PASS; 42
+  depreciações upstream.
+
 ## 0.1.0-dev.24 — verificar integração do validador de anexos — 2026-10-21
 
 - Testa que o hook OOP é descoberto pelo Kernel e que acrescenta o constraint

@@ -38,7 +38,7 @@ atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões
 mantêm a validação nativa do LMS File Upload. Imagens inválidas, com MIME
 incompatível ou acima de 10 MB são recusadas. Unit cobre imagem válida, arquivo
 inválido, limite de tamanho e delegação de arquivos não raster à validação
-nativa. Kernel `AttemptArchiveLifecycleTest` passou com 7 testes / 289
+nativa. Kernel `AttemptArchiveLifecycleTest` passou com 8 testes / 322
 assertions, inclusive download privado, revogação de membership e acesso de
 educador. O hook OOP que liga o constraint ao formulário também é descoberto no
 Kernel, e Unit confirma que ele preserva a allowlist da atividade. O smoke ponta
@@ -217,7 +217,7 @@ fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
 Suítes completas em 2026-10-21: Unit 36 testes/161 assertions; Kernel MariaDB
-17 testes/476 assertions. O Kernel registrou 90 depreciações de Core/contrib e
+18 testes/509 assertions. O Kernel registrou 90 depreciações de Core/contrib e
 a Unit, 5 avisos do PHPUnit.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit

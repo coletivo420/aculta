@@ -227,8 +227,10 @@ Runtime de teste e suportam tópicos Node/Comment no Group de curso/turma, mas
 não há tópico/Comment LMS real nesse Runtime, vínculo a atividade, nem discussão
 criada a partir da sala do estudante. Unit do adapter: 18/190 assertions; Kernel
 MariaDB: 2/127 assertions PASS com 43 depreciações upstream; a cobertura é de
-curso/turma e não inclui atividade. Upload de imagem em entrega, anexos de
-discussão, download após revogação e renderização HTTP/visual seguem pendentes.
+curso/turma e não inclui atividade. O constraint de imagem em entrega é
+exercitado pelo `file.validator` do Core com arquivo válido/inválido, e o
+Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtime,
+anexos de discussão e renderização HTTP/visual seguem pendentes.
 O escopo de Gallery, Magazine e Wiki também precisa ser concretizado em
 integrações específicas, sem CMS paralelo.
 

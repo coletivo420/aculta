@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
@@ -344,6 +345,42 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $teacher = $this->createUser();
     $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
     self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $teacher, TRUE)->isAllowed());
+  }
+
+  /** Tests ACULTA image constraints run through Drupal Core file validation. */
+  public function testSubmissionImageConstraintUsesCoreFileValidator(): void {
+    $validPath = $this->siteDirectory . '/private/answer-valid.png';
+    $invalidPath = $this->siteDirectory . '/private/answer-invalid.png';
+    file_put_contents($validPath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l1sAAAAASUVORK5CYII=', TRUE));
+    file_put_contents($invalidPath, 'not an image');
+    try {
+      $validator = $this->container->get('file.validator');
+      $valid = File::create([
+        'uid' => 1,
+        'filename' => 'answer-valid.png',
+        'uri' => $validPath,
+        'filemime' => 'image/png',
+        'filesize' => filesize($validPath),
+      ]);
+      $invalid = File::create([
+        'uid' => 1,
+        'filename' => 'answer-invalid.png',
+        'uri' => $invalidPath,
+        'filemime' => 'image/png',
+        'filesize' => filesize($invalidPath),
+      ]);
+
+      self::assertCount(0, $validator->validate($valid, ['AcultaLmsSubmissionImage' => []]));
+      self::assertCount(1, $validator->validate($invalid, ['AcultaLmsSubmissionImage' => []]));
+    }
+    finally {
+      if (is_file($validPath)) {
+        unlink($validPath);
+      }
+      if (is_file($invalidPath)) {
+        unlink($invalidPath);
+      }
+    }
   }
 
   /** @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer} */
