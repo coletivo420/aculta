@@ -28,7 +28,7 @@ suprimido durante a janela pendente em vez de provocar erro no contador, gaveta
 ou digest. Aviso de conclusão também resolve a referência ao curso diretamente
 do campo: se o curso foi removido, a notificação não chama o getter tipado nem
 gera erro 500. A suíte Unit LMS/Messenger passou com 84 testes / 445 assertions
-(8 depreciações PHPUnit); Kernel MariaDB: 23 / 719 assertions PASS (95
+(8 depreciações PHPUnit); Kernel MariaDB: 23 / 722 assertions PASS (95
 depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
 O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova

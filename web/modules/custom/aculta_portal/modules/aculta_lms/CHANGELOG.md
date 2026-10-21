@@ -1,5 +1,16 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.68 — invalidar negativa de acesso quando a turma é vinculada — 2026-10-21
+
+- O access checker de prazo agora inclui a lista de relações Group da turma na
+  cacheabilidade da negação sem curso pai. Também depende do curso quando a
+  atividade ainda não pertence ao seu conteúdo. O Kernel prova que criar o
+  vínculo invalida a negativa armazenada: `ClassActivityDeadlineTest` 1/49;
+  regressão Kernel LMS/Messenger 23/722 PASS (95 depreciações upstream). No
+  Runtime `cursos`, Drush confirmou ausência de updates; cache rebuild e
+  resolução do access checker passaram, com warning preexistente de cópia de
+  assets H5P. Nenhuma configuração foi importada.
+
 ## 0.1.0-dev.67 — exibir prazo no formulário de resposta — 2026-10-21
 
 - Corrige a exibição do prazo para estudantes: o hook injeta o serviço de

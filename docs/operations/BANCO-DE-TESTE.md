@@ -202,6 +202,12 @@ regressão Kernel `aculta_lms` + `aculta_lms_messenger` passou com 22 testes /
 testes / 334 assertions e 8 depreciações PHPUnit. PHP CLI 8.4.26; PHP 8.5
 continua não validado.
 
+Em 2026-10-21, `ClassActivityDeadlineTest` passou com 1 teste / 49 assertions:
+ao criar o vínculo curso→turma, o cache tag Group invalida a negativa de acesso
+previamente armazenada. A regressão Kernel LMS/Messenger passou com 23 testes /
+722 assertions; 95 depreciações vieram de Core/contrib. PHP CLI 8.4.26; PHP 8.5
+continua não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

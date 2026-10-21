@@ -328,6 +328,13 @@ incorreto de `DateTimeItemInterface`. Kernel LMS/Messenger: 23/719 assertions;
 cache rebuild e resolução do hook passaram, com warning preexistente de cópia
 dos assets H5P. Sem import de configuração. Unit: 84/445.
 
+Em `aculta_lms` dev.68, a autorização negativa do prazo é invalidada quando a
+turma ganha vínculo ao curso. O access checker inclui a cache tag de lista de
+relações Group da turma, e acompanha a entidade curso quando o vínculo da
+atividade às aulas ainda não existe. `ClassActivityDeadlineTest`: 1 teste / 49
+assertions; Kernel combinado LMS/Messenger: 23 testes / 722 assertions PASS,
+com 95 depreciações de Core/contrib.
+
 O formulário de prazo foi protegido por teste Unit para o contrato de fuso por conta: `#date_timezone` usa o fuso configurado do educador ou UTC como fallback; o campo DateTime do Core armazena os instantes em UTC. Drupal Core define UTC como fuso de armazenamento e `#date_timezone` como o fuso de exibição/interpretação ([DateTimeItemInterface](https://api.drupal.org/api/drupal/core%21modules%21datetime%21src%21Plugin%21Field%21FieldType%21DateTimeItemInterface.php/interface/DateTimeItemInterface/11.x), [elemento datetime](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Datetime%21Element%21Datetime.php/class/Datetime/11.x)). Unit: 2 testes / 8 assertions PASS.
 
 **F14 — escopo de conexão no LMS aguarda decisão de produto.** `aculta_user`

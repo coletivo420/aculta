@@ -29,7 +29,17 @@ final class ClassActivityDeadlineAccessCheck {
     $course = $this->courseForClass($group);
     if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
       || !$this->activityBelongsToCourse($activity, $course)) {
-      return AccessResult::forbidden()->addCacheableDependency($group)->addCacheableDependency($activity);
+      $result = AccessResult::forbidden()
+        ->addCacheableDependency($group)
+        ->addCacheableDependency($activity)
+        // A missing parent-course relationship can be added later. Invalidate
+        // this negative access result when that Group relationship is saved.
+        ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
+      if ($course instanceof CourseInterface) {
+        // Course lesson references can also make the activity eligible later.
+        $result->addCacheableDependency($course);
+      }
+      return $result;
     }
     $account = $this->currentUser;
     return AccessResult::allowedIf(

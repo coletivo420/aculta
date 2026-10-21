@@ -16,6 +16,12 @@ formulários e revisão visual permanecem pendentes.
 
 ## F16 — referências removidas em respostas
 
+O access checker do prazo invalida uma negação armazenada quando a turma passa
+a ter curso pai; o teste usa uma entrada real de cache e o cache tag de lista
+de relações do Group instalado. Também acompanha alterações do curso quando a
+atividade não está vinculada às aulas dele. `ClassActivityDeadlineTest`: 1/49;
+Kernel LMS/Messenger: 23/722 assertions PASS (95 depreciações upstream).
+
 Os hooks do formulário de prazo por atividade e do aviso de feedback do
 educador resolvem curso pelos campos de referência LMS e toleram LessonStatus
 ou CourseStatus removidos durante a limpeza assíncrona. Nesses casos, o

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Component\Serialization\Yaml;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -109,6 +110,17 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     $course = Group::create(['type' => 'lms_course', 'label' => 'Curso', 'uid' => $owner->id()]);
     $course->get('lessons')->appendItem(['target_id' => $lesson->id()]);
     $course->save();
+    $unlinkedClass = Group::create(['type' => 'lms_class', 'label' => 'Turma sem vínculo', 'uid' => $owner->id()]);
+    $unlinkedClass->save();
+    $accessCheck = $this->container->get('aculta_lms.class_activity_deadline_access');
+    $denied = $accessCheck->access($unlinkedClass, $activity);
+    self::assertTrue($denied->isForbidden());
+    $cache = $this->container->get('cache.default');
+    $cache->set('aculta_lms_test.unlinked_class_access', TRUE, Cache::PERMANENT, $denied->getCacheTags());
+    self::assertNotFalse($cache->get('aculta_lms_test.unlinked_class_access'));
+    $course->addRelationship($unlinkedClass, 'lms_classes');
+    self::assertFalse($cache->get('aculta_lms_test.unlinked_class_access'), 'Adding the parent course invalidates the cached negative access result.');
+
     $classA = Group::create(['type' => 'lms_class', 'label' => 'Turma A', 'uid' => $owner->id()]);
     $classA->save();
     $classB = Group::create(['type' => 'lms_class', 'label' => 'Turma B', 'uid' => $owner->id()]);
