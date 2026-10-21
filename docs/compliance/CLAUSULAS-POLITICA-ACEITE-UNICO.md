@@ -1,8 +1,7 @@
 # Cláusulas propostas para a Política de Privacidade (aceite único)
 
-Rascunho para publicação pelo responsável. **Não publicado.** Recomenda-se revisão jurídica antes da publicação,
-porque o aceite único é o meio de adesão a funções que, pela LGPD, exigem consentimento específico quando dependem de
-escolha do titular (art. 8º, §4º). Enquanto o texto não estiver publicado, as funções abaixo permanecem desligadas
+Rascunho para publicação pelo responsável. **Não publicado.** Decisão do responsável (2026-10-21): o consentimento
+embutido no aceite único atende o propósito jurídico do projeto; não há revisão jurídica adicional pendente sobre esse ponto. Enquanto o texto não estiver publicado, as funções abaixo permanecem desligadas
 (ver `docs/portal/ACEITE-UNICO.md`).
 
 ## 1. Acompanhamento do progresso nos cursos
@@ -40,6 +39,6 @@ escolha não entra no registro de aceites. Ver a exceção em `docs/portal/ACEIT
 ## Itens para o responsável decidir antes da publicação
 
 - Confirmar o prazo de 90 dias para cada função, ou ajustar nas configurações do `aculta_statistics`.
-- Confirmar a base jurídica (aceite único) para as funções 1 e 2, após a revisão jurídica.
+- Confirmar a redação das cláusulas antes da publicação.
 - Decidir se a função 2 é ligada: a constante `AcultaUserAgreementTrackingConsent::FUNCTION_PUBLISHED` só deve passar a
   verdadeira depois da publicação.

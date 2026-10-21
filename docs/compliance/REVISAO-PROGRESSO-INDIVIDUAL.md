@@ -1,6 +1,6 @@
 # Revisão LGPD: série diária do progresso individual do aluno
 
-Data: 21/10/2026. Status (atualizado 2026-10-21): **implementada sob o aceite único**, por decisão do responsável. A função vale depois de publicada na Política de Privacidade (rascunho das cláusulas em `CLAUSULAS-POLITICA-ACEITE-UNICO.md`). Não há consentimento separado. Recomenda-se revisão jurídica do consentimento embutido no aceite único (art. 8º, §4º). Esta revisão continua registrando os riscos acima. Aprovado apenas o agregado por turma
+Data: 21/10/2026. Status (atualizado 2026-10-21): **implementada sob o aceite único**, por decisão do responsável. A função vale depois de publicada na Política de Privacidade (rascunho das cláusulas em `CLAUSULAS-POLITICA-ACEITE-UNICO.md`). Não há consentimento separado. Consentimento embutido no aceite único: decisão do responsável (2026-10-21), atende o propósito jurídico do projeto; não há revisão jurídica adicional pendente sobre esse ponto. Esta revisão continua registrando os riscos acima. Aprovado apenas o agregado por turma
 e situação (ver conclusão). Decisão final: responsável (controlador).
 
 Referências: `docs/compliance/LGPD-INVENTARIO.md` (linha `aculta_lms`, pendências 1, 4 e 5), ADR-0005 do
