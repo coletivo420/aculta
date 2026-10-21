@@ -6,7 +6,7 @@ progresso, certificado, mensagem ou amizade paralelos.
 
 ## Integrações de conteúdo
 
-- Imagens de capa de turma usam `aculta_image` e sua `UploadPolicy`; imagens
+- Imagens de capa de curso usam `aculta_image` e sua `UploadPolicy`; imagens
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
   de File/uso compartilhado. Imagens anexadas a respostas do LMS passam pela
   `UploadPolicy` e por `ImageInspector` antes de serem aceitas; continuam em
@@ -19,14 +19,19 @@ progresso, certificado, mensagem ou amizade paralelos.
 - Discussões LMS usam o adapter opcional `aculta_forum_lms`, com Node e Comment
   compartilhado em Group de curso/turma, access contextual, membership
   revalidada e moderação por `grade students` do curso. `lms_classes.settings`
-  herda essa permissão Group Node para turmas. O adapter continua desabilitado
-  até a matriz integrada de Comments, roles e cache passar; nenhuma conversa é
-  publicada no Growroom420. O contrato e as condições estão em
+  herda essa permissão Group Node para turmas. O adapter e suas permissões estão
+  ativos no Runtime de teste; ainda não há Node ou Comment LMS real nesse
+  Runtime, então autorização por conteúdo HTTP e visual continuam pendentes.
+  A integração atual não associa uma discussão a uma atividade específica; esse
+  trabalho pertence à F15. O contrato e as condições estão em
   [LMS-INTEGRATION-CONTRACTS.md](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md).
 
 As integrações ainda exigem aceite ponta a ponta no Runtime após a configuração
 de cada fluxo; a dependência do PDF garante disponibilidade do plugin, mas não
-substitui a validação de permissão/cache nem importa conteúdo.
+substitui a validação de permissão/cache nem importa conteúdo. Testes atuais do
+adapter Forum LMS: Unit 18/190 assertions e Kernel 2/127 assertions PASS; o
+Kernel registra 43 depreciações upstream e cobre tópicos em curso/turma, não
+discussões específicas de atividade.
 
 O validador da resposta só aplica a política quando a extensão autorizada pela
 atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões

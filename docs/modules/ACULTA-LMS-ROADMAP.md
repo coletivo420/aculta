@@ -209,6 +209,26 @@ Runtime status: DEFERRED.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 
+**F14 — escopo de conexão no LMS aguarda decisão de produto.** `aculta_user`
+mantém a fonte de amizade e `aculta_messenger` consulta o estado atual para
+conversas; o LMS não tem ação própria na turma. A lista de colegas pode revelar
+matrículas e não será exibida antes de definir o escopo. A dívida DT-O15 de
+pedidos recebidos sem formulário ativo no Messenger também permanece separada.
+
+**F15 — integrações parciais; atividade/discussão e homologação ainda abertas.**
+`capa_curso` usa `aculta_image`; imagens do editor H5P passam por
+`ImageUploadIngestor`; anexos raster de respostas passam pela `UploadPolicy` e
+`ImageInspector`; materiais PDF usam `course_document`, Group e
+`aculta_pdf_viewer`. `aculta_forum_lms` e suas permissões estão ativos no
+Runtime de teste e suportam tópicos Node/Comment no Group de curso/turma, mas
+não há tópico/Comment LMS real nesse Runtime, vínculo a atividade, nem discussão
+criada a partir da sala do estudante. Unit do adapter: 18/190 assertions; Kernel
+MariaDB: 2/127 assertions PASS com 43 depreciações upstream; a cobertura é de
+curso/turma e não inclui atividade. Upload de imagem em entrega, anexos de
+discussão, download após revogação e renderização HTTP/visual seguem pendentes.
+O escopo de Gallery, Magazine e Wiki também precisa ser concretizado em
+integrações específicas, sem CMS paralelo.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando

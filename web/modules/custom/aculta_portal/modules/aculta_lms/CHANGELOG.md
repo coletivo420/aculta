@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## Registro documental F15 — estado das integrações — 2026-10-21
+
+- Corrige o estado do adapter `aculta_forum_lms`: permissões e módulo estão
+  ativos no Runtime de teste, mas ainda não há tópicos/Comments LMS para
+  homologação HTTP ou visual. Discussão vinculada a atividade continua ausente.
+- Inventário atual do adapter: Unit 18/190 assertions e Kernel MariaDB 2/127
+  assertions PASS; 43 depreciações upstream no Kernel. Esses testes cobrem
+  contexto Group curso/turma e não provam o vínculo com atividade.
+
 ## 0.1.0-dev.19 — autorizar aprendizagem pelo curso pai — 2026-10-21
 
 - Usa `take course` no curso pai junto da membership ativa na turma para
