@@ -236,7 +236,6 @@ final class ThemeHooks implements TrustedCallbackInterface {
         'page',
         'article',
         'activity',
-        'project',
         'editorial_highlight',
         'document',
       ], TRUE)) {

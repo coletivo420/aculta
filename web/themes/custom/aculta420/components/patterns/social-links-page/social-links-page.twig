@@ -21,10 +21,4 @@
   {% if has_links %}
     <div class="aculta-social-links__channels">{{ links }}</div>
   {% endif %}
-  {% if has_projects is defined ? has_projects : projects %}
-    <section class="aculta-social-links__projects" aria-labelledby="aculta-social-links-projects-title">
-      <h2 id="aculta-social-links-projects-title">{{ 'Projetos da ACULTA'|t }}</h2>
-      {{ projects }}
-    </section>
-  {% endif %}
 </section>

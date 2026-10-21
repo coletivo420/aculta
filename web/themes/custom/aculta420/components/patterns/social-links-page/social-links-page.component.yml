@@ -13,10 +13,6 @@ props:
       type: boolean
       title: Has social links
       default: false
-    has_projects:
-      type: boolean
-      title: Has ACULTA projects
-      default: false
     theme_preset:
       type: string
       title: Theme preset
@@ -39,6 +35,3 @@ slots:
   links:
     title: Social links
     description: 'Primary MAIN link and configured additional buttons supplied by ACULTA Portal.'
-  projects:
-    title: ACULTA projects
-    description: 'Project teaser cards rendered by the ACULTA Projects View with the VVJB carousel.'

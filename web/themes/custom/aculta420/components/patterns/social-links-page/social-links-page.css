@@ -74,12 +74,6 @@
 .aculta-social-links__channel:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }
 .aculta-social-links__channel .bi { font-size: 1.25rem; }
 .aculta-social-links__channels .aculta-social-links__button-list { display: grid; gap: 0.875rem; }
-.aculta-social-links__projects {
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--aculta-border-subtle);
-}
-.aculta-social-links__projects .view-content { width: 100%; }
 .aculta-social-links-footer {
   padding-block: 0.75rem;
   border-top: 1px solid var(--aculta-border-default);
@@ -99,10 +93,6 @@
 }
 .aculta-social-links-footer .aculta-social-links__channel span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .aculta-social-links-footer .aculta-social-links__channel .bi { font-size: 1.5rem; }
-.aculta-social-links__projects h2 {
-  margin: 0 0 1rem;
-  font-size: 1.25rem;
-}
 .aculta-social-links__item a {
   display: flex;
   min-height: 3.25rem;

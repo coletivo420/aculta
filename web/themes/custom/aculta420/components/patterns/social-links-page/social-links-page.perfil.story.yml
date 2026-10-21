@@ -10,5 +10,3 @@ slots:
     markup: '<p>Associação cultural antiproibicionista: cultura, direitos e participação.</p>'
   links:
     markup: '<a class="btn btn-primary" href="#site-exemplo">Conheça a associação</a><a class="btn btn-outline-primary" href="#canal-exemplo">Canal cultural (exemplo)</a>'
-  projects:
-    markup: <div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para projetos em destaque"></div>
