@@ -1,0 +1,4 @@
+administer aculta_statistics:
+  title: 'Administrar o ACULTA Statistics'
+  description: 'Alterar prazos de retenção dos agregados de métricas.'
+  restrict access: true

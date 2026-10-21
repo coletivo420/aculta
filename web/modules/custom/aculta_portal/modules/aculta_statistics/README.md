@@ -1,27 +1,38 @@
 # ACULTA Statistics
 
-Central de métricas da plataforma ACULTA: catálogo, agregação, consulta e painel.
-Não substitui os dados de origem. Pedidos ficam no Commerce, matrículas e progresso
-no LMS, mensagens no sistema de e-mail.
+Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
+configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
+ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mail.
 
-**Estado:** fase 0.1.0, fundação. Módulo não ativado (sem `*.info.yml`).
+**Estado:** módulo ativo no código (fase 0.2.0). Ativação no Runtime de teste pendente.
+
+## O que existe
+
+- Catálogo de métricas em código (`src/Catalog/MetricCatalog.php`): identificador,
+  rótulo, unidade, sensibilidade (P, I, R) e prazo padrão.
+- Gravação pelo ponto único `aculta_statistics.recorder`: recusa métricas fora do catálogo.
+- Armazenamento diário `aculta_statistics_daily` (`aculta_statistics.install`),
+  sem IP, usuário, referrer ou user-agent.
+- Retenção por métrica (`RetentionPolicy`): 30, 90, 180, 365 dias ou indefinido. Padrão 90.
+- Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
+- Painel de retenção em `/painel-administrativo/aculta/estatisticas/retencao`,
+  com confirmação antes de reduzir prazo (permissão `administer aculta_statistics`).
 
 ## Documentação
 
-- [Estado atual](docs/CURRENT-STATE.md): produtores de métrica e classificação, incluindo Fórum, Wiki e LMS.
-- [Arquitetura](docs/ARCHITECTURE.md)
-- [Catálogo de métricas](docs/METRIC-CATALOG.md)
-- [Integrações](docs/INTEGRATIONS.md)
+- [Estado atual](docs/CURRENT-STATE.md) e [arquitetura](docs/ARCHITECTURE.md)
+- [Catálogo de métricas](docs/METRIC-CATALOG.md) e [integrações](docs/INTEGRATIONS.md)
 - [Matriz de portabilidade](docs/PORTABILITY-MATRIX.md)
 - [Roteiro](docs/ROADMAP.md) e [changelog](docs/CHANGELOG.md)
 - [ADRs](docs/adr/)
 
-## Código
+## Código portado
 
-- `src/Storage/`: contador diário (adaptado de `drupal/statistics`).
-- `src/Hook/StatisticsCronHooks.php`: retenção no cron.
-- `src/Connector/SearchConsole/`: janela e variação do Search Console (adaptado de `drupal/analyze_search_console`).
-- `tests/src/Unit/`: testes unitários.
+- `src/Storage/DailyAggregateStorage.php`: adaptado de `drupal/statistics` (GPL-2.0-or-later, commit `fe20f9f`).
+- `src/Connector/SearchConsole/`: adaptado de `drupal/analyze_search_console` (GPL-2.0-or-later, commit `6f054ac`).
 
-Código de terceiros adaptado mantém a licença de origem (GPL-2.0-or-later) e
-o commit de referência no cabeçalho do arquivo.
+## Testes
+
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador). 21 casos.
+- Kernel: `tests/src/Kernel/` (storage e cron de retenção). 6 casos, executados
+  contra `aculta_simpletest`.

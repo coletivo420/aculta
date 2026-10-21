@@ -1,0 +1,17 @@
+aculta_statistics.settings:
+  type: config_object
+  label: 'Configurações do ACULTA Statistics'
+  mapping:
+    retention:
+      type: sequence
+      label: 'Prazo de retenção por métrica'
+      sequence:
+        type: mapping
+        label: 'Prazo de uma métrica'
+        mapping:
+          metric:
+            type: string
+            label: 'Identificador da métrica'
+          days:
+            type: integer
+            label: 'Dias de retenção (0 = indefinido)'

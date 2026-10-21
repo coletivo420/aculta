@@ -41,12 +41,19 @@ interface AggregateStorageInterface {
   public function total(string $metric, int $fromDay, int $toDay, ?string $dimension = NULL): int;
 
   /**
-   * Remove contadores anteriores ao dia informado.
+   * Conta as linhas de uma métrica anteriores ao dia informado.
+   *
+   * Usado pelo painel antes de confirmar a redução de prazo.
+   */
+  public function countBefore(string $metric, int $day): int;
+
+  /**
+   * Remove as linhas de uma métrica anteriores ao dia informado.
    *
    * @return int
    *   Quantidade de linhas removidas.
    */
-  public function purgeBefore(int $day): int;
+  public function purgeMetricBefore(string $metric, int $day): int;
 
   /**
    * Número do dia UTC atual, usado como chave de agregação.

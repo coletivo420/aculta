@@ -1,0 +1,7 @@
+aculta_statistics.retention:
+  path: '/painel-administrativo/aculta/estatisticas/retencao'
+  defaults:
+    _form: '\Drupal\aculta_statistics\Form\RetentionSettingsForm'
+    _title: 'Retenção de estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'

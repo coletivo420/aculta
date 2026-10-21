@@ -1,4 +1,21 @@
 services:
+  aculta_statistics.catalog:
+    class: Drupal\aculta_statistics\Catalog\MetricCatalog
+
   aculta_statistics.storage:
     class: Drupal\aculta_statistics\Storage\DailyAggregateStorage
     arguments: ['@database', '@datetime.time']
+
+  aculta_statistics.retention:
+    class: Drupal\aculta_statistics\Retention\RetentionPolicy
+    arguments: ['@config.factory', '@aculta_statistics.catalog']
+
+  aculta_statistics.recorder:
+    class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
+    arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
+
+  # Aliases por classe e interface, para injeção por tipo (autowiring).
+  Drupal\aculta_statistics\Catalog\MetricCatalog: '@aculta_statistics.catalog'
+  Drupal\aculta_statistics\Storage\AggregateStorageInterface: '@aculta_statistics.storage'
+  Drupal\aculta_statistics\Retention\RetentionPolicy: '@aculta_statistics.retention'
+  Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'

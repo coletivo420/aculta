@@ -15,8 +15,7 @@ use Drupal\Core\Database\Connection;
  * vez de `node_counter` por nid; tempo injetado por `TimeInterface` em vez de
  * `REQUEST_TIME` da requisição; sem `RequestStack`, IP ou metadados de visita.
  *
- * O schema da tabela ainda não é instalado nesta fase (0.1.0 não executa
- * migração); ver docs/ENTITY-MODEL.md.
+ * Schema em `aculta_statistics.install`. Retenção por métrica em `RetentionPolicy`.
  */
 final class DailyAggregateStorage implements AggregateStorageInterface {
 
@@ -87,8 +86,23 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function purgeBefore(int $day): int {
+  public function countBefore(string $metric, int $day): int {
+    $this->assertMetric($metric);
+    return (int) $this->database->select(self::TABLE, 'stats')
+      ->condition('metric', $metric)
+      ->condition('day', $day, '<')
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purgeMetricBefore(string $metric, int $day): int {
+    $this->assertMetric($metric);
     return (int) $this->database->delete(self::TABLE)
+      ->condition('metric', $metric)
       ->condition('day', $day, '<')
       ->execute();
   }

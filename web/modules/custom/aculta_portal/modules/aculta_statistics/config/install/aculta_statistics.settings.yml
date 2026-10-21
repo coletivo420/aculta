@@ -1,0 +1,15 @@
+retention:
+  - metric: links.link.clicks
+    days: 90
+  - metric: wiki.entries.read
+    days: 90
+  - metric: forum.comments.created
+    days: 90
+  - metric: email.messages.accepted
+    days: 90
+  - metric: email.messages.failed
+    days: 90
+  - metric: commerce.orders.paid
+    days: 90
+  - metric: lms.courses.completed
+    days: 90
