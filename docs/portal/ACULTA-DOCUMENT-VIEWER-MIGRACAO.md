@@ -341,4 +341,10 @@ Conclusão: a integração técnica está pronta para os consumidores, mas nenhu
 - ODS com limites de descompactação e teste de ZIP bomb; XLSX já tinha limites pelo validador OOXML.
 - Sonda de isolamento durante a leitura (Chromium X11): iframe com `sandbox="allow-scripts"`; página sem acesso ao documento do iframe; célula com `<img ...>` chega como texto; nenhum elemento `img` criado.
 - Runtime (XLSX de três abas no modo full de `node.document`): `status: ok`, abas, modo Tabela com cabeçalhos corretos. Display restaurado; fixtures removidos.
-- Não exercitado no Runtime: DOCX malicioso (HTML embutido, referência externa com CSP real) e arquivo corrompido com fallback no navegador. Permanecem como pendência de homologação.
+- Testes de DOCX malicioso no Runtime (Chromium X11, fixtures temporários removidos depois):
+  - DOCX com `altChunk` (HTML com script que tenta alterar `parent.document.title`): **recusado na validação** (`forbidden_part`); sem leitor, link do Core, título do pai intacto, nenhuma flag no pai, nenhum script na página. O log registra a recusa.
+  - DOCX com referência externa: renderizado no iframe `sandbox="allow-scripts"` com status `done`; título do pai intacto. Nenhuma requisição externa, porque o docx-preview não busca relações externas; esse caminho não exercita o CSP.
+  - DOCX corrompido: recusado, sem leitor, link mantido.
+- CSP real (política do `docx-frame.html` de produção, copiada byte a byte com uma sonda, no navegador X11): `fetch` externo bloqueado (`connect-src`, `TypeError`); imagem externa bloqueada (`img-src`); as duas violações foram reportadas; o rastreador não recebeu nenhuma requisição. Feito num servidor local com a mesma política, não no Runtime.
+- Ressalva: a sonda de CSP não roda no Runtime, porque o arquivo de produção não foi alterado. A política foi comparada com `diff` para garantir que é a mesma.
+- Ruído conhecido: o CSP do site registra mensagens `info` de estilo inline em todas as páginas; não é do leitor.
