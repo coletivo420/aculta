@@ -13,7 +13,10 @@ para centralizar estatísticas (ADR-0004). Não é auditoria externa.
 | Gate de status do índice (`validate-project-status-index.php`) | PASS |
 | Gate Drupal 11+ (`validate-aculta-portal-drupal11.php`) | PASS (1007 verificações) |
 | Gate de fundação do tema (`validate-aculta420-foundation.php`) | PASS (368 verificações) |
-| Painel de envios e painel de áreas no navegador (servidor de testes) | Verificado por captura: filtros, período, gráfico, tabela e comparação |
+| Painel de envios e painel de áreas no navegador (servidor de testes) | Verificado por captura: filtros, período, gráfico, tabela e comparação. Rótulo do último dia corrigido no gráfico (mailer 0.1.0-dev.60) |
+| Funcional do painel (`StatisticsDashboardFunctionalTest`) | 2 casos, 18 asserções: OK, executados num servidor PHP em `127.0.0.1` (simula o servidor de testes, não é o Runtime). Acesso anônimo negado, administrador com período e CSV, área inexistente 404 |
+| Guarda de rotas (`RoutingAccessGuardTest`) | OK: toda rota administrativa exige `administer aculta_statistics`; só o beacon da wiki é pública |
+| Domínio das rotas administrativas no Runtime (leitura) | `aculta_statistics.dashboard`, `.area`, `.dashboard_export` e `.retention` têm purpose `main`, pela regra de caminho `/painel-administrativo/**` |
 | Conciliação de e-mails no Runtime | 69 envios na janela, igual ao total do log |
 | Produtor do LMS (instantâneo) no Runtime | Roda sem erro; sem turmas no ambiente, sem linhas |
 
@@ -38,10 +41,10 @@ para centralizar estatísticas (ADR-0004). Não é auditoria externa.
 - **Cliente GA4 real (0.6.0):** o padrão é o cliente nulo, desligado. A dependência `google/apiclient` tem justificativa proposta (ADR-0006), mas não foi instalada: `composer.json` e `composer.lock` têm alterações não commitadas de outra frente. Espera a outra frente commitar.
 - **Search Console:** só os cálculos portados (janela e delta). Sem consulta à API.
 - **Painéis em tema Claro:** as telas de estatísticas e de envios usam o tema administrativo Claro. O CSS do ACULTA420 para elas (`statistics.css`) não se aplica a essas telas. Decisão do responsável (2026-10-21): ajustar só o conteúdo.
-- **Testes funcionais e multidomínio:** `StatisticsDashboardFunctionalTest` escrito (acesso anônimo bloqueado, administrador com período e CSV, área inexistente 404), mas **não executado**: exige um site de teste com `SIMPLETEST_BASE_URL`, e o procedimento proíbe usar o Runtime. Pulado sem essa variável. Na captura de navegador do servidor de testes, o acesso anônimo ao painel foi negado e o administrador viu a página. Testes multidomínio não feitos.
+- **Multidomínio:** não há teste de requisição em cada host (main, conta, loja...). A regra de domínio das rotas administrativas foi conferida no Runtime e pela guarda de rotas. Teste por host fica pendente.
 - **Auditoria de licenças:** a matriz de portabilidade (`PORTABILITY-MATRIX.md`) cobre as dependências atuais. Nenhuma dependência nova foi adicionada.
 - **Revisão visual de todos os painéis por área:** verificado só o de mídia, e o de envios.
-- **Teste de carga:** não feito.
+- **Teste de carga:** medição única, com dados sintéticos, no banco de teste (27 mil linhas: 90 dias, 300 dimensões por dia, e 180 linhas de domínio). Página de 30 dias por wiki: 0,38 s. CSV de 30 dias: 0,01 s. Página de 30 dias com filtro de domínio: 0,04 s. Gravação diária de 27 mil linhas: 32 s, por apagar e regravar linha a linha. Não é teste de carga contínua nem de concorrência.
 
 ## Conclusão
 
