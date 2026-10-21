@@ -24,7 +24,7 @@ envio ou configuração foi alterado. Para migrar cada item, seguir a ordem da �
 | Webform (`aculta_contact`) | envio do formulário | Dados do formulário | Ver `webform.webform.aculta_contact` | 4 (relacionado ao DT-P09) |
 | Commerce (`commerce`) | recibos e notificações de pedido | Dados de pedido | Ver configuração do Commerce | 3 (fluxo de pagamento, com cuidado) |
 | email_confirmer (contrib) | `notify_current` | Não | Não | 2 (com a F9 seguinte) |
-| Consentimento de rastreamento (`aculta_user_agreement`) | `aculta_user_agreement_email_tracking` | Verificado via `AcultaUserAgreementTrackingConsent` | Ledger append-only / HMAC | — |
+| Rastreamento de e-mail | Sem aceite próprio (aceite único, `docs/portal/ACEITE-UNICO.md`); desligado por falha fechada em `AcultaUserAgreementTrackingConsent` | Adapter `TrackingConsentChecker` retorna falso | — | — |
 | message_notify (contrib) | notificador de e-mail | Conteúdo de avisos | Não verificado | 4 (com aculta_messenger) |
 
 ## Pontos que bloqueiam a migração sem cuidado

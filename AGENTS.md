@@ -661,6 +661,14 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
 - Só a árvore de configuração e as ferramentas listadas são traduzidas (`AdministrativeRouteSubscriber`). Caminhos antigos
   respondem 404, sem redirecionamento.
 
+## Aceite único (regra permanente)
+
+- Existe **um único formulário de aceite** (`AcultaUserAgreementAcceptForm`), para Termos de Uso e Política de Privacidade.
+- **Não criar novos formulários de aceite**, checkbox de aceite fora do formulário único nem tipo de aceite novo no ledger (`aculta_user_agreement`). O ledger grava só `aculta_user_agreement_terms`.
+- Toda função do portal que trate dado pessoal ou dependa de consentimento precisa estar descrita na Política de Privacidade e nos Termos de Uso publicados. O aceite único cobre esse texto.
+- Função que exige escolha separada do titular não entra no portal sem decisão do responsável sobre a base legal.
+- Regra, pendências e exceções: `docs/portal/ACEITE-UNICO.md`. Gate: `php scripts/validate-single-acceptance.php`.
+
 ## Links de acesso único: 24 horas (regra permanente)
 
 - Todo link de acesso único do projeto (confirmação, troca de e-mail, recuperação de senha, acesso de cadastro) vale **24 horas**, em todos os módulos. Nenhum prazo maior, nenhum `isExpired()` com retorno fixo.

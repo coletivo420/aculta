@@ -67,4 +67,5 @@ Legenda de base legal (LGPD, art. 7º e 11): **C** consentimento (art. 7º, I); 
 3. Wiki: definir a base legal e a retenção quando a wiki for ativada.
 4. Retenção de dados de associado e de pagamento: confirmar os prazos fiscais e de vínculo.
 5. Processo de atendimento aos direitos do titular (art. 18) e de comunicação de incidentes (art. 48): a definir pelo responsável.
+7. Aceite único (2026-10-21): um só formulário, o de Termos e Política (`aculta_user_agreement_terms`). Todas as funções com dado pessoal precisam estar descritas na política publicada. Rastreamento de e-mail desligado até decisão. Ver `docs/portal/ACEITE-UNICO.md`.
 6. Série de progresso individual do aluno (LMS): **não aprovada**. Ver `REVISAO-PROGRESSO-INDIVIDUAL.md`. Só o agregado por turma e situação está aprovado. Decisão do responsável entre as opções A, B e C da revisão.

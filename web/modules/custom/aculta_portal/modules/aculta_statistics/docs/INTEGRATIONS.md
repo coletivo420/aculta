@@ -142,12 +142,9 @@ o painel de turma do LMS), com as mesmas permissões.
 
 ## Decisões do responsável (2026-10-20)
 
-- **Consentimento (GA4 e rastreamento):** usa o mecanismo existente, não um novo.
-  O aceite é gravado pelo ledger `aculta_user_agreement` de `aculta_user`, integrado por
-  `aculta_portal/src/Account/` (`AcultaUserAgreementTrackingConsent`, `AcultaUserAgreementPolicy`), com os
-  acordos `aculta_account_terms` (termos, obrigatório) e `aculta_rastreamento`
-  (opcional). O `aculta_user` não tem módulo de consentimento próprio.
-- **GA4 para contas:** consentimento opcional `aculta_user_agreement_email_tracking`.
+- **Consentimento (GA4 e rastreamento):** o único aceite é o de Termos e Política (`aculta_user_agreement_terms`),
+  gravado pelo ledger de `aculta_user`. Não há aceite opcional por função (ver `docs/portal/ACEITE-UNICO.md`).
+- **GA4 para contas:** sem aceite próprio. Depende de decisão do responsável e de a função constar da política.
 - **GA4 para anônimos:** banner de cookies com Google Consent Mode v2. Exige
   **autorização explícita** para alterar `web/themes/custom/aculta420/` (AGENTS).
   Até lá, nenhuma tag de visitante anônimo é carregada.
