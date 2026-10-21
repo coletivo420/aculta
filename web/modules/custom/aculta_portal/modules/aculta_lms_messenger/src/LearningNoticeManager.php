@@ -9,7 +9,7 @@ use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Datetime\DateTimeItemInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Queue\QueueFactory;

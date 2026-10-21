@@ -1,5 +1,11 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.12 — usar DateTimeItemInterface do módulo datetime — 2026-10-21
+
+- Corrige o namespace do formatador de prazo usado ao exibir aviso e lembrete;
+  no Drupal instalado, `DateTimeItemInterface` pertence ao módulo `datetime`.
+- Encontrado ao resolver o primeiro aviso real no smoke do Runtime.
+
 ## 0.1.0-dev.11 — validar take-course no curso pai — 2026-10-21
 
 - Valida membership ativa na turma e permissão `take course` herdada no curso
