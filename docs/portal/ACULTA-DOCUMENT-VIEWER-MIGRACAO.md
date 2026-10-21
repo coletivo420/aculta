@@ -191,7 +191,7 @@ Incorpora planilhas ao escopo, com o nome definitivo `aculta_document_viewer`.
 | 0.1.0-dev.3 | Identidade | Módulo instalado e compatível com PDF | **Bloqueada** (ver abaixo) |
 | 0.1.0-dev.4 | DOCX | docx-preview local | Vendoring concluído (`2b7f6a90`); renderização em navegador pendente |
 | 0.1.0-dev.5 | Integração DOCX | Media/File e visualização autorizada | Não iniciada |
-| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Não iniciada (ver verificação abaixo) |
+| 0.1.0-dev.6 | Tabulator | Tabulator + SheetJS locais | Vendoring concluído (`42042558`, `71545352`); leitor não iniciado |
 | 0.1.0-dev.7 | Planilhas | XLSX, XLS, ODS, CSV e múltiplas abas | Não iniciada |
 | 0.1.0-dev.8 | Leitor unificado | Toolbar e controles ACULTA420 | Não iniciada |
 | 0.1.0-dev.9 | Integração transversal | Wiki, Fórum, LMS, Revista | Não iniciada |
@@ -221,4 +221,4 @@ O PDF.js, suas configurações, o visualizador completo, as miniaturas PDFPrevie
 
 - **0.1.0-dev.3:** renomeação, após (a) o dono da frente de `aculta_pdf_viewer` commitar ou separar os arquivos alterados e (b) autorização para migração no Runtime.
 - **0.1.0-dev.4 (fechamento):** renderizar um DOCX público de teste no navegador, com `renderAltChunks: false`, e registrar o resultado.
-- **0.1.0-dev.6:** escolher a versão do SheetJS e verificar advisories antes de vendorizar.
+- **0.1.0-dev.6 (leitor):** integrar Tabulator Spreadsheet e SheetJS (ver manifestos em `web/libraries/tabulator` e `web/libraries/sheetjs`).
