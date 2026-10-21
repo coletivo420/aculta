@@ -61,6 +61,10 @@ final class StatisticsDashboardController extends ControllerBase {
     $today = $this->today();
     $domain = $this->selectedDomain($request, $metric, $today, $days);
     $series = MetricSeries::build($today, $days, fn (int $day): int => $this->dailyTotal($metric->id, $day, $domain));
+    $previous = 0;
+    for ($day = $today - 2 * $days + 1; $day <= $today - $days; $day++) {
+      $previous += $this->dailyTotal($metric->id, $day, $domain);
+    }
 
     $table = [];
     foreach ($series['labels'] as $index => $label) {
@@ -76,6 +80,13 @@ final class StatisticsDashboardController extends ControllerBase {
           '@unidade' => $metric->unit,
           '@days' => $days,
         ]) . '</strong></p>',
+      ],
+      'comparacao' => [
+        '#markup' => '<p>' . $this->t('Período anterior (mesmo tamanho): @anterior @unidade. Variação: @variacao. A variação mostra só a diferença entre períodos, não sua causa.', [
+          '@anterior' => $previous,
+          '@unidade' => $metric->unit,
+          '@variacao' => $this->variation($series['total'], $previous),
+        ]) . '</p>',
       ],
       'grafico' => [
         '#markup' => Markup::create(MailTrendChart::svg($series['labels'], [
@@ -228,6 +239,17 @@ final class StatisticsDashboardController extends ControllerBase {
         Html::escape((string) $this->t('Aplicar')),
       )),
     ];
+  }
+
+  /**
+   * Variação percentual entre o período atual e o anterior; "sem base" quando o anterior é zero.
+   */
+  private function variation(int $current, int $previous): string {
+    if ($previous === 0) {
+      return (string) $this->t('sem base de comparação');
+    }
+    $percent = (int) round(($current - $previous) / $previous * 100);
+    return sprintf('%+d%%', $percent);
   }
 
   /**

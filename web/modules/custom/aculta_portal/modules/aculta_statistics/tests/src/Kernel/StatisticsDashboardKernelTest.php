@@ -76,6 +76,23 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   }
 
   /**
+   * A comparação mostra o período anterior e a variação, sem afirmar causa.
+   */
+  public function testComparisonWithPreviousPeriod(): void {
+    $storage = $this->container->get('aculta_statistics.storage');
+    $today = $storage->currentDay();
+    $storage->record('wiki.entries.read', '10', 4);
+    $storage->replaceDay('wiki.entries.read', $today - 8, ['10' => 2]);
+
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', ['metrica' => 'wiki.entries.read', 'dias' => 7]);
+    $page = StatisticsDashboardController::create($this->container)->overview($request);
+    $html = (string) $this->container->get('renderer')->renderInIsolation($page);
+    $this->assertStringContainsString('Período anterior (mesmo tamanho): 2 leituras', $html);
+    $this->assertStringContainsString('Variação: +100%', $html);
+    $this->assertStringContainsString('não sua causa', $html);
+  }
+
+  /**
    * Métrica restrita (dado pessoal por aluno) não é oferecida no painel agregado.
    */
   public function testRestrictedMetricIsNotOffered(): void {

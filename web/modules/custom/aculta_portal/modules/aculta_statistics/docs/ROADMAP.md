@@ -139,7 +139,7 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Feito (0.8.0-dev.1): painel central (uma métrica por vez), período de 7, 14 e 30 dias, gráfico, tabela e exportação CSV. Métricas R fora do painel.
 - Pendente: painéis por módulo no design system do ACULTA420 (tela própria, sem contrato de cor novo).
 - Pendente: filtros por domínio e fonte.
-- Pendente: comparações entre áreas, sem atribuir causalidade.
+- Feito (0.9.0-dev.1): comparação com o período anterior de mesmo tamanho, com variação percentual e aviso de que não é causa. Comparação entre áreas (métricas lado a lado) fica para o próximo corte.
 - Feito (0.9.0-dev.1): filtro por domínio em pedidos.
 - Pendente: validação visual no navegador (Firefox), com dados reais no Runtime.
 

@@ -49,6 +49,7 @@ até o módulo ser ativado.
 - Pendente: cliente real, quando a propriedade GA4, as credenciais e a justificativa de dependência forem informadas.
 
 ### 0.8 — Painel
+- Comparação com o período anterior de mesmo tamanho (variação percentual, sem atribuir causa).
 - Filtro por domínio na contagem de pedidos (`commerce.orders.by_domain`). Receita por domínio não tem o filtro: somaria centavos de moedas diferentes.
 - Página e CSV respeitam o domínio escolhido. Cache do painel com `max-age` 0.
 
