@@ -186,9 +186,12 @@ resolvida pelo `DomainPurposeManager` no purpose `main`; o LMS não mantém gera
 QR própria.
 
 Config Sync declara o campo do curso; seu importe parcial e a instalação do
-storage da entidade ainda não foram aplicados no Runtime. RUNTIME STATUS:
-DEFERRED. Emissão/revogação em navegador, revisão visual do QR/PDF e aplicação
-segura de schema/config no Runtime continuam pendentes.
+storage da entidade ainda não foram aplicados no Runtime. Smoke anônimo de
+código inexistente passou com 404 após reconstruir o container, que ainda
+mantinha a definição anterior do serviço após a inclusão do lock. Não houve
+alteração de entidades ou configuração. RUNTIME STATUS: parcial; código válido,
+emissão/revogação em navegador, revisão visual do QR/PDF e aplicação segura de
+schema/config continuam pendentes.
 
 ## F12 — Painéis de aprendizagem (implementação inicial)
 

@@ -7,6 +7,13 @@
   a revogação de matrícula e o educador autorizado seguem cobertos.
 - `AttemptArchiveLifecycleTest`: 8 testes / 324 assertions PASS; 42
   depreciações upstream.
+- Runtime de teste: a verificação pública de código inexistente retornava 500
+  porque o container compilado ainda tinha a definição anterior do serviço,
+  sem o novo argumento `lock`. `drush cr --uri=https://aculta.toca.net.br`
+  reconstruiu o container; a mesma rota passou a responder 404. Não houve
+  alteração de entidades ou configuração. Verificação de código válido, PDF,
+  QR e revisão visual seguem DEFERRED. O rebuild registrou também um aviso
+  independente do H5P sobre o destino `assets://`; não foi alterado nesta frente.
 
 ## 0.1.0-dev.26 — proteger fuso horário de prazos — 2026-10-21
 

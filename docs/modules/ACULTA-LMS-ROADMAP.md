@@ -191,8 +191,11 @@ pública e PDF escapado foram adicionados. Kernel dedicado cobre elegibilidade,
 autorização, cadeia de emissão, revogação, retenção após exclusão de conta e
 headers do PDF. Unit e gates passam. O QR integra `aculta_qrcode` por URL
 absoluta do `DomainPurposeManager`; o SVG é servido sem persistir arquivo e o
-PNG é incorporado ao PDF. RUNTIME STATUS: DEFERRED. Smoke visual e validação em
-Runtime ainda não ocorreram.
+PNG é incorporado ao PDF. No Runtime de teste, a rota pública para código
+inexistente retornou 404 após `drush cr` corrigir um container compilado que
+mantinha os argumentos anteriores do serviço. Não houve alteração de dados nem
+configuração. RUNTIME STATUS: parcial; emissão com conclusão válida, QR/PDF,
+schema/config e revisão visual continuam DEFERRED.
 
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
