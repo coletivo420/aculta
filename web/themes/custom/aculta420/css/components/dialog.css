@@ -197,6 +197,22 @@
   inline-size: min(40rem, calc(100vw - 2rem)) !important;
 }
 
+/* Uploads do Forum seguem o diálogo Core, com rolagem em viewports baixos. */
+.ui-dialog:has(.aculta-forum-attachment-dialog) {
+  inline-size: min(40rem, calc(100vw - 2rem)) !important;
+  max-block-size: min(75vh, calc(100dvh - 2rem));
+}
+
+.ui-dialog:has(.aculta-forum-gallery-dialog) {
+  inline-size: min(48rem, calc(100vw - 2rem)) !important;
+  max-block-size: min(80vh, calc(100dvh - 2rem));
+}
+
+.ui-dialog:has(:is(.aculta-forum-attachment-dialog, .aculta-forum-gallery-dialog)) .ui-dialog-content {
+  max-block-size: calc(100dvh - 8rem);
+  overflow-y: auto;
+}
+
 .ui-dialog:has([data-portal-ui="search-popup"]) {
   position: fixed !important;
   inline-size: min(520px, calc(100vw - 2rem)) !important;

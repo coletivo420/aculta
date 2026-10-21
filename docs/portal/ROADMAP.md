@@ -20,7 +20,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 - Versão: **0.4.0-dev.249** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento, com leitura de documentos existentes separada dos requisitos de gravação). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
 - Submódulos: `aculta_deployer` 0.1.21 (`info.yml`, `VERSION` e `CHANGELOG.md`; falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.11, `aculta_gallery` 0.1.0-dev.13 (acesso público global; sem validação Runtime), `aculta_magazine` 0.1.0-dev.5.
-- Tema: `aculta420` 0.6.0-dev.35 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation PASS (341 checks) desde 2026-10-15: DT-T19 resolvida em 0.6.0-dev.22.
+- Tema: `aculta420` 0.6.0-dev.143 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.

@@ -106,6 +106,9 @@ final class PortalUiHooks {
     'search-preview-full' => ['aculta-search-preview__full', 'btn', 'btn-outline-primary', 'btn-sm'],
     'hint' => ['small', 'text-body-secondary'],
     'hint-muted' => ['text-body-secondary'],
+    // Uploads contextuais do Forum (aculta_forum): o módulo informa a função do modal.
+    'forum-attachment-dialog' => ['aculta-forum-attachment-dialog'],
+    'forum-gallery-dialog' => ['aculta-forum-gallery-dialog'],
     // Review de texto livre (aculta_lms): seções de retorno e cada frase verificada.
     'feedback-matched' => ['feedback-section', 'matched-phrases'],
     'feedback-unmatched' => ['feedback-section', 'unmatched-phrases'],

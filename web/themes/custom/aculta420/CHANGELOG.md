@@ -1,3 +1,11 @@
+## 0.6.0-dev.143 — define tamanho dos modais de anexo e galeria do Fórum — 2026-10-21
+
+Classificação: PATCH (apresentação responsiva com tokens semânticos e diálogo Core existente).
+
+- `PortalUiHooks` traduz `forum-attachment-dialog` e `forum-gallery-dialog` para classes do ACULTA420.
+- `dialog.css` define largura responsiva e rolagem para os modais de upload contextual; nenhum modal ou CSS paralelo é criado pelo Fórum.
+- `PortalUiHooksTest`: 6 testes/29 asserções PASS; Foundation: 368 checks PASS. Inspeção visual pré-RC pendente. Design Foundations continua com três falhas no contrato do envelope Mailer, fora desta mudança.
+
 ## 0.6.0-dev.142 — modo de cor do envelope segue o controle do site — 2026-10-22
 
 Classificação: PATCH (apresentação do envelope; sem componente novo, sem cor nova).
@@ -1924,5 +1932,4 @@ Classificação: PATCH de manutenção do tema e do gate.
 
 - O SDC `social-links-page` oferece slot opcional `owner_identity`; ACULTA Links envia apenas a identidade pública preparada por `aculta_user`.
 - SDC schema PASS (570 checks), Design Foundations PASS (2109); revisão visual responsiva e acessível ainda pendente, estado Dev.
-
 

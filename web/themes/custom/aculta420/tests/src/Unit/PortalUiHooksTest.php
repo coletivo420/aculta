@@ -46,6 +46,24 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Forum dialog tokens map to the theme classes used by dialog.css.
+   */
+  public function testMapsForumDialogTokens(): void {
+    $variables = [
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'forum-attachment-dialog forum-gallery-dialog',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['attributes'];
+    $this->assertTrue($attributes->hasClass('aculta-forum-attachment-dialog'));
+    $this->assertTrue($attributes->hasClass('aculta-forum-gallery-dialog'));
+    $this->assertFalse($attributes->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Token desconhecido não gera classe e ainda assim é removido.
    */
   public function testUnknownTokenGeneratesNoClassAndIsRemoved(): void {

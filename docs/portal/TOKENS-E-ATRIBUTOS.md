@@ -407,6 +407,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `feedback-matched` | `feedback-section`, `matched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `feedback-unmatched` | `feedback-section`, `unmatched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `gallery-dialog` | `aculta-gallery-dialog` | `web/modules/custom/aculta_portal/modules/aculta_gallery/src/Form/GalleryEmbedDialogForm.php` |
+| `forum-attachment-dialog` | `aculta-forum-attachment-dialog` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumAttachmentUploadDialogForm.php` |
+| `forum-gallery-dialog` | `aculta-forum-gallery-dialog` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php` |
 | `phrase-match` | `phrase-match` (com `correct-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `phrase-mismatch` | `phrase-mismatch` (com `wrong-answer`, classe de estado do LMS) | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
 | `social-links-icon-instagram` | `bi`, `bi-instagram` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
