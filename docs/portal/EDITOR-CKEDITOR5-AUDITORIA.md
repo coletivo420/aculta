@@ -167,5 +167,5 @@ Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` 
 
 - **Título de nível 1 (H1):** fica fora do perfil Editorial, que aceita títulos 2 a 4. Motivo: o título da página já é o H1 do tema. Decisão padrão mantida; revisável.
 - **Auto Image:** exceção formal registrada e plugin habilitado, inerte porque os formatos não têm `ckeditor5_image`. A regra do `aculta_image` impede adicionar o upload do Core, então o estado final é este.
-- **Envio de e-mail de teste do modelo:** não executado. Envia e-mail real a partir do servidor de testes e precisa de destinatário e confirmação do responsável.
+- **Envio de e-mail de teste do modelo:** executado em 2026-10-22 com autorização do responsável, para 4e20coletivo@gmail.com (endereço antigo que o AGENTS.md não recomenda; o responsável confirmou). O modelo `avisos_resumo` foi ativado só durante o teste e removido em seguida. **Dois envios saíram** (registro do mailer, ids 77 e 78), por uma tentativa anterior que submeteu sem exibir a mensagem. Não há como desfazer o segundo envio.
 - **Validação no navegador:** ciclo do editor (editar, inserir modelo e tabela, salvar, reabrir, renderizar), colagem Markdown, prévia e formulário de modelos do mailer.
