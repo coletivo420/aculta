@@ -26,7 +26,7 @@ Pendente nesta fase:
 
 Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e conectores.
 
-## 0.2.0 — Núcleo analítico (em andamento: 0.2.0-dev.1)
+## 0.2.0 — Núcleo analítico (em andamento: 0.2.0-dev.3)
 
 - Ativar o módulo: `*.info.yml`, linha no `PROJECT-STATUS-INDEX` do README raiz, schema. **Feito no código**; ativação no Runtime pendente.
 - Contratos de evento e de provedor.
@@ -102,5 +102,6 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 ## Decisões incorporadas (2026-10-20)
 
 - 0.6.0: GA4 com acordo `agreement` para contas; banner de cookies (Consent Mode v2) para anônimos, sujeito a autorização para o tema ACULTA420. Somente `google_tag`.
-- 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos; contador de leitura da Wiki próprio (`wiki.entries.read`), após inventário LGPD.
+- 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos.
+- Antecipado para a 0.2.0-dev.3 por decisão do responsável: contador de leitura da Wiki (`wiki.entries.read`), com beacon e retenção configurável.
 - 0.2.0: configuração de retenção por métrica (Configuration API) e permissão própria; 0.9.0: auditoria das alterações de prazo.

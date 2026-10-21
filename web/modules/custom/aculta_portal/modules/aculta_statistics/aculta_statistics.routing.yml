@@ -5,3 +5,15 @@ aculta_statistics.retention:
     _title: 'Retenção de estatísticas'
   requirements:
     _permission: 'administer aculta_statistics'
+
+aculta_statistics.wiki_read:
+  path: '/estatisticas/wiki/{node}/leitura'
+  defaults:
+    _controller: 'aculta_statistics.wiki_read_controller:record'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node

@@ -4,3 +4,10 @@ consent:
   dependencies:
     - core/drupal
     - core/once
+
+wiki-read:
+  js:
+    js/wiki-read.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

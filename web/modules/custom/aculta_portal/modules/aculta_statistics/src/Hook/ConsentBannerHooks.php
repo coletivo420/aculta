@@ -51,7 +51,8 @@ final class ConsentBannerHooks {
     $attachments['#attached']['drupalSettings']['acultaStatistics']['consent'] = [
       'cookieName' => self::COOKIE_NAME,
       'version' => self::COOKIE_VERSION,
-      'privacyUrl' => Url::fromUserInput('/politica-de-privacidade')->toString(),
+      // Caminho relativo: o host vem do ambiente, nunca fixo no código (AGENTS, endereços dependentes de ambiente).
+      'privacyUrl' => Url::fromUserInput('/politica-de-privacidade', ['absolute' => FALSE])->toString(),
     ];
   }
 

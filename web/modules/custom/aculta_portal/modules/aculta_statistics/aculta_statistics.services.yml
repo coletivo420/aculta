@@ -14,6 +14,10 @@ services:
     class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
     arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
 
+  aculta_statistics.wiki_read_controller:
+    class: Drupal\aculta_statistics\Controller\WikiReadController
+    arguments: ['@aculta_statistics.recorder']
+
   # Aliases por classe e interface, para injeção por tipo (autowiring).
   Drupal\aculta_statistics\Catalog\MetricCatalog: '@aculta_statistics.catalog'
   Drupal\aculta_statistics\Storage\AggregateStorageInterface: '@aculta_statistics.storage'

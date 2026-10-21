@@ -17,6 +17,8 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 - Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
 - Painel de retenção em `/painel-administrativo/aculta/estatisticas/retencao`,
   com confirmação antes de reduzir prazo (permissão `administer aculta_statistics`).
+- Contador de leitura da Wiki: beacon `POST /estatisticas/wiki/{node}/leitura` em verbetes publicados
+  (`wiki.entries.read`, dimensão = nid, retenção configurável).
 - Banner de consentimento para visitante anônimo (`consent_banner.enabled`, desligado por padrão):
   biblioteca `aculta_statistics/consent`; o marcado visual é do tema (`consent-banner`).
 
@@ -35,6 +37,6 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 
 ## Testes
 
-- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC). 21 casos.
-- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner). 11 casos, executados
+- Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki). 25 casos.
+- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 14 casos, executados
   contra `aculta_simpletest`.
