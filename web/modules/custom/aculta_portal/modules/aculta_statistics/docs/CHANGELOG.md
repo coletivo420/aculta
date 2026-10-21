@@ -36,6 +36,21 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.3 (reembolsos por incremento)
+
+### Código
+- `CommercePaymentRefundHooks` (`commerce_payment_update`): conta `commerce.refunds.total` em centavos
+  pela diferença entre o reembolso atual e o original (`$payment->original`). Salvar o mesmo reembolso
+  de novo não conta. Troca de moeda entre versões não gera incremento.
+- Receita líquida fica para a leitura (bruta menos reembolsos): não se grava valor negativo.
+- Dependência `commerce:commerce_payment`. Métrica e retenção (90 dias) no catálogo e na configuração.
+
+### Testes
+- Unit: 45 casos (inclui 5 do incremento de reembolso).
+- Kernel: 15 casos, aprovados após a nova dependência.
+- Runtime de teste: `cr` aplicado; o hook `commerce_payment_update` está registrado para o módulo.
+  Não há pagamento real no ambiente, então o incremento em dados reais não foi exercitado.
+
 ## 0.3.0-dev.2 (reconciliação diária com os pedidos do Commerce)
 
 ### Código

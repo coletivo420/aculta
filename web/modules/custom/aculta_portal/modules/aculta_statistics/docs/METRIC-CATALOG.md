@@ -14,6 +14,7 @@ Sensibilidade: **P** pública (agregado), **I** interna (equipe), **R** restrita
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
 | `commerce.orders.paid` | evento `commerce_order.order.paid` (uma vez por pedido) | pedidos | moeda | 90 dias | I |
+| `commerce.refunds.total` (implementada na 0.3.0-dev.3) | `commerce_payment_update`, incremento do reembolso | centavos da moeda | moeda | 90 dias | I |
 | `commerce.revenue.gross` (implementada na 0.3.0-dev.1) | mesmo evento, total do pedido | centavos da moeda | moeda | 90 dias | I |
 | `commerce.orders.created` | `commerce_order.commerce_order.insert` | pedidos criados (não são venda) | domínio | 90 dias | I |
 | `commerce.revenue.gross` | pagamentos capturados | moeda (centavos) | moeda, domínio | 90 dias | I |

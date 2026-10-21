@@ -30,7 +30,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 
 - Feito: pedidos pagos e receita bruta por moeda, a partir do evento `commerce_order.order.paid`.
 - Feito (0.3.0-dev.2): reconciliação diária com pedidos oficiais `completed`, por dia UTC e moeda; doações na mesma contagem; qualquer diferença vai ao log.
-- Pendente: reembolsos, carrinho abandonado, produtos e cupons, vendas por domínio.
+- Feito (0.3.0-dev.3): reembolsos por incremento em `commerce.refunds.total`; receita líquida na leitura.
+- Pendente: carrinho abandonado, produtos e cupons, vendas por domínio, painel de receita líquida.
 
 ## 0.2.0 — Núcleo analítico (concluído no código: 0.2.0-dev.4)
 
