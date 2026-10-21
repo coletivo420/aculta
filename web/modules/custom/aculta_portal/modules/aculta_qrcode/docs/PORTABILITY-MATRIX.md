@@ -16,7 +16,7 @@ Origens: `QRG` = `qr_generator` 2.x `6335abd`; `BC` = `barcodes` 2.1.x `a78b494`
 | Cores, logo e legenda | `QRG` `src/QRCodeExportService.php` (cores, `hexToColor`, correção de erro, logo) | PORTAR | Regras de cor e correção são úteis. A origem do logo muda: somente arquivo do `aculta_image`. | 0.4.0 |
 | Logo por URL remota (`logo_source=url`) | `QRG` `QRCodeExportService::getLogoPath()` | DESCARTAR | Permite leitura de URL arbitrária no servidor (SSRF). | — |
 | Exportação PNG e WebP | `endroid` `PngWriter`, `WebPWriter` | REUTILIZAR | Writers já presentes na dependência. | 0.4.0 |
-| Exportação PDF | `QRG` `PdfWriter` com `setasign/fpdf`; alternativa Entity Print/Dompdf (`entity_print` no contrib) | ADIAR | Depende da decisão 1 de `ARQUITETURA.md`. | 0.4.0 |
+| Exportação PDF | `QRG` `PdfWriter` com `setasign/fpdf` (não adotado); motor escolhido: Entity Print/Dompdf (`entity_print` no contrib) | REUTILIZAR | Decisão 1 de `ARQUITETURA.md`: um único motor de PDF, o do LMS. | 0.4.0 |
 | Recursos visuais de `qrcode` (estilos, animações) | `QR` `src/` | ADIAR | Animação compromete leitura. Estilos entram como presets validados. | 0.4.0 |
 | Presets de aparência com validação de contraste | — | REIMPLEMENTAR | Não há equivalente nos projetos; regra nova do ACULTA. | 0.2.0 |
 

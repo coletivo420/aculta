@@ -30,7 +30,8 @@ Auditoria de 2026-10-20 (0.1.0-dev.1), por busca direcionada (`rg` por `qrcode|q
 | Tokens | `token` (contrib instalado) | FUNCIONAL E REUTILIZÁVEL | Para QR de entidade. |
 | Views | Core `views` | FUNCIONAL E REUTILIZÁVEL | Listagem administrativa futura. |
 | Batch API | Core `Drupal\Core\Batch` | FUNCIONAL E REUTILIZÁVEL | Geração em lote futura. |
-| PDF | `entity_print` (contrib, no `composer.json` do trabalho em andamento) | NECESSITA INTEGRAÇÃO | Decisão 1 pendente; pode duplicar com `setasign/fpdf`. |
+| PDF | `entity_print` (contrib, no `composer.json` do trabalho em andamento) | NECESSITA INTEGRAÇÃO | Motor escolhido (decisão 1). Falta garantir que a saída passe pelo `aculta_image`. |
+| Visualizador de PDF | `aculta_pdf_viewer` (ACULTA) | FUNCIONAL E REUTILIZÁVEL (somente leitura) | Lê PDFs com PDF.js. Não gera PDF; não resolve exportação. Pode exibir um PDF gerado se ele for entregue como Media/File. O nome `aculta_pdf_reader` citado no `aculta_lms_h5p/CHANGELOG.md` é antigo. |
 | Cache de redirecionamento | Não há política específica para QR | AUSENTE | Será definida em `ARQUITETURA.md` (seção Cache). |
 
 ## Duplicidades e pontos de atenção

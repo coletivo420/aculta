@@ -78,11 +78,6 @@ Versões de PHP: `qr_generator`, `barcodes`, `endroid_qr_code`, `qrcode_fields` 
 - Versão mínima de PHP do `qr_generator` não declarada no manifesto.
 - Não houve execução dos módulos de origem; a análise é de código.
 
-## Decisões pendentes do responsável
+## Decisões do responsável
 
-Detalhes e recomendações estão em [ARQUITETURA.md](ARQUITETURA.md), seção “Decisões pendentes”.
-
-1. Motor de PDF: `setasign/fpdf` (proposta original) ou o Entity Print/Dompdf que o LMS usa em F11.
-2. Slug público do código dinâmico (a proposta usa `/q/{codigo}`, que não segue a regra de slugs em português).
-3. Forma de entrega dos arquivos exportados (PNG, WebP e PDF) em relação ao `aculta_image`.
-4. Analytics: quais métricas são aceitáveis e em que momento entram no inventário LGPD.
+Registradas em [ARQUITETURA.md](ARQUITETURA.md), seção “Decisões do responsável (2026-10-20)”: motor de PDF Entity Print/Dompdf; caminho `/qr/{codigo}`; exportações pelo `aculta_image` sem acúmulo; analytics como contagem diária por código. A geração em lote segue sem resposta.

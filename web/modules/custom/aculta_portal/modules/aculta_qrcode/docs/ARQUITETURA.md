@@ -73,13 +73,13 @@ Nomes em `aculta_qrcode.services.yml`, com injeção de dependência e sem `\Dru
 - `aculta_image`: arquivos exportados e logos passam por ele.
 - Consumidores dependem da API pública do serviço, não de classes internas.
 
-## Decisões pendentes do responsável
+## Decisões do responsável (2026-10-20)
 
-1. **Motor de PDF.** Opções: (a) `setasign/fpdf` pelo writer do Endroid, nova dependência; (b) Entity Print/Dompdf, já presente no `composer.json` do trabalho em andamento do LMS. Recomendação: uma única solução PDF no ACULTA, decidida antes de 0.4.0, e não duas.
-2. **Caminho público do código dinâmico.** A proposta usa `/q/{codigo}`, que não segue a regra de slugs em português (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`). Sugestão: `/qr/{codigo}` ou `/codigo-qr/{codigo}`. A escolha precisa constar no mapa de rotas (`docs/architecture/ROUTES-SITEMAP.md`) antes da 0.3.0.
-3. **Entrega de arquivos exportados.** PNG, WebP e PDF exportados são arquivos de imagem: por regra, passam pelo `aculta_image`. Alternativa: stream direto, sem gravação. Recomendação: stream, sem gravar.
-4. **Analytics.** Quais métricas são aceitáveis (sugestão: contagem diária por código, sem IP nem user agent) e prazo de retenção. Entra no inventário LGPD antes da 0.6.0.
-5. **Escopo de lote.** Se a geração em lote usa Batch API (recomendado para coleções) ou Queue API.
+1. **Motor de PDF: Entity Print/Dompdf.** Reutiliza o motor já usado pelo LMS (F11). Não se adiciona `setasign/fpdf`, e o ACULTA não terá dois motores de PDF. O PDF é gerado pelo Entity Print, sem dependência nova. Antes de 0.4.0, confirmar que a saída do Entity Print entra no `aculta_image` (ver decisão 3).
+2. **Caminho público do código dinâmico: `/qr/{codigo}`.** Curto, em português e sem termo técnico, em conformidade com `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`. Deve constar no mapa de rotas (`docs/architecture/ROUTES-SITEMAP.md`) antes da 0.3.0. O caminho `/q/{codigo}` da proposta original não é usado.
+3. **Entrega das exportações (PNG, WebP e PDF): pelo `aculta_image`, sem acúmulo.** Cada exportação é gerada sob demanda e registrada como arquivo temporário pelo serviço `aculta_image.generated_file` (`GeneratedImageFileManager`). Ela sai do sistema pela limpeza normal de temporários (`system.file:temporary_maximum_age`, 6 horas no Runtime atual). Assim o arquivo passa pela política do `aculta_image`, sem ser gravado de forma permanente. A renderização usa `aculta_image.render`, e a finalidade de cada exportação deve vir do `ImageCatalog`, não de um image style direto. Nenhum processamento usa `ImageFactory` nem exclusão por fora do `aculta_image`.
+4. **Analytics: contagem diária por código.** Guarda-se somente o número de acessos por código e por dia. Não se guardam IP, user agent completo nem identificador de pessoa. A métrica entra no inventário LGPD (`docs/compliance/LGPD-INVENTARIO.md`) antes da 0.6.0.
+5. **Geração em lote: não respondida.** A especificação indica Batch API para coleções e Queue API apenas para trabalhos longos. Essa é a recomendação adotada até confirmação do responsável.
 
 ## Validação prevista
 
