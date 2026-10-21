@@ -46,18 +46,23 @@ mesmo recorte; não somar taxas de turmas diferentes.
 
 ## E-mail (fonte: `aculta_mail_log`, Brevo, SMTP2GO)
 
+Implementado na 0.5.0-dev.1 por `EmailProvider` (leitura) e `EmailReconciler` (cron, janela de 7 dias).
+O dia é o da solicitação (`created`); o estado é o atual. Cada envio conta uma vez.
+
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
-| `email.messages.queued` | fila Drupal | mensagens | tipo | 90 dias | I |
-| `email.attempts.total` | transporte (`attempts`) | tentativas | transporte, tipo | 90 dias | I |
-| `email.messages.accepted` | estado `sent` no log | mensagens aceitas pelo sistema | transporte | 90 dias | I |
-| `email.messages.delivered` | webhook/evento do provedor, quando houver | mensagens | transporte | 90 dias | I |
-| `email.messages.failed` | estado `failed` | mensagens | transporte, código | 90 dias | I |
-| `email.bounces.hard` / `email.bounces.soft` | webhook ou IMAP | mensagens | transporte | 90 dias | I |
-| `email.quota.reached` | `TransportQuota` | eventos | transporte | 90 dias | I |
+| `email.messages.queued` | `created` do registro | mensagens | tipo | 90 dias | I |
+| `email.messages.accepted` | campo `sent` preenchido | mensagens aceitas pelo sistema | transporte | 90 dias | I |
+| `email.messages.delivered` | estado `delivered` (confirmado pelo webhook do Brevo) | mensagens | transporte | 90 dias | I |
+| `email.messages.bounced` | estado `bounced` | mensagens | transporte | 90 dias | I |
+| `email.messages.failed` | estado `failed` | mensagens | transporte\|código | 90 dias | I |
 
 Distinção obrigatória: **aceita** (o sistema de e-mail recebeu) não é **entregue**.
 "Entregue" só aparece quando houver confirmação do provedor.
+
+Pendente (fora da 0.5.0-dev.1): separar devolução `hard` e `soft` (`email.bounces.hard` /
+`email.bounces.soft`), que depende do código de devolução gravado pelo webhook e pelo monitor IMAP;
+`email.quota.reached`; conector SMTP2GO.
 
 ## Links e QR (fonte: `aculta_links`, `aculta_qrcode`)
 

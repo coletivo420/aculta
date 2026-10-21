@@ -4,7 +4,7 @@ Central de métricas da plataforma ACULTA: catálogo, agregados diários, reten�
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
 ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mail.
 
-**Estado:** módulo ativo no código (fase 0.2.0). Ativação no Runtime de teste pendente.
+**Estado:** módulo ativo no código. Ativação no Runtime de teste pendente.
 
 ## O que existe
 
@@ -15,6 +15,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   sem IP, usuário, referrer ou user-agent.
 - Retenção por métrica (`RetentionPolicy`): 30, 90, 180, 365 dias ou indefinido. Padrão 90.
 - Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
+- Funil de e-mails por dia de solicitação, a partir do `aculta_mail_log` (aceito, entregue, devolvido, falho), recalculado no cron (`EmailReconciler`).
 - Pedidos pagos e receita bruta por moeda, a partir de `commerce_order.order.paid` (fase 0.3.0, em andamento).
 - Painel de retenção em `/painel-administrativo/aculta/estatisticas/retencao`,
   com confirmação antes de reduzir prazo (permissão `administer aculta_statistics`).

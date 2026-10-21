@@ -75,6 +75,10 @@ o painel de turma do LMS), com as mesmas permissões.
   `bounces` e `rejects`, sem status por mensagem). **Não há contagem de entregues.**
   Logo, "entregues" vem só do webhook do Brevo; o SMTP2GO entra como enviados e
   devoluções agregadas.
+- **Funil (0.5.0-dev.1):** `EmailProvider` lê o `aculta_mail_log` por dia de solicitação (`created`).
+  `EmailReconciler` recalcula os últimos 7 dias no cron e substitui o valor do dia, então um webhook
+  que chega depois corrige o contador sem duplicar. Dias mais antigos que a janela ficam como foram
+  calculados.
 - **Idempotência:** conciliar por `correlation_id` (`X-Aculta-Mail-ID`) para não
   contar o mesmo evento duas vezes entre webhook, IMAP e API.
 - **Não armazenar:** corpo, assunto, destinatário em claro, token ou credencial.

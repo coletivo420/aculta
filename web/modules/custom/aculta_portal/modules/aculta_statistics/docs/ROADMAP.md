@@ -68,12 +68,33 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 - Número mínimo por célula para evitar identificação em turma pequena.
 - Só depois do commit de `AnswerSubmittedEvent` (outra frente).
 
-## 0.5.0 — E-mail
+## 0.5.0 — E-mail (em andamento: 0.5.0-dev.1)
 
-- `EmailProvider` lendo `aculta_mail_log`.
-- Conciliação Brevo, IMAP e SMTP2GO por `correlation_id`.
-- Métricas de entregabilidade com distinção aceito/entregue.
-- Conector SMTP2GO somente após confirmar o endpoint.
+- Feito (0.5.0-dev.1): `EmailProvider` lê o `aculta_mail_log` por dia de solicitação; `EmailReconciler`
+  recalcula os últimos 7 dias no cron e substitui o valor do dia (idempotente). Métricas `email.messages.*`:
+  queued, accepted, delivered, bounced e failed. Aceito e entregue ficam separados.
+- Feito: conciliação entre Brevo, IMAP e SMTP2GO pelo `correlation_id` já existe no registro único do
+  `aculta_mailer`; o Statistics lê esse registro, então cada envio conta uma vez.
+- Pendente: devolução hard e soft (`email.bounces.*`), `email.quota.reached`.
+- Pendente: conector SMTP2GO. Não há contagem de entregues na API; aguarda decisão do responsável
+  sobre o uso (ver INTEGRATIONS).
+- Pendente: validação no Runtime de teste com envios reais.
+- Não iniciado: painel e resumo semanal com séries de e-mail (0.8.0).
+
+## Centralização (decisão de 2026-10-21, ADR-0004)
+
+`aculta_statistics` é a única fonte e central de estatísticas agregadas. Ordem:
+
+1. **Migração de links (pré-requisito da remoção):** copiar `aculta_links_stat_daily` para
+   `links.link.clicks` (dimensão = destino), conferir totais por dia, manter o registro de origem
+   do `aculta_links`. Só depois, com autorização e backup verificado: remover a tabela, a fila e o
+   painel próprios.
+2. **Fórum:** séries temporais em `forum.*`; a contagem atual passa a ler o `aculta_statistics`.
+3. **E-mail (0.5.0):** resumo semanal e painéis leem `email.*`; o `MailSummary` deixa de ser agregado próprio.
+4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora.
+5. **Gate:** `aculta_statistics` é o único gravador de agregados estatísticos (validação a criar).
+
+Sem remover tabela, dado ou painel antes do passo de migração e da autorização do responsável.
 
 ## 0.6.0 — Google Analytics e Search Console
 

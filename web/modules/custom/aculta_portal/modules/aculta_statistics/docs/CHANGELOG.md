@@ -36,6 +36,45 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.5.0-dev.1 (e-mail: funil por dia de solicitação, conciliado no cron)
+
+### Código
+- `Email\EmailProvider` (interface `EmailProviderInterface`): lê o `aculta_mail_log` por dia UTC de
+  solicitação (`created`). Só lê tipo, transporte, código, estado e se o campo `sent` foi preenchido;
+  destinatário, correlation ID, assunto e corpo não são lidos.
+- `Email\EmailFunnel`: classifica as linhas. Aceito (`sent`) e entregue (estado `delivered`) são
+  métricas separadas. Dimensões sem `@`, até 128 caracteres, nunca vazias.
+- `Reconciliation\EmailReconciler` e `Hook\EmailReconciliationCronHooks`: no cron, recalcula os últimos
+  7 dias e substitui o valor de cada métrica do dia. Idempotente: rodar de novo ou depois de um webhook
+  de entrega não conta em dobro.
+- `AggregateStorageInterface::replaceDay()`: substitui os totais de um dia na mesma transação. Usado
+  só por conciliações; `record()` continua somando.
+- Catálogo: `email.messages.queued`, `email.messages.delivered` e `email.messages.bounced` incluídas;
+  `accepted` e `failed` passam a ser alimentadas. Retenção de 90 dias na configuração instalada.
+
+### Decisões
+- Dia de cada métrica é o da solicitação (`created`), com estado atual. Um envio entregue depois muda o
+  contador do próprio dia, enquanto ele estiver na janela de 7 dias. Depois disso o dia fica como foi
+  calculado. Alternativa descartada: contar pelo dia do evento, que exigiria gravar cada transição.
+- O conector SMTP2GO não entrou: a API não tem contagem de entregues (ver INTEGRATIONS), e o uso dele
+  depende de decisão do responsável.
+- Conciliação entre Brevo, IMAP e SMTP2GO não tem código próprio: o `aculta_mailer` já grava tudo no
+  registro único, pelo `correlation_id`. O Statistics lê esse registro.
+- Versão do manifesto passa a `0.5.0-dev.1` (nova fase do roteiro).
+
+### Testes
+- Unit: 69 casos (inclui funil e reconciliador com dias vazios e substituição).
+- Kernel: 20 casos, no banco `aculta_simpletest`. Inclui `replaceDay` e conciliação com registros reais
+  do `aculta_mail_log` (dia de fora não entra; reconciliar duas vezes não soma; entrega tardia move
+  de aceito para entregue sem duplicar).
+
+### Não feito
+- Devolução `hard`/`soft` e `email.quota.reached`.
+- Conector SMTP2GO.
+- Validação no Runtime de teste com envios reais (não executada nesta entrega).
+- Configuração instalada não reimportada: métricas novas usam o prazo padrão do catálogo (90 dias)
+  até a reimportação (`RetentionPolicy::daysFor()`). Nenhuma alteração de schema, então sem `updb`.
+
 ## 0.4.0-dev.3 (conclusões por turma, resumo de estatísticas no aculta_mailer)
 
 ### Código
