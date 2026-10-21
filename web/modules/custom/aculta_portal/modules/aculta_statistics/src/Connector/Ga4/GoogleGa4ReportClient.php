@@ -114,8 +114,21 @@ final class GoogleGa4ReportClient implements Ga4ReportClient {
     $range->setStartDate($request['dateRanges'][0]['startDate']);
     $range->setEndDate($request['dateRanges'][0]['endDate']);
     $body->setDateRanges([$range]);
-    $body->setDimensions(array_map(static fn (string $name): \Google\Service\AnalyticsData\Dimension => (new \Google\Service\AnalyticsData\Dimension())->setName($name), $request['dimensions']));
-    $body->setMetrics(array_map(static fn (string $name): \Google\Service\AnalyticsData\Metric => (new \Google\Service\AnalyticsData\Metric())->setName($name), $request['metrics']));
+    // Os setters da biblioteca não devolvem o objeto: cada dimensão e métrica é criada e nomeada em separado.
+    $dimensions = [];
+    foreach ($request['dimensions'] as $name) {
+      $dimension = new \Google\Service\AnalyticsData\Dimension();
+      $dimension->setName($name);
+      $dimensions[] = $dimension;
+    }
+    $metrics = [];
+    foreach ($request['metrics'] as $name) {
+      $metric = new \Google\Service\AnalyticsData\Metric();
+      $metric->setName($name);
+      $metrics[] = $metric;
+    }
+    $body->setDimensions($dimensions);
+    $body->setMetrics($metrics);
 
     $response = $service->properties->runReport('properties/' . $propertyId, $body);
     $rows = [];
