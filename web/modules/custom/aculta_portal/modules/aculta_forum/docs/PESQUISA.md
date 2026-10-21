@@ -110,6 +110,39 @@ que passarem revisão de segurança e performance. Referências primárias:
 [SheetJS Community Edition](https://github.com/SheetJS/sheetjs),
 [Microsoft Office Online Server](https://learn.microsoft.com/en-us/officeonlineserver/office-online-server-overview).
 
+### Google Docs/Drive como visualizador Office
+
+As APIs Google Docs/Drive têm quotas de chamadas sem cobrança adicional, mas
+não oferecem um endpoint que renderize um arquivo Office arbitrário diretamente
+no cartão do Fórum. A API Docs edita documentos Google; para pré-visualizar um
+Office seria necessário enviá-lo ao Drive e convertê-lo para Docs, Sheets ou
+Slides. As conversões variam por formato, e a importação deve ser verificada
+pela lista `about.importFormats` da conta que fará a conversão. Referências
+oficiais: [limites e quotas da Docs API](https://developers.google.com/docs/api/limits),
+[upload e conversão no Drive API](https://developers.google.com/workspace/drive/api/guides/manage-uploads)
+e [formatos de importação](https://developers.google.com/workspace/drive/api/reference/rest/v3/about).
+
+Isso exigiria OAuth e escopos Drive. `drive.file` limita o acesso a arquivos
+abertos/criados pelo app e não converte a integração em visualizador público;
+escopos mais amplos podem ser sensíveis ou restritos e exigem verificação Google.
+Consulte [seleção de escopos Drive](https://developers.google.com/workspace/drive/api/guides/api-specific-auth),
+[catálogo de escopos OAuth](https://developers.google.com/identity/protocols/oauth2/scopes)
+e [verificação de escopos](https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification).
+
+Quando o servidor encaminha anexos de participantes a um Drive da associação,
+conteúdo e metadados passam a ser processados e armazenados por terceiro. Além
+de quotas de API, há armazenamento, credenciais, controle de acesso, retenção,
+exclusão e obrigações de transparência/consentimento. A política de dados das
+APIs Google exige divulgação e proteção dos dados obtidos; [Google API User
+Data Policy](https://developers.google.com/terms/api-services-user-data-policy)
+e [Google APIs Terms](https://developers.google.com/terms) devem ser revisados.
+“Sem custo adicional de API” não significa serviço de conversão gratuito,
+privado ou sem transferência de dados. A fase de anexos do Fórum não habilita
+essa integração sem aprovação explícita do fluxo de dados, da base LGPD, do
+escopo OAuth e da política de retenção. Por ora, manter prévia local somente
+para formatos cobertos por renderer seguro e usar cartão com metadados/download
+nos demais.
+
 Referências upstream: [API do plugin CKEditor 5](https://www.drupal.org/docs/drupal-apis/ckeditor-5-api/overview),
 [Ajax Dialogs](https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes),
 [Core Media Embed 11.x e view modes](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21Plugin%21Filter%21MediaEmbed.php/class/MediaEmbed/11.x),

@@ -23,6 +23,10 @@
 - Pesquisa Office confirma que não há renderer local instalado; previews locais
   seguem por formato, com segurança e fidelidade avaliadas, e cartão/download
   permanece como fallback. Não usar viewer externo para anexos privados.
+- Google Docs/Drive tem quotas de API sem cobrança adicional, mas não oferece
+  renderer pronto para anexos do Fórum. A conversão transfere o documento para
+  Drive e exige OAuth, política de dados, retenção e revisão LGPD; integração
+  permanece fora do escopo sem aprovação explícita do fluxo de dados.
 
 ## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
 
