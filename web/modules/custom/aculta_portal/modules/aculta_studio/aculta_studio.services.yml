@@ -1,0 +1,10 @@
+services:
+  aculta_studio.tab_manager:
+    class: Drupal\aculta_studio\StudioTabManager
+    parent: default_plugin_manager
+  aculta_studio.presenter:
+    class: Drupal\aculta_studio\StudioPresenter
+    arguments: ['@aculta_studio.tab_manager']
+  aculta_studio.controller:
+    class: Drupal\aculta_studio\Controller\StudioController
+    arguments: ['@aculta_studio.presenter', '@current_user', '@string_translation']

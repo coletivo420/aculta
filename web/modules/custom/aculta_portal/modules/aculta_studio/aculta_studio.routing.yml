@@ -1,0 +1,9 @@
+aculta_studio.home:
+  path: /studio
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: Estúdio
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
