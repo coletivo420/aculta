@@ -10,7 +10,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 
 /**
  * Revista tab: creating editorial publications. The owner is aculta_magazine.
@@ -33,12 +32,20 @@ final class RevistaTab extends StudioTabBase {
   }
 
   /** {@inheritdoc} */
-  public function actions(AccountInterface $account): array {
+  public function sections(AccountInterface $account): array {
     return [
-      [
-        'title' => $this->t('Nova publicação'),
-        'url' => Url::fromRoute('node.add', ['node_type' => 'revista']),
-        'access' => $this->access($account)->isAllowed(),
+      'criar' => [
+        'label' => $this->t('Criar'),
+        'weight' => 0,
+        'tabs' => [
+          'novapublicacao' => [
+            'label' => $this->t('Nova publicação'),
+            'weight' => 0,
+            'actions' => [
+              $this->routeAction($this->t('Nova publicação'), 'node.add', ['node_type' => 'revista'], $account, 'magazine'),
+            ],
+          ],
+        ],
       ],
     ];
   }

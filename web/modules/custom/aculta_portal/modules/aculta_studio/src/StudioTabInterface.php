@@ -27,10 +27,16 @@ interface StudioTabInterface extends PluginInspectionInterface {
   public function access(AccountInterface $account): AccessResultInterface;
 
   /**
-   * Actions of the tab. Each item has a title, an URL and an access flag.
+   * The sections of the area: one entry per item of the left submenu. Each section has its own tabs, and
+   * each tab lists its actions. Shape:
+   *   ['<section id>' => ['label' => ..., 'weight' => 0, 'tabs' => [
+   *       '<tab id>' => ['label' => ..., 'weight' => 0, 'actions' => [
+   *           ['title' => ..., 'url' => Url, 'access' => bool]]]]]]
+   * The presenter removes every item the account cannot use.
    *
-   * @return array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>
+   * @return array<string, array{label: \Stringable|string, weight?: int, tabs: array<string, array{label: \Stringable|string, weight?: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>}>
    */
-  public function actions(AccountInterface $account): array;
+  public function sections(AccountInterface $account): array;
 
 }
+

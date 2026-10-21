@@ -59,25 +59,29 @@ try {
   await sleep(1000);
 
   const d = JSON.parse(await exec(`return JSON.stringify({
-    shell: !!document.getElementById('portal-account-body'),
-    menu: [...document.querySelectorAll('[data-portal-account-menu] a')].some((a) => a.textContent.includes('Estúdio')),
-    tab: !!document.querySelector('[data-aculta-studio="tab"]'),
-    panel: !!document.querySelector('[data-aculta-studio="panel"]'),
-    action: [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim()),
+    root: !!document.querySelector('[data-aculta-studio="root"]'),
+    accountShell: !!document.getElementById('portal-account-body') || !!document.querySelector('[data-portal-account-menu]'),
+    areas: document.querySelectorAll('[data-aculta-studio="tab"]').length,
+    sidebar: document.querySelectorAll('[data-aculta-studio="section"]').length,
+    subtabs: document.querySelectorAll('[data-aculta-studio="subtab"]').length,
+    actions: [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim()),
     overflow: document.documentElement.scrollWidth > window.innerWidth
   })`));
-  check('seção "Estúdio" no menu da conta', d.menu);
-  check('shell da conta envolve a página (#portal-account-body)', d.shell);
-  check('aba com ação "Nova publicação"', d.tab && d.panel && d.action.includes('Nova publicação'), d.action.join(' | '));
+  check('página própria do Studio (sem shell nem menu da conta)', d.root && !d.accountShell);
+  check('áreas em abas superiores', d.areas >= 1, `${d.areas} área(s)`);
+  check('submenu à esquerda com as seções da área', d.sidebar >= 1, `${d.sidebar} seção(ões)`);
+  check('abas próprias da seção', d.subtabs >= 1, `${d.subtabs} aba(s)`);
+  check('ação "Nova publicação" no painel', d.actions.includes('Nova publicação'), d.actions.join(' | '));
   check('sem rolagem horizontal em 1280 px', !d.overflow);
   await shot('01-desktop');
 
   // Navegação AJAX: clicar na aba mantém a página (sem recarga) e atualiza a URL.
-  await exec(`document.querySelector('[data-aculta-studio="tab"]').click(); return 1;`);
+  await exec(`document.querySelector('[data-aculta-studio="section"]').click(); return 1;`);
   await sleep(2500);
   const after = await exec(`return window.__marker || null;`);
-  check('clique na aba troca o conteúdo sem recarregar a página', after === 'sem-recarga');
-  check('aba ativa marcada por aria-current', await exec(`return !!document.querySelector('[data-aculta-studio="tab"][aria-current="page"]');`));
+  check('clique no submenu troca o conteúdo sem recarregar a página', after === 'sem-recarga');
+  check('seção ativa marcada por aria-current', await exec(`return !!document.querySelector('[data-aculta-studio="section"][aria-current="page"]');`));
+  check('URL acompanha a seção', (await exec(`return window.location.search;`)).includes('secao='));
 
   await setViewport(390, 844);
   await exec(`location.reload(); return 1;`);

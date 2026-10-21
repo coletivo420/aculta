@@ -8,10 +8,11 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Chooses the tabs an account can see, in weight order.
+ * Decides what the account can see, at each level of the Studio.
  *
- * A tab is shown only when its owner is available and the account has the
- * owner's permission. Actions are filtered the same way by the controller.
+ * Three levels: area (top tabs, one per owner), section (left submenu of the area) and tab (the tabs of a
+ * section). An action is shown only when the owner's route grants it. An empty level is removed, so an area
+ * appears only when it has at least one allowed action in one of its sections and tabs.
  */
 final class StudioPresenter {
 
@@ -20,7 +21,7 @@ final class StudioPresenter {
   ) {}
 
   /**
-   * Returns the visible tabs keyed by plugin id.
+   * Visible areas keyed by plugin id, in weight order.
    *
    * @return array<string, \Drupal\aculta_studio\StudioTabInterface>
    */
@@ -31,11 +32,36 @@ final class StudioPresenter {
       if (!$tab instanceof StudioTabInterface || !$tab->isAvailable()) {
         continue;
       }
-      if ($tab->access($account)->isAllowed()) {
+      if ($this->sectionsFor($tab, $account) !== []) {
         $visible[$id] = $tab;
       }
     }
     return $visible;
+  }
+
+  /**
+   * The sections of an area the account can use: only sections with tabs, and tabs with allowed actions.
+   *
+   * @return array<string, array{label: \Stringable|string, weight: int, tabs: array<string, array{label: \Stringable|string, weight: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>}>
+   */
+  public function sectionsFor(StudioTabInterface $tab, AccountInterface $account): array {
+    if (!$tab->access($account)->isAllowed()) {
+      return [];
+    }
+    $sections = [];
+    foreach ($tab->sections($account) as $sectionId => $section) {
+      $tabs = [];
+      foreach ($section['tabs'] ?? [] as $tabId => $item) {
+        $actions = array_values(array_filter($item['actions'] ?? [], static fn (array $action): bool => (bool) ($action['access'] ?? FALSE)));
+        if ($actions !== []) {
+          $tabs[$tabId] = ['label' => $item['label'], 'weight' => $item['weight'] ?? 0, 'actions' => $actions];
+        }
+      }
+      if ($tabs !== []) {
+        $sections[$sectionId] = ['label' => $section['label'], 'weight' => $section['weight'] ?? 0, 'tabs' => $this->byWeight($tabs)];
+      }
+    }
+    return $this->byWeight($sections);
   }
 
   /**
@@ -47,6 +73,14 @@ final class StudioPresenter {
     $definitions = $this->tabs->getDefinitions();
     uasort($definitions, static fn (array $a, array $b): int => [$a['weight'] ?? 0, $a['id']] <=> [$b['weight'] ?? 0, $b['id']]);
     return $definitions;
+  }
+
+  /**
+   * Keeps the keys and orders the items by their weight.
+   */
+  private function byWeight(array $items): array {
+    uasort($items, static fn (array $a, array $b): int => $a['weight'] <=> $b['weight']);
+    return $items;
   }
 
 }

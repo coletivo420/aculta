@@ -1,0 +1,7 @@
+navigation:
+  js:
+    js/studio-navigation.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.ajax
+    - core/once

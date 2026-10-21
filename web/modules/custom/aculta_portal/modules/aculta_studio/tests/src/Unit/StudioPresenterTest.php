@@ -62,6 +62,7 @@ final class StudioPresenterTest extends UnitTestCase {
     $tab = $this->createMock(StudioTabInterface::class);
     $tab->method('isAvailable')->willReturn($available);
     $tab->method('access')->willReturn($access);
+    $tab->method('sections')->willReturn(['criar' => ['label' => 'Criar', 'weight' => 0, 'tabs' => ['nova' => ['label' => 'Nova', 'weight' => 0, 'actions' => [['title' => 'Ação', 'url' => NULL, 'access' => TRUE]]]]]]);
     return $tab;
   }
 

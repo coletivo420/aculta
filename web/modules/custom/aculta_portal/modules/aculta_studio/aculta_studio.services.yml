@@ -8,6 +8,3 @@ services:
   aculta_studio.controller:
     class: Drupal\aculta_studio\Controller\StudioController
     arguments: ['@aculta_studio.presenter', '@current_user', '@string_translation']
-  Drupal\aculta_studio\Hook\StudioAccountHooks:
-    class: Drupal\aculta_studio\Hook\StudioAccountHooks
-    arguments: ['@aculta_studio.presenter']
