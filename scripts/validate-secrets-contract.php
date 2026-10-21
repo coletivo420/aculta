@@ -109,6 +109,9 @@ $assert(is_string($loader), 'Portable secrets loader is readable.');
 foreach (array_keys($expected) as $id) {
   $assert(str_contains($loader, $expected[$id][0]), 'Loader allowlist includes contract variable: ' . $expected[$id][0]);
 }
+foreach ($file_secrets as $name) {
+  $assert(str_contains($loader, "'" . $name . "'"), 'Loader allowlist includes file secret: ' . $name);
+}
 $assert(str_contains($loader, 'Unknown ACULTA secret variable'), 'Loader rejects unknown names.');
 $assert(str_contains($loader, 'getenv($name)') && str_contains($loader, 'putenv($name .'), 'Loader preserves native environment precedence.');
 $assert(str_contains($loader, "!defined('DRUPAL_ROOT')"), 'Loader requires Drupal bootstrap context.');

@@ -77,6 +77,9 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
 compartilhadas aparecem nas duas seções do painel. Mercado Pago: ver [MERCADOPAGO.md](../integrations/MERCADOPAGO.md).
+O allowlist do loader do Runtime também deve reconhecer cada variável do contrato,
+inclusive as credenciais opcionais; o gate `validate-secrets-contract.php`
+verifica essa correspondência.
 
 ## Regra ao incluir uma variável
 
