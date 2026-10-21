@@ -127,7 +127,7 @@ insider. Unit cobre pedido gratuito, pagamento concluído, reembolso parcial e
 integral e pedido incompleto, sem gateway remoto. `EnrollmentFormHooksTest`
 confirma que matrículas manuais podem ser removidas, matrículas de compra paga,
 parcialmente reembolsada ou gratuita concluída ficam protegidas, reembolso total
-permite remoção e origem inválida falha fechada (5 testes/31 assertions).
+permite remoção e origem inválida falha fechada (5 testes/32 assertions).
 RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso, confirmação da
 interface de remoção e isolamento A/B continuam DEFERRED.
 Backup privado em
