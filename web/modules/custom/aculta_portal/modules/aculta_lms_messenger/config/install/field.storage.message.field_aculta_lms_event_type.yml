@@ -19,6 +19,9 @@ settings:
     -
       value: certificate
       label: Certificado
+    -
+      value: completion
+      label: Conclusão de curso
   allowed_values_function: ''
 module: options
 locked: false

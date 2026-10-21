@@ -10,9 +10,9 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Resumo diário de avisos do Fórum por e-mail (ACULTA Messenger, F5.2).
+ * Resumo diário do site por e-mail (ACULTA Messenger, F5.2).
  *
- * O consumidor monta a variável `resumo` com formatLinhas(); o tipo só declara o texto.
+ * O tipo declara o texto; o consumidor monta a variável `resumo`.
  */
 final class AvisosResumoMailType implements MailTypeInterface {
 
@@ -32,7 +32,10 @@ final class AvisosResumoMailType implements MailTypeInterface {
    */
   public function variables(): array {
     return [
-      'resumo' => ['label' => (string) $this->translation->translate('Linhas do resumo (um tópico por linha)'), 'sample' => 'Respostas novas em "Tópico de exemplo": 2'],
+      'resumo' => [
+        'label' => (string) $this->translation->translate('Linhas do resumo diário de avisos'),
+        'sample' => 'Respostas novas em "Tópico de exemplo": 2',
+      ],
     ];
   }
 
@@ -40,7 +43,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
    * {@inheritdoc}
    */
   public function defaultSubject(): string {
-    return (string) $this->translation->translate('Resumo de avisos do Fórum');
+    return (string) $this->translation->translate('Resumo diário de avisos');
   }
 
   /**
@@ -48,7 +51,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
    */
   public function defaultBody(): string {
     $partes = [
-      (string) $this->translation->translate('Você tem novidades nos tópicos que segue:'),
+      (string) $this->translation->translate('Você tem novidades nos seus avisos:'),
       '{{ resumo }}',
       (string) $this->translation->translate('Para deixar de receber este resumo, altere a opção em Minha conta > Privacidade.'),
     ];
@@ -56,7 +59,7 @@ final class AvisosResumoMailType implements MailTypeInterface {
   }
 
   /**
-   * Linhas do resumo a partir de `tipo`, `titulo` e `quantidade` (uma por tópico).
+   * Formata linhas do resumo, seja tópico ou aviso de outro módulo.
    *
    * @param array $linhas
    *   Linhas do resumo.
@@ -69,6 +72,10 @@ final class AvisosResumoMailType implements MailTypeInterface {
     $texto = [];
     foreach ($linhas as $linha) {
       $tipo = (string) ($linha['tipo'] ?? '');
+      if ($tipo === 'aprendizagem') {
+        $texto[] = (string) ($linha['titulo'] ?? '');
+        continue;
+      }
       $texto[] = ($rotulos[$tipo] ?? $tipo) . ' em "' . (string) ($linha['titulo'] ?? '') . '": ' . (int) ($linha['quantidade'] ?? 0);
     }
     return implode("\n", $texto);

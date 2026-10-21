@@ -114,17 +114,19 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 ## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")
 
 - Os avisos no site são **sempre exibidos**: não há opção para desligá-los.
-- **Resumo diário por e-mail**: desligado por padrão. Quando ligado, dois sub-controles escolhem o que entra:
-  respostas novas e atualizações de tópicos. Preferências em `user.data` (`aculta_messenger`).
+- **Resumo diário por e-mail**: desligado por padrão. Quando ligado, entram respostas/atualizações do Fórum conforme
+  os controles abaixo e itens de módulos integradores que fornecem linhas pelo `AvisoDigestProviderInterface`.
+  Preferências em `user.data` (`aculta_messenger`).
 - Desligar o resumo zera os contadores de e-mail pendentes, para não acumular um resumo antigo.
 
 ## 7. Resumo diário por e-mail
 
 - Roda no cron (`AvisosResumoHooks::cron`) e chama `AvisosResumo::enviarResumos()`.
 - Envia para contas **ativas, com e-mail e e-mail confirmado** (`EmailConfirmationPolicy`), com o resumo ligado.
-- Um e-mail por conta por dia, no máximo (intervalo de 20 horas), e só quando há contador de e-mail > 0.
-- Linhas agrupadas por tópico: tipo, título e quantidade. O contador de e-mail zera **somente após envio com sucesso**.
-- Sistema de e-mail do Drupal, com o modelo `avisos_resumo` (`hook_mail`).
+- Um e-mail por conta a cada 20 horas, no máximo, quando houver item de qualquer provider ativo.
+- Linhas do Fórum são agrupadas por tópico; providers podem acrescentar avisos revalidados. Pendências são confirmadas
+  **somente após envio com sucesso**.
+- `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
 
 ## 8. Funções do módulo, resumo dos novos componentes
 
@@ -132,7 +134,8 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - `src/Aviso/AvisoService.php`: regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
   `notificarAtualizacao`, `marcarLido`, `naoLidosTotal`.
 - `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
-- `src/Aviso/AvisosResumo.php`: envio do resumo diário.
+- `src/Aviso/AvisosResumo.php`: envio do resumo diário combinado. Providers tagged `aculta_messenger.aviso_digest_provider`
+  fornecem linhas e só confirmam entrega depois de envio bem-sucedido.
 - `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
 - `src/Hook/ForumAvisoHooks.php`: `comment_insert` e `comment_update` (aprovação de comentário).
 - `src/EventSubscriber/ForumAvisoReadSubscriber.php`: leitura do tópico.

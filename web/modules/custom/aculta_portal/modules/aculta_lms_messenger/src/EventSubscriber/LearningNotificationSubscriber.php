@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_messenger\EventSubscriber;
 
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,6 +28,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     return [
       CourseEnrollmentEvent::NAME => 'courseEnrollment',
       CertificateIssuedEvent::NAME => 'certificateIssued',
+      CourseCompletedEvent::NAME => 'courseCompleted',
     ];
   }
 
@@ -45,11 +47,18 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
   }
 
   /**
+   * Records completion for the site and shared daily digest.
+   */
+  public function courseCompleted(CourseCompletedEvent $event): void {
+    $this->record($event->sourceStatusUuid, 'completion', (int) $event->accountId, FALSE);
+  }
+
+  /**
    * Persists one deduplicated notice without breaking the LMS transaction.
    */
-  private function record(string $sourceUuid, string $type, int $uid): void {
+  private function record(string $sourceUuid, string $type, int $uid, bool $sendEmail = TRUE): void {
     try {
-      $this->notices->record($sourceUuid, $type, $uid, TRUE);
+      $this->notices->record($sourceUuid, $type, $uid, $sendEmail);
     }
     catch (\Throwable $exception) {
       $this->logger->error('Could not persist LMS notification @type: @message', [

@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_lms_messenger\Unit;
 use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms_messenger\EventSubscriber\LearningNotificationSubscriber;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -45,6 +46,24 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
 
     $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
     $subscriber->certificateIssued(new CertificateIssuedEvent('certificate-uuid', '27'));
+  }
+
+  /**
+   * Confirms course completion is site-only and enters the shared digest.
+   */
+  public function testCompletionCreatesSiteNoticeWithoutTransactionalEmail(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects($this->once())
+      ->method('record')
+      ->with('status-uuid', 'completion', 27, FALSE);
+
+    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber->courseCompleted(new CourseCompletedEvent(
+      'status-uuid',
+      '10',
+      '27',
+      new \DateTimeImmutable('2026-10-20T12:00:00+00:00'),
+    ));
   }
 
   /**

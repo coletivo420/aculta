@@ -31,10 +31,9 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - Message mantém eventos persistentes configurados como tipos de mensagem.
 - Message Notify entrega mensagens por notificadores existentes e pela
   infraestrutura de e-mail do Drupal.
-- O adapter opcional `aculta_lms_messenger` adiciona avisos de matrícula e
-  certificado à lista/contador global por pontos de extensão; ele não cria uma
-  central ou storage próprio. Resumo diário opt-in para demais eventos LMS é
-  trabalho pendente da F13.
+- O adapter opcional `aculta_lms_messenger` adiciona avisos de matrícula,
+  certificado e conclusão à lista/contador global; conclusão entra no resumo
+  diário compartilhado por provider tagged. Não cria central ou storage próprio.
 - Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso. Para tópicos de fórum, a entrega por mensagem foi desligada (F-D21); ver `docs/AVISOS-E-MENSAGENS.md`.
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis

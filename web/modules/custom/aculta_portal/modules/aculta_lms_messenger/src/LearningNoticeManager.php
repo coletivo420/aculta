@@ -8,22 +8,24 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Queue\QueueFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\user\UserInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
+use Drupal\user\UserInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
-use Drupal\Core\Template\Attribute;
 use Psr\Log\LoggerInterface;
 
 /**
  * Persists and presents LMS notices using Messenger's Message entities.
  */
-final class LearningNoticeManager implements LearningNoticeManagerInterface {
+final class LearningNoticeManager implements LearningNoticeManagerInterface, AvisoDigestProviderInterface {
 
   use StringTranslationTrait;
 
@@ -39,6 +41,10 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
 
   private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 
+  private const DIGEST_FIELD = 'field_aculta_lms_digest_sent';
+
+  private const DIGEST_TYPE = 'aprendizagem';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -50,7 +56,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
    * Creates one durable notice per source and recipient; enqueue email once.
    */
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail): ?MessageInterface {
-    if (!in_array($type, ['enrollment', 'certificate'], TRUE)) {
+    if (!in_array($type, ['enrollment', 'certificate', 'completion'], TRUE)) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
@@ -74,6 +80,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
         self::EVENT_FIELD => $type,
         self::SOURCE_FIELD => $sourceUuid,
         self::READ_FIELD => 0,
+        self::DIGEST_FIELD => $type === 'completion' ? 0 : 1,
         self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
@@ -103,6 +110,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
     return match ($type) {
       'enrollment' => $this->resolveEnrollment($sourceUuid, $account),
       'certificate' => $this->resolveCertificate($sourceUuid, $account),
+      'completion' => $this->resolveCompletion($sourceUuid, $account),
       default => NULL,
     };
   }
@@ -197,6 +205,92 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    $ids = $this->entityTypeManager->getStorage('message')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)
+      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::DIGEST_FIELD, 0)
+      ->execute();
+    $uids = [];
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if ($message instanceof MessageInterface) {
+        $uids[(int) $message->getOwnerId()] = TRUE;
+      }
+    }
+    return array_keys($uids);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    if (!$account instanceof UserInterface || !$account->isActive()) {
+      $this->discardDigest($uid);
+      return [];
+    }
+    $ids = $this->entityTypeManager->getStorage('message')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)
+      ->condition('uid', $uid)
+      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::DIGEST_FIELD, 0)
+      ->execute();
+    $rows = [];
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if (!$message instanceof MessageInterface) {
+        continue;
+      }
+      $notice = $this->resolve($message, $account);
+      if ($notice === NULL) {
+        $message->set(self::DIGEST_FIELD, 1)->save();
+        continue;
+      }
+      $rows[] = [
+        'tipo' => self::DIGEST_TYPE,
+        'titulo' => (string) $notice['digest_summary'],
+        'quantidade' => 1,
+      ];
+    }
+    return $rows;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid): void {
+    $this->setDigestSent($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {
+    $this->setDigestSent($uid);
+  }
+
+  /**
+   * Marks pending course completion summaries as sent or discarded.
+   */
+  private function setDigestSent(int $uid): void {
+    $ids = $this->entityTypeManager->getStorage('message')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)
+      ->condition('uid', $uid)
+      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::DIGEST_FIELD, 0)
+      ->execute();
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if ($message instanceof MessageInterface) {
+        $message->set(self::DIGEST_FIELD, 1)->save();
+      }
+    }
+  }
+
+  /**
    * Loads and authorizes an enrollment event's course and class.
    */
   private function resolveEnrollment(string $sourceUuid, AccountInterface $account): ?array {
@@ -262,6 +356,56 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface {
       'title' => $this->t('Seu certificado está disponível'),
       'summary' => $this->t('O certificado do curso @course foi emitido.', ['@course' => $certificate->get('course_title')->value]),
       'email_summary' => $this->t('O certificado do curso @course está disponível para verificação.', ['@course' => $certificate->get('course_title')->value]),
+      'url' => $url,
+    ];
+  }
+
+  /**
+   * Loads a passed course status and checks its current learner membership.
+   */
+  private function resolveCompletion(string $sourceUuid, AccountInterface $account): ?array {
+    $statuses = $this->entityTypeManager->getStorage('lms_course_status')->loadByProperties(['uuid' => $sourceUuid]);
+    $status = reset($statuses);
+    if (!$status instanceof CourseStatusInterface || $status->getUserId() !== (string) $account->id()
+      || !$status->isFinished() || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
+      return NULL;
+    }
+    $course = $status->getCourse();
+    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+      || !$course->access('view', $account, TRUE)->isAllowed()) {
+      return NULL;
+    }
+    $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'entity_id' => $course->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    $hasCurrentEnrollment = FALSE;
+    foreach ($classRelationships as $relationship) {
+      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($class === NULL || $class->bundle() !== 'lms_class') {
+        continue;
+      }
+      foreach (GroupMembership::loadByGroup($class) as $membership) {
+        $member = $membership->getEntity();
+        if ($member instanceof UserInterface && (int) $member->id() === (int) $account->id()
+          && $membership->hasPermission('take course')) {
+          $hasCurrentEnrollment = TRUE;
+          break 2;
+        }
+      }
+    }
+    if (!$hasCurrentEnrollment) {
+      return NULL;
+    }
+    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+    if ($url === NULL) {
+      return NULL;
+    }
+    return [
+      'title' => $this->t('Curso concluído'),
+      'summary' => $this->t('Você concluiu o curso @course.', ['@course' => $course->label()]),
+      'email_summary' => $this->t('Você concluiu o curso @course.', ['@course' => $course->label()]),
+      'digest_summary' => $this->t('Conclusão confirmada: @course', ['@course' => $course->label()]),
       'url' => $url,
     ];
   }

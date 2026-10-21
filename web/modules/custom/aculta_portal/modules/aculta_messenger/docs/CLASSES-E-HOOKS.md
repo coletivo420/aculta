@@ -58,6 +58,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AvisoRetencao` | `src/Aviso/AvisoRetencao.php` | Retenção dos avisos por pessoa do Fórum (ACULTA Messenger): seis meses desde a criação. |
 | `AvisoService` | `src/Aviso/AvisoService.php` | Avisos de resposta em tópico seguido (ACULTA Fórum, F5.2, F-D21). |
 | `AvisosResumo` | `src/Aviso/AvisosResumo.php` | Resumo diário dos avisos por e-mail (ACULTA Messenger, F5.2, política de 2026-10-16). |
+| `AvisoDigestProviderInterface` | `src/Aviso/AvisoDigestProviderInterface.php` | Extensão para adicionar avisos atuais ao mesmo resumo diário combinado. |
 
 ### `Controller`
 

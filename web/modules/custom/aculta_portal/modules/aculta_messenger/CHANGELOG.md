@@ -1,3 +1,13 @@
+## 0.1.1-dev.61 — providers de resumo diário por tagged iterator — 2026-10-20
+
+- Permite que módulos forneçam linhas ao resumo existente sem substituir
+  `AvisosResumo`; o cron envia uma mensagem combinada e confirma os itens só
+  depois do envio bem-sucedido.
+- Mantém opt-in global, confirmação de e-mail, janela entre envios e limpeza de
+  pendências após opt-out. `AvisoDigestProviderInterface` é a extensão pública.
+- O adapter LMS publica conclusão neste resumo e preserva Avisos no site.
+  Runtime: DEFERRED.
+
 ## 0.1.1-dev.60 — integração de contagem e lista de avisos pessoais — 2026-10-20
 
 - Expõe pontos de alteração para módulos adicionarem avisos pessoais à gaveta

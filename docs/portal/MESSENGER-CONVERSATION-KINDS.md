@@ -72,7 +72,8 @@ O chat do curso não tem controle de limpeza: é persistente por definição. Qu
 - **Avisos globais:** LMS publica no canal global `aculta_messenger`; o adapter
   `aculta_lms_messenger` acrescenta avisos pessoais de matrícula e certificado à
   gaveta/contador. Matrícula e certificado também disparam e-mail transacional;
-  demais eventos devem usar o resumo diário opt-in. Não há canal separado do curso.
+  conclusão aprovada permanece no site e entra no resumo diário opt-in combinado.
+  Não há canal separado do curso.
 - **Relatório de participação para avaliação:** ver seção 8.
 
 ## 7. Contrato previsto para as integrações

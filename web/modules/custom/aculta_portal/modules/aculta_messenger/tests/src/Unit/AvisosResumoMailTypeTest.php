@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Texto do resumo de avisos: linhas formatadas pelo tipo e texto padrão com a variável `resumo`.
+ * Texto de avisos e formatação das linhas da mensagem de resumo.
  */
 #[CoversClass(AvisosResumoMailType::class)]
 #[Group('aculta_messenger')]
@@ -30,12 +30,24 @@ final class AvisosResumoMailTypeTest extends UnitTestCase {
     ]);
 
     $this->assertSame(AvisosResumo::CHAVE_MAIL, $type->id());
-    $this->assertSame('Resumo de avisos do Fórum', $type->defaultSubject());
+    $this->assertSame('Resumo diário de avisos', $type->defaultSubject());
     $this->assertSame([], MailTemplateRenderer::unknownPlaceholders($type->defaultBody(), array_keys($type->variables())));
     $body = MailTemplateRenderer::fill($type->defaultBody(), ['resumo' => $linhas]);
     $this->assertStringContainsString('Respostas novas em "Tópico A": 2', $body);
     $this->assertStringContainsString('Atualizações em "Tópico B": 1', $body);
     $this->assertStringContainsString('Minha conta > Privacidade', $body);
+  }
+
+  /**
+   * LMS completion summaries use the shared daily email format.
+   */
+  public function testLearningCompletionSummaryLine(): void {
+    $this->assertSame(
+      'Conclusão confirmada: Curso de exemplo',
+      AvisosResumoMailType::formatLinhas([
+        ['tipo' => 'aprendizagem', 'titulo' => 'Conclusão confirmada: Curso de exemplo', 'quantidade' => 1],
+      ]),
+    );
   }
 
 }

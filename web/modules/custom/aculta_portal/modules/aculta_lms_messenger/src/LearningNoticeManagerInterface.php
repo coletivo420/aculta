@@ -37,4 +37,30 @@ interface LearningNoticeManagerInterface {
    */
   public function markRead(MessageInterface $message): void;
 
+  /**
+   * Returns user IDs with pending digest entries.
+   *
+   * @return int[]
+   *   User IDs.
+   */
+  public function pendingRecipientIds(): array;
+
+  /**
+   * Returns validated daily digest rows.
+   *
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int}>
+   *   Rows ready for the shared email.
+   */
+  public function digestRowsFor(int $uid): array;
+
+  /**
+   * Marks this recipient's pending digest entries as delivered.
+   */
+  public function markDigestSent(int $uid): void;
+
+  /**
+   * Discards pending email entries after opt-out.
+   */
+  public function discardDigest(int $uid): void;
+
 }
