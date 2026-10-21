@@ -57,6 +57,25 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   }
 
   /**
+   * Filtro por domínio soma só o purpose escolhido, na página e no CSV.
+   */
+  public function testDomainFilterOnOrderCounts(): void {
+    $storage = $this->container->get('aculta_statistics.storage');
+    $storage->record('commerce.orders.by_domain', 'main.aculta|BRL', 2);
+    $storage->record('commerce.orders.by_domain', 'loja.aculta|BRL', 5);
+
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET', ['metrica' => 'commerce.orders.by_domain', 'dias' => 7, 'dominio' => 'loja.aculta']);
+    $page = StatisticsDashboardController::create($this->container)->overview($request);
+    $html = (string) $this->container->get('renderer')->renderInIsolation($page);
+    $this->assertStringContainsString('<option value="loja.aculta" selected', $html);
+    $this->assertStringContainsString('5 pedidos no período (7 dias)', $html);
+
+    $export = (string) StatisticsDashboardController::create($this->container)->export($request)->getContent();
+    $this->assertStringContainsString('loja.aculta|BRL,5', $export);
+    $this->assertStringNotContainsString('main.aculta', $export);
+  }
+
+  /**
    * Métrica restrita (dado pessoal por aluno) não é oferecida no painel agregado.
    */
   public function testRestrictedMetricIsNotOffered(): void {

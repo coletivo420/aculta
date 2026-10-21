@@ -7,6 +7,7 @@ namespace Drupal\aculta_statistics\Controller;
 use Drupal\aculta_mailer\Chart\MailTrendChart;
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Catalog\MetricDefinition;
+use Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient;
 use Drupal\aculta_statistics\Report\MetricSeries;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Component\Datetime\TimeInterface;
@@ -25,10 +26,18 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class StatisticsDashboardController extends ControllerBase {
 
+  /**
+   * Métrica de contagem por domínio: a dimensão é `purpose|moeda` e o filtro de domínio soma os dias do purpose.
+   *
+   * A receita por domínio não tem esse filtro: somaria centavos de moedas diferentes.
+   */
+  private const DOMAIN_COUNT_METRIC = 'commerce.orders.by_domain';
+
   public function __construct(
     private readonly MetricCatalog $catalog,
     private readonly AggregateStorageInterface $storage,
     private readonly TimeInterface $time,
+    private readonly Ga4ReportClient $ga4,
   ) {}
 
   /**
@@ -39,6 +48,7 @@ final class StatisticsDashboardController extends ControllerBase {
       $container->get('aculta_statistics.catalog'),
       $container->get('aculta_statistics.storage'),
       $container->get('datetime.time'),
+      $container->get(Ga4ReportClient::class),
     );
   }
 
@@ -49,7 +59,8 @@ final class StatisticsDashboardController extends ControllerBase {
     $metric = $this->selectedMetric($request);
     $days = MetricSeries::normalizePeriod($request->query->get('dias'));
     $today = $this->today();
-    $series = MetricSeries::build($today, $days, fn (int $day): int => $this->storage->total($metric->id, $day, $day));
+    $domain = $this->selectedDomain($request, $metric, $today, $days);
+    $series = MetricSeries::build($today, $days, fn (int $day): int => $this->dailyTotal($metric->id, $day, $domain));
 
     $table = [];
     foreach ($series['labels'] as $index => $label) {
@@ -58,7 +69,7 @@ final class StatisticsDashboardController extends ControllerBase {
 
     return [
       '#type' => 'container',
-      'controles' => $this->controls($metric, $days),
+      'controles' => $this->controls($metric, $days, $domain, $today),
       'resumo' => [
         '#markup' => '<p><strong>' . $this->t('@total @unidade no período (@days dias)', [
           '@total' => $series['total'],
@@ -80,10 +91,14 @@ final class StatisticsDashboardController extends ControllerBase {
       'exportar' => [
         '#type' => 'link',
         '#title' => $this->t('Exportar CSV'),
-        '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], ['query' => ['metrica' => $metric->id, 'dias' => $days]]),
+        '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], ['query' => array_filter(['metrica' => $metric->id, 'dias' => $days, 'dominio' => $domain])]),
         '#prefix' => '<p>',
         '#suffix' => '</p>',
       ],
+      'integracoes' => [
+        '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $this->ga4->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>',
+      ],
+      '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
   }
 
@@ -94,10 +109,14 @@ final class StatisticsDashboardController extends ControllerBase {
     $metric = $this->selectedMetric($request);
     $days = MetricSeries::normalizePeriod($request->query->get('dias'));
     $today = $this->today();
+    $domain = $this->selectedDomain($request, $metric, $today, $days);
 
     $lines = ["dia,dimensao,total"];
     for ($day = $today - $days + 1; $day <= $today; $day++) {
       foreach ($this->storage->dimensions($metric->id, $day) as $dimension) {
+        if ($domain !== NULL && !str_starts_with($dimension, $domain . '|')) {
+          continue;
+        }
         $lines[] = gmdate('Y-m-d', $day * 86400) . ',' . $this->csvField($dimension) . ',' . $this->storage->total($metric->id, $day, $day, $dimension);
       }
     }
@@ -119,6 +138,50 @@ final class StatisticsDashboardController extends ControllerBase {
   }
 
   /**
+   * Domínio pedido, se a métrica suporta filtro e o valor existe no período; senão NULL (todos).
+   */
+  private function selectedDomain(Request $request, MetricDefinition $metric, int $today, int $days): ?string {
+    $requested = (string) $request->query->get('dominio', '');
+    if ($metric->id !== self::DOMAIN_COUNT_METRIC || $requested === '') {
+      return NULL;
+    }
+    return in_array($requested, $this->domainsIn($metric, $today, $days), TRUE) ? $requested : NULL;
+  }
+
+  /**
+   * Purposes que aparecem na métrica no período, ordenados.
+   *
+   * @return string[]
+   */
+  private function domainsIn(MetricDefinition $metric, int $today, int $days): array {
+    $purposes = [];
+    for ($day = $today - $days + 1; $day <= $today; $day++) {
+      foreach ($this->storage->dimensions($metric->id, $day) as $dimension) {
+        $purposes[explode('|', $dimension, 2)[0]] = TRUE;
+      }
+    }
+    $list = array_keys($purposes);
+    sort($list);
+    return $list;
+  }
+
+  /**
+   * Total de um dia; com domínio, soma só as dimensões daquele purpose.
+   */
+  private function dailyTotal(string $metric, int $day, ?string $domain): int {
+    if ($domain === NULL) {
+      return $this->storage->total($metric, $day, $day);
+    }
+    $sum = 0;
+    foreach ($this->storage->dimensions($metric, $day) as $dimension) {
+      if (str_starts_with($dimension, $domain . '|')) {
+        $sum += $this->storage->total($metric, $day, $day, $dimension);
+      }
+    }
+    return $sum;
+  }
+
+  /**
    * Métricas do catálogo que o painel agregado mostra (sensibilidade P ou I), ordenadas pelo identificador.
    *
    * @return array<string, \Drupal\aculta_statistics\Catalog\MetricDefinition>
@@ -135,7 +198,7 @@ final class StatisticsDashboardController extends ControllerBase {
   /**
    * Formulário de seleção (GET, sem JavaScript): métrica e período, com botão de aplicar.
    */
-  private function controls(MetricDefinition $selected, int $days): array {
+  private function controls(MetricDefinition $selected, int $days, ?string $domain = NULL, int $today = 0): array {
     $metricOptions = '';
     foreach ($this->aggregatedMetrics() as $id => $definition) {
       $metricOptions .= sprintf('<option value="%s"%s>%s</option>', Html::escape($id), $id === $selected->id ? ' selected' : '', Html::escape($definition->label));
@@ -144,15 +207,24 @@ final class StatisticsDashboardController extends ControllerBase {
     foreach (MetricSeries::PERIODS as $option) {
       $periodOptions .= sprintf('<option value="%d"%s>%s</option>', $option, $option === $days ? ' selected' : '', Html::escape((string) $this->t('Últimos @days dias', ['@days' => $option])));
     }
+    $domainControl = '';
+    if ($selected->id === self::DOMAIN_COUNT_METRIC) {
+      $domainOptions = sprintf('<option value="">%s</option>', Html::escape((string) $this->t('Todos os domínios')));
+      foreach ($this->domainsIn($selected, $today, $days) as $purpose) {
+        $domainOptions .= sprintf('<option value="%s"%s>%s</option>', Html::escape($purpose), $purpose === $domain ? ' selected' : '', Html::escape($purpose));
+      }
+      $domainControl = sprintf(' <label>%s <select name="dominio">%s</select></label>', Html::escape((string) $this->t('Domínio')), $domainOptions);
+    }
     $action = Html::escape(Url::fromRoute('aculta_statistics.dashboard')->toString());
     return [
       '#markup' => Markup::create(sprintf(
-        '<form method="get" action="%s" class="aculta-statistics-controles"><label>%s <select name="metrica">%s</select></label> <label>%s <select name="dias">%s</select></label> <button type="submit">%s</button></form>',
+        '<form method="get" action="%s" class="aculta-statistics-controles"><label>%s <select name="metrica">%s</select></label> <label>%s <select name="dias">%s</select></label>%s <button type="submit">%s</button></form>',
         $action,
         Html::escape((string) $this->t('Métrica')),
         $metricOptions,
         Html::escape((string) $this->t('Período')),
         $periodOptions,
+        $domainControl,
         Html::escape((string) $this->t('Aplicar')),
       )),
     ];

@@ -105,6 +105,10 @@ services:
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
   Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
   Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
+  # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.
+  aculta_statistics.ga4_client:
+    class: Drupal\aculta_statistics\Connector\Ga4\NullGa4ReportClient
+  Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient: '@aculta_statistics.ga4_client'
   Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
   Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
   Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'

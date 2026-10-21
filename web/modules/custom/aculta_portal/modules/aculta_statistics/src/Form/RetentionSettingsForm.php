@@ -8,6 +8,8 @@ use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Retention\RetentionPolicy;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,6 +29,8 @@ final class RetentionSettingsForm extends ConfigFormBase {
     private readonly MetricCatalog $catalog,
     private readonly RetentionPolicy $retention,
     private readonly AggregateStorageInterface $storage,
+    private readonly LoggerChannelFactoryInterface $auditLoggerFactory,
+    private readonly AccountProxyInterface $operator,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
   }
@@ -41,6 +45,8 @@ final class RetentionSettingsForm extends ConfigFormBase {
       $container->get('aculta_statistics.catalog'),
       $container->get('aculta_statistics.retention'),
       $container->get('aculta_statistics.storage'),
+      $container->get('logger.factory'),
+      $container->get('current_user'),
     );
   }
 
@@ -122,6 +128,19 @@ final class RetentionSettingsForm extends ConfigFormBase {
     $retention = [];
     foreach (array_keys($this->catalog->all()) as $id) {
       $retention[] = ['metric' => $id, 'days' => (int) $form_state->getValue(['retention', $id])];
+    }
+
+    // Auditoria (ADR-0003): quem alterou, qual métrica e de quanto para quanto. Só registra prazo que mudou.
+    foreach ($retention as $row) {
+      $old = $this->retention->daysFor($row['metric']);
+      if ($old !== $row['days']) {
+        $this->auditLoggerFactory->get('aculta_statistics')->notice('Prazo de retenção alterado: @metric de @old para @new dias pelo usuário @uid.', [
+          '@metric' => $row['metric'],
+          '@old' => $old,
+          '@new' => $row['days'],
+          '@uid' => (int) $this->operator->id(),
+        ]);
+      }
     }
 
     $this->config('aculta_statistics.settings')
