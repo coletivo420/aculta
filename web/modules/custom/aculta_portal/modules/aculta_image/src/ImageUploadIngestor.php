@@ -25,10 +25,18 @@ final class ImageUploadIngestor {
    * owning feature. ACULTA image extension/size and raster validation remain
    * centralized here; Drupal Core creates and validates the managed file.
    */
-  public function upload(UploadedFileInterface $uploadedFile, string $destination, array $allowedMimes = []): FileUploadResult {
+  public function upload(
+    UploadedFileInterface $uploadedFile,
+    string $destination,
+    array $allowedMimes = [],
+    ?int $maxBytes = NULL,
+    ?string $allowedExtensions = NULL,
+  ): FileUploadResult {
     $extension = strtolower(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_EXTENSION));
-    if (!ImageIngester::extensaoAceita($uploadedFile->getClientOriginalName())
-      || !ImageIngester::tamanhoAceito($uploadedFile->getSize())) {
+    $validators = $this->policy->validators($maxBytes, $allowedExtensions);
+    if (!in_array($extension, explode(' ', $validators['FileExtension']['extensions']), TRUE)
+      || $uploadedFile->getSize() <= 0
+      || $uploadedFile->getSize() > $validators['FileSizeLimit']['fileLimit']) {
       throw new \InvalidArgumentException('A imagem não atende à política de upload do ACULTA.');
     }
     $bytes = @file_get_contents((string) $uploadedFile->getRealPath());
@@ -41,7 +49,7 @@ final class ImageUploadIngestor {
 
     return $this->uploadHandler->handleFileUpload(
       $uploadedFile,
-      $this->policy->validators(),
+      $validators,
       $destination,
       FileExists::Rename,
     );

@@ -61,6 +61,35 @@ final class ImageUploadIngestorTest extends UnitTestCase {
     }
   }
 
+  /**
+   * A Forum-specific limit still passes through the central image policy.
+   */
+  public function testUsesValidatedContextualPolicy(): void {
+    $path = $this->pngFile();
+    $handler = $this->createMock(FileUploadHandlerInterface::class);
+    $handler->expects(self::once())
+      ->method('handleFileUpload')
+      ->with(
+        self::isInstanceOf(FormUploadedFile::class),
+        ['FileExtension' => ['extensions' => 'png'], 'FileSizeLimit' => ['fileLimit' => 20 * 1024 * 1024]],
+        'private://forum/attachments',
+        \Drupal\Core\File\FileExists::Rename,
+      )
+      ->willReturn(new FileUploadResult());
+    try {
+      $this->ingestor($handler)->upload(
+        new FormUploadedFile(new UploadedFile($path, 'image.png', 'image/png', UPLOAD_ERR_OK, TRUE)),
+        'private://forum/attachments',
+        ['image/png'],
+        20 * 1024 * 1024,
+        'png',
+      );
+    }
+    finally {
+      unlink($path);
+    }
+  }
+
   private function ingestor(FileUploadHandlerInterface $handler): ImageUploadIngestor {
     return new ImageUploadIngestor(
       new UploadPolicy(),

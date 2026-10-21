@@ -24,7 +24,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | Serviço | Classe | Função |
 | --- | --- | --- |
 | `aculta_image.catalog` | `ImageCatalog` | Finalidades (`PURPOSES`), estilos (`STYLES`) e modelos de texto (`MODELOS`). Única fonte de nome de estilo. |
-| `aculta_image.upload_policy` | `UploadPolicy` | Extensões (png, gif, jpg, jpeg, webp) e tamanho máximo (10 MB). |
+| `aculta_image.upload_policy` | `UploadPolicy` | Política central para png, gif, jpg, jpeg e webp (10 MB padrão). Uploads contextuais podem selecionar subconjunto e ampliar tamanho explicitamente, sem liberar extensões fora do catálogo central. |
 | `aculta_image.render` | `ImageRenderer` | `build()`, `buildManagedImage()` para imagens gerenciadas pré-derivadas, `styleId()`, `styleEntity()`, `displaySettings()`. |
 | `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
 | `aculta_image.generated_file` | `GeneratedImageFileManager` | Registra derivados de imagem públicos como arquivos temporários sujeitos à limpeza normal. |

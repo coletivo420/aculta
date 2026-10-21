@@ -1,5 +1,14 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.29 — permite perfil contextual de upload de imagem
+
+- `UploadPolicy::validators()` recebe limite e extensões opcionais para fluxos
+  contextuais; qualquer extensão deve continuar no catálogo central ACULTA.
+  Sem argumentos, o comportamento segue png/gif/jpg/jpeg/webp e 10 MB.
+- `ImageUploadIngestor` aplica o mesmo perfil ao validar e entregar o arquivo ao
+  Managed File API. Cobertura Unit de padrão, ampliação de tamanho e recusa de
+  extensão fora do catálogo.
+
 ## 0.1.0-dev.28 — campo histórico de produto alinhado à política de imagem — 2026-10-20
 
 - O campo legado `commerce_product.produto_loja.field_imagens` declara `aculta_image:policy: default`, mantendo a configuração histórica dentro da política única de imagens.
