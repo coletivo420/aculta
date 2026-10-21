@@ -1,5 +1,16 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.13 — eventos educacionais para avisos — 2026-10-20
+
+- Publica eventos após salvar uma matrícula em turma e após emitir certificado;
+  o adapter `aculta_lms_messenger` converte ambos em avisos pessoais no painel
+  multidomínio existente e em e-mail transacional.
+- Publica conclusão aprovada por evento para permitir o próximo incremento da
+  F13; a distribuição diária opt-in e os demais eventos ainda não estão ligados.
+- Testes isolados e validação do Runtime permanecem pendentes até execução desta
+  entrega; Runtime: DEFERRED.
+
+
 ## 0.1.0-dev.12 — aba do painel da turma no contexto de Group — 2026-10-20
 
 - Corrige a aba local do painel do educador para pertencer à rota canônica de

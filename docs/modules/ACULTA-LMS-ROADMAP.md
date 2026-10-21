@@ -27,7 +27,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas, reprodução integrada ao curso e imagens via `aculta_image`; materiais PDF complementares usam `aculta_pdf_viewer` + Group | Bibliotecas, permissões, uploads, imagens, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
 | F11 — Certificados | Entity Print/Dompdf após conclusão LMS aprovada; QR via `aculta_qrcode` | emissão/reemissão transacional por educador/admin, snapshot imutável, verificação pública por código/QR, revogação com motivo, retenção após exclusão de conta, privacidade e template testados | Decisões registradas em `LMS-INTEGRATION-CONTRACTS.md`; reverter código sem apagar auditoria/artefatos válidos |
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
-| F13 — Notificações educacionais | Eventos LMS → `aculta_messenger` / Message Notify | dedupe, access atual, preferências, e-mail mínimo e fila testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
+| F13 — Notificações educacionais | Adapter `aculta_lms_messenger` → avisos globais `aculta_messenger` / Message Notify | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
 | F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine e Wiki | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose | `aculta_forum` ainda não tem API executável para vínculo LMS; implementar e testar isolamento por turma antes de dependência/ativação. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
@@ -35,6 +35,13 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
 
 ## Estado de fase
+
+**F13 — notificações educacionais: implementação parcial nesta branch.** Eventos de matrícula persistida e emissão
+de certificado passam ao adapter `aculta_lms_messenger`, que grava Message, integra a lista e contagem de Avisos
+da barra multidomínio via pontos de extensão do `aculta_messenger`, e enfileira e-mail transacional mínimo com
+Message Notify. A rota de abertura revalida acesso e purpose. Unit do subscriber, configuração de Message, testes
+de integração, resumo diário opt-in para demais eventos e revisão visual ainda precisam passar; **RUNTIME STATUS:
+DEFERRED**. Próximo passo: concluir eventos/digest e validar a gaveta em teste antes de RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`

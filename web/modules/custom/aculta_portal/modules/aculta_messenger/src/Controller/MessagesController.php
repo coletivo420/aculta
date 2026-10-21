@@ -774,7 +774,9 @@ final class MessagesController extends ControllerBase {
     $cacheability->applyTo($build);
     return [
       'build' => $build,
-      'contador' => $activeAlertCount + $this->counts->unreadPersistentNoticeCount($this->account),
+      'contador' => $activeAlertCount
+        + $this->counts->unreadPersistentNoticeCount($this->account)
+        + ($this->account->isAuthenticated() ? $this->avisos->naoLidosTotal((int) $this->account->id()) : 0),
     ];
   }
 

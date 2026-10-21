@@ -1,4 +1,7 @@
 services:
+  logger.channel.aculta_lms:
+    parent: logger.channel_base
+    arguments: ['aculta_lms']
   aculta_lms.learning_dashboard:
     class: Drupal\aculta_lms\LearningDashboardManager
     arguments: ['@?aculta_portal.account_courses', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@?lms.training_manager']
@@ -10,7 +13,7 @@ services:
     arguments: ['@aculta_lms.learning_dashboard', '@current_user', '@date.formatter', '@string_translation']
   aculta_lms.course_certificate_manager:
     class: Drupal\aculta_lms\Certificate\CourseCertificateManager
-    arguments: ['@entity_type.manager', '@datetime.time', '@database']
+    arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms']
   aculta_lms.certificate_issue_access:
     class: Drupal\aculta_lms\Access\CertificateIssueAccessCheck
     arguments: ['@current_user']
@@ -34,6 +37,7 @@ services:
     arguments: ['@event_dispatcher']
     tags:
       - { name: aculta_portal.helper }
+  Drupal\aculta_lms\Event\CourseCompletionPublisherInterface: '@aculta_lms.course_completion_publisher'
   aculta_lms.course_room_builder:
     class: Drupal\aculta_lms\CourseRoomBuilder
     arguments: ['@current_user', '@string_translation', '@form_builder']

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\flag\FlagServiceInterface;
@@ -24,6 +25,7 @@ final class AvisoService {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
     private readonly ForumNoticeAccessPolicy $accessPolicy,
+    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /** Regra de contagem: um comentário só conta se é mais novo que o último já contado. */
@@ -138,6 +140,7 @@ final class AvisoService {
         $total++;
       }
     }
+    $this->moduleHandler?->alter('aculta_messenger_personal_notice_count', $total, $uid);
     return $total;
   }
 
@@ -194,7 +197,7 @@ final class AvisoService {
     }
   }
 
-  /** Quantos tópicos têm respostas não lidas para a pessoa (para a contagem do site). */
+  /** Quantos avisos pessoais não lidos entram na contagem global do site. */
   public function naoLidosNoSite(int $uid): int {
     return $this->naoLidosTotal($uid);
   }

@@ -106,7 +106,9 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 ## 5. Contador do ícone de avisos
 
 O ícone de avisos da barra mostra: alertas do site + comunicados não lidos + **avisos por pessoa não lidos**
-(`AvisoService::naoLidosTotal`). Cada entrada é um grupo tipo + assunto com contador > 0. O contador de conversas
+(`AvisoService::naoLidosTotal`): avisos do Fórum são grupos tipo + assunto com
+contador > 0; adapters pessoais, como `aculta_lms_messenger`, somam registros
+acessíveis não lidos pelo alter de contagem. O contador de conversas
 (outro ícone) não inclui avisos.
 
 ## 6. Controles individuais (Minha conta > Privacidade, bloco "Avisos")

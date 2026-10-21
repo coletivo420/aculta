@@ -10,7 +10,10 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\group\Entity\GroupInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -27,6 +30,8 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
     private readonly Connection $database,
+    private readonly EventDispatcherInterface $eventDispatcher,
+    private readonly LoggerInterface $logger,
   ) {}
 
   public function issue(CourseStatusInterface $status, AccountInterface $issuer): CourseCertificate {
@@ -87,13 +92,21 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       ]);
       $certificate->save();
       unset($transaction);
-
-      return $certificate;
     }
     catch (\Throwable $exception) {
       $transaction->rollBack();
       throw $exception;
     }
+
+    try {
+      $this->eventDispatcher->dispatch(new CertificateIssuedEvent((string) $certificate->uuid(), (string) $student->id()));
+    }
+    catch (\Throwable $exception) {
+      // A notification integration must never roll back an already issued
+      // certificate or make the issuer believe it was not issued.
+      $this->logger->error('Could not publish the LMS certificate issued event: @message', ['@message' => $exception->getMessage()]);
+    }
+    return $certificate;
   }
 
   public function revoke(CourseCertificate $certificate, AccountInterface $issuer, string $reason): void {

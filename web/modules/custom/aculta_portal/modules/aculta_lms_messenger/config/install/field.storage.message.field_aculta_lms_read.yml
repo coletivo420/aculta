@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_lms_messenger
+id: message.field_aculta_lms_read
+field_name: field_aculta_lms_read
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

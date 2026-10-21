@@ -26,6 +26,13 @@ Cada incremento registra os testes realmente executados e `RUNTIME STATUS`.
 RC exige testes/gates e revisão visual aplicável pré-deploy; homologação do
 Runtime e transporte controlado são validados em Alpha.
 
+### Integração LMS F13 (parcial)
+
+O adapter `aculta_lms_messenger` usa Message/Message Notify e estes pontos de
+extensão para inserir avisos pessoais na lista e no contador da barra
+multidomínio. Matrícula e certificado usam e-mail transacional; resumo diário
+opt-in para outros eventos, integração visual e Runtime continuam pendentes.
+
 ## 0.1.0
 
 1. **dev.1 — fundação documental:** ownership, inventário, compatibilidade,

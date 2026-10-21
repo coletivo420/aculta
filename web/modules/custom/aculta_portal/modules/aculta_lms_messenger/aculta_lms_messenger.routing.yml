@@ -1,0 +1,13 @@
+aculta_lms_messenger.notice_open:
+  path: '/avisos/educacionais/{message}/abrir'
+  defaults:
+    _controller: 'aculta_lms_messenger.notice_open_controller:open'
+    _title: 'Aviso de curso'
+  requirements:
+    _custom_access: 'aculta_lms_messenger.notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message

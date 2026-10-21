@@ -1,3 +1,12 @@
+## 0.1.1-dev.60 — integração de contagem e lista de avisos pessoais — 2026-10-20
+
+- Expõe pontos de alteração para módulos adicionarem avisos pessoais à gaveta
+  multidomínio e ao contador, mantendo `aculta_aviso` como implementação dos
+  avisos do Fórum.
+- `AvisoService` aceita `module_handler` opcional para compatibilidade de
+  construção, e o contador da barra soma a extensão dos módulos integradores.
+- Integração LMS via `aculta_lms_messenger`; Runtime: DEFERRED.
+
 ## 0.1.1-dev.59 — subaba Mensagens na aba Pessoas do painel ACULTA — 2026-10-20
 
 - Subaba **Mensagens** em `/painel-administrativo/aculta/mensagens`, dentro da aba Pessoas. Avisos continuam no menu de conteúdo.

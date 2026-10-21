@@ -1,0 +1,18 @@
+services:
+  aculta_lms_messenger.notice_manager:
+    class: Drupal\aculta_lms_messenger\LearningNoticeManager
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@queue', '@logger.channel.aculta_lms_messenger']
+  aculta_lms_messenger.notice_access:
+    class: Drupal\aculta_lms_messenger\Access\LearningNoticeAccessCheck
+    arguments: ['@aculta_lms_messenger.notice_manager', '@current_user']
+  aculta_lms_messenger.notice_open_controller:
+    class: Drupal\aculta_lms_messenger\Controller\LearningNoticeOpenController
+    arguments: ['@aculta_lms_messenger.notice_manager', '@current_user']
+  aculta_lms_messenger.notification_subscriber:
+    class: Drupal\aculta_lms_messenger\EventSubscriber\LearningNotificationSubscriber
+    arguments: ['@aculta_lms_messenger.notice_manager', '@logger.channel.aculta_lms_messenger']
+    tags:
+      - { name: event_subscriber }
+  logger.channel.aculta_lms_messenger:
+    parent: logger.channel_base
+    arguments: ['aculta_lms_messenger']
