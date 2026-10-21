@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Evento de atividade do Fórum: emitido só para tópico e comentário do Fórum, uma vez por criação.
+ * Evento de atividade do Fórum: um evento por tópico ou comentário criado.
  */
 #[CoversClass(ForumActivityEventHooks::class)]
 #[Group('aculta_forum')]
@@ -60,7 +60,7 @@ final class ForumActivityEventHooksTest extends TestCase {
   }
 
   /**
-   * Comentário em outro contexto (publicação, LMS, Wiki) não é do Fórum e não emite evento.
+   * Comentários de publicação, LMS ou Wiki não emitem evento do Fórum.
    */
   public function testCommentOnOtherContentDoesNotDispatch(): void {
     $article = $this->createMock(NodeInterface::class);
@@ -74,7 +74,7 @@ final class ForumActivityEventHooksTest extends TestCase {
   }
 
   /**
-   * Dispatcher que espera um único evento com o nome e o identificador informados.
+   * Dispatcher que espera o nome e o ID informados em um único evento.
    */
   private function dispatcherExpecting(string $name, int $entityId): EventDispatcherInterface {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);

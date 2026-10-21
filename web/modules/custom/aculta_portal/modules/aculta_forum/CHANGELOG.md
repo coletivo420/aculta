@@ -1,3 +1,12 @@
+## `0.1.0-dev.128` — PHPCS dos docblocks de atividade — 2026-10-21
+
+- Quebra docblocks longos do produtor de eventos em linhas compatíveis com
+  Drupal/DrupalPractice. Nenhum comportamento ou contrato mudou.
+- README, roadmap, matriz de testes e índice de status foram alinhados à dev.128.
+- A documentação da fase LMS registra o fluxo H5P–Fórum validado no Runtime de
+  teste pela F15 de `aculta_lms_h5p`; busca e notificações privadas LMS seguem
+  pendentes. Nenhuma alteração de Runtime nesta atualização documental.
+
 ## `0.1.0-dev.127` — produtor de eventos de atividade para estatísticas — 2026-10-21
 
 - Correção de teste (`ForumSearchConfigTest`): o `config/install` da busca do Fórum (`search_api.index.aculta_forum.yml` e `views.view.aculta_forum_search.yml`) passa a ser idêntico ao `config/sync` exportado do Runtime. Diferenças eram ordem de chaves e duas entradas `remember_roles` com valor `'0'` (equivalentes a ausentes, Drupal não as exporta). Nenhuma regra de acesso mudou.

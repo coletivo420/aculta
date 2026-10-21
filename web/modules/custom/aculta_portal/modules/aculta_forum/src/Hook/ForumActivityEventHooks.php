@@ -12,10 +12,10 @@ use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Emite ForumActivityEvent quando um tópico ou um comentário do Fórum é criado.
+ * Emite ForumActivityEvent quando cria tópico ou comentário no Fórum.
  *
- * Só criação: edição, movimentação e exclusão não emitem evento. Comentários de outros contextos
- * (publicações, LMS, Wiki) não são do Fórum e são ignorados.
+ * Só criação: edição, movimentação e exclusão não emitem evento. Comentários
+ * de outros contextos (publicações, LMS, Wiki) são ignorados.
  */
 final class ForumActivityEventHooks {
 

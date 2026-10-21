@@ -1,3 +1,29 @@
+## dev.128 — PHPCS nos docblocks do produtor de eventos
+
+- Ajuste somente de comentários; o comportamento permanece o da dev.127.
+- `ForumActivityEventHooksTest`: resultado funcional mantém a evidência da
+  dev.127 (4 casos). PHPCS Drupal/DrupalPractice PASS após este ajuste.
+
+## dev.127 — produtor de eventos para estatísticas
+
+- `ForumActivityEventHooksTest`: 4 testes cobrem evento de tópico, evento de
+  comentário e exclusão de contextos não públicos do Fórum. Suíte Unit completa:
+  94 testes / 650 assertions PASS.
+- Suíte Kernel completa do módulo, executada em `aculta_simpletest`: 26 testes /
+  528 assertions PASS; 19 depreciações de Core/contrib instalados.
+- Integração dos eventos no Runtime com tópico e comentário reais e decisão de
+  apresentar agregados no painel seguem pendentes. A integração H5P contextual
+  tem evidência separada em `aculta_lms_h5p/CHANGELOG.md`.
+
+## dev.126 — permalink canônico após mover comentário
+
+- `ForumCommentMoverKernelTest`: 18 testes / 368 assertions; rota Core do
+  comentário e fragmento por CID permanecem válidos após mover a árvore.
+- `ForumTopicDisplayConfigTest`: 19 testes / 283 assertions; comparação YAML
+  ignora ordem de mapas, preservando a ordem das listas. O Runtime não foi
+  alterado; links antigos com fragmento no tópico de origem não podem ser
+  redirecionados pelo servidor. RUNTIME STATUS: DEFERRED.
+
 ## dev.125 — mover comentário pela aba Comentários
 
 - Forum Unit `ForumTopicDisplayConfigTest`: 19 testes/283 assertions PASS.

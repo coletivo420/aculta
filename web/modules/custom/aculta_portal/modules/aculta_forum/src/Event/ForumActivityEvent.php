@@ -9,9 +9,10 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * Atividade criada no Fórum: um tópico ou um comentário novo.
  *
- * Produtor de eventos para o `aculta_statistics` e outros consumidores. Carrega só o identificador
- * da entidade e o instante da criação: nenhum autor, texto ou e-mail. Quem consome busca o restante
- * pelas APIs do dono, se precisar.
+ * Produtor de eventos para `aculta_statistics` e outros consumidores.
+ * Carrega só o identificador da entidade e o instante da criação: nenhum autor,
+ * texto ou e-mail. Consumidores buscam o restante pelas APIs do dono, se
+ * preciso.
  */
 final class ForumActivityEvent extends Event {
 
