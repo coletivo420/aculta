@@ -429,7 +429,7 @@ implementação: certificados usam snapshot próprio, Entity Print/Dompdf e
 `aculta_qrcode`; painéis são montados pelos serviços LMS e Group, sem depender de
 Views. A matriz também explicita que compra ativa protege matrícula manual e
 que reembolso revoga apenas a matrícula ligada ao pedido, e detalha os pontos
-de cache e isolamento ainda exigidos. Regressão atual LMS/Messenger: Unit 86/460
+de cache e isolamento ainda exigidos. Regressão atual LMS/Messenger: Unit 87/470
 e Kernel MariaDB dedicado 23/730 PASS; gate Portal 1010 checks e índice 29
 componentes PASS. Permanecem depreciações upstream, visual/Runtime incompletos
 e validação em PHP 8.5.
