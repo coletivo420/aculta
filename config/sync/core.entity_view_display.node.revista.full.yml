@@ -108,10 +108,10 @@ content:
     weight: 90
     region: content
 hidden:
+  co_authors: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
-  co_authors: true
   field_domain_source: true
   field_editorial_author: true
   field_meta_tags: true
