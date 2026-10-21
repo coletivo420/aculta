@@ -12,24 +12,7 @@
         "Participamos de espaços de diálogo e construção coletiva relacionados a direitos humanos, cidadania e políticas públicas."
     ],
     "projects_intro": "Da percussão ao audiovisual, nossos projetos aproximam pessoas e fortalecem a participação cultural.",
-    "projects": {
-        "bloco_sativa": {
-            "title": "Carnareggae Bloco Sativa",
-            "summary": "Carnaval de rua, reggae, dub e percussão ocupando o Centro de Goiânia com cultura, convivência e participação popular."
-        },
-        "baque_sativa": {
-            "title": "Baque Sativa",
-            "summary": "Grupo de percussão que transforma ritmo, encontro e cultura popular em ocupação coletiva dos espaços da cidade."
-        },
-        "podplant420": {
-            "title": "PodPlant420",
-            "summary": "Projeto audiovisual dedicado a conversas sobre cultura, direitos, sociedade, cuidado e participação popular."
-        },
-        "batalha_riddim": {
-            "title": "Batalha do Riddim",
-            "summary": "Encontros dedicados ao reggae, à cultura sound system e à circulação da música independente."
-        }
-    },
+    "projects": {},
     "city": [
         "Ensaios, apresentações, cortejos e encontros abertos à comunidade fazem da cidade um espaço de cultura e convivência.",
         "Do Baque Sativa ao Carnareggae, fortalecemos a produção independente e a ocupação coletiva dos espaços públicos de Goiânia."

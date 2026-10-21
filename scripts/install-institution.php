@@ -65,7 +65,7 @@ function institution_field(string $entity_type, string $bundle, string $name, st
     FieldStorageConfig::create(['entity_type' => $entity_type, 'field_name' => $name, 'type' => $type, 'cardinality' => $cardinality, 'settings' => $settings])->save();
   }
   if (!FieldConfig::loadByName($entity_type, $bundle, $name)) {
-    $field_settings = $type === 'entity_reference' ? ['handler' => 'default:node', 'handler_settings' => ['target_bundles' => ['project' => 'project']]] : [];
+    $field_settings = $type === 'entity_reference' ? ['handler' => 'default:node'] : [];
     if ($type === 'file') {
       $field_settings = ['file_extensions' => 'pdf', 'file_directory' => 'institutional-documents', 'description_field' => TRUE];
     }
@@ -141,7 +141,7 @@ function institution_block(string $key, string $label, string $html, int $weight
 }
 
 // Core content types; no pre-existing type or content is removed.
-foreach (['page' => 'Página institucional', 'project' => 'Projeto', 'activity' => 'Atividade', 'article' => 'Notícia', 'document' => 'Documento institucional'] as $id => $label) {
+foreach (['page' => 'Página institucional', 'activity' => 'Atividade', 'article' => 'Notícia', 'document' => 'Documento institucional'] as $id => $label) {
   if (!NodeType::load($id)) {
     $type = NodeType::create(['type' => $id, 'name' => $label, 'new_revision' => TRUE, 'display_submitted' => FALSE]);
     $type->save();
@@ -151,20 +151,10 @@ foreach (['page' => 'Página institucional', 'project' => 'Projeto', 'activity' 
   institution_display('node', $id, 'default', ['body' => ['type' => 'text_default', 'label' => 'hidden', 'weight' => 5]]);
   institution_display('node', $id, 'full', ['body' => ['type' => 'text_default', 'label' => 'hidden', 'weight' => 5]]);
 }
-institution_field('node', 'project', 'field_category', 'string', 'Categoria');
-institution_field('node', 'project', 'field_link_label', 'string', 'Chamada do link');
-institution_field('node', 'project', 'field_project_order', 'integer', 'Ordem editorial');
-institution_field('node', 'project', 'field_image', 'image', 'Imagem', ['uri_scheme' => 'public', 'target_type' => 'file']);
-foreach (['history' => 'História', 'objectives' => 'Objetivos', 'activities' => 'Atividades', 'records' => 'Registros'] as $suffix => $label) {
-  institution_field('node', 'project', 'field_project_' . $suffix, 'text_long', $label);
-}
-foreach (['article', 'activity'] as $bundle) {
-  institution_field('node', $bundle, 'field_project', 'entity_reference', 'Projetos relacionados', ['target_type' => 'node'], -1);
-}
 institution_field('node', 'activity', 'field_activity_date', 'datetime', 'Data da atividade', ['datetime_type' => 'date']);
 institution_field('node', 'document', 'field_document', 'file', 'Documento PDF', ['uri_scheme' => 'public', 'target_type' => 'file']);
 institution_field('node', 'document', 'field_category', 'string', 'Categoria');
-foreach (['project', 'article', 'activity', 'document'] as $bundle) {
+foreach (['article', 'activity', 'document'] as $bundle) {
   $widgets = ['body' => ['type' => 'text_textarea_with_summary', 'weight' => 5]];
   $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', $bundle);
   $weight = 10;
@@ -188,11 +178,6 @@ foreach (['project', 'article', 'activity', 'document'] as $bundle) {
   }
   foreach (['default', 'full', 'teaser'] as $mode) {
     $mode_components = $components;
-    if ($bundle === 'project' && $mode !== 'teaser') {
-      foreach (['history', 'objectives', 'activities', 'records'] as $weight => $suffix) {
-        $mode_components['field_project_' . $suffix] = ['type' => 'text_default', 'label' => 'above', 'weight' => 20 + $weight];
-      }
-    }
     institution_display('node', $bundle, $mode, $mode_components);
   }
 }
@@ -208,9 +193,6 @@ foreach ($data['work']['areas'] as $area) {
   $work .= '<section><h3>' . institution_escape($area['title']) . '</h3><p>' . institution_escape($area['text']) . '</p></section>';
 }
 institution_block('home_work', 'Home — O que fazemos', $work . '</div></section>', 20);
-foreach ($data['projects'] as $order => $project) {
-  institution_node($project['key'], 'project', $project['name'], institution_paragraphs($project['paragraphs']), $project['path'], TRUE, ['field_category' => $project['category'], 'field_link_label' => $project['link'], 'field_project_order' => $order]);
-}
 institution_block('home_city', 'Home — Cultura que ocupa a cidade', institution_section($data['city'], '<p class="aculta-callout">' . institution_escape($data['city']['callout']) . '</p><p>' . institution_link('/atividades', 'VEJA NOSSAS ATIVIDADES', 'btn btn-primary') . '</p>', 'aculta-city'), 40);
 institution_block('home_knowledge', 'Home — Comunicação e conhecimento', institution_section($data['knowledge'], '<p>' . institution_link('/noticias', 'ACOMPANHE AS PUBLICAÇÕES', 'aculta-editorial-link') . '</p>'), 50);
 institution_block('home_care', 'Home — Cuidado, informação e direitos', institution_section($data['care'], '<p class="aculta-institutional-note">' . institution_escape($data['care']['note']) . '</p>'), 60);
@@ -288,7 +270,7 @@ function institution_view(string $id, string $label, array $bundles, string $pat
       'status' => ['id' => 'status', 'table' => 'node_field_data', 'field' => 'status', 'value' => '1', 'entity_type' => 'node', 'entity_field' => 'status', 'plugin_id' => 'boolean'],
       'type' => ['id' => 'type', 'table' => 'node_field_data', 'field' => 'type', 'value' => array_combine($bundles, $bundles), 'entity_type' => 'node', 'entity_field' => 'type', 'plugin_id' => 'bundle'],
     ];
-    $sorting = $sort === 'field_project_order' ? ['field_project_order_value' => ['id' => 'field_project_order_value', 'table' => 'node__field_project_order', 'field' => 'field_project_order_value', 'plugin_id' => 'standard', 'order' => 'ASC']] : ['created' => ['id' => 'created', 'table' => 'node_field_data', 'field' => 'created', 'entity_type' => 'node', 'entity_field' => 'created', 'plugin_id' => 'date', 'order' => 'DESC']];
+    $sorting = ['created' => ['id' => 'created', 'table' => 'node_field_data', 'field' => 'created', 'entity_type' => 'node', 'entity_field' => 'created', 'plugin_id' => 'date', 'order' => 'DESC']];
     $options = ['title' => $label, 'access' => ['type' => 'perm', 'options' => ['perm' => 'access content']], 'cache' => ['type' => 'tag', 'options' => []], 'query' => ['type' => 'views_query', 'options' => []], 'pager' => ['type' => 'none', 'options' => ['offset' => 0]], 'style' => ['type' => 'default', 'options' => ['default_row_class' => TRUE]], 'row' => ['type' => 'entity:node', 'options' => ['view_mode' => $row_mode]], 'filters' => $filters, 'sorts' => $sorting, 'css_class' => $id === 'aculta_projects' ? 'aculta-project-list' : 'aculta-editorial-list'];
     if ($header) {
       $options['header'] = ['area' => ['id' => 'area', 'table' => 'views', 'field' => 'area', 'plugin_id' => 'text', 'empty' => FALSE, 'content' => ['value' => $header, 'format' => 'full_html'], 'tokenize' => FALSE]];
@@ -297,7 +279,6 @@ function institution_view(string $id, string $label, array $bundles, string $pat
   }
   institution_place($id, 'views_block:' . $id . '-block_1', 'content', $weight, $label, $paths);
 }
-institution_view('aculta_projects', 'Projetos da Associação', ['project'], "<front>\n/projetos", 30, '<h2 class="aculta-section-title">NOSSOS PROJETOS</h2><p class="aculta-prose">' . institution_escape($data['projects_intro']) . '</p>', 'field_project_order');
 institution_view('aculta_news', 'Publicações da Associação', ['article'], '/noticias', 30);
 institution_view('aculta_activities', 'Registros de atividades', ['activity'], '/atividades', 30);
 institution_view('aculta_documents', 'Documentos institucionais', ['document'], '/transparencia', 100, '<h2>DOCUMENTOS</h2>');
@@ -334,7 +315,7 @@ institution_place('aculta_contact_data', 'block_content:' . $institution_data->u
 
 $footer_menus = [
   'aculta-footer-institution' => ['INSTITUCIONAL', ['institutional' => 'Quem somos', 'projects' => 'Projetos', 'transparency' => 'Transparência']],
-  'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades', 'podplant420' => 'PodPlant420']],
+  'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades',]],
 ];
 foreach ($footer_menus as $id => [$label, $links]) {
   if (!Menu::load($id)) {

@@ -46,43 +46,7 @@
     ]
   },
   "projects_intro": "Da percussão ao audiovisual, do carnaval de rua aos encontros culturais, nossos projetos utilizam diferentes linguagens para aproximar pessoas e fortalecer a participação cultural.",
-  "projects": [
-    {
-      "key": "bloco_sativa", "path": "/projetos/carnareggae-bloco-sativa",
-      "name": "Carnareggae Bloco Sativa", "category": "CARNAVAL • CULTURA DE RUA", "link": "CONHEÇA O BLOCO SATIVA",
-      "paragraphs": [
-        "O Carnareggae Bloco Sativa é uma experiência de carnaval de rua que reúne reggae, dub, percussão, artistas independentes e cultura popular no Centro de Goiânia.",
-        "Nascido a partir da construção do Bloco Sativa, o projeto transforma o carnaval em espaço de encontro, celebração, convivência e participação cultural. Sua programação aproxima músicos, DJs, percussionistas, produtores e público em uma ocupação coletiva da cidade.",
-        "Além da programação artística, o projeto incorpora ações de cuidado, convivência e redução de danos, buscando construir uma festa popular gratuita, responsável e aberta à diversidade."
-      ]
-    },
-    {
-      "key": "baque_sativa", "path": "/projetos/baque-sativa",
-      "name": "Grupo de Percussão Baque Sativa", "category": "MÚSICA • PERCUSSÃO", "link": "CONHEÇA O BAQUE SATIVA",
-      "paragraphs": [
-        "O Baque Sativa é um grupo de percussão de Goiânia criado em 2023 e ligado à trajetória cultural que deu origem à Associação.",
-        "Com ensaios, apresentações, cortejos e participação em atividades culturais, o grupo utiliza a percussão como instrumento de encontro, expressão coletiva e ocupação dos espaços públicos.",
-        "O Baque reúne pessoas com diferentes níveis de experiência e fortalece a presença da percussão popular em eventos, manifestações culturais e ações comunitárias."
-      ]
-    },
-    {
-      "key": "podplant420", "path": "/projetos/podplant420",
-      "name": "PodPlant420", "category": "COMUNICAÇÃO • AUDIOVISUAL", "link": "CONHEÇA O PODPLANT420",
-      "paragraphs": [
-        "O PodPlant420 é um projeto de comunicação audiovisual criado para promover conversas acessíveis sobre cultura, direitos, sociedade, redução de danos, organização comunitária e temas relacionados ao antiproibicionismo.",
-        "Em formato de entrevistas e rodas de conversa, o programa recebe convidados com diferentes experiências e áreas de atuação, aproximando conhecimento técnico, vivências e participação popular.",
-        "Os episódios completos e seus recortes ampliam a presença da Associação no ambiente digital e ajudam a transformar informação em diálogo."
-      ]
-    },
-    {
-      "key": "batalha_riddim", "path": "/projetos/batalha-do-riddim",
-      "name": "Batalha do Riddim", "category": "MÚSICA • CULTURA SOUND SYSTEM", "link": "CONHEÇA A BATALHA DO RIDDIM",
-      "paragraphs": [
-        "A Batalha do Riddim integra a frente cultural da Associação e amplia o espaço dedicado à música, à cultura reggae e às experiências sonoras ligadas ao universo dos sound systems.",
-        "O projeto busca promover encontros entre artistas, seletores, DJs, produtores e público, fortalecendo a circulação da música independente e a ocupação cultural de espaços da cidade."
-      ]
-    }
-  ],
+  "projects": [],
   "city": {
     "title": "CULTURA QUE OCUPA A CIDADE", "callout": "CULTURA SE FAZ JUNTO.",
     "paragraphs": [
