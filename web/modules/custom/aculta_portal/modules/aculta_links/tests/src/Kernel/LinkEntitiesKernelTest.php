@@ -29,6 +29,8 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'system',
     'user',
     'field',
+    'token',
+    'metatag',
     'datetime',
     'link',
     'options',

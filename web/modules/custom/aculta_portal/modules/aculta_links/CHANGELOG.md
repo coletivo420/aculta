@@ -1,5 +1,12 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.12 — fornece SEO nativo para micropáginas — 2026-10-20
+
+- Integração pela API/alter hook do Metatag gera title, description, canonical Domain, Open Graph e Schema.org a partir da micropágina publicada; texto de descrição é convertido para texto simples e limitado a 300 caracteres.
+- Dashboard, preview e rotas de entidade do ACULTA Links recebem `noindex, nofollow`; canonical não é emitido se `DomainPurposeManager` não resolver o purpose.
+- Cache do render da página varia/invalida pelos defaults global e de entidade do Metatag.
+- Validação: Kernel 2 testes/76 asserções PASS (com 5 depreciações do Metatag/Token instalado); Unit de política privada 1/4 PASS (2 avisos PHPUnit), PHPCS Drupal, PHP lint e diff-check PASS. Runtime DEFERRED pelo erro de container externo do `aculta_lms`.
+
 ## 0.4.0-dev.11 — agenda disponibilidade de itens — 2026-10-20
 
 - Itens de micropágina agora aceitam início e fim opcionais de disponibilidade em campos revisionáveis; `system.date` define o fuso de edição e o Core armazena UTC.

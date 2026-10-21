@@ -105,6 +105,23 @@ final class LinkPagePublicController {
     $cache_contexts = ['url.site', 'languages:language_interface', 'user', 'user.permissions'];
     $cache_max_age = Cache::PERMANENT;
 
+    // This render output also contains route-specific Metatag output, so
+    // invalidate it when the global or entity-type SEO defaults change.
+    if ($published_only) {
+      $metatag_storage = $this->entityTypeManager->getStorage('metatag_defaults');
+      $cache_tags = array_merge($cache_tags, $metatag_storage->getEntityType()->getListCacheTags());
+      foreach ([
+        'global',
+        'aculta_link_page',
+        'aculta_link_page__aculta_link_page',
+      ] as $default_id) {
+        $defaults = $metatag_storage->load($default_id);
+        if ($defaults) {
+          $cache_tags = array_merge($cache_tags, $defaults->getCacheTags());
+        }
+      }
+    }
+
     foreach ($items as $item) {
       // Preview is authorized by update access to the page. Requiring view
       // access here would hide scheduled items from their owner before publish.

@@ -35,8 +35,7 @@ páginas; equipes complexas não são prioridade.
 
 ## 0.4.0 — interface pública e presets
 
-Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Em 0.4.0-dev.9, o template da micropágina passou a mostrar seu título e a omitir a marca institucional da ACULTA. Faltam SEO, controles adicionais de aparência e revisão visual/acessível antes de RC.
-SEO deverá usar o Metatag já instalado (2.2.0) e canonical de `DomainPurposeManager`; a rota do controller não passa pelo fluxo `entity_view_alter` do Metatag. Portanto, a integração precisa chamar sua API explicitamente e aplicar os tags ao render array com cacheability. Não adicionar campos Metatag ou duplicar tags em `html_head` antes de validar precedência dos defaults. `schema_metatag` 3.0.4 está instalado.
+Rota pública, prévia privada e presets governados `classic`, `soft` e `outline` implementados em 0.4.0-dev.4; em 0.4.0-dev.5 a landing raiz foi restaurada com preservação do Node editorial e fallback dos dados atuais. Em 0.4.0-dev.9, o template da micropágina passou a mostrar seu título e a omitir a marca institucional da ACULTA. Em 0.4.0-dev.12, o alter hook do Metatag fornece metadata por página e canonical via `DomainPurposeManager`; defaults permanecem controlados pela configuração central. Faltam controles adicionais de aparência e revisão visual/acessível antes de RC.
 Identidade pública opt-in do proprietário permanece planejada para 0.6.0.
 
 ## 0.5.0 — métricas e ferramentas

@@ -11,6 +11,8 @@ interno `/redes-sociais` continua inacessível diretamente.
 Páginas publicadas têm download de QR Code SVG em
 `/pagina/{slug}/codigo-qr.svg`; a carga codifica a URL canônica do purpose
 `links` sem armazenar imagem ou medir visitas.
+Metatag fornece título, descrição, canonical Domain, Open Graph e Schema.org
+por página; rotas privadas de edição e preview são `noindex`.
 
 A configuração e o formulário administrativo dos canais sociais também estão
 no submódulo. Os valores são migrados sem apagar `aculta_portal.social_links`, e

@@ -93,3 +93,9 @@ smoke de Runtime permanecem DEFERRED: o preflight Drush falhou durante a
 compilação do container por serviço ausente `entity_print.print_builder`
 introduzido na alteração concorrente do `aculta_lms`; nenhuma operação Runtime
 foi executada.
+
+SEO 0.4.0-dev.12: Unit PASS (1 teste/4 asserções) para `noindex` e remoção de
+canonical nos previews privados; PHPCS e lint PASS. O Kernel manteve 2/76 PASS,
+com 5 depreciações provenientes do Metatag/Token e de APIs do Core acionadas
+pelos contribs. A emissão de metadata em HTTP e a cache no Runtime ficam
+DEFERRED pelo bloqueio do bootstrap Drush descrito acima.

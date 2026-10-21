@@ -98,4 +98,14 @@ com dados/editoria antes de qualquer migração.
 
 ## Micropáginas públicas 0.4.0-dev.1
 
-`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Micropáginas guardam preset de apresentação revisionável; o update `10001` foi aplicado no Runtime após confirmar que não havia páginas existentes. ACULTA420 apresenta o SDC existente. Landing raiz restaurada, mas integração com perfil público/avatares e SEO pendente. Produção não foi verificada.
+`/pagina/{slug}` está ativa no Runtime de teste no purpose `links`, com status publicado e acesso revalidado em página, item e destino. A prévia em `/pagina/{slug}/previa` é hospedada no mesmo purpose para usar o tema público, exige edição e não é cacheada. Micropáginas guardam preset de apresentação revisionável; o update `10001` foi aplicado no Runtime após confirmar que não havia páginas existentes. ACULTA420 apresenta o SDC existente. Landing raiz restaurada; integração com perfil público/avatares pendente. Produção não foi verificada.
+
+## SEO por micropágina 0.4.0-dev.12
+
+Metatag usa um alter hook OOP em rotas públicas de micropágina para preencher
+título, descrição, canonical de Domain, Open Graph e Schema.org. Defaults
+globais e por tipo continuam sob administração Metatag; seus cache tags são
+incluídos no render da página. Preview, dashboard e rotas de CRUD recebem
+`noindex, nofollow`. A política privada tem teste Unit; headers renderizados,
+canonical em Runtime e integração visual permanecem DEFERRED enquanto o
+container Drush de teste não compilar por alteração externa do `aculta_lms`.
