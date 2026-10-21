@@ -9,7 +9,7 @@ Seguir o ciclo Dev → RC → Alpha ([RELEASE-LIFECYCLE.md](../../../../../../..
 - Arquitetura, entidades, domínio e decisões pendentes ([ARQUITETURA.md](ARQUITETURA.md)).
 - Sem código, sem banco, sem dependência Composer.
 
-Decisões 1 a 4 de `ARQUITETURA.md` registradas pelo responsável em 2026-10-20. A decisão 5 (lote) segue pendente, com a recomendação de Batch API adotada até confirmação.
+Decisões 1 a 5 de `ARQUITETURA.md` registradas pelo responsável em 2026-10-20 (lote: Batch API).
 
 ## 0.2.0 — motor de geração (concluída em 0.2.0-dev.1)
 
