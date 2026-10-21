@@ -71,17 +71,14 @@ de existir. Não desinstalar o módulo enquanto houver conteúdo com esses forma
 
 ## Integração com aculta_mailer
 
-Contrato, sem código de envio no editor:
-
-- **Ponto de conexão:** o editor visual de modelos de e-mail (passo 4 de `aculta_mailer/docs/CONTROL-SCREENS.md`) deve
-  usar o formato `aculta_email`, como decidido em 2026-10-20 ("HTML restrito").
-- **Responsabilidade do `aculta_mailer`:** tokens, cabeçalho e rodapé, renderização, substituição de tokens, envio, logs e
-  relatórios. O editor só monta o HTML.
-- **Pendente no mailer:** a tela de modelos ainda não existe. Inserção de tokens e pré-visualização dependem dela.
-- Nenhuma dependência de módulo foi criada do `aculta_editor` para o `aculta_mailer`.
+- O editor visual de modelos (`MailTemplateForm`, `aculta_mailer` 0.1.0-dev.61) usa o formato `aculta_email`.
+- O corpo HTML é escapado nas variáveis e filtrado pelo formato no render; a parte HTML do envio usa esse corpo sem escapar de novo.
+- Sem o formato `aculta_email` (este submódulo desabilitado), o corpo HTML sai escapado, sem marcação (falha fechada).
+- Tokens, cabeçalho e rodapé, envio, logs e relatórios continuam no `aculta_mailer`. A proposta e o desenho estão em [`docs/PROPOSTA-MAILER.md`](docs/PROPOSTA-MAILER.md).
 
 ## Limitações conhecidas
 
+- **Pré-visualização do modelo:** `preview()` usa o mesmo escape do envio; a tela não foi validada no navegador.
 - **Navegador:** a interação completa (inserir, editar, salvar, reabrir e renderizar pela interface do CKEditor) **não
   foi validada**. O ciclo de dados (salvar, recarregar, renderizar com sanitização) está coberto pelo Kernel test.
 - **Servidor de testes:** em 2026-10-21, o host principal respondeu HTTP 500 por causa do campo `field_h5p_content`

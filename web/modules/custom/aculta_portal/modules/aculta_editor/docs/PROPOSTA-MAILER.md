@@ -1,6 +1,6 @@
 # Proposta: editor visual de modelos no aculta_mailer
 
-Status: **proposta para a frente do `aculta_mailer`**. Este documento não altera o mailer. A alteração é da frente responsável pelo `aculta_mailer` (ou depende de autorização do responsável).
+Status: **implementada no `aculta_mailer` 0.1.0-dev.61**, com autorização do responsável. Este documento registra o desenho e os testes. Itens 1 a 4 entregues; item 5 permanece como fora de escopo.
 
 Data: 2026-10-22. Base: `MailTemplateForm.php`, `MailTemplateRenderer.php` e `CONTROL-SCREENS.md` do mailer, no estado da branch `docs/aculta-forum-0.1.0-dev.1`.
 
@@ -60,6 +60,7 @@ Sem esse passo, o editor torna possível injeção de HTML em e-mails enviados p
 
 Inserção de tokens pelo editor, pré-visualização e envio dependem da tela de modelos do mailer. O `aculta_editor` fornece só o formato `aculta_email`. Nenhum envio ou token é implementado aqui.
 
-## 6. Pendência de decisão
+## 6. Situação
 
-- Autorização do responsável para a frente do mailer aplicar as seções 2 a 4, ou para que o agente de integração faça essa alteração pontual.
+- Seções 2 a 4: implementadas no mailer (`body_format`, `text_format` no formulário, escape em `fill()` para corpo HTML, filtro do formato `aculta_email` no render, parte HTML sem escape duplo no envio). Testes: unitários e Kernel do mailer.
+- Seção 5 continua fora de escopo deste submódulo.
