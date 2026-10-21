@@ -13,6 +13,8 @@ retention:
     days: 90
   - metric: commerce.revenue.gross
     days: 90
+  - metric: commerce.items.sold
+    days: 90
   - metric: commerce.refunds.total
     days: 90
   - metric: lms.courses.completed

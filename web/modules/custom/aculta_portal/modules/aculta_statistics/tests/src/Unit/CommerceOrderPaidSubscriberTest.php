@@ -9,6 +9,7 @@ use Drupal\aculta_statistics\EventSubscriber\CommerceOrderPaidSubscriber;
 use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_order\Event\OrderEvent;
 use Drupal\commerce_order\Event\OrderEvents;
 use Drupal\commerce_price\Price;
@@ -51,6 +52,23 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
     );
 
     $this->subscriber($storage)->onOrderPaid($this->event('10.50', 'BRL'));
+  }
+
+  /**
+   * Cada item pago soma suas unidades pela variação de produto, sem dado de cliente.
+   */
+  public function testItemsAreCountedPerPurchasedVariation(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $calls = [];
+    $storage->method('record')->willReturnCallback(static function (string $metric, string $dimension, int $amount) use (&$calls): void {
+      $calls[] = [$metric, $dimension, $amount];
+    });
+
+    $this->subscriber($storage)->onOrderPaid($this->eventWithItems([[12, 2], [7, 1], [9, 0]]));
+
+    $this->assertContains(['commerce.items.sold', '12', 2], $calls);
+    $this->assertContains(['commerce.items.sold', '7', 1], $calls);
+    $this->assertNotContains(['commerce.items.sold', '9', 0], $calls);
   }
 
   /**
@@ -98,12 +116,35 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
   }
 
   /**
+   * Evento de pedido pago com itens (variação, quantidade) e total de 10,00 BRL.
+   *
+   * @param array<int, array{0: int, 1: int}> $items
+   *   Pares de identificador de variação e quantidade.
+   */
+  private function eventWithItems(array $items): OrderEvent {
+    $rows = [];
+    foreach ($items as [$variationId, $quantity]) {
+      $item = $this->createMock(OrderItemInterface::class);
+      $item->method('getPurchasedEntityId')->willReturn((string) $variationId);
+      $item->method('getQuantity')->willReturn((string) $quantity);
+      $rows[] = $item;
+    }
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(7);
+    $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
+    $order->method('getItems')->willReturn($rows);
+
+    return new OrderEvent($order);
+  }
+
+  /**
    * Evento de pedido pago com o total informado.
    */
   private function event(?string $number, string $currency): OrderEvent {
     $order = $this->createMock(OrderInterface::class);
     $order->method('id')->willReturn(7);
     $order->method('getTotalPrice')->willReturn($number === NULL ? NULL : new Price($number, $currency));
+    $order->method('getItems')->willReturn([]);
 
     return new OrderEvent($order);
   }

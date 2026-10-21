@@ -33,6 +33,11 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
   public const METRIC_REVENUE = 'commerce.revenue.gross';
 
   /**
+   * Métrica de unidades vendidas, por variação de produto.
+   */
+  public const METRIC_ITEMS = 'commerce.items.sold';
+
+  /**
    * Código ISO de moeda aceito como dimensão.
    */
   private const CURRENCY_PATTERN = '/^[A-Z]{3}$/';
@@ -51,6 +56,22 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [OrderEvents::ORDER_PAID => 'onOrderPaid'];
+  }
+
+  /**
+   * Soma as unidades de cada item pago, por variação de produto.
+   *
+   * Item sem entidade comprada ou com quantidade não positiva é ignorado.
+   */
+  private function recordItems(object $order): void {
+    foreach ($order->getItems() as $item) {
+      $entityId = $item->getPurchasedEntityId();
+      $quantity = (int) round((float) $item->getQuantity());
+      if ($entityId === NULL || $entityId === '' || $quantity < 1) {
+        continue;
+      }
+      $this->recorder->record(self::METRIC_ITEMS, (string) $entityId, $quantity);
+    }
   }
 
   /**
@@ -75,6 +96,7 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
       if ($cents > 0) {
         $this->recorder->record(self::METRIC_REVENUE, $currency, $cents);
       }
+      $this->recordItems($order);
     }
     catch (\Throwable $exception) {
       $this->logger->error('Falha ao registrar pedido pago: @message', ['@message' => $exception->getMessage()]);
