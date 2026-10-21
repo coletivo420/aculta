@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\lms\Entity\ActivityInterface;
@@ -54,26 +55,34 @@ final class AttemptArchiveManager {
 
   /** Stores an immutable copy of the Answer state that is about to disappear. */
   private function storeSnapshot(AnswerInterface $answer, string $event_type): void {
-    $lesson_status = $answer->getLessonStatus();
-    $course_status = $lesson_status->getCourseStatus();
-    $course = $course_status->getCourse();
+    $context = $this->getAnswerContext($answer);
+    if ($context === NULL) {
+      // LMS lifecycle cleanup may remove the referenced statuses first.
+      return;
+    }
+    [
+      'lesson_status' => $lesson_status,
+      'course_status' => $course_status,
+      'course' => $course,
+      'lesson' => $lesson,
+      'activity' => $activity,
+    ] = $context;
     $storage = $this->entityTypeManager->getStorage('aculta_lms_attempt_archive');
 
-    $activity = $answer->getActivity();
     $archive = $storage->create([
       'uid' => $answer->getUserId(),
       'group_id' => $course->id(),
       'course_status_id' => (string) $course_status->id(),
       'lesson_status_id' => (string) $lesson_status->id(),
       'lesson_id' => $lesson_status->getLessonId(),
-      'lesson_label' => $lesson_status->getLesson()->label(),
+      'lesson_label' => $lesson->label(),
       'activity_id' => (string) $activity->id(),
       'activity_label' => $activity->label(),
       'answer_uuid' => $answer->uuid(),
       'event_type' => $event_type,
       'answer_data' => \Drupal\Component\Serialization\Json::encode($answer->getData()),
       'score' => $answer->getScore(),
-      'max_score' => $this->getActivityMaxScore($lesson_status->getLesson(), $activity),
+      'max_score' => $this->getActivityMaxScore($lesson, $activity),
       'started' => $lesson_status->getCreatedTime(),
       'finished' => $lesson_status->getFinishedTime(),
       'answered' => $answer->getChangedTime(),
@@ -91,16 +100,24 @@ final class AttemptArchiveManager {
    *   Visible attempt records in chronological order.
    */
   public function loadPreviousAttempts(AnswerInterface $answer, CacheableMetadata $cacheability): array {
-    $lesson_status = $answer->getLessonStatus();
-    $course_status = $lesson_status->getCourseStatus();
+    $context = $this->getAnswerContext($answer);
+    if ($context === NULL) {
+      return [];
+    }
+    [
+      'lesson_status' => $lesson_status,
+      'course_status' => $course_status,
+      'course' => $course,
+      'activity' => $activity,
+    ] = $context;
     $storage = $this->entityTypeManager->getStorage('aculta_lms_attempt_archive');
     $query = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $answer->getUserId())
-      ->condition('group_id', $course_status->getCourseId())
+      ->condition('group_id', $course->id())
       ->condition('course_status_id', (string) $course_status->id())
       ->condition('lesson_id', $lesson_status->getLessonId())
-      ->condition('activity_id', (string) $answer->getActivity()->id())
+      ->condition('activity_id', (string) $activity->id())
       ->sort('archived', 'ASC');
     $records = $storage->loadMultiple($query->execute());
     $visible_records = [];
@@ -112,6 +129,46 @@ final class AttemptArchiveManager {
       }
     }
     return $visible_records;
+  }
+
+  /**
+   * Resolves the current response context through nullable entity references.
+   *
+   * @return array{lesson_status: \Drupal\lms\Entity\LessonStatusInterface, course_status: \Drupal\lms\Entity\CourseStatusInterface, course: \Drupal\lms\Entity\Bundle\CourseInterface, lesson: \Drupal\lms\Entity\LessonInterface, activity: \Drupal\lms\Entity\ActivityInterface}|null
+   *   The related entities, or NULL when LMS cleanup has removed a reference.
+   */
+  private function getAnswerContext(AnswerInterface $answer): ?array {
+    $lesson_status = $this->referencedEntity($answer, 'lesson_status');
+    if (!$lesson_status instanceof \Drupal\lms\Entity\LessonStatusInterface) {
+      return NULL;
+    }
+    $course_status = $this->referencedEntity($lesson_status, 'course_status');
+    if (!$course_status instanceof CourseStatusInterface) {
+      return NULL;
+    }
+    $course = $this->referencedEntity($course_status, CourseStatusInterface::COURSE_FIELD);
+    $lesson = $this->referencedEntity($lesson_status, \Drupal\lms\Entity\LessonStatusInterface::LESSON_FIELD);
+    $activity = $this->referencedEntity($answer, AnswerInterface::ACTIVITY_FIELD);
+    if (!$course instanceof \Drupal\lms\Entity\Bundle\CourseInterface
+      || !$lesson instanceof LessonInterface || !$activity instanceof ActivityInterface) {
+      return NULL;
+    }
+    return [
+      'lesson_status' => $lesson_status,
+      'course_status' => $course_status,
+      'course' => $course,
+      'lesson' => $lesson,
+      'activity' => $activity,
+    ];
+  }
+
+  /** Returns the entity referenced by a field, or NULL if it is unavailable. */
+  private function referencedEntity(object $entity, string $field_name): ?object {
+    if (!method_exists($entity, 'hasField') || !$entity->hasField($field_name)) {
+      return NULL;
+    }
+    $field = $entity->get($field_name);
+    return $field instanceof FieldItemListInterface ? $field->entity : NULL;
   }
 
   /** Purges records attached to a course-status lifecycle. */

@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.35 — tolerar referências removidas no histórico de tentativas — 2026-10-21
+
+- Arquivamento pré-exclusão e consulta de tentativas resolvem referências do
+  LMS por campos. Se status, curso, aula ou atividade já foram removidos, o
+  fluxo não tenta getters tipados nem gera 500; não cria snapshot incompleto.
+- Unit: 42 testes / 197 assertions PASS; 5 depreciações do ecossistema. PHP
+  local 8.4.26; PHP 8.5 não validado. `AttemptArchiveLifecycleTest`: 9 testes
+  / 363 assertions PASS no `aculta_simpletest`, com 42 depreciações de Core e
+  contrib.
+
 ## 0.1.0-dev.34 — tolerar referências de resposta removidas — 2026-10-21
 
 - Formulário de prazo e aviso de feedback resolvem curso através dos campos de

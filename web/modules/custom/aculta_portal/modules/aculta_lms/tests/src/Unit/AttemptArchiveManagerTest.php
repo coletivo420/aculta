@@ -146,21 +146,50 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     $manager->archivePreviousAnswer($answer);
   }
 
+  public function testStaleReferencesSkipArchivingAndHistoryQuery(): void {
+    $answer = $this->createMock(AnswerInterface::class);
+    $answer->method('hasField')->willReturnMap([
+      ['lesson_status', TRUE],
+      ['activity_revision', TRUE],
+    ]);
+    $answer->method('get')->willReturnMap([
+      ['lesson_status', $this->referenceField(NULL)],
+      ['activity_revision', $this->referenceField(NULL)],
+    ]);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects(self::never())->method('getStorage');
+    $manager = new AttemptArchiveManager(
+      $entity_type_manager,
+      $this->createMock(AccountInterface::class),
+      $this->buildTime(),
+    );
+
+    $manager->archiveAnswer($answer);
+    self::assertSame([], $manager->loadPreviousAttempts($answer, new \Drupal\Core\Cache\CacheableMetadata()));
+  }
+
   private function buildAnswer(array $data, int $score, bool $evaluated): AnswerInterface {
     $group = $this->createMock(CourseInterface::class);
     $group->method('id')->willReturn('course-7');
     $course_status = $this->createMock(CourseStatusInterface::class);
     $course_status->method('id')->willReturn('14');
-    $course_status->method('getCourse')->willReturn($group);
+    $course_status->method('hasField')->with('course')->willReturn(TRUE);
+    $course_status->method('get')->with('course')->willReturn($this->referenceField($group));
     $course_status->method('getCourseId')->willReturn('course-7');
     $lesson = $this->createMock(LessonInterface::class);
     $lesson->method('label')->willReturn('Aula 1');
     $lesson->method('get')->with(LessonInterface::ACTIVITIES)->willReturn($this->buildActivityList());
     $lesson_status = $this->createMock(LessonStatus::class);
     $lesson_status->method('id')->willReturn('18');
-    $lesson_status->method('getCourseStatus')->willReturn($course_status);
+    $lesson_status->method('hasField')->willReturnMap([
+      ['course_status', TRUE],
+      ['lesson_revision', TRUE],
+    ]);
+    $lesson_status->method('get')->willReturnMap([
+      ['course_status', $this->referenceField($course_status)],
+      ['lesson_revision', $this->referenceField($lesson)],
+    ]);
     $lesson_status->method('getLessonId')->willReturn('3');
-    $lesson_status->method('getLesson')->willReturn($lesson);
     $lesson_status->method('getCreatedTime')->willReturn(1000);
     $lesson_status->method('getFinishedTime')->willReturn(0);
     $activity = $this->createMock(ActivityInterface::class);
@@ -175,11 +204,29 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     $answer->method('getData')->willReturn($data);
     $answer->method('getScore')->willReturn($score);
     $answer->method('isEvaluated')->willReturn($evaluated);
-    $answer->method('getLessonStatus')->willReturn($lesson_status);
-    $answer->method('getActivity')->willReturn($activity);
+    $answer->method('hasField')->willReturnCallback(static fn (string $field): bool => $field !== 'comments');
+    $answer->method('get')->willReturnMap([
+      ['lesson_status', $this->referenceField($lesson_status)],
+      ['activity_revision', $this->referenceField($activity)],
+      ['comments', $this->referenceField(NULL)],
+    ]);
     $answer->method('getChangedTime')->willReturn(1200);
-    $answer->method('hasField')->with('comments')->willReturn(FALSE);
     return $answer;
+  }
+
+  private function referenceField(?object $entity): FieldItemListInterface {
+    return new class($entity) extends FieldItemList {
+
+      public function __construct(private readonly ?object $referencedEntity) {}
+
+      public function __get($property_name) {
+        if ($property_name === 'entity') {
+          return $this->referencedEntity;
+        }
+        return parent::__get($property_name);
+      }
+
+    };
   }
 
   private function buildTime(): TimeInterface {

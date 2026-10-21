@@ -12,6 +12,12 @@ ou CourseStatus removidos durante a limpeza assíncrona. Nesses casos, o
 formulário não recebe configuração de prazo e o evento de feedback não é
 publicado. Unit do módulo: 41 testes / 192 assertions PASS; 5 depreciações do
 ecossistema de teste. A execução local usa PHP 8.4.26 e não valida PHP 8.5.
+O arquivamento pré-exclusão e a consulta do histórico também deixam de forma
+segura de operar se o LMS já removeu status, curso, aula ou atividade; nesse
+caso não é criado snapshot incompleto. A suíte Unit completa passou com 42
+testes / 197 assertions (5 depreciações). `AttemptArchiveLifecycleTest` passou
+com 9 testes / 363 assertions no banco Kernel dedicado; 42 depreciações vieram
+do Core e contrib.
 
 ## Integrações de conteúdo
 
