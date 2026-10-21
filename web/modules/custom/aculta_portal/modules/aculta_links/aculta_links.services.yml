@@ -22,7 +22,7 @@ services:
 
   aculta_links.analytics:
     class: Drupal\aculta_links\Service\LinkAnalytics
-    arguments: ['@queue', '@database', '@datetime.time', '@cache_tags.invalidator', '@config.factory']
+    arguments: ['@aculta_statistics.recorder', '@aculta_statistics.storage', '@datetime.time', '@config.factory']
 
   aculta_links.short_code_generator:
     class: Drupal\aculta_links\Service\LinkShortCodeGenerator

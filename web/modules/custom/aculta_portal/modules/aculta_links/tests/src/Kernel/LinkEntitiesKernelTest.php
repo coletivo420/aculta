@@ -19,6 +19,7 @@ use Drupal\aculta_links\Entity\LinkPage;
 use Drupal\aculta_links\Form\LinkPageItemAddForm;
 use Drupal\aculta_links\Form\LinkPageEditorForm;
 use Drupal\aculta_links\Service\LinkAnalytics;
+use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use PHPUnit\Framework\Attributes\Group;
@@ -38,6 +39,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
+    'aculta_statistics',
     'field',
     'token',
     'metatag',
@@ -83,7 +85,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_link_page');
     $this->installEntitySchema('aculta_link_item');
     $this->installSchema('user', ['users_data']);
-    $this->installSchema('aculta_links', ['aculta_links_stat_daily']);
+    $this->installSchema('aculta_statistics', [DailyAggregateStorage::TABLE]);
     $this->installConfig(['system', 'user', 'node']);
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
   }
@@ -176,30 +178,19 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $request_stack->pop();
     self::assertSame(302, $short_response->getStatusCode());
     self::assertSame('https://example.org/', $short_response->getTargetUrl());
-    self::assertSame([], $analytics->clickCounts([(int) $link->id()]), 'Clicks remain pending until the queue worker aggregates them.');
-    $queue = $this->container->get('queue')->get(LinkAnalytics::QUEUE_ID);
-    $queue_item = $queue->claimItem();
-    self::assertNotFalse($queue_item, 'A validated short-link redirect queues a click event.');
-    $worker = $this->container->get('plugin.manager.queue_worker')->createInstance(LinkAnalytics::QUEUE_ID);
-    $worker->processItem($queue_item->data);
-    $queue->deleteItem($queue_item);
-    self::assertSame([((int) $link->id()) => 1], $analytics->clickCounts([(int) $link->id()]), 'The worker stores only the aggregate count by destination.');
+    self::assertSame([((int) $link->id()) => 1], $analytics->clickCounts([(int) $link->id()]), 'A validated redirect counts one click in aculta_statistics.');
     $request_stack->push(Request::create('/redirecionar/' . $short_code, 'HEAD'));
     $head_response = $this->container->get('aculta_links.public_page_controller')
       ->redirectByCode($short_code);
     $request_stack->pop();
     self::assertSame(302, $head_response->getStatusCode());
-    self::assertSame(0, $queue->numberOfItems(), 'HEAD probes do not enqueue click events.');
-    $expired_date = gmdate('Y-m-d', $this->container->get('datetime.time')->getRequestTime() - 91 * 86400);
-    $this->container->get('database')->insert('aculta_links_stat_daily')
-      ->fields([
-        'event' => 'click',
-        'target_id' => (int) $link->id(),
-        'event_date' => $expired_date,
-        'count' => 8,
-      ])
-      ->execute();
-    self::assertSame(1, $analytics->purgeExpired(), 'Cron retention removes aggregates outside 90 days.');
+    self::assertSame([((int) $link->id()) => 1], $analytics->clickCounts([(int) $link->id()]), 'HEAD probes do not count clicks.');
+    $this->container->get('aculta_statistics.storage')->replaceDay(
+      'links.link.clicks',
+      $this->container->get('aculta_statistics.storage')->currentDay() - 91,
+      [(string) $link->id() => 8],
+    );
+    self::assertSame([((int) $link->id()) => 1], $analytics->clickCounts([(int) $link->id()]), 'Clicks outside the 90-day window are not read.');
     $first_revision_id = $link->getRevisionId();
 
     $page = LinkPage::create([

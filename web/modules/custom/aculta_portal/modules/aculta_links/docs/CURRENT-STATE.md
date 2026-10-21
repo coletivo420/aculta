@@ -44,7 +44,7 @@ com dados/editoria antes de qualquer migração.
 | `node.page.field_social_links` | EXISTENTE; consumidor no template dedicado não localizado | Investigar preenchimento e referências; não remover nem migrar nesta fase. |
 | Redes pessoais e perfil `/u/{apelido}` do `aculta_user` | EXISTENTE E FUNCIONAL em outro purpose/contrato | Preservar como capacidade compartilhada, com exposição explícita. |
 | Links curtos, micropáginas por pessoa e editor | EXISTENTE no purpose `links`; rotas/build registrados no Runtime de teste | Preservar entidades Drupal; smoke temporário de referência Node em HTTP concluído, sem declarar revisão visual completa. |
-| Analytics de destinos | EXISTENTE PARCIAL e DESATIVADO por padrão: cliques GET em códigos curtos são agregados por link/dia em fila; sem page views, visitantes únicos ou origem | Habilitação administrativa exige validação da base legal; agregados expiram em 90 dias e o painel limita-se às entidades autorizadas. |
+| Analytics de destinos | EXISTENTE PARCIAL e DESATIVADO por padrão: cliques GET em códigos curtos são contados no `aculta_statistics` (`links.link.clicks`, desde 0.4.0-dev.31); sem page views, visitantes únicos ou origem | Habilitação administrativa exige validação da base legal; agregados expiram em 90 dias e o painel limita-se às entidades autorizadas. |
 | Linky/LinkStack na instalação | AUSENTE (não são dependências do projeto) | Usar como fontes de estudo; nenhuma dependência Composer adicionada. |
 
 ## Hardening atual

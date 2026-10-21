@@ -105,15 +105,13 @@ function aculta_links_update_10005(): string {
 }
 
 /**
- * Installs the daily aggregate storage for privacy-minimized analytics.
+ * Cliques passaram a ser contados pelo aculta_statistics (ADR-0004).
+ *
+ * A tabela própria foi criada aqui antes da centralização e é removida em
+ * aculta_links_update_10008(). Nenhum dado é migrado: o banco é de teste.
  */
 function aculta_links_update_10006(): string {
-  $schema = \Drupal::database()->schema();
-  if (!$schema->tableExists('aculta_links_stat_daily')) {
-    $schema->createTable('aculta_links_stat_daily', aculta_links_schema()['aculta_links_stat_daily']);
-  }
-
-  return 'Installed the daily aggregate table for link clicks; no visitor identifiers are stored.';
+  return 'Cliques de links passam ao aculta_statistics; a tabela própria é removida na atualização 10008.';
 }
 
 /**
@@ -136,40 +134,16 @@ function aculta_links_update_10007(): string {
 }
 
 /**
- * Defines storage for daily aggregate analytics.
+ * Remove a tabela própria de cliques: a contagem agora é do aculta_statistics (ADR-0004).
+ *
+ * Sem migração: o banco de teste não retém esses agregados.
  */
-function aculta_links_schema(): array {
-  return [
-    'aculta_links_stat_daily' => [
-      'description' => 'Daily aggregate counts for privacy-minimized ACULTA Links events.',
-      'fields' => [
-        'event' => [
-          'type' => 'varchar',
-          'length' => 16,
-          'not null' => TRUE,
-        ],
-        'target_id' => [
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        ],
-        'event_date' => [
-          'type' => 'varchar',
-          'length' => 10,
-          'not null' => TRUE,
-        ],
-        'count' => [
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        ],
-      ],
-      'primary key' => ['event', 'target_id', 'event_date'],
-      'indexes' => [
-        'event_date' => ['event_date'],
-      ],
-    ],
-  ];
+function aculta_links_update_10008(): string {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_links_stat_daily')) {
+    $schema->dropTable('aculta_links_stat_daily');
+  }
+
+  return 'Removed the link click table; clicks are counted by aculta_statistics.';
 }
+

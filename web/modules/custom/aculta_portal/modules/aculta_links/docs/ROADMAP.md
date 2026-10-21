@@ -121,6 +121,13 @@ por destino via Queue API, com retenção de 90 dias e controle administrativo
 desligado por padrão. Page views, CTR por micropágina, origem/campanhas e cliques
 dos links diretos continuam fora da métrica. Base legal precisa ser validada.
 
+Centralização (ADR-0004 do aculta_statistics, 0.4.0-dev.31): os cliques deixam de ter tabela e fila
+próprias. `LinkAnalytics` grava `links.link.clicks` (dimensão = destino) no `aculta_statistics` e lê
+os totais dos 90 dias por ele. Removidos: `aculta_links_stat_daily` (atualização 10008), worker da fila
+e cron de retenção. Sem migração: o banco é de teste e nenhum agregado precisa ser retido. A
+configuração `analytics_enabled` continua sendo o interruptor. Pendente: a `aculta_statistics` precisa
+estar habilitada no Runtime antes de a 10008 rodar.
+
 ## 0.6.0 — integração do ecossistema
 
 Integração de identidade com `aculta_user`, Domain de páginas e redirects e

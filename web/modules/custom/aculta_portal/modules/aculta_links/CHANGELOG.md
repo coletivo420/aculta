@@ -1,5 +1,13 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.31 — cliques passam ao aculta_statistics (ADR-0004) — 2026-10-21
+
+- `LinkAnalytics` deixa de usar fila e tabela próprias: `recordClick()` grava `links.link.clicks` (dimensão = destino) com `StatisticsRecorder`; `clickCounts()` soma o `AggregateStorageInterface` nos 90 dias. A interface pública foi mantida para os controladores.
+- Removidos: `LinkAnalyticsQueueWorker`, `LinkAnalyticsCronHooks`, schema `aculta_links_stat_daily` e `purgeExpired()`.
+- `aculta_links_update_10006` vira apenas registro (a tabela era criada aqui); `aculta_links_update_10008` remove a tabela. Sem migração: banco de teste, sem retenção de dados.
+- Dependência declarada em `aculta_statistics`. Pendente: habilitar o `aculta_statistics` no Runtime antes de rodar `updb`.
+- Testes: Kernel `LinkEntitiesKernelTest` (7 testes) passa com cliques contados de forma síncrona, HEAD sem contagem e leitura fora da janela de 90 dias. Unit (8 testes) passa.
+
 ## 0.4.0-dev.30 — reutiliza o serviço central de QR Code — 2026-10-21
 
 - `QrCodeSvgGenerator` agora valida o endereço e delega ao `aculta_qrcode.generator` com o preset central padrão, eliminando o gerador Endroid duplicado em Links.

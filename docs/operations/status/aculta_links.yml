@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Navegação por seção; serviço `aculta_qrcode` confirmado no Runtime, sem página publicada para download HTTP positivo; revisão visual autenticada pendente ([roadmap](web/modules/custom/aculta_portal/modules/aculta_links/docs/ROADMAP.md))
+next_phase: Cliques contados no aculta_statistics (0.4.0-dev.31; tabela própria removida, validar updb no Runtime após habilitar o aculta_statistics); navegação por seção; serviço `aculta_qrcode` confirmado no Runtime, sem página publicada para download HTTP positivo; revisão visual autenticada pendente ([roadmap](web/modules/custom/aculta_portal/modules/aculta_links/docs/ROADMAP.md))

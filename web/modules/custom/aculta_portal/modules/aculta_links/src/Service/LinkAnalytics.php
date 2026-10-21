@@ -4,100 +4,78 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_links\Service;
 
+use Drupal\aculta_statistics\Recorder\StatisticsRecorder;
+use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 
 /**
- * Queues minimal link-click events and reads their daily aggregate.
+ * Fachada dos cliques de links curtos sobre o `aculta_statistics`.
+ *
+ * O agregado é da central de estatísticas (`links.link.clicks`, dimensão = destino).
+ * Este serviço só decide se a coleta está habilitada e lê os totais do destino.
+ * Não guarda visitante, IP nem tabela própria (ADR-0004).
  */
 final class LinkAnalytics {
 
   /**
-   * Queue whose worker writes daily aggregate rows.
+   * Métrica do catálogo do aculta_statistics usada para cliques.
    */
-  public const QUEUE_ID = 'aculta_links_analytics';
+  public const METRIC_CLICKS = 'links.link.clicks';
 
   /**
-   * Aggregated click records are retained for this many days.
+   * Prazo de leitura dos cliques, em dias UTC (igual ao prazo da métrica).
    */
   public const RETENTION_DAYS = 90;
 
+  private const DAY_SECONDS = 86400;
+
   public function __construct(
-    private readonly QueueFactory $queueFactory,
-    private readonly Connection $database,
+    private readonly StatisticsRecorder $recorder,
+    private readonly AggregateStorageInterface $storage,
     private readonly TimeInterface $time,
-    private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
     private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
-   * Queues a click without storing visitor or request metadata.
+   * Conta um clique no destino, quando o administrador habilitou a coleta.
    */
   public function recordClick(int $linkId): void {
     if ($linkId < 1 || !$this->isEnabled()) {
       return;
     }
-
-    $this->queueFactory->get(self::QUEUE_ID)->createItem([
-      'event' => 'click',
-      'target_id' => $linkId,
-      'occurred_at' => $this->time->getRequestTime(),
-    ]);
+    $this->recorder->record(self::METRIC_CLICKS, (string) $linkId);
   }
 
   /**
-   * Indicates whether the administrator explicitly enabled aggregate analytics.
+   * Indica se o administrador habilitou a coleta de cliques de links.
    */
   public function isEnabled(): bool {
     return $this->configFactory->get('aculta_links.settings')->get('analytics_enabled') === TRUE;
   }
 
   /**
-   * Returns click totals keyed by destination ID.
+   * Totais de cliques por destino, nos dias do prazo.
    *
    * @param int[] $linkIds
-   *   Destination IDs already filtered by entity access.
+   *   Destinos já filtrados pelo acesso da entidade.
    *
    * @return int[]
-   *   Destination ID to total clicks over the retention period.
+   *   Destino para total de cliques. Destinos sem clique não aparecem.
    */
   public function clickCounts(array $linkIds): array {
     $linkIds = array_values(array_unique(array_filter(array_map('intval', $linkIds), static fn (int $id): bool => $id > 0)));
-    if ($linkIds === []) {
-      return [];
-    }
-
-    $cutoff = gmdate('Y-m-d', $this->time->getRequestTime() - self::RETENTION_DAYS * 86400);
-    $query = $this->database->select('aculta_links_stat_daily', 'stats')
-      ->fields('stats', ['target_id'])
-      ->condition('event', 'click')
-      ->condition('target_id', $linkIds, 'IN')
-      ->condition('event_date', $cutoff, '>=');
-    $query->addExpression('SUM(count)', 'clicks');
-    $query->groupBy('target_id');
+    $today = $this->storage->currentDay();
+    $from = $today - self::RETENTION_DAYS + 1;
 
     $counts = [];
-    foreach ($query->execute() as $row) {
-      $counts[(int) $row->target_id] = (int) $row->clicks;
+    foreach ($linkIds as $linkId) {
+      $total = $this->storage->total(self::METRIC_CLICKS, $from, $today, (string) $linkId);
+      if ($total > 0) {
+        $counts[$linkId] = $total;
+      }
     }
     return $counts;
-  }
-
-  /**
-   * Removes daily aggregates older than the documented retention period.
-   */
-  public function purgeExpired(): int {
-    $cutoff = gmdate('Y-m-d', $this->time->getRequestTime() - self::RETENTION_DAYS * 86400);
-    $deleted = (int) $this->database->delete('aculta_links_stat_daily')
-      ->condition('event_date', $cutoff, '<')
-      ->execute();
-    if ($deleted > 0) {
-      $this->cacheTagsInvalidator->invalidateTags(['aculta_links_analytics']);
-    }
-    return $deleted;
   }
 
 }
