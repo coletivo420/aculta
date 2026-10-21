@@ -1,6 +1,6 @@
 name: ACULTA QR Code
 type: module
-description: 'Serviço central de QR Codes do ACULTA Portal. Versão 0.1.0 registra auditoria, licenças e arquitetura; ainda não contém código de geração.'
+description: 'Serviço central de QR Codes do ACULTA Portal. Versão 0.2.0 traz geração estática em SVG e PNG, presets com contraste validado e validação de conteúdo; sem entidade, rota pública ou exportação de arquivo.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.1'
+version: '0.2.0-dev.1'
 core_version_requirement: ^11.3

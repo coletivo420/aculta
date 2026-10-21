@@ -4,23 +4,20 @@ Serviço central de QR Codes do ACULTA Portal, planejado para uso por todos os m
 
 ## Estado
 
-- Versão: `0.1.0-dev.1`. Estado: **Dev**.
-- Esta entrega é documental. Não há código de geração, entidade, rota, permissão, serviço ou dependência Composer.
-- O módulo pode ser lido, mas não tem funcionalidade a ser habilitada.
+- Versão: `0.2.0-dev.1`. Estado: **Dev**.
+- Entregue na 0.2.0: geração estática em SVG e PNG em memória, presets com contraste validado (mínimo 4,5:1) e validação de URL e texto. Testes Unit em `tests/src/Unit/`.
+- Ainda não existe: entidade, rota pública, redirecionamento dinâmico, logo, exportação de arquivo, permissões, painel.
 
 ## Documentação
 
+- [API de QR Codes (0.2.0)](docs/API.md)
+- [Roadmap de 0.1.0 a 1.0.0](docs/ROADMAP.md)
+- [Arquitetura e decisões do responsável](docs/ARQUITETURA.md)
 - [Auditoria do código do ACULTA e dos projetos de referência](docs/AUDITORIA.md)
-- [Licenças e atribuições](docs/LICENSING.md)
-- [Arquitetura proposta e decisões pendentes](docs/ARQUITETURA.md)
 - [Matriz de portabilidade por recurso](docs/PORTABILITY-MATRIX.md)
 - [Estado atual de QR no ACULTA](docs/CURRENT-STATE.md)
-- [Roadmap de 0.1.0 a 1.0.0](docs/ROADMAP.md)
+- [Licenças e atribuições](docs/LICENSING.md)
 - [Histórico de versões](CHANGELOG.md)
-
-## Escopo
-
-QR estático (conteúdo codificado diretamente), QR dinâmico (URL estável com destino editável), personalização, exportação, estatísticas agregadas, geração em lote e controle de acesso. O escopo completo está no roadmap.
 
 ## Limites
 

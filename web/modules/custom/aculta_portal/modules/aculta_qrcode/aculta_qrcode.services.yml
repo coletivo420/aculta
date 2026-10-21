@@ -1,0 +1,9 @@
+services:
+  aculta_qrcode.payload_validator:
+    class: Drupal\aculta_qrcode\Service\QrCodePayloadValidator
+
+  aculta_qrcode.preset_registry:
+    class: Drupal\aculta_qrcode\Service\QrCodePresetRegistry
+
+  aculta_qrcode.generator:
+    class: Drupal\aculta_qrcode\Service\QrCodeGenerator

@@ -11,12 +11,14 @@ Seguir o ciclo Dev → RC → Alpha ([RELEASE-LIFECYCLE.md](../../../../../../..
 
 Decisões 1 a 4 de `ARQUITETURA.md` registradas pelo responsável em 2026-10-20. A decisão 5 (lote) segue pendente, com a recomendação de Batch API adotada até confirmação.
 
-## 0.2.0 — motor de geração
+## 0.2.0 — motor de geração (em andamento: 0.2.0-dev.1)
 
-- Serviço `generator` com Endroid 6.1.3 já fixado no lock: QR estático, SVG e PNG.
-- Presets básicos com validação de contraste e margens.
-- Sem entidade, sem rota pública, sem gravação de arquivo.
-- Testes Unit de geração, presets e rejeição de protocolos.
+- Feito: serviço `generator` com Endroid 6.1.3 (já fixado no lock), QR estático em SVG e PNG.
+- Feito: presets `aculta_padrao` e `aculta_impressao` com contraste mínimo de 4,5:1 e margens validadas.
+- Feito: validação de URL e texto, rejeição de `javascript:`, `data:`, `file:` e credenciais.
+- Feito: testes Unit (25 testes, 38 asserções) e contrato em [API.md](API.md).
+- Sem entidade, rota pública ou gravação de arquivo.
+- Pendente antes de RC: PHPUnit e PHPCS no PHP 8.5 do servidor.
 
 ## 0.3.0 — entidade e QR dinâmico
 
