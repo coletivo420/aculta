@@ -80,6 +80,20 @@ final class EmailFunnelTest extends TestCase {
   }
 
   /**
+   * Estado atual de cada envio vira dimensão da métrica de estado, sem repetir a mensagem.
+   */
+  public function testStatusMetricCountsCurrentStateOnce(): void {
+    $counts = EmailFunnel::count([
+      $this->row(['status' => 'sent', 'accepted' => TRUE]),
+      $this->row(['status' => 'delivered', 'accepted' => TRUE]),
+      $this->row(['status' => 'delivered', 'accepted' => TRUE]),
+      $this->row(['status' => 'complained', 'accepted' => TRUE]),
+    ]);
+
+    $this->assertSame(['smtp|sent' => 1, 'smtp|delivered' => 2, 'smtp|complained' => 1], $counts[EmailFunnel::METRIC_STATUS]);
+  }
+
+  /**
    * Sem linhas, todas as métricas existem e vêm vazias (base para zerar o dia).
    */
   public function testEmptyDayReturnsEveryMetricEmpty(): void {

@@ -57,6 +57,10 @@ final class EmailReconciliationKernelTest extends KernelTestBase {
     $this->assertSame(['smtp' => 1], $this->dimensionTotals($storage, EmailFunnel::METRIC_DELIVERED, $day));
     $this->assertSame(['brevo' => 1], $this->dimensionTotals($storage, EmailFunnel::METRIC_BOUNCED, $day));
     $this->assertSame(['smtp|provedor_timeout' => 1], $this->dimensionTotals($storage, EmailFunnel::METRIC_FAILED, $day));
+    $this->assertSame(
+      ['brevo|bounced' => 1, 'smtp|delivered' => 1, 'smtp|failed' => 1],
+      $this->dimensionTotals($storage, EmailFunnel::METRIC_STATUS, $day),
+    );
   }
 
   /**

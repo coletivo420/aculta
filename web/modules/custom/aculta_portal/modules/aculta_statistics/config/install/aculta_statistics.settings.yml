@@ -15,6 +15,8 @@ retention:
     days: 90
   - metric: email.messages.bounced
     days: 90
+  - metric: email.messages.status
+    days: 90
   - metric: email.messages.failed
     days: 90
   - metric: commerce.orders.paid

@@ -22,6 +22,7 @@ final class EmailFunnel {
   public const METRIC_DELIVERED = 'email.messages.delivered';
   public const METRIC_BOUNCED = 'email.messages.bounced';
   public const METRIC_FAILED = 'email.messages.failed';
+  public const METRIC_STATUS = 'email.messages.status';
 
   /**
    * Métricas produzidas por este funil.
@@ -32,6 +33,7 @@ final class EmailFunnel {
     self::METRIC_DELIVERED,
     self::METRIC_BOUNCED,
     self::METRIC_FAILED,
+    self::METRIC_STATUS,
   ];
 
   /**
@@ -48,7 +50,7 @@ final class EmailFunnel {
    * Conta as linhas do dia por métrica e dimensão.
    *
    * Dimensões: `queued` por tipo; `accepted`, `delivered` e `bounced` por transporte;
-   * `failed` por transporte e código.
+   * `failed` por transporte e código; `status` por transporte e estado atual. Somando uma das partes, obtém-se o total por estado ou por transporte.
    *
    * @param iterable<array{type: string, status: string, transport: string, error_code: string, accepted: bool}> $rows
    *   Uma linha por envio, com `accepted` verdadeiro quando o campo `sent` foi preenchido.
@@ -61,6 +63,7 @@ final class EmailFunnel {
     foreach ($rows as $row) {
       $transport = self::dimension($row['transport']);
       self::add($counts, self::METRIC_QUEUED, self::dimension($row['type']));
+      self::add($counts, self::METRIC_STATUS, self::dimension($transport . '|' . $row['status']));
       if ($row['accepted']) {
         self::add($counts, self::METRIC_ACCEPTED, $transport);
       }
