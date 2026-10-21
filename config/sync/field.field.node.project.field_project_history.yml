@@ -4,9 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_project_history
-    - filter.format.email_html
     - filter.format.plain_text
-    - filter.format.restricted_html
     - filter.format.revista_editorial
     - filter.format.usuario_aculta
     - filter.format.webform_default
@@ -28,9 +26,8 @@ settings:
   allowed_formats:
     revista_editorial: revista_editorial
     usuario_aculta: usuario_aculta
-    email_html: email_html
-    restricted_html: restricted_html
     webform_default: webform_default
     wiki: wiki
     plain_text: plain_text
 field_type: text_long
+

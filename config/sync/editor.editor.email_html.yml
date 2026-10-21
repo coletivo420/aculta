@@ -1,14 +1,12 @@
+uuid: 699e69f1-1ba9-4a63-85f5-6ec5be65ed72
 langcode: pt-br
 status: true
 dependencies:
   config:
-    - filter.format.aculta_email
+    - filter.format.email_html
   module:
     - ckeditor5
-    - media
-    - media_library
-format: aculta_email
-label: 'Aculta Email'
+format: email_html
 editor: ckeditor5
 settings:
   toolbar:
@@ -26,4 +24,6 @@ settings:
       - '|'
       - undo
       - redo
-  plugins: {}
+  plugins: {  }
+image_upload: {  }
+

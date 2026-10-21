@@ -2,15 +2,12 @@ uuid: 1c9fee49-8f31-40f6-b15b-c18c253713c5
 langcode: pt-br
 status: true
 dependencies:
-  config:
-    - filter.format.restricted_html
   module:
     - aculta_donation
     - comment
     - commerce_checkout
     - commerce_product
     - commerce_shipping
-    - filter
     - media
     - media_gallery
     - system
@@ -25,8 +22,8 @@ permissions:
   - 'access comments'
   - 'access content'
   - 'make donation'
-  - 'use text format restricted_html'
   - 'view commerce_product'
   - 'view commerce_shipping_method'
   - 'view media'
   - 'view published media gallery entities'
+

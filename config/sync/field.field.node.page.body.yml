@@ -4,13 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
-    - filter.format.aculta_basico
-    - filter.format.aculta_editorial
-    - filter.format.aculta_email
-    - filter.format.aculta_institucional
-    - filter.format.email_html
     - filter.format.plain_text
-    - filter.format.restricted_html
     - filter.format.revista_editorial
     - filter.format.usuario_aculta
     - filter.format.webform_default
@@ -34,13 +28,8 @@ settings:
   allowed_formats:
     revista_editorial: revista_editorial
     usuario_aculta: usuario_aculta
-    email_html: email_html
-    restricted_html: restricted_html
     webform_default: webform_default
     wiki: wiki
     plain_text: plain_text
-    aculta_basico: aculta_basico
-    aculta_editorial: aculta_editorial
-    aculta_institucional: aculta_institucional
-    aculta_email: aculta_email
 field_type: text_with_summary
+

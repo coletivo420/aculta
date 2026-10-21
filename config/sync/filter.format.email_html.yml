@@ -1,11 +1,37 @@
 uuid: cf10fe32-163b-4fee-b066-647646bff819
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - media
 _core:
   default_config_hash: 8UYEKlWeJ8cK8V-9ojit-_9SwBjQKk0SU-UkiuvlWKI
-name: 'Email HTML'
+name: 'Aculta Email (e-mails)'
 format: email_html
 weight: 10
-filters: {  }
+filters:
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<p align> <br> <h2> <h3> <strong> <em> <u> <ul> <ol> <li> <a href hreflang title> <table width cellpadding cellspacing border align bgcolor> <caption> <thead> <tbody> <tfoot> <tr> <td width align valign bgcolor colspan rowspan> <th width align valign bgcolor colspan rowspan scope> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align>'
+      filter_html_help: true
+      filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 40
+    settings:
+      default_view_mode: default
+      allowed_view_modes: {  }
+      allowed_media_types: {  }
 

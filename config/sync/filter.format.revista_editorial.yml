@@ -7,7 +7,7 @@ dependencies:
     - editor
     - entity_embed
     - media
-name: 'Revista — editorial'
+name: 'Aculta Editorial (HTML completo)'
 format: revista_editorial
 weight: 5
 filters:

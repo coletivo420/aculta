@@ -5,7 +5,7 @@ dependencies:
   module:
     - freelinking
     - media
-name: Wiki420
+name: 'Aculta Wiki (somente Wiki)'
 format: wiki
 weight: 5
 filters:
@@ -69,3 +69,4 @@ filters:
       allowed_view_modes: {  }
       allowed_media_types:
         document: document
+
