@@ -105,3 +105,19 @@ O migrador agora traduz o status legado para `published`/`draft` quando o bundle
 destino possui workflow e verifica o status no pós-check transacional. O teste
 Kernel instala o workflow e confirma que um Node legado publicado permanece
 publicado após a migração.
+
+### Limpeza de conteúdo de teste — 2026-10-21
+
+Após preservar as 12 publicações legítimas, o Runtime foi inventariado
+novamente. Os únicos Nodes restantes com títulos explícitos de teste eram os
+NIDs 288 (`aculta-image-r2-temporary-20261016`), 290
+(`aculta-image-r3-temporary-20261016`), 375 (`TEMP PV6 article ...`) e 376
+(`TEMP PV6 blog ...`). Cada um foi confirmado como `revista`, com uma revisão,
+sem Comments, referências Entity Reference recebidas, Entity Usage ou redirects;
+os quatro tinham somente seu alias de caminho próprio. Um novo dump gzip e
+export da configuração ativa foram feitos em diretório privado fora do checkout.
+
+Os quatro Nodes e seus aliases foram removidos por APIs Entity em uma
+transação. Nenhum Media, arquivo ou entidade compartilhada foi excluído. As 12
+publicações legítimas permanecem preservadas. O backup gzip passou `gzip -t`;
+seu diretório não deve ser versionado nem restaurado sobre produção.

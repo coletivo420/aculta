@@ -15,6 +15,11 @@
 - A permissão contextual continua combinando acesso do Node, acesso do campo Comment, estado aberto/fechado e permissões `post comments`/`administer comments`; não cria tópicos públicos.
 - A Revista declara dependência direta do subkernel `aculta_gallery`. O corpo editorial incorpora entidades `media_gallery` existentes pelo CKEditor 5/Entity Embed; upload e apresentação seguem pertencendo à Gallery/Image.
 - Unit do provider: 5 testes / 28 assertions PASS. Drupal Core 11.4.10 instalado; fontes consultadas: `EntityInterface::access()` e `AccessResult::inheritCacheability()` da API oficial.
+- Limpeza autorizada no Runtime: removidos pela Entity API os quatro Nodes identificados como dados de teste (NID 288, 290, 375 e 376) e seus quatro aliases próprios. Permanecem as 12 publicações legítimas; nenhuma referência recebida, Comment, Entity Usage ou redirect apontava para os Nodes removidos. Nenhum Media, arquivo ou entidade referenciada foi excluído. Backup privado atualizado antes da operação.
+- O bloco da fila administrativa de comentários, presente no Config Sync mas ausente do Runtime e de `config/install`, foi incluído no pacote do Magazine e ativado como bloco do tema Claro. A View mantém acesso `administer comments` e visibilidade no purpose `main`.
+- Smoke autenticado com UID 5: `/node/add` HTTP 200 lista Revista e Wiki; há apenas um tipo editorial e `article`/`blog` não aparecem. `/node/add/revista` renderiza título, subtítulo, corpo e moderação; uma publicação renderiza o formulário Comment contextual. Nenhum conteúdo novo foi enviado.
+- Um 500 transitório durante o smoke foi causado por referência de hook obsoleta em cache (`Drupal\aculta_studio\Hook\StudioAccountHooks` ausente), não pelo Magazine. `drush cr` eliminou a referência; as rotas autenticadas da Revista voltaram a HTTP 200.
+- Config Sync ainda apresenta diferenças que não foram importadas: campos virtuais `entity_print_*` nos displays ativos, peso do formato editorial, permissões/dependências de workflow do Fórum ainda não disponíveis no Runtime e hostname de Domain específico do ambiente. A importação integral continua bloqueada pelo drift concorrente.
 
 ## 0.3.0-dev.2 — consolida bundle único Revista — 2026-10-21
 

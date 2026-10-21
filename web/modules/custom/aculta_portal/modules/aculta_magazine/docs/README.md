@@ -87,10 +87,15 @@ separar formatos; todas as publicações usam `revista`.
 
 ## Pendências
 
-- Vídeo e galeria: representar por categorias editoriais e referências ao
-  `aculta_gallery`; não criar bundles de conteúdo ou armazenamento de mídia no
-  Magazine.
-- Inspeção visual humana.
+- Vídeo: não há um campo ou contrato editorial específico; usar incorporação
+  compatível no corpo quando necessário. Galerias existentes são incorporadas
+  pelo CKEditor 5/Entity Embed e continuam sob propriedade de `aculta_gallery`.
+- Concluir inspeção visual humana da página editorial e do formulário no ACULTA420.
+- Resolver as diferenças de Config Sync depois que o workflow concorrente do
+  Fórum estiver disponível no Runtime. Diferenças de hostname Domain e campos
+  virtuais Entity Print devem permanecer separadas desse ajuste.
+- O formulário de comentários foi confirmado via HTTP autenticado; envio de
+  comentário de teste e revisão visual permanecem pendentes de homologação.
 
 ## Função x tema (separação)
 

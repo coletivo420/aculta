@@ -23,6 +23,7 @@ settings:
   provider: views
   views_label: 'Comentários da Revista'
   items_per_page: 10
+  exposed: {  }
 visibility:
   request_path:
     id: request_path
