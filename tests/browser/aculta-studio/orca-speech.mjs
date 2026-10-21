@@ -2,7 +2,7 @@
 // Orca anuncia, pelo log de depuração dele (--debug-file). Requer o Orca em execução na sessão gráfica.
 // Ver README.md desta pasta. Somente no servidor de teste, com a conta de teste.
 import { readFileSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -25,6 +25,15 @@ async function wd(method, path, body) {
 const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--name=teste.comum', `--uri=${LOGIN_URI}`], { cwd: PROJECT }).toString().trim().split('\n').pop();
 const logSize = () => { try { return readFileSync(ORCA_LOG, 'utf8').length; } catch { return 0; } };
 const logSince = (from) => readFileSync(ORCA_LOG, 'utf8').slice(from);
+// Grava a saída de áudio (monitor do sink padrão) durante a navegação e mede o nível, para comprovar som.
+const audioLevel = (file) => {
+  const sink = execFileSync('pactl', ['get-default-sink']).toString().trim();
+  return { sink, file, proc: spawn('parecord', ['--device=' + sink + '.monitor', '--file-format=wav', file]) };
+};
+const rmsOf = (file) => execFileSync('python3', ['-c', `import wave,struct,math
+w=wave.open('${file}','rb');f=w.readframes(w.getnframes());w.close()
+s=struct.unpack('<%dh'%(len(f)//2),f)
+print(round(math.sqrt(sum(x*x for x in s)/len(s)),1) if s else 0)`]).toString().trim();
 const key = (text) => ({ actions: [{ type: 'key', id: 'k', actions: [{ type: 'keyDown', value: text }, { type: 'keyUp', value: text }] }] });
 
 const { sessionId: sid } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { prefs: { 'network.dns.localDomains': 'aculta.toca.net.br,conta.aculta.toca.net.br' } } } } });
@@ -34,6 +43,7 @@ const press = (text) => wd('POST', p('/actions'), key(text));
 try {
   await wd('POST', p('/url'), { url: oneTimeLogin() });
   await sleep(2500);
+  const rec = audioLevel(join(OUT, 'studio-audio.wav'));
   const start = logSize();
   await wd('POST', p('/url'), { url: PAGE });
   await sleep(5000);
@@ -46,6 +56,10 @@ try {
   const afterEnter = logSince(start);
   check('Enter no teclado disparou novo anúncio do Orca', afterEnter.length > spoken.length, `+${afterEnter.length - spoken.length} caracteres`);
   writeFileSync(join(OUT, 'orca-speech.txt'), afterEnter);
+  await sleep(500);
+  rec.proc.kill();
+  const rms = Number(rmsOf(rec.file));
+  check('a saída de áudio do sistema tem sinal durante a fala do Orca', rms > 50, `RMS ${rms} (silêncio = 0)`);
   // O Orca gera a fala do foco com o nome acessível de cada área (link) e do título da seção (heading).
   const names = ['Revista', 'Fórum', 'Cursos', 'Galerias', 'Projetos', 'Wiki'].filter((n) => afterEnter.includes(`[link: '${n}']`));
   const heading = afterEnter.includes("[heading: 'Publicações']");
