@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.43 — limitar progresso a aulas acessíveis — 2026-10-21
+
+- O painel do estudante calcula total e aulas concluídas apenas entre aulas que
+  passam pelo `view` access do Drupal LMS para a conta; alterações de aula e dos
+  respectivos resultados de access entram na metadata de cache.
+- Unit do módulo: 48 testes / 260 assertions PASS (8 depreciações PHPUnit).
+  PHPCS Drupal/DrupalPractice, gate do índice de estado e gate Drupal 11+
+  (1010 checks) PASS. PHP 8.4.26; PHP 8.5 não validado.
+
 ## 0.1.0-dev.42 — alinhar carga horária ao schema Core — 2026-10-21
 
 - A configuração exportada do campo `field_course_hours` agora registra os

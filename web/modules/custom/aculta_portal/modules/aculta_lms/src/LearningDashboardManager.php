@@ -14,6 +14,7 @@ use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\lms\TrainingManager;
 use Drupal\user\UserInterface;
@@ -48,25 +49,42 @@ final class LearningDashboardManager {
       if (!$course instanceof CourseInterface) {
         continue;
       }
+      $metadata->addCacheableDependency($course);
+      $availableLessonIds = [];
+      foreach ($course->get(CourseInterface::LESSONS)->referencedEntities() as $lesson) {
+        if (!$lesson instanceof LessonInterface) {
+          continue;
+        }
+        $lessonAccess = $lesson->access('view', $account, TRUE);
+        $metadata
+          ->addCacheableDependency($lesson)
+          ->addCacheableDependency($lessonAccess);
+        if ($lessonAccess->isAllowed()) {
+          $availableLessonIds[] = (string) $lesson->id();
+        }
+      }
       if ($this->trainingManager === NULL) {
         throw new \LogicException('Drupal LMS must be enabled to build learning dashboards.');
       }
       $status = $this->trainingManager->loadCourseStatus($course, $account, ['current' => TRUE]);
-      $total = $course->get(CourseInterface::LESSONS)->count();
+      $total = count($availableLessonIds);
       $completed = 0;
       if ($status !== NULL) {
         $metadata->addCacheableDependency($status);
-        $metadata->addCacheableDependency($course);
-        $rows = $this->entityTypeManager->getStorage('lms_lesson_status')
-          ->getAggregateQuery()
-          // The status is fetched for this authenticated user above; this
-          // internal count is scoped to that exact course-status entity.
-          ->accessCheck(FALSE)
-          ->condition('course_status', $status->id())
-          ->condition('finished', 0, '<>')
-          ->groupBy(LessonStatusInterface::LESSON_FIELD)
-          ->execute();
-        $completed = count($rows);
+        if ($availableLessonIds !== []) {
+          $rows = $this->entityTypeManager->getStorage('lms_lesson_status')
+            ->getAggregateQuery()
+            // The status is fetched for this authenticated user above; this
+            // internal count is scoped to that exact course status and its
+            // currently viewable lesson entities.
+            ->accessCheck(FALSE)
+            ->condition('course_status', $status->id())
+            ->condition(LessonStatusInterface::LESSON_FIELD, $availableLessonIds, 'IN')
+            ->condition('finished', 0, '<>')
+            ->groupBy(LessonStatusInterface::LESSON_FIELD)
+            ->execute();
+          $completed = count($rows);
+        }
       }
       $courses[] = $course_data + [
         'completed_lessons' => $completed,
