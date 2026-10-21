@@ -9,6 +9,7 @@
 - Branch: `docs/aculta-forum-0.1.0-dev.1`; HEAD ao concluir a sincronização concorrente: `b5e6650bf293f3bd6f308fe752fcdc847f3a381f`.
 - Drush confirmou Drupal 11.4.10, banco `aculta_runtime`, conexão válida e URI padrão `http://default`.
 - PHP CLI disponível: 8.4.26; abaixo da baseline de projeto PHP 8.5.
+- Documento histórico: descreve o estado antes da migração de 2026-10-21. O estado atual está em `docs/README.md` e no roadmap do Studio e Revista.
 - Nenhuma entidade, configuração, arquivo de conteúdo ou banco foi alterado nesta auditoria. Nenhuma exclusão ou backup foi executado.
 - No início, a worktree tinha alterações concorrentes em Fórum, User, PDF Viewer e documentação. Elas foram preservadas. Durante a auditoria, o HEAD foi movido para a ref remota da própria branch da PR (`git reflog`: `reset: moving to origin/docs/aculta-forum-0.1.0-dev.1`); não foi uma operação deste trabalho. A worktree continuou com mudanças fora do Magazine.
 

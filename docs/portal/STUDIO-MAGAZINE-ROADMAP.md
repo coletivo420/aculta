@@ -7,7 +7,7 @@
 | 0.1.0 | Auditar código, Config Sync, Runtime de desenvolvimento, consumidores e referências da Revista. |
 | 0.2.0 | Criar o bundle único `revista`, campos, displays, categorias, SEO, Views e workflow, mantendo os bundles antigos durante a migração. |
 | 0.3.0 | Migrar Nodes, revisões, Comments, aliases e referências por APIs suportadas; depois aposentar `article` e `blog` com rollback verificado. |
-| 0.4.0 | Consolidar Fórum/Galeria como serviços compartilhados, permissões e apresentação editorial; retirar conversor e duplicações obsoletas. |
+| 0.4.0 | Consolidar Fórum e Galeria como subkernels reutilizáveis, com permissões e apresentação editorial; retirar conversor e duplicações obsoletas. |
 | 0.5.0 | Validar gates e regressões, atualizar documentação e concluir a Revista antes de iniciar o Studio. |
 | 0.6.0 | Fundar `aculta_studio`: frontend, shell, abas condicionais, providers e access/cache. |
 | 0.7.0 | Studio Revista: criação, revisão, moderação de comentários contextuais e galerias por referências. |
@@ -45,11 +45,10 @@
 
 ## Matriz de abas do Studio
 
-O Studio é frontend integrado à Minha Conta. Itens não autorizados não aparecem; rotas e operações devem também aplicar suas próprias verificações de acesso. **Disponibilidade planejada, não implementação concluída.**
+O Studio é frontend integrado à Minha Conta. Itens não autorizados não aparecem; rotas e operações devem também aplicar suas próprias verificações de acesso. **Disponibilidade planejada, não implementação concluída.** As abas seguem a diretiva normativa (`docs/architecture/aculta-kernels.md`); a página agregadora inicial do Studio não é aba e não consta dessa matriz.
 
 | Aba | Dono funcional | Ações previstas | Serviços compartilhados |
 | --- | --- | --- | --- |
-| Início | `aculta_studio` (agregação) | Meus conteúdos, tarefas, revisão, avisos | User, Messenger, Views |
 | Revista | `aculta_magazine` | Criar `revista`, rascunhos, revisão, categorias, comentários | User, Image, Forum contextual, Gallery |
 | Fórum | `aculta_forum` | Tópicos, denúncias, respostas, moderação | User, Image, Messenger |
 | Wiki | Wiki atual | Verbetes, propostas, revisões, discussão do verbete | User, Forum contextual, Document Viewer |

@@ -1,5 +1,7 @@
 # Migração editorial para `revista`
 
+**Estado:** executada no Runtime de teste em 2026-10-21, com autorização do responsável (DT-K02). As seções abaixo descrevem o plano, as salvaguardas e o inventário de execução; o resultado está no roadmap do Studio e Revista.
+
 ## Escopo e salvaguardas
 
 O comando `aculta-magazine:migrate-publications` recria Nodes `article` e
