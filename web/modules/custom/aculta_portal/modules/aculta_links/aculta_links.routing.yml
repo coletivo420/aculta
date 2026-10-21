@@ -92,3 +92,13 @@ aculta_links.social_links_settings:
     _permission: 'administer site configuration'
   options:
     _admin_route: true
+
+aculta_links.analytics_settings:
+  path: '/painel-administrativo/aculta/links/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_links\Form\LinkAnalyticsSettingsForm'
+    _title: 'Configurações de métricas do ACULTA Links'
+  requirements:
+    _permission: 'administer aculta links'
+  options:
+    _admin_route: true

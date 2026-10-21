@@ -12,6 +12,8 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkItem;
 use Drupal\aculta_links\Entity\LinkPage;
+use Drupal\aculta_links\Service\LinkAnalytics;
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -71,6 +73,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_link_page');
     $this->installEntitySchema('aculta_link_item');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_links', ['aculta_links_stat_daily']);
     $this->installConfig(['system', 'user']);
   }
 
@@ -114,6 +117,10 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $social_settings_route = $route_provider->getRouteByName('aculta_links.social_links_settings');
     self::assertSame('/painel-administrativo/aculta/redes-sociais', $social_settings_route->getPath());
     self::assertTrue($social_settings_route->getOption('_admin_route'));
+    $analytics_settings_route = $route_provider->getRouteByName('aculta_links.analytics_settings');
+    self::assertSame('/painel-administrativo/aculta/links/configuracoes', $analytics_settings_route->getPath());
+    self::assertSame('administer aculta links', $analytics_settings_route->getRequirement('_permission'));
+    self::assertTrue($analytics_settings_route->getOption('_admin_route'));
     self::assertSame('aculta_link_page.update', $editor_route->getRequirement('_entity_access'));
     $item_revision_route = $route_provider->getRouteByName('entity.aculta_link_item.revision');
     self::assertSame(
@@ -143,10 +150,42 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $link->save();
     $short_code = (string) $link->get('short_code')->value;
     self::assertMatchesRegularExpression('/^[0-9a-z]{12}$/D', $short_code);
+    $analytics = $this->container->get('aculta_links.analytics');
+    self::assertFalse($analytics->isEnabled(), 'Analytics starts disabled unless a site administrator explicitly enables it.');
+    $this->container->get('config.factory')->getEditable('aculta_links.settings')
+      ->set('analytics_enabled', TRUE)
+      ->save();
+    $request_stack = $this->container->get('request_stack');
+    $request_stack->push(Request::create('/redirecionar/' . $short_code, 'GET'));
     $short_response = $this->container->get('aculta_links.public_page_controller')
       ->redirectByCode($short_code);
+    $request_stack->pop();
     self::assertSame(302, $short_response->getStatusCode());
     self::assertSame('https://example.org/', $short_response->getTargetUrl());
+    self::assertSame([], $analytics->clickCounts([(int) $link->id()]), 'Clicks remain pending until the queue worker aggregates them.');
+    $queue = $this->container->get('queue')->get(LinkAnalytics::QUEUE_ID);
+    $queue_item = $queue->claimItem();
+    self::assertNotFalse($queue_item, 'A validated short-link redirect queues a click event.');
+    $worker = $this->container->get('plugin.manager.queue_worker')->createInstance(LinkAnalytics::QUEUE_ID);
+    $worker->processItem($queue_item->data);
+    $queue->deleteItem($queue_item);
+    self::assertSame([((int) $link->id()) => 1], $analytics->clickCounts([(int) $link->id()]), 'The worker stores only the aggregate count by destination.');
+    $request_stack->push(Request::create('/redirecionar/' . $short_code, 'HEAD'));
+    $head_response = $this->container->get('aculta_links.public_page_controller')
+      ->redirectByCode($short_code);
+    $request_stack->pop();
+    self::assertSame(302, $head_response->getStatusCode());
+    self::assertSame(0, $queue->numberOfItems(), 'HEAD probes do not enqueue click events.');
+    $expired_date = gmdate('Y-m-d', $this->container->get('datetime.time')->getRequestTime() - 91 * 86400);
+    $this->container->get('database')->insert('aculta_links_stat_daily')
+      ->fields([
+        'event' => 'click',
+        'target_id' => (int) $link->id(),
+        'event_date' => $expired_date,
+        'count' => 8,
+      ])
+      ->execute();
+    self::assertSame(1, $analytics->purgeExpired(), 'Cron retention removes aggregates outside 90 days.');
     $first_revision_id = $link->getRevisionId();
 
     $page = LinkPage::create([

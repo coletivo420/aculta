@@ -4,3 +4,10 @@ aculta_links.social_links_settings:
   route_name: aculta_links.social_links_settings
   parent: aculta_portal.admin
   weight: 2
+
+aculta_links.analytics_settings:
+  title: Métricas do ACULTA Links
+  description: Habilitar ou desabilitar contagem agregada de redirects curtos.
+  route_name: aculta_links.analytics_settings
+  parent: aculta_portal.admin
+  weight: 3

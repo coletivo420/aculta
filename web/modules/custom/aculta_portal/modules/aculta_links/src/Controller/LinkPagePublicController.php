@@ -12,6 +12,8 @@ use Drupal\Core\Url;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_links\Entity\Link;
 use Drupal\aculta_links\Entity\LinkPage;
+use Drupal\aculta_links\Service\LinkAnalytics;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -22,6 +24,8 @@ final class LinkPagePublicController {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly AuthorIdentityResolver $authorIdentityResolver,
+    private readonly LinkAnalytics $analytics,
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -114,6 +118,10 @@ final class LinkPagePublicController {
     }
     catch (\InvalidArgumentException) {
       throw new NotFoundHttpException();
+    }
+
+    if ($this->requestStack->getCurrentRequest()?->isMethod('GET')) {
+      $this->analytics->recordClick((int) $link->id());
     }
 
     return $response

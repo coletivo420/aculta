@@ -2,7 +2,7 @@
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
 purpose `links` em micropáginas gerenciáveis. Versão declarada:
-`0.4.0-dev.15`. O módulo possui entidades revisionáveis de destinos, micropáginas
+`0.4.0-dev.16`. O módulo possui entidades revisionáveis de destinos, micropáginas
 e itens ordenados, painel administrativo, editor de composição e rota pública
 `/pagina/{slug}` no purpose `links`. A raiz do purpose preserva a página
 editorial encontrada pelo alias `/redes-sociais`; se o Node/alias não existir,
@@ -20,6 +20,10 @@ persistir imagens.
 Cada micropágina pode optar por exibir o apelido e o perfil público do titular;
 `aculta_user` aplica suas regras de visibilidade e entrega URL canônica e cache.
 A opção inicia desativada; avatar, e-mail, bio e redes não são herdados.
+GETs aceitos pelo redirect curto são agregados por destino/dia via Queue API;
+o painel soma até 90 dias, sem identificadores de visitante. Page views e
+origem de tráfego ainda não são métricas oferecidas. A coleta inicia desligada
+e só pode ser ativada por administrador em `/painel-administrativo/aculta/links/configuracoes`.
 
 A configuração e o formulário administrativo dos canais sociais também estão
 no submódulo. Os valores são migrados sem apagar `aculta_portal.social_links`, e

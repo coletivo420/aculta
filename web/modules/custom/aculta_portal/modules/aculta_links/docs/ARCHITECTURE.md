@@ -21,8 +21,10 @@ resolução de domínio paralelos.
    apresentação textual e publicação em rascunho por padrão.
 3. **Item de página (`aculta_link_item`):** referências tipadas à página e ao
    destino, posição, rótulo, ativação e agendamento futuro.
-4. **Evento estatístico:** evento minimizado, retenção e processamento
-   assíncrono quando volume e confiabilidade justificarem.
+4. **Evento estatístico:** fila Core recebe só ID do destino e instante do GET;
+   worker agrega por dia UTC, tabela não guarda visitante, e cron remove linhas
+   além da retenção de 90 dias. A métrica é aproximação de requisições de
+   redirect, sem page views, atribuição por página ou visitante único.
 
 Não fundir essas responsabilidades por conveniência. O Linky serviu como
 referência para entidade/revisões; sua dependência Dynamic Entity Reference não

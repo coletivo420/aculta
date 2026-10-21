@@ -15,7 +15,7 @@ mantém acesso privado até a integração de publicação/domínio.
 | Link reutilizável | Destino do campo Link do Core, título e publicação; `aculta_link` já cobre o armazenamento revisionável e propriedade. | Autor Drupal; destino pode ser URI interna ou HTTPS externa; Entity Access privado. |
 | Micropágina | `aculta_link_page`: título, slug, descrição, preset visual, publicação e opção revisionável `show_owner_identity` (desligada por padrão). | `uid` proprietário; identidade pública mínima via `aculta_user`, Domain/purpose resolvido em runtime. |
 | Item de página | `aculta_link_item`: composição ordenada que aponta a um destino reutilizável. | Referências tipadas à página e ao link; peso e ativo. |
-| Evento estatístico | Visita/clique mínimo, retenção curta e agregação. | IDs opacos de página/item e data; sem IP ou user-agent persistente por padrão. |
+| Evento estatístico | Contagem agregada diária dos GETs aceitos por redirecionamento curto; nunca visitante único nem page view. | ID de destino e data UTC; fila contém só ID/timestamp, sem IP, UID de visitante, user-agent, referrer ou cookie. Agregado retido por 90 dias. |
 
 Uma conta poderá ter várias páginas. Colaboração não entra na primeira entrega.
 Unicidade/reservas de slug devem seguir as normas de URL pública. O Core `link`

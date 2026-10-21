@@ -10,11 +10,15 @@ services:
 
   aculta_links.dashboard_controller:
     class: Drupal\aculta_links\Controller\LinksDashboardController
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_links.analytics']
 
   aculta_links.public_page_controller:
     class: Drupal\aculta_links\Controller\LinkPagePublicController
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver', '@aculta_links.analytics', '@request_stack']
+
+  aculta_links.analytics:
+    class: Drupal\aculta_links\Service\LinkAnalytics
+    arguments: ['@queue', '@database', '@datetime.time', '@cache_tags.invalidator', '@config.factory']
 
   aculta_links.short_code_generator:
     class: Drupal\aculta_links\Service\LinkShortCodeGenerator

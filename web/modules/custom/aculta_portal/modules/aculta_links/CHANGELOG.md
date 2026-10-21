@@ -1,5 +1,13 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.16 — agrega acessos a links curtos com retenção — 2026-10-20
+
+- Redirects curtos GET aprovados por Entity Access e validação podem enfileirar apenas ID do destino e instante; HEAD não conta. QueueWorker agrega contagem UTC por destino/dia. Dashboard do dono mostra total móvel de 90 dias.
+- Tabela local contém apenas evento, ID do destino, dia e contador. Cron remove agregados anteriores a 90 dias; eventos não incluem IP, UID do visitante, user-agent, referer, fingerprint ou cookie. Coleta começa desativada; o formulário de configuração exige validação da base legal antes de habilitar em produção.
+- Configuração administrativa `/painel-administrativo/aculta/links/configuracoes` requer `administer aculta links`; a rota fica em MAIN pela política do Portal.
+- Fonte Drupal: [QueueWorker API 11.x](https://api.drupal.org/api/drupal/class/QueueWorker/11.x) e [Cron/Queue API](https://api.drupal.org/api/drupal/core%21core.api.php/11.x).
+- Validação: Kernel PASS (2 testes/97 asserções; 7 depreciações upstream); PHPCS, lint, YAML e gates registrados em `docs/TESTING.md`. Update 10006 e smoke Runtime DEFERRED pelo erro de container externo `entity_print.print_builder`; coleta permanece desligada até validação legal.
+
 ## 0.4.0-dev.15 — integra identidade pública opt-in — 2026-10-20
 
 - A micropágina pode apresentar apelido e link público do proprietário mediante opção revisionável explícita, desativada por padrão. Usa `aculta_user.author_identity_resolver`, respeita o perfil e a URL canônica, e carrega tags, contextos e max-age retornados pela API.

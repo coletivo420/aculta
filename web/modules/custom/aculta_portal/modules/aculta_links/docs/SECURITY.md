@@ -31,14 +31,20 @@
 - `/redirecionar/{codigo}` resolve apenas um destino publicado, revalida Entity
   Access e executa a constraint de URL antes de emitir `TrustedRedirectResponse`
   302. Códigos têm 12 caracteres aleatórios e não aceitam destino na requisição;
-  o endpoint não registra cliques. Monitorar abuso e definir rate limiting se
+  GETs válidos entram em fila para agregação, HEAD não conta. Monitorar abuso e definir rate limiting se
   tráfego/anomalias indicarem necessidade, sem limitar visitas legítimas por IP.
 - A auditoria de 2026-10-20 registrou `GHSA-mg7g-g2wv-6mhr` para
   `UserController::saveLink` do LinkStack até v4.8.6. Não portar esse fluxo ou
   sua autorização; revalidar Entity Access e ownership no Drupal.
-- Analytics minimiza dados e define retenção/expurgo. Não persistir IP, user
-  agent completo, fingerprint ou identificador transversal por padrão; definir
-  LGPD e consentimento antes de rastrear.
+- Analytics está desativado por padrão. Após validação legal e ativação
+  administrativa em `/painel-administrativo/aculta/links/configuracoes`, registra
+  somente GET válido de redirect curto numa fila Drupal; o
+  worker soma contadores por destino e data UTC. Agregados expiram após 90 dias
+  no cron; fila/backlog permanece sem identificadores de visitantes e eventos
+  antigos são descartados quando processados. Não armazenar IP, UID visitante,
+  user-agent, referrer, fingerprint ou cookie. Contagens são aproximadas e não
+  identificam pessoas únicas. Base legal deve ser validada no inventário LGPD
+  antes de habilitar a coleta no Runtime de produção.
 - QR Code é calculado localmente como SVG a partir somente da URL canônica
   HTTPS de página publicada. O endpoint não aceita URL da requisição, não busca
   rede, não persiste arquivo e não registra visualizações ou scans.

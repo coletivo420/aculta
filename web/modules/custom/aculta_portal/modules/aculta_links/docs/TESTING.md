@@ -118,3 +118,15 @@ slugs (385) e índice de status PASS. O gate de fronteira falha somente pelas
 classes de apresentação introduzidas em arquivos concorrentes do `aculta_lms`.
 HTTP no Runtime e revisão visual/acessível permanecem DEFERRED; o bootstrap
 Drush falha pelo serviço ausente `entity_print.print_builder` da alteração LMS.
+
+Métricas agregadas 0.4.0-dev.16: Kernel PASS (2 testes/97 asserções; 7
+avisos de depreciação oriundos de Core/Metatag/Token), cobrindo analytics
+inativo por padrão, ativação explícita, fila só em GET, agregação diária,
+exclusão de HEAD e expurgo após 90 dias. PHPCS Drupal, PHP lint, YAML e
+`git diff --check` foram executados. O status index e os gates independentes de
+slugs/SDC também precisam constar com resultado da execução deste incremento.
+Update `10006` e smoke no Runtime DEFERRED: o preflight Drush falha ao compilar
+o container por serviço ausente `entity_print.print_builder` em alteração
+concorrente de `aculta_lms`; nenhuma operação persistente foi executada. Revisão
+visual e validação legal da base para coleta permanecem pendentes; a coleta
+segue desligada por padrão.

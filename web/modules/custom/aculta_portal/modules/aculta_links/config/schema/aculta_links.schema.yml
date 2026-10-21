@@ -23,3 +23,11 @@ aculta_links.social_links:
           url:
             type: string
             label: 'Link do botão'
+
+aculta_links.settings:
+  type: config_object
+  label: 'Configurações do ACULTA Links'
+  mapping:
+    analytics_enabled:
+      type: boolean
+      label: 'Habilitar contagem agregada de redirects curtos'

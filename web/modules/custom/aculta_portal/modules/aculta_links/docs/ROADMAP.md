@@ -44,12 +44,12 @@ QR Code SVG da URL canônica para páginas publicadas foi implementado em
 0.4.0-dev.10, com dependência MIT Endroid e licenças transitivas registradas.
 Janelas de disponibilidade por item foram implementadas em 0.4.0-dev.11 com
 campos revisionáveis, edição no fuso padrão do portal, persistência UTC,
-validação do intervalo e expiração de cache no próximo limite. Permanecem
-eventos minimizados, filas/agregação e retenção; redirects curtos foram
-implementados em 0.4.0-dev.13 com códigos opacos, validação de destino e
-TrustedRedirectResponse. QR SVG de páginas e destinos curtos está implementado
-com o gerador local até 0.4.0-dev.14. Revisar métricas agregadas e política
-Flood antes de registrar eventos.
+validação do intervalo e expiração de cache no próximo limite. Redirects curtos
+foram implementados em 0.4.0-dev.13 e QR SVG correspondente em 0.4.0-dev.14.
+Em 0.4.0-dev.16, GETs válidos dos redirects podem alimentar contagens diárias
+por destino via Queue API, com retenção de 90 dias e controle administrativo
+desligado por padrão. Page views, CTR por micropágina, origem/campanhas e cliques
+dos links diretos continuam fora da métrica. Base legal precisa ser validada.
 
 ## 0.6.0 — integração do ecossistema
 

@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_links\Service\LinkAnalytics;
 
 /**
  * Builds the owner-scoped administration dashboard for pages and links.
@@ -20,6 +21,7 @@ final class LinksDashboardController {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly DomainPurposeManager $domainPurpose,
+    private readonly LinkAnalytics $analytics,
   ) {}
 
   /**
@@ -110,23 +112,30 @@ final class LinksDashboardController {
       $query->condition($owner_key, $this->currentUser->id());
     }
     $entities = $storage->loadMultiple($query->execute());
-    $rows = [];
     $links_domain = in_array($entity_type_id, ['aculta_link', 'aculta_link_page'], TRUE)
       ? $this->domainPurpose->getDomain('links')
       : NULL;
     $cache_tags = array_merge(
       $this->entityTypeManager->getDefinition($entity_type_id)->getListCacheTags(),
       [$list_cache_tag],
+      $entity_type_id === 'aculta_link' ? ['aculta_links_analytics'] : [],
     );
     if ($links_domain !== NULL) {
       $cache_tags = array_merge($cache_tags, $links_domain->getCacheTags());
     }
+    $authorized_entities = [];
     foreach ($entities as $entity) {
       $access = $entity->access('update', $this->currentUser, TRUE);
       $cache_tags = array_merge($cache_tags, $entity->getCacheTags(), $access->getCacheTags());
-      if (!$access->isAllowed()) {
-        continue;
+      if ($access->isAllowed()) {
+        $authorized_entities[] = $entity;
       }
+    }
+    $click_counts = $entity_type_id === 'aculta_link'
+      ? $this->analytics->clickCounts(array_map(static fn ($link): int => (int) $link->id(), $authorized_entities))
+      : [];
+    $rows = [];
+    foreach ($authorized_entities as $entity) {
       $edit_route = 'entity.' . $entity_type_id . '.edit_form';
       $delete_route = 'entity.' . $entity_type_id . '.delete_form';
       $route_parameter = $entity_type_id;
@@ -202,7 +211,7 @@ final class LinksDashboardController {
           }
         }
       }
-      $rows[] = [
+      $row = [
         'title' => CoreLink::fromTextAndUrl($entity->label(), Url::fromRoute($edit_route, $route_arguments)),
         'status' => $entity->isPublished()
           ? new TranslatableMarkup('Publicado')
@@ -214,6 +223,15 @@ final class LinksDashboardController {
           ],
         ],
       ];
+      if ($entity_type_id === 'aculta_link') {
+        $row = [
+          'title' => $row['title'],
+          'status' => $row['status'],
+          'clicks' => (int) ($click_counts[(int) $entity->id()] ?? 0),
+          'operations' => $row['operations'],
+        ];
+      }
+      $rows[] = $row;
     }
 
     return [
@@ -229,6 +247,7 @@ final class LinksDashboardController {
         '#header' => [
           new TranslatableMarkup('Título'),
           new TranslatableMarkup('Estado'),
+          ...($entity_type_id === 'aculta_link' ? [new TranslatableMarkup('Cliques')] : []),
           new TranslatableMarkup('Operações'),
         ],
         '#rows' => $rows,

@@ -43,7 +43,8 @@ com dados/editoria antes de qualquer migração.
 | Pattern `aculta420:social-links-page` e template Node dedicado | EXISTENTE, apresentação experimental | Preservar nesta fase; adaptar quando o contrato de micropágina estiver definido. |
 | `node.page.field_social_links` | EXISTENTE; consumidor no template dedicado não localizado | Investigar preenchimento e referências; não remover nem migrar nesta fase. |
 | Redes pessoais e perfil `/u/{apelido}` do `aculta_user` | EXISTENTE E FUNCIONAL em outro purpose/contrato | Preservar como capacidade compartilhada, com exposição explícita. |
-| Links curtos, micropáginas por pessoa, editor e analytics | AUSENTE no purpose `links` | Projetar sem duplicar usuários ou autenticação. |
+| Links curtos, micropáginas por pessoa e editor | EXISTENTE no purpose `links`; Runtime HTTP ainda depende de rebuild/bootstrap saudável | Preservar entidades Drupal e validar novamente no Runtime após reparo independente do container. |
+| Analytics de destinos | EXISTENTE PARCIAL e DESATIVADO por padrão: cliques GET em códigos curtos são agregados por link/dia em fila; sem page views, visitantes únicos ou origem | Habilitação administrativa exige validação da base legal; agregados expiram em 90 dias e o painel limita-se às entidades autorizadas. |
 | Linky/LinkStack na instalação | AUSENTE (não são dependências do projeto) | Usar como fontes de estudo; nenhuma dependência Composer adicionada. |
 
 ## Consumidores e acoplamentos
