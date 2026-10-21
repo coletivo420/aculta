@@ -40,8 +40,9 @@ incompatível ou acima de 10 MB são recusadas. Unit cobre imagem válida, arqui
 inválido, limite de tamanho e delegação de arquivos não raster à validação
 nativa. Kernel `AttemptArchiveLifecycleTest` passou com 7 testes / 289
 assertions, inclusive download privado, revogação de membership e acesso de
-educador. O smoke ponta a ponta de upload e revogação no Runtime ainda está
-pendente.
+educador. O hook OOP que liga o constraint ao formulário também é descoberto no
+Kernel, e Unit confirma que ele preserva a allowlist da atividade. O smoke ponta
+a ponta de upload e revogação no Runtime ainda está pendente.
 
 ## F1 — Fundação
 
@@ -215,8 +216,8 @@ assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
-Suítes completas em 2026-10-21: Unit 34 testes/157 assertions; Kernel MariaDB
-17 testes/475 assertions. O Kernel registrou 90 depreciações de Core/contrib e
+Suítes completas em 2026-10-21: Unit 36 testes/161 assertions; Kernel MariaDB
+17 testes/476 assertions. O Kernel registrou 90 depreciações de Core/contrib e
 a Unit, 5 avisos do PHPUnit.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit

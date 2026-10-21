@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.24 — verificar integração do validador de anexos — 2026-10-21
+
+- Testa que o hook OOP é descoberto pelo Kernel e que acrescenta o constraint
+  `AcultaLmsSubmissionImage` ao `managed_file` do LMS sem remover os validadores
+  próprios da atividade. Unit: 2 testes / 4 assertions; Kernel de instalação:
+  4 testes / 35 assertions PASS.
+
 ## 0.1.0-dev.23 — isolar métricas agregadas da turma — 2026-10-21
 
 - Exclui educadores com `grade students` e administradores das contagens de
