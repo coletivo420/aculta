@@ -147,10 +147,10 @@ português e manter formulários/ações nativos conforme o teste de path e purp
 Endereços públicos em inglês ainda precisam ser cobertos pelo contrato de slugs
 antes de expor o fluxo.
 
-O submódulo opcional `private_message_notify` também entrega email via
+O submódulo `private_message_notify` também entregaria email via
 `message_notify.sender`, mas seu template padrão inclui o corpo da mensagem
-privada. O lifecycle guard do Messenger bloqueia a ativação simultânea para
-evitar exposição e dupla entrega.
+privada. Foi desinstalado do Runtime (0.1.1-dev.68), sem avisos nem tabelas
+próprias; o lifecycle guard do Messenger impede a reativação simultânea.
 
 O envio externo permanece no transporte de e-mail já instalado pelo projeto:
 Drupal Mail com Symfony Mailer/camada de envio E-Mails ACULTA. Message Notify é responsável pela

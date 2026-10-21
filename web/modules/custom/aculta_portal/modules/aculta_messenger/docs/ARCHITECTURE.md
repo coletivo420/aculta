@@ -117,10 +117,11 @@ tem queue opcional e opção de revalidar access da entidade. Site Alert inclui
 cache context `active_site_alerts`; validar o bubbling quando a UI for
 integrada.
 
-`private_message_notify` é submódulo opcional do pacote Private Message e
-reutiliza `message_notify.sender`, mas seu template padrão inclui o corpo
-privado. O Messenger impede a ativação simultânea enquanto esse template não
-for substituído por uma configuração que respeite a política ACULTA.
+`private_message_notify` (submódulo do pacote Private Message) foi desinstalado
+do Runtime: seu template padrão inclui o corpo privado. O Messenger impede a
+reativação simultânea enquanto esse template não for substituído por uma
+configuração que respeite a política ACULTA. O código continua no pacote
+`drupal/private_message`, que o Messenger usa.
 
 `hook_private_message_new_message` é o evento público do Private Message;
 Message Subscribe fornece hooks de seleção e alteração de candidatos e

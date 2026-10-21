@@ -1,3 +1,8 @@
+## 0.1.1-dev.68 — remoção do notificador de mensagens privadas com corpo — 2026-10-21
+
+- `private_message_notify` estava ativo ao lado do Messenger, combinação que o próprio guard do módulo proíbe (o template padrão expõe o corpo da mensagem privada). Foi desinstalado do Runtime, sem avisos nem tabelas próprias. O código continua no pacote `drupal/private_message`.
+- Documentação de integração e arquitetura atualizada. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.1-dev.67 — verificação de amizade e entrega de e-mail — 2026-10-21
 
 - Endurecimento verificado no servidor de testes: pedido a si mesmo e a conta inativa bloqueados; terceiro não aceita nem cancela pedido alheio; solicitante não aceita o próprio pedido; aceite repetido bloqueado; limite de 10 pedidos por hora (o 11º e o 12º bloqueados). Dados de teste removidos.
