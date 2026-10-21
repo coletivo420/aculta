@@ -110,6 +110,24 @@ try {
   const kbPath = await exec(`return window.location.pathname;`);
   check('Enter no teclado troca a aba pela URL dela', kbPath === '/studio/revista/criar/nova-publicacao' || kbPath.startsWith('/studio/revista/criar/'), kbPath);
 
+  // Paridade claro/escuro: mesma geometria nos dois modos. A preferência da conta de teste é trocada e restaurada.
+  const boxesFor = () => exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="panel"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]; }));`);
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (claro)');
+  const lightBoxes = JSON.parse(await boxesFor());
+  const lightMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
+  const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code], { cwd: PROJECT }).toString().trim();
+  const original = drushRun(`echo json_encode(\\Drupal::service('aculta_portal.color_mode_preference')->forUser(5));`);
+  drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save(5, 'dark'); echo 'ok';`);
+  await wd('POST', p('/refresh'), {});
+  await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (escuro)');
+  await sleep(800);
+  const darkBoxes = JSON.parse(await boxesFor());
+  const darkMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
+  if (original === 'null' || original === '') { drushRun(`\\Drupal::service('user.data')->delete('aculta_portal', 5, 'color_mode'); echo 'ok';`); } else { drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save(5, json_decode('${original}')); echo 'ok';`); }
+  check('modo escuro aplicado à página', darkMode !== lightMode, `claro=${lightMode} escuro=${darkMode}`);
+  check('mesma geometria nos modos claro e escuro', JSON.stringify(lightBoxes) === JSON.stringify(darkBoxes), `${lightBoxes.length} elemento(s) comparado(s)`);
+
   // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
   await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/forum/moderacao/fila' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
