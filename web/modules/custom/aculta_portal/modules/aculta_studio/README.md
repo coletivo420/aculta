@@ -5,13 +5,15 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
 
 - Rota: `/studio` no domínio de conta (`conta.aculta.*/studio`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.
-- Abas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada aba declara se o dono está disponível (`isAvailable()`),
-  a permissão de exibição (`access()`) e as ações (`actions()`), cada uma com sua própria checagem de acesso.
+- Áreas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada área declara se o dono está disponível (`isAvailable()`),
+  a permissão de exibição (`access()`) e as seções (`sections()`): cada seção do submenu tem as próprias abas, e cada
+  aba lista as ações, cada uma com o acesso da rota do dono.
 - Presenter: `StudioPresenter::visibleTabs()` mostra só abas com dono ativo e permissão concedida, em ordem de peso.
 - Aba atual: argumento `aba` (id do plugin). Sem argumento ou com id desconhecido, a primeira aba visível.
-- Navegação AJAX como na Minha conta: a seção "Estúdio" entra no shell da conta (hook `aculta_portal_account_sections_alter`,
-  só com aba visível). As abas ficam dentro de `#portal-account-body`, e o `account-navigation.js` troca o conteúdo
-  por `drupal_ajax`, atualizando URL, menu e título.
+- Três níveis, cada um com navegação AJAX própria (`js/studio-navigation.js`, biblioteca `aculta_studio/navigation`):
+  áreas (`aba`), seções do submenu (`secao`) e abas da seção (`sub`). A raiz `#aculta-studio-root` é substituída pela
+  resposta `drupal_ajax`; URL, `aria-current` e voltar/avançar acompanham a troca.
+- Página própria: sem o shell, o menu nem o `account-navigation.js` da Minha conta.
 
 ## Abas
 

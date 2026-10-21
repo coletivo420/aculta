@@ -736,9 +736,11 @@ O pagamento é processado pelo Mercado Pago. A conta ACULTA não armazena nem ex
   permissão real do dono, nunca nome de papel) e `actions()` (ação com o acesso da rota do dono). Ação para outro
   domínio usa `DomainPurposeManager::routeUrl()` e avalia o acesso com `runInPurpose()`.
 - Nenhuma rota ou ação do Studio contorna Form API, Entity Access, Content Moderation nem as permissões do dono.
-- Apresentação: o módulo marca as partes com tokens `data-portal-ui` (`studio-*`) e atributos `data-aculta-studio*`
-  de comportamento; classes e aparência ficam no ACULTA420. Navegação AJAX pelo shell da conta (seção por
-  `aculta_portal_account_sections_alter`), sem navegação paralela.
+- Três níveis: áreas em abas superiores (uma por dono); submenu à esquerda com as seções da área; abas de cada seção
+  com as ações no painel. Cada área implementa `sections()` com esses níveis. Apresentação: tokens `data-portal-ui`
+  (`studio-*`) e atributos `data-aculta-studio*` de comportamento; classes e aparência ficam no ACULTA420.
+- O Studio tem página, shell, JavaScript (`js/studio-navigation.js`) e hooks próprios. Não usa o shell, o menu ou
+  o `account-navigation.js` da Minha conta, e não aparece no menu da conta.
 - Melhoria contínua: toda frente que criar função com potencial de aba ou ação deve investigar o Studio antes de
   concluir, propor ou implementar a aba dentro desse contrato, e atualizar a matriz em
   `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`, o README do `aculta_studio` e o status do componente.
