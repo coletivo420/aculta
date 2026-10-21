@@ -74,3 +74,18 @@ mais recentes sem decisão do responsável.
 
 O export de configuração e o dump pós-configuração de F0.2 são backups
 anteriores à migração de conteúdo; não substituem o dump novo exigido acima.
+
+
+## Resultado do Runtime de teste — 2026-10-21
+
+A migração foi executada em `toca`, URI `http://revista420.aculta.toca.net.br`,
+com banco `aculta_runtime`, após dump gzip e export completo de configuração
+privados. Foram migrados 16 Nodes e 16 revisões; NID, UUID, VID e os 26 aliases
+foram preservados. Não havia Comments, referências de entrada ou Entity Usage
+nos Nodes inventariados. Nenhum conteúdo ou arquivo compartilhado foi excluído.
+
+Após a contagem zero dos bundles antigos, `article` e `blog` foram removidos via
+Entity API. A tela de criação agora tem somente o tipo editorial `revista`.
+Backup do banco: `/tmp/aculta-magazine-before-migration-20261021.sql.gz`;
+backup de configuração: `/tmp/aculta-magazine-before-migration-20261021-config`.
+Esses arquivos são privados do Runtime de teste e não devem ser versionados.

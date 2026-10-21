@@ -3,10 +3,10 @@
 Auditoria estrutural F0.1.0: [estado do código, Config Sync, Runtime e plano de
 limpeza](AUDITORIA-F0.1.0.md).
 
-> **Transição em andamento:** publicações recebem o campo Comment compartilhado
-> `field_aculta_discussion` em Config Sync e no Runtime de teste. A sincronização automática de tópicos foi
-> removida; serviços de leitura/conversão ainda sustentam vínculos históricos. A remoção
-> final do Drupal Forum e de seus consumidores exige a sequência segura descrita em
+> **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
+> pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática
+> de tópicos foi removida. A desinstalação do Drupal Forum contrib e a retirada de
+> consumidores restantes seguem a sequência segura descrita em
 > [`MIGRATION-REMOVAL.md`](../../aculta_forum/docs/MIGRATION-REMOVAL.md).
 
 Submódulo do Portal ACULTA (`aculta_portal`). Centraliza tudo que é da Revista: publicações, chamada, resumo,
@@ -17,11 +17,11 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 
 | Regra | Como | Onde |
 | --- | --- | --- |
-| Publicações da Revista | `revista` é o bundle canônico; `article` e `blog` são reconhecidos apenas durante a migração | `src/Revista/RevistaPublications.php` |
-| Chamada | campo `field_subtitle` (rótulo "Chamada" no blog) | exibição do tipo, acima do corpo |
-| Resumo | campo `field_summary` (rótulo "Resumo" no blog); descrição e Open Graph via `[node:editorial-summary]` | metatag `node__revista` |
+| Publicações da Revista | `revista` é o único bundle; `article` e `blog` foram migrados e aposentados | `src/Revista/RevistaPublications.php` |
+| Chamada | campo `field_subtitle` (rótulo "Chamada") | exibição do tipo, acima do corpo |
+| Resumo | campo `field_summary` (rótulo "Resumo"); descrição e Open Graph via `[node:editorial-summary]` | metatag `node__revista` |
 | SEO | metatag `node__revista` e campo `field_meta_tags` | config do metatag |
-| URL por sessão | padrão Pathauto `/[node:session]/[node:title]` (`aculta_article`, inclui o blog) | config do pathauto e token do aculta_portal |
+| URL por sessão | padrão Pathauto `/[node:session]/[node:title]` (`aculta_article`) | config do pathauto e token do aculta_portal |
 | Listagens por sessão | view `revista_sessoes` (filtro de tipo com todos os tipos da Revista) | config da view |
 | Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`); identity/avatar/bio/redes vêm do cartão `author_editorial` de `aculta_user`; Magazine fornece só Autor/Coautor | `src/Hook/ArticleAuthorsHooks.php` |
 | Coautores | `co_authors` (Node Co-Authors): coautores recebem os direitos de conteúdo do autor | módulo contrib |
@@ -34,11 +34,10 @@ Coautor; apelido/nome, avatar, biografia e redes públicas são preparados pelo
 User e apresentados pelo SDC compartilhado do ACULTA420. Bio e redes respeitam
 o opt-in do perfil público, e o Magazine não lê campos de perfil diretamente.
 
-`revista`, `article` e `blog` recebem `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
+`revista` recebe `field_aculta_discussion`, do tipo Comment `aculta_discussion_post`, diretamente no Node.
 O full display usa o formatter Core `comment_default`, e o `aculta_user` constrói o cartão `author_comment`; autoria vinculada ao acervo usa `author_growroom_historico` sem conta ativa. A política
 configurável de primeiro comentário do `aculta_user` aplica-se aqui como nos demais contextos públicos; LMS fica
-expressamente fora dessa moderação global. A troca article ↔ blog copia o item do campo e re-hospeda as entidades
-Comment antes de remover a publicação antiga, preservando autoria, estado e encadeamento.
+expressamente fora dessa moderação global. As discussões contextuais continuam hospedadas no campo Comment do Node `revista`; a migração preservou as entidades hospedeiras e os campos disponíveis.
 
 A configuração está em `config/sync` e `config/install`; as duas instâncias e displays full foram aplicados no
 Runtime de teste em importação parcial. Para Nodes de publicação anteriores à instalação do campo,
@@ -58,49 +57,16 @@ Entrevistas e outras seções editoriais. Elas não criam bundles de Node. A dec
 categoria Editorial está superada pelo modelo canônico `revista`.
 
 - Novas publicações usam o bundle `revista` e uma categoria editorial apropriada.
-- Enquanto a migração não terminar, `article` e `blog` seguem visíveis nas listagens e preservam suas URLs.
-- O modelo de publicação (`aculta420:revista-publication`) atende o bundle canônico e os legados durante a transição.
+- Publicações existentes e futuras usam `revista`; Blog/Opinião é uma classificação editorial.
+- O modelo de publicação (`aculta420:revista-publication`) atende o bundle `revista`.
 
-## Conversão legado article ↔ blog
+## Migração concluída
 
-O serviço `aculta_magazine.publication_type_converter` é legado e não participa da consolidação em `revista`. Ele
-recria a publicação, não preserva NID/UUID/revisões e não reescreve todas as referências externas. Não o use na
-migração editorial; sua remoção será feita após retirar os consumidores antigos.
-
-O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.publication_type_converter` faz a troca
-(é um serviço PHP: pode ser chamado de qualquer código; não há comando Drush nem tela registrados).
-
-- `plan($post, $target)`: não grava. Mostra os campos que serão copiados e os que se perdem
-  (campos que só existem no tipo de origem).
-- `convert($post, $target)`: grava. Ordem: (1) cria a publicação no tipo de destino com os campos copiados, o mesmo
-  autor, a mesma data de criação e o mesmo estado; (2) re-hospeda na publicação nova os Comments diretos de
-  `field_aculta_discussion`; (3) remove o alias da antiga e a
-  nova recebe o mesmo endereço pelo Pathauto; (4) a antiga perde o vínculo e o alias e é excluída. Tudo em transação.
-- A antiga é sempre excluída; Comments diretos ficam na publicação nova e não
-  são criados nem movidos para Nodes do Forum contrib.
-
-### O que permanece na troca
-
-- **Discussão pública**: a conversão não cria tópicos públicos. A publicação
-  conserva sua discussão interna pelo campo Comment compartilhado.
-- **Comments diretos**: ficam associados à publicação convertida (mesmos CIDs, autoria, estado e hierarquia); o
-  formatter Core de `field_aculta_discussion` os exibe na publicação.
-- **Endereço**: o mesmo, pelo padrão da sessão. O endereço antigo responde 404 (sem redirecionamento).
-- **Autoria**: o autor (`uid`), os coautores (`co_authors`) e o autor editorial (`field_editorial_author`) são copiados.
-  A caixa de autoria segue o autor copiado. Verificado no runtime em 2026-10-14: publicações
-  PodPlant420 #01 e Cuidar não é crime, de `coletivo420` (uid 15), continuam de `coletivo420`; o Bloco Sativa segue
-  do uid 1. Os tópicos têm o mesmo dono de suas publicações.
-- **Autor dos comentários**: cada Comment mantém o próprio autor (`uid`). A conversão re-hospeda os Comments diretos
-  preservando CID, autor, estado, parent/thread e conteúdo. O teste legado em tópico no Runtime de 2026-10-14 não
-  homologa a discussão direta atual.
-- **Campos**: copiados quando existem no destino. Blog e Notícia têm os mesmos campos da Revista, então nada se perde.
-
-### Verificação
-
-- Homologação pendente: criar Comment diretamente na publicação, comprovar CID,
-  estado, hierarquia, exibição no purpose Magazine e moderação. A conversão
-  article ↔ blog é uma ferramenta temporária entre bundles legados; nunca usá-la
-  para consolidar conteúdo no bundle `revista`.
+Os 16 Nodes inventariados no Runtime de teste foram migrados pelo comando
+`aculta-magazine:migrate-publications` via Entity API, preservando NID, UUID,
+VID, campos e aliases. `article` e `blog` não existem mais como bundles; a
+configuração mantém somente `revista`. Backup, verificação e rollback estão em
+[`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md).
 
 ## Privacidade
 
@@ -117,7 +83,7 @@ separar formatos; todas as publicações usam `revista`.
 
 - `php scripts/validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`,
   `validate-public-slugs.php`, `validate-environment-addresses.php`.
-- Navegador: publicação de teste (blog) com chamada, resumo, corpo e coautora; caixa de autores; descrição de SEO.
+- Navegador: publicação de teste (`revista`) com chamada, resumo, corpo e coautora; caixa de autores; descrição de SEO.
 
 ## Pendências
 
@@ -157,8 +123,7 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
   foram removidos no Runtime de teste; o inventário tinha zero Comments
   `comment_forum`. O campo `field_discussao`, o leitor legado e a apresentação
   da publicação como abertura de Node `forum` foram retirados do código atual.
-- `field_aculta_discussion` é a discussão corrente em `article` e `blog`; o
-  serviço de conversão entre tipos mantém esses Comments no novo host.
+- `field_aculta_discussion` é a discussão contextual da publicação `revista`; Drupal Comment mantém autoria, estado e encadeamento.
 - A desinstalação oficial do módulo contrib e remoção do pacote Composer ainda
   dependem da migração dos consumidores restantes e revisão da configuração.
 - Moderação atual: comentários diretos seguem a política configurável do primeiro comentário público, fora do LMS.
@@ -168,10 +133,10 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 - Categoria nova: não cria pasta no vocabulário antigo do Forum.
 - Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem seus contratos contextuais.
 
-## Destino arquitetural aprovado — ainda não migrado
+## Arquitetura editorial vigente
 
 A Revista será **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes) e `aculta_forum` (discussão contextual via Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
 
-O bundle `revista` e seus campos, displays, Metatag, Pathauto, consultas e workflow próprio estão preparados em Config Sync. O workflow `editorial` existente permanece com `aculta_notice`. `article` e `blog` continuam instalados até a migração autorizada. Procedimento, salvaguardas e rollback estão em [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md). Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+O bundle `revista`, seus campos, displays, Metatag, Pathauto, Views e workflow próprio estão ativos no Runtime de teste. `article` e `blog` foram migrados e aposentados. O workflow `editorial` existente permanece com `aculta_notice`. Procedimento, salvaguardas e rollback estão em [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md). Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
 
 Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).

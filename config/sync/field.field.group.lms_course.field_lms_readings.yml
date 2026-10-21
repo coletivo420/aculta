@@ -5,8 +5,7 @@ dependencies:
   config:
     - field.storage.group.field_lms_readings
     - group.type.lms_course
-    - node.type.article
-    - node.type.blog
+    - node.type.revista
     - node.type.wiki_entry
   module:
     - node
@@ -24,8 +23,7 @@ settings:
   handler: 'default:node'
   handler_settings:
     target_bundles:
-      article: article
-      blog: blog
+      revista: revista
       wiki_entry: wiki_entry
     sort:
       field: _none

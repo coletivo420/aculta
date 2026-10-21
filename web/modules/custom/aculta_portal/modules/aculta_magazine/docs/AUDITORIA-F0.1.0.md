@@ -139,3 +139,23 @@ Outros resultados somente leitura:
   escrito. A execução requer dump gzip privado recente e export privado da
   configuração ativa conforme
   [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md).
+
+
+## Resultado da consolidação — 2026-10-21
+
+- Os 16 Nodes foram migrados pelo Entity API para `revista`, preservando NID,
+  UUID, VID, revisão e os 26 aliases; nenhum Node, Comment, Media ou arquivo foi
+  excluído.
+- Depois de confirmar zero Nodes nos bundles antigos, `article` e `blog` foram
+  aposentados pela API de configuração do Node. Os campos e displays por bundle
+  foram removidos; storages globais usados por `revista` foram mantidos.
+- Views da Revista, notícias, publicações relacionadas e administração editorial
+  foram atualizadas/importadas individualmente. Pathauto e Search API agora
+  selecionam `revista`; os defaults Metatag exclusivos dos bundles antigos
+  foram removidos.
+- HTTP de teste: `/` 200, `/revista` 301 canônico, sessões editoriais 200,
+  `/node/add/revista` 302 para login anônimo e caminhos antigos 404. Watchdog não
+  registrou 500 novo do Magazine. Erros recentes de Group/LMS são concorrentes.
+- Conteúdo preservado: os 16 Nodes, seus campos, revisões e aliases. Conteúdo
+  excluído: nenhum. Backups privados anteriores à migração estão descritos no
+  procedimento e permaneceram fora do checkout.

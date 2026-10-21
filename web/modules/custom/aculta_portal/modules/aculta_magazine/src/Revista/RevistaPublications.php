@@ -7,11 +7,8 @@ namespace Drupal\aculta_magazine\Revista;
 /**
  * Tipos de conteúdo que são publicações da Revista.
  *
- * Todo tipo listado aqui segue as mesmas regras do aculta_magazine: chamada (subtítulo), resumo (descrição e
- * Open Graph), SEO (metatag com [node:editorial-summary]), URL por sessão (/[sessão]/[título]), listagens por
- * sessão e caixa de autores. Ao criar um tipo novo (ex.: vídeo, galeria), adicione-o aqui e siga o docs/README.md.
- * `revista` é o bundle canônico. `article` e `blog` permanecem temporariamente
- * reconhecidos enquanto as publicações e suas configurações são migradas.
+ * As publicações usam os mesmos campos de chamada, resumo e SEO, URLs por
+ * sessão, listagens e caixa de autores. Todas usam o bundle `revista`.
  */
 final class RevistaPublications {
 
@@ -21,11 +18,11 @@ final class RevistaPublications {
   public const CANONICAL_BUNDLE = 'revista';
 
   /**
-   * Bundles reconhecidos durante a transição editorial.
+   * Único bundle editorial da Revista.
    *
    * @var string[]
    */
-  public const BUNDLES = [self::CANONICAL_BUNDLE, 'article', 'blog'];
+  public const BUNDLES = [self::CANONICAL_BUNDLE];
 
   /**
    * Indica se o tipo de conteúdo é publicação da Revista.

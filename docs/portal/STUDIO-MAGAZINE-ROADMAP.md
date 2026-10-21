@@ -1,6 +1,6 @@
 # Roadmap — ACULTA Studio, Revista e integração dos kernels
 
-**Estado:** planejamento; não constitui evidência de execução. Os marcos são sequenciais e cada alteração de Runtime demanda gates e autorização próprios.
+**Estado:** planejamento. Os marcos são sequenciais; o registro de execução abaixo contém evidências de Runtime e cada alteração persistente exige salvaguardas próprias.
 
 | Marco | Entrega |
 | --- | --- |
@@ -19,6 +19,19 @@
 | 0.13.0 | Integrações opcionais e hardening; Eventos somente quando `aculta_eventos` existir. |
 | 0.14.0 | Homologação: regressão, Domain, access, Group, acessibilidade, performance e gates. |
 | 1.0.0 | Estabilização, documentação e liberação controlada. |
+
+## Registro de execução — Magazine 0.3.0 — 2026-10-21
+
+- No Runtime `toca`/`aculta_runtime`, 16 Nodes e 16 revisões foram migrados a
+  `revista`, preservando NID, UUID, VID e 26 aliases. Nenhum conteúdo ou arquivo
+  compartilhado foi excluído.
+- `article` e `blog` foram aposentados após inventário e contagem zero; Views,
+  Pathauto, Search API, Metatag e referências de LMS foram ajustados ao bundle
+  canônico. `/node/add/revista` está ativo; as rotas antigas retornam 404.
+- HTTP no purpose Revista: raiz 200, `/revista` redireciona canonicamente e as
+  listagens editoriais respondem 200. A próxima entrega permanece 0.4.0:
+  integração compartilhada de Fórum/Galeria, permissões e revisão completa do
+  workflow e da apresentação. Studio continua bloqueado até o gate 0.5.0.
 
 ## Gates irrenunciáveis
 

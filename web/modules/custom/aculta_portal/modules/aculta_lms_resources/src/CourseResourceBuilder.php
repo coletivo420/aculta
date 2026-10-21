@@ -26,8 +26,7 @@ final class CourseResourceBuilder {
    * @var array<string, string>
    */
   private const NODE_PURPOSES = [
-    'article' => 'magazine',
-    'blog' => 'magazine',
+    'revista' => 'magazine',
     'wiki_entry' => 'wiki',
   ];
 

@@ -59,7 +59,6 @@ datasource_settings:
       default: false
       selected:
         - activity
-        - article
         - revista
         - document
         - page

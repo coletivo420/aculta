@@ -31,7 +31,7 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
 
     self::assertSame('admin/content/revista', $page['display']['page_magazine']['display_options']['path']);
     self::assertSame(
-      ['article' => 'article', 'revista' => 'revista', 'blog' => 'blog'],
+      ['revista' => 'revista'],
       $page['display']['default']['display_options']['filters']['type']['value'],
     );
     self::assertSame('access content overview', $page['display']['default']['display_options']['access']['options']['perm']);
@@ -39,7 +39,7 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     $options = $comments['display']['default']['display_options'];
     self::assertSame('administer comments', $options['access']['options']['perm']);
     self::assertSame('field_aculta_discussion', $options['filters']['field_name']['value']);
-    self::assertSame(['article' => 'article', 'revista' => 'revista', 'blog' => 'blog'], $options['filters']['type']['value']);
+    self::assertSame(['revista' => 'revista'], $options['filters']['type']['value']);
     self::assertSame('block', $comments['display']['block_comments']['display_plugin']);
 
     $block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_magazine_admin_comments.yml');
@@ -57,6 +57,27 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     self::assertSame('view.aculta_magazine_admin_content.page_magazine', $menu['aculta_magazine.admin_content']['route_name']);
     self::assertSame('system.admin_content', $menu['aculta_magazine.admin_content']['parent']);
     self::assertSame('admin', $menu['aculta_magazine.admin_content']['menu_name']);
+  }
+
+  /**
+   * Config Sync exposes only the canonical bundle to editorial services.
+   */
+  public function testLegacyBundlesAreAbsentFromEditorialConfiguration(): void {
+    $module_path = dirname(__DIR__, 3);
+    $repository_path = dirname($module_path, 6);
+    foreach (['article', 'blog'] as $bundle) {
+      self::assertFileDoesNotExist($repository_path . '/config/sync/node.type.' . $bundle . '.yml');
+      self::assertFileDoesNotExist($repository_path . '/config/sync/metatag.metatag_defaults.node__' . $bundle . '.yml');
+    }
+
+    $pathauto = Yaml::parseFile($repository_path . '/config/sync/pathauto.pattern.aculta_article.yml');
+    $pathauto_criteria = array_values($pathauto['selection_criteria']);
+    self::assertSame(['revista' => 'revista'], $pathauto_criteria[0]['bundles']);
+
+    $search = Yaml::parseFile($repository_path . '/config/sync/search_api.index.aculta_conteudo.yml');
+    self::assertContains('revista', $search['datasource_settings']['entity:node']['bundles']['selected']);
+    self::assertNotContains('article', $search['datasource_settings']['entity:node']['bundles']['selected']);
+    self::assertNotContains('blog', $search['datasource_settings']['entity:node']['bundles']['selected']);
   }
 
 }

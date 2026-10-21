@@ -15,14 +15,14 @@ use PHPUnit\Framework\Attributes\Group;
 final class RevistaPublicationsTest extends UnitTestCase {
 
   /**
-   * The canonical bundle is revista; legacy bundles stay visible in transition.
+   * Revista is the only editorial bundle.
    */
   public function testCanonicalAndLegacyBundlesAreRecognized(): void {
     self::assertSame('revista', RevistaPublications::CANONICAL_BUNDLE);
-    self::assertSame(['revista', 'article', 'blog'], RevistaPublications::BUNDLES);
+    self::assertSame(['revista'], RevistaPublications::BUNDLES);
     self::assertTrue(RevistaPublications::isPublication('revista'));
-    self::assertTrue(RevistaPublications::isPublication('article'));
-    self::assertTrue(RevistaPublications::isPublication('blog'));
+    self::assertFalse(RevistaPublications::isPublication('article'));
+    self::assertFalse(RevistaPublications::isPublication('blog'));
     self::assertFalse(RevistaPublications::isPublication('project'));
   }
 

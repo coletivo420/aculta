@@ -3,8 +3,6 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - node.type.article
-    - node.type.blog
     - node.type.revista
   module:
     - node
@@ -408,9 +406,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            article: article
             revista: revista
-            blog: blog
           group: 1
           exposed: false
           expose:

@@ -1,3 +1,21 @@
+## 0.3.0-dev.2 — consolida bundle único Revista — 2026-10-21
+
+- Migração no Runtime de teste: 16 Nodes e suas 16 revisões passaram a `revista`,
+  preservando NID, UUID, VID e os 26 aliases Path Alias. Não houve exclusão de
+  conteúdo, Comments, Media ou arquivos.
+- Bundles `article` e `blog` aposentados pela Entity API após confirmação de
+  zero Nodes remanescentes. Drupal removeu displays e instâncias de campos por
+  bundle; campos compartilhados e seus valores em `revista` permanecem.
+- Formulários, Views, Pathauto, Search API, LMS Resources e comentários passam
+  a selecionar somente `revista`; conversor article/blog removido.
+- Backups privados foram verificados antes da migração. Runtime: HTTP 200 em
+  `aculta.toca.net.br` e `revista420.aculta.toca.net.br` respondem HTTP 200 na raiz;
+  `/revista` redireciona canonicamente e as páginas por sessão respondem 200.
+  `/node/add/article` e `/node/add/blog` respondem 404; `/node/add/revista` redireciona
+  para login anônimo. Nenhum HTTP 500 novo atribuível ao Magazine. Erros existentes de Group/LMS e e-mail
+  são de trabalho concorrente e não foram alterados. As Views públicas e administrativas
+  previstas foram importadas individualmente após conferir as dependências.
+
 ## 0.3.0-dev.1 — migração Entity API preparada — 2026-10-21
 
 - Comando `aculta-magazine:migrate-publications` com dry run padrão e execução

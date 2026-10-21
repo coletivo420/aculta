@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
-    - node.type.article
+    - node.type.revista
   module:
     - node
     - text
@@ -212,7 +212,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
+            revista: revista
       style:
         type: views_vvjf
         options:

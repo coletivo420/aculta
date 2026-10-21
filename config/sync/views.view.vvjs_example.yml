@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - node.type.article
+    - node.type.revista
   module:
     - node
     - user
@@ -125,12 +125,12 @@ display:
               <h3>No Articles Found</h3>
               <p>To see the VVJS slideshow in action:</p>
               <ol>
-                <li>Create a new <strong>Article</strong> content</li>
-                <li>Add some <strong>content</strong> to the article</li>
-                <li>Publish the article</li>
+                <li>Create a new <strong>Revista</strong> content</li>
+                <li>Add some <strong>content</strong> to Revista</li>
+                <li>Publish the Revista publication</li>
                 <li>Return to this page to see your slideshow</li>
               </ol>
-              <p><a href="/node/add/article" class="btn btn-primary">Create Your First Article</a></p>
+              <p><a href="/node/add/revista" class="btn btn-primary">Create Your First Publication</a></p>
             </div>
           tokenize: false
       sorts:
@@ -171,7 +171,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
+            revista: revista
           group: 1
       style:
         type: views_vvjs
@@ -213,7 +213,7 @@ display:
           content: |
             <div class="vvjs-demo-header">
               <h2>VVJS Slideshow Demo</h2>
-              <p>This slideshow displays your published <strong>Article</strong> content in teaser format. <a href="/node/add/article">Create articles</a> to see them appear here.</p>
+              <p>This slideshow displays your published <strong>Revista</strong> content in teaser format. <a href="/node/add/revista">Create publications</a> to see them appear here.</p>
             </div>
           tokenize: false
       footer: {  }

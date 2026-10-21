@@ -5,7 +5,7 @@ dependencies:
   config:
     - field.storage.node.body
     - field.storage.node.field_image
-    - node.type.article
+    - node.type.revista
   module:
     - image
     - node
@@ -299,7 +299,7 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
+            revista: revista
       style:
         type: views_vvjr
         options:

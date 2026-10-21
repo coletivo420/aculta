@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - node.type.article
     - node.type.revista
   module:
     - node
@@ -74,7 +73,6 @@ display:
           entity_field: type
           plugin_id: bundle
           value:
-            article: article
             revista: revista
       style:
         type: default

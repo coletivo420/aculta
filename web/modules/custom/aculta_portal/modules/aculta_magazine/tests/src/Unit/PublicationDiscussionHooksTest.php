@@ -50,7 +50,7 @@ final class PublicationDiscussionHooksTest extends UnitTestCase {
     ]);
 
     $node = $this->createMock(NodeInterface::class);
-    $node->method('bundle')->willReturn('article');
+    $node->method('bundle')->willReturn('revista');
     $node->method('hasField')->with('field_aculta_discussion')->willReturn(TRUE);
     $node->method('get')->with('field_aculta_discussion')->willReturn($field);
     $node->method('getFieldDefinition')->with('field_aculta_discussion')->willReturn($definition);
@@ -78,7 +78,7 @@ final class PublicationDiscussionHooksTest extends UnitTestCase {
     ]);
 
     $node = $this->createMock(NodeInterface::class);
-    $node->method('bundle')->willReturn('article');
+    $node->method('bundle')->willReturn('revista');
     $node->method('hasField')->willReturn(TRUE);
     $node->method('get')->willReturn($field);
     $node->method('getFieldDefinition')->willReturn($definition);
@@ -96,7 +96,7 @@ final class PublicationDiscussionHooksTest extends UnitTestCase {
       $field->expects(self::never())->method('setValue');
 
       $node = $this->createMock(NodeInterface::class);
-      $node->method('bundle')->willReturn('blog');
+      $node->method('bundle')->willReturn('revista');
       $node->method('hasField')->with('field_aculta_discussion')->willReturn(TRUE);
       $node->method('get')->with('field_aculta_discussion')->willReturn($field);
 

@@ -3,13 +3,11 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - node.type.article
-    - node.type.blog
     - node.type.revista
   module:
     - node
 id: aculta_article
-label: 'URLs — article'
+label: 'URLs — Revista'
 type: 'canonical_entities:node'
 pattern: '/[node:session]/[node:title]'
 selection_criteria:
@@ -19,8 +17,6 @@ selection_criteria:
     context_mapping:
       node: node
     bundles:
-      article: article
-      blog: blog
       revista: revista
 selection_logic: and
 weight: 0
