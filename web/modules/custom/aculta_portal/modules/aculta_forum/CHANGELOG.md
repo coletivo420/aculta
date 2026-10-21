@@ -14,6 +14,16 @@
   Runtime. As listas estavam vazias, portanto linhas com tópicos não foram
   avaliadas.
 
+## Pesquisa de anexos no Fórum e integração com Gallery (2026-10-21)
+
+- Registra `aculta_gallery` como integração obrigatória do editor do Fórum,
+  reutilizando o botão, diálogo, Entity Embed e display PhotoSwipe existentes.
+  A publicação imediata da galeria e dos arquivos exige resolver o vínculo de
+  visibilidade com comentário moderado antes de habilitar o fluxo.
+- Pesquisa Office confirma que não há renderer local instalado; previews locais
+  seguem por formato, com segurança e fidelidade avaliadas, e cartão/download
+  permanece como fallback. Não usar viewer externo para anexos privados.
+
 ## `0.1.0-dev.131` — valida salto acessível ao conteúdo no Firefox
 
 - `forum-index-visual.mjs` usa Tab e Enter via WebDriver no teste anônimo das

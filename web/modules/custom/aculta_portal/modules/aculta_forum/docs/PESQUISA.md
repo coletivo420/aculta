@@ -64,6 +64,16 @@ exportada e o servidor sejam idênticos em todos os itens.
   `aculta_gallery/src/Plugin/CKEditor5Plugin/CreateGallery.php`,
   `aculta_gallery/src/Form/GalleryEmbedDialogForm.php` e
   `aculta_gallery/docs/ARQUITETURA.md` §4.3.
+- A integração com `aculta_gallery` é requisito do Fórum: reutilizar o botão e
+  diálogo `CreateGallery`/`GalleryEmbedDialogForm`, a entidade `media_gallery`,
+  o contrato Entity Embed e o display PhotoSwipe existente. Não criar álbum,
+  formatter ou armazenamento paralelo no `aculta_forum`. O formato de texto do
+  Fórum deve habilitar o embed e validar acesso coerente com o comentário. O
+  Gallery publica a entidade ao enviar o diálogo, enquanto comentários podem
+  aguardar moderação; resolver esse ciclo e a política de arquivo/mídia privada
+  com o dono do Gallery antes de habilitar a integração no Fórum, sem mudar os
+  usos atuais da Revista. Upload de imagem deve respeitar a ingestão e a política
+  de `aculta_image`, sem duplicar processamento ou exclusão.
 - O popup padrão exige modal Core; o módulo fornece comportamento e marca
   `data-portal-ui`, enquanto o tema controla largura e apresentação em
   `css/components/dialog.css`. A regra está em
@@ -83,6 +93,22 @@ exportada e o servidor sejam idênticos em todos os itens.
   comentário. Para anexos privados, a miniatura só pode ser publicada depois
   do comentário e precisa acompanhar sua retirada; validar acesso e limpeza
   antes de estender o builder.
+
+Não há renderer Office instalado no Portal. Microsoft Office Online Server
+oferece renderização rica, mas requer serviço/farm WOPI; seus online viewers não
+abrem arquivos que exijam autenticação. Não serve ao contrato de anexos privados
+sem uma infraestrutura WOPI própria. Mammoth.js converte DOCX em HTML no
+navegador, sem fidelidade visual completa, e declara que não sanitiza o
+conteúdo. SheetJS lê formatos de planilha no navegador, mas é parser/modelo de
+dados, não um renderer Office fiel; DOC e apresentações continuam sem solução
+local confirmada no Portal. A pré-visualização deve ser local, por formato,
+sanitizada e limitada em processamento; não declarar suporte uniforme a
+DOC/DOCX/XLS/XLSX/PPT/PPTX sem renderer confirmado para cada extensão. Manter
+nome, tamanho e download como fallback, e habilitar preview só para formatos
+que passarem revisão de segurança e performance. Referências primárias:
+[Mammoth.js — escopo e segurança](https://github.com/mwilliamson/mammoth.js),
+[SheetJS Community Edition](https://github.com/SheetJS/sheetjs),
+[Microsoft Office Online Server](https://learn.microsoft.com/en-us/officeonlineserver/office-online-server-overview).
 
 Referências upstream: [API do plugin CKEditor 5](https://www.drupal.org/docs/drupal-apis/ckeditor-5-api/overview),
 [Ajax Dialogs](https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes),
