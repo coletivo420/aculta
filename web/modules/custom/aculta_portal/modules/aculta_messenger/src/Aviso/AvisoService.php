@@ -19,7 +19,7 @@ use Drupal\user\UserInterface;
  * Um aviso por pessoa e por tópico. Cada comentário novo é contado uma vez (o último contado fica no próprio aviso).
  * Quem escreveu o comentário não recebe aviso dele. O aviso não é mensagem: não aparece na caixa de conversas.
  */
-final class AvisoService {
+final class AvisoService implements ForumNoticeTransferInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -178,7 +178,63 @@ final class AvisoService {
     return $atualizados;
   }
 
-  /** Zera o contador do site quando a pessoa lê o tópico. */
+  /**
+   * Transfers whole per-user response aggregates between Forum topics.
+   *
+   * The historic counter cannot identify individual comments. Moving the whole
+   * record is therefore intentional; destination records are merged.
+   */
+  public function transferTopicResponseNotices(int $sourceNid, int $destinationNid): int {
+    if ($sourceNid <= 0 || $destinationNid <= 0
+      || $sourceNid === $destinationNid) {
+      return 0;
+    }
+    $destination = $this->loadTopic($destinationNid);
+    if (!$destination instanceof NodeInterface
+      || !$this->accessPolicy->supportsTopic($destination)
+      || !$destination->isPublished()) {
+      return 0;
+    }
+    $storage = $this->entityTypeManager->getStorage('aculta_aviso');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('assunto_nid', $sourceNid)
+      ->condition('tipo', Aviso::TIPO_RESPOSTA)
+      ->execute();
+    $moved = 0;
+    foreach ($storage->loadMultiple($ids) as $source) {
+      $uid = (int) $source->get('uid')->target_id;
+      if ($uid <= 0 || !$this->accessPolicy->canViewTopic($destination, $uid)) {
+        continue;
+      }
+      $target_ids = $this->query($uid, $destinationNid, Aviso::TIPO_RESPOSTA);
+      if ($target_ids !== []) {
+        $target = $storage->load(reset($target_ids));
+        $target->set('contador_site', (int) $target->get('contador_site')->value
+          + (int) $source->get('contador_site')->value);
+        $target->set('contador_email', (int) $target->get('contador_email')->value
+          + (int) $source->get('contador_email')->value);
+        $target->set('ultimo_comentario', max(
+          (int) $target->get('ultimo_comentario')->value,
+          (int) $source->get('ultimo_comentario')->value,
+        ));
+        $target->set('titulo', mb_substr((string) $destination->label(), 0, 255));
+        $target->save();
+        $source->delete();
+      }
+      else {
+        $source->set('assunto_nid', $destinationNid);
+        $source->set('titulo', mb_substr((string) $destination->label(), 0, 255));
+        $source->save();
+      }
+      $moved++;
+    }
+    return $moved;
+  }
+
+  /**
+   * Zera o contador do site quando a pessoa lê o tópico.
+   */
   public function marcarLido(int $uid, int $nid): void {
     if (!$this->accessPolicy->canViewTopic($this->loadTopic($nid), $uid)) {
       return;
@@ -197,7 +253,9 @@ final class AvisoService {
     }
   }
 
-  /** Quantos avisos pessoais não lidos entram na contagem global do site. */
+  /**
+   * Quantos avisos pessoais não lidos entram na contagem global do site.
+   */
   public function naoLidosNoSite(int $uid): int {
     return $this->naoLidosTotal($uid);
   }

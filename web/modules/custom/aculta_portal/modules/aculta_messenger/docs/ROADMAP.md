@@ -5,6 +5,12 @@
 Documento de planejamento único do submódulo. O estado de execução pertence ao
 Git, aos commits e ao changelog; esta lista registra sequência e critérios de entrega.
 
+Integração com o Fórum: o evento `aculta_forum.comment_subtree_moved` transfere
+avisos agregados completos; testes específicos e smoke visual permanecem
+pendentes. A transferência intencional inclui contagens históricas de respostas
+do tópico de origem que não façam parte da árvore movida, conforme decisão do
+responsável em 2026-10-21.
+
 ## 0.1.1 — pedidos de amizade e política de novas conversas
 
 1. **dev.1 — pesquisa e decisão:** auditados Friendship, User Relationships,

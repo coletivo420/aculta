@@ -1668,3 +1668,4 @@ real no servidor de teste.
   removida nem configuração foi submetida. RUNTIME STATUS: PARTIAL; a inspeção
   visual do painel e redirects está PASS, mas a validação HTTP positiva das
   rotas dinâmicas e a homologação visual integral do Fórum seguem pendentes.
+| 0.1.0-dev.132 | Transferência de aviso ao mover subtree | Kernel 19/391 verifica evento para árvore publicada e ausência para árvore somente pendente; Unit Messenger 2/4 verifica condição e IDs entregues ao serviço. Persistência/mesclagem do serviço ainda carece de teste; Runtime não alterado. |

@@ -2257,3 +2257,10 @@
   depreciações Core/Group/contrib, sem falhas. Nenhum Runtime/configuração real
   foi alterado. RUNTIME STATUS: DEFERRED.
 
+## `0.1.0-dev.132` — publica mudança de tópico para transferência de avisos agregados
+
+- `ForumCommentSubtreeMovedEvent` publica IDs da origem/destino quando uma árvore que contém comentário publicado é movida; o evento ocorre dentro da transação da operação.
+- O Messenger move o registro inteiro de respostas agregadas por usuário, preservando o histórico; quando já há aviso no destino, soma contagens e conserva o maior ID de comentário. Acesso ao destino é revalidado.
+- Kernel `ForumCommentMoverKernelTest`: 19 testes / 391 assertions PASS; evento verificado para árvore publicada e ausente em árvore somente pendente. Unit Messenger: 2 testes / 4 assertions PASS (assinatura/condição do consumidor). 19 depreciações Core/contrib no Kernel.
+- Sem deploy. Anexos diretos ainda precisam do modal contextual, armazenamento/publicação vinculados ao comentário, opções administrativas de tipo/tamanho e cartão PDF sem leitor embutido; o módulo permanece Dev.
+

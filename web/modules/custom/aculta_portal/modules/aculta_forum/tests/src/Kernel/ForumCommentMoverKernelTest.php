@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumCommentMoveForm;
+use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -205,6 +206,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       $this->container->get('database'),
       $this->container->get('comment.statistics'),
       $this->container->get('cache_tags.invalidator'),
+      $this->container->get('event_dispatcher'),
       $this->createMock(LoggerInterface::class),
     );
   }
@@ -219,6 +221,13 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $grandchild = $this->comment($source, $child, CommentInterface::PUBLISHED);
     $source_keeper = $this->comment($source, NULL, CommentInterface::PUBLISHED);
     $destination_existing = $this->comment($destination, NULL, CommentInterface::PUBLISHED);
+    $move_event = NULL;
+    $this->container->get('event_dispatcher')->addListener(
+      ForumCommentSubtreeMovedEvent::NAME,
+      static function (ForumCommentSubtreeMovedEvent $event) use (&$move_event): void {
+        $move_event = $event;
+      },
+    );
     $identities = [];
     foreach ([$root, $child, $grandchild] as $comment) {
       $identities[(int) $comment->id()] = [
@@ -234,6 +243,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame(4, $this->commentCount($source));
     self::assertSame(1, $this->commentCount($destination));
     self::assertSame(3, $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account));
+    self::assertInstanceOf(ForumCommentSubtreeMovedEvent::class, $move_event);
+    self::assertSame((int) $source->id(), $move_event->sourceTopicId);
+    self::assertSame((int) $destination->id(), $move_event->destinationTopicId);
+    self::assertTrue($move_event->containsPublishedComment);
 
     $storage = $this->container->get('entity_type.manager')->getStorage('comment');
     $moved_root = $storage->load($root->id());
@@ -306,8 +319,16 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $destination = $this->topic('Destination');
     $pending = $this->comment($source, NULL, CommentInterface::NOT_PUBLISHED);
     $child = $this->comment($source, $pending, CommentInterface::NOT_PUBLISHED);
+    $event_dispatched = FALSE;
+    $this->container->get('event_dispatcher')->addListener(
+      ForumCommentSubtreeMovedEvent::NAME,
+      static function () use (&$event_dispatched): void {
+        $event_dispatched = TRUE;
+      },
+    );
 
     $this->mover->move((int) $pending->id(), (int) $destination->id(), $this->account);
+    self::assertFalse($event_dispatched);
     self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($pending->id())->get('status')->value);
     self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($child->id())->get('status')->value);
     self::assertSame(0, $this->commentCount($source));

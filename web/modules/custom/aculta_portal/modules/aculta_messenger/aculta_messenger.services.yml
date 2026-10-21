@@ -80,6 +80,11 @@ services:
     arguments: ['@current_user', '@aculta_messenger.aviso_service']
     tags:
       - { name: event_subscriber }
+  aculta_messenger.forum_comment_move_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\ForumCommentMoveSubscriber
+    arguments: ['@aculta_messenger.aviso_service']
+    tags:
+      - { name: event_subscriber }
   aculta_messenger.aviso_preferencias:
     class: Drupal\aculta_messenger\Aviso\AvisoPreferencias
     arguments: ['@user.data']

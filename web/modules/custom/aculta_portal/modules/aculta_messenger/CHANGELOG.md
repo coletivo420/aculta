@@ -802,3 +802,9 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - `MessagesController::notifications()`: agrega os pedidos recebidos e notificações Message privadas existentes.
 - `MessengerBarHooks::preprocessPage()`: soma pedidos pendentes ao contador privado da barra.
 - `PrivateMessageFormHooks::formAlter()` e `PrivateMessageFormValidator::validateNewConversationPrivacy()`: aplicam a preferência apenas ao criar conversa.
+## 0.1.1-dev.72 — transfere agregados de respostas ao mover comentário — 2026-10-21
+
+- Assina `aculta_forum.comment_subtree_moved` e transfere registros completos `forum_resposta` da origem para o tópico destino. Ao colidir com registro do mesmo usuário/tipo no destino, soma contadores e mantém o maior `ultimo_comentario`. Unit do assinante: 2 testes / 4 assertions PASS.
+- A transferência ocorre na transação do mover; tópicos de destino não publicados, incompatíveis ou inacessíveis não recebem os registros. A decisão funcional aceita que o agregado inclua respostas não movidas.
+- Dependência explícita de `aculta_forum`. Nenhum envio retroativo de e-mail é disparado.
+

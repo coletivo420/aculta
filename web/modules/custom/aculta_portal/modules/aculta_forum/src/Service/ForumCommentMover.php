@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentStatisticsInterface;
 use Drupal\comment\CommentStorageInterface;
@@ -22,6 +23,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Moves a public Forum comment and its complete reply subtree. */
@@ -43,6 +45,7 @@ final class ForumCommentMover {
     private readonly Connection $database,
     private readonly CommentStatisticsInterface $commentStatistics,
     private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    private readonly EventDispatcherInterface $eventDispatcher,
     #[Autowire(service: 'logger.channel.aculta_forum')]
     private readonly LoggerInterface $logger,
   ) {}
@@ -199,6 +202,7 @@ final class ForumCommentMover {
         $transaction = NULL;
         try {
           $transaction = $this->database->startTransaction();
+          $contains_published_comment = (bool) array_filter($subtree, static fn (CommentInterface $member): bool => $member->isPublished());
           $this->discussionWriteGuard->beginMove(array_keys($subtree));
           foreach ($subtree as $cid => $member) {
             $this->discussionWriteGuard->refresh($topic_locks);
@@ -216,6 +220,14 @@ final class ForumCommentMover {
             }
             $member->set('entity_id', $destination_id);
             $member->save();
+          }
+
+          if ($contains_published_comment) {
+            $this->eventDispatcher->dispatch(new ForumCommentSubtreeMovedEvent(
+              $source_id,
+              $destination_id,
+              TRUE,
+            ), ForumCommentSubtreeMovedEvent::NAME);
           }
 
           $this->commentStatistics->update($this->newHostProbe($source));
