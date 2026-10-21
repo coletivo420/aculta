@@ -1,3 +1,10 @@
+## 0.1.1-dev.63 — eventos de amizade: aviso persistente e e-mail mínimo — 2026-10-21
+
+- Pedido e aceite de amizade geram um aviso persistente (`aculta_msg_friendship`) para quem recebe o aviso, com dedução por amizade, evento e instante da transição. Pedido avisa quem recebeu; aceite avisa quem pediu.
+- E-mail mínimo por fila (`aculta_msg_friendship`), sem nome nem conteúdo: só o link para a conta. Tentativas limitadas e estado de entrega registrado.
+- Consome `aculta_user.friendship_changed` (aculta_user 0.4.0-dev.54); o aculta_user não conhece o Messenger.
+- Verificado no servidor de testes: pedido cria 1 aviso e 1 item de fila; pedido repetido não duplica; aceite cria o aviso para quem pediu; dados de teste removidos. Envio real do e-mail ainda não executado (RUNTIME STATUS: DEFERRED).
+
 ## 0.1.1-dev.62 — idioma preferido no resumo diário — 2026-10-21
 
 - Usa o idioma preferido da conta ao construir `MailMessage`; o idioma Drupal

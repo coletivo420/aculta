@@ -1,0 +1,22 @@
+uuid: e2e7f077-344e-49c3-9a85-630e141d8792
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_source_fr
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_friendship.field_aculta_messenger_source_fr
+field_name: field_aculta_messenger_source_fr
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Referência de origem'
+description: 'Chave de idempotência do aviso (amizade, evento e instante). Não contém nomes.'
+required: true
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings: {}
+field_type: string

@@ -14,7 +14,7 @@ Git, aos commits e ao changelog; esta lista registra sequência e critérios de 
 2. **dev.2 — workflow e privacidade (implementado estaticamente):** entidade e
    serviço em `aculta_user`, ações em perfil/notificações, preferência individual
    e validação de novas threads; runtime DEFERRED.
-3. **dev.3 — eventos de amizade:** criar notificações persistentes Message e
+3. **dev.3 — eventos de amizade (implementado; envio de e-mail pendente de validação):** criar notificações persistentes Message e
    integrar Message Notify para pedido/aceite, com deduplicação e e-mail mínimo,
    sem expor dados privados.
 4. **dev.4 — hardening e homologação:** testes automatizados de acesso/IDOR,

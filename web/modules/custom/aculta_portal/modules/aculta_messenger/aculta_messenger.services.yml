@@ -92,3 +92,8 @@ services:
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }
+  aculta_messenger.friendship_notice_subscriber:
+    class: Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber
+    arguments: ['@entity_type.manager', '@queue']
+    tags:
+      - { name: event_subscriber }

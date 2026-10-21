@@ -8,6 +8,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_user\Event\FriendshipChangedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\user\UserInterface;
 
@@ -19,6 +21,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
     private readonly AccountProxyInterface $currentUser,
     private readonly LockBackendInterface $lock,
     private readonly FloodInterface $flood,
+    private readonly EventDispatcherInterface $eventDispatcher,
   ) {}
 
   public function request(UserInterface $target): AcultaFriendshipInterface {
@@ -64,6 +67,7 @@ final class FriendshipManager implements FriendshipManagerInterface {
       }
       $relationship->save();
       $this->flood->register('aculta_user.friendship_request', 3600, (string) $requesterId);
+      $this->dispatchChange(FriendshipChangedEvent::REQUESTED, $relationship);
       return $relationship;
     }
     finally {
@@ -167,10 +171,24 @@ final class FriendshipManager implements FriendshipManagerInterface {
       }
       $friendship->set('status', $to->value);
       $friendship->save();
+      if ($to === FriendshipStatus::Accepted) {
+        $this->dispatchChange(FriendshipChangedEvent::ACCEPTED, $friendship);
+      }
     }
     finally {
       $this->lock->release($lockId);
     }
+  }
+
+  /** Notifica a transição para quem integra (ver FriendshipChangedEvent). */
+  private function dispatchChange(string $transition, AcultaFriendshipInterface $friendship): void {
+    $this->eventDispatcher->dispatch(new FriendshipChangedEvent(
+      $transition,
+      (string) $friendship->id(),
+      $friendship->getRequesterId(),
+      $friendship->getRecipientId(),
+      (int) $friendship->get('changed')->value,
+    ), FriendshipChangedEvent::NAME);
   }
 
   private function loadPair(int $low, int $high): ?AcultaFriendshipInterface {

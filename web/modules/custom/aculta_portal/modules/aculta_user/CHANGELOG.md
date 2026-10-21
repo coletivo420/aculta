@@ -1,3 +1,9 @@
+## 0.4.0-dev.54 — evento de transição de amizade para o Messenger — 2026-10-21
+
+- `FriendshipChangedEvent` (`aculta_user.friendship_changed`) disparado ao registrar um pedido (`requested`) e ao aceitar (`accepted`). Carrega só identificadores e o instante, sem dados pessoais.
+- `FriendshipManager` recebe o `event_dispatcher`.
+- `aculta_user.info.yml` 0.4.0-dev.54. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.53 — linha de ações da foto com token próprio do tema — 2026-10-21
 
 - Ações do popup de foto (sortear, remover e salvar) usam o token `account-photo-actions` (tema aculta420 0.6.0-dev.134), no lugar do token da bio.

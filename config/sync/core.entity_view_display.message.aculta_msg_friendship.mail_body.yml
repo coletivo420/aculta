@@ -1,0 +1,29 @@
+uuid: 6e0f4392-5a69-4743-ba11-6b5343b9c426
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - field.field.message.aculta_msg_friendship.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_friendship.field_aculta_messenger_source_fr
+    - field.field.message.aculta_msg_friendship.field_aculta_msg_delivery
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_friendship.mail_body
+targetEntityType: message
+bundle: aculta_msg_friendship
+mode: mail_body
+content:
+  partial_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_aculta_messenger_attempts: true
+  field_aculta_messenger_source_fr: true
+  field_aculta_msg_delivery: true
+  partial_0: true
+  search_api_excerpt: true

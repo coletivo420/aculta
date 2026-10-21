@@ -1,0 +1,28 @@
+uuid: 4fe1bc92-98d6-41ff-ac50-94e5d8f5b85e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_friendship.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Tentativas de entrega'
+description: 'Contagem limitada de tentativas para o envio do aviso.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

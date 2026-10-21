@@ -1,0 +1,25 @@
+uuid: 19769ee4-cf3b-49c1-9234-002e5c4f0cd6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_friendship
+label: 'Aviso de amizade ACULTA'
+description: 'Aviso de pedido ou aceite de amizade. Sem nome, sem conteúdo privado.'
+text:
+  -
+    value: 'Atualização de amizade na ACULTA'
+    format: plain_text
+  -
+    value: 'Você recebeu um pedido ou um aceite de amizade. Acesse sua conta para ver: @account_url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

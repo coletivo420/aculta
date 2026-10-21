@@ -6,7 +6,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager
-    arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood']
+    arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
   aculta_user.public_profile_policy:
     class: Drupal\aculta_user\PublicProfilePolicy
   aculta_user.public_profile_link:
