@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_lms\Account\AccountUserLoaderInterface;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
@@ -16,15 +17,21 @@ use Drupal\user\UserInterface;
 /** Tightens uploaded-answer downloads after a student's course access ends. */
 final class UploadedAnswerAccessCheck {
 
+  public function __construct(
+    private readonly AccountUserLoaderInterface $accountUserLoader,
+  ) {}
+
   /**
    * Checks LMS answer access and revalidates the owner's current course access.
    */
   public function access(AnswerInterface $lms_answer, AccountInterface $account): AccessResultInterface {
-    if ($account instanceof UserInterface && !$account->isActive()) {
-      return AccessResult::forbidden()
-        ->cachePerUser()
-        ->addCacheableDependency($account)
-        ->addCacheableDependency($lms_answer);
+    $user = $this->accountUserLoader->load($account);
+    if (!$user instanceof UserInterface || !$user->isActive()) {
+      $result = AccessResult::forbidden()->cachePerUser()->addCacheableDependency($lms_answer);
+      if ($user instanceof UserInterface) {
+        $result->addCacheableDependency($user);
+      }
+      return $result;
     }
 
     $access = $lms_answer->access('see_details', $account, TRUE);

@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.38 — resolver estado ativo da conta de sessão — 2026-10-21
+
+- Access do histórico e dos downloads resolve `AccountInterface`/AccountProxy
+  para User antes de checar status; cache depende do User e varia por conta.
+- Unit: 46 testes / 215 assertions PASS (6 depreciações); Kernel lifecycle:
+  9 testes / 369 assertions PASS (42 depreciações). PHP 8.4.26; PHP 8.5 não
+  validado.
+
 ## 0.1.0-dev.37 — negar downloads LMS a contas bloqueadas — 2026-10-21
 
 - A rota privada de arquivo de resposta nega estudantes e educadores bloqueados

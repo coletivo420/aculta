@@ -13,6 +13,8 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\aculta_lms\Access\UploadedAnswerAccessCheck;
+use Drupal\aculta_lms\Account\AccountUserLoaderInterface;
+use Drupal\user\UserInterface;
 use Drupal\Tests\UnitTestCase;
 
 /** @coversDefaultClass \Drupal\aculta_lms\Access\UploadedAnswerAccessCheck */
@@ -37,7 +39,7 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     $answer->method('getUserId')->willReturn('27');
     $answer->method('get')->with('lesson_status')->willReturn($this->referenceField($lesson_status));
 
-    $result = (new UploadedAnswerAccessCheck())->access($answer, $account);
+    $result = $this->accessCheck($account)->access($answer, $account);
 
     self::assertFalse($result->isAllowed());
   }
@@ -61,7 +63,7 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     $answer->method('getUserId')->willReturn('27');
     $answer->method('get')->with('lesson_status')->willReturn($this->referenceField($lesson_status));
 
-    self::assertTrue((new UploadedAnswerAccessCheck())->access($answer, $account)->isAllowed());
+    self::assertTrue($this->accessCheck($account)->access($answer, $account)->isAllowed());
   }
 
   /** @covers ::access */
@@ -74,12 +76,41 @@ final class UploadedAnswerAccessCheckTest extends UnitTestCase {
     $answer->method('getUserId')->willReturn('27');
     $answer->expects(self::never())->method('getLessonStatus');
 
-    self::assertTrue((new UploadedAnswerAccessCheck())->access($answer, $account)->isAllowed());
+    self::assertTrue($this->accessCheck($account)->access($answer, $account)->isAllowed());
   }
 
-  private function setCacheability(AnswerInterface|CourseInterface $entity): void {
+  /** @covers ::access */
+  public function testInactiveSessionAccountIsDeniedBeforeLmsAccess(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn('27');
+    $user = $this->createMock(UserInterface::class);
+    $user->method('isActive')->willReturn(FALSE);
+    $this->setCacheability($user);
+    $loader = $this->createMock(AccountUserLoaderInterface::class);
+    $loader->expects(self::once())->method('load')->with($account)->willReturn($user);
+    $answer = $this->createMock(AnswerInterface::class);
+    $this->setCacheability($answer);
+    $answer->expects(self::never())->method('access');
+
+    $result = (new UploadedAnswerAccessCheck($loader))->access($answer, $account);
+
+    self::assertFalse($result->isAllowed());
+    self::assertContains('user', $result->getCacheContexts());
+    self::assertContains('user:27', $result->getCacheTags());
+  }
+
+  private function accessCheck(AccountInterface $account): UploadedAnswerAccessCheck {
+    $user = $this->createMock(UserInterface::class);
+    $user->method('isActive')->willReturn(TRUE);
+    $this->setCacheability($user);
+    $loader = $this->createMock(AccountUserLoaderInterface::class);
+    $loader->method('load')->with($account)->willReturn($user);
+    return new UploadedAnswerAccessCheck($loader);
+  }
+
+  private function setCacheability(AnswerInterface|CourseInterface|UserInterface $entity): void {
     $entity->method('getCacheContexts')->willReturn([]);
-    $entity->method('getCacheTags')->willReturn([]);
+    $entity->method('getCacheTags')->willReturn($entity instanceof UserInterface ? ['user:27'] : []);
     $entity->method('getCacheMaxAge')->willReturn(-1);
   }
 

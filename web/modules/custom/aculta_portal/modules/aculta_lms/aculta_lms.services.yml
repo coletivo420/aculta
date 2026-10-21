@@ -1,4 +1,7 @@
 services:
+  aculta_lms.account_user_loader:
+    class: Drupal\aculta_lms\Account\AccountUserLoader
+    arguments: ['@entity_type.manager']
   logger.channel.aculta_lms:
     parent: logger.channel_base
     arguments: ['aculta_lms']
@@ -35,6 +38,7 @@ services:
     arguments: ['@aculta_image.inspector', '@file_system']
   aculta_lms.uploaded_answer_access:
     class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
+    arguments: ['@aculta_lms.account_user_loader']
   aculta_lms.uploaded_answer_route_subscriber:
     class: Drupal\aculta_lms\EventSubscriber\UploadedAnswerRouteSubscriber
     tags:

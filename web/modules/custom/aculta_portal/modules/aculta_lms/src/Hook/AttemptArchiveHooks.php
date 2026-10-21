@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\aculta_lms\Account\AccountUserLoaderInterface;
 use Drupal\aculta_lms\AttemptArchiveManager;
 use Drupal\aculta_lms\Entity\AttemptArchive;
 use Drupal\group\Access\GroupAccessResult;
@@ -28,6 +29,8 @@ final class AttemptArchiveHooks {
   public function __construct(
     #[Autowire(service: 'aculta_lms.attempt_archive')]
     private readonly AttemptArchiveManager $attemptArchiveManager,
+    #[Autowire(service: 'aculta_lms.account_user_loader')]
+    private readonly AccountUserLoaderInterface $accountUserLoader,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly TranslationInterface $translation,
@@ -69,11 +72,13 @@ final class AttemptArchiveHooks {
     }
 
     if ($operation === 'view' || $operation === 'view label') {
-      if ($account instanceof UserInterface && !$account->isActive()) {
-        return AccessResult::forbidden()
-          ->cachePerUser()
-          ->addCacheableDependency($account)
-          ->addCacheableDependency($entity);
+      $user = $this->accountUserLoader->load($account);
+      if (!$user instanceof UserInterface || !$user->isActive()) {
+        $result = AccessResult::forbidden()->cachePerUser()->addCacheableDependency($entity);
+        if ($user instanceof UserInterface) {
+          $result->addCacheableDependency($user);
+        }
+        return $result;
       }
       if ($account->hasPermission('administer lms')) {
         return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);

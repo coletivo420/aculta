@@ -200,11 +200,14 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertTrue($archive->access('view', $teacher));
     self::assertFalse($archive->access('view', $outsider));
 
+    $session_account = $this->container->get('current_user');
+    $session_account->setAccount($student);
+    self::assertTrue($archive->access('view', $session_account), 'A session AccountProxy resolves to its active User entity.');
     $student->block()->save();
     $this->container->get('entity_type.manager')
       ->getAccessControlHandler('aculta_lms_attempt_archive')
       ->resetCache();
-    self::assertFalse($archive->access('view', $student), 'A blocked student cannot access archived answers.');
+    self::assertFalse($archive->access('view', $session_account), 'A blocked student session cannot access archived answers.');
     $student->activate()->save();
     $teacher->block()->save();
     $this->container->get('entity_type.manager')
@@ -304,12 +307,13 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $other_student = $this->createUser();
     $course->addMember($other_student);
     $this->setCurrentUser($student);
-    $access_check = new UploadedAnswerAccessCheck();
-    self::assertTrue($access_check->access($answer, $student)->isAllowed(), 'An enrolled answer owner can download their file.');
+    $access_check = $this->container->get('aculta_lms.uploaded_answer_access');
+    $session_account = $this->container->get('current_user');
+    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An enrolled answer owner can download their file.');
     self::assertFalse($access_check->access($answer, $other_student)->isAllowed(), 'Another enrolled student cannot download a peer submission.');
 
     $student->block()->save();
-    self::assertFalse($access_check->access($answer, $student)->isAllowed(), 'A blocked student cannot download an uploaded answer.');
+    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked student session cannot download an uploaded answer.');
     $student->activate()->save();
 
     $course->removeMember($student);
@@ -317,9 +321,10 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
 
     $teacher = $this->createUser();
     $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
-    self::assertTrue($access_check->access($answer, $teacher)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
+    $session_account->setAccount($teacher);
+    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
     $teacher->block()->save();
-    self::assertFalse($access_check->access($answer, $teacher)->isAllowed(), 'A blocked educator cannot download an uploaded answer.');
+    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked educator session cannot download an uploaded answer.');
   }
 
   /**
@@ -337,7 +342,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertNull($answer->get('lesson_status')->entity, 'The answer reference is temporarily unresolved before the queue runs.');
 
     $this->setCurrentUser($student);
-    $access = (new UploadedAnswerAccessCheck())->access($answer, $student);
+    $access = $this->container->get('aculta_lms.uploaded_answer_access')->access($answer, $student);
     self::assertFalse($access->isAllowed(), 'A missing course context never grants a private download.');
     self::assertContains('user', $access->getCacheContexts());
   }
