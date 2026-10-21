@@ -1,3 +1,12 @@
+## 0.6.0-dev.139 — estilos do conteúdo no CKEditor 5 — 2026-10-21
+
+Classificação: PATCH (apresentação do conteúdo dentro do editor; sem componente novo, sem cor nova).
+
+- `css/ckeditor5.css`, registrado por `ckeditor5-stylesheets` em `aculta420.info.yml`: títulos, citação, link, destaque,
+  tabela, separador e quebra de página dentro de `.ck-content`, com tokens `--aculta-*` nos modos claro e escuro.
+- Afeta a área de edição de todos os formatos CKEditor 5 do site, não só os do `aculta_editor`. Conteúdo salvo não muda.
+- Revisão visual no editor pendente: a validação no navegador fica para o roteiro do `aculta_editor`.
+
 ## 0.6.0-dev.138 — tokens semânticos para discussões do LMS — 2026-10-21
 
 Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar novo componente).

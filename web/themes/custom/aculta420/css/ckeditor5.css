@@ -1,0 +1,65 @@
+/**
+ * ACULTA420 — estilos do conteúdo dentro do editor CKEditor 5.
+ *
+ * Carregado pela chave `ckeditor5-stylesheets` do aculta420.info.yml. Usa só
+ * tokens semânticos (--aculta-*), válidos nos modos claro e escuro. Espelha a
+ * apresentação do conteúdo publicado, para que o autor veja o resultado real.
+ */
+
+.ck-content h2,
+.ck-content h3,
+.ck-content h4,
+.ck-content h5 {
+  color: var(--aculta-text-primary);
+  line-height: 1.25;
+  margin-block: 1em 0.5em;
+}
+
+.ck-content blockquote {
+  background-color: var(--aculta-surface-muted);
+  border-left: 4px solid var(--aculta-border-accent);
+  color: var(--aculta-text-primary);
+  margin-inline: 0;
+  padding: 0.75em 1em;
+}
+
+.ck-content a {
+  color: var(--aculta-text-accent);
+  text-decoration-thickness: 1px;
+}
+
+.ck-content mark {
+  background-color: var(--aculta-yellow);
+  color: var(--aculta-green-dark);
+  padding-inline: 0.1em;
+}
+
+.ck-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.ck-content th,
+.ck-content td {
+  border: 1px solid var(--aculta-border-default);
+  padding: 0.4em 0.6em;
+  vertical-align: top;
+}
+
+.ck-content th {
+  background-color: var(--aculta-surface-muted);
+  color: var(--aculta-text-primary);
+}
+
+.ck-content hr {
+  border-top: 1px solid var(--aculta-border-default);
+  margin-block: 1.25em;
+}
+
+.ck-content .page-break {
+  border-top: 1px dashed var(--aculta-border-strong);
+  color: var(--aculta-text-muted);
+  font-size: 0.85em;
+  margin-block: 1em;
+  text-align: center;
+}

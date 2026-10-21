@@ -2,13 +2,15 @@ name: ACULTA420
 type: theme
 description: 'Bootstrap Component Design System público da plataforma ACULTA420.'
 package: Custom
-version: '0.6.0-dev.138'
+version: '0.6.0-dev.139'
 core_version_requirement: ^11
 base theme: bootstrap
 enforce_prop_schemas: true
 libraries:
   - aculta420/global
   - aculta420/album-slideshow
+ckeditor5-stylesheets:
+  - css/ckeditor5.css
 regions:
   header: Cabeçalho
   primary_menu: Menu principal
