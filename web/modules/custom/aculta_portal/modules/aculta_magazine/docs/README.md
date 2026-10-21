@@ -19,8 +19,8 @@ SEO, caixa de autores e coautoria. Depende de `aculta_user` (perfil, privacidade
 | --- | --- | --- |
 | Publicações da Revista | `revista` é o bundle canônico; `article` e `blog` são reconhecidos apenas durante a migração | `src/Revista/RevistaPublications.php` |
 | Chamada | campo `field_subtitle` (rótulo "Chamada" no blog) | exibição do tipo, acima do corpo |
-| Resumo | campo `field_summary` (rótulo "Resumo" no blog); descrição e Open Graph via `[node:editorial-summary]` | metatag `node__<tipo>` |
-| SEO | metatag do tipo (`node__article`, `node__blog`) e campo `field_meta_tags` | config do metatag |
+| Resumo | campo `field_summary` (rótulo "Resumo" no blog); descrição e Open Graph via `[node:editorial-summary]` | metatag `node__revista` |
+| SEO | metatag `node__revista` e campo `field_meta_tags` | config do metatag |
 | URL por sessão | padrão Pathauto `/[node:session]/[node:title]` (`aculta_article`, inclui o blog) | config do pathauto e token do aculta_portal |
 | Listagens por sessão | view `revista_sessoes` (filtro de tipo com todos os tipos da Revista) | config da view |
 | Caixa de autores | `node_view`: autor (`node.uid`) e coautores (`co_authors`); identity/avatar/bio/redes vêm do cartão `author_editorial` de `aculta_user`; Magazine fornece só Autor/Coautor | `src/Hook/ArticleAuthorsHooks.php` |
@@ -97,23 +97,21 @@ O Drupal não converte o tipo de um nó no lugar. O serviço `aculta_magazine.pu
 
 ### Verificação
 
-- Homologação pendente: criar Comment diretamente na publicação, converter article ↔ blog, comprovar CID, estado,
-  hierarquia, exibição no novo host e moderação; depois remover apenas o fixture de teste.
+- Homologação pendente: criar Comment diretamente na publicação, comprovar CID,
+  estado, hierarquia, exibição no purpose Magazine e moderação. A conversão
+  article ↔ blog é uma ferramenta temporária entre bundles legados; nunca usá-la
+  para consolidar conteúdo no bundle `revista`.
 
 ## Privacidade
 
 A caixa de autores usa somente `PublicProfilePolicy` (aculta_user): link para o perfil só com perfil público,
 foto e bio só quando exibidas, ícones só das redes preenchidas e exibidas. E-mail não entra na caixa.
 
-## Como adicionar um tipo da Revista (vídeo, galeria, outro)
+## Classificações editoriais
 
-1. Criar o tipo de conteúdo com os campos `field_subtitle` (rótulo "Chamada"), `field_summary` (rótulo
-   "Resumo"), `field_editorial_category`, `field_media_image` e `field_meta_tags`.
-2. Adicionar o machine name em `RevistaPublications::BUNDLES`.
-3. Criar o metatag `node__<tipo>` copiando o de `node__article` (o resumo entra por `[node:editorial-summary]`).
-4. Incluir o tipo no padrão Pathauto `aculta_article` (critério de bundle) e no filtro de tipo da view `revista_sessoes`.
-5. Exibir chamada e resumo na exibição `node.<tipo>.default` (view display).
-6. Testar: página na Revista com chamada, descrição de SEO, caixa de autores e coautoria.
+Termos como Editorial, Blog/Opinião, Notícias, Reportagens e Entrevistas são
+classificações do vocabulário `editorial_category`. Não criar bundles Node para
+separar formatos; todas as publicações usam `revista`.
 
 ## Gates e verificação
 
@@ -123,7 +121,9 @@ foto e bio só quando exibidas, ícones só das redes preenchidas e exibidas. E-
 
 ## Pendências
 
-- Vídeo e galeria: tipos ainda não criados; seguem o passo a passo acima.
+- Vídeo e galeria: representar por categorias editoriais e referências ao
+  `aculta_gallery`; não criar bundles de conteúdo ou armazenamento de mídia no
+  Magazine.
 - Inspeção visual humana.
 
 ## Função x tema (separação)
@@ -163,7 +163,8 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
   dependem da migração dos consumidores restantes e revisão da configuração.
 - Moderação atual: comentários diretos seguem a política configurável do primeiro comentário público, fora do LMS.
   A regra específica do LMS permanece sob Educadores com acesso contextual.
-- Novo tipo de publicação da Revista: entra em `RevistaPublications::BUNDLES` e recebe configuração de Comment direto.
+- Nova categoria editorial: adicionar termo em `editorial_category`; o bundle
+  único `revista` continua inalterado.
 - Categoria nova: não cria pasta no vocabulário antigo do Forum.
 - Não há criação manual de tópico para publicação. Tópicos de outros tipos (verbete, atividade) seguem seus contratos contextuais.
 
@@ -171,6 +172,6 @@ Registro histórico: a versão anterior criava um tópico Drupal Forum por publi
 
 A Revista será **consumidora**, nunca proprietária, dos subkernels `aculta_gallery` (álbuns independentes) e `aculta_forum` (discussão contextual via Comments na publicação). Identidade e cartões pertencem a `aculta_user`; imagens a `aculta_image`; leitura de documentos ao `aculta_document_viewer` conforme disponibilidade. O `aculta_studio` planejado fornece somente interface de autoria/revisão, sem storage próprio de publicações.
 
-O bundle `revista` e seus campos, displays, Metatag, Pathauto, consultas e workflow próprio estão preparados em Config Sync. O workflow `editorial` existente permanece com `aculta_notice`. `article` e `blog` continuam instalados durante esta transição; nenhuma publicação foi migrada ou removida. Permissões de transição precisam ser atribuídas por papel antes da ativação do fluxo. A migração requer preservar NID, UUID, aliases, revisões, comentários, mídia e referências, com rollback recuperável. Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
+O bundle `revista` e seus campos, displays, Metatag, Pathauto, consultas e workflow próprio estão preparados em Config Sync. O workflow `editorial` existente permanece com `aculta_notice`. `article` e `blog` continuam instalados até a migração autorizada. Procedimento, salvaguardas e rollback estão em [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md). Projetos continuam no domínio principal, Eventos pertencem ao futuro `aculta_eventos`, e `editorial_highlight` é curadoria Home a auditar separadamente.
 
 Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md). Planejamento: [Studio e Revista](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md).

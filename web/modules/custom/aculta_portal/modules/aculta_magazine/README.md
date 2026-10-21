@@ -6,6 +6,7 @@ conteúdo, publicação e mídia.
 ## Documentação
 
 - [Índice documental](docs/README.md)
+- [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
 - [CHANGELOG](CHANGELOG.md)
 
 Para políticas editoriais transversais, consulte a

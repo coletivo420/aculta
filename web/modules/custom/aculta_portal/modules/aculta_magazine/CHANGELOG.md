@@ -1,3 +1,20 @@
+## 0.3.0-dev.1 — migração Entity API preparada — 2026-10-21
+
+- Comando `aculta-magazine:migrate-publications` com dry run padrão e execução
+  restrita a `toca`, `aculta_runtime` e URI do purpose Magazine de teste. Exige
+  dump gzip e export de configuração ativa, ambos privados, recentes e fora do
+  checkout.
+- A migração recria Nodes com o mesmo NID, UUID e VID e preserva IDs, UUIDs,
+  revisão, caminho e alias das entidades Path Alias. Uma transação, pós-checagens
+  e falha fechada protegem as escritas; conteúdo com múltiplas revisões,
+  traduções, Comments ou referências adicionais interrompe antes da alteração.
+- Kernel MariaDB: 2 testes/34 assertions PASS, com duas depreciações de Core/
+  contrib. Runtime dry run: 16 Nodes, 16 revisões, 26 aliases; nenhuma escrita
+  de conteúdo. A migração no Runtime ainda aguarda os backups exigidos e a
+  execução explícita. Gate de módulo/tema reporta duas lacunas concorrentes de
+  documentação para `aculta_editor` e `aculta_lms_resources`; boundary PASS.
+  RUNTIME STATUS: PARTIAL.
+
 ## 0.2.0-dev.1 — bundle editorial `revista` preparado — 2026-10-21
 
 - Config Sync ganha o bundle canônico `revista`, com campos editoriais,
