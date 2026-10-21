@@ -1,3 +1,8 @@
+## 0.1.0-dev.60 — rótulo do último dia do gráfico sem sobreposição — 2026-10-21
+
+- Verificado no navegador (painel de área, período de 30 dias): o rótulo do último dia encostava no penúltimo. O último rótulo só aparece quando há espaço.
+- Sem mudança de dados. Unit do módulo: 149/149.
+
 ## 0.1.0-dev.59 — legenda e rótulos do gráfico de tendência dentro da área visível — 2026-10-21
 
 - Correção visual verificada no navegador (servidor de testes): a legenda ficava fora da área do SVG e cortava o nome das séries. A altura do gráfico passou de 260 para 292, e a legenda e os rótulos de dia ficaram em posições que não se sobrepõem à linha do zero.

@@ -49,10 +49,14 @@ final class MailTrendChart {
       $out[] = sprintf('<text x="%d" y="%.1f" text-anchor="end" font-size="11" fill="#444">%d</text>', self::LEFT - 6, $y + 4, $tick);
     }
     $every = max(1, (int) ceil($count / 8));
+    $lastPrinted = -$every;
     foreach ($labels as $index => $label) {
-      if ($index % $every !== 0 && $index !== $count - 1) {
+      // O último dia só recebe rótulo se couber após o último rótulo impresso; senão encostaria no anterior.
+      $isLast = $index === $count - 1 && $index - $lastPrinted >= $every;
+      if ($index % $every !== 0 && !$isLast) {
         continue;
       }
+      $lastPrinted = $index;
       $out[] = sprintf('<text x="%.1f" y="%d" text-anchor="middle" font-size="11" fill="#444">%s</text>', $xFor($index), self::HEIGHT - 28, Html::escape($label));
     }
     foreach ($series as $line) {
