@@ -1,3 +1,8 @@
+## 0.4.0-dev.57 — consulta administrativa read-only do ledger — 2026-10-21
+
+- Adicionada permissão restrita e rota em `/painel-administrativo/aculta/termos/aceites` para consultar eventos, IP/User-Agent, evidência legada e integridade HMAC. A tela não inclui operações de edição ou exclusão.
+- `aculta_user.info.yml` 0.4.0-dev.57. Runtime: código aplicado; acesso administrativo ainda requer smoke autenticado. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.56 — ledger de aceite e consentimento (em desenvolvimento) — 2026-10-21
 
 - Criado `aculta_user.consent_ledger`: eventos append-only por conta, com encadeamento HMAC verificável usando a chave privada do site; captura IP resolvido pelo Drupal e User-Agent em eventos novos.

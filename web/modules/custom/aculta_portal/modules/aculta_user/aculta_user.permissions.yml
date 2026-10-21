@@ -2,6 +2,11 @@ administer aculta participacao:
   title: 'Administrar regras de participação'
   restrict access: true
 
+administer aculta consent ledger:
+  title: 'Consultar evidências de aceite e consentimento'
+  description: 'Acessa IP, User-Agent e evidências de integridade do ledger. Não permite editar registros.'
+  restrict access: true
+
 administer aculta associados:
   title: 'Ver relatório de associados'
   restrict access: true

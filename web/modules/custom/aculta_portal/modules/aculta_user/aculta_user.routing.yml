@@ -26,6 +26,16 @@ aculta_user.mail_tracking_consent:
   requirements:
     _user_is_logged_in: 'TRUE'
 
+aculta_user.consent_audit:
+  path: '/painel-administrativo/aculta/termos/aceites'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ConsentAuditController::listing'
+    _title: 'Evidências de aceite e consentimento'
+  requirements:
+    _permission: 'administer aculta consent ledger'
+  options:
+    _admin_route: true
+
 aculta_user.participacao_settings:
   path: '/painel-administrativo/aculta/participacao'
   defaults:
