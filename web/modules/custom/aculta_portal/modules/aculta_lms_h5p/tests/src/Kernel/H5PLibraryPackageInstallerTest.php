@@ -17,7 +17,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
 
   /** {@inheritdoc} */
   protected static $modules = [
-    'system', 'user', 'field', 'options', 'file', 'image', 'views',
+    'system', 'user', 'field', 'options', 'file', 'image', 'media', 'views',
     'entity_usage', 'aculta_image', 'aculta_lms', 'aculta_lms_h5p',
   ];
 
@@ -35,6 +35,7 @@ final class H5PLibraryPackageInstallerTest extends KernelTestBase {
     parent::setUp();
     $this->installConfig(['system', 'user', 'file', 'image']);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('media');
     $this->installEntitySchema('file');
     $this->installEntitySchema('h5p_content');
     $this->installSchema('file', ['file_usage']);

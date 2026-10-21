@@ -132,6 +132,17 @@ class H5PContent extends ContentEntityBase implements ContentEntityInterface {
       ->setSetting('max_length', '32')
       ->setDefaultValue(NULL);
 
+    // Reference existing private course Media without copying its file.
+    $fields['course_documents'] = BaseFieldDefinition::create(
+      'entity_reference',
+    )
+      ->setLabel(t('Documentos de apoio do curso'))
+      ->setDescription(t(
+        'Documentos privados existentes relacionados ao curso.',
+      ))
+      ->setSetting('target_type', 'media')
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
+
     return $fields;
   }
 

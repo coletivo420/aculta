@@ -26,6 +26,14 @@ permissão do tópico, contexto do Group no autocomplete e composição do playe
 No Runtime de teste, a revisão X11 do painel administrativo passou, mas não há
 conteúdo H5P nem tópico vinculado para smoke autenticado/visual da conversa.
 
+Educadores também podem associar PDFs `course_document` existentes a cada
+atividade H5P. A referência aponta para o mesmo Media do curso, sem duplicar o
+arquivo. O formatter valida novamente a relação com o Group e usa
+`aculta_pdf_viewer.builder`, preservando as permissões de arquivo privado. O
+campo de referência foi instalado pelo update `aculta_lms_h5p_update_8006` no
+Runtime de teste. Como não há conteúdo H5P nem documentos `course_document`
+nesse Runtime, a validação visual autenticada do vínculo permanece pendente.
+
 ## Painéis e vínculo com cursos
 
 - Administração: `/painel-administrativo/lms/h5p`, com acesso pela permissão

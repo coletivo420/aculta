@@ -1,11 +1,18 @@
+## F15 — compatibilidade do Kernel com referências H5P–Media — 2026-10-21
+
+- A fixture do Kernel de discussão H5P habilita o módulo Core `media`, agora
+  exigido como tipo-alvo da referência de PDFs existentes na entidade H5P.
+- Suíte Kernel Forum LMS: 4 testes / 205 assertions PASS; 47 depreciações de
+  Core/contrib. Unit Forum LMS: 25 testes / 292 assertions PASS. PHP CLI 8.4.26.
+
 ## `0.1.0-dev.28` — apresentação das discussões do LMS por tokens neutros — 2026-10-21
 
 - Discussões de atividade, wrapper do player H5P e cartão das conversas agora
   emitem tokens `data-portal-ui`; ACULTA420 mapeia-os para primitives
   Bootstrap. O módulo não emite classes de apresentação.
 - Kernel H5P–Fórum valida a composição dos tokens junto com associação,
-  autorização e isolamento por curso/turma: 1 teste / 36 assertions PASS. Suíte
-  completa Forum LMS: 29 testes / 496 assertions PASS; 47 depreciações de
+  autorização e isolamento por curso/turma: 1 teste / 37 assertions PASS. Suíte
+  completa Forum LMS: 29 testes / 497 assertions PASS; 47 depreciações de
   Core/contrib. PHP 8.4.26; PHP 8.5 não validado.
 - A revisão visual autenticada do player com tópico segue pendente: não há
   conteúdo H5P/tópico vinculado no Runtime de teste.

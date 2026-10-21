@@ -40,6 +40,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     'field',
     'file',
     'image',
+    'media',
     'filter',
     'text',
     'options',

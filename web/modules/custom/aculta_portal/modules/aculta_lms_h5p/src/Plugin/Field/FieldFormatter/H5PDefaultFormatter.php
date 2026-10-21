@@ -17,6 +17,8 @@ use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PLibraryIdentifier;
 use Drupal\aculta_lms_h5p\Entity\H5PContent;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
+use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Plugin implementation of the H5P formatter. */
@@ -49,6 +51,7 @@ class H5PDefaultFormatter extends FormatterBase {
     ConfigFactoryInterface $config_factory,
     protected AccountProxyInterface $currentUser,
     protected H5PDrupal $framework,
+    protected PdfViewerBuilderInterface $pdfViewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->config = $config_factory->get('aculta_lms_h5p.settings');
@@ -69,6 +72,7 @@ class H5PDefaultFormatter extends FormatterBase {
       $container->get('config.factory'),
       $container->get('current_user'),
       $container->get('aculta_lms_h5p.framework'),
+      $container->get('aculta_pdf_viewer.builder'),
     );
   }
 
@@ -184,6 +188,63 @@ class H5PDefaultFormatter extends FormatterBase {
       $cacheability->setCacheMaxAge(12 * 60 * 60);
 
       $cacheability->applyTo($element[$delta]);
+
+      if (
+        $course instanceof CourseInterface
+        && $h5p_content->hasField('course_documents')
+      ) {
+        $documents = [];
+        $cacheability->addCacheableDependency($course);
+        $relationshipListTag = 'group_relationship_list:plugin:'
+          . 'aculta_pdf_viewer_group:course_document:group:' . $course->id();
+        $cacheability->addCacheTags([
+          $relationshipListTag,
+        ]);
+        foreach (
+          $h5p_content->get('course_documents')->referencedEntities()
+          as $media
+        ) {
+          if (
+            !$media instanceof MediaInterface
+            || $media->bundle() !== 'course_document'
+          ) {
+            continue;
+          }
+          $belongsToCourse = FALSE;
+          foreach (
+            $course->getRelationships('aculta_pdf_viewer_group:course_document')
+            as $relationship
+          ) {
+            $cacheability->addCacheableDependency($relationship);
+            if ((int) $relationship->getEntity()->id() === (int) $media->id()) {
+              $belongsToCourse = TRUE;
+            }
+          }
+          if (!$belongsToCourse) {
+            continue;
+          }
+          $viewer = $this->pdfViewerBuilder->build(
+            $media,
+            'field_media_course_document',
+          );
+          $documents[] = $viewer;
+          $cacheability->addCacheableDependency($media);
+          $mediaAccess = $media->access('view', $this->currentUser, TRUE);
+          $cacheability->addCacheableDependency($mediaAccess);
+          $documentField = $media->get('field_media_course_document');
+          $cacheability->addCacheableDependency(
+            $documentField->access('view', $this->currentUser, TRUE),
+          );
+        }
+        if ($documents) {
+          $element[$delta]['course_documents'] = [
+            '#type' => 'container',
+            '#attributes' => ['data-portal-ui' => 'lms-h5p-course-documents'],
+            'items' => $documents,
+          ];
+          $cacheability->applyTo($element[$delta]['course_documents']);
+        }
+      }
     }
     $this->moduleHandler->alter('h5p_formatter', $element, $items);
 

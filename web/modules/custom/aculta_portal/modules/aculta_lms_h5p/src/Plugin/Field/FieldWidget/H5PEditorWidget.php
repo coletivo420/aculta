@@ -10,6 +10,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -47,6 +48,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     protected AccountProxyInterface $currentUser,
     protected H5PEditorUtilities $editorUtilities,
     protected H5PDrupal $framework,
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -63,6 +65,7 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
       $container->get('current_user'),
       $container->get('aculta_lms_h5p.editor_utilities'),
       $container->get('aculta_lms_h5p.framework'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -100,6 +103,32 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
         '#default_value' => $h5p_content_id,
       ];
     }
+
+    $courseDocumentOptions = $this->courseDocumentOptions($course);
+    $selectedDocuments = [];
+    if (!empty($h5p_content) && $h5p_content->hasField('course_documents')) {
+      foreach ($h5p_content->get('course_documents')->referencedEntities() as $document) {
+        if (isset($courseDocumentOptions[$document->id()])) {
+          $selectedDocuments[] = (string) $document->id();
+        }
+      }
+    }
+    $element['course_id'] = [
+      '#type' => 'value',
+      '#value' => (int) $course->id(),
+    ];
+    $element['course_documents'] = [
+      '#type' => 'select',
+      '#title' => $this->t('PDFs de apoio desta atividade'),
+      '#description' => $this->t(
+        'Selecione PDFs já vinculados; os arquivos não serão duplicados.',
+      ),
+      '#options' => $courseDocumentOptions,
+      '#default_value' => $selectedDocuments,
+      '#multiple' => TRUE,
+      '#size' => min(6, max(3, count($courseDocumentOptions))),
+      '#weight' => 35,
+    ];
 
     $element['parameters'] = [
       '#type' => 'hidden',
@@ -276,6 +305,25 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     return 0;
   }
 
+  /** Lists existing course_document Media related to this Group. */
+  private function courseDocumentOptions(CourseInterface $course): array {
+    if (!$this->currentUser->hasPermission('view media')) {
+      return [];
+    }
+    $options = [];
+    foreach (
+      $course->getRelatedEntities('aculta_pdf_viewer_group:course_document')
+      as $media
+    ) {
+      if ($media->getEntityTypeId() === 'media'
+        && $media->bundle() === 'course_document'
+        && $media->access('view', $this->currentUser)) {
+        $options[(string) $media->id()] = $media->label();
+      }
+    }
+    return $options;
+  }
+
   /**
    * Help message out each value from the submitted form
    *
@@ -299,6 +347,8 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
         // Not a new revision or translation, delete existing content
         H5PItem::deleteH5PContent($value['id']);
       }
+
+      $return_value['course_documents'] = [];
 
       return $return_value;
     }
@@ -328,6 +378,27 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     // Save the new content
     $return_value['h5p_content_id'] = $core->saveContent($content);
 
+    $h5pEntity = H5PContent::load($return_value['h5p_content_id']);
+    if ($h5pEntity && $h5pEntity->hasField('course_documents')) {
+      $submittedIds = array_values(array_unique(array_filter(array_map(
+        'intval',
+        (array) ($value['course_documents'] ?? []),
+      ))));
+      $course = $this->courseForSave((int) ($value['course_id'] ?? 0));
+      $allowed = $course
+        ? array_map(
+          'intval',
+          array_keys($this->courseDocumentOptions($course)),
+        )
+        : [];
+      $documentReferences = array_map(
+        static fn (int $id): array => ['target_id' => $id],
+        array_values(array_intersect($submittedIds, $allowed)),
+      );
+      $h5pEntity->set('course_documents', $documentReferences);
+      $h5pEntity->save();
+    }
+
     // If we had existing content and did a new revision we need to make a copy
     // of the content folder from the old revision
     if ($value['id'] && ($do_new_revision || $value['new_translation'])) {
@@ -345,6 +416,14 @@ class H5PEditorWidget extends H5PWidgetBase implements ContainerFactoryPluginInt
     );
 
     return $return_value;
+  }
+
+  /** Retrieves the Group being edited for validating submitted references. */
+  private function courseForSave(int $courseId): ?CourseInterface {
+    $course = $courseId
+      ? $this->entityTypeManager->getStorage('group')->load($courseId)
+      : NULL;
+    return $course instanceof CourseInterface ? $course : NULL;
   }
 
 }

@@ -8,11 +8,14 @@ use Drupal\aculta_lms_h5p\Controller\H5PAJAX;
 use Drupal\aculta_lms_h5p\H5PDrupal\H5PDrupal;
 use Drupal\Core\Form\FormState;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldWidget\H5PEditorWidget;
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
+use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -35,6 +38,8 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
     'user',
     'field',
     'file',
+    'image',
+    'media',
     'text',
     'filter',
     'entity',
@@ -71,8 +76,14 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
    * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'filter', 'group', 'lms']);
+    $this->container->set(
+      'aculta_pdf_viewer.builder',
+      $this->createMock(PdfViewerBuilderInterface::class),
+    );
+    $this->installConfig(['system', 'user', 'filter', 'group', 'lms', 'media']);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
@@ -190,6 +201,49 @@ final class H5PCourseAccessIntegrationTest extends KernelTestBase {
       'title' => 'Atividade vinculada',
     ]);
     $content->save();
+    self::assertSame(
+      'media',
+      $content->getFieldDefinition('course_documents')->getSetting('target_type'),
+    );
+    self::assertSame(
+      -1,
+      $content->getFieldDefinition('course_documents')
+        ->getFieldStorageDefinition()
+        ->getCardinality(),
+    );
+    MediaType::create([
+      'id' => 'h5p_test_media',
+      'label' => 'H5P test media',
+      'source' => 'image',
+      'source_configuration' => ['source_field' => 'field_media_image'],
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'type' => 'image',
+      'settings' => ['target_type' => 'file'],
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_media_image',
+      'entity_type' => 'media',
+      'bundle' => 'h5p_test_media',
+      'label' => 'Image',
+    ])->save();
+    $document = Media::create([
+      'bundle' => 'h5p_test_media',
+      'name' => 'H5P reference persistence test',
+    ]);
+    $document->save();
+    $content->set('course_documents', [['target_id' => $document->id()]]);
+    $content->save();
+    $content = $this->container->get('entity_type.manager')
+      ->getStorage('h5p_content')
+      ->load($content->id());
+    self::assertSame(
+      (int) $document->id(),
+      (int) $content->get('course_documents')->target_id,
+    );
     $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
     $course->save();
 

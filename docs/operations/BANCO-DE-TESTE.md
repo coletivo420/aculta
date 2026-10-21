@@ -241,6 +241,21 @@ incluindo vínculo H5P–Fórum persistido no Kernel; 47 depreciações Core/con
 schemas (593), Shell Contract (11), imagem e slugs passaram. PHP CLI 8.4.26;
 PHP 8.5 não validado.
 
+Após adicionar referências de Media `course_document` às atividades H5P, a
+suíte Unit passou com 23 testes / 67 assertions e a Kernel com 14 testes / 341
+assertions no MariaDB dedicado; 43 depreciações de Core/Group/Views. O Kernel
+confirma o campo de referência multivalorado. O update `8006` foi aplicado no
+Runtime de teste depois de confirmar zero conteúdos H5P e zero Media
+`course_document`; nenhuma entidade existente foi alterada. O smoke visual
+autenticado ainda depende de fixtures temporárias. PHP CLI 8.4.26; PHP 8.5 não
+validado.
+
+Na regressão integrada, após habilitar Core Media na fixture do adapter
+H5P–Fórum,
+Forum LMS Unit passou com 25 testes / 292 assertions e Kernel passou com 4
+testes / 205 assertions; 47 depreciações upstream. A suíte confirma que a nova
+definição de campo do H5P pode ser descoberta junto ao resolver de discussões.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.

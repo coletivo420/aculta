@@ -10,6 +10,8 @@ dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_image
   - aculta_portal:aculta_lms
+  - aculta_pdf_viewer:aculta_pdf_viewer
+  - aculta_pdf_viewer_group:aculta_pdf_viewer_group
   - group:group
   - ctools:ctools
   - lms:lms

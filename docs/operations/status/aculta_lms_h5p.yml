@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'F15: ligar discussões Forum diretamente ao conteúdo H5P, com seleção e acesso limitados ao curso/turma; executar smoke autenticado e revisão visual. F10 permanece homologada no Runtime de teste ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md))'
+next_phase: 'F15: criar fixtures temporárias de curso, atividade e PDF no Runtime de teste; validar seleção/renderização e remover os dados de smoke antes de RC. F10 permanece homologada ([README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md))'
 version_note: versão não declarada

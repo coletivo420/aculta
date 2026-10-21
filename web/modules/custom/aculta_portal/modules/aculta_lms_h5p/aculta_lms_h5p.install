@@ -5,6 +5,7 @@
  */
 
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\aculta_lms_h5p\Entity\H5PContent;
 
 /**
  * Preserve private content files when the integration is uninstalled.
@@ -795,4 +796,18 @@ function aculta_lms_h5p_update_8005() {
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('a11y_title', 'h5p_content', 'h5p_content', $storage_definition);
 
+}
+
+/** Adds references from H5P activities to existing course document Media. */
+function aculta_lms_h5p_update_8006(): void {
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('h5p_content');
+  $field_definitions = H5PContent::baseFieldDefinitions($entity_type);
+  $storage_definition = $field_definitions['course_documents'];
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition(
+      'course_documents',
+      'h5p_content',
+      'h5p_content',
+      $storage_definition,
+    );
 }

@@ -17,13 +17,20 @@
   conteúdo H5P nem tópico de Fórum associado. O player atual exige conteúdo
   `div`, então a conversa sob o player não tem fixture para revisão visual no
   Runtime. Nenhuma alteração de produção foi feita.
-- Suíte própria `aculta_lms_h5p`: **37 testes / 337 assertions PASS** (Unit 23/67;
-  Kernel 14/270), PHP CLI 8.4.26. As 43 depreciações Kernel são do Core/Group/
+- Suíte própria `aculta_lms_h5p`: **37 testes / 408 assertions PASS**
+  (Unit 23/67;
+  Kernel 14/341), PHP CLI 8.4.26. As 43 depreciações Kernel são do Core/Group/
   Views instalados. Os Kernels cobrem membership e referência de curso,
   persistência/isolamento de estado por conta, pacote válido/inválido, ingestão
   e remoção de mídia/biblioteca gerenciada, cache privado e endpoints.
-- Integração Forum LMS: **29 testes / 496 assertions PASS** (Unit+Kernel),
-  incluindo vínculo H5P–Fórum com 36 assertions no Kernel. ACULTA420 valida
+- Em 2026-10-21, o F15 também passou a permitir vínculo de PDFs existentes
+  `course_document` por atividade. O Media precisa estar relacionado ao mesmo
+  Group; o formatter chama o builder do `aculta_pdf_viewer`, sem duplicar
+  arquivo e sem enfraquecer o acesso privado. O update `8006` foi aplicado no
+  Runtime após confirmar zero conteúdo H5P e zero Media `course_document`; o
+  smoke autenticado/visual aguarda fixtures temporárias para o vínculo.
+- Integração Forum LMS: **29 testes / 497 assertions PASS** (Unit+Kernel),
+  incluindo vínculo H5P–Fórum com 37 assertions no Kernel. ACULTA420 valida
   os tokens neutros de apresentação (5/26). Gates Drupal 11+ (1007 checks),
   Foundation do tema (368 checks), imagem e slugs passam. PHP 8.5 e produção
   não foram validados.

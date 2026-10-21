@@ -1,3 +1,25 @@
+## F15 — associação de PDFs existentes a atividades — 2026-10-21
+
+- Educadores selecionam, no editor da atividade, documentos `course_document`
+  já relacionados ao mesmo curso. O H5P guarda referências Media; os arquivos
+  privados não são copiados nem recebem uma segunda relação de propriedade.
+- Na exibição, o formatter confirma novamente a relação Media↔Group e chama o
+  serviço `aculta_pdf_viewer.builder`, que revalida acesso à Media, ao campo e
+  ao arquivo privado. Metadados de cache do curso, relações e documentos são
+  propagados; viewer privado mantém cache max-age zero.
+- Campo de referência instalado por update `aculta_lms_h5p_update_8006`; aplicado
+  no Runtime de teste após confirmar zero conteúdos H5P e zero Media
+  `course_document`. A tabela foi criada sem alterar entidades existentes.
+  Kernel H5P: 14 testes / 341 assertions; inclui persistência e recarga da
+  referência Media no H5P Content.
+  PASS em MariaDB dedicado; Unit H5P: 23 testes / 67 assertions PASS. As 43
+  depreciações Kernel são de Core/Group/Views. PHP CLI 8.4.26; PHP 8.5 não
+  validado. No Runtime, a tabela de referência está instalada; sem conteúdo
+  H5P e documentos de curso, ainda não foi possível revisar seleção/renderização
+  visual autenticada.
+- RUNTIME STATUS: PARTIAL; criar fixture temporária de curso, atividade e PDF,
+  validar os acessos e remover os dados de smoke antes de RC.
+
 ## F15 — persistência privada de tentativas H5P — 2026-10-21
 
 - O Kernel agora confirma que o estado de uma tentativa H5P continua disponível
