@@ -6,7 +6,7 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
 ## Instantâneo por turma (2026-10-21)
 
 - Feito (0.1.0-dev.78): `ClassStatusSnapshotEvent` no cron, série diária por turma e situação, sem dado individual.
-- Decidido: a barra de progresso do aluno continua sendo o estado atual, sem série. Série diária **por aluno** exige revisão LGPD antes (dado pessoal ao longo do tempo); não foi criada.
+- Decidido: a barra de progresso do aluno continua sendo o estado atual, sem série. Série diária **por aluno** não foi criada. Revisão LGPD feita em 2026-10-21: não aprovada para armazenamento (ver `docs/compliance/REVISAO-PROGRESSO-INDIVIDUAL.md`). Aguarda a decisão do responsável entre as opções A, B e C.
 - Pendente: seletor de período no painel da turma, lendo a série do `aculta_statistics` (regra de período em gráficos, ADR-0005).
 - Pendente: validar no Runtime com turmas reais (o de teste não tem turmas).
 
