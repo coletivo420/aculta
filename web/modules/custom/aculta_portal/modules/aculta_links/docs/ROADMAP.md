@@ -64,7 +64,9 @@ Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram
 corrigidos para `ContentEntityForm` após inspeção autenticada encontrar ausência
 dos widgets. Kernel e Firefox autenticado a 390 × 844 confirmam os campos dos
 três formulários sem overflow. Edição preenchida e submissão funcional ainda
-precisam de validação específica.
+precisam de validação específica. O formulário de edição de destino preexistente
+foi confirmado a 390 × 844 sem salvar; páginas/itens e submissão continuam
+pendentes.
 
 ## 0.4.0 — interface pública e presets
 

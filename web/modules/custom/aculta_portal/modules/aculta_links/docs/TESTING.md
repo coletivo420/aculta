@@ -221,4 +221,7 @@ Após `cr` no Runtime de teste, Firefox autenticado em viewport CSS 390 × 844
 confirmou os campos das rotas de adição de micropágina, destino e item; cada
 página ficou com `scrollWidth=378`. Capturas revisadas. Nenhum formulário foi
 submetido, nenhum fixture foi criado e nenhuma entidade foi alterada. Edição de
-entidade existente e submissão funcional seguem sem validação visual.
+destino preexistente também foi inspecionada em 390 × 844 com título, destino,
+referência Node, estado e controles de revisão, `scrollWidth=378`; o formulário
+foi fechado sem enviar. Edição de página/item e submissão funcional seguem sem
+validação visual.

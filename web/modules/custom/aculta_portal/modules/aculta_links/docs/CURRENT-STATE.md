@@ -174,7 +174,10 @@ handler base `EntityForm`, que monta a estrutura e ações mas não os widgets d
 fields. Foram trocados por `ContentEntityForm`; Kernel e Firefox autenticado
 confirmaram os campos de destino, página e item após `cr`, em 390 × 844 sem
 overflow (`scrollWidth=378`). Capturas revisadas. Nenhum formulário foi enviado
-ou entidade alterada.
+ou entidade alterada. O formulário de edição do destino preexistente também foi
+aberto no mesmo viewport, renderizou título, destino, conteúdo Node, estado e
+revisão sem overflow; não foi salvo. Edição de página/item e submissão seguem
+sem validação visual.
 
 ## Dashboard responsivo 0.4.0-dev.23
 
