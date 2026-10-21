@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: nota_publica
+label: "Nota pública"
+description: "Posicionamento público curto, com título e assinatura institucional."
+data: "<h2>Nota pública</h2><p>[Posicionamento da ACULTA sobre o tema, em linguagem objetiva.]</p><p>[Fundamento ou referência, quando houver.]</p><p><em>ACULTA — Associação Cultural Antiproibicionista</em></p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 3

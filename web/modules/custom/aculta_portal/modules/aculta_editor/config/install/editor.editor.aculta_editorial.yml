@@ -1,0 +1,60 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.aculta_editorial
+  module:
+    - ckeditor5
+    - media
+    - media_library
+    - ckeditor5_plugin_pack
+    - ckeditor5_plugin_pack_find_and_replace
+    - ckeditor5_plugin_pack_fullscreen
+    - ckeditor5_plugin_pack_highlight
+    - ckeditor5_plugin_pack_bookmark
+    - ckeditor5_plugin_pack_layout_table
+    - ckeditor5_plugin_pack_media_embed
+    - ckeditor5_plugin_pack_page_break
+    - ckeditor5_plugin_pack_select_all
+    - ckeditor5_plugin_pack_templates
+format: aculta_editorial
+label: 'Aculta Editorial'
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - underline
+      - strikethrough
+      - '|'
+      - heading
+      - '|'
+      - link
+      - bookmark
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - insertTable
+      - horizontalLine
+      - pageBreak
+      - highlight
+      - '|'
+      - insertTemplate
+      - drupalMedia
+      - mediaEmbed
+      - '|'
+      - findAndReplace
+      - selectAll
+      - fullscreen
+      - '|'
+      - sourceEditing
+      - undo
+      - redo
+  plugins:
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4

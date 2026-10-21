@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: artigo_institucional
+label: "Artigo institucional"
+description: "Texto de apresentação institucional com título, subtítulo e seções."
+data: "<h2>[Título do artigo]</h2><p><em>[Subtítulo ou resumo em uma frase]</em></p><h3>[Primeira seção]</h3><p>[Texto da seção. Descreva a atuação da ACULTA com linguagem clara e verificável.]</p><h3>[Segunda seção]</h3><p>[Texto da seção.]</p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 0

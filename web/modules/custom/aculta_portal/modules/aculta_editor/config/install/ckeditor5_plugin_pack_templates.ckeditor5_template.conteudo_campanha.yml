@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: conteudo_campanha
+label: "Conteúdo de campanha"
+description: "Conteúdo de campanha com chamada, texto e ação."
+data: "<h2>[Título da campanha]</h2><p><strong>[Chamada principal em uma frase]</strong></p><p>[Texto que explica a campanha e o seu objetivo.]</p><p>[Como participar ou apoiar.]</p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 7

@@ -1,0 +1,26 @@
+name: 'ACULTA Editor (Editor de conteúdo)'
+type: module
+description: 'Formatos e editor do CKEditor 5 para o Portal ACULTA, com o Plugin Pack. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+version: '0.1.0-dev.1'
+dependencies:
+  - ckeditor5:ckeditor5
+  - drupal:filter
+  - drupal:media
+  - drupal:media_library
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_bookmark
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_find_and_replace
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_fullscreen
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_highlight
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_indent_block
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_layout_table
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_link_attributes
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_media_embed
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_page_break
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_paste_markdown
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_select_all
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_templates
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_text_transformation
+  - ckeditor5_plugin_pack:ckeditor5_plugin_pack_word_count

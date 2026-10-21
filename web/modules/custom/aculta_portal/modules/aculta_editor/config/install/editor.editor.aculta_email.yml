@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.aculta_email
+  module:
+    - ckeditor5
+    - media
+    - media_library
+format: aculta_email
+label: 'Aculta Email'
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - underline
+      - '|'
+      - link
+      - bulletedList
+      - numberedList
+      - '|'
+      - insertTable
+      - drupalMedia
+      - '|'
+      - undo
+      - redo
+  plugins: {}

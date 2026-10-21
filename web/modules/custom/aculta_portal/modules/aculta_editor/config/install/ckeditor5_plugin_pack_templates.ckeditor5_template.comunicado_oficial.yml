@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: comunicado_oficial
+label: "Comunicado oficial"
+description: "Comunicado institucional com identificação do emissor e data."
+data: "<h2>Comunicado oficial</h2><p><strong>[Assunto]</strong></p><p>A ACULTA — Associação Cultural Antiproibicionista comunica que [texto do comunicado].</p><p>[Orientações ou prazos, se houver.]</p><p><strong>Data:</strong> [dd/mm/aaaa]</p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 2

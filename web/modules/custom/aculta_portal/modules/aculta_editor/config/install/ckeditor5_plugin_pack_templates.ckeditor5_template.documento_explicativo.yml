@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: documento_explicativo
+label: "Documento explicativo"
+description: "Texto didático com introdução, passos e perguntas frequentes."
+data: "<h2>[Título do documento]</h2><p>[Introdução: o que é e para quem serve.]</p><h3>Como funciona</h3><ol><li>[Passo 1]</li><li>[Passo 2]</li></ol><h3>Perguntas frequentes</h3><p><strong>[Pergunta?]</strong></p><p>[Resposta.]</p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 6

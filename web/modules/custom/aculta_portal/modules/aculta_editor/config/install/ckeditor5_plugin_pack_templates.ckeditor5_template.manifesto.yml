@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - ckeditor5_plugin_pack_templates
+id: manifesto
+label: "Manifesto"
+description: "Manifesto com título, premissas e chamado à ação."
+data: "<h2>[Título do manifesto]</h2><p>[Abertura: o problema e a posição da associação.]</p><h3>Premissas</h3><ul><li>[Premissa 1]</li><li>[Premissa 2]</li></ul><h3>Chamado</h3><p>[Chamado à ação ou ao debate público.]</p>"
+icon: ''
+textFormats:
+  - aculta_editorial
+  - aculta_institucional
+weight: 4
