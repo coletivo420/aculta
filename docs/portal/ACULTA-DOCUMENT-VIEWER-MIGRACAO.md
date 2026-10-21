@@ -129,7 +129,54 @@ A estratégia específica de migração de identidade (`dev.2`) detalha o proced
 6. **Worktree compartilhado**: alterações de outras frentes em `aculta_pdf_viewer/src/Pdf/` e em arquivos de `docs/architecture/ROUTES-SITEMAP.md` e `config/sync/` precisam ficar fora dos commits desta frente.
 7. **Dados de homologação** (Media 234 e 237): devem ser preservados nas migrações e usados como caso de teste.
 
+## 0.1.0-dev.2 — Estratégia de migração (evidência)
+
+### Ambiente de teste
+
+- Backup do Runtime: `sql:dump` em `scratchpad` da sessão (fora do repositório, 53 MB, não versionado).
+- Cópia do banco do Runtime **não foi criada**: o usuário `aculta_runtime` não tem `CREATE DATABASE` (grants: `aculta_runtime.*` e `aculta_id_cpf_test.*`). Os testes de migração rodam no banco `aculta_simpletest`, previsto em `docs/operations/BANCO-DE-TESTE.md`, com fixtures próprias. Não houve operação no Runtime.
+
+### Mecanismo do Core (confirmado no código instalado, Drupal 11.4.10)
+
+- `EntityDisplayBase::onDependencyRemoval()` (`web/core/lib/Drupal/Core/Entity/EntityDisplayBase.php:456`) remove componentes cujo renderer tem provider na lista de módulos removidos.
+- `ConfigManager::uninstall()` (`web/core/lib/Drupal/Core/Config/ConfigManager.php:203`) reprocessa todas as configurações dependentes do módulo.
+
+### Spike (`tests/src/Kernel/DocumentMigrationSpikeTest.php`, fixtures em `tests/modules/`)
+
+Resultado da execução real, 3 testes, 20 asserções, OK:
+
+| Cenário | Resultado observado |
+| --- | --- |
+| Novo módulo expõe **o mesmo formatter ID** do antigo | O provider **continua sendo o antigo**. Os dois não podem coexistir com o mesmo ID. |
+| Desinstalar o antigo **sem migrar** o display | O componente **não some**: volta ao formatter padrão do tipo (`string`). Num display público de PDF, a falha seria **silenciosa**. |
+| Trocar o tipo do componente para um ID **novo** antes de desinstalar o antigo | O componente permanece com o ID novo e a dependência deixa de citar o módulo antigo. |
+
+### Consequência para a decisão de IDs
+
+O plano pede que `aculta_pdf_media` e `aculta_pdf_file` sejam preservados. Com base no spike:
+
+- **Preservar os IDs não é seguro** na desinstalação: o módulo antigo precisa sair para o novo assumir o ID, e nesse intervalo o display cai no formatter padrão.
+- **Caminho proposto (B):** o novo módulo registra IDs próprios; uma `hook_update_N` troca o tipo dos componentes em `core.entity_view_display.*` (`media.document`, `media.course_document`, `node.document.default` e `node.document.full`) e recalcula as dependências; só depois o módulo antigo é desinstalado. O teste acima comprova o efeito no Core.
+- **Alternativa (C):** manter o módulo antigo instalado apenas como provedor dos IDs antigos (estado B prolongado). Preserva os IDs, mas mantém código legado e uma dívida explícita.
+
+**Decisão necessária do responsável antes da 0.1.0-dev.3:** aprovar B (recomendado) ou C. Isso altera o requisito do plano de preservar os IDs de formatter.
+
+### Ordem obrigatória (com B)
+
+1. Backup: `sql:dump` do Runtime, cópia de `config/sync/` e commit de referência.
+2. Instalar o novo módulo (código e IDs próprios), sem remover o antigo.
+3. `hook_update_N` do novo módulo: trocar `type` dos componentes, reescrever `dependencies.module`, migrar relações Group (`group.relationship_type` e permissões de papel) e atualizar `system.schema`.
+4. Verificações anteriores e posteriores: `core.extension`, componentes por display, dependências, relações Group e contagem de Media. Mesmo critério de homologação do plano.
+5. Desinstalar o módulo antigo apenas depois de a verificação posterior passar.
+6. Rollback: restaurar o código no commit de referência, restaurar o banco do backup no mesmo ponto e `drush cr`.
+
+### Pendências que continuam bloqueadas
+
+- A troca do plugin ID de Group (`aculta_pdf_viewer_group:course_document`) segue a mesma lógica de provider. Não foi testada ainda; deve entrar no spike antes da dev.3.
+- O spike cobre o formatter. Não cobre `group.relationship_type`, permissões de papel nem `media.type.course_document`.
+- Os 5 erros Kernel da baseline (ver acima) continuam pré-existentes e não afetam o spike, que roda com módulos mínimos.
+
 ## Próximas etapas
 
-- **0.1.0-dev.2 — Estratégia segura de migração:** definir e testar em cópia do banco a estratégia para registro de extensões, schemas, configuração ativa e exportada, providers, serviços, plugins, relações Group e histórico de atualizações.
-- Antes disso, resolver ou isolar as causas dos erros Kernel da baseline, se bloquearem a validação da estratégia.
+- **0.1.0-dev.3 — Renomeação estrutural:** depende da decisão B/C e da extensão do spike para Group e Media.
+- **0.1.0-dev.4 — docx-preview:** pode começar em paralelo, pois não depende da renomeação, mas o plano manda seguir a ordem das fases. Aguardando confirmação.
