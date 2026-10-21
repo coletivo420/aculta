@@ -36,6 +36,18 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.4 (unidades vendidas por variação de produto)
+
+### Código
+- `CommerceOrderPaidSubscriber` soma as unidades de cada item do pedido pago em `commerce.items.sold`,
+  com o identificador da variação comprada como dimensão. Item sem entidade ou com quantidade não positiva é ignorado.
+- Métrica e retenção (90 dias) no catálogo e na configuração.
+
+### Testes
+- Unit: 46 casos (inclui unidades por variação).
+- Kernel: 15 casos, aprovados.
+- Runtime de teste: `cr` aplicado. Sem pedidos no ambiente, o efeito real não foi exercitado.
+
 ## 0.3.0-dev.3 (reembolsos por incremento)
 
 ### Código
