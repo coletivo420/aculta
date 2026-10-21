@@ -15,7 +15,7 @@ interface LearningNoticeManagerInterface {
   /**
    * Records a notice once per source and recipient.
    */
-  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail): ?MessageInterface;
+  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface;
 
   /**
    * Resolves the current target only when access is still valid.

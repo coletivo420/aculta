@@ -19,6 +19,7 @@ content:
     region: content
 hidden:
   field_aculta_lms_digest_sent: true
+  field_aculta_lms_event_version: true
   field_aculta_lms_event_type: true
   field_aculta_lms_source_uuid: true
   field_aculta_lms_read: true

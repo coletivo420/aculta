@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.3 — avisos de avaliações publicadas — 2026-10-20
+
+- Integra avaliações LMS à central multidomínio e ao resumo diário opt-in do
+  `aculta_messenger`; cada republicação tem deduplicação própria.
+- Revalida resposta, identidade, matrícula e acesso antes de exibir o aviso; não
+  inclui resposta nem nota. Não envia e-mail transacional deste evento.
+- Runtime e revisão visual do aviso: DEFERRED.
+
 ## 0.1.0-dev.2 — conclusão no aviso e resumo diário — 2026-10-20
 
 - Publica avisos no site quando a conclusão aprovada é registrada, revalidando

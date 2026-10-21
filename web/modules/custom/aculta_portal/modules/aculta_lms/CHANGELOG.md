@@ -1,5 +1,14 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.14 — publicação de avaliações — 2026-10-20
+
+- Publica evento após uma resposta passar a avaliada e a cada nova gravação de
+  avaliação publicada, inclusive quando o educador reaplica a mesma nota.
+- O evento carrega somente UUID da resposta, identificador do estudante e uma
+  versão opaca derivada do estado persistido; conteúdo e nota não são expostos.
+- Teste Unit cobre primeira avaliação, republicação, mudança de nota e ausência
+  de evento quando não houve mudança. Runtime/visual: DEFERRED.
+
 ## 0.1.0-dev.13 — eventos educacionais para avisos — 2026-10-20
 
 - Publica eventos após salvar uma matrícula em turma e após emitir certificado;

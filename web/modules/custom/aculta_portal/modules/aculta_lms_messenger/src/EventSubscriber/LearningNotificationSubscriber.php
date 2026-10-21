@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms_messenger\EventSubscriber;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
+use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,6 +30,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
       CourseEnrollmentEvent::NAME => 'courseEnrollment',
       CertificateIssuedEvent::NAME => 'certificateIssued',
       CourseCompletedEvent::NAME => 'courseCompleted',
+      AnswerEvaluatedEvent::NAME => 'answerEvaluated',
     ];
   }
 
@@ -51,6 +53,17 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    */
   public function courseCompleted(CourseCompletedEvent $event): void {
     $this->record($event->sourceStatusUuid, 'completion', (int) $event->accountId, FALSE);
+  }
+
+  /**
+   * Records the new result for the learner's site and digest notices. */
+  public function answerEvaluated(AnswerEvaluatedEvent $event): void {
+    try {
+      $this->notices->record($event->answerUuid, 'evaluation', (int) $event->accountId, FALSE, $event->publicationVersion);
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error('Could not record LMS evaluation notice: @message', ['@message' => $exception->getMessage()]);
+    }
   }
 
   /**

@@ -17,6 +17,7 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -34,6 +35,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   private const EVENT_FIELD = 'field_aculta_lms_event_type';
 
   private const SOURCE_FIELD = 'field_aculta_lms_source_uuid';
+  private const EVENT_VERSION_FIELD = 'field_aculta_lms_event_version';
 
   private const READ_FIELD = 'field_aculta_lms_read';
 
@@ -55,8 +57,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Creates one durable notice per source and recipient; enqueue email once.
    */
-  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail): ?MessageInterface {
-    if (!in_array($type, ['enrollment', 'certificate', 'completion'], TRUE)) {
+  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface {
+    if (!in_array($type, ['enrollment', 'certificate', 'completion', 'evaluation'], TRUE)) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
@@ -70,6 +72,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->condition('uid', $uid)
       ->condition(self::EVENT_FIELD, $type)
       ->condition(self::SOURCE_FIELD, $sourceUuid)
+      ->condition(self::EVENT_VERSION_FIELD, $eventVersion)
       ->range(0, 1)
       ->execute();
     $message = $ids === [] ? NULL : $storage->load(reset($ids));
@@ -79,8 +82,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         'uid' => $uid,
         self::EVENT_FIELD => $type,
         self::SOURCE_FIELD => $sourceUuid,
+        self::EVENT_VERSION_FIELD => $eventVersion,
         self::READ_FIELD => 0,
-        self::DIGEST_FIELD => $type === 'completion' ? 0 : 1,
+        self::DIGEST_FIELD => in_array($type, ['completion', 'evaluation'], TRUE) ? 0 : 1,
         self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
@@ -111,6 +115,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'enrollment' => $this->resolveEnrollment($sourceUuid, $account),
       'certificate' => $this->resolveCertificate($sourceUuid, $account),
       'completion' => $this->resolveCompletion($sourceUuid, $account),
+      'evaluation' => $this->resolveEvaluation($sourceUuid, $account),
       default => NULL,
     };
   }
@@ -211,7 +216,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $ids = $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
-      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $uids = [];
@@ -236,7 +241,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $rows = [];
@@ -280,7 +285,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, 'completion')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
@@ -375,26 +380,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$course->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
-      'entity_id' => $course->id(),
-      'plugin_id' => 'lms_classes',
-    ]);
-    $hasCurrentEnrollment = FALSE;
-    foreach ($classRelationships as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
-      if ($class === NULL || $class->bundle() !== 'lms_class') {
-        continue;
-      }
-      foreach (GroupMembership::loadByGroup($class) as $membership) {
-        $member = $membership->getEntity();
-        if ($member instanceof UserInterface && (int) $member->id() === (int) $account->id()
-          && $membership->hasPermission('take course')) {
-          $hasCurrentEnrollment = TRUE;
-          break 2;
-        }
-      }
-    }
-    if (!$hasCurrentEnrollment) {
+    if (!$this->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
     $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
@@ -408,6 +394,67 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'digest_summary' => $this->t('Conclusão confirmada: @course', ['@course' => $course->label()]),
       'url' => $url,
     ];
+  }
+
+  /**
+   * Resolves an evaluated answer without exposing its response or score. */
+  private function resolveEvaluation(string $sourceUuid, AccountInterface $account): ?array {
+    $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $sourceUuid]);
+    $answer = reset($answers);
+    if (!$answer instanceof AnswerInterface || !$answer->isEvaluated()
+      || $answer->getUserId() !== (string) $account->id()
+      || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
+      return NULL;
+    }
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+      || !$course->access('view', $account, TRUE)->isAllowed()
+      || !$this->hasCurrentEnrollment($course, $account)) {
+      return NULL;
+    }
+    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.answer.details', [
+      'lms_answer' => $answer->id(),
+      'js' => 'nojs',
+    ]);
+    if ($url === NULL) {
+      return NULL;
+    }
+    return [
+      'title' => $this->t('Avaliação disponível'),
+      'summary' => $this->t('Uma atividade do curso @course recebeu avaliação.', [
+        '@course' => $course->label(),
+      ]),
+      'email_summary' => $this->t('Uma atividade do curso @course recebeu avaliação.', [
+        '@course' => $course->label(),
+      ]),
+      'digest_summary' => $this->t('Avaliação disponível no curso @course.', [
+        '@course' => $course->label(),
+      ]),
+      'url' => $url,
+    ];
+  }
+
+  /**
+   * Checks active take-course permission in any class linked to the course. */
+  private function hasCurrentEnrollment(CourseInterface $course, AccountInterface $account): bool {
+    $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'entity_id' => $course->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    foreach ($classRelationships as $relationship) {
+      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($class === NULL || $class->bundle() !== 'lms_class') {
+        continue;
+      }
+      foreach (GroupMembership::loadByGroup($class) as $membership) {
+        $member = $membership->getEntity();
+        if ($member instanceof UserInterface && (int) $member->id() === (int) $account->id()
+          && $membership->hasPermission('take course')) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
   }
 
 }

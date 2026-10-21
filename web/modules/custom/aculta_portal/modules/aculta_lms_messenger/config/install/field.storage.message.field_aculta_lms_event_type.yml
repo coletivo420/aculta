@@ -22,6 +22,9 @@ settings:
     -
       value: completion
       label: Conclusão de curso
+    -
+      value: evaluation
+      label: Avaliação publicada
   allowed_values_function: ''
 module: options
 locked: false

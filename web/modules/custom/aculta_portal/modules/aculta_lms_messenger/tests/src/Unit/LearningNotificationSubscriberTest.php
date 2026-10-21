@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_messenger\Unit;
 
+use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
@@ -64,6 +65,18 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
       '27',
       new \DateTimeImmutable('2026-10-20T12:00:00+00:00'),
     ));
+  }
+
+  /**
+   * An evaluated answer creates only the site and digest notices. */
+  public function testEvaluationCreatesSiteNoticeWithoutTransactionalEmail(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects($this->once())
+      ->method('record')
+      ->with('answer-uuid', 'evaluation', 27, FALSE, str_repeat('a', 32));
+
+    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber->answerEvaluated(new AnswerEvaluatedEvent('answer-uuid', '27', str_repeat('a', 32)));
   }
 
   /**

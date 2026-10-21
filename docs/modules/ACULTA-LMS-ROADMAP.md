@@ -206,6 +206,16 @@ acesso/cache específico com fixtures completas, navegador/visual e Runtime
 ainda são pendentes. Os testes unitários dos painéis passam (4/18).
 Runtime status: DEFERRED.
 
+**F13 — em implementação.** Matrícula e certificado geram avisos/e-mails
+transacionais pelo adapter `aculta_lms_messenger`; conclusão de curso e
+avaliação publicada aparecem sempre nos avisos multidomínio e entram no resumo
+diário opt-in. Reavaliações persistidas criam eventos deduplicados por versão,
+inclusive com nota igual. O conteúdo e a nota nunca entram no aviso; destino,
+membership e acesso são revalidados ao exibir. Testes Unit LMS/adapter: 27
+passaram (140 assertions; 5 deprecações do PHPUnit). Integração Runtime e
+revisão visual dos avisos: DEFERRED. Permanecem outros eventos de F13, teste do
+digest integrado e os gates/revisões de release.
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando
