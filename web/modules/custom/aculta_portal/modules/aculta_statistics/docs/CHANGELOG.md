@@ -36,6 +36,22 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.5 (carrinhos abandonados, 24 horas)
+
+### Código
+- `CartAbandonmentCronHooks` (cron): conta `commerce.carts.abandoned` para carrinhos (`cart`) em estado `draft`
+  com itens, alterados na janela `AbandonedCartWindow` (dias D-2 inteiro, para D-1 no cron de D). Cada carrinho
+  entra numa única janela diária, desde que o cron rode todo dia. Carrinho vazio não conta.
+- Dependência `commerce:commerce_cart`.
+
+### Limites
+- Vendas por domínio: não implementado. O pedido não guarda o domínio de origem, e a loja é única (`online`).
+  Não há vínculo confiável para a dimensão. Depende de decisão sobre loja por domínio.
+- Exclusões de carrinho (além de vazio) não definidas.
+
+### Testes
+- Unit: 48 casos (inclui a janela de 24 horas).
+
 ## 0.3.0-dev.4 (unidades vendidas por variação de produto)
 
 ### Código

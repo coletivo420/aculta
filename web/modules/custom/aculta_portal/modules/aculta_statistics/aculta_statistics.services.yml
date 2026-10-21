@@ -22,6 +22,10 @@ services:
     class: Drupal\aculta_statistics\Reconciliation\CommerceReconciler
     arguments: ['@entity_type.manager', '@aculta_statistics.storage']
 
+  aculta_statistics.cart_abandonment_cron_hooks:
+    class: Drupal\aculta_statistics\Hook\CartAbandonmentCronHooks
+    arguments: ['@entity_type.manager', '@aculta_statistics.recorder', '@aculta_statistics.storage', '@module_handler']
+
   aculta_statistics.commerce_payment_refund_hooks:
     class: Drupal\aculta_statistics\Hook\CommercePaymentRefundHooks
     arguments: ['@aculta_statistics.recorder', '@logger.factory']
