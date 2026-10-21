@@ -36,6 +36,23 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.3.0-dev.8 (cupons: pedidos com cupom e desconto por moeda)
+
+### Código
+- `CommerceOrderPaidSubscriber` conta `commerce.coupons.orders` (pedido com campo `coupons` preenchido) e
+  `commerce.discounts.total` (em centavos, a partir dos ajustes `promotion` do pedido e dos itens). Ajuste em
+  outra moeda é ignorado.
+- Métricas e retenção (90 dias) no catálogo e na configuração.
+
+### Testes
+- Unit: 54 casos (inclui cupom e desconto).
+- Kernel: 15 casos, aprovados.
+
+### Estado da fase 0.3.0
+- Itens do roteiro implementados no código: pedidos pagos e receita, reembolsos, reconciliação diária,
+  unidades por variação, carrinhos abandonados, vendas por domínio (purpose no pedido) e cupons.
+- Pendente: validação com pedidos reais no Runtime de teste (não há pedidos no ambiente) e o painel de receita líquida (0.8.0).
+
 ## 0.3.0-dev.7 (Google Tag com Consent Mode, antecipado da 0.6.0)
 
 ### Dependência

@@ -19,6 +19,10 @@ retention:
     days: 90
   - metric: commerce.revenue.by_domain
     days: 90
+  - metric: commerce.coupons.orders
+    days: 90
+  - metric: commerce.discounts.total
+    days: 90
   - metric: commerce.items.sold
     days: 90
   - metric: commerce.refunds.total

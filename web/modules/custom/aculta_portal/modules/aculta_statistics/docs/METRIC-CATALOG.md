@@ -14,6 +14,7 @@ Sensibilidade: **P** pública (agregado), **I** interna (equipe), **R** restrita
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
 | `commerce.orders.paid` | evento `commerce_order.order.paid` (uma vez por pedido) | pedidos | moeda | 90 dias | I |
+| `commerce.coupons.orders` e `commerce.discounts.total` (implementadas na 0.3.0-dev.8) | evento de pedido pago; campo `coupons`; ajustes `promotion` | pedidos e centavos | moeda | 90 dias | I |
 | `commerce.orders.by_domain` e `commerce.revenue.by_domain` (implementadas na 0.3.0-dev.6) | evento de pedido pago; purpose gravado no pedido | pedidos e centavos | `purpose|moeda` (`sem_dominio` se ausente) | 90 dias | I |
 | `commerce.carts.abandoned` (implementada na 0.3.0-dev.5) | cron: carrinhos `draft` com itens alterados há 24 h | carrinhos | total do dia | 90 dias | I |
 | `commerce.items.sold` (implementada na 0.3.0-dev.4) | evento de pedido pago, itens | unidades | variação de produto | 90 dias | I |

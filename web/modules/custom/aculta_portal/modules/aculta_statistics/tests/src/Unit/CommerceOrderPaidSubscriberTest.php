@@ -14,6 +14,7 @@ use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_order\Event\OrderEvent;
 use Drupal\commerce_order\Event\OrderEvents;
 use Drupal\commerce_price\Price;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -85,12 +86,46 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
     $order->method('id')->willReturn(9);
     $order->method('getTotalPrice')->willReturn(new Price('5.00', 'BRL'));
     $order->method('getItems')->willReturn([]);
+    $order->method('getAdjustments')->willReturn([]);
+    $order->method('hasField')->willReturn(FALSE);
     $order->method('getData')->with(CommerceOrderDomainHooks::DATA_KEY)->willReturn('main');
 
     $this->subscriber($storage)->onOrderPaid(new OrderEvent($order));
 
     $this->assertContains(['commerce.orders.by_domain', 'main|BRL', 1], $calls);
     $this->assertContains(['commerce.revenue.by_domain', 'main|BRL', 500], $calls);
+  }
+
+  /**
+   * Pedido com cupom e ajuste de promoção conta o cupom e o desconto em centavos.
+   */
+  public function testCouponOrderCountsCouponAndDiscount(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $calls = [];
+    $storage->method('record')->willReturnCallback(static function (string $metric, string $dimension, int $amount) use (&$calls): void {
+      $calls[] = [$metric, $dimension, $amount];
+    });
+    $coupons = $this->createMock(FieldItemListInterface::class);
+    $coupons->method('isEmpty')->willReturn(FALSE);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn(11);
+    $order->method('getTotalPrice')->willReturn(new Price('90.00', 'BRL'));
+    $order->method('getItems')->willReturn([]);
+    $order->method('getData')->willReturn(NULL);
+    $order->method('hasField')->with('coupons')->willReturn(TRUE);
+    $order->method('get')->with('coupons')->willReturn($coupons);
+    // Ajuste de promoção: o subscriber só usa getAmount(). Adjustment real exige o container do Drupal.
+    $adjustment = new class() {
+      public function getAmount(): Price {
+        return new Price('-10.00', 'BRL');
+      }
+    };
+    $order->method('getAdjustments')->willReturn([$adjustment]);
+
+    $this->subscriber($storage)->onOrderPaid(new OrderEvent($order));
+
+    $this->assertContains(['commerce.coupons.orders', 'BRL', 1], $calls);
+    $this->assertContains(['commerce.discounts.total', 'BRL', 1000], $calls);
   }
 
   /**
@@ -162,6 +197,8 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
     $order->method('id')->willReturn(7);
     $order->method('getTotalPrice')->willReturn(new Price('10.00', 'BRL'));
     $order->method('getItems')->willReturn($rows);
+    $order->method('getAdjustments')->willReturn([]);
+    $order->method('hasField')->willReturn(FALSE);
 
     return new OrderEvent($order);
   }
@@ -174,6 +211,8 @@ final class CommerceOrderPaidSubscriberTest extends TestCase {
     $order->method('id')->willReturn(7);
     $order->method('getTotalPrice')->willReturn($number === NULL ? NULL : new Price($number, $currency));
     $order->method('getItems')->willReturn([]);
+    $order->method('getAdjustments')->willReturn([]);
+    $order->method('hasField')->willReturn(FALSE);
 
     return new OrderEvent($order);
   }

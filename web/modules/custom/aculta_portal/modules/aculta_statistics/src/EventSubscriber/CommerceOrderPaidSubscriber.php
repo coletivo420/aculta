@@ -49,6 +49,16 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
   public const METRIC_REVENUE_BY_DOMAIN = 'commerce.revenue.by_domain';
 
   /**
+   * Métrica de pedidos pagos com cupom, por moeda.
+   */
+  public const METRIC_COUPON_ORDERS = 'commerce.coupons.orders';
+
+  /**
+   * Métrica de desconto de promoção concedido, por moeda, em centavos.
+   */
+  public const METRIC_DISCOUNTS = 'commerce.discounts.total';
+
+  /**
    * Código ISO de moeda aceito como dimensão.
    */
   private const CURRENCY_PATTERN = '/^[A-Z]{3}$/';
@@ -67,6 +77,33 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [OrderEvents::ORDER_PAID => 'onOrderPaid'];
+  }
+
+  /**
+   * Conta pedido com cupom e o desconto de promoção (ajustes `promotion`) em centavos.
+   *
+   * O desconto soma os ajustes do pedido e dos itens. Os valores são negativos no Commerce;
+   * grava-se o módulo. Ajuste em outra moeda é ignorado.
+   */
+  private function recordCoupons(object $order, string $currency): void {
+    if ($order->hasField('coupons') && !$order->get('coupons')->isEmpty()) {
+      $this->recorder->record(self::METRIC_COUPON_ORDERS, $currency);
+    }
+
+    $adjustments = (array) $order->getAdjustments(['promotion']);
+    foreach ($order->getItems() as $item) {
+      $adjustments = [...$adjustments, ...(array) $item->getAdjustments(['promotion'])];
+    }
+    $cents = 0;
+    foreach ($adjustments as $adjustment) {
+      $amount = $adjustment->getAmount();
+      if ($amount->getCurrencyCode() === $currency) {
+        $cents += abs((int) round((float) $amount->getNumber() * 100));
+      }
+    }
+    if ($cents > 0) {
+      $this->recorder->record(self::METRIC_DISCOUNTS, $currency, $cents);
+    }
   }
 
   /**
@@ -119,6 +156,7 @@ final class CommerceOrderPaidSubscriber implements EventSubscriberInterface {
         $this->recorder->record(self::METRIC_REVENUE, $currency, $cents);
       }
       $this->recordItems($order);
+      $this->recordCoupons($order, $currency);
       $key = $this->domainCurrencyKey($order, $currency);
       $this->recorder->record(self::METRIC_ORDERS_BY_DOMAIN, $key);
       if ($cents > 0) {

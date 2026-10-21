@@ -35,7 +35,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 - Feito (0.3.0-dev.5): carrinhos abandonados (24 horas sem alteração), contados no cron.
 - Feito (0.3.0-dev.6): vendas por domínio, com o purpose de origem gravado no pedido.
 - Feito (0.3.0-dev.7, antecipado da 0.6.0): `drupal/google_tag` habilitado com Consent Mode; falta o ID da propriedade.
-- Pendente: cupons; painel de receita líquida.
+- Feito (0.3.0-dev.8): cupons, com pedidos com cupom e desconto por moeda.
+- Fase 0.3.0 implementada no código. Pendente: validação com pedidos reais; painel de receita líquida (0.8.0).
 
 ## 0.2.0 — Núcleo analítico (concluído no código: 0.2.0-dev.4)
 
