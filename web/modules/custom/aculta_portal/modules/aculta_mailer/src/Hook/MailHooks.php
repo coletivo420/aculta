@@ -35,6 +35,10 @@ final class MailHooks {
       // Corpo HTML restrito: o envio o usa na parte HTML; a parte de texto segue pelo format().
       $message['aculta_html_body'] = $rendered['body'];
     }
+    if ($rendered['layout']) {
+      // Com layout, o cabeçalho e o rodapé da marca já estão no corpo: o envelope não repete o rodapé.
+      $message['aculta_layout'] = TRUE;
+    }
     if (isset($params['correlation_id'])) {
       // Cabeçalho próprio para rastrear a mensagem do Drupal até o provedor (ver docs/ARCHITECTURE.md).
       $message['headers']['X-Aculta-Mail-ID'] = (string) $params['correlation_id'];

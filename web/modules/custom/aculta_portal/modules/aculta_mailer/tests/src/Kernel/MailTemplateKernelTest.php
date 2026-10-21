@@ -128,6 +128,8 @@ final class MailTemplateKernelTest extends KernelTestBase {
     $this->assertStringContainsString('CNPJ 00', $rendered['body']);
     $this->assertStringNotContainsString('<Cultural>', $rendered['body']);
     $this->assertStringContainsString('<p><strong>Corpo</strong> Maria</p>', $rendered['body']);
+    // O envelope usa esse flag para não repetir o rodapé do tema quando a marca já o traz.
+    $this->assertTrue($rendered['layout']);
   }
 
   public function testLayoutWrapsBodyWithBrand(): void {

@@ -28,6 +28,7 @@ final class MailThemeHooks {
           'sub_type' => '',
           'is_html' => TRUE,
           'public_base' => '',
+          'layout' => FALSE,
         ],
       ],
     ];

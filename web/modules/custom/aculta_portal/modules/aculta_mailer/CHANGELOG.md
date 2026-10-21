@@ -1,3 +1,8 @@
+## 0.1.0-dev.66 — layout de marca no envelope HTML — 2026-10-22
+
+- Com layout, o envelope do tema não repete o rodapé: o rodapé da marca vai no corpo. Sem layout, o rodapé fixo da associação continua. Flag `layout` passado do renderizador ao envelope e declarado no `hook_theme` (variável não declarada não chega ao template).
+- Teste de Kernel: `layout` verdadeiro quando o modelo usa layout. Kernel 41/41; unidade 154/154.
+
 ## 0.1.0-dev.65 — layout e marca com corpo HTML — 2026-10-22
 
 - Com corpo HTML, o cabeçalho, o rodapé e a marca do layout são texto simples: passam a ser escapados e as quebras de linha viram `<br>`. Antes, entravam crus no HTML (texto colado, quebras perdidas). O HTML do modelo não muda.

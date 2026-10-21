@@ -56,6 +56,7 @@ final class MailTemplateRenderer {
       'subject' => self::fill($subject, $context),
       'body' => $body,
       'html' => $html,
+      'layout' => $layout !== NULL,
     ];
   }
 
