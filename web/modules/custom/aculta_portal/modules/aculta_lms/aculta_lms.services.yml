@@ -10,7 +10,14 @@ services:
     arguments: ['@aculta_lms.learning_dashboard', '@current_user']
   aculta_lms.learning_dashboard_controller:
     class: Drupal\aculta_lms\Controller\LearningDashboardController
-    arguments: ['@aculta_lms.learning_dashboard', '@current_user', '@date.formatter', '@string_translation']
+    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation']
+  aculta_lms.class_activity_deadline_access:
+    class: Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_lms.class_activity_deadline_manager:
+    class: Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_access']
+  Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager: '@aculta_lms.class_activity_deadline_manager'
   aculta_lms.course_certificate_manager:
     class: Drupal\aculta_lms\Certificate\CourseCertificateManager
     arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms']

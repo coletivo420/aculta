@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.7 — aviso de prazo por atividade/turma — 2026-10-21
+
+- Cria aviso de prazo ao definir ou alterar a data por atividade e turma;
+  membros ativos com `take course` são destinatários e o acesso é revalidado
+  na exibição e no resumo diário. Não envia e-mail transacional.
+- Mudanças futuras na data invalidam avisos antigos. O intervalo do lembrete
+  antecipado aguarda decisão; Unit LMS/adapter: 43 testes / 197 assertions
+  PASS. Kernel com entidades reais do provider, visual e Runtime DEFERRED.
+
 ## 0.1.0-dev.6 — aviso de conteúdo liberado e retorno — 2026-10-21
 
 - Envia avisos de curso, aula e atividade recém-publicados aos estudantes

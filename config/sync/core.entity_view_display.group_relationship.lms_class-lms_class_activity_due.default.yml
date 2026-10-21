@@ -1,0 +1,28 @@
+uuid: 226d1b7b-5290-4c6f-a117-9787d192270c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.group_relationship.lms_class-lms_class_activity_due.field_activity_due_at
+    - group.relationship_type.lms_class-lms_class_activity_due
+  module:
+    - datetime
+id: group_relationship.lms_class-lms_class_activity_due.default
+targetEntityType: group_relationship
+bundle: lms_class-lms_class_activity_due
+mode: default
+content:
+  field_activity_due_at:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      date_format: medium
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_id: true
+  langcode: true
+  search_api_excerpt: true
+  uid: true

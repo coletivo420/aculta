@@ -40,6 +40,12 @@ settings:
     -
       value: feedback
       label: Retorno do educador
+    -
+      value: deadline
+      label: Prazo de atividade
+    -
+      value: deadline_reminder
+      label: Lembrete de prazo
   allowed_values_function: ''
 module: options
 locked: false

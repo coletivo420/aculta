@@ -7,18 +7,20 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão `0.1.0-dev.6`. Matrícula, certificado, conclusão, avaliação publicada,
-resposta aberta pendente, conteúdo liberado e retorno do educador geram avisos
-no painel multidomínio. Matrícula e
+Versão `0.1.0-dev.7`. Matrícula, certificado, conclusão, avaliação publicada,
+resposta aberta pendente, conteúdo liberado, retorno do educador e definição ou
+alteração de prazo por atividade/turma geram avisos no painel multidomínio. O
+prazo fica em relação Group específica da turma, não na atividade LMS. Matrícula e
 certificado têm e-mail transacional mínimo; conclusão, avaliação e resposta
 pendente entram no resumo diário opt-in. Um link revalida acesso e encaminha ao
 purpose correto. Republicações de avaliação usam versão opaca para deduplicar.
 Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
 
 O módulo está em Dev e não foi habilitado no Runtime nesta entrega. Ainda faltam
-avisos de prazo por atividade/turma, um Kernel com entidades reais do provider,
-integração no Runtime e inspeção visual da gaveta. A entrega de digest pelo
-serviço compartilhado foi exercitada com providers educacionais no Unit.
+um Kernel com entidades reais do provider, integração no Runtime e inspeção
+visual da gaveta. O intervalo do lembrete antecipado aguarda decisão. A entrega
+de digest pelo serviço compartilhado foi exercitada com providers educacionais
+no Unit.
 
 ## Contratos
 

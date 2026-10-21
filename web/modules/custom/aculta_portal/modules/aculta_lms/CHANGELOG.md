@@ -1,5 +1,17 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.17 — prazos de atividade por turma — 2026-10-21
+
+- Educadores com `grade students` no curso e administradores podem definir,
+  alterar e remover o prazo de uma atividade em cada turma. O dado fica na
+  relação Group turma↔atividade; não altera a entidade LMS nem outros cursos.
+- O estudante vê o prazo no fuso de sua conta; o painel do educador informa os
+  prazos da turma, e a data usa o fuso de quem a definiu.
+- Publica evento somente ao criar ou mudar a data. Unit LMS/adapter: 43 testes /
+  197 assertions PASS; Kernel de instalação: 4 testes / 34 assertions PASS.
+  Lembrete antecipado depende da decisão de intervalo; Kernel real de Group,
+  revisão visual e Runtime permanecem DEFERRED.
+
 ## 0.1.0-dev.16 — avisos de conteúdo liberado e retorno — 2026-10-21
 
 - Publica eventos após publicar curso, aula ou atividade, incluindo atividades

@@ -206,6 +206,22 @@ Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 Composer audit sem advisories. O Entity Print 2.19.0 gera três deprecações
 Drupal 11.2/11.3 em código upstream; nenhuma alteração foi feita no contrib.
 
+## F13 — Avisos e prazos por turma (implementação parcial)
+
+Educadores com `grade students` no curso e administradores podem definir,
+alterar e remover o prazo de uma atividade em `/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo`.
+O prazo fica na relação Group turma↔atividade (`field_activity_due_at`), então
+uma atividade reutilizada pode ter prazos diferentes em cada turma. A tela usa
+o fuso da conta do educador; a área de atividade do estudante e o aviso usam o
+fuso da conta que consulta.
+
+Definir ou alterar o prazo gera aviso no painel e no resumo diário opt-in por
+meio de `aculta_lms_messenger`/`aculta_messenger`. A mensagem não envia e-mail
+transacional e é revalidada contra publicação, curso e membership atual. O
+lembrete antecipado aguarda decisão de intervalo. Unit LMS/adapter: 43 testes /
+197 assertions PASS; Kernel de instalação: 4 testes / 34 assertions PASS. Kernel
+com Group/Message reais, revisão visual e Runtime permanecem DEFERRED.
+
 ## Testes
 
 - `tests/src/Unit/CourseCompletionPublisherTest.php`: publicação apenas de

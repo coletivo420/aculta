@@ -32,6 +32,10 @@ interface LearningNoticeManagerInterface {
   public function recordEducatorFeedbackForLearner(string $commentUuid, string $eventVersion): void;
 
   /**
+   * Records a due date for current learners in the source class. */
+  public function recordActivityDeadlineForLearners(string $deadlineUuid, string $eventVersion): void;
+
+  /**
    * Resolves the current target only when access is still valid.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
+use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\UserInterface;
@@ -54,6 +56,16 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
+    );
+    $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');
+    $this->assertSame('/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo', $route->getPath());
+    $this->assertSame(
+      $container->get('aculta_lms.class_activity_deadline_manager'),
+      $container->get(ClassActivityDeadlineManager::class),
+    );
+    $this->assertInstanceOf(
+      LearningDashboardController::class,
+      $container->get('aculta_lms.learning_dashboard_controller'),
     );
     $this->assertFalse($container->get('config.storage')->exists('aculta_lms.settings'));
     $this->assertFalse($container->get('module_handler')->hasImplementations('install', ['aculta_lms']));

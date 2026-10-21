@@ -7,6 +7,9 @@ namespace Drupal\aculta_lms_messenger;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Datetime\DateTimeItemInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Queue\QueueFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,6 +26,7 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -66,11 +70,15 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     'lesson_release',
     'activity_release',
     'feedback',
+    'deadline',
+    'deadline_reminder',
   ];
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly ClassActivityDeadlineManager $deadlines,
+    private readonly DateFormatterInterface $dateFormatter,
     private readonly QueueFactoryInterface $queueFactory,
     private readonly LoggerInterface $logger,
   ) {}
@@ -89,6 +97,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'lesson_release',
       'activity_release',
       'feedback',
+      'deadline',
+      'deadline_reminder',
     ], TRUE)) {
       return NULL;
     }
@@ -152,6 +162,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'lesson_release' => $this->resolveContentRelease($sourceUuid, 'lms_lesson', $account),
       'activity_release' => $this->resolveContentRelease($sourceUuid, 'lms_activity', $account),
       'feedback' => $this->resolveEducatorFeedback($sourceUuid, $account),
+      'deadline' => $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value),
+      'deadline_reminder' => $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value),
       default => NULL,
     };
   }
@@ -262,6 +274,40 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       return;
     }
     $this->record($commentUuid, 'feedback', (int) $learner->id(), FALSE, $eventVersion);
+  }
+
+  /**
+   * Records a new or changed activity deadline for current class learners.
+   */
+  public function recordActivityDeadlineForLearners(string $deadlineUuid, string $eventVersion): void {
+    $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'uuid' => $deadlineUuid,
+      'plugin_id' => 'lms_class_activity_due',
+    ]);
+    $deadline = reset($relationships);
+    if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
+      return;
+    }
+    $class = $deadline->getGroup();
+    $activity = $deadline->getEntity();
+    $course = $class instanceof GroupInterface ? $this->deadlines->courseForClass($class) : NULL;
+    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ActivityInterface
+      || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()
+      || !$course instanceof CourseInterface || !$course->isPublished()
+      || !$this->deadlines->activityBelongsToCourse($activity, $course)) {
+      return;
+    }
+    foreach (GroupMembership::loadByGroup($class) as $membership) {
+      if ($membership->getPluginId() !== 'group_membership' || !$membership->hasPermission('take course')) {
+        continue;
+      }
+      $learner = $membership->getEntity();
+      if (!$learner instanceof UserInterface || !$learner->isActive()
+        || !$course->access('view', $learner, TRUE)->isAllowed()) {
+        continue;
+      }
+      $this->record($deadlineUuid, 'deadline', (int) $learner->id(), FALSE, $eventVersion);
+    }
   }
 
   /**
@@ -684,6 +730,72 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'digest_summary' => $this->t('Retorno disponível em uma atividade do curso.'),
       'url' => $url,
     ];
+  }
+
+  /**
+   * Resolves a current class deadline only for its active class learners. */
+  private function resolveActivityDeadline(string $deadlineUuid, AccountInterface $account, string $eventVersion): ?array {
+    $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'uuid' => $deadlineUuid,
+      'plugin_id' => 'lms_class_activity_due',
+    ]);
+    $deadline = reset($relationships);
+    if (!$deadline instanceof GroupRelationshipInterface || $deadline->get('field_activity_due_at')->isEmpty()) {
+      return NULL;
+    }
+    $currentVersion = substr(hash(
+      'sha256',
+      (string) $deadline->uuid() . '|' . (string) $deadline->get('field_activity_due_at')->value,
+    ), 0, 32);
+    if (!hash_equals($currentVersion, $eventVersion)) {
+      return NULL;
+    }
+    $class = $deadline->getGroup();
+    $activity = $deadline->getEntity();
+    $course = $class instanceof GroupInterface ? $this->deadlines->courseForClass($class) : NULL;
+    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ActivityInterface
+      || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()
+      || !$course instanceof CourseInterface || !$course->isPublished()
+      || !$course->access('view', $account, TRUE)->isAllowed()
+      || !$this->deadlines->activityBelongsToCourse($activity, $course)
+      || !$this->memberCanTakeCourseInClass($class, $account)) {
+      return NULL;
+    }
+    $date = DrupalDateTime::createFromFormat(
+      DateTimeItemInterface::DATETIME_STORAGE_FORMAT,
+      (string) $deadline->get('field_activity_due_at')->value,
+      new \DateTimeZone('UTC'),
+    );
+    if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
+      return NULL;
+    }
+    $user = $account instanceof UserInterface ? $account : NULL;
+    $timestamp = $date->getTimestamp();
+    $formattedDate = $this->dateFormatter->format($timestamp, 'long', NULL, $user?->getTimeZone());
+    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+    if ($url === NULL) {
+      return NULL;
+    }
+    return [
+      'title' => $this->t('Prazo de atividade'),
+      'summary' => $this->t('Uma atividade da turma tem prazo até @date.', ['@date' => $formattedDate]),
+      'digest_summary' => $this->t('Prazo de atividade: @date', ['@date' => $formattedDate]),
+      'url' => $url,
+    ];
+  }
+
+  /**
+   * Checks an active take-course membership in the specific class. */
+  private function memberCanTakeCourseInClass(GroupInterface $class, AccountInterface $account): bool {
+    foreach (GroupMembership::loadByGroup($class) as $membership) {
+      $member = $membership->getEntity();
+      if ($member instanceof UserInterface && $member->isActive()
+        && (int) $member->id() === (int) $account->id()
+        && $membership->hasPermission('take course')) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**

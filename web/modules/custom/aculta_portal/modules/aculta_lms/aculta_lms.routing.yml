@@ -24,6 +24,22 @@ aculta_lms.class_dashboard:
       group:
         type: entity:group
 
+aculta_lms.class_activity_deadline:
+  path: '/painel-administrativo/lms/turma/{group}/atividade/{activity}/prazo'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ClassActivityDeadlineForm'
+    _title: 'Prazo da atividade'
+  requirements:
+    _custom_access: 'aculta_lms.class_activity_deadline_access:access'
+  options:
+    _admin_route: true
+    no_cache: true
+    parameters:
+      group:
+        type: entity:group
+      activity:
+        type: entity:lms_activity
+
 aculta_lms.certificate_issue:
   path: '/painel-administrativo/lms/curso/{group}/certificados/emitir'
   defaults:

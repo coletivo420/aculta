@@ -11,6 +11,7 @@ use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
+use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,6 +38,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
       AnswerSubmittedEvent::NAME => 'answerSubmitted',
       CourseContentReleasedEvent::NAME => 'contentReleased',
       EducatorFeedbackPublishedEvent::NAME => 'educatorFeedbackPublished',
+      ActivityDeadlineAssignedEvent::NAME => 'activityDeadlineAssigned',
     ];
   }
 
@@ -108,6 +110,17 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     }
     catch (\Throwable $exception) {
       $this->logger->error('Could not record LMS educator feedback notice: @message', ['@message' => $exception->getMessage()]);
+    }
+  }
+
+  /**
+   * Records a class-specific activity deadline for its current learners. */
+  public function activityDeadlineAssigned(ActivityDeadlineAssignedEvent $event): void {
+    try {
+      $this->notices->recordActivityDeadlineForLearners($event->deadlineUuid, $event->publicationVersion);
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error('Could not record LMS activity deadline notice: @message', ['@message' => $exception->getMessage()]);
     }
   }
 
