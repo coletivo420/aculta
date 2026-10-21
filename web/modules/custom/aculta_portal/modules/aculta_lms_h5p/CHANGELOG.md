@@ -3,7 +3,8 @@
 - Classes, interfaces, controladores, hooks, formulários, plugins, seletores e arquivos PHP próprios do H5P agora usam `aculta_H5P` no identificador; as pastas/namespaces internos também seguem o prefixo. A integração PHP do Fórum segue a mesma regra.
 - O plugin de entidade e os campos de referência passam a usar `aculta_h5p_content`. O update `8007` descarta conteúdos, tentativas e vínculos H5P legados e recria a entidade sob o ID novo, conforme decisão do responsável; as tabelas e contratos de protocolo exigidos pelo H5P continuam com seus nomes upstream.
 - Interfaces e classes globais definidas pelo H5P permanecem intactas porque são contratos externos implementados pelo adaptador ACULTA.
-- Runtime update: DEFERRED até inspeção e execução no ambiente de testes.
+- Update `8007` aplicado no Runtime `aculta_runtime` em 2026-10-21 após dump íntegro e inventário: zero conteúdos/refs/tentativas legados. A primeira execução revelou que o Entity Reference não recalcula a definição após remover o tipo antigo; o hook foi ajustado para atualizar a configuração e a definição instalada via APIs Core. A segunda execução completou; entidade `aculta_h5p_content` e destino do Fórum confirmados.
+- Smoke HTTP pós-update: catálogo `/` em `cursos` 200; painéis H5P anônimo 403 esperado; nenhum 500 nas rotas verificadas. O rebuild ainda registra `DirectoryNotReadyException` ao copiar `h5p-disable-hub.js` para `assets://h5p/...`; precisa ser corrigido ou explicado antes da validação visual completa.
 
 ## F15 — associação de PDFs existentes a atividades — 2026-10-21
 
@@ -193,4 +194,3 @@
   montagem do formulário administrativo (36 elementos) passaram; sem updates
   de banco. Gates Drupal 11+, imagem e slugs passaram.
 
-- O primeiro `updb` no Runtime encontrou a limitação do Entity Reference ao recalcular a definição antiga após remover o entity type. O update agora troca a configuração pelo Config API e sincroniza a definição instalada pelo repositório Core; a coluna segue `integer` e as referências legadas são descartadas. O update segue pendente e será reexecutado após novo dump íntegro.
