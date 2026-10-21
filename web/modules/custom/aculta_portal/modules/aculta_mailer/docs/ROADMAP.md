@@ -57,6 +57,20 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 - Caminho administrativo: `/painel-administrativo/...`, conforme decisão do responsável.
 - Local dos templates de layout: módulo, com estilos vindos do tema via dados e classes (decisão do responsável).
 
+## Produtor de eventos para estatísticas (ADR-0004 do aculta_statistics)
+
+Pendente. O resumo de envios por estado exato (nove estados) precisa de um consumidor que o
+`aculta_statistics` não tem hoje: o funil só tem cinco métricas.
+
+- Produtor proposto: `MailStatusChangedEvent` (`aculta_mailer.status_changed`), disparado após a
+  transição gravada em `DeliveryEventApplier` e na gravação de estado de envio. Carrega identificador do
+  registro, novo estado e transporte. Sem destinatário, assunto ou corpo.
+- Decisão em aberto: a métrica de estado conta **transições** (evento) ou **estado atual** (conciliação
+  do `aculta_mail_log`)? Recomendação: estado atual por dia de solicitação, pela mesma conciliação do funil,
+  para não contar uma mensagem duas vezes quando muda de estado.
+- Bloqueio resolvido depois: `email.messages.status` (dimensão = estado) no catálogo, depois troca do
+  `MailDashboard::summary()` para o `aculta_statistics`.
+
 ## Telas de controle (planejado)
 
 - Lista de e-mails do sistema, suspensão por tipo, coluna de destinatário, diagnóstico de domínio (SPF, DKIM, DMARC) e editor visual. Ver `docs/CONTROL-SCREENS.md`.
