@@ -18,6 +18,11 @@ interface LearningNoticeManagerInterface {
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface;
 
   /**
+   * Records a pending answer notice for current course graders.
+   */
+  public function recordSubmissionForEducators(string $answerUuid, string $eventVersion): void;
+
+  /**
    * Resolves the current target only when access is still valid.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;

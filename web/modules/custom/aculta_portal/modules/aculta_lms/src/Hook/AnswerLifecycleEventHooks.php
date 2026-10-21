@@ -9,10 +9,12 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\lms\Entity\AnswerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
+use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 
 /**
- * Publishes when a learner's answer becomes evaluated. */
-final class AnswerEvaluationEventHooks {
+ * Publishes learner answer submissions and evaluation publications.
+ */
+final class AnswerLifecycleEventHooks {
 
   public function __construct(
     private readonly EventDispatcherInterface $eventDispatcher,
@@ -23,8 +25,14 @@ final class AnswerEvaluationEventHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($entity instanceof AnswerInterface && $entity->isEvaluated()) {
+    if (!$entity instanceof AnswerInterface) {
+      return;
+    }
+    if ($entity->isEvaluated()) {
       $this->publish($entity);
+    }
+    elseif ($entity->getData() !== []) {
+      $this->publishSubmission($entity);
     }
   }
 
@@ -33,16 +41,17 @@ final class AnswerEvaluationEventHooks {
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$entity instanceof AnswerInterface || !$entity->isEvaluated()) {
+    if (!$entity instanceof AnswerInterface) {
       return;
     }
     $original = $entity->getOriginal();
     if (!$original instanceof AnswerInterface) {
       return;
     }
-    if ($original->isEvaluated()
-      && $original->getScore() === $entity->getScore()
-      && $original->getChangedTime() === $entity->getChangedTime()) {
+    if (!$entity->isEvaluated()) {
+      if ($entity->getData() !== [] && $original->getData() !== $entity->getData()) {
+        $this->publishSubmission($entity);
+      }
       return;
     }
     $this->publish($entity);
@@ -55,8 +64,25 @@ final class AnswerEvaluationEventHooks {
     $this->eventDispatcher->dispatch(new AnswerEvaluatedEvent(
       (string) $answer->uuid(),
       $answer->getUserId(),
-      substr(hash('sha256', $answer->uuid() . ':' . $answer->getChangedTime() . ':' . $answer->getScore()), 0, 32),
+      $this->newPublicationVersion(),
     ));
+  }
+
+  /**
+   * Dispatches a response without including its content.
+   */
+  private function publishSubmission(AnswerInterface $answer): void {
+    $this->eventDispatcher->dispatch(new AnswerSubmittedEvent(
+      (string) $answer->uuid(),
+      $this->newPublicationVersion(),
+    ));
+  }
+
+  /**
+   * Creates an opaque identity for this persisted publication event.
+   */
+  private function newPublicationVersion(): string {
+    return bin2hex(random_bytes(16));
   }
 
 }

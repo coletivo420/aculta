@@ -25,6 +25,9 @@ settings:
     -
       value: evaluation
       label: Avaliação publicada
+    -
+      value: submission
+      label: Resposta para correção
   allowed_values_function: ''
 module: options
 locked: false

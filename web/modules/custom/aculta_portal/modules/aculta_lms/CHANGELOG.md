@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.15 — evento de resposta pendente — 2026-10-20
+
+- Publica evento mínimo depois de criar/alterar resposta discursiva ou anexo
+  ainda pendente de correção, sem transmitir conteúdo da resposta.
+- Preserva o evento de nota publicada para o estudante e republicações.
+- Unit cobre resposta pendente sem dados no payload. Runtime: DEFERRED.
+
 ## 0.1.0-dev.14 — publicação de avaliações — 2026-10-20
 
 - Publica evento após uma resposta passar a avaliada e a cada nova gravação de

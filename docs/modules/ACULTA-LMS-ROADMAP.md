@@ -36,14 +36,14 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**F13 — notificações educacionais: implementação parcial nesta branch.** Eventos de matrícula persistida e emissão
-de certificado passam ao adapter `aculta_lms_messenger`, que grava Message, integra a lista e contagem de Avisos
-da barra multidomínio via pontos de extensão do `aculta_messenger`, e enfileira e-mail transacional mínimo com
-Message Notify. Conclusões aprovadas também entram no resumo diário opt-in já usado pelo Fórum, em e-mail combinado;
-os avisos continuam no site e só são marcados enviados após sucesso. A rota de abertura revalida acesso e purpose.
-Unit cobre subscriber e formatter; configuração de Message, integração do digest, testes de integração e revisão
-visual ainda precisam passar; **RUNTIME STATUS: DEFERRED**. Próximo passo: validar providers e drawer em teste antes
-de RC.
+**F13 — notificações educacionais: implementação parcial nesta branch.** Matrícula e certificado passam ao adapter
+`aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
+transacional mínimo via Message Notify. Conclusão, avaliação publicada e respostas abertas pendentes aparecem sempre
+no painel e no resumo diário opt-in já usado pelo Fórum; educadores recebem resposta pendente apenas com permissão
+`grade students` atual no curso. Mensagens não carregam resposta, nota ou anexo; a rota revalida acesso e purpose.
+Unit e Kernel de instalação confirmam eventos, adapter e descoberta dos hooks; integração de Message/digest,
+revisão visual e Runtime seguem DEFERRED. Próximo: eventos adicionais que tenham fonte persistida, teste de
+integração do digest e revisão visual antes de RC.
 
 **F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
 DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
@@ -210,9 +210,11 @@ Runtime status: DEFERRED.
 transacionais pelo adapter `aculta_lms_messenger`; conclusão de curso e
 avaliação publicada aparecem sempre nos avisos multidomínio e entram no resumo
 diário opt-in. Reavaliações persistidas criam eventos deduplicados por versão,
-inclusive com nota igual. O conteúdo e a nota nunca entram no aviso; destino,
-membership e acesso são revalidados ao exibir. Testes Unit LMS/adapter: 27
-passaram (140 assertions; 5 deprecações do PHPUnit). Integração Runtime e
+inclusive com nota igual. Respostas abertas pendentes avisam educadores com
+permissão atual de correção no curso. O conteúdo, o anexo e a nota nunca entram
+no aviso; destino, membership e acesso são revalidados ao exibir. Testes Unit
+LMS/adapter: 30 passaram (151 assertions; 5 deprecações do PHPUnit). Kernel de instalação passou (4 testes,
+31 assertions; deprecações de `entity_print`). Integração Runtime e
 revisão visual dos avisos: DEFERRED. Permanecem outros eventos de F13, teste do
 digest integrado e os gates/revisões de release.
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms_messenger\Unit;
 
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
+use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
@@ -77,6 +78,19 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
 
     $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
     $subscriber->answerEvaluated(new AnswerEvaluatedEvent('answer-uuid', '27', str_repeat('a', 32)));
+  }
+
+  /**
+   * A submitted response is routed to the notice manager for current graders.
+   */
+  public function testSubmissionNotifiesCurrentCourseEducators(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects($this->once())
+      ->method('recordSubmissionForEducators')
+      ->with('answer-uuid', str_repeat('b', 32));
+
+    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber->answerSubmitted(new AnswerSubmittedEvent('answer-uuid', str_repeat('b', 32)));
   }
 
   /**

@@ -58,7 +58,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * Creates one durable notice per source and recipient; enqueue email once.
    */
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface {
-    if (!in_array($type, ['enrollment', 'certificate', 'completion', 'evaluation'], TRUE)) {
+    if (!in_array($type, ['enrollment', 'certificate', 'completion', 'evaluation', 'submission'], TRUE)) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($uid);
@@ -84,7 +84,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         self::SOURCE_FIELD => $sourceUuid,
         self::EVENT_VERSION_FIELD => $eventVersion,
         self::READ_FIELD => 0,
-        self::DIGEST_FIELD => in_array($type, ['completion', 'evaluation'], TRUE) ? 0 : 1,
+        self::DIGEST_FIELD => in_array($type, ['completion', 'evaluation', 'submission'], TRUE) ? 0 : 1,
         self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
@@ -116,8 +116,40 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'certificate' => $this->resolveCertificate($sourceUuid, $account),
       'completion' => $this->resolveCompletion($sourceUuid, $account),
       'evaluation' => $this->resolveEvaluation($sourceUuid, $account),
+      'submission' => $this->resolveSubmission($sourceUuid, $account),
       default => NULL,
     };
+  }
+
+  /**
+   * Records one pending answer for current course graders.
+   */
+  public function recordSubmissionForEducators(string $answerUuid, string $eventVersion): void {
+    $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $answerUuid]);
+    $answer = reset($answers);
+    if (!$answer instanceof AnswerInterface || $answer->isEvaluated() || $answer->getData() === []) {
+      return;
+    }
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course') {
+      return;
+    }
+    $student = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    if (!$student instanceof UserInterface || !$student->isActive() || !$this->hasCurrentEnrollment($course, $student)) {
+      return;
+    }
+    foreach (GroupMembership::loadByGroup($course) as $membership) {
+      if (!$membership->hasPermission('grade students')) {
+        continue;
+      }
+      $educator = $membership->getEntity();
+      if (!$educator instanceof UserInterface || !$educator->isActive()
+        || (int) $educator->id() === (int) $answer->getUserId()
+        || !$course->hasPermission('grade students', $educator)) {
+        continue;
+      }
+      $this->record($answerUuid, 'submission', (int) $educator->id(), FALSE, $eventVersion);
+    }
   }
 
   /**
@@ -216,7 +248,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $ids = $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $uids = [];
@@ -241,7 +273,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     $rows = [];
@@ -285,7 +317,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
       ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, ['completion', 'evaluation'], 'IN')
+      ->condition(self::EVENT_FIELD, ['completion', 'evaluation', 'submission'], 'IN')
       ->condition(self::DIGEST_FIELD, 0)
       ->execute();
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
@@ -428,6 +460,48 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         '@course' => $course->label(),
       ]),
       'digest_summary' => $this->t('Avaliação disponível no curso @course.', [
+        '@course' => $course->label(),
+      ]),
+      'url' => $url,
+    ];
+  }
+
+  /**
+   * Resolves a pending response only for a current course grader.
+   */
+  private function resolveSubmission(string $sourceUuid, AccountInterface $account): ?array {
+    $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $sourceUuid]);
+    $answer = reset($answers);
+    if (!$answer instanceof AnswerInterface || $answer->isEvaluated() || $answer->getData() === []
+      || !$answer->access('see_details', $account, TRUE)->isAllowed()) {
+      return NULL;
+    }
+    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
+    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+      || !$course->access('view', $account, TRUE)->isAllowed()
+      || !$course->hasPermission('grade students', $account)) {
+      return NULL;
+    }
+    $student = $this->entityTypeManager->getStorage('user')->load((int) $answer->getUserId());
+    if (!$student instanceof UserInterface || !$student->isActive() || !$this->hasCurrentEnrollment($course, $student)) {
+      return NULL;
+    }
+    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.answer.details', [
+      'lms_answer' => $answer->id(),
+      'js' => 'nojs',
+    ]);
+    if ($url === NULL) {
+      return NULL;
+    }
+    return [
+      'title' => $this->t('Resposta aguardando correção'),
+      'summary' => $this->t('Uma nova resposta aguarda correção no curso @course.', [
+        '@course' => $course->label(),
+      ]),
+      'email_summary' => $this->t('Uma nova resposta aguarda correção no curso @course.', [
+        '@course' => $course->label(),
+      ]),
+      'digest_summary' => $this->t('Resposta para correção: @course', [
         '@course' => $course->label(),
       ]),
       'url' => $url,

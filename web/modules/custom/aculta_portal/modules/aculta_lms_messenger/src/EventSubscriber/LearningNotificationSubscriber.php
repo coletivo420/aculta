@@ -8,6 +8,7 @@ use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
+use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,6 +32,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
       CertificateIssuedEvent::NAME => 'certificateIssued',
       CourseCompletedEvent::NAME => 'courseCompleted',
       AnswerEvaluatedEvent::NAME => 'answerEvaluated',
+      AnswerSubmittedEvent::NAME => 'answerSubmitted',
     ];
   }
 
@@ -63,6 +65,18 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     }
     catch (\Throwable $exception) {
       $this->logger->error('Could not record LMS evaluation notice: @message', ['@message' => $exception->getMessage()]);
+    }
+  }
+
+  /**
+   * Records a pending response for course educators.
+   */
+  public function answerSubmitted(AnswerSubmittedEvent $event): void {
+    try {
+      $this->notices->recordSubmissionForEducators($event->answerUuid, $event->publicationVersion);
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error('Could not record LMS submission notice: @message', ['@message' => $exception->getMessage()]);
     }
   }
 

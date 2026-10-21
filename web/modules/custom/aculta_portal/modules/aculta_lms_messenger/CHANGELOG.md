@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_messenger
 
+## 0.1.0-dev.4 — aviso de resposta pendente — 2026-10-20
+
+- Cria avisos para educadores com permissão atual de correção no curso quando
+  chega resposta pendente; a origem e o acesso são revalidados ao abrir.
+- O aviso fica no painel multidomínio e no resumo diário opt-in, sem e-mail
+  transacional e sem conteúdo/resposta/anexo.
+- Testes Unit do produtor e adapter passam; integração Kernel/Runtime e visual:
+  DEFERRED.
+
 ## 0.1.0-dev.3 — avisos de avaliações publicadas — 2026-10-20
 
 - Integra avaliações LMS à central multidomínio e ao resumo diário opt-in do

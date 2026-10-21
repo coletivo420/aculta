@@ -7,16 +7,15 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão `0.1.0-dev.2`. Matrícula, certificado e conclusão aprovada geram aviso no
-painel de avisos da barra multidomínio. Um link revalida acesso à matrícula,
-curso ou certificado, marca o aviso como lido e encaminha para o purpose correto.
-Matrícula/certificado têm e-mail transacional mínimo; conclusão entra no resumo
-diário opt-in existente do Messenger. Falha de envio mantém a pendência para
-nova tentativa; opt-out limpa só o e-mail pendente. Deduplicação usa UUID da
-origem e destinatário.
+Versão `0.1.0-dev.4`. Matrícula, certificado, conclusão, avaliação publicada e
+resposta aberta pendente geram avisos no painel multidomínio. Matrícula e
+certificado têm e-mail transacional mínimo; conclusão, avaliação e resposta
+pendente entram no resumo diário opt-in. Um link revalida acesso e encaminha ao
+purpose correto. Republicações de avaliação usam versão opaca para deduplicar.
+Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
 
 O módulo está em Dev e não foi habilitado no Runtime nesta entrega. Ainda faltam
-eventos LMS adicionais, testes de integração e inspeção visual da gaveta.
+outros eventos LMS, testes de integração e inspeção visual da gaveta.
 
 ## Contratos
 
@@ -27,8 +26,8 @@ eventos LMS adicionais, testes de integração e inspeção visual da gaveta.
   `aculta_messenger_personal_notice_count` do Messenger.
 - Acesso a matrícula é revalidado por membership atual, turma, curso e
   permissões. Acesso a certificado confere o titular e a verificação pública.
-- Mensagens não expiram. Os valores de origem guardam somente UUID e tipo do
-  evento; não guardam resposta, nota ou arquivo.
+- Mensagens não expiram. Os valores de origem guardam somente UUID, tipo e
+  versão opaca do evento; não guardam resposta, nota ou arquivo.
 - A rota de abertura é `/avisos/educacionais/{message}/abrir` em `account` e
   redireciona com URL preparada pelo `DomainPurposeManager`.
 
