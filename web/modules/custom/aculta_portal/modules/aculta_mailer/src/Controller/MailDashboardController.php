@@ -6,10 +6,12 @@ namespace Drupal\aculta_mailer\Controller;
 
 use Drupal\aculta_mailer\Dashboard\MailDashboard;
 use Drupal\aculta_mailer\Diagnostics\MailDiagnostics;
+use Drupal\aculta_mailer\Chart\MailTrendChart;
 use Drupal\aculta_mailer\Diagnostics\SenderDomainCheck;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,48 +58,126 @@ final class MailDashboardController extends ControllerBase {
   }
 
   /**
-   * Página do painel.
+   * Página do painel: período e tipo escolhidos na query (`dias`, `tipo`) valem para gráfico e tabelas.
    */
-  public function overview(): array {
+  public function overview(Request $request): array {
     $now = $this->time->getRequestTime();
+    $days = (int) $request->query->get('dias', 7);
+    if (!in_array($days, MailDashboard::CHART_PERIODS, TRUE)) {
+      $days = 7;
+    }
+    $filter = (string) $request->query->get('tipo', 'todos');
+    if (!array_key_exists($filter, MailDashboard::FILTERS)) {
+      $filter = 'todos';
+    }
+    $since = $now - $days * 86400;
+    $today = intdiv($now, 86400);
+
+    // Uma linha por dia UTC do período, em ordem; dias sem envio entram com zero.
+    $labels = [];
+    $series = [];
+    $categories = [
+      'confirmados' => [$this->t('Confirmados'), '#2e7d32'],
+      'nao_confirmados' => [$this->t('Não confirmados'), '#616161'],
+      'falha' => [$this->t('Com falha'), '#c62828'],
+    ];
+    $perCategory = [];
+    foreach ($categories as $key => [$label, $color]) {
+      $perCategory[$key] = $this->dashboard->dailyCounts($since, MailDashboard::FILTERS[$key]);
+    }
+    for ($day = $today - $days + 1; $day <= $today; $day++) {
+      $labels[] = gmdate('d/m', $day * 86400);
+    }
+    $selected = $filter === 'todos' ? array_keys($categories) : [$filter];
+    $table = [];
+    foreach ($categories as $key => [$label, $color]) {
+      if (!in_array($key, $selected, TRUE)) {
+        continue;
+      }
+      $values = [];
+      for ($day = $today - $days + 1; $day <= $today; $day++) {
+        $values[] = $perCategory[$key][$day] ?? 0;
+      }
+      $series[] = ['label' => (string) $label, 'color' => $color, 'values' => $values];
+      $table[] = array_merge([(string) $label], $values, [array_sum($values)]);
+    }
+
+    $summary = $this->dashboard->summary($since);
+    $total = $filter === 'todos'
+      ? $summary['total']
+      : array_sum(array_map('array_sum', array_intersect_key($perCategory, [$filter => TRUE])));
+
     $build = [
       '#type' => 'container',
       'intro' => [
         '#markup' => '<p>' . $this->t('Aceito pelo sistema de e-mail não é o mesmo que entregue: a entrega depende dos provedores.') . '</p>',
       ],
-      'lista' => [
-        '#type' => 'link',
-        '#title' => $this->t('Ver todos os envios, com filtros'),
-        '#url' => Url::fromRoute('aculta_mailer.log_list'),
-        '#prefix' => '<p>',
-        '#suffix' => '</p>',
+      'controles' => $this->controls($days, $filter),
+      'resumo' => [
+        '#markup' => '<p><strong>' . $this->t('@total envio(s) no período (@tipo)', [
+          '@total' => $total,
+          '@tipo' => (string) $this->filterLabel($filter),
+        ]) . '</strong></p>',
       ],
-      'export' => [
-        '#type' => 'link',
-        '#title' => $this->t('Exportar registro dos últimos 30 dias (CSV)'),
-        '#url' => Url::fromRoute('aculta_mailer.log_export', [], ['query' => ['dias' => 30]]),
-        '#prefix' => '<p>',
-        '#suffix' => '</p>',
-      ],
-    ];
-    foreach (MailDashboard::PERIODS as $days) {
-      $summary = $this->dashboard->summary($now - $days * 86400);
-      $build['period_' . $days] = [
-        '#type' => 'details',
-        '#title' => new TranslatableMarkup('Últimos @days dia(s): @total envio(s)', [
-          '@days' => $days,
-          '@total' => $summary['total'],
+      'tendencia' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-mailer-tendencia']],
+        'grafico' => [
+          '#markup' => Markup::create(MailTrendChart::svg($labels, $series, (string) $this->t('Envios por dia nos últimos @days dias', ['@days' => $days]))),
+        ],
+        'valores' => $this->scrollable([
+          '#type' => 'table',
+          '#caption' => $this->t('Valores do gráfico, por dia'),
+          '#header' => array_merge([$this->t('Série')], $labels, [$this->t('Total')]),
+          '#rows' => $table,
         ]),
-        '#open' => $days === 1,
-        'status_chart' => $this->chart($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
-        'transport_chart' => $this->chart($this->t('Transporte'), $summary['by_transport']),
-        'status' => $this->table($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
-        'type' => $this->table($this->t('Tipo'), $summary['by_type']),
-        'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
-        'error' => $this->table($this->t('Motivo da falha'), $summary['by_error']),
-      ];
-    }
+      ],
+      'status_chart' => $this->chart($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
+      'transport_chart' => $this->chart($this->t('Transporte'), $summary['by_transport']),
+      'status' => $this->table($this->t('Estado'), $this->labelled($summary['by_status'], self::STATUS_LABELS)),
+      'type' => $this->table($this->t('Tipo'), $summary['by_type']),
+      'transport' => $this->table($this->t('Transporte'), $summary['by_transport']),
+      'error' => $this->table($this->t('Motivo da falha'), $summary['by_error']),
+    ];
     return $build;
+  }
+
+  /**
+   * Formulário de seleção (GET, sem JavaScript): período e tipo, com botão de aplicar.
+   */
+  private function controls(int $days, string $filter): array {
+    $periodOptions = '';
+    foreach (MailDashboard::CHART_PERIODS as $option) {
+      $periodOptions .= sprintf('<option value="%d"%s>%s</option>', $option, $option === $days ? ' selected' : '', Html::escape((string) $this->t('Últimos @days dias', ['@days' => $option])));
+    }
+    $typeOptions = '';
+    foreach (array_keys(MailDashboard::FILTERS) as $option) {
+      $typeOptions .= sprintf('<option value="%s"%s>%s</option>', Html::escape($option), $option === $filter ? ' selected' : '', Html::escape((string) $this->filterLabel($option)));
+    }
+    $action = Html::escape(Url::fromRoute('aculta_mailer.dashboard')->toString());
+    return [
+      '#markup' => Markup::create(sprintf(
+        '<form method="get" action="%s" class="aculta-mailer-controles"><label>%s <select name="tipo">%s</select></label> <label>%s <select name="dias">%s</select></label> <button type="submit">%s</button></form>',
+        $action,
+        Html::escape((string) $this->t('Tipo de envio')),
+        $typeOptions,
+        Html::escape((string) $this->t('Período')),
+        $periodOptions,
+        Html::escape((string) $this->t('Aplicar')),
+      )),
+    ];
+  }
+
+  /**
+   * Rótulo de um filtro de tipo.
+   */
+  private function filterLabel(string $filter): TranslatableMarkup {
+    return match ($filter) {
+      'confirmados' => $this->t('Confirmados'),
+      'nao_confirmados' => $this->t('Não confirmados'),
+      'falha' => $this->t('Com falha'),
+      default => $this->t('Todos os e-mails'),
+    };
   }
 
   /**

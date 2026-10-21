@@ -1,3 +1,11 @@
+## 0.1.0-dev.58 — painel de envios com período e tipo nos gráficos — 2026-10-21
+
+- Painel de envios: seletor de período (7, 14 e 30 dias) e de tipo (todos, confirmados, não confirmados, com falha). Valem para o gráfico de tendência, para as contagens e para os quadros de estado, transporte, tipo e motivo. A página usa GET e funciona sem JavaScript.
+- Gráfico de tendência por dia em SVG inline (`Chart\MailTrendChart`): uma linha por série escolhida, legenda, valores repetidos numa tabela e rótulos escapados.
+- Categorias do tipo em `MailDashboard::FILTERS`: confirmados (entregue), não confirmados (na fila, processando, aceito, adiado), com falha (falhou, devolvido, reclamação). Cancelado só aparece em "todos".
+- Dados: série ao vivo do `aculta_mail_log` (`MailDashboard::dailyCounts()`). O painel continua ao vivo, por ser operacional.
+- Testes: Unit 149/149 (inclui `MailTrendChartTest`); Kernel 35/35 (página com filtro de falha e período de 14 dias).
+
 ## 0.1.0-dev.57 — modelo de e-mail das estatísticas para o administrador — 2026-10-21
 
 - Novo tipo `aculta_admin_statistics` (`AdminStatisticsMailType`), com as variáveis `periodo` e `estatisticas`. O texto dos indicadores vem de `StatisticsLinesProviderInterface`, opcional: sem o `aculta_statistics`, o e-mail informa que as estatísticas não estão disponíveis.

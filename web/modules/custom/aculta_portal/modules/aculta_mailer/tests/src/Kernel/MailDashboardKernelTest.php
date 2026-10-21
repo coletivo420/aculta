@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Controller\MailDashboardController;
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -60,15 +61,33 @@ final class MailDashboardKernelTest extends KernelTestBase {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_mailer.dashboard');
     $this->assertSame('administer aculta_mailer', $route->getRequirement('_permission'));
 
-    $page = MailDashboardController::create($this->container)->overview();
-    $this->assertArrayHasKey('period_1', $page);
-    $this->assertArrayHasKey('period_7', $page);
-    $this->assertArrayHasKey('period_30', $page);
+    $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')->create([
+      'correlation_id' => 'a0000000-0000-4000-8000-000000000011',
+      'type' => 'account_created',
+      'recipient_hash' => str_repeat('c', 64),
+      'status' => 'failed',
+      'transport' => 'smtp',
+      'error_code' => 'smtp_550',
+      'created' => time(),
+    ])->save();
+    $request = Request::create('/painel-administrativo/aculta/mail', 'GET', ['dias' => 14, 'tipo' => 'falha']);
+    $page = MailDashboardController::create($this->container)->overview($request);
+    $this->assertArrayHasKey('controles', $page);
+    $this->assertArrayHasKey('tendencia', $page);
+
+    // Gráfico de tendência: só a série escolhida (falha) aparece; o total diz o tipo e o período.
+    $html = (string) $this->container->get('renderer')->renderInIsolation($page);
+    $this->assertStringContainsString('<svg', $html);
+    $this->assertSame(1, substr_count($html, '<polyline'), 'Filtro falha desenha só uma série.');
+    $this->assertStringContainsString('<option value="14" selected', $html, 'Período escolhido fica selecionado.');
+    $this->assertStringContainsString('<option value="falha" selected', $html, 'Tipo escolhido fica selecionado.');
 
     // Gráfico por estado: barras nativas com o valor em texto (acessível sem cor).
-    $html = (string) $this->container->get('renderer')->renderInIsolation($page['period_1']['status_chart']);
-    $this->assertStringContainsString('<progress', $html);
-    $this->assertSame(count(\Drupal\aculta_mailer\Message\MailStatus::cases()), substr_count($html, '<progress'), 'Uma barra por estado.');
+    // Uma página nova: renderInIsolation marca os filhos já impressos e devolveria vazio.
+    $fresh = MailDashboardController::create($this->container)->overview($request);
+    $status_html = (string) $this->container->get('renderer')->renderInIsolation($fresh['status_chart']);
+    $this->assertStringContainsString('<progress', $status_html);
+    $this->assertSame(count(\Drupal\aculta_mailer\Message\MailStatus::cases()), substr_count($status_html, '<progress'), 'Uma barra por estado.');
   }
 
   /**

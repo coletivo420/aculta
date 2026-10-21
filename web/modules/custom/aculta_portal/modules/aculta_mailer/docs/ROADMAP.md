@@ -57,6 +57,11 @@ Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser de
 - Caminho administrativo: `/painel-administrativo/...`, conforme decisão do responsável.
 - Local dos templates de layout: módulo, com estilos vindos do tema via dados e classes (decisão do responsável).
 
+## Painel de envios com período e tipo (2026-10-21)
+
+- Feito (0.1.0-dev.58): seletor de período (7, 14 e 30 dias) e de tipo nos gráficos e quadros do painel. Gráfico de tendência em SVG inline. Regra do projeto: todo gráfico tem seletor de período; ver `aculta_statistics/docs/adr/ADR-0005-periodo-em-graficos.md`.
+- Pendente: validar o painel no navegador (Firefox) com envios reais de cada tipo, no Runtime.
+
 ## Produtor de eventos para estatísticas (ADR-0004 do aculta_statistics)
 
 Pendente. O resumo de envios por estado exato (nove estados) precisa de um consumidor que o

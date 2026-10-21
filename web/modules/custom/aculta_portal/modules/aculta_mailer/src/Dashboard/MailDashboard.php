@@ -24,6 +24,25 @@ final class MailDashboard {
   public const PERIODS = [1, 7, 30];
 
   /**
+   * Períodos selecionáveis no gráfico e nas tabelas, em dias.
+   */
+  public const CHART_PERIODS = [7, 14, 30];
+
+  /**
+   * Filtros de tipo do painel e os estados de cada um. `todos` não restringe.
+   *
+   * `confirmados`: entrega confirmada pelo provedor. `nao_confirmados`: ainda sem confirmação (na fila,
+   * processando, aceito ou adiado). `falha`: falha de envio, devolução ou reclamação. `cancelled` só aparece
+   * em `todos`.
+   */
+  public const FILTERS = [
+    'todos' => NULL,
+    'confirmados' => ['delivered'],
+    'nao_confirmados' => ['queued', 'processing', 'sent', 'deferred'],
+    'falha' => ['failed', 'bounced', 'complained'],
+  ];
+
+  /**
    * Tabela de registros (mesmo nome da entidade aculta_mail_log).
    */
   private const TABLE = MailLogRecorder::ENTITY_TYPE;
@@ -116,6 +135,33 @@ final class MailDashboard {
       ->range(0, $limit)
       ->execute();
     return array_map(static fn(object $row): array => (array) $row, $rows->fetchAll());
+  }
+
+  /**
+   * Contagem de envios por dia UTC desde o instante, opcionalmente restrita a estados.
+   *
+   * @param int $since
+   *   Instante inicial, em timestamp Unix.
+   * @param string[]|null $statuses
+   *   Estados a contar; NULL conta todos.
+   *
+   * @return array<int, int>
+   *   Número do dia UTC (timestamp dividido por 86400) para a quantidade de envios.
+   */
+  public function dailyCounts(int $since, ?array $statuses = NULL): array {
+    $query = $this->table()
+      ->fields('log', ['created'])
+      ->condition('log.created', $since, '>=');
+    if ($statuses !== NULL) {
+      $query->condition('log.status', $statuses, 'IN');
+    }
+    $days = [];
+    foreach ($query->execute() as $row) {
+      $day = intdiv((int) $row->created, 86400);
+      $days[$day] = ($days[$day] ?? 0) + 1;
+    }
+    ksort($days);
+    return $days;
   }
 
   /**
