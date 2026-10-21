@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
+use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EditorialContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -26,6 +27,9 @@ use Drupal\views\EntityViewsData;
   label_collection: new TranslatableMarkup('Publicações do Fórum'),
   handlers: [
     'access' => '\\Drupal\\Core\\Entity\\EntityAccessControlHandler',
+    'form' => [
+      'default' => ContentEntityForm::class,
+    ],
     'views_data' => EntityViewsData::class,
   ],
   base_table: 'aculta_forum_post',
@@ -92,6 +96,12 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
       ->setLabel(new TranslatableMarkup('Assunto'))
       ->setSetting('max_length', 255)
       ->setRevisionable(TRUE);
+    $fields['subject']
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
     $fields['body'] = BaseFieldDefinition::create('text_long')
       ->setLabel(new TranslatableMarkup('Texto'))
       ->setRequired(TRUE)

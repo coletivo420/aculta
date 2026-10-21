@@ -1,3 +1,9 @@
+## `0.1.0-dev.139` — prepara formulário da publicação revisionável
+
+- A entidade registra `ContentEntityForm` como handler padrão e define widgets de assunto, corpo e estado de moderação no display `default`. Campos contextuais e metadados permanecem ocultos.
+- Nenhuma rota ou entrada de formulário foi ligada; a criação continua indisponível até a integração contextual e a equivalência da migração.
+- Configuração de instalação e Config Sync mantidas idênticas. Sem alteração no Runtime.
+
 ## `0.1.0-dev.138` — prepara view mode de post revisionável
 
 - O view mode `default` renderiza assunto e corpo pelo formatter de texto do Core; campos internos, relações e metadados de revisão ficam ocultos.

@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.139` | Preparar handler e widgets Form API | A entidade passa a declarar `ContentEntityForm`; assunto, corpo e estado usam widgets Core no display `default`. Sem rota, formulário exposto ou alteração no Runtime; a criação aguarda integração contextual e equivalência migratória. |
 | `0.1.0-dev.138` | Preparar renderização de post revisionável | O display `default` usa formatters de texto do Core e oculta metadados internos; `aculta_user` renderiza autoria User/histórica. Nenhuma rota, formulário ou corte foi ativado; Comments seguem ativos. Gates Portal e índice PASS; sem Runtime. |
 | `0.1.0-dev.137` | Preservar autoria histórica na entidade revisionável | Campo-base revisionável `legacy_author` aponta a `aculta_legado_autor`; Unit e PHPCS PASS. Runtime: cache reconstruído, campo descoberto e sem tabelas da entidade; HTTP 200/302 esperado. Migrador e equivalência pendentes; sem alteração de conteúdo/configuração. |
 | `0.1.0-dev.136` | Acesso contextual e permissões do post revisionável | Criação só no purpose `forum`; leitura/edição de autoria limitadas ao tópico público publicado; administração no purpose `main`; papéis recebem permissões Core de transição. Unit access e janela PASS. Leitura integrada, formulários, migração de Comments e corte permanecem pendentes. Dev, cache do Runtime reconstruído sem erros HTTP/PHP novos. |
