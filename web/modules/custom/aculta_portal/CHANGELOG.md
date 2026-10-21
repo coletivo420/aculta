@@ -1,3 +1,15 @@
+## 0.4.0-dev.242 — aviso de e-mail não confirmado: caixa de atenção e título do aviso persistente — 2026-10-21
+
+- `EmailConfirmationNotice` mantém o aviso em "Minha conta", agora como caixa de atenção (`notice-warning`). O título passa pelo ponto `aculta_portal_email_notice` (alter), que o aculta_messenger usa para trazer o aviso persistente do sistema de avisos.
+- `aculta_portal.services.yml`: `module_handler` injetado em `aculta_portal.email_confirmation_notice`.
+- `EmailConfirmationPolicy::markConfirmed()` invoca `aculta_portal_email_confirmed` (uid) depois de gravar a confirmação e o papel; o aculta_messenger remove o aviso persistente nesse ponto, sem depender de `user_update` (a conta pode não ser salva se o papel já existe). `module_handler` injetado na política.
+- `aculta_portal.info.yml` 0.4.0-dev.242. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro).
+
+## 0.4.0-dev.241 — bloco "Alteração pendente" com parágrafos próprios — 2026-10-21
+
+- E-mail pendente e mensagem da aba E-mail passam a ser elementos `<p>` (`aculta_portal_element`), no lugar de texto solto que colava as duas linhas. Sem classe de design: o espaçamento está no tema aculta420 0.6.0-dev.135.
+- `aculta_portal.info.yml` 0.4.0-dev.241. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro de testes).
+
 ## 0.4.0-dev.240 — troca de e-mail incorporada ao aculta_user; contrib change_mail_page retirado — 2026-10-21
 
 - Dependência `change_mail_page` removida de `aculta_portal.info.yml`. A aba E-mail da Segurança recebe o formulário pelo ponto `aculta_portal_changemail` (alter), entregue pelo aculta_user (`ChangemailForm`). O Portal só monta a aba e a mensagem de "sem serviço de mensagens".

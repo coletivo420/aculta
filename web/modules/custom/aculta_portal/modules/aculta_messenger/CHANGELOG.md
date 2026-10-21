@@ -1,3 +1,9 @@
+## 0.1.1-dev.69 — aviso persistente de e-mail não confirmado — 2026-10-21
+
+- Modelo de aviso `aculta_msg_email_pendente` (config em `config/sync`): aviso persistente de quem não confirmou o e-mail, no sistema de avisos (entidade `message`). Sem dados pessoais.
+- `EmailPendingAvisoHooks`: garante o aviso ao exibir o aviso de atenção (`aculta_portal_email_notice_alter`) e remove o aviso quando o e-mail é confirmado (`user_update`).
+- `aculta_messenger.info.yml` 0.1.1-dev.69. RUNTIME STATUS: DEFERRED (teste no X11 registrado no roteiro).
+
 ## 0.1.1-dev.68 — remoção do notificador de mensagens privadas com corpo — 2026-10-21
 
 - `private_message_notify` estava ativo ao lado do Messenger, combinação que o próprio guard do módulo proíbe (o template padrão expõe o corpo da mensagem privada). Foi desinstalado do Runtime, sem avisos nem tabelas próprias. O código continua no pacote `drupal/private_message`.

@@ -379,8 +379,8 @@ final class PortalController extends ControllerBase {
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
           'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
-          'email' => ['#plain_text' => $pending_email],
-          'message' => ['#plain_text' => $this->t('Aguardando confirmação no novo endereço.')],
+          'email' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $pending_email],
+          'message' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Aguardando confirmação no novo endereço.')],
         ];
       }
     }

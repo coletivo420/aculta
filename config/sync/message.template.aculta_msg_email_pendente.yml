@@ -1,0 +1,22 @@
+uuid: 0b6f2a9e-5c1d-4e8a-9f3b-7d2c1a4e6f08
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_email_pendente
+label: 'Aviso de e-mail pendente ACULTA'
+description: 'Aviso persistente de e-mail não confirmado. Sem dados pessoais; some quando o e-mail é confirmado.'
+text:
+  -
+    value: 'Seu e-mail precisa ser confirmado.'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

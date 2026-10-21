@@ -1,3 +1,17 @@
+## 0.6.0-dev.136 — caixa de atenção para e-mail não confirmado — 2026-10-21
+
+Classificação: PATCH (classe de aviso com tokens de estado de atenção já existentes).
+
+- `.aculta-email-notice` em `account.css`: caixa de atenção (`--aculta-status-warning-*`, nos modos claro e escuro) no aviso de e-mail não confirmado de "Minha conta".
+- `aculta420.info.yml` 0.6.0-dev.136. RUNTIME STATUS: DEFERRED (inspeção visual no X11 registrada no roteiro).
+
+## 0.6.0-dev.135 — espaçamento do bloco "Alteração pendente" na aba E-mail — 2026-10-21
+
+Classificação: PATCH (ajuste de CSS; sem mudança nos tokens).
+
+- `.aculta-security-pending` ganha espaçamento entre título, e-mail e mensagem; o e-mail e a mensagem passam a ser parágrafos (o módulo emite `<p>`, sem classe de design), e o texto longo quebra dentro do bloco.
+- `aculta420.info.yml` 0.6.0-dev.135. RUNTIME STATUS: DEFERRED (inspeção visual no X11 pendente de registro).
+
 ## 0.6.0-dev.134 — token próprio para as ações da foto de perfil — 2026-10-21
 
 Classificação: PATCH (token novo e regra de linha de ações; sem mudança nos tokens existentes).

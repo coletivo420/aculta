@@ -59,7 +59,7 @@ services:
       - { name: aculta_portal.implementation }
   aculta_portal.email_confirmation_notice:
     class: Drupal\aculta_portal\Account\EmailConfirmationNotice
-    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation']
+    arguments: ['@aculta_portal.email_confirmation_policy', '@current_user', '@current_route_match', '@string_translation', '@module_handler']
   aculta_portal.email_confirmation_request_mail_type:
     class: Drupal\aculta_portal\Email\EmailConfirmationRequestMailType
     arguments: ['@string_translation']
@@ -100,7 +100,7 @@ services:
       - { name: aculta_mailer.tracking_consent }
   aculta_portal.email_confirmation_policy:
     class: Drupal\aculta_portal\Account\EmailConfirmationPolicy
-    arguments: ['@user.data', '@entity_type.manager']
+    arguments: ['@user.data', '@entity_type.manager', '@module_handler']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.email_confirmation_subscriber:
