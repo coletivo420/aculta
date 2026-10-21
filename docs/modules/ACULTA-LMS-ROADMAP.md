@@ -424,6 +424,16 @@ antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
 
+Na revisão seguinte, `docs/portal/SECURITY-ACCESS-FILES-MATRIX.md` foi alinhada à
+implementação: certificados usam snapshot próprio, Entity Print/Dompdf e
+`aculta_qrcode`; painéis são montados pelos serviços LMS e Group, sem depender de
+Views. A matriz também explicita que compra ativa protege matrícula manual e
+que reembolso revoga apenas a matrícula ligada ao pedido, e detalha os pontos
+de cache e isolamento ainda exigidos. Regressão atual LMS/Messenger: Unit 86/460
+e Kernel MariaDB dedicado 23/730 PASS; gate Portal 1010 checks e índice 29
+componentes PASS. Permanecem depreciações upstream, visual/Runtime incompletos
+e validação em PHP 8.5.
+
 Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
 e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de
 curso/estudante são resolvidas pelas listas dos campos; ausência resulta em 422,
