@@ -1,3 +1,10 @@
+## 0.1.0-dev.57 — modelo de e-mail das estatísticas para o administrador — 2026-10-21
+
+- Novo tipo `aculta_admin_statistics` (`AdminStatisticsMailType`), com as variáveis `periodo` e `estatisticas`. O texto dos indicadores vem de `StatisticsLinesProviderInterface`, opcional: sem o `aculta_statistics`, o e-mail informa que as estatísticas não estão disponíveis.
+- `MailSummary` envia o modelo junto do resumo semanal, para os mesmos destinatários, no cron semanal (`MailSummary::buildStatistics()`).
+- O resumo semanal de envios continua só com dados de envio.
+- Testes: Unit 146 casos, aprovados (inclui o novo tipo).
+
 ## 0.1.0-dev.56 — MAIL FROM com endereço de retorno no SMTP — 2026-10-20
 
 - `MailTransportSender::envelopeFor()`: para transporte SMTP, o envelope (MAIL FROM) usa o `bounce_address` configurado.

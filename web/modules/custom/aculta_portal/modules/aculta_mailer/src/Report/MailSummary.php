@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Queue\MailQueue;
+use Drupal\aculta_mailer\Type\AdminStatisticsMailType;
 use Drupal\aculta_mailer\Type\WeeklySummaryMailType;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
@@ -45,6 +46,7 @@ final class MailSummary {
     private readonly MailQueue $queue,
     private readonly UuidInterface $uuid,
     private readonly AdministratorRecipients $administrators,
+    private readonly ?StatisticsLinesProviderInterface $statistics = NULL,
   ) {}
 
   /**
@@ -66,8 +68,10 @@ final class MailSummary {
     // Marca antes de enfileirar: uma falha de fila não gera resumos repetidos a cada cron.
     $this->state->set(self::STATE_LAST, $now);
     $summary = $this->build($now);
+    $statistics = $this->buildStatistics($now);
     foreach ($recipients as $recipient) {
       $this->queue->enqueue(new MailMessage(WeeklySummaryMailType::ID, $recipient, 'pt-br', $summary, $this->uuid->generate()));
+      $this->queue->enqueue(new MailMessage(AdminStatisticsMailType::ID, $recipient, 'pt-br', $statistics, $this->uuid->generate()));
     }
   }
 
@@ -89,6 +93,24 @@ final class MailSummary {
       'rebotes' => (string) $current['status']['bounced'],
       'anterior' => (string) $previous['total'],
       'motivos' => $this->reasons($now - $week, $now),
+    ];
+  }
+
+  /**
+   * Variáveis do modelo de estatísticas da plataforma até `$now`, na semana anterior.
+   *
+   * @return array<string, string>
+   *   `periodo` e `estatisticas`.
+   */
+  public function buildStatistics(int $now): array {
+    $week = self::INTERVAL;
+    $lines = $this->statistics?->lines($now - $week, $now) ?? [];
+    $text = $this->statistics === NULL
+      ? 'Estatísticas indisponíveis: o módulo de estatísticas não está instalado.'
+      : ($lines === [] ? '-' : implode("\n", $lines));
+    return [
+      'periodo' => date('d/m/Y', $now - $week) . ' a ' . date('d/m/Y', $now),
+      'estatisticas' => $text,
     ];
   }
 

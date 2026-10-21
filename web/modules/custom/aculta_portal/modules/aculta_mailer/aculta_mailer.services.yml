@@ -145,13 +145,19 @@ services:
     tags:
       - { name: aculta_mailer.type }
 
+  Drupal\aculta_mailer\Type\AdminStatisticsMailType:
+    class: Drupal\aculta_mailer\Type\AdminStatisticsMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
   Drupal\aculta_mailer\Alert\MailAlerts:
     class: Drupal\aculta_mailer\Alert\MailAlerts
     arguments: ['@config.factory', '@state', '@datetime.time', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients']
 
   Drupal\aculta_mailer\Report\MailSummary:
     class: Drupal\aculta_mailer\Report\MailSummary
-    arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients']
+    arguments: ['@config.factory', '@state', '@datetime.time', '@entity_type.manager', '@aculta_mailer.queue', '@uuid', '@Drupal\aculta_mailer\Delivery\AdministratorRecipients', '@?Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface']
 
   Drupal\aculta_mailer\Log\MailLogRetention:
     class: Drupal\aculta_mailer\Log\MailLogRetention
