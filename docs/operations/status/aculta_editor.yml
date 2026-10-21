@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Pendente antes de RC: verificação do envelope de e-mail em modo escuro e automático por envio real (exige alterar o modo de cor do site, com sua autorização); revisão visual no cliente de e-mail; decisão sobre o título H1 (mantido fora) ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))
+next_phase: 'Pendente antes de RC: verificação do envelope de e-mail em modo escuro e automático por envio real (exige alterar o modo de cor do site, com sua autorização); revisão visual no cliente de e-mail; decisão sobre o título H1 (mantido fora) ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'
