@@ -8,6 +8,10 @@ services:
   aculta_lms.learning_dashboard:
     class: Drupal\aculta_lms\LearningDashboardManager
     arguments: ['@?aculta_portal.account_courses', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@?lms.training_manager']
+  aculta_lms.student_status_cron_hooks:
+    class: Drupal\aculta_lms\Hook\StudentStatusSnapshotCronHooks
+    arguments: ['@aculta_lms.learning_dashboard', '@entity_type.manager', '@event_dispatcher', '@?aculta_user.aculta_user_agreement_ledger']
+
   # Alias por classe: o hook de cron recebe o gerenciador por tipo.
   Drupal\aculta_lms\LearningDashboardManager: '@aculta_lms.learning_dashboard'
   aculta_lms.class_dashboard_access:

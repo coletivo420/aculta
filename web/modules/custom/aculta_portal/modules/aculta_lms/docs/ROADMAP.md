@@ -20,4 +20,7 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
   contagens por turma, sem identificação de aluno.
 - Decidido (2026-10-21, responsável): série diária por turma, com a supressão de célula pequena (menos de 5
   alunos) já existente em `CellSuppression`.
+- Decidido (2026-10-21, responsável): série diária **por aluno**, sob o aceite único (Termos e Política), sem
+  checkbox separado. Implementado no 0.1.0-dev.79 (`StudentStatusSnapshotEvent`). Vale depois da publicação da função
+  na política (`docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`).
 - Não incluir: notas, respostas e progresso individual. O painel individual fica fora da central.

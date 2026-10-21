@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.79 (situação por aluno para a série, sob o aceite único)
+
+- `StudentStatusSnapshotEvent` (`aculta_lms.student_status_snapshot`) emitido no cron com uma linha por curso e aluno. Só entram alunos com aceite único vigente (`aculta_user_agreement_terms`). Um aluno em duas turmas do mesmo curso conta uma vez.
+- `StudentStatusSnapshotCronHooks`: sem o ledger instalado, não emite nada (`@?aculta_user.aculta_user_agreement_ledger`).
+- `countClassStatuses($class, $course, TRUE)` devolve `by_student`. O painel não pede esse dado; o comportamento não mudou.
+- Dependência declarada em `aculta_user`.
+- Testes: Unit 71 (sem mudança de resultado). Sem turmas no Runtime de teste; o caminho com linhas não foi observado lá.
+
 ## 0.1.0-dev.78 — instantâneo diário da situação por turma para estatísticas — 2026-10-21
 
 - `ClassStatusSnapshotCronHooks` emite `ClassStatusSnapshotEvent` (`aculta_lms.class_status_snapshot`) no cron, com uma linha por turma e situação (alunos, não iniciados, em andamento, aguardando avaliação, aprovados, reprovados). Só contagens agregadas; nenhum aluno é identificado.

@@ -173,12 +173,11 @@ final class LearningDashboardManager {
    *
    * The dashboard calls it after its access check. The daily class snapshot on cron calls it directly.
    *
-   * @return array{students: int, not_started: int, in_progress: int, pending_evaluation: int, passed: int, failed: int, cache: \Drupal\Core\Cache\CacheableMetadata}
-   *   Counts by situation and the cache metadata of the membership and status data read.
+   * @return array{students: int, not_started: int, in_progress: int, pending_evaluation: int, passed: int, failed: int, cache: \Drupal\Core\Cache\CacheableMetadata, by_student?: array<int, string>}
+   *   Counts by situation and the cache metadata of the membership and status data read. `by_student` (uid to
+   *   situation) só com `$perStudent`.
    */
-  public function countClassStatuses(GroupInterface $class, CourseInterface $course): array {
-
-
+  public function countClassStatuses(GroupInterface $class, CourseInterface $course, bool $perStudent = FALSE): array {
     $members = [];
     $memberAccessCache = new CacheableMetadata();
     foreach (GroupMembership::loadByGroup($class) as $membership) {
@@ -236,10 +235,12 @@ final class LearningDashboardManager {
     foreach ($statuses as $status) {
       $statuses_by_student[(int) $status->getUserId()] = $status;
     }
+    $bySituation = [];
     foreach ($members as $member_id => $member) {
       $status = $statuses_by_student[$member_id] ?? NULL;
       if ($status === NULL || $status->getStatus() === CourseStatusInterface::STATUS_NEW) {
         $result['not_started']++;
+        $bySituation[(int) $member_id] = 'not_started';
         continue;
       }
       $key = match ($status->getStatus()) {
@@ -251,8 +252,13 @@ final class LearningDashboardManager {
       };
       if ($key !== NULL) {
         $result[$key]++;
+        $bySituation[(int) $member_id] = $key;
       }
       $result['cache']->addCacheableDependency($status);
+    }
+    // Situação por aluno: só quando pedida (série por aluno, com consentimento pelo aceite único). O painel não pede.
+    if ($perStudent) {
+      $result['by_student'] = $bySituation;
     }
     return $result;
   }
