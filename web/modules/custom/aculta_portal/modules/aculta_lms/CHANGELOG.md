@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.42 — alinhar carga horária ao schema Core — 2026-10-21
+
+- A configuração exportada do campo `field_course_hours` agora registra os
+  valores padrão que o Core materializa (`min`, `max`, `prefix`, `suffix`),
+  evitando drift após a criação no Runtime.
+- O campo e o widget foram aplicados por importação parcial revisada no Runtime;
+  zero valores foram criados. `config:status` confirma storage e definição do
+  campo sem diferenças; o display permanece diferente por configurações locais
+  preservadas fora deste escopo.
+
 ## 0.1.0-dev.41 — cobrir acesso genérico ao snapshot de certificado — 2026-10-21
 
 - Kernel confirma que até administradores não visualizam nem criam snapshots

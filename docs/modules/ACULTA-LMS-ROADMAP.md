@@ -202,7 +202,10 @@ exatamente duas criações e uma atualização; a configuração anterior do for
 foi guardada para recuperação e os demais itens locais foram preservados. O
 campo existe agora, mas tem zero valores e não há status aprovado; não foi criada
 uma conclusão artificial nem certificado público. Portanto, ainda não existe
-fixture real elegível para smoke positivo. O 404 inicial foi corrigido por
+fixture real elegível para smoke positivo. Após materializar os padrões do Core
+no YAML canônico, `config:status` não aponta diferença na storage nem na
+definição do campo; o display continua com diferenças locais anteriores, que
+foram preservadas. O 404 inicial foi corrigido por
 `drush cr`, que atualizou um container compilado com argumentos antigos do
 serviço. RUNTIME STATUS: parcial; campo e formulário ativos, emissão positiva,
 QR/PDF válidos para código real e revisão visual continuam DEFERRED.
