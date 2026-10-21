@@ -1,5 +1,16 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.4 — formatter DOCX integrado ao Drupal e testado no Runtime (0.1.0-dev.5 do plano) — 2026-10-21
+
+- `Plugin\Field\FieldFormatter\DocxMediaFormatter` (`aculta_document_docx_media`): campos `file` de qualquer entidade (Media ou nó). Verifica a entidade hospedeira, o campo e o arquivo (download) antes de montar o leitor. Sem acesso, o elemento sai com `#access` FALSE.
+- `Docx\DocxViewerBuilder`: valida o pacote com `DocxPackageValidator`, aceita só `public://` e `private://`, e gera a URL pelo Core (`file_url_generator`). Estrutura inválida ou URI remoto: sem leitor, só o link do Core.
+- Biblioteca `aculta_document_viewer/docx` com `js/docx-viewer-behavior.mjs`, carregada somente quando há DOCX autorizado. Monta o iframe isolado e esconde o leitor em caso de falha; o link de download continua.
+- Serviços `aculta_document_viewer.docx_package_validator` e `aculta_document_viewer.docx_builder`.
+- Testes Unit: builder recusa URI remoto, pacote inválido e caminho não resolvido (41 testes no total do módulo, OK).
+- Runtime (sessão X11, Chromium, `https://aculta.toca.net.br`): DOCX válido renderizado no iframe (`sandbox="allow-scripts"`), pai sem acesso ao DOM do iframe, link de download presente. DOCX corrompido: sem leitor, link mantido (200). Página de Media privada de nó não publicado: 403 para anônimo; arquivo privado: 404, igual ao de um caminho inexistente.
+- Fixtures de teste criados e removidos; displays `node.document` restaurados ao formatter PDF (verificado no config).
+- Ainda não ativado nos displays de produção: os displays `media.document` e `node.document` continuam com o formatter PDF.
+
 ## 0.1.0-dev.3 — renderizador isolado do DOCX (etapa de isolamento do plano) — 2026-10-21
 
 - `docx/docx-frame.html` e `docx/docx-frame.js`: página estática do próprio módulo, renderizada em `<iframe sandbox="allow-scripts">` sem `allow-same-origin`. CSP em `<meta>` com `script-src 'self'`, `connect-src 'none'`, `img-src blob: data:`. Bootstrap externo (script inline é bloqueado pelo CSP).

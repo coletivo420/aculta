@@ -5,3 +5,12 @@ viewer:
         type: module
   dependencies:
     - core/drupal
+
+docx:
+  js:
+    js/docx-viewer-behavior.mjs:
+      attributes:
+        type: module
+  dependencies:
+    - core/drupal
+    - core/once

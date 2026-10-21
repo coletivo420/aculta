@@ -15,3 +15,10 @@ services:
   logger.channel.aculta_document_viewer:
     parent: logger.channel_base
     arguments: ['aculta_document_viewer']
+
+  aculta_document_viewer.docx_package_validator:
+    class: Drupal\aculta_document_viewer\Docx\DocxPackageValidator
+
+  aculta_document_viewer.docx_builder:
+    class: Drupal\aculta_document_viewer\Docx\DocxViewerBuilder
+    arguments: ['@file_url_generator', '@file_system', '@aculta_document_viewer.docx_package_validator', '@extension.list.module', '@logger.channel.aculta_document_viewer']
