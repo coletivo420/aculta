@@ -87,9 +87,8 @@ Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor
 
 - **Fórum (feito, 0.1.0-dev.127 do aculta_forum):** `aculta_forum.topic_created` e `aculta_forum.comment_created`
   → `forum.topics.created` e `forum.comments.created`. Pendente: validação no Runtime.
-- **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`). Ver
-  `aculta_mailer/docs/ROADMAP.md`.
-- **LMS (pendente):** instantâneo por turma (`lms.students.by_status`). Ver `aculta_lms/docs/ROADMAP.md`.
+- **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`), estado atual por dia de solicitação (decidido em 2026-10-21). Ver `aculta_mailer/docs/ROADMAP.md`.
+- **LMS (pendente):** instantâneo por turma (`lms.students.by_status`), série diária (decidido em 2026-10-21). Ver `aculta_lms/docs/ROADMAP.md`.
 
 ## Centralização (decisão de 2026-10-21, ADR-0004)
 
