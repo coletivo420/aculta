@@ -106,8 +106,16 @@ services:
   Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
   Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
   # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.
+  aculta_statistics.ga4_settings:
+    class: Drupal\aculta_statistics\Connector\Ga4\SecretsGa4Settings
+    arguments: ['@aculta_portal.secrets_manager']
+  aculta_statistics.ga4_logger:
+    class: Psr\Log\LoggerInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_statistics']
   aculta_statistics.ga4_client:
-    class: Drupal\aculta_statistics\Connector\Ga4\NullGa4ReportClient
+    class: Drupal\aculta_statistics\Connector\Ga4\GoogleGa4ReportClient
+    arguments: ['@aculta_statistics.ga4_settings', '@aculta_statistics.ga4_logger']
   Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient: '@aculta_statistics.ga4_client'
   Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
   Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
