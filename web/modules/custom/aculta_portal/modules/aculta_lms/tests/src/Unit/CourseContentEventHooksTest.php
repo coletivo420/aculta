@@ -66,6 +66,21 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
+   * Editorial changes to already released content do not create notices.
+   */
+  public function testEditorialActivityUpdateDoesNotPublishRelease(): void {
+    $original = $this->createMock(Activity::class);
+    $original->method('isPublished')->willReturn(TRUE);
+    $activity = $this->createMock(Activity::class);
+    $activity->method('isPublished')->willReturn(TRUE);
+    $activity->method('getOriginal')->willReturn($original);
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+
+    (new CourseContentEventHooks($dispatcher))->entityUpdate($activity);
+  }
+
+  /**
    * Adding a published activity to a published lesson creates a release event.
    */
   public function testAddingPublishedActivityToLessonPublishesRelease(): void {

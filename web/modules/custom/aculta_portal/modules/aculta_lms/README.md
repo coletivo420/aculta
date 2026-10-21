@@ -350,6 +350,10 @@ do aviso e lembrete, integração com aviso pessoal e worker; as fixtures e fila
 foram removidas. Não houve envio de e-mail nem espera pelo Cron agendado. A
 revisão visual autenticada permanece DEFERRED até o aceite do acordo geral pelo
 responsável.
+`CourseContentEventHooksTest` também confirma que editar uma atividade já
+publicada sem liberar conteúdo novo não gera aviso: F13 notifica transições e
+mudanças acionáveis, não edição editorial. Focal 4 testes/11 assertions; Unit
+LMS/Messenger 79/407 PASS (8 depreciações PHPUnit).
 
 ## Testes
 

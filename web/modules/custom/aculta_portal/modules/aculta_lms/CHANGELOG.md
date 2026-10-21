@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.63 — suprimir aviso em edição editorial — 2026-10-21
+
+- `CourseContentEventHooksTest` confirma que editar atividade já publicada sem
+  liberar conteúdo novo não produz aviso, conforme a decisão F13 de notificar
+  somente eventos acionáveis persistidos. Focal: 4 testes / 11 assertions PASS;
+  Unit LMS/Messenger: 79/407 PASS, com 8 depreciações PHPUnit.
+
 ## 0.1.0-dev.62 — isolar certificados no painel do estudante — 2026-10-21
 
 - O Kernel cria certificados de duas contas e confirma que o painel retorna
