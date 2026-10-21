@@ -38,7 +38,7 @@ para centralizar estatísticas (ADR-0004). Não é auditoria externa.
 - **Cliente GA4 real (0.6.0):** o padrão é o cliente nulo, desligado. A dependência `google/apiclient` tem justificativa proposta (ADR-0006), mas não foi instalada: `composer.json` e `composer.lock` têm alterações não commitadas de outra frente. Espera a outra frente commitar.
 - **Search Console:** só os cálculos portados (janela e delta). Sem consulta à API.
 - **Painéis em tema Claro:** as telas de estatísticas e de envios usam o tema administrativo Claro. O CSS do ACULTA420 para elas (`statistics.css`) não se aplica a essas telas. Decisão do responsável (2026-10-21): ajustar só o conteúdo.
-- **Testes funcionais e multidomínio:** não feitos neste ciclo. Só Unit e Kernel.
+- **Testes funcionais e multidomínio:** `StatisticsDashboardFunctionalTest` escrito (acesso anônimo bloqueado, administrador com período e CSV, área inexistente 404), mas **não executado**: exige um site de teste com `SIMPLETEST_BASE_URL`, e o procedimento proíbe usar o Runtime. Pulado sem essa variável. Na captura de navegador do servidor de testes, o acesso anônimo ao painel foi negado e o administrador viu a página. Testes multidomínio não feitos.
 - **Auditoria de licenças:** a matriz de portabilidade (`PORTABILITY-MATRIX.md`) cobre as dependências atuais. Nenhuma dependência nova foi adicionada.
 - **Revisão visual de todos os painéis por área:** verificado só o de mídia, e o de envios.
 - **Teste de carga:** não feito.
