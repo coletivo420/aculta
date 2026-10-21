@@ -226,7 +226,7 @@ registrou 90 depreciações de Core/contrib e a Unit, 5 avisos do PHPUnit.
 `ClassActivityDeadlineFormTest`: 2 testes/8 assertions PASS para fuso da conta e
 fallback UTC. O total Unit passa a 38 testes/169 assertions.
 O Kernel de entrega privada `AttemptArchiveLifecycleTest` agora tem 8
-testes/324 assertions PASS; a suíte Kernel total fica em 18 testes/511
+testes/324 assertions PASS; a suíte Kernel total fica em 18 testes/520
 assertions. As 42 depreciações nesse Kernel vêm de Core/contrib.
 `CertificateLifecycleTest`: 3 testes/73 assertions PASS, cobrindo o snapshot
 público e cache; 38 depreciações upstream.
