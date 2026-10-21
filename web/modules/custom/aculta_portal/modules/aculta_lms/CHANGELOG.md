@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.26 — proteger fuso horário de prazos — 2026-10-21
+
+- Adiciona cobertura Unit para garantir que o formulário de prazo interprete a
+  data no fuso da conta do educador e use UTC quando a conta não define um.
+- `ClassActivityDeadlineFormTest`: 2 testes / 8 assertions PASS. A conversão e
+  o armazenamento em UTC seguem o contrato do DateTime do Core Drupal 11.
+
 ## 0.1.0-dev.25 — validar constraint pelo File API do Core — 2026-10-21
 
 - Kernel passa arquivos raster válido e inválido pelo serviço `file.validator`

@@ -216,9 +216,12 @@ assertions). Revisão visual/browser, acesso do dashboard do estudante com
 fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
-Suítes completas em 2026-10-21: Unit 36 testes/161 assertions; Kernel MariaDB
-18 testes/509 assertions. O Kernel registrou 90 depreciações de Core/contrib e
-a Unit, 5 avisos do PHPUnit.
+Suítes completas em 2026-10-21 antes do novo teste de prazo: Unit 36
+testes/161 assertions; Kernel MariaDB 18 testes/509 assertions. O Kernel
+registrou 90 depreciações de Core/contrib e a Unit, 5 avisos do PHPUnit.
+
+`ClassActivityDeadlineFormTest`: 2 testes/8 assertions PASS para fuso da conta e
+fallback UTC. O total Unit passa a 38 testes/169 assertions.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
@@ -260,6 +263,7 @@ responsável.
   feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada, registro DI, persistência, bloqueio de edição e limpeza por conta.
 - `tests/src/Unit/LearningDashboardManagerTest.php`: painel pessoal isolado por usuário e negação segura para turma sem curso pai.
+- `tests/src/Unit/ClassActivityDeadlineFormTest.php`: formulário interpreta o prazo no fuso horário da conta do educador e usa UTC como fallback.
 - `tests/src/Kernel/AttemptArchiveLifecycleTest.php`: ciclo real de Answer/Comment, comentários publicados, acesso e cache por turma/permissão, saída em texto e limpeza por progresso/conta/curso.
 - `web/modules/contrib/lms/modules/lms_answer_plugins/tests/src/Unit/SelectBaseAnsweringFormTest.php`: teste upstream do formulário de seleção.
 
