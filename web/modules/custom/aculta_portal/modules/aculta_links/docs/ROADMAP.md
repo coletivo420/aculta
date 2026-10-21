@@ -22,8 +22,12 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
    listagem com filtros de proprietário, publicação e histórico para as três entidades.
    A integridade de composição em 0.4.0-dev.17 exige proprietário comum entre
    item, página e destino, tanto na validação quanto na leitura pública.
-4. Fechar a revisão arquivo a arquivo do Linky e a licença por arquivo do
-   LinkStack antes de copiar qualquer código/asset.
+4. O inventário funcional dos arquivos Laravel/Blade prioritários do LinkStack
+   `v4.8.6` está registrado em `LINKSTACK-PORTABILITY.md`, fixado no commit
+   `dca586e8b8946a779cb212d21791cff6308fa7c0`. Faltam auditoria de
+   licença/proveniência dos assets de terceiros e análise de compatibilidade
+   jurídica antes de qualquer cópia. A auditoria arquivo a arquivo do Linky
+   também segue pendente; nenhum código upstream foi copiado.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
    não recebem permissões automaticamente.
 

@@ -5,6 +5,7 @@
 - A inspeção autenticada do formulário de micropágina encontrou formulário contendo somente “Salvar”. Os três handlers de criação/edição agora usam `ContentEntityForm`, que constrói os widgets dos campos de conteúdo; o handler base `EntityForm` não o fazia.
 - Kernel verifica os campos principais dos formulários de destino, micropágina e item (4 testes/159 asserções; 7 depreciações upstream); Unit PASS (5/50), PHPCS Drupal/Practice e lint PASS. Runtime `cr` passou, sem updates de banco.
 - Firefox autenticado confirmou a 390 × 844 os formulários de adição de página, destino e item com os campos esperados e sem overflow (`scrollWidth=378`). Capturas revisadas; nenhum formulário foi submetido e nenhum conteúdo foi criado.
+- `LINKSTACK-PORTABILITY.md` registra responsabilidades e decisões Drupal para arquivos de controllers, models, routes, views, painel, blocos, assets principais e temas da tag `v4.8.6`, commit `dca586e8b8946a779cb212d21791cff6308fa7c0`. Nenhum código/asset copiado; classificação AGPL-3.0 é conservadora diante da metadata Composer `GPL-3.0-or-later`; auditoria dos ativos de terceiros e compatibilidade legal seguem pendentes.
 
 ## 0.4.0-dev.23 — melhora legibilidade móvel do dashboard — 2026-10-20
 
