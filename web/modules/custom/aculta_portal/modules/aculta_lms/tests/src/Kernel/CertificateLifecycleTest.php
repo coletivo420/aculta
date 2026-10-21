@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Session\UserSession;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Session\UserSession;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Form\CourseCertificateIssueForm;
 use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
@@ -20,13 +22,15 @@ use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
 use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Covers certificate issuance and state changes using real LMS entities.
@@ -264,6 +268,65 @@ final class CertificateLifecycleTest extends KernelTestBase {
     catch (AccessDeniedHttpException) {
       self::assertCount(0, $manager->loadForStudent((int) $student->id()));
     }
+  }
+
+  /**
+   * Tests stale references fail cleanly instead of calling typed getters.
+   */
+  public function testMissingCourseOrStudentReferenceIsRejected(): void {
+    $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso',
+      'uid' => $student->id(),
+      'field_course_hours' => 8,
+    ]);
+    $course->save();
+    $status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $student->id(),
+      'status' => CourseStatusInterface::STATUS_PASSED,
+      'finished' => 1_700_000_000,
+    ]);
+    $status->save();
+    $manager = $this->container->get('aculta_lms.course_certificate_manager');
+    $issuer = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
+
+    $status->set('uid', 999_999)->save();
+    $routeMatch = $this->createMock(CurrentRouteMatch::class);
+    $routeMatch->method('getParameter')->with('group')->willReturn($course);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('hasPermission')->with('administer lms')->willReturn(TRUE);
+    $form = new CourseCertificateIssueForm(
+      $this->container->get('entity_type.manager'),
+      $manager,
+      $routeMatch,
+      $account,
+      $this->container->get('date.formatter'),
+    );
+    $form->setStringTranslation($this->container->get('string_translation'));
+    $form->setMessenger($this->container->get('messenger'));
+    $build = $form->buildForm([], new FormState());
+    self::assertSame([], $build['course_status']['#options'], 'The educator form skips statuses whose student reference was removed.');
+
+    foreach ([
+      'student reference' => ['uid', 999_999],
+      'course reference' => [CourseStatusInterface::COURSE_FIELD, 999_999],
+    ] as $reference => [$field, $targetId]) {
+      $status->set($field, $targetId)->save();
+      try {
+        $manager->issue($status, $issuer);
+        self::fail(sprintf('A missing %s must not issue a certificate.', $reference));
+      }
+      catch (UnprocessableEntityHttpException $exception) {
+        self::assertSame(422, $exception->getStatusCode());
+        self::assertStringContainsString('course or student is unavailable', $exception->getMessage());
+      }
+      $status->set($field, $field === 'uid' ? $student->id() : $course->id())->save();
+    }
+
+    self::assertCount(0, $manager->loadForStudent((int) $student->id()));
   }
 
   /**

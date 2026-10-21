@@ -284,7 +284,7 @@ Em 0.1.0-dev.50, o Kernel testa diretamente a rota lógica de PDF após revogaç
 retorna 404 e não instancia Entity Print nem o gerador QR. Em 0.1.0-dev.56,
 `CertificateLifecycleTest` também valida os quatro campos públicos contratados
 e a ausência de e-mail/motivo interno: 3 testes / 102 assertions. Suítes
-combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 21/651 assertions
+combinadas atuais: Unit LMS + Messenger 77/400; Kernel MariaDB 22/675 assertions
 PASS. As 92 depreciações continuam upstream.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
@@ -364,6 +364,14 @@ antes da consulta; outro Kernel já cobre exclusão da conta. Core documenta que
 `applyTo()` define diretamente o metadata
 do render array e que dependências devem ser mescladas ([CacheableMetadata](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21CacheableMetadata.php/class/CacheableMetadata/11.x), [Renderer::addCacheableDependency](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21Renderer.php/function/Renderer%3A%3AaddCacheableDependency/11.x)). O adapter F13 também passou a resolver referências de resposta por campos antes de montar avisos de submissão, avaliação ou feedback: quando o LMS remove LessonStatus/CourseStatus de forma assíncrona, a notificação desaparece até a limpeza terminar em vez de lançar erro. Unit do `aculta_lms_messenger`: 1/6 PASS. O conjunto ainda não completa a matriz de acesso/cache,
 acessibilidade e os gates da fase.
+
+Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
+e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de
+curso/estudante são resolvidas pelas listas dos campos; ausência resulta em 422,
+e o formulário de emissão omite conclusões sem conta associada. O Kernel focal
+usa IDs inexistentes para simular referências removidas e cobre o formulário:
+4 testes / 126 assertions. Unit LMS: 61/334; Kernel combinado LMS/Messenger:
+22/675 PASS, com 92 depreciações upstream. PHP 8.5 não validado.
 
 O painel de turma agora também é testado com `grade students` concedido no
 curso pelo Group, sem grant administrativo global; o mesmo teste prova que

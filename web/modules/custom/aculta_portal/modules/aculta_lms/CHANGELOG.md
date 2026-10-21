@@ -1,5 +1,16 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.57 — tratar referências ausentes na emissão de certificado — 2026-10-21
+
+- O manager resolve curso e estudante pelos campos do `CourseStatus` e rejeita
+  referências ausentes com resposta 422 controlada, sem chamar os getters
+  tipados do LMS que podem falhar durante a limpeza assíncrona.
+- O formulário do educador ignora conclusões cujo usuário já não está
+  referenciado. `CertificateLifecycleTest` passou com 4 testes / 126 assertions;
+  Kernel combinado LMS/Messenger: 22 testes / 675 assertions PASS, com 92
+  depreciações upstream. Unit LMS: 61 testes / 334 assertions PASS (8
+  depreciações PHPUnit). Runtime/visual não foram alterados.
+
 ## Evidência Runtime F11 — 2026-10-21
 
 - No Runtime `cursos` confirmado em `aculta_runtime`, um fixture temporário

@@ -13,9 +13,12 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Url;
 use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Lets authorized course educators issue a certificate from approved status. */
+/**
+ * Lets authorized course educators issue a certificate from approved status.
+ */
 final class CourseCertificateIssueForm extends FormBase {
 
   public function __construct(
@@ -26,6 +29,9 @@ final class CourseCertificateIssueForm extends FormBase {
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     $form = new static(
       $container->get('entity_type.manager'),
@@ -39,10 +45,16 @@ final class CourseCertificateIssueForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_lms_course_certificate_issue';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $course = $this->certificateRouteMatch->getParameter('group');
     $options = [];
@@ -59,7 +71,12 @@ final class CourseCertificateIssueForm extends FormBase {
         if (!$status instanceof CourseStatusInterface || !$status->isFinished()) {
           continue;
         }
-        $student = $status->getUser();
+        // The LMS's typed getter throws if asynchronous cleanup has already
+        // removed the referenced account. Skip stale statuses in the form.
+        $student = $status->get('uid')->entity;
+        if (!$student instanceof UserInterface) {
+          continue;
+        }
         $options[$status->id()] = $this->t('@student — conclusão em @date', [
           '@student' => $student->getDisplayName(),
           '@date' => $this->dateFormatter->format($status->getFinished(), 'long'),
@@ -103,7 +120,14 @@ final class CourseCertificateIssueForm extends FormBase {
       $form['issued_certificates'] = [
         '#type' => 'table',
         '#caption' => $this->t('Certificados já emitidos neste curso'),
-        '#header' => [$this->t('Estudante'), $this->t('Curso'), $this->t('Emissão'), $this->t('Estado'), $this->t('Verificação'), $this->t('Ação')],
+        '#header' => [
+          $this->t('Estudante'),
+          $this->t('Curso'),
+          $this->t('Emissão'),
+          $this->t('Estado'),
+          $this->t('Verificação'),
+          $this->t('Ação'),
+        ],
         '#rows' => $rows,
         '#weight' => 10,
         '#cache' => ['max-age' => 0],
@@ -123,6 +147,9 @@ final class CourseCertificateIssueForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->certificateRouteMatch->getParameter('group');
     $status = $this->entityTypeManager->getStorage('lms_course_status')->load($form_state->getValue('course_status'));

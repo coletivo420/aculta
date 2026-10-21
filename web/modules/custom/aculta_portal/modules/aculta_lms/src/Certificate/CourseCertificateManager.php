@@ -12,7 +12,8 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
-use Drupal\group\Entity\GroupInterface;
+use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\user\UserInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -28,6 +29,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  */
 final class CourseCertificateManager implements CourseCertificateManagerInterface {
 
+  /**
+   * Constructs the manager.
+   */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
@@ -37,14 +41,20 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     private readonly LockBackendInterface $lock,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function issue(CourseStatusInterface $status, AccountInterface $issuer): CourseCertificate {
     if (!$status->isFinished() || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
       throw new UnprocessableEntityHttpException('Only a finished, approved course status can receive a certificate.');
     }
 
-    $course = $status->getCourse();
-    $student = $status->getUser();
-    if (!$course instanceof GroupInterface) {
+    // LMS entity getters are typed and can throw when asynchronous cleanup has
+    // already removed one of the referenced entities. Resolve the fields first
+    // so an incomplete status fails as a controlled validation response.
+    $course = $status->get(CourseStatusInterface::COURSE_FIELD)->entity;
+    $student = $status->get('uid')->entity;
+    if (!$course instanceof CourseInterface || !$student instanceof UserInterface) {
       throw new UnprocessableEntityHttpException('The course or student is unavailable.');
     }
     if (!$issuer->hasPermission('administer lms') && !$course->hasPermission('grade students', $issuer)) {
@@ -121,6 +131,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     return $certificate;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function revoke(CourseCertificate $certificate, AccountInterface $issuer, string $reason): void {
     $course = $this->entityTypeManager->getStorage('group')->load($certificate->get('course_id')->value);
     if (!$issuer->hasPermission('administer lms') && (!$course instanceof GroupInterface || !$course->hasPermission('grade students', $issuer))) {
@@ -139,6 +152,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     $certificate->save();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function loadByCode(string $code): ?CourseCertificate {
     if (!preg_match('/^[A-Za-z0-9_-]{40,64}$/D', $code)) {
       return NULL;
@@ -156,6 +172,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     return $entity instanceof CourseCertificate ? $entity : NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function loadForStudent(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('aculta_lms_certificate')
       ->getQuery()
@@ -166,7 +185,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     return $this->entityTypeManager->getStorage('aculta_lms_certificate')->loadMultiple($ids);
   }
 
-  /** Generates an unallocated random verification code. */
+  /**
+   * Generates an unallocated random verification code.
+   */
   private function newVerificationCode(): string {
     $storage = $this->entityTypeManager->getStorage('aculta_lms_certificate');
     do {

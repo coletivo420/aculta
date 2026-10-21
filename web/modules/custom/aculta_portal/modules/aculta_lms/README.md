@@ -27,6 +27,13 @@ carregado também quando a requisição entrega apenas AccountProxy/session.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.
+Na emissão de certificado F11, o manager e o formulário também usam as
+referências dos campos do `CourseStatus`: se usuário ou curso tiver sido
+removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
+conclusão, sem erro 500. Kernel focal: 4 testes / 126 assertions; regressão
+Kernel LMS/Messenger: 22 testes / 675 assertions PASS, com 92 depreciações
+upstream. Unit LMS: 61 testes / 334 assertions PASS, com 8 depreciações
+PHPUnit.
 No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
 rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
 O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi

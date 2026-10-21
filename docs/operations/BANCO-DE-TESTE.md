@@ -195,6 +195,13 @@ Kernel LMS/Messenger passou com 21 testes / 651 assertions e 92 depreciações
 upstream. A renderização por código confirma nome, curso, horas e estado, sem
 email ou motivo interno de revogação.
 
+Após proteger emissão e formulário F11 contra referências de estudante/curso
+ausentes, `CertificateLifecycleTest` passou com 4 testes / 126 assertions. A
+regressão Kernel `aculta_lms` + `aculta_lms_messenger` passou com 22 testes /
+675 assertions; 92 depreciações vieram de Core/contrib. Unit LMS passou com 61
+testes / 334 assertions e 8 depreciações PHPUnit. PHP CLI 8.4.26; PHP 8.5
+continua não validado.
+
 ## Quem usa
 
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
