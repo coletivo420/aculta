@@ -70,11 +70,6 @@ $expected = [
   'aculta_magazine_admin_content',
   'group_nodes',
   'vvja_example',
-  'vvjf_example',
-  'vvjh_example',
-  'vvjl_example',
-  'vvjr_example',
-  'vvjs_example',
   'vvjt_example',
 ];
 $views = \Drupal\views\Entity\View::loadMultiple();
@@ -106,6 +101,12 @@ $retired = [
   'a2079029-53bf-4c12-96c2-79881a43a656', // Contato (menu aculta-footer-participation)
   'd9f4dac8-647f-4cdc-aa5d-841d5cb91178', // Acompanhe nossas atividades (menu aculta-footer-participation)
   '18825a7c-e0f4-4277-9f70-56ec5842fe98', // Política de Privacidade (menu aculta-footer-participation)
+  // Projetos removidos pelo responsável (tipo projeto retirado, 2026-10-21).
+  'dc796008-38c0-4deb-864c-0e3d12c09f4a', // Carnareggae Bloco Sativa
+  '267321dc-f286-472f-887b-dec6aa3ee0b8', // Grupo de Percussão Baque Sativa
+  '9a52f9b6-40ca-4a90-b1e6-6caecc6447fe', // PodPlant420
+  'cd3b0bcc-cbe2-4500-aeb0-5a6d1fe3b854', // Batalha do Riddim
+  'ae127c2e-aa03-4a8e-b89c-69f864b7e2eb', // Menu do PodPlant420 (removido com o nó)
 ];
 foreach (['node','block_content','menu_link_content'] as $type) {
   // A limpeza não pode apagar conteúdo existente. O conteúdo novo (importações, publicações) é esperado: a checagem é
