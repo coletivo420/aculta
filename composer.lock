@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d474f6b0da8314ad96e4e9bb31c66de9",
+    "content-hash": "f8206ff2adf330034ab6e97e2ca0e77e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1876,65 +1876,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/captcha",
                 "issues": "https://www.drupal.org/project/issues/captcha"
-            }
-        },
-        {
-            "name": "drupal/change_mail_page",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/change_mail_page.git",
-                "reference": "1.0.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/change_mail_page-1.0.2.zip",
-                "reference": "1.0.2",
-                "shasum": "f40d7f229c89e59ce7a162a5f1fc0f02a37fa272"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.2",
-                    "datestamp": "1773368190",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "abdulaziz zaid",
-                    "homepage": "https://www.drupal.org/user/3585656"
-                },
-                {
-                    "name": "amr_alsayd",
-                    "homepage": "https://www.drupal.org/user/2611102"
-                },
-                {
-                    "name": "msameer",
-                    "homepage": "https://www.drupal.org/user/9094"
-                }
-            ],
-            "description": "Provides a separate page for users to change their email address.",
-            "homepage": "https://www.drupal.org/project/change_mail_page",
-            "keywords": [
-                "Drupal",
-                "email",
-                "mail",
-                "user"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/change_mail_page",
-                "issues": "https://www.drupal.org/project/issues/change_mail_page"
             }
         },
         {
