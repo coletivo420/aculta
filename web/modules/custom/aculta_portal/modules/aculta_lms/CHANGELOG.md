@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.75 — cobrir hooks Commerce de pedido — 2026-10-21
+
+- `AcultaLmsInstallTest` agora confirma o registro dos hooks de insert e update
+  do pedido, que chamam a reconciliação de memberships compradas. O teste focal
+  passou com 4 testes / 42 assertions; Kernel LMS/Messenger: 24 testes / 772
+  assertions PASS, com 95 depreciações upstream.
+
 ## 0.1.0-dev.74 — reconciliar memberships com itens atuais do pedido — 2026-10-21
 
 - A sincronização de pedido pago agora reconcilia as memberships marcadas com

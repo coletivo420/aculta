@@ -450,8 +450,10 @@ O sincronizador de pedidos F7 também reconcilia memberships de origem após
 edições do pedido: turma removida/reapontada não conserva acesso sem outra
 compra ativa, enquanto turmas ainda compradas permanecem matriculadas.
 `CourseOrderEnrollmentManagerTest` 9/47; Unit LMS/Messenger 89/482 PASS.
-Kernel LMS/Messenger: 24/770 PASS (95 depreciações upstream); PHPCS
+Kernel LMS/Messenger: 24/772 PASS (95 depreciações upstream); PHPCS
 Drupal/DrupalPractice PASS no manager e nos testes Unit.
+`AcultaLmsInstallTest` também verifica o registro dos hooks Commerce de insert
+e update para que alterações do pedido acionem a reconciliação de turmas.
 
 Em 0.1.0-dev.57, o manager de certificados deixou de usar `CourseStatus::getCourse()`
 e `getUser()` em caminhos suscetíveis à remoção assíncrona. Referências de

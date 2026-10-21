@@ -56,6 +56,8 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
     $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
+    $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
+    $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),

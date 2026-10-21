@@ -17,6 +17,8 @@ turma retirada do pedido perde o vínculo, salvo outra compra ativa; itens ainda
 válidos preservam a membership, e vínculos manuais sem origem não são alterados.
 `CourseOrderEnrollmentManagerTest`: 9 testes / 47 assertions; Unit LMS/Messenger:
 89/482 PASS.
+`AcultaLmsInstallTest` também verifica que insert e update de pedido estão
+registrados como hooks de reconciliação; Kernel focal: 4/42 PASS.
 
 ## F11 — emissão e revogação por educadores
 
