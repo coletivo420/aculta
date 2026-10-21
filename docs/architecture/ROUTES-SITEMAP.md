@@ -293,6 +293,7 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | Host | Caminho/padrão | Título / objeto | Estado |
 | --- | --- | --- | --- |
 | `main.aculta` | `/webhook/{endpoint}` | Recepção de evento de integração/gateway | Padrão genérico; caminhos concretos definidos pelo módulo ativo e configuração. Nunca presumir acesso público irrestrito. |
+| `wiki420.aculta` | `/estatisticas/wiki/{node}/leitura` | Beacon de leitura de verbete publicado da Wiki (POST, 204); grava `wiki.entries.read` com o nid | Acesso público (`_access: TRUE`); 404 para rascunho, outro tipo de conteúdo ou sem permissão de visualização, sem gravar IP nem cookie. Ver `aculta_statistics/docs/INTEGRATIONS.md`. Ativo no Runtime de teste. |
 | `main.aculta` | `/admin/**` | Administração técnica Drupal Core/contrib | Rotas individuais variam por módulo e continuam sob access upstream; navegação humana ACULTA usa `/painel-administrativo/**`. |
 | `main.aculta` | `/views-bulk-operations/execute/{view_id}/{display_id}` | Inicialização de operações em lote de uma View | Rota técnica condicional ao VBO; a própria View exige access e a Action revalida seleção, permissão e cada tópico. |
 | `main.aculta` | `/views-bulk-operations/ajax/{view_id}/{display_id}` | Atualização da seleção entre páginas de uma View | Rota técnica condicional ao VBO; acesso passa pelo display da View e usa seleção temporária privada do usuário. |
