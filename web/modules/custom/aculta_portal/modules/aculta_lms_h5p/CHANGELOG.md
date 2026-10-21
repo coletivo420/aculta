@@ -44,6 +44,13 @@
   `cursos` (HTTP 200). O curso, a atividade e o tópico temporários foram
   removidos. Após mapear `lms-h5p-course-documents` no ACULTA420, novo smoke X11
   confirmou a classe `mt-3` no wrapper do PDF junto da atividade e do Fórum.
+- Validação final das suítes completas em 2026-10-21: H5P Unit 24 testes / 73
+  asserções e Kernel 15 / 383 (44 depreciações upstream); `aculta_forum_lms`
+  Unit 25 / 292 e Kernel 4 / 205 (47 depreciações upstream). Após padronizar
+  as classes PHP próprias para `aculta_H5P`, Kernel confirmou a resolução dos
+  serviços e evento renomeados. Cache reconstruído no Runtime de teste:
+  `field_h5p_content` aponta para `aculta_h5p_content`; host principal e host
+  `cursos` responderam HTTP 200. PHP CLI 8.4.26; PHP 8.5 não validado.
 
 ## F15 — associação de PDFs existentes a atividades — 2026-10-21
 
