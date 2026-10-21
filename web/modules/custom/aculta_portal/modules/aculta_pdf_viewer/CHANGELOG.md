@@ -1,5 +1,10 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.40 — reconhece anexos PDF privados do Fórum — 2026-10-21
+
+- O mapa de campos reconhece `forum_attachment.field_media_forum_attachment`; a validação de acesso exige o esquema `private` e entrega o arquivo pela rota protegida do Core.
+- Unit cobre builder e formatter para anexos do Fórum. O Fórum ainda não apresenta cartão PDF ao usuário; a integração visual permanece na etapa final do roadmap `aculta_forum`.
+
 ## 0.1.0-dev.39 — remover formatter PDF contrib sem uso — 2026-10-21
 
 - `drupal/pdf` 1.3 estava instalado apenas no código, desativado no Runtime, sem referência em Config Sync e sem consumidores fora do próprio contrib. O formatter compartilhado do `aculta_pdf_viewer` substitui sua função de leitura usando PDF.js ESM.

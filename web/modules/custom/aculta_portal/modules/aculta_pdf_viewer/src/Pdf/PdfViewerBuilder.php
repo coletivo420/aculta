@@ -60,7 +60,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       return $this->denied($cacheability);
     }
 
-    $expected_scheme = $bundle === 'course_document' ? 'private' : 'public';
+    $expected_scheme = in_array($bundle, ['course_document', 'forum_attachment'], TRUE) ? 'private' : 'public';
     return $this->buildFile($file, $media->label() ?: $file->getFilename(), $expected_scheme, $cacheability, TRUE, $settings);
   }
 

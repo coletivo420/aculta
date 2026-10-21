@@ -176,4 +176,53 @@ final class PdfViewerBuilderTest extends UnitTestCase {
     self::assertArrayNotHasKey('thumbnail', $build);
   }
 
+  /**
+   * Ensures Forum attachment PDFs use the private file route as well.
+   */
+  public function testForumAttachmentPdfUsesProtectedRoute(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $media = $this->createMock(MediaInterface::class);
+    $media->method('access')->willReturn(AccessResult::allowed());
+    $media->method('getCacheTags')->willReturn(['media:12']);
+    $media->method('getCacheContexts')->willReturn([]);
+    $media->method('getCacheMaxAge')->willReturn(-1);
+    $media->method('bundle')->willReturn('forum_attachment');
+    $media->method('hasField')->with('field_media_forum_attachment')->willReturn(TRUE);
+    $media->method('label')->willReturn('Anexo do fórum');
+
+    $file = $this->createMock(FileInterface::class);
+    $file->method('access')->willReturn(AccessResult::allowed());
+    $file->method('getCacheTags')->willReturn(['file:16']);
+    $file->method('getCacheContexts')->willReturn([]);
+    $file->method('getCacheMaxAge')->willReturn(-1);
+    $file->method('getFileUri')->willReturn('private://forum/anexos/anexo.pdf');
+    $file->method('isPermanent')->willReturn(TRUE);
+    $file->method('getMimeType')->willReturn('application/pdf');
+    $file->method('getFilename')->willReturn('anexo.pdf');
+
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('access')->willReturn(AccessResult::allowed());
+    $field->method('isEmpty')->willReturn(FALSE);
+    $field->method('__get')->with('entity')->willReturn($file);
+    $media->method('get')->with('field_media_forum_attachment')->willReturn($field);
+
+    $routeUrlGenerator = $this->createMock(UrlGeneratorInterface::class);
+    $routeUrlGenerator->expects(self::once())
+      ->method('generateFromRoute')
+      ->with('system.files', ['scheme' => 'private'], ['query' => ['file' => 'forum/anexos/anexo.pdf']], FALSE)
+      ->willReturn('/system/files?file=forum/anexos/anexo.pdf');
+    $thumbnailBuilder = $this->createMock(PdfPreviewThumbnailBuilderInterface::class);
+    $thumbnailBuilder->expects(self::never())->method('build');
+
+    $build = (new PdfViewerBuilder(
+      $this->createMock(FileUrlGeneratorInterface::class),
+      $routeUrlGenerator,
+      $account,
+      $thumbnailBuilder,
+    ))->build($media, 'field_media_forum_attachment');
+
+    self::assertSame('/system/files?file=forum/anexos/anexo.pdf', $build['download']['#attributes']['href']);
+    self::assertSame(0, $build['#cache']['max-age']);
+  }
+
 }
