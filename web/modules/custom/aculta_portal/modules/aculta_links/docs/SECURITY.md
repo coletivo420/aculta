@@ -97,6 +97,8 @@ A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de prop
 
 Editor de composição: a rota e a submissão revalidam access da página; a submissão também confirma que cada item pertence à página editada antes de salvar nova revisão. Query declara `accessCheck(TRUE)`.
 
+Desde 0.4.0-dev.27, o editor valida acesso e relação de todas as linhas antes de salvar qualquer item, evitando atualização parcial se a submissão incluir item de outra página. O conjunto de entidades também passa pelo Entity Validation antes de qualquer save. Os valores são texto simples e limitados ao comprimento dos campos; título é obrigatório antes da escrita.
+
 
 ## Publicação 0.4.0-dev.1
 

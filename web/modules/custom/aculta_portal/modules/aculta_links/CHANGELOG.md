@@ -1,5 +1,22 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.27 — edita textos no organizador de página — 2026-10-20
+
+- O editor de composição permite atualizar título e descrição inline junto com ordem e publicação; destino e agendamento continuam no formulário avançado do item.
+- O submit valida acesso, associação à página e título de todas as linhas antes de salvar qualquer uma. Linhas sem mudanças não criam revisão; mudanças criam revisão com mensagem atualizada.
+- Kernel MariaDB PASS: a estrutura do formulário inclui texto, descrição e edição avançada; a edição inline persiste título/descrição, ordem e estado em revisão; título vazio é rejeitado sem escrita; item de outra página rejeita o submit inteiro sem alteração parcial. Teste direcionado: 1/30; suíte Kernel: 6/208 com 7 depreciações upstream. Unit: 6/54; PHPCS, lint e slugs PASS.
+- Runtime `toca`: sem updates pendentes; cache reconstruído para purpose `links`; raiz HTTP 200 e rota do editor com entidade inexistente HTTP 404. O rebuild repetiu o aviso H5P `assets://`. A inspeção visual autenticada ficou pendente porque o Firefox já estava aberto em outro fluxo; nenhuma sessão foi usada nem conteúdo alterado.
+- Drupal 11 gate e status-index estão bloqueados pelo trabalho não commitado de `aculta_statistics`; nenhum arquivo dessa frente foi incluído. Produção não acessada.
+
+## 0.4.0-dev.26 — filtra publicação e atualiza inventário — 2026-10-20
+
+- Cada lista do dashboard pode mostrar todos, publicados ou rascunhos. Os três filtros são independentes, validam valores por allowlist, mantêm os filtros irmãos e reiniciam offsets de paginação ao trocar o estado.
+- O inventário documental registra também a prévia privada e a identidade opt-in do proprietário via `aculta_user`; versão de código mantida para esta correção documental.
+- A consulta aplica o filtro no EntityQuery antes da paginação; renderização varia o cache pela query correspondente. Não há alteração de rota ou schema.
+- Unit cobre links do filtro, preservação dos filtros irmãos, indicação acessível do filtro ativo e remoção do offset de pager. Kernel valida que o EntityQuery filtra os itens rascunho sob owner access.
+- Validação final: Unit PASS (6 testes/54 asserções); Kernel MariaDB PASS (6 testes/197 asserções, 7 depreciações Core/Metatag/Token); PHPCS Drupal/Practice e PHP lint PASS. Drupal 11 gate, status-index e public-slugs PASS. Mapa módulo-tema segue FAIL por dois módulos de outra frente sem entrada no mapa.
+- Runtime de teste `toca`: sem updates pendentes; `cr --uri=https://links.aculta.toca.net.br` concluiu. Raiz pública respondeu 200 e dashboard com filtro, sem autenticação, respondeu 302 para o fluxo de login. O rebuild repetiu aviso preexistente de asset H5P `assets://` sem destino configurado. Nenhum conteúdo/config foi alterado; produção não acessada.
+
 ## 0.4.0-dev.25 — cobre gravação e isolamento do editor — 2026-10-20
 
 - Kernel agora executa o submit real do editor de composição pela Form API: altera ordem e estado, confirma nova revisão e nega item de outra micropágina mesmo quando o proprietário é o mesmo.

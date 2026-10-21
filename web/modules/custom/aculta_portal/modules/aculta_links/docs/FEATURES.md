@@ -18,7 +18,8 @@
 - Handler de acesso e permissões explícitas, com propriedade Drupal User e
   teste Unit/Kernel de storage, referências, revisões e isolamento entre contas.
 - Dashboard e formulários Core para micropáginas, destinos e itens, com listas
-  paginadas por proprietário, revisões e cache por usuário. Rotas administrativas
+  paginadas por proprietário, filtros independentes de publicação, revisões e
+  cache por usuário/query. Rotas administrativas
   pertencem ao MAIN; o acesso revalida permissões e Entity Access. A lista de
   micropáginas inclui endereço publicado ou prévia privada.
 - Editor de itens com ordenação, publicação individual e link para prévia
@@ -30,7 +31,7 @@
 
 ## Lacunas
 
-Dashboard visual equivalente ao LinkStack, editor completo de identidade/aparência,
+Dashboard visual equivalente ao LinkStack, controles avançados de aparência,
 mais temas e componentes referenciados ainda precisam ser concluídos. Analytics
 está limitado à contagem agregada de GETs em links curtos; page views, origens e
 CTR não são medidos. SEO via Metatag, QR e agendamento de itens estão disponíveis.
@@ -45,11 +46,11 @@ a base legal e a política de privacidade.
 
 - Painel administrativo em `main`, com listas separadas e paginadas para micropáginas, destinos reutilizáveis e itens de página.
 - Formulários de entidade Drupal para CRUD e revisões, protegidos pelos handlers de acesso e permissões do módulo.
-- Ainda não existe dashboard público do proprietário, preview ao vivo ou apresentação de identidade herdada de `aculta_user`.
+- A prévia privada renderiza a micropágina no tema público, sem cache compartilhado; a identidade do proprietário é opt-in e limitada aos dados públicos liberados por `aculta_user`.
 
 ## Editor de composição — 0.3.0-dev.1
 
-A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens` lista itens da página, permite alterar ordem por tabela arrastável com campo numérico como fallback e ativar/desativar individualmente. Cada item salvo cria revisão. A edição do texto e destino permanece no formulário individual da entidade.
+A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/editar-itens` lista itens da página, permite alterar texto, descrição, ordem e publicação inline; a ordem também tem campo numérico como fallback. Cada item alterado cria revisão. O destino e o agendamento permanecem no formulário avançado individual da entidade.
 
 ## Micropágina pública — 0.4.0-dev.1
 
@@ -57,7 +58,7 @@ A rota administrativa `/painel-administrativo/links/pagina/{aculta_link_page}/ed
 - Itens publicados aparecem em ordem por peso e ID; item, página e destino precisam estar publicados e acessíveis.
 - Destinos permitem URIs Drupal internas (`internal:`/`entity:`) ou HTTPS sem credenciais e sem portas não padrão.
 - Contrato de render é neutro no módulo; ACULTA420 reutiliza o SDC `social-links-page`.
-- Micropáginas exibem o próprio título e não herdam a marca institucional da ACULTA; a landing preserva o logo ACULTA. Identidade Drupal do proprietário ainda não é herdada.
+- Micropáginas exibem o próprio título e não herdam a marca institucional da ACULTA; a landing preserva o logo ACULTA. A identidade Drupal do proprietário pode ser apresentada por opção explícita e revisionável, desligada por padrão.
 - Micropágina publicada oferece SVG QR em `/pagina/{slug}/codigo-qr.svg`; codifica a URL canônica gerada por Domain. Sem QR para rascunhos, arquivo persistido ou medição de scans.
 - Itens aceitam `available_from` e `available_until` revisionáveis, com edição no fuso padrão do site e armazenamento UTC. Itens fora da janela não são renderizados na página pública; a prévia privada mantém todos os itens publicados do proprietário visíveis. O cache vence na próxima transição e intervalos inválidos são recusados.
 - Metatag produz title, description, canonical URL de Domain, Open Graph e Schema.org para a rota pública; rotas de edição, preview e CRUD de entidade são `noindex, nofollow`.

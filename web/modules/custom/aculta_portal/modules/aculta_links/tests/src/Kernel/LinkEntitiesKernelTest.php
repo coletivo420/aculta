@@ -421,18 +421,51 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
       $this->container->get('current_user'),
       $this->container->get('aculta_portal.domain_purpose'),
     );
+    $display_page = clone $page;
+    $display_page->set('slug', 'slug inválido');
+    $display_state = new FormState();
+    $display_form = $editor->buildForm([], $display_state, $display_page);
+    self::assertSame('textfield', $display_form['items'][$item->id()]['content']['title']['#type']);
+    self::assertSame('Botão existente', $display_form['items'][$item->id()]['content']['title']['#default_value']);
+    self::assertSame(255, $display_form['items'][$item->id()]['content']['title']['#maxlength']);
+    self::assertSame('textfield', $display_form['items'][$item->id()]['content']['description']['#type']);
+    self::assertSame('Destino e agendamento', (string) $display_form['items'][$item->id()]['edit']['data']['#title']);
+
+    $invalid_state = new FormState();
+    $invalid_state->set('aculta_link_page_id', (int) $page->id());
+    $invalid_state->setValue('items', [
+      (string) $item->id() => [
+        'content' => ['title' => '   ', 'description' => 'Inválida'],
+        'weight' => 5,
+        'status' => 0,
+      ],
+    ]);
+    $form = [];
+    $editor->submitForm($form, $invalid_state);
+    self::assertTrue($invalid_state->hasAnyErrors());
+    $unchanged_item = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_link_item')
+      ->load($item->id());
+    self::assertSame('Botão existente', $unchanged_item->label());
+    self::assertSame($original_revision, $unchanged_item->getRevisionId());
+
     $state = new FormState();
     $state->set('aculta_link_page_id', (int) $page->id());
     $state->setValue('items', [
-      (string) $item->id() => ['weight' => 4, 'status' => 0],
+      (string) $item->id() => [
+        'content' => ['title' => 'Botão atualizado', 'description' => 'Descrição atualizada'],
+        'weight' => 4,
+        'status' => 0,
+      ],
     ]);
-    $form = [];
     $editor->submitForm($form, $state);
 
     $saved_item = $this->container->get('entity_type.manager')
       ->getStorage('aculta_link_item')
       ->load($item->id());
     self::assertSame(4, (int) $saved_item->get('weight')->value);
+    self::assertSame('Botão atualizado', $saved_item->label());
+    self::assertSame('Descrição atualizada', $saved_item->get('description')->value);
     self::assertFalse($saved_item->isPublished());
     self::assertNotSame($original_revision, $saved_item->getRevisionId());
 
@@ -454,10 +487,91 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $malicious_state = new FormState();
     $malicious_state->set('aculta_link_page_id', (int) $page->id());
     $malicious_state->setValue('items', [
-      (string) $foreign_item->id() => ['weight' => 99, 'status' => 0],
+      (string) $item->id() => [
+        'content' => ['title' => 'Alteração parcial proibida', 'description' => ''],
+        'weight' => 99,
+        'status' => 1,
+      ],
+      (string) $foreign_item->id() => [
+        'content' => ['title' => 'Item estrangeiro', 'description' => ''],
+        'weight' => 99,
+        'status' => 0,
+      ],
     ]);
-    $this->expectException(AccessDeniedHttpException::class);
-    $editor->submitForm($form, $malicious_state);
+    try {
+      $editor->submitForm($form, $malicious_state);
+      self::fail('An item from another page must reject the complete submission.');
+    }
+    catch (AccessDeniedHttpException) {
+      $unchanged_item = $this->container->get('entity_type.manager')
+        ->getStorage('aculta_link_item')
+        ->load($item->id());
+      self::assertSame('Botão atualizado', $unchanged_item->label());
+      self::assertSame(4, (int) $unchanged_item->get('weight')->value);
+    }
+  }
+
+  /**
+   * Tests publication filters against the actual owner-scoped entity query.
+   */
+  public function testDashboardPublicationFilterQueriesOnlySelectedItems(): void {
+    $role = Role::create(['id' => 'links_filter_owner', 'label' => 'Links filter owner']);
+    $role->grantPermission('manage own aculta links');
+    $role->save();
+    $owner = User::create(['name' => 'links-filter-owner', 'status' => TRUE]);
+    $owner->addRole('links_filter_owner');
+    $owner->save();
+    $this->container->get('current_user')->setAccount($owner);
+    $page = LinkPage::create([
+      'title' => 'Página com filtros',
+      'slug' => 'pagina-com-filtros',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $page->save();
+    $link = Link::create([
+      'title' => 'Destino do filtro',
+      'uri' => ['uri' => 'https://example.org/'],
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $link->save();
+    $published = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Botão publicado',
+      'status' => TRUE,
+    ]);
+    $published->save();
+    $draft = LinkItem::create([
+      'page' => $page->id(),
+      'link' => $link->id(),
+      'uid' => $owner->id(),
+      'title' => 'Botão em rascunho',
+      'status' => FALSE,
+    ]);
+    $draft->save();
+
+    $request_stack = $this->container->get('request_stack');
+    $request_stack->push(Request::create('/painel-administrativo/links?itens_estado=rascunhos'));
+    $controller = $this->container->get('aculta_links.dashboard_controller');
+    $build_table = new \ReflectionMethod($controller, 'buildTable');
+    $build = $build_table->invoke(
+      $controller,
+      'aculta_link_item',
+      'aculta_link_item_list',
+      'Itens de micropágina',
+      FALSE,
+      'uid',
+      2,
+    );
+    $request_stack->pop();
+
+    self::assertCount(1, $build['table']['#rows']);
+    self::assertSame('Botão em rascunho', (string) $build['table']['#rows'][0]['title']->getText());
+    self::assertContains('url.query_args:itens_estado', $build['table']['#cache']['contexts']);
+    self::assertNotSame($published->id(), $draft->id());
   }
 
   /**

@@ -13,6 +13,10 @@
 - Kernel em `aculta_simpletest`: armazenamento de destino/página/item,
   referências, rascunho padrão, acesso por proprietário e revisão do destino.
 - Validar lint/PHPCS, dependências Core e gates de mapa/documentação do projeto.
+- Unit do dashboard valida os links de filtro de estado, preservação de filtros independentes e reset do pager ao alterar o estado.
+- Kernel em MariaDB `aculta_simpletest` consulta a lista sob Entity Access e confirma que o filtro `rascunhos` retorna somente o item não publicado e varia o cache pela query. Na mudança 0.4.0-dev.26: Unit 6/54 e Kernel 6/197 PASS; 7 depreciações de Core/Metatag/Token. PHPCS, PHP lint, Drupal 11 gate, índice de status e slugs PASS. O gate de mapa módulo-tema reporta apenas `aculta_lms_messenger` e `aculta_qrcode`, fora do escopo desta alteração.
+- Runtime de teste em `toca`, após confirmar `aculta_runtime` e ausência de updates: rebuild de cache no purpose `links` PASS; raiz pública HTTP 200; dashboard com filtro anônimo HTTP 302 ao fluxo de login. `cr` avisou sobre asset H5P `assets://` sem diretório configurado. Sem importação, alterações de conteúdo ou acesso à produção.
+- Em 0.4.0-dev.27, Kernel MariaDB PASS: formulário expõe texto/descrição e edição avançada; submissão persiste título/descrição, ordem e estado em revisão; título vazio não grava; item fora da página rejeita o submit sem alteração parcial (suíte 6 testes/208 asserções, 7 depreciações). Unit 6/54 e PHPCS/lint/slugs PASS. Runtime sem updates: `cr` PASS, raiz 200, rota de editor para entidade inexistente 404; aviso H5P assets permanece. A revisão autenticada móvel ainda precisa ser feita antes de RC. Drupal 11/status-index gates foram bloqueados por `aculta_statistics` não commitado de outra frente.
 
 ## Migração da landing e UI
 

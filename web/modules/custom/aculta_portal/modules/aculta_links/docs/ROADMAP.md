@@ -22,6 +22,7 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
    listagem com filtros de proprietário, publicação e histórico para as três entidades.
    A integridade de composição em 0.4.0-dev.17 exige proprietário comum entre
    item, página e destino, tanto na validação quanto na leitura pública.
+   Filtros independentes de publicados/rascunhos nas três listas estão implementados em 0.4.0-dev.26; a seleção acontece antes da paginação e preserva os filtros das outras listas.
 4. O inventário funcional dos arquivos Laravel/Blade prioritários do LinkStack
    `v4.8.6` está registrado em `LINKSTACK-PORTABILITY.md`, fixado no commit
    `dca586e8b8946a779cb212d21791cff6308fa7c0`. Faltam auditoria de
@@ -57,7 +58,8 @@ de destino do proprietário e atalho no dashboard estão implementados. Em
 secundárias em telas estreitas. Firefox autenticado via WebDriver BiDi confirmou
 390 × 844, sem overflow horizontal (`scrollWidth=378`). Ainda faltam navegação
 fluida entre páginas e editor de identidade em uma experiência coesa inspirada
-no LinkStack. Uma conta pode ter várias páginas; equipes complexas não são
+no LinkStack. Em 0.4.0-dev.27, o organizador também edita título e descrição
+inline e pré-valida todas as linhas para impedir submits parciais. Uma conta pode ter várias páginas; equipes complexas não são
 prioridade.
 
 Em 0.4.0-dev.24, os formulários Drupal para destino, micropágina e item foram

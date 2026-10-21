@@ -66,13 +66,15 @@ final class LinkPageEditorForm extends FormBase {
     $form['intro'] = [
       '#type' => 'item',
       '#title' => new TranslatableMarkup('Organize os itens desta micropágina'),
-      '#description' => new TranslatableMarkup('Ajuste a posição e a publicação de cada item. A ordem também pode ser alterada pelo campo numérico sem JavaScript.'),
+      '#description' => new TranslatableMarkup('Edite os textos, a posição e a publicação de cada item. A ordem também pode ser alterada pelo campo numérico sem JavaScript.'),
     ];
     $slug = (string) $aculta_link_page->get('slug')->value;
     $preview_url = preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug)
       ? $this->domainPurpose->pathUrl('links', '/pagina/' . $slug . '/previa')
       : NULL;
-    $links_domain = $this->domainPurpose->getDomain('links');
+    $links_domain = $preview_url !== NULL
+      ? $this->domainPurpose->getDomain('links')
+      : NULL;
     if ($preview_url !== NULL && $links_domain !== NULL) {
       $form['preview'] = [
         '#type' => 'link',
@@ -88,9 +90,10 @@ final class LinkPageEditorForm extends FormBase {
     $form['items'] = [
       '#type' => 'table',
       '#header' => [
-        new TranslatableMarkup('Texto'),
+        new TranslatableMarkup('Texto e descrição'),
         new TranslatableMarkup('Posição'),
         new TranslatableMarkup('Ativo'),
+        new TranslatableMarkup('Detalhes'),
       ],
       '#empty' => new TranslatableMarkup('Esta micropágina ainda não tem itens.'),
       '#tabledrag' => [[
@@ -110,11 +113,22 @@ final class LinkPageEditorForm extends FormBase {
       $id = (string) $item->id();
       $form['items'][$id] = [
         '#attributes' => ['class' => ['draggable']],
-        'title' => [
-          'data' => [
-            '#type' => 'link',
-            '#title' => $item->label(),
-            '#url' => Url::fromRoute('entity.aculta_link_item.edit_form', ['aculta_link_item' => $id]),
+        'content' => [
+          '#type' => 'container',
+          'title' => [
+            '#type' => 'textfield',
+            '#title' => new TranslatableMarkup('Texto do botão'),
+            '#title_display' => 'invisible',
+            '#default_value' => $item->label(),
+            '#maxlength' => 255,
+            '#required' => TRUE,
+          ],
+          'description' => [
+            '#type' => 'textfield',
+            '#title' => new TranslatableMarkup('Descrição opcional'),
+            '#title_display' => 'invisible',
+            '#default_value' => (string) $item->get('description')->value,
+            '#maxlength' => 255,
           ],
         ],
         'weight' => [
@@ -132,6 +146,13 @@ final class LinkPageEditorForm extends FormBase {
           '#default_value' => (bool) $item->isPublished(),
         ],
       ];
+      $form['items'][$id]['edit'] = [
+        'data' => [
+          '#type' => 'link',
+          '#title' => new TranslatableMarkup('Destino e agendamento'),
+          '#url' => Url::fromRoute('entity.aculta_link_item.edit_form', ['aculta_link_item' => $id]),
+        ],
+      ];
     }
     $form['#attached']['library'][] = 'core/drupal.tabledrag';
     return $form;
@@ -146,16 +167,50 @@ final class LinkPageEditorForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
     $storage = $this->entityTypeManager->getStorage('aculta_link_item');
+    $updates = [];
     foreach ($form_state->getValue('items', []) as $item_id => $values) {
       $item = $storage->load($item_id);
       if (!$item || !$item->access('update', $this->currentUser)
         || (string) $item->get('page')->target_id !== (string) $page->id()) {
         throw new AccessDeniedHttpException();
       }
-      $item->set('weight', (int) $values['weight']);
-      $item->set('status', (bool) $values['status']);
+      $title = trim((string) ($values['content']['title'] ?? ''));
+      if ($title === '') {
+        $form_state->setErrorByName('items][' . $item_id . '][content][title', new TranslatableMarkup('O texto do botão é obrigatório.'));
+        return;
+      }
+      $updates[] = [$item, $values, $title];
+    }
+
+    // Validate access and required input for the complete submission before
+    // saving any row, so a later invalid or foreign row cannot cause a partial
+    // composition update.
+    $changed_items = [];
+    foreach ($updates as [$item, $values, $title]) {
+      $description = trim((string) ($values['content']['description'] ?? ''));
+      $weight = (int) $values['weight'];
+      $status = (bool) $values['status'];
+      $changed = $item->label() !== $title
+        || (string) $item->get('description')->value !== $description
+        || (int) $item->get('weight')->value !== $weight
+        || $item->isPublished() !== $status;
+      if (!$changed) {
+        continue;
+      }
+      $item->set('title', $title);
+      $item->set('description', $description);
+      $item->set('weight', $weight);
+      $item->set('status', $status);
       $item->setNewRevision(TRUE);
-      $item->setRevisionLogMessage((string) new TranslatableMarkup('Atualiza ordem e publicação pelo editor da micropágina.'));
+      $item->setRevisionLogMessage((string) new TranslatableMarkup('Atualiza conteúdo, ordem e publicação pelo editor da micropágina.'));
+      $violations = $item->validate();
+      if ($violations->count() > 0) {
+        $form_state->setErrorByName('items][' . $item->id() . '][content][title', $violations->get(0)->getMessage());
+        return;
+      }
+      $changed_items[] = $item;
+    }
+    foreach ($changed_items as $item) {
       $item->save();
     }
     $this->messenger()->addStatus(new TranslatableMarkup('A composição da micropágina foi salva.'));

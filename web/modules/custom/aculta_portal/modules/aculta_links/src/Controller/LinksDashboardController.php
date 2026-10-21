@@ -9,6 +9,7 @@ use Drupal\Core\Link as CoreLink;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_links\Service\LinkAnalytics;
 
@@ -22,6 +23,7 @@ final class LinksDashboardController {
     private readonly AccountProxyInterface $currentUser,
     private readonly DomainPurposeManager $domainPurpose,
     private readonly LinkAnalytics $analytics,
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -104,10 +106,20 @@ final class LinksDashboardController {
    */
   private function buildTable(string $entity_type_id, string $list_cache_tag, string $heading, bool $admin, string $owner_key, int $pager_element): array {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
+    $filter_key = match ($entity_type_id) {
+      'aculta_link_page' => 'paginas_estado',
+      'aculta_link' => 'destinos_estado',
+      default => 'itens_estado',
+    };
+    $filter = $this->requestStack->getCurrentRequest()?->query->get($filter_key);
+    $filter = in_array($filter, ['publicados', 'rascunhos'], TRUE) ? $filter : 'todos';
     $query = $storage->getQuery()
       ->accessCheck(TRUE)
       ->sort('changed', 'DESC')
       ->pager(50, $pager_element);
+    if ($filter !== 'todos') {
+      $query->condition('status', $filter === 'publicados');
+    }
     if (!$admin) {
       $query->condition($owner_key, $this->currentUser->id());
     }
@@ -261,6 +273,14 @@ final class LinksDashboardController {
         default => new TranslatableMarkup('Itens de micropágina'),
       },
       '#open' => TRUE,
+      'filters' => [
+        '#theme' => 'links',
+        '#links' => $this->buildStatusFilterLinks($filter_key, $filter),
+        '#attributes' => ['class' => ['aculta-links-status-filters']],
+        '#cache' => [
+          'contexts' => ['url.query_args:' . $filter_key],
+        ],
+      ],
       'table' => [
         '#type' => 'table',
         '#header' => $header,
@@ -271,6 +291,7 @@ final class LinksDashboardController {
             'user',
             'user.permissions',
             'url.query_args:page',
+            'url.query_args:' . $filter_key,
             ...(in_array($entity_type_id, ['aculta_link', 'aculta_link_page'], TRUE)
               ? ['url.site', 'languages:language_interface']
               : []),
@@ -283,6 +304,48 @@ final class LinksDashboardController {
         '#element' => $pager_element,
       ],
     ];
+  }
+
+  /**
+   * Builds links for the publication status filter of a dashboard list.
+   *
+   * @param string $filter_key
+   *   Query parameter dedicated to this entity list.
+   * @param string $active_filter
+   *   Current normalized filter.
+   *
+   * @return array
+   *   Render links keyed by status value.
+   */
+  private function buildStatusFilterLinks(string $filter_key, string $active_filter): array {
+    $request = $this->requestStack->getCurrentRequest();
+    $query = $request?->query->all() ?? [];
+    // Reset pager offsets when a filter changes but retain filters for the
+    // other two lists. Core pager links preserve these query arguments.
+    unset($query['page']);
+    $labels = [
+      'todos' => new TranslatableMarkup('Todos'),
+      'publicados' => new TranslatableMarkup('Publicados'),
+      'rascunhos' => new TranslatableMarkup('Rascunhos'),
+    ];
+    $links = [];
+    foreach ($labels as $value => $label) {
+      $parameters = $query;
+      if ($value === 'todos') {
+        unset($parameters[$filter_key]);
+      }
+      else {
+        $parameters[$filter_key] = $value;
+      }
+      $links[$value] = [
+        'title' => $label,
+        'url' => Url::fromRoute('aculta_links.dashboard', [], ['query' => $parameters]),
+        'attributes' => [
+          'aria-current' => $active_filter === $value ? 'page' : NULL,
+        ],
+      ];
+    }
+    return $links;
   }
 
 }
