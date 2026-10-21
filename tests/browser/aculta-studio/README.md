@@ -1,0 +1,20 @@
+# Revisão visual e de navegação do ACULTA Studio
+
+Suíte no Firefox pelo geckodriver (WebDriver W3C e BiDi), com janela no X11 (`DISPLAY`) ou headless com
+`STUDIO_HEADLESS=1`. Confere a seção "Estúdio" no menu da conta, as abas e o painel, a navegação AJAX
+(troca de aba sem recarregar a página), `aria-current`, largura de 390 px emulada pelo BiDi, ausência de rolagem
+horizontal e de erros de JavaScript.
+
+Somente no servidor de teste, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
+Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
+
+```sh
+DISPLAY=:0 geckodriver --port 4444 &
+node tests/browser/aculta-studio/visual.mjs
+```
+
+Variáveis: `STUDIO_PAGE` (padrão `https://conta.aculta.toca.net.br/studio`), `STUDIO_LOGIN_URI`, `STUDIO_USER`,
+`STUDIO_OUT` (padrão `.suite-out/studio`, fora do Git), `STUDIO_HEADLESS`, `GECKODRIVER`.
+
+Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
+por classes na renderização.

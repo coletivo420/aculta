@@ -53,7 +53,7 @@ final class StudioController {
     $selected = $tabs[$active] ?? reset($tabs);
     $items = [];
     foreach ($tabs as $id => $tab) {
-      $attributes = ['data-portal-ui' => 'studio-tab'];
+      $attributes = ['data-portal-ui' => 'studio-tab', 'data-aculta-studio' => 'tab'];
       if ($id === $selected->getPluginId()) {
         $attributes['aria-current'] = 'page';
       }
@@ -66,7 +66,7 @@ final class StudioController {
     $build['tabs'] = [
       '#theme' => 'item_list',
       '#items' => $items,
-      '#attributes' => ['data-portal-ui' => 'studio-tabs'],
+      '#attributes' => ['data-portal-ui' => 'studio-tabs', 'data-aculta-studio' => 'tabs'],
     ];
 
     $actions = [];
@@ -74,11 +74,11 @@ final class StudioController {
       if (!$action['access']) {
         continue;
       }
-      $actions[] = PortalLinkElement::build($action['title'], $action['url'], ['data-portal-ui' => 'studio-action']);
+      $actions[] = PortalLinkElement::build($action['title'], $action['url'], ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action']);
     }
     $build['panel'] = [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-panel', 'data-aculta-studio-tab' => $selected->getPluginId()],
+      '#attributes' => ['data-portal-ui' => 'studio-panel', 'data-aculta-studio' => 'panel', 'data-aculta-studio-tab' => $selected->getPluginId()],
       'heading' => $this->element('h2', $selected->getPluginDefinition()['label'], 'studio-heading'),
       'actions' => [
         '#theme' => 'item_list',
