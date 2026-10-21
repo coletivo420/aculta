@@ -18,8 +18,8 @@ Entregue nesta fase (documentação e código portado sem ativação):
 
 Pendente nesta fase:
 
-- Verificar o endpoint SMTP2GO de "entregues" na documentação oficial.
-- Localizar o Commerce Reporting atual (consulta retornou 404).
+- SMTP2GO: "entregues" não existe na API documentada (verificado); a métrica vem do Brevo.
+- Commerce Reports: não instalar (sem release estável em D11).
 - Decidir sobre contador de leitura da Wiki e sobre gráficos (`charts`).
 - Decidir sobre QR estático.
 - Schema da tabela `aculta_statistics_daily`: não instalado (sem migração).

@@ -64,9 +64,11 @@ o painel de turma do LMS), com as mesmas permissões.
 - **Provedor principal:** Brevo, com webhook (`BrevoWebhook`) e status
   (`BrevoEventStatus`). Entregas confirmadas vêm daqui.
 - **Contingência:** SMTP2GO (`TransportFailover`). Não é fonte principal.
-- **Conector SMTP2GO (fase 0.5.0):** API de estatísticas documentada
-  (bounces em 30 dias, eventos, webhooks). Antes de prometer "entregues",
-  confirmar o endpoint na documentação oficial. Não localizado na página consultada.
+- **Conector SMTP2GO (fase 0.5.0):** verificado em 2026-10-20. A API tem
+  `/stats/email_cycle` (enviados no ciclo) e `/stats/email_history` (agregado com
+  `bounces` e `rejects`, sem status por mensagem). **Não há contagem de entregues.**
+  Logo, "entregues" vem só do webhook do Brevo; o SMTP2GO entra como enviados e
+  devoluções agregadas.
 - **Idempotência:** conciliar por `correlation_id` (`X-Aculta-Mail-ID`) para não
   contar o mesmo evento duas vezes entre webhook, IMAP e API.
 - **Não armazenar:** corpo, assunto, destinatário em claro, token ou credencial.
@@ -77,9 +79,9 @@ o painel de turma do LMS), com as mesmas permissões.
   `commerce_order.commerce_order.insert` (pedido criado, não é venda),
   `commerce_payment.commerce_payment.insert/update` (pagamento e reembolso).
 - **Carrinho abandonado:** `CartManager` e a expiração do módulo cart.
-- **Decisão:** não instalar ECA Commerce nem Commerce Reporting. ECA Commerce
-  apenas expõe os eventos nativos; Commerce Reporting não foi localizado no
-  drupal.org na consulta de 2026-10-20.
+- **Decisão:** não instalar ECA Commerce nem Commerce Reports (`commerce_reports`).
+  ECA Commerce apenas expõe os eventos nativos. Commerce Reports tem só release
+  candidata 1.0-rc4 (fev/2025), sem release estável para Drupal 11.
 - **Regra:** cada transição conta uma vez, pelo estado atingido. Reembolso não
   é venda nova. Receita preserva moeda.
 - **Mercado Pago:** é o processador. O Statistics recebe o resultado, não

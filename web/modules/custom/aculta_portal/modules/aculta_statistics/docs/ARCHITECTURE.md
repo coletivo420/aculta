@@ -105,3 +105,9 @@ A versão do componente só será declarada quando o módulo for ativado.
   exclusão roda no cron seguinte.
 - Permissão própria para alterar prazos.
 - O cron aplica o prazo de cada métrica, não uma constante única.
+
+## Autorização de alterações (2026-10-20)
+
+O responsável autorizou alterações no tema `aculta420`, nos módulos e nos
+submódulos ACULTA quando forem necessárias às fases do Statistics, com
+commits isolados. A autorização não inclui PR, merge, tag nem deploy.
