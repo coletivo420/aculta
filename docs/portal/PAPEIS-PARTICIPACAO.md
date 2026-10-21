@@ -166,7 +166,7 @@ Hooks são classes com `#[Hook]`, descobertas automaticamente pelo Core; não s�
 |---|---|---|
 | Estudante por matrícula em curso/turma, só alunos | `Hook\EnrollmentRoleHooks` | `group_relationship_insert` (plugin `group_membership`, tipo `lms_course` ou `lms_class`) |
 | Wiki para quem confirmou o e-mail | Papel `email_confirmed` (`wiki_contributor` mesclado; sem hook) | Configuração do papel |
-| Associado: concessão e marcador de conta | `Associado\AssociadoMarker`, `Form\AssociadoMarkForm` | marcador para recursos que o consumirem; não cria acesso ao Fórum público |
+| Associado: situação da conta (pendente, ativo, suspenso, desligado) com data de adesão | `Associado\AssociadoMarker`, `Form\AssociadoSituacaoForm`, `Form\AssociadoRequestForm` | situação, não papel (2026-10-21); só administrador concede; não cria acesso ao Fórum público. Ver `aculta_user/docs/ASSOCIADO.md` |
 | Relatório de associados (só administrador) | `Controller\AssociadosController` | `/painel-administrativo/associados/relatorio` |
 | Relatório de vendas (gerente de loja) | `aculta_portal` `Controller\SalesReportController` | `/painel-administrativo/loja/vendas`, permissão `view commerce_order` |
 | Herança de papéis (Fase 2) | configuração `aculta_portal.role_hierarchy` (cadeia) | cadeia em `config/sync/aculta_portal.role_hierarchy.yml`; herança calculada pelo `aculta_user` |

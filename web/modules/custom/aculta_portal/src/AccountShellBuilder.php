@@ -58,6 +58,7 @@ final class AccountShellBuilder {
       'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'heart'],
       'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'mortarboard'],
       ...($this->routeExists('aculta_user.atividade') ? ['aculta_user.atividade' => ['title' => $this->translation->translate('Atividade'), 'route' => 'aculta_user.atividade', 'icon' => 'activity']] : []),
+      ...($this->routeExists('aculta_user.associado_pedido') ? ['aculta_user.associado_pedido' => ['title' => $this->translation->translate('Associado'), 'route' => 'aculta_user.associado_pedido', 'icon' => 'person-badge']] : []),
       'view.commerce_user_orders.order_page' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'view.commerce_user_orders.order_page', 'icon' => 'bag'],
       'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'person-vcard'],
       'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'link-45deg'],

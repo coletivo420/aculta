@@ -1,3 +1,9 @@
+## 0.1.0-dev.15 — data de obtenção nas missões concluídas — 2026-10-21
+
+- Conquista obtida mostra "Concluída em DATA" e tooltip "Obtida em DATA" (atributo `title`), em `MissionProgress`.
+- Administração e concessão de conquistas continuam só para o administrador (`administer aculta game`, sem papel concedido).
+- `aculta_game.info.yml` 0.1.0-dev.15. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
+
 # Changelog — ACULTA Game
 
 ## 0.1.0-dev.14 — excluir tópicos LMS da conquista pública de Fórum

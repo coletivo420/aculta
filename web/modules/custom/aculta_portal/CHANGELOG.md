@@ -1,3 +1,11 @@
+## 0.4.0-dev.239 — associado fora da hierarquia de papéis; item Associado na Minha conta — 2026-10-21
+
+- Papel `associado` retirado da cadeia de herança (`aculta_portal.role_hierarchy`) e do formulário da hierarquia. `lms_teacher` herda de `estudante`. Decisão do responsável de 2026-10-21 (associado é situação).
+- Perfil `associado` continua sendo o tipo de dados da situação; `roles` vazio no tipo de perfil (sem restrição por papel).
+- Item "Associado" no menu da Minha conta, ao lado de Atividade (rota `aculta_user.associado_pedido`).
+- Gate `scripts/validate-role-hierarchy.php` atualizado para a cadeia decidida: PASS.
+- `aculta_portal.info.yml` 0.4.0-dev.239. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.238 — remove a apresentação LINKS do Portal — 2026-10-20
 
 - Presenter e sugestões/preprocess específicos de links foram movidos ao submódulo. Portal mantém os serviços compartilhados de Domain; footer e dados da página agora pertencem ao `aculta_links`.

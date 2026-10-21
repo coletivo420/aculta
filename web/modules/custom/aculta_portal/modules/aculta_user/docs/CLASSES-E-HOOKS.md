@@ -115,7 +115,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AccountBioForm` | `src/Form/AccountBioForm.php` | Modal de edição da bio (campo field_bio do perfil participante). |
-| `AssociadoMarkForm` | `src/Form/AssociadoMarkForm.php` | Marca ou desmarca uma conta como associado (marcador puro, F-D19). Não concede nenhum acesso no site. |
+| `AssociadoSituacaoForm` | `src/Form/AssociadoSituacaoForm.php` | Administrador define a situação de associado (ativo, suspenso, desligado) ou recusa um pedido. Só administrador. |
+| `AssociadoRequestForm` | `src/Form/AssociadoRequestForm.php` | Pessoa com e-mail confirmado pede adesão em `/associado`. Não concede nada. |
 | `AvatarCropForm` | `src/Form/AvatarCropForm.php` | Popup de recorte da foto personalizada. |
 | `FriendshipActionForm` | `src/Form/FriendshipActionForm.php` | Presents the current member's allowed action for a profile relationship. */ |
 | `ParticipationSettingsForm` | `src/Form/ParticipationSettingsForm.php` | Painel de regras de participação (plano aculta_user, seção E7). |

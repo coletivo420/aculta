@@ -296,7 +296,8 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/u/lendashistoricas` | Memorial de legados (página pública) | Purpose `main`; sem restrição de acesso (`_access: TRUE`). |
 | `main.aculta` | `/painel-administrativo/associados/relatorio` | Relatório administrativo de associados | Exige `administer aculta associados`; rota administrativa. |
 | `main.aculta` | `/painel-administrativo/associados/exportar` | Exportação CSV de associados | Exige `export aculta associados` (somente administrador). |
-| `main.aculta` | `/painel-administrativo/associados/{user}/marcar` | Marca ou desmarca associado de uma conta | Exige `administer aculta associados`; confirmação antes de gravar. |
+| `main.aculta` | `/painel-administrativo/associados/{user}/situacao` | Situação de associado de uma conta (ativo, suspenso, desligado) e recusa de pedido | Exige `administer aculta associados`; só administrador concede. |
+| `conta.aculta` | `/associado` | Pedido de adesão à associação e situação atual da própria pessoa | Exige `access aculta portal`, e-mail confirmado para pedir; purpose `account`. |
 
 ## Rotas técnicas ativas
 

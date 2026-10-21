@@ -4,7 +4,7 @@ services:
 
   aculta_game.mission_progress:
     class: Drupal\aculta_game\MissionProgress
-    arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager']
+    arguments: ['@config.factory', '@aculta_user.badge_service', '@entity_type.manager', '@date.formatter']
     tags:
       - { name: aculta_portal.helper }
   aculta_game.achievement_presentation:

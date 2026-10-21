@@ -7,8 +7,7 @@ label: Associado
 display_label: 'Perfil de associado'
 multiple: false
 registration: false
-roles:
-  - associado
+roles: {  }
 allow_revisions: false
 new_revision: false
 

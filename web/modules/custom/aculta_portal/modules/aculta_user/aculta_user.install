@@ -51,3 +51,25 @@ function aculta_user_update_10004(): string {
   return (string) t('Removed the obsolete first-comment setting for Drupal Forum.');
 }
 
+
+/**
+ * Associado vira situação: campos de situação, data de adesão, autor e motivo na marca existente.
+ *
+ * Contas que já tinham a marca (ou o papel) passam a "ativo", com a data de adesão igual à data da marca. Sem essa
+ * migração, quem já é associado perderia a situação.
+ */
+function aculta_user_update_10005(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_associado');
+  $fields = \Drupal\aculta_user\Entity\AssociadoMarcador::baseFieldDefinitions($entity_type);
+  foreach (['situacao', 'data_adesao', 'motivo', 'changed'] as $name) {
+    if ($manager->getFieldStorageDefinition($name, 'aculta_associado') === NULL) {
+      $manager->installFieldStorageDefinition($name, 'aculta_associado', 'aculta_user', $fields[$name]);
+    }
+  }
+  \Drupal::database()->update('aculta_associado')
+    ->fields(['situacao' => 'ativo'])
+    ->condition('situacao', 'pendente')
+    ->execute();
+  \Drupal::database()->query("UPDATE {aculta_associado} SET data_adesao = created WHERE data_adesao IS NULL AND situacao = 'ativo'");
+}

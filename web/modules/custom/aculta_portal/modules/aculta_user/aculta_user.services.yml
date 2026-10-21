@@ -64,7 +64,7 @@ services:
     arguments: ['@entity_type.manager']
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@datetime.time']
   aculta_user.public_profile_not_canonical:
     class: Drupal\aculta_user\EventSubscriber\PublicProfileNotCanonicalSubscriber
     arguments: ['@router.route_provider']

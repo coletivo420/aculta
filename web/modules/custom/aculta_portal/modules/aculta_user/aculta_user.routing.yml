@@ -148,11 +148,11 @@ aculta_user.denuncias_forum:
   options:
     _admin_route: true
 
-aculta_user.associado_marcar:
-  path: '/painel-administrativo/associados/{user}/marcar'
+aculta_user.associado_situacao:
+  path: '/painel-administrativo/associados/{user}/situacao'
   defaults:
-    _form: '\Drupal\aculta_user\Form\AssociadoMarkForm'
-    _title: 'Marca de associado'
+    _form: '\Drupal\aculta_user\Form\AssociadoSituacaoForm'
+    _title: 'Situação de associado'
   requirements:
     _permission: 'administer aculta associados'
     user: '\d+'
@@ -161,3 +161,13 @@ aculta_user.associado_marcar:
     parameters:
       user:
         type: entity:user
+
+aculta_user.associado_pedido:
+  path: '/associado'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoRequestForm'
+    _title: 'Associado'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: 'account'

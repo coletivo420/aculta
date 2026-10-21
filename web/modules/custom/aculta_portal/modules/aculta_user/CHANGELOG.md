@@ -1,3 +1,14 @@
+## 0.4.0-dev.50 — associado vira situação (não papel); pedido de adesão; só administrador concede — 2026-10-21
+
+- Associado deixa de ser papel. A situação fica na entidade `aculta_associado`: pendente, ativo, suspenso ou desligado, com **data de adesão** (primeira ativação) e autor/motivo da última alteração. Contrato em `docs/ASSOCIADO.md`.
+- Pedido de adesão pela própria pessoa, em `/associado` (Minha conta), só com e-mail confirmado. Pedido cria a situação "pendente"; não concede nada.
+- Só o administrador (`administer aculta associados`) concede, suspende, desliga ou recusa o pedido, em `/painel-administrativo/associados/{user}/situacao`. Ativar garante o perfil de associado (dados como RG ficam nele).
+- Migração `aculta_user_update_10005`: campos novos; contas já marcadas passam a "ativo" com data de adesão da marca.
+- Relatório de associados: situação, data de adesão e pedidos em análise; CSV com situação e data.
+- Papel `associado` removido da configuração, da cadeia de herança e das ações de papel (sem usuários com o papel). `lms_teacher` herda de `estudante`.
+- Verificado no servidor de testes: pedido, ativação pelo administrador, suspensão, visão da pessoa, negação de acesso à tela administrativa e de auto-concessão. Teste de Kernel não executável neste ambiente (cadeia de serviços do `aculta_portal`); registrado em `docs/PENDENCIAS.md`.
+- `aculta_user.info.yml` 0.4.0-dev.50. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
+
 ## 0.4.0-dev.49 — aba Pessoas do painel; formulário de participação corrigido — 2026-10-20
 
 - Aba **Pessoas** no painel ACULTA, com Regras de participação, Mensagens e CEP como subabas.

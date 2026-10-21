@@ -4,11 +4,12 @@
  * @file
  * Gate: hierarquia de papéis (role_inheritance) e checagens por nome de papel.
  *
- * Decisão do responsável (2026-10-17): cadeia unilateral authenticated < email_confirmed < estudante < associado <
- * lms_teacher < content_editor < gerente_loja < administrator. A herança é transitiva; administrator herda de todos.
+ * Decisão do responsável (2026-10-21): cadeia unilateral authenticated < email_confirmed < estudante < lms_teacher <
+ * content_editor < gerente_loja < administrator. Associado não é papel (é situação, com pedido e data de adesão; ver
+ * docs/ASSOCIADO.md em aculta_user). A herança é transitiva; administrator herda de todos.
  *
  * Verifica no config/sync (sem Runtime):
- * - a cadeia de herança exatamente como decidida (email_confirmed, estudante, associado, lms_teacher,
+ * - a cadeia de herança exatamente como decidida (email_confirmed, estudante, lms_teacher,
  *   content_editor, gerente_loja);
  * - o mapa não tem ciclo nem autorreferência;
  * - administrator herda de todos os demais papéis de negócio;
@@ -34,8 +35,7 @@ $errors = [];
 $decidida = [
   'email_confirmed' => ['authenticated'],
   'estudante' => ['email_confirmed'],
-  'associado' => ['estudante'],
-  'lms_teacher' => ['associado'],
+  'lms_teacher' => ['estudante'],
   'content_editor' => ['lms_teacher'],
   'gerente_loja' => ['content_editor'],
 ];

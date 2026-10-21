@@ -19,15 +19,19 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
 - **Tooltip "Obtida em DATA" na lista de conquistas do público:** não existe na apresentação do `aculta_game`
   (a data só aparece na administração). Decisão de dono: `aculta_game` (apresentação) ou `aculta_user` (cartão).
 
+## Decidido pelo responsável (2026-10-21)
+
+- **Associado é situação, não papel.** Pedido de adesão pela pessoa; só o administrador concede, suspende ou desliga
+  (`docs/ASSOCIADO.md`).
+- **Badges:** só administradores concedem (`administer aculta game`; nenhum papel recebe essa permissão).
+- **Tooltip "Obtida em DATA":** fica no `aculta_game` (missões concluídas, `MissionProgress`).
+- **Não mesclar** esta frente: o branch é compartilhado com outro agente e a PR #297 segue aberta.
+
 ## Pendente de decisão do responsável
 
-1. **Associado (estado):** é só o papel `associado` (hoje: marcador `AssociadoMarker`), ou também há situação
-   (ativo, suspenso, desligado) e data de adesão? Quem perde o papel mantém o histórico? (plano, pergunta 14).
-2. **Adesão:** só o administrador torna alguém associado, ou haverá pedido de adesão? (plano, pergunta 15).
-3. **Badges manuais:** quem concede (só administrador, ou também editores de Wiki e de Fórum)? (plano, pergunta 18).
-4. **Badges automáticas na primeira versão:** quais regras entram? Sugestão do plano: verbetes publicados, respostas
-   no Fórum e tempo de participação. (plano, pergunta 19).
-5. **Dono do tooltip "Obtida em":** `aculta_game` ou `aculta_user` (ver acima).
+1. **Adesão:** pedido pela pessoa com decisão do administrador (decidido) ou também convite direto? Hoje só pedido.
+2. **Badges automáticas na primeira versão:** quais regras entram? (sugestão do plano: verbetes publicados, respostas
+   no Fórum, tempo de participação).
 
 ## Pendente técnico (sem decisão de produto)
 
