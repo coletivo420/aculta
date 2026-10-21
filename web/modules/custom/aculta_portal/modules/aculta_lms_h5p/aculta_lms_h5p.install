@@ -875,10 +875,23 @@ function aculta_lms_h5p_update_8007(): void {
   }
 
   // Forum's optional entity reference field follows the new entity type ID.
-  $field_storage = \Drupal::entityTypeManager()
-    ->getStorage('field_storage_config')
-    ->load('node.field_h5p_content');
-  if ($field_storage && $field_storage->getSetting('target_type') === 'h5p_content') {
-    $field_storage->setSetting('target_type', $entity_type_id)->save();
+  // The old target type has already been removed from code at this point, so
+  // FieldStorageConfig::save() cannot calculate its old reference schema. The
+  // target column remains an integer in both entity types and all field rows
+  // were discarded above; update config and the installed definition directly.
+  $field_storage_config = \Drupal::configFactory()->getEditable('field.storage.node.field_h5p_content');
+  $field_settings = $field_storage_config->get('settings') ?? [];
+  if (($field_settings['target_type'] ?? NULL) === 'h5p_content') {
+    $field_settings['target_type'] = $entity_type_id;
+    $field_storage_config->set('settings', $field_settings)->save();
+
+    $field_storage_entity_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+    $field_storage_entity_storage->resetCache(['node.field_h5p_content']);
+    $entity_field_manager = \Drupal::service('entity_field.manager');
+    $entity_field_manager->clearCachedFieldDefinitions();
+    $field_definition = $entity_field_manager->getFieldStorageDefinitions('node')['field_h5p_content'] ?? NULL;
+    if ($field_definition) {
+      $repository->setLastInstalledFieldStorageDefinition($field_definition);
+    }
   }
 }

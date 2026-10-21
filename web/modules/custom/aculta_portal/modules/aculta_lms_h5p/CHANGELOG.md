@@ -193,3 +193,4 @@
   montagem do formulário administrativo (36 elementos) passaram; sem updates
   de banco. Gates Drupal 11+, imagem e slugs passaram.
 
+- O primeiro `updb` no Runtime encontrou a limitação do Entity Reference ao recalcular a definição antiga após remover o entity type. O update agora troca a configuração pelo Config API e sincroniza a definição instalada pelo repositório Core; a coluna segue `integer` e as referências legadas são descartadas. O update segue pendente e será reexecutado após novo dump íntegro.
