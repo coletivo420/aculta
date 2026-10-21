@@ -1,5 +1,17 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.67 — exibir prazo no formulário de resposta — 2026-10-21
+
+- Corrige a exibição do prazo para estudantes: o hook injeta o serviço de
+  tradução e usa o namespace instalado de `DateTimeItemInterface`; a rota
+  positiva agora mostra o prazo da turma com o fuso da conta. Kernel integrado
+  valida entidades LMS/Group reais e autowiring do hook: 1 teste / 46
+  assertions. Unit LMS/Messenger: 84/445; Kernel combinado: 23/719, com 95
+  depreciações upstream; PHPCS Drupal/DrupalPractice PASS. No Runtime `cursos`,
+  `drush updatedb:status` não encontrou updates, cache rebuild passou e o
+  container resolveu o serviço do hook; houve apenas warning preexistente da
+  cópia de assets H5P. Nenhuma configuração foi importada.
+
 ## 0.1.0-dev.66 — cobrir resposta aberta sem atividade — 2026-10-21
 
 - `FreeTextReviewFeedback` mantém o campo de resposta sem os controles de

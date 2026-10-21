@@ -5,11 +5,20 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Component\Serialization\Yaml;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks;
 use Drupal\group\Entity\Group;
 use Drupal\lms\Entity\Activity;
 use Drupal\lms\Entity\ActivityType;
+use Drupal\lms\Entity\Answer;
+use Drupal\lms\Entity\AnswerInterface;
+use Drupal\lms\Entity\CourseStatus;
+use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\Lesson;
+use Drupal\lms\Entity\LessonStatus;
+use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -55,7 +64,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'group', 'lms', 'lms_classes']);
     foreach ([
       'group.relationship_type.lms_class-lms_class_activity_due',
       'field.storage.group_relationship.field_activity_due_at',
@@ -76,6 +85,9 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installEntitySchema('lms_lesson');
     $this->installEntitySchema('lms_activity');
+    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('lms_lesson_status');
+    $this->installEntitySchema('lms_answer');
   }
 
   /**
@@ -122,6 +134,8 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     self::assertSame('2026-10-22T12:00:00', $deadlineA->get('field_activity_due_at')->value);
     self::assertSame('2026-10-23T12:00:00', $deadlineB->get('field_activity_due_at')->value);
     $learner = $this->createUser();
+    $learner->set('timezone', 'America/Sao_Paulo');
+    $learner->save();
     $outsider = $this->createUser();
     $classA->addMember($learner);
     self::assertTrue($course->hasPermission('take course', $learner), 'A class membership grants take-course permission on its parent course.');
@@ -129,6 +143,44 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     self::assertSame($deadlineA->id(), $manager->deadlineForLearner($course, $activity, $learner)?->id());
     self::assertNull($manager->deadlineForLearner($course, $activity, $outsider));
     self::assertSame('Atividade compartilhada', $activity->label());
+
+    $course_status = CourseStatus::create([
+      CourseStatusInterface::COURSE_FIELD => $course->id(),
+      'uid' => $learner->id(),
+      'current' => TRUE,
+    ]);
+    $course_status->save();
+    $lesson_status = LessonStatus::create([
+      'course_status' => $course_status->id(),
+      LessonStatusInterface::LESSON_FIELD => $lesson->id(),
+    ]);
+    $lesson_status->save();
+    $answer = Answer::create([
+      'user_id' => $learner->id(),
+      'lesson_status' => $lesson_status->id(),
+      AnswerInterface::ACTIVITY_FIELD => ['target_id' => $activity->id()],
+    ]);
+    $answer->setData(['answer' => 'Resposta de teste']);
+    $answer->save();
+
+    $form_object = $this->createMock(EntityFormInterface::class);
+    $form_object->method('getEntity')->willReturn($answer);
+    $form_state = $this->createMock(FormStateInterface::class);
+    $form_state->method('getFormObject')->willReturn($form_object);
+    $date_formatter = $this->container->get('date.formatter');
+    $hook = $this->container->get(ActivityDeadlineFormHooks::class);
+    self::assertInstanceOf(ActivityDeadlineFormHooks::class, $hook);
+    $form = [];
+    $hook->answerFormAlter($form, $form_state);
+
+    self::assertSame('item', $form['aculta_lms_activity_deadline']['#type']);
+    $expected_date = $date_formatter->format(
+      (new \DateTimeImmutable('2026-10-22T12:00:00', new \DateTimeZone('UTC')))->getTimestamp(),
+      'long',
+      NULL,
+      'America/Sao_Paulo',
+    );
+    self::assertStringContainsString($expected_date, (string) $form['aculta_lms_activity_deadline']['#markup']);
   }
 
 }

@@ -40,7 +40,7 @@ final class ActivityDeadlineFormHooksTest extends UnitTestCase {
     $deadlines = (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor();
     $form = ['existing' => ['#plain_text' => 'answer form']];
 
-    (new ActivityDeadlineFormHooks($deadlines, $this->createMock(DateFormatterInterface::class)))
+    (new ActivityDeadlineFormHooks($deadlines, $this->createMock(DateFormatterInterface::class), $this->getStringTranslationStub()))
       ->answerFormAlter($form, $formState);
 
     self::assertSame(['existing' => ['#plain_text' => 'answer form']], $form);
@@ -73,7 +73,7 @@ final class ActivityDeadlineFormHooksTest extends UnitTestCase {
     $deadlines = (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor();
     $form = ['existing' => ['#plain_text' => 'answer form']];
 
-    (new ActivityDeadlineFormHooks($deadlines, $this->createMock(DateFormatterInterface::class)))
+    (new ActivityDeadlineFormHooks($deadlines, $this->createMock(DateFormatterInterface::class), $this->getStringTranslationStub()))
       ->answerFormAlter($form, $formState);
 
     self::assertSame(['existing' => ['#plain_text' => 'answer form']], $form);

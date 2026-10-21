@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\AnswerInterface;
@@ -23,10 +25,15 @@ use Drupal\user\UserInterface;
  * Shows the class-specific deadline on the LMS activity answer form. */
 final class ActivityDeadlineFormHooks {
 
+  use StringTranslationTrait;
+
   public function __construct(
     private readonly ClassActivityDeadlineManager $deadlines,
     private readonly DateFormatterInterface $dateFormatter,
-  ) {}
+    TranslationInterface $stringTranslation,
+  ) {
+    $this->stringTranslation = $stringTranslation;
+  }
 
   /**
  * Adds the deadline label without changing the answer or its validation. */
