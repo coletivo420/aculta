@@ -162,3 +162,10 @@ Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` 
 
 - **Auto Image:** exceção formal registrada e plugin habilitado. Inerte até que `ckeditor5_image` seja adicionado aos formatos, o que não foi feito.
 - **Tipos Página e Documento:** formatos novos liberados no campo `body`, por decisão do responsável. Mesma ordem nos arquivos de configuração e no Runtime; sem drift.
+
+## 12. Fechamento da missão (2026-10-22)
+
+- **Título de nível 1 (H1):** fica fora do perfil Editorial, que aceita títulos 2 a 4. Motivo: o título da página já é o H1 do tema. Decisão padrão mantida; revisável.
+- **Auto Image:** exceção formal registrada e plugin habilitado, inerte porque os formatos não têm `ckeditor5_image`. A regra do `aculta_image` impede adicionar o upload do Core, então o estado final é este.
+- **Envio de e-mail de teste do modelo:** não executado. Envia e-mail real a partir do servidor de testes e precisa de destinatário e confirmação do responsável.
+- **Validação no navegador:** ciclo do editor (editar, inserir modelo e tabela, salvar, reabrir, renderizar), colagem Markdown, prévia e formulário de modelos do mailer.
