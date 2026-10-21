@@ -1,5 +1,12 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.60 — exibir conclusão elegível ao educador — 2026-10-21
+
+- O teste Kernel confirma que uma conclusão aprovada aparece no seletor do
+  formulário para o educador autorizado por `grade students` no curso. Focal:
+  5 testes / 159 assertions PASS; regressão combinada LMS/Messenger: 23 testes /
+  708 assertions PASS, com 92 depreciações upstream.
+
 ## 0.1.0-dev.59 — provar emissão por educador de turma — 2026-10-21
 
 - O Kernel usa educador real com papel Group contextual `grade students`, sem

@@ -10,9 +10,9 @@ O Kernel percorre os submits dos formulários de emissão e revogação com um
 educador real, autorizado por `grade students` no curso e sem permissão
 administrativa global. A emissão redireciona para a verificação pública pelo
 código, e a revogação preserva o registro e o motivo informado.
-`CertificateLifecycleTest`: 5 testes / 157 assertions PASS; 38 depreciações de
-Core/contrib. Smoke Runtime dos formulários e revisão visual permanecem
-pendentes.
+`CertificateLifecycleTest`: 5 testes / 159 assertions PASS; 38 depreciações de
+Core/contrib. A conclusão elegível aparece no seletor. Smoke Runtime dos
+formulários e revisão visual permanecem pendentes.
 
 ## F16 — referências removidas em respostas
 
@@ -41,7 +41,7 @@ Na emissão de certificado F11, o manager e o formulário também usam as
 referências dos campos do `CourseStatus`: se usuário ou curso tiver sido
 removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
 conclusão, sem erro 500. Kernel focal: 4 testes / 126 assertions; regressão
-Kernel LMS/Messenger: 23 testes / 706 assertions PASS, com 92 depreciações
+Kernel LMS/Messenger: 23 testes / 708 assertions PASS, com 92 depreciações
 upstream. Unit LMS/Messenger: 77 testes / 400 assertions PASS, com 8
 depreciações PHPUnit. F11 também executa os submits de emissão/revogação:
 Kernel focal 5/155; smoke Runtime autenticado e revisão visual permanecem

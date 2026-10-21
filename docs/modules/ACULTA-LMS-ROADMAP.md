@@ -376,8 +376,10 @@ usa IDs inexistentes para simular referências removidas e cobre o formulário:
 Em 0.1.0-dev.59, o Kernel executa os submits dos formulários com um educador
 real, autorizado por `grade students` no curso e sem permissão administrativa
 global: emissão redireciona para a rota pública com código opaco; revogação
-preserva o certificado com estado e motivo. `CertificateLifecycleTest`: 5 testes
-/ 157 assertions PASS, com 38 depreciações do Core/contrib. Isso valida
+preserva o certificado com estado e motivo, e a conclusão elegível aparece na
+lista do formulário. `CertificateLifecycleTest`: 5 testes / 159 assertions
+PASS, com 38 depreciações do Core/contrib. A regressão combinada atual passou
+com 23 testes / 708 assertions e 92 depreciações upstream. Isso valida
 o fluxo de Form API, mas não substitui o smoke HTTP autenticado nem a revisão
 visual no Runtime; ambos seguem pendentes.
 

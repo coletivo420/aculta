@@ -401,15 +401,19 @@ final class CertificateLifecycleTest extends KernelTestBase {
 
     $issueRoute = $this->createMock(CurrentRouteMatch::class);
     $issueRoute->method('getParameter')->with('group')->willReturn($course);
+    $dateFormatter = $this->createMock(DateFormatterInterface::class);
+    $dateFormatter->method('format')->willReturn('21/10/2026');
     $issueForm = new CourseCertificateIssueForm(
       $this->container->get('entity_type.manager'),
       $manager,
       $issueRoute,
       $account,
-      $this->container->get('date.formatter'),
+      $dateFormatter,
     );
     $issueForm->setStringTranslation($this->container->get('string_translation'));
     $issueForm->setMessenger($this->container->get('messenger'));
+    $issueOptions = $issueForm->buildForm([], new FormState());
+    self::assertArrayHasKey((string) $status->id(), $issueOptions['course_status']['#options']);
     $issueState = new FormState();
     $issueState->setValue('course_status', $status->id());
     $issueBuild = [];
