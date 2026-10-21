@@ -8,6 +8,10 @@
   pelo teste e filas foram restaurados/limpos. Nenhum e-mail foi enviado.
 - Hook e worker foram invocados diretamente; execução por Cron agendado e
   revisão visual/autenticada continuam pendentes.
+- Tentativa Firefox headless isolada alcançou a tela `/agreement`, cuja
+  frequência ativa requer aceite na sessão. Nenhum aceite foi submetido; a
+  gaveta não foi validada e as fixtures, mensagens temporárias e perfil do
+  navegador foram limpos.
 
 ## 0.1.0-dev.12 — usar DateTimeItemInterface do módulo datetime — 2026-10-21
 

@@ -31,6 +31,12 @@ diretamente; não se aguardou Cron agendado. Revisão visual/acessível da gavet
 segue pendente. A entrega de digest pelo serviço compartilhado foi exercitada
 com providers educacionais no Unit.
 
+Tentativa visual em Firefox headless isolado em 2026-10-21 chegou à tela do
+acordo geral `/agreement`; a configuração exige aceite por sessão. Não foi
+submetido aceite em nome da conta. A gaveta autenticada não pôde ser revisada;
+fixtures e perfil headless foram removidos. Repetir com uma sessão de teste já
+autenticada e com o acordo vigente concluído pelo próprio responsável.
+
 ## Contratos
 
 - Matrícula/certificado usam e-mail transacional sem confirmação de endereço,
