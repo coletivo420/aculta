@@ -79,7 +79,7 @@ final class MailTemplate extends ConfigEntityBase {
   /**
    * Formato HTML restrito do editor de modelos (criado pelo aculta_editor).
    */
-  public const BODY_FORMAT_HTML = 'aculta_email';
+  public const BODY_FORMAT_HTML = 'email_html';
 
   /**
    * ID do layout, ou vazio.

@@ -31,7 +31,7 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['filter']);
-    // Formato restrito equivalente ao aculta_email (o aculta_editor o cria em produção).
+    // Formato de e-mail do ACULTA (email_html, com o filtro restrito do aculta_editor).
     FilterFormat::create([
       'format' => MailTemplate::BODY_FORMAT_HTML,
       'name' => 'Aculta Email (teste)',

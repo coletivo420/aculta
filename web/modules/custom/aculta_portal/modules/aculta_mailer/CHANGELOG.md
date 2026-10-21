@@ -1,3 +1,8 @@
+## 0.1.0-dev.69 — formato de e-mail unificado — 2026-10-22
+
+- O corpo HTML do modelo usa `email_html` (Aculta Email), no lugar de `aculta_email`, que foi removido na unificação dos formatos. Constante `MailTemplate::BODY_FORMAT_HTML`.
+- Kernel 41/41.
+
 ## 0.1.0-dev.68 — modo de cor do e-mail segue o controle do site — 2026-10-22
 
 - O envelope recebe o modo de cor do site (`aculta_portal.appearance`, o mesmo controle da aparência): light, dark ou auto. Antes seguia só a preferência do sistema.

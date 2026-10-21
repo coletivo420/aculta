@@ -176,3 +176,21 @@ Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` 
 - **Título H1:** decidido pelo responsável: fica fora do perfil Editorial (títulos 2 a 4). Não há pendência.
 - **Revisão visual no cliente de e-mail:** pendência do responsável. Foi enviada uma mensagem de revisão a 4e20coletivo@gmail.com (registro do mailer, id 88, status `sent`, layout atual, modo claro). O conteúdo gerado é o mesmo caminho verificado por IMAP no dmarc@, mas não foi lido na caixa do Gmail, que não é acessível pelo sistema.
 - **Escopo técnico:** concluído. Ver as seções 7 e 12.
+
+## 14. Unificação de formatos de texto (2026-10-22)
+
+Decisão do responsável: os formatos antigos recebem as funções do ACULTA e os excedentes são removidos.
+
+| Formato | Função | Situação |
+| --- | --- | --- |
+| `plain_text` | Aculta Básico (texto puro) | mantido, sem editor |
+| `usuario_aculta` | Usuário ACULTA (HTML restrito) | mantido |
+| `revista_editorial` | Aculta Editorial (HTML completo) | mantido; **sem filtro de HTML**, por decisão; restringir o acesso aos papéis de edição |
+| `email_html` | Aculta Email | mantido; configurado com o filtro e o editor do e-mail |
+| `wiki` | Aculta Wiki (somente Wiki) | mantido |
+| `webform_default` | sistema do Webform | mantido (não alterar) |
+| `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` | — | removidos (sem conteúdo) |
+| `restricted_html` | — | removido; único conteúdo (nó 372) migrado para `usuario_aculta`, sem perda |
+
+Campos de conteúdo (página, documento, atividade, projeto, wiki) não listam mais os formatos removidos nem o `email_html`.
+Permissão `use text format restricted_html` revogada do papel anônimo.
