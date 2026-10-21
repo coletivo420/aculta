@@ -166,6 +166,18 @@ por compartilhar o comando. Uma nova tentativa foi bloqueada pela edição
 incompleta de hook LMS; o único destino temporário gravado foi removido por
 identidade exata e sua ausência confirmada. Produção continua não verificada.
 
+## Dashboard responsivo 0.4.0-dev.23
+
+O dashboard substituiu os links de ação concatenados por uma lista semântica e
+marcou Estado como prioridade média e Cliques como baixa nas tabelas Core. Em
+telas estreitas, o padrão responsivo do Core recolhe essas colunas; Título e
+Operações permanecem disponíveis. O Core 11.4.10 foi inspecionado e `cr`/teste
+visual autenticado passaram. Firefox autenticado confirmou os três atalhos como
+itens separados, colunas secundárias recolhidas e largura de documento menor
+que o viewport efetivo de 500 px. Embora a janela do WebDriver tenha sido
+solicitada em 390 px, Firefox manteve `innerWidth` em 500; o breakpoint exato
+390 px segue pendente. Nenhum formulário foi enviado ou entidade alterada.
+
 ## Erro de metadata 0.4.0-dev.22
 
 O primeiro GET de uma micropágina temporária, após o hook LMS ser restaurado,

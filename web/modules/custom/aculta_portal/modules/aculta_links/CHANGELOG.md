@@ -1,5 +1,10 @@
 # Changelog — ACULTA Links
 
+## 0.4.0-dev.23 — melhora legibilidade móvel do dashboard — 2026-10-20
+
+- Ações rápidas agora são uma lista HTML semântica em vez de links concatenados; tabelas usam prioridades responsivas do Core para recolher Estado e Cliques em telas estreitas, preservando Título e Operações.
+- API confirmada no Core instalado 11.4.10 e na documentação 11.x (`ThemePreprocess`/`Table`). `cr` passou. Firefox autenticado confirmou lista e colunas compactadas; geckodriver manteve viewport CSS em 500 px apesar da janela de 390 px, logo o breakpoint exato de 390 px permanece pendente. Captura revisada, sem mudança de dados.
+
 ## 0.4.0-dev.22 — corrige metadata pública de micropágina — 2026-10-20
 
 - O Runtime reportou HTTP 500 ao montar metadata porque a classe Unicode estava importada do namespace Core inexistente. A importação agora usa `Drupal\Component\Utility\Unicode`, igual ao Core Drupal 11 instalado ([API Core 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3Atruncate/11.x)).

@@ -35,21 +35,21 @@ final class LinksDashboardController {
     $admin = $account->hasPermission('administer aculta links');
     $build = [
       'actions' => [
-        '#type' => 'container',
-        'add_page' => [
-          '#type' => 'link',
-          '#title' => new TranslatableMarkup('Criar micropágina'),
-          '#url' => Url::fromRoute('entity.aculta_link_page.add_form'),
-        ],
-        'add_link' => [
-          '#type' => 'link',
-          '#title' => new TranslatableMarkup('Criar destino reutilizável'),
-          '#url' => Url::fromRoute('entity.aculta_link.add_form'),
-        ],
-        'add_item' => [
-          '#type' => 'link',
-          '#title' => new TranslatableMarkup('Adicionar item a uma micropágina'),
-          '#url' => Url::fromRoute('entity.aculta_link_item.add_form'),
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#items' => [
+          CoreLink::createFromRoute(
+            new TranslatableMarkup('Criar micropágina'),
+            'entity.aculta_link_page.add_form',
+          )->toRenderable(),
+          CoreLink::createFromRoute(
+            new TranslatableMarkup('Criar destino reutilizável'),
+            'entity.aculta_link.add_form',
+          )->toRenderable(),
+          CoreLink::createFromRoute(
+            new TranslatableMarkup('Adicionar item a uma micropágina'),
+            'entity.aculta_link_item.add_form',
+          )->toRenderable(),
         ],
       ],
       'pages' => $this->buildTable(
@@ -238,6 +238,21 @@ final class LinksDashboardController {
       $rows[] = $row;
     }
 
+    $header = [
+      new TranslatableMarkup('Título'),
+      [
+        'data' => new TranslatableMarkup('Estado'),
+        'class' => [\RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+    ];
+    if ($entity_type_id === 'aculta_link') {
+      $header[] = [
+        'data' => new TranslatableMarkup('Cliques'),
+        'class' => [\RESPONSIVE_PRIORITY_LOW],
+      ];
+    }
+    $header[] = new TranslatableMarkup('Operações');
+
     return [
       '#type' => 'details',
       '#title' => match ($heading) {
@@ -248,12 +263,7 @@ final class LinksDashboardController {
       '#open' => TRUE,
       'table' => [
         '#type' => 'table',
-        '#header' => [
-          new TranslatableMarkup('Título'),
-          new TranslatableMarkup('Estado'),
-          ...($entity_type_id === 'aculta_link' ? [new TranslatableMarkup('Cliques')] : []),
-          new TranslatableMarkup('Operações'),
-        ],
+        '#header' => $header,
         '#rows' => $rows,
         '#empty' => new TranslatableMarkup('Nenhum item cadastrado.'),
         '#cache' => [
