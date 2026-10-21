@@ -8,7 +8,8 @@
 - CSV é lido como texto (`raw`): o SheetJS não converte "25.6%" em número.
 - Modo Tabela: uma aba por vez, com seletor de aba, primeira linha como cabeçalho, filtros por coluna e paginação local. Somente leitura. Modo Planilha segue igual.
 - Testes: Unit 52/52 OK (inclui validação por formato). Browser (Chromium na sessão X11, fixtures ODS, XLS, CSV e XLSX gerados com SheetJS 0.20.3): status ok em todos; XLS e ODS com pt-BR, percentual, data, booleanos e cabeçalhos; CSV como texto; modo Tabela com títulos e filtros.
-- Pendências: integração no Runtime (criação de nó e arquivo bloqueada pelo hook do Fórum, outra frente); isolamento do SheetJS (0.1.0-dev.10); formato de data e número vindo do arquivo para locales além de pt-BR; recorte de módulos do Tabulator.
+- Runtime (`https://aculta.toca.net.br`, sessão X11): XLSX de três abas e ODS renderizados pelo formatter de planilha no modo full de `node.document`; status ok, abas listadas e modo Tabela com seletor e filtros. Display restaurado ao formatter PDF e fixtures removidos.
+- Pendências: CSV não é aceito pelo campo de documentos do Runtime (extensões de `field_media_document`), então não foi testado nele; isolamento do SheetJS (0.1.0-dev.10); formato de data e número vindo do arquivo para locales além de pt-BR; recorte de módulos do Tabulator; botões da barra ainda sem estilo ACULTA420 (0.1.0-dev.8).
 
 ## 0.1.0-dev.5 — leitor de planilhas com SheetJS e Tabulator (0.1.0-dev.6 do plano) — 2026-10-21
 
