@@ -43,9 +43,9 @@ padrão e respeita a opção explícita do painel/formatter.
   sem estrutura marcada acessíveis por si só.
 - O bundle Media `document` atual usa `public://`. Não o use para trabalhos de
   estudante ou outro documento que exija isolamento por turma.
-- O `CspReportRequestGuardSubscriber` limita e valida os corpos CSP antes do
-  controller do Reporting; não altera relatórios válidos. Não cria rota nem
-  controller próprios para o viewer. A entrega de PDFs privados continua sob
+- O guarda `CspReportRequestGuardSubscriber` (limita e valida os corpos CSP antes do
+  controller do Reporting) continua apenas no `aculta_pdf_viewer` até a desinstalação
+  dele; o `aculta_document_viewer` não o duplica. Não cria rota nem controller próprios. A entrega de PDFs privados continua sob
   Core e não chama `hook_file_download`.
 - PDFPreview/ImageMagick gera miniatura fail-soft somente para PDFs públicos;
   serviço e dependências contrib não são requisito para habilitar o viewer.

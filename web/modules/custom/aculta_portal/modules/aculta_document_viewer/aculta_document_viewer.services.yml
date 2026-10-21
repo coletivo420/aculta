@@ -1,9 +1,4 @@
 services:
-  aculta_document_viewer.csp_report_request_guard:
-    class: Drupal\aculta_document_viewer\EventSubscriber\CspReportRequestGuardSubscriber
-    tags:
-      - { name: event_subscriber }
-
   aculta_document_viewer.builder:
     class: Drupal\aculta_document_viewer\Pdf\PdfViewerBuilder
     arguments: ['@file_url_generator', '@url_generator', '@current_user', '@aculta_document_viewer.thumbnail_builder', '@config.factory']

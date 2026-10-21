@@ -1,5 +1,11 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.10 — remove o guarda CSP duplicado — 2026-10-21
+
+- Removidos do módulo o `CspReportRequestGuardSubscriber`, sua entrada de serviço e seu teste unitário. O guarda continua registrado apenas no `aculta_pdf_viewer` até esse módulo ser desinstalado, o que evita dupla execução enquanto os dois coexistem.
+- Verificado: o container reconstrói após `cr`; o serviço do módulo antigo continua registrado e o do viewer não existe mais.
+- Unit do módulo: 42/42 OK.
+
 ## 0.1.0-dev.9 — correções da revisão de código da homologação RC1 — 2026-10-21
 
 - **Segurança:** títulos das colunas do modo Tabela agora são texto puro (`titleFormatter: 'plaintext'`). Antes, o Tabulator escrevia o cabeçalho do arquivo com `innerHTML`, e um cabeçalho com HTML executava na origem do site. Verificado no navegador X11: a versão anterior executava (`xssExecutou: true`, `<img>` criado); a corrigida mostra o texto e não executa.
