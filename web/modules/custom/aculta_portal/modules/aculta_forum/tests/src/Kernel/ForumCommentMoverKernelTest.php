@@ -56,6 +56,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'user',
     'field',
     'filter',
+    'editor',
     'text',
     'node',
     'comment',
@@ -466,6 +467,39 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $stored_comment = Comment::load($comment->id());
     self::assertSame((int) $file->id(), (int) $stored_comment->get('field_test_attachment')->target_id);
     self::assertSame('1', $file_usage->listUsage($stored_file)['file']['comment'][$comment->id()]);
+    self::assertSame((int) $destination->id(), (int) $stored_comment->getCommentedEntityId());
+  }
+
+  /**
+   * CKEditor inline image usage stays attached to the same Comment after move.
+   */
+  public function testMovePreservesInlineEditorImageUsage(): void {
+    $source = $this->topic('Source');
+    $destination = $this->topic('Destination');
+    $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
+    $file = File::create([
+      'uid' => 42,
+      'filename' => 'forum-inline-image.png',
+      'uri' => 'public://inline-images/forum-inline-image.png',
+      'filemime' => 'image/png',
+      'status' => 1,
+    ]);
+    $file->save();
+    $comment->set('comment_body', [
+      'value' => '<p>Imagem da resposta</p><img src="/sites/default/files/inline-images/forum-inline-image.png" data-entity-type="file" data-entity-uuid="' . $file->uuid() . '">',
+      'format' => 'usuario_aculta',
+    ])->save();
+
+    $file_usage = $this->container->get('file.usage');
+    $expected_usage = ['editor' => ['comment' => [(int) $comment->id() => '1']]];
+    self::assertSame($expected_usage, $file_usage->listUsage($file));
+
+    $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
+
+    $stored_file = File::load($file->id());
+    $stored_comment = Comment::load($comment->id());
+    self::assertSame($expected_usage, $file_usage->listUsage($stored_file));
+    self::assertStringContainsString($file->uuid(), (string) $stored_comment->get('comment_body')->value);
     self::assertSame((int) $destination->id(), (int) $stored_comment->getCommentedEntityId());
   }
 

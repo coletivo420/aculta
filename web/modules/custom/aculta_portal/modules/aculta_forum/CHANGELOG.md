@@ -1,3 +1,11 @@
+## `0.1.0-dev.130` — comprova imagem inline após mover comentário
+
+- Kernel `ForumCommentMoverKernelTest` salva uma imagem inline referenciada
+  pelo CKEditor no `comment_body`, move o comentário e confirma que o hook
+  `editor_file_reference` conserva o uso por `editor` no mesmo CID.
+- Suite Kernel: 19 testes / 386 assertions PASS em MariaDB `aculta_simpletest`;
+  19 depreciações de Core/contrib. Nenhum dado do Runtime foi alterado.
+
 ## `0.1.0-dev.129` — documenta contrato de anexos nos comentários
 
 - `ForumTopicDisplayConfigTest` verifica que a resposta pública usa o formato

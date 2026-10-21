@@ -1,3 +1,11 @@
+## dev.130 — imagem inline preservada no movimento
+
+- `ForumCommentMoverKernelTest::testMovePreservesInlineEditorImageUsage` usa o
+  hook `editor_file_reference` do Core em um `comment_body` no formato
+  `usuario_aculta`, move o Comment e confirma a associação do arquivo ao mesmo
+  CID. Suíte Kernel: 19 testes / 386 assertions PASS, 19 depreciações Core e
+  contrib; MariaDB `aculta_simpletest`. Runtime não alterado.
+
 ## dev.129 — contrato de anexos em comentários
 
 - `ForumTopicDisplayConfigTest` confere que o campo compartilhado dos
