@@ -287,7 +287,6 @@ correspondentes estão habilitados no ambiente.
 | `apoio.aculta` | `/` | Página de apoio com formulário e valores sugeridos | Ativo; fluxo de pagamento continua em `main.aculta`. |
 | `main.aculta` | `/{titulo}` | Página institucional por alias editorial | Dinâmico; depende de nó publicado e domínio associado. |
 | `main.aculta` | `/atividades/{titulo}` | Página de uma atividade cultural | Dinâmico; depende de atividade publicada e domínio. |
-| `main.aculta` | `/projetos/{titulo}` | Página de um projeto cultural/social | Dinâmico; depende de projeto publicado e domínio. |
 | `main.aculta` | `/transparencia/documentos/{titulo}` | Documento institucional público | Dinâmico; depende de documento publicado e access. |
 | `loja.aculta` | `/loja/produto/{categoria}/{titulo}` | Página de produto da loja | Dinâmico; produto publicado; fora do purpose loja responde `404`. |
 | `main.aculta` | `/node/add/article` | Antigo formulário de criação do bundle editorial `article` | Bundle aposentado no Runtime de teste em 2026-10-21; responde 404. |
