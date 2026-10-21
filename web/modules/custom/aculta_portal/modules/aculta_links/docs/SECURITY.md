@@ -16,7 +16,7 @@
   cada linha. As listagens variam por usuário/permissões e invalidam pelo tag de
   lista da entidade.
 
-## Controles obrigatórios antes de publicar páginas
+## Controles de segurança da publicação
 
 - Entity Access por proprietário em rotas, formulários, Views e ações; CSRF e
   Form API para mutações.
@@ -31,8 +31,9 @@
 - `/redirecionar/{codigo}` resolve apenas um destino publicado, revalida Entity
   Access e executa a constraint de URL antes de emitir `TrustedRedirectResponse`
   302. Códigos têm 12 caracteres aleatórios e não aceitam destino na requisição;
-  GETs válidos entram em fila para agregação, HEAD não conta. Monitorar abuso e definir rate limiting se
-  tráfego/anomalias indicarem necessidade, sem limitar visitas legítimas por IP.
+  GETs válidos entram em fila para agregação, HEAD não conta. Monitorar abuso e
+  avaliar rate limiting por sinal operacional; ainda não existe limite dedicado.
+  Não bloquear visitas legítimas apenas por IP.
 - A auditoria de 2026-10-20 registrou `GHSA-mg7g-g2wv-6mhr` para
   `UserController::saveLink` do LinkStack até v4.8.6. Não portar esse fluxo ou
   sua autorização; revalidar Entity Access e ownership no Drupal.
@@ -91,7 +92,7 @@ caminhos.
 
 ## Painel 0.2.0-dev.2
 
-A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de proprietário para contas comuns e revalida permissão de edição por entidade antes de criar operações. Cache da tabela varia por usuário/permissões e query de paginação, inclui tags de lista e dependências das entidades e resultados de acesso. Itens têm proprietário explícito além de page/link references; o acesso exige coincidência de propriedade nos três registros. Nenhuma rota pública ou redirecionamento curto foi criado.
+A consulta administrativa declara `accessCheck(TRUE)`, aplica condição de proprietário para contas comuns e revalida permissão de edição por entidade antes de criar operações. Cache da tabela varia por usuário/permissões e query de paginação, inclui tags de lista e dependências das entidades e resultados de acesso. Itens têm proprietário explícito além de page/link references; o acesso exige coincidência de propriedade nos três registros. A publicação pública e o redirect curto vieram em fases posteriores e estão cobertos nesta política.
 
 
 Editor de composição: a rota e a submissão revalidam access da página; a submissão também confirma que cada item pertence à página editada antes de salvar nova revisão. Query declara `accessCheck(TRUE)`.

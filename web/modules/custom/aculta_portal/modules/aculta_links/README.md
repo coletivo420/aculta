@@ -44,7 +44,7 @@ remoção de configuração ou conteúdo nesta fase.
 
 As redes sociais pessoais pertencem ao `aculta_user` e aos seus contratos de
 perfil e privacidade. Conteúdo de projetos, eventos, cursos e mídia continua sob
-as entidades Drupal que o fornecem. O futuro `aculta_links` poderá consumir
+as entidades Drupal que o fornecem. O `aculta_links` consome
 essas APIs; não passa a ser dono desses dados.
 
 Itens podem ter janela opcional de disponibilidade. Os campos `available_from`
@@ -81,7 +81,9 @@ destinos e rascunhos privados por proprietário. O editor oferece prévia privad
 de rascunhos e itens inativos, sem cache compartilhado. A rota pública usa status publicado, validação de slug/destino e o SDC
 `social-links-page` via template ACULTA420. O módulo foi habilitado no Runtime
 de teste em 2026-10-20; router confirmado sob purpose `links`; slug inexistente
-retorna 404 e dashboard anônimo retorna 403. Micropáginas oferecem três presets
-de aparência controlados pelo ACULTA420. A configuração exportável foi
-atualizada, sem importação global. A migração da landing atual e a revisão visual
-com conteúdo continuam pendentes.
+retorna 404 e dashboard anônimo retorna 403. Updates 10003–10007 foram aplicados
+após backup verificado, sem importação global da configuração. Smoke de
+referência Node confirmou destino canônico Domain; a fixture foi removida. A
+produção não foi alterada. Micropáginas oferecem três presets controlados pelo
+ACULTA420. A revisão visual e acessível integral com conteúdo permanece
+pendente.

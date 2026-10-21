@@ -7,7 +7,7 @@
 - Executar `git diff --check`.
 - O módulo está habilitado no Runtime de teste desde 2026-10-20; a configuração versionada lista a extensão. Não importar globalmente a configuração enquanto existirem diferenças de outras frentes.
 
-## Entidades 0.2.0 em desenvolvimento
+## Entidades 0.2.0
 
 - Unit: permissão do proprietário, isolamento de outra conta e administração.
 - Kernel em `aculta_simpletest`: armazenamento de destino/página/item,
@@ -23,9 +23,9 @@ perdem conteúdo. Criar mecanismo de reversão antes de qualquer migração de d
 
 Para entidades: Unit/Kernel/Functional em MariaDB dedicado conforme
 `docs/operations/BANCO-DE-TESTE.md`, cobrindo ownership, revisões, unicidade,
-URLs inválidas, isolamento Domain, access, cache e publicação. Runtime é DEFERRED
-para produção; evidências parciais do Runtime de teste e seus limites são
-registrados abaixo.
+URLs inválidas, isolamento Domain, access, cache e publicação. Runtime de teste
+foi atualizado em 2026-10-20; produção permanece DEFERRED. Evidências e limites
+estão registrados abaixo.
 
 ## Interface pública e segurança
 
@@ -172,8 +172,25 @@ resolução por URI e por ID de Entity Reference. Kernel PASS (3 testes/131
 asserções), incluindo destino Node salvo, validação que exige exatamente uma
 origem (URL ou Node) e filtro de propriedade das opções do formulário; 7
 depreciações vêm de Core/Metatag/Token. PHPCS, lint e `git diff --check` PASS.
-O Runtime está conectado ao banco `aculta_runtime` no host `toca`;
-`updatedb:status` lista `aculta_links` 10003–10007 e `aculta_lms` 10002. O
-Drush não oferece seleção de updates por módulo e `updb` executaria também o
-update da frente LMS; schema, HTTP e visual da versão .21 ficam DEFERRED até
-essa aplicação coordenada. Nenhuma atualização persistente foi feita.
+Em 2026-10-20, preflight confirmou hostname `toca`, checkout atual e Drush
+conectado ao banco de teste `aculta_runtime` (URI default esperada nesse
+servidor). Antes do update foi criado dump privado verificado. `updb` aplicou
+Links 10003–10007 e também LMS 10002, que estava pendente e era aditivo (novo
+storage de certificados vazio); `updatedb:status` confirmou zero updates
+pendentes. A operação compartilhada foi aplicada com backup e foi comunicada
+como tal. `cr` completou. Smoke HTTP autenticado/publicado de destino Node
+retornou 200 e gerou URL canônica no purpose de origem; página inexistente
+retornou 404, dashboard anônimo 403, e a fixture temporária foi removida e
+confirmada como 404. Produção continua DEFERRED. `cr` e `updb` imprimiram aviso
+preexistente de cópia de asset H5P para destino `assets://` sem diretório
+configurado. Inspeção visual por screenshot não foi concluída: Firefox já estava
+em uso na sessão gráfica e o processo headless isolado não terminou no prazo.
+
+Tentativa posterior de repetir o screenshot foi interrompida antes da criação
+da página e do item de teste: uma edição ainda não concluída na frente LMS
+removeu `AnswerEvaluationEventHooks`, ainda referenciada pelo container do
+Runtime. A gravação abortada deixou apenas o destino temporário `id=5`; foi
+confirmada a ausência de página/item associados e esse registro exato foi
+removido junto de sua revisão em transação SQL. A consulta confirmou zero linhas
+restantes. Não houve limpeza geral nem alteração de arquivos LMS. Repetir o
+smoke autenticado e visual quando a edição concorrente estiver estabilizada.

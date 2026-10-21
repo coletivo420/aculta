@@ -6,9 +6,9 @@
 - PR associada: [#297](https://github.com/coletivo420/aculta/pull/297), cujo
   assunto é o Fórum; não foi criada PR para Links.
 - HEAD inicial da auditoria: `1d54c26faf4ca81f00deea6344449bdc97ee53b8`.
-- O working tree e o index estavam limpos no início. A branch contém trabalho de
-  outras frentes; o commit inicial de Links foi documental. A fase 0.2 começa
-  agora com entidades próprias, sem habilitação no Runtime.
+- O working tree e o index estavam limpos no início. Desde então, Links evoluiu
+  em commits isolados; outras frentes continuam compartilhando a branch. O
+  módulo e seus updates incrementais estão habilitados no Runtime de teste.
 
 ## Implementação encontrada
 
@@ -43,7 +43,7 @@ com dados/editoria antes de qualquer migração.
 | Pattern `aculta420:social-links-page` e template Node dedicado | EXISTENTE, apresentação experimental | Preservar nesta fase; adaptar quando o contrato de micropágina estiver definido. |
 | `node.page.field_social_links` | EXISTENTE; consumidor no template dedicado não localizado | Investigar preenchimento e referências; não remover nem migrar nesta fase. |
 | Redes pessoais e perfil `/u/{apelido}` do `aculta_user` | EXISTENTE E FUNCIONAL em outro purpose/contrato | Preservar como capacidade compartilhada, com exposição explícita. |
-| Links curtos, micropáginas por pessoa e editor | EXISTENTE no purpose `links`; Runtime HTTP ainda depende de rebuild/bootstrap saudável | Preservar entidades Drupal e validar novamente no Runtime após reparo independente do container. |
+| Links curtos, micropáginas por pessoa e editor | EXISTENTE no purpose `links`; rotas/build registrados no Runtime de teste | Preservar entidades Drupal; smoke temporário de referência Node em HTTP concluído, sem declarar revisão visual completa. |
 | Analytics de destinos | EXISTENTE PARCIAL e DESATIVADO por padrão: cliques GET em códigos curtos são agregados por link/dia em fila; sem page views, visitantes únicos ou origem | Habilitação administrativa exige validação da base legal; agregados expiram em 90 dias e o painel limita-se às entidades autorizadas. |
 | Linky/LinkStack na instalação | AUSENTE (não são dependências do projeto) | Usar como fontes de estudo; nenhuma dependência Composer adicionada. |
 
@@ -55,9 +55,17 @@ com dados/editoria antes de qualquer migração.
 - Redirects curtos podem contar GETs válidos com agregação diária sem
   identificadores de visitante, retenção de 90 dias e coleta explicitamente
   desativada por padrão. A base legal precisa ser validada antes da ativação.
-- Ainda não há revisão visual completa, rate limiting dedicado nem validação
-  HTTP no Runtime atual; o preflight Drush encontra serviço ausente em mudança
-  concorrente do LMS e nenhuma operação persistente foi feita nesta sequência.
+- Ainda não há revisão visual/acessível completa nem rate limiting dedicado.
+  Updates Links 10003–10007 foram aplicados no Runtime de teste com backup; o
+  update aditivo LMS 10002 também foi executado por ser parte do mesmo `updb`.
+  Um smoke temporário HTTP confirmou destino Node e URL Domain; nenhuma fixture
+  permaneceu. Produção não foi alterada nem verificada.
+- No estado atual da branch, uma edição não commitada da frente LMS remove
+  `AnswerEvaluationEventHooks` ainda referenciada pelo container. Drush falha ao
+  executar hooks de save; a tentativa visual abortou antes de criar página/item
+  e o único destino temporário gravado foi removido por ID/título em transação.
+  Repetir Runtime/visual após estabilização da frente. Nenhum arquivo LMS foi
+  alterado por Links.
 
 ## Consumidores e acoplamentos
 
@@ -86,9 +94,10 @@ com dados/editoria antes de qualquer migração.
   páginas publicadas têm a rota `/pagina/{slug}` em `links`, e a prévia exige
   edição e não é cacheada. O dashboard e os formulários/listagens ficam no MAIN,
   em rotas administrativas sob `/painel-administrativo/links/**`.
-- Testes Unit e Kernel passam no banco dedicado (Kernel 1/56). Módulo habilitado
-  no Runtime de teste em 2026-10-20; `config/sync/core.extension.yml` registra a
-  extensão e não houve importação global. Produção não verificada.
+- Testes Unit e Kernel passam no banco dedicado. Módulo habilitado no Runtime de
+  teste em 2026-10-20; `config/sync/core.extension.yml` registra a extensão e
+  não houve importação global. Updates 10003–10007 foram aplicados com dump
+  privado verificado. Produção não verificada.
 
 ## Pendências para a migração
 
@@ -119,9 +128,9 @@ Metatag usa um alter hook OOP em rotas públicas de micropágina para preencher
 título, descrição, canonical de Domain, Open Graph e Schema.org. Defaults
 globais e por tipo continuam sob administração Metatag; seus cache tags são
 incluídos no render da página. Preview, dashboard e rotas de CRUD recebem
-`noindex, nofollow`. A política privada tem teste Unit; headers renderizados,
-canonical em Runtime e integração visual permanecem DEFERRED enquanto o
-container Drush de teste não compilar por alteração externa do `aculta_lms`.
+`noindex, nofollow`. A política privada tem teste Unit. HTTP canônico da
+referência Node foi conferido no Runtime de teste; metadata da página, visual e
+acessibilidade completos ainda não foram revisados.
 
 ## Links curtos 0.4.0-dev.13
 
@@ -146,8 +155,14 @@ devido ao bootstrap compartilhado quebrado do `aculta_lms`.
 Destinos reutilizáveis aceitam um Node pelo widget Core `entity_reference_autocomplete`
 ou uma URL/caminho pelo campo Link, nunca ambos. `LinkDestinationChoice` exige
 uma origem, e páginas/redirects passam pela resolução existente de Domain,
-publicação, acesso anônimo e cache. O update 10007 declara a instalação do novo
-campo revisionável sem alterar destinos existentes. No momento desta revisão,
-Drush conecta ao Runtime `aculta_runtime`, porém há updates pendentes de Links
-10003–10007 e LMS 10002; o update LMS pertence a outra frente e não foi aplicado.
-Kernel e Unit passaram; HTTP/visual e schema no Runtime continuam DEFERRED.
+publicação, acesso anônimo e cache. O update 10007 instala o campo revisionável
+sem alterar destinos existentes. Em 2026-10-20, updates 10003–10007 foram
+aplicados ao Runtime de teste após backup; Drush confirmou storage instalado e
+zero updates pendentes. Smoke com Node público confirmou HTTP 200 e canonical
+no purpose da origem; acesso anônimo ao dashboard respondeu 403. Uma micropágina
+temporária e seus itens foram excluídos, e seu endereço voltou a 404. A fixture
+de inspeção visual foi removida sem screenshot: Firefox estava ocupado e o
+headless não terminou. Update LMS 10002 foi aplicado junto, de forma aditiva,
+por compartilhar o comando. Uma nova tentativa foi bloqueada pela edição
+incompleta de hook LMS; o único destino temporário gravado foi removido por
+identidade exata e sua ausência confirmada. Produção continua não verificada.

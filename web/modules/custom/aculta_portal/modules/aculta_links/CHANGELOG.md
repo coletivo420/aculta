@@ -5,7 +5,10 @@
 - Destinos reutilizáveis agora aceitam uma referência revisionável a Node pelo widget Core `entity_reference_autocomplete`, sem URL duplicada.
 - Validação de entidade exige exatamente uma origem: URL/caminho ou referência de conteúdo. Updates instalados preservam destinos URI existentes e adicionam o novo storage revisionável.
 - Resolver usa o mesmo Domain, publicação, acesso anônimo e cache dos destinos `entity:node/{id}`; não amplia o acesso a conteúdo não público.
-- Validação: Unit PASS (4 testes/47 asserções), Kernel PASS (3 testes/131 asserções; 7 depreciações upstream), PHPCS, PHP lint e `git diff --check` PASS. Update `aculta_links` 10007 e smoke Runtime DEFERRED porque `updb` compartilhado também aplicaria `aculta_lms` 10002, de outra frente.
+- Validação de código: Unit PASS (4 testes/47 asserções), Kernel PASS (3 testes/131 asserções; 7 depreciações upstream), PHPCS, PHP lint e `git diff --check` PASS.
+- Runtime de teste em `toca`: backup privado verificado antes de `updb`; updates `aculta_links` 10003–10007 e o update LMS 10002 (aditivo, storage vazio) aplicados; status final sem updates pendentes e `cr` concluído. Smoke com Node público retornou 200 e URL canônica do Domain de origem; página inexistente 404 e dashboard anônimo 403. Fixture temporária removida e verificada como 404. Produção não alterada.
+- `updb` e `cr` imprimiram aviso do asset H5P cujo destino `assets://` não está configurado. Screenshot visual não concluído: Firefox já estava ativo e a instância isolada headless não encerrou no tempo disponível. Revisão visual/acessível integral continua pendente.
+- A repetição de screenshot foi bloqueada por edição não commitada de hook da frente LMS (`AnswerEvaluationEventHooks` removido enquanto serviço ainda referenciado). A gravação abortou antes de persistir página/item; o registro isolado do destino temporário foi removido por ID/título e confirmado ausente. Nenhum arquivo de outra frente foi alterado.
 
 ## 0.4.0-dev.20 — atalhos contextuais no dashboard — 2026-10-20
 

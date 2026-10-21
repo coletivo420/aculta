@@ -27,6 +27,13 @@ entrega conclui documentação/fundação; nenhum código upstream foi copiado.
 5. Testar access, revisão, slug, cache, Domain, reversão e configuração; papéis
    não recebem permissões automaticamente.
 
+Em 2026-10-20, os updates incrementais 10003–10007 foram aplicados no Runtime
+de teste após backup verificado; o `updb` também executou o update aditivo LMS
+10002 pendente. Não há updates pendentes. A integração Node passou por smoke
+HTTP no purpose `links`; produção e revisão visual continuam fora do gate
+concluído. A auditoria de licença por arquivo continua pré-requisito para
+qualquer cópia upstream.
+
 ## 0.3.0 — dashboard e editor (em andamento)
 
 Listas paginadas, CRUD Core, operações por entidade, acesso a página pública/preview,
@@ -75,3 +82,7 @@ avaliação de abuso/rate limit, auditoria final de cache e revisão independent
 
 Auditar acesso, testes, Domains, a11y, desempenho, atualizações, licenças e
 rollback. Seguir gates Dev → RC → Alpha; sem deploy, tag, PR ou merge automático.
+O smoke de Runtime de teste em 2026-10-20 não equivale a RC, validação Alpha ou
+prontidão de produção. A revisão visual/acessível completa, revisão de código
+independente, decisão legal sobre analytics e auditoria licenciada por arquivo
+permanecem gates explícitos.
