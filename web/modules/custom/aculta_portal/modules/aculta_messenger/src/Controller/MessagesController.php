@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
+use Drupal\aculta_messenger\Aviso\EmailPendingAviso;
 use Drupal\aculta_messenger\Support\NoticeType;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -70,6 +71,7 @@ final class MessagesController extends ControllerBase {
     private readonly PrivateMessageFormValidator $replyValidator,
     private readonly CsrfTokenGenerator $csrfToken,
     private readonly AvisoService $avisos,
+    private readonly EmailPendingAviso $emailPendingAviso,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -92,6 +94,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('csrf_token'),
       $container->get('aculta_messenger.aviso_service'),
+      $container->get('aculta_messenger.email_pending_aviso'),
       $container->get('module_handler'),
     );
   }
@@ -703,6 +706,21 @@ final class MessagesController extends ControllerBase {
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
     foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
       $items[] = $item;
+    }
+
+    // Aviso permanente de e-mail não confirmado: sem "×", some quando o e-mail é confirmado (EmailPendingAviso).
+    if ($this->emailPendingAviso->isPending($this->account)) {
+      $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
+      $aviso = $this->emailPendingAviso->ensure((int) $this->account->id());
+      $items[] = $this->noticeSummary(
+        $this->emailPendingAviso->title($aviso) ?? (string) $this->translation->translate('Seu e-mail precisa ser confirmado.'),
+        (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar. Clique aqui para solicitar outro link.'),
+        Url::fromRoute('aculta_portal.email_resend'),
+        [],
+        (string) $this->translation->translate('Confirmação pendente'),
+        TRUE,
+        NoticeType::WARNING,
+      );
     }
 
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.

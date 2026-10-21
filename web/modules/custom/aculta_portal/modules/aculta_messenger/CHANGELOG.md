@@ -4,6 +4,14 @@
 - `EmailPendingAvisoHooks`: garante o aviso ao exibir o aviso de atenção (`aculta_portal_email_notice_alter`) e remove o aviso quando o e-mail é confirmado (`user_update`).
 - `aculta_messenger.info.yml` 0.1.1-dev.69. RUNTIME STATUS: DEFERRED (teste no X11 registrado no roteiro).
 
+## 0.1.1-dev.70 — aviso permanente na lista de avisos; texto padronizado — 2026-10-21
+
+- `EmailPendingAviso` (serviço `aculta_messenger.email_pending_aviso`): cria, lê e remove o aviso de e-mail pendente. O hook e a página de avisos usam o mesmo serviço.
+- A página de avisos (`/avisos-mensagens`, `MessagesController::alertsBuild`) lista o aviso como item persistente (sem "×"), com o estado "Confirmação pendente". O item aponta para o reenvio de confirmação.
+- Texto padronizado com o aviso de atenção de Minha conta: "Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar. Clique aqui para solicitar outro link."
+- Confirmação: o aviso sai pelo ponto `aculta_portal_email_confirmed` (não por `user_update`).
+- `aculta_messenger.info.yml` 0.1.1-dev.70. RUNTIME STATUS: DEFERRED (confirmação real por IMAP pendente; ver CHANGELOG do aculta_user).
+
 ## 0.1.1-dev.68 — remoção do notificador de mensagens privadas com corpo — 2026-10-21
 
 - `private_message_notify` estava ativo ao lado do Messenger, combinação que o próprio guard do módulo proíbe (o template padrão expõe o corpo da mensagem privada). Foi desinstalado do Runtime, sem avisos nem tabelas próprias. O código continua no pacote `drupal/private_message`.

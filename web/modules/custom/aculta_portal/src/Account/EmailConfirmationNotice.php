@@ -53,9 +53,8 @@ final class EmailConfirmationNotice {
     $this->moduleHandler->alter('aculta_portal_email_notice', $context, $this->currentUser);
 
     $url = Url::fromRoute('aculta_portal.email_resend')->toString();
-    $detail = $this->routeMatch->getRouteName() === 'aculta_portal.security'
-      ? (string) $this->translation->translate('Sem a confirmação do e-mail, o acesso ao site é restrito: você não pode realizar cursos, editar a wiki, comentar, comprar na loja ou apoiar. Você pode continuar entrando e navegando, e pode solicitar a troca do endereço nesta página.')
-      : (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar.');
+    // Texto padrão do aviso (o mesmo do aviso persistente do aculta_messenger).
+    $detail = (string) $this->translation->translate('Enquanto isso, você não pode realizar cursos nem editar a wiki, nem comentar, comprar na loja ou apoiar.');
     return [
       '#type' => 'container',
       '#weight' => -100,

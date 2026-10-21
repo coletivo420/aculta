@@ -17,6 +17,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `preprocess_field` (campos de referência a usuário) | `UsernameLinkHooks::preprocessField` | `src/Hook/UsernameLinkHooks.php` |
 | `aculta_portal_dashboard_alter` | `AccountDashboardHooks::dashboardAlter` | `src/Hook/AccountDashboardHooks.php` |
 | `aculta_portal_photo_editor_alter` | `PhotoEditorHooks::photoEditorAlter` | `src/Hook/PhotoEditorHooks.php` |
+| `aculta_portal_changemail_alter` | `ChangemailHooks::changemailAlter` | `src/Hook/ChangemailHooks.php` |
 | `aculta_portal_settings_tabs_alter` | `SettingsTabsHooks::settingsTabsAlter` | `src/Hook/SettingsTabsHooks.php` |
 | `comment_presave` | `ParticipationHooks::commentPresave` | `src/Hook/ParticipationHooks.php` |
 | `cron` | `AvatarCronHooks::cron` | `src/Hook/AvatarCronHooks.php` |
@@ -86,6 +87,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `ActivityController` | `src/Controller/ActivityController.php` | Atividade da própria pessoa em Minha Conta (plano aculta_user, seção E2); comentários usam o bundle compartilhado e validação de acesso/domínio do Fórum, sem consultar `comment_forum`. |
 | `AssociadosController` | `src/Controller/AssociadosController.php` | Relatório de associados (plano aculta_user, seção G2). |
 | `AvatarRerollController` | `src/Controller/AvatarRerollController.php` | Sorteia outro avatar do acervo para a própria conta (botão do popup de foto). |
+| `ChangemailRedirectController` | `src/Controller/ChangemailRedirectController.php` | Caminhos legados `/seguranca/email` e `/seguranca/email/{user}`: `302` para a aba E-mail da Segurança, só para a própria conta. Ver [TROCA-DE-EMAIL](TROCA-DE-EMAIL.md). |
 | `LegacyMemorialController` | `src/Controller/LegacyMemorialController.php` | Memorial coletivo das autorias históricas do Fórum em /u/lendashistoricas (ACULTA Fórum, F2, F-D07). |
 | `PublicProfileController` | `src/Controller/PublicProfileController.php` | Página pública do perfil em /u/<apelido>. |
 | `ReportQueueController` | `src/Controller/ReportQueueController.php` | Redirect local do caminho legado de denúncias para `/painel-administrativo/forum`; mantém access route-level e não carrega a fila. |
@@ -115,6 +117,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `AccountBioForm` | `src/Form/AccountBioForm.php` | Modal de edição da bio (campo field_bio do perfil participante). |
+| `ChangemailForm` | `src/Form/ChangemailForm.php` | Pedido de troca de e-mail na aba E-mail da Segurança. Confere a senha atual (com limite de tentativas), recusa e-mail igual ao atual e deixa a confirmação ao aculta_mail_confirmer_user. Ver [TROCA-DE-EMAIL](TROCA-DE-EMAIL.md). |
 | `AssociadoSituacaoForm` | `src/Form/AssociadoSituacaoForm.php` | Administrador define a situação de associado (ativo, suspenso, desligado) ou recusa um pedido. Só administrador. |
 | `AssociadoRequestForm` | `src/Form/AssociadoRequestForm.php` | Pessoa com e-mail confirmado pede adesão em `/associado`. Não concede nada. |
 | `AvatarCropForm` | `src/Form/AvatarCropForm.php` | Popup de recorte da foto personalizada. |

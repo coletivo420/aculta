@@ -16,6 +16,9 @@ services:
     arguments:
       - '@current_user'
       - '@user.data'
+  aculta_messenger.email_pending_aviso:
+    class: Drupal\aculta_messenger\Aviso\EmailPendingAviso
+    arguments: ['@entity_type.manager', '@aculta_portal.email_confirmation_policy']
   aculta_messenger.counts:
     class: Drupal\aculta_messenger\Service\MessengerCounts
     arguments:
