@@ -153,10 +153,14 @@ usuário para validar o access de conta ativa via `AccountUserLoader`. PHP CLI
 8.4.26; PHP 8.5 permanece não validado.
 
 Execução adicional em 2026-10-21: regressão combinada `aculta_lms` e
-`aculta_lms_messenger` passou com 21 testes / 643 assertions Kernel no MariaDB
+`aculta_lms_messenger` passou com 21 testes / 646 assertions Kernel no MariaDB
 dedicado e 67 testes / 347 assertions Unit. Foram reportadas 92 depreciações de
 Core/contrib e 8 depreciações PHPUnit; não houve falhas. PHP CLI 8.4.26; PHP
 8.5 continua não validado.
+
+Após adicionar a recusa de PDF revogado, `CertificateLifecycleTest` passou com
+3 testes / 97 assertions e a suíte Kernel combinada permaneceu em 21 testes,
+agora com 646 assertions; a execução completa acima já inclui essa alteração.
 
 ## Quem usa
 

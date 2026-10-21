@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.50 — negar PDF de certificado revogado — 2026-10-21
+
+- `CertificateLifecycleTest` chama o controlador PDF com um certificado
+  revogado e confirma 404 sem instanciar Entity Print ou gerar QR. Kernel
+  focal: 3 testes / 97 assertions; suíte combinada Kernel LMS/Messenger:
+  21 testes / 646 assertions PASS. Unit segue 67 / 347, sem alteração de
+  código Unit nesta entrega; 92 depreciações de Core/contrib.
+
 ## 0.1.0-dev.49 — remover domínio real do teste QR — 2026-10-21
 
 - O teste de integração QR usa um host reservado `.test`, sem fixar domínio

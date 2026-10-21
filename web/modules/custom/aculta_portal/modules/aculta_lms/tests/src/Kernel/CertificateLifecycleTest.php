@@ -14,6 +14,7 @@ use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
 use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
+use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
@@ -23,6 +24,7 @@ use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -196,6 +198,25 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertSame('Certificado revogado', (string) $revoked['status']['#plain_text']);
     self::assertArrayNotHasKey('pdf', $revoked);
     self::assertArrayNotHasKey('revocation_reason', $revoked);
+
+    $print_engines = $this->createMock(EntityPrintPluginManagerInterface::class);
+    $print_engines->expects(self::never())->method('createInstance');
+    $revoked_qr_codes = $this->createMock(CertificateQrCodeProviderInterface::class);
+    $revoked_qr_codes->expects(self::never())->method('generate');
+    $pdf_controller = new CertificateVerificationController(
+      $manager,
+      $print_engines,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+      $revoked_qr_codes,
+    );
+    try {
+      $pdf_controller->pdf($secondCode);
+      self::fail('A revoked certificate must not be downloadable as PDF.');
+    }
+    catch (NotFoundHttpException $exception) {
+      self::assertSame(404, $exception->getStatusCode());
+    }
     self::assertCount(2, $manager->loadForStudent((int) $student->id()));
   }
 

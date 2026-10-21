@@ -249,12 +249,12 @@ fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
 DEFERRED.
 
 Suítes do `aculta_lms` revalidadas em 2026-10-21: Unit 51 testes/281
-assertions; Kernel MariaDB 20 testes/631 assertions PASS. O Kernel registrou 90
+assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
 Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 67 testes/347
-assertions; Kernel MariaDB 21 testes/643 assertions PASS. No total, houve 8
+assertions; Kernel MariaDB 21 testes/646 assertions PASS. No total, houve 8
 depreciações PHPUnit e 92 de Core/contrib, sem falhas.
 
 O Kernel `LearningDashboardKernelTest` reproduz o contrato de acesso do LMS:
@@ -266,15 +266,15 @@ Revisão visual e smoke Runtime seguem pendentes.
 fallback UTC. `LearningDashboardControllerTest`: 1/4 assertions PASS. Unit
 total: 39 testes/185 assertions PASS; 5 depreciações do
 PHPUnit.
-`CertificateLifecycleTest`: 3 testes/94 assertions PASS, cobrindo o snapshot
+`CertificateLifecycleTest`: 3 testes/97 assertions PASS, cobrindo o snapshot
 público, cache e endpoint QR SVG; 38 depreciações upstream.
 `ClassDashboardKernelTest`: 1 teste/43 assertions PASS, incluindo a política de
 cache do painel educador.
 O download privado também falha fechado durante a exclusão assíncrona de um
 LessonStatus, quando a resposta ainda existe, mas já perdeu o contexto de curso.
 Kernel `AttemptArchiveLifecycleTest`: 9 testes/363 assertions PASS; caso
-dedicado 1/39 assertions. A suíte Kernel totaliza 19 testes/594 assertions,
-com 90 depreciações de Core/contrib.
+dedicado 1/39 assertions. Naquela rodada, a suíte Kernel totalizou 19
+testes/594 assertions, com 90 depreciações de Core/contrib.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
