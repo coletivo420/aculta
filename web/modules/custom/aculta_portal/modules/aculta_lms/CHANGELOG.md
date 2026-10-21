@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.46 — cobrir resposta SVG do QR de certificado — 2026-10-21
+
+- Kernel exercita a resposta positiva do endpoint QR com código emitido e
+  verifica conteúdo SVG, tipo MIME, cache privado e headers de segurança.
+- `CertificateLifecycleTest`: 3 testes / 94 assertions PASS; 38 depreciações
+  upstream. A validação usa provedor controlado no teste; geração da imagem é
+  coberta pela suíte própria de `aculta_qrcode`.
+
 ## 0.1.0-dev.45 — validar carga horária mínima — 2026-10-21
 
 - O campo de carga horária do curso exige no mínimo uma hora, alinhando a

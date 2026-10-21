@@ -11,8 +11,10 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
+use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
 use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
+use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\group\Entity\Group;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lms\Entity\CourseStatus;
@@ -160,6 +162,26 @@ final class CertificateLifecycleTest extends KernelTestBase {
     self::assertArrayHasKey('pdf', $public);
     self::assertSame(0, $public['#cache']['max-age']);
     self::assertContains('aculta_lms_certificate:' . $second->id(), $public['#cache']['tags']);
+
+    $qrCodes = $this->createMock(CertificateQrCodeProviderInterface::class);
+    $qrCodes->expects(self::once())
+      ->method('generate')
+      ->with($secondCode, QrCodeFormat::Svg)
+      ->willReturn('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    $qrController = new CertificateVerificationController(
+      $manager,
+      NULL,
+      $this->container->get('date.formatter'),
+      $this->container->get('string_translation'),
+      $qrCodes,
+    );
+    $qrResponse = $qrController->qr($secondCode);
+    self::assertSame(200, $qrResponse->getStatusCode());
+    self::assertSame('image/svg+xml; charset=utf-8', $qrResponse->headers->get('Content-Type'));
+    self::assertSame('max-age=0, no-store, private', $qrResponse->headers->get('Cache-Control'));
+    self::assertSame('nosniff', $qrResponse->headers->get('X-Content-Type-Options'));
+    self::assertSame("default-src 'none'; sandbox", $qrResponse->headers->get('Content-Security-Policy'));
+    self::assertSame('<svg xmlns="http://www.w3.org/2000/svg"></svg>', $qrResponse->getContent());
 
     $student->block();
     $student->save();

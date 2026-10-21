@@ -218,6 +218,13 @@ Runtime agora confirma `min: 1`, sem mudanças em outras configurações. Cache 
 reconstruído e Drush não encontrou updates pendentes. O rebuild registrou o
 aviso conhecido do asset H5P fora desta alteração.
 
+Em 0.1.0-dev.46, o Kernel passou a cobrir também uma resposta positiva do
+endpoint SVG do QR para um código ativo, incluindo cache privado, MIME,
+`nosniff` e CSP. O teste usa provedor mock; a geração real continua coberta na
+suíte `aculta_qrcode` e a validação HTTP de um certificado real segue pendente.
+`CertificateLifecycleTest`: 3 testes / 94 assertions PASS, com 38 depreciações
+upstream.
+
 **F12 — decisões de conteúdo recebidas em 2026-10-20.** Estudante: cursos,
 progresso, avaliações pendentes e certificados próprios. Educador: indicadores
 agregados por turma, sem respostas abertas nem dados identificáveis na visão
