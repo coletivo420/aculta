@@ -202,10 +202,13 @@ duplicar estado. Ver contrato em `LMS-INTEGRATION-CONTRACTS.md`.
 
 F12 tem implementação inicial na branch: painel do estudante em
 `/minha-aprendizagem` e contagens do educador por turma sob
-`/painel-administrativo/lms/turma/{group}/painel`. Testes dedicados, revisão de
-acesso/cache específico com fixtures completas, navegador/visual e Runtime
-ainda são pendentes. Os testes unitários dos painéis passam (4/18).
-Runtime status: DEFERRED.
+`/painel-administrativo/lms/turma/{group}/painel`. Kernel Group/LMS verifica que
+somente estudantes elegíveis da turma entram nas métricas, exclui educador,
+administrador e outsider, e mantém as respostas fora do retorno; cache é
+invalidado por alterações nas memberships/contas consideradas (1 teste/38
+assertions). Unit dos painéis: 4/18 assertions PASS. Revisão visual, fixture
+integrada do painel do estudante e smoke Runtime permanecem pendentes. Runtime
+status: DEFERRED.
 
 **F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 

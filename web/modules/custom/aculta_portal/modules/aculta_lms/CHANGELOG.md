@@ -1,5 +1,15 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.23 — isolar métricas agregadas da turma — 2026-10-21
+
+- Exclui educadores com `grade students` e administradores das contagens de
+  estudantes; o estado de alguém fora da turma também não entra nas métricas.
+- Acrescenta dependências de cache para cada membership e conta consultada, além
+  das listas de roles Group/Drupal, para invalidar dados quando roles ou
+  memberships mudarem.
+- Kernel real de Group/LMS cobre membro, educador, administrador e outsider:
+  1 teste / 38 assertions PASS; 39 depreciações vêm do Core/Group upstream.
+
 ## 0.1.0-dev.22 — serializar reemissões de certificado — 2026-10-21
 
 - Adquire lock do Core por UUID do status antes de revogar uma emissão anterior

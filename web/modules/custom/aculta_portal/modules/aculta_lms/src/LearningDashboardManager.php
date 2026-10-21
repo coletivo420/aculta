@@ -118,13 +118,27 @@ final class LearningDashboardManager {
     }
 
     $members = [];
+    $memberAccessCache = new CacheableMetadata();
     foreach (GroupMembership::loadByGroup($class) as $membership) {
       if ($membership->getPluginId() !== 'group_membership') {
         continue;
       }
       $member = $membership->getEntity();
-      if ($member instanceof UserInterface && $member->isActive()
-        && $course->hasPermission('take course', $member)) {
+      if (!$member instanceof UserInterface) {
+        continue;
+      }
+      $memberAccessCache
+        ->addCacheableDependency($membership)
+        ->addCacheableDependency($member)
+        ->addCacheTags([
+          'group_relationship_list:plugin:group_membership:entity:' . $member->id(),
+          'config:group_role_list',
+          'config:user.role_list',
+        ]);
+      if ($member->isActive()
+        && !$member->hasPermission('administer lms')
+        && $course->hasPermission('take course', $member)
+        && !$course->hasPermission('grade students', $member)) {
         $members[(int) $member->id()] = $member;
       }
     }
@@ -141,6 +155,7 @@ final class LearningDashboardManager {
         ->addCacheableDependency($access)
         ->addCacheableDependency($class)
         ->addCacheableDependency($course)
+        ->merge($memberAccessCache)
         ->addCacheTags([
           'lms_course_status_list',
           'group_relationship_list:plugin:group_membership:group:' . $class->id(),

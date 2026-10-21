@@ -199,15 +199,25 @@ de cursos.
 O painel `/painel-administrativo/lms/turma/{group}/painel` exige a permissão
 contextual `grade students` no curso associado. Exibe apenas contagens agregadas
 da turma (matrículas, início, andamento, avaliação pendente, aprovação e
-reprovação), sem nomes, respostas ou texto de feedback. Group/LMS continuam
-fontes de verdade e as páginas não usam cache compartilhado.
+reprovação), sem nomes, respostas ou texto de feedback. Educadores e
+administradores não são contados como estudantes, e status de pessoas fora da
+turma são excluídos. Cache depende dos memberships e contas consultados para
+invalidar alterações de participação/roles. Group/LMS continuam fontes de
+verdade e as páginas não usam cache compartilhado.
 
 Unit dos painéis e do PDF: 4 testes/18 assertions (escopo próprio, menu
 autenticado, PDF indisponível e turma órfã); em conjunto com os Kernel de
 instalação/certificados, 6 testes/76 assertions PASS. Unit total: 20
 testes/106 assertions.
-Faltam fixtures LMS/Group completas, revisão visual/browser e smoke no Runtime;
-RUNTIME STATUS: DEFERRED.
+Kernel de Group/LMS comprova contagens para dois estudantes, exclusão de
+educador/admin e outsider e ausência de dados identificáveis (1 teste/38
+assertions). Revisão visual/browser, acesso do dashboard do estudante com
+fixtures completas e smoke no Runtime continuam pendentes; RUNTIME STATUS:
+DEFERRED.
+
+Suítes completas em 2026-10-21: Unit 34 testes/157 assertions; Kernel MariaDB
+17 testes/475 assertions. O Kernel registrou 90 depreciações de Core/contrib e
+a Unit, 5 avisos do PHPUnit.
 
 Validação desta entrega parcial: Kernel isolado 6 testes/76 assertions; Unit
 16/88; gates Drupal 11+ (1007 checks), índice de status, slugs e imagens PASS;
