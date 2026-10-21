@@ -137,7 +137,7 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Regra (ADR-0005, 2026-10-21): todo gráfico com eixo de tempo tem seletor de período (7, 14 e 30 dias), no mesmo commit do gráfico.
 
 - Feito (0.8.0-dev.1): painel central (uma métrica por vez), período de 7, 14 e 30 dias, gráfico, tabela e exportação CSV. Métricas R fora do painel.
-- Pendente: painéis por módulo no design system do ACULTA420 (tela própria, sem contrato de cor novo).
+- Feito (0.9.0-dev.2): painéis por área (vendas, e-mail, cursos, links, fórum, mídia, wiki) no design system do ACULTA420 (tokens `statistics-*`, autorizado em 2026-10-21). Pendente: validação visual no navegador.
 - Pendente: filtros por domínio e fonte.
 - Feito (0.9.0-dev.1): comparação com o período anterior de mesmo tamanho, com variação percentual e aviso de que não é causa. Comparação entre áreas (métricas lado a lado) fica para o próximo corte.
 - Feito (0.9.0-dev.1): filtro por domínio em pedidos.

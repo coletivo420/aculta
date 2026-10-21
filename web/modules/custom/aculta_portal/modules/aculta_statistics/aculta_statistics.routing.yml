@@ -33,3 +33,12 @@ aculta_statistics.dashboard_export:
     _title: 'Exportar estatísticas'
   requirements:
     _permission: 'administer aculta_statistics'
+
+aculta_statistics.area:
+  path: '/painel-administrativo/aculta/estatisticas/area/{area}'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::overview'
+    _title: 'Estatísticas por área'
+  requirements:
+    _permission: 'administer aculta_statistics'
+    area: 'vendas|email|lms|links|forum|midia|wiki'

@@ -36,6 +36,22 @@ até o módulo ser ativado.
 - Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
+## 0.9.0-dev.2 (painéis por área, com o tema autorizado)
+
+### Código
+- Painel por área em `/painel-administrativo/aculta/estatisticas/area/{area}`: vendas, e-mail, cursos, links, fórum, mídia e wiki. Cada área mostra só as métricas dela (prefixo do catálogo), com o mesmo período 7/14/30, comparação e CSV.
+- Navegação entre áreas e todas as métricas, por lista com token `statistics-areas`.
+- Marcadores `data-portal-ui="statistics-*"` (sem classes de design no módulo). O visual é do ACULTA420 (`css/components/statistics.css`, 0.6.0-dev.137), autorizado pelo responsável em 2026-10-21.
+- Área fora da lista responde 404.
+- Formulário de período e métrica usa `data-portal-ui="statistics-form"`, sem classe de design (correção de um caso encontrado pelo teste).
+
+### Testes
+- Unit: 88 casos. Kernel: 27 casos (inclui página por área com tokens, área desconhecida).
+
+### Pendente
+- Validação visual no navegador (Firefox), no servidor de testes.
+- Cliente GA4 real (credenciais e justificativa da dependência `google/apiclient`).
+
 ## 0.9.0-dev.1 (fases 0.6 a 0.9: mídia, GA4 desligado, filtro por domínio, auditoria de prazo)
 
 ### 0.7 — Mídia e QR

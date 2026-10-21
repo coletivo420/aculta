@@ -93,6 +93,29 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   }
 
   /**
+   * Página por área lista só as métricas da área e marca os blocos com tokens do tema (sem classes de design).
+   */
+  public function testAreaPageOffersOnlyItsMetricsAndTokens(): void {
+    $request = Request::create('/painel-administrativo/aculta/estatisticas/area/midia', 'GET', []);
+    $page = StatisticsDashboardController::create($this->container)->overview($request, 'midia');
+    $html = (string) $this->container->get('renderer')->renderInIsolation($page);
+
+    $this->assertStringContainsString('data-portal-ui="statistics-panel"', $html);
+    $this->assertStringContainsString('data-portal-ui="statistics-chart"', $html);
+    $this->assertStringContainsString('value="media.files.requests"', $html);
+    $this->assertStringNotContainsString('value="wiki.entries.read"', $html);
+    $this->assertStringNotContainsString('class="aculta-', $html, 'O Portal não emite classe de design.');
+  }
+
+  /**
+   * Área desconhecida responde 404.
+   */
+  public function testUnknownAreaIsNotFound(): void {
+    $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+    StatisticsDashboardController::create($this->container)->overview(Request::create('/x'), 'inexistente');
+  }
+
+  /**
    * Métrica restrita (dado pessoal por aluno) não é oferecida no painel agregado.
    */
   public function testRestrictedMetricIsNotOffered(): void {

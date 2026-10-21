@@ -15,6 +15,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,19 @@ final class StatisticsDashboardController extends ControllerBase {
    * A receita por domínio não tem esse filtro: somaria centavos de moedas diferentes.
    */
   private const DOMAIN_COUNT_METRIC = 'commerce.orders.by_domain';
+
+  /**
+   * Áreas do painel: rótulo e prefixo das métricas do catálogo que pertencem a cada área.
+   */
+  public const AREAS = [
+    'vendas' => ['Vendas', 'commerce.'],
+    'email' => ['E-mail', 'email.'],
+    'lms' => ['Cursos', 'lms.'],
+    'links' => ['Links', 'links.'],
+    'forum' => ['Fórum', 'forum.'],
+    'midia' => ['Mídia', 'media.'],
+    'wiki' => ['Wiki', 'wiki.'],
+  ];
 
   public function __construct(
     private readonly MetricCatalog $catalog,
@@ -55,8 +69,11 @@ final class StatisticsDashboardController extends ControllerBase {
   /**
    * Página do painel: métrica e período escolhidos na query (`metrica`, `dias`).
    */
-  public function overview(Request $request): array {
-    $metric = $this->selectedMetric($request);
+  public function overview(Request $request, ?string $area = NULL): array {
+    if ($area !== NULL && !array_key_exists($area, self::AREAS)) {
+      throw new NotFoundHttpException();
+    }
+    $metric = $this->selectedMetric($request, $area);
     $days = MetricSeries::normalizePeriod($request->query->get('dias'));
     $today = $this->today();
     $domain = $this->selectedDomain($request, $metric, $today, $days);
@@ -73,8 +90,16 @@ final class StatisticsDashboardController extends ControllerBase {
 
     return [
       '#type' => 'container',
-      'controles' => $this->controls($metric, $days, $domain, $today),
+      '#attributes' => ['data-portal-ui' => 'statistics-panel'],
+      'areas' => $this->areaNavigation($area),
+      'controles' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-controls'],
+        'form' => $this->controls($metric, $days, $domain, $today, $area),
+      ],
       'resumo' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-summary'],
         '#markup' => '<p><strong>' . $this->t('@total @unidade no período (@days dias)', [
           '@total' => $series['total'],
           '@unidade' => $metric->unit,
@@ -82,6 +107,8 @@ final class StatisticsDashboardController extends ControllerBase {
         ]) . '</strong></p>',
       ],
       'comparacao' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-comparison'],
         '#markup' => '<p>' . $this->t('Período anterior (mesmo tamanho): @anterior @unidade. Variação: @variacao. A variação mostra só a diferença entre períodos, não sua causa.', [
           '@anterior' => $previous,
           '@unidade' => $metric->unit,
@@ -89,27 +116,54 @@ final class StatisticsDashboardController extends ControllerBase {
         ]) . '</p>',
       ],
       'grafico' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-chart'],
         '#markup' => Markup::create(MailTrendChart::svg($series['labels'], [
           ['label' => $metric->label, 'color' => '#1f4e79', 'values' => $series['values']],
         ], (string) $this->t('@label nos últimos @days dias', ['@label' => $metric->label, '@days' => $days]))),
       ],
       'valores' => [
         '#type' => 'table',
+        '#attributes' => ['data-portal-ui' => 'statistics-table'],
         '#caption' => $this->t('Valores por dia'),
         '#header' => [$this->t('Dia'), $this->t('Total')],
         '#rows' => $table,
       ],
       'exportar' => [
-        '#type' => 'link',
-        '#title' => $this->t('Exportar CSV'),
-        '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], ['query' => array_filter(['metrica' => $metric->id, 'dias' => $days, 'dominio' => $domain])]),
-        '#prefix' => '<p>',
-        '#suffix' => '</p>',
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-note'],
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Exportar CSV'),
+          '#url' => Url::fromRoute('aculta_statistics.dashboard_export', [], ['query' => array_filter(['metrica' => $metric->id, 'dias' => $days, 'dominio' => $domain])]),
+        ],
       ],
       'integracoes' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-note'],
         '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $this->ga4->isEnabled() ? $this->t('ligado') : $this->t('desligado (sem propriedade e credencial configuradas)')]) . '</p>',
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
+    ];
+  }
+
+  /**
+   * Navegação entre as áreas do painel (item list com token, sem classes de design).
+   */
+  private function areaNavigation(?string $current): array {
+    $items = [];
+    $items[] = ['#type' => 'link', '#title' => $this->t('Todas as métricas'), '#url' => Url::fromRoute('aculta_statistics.dashboard')];
+    foreach (self::AREAS as $id => [$label]) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $this->t('@label', ['@label' => $label]),
+        '#url' => Url::fromRoute('aculta_statistics.area', ['area' => $id]),
+      ];
+    }
+    return [
+      '#theme' => 'item_list',
+      '#items' => $items,
+      '#attributes' => ['data-portal-ui' => 'statistics-areas', 'data-area-atual' => $current ?? 'todas'],
     ];
   }
 
@@ -142,9 +196,9 @@ final class StatisticsDashboardController extends ControllerBase {
   /**
    * Métrica pedida se existir e não for restrita; senão a primeira métrica agregada do catálogo.
    */
-  private function selectedMetric(Request $request): MetricDefinition {
+  private function selectedMetric(Request $request, ?string $area = NULL): MetricDefinition {
     $requested = (string) $request->query->get('metrica', '');
-    $aggregated = $this->aggregatedMetrics();
+    $aggregated = $this->aggregatedMetrics($area);
     return $aggregated[$requested] ?? reset($aggregated);
   }
 
@@ -197,10 +251,12 @@ final class StatisticsDashboardController extends ControllerBase {
    *
    * @return array<string, \Drupal\aculta_statistics\Catalog\MetricDefinition>
    */
-  private function aggregatedMetrics(): array {
+  private function aggregatedMetrics(?string $area = NULL): array {
+    $prefix = $area === NULL ? NULL : self::AREAS[$area][1];
     $metrics = array_filter(
       $this->catalog->all(),
-      static fn (MetricDefinition $definition): bool => $definition->sensitivity !== MetricDefinition::SENSITIVITY_RESTRICTED,
+      static fn (MetricDefinition $definition): bool => $definition->sensitivity !== MetricDefinition::SENSITIVITY_RESTRICTED
+        && ($prefix === NULL || str_starts_with($definition->id, $prefix)),
     );
     ksort($metrics);
     return $metrics;
@@ -209,9 +265,9 @@ final class StatisticsDashboardController extends ControllerBase {
   /**
    * Formulário de seleção (GET, sem JavaScript): métrica e período, com botão de aplicar.
    */
-  private function controls(MetricDefinition $selected, int $days, ?string $domain = NULL, int $today = 0): array {
+  private function controls(MetricDefinition $selected, int $days, ?string $domain = NULL, int $today = 0, ?string $area = NULL): array {
     $metricOptions = '';
-    foreach ($this->aggregatedMetrics() as $id => $definition) {
+    foreach ($this->aggregatedMetrics($area) as $id => $definition) {
       $metricOptions .= sprintf('<option value="%s"%s>%s</option>', Html::escape($id), $id === $selected->id ? ' selected' : '', Html::escape($definition->label));
     }
     $periodOptions = '';
@@ -226,10 +282,10 @@ final class StatisticsDashboardController extends ControllerBase {
       }
       $domainControl = sprintf(' <label>%s <select name="dominio">%s</select></label>', Html::escape((string) $this->t('Domínio')), $domainOptions);
     }
-    $action = Html::escape(Url::fromRoute('aculta_statistics.dashboard')->toString());
+    $action = Html::escape($area === NULL ? Url::fromRoute('aculta_statistics.dashboard')->toString() : Url::fromRoute('aculta_statistics.area', ['area' => $area])->toString());
     return [
       '#markup' => Markup::create(sprintf(
-        '<form method="get" action="%s" class="aculta-statistics-controles"><label>%s <select name="metrica">%s</select></label> <label>%s <select name="dias">%s</select></label>%s <button type="submit">%s</button></form>',
+        '<form method="get" action="%s" data-portal-ui="statistics-form"><label>%s <select name="metrica">%s</select></label> <label>%s <select name="dias">%s</select></label>%s <button type="submit">%s</button></form>',
         $action,
         Html::escape((string) $this->t('Métrica')),
         $metricOptions,
