@@ -348,3 +348,53 @@ Conclusão: a integração técnica está pronta para os consumidores, mas nenhu
 - CSP real (política do `docx-frame.html` de produção, copiada byte a byte com uma sonda, no navegador X11): `fetch` externo bloqueado (`connect-src`, `TypeError`); imagem externa bloqueada (`img-src`); as duas violações foram reportadas; o rastreador não recebeu nenhuma requisição. Feito num servidor local com a mesma política, não no Runtime.
 - Ressalva: a sonda de CSP não roda no Runtime, porque o arquivo de produção não foi alterado. A política foi comparada com `diff` para garantir que é a mesma.
 - Ruído conhecido: o CSP do site registra mensagens `info` de estilo inline em todas as páginas; não é do leitor.
+
+
+## 0.1.0-rc.1 — homologação (registro)
+
+Estado: **candidato em homologação, RC não declarado**. Faltam a revisão de código (AGENTS.md exige) e a revisão visual em Firefox antes de declarar RC. O estado do módulo continua `Dev` no índice de status.
+
+### Testes
+
+| Item | Resultado | Classificação |
+| --- | --- | --- |
+| PHP lint (34 arquivos do módulo) | sem erros | verificado |
+| `node --check` dos JS do leitor | sem erros | verificado |
+| Unit do módulo `aculta_document_viewer` | 54 testes, 229 asserções, OK | verificado |
+| Unit de baseline `aculta_pdf_viewer` | 28 testes, 217 asserções, OK | verificado |
+| Kernel do módulo e do submódulo Group | 5 erros (serviço `aculta_user.aculta_user_agreement_ledger` ausente) | dívida preexistente, mesma causa da baseline |
+| Runtime: DOCX, XLSX, ODS, XLS, CSV (fixtures e medição) | valores, abas, Tabela e fallback corretos | verificado (CSV só em fixture local, o campo de documentos do Runtime não aceita CSV) |
+| DOCX malicioso no Runtime (altChunk, externo, corrompido) | ver registro do dev.10 | verificado |
+| CSP real (sonda com a política de produção, servidor local) | fetch e imagem externos bloqueados | verificado fora do Runtime |
+| Viewport 390 e 768 px, claro e escuro (Runtime) | sem rolagem horizontal, alvos de 44 px, grade e abas com tokens | verificado (Chromium X11; Firefox pendente) |
+
+### Gates
+
+| Gate | Resultado | Classificação |
+| --- | --- | --- |
+| Índice de status (`validate-project-status-index`) | PASS após criar os status do módulo e do submódulo Group | corrigido nesta etapa (falha introduzida pelo módulo novo) |
+| Foundation do tema (`validate-aculta420-foundation`) | 369 checks PASS | verificado |
+| Design foundations do tema | 3 falhas no envelope de e-mail do Mailer | dívida preexistente de outra frente |
+| Mapa módulo-tema | 2 falhas: `aculta_editor`, `aculta_lms_resources` | dívida preexistente de outras frentes; nenhuma do leitor |
+| Fronteira módulo-tema | 1 falha: `aculta_mailer` | dívida preexistente de outra frente |
+| Pacotes próprios | 3 falhas em fixtures de outros módulos de teste | dívida preexistente; os fixtures do spike foram corrigidos |
+| Atributos documentados (`validate-portal-ui-docs`) | 13 falhas, nenhuma dos atributos do leitor | dívida preexistente de outras frentes |
+| Drupal 11+ do Portal (`validate-aculta-portal-drupal11`) | falhava só pelo índice de status | corrigido pelo status do módulo |
+| Endereços de ambiente | 26 ocorrências em `aculta_statistics` e `aculta_qrcode` | dívida preexistente; nenhuma no leitor |
+| `.htaccess` (diretiva `.mjs`) | 2 falhas: a regra existe no `HEAD`, mas foi removida na árvore de trabalho por uma alteração não commitada de outra frente | **risco de release**: não é desta frente, e não foi revertido |
+| `aculta_image` | PASS | verificado |
+| Slugs públicos | PASS | verificado |
+
+### Riscos para o RC
+
+1. A árvore de trabalho não tem a regra `AddType application/javascript .mjs` do `.htaccess`. O `HEAD` tem. Sem ela, os módulos ES do PDF.js e do leitor saem com MIME errado em produção. O dono da alteração precisa commitar ou restaurar antes de qualquer deploy.
+2. O índice compartilhado tinha arquivos staged da frente do Fórum. Durante esta etapa, um commit meu levou esses arquivos por engano; desfiz esse commit local antes do push e recomitei só os meus caminhos. Os seis arquivos do Fórum continuam staged, sob responsabilidade do dono.
+3. Revisão de código e revisão visual em Firefox pendentes.
+4. Alpha (deploy no servidor de desenvolvimento) e produção dependem de autorização do responsável.
+
+### Próximos passos para declarar RC
+
+1. Revisão de código do módulo e do tema (`0.1.0-dev.8` e `0.6.0-dev.146`).
+2. Revisão visual em Firefox, com as capturas de 390, 768 e 1024 px nos modos claro e escuro.
+3. Resolver o `.htaccess` com o dono da alteração, e rodar `validate-htaccess-directives` na árvore de trabalho.
+4. Depois disso, declarar RC no índice de status e no roadmap, e pedir autorização para o Alpha.
