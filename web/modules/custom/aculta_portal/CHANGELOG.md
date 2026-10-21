@@ -1,3 +1,11 @@
+## 0.4.0-dev.252 — LMS como segundo consumidor da política de upload
+
+- Formulário `aculta_portal.user_upload_settings`: aba **LMS** ao lado do Fórum, com herança da política global ou override de extensões e tamanho. Os blocos do Fórum e do LMS passam a ser gerados pelo mesmo laço, sem mudança de comportamento para o Fórum.
+- Schema `aculta_portal.user_upload` aceita `consumers.lms`. Sem configuração salva, o LMS herda a política global; por isso nenhuma configuração exportada foi alterada.
+- `UserUploadPolicy::restrictValidators()`: limita as validações de um consumidor à sua política efetiva. Extensões fora da allowlist são removidas e o limite de tamanho só pode diminuir. O validador de imagem do `aculta_image` continua aplicado.
+- Wiki não recebe aba: `wiki_entry` não tem campo de envio por usuário; o contrato continua permitindo a integração quando esse campo existir.
+- Testes: `UserUploadPolicyKernelTest` (6 testes, 97 asserções, Kernel no banco `aculta_simpletest`, 8 deprecações do contrib) cobre a aba LMS e o teto de validadores. O contrato está em `docs/portal/USER-UPLOADS.md`.
+
 ## 0.4.0-dev.248 — rastreamento de e-mail sob o aceite único, desligado até publicação
 
 - `AcultaUserAgreementTrackingConsent::hasConsent()` passa a usar o aceite único (`aculta_user_agreement_terms`), mas só responde verdadeiro quando `FUNCTION_PUBLISHED` for verdadeiro. A constante começa falsa.

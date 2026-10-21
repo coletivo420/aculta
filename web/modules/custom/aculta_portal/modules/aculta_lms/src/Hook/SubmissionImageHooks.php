@@ -4,17 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
+use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
-/** Applies shared image validation to LMS File Upload answer forms. */
+/** Applies the Portal upload policy to LMS File Upload answer forms. */
 final class SubmissionImageHooks {
 
+  public function __construct(
+    private readonly UserUploadPolicy $uploadPolicy,
+  ) {}
+
   /**
-   * Adds the ACULTA image constraint to the contrib managed upload element.
+   * Caps the contrib managed upload element to the LMS upload policy.
    *
-   * Non-image extensions configured by the activity keep their native
-   * validation. The constraint inspects only raster image extensions.
+   * The activity still chooses its extensions, but only inside the consumer
+   * policy from aculta_portal. The ACULTA image constraint then inspects raster
+   * image bytes; other extensions keep their native validation.
    */
   #[Hook('form_lms_answer_form_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
@@ -22,7 +28,9 @@ final class SubmissionImageHooks {
       return;
     }
 
-    $form['file_upload']['#upload_validators']['AcultaLmsSubmissionImage'] = [];
+    $validators = $form['file_upload']['#upload_validators'];
+    $validators['AcultaLmsSubmissionImage'] = [];
+    $form['file_upload']['#upload_validators'] = $this->uploadPolicy->restrictValidators($validators, 'lms');
   }
 
 }

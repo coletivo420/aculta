@@ -119,6 +119,27 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Activity validators are capped to the consumer's effective policy. */
+  public function testActivityValidatorsAreCappedToTheConsumerPolicy(): void {
+    $this->config('aculta_portal.user_upload')
+      ->set('allowed_extensions', 'png pdf docx')
+      ->set('max_size_mb', 5)
+      ->set('consumers.lms', [
+        'inherit_global' => FALSE,
+        'allowed_extensions' => 'pdf docx',
+        'max_size_mb' => 50,
+      ])
+      ->save();
+
+    $validators = $this->policy->restrictValidators([
+      'FileExtension' => ['extensions' => 'pdf docx xls'],
+      'FileSizeLimit' => ['fileLimit' => 100 * 1024 * 1024],
+    ], 'lms');
+
+    self::assertSame(['FileExtension' => ['extensions' => 'pdf docx'], 'FileSizeLimit' => ['fileLimit' => 50 * 1024 * 1024]], $validators);
+  }
+
+  /**
    * Image and document controls use the configured Core validators. */
   public function testUploadDialogUsesPolicyAndDrupalManagedFileValidators(): void {
     $this->config('aculta_portal.user_upload')
@@ -151,7 +172,7 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
 
   /**
    * The administrative form exposes global and consumer policy tabs. */
-  public function testAdministrativeSettingsFormBuildsGlobalAndForumTabs(): void {
+  public function testAdministrativeSettingsFormBuildsGlobalAndConsumerTabs(): void {
     $form_object = $this->container->get('class_resolver')
       ->getInstanceFromDefinition(UserUploadSettingsForm::class);
     $form = $this->container->get('form_builder')->getForm($form_object);
@@ -160,8 +181,10 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
     self::assertSame('vertical_tabs', $form['policy_tabs']['#type']);
     self::assertSame('Política global', (string) $form['global']['#title']);
     self::assertSame('Fórum', (string) $form['forum']['#title']);
+    self::assertSame('LMS', (string) $form['lms']['#title']);
     self::assertSame(10, $form['global']['max_size_mb']['#default_value']);
     self::assertSame(TRUE, $form['forum']['inherit_global']['#default_value']);
+    self::assertSame(TRUE, $form['lms']['inherit_global']['#default_value']);
   }
 
   /**

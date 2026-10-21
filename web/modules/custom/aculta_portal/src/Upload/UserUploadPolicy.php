@@ -115,6 +115,23 @@ final class UserUploadPolicy {
   }
 
   /**
+   * Caps an integration's File API validators to the consumer policy.
+   *
+   * The consumer may narrow the policy but never widen it: extensions outside
+   * its allowlist are dropped and the size limit can only go down. Callers keep
+   * their own extra validators, such as aculta_image's raster constraint.
+   */
+  public function restrictValidators(array $validators, ?string $consumer = NULL): array {
+    $allowed = $this->allowedExtensions($consumer);
+    $requested = preg_split('/[\s,]+/', strtolower(trim((string) ($validators['FileExtension']['extensions'] ?? implode(' ', $allowed))))) ?: [];
+    $validators['FileExtension'] = ['extensions' => implode(' ', array_values(array_intersect($requested, $allowed)))];
+
+    $limit = $this->maxBytes($consumer);
+    $validators['FileSizeLimit'] = ['fileLimit' => min((int) ($validators['FileSizeLimit']['fileLimit'] ?? $limit), $limit)];
+    return $validators;
+  }
+
+  /**
    * Resolves consumer overrides, falling back to the site-wide policy. */
   private function settings(?string $consumer): array {
     $config = $this->configFactory->get('aculta_portal.user_upload');

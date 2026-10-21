@@ -11,6 +11,9 @@ use Drupal\Core\Form\FormStateInterface;
 /** Configures the shared policy for user file uploads across the Portal. */
 final class UserUploadSettingsForm extends ConfigFormBase {
 
+  /** Integrations with their own tab; each may inherit the global policy. */
+  private const CONSUMERS = ['forum', 'lms'];
+
   /** {@inheritdoc} */
   public function getFormId(): string {
     return 'aculta_portal_user_upload_settings';
@@ -25,7 +28,7 @@ final class UserUploadSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_portal.user_upload');
     $form['introduction'] = [
-      '#plain_text' => $this->t('Esta política central é usada pelos formulários de envio de arquivos para usuários no Portal, incluindo o Fórum. Cada área continua responsável por associar o arquivo ao conteúdo e controlar sua publicação e acesso.'),
+      '#plain_text' => $this->t('Esta política central é usada pelos formulários de envio de arquivos para usuários no Portal, incluindo o Fórum e as respostas com arquivo do LMS. Cada área continua responsável por associar o arquivo ao conteúdo e controlar sua publicação e acesso.'),
     ];
     $form['policy_tabs'] = ['#type' => 'vertical_tabs'];
     $form['global'] = [
@@ -52,41 +55,48 @@ final class UserUploadSettingsForm extends ConfigFormBase {
       '#step' => 1,
       '#required' => TRUE,
     ];
-    $forum = $config->get('consumers.forum') ?? [];
-    $form['forum'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Fórum'),
-      '#group' => 'policy_tabs',
-    ];
-    $form['forum']['inherit_global'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Usar a política global'),
-      '#default_value' => $forum['inherit_global'] ?? TRUE,
-    ];
-    $form['forum']['allowed_extensions'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Extensões permitidas no Fórum'),
-      '#default_value' => $forum['allowed_extensions'] ?? UserUploadPolicy::DEFAULT_EXTENSIONS,
-      '#maxlength' => 255,
-      '#states' => ['visible' => [':input[name="forum[inherit_global]"]' => ['checked' => FALSE]]],
-    ];
-    $form['forum']['max_size_mb'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Tamanho máximo por arquivo no Fórum (MB)'),
-      '#default_value' => $forum['max_size_mb'] ?? 10,
-      '#min' => 1,
-      '#max' => intdiv(PHP_INT_MAX, 1048576),
-      '#step' => 1,
-      '#states' => ['visible' => [':input[name="forum[inherit_global]"]' => ['checked' => FALSE]]],
-    ];
+    foreach (self::CONSUMERS as $consumer) {
+      $settings = $config->get('consumers.' . $consumer) ?? [];
+      $label = $this->consumerLabel($consumer);
+      $form[$consumer] = [
+        '#type' => 'details',
+        '#title' => $label,
+        '#group' => 'policy_tabs',
+      ];
+      $form[$consumer]['inherit_global'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Usar a política global'),
+        '#default_value' => $settings['inherit_global'] ?? TRUE,
+      ];
+      $form[$consumer]['allowed_extensions'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Extensões permitidas em @consumer', ['@consumer' => $label]),
+        '#default_value' => $settings['allowed_extensions'] ?? UserUploadPolicy::DEFAULT_EXTENSIONS,
+        '#maxlength' => 255,
+        '#states' => ['visible' => [':input[name="' . $consumer . '[inherit_global]"]' => ['checked' => FALSE]]],
+      ];
+      $form[$consumer]['max_size_mb'] = [
+        '#type' => 'number',
+        '#title' => $this->t('Tamanho máximo por arquivo em @consumer (MB)', ['@consumer' => $label]),
+        '#default_value' => $settings['max_size_mb'] ?? 10,
+        '#min' => 1,
+        '#max' => intdiv(PHP_INT_MAX, 1048576),
+        '#step' => 1,
+        '#states' => ['visible' => [':input[name="' . $consumer . '[inherit_global]"]' => ['checked' => FALSE]]],
+      ];
+    }
     return parent::buildForm($form, $form_state);
   }
 
   /** {@inheritdoc} */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
-    foreach (['global' => 'Política global', 'forum' => 'Fórum'] as $scope => $label) {
-      if ($scope === 'forum' && $form_state->getValue(['forum', 'inherit_global'])) {
+    $scopes = ['global' => 'Política global'];
+    foreach (self::CONSUMERS as $consumer) {
+      $scopes[$consumer] = (string) $this->consumerLabel($consumer);
+    }
+    foreach ($scopes as $scope => $label) {
+      if ($scope !== 'global' && $form_state->getValue([$scope, 'inherit_global'])) {
         continue;
       }
       $extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue([$scope, 'allowed_extensions'])))) ?: [];
@@ -105,18 +115,28 @@ final class UserUploadSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $global_extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue(['global', 'allowed_extensions'])))) ?: [];
     $global_extensions = array_values(array_unique(array_filter($global_extensions)));
-    $forum_extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue(['forum', 'allowed_extensions'])))) ?: [];
-    $forum_extensions = array_values(array_unique(array_filter($forum_extensions)));
-    $this->config('aculta_portal.user_upload')
+    $config = $this->config('aculta_portal.user_upload')
       ->set('allowed_extensions', implode(' ', $global_extensions))
-      ->set('max_size_mb', (int) $form_state->getValue(['global', 'max_size_mb']))
-      ->set('consumers.forum', [
-        'inherit_global' => (bool) $form_state->getValue(['forum', 'inherit_global']),
-        'allowed_extensions' => implode(' ', $forum_extensions),
-        'max_size_mb' => (int) $form_state->getValue(['forum', 'max_size_mb']),
-      ])
-      ->save();
+      ->set('max_size_mb', (int) $form_state->getValue(['global', 'max_size_mb']));
+    foreach (self::CONSUMERS as $consumer) {
+      $extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue([$consumer, 'allowed_extensions'])))) ?: [];
+      $extensions = array_values(array_unique(array_filter($extensions)));
+      $config->set('consumers.' . $consumer, [
+        'inherit_global' => (bool) $form_state->getValue([$consumer, 'inherit_global']),
+        'allowed_extensions' => implode(' ', $extensions),
+        'max_size_mb' => (int) $form_state->getValue([$consumer, 'max_size_mb']),
+      ]);
+    }
+    $config->save();
     parent::submitForm($form, $form_state);
+  }
+
+  /** Returns the administrative label of a consumer tab. */
+  private function consumerLabel(string $consumer): string|\Stringable {
+    return match ($consumer) {
+      'forum' => $this->t('Fórum'),
+      'lms' => $this->t('LMS'),
+    };
   }
 
 }
