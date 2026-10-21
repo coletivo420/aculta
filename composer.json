@@ -263,6 +263,7 @@
         "cweagans/composer-patches": "^2.0",
         "drupal/bootstrap": "^5.0",
         "drupal/captcha": "^2.0",
+        "drupal/ckeditor5_plugin_pack": "^1.5",
         "drupal/commerce": "^3.3",
         "drupal/commerce_cart": "3.3.10",
         "drupal/commerce_checkout": "3.3.10",
