@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.wiki_entry.body
+    - field.field.node.wiki_entry.field_aculta_discussion
     - field.field.node.wiki_entry.field_domain_source
     - field.field.node.wiki_entry.field_wiki_categories
     - field.field.node.wiki_entry.field_wiki_image
@@ -137,5 +138,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_aculta_discussion: true
   promote: true
   sticky: true

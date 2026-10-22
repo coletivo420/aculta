@@ -148,7 +148,9 @@ Ordem sugerida, depois das Fases 1–4:
    Entregue nesta sessão: aba "Imagem de destaque" no formulário do verbete, com o
    consumidor `wiki` da política (ver estado abaixo).
 3. Adaptador `wiki` do Fórum: uma discussão por verbete, em Comment no Node. A revisão
-   editorial continua separada.
+   editorial continua separada. Entregue nesta sessão: submódulo `aculta_forum_wiki`
+   com o provider `wiki` e o campo `field_aculta_discussion` no `wiki_entry` (ver
+   estado abaixo). Sem rota administrativa própria e sem habilitação no Runtime.
 4. Busca e notificações. Mudam a retenção e exigem atualizar o inventário LGPD de novo.
 5. Estatísticas de edição e revisão por verbete, a partir do histórico do Node.
 
@@ -156,7 +158,9 @@ Ordem sugerida, depois das Fases 1–4:
 
 - **Dono da configuração:** manter os itens de `config/sync` no núcleo ou mover para
   `aculta_wiki/config/install`? Recomendação: manter os UUIDs e mover só depois de confirmar
-  o Config Sync sem diferenças.
+  o Config Sync sem diferenças. O adaptador do Fórum acrescentou a instância de
+  `field_aculta_discussion`, o `hidden` no formulário e a exibição `full` do `wiki_entry`
+  em `config/sync` justamente porque essa decisão segue aberta.
 - **Ranking:** só no painel administrativo ou também público? Padrão adotado: só administrativo,
   como os demais painéis do Statistics.
 - **Contagem de atualizações:** contar todas as revisões ou só revisões publicadas?
@@ -197,6 +201,7 @@ ao fim da sessão.
 | E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
 | E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
 | E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
+| E7 | Adaptador `wiki` do Fórum: provider e discussão por verbete | Fase 5 (item 3) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -275,6 +280,22 @@ ao fim da sessão.
   `#tree`, por isso a aba o define explicitamente — sem isso os valores não
   chegariam sob `wiki_lead_image`. O `info.yml` passou a declarar
   `drupal:file` e `drupal:media`, que o fluxo agora usa. Nenhuma URL mudou.
+- **Adaptador `wiki` do Fórum (Fase 5, item 3).** O submódulo
+  `aculta_forum_wiki` registra `WikiDiscussionContextProvider` no serviço
+  tagueado `aculta_forum.discussion_context_provider`. O provider aceita apenas
+  Node `wiki_entry` com o campo compartilhado `field_aculta_discussion`, usa
+  `stableId` `wiki:node:{uuid}`, URL canônica do verbete e as políticas
+  `editorial_entity_access` (leitura, descoberta e notificação) e
+  `editorial_opt_in`. Leitura compõe Entity Access do verbete com o do campo;
+  escrita acrescenta `post comments` e o campo aberto; moderação usa
+  `administer comments`. O adaptador não cria tópico público, não reimplementa a
+  Wiki, não registra rotas e não toca o fluxo editorial. A instância do campo, o
+  `hidden` do formulário e a exibição `full` do `wiki_entry` existem apenas em
+  `config/sync`, porque o `aculta_wiki` não tem `config/install`; a decisão
+  sobre o dono dessa configuração continua aberta. O tema ACULTA420 recebe o
+  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, e o Olivero o
+  renderiza pela exibição `full` sem alteração de tema. `aculta_forum_wiki`
+  entrou em `config/sync/core.extension.yml` e continua desabilitado no Runtime.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
@@ -289,16 +310,21 @@ ao fim da sessão.
   e envio, imagem atual, política sem imagem, campo sem acesso e formulário sem
   o campo) e `WikiLeadImagePolicyTest` (3 testes: consumidor exportado, schema e
   aba administrativa) aprovados — suíte do submódulo: `32 testes, 158 asserções`.
+  O adaptador do Fórum tem `WikiDiscussionContextProviderTest` (5 testes, 28
+  asserções: bundles aceitos, acesso e cache, campo fechado e permissão,
+  restrição do host e do campo preservada, verbete não persistido) e a suíte
+  unitária do `aculta_forum` continua passando (`105 testes, 799 asserções`).
   A suíte unitária
   do `aculta_statistics` tem 1 falha pré-existente:
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** O restante da Fase 5 do plano (adaptador do Fórum,
-  busca e notificações, estatísticas de edição e revisão) e a validação em
-  navegador com ACULTA420 e Olivero depois
-  da ativação — a imagem do card e a aba de upload foram verificadas por
-  configuração e testes, não renderizadas em navegador. A ativação em si depende
+- **O que ficou faltando.** O restante da Fase 5 do plano (busca e notificações,
+  estatísticas de edição e revisão), a rota administrativa própria da Wiki e a
+  validação em navegador com ACULTA420 e Olivero depois
+  da ativação — a imagem do card, a aba de upload e a discussão do verbete foram
+  verificadas por configuração e testes, não renderizadas em navegador. A
+  ativação em si depende
   de o ambiente importar a configuração e rodar os passos de atualização com
   backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`

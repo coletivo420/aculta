@@ -1,10 +1,10 @@
 # Contextos de discussão e contratos
 
 Este documento define o contrato funcional para Fórum público, Publicações,
-LMS e a futura Wiki. A dev.4 implementa a interface comum, o resolver e o
-provider do Fórum público. Providers de Publicações, LMS e Wiki continuam por
-suas fases de integração; nenhuma entidade é tratada como contexto só por slug,
-nome de bundle enviado pelo cliente ou presença de dados arbitrários.
+LMS e Wiki. A dev.4 implementa a interface comum, o resolver e o provider do
+Fórum público; Publicações, LMS e Wiki têm providers próprios em submódulos
+adaptadores. Nenhuma entidade é tratada como contexto só por slug, nome de
+bundle enviado pelo cliente ou presença de dados arbitrários.
 
 **Inicialização limpa:** por F-D33, Nodes `forum`, Comments `comment_forum`,
 termos do vocabulário `forums` e vínculos antigos `field_discussao` foram
@@ -43,7 +43,7 @@ são a interface administrativa dos contextos de discussão.
 | Fórum público Growroom420 | `/painel-administrativo/forum` é a entrada canônica e mostra resumo público e links para a experiência Growroom420; as abas administrativas Drupal e o menu lateral abrem Tópicos, Comentários e Configurações. As filas de comentários são subabas; Revista, LMS e Wiki mantêm administração contextual própria. | Views reativadas como páginas dentro da seção, com filtro fixo do Domain ativo; settings usa `ForumSettingsForm`. Runtime/X11 validado em dev.122; movimento em lote validado em dev.123. Rotas genéricas Core e participação compartilhada permanecem fora da seção. |
 | Publicações | Conteúdo e comentários editoriais são reunidos em `/painel-administrativo/conteudo/revista`; nunca aparecem na listagem do Fórum. | Provider Magazine usa Comment compartilhado. View editorial lista `article`/`blog` e mostra seus comentários na mesma página administrativa. |
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
-| Wiki420 | Espaço administrativo próprio em `/painel-administrativo/wiki/forum`, limitado a comentários de discussão de verbetes; edição/revisão editorial permanece separada. | Contrato futuro, condicionado ao provider e ao bundle Wiki. Não criar agora rota/listagem sem contexto instalável e access validado. |
+| Wiki420 | O adaptador `aculta_forum_wiki` hospeda uma discussão por verbete no campo `field_aculta_discussion` do Node `wiki_entry`, renderizada dentro do próprio verbete; a revisão editorial permanece separada e nenhum tópico público é criado. | Provider `wiki` e campo instalados pela configuração; ainda não há rota/listagem administrativa própria da Wiki. Criá-la exige filtro de contexto instalável e access validado, como nas demais filas. |
 
 ### Inventário administrativo do Growroom420
 
@@ -85,9 +85,10 @@ Moderação segue a árvore do sistema dono do conteúdo, sem fila global que
 misture contextos: Fórum → estado do comentário; Revista → publicações e
 comentários editoriais; Wiki → Comentários → Moderação; LMS → Cursos → Fórum →
 Comentários, sob responsabilidade contextual dos Educadores. Nesta entrega, as
-três abas de estado do Fórum estão ativas; Revista já tem área própria; Wiki/LMS aguardam seus
-adapters e não recebem rotas antecipadas. Rotas futuras devem nascer com os
-adapters e ser registradas no mapa global. A fila genérica do Core exclui
+três abas de estado do Fórum estão ativas; Revista já tem área própria; a Wiki
+já tem o provider de discussão por verbete, mas ainda não recebeu rota própria
+de moderação; o LMS aguarda a instalação do adapter. Rotas futuras devem nascer
+com os adapters e ser registradas no mapa global. A fila genérica do Core exclui
 Comments hospedados por `field_aculta_discussion`; novas integrações devem
 manter seus filtros, Entity Access e, no LMS, membership/Group atuais. Nunca
 usar apenas `comment_type` para autorizar ou listar conteúdo contextual.
@@ -159,9 +160,24 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 
 ### `wiki`
 
-- Contrato futuro para Node do bundle Wiki com uma discussão por verbete.
-- Renderizado dentro do verbete; comentários não alteram revisão editorial nem criam tópico público.
-- Usa `author_wiki`; criação do provider aguarda o submódulo `aculta_wiki` (planejamento em `docs/modules/WIKI-SUBMODULO.md`, Fase 5).
+- Implementado pelo adaptador `aculta_forum_wiki` (tipo `wiki`): uma discussão
+  por verbete, no campo `field_aculta_discussion` do Node `wiki_entry`.
+  `stableId` é `wiki:node:{uuid}` e a URL canônica é a do próprio verbete.
+- Renderizado dentro do verbete; comentários não alteram a revisão editorial
+  nem criam tópico público no Fórum.
+- Leitura exige Entity Access do verbete e do campo; escrita acrescenta
+  `post comments` e o campo aberto; moderação usa `administer comments`. As
+  políticas declaradas são `editorial_entity_access` (leitura, descoberta e
+  notificação) e `editorial_opt_in`; nenhum consumidor ramifica por elas.
+- A Wiki não é reimplementada no Fórum: o adaptador não registra rotas, não cria
+  bundles nem altera o fluxo editorial. A rota administrativa da Wiki continua
+  pendente e nascerá junto do filtro de contexto correspondente.
+- O `aculta_wiki` não tem `config/install`; por isso a instância do campo e a
+  exibição `full` do verbete vivem apenas em `config/sync`. O proprietário dessa
+  configuração (manter em `config/sync` ou mover para o submódulo) é decisão do
+  responsável, ainda aberta.
+- O cartão de autoria `author_wiki` é uma variante de apresentação resolvida por
+  `AuthorCardVariantResolver`, não um papel do Drupal.
 
 ## Reutilização do Comment
 

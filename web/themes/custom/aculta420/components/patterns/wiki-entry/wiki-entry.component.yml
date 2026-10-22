@@ -52,5 +52,7 @@ slots:
     title: Related entries
   references:
     title: References
+  discussion:
+    title: Comment discussion attached to the entry
   actions:
     title: Drupal access-checked node actions

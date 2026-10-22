@@ -1,0 +1,4 @@
+services:
+  Drupal\aculta_forum_wiki\Context\WikiDiscussionContextProvider:
+    tags:
+      - { name: aculta_forum.discussion_context_provider }

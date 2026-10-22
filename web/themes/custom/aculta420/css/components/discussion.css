@@ -1,5 +1,6 @@
-/* Discussão vinculada à publicação: caixa própria abaixo do conteúdo editorial. */
-.aculta-revista-publication__discussion {
+/* Discussão vinculada ao conteúdo editorial (publicação ou verbete): caixa própria abaixo do texto. */
+.aculta-revista-publication__discussion,
+.aculta-wiki-article__discussion {
   display: grid;
   gap: 0.75rem;
   margin-block: 1.5rem 0;
