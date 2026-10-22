@@ -37,3 +37,9 @@ O CSS `context-tabs.css` foi adequado a `ul/li` produzidos por `item_list`, sem 
 **Gates NÃO executados no homelab:** confirmar a estrutura real do slot e do `item_list` renderizado, uma região `nav` para cada grupo, alinhamento visual, acesso por usuário e cache, teclado, comportamento AJAX/pushState/popstate, navegação sem JS, 320/390/768/1280px e dark/light. Também verificar conflitos com CSS legado do Studio. Não marcar PASS com base no código.
 
 **Próxima fase B2-04:** auditar e integrar segundo consumidor real (Wiki ou Conta), evitando alterar ações do verbete e evitando transformar `product-tabs` em tabs de rotas; B2-05 será a homologação.
+
+## B2-04 — segundo consumidor integrado no código (2026-10-22)
+
+A Wiki integrou `aculta420:context-tabs` em `WikiController::home()` e `WikiController::search()` com `contextNavigation()`. São duas rotas reais existentes: `aculta_portal.wiki_home` (`/wiki`) e `aculta_portal.wiki_search` (`/wiki/busca`). O controller constrói links renderizáveis com `Link::fromTextAndUrl()`/`Url::fromRoute()`, controla `aria-current=page`, fornece a lista ao slot `items` do SDC e mantém as políticas de acesso existentes. Não mudou actions de verbete, shell ou resultados de busca. Agora há **dois consumidores de áreas distintas no código**: Studio e Wiki.
+
+**B2-05 pendente no Runtime:** PHP lint, Drush CR, descoberta SDC e renderização do slot `item_list` com `Link` render arrays, UI Patterns Library, UI Styles, links sem JS, comportamento AJAX Studio, isolamento acesso/cache, navegação teclado/foco, H1, Institution Bar + Domain Header, viewports 320/390/768/1280 e light/dark. Nenhum PASS de Runtime foi registrado.
