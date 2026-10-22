@@ -1022,3 +1022,9 @@ automaticamente.
 - Variantes de autoria são contratos distintos por contexto. A autoria histórica do Growroom usa `author_growroom_historico`; ela nunca passa pelo resolver de contas User.
 - O plano antigo F1–F9 e seus resultados permanecem histórico; decisões
   incompatíveis estão marcadas como superadas em `DECISOES.md`.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+F-GROUP 0.1: adotar **Group** para fóruns restritos a associados ativos; situação `associado` não é papel Drupal. F-GROUP-A inventariar Group types/grants + fóruns; B adapter membership sincronizada com situação User, revogação/suspensão; C busca, tópicos, comentários, anexos, contagens e notificações sob ACL Group; D dry-run/backfill e backup; R testes dois associados/grupos, ex-associado, cache/Domain. Fórum segue dono de discussão; política de identidade fica no aculta_user. XK-01: eventos de aviso devem ir ao Messenger, sem engine própria.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
