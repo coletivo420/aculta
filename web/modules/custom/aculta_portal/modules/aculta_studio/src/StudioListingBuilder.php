@@ -7,7 +7,7 @@ namespace Drupal\aculta_studio;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Pager\PagerManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -33,7 +33,7 @@ final class StudioListingBuilder {
     private readonly DomainPurposeManager $domainPurposes,
     private readonly AccountInterface $account,
     TranslationInterface $stringTranslation,
-    private readonly PagerManagerInterface $pagerManager,
+    private readonly RequestStack $requestStack,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -56,29 +56,50 @@ final class StudioListingBuilder {
     $bundle = $listing['bundle'];
     $state = $listing['state'] ?? NULL;
     $storage = $this->entityTypeManager->getStorage('node');
-    $query = $storage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', $bundle)
-      ->sort('changed', 'DESC');
     $mine = ($listing['scope'] ?? '') === 'mine';
-    // Restrict candidate discovery at SQL level before handling revisions.
+    $nids = [];
+    $nextCursor = NULL;
     if ($mine) {
-      $query->condition('uid', (int) $account->id());
-    }
-    else {
-      $query->range(0, self::LIMIT);
-    }
-    // Never enumerate all moderation state entities with accessCheck(FALSE).
-    // Resolve a visible node's latest revision, then verify revision access
-    // before showing its moderation state or using it for a filtered listing.
-    $nids = $query->execute();
-    // A personal filtered pager counts *visible matching revisions*, not raw
-    // node candidates. This scan is intentionally limited to the owner's
-    // authorized entity query; a scalable indexed provider is a later gate.
-    $matched = [];
-    if ($mine) {
-      foreach (array_chunk(array_values($nids), 100) as $chunk) {
-        foreach ($storage->loadMultiple($chunk) as $node) {
+      // Seek pagination: never enumerate the entire author's work to compute
+      // a total. The cursor is an untrusted position, never an access token.
+      $request = $this->requestStack->getCurrentRequest();
+      $rawCursor = $request?->query->get('studio_cursor');
+      $cursor = is_string($rawCursor) && preg_match('/^([0-9]{1,12})-([1-9][0-9]{0,12})$/D', $rawCursor, $parts)
+        ? [(int) $parts[1], (int) $parts[2]]
+        : NULL;
+      $seen = 0;
+      $finished = FALSE;
+      // Keep work per HTTP request bounded, including sparse state filters.
+      for ($batch = 0; $batch < 10 && count($nids) < 20; $batch++) {
+        $query = $storage->getQuery()
+          ->accessCheck(TRUE)
+          ->condition('type', $bundle)
+          ->condition('uid', (int) $account->id())
+          ->sort('changed', 'DESC')
+          ->sort('nid', 'DESC')
+          ->range(0, 100);
+        if ($cursor !== NULL) {
+          $seek = $query->orConditionGroup()
+            ->condition('changed', $cursor[0], '<')
+            ->condition($query->andConditionGroup()
+              ->condition('changed', $cursor[0])
+              ->condition('nid', $cursor[1], '<'));
+          $query->condition($seek);
+        }
+        $batchIds = array_values($query->execute());
+        if ($batchIds === []) {
+          $finished = TRUE;
+          break;
+        }
+        // loadMultiple is not guaranteed to preserve input query ordering.
+        $loaded = $storage->loadMultiple($batchIds);
+        foreach ($batchIds as $nid) {
+          $node = $loaded[$nid] ?? NULL;
+          if (!$node instanceof NodeInterface) {
+            continue;
+          }
+          $cursor = [$node->getChangedTime(), (int) $node->id()];
+          $seen++;
           if (!$node->access('view', $account)) {
             continue;
           }
@@ -91,12 +112,28 @@ final class StudioListingBuilder {
             ? (string) ($latest->get('moderation_state')->value ?? '')
             : '';
           if ($state === NULL || $currentState === $state) {
-            $matched[] = $node->id();
+            $nids[] = $node->id();
+          }
+          if (count($nids) === 20) {
+            break;
           }
         }
+        if (count($batchIds) < 100) {
+          $finished = TRUE;
+          break;
+        }
       }
-      $pager = $this->pagerManager->createPager(count($matched), 20);
-      $nids = array_slice($matched, $pager->getCurrentPage() * 20, 20);
+      if (!$finished && $cursor !== NULL) {
+        $nextCursor = implode('-', $cursor);
+      }
+    }
+    else {
+      $nids = $storage->getQuery()
+        ->accessCheck(TRUE)
+        ->condition('type', $bundle)
+        ->sort('changed', 'DESC')
+        ->range(0, self::LIMIT)
+        ->execute();
     }
     $rows = [];
     foreach ($storage->loadMultiple($nids) as $node) {
@@ -147,9 +184,17 @@ final class StudioListingBuilder {
       '#empty' => $this->t('Nenhum item nesta aba.'),
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      'pager' => $mine ? ['#type' => 'pager'] : [],
+      'pager' => $mine && $nextCursor !== NULL
+        ? [
+          '#type' => 'link',
+          '#title' => $this->t('Carregar mais publicações'),
+          '#url' => Url::fromUri('internal:' . ($this->requestStack->getCurrentRequest()?->getPathInfo() ?? '/studio/ganjalab'), [
+            'query' => ['studio_cursor' => $nextCursor],
+          ]),
+        ]
+        : [],
       '#cache' => [
-        'contexts' => ['user', 'user.permissions', 'url.query_args.pagers'],
+        'contexts' => ['user', 'user.permissions', 'url.query_args:studio_cursor'],
         'tags' => ['node_list:' . $bundle],
       ],
     ];
