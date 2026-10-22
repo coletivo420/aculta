@@ -36,3 +36,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b0-static-followup.md](theme-ux-0.8-b0-static-followup.md) — continuação da auditoria estática, revisão de metadados e primeiro slice contextual condicionado ao Runtime.
 
 - [theme-ux-0.8-m0-s-structural-audit.md](theme-ux-0.8-m0-s-structural-audit.md) — achados e decisões da inspeção estrutural SDC, QR, abas e Context Header.
+
+- [theme-ux-0.8-m2-b1-context-header.md](theme-ux-0.8-m2-b1-context-header.md) — contrato da próxima fase SDC Context Header, consumidores e gates multidomínio.
