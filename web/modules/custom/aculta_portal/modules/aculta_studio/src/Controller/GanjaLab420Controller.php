@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Controller;
 
-use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * ACULTA Studio entrypoint for the GanjaLab420 learner experience.
+ * Studio entrypoint for the GanjaLab420 student experience.
  *
- * LMS remains responsible for enrollment, progress, assessment, certificates
- * and the current dashboard render contract. This adapter is the first
- * incremental migration step; it never duplicates access or learner data.
+ * Route security and LMS entity access remain authoritative.
  */
 final class GanjaLab420Controller {
 
   public function __construct(
-    private readonly ?LearningDashboardController $lmsDashboard,
+    private readonly StudioExperienceManager $experiences,
+    private readonly AccountInterface $account,
   ) {}
 
-  /**
-   * Presents the student's LMS dashboard without altering its cache policy.
-   */
   public function student(): array {
-    if ($this->lmsDashboard === NULL) {
+    $provider = $this->experiences->get('ganjalab420');
+    if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
     }
-    return $this->lmsDashboard->student();
+    if (!$this->experiences->access('ganjalab420', 'account', $this->account)->isAllowed()) {
+      throw new AccessDeniedHttpException();
+    }
+    return $provider->build();
   }
 
 }
