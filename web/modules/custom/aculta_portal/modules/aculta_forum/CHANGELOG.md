@@ -1,3 +1,11 @@
+## `0.1.0-dev.196` — restringir diálogos de upload a contas autenticadas
+
+- Os acessos dos diálogos de anexo e galeria agora exigem conta autenticada,
+  além de formato `forum` e purpose Fórum. A decisão inclui o contexto de cache
+  `user.roles:authenticated`, conforme o contrato central de uploads por
+  pessoas autenticadas.
+- Sem alteração de Runtime; não executei teste autenticado nesta etapa.
+
 ## `0.1.0-dev.195` — auditar os dois watermarks dos avisos
 
 - A auditoria somente leitura do Messenger também classifica `ultimo_post`,
