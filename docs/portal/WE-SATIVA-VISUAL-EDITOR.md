@@ -131,3 +131,8 @@ A [pesquisa comparativa e o plano de entrada contextual](WE-SATIVA-CONTRIBUTION-
 ## Aprovação WES-UX 0.2 — início documental/de fundação
 
 A direção contribuição primeiro está aprovada. O contrato técnico inicial está no [subkernel Wiki](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-FOUNDATION.md). **Autosave Form adiado para backlog futuro**, sem dependência ou ativação. Próxima entrega: auditar permissões/formulários/workflow e entrada a partir do verbete; sem novo módulo ou editor paralelo.
+
+
+## Arquitetura interna WES-UX 0.3 — fonte de verdade
+
+[WE-SATIVA-INTERNAL-ARCHITECTURE.md](WE-SATIVA-INTERNAL-ARCHITECTURE.md) define a navegação interna completa, telas, estados, microtarefas, editor visual, revisão, fontes, mídia, regras de permissão e roadmap técnico. A UI pública da Wiki e o editor são mobile-first; GanjaLab/GanjaLab420 não integram este shell de edição. O planejamento não implementa rotas; Autosave Form segue adiado.
