@@ -134,4 +134,8 @@ Planejada a interface independente [WE SATIVA — Wiki Editor Sativa](WE-SATIVA-
 
 ## Nova regra editorial — primeiro verbete moderado
 
-Usuários `email_confirmed` podem criar verbetes; **o primeiro verbete necessita revisão e aprovação de um content editor**. O workflow atual mantém a publicação restrita aos editores e todas as novas sugestões sob revisão. A [moderação Wiki/WE SATIVA](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) documenta fila, decisões, revisão, acesso e integração com a [política do kernel central](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md). Reaproveitamento transversal passa pelo `aculta_portal`, sem acoplamento Wiki→Fórum.
+Usuários `email_confirmed` podem criar verbetes; **o primeiro verbete necessita revisão e aprovação de um content editor**. O workflow atual mantém a publicação restrita aos editores e todas as novas sugestões sob revisão. A [moderação Wiki/WE SATIVA](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) documenta fila, decisões, revisão, acesso e integração com a [política do subkernel aculta_user](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md). Reaproveitamento transversal passa pelo `aculta_user`, sem acoplamento Wiki→Fórum.
+
+## Retificação de ownership (2026-10-22)
+
+**A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
