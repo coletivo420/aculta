@@ -68,3 +68,8 @@ GanjaLab é a interface de criação. Consulte [identidade pública](../../../..
 ## URLs GanjaLab
 
 Rotas públicas canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}/{seção}`, `/ganjalab/{área}/{seção}/{aba}` (route names técnicos inalterados). As antigas `/studio` continuam como aliases temporários, sem redirecionamento HTTP automático. O GanjaLab420 usa `/ganjalab420` para dashboard do estudante. Rebuild de rotas e testes no Runtime pendentes. Ver [contrato de marca](../../../../../../docs/portal/GANJALAB-BRANDING.md).
+
+
+## Wiki420 — janela de moderação no GanjaLab (V-0.4-D)
+
+A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por aba `StudioTab` específica/área Wiki com seção Moderação, mantendo a navegação por áreas/seções/abas e AJAX progressivo existentes. [Especificação da janela](../../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): fila autorizada, primeira publicação, revisão de propostas, comparação, devolução para ajustes, publicação, concorrência e acessibilidade mobile/full-screen. `aculta_wiki` mantém dados, grants, formulários e workflow. WE SATIVA permanece ambiente de autoria/acompanhar resultados, não moderador. Nenhum storage/ACL alternativo no Studio.
