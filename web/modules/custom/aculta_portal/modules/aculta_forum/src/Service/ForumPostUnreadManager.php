@@ -42,16 +42,16 @@ final class ForumPostUnreadManager {
     }
 
     $result = $this->database->query(
-      'SELECT p.topic_target_id, p.id, p.thread_position, p.created,
+      'SELECT p.topic, p.id, p.thread_position, p.created,
         (SELECT COUNT(*) FROM {aculta_forum_post_field_data} unread
-          LEFT JOIN {history} unread_history ON unread_history.nid = unread.topic_target_id AND unread_history.uid = :count_uid
-          WHERE unread.topic_target_id = p.topic_target_id
+          LEFT JOIN {history} unread_history ON unread_history.nid = unread.topic AND unread_history.uid = :count_uid
+          WHERE unread.topic = p.topic
             AND unread.status = 1
             AND unread.default_langcode = 1
             AND unread.first_published > GREATEST(COALESCE(unread_history.timestamp, :count_limit_missing), :count_limit_old)
         ) AS unread_count,
         (SELECT COUNT(*) FROM {aculta_forum_post_field_data} previous
-          WHERE previous.topic_target_id = p.topic_target_id
+          WHERE previous.topic = p.topic
             AND previous.status = 1
             AND previous.default_langcode = 1
             AND (previous.thread_position < p.thread_position
@@ -59,14 +59,14 @@ final class ForumPostUnreadManager {
               OR (previous.thread_position = p.thread_position AND previous.created = p.created AND previous.id < p.id))
         ) AS preceding_count
       FROM {aculta_forum_post_field_data} p
-      LEFT JOIN {history} h ON h.nid = p.topic_target_id AND h.uid = :history_uid
-      WHERE p.topic_target_id IN (:topic_ids[])
+      LEFT JOIN {history} h ON h.nid = p.topic AND h.uid = :history_uid
+      WHERE p.topic IN (:topic_ids[])
         AND p.status = 1
         AND p.default_langcode = 1
         AND p.first_published > GREATEST(COALESCE(h.timestamp, :history_limit_missing), :history_limit_old)
         AND NOT EXISTS (SELECT 1 FROM {aculta_forum_post_field_data} earlier
-          LEFT JOIN {history} earlier_history ON earlier_history.nid = earlier.topic_target_id AND earlier_history.uid = :earlier_uid
-          WHERE earlier.topic_target_id = p.topic_target_id
+          LEFT JOIN {history} earlier_history ON earlier_history.nid = earlier.topic AND earlier_history.uid = :earlier_uid
+          WHERE earlier.topic = p.topic
             AND earlier.status = 1
             AND earlier.default_langcode = 1
             AND earlier.first_published > GREATEST(COALESCE(earlier_history.timestamp, :earlier_limit_missing), :earlier_limit_old)
@@ -89,7 +89,7 @@ final class ForumPostUnreadManager {
 
     $unread = [];
     foreach ($result as $first) {
-      $topicId = (int) $first->topic_target_id;
+      $topicId = (int) $first->topic;
       $unread[$topicId] = [
         'count' => (int) $first->unread_count,
         'post_id' => (int) $first->id,

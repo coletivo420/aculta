@@ -60,7 +60,7 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
       . " OR {$historyAlias}.timestamp < {$nodeAlias}.changed"
       . " OR {$historyAlias}.timestamp < {$statisticsAlias}.last_comment_timestamp"
       . " OR EXISTS (SELECT 1 FROM {aculta_forum_post_field_data} forum_unread_post"
-      . " WHERE forum_unread_post.topic_target_id = {$nodeAlias}.nid"
+      . " WHERE forum_unread_post.topic = {$nodeAlias}.nid"
       . " AND forum_unread_post.status = 1"
       . " AND forum_unread_post.default_langcode = 1"
       . " AND forum_unread_post.first_published > GREATEST(COALESCE({$historyAlias}.timestamp, :forum_history_limit_post), :forum_history_limit_old)))";

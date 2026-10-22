@@ -27,7 +27,7 @@ final class PublicForumNoReplies extends FilterPluginBase {
 
     $expression = $statisticsAlias . '.comment_count = 0'
       . ' AND NOT EXISTS (SELECT 1 FROM {aculta_forum_post_field_data} forum_no_reply'
-      . ' WHERE forum_no_reply.topic_target_id = ' . $nodeAlias . '.nid'
+      . ' WHERE forum_no_reply.topic = ' . $nodeAlias . '.nid'
       . ' AND forum_no_reply.status = 1'
       . ' AND forum_no_reply.default_langcode = 1)';
     $this->query->addWhereExpression($this->options['group'], $expression);

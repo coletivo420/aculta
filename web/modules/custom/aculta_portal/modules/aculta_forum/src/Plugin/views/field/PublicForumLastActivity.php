@@ -21,7 +21,7 @@ final class PublicForumLastActivity extends Date {
     $nodeTable = $this->query->ensureTable('node_field_data', $this->relationship);
     $formula = 'GREATEST(' . $nodeTable . '.changed, COALESCE(' . $this->tableAlias . '.last_comment_timestamp, 0), '
       . 'COALESCE((SELECT MAX(forum_post_activity.changed) FROM {aculta_forum_post_field_data} forum_post_activity '
-      . 'WHERE forum_post_activity.topic_target_id = ' . $nodeTable . '.nid '
+      . 'WHERE forum_post_activity.topic = ' . $nodeTable . '.nid '
       . 'AND forum_post_activity.status = 1 '
       . 'AND forum_post_activity.default_langcode = 1), 0))';
     $this->field_alias = $this->query->addField(NULL, $formula, $this->tableAlias . '_' . $this->field);

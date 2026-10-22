@@ -52,31 +52,31 @@ final class ForumPublicPostStatistics {
 
     if ($missingIds !== []) {
       $result = $this->database->query(
-        'SELECT post.topic_target_id, COUNT(*) AS post_count,
+        'SELECT post.topic, COUNT(*) AS post_count,
           MAX(post.changed) AS last_activity,
           MAX(latest_post.last_post_id) AS last_post_id
         FROM {aculta_forum_post_field_data} post
         LEFT JOIN (
-          SELECT latest.topic_target_id, MAX(latest.id) AS last_post_id
+          SELECT latest.topic, MAX(latest.id) AS last_post_id
           FROM {aculta_forum_post_field_data} latest
           INNER JOIN (
-            SELECT topic_target_id, MAX(changed) AS last_changed
+            SELECT topic, MAX(changed) AS last_changed
             FROM {aculta_forum_post_field_data}
-            WHERE topic_target_id IN (:latest_topic_ids[])
+            WHERE topic IN (:latest_topic_ids[])
               AND status = 1
               AND default_langcode = 1
-            GROUP BY topic_target_id
+            GROUP BY topic
           ) latest_change
-            ON latest_change.topic_target_id = latest.topic_target_id
+            ON latest_change.topic = latest.topic
             AND latest_change.last_changed = latest.changed
           WHERE latest.status = 1
             AND latest.default_langcode = 1
-          GROUP BY latest.topic_target_id
-        ) latest_post ON latest_post.topic_target_id = post.topic_target_id
-        WHERE post.topic_target_id IN (:topic_ids[])
+          GROUP BY latest.topic
+        ) latest_post ON latest_post.topic = post.topic
+        WHERE post.topic IN (:topic_ids[])
           AND post.status = 1
           AND post.default_langcode = 1
-        GROUP BY post.topic_target_id',
+        GROUP BY post.topic',
         [
           ':latest_topic_ids[]' => $missingIds,
           ':topic_ids[]' => $missingIds,
@@ -84,7 +84,7 @@ final class ForumPublicPostStatistics {
       );
 
       foreach ($result as $row) {
-        $this->statistics[(int) $row->topic_target_id] = [
+        $this->statistics[(int) $row->topic] = [
           'count' => (int) $row->post_count,
           'last_activity' => (int) $row->last_activity,
           'last_post_id' => (int) $row->last_post_id,

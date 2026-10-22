@@ -3369,3 +3369,12 @@
 - `ForumAttachmentPublicationKernelTest`: 6 testes / 148 assertions PASS no MariaDB dedicado (10 depreciações Core/contrib e uma PHP 8.4). PHPCS nos arquivos PHP alterados e gates `validate-aculta-image.php` e `validate-aculta-gallery.php` PASS.
 - Runtime não foi alterado; PHP CLI 8.4.26, abaixo da baseline 8.5. Estado Dev.
 
+## Não lançado — corrigir erro 500 na página inicial do Fórum — 2026-10-22
+
+- As consultas das Views e serviços de atividade, contagem e não lidas passam a
+  usar a coluna `topic` existente na tabela de dados do `aculta_forum_post`.
+  `topic_target_id` não existe nessa entidade; seu uso fazia a página inicial
+  do Fórum retornar HTTP 500 e também afetava consultas relacionadas.
+- Confirmado no Runtime de testes (`aculta_runtime`): `SHOW COLUMNS` lista
+  `topic`, e a requisição pública do domínio do Fórum reproduzia o erro SQL.
+

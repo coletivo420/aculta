@@ -25,7 +25,7 @@ final class PublicForumReplyCount extends SortPluginBase {
 
     $commentCount = $this->tableAlias . '.comment_count';
     $postCount = '(SELECT COUNT(*) FROM {aculta_forum_post_field_data} forum_post_count '
-      . 'WHERE forum_post_count.topic_target_id = ' . $nodeAlias . '.nid '
+      . 'WHERE forum_post_count.topic = ' . $nodeAlias . '.nid '
       . 'AND forum_post_count.status = 1 '
       . 'AND forum_post_count.default_langcode = 1)';
     $this->query->addOrderBy(
