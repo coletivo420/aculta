@@ -81,6 +81,7 @@ final class ForumCommentMigrationAudit {
       'flaggings_by_flag' => [],
       'flaggings_global' => 0,
       'flaggings_with_missing_owner' => 0,
+      'anonymous_flaggings_without_session' => 0,
       'flaggings_without_valid_created_time' => 0,
       'flaggings_without_post_flag_configuration' => 0,
       'topics' => 0,
@@ -268,6 +269,9 @@ final class ForumCommentMigrationAudit {
           $owner_id = (int) ($flagging->getOwnerId() ?? 0);
           if ($owner_id > 0 && !isset($flagging_owners[$owner_id])) {
             $report['flaggings_with_missing_owner']++;
+          }
+          if ($owner_id === 0 && trim((string) $flagging->get('session_id')->value) === '') {
+            $report['anonymous_flaggings_without_session']++;
           }
           if ((bool) $flagging->get('global')->value) {
             $report['flaggings_global']++;

@@ -157,9 +157,19 @@ testes de workflow; a configuração da política inicial continua sendo a de
    `aculta_user.ReportQueue`; a auditoria mapeia o ID legado ao ID de destino.
    A dev.179 estende a auditoria para contar flaggings globais, donos ausentes e
    timestamps `created` inválidos por lotes, sem divulgar identidade. Isso
-   prepara o inventário de pré-condições, mas ainda não migra associações. A estratégia de
-   gravar o timestamp histórico por Entity API após criar pela Flag API ainda
-   precisa ser validada quanto a eventos, access e deduplicação antes da
+   prepara o inventário de pré-condições. A dev.180 adiciona source keyset e
+   destination dependente do mapa de posts para migrar somente
+   `sinalizar_comentario`. O destino grava o Flagging via Entity API com
+   `created` histórico antes do save; contexto temporário autoriza somente o
+   objeto que valida origem, CID, tópico, post destino, dono e configuração de
+   Flag. Escopo global, usuário ausente, sessão anônima ausente, timestamp
+   inválido e duplicidade falham fechados; a auditoria conta as sessões
+   anônimas ausentes.
+   Migrate foi habilitado no Runtime de teste porque estava desabilitado apesar
+   da dependência no manifest; source/destination e definição da migration
+   instanciam, mas a source retornou zero linhas. O novo Flag segue somente no
+   Config Sync. O inventário vazio não valida associações reais. Ainda faltam
+   provas Kernel de eventos/deduplicação/rollback e revisão antes de executar a
    migration. Fonte upstream:
    [API Flag 5.x](https://www.drupal.org/project/flag/issues/3157623); código
    instalado: `web/modules/contrib/flag/src/FlagServiceInterface.php`,

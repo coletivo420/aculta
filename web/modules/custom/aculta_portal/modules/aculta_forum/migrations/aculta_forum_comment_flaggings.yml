@@ -1,0 +1,31 @@
+id: aculta_forum_comment_flaggings
+label: 'ACULTA Forum: denúncias de Comments para posts revisionáveis'
+migration_tags:
+  - 'ACULTA Forum'
+source:
+  plugin: aculta_forum_comment_flagging
+  skip_count: true
+  track_changes: true
+process:
+  flag_id:
+    plugin: default_value
+    default_value: sinalizar_post_forum
+  entity_type:
+    plugin: default_value
+    default_value: aculta_forum_post
+  entity_id:
+    plugin: migration_lookup
+    migration: aculta_forum_comment_posts
+    source: cid
+    no_stub: true
+  uid: uid
+  session_id: session_id
+  global: global
+  created: created
+destination:
+  plugin: aculta_forum_comment_flagging
+  default_bundle: sinalizar_post_forum
+  validate: true
+migration_dependencies:
+  required:
+    - aculta_forum_comment_posts

@@ -1,3 +1,26 @@
+## `0.1.0-dev.180` — preparar migração de denúncias para posts
+
+- Migration própria lê flaggings `sinalizar_comentario` em lotes keyset e
+  resolve cada CID pelo mapa de `aculta_forum_comment_posts`. O destino grava
+  `sinalizar_post_forum` por Entity API com dono, sessão, escopo e timestamp
+  originais; a guarda de presave permite somente o mesmo objeto validado numa
+  chamada de importação, conferindo origem, destino e tópico.
+- Denúncias globais, anônimas sem sessão, com timestamp inválido, usuário
+  ausente, duplicadas no destino ou sem configuração compatível falham fechadas.
+  A auditoria conta flaggings anônimas sem sessão. A API pública do Flag não recebe
+  timestamp histórico; a implementação atribui `created` antes do primeiro
+  save e emite o ciclo de vida normal do Flag. Isso ainda precisa de prova
+  Kernel com dados e revisão dos eventos antes de executar a migration.
+- O smoke somente leitura de `aculta-forum:audit-comment-migration` no Runtime
+  de teste (purpose `forum`) encontrou 0 Comments elegíveis, 0 posts e 0 flags;
+  o acervo vazio não valida casos com associações reais. Nenhuma configuração
+  foi importada nem migration executada.
+- `migrate` estava desabilitado no Runtime apesar de constar como dependência do
+  manifest. Foi habilitado no servidor de teste para descobrir os plugins; a
+  source/destination e a migration instanciam corretamente, e a source não
+  produz linhas. A configuração nova `sinalizar_post_forum` permanece apenas no
+  Config Sync; não foi importada.
+
 ## `0.1.0-dev.179` — auditar integridade das denúncias migráveis
 
 - A auditoria somente leitura agora conta flaggings globais, donos de usuário

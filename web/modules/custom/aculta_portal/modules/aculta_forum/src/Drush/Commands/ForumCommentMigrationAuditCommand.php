@@ -66,6 +66,7 @@ final class ForumCommentMigrationAuditCommand extends Command {
       'flaggings' => 'Denúncias/flags associadas aos Comments elegíveis',
       'flaggings_global' => 'Flaggings globais',
       'flaggings_with_missing_owner' => 'Flaggings com usuário dono ausente',
+      'anonymous_flaggings_without_session' => 'Flaggings anônimas sem sessão identificável',
       'flaggings_without_valid_created_time' => 'Flaggings sem timestamp de criação válido',
       'flaggings_without_post_flag_configuration' => 'Flaggings sem configuração aplicável ao post revisionável',
       'topics' => 'Tópicos distintos elegíveis',
