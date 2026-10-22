@@ -74,3 +74,16 @@ Testar 320/360/390/768/1024/1440px, reflow/zoom, teclado/touch, leitor de tela, 
 5. G420-UX 0.4.5: regressões integradas.
 
 **Nenhuma dessas etapas altera o módulo técnico `aculta_lms` ou implanta uma UI neste commit.**
+
+## Refinamento de wireframes — leitura, vídeo e H5P (2026-10-22)
+
+### Leitura: composição detalhada
+**Mobile:** topo compacto “Meu curso”/índice, trilha Módulo/Aula, título editorial de duas ou mais linhas, imagem de abertura opcional, corpo de texto em coluna única, citações e referências, bloco de materiais autorizado e anterior/próxima. Não permitir que cabeçalho sticky ou toolbar encubra a leitura. **Desktop:** índice à esquerda, conteúdo de largura tipográfica controlada, mídias responsivas dentro do reader e materiais contextuais. CKEditor 5 é editor de autoria no GanjaLab, nunca aparece como editor para o estudante.
+
+### Vídeo: composição detalhada
+Player central responsivo (16:9 somente quando combinar com a mídia), sem autoplay, seguido de resumo, transcrição/legendas se fornecidas, materiais complementares, discussão contextual e navegação. Oferecer acesso a material textual sem obrigar reprodução e não derivar conclusão apenas de iniciar ou concluir playback. Mídias privadas devem preservar autorização e política do provider.
+
+### H5P: exemplo de quiz
+Uma aula com pergunta e alternativas exemplifica a **região de player H5P**, não um formulário próprio da Sala. O iframe/container deve dimensionar-se conforme a biblioteca e a tela, sem cortar controles ou criar scroll horizontal/duplo. As alternativas, validações, tentativas, pontuação e feedback são renderizados/controlados pelo H5P e a integração LMS autorizada, não pelo shell da Sala. Questões não acessíveis via teclado/leitor de tela exigem avaliação específica e alternativa pedagógica equivalente antes de se tornarem obrigatórias.
+
+**Contrato comum:** curso/módulo/posição, leitor, materiais, discussão, anterior/próxima e estado real de conclusão compõem um shell único. Preservar as variantes light/dark, com geometria e hierarquia idênticas. Este refinamento é documentação, não novas funcionalidades.
