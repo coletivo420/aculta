@@ -112,3 +112,9 @@ são contados enquanto ativos e não simulam estado individual.
 XK-01/02/12: Messenger é centro de conversas e avisos; Private Message, Message/Message Notify, flags, avisos e contadores permanecem suas fontes atuais. Inventariar produtores User/Fórum/LMS/Wiki/Revista; tipar eventos, deduplicar, revalidar acesso/consentimento em cron e na entrega. Preferências de identidade pertencem ao User; não criar outra inbox ou transporte SMTP.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B / ADR-XK-02: catalogar produtores de eventos (Forum, Wiki, LMS Messenger, User), preferências, canais e idempotência antes de mudar adapters. Messenger é concentrador; Private Message, Message/Notify e avisos persistentes mantêm storage existente. Não fazer delivery SMTP no produtor nem inbox paralelo.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
