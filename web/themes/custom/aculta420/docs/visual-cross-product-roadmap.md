@@ -173,3 +173,8 @@ O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_po
 ## WE SATIVA 0.3 — composição da arquitetura interna
 
 [Arquitetura completa das áreas WE SATIVA](../../../../../docs/portal/WE-SATIVA-INTERNAL-ARCHITECTURE.md): início, meu trabalho, contribuir, ajuda e contextos editoriais (novo verbete, editor completo, fontes, mídia, revisões). O tema fornece exclusivamente SDC/UI Patterns/UI Styles, sem duplicar Form API, workflows ou o shell multidomínio. Primeiro validar a conformidade e consumidores de `context-header`, `context-tabs`, `card`, `editorial-card` e `empty-state`. Todas as telas mobile-first.
+
+
+## WE SATIVA C01 — componente de entrada (WES-UX 0.3-B1)
+
+[Contrato de composição C01](../../../../../docs/portal/WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md): reutilizar `context-header` para convite/heading e `card` para escolhas condicionais, `context-tabs` e `empty-state` apenas se houver consumidor real. Nenhum novo SDC até provar lacuna; primeiro inventariar a ação no Twig full da Wiki e ACL/rotas. Institution Bar e Domain Header seguem inalterados; mobile-first.
