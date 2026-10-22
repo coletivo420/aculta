@@ -114,11 +114,60 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    * The quote query only prefills the exact accessible parent reply form.
    */
   public function testReplyFormPrefillsSanitizedParentQuote(): void {
+    [$formState, $stack] = $this->quoteReplyContext();
+    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    $form = ['comment_body' => ['widget' => [0 => ['value' => ['#default_value' => '']]]]];
+
+    $hooks->commentFormAlter($form, $formState, 'comment_form');
+
+    self::assertSame(
+      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      $form['comment_body']['widget'][0]['value']['#default_value'],
+    );
+    self::assertContains('url.query_args:quote', $form['#cache']['contexts']);
+    self::assertContains('filter_formats', $form['#cache']['contexts']);
+    self::assertContains('config:filter.format.usuario_aculta', $form['#cache']['tags']);
+    self::assertSame(900, $form['#cache']['max-age']);
+  }
+
+  /**
+   * Core alters the reply form before text_format is processed into children.
+   */
+  public function testReplyFormPrefillsUnprocessedTextFormatElement(): void {
+    [$formState, $stack] = $this->quoteReplyContext();
+    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    // A new reply has no body, so Core keeps #default_value NULL at the root.
+    $form = [
+      'comment_body' => [
+        'widget' => [
+          0 => [
+            '#type' => 'text_format',
+            '#default_value' => NULL,
+            '#format' => 'forum',
+            '#base_type' => 'textarea',
+          ],
+        ],
+      ],
+    ];
+
+    $hooks->commentFormAlter($form, $formState, 'comment_form');
+
+    self::assertSame(
+      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      $form['comment_body']['widget'][0]['#default_value'],
+    );
+    self::assertArrayNotHasKey('value', $form['comment_body']['widget'][0]);
+  }
+
+  /**
+   * Builds a reply form state whose exact parent comment is quoteable.
+   */
+  private function quoteReplyContext(): array {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $parent = $this->comment(AccessResult::allowed());
     $parent->method('hasField')->with('comment_body')->willReturn(TRUE);
-    $processed = new class('<p>Original <strong>mensagem</strong>.</p>') implements CacheableDependencyInterface, \Stringable {
+    $processed = new class('<p>Original <strong>mensagem</strong>.</p>') implements CacheableDependencyInterface {
 
       /**
        * Creates a processed-text fixture with filter cache metadata.
@@ -126,9 +175,9 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       public function __construct(private readonly string $markup) {}
 
       /**
-       * {@inheritdoc}
+       * Returns the processed markup like TextProcessed does.
        */
-      public function __toString(): string {
+      public function getValue(): string {
         return $this->markup;
       }
 
@@ -181,19 +230,8 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $request->attributes->set('_route', 'comment.reply');
     $stack = new RequestStack();
     $stack->push($request);
-    $hooks = $this->hooks(AccessResult::allowed(), $stack);
-    $form = ['comment_body' => ['widget' => [0 => ['value' => ['#default_value' => '']]]]];
 
-    $hooks->commentFormAlter($form, $formState, 'comment_form');
-
-    self::assertSame(
-      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
-      $form['comment_body']['widget'][0]['value']['#default_value'],
-    );
-    self::assertContains('url.query_args:quote', $form['#cache']['contexts']);
-    self::assertContains('filter_formats', $form['#cache']['contexts']);
-    self::assertContains('config:filter.format.usuario_aculta', $form['#cache']['tags']);
-    self::assertSame(900, $form['#cache']['max-age']);
+    return [$formState, $stack];
   }
 
   /**

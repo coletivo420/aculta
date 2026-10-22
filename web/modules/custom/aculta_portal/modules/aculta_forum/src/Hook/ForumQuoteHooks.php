@@ -132,11 +132,23 @@ final class ForumQuoteHooks {
       return;
     }
     $processedBody = $bodyItem->get('processed');
-    $quote = $this->quoteBuilder->build((string) $processedBody, $parent->getAuthorName());
-    if ($quote === NULL || !isset($form['comment_body']['widget'][0]['value'])) {
+    $quote = $this->quoteBuilder->build((string) $processedBody->getValue(), $parent->getAuthorName());
+    if ($quote === NULL) {
       return;
     }
-    $body =& $form['comment_body']['widget'][0]['value'];
+
+    // Before processing, text_format keeps #default_value on the element
+    // itself; the nested value/format children only exist afterwards.
+    // #default_value is NULL for a new reply, so array_key_exists() is used.
+    if (isset($form['comment_body']['widget'][0]['value'])) {
+      $body =& $form['comment_body']['widget'][0]['value'];
+    }
+    elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
+      $body =& $form['comment_body']['widget'][0];
+    }
+    else {
+      return;
+    }
     if (!empty($body['#default_value'])) {
       return;
     }

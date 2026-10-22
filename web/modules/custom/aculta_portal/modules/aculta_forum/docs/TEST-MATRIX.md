@@ -1,3 +1,26 @@
+## aculta_forum_lms 0.1.0-dev.40 — citação de Comment LMS
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`). Fixture temporária: Curso 58, Turma 59,
+  estudante membro de ambos, Educador (`lms_teacher`) membro só do Curso,
+  tópico 532 em `Open`, Comment publicado 122 e pendente 123.
+- Cobre `DISCOURSE-EXPERIENCE.md` linha 147: a ação de citação só existe para
+  Comment publicado, legível e respondível no contexto da Turma.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante — tópico 532 | 200; só o Comment 122 tem `Citar` (`quote=122`); pendente 123 sem link | — |
+| Estudante — citação do 122 | 200; textarea com bloco citado e autoria | 303 para `#comment-124`, `pid` 122, `status: 0` (moderação da Turma) |
+| Estudante — citação do 123 (pendente) | 403 | — |
+| Forasteiro autenticado — tópico, citação e POST | 403 | 403 |
+| Educador do Curso fora da Turma — tópico e citação | 403 | — |
+
+- O texto publicado não aparece em nenhuma resposta 403 do forasteiro. Estado
+  final: 0 tópicos LMS e 0 Comments de discussão no Runtime.
+- Causa do prefill vazio corrigida em `aculta_forum` dev.232: no alter o
+  `text_format` ainda não foi processado e `#default_value` é `NULL` para
+  resposta nova, então `isset()` retornava falso.
+
 ## aculta_forum_lms 0.1.0-dev.39 — aprovar/rejeitar LMS pela entity_operations
 
 - Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por

@@ -1,3 +1,21 @@
+## `0.1.0-dev.40` — citação de Comment LMS no Runtime — 2026-10-22
+
+- Verifica no Runtime de teste o contrato de citação de
+  `DISCOURSE-EXPERIENCE.md` linha 147 para a Turma. O código alterado é
+  `aculta_forum` (dev.232); este adaptador registra a matriz LMS.
+- Fixture: Curso 58, Turma 59, estudante membro da Turma e do Curso,
+  Educador com `lms_teacher` membro só do Curso, tópico 532 com
+  `field_aculta_discussion` em `Open`, Comment publicado 122 e pendente 123.
+- Estudante no tópico (200): apenas o Comment publicado exibe `Citar`, com
+  `quote=122`. O pendente não exibe link e sua citação responde 403.
+- GET da citação: 200 com o corpo prefixado pelo bloco citado e a autoria.
+  POST: 303 para `#comment-124`, `pid` 122, `status: 0` pela moderação da
+  Turma.
+- Forasteiro autenticado: tópico, citação e POST retornam 403 e não recebem o
+  texto citado. Educador do Curso fora da Turma: 403 no tópico e na citação.
+- Fixture e sessões removidas; Runtime voltou a 0 tópicos LMS e 0 Comments de
+  discussão.
+
 ## `0.1.0-dev.39` — aprovar/rejeitar LMS pela entity_operations no Runtime — 2026-10-22
 
 - Fecha a verificação de Runtime das dev.109–111 com POST real a partir dos

@@ -1,3 +1,27 @@
+## `0.1.0-dev.232` — preencher a citação antes do processamento do text_format — 2026-10-22
+
+- `ForumQuoteHooks::commentFormAlter()` roda dentro de
+  `FormBuilder::prepareForm()`, antes de `doBuildForm()`, quando o elemento
+  `text_format` ainda guarda `#default_value` na própria raiz e só depois copia
+  as propriedades para os filhos `value`/`format`. Como uma resposta nova tem
+  corpo vazio, esse `#default_value` é `NULL`; `isset()` dava falso e o hook
+  retornava sem preencher. A checagem passou a usar `array_key_exists()`,
+  preservando o suporte ao formato já processado (`widget[0]['value']`).
+- Runtime LMS (`https://aculta.toca.net.br`, Tópico 532 na Turma 59 do Curso
+  58): o Comment publicado 122 recebe um único link `Citar` com `quote=122`; o
+  Comment pendente 123 não recebe link e a citação responde 403. O GET de
+  citação retorna 200 com o textarea preenchido:
+  `<blockquote><p>Conteúdo publicado da fixture T12.</p><cite>t12.aluno.20261022</cite></blockquote><p></p>`.
+  O POST grava a resposta (303 para `#comment-124`, `pid` 122, `status: 0`
+  pela moderação da Turma).
+- Forasteiro autenticado: tópico 403, citação 403 e POST 403, sem o texto
+  publicado na resposta. Educador membro do Curso, mas não da Turma, também
+  recebe 403 no tópico e na citação.
+- Unit `ForumQuoteHooksTest` cobre as duas formas do elemento, incluindo
+  `#default_value: NULL`: 7 testes, 25 asserções; PHPCS PASS. Fixture (dois
+  conjuntos de usuários, grupos, tópico e Comments) removida; o Runtime voltou
+  a 0 tópicos LMS e 0 Comments de discussão.
+
 ## `0.1.0-dev.231` — revalidar acesso de anexos pelo host atual
 
 - Media `forum_attachment` só pode ser visualizada no purpose `forum`. Em cada
