@@ -42,3 +42,8 @@ Data de referência: 2026-10-21. Registro operacional da frente aberta; a decis�
   testes (`client_id` vazio; `client_secret` na configuração do runtime; risco do módulo `group` em gravação posterior).
   Ver `docs/integrations/GOOGLE.md`.
 - Estado de release: `aculta_user` continua em Dev. RC exige os itens 1 a 5 decididos, testes de Kernel e revisão visual.
+
+
+## Nova frente USER-PART 0.1 — participação compartilhada (2026-10-22)
+
+[Inventário Fórum/LMS/Wiki](USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md) commitado. Próximas pendências: (1) contrato de provedor de participação publicada por contexto; (2) testes de caracterização das regras e exclusões LMS; (3) consulta separada de verbetes publicados Wiki; (4) acesso confirmado e cache; (5) integração gradual e homologação. Não alterar serviços atuais sem testes. Proposta de terceiro continua responsabilidade Wiki; Autosave Form permanece no backlog.
