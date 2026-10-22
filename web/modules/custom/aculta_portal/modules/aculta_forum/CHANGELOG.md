@@ -1,3 +1,9 @@
+## `0.1.0-dev.144` — permite responder a posts revisionáveis
+
+- Cada post publicado mostra ação contextual de resposta para contas autorizadas; o composer recebe UUID do post pai e salva a referência junto ao tópico.
+- A rota repete a validação: post pai precisa ser a revisão default publicada, acessível e pertencer ao mesmo tópico público. UUIDs inválidos, posts pendentes/rejeitados e pais de outro tópico são negados.
+- Sem rota nova ou alteração Runtime. Apresentação hierárquica, respostas a posts pendentes e revisão visual seguem pendentes.
+
 ## `0.1.0-dev.143` — abre a criação contextual de posts revisionáveis
 
 - O botão de resposta usa `DiscussionContextResolver`; formulário `/publicacao/nova?topico={uuid}` revalida o contexto e associa no servidor a autoria e o tópico.

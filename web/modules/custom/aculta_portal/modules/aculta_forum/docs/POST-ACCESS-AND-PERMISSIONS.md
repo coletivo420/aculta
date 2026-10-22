@@ -8,10 +8,14 @@ acesso de leitura ao Node hospedeiro e `field_domain_source` ligado ao purpose
 de ver conteúdo não publicado, respeitando a autoria para a permissão `view own
 unpublished content`.
 
-O formulário público de criação vive em `/publicacao/nova?topico={uuid}`. O
+O formulário público vive em `/publicacao/nova?topico={uuid}`, com `resposta={uuid}`
+opcional para responder a um post. O
 provider `public_forum` só libera escrita para conta autenticada com
 `create aculta forum posts`, tópico publicado/legível e purpose `forum`; o
-controller revalida o UUID e associa tópico, autoria e posição pelo servidor.
+controller revalida os UUIDs e associa tópico, autoria e post pai pelo servidor.
+Uma resposta só pode apontar para revisão default publicada, acessível e do
+mesmo tópico; tentativas de responder a revisão pendente, rejeitada ou de outro
+tópico falham fechadas.
 O form mode `public_submission` mostra somente assunto e corpo, sem campo de
 estado, tópico ou autoria. `ForumPublicationTimeHooks` consulta a regra
 compartilhada `ParticipationRules` para selecionar `review` ou `published`; o

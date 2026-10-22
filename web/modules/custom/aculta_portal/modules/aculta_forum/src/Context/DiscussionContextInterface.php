@@ -31,7 +31,7 @@ interface DiscussionContextInterface extends CacheableDependencyInterface {
   public function getReadAccess(): AccessResultInterface;
 
   /**
-   * Returns a fail-closed write access result for this phase. */
+   * Returns whether the current account may write in this discussion. */
   public function getWriteAccess(): AccessResultInterface;
 
   /**

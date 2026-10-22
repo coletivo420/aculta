@@ -41,10 +41,30 @@ final class ForumPostSubmissionController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
+    $parentUuid = (string) $this->requestStack->getCurrentRequest()?->query->get('resposta', '');
+    $parent = NULL;
+    if ($parentUuid !== '') {
+      $postStorage = $this->entityTypeManager->getStorage('aculta_forum_post');
+      $parentIds = $postStorage->getQuery()
+        ->accessCheck(TRUE)
+        ->condition('uuid', $parentUuid)
+        ->condition('status', 1)
+        ->range(0, 1)
+        ->execute();
+      $parent = $parentIds === [] ? NULL : $postStorage->load(reset($parentIds));
+      if ($parent === NULL
+        || !$parent->isPublished()
+        || !$parent->isDefaultRevision()
+        || (string) $parent->get('topic')->target_id !== (string) $topic->id()
+        || !$parent->access('view', $this->currentUser)->isAllowed()) {
+        throw new NotFoundHttpException();
+      }
+    }
+
     $post = $this->entityTypeManager->getStorage('aculta_forum_post')->create([
       'uid' => $this->currentUser->id(),
       'topic' => $topic->id(),
-      'parent' => NULL,
+      'parent' => $parent?->id(),
       'thread_position' => 0,
       'moderation_state' => 'draft',
     ]);

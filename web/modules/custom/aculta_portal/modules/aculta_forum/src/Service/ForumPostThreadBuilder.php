@@ -61,6 +61,7 @@ final class ForumPostThreadBuilder {
     $cacheability = CacheableMetadata::createFromObject($context)
       ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.query_args.pagers:' . self::PAGER_ID])
       ->addCacheTags(['aculta_forum_post_list']);
+    $canReply = $context->getWriteAccess()->isAllowed();
     $build = [
       '#type' => 'container',
       '#weight' => 90,
@@ -143,6 +144,17 @@ final class ForumPostThreadBuilder {
         '#attributes' => $attributes,
         'content' => $renderedPosts[$delta],
       ];
+      if ($canReply) {
+        $build['posts'][$postId]['reply'] = Link::fromTextAndUrl(
+          new TranslatableMarkup('Responder a esta publicação'),
+          Url::fromRoute('aculta_forum.post_create', [], [
+            'query' => [
+              'topico' => $topic->uuid(),
+              'resposta' => $post->uuid(),
+            ],
+          ]),
+        )->toRenderable();
+      }
     }
     if ($totalItems > self::POSTS_PER_PAGE) {
       $build['pager'] = [

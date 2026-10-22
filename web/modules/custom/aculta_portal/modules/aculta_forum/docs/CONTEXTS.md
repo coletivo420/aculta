@@ -114,7 +114,7 @@ não concede autorização para criar configuração ou instalar entidades nesta
 - Hospedeiro: Node `aculta_forum_topic`.
 - Público: tópico independente classificado em categoria pública; sem Group membership.
 - Leitura: pública quando publicado e permitido pela política de Domain/purpose; o provider implementado nega fora do purpose `forum` e varia o access result pelo cache context `domain`.
-- Escrita de posts revisionáveis: conta autenticada com permissão `create aculta forum posts`, tópico legível e purpose `forum`; `ForumPublicationTimeHooks` consulta `ParticipationRules` para iniciar em `review` ou `published`. A rota contextual usa UUID do tópico em `?topico={uuid}` e revalida a entidade no servidor.
+- Escrita de posts revisionáveis: conta autenticada com permissão `create aculta forum posts`, tópico legível e purpose `forum`; `ForumPublicationTimeHooks` consulta `ParticipationRules` para iniciar em `review` ou `published`. A rota contextual usa UUID do tópico em `?topico={uuid}` e, para respostas, UUID do post pai em `?resposta={uuid}`; a relação é revalidada no servidor para o mesmo tópico e revisão publicada acessível.
 - Comments existentes seguem ativos durante a migração; o composer revisionável não grava no campo Comment legado.
 - Pesquisa e aviso: elegível para descoberta pública apenas se publicado e acessível.
 - Identificador estável: `public_forum:node:{uuid}`. O UUID é obtido da entidade; não do request.
