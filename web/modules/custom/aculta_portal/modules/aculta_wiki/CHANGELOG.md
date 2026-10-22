@@ -1,12 +1,22 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.4 — relação outgoing de verbetes no Content Index
+
+- `WikiContentIndexProvider` projeta `field_wiki_related` como relação nomeada
+  `related_entry` para `node:wiki_entry`, deduplicada e unidirecional. Cada
+  destino continua sujeito ao próprio provider e à revalidação de Entity
+  Access no purpose canônico `wiki`.
+- Categorias (`field_wiki_categories`) e imagem (`field_wiki_image`) continuam
+  adiadas até a finalização de seus contratos. Testes Unit cobrem a allowlist e
+  deduplicação; o módulo permanece desabilitado no Runtime.
+
 ## 0.1.0-dev.3 — acesso canônico do Content Index
 
 - O provider da Wiki declara o purpose canônico `wiki`; consultas do Index
   vindas de outros domínios revalidam o Entity Access com o mesmo usuário e
   grants, falhando fechado se o domínio não puder ser resolvido.
-- Teste Unit cobre o purpose declarado pelo provider. Relações de verbetes,
-  categorias e imagens continuam dívida até a finalização da Wiki.
+- Teste Unit cobre o purpose declarado pelo provider. Categorias e imagens
+  continuam dívida até a finalização da Wiki.
 
 ## 0.1.0-dev.2 — provider inicial do Content Index
 

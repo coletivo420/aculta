@@ -1,3 +1,10 @@
+## 0.4.1-dev.7 — provider remote_video adiado por ownership indefinido
+
+- Conforme decisão do responsável, `aculta_portal` deixa de registrar provider
+  para `media:remote_video`. O bundle permanece fora do catálogo até um módulo
+  proprietário ser definido; consulta a entradas antigas sem provider ativo
+  falha fechado.
+
 ## 0.4.1-dev.6 — policy contextual de acesso para adapters do Content Index
 
 - Novo contrato `ContentIndexAccessPolicyProviderInterface` permite que um provider some regras contextuais à Entity Access; o filtro combina os resultados e propaga cacheability. O adapter LMS usa a API Group/LMS sem mover membership para o Index.

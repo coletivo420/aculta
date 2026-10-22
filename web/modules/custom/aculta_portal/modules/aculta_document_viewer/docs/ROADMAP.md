@@ -10,6 +10,16 @@ no Runtime.
 
 ## Princípios e referência funcional
 
+### Limpeza de documentos sem uso — planejamento Portal IDX 0.1-R
+
+O adapter de Media `document` deverá informar ao serviço de limpeza do Portal
+as relações estruturadas que ligam publicações e documentos. O viewer mantém
+renderização, download e autorização de arquivo; não remove Media/File. A
+remoção de documentos e arquivos será feita pelo módulo dono e File API após
+revalidar referências em conteúdos e revisões. Imagens continuam delegadas a
+`aculta_image`. Ver
+[política do Portal](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 ### Comparação de recursos TNC solicitados em 2026-10-20
 
 O arquivo que o responsável enviou ao outro agente não está disponível neste

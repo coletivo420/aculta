@@ -1,3 +1,16 @@
+## 0.5.0-dev.5 — referência estruturada de Galeria
+
+- `node.revista.field_editorial_gallery` guarda uma referência estruturada a
+  `media_gallery`, com cardinalidade 1. A apresentação continua no Entity
+  Embed; o provider emite `editorial_gallery` a partir do campo sem analisar ou
+  copiar o corpo.
+- `aculta-magazine:migrate-gallery-references` oferece lotes keyset com prévia
+  por padrão. Com `--execute`, copia embeds únicos resolvidos sem alterar o
+  corpo; publicações com várias galerias distintas são ignoradas e listadas
+  para revisão editorial. Retomada usa o `next_nid` do relatório.
+- Importar a configuração `config/sync` antes de executar o comando. Nenhuma
+  migração foi executada nesta entrega.
+
 ## 0.5.0-dev.4 — acesso canônico do Content Index
 
 - O provider da Revista declara o purpose canônico `magazine`; consultas do

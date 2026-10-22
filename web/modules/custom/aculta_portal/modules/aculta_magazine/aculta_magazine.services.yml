@@ -4,6 +4,10 @@ services:
     tags:
       - { name: aculta_index.provider }
 
+  aculta_magazine.gallery_reference_migrator:
+    class: Drupal\aculta_magazine\Migration\GalleryReferenceMigrator
+    arguments: ['@entity_type.manager', '@entity_field.manager']
+
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']

@@ -31,7 +31,7 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
   }
 
   /**
-   * Projects only selected metadata and leaves Wiki relations as deferred work.
+   * Projects selected metadata without a related-entry field value.
    */
   public function testProjectsAllowlistedEntryMetadataWithoutRelations(): void {
     $language = $this->createMock(LanguageInterface::class);
@@ -49,8 +49,16 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     $node->method('isPublished')->willReturn(TRUE);
     $node->method('getCreatedTime')->willReturn(100);
     $node->method('getChangedTime')->willReturn(200);
-    $node->method('hasField')->with('field_domain_source')->willReturn(TRUE);
-    $node->method('get')->with('field_domain_source')->willReturn($domain);
+    $emptyRelations = $this->createMock(FieldItemListInterface::class);
+    $emptyRelations->method('isEmpty')->willReturn(TRUE);
+    $node->method('hasField')->willReturnMap([
+      ['field_domain_source', TRUE],
+      ['field_wiki_related', TRUE],
+    ]);
+    $node->method('get')->willReturnMap([
+      ['field_domain_source', $domain],
+      ['field_wiki_related', $emptyRelations],
+    ]);
 
     $projection = (new WikiContentIndexProvider())->project($node);
 
@@ -63,6 +71,47 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     self::assertSame('Cannabis medicinal', $projection->label);
     self::assertTrue($projection->published);
     self::assertSame([], $projection->relations);
+  }
+
+  /**
+   * Projects only explicit Wiki entry references as outgoing links.
+   */
+  public function testProjectsNamedOutgoingRelatedEntryRelations(): void {
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('pt-br');
+    $relations = $this->createMock(FieldItemListInterface::class);
+    $relations->method('isEmpty')->willReturn(FALSE);
+    $relations->method('getValue')->willReturn([
+      ['target_id' => '71'],
+      ['target_id' => '72'],
+      ['target_id' => '71'],
+    ]);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+    $node->method('isDefaultRevision')->willReturn(TRUE);
+    $node->method('id')->willReturn('51');
+    $node->method('language')->willReturn($language);
+    $node->method('uuid')->willReturn('wiki-entry-uuid');
+    $node->method('label')->willReturn('Cannabis medicinal');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('getCreatedTime')->willReturn(100);
+    $node->method('getChangedTime')->willReturn(200);
+    $node->method('hasField')->willReturnMap([
+      ['field_domain_source', FALSE],
+      ['field_wiki_related', TRUE],
+    ]);
+    $node->method('get')->with('field_wiki_related')->willReturn($relations);
+
+    $projection = (new WikiContentIndexProvider())->project($node);
+
+    self::assertNotNull($projection);
+    self::assertSame([
+      ['related_entry', 'node', '71'],
+      ['related_entry', 'node', '72'],
+    ], array_map(
+      static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
+      $projection->relations,
+    ));
   }
 
   /**

@@ -1,0 +1,30 @@
+uuid: 56ba785e-2f70-467e-92fb-8e6794b84846
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_editorial_gallery
+    - node.type.revista
+  module:
+    - media_gallery
+id: node.revista.field_editorial_gallery
+field_name: field_editorial_gallery
+entity_type: node
+bundle: revista
+label: 'Galeria editorial'
+description: 'Galeria estruturada associada à publicação. O embed no corpo continua responsável pela apresentação.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media_gallery'
+  handler_settings:
+    target_bundles:
+      media_gallery: media_gallery
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

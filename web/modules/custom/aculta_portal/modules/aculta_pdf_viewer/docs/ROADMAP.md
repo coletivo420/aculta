@@ -10,6 +10,15 @@ no Runtime.
 
 ## Princípios e referência funcional
 
+### Integração planejada com limpeza de anexos do Portal — 2026-10-22
+
+O viewer continuará dono de renderização e acesso a PDFs. Na IDX 0.1-R, os
+adapters de Media `document` e `course_document` devem fornecer ao Portal as
+referências necessárias para que a exclusão de conteúdo confira uso e Group
+antes de limpar anexos. Arquivos não serão apagados pelo formatter; a remoção
+física segue File API e, quando imagem, `aculta_image`. Contrato central ainda
+pendente: [política de limpeza](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 ### Comparação de recursos TNC solicitados em 2026-10-20
 
 O arquivo que o responsável enviou ao outro agente não está disponível neste

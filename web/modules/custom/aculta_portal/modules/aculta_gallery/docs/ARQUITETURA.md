@@ -2,6 +2,15 @@
 
 Status: **normativo para a linha 0.1.x**. Dono: responsável pelo Portal. Revisão: a cada fase da linha 0.1.x e antes do RC.
 
+## Limpeza coordenada pelo Portal
+
+Planejamento IDX 0.1-R (2026-10-22): `aculta_gallery` fornecerá ao serviço de
+limpeza do Portal a descoberta das relações Gallery → Media e referências a
+capas. Ao excluir uma galeria, só solicitará limpeza de Media não usado por
+outra galeria ou conteúdo; a exclusão física de imagem continua sob
+`aculta_image`. A implementação preservará finalidade e acesso do Gallery.
+Ver [política compartilhada](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 **Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). O estado registrado no índice raiz é a fonte vigente. `preRC` foi aposentado; RC exige todas as pendências, testes, gates e revisão visual pré-deploy concluídos. A classificação `rc.1` e a versão `preRC.4` abaixo são registros históricos feitos sob o fluxo anterior e não qualificam o estado atual.
 
 Este documento registra **por que** o submódulo é feito de certo modo. Ele não contém status de PR nem resultado de teste; esses dados ficam no `CHANGELOG.md` do módulo e, quando solicitado, na descrição da PR.

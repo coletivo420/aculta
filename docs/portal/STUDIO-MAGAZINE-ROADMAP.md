@@ -2,6 +2,31 @@
 
 **Estado:** planejamento. Os marcos são sequenciais; o registro de execução abaixo contém evidências de Runtime e cada alteração persistente exige salvaguardas próprias.
 
+## Integração com o ACULTA Content Index
+
+### Exclusão segura de publicações e anexos — planejamento 2026-10-22
+
+Na IDX 0.1-R, a Revista deve solicitar ao serviço comum do Portal a análise e
+limpeza de anexos quando uma publicação for excluída por ação editorial
+autorizada. A Revista fornece suas relações estruturadas e embeds de CKEditor;
+Portal revalida referências compartilhadas e `aculta_image` remove imagens
+somente se continuarem sem uso. A limpeza nunca será acionada pelo mero fato de
+um Media deixar de aparecer no Content Index. Ver
+[`CONTENT-CLEANUP-POLICY.md`](CONTENT-CLEANUP-POLICY.md).
+
+- A Revista fornece provider de metadados e revalida Entity Access no purpose
+  canônico `magazine`; o catálogo não assume propriedade do conteúdo ou da
+  autorização.
+- `field_editorial_gallery` estabelece relação estruturada com Gallery sem
+  substituir o embed de apresentação. O comando
+  `aculta-magazine:migrate-gallery-references` oferece prévia e execução em
+  lotes; migra somente embeds únicos resolvidos e deixa referências múltiplas
+  para revisão editorial. Importar configuração e homologar a migração seguem
+  pendentes antes do backfill no ambiente.
+- O Index fornece consultas para o Studio; escrita e ações continuam sujeitas
+  a acesso e revisão do módulo proprietário e às decisões do Core.
+- Referência: [roadmap ACULTA Content Index](ACULTA-CONTENT-INDEX.md).
+
 | Marco | Entrega |
 | --- | --- |
 | 0.1.0 | Auditar código, Config Sync, Runtime de desenvolvimento, consumidores e referências da Revista. |
@@ -34,6 +59,11 @@
   workflow e da apresentação. Studio continua bloqueado até o gate 0.5.0.
 
 ## Registro de execução — Magazine 0.5-B — 2026-10-22
+
+Limpeza de dados no Runtime de teste autorizada em 2026-10-22: 12 Nodes
+`revista`, 17 Media `image` e 17 arquivos sem uso externo foram removidos; um
+Media `remote_video` ficou preservado. Evidências e backups:
+[`MAGAZINE-TEST-CLEANUP-2026-10-22.md`](MAGAZINE-TEST-CLEANUP-2026-10-22.md).
 
 - Contratos editoriais consumíveis pelo Studio publicados em
   `aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md`,

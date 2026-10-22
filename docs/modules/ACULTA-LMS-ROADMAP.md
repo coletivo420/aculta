@@ -6,6 +6,16 @@ Revisado em 2026-10-19. A implementação segue fases independentes, com autoriz
 
 ## Princípios e estado inicial
 
+### Limpeza de anexos de cursos — planejamento 2026-10-22
+
+Ao excluir curso ou recurso, `aculta_lms_resources` e
+`aculta_pdf_viewer_group` devem encaminhar referências para o serviço comum de
+limpeza do Portal. A checagem deve considerar referências em outras turmas,
+conteúdos e revisões, além do acesso Group; arquivos ainda usados permanecem.
+O LMS não apaga File/Media diretamente. Imagens passam por `aculta_image`, e
+documentos pela File API após decisão do adapter dono. Contrato e etapas:
+[política de limpeza do Portal](../portal/CONTENT-CLEANUP-POLICY.md).
+
 `aculta_lms` será opcional, integrador e educacional. Group mantém cursos/memberships; Drupal LMS mantém lições/atividades/respostas/status/notas; Media/File mantém arquivos; `aculta_messenger` controla comunicações; `aculta_user`/`aculta_game` controlam identidade/conquistas. O serviço compartilhado de PDF pertence a `aculta_pdf_viewer`, não ao LMS. O inventário está em [LMS-GROUP.md](LMS-GROUP.md), contratos em [LMS-INTEGRATION-CONTRACTS.md](../portal/LMS-INTEGRATION-CONTRACTS.md), segurança em [SECURITY-ACCESS-FILES-MATRIX.md](../portal/SECURITY-ACCESS-FILES-MATRIX.md) e PDF em [PDF-VIEWER-INTEGRATION.md](../portal/PDF-VIEWER-INTEGRATION.md).
 
 Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via Composer; miniaturas privadas continuam desativadas; H5P segue beta e precisa de auditoria de segurança; PHP 8.5 e a produção Hostinger precisam de validação nos ambientes correspondentes. O módulo PDF contrib legado foi removido; o LMS usa o serviço compartilhado `aculta_pdf_viewer`.

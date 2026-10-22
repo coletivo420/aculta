@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Projects allowlisted metadata for the current Wiki entry translation.
+ * Projects allowlisted metadata and outgoing related-entry links.
  *
- * Wiki relations to other entries, taxonomy terms and media remain deferred
- * until the Wiki module's content and access contracts are finalized.
+ * Taxonomy and media relations remain deferred until the Wiki module's content
+ * and access contracts are finalized.
  */
 final class WikiContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
 
@@ -54,6 +55,18 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
       $domainId = (string) $entity->get('field_domain_source')->target_id;
     }
 
+    $relations = [];
+    if ($entity->hasField('field_wiki_related') && !$entity->get('field_wiki_related')->isEmpty()) {
+      foreach ($entity->get('field_wiki_related')->getValue() as $item) {
+        $targetId = $item['target_id'] ?? NULL;
+        if ($targetId === NULL || $targetId === '') {
+          continue;
+        }
+        $targetId = (string) $targetId;
+        $relations[$targetId] = new ContentIndexRelation('related_entry', 'node', $targetId);
+      }
+    }
+
     return new ContentIndexProjection(
       'node',
       (string) $entity->id(),
@@ -65,6 +78,7 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
       $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
+      relations: array_values($relations),
     );
   }
 

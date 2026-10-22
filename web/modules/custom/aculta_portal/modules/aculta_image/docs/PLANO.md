@@ -22,6 +22,17 @@ exclusão de arquivo. O resultado era dívida espalhada e arquivos apagados sem 
 
 ## 2. Estado por fase
 
+### Integração planejada com limpeza coordenada pelo Portal — 2026-10-22
+
+O Portal planeja fornecer um serviço compartilhado para descobrir o uso de
+anexos e coordenar a limpeza após exclusão de conteúdo. O serviço ainda não está
+implementado. `aculta_image` continuará sendo a autoridade para remover imagens:
+`FileRemover` deve revalidar File Usage e Entity Usage, invalidar derivados e
+remover metadados. Na IDX 0.1-R, adaptar `ImageCleanup`/`FileRemover` para
+receber solicitações do Portal sem remover sua fila, quarentena, retenção ou
+proteções atuais. Migrar consumidor por consumidor; não apagar arquivos por
+SQL nem por API paralela.
+
 | Fase | Estado | Observação |
 | --- | --- | --- |
 | M0 inventário | feito | relatório `/painel-administrativo/imagens` |

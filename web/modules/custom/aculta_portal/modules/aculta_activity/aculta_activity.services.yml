@@ -1,0 +1,5 @@
+services:
+  aculta_activity.content_index_provider:
+    class: Drupal\aculta_activity\ContentIndex\ActivityContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }

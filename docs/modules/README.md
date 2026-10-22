@@ -1,5 +1,7 @@
 # Módulos e integrações Drupal
 
+- [ACULTA Activity — roadmap](ACULTA-ACTIVITY-ROADMAP.md)
+
 Este índice leva à documentação transversal dos módulos Core/contrib e às
 entradas dos componentes próprios. O inventário instalado é definido por
 `composer.json`, `composer.lock` e pela configuração Drupal (`core.extension`);

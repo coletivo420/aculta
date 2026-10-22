@@ -84,6 +84,18 @@ Kernel, migração dry-run, backup e aprovação visual.
 
 ### Integração de anexos e galerias — ordem aprovada em 2026-10-21
 
+#### Limpeza comum de posts e anexos — planejado em 2026-10-22
+
+Na IDX 0.1-R, substituir a checagem genérica de `file_usage`/`entity_usage` em
+`ForumAttachmentCleanup` pela função comum planejada em
+[`CONTENT-CLEANUP-POLICY.md`](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+O adapter do Fórum continua responsável por descobrir referências em
+Comments, ForumPost, revisões, embeds e galerias; Portal coordena o uso
+compartilhado e `aculta_image` continua removendo imagens. Preservar o fluxo
+atual até Kernel provar paridade de referências compartilhadas, revisão,
+concorrência e falha parcial. Esta etapa não autoriza excluir conteúdo do
+Runtime.
+
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
    via `aculta_gallery`, consumindo a política central `aculta_portal.user_upload_policy`;
    a aba do Fórum herda a política global ou configura override, e a publicação

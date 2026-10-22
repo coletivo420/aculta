@@ -1,5 +1,12 @@
 # ACULTA PDF Viewer — Group
 
+## Limpeza futura de documentos associados a turmas
+
+No planejamento IDX 0.1-R, este submódulo deve fornecer ao Portal as
+referências Media↔Group antes da limpeza de um documento. A remoção respeitará
+outras turmas, conteúdos e acesso atual; o submódulo não excluirá File/Media
+diretamente. Ver [política compartilhada do Portal](../../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 ## Content Index
 
 O serviço opcional `course_document_content_index_provider` registra o bundle

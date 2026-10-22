@@ -10,6 +10,16 @@ O plano aprovado e o inventário de referências ficam em
 
 ## Fase 1 — Casca do submódulo
 
+### Limpeza de verbetes e anexos — dívida coordenada com o Portal
+
+Quando o serviço comum de limpeza estiver implementado, adicionar ao contrato
+do provider Wiki a descoberta de referências necessárias à exclusão segura de
+verbetes. A remoção de imagens/arquivos deve passar pelo Portal e
+`aculta_image`; a Wiki mantém a descoberta de embeds e relações da própria
+entidade. `field_wiki_categories` e `field_wiki_image` permanecem adiados até
+fechar os contratos de acesso e relações da Wiki. Ver
+[`CONTENT-CLEANUP-POLICY.md`](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 - Manifesto com dependências `aculta_portal`, `domain`, `views`, `node` e
   `content_moderation`.
 - Documentação de entrada e regras locais.
@@ -56,8 +66,10 @@ O plano aprovado e o inventário de referências ficam em
   Entity Access em consultas originadas por outros domínios, com o usuário e
   grants atuais. A falha em resolver o domínio deve negar exposição.
 - Relações `field_wiki_related`, `field_wiki_categories` e `field_wiki_image`
-  permanecem dívida até a finalização dos contratos de conteúdo e acesso da
-  Wiki. O provider não copia corpo nem substitui revisão, workflow ou acesso.
+  não são tratadas todas da mesma forma: `field_wiki_related` já é projetado
+  como relação outgoing `related_entry`; categorias e imagem permanecem dívida
+  até a finalização dos contratos de conteúdo e acesso. O provider não copia
+  corpo nem substitui revisão, workflow ou acesso.
 - Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ### Entregue em código (2026-10-22)

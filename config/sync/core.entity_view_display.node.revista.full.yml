@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.revista.field_domain_source
     - field.field.node.revista.field_editorial_author
     - field.field.node.revista.field_editorial_category
+    - field.field.node.revista.field_editorial_gallery
     - field.field.node.revista.field_media_image
     - field.field.node.revista.field_meta_tags
     - field.field.node.revista.field_published_at
@@ -118,6 +119,7 @@ hidden:
   entity_print_view_word_docx: true
   field_domain_source: true
   field_editorial_author: true
+  field_editorial_gallery: true
   field_meta_tags: true
   field_published_at: true
   field_related_activity: true

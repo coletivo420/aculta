@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.24 — adiar bundle sem módulo proprietário
+
+- `media:remote_video` deixa de ser anunciado como integração ativa. O provider
+  temporário no Portal foi removido até que o módulo proprietário do bundle
+  seja definido; a ausência de provider mantém a exposição de entradas antigas
+  fechada.
+
 ## 0.1.0-dev.23 — adapters LMS de curso e policy contextual
 
 - O filtro combina Entity Access com a policy opcional do provider e mantém o contexto canônico.

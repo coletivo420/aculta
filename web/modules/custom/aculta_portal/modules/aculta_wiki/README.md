@@ -7,8 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.2`: provider opcional do Content Index implementado para metadados
-  allowlisted de `wiki_entry`; o módulo permanece desabilitado.
+- `0.1.0-dev.4`: provider opcional do Content Index implementado para
+  metadados allowlisted e relação outgoing `related_entry`; categorias e
+  imagem seguem adiadas. O módulo permanece desabilitado.
 - O módulo **não está habilitado** e não altera o Runtime.
 - As rotas públicas continuam definidas em `aculta_portal.routing.yml` até a
   Fase 2. Os caminhos `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
@@ -25,9 +26,9 @@ pendentes, está em
 - Configuração continua em `config/sync`, com UUIDs e IDs preservados. A
   propriedade de cada item é decisão pendente do responsável.
 - `WikiContentIndexProvider` projeta título, UUID, bundle, idioma, domínio,
-  publicação e datas; não projeta corpo, referências, categorias ou mídia.
-  Relações Wiki — inclusive `field_wiki_related` — ficam como dívida técnica
-  até a finalização da Wiki. O provider só é descoberto quando `aculta_wiki` e
+  publicação, datas e apenas `field_wiki_related` como `related_entry`; não
+  projeta corpo, categorias ou mídia. Relações de categoria/imagem ficam como
+  dívida até a finalização da Wiki. O provider só é descoberto quando `aculta_wiki` e
   `aculta_index` estiverem habilitados; não cria dependência obrigatória entre
   eles nem habilita o módulo.
 

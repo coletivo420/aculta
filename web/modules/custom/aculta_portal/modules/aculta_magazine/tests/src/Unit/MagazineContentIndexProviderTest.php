@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_magazine\Unit;
 
 use Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider;
+use Drupal\aculta_magazine\Migration\GalleryReferenceMigrator;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -61,6 +62,25 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
   }
 
   /**
+   * Tests embed UUID extraction is ordered, unique and limited to galleries.
+   */
+  public function testExtractsUniqueGalleryEmbedUuids(): void {
+    $first = '11111111-1111-4111-8111-111111111111';
+    $second = '22222222-2222-4222-8222-222222222222';
+    $html = sprintf(
+      '<drupal-entity data-entity-type="media_gallery" data-entity-uuid="%s"></drupal-entity>' .
+      '<drupal-entity data-entity-type="media" data-entity-uuid="33333333-3333-4333-8333-333333333333"></drupal-entity>' .
+      '<drupal-entity data-entity-type="media_gallery" data-entity-uuid="%s"></drupal-entity>' .
+      '<drupal-entity data-entity-type="media_gallery" data-entity-uuid="%s"></drupal-entity>',
+      $first,
+      $second,
+      $first,
+    );
+
+    self::assertSame([$first, $second], GalleryReferenceMigrator::extractGalleryUuids($html));
+  }
+
+  /**
    * Tests other bundles and non-default revisions are excluded.
    *
    * @dataProvider unsupportedEntityProvider
@@ -81,6 +101,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
     $language->method('getId')->willReturn('pt-br');
     $relatedActivity = $this->referenceField(['activity-1', 'activity-2']);
     $editorialImage = $this->referenceField(['media-9']);
+    $editorialGallery = $this->referenceField(['gallery-7']);
     $domain = $this->createMock(FieldItemListInterface::class);
     $domain->method('isEmpty')->willReturn(FALSE);
     $domain->method('__get')->with('target_id')->willReturn('coletivo420_aculta_org');
@@ -102,12 +123,14 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
       ['field_published_at', TRUE],
       ['field_related_activity', TRUE],
       ['field_media_image', TRUE],
+      ['field_editorial_gallery', TRUE],
     ]);
     $node->method('get')->willReturnMap([
       ['field_domain_source', $domain],
       ['field_published_at', $publishedAt],
       ['field_related_activity', $relatedActivity],
       ['field_media_image', $editorialImage],
+      ['field_editorial_gallery', $editorialGallery],
     ]);
 
     $projection = (new MagazineContentIndexProvider())->project($node);
@@ -119,6 +142,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
       ['related_activity', 'node', 'activity-1'],
       ['related_activity', 'node', 'activity-2'],
       ['editorial_image', 'media', 'media-9'],
+      ['editorial_gallery', 'media_gallery', 'gallery-7'],
     ], array_map(
       static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
       $projection->relations,

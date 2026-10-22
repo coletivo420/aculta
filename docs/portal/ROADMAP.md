@@ -2,7 +2,7 @@
 
 **Ciclo vigente:** este roadmap segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Todo escopo funcional, gates, testes e revisão visual aplicável devem estar prontos em RC antes do deploy. Alpha é o deploy/validação no servidor de desenvolvimento; após aprovação, preparar a migração do mesmo candidato para produção. Itens de releases anteriores são históricos e não alteram este fluxo.
 
-Atualizado após os merges das PRs #238 e #239 (2026-10-13 UTC; estado atual: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md)). Substitui o roadmap de modernização
+Base histórica atualizada após os merges das PRs #238 e #239 (2026-10-13 UTC; estado histórico: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md)). Roadmap revisto em 2026-10-22 para refletir o manifesto do Portal, Content Index, Activity e política de limpeza. Substitui o roadmap de modernização
 P0–P10 e a lista antiga de prioridades de produto.
 
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
@@ -16,17 +16,46 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 - Apresentação Wiki420 e política de autoria pública: [WIKI.md](WIKI.md); Runtime DEFERRED até inspeção visual.
 
-## Estado atual
+## Estado atual — conferido em 2026-10-22
 
-- Versão: **0.4.0-dev.251** (`aculta_portal.info.yml` e `CHANGELOG.md`; linha 0.4.x em desenvolvimento). Sem tag: tags só por pedido explícito do responsável. A linha 0.2.0 foi fechada antes desta revisão.
-- Submódulos: `aculta_deployer` 0.1.21 (`info.yml`, `VERSION` e `CHANGELOG.md`; falhas de teste e de `check`, DT-O12), `aculta_associado_id` 0.3.0-dev.1 (migração do legado `aculta_id_cpf` pendente; Runtime DEFERRED), `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.11, `aculta_gallery` 0.1.0-dev.13 (acesso público global; sem validação Runtime), `aculta_magazine` 0.1.0-dev.5.
-- Tema: `aculta420` 0.6.0-dev.143 (`aculta420.info.yml`, `CHANGELOG.md` e `docs/roadmap.md` coerentes). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
+- Versão: **0.4.1-dev.7** (`aculta_portal.info.yml`; confira o changelog para o estado das alterações desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete a auditoria anterior e deve ser lido junto às atualizações datadas do roadmap.
+- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1, `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.16, `aculta_magazine` 0.5.0-dev.5, `aculta_index` 0.1.0-dev.24 e `aculta_activity` 0.1.0-dev.1. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
+- Tema: `aculta420` 0.6.1-dev.3 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
 - Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation PASS em 2026-10-15 (341 checks, via Drush; DT-T19 resolvida).
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
 - Integração de Termos/aceites no `aculta_user`: Agreement contrib desinstalado no Runtime de testes e removido de Composer/Config Sync; ledger, auditoria read-only e migrações estão documentados no CHANGELOG do componente. Revisão autenticada e gates antes de RC permanecem pendentes.
+
+### Conteúdo transversal e Activity — atualização 2026-10-22
+
+- O `aculta_index` está em desenvolvimento dentro do Kernel Portal. Estado por fase,
+  decisões, dívida de `remote_video` e integrações encontram-se no
+  [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
+- Criar o submódulo proprietário `aculta_activity` com projeção mínima do Node
+  `activity` e adapter tagged. Entregar e homologar junto do `aculta_portal`;
+  não criar uma linha de release independente nesta etapa. O módulo não assume
+  ainda autoria, edição, workflows, apresentação ou migração do conteúdo.
+- IDX 0.1-R inclui a política planejada de limpeza de posts/anexos; implementar
+  prévia, verificação de uso em todas as revisões e execução por IDs explícitos,
+  delegando imagens ao `aculta_image`. Homologar com backup restaurável antes
+  de qualquer limpeza no Runtime.
+- A limpeza pontual autorizada dos 12 Nodes `revista` no Runtime de teste foi
+  executada em 2026-10-22; relatório em
+  [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md).
+  Essa operação não substitui a entrega do serviço comum.
+- Política de limpeza explícita de posts e anexos: ver
+  [CONTENT-CLEANUP-POLICY.md](CONTENT-CLEANUP-POLICY.md). Reaproveitar
+  `aculta_image.file_remover` para imagens e as verificações de referência
+  demonstradas pelo Fórum. A integração planejada exige adapters em Forum,
+  Wiki, Magazine, Gallery, Document/PDF Viewer e LMS Resources; cada dono
+  descobre suas referências e chama o coordenador, sem exclusão física paralela.
+  O fluxo exige IDs explícitos, relatório prévio, backup e revalidação; não há
+  exclusão de conteúdo pelo cron.
+- Roadmap anterior descrevia versões de Portal já superadas. A versão acima foi
+  conferida no manifesto; as demais versões e pendências históricas não foram
+  reauditas nesta atualização.
 
 ## Próximos passos (replanejamento de 2026-10-15)
 

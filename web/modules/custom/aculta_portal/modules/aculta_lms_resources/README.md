@@ -24,6 +24,14 @@ continuam exclusivamente no LMS.
 
 ## Estado
 
+### Limpeza coordenada de recursos — dívida planejada em 2026-10-22
+
+Quando curso, turma ou referência for removida, o módulo deve fornecer suas
+relações ao serviço de limpeza do Portal antes de retirar File/Media. A
+verificação deve preservar documentos ligados a outras turmas ou conteúdos e
+respeitar a relação Group atual. Não excluir arquivos diretamente; ver
+[política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 Dev 0.1.0-dev.3. O provider tem cobertura Unit própria (3 testes / 14
 assertions); Unit de recursos preexistente (8 testes / 39 assertions) passou; Kernel
 (2 testes / 46 assertions) já passava na versão anterior e não foi alterado nesta

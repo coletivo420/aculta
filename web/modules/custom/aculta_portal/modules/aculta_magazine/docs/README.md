@@ -109,10 +109,15 @@ separar formatos; todas as publicações usam `revista`.
 - Vídeo: não há um campo ou contrato editorial específico; usar incorporação
   compatível no corpo quando necessário. Galerias existentes são incorporadas
   pelo CKEditor 5/Entity Embed e continuam sob propriedade de `aculta_gallery`.
-- Integração planejada com Content Index: criar uma referência estruturada da
-  publicação para `media_gallery`, implementar relação editorial no provider e
-  migrar os embeds atuais para o novo campo por um processo único, idempotente
-  e revisável. A consulta do Index não interpretará o corpo do Entity Embed.
+- O comando de migração de galeria ainda não foi executado. Depois da importação
+  da configuração, revisar a prévia em lotes; resolver manualmente os NIDs
+  reportados com mais de uma galeria antes de completar o backfill.
+- Content Index: `field_editorial_gallery` mantém uma referência estruturada
+  única e o provider expõe `editorial_gallery`. O comando
+  `aculta-magazine:migrate-gallery-references` faz prévia por padrão e migra em
+  lotes apenas embeds únicos resolvidos; casos com várias galerias são
+  reportados para revisão. O corpo e a apresentação Entity Embed permanecem
+  inalterados. Consulte [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 - A captura pública em Firefox não teve overflow em mobile; com sessão editorial,
   a barra administrativa gera 78 px de overflow em 390 px. Revisar essa
   apresentação antes de RC.

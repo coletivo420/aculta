@@ -62,6 +62,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
     $relations = [];
     $this->addRelations($entity, 'field_related_activity', 'related_activity', 'node', $relations);
     $this->addRelations($entity, 'field_media_image', 'editorial_image', 'media', $relations);
+    $this->addRelations($entity, 'field_editorial_gallery', 'editorial_gallery', 'media_gallery', $relations);
 
     return new ContentIndexProjection(
       'node',
