@@ -1,4 +1,10 @@
 services:
+  aculta_index.generation_manager:
+    class: Drupal\aculta_index\Generation\ContentIndexGenerationManager
+    arguments: ['@database', '@uuid', '@datetime.time']
+
+  Drupal\aculta_index\Generation\ContentIndexGenerationManager: '@aculta_index.generation_manager'
+
   aculta_index.provider_registry:
     class: Drupal\aculta_index\Provider\ContentIndexProviderRegistry
     arguments: [!tagged_iterator aculta_index.provider]

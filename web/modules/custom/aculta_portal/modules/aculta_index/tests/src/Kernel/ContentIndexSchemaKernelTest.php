@@ -32,6 +32,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'aculta_index_entry',
       'aculta_index_relation',
     ]);
+    aculta_index_install();
   }
 
   /**
@@ -53,13 +54,13 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
    * Checks the state pointer can refer to the active generation.
    */
   public function testActiveGenerationPointerIsStored(): void {
-    $this->container->get('database')->insert('aculta_index_state')
+    $this->container->get('database')->update('aculta_index_state')
       ->fields([
-        'state_id' => 1,
         'active_generation' => 'gen-a',
         'revision' => 1,
         'updated' => 100,
       ])
+      ->condition('state_id', 1)
       ->execute();
 
     $this->assertSame('gen-a', $this->container->get('database')
@@ -74,8 +75,6 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
    * Checks a fresh install starts with no published generation.
    */
   public function testInstallInitializesEmptyActiveGenerationPointer(): void {
-    aculta_index_install();
-
     $state = $this->container->get('database')->select('aculta_index_state', 'state')
       ->fields('state', ['active_generation', 'revision'])
       ->condition('state_id', 1)
@@ -84,6 +83,47 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
 
     $this->assertSame('', $state['active_generation']);
     $this->assertSame('0', $state['revision']);
+  }
+
+  /**
+   * Tests generations activate only after validation and can be rolled back.
+   */
+  public function testGenerationLifecycleAndRollback(): void {
+    $manager = $this->container->get('aculta_index.generation_manager');
+    $first = $manager->start();
+    $manager->markValidated($first);
+    $manager->activate($first);
+    $this->assertSame($first, $manager->getActiveGeneration());
+
+    $second = $manager->start();
+    $manager->markValidated($second);
+    $manager->activate($second);
+    $this->assertSame($second, $manager->getActiveGeneration());
+
+    $manager->activate($first);
+    $this->assertSame($first, $manager->getActiveGeneration());
+    $this->assertSame('retained', $this->generationStatus($second));
+  }
+
+  /**
+   * Tests an unvalidated generation cannot replace the active pointer.
+   */
+  public function testBuildingGenerationCannotActivate(): void {
+    $manager = $this->container->get('aculta_index.generation_manager');
+    $generation = $manager->start();
+
+    try {
+      $manager->activate($generation);
+      $this->fail('Expected an unvalidated generation to be rejected.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertNull($manager->getActiveGeneration());
+      $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_state', 'state')
+        ->fields('state', ['revision'])
+        ->condition('state_id', 1)
+        ->execute()
+        ->fetchField());
+    }
   }
 
   /**
@@ -127,6 +167,17 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
         'updated' => 1,
       ])
       ->execute();
+  }
+
+  /**
+   * Gets the stored lifecycle status of a generation.
+   */
+  private function generationStatus(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['status'])
+      ->condition('generation_id', $generationId)
+      ->execute()
+      ->fetchField();
   }
 
 }

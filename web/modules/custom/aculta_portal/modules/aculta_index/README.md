@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.2` — IDX 0.1-C, schema, contratos de projeção e estado inicial.
-**Status:** Dev; schema declarado e hook de instalação cria o ponteiro vazio. Ainda sem writer, consumers ou adaptadores de conteúdo e sem instalação no Runtime.
+**Versão:** `0.1.0-dev.3` — gestão inicial do ciclo de gerações.
+**Status:** Dev; schema, contratos, inicialização do ponteiro e ciclo validado de ativação/rollback implementados. Ainda sem writer, consumers ou adaptadores de conteúdo e sem instalação no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -26,3 +26,5 @@ O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de
 O submódulo depende do módulo base `aculta_portal`, mas não é ativado por ele. Nenhum módulo de origem depende obrigatoriamente de `aculta_index`; integrações futuras devem usar dependência opcional e manter seu comportamento principal sem o índice.
 
 Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cria o singleton com geração ativa vazia. Nenhum conteúdo é indexado ou exposto até uma futura reconstrução validada. Desativar/remover o submódulo não afeta as entidades de origem.
+
+`ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O manager não grava projeções nem declara uma geração validada por conta própria: o rebuild deve executar e conferir o backfill antes de chamar `markValidated()`.

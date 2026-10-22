@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.3 — ciclo inicial de gerações
+
+- Adicionado `ContentIndexGenerationManager` para iniciar geração, registrar
+  validação e trocar/retomar o ponteiro entre gerações validadas.
+- A troca mantém a geração anterior em `retained`, atualiza o ponteiro por CAS
+  dentro de transação e reverte integralmente se o estado de origem divergir.
+- Kernel cobre o ciclo de ativação/rollback e a recusa transacional de geração
+  ainda em construção.
+
 ## 0.1.0-dev.2 — iniciar ponteiro vazio de geração
 
 - A instalação cria a linha singleton de `aculta_index_state` com geração ativa
