@@ -1,0 +1,7 @@
+name: Prévia de QR Code
+description: Exemplo estático do componente sem gerar códigos ou dados pessoais.
+component: aculta420:qr-preview
+props:
+  src: '#exemplo-qr'
+  alt: 'Prévia ilustrativa de código QR não funcional'
+  caption: 'Código ilustrativo, sem validação real'
