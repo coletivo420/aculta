@@ -124,7 +124,8 @@ testes de workflow; a configuração da política inicial continua sendo a de
    post e do tópico; a retenção inclui todas as revisões. A dev.150 torna
    navegável o contexto do pai fora da página corrente, calculando sua página
    com a mesma ordenação e query de acesso da thread e preservando os pagers
-   existentes.
+   existentes. A dev.156 integra os posts à aba pessoal Comentários de Minha
+   Conta, sem exigir dependência inversa de `aculta_user` para `aculta_forum`.
 3. **Migração não destrutiva em código:** mapear Comments apenas quando
    `comment_type=aculta_discussion_post`, host Node de bundle
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore

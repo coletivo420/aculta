@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.156` | Integrar posts revisionáveis à atividade pessoal | A aba de comentários combina posts do Fórum e Comments legados, com acesso revalidado e ordenação cronológica. Sem dependência circular; testes e smoke autenticado pendentes. |
 | `0.1.0-dev.155` | Inventariar agregados e marcadores dos avisos de respostas | Com Messenger habilitado, mede avisos por tópico elegível e valida se `ultimo_comentario` referencia Comment elegível, externo, inexistente ou de outro tópico. Somente leitura; testes pendentes. |
 | `0.1.0-dev.154` | Inventariar denúncias/flags de Comments elegíveis | Auditoria conta Flaggings por configuração sem expor autores; a migração deverá recriar as associações pela API do Flag, que impede mover uma flagging. Sem alteração Runtime; testes pendentes. |
 | `0.1.0-dev.153` | Corrigir classificação de pais fora do escopo no inventário | Auditoria resolve pais existentes não elegíveis e separa relações externas de referências realmente ausentes. Sem alteração Runtime; testes pendentes. |

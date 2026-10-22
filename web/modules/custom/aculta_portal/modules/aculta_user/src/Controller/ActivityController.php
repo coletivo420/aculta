@@ -8,7 +8,10 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableInterface;
+use Drupal\Core\Field\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -63,7 +66,11 @@ final class ActivityController implements ContainerInjectionInterface {
       throw new NotFoundHttpException();
     }
     $uid = (int) $this->currentUser->id();
-    $cache = (new CacheableMetadata())->addCacheContexts(['user'])->addCacheTags(['node_list', 'comment_list']);
+    $cache = (new CacheableMetadata())->addCacheContexts(['user'])->addCacheTags([
+      'node_list',
+      'comment_list',
+      'aculta_forum_post_list',
+    ]);
 
     $conteudo = match ($aba) {
       'wiki' => $this->wiki($uid),
@@ -143,7 +150,7 @@ final class ActivityController implements ContainerInjectionInterface {
     return $this->nodeList(array_values($nids), 'article', 'Você ainda não tem artigos publicados na revista.', FALSE);
   }
 
-  /** Comentários publicados pela pessoa em tópicos públicos do novo Fórum. */
+  /** Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
   private function comentarios(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
@@ -156,11 +163,8 @@ final class ActivityController implements ContainerInjectionInterface {
       ->sort('created', 'DESC')
       ->range(0, 50)
       ->execute();
+    $entries = [];
     $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
-    if ($comments === []) {
-      return ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')];
-    }
-    $items = [];
     foreach ($comments as $comment) {
       if (!($comment instanceof CommentInterface)) {
         continue;
@@ -191,15 +195,79 @@ final class ActivityController implements ContainerInjectionInterface {
         continue;
       }
       $url->setOption('fragment', 'comment-' . $comment->id());
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $topic->label(),
-        '#url' => $url,
+      $entries[] = [
+        'created' => (int) $comment->getCreatedTime(),
+        'sort_id' => 'comment-' . $comment->id(),
+        'link' => [
+          '#type' => 'link',
+          '#title' => $topic->label(),
+          '#url' => $url,
+        ],
       ];
     }
-    return $items === []
-      ? ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')]
-      : ['#theme' => 'item_list', '#items' => $items];
+
+    if ($this->entityTypeManager->getDefinition('aculta_forum_post', FALSE) !== NULL) {
+      $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+      $post_ids = $post_storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('uid', $uid)
+        ->condition('status', 1)
+        ->sort('created', 'DESC')
+        ->range(0, 50)
+        ->execute();
+      foreach ($post_storage->loadMultiple($post_ids) as $post) {
+        if (!$post instanceof FieldableEntityInterface
+          || !$post instanceof EntityPublishedInterface
+          || !$post instanceof RevisionableInterface
+          || !$post->isPublished()
+          || !$post->isDefaultRevision()
+          || !$post->hasField('topic')) {
+          continue;
+        }
+        $topic = $post->get('topic')->entity;
+        if (!$topic instanceof NodeInterface
+          || $topic->bundle() !== 'aculta_forum_topic'
+          || !$topic->isPublished()) {
+          continue;
+        }
+        $access = $this->purposeManager->runInPurpose('forum', fn (): bool =>
+          $topic->access('view', $this->currentUser, TRUE)->isAllowed()
+          && $post->access('view', $this->currentUser, TRUE)->isAllowed()
+        );
+        if ($access !== TRUE) {
+          continue;
+        }
+        $url = $this->purposeManager->routeUrl(
+          'forum',
+          'entity.node.canonical',
+          ['node' => $topic->id()],
+        );
+        if ($url === NULL) {
+          continue;
+        }
+        $url->setOption('fragment', 'forum-post-' . $post->id());
+        $entries[] = [
+          'created' => (int) $post->get('created')->value,
+          'sort_id' => 'post-' . $post->id(),
+          'link' => [
+            '#type' => 'link',
+            '#title' => $this->stringTranslation->translate(
+              '@subject — @topic',
+              ['@subject' => $post->get('subject')->value, '@topic' => $topic->label()],
+            ),
+            '#url' => $url,
+          ],
+        ];
+      }
+    }
+
+    if ($entries === []) {
+      return ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')];
+    }
+    usort($entries, static fn (array $left, array $right): int =>
+      ($right['created'] <=> $left['created']) ?: strcmp($left['sort_id'], $right['sort_id'])
+    );
+    return ['#theme' => 'item_list', '#items' => array_column(array_slice($entries, 0, 50), 'link')];
   }
 
   /** Mantém os nós publicados do tipo indicado. */

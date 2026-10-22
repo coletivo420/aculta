@@ -1,3 +1,13 @@
+## 0.4.0-dev.65 — posts revisionáveis na atividade pessoal — 2026-10-21
+
+- A aba Comentários de Minha Conta combina Comments públicos e posts
+  revisionáveis publicados pela própria pessoa, com ordenação cronológica e
+  revalidação de acesso no purpose `forum`. A entidade é detectada quando
+  disponível, sem dependência circular `aculta_user` → `aculta_forum`.
+- Links de posts apontam para `forum-post-{id}` na página canônica do tópico e
+  identificam assunto e tópico; nenhuma outra atividade de pessoa é exposta.
+- Validação estática concluída; testes e smoke autenticado ficam pendentes.
+
 ## 0.4.0-dev.64 — compartilha autoria com posts revisionáveis do Fórum — 2026-10-21
 
 - `DiscussionCommentAuthorHooks` apresenta posts `aculta_forum_post` pelo `AuthorCardBuilder`: identidade User usa `author_forum`; `legacy_author` continua no cartão histórico, sem conversão para conta.

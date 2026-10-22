@@ -1,3 +1,11 @@
+## `0.1.0-dev.156` — incluir posts revisionáveis na atividade da conta
+
+- A aba Comentários de Minha Conta passa a combinar Comments públicos e posts
+  revisionáveis publicados pelo próprio usuário, ordenados juntos por data.
+  Links de posts usam o fragmento canônico `forum-post-{id}` e revalidam acesso
+  ao tópico e à publicação no purpose `forum`. `aculta_user` detecta a entidade
+  opcionalmente, sem dependência circular. Testes e revisão autenticada pendentes.
+
 ## `0.1.0-dev.155` — inventariar agregados de avisos do Fórum
 
 - Quando `aculta_messenger` está habilitado, a auditoria conta avisos
