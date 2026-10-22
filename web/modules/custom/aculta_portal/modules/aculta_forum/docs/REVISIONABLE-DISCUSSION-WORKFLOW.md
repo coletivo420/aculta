@@ -138,8 +138,12 @@ testes de workflow; a configuração da política inicial continua sendo a de
    A dev.152 acrescenta `drush aculta-forum:audit-comment-migration`, um
    inventário somente leitura e sem IDs/PII na saída; falhas omitem mensagens
    de exceção potencialmente sensíveis. Ele identifica o escopo
-   elegível, formatos, idiomas/traduções, estados, autoria histórica,
-   timestamps, embeds e referências pai ausentes/externas/cruzadas. A dev.161
+   elegível, formatos, idiomas/traduções, estados, autoria histórica e
+   Comments sem proprietário (`uid=0`), timestamps, embeds e referências pai
+   ausentes/externas/cruzadas. Como ForumPost não armazena nome de autor
+   anônimo e o Comment Core pode guardar dados de contato próprios, a dev.200
+   faz o destino falhar fechado nesse caso, sem copiar contato pessoal. A
+   elegibilidade desse dado exige decisão de produto antes da migração. A dev.161
    pagina os CIDs por lotes com limite inicial, sem carregar antecipadamente
    todos os IDs. A dev.162 resolve relações pai/filho por lote e deixa de manter
    um mapa global Comment → tópico; referências de avisos são resolvidas em

@@ -90,6 +90,13 @@ final class ForumCommentPost extends EntityContentBase {
    */
   public function import(Row $row, array $old_destination_id_values = []): array {
     $source_id = (string) $row->getSourceProperty('cid');
+    $owner_id = (int) $row->getSourceProperty('uid');
+    if ($owner_id <= 0) {
+      throw new MigrateException(sprintf(
+        'Comment %s tem autoria anônima, que o ForumPost não consegue preservar; migração interrompida.',
+        $source_id,
+      ));
+    }
     $default_langcode = (string) $row->getSourceProperty('langcode');
     $translations = $row->getSourceProperty('translations');
     if ($default_langcode === '' || !is_array($translations) || !isset($translations[$default_langcode])) {

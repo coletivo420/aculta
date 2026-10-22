@@ -62,6 +62,7 @@ final class ForumCommentMigrationAudit {
       'unpublished_comments' => 0,
       'rejected_comments' => 0,
       'comments_with_legacy_author' => 0,
+      'comments_without_owner' => 0,
       'comments_with_missing_owner' => 0,
       'comments_with_missing_legacy_author' => 0,
       'comments_with_empty_body_translation' => 0,
@@ -137,6 +138,9 @@ final class ForumCommentMigrationAudit {
         $owner_id = (int) ($comment->getOwnerId() ?? 0);
         if ($owner_id > 0) {
           $owner_references[$comment_id] = (string) $owner_id;
+        }
+        else {
+          $report['comments_without_owner']++;
         }
         $translations = $comment->getTranslationLanguages();
         if (count($translations) > 1) {

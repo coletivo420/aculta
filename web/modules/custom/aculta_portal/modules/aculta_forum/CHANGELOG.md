@@ -1,3 +1,11 @@
+## `0.1.0-dev.200` — bloquear perda de autoria anônima na migração
+
+- A auditoria conta Comments elegíveis sem proprietário. O destino da migration
+  interrompe a linha quando `uid` é zero, pois `aculta_forum_post` não preserva
+  o nome de autoria anônima; não converte silenciosamente a autoria em conta
+  genérica nem migra contato pessoal.
+- Sem execução de migration, Runtime ou testes nesta etapa.
+
 ## `0.1.0-dev.199` — evitar link duplicado no cartão PDF
 
 - Cartões construídos pelo `aculta_pdf_viewer` mantêm as ações próprias de
