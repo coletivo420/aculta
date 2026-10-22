@@ -337,3 +337,7 @@ Classe única para todos os contadores (carrinho, avisos, mensagens, badge de co
 do fórum). Arquivo: `css/components/unread-count.css`. O Portal poderá entregar o token `data-portal-ui` (ex.: `forum-topic-unread`) na futura contagem da View ACULTA; não há produtor ativo hoje,
 que `PortalUiHooks` traduz nessa classe. Zero não lidos oculta o contador. A posição fica no gatilho. Contrato completo
 em `docs/portal/CONTADORES.md` (raiz do repositório).
+
+## Auditoria de reutilização GanjaLab420 — 2026-10-22
+
+O planejamento [GanjaLab420 × ACULTA420](../../../../../docs/portal/GANJALAB420-CROSS-VISUAL-AUDIT.md) prioriza componentes existentes e variantes. Criar novos SDCs apenas com contrato de dados/slots, primeiro consumidor real, segundo consumidor mapeado, story UI Patterns, acessibilidade, cache/access nos providers e documentação. Padrões transversais candidatos: context-header, context-tabs, empty-state, content-reader, resource-list e status-timeline. Nenhum foi implementado nesta auditoria.
