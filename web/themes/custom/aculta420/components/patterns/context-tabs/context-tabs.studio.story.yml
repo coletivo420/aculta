@@ -1,0 +1,8 @@
+name: GanjaLab — abas por URL
+description: 'Links demonstrativos; navegação de áreas, não painéis controlados por Bootstrap.'
+component: aculta420:context-tabs
+props:
+  label: Seções do GanjaLab
+slots:
+  items:
+    markup: '<a href="#revista" aria-current="page">Revista</a> <a href="#wiki">Wiki</a> <a href="#cursos">Cursos</a>'
