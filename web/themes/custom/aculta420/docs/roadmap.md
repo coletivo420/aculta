@@ -374,3 +374,7 @@ Novo componente experimental `aculta420:context-tabs` criado com schema Core SDC
 ## B2-03 — primeiro consumidor de Context Tabs (2026-10-22)
 
 O GanjaLab (`aculta_studio`) integra agora `aculta420:context-tabs` nos menus de áreas e abas da seção, preservando links Drupal/PortalLinkElement, AJAX progressivo e fallback sem JS por contrato. CSS do componente passou a acomodar `item_list` renderizável. [Relatório B2](theme-ux-0.8-b2-context-tabs.md). Sem testes Runtime; o segundo consumidor e homologação continuam pendentes.
+
+## THEME-UX 0.8-B2-04 — segundo consumidor em código
+
+A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com duas URLs Drupal reais e `aria-current=page`. Junto ao GanjaLab, são dois consumidores integrados por código. Ver [B2](theme-ux-0.8-b2-context-tabs.md). Próxima fase B2-05: homologação Runtime e correção de CSS/semântica antes de B3; shell multidomínio obrigatório.
