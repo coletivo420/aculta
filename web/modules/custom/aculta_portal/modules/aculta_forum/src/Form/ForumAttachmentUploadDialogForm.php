@@ -135,13 +135,36 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       return $response;
     }
 
-    $fids = array_values(array_filter(array_map('intval', array_merge(
-      (array) $form_state->getValue('image_file'),
-      (array) $form_state->getValue('document_file'),
-    ))));
+    $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
+    $document_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('document_file'))));
+    $is_image_upload = $image_fids !== [];
+    $field_name = $is_image_upload ? 'image_file' : 'document_file';
+    $fids = array_merge($image_fids, $document_fids);
+    if (count($fids) !== 1) {
+      $form_state->setErrorByName($field_name, $this->t('Envie um arquivo por vez.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
+      return $response;
+    }
+
     $file = $this->entityTypeManager->getStorage('file')->load((int) reset($fids));
     if (!$file instanceof FileInterface) {
-      $form_state->setErrorByName('image_file', $this->t('O arquivo enviado não está disponível. Envie-o novamente.'));
+      $form_state->setErrorByName($field_name, $this->t('O arquivo enviado não está disponível. Envie-o novamente.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
+      return $response;
+    }
+
+    $is_valid = $is_image_upload
+      ? $this->uploadPolicy->isValidImage($file, 'forum')
+      : $this->uploadPolicy->isValidDocument($file, 'forum');
+    if (!$is_valid) {
+      $form_state->setErrorByName($field_name, $this->t('O arquivo não atende às extensões ou ao tamanho permitidos.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
+      return $response;
+    }
+
+    $image_alt = trim((string) $form_state->getValue('image_alt'));
+    if ($is_image_upload && ($image_alt === '' || Unicode::strlen($image_alt) > 512)) {
+      $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição não vazia de até 512 caracteres para a imagem.'));
       $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
       return $response;
     }
@@ -159,7 +182,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     if (str_starts_with((string) $file->getMimeType(), 'image/')) {
       $media->set('field_media_forum_image', [
         'target_id' => $file->id(),
-        'alt' => trim((string) $form_state->getValue('image_alt')),
+        'alt' => $image_alt,
       ]);
     }
     $media->save();

@@ -1,3 +1,11 @@
+## dev.190 — revalidação de arquivo no callback de anexo
+
+- O callback AJAX repete as guardas de cardinalidade, existência, política
+  central e texto alternativo antes da criação do Media. Arquivo removido ou
+  alterado após a validação do formulário retorna erro no diálogo sem criar
+  entidade.
+- Sem upload autenticado ou fixture Runtime nesta entrega.
+
 ## dev.189 — limite do texto alternativo no servidor
 
 - O formulário de anexo valida tamanho Unicode de até 512 caracteres além do

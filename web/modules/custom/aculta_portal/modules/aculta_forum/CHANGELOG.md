@@ -1,3 +1,11 @@
+## `0.1.0-dev.190` — revalidar anexo antes de criar Media
+
+- O callback AJAX do anexo agora confirma novamente exatamente um arquivo,
+  existência, política central de extensão/tamanho/inspeção raster e descrição
+  alternativa antes de criar Media. Alteração entre a validação do Form API e a
+  gravação falha fechada e mantém o diálogo com erro recuperável.
+- Sem alteração Runtime ou upload autenticado nesta etapa.
+
 ## `0.1.0-dev.189` — validar tamanho alternativo no servidor
 
 - O formulário de anexo agora exige texto alternativo não vazio de até 512
