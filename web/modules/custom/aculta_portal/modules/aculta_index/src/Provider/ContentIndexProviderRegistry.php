@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Provider;
 
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
+
 /**
  * Registry for providers contributed by enabled source modules.
  */
@@ -12,14 +14,14 @@ final class ContentIndexProviderRegistry {
   /**
    * The providers indexed by stable provider ID.
    *
-   * @var array<string, \Drupal\aculta_index\Provider\ContentIndexProviderInterface>
+   * @var array<string, \Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface>
    */
   private array $providers = [];
 
   /**
    * Builds the registry from tagged services.
    *
-   * @param iterable<\Drupal\aculta_index\Provider\ContentIndexProviderInterface> $providers
+   * @param iterable<\Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface> $providers
    *   Services tagged `aculta_index.provider`.
    */
   public function __construct(iterable $providers = []) {
@@ -34,6 +36,16 @@ final class ContentIndexProviderRegistry {
       if (isset($this->providers[$id])) {
         throw new \InvalidArgumentException(sprintf('Duplicate ACULTA Content Index provider ID: %s.', $id));
       }
+      foreach ($provider->getSupportedEntityTypes() as $entityTypeId => $bundles) {
+        if (!is_string($entityTypeId) || preg_match('/^[a-z][a-z0-9_]*$/', $entityTypeId) !== 1 || !is_array($bundles) || $bundles === []) {
+          throw new \InvalidArgumentException(sprintf('Provider %s declares an invalid entity type or bundle list.', $id));
+        }
+        foreach ($bundles as $bundle) {
+          if (!is_string($bundle) || preg_match('/^[a-z][a-z0-9_]*$/', $bundle) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Provider %s declares an invalid bundle for entity type %s.', $id, $entityTypeId));
+          }
+        }
+      }
       $this->providers[$id] = $provider;
     }
   }
@@ -41,7 +53,7 @@ final class ContentIndexProviderRegistry {
   /**
    * Returns registered providers keyed by provider ID.
    *
-   * @return array<string, \Drupal\aculta_index\Provider\ContentIndexProviderInterface>
+   * @return array<string, \Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface>
    *   The registered providers.
    */
   public function all(): array {

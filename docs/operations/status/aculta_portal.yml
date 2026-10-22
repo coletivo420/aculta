@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Upload compartilhado com Fórum e LMS integrados (0.4.0-dev.252; teto LMS verificado por leitura no Runtime, container montando; smoke HTTP autenticado e revisão visual no Firefox/X11 de envio por aluno OK); Wiki sem campo de envio por usuário; retomar Fórum em Workflow e moderação após fechar as evidências visuais no Runtime e seguir dívidas do roadmap antes de RC ([uploads](docs/portal/USER-UPLOADS.md), [roadmap](docs/portal/ROADMAP.md), [dívidas](docs/operations/DEBT-REGISTER.md))
+next_phase: Manter contrato neutro do Content Index (`0.4.1-dev.4`) e avançar IDX 0.1-C para provider e escrita do catálogo; fila e reconstrução dependem das decisões registradas ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [roadmap Portal](docs/portal/ROADMAP.md))

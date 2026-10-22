@@ -1,3 +1,14 @@
+## 0.4.1-dev.4 — contrato neutro para o ACULTA Content Index (2026-10-22)
+
+- Adicionado o contrato público `ContentIndexProviderInterface` e os DTOs
+  `ContentIndexProjection` e `ContentIndexRelation` no namespace do Portal. O
+  submódulo opcional `aculta_index` pode descobrir providers por tag sem tornar
+  a API-base dependente dele.
+- A projeção representa uma identidade por entidade e idioma e aceita apenas
+  relações explícitas. Não inclui revisão, corpo, arquivos ou identificadores
+  pessoais.
+- Cobertura unitária inclui registro de provider e validação dos DTOs.
+
 ## 0.4.1-dev.3 — leitura da interseção restrita da política de upload (2026-10-22)
 
 - `UserUploadPolicy::acceptedExtensions()` devolve, para exibição, as extensões

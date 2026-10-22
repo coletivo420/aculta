@@ -16,6 +16,7 @@
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
 - [ACULTA-CONTENT-INDEX.md](ACULTA-CONTENT-INDEX.md) — catálogo transversal, fronteiras, estado e roadmap do `aculta_index`.
 - [Schema do Content Index](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md) — modelo SQL por geração e limites da projeção.
+- [Bridge Index ↔ Statistics](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md) — correlação opcional sem mover agregações ou métricas.
 - [Auditoria IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) — matriz de reaproveitamento, auditoria de Statistics e proveniência dos projetos contrib.
 - [ADR-013 — ACULTA Content Index](../decisions/ADR-013-aculta-content-index.md) — decisão arquitetural do catálogo derivado.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.

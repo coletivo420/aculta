@@ -1,10 +1,11 @@
 # ACULTA Content Index
 
-**Versão da iniciativa:** 0.1.0 — IDX 0.1-B em desenvolvimento; registry inicial implementado.
+**Versão da iniciativa:** 0.1.0 — IDX 0.1-C em desenvolvimento; schema e contratos iniciais implementados.
 **Dono:** Kernel `aculta_portal`, submódulo opcional `aculta_index`.
 **ADR:** [ADR-013](../decisions/ADR-013-aculta-content-index.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 **Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
+**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md).
 
 ## Propósito e propriedade
 

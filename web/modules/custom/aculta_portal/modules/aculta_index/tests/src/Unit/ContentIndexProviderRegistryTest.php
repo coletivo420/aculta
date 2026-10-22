@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Unit;
 
-use Drupal\aculta_index\Provider\ContentIndexProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Tests\UnitTestCase;
 
@@ -49,6 +49,19 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Index provider IDs must be lowercase machine names.');
     new ContentIndexProviderRegistry([$this->provider('Magazine')]);
+  }
+
+  /**
+   * Tests invalid supported bundle declarations are rejected.
+   */
+  public function testInvalidSupportedEntityTypesAreRejected(): void {
+    $provider = $this->createMock(ContentIndexProviderInterface::class);
+    $provider->method('getProviderId')->willReturn('magazine');
+    $provider->method('getSupportedEntityTypes')->willReturn(['node' => []]);
+
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('Provider magazine declares an invalid entity type or bundle list.');
+    new ContentIndexProviderRegistry([$provider]);
   }
 
   /**
