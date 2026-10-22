@@ -128,3 +128,7 @@ Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questio
 ## Conquistas, certificados e histórico — UX 0.7
 
 [Contrato visual de Conquistas, Certificados e Histórico](GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md): emissão e validação oficiais de certificados, PDF/QR, histórico pessoal e conquistas opcionais, sem métricas paralelas. `aculta_lms` permanece o módulo técnico. Planejamento apenas.
+
+## Consolidação visual e homologação — G420-UX 0.8
+
+[Contrato transversal, sistema visual e gates](GANJALAB420-VISUAL-QUALITY-GATES.md) integra Dashboard, Sala/H5P, Atividades, Biblioteca/PDF, Jornada, Turmas e Conquistas. A versão 0.8 consolida documentação e critérios de aceite, não declara interfaces implementadas. `aculta_lms` continua como módulo técnico.
