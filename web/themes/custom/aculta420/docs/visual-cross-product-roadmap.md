@@ -248,3 +248,7 @@ D-A.2-T: a base de listagem do GanjaLab ganhou isolamento de cache por usuário 
 All custom interfaces (GanjaLab, GanjaLab420, WE SATIVA and future consumers) share the ACULTA Studio interface foundation while aculta420 owns visual SDC/UI Suite components. Never reuse components outside that basis; preserve the global multidomain header. Distinct experiences need separate authorized navigation/purpose.
 
 [Contrato e roadmap transversal](../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+## Atualização STUDIO 0.1-B / D-A.2-T2
+
+STUDIO 0.1-B: providers de experiência propostos para GanjaLab, WE SATIVA e futuras interfaces, com SDC/UI Suite como única camada de apresentação. D-A.2-T2 endurece listing de estados; nova fila Wiki somente após provider seguro e testes. Nenhuma alteração visual nesta etapa.
