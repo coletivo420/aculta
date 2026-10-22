@@ -873,3 +873,7 @@ e não na `main`). Esta regra existe para que nenhum trabalho dependa de estado 
 - **Mensagem de commit** em português, com o trailer `Co-Authored-By` do agente.
 - **Encerramento:** antes de encerrar a sessão, informar o estado de `git status`, o
   branch e o commit de cada entrega. Se algo ficou fora do git, dizer o motivo.
+
+## Cache compartilhado (Claude, Codex e DeepSeek)
+
+Consulte `docs/operations/AGENT-CACHE.md` para regras de contexto enxuto e seleção manual de modelo fixo por sessão. Este guia não substitui os guardrails acima. Não carregue documentação não relacionada à tarefa nem repita logs extensos.
