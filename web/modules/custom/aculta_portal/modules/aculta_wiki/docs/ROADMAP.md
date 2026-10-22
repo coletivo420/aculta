@@ -121,3 +121,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 ## WES-UX 0.4 — projeto visual por telas (2026-10-22)
 
 [Inventário de 12 estruturas WE SATIVA](../../../../../../../docs/portal/WE-SATIVA-VISUAL-SCREENS-0.4.md), incluindo entrada pelo verbete, início, Meu trabalho, microtarefas, novo verbete, CKEditor, prévia, revisão, feedback, ajuda, fontes e mídia. Sequência V-0.4-A–R, mobile-first em toda a Wiki, componentes Core SDC/UI Suite exclusivamente, Institution Bar + Domain Header preservados. Cada tela depende de providers, estados e permissões reais; não implementar links fictícios. Autosave apenas futuro.
+
+## WES-UX V-0.4-B — entrada, início e Meu trabalho
+
+[Especificação detalhada das telas V01–V04](../../../../../../../docs/portal/WE-SATIVA-V-0.4-B-ENTRY-DASHBOARD-WORK.md): convite contextual único, seletor de intenções com ações realmente disponíveis, início com criação/continuação autorizadas e lista própria de trabalhos com filtros HTTP. Histórias WES-B-01 a WES-B-10, cenários vazios/erro/acesso, mobile-first 320px e claro/escuro. Somente Core SDC/UI Suite, sem rotas fictícias ou novas permissões. Próximo marco V-0.4-C (microtarefas e editor).
