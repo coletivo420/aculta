@@ -7,7 +7,8 @@
 - Cada avanço exige a revisão lida; workers concorrentes com checkpoint antigo
   recebem conflito e não substituem um cursor mais novo.
 - Adicionado `cursor_revision` ao schema e update hook idempotente 10001.
-- Kernel cobre avanço, recarga e recusa de checkpoint obsoleto.
+- Kernel cobre avanço, recarga, recusa de checkpoint obsoleto e aplicação do
+  update hook a uma instalação com o campo ainda ausente.
 
 ## 0.1.0-dev.7 — propriedade exclusiva de projeção por bundle
 

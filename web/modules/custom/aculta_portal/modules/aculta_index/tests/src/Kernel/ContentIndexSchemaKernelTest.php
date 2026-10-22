@@ -135,6 +135,28 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds the checkpoint CAS field to older installs.
+   */
+  public function testUpdateHookAddsCheckpointRevision(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields(['generation_id' => 'legacy-gen', 'status' => 'building'])
+      ->execute();
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_generation', 'cursor_revision');
+    $this->assertFalse($schema->fieldExists('aculta_index_generation', 'cursor_revision'));
+
+    aculta_index_update_10001();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_generation', 'cursor_revision'));
+    $this->assertSame('0', $database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['cursor_revision'])
+      ->condition('generation_id', 'legacy-gen')
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Tests an unvalidated generation cannot replace the active pointer.
    */
   public function testBuildingGenerationCannotActivate(): void {
