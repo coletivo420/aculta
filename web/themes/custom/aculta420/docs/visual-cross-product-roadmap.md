@@ -115,3 +115,7 @@ O [plano B1-02](theme-ux-0.8-b1-02-ownership-h1.md) autoriza Context Header SDC 
 ## Situação de transição B2 → B3
 
 B2 tem dois consumidores conectados em código (GanjaLab e Wiki) mas permanece pendente de homologação Runtime; ver [B2-05](theme-ux-0.8-b2-05-static-gates.md). A próxima fase B3 inicia por [auditoria de feedback](theme-ux-0.8-b3-feedback-audit.md), reutilizando somente SDCs alinhados a UI Suite, não copiando alertas Drupal e preservando o shell global.
+
+## Continuidade B6 — inventário atualizado da branch
+
+O tema já dispõe de `context-header`, `context-tabs` e `empty-state` como SDCs. A fotografia estática posterior contabilizou **41 metadados SDC / 65 stories**. A evolução visual segue em [B6: consolidação](theme-ux-0.8-b6-consolidation.md), sem duplicar padrões e sem declarar UI Patterns/Styles em Runtime verificados. Os números de inventário anteriores são históricos e não devem ser usados como contagem atual.
