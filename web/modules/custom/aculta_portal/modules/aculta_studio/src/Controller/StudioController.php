@@ -62,6 +62,12 @@ final class StudioController {
       return $build;
     }
 
+    // A entrada editorial oferece criação rápida antes da navegação por áreas.
+    // Somente ações liberadas pelo proprietário entram nos atalhos.
+    if ($aba === '') {
+      $build['welcome'] = $this->welcome($areas);
+    }
+
     // Nível 1: a área pedida, ou a primeira quando a URL é /studio.
     if ($aba === '') {
       $aba = (string) array_key_first($areas);
@@ -133,6 +139,58 @@ final class StudioController {
       ],
     ];
     return $build;
+  }
+
+  /**
+   * Publication-first landing: native SDC composition and authorized links.
+   *
+   * @param array<string, \Drupal\aculta_studio\StudioTabInterface> $areas
+   *   Areas already filtered by the presenter.
+   */
+  private function welcome(array $areas): array {
+    $items = [];
+    foreach ($areas as $area) {
+      foreach ($this->presenter->sectionsFor($area, $this->account) as $sectionId => $section) {
+        if ($sectionId !== 'criar') {
+          continue;
+        }
+        foreach ($section['tabs'] as $tab) {
+          foreach ($tab['actions'] as $action) {
+            $items[] = [
+              '#type' => 'component',
+              '#component' => 'aculta420:card',
+              '#slots' => [
+                'header' => ['#plain_text' => (string) $action['title']],
+                'content' => ['#plain_text' => (string) $area->getPluginDefinition()['label']],
+                'footer' => PortalLinkElement::build($action['title'], $action['url'], [
+                  'data-portal-ui' => 'studio-action',
+                  'data-aculta-studio' => 'action',
+                ]),
+              ],
+            ];
+          }
+        }
+      }
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-aculta-studio' => 'welcome'],
+      'header' => [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-header',
+        '#props' => [
+          'eyebrow' => (string) $this->t('GanjaLab'),
+          'title' => (string) $this->t('O que vamos criar hoje?'),
+          'subtitle' => (string) $this->t('Escolha como começar ou continue seu trabalho nas áreas abaixo.'),
+        ],
+      ],
+      'create' => $items === [] ? [] : [
+        '#type' => 'component',
+        '#component' => 'aculta420:content-grid',
+        '#props' => ['columns' => 2],
+        '#slots' => ['items' => $items],
+      ],
+    ];
   }
 
   /**
