@@ -42,12 +42,21 @@ final class PublicForumLastActivityAuthorHooks {
    */
   private array $legacyAuthors = [];
 
+  /**
+   * Activity and identity batches already prepared for a View render.
+   *
+   * @var \WeakMap<\Drupal\views\ViewExecutable, array<int, array{count: int, last_activity: int, last_post_id: int}>>
+   */
+  private \WeakMap $preparedViews;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_user.author_card_builder')]
     private readonly AuthorCardBuilder $authorCardBuilder,
     private readonly ForumPublicPostStatistics $postStatistics,
-  ) {}
+  ) {
+    $this->preparedViews = new \WeakMap();
+  }
 
   /**
    * Adds a cacheable identity card to public forum topic rows.
@@ -68,22 +77,28 @@ final class PublicForumLastActivityAuthorHooks {
       return;
     }
 
-    $topicIds = [];
-    foreach ($view->result as $resultRow) {
-      if ($resultRow instanceof ResultRow) {
-        $topicIds[] = (int) $view->field['nid']->getValue($resultRow);
+    if (isset($this->preparedViews[$view])) {
+      $statistics = $this->preparedViews[$view];
+    }
+    else {
+      $topicIds = [];
+      foreach ($view->result as $resultRow) {
+        if ($resultRow instanceof ResultRow) {
+          $topicIds[] = (int) $view->field['nid']->getValue($resultRow);
+        }
       }
+      $statistics = $this->postStatistics->getByTopics($topicIds);
+      $postIds = array_values(array_unique(array_filter(array_map(
+        static fn (array $item): int => (int) $item['last_post_id'],
+        $statistics,
+      ))));
+      $missingPostIds = array_values(array_diff($postIds, array_keys($this->forumPosts)));
+      if ($missingPostIds !== []) {
+        $this->forumPosts += $this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($missingPostIds);
+      }
+      $this->preloadAuthors($view, $statistics);
+      $this->preparedViews[$view] = $statistics;
     }
-    $statistics = $this->postStatistics->getByTopics($topicIds);
-    $postIds = array_values(array_unique(array_filter(array_map(
-      static fn (array $item): int => (int) $item['last_post_id'],
-      $statistics,
-    ))));
-    $missingPostIds = array_values(array_diff($postIds, array_keys($this->forumPosts)));
-    if ($missingPostIds !== []) {
-      $this->forumPosts += $this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($missingPostIds);
-    }
-    $this->preloadAuthors($view, $statistics);
 
     $topicId = (int) $view->field['nid']->getValue($row);
     $commentCount = (int) $view->field['last_comment_count']->getValue($row);

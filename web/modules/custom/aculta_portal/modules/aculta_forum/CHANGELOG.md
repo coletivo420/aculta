@@ -1,3 +1,11 @@
+## `0.1.0-dev.228` — preparar autores uma vez por View
+
+- A pré-carga de estatísticas, ForumPosts, contas e autores históricos da página
+  da View agora roda uma vez por instância de `ViewExecutable`; cada linha
+  continua escolhendo sua atividade e cartão pelas mesmas regras. A referência
+  é uma `WeakMap`, limitada ao ciclo de vida da View. Sem mudança Runtime.
+- Lint PHP e gates estáticos; sem testes automatizados.
+
 ## `0.1.0-dev.227` — evitar contagens repetidas do mesmo post pai
 
 - Durante a renderização de uma página da thread, a posição de um post pai fora
