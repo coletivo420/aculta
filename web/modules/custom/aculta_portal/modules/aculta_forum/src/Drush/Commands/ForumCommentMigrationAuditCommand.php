@@ -48,6 +48,8 @@ final class ForumCommentMigrationAuditCommand extends Command {
       'unpublished_comments' => 'Comments não publicados',
       'rejected_comments' => 'Comments marcados como rejeitados',
       'comments_with_legacy_author' => 'Comments com referência de autoria histórica',
+      'comments_with_missing_owner' => 'Comments com usuário autor ausente',
+      'comments_with_missing_legacy_author' => 'Comments com autoria histórica ausente',
       'comments_with_publication_timestamp' => 'Comments com timestamp de primeira publicação',
       'comments_with_translations' => 'Comments com traduções',
       'media_embeds' => 'Embeds de Media',

@@ -61,6 +61,8 @@ final class ForumCommentMigrationAudit {
       'unpublished_comments' => 0,
       'rejected_comments' => 0,
       'comments_with_legacy_author' => 0,
+      'comments_with_missing_owner' => 0,
+      'comments_with_missing_legacy_author' => 0,
       'comments_with_publication_timestamp' => 0,
       'comments_with_translations' => 0,
       'media_embeds' => 0,
@@ -101,6 +103,8 @@ final class ForumCommentMigrationAudit {
       $last_comment_id = (int) end($batch);
       $eligible_comment_ids = [];
       $parent_references = [];
+      $owner_references = [];
+      $legacy_author_references = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
         if (!$comment instanceof CommentInterface) {
           continue;
@@ -121,6 +125,10 @@ final class ForumCommentMigrationAudit {
         $report['eligible_comments']++;
         $eligible_comment_ids[] = $comment_id;
         $topic_ids[$topic_id] = TRUE;
+        $owner_id = (int) ($comment->getOwnerId() ?? 0);
+        if ($owner_id > 0) {
+          $owner_references[$comment_id] = (string) $owner_id;
+        }
         $translations = $comment->getTranslationLanguages();
         if (count($translations) > 1) {
           $report['comments_with_translations']++;
@@ -151,6 +159,7 @@ final class ForumCommentMigrationAudit {
         }
         if ($comment->hasField('field_autor_legado') && !$comment->get('field_autor_legado')->isEmpty()) {
           $report['comments_with_legacy_author']++;
+          $legacy_author_references[$comment_id] = (string) $comment->get('field_autor_legado')->target_id;
         }
         if ($comment->hasField('field_aculta_published_at') && !$comment->get('field_aculta_published_at')->isEmpty()) {
           $report['comments_with_publication_timestamp']++;
@@ -162,6 +171,23 @@ final class ForumCommentMigrationAudit {
             'parent_id' => $parent_id,
             'topic_id' => $topic_id,
           ];
+        }
+      }
+
+      if ($owner_references !== []) {
+        $users = $this->entityTypeManager->getStorage('user')->loadMultiple(array_values(array_unique($owner_references)));
+        foreach ($owner_references as $owner_id) {
+          if (!isset($users[$owner_id])) {
+            $report['comments_with_missing_owner']++;
+          }
+        }
+      }
+      if ($legacy_author_references !== []) {
+        $legacy_authors = $this->entityTypeManager->getStorage('aculta_legado_autor')->loadMultiple(array_values(array_unique($legacy_author_references)));
+        foreach ($legacy_author_references as $legacy_author_id) {
+          if (!isset($legacy_authors[$legacy_author_id])) {
+            $report['comments_with_missing_legacy_author']++;
+          }
         }
       }
 

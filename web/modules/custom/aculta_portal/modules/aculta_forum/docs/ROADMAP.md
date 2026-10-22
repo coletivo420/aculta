@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.170` | Auditar referências de autoria ausentes | Inventário confere em lotes os usuários autores e `aculta_legado_autor` referenciados; apresenta apenas contagens para reprovar a migração antes da execução. Smoke Homelab somente leitura: acervo elegível vazio, portanto casos com dados não validados. |
 | `0.1.0-dev.169` | Criar destino multilíngue e migrations de posts/pais | Destino salva uma revisão com traduções por Comment e mapeia CID a post ID; definições em duas passagens preservam metadados e ligam pais via mapa Core, sem stubs e com overwrite somente de `parent`. Formato incompatível, corpo vazio ou estado conflitante falham. Validação de integração pendente; sem Runtime. |
 | `0.1.0-dev.168` | Criar fonte Migrate paginada para Comments do Fórum | Plugin de origem usa keyset por CID com máximo inicial, lote configurável de 1–1.000 e um source row por Comment com traduções agrupadas; sem nome/e-mail/hostname. Core Migrate declarado no módulo e no sync. Destino, definições de migration e validação pendentes; sem Runtime. |
 | `0.1.0-dev.167` | Definir mapa de posts e relações em duas passagens | Source row por Comment agrupa traduções e um destino próprio salva uma entidade/mapa `cid → post ID`; migration dependente resolve pais com `migration_lookup`/`no_stub` e altera só o campo pai. Evita depender da ordem por CID e stubs fora do escopo. Implementação e prova pendentes; sem Runtime. |

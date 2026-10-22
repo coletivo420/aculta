@@ -1,3 +1,14 @@
+## `0.1.0-dev.170` — auditar referências de autoria ausentes
+
+- A auditoria paginada verifica em lote se usuários autores e entidades
+  `aculta_legado_autor` referenciadas ainda existem. A saída apresenta somente
+  contagens, sem IDs ou dados pessoais, para identificar referências que
+  reprovariam a validação do destino antes de executar a migration.
+- Smoke somente leitura no Homelab (`toca`, URI de teste do purpose `forum`):
+  0 Comments elegíveis, 0 referências de usuário/autoria legada ausentes e 0
+  posts revisionáveis existentes. O acervo vazio não valida casos com dados.
+  Nenhum conteúdo ou configuração do Runtime foi alterado.
+
 ## `0.1.0-dev.169` — criar destino multilíngue e migrations de posts/pais
 
 - O destino `aculta_forum_comment_post` grava todas as traduções do Comment em
