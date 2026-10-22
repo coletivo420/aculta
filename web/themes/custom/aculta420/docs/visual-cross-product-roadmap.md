@@ -138,3 +138,8 @@ O inventário da árvore da PR #297 confirmou **41 SDCs** no tema. A [matriz B6-
 ## B6-S1a-L3 — inspeção prioritária de assets (2026-10-22)
 
 A [auditoria B6-S1a-L3](theme-ux-0.8-b6-s1a-l3-priority-assets.md) leu 5 CSS e 3 stories e registrou divergência concreta em `cart-offcanvas.default.story.yml` (`items` ausente da metadata). O inventário atual contém 41 Twig, 32 CSS e 65 stories. **L3b** examinará os assets ainda não inspecionados; **S1b** rastreará consumidores; **S2** tratará correções reproduzidas. Shell multidomínio preservado e Runtime não homologado.
+
+
+## B6-S1a-L3b — revisão dirigida (2026-10-22)
+
+[Relatório L3b](theme-ux-0.8-b6-s1a-l3b-asset-findings.md): Twig do carrinho confirmou `sites` e `site.items`; story corrigida sem alterar o renderer. Inspecionados sete arquivos adicionais de Twig/stories, com limites documentados. **B6-S1a-L3c** segue para revisão sistemática dos demais assets e **B6-S1b** para consumidores. Homologação Runtime não executada.
