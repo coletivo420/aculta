@@ -12,11 +12,11 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Aviso por pessoa (ACULTA Fórum, F5.2, F-D21 e política de avisos de 2026-10-16).
+ * Personal notice entity (ACULTA Forum, F5.2 and F-D21).
  *
- * Avisos não são mensagens: são notificações do sistema para uma pessoa. Um aviso por pessoa, por tipo e por
- * tópico. Respostas novas somam ao contador do mesmo aviso (agrupamento tipo + assunto). O contador do site é
- * zerado quando a pessoa lê o tópico; o contador do e-mail é zerado pelo resumo diário.
+ * Notices are system notifications, not messages. One notice is stored per
+ * person, type, and topic. New replies increment its counters. Reading a topic
+ * clears the site counter; the daily digest clears the email counter.
  */
 #[ContentEntityType(
   id: 'aculta_aviso',
@@ -36,12 +36,25 @@ final class Aviso extends ContentEntityBase {
 
   use EntityChangedTrait;
 
-  /** Tipo do aviso de resposta em tópico seguido. */
+  /**
+   * Notice type for a reply in a followed topic.
+   */
   public const TIPO_RESPOSTA = 'forum_resposta';
 
-  /** Tipo do aviso de atualização de tópico seguido (revisão editada). */
+  /**
+   * Notice type for a revision of a followed topic.
+   */
   public const TIPO_ATUALIZACAO = 'forum_atualizacao';
 
+  /**
+   * Defines fields for personal notices.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Entity type definition.
+   *
+   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   *   Base field definitions.
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')

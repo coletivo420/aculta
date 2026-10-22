@@ -8,6 +8,9 @@
   resposta.
 - Nenhum campo foi adicionado. Testes de persistência e Runtime permanecem
   pendentes; não houve alteração no Runtime nesta entrega.
+- PHPDoc das classes `AvisoService` e `Aviso` foi alinhado ao padrão Drupal;
+  PHPCS Drupal/DrupalPractice passa nos arquivos dessas classes e no hook de
+  integração. Sem mudança de comportamento.
 
 ## 0.1.1-dev.74 — avisos de resposta para posts revisionáveis — 2026-10-22
 

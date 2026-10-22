@@ -16,10 +16,11 @@ use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Avisos de resposta em tópico seguido (ACULTA Fórum, F5.2, F-D21).
+ * Notices for replies in followed topics (ACULTA Forum, F5.2, F-D21).
  *
- * Um aviso por pessoa e por tópico. Cada comentário novo é contado uma vez (o último contado fica no próprio aviso).
- * Quem escreveu o comentário não recebe aviso dele. O aviso não é mensagem: não aparece na caixa de conversas.
+ * One notice is kept per person and topic. Each new comment is counted once;
+ * the last counted comment is stored on the notice. Authors do not receive
+ * notices for their own replies. Notices do not appear in the message inbox.
  */
 final class AvisoService implements ForumNoticeTransferInterface {
 
@@ -30,7 +31,17 @@ final class AvisoService implements ForumNoticeTransferInterface {
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
-  /** Regra de contagem: um comentário só conta se é mais novo que o último já contado. */
+  /**
+   * Whether a comment ID is newer than the last counted comment.
+   *
+   * @param int $commentId
+   *   Comment ID to compare.
+   * @param int $ultimoContado
+   *   Last counted Comment ID.
+   *
+   * @return bool
+   *   Whether the comment should be counted.
+   */
   public static function isNewComment(int $commentId, int $ultimoContado): bool {
     return $commentId > $ultimoContado;
   }
@@ -42,15 +53,33 @@ final class AvisoService implements ForumNoticeTransferInterface {
     return $revisionId > $ultimoContado;
   }
 
-  /** Regra de contagem de atualização: uma revisão só conta se é mais nova que a última contada. */
+  /**
+   * Whether a revision ID is newer than the last counted revision.
+   *
+   * @param int $revisionId
+   *   Revision ID to compare.
+   * @param int $ultimaContada
+   *   Last counted revision ID.
+   *
+   * @return bool
+   *   Whether the revision should be counted.
+   */
   public static function isNewRevision(int $revisionId, int $ultimaContada): bool {
     return $revisionId > $ultimaContada;
   }
 
   /**
-   * Notifica quem segue o tópico de uma atualização (revisão nova). Conta uma vez por revisão.
+   * Notifies topic followers about a new revision.
    *
-   * Substitui a entrega de atualização por mensagem (F-D21). Retorna quantos avisos mudaram.
+   * This replaces message delivery for topic updates (F-D21).
+   *
+   * @param \Drupal\node\NodeInterface $topico
+   *   Published topic being updated.
+   * @param int $revisionId
+   *   Revision ID that triggered the notice.
+   *
+   * @return int
+   *   Number of notices updated.
    */
   public function notificarAtualizacao(NodeInterface $topico, int $revisionId): int {
     if (!$this->accessPolicy->supportsTopic($topico) || !$topico->isPublished()) {
@@ -80,9 +109,10 @@ final class AvisoService implements ForumNoticeTransferInterface {
   }
 
   /**
-   * Avisos da própria pessoa, do mais recente para o mais antigo. Mostra lidos e não lidos (contador > 0 primeiro).
+   * Loads a person's notices, with unread items first and newest first.
    *
    * @return \Drupal\aculta_messenger\Entity\Aviso[]
+   *   Accessible notices for the account.
    */
   public function listarDaPessoa(int $uid, int $limite = 100): array {
     $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
@@ -108,7 +138,17 @@ final class AvisoService implements ForumNoticeTransferInterface {
     )));
   }
 
-  /** Itens não lidos da pessoa em um tópico, somando todos os tipos (contador individual do tópico). */
+  /**
+   * Counts a person's unread notices for one topic.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int $nid
+   *   Topic node ID.
+   *
+   * @return int
+   *   Number of unread notices across all types for the topic.
+   */
   public function contadorDoTopico(int $uid, int $nid): int {
     $topic = $this->loadTopic($nid);
     if (!$this->accessPolicy->canViewTopic($topic, $uid)) {
@@ -127,7 +167,15 @@ final class AvisoService implements ForumNoticeTransferInterface {
     return $total;
   }
 
-  /** Quantos tópicos (avisos agrupados por tipo + assunto) têm itens não lidos para a pessoa. */
+  /**
+   * Counts topics with unread personal notices.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   *
+   * @return int
+   *   Number of accessible topics with unread notices.
+   */
   public function naoLidosTotal(int $uid): int {
     $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
@@ -154,7 +202,13 @@ final class AvisoService implements ForumNoticeTransferInterface {
   }
 
   /**
-   * Registra um comentário publicado de tópico: soma nos avisos de quem segue o tópico. Retorna quantos avisos mudaram.
+   * Registers a published reply for followers of its topic.
+   *
+   * @param \Drupal\comment\CommentInterface $comment
+   *   Published Forum comment.
+   *
+   * @return int
+   *   Number of notices updated.
    */
   public function registrarResposta(CommentInterface $comment): int {
     if (!$comment->isPublished() || $comment->bundle() !== 'aculta_discussion_post') {
@@ -300,7 +354,7 @@ final class AvisoService implements ForumNoticeTransferInterface {
     if (!$this->accessPolicy->canViewTopic($this->loadTopic($nid), $uid)) {
       return;
     }
-    // Todos os tipos de aviso deste tópico: ler o tópico zera respostas e atualizações.
+    // Reading a topic clears its reply and update notices.
     $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $uid)
@@ -336,6 +390,21 @@ final class AvisoService implements ForumNoticeTransferInterface {
     return $this->accessPolicy->canViewTopic($this->loadTopic($nid), $uid);
   }
 
+  /**
+   * Loads a notice or creates one for a person, topic, and type.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int $nid
+   *   Topic node ID.
+   * @param string $titulo
+   *   Topic title stored on a new notice.
+   * @param string $tipo
+   *   Notice type.
+   *
+   * @return \Drupal\aculta_messenger\Entity\Aviso
+   *   Existing or new notice entity.
+   */
   private function avisoDe(int $uid, int $nid, string $titulo, string $tipo): Aviso {
     $ids = $this->query($uid, $nid, $tipo);
     $storage = $this->entityTypeManager->getStorage('aculta_aviso');
@@ -362,6 +431,19 @@ final class AvisoService implements ForumNoticeTransferInterface {
     return $this->entityTypeManager->getStorage('node')->load($nid);
   }
 
+  /**
+   * Finds the notice matching one person, topic, and type.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int $nid
+   *   Topic node ID.
+   * @param string $tipo
+   *   Notice type.
+   *
+   * @return int[]
+   *   Matching notice entity IDs.
+   */
   private function query(int $uid, int $nid, string $tipo = Aviso::TIPO_RESPOSTA): array {
     return $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
