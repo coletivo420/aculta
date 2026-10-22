@@ -48,15 +48,22 @@ de Node e do estado publicado do tópico e do post.
 Antes de habilitar posts, a integração precisa:
 
 - indexar assunto e corpo do post, junto com valores coerentes de tipo,
-  categoria e Domain para filtros fixos da View;
+  categoria e Domain derivados do tópico hospedeiro para filtros fixos da View;
 - aplicar os grants e a política do tópico hospedeiro durante a consulta, antes
   da paginação e dos totais. A checagem de acesso padrão da View Search API é
   defesa adicional, mas a documentação upstream alerta que checagens após a
   busca não refletem corretamente facetas e paginação;
+- combinar os campos de tópico e post nos filtros fixos existentes de tipo,
+  Domain e categoria. O subscriber atual filtra `forum_domain` e falha fechado
+  por `nid=0` fora do purpose; os posts precisam de campos indexados próprios
+  para que o escopo mantenha a mesma semântica nas duas fontes;
 - manter a checagem de acesso da View habilitada e preservar o filtro fixo de
   bundle e o escopo de Domain, sem filtros expostos que permitam removê-los;
 - apresentar resultados com link para a âncora canônica
-  `forum-post-{id}` e um resumo seguro, usando o display de busca do post;
+  `forum-post-{id}` dentro do tópico hospedeiro. `ForumPost` não declara rota
+  canônica própria e a thread renderiza essa âncora dentro da página Node; o
+  resultado precisa gerar a URL do tópico e resumir o corpo do post sem expor
+  revisões não públicas;
 - cobrir acesso anônimo/autenticado, tópico ou post não publicado, grants de
   Node, purpose/Domain incorreto e filtro de categoria antes de reindexar e
   liberar a integração.
