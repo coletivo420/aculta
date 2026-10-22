@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
@@ -36,13 +37,17 @@ final class LearningDashboardControllerTest extends UnitTestCase {
     $deadlineAccess = new ClassActivityDeadlineAccessCheck($entityTypeManager, $account);
     $deadlines = new ClassActivityDeadlineManager($entityTypeManager, $deadlineAccess);
 
+    $dateFormatter = $this->createMock(DateFormatterInterface::class);
+    $translator = $this->getStringTranslationStub();
+    $composer = new LearnerDashboardComposer($dashboards, $account, $dateFormatter, $translator);
     $controller = new LearningDashboardController(
       $dashboards,
       $deadlines,
       $entityTypeManager,
       $account,
-      $this->createMock(DateFormatterInterface::class),
-      $this->getStringTranslationStub(),
+      $dateFormatter,
+      $translator,
+      $composer,
     );
 
     $build = $controller->student();
