@@ -127,3 +127,8 @@ ACL por participante e estado; tenant/purpose Wiki, isolamento de Group quando a
 | **WES-0.3-R** | bateria de Runtime e homelab antes de RC | evidência por role, estado, viewport e tema |
 
 **Regra de execução:** um commit por fatia, documentar no mesmo commit; não tocar GanjaLab ou GanjaLab420. Esta arquitetura é **planejamento**, não instrução para habilitar tudo automaticamente.
+
+
+## Primeiro componente planejado — C01
+
+[WE SATIVA C01 — Porta de contribuição contextual](WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md) especifica a ação única no verbete, a seleção de intenções, reuso SDC/UI Suite, estados de acesso, mobile-first e microfases C01-A–R. Não cria novo componente SDC ou rota antes da auditoria de consumidores e permissões.
