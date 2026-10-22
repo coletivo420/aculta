@@ -3,14 +3,14 @@
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.
 
-- Rota: `/studio` no domínio de conta (`conta.aculta.*/studio`), com `_aculta_domain_purpose: account` e permissão
+- Rota canônica: `/ganjalab` no domínio de conta (`conta.aculta.*/ganjalab`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.
 - Áreas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada área declara se o dono está disponível (`isAvailable()`),
   a permissão de exibição (`access()`) e as seções (`sections()`): cada seção do submenu tem as próprias abas, e cada
   aba lista as ações, cada uma com o acesso da rota do dono.
 - Presenter: `StudioPresenter::visibleTabs()` mostra só abas com dono ativo e permissão concedida, em ordem de peso.
 - Aba atual: argumento `aba` (id do plugin). Sem argumento ou com id desconhecido, a primeira aba visível.
-- Quatro URLs: `/studio`, `/studio/{área}`, `/studio/{área}/{seção}` e `/studio/{área}/{seção}/{aba}`. Segmento
+- Quatro URLs canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}/{seção}` e `/ganjalab/{área}/{seção}/{aba}`. Segmento
   inexistente ou fora do alcance da conta responde 404. Cada nível é um link real; sem JavaScript, a navegação segue normal.
 - Galerias não aparece para a conta de teste: a rota de criação de galeria do dono fica no painel administrativo do
   domínio principal. A conta recebe a permissão de mídia pelo papel, mas o acesso à rota continua negado.
