@@ -50,3 +50,58 @@ aculta_studio.tab:
     sub: '[a-z0-9-]+'
   options:
     _aculta_domain_purpose: account
+
+
+# Compatibilidade temporária de URLs antigas; os geradores de URL utilizam os IDs canônicos acima.
+# Não eliminar até revisar links externos, menus, referências e políticas de redirecionamento.
+aculta_studio.legacy_home:
+  path: /studio
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: GanjaLab
+    aba: ''
+    secao: ''
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.legacy_area:
+  path: /studio/{aba}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: GanjaLab
+    secao: ''
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.legacy_section:
+  path: /studio/{aba}/{secao}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: GanjaLab
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.legacy_tab:
+  path: /studio/{aba}/{secao}/{sub}
+  defaults:
+    _controller: 'aculta_studio.controller:page'
+    _title: GanjaLab
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+    sub: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
