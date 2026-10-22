@@ -60,6 +60,12 @@ final class ForumCommentMigrationAudit {
       'comments_with_translations' => 0,
       'media_embeds' => 0,
       'gallery_embeds' => 0,
+      'unique_media_references' => 0,
+      'media_embeds_without_uuid' => 0,
+      'missing_media_references' => 0,
+      'unique_gallery_references' => 0,
+      'gallery_embeds_without_uuid' => 0,
+      'missing_gallery_references' => 0,
       'flaggings' => 0,
       'flaggings_by_flag' => [],
       'topics' => 0,
@@ -74,6 +80,8 @@ final class ForumCommentMigrationAudit {
     $topic_ids = [];
     $topic_by_comment = [];
     $parent_references = [];
+    $media_uuids = [];
+    $gallery_uuids = [];
 
     foreach (array_chunk($comment_ids, $batch_size) as $batch) {
       $eligible_comment_ids = [];
@@ -109,7 +117,12 @@ final class ForumCommentMigrationAudit {
           if ($translation->hasField('comment_body') && !$translation->get('comment_body')->isEmpty()) {
             $format = (string) $translation->get('comment_body')->format;
             $report['body_formats'][$format] = ($report['body_formats'][$format] ?? 0) + 1;
-            $this->countEmbeds((string) $translation->get('comment_body')->value, $report);
+            $this->countEmbeds(
+              (string) $translation->get('comment_body')->value,
+              $report,
+              $media_uuids,
+              $gallery_uuids,
+            );
           }
         }
         if ($comment->isPublished()) {
@@ -188,6 +201,10 @@ final class ForumCommentMigrationAudit {
     }
 
     $report['topics'] = count($topic_ids);
+    $report['unique_media_references'] = count($media_uuids);
+    $report['missing_media_references'] = $this->countMissingEntities('media', array_keys($media_uuids), $batch_size);
+    $report['unique_gallery_references'] = count($gallery_uuids);
+    $report['missing_gallery_references'] = $this->countMissingEntities('media_gallery', array_keys($gallery_uuids), $batch_size);
     $report['response_notices'] = $this->inspectResponseNotices(
       array_keys($topic_ids),
       $topic_by_comment,
@@ -293,8 +310,17 @@ final class ForumCommentMigrationAudit {
    *   Filtered-text source stored in the Comment body.
    * @param array<string, mixed> $report
    *   The audit report being built.
+   * @param array<string, bool> $media_uuids
+   *   The unique Media UUIDs encountered.
+   * @param array<string, bool> $gallery_uuids
+   *   The unique Gallery UUIDs encountered.
    */
-  private function countEmbeds(string $body, array &$report): void {
+  private function countEmbeds(
+    string $body,
+    array &$report,
+    array &$media_uuids,
+    array &$gallery_uuids,
+  ): void {
     $document = Html::load($body);
     $xpath = new \DOMXPath($document);
     foreach ($xpath->query('//*[@data-entity-uuid and @data-entity-type]') as $element) {
@@ -303,11 +329,56 @@ final class ForumCommentMigrationAudit {
       }
       if ($element->getAttribute('data-entity-type') === 'media') {
         $report['media_embeds']++;
+        $uuid = $element->getAttribute('data-entity-uuid');
+        if ($uuid !== '') {
+          $media_uuids[$uuid] = TRUE;
+        }
+        else {
+          $report['media_embeds_without_uuid']++;
+        }
       }
       elseif ($element->getAttribute('data-entity-type') === 'media_gallery') {
         $report['gallery_embeds']++;
+        $uuid = $element->getAttribute('data-entity-uuid');
+        if ($uuid !== '') {
+          $gallery_uuids[$uuid] = TRUE;
+        }
+        else {
+          $report['gallery_embeds_without_uuid']++;
+        }
       }
     }
+  }
+
+  /**
+   * Counts referenced UUIDs absent from an entity type, without returning IDs.
+   *
+   * @param string $entity_type
+   *   The referenced entity type.
+   * @param list<string> $uuids
+   *   Unique UUIDs found in the source markup.
+   * @param int $batch_size
+   *   Maximum number of UUIDs checked per query.
+   *
+   * @return int
+   *   Number of UUIDs that do not resolve to an entity.
+   */
+  private function countMissingEntities(string $entity_type, array $uuids, int $batch_size): int {
+    if ($uuids === [] || $this->entityTypeManager->getDefinition($entity_type, FALSE) === NULL) {
+      return count($uuids);
+    }
+    $storage = $this->entityTypeManager->getStorage($entity_type);
+    $found = [];
+    foreach (array_chunk($uuids, $batch_size) as $batch) {
+      $ids = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('uuid', $batch, 'IN')
+        ->execute();
+      foreach ($storage->loadMultiple($ids) as $entity) {
+        $found[$entity->uuid()] = TRUE;
+      }
+    }
+    return count(array_diff_key(array_fill_keys($uuids, TRUE), $found));
   }
 
 }

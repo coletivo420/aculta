@@ -143,7 +143,10 @@ testes de workflow; a configuração da política inicial continua sendo a de
    entidade; a migração precisará recriar a associação no destino pela API e
    validar quantidade, dono/global e timestamp. A dev.155 inventaria os avisos
    `forum_resposta` do Messenger por tópico elegível e classifica o marcador
-   `ultimo_comentario` para guiar a conversão pelo mapa source/destination.
+   `ultimo_comentario` para guiar a conversão pelo mapa source/destination. A
+   dev.157 confere existência dos UUIDs de Media/Gallery embutidos e conta
+   embeds sem UUID, sem carregar nem registrar conteúdo referenciado; arquivos
+   e imagens continuam sob a governança de `aculta_image` e `aculta_gallery`.
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o

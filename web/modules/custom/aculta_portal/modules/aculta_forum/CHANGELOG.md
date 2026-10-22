@@ -1,3 +1,11 @@
+## `0.1.0-dev.157` — conferir UUIDs de anexos citados pelos Comments
+
+- A auditoria reúne UUIDs únicos de Media e `media_gallery` encontrados nos
+  embeds dos Comments elegíveis, conta referências sem entidade correspondente
+  e embeds sem UUID. Só imprime contagens; não carrega conteúdo binário, altera
+  uso de arquivos ou modifica entidades. Ingestão/reatribuição continua sob
+  `aculta_image` e `aculta_gallery`.
+
 ## `0.1.0-dev.156` — incluir posts revisionáveis na atividade da conta
 
 - A aba Comentários de Minha Conta passa a combinar Comments públicos e posts
