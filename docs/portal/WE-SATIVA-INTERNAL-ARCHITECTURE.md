@@ -132,3 +132,8 @@ ACL por participante e estado; tenant/purpose Wiki, isolamento de Group quando a
 ## Primeiro componente planejado — C01
 
 [WE SATIVA C01 — Porta de contribuição contextual](WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md) especifica a ação única no verbete, a seleção de intenções, reuso SDC/UI Suite, estados de acesso, mobile-first e microfases C01-A–R. Não cria novo componente SDC ou rota antes da auditoria de consumidores e permissões.
+
+
+## Política editorial aprovada — contribuição comunitária moderada
+
+Todas as contas com **e-mail confirmado** poderão contribuir pelo WE SATIVA, observando acesso efetivo e isolamento de domínio. Configuração exportada já permite criar/editar verbetes próprios e enviar revisão; publicações são responsabilidade de `content_editor`. Propostas para verbetes de terceiros **não podem** usar `edit own` como se fosse `edit any`: seguir a [C01-B](WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) e decidir backend próprio de propostas revisáveis antes de oferecer microtarefas. Autosave Form permanece futuro.
