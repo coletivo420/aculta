@@ -131,12 +131,15 @@ Estas fases dependem de S0–S4. Nenhuma tem versão alvo de 1.0.
 - Critério: indexação sem alterar índices de produção sem autorização.
 
 ### F3 — Participação
-- Fórum e Participation Hub, com Domain próprio e Forum/Node/Comment/Taxonomy como fontes.
+- Fórum e Participation Hub, com Domain próprio e Node/Taxonomy/Views,
+  Comments durante a migração e `ForumPost` revisionável como fontes; avisos
+  seguem `aculta_messenger`.
 - Critério: nenhum storage paralelo; access e cache por Domain.
 
-O roadmap específico aprovado em 2026-10-19 reconstrói o ACULTA Forum por versões
-`0.1.0-dev.1`–`0.1.0-dev.17`, com Drupal Forum contrib legado apenas até uma fase
-de retirada controlada. A fase ativa e seus gates estão em
+O roadmap específico aprovado em 2026-10-19 reconstrói o ACULTA Forum com Nodes,
+Taxonomy, Views e posts revisionáveis; Comments do Fórum coexistem durante a
+migração aprovada. `drupal/forum` foi retirado do Composer e do Runtime de teste
+na limpeza registrada pelo componente. A fase ativa e seus gates estão em
 [`aculta_forum/docs/ROADMAP.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md);
 esta linha não substitui nem duplica a sequência do Portal.
 
@@ -147,7 +150,7 @@ visíveis; escopo e validações em
 [`aculta_gallery/docs/ARQUITETURA.md`](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md).
 
 ### F4 — Engajamento
-- Flag para favoritos e follows; Comment Notify para notificações, com opt-in e privacidade.
+- Flag para salvar/seguir e `aculta_messenger` para avisos, com acesso contextual, opt-in e privacidade.
 - Critério: consentimento e envio de e-mail validados em S3.
 
 ## Linha LMS + PDF global

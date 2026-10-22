@@ -47,20 +47,24 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 ## Fórum (`forum`)
 
-- Estado legado atual: enquanto `drupal/forum` não for removido na fase de migração aprovada,
-  preservar sua operação e não desinstalar/desabilitar nem apagar dados como efeito colateral.
-- Arquitetura alvo ACULTA Forum: tópico público independente é bundle de Node; respostas e
-  comentários contextuais usam Comment; categorias usam Taxonomy; navegação/listagem usa Views.
-  Não criar entidades Topic/Reply próprias, tabelas de discussão ou storage paralelo.
+- O ACULTA Forum novo é a implementação vigente: tópicos públicos independentes são Nodes;
+  categorias usam Taxonomy e navegação/listagem usa Views. Posts públicos revisionáveis
+  coexistem com Comments durante a migração aprovada; Comments contextuais de Publicações,
+  LMS e Wiki permanecem sob seus contratos. Não criar storage paralelo de tópico/categoria.
+- `drupal/forum` foi retirado do Composer e do Runtime de teste na limpeza aprovada. Conteúdo e
+  configuração legados foram inventariados/limpos conforme
+  `aculta_forum/docs/MIGRATION-REMOVAL.md`; não reintroduzir o contrib nem presumir presença
+  de dados antigos. Operações em Runtime continuam sujeitas ao preflight e à política de
+  recuperação deste AGENTS.md.
 - Publicações, LMS e Wiki discutem na própria entidade/contexto autorizado; não criar tópico
   público automático para publicação, atividade, turma ou verbete. O provider LMS é opcional e
   revalida Group/membership; a Wiki aguarda sua reimplementação.
-- Não criar `ForumController` só para reconstruir a listagem nativa. Mapear rotas e Views nativas
-  antes de escrever controller/subscriber custom.
+- Reutilizar Node, Taxonomy, Views, Comment e demais APIs Core/contrib quando seus contratos
+  se aplicarem; extensões do Portal devem seguir o roadmap atual do `aculta_forum`.
 - Acesso direto a um tópico em host incorreto é bloqueado pela política multidomínio.
 - Acompanhar tópico e favoritos usam Flag, não storage custom.
-- Moderação reutiliza permissões, Comment, Node, Views e ferramentas administrativas. O Portal
-  Admin pode ser hub de acesso e resumo, mas não um segundo CRUD de moderação.
+- Moderação reutiliza permissões, Comment/ForumPost, Node, Views e ferramentas administrativas.
+  O Portal Admin pode ser hub de acesso e resumo, mas não um segundo CRUD de moderação.
 - Conta agrega participação sem duplicar comentários.
 
 ## Revista (`magazine`)

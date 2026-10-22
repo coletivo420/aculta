@@ -1,3 +1,11 @@
+## `0.1.0-dev.230` — alinhar guardrails e roadmap do Portal
+
+- Contratos gerais e políticas locais deixam de descrever `drupal/forum` como
+  implementação vigente e passam a apontar para a reconstrução aprovada, a
+  coexistência temporária de Comments/ForumPost e a sequência atual do módulo.
+  A fixture do ForumPost também passa a declarar o pacote próprio exigido pelo
+  guardrail de módulos ACULTA. Sem alteração Runtime.
+
 ## `0.1.0-dev.229` — agregar último post sem subconsulta correlacionada
 
 - A consulta da página agrega a data mais recente por tópico e junta o ID de
