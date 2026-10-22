@@ -87,3 +87,11 @@
 ## Próxima execução
 
 **D-A.2-T:** implementar testes de caracterização e endurecer cache/access no listing sem regressão. **D-B-S:** construir stories SDC reais somente quando provider/cache forem auditados. **D-C:** integrar a seção Moderação da WikiTab existente. **D-R:** testar no homelab; nenhum gate Runtime ou screenshot real realizado nesta fase.
+
+## D-A.2-T — primeira correção de código (2026-10-22)
+
+**Commits:** `0a004cc` (StudioListingBuilder) e `7709f12` (Unit). A listagem de Nodes, Comments, Groups e Revisions agora acrescenta cache context `user` junto a `user.permissions`, isolando resultados por conta; isso não dispensa tags/grants adicionais. A listagem de revisões verifica `view` e `view revision` na revisão antes de montar link ou metadados. Cabeçalho duplicado foi removido.
+
+**Testes incluídos mas NÃO executados no runtime:** `StudioListingRevisionAccessTest` caracteriza (1) Node visível e revisão negada, (2) ambas operações concedidas, (3) Node negado e short-circuit. Não alegar testes PASS nem afirmar que a operação `view revision` cobrirá todos os handlers sem Kernel. Próximo agente deve executar PHPUnit/Drupal Kernel e confirmar semântica dos handlers.
+
+**Continua bloqueado:** a consulta de `content_moderation_state` com `accessCheck(FALSE)` e associação de estado por nid, a listagem sem paginação, grants de comentário hospedeiro, relações Group e cache por domínio. Por isso **não** reutilizar a tabela genérica como fila editorial Wiki e não ativar seção Moderação até concluir provider Wiki com revisão autorizada. Garantir testes de cache com duas contas do mesmo papel, Node publicado com draft privado e grupos LMS diferentes.
