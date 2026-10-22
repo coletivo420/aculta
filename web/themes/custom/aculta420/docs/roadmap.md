@@ -386,3 +386,7 @@ A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com du
 ## B3 — primeiro estado neutro reutilizado
 
 `aculta420:empty-state` criado com Core SDC, UI Patterns stories e CSS semântico, conectado em resultados vazios de busca Wiki e listas vazias de cursos/certificados GanjaLab420. [Evidências B3](theme-ux-0.8-b3-feedback-audit.md). Runtime/QA pendentes; Messenger/Site Alert/Studio AJAX preservados.
+
+## B4 — Painéis da barra multidomínio e Minha Conta
+
+[Auditoria e correções B4](theme-ux-0.8-b4-utility-panels.md): eliminado X que ocultava itens de carrinho sem remover do Commerce; largura/rolagem/foco de offcanvas padronizados para avisos, mensagens e carrinho; reflow mobile da Minha Conta ajustado. Alterações commitadas no código, testes Runtime PENDENTES. Próxima fase B4-02 de homologação de overlays/controles; preservar Institution Bar + Domain Header.
