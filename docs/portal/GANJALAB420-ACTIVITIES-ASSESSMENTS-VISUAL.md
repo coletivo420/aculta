@@ -55,3 +55,29 @@ WCAG 2.2 AA, suporte a teclado/leitor de tela e touch, labels visíveis, agrupam
 | 0.4.3-E | auditoria UX, acessibilidade e documentação | evidência Runtime |
 
 **Não instalar novo módulo, renomear `aculta_lms` ou implementar workflows nesta etapa.**
+
+## Refinamento de interface — avaliação guiada e confirmação (2026-10-22)
+
+O protótipo mobile apresenta **uma questão por vez**, progresso local de navegação (“questão 2 de N”), alternativas em grupos semânticos, botões anterior/próxima e etapa explícita **Revisar envio**. A revisão lista respondidas/pendentes, oferece retorno a cada questão e só apresenta “Enviado” após resposta confirmada pelo LMS.
+
+**Não confundir protótipo e recurso implementado:** o sequenciamento de perguntas, rascunho entre etapas e edição pré-envio são condicionados às capacidades do Form API/answer plugin existente. Não quebrar a submissão nativa em múltiplas telas sem garantia de preservação, validação, CSRF e tentativas. Progresso de navegação entre perguntas não é progresso curricular. Em perda de rede, não declarar respostas enviadas.
+
+### Wireframe da navegação mobile
+```text
+‹ Sala · Questionário de fundamentos
+QUESTÃO 1 DE N           Respondidas X/N
+[Enunciado e instruções]
+(o) Alternativa A
+( ) Alternativa B
+( ) Alternativa C
+[Anterior]       [Próxima]
+       ↓
+Revisar antes de enviar
+Questão 1: respondida     [Editar]
+Questão 2: sem resposta   [Editar]
+[Confirmar envio pelo formulário real]
+       ↓
+Recibo confirmado no backend: enviada / aguarda correção
+```
+
+Documentos anexados usam o serviço privado já contratado; H5P preserva seu próprio player e resultados reais. O feedback docente fica visível apenas no estado e autorização correspondentes. A interface não calcula notas, não cria gradebook, nem substitui `aculta_lms`.
