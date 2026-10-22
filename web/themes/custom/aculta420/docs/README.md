@@ -77,3 +77,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b6-s1-contract-audit.md](theme-ux-0.8-b6-s1-contract-audit.md) — matriz versionada dos 41 SDCs da branch e protocolo de auditoria contratual por componente; B6-S1a/S1b e Runtime ainda pendentes.
 
 - [theme-ux-0.8-b6-s1a-contract-findings.md](theme-ux-0.8-b6-s1a-contract-findings.md) — inspeção estática do primeiro lote (13 metadata, 7 Twig), achados acionáveis e roteiro B6-S1a-L2.
+
+- [theme-ux-0.8-b6-s1a-l2-metadata-audit.md](theme-ux-0.8-b6-s1a-l2-metadata-audit.md) — leitura dos 28 metadados restantes e finding dos quatro schemas legados de doação; Twig/CSS/stories pendentes.
