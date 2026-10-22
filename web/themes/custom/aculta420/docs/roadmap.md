@@ -390,3 +390,7 @@ A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com du
 ## B4 — Painéis da barra multidomínio e Minha Conta
 
 [Auditoria e correções B4](theme-ux-0.8-b4-utility-panels.md): eliminado X que ocultava itens de carrinho sem remover do Commerce; largura/rolagem/foco de offcanvas padronizados para avisos, mensagens e carrinho; reflow mobile da Minha Conta ajustado. Alterações commitadas no código, testes Runtime PENDENTES. Próxima fase B4-02 de homologação de overlays/controles; preservar Institution Bar + Domain Header.
+
+## B4-02 — proteção das gavetas contra respostas AJAX obsoletas
+
+[Relatório B4-02](theme-ux-0.8-b4-02-ajax-drawer-race.md): `messenger-drawers.js` agora ignora respostas de requests cancelados/superados em Avisos e Mensagens, evita erro obsoleto e encerra `aria-busy` apenas para a requisição ativa. Correção de código commitada; QA em navegador pendente. Próximo B4-03/B5: gates Runtime de overlays e catálogo visual compartilhado, mantendo Institution Bar + Domain Header.
