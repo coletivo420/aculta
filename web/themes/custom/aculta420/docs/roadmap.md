@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.1-dev.3 | Banner de consentimento no fluxo normal para não cobrir conteúdo | Firefox ESR/X11: 15/15; capturas 390/768/1024 px em claro/escuro; sem overflow; foco do link de salto verificado | Sai da posição fixa e permanece após o rodapé; cartões sem sobreposição nas capturas inspecionadas |
 | 0.6.1-dev.2 | Hierarquia semântica de grupos e cartões de categoria | Firefox ESR/X11, seis viewports, sem overflow; modo escuro/zoom/dispositivo real pendentes | Grupo H2; categoria H3 com tipografia existente; Foundation espera `0.6.1-dev.2` |
 | 0.6.0-dev.147 | Template da publicação `revista` conectado ao SDC existente | Código criado; revisão visual no Runtime pendente | `node--revista--full.html.twig` reutiliza `revista-publication` sem duplicar CSS ou lógica editorial |
 | 0.6.0-dev.146 | Grade e abas das planilhas com tokens em claro e escuro | Medido no Runtime (Chromium X11) em 390 e 768 px, claro e escuro; revisão em Firefox pendente | `document-viewer.css` com a cadeia completa de seletores |

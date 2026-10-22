@@ -1,3 +1,14 @@
+## 0.6.1-dev.3 — banner de consentimento sem sobreposição (2026-10-22)
+
+Classificação: PATCH de acessibilidade e reflow.
+
+- O banner passa a ocupar o fluxo após o rodapé, sem `position: fixed` cobrindo
+  conteúdo ou foco até a decisão. Modos claro/escuro mantêm a mesma geometria.
+- Firefox ESR no X11 do Runtime de teste: 15/15 verificações; capturas em
+  390, 768 e 1024 CSS px, claro/escuro, sem overflow horizontal. Inspeção das
+  capturas confirmou cartões livres da sobreposição em 390 px (claro/escuro) e
+  1024 px (escuro); foco do link de salto verificado. Sem alteração de conteúdo.
+
 ## 0.6.1-dev.2 — hierarquia semântica dos cartões de categoria (2026-10-22)
 
 Classificação: PATCH de acessibilidade e tipografia na linha aberta.
