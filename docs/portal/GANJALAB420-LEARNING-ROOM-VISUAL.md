@@ -85,3 +85,7 @@ Componentes *candidatos* no ACULTA420: `learning-room-shell`, `learning-course-o
 | 0.4-F | browser/Kernel/Unit, acessibilidade e documentação | aceite Runtime, Group A/B e domínio |
 
 **Matriz de homologação:** 320, 360, 390, 768, 1024, 1280 e 1440px; dark/light; estudante A/B; grupos A/B; roles docente/estudante, autenticação, conclusão/nota, H5P, PDF privado, voltar/avançar, erro/retry e teclado. A implementação respeitará gates existentes F6/F7/F8/F9/F10/F12/F15/F16/RC do roadmap LMS. Nenhum desses marcos é declarado concluído por este plano.
+
+## Cinco modelos de conteúdo — evolução 0.4.1
+
+O contrato de [modelos de aula (leitura, vídeo e H5P)](GANJALAB420-LESSON-MODELS-VISUAL.md) define cinco variantes do mesmo shell: **leitura, vídeo, atividade, documento/PDF e H5P interativo**. H5P tem exigências próprias de escala no mobile, teclado, tentativas, CSP, arquivos privados, fallback e homologação; não pode ser confundido com um embed de vídeo. O módulo interno continua `aculta_lms`, a integração H5P continua `aculta_lms_h5p`.
