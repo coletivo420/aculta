@@ -64,3 +64,7 @@ O [contrato CB-UX 0.3.0–0.3.8](../../../../../../docs/portal/STUDIO-LMS-COURSE
 ## Identidade pública
 
 GanjaLab é a interface de criação. Consulte [identidade pública](../../../../../../docs/portal/GANJALAB-BRANDING.md) e [GanjaLab420: experiência de aprendizagem](../../../../../../docs/portal/GANJALAB420-LEARNING-UX.md). Nomes internos e rotas permanecem inalterados.
+
+## URLs GanjaLab
+
+Rotas públicas canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}/{seção}`, `/ganjalab/{área}/{seção}/{aba}` (route names técnicos inalterados). As antigas `/studio` continuam como aliases temporários, sem redirecionamento HTTP automático. O GanjaLab420 usa `/ganjalab420` para dashboard do estudante. Rebuild de rotas e testes no Runtime pendentes. Ver [contrato de marca](../../../../../../docs/portal/GANJALAB-BRANDING.md).
