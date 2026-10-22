@@ -143,3 +143,8 @@ A [auditoria B6-S1a-L3](theme-ux-0.8-b6-s1a-l3-priority-assets.md) leu 5 CSS e 3
 ## B6-S1a-L3b — revisão dirigida (2026-10-22)
 
 [Relatório L3b](theme-ux-0.8-b6-s1a-l3b-asset-findings.md): Twig do carrinho confirmou `sites` e `site.items`; story corrigida sem alterar o renderer. Inspecionados sete arquivos adicionais de Twig/stories, com limites documentados. **B6-S1a-L3c** segue para revisão sistemática dos demais assets e **B6-S1b** para consumidores. Homologação Runtime não executada.
+
+
+## B6-S1a-L3c — auditor estático versionado (2026-10-22)
+
+O [gate B6-S1a-L3c](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) adicionou `scripts/audit-aculta420-sdc-assets.php`: varredura somente leitura de metadata/Twig e chaves das stories, schema Core e contagens. **Script ainda não executado com Composer; nenhuma aprovação presumida.** Seguir B6-S1a-L3d (executar, registrar achados), B6-S1b (consumidores) e B6-S2 (correções pequenas). Preservar shell multidomínio e padrão Core SDC/UI Suite.
