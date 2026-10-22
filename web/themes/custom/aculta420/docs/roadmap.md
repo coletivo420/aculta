@@ -326,3 +326,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## Inventário SDC/UI Suite — fotografia estática (2026-10-22)
 
 [Inventário e backlog de migração](sdc-ui-suite-inventory-2026-10-22.md) confirmou 38 bases SDC e 55 stories na árvore; três componentes ainda sem stories. A lista M0–M6 prioriza validação e adequação SDC/UI Suite antes de reutilização transversal. Runtime e homologação permanecem pendentes.
+
+## Execução estática 0.8 — M1 e próxima revisão M0-S
+
+[Inventário SDC/UI Suite](sdc-ui-suite-inventory-2026-10-22.md): 38 SDCs; 58 stories após três correções de cobertura (forum-category, qr-preview e qr-download). O [plano de continuação fora do Runtime](theme-ux-0.8-b0-static-followup.md) estabelece comparação de schemas/Twig/stories e análise de cabeçalho contextual. Cobertura de arquivos concluída, renderização e testes Runtime pendentes; não avançar release por este marco.
