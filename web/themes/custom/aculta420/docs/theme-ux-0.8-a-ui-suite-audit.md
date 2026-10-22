@@ -41,3 +41,7 @@ Aprovada a matriz B0 e demonstrados pelo menos dois consumidores reais, executar
 ## Avanço do plano — B0 operacional
 
 A [matriz de evidências B0](theme-ux-0.8-b0-execution-matrix.md) detalha as rotas/purposes, os componentes realmente consumidos e a avaliação Core SDC/UI Patterns/UI Styles, com critérios de PASS e pendências. É um instrumento de execução, **não evidência de teste Runtime já realizado**.
+
+## Norma revisada de reutilização
+
+**Somente componentes baseados em Drupal Core SDC e alinhados ao UI Suite podem ser reutilizados diretamente em novas áreas.** Inventariar legados Twig/Bootstrap/PHP como candidatos à migração, não como componentes prontos. O relatório B0 deve separar `SDC-CONFORME`, `SDC-PARCIAL`, `LEGADO-MIGRAR` e `DESCARTAR/SUBSTITUIR`; validar schema, slots, UI Patterns Library stories e UI Styles semânticos, além de access/cache. Não copiar apresentação antiga entre módulos para adiar migração. Preservar o cabeçalho multidomínio: qualquer modernização deve migrar padrões internos sem substituí-lo.
