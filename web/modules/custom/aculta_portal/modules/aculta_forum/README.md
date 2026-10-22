@@ -25,6 +25,8 @@ reindexação. A integração de posts ainda exige a matriz
 automatizada de acesso antes de reindexação ou ativação no Runtime.
 Quando não há correspondências, a View orienta a ajustar a busca ou explorar
 as categorias.
+A lista pública invalida a cache tag-based em mudanças de ForumPost para
+atualizar a contagem, a atividade e a ordenação por respostas.
 Fixtures de tópicos do Runtime de teste são inventariadas em
 [TEST-FIXTURES](docs/TEST-FIXTURES.md). `aculta_user`
 já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC

@@ -1,3 +1,15 @@
+## `0.1.0-dev.215` — invalidar a cache das listas ao publicar ForumPost
+
+- A View pública usa um plugin cache tag-based que também inclui
+  `aculta_forum_post_list`; salvar ou remover post invalida resultados e saída
+  que dependem de contagem, atividade e ordenação por ForumPost.
+- Instalações novas, Sync e atualização `9005` usam o mesmo plugin. Runtime de
+  teste `toca`/`aculta_runtime`: update aplicado; o plugin foi descoberto após
+  cache rebuild e `ViewExecutable::getCacheTags()` retornou
+  `aculta_forum_post_list` e `node_list`. Backup da View ativa em
+  `/home/aculta/private/aculta/forum-public-topics-before-9005-20261022.yml`.
+  Nenhum tópico/post criado. Sem testes automatizados.
+
 ## `0.1.0-dev.214` — remover classes de apresentação do Fórum
 
 - Scripts de progresso/histórico localizam posts pelo marcador funcional existente

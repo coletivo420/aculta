@@ -245,7 +245,7 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
+        type: aculta_forum_post_tag
         options: {  }
       empty:
         area_text_custom:

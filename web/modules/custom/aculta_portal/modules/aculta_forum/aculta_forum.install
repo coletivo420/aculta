@@ -187,3 +187,17 @@ function aculta_forum_update_9004(): void {
   $view->set($field_path, 'h3');
   $view->save(TRUE);
 }
+
+/**
+ * Invalidates public topic View caches when revisionable replies change.
+ */
+function aculta_forum_update_9005(): void {
+  $configFactory = \Drupal::configFactory();
+  $view = $configFactory->getEditable('views.view.aculta_forum_public_topics');
+  if ($view->isNew()) {
+    throw new RuntimeException('The ACULTA Forum public topics View is missing.');
+  }
+
+  $view->set('display.default.display_options.cache.type', 'aculta_forum_post_tag');
+  $view->save(TRUE);
+}

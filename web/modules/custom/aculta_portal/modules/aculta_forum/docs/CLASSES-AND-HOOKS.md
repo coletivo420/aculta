@@ -58,3 +58,8 @@ procedural continuam procedurais conforme `DRUPAL-11-STANDARDS.md`.
 ## Marcadores de comportamento dos posts públicos
 
 `ForumPostThreadBuilder` expõe `data-aculta-forum-post-timestamp` nos artigos de post. Os scripts de progresso e histórico usam esse atributo para localizar posts sem depender de classes de apresentação. As classes `diff`, `diff-responsive-table` e `field-name` na comparação de revisões são requisitos de integração do módulo Diff instalado, não estilos definidos pelo Fórum.
+
+
+## Cache das listas públicas
+
+`Drupal\aculta_forum\Plugin\views\cache\ForumPostTag` estende o cache tag-based do Views e acrescenta `aculta_forum_post_list`, tag de lista invalidada pelo ciclo de vida da entidade `ForumPost`. Assim, resultados e saída da View pública que ordenam/exibem contagens e atividade de ForumPost expiram em criação, atualização ou exclusão. A configuração existente é migrada pelo update `9005`.

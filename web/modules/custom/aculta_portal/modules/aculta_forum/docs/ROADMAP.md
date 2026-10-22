@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.215` | Invalidar cache de lista ao mudar ForumPost | Plugin tag-based acrescenta `aculta_forum_post_list` à cache de resultados e render da View pública; install, Sync e update `9005` alinhados. Runtime `toca`: update aplicado e `getCacheTags()` confirmou `aculta_forum_post_list`/`node_list`; sem conteúdo criado ou testes automatizados. |
 | `0.1.0-dev.214` | Remover classes de apresentação do markup do Fórum | Progresso e histórico localizam posts pelo atributo funcional `data-aculta-forum-post-timestamp`; classes sem consumidores foram removidas. As classes da comparação continuam por contrato do Diff contrib. Gate módulo-tema passa. Sem testes. |
 | `0.1.0-dev.213` | Corrigir níveis semânticos e revisar a grade de categorias | Grupos H2 e categorias H3, aplicados em instalação e pelo update `9004`. Firefox ESR/X11: 12 cartões em cinco grupos, sem overflow em 320/375/390/768/1024/1440 CSS px. Banner de consentimento continua cobrindo parte do conteúdo até a escolha; dark mode, zoom e aparelho real pendentes. Sem testes. |
 | `0.1.0-dev.212` | Aplicar agrupamento no Sync e em instalações existentes | O Sync e a atualização `9003` aplicam o agrupamento da página sem substituir filtros, acesso, display padrão ou bloco lateral. Runtime de teste atualizado; 12 categorias e hierarquias disponíveis para revisão visual. Testes automatizados não executados. |

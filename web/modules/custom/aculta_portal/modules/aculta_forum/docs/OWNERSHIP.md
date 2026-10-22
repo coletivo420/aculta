@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | Nodes de tópico e publicação | Node/Core e `aculta_forum` para política de discussão | Entity API, Views, Access API | storage paralelo de tópico |
 | Respostas públicas do Growroom | Entity `aculta_forum_post` revisionável; Comments Core existentes ficam legados até migração validada | Entity/Revision/Workflow APIs, resposta pai e acesso no tópico | criar Comments novos no Growroom ou remover dados sem migração comprovada |
-| Contagem/atividade nas listas de tópicos | `comment_entity_statistics` do Core para Comments legados; `ForumPublicPostStatistics` agrega ForumPosts publicados | Plugins Views combinam contagem/timestamps; filtros Node access e Domain ficam fixos | escrever no agregado Core ou contar posts não publicados/idiomas não padrão |
+| Contagem/atividade nas listas de tópicos | `comment_entity_statistics` do Core para Comments legados; `ForumPublicPostStatistics` agrega ForumPosts publicados | Plugins Views combinam contagem/timestamps; cache da lista invalida por `aculta_forum_post_list`; filtros Node access e Domain ficam fixos | escrever no agregado Core ou contar posts não publicados/idiomas não padrão |
 | Comments em Publicações, LMS e Wiki | Comment/Core | Field e API de contexto da entidade hospedeira | mover esses contextos para o storage do ForumPost público |
 | Categorias públicas | Taxonomy/Core e `aculta_forum` | vocabulário e Views | categoria paralela |
 | Ação de criar tópico | `aculta_forum` consulta o access da rota Core | link render array em `views_pre_render`, token visual `button-primary` já existente, cacheability do resultado | link estático que ignore Entity Create Access ou regra contextual |
