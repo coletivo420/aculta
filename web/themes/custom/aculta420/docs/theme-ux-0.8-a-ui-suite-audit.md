@@ -37,3 +37,7 @@ Propor `Context Header` interno a uma página de LMS e uma de Wiki/Revista/Fóru
 
 ## Condição de avanço
 Aprovada a matriz B0 e demonstrados pelo menos dois consumidores reais, executar **B1 em uma fatia pequena** (sem trocar shell) com SDC ou variante mínima, story, documentação e validações, antes de passar às abas B2. Nenhuma implementação é afirmada neste plano.
+
+## Avanço do plano — B0 operacional
+
+A [matriz de evidências B0](theme-ux-0.8-b0-execution-matrix.md) detalha as rotas/purposes, os componentes realmente consumidos e a avaliação Core SDC/UI Patterns/UI Styles, com critérios de PASS e pendências. É um instrumento de execução, **não evidência de teste Runtime já realizado**.
