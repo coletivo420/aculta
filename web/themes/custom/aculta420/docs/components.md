@@ -375,3 +375,7 @@ SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `it
 ## Context Tabs — segundo consumidor Wiki
 
 `WikiController::contextNavigation()` prepara links Início/Busca com Url::fromRoute, render arrays e `aria-current=page` e entrega `item_list` ao slot do SDC. Agora Studio e Wiki compartilham a apresentação Core SDC/UI Suite, sem atribuir ao tema URLs, ACL ou AJAX. [Gates B2-05 pendentes](theme-ux-0.8-b2-context-tabs.md).
+
+## `aculta420:empty-state`
+
+Componente neutro em `components/feedback/empty-state/`, com slot `message` para render array traduzido/escapado, slot opcional `actions`, prop `compact` e duas stories. Consumidores de código: Wiki search sem resultados e LMS dashboard sem cursos/certificados. Não determina acesso/erros/query. Não confundir com `messenger-state`/`institutional-notice`. [Auditoria B3](theme-ux-0.8-b3-feedback-audit.md).
