@@ -34,7 +34,7 @@ final class ForumActivityEventHooks {
    */
   #[Hook('node_insert')]
   public function topicCreated(NodeInterface $node): void {
-    if ($node->bundle() !== self::TOPIC_BUNDLE) {
+    if ($node->bundle() !== self::TOPIC_BUNDLE || $this->isSynchronizing($node)) {
       return;
     }
     $this->dispatcher->dispatch(
@@ -48,6 +48,9 @@ final class ForumActivityEventHooks {
    */
   #[Hook('comment_insert')]
   public function commentCreated(CommentInterface $comment): void {
+    if ($this->isSynchronizing($comment)) {
+      return;
+    }
     $entity = $comment->getCommentedEntity();
     if (!$entity instanceof NodeInterface || $entity->bundle() !== self::TOPIC_BUNDLE) {
       return;
@@ -66,8 +69,7 @@ final class ForumActivityEventHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if (!$entity instanceof ForumPost
-      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())) {
+    if (!$entity instanceof ForumPost || $this->isSynchronizing($entity)) {
       return;
     }
 
@@ -75,6 +77,13 @@ final class ForumActivityEventHooks {
       new ForumActivityEvent((int) $entity->id(), $this->time->getRequestTime()),
       ForumActivityEvent::POST_CREATED,
     );
+  }
+
+  /**
+   * Indicates entities written by synchronization or migration.
+   */
+  private function isSynchronizing(EntityInterface $entity): bool {
+    return $entity instanceof SynchronizableInterface && $entity->isSyncing();
   }
 
 }

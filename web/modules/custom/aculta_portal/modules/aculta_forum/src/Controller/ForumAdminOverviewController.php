@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,6 +23,8 @@ final class ForumAdminOverviewController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_statistics.storage')]
+    private readonly ?AggregateStorageInterface $statisticsStorage = NULL,
   ) {}
 
   /**
@@ -71,6 +74,9 @@ final class ForumAdminOverviewController extends ControllerBase {
         '#rows' => $this->statisticsRows($categoryCount, $topicCount),
         '#empty' => $this->t('Os dados do Growroom420 estão temporariamente indisponíveis.'),
       ],
+      'activity' => $forumDomain !== NULL
+        ? $this->activitySeries()
+        : ['#plain_text' => $this->t('Os dados do Growroom420 estão temporariamente indisponíveis.')],
       'public_links' => [
         '#theme' => 'item_list',
         '#title' => $this->t('Acessar o fórum público'),
@@ -95,6 +101,45 @@ final class ForumAdminOverviewController extends ControllerBase {
     }
 
     return $build;
+  }
+
+  /**
+   * Builds the seven most recent daily activity totals from Statistics.
+   */
+  private function activitySeries(): array {
+    if ($this->statisticsStorage === NULL) {
+      return [
+        '#type' => 'container',
+        'message' => [
+          '#plain_text' => $this->t('A série temporal está indisponível neste ambiente.'),
+        ],
+      ];
+    }
+
+    $metrics = [
+      'forum.topics.created' => $this->t('Tópicos criados'),
+      'forum.comments.created' => $this->t('Comments legados criados'),
+      'forum.posts.created' => $this->t('Posts revisionáveis criados'),
+    ];
+    $today = $this->statisticsStorage->currentDay();
+    $rows = [];
+    for ($day = $today - 6; $day <= $today; $day++) {
+      foreach ($metrics as $metric => $label) {
+        $rows[] = [
+          gmdate('Y-m-d', $day * 86400),
+          $label,
+          $this->statisticsStorage->total($metric, $day, $day),
+        ];
+      }
+    }
+
+    return [
+      '#type' => 'table',
+      '#caption' => $this->t('Atividade do Fórum nos últimos sete dias (UTC)'),
+      '#header' => [$this->t('Dia'), $this->t('Atividade'), $this->t('Quantidade')],
+      '#rows' => $rows,
+      '#empty' => $this->t('Ainda não há atividade agregada neste período.'),
+    ];
   }
 
   /**

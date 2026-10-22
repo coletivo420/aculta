@@ -1,3 +1,13 @@
+## `0.1.0-dev.160` — mostrar atividade agregada no painel do Fórum
+
+- O painel administrativo apresenta sete dias UTC de tópicos, Comments legados
+  e posts revisionáveis a partir de `aculta_statistics`, sem registrar
+  identificadores ou autoria. O serviço de Statistics é opcional; sem ele, a
+  tabela informa que a série está indisponível. Cache limitado a 60 segundos.
+- Eventos de tópicos e Comments sincronizados também são ignorados, evitando
+  atribuir importações a atividade nova. Sem rota ou escrita Runtime; testes e
+  revisão visual pendentes.
+
 ## `0.1.0-dev.159` — emitir atividade de posts revisionáveis
 
 - A criação de `aculta_forum_post` emite `aculta_forum.post_created` com ID e
