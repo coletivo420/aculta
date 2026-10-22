@@ -7,6 +7,7 @@ namespace Drupal\aculta_studio;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -32,6 +33,7 @@ final class StudioListingBuilder {
     private readonly DomainPurposeManager $domainPurposes,
     private readonly AccountInterface $account,
     TranslationInterface $stringTranslation,
+    private readonly PagerManagerInterface $pagerManager,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -58,10 +60,10 @@ final class StudioListingBuilder {
       ->accessCheck(TRUE)
       ->condition('type', $bundle)
       ->sort('changed', 'DESC');
-    // Author scope is applied in SQL, before paging and any visible revision checks.
-    if (($listing['scope'] ?? '') === 'mine') {
+    $mine = ($listing['scope'] ?? '') === 'mine';
+    // Restrict candidate discovery at SQL level before handling revisions.
+    if ($mine) {
       $query->condition('uid', (int) $account->id());
-      $query->pager(20);
     }
     else {
       $query->range(0, self::LIMIT);
@@ -70,6 +72,32 @@ final class StudioListingBuilder {
     // Resolve a visible node's latest revision, then verify revision access
     // before showing its moderation state or using it for a filtered listing.
     $nids = $query->execute();
+    // A personal filtered pager counts *visible matching revisions*, not raw
+    // node candidates. This scan is intentionally limited to the owner's
+    // authorized entity query; a scalable indexed provider is a later gate.
+    $matched = [];
+    if ($mine) {
+      foreach (array_chunk(array_values($nids), 100) as $chunk) {
+        foreach ($storage->loadMultiple($chunk) as $node) {
+          if (!$node->access('view', $account)) {
+            continue;
+          }
+          $latestId = $storage->getLatestRevisionId($node->id());
+          $latest = $latestId === NULL ? NULL : $storage->loadRevision($latestId);
+          if (!$latest instanceof NodeInterface || !self::canViewRevision($latest, $account)) {
+            continue;
+          }
+          $currentState = $latest->hasField('moderation_state')
+            ? (string) ($latest->get('moderation_state')->value ?? '')
+            : '';
+          if ($state === NULL || $currentState === $state) {
+            $matched[] = $node->id();
+          }
+        }
+      }
+      $pager = $this->pagerManager->createPager(count($matched), 20);
+      $nids = array_slice($matched, $pager->getCurrentPage() * 20, 20);
+    }
     $rows = [];
     foreach ($storage->loadMultiple($nids) as $node) {
       if (!$node->access('view', $account)) {
@@ -86,6 +114,9 @@ final class StudioListingBuilder {
       }
       // Fail closed: a private latest revision must not be indexed as public
       // draft/review or cause its metadata to appear in a listing.
+      if ($mine && ($latestId === NULL || !isset($latest) || !$latest instanceof NodeInterface || !self::canViewRevision($latest, $account))) {
+        continue;
+      }
       if ($state !== NULL && $currentState !== $state) {
         continue;
       }
@@ -116,7 +147,7 @@ final class StudioListingBuilder {
       '#empty' => $this->t('Nenhum item nesta aba.'),
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      'pager' => ($listing['scope'] ?? '') === 'mine' ? ['#type' => 'pager'] : [],
+      'pager' => $mine ? ['#type' => 'pager'] : [],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.query_args.pagers'],
         'tags' => ['node_list:' . $bundle],
