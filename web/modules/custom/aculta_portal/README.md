@@ -94,4 +94,8 @@ ser registrados no changelog da entrega, não copiados para este README.
 
 ## Política de arquitetura transversal ACULTA — código compartilhado
 
-[Contratos de moderação e centralização](../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md): serviços e código realmente reutilizáveis entre submódulos ACULTA devem migrar para o kernel central `aculta_portal` após auditoria/ADR/testes, mantendo adapters específicos nos respectivos subkernels. Exemplo inicial: princípio da primeira participação do Fórum e primeira publicação da Wiki, com fontes de dados e workflows distintos. Não centralizar regras de negócio exclusivas ou renderização do tema.
+[Contratos de moderação e centralização](../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md): serviços e código realmente reutilizáveis entre submódulos ACULTA devem migrar para o subkernel `aculta_user` após auditoria/ADR/testes, mantendo adapters específicos nos respectivos subkernels. Exemplo inicial: princípio da primeira participação do Fórum e primeira publicação da Wiki, com fontes de dados e workflows distintos. Não centralizar regras de negócio exclusivas ou renderização do tema.
+
+## Retificação de ownership (2026-10-22)
+
+**A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
