@@ -30,3 +30,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-a-ui-suite-audit.md](theme-ux-0.8-a-ui-suite-audit.md) — próxima fase de auditoria de componentes/consumidores e uso efetivo das ferramentas UI Suite.
 
 - [theme-ux-0.8-b0-execution-matrix.md](theme-ux-0.8-b0-execution-matrix.md) — matriz operacional de evidências Runtime do shell e ferramentas UI Suite; ainda não executada.
+
+- [sdc-ui-suite-inventory-2026-10-22.md](sdc-ui-suite-inventory-2026-10-22.md) — inventário estático dos SDCs, cobertura de stories, lacunas e migrações M0–M6.
