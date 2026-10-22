@@ -119,3 +119,7 @@ B2 tem dois consumidores conectados em código (GanjaLab e Wiki) mas permanece p
 ## Continuidade B6 — inventário atualizado da branch
 
 O tema já dispõe de `context-header`, `context-tabs` e `empty-state` como SDCs. A fotografia estática posterior contabilizou **41 metadados SDC / 65 stories**. A evolução visual segue em [B6: consolidação](theme-ux-0.8-b6-consolidation.md), sem duplicar padrões e sem declarar UI Patterns/Styles em Runtime verificados. Os números de inventário anteriores são históricos e não devem ser usados como contagem atual.
+
+## Avanço B6-S1 — 2026-10-22
+
+O inventário da árvore da PR #297 confirmou **41 SDCs** no tema. A [matriz B6-S1](theme-ux-0.8-b6-s1-contract-audit.md) formaliza os caminhos e os critérios de revisão individual. Este marco é **inventário estático**, não homologação de contratos, story rendering ou Runtime. Próxima microfase: **B6-S1a**, conferir metadata/Twig/CSS/stories de cada componente e registrar achados por arquivo; depois **B6-S1b**, rastrear consumidores por código/configuração. Corrigir somente inconformidades demonstradas em B6-S2; o gate B6-R permanece no homelab. O shell multidomínio e a exigência de SDC/UI Suite para reuso continuam regras obrigatórias.
