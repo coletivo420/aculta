@@ -113,3 +113,7 @@ A home GanjaLab passou a oferecer a pergunta “O que vamos criar hoje?” e car
 ## E-B.1 — Meu trabalho em implementação
 
 Na área Revista, a navegação passa a iniciar em `Meu trabalho → Meus conteúdos`, filtrando por autor antes de paginar. O fluxo básico de criar permanece ligado à rota real do módulo dono. Filtros por estado ainda têm contagem/paginação parcial por serem resolvidos depois da busca de revisões autorizadas; não considerar o painel finalizado. Próximo passo: provider com semântica de revisões e acesso, seguido por cartões SDC mobile-first e continuidade de rascunhos.
+
+## E-B.2 — listagem pessoal e revisão autorizada
+
+A contagem das abas pessoais de Revista foi alterada para filtrar estados de revisões autorizadas antes de criar a página de 20 resultados, mantendo a distinção `Meu trabalho` versus `Equipe/Moderação`. É implementação não homologada, com custo de varredura do acervo pessoal; benchmarks e testes Kernel/Domain continuam obrigatórios. A criação/editoração ainda utiliza Form API do módulo dono.
