@@ -64,3 +64,24 @@ Mobile 320px: linha de retorno e título, ações secundárias recolhíveis **se
 Contrato revisado: o SDC apresenta um slot `page_title` renderizável (preferencial quando vindo do Core) ou uma prop `title` texto processado; um dos dois é escolhido pelo provider. O componente é dono da tag `h1` visível quando configurado em `heading_mode: primary`; modo secundário só com semântica explicitamente justificada. Nunca renderizar slot com H1 já encapsulado **dentro** de outro H1. Checar `html_head`/metadados, breadcrumbs, âncoras, views e leitores de tela; não alterar TitleResolver ou entidades.
 
 **Gate:** exatamente um H1 primário em cada página elegível, persistência de Institution Bar + Domain Header, acesso/cache e fallback sem JS. Esta mudança substitui as sugestões anteriores deste documento de preservar o H1 Core fora do SDC; não é implementação concluída.
+
+## Atualização do estado real na branch — 2026-10-22 (verificação posterior)
+
+**Importante:** a orientação acima foi redigida antes da inclusão do SDC. A árvore atual da branch **já contém** `components/patterns/context-header/context-header.component.yml`, `.twig`, `.css` e stories `default` e `editorial`. Portanto a instrução histórica "não criar arquivos" já não descreve o estado do código; **não criar componente duplicado**.
+
+A inspeção de arquivos confirma:
+- `status: experimental`; props `title` obrigatória, `eyebrow` e `subtitle` opcionais;
+- slots `breadcrumbs`, `back_link` e `actions`, a serem fornecidos por render arrays autorizados;
+- `<h1>` incondicional quando componente renderiza título, exigindo gate rigoroso contra H1 duplicado;
+- CSS escopado e flex responsivo em 48rem, com tokens semânticos.
+- **Não há evidência, nesta inspeção, de uso por tela real ou renderização aprovada no Runtime.**
+
+### Próxima microfase B1-C — integração sem duplicação
+1. Identificar e documentar **um consumidor GanjaLab420 e um consumidor editorial existente** e seu page title/breadcrumb efetivo; não supor rotas.
+2. Se o Core já renderiza H1, o integrador deverá **suprimir apenas o bloco de título redundante naquela página**, sem ocultar o H1 por CSS nem afetar outras páginas. Não ativar SDC antes de confirmar essa escolha de ownership.
+3. Integrar render arrays de breadcrumb/back/actions; conferir metadados de access/cache e que ações ficam indisponíveis para perfis sem permissão.
+4. Validar no UI Patterns Library as duas stories, tokens UI Styles e CSS em mobile/dark/light; não exigir que consumidores não compatíveis sejam forçados a UI Patterns no display.
+5. Preservar Institution Bar e Domain Header globais; conferir AJAX e no-JS.
+6. Após verificar dois consumidores e gates, registrar fase como implementada/homologada, removendo instruções históricas conflitantes no próximo ciclo editorial.
+
+**Status desta atualização: SDC existente na branch; integração e gate Runtime pendentes.**
