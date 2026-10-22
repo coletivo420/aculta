@@ -69,3 +69,7 @@ Reutilização: biblioteca, carrinho vazio, artigos sem itens, wiki sem resultad
 
 ## Limitações desta versão
 Plano não corresponde a componente instalado ou homologado. Nenhum arquivo funcional do tema, da navegação ou do `aculta_lms` foi alterado. A auditoria 0.8-A ainda requer inspeção Runtime dos consumidores, CSS, acessibilidade e stories antes de marcar o gate como concluído.
+
+## Regra não negociável — shell multidomínio (decisão 2026-10-22)
+
+Preservar **Institution Bar + Domain Header atuais em todo o portal**. O `context-header` planejado em B1 é um subcabeçalho contextual **dentro do conteúdo**, sem trocar nem replicar o cabeçalho multidomínio. Pode evoluir visualmente o shell real (mobile-first, contraste, menus e dark/light), porém com ownership e resolução de purpose existentes. Abas e estados também se encaixam abaixo do shell; nenhuma tela de Sala, Studio, Wiki, Fórum ou Conta pode montar outro header global. Regressão do shell em qualquer purpose impede aprovação da fase.
