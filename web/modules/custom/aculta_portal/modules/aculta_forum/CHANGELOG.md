@@ -1,3 +1,8 @@
+## `0.1.0-dev.147` — seleciona revisões para comparação
+
+- O histórico permite comparar quaisquer duas revisões exibidas na página atual; o atalho entre revisões adjacentes continua disponível. A seleção valida no servidor que ambos os IDs pertencem às opções renderizadas e são distintos; a rota de comparação repete a validação de pertencimento ao post e acesso.
+- As opções ficam limitadas às 50 revisões da página corrente. Não oferece revert/delete nem altera Runtime. Revisão visual e seleção entre páginas seguem pendentes.
+
 ## `0.1.0-dev.146` — compara revisões de posts
 
 - O histórico administrativo oferece comparação entre revisões adjacentes da mesma publicação, limitada ao assunto e corpo; o Diff contrib fornece a comparação textual e o Core escapa as linhas exibidas.

@@ -81,8 +81,10 @@ A comparação de revisões fica em
 `/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}`.
 O custom access revalida os dois IDs, exige que sejam distintos e pertençam ao
 mesmo post do histórico, além dos critérios de purpose/permissão/tópico desta
-seção. A interface compara somente assunto e corpo, não oferece revert/delete
-e usa o serviço `diff.entity_comparison` do Diff 2.1.1 instalado; a rota genérica
+seção. A interface mantém o atalho entre revisões adjacentes e permite selecionar
+duas revisões dentre as 50 exibidas na página atual. Compara somente assunto e
+corpo, não oferece revert/delete e usa o serviço `diff.entity_comparison` do
+Diff 2.1.1 instalado; a rota genérica
 do Diff é específica para Node e não é reutilizada. O Core DiffFormatter escapa
 as linhas resultantes; o controller converte rich text em texto antes de
 renderizar a comparação.

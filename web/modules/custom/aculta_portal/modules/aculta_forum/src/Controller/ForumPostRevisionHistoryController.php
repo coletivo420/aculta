@@ -10,9 +10,12 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Displays revision metadata for one revisionable Forum post.
@@ -24,7 +27,19 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly FormBuilderInterface $formBuilder,
   ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('date.formatter'),
+      $container->get('form_builder'),
+    );
+  }
 
   /**
    * Builds the administrative history table for a post.
@@ -55,6 +70,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
     }
     $revisions = $storage->loadMultipleRevisions($revisionIds);
     $rows = [];
+    $revisionOptions = [];
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($aculta_forum_post)
       ->addCacheContexts([
@@ -76,6 +92,11 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       $isDefault = $revision->isDefaultRevision();
       $date = $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short');
       $revisionLabel = $revision->getRevisionLogMessage();
+      $revisionOptions[(string) $revisionId] = new TranslatableMarkup('Revisão @id — @date — @state', [
+        '@id' => (string) $revisionId,
+        '@date' => $date,
+        '@state' => (string) ($revision->get('moderation_state')->value ?? ''),
+      ]);
       $operations = [];
       $previousRevisionId = $revisionIds[$index + 1] ?? $olderRevisionId;
       if ($previousRevisionId !== NULL) {
@@ -112,7 +133,18 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
     }
 
     $build = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-forum-post-revision-history']],
+    ];
+    if (count($revisionOptions) > 1) {
+      $build['comparison_selection'] = $this->formBuilder->getForm(
+        ForumPostRevisionSelectionForm::class,
+        $revisionOptions,
+      );
+    }
+    $build['history'] = [
       '#type' => 'table',
+      '#weight' => 10,
       '#header' => [
         $this->t('ID da revisão'),
         $this->t('Data'),
@@ -125,12 +157,16 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       ],
       '#rows' => $rows,
       '#empty' => $this->t('Esta publicação ainda não tem revisões.'),
-      'pager' => ['#type' => 'pager'],
-      'back' => Link::fromTextAndUrl(
+    ];
+    $build['pager'] = [
+      '#type' => 'pager',
+      '#weight' => 20,
+    ];
+    $build['back'] = Link::fromTextAndUrl(
         $this->t('Voltar à fila de moderação'),
         Url::fromRoute('aculta_forum.post_moderation_queue'),
-      )->toRenderable(),
-    ];
+      )->toRenderable();
+    $build['back']['#weight'] = 30;
     $cacheability->applyTo($build);
     return $build;
   }

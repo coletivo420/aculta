@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.147` | Selecionar revisões para comparação | Histórico permite escolher duas revisões da página atual, além do atalho entre adjacentes; valida IDs disponíveis/diferentes e preserva validação de acesso no destino. Ainda limitado à página corrente (50 registros); seleção entre páginas e revisão visual pendentes. Sem revert/delete ou Runtime. |
 | `0.1.0-dev.146` | Comparar revisões adjacentes de uma publicação | Histórico oferece comparação segura de assunto/corpo para duas revisões do mesmo post, com acesso restrito a `main` e tópico publicado em `forum`; reutiliza Diff 2.1.1 habilitado. Sem revert/delete ou Runtime; comparação não adjacente, testes e visual pendentes. |
 | `0.1.0-dev.145` | Identificar o contexto da resposta | Lista cronológica mostra assunto do post pai acessível, com âncora interna se presente na página; composer confirma o destino da resposta. Sem rota nova, CSS/JS ou Runtime; hierarquia visual, navegação ao pai em outra página e validação visual pendentes. |
 | `0.1.0-dev.144` | Responder a posts revisionáveis | Ação por publicação abre o composer contextual; UUID do pai é resolvido no servidor e só aceita revisão default publicada, acessível e do mesmo tópico. Sem rota nova ou Runtime; apresentação hierárquica, testes e revisão visual pendentes. |
