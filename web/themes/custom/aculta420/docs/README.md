@@ -75,3 +75,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b6-consolidation.md](theme-ux-0.8-b6-consolidation.md) — fase B6: inventário atual, consolidação SDC/UI Suite, critérios de reuso e gates de Runtime.
 
 - [theme-ux-0.8-b6-s1-contract-audit.md](theme-ux-0.8-b6-s1-contract-audit.md) — matriz versionada dos 41 SDCs da branch e protocolo de auditoria contratual por componente; B6-S1a/S1b e Runtime ainda pendentes.
+
+- [theme-ux-0.8-b6-s1a-contract-findings.md](theme-ux-0.8-b6-s1a-contract-findings.md) — inspeção estática do primeiro lote (13 metadata, 7 Twig), achados acionáveis e roteiro B6-S1a-L2.
