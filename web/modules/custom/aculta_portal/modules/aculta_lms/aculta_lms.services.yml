@@ -1,4 +1,8 @@
 services:
+  # LMS registers this optional Studio compositor only while LMS is enabled.
+  aculta_studio.learner_dashboard_composer:
+    class: Drupal\aculta_studio\Learning\LearnerDashboardComposer
+    arguments: ['@aculta_lms.learning_dashboard', '@current_user', '@date.formatter', '@string_translation']
   aculta_lms.account_user_loader:
     class: Drupal\aculta_lms\Account\AccountUserLoader
     arguments: ['@entity_type.manager']
