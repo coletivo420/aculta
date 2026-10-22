@@ -163,3 +163,8 @@ O plano [Wiki420 — Experiência visual](../../../../../docs/portal/WIKI420-VIS
 ## WE SATIVA 0.2 — contribuição a partir do verbete
 
 [Pesquisa e fluxo contextual](../../../../../docs/portal/WE-SATIVA-CONTRIBUTION-FIRST-RESEARCH.md): o caminho preferencial sai da leitura Wiki420, escolhe uma microtarefa e abre o editor WE SATIVA apropriado, sem exigir passagem pelo GanjaLab. Reusar SDC Core/UI Patterns/UI Styles e Form API/CKEditor 5, sem criar engine de edição ou workflow duplicado. Entrada, ações e estados são condicionados a ACL/rotas reais; visual mobile-first e shell global inalterado.
+
+
+## WES-UX 0.2-A0 — fundação aprovada e iniciada
+
+O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-FOUNDATION.md) detalha intents, ownership de Form API e controle de acesso, ordem das microfases e restrições de implementação. **Autosave Form postergado**. Primeiro mapear consumidores/rotas/permissões; componentes compartilhados precisam de Core SDC/UI Patterns/UI Styles. Wiki pública e editor permanecem mobile-first com Institution Bar + Domain Header em todas as telas.
