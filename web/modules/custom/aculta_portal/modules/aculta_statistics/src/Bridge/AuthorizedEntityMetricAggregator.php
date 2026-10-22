@@ -45,9 +45,6 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
     array $entities,
     AccountInterface $account,
   ): array {
-    if (!$account->hasPermission('administer aculta_statistics')) {
-      throw new AccessDeniedHttpException();
-    }
     if ($fromDay < 0 || $toDay < $fromDay) {
       throw new \InvalidArgumentException('Statistics day range is invalid.');
     }
@@ -57,6 +54,12 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
 
     $definition = $this->catalog->get($metric);
     if ($definition->sensitivity === MetricDefinition::SENSITIVITY_RESTRICTED) {
+      throw new AccessDeniedHttpException();
+    }
+    $hasAdminPermission = $account->hasPermission('administer aculta_statistics');
+    $hasContentMetricPermission = $account->hasPermission('view content-level statistics');
+    if (!$hasAdminPermission
+      && !($definition->sensitivity === MetricDefinition::SENSITIVITY_PUBLIC && $hasContentMetricPermission)) {
       throw new AccessDeniedHttpException();
     }
     $expected = self::ENTITY_ID_METRICS[$metric] ?? NULL;

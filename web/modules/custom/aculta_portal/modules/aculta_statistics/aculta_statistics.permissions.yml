@@ -2,3 +2,6 @@ administer aculta_statistics:
   title: 'Administrar o ACULTA Statistics'
   description: 'Alterar prazos de retenção dos agregados de métricas.'
   restrict access: true
+view content-level statistics:
+  title: 'Consultar métricas públicas por conteúdo autorizado'
+  description: 'Ver métricas públicas da allowlist por conteúdo que a conta pode acessar. Não concede acesso a relatórios administrativos ou métricas internas/restritas.'

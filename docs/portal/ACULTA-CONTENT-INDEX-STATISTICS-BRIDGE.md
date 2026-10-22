@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** bridge tipado implementado no código local `0.1.0-dev.19` / Statistics `0.9.0-dev.7`; não ativado no Runtime.
+**Estado:** bridge tipado implementado no código local `0.1.0-dev.19` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -27,7 +27,10 @@ Nenhuma consulta cruza diretamente `aculta_index_entry` e `aculta_statistics_dai
 
 ## Acesso e privacidade
 
-- O endpoint de Statistics verifica sua permissão específica antes de consultar.
+- Para a bridge, Statistics exige `view content-level statistics` em métricas
+  públicas allowlisted; métricas internas exigem `administer aculta_statistics`
+  e as restritas são negadas. Relatórios administrativos continuam exigindo a
+  permissão administrativa.
 - O bridge de seleção filtra o propósito/domínio quando solicitado e não retorna campos privados.
 - Se um relatório apresenta dados por conteúdo, o consumer revalida Entity Access no módulo dono e agrega/suprime células antes de exibir; facetas e totais seguem a mesma regra.
 - A ausência de autorização ou de contexto de domínio resulta em nenhuma identidade. Índice ausente também não significa permissão ampla.
@@ -54,6 +57,6 @@ Conectar primeiro indicadores agregados por bundle/domínio e janela de tempo, p
 ## Limites e pendências
 
 - A allowlist inicial cobre métricas Wiki por `node/wiki_entry` e solicitações de arquivo por `file/file`; dimensões compostas ficam fora deste bridge.
-- A chamada exige `administer aculta_statistics`; a autorização de cada conteúdo já foi revalidada pelo Index. O bridge não agrega conteúdo não autorizado.
+- Métricas públicas allowlisted aceitam a permissão granular `view content-level statistics`; métricas internas exigem permissão administrativa. A autorização de cada conteúdo já foi revalidada pelo Index.
 - Os testes Kernel do aggregator foram escritos, mas não iniciaram nesta sessão porque `SIMPLETEST_DB` não está configurada.
 - Ainda faltam cenários Kernel ponta a ponta, fallback em container sem Statistics e medição de consultas/latência antes de conectar a listagens de Studio.

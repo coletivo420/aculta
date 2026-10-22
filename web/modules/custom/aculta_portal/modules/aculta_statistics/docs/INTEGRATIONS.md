@@ -6,19 +6,23 @@
   the owner of metrics and daily aggregates. Neither module requires the other
   to provide its core features.
 - A consumer first obtains an authorized, bounded entity page from the Index.
-  It may then pass those entity IDs as dimensions to
-  `AggregateStorageInterface::dimensionTotalsForDimensions()` (maximum 100) to
-  correlate a supported metric such as `wiki.entries.read` in one grouped SQL
-  query. Missing dimensions are omitted; callers map them to zero as needed.
-- The method is a storage API, not an access grant. Do not pass unfiltered
-  candidate IDs or expose restricted metrics. The consumer must have permission
-  for the metric and retain Entity Access checks at the source module.
+- `aculta_index.statistics_bridge` implements this two-step flow: it queries
+  and authorizes a page, then sends at most 100 IDs to the typed Statistics
+  adapter. It does not join the Index and Statistics tables.
+- `view content-level statistics` permits only public allowlisted entity
+  metrics; internal metrics require `administer aculta_statistics`, and
+  restricted metrics remain unavailable through the bridge. Supported metrics
+  currently include the Wiki metrics by node ID; private file activity remains
+  internal. Missing dimensions are returned as zero by the Index bridge.
+- The storage method is not an access grant. Do not pass unfiltered candidate
+  IDs or bypass the source module's Entity Access checks.
 - No Index dependency or metric table is added to Statistics. If
   `aculta_statistics` is disabled, Index queries and rebuilds continue without
   indicators; if `aculta_index` is disabled, Statistics continues to record,
   aggregate and report metrics using its existing APIs.
 
-Desenho de cada integração. Nada aqui foi implementado nesta fase.
+Cada integração informa seu estado abaixo; a ponte Index–Statistics está
+implementada no código, mas ainda não foi ativada nem verificada no Runtime.
 
 ## Regra geral de migração
 

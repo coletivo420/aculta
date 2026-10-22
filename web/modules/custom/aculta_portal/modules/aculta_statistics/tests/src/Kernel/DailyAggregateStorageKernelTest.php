@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_statistics\Kernel;
 
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
-use Drupal\Core\Session\UserSession;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -115,10 +115,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
     $storage = $this->storage();
     $storage->record('wiki.entries.read', '42', 3);
     $today = $storage->currentDay();
-    $account = new UserSession([
-      'uid' => 7,
-      'permissions' => ['administer aculta_statistics'],
-    ]);
+    $account = $this->accountWithPermissions(['administer aculta_statistics']);
     $aggregator = new AuthorizedEntityMetricAggregator(
       $this->container->get('aculta_statistics.catalog'),
       $storage,
@@ -146,7 +143,35 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
       100,
       100,
       [],
-      new UserSession(['uid' => 7]),
+      $this->accountWithPermissions([]),
+    );
+  }
+
+  /**
+   * Granular permission allows public metrics, but not internal metrics.
+   */
+  public function testContentMetricPermissionIsLimitedBySensitivity(): void {
+    $aggregator = new AuthorizedEntityMetricAggregator(
+      $this->container->get('aculta_statistics.catalog'),
+      $this->storage(),
+    );
+    $account = $this->accountWithPermissions(['view content-level statistics']);
+
+    $this->assertSame([], $aggregator->aggregateForAuthorizedEntities(
+      'wiki.entries.read',
+      100,
+      100,
+      [['entity_type' => 'node', 'bundle' => 'wiki_entry', 'entity_id' => '42']],
+      $account,
+    ));
+
+    $this->expectException(AccessDeniedHttpException::class);
+    $aggregator->aggregateForAuthorizedEntities(
+      'media.files.requests',
+      100,
+      100,
+      [['entity_type' => 'file', 'bundle' => 'file', 'entity_id' => '42']],
+      $account,
     );
   }
 
@@ -164,10 +189,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
       100,
       100,
       [['entity_type' => 'node', 'bundle' => 'article', 'entity_id' => '42']],
-      new UserSession([
-        'uid' => 7,
-        'permissions' => ['administer aculta_statistics'],
-      ]),
+      $this->accountWithPermissions(['administer aculta_statistics']),
     );
   }
 
@@ -255,6 +277,19 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
       $this->container->get('database'),
       $this->container->get('datetime.time'),
     );
+  }
+
+  /**
+   * Creates an account double for bridge permission checks.
+   *
+   * @param list<string> $permissions
+   *   Permission IDs granted to the account.
+   */
+  private function accountWithPermissions(array $permissions): AccountInterface {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')
+      ->willReturnCallback(static fn(string $permission): bool => in_array($permission, $permissions, TRUE));
+    return $account;
   }
 
   /**

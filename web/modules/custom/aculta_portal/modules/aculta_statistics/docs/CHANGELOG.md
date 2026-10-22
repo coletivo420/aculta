@@ -1,5 +1,15 @@
 # Changelog — ACULTA Statistics
 
+## 0.9.0-dev.8 — permissão granular para métricas públicas por conteúdo
+
+- Adiciona `view content-level statistics`: permite consultar somente métricas
+  de sensibilidade pública na allowlist de dimensões por entidade.
+- Métricas internas continuam exigindo `administer aculta_statistics`; métricas
+  restritas seguem negadas. O permissionamento dos relatórios administrativos
+  não foi ampliado.
+- Testes Unit cobrem ID allowlisted, permissão granular e negação de métrica
+  interna.
+
 ## 0.9.0-dev.7 — bridge por IDs autorizados do Content Index
 
 - Implementa `AuthorizedEntityMetricAggregator` para métricas allowlisted com

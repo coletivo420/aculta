@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.7` — contrato de agregação por IDs autorizados do Content Index.
+**Versão:** `0.9.0-dev.8` — permissão granular para métricas públicas por conteúdo.
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
@@ -20,9 +20,10 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   como o Content Index podem correlacionar uma página já autorizada sem ler
   todas as dimensões globais. A autorização do conteúdo continua no módulo dono.
 - `AuthorizedEntityMetricAggregator` implementa o contrato opcional do Portal;
-  exige `administer aculta_statistics`, restringe entidades/métricas por
-  allowlist e reutiliza a agregação SQL existente. Não há dependência obrigatória
-  nem junção entre os esquemas.
+  exige `view content-level statistics` para métricas públicas da allowlist e
+  `administer aculta_statistics` para métricas internas. Métricas restritas
+  permanecem negadas. Reutiliza a agregação SQL existente, sem dependência
+  obrigatória ou junção entre esquemas.
 - Retenção por métrica (`RetentionPolicy`): 30, 90, 180, 365 dias ou indefinido. Padrão 90.
 - Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
 - Funil de e-mails por dia de solicitação, a partir do `aculta_mail_log` (aceito, entregue, devolvido, falho), recalculado no cron (`EmailReconciler`).
