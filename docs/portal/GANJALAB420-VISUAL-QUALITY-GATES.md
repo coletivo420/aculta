@@ -66,3 +66,7 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 ## Resultado preliminar 0.8-A — auditoria cruzada de reutilização
 
 [AUDITORIA CRUZADA: GanjaLab420 × ACULTA420](GANJALAB420-CROSS-VISUAL-AUDIT.md) registra os SDCs existentes, lacunas transversais, matriz de consumidores e regra **reutilizar → estender → criar padrão compartilhado**. Evidência estática concluída; Runtime/stories/browser e gate de homologação ainda pendentes. Novos padrões devem beneficiar outras áreas (Revista, Wiki, Fórum, Galeria, Conta e GanjaLab) antes de serem especializações LMS.
+
+## Planejamento da etapa 0.8-B
+
+[Componentes transversais e navegação](GANJALAB420-SHARED-UI-PLAN.md) especifica os contratos de Context Header, Context Tabs, feedback e layout, com consumidores reutilizáveis em GanjaLab420, GanjaLab, Revista, Wiki, Fórum e Conta. Este avanço permanece documental, sem gate Runtime aprovado.
