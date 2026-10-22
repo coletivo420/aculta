@@ -406,3 +406,7 @@ O componente `aculta420:context-header` **já existe** com schema SDC, Twig, CSS
 ## THEME-UX 0.8 — Continuação a partir da branch atual
 
 A inspeção de 2026-10-22 confirmou que `context-header` e `context-tabs` já existem na branch. Portanto não repetir a implementação B1/B2: avançar para [B5-02](theme-ux-0.8-b5-02-drawer-runtime-gates.md), auditoria de interações das gavetas globais com UI Patterns/Styles e preservação do shell. Depois, B6 consolidará os componentes transversais. Fase **planejada**; Runtime pendente.
+
+## THEME-UX 0.8-B6 — Consolidação transversal SDC/UI Suite
+
+A fotografia atual da branch aponta **41 metadados SDC e 65 stories** (substitui a fotografia histórica 38/58). Iniciada a [consolidação B6](theme-ux-0.8-b6-consolidation.md): revisão dos contratos de context-header, context-tabs, empty-state, messenger-state, cartões e overlays, mais matriz de UI Patterns/Styles. A fase B5-02 e a homologação de B6 continuam **PENDENTES no Runtime**; nenhum gate foi aprovado nesta atualização.
