@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.210` | Carregar autores da lista pública em lote | ForumPosts, contas User e autores históricos da página são carregados em lote; seleção de atividade e `aculta_user` permanecem como fonte de autoria/apresentação. Validação integrada de performance pendente. Sem teste ou Runtime. |
 | `0.1.0-dev.209` | Mostrar autoria da atividade mais recente na lista pública | Compara atividade de tópico, Comment e ForumPost; a identidade User/histórica de ForumPost usa o builder proprietário `aculta_user`. Validação integrada/browser pendente. Sem teste ou Runtime. |
 | `0.1.0-dev.208` | Incluir ForumPost na contagem e atividade da lista pública | Combina Comments e ForumPosts publicados em contagem, ordenação e filtro “Sem resposta”; atividade usa o timestamp mais recente do tópico, Comment ou ForumPost. A autoria exibida ainda é a do último Comment até integrar a identidade do último post; validação integrada pendente. Sem teste ou Runtime. |
 | `0.1.0-dev.205` | Conectar ForumPost à conquista existente de primeira resposta | Game avalia a primeira publicação default de post público pelo trigger `forum_comment`; sem dependência do Fórum, backfill ou Runtime. Validação automatizada integrada pendente. |

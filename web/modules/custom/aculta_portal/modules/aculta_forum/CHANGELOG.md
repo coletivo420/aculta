@@ -1,3 +1,12 @@
+## `0.1.0-dev.210` — carregar autores da lista de tópicos em lote
+
+- A preparação da View coleta autores User e históricos das respostas recentes
+  da página e carrega entidades em lotes, junto com os ForumPosts já agregados.
+  Remove consultas individuais de usuário/ForumPost por linha, sem mudar as
+  regras de seleção de última atividade ou o builder proprietário `aculta_user`.
+- Não houve alteração Runtime. Validação integrada/performance permanece
+  pendente; não foram adicionados nem executados testes.
+
 ## `0.1.0-dev.209` — apresentar a autoria da atividade mais recente
 
 - O cartão da listagem pública compara timestamps de tópico, Comments e

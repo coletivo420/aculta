@@ -41,7 +41,7 @@ motor novo segue por contexto e fases.
   há tópico público automático para publicação ou verbete.
 - LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
 - `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
-- Nas listagens públicas, a última autoria usa o UID agregado pelo Comment Core e o cartão `author_forum` de `aculta_user`. O nome de login e `last_comment_name` não são exibidos; identidade e avatar obedecem à política de perfil e cache do `aculta_user`.
+- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade User/histórica usa o `aculta_user.author_card_builder` e é carregada em lotes; o nome de login nunca é exibido.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
 - Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
   API, History, Flag e workflow/revisão. A entidade `aculta_forum_post` passa a
