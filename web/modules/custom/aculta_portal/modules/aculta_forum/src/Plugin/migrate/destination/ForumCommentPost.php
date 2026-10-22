@@ -91,9 +91,11 @@ final class ForumCommentPost extends EntityContentBase {
   public function import(Row $row, array $old_destination_id_values = []): array {
     $source_id = (string) $row->getSourceProperty('cid');
     $owner_id = (int) $row->getSourceProperty('uid');
-    if ($owner_id <= 0) {
+    $legacy_author_id = (int) $row->getSourceProperty('legacy_author_id');
+    if ($owner_id <= 0 && ($legacy_author_id <= 0
+      || $this->entityTypeManager->getStorage('aculta_legado_autor')->load($legacy_author_id) === NULL)) {
       throw new MigrateException(sprintf(
-        'Comment %s tem autoria anônima, que o ForumPost não consegue preservar; migração interrompida.',
+        'Comment %s não tem usuário nem autoria histórica válida para o ForumPost; migração interrompida.',
         $source_id,
       ));
     }

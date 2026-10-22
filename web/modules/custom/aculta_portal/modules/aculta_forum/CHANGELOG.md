@@ -1,9 +1,17 @@
+## `0.1.0-dev.201` — preservar autoria histórica em Comments anônimos
+
+- A migração aceita `uid=0` quando a origem contém uma referência existente a
+  `aculta_legado_autor`, que é mapeada para `ForumPost.legacy_author`. Sem
+  usuário ou referência válida, interrompe a linha; a auditoria agora conta
+  somente esses casos sem representação histórica válida.
+- Sem execução de migration, Runtime ou testes nesta etapa.
+
 ## `0.1.0-dev.200` — bloquear perda de autoria anônima na migração
 
 - A auditoria conta Comments elegíveis sem proprietário. O destino da migration
-  interrompe a linha quando `uid` é zero, pois `aculta_forum_post` não preserva
-  o nome de autoria anônima; não converte silenciosamente a autoria em conta
-  genérica nem migra contato pessoal.
+  interrompe a linha quando `uid` é zero e não há referência de autoria
+  histórica válida; não converte silenciosamente a autoria em conta genérica
+  nem migra contato pessoal.
 - Sem execução de migration, Runtime ou testes nesta etapa.
 
 ## `0.1.0-dev.199` — evitar link duplicado no cartão PDF

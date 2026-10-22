@@ -62,7 +62,7 @@ final class ForumCommentMigrationAudit {
       'unpublished_comments' => 0,
       'rejected_comments' => 0,
       'comments_with_legacy_author' => 0,
-      'comments_without_owner' => 0,
+      'anonymous_comments_without_legacy_author' => 0,
       'comments_with_missing_owner' => 0,
       'comments_with_missing_legacy_author' => 0,
       'comments_with_empty_body_translation' => 0,
@@ -115,6 +115,8 @@ final class ForumCommentMigrationAudit {
       $parent_references = [];
       $owner_references = [];
       $legacy_author_references = [];
+      $anonymous_comment_ids = [];
+      $anonymous_comment_lookup = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
         if (!$comment instanceof CommentInterface) {
           continue;
@@ -140,7 +142,8 @@ final class ForumCommentMigrationAudit {
           $owner_references[$comment_id] = (string) $owner_id;
         }
         else {
-          $report['comments_without_owner']++;
+          $anonymous_comment_ids[] = $comment_id;
+          $anonymous_comment_lookup[$comment_id] = TRUE;
         }
         $translations = $comment->getTranslationLanguages();
         if (count($translations) > 1) {
@@ -215,10 +218,18 @@ final class ForumCommentMigrationAudit {
       }
       if ($legacy_author_references !== []) {
         $legacy_authors = $this->entityTypeManager->getStorage('aculta_legado_autor')->loadMultiple(array_values(array_unique($legacy_author_references)));
-        foreach ($legacy_author_references as $legacy_author_id) {
+        foreach ($legacy_author_references as $comment_id => $legacy_author_id) {
           if (!isset($legacy_authors[$legacy_author_id])) {
             $report['comments_with_missing_legacy_author']++;
+            if (isset($anonymous_comment_lookup[$comment_id])) {
+              $report['anonymous_comments_without_legacy_author']++;
+            }
           }
+        }
+      }
+      foreach ($anonymous_comment_ids as $comment_id) {
+        if (!isset($legacy_author_references[$comment_id])) {
+          $report['anonymous_comments_without_legacy_author']++;
         }
       }
 

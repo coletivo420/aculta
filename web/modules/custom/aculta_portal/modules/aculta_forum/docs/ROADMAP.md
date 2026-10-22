@@ -95,7 +95,8 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.200` | Bloquear perda de autoria anônima na migração | Auditoria conta Comments `uid=0`; destino falha fechado porque ForumPost não representa nome de autor anônimo, sem copiar dados de contato. Migração não executada; decisão sobre esse conteúdo é pré-condição. |
+| `0.1.0-dev.201` | Preservar autoria histórica em Comments anônimos | Destino aceita `uid=0` somente com referência existente a `aculta_legado_autor`; auditoria conta os anônimos sem representação histórica válida. Sem execução de migration ou Runtime. |
+| `0.1.0-dev.200` | Bloquear perda de autoria anônima na migração | Primeira trava tratava todo `uid=0` como não representável; refinada na dev.201 para aceitar referências históricas válidas. Não migra dados de contato. |
 | `0.1.0-dev.199` | Evitar ação duplicada nos cartões PDF | O cartão mantém download/abertura do `aculta_pdf_viewer`; link Core só entra no fallback negado. Sem alteração Runtime; inspeção visual pendente. |
 | `0.1.0-dev.198` | Integrar cartão PDF compartilhado aos anexos | Formatter delega `forum_attachment.field_media_forum_attachment` ao `aculta_pdf_viewer`; o builder valida acesso/cache e link Core permanece fallback. Sem Runtime; validação visual/funcional pendente. |
 | `0.1.0-dev.197` | Limitar lotes ao sincronizar anexos no estado do tópico | Mudança de publicação do tópico percorre Comments e posts em lotes de 100, com limite máximo capturado no início; Media e Gallery preservam as regras existentes. Sem alteração Runtime; regressão automatizada pendente. |
