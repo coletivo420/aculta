@@ -8,7 +8,7 @@ Decisão arquitetural normativa. Esta classificação **não** corresponde a um 
 2. **Kernel ACULTA** é o conjunto de serviços transversais e contratos comuns: `aculta_portal` (integração e política multidomínio), `aculta_user` (identidade, perfis e cartões), `aculta_image` (pipeline, otimização, deduplicação e remoção segura de imagens), `aculta_document_viewer` (leitura de arquivos conforme fases efetivamente implantadas), `aculta_messenger` (experiência de mensagens e avisos, sobre entidades contrib) e `aculta_mail_confirmer`/`aculta_mail_confirmer_user` (confirmação de e-mail/conta). Consultar o Runtime para distinguir migrações planejadas de módulos já habilitados.
 3. **Subkernels funcionais reutilizáveis**: `aculta_forum` para experiência de discussões e moderação contextual; `aculta_gallery` para álbuns, referências de Media e experiência de galeria. São independentes da Revista e do Studio. Usam serviços do Kernel ACULTA e Core/contrib.
 4. **Consumidores funcionais**: `aculta_magazine` (Revista), Wiki (Node/Taxonomy/Views existentes), `aculta_lms`/Group, Projetos do domínio principal e futuro `aculta_eventos`. Consomem seletivamente kernel e subkernels, mas preservam dados, acesso e regras de seu contexto.
-5. **`aculta_studio` (planejado)**: espaço de trabalho frontend por abas para autores, editores, moderadores e educadores. Agrega formulários, Views, operações e filas autorizadas, sem se tornar dono dos conteúdos, permissões, discussões ou galerias.
+5. **`aculta_studio` (submódulo existente; contratos multi-experiência em expansão)**: espaço de trabalho frontend por abas para autores, editores, moderadores e educadores. Agrega formulários, Views, operações e filas autorizadas, sem se tornar dono dos conteúdos, permissões, discussões ou galerias.
 6. **ACULTA420**: única camada visual pública, com SDC, UI Patterns, UI Styles e tokens. Código de negócio nos módulos; apresentação no tema conforme `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
 
 ## Dependências e fronteiras
@@ -75,3 +75,9 @@ Esta matriz representa o **contrato-alvo**, não a confirmação de que cada int
 - **Mensagem ≠ confirmação de conta**: Messenger entrega comunicações autorizadas; Mail Confirmer controla confirmação de e-mail; publicação continua condicionada a permissões reais.
 - **Studio ≠ módulo dono do dado**: usar Views/Form API/Entity Access/Workflows do consumidor, sem tabelas próprias equivalentes ou novos fluxos de permissão.
 - **Kernel ≠ dependência obrigatória universal**: modules `*.info.yml` declaram apenas os serviços necessários; providers opcionais evitam ciclos.
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+Kernel taxonomy: aculta_studio is an existing installed-capable Drupal submodule that serves as shared experience/interface platform for GanjaLab, GanjaLab420, WE SATIVA and future custom user interfaces. Existing point 5 calling it planned is obsolete; existing GanjaLab routes are real, new shared experience providers are planned. Studio does not own domain content or editorial permissions.
+
+[Contrato e roadmap transversal](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
