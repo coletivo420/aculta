@@ -137,3 +137,8 @@ ACL por participante e estado; tenant/purpose Wiki, isolamento de Group quando a
 ## Política editorial aprovada — contribuição comunitária moderada
 
 Todas as contas com **e-mail confirmado** poderão contribuir pelo WE SATIVA, observando acesso efetivo e isolamento de domínio. Configuração exportada já permite criar/editar verbetes próprios e enviar revisão; publicações são responsabilidade de `content_editor`. Propostas para verbetes de terceiros **não podem** usar `edit own` como se fosse `edit any`: seguir a [C01-B](WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) e decidir backend próprio de propostas revisáveis antes de oferecer microtarefas. Autosave Form permanece futuro.
+
+
+## Retificação de experiência editorial (V-0.4-D)
+
+A seção de revisão editorial e sua fila são **áreas do GanjaLab**, por meio de StudioTab e services do `aculta_wiki`, não da navegação WE SATIVA. O WE SATIVA tem somente `Meu trabalho` (contribuições próprias, respostas editoriais e status), além de criação/edição autorizada. [Janela de moderação planejada no GanjaLab](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md). Esta decisão prevalece sobre tabelas anteriores que associavam Revisão à UI do colaborador.
