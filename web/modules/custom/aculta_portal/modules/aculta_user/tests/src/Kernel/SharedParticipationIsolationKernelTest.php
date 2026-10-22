@@ -65,6 +65,18 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * The Forum modules are not enabled here, so their settings schema is not
+   * installed. Excluding these names keeps the real save path (and its cache
+   * invalidation) while skipping only the schema assertion.
+   */
+  protected static $configSchemaCheckerExclusions = [
+    'aculta_forum.settings',
+    'aculta_forum_lms.settings',
+  ];
+
+  /**
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -393,14 +405,13 @@ final class SharedParticipationIsolationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Writes a window setting and clears the configuration static cache.
+   * Saves a window setting through the regular config API.
    *
-   * The Forum modules are not enabled in this kernel test, so their schema is
-   * unavailable and the value is written directly to config storage.
+   * The names are declared in $configSchemaCheckerExclusions because the Forum
+   * settings schema is not installed in this minimal kernel.
    */
   private function setEditWindow(string $name, int $minutes): void {
-    $this->container->get('config.storage')
-      ->write($name, ['edit_window_minutes' => $minutes]);
+    $this->config($name)->set('edit_window_minutes', $minutes)->save();
     $this->container->get('config.factory')->reset($name);
   }
 

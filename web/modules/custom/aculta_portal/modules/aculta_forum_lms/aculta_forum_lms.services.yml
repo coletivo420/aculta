@@ -24,5 +24,7 @@ services:
     class: Drupal\aculta_forum_lms\Access\LmsEditWindowExemption
     arguments: ['@Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider']
     tags:
-      - { name: aculta_user.edit_window_exemption }
+      # Explicit priority keeps the contract ordering stable: exemptions run
+      # from the highest priority to the lowest, and the first allowed wins.
+      - { name: aculta_user.edit_window_exemption, priority: 0 }
 

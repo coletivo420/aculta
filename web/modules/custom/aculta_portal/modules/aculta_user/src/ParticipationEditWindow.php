@@ -20,6 +20,12 @@ use Drupal\Component\Datetime\TimeInterface;
 final class ParticipationEditWindow {
 
   /**
+   * Builds the author edit window policy.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Configuration factory with the consumer's setting.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   Request time source used to measure the window boundary.
    * @param iterable<\Drupal\aculta_user\EditWindowExemptionInterface> $exemptions
    *   Consumer exemptions, such as contextual educator rights in a course.
    */
@@ -51,9 +57,16 @@ final class ParticipationEditWindow {
     $cacheContexts = ['user', 'user.permissions'];
 
     // Consumers decide who keeps contextual rights, for example educators in
-    // their course. Only an allowed exemption lifts the window.
+    // their course. Only an allowed exemption lifts the window. An exemption
+    // that cannot answer is skipped: the window stays authoritative instead of
+    // turning a service failure into an edit grant.
     foreach ($this->exemptions as $exemption) {
-      $exempt = $exemption->access($entity, $account);
+      try {
+        $exempt = $exemption->access($entity, $account);
+      }
+      catch (\Throwable) {
+        continue;
+      }
       if ($exempt->isAllowed()) {
         return AccessResult::neutral()
           ->addCacheableDependency($entity)
@@ -71,8 +84,8 @@ final class ParticipationEditWindow {
     }
 
     // Without a first-publication marker the window cannot be measured, so the
-    // creation time is the conservative bound: it never gives more time than the
-    // policy allows. Content with neither value is locked, not left open.
+    // creation time is the conservative bound: it never gives more time than
+    // the policy allows. Content with neither value is locked, not left open.
     if ($publishedAt === NULL) {
       return AccessResult::forbidden()
         ->addCacheableDependency($entity)

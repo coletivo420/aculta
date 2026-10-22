@@ -93,16 +93,32 @@ final class LmsEditWindowExemptionTest extends TestCase {
   /**
    * A saved LMS topic without a UUID cannot resolve a context.
    *
-   * This pins the current provider guard. The exemption does not catch the
-   * exception, so a context is never silently granted.
+   * The provider guard is mirrored here, so the exemption fails closed with a
+   * neutral result instead of letting a LogicException escape the access
+   * pipeline. The author window therefore still applies.
    */
-  public function testTopicWithoutAnIdentifierIsRejected(): void {
+  public function testTopicWithoutAnIdentifierIsNeutral(): void {
     $topic = $this->topic(uuid: '');
 
-    $this->expectException(\LogicException::class);
-    $this->expectExceptionMessage('LMS discussion context requires a persisted aculta_lms_topic node with a UUID.');
+    $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
 
-    $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
+    self::assertTrue($result->isNeutral());
+    self::assertContains('comment:1', $result->getCacheTags());
+    self::assertContains('aculta_lms_topic:5', $result->getCacheTags());
+  }
+
+  /**
+   * A topic that has not been saved yet is also neutral.
+   *
+   * Unsaved topics have no context to resolve and must never grant moderation.
+   */
+  public function testNewTopicIsNeutral(): void {
+    $topic = $this->topic(uuid: '', isNew: TRUE);
+
+    $result = $this->exemption($this->entityTypeManager([]))->access($this->comment($topic), $this->account());
+
+    self::assertTrue($result->isNeutral());
+    self::assertContains('comment:1', $result->getCacheTags());
   }
 
   /**
@@ -196,10 +212,10 @@ final class LmsEditWindowExemptionTest extends TestCase {
   /**
    * Creates a persisted LMS topic shaped like a group host.
    */
-  private function topic(string $uuid = 'topic-uuid'): NodeInterface {
+  private function topic(string $uuid = 'topic-uuid', bool $isNew = FALSE): NodeInterface {
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_lms_topic');
-    $topic->method('isNew')->willReturn(FALSE);
+    $topic->method('isNew')->willReturn($isNew);
     $topic->method('uuid')->willReturn($uuid);
     $topic->method('id')->willReturn('5');
     $topic->method('access')->willReturn(AccessResult::allowed());

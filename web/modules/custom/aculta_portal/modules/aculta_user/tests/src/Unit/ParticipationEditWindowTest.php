@@ -250,6 +250,27 @@ final class ParticipationEditWindowTest extends TestCase {
   }
 
   /**
+   * The first allowed exemption wins and evaluation stops there.
+   *
+   * The contract orders exemptions by service tag priority (highest first);
+   * once an exemption allows, later ones are not consulted and their
+   * cacheability does not leak into the result.
+   */
+  public function testFirstAllowedExemptionShortCircuitsTheIteration(): void {
+    $first = (new ParticipationEditWindowExemptionStub(AccessResult::allowed()))
+      ->withCacheability(['user.group_permissions'], ['group:1']);
+    $second = (new ParticipationEditWindowExemptionStub(AccessResult::allowed()))
+      ->withCacheability(['user.group_permissions'], ['group:2']);
+
+    $result = $this->window(exemptions: [$first, $second])
+      ->access($this->post(17, 100), 'update', $this->account(17));
+
+    self::assertTrue($result->isNeutral());
+    self::assertContains('group:1', $result->getCacheTags());
+    self::assertNotContains('group:2', $result->getCacheTags());
+  }
+
+  /**
    * An allowed exemption also wins over a zero-length window.
    */
   public function testAllowedExemptionWinsOverZeroWindow(): void {
@@ -277,6 +298,23 @@ final class ParticipationEditWindowTest extends TestCase {
     self::assertTrue($result->isNeutral());
     self::assertContains('user.group_permissions', $result->getCacheContexts());
     self::assertContains('group:1', $result->getCacheTags());
+  }
+
+  /**
+   * An unavailable exemption keeps the window instead of breaking the check.
+   *
+   * A consumer service that cannot answer must never turn into an edit grant:
+   * the policy skips it (fail closed) and still evaluates the remaining ones.
+   */
+  public function testUnavailableExemptionFailsClosed(): void {
+    $post = $this->post(17, 100);
+    $account = $this->account(17);
+
+    $throwing = new ParticipationEditWindowThrowingExemptionStub();
+    self::assertTrue($this->window(exemptions: [$throwing])->access($post, 'update', $account)->isForbidden());
+
+    $allowed = new ParticipationEditWindowExemptionStub(AccessResult::allowed());
+    self::assertTrue($this->window(exemptions: [$throwing, $allowed])->access($post, 'update', $account)->isNeutral());
   }
 
   /**
@@ -477,6 +515,20 @@ final class ParticipationEditWindowFieldList extends FieldItemList {
    */
   public function isEmpty(): bool {
     return $this->empty;
+  }
+
+}
+
+/**
+ * Exemption stub that cannot answer, simulating an unavailable consumer.
+ */
+final class ParticipationEditWindowThrowingExemptionStub implements EditWindowExemptionInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
+    throw new \RuntimeException('Exemption service unavailable.');
   }
 
 }
