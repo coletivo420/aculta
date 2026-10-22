@@ -138,8 +138,9 @@ testes de workflow; a configuração da política inicial continua sendo a de
    A dev.152 acrescenta `drush aculta-forum:audit-comment-migration`, um
    inventário somente leitura e sem IDs/PII na saída. Ele identifica o escopo
    elegível, formatos, idiomas/traduções, estados, autoria histórica,
-   timestamps, embeds e referências pai ausentes/externas/cruzadas. Ainda não
-   cria posts nem usa o mapa Migrate. A dev.154 também conta Flagging entities
+   timestamps, embeds e referências pai ausentes/externas/cruzadas. A dev.161
+   pagina os CIDs por lotes com limite inicial, sem carregar antecipadamente
+   todos os IDs. Ainda não cria posts nem usa o mapa Migrate. A dev.154 também conta Flagging entities
    ligadas aos Comments elegíveis por configuração de flag, sem expor uid ou
    sessão. O contrib Flag impede transferir uma Flagging existente para outra
    entidade; a migração precisará recriar a associação no destino pela API e

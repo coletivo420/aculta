@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
@@ -40,15 +41,19 @@ final class ForumCommentMigrationAudit {
     }
 
     $storage = $this->entityTypeManager->getStorage('comment');
-    $comment_ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('comment_type', self::COMMENT_TYPE)
-      ->condition('entity_type', 'node')
-      ->condition('field_name', self::COMMENT_FIELD)
-      ->sort('cid')
+    $last_source_ids = $this->sourceCommentQuery()
+      ->sort('cid', 'DESC')
+      ->range(0, 1)
       ->execute();
+    $max_source_id = $last_source_ids === [] ? 0 : (int) reset($last_source_ids);
+    $source_comments = $max_source_id > 0
+      ? $this->sourceCommentQuery()
+        ->condition('cid', $max_source_id, '<=')
+        ->count()
+        ->execute()
+      : 0;
     $report = [
-      'source_comments' => count($comment_ids),
+      'source_comments' => (int) $source_comments,
       'eligible_comments' => 0,
       'invalid_topic' => 0,
       'wrong_purpose' => 0,
@@ -83,7 +88,18 @@ final class ForumCommentMigrationAudit {
     $media_uuids = [];
     $gallery_uuids = [];
 
-    foreach (array_chunk($comment_ids, $batch_size) as $batch) {
+    $last_comment_id = 0;
+    while ($last_comment_id < $max_source_id) {
+      $batch = $this->sourceCommentQuery()
+        ->condition('cid', $last_comment_id, '>')
+        ->condition('cid', $max_source_id, '<=')
+        ->sort('cid')
+        ->range(0, $batch_size)
+        ->execute();
+      if ($batch === []) {
+        break;
+      }
+      $last_comment_id = (int) end($batch);
       $eligible_comment_ids = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
         if (!$comment instanceof CommentInterface) {
@@ -220,6 +236,20 @@ final class ForumCommentMigrationAudit {
       ->count()
       ->execute();
     return $report;
+  }
+
+  /**
+   * Creates the stable base query for legacy Forum Comments.
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   Entity query limited to the source Comment type and field.
+   */
+  private function sourceCommentQuery(): QueryInterface {
+    return $this->entityTypeManager->getStorage('comment')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('comment_type', self::COMMENT_TYPE)
+      ->condition('entity_type', 'node')
+      ->condition('field_name', self::COMMENT_FIELD);
   }
 
   /**

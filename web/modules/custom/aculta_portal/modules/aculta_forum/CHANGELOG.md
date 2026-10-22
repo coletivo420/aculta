@@ -1,3 +1,11 @@
+## `0.1.0-dev.161` — paginar IDs da auditoria de migração
+
+- A auditoria fixa o maior CID de origem no início e busca os Comments em lotes
+  por intervalo de IDs, sem materializar de antemão a lista completa de origem.
+  O limite exclui inserções concorrentes posteriores ao início do inventário.
+- Somente leitura; mapas auxiliares necessários para relações, referências e
+  UUIDs continuam proporcionais ao conteúdo analisado. Sem alteração Runtime.
+
 ## `0.1.0-dev.160` — mostrar atividade agregada no painel do Fórum
 
 - O painel administrativo apresenta sete dias UTC de tópicos, Comments legados
