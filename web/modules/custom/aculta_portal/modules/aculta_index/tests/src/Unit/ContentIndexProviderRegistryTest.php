@@ -65,6 +65,22 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
   }
 
   /**
+   * Tests an entity bundle has exactly one projection owner.
+   */
+  public function testRejectsOverlappingBundleOwners(): void {
+    $first = $this->createMock(ContentIndexProviderInterface::class);
+    $first->method('getProviderId')->willReturn('magazine');
+    $first->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $second = $this->createMock(ContentIndexProviderInterface::class);
+    $second->method('getProviderId')->willReturn('custom');
+    $second->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('Entity bundle node:revista is declared by both providers magazine and custom.');
+    new ContentIndexProviderRegistry([$first, $second]);
+  }
+
+  /**
    * Tests unknown providers fail closed.
    */
   public function testUnknownProviderFailsClosed(): void {

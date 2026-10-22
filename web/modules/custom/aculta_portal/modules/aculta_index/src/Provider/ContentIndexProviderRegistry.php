@@ -19,6 +19,13 @@ final class ContentIndexProviderRegistry {
   private array $providers = [];
 
   /**
+   * Provider that owns each entity type and bundle pair.
+   *
+   * @var array<string, array<string, string>>
+   */
+  private array $bundleOwners = [];
+
+  /**
    * Builds the registry from tagged services.
    *
    * @param iterable<\Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface> $providers
@@ -44,6 +51,11 @@ final class ContentIndexProviderRegistry {
           if (!is_string($bundle) || preg_match('/^[a-z][a-z0-9_]*$/', $bundle) !== 1) {
             throw new \InvalidArgumentException(sprintf('Provider %s declares an invalid bundle for entity type %s.', $id, $entityTypeId));
           }
+          $owner = $this->bundleOwners[$entityTypeId][$bundle] ?? NULL;
+          if ($owner !== NULL) {
+            throw new \InvalidArgumentException(sprintf('Entity bundle %s:%s is declared by both providers %s and %s.', $entityTypeId, $bundle, $owner, $id));
+          }
+          $this->bundleOwners[$entityTypeId][$bundle] = $id;
         }
       }
       $this->providers[$id] = $provider;

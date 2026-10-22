@@ -20,7 +20,7 @@ interface ContentIndexProviderInterface {
   public function getProviderId(): string;
 
   /**
-   * Returns supported entity types and their bundles.
+   * Returns entity types and bundles exclusively owned by this projection.
    *
    * @return array<string, list<string>>
    *   Entity type IDs mapped to supported bundle IDs.

@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.7 — propriedade exclusiva de projeção por bundle
+
+- O registry rejeita providers que disputem o mesmo tipo/bundle. O schema
+  mantém uma linha por identidade entidade/idioma/geração, portanto projeções
+  concorrentes seriam sobrescritas e tornariam a origem ambígua.
+- Unit cobre a recusa de providers sobrepostos.
+
 ## 0.1.0-dev.6 — checker de integridade do catálogo
 
 - `ContentIndexIntegrityChecker` valida coerência do ponteiro e conta entradas
