@@ -1,5 +1,20 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.13 — consulta paginada e cursor opaco
+
+- `ContentIndexQuery` seleciona no máximo 100 candidatos por página, em ordem
+  keyset `changed DESC, entry_id DESC`, e retorna somente traduções aprovadas
+  pelo Entity Access atual. Não calcula totais/facetas e usa cache max-age 0.
+- Cursor aleatório vinculado a conta, filtros e geração; somente SHA-256 fica
+  armazenado. Expira após 15 minutos de inatividade, avança por CAS e cron
+  remove expirados em lotes limitados.
+- Próximo token só é emitido quando a página de candidatos atinge o limite; essa
+  política mantém custo limitado e o token não revela IDs nem metadados do item.
+- Update hooks 10005–10007 criam cursor, CAS do cursor e índice keyset.
+- Kernel cobre páginas, cursor não legível no banco, filtro de acesso de item
+  privado e remoção do cursor ao final. Custo real/volume e concorrência seguem
+  pendentes.
+
 ## 0.1.0-dev.12 — inventário estável e consultas sem agregados
 
 - A geração persiste fingerprint SHA-256 do inventário de providers/tipos/

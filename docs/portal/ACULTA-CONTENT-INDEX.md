@@ -34,7 +34,7 @@ Relações são direcionadas, tipadas e produzidas por provider. Cada tipo decla
 
 O desenho de implementação combina: revogação/bloqueio síncrono quando uma mudança reduzir exposição; job incremental idempotente com payload mínimo e comparação atômica de versão; reconciliação paginada/checkpointed; rebuild por geração com catch-up de deltas e ativação atômica; rollback/limpeza somente depois de validar integridade. Entradas e relações terão `generation_id` e um ponteiro para a geração ativa. A ativação trocará o ponteiro transacionalmente. O cursor será keyset, sem OFFSET profundo. Consultas de candidatos não autorizam saída; entidades originais serão carregadas em lotes e autorizadas de acordo com a API dona.
 
-Contrato decidido para consultas 0.1: páginas limitadas por cursor, sem totais ou facetas. Isso evita agregações sobre candidatos não autorizados e mantém o trabalho limitado por página. Se forem adicionados depois, totals/facetas só poderão refletir entidades aprovadas por Entity Access e deverão ser medidos em volume.
+Contrato decidido para consultas 0.1: páginas de até 100 candidatos, sem totais ou facetas. O serviço filtra cada página por Entity Access e retorna cursor aleatório vinculado a conta, filtros e geração; só o hash do token é persistido. O cursor não expõe IDs. Sua presença quando uma página chega ao limite pode sinalizar continuação, opção aceita para limitar custo sem varrer um conjunto irrestrito. Respostas iniciais têm cache max-age 0. Se totals/facetas forem adicionados depois, só poderão refletir entidades autorizadas e deverão ser medidos em volume.
 
 Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado mínimo próprio para contagem/timing de falhas e dead-letter, pois a Queue Core fornece lease/recuperação de item expirado, mas não o histórico operacional específico requerido. Política confirmada: cinco tentativas com backoff exponencial de 30 segundos até seis horas. Não instalar Advanced Queue. O fluxo precisa sobreviver a módulo de origem desabilitado, rebuild concorrente, job fora de ordem, relação removida e acesso revogado.
 
@@ -48,7 +48,7 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Hooks CRUD, fila deduplicada Core Queue, sequência por identidade, retries e worker inicial implementados; eventos de grants externos e teste de concorrência pendentes |
 | IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, fingerprint de providers e coordenador de lotes implementados; validação/catch-up e reconciliação pendentes; worker grava gerações active/building para preservar deltas |
 | IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Provider Magazine conectado à fila; integração de outros providers e bridge Statistics pendentes |
-| IDX 0.1-G | Consultas, cache e medições | Pendente |
+| IDX 0.1-G | Consultas, cache e medições | Serviço inicial com filtros allowlisted, Entity Access e cursor opaco implementado; API de relações, caches/benchmarks e mais bancos pendentes |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |
 
 Ver o [relatório da IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) para inventário, riscos, proveniência e achados de código. Nenhuma fase futura está marcada como concluída por antecipação.

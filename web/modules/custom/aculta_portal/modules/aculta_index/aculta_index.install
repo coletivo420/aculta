@@ -72,6 +72,7 @@ function aculta_index_schema(): array {
       'indexes' => [
         'gen_bundle' => ['generation_id', 'entity_type', 'bundle', 'langcode'],
         'gen_domain_pub' => ['generation_id', 'domain_id', 'published', 'changed'],
+        'gen_changed' => ['generation_id', 'changed', 'entry_id'],
         'gen_provider' => ['generation_id', 'provider_id'],
       ],
     ],
@@ -125,6 +126,26 @@ function aculta_index_schema(): array {
       'indexes' => [
         'status_available' => ['status', 'available_at'],
         'status_updated' => ['status', 'updated'],
+      ],
+    ],
+    'aculta_index_cursor' => [
+      'description' => 'Opaque, account-bound keyset cursors for Content Index queries.',
+      'fields' => [
+        'token_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'query_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'cursor_changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'cursor_entry_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'cursor_revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'expires' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      ],
+      'primary key' => ['token_hash'],
+      'indexes' => [
+        'owner_expiry' => ['uid', 'expires'],
+        'expires' => ['expires'],
       ],
     ],
   ];
@@ -197,5 +218,40 @@ function aculta_index_update_10004(): void {
       'not null' => TRUE,
       'default' => '',
     ]);
+  }
+}
+
+/**
+ * Adds opaque query cursor storage.
+ */
+function aculta_index_update_10005(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_cursor')) {
+    $schema->createTable('aculta_index_cursor', aculta_index_schema()['aculta_index_cursor']);
+  }
+}
+
+/**
+ * Adds compare-and-swap revision to persisted query cursors.
+ */
+function aculta_index_update_10006(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_cursor') && !$schema->fieldExists('aculta_index_cursor', 'cursor_revision')) {
+    $schema->addField('aculta_index_cursor', 'cursor_revision', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds the keyset order index used by bounded query pages.
+ */
+function aculta_index_update_10007(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->indexExists('aculta_index_entry', 'gen_changed')) {
+    $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id']);
   }
 }

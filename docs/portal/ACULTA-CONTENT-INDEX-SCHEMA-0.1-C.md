@@ -28,6 +28,8 @@ Entradas têm consultas seletivas por geração, tipo/bundle, domínio/estado e 
 
 Schema foi declarado com Database Schema API, sem SQL de criação específico do driver. Os testes atuais conferem o contrato da definição; ainda é necessário instalar e consultar schema em MariaDB e SQLite dentro dos harnesses de teste aprovados. Não há medição de latência, volume ou tamanho de índice nesta fase.
 
+Consultas 0.1 usam `generation_id`, filtros allowlisted, `changed DESC` e `entry_id DESC` para keyset. O índice `gen_changed` serve esse percurso. O cursor não contém identidade da origem: um token aleatório por conta/filtros/geração localiza uma linha com hash SHA-256, posição, revisão CAS e expiração de 15 minutos. O cron apaga tokens expirados por lotes. O leitor revalida cada entidade pela API de acesso; as respostas não são armazenáveis em cache neste primeiro contrato.
+
 ## Limites de projeção
 
 O schema não guarda corpo, URI de arquivo, usuário, histórico de revisão, notas de estudante ou métricas. `published` é nullable porque algumas entidades não têm publicação; zero/um representam estado explícito quando o provider pode determiná-lo. `domain_id` vazio representa ausência de domínio. A presença da linha não concede acesso; APIs de consulta futuras precisam carregar o original, validar Entity Access e filtrar resultados sem expor totais/facetas privados.

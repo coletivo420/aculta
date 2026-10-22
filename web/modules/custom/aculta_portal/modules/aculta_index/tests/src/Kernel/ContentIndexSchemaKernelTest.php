@@ -38,6 +38,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'aculta_index_entry',
       'aculta_index_relation',
       'aculta_index_work',
+      'aculta_index_cursor',
     ]);
     aculta_index_install();
   }

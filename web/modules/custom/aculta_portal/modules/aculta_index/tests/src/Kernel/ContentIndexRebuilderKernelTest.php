@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -42,8 +43,10 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       'aculta_index_entry',
       'aculta_index_relation',
       'aculta_index_work',
+      'aculta_index_cursor',
     ]);
-    $this->installConfig(['node']);
+    $this->installConfig(['node', 'user']);
+    $this->config('user.role.anonymous')->set('permissions', ['access content'])->save();
     aculta_index_install();
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
   }
@@ -92,6 +95,58 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
 
     $this->expectException(\UnexpectedValueException::class);
     $rebuilder->processNextBatch($generationId);
+  }
+
+  /**
+   * Checks query pagination uses an opaque persisted cursor and access checks.
+   */
+  public function testQueryUsesOpaqueCursorAndReturnsAuthorizedEntities(): void {
+    foreach (['Article one', 'Article two', 'Private article'] as $index => $title) {
+      $node = Node::create([
+        'type' => 'article',
+        'title' => $title,
+        'created' => 1000,
+        'changed' => 1000,
+      ]);
+      if ($index < 2) {
+        $node->setPublished();
+      }
+      else {
+        $node->setUnpublished();
+      }
+      $node->save();
+    }
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 2)['complete']) {
+    }
+    $generations = $this->container->get('aculta_index.generation_manager');
+    $generations->markValidated($generationId);
+    $generations->activate($generationId);
+
+    $query = $this->container->get('aculta_index.query');
+    $account = new AnonymousUserSession();
+    $privateNode = $this->container->get('entity_type.manager')->getStorage('node')->load(3);
+    $this->assertFalse($privateNode->isPublished());
+    $this->assertFalse($privateNode->access('view', $account));
+    $authorized = $query->query([], $account, NULL, 4);
+    $this->assertCount(2, $authorized->entities);
+    $labels = array_map(static fn ($entity): string => (string) $entity->label(), $authorized->entities);
+    $this->assertNotContains('Private article', $labels);
+    $firstPage = $query->query(['published' => TRUE], $account, NULL, 2);
+    $this->assertCount(2, $firstPage->entities);
+    $this->assertNotNull($firstPage->nextCursor);
+    $storedHash = $this->container->get('database')->select('aculta_index_cursor', 'cursor')
+      ->fields('cursor', ['token_hash'])
+      ->execute()
+      ->fetchField();
+    $this->assertNotSame($firstPage->nextCursor, $storedHash);
+    $this->assertSame(0, $firstPage->cacheability->getCacheMaxAge());
+
+    $secondPage = $query->query(['published' => TRUE], $account, $firstPage->nextCursor, 2);
+    $this->assertCount(0, $secondPage->entities);
+    $this->assertNull($secondPage->nextCursor);
+    $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_cursor')->countQuery()->execute()->fetchField());
   }
 
 }
