@@ -152,3 +152,7 @@ D-A.2-T: hardening inicial do GanjaLab no StudioListingBuilder (cache por usuár
 WE SATIVA is an ACULTA Studio user experience hosted within the Wiki purpose, driven by aculta_wiki Form API/CKEditor and editorial access; it is not an independent interface kernel. GanjaLab moderation is another Studio experience at account purpose. Maintain different UIs and common interfaces/SDC base; V-0.4-R and D-A.2-T guards still apply.
 
 [Contrato e roadmap transversal](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+## Atualização STUDIO 0.1-B / D-A.2-T2
+
+D-A.2-T2: aculta_studio não enumera mais todas as entidades content_moderation_state; o estado usa a revisão mais recente visível por item. Isso não fornece fila confiável/paginada: aculta_wiki ainda deve implementar provider próprio de revisões com grants e workflow. STUDIO 0.1-B separa providers de experiência WE SATIVA (purpose Wiki) da navegação GanjaLab (account).
