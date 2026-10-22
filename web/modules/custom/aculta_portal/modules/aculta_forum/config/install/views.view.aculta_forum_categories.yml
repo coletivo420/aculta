@@ -210,7 +210,121 @@ display:
     display_options:
       title: 'Categorias do Growroom420'
       defaults:
+        fields: false
         header: false
+        style: false
+      fields:
+        tid:
+          id: tid
+          table: taxonomy_term_field_data
+          field: tid
+          entity_type: taxonomy_term
+          entity_field: tid
+          plugin_id: field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+        parent_name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: parent
+          group_type: group
+          admin_label: 'Título do grupo hierárquico'
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: h2
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          empty: 'Categoria raiz'
+          hide_empty: false
+          empty_zero: false
+          group_rows: true
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: field
+          label: ''
+          alter:
+            alter_text: false
+            make_link: true
+            path: '/?categoria={{ tid }}'
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: h2
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          group_rows: true
+        description__value:
+          id: description__value
+          table: taxonomy_term_field_data
+          field: description__value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
+      style:
+        type: default
+        options:
+          grouping:
+            - field: parent_name
+              rendered: false
+              rendered_strip: false
+          default_row_class: true
       header:
         area_text_custom:
           id: area_text_custom

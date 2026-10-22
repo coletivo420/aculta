@@ -33,7 +33,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 
 | Capacidade | Tratamento | Critério/nota |
 | --- | --- | --- |
-| Categorias e subcategorias / containers separados | Portar com Taxonomy `aculta_forum_categories` | Hierarquia explícita, breadcrumbs e acessibilidade. |
+| Categorias e subcategorias / containers separados | Taxonomy `aculta_forum_categories`; a página agrupa cartões pela relação Parent | Dev.211 usa Views Core com título semântico por pai; breadcrumbs e contadores access-aware continuam pendentes. |
 | Busca em todos os fóruns | Portar via Search API com escopo/purpose | Nunca indexar LMS privado na busca pública. |
 | Marcar todos os fóruns como lidos | Implementado em dev.29 pela confirmação e Core Batch sobre History | Por conta autenticada; tópicos publicados e access-aware no purpose público. Kernel MariaDB prova escopo e grava somente o History da pessoa. |
 | Ícone por fórum/categoria (Taxonomy Image) | Portar por referência Media/Imagem através de `aculta_image` | Definir finalidade do catálogo antes de campo. |

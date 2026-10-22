@@ -102,11 +102,12 @@ Pendências da 0.4:
 
 Status: experimental. Local: `components/content/forum-category/`.
 
-Slots `parent`, `title` e `description` recebem os campos renderizados pela View
-Core de categorias; `title` já inclui o link filtrado preparado pela View. Os
-presenters especializados preservam as linhas e seus attributes e o SDC organiza
-hierarquia/descrição numa grade responsiva. Não carrega entidades, constrói URLs
-ou decide filtros/acesso; isso continua com Drupal Views e o Portal.
+No bloco `block_landing`, os slots `parent`, `title` e `description` recebem os
+campos renderizados pela View Core. Na página `/categorias`, a View agrupa as
+linhas pela relação Parent e o slot `parent` fica vazio; `title` inclui o link
+filtrado preparado pela View. Os presenters preservam linhas e attributes, e o
+SDC apresenta os cartões numa grade responsiva. Não carrega entidades, constrói
+URLs ou decide filtros/acesso; isso continua com Drupal Views e o Portal.
 
 ### `aculta420:project-card` (removido)
 

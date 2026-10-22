@@ -7,6 +7,11 @@ Classificação: PATCH na linha aberta, decidida pelo responsável.
 - Runtime de teste: 5 nós de projeto excluídos depois de backup do banco; a configuração foi removida pela API do Drupal.
 - Versão `0.6.1-dev.1` registrada no `aculta420.info.yml`.
 
+Documentação complementar, sem mudança de código ou versão:
+
+- Atualizada a divisão de responsabilidade da categoria: Views agrupa a página
+  `/categorias` por Parent; o SDC apresenta os termos e descrições.
+
 ## 0.6.0-dev.147 — auditoria Mobile First (documental) — 2026-10-21
 
 Classificação: PATCH documental; sem alteração de código ou incremento de versão.

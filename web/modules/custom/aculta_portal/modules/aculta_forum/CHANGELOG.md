@@ -1,3 +1,15 @@
+## `0.1.0-dev.211` — agrupar categorias por categoria-pai
+
+- A página `/categorias` agrupa cartões pela relação Parent do Taxonomy. Cada
+  grupo tem título semântico; termos raiz ficam em “Categoria raiz”. O display
+  do bloco lateral não muda. Nenhuma contagem de tópico foi adicionada, pois
+  exige agregação que respeite Node Access e Domain.
+- Configuração apenas no Views Core; sem rota ou storage novo. A análise YAML,
+  Drupal 11+, status index, design foundations e SDC schemas passam. O gate
+  módulo-tema aponta dívida preexistente; o gate Foundation ainda espera a
+  versão anterior do tema no Runtime. Inspeção visual com termos filhos
+  continua pendente. Sem testes.
+
 ## `0.1.0-dev.210` — carregar autores da lista de tópicos em lote
 
 - A preparação da View coleta autores User e históricos das respostas recentes
