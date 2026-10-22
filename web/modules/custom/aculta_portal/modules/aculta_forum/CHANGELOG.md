@@ -28,8 +28,11 @@
   e limite de 10 MiB efetivos antes e depois; agora o override pode ser
   administrado explicitamente.
 - O Runtime ainda tem zero `ForumPost` e zero Media `forum_attachment`; o fluxo
-  com post/arquivo e a revisão visual seguem pendentes. Nenhuma fixture ou teste
-  automatizado foi executado.
+  com post/arquivo e a revisão visual seguem pendentes. Kernels de anexos,
+  workflow e política de upload passaram: 13 testes / 304 assertions no
+  `aculta_simpletest`; 15 depreciações de Core/contrib foram reportadas. A suíte
+  de anexos agora instala a definição de `ForumPost` pelo fixture de teste
+  existente; nenhuma fixture de conteúdo foi criada no Runtime.
 
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 

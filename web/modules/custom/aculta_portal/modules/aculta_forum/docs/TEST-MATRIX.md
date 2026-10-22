@@ -16,9 +16,14 @@
 - `aculta_portal.user_upload` foi criado pelo import parcial do Sync; a aba
   Fórum herda a política global. O serviço efetivo continua com os mesmos nove
   formatos e 10 MiB, e o objeto ativo coincide com o Sync.
-- Há zero `ForumPost` e zero Media `forum_attachment`; submissão, moderação,
-  preview privado, fallback e layout seguem sem validação visual. Nenhuma fixture
-  ou importação global; nenhum teste automatizado executado.
+- Kernels de `ForumAttachmentPublicationKernelTest`,
+  `ForumPostWorkflowKernelTest` e `UserUploadPolicyKernelTest` passaram em
+  `aculta_simpletest`: 13 testes / 304 assertions, com 15 depreciações de
+  Core/contrib. A suíte de anexos instala a definição `ForumPost` usando o
+  fixture de teste existente; nenhuma fixture de conteúdo foi criada no Runtime.
+- Há zero `ForumPost` e zero Media `forum_attachment`; submissão/moderação pelo
+  navegador, preview privado, fallback e layout seguem sem validação visual.
+  Nenhuma importação global foi feita.
 
 ## Revisão visual — listas públicas de atividade (2026-10-21)
 

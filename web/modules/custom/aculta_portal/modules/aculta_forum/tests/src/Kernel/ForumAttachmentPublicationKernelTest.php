@@ -77,6 +77,9 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     'path',
     'path_alias',
     'entity_usage',
+    'workflows',
+    'content_moderation',
+    'aculta_forum_post_test',
   ];
 
   /**
@@ -111,6 +114,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('media_gallery');
+    $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('path_alias');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -120,7 +124,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       'system', 'user', 'field', 'file', 'media', 'node', 'comment', 'domain',
       'filter', 'text', 'options', 'path', 'path_alias', 'entity_usage',
       'media_library', 'photoswipe', 'media_gallery',
-      'views',
+      'views', 'workflows', 'content_moderation',
     ]);
 
     Domain::create([
