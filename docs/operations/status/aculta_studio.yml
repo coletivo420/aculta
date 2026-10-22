@@ -1,3 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'Diretiva visual do Studio concluída e validada no Runtime de teste: quatro níveis com URL própria; Revista (listagens por estado, Editar pelo formulário administrativo do domínio principal, formulário com propriedades secundárias recolhíveis e aviso de alterações não salvas); Wiki (verbetes e revisões); Cursos (turmas e aba por curso); Fórum (fila de moderação); Galerias (acesso ao papel de editor no Runtime de teste; captura visual); paridade claro e escuro; contraste WCAG (7,84:1 claro, 11,51:1 escuro); teclado; leitor de tela validado com o Orca (fala gerada e som medido), decisão do responsável para esta fase. Validação com usuário de leitor de tela fica para fase futura. Suítes: visual 26/26 no Firefox/X11 e Orca 5/5. Decisão do responsável: não publicar em Alpha agora'
+
+# 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
+# G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T
+# depende de fixtures LMS, contratos UI Suite, browser, cache e Domain.
+# Próxima frente ativa: GANJALAB E-0.1 — inventário/editor, seguida de
+# Meu trabalho seguro, jornada Form API, shell SDC e gates Kernel/Functional.
+# Ver web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md.
