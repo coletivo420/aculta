@@ -40,3 +40,17 @@
 ## Gate de deploy
 
 **Não afirmar PASS** sem executar PHP lint, Drupal rebuild container, PHPUnit e smoke nos dois caminhos. Se aculta_lms estiver ativo e Studio inativo, habilitar Studio antes de sincronizar/atualizar; a dependência nova não resolve ambiente sozinha. Reversão da alteração de controlador deve manter ambas as URLs e dados LMS; não reverter indiscriminadamente outras alterações da PR.
+
+## G420-B — Provider e registro de experiências (2026-10-22)
+
+- Criado `StudioExperienceProviderInterface`: id, label, purpose, routeName, available, access cacheável e build render array. É independente de `StudioTab` do GanjaLab editorial.
+- Criado `StudioExperienceManager`, com registro explícito de provider, rejeição de IDs duplicados, lookup e negação quando purpose/availability não coincidem.
+- `GanjaLab420ExperienceProvider` é o primeiro consumidor: ID `ganjalab420`, purpose `account`, rota canônica `aculta_lms.student_dashboard`. O dashboard real continua no serviço `aculta_lms.learning_dashboard_controller`; nenhuma regra de matrícula ou gradebook migrou.
+- `GanjaLab420Controller` agora resolve a experiência pelo registro, verifica acesso de conta e delega o render ao provider. Rotas e requisitos não mudaram; `/minha-aprendizagem` continua rota de compatibilidade.
+- O registry é explicitamente composto por DI em `aculta_studio.services.yml` nesta primeira entrega; discovery dinâmica/tagueada fica para quando houver segundo provider concreto. Não criar provider fictício para WE SATIVA.
+- G420-B tem testes Unit escritos para registry, IDs duplicados, purpose incorreto, LMS ausente e controller sem provider. **Sem execução de PHPUnit/Kernel/Runtime nesta sessão**: PHP lint, rebuild e HTTP precisam ser verificados em ambiente de execução.
+- O provider só verifica autenticação e permissão básica de entrada do Portal. A autorização do LMS, cursos, matrículas, materiais e certificados continua obrigatoriamente a cargo de seus serviços e rotas. O purpose é também imposto pela política de Domain/Portal existente, não pelo valor passado manualmente ao registry.
+
+### Próxima microfase: G420-C
+
+Separar `LearningDashboardController::student()` entre dados de aprendizagem e composição visual Studio; preservar metadados de cache e decisões de acesso, sem copiar dados nem modificar URLs. Depois integrar salas e turmas em G420-D. Testar no homelab um estudante matriculado, um não matriculado e um educador que também é estudante, incluindo domínios e fallback sem JS.
