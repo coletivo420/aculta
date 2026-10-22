@@ -35,6 +35,16 @@ services:
 
   Drupal\aculta_index\Query\ContentIndexAccessFilter: '@aculta_index.access_filter'
 
+  aculta_index.work_manager:
+    class: Drupal\aculta_index\Queue\ContentIndexWorkManager
+    arguments: ['@database', '@queue', '@datetime.time', '@logger.channel.aculta_index']
+
+  Drupal\aculta_index\Queue\ContentIndexWorkManager: '@aculta_index.work_manager'
+
+  logger.channel.aculta_index:
+    parent: logger.channel_base
+    arguments: ['aculta_index']
+
   aculta_index.provider_registry:
     class: Drupal\aculta_index\Provider\ContentIndexProviderRegistry
     arguments: [!tagged_iterator aculta_index.provider]

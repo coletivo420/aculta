@@ -1,5 +1,22 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.10 — fila incremental e projeção contínua
+
+- Hooks de insert/update/delete registram somente identidades e operação; o
+  payload do Core Queue contém apenas o ID do estado durável do trabalho.
+- `ContentIndexWorkManager` deduplica por provider/entidade/idioma, avança uma
+  sequência monotônica e mantém estado mínimo queued/processing/retry/dead.
+- Worker relê a entidade atual, aplica projeções às gerações ativa e building e
+  usa a sequência no writer para rejeitar trabalho obsoleto. Isso mantém deltas
+  durante backfill; o orquestrador e o gate de validação ainda serão ligados.
+- Cron recupera dispatch perdido e retries. Política inicial: cinco tentativas,
+  backoff exponencial de 30 segundos até seis horas; registros dead exigem
+  reparação operacional futura.
+- Não instalar contrib. Core Queue e contratos próprios ACULTA são usados;
+  as referências contrib continuam fonte de padrões e proveniência.
+- Kernel: deduplicação, sequência e claim/complete; integração geral permanece
+  Dev e não foi validada no Runtime.
+
 ## 0.1.0-dev.9 — writer transacional e revalidação de Entity Access
 
 - `ContentIndexWriter` grava uma identidade por entidade/idioma/geração e

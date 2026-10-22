@@ -100,6 +100,32 @@ function aculta_index_schema(): array {
         'gen_type' => ['generation_id', 'relation_type'],
       ],
     ],
+    'aculta_index_work' => [
+      'description' => 'Deduplicated pending work and retry state for source identities.',
+      'fields' => [
+        'work_id' => ['type' => 'serial', 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'sequence' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'operation' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'project'],
+        'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'queued'],
+        'attempts' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'available_at' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['work_id'],
+      'unique keys' => [
+        'source_identity' => ['provider_id', 'entity_type', 'entity_id', 'langcode'],
+      ],
+      'indexes' => [
+        'status_available' => ['status', 'available_at'],
+        'status_updated' => ['status', 'updated'],
+      ],
+    ],
   ];
 }
 
@@ -145,5 +171,15 @@ function aculta_index_update_10002(): void {
       'not null' => TRUE,
       'default' => 0,
     ]);
+  }
+}
+
+/**
+ * Adds durable incremental work and failure state.
+ */
+function aculta_index_update_10003(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_work')) {
+    $schema->createTable('aculta_index_work', aculta_index_schema()['aculta_index_work']);
   }
 }

@@ -141,4 +141,19 @@ final class ContentIndexGenerationManager {
     return $active === FALSE || $active === '' ? NULL : (string) $active;
   }
 
+  /**
+   * Returns generations that must receive live changes during a rebuild.
+   *
+   * @return list<string>
+   *   Active and building generation IDs.
+   */
+  public function getWritableGenerations(): array {
+    return array_map('strval', $this->database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['generation_id'])
+      ->condition('status', ['active', 'building'], 'IN')
+      ->orderBy('created')
+      ->execute()
+      ->fetchCol());
+  }
+
 }

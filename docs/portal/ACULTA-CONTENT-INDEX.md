@@ -42,10 +42,10 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 |---|---|---|
 | IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
 | IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
-| IDX 0.1-C | Schema e primeiro provider | Schema, provider Magazine, writer transacional e filtro de Entity Access testados no Kernel/Unit; integração do writer ao backfill pendente |
-| IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Planejada com Core Queue + estado mínimo de falhas |
-| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, writer e diagnóstico inicial implementados; orquestrador, reconciliação e catch-up pendentes |
-| IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Primeiro provider (Magazine) implementado; persistência/eventos ainda pendentes |
+| IDX 0.1-C | Schema e primeiro provider | Schema, provider Magazine, writer transacional e filtro de Entity Access testados no Kernel/Unit; writer do backfill pendente |
+| IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Hooks CRUD, fila deduplicada Core Queue, sequência por identidade, retries e worker inicial implementados; eventos de grants externos e teste de concorrência pendentes |
+| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, writer e diagnóstico inicial implementados; orquestrador e reconciliação pendentes; worker grava gerações active/building para preservar deltas |
+| IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Provider Magazine conectado à fila; integração de outros providers e bridge Statistics pendentes |
 | IDX 0.1-G | Consultas, cache e medições | Pendente |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |
 

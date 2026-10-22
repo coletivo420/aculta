@@ -110,7 +110,7 @@ Riscos em aberto: revogação de acesso por grants/Group/domain nem sempre corre
 | IDX 0.1-A — auditoria e ADR | Concluída nesta entrega documental | Não foi criado runtime nem copiado contrib. |
 | IDX 0.1-B — fundação | Próxima | Manifesto/versionamento do submódulo, contratos mínimos e lifecycle opcional. |
 | IDX 0.1-C — persistência e primeiro provider | Pendente | Identidade, schema e relações revisados antes de instalar tabelas. |
-| IDX 0.1-D — sincronização incremental | Pendente | Evento síncrono de revogação e concorrência definidos; escolher Queue vs Advanced Queue. |
+| IDX 0.1-D — sincronização incremental | Em desenvolvimento | Core Queue escolhida; estado mínimo próprio, hooks CRUD, sequência e worker inicial em implementação. Alterações de grants externos seguem revalidação na consulta. |
 | IDX 0.1-E — rebuild e reparação | Pendente | Geração, cursor/delta, retomada e rollback demonstráveis. |
 | IDX 0.1-F — integrações | Pendente | Providers só após contratos e testes do módulo proprietário; Statistics bridge opcional. |
 | IDX 0.1-G — consultas/desempenho | Pendente | Segurança, paginação e medições antes de declarar escala. |

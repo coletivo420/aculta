@@ -37,6 +37,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'aculta_index_state',
       'aculta_index_entry',
       'aculta_index_relation',
+      'aculta_index_work',
     ]);
     aculta_index_install();
   }
@@ -89,6 +90,28 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
 
     $this->assertSame('', $state['active_generation']);
     $this->assertSame('0', $state['revision']);
+  }
+
+  /**
+   * Checks repeated source events deduplicate into a latest-sequence job.
+   */
+  public function testWorkManagerDeduplicatesAndClaimsLatestSequence(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $first = $work->schedule('magazine', 'node', '123', 'pt_BR', 'project');
+    $second = $work->schedule('magazine', 'node', '123', 'pt_BR', 'delete');
+
+    $this->assertSame(1, $first);
+    $this->assertSame(2, $second);
+    $this->assertSame(1, (int) $this->container->get('database')->select('aculta_index_work')->countQuery()->execute()->fetchField());
+    $status = $work->getStatus('magazine', 'node', '123', 'pt_BR');
+    $this->assertSame('delete', $status['operation']);
+    $this->assertSame('queued', $status['status']);
+
+    $claim = $work->claim($status['work_id']);
+    $this->assertSame(2, $claim['sequence']);
+    $this->assertSame('delete', $claim['operation']);
+    $this->assertTrue($work->complete($claim['work_id'], $claim['sequence']));
+    $this->assertSame('done', $work->getStatus('magazine', 'node', '123', 'pt_BR')['status']);
   }
 
   /**

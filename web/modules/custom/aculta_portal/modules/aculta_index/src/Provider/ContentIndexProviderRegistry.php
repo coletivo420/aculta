@@ -89,4 +89,19 @@ final class ContentIndexProviderRegistry {
     return $this->providers[$providerId];
   }
 
+  /**
+   * Returns the unique provider for an entity type and bundle, if registered.
+   */
+  public function findForBundle(string $entityTypeId, string $bundle): ?ContentIndexProviderInterface {
+    $providerId = $this->bundleOwners[$entityTypeId][$bundle] ?? NULL;
+    return $providerId === NULL ? NULL : $this->providers[$providerId];
+  }
+
+  /**
+   * Returns the owner ID for an entity type and bundle, if registered.
+   */
+  public function findProviderIdForBundle(string $entityTypeId, string $bundle): ?string {
+    return $this->bundleOwners[$entityTypeId][$bundle] ?? NULL;
+  }
+
 }
