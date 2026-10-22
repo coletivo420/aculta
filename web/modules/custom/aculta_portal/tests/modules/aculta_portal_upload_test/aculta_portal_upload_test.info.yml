@@ -1,6 +1,6 @@
 name: 'ACULTA Portal upload test support'
 type: module
-package: Testing
+package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 dependencies:
   - drupal:system

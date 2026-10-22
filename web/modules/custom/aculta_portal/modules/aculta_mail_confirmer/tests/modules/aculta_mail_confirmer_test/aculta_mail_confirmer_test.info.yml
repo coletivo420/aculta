@@ -1,7 +1,7 @@
 name: Email Confirmer Test
 type: module
 description: A module to test the aculta mail confirmer service.
-package: Testing
+package: 'ACULTA Portal'
 
 # Information added by Drupal.org packaging script on 2025-04-02
 version: '8.x-1.0'
