@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -24,6 +25,7 @@ final class ForumCommentMigrationAudit {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
@@ -186,6 +188,11 @@ final class ForumCommentMigrationAudit {
     }
 
     $report['topics'] = count($topic_ids);
+    $report['response_notices'] = $this->inspectResponseNotices(
+      array_keys($topic_ids),
+      $topic_by_comment,
+      $batch_size,
+    );
     ksort($report['body_formats']);
     ksort($report['languages']);
     ksort($report['flaggings_by_flag']);
@@ -196,6 +203,87 @@ final class ForumCommentMigrationAudit {
       ->count()
       ->execute();
     return $report;
+  }
+
+  /**
+   * Inventories Messenger response aggregates and their latest Comment IDs.
+   *
+   * @param list<string> $topic_ids
+   *   Eligible public Forum topic IDs.
+   * @param array<string, string> $topic_by_comment
+   *   Eligible source Comment ID to topic ID map.
+   * @param int $batch_size
+   *   Bounded number of notices or Comments loaded in each batch.
+   *
+   * @return array<string, int|bool>
+   *   Aggregate counts only, or an unavailable marker when Messenger is off.
+   */
+  private function inspectResponseNotices(array $topic_ids, array $topic_by_comment, int $batch_size): array {
+    $result = [
+      'available' => $this->moduleHandler->moduleExists('aculta_messenger'),
+      'records' => 0,
+      'records_with_comment_marker' => 0,
+      'markers_in_scope' => 0,
+      'markers_outside_scope' => 0,
+      'markers_missing' => 0,
+      'markers_for_other_topic' => 0,
+    ];
+    if (!$result['available'] || $topic_ids === []) {
+      return $result;
+    }
+
+    $notice_storage = $this->entityTypeManager->getStorage('aculta_aviso');
+    $notice_ids = $notice_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('tipo', 'forum_resposta')
+      ->condition('assunto_nid', $topic_ids, 'IN')
+      ->execute();
+    $markers = [];
+    foreach (array_chunk($notice_ids, $batch_size) as $batch) {
+      foreach ($notice_storage->loadMultiple($batch) as $notice) {
+        $result['records']++;
+        $comment_id = (int) $notice->get('ultimo_comentario')->value;
+        if ($comment_id > 0) {
+          $result['records_with_comment_marker']++;
+          $markers[$notice->id()] = [
+            'comment_id' => (string) $comment_id,
+            'topic_id' => (string) $notice->get('assunto_nid')->value,
+          ];
+        }
+      }
+    }
+
+    $out_of_scope_ids = [];
+    foreach ($markers as $marker) {
+      if (!isset($topic_by_comment[$marker['comment_id']])) {
+        $out_of_scope_ids[$marker['comment_id']] = $marker['comment_id'];
+      }
+    }
+    $existing_comments = [];
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+    foreach (array_chunk(array_values($out_of_scope_ids), $batch_size) as $batch) {
+      foreach ($comment_storage->loadMultiple($batch) as $comment) {
+        if ($comment instanceof CommentInterface) {
+          $existing_comments[(string) $comment->id()] = TRUE;
+        }
+      }
+    }
+    foreach ($markers as $marker) {
+      $comment_id = $marker['comment_id'];
+      if (isset($topic_by_comment[$comment_id])) {
+        $result['markers_in_scope']++;
+        if ($topic_by_comment[$comment_id] !== $marker['topic_id']) {
+          $result['markers_for_other_topic']++;
+        }
+      }
+      elseif (isset($existing_comments[$comment_id])) {
+        $result['markers_outside_scope']++;
+      }
+      else {
+        $result['markers_missing']++;
+      }
+    }
+    return $result;
   }
 
   /**

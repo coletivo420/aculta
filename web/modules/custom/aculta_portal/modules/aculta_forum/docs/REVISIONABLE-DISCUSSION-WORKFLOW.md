@@ -140,7 +140,9 @@ testes de workflow; a configuração da política inicial continua sendo a de
    ligadas aos Comments elegíveis por configuração de flag, sem expor uid ou
    sessão. O contrib Flag impede transferir uma Flagging existente para outra
    entidade; a migração precisará recriar a associação no destino pela API e
-   validar quantidade, dono/global e timestamp.
+   validar quantidade, dono/global e timestamp. A dev.155 inventaria os avisos
+   `forum_resposta` do Messenger por tópico elegível e classifica o marcador
+   `ultimo_comentario` para guiar a conversão pelo mapa source/destination.
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o

@@ -1,3 +1,14 @@
+## `0.1.0-dev.155` — inventariar agregados de avisos do Fórum
+
+- Quando `aculta_messenger` está habilitado, a auditoria conta avisos
+  `forum_resposta` nos tópicos elegíveis e classifica seus marcadores
+  `ultimo_comentario` como elegíveis, externos, ausentes ou ligados a outro
+  tópico. Não exibe destinatários nem altera avisos. Sem Messenger, informa que
+  essa parte do inventário não está disponível.
+- No Runtime de testes confirmado, `drush cr` concluiu e a execução encontrou
+  zero Comments elegíveis, Flaggings e avisos nos tópicos do Fórum; não houve
+  gravação de dados/configuração.
+
 ## `0.1.0-dev.154` — inventariar flags antes da migração
 
 - A auditoria soma Flagging entities ligadas aos Comments elegíveis e agrupa

@@ -75,6 +75,18 @@ final class ForumCommentMigrationAuditCommand extends Command {
     foreach ($report['flaggings_by_flag'] as $flag => $count) {
       $output->writeln(sprintf('  %s: %d', $flag, $count));
     }
+    $notice_report = $report['response_notices'];
+    if (!$notice_report['available']) {
+      $output->writeln('Messenger desabilitado: inventário de avisos não disponível.');
+    }
+    else {
+      $output->writeln(sprintf('Avisos Messenger de respostas nos tópicos elegíveis: %d', $notice_report['records']));
+      $output->writeln(sprintf('Avisos com marcador de último Comment: %d', $notice_report['records_with_comment_marker']));
+      $output->writeln(sprintf('Marcadores ligados a Comments elegíveis: %d', $notice_report['markers_in_scope']));
+      $output->writeln(sprintf('Marcadores ligados a Comments fora do escopo: %d', $notice_report['markers_outside_scope']));
+      $output->writeln(sprintf('Marcadores sem Comment existente: %d', $notice_report['markers_missing']));
+      $output->writeln(sprintf('Marcadores de outro tópico: %d', $notice_report['markers_for_other_topic']));
+    }
     $output->writeln('<comment>Dry run somente leitura: nenhum conteúdo ou configuração foi alterado.</comment>');
     return Command::SUCCESS;
   }
