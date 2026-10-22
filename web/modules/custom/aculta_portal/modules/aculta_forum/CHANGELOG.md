@@ -1,3 +1,12 @@
+## `0.1.0-dev.195` — auditar os dois watermarks dos avisos
+
+- A auditoria somente leitura do Messenger também classifica `ultimo_post`,
+  separadamente de `ultimo_comentario`, como post do Fórum elegível, post fora
+  do escopo, referência ausente ou post associado a outro tópico. Isso dá
+  visibilidade aos avisos já vinculados a posts revisionáveis sem expor IDs,
+  destinatários ou conteúdo.
+- Sem alteração de Runtime ou execução da auditoria nesta etapa.
+
 ## `0.1.0-dev.194` — saída segura em falhas da auditoria migratória
 
 - Falhas em `aculta-forum:audit-comment-migration` deixam de imprimir a

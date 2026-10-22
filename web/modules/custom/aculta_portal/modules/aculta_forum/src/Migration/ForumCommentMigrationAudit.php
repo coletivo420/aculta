@@ -372,10 +372,15 @@ final class ForumCommentMigrationAudit {
       'available' => $this->moduleHandler->moduleExists('aculta_messenger'),
       'records' => 0,
       'records_with_comment_marker' => 0,
+      'records_with_post_marker' => 0,
       'markers_in_scope' => 0,
       'markers_outside_scope' => 0,
       'markers_missing' => 0,
       'markers_for_other_topic' => 0,
+      'post_markers_in_scope' => 0,
+      'post_markers_outside_scope' => 0,
+      'post_markers_missing' => 0,
+      'post_markers_for_other_topic' => 0,
     ];
     if (!$result['available'] || $topic_ids === []) {
       return $result;
@@ -404,7 +409,9 @@ final class ForumCommentMigrationAudit {
         $last_notice_id = (int) end($notice_ids);
 
         $markers = [];
+        $post_markers = [];
         $marker_comment_ids = [];
+        $marker_post_ids = [];
         foreach ($notice_storage->loadMultiple($notice_ids) as $notice) {
           $result['records']++;
           $comment_id = (int) $notice->get('ultimo_comentario')->value;
@@ -416,6 +423,16 @@ final class ForumCommentMigrationAudit {
               'topic_id' => (string) $notice->get('assunto_nid')->value,
             ];
             $marker_comment_ids[$comment_id] = $comment_id;
+          }
+          $post_id = (int) $notice->get('ultimo_post')->value;
+          if ($post_id > 0) {
+            $result['records_with_post_marker']++;
+            $post_id = (string) $post_id;
+            $post_markers[$notice->id()] = [
+              'post_id' => $post_id,
+              'topic_id' => (string) $notice->get('assunto_nid')->value,
+            ];
+            $marker_post_ids[$post_id] = $post_id;
           }
         }
 
@@ -446,6 +463,37 @@ final class ForumCommentMigrationAudit {
           }
           else {
             $result['markers_missing']++;
+          }
+        }
+
+        $existing_posts = [];
+        $post_topic_by_id = [];
+        $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+        foreach (array_chunk(array_values($marker_post_ids), $batch_size) as $post_batch) {
+          foreach ($post_storage->loadMultiple($post_batch) as $post) {
+            $post_id = (string) $post->id();
+            $existing_posts[$post_id] = TRUE;
+            $topic = $post->get('topic')->entity;
+            if ($topic instanceof NodeInterface && $topic->bundle() === self::TOPIC_BUNDLE
+              && $topic->hasField('field_domain_source') && !$topic->get('field_domain_source')->isEmpty()
+              && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum') {
+              $post_topic_by_id[$post_id] = (string) $topic->id();
+            }
+          }
+        }
+        foreach ($post_markers as $marker) {
+          $post_id = $marker['post_id'];
+          if (isset($post_topic_by_id[$post_id])) {
+            $result['post_markers_in_scope']++;
+            if ($post_topic_by_id[$post_id] !== $marker['topic_id']) {
+              $result['post_markers_for_other_topic']++;
+            }
+          }
+          elseif (isset($existing_posts[$post_id])) {
+            $result['post_markers_outside_scope']++;
+          }
+          else {
+            $result['post_markers_missing']++;
           }
         }
       }

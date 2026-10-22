@@ -176,7 +176,10 @@ testes de workflow; a configuração da política inicial continua sendo a de
    instalado: `web/modules/contrib/flag/src/FlagServiceInterface.php`,
    `FlagService.php` e `FlagInterface.php`. A dev.155 inventaria os avisos
    `forum_resposta` do Messenger por tópico elegível e classifica o marcador
-   `ultimo_comentario` para guiar a conversão pelo mapa source/destination. A
+   `ultimo_comentario` e `ultimo_post` separadamente: o primeiro guia a
+   conversão pelo mapa source/destination; o segundo confirma se avisos já
+   associados a posts revisionáveis apontam para entidade existente e para o
+   tópico correto. A auditoria só imprime contagens e não altera avisos. A
    dev.157 confere existência dos UUIDs de Media/Gallery embutidos e conta
    embeds sem UUID, sem carregar nem registrar conteúdo referenciado; arquivos
    e imagens continuam sob a governança de `aculta_image` e `aculta_gallery`.

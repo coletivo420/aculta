@@ -105,10 +105,15 @@ final class ForumCommentMigrationAuditCommand extends Command {
     else {
       $output->writeln(sprintf('Avisos Messenger de respostas nos tópicos elegíveis: %d', $notice_report['records']));
       $output->writeln(sprintf('Avisos com marcador de último Comment: %d', $notice_report['records_with_comment_marker']));
+      $output->writeln(sprintf('Avisos com marcador de último post revisionável: %d', $notice_report['records_with_post_marker']));
       $output->writeln(sprintf('Marcadores ligados a Comments elegíveis: %d', $notice_report['markers_in_scope']));
       $output->writeln(sprintf('Marcadores ligados a Comments fora do escopo: %d', $notice_report['markers_outside_scope']));
       $output->writeln(sprintf('Marcadores sem Comment existente: %d', $notice_report['markers_missing']));
       $output->writeln(sprintf('Marcadores de outro tópico: %d', $notice_report['markers_for_other_topic']));
+      $output->writeln(sprintf('Marcadores ligados a posts revisionáveis no escopo: %d', $notice_report['post_markers_in_scope']));
+      $output->writeln(sprintf('Marcadores ligados a posts revisionáveis fora do escopo: %d', $notice_report['post_markers_outside_scope']));
+      $output->writeln(sprintf('Marcadores sem post revisionável existente: %d', $notice_report['post_markers_missing']));
+      $output->writeln(sprintf('Marcadores de post ligados a outro tópico: %d', $notice_report['post_markers_for_other_topic']));
     }
     $output->writeln('<comment>Dry run somente leitura: nenhum conteúdo ou configuração foi alterado.</comment>');
     return Command::SUCCESS;
