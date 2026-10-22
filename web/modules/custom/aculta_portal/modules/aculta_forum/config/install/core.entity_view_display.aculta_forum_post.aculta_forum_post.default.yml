@@ -2,8 +2,11 @@ uuid: 6fc68dab-bf94-4b9a-b5a5-b2f58a74e5d3
 langcode: pt-br
 status: true
 dependencies:
+  config:
+    - flag.flag.sinalizar_post_forum
   module:
     - aculta_forum
+    - flag
     - text
 id: aculta_forum_post.aculta_forum_post.default
 targetEntityType: aculta_forum_post
@@ -24,6 +27,11 @@ content:
     settings: { }
     third_party_settings: { }
     weight: 1
+    region: content
+  flag_sinalizar_post_forum:
+    settings: { }
+    third_party_settings: { }
+    weight: 20
     region: content
 hidden:
   changed: true

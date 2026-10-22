@@ -265,9 +265,16 @@ final class ForumCommentMigrationAudit {
       $batch_size,
     );
     if ($report['flaggings_by_flag'] !== []) {
-      $flags = $this->entityTypeManager->getStorage('flag')->loadMultiple(array_keys($report['flaggings_by_flag']));
+      $target_flag_ids = array_map(
+        static fn (string $source_flag_id): string => $source_flag_id === 'sinalizar_comentario'
+          ? 'sinalizar_post_forum'
+          : $source_flag_id,
+        array_keys($report['flaggings_by_flag']),
+      );
+      $flags = $this->entityTypeManager->getStorage('flag')->loadMultiple(array_unique($target_flag_ids));
       foreach ($report['flaggings_by_flag'] as $flag_id => $flagging_count) {
-        $flag = $flags[$flag_id] ?? NULL;
+        $target_flag_id = $flag_id === 'sinalizar_comentario' ? 'sinalizar_post_forum' : $flag_id;
+        $flag = $flags[$target_flag_id] ?? NULL;
         $bundles = $flag instanceof FlagInterface ? $flag->getBundles() : [];
         $supports_post = $flag instanceof FlagInterface
           && $flag->getFlaggableEntityTypeId() === 'aculta_forum_post'

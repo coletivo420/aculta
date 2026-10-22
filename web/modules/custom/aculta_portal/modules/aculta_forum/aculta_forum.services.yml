@@ -55,7 +55,7 @@ services:
     arguments: ['@aculta_forum.topic_mover', '@current_user']
   Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks:
     class: Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks
-    arguments: ['@entity_type.manager', '@current_user']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose']
   Drupal\aculta_forum\Hook\PublicForumExposedFormHooks:
     class: Drupal\aculta_forum\Hook\PublicForumExposedFormHooks
     arguments: ['@entity_type.manager', '@current_user', '@entity.repository', '@string_translation']

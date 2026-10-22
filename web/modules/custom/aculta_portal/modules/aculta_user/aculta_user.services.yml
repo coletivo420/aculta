@@ -74,7 +74,7 @@ services:
     arguments: ['@entity_type.manager']
   aculta_user.report_queue:
     class: Drupal\aculta_user\Moderation\ReportQueue
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
     arguments: ['@entity_type.manager', '@datetime.time']

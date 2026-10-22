@@ -1,3 +1,11 @@
+## 0.4.0-dev.66 — fila agrega denúncia de post revisionável — 2026-10-21
+
+- `ReportQueue` carrega flaggings de `aculta_forum_post`, em lotes e sem
+  dependência do módulo Fórum; valida o tópico hospedeiro e seu Domain purpose
+  antes de agrupar, e ignora posts/autores históricos.
+- Serviço recebe `DomainPurposeManager`; PHPCS/lint e gates estáticos PASS.
+  Sem import de configuração ou alteração no Runtime.
+
 ## 0.4.0-dev.65 — posts revisionáveis na atividade pessoal — 2026-10-21
 
 - A aba Comentários de Minha Conta combina Comments públicos e posts

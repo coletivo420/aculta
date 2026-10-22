@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\comment\CommentInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -29,9 +31,12 @@ final class HistoricForumFlagAccessHooks {
 
   private const FLAGS = ['sinalizar_topico', 'sinalizar_comentario'];
 
+  private const POST_FLAG = 'sinalizar_post_forum';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
+    private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   /**
@@ -40,26 +45,49 @@ final class HistoricForumFlagAccessHooks {
   #[Hook('flag_action_access')]
   public function flagActionAccess(string $action, FlagInterface $flag, AccountInterface $account, ?EntityInterface $flaggable = NULL): AccessResultInterface {
     if (!in_array($action, ['flag', 'unflag'], TRUE)
-      || !in_array($flag->id(), self::FLAGS, TRUE)
-      || $flaggable === NULL) {
+      || (!in_array($flag->id(), self::FLAGS, TRUE) && $flag->id() !== self::POST_FLAG)) {
       return AccessResult::neutral();
     }
+    if ($flaggable === NULL) {
+      return $flag->id() === self::POST_FLAG
+        ? AccessResult::forbidden('A denúncia exige uma publicação do Fórum válida.')
+          ->addCacheContexts(['domain'])
+        : AccessResult::neutral();
+    }
 
+    $postAccess = NULL;
     $applies = match ($flag->id()) {
       'sinalizar_topico' => $flaggable instanceof NodeInterface && $flaggable->bundle() === 'aculta_forum_topic',
       'sinalizar_comentario' => $this->isPublicForumComment($flaggable),
+      self::POST_FLAG => ($postAccess = $this->forumPostAccess($flaggable, $account))->isAllowed(),
     };
-    if (!$applies) {
+    if (!$applies && $flag->id() !== self::POST_FLAG) {
       return AccessResult::neutral();
     }
 
-    $result = $this->isHistoricalTarget($flaggable, $flag->id())
-      ? AccessResult::forbidden('Conteúdo histórico do Growroom não entra no fluxo de denúncias.')
-      : AccessResult::allowedIf($account->hasPermission('report aculta forum content'));
+    if (!$applies) {
+      $result = AccessResult::forbidden('Denúncia disponível somente para publicação pública deste Fórum.');
+    }
+    elseif ($this->isHistoricalTarget($flaggable, $flag->id())) {
+      $result = AccessResult::forbidden('Conteúdo histórico do Growroom não entra no fluxo de denúncias.');
+    }
+    else {
+      $result = AccessResult::allowedIf($account->hasPermission('report aculta forum content'));
+    }
 
-    return $result
-      ->addCacheableDependency($flaggable)
+    $result->addCacheableDependency($flaggable)
       ->addCacheContexts(['user.permissions']);
+    if ($flaggable instanceof ForumPost) {
+      $topic = $flaggable->get('topic')->entity;
+      if ($topic instanceof NodeInterface) {
+        $result->addCacheableDependency($topic);
+      }
+      $result->addCacheContexts(['domain']);
+    }
+    if ($postAccess instanceof AccessResultInterface) {
+      $result->addCacheableDependency($postAccess);
+    }
+    return $result;
   }
 
   /**
@@ -72,22 +100,34 @@ final class HistoricForumFlagAccessHooks {
    */
   #[Hook('flagging_presave')]
   public function preventHistoricalFlagging(FlaggingInterface $flagging): void {
-    if (!in_array($flagging->getFlagId(), self::FLAGS, TRUE)) {
+    if (!in_array($flagging->getFlagId(), self::FLAGS, TRUE) && $flagging->getFlagId() !== self::POST_FLAG) {
       return;
     }
 
     if (!$this->currentUser->hasPermission('report aculta forum content')) {
       throw new AccessDeniedHttpException('A conta não pode denunciar conteúdo do Fórum público.');
     }
+    if ($flagging->getFlagId() === self::POST_FLAG
+      && $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+      throw new AccessDeniedHttpException('Denúncias de publicações só são aceitas no purpose Fórum.');
+    }
 
-    $expectedType = $flagging->getFlagId() === 'sinalizar_topico' ? 'node' : 'comment';
+    $expectedType = match ($flagging->getFlagId()) {
+      'sinalizar_topico' => 'node',
+      'sinalizar_comentario' => 'comment',
+      self::POST_FLAG => 'aculta_forum_post',
+    };
     if ($flagging->getFlaggableType() !== $expectedType) {
       throw new AccessDeniedHttpException('Este tipo de entidade não aceita denúncia pela fila do Fórum público.');
     }
 
     $entity = $this->entityTypeManager->getStorage($expectedType)
       ->load($flagging->getFlaggableId());
-    if ($entity === NULL || !$this->isPublicForumTarget($entity, $flagging->getFlagId())
+    $validTarget = $entity !== NULL && $this->isPublicForumTarget($entity, $flagging->getFlagId());
+    if ($flagging->getFlagId() === self::POST_FLAG && $entity !== NULL) {
+      $validTarget = $this->forumPostAccess($entity, $this->currentUser)->isAllowed();
+    }
+    if ($entity === NULL || !$validTarget
       || $this->isHistoricalTarget($entity, $flagging->getFlagId())) {
       throw new AccessDeniedHttpException('Este conteúdo não aceita denúncia pela fila do Fórum público.');
     }
@@ -101,6 +141,16 @@ final class HistoricForumFlagAccessHooks {
       return $entity instanceof NodeInterface
         && $entity->bundle() === 'aculta_forum_topic'
         && $this->hasHistoricAuthor($entity);
+    }
+    if ($flagId === self::POST_FLAG) {
+      if (!$this->isPublicForumPost($entity)) {
+        return FALSE;
+      }
+      if ($this->hasHistoricAuthor($entity)) {
+        return TRUE;
+      }
+      $topic = $entity instanceof ForumPost ? $entity->get('topic')->entity : NULL;
+      return $topic instanceof NodeInterface && $this->hasHistoricAuthor($topic);
     }
     if (!$this->isPublicForumComment($entity)) {
       return FALSE;
@@ -121,6 +171,7 @@ final class HistoricForumFlagAccessHooks {
     return match ($flagId) {
       'sinalizar_topico' => $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic',
       'sinalizar_comentario' => $this->isPublicForumComment($entity),
+      self::POST_FLAG => $this->isPublicForumPost($entity),
       default => FALSE,
     };
   }
@@ -137,9 +188,48 @@ final class HistoricForumFlagAccessHooks {
   }
 
   /**
+   * Checks that a revisionable post belongs to a published Forum topic.
+   */
+  private function isPublicForumPost(EntityInterface $entity): bool {
+    if (!$entity instanceof ForumPost || !$entity->isPublished() || !$entity->isDefaultRevision()
+      || !$entity->hasField('topic') || $entity->get('topic')->isEmpty()) {
+      return FALSE;
+    }
+    $topic = $entity->get('topic')->entity;
+    return $topic instanceof NodeInterface
+      && $topic->bundle() === 'aculta_forum_topic'
+      && $topic->isPublished()
+      && $topic->hasField('field_domain_source')
+      && !$topic->get('field_domain_source')->isEmpty()
+      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+  }
+
+  /**
+   * Returns cacheable access for viewing and flagging one Forum post.
+   */
+  private function forumPostAccess(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
+    if (!$this->isPublicForumPost($entity) || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+      return AccessResult::forbidden()
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['domain']);
+    }
+    assert($entity instanceof ForumPost);
+    $topic = $entity->get('topic')->entity;
+    assert($topic instanceof NodeInterface);
+    return $entity->access('view', $account, TRUE)
+      ->andIf($topic->access('view', $account, TRUE))
+      ->addCacheableDependency($entity)
+      ->addCacheableDependency($topic)
+      ->addCacheContexts(['domain']);
+  }
+
+  /**
    * Checks whether an entity carries the immutable historical author marker.
    */
   private function hasHistoricAuthor(EntityInterface $entity): bool {
+    if ($entity instanceof ForumPost && $entity->hasField('legacy_author')) {
+      return !$entity->get('legacy_author')->isEmpty();
+    }
     return $entity instanceof FieldableEntityInterface
       && $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty();

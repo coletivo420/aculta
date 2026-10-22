@@ -1,3 +1,14 @@
+## `0.1.0-dev.178` — incluir posts revisionáveis na fila de denúncias
+
+- Flag `sinalizar_post_forum` mostra a ação no display de `aculta_forum_post`;
+  o hook restringe a ação a conta com permissão, post publicado/default e tópico
+  no purpose `forum`, e recusa alvos históricos também no save de Flagging.
+  `aculta_user.ReportQueue` agrupa esse tipo e valida o host sem criar
+  dependência reversa do Fórum. A auditoria mapeia a flag antiga de Comment ao
+  ID de Flag de destino.
+- Migração de flaggings e preservação do timestamp histórico continuam
+  pendentes. Nenhuma configuração foi importada nem migration executada.
+
 ## `0.1.0-dev.177` — evitar publicação de anexos durante importação
 
 - `ForumAttachmentPublicationHooks` não reconcilia Media/Gallery quando um

@@ -173,7 +173,7 @@ e o resolver de variantes. Fórum e respostas usam `author_forum`; Revista usa
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `ReportQueue` | `src/Moderation/ReportQueue.php` | Fila exclusiva de denúncias do Fórum público; carrega alvos em lote e exclui conteúdo histórico e comentários de outros contextos (ACULTA Fórum, dev.51). |
+| `ReportQueue` | `src/Moderation/ReportQueue.php` | Fila exclusiva de denúncias do Fórum público; carrega Node, Comment e `aculta_forum_post` em lotes, valida purpose do tópico e exclui conteúdo histórico e contextos externos sem dependência de `aculta_forum` (dev.66). |
 
 ### `Social`
 

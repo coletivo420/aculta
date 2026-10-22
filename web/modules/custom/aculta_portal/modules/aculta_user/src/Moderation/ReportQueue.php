@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
  * Fila de denúncias do Fórum (ACULTA Fórum, F5.1).
@@ -23,7 +24,9 @@ final class ReportQueue {
   /**
    * Sinalizações do Fórum (tópico e comentário).
    */
-  public const FLAGS = ['sinalizar_topico', 'sinalizar_comentario'];
+  public const FLAGS = ['sinalizar_topico', 'sinalizar_comentario', 'sinalizar_post_forum'];
+
+  private const TARGET_TYPES = ['node', 'comment', 'aculta_forum_post'];
 
   /**
    * Registros Flag lidos por consulta.
@@ -32,6 +35,7 @@ final class ReportQueue {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
   ) {}
 
   /**
@@ -45,7 +49,7 @@ final class ReportQueue {
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('flag_id', self::FLAGS, 'IN')
-      ->condition('entity_type', ['node', 'comment'], 'IN')
+      ->condition('entity_type', self::TARGET_TYPES, 'IN')
       ->sort('created', 'DESC')
       ->range(0, self::SCAN_LIMIT + 1)
       ->execute();
@@ -56,7 +60,7 @@ final class ReportQueue {
     $target_ids = [];
     foreach ($flaggings as $flagging) {
       $entity_type = $flagging->getFlaggableType();
-      if (in_array($entity_type, ['node', 'comment'], TRUE)) {
+      if (in_array($entity_type, self::TARGET_TYPES, TRUE)) {
         $target_ids[$entity_type][] = $flagging->getFlaggableId();
       }
     }
@@ -92,6 +96,9 @@ final class ReportQueue {
       return $entity->bundle() === 'aculta_forum_topic'
         && !$this->hasHistoricalAuthor($entity);
     }
+    if ($entity->getEntityTypeId() === 'aculta_forum_post') {
+      return $this->isForumPost($entity);
+    }
     if (!$entity instanceof CommentInterface || $entity->bundle() !== 'aculta_discussion_post') {
       return FALSE;
     }
@@ -106,9 +113,34 @@ final class ReportQueue {
   }
 
   /**
+   * Checks the post host and Domain purpose without Forum module coupling.
+   */
+  private function isForumPost(EntityInterface $entity): bool {
+    if (!$entity instanceof FieldableEntityInterface
+      || !$entity->hasField('topic')
+      || $entity->get('topic')->isEmpty()
+      || $this->hasHistoricalAuthor($entity)
+      || $this->domainPurposeManager === NULL) {
+      return FALSE;
+    }
+    $topic = $entity->get('topic')->entity;
+    return $topic instanceof NodeInterface
+      && $topic->bundle() === 'aculta_forum_topic'
+      && $topic->hasField('field_domain_source')
+      && !$topic->get('field_domain_source')->isEmpty()
+      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum'
+      && !$this->hasHistoricalAuthor($topic);
+  }
+
+  /**
    * Checks the marker shared by imported historical topics and comments.
    */
   private function hasHistoricalAuthor(EntityInterface $entity): bool {
+    if ($entity->getEntityTypeId() === 'aculta_forum_post'
+      && $entity instanceof FieldableEntityInterface
+      && $entity->hasField('legacy_author')) {
+      return !$entity->get('legacy_author')->isEmpty();
+    }
     return $entity instanceof FieldableEntityInterface
       && $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty();
