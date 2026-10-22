@@ -107,3 +107,7 @@ O [plano B1-02](theme-ux-0.8-b1-02-ownership-h1.md) autoriza Context Header SDC 
 ## Avanço B1-02b — contrato visual multiárea
 
 [Contrato visual Context Header](theme-ux-0.8-b1-02b-visual-contract.md) conecta decisões arquiteturais SDC/UI Suite a composição mobile-first para GanjaLab420 e Wiki, H1 único, UI Patterns/Styles e preservação do cabeçalho multidomínio. Próximo B1-02c só cria SDC após evidência Runtime dos consumidores; backlog B2 de abas contextuais permanece posterior.
+
+## Conclusão de código B1-02d, abertura B1-02e/B2
+
+`aculta420:context-header` possui dois consumidores integrados por código: Wiki verbete completo e dashboard `/ganjalab420`. A renderização contextual H1 e a supressão seletiva do page-title estão documentadas na [matriz B1-02e](theme-ux-0.8-b1-02e-runtime-validation.md). Não marcar homologação sem testes. Próximo planejamento visual é B2 (abas de contexto com SDC/UI Suite, sem reutilizar `product-tabs` para navegação de rotas).
