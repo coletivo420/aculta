@@ -15,6 +15,9 @@ use Drupal\Tests\UnitTestCase;
  */
 final class ContentIndexProviderRegistryTest extends UnitTestCase {
 
+  /**
+   * Tests providers register by stable ID.
+   */
   public function testRegistersProvidersByStableId(): void {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn('magazine');
@@ -27,6 +30,9 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     self::assertSame(['magazine' => $provider], $registry->all());
   }
 
+  /**
+   * Tests duplicate provider IDs are rejected.
+   */
   public function testRejectsDuplicateProviderIds(): void {
     $first = $this->provider('magazine');
     $second = $this->provider('magazine');
@@ -36,12 +42,18 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     new ContentIndexProviderRegistry([$first, $second]);
   }
 
+  /**
+   * Tests invalid provider IDs are rejected.
+   */
   public function testRejectsInvalidProviderIds(): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Index provider IDs must be lowercase machine names.');
     new ContentIndexProviderRegistry([$this->provider('Magazine')]);
   }
 
+  /**
+   * Tests unknown providers fail closed.
+   */
   public function testUnknownProviderFailsClosed(): void {
     $registry = new ContentIndexProviderRegistry();
 
@@ -50,6 +62,9 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     $registry->get('missing');
   }
 
+  /**
+   * Creates a provider mock with the given ID.
+   */
   private function provider(string $id): ContentIndexProviderInterface {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn($id);

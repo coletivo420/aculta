@@ -42,6 +42,7 @@ final class ContentIndexProviderRegistry {
    * Returns registered providers keyed by provider ID.
    *
    * @return array<string, \Drupal\aculta_index\Provider\ContentIndexProviderInterface>
+   *   The registered providers.
    */
   public function all(): array {
     return $this->providers;

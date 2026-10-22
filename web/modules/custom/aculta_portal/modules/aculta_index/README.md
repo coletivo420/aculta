@@ -3,7 +3,7 @@
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
 **Versão:** `0.1.0-dev.1` — IDX 0.1-B, contratos iniciais.
-**Status:** Dev; sem tabelas, consumers ou adaptadores de conteúdo instalados nesta etapa.
+**Status:** Dev; schema inicial declarado, mas sem writer, consumers ou adaptadores de conteúdo e sem instalação no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 

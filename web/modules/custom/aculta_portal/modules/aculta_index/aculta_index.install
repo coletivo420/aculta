@@ -1,0 +1,102 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Content Index.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_index_schema(): array {
+  return [
+    'aculta_index_generation' => [
+      'description' => 'Rebuild generations and resumable keyset checkpoints.',
+      'fields' => [
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'building'],
+        'cursor_provider' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'cursor_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+        'cursor_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'cursor_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE, 'default' => ''],
+        'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'validated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'activated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['generation_id'],
+      'indexes' => [
+        'status_created' => ['status', 'created'],
+      ],
+    ],
+    'aculta_index_state' => [
+      'description' => 'Singleton pointer to the active generation.',
+      'fields' => [
+        'state_id' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1],
+        'active_generation' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['state_id'],
+    ],
+    'aculta_index_entry' => [
+      'description' => 'Minimal, rebuildable projection of selected source entities.',
+      'fields' => [
+        'entry_id' => ['type' => 'serial', 'not null' => TRUE],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'bundle' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'uuid' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
+        'label' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'domain_id' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
+        'published' => ['type' => 'int', 'size' => 'tiny', 'not null' => FALSE],
+        'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'published_at' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'projection_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['entry_id'],
+      'unique keys' => [
+        'gen_identity' => ['generation_id', 'entity_type', 'entity_id', 'langcode'],
+      ],
+      'indexes' => [
+        'gen_bundle' => ['generation_id', 'entity_type', 'bundle', 'langcode'],
+        'gen_domain_pub' => ['generation_id', 'domain_id', 'published', 'changed'],
+        'gen_provider' => ['generation_id', 'provider_id'],
+      ],
+    ],
+    'aculta_index_relation' => [
+      'description' => 'Directed, provider-owned relations between source entity identities.',
+      'fields' => [
+        'relation_id' => ['type' => 'serial', 'not null' => TRUE],
+        'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'source_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'source_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'source_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'relation_type' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'target_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+        'target_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'target_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
+        'relation_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['relation_id'],
+      'unique keys' => [
+        'gen_relation_hash' => ['generation_id', 'relation_hash'],
+      ],
+      'indexes' => [
+        'gen_source' => ['generation_id', 'source_entity_type', 'source_entity_id', 'source_langcode'],
+        'gen_target' => ['generation_id', 'target_entity_type', 'target_entity_id', 'target_langcode'],
+        'gen_type' => ['generation_id', 'relation_type'],
+      ],
+    ],
+  ];
+}

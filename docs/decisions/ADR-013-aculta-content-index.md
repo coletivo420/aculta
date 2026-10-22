@@ -26,6 +26,8 @@ Os providers definem allowlists de entidades, metadados e relações. Relações
 
 No 0.1, a identidade de uma entrada representa uma entidade e um idioma; revisões não geram entradas independentes. O site hoje usa `pt_BR`, mas o idioma permanece na identidade. Providers opcionais são serviços DI tagueados como `aculta_index.provider`, escolhidos pelo responsável para evitar um plugin manager prematuro. Não instalar Search API, Advanced Queue, Entity Usage, Views Bulk Operations ou Track Usage para esta iniciativa; usar APIs ACULTA/Core existentes e portar código somente se uma lacuna técnica concreta exigir e a proveniência/licença estiver registrada.
 
+O rebuild usa `generation_id` nas tabelas e um ponteiro de geração ativa trocado em transação. A fila incremental usará Core Queue e estado mínimo próprio para falhas/retries/dead-letter; Advanced Queue não será instalada.
+
 Reconstruções usam geração/checkpoint e catch-up de alterações. A gravação valida versão/fingerprint para impedir jobs antigos de sobrescrever dados novos. Mudanças que reduzam exposição bloqueiam ou removem a entrada síncronamente; workers e caches não podem manter visibilidade privada até a fila drenar. Todas as leituras verificam acesso na entidade original.
 
 ## Alternativas consideradas

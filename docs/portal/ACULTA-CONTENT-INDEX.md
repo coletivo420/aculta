@@ -4,6 +4,7 @@
 **Dono:** Kernel `aculta_portal`, submódulo opcional `aculta_index`.
 **ADR:** [ADR-013](../decisions/ADR-013-aculta-content-index.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
+**Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
 
 ## Propósito e propriedade
 
@@ -30,9 +31,9 @@ Relações são direcionadas, tipadas e produzidas por provider. Cada tipo decla
 
 ## Atualização, reconstrução e consulta
 
-O desenho de implementação deverá combinar: revogação/bloqueio síncrono quando uma mudança reduzir exposição; job incremental idempotente com payload mínimo e comparação atômica de versão; reconciliação paginada/checkpointed; rebuild por geração com catch-up de deltas e ativação atômica; rollback/limpeza somente depois de validar integridade. O cursor será keyset, sem OFFSET profundo. Consultas de candidatos não autorizam saída; entidades originais serão carregadas em lotes e autorizadas de acordo com a API dona.
+O desenho de implementação combina: revogação/bloqueio síncrono quando uma mudança reduzir exposição; job incremental idempotente com payload mínimo e comparação atômica de versão; reconciliação paginada/checkpointed; rebuild por geração com catch-up de deltas e ativação atômica; rollback/limpeza somente depois de validar integridade. Entradas e relações terão `generation_id` e um ponteiro para a geração ativa. A ativação trocará o ponteiro transacionalmente. O cursor será keyset, sem OFFSET profundo. Consultas de candidatos não autorizam saída; entidades originais serão carregadas em lotes e autorizadas de acordo com a API dona.
 
-Core Queue é candidato inicial, sujeito às garantias de retry/delay/concurrency requeridas. Advanced Queue será integrada apenas se os requisitos operacionais justificarem dependência. O fluxo precisa sobreviver a módulo de origem desabilitado, rebuild concorrente, job fora de ordem, relação removida e acesso revogado.
+Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado mínimo próprio para contagem/timing de falhas e dead-letter, pois a Queue Core fornece lease/recuperação de item expirado, mas não o histórico operacional específico requerido. Não instalar Advanced Queue. O fluxo precisa sobreviver a módulo de origem desabilitado, rebuild concorrente, job fora de ordem, relação removida e acesso revogado.
 
 ## Fases
 
@@ -40,8 +41,8 @@ Core Queue é candidato inicial, sujeito às garantias de retry/delay/concurrenc
 |---|---|---|
 | IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
 | IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
-| IDX 0.1-C | Schema e primeiro provider | Pendente |
-| IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Pendente |
+| IDX 0.1-C | Schema e primeiro provider | Schema inicial implementado; provider/writer e teste de instalação pendentes |
+| IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Planejada com Core Queue + estado mínimo de falhas |
 | IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Pendente |
 | IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Pendente |
 | IDX 0.1-G | Consultas, cache e medições | Pendente |

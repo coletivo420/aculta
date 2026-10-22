@@ -7,8 +7,8 @@ namespace Drupal\aculta_index\Provider;
 /**
  * Identifies the source entity types handled by an index provider.
  *
- * Providers are optional services tagged `aculta_index.provider`. Projection
- * and relationship methods will be added with the storage contract in IDX 0.1-C.
+ * Adapters are DI services tagged `aculta_index.provider`.
+ * The projection contract arrives with the IDX 0.1-C writer.
  */
 interface ContentIndexProviderInterface {
 
@@ -24,6 +24,7 @@ interface ContentIndexProviderInterface {
    * IDs. An empty array means the provider does not support any entity bundle.
    *
    * @return array<string, list<string>>
+   *   Entity type IDs mapped to supported bundle IDs.
    */
   public function getSupportedEntityTypes(): array;
 
