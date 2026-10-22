@@ -181,33 +181,23 @@ final class ForumPostThreadBuilder {
         $build['posts'][$postId]['reply_context'] = [
           '#type' => 'container',
         ];
-        if (isset($viewableIds[(string) $parent->id()])) {
+        $parentPage = isset($viewableIds[(string) $parent->id()])
+          ? $pager->getCurrentPage()
+          : $this->getPageForPost($topic, $parent);
+        if ($parentPage !== NULL) {
+          $query = $this->pagerManager->getUpdatedParameters([], self::PAGER_ID, $parentPage);
           $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(
             $parentLabel,
             Url::fromRoute('entity.node.canonical', ['node' => $topic->id()], [
+              'query' => $query,
               'fragment' => 'forum-post-' . $parent->id(),
             ]),
           )->toRenderable();
         }
         else {
-          $parentPage = $this->getPageForPost($topic, $parent);
-          if ($parentPage !== NULL) {
-            $query = $parentPage === $pager->getCurrentPage()
-              ? []
-              : $this->pagerManager->getUpdatedParameters([], self::PAGER_ID, $parentPage);
-            $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(
-              $parentLabel,
-              Url::fromRoute('entity.node.canonical', ['node' => $topic->id()], [
-                'query' => $query,
-                'fragment' => 'forum-post-' . $parent->id(),
-              ]),
-            )->toRenderable();
-          }
-          else {
-            $build['posts'][$postId]['reply_context']['parent'] = [
-              '#plain_text' => $parentLabel,
-            ];
-          }
+          $build['posts'][$postId]['reply_context']['parent'] = [
+            '#plain_text' => $parentLabel,
+          ];
         }
       }
       if ($canReply) {

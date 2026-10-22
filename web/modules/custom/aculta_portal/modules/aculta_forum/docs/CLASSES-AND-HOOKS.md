@@ -65,4 +65,4 @@ procedural continuam procedurais conforme `DRUPAL-11-STANDARDS.md`.
 `Drupal\aculta_forum\Plugin\views\cache\ForumPostTag` estende o cache tag-based do Views e acrescenta `aculta_forum_post_list`, tag de lista invalidada pelo ciclo de vida da entidade `ForumPost`. Assim, resultados e saída da View pública que ordenam/exibem contagens e atividade de ForumPost expiram em criação, atualização ou exclusão. A configuração existente é migrada pelo update `9005`.
 
 
-`ForumPostThreadBuilder::POSTS_PER_PAGE` e `PAGER_ID` são a fonte comum para a thread, a página do primeiro post não lido e o cálculo de posições. Links que partem de outra rota usam `getTopicPagerQuery()` para criar estado limpo de destino (`page=0,{página}`); não devem carregar a página ou filtros do pager de origem.
+`ForumPostThreadBuilder::POSTS_PER_PAGE` e `PAGER_ID` são a fonte comum para a thread, a página do primeiro post não lido e o cálculo de posições. Links que partem de outra rota usam `getTopicPagerQuery()` para criar estado limpo de destino (`page=0,{página}`); links para pai dentro da thread usam `PagerManagerInterface` e preservam o índice ativo de Comments e query local.

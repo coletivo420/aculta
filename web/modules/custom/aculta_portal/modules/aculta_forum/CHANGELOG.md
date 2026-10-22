@@ -1,3 +1,9 @@
+## `0.1.0-dev.223` — manter pagers ativos nos links entre posts
+
+- Links para post pai sempre atualizam o pager da thread pelo Core, inclusive
+  quando o post já está na página atual; preservam pager de Comments e query da
+  thread. Evita voltar à página zero e perder a âncora. Sem Runtime/testes.
+
 ## `0.1.0-dev.222` — redirecionar post publicado à página correta
 
 - Após publicar ou editar um post publicado, o formulário calcula a página da

@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.223` | Preservar pager ativo nos links para post pai | O link chama sempre `PagerManagerInterface` com a página do pai, também na página atual; Comments pager e query da thread permanecem estáveis. Evita fragmento fora da página após reiniciar o pager em zero. Sem Runtime/testes. |
 | `0.1.0-dev.222` | Redirecionar publicação/edição à página do post | Após salvar post publicado, `ForumPostSubmissionForm` usa a página compartilhada da thread e `getTopicPagerQuery()` antes de aplicar a âncora; sem fragmento se o destino público não puder ser calculado. Sem Runtime/testes. |
 | `0.1.0-dev.221` | Isolar o link de não lidas ao abrir um tópico | `ForumUnreadPosts` usa `getTopicPagerQuery()` para iniciar Comment pager em zero e apontar o pager ForumPost à resposta não lida, sem parâmetros da View de origem. Sem Runtime/testes. |
 | `0.1.0-dev.220` | Aplicar purpose ao cálculo da página do post | `getPageForPost()` compartilha a validação do tópico público usada pela thread: bundle, publicação, Domain associado ao purpose Fórum e purpose atual. Sem Runtime/testes. |

@@ -49,7 +49,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | --- | --- | --- |
 | Listagem de tópico como Views personalizável | Portar via Views | Filtros de Domain/contexto/access permanecem fixos. CTools só expõe opções aprovadas. |
 | Busca em categoria e em tópico | Portar via Search API contextual | Aplicar access igual às rotas. |
-| Pager no topo e paginação contextual | Portar via pager Views/Core | A paginação dentro da mesma listagem preserva filtros/query. Links que saem de outra rota para um post definem o pager do tópico de destino (`page=0,{página}`), sem carregar filtros ou índice de página de origem, e mantêm slug canônico/fragmento estável. |
+| Pager no topo e paginação contextual | Portar via pager Views/Core | A paginação dentro da mesma listagem preserva filtros/query; links entre posts mantêm os índices ativos de Comments e ForumPost. Links que saem de outra rota definem o pager do tópico de destino (`page=0,{página}`), sem carregar filtros ou índice de página de origem, e mantêm slug canônico/fragmento estável. |
 | Seção separada para fixados | Portar se suportado pela entidade/Flag/config validada | Ordenação previsível e acessível. |
 | Reorganizar categoria/subcategoria | Planejar com Taxonomy parent/weight | dev.9; preservar acesso fixo, validar hierarquia e impacto em Views/breadcrumbs. |
 | Mover tópico entre categorias e em lote | Atualizar o Node existente via Entity API; Views Bulk Operations oferece seleção e Batch API | Dev.118 implementa lote limitado a 50, configuração de destino e confirmação; revalida `ForumTopicMover` por item, preserva ID/revisão/alias/Comments e nega `field_autor_legado`. Kernel cobre dois Nodes; instalação e View ativa no Runtime pendentes. |
