@@ -22,14 +22,20 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
     self::assertStringContainsString("Meus conteúdos", $source);
   }
 
-  public function testNodeQueryAppliesOwnerBeforePager(): void {
+  public function testOwnerScopeAndRevisionFilterPrecedePageSlice(): void {
     $source = file_get_contents(__DIR__ . '/../../../src/StudioListingBuilder.php');
     self::assertIsString($source);
     $owner = strpos($source, "->condition('uid', (int) \$account->id())");
-    $pager = strpos($source, '->pager(20)');
+    $revision = strpos($source, 'foreach (array_chunk(array_values($nids), 100)');
+    $pager = strpos($source, 'createPager(count($matched), 20)');
+    $slice = strpos($source, 'array_slice($matched, $pager->getCurrentPage() * 20, 20)');
     self::assertNotFalse($owner);
+    self::assertNotFalse($revision);
     self::assertNotFalse($pager);
-    self::assertLessThan($pager, $owner);
+    self::assertNotFalse($slice);
+    self::assertLessThan($revision, $owner);
+    self::assertLessThan($pager, $revision);
+    self::assertLessThan($slice, $pager);
   }
 
 }
