@@ -66,6 +66,16 @@ de acesso do tópico hospedeiro. A implementação deverá reutilizar Search API
 Views, sem storage paralelo, e validar no código instalado a semântica do
 processador customizado ou de outra estratégia compatível.
 
+Não habilitar apenas o processador `role-based access` como substituto dos
+grants do tópico: ele indexa acesso por papel, enquanto Node Access pode variar
+por realm e GID para a conta atual. A extensão precisa indexar os grants de
+visualização do tópico hospedeiro junto ao post e aplicar os grants da conta na
+consulta do Search API, antes de total e paginação. Isso deve cobrir também a
+publicação do tópico hospedeiro; o status publicado do post, isoladamente, não
+torna o resultado público. O processador `content_access` continua habilitado
+para os Nodes da busca, mas o código instalado 1.41 não aplica esse processor a
+datasources de entidades fora de Node e Comment.
+
 O corpo de Comments não é pesquisado. A interface permite busca textual de
 título e corpo do tópico, com pelo menos três caracteres, além de filtro por
 categoria. O índice armazena o ID inteiro do termo; um hook de formulário
@@ -92,6 +102,7 @@ configuráveis, conforme o contrato do Portal.
 ## Referências técnicas
 
 - [Search API: processors](https://www.drupal.org/docs/8/modules/search-api/getting-started/processors)
+- [Search API: common pitfalls](https://www.drupal.org/docs/8/modules/search-api/getting-started/common-pitfalls)
 - [Search API: creating a search View](https://www.drupal.org/docs/8/modules/search-api/getting-started/search-forms-and-results-pages/searching-with-views/creating-a-search-view)
 - [Search API: adding an index](https://www.drupal.org/docs/8/modules/search-api/getting-started/adding-an-index)
 - [Search API: custom fields via processor](https://www.drupal.org/docs/8/modules/search-api/developer-documentation/create-custom-fields-using-a-custom-processor)
