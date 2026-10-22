@@ -1,3 +1,29 @@
+## aculta_forum_lms 0.1.0-dev.36 — propagação da moderação LMS
+
+- `LmsModerationPropagationKernelTest` usa a `ParticipationRules` e o
+  `ParticipationHooks` reais (schema de `aculta_user_test`) sobre um tópico
+  público, um blog e um tópico LMS com o mesmo `field_aculta_discussion`.
+- Comment LMS é publicado mesmo com a moderação inicial ativa. Com um Comment
+  não LMS pendente, a criação de `aculta_forum_topic` fica forbidden; o
+  Comment LMS publicado conta como participação aprovada, limpa
+  `firstDiscussionCommentPending` e libera o bloqueio (neutral). O próximo
+  Comment não LMS já nasce publicado.
+- Comment LMS pendente não libera o bloqueio: não conta como participação
+  publicada, o resultado continua forbidden e a consulta de pendências não LMS
+  ignora esse registro. As decisões levam as tags `comment_list` e
+  `config:aculta_user.settings` e os contextos `user`/`user.roles`.
+
+| Cenário | Resultado |
+| --- | --- |
+| Comment não LMS pendente | Criação de tópico forbidden pelo bloqueio temporário |
+| Publicar Comment LMS | Publicado sem moderação; participação aprovada; criação neutral |
+| Próximo Comment não LMS | Publicado, sem nova moderação |
+| Comment LMS pendente | Não conta como aprovação; bloqueio permanece forbidden |
+| Query de pendências não LMS | Ignora o Comment LMS pendente |
+
+- Teste: 2 testes / 46 asserções PASS, sem depreciações. PHPCS limpo. Nenhuma
+  configuração foi alterada e o Runtime não recebeu fixture.
+
 ## aculta_forum_lms 0.1.0-dev.35 — campo de discussão fechado
 
 - `LmsClosedDiscussionFieldKernelTest` usa um tópico de turma com estudante

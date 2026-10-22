@@ -1,3 +1,21 @@
+## `0.1.0-dev.36` — moderação LMS propaga aprovação para os demais contextos — 2026-10-22
+
+- `LmsModerationPropagationKernelTest` exercita a `ParticipationRules` e o
+  `ParticipationHooks` reais com o schema de `aculta_user_test`, sobre Nodes
+  `aculta_forum_topic`, `blog` e `aculta_lms_topic` com o campo compartilhado.
+- Comment LMS nunca entra na moderação inicial: o hook o mantém publicado.
+  Com um Comment não LMS pendente, o bloqueio temporário de criação de tópico
+  está ativo (forbidden); publicar um Comment LMS conta como participação
+  aprovada (`hasPublishedDiscussionComment`), zera
+  `firstDiscussionCommentPending` e libera o bloqueio (neutral). Um Comment
+  não LMS posterior já nasce publicado.
+- Comment LMS pendente não libera: continua sem participação publicada, o
+  bloqueio segue forbidden e a consulta de pendências não LMS ignora o
+  registro. Os resultados de acesso mantêm as tags `comment_list` e
+  `config:aculta_user.settings` e os contextos `user`/`user.roles`.
+- Teste: 2 testes / 46 asserções PASS, sem depreciações. PHPCS limpo. Nenhuma
+  configuração foi alterada e o Runtime não recebeu fixture.
+
 ## `0.1.0-dev.35` — campo de discussão fechado bloqueia e libera escrita — 2026-10-22
 
 - `LmsClosedDiscussionFieldKernelTest` prova o ciclo pedido na dev.98 sobre um
