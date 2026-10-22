@@ -17,6 +17,11 @@
   `forum`; não aprova, rejeita ou retira posts. `content_editor` recebe as seis
   transições do workflow. Os papéis não foram importados por inteiro. Havia três
   contas `email_confirmed` e uma `content_editor` no Runtime.
+- O campo `comment_body` do bundle dedicado `aculta_discussion_post` divergia do
+  Sync: permitia `usuario_aculta`, enquanto CKEditor e os diálogos de anexo usam
+  o formato `forum`. Após confirmar zero Comments nesse bundle, foi sincronizado
+  somente esse objeto de configuração; o Runtime agora restringe o campo ao
+  formato `forum`.
 - O Runtime ainda tem zero `ForumPost` e zero Media `forum_attachment`; o fluxo
   com post/arquivo e a revisão visual seguem pendentes. Nenhuma fixture ou teste
   automatizado foi executado.

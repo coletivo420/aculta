@@ -10,6 +10,9 @@
   O primeiro não tem transições de aprovar/rejeitar/retirar; o segundo tem as
   seis transições previstas. O Runtime tinha três contas `email_confirmed` e
   uma `content_editor`.
+- O bundle legado dedicado tem zero Comments. O único campo `comment_body` foi
+  sincronizado parcialmente para permitir apenas o formato `forum`, conforme o
+  CKEditor e o Sync; não houve alteração de outros bundles de comentário.
 - Há zero `ForumPost` e zero Media `forum_attachment`; submissão, moderação,
   preview privado, fallback e layout seguem sem validação visual. Nenhuma fixture
   ou importação global; nenhum teste automatizado executado.
