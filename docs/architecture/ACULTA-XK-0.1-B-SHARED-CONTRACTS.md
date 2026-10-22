@@ -52,7 +52,7 @@
 | XK-B2 | Messenger | catálogo de eventos, transporte, idempotência e consentimento |
 | XK-B3 | User + Forum | situação de associado, Group model e sincronização segura |
 | XK-C1 | User | **concluído em 2026-10-22**: testes de caracterização para ParticipationRules/ParticipationEditWindow/hooks ([evidência](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md)); sem refatoração |
-| XK-C2 | Messenger | adaptar um evento existente sem duplicar aviso, com testes |
+| XK-C2 | Messenger | **concluído em 2026-10-22**: teste Kernel confirma um aviso por destinatário e por revisão nos eventos existentes de primeira publicação e de atualização de tópico ([evidência](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/MESSENGER-PART-0.1-C2-CHARACTERIZATION.md)); sem mudança de produtor |
 | XK-C3 | Forum | prova de ACL Group e revogação antes da migração |
 | XK-D | Wiki e LMS | consumos graduais, sem alterar isolamento Group nem revisão |
 | XK-R | todos | gates Unit/Kernel/Runtime, segurança, cache, responsividade, migração/rollback |
