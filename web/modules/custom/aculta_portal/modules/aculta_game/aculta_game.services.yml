@@ -1,6 +1,7 @@
 services:
   aculta_game.forum_participation_policy:
     class: Drupal\aculta_game\ForumParticipationPolicy
+    arguments: ['@aculta_portal.domain_purpose']
 
   aculta_game.mission_progress:
     class: Drupal\aculta_game\MissionProgress

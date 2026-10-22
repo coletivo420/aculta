@@ -1,3 +1,13 @@
+## 0.1.0-dev.16 — incluir a primeira publicação de ForumPost no trigger atual
+
+- Hooks genéricos de insert/update concedem o trigger existente `forum_comment`
+  quando um `aculta_forum_post` de conta ativa passa a publicado na revisão
+  default de tópico Growroom publicado no Domain `forum`. Edições publicadas, sincronização,
+  autoria histórica e respostas de outros contextos não se qualificam.
+- O Game continua opcional e não declara dependência de `aculta_forum`; não há
+  nova conquista, backfill ou alteração Runtime. Testes automatizados não foram
+  executados nesta etapa.
+
 ## 0.1.0-dev.15 — data de obtenção nas missões concluídas — 2026-10-21
 
 - Conquista obtida mostra "Concluída em DATA" e tooltip "Obtida em DATA" (atributo `title`), em `MissionProgress`.

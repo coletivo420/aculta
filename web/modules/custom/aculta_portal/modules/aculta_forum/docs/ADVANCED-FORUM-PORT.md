@@ -6,6 +6,10 @@ com Author Pane e módulos auxiliares como dependências separadas. Código lega
 serve somente para inventário de comportamento; não será executado nem portado
 como implementação PHPTemplate. O projeto upstream está sem release estável
 suportada atual; qualquer comportamento final é contrato ACULTA e API Drupal 11+.
+Desde a decisão de 2026-10-21, respostas do Growroom público usam `ForumPost`
+revisionável; linhas históricas que prescrevem Comment como storage público estão
+superadas. Comments Core continuam nos contextos de Publicações, LMS e Wiki até
+eventuais decisões próprias.
 
 Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 [matriz de features upstream](https://www.drupal.org/node/841056),
@@ -64,7 +68,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 
 | Capacidade | Tratamento | Critério/nota |
 | --- | --- | --- |
-| Resposta linear ou encadeada | Portar como modos configurados do campo Comment | Nativo Comment; sem entidade de resposta própria. |
+| Resposta linear ou encadeada | Usar árvore revisionável `ForumPost.parent` no Growroom público; manter Comment/Core nos outros contextos | A ordem pública permanece cronológica; contexto e acesso são revalidados pelo Fórum. |
 | Painel de autor lateral e layout empilhado | Portar em variante `aculta_user` + preset do tema | Ver `aculta_user/docs/AUTHOR-PANE-PORT.md`. |
 | Ano de entrada do participante | Mostrar ano de criação da conta ativa em cartões públicos do Fórum | Perfil privado oculta a data; autores Growroom históricos não recebem data de conta inferida. |
 | Nome/avatar/links de perfil | Reutilizar Author Card API de `aculta_user` | Privacy/access antes de construir dados. O ano da conta aparece apenas em perfil público; estatísticas por autor aguardam fonte/access/cache próprios. |
@@ -72,9 +76,9 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Email e campos opcionais | Não mostrar por padrão; somente dado público autorizado | Email privado não integra view-model público. |
 | Assinaturas de fórum | Candidato a port; requer política/sanitização de conteúdo própria | Não inserir HTML livre ou elevar formato. |
 | Cabeçalho: total, novas respostas e última resposta | Portar | Totais respeitam access; links a primeira/última não lida. |
-| Botões responder/citar/editar/excluir | Portar com Comment/Form/Access APIs | Permissão nativa e política de confirmação de email. |
-| Numeração de posts e permalink | Portar com permalink estável de comentário e anchor acessível | Não usar posição de paginação como ID permanente. |
-| Link para resposta pai (“Responder a #N”) | Portar se estrutura Comment encadeada habilitada | Link para comentário pai com access/canonical. |
+| Botões responder/citar/editar/excluir | Usar Form/Access API de ForumPost no Growroom e Comment nos contextos próprios | Permissão contextual e política de confirmação de email. |
+| Numeração e permalink de posts públicos | ID estável de ForumPost e âncora `forum-post-{id}` dentro do tópico | Não usar posição de paginação como ID permanente; ForumPost não tem rota canônica própria. |
+| Link para resposta pai (“Responder a #N”) | Usar `ForumPost.parent` e a navegação da thread | Link/âncora calculados com paginação e acesso do tópico. |
 | Navegação próximo/anterior tópico | Portar via View/contexto | Omitir se lista privada não puder ser enumerada com segurança. |
 | Navegação topo | Portar como affordance acessível | Respeitar movimento reduzido. |
 | Comentário-título oculto quando vazio | Portar configuração/display do Comment | Não renderizar título duplicado. |

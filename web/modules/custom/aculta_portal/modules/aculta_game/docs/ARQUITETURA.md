@@ -8,7 +8,7 @@ limites em [EXECUCAO.md](EXECUCAO.md). Partes futuras continuam propostas.
 
 ```mermaid
 flowchart TD
-  F[Forum e Comment: publicação aprovada] --> C[Critérios e elegibilidade]
+  F[ForumPost/Comment: primeira publicação aprovada] --> C[Critérios e elegibilidade]
   W[Wiki: revisão e decisão editorial] --> C
   L[LMS: status e matrícula reais] --> C
   P[Profile e fatos administrativos permitidos] --> C
@@ -57,16 +57,20 @@ Desabilitar Game não apaga identidade, posts, cursos ou concessões.
 
 ### Integração com o Fórum público
 
-Em `0.1.0-dev.10`, o hook de Comment do Game escuta o bundle atual
+O caminho Comment de `0.1.0-dev.10` escuta o bundle atual
 `aculta_discussion_post`, campo `field_aculta_discussion`, hospedado no Node
-publicado `aculta_forum_topic`. O trigger continua `forum_comment`, então o
-catálogo, a missão e a API de concessões existentes são reutilizados; Fórum não
-passa a depender do Game. Aprovação posterior conta uma vez, enquanto edição de
-comentário já publicado não dispara nova avaliação.
+`aculta_forum_topic`. Desde `0.1.0-dev.16`, hooks genéricos `entity_insert` e
+`entity_update` também avaliam `aculta_forum_post`, sem importar a classe ou
+declarar dependência do Game ao Fórum. O mesmo trigger `forum_comment` mantém o
+catálogo, a missão e a API única de concessões. Aprovação posterior de post
+pendente conta uma vez; insert/update sincronizados, autoria histórica, tópico
+não publicado ou fora do Domain `forum`, revisão que não é default e edição de
+post já publicado não concedem uma nova conquista.
 
 O par contrib antigo (`comment_forum` em `forum`) não é elegível, mesmo enquanto
-o módulo aguarda a retirada segura documentada em `aculta_forum`. Somente a
-publicação atual no bundle ACULTA conta. `field_autor_legado` e
+o módulo aguarda a retirada segura documentada em `aculta_forum`. Somente
+Comments ACULTA vigentes e posts revisionáveis públicos podem qualificar.
+`field_autor_legado` e
 `SynchronizableInterface::isSyncing()` também bloqueiam concessões por conteúdo
 histórico/restaurado. Não se reavalia o passado e não se cria cópia dos
 comentários ou contadores no Game. O evento atual é o hook de entidade Drupal;

@@ -1,5 +1,19 @@
 # Execução por fases — ACULTA Game
 
+## Dev.16 — incluir ForumPost na primeira resposta pública
+
+- `BadgeEvaluationHooks` avalia o trigger existente `forum_comment` nos hooks
+  genéricos de insert/update para `aculta_forum_post`. `ForumParticipationPolicy`
+  exige publicação default em tópico Growroom publicado no Domain `forum`,
+  conta proprietária, primeira transição a publicado e conteúdo não
+  sincronizado/não histórico.
+- Mantida a integração de Comment ACULTA vigente até a migração; Forum contrib,
+  LMS, autoria histórica e outros contextos não concedem a conquista. Game não
+  depende de `aculta_forum`; não houve concessão ou alteração Runtime.
+- PHP lint e PHPCS dos arquivos alterados: PASS. Testes automatizados não foram
+  executados nesta etapa; a matriz de aceitação foi atualizada para orientar a
+  validação integrada posterior. RUNTIME STATUS: DEFERRED.
+
 ## Dev.14 — manter conquistas públicas isoladas do LMS
 
 - `ForumParticipationPolicyTest::testLmsTopicDoesNotEarnPublicForumParticipation`

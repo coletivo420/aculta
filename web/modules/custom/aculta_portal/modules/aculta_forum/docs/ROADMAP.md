@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.205` | Conectar ForumPost à conquista existente de primeira resposta | Game avalia a primeira publicação default de post público pelo trigger `forum_comment`; sem dependência do Fórum, backfill ou Runtime. Validação automatizada integrada pendente. |
 | `0.1.0-dev.204` | Rastrear atualização do tópico na busca de posts | Campo oculto `topic:entity:changed` dá ao Search API uma referência indexada para enfileirar posts quando o tópico hospedeiro é salvo; rebuilds de grants sem save ainda exigem reindex explícito. Sem Runtime. |
 | `0.1.0-dev.203` | Atualizar a entrada do módulo para a busca de posts | README descreve tópicos, posts, grants antes da paginação e validação pendente antes do Runtime. |
 | `0.1.0-dev.202` | Incluir posts revisionáveis na busca pública | Configuração inclui datasource/post fields, filtros unificados e formatter de âncora; processor filtra grants/publicação antes da paginação. Validação automatizada integrada pendente antes de reindexar ou aplicar no Runtime. |
@@ -752,11 +753,12 @@ Esta matriz é planejamento: não declara implementação, cobertura Runtime ou
 estado RC para itens ainda não comprovados.
 
 Integração inicial do gatilho de primeira resposta publicada com `aculta_game`
-foi implementada separadamente em `aculta_game 0.1.0-dev.11`: Game reconhece
-Comment publicado de conta no tópico público novo e rejeita bundles do Drupal
-Forum contribuído e autoria histórica. A
-homologação do evento real no Runtime fica pendente; estatísticas completas e novos critérios
-de gamificação continuam nesta fase e na linha própria do Game.
+foi implementada em `aculta_game 0.1.0-dev.11` para Comments ACULTA e ampliada
+na dev.16 para a primeira publicação de `ForumPost`. O Game reutiliza o trigger
+existente, sem dependência do Fórum; publicação aprovada pode conceder uma vez,
+enquanto Forum contrib, sync e autoria histórica são rejeitados. A homologação
+integrada permanece pendente; estatísticas completas e novos critérios de
+gamificação continuam na linha própria do Game.
 
 Pesquisa atualizada em 2026-10-19: o Discourse combina badges por marcos com
 gamificação configurável por pontos e leaderboards; seus níveis de confiança

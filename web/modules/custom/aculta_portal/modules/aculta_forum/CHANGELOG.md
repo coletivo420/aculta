@@ -1,3 +1,11 @@
+## `0.1.0-dev.205` — integrar a primeira publicação de ForumPost às conquistas
+
+- `aculta_game 0.1.0-dev.16` reutiliza o trigger `forum_comment` quando um post
+  público revisionável é publicado pela primeira vez; Game continua opcional e
+  não cria dependência inversa. O ownership e a matriz Advanced Forum agora
+  distinguem ForumPost público dos Comments contextuais. Runtime e testes não
+  foram executados nesta etapa.
+
 ## `0.1.0-dev.204` — rastrear mudanças no tópico hospedeiro da busca
 
 - O índice inclui o campo oculto `post_topic_changed` (`topic:entity:changed`)

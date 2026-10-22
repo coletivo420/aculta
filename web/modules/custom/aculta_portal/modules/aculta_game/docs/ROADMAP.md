@@ -19,7 +19,7 @@ do responsável, as fases são commits próprios na PR #286 existente.
 | G5.3 — perfil público implementado | Cartões de conquistas obtidas em `/u/<apelido>` | Imagem, título, descrição e destaque; preferências respeitadas; evidências privadas excluídas |
 | G5.4 — arte cultural implementada | Ilustrações temáticas nas conquistas de participação e fallback | Paleta ACULTA, cannabis e antiproibicionismo; 512 px, mobile e assets originais preservados |
 | G6 — automação opcional | Spike ECA ou outro backend apenas se houver lacuna demonstrada | Composer e licenças revistos, ownership único, testes de paridade; não instalar ECA e Rules para a mesma regra |
-| G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural; trigger do Fórum atual limitado ao conteúdo novo na dev.11 | Mesma conquista e mesma privacidade em todos os consumidores; Forum contrib/restaurado tratado como legado; avaliar qualidade/abuso antes de critérios por volume |
+| G7 — integração continuada | Fórum atual, Wiki, Revista, cursos e participação cultural; trigger do Growroom inclui Comments ACULTA vigentes e `ForumPost` desde dev.16 | Mesma conquista e mesma privacidade em todos os consumidores; Forum contrib/restaurado tratado como legado; avaliar qualidade/abuso antes de critérios por volume |
 
 G3 pode ser prototipada visualmente enquanto G1/G2 são resolvidas, sem publicar
 dados sem a política de acesso. G6 é condicional, não requisito de lançamento.
@@ -35,9 +35,10 @@ de contribuição útil e pertencimento comunitário, com critérios transparent
 sem pressionar participação diária.
 
 - O primeiro marco usa a conquista existente `primeiro_comentario_forum` e o
-  trigger `forum_comment`; agora aceita comentário `aculta_discussion_post` em
-  Node `aculta_forum_topic`, após publicação efetiva. Comentário ainda pendente
-  só conta ao ser aprovado; edição de conteúdo já publicado não repete o marco.
+  trigger `forum_comment`; aceita Comment ACULTA vigente e `aculta_forum_post`
+  no tópico Growroom publicado. Conteúdo pendente só conta ao ser aprovado;
+  edição já publicada não repete o marco. Sincronização e autoria histórica
+  ficam excluídas.
 - Manter somente fontes contemporâneas. Importação/sync, autorias
   `field_autor_legado`, comentário anônimo, conteúdo não publicado e outros
   contextos não contam.
@@ -87,7 +88,11 @@ ator e auditoria, sem CRUD paralelo às entidades Drupal existentes.
 
 ## Matriz mínima de evidência
 
-- Primeiro comentário salvo não publicado e aprovado depois: uma concessão.
+- Primeiro Comment ACULTA ou `ForumPost` salvo não publicado e aprovado depois:
+  uma concessão; insert publicado também qualifica uma única vez.
+- Editar resposta publicada, salvar revisão que não é default, migrar/sincronizar
+  conteúdo, autoria histórica, Domain incorreto e tópico privado/não publicado:
+  nenhuma concessão.
 - Edição repetida, reenvio de fila e dois workers: nenhuma duplicação.
 - Autor real da revisão Wiki, com estado aceito; não premiar mero save do Node.
 - LMS `passed`, sem prêmio por compra/matrícula; evidência reservada protegida.

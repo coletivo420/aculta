@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Drupal\aculta_game\Hook;
 
 use Drupal\aculta_game\ForumParticipationPolicy;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\Badge\BadgeService;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\comment\CommentInterface;
+use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\node\NodeInterface;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\aculta_portal\Profile\PerfilDoPapel;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -23,7 +24,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Cada regra concede no fato que a cumpre; a concessão é idempotente.
  * Conquistas automáticas nunca são revogadas.
  *
- * Forum is optional: only the current ACULTA public discussion bundles match.
+ * Forum is optional: only current ACULTA public discussions match.
  */
 final class BadgeEvaluationHooks {
 
@@ -46,6 +47,20 @@ final class BadgeEvaluationHooks {
       return;
     }
     $this->badges->awardForTrigger((int) $comment->getOwnerId(), 'forum_comment');
+  }
+
+  /**
+   * Avalia a primeira publicação de um post revisionável do Growroom.
+   */
+  #[Hook('entity_insert')]
+  #[Hook('entity_update')]
+  public function forumPostSave(EntityInterface $entity): void {
+    if (!$entity instanceof EntityOwnerInterface
+      || !$this->forumParticipation->isEligiblePost($entity)) {
+      return;
+    }
+
+    $this->badges->awardForTrigger((int) $entity->getOwnerId(), 'forum_comment');
   }
 
   /**

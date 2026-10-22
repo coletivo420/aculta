@@ -1,8 +1,8 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.14` — aprovação de comentário pendente é elegível uma
-única vez após publicação; gatilho limitado ao Fórum ACULTA novo; Forum
-contribuído e conteúdo legado não geram conquistas contemporâneas.
+Versão atual: `0.1.0-dev.16` — primeira publicação de Comment ACULTA vigente ou
+de `ForumPost` público pode conceder uma vez a conquista existente; migração,
+sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
@@ -16,10 +16,11 @@ Reconhecer contribuições culturais, comunitárias e de aprendizagem por conqui
 e missões. Integrar as fontes reais do Portal e apresentar progresso compreensível,
 sem ranking, pontuação competitiva, XP/níveis ou benefícios financeiros.
 
-O trigger existente de primeira resposta publicada agora inclui o novo Fórum
-ACULTA. A integração observa o Comment por seus bundles/campo; Fórum não passa
-a depender do Game. Comentários históricos/importados e outros contextos nunca
-recebem conquistas contemporâneas. Ver
+O trigger existente de primeira resposta publicada agora aceita Comments
+ACULTA vigentes e posts revisionáveis do Growroom. O Game observa a publicação
+pelos hooks genéricos de entidade e não adiciona dependência de módulo ao Fórum;
+migração, autoria histórica e outros contextos não recebem conquistas
+contemporâneas. Ver
 [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) e
 [`docs/PESQUISA.md`](docs/PESQUISA.md).
 
