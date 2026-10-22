@@ -363,3 +363,7 @@ Diretório: `components/patterns/context-header/`. Apresentação contextual aba
 ## Segundo consumidor — GanjaLab420
 
 `LearningDashboardController::student()` passou a renderizar `aculta420:context-header` com título `Meus cursos`, etiqueta GanjaLab420 e subtítulo. `ThemeHooks::preprocessPage()` suprime seletivamente o page-title block nessa rota para evitar H1 concorrente, mantendo o `_title` do Drupal. O tema preserva o shell multidomínio e o LMS mantém a propriedade de acesso/progresso/cache. Ver [homologação pendente](theme-ux-0.8-b1-02e-runtime-validation.md).
+
+## `aculta420:context-tabs` — navegação contextual por rotas
+
+SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `items` de âncoras access-checked, incluindo `aria-current=page` preparado pelo provider. Twig possui `<nav>`, CSS usa tokens e flex wrap mobile; stories estáticas GanjaLab e Wiki. **Não** confundir com `product-tabs`, que controla painéis Bootstrap internos. Ainda sem consumidores funcionais; ver [plano B2](theme-ux-0.8-b2-context-tabs.md).
