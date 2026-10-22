@@ -8,8 +8,11 @@ use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_forum\Attachment\ForumGalleryPublication;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
-use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageInspector;
+use Drupal\aculta_image\FileRemover;
+use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
@@ -343,17 +346,34 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $cleanup = new ForumAttachmentCleanup(
       $this->container->get('entity_type.manager'),
       $this->container->get('entity_usage.usage'),
-      $this->container->get('file.usage'),
       $this->container->get('database'),
       $this->container->get('datetime.time'),
-      new FileRemover(
-        $this->container->get('file.usage'),
-        $this->container->get('entity_type.manager'),
-        $this->container->get('database'),
-        $this->container->get('file_system'),
-        $this->container->get('logger.factory'),
+      new UnusedMediaCleaner(
+        new FileReferenceInspector(
+          $this->container->get('entity_type.manager'),
+          $this->container->get('entity_field.manager'),
+          $this->container->get('database'),
+        ),
+        $this->container->get('logger.factory')->get('test'),
       ),
-      new ImageInspector($this->container->get('image.factory')),
+      new UnusedFileCleaner(
+        $this->container->get('file.usage'),
+        $this->container->get('database'),
+        new FileReferenceInspector(
+          $this->container->get('entity_type.manager'),
+          $this->container->get('entity_field.manager'),
+          $this->container->get('database'),
+        ),
+        new FileRemover(
+          $this->container->get('file.usage'),
+          $this->container->get('entity_type.manager'),
+          $this->container->get('database'),
+          $this->container->get('file_system'),
+          $this->container->get('logger.factory'),
+        ),
+        new ImageInspector($this->container->get('image.factory')),
+        $this->container->get('logger.factory')->get('test'),
+      ),
       $this->container->get('config.factory'),
     );
 

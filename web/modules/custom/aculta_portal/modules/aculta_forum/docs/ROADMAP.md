@@ -7,6 +7,19 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
+### Política comum de limpeza de anexos — integração inicial 2026-10-22
+
+`ForumAttachmentCleanup` agora conserva a responsabilidade de localizar Media
+órfãs do Fórum, validar referências de galeria/Comments/ForumPost e excluir o
+Media pelo módulo dono. A verificação e remoção do File são delegadas a
+`aculta_portal.unused_file_cleaner`; para imagens, a remoção física continua em
+`aculta_image`. O Portal também revalida referências estruturadas e embeds em
+todas as revisões e executa a exclusão do Media órfão via Entity API. Próximos
+gates: Kernel para revisão/embeds e arquivo compartilhado, concorrência/falha
+parcial e confirmar que todos os caminhos de limpeza usam o serviço comum. Não
+ampliar exclusão de posts por cron.
+Contrato e estado global: [política do Portal](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
 `0.1.0-dev.185–193` adaptam os diálogos de imagem à política central e exigem
 texto alternativo fornecido pela pessoa autora no
 diálogo de anexo e uma descrição por cada imagem da galeria. O passo seguinte da

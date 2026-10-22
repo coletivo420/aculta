@@ -12,12 +12,14 @@ no Runtime.
 
 ### Integração planejada com limpeza de anexos do Portal — 2026-10-22
 
-O viewer continuará dono de renderização e acesso a PDFs. Na IDX 0.1-R, os
-adapters de Media `document` e `course_document` devem fornecer ao Portal as
-referências necessárias para que a exclusão de conteúdo confira uso e Group
-antes de limpar anexos. Arquivos não serão apagados pelo formatter; a remoção
-física segue File API e, quando imagem, `aculta_image`. Contrato central ainda
-pendente: [política de limpeza](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+O viewer continuará dono de renderização e acesso a PDFs. O Portal já dispõe
+parcialmente de `aculta_portal.unused_file_cleaner` para verificar/remover File;
+na IDX 0.1-R, o viewer deve expor referências de Media/arquivos e consumir esse
+serviço ao limpar anexos. Os adapters de Media `document` e `course_document`
+devem fornecer ao Portal as referências necessárias para que a exclusão de
+conteúdo confira uso e Group antes de limpar anexos. Arquivos não serão apagados
+pelo formatter; a remoção física de imagem continua em `aculta_image`. A política central está em
+[política de limpeza](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
 ### Comparação de recursos TNC solicitados em 2026-10-20
 

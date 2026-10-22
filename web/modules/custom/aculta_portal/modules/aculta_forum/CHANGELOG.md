@@ -3445,3 +3445,8 @@
 - Confirmado no Runtime de testes (`aculta_runtime`): `SHOW COLUMNS` lista
   `topic`, e a requisição pública do domínio do Fórum reproduzia o erro SQL.
 
+# `0.1.0-dev.244` — limpeza compartilhada de anexos
+
+- `ForumAttachmentCleanup` mantém a descoberta específica de candidatos e verificações de Fórum, e usa `aculta_portal.unused_media_cleaner` para revalidar/remover Media e `aculta_portal.unused_file_cleaner` para Files.
+- Retenção, descoberta de referências de Fórum e regras de publicação continuam no módulo; sem alteração de Runtime.
+

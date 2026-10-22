@@ -24,12 +24,14 @@ continuam exclusivamente no LMS.
 
 ## Estado
 
-### Limpeza coordenada de recursos — dívida planejada em 2026-10-22
+### Limpeza coordenada de recursos — dívida de integração em 2026-10-22
 
-Quando curso, turma ou referência for removida, o módulo deve fornecer suas
-relações ao serviço de limpeza do Portal antes de retirar File/Media. A
-verificação deve preservar documentos ligados a outras turmas ou conteúdos e
-respeitar a relação Group atual. Não excluir arquivos diretamente; ver
+O Portal já oferece parcialmente `aculta_portal.unused_file_cleaner` para
+verificação/remoção de File. Quando curso, turma ou referência for removida, o
+módulo deve fornecer suas relações e submeter candidatos ao Portal antes da
+limpeza. O Portal revalida referências e remove Media/File órfãos. A verificação
+deve preservar documentos ligados a outras turmas ou conteúdos e respeitar a
+relação Group atual. Não excluir arquivos diretamente; ver
 [política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
 Dev 0.1.0-dev.3. O provider tem cobertura Unit própria (3 testes / 14

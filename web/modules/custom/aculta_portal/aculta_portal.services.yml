@@ -1,4 +1,21 @@
 services:
+  aculta_portal.file_reference_inspector:
+    class: Drupal\aculta_portal\Cleanup\FileReferenceInspector
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@database']
+  aculta_portal.unused_file_cleaner:
+    class: Drupal\aculta_portal\Cleanup\UnusedFileCleaner
+    arguments: ['@file.usage', '@database', '@aculta_portal.file_reference_inspector', '@aculta_image.file_remover', '@aculta_image.inspector', '@aculta_portal.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.unused_media_cleaner:
+    class: Drupal\aculta_portal\Cleanup\UnusedMediaCleaner
+    arguments: ['@aculta_portal.file_reference_inspector', '@aculta_portal.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.cleanup.logger:
+    class: Drupal\Core\Logger\LoggerChannelInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_portal_cleanup']
   aculta_portal.user_upload_policy:
     class: Drupal\aculta_portal\Upload\UserUploadPolicy
     arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']

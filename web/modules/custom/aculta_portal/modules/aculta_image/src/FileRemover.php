@@ -12,9 +12,9 @@ use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
- * Exclusão controlada de imagem, com checagem de referências no momento da remoção.
+ * Exclusão controlada de imagem após checar referências.
  */
-final class FileRemover {
+final class FileRemover implements FileRemoverInterface {
 
   public function __construct(
     private readonly FileUsageInterface $fileUsage,
@@ -24,31 +24,42 @@ final class FileRemover {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 
-  /** Apaga $file se nenhuma entidade o referencia. Retorna TRUE se foi apagado. */
+  /**
+   * Deletes the file only when no entity references it.
+   */
   public function delete(FileInterface $file, string $motivo): bool {
     if (!str_starts_with((string) $file->getMimeType(), 'image/')) {
       return FALSE;
     }
     if ($this->hasReferences($file)) {
-      $this->loggerFactory->get('aculta_image')->notice('Exclusão recusada: arquivo {fid} ainda em uso ({motivo}).', ['fid' => $file->id(), 'motivo' => $motivo]);
+      $this->loggerFactory->get('aculta_image')->notice(
+        'Exclusão recusada: arquivo {fid} ainda em uso ({motivo}).',
+        ['fid' => $file->id(), 'motivo' => $motivo],
+      );
       return FALSE;
     }
-    // Invalida os derivados antes de remover o original; seus arquivos não são temporários.
+    // Invalidate derivatives before removing the original file.
     foreach ($this->entityTypeManager->getStorage('image_style')->loadMultiple() as $style) {
       $style->flush($file->getFileUri());
     }
     $fid = (int) $file->id();
     $this->entityTypeManager->getStorage('file')->delete([$file]);
-    foreach (['aculta_image_fingerprint', 'aculta_image_origin', 'aculta_image_quarantine'] as $table) {
+    $tables = ['aculta_image_fingerprint', 'aculta_image_origin', 'aculta_image_quarantine'];
+    foreach ($tables as $table) {
       if ($this->database->schema()->tableExists($table)) {
         $this->database->delete($table)->condition('fid', $fid)->execute();
       }
     }
-    $this->loggerFactory->get('aculta_image')->info('Arquivo {fid} removido: {motivo}.', ['fid' => $file->id(), 'motivo' => $motivo]);
+    $this->loggerFactory->get('aculta_image')->info(
+      'Arquivo {fid} removido: {motivo}.',
+      ['fid' => $file->id(), 'motivo' => $motivo],
+    );
     return TRUE;
   }
 
-  /** Confere tanto o registro tradicional do File API quanto referências entity_usage. */
+  /**
+   * Checks File API usage and entity_usage references.
+   */
   public function hasReferences(FileInterface $file): bool {
     if (!empty($this->fileUsage->listUsage($file))) {
       return TRUE;

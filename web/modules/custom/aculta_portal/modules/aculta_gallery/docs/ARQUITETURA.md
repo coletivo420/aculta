@@ -4,10 +4,10 @@ Status: **normativo para a linha 0.1.x**. Dono: responsável pelo Portal. Revis�
 
 ## Limpeza coordenada pelo Portal
 
-Planejamento IDX 0.1-R (2026-10-22): `aculta_gallery` fornecerá ao serviço de
-limpeza do Portal a descoberta das relações Gallery → Media e referências a
-capas. Ao excluir uma galeria, só solicitará limpeza de Media não usado por
-outra galeria ou conteúdo; a exclusão física de imagem continua sob
+Planejamento IDX 0.1-R (2026-10-22; primitiva File entregue parcialmente):
+`aculta_gallery` fornecerá ao serviço de limpeza do Portal a descoberta das relações Gallery → Media e referências a
+capas. Ao excluir uma galeria, submeterá candidatos Media; o Portal revalidará
+referências site-wide e fará a remoção pela Entity API. A exclusão física de imagem continua sob
 `aculta_image`. A implementação preservará finalidade e acesso do Gallery.
 Ver [política compartilhada](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 

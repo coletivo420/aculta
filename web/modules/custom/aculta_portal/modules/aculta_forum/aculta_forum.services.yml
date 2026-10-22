@@ -102,7 +102,7 @@ services:
     arguments: ['@entity_type.manager', '@aculta_forum.attachment_publication']
   aculta_forum.attachment_cleanup:
     class: Drupal\aculta_forum\Attachment\ForumAttachmentCleanup
-    arguments: ['@entity_type.manager', '@entity_usage.usage', '@file.usage', '@database', '@datetime.time', '@aculta_image.file_remover', '@aculta_image.inspector', '@config.factory']
+    arguments: ['@entity_type.manager', '@entity_usage.usage', '@database', '@datetime.time', '@aculta_portal.unused_media_cleaner', '@aculta_portal.unused_file_cleaner', '@config.factory']
   aculta_forum.attachment_upload_access:
     class: Drupal\aculta_forum\Access\ForumAttachmentUploadAccess
     arguments: ['@aculta_portal.domain_purpose']

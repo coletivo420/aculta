@@ -37,18 +37,26 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
   `activity` e adapter tagged. Entregar e homologar junto do `aculta_portal`;
   não criar uma linha de release independente nesta etapa. O módulo não assume
   ainda autoria, edição, workflows, apresentação ou migração do conteúdo.
-- IDX 0.1-R inclui a política planejada de limpeza de posts/anexos; implementar
-  prévia, verificação de uso em todas as revisões e execução por IDs explícitos,
-  delegando imagens ao `aculta_image`. Homologar com backup restaurável antes
-  de qualquer limpeza no Runtime.
+- IDX 0.1-R inclui a política de limpeza de posts/anexos. A primitiva
+  As APIs `aculta_portal.unused_file_cleaner` e
+  `aculta_portal.unused_media_cleaner` foram implementadas parcialmente:
+  verificam File Usage/Entity Usage, referências
+  estruturadas e embeds textuais, delega imagens ao `aculta_image` e remove
+  Media não publicado submetido como candidato após revalidar uso. O executor
+  com prévia, IDs explícitos,
+  verificação de todas as revisões, adapters por dono e backup homologado segue
+  pendente; não há exclusão de conteúdo pelo cron.
 - A limpeza pontual autorizada dos 12 Nodes `revista` no Runtime de teste foi
   executada em 2026-10-22; relatório em
   [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md).
-  Essa operação não substitui a entrega do serviço comum.
+  Essa operação não substitui a homologação do serviço comum nem autoriza
+  outras exclusões.
 - Política de limpeza explícita de posts e anexos: ver
   [CONTENT-CLEANUP-POLICY.md](CONTENT-CLEANUP-POLICY.md). Reaproveitar
-  `aculta_image.file_remover` para imagens e as verificações de referência
-  demonstradas pelo Fórum. A integração planejada exige adapters em Forum,
+  `aculta_portal.unused_file_cleaner` e `aculta_image.file_remover` para imagens,
+  somando a descoberta específica do Fórum. Fórum já é o primeiro consumidor;
+  Wiki, Magazine, Gallery, Document/PDF Viewer e LMS Resources ainda exigem
+  adapters em seus módulos donos. A integração completa exige providers em Forum,
   Wiki, Magazine, Gallery, Document/PDF Viewer e LMS Resources; cada dono
   descobre suas referências e chama o coordenador, sem exclusão física paralela.
   O fluxo exige IDs explícitos, relatório prévio, backup e revalidação; não há

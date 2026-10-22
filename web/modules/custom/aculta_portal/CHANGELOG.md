@@ -2779,6 +2779,14 @@ RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/bu
 
 # Changelog — ACULTA Portal
 
+## 0.4.1-dev.8 — coordenador compartilhado de arquivos sem uso
+
+- Adicionados `aculta_portal.unused_file_cleaner` e `aculta_portal.unused_media_cleaner`: consultam File Usage/Entity Usage quando aplicável, referências estruturadas e embeds UUID em campos de texto/revisões; falham fechados quando não conseguem verificar.
+- Imagens continuam delegadas a `aculta_image.file_remover`; outros arquivos são removidos pela Entity API File depois da verificação.
+- O Portal remove Media não publicado submetido como candidato pelo módulo dono, via Entity API e após nova varredura de relações. A descoberta semântica de candidatos continua no módulo dono.
+- `aculta_image.cleanup` usa o serviço de File quando Portal está habilitado, preservando modo standalone; Fórum usa os serviços de Media e File para anexos órfãos.
+- Executor explícito para excluir conteúdo/posts, revisão operacional e adapters dos demais projetos ainda pendentes.
+
 ## Documentação — F1 validada no Runtime oficial — 2026-10-09
 
 Mudança apenas documental; a versão vigente segue `0.2.0-dev.18`.

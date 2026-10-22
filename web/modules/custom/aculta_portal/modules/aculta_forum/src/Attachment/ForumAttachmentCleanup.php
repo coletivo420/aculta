@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Attachment;
 
-use Drupal\aculta_image\FileRemover;
-use Drupal\aculta_image\ImageInspector;
+use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
+use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
+use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
@@ -13,7 +14,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\entity_usage\EntityUsageInterface;
-use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 
@@ -29,11 +29,10 @@ final class ForumAttachmentCleanup {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EntityUsageInterface $entityUsage,
-    private readonly FileUsageInterface $fileUsage,
     private readonly Connection $database,
     private readonly TimeInterface $time,
-    private readonly FileRemover $imageFileRemover,
-    private readonly ImageInspector $imageInspector,
+    private readonly UnusedMediaCleaner $unusedMediaCleaner,
+    private readonly UnusedFileCleaner $unusedFileCleaner,
     private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
@@ -86,17 +85,12 @@ final class ForumAttachmentCleanup {
       if ($media->isPublished() || $this->hasLiveReference($media)) {
         continue;
       }
-      $media->delete();
-      if ($this->hasFileReferences($file)) {
+      if ($this->unusedMediaCleaner->removeIfUnused($media) !== FileCleanupStatus::Deleted) {
         continue;
       }
-      if ($this->isImage($file)) {
-        $this->imageFileRemover->delete($file, 'anexo órfão do Fórum após uma hora');
+      if ($this->unusedFileCleaner->removeIfUnused($file) === FileCleanupStatus::Deleted) {
+        $removed++;
       }
-      else {
-        $this->entityTypeManager->getStorage('file')->delete([$file]);
-      }
-      $removed++;
     }
     return $removed;
   }
@@ -119,16 +113,10 @@ final class ForumAttachmentCleanup {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $file) {
-      if (!$file instanceof FileInterface || $this->hasFileReferences($file)) {
+      if (!$file instanceof FileInterface) {
         continue;
       }
-      if ($this->isImage($file)) {
-        if ($this->imageFileRemover->delete($file, 'upload temporário órfão do Fórum após uma hora')) {
-          $removed++;
-        }
-      }
-      else {
-        $this->entityTypeManager->getStorage('file')->delete([$file]);
+      if ($this->unusedFileCleaner->removeIfUnused($file, TRUE) === FileCleanupStatus::Deleted) {
         $removed++;
       }
     }
@@ -218,30 +206,6 @@ final class ForumAttachmentCleanup {
       }
     }
     return FALSE;
-  }
-
-  /**
-   * Checks both File API and Entity Usage references before file deletion.
-   */
-  private function hasFileReferences(FileInterface $file): bool {
-    if ($this->fileUsage->listUsage($file) !== []) {
-      return TRUE;
-    }
-    return (bool) $this->database->select('entity_usage', 'eu')
-      ->fields('eu', ['target_id'])
-      ->condition('eu.target_type', 'file')
-      ->condition('eu.target_id', (string) $file->id())
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-  }
-
-  /**
-   * Routes image content through aculta_image even when MIME metadata is weak.
-   */
-  private function isImage(FileInterface $file): bool {
-    return str_starts_with((string) $file->getMimeType(), 'image/')
-      || $this->imageInspector->dimensions($file->getFileUri()) !== NULL;
   }
 
   /**

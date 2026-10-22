@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Status;
 
-/** Curated metadata for reusable Portal services shown in administrative Status. */
+/**
+ * Curated metadata for reusable Portal services shown in administrative Status. */
 final class PortalHelperRegistry {
 
   /**
@@ -35,7 +36,7 @@ final class PortalHelperRegistry {
     'aculta_user.author_card_variant_resolver' => [
       'label' => 'Variantes contextuais de autoria',
       'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
-        . 'Fórum, Revista, LMS e Wiki.',
+      . 'Fórum, Revista, LMS e Wiki.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
     ],
     'aculta_game.mission_progress' => [
@@ -77,6 +78,16 @@ final class PortalHelperRegistry {
       'label' => 'Exclusão controlada de imagem',
       'summary' => 'Apaga arquivo de imagem somente quando file_usage e entity_usage não apontam para ele; invalida derivados e metadados.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_portal.unused_file_cleaner' => [
+      'label' => 'Coordenação de limpeza de arquivos sem uso',
+      'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_portal.unused_media_cleaner' => [
+      'label' => 'Coordenação de limpeza de Media órfão',
+      'summary' => 'Revalida referências e remove Media não publicado submetido pelo módulo dono.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
     'aculta_image.cleanup' => [
       'label' => 'Limpeza do ciclo de vida de imagens',
@@ -226,7 +237,7 @@ final class PortalHelperRegistry {
     'aculta_portal.secrets_manager' => [
       'label' => 'Referências de credenciais',
       'summary' => 'Lê referências Drupal Key e valores fornecidos pelo ambiente sem expor segredos no Status.',
-    'docs' => 'docs/operations/SECRETS.md',
+      'docs' => 'docs/operations/SECRETS.md',
     ],
     'aculta_portal.turnstile_key_override' => [
       'label' => 'Chaves de ambiente do Turnstile',
@@ -240,11 +251,16 @@ final class PortalHelperRegistry {
     ],
   ];
 
-  /** @param string[] $activeHelperIds IDs coletados das definições ativas do container. */
+  /**
+   * Builds a registry from helper IDs collected from the active container.
+   *
+   * @param string[] $activeHelperIds
+   *   IDs collected from active service definitions.
+   */
   public function __construct(private readonly array $activeHelperIds) {}
 
   /**
-   * Returns rows for registered active helpers, including an explicit missing-metadata state.
+   * Returns active helper rows, including missing-metadata state.
    *
    * @return array<int, array<string, array<string, mixed>>>
    *   Render API table rows.
@@ -265,7 +281,8 @@ final class PortalHelperRegistry {
     return $rows;
   }
 
-  /** Exposes curated definitions to the static gate and unit tests. */
+  /**
+   * Exposes curated definitions to the static gate and unit tests. */
   public static function definitions(): array {
     return self::DEFINITIONS;
   }

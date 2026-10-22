@@ -1,5 +1,10 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.31 — limpeza delegada ao coordenador Portal
+
+- `ImageCleanup` usa `aculta_portal.unused_file_cleaner` quando disponível, mantendo fallback para instalação sem o Kernel Portal; não há dependência de módulo circular.
+- `FileRemoverInterface` formaliza o limite de propriedade: a remoção física de imagem e a invalidação de derivados continuam aqui.
+
 ## 0.1.0-dev.30 — provider de mídia do Content Index
 
 - Registra o provider mínimo de `media:image` no módulo dono; arquivos, URLs e metadados de imagem não são copiados.

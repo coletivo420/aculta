@@ -12,11 +12,13 @@ O plano aprovado e o inventário de referências ficam em
 
 ### Limpeza de verbetes e anexos — dívida coordenada com o Portal
 
-Quando o serviço comum de limpeza estiver implementado, adicionar ao contrato
-do provider Wiki a descoberta de referências necessárias à exclusão segura de
-verbetes. A remoção de imagens/arquivos deve passar pelo Portal e
-`aculta_image`; a Wiki mantém a descoberta de embeds e relações da própria
-entidade. `field_wiki_categories` e `field_wiki_image` permanecem adiados até
+O Portal já oferece `aculta_portal.unused_file_cleaner` para verificar e remover
+Files sem uso conhecido, delegando imagens a `aculta_image`. Adicionar ao
+contrato do provider Wiki a descoberta de referências necessárias à exclusão
+segura de verbetes e submeter candidatos Media ao Portal ao limpar anexos. A
+Wiki mantém a descoberta de embeds e relações da própria entidade; o Portal
+revalida referências globais e remove os Media órfãos por Entity API.
+`field_wiki_categories` e `field_wiki_image` permanecem adiados até
 fechar os contratos de acesso e relações da Wiki. Ver
 [`CONTENT-CLEANUP-POLICY.md`](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 

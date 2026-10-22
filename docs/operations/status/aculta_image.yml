@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Validar provider Content Index de `media:image` no Kernel; confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-version_note: "0.1.0-dev.30 (provider de media:image para aculta_index)"
+next_phase: Validar a delegação opcional do `ImageCleanup` ao serviço comum no Kernel e conferir que quarentena, retenção e remoção de derivados mantêm paridade; confirmar binários necessários para produção e avançar integração Growroom ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+version_note: "0.1.0-dev.31 (limpeza de File integrada opcionalmente ao Portal)"
