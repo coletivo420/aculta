@@ -81,3 +81,7 @@ A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por a
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 
 [Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../../docs/portal/GANJALAB-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
+
+## D-A.2-T — progresso e próximos gates
+
+D-A.2-T aplicado: StudioListingBuilder passa a variar listagens por user além de user.permissions e filtra cada revisão por view + view revision. Teste unitário de caracterização incluído, execução pendente. A consulta auxiliar de moderation_state, cache de Domain/grants e paginação ainda bloqueiam fila Wiki real.
