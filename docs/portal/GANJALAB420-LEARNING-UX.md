@@ -98,3 +98,9 @@ Nome público da experiência: **GanjaLab420**. Nesta fase manter URLs, machine 
 ## Rota inicial da experiência
 
 O dashboard de estudante canônico passa a `/ganjalab420` no domínio de conta, usando o mesmo controller e route name de `/minha-aprendizagem`; este último permanece alias temporário. Nenhuma outra rota de sala, avaliação, matrícula ou certificado foi renomeada nesta fase. Ver [contrato de marca](GANJALAB-BRANDING.md).
+
+## Design visual detalhado — 2026-10-22
+
+- [Dashboard, cursos, atividades e conquistas](GANJALAB420-DASHBOARD-VISUAL.md): G420-UX 0.2.0-dev.1; mobile first, continuidade de estudos e progresso real.
+- [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md): planejamento G420-UX 0.4.0-dev.1; índice curricular, leitor multimídia, atividades, PDF, H5P, Fórum contextual e critérios de acesso.
+- **Decisão técnica definitiva neste planejamento:** preservar o nome interno `aculta_lms`; descartar propostas de renomear para `aculta_escola` ou `aculta_ganjalab_lms`. Essas entregas são somente documentação.
