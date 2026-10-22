@@ -14,6 +14,8 @@ Documentação normativa vigente:
 - [Contrato de integração Studio ↔ Magazine](STUDIO-INTEGRATION-CONTRACT.md) —
   inventário real das rotas Core e dos contratos do Magazine e do Studio,
   lacunas e decisão sobre adaptador.
+- [Matriz de acesso editorial](EDITORIAL-ACCESS-MATRIX.md) — atores, operações,
+  estados e transições reais do `revista`, coautoria e cacheability.
 
 > **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
 > pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática
