@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.3 — acesso canônico do Content Index
+
+- O provider da Wiki declara o purpose canônico `wiki`; consultas do Index
+  vindas de outros domínios revalidam o Entity Access com o mesmo usuário e
+  grants, falhando fechado se o domínio não puder ser resolvido.
+- Teste Unit cobre o purpose declarado pelo provider. Relações de verbetes,
+  categorias e imagens continuam dívida até a finalização da Wiki.
+
 ## 0.1.0-dev.2 — provider inicial do Content Index
 
 - Serviço opcional `aculta_wiki.content_index_provider`, marcado com

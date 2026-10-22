@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.23 — adapters LMS de curso e policy contextual
+
+- O filtro combina Entity Access com a policy opcional do provider e mantém o contexto canônico.
+- `Group:lms_course` recebe projeção mínima e relações allowlisted para leituras e galerias; exige `takeAccess()` ou permissão de educador além de Entity Access.
+- Testes Unit do Index e de LMS Resources passam; validação Kernel/DI e Runtime pendentes.
+
 ## 0.1.0-dev.22 — providers do Fórum, mídia e galerias
 
 - Providers opcionais projetam tópicos, ForumPosts e Comments legados do Fórum

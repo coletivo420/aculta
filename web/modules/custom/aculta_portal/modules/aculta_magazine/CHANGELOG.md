@@ -1,3 +1,10 @@
+## 0.5.0-dev.4 — acesso canônico do Content Index
+
+- O provider da Revista declara o purpose canônico `magazine`; consultas do
+  Index vindas de outros domínios revalidam o Entity Access com o mesmo usuário
+  e grants, falhando fechado se o domínio não puder ser resolvido.
+- Teste Unit cobre o purpose declarado pelo provider.
+
 ## 0.5.0-dev.3 — contratos editoriais para o Studio — 2026-10-22
 
 - MAG 0.5-B publica os contratos editoriais consumíveis pelo Studio:

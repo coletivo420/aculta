@@ -61,4 +61,16 @@ final class GalleryContentIndexProviderTest extends UnitTestCase {
     self::assertSame('und', $projection->relations[0]->targetLangcode);
   }
 
+  /**
+   * Tests Entity Access is revalidated under the canonical Magazine purpose.
+   *
+   * @covers ::getAccessPurpose
+   */
+  public function testGalleryAccessPurposeIsMagazine(): void {
+    $gallery = $this->createMock(MediaGalleryInterface::class);
+    $gallery->method('bundle')->willReturn('media_gallery');
+
+    self::assertSame('magazine', (new GalleryContentIndexProvider())->getAccessPurpose($gallery));
+  }
+
 }

@@ -14,6 +14,7 @@ conteúdo, publicação e mídia.
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
 - [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
+- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — provider editorial revalida acesso no purpose canônico `magazine`; integração futura de Gallery usa referência estruturada.
 - [CHANGELOG](CHANGELOG.md)
 
 Para políticas editoriais transversais, consulte a

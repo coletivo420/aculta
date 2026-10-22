@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_wiki\Unit;
 
 use Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
@@ -16,6 +17,18 @@ use Drupal\Tests\UnitTestCase;
  * @group aculta_wiki
  */
 final class WikiContentIndexProviderTest extends UnitTestCase {
+
+  /**
+   * Tests cross-purpose access is revalidated in the Wiki domain.
+   */
+  public function testUsesCanonicalWikiAccessPurpose(): void {
+    $provider = new WikiContentIndexProvider();
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+
+    self::assertSame('wiki', $provider->getAccessPurpose($node));
+    self::assertNull($provider->getAccessPurpose($this->createMock(ContentEntityInterface::class)));
+  }
 
   /**
    * Projects only selected metadata and leaves Wiki relations as deferred work.

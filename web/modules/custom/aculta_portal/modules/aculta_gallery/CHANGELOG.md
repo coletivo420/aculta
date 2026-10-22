@@ -1,5 +1,10 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.16 — acesso do provider no purpose Revista
+
+- O provider de `media_gallery` declara o purpose canônico `magazine`, permitindo revalidar acesso a galerias relacionadas a cursos no mesmo contexto que concede acesso aos membros/educadores autorizados.
+- Cobertura Unit verifica o purpose; sem ativação no Runtime.
+
 ## 0.1.0-dev.15 — catálogo de galerias e imagens
 
 - Provider opcional registra `media_gallery` no Content Index e projeta título,

@@ -1,3 +1,7 @@
+## 0.4.1-dev.6 — policy contextual de acesso para adapters do Content Index
+
+- Novo contrato `ContentIndexAccessPolicyProviderInterface` permite que um provider some regras contextuais à Entity Access; o filtro combina os resultados e propaga cacheability. O adapter LMS usa a API Group/LMS sem mover membership para o Index.
+
 ## 0.4.1-dev.5 — contexto canônico de acesso do Content Index e providers Media
 
 - Novo contrato opcional de provider declara purpose para revalidar Entity
@@ -5,8 +9,9 @@
   nega exposição em vez de voltar ao purpose da requisição.
 - `MediaContentIndexProvider` oferece projeção mínima aos bundles Media
   `document`, `remote_video`, `course_document` e `forum_attachment`, com
-  registros nos módulos Portal/Viewer/Group/Fórum donos. A mídia `image` usa
-  registro no Kernel por ser o bundle compartilhado entre experiências.
+  registros nos módulos Viewer/Group/Fórum donos. A mídia `image` é registrada
+  pelo `aculta_image`; `remote_video` permanece temporariamente no Portal até
+  definição formal do módulo proprietário.
 - O Index segue opcional. Não houve ativação, import de configuração ou
   alteração de Runtime.
 

@@ -15,9 +15,17 @@ permissão contextual escolhe galerias publicadas no purpose Revista. A galeria
 concede visualização aos membros ativos e educadores do curso somente enquanto
 estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
 
+O provider do Content Index projeta somente `Group:lms_course` e relações
+explícitas `course_reading` (`revista`/`wiki_entry`) e `course_gallery`.
+Consultas revalidam Entity Access sob o purpose `courses` e exigem também
+`takeAccess()` ou a permissão contextual de educador (`administer members` ou
+`grade students`). Aulas, progresso, matrículas, respostas, notas e certificados
+continuam exclusivamente no LMS.
+
 ## Estado
 
-Dev 0.1.0-dev.2. A cobertura Unit (8 testes / 39 assertions) passou; Kernel
+Dev 0.1.0-dev.3. O provider tem cobertura Unit própria (3 testes / 14
+assertions); Unit de recursos preexistente (8 testes / 39 assertions) passou; Kernel
 (2 testes / 46 assertions) já passava na versão anterior e não foi alterado nesta
 subfase. PHP CLI 8.4.26; PHP 8.5 não validado. Instalação e smoke autenticado no
 Runtime e revisão visual continuam pendentes. Consulte o

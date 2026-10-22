@@ -109,6 +109,10 @@ separar formatos; todas as publicações usam `revista`.
 - Vídeo: não há um campo ou contrato editorial específico; usar incorporação
   compatível no corpo quando necessário. Galerias existentes são incorporadas
   pelo CKEditor 5/Entity Embed e continuam sob propriedade de `aculta_gallery`.
+- Integração planejada com Content Index: criar uma referência estruturada da
+  publicação para `media_gallery`, implementar relação editorial no provider e
+  migrar os embeds atuais para o novo campo por um processo único, idempotente
+  e revisável. A consulta do Index não interpretará o corpo do Entity Embed.
 - A captura pública em Firefox não teve overflow em mobile; com sessão editorial,
   a barra administrativa gera 78 px de overflow em 390 px. Revisar essa
   apresentação antes de RC.

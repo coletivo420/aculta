@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -13,7 +14,7 @@ use Drupal\node\NodeInterface;
 /**
  * Projects current Revista publication metadata and explicit editorial links.
  */
-final class MagazineContentIndexProvider implements ContentIndexProviderInterface {
+final class MagazineContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc}
@@ -27,6 +28,15 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
    */
   public function getSupportedEntityTypes(): array {
     return ['node' => ['revista']];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+    return $entity instanceof NodeInterface && $entity->bundle() === 'revista'
+      ? 'magazine'
+      : NULL;
   }
 
   /**

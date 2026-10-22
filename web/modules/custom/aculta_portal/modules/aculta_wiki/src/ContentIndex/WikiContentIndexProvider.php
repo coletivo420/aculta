@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
@@ -15,7 +16,7 @@ use Drupal\node\NodeInterface;
  * Wiki relations to other entries, taxonomy terms and media remain deferred
  * until the Wiki module's content and access contracts are finalized.
  */
-final class WikiContentIndexProvider implements ContentIndexProviderInterface {
+final class WikiContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc}
@@ -29,6 +30,15 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface {
    */
   public function getSupportedEntityTypes(): array {
     return ['node' => ['wiki_entry']];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+    return $entity instanceof NodeInterface && $entity->bundle() === 'wiki_entry'
+      ? 'wiki'
+      : NULL;
   }
 
   /**

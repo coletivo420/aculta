@@ -48,6 +48,18 @@ O plano aprovado e o inventário de referências ficam em
 - Só depois das fases anteriores, com decisão do responsável, backup privado e
   validação no servidor de testes.
 
+## Integração ACULTA Content Index — IDX 0.1
+
+- Provider `node:wiki_entry` registrado pelo próprio módulo sob a tag
+  `aculta_index.provider`, sem dependência obrigatória do submódulo Index.
+- Projeta metadados mínimos e declara o purpose canônico `wiki` para revalidar
+  Entity Access em consultas originadas por outros domínios, com o usuário e
+  grants atuais. A falha em resolver o domínio deve negar exposição.
+- Relações `field_wiki_related`, `field_wiki_categories` e `field_wiki_image`
+  permanecem dívida até a finalização dos contratos de conteúdo e acesso da
+  Wiki. O provider não copia corpo nem substitui revisão, workflow ou acesso.
+- Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+
 ### Entregue em código (2026-10-22)
 
 - **Listagem e imagem de destaque:** contagem e paginação da view `wiki_entries`,

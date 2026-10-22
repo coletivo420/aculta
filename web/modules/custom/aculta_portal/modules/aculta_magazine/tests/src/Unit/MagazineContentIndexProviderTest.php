@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_magazine\Unit;
 
 use Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
@@ -45,6 +46,18 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
     self::assertSame('Publicação de teste', $projection->label);
     self::assertTrue($projection->published);
     self::assertSame([], $projection->relations);
+  }
+
+  /**
+   * Tests cross-purpose access is revalidated in the Magazine domain.
+   */
+  public function testUsesCanonicalMagazineAccessPurpose(): void {
+    $provider = new MagazineContentIndexProvider();
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+
+    self::assertSame('magazine', $provider->getAccessPurpose($node));
+    self::assertNull($provider->getAccessPurpose($this->createMock(ContentEntityInterface::class)));
   }
 
   /**

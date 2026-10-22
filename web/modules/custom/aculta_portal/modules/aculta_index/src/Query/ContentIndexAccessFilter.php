@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Query;
 
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -97,7 +99,7 @@ final class ContentIndexAccessFilter {
             $cacheability->addCacheContexts(['domain']);
             $access = $this->domainPurposeManager->runInPurpose(
               $purpose,
-              static fn (): AccessResultInterface => $translation->access('view', $account, TRUE),
+              fn (): AccessResultInterface => $this->checkEntityAccess($translation, $account, $provider),
             );
             if (!$access instanceof AccessResultInterface) {
               // A missing or unavailable canonical Domain must never fall back
@@ -111,7 +113,7 @@ final class ContentIndexAccessFilter {
             continue;
           }
           else {
-            $access = $translation->access('view', $account, TRUE);
+            $access = $this->checkEntityAccess($translation, $account, $provider);
           }
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($translation));
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($access));
@@ -130,6 +132,22 @@ final class ContentIndexAccessFilter {
     }
 
     return new ContentIndexAccessResult($allowed, $cacheability);
+  }
+
+  /**
+   * Combines Entity Access with any provider-specific source policy.
+   */
+  private function checkEntityAccess(
+    ContentEntityInterface $entity,
+    AccountInterface $account,
+    ?ContentIndexProviderInterface $provider,
+  ): AccessResultInterface {
+    $access = $entity->access('view', $account, TRUE);
+    if ($provider instanceof ContentIndexAccessPolicyProviderInterface) {
+      $policy = $provider->checkAccess($entity, $account);
+      $access = $access->andIf($policy);
+    }
+    return $access;
   }
 
   /**

@@ -36,3 +36,7 @@ Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/archit
 XK 0.1-B: preservar membership e grants Group de cursos/turmas; não herdar elegibilidade de associado do Fórum. Eventos LMS seguem o adaptador aculta_lms_messenger, sob idempotência e revalidação na entrega. Teste regressão Group depois de qualquer refatoração User/Forum.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
+
+## Content Index — adapter de curso (IDX 0.1-F)
+
+O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. Pendentes: Kernel/DI, reconciliação das referências e smoke no Runtime após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'IDX 0.1-F — validar DI/Kernel dos providers Magazine, Wiki, Fórum, Gallery e Media; definir dono de `remote_video`, criar referência estruturada Revista→Gallery e prosseguir integração LMS ([roadmap](docs/portal/ACULTA-CONTENT-INDEX.md))'
-version_note: "`0.1.0-dev.22` (providers de Fórum, Media e Gallery; acesso por purpose canônico)"
+next_phase: 'IDX 0.1-F — validar DI/Kernel dos providers; confirmar LMS `Group:lms_course`; criar campo estruturado Revista→Gallery e migrar embeds legados; manter Wiki relations e ownership de `remote_video` como dívidas ([roadmap](docs/portal/ACULTA-CONTENT-INDEX.md))'
+version_note: "`0.1.0-dev.23` (providers de Fórum/Media/Gallery/LMS; policy de acesso contextual)"

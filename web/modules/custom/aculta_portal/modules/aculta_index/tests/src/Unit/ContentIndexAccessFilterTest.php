@@ -7,10 +7,12 @@ namespace Drupal\Tests\aculta_index\Unit;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -83,6 +85,44 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     ], $this->createMock(AccountInterface::class));
 
     self::assertSame([], $result->entities);
+  }
+
+  /**
+   * Provider policy can further restrict an otherwise viewable entity.
+   */
+  public function testProviderPolicyIsCombinedWithEntityAccess(): void {
+    $translation = $this->translation(AccessResult::allowed(), ['node:1']);
+    $translation->method('bundle')->willReturn('lms_course');
+    $provider = new class() implements ContentIndexProviderInterface, ContentIndexAccessPolicyProviderInterface {
+
+      /** {@inheritdoc} */
+      public function getProviderId(): string {
+        return 'lms_course';
+      }
+
+      /** {@inheritdoc} */
+      public function getSupportedEntityTypes(): array {
+        return ['group' => ['lms_course']];
+      }
+
+      /** {@inheritdoc} */
+      public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+        return NULL;
+      }
+
+      /** {@inheritdoc} */
+      public function checkAccess(ContentEntityInterface $entity, AccountInterface $account): AccessResultInterface {
+        return AccessResult::forbidden()->addCacheContexts(['user.group_permissions']);
+      }
+
+    };
+    $manager = $this->entityManagerWithType('group', $translation);
+    $result = (new ContentIndexAccessFilter($manager, new ContentIndexProviderRegistry([$provider])))->filter([
+      ['entity_type' => 'group', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertSame([], $result->entities);
+    self::assertContains('user.group_permissions', $result->cacheability->getCacheContexts());
   }
 
   /**
@@ -235,6 +275,22 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $manager->method('getStorage')->with('node')->willReturn($storage);
+    return $manager;
+  }
+
+  /**
+   * Creates an entity type manager for one arbitrary entity type.
+   */
+  private function entityManagerWithType(string $type, ContentEntityInterface $translation): EntityTypeManagerInterface {
+    $entity = $this->sourceEntity($translation);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadMultiple')->willReturn(['1' => $entity]);
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn([$type . '_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with($type)->willReturn(TRUE);
+    $manager->method('getDefinition')->with($type)->willReturn($entityType);
+    $manager->method('getStorage')->with($type)->willReturn($storage);
     return $manager;
   }
 
