@@ -322,3 +322,7 @@ O planejamento visual originado no GanjaLab420 agora possui **roadmap de impleme
 ## Gate de migração SDC/UI Suite — decisão obrigatória
 
 A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legados sem base SDC/UI Suite**. B0 classifica `SDC-CONFORME`, `SDC-PARCIAL`, `LEGADO-MIGRAR`, `DESCARTAR/SUBSTITUIR`; migração/adequação e stories antecedem a adoção transversal. Ver [roadmap visual](visual-cross-product-roadmap.md). Nenhuma fase técnica foi considerada executada por esta atualização.
+
+## Inventário SDC/UI Suite — fotografia estática (2026-10-22)
+
+[Inventário e backlog de migração](sdc-ui-suite-inventory-2026-10-22.md) confirmou 38 bases SDC e 55 stories na árvore; três componentes ainda sem stories. A lista M0–M6 prioriza validação e adequação SDC/UI Suite antes de reutilização transversal. Runtime e homologação permanecem pendentes.
