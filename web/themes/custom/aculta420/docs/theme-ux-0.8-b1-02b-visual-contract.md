@@ -64,3 +64,7 @@ Todas partilham **o mesmo contrato SDC**; variantes não alteram ACL, render arr
 - **B2:** tabs contextuais SDC/UI Suite com links reais, AJAX progressivo controlado pelo módulo.
 
 **Status de verificação:** somente code review estático e documentação. Nenhuma screenshot, prova visual Runtime ou teste funcional foi executado.
+
+## Atualização B1-02c — SDC criado, sem integração (2026-10-22)
+
+Foi criado o componente experimental `aculta420:context-header` em `components/patterns/context-header/`, com `.component.yml`, Twig, CSS com tokens semânticos e duas stories (educacional e editorial). O SDC emite H1 a partir de `title` simples fornecido pelo consumidor; contém slots renderizáveis para `breadcrumbs`, `back_link` e `actions`. **Ainda não foi aplicado a rotas LMS/Wiki**, portanto o H1 nativo e o H1 de `wiki-entry` continuam intactos. Nunca renderizar o novo SDC em páginas sem remover previamente a saída H1 concorrente pelo provider. Verificar schema, Library, CSS e compatibilidade UI Patterns/Styles no Runtime antes de aprovar reuso. O shell multidomínio não foi modificado.
