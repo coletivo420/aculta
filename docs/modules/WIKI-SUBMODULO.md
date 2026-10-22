@@ -1,7 +1,9 @@
 # Wiki420 como submódulo do Portal — planejamento
 
-Status: **planejado**. Esta entrega é só documentação. Nenhum código foi movido,
-nenhuma rota foi alterada e nenhum módulo foi habilitado.
+Status: **implementado até a Fase 4**; o submódulo está declarado em
+`config/sync/core.extension.yml` (ver "Estado ao fim da sessão de 2026-10-22").
+Nenhuma rota foi alterada. No Runtime nada foi habilitado nesta frente: a
+ativação ocorre quando o ambiente importar a configuração.
 
 Este documento é a fonte única da frente. Cada fase termina antes da próxima começar.
 
@@ -197,10 +199,18 @@ ao fim da sessão.
   `aculta_portal.wiki_search`, `aculta_portal.wiki_search_preview`) estão em
   `aculta_wiki.routing.yml` com os mesmos nomes, caminhos, permissões e
   controladores de antes.
-- **Submódulo desabilitado.** `aculta_wiki` continua fora da instalação: as
-  rotas existem no código, mas não são registradas no Runtime enquanto o
-  módulo não for habilitado. Não houve `updb`, limpeza de cache, ativação de
-  módulo nem qualquer operação no Runtime.
+- **Submódulo desabilitado no Runtime, habilitado na configuração.** Por
+  decisão do responsável nesta data, `aculta_wiki` entrou em
+  `config/sync/core.extension.yml` (`aculta_wiki: 0`). A configuração
+  exportada passa a declarar o submódulo, e o próximo `drush config:import`
+  no ambiente é que o habilita. Não houve `updb`, limpeza de cache, ativação
+  de módulo nem qualquer operação no Runtime nesta sessão. As dependências
+  (`aculta_portal`, `node`) já estavam habilitadas, e o submódulo não tem
+  `config/install`; por isso a entrada basta.
+- **Retenção acessível no menu.** O formulário de prazos (`aculta_statistics`)
+  ganhou itens de menu ("Estatísticas", peso 12, e a subaba "Retenção") e um
+  atalho no painel para quem tem `administer aculta_statistics`. Até aqui o
+  formulário só era alcançável pela URL.
 - **Métricas prontas, sem emissão para conteúdo importado.** O catálogo, a
   retenção instalada, o `WikiProvider` e o hook de publicação estão no código;
   conteúdo sincronizado não conta. A produção das métricas só começa quando o
@@ -215,10 +225,10 @@ ao fim da sessão.
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** Habilitar o `aculta_wiki` (decisão do responsável,
-  depois da base legal para conteúdo publicado e da retenção do painel);
-  construir a Fase 5 (ranking por verbete apenas no painel administrativo);
-  validar em navegador com ACULTA420 e Olivero depois da ativação.
+- **O que ficou faltando.** Construir a Fase 5 (ranking por verbete apenas no
+  painel administrativo); validar em navegador com ACULTA420 e Olivero depois
+  da ativação. A ativação em si depende de o ambiente importar a configuração
+  e rodar os passos de atualização com backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
   seguem não versionados e foram deixados intactos.
 

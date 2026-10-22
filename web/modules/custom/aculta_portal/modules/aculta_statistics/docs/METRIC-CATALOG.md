@@ -1,7 +1,10 @@
-# Catálogo de métricas — proposta inicial
+# Catálogo de métricas
 
-Proposta da fase 0.1.0. Nenhuma métrica destas está implementada. Cada entrada
-registra a fonte oficial, para não confundir unidades diferentes.
+As métricas implementadas são as registradas em `src/Catalog/MetricCatalog.php`; a
+tabela abaixo indica, quando houver, a versão em que cada uma passou a ser gravada.
+Linha sem essa indicação continua proposta: ainda não tem fonte instrumentada e não
+entra no painel. Cada entrada registra a fonte oficial, para não confundir unidades
+diferentes.
 
 Campos: **id** (identificador), **fonte** (onde o dado nasce), **unidade**,
 **dimensões**, **retenção**, **sensibilidade**.
