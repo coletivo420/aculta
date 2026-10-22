@@ -1,5 +1,25 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.84 — rodar Kernel e Unit do LMS e registrar o resultado medido — 2026-10-22
+
+Tarefa: "Rodar os Kernels e unitários dos módulos LMS e Forum alterados; registrar testes/asserções/depreciações em cada CHANGELOG; confirmar git status limpo e listar os commits da sequência."
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Unit: `tests/src/Unit` — 74 testes, 408 asserções, OK com 8 depreciações do
+  PHPUnit.
+- Kernel: `tests/src/Kernel` — 29 testes, 832 asserções, OK com 93
+  depreciações conhecidas, todas de código contrib e já presentes antes desta
+  sequência: anotações de plugin do Group (relação, argumento e acesso de
+  Views), `FieldType`/`EntityType` do Webform, `fraction` e `entity_print`,
+  além do retorno implicitamente anulável de
+  `webform_score_entity_field_access()` e do hook de requisitos legado.
+- Comandos: a partir de `web/core`, com `secrets/simpletest-db.env` carregado
+  no ambiente, `../../vendor/bin/phpunit -c phpunit.xml.dist
+  ../modules/custom/aculta_portal/modules/aculta_lms/tests/src/{Unit,Kernel}`;
+  banco local `aculta_simpletest`; o Runtime de teste não foi tocado.
+- Resultado anteriormente registrado por engano no `aculta_forum_lms`
+  dev.42; este é o registro correto do módulo LMS.
+
 ## 0.1.0-dev.83 — regressão Kernel da política central de upload — 2026-10-22
 
 Tarefa: "Migrar anexos LMS para a política central `aculta_portal.user_upload_policy`, com aba própria no painel de uploads. Política efetiva inalterada. Kernel de regressão."

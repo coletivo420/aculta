@@ -155,16 +155,23 @@ T22–T24 — bloqueadas por dependência de T21 (dev.237):
   citação contextual): a própria especificação condiciona a execução a T19–T23
   verdes.
 
-Pendência de teste (dev.238): o suite `tests/src/Unit` do Fórum tem 7 falhas em
-`ForumTopicDisplayConfigTest` por expectativas que ficaram atrás de commits de
-funcionalidade — `ad33ab56` acrescentou `aculta_forum.admin_revisionable_posts`
-ao menu sem atualizar a lista esperada, e outros testes divergem da janela de
-edição, do consumidor de upload `forum` e dos filtros da View pública vigentes.
-Não são regressão desta sequência (os commits aqui só tocam `CHANGELOG.md` e
-este `ROADMAP.md`); a correção cabe a quem alterou cada contrato.
+Pendência de teste (dev.238, causas precisadas em dev.239): o suite
+`tests/src/Unit` do Fórum tem 7 falhas em `ForumTopicDisplayConfigTest`, todas
+anteriores a esta sequência — `ad33ab56` acrescentou
+`aculta_forum.admin_revisionable_posts` ao menu sem atualizar a lista esperada;
+`164aeff2` criou `edit_window_minutes: 10` no `config/install` e no formulário,
+mas `b6e49d5e` não levou a chave ao `config/sync`; `c56a0cd6` passou o corpo do
+comentário para o formato `forum`, e o teste ainda espera `usuario_aculta`; e a
+mesma exportação `b6e49d5e` trouxe Views do Runtime sem
+`aculta_forum_reply_count`, `forum_unread_posts` e os campos derivados de último
+comentário, divergindo da instalação nas listagens pública, de categorias, de não
+lidas e de descoberta. Não são regressão desta sequência (os commits aqui só
+tocam `CHANGELOG.md` e este `ROADMAP.md`); a correção cabe a quem alterou cada
+contrato.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.239` | Precisar as causas das falhas Unit do Fórum | Documento apenas. Cada uma das 7 falhas de `ForumTopicDisplayConfigTest` tem causa anterior a esta sequência: menu (`ad33ab56`), `edit_window_minutes` ausente do `config/sync` (`164aeff2` × `b6e49d5e`), formato `forum` no corpo do comentário (`c56a0cd6`) e Views exportadas do Runtime sem os plugins e campos do contrato de instalação (`b6e49d5e`). Nenhum código, configuração ou Runtime tocado. |
 | `0.1.0-dev.238` | Rodar Kernel e Unit do Fórum e registrar o resultado | Documento apenas. Kernel 34 testes/758 asserções OK (25 depreciações conhecidas); Unit 105/656 com 7 falhas pré-existentes em `ForumTopicDisplayConfigTest`, registradas acima como pendência de teste, não regressão desta sequência. Nenhum Runtime tocado. |
 | `0.1.0-dev.237` | Registrar o bloqueio de T22–T24 por dependência de T21 | Documento apenas. Sem o campo e o provider de T21, não há lado Wiki para o isolamento de T22, cenário HTTP de T23 nem citação contextual de T24, que a especificação já condiciona a T19–T23 verdes. Nenhum teste ou Runtime executado. |
 | `0.1.0-dev.236` | Registrar o bloqueio dos comentários da Wiki | Documento apenas. `wiki_entry` não tem instância de `field_aculta_discussion` (só `revista`, `aculta_forum_topic` e `aculta_lms_topic` têm), e o `CONTEXTS.md` trata o contexto `wiki` como contrato futuro que "aguarda a reimplementação da Wiki", citando `author_wiki`, papel que não existe em `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a instância e o provider equivale a reimplementar a Wiki. Bloqueia também T22–T24. Sem Runtime/testes. |

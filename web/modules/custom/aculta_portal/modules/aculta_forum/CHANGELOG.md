@@ -1,3 +1,26 @@
+## `0.1.0-dev.239` — precisar as causas das falhas Unit do Fórum — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Complementa o dev.238 com a causa de cada uma das 7 falhas de
+  `ForumTopicDisplayConfigTest`, todas anteriores a esta sequência de
+  documentação:
+  - Lista de chaves do menu administrativo: `ad33ab56` incluiu
+    `aculta_forum.admin_revisionable_posts` sem atualizar a expectativa.
+  - Janela de edição: `164aeff2` acrescentou `edit_window_minutes: 10` ao
+    `config/install` e ao formulário, mas a exportação `b6e49d5e`
+    ("sincroniza config/sync com o Runtime de teste") não levou a chave ao
+    `config/sync`; o teste compara instalação e sincronização.
+  - Formato do corpo do comentário: `c56a0cd6` mudou o campo para o formato
+    `forum`, e o teste ainda espera `usuario_aculta`.
+  - Views públicas (listagem, categorias, não lidas e descoberta): `b6e49d5e`
+    exportou as Views do Runtime, que não têm o plugin
+    `aculta_forum_reply_count`, o campo `forum_unread_posts` nem os campos
+    derivados de último comentário, e têm a display `block_landing` nas
+    categorias; a instalação do módulo mantém o contrato anterior.
+- Nenhuma dessas falhas vem dos commits de T19–T25, que só tocam
+  `CHANGELOG.md` e `docs/ROADMAP.md`. A correção pertence aos commits que
+  alteraram cada contrato acima.
+
 ## `0.1.0-dev.238` — rodar Kernel e Unit do Fórum e registrar o resultado medido — 2026-10-22
 
 - Documento apenas; nenhuma alteração de código, configuração ou Runtime.

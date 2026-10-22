@@ -1,3 +1,22 @@
+## `0.1.0-dev.43` — corrigir o registro de testes do adapter — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Correção do dev.42: aquela entrada pertence ao módulo `aculta_lms`, não a
+  este adapter, e rodou apenas `SubmissionUploadPolicyKernelTest`. O registro
+  medido do LMS está no `aculta_lms` dev.84.
+- Medição própria deste adapter, nas mesmas condições (banco local
+  `aculta_simpletest`, Runtime intocado):
+  - Unit: `tests/src/Unit` — 25 testes, 288 asserções, 1 falha.
+  - Kernel: `tests/src/Kernel` — 27 testes, 1.355 asserções, OK com 48
+    depreciações conhecidas de contrib.
+- A falha é pré-existente e alheia a esta sequência:
+  `LmsDiscussionInstallConfigTest::testBundleReusesTheSharedCommentField`
+  ainda espera `allowed_formats: usuario_aculta`, mas `c56a0cd6`
+  ("centraliza uploads de usuários e Fórum") passou o campo
+  `comment.comment_body` do bundle para o formato `forum`, que é o valor
+  vigente em `config/sync`. A correção cabe ao commit que mudou o contrato;
+  não foi reescrita aqui para não alterar trabalho paralelo.
+
 ## `0.1.0-dev.42` — rodar Unit e Kernel do LMS e registrar o resultado medido — 2026-10-22
 
 - Documento apenas; nenhuma alteração de código, configuração ou Runtime.
