@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Hook\FormHooks;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -47,7 +48,11 @@ final class LoginValidatorSwapTest extends UnitTestCase {
       $this->createMock(CurrentRouteMatch::class),
       $this->createMock(AccountProxyInterface::class),
       $translation,
-      new EmailConfirmationPolicy($this->createMock(UserDataInterface::class), $this->createMock(EntityTypeManagerInterface::class)),
+      new EmailConfirmationPolicy(
+        $this->createMock(UserDataInterface::class),
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
       $purpose,
       new AddToCartAjax(
         new CartUtility($this->createMock(CartProviderInterface::class), $purpose, $translation),

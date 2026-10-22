@@ -30,6 +30,7 @@ final class EmailConfirmationPolicyKernelTest extends KernelTestBase {
     $this->policy = new EmailConfirmationPolicy(
       $this->container->get('user.data'),
       $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
     );
   }
 

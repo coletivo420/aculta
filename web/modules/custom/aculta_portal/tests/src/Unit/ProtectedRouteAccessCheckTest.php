@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -17,7 +18,15 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface as UserModuleDataInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\path_alias\AliasManagerInterface;
+use Drupal\Core\PrivateKey;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /** Verifies LMS participation uses Group access without email verification. */
 #[Group('aculta_portal')]
@@ -33,10 +42,14 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $userData = $this->createMock(UserModuleDataInterface::class);
     $userData->expects(self::never())->method('get');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $policy = new EmailConfirmationPolicy($userData, $entityTypeManager);
+    $policy = new EmailConfirmationPolicy(
+      $userData,
+      $entityTypeManager,
+      $this->createMock(ModuleHandlerInterface::class),
+    );
     $emailCheck = new EmailConfirmedAccessCheck($policy);
 
-    $terms = new AcultaUserAgreementPolicy($this->createMock(AcultaUserAgreementLedger::class));
+    $terms = new AcultaUserAgreementPolicy($this->acceptedTermsLedger());
 
     $course = $this->createMock(GroupInterface::class);
     $course->expects(self::once())->method('access')->with('take', $student, TRUE)->willReturn(AccessResult::allowed()->cachePerUser());
@@ -59,10 +72,11 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     $student->method('hasPermission')->willReturn(FALSE);
 
     $entityTypeManager = $this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class);
-    $terms = new AcultaUserAgreementPolicy($this->createMock(AcultaUserAgreementLedger::class));
+    $terms = new AcultaUserAgreementPolicy($this->acceptedTermsLedger());
     $emailCheck = new EmailConfirmedAccessCheck(new EmailConfirmationPolicy(
       $this->createMock(UserModuleDataInterface::class),
       $entityTypeManager,
+      $this->createMock(ModuleHandlerInterface::class),
     ));
     $course = $this->createMock(GroupInterface::class);
     $course->method('access')->with('take', $student, TRUE)->willReturn(AccessResult::forbidden()->cachePerUser());
@@ -76,6 +90,35 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     );
 
     self::assertFalse($checker->course($routeMatch, $student)->isAllowed());
+  }
+
+  /**
+   * Um ledger real cuja consulta informa o aceite mais recente como "accepted".
+   *
+   * O ledger é final e não pode ser duplicado por mock; a consulta ao banco é
+   * substituída pela infraestrutura mockada.
+   */
+  private function acceptedTermsLedger(): AcultaUserAgreementLedger {
+    $select = $this->createMock(SelectInterface::class);
+    $select->method('fields')->willReturnSelf();
+    $select->method('condition')->willReturnSelf();
+    $select->method('orderBy')->willReturnSelf();
+    $select->method('range')->willReturnSelf();
+    $statement = $this->createMock(StatementInterface::class);
+    $statement->method('fetchField')->willReturn('accepted');
+    $select->method('execute')->willReturn($statement);
+    $database = $this->createMock(Connection::class);
+    $database->method('select')->willReturn($select);
+
+    return new AcultaUserAgreementLedger(
+      $database,
+      new RequestStack(),
+      $this->createMock(TimeInterface::class),
+      $this->createMock(PrivateKey::class),
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AliasManagerInterface::class),
+      $this->createMock(EventDispatcherInterface::class),
+    );
   }
 
 }
