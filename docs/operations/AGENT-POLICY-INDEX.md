@@ -14,6 +14,11 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | Runtime e Git | `docs/operations/AGENT-OPERATIONS.md` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |
 | Conteúdo institucional e Wiki | `docs/operations/AGENT-CONTENT.md` |
+| Estatísticas | `web/modules/custom/aculta_portal/modules/aculta_statistics/AGENTS.md` |
+| Galerias | `web/modules/custom/aculta_portal/modules/aculta_gallery/AGENTS.md` |
+| Imagens/uploads | `web/modules/custom/aculta_portal/modules/aculta_image/AGENTS.md` |
+| CPF/CNPJ | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/AGENTS.md` |
+| Messenger | `web/modules/custom/aculta_portal/modules/aculta_messenger/AGENTS.md` |
 | Cache e saídas | `docs/operations/AGENT-CACHE.md` e `docs/operations/AGENT-OUTPUT.md` |
 
 ## Duplicação e obsolescência
