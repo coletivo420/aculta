@@ -11,6 +11,7 @@
         data-bs-toggle="offcanvas"
         data-bs-target="#aculta-alerts-offcanvas"
         aria-controls="aculta-alerts-offcanvas"
+        aria-expanded="false"
         aria-label="{{ label }}">
   <i class="bi bi-bell" aria-hidden="true"></i>
   <span class="aculta-unread-count" data-aculta-alerts-count data-count="{{ count }}">{{ count > 99 ? '99+' : count }}</span>
@@ -20,6 +21,7 @@
      tabindex="-1"
      id="aculta-alerts-offcanvas"
      aria-labelledby="aculta-alerts-offcanvas-title"
+     data-aculta-utility-drawer
      data-aculta-drawer-count="alerts"
      data-aculta-drawer-url="{{ href }}"
      data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
