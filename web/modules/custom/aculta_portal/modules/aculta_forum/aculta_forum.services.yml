@@ -71,9 +71,9 @@ services:
   Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks:
     class: Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks
     arguments: ['@plugin.manager.menu.local_task', '@request_stack', '@aculta_portal.domain_purpose']
-  Drupal\aculta_forum\Hook\PublicForumLastCommentAuthorHooks:
-    class: Drupal\aculta_forum\Hook\PublicForumLastCommentAuthorHooks
-    arguments: ['@entity_type.manager', '@aculta_user.author_card_builder']
+  Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks:
+    class: Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks
+    arguments: ['@entity_type.manager', '@aculta_user.author_card_builder', '@aculta_forum.public_post_statistics']
   Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks:
     class: Drupal\aculta_forum\Hook\PublicForumTopicCreateActionHooks
     arguments: ['@access_manager', '@aculta_portal.domain_purpose']

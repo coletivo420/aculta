@@ -14,7 +14,7 @@ final class ForumPublicPostStatistics {
   /**
    * Request-local aggregate results keyed by topic ID.
    *
-   * @var array<int, array{count: int, last_activity: int, last_author_uid: int}>
+   * @var array<int, array{count: int, last_activity: int, last_post_id: int}>
    */
   private array $statistics = [];
 
@@ -32,7 +32,7 @@ final class ForumPublicPostStatistics {
    * @param array $topicIds
    *   Node IDs from the current public Forum View result page.
    *
-   * @return array<int, array{count: int, last_activity: int, last_author_uid: int}>
+   * @return array<int, array{count: int, last_activity: int, last_post_id: int}>
    *   Aggregate data keyed by topic ID.
    */
   public function getByTopics(array $topicIds): array {
@@ -46,7 +46,7 @@ final class ForumPublicPostStatistics {
       $this->statistics[$topicId] = [
         'count' => 0,
         'last_activity' => 0,
-        'last_author_uid' => 0,
+        'last_post_id' => 0,
       ];
     }
 
@@ -54,13 +54,13 @@ final class ForumPublicPostStatistics {
       $result = $this->database->query(
         'SELECT post.topic_target_id, COUNT(*) AS post_count,
           MAX(post.changed) AS last_activity,
-          (SELECT latest.uid FROM {aculta_forum_post_field_data} latest
+          (SELECT latest.id FROM {aculta_forum_post_field_data} latest
             WHERE latest.topic_target_id = post.topic_target_id
               AND latest.status = 1
               AND latest.default_langcode = 1
             ORDER BY latest.changed DESC, latest.id DESC
             LIMIT 1
-          ) AS last_author_uid
+          ) AS last_post_id
         FROM {aculta_forum_post_field_data} post
         WHERE post.topic_target_id IN (:topic_ids[])
           AND post.status = 1
@@ -73,7 +73,7 @@ final class ForumPublicPostStatistics {
         $this->statistics[(int) $row->topic_target_id] = [
           'count' => (int) $row->post_count,
           'last_activity' => (int) $row->last_activity,
-          'last_author_uid' => (int) $row->last_author_uid,
+          'last_post_id' => (int) $row->last_post_id,
         ];
       }
     }

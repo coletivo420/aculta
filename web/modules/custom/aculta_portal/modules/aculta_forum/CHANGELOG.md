@@ -1,3 +1,17 @@
+## `0.1.0-dev.209` — apresentar a autoria da atividade mais recente
+
+- O cartão da listagem pública compara timestamps de tópico, Comments e
+  ForumPosts e apresenta a identidade de quem publicou a resposta mais recente.
+  Posts revisionáveis resolvem autoria User ou histórica pela Entity API e pelo
+  `aculta_user.author_card_builder`; Comments legados usam o UID do agregado
+  Core. Tópicos sem Comment publicado não tratam o autor do tópico como autor de
+  resposta, e edição posterior do tópico não recebe cartão de resposta incorreto.
+- Campos ocultos da View fornecem NID e timestamp Core diretamente pelo handler
+  Views, inclusive quando excluídos do template. O agregado de ForumPost mantém
+  uma consulta em lote por página.
+- Não houve alteração Runtime. Validação integrada/browser pendente; não foram
+  adicionados nem executados testes.
+
 ## `0.1.0-dev.208` — incluir ForumPost na atividade e contagem de tópicos
 
 - A listagem pública combina Comments publicados e ForumPosts publicados na

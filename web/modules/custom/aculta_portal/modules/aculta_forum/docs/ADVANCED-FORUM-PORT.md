@@ -39,7 +39,7 @@ Fontes: [projeto Advanced Forum](https://www.drupal.org/project/advanced_forum),
 | Ícone por fórum/categoria (Taxonomy Image) | Portar por referência Media/Imagem através de `aculta_image` | Definir finalidade do catálogo antes de campo. |
 | Ícones de pasta com novos posts / legenda | Portar como status textual e visual acessível | Ícone nunca é único indicador. |
 | Novos posts/tópicos com links | View autenticada combina atualização do tópico, `node_new_comments` para Comments e campo ACULTA para contar ForumPosts públicos por `first_published`, ligando ao primeiro post ainda não lido; na thread, os posts também recebem `.new` para navegação | A View mantém filtros Node grants/Domain e cache privado. Validação integrada de grants, contagem, pager e destino permanece pendente. HTML da thread não varia por recibo individual. Limite de idade segue `HISTORY_READ_LIMIT` do History instalado. |
-| Último tópico/atividade e último autor | Portar em View/query cacheável com access | Não vazar nomes ou existência de contexto privado. |
+| Último tópico/atividade e último autor | A View pública combina alteração do tópico, Comments Core publicados e ForumPosts publicados; cartão usa `aculta_user` | Só apresenta autoria quando a resposta é mais recente que a alteração do tópico; acesso público/Domain continuam fixos. Validação integrada pendente. |
 | Estatísticas de usuários ativos, membro recente, membros/tópicos/posts | Portar apenas estatísticas úteis e aprovadas | “Online agora” fica sujeito à política de privacidade; não inferir de visualização de página. |
 | Hierarquia e contagens dependentes de node access | Portar com query access e agregação segura | Não confiar em contagem que ignora grants/Group. |
 
