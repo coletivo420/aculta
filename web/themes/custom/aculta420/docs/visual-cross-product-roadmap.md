@@ -153,3 +153,8 @@ O [gate B6-S1a-L3c](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) adicionou `script
 ## Wiki420 — trilha visual W420-UX 0.1 (2026-10-22)
 
 O plano [Wiki420 — Experiência visual](../../../../../docs/portal/WIKI420-VISUAL-EXPERIENCE.md) organiza Home, busca, categorias, verbete enciclopédico, revisões, discussão contextual e colaboração, utilizando Core SDC/UI Patterns/UI Styles. **Ownership de componentes, tokens e CSS transversais: ACULTA420; regras, rotas e acesso: aculta_wiki/Core/Portal.** Reutilizar `context-header`, `wiki-entry`, `context-tabs`, `figure`, `empty-state` e `card` apenas após gate por consumidor. Institution Bar + Domain Header preservados. W420-UX 0.1-A é próximo slice estático; 0.1-R é Runtime.
+
+
+## WE SATIVA — linha própria WES-UX 0.1 (2026-10-22)
+
+[WE SATIVA — Wiki Editor Sativa](../../../../../docs/portal/WE-SATIVA-VISUAL-EDITOR.md) será o frontend de contribuição da Wiki420, **separado de GanjaLab/GanjaLab420**, para público editorial mais amplo segundo acesso real do Drupal. Wiki pública **e** editor serão mobile-first. Compor `context-header`, `context-tabs`, `card`, `empty-state` e Form API/CKEditor com SDC/UI Suite; evitar componentes legados ou um segundo editor. O shell multidomínio permanece em todas as telas. Fases WES-UX 0.1-A–R: auditoria, protótipos, providers/rotas, composição visual, fluxos, qualidade e homologação.
