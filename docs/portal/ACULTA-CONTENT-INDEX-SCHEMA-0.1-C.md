@@ -18,7 +18,7 @@ As relações guardam a identidade do alvo mesmo quando o alvo não tem adapter 
 
 Todos os registros de entrada e relação pertencem a uma geração. Consultas públicas do serviço de storage devem obter o `active_generation` e restringir a consulta a esse valor. O worker de rebuild grava apenas numa geração `building`; a geração ativa permanece disponível até validação. A ativação futura deve, em uma transação, validar o candidato, atualizar o estado da geração anterior e trocar o ponteiro. Rollback repõe o ponteiro anterior enquanto os dados forem mantidos. A limpeza de gerações antigas será explícita e posterior ao período de rollback.
 
-O checkpoint identifica provider e tupla (entity type, ID, idioma) para keyset. Ele não usa OFFSET nem serializa entidades. Ainda faltam IDX 0.1-D/E: fila/delta durante o rebuild, operação atômica no driver e recuperação após falha.
+O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de entidade e último ID; percorre todas as traduções da entidade dentro do mesmo lote. Não usa OFFSET nem serializa entidades. O campo de checkpoint em `aculta_index_generation` existe no schema, mas ainda falta persistir/retomar o cursor a cada lote. Também faltam IDX 0.1-D/E: fila/delta durante o rebuild, operação atômica no driver e recuperação após falha.
 
 ## Índices e portabilidade
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -133,6 +134,15 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $registry = $this->container->get('aculta_index.provider_registry');
 
     $this->assertSame([], $registry->all());
+  }
+
+  /**
+   * Checks backfill discovery service is available with no providers.
+   */
+  public function testEntityEnumeratorServiceLoadsWithoutSourceAdapters(): void {
+    $enumerator = $this->container->get('aculta_index.entity_enumerator');
+
+    $this->assertInstanceOf(ContentIndexEntityEnumerator::class, $enumerator);
   }
 
   /**

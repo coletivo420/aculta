@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.5 — enumeração keyset para backfill
+
+- `ContentIndexEntityEnumerator` descobre somente tipos e bundles declarados
+  pelo provider, com Entity Query keyset, limite de 500 e processamento de
+  todas as traduções por entidade. A consulta interna declara explicitamente
+  `accessCheck(FALSE)`; nenhum resultado é exposto por essa API.
+- O enumerador verifica identidade/bundle retornados pelo provider e fornece
+  cursor pela última entidade do lote. Persistência do checkpoint e writer
+  seguem pendentes.
+- Unit e Kernel verificam paginação, traduções e registro DI sem providers.
+
 ## 0.1.0-dev.4 — integração inicial da Revista
 
 - O provider Magazine implementa o contrato neutro do Portal e é descoberto

@@ -5,6 +5,12 @@ services:
 
   Drupal\aculta_index\Generation\ContentIndexGenerationManager: '@aculta_index.generation_manager'
 
+  aculta_index.entity_enumerator:
+    class: Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator
+    arguments: ['@aculta_index.provider_registry', '@entity_type.manager']
+
+  Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator: '@aculta_index.entity_enumerator'
+
   aculta_index.provider_registry:
     class: Drupal\aculta_index\Provider\ContentIndexProviderRegistry
     arguments: [!tagged_iterator aculta_index.provider]
