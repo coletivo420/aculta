@@ -14,6 +14,33 @@ integração continua sendo validar upload real, publicação contextual, acesso
 privado e apresentação no navegador, antes de avançar previews Office e cartão
 PDF.
 
+## F-GROUP 0.1 — fóruns restritos de associados (fundação pronta, desligada)
+
+Estado em 2026-10-22: inventário (A), contratos e fundação (B) e testes Unit da
+unidade mínima (C) concluídos; **sem alteração de Runtime, sem import de
+configuração e sem rebuild de `node_access`**. O contrato completo, a matriz de
+testes com PASS/DEFERRED e os riscos residuais ficam em
+[`RESTRICTED-FORUMS.md`](RESTRICTED-FORUMS.md).
+
+- A elegibilidade continua em `aculta_user`: `ActiveAssociateInterface`
+  (`aculta_user.active_associate`) responde pela situação `ativo` de
+  `aculta_associado`. Não existe papel `associado` e o Fórum não duplica a
+  situação.
+- O Fórum só conhece Groups do tipo configurado em
+  `aculta_forum.settings.restricted_group_type` (vazio por padrão). Tipos LMS
+  são recusados; a membership é sincronizada de forma idempotente por hooks de
+  `aculta_associado`, com lock e invalidação de cache.
+- Leitura restrita usa `entity_access` mais grants de nó no realm
+  `aculta_forum_restricted`; falha do resolver fecha o acesso. Tópico público não
+  recebe grant restrito.
+- Gate medido: `tests/src/Unit/RestrictedForum` — 60 testes, 167 asserções, OK;
+  PHPCS/PHPStan limpos. Nenhum teste Kernel, Runtime, Functional ou de navegador
+  foi executado.
+- Próxima microfase **F-GROUP 0.2**: prova Kernel/Runtime com tipo de Group,
+  tópico restrito real e `NodeAccessRebuild`, seguida do recorte de posts
+  revisionáveis e anexos — os dois riscos que hoje impedem ativar a frente em
+  produção.
+
 ## Direção atual de produto: experiência Discourse Ubuntu
 
 O responsável definiu como referência uma experiência parecida com

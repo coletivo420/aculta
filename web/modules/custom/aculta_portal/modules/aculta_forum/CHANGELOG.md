@@ -1,3 +1,35 @@
+## `0.1.0-dev.241` — fundação do fórum restrito de associados (F-GROUP 0.1) — 2026-10-22
+
+- Acrescenta o adaptador `RestrictedForumGroupResolver`: lê
+  `aculta_forum.settings.restricted_group_type` (vazio desativa a frente),
+  valida o tipo de Group e recusa `lms_course`/`lms_class`. Tópicos restritos
+  vêm de relações `group_node:aculta_forum_topic` e
+  `group_taxonomy_term:aculta_forum_categories`.
+- Acrescenta `RestrictedForumAccessPolicy` e `RestrictedForumAccessHooks`:
+  `entity_access` revalida o tópico no servidor (associado ativo **e** membro de
+  um Group do tipo configurado); `node_grants` emite o realm
+  `aculta_forum_restricted` só para `view`; `node_access_records` grava grant
+  por Group e falha fechado (`gid = 0`). Fora do caso restrito devolve
+  `neutral`, preservando o comportamento público.
+- Acrescenta `RestrictedForumMembershipSync` e `RestrictedForumMembershipHooks`:
+  ativação, suspensão, desligamento, readmissão e alteração administrativa
+  reconciliam membership de forma idempotente, com lock por conta, log,
+  `try/catch` por Group e invalidação de `user:<uid>`,
+  `aculta_associado_list`, `group_relationship_list` e `node_list`.
+- Acrescenta `RestrictedForumGrantRebuilder` e `RestrictedForumRelationshipHooks`:
+  regrava grants do tópico ao mudar relação de tópico ou de categoria.
+- `aculta_user` passa a expor `aculta_user.active_associate`
+  (`ActiveAssociateInterface`) como contrato público de elegibilidade.
+- Configuração nova `restricted_group_type: ''` em instalação, schema e
+  `config/sync`; nenhum import foi executado. `aculta_forum.info.yml` declara
+  dependência de `group:group`.
+- Testes: `tests/src/Unit/RestrictedForum` — 60 testes, 167 asserções, OK;
+  PHPCS e PHPStan nível 5 limpos. Kernel/Runtime/busca/anexos ficam DEFERRED,
+  com motivo em `docs/RESTRICTED-FORUMS.md`.
+- Documento novo [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md) com a
+  matriz F-GROUP-A, decisões, passos de ativação (inclui
+  `NodeAccessRebuild::rebuild()`), matriz de testes e riscos residuais.
+
 ## `0.1.0-dev.240` — corrigir as falhas Unit do Fórum — 2026-10-22
 
 - Corrige as sete falhas registradas no dev.239, sem tocar o Runtime.

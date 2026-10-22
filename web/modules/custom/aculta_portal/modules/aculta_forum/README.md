@@ -79,6 +79,7 @@ motor novo segue por contexto e fases.
 - [Plano de retirada/migração](docs/MIGRATION-REMOVAL.md)
 - [Classes e hooks planejados](docs/CLASSES-AND-HOOKS.md)
 - [Matriz de testes](docs/TEST-MATRIX.md)
+- [Fóruns restritos para associados ativos](docs/RESTRICTED-FORUMS.md)
 - [Decisões](docs/DECISOES.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Reconstrução histórica](docs/RECONSTRUCAO.md) — histórico de pesquisa/importação, não autorização de exclusão.
@@ -95,6 +96,21 @@ comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
 [LMS](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md),
 [Wiki](../../../../../../docs/portal/WIKI.md) e
 [notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
+
+## Fóruns restritos para associados ativos — F-GROUP 0.1
+
+A fundação do fórum restrito existe e está **desligada por padrão**: enquanto
+`aculta_forum.settings.restricted_group_type` estiver vazio, nenhum Group é
+consultado e o fórum público mantém o comportamento atual. Um tópico é restrito
+quando relacionado a um Group do tipo configurado, direta ou pela categoria; a
+elegibilidade é a situação `ativo` de `aculta_associado`, lida em `aculta_user`,
+e nunca um papel. Group é consumidor, não dono dessa situação, e os tipos do LMS
+(`lms_course`, `lms_class`) são recusados. O acesso de leitura é revalidado no
+servidor por `entity_access` e por grants de nó no realm
+`aculta_forum_restricted`; ativar exige rebuild de `node_access`. Inventário,
+decisões, matriz de testes, riscos e a próxima microfase estão em
+[`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md). Nenhum Runtime foi
+alterado.
 
 ## Estado confirmado na auditoria
 
