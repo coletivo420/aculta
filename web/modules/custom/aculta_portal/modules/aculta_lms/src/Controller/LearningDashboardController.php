@@ -35,7 +35,7 @@ final class LearningDashboardController {
     private readonly AccountProxyInterface $currentUser,
     private readonly DateFormatterInterface $dateFormatter,
     TranslationInterface $stringTranslation,
-    private readonly \\Drupal\\aculta_studio\\Learning\\LearnerDashboardComposer $learnerComposer,
+    private readonly \Drupal\aculta_studio\Learning\LearnerDashboardComposer $learnerComposer,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
