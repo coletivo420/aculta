@@ -7,18 +7,19 @@
   do Core.
 - A dependência do viewer fica explícita no manifest. PDF permanece como link
   até a etapa prevista para integração com o leitor PDF.
-- No Runtime de teste (purpose `forum`), foram importados seletivamente os sete
-  objetos de configuração do bundle e campos de `forum_attachment`, após
-  confirmar que estavam ausentes e não havia Media desse tipo. O formatter e
-  builders foram descobertos após rebuild; nenhum anexo real existe ainda,
-  então preview de arquivo e revisão visual seguem pendentes. Sem import global,
-  fixture ou teste automatizado.
-- `filter.format.forum` e `editor.editor.forum` também foram importados
-  seletivamente para instalar o formato restrito e os botões dos diálogos. O
-  papel `email_confirmed` não recebeu permissão: o Sync contém permissões de
-  conteúdo ausentes no papel ativo, então importar o papel inteiro alteraria
-  outros acessos. Usuários comuns continuam sem acesso ao formato no Runtime
-  até revisão da configuração de papéis.
+- No Runtime de teste (purpose `forum`), treze configurações ausentes foram
+  importadas seletivamente: sete objetos de Media/anexo, formato/editor `forum`,
+  workflow dos posts, Flag de denúncia e displays padrão. Rebuild descobriu
+  formatter e builders DOCX/planilha. Nenhuma importação global foi feita.
+- Após comparar papéis ativos com o Sync, o Role API acrescentou somente as
+  permissões de Fórum ausentes: `email_confirmed` cria rascunho, envia para
+  moderação, edita seu post publicado pela janela aprovada e usa o formato
+  `forum`; não aprova, rejeita ou retira posts. `content_editor` recebe as seis
+  transições do workflow. Os papéis não foram importados por inteiro. Havia três
+  contas `email_confirmed` e uma `content_editor` no Runtime.
+- O Runtime ainda tem zero `ForumPost` e zero Media `forum_attachment`; o fluxo
+  com post/arquivo e a revisão visual seguem pendentes. Nenhuma fixture ou teste
+  automatizado foi executado.
 
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 

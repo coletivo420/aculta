@@ -66,11 +66,12 @@ acesso; o cartão/formatter ainda não foi ligado à apresentação do post e co
 na etapa 3.
 
 Dev.181 conecta DOCX e planilhas do Media `forum_attachment` aos builders locais
-do `aculta_document_viewer`; sete objetos de Media e o formato/editor `forum`
-foram importados parcialmente no Runtime de teste. A revisão do papel
-`email_confirmed` permanece pendente devido a drift de permissões; não foi
-alterado. Sem anexos no ambiente, a validação com arquivo e revisão visual
-continuam pendentes. PDF segue como download até a etapa 3.
+do `aculta_document_viewer`; as configurações ausentes de anexos, editor e
+workflow de posts foram importadas seletivamente no Runtime de teste. As
+permissões específicas de Fórum dos papéis `email_confirmed` e `content_editor`
+foram aplicadas pelo Role API sem substituir outros acessos. Não há posts nem
+anexos para validar os fluxos; revisão visual segue pendente. PDF continua como
+download até a etapa 3.
 
 Não criar leitor PDF ou serviço de conversão paralelo no Fórum. Cada etapa exige
 respeitar o contrato de acesso e retenção de anexos privados.
@@ -81,7 +82,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.181` | Conectar preview local de Office nos anexos do Fórum | Formatter do Media `forum_attachment` delega DOCX e planilhas aos builders do `aculta_document_viewer`, mantendo acesso e link de download. Sete objetos de Media e formato/editor `forum` foram importados parcialmente no Runtime; formatter/builders descobertos, sem Media de anexo. Permissão de uso do formato no papel `email_confirmed` permanece pendente após revisão do drift. Validação com arquivos e revisão visual pendentes. Sem importação global ou fixtures. |
+| `0.1.0-dev.181` | Conectar preview local de Office nos anexos do Fórum | Formatter do Media `forum_attachment` delega DOCX e planilhas aos builders do `aculta_document_viewer`, mantendo acesso e link de download. Configurações ausentes de Media, editor, workflow, Flag e displays importadas parcialmente; grants específicos de Fórum nos papéis foram alinhados ao Sync sem substituí-los. Formatter/builders descobertos, mas não há post nem anexo no Runtime. Validação com arquivos, submissão/moderação e revisão visual pendentes. Sem importação global ou fixtures. |
 | `0.1.0-dev.180` | Preparar migration das denúncias | Source keyset percorre `sinalizar_comentario`; destino resolve CID pelo mapa de posts e preserva dono/sessão/escopo/timestamp via Entity API com guarda de presave específica. Global, sessão anônima ausente, dono/timestamp inválidos, duplicidade e config incompatível falham fechados; auditoria expõe as respectivas contagens. No Runtime de teste, Migrate foi habilitado conforme dependência do módulo; plugins e migration instanciam, source sem linhas. Config do novo Flag não importada e nenhuma migration executada; Kernel/eventos com dados reais pendentes. |
 | `0.1.0-dev.179` | Auditar integridade das denúncias migráveis | Dry-run conta flags globais, donos ausentes e timestamps `created` inválidos em lotes, sem expor identidade. Smoke no Runtime de teste: zero Comments/posts/flags elegíveis, portanto casos com dados seguem sem validação; nenhuma migration/configuração executada. |
 | `0.1.0-dev.178` | Incluir denúncias de posts revisionáveis | Flag dedicado aparece no display do post, exige permissão e valida publicação/default revision e Domain Fórum; a fila User agrupa o novo tipo sem depender do módulo Fórum. A auditoria mapeia o Flag legado `sinalizar_comentario` ao destino novo. Conversão real das flaggings e preservação do timestamp ainda pendentes; sem import de configuração/Runtime. |

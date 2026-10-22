@@ -2,13 +2,17 @@
 
 - Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
   `forum`. `aculta_forum`, `aculta_document_viewer` e `aculta_gallery` estão
-  habilitados. Importação parcial criou sete objetos do Media `forum_attachment`
-  e o formato/editor `forum`; rebuild descobriu formatter e builders.
-- Não há Media `forum_attachment`: preview com arquivo privado, fallback e layout
-  seguem sem validação visual. O papel `email_confirmed` não tem permissão de uso
-  do formato no ativo e diverge do Sync; não foi importado para evitar reverter
-  outras permissões. Nenhuma fixture ou importação global; nenhum teste
-  automatizado executado.
+  habilitados. Importação parcial criou treze objetos: sete de Media/anexo,
+  formato/editor `forum`, workflow, Flag e displays padrão. Rebuild descobriu
+  formatter e builders DOCX/planilha.
+- Os conjuntos de permissões Forum de `email_confirmed` e `content_editor` foram
+  alinhados às entradas do Sync via Role API, sem importar os papéis completos.
+  O primeiro não tem transições de aprovar/rejeitar/retirar; o segundo tem as
+  seis transições previstas. O Runtime tinha três contas `email_confirmed` e
+  uma `content_editor`.
+- Há zero `ForumPost` e zero Media `forum_attachment`; submissão, moderação,
+  preview privado, fallback e layout seguem sem validação visual. Nenhuma fixture
+  ou importação global; nenhum teste automatizado executado.
 
 ## Revisão visual — listas públicas de atividade (2026-10-21)
 
