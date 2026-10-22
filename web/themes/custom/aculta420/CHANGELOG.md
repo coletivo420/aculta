@@ -1,3 +1,16 @@
+## 0.6.1-dev.2 — hierarquia semântica dos cartões de categoria (2026-10-22)
+
+Classificação: PATCH de acessibilidade e tipografia na linha aberta.
+
+- Os títulos dos grupos da View `/categorias` usam H2; os links dos termos
+  usam H3, preservando o estilo tipográfico do cartão.
+- Firefox ESR/X11 no Runtime de teste: capturas em 320, 375, 390, 768, 1024 e
+  1440 CSS px; document scrollWidth igual a clientWidth em todos. Os grupos e
+  12 cartões renderizam. O banner global de consentimento se sobrepõe ao
+  conteúdo até a escolha da pessoa; dark mode, zoom e dispositivo real não
+  foram verificados. Nenhum teste automatizado executado.
+- Foundation ajustada para a versão atual do tema `0.6.1-dev.2`.
+
 ## 0.6.1-dev.1 — remoção do tipo de conteúdo projeto (2026-10-21)
 
 Classificação: PATCH na linha aberta, decidida pelo responsável.

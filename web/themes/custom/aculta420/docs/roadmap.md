@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.1-dev.2 | Hierarquia semântica de grupos e cartões de categoria | Firefox ESR/X11, seis viewports, sem overflow; modo escuro/zoom/dispositivo real pendentes | Grupo H2; categoria H3 com tipografia existente; Foundation espera `0.6.1-dev.2` |
 | 0.6.0-dev.147 | Template da publicação `revista` conectado ao SDC existente | Código criado; revisão visual no Runtime pendente | `node--revista--full.html.twig` reutiliza `revista-publication` sem duplicar CSS ou lógica editorial |
 | 0.6.0-dev.146 | Grade e abas das planilhas com tokens em claro e escuro | Medido no Runtime (Chromium X11) em 390 e 768 px, claro e escuro; revisão em Firefox pendente | `document-viewer.css` com a cadeia completa de seletores |
 | 0.6.0-dev.145 | Apresentação compartilhada dos leitores DOCX e planilhas (`aculta_document_viewer`): cabeçalho, barra de zoom e tela cheia, status acessível, abas e modo Tabela | Runtime testado no Chromium X11 com DOCX e XLSX públicos (zoom, tela cheia por clique real, status oculto ao concluir, título escapado); captura confirma tokens; revisão em Firefox e viewports móveis pendente | `css/components/document-viewer.css` com seletores `data-aculta-document-part`; sem classe de design no módulo |

@@ -90,8 +90,8 @@ Core/Bootstrap5/contrib:
 | `block--block-content--type--aculta-institution.html.twig` | view modes institucionais específicos |
 | `node--editorial-highlight.html.twig` | presenter do SDC `editorial-card` |
 | `views-view-vvjb.html.twig` | delta de integração/acessibilidade e library contextual do VVJB |
-| `views-view-fields--aculta-forum-categories--page-categories.html.twig` | compõe o termo e a descrição Taxonomy no SDC `forum-category`; a relação Parent é um campo oculto usado pelo agrupamento Core da página |
-| `views-view-unformatted--aculta-forum-categories--page-categories.html.twig` | adiciona a grade responsiva preservando `row.attributes`, o título de agrupamento e o conteúdo da linha Core |
+| `views-view-fields--aculta-forum-categories--page-categories.html.twig` | compõe o termo e a descrição Taxonomy no SDC `forum-category`; a relação Parent é um campo oculto usado pelo agrupamento Core; o link do termo é H3 |
+| `views-view-unformatted--aculta-forum-categories--page-categories.html.twig` | adiciona a grade responsiva preservando `row.attributes`, o título H2 do agrupamento e o conteúdo da linha Core |
 
 Novo override exige comparação com o template upstream da versão instalada e
 uma justificativa documental. Override sem delta real deve ser removido.

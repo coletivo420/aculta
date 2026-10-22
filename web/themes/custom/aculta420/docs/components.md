@@ -105,9 +105,10 @@ Status: experimental. Local: `components/content/forum-category/`.
 No bloco `block_landing`, os slots `parent`, `title` e `description` recebem os
 campos renderizados pela View Core. Na página `/categorias`, a View agrupa as
 linhas pela relação Parent e o slot `parent` fica vazio; `title` inclui o link
-filtrado preparado pela View. Os presenters preservam linhas e attributes, e o
-SDC apresenta os cartões numa grade responsiva. Não carrega entidades, constrói
-URLs ou decide filtros/acesso; isso continua com Drupal Views e o Portal.
+filtrado preparado pela View. O grupo usa H2 e cada link de categoria usa H3.
+Os presenters preservam linhas e attributes, e o SDC apresenta os cartões numa
+grade responsiva. Não carrega entidades, constrói URLs ou decide filtros/acesso;
+isso continua com Drupal Views e o Portal.
 
 ### `aculta420:project-card` (removido)
 

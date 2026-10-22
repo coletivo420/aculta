@@ -22,7 +22,8 @@
   font-size: 0.8125rem;
 }
 
-.aculta-forum-category__title h2 {
+.aculta-forum-category__title h2,
+.aculta-forum-category__title h3 {
   margin: 0;
   font-family: var(--aculta-font-display);
   font-size: clamp(1.2rem, 2vw, 1.5rem);

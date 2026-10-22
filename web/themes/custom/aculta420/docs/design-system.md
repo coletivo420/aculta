@@ -17,9 +17,10 @@ Filtros, ordenação, visibilidade e contagens continuam responsabilidade do
 Portal/Core, nunca do tema.
 
 O índice `/categorias` agrupa os cartões por categoria-pai com o agrupamento
-nativo da View Core. O SDC `content/forum-category` apresenta o termo e sua
-descrição; o link filtrado é preparado pela View a partir do TID. O componente
-não carrega Taxonomy nem constrói URLs; a navegação permanece sob
+nativo da View Core. Os títulos dos grupos usam H2; os links dos termos usam H3
+e conservam a tipografia definida no SDC `content/forum-category`. O componente
+apresenta o termo e sua descrição; o link filtrado é preparado pela View a
+partir do TID. O componente não carrega Taxonomy nem constrói URLs; a navegação permanece sob
 responsabilidade do Portal.
 
 Na entrada do Growroom420, o mesmo SDC apresenta até seis categorias no bloco

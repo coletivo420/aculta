@@ -1,3 +1,13 @@
+## `0.1.0-dev.213` — corrigir níveis semânticos dos títulos de categoria
+
+- `/categorias` usa H2 para cada categoria-pai e H3 para os links das
+  categorias; a atualização `9004` ajusta a View existente sem tocar no bloco.
+- Firefox ESR/X11 no Runtime de teste: 12 cartões em cinco grupos, sem overflow
+  horizontal em 320, 375, 390, 768, 1024 e 1440 CSS px. Capturas privadas em
+  `/home/aculta/private/aculta/visual-tests/forum-categories-20261022`.
+  O banner global de consentimento aparece sobre o conteúdo até a escolha da
+  pessoa; modo escuro, zoom e aparelho real continuam pendentes. Sem testes.
+
 ## `0.1.0-dev.212` — aplicar agrupamento no Sync e em instalações existentes
 
 - A definição agrupada de `/categorias` também foi registrada em

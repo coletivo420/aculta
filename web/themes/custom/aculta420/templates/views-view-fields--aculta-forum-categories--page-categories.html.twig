@@ -1,5 +1,8 @@
+{% set category_title %}
+  <h3>{{ fields.name.content }}</h3>
+{% endset %}
 {{ include('aculta420:forum-category', {
   parent: fields.parent_name.content,
-  title: fields.name.content,
+  title: category_title,
   description: fields.description__value.content,
 }, with_context = false) }}
