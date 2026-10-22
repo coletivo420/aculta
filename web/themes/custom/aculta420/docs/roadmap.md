@@ -338,3 +338,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## Próxima implementação transversal — M2/B1
 
 [Contrato técnico de Context Header](theme-ux-0.8-m2-b1-context-header.md) define dados/slots, consumidores, uso obrigatório de Core SDC + UI Suite e gates para preservar Institution Bar e Domain Header. A etapa é planejamento, sem componentes novos e com validação Runtime pendente.
+
+## THEME-UX 0.8-B1 — Auditoria estática de cabeçalhos
+
+[Relatório de inspeção de breadcrumb e headings](theme-ux-0.8-b1-source-audit.md): confirmado template de breadcrumb existente, CSS tokenizado e limites semânticos de `content-section`/`product-tabs`. Próximo gate B1 depende de DOM e dois consumidores reais; nada autoriza substituir Institution Bar/Domain Header ou criar um SDC sem uso.
