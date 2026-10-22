@@ -116,7 +116,8 @@ testes de workflow; a configuração da política inicial continua sendo a de
    administrativa contextual; a dev.147 também permite escolher quaisquer duas
    revisões mostradas na página atual do histórico. Hierarquia visual, salto
    paginado até pai fora da página, seleção entre páginas e homologação visual
-   continuam pendentes.
+   continuam pendentes. A dev.148 liga a edição pública dentro da janela do
+   autor, salvando revisão nova sem expor campos de moderação ou contexto.
 3. **Migração não destrutiva em código:** mapear Comments apenas quando
    `comment_type=aculta_discussion_post`, host Node de bundle
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore

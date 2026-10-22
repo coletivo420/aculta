@@ -1,3 +1,8 @@
+## `0.1.0-dev.148` — permite editar publicação própria
+
+- Posts publicados/default agora mostram ação de edição ao próprio autor enquanto `update` é permitido, incluindo a janela configurável que `aculta_user.ParticipationEditWindow` aplica sobre o access handler.
+- A rota `/publicacao/editar?post={uuid}` revalida dono, publicação/revisão default e acesso. Reutiliza o form mode público, preserva estado/tópico/pai/autoria e salva uma nova revisão com metadados do autor. Sem alteração Runtime; smoke autenticado e revisão visual pendentes.
+
 ## `0.1.0-dev.147` — seleciona revisões para comparação
 
 - O histórico permite comparar quaisquer duas revisões exibidas na página atual; o atalho entre revisões adjacentes continua disponível. A seleção valida no servidor que ambos os IDs pertencem às opções renderizadas e são distintos; a rota de comparação repete a validação de pertencimento ao post e acesso.

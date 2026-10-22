@@ -203,6 +203,16 @@ final class ForumPostThreadBuilder {
           ]),
         )->toRenderable();
       }
+      $editAccess = $post->access('update', $this->currentUser, TRUE);
+      $cacheability->addCacheableDependency($editAccess);
+      if ($editAccess->isAllowed()) {
+        $build['posts'][$postId]['edit'] = Link::fromTextAndUrl(
+          new TranslatableMarkup('Editar publicação'),
+          Url::fromRoute('aculta_forum.post_edit', [], [
+            'query' => ['post' => $post->uuid()],
+          ]),
+        )->toRenderable();
+      }
     }
     if ($totalItems > self::POSTS_PER_PAGE) {
       $build['pager'] = [

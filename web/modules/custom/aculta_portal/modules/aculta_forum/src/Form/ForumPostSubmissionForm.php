@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -84,9 +85,25 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    $entity = parent::buildEntity($form, $form_state);
+    if (!$entity->isNew() && $entity instanceof RevisionLogInterface) {
+      $entity->setNewRevision(TRUE);
+      $entity->setRevisionUserId($this->currentUser()->id());
+      $entity->setRevisionCreationTime($this->time->getRequestTime());
+      $entity->setRevisionLogMessage($this->t('Edição pelo autor.'));
+    }
+    return $entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = $this->t('Enviar publicação');
+    $actions['submit']['#value'] = $this->entity->isNew()
+      ? $this->t('Enviar publicação')
+      : $this->t('Salvar alterações');
     return $actions;
   }
 
@@ -94,15 +111,18 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state): int {
+    $wasNew = $this->entity->isNew();
     $result = parent::save($form, $form_state);
     $topic = $this->entity->get('topic')->entity;
     if (!$topic instanceof NodeInterface) {
       return $result;
     }
 
-    $message = $this->entity->isPublished()
-      ? $this->t('Sua publicação foi adicionada à discussão.')
-      : $this->t('Sua publicação foi enviada para moderação e aparecerá na discussão depois da aprovação.');
+    $message = $wasNew
+      ? ($this->entity->isPublished()
+        ? $this->t('Sua publicação foi adicionada à discussão.')
+        : $this->t('Sua publicação foi enviada para moderação e aparecerá na discussão depois da aprovação.'))
+      : $this->t('Sua publicação foi atualizada.');
     $this->messenger->addStatus($message);
     $url = $topic->toUrl('canonical');
     if ($this->entity->isPublished()) {

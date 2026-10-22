@@ -2,6 +2,9 @@ services:
   Drupal\aculta_forum\Controller\ForumPostSubmissionController:
     class: Drupal\aculta_forum\Controller\ForumPostSubmissionController
     arguments: ['@entity_type.manager', '@entity.form_builder', '@request_stack', '@current_user', '@aculta_forum.discussion_context_resolver']
+  Drupal\aculta_forum\Controller\ForumPostEditController:
+    class: Drupal\aculta_forum\Controller\ForumPostEditController
+    arguments: ['@entity.form_builder', '@aculta_forum.post_public_edit_access']
   Drupal\aculta_forum\Controller\ForumPostModerationFormController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
     arguments: ['@entity_type.manager', '@entity.form_builder']
@@ -77,6 +80,9 @@ services:
   aculta_forum.attachment_upload_access:
     class: Drupal\aculta_forum\Access\ForumAttachmentUploadAccess
     arguments: ['@aculta_portal.domain_purpose']
+  aculta_forum.post_public_edit_access:
+    class: Drupal\aculta_forum\Access\ForumPostPublicEditAccess
+    arguments: ['@entity_type.manager', '@request_stack']
   aculta_forum.post_moderation_access:
     class: Drupal\aculta_forum\Access\ForumPostModerationAccess
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

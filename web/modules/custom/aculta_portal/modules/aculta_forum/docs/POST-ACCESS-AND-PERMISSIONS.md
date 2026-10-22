@@ -22,6 +22,14 @@ compartilhada `ParticipationRules` para selecionar `review` ou `published`; o
 Core sincroniza a publicação com o workflow. O envio volta ao fragmento estável
 da publicação no tópico.
 
+O autor pode editar sua publicação enquanto o access handler permite `update`.
+A rota `/publicacao/editar?post={uuid}` usa UUID, exige que o post pertença à
+conta atual e seja a revisão default publicada; o `ParticipationEditWindow` do
+`aculta_user` continua restringindo o acesso pelo timestamp imutável e pela
+configuração do Fórum. O mesmo form mode deixa estado, tópico, pai e autoria
+fora do input. Cada edição salva uma nova revisão publicada com metadados da
+conta atual, sem reiniciar o prazo.
+
 O acesso de atualização do autor é apenas uma condição contextual. O handler da
 entidade e o Core Content Moderation continuam responsáveis por permitir a
 operação e validar transições. `ParticipationEditWindow` pode negar a edição
@@ -96,3 +104,13 @@ Referências primárias consultadas em 2026-10-22:
 - Código instalado: `web/modules/contrib/diff/src/DiffEntityComparison.php`,
   `web/modules/contrib/diff/src/DiffEntityParser.php` e
   `web/core/lib/Drupal/Core/Diff/DiffFormatter.php`.
+
+A edição reutiliza `EntityFormBuilderInterface::getForm()` com o form mode
+`public_submission`; a entidade é selecionada e autorizada pelo serviço de
+access da rota antes de montar o formulário. `ForumPostSubmissionForm` usa a
+API de revisão do Core para preservar cada edição como revisão própria.
+
+- [Drupal 11.x `EntityFormBuilder::getForm()`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21EntityFormBuilder.php/function/EntityFormBuilder%3A%3AgetForm/11.x)
+- [Drupal 11.x `EntityAccessCheck::access()`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21EntityAccessCheck.php/function/EntityAccessCheck%3A%3Aaccess/11.x)
+- Código instalado: `web/core/lib/Drupal/Core/Entity/EntityFormBuilder.php` e
+  `web/core/lib/Drupal/Core/Entity/ContentEntityForm.php`.
