@@ -1,5 +1,5 @@
 aculta_lms.student_dashboard:
-  path: '/ganjalab420'
+  path: '/studio/ganjalab420'
   defaults:
     _controller: 'aculta_studio.ganjalab420_controller:student'
     _title: 'GanjaLab420'
@@ -116,6 +116,19 @@ aculta_lms.certificate_qr:
 # Rota de compatibilidade antiga; preservar até inventariar consumidores e definir redirect canônico.
 aculta_lms.legacy_student_dashboard:
   path: '/minha-aprendizagem'
+  defaults:
+    _controller: 'aculta_studio.ganjalab420_controller:student'
+    _title: 'GanjaLab420'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account
+
+# Transitional student URL on the account purpose.
+aculta_lms.old_student_dashboard:
+  path: '/ganjalab420'
   defaults:
     _controller: 'aculta_studio.ganjalab420_controller:student'
     _title: 'GanjaLab420'
