@@ -140,6 +140,10 @@ final class ForumPostThreadBuilder {
       }
     }
     $parentEntities = $storage->loadMultiple($externalParentIds);
+    // A page can contain several replies to the same parent outside the
+    // current pager range. Its destination page is identical for each reply,
+    // so calculate that count query only once during this render.
+    $externalParentPages = [];
     foreach ($viewable as $post) {
       $postId = (string) $post->id();
       $renderedPost = $this->entityTypeManager->getViewBuilder('aculta_forum_post')
@@ -181,9 +185,16 @@ final class ForumPostThreadBuilder {
         $build['posts'][$postId]['reply_context'] = [
           '#type' => 'container',
         ];
-        $parentPage = isset($viewableIds[(string) $parent->id()])
-          ? $pager->getCurrentPage()
-          : $this->getPageForPost($topic, $parent);
+        $parentId = (string) $parent->id();
+        if (isset($viewableIds[$parentId])) {
+          $parentPage = $pager->getCurrentPage();
+        }
+        else {
+          if (!array_key_exists($parentId, $externalParentPages)) {
+            $externalParentPages[$parentId] = $this->getPageForPost($topic, $parent);
+          }
+          $parentPage = $externalParentPages[$parentId];
+        }
         if ($parentPage !== NULL) {
           $query = $this->pagerManager->getUpdatedParameters([], self::PAGER_ID, $parentPage);
           $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(

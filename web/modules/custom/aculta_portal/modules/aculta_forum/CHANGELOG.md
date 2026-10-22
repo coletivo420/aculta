@@ -1,3 +1,11 @@
+## `0.1.0-dev.227` — evitar contagens repetidas do mesmo post pai
+
+- Durante a renderização de uma página da thread, a posição de um post pai fora
+  do pager atual é calculada uma vez por ID. Respostas distintas ao mesmo post
+  pai deixam de repetir a mesma consulta de contagem; estado fica restrito à
+  chamada atual de `build()`. Sem alteração de acesso ou destino dos links.
+- Lint PHP e gates estáticos; sem testes automatizados ou alteração Runtime.
+
 ## `0.1.0-dev.226` — remover limite agregado de descrições da galeria
 
 - O textarea não limita mais o total de caracteres com teto fixo que também

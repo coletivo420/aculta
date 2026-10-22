@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.227` | Reutilizar página calculada de posts pais na thread | Até uma consulta de contagem por post pai externo distinto na renderização atual; acesso, paginação e links inalterados. Sem Runtime. |
 | `0.1.0-dev.226` | Remover limite agregado de descrições da galeria | Mantém validação individual de 512 caracteres sem limitar por consequência a quantidade de imagens além da política central. Sem Runtime/testes. |
 | `0.1.0-dev.225` | Variar cache por toda query preservada na thread | Links entre posts usam `PagerManagerInterface::getUpdatedParameters()` e preservam a query completa; `url.query_args` varia também por filtros além dos pagers. Substitui a variação parcial por pager IDs da dev.224. Sem Runtime/testes. |
 | `0.1.0-dev.224` | Variar cache da thread pelo pager de Comments | Links entre posts preservam o pager 0 de Comments; o render array da thread agora varia pelos pagers 0 e 1, evitando cache cruzado entre índices. Sem Runtime/testes. |
