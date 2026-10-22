@@ -109,3 +109,8 @@ Wiki / Categoria / Verbete
 ## Auditoria inicial concluída (somente código)
 
 A [auditoria W420-UX 0.1-A](WIKI420-VISUAL-STATIC-AUDIT.md) registra evidências diretas de rotas, template full, contratos SDC, CSS e decisões preexistentes. **Não representa inspeção completa dos consumidores nem validação Runtime.** Próxima microfase: mapear controller/Views e H1/busca por rota; após isso elaborar wireframes detalhados com evidência suficiente.
+
+
+## WE SATIVA — edição editorial independente
+
+O editor Wiki ganha uma interface própria **WE SATIVA (Wiki Editor Sativa)**, documentada em [WE-SATIVA-VISUAL-EDITOR.md](WE-SATIVA-VISUAL-EDITOR.md). Ela é **separada de GanjaLab/GanjaLab420**, atende contribuintes autorizados mais amplamente, usa Form API/CKEditor e workflow do Drupal sem duplicação, e segue a mesma regra mobile-first que a Wiki pública. O acesso segue capacidades do kernel, não a filiação ao Studio. As duas experiências preservam Institution Bar e Domain Header global e usam exclusivamente o Design System Core SDC/UI Suite.
