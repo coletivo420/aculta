@@ -1028,3 +1028,9 @@ automaticamente.
 F-GROUP 0.1: adotar **Group** para fóruns restritos a associados ativos; situação `associado` não é papel Drupal. F-GROUP-A inventariar Group types/grants + fóruns; B adapter membership sincronizada com situação User, revogação/suspensão; C busca, tópicos, comentários, anexos, contagens e notificações sob ACL Group; D dry-run/backfill e backup; R testes dois associados/grupos, ex-associado, cache/Domain. Fórum segue dono de discussão; política de identidade fica no aculta_user. XK-01: eventos de aviso devem ir ao Messenger, sem engine própria.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B / ADR-XK-03: especificar relação entre situação `ativo` do associado em User, membership Group e Entity Access; bloquear leitura imediatamente ao suspender/desligar, sem esperar worker. Inventariar Group type, relação do tópico, caches, anexos, Search API, aviso; migração/backfill só após dry-run/backup. Não confundir Group LMS com Forum associado.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
