@@ -117,6 +117,9 @@ services:
   aculta_forum.discussion_write_guard:
     class: Drupal\aculta_forum\Service\ForumDiscussionWriteGuard
     arguments: ['@entity_type.manager', '@lock', '@database']
+  aculta_forum.post_unread_manager:
+    class: Drupal\aculta_forum\Service\ForumPostUnreadManager
+    arguments: ['@database', '@current_user']
   aculta_forum.post_thread_builder:
     class: Drupal\aculta_forum\Service\ForumPostThreadBuilder
     arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_forum.discussion_context_resolver', '@pager.manager']

@@ -32,6 +32,21 @@ final class PublicForumViewsDataHooks {
         'no group by' => TRUE,
       ],
     ];
+    $data['history']['aculta_forum_unread_content'] = [
+      'title' => 'ACULTA Forum: conteúdo não lido',
+      'help' => 'Filtra tópicos com atualização, Comment ou ForumPost ainda não lido.',
+      'filter' => [
+        'id' => 'aculta_forum_unread_content',
+      ],
+    ];
+    $data['node']['aculta_forum_unread_posts'] = [
+      'title' => 'ACULTA Forum: publicações não lidas',
+      'help' => 'Exibe a contagem e o link para o primeiro ForumPost não lido.',
+      'field' => [
+        'id' => 'aculta_forum_unread_posts',
+        'no group by' => TRUE,
+      ],
+    ];
   }
 
 }

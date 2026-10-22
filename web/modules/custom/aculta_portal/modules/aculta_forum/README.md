@@ -103,11 +103,13 @@ público do novo bundle está ativo na raiz do Runtime e `/criar-topico` verific
 Entity Create Access. Releases Portal, User e tema conservam linhas próprias;
 o roadmap detalha as próximas entregas.
 
-A lista personalizada `/discussoes/nao-lidas` mostra o número de novos Comments
-por tópico e liga diretamente ao primeiro Comment não lido. Essa capacidade usa
-o campo `node_new_comments` do History apenas nessa View autenticada com cache
-desativado; o campo esconde contagens vazias. A View ainda não conta posts
-revisionáveis: os plugins instalados leem as tabelas de Comment.
+A lista personalizada `/discussoes/nao-lidas` inclui atualizações de tópico,
+Comments e ForumPosts públicos ainda não lidos. `node_new_comments` continua
+responsável pelas contagens de Comments; um filtro e campo próprios incluem
+ForumPosts publicados, contam por recibo History e ligam ao primeiro post não
+lido, preservando sua página no pager da thread. A View é autenticada e não
+compartilha cache entre usuários. A validação integrada de grants, contagem,
+paginação e destino do link permanece pendente.
 
 Na página de discussão, o controle “Não lidas” reconhece a classe `.new` nos
 Comments marcados pelo History e nos ForumPosts comparados no cliente ao recibo

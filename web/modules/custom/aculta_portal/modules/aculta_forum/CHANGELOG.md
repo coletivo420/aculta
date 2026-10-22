@@ -1,6 +1,18 @@
+## `0.1.0-dev.207` — incluir ForumPost na lista de não lidas
+
+- A View autenticada agora considera posts revisionáveis publicados no filtro
+  de tópicos não lidos e mostra a contagem com link para o primeiro post novo,
+  incluindo o pager da thread. Uma consulta em lote compara `first_published`
+  com o recibo History e segue o `HISTORY_READ_LIMIT` instalado; acesso do tópico
+  continua sob Node grants e posts públicos seguem as regras do
+  `ForumPostAccessHooks`.
+- A View continua sem cache compartilhado por usuário. A validação integrada de
+  consulta, grants, paginação, link e banco MariaDB ainda está pendente; sem
+  testes ou alteração Runtime nesta etapa.
+
 ## `0.1.0-dev.206` — incluir ForumPost no progresso de leitura
 
-- A thread revisionável publica o NID do tópico e timestamp público de cada
+- A thread revisionável publica o NID do tópico e o `first_published` de cada
   post. Para contas autenticadas, um comportamento cliente usa os recibos da API
   History para aplicar `.new`; a navegação de progresso reconhece posts e
   Comments. Dados pessoais de leitura não são renderizados no HTML cacheável.

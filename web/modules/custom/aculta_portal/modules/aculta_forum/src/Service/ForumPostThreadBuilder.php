@@ -168,7 +168,7 @@ final class ForumPostThreadBuilder {
       $attributes = [
         'id' => 'forum-post-' . $postId,
         'class' => ['aculta-forum-post'],
-        'data-aculta-forum-post-timestamp' => (string) $post->getCreatedTime(),
+        'data-aculta-forum-post-timestamp' => (string) $post->get('first_published')->value,
       ];
       $build['posts'][$postId] = [
         '#type' => 'html_tag',
