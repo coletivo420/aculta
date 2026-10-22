@@ -230,3 +230,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-X
 ## V-0.4-D — divisão visual WE SATIVA x GanjaLab
 
 [Janela de moderação Wiki no GanjaLab](../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): visualização de fila, comparação e aprovação fica em Studio. WE SATIVA mantém escrita e acompanhamento, sem botões de publicação para colaborador. SDC/UI Suite rege ambas as superfícies, com mobile full-screen na revisão e desktop comparativo, nenhum cabeçalho global duplicado. Contratos entre Studio/Wiki definidos antes de componentizar.
+
+## V-0.4-R / GanjaLab D-A — auditoria do código existente
+
+[Inventário e contrato da janela Wiki](../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
