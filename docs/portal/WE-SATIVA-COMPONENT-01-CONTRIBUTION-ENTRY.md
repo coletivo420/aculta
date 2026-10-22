@@ -120,3 +120,8 @@ O mesmo fluxo preserva a ordem e o texto; largura de leitura limitada, escolhas 
 5. **C01-R** testes Runtime no homelab com domínios, sessões, teclado, mobile e dark/light.
 
 **Dependência:** definir modelo seguro de proposta para perfis sem `update` antes de habilitar microtarefas. **Autosave Form continua no backlog futuro**, sem dependência instalada.
+
+
+## C01-A — decisão após auditoria de código e configuração
+
+[Auditoria de ação e permissões](WE-SATIVA-C01-A-ACCESS-AND-CTA-AUDIT.md): o template full oferece `content.links` em `wiki-entry.actions`, enquanto `context-header.actions` está livre. O CTA **Contribuir** terá **um único lugar canônico**, proposto no `context-header.actions` após o kernel fornecer rota, access e render array cacheável. O papel `authenticated` exportado não pode editar verbetes; `content_editor` possui permissões amplas demais para o público colaborador. Portanto, não adicionar CTA fictício nem abrir acessos agora. Próxima fase C01-B: capacidades mínimas, intenções e URLs seguras.
