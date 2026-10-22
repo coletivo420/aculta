@@ -15,7 +15,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Revista tab. The owner is aculta_magazine; the states come from the editorial workflow `revista`.
  *
  * Publicações lists the nodes by state (Todos, Rascunhos, Em revisão, Publicados, Arquivados) through the
- * listing of the Studio, which keeps the node access of the owner. Criar gives the owner's create route.
+ * listing of the Studio, which keeps the node access of the owner. Edit links resolve on the magazine
+ * domain, where the editorial context lives. Criar keeps the create route.
  */
 #[StudioTab(
   id: 'revista',
@@ -49,7 +50,13 @@ final class RevistaTab extends StudioTabBase {
       $listTabs[$id] = [
         'label' => $item['label'],
         'weight' => count($listTabs),
-        'listing' => ['bundle' => 'revista', 'scope' => 'mine', 'state' => $item['state'], 'editable' => TRUE],
+        'listing' => [
+          'bundle' => 'revista',
+          'scope' => 'mine',
+          'state' => $item['state'],
+          'editable' => TRUE,
+          'purpose' => 'magazine',
+        ],
         'actions' => [],
       ];
     }

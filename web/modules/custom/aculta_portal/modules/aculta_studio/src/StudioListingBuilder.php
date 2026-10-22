@@ -41,7 +41,7 @@ final class StudioListingBuilder {
   /**
    * Table of nodes of a bundle in a moderation state (or any state when $state is NULL).
    *
-   * @param array{bundle: string, state?: string|null} $listing
+   * @param array{bundle: string, state?: string|null, purpose?: string} $listing
    */
   public function build(array $listing, AccountInterface $account): array {
     if (($listing['entity'] ?? 'node') === 'comment') {
@@ -162,7 +162,7 @@ final class StudioListingBuilder {
         'changed' => $this->dateFormatter->format($node->getChangedTime(), 'short'),
       ];
       if (!empty($listing['editable'])) {
-        $row['edit'] = $this->editLink($node);
+        $row['edit'] = $this->editLink($node, $listing['purpose'] ?? 'main');
       }
       $rows[] = $row;
     }
@@ -354,15 +354,18 @@ final class StudioListingBuilder {
 
   /**
    * Edit link to the owner's edit form in the owner's domain. Access is the owner's node access, evaluated there.
+   *
+   * The listing declares the purpose of the content it shows; without one,
+   * the main domain is kept for listings that are not tied to a purpose.
    */
-  private function editLink(object $node): array {
-    $url = $this->domainPurposes->routeUrl('main', 'entity.node.edit_form', ['node' => $node->id()]);
+  private function editLink(object $node, string $purpose = 'main'): array {
+    $url = $this->domainPurposes->routeUrl($purpose, 'entity.node.edit_form', ['node' => $node->id()]);
     if ($url === NULL) {
       return ['data' => ''];
     }
     // The route's own access (admin route, domain and entity checks), not a copy of the rule.
     $account = $this->account;
-    $access = $this->domainPurposes->runInPurpose('main', static fn (): bool => $url->access($account));
+    $access = $this->domainPurposes->runInPurpose($purpose, static fn (): bool => $url->access($account));
     if (!$access) {
       return ['data' => ''];
     }
