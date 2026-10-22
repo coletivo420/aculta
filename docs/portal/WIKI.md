@@ -125,3 +125,8 @@ não existe atualmente um endpoint administrativo Wiki de comentários.
 ## Planejamento visual Wiki420 — W420-UX 0.1.0-dev.1
 
 A especificação transversal das telas Home, busca, categoria, verbete, histórico, discussão e contribuição está em [WIKI420-VISUAL-EXPERIENCE.md](WIKI420-VISUAL-EXPERIENCE.md). O documento é **planejamento**: reaproveita os SDCs existentes do ACULTA420, exige UI Patterns/UI Styles e preserva Institution Bar + Domain Header, com a busca Wiki já integrada. Não cria novas rotas, interfaces funcionais ou providers sem auditoria.
+
+
+## WE SATIVA — contribuição editorial
+
+Planejada a interface independente [WE SATIVA — Wiki Editor Sativa](WE-SATIVA-VISUAL-EDITOR.md) para criação, revisão e acompanhamento de verbetes por usuários autorizados, sem depender do GanjaLab/GanjaLab420. A Wiki pública e o editor são ambos mobile-first. A implementação futura reutiliza Drupal Node/Form API, revisão e Content Moderation, com apresentação SDC/UI Suite do ACULTA420; este plano não habilita novas permissões ou rotas.
