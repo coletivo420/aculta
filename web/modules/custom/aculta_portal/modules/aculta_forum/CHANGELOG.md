@@ -1,3 +1,10 @@
+## `0.1.0-dev.188` — refletir política de imagens nos diálogos
+
+- O anexo só mostra o campo de descrição quando a política efetiva habilita
+  upload de imagem. O diálogo de galeria explica quando nenhuma extensão de
+  imagem está autorizada e não exibe ação para criar uma galeria vazia.
+- Sem alteração no Runtime ou smoke autenticado nesta etapa.
+
 ## `0.1.0-dev.187` — alinhar tamanho do texto alternativo ao Core
 
 - O diálogo de galeria informa e valida o limite de 512 caracteres por

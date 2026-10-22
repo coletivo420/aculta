@@ -66,12 +66,14 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     ];
 
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'image_file', 'document_file');
-    $form['image_alt'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Descrição da imagem'),
-      '#description' => $this->t('Obrigatória ao enviar uma imagem. Descreva o que ela mostra; documentos não usam este campo.'),
-      '#maxlength' => 512,
-    ];
+    if (isset($form['image_file'])) {
+      $form['image_alt'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Descrição da imagem'),
+        '#description' => $this->t('Obrigatória ao enviar uma imagem. Descreva o que ela mostra; documentos não usam este campo.'),
+        '#maxlength' => 512,
+      ];
+    }
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [

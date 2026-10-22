@@ -1,3 +1,11 @@
+## dev.188 — formulários conforme a política efetiva de imagem
+
+- Inspeção do construtor compartilhado confirmou que ele omite o controle de
+  imagem quando a allowlist do consumidor não contém extensão raster. O
+  formulário de anexo agora só mostra o campo alt quando o controle existe; a
+  galeria explica a política sem oferecer criação vazia.
+- Sem alteração no Runtime ou smoke autenticado nesta entrega.
+
 ## dev.187 — limite por descrição da imagem
 
 - O código do Drupal Core 11.4 limita `ImageWidget` a 512 caracteres no campo

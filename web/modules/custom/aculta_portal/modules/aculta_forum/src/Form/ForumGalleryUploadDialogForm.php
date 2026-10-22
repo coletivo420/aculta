@@ -67,6 +67,13 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       '#maxlength' => 255,
     ];
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'images', NULL, TRUE);
+    if (!isset($form['images'])) {
+      $form['policy_notice'] = [
+        '#type' => 'item',
+        '#plain_text' => $this->t('A política de upload atual não permite extensões de imagem para o Fórum.'),
+      ];
+      return $form;
+    }
     $form['image_alts'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Descrição de cada imagem'),
