@@ -370,3 +370,7 @@ O dashboard GanjaLab420 agora renderiza `aculta420:context-header` como H1 e o h
 ## THEME-UX 0.8-B2 — Context Tabs em SDC/UI Suite
 
 Novo componente experimental `aculta420:context-tabs` criado com schema Core SDC, CSS tokenizado e duas stories UI Patterns Library. [Plano B2 e evidências](theme-ux-0.8-b2-context-tabs.md) distingue navegação por URLs reais de `product-tabs` (painéis Bootstrap), preservando Institution Bar + Domain Header. A integração com o Studio e a Wiki, assim como testes Runtime, permanecem **pendentes**.
+
+## B2-03 — primeiro consumidor de Context Tabs (2026-10-22)
+
+O GanjaLab (`aculta_studio`) integra agora `aculta420:context-tabs` nos menus de áreas e abas da seção, preservando links Drupal/PortalLinkElement, AJAX progressivo e fallback sem JS por contrato. CSS do componente passou a acomodar `item_list` renderizável. [Relatório B2](theme-ux-0.8-b2-context-tabs.md). Sem testes Runtime; o segundo consumidor e homologação continuam pendentes.
