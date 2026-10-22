@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — testes do controlador e do formulário — 2026-10-22
+
+- Cria testes unitários em `tests/src/Unit` para as duas classes movidas:
+  `WikiControllerTest` (5 testes) e `WikiSearchFormBuilderTest` (4 testes).
+  Execução: `9 testes, 34 asserções, OK`.
+- Correção de robustez encontrada pelos testes: `$request->query->get('q', '')`
+  lança `BadRequestException` (`Input value "q" contains a non-scalar value.`)
+  quando a URL traz `q[]=...`. `WikiController::search()`,
+  `WikiController::preview()` e `WikiSearchFormBuilder::build()` passam a ler
+  `query->all()['q'] ?? ''` e só aceitam valor escalar; um `q[]` malformado
+  deixa o campo vazio em vez de derrubar a requisição.
+- Os testes rodam sem o módulo habilitado e sem banco; nenhuma operação de
+  Runtime.
+
 ## Não lançado — rotas movidas — 2026-10-22
 
 - `aculta_portal.wiki_home` (`/wiki`), `aculta_portal.wiki_search`

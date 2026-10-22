@@ -26,7 +26,9 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
    * The current query value is repeated in the shared header on search results.
    */
   public function build(): array {
-    $term = $this->requestStack->getCurrentRequest()?->query->get('q', '');
+    // InputBag::get() throws on non-scalar values; read the raw bag so that
+    // malformed queries (ex.: `q[]=x`) only leave the field empty.
+    $term = $this->requestStack->getCurrentRequest()?->query->all()['q'] ?? '';
     $term = is_string($term) ? mb_substr(trim($term), 0, 100) : '';
 
     return [

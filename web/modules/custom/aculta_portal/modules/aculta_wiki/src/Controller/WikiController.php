@@ -86,7 +86,10 @@ final class WikiController extends ControllerBase {
    * Searches only published Wiki entries by title, summary, and body.
    */
   public function search(Request $request): array {
-    $term = trim((string) $request->query->get('q', ''));
+    // InputBag::get() throws on non-scalar values; a malformed `q[]` is treated
+    // as an empty term instead of failing the request.
+    $raw = $request->query->all()['q'] ?? '';
+    $term = trim(is_string($raw) ? $raw : '');
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
@@ -123,7 +126,10 @@ final class WikiController extends ControllerBase {
    * Returns a no-store HTML preview using the full Wiki search query.
    */
   public function preview(Request $request): Response {
-    $term = trim((string) $request->query->get('q', ''));
+    // InputBag::get() throws on non-scalar values; a malformed `q[]` is treated
+    // as an empty term instead of failing the request.
+    $raw = $request->query->all()['q'] ?? '';
+    $term = trim(is_string($raw) ? $raw : '');
     $term = mb_substr($term, 0, SearchPageController::MAX_CHARS);
     $build = ['#cache' => ['max-age' => 0]];
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
