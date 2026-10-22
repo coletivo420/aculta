@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Experience;
 
-use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class GanjaLab420ExperienceProvider implements StudioExperienceProviderInterface {
 
   public function __construct(
-    private readonly ?LearningDashboardController $lmsDashboard,
+    private readonly ?LearnerDashboardComposer $lmsDashboard,
   ) {}
 
   public function id(): string {
@@ -49,7 +49,7 @@ final class GanjaLab420ExperienceProvider implements StudioExperienceProviderInt
     if (!$this->available()) {
       throw new NotFoundHttpException();
     }
-    return $this->lmsDashboard->student();
+    return $this->lmsDashboard->build();
   }
 
 }
