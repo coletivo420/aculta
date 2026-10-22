@@ -56,3 +56,11 @@ Mobile 320px: linha de retorno e título, ações secundárias recolhíveis **se
 ## Auditoria de código B1 — continuação
 
 [Inspeção de breadcrumb, headings e limites de reuso](theme-ux-0.8-b1-source-audit.md) confirma por código que o breadcrumb já tem template e estilo do tema, `content-section` usa H2/H3 e `product-tabs` possui semântica de painéis internos. Não criar outro breadcrumb ou forçar o SDC editorial a emitir H1. Consumidores reais e DOM ainda não confirmados no Runtime.
+
+## Decisão revisada — ownership do H1 (2026-10-22)
+
+**Não preservar obrigatoriamente a renderização nativa do H1.** O `Context Header` poderá assumir o **H1 canônico e visível** da página. O Drupal continua fonte de verdade do título e da entidade; o **provider/page builder decide onde renderizar** esse título, suprimindo ou removendo a saída visual nativa redundante no mesmo contexto. Não ocultar H1 duplicado com CSS nem desativar o page title globalmente: a substituição é **cirúrgica por rota/consumer**, com fallback definido para páginas que ainda não adotaram o SDC.
+
+Contrato revisado: o SDC apresenta um slot `page_title` renderizável (preferencial quando vindo do Core) ou uma prop `title` texto processado; um dos dois é escolhido pelo provider. O componente é dono da tag `h1` visível quando configurado em `heading_mode: primary`; modo secundário só com semântica explicitamente justificada. Nunca renderizar slot com H1 já encapsulado **dentro** de outro H1. Checar `html_head`/metadados, breadcrumbs, âncoras, views e leitores de tela; não alterar TitleResolver ou entidades.
+
+**Gate:** exatamente um H1 primário em cada página elegível, persistência de Institution Bar + Domain Header, acesso/cache e fallback sem JS. Esta mudança substitui as sugestões anteriores deste documento de preservar o H1 Core fora do SDC; não é implementação concluída.
