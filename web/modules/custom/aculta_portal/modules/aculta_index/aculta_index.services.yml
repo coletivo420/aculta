@@ -1,0 +1,6 @@
+services:
+  aculta_index.provider_registry:
+    class: Drupal\aculta_index\Provider\ContentIndexProviderRegistry
+    arguments: [!tagged_iterator aculta_index.provider]
+
+  Drupal\aculta_index\Provider\ContentIndexProviderRegistry: '@aculta_index.provider_registry'

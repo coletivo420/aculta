@@ -16,7 +16,7 @@ Não foi encontrado um catálogo ACULTA normalizado e transversal de entidades e
 - `aculta_statistics` mantém métricas separadas de descoberta de conteúdo. Oferece catálogo de métricas, recorder, agregado diário, reconciliação e providers de relatório, mas não é uma fila genérica nem um indexador de entidades.
 - Não foi identificada fila genérica ACULTA que deva ser promovida a requisito do índice. `aculta_links` tem uma fila local para contagem de cliques; sua semântica não cobre projeção de entidades.
 
-IDX 0.1-A está concluída. Nenhum código de runtime foi alterado nesta fase. A matriz abaixo distingue código confirmado de documentação legada; nenhum trecho de módulo contrib foi copiado.
+IDX 0.1-A está concluída. Nenhum código de runtime foi alterado nesta fase. A matriz abaixo distingue código confirmado de documentação legada; nenhum trecho de módulo contrib foi copiado. Decisão posterior do responsável: não instalar módulos contrib pesquisados, integrar APIs ACULTA existentes e somente portar código se uma lacuna concreta justificar a operação, preservando proveniência. A identidade escolhida é uma entrada por entidade e idioma (hoje `pt_BR`), sem linhas por revisão.
 
 ## Auditoria prioritária: `aculta_statistics`
 
@@ -35,6 +35,8 @@ IDX 0.1-A está concluída. Nenhum código de runtime foi alterado nesta fase. A
 | Commerce/pagamentos | `CommerceOrderPaidSubscriber.php`, `CommercePaymentRefundHooks.php`, `CommerceOrderDomainHooks.php` | Eventos e resolução de purpose servem de referência para desacoplamento. Dados analíticos continuam no Statistics e dados oficiais no Commerce. |
 | E-mail | `Email/EmailProvider.php`, `EmailFunnel.php`, `EmailReconciler.php` | Fonte e agregação já têm dono. Não indexar destinatários, logs ou identificadores pessoais. |
 | Providers e APIs de relatório | `EmailProviderInterface.php`, `LmsClassResolverInterface.php`, `PurposeResolverInterface.php`, `WikiProvider.php`; contratos em `aculta_statistics.services.yml` | Contratos são locais a Statistics; criar ponte opcional no índice sem dependência obrigatória/circular. |
+| Jobs, filas e reconciliação | Não há fila/workers genéricos de sincronização em `aculta_statistics`; reconciliação de e-mail/Commerce roda em cron e LMS usa KeyValue para deduplicação | Recalcula agregados e deduplica eventos analíticos | Adaptar apenas padrões idempotentes; não conectar o fluxo analítico ao worker do índice. Sem serviço genérico a extrair. |
+| Consulta administrativa e histórico | `Controller/StatisticsDashboardController.php`, `Wiki/WikiRevisionReport.php`, `DailyAggregateStorage.php` | Painéis, relatório de revisões e séries diárias | Manter no Statistics; o índice fornece IDs/seleções somente via bridge opcional. Não incluir métrica/histórico nas projeções. |
 | Persistência e cache | `aculta_statistics.services.yml`, `DailyAggregateStorage.php`; tag `aculta_statistics` | Não compartilhar storage. Revisar cache de consulta no consumidor e invalidar por tags próprias do índice. |
 | Tabelas e estatísticas | `aculta_statistics.install`, dados de retenção do LMS e fontes Commerce/e-mail | Nenhuma tabela de métricas deve migrar para `aculta_index`. |
 

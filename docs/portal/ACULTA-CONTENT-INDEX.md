@@ -1,6 +1,6 @@
 # ACULTA Content Index
 
-**Versão da iniciativa:** 0.1.0 — IDX 0.1-A concluída; implementação pendente.
+**Versão da iniciativa:** 0.1.0 — IDX 0.1-B em desenvolvimento; registry inicial implementado.
 **Dono:** Kernel `aculta_portal`, submódulo opcional `aculta_index`.
 **ADR:** [ADR-013](../decisions/ADR-013-aculta-content-index.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
@@ -24,7 +24,7 @@ O catálogo não é dono de nenhuma entidade original. O módulo de origem mant�
 
 ## Projeção prevista
 
-O schema definitivo fica para IDX 0.1-C. A auditoria aponta identidade por tipo de entidade + ID original + idioma/revisão conforme semântica validada, além de bundle, UUID, domínio estável, módulo proprietário, estado de indexação, título mínimo, datas, fingerprint/versão e geração. Campos devem ser allowlist por provider. Não copiar corpos integrais, arquivos, segredos ou informação pessoal desnecessária.
+Decisão do responsável para 0.1: uma identidade por entidade e idioma, sem entradas separadas por revisão. Como o site hoje usa `pt_BR`, normalmente haverá uma linha por entidade; preservar o idioma na identidade evita remodelagem se outros idiomas forem habilitados. O schema ainda será definido na IDX 0.1-C e poderá guardar identidade, bundle, UUID, domínio estável, módulo proprietário, estado de indexação, título mínimo, datas, fingerprint/versão e geração. Campos devem ser allowlist por provider. Não copiar corpos integrais, arquivos, segredos ou informação pessoal desnecessária.
 
 Relações são direcionadas, tipadas e produzidas por provider. Cada tipo declara origem, cardinalidade, remoção e acesso. Entity Usage é referência para descoberta de relações, não fonte pública universal. Relações com usuários/autores exigem justificativa de necessidade e política de acesso.
 
@@ -38,8 +38,8 @@ Core Queue é candidato inicial, sujeito às garantias de retry/delay/concurrenc
 
 | Fase | Entrega | Estado |
 |---|---|---|
-| IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída documentalmente |
-| IDX 0.1-B | Fundação opcional e contratos mínimos | Próxima |
+| IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
+| IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
 | IDX 0.1-C | Schema e primeiro provider | Pendente |
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Pendente |
 | IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Pendente |

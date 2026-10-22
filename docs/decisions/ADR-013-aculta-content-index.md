@@ -24,6 +24,8 @@ Search API continua responsável pela busca textual, datasource/tracking e backe
 
 Os providers definem allowlists de entidades, metadados e relações. Relações têm tipo, direção, origem, cardinalidade e lifecycle explícitos. Dados pessoais, corpos integrais e arquivos não são projetados sem caso de uso demonstrado.
 
+No 0.1, a identidade de uma entrada representa uma entidade e um idioma; revisões não geram entradas independentes. O site hoje usa `pt_BR`, mas o idioma permanece na identidade. Providers opcionais são serviços DI tagueados como `aculta_index.provider`, escolhidos pelo responsável para evitar um plugin manager prematuro. Não instalar Search API, Advanced Queue, Entity Usage, Views Bulk Operations ou Track Usage para esta iniciativa; usar APIs ACULTA/Core existentes e portar código somente se uma lacuna técnica concreta exigir e a proveniência/licença estiver registrada.
+
 Reconstruções usam geração/checkpoint e catch-up de alterações. A gravação valida versão/fingerprint para impedir jobs antigos de sobrescrever dados novos. Mudanças que reduzam exposição bloqueiam ou removem a entrada síncronamente; workers e caches não podem manter visibilidade privada até a fila drenar. Todas as leituras verificam acesso na entidade original.
 
 ## Alternativas consideradas
@@ -45,4 +47,4 @@ Reconstruções usam geração/checkpoint e catch-up de alterações. A gravaç�
 
 ## Próximos passos
 
-IDX 0.1-B define manifesto, serviços e contratos mínimos; IDX 0.1-C define schema/identidade e primeiro provider. O detalhamento, status e bloqueios estão no roadmap do [ACULTA Content Index](../portal/ACULTA-CONTENT-INDEX.md).
+IDX 0.1-B estabeleceu manifesto, registry e contrato inicial de providers. IDX 0.1-C define schema e primeiro provider, respeitando as decisões de identidade acima. O detalhamento, status e bloqueios estão no roadmap do [ACULTA Content Index](../portal/ACULTA-CONTENT-INDEX.md).
