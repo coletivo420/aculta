@@ -355,3 +355,7 @@ Consultar [roadmap visual transversal](visual-cross-product-roadmap.md) e [matri
 ## Novo componente experimental — `aculta420:context-header`
 
 Diretório: `components/patterns/context-header/`. Apresentação contextual abaixo do shell multidomínio; `title` texto simples obrigatório, `eyebrow` e `subtitle` opcionais, slots `breadcrumbs`, `back_link`, `actions`. O Twig renderiza H1 e **exige que o consumer evite emitir outro H1 na mesma página**. Tem stories estáticas educacional/editorial e CSS semântico. Não depende de LMS, Wiki, Group ou Domain. **Não usar em rota de produção antes da revisão B1-02d, prova de consumidores e testes Runtime**. [Contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
+
+## Context Header — primeiro consumidor Wiki
+
+`node--wiki-entry--full.html.twig` usa `aculta420:context-header` com `title` do label da entidade e `eyebrow` editorial. `aculta420:wiki-entry` tem a prop booleana `show_heading`, default `true`, configurada como `false` apenas na página completa para transferir o H1 sem alterar teasers e outros consumidores. O CSS existente de `.aculta-wiki-article__header` pode exigir adaptação após inspeção visual do Runtime. O component Context Header permanece `experimental` até validações em Drupal e segundo consumidor real.
