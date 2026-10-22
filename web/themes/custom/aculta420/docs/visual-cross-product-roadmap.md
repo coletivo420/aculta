@@ -192,4 +192,8 @@ O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_po
 
 ## Wiki420 / WE SATIVA — moderação antes da próxima fase visual
 
-O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) estabelece a primeira publicação de conta `email_confirmed` como moderada e cria a especificação da fila editorial Wiki. Serviços neutros reutilizáveis entre Fórum, Wiki e demais kernels passam pelo `aculta_portal` conforme [política transversal](../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md), mantendo dados/workflows por contexto. **Adiar inspeção/refatoração visual até concluir o desenho de contratos, acesso e ownership**. Depois compor UI SDC/UI Patterns/UI Styles mobile-first, sem shell duplicado.
+O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) estabelece a primeira publicação de conta `email_confirmed` como moderada e cria a especificação da fila editorial Wiki. Serviços neutros reutilizáveis entre Fórum, Wiki e demais kernels passam pelo `aculta_user` conforme [política transversal](../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md), mantendo dados/workflows por contexto. **Adiar inspeção/refatoração visual até concluir o desenho de contratos, acesso e ownership**. Depois compor UI SDC/UI Patterns/UI Styles mobile-first, sem shell duplicado.
+
+## Retificação de ownership (2026-10-22)
+
+**A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
