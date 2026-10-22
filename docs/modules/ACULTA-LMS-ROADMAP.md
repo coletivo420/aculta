@@ -614,3 +614,7 @@ Prévia de mudanças: `composer require --dry-run`, `composer validate`, `compos
 | F16/RC (gates) | WCAG 2.2 AA, 320–1440px, light/dark, keyboard move, AJAX/no-JS, salvamento/concorrência, impacto em turmas ativas |
 
 A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** presumir entidade Módulo, tipo específico para vídeo/PDF/H5P, nem capacidade de drag-and-drop no backend. A fase CB-UX 0.3.0 deve provar providers e persistência de ordem antes de qualquer edição/reorganização. Desktop: árvore + editor de item em duas colunas; mobile: estrutura → item → edição, uma tela por vez. Todas as operações revalidam acesso nativo e atualizam cache adequadamente. Preservar especialmente as pendências e riscos já registrados neste roadmap.
+
+## Experiências de criador e estudante
+
+**GanjaLab**: criação e edição de cursos via módulo técnico `aculta_studio` e Course Builder planejado. **GanjaLab420**: experiência do estudante, conforme [documentação inicial](../portal/GANJALAB420-LEARNING-UX.md). Ambas compartilham LMS/Group sem novos bancos, matrículas ou notas. A linha visual G420-UX 0.1–0.8 não substitui fases F0–F17, nem altera seus estados e gates. Ver [identidade pública](../portal/GANJALAB-BRANDING.md).
