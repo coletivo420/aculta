@@ -57,3 +57,24 @@ Coluna principal (aprox. 65–75%) apresenta a trilha curricular, linha do tempo
 | 0.5-E | regressão A/B, acessibilidade, domínio e documentação | evidências Runtime |
 
 Este documento **não instala código, não altera rotas e não declara progresso ou certificados já disponíveis**.
+
+## Refinamento de wireframes — Jornada e Conquistas (2026-10-22)
+
+**Tela principal mobile:** cabeçalho compacto GanjaLab420/curso; “Minha jornada”; cartão de continuar com progresso **somente oficial**; percurso em módulos e aulas com ícone + texto de estado (concluído, atual, pendente, bloqueado quando identificável); acesso a atividade pendente e conquistas reais. Desktop mantém percurso principal e painel discreto de próximas ações. Progresso visual não pode mascarar etapas dependentes de avaliação.
+
+**Exemplo textual:**
+```text
+Minha jornada · Redução de danos
+[Continuar aprendendo →]
+[Progresso oficial, se disponível]
+✓ Módulo 1 · Fundamentos
+  ✓ Conceitos · ✓ História
+○ Módulo 2 · Práticas
+  ▶ Aula atual · ◷ Atividade pendente
+[Próxima etapa: estado público permitido]
+[Minhas conquistas →]
+```
+
+**Navegação complementar:** três visões ou filtros “Percurso / Atividades / Conquistas”, sem produzir status paralelos nem replicar dados em JS. “Aguardando correção” não equivale a “concluído”. Certificados só podem mostrar PDF/QR a partir do registro oficial emitido. As imagens e percentuais dos protótipos são demonstrativos; nunca persistir esses dados como informação acadêmica.
+
+**Próximo planejamento:** [Minhas Turmas e Comunidade](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md), conectando jornada pessoal ao contexto Group/Fórum/Messenger, sem misturar turmas ou dados de colegas. 
