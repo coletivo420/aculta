@@ -310,3 +310,7 @@ justificativa aceita pelo responsável. Os gates passam. Não há dívida nova s
 ## Roadmap visual transversal — THEME-UX 0.8 (planejado)
 
 O planejamento visual originado no GanjaLab420 agora possui **roadmap de implementação próprio do tema**: [visual-cross-product-roadmap.md](visual-cross-product-roadmap.md). As microfases THEME-UX 0.8-A/B0/B1/B2/B3/B4/B5 cobrem auditoria de consumidores SDC reais, preservação mandatória do shell multidomínio, context header interno, abas, estados, leitor/listas de recursos e catálogo UI Patterns. Priorizar reutilização entre GanjaLab420, GanjaLab, Revista, Wiki, Fórum, Galeria e Conta. **Somente planejamento**: não incrementar versão de release do tema nem marcar gates PASS por esta documentação. Os ciclos e marcos existentes neste roadmap permanecem preservados.
+
+## Próxima fase técnica de tema — THEME-UX 0.8-A/B0 com UI Suite
+
+[Plano de auditoria técnica e UI Suite](theme-ux-0.8-a-ui-suite-audit.md) organiza o inventário Runtime de SDC, UI Patterns, UI Patterns Library, UI Styles, Fences e integrações Views/blocks/fields/layouts, com preservação obrigatória do shell multidomínio. Ver [roadmap visual transversal](visual-cross-product-roadmap.md). **Planejado, não executado**.
