@@ -97,3 +97,7 @@ O provider fornece render arrays de Form API, links/autorização por ação, es
 5. Revisar escopo equipe/moderação, permissões cross-domain e comportamento móvel em Runtime real.
 
 Este documento **não** altera banco, roles, fluxos existentes nem autoriza exclusões; é especificação para execução em etapas.
+
+## Planejamento visual específico — Revista
+
+A proposta mobile-first detalhada para a experiência de post, criação e edição da Revista está em [STUDIO-REVISTA-EDITOR-VISUAL.md](STUDIO-REVISTA-EDITOR-VISUAL.md). O documento detalha o shell CKEditor 5, configurações progressivas, prévia, fluxos editoriais, a prioridade de “Minhas publicações”, separação de fila de equipe e os gates de acessibilidade. **É planejamento; nenhuma tela foi implementada nesta entrega.**
