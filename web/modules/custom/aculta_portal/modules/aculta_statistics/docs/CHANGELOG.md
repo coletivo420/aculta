@@ -1,5 +1,21 @@
 # Changelog — ACULTA Statistics
 
+## 0.9.0-dev.6 — contrato `lms.students.by_status` validado no Runtime
+
+- Validação do contrato de estatísticas LMS por turma (`docs/ROADMAP.md`,
+  seção "Produtores de eventos" e item 4 de "Centralização"): com uma turma de
+  teste de três estudantes, o instantâneo gravou as dimensões
+  `1/64|students=3`, `1/64|not_started=1`, `1/64|in_progress=1` e
+  `1/64|passed=1`; situações com zero foram omitidas.
+- Duas execuções seguidas do hook de cron produziram exatamente as mesmas linhas
+  (idempotência do `replaceDay()`), e nenhuma linha da métrica individual
+  `lms.student.status` foi criada — o painel individual fica fora, como decidido.
+- Os dados de teste (turma, matrículas, estados e contas) foram removidos e o
+  hook rodou de novo: a métrica voltou a zero linhas no dia, restaurando a linha
+  de base. Sem alteração de código nesta tarefa.
+- Testes: `LmsClassStatusSubscriberTest` (2 testes, 5 asserções) aprovado com
+  PHPUnit 11.5.57 e PHP 8.4.26.
+
 ## 0.9.0-dev.5 — contabilizar posts revisionáveis do Fórum
 
 - O assinante reconhece `aculta_forum.post_created` e grava a métrica pública
