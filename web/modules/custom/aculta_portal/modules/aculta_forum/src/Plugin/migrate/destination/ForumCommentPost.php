@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Plugin\migrate\destination;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Field\FieldTypePluginManagerInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\migrate\Attribute\MigrateDestination;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
@@ -21,6 +28,34 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 #[MigrateDestination(id: 'aculta_forum_comment_post')]
 final class ForumCommentPost extends EntityContentBase {
+
+  /**
+   * The entity type manager used to resolve embedded references.
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    MigrationInterface $migration,
+    EntityStorageInterface $storage,
+    array $bundles,
+    EntityFieldManagerInterface $entity_field_manager,
+    FieldTypePluginManagerInterface $field_type_manager,
+    ?AccountSwitcherInterface $account_switcher = NULL,
+    ?EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL,
+    ?EntityTypeManagerInterface $entity_type_manager = NULL,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration, $storage, $bundles, $entity_field_manager, $field_type_manager, $account_switcher, $entity_type_bundle_info);
+    if (!$entity_type_manager instanceof EntityTypeManagerInterface) {
+      throw new \InvalidArgumentException('EntityTypeManagerInterface é obrigatório para validar embeds da migration.');
+    }
+    $this->entityTypeManager = $entity_type_manager;
+  }
 
   /**
    * {@inheritdoc}
@@ -41,6 +76,7 @@ final class ForumCommentPost extends EntityContentBase {
       $container->get('plugin.manager.field.field_type'),
       $container->get('account_switcher'),
       $bundle_info,
+      $entity_type_manager,
     );
   }
 
@@ -75,6 +111,7 @@ final class ForumCommentPost extends EntityContentBase {
         throw new MigrateException(sprintf('Comment %s usa formato de texto incompatível no idioma %s.', $source_id, $langcode));
       }
     }
+    $this->validateEmbeddedEntities($source_id, $translations);
 
     if ($old_destination_id_values !== []) {
       $existing = $this->storage->load(reset($old_destination_id_values));
@@ -132,6 +169,60 @@ final class ForumCommentPost extends EntityContentBase {
    */
   public function fields(): array {
     return [];
+  }
+
+  /**
+   * Fails closed when a Media or Gallery embed no longer resolves by UUID.
+   *
+   * @param string $source_id
+   *   The source Comment ID.
+   * @param array<string, array<string, mixed>> $translations
+   *   Source translation values.
+   *
+   * @throws \Drupal\migrate\MigrateException
+   *   When a referenced Media or Gallery is missing or has no UUID.
+   */
+  private function validateEmbeddedEntities(string $source_id, array $translations): void {
+    $uuids = ['media' => [], 'media_gallery' => []];
+    foreach ($translations as $translation) {
+      $document = Html::load((string) ($translation['body_value'] ?? ''));
+      $xpath = new \DOMXPath($document);
+      foreach ($xpath->query('//*[@data-entity-type="media" or @data-entity-type="media_gallery"]') ?: [] as $element) {
+        if (!$element instanceof \DOMElement) {
+          continue;
+        }
+        $type = $element->getAttribute('data-entity-type');
+        $uuid = trim($element->getAttribute('data-entity-uuid'));
+        if ($uuid === '') {
+          throw new MigrateException(sprintf('Comment %s contém embed %s sem UUID.', $source_id, $type));
+        }
+        $uuids[$type][$uuid] = TRUE;
+      }
+    }
+
+    foreach ($uuids as $entity_type => $referenced_uuids) {
+      if ($referenced_uuids === []) {
+        continue;
+      }
+      $definition = $this->entityTypeManager->getDefinition($entity_type, FALSE);
+      $uuid_key = $definition?->getKey('uuid');
+      if (!$definition || !$uuid_key) {
+        throw new MigrateException(sprintf('Comment %s contém embed para entidade indisponível: %s.', $source_id, $entity_type));
+      }
+      $storage = $this->entityTypeManager->getStorage($entity_type);
+      $ids = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition($uuid_key, array_keys($referenced_uuids), 'IN')
+        ->execute();
+      $existing_uuids = [];
+      foreach ($storage->loadMultiple($ids) as $entity) {
+        $existing_uuids[(string) $entity->uuid()] = TRUE;
+      }
+      $missing = array_diff_key($referenced_uuids, $existing_uuids);
+      if ($missing !== []) {
+        throw new MigrateException(sprintf('Comment %s contém %d embed(s) %s sem entidade de destino.', $source_id, count($missing), $entity_type));
+      }
+    }
   }
 
 }

@@ -1,3 +1,12 @@
+## `0.1.0-dev.176` — validar embeds antes de migrar
+
+- O destino verifica em lote os UUIDs de Media e Gallery em todas as traduções
+  antes de salvar o post. Embeds sem UUID, referências ausentes ou tipos de
+  entidade indisponíveis interrompem a linha, em vez de persistirem markup
+  quebrado. Entity Usage rastreia campos `text_long` no save; a publicação
+  contextual dos anexos e galerias continua pendente de validação integrada.
+- Nenhuma migration foi executada; somente lint/PHPCS e gates estáticos.
+
 ## `0.1.0-dev.175` — reconciliar traduções em reexecuções
 
 - Reimportações da migration removem traduções de destino que deixaram de
