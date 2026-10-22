@@ -25,7 +25,7 @@ Base: SDK `mercadopago/dx-php` 3.16.0 instalado em `vendor/`; gateway `aculta_pa
 
 ## 0.0 Correção de 2026-10-16 (leia antes do resto)
 
-- O modo `test` do gateway usa credenciais `APP_USR-` (produção). As afirmações anteriores de "ambiente de teste autenticado" valem só para a conta de produção. Ver DT-MP-09.
+- O prefixo do token não identifica o ambiente: credenciais `APP_USR-` podem ser de teste. Decidir pelo modo configurado e pelo `live_mode`. A recusa da API (401 em `POST /v1/payments`, "Unauthorized use of live credentials") segue como evidência aberta no DT-MP-09. As afirmações anteriores de "ambiente de teste autenticado" valem só para a conta vinculada a essa aplicação. Ver DT-MP-09.
 - Não criar pagamentos nem assinaturas de teste até o gateway ter credenciais `TEST-`. O plano `763715780e834403864cf3c154e3167b` foi criado com essas credenciais; cancelar depende de autorização.
 
 ## 0.2 Pendências resolvidas (dev.67)

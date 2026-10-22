@@ -1,7 +1,6 @@
 # Revisão visual e de navegação do ACULTA Studio
 
-Suíte no Firefox pelo geckodriver (WebDriver W3C e BiDi), com janela no X11 (`DISPLAY`) ou headless com
-`STUDIO_HEADLESS=1`. Confere a seção "Estúdio" no menu da conta, as abas e o painel, a navegação AJAX
+Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver (WebDriver W3C e BiDi). Não usar headless para validação. Confere a seção "Estúdio" no menu da conta, as abas e o painel, a navegação AJAX
 (troca de aba sem recarregar a página), `aria-current`, largura de 390 px emulada pelo BiDi, ausência de rolagem
 horizontal e de erros de JavaScript.
 

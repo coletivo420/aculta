@@ -54,8 +54,8 @@ represente todos os sites/purposes do Runtime.
 - Não é produção: nenhum dado de produção deve ser usado nele sem decisão do
   responsável.
 
-Testes locais em máquina de desenvolvimento (por exemplo, navegador headless
-apontado para `127.0.0.1` com resolução de host própria) simulam o servidor de
+Testes locais em máquina de desenvolvimento (por exemplo, Firefox visível na
+sessão X11 apontado para `127.0.0.1` com resolução de host própria) simulam o servidor de
 testes, mas não são o servidor de testes. Resultados desses testes devem ser
 registrados como tal.
 

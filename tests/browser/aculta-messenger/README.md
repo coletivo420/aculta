@@ -1,7 +1,6 @@
 # Suíte de navegador do ACULTA Messenger
 
-Suíte de ponta a ponta com cliques e digitação reais no Firefox (headless, pelo geckodriver e o protocolo W3C
-WebDriver). Duas contas de teste, mais uma terceira para a conversa em grupo, passam pelos dois lados de cada estado.
+Suíte de ponta a ponta com cliques e digitação reais no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver e o protocolo W3C WebDriver. Duas contas de teste, mais uma terceira para a conversa em grupo, passam pelos dois lados de cada estado.
 Sem dependências npm: usa o Node 22 (`fetch` e `child_process`) e o Drush do projeto.
 
 ## Onde roda
