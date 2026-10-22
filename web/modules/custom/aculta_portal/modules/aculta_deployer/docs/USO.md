@@ -75,7 +75,7 @@ Na Hostinger, mantenha a instalação Composer diretamente na raiz da pasta do d
 ```
 
 O projeto Composer fica diretamente na raiz da pasta do domínio; não crie uma subpasta
-`aculta-site`.
+`aculta`.
 
 O caminho absoluto da pasta do domínio varia por conta. Descubra-o em hPanel → FTP Accounts;
 confirme que SSH está habilitado e que a função `symlink` foi removida de `disableFunctions`

@@ -5,7 +5,7 @@
 
 ## Ambiente e limites da auditoria
 
-- Host: `toca`; checkout: `/home/piradopirata/projetos/aculta-site`.
+- Host: `toca`; checkout: `/home/piradopirata/projetos/aculta`.
 - Branch: `docs/aculta-forum-0.1.0-dev.1`; HEAD ao concluir a sincronização concorrente: `b5e6650bf293f3bd6f308fe752fcdc847f3a381f`.
 - Drush confirmou Drupal 11.4.10, banco `aculta_runtime`, conexão válida e URI padrão `http://default`.
 - PHP CLI disponível: 8.4.26; abaixo da baseline de projeto PHP 8.5.

@@ -14,7 +14,7 @@ rewrite, headers e PHP-FPM neste servidor; produção usa LiteSpeed e precisa de
 validação específica, sem manter uma camada de compatibilidade com Nginx.
 
 No servidor de testes, `/home/aculta` é um symlink para o checkout
-`/home/piradopirata/projetos/aculta-site`; não há uma subpasta `aculta-site`
+`/home/piradopirata/projetos/aculta`; não há uma subpasta `aculta-site`
 dentro dele. O acesso público usa `/home/aculta/public_html -> web` (symlink
 relativo), e o VirtualHost aponta para `/home/aculta/public_html`. A raiz serve
 o `.htaccess` original do Drupal e permite as diretivas necessárias. Os dados
@@ -26,10 +26,10 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
 - Diretório de trabalho do Homelab e dos agentes: `/home/aculta/`. É a raiz da instalação
   Drupal (Composer, `vendor/`, `web/`, `config/sync/`, `secrets/`, `var/deployer/`, `private/`)
   e `public_html -> web` é o acesso público do Apache.
-- O repositório git aparece em `/home/aculta/aculta-site`. Até a migração completa, esse
-  caminho é um symlink para o checkout de origem em `/home/piradopirata/projetos/aculta-site`,
-  com o mesmo branch e o mesmo histórico. Não há duas cópias de trabalho: edite pelo caminho
-  canônico e confirme com `git status`.
+- O repositório git é o próprio `/home/aculta/`, que resolve para o checkout
+  `/home/piradopirata/projetos/aculta`. Não há uma subpasta `aculta-site` nem uma
+  segunda cópia de trabalho: edite pelo caminho canônico e confirme com
+  `git status`. O remoto é `git@github.com:coletivo420/aculta.git`.
 - Drush e operações de runtime devem ser executados a partir de `/home/aculta/`
   (`php vendor/drush/drush/drush.php status`), porque o bootstrap lê
   `web/sites/default/settings.php` e `settings.local.php`.
@@ -37,7 +37,7 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
   trabalho precisa estar no grupo `aculta` para o Drush conectar ao runtime. Sem essa
   permissão, o `drush status` não mostra banco nem site URI. Não relaxe o modo dos arquivos
   de configuração nem copie segredos para fora da instalação para contornar isso.
-- Estado verificado em 2026-10-19: o checkout aberto em `/home/piradopirata/projetos/aculta-site`
+- Estado verificado em 2026-10-22: o checkout em `/home/piradopirata/projetos/aculta`
   está no servidor de testes (`hostname: toca`) e o Drush alcança o Runtime de teste
   `aculta_runtime`. Neste servidor, `Site URI: http://default` é uma saída esperada quando o Drush
   roda sem `--uri`; não indica produção nem conexão errada por si só. Para comandos que dependem do

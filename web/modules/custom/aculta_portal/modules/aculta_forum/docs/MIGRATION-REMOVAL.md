@@ -97,7 +97,7 @@ Wiki, LMS, usuários ou comentários diretos de publicação.
 ## Auditoria do Runtime de teste — 2026-10-19
 
 Ambiente confirmado antes da consulta: `hostname=toca`, checkout
-`/home/piradopirata/projetos/aculta-site`, branch
+`/home/piradopirata/projetos/aculta`, branch
 `docs/aculta-forum-0.1.0-dev.1`, Drush conectado ao banco `aculta_runtime`.
 Foi usado `--uri=https://growroom420.aculta.toca.net.br` para resolver o
 purpose. Esse é o Runtime Homelab de teste, não produção. Consultas Entity API
@@ -219,7 +219,7 @@ permanece para explicar a sequência; ele não é a instrução operacional atua
 ## Limpeza e retirada do Forum contrib no Runtime de teste — 2026-10-20
 
 Ambiente verificado imediatamente antes da operação: `hostname=toca`, checkout
-`/home/piradopirata/projetos/aculta-site`, branch
+`/home/piradopirata/projetos/aculta`, branch
 `docs/aculta-forum-0.1.0-dev.1`, Drupal 11.4.10, URI
 `https://growroom420.aculta.toca.net.br`, banco `aculta_runtime`. Produção não
 foi consultada nem alterada.

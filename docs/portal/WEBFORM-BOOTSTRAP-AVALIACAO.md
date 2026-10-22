@@ -24,7 +24,7 @@ Vinculado à PR #297 (linha do ACULTA Forum), por commit no branch da própria P
 | Classe `Drupal\bootstrap\Bootstrap` | Inexistente no Bootstrap 5 (`class_exists = false`, leitura no Runtime de teste) |
 | Forms do Portal | `aculta_contact` e `aculta_participation` (`config/sync/webform.webform.*.yml`), sem `image_button`, sem `likert` como elemento e sem `title_display: inline` |
 
-Ambiente: `hostname=toca`; Drush alcança o Runtime `aculta_runtime` (`Site URI: http://default`, esperado neste ambiente). O Drupal root é `web/` do checkout `/home/piradopirata/projetos/aculta-site`; não há `public_html` nesse caminho.
+Ambiente: `hostname=toca`; Drush alcança o Runtime `aculta_runtime` (`Site URI: http://default`, esperado neste ambiente). O Drupal root é `web/` do checkout `/home/piradopirata/projetos/aculta`; não há `public_html` nesse caminho.
 
 ## 2. Inventário e decisão por funcionalidade
 

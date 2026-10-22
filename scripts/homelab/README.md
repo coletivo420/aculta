@@ -11,8 +11,8 @@ banco. Nunca implante um Estado em produção.
 Fluxo de preparação:
 
 ```sh
-git clone git@github.com:coletivo420/aculta-site.git
-cd aculta-site
+git clone git@github.com:coletivo420/aculta.git
+cd aculta
 composer install
 cp web/sites/default/settings.homelab.php.example web/sites/default/settings.homelab.php
 export ACULTA_ENV=homelab

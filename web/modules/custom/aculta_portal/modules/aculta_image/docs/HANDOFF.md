@@ -30,7 +30,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 
 ## 2. Git e working tree
 
-- Branch: `chore/messenger-pendencias`, publicado em `origin` (o remoto mudou de nome para `coletivo420/aculta`; o `origin` local ainda aponta para `coletivo420/aculta-site` e o push funciona).
+- Branch: `chore/messenger-pendencias`, publicado em `origin` (o repositório mudou de nome para `coletivo420/aculta` em 2026-10-22; o `origin` local foi atualizado para `git@github.com:coletivo420/aculta.git`).
 - **Observação de processo:** o responsável decidiu que não haverá um branch por tarefa. A tarefa de imagem continua no branch atual e deve ser registrada em um commit atômico próprio, sem incluir alterações de outras frentes. Não criar ou trocar de branch para esta entrega.
 - Commits desta frente (do mais antigo ao mais novo, a partir de `b5260eef`):
 
@@ -62,7 +62,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 ## 3. Verificação rápida (Homelab, sem alterar nada)
 
 ```sh
-cd /home/piradopirata/projetos/aculta-site
+cd /home/piradopirata/projetos/aculta
 php scripts/validate-aculta-image.php                       # esperado: PASS
 php -l web/modules/custom/aculta_portal/modules/aculta_image/src/Plugin/CKEditor5Plugin/ImageModel.php
 node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js
@@ -70,7 +70,7 @@ php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_po
 # esperado: OK (14 tests). O aviso "browser_output is not a writable directory" é esperado e não afeta o resultado.
 ```
 
-Ambiente: checkout de teste em `/home/piradopirata/projetos/aculta-site`, branch `chore/messenger-pendencias`, host `toca`. Runtime `https://aculta.toca.net.br`, Drupal 11.4.10 / Drush 13.8.0. `config:status` foi consultado antes da importação. As mudanças de imagem foram aplicadas parcialmente e o cache reconstruído; não foi feita importação total.
+Ambiente: checkout de teste em `/home/piradopirata/projetos/aculta`, branch `chore/messenger-pendencias`, host `toca`. Runtime `https://aculta.toca.net.br`, Drupal 11.4.10 / Drush 13.8.0. `config:status` foi consultado antes da importação. As mudanças de imagem foram aplicadas parcialmente e o cache reconstruído; não foi feita importação total.
 
 ## 4. Estado do Runtime
 
