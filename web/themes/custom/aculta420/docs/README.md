@@ -89,3 +89,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [Plano visual Wiki420](../../../../../docs/portal/WIKI420-VISUAL-EXPERIENCE.md) — experiência enciclopédica mobile-first (Home, busca, verbete, categorias, histórico, discussão), contratos SDC/UI Suite e gates W420-UX 0.1.
 
 - [WE SATIVA — Wiki Editor Sativa](../../../../../docs/portal/WE-SATIVA-VISUAL-EDITOR.md) — planejamento da UI editorial independente e mobile-first da Wiki420, baseada nos SDCs/UI Suite do ACULTA420.
+
+- [Arquitetura interna WE SATIVA](../../../../../docs/portal/WE-SATIVA-INTERNAL-ARCHITECTURE.md) — mapa completo de telas, navegação, microtarefas, revisão e fundação SDC/UI Suite (WES-UX 0.3).
