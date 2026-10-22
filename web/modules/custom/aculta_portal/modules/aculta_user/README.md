@@ -45,3 +45,9 @@ Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architect
 XK 0.1-B: contratos compartilhados de primeira participação e elegibilidade de associado ativo ficam no User. Preservar ParticipationRules e ParticipationEditWindow; caracterizar Fórum e exclusões LMS antes de acrescentar lookup da primeira publicação Wiki. Consulta de situação da associação deve ser autoritativa; Group do Fórum é consumidor, não dono dessa situação.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+ACULTA Studio presents account-oriented user experiences. aculta_user stays the owner of identity, profiles, roles and first-participation policy; the GanjaLab/WE SATIVA user experience belongs to aculta_studio, not a second implementation in User.
+
+[Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
