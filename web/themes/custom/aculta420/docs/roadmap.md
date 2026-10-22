@@ -318,3 +318,7 @@ O planejamento visual originado no GanjaLab420 agora possui **roadmap de impleme
 ## Pacote de preparação THEME-UX 0.8-B0
 
 [Matriz de execução e evidências UI Suite](theme-ux-0.8-b0-execution-matrix.md): fases B0-R1 a B0-R4, auditoria do shell em todos os purposes, inventário de SDC, UI Patterns, UI Styles, Fences e stories. Todos os testes do Runtime continuam pendentes. A implementação B1 dependerá do gate B0 documentado.
+
+## Gate de migração SDC/UI Suite — decisão obrigatória
+
+A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legados sem base SDC/UI Suite**. B0 classifica `SDC-CONFORME`, `SDC-PARCIAL`, `LEGADO-MIGRAR`, `DESCARTAR/SUBSTITUIR`; migração/adequação e stories antecedem a adoção transversal. Ver [roadmap visual](visual-cross-product-roadmap.md). Nenhuma fase técnica foi considerada executada por esta atualização.
