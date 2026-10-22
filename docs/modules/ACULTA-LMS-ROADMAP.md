@@ -636,3 +636,7 @@ A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora 
 ## UX de materiais — GanjaLab420 0.4.4
 
 [Leitor PDF e biblioteca de materiais](../portal/GANJALAB420-MATERIALS-PDF-VISUAL.md), usando o `aculta_pdf_viewer` e os kernels de imagem/galeria, com controle de acesso Group, fallback e testes de arquivo privado. Plano visual, sem mudar estados das fases funcionais nem renomear `aculta_lms`.
+
+## UX de acompanhamento de aprendizagem — G420-UX 0.5
+
+[Minha Jornada de Aprendizagem](../portal/GANJALAB420-LEARNING-JOURNEY-VISUAL.md) organiza progresso, status, próximas atividades e certificados em telas mobile-first usando fontes nativas LMS/Group e evitando dashboards duplicados. Planejamento visual apenas; preservar o nome técnico `aculta_lms` e os gates existentes.
