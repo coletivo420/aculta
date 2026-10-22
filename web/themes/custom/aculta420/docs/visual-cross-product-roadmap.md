@@ -188,3 +188,8 @@ O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_po
 ## WE SATIVA C01-B — confirmação de e-mail + moderação
 
 [Contrato C01-B](../../../../../docs/portal/WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md): papéis exportados já permitem a `email_confirmed` criar/editar verbetes próprios e enviar à revisão, porém **não publicar**; `content_editor` revê e publica. Microtarefas em conteúdo de terceiros aguardam mecanismo seguro de propostas, sem ampliar `edit any`. O tema exibirá `Contribuir` uma única vez no `context-header.actions`, somente com URL/access válidos, e seguirá mobile-first com shell multidomínio intacto.
+
+
+## Wiki420 / WE SATIVA — moderação antes da próxima fase visual
+
+O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) estabelece a primeira publicação de conta `email_confirmed` como moderada e cria a especificação da fila editorial Wiki. Serviços neutros reutilizáveis entre Fórum, Wiki e demais kernels passam pelo `aculta_portal` conforme [política transversal](../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md), mantendo dados/workflows por contexto. **Adiar inspeção/refatoração visual até concluir o desenho de contratos, acesso e ownership**. Depois compor UI SDC/UI Patterns/UI Styles mobile-first, sem shell duplicado.
