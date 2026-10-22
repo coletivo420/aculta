@@ -7,7 +7,7 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-`0.1.0-dev.185–188` adaptam os diálogos de imagem à política central e exigem
+`0.1.0-dev.185–189` adaptam os diálogos de imagem à política central e exigem
 texto alternativo fornecido pela pessoa autora no
 diálogo de anexo e uma descrição por cada imagem da galeria. O passo seguinte da
 integração continua sendo validar upload real, publicação contextual, acesso
@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.189` | Aplicar limite de texto alternativo no servidor | Anexo individual exige valor não vazio até 512 caracteres, conforme o campo ImageWidget do Core. Sem Runtime. |
 | `0.1.0-dev.188` | Adaptar os diálogos à política efetiva de imagem | Campo alt só aparece se a imagem estiver habilitada; galeria sem extensões permitidas informa a situação e não oferece criação vazia. Sem Runtime. |
 | `0.1.0-dev.187` | Alinhar limite de texto alternativo com o Core | Descrição por imagem não vazia e limitada a 512 caracteres, conforme `ImageWidget` do Core 11.4. Sem alteração Runtime. |
 | `0.1.0-dev.186` | Exigir descrição para cada imagem enviada à galeria | O diálogo associa cada linha ao File na ordem de upload, valida quantidade e conteúdo, e repete a verificação de arquivo/política antes de criar Media. Sem alteração Runtime ou revisão visual. |

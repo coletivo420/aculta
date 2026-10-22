@@ -1,3 +1,10 @@
+## dev.189 — limite do texto alternativo no servidor
+
+- O formulário de anexo valida tamanho Unicode de até 512 caracteres além do
+  campo HTML `maxlength`; uma requisição que contorne o navegador é rejeitada
+  antes da criação de Media.
+- Sem alteração Runtime ou upload autenticado nesta entrega.
+
 ## dev.188 — formulários conforme a política efetiva de imagem
 
 - Inspeção do construtor compartilhado confirmou que ele omite o controle de

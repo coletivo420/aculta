@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -97,9 +98,12 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     }
 
     $is_image_upload = $image_fids !== [];
-    if ($is_image_upload && trim((string) $form_state->getValue('image_alt')) === '') {
-      $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição para a imagem.'));
-      return;
+    if ($is_image_upload) {
+      $image_alt = trim((string) $form_state->getValue('image_alt'));
+      if ($image_alt === '' || Unicode::strlen($image_alt) > 512) {
+        $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição não vazia de até 512 caracteres para a imagem.'));
+        return;
+      }
     }
     $fid = $is_image_upload ? reset($image_fids) : reset($document_fids);
     $file = $this->entityTypeManager->getStorage('file')->load($fid);

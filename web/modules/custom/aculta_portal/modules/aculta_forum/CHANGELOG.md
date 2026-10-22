@@ -1,3 +1,10 @@
+## `0.1.0-dev.189` — validar tamanho alternativo no servidor
+
+- O formulário de anexo agora exige texto alternativo não vazio de até 512
+  caracteres no servidor, limite correspondente ao widget de imagem do Core.
+  O limite HTML sozinho não impedia um POST maior.
+- Sem alteração Runtime ou upload autenticado nesta etapa.
+
 ## `0.1.0-dev.188` — refletir política de imagens nos diálogos
 
 - O anexo só mostra o campo de descrição quando a política efetiva habilita
