@@ -7,10 +7,28 @@
   `field_aculta_discussion`, os displays default/full/teaser e as duas relações
   Group Node com cardinalidade 1 por entidade. O config opcional de H5P fica
   fora quando `aculta_lms_h5p` não está ativo.
-- Só entidades de configuração são instaladas; `aculta_forum_lms.settings` não
-  é criado porque o módulo não está habilitado no Kernel e seu schema não é
-  registrado. A configuração simples segue coberta pelo teste de permissões.
-- Teste: 4 testes / 128 asserções PASS. Depreciações de Core/contrib
+- Só entidades de configuração são instaladas. A fixture
+  `aculta_forum_lms_test`, habilitada no Kernel, registra o schema de
+  `aculta_forum_lms.settings` para que o `ConfigInstaller` valide a
+  configuração simples sem habilitar o adaptador e sua cadeia de dependências.
+- Teste: 4 testes / 129 asserções PASS. Depreciações de Core/contrib
+  permanecem as já registradas.
+
+## `0.1.0-dev.31` — Kernel de isolamento do contexto LMS — 2026-10-22
+
+- `LmsDiscussionContextIsolationKernelTest` instancia
+  `LmsDiscussionContextProvider` diretamente e prova que o contexto falha
+  fechado fora da relação Group exata: nó não suportado, tópico novo, tópico
+  sem relação, com duas relações, ligado a Group fora de `lms_course`/
+  `lms_class`, ou turma sem único curso pai (nenhum ou dois).
+- Prova o caminho permitido: membro do curso lê e responde enquanto o
+  `status` está aberto, fecha a escrita quando a discussão é encerrada, não
+  recebe moderação e mantém as políticas `group_members_only`,
+  `private_search_only` e `membership_revalidated` com ID estável
+  `lms:node:{uuid}`. O não membro não lê nem escreve.
+- Prova o isolamento de turma: membro de uma turma não acessa tópico de outra
+  turma do mesmo curso.
+- Teste: 6 testes / 205 asserções PASS. Depreciações de Core/contrib
   permanecem as já registradas.
 
 ## `0.1.0-dev.29` — configura janela de edição das discussões LMS — 2026-10-21

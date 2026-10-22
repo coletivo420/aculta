@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum_lms\Kernel;
 
 use Drupal\comment\Entity\CommentType;
-use Drupal\Core\Config\DefaultConfigMode;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\GroupType;
@@ -46,6 +45,7 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     'gnode',
     'lms',
     'lms_classes',
+    'aculta_forum_lms_test',
   ];
 
   /**
@@ -91,11 +91,10 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
 
     self::assertNull(NodeType::load('aculta_lms_topic'), 'The bundle does not exist before installing the adapter.');
 
-    // Only config entities are installed: the module itself is not enabled in
-    // this kernel, so its simple settings schema is not registered and the
-    // adapter's settings are covered by the role/permission test instead.
+    // The test fixture module registers the adapter settings schema, because
+    // the adapter itself cannot be enabled without its full dependency chain.
     $this->container->get('config.installer')
-      ->installDefaultConfig('module', 'aculta_forum_lms', DefaultConfigMode::InstallEntities);
+      ->installDefaultConfig('module', 'aculta_forum_lms');
   }
 
   /**
@@ -176,9 +175,10 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
   }
 
   /**
-   * Asserts missing optional config is skipped by the installer.
+   * Asserts simple settings are created and missing optional config is skipped.
    */
-  public function testConfigInstallerSkipsOptionalH5pWithoutModule(): void {
+  public function testConfigInstallerCreatesSettingsWithoutOptionalH5p(): void {
+    self::assertSame(10, $this->config('aculta_forum_lms.settings')->get('edit_window_minutes'));
     // aculta_lms_h5p is not enabled in this kernel, so its optional fields must
     // stay out of the installed bundle.
     self::assertNull(FieldConfig::load('node.aculta_lms_topic.field_h5p_content'));

@@ -66,6 +66,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'gnode',
     'lms',
     'lms_classes',
+    'aculta_forum_lms_test',
   ];
 
   /**
