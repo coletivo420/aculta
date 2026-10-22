@@ -22,6 +22,7 @@ function aculta_index_schema(): array {
         'cursor_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
         'cursor_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE, 'default' => ''],
         'cursor_revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'provider_fingerprint' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
         'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
         'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
@@ -181,5 +182,20 @@ function aculta_index_update_10003(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->tableExists('aculta_index_work')) {
     $schema->createTable('aculta_index_work', aculta_index_schema()['aculta_index_work']);
+  }
+}
+
+/**
+ * Adds provider-inventory identity to resumable generations.
+ */
+function aculta_index_update_10004(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('aculta_index_generation', 'provider_fingerprint')) {
+    $schema->addField('aculta_index_generation', 'provider_fingerprint', [
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    ]);
   }
 }

@@ -30,7 +30,7 @@ final class ContentIndexRebuilder {
    * Starts a new, empty generation for a future backfill.
    */
   public function start(): string {
-    return $this->generations->start();
+    return $this->generations->start($this->providerFingerprint());
   }
 
   /**
@@ -49,6 +49,9 @@ final class ContentIndexRebuilder {
       throw new \InvalidArgumentException(sprintf('Content Index rebuild batch size must be between 1 and %d.', self::MAX_BATCH_SIZE));
     }
     $checkpoint = $this->checkpoints->load($generationId);
+    if (!hash_equals($this->generations->getProviderFingerprint($generationId), $this->providerFingerprint())) {
+      throw new \UnexpectedValueException('The provider inventory changed during an ACULTA Content Index rebuild; restart or repair the generation.');
+    }
     $tuples = $this->tuples();
     if ($tuples === []) {
       return [
@@ -109,6 +112,25 @@ final class ContentIndexRebuilder {
       }
     }
     return $tuples;
+  }
+
+  /**
+   * Returns a stable hash of providers, entity types, and supported bundles.
+   */
+  private function providerFingerprint(): string {
+    $inventory = [];
+    $providers = $this->providers->all();
+    ksort($providers);
+    foreach ($providers as $providerId => $provider) {
+      $entityTypes = $provider->getSupportedEntityTypes();
+      ksort($entityTypes);
+      foreach ($entityTypes as &$bundles) {
+        sort($bundles);
+      }
+      unset($bundles);
+      $inventory[$providerId] = $entityTypes;
+    }
+    return hash('sha256', json_encode($inventory, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
   }
 
   /**

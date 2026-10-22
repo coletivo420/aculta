@@ -2,7 +2,7 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.11` — fila incremental e coordenador inicial de rebuild.
+**Versão:** `0.1.0-dev.12` — rebuild com inventário de providers fixado por geração.
 **Status:** Dev; schema, contratos, gerações, provider Revista, descoberta keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental e coordenação retomável de lotes implementados. Reconciliação, validação final/catch-up do rebuild, sincronização de relações-alvo e API completa de consulta pendentes; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).

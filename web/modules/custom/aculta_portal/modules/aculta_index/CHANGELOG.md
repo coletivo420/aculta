@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.12 — inventário estável e consultas sem agregados
+
+- A geração persiste fingerprint SHA-256 do inventário de providers/tipos/
+  bundles; resume falha explicitamente se o inventário habilitado mudou.
+- Update hook 10004 adiciona o fingerprint a instalações existentes. Kernel
+  cobre o update e rejeição de drift.
+- Kernel cobre backfill por lotes keyset sobre Nodes reais, checkpoint/retomada,
+  geração ainda não ativa e ausência de providers.
+- Decisão da API 0.1: páginas por cursor sem totais nem facetas; resultados
+  serão autorizados na entidade original.
+
 ## 0.1.0-dev.11 — coordenação inicial de backfill retomável
 
 - `ContentIndexRebuilder` percorre providers/tipos em ordem estável, escreve
@@ -8,8 +19,6 @@
 - Cada chamada processa no máximo um lote/tipo e informa conclusão sem marcar
   a geração como validada ou ativá-la. Integridade, drenagem/catch-up e o gate
   explícito de publicação continuam necessários.
-- Kernel cobre início e término de geração sem providers; percurso real com
-  adapter/entidades e concorrência segue pendente.
 
 ## 0.1.0-dev.10 — fila incremental e projeção contínua
 

@@ -115,6 +115,38 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Checks approved retry count and exponential delay before dead-letter.
+   */
+  public function testWorkManagerRetriesFiveTimesThenMarksDead(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $work->schedule('magazine', 'node', 'retry-1', 'pt_BR');
+    $database = $this->container->get('database');
+    $delays = [30, 60, 120, 240];
+
+    for ($attempt = 1; $attempt <= 5; $attempt++) {
+      $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+      $claim = $work->claim($status['work_id']);
+      $this->assertNotNull($claim);
+      $this->assertTrue($work->fail($claim['work_id'], $claim['sequence'], 'worker_failure'));
+      $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+      $this->assertSame($attempt, $status['attempts']);
+
+      if ($attempt < 5) {
+        $this->assertSame('retry', $status['status']);
+        $this->assertGreaterThanOrEqual($this->container->get('datetime.time')->getRequestTime() + $delays[$attempt - 1], $status['available_at']);
+        $database->update('aculta_index_work')->fields(['available_at' => 0])
+          ->condition('work_id', $status['work_id'])
+          ->execute();
+        $this->assertSame(1, $work->recover());
+      }
+      else {
+        $this->assertSame('dead', $status['status']);
+        $this->assertSame(0, $status['available_at']);
+      }
+    }
+  }
+
+  /**
    * Checks a rebuild can start and terminate cleanly without providers.
    */
   public function testRebuilderStartsEmptyGenerationWhenNoProvidersExist(): void {
@@ -218,6 +250,28 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame('0', $database->select('aculta_index_entry', 'entry')
       ->fields('entry', ['source_sequence'])
       ->condition('entity_id', '104')
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Tests the update hook adds provider inventory identity to older installs.
+   */
+  public function testUpdateHookAddsProviderFingerprint(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields(['generation_id' => 'legacy-provider-gen', 'status' => 'building'])
+      ->execute();
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_generation', 'provider_fingerprint');
+    $this->assertFalse($schema->fieldExists('aculta_index_generation', 'provider_fingerprint'));
+
+    aculta_index_update_10004();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_generation', 'provider_fingerprint'));
+    $this->assertSame('', $database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['provider_fingerprint'])
+      ->condition('generation_id', 'legacy-provider-gen')
       ->execute()
       ->fetchField());
   }

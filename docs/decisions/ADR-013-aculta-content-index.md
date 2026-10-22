@@ -26,9 +26,9 @@ Os providers definem allowlists de entidades, metadados e relações. Relações
 
 No 0.1, a identidade de uma entrada representa uma entidade e um idioma; revisões não geram entradas independentes. O site hoje usa `pt_BR`, mas o idioma permanece na identidade. Providers opcionais são serviços DI tagueados como `aculta_index.provider`, escolhidos pelo responsável para evitar um plugin manager prematuro. Não instalar Search API, Advanced Queue, Entity Usage, Views Bulk Operations ou Track Usage para esta iniciativa; usar APIs ACULTA/Core existentes e portar código somente se uma lacuna técnica concreta exigir e a proveniência/licença estiver registrada.
 
-O rebuild usa `generation_id` nas tabelas e um ponteiro de geração ativa trocado em transação. A fila incremental usará Core Queue e estado mínimo próprio para falhas/retries/dead-letter; Advanced Queue não será instalada.
+O rebuild usa `generation_id` nas tabelas e um ponteiro de geração ativa trocado em transação. A fila incremental usa Core Queue e estado mínimo próprio para falhas/retries/dead-letter; a política aprovada é cinco tentativas com backoff exponencial de 30 segundos até seis horas. Nenhum módulo contrib pesquisado será instalado.
 
-Reconstruções usam geração/checkpoint e catch-up de alterações. A gravação valida versão/fingerprint para impedir jobs antigos de sobrescrever dados novos. Mudanças que reduzam exposição bloqueiam ou removem a entrada síncronamente; workers e caches não podem manter visibilidade privada até a fila drenar. Todas as leituras verificam acesso na entidade original.
+Reconstruções usam geração/checkpoint e catch-up de alterações. A gravação valida versão/fingerprint para impedir jobs antigos de sobrescrever dados novos. O worker aplica alterações às gerações `active` e `building`; a validação final e o catch-up antes da ativação são gates pendentes. Todas as leituras verificam acesso na entidade original e falham fechadas. No contrato inicial 0.1, consultas não retornam totais nem facetas: esses agregados podem vazar informação privada e podem exigir autorizar conjuntos inteiros; uma versão futura só poderá incluí-los após filtragem por Entity Access e medição de custo.
 
 ## Alternativas consideradas
 
@@ -36,7 +36,7 @@ Reconstruções usam geração/checkpoint e catch-up de alterações. A gravaç�
 2. **Usar Entity Usage como catálogo:** rejeitada; armazena usos source/target por field, revisão e método e não é catálogo de metadados/consultas.
 3. **Mover tabelas de Statistics para o índice:** rejeitada; mistura eventos analíticos com projeções e cria dependência de ciclo de vida.
 4. **Indexar todo tipo/referência automaticamente:** rejeitada; faria relações e metadados sem garantia de semântica ou visibilidade.
-5. **Consumir Advanced Queue obrigatoriamente desde a fundação:** não decidido como requisito; Core Queue será avaliada primeiro e Advanced Queue só será integrada se a necessidade operacional for demonstrada.
+5. **Instalar Advanced Queue:** rejeitada; Core Queue com estado mínimo ACULTA atende a primeira etapa e evita dependência adicional.
 
 ## Consequências
 

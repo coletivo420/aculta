@@ -25,13 +25,17 @@ final class ContentIndexGenerationManager {
   /**
    * Starts a rebuild generation and returns its opaque ID.
    */
-  public function start(): string {
+  public function start(?string $providerFingerprint = NULL): string {
+    if ($providerFingerprint !== NULL && preg_match('/^[a-f0-9]{64}$/', $providerFingerprint) !== 1) {
+      throw new \InvalidArgumentException('Provider inventory fingerprint must be a SHA-256 hex digest.');
+    }
     $id = $this->uuid->generate();
     $now = $this->time->getRequestTime();
     $this->database->insert('aculta_index_generation')
       ->fields([
         'generation_id' => $id,
         'status' => 'building',
+        'provider_fingerprint' => $providerFingerprint ?? '',
         'created' => $now,
         'updated' => $now,
       ])
@@ -154,6 +158,22 @@ final class ContentIndexGenerationManager {
       ->orderBy('created')
       ->execute()
       ->fetchCol());
+  }
+
+  /**
+   * Returns the provider inventory fingerprint of a building generation.
+   */
+  public function getProviderFingerprint(string $generationId): string {
+    $fingerprint = $this->database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['provider_fingerprint'])
+      ->condition('generation_id', $generationId)
+      ->condition('status', 'building')
+      ->execute()
+      ->fetchField();
+    if ($fingerprint === FALSE) {
+      throw new \InvalidArgumentException(sprintf('Generation %s is missing or is not building.', $generationId));
+    }
+    return (string) $fingerprint;
   }
 
 }

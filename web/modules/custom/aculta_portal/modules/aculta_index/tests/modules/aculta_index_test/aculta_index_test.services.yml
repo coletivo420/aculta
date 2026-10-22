@@ -1,0 +1,5 @@
+services:
+  aculta_index_test.article_provider:
+    class: Drupal\aculta_index_test\ContentIndex\ArticleProvider
+    tags:
+      - { name: aculta_index.provider }
