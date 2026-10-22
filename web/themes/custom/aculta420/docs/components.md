@@ -345,3 +345,9 @@ O planejamento [GanjaLab420 × ACULTA420](../../../../../docs/portal/GANJALAB420
 ## Planejamento dos componentes transversais — 0.8-B
 
 [Contratos de Context Header, Context Tabs e Feedback](../../../../../docs/portal/GANJALAB420-SHARED-UI-PLAN.md) orientam o reuso em LMS, Revista, Wiki, Fórum e Conta. Não criar componentes antes de identificar consumidores reais e avaliar Core/Bootstrap/SDCs existentes; cada novo SDC necessita story, contrato de props/slots e testes mobile/light-dark.
+
+## Critério obrigatório de reuso (revisão 2026-10-22)
+
+O ACULTA420 só compartilha novos padrões de apresentação como **Drupal Core SDC**, preparados para **UI Patterns, UI Patterns Library e UI Styles**. Componentes preexistentes com Twig/Bootstrap puro não são elegíveis à reutilização transversal até sua migração para SDC e testes. Componentes SDC incompletos precisam de alinhamento antes de consumo novo. Conservar interfaces funcionais de terceiros (H5P, PDF.js, Form API) nos donos originais; aplicar SDC à composição visual, sem recodificar players/formulários.
+
+Consultar [roadmap visual transversal](visual-cross-product-roadmap.md) e [matriz operacional B0](theme-ux-0.8-b0-execution-matrix.md) para estados de conformidade e gates. UI Patterns/Styles são usados onde a integração é apropriada; não se requer converter indiscriminadamente todos os displays existentes.
