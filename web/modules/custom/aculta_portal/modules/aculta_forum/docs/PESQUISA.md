@@ -21,13 +21,24 @@ verificadas em `TaxonomyViewsHooks.php` e `TaxonomyHooks.php`. Referências:
 
 A View `aculta_forum_categories` parte de `taxonomy_term_field_data` e hoje não
 inclui conteúdo nem contagem. No Core instalado 11.4.10, `NodeViewsData` associa
-o tag `node_access` à tabela base de Node; `Sql::execute()` só adiciona esse
-tag automaticamente quando ele está na tabela base da View. Portanto, uma
-relação futura iniciada na View de Taxonomy precisa pedir explicitamente o tag
-`node_access` na query. A opção de query tags de Views e
-`NodeDatabaseHooks::queryNodeAccessAlter()` são os pontos instalados a validar;
-o hook de acesso descobre a tabela Node na query, aplica os grants do usuário e
-acrescenta o contexto de cache `user.node_grants:view`.
+o tag `node_access` à tabela-base de Node. `Sql::execute()` acrescenta o tag
+quando Node é a base da View; além disso,
+`RelationshipPluginBase::query()` também acrescenta o tag quando a relação
+alcança uma tabela-base que o declara. `TermViewsData` fornece o caminho
+`taxonomy_term_field_data` → `taxonomy_index` → `node_field_data` por meio da
+relação `taxonomy_index.nid`. Assim, essa relação de Views é uma candidata a
+aplicar node grants sem query tag customizado.
+
+`NodeDatabaseHooks::queryNodeAccessAlter()` localiza a tabela Node relacionada,
+aplica os grants do usuário e adiciona `user.node_grants:view` ao contexto de
+renderização. Uma listagem por query não executa `entity_access()` para cada
+Node; por isso, a configuração ainda deve fixar o bundle `aculta_forum_topic`,
+publicação e associação ao Domain do purpose `forum`. A antiga hipótese de que
+a View teria necessariamente que configurar `node_access` em `query_tags` foi
+incorreta e fica substituída por esta leitura do código Core. A presença do tag
+ainda não prova que uma contagem final esteja correta: o caminho precisa ser
+validado na consulta montada pela View, inclusive quando agregação e pager geram
+query de contagem.
 
 O Core também registra em `TaxonomyViewsHooks` a relação `taxonomy_index.nid` →
 `node_field_data`; o caminho candidato é termo → `taxonomy_index` → Node, com
@@ -47,11 +58,12 @@ alterado nesta investigação.
 Fontes: Core instalado em `web/core/modules/node/src/NodeViewsData.php`,
 `web/core/modules/node/src/Hook/NodeDatabaseHooks.php`,
 `web/core/modules/views/src/Plugin/views/query/Sql.php`,
-`web/core/modules/views/src/Plugin/views/cache/CachePluginBase.php`,
+`web/core/modules/views/src/Plugin/views/relationship/RelationshipPluginBase.php`,
 `web/core/modules/taxonomy/src/TermViewsData.php` e contrib instalado em
 `web/modules/contrib/domain/domain_access/src/Hook/DomainAccessNodeHooks.php`;
+[Views relationship access tags](https://api.drupal.org/api/drupal/core%21modules%21views%21src%21Plugin%21views%21relationship%21RelationshipPluginBase.php/function/RelationshipPluginBase%3A%3Aquery/11.x),
 [Views SQL query plugin](https://api.drupal.org/api/drupal/core%21modules%21views%21src%21Plugin%21views%21query%21Sql.php/class/Sql/11.x),
-[Core Node access grants](https://api.drupal.org/api/drupal/core%21modules%21node%21src%21NodeGrantDatabaseStorage.php/11.x),
+[Core Node access grants](https://api.drupal.org/api/drupal/core%21modules%21node%21src%21Hook%21NodeDatabaseHooks.php/class/NodeDatabaseHooks/11.x),
 [Node access API](https://www.drupal.org/docs/develop/drupal-apis/writing-a-module-that-handles-node-access).
 
 ## Estado real do repositório
