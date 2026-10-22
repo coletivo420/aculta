@@ -105,3 +105,9 @@ ser registrados no changelog da entrega, não copiados para este README.
 Centralização é por ownership: User (participação/associados), Messenger (avisos/mensagens), Image/Gallery (mídia), viewers (documentos), Statistics (métricas), Portal (domain/purpose). Group restrito a associado deve exigir situação ativa User + membership Group no Fórum. Auditoria transversal: docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+aculta_studio already is a submodule of aculta_portal and is the shared UI/experience platform for GanjaLab, GanjaLab420, WE SATIVA and future own-account experiences. Portal remains owner of Domain/purpose, not Studio's experience presentation or Wiki's workflow.
+
+[Contrato e roadmap transversal](../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
