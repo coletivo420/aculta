@@ -236,3 +236,7 @@ Referências:
 - https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/creating-a-single-directory-component
 - https://www.drupal.org/docs/develop/theming-drupal/using-single-directory-components/using-your-new-single-directory-component
 - https://www.drupal.org/node/3517062
+
+## Decisão de arquitetura — padrões visuais transversais
+
+O [roadmap visual do tema](visual-cross-product-roadmap.md) estabelece ownership do ACULTA420 sobre componentes/SDCs compartilhados, estilos, tokens, layouts e feedback. Providers/Portal continuam donos de dados, access/cache e operações. Institution Bar e Domain Header existentes são obrigatórios em toda área; Context Header é região interna de conteúdo, não shell novo. Não permitir componentes funcionais LMS/H5P/PDF/Group nem duplicar armazenamento. O roadmap representa planejamento; não altera implementação atual.
