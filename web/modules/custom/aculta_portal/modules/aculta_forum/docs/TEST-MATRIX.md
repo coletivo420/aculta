@@ -1,3 +1,10 @@
+## dev.194 — saída segura em falhas do auditor migratório
+
+- O comando não inclui mais a mensagem da exceção na saída de terminal. O
+  resumo da falha não contém identificadores; o log registra apenas a classe
+  da exceção, sem mensagem ou stack trace.
+- Sem execução do comando nem alteração Runtime nesta etapa.
+
 ## dev.193 — idade configurada para Files temporários
 
 - A limpeza do Fórum lê `system.file:temporary_maximum_age`, usa o timestamp

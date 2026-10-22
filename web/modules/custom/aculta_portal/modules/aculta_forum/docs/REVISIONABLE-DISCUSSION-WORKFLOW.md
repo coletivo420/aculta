@@ -136,7 +136,8 @@ testes de workflow; a configuração da política inicial continua sendo a de
    Validar contagens, UUIDs de mídia, árvore, estado e destinatários. O script
    deve suportar dry-run, lotes limitados, transação por árvore e idempotência.
    A dev.152 acrescenta `drush aculta-forum:audit-comment-migration`, um
-   inventário somente leitura e sem IDs/PII na saída. Ele identifica o escopo
+   inventário somente leitura e sem IDs/PII na saída; falhas omitem mensagens
+   de exceção potencialmente sensíveis. Ele identifica o escopo
    elegível, formatos, idiomas/traduções, estados, autoria histórica,
    timestamps, embeds e referências pai ausentes/externas/cruzadas. A dev.161
    pagina os CIDs por lotes com limite inicial, sem carregar antecipadamente

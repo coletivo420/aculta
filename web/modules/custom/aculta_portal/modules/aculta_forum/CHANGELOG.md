@@ -1,3 +1,11 @@
+## `0.1.0-dev.194` — saída segura em falhas da auditoria migratória
+
+- Falhas em `aculta-forum:audit-comment-migration` deixam de imprimir a
+  mensagem da exceção, que poderia conter parâmetros ou identificadores. A
+  saída informa somente que a auditoria falhou sem alterar dados; o log guarda
+  a classe da exceção, sem mensagem ou stack trace.
+- Sem alteração Runtime ou execução da auditoria nesta etapa.
+
 ## `0.1.0-dev.193` — respeitar idade máxima dos Files temporários
 
 - A limpeza de arquivos ainda temporários do diretório privado usa

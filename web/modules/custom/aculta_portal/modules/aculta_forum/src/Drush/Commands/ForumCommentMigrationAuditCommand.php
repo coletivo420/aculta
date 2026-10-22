@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Drush\Commands;
 
 use Drupal\aculta_forum\Migration\ForumCommentMigrationAudit;
 use Drush\Commands\AutowireTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,8 @@ final class ForumCommentMigrationAuditCommand extends Command {
   public function __construct(
     #[Autowire(service: 'aculta_forum.comment_migration_audit')]
     private readonly ForumCommentMigrationAudit $audit,
+    #[Autowire(service: 'logger.channel.aculta_forum')]
+    private readonly LoggerInterface $logger,
   ) {
     parent::__construct();
   }
@@ -35,7 +38,10 @@ final class ForumCommentMigrationAuditCommand extends Command {
       $report = $this->audit->inspect();
     }
     catch (\Throwable $exception) {
-      $output->writeln('<error>Auditoria interrompida: ' . $exception->getMessage() . '</error>');
+      $this->logger->error('Auditoria de migração do Fórum interrompida ({exception_class}); nenhuma alteração foi aplicada.', [
+        'exception_class' => $exception::class,
+      ]);
+      $output->writeln('<error>Auditoria interrompida; nenhum dado foi alterado. Consulte o log administrativo para diagnóstico.</error>');
       return Command::FAILURE;
     }
 
