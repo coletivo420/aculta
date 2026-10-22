@@ -64,8 +64,10 @@ O Fórum é o primeiro consumidor: a aba do Fórum pode herdar a política globa
 configurar extensões e tamanho próprios. Os modais de anexo e galeria aceitam
 somente tipos compatíveis com cada controle e salvam em `private://forum/anexos`.
 O Media e a Media Gallery começam não publicados; imagens passam pelo contrato
-`aculta_image`, galerias pelo `aculta_gallery`, e a publicação pública do
-comentário e do tópico controla sua disponibilidade. Uploads órfãos são limpos
+`aculta_image`, galerias pelo `aculta_gallery`, e a publicação pública do post
+ou comentário e do tópico controla sua disponibilidade. No Fórum revisionável,
+a limpeza considera referências de todas as revisões para não remover anexos
+mantidos no histórico. Uploads órfãos são limpos
 após uma hora em lote limitado, revalidando embeds atuais, uso do File e
 referências de entidades antes de apagar. Imagens removidas passam por
 `aculta_image`; arquivos não-imagem passam pela exclusão da File API. A regra

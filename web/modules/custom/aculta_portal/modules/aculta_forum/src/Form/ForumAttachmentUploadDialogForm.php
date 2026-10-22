@@ -62,7 +62,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     $this->dialogBuilder->wrap($form, 'aculta-forum-attachment-dialog', 'forum', 'forum-attachment-dialog');
     $form['introduction'] = [
       '#type' => 'item',
-      '#plain_text' => $this->t('O arquivo ficará privado até ser referenciado por um comentário publicado num tópico público do Fórum.'),
+      '#plain_text' => $this->t('O arquivo ficará privado até ser referenciado por uma publicação ou comentário publicado num tópico público do Fórum.'),
     ];
 
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'image_file', 'document_file');

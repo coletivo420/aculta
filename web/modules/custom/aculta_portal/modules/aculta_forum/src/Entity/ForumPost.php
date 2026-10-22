@@ -105,6 +105,7 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
       ->setDisplayConfigurable('form', TRUE);
     $fields['body'] = BaseFieldDefinition::create('text_long')
       ->setLabel(new TranslatableMarkup('Texto'))
+      ->setSetting('allowed_formats', ['forum'])
       ->setRequired(TRUE)
       ->setRevisionable(TRUE)
       ->setDisplayOptions('form', [

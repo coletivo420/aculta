@@ -12,10 +12,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Synchronizes Forum attachment publication with comment and topic lifecycle.
+ * Synchronizes Forum attachment publication with post, comment, and topic.
  */
 final class ForumAttachmentPublicationHooks {
 
@@ -27,13 +28,17 @@ final class ForumAttachmentPublicationHooks {
   ) {}
 
   /**
-   * Reconciles attachment publication after a comment is created.
+   * Reconciles attachment publication after a post, comment, or Media insert.
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
     if ($entity instanceof CommentInterface) {
       $this->publication->syncComment($entity);
       $this->galleryPublication->syncComment($entity);
+    }
+    elseif ($entity instanceof ForumPost) {
+      $this->publication->syncPost($entity);
+      $this->galleryPublication->syncPost($entity);
     }
     elseif ($entity instanceof MediaInterface) {
       $this->publication->syncMediaEntity($entity);
@@ -48,13 +53,17 @@ final class ForumAttachmentPublicationHooks {
   }
 
   /**
-   * Reconciles attachments after comment or topic state changes.
+   * Reconciles attachments after post, comment, or topic changes.
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
     if ($entity instanceof CommentInterface) {
       $this->publication->syncComment($entity);
       $this->galleryPublication->syncComment($entity);
+    }
+    elseif ($entity instanceof ForumPost) {
+      $this->publication->syncPost($entity);
+      $this->galleryPublication->syncPost($entity);
     }
     elseif ($entity instanceof MediaInterface) {
       $this->publication->syncMediaEntity($entity);
@@ -76,6 +85,10 @@ final class ForumAttachmentPublicationHooks {
     if ($entity instanceof CommentInterface) {
       $this->publication->syncComment($entity, TRUE);
       $this->galleryPublication->syncComment($entity, TRUE);
+    }
+    elseif ($entity instanceof ForumPost) {
+      $this->publication->syncPost($entity, TRUE);
+      $this->galleryPublication->syncPost($entity, TRUE);
     }
     elseif ($entity instanceof MediaGalleryInterface) {
       $this->galleryPublication->syncDeletedGallery($entity);

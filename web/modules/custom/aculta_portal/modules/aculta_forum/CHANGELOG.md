@@ -1,3 +1,8 @@
+## `0.1.0-dev.149` — integra anexos e galerias a posts revisionáveis
+
+- O corpo de `aculta_forum_post` aceita apenas o formato `forum`, habilitando os diálogos CKEditor já integrados com `aculta_portal.user_upload_policy`, `aculta_image` e `aculta_gallery`.
+- Publicação/despublicação de Media e Gallery acompanha referências em posts publicados e o estado do tópico, além do fluxo existente de Comments. A limpeza preserva arquivos usados por qualquer revisão de post. Runtime e regressão Kernel pendentes; sem migração ou exclusão de dados.
+
 ## `0.1.0-dev.148` — permite editar publicação própria
 
 - Posts publicados/default agora mostram ação de edição ao próprio autor enquanto `update` é permitido, incluindo a janela configurável que `aculta_user.ParticipationEditWindow` aplica sobre o access handler.

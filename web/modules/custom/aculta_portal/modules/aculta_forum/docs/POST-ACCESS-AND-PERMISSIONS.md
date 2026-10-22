@@ -30,6 +30,13 @@ configuração do Fórum. O mesmo form mode deixa estado, tópico, pai e autoria
 fora do input. Cada edição salva uma nova revisão publicada com metadados da
 conta atual, sem reiniciar o prazo.
 
+O corpo do post aceita somente o formato `forum`, cujo CKEditor já apresenta os
+diálogos de anexo e galeria do Fórum. A política de upload do Portal valida os
+arquivos; Media e Gallery ficam não publicados até serem referenciados por post
+publicado num tópico público. Despublicar ou editar o post reconcilia o estado
+dessas entidades. A limpeza confere os embeds do histórico completo antes de
+remover Media, Gallery ou File.
+
 O acesso de atualização do autor é apenas uma condição contextual. O handler da
 entidade e o Core Content Moderation continuam responsáveis por permitir a
 operação e validar transições. `ParticipationEditWindow` pode negar a edição

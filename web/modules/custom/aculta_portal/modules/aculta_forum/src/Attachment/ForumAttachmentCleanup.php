@@ -127,7 +127,7 @@ final class ForumAttachmentCleanup {
   }
 
   /**
-   * Checks Entity Usage sources against the current comment body.
+   * Checks Entity Usage sources against current content and post revisions.
    */
   private function hasLiveReference(MediaInterface $media): bool {
     $gallery_ids = $this->entityTypeManager->getStorage('media_gallery')->getQuery()
@@ -154,11 +154,24 @@ final class ForumAttachmentCleanup {
         return TRUE;
       }
     }
+    if ($this->hasForumPostMediaReference($media->uuid())) {
+      return TRUE;
+    }
 
     foreach ($this->entityUsage->listSources($media, FALSE) as $source) {
       $type = (string) ($source['source_type'] ?? '');
       $id = $source['source_id'] ?? NULL;
-      if ($type !== 'comment' || !$id) {
+      if (!$id) {
+        // Unknown source types fail closed to prevent deleting live media.
+        return TRUE;
+      }
+      if ($type === 'aculta_forum_post') {
+        if ($this->hasForumPostMediaReference($media->uuid())) {
+          return TRUE;
+        }
+        continue;
+      }
+      if ($type !== 'comment') {
         // Unknown source types fail closed to prevent deleting live media.
         return TRUE;
       }
@@ -168,6 +181,31 @@ final class ForumAttachmentCleanup {
       }
       if ($this->commentEmbeds($comment, $media->uuid())) {
         return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Checks every Forum post revision for an exact Media embed.
+   */
+  private function hasForumPostMediaReference(string $uuid): bool {
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $revision_ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->allRevisions()
+      ->condition('body.value', '%' . $this->database->escapeLike($uuid) . '%', 'LIKE')
+      ->execute();
+    foreach ($storage->loadMultipleRevisions($revision_ids) as $post) {
+      if (!$post->hasField('body') || $post->get('body')->isEmpty()) {
+        continue;
+      }
+      $document = Html::load((string) $post->get('body')->value);
+      $xpath = new \DOMXPath($document);
+      foreach ($xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]') as $element) {
+        if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
+          return TRUE;
+        }
       }
     }
     return FALSE;

@@ -9,6 +9,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
@@ -51,6 +52,22 @@ final class ForumAttachmentPublication {
   }
 
   /**
+   * Reconciles Media embeds in a post and its prior revision.
+   */
+  public function syncPost(ForumPost $post, bool $deleted = FALSE): void {
+    $uuids = array_unique([
+      ...$this->postMediaUuids($post),
+      ...($post->getOriginal() instanceof ForumPost ? $this->postMediaUuids($post->getOriginal()) : []),
+    ]);
+    foreach ($uuids as $uuid) {
+      $media = $this->loadAttachmentByUuid($uuid);
+      if ($media instanceof MediaInterface) {
+        $this->syncMedia($media, NULL, NULL, NULL, $deleted ? NULL : $post, $deleted ? (int) $post->id() : NULL);
+      }
+    }
+  }
+
+  /**
    * Reconciles all Forum attachments when their topic publication changes.
    */
   public function syncTopic(NodeInterface $topic): void {
@@ -76,6 +93,21 @@ final class ForumAttachmentPublication {
         }
       }
     }
+    $post_ids = $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('topic.target_id', $topic->id())
+      ->execute();
+    foreach ($this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($post_ids) as $post) {
+      if (!$post instanceof ForumPost) {
+        continue;
+      }
+      foreach ($this->postMediaUuids($post) as $uuid) {
+        $media = $this->loadAttachmentByUuid($uuid);
+        if ($media instanceof MediaInterface) {
+          $this->syncMedia($media, NULL, $topic, NULL, $post);
+        }
+      }
+    }
   }
 
   /**
@@ -85,6 +117,30 @@ final class ForumAttachmentPublication {
     if ($media->bundle() === self::BUNDLE && $media->hasField(self::PDF_FIELD)) {
       $this->syncMedia($media, NULL, NULL, $excluded_gallery_id);
     }
+  }
+
+  /**
+   * Checks whether any stored Forum post revision embeds the Media UUID.
+   */
+  public function hasPostMediaReference(string $uuid): bool {
+    return $this->findPostsReferencing($uuid, 'media', TRUE) !== [];
+  }
+
+  /**
+   * Checks whether any stored Forum post revision embeds the Gallery UUID.
+   */
+  public function hasPostGalleryReference(string $uuid): bool {
+    return $this->findPostsReferencing($uuid, 'media_gallery', TRUE) !== [];
+  }
+
+  /**
+   * Returns current Forum posts that embed one Gallery UUID.
+   *
+   * @return \Drupal\aculta_forum\Entity\ForumPost[]
+   *   Matching posts keyed by entity ID.
+   */
+  public function currentPostsReferencingGallery(string $uuid): array {
+    return $this->findPostsReferencing($uuid, 'media_gallery');
   }
 
   /**
@@ -119,6 +175,8 @@ final class ForumAttachmentPublication {
     ?CommentInterface $current_comment = NULL,
     ?NodeInterface $current_topic = NULL,
     ?int $excluded_gallery_id = NULL,
+    ?ForumPost $current_post = NULL,
+    ?int $excluded_post_id = NULL,
   ): void {
     $is_public = FALSE;
     // Field references are not reported consistently by Entity Usage; discover
@@ -161,6 +219,23 @@ final class ForumAttachmentPublication {
         && $this->isForumComment($comment)
         && in_array($media->uuid(), $this->mediaUuids($comment), TRUE)
         && $this->isPublicComment($comment, $current_topic)) {
+        $is_public = TRUE;
+        break;
+      }
+    }
+
+    $posts = $this->findPostsReferencing($media->uuid(), 'media');
+    if ($excluded_post_id !== NULL) {
+      unset($posts[$excluded_post_id]);
+    }
+    if ($current_post instanceof ForumPost) {
+      unset($posts[$current_post->id()]);
+      if (in_array($media->uuid(), $this->postMediaUuids($current_post), TRUE)) {
+        $posts[$current_post->id()] = $current_post;
+      }
+    }
+    foreach ($posts as $post) {
+      if ($post instanceof ForumPost && $this->isPublicPost($post, $current_topic)) {
         $is_public = TRUE;
         break;
       }
@@ -217,6 +292,109 @@ final class ForumAttachmentPublication {
   }
 
   /**
+   * Checks anonymous access to a published post in a public Forum topic.
+   */
+  public function isPublicPost(ForumPost $post, ?NodeInterface $current_topic = NULL): bool {
+    $topic = $current_topic instanceof NodeInterface
+      && (string) $current_topic->id() === (string) $post->get('topic')->target_id
+      ? $current_topic
+      : $post->get('topic')->entity;
+    if (!$post->isPublished()
+      || !$post->isDefaultRevision()
+      || !$topic instanceof NodeInterface
+      || $topic->bundle() !== 'aculta_forum_topic'
+      || !$topic->isPublished()
+      || !$topic->hasField('field_domain_source')
+      || $topic->get('field_domain_source')->isEmpty()
+      || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+      return FALSE;
+    }
+
+    $anonymous = new AnonymousUserSession();
+    return (bool) $this->domainPurposeManager->runInPurpose(
+      'forum',
+      static fn (): bool => $post->access('view', $anonymous, TRUE)->isAllowed(),
+    );
+  }
+
+  /**
+   * Returns Media UUIDs embedded in a Forum post's body.
+   *
+   * @return string[]
+   *   Unique Media UUIDs.
+   */
+  private function postMediaUuids(ForumPost $post): array {
+    return $this->embeddedUuids($post, 'drupal-media', 'media');
+  }
+
+  /**
+   * Returns Gallery UUIDs embedded in a Forum post's body.
+   *
+   * @return string[]
+   *   Unique Gallery UUIDs.
+   */
+  public function postGalleryUuids(ForumPost $post): array {
+    return $this->embeddedUuids($post, 'drupal-entity', 'media_gallery');
+  }
+
+  /**
+   * Returns UUIDs of the selected entity type from a post body.
+   *
+   * @return string[]
+   *   Unique entity UUIDs.
+   */
+  private function embeddedUuids(ForumPost $post, string $tag, string $entityType): array {
+    if (!$post->hasField('body') || $post->get('body')->isEmpty()) {
+      return [];
+    }
+    $document = Html::load((string) $post->get('body')->value);
+    $xpath = new \DOMXPath($document);
+    $uuids = [];
+    foreach ($xpath->query('//' . $tag . '[@data-entity-type="' . $entityType . '"][@data-entity-uuid]') as $element) {
+      if ($element instanceof \DOMElement) {
+        $uuid = trim($element->getAttribute('data-entity-uuid'));
+        if ($uuid !== '') {
+          $uuids[] = $uuid;
+        }
+      }
+    }
+    return array_values(array_unique($uuids));
+  }
+
+  /**
+   * Loads posts that embed an entity UUID in their current or all revisions.
+   *
+   * @return \Drupal\aculta_forum\Entity\ForumPost[]
+   *   Matching posts keyed by entity ID.
+   */
+  private function findPostsReferencing(string $uuid, string $entityType, bool $allRevisions = FALSE): array {
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $query = $storage->getQuery()->accessCheck(FALSE);
+    if ($allRevisions) {
+      $query->allRevisions();
+    }
+    $ids = $query
+      ->condition('body.value', '%' . $uuid . '%', 'LIKE')
+      ->execute();
+    if ($ids === []) {
+      return [];
+    }
+
+    $posts = $allRevisions
+      ? $storage->loadMultipleRevisions($ids)
+      : $storage->loadMultiple($ids);
+    $tag = $entityType === 'media' ? 'drupal-media' : 'drupal-entity';
+    $matches = [];
+    foreach ($posts as $post) {
+      if ($post instanceof ForumPost
+        && in_array($uuid, $this->embeddedUuids($post, $tag, $entityType), TRUE)) {
+        $matches[$post->id()] = $post;
+      }
+    }
+    return $matches;
+  }
+
+  /**
    * Checks whether a public Forum Gallery references this Media.
    */
   private function isPublicGalleryReference(
@@ -246,6 +424,13 @@ final class ForumAttachmentPublication {
         && $this->isForumComment($comment)
         && in_array($gallery->uuid(), $this->galleryUuids($comment), TRUE)
         && $this->isPublicComment($comment, $current_topic)) {
+        return TRUE;
+      }
+    }
+    foreach ($this->findPostsReferencing($gallery->uuid(), 'media_gallery') as $post) {
+      if ($post instanceof ForumPost
+        && in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
+        && $this->isPublicPost($post, $current_topic)) {
         return TRUE;
       }
     }

@@ -9,9 +9,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
 
 /**
- * Synchronizes Forum-created Gallery albums with public comment references. */
+ * Synchronizes Forum galleries with public post and comment references. */
 final class ForumGalleryPublication {
 
   public function __construct(
@@ -40,6 +41,24 @@ final class ForumGalleryPublication {
   }
 
   /**
+   * Reconciles Gallery embeds in a revisionable Forum post and its original.
+   */
+  public function syncPost(ForumPost $post, bool $deleted = FALSE): void {
+    $uuids = array_unique([
+      ...$this->attachmentPublication->postGalleryUuids($post),
+      ...($post->getOriginal() instanceof ForumPost
+        ? $this->attachmentPublication->postGalleryUuids($post->getOriginal())
+        : []),
+    ]);
+    foreach ($uuids as $uuid) {
+      $gallery = $this->loadForumGallery($uuid);
+      if ($gallery instanceof MediaGalleryInterface) {
+        $this->syncGallery($gallery, NULL, NULL, $deleted ? NULL : $post, $deleted ? (int) $post->id() : NULL);
+      }
+    }
+  }
+
+  /**
    * Reconciles Gallery publication after the host topic changes state. */
   public function syncTopic(NodeInterface $topic): void {
     if ($topic->bundle() !== 'aculta_forum_topic' || $topic->isNew()) {
@@ -60,6 +79,21 @@ final class ForumGalleryPublication {
         $gallery = $this->loadForumGallery($uuid);
         if ($gallery instanceof MediaGalleryInterface) {
           $this->syncGallery($gallery, $comment, $topic);
+        }
+      }
+    }
+    $post_ids = $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('topic.target_id', $topic->id())
+      ->execute();
+    foreach ($this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($post_ids) as $post) {
+      if (!$post instanceof ForumPost) {
+        continue;
+      }
+      foreach ($this->attachmentPublication->postGalleryUuids($post) as $uuid) {
+        $gallery = $this->loadForumGallery($uuid);
+        if ($gallery instanceof MediaGalleryInterface) {
+          $this->syncGallery($gallery, NULL, $topic, $post);
         }
       }
     }
@@ -109,11 +143,11 @@ final class ForumGalleryPublication {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $gallery) {
-      if (!$gallery instanceof MediaGalleryInterface || $this->hasCommentReference($gallery)) {
+      if (!$gallery instanceof MediaGalleryInterface || $this->hasContentReference($gallery)) {
         continue;
       }
       // Recheck publication and comments immediately before deleting.
-      if ($gallery->isPublished() || $this->hasCommentReference($gallery)) {
+      if ($gallery->isPublished() || $this->hasContentReference($gallery)) {
         continue;
       }
       $gallery->delete();
@@ -129,6 +163,8 @@ final class ForumGalleryPublication {
     MediaGalleryInterface $gallery,
     ?CommentInterface $current_comment = NULL,
     ?NodeInterface $current_topic = NULL,
+    ?ForumPost $current_post = NULL,
+    ?int $excluded_post_id = NULL,
   ): void {
     if (!$this->isForumGallery($gallery)) {
       return;
@@ -154,6 +190,22 @@ final class ForumGalleryPublication {
         break;
       }
     }
+    $posts = $this->attachmentPublication->currentPostsReferencingGallery($gallery->uuid());
+    if ($excluded_post_id !== NULL) {
+      unset($posts[$excluded_post_id]);
+    }
+    if ($current_post instanceof ForumPost) {
+      unset($posts[$current_post->id()]);
+      if (in_array($gallery->uuid(), $this->attachmentPublication->postGalleryUuids($current_post), TRUE)) {
+        $posts[$current_post->id()] = $current_post;
+      }
+    }
+    foreach ($posts as $post) {
+      if ($post instanceof ForumPost && $this->attachmentPublication->isPublicPost($post, $current_topic)) {
+        $is_public = TRUE;
+        break;
+      }
+    }
 
     if ($gallery->isPublished() !== $is_public) {
       $is_public ? $gallery->setPublished() : $gallery->setUnpublished();
@@ -175,7 +227,7 @@ final class ForumGalleryPublication {
 
   /**
    * Checks for any current comment reference, including drafts and pending posts. */
-  private function hasCommentReference(MediaGalleryInterface $gallery): bool {
+  private function hasContentReference(MediaGalleryInterface $gallery): bool {
     $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', 'aculta_discussion_post')
@@ -190,7 +242,7 @@ final class ForumGalleryPublication {
         return TRUE;
       }
     }
-    return FALSE;
+    return $this->attachmentPublication->hasPostGalleryReference($gallery->uuid());
   }
 
   /**

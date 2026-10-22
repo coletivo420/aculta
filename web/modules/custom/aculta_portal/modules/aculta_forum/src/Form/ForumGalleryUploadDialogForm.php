@@ -57,7 +57,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     $this->dialogBuilder->wrap($form, 'aculta-forum-gallery-dialog', 'forum', 'forum-gallery-dialog');
     $form['introduction'] = [
       '#type' => 'item',
-      '#plain_text' => $this->t('As imagens ficam privadas. A galeria e as imagens só são publicadas com um comentário público do Fórum.'),
+      '#plain_text' => $this->t('As imagens ficam privadas. A galeria e as imagens só são publicadas com uma publicação pública do Fórum.'),
     ];
     $form['title'] = [
       '#type' => 'textfield',

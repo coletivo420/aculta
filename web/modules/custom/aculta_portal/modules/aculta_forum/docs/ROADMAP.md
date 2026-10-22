@@ -53,7 +53,7 @@ Kernel, migração dry-run, backup e aprovação visual.
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
    via `aculta_gallery`, consumindo a política central `aculta_portal.user_upload_policy`;
    a aba do Fórum herda a política global ou configura override, e a publicação
-   dos Media permanece vinculada ao comentário visível.
+   dos Media permanece vinculada ao post ou comentário visível.
 2. Cartões/preview local de Office, priorizando DOCX e planilhas, apenas para
    formatos validados em segurança e desempenho; metadados e download seguem
    disponíveis.
@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.149` | Integrar anexos e galerias a posts revisionáveis | O formato `forum` fica fixo no corpo; ciclo de publicação de Media/Gallery acompanha post público e tópico; retenção verifica todas as revisões antes de limpeza. Regressão Kernel e Runtime pendentes. |
 | `0.1.0-dev.148` | Editar publicação própria dentro da janela | Thread oferece edição de post publicado/default pelo próprio autor; UUID na query, access revalidado e limitado pela `ParticipationEditWindow`; grava nova revisão preservando estado e contexto. Runtime e revisão visual pendentes. |
 | `0.1.0-dev.147` | Selecionar revisões para comparação | Histórico permite escolher duas revisões da página atual, além do atalho entre adjacentes; valida IDs disponíveis/diferentes e preserva validação de acesso no destino. Ainda limitado à página corrente (50 registros); seleção entre páginas e revisão visual pendentes. Sem revert/delete ou Runtime. |
 | `0.1.0-dev.146` | Comparar revisões adjacentes de uma publicação | Histórico oferece comparação segura de assunto/corpo para duas revisões do mesmo post, com acesso restrito a `main` e tópico publicado em `forum`; reutiliza Diff 2.1.1 habilitado. Sem revert/delete ou Runtime; comparação não adjacente, testes e visual pendentes. |
