@@ -74,3 +74,7 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 ## Gate obrigatório — shell multidomínio global
 
 Em todas as telas do GanjaLab420 e nos demais purposes, manter **Institution Bar e Domain Header existentes**. Os headers contextuais são internos ao conteúdo. Testar mobile, desktop, light/dark, autenticação, AJAX, navegação sem JS e retorno entre domínios; bloquear entrega com cabeçalho oculto, duplicado ou substituído. Melhorias estéticas são permitidas, reestruturação do shell não. Ver [contrato do shell ACULTA420](../../web/themes/custom/aculta420/docs/shell.md).
+
+## Separação de ownership — planejamento do tema
+
+Componentes novos/variantes compartilhadas e evolução do shell pertencem ao [roadmap visual ACULTA420](../../web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md). Este documento permanece contrato de experiência, dados, permissão e homologação do GanjaLab420. Nenhum componente do tema foi implementado nesta etapa.
