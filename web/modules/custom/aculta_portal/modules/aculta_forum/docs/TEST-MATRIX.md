@@ -22,6 +22,23 @@
   Capturas headless em
   `/home/aculta/private/aculta/visual-tests/forum-office-dev182-6d9f7c9a/`.
 
+## dev.12 — manter a prévia DOCX no iframe isolado
+
+- Um pacote OOXML completo no Runtime de teste (tópico 526, post 3, Media 245,
+  File 588) retornou HTTP 200 por query e path Core. Firefox ESR informou
+  `data-aculta-docx-status="done"`, preservou um iframe com sandbox e exibiu
+  visualmente título e texto do DOCX. A captura foi revista com a barra de
+  consentimento fechada; viewport efetivo 1354 CSS px, sem overflow horizontal.
+- A inspeção visual detectou que o `mountDocxViewer()` removia o iframe também
+  após receber `done`, descartando o conteúdo. Em dev.12, o iframe permanece no
+  sucesso e continua sendo removido em erro, timeout ou biblioteca indisponível.
+- Fixture limpa após validar UUIDs e relações pela Entity API; tópicos, posts,
+  Comments dedicados e anexos voltaram a zero. Galerias 11/18 preservaram 63 e
+  34 imagens. URL do tópico e rota do File removidos retornaram HTTP 404.
+- A matriz de 320/375/390/768/1024/1440 CSS px, zoom, tema escuro e planilhas
+  continua pendente; este smoke valida somente um DOCX em Firefox no viewport
+  registrado.
+
 ## dev.181 — descoberta do preview local de Office
 
 - Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose

@@ -1,5 +1,18 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.12 — manter o DOCX renderizado visível — 2026-10-22
+
+- `mountDocxViewer()` mantém o iframe sandboxed quando o filho informa sucesso;
+  ele continua sendo removido em erro, timeout ou falta de bibliotecas. Antes,
+  o iframe era removido inclusive no caminho `done`, descartando o documento
+  depois de uma renderização bem-sucedida.
+- A captura preliminar com um DOCX OOXML completo confirmou status `done`, mas
+  revelou que nenhum conteúdo permanecia no quadro; isso identificou o iframe
+  removido no sucesso. Após a correção, Firefox ESR no Runtime de teste confirmou
+  `data-aculta-docx-status="done"`, iframe mantido e documento OOXML completo
+  visível. A captura revisada teve 1354 CSS px e `scrollWidth` igual à largura
+  do viewport. A matriz menor e formatos Office adicionais seguem pendentes.
+
 ## 0.1.0-dev.11 — gerar URL Core para arquivos privados Office — 2026-10-21
 
 - Builders DOCX e planilha usam `/system/files?file=...` para `private://`,

@@ -38,8 +38,11 @@ export function mountDocxViewer(host, { url, frameUrl, libs, timeoutMs = 60000 }
       finished = true;
       window.removeEventListener('message', onMessage);
       clearTimeout(timer);
-      // Encerra o iframe também em timeout ou falha: a renderização não continua em segundo plano.
-      frame.remove();
+      // Mantém a página isolada depois do sucesso para o conteúdo renderizado
+      // continuar visível. Em falha/timeout, encerra o processamento no iframe.
+      if (status !== 'done') {
+        frame.remove();
+      }
       resolve(reason ? { status, reason } : { status });
     };
 

@@ -72,4 +72,16 @@ arquivo de propriedade `aculta` confirmou HTTP 200 em query e path de
 A fixture de revalidação (Node 525, ForumPost 2, Media 244, File 587) foi
 removida por Entity API; o arquivo privado e as capturas temporárias também
 foram removidos. O Runtime voltou a zero tópicos, posts e anexos; as 97 imagens
-das galerias permaneceram. O preview segue pendente em `TEST-MATRIX.md`.
+das galerias permaneceram.
+
+## Revalidação de DOCX completo — 2026-10-22
+
+Um novo fixture OOXML completo foi criado sob o usuário `aculta` do PHP-FPM:
+Node 526, ForumPost 3, Media 245 e File 588. As duas formas da rota Core
+retornaram HTTP 200. Firefox ESR confirmou status `done` e o conteúdo visível
+dentro do iframe sandboxed. A captura revelou o bug que removia o iframe após
+sucesso; a correção ficou em `aculta_document_viewer` dev.12. Após limpar as
+entidades pela Entity API e o File sem usos, o Runtime voltou a zero tópicos,
+posts, Comments dedicados e anexos; as galerias 11/18 mantiveram 63+34 imagens.
+A URL do tópico e o endpoint do arquivo removidos retornaram 404. Capturas e
+scripts temporários foram removidos do armazenamento privado e de `/tmp`.

@@ -26,6 +26,14 @@
 - Fixture de revalidação DOCX removida: tópico 525, post 2, Media 244 e File
   587. A verificação final confirmou zero tópicos, posts e anexos de Fórum, zero
   usos e ausência do arquivo no disco; as 97 imagens da galeria permaneceram.
+- Na revalidação seguinte, um DOCX OOXML completo retornou HTTP 200 pelas duas
+  formas Core e Firefox ESR confirmou que o conteúdo foi renderizado. A captura
+  mostrou que o iframe sandboxed era removido mesmo após `done`; correção
+  versionada como `aculta_document_viewer` dev.12 o mantém no sucesso e o remove
+  em erro/timeout. O iframe permaneceu, status foi `done`, e a página não teve
+  overflow horizontal no viewport efetivo de 1354 CSS px. Fixture removida:
+  tópico 526, post 3, Media 245 e File 588; categorias 11 e 18 preservaram 63 e
+  34 imagens e a URL/arquivo removidos retornaram 404.
 
 ## `0.1.0-dev.181` — conectar preview local de Office nos anexos do Fórum
 

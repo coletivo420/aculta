@@ -30,7 +30,11 @@ padrão e respeita a opção explícita do painel/formatter.
   servidos com HTTP 200 quando o arquivo da fixture pertencia ao usuário
   `aculta` do PHP-FPM. O erro `File must be readable` veio de uma fixture
   criada pelo Drush com proprietário diferente; a entrega do viewer DOCX no
-  navegador continua pendente, pois a captura exibiu o fallback.
+  navegador foi validada em Firefox ESR com um DOCX OOXML completo: status
+  `done`, iframe sandboxed preservado e conteúdo visível. Uma falha anterior
+  em mostrar conteúdo revelou que o iframe era removido após sucesso; a dev.12
+  mantém-no em caso de sucesso e ainda o encerra em erro/timeout. A validação
+  não cobre a matriz de viewports nem documentos Office adicionais.
 - O esquema `private://` não define a audiência: a permissão da Media governa a
   leitura. Config Sync concede `view media` aos papéis anônimo e autenticado;
   Media publicada com arquivo privado pode ser lida por ambos. Não usar esse
@@ -147,8 +151,9 @@ Media `document` foi salva e a tela de edição abriu após conceder somente
 `edit own document media` ao papel editorial. A miniatura pública foi gerada no
 Runtime pelo pipeline `aculta_image`. Em teste posterior do Fórum, query e path
 de `system.files` entregaram HTTP 200 para um DOCX privado com propriedade
-compatível com o PHP-FPM; o Firefox mostrou os controles e o fallback, sem
-confirmar a renderização do conteúdo. Fixtures, uploads, miniatura, contas,
+compatível com o PHP-FPM; Firefox ESR confirmou a prévia de um pacote OOXML
+completo após a dev.12 manter o iframe no estado de sucesso. Fixtures, uploads,
+miniatura, contas,
 conteúdo e tokens de login de teste foram removidos. Nesta homologação
 não houve `drush cim` global nem `updb`;
 CDN, policy ImageMagick e migração de arquivos também não fazem parte do módulo.
