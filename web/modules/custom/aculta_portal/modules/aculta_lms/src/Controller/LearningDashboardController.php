@@ -95,7 +95,12 @@ final class LearningDashboardController {
       $course_items[] = $item;
     }
     $build['courses'] = $course_items === []
-      ? ['#plain_text' => $this->t('Você ainda não está matriculado em nenhum curso.')]
+      ? [
+        '#type' => 'component',
+        '#component' => 'aculta420:empty-state',
+        '#props' => ['compact' => TRUE],
+        '#slots' => ['message' => ['#plain_text' => $this->t('Você ainda não está matriculado em nenhum curso.')]],
+      ]
       : ['#theme' => 'item_list', '#items' => $course_items];
 
     $build['certificates_title'] = ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Meus certificados')];
@@ -119,7 +124,12 @@ final class LearningDashboardController {
       ];
     }
     $build['certificates'] = $certificate_items === []
-      ? ['#plain_text' => $this->t('Nenhum certificado emitido ainda.')]
+      ? [
+        '#type' => 'component',
+        '#component' => 'aculta420:empty-state',
+        '#props' => ['compact' => TRUE],
+        '#slots' => ['message' => ['#plain_text' => $this->t('Nenhum certificado emitido ainda.')]],
+      ]
       : ['#theme' => 'item_list', '#items' => $certificate_items];
     CacheableMetadata::createFromRenderArray($build)
       ->addCacheableDependency($data['cache'])
