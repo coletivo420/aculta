@@ -1,3 +1,13 @@
+## `0.1.0-dev.44` — corrigir a expectativa de formato de comentário — 2026-10-22
+
+- Corrige a falha registrada no dev.43, sem tocar o Runtime.
+- `LmsDiscussionInstallConfigTest` passa a esperar o formato `forum` no campo
+  `comment.comment_body`, `filter.format.forum` com `media_embed` do provider
+  `media` e `editor.editor.forum` com upload em `forum/anexos`, valores
+  vigentes desde `c56a0cd6`.
+- Medição (banco local `aculta_simpletest`, Runtime intocado):
+  `tests/src/Unit` — 25 testes, 292 asserções, OK.
+
 ## `0.1.0-dev.43` — corrigir o registro de testes do adapter — 2026-10-22
 
 - Documento apenas; nenhuma alteração de código, configuração ou Runtime.

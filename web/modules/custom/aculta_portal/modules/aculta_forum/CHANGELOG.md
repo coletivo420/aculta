@@ -1,3 +1,22 @@
+## `0.1.0-dev.240` — corrigir as falhas Unit do Fórum — 2026-10-22
+
+- Corrige as sete falhas registradas no dev.239, sem tocar o Runtime.
+- `config/sync/aculta_forum.settings.yml` recebe `edit_window_minutes: 10`,
+  alinhado ao `config/install` desde `164aeff2`.
+- `config/sync/views.view.aculta_forum_public_topics.yml` e
+  `config/sync/views.view.aculta_forum_unread_topics.yml` são republicados a
+  partir de `config/install`, restaurando `aculta_forum_reply_count`,
+  `aculta_forum_last_activity`, `aculta_forum_no_replies`,
+  `aculta_forum_unread_content` e `aculta_forum_unread_posts`. Sem `_core` e
+  com os mesmos UUIDs anteriores.
+- `ForumTopicDisplayConfigTest` passa a esperar a chave
+  `aculta_forum.admin_revisionable_posts` no menu, o formato e o editor
+  `forum` no corpo do comentário, os plugins customizados nas Views e o filtro
+  `aculta_forum_no_replies` na descoberta. Import não usado de
+  `UploadPolicy` removido.
+- Medição (banco local `aculta_simpletest`, Runtime intocado):
+  `tests/src/Unit` — 105 testes, 799 asserções, OK.
+
 ## `0.1.0-dev.239` — precisar as causas das falhas Unit do Fórum — 2026-10-22
 
 - Documento apenas; nenhuma alteração de código, configuração ou Runtime.

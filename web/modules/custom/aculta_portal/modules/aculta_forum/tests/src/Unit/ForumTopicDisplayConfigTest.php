@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
-use Drupal\aculta_image\UploadPolicy;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
@@ -69,7 +68,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin']['route_name']);
     self::assertSame('system.admin', $menu['aculta_forum.admin']['parent']);
     self::assertSame(
-      ['aculta_forum.admin', 'aculta_forum.admin_topics', 'aculta_forum.admin_comments', 'aculta_forum.admin_settings'],
+      [
+        'aculta_forum.admin',
+        'aculta_forum.admin_topics',
+        'aculta_forum.admin_comments',
+        'aculta_forum.admin_revisionable_posts',
+        'aculta_forum.admin_settings',
+      ],
       array_keys($menu),
     );
     self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin_topics']['parent']);
@@ -214,9 +219,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * Forum replies use the shared CKEditor image and Media embed policies.
+   * Forum replies use the dedicated Forum attachment format and Media policy.
    */
-  public function testForumCommentAttachmentsUseSharedImageAndMediaPolicies(): void {
+  public function testForumCommentAttachmentsUseDedicatedForumPolicies(): void {
     $module_path = dirname(__DIR__, 3);
     $repository_path = dirname($module_path, 6);
     $field_filename = 'field.field.comment.aculta_discussion_post.comment_body.yml';
@@ -224,22 +229,29 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     $field_sync = Yaml::parseFile($repository_path . '/config/sync/' . $field_filename);
     unset($field_sync['_core']);
 
-    $format = Yaml::parseFile($repository_path . '/config/sync/filter.format.usuario_aculta.yml');
-    $editor = Yaml::parseFile($repository_path . '/config/sync/editor.editor.usuario_aculta.yml');
+    $format = Yaml::parseFile($module_path . '/config/install/filter.format.forum.yml');
+    $format_sync = Yaml::parseFile($repository_path . '/config/sync/filter.format.forum.yml');
+    $editor = Yaml::parseFile($module_path . '/config/install/editor.editor.forum.yml');
+    $editor_sync = Yaml::parseFile($repository_path . '/config/sync/editor.editor.forum.yml');
+    unset($format_sync['_core'], $editor_sync['_core']);
 
-    self::assertSame($field, $field_sync);
-    self::assertSame(['usuario_aculta' => 'usuario_aculta'], $field['settings']['allowed_formats']);
+    self::assertConfigSame($field, $field_sync);
+    self::assertConfigSame($format, $format_sync);
+    self::assertConfigSame($editor, $editor_sync);
+    self::assertSame(['forum' => 'forum'], $field['settings']['allowed_formats']);
+    self::assertContains('filter.format.forum', $field['dependencies']['config']);
+    self::assertSame('forum', $format['format']);
     self::assertTrue($format['filters']['media_embed']['status']);
     self::assertSame(
-      ['document' => 'document'],
+      ['forum_attachment' => 'forum_attachment'],
       $format['filters']['media_embed']['settings']['allowed_media_types'],
-      'Participant comments may embed existing public Document media.',
+      'Participant comments may embed only Forum attachment media.',
     );
-    self::assertContains('drupalMedia', $editor['settings']['toolbar']['items']);
-    self::assertTrue($editor['image_upload']['status'], 'Participants can upload inline images through CKEditor.');
-    self::assertSame('public', $editor['image_upload']['scheme']);
-    self::assertSame('inline-images', $editor['image_upload']['directory']);
-    self::assertSame((string) UploadPolicy::MAX_BYTES, $editor['image_upload']['max_size']);
+    self::assertContains('acultaForumAttachment', $editor['settings']['toolbar']['items']);
+    self::assertContains('acultaForumGallery', $editor['settings']['toolbar']['items']);
+    self::assertFalse($editor['image_upload']['status'], 'Forum uploads go through the centralized attachment policy.');
+    self::assertSame('private', $editor['image_upload']['scheme']);
+    self::assertSame('forum/anexos', $editor['image_upload']['directory']);
   }
 
   /**
@@ -324,7 +336,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertFalse($options['fields']['comment_count']['empty_zero']);
     self::assertFalse($options['fields']['comment_count']['format_plural']);
     self::assertSame('comment_entity_statistics', $options['fields']['last_updated']['table']);
-    self::assertSame('comment_ces_last_updated', $options['fields']['last_updated']['plugin_id']);
+    self::assertSame('aculta_forum_last_activity', $options['fields']['last_updated']['plugin_id']);
     self::assertSame('comment_entity_statistics', $options['sorts']['last_updated']['table']);
     self::assertSame('aculta_forum_last_activity', $options['sorts']['last_updated']['field']);
     self::assertSame('aculta_forum_last_activity', $options['sorts']['last_updated']['plugin_id']);
@@ -450,10 +462,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       );
     }
     self::assertFalse($options['query']['options']['disable_sql_rewrite']);
-    self::assertSame('history_user_timestamp', $options['filters']['timestamp']['plugin_id']);
-    self::assertSame('history', $options['filters']['timestamp']['table']);
+    self::assertArrayNotHasKey('timestamp', $options['filters'], 'Unread state includes Forum posts, not only Node history.');
+    self::assertSame('aculta_forum_unread_content', $options['filters']['forum_unread_content']['plugin_id']);
+    self::assertSame('history', $options['filters']['forum_unread_content']['table']);
+    self::assertFalse($options['filters']['forum_unread_content']['exposed']);
     self::assertSame('history_user_timestamp', $options['fields']['timestamp']['plugin_id']);
     self::assertTrue($options['fields']['timestamp']['comments']);
+    self::assertSame('aculta_forum_unread_posts', $options['fields']['forum_unread_posts']['plugin_id']);
+    self::assertSame('node', $options['fields']['forum_unread_posts']['table']);
+    self::assertSame('Publicações novas', $options['fields']['forum_unread_posts']['label']);
+    self::assertTrue($options['fields']['forum_unread_posts']['hide_empty']);
     self::assertSame('node_new_comments', $options['fields']['new_comments']['plugin_id']);
     self::assertSame('node', $options['fields']['new_comments']['table']);
     self::assertTrue($options['fields']['new_comments']['link_to_comment']);
@@ -489,7 +507,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     foreach (['status', 'type', 'field_domain_source_target_id', 'field_aculta_categories_target_id'] as $filter) {
       self::assertSame($default['filters'][$filter], $unanswered['filters'][$filter], $filter);
     }
-    self::assertSame('numeric', $unanswered['filters']['comment_count']['plugin_id']);
+    self::assertSame('aculta_forum_no_replies', $unanswered['filters']['comment_count']['plugin_id']);
     self::assertSame('comment_entity_statistics', $unanswered['filters']['comment_count']['table']);
     self::assertSame('0', $unanswered['filters']['comment_count']['value']['value']);
     self::assertFalse($view['display']['default']['display_options']['query']['options']['disable_sql_rewrite']);
