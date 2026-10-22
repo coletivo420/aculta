@@ -1,3 +1,15 @@
+## `0.1.0-dev.236` — registrar o bloqueio dos comentários da Wiki — 2026-10-22
+
+- Documento apenas. T21 está bloqueada: `wiki_entry` não tem instância de
+  `field_aculta_discussion`; as instâncias existentes são `revista`,
+  `aculta_forum_topic` e `aculta_lms_topic`.
+- O `CONTEXTS.md` descreve o contexto `wiki` como contrato futuro que
+  "aguarda a reimplementação da Wiki" e usa `author_wiki`, papel ausente de
+  `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a
+  instância e o provider equivale a reimplementar a Wiki.
+- T22, T23 e T24 dependem de T21 e ficam bloqueadas na sequência. Sem alteração
+  de código, configuração ou Runtime.
+
 ## `0.1.0-dev.235` — registrar o bloqueio do upload contextual da Wiki — 2026-10-22
 
 - Documento apenas. T20 está bloqueada: `wiki_entry` não tem campo de envio do

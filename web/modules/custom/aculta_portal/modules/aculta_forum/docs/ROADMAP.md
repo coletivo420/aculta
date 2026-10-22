@@ -131,8 +131,20 @@ antes do consumidor só ofereceria uma política que nenhum envio usa. T20 fica
 bloqueada até decisão humana sobre criar o campo de upload e a permissão de
 Media do verbete. T21 (comentários) não depende da carga, então segue.
 
+Bloqueio de T21 — comentários da Wiki (dev.236): `wiki_entry` não tem instância
+de `field_aculta_discussion`; o storage compartilhado existe em
+`config/sync/field.storage.node.field_aculta_discussion.yml`, mas as instâncias
+são só `revista`, `aculta_forum_topic` e `aculta_lms_topic`. O `CONTEXTS.md`
+(seção `wiki`) trata o contexto como "contrato futuro": renderiza dentro do
+verbete, usa `author_wiki` e "a criação do provider aguarda a reimplementação da
+Wiki"; `author_wiki` não existe como papel em `config/sync`. A moderação do
+`aculta_user` é genérica ao campo e passaria a valer assim que houvesse a
+instância, mas criá-la mais o provider significa reimplementar a Wiki — decisão
+adiada pelo próprio documento. T21 fica bloqueada, e T22–T24 dependem dela.
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.236` | Registrar o bloqueio dos comentários da Wiki | Documento apenas. `wiki_entry` não tem instância de `field_aculta_discussion` (só `revista`, `aculta_forum_topic` e `aculta_lms_topic` têm), e o `CONTEXTS.md` trata o contexto `wiki` como contrato futuro que "aguarda a reimplementação da Wiki", citando `author_wiki`, papel que não existe em `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a instância e o provider equivale a reimplementar a Wiki. Bloqueia também T22–T24. Sem Runtime/testes. |
 | `0.1.0-dev.235` | Registrar o bloqueio do upload contextual da Wiki | Documento apenas. `wiki_entry` não tem campo de envio do usuário: `field_wiki_image` é referência autocomplete a Media `image` existente (`auto_create: false`) e `email_confirmed` não cria nem edita Media, então não há superfície para a política central nem envio cuja Media se possa publicar. A aba por consumidor é administrativa (`UserUploadSettingsForm::CONSUMERS`), e registrar `wiki` sem consumidor criaria política sem uso. Bloqueada até decisão humana sobre campo de upload e permissão de Media. Sem Runtime/testes. |
 | `0.1.0-dev.234` | Localizar a Wiki e registrar pendências de upload e comentários | Documento apenas. A Wiki não tem módulo: é conteúdo e configuração do `aculta_portal` (Node `wiki_entry`, rotas `/wiki*`, purpose `wiki420`), com regras em `docs/operations/AGENT-CONTENT.md` e no `AGENTS.md` do Portal. Registra as duas pendências que bloqueiam T20–T24: ausência de campo de upload do usuário no verbete e ausência de `field_aculta_discussion`/provider de contexto, já que `PublicationContextProvider` cobre só `revista`. Nada implementado; sem Runtime/testes. |
 | `0.1.0-dev.233` | Registrar escopo mínimo da busca e das notificações privadas LMS | Documento apenas: o ROADMAP do adapter (mantido na seção dev.13 do Fórum, sem `docs/` próprio) lista o que falta em índice/View, filtro de moderação, reindexação, eventos, idempotência e revalidação de acesso, e fixa o menor recorte aceitável — busca só por curso/turma com Group explícito e notificação apenas da primeira resposta publicada via `aculta_messenger`. Nada implementado; sem Runtime/testes. |
