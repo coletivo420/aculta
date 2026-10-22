@@ -73,3 +73,54 @@ Todos / Documentos / Vídeos / Imagens e Galerias / Links e Recursos Interativos
 | 0.4.4-E | fallback, erros, acessibilidade e regressões | Runtime e Group A/B |
 
 Este documento é **somente a especificação inicial**. Não instalar dependências, criar rotas, alterar módulos ou migrar arquivos nesta fase.
+
+## Refinamento 0.4.4-B — wireframes e organização pedagógica (2026-10-22)
+
+### Regra de organização: contexto, não formato
+O estudante encontra o recurso **a partir do curso → módulo → aula** a que está vinculado, e a Biblioteca do Curso agrega os mesmos recursos sem duplicá-los. Uma mídia pode estar referenciada em diversas aulas, mas continua sendo o mesmo objeto canônico Media/File/Gallery. Preferir consultas por relações existentes e render arrays dos providers. Se faltar relação entre recurso e contexto, levantar lacuna na etapa 0.4.4-A; não criar tabela, campo ou taxonomia sem nova decisão arquitetural.
+
+**Escopos:**
+- **Aula:** “Materiais desta aula”, com referências, arquivos e links ligados à atividade.
+- **Módulo:** coleção dos recursos das aulas do módulo, somente se o vínculo curricular puder ser identificado.
+- **Curso:** índice agregado do conteúdo autorizado e deduplicado com contexto de origem visível.
+- **Turma:** materiais exclusivos da turma aparecem somente para integrantes autorizados; não são promovidos para a biblioteca geral do curso.
+- **Minha aprendizagem:** atalho contextual para materiais de cursos com matrícula/acesso atual; nunca pesquisa global de arquivos privados.
+
+**Metadados visíveis quando reais:** título, tipo, breve descrição, aula/módulo de origem, indicação de material complementar/obrigatório **somente se existente**, idioma e acessibilidade disponível. Evitar tamanho/duração, quantidade, progresso e estado “lido” sem dados oficiais. Se um recurso for reutilizado em várias aulas, mostrar referências de origem ou agrupá-las em vez de multiplicar arquivos.
+
+### Wireframe — biblioteca mobile
+```text
+‹ Meu curso                        [Buscar?]
+Materiais de estudo
+[Todos] [Documentos] [Vídeos] [Imagens]
+Módulo 1 · Fundamentos
+[PDF] Guia de redução de danos    [Visualizar]
+[LINK] Referência externa         [Abrir]
+Módulo 2 · Práticas
+[VIDEO] Entrevista                [Assistir]
+[GALERIA] Infográficos            [Explorar]
+[H5P] Exercício interativo        [Abrir atividade]
+```
+Filtros e busca apenas quando os providers sustentarem esses atributos e permissões. H5P pode aparecer como recurso pedagógico navegável, **não** como arquivo downloadável nem duplicação de atividade.
+
+### Wireframe — leitor PDF mobile
+```text
+‹ Voltar à aula   Guia de redução de danos    [Mais]
+┌────────────────────────────────────────────┐
+│ PDF.js via aculta_pdf_viewer               │
+│ [página/zoom/busca/ações permitidas]       │
+│ documento responsivo                      │
+└────────────────────────────────────────────┘
+[Voltar à aula e contexto anterior]
+```
+Não renderizar controles de PDF fictícios pelo Studio: o visualizador real gerencia zoom, páginas e busca. No desktop o viewer usa a área central com índice recolhível; mobile dá prioridade à página. Se houver resposta não enviada na aula, preservar/avisar sobre perda de edição ao navegar.
+
+### Aceite específico de contexto
+- Aula A e B podem referenciar a mesma Media sem copiar File; a Biblioteca lista a referência sem duplicar o arquivo.
+- Estudante da Turma A não recebe documentos privados da Turma B, nem por listagem, URL de derivado, cache ou link direto.
+- Remover uma referência curricular não apaga a mídia se outros contextos ainda a utilizam.
+- Abrir e voltar ao PDF preserva URL, foco e contexto; sem JavaScript, links/rotas oficiais permanecem utilizáveis.
+- Lista, busca e filtros devem aplicar **access antes da paginação/contagem**, com contextos e tags de cache corretos.
+- Layout light/dark, leitor de tela, zoom/reflow e 320–1440px; PDFs sem acessibilidade requerem alternativa de conteúdo quando forem obrigatórios.
+
+**Status:** planejamento visual e contrato de acesso; não implementado.
