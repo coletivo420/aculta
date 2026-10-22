@@ -74,7 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.166` | Detectar pais posteriores aos filhos na ordem por CID | Auditoria sinaliza relações válidas em que o pai tem CID maior, precondição para escolher lookup sequencial ou estratégia em duas passagens. Só contagens; sem Runtime. |
+| `0.1.0-dev.166` | Detectar pais posteriores aos filhos na ordem por CID | Auditoria sinaliza relações válidas em que o pai tem CID maior, precondição para escolher lookup sequencial ou estratégia em duas passagens. Smoke GET/Drush somente leitura no Homelab: zero Comments de origem, zero posts existentes e zero relações pai/filho; acervo vazio neste Runtime. |
 | `0.1.0-dev.165` | Pesquisar fonte e destino do Migrate API para traduções | Core 11.4.10: `content_entity` materializa todos os IDs antes de iterar; `EntityContentBase` salva cada linha separadamente e mapeia também o idioma. Antes da definição executável, implementar fonte paginada e vínculo idempotente das linhas de um Comment ao mesmo post de ID automático. Sem migração/Runtime. |
 | `0.1.0-dev.164` | Habilitar traduções de assunto e corpo dos posts | Campos de apresentação aceitam traduções para preservar os idiomas dos Comments na migração; tópico, pai e posição permanecem estruturais/compartilhados. Atualização de schema no Runtime e migração pendentes. |
 | `0.1.0-dev.163` | Paginar avisos do Messenger na auditoria | Avisos por tópico são percorridos em lotes com CID máximo inicial; marcadores e Comments associados são resolvidos por lote, sem lista global de registros. Sem Runtime. |

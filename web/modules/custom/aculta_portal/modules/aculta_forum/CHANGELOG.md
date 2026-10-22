@@ -3,7 +3,9 @@
 - O inventário identifica relações válidas do mesmo tópico em que o CID do pai
   é maior que o do filho. A contagem sinaliza árvores que uma importação
   sequencial por CID não pode resolver por lookup imediato; não expõe IDs.
-- Somente leitura. Nenhuma migração foi executada.
+- Smoke no Homelab (`toca`, Runtime `aculta_runtime`, URI do purpose `forum`):
+  auditoria concluiu; zero Comments de origem, zero posts de destino e zero
+  relações pai/filho. Somente leitura; nenhuma migração foi executada.
 
 ## `0.1.0-dev.165` — definir os limites do adapter Migrate
 
