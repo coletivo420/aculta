@@ -28,3 +28,8 @@ e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
 ## Política compartilhada de participação — Fórum e Wiki420
 
 O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de primeira participação e moderação**, estendendo `src/ParticipationRules.php` sem mover a política para `aculta_portal`. A função atual `requiresFirstDiscussionModeration()` é específica das discussões do Fórum; a extensão para Wiki usará histórico próprio de verbetes publicados e contrato compartilhado no User, sem confundir comentários com verbetes. Todo `email_confirmed` pode criar verbetes; o **primeiro verbete** exige moderação e somente `content_editor` aprova/publica, conforme workflow e acesso efetivos. A aprovação do primeiro não concede publicação direta posterior. O Fórum e a Wiki continuam donos de suas filas, revisões, adapters e storage de domínio. Implementação sujeita a inventário DI/chamadores, ADR, testes e homelab. [Política e roadmap USER-PART 0.1](../../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md) · [Plano de moderação Wiki](../aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md). Autosave Form permanece futuro.
+
+
+## Inventário transversal USER-PART 0.1-A
+
+[Inventário comparativo Fórum, Fórum LMS e Wiki](docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md): preserva os contratos existentes de `ParticipationRules`, `ParticipationHooks`, `ParticipationEditWindow`, moderação contextual Group e workflow Wiki. A centralização priorizada é de **políticas e interfaces em `aculta_user`**; queries, filas e transições de cada domínio permanecem nos kernels respectivos. Próximo marco USER-PART 0.1-B: contrato/ADR e testes de caracterização antes de PHP funcional. Nenhum teste Runtime foi executado.
