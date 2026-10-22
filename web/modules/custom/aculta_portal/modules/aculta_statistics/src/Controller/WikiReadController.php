@@ -29,6 +29,11 @@ final class WikiReadController {
   public const BUNDLE = 'wiki_entry';
 
   /**
+   * Métrica de leitura de verbete: a dimensão é o ID do nó.
+   */
+  public const READ_METRIC = 'wiki.entries.read';
+
+  /**
    * Evento do limite por verbete.
    */
   public const FLOOD_NODE = 'aculta_statistics.wiki_read.node';
@@ -85,7 +90,7 @@ final class WikiReadController {
 
     $this->flood->register(self::FLOOD_NODE, self::NODE_WINDOW, $nodeKey);
     $this->flood->register(self::FLOOD_CLIENT, self::CLIENT_WINDOW, $clientKey);
-    $this->recorder->record('wiki.entries.read', (string) $node->id());
+    $this->recorder->record(self::READ_METRIC, (string) $node->id());
 
     return new Response('', Response::HTTP_NO_CONTENT);
   }

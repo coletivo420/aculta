@@ -90,6 +90,15 @@ interface AggregateStorageInterface {
   public function dimensions(string $metric, int $day): array;
 
   /**
+   * Total de cada dimensão da métrica no período.
+   *
+   * @return array<int|string, int>
+   *   Total por dimensão, do maior para o menor; no empate, pela dimensão.
+   *   Chave numérica volta como inteiro, comportamento do array do PHP.
+   */
+  public function dimensionTotals(string $metric, int $fromDay, int $toDay): array;
+
+  /**
    * Número do dia UTC atual, usado como chave de agregação.
    */
   public function currentDay(): int;

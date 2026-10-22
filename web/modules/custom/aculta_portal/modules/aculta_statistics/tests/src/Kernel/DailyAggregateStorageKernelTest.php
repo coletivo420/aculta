@@ -59,6 +59,26 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Totais por dimensão somam o período, ordenam e isolam a métrica.
+   */
+  public function testDimensionTotalsSumThePeriodAndOrderByTotal(): void {
+    $storage = $this->storage();
+    $this->insertRow('wiki.entries.read', '10', 100, 3);
+    $this->insertRow('wiki.entries.read', '10', 102, 2);
+    $this->insertRow('wiki.entries.read', '11', 101, 4);
+    $this->insertRow('wiki.entries.read', '12', 100, 1);
+    $this->insertRow('wiki.entries.read', '13', 100, 3);
+    $this->insertRow('wiki.entries.read', '11', 99, 50);
+    $this->insertRow('links.link.clicks', '10', 100, 7);
+
+    // Fora do período: o dia 99 não entra.
+    $this->assertSame([10 => 5, 11 => 4, 13 => 3, 12 => 1], $storage->dimensionTotals('wiki.entries.read', 100, 102));
+    // Empate desempata pela dimensão.
+    $this->assertSame([10 => 3, 13 => 3, 12 => 1], $storage->dimensionTotals('wiki.entries.read', 100, 100));
+    $this->assertSame([], $storage->dimensionTotals('wiki.entries.read', 200, 210));
+  }
+
+  /**
    * Identificador fora do formato é recusado.
    */
   public function testRejectsInvalidMetric(): void {

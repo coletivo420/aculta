@@ -161,6 +161,23 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function dimensionTotals(string $metric, int $fromDay, int $toDay): array {
+    $this->assertMetric($metric);
+    $query = $this->database->select(self::TABLE, 'stats')
+      ->fields('stats', ['dimension'])
+      ->condition('metric', $metric)
+      ->condition('day', [$fromDay, $toDay], 'BETWEEN')
+      ->groupBy('dimension')
+      ->orderBy('total', 'DESC')
+      ->orderBy('dimension');
+    $query->addExpression('SUM(stats.total)', 'total');
+
+    return array_map('intval', $query->execute()->fetchAllKeyed());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function purgeMetricBefore(string $metric, int $day): int {
     $this->assertMetric($metric);
     return (int) $this->database->delete(self::TABLE)

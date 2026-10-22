@@ -34,6 +34,14 @@ aculta_statistics.dashboard_export:
   requirements:
     _permission: 'administer aculta_statistics'
 
+aculta_statistics.wiki_ranking_export:
+  path: '/painel-administrativo/aculta/estatisticas/area/wiki/ranking.csv'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::wikiRankingExport'
+    _title: 'Exportar ranking da Wiki'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
 aculta_statistics.area:
   path: '/painel-administrativo/aculta/estatisticas/area/{area}'
   defaults:

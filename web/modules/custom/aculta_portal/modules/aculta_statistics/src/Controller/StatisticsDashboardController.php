@@ -150,6 +150,11 @@ final class StatisticsDashboardController extends ControllerBase {
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
 
+    // O ranking é por verbete e só faz sentido na área Wiki.
+    if ($area === 'wiki') {
+      $build['ranking'] = $this->wikiRanking($today, $days);
+    }
+
     // Atalho para os prazos, só para quem administra a retenção. A subaba do
     // menu já leva lá; o link no painel evita procurar o menu.
     if ($this->currentUser()->hasPermission('administer aculta_statistics')) {
@@ -211,6 +216,100 @@ final class StatisticsDashboardController extends ControllerBase {
       'Content-Type' => 'text/csv; charset=utf-8',
       'Content-Disposition' => 'attachment; filename="' . $filename . '"',
     ]);
+  }
+
+  /**
+   * CSV do ranking da Wiki: posição, título atual do verbete e leituras no período.
+   */
+  public function wikiRankingExport(Request $request): Response {
+    $days = MetricSeries::normalizePeriod($request->query->get('dias'));
+    $lines = ['posicao,verbete,leituras'];
+    foreach ($this->wikiRankingEntries($this->today(), $days) as $position => $entry) {
+      $lines[] = ($position + 1) . ',' . $this->csvField((string) $entry['node']->label()) . ',' . $entry['reads'];
+    }
+
+    $filename = 'wiki-ranking-' . $days . 'd.csv';
+    return new Response(implode("\n", $lines) . "\n", Response::HTTP_OK, [
+      'Content-Type' => 'text/csv; charset=utf-8',
+      'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+    ]);
+  }
+
+  /**
+   * Ranking dos verbetes mais lidos no período, com o título resolvido na renderização.
+   */
+  private function wikiRanking(int $today, int $days): array {
+    $entries = $this->wikiRankingEntries($today, $days);
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-wiki-ranking'],
+    ];
+    if ($entries === []) {
+      $build['vazio'] = [
+        '#markup' => '<p>' . $this->t('Nenhuma leitura de verbete no período.') . '</p>',
+      ];
+      return $build;
+    }
+
+    $rows = [];
+    foreach ($entries as $position => $entry) {
+      $rows[] = [
+        $position + 1,
+        ['data' => ['#type' => 'link', '#title' => (string) $entry['node']->label(), '#url' => $entry['node']->toUrl()]],
+        $entry['reads'],
+      ];
+    }
+    $build['tabela'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Verbetes mais lidos no período'),
+      '#header' => [$this->t('Posição'), $this->t('Verbete'), $this->t('Leituras')],
+      '#rows' => $rows,
+    ];
+    $build['exportar'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-note'],
+      'link' => [
+        '#type' => 'link',
+        '#title' => $this->t('Exportar ranking (CSV)'),
+        '#url' => Url::fromRoute('aculta_statistics.wiki_ranking_export', [], ['query' => ['dias' => $days]]),
+      ],
+    ];
+    return $build;
+  }
+
+  /**
+   * Verbetes com leitura no período, do mais lido para o menos lido.
+   *
+   * A dimensão guardada é o ID do verbete. Os títulos são carregados agora:
+   * verbete excluído não carrega e sai do ranking sem erro.
+   *
+   * @return array<int, array{node: \Drupal\node\NodeInterface, reads: int}>
+   *   Verbete e leituras no período, na ordem do ranking.
+   */
+  private function wikiRankingEntries(int $today, int $days): array {
+    if (!$this->entityTypeManager()->hasDefinition('node')) {
+      return [];
+    }
+    $totals = [];
+    foreach ($this->storage->dimensionTotals(WikiReadController::READ_METRIC, $today - $days + 1, $today) as $dimension => $reads) {
+      // Dimensão numérica vira chave inteira no array do PHP.
+      if (preg_match('/^[1-9][0-9]*$/', (string) $dimension) === 1) {
+        $totals[(int) $dimension] = $reads;
+      }
+    }
+    if ($totals === []) {
+      return [];
+    }
+
+    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple(array_keys($totals));
+    $entries = [];
+    foreach ($totals as $nid => $reads) {
+      $node = $nodes[$nid] ?? NULL;
+      if ($node !== NULL && $node->bundle() === WikiReadController::BUNDLE) {
+        $entries[] = ['node' => $node, 'reads' => $reads];
+      }
+    }
+    return $entries;
   }
 
   /**
