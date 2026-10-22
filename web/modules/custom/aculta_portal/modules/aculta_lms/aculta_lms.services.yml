@@ -19,7 +19,7 @@ services:
     arguments: ['@aculta_lms.learning_dashboard', '@current_user']
   aculta_lms.learning_dashboard_controller:
     class: Drupal\aculta_lms\Controller\LearningDashboardController
-    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation']
+    arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation', '@aculta_studio.learner_dashboard_composer']
   aculta_lms.class_activity_deadline_access:
     class: Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck
     arguments: ['@entity_type.manager', '@current_user']
