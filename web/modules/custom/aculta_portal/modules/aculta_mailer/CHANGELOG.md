@@ -1,3 +1,9 @@
+## 0.1.0-dev.69 (regressão do container, sem mudança de versão)
+
+- A nota da dev.22 dizia que `LmsForumModerationController` (do `aculta_forum_lms`) quebrava o rebuild do container. Reproduzido no servidor de testes: `drush --uri=https://aculta.toca.net.br cache:rebuild` retorna `[success] Cache rebuild complete.` com código 0 em 2026-10-22. A falha antiga não se reproduz; o container resolve o controller.
+- Nenhuma alteração de código, configuração ou conteúdo foi feita para essa verificação. Log privado em `/home/aculta/private/aculta/t11-20261022-drush-cr.log`.
+- Versão mantida: ver a nota da entrada anterior sobre a tabela do README raiz.
+
 ## 0.1.0-dev.69 (correção de fronteira, sem mudança de versão)
 
 - Prévia do modelo (`MailTemplateForm`) e gráfico de tendência (`MailDashboardController`) deixam de usar classes de design e passam a usar os atributos neutros `data-aculta-mailer-preview` e `data-aculta-mailer-tendencia`. Nenhuma regra CSS dependia das classes antigas, então a aparência não muda.
