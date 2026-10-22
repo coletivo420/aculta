@@ -16,6 +16,8 @@ Documentação normativa vigente:
   lacunas e decisão sobre adaptador.
 - [Matriz de acesso editorial](EDITORIAL-ACCESS-MATRIX.md) — atores, operações,
   estados e transições reais do `revista`, coautoria e cacheability.
+- [Matriz ator × estado × ação](EDITORIAL-ACTOR-STATE-MATRIX.md) — leitura,
+  edição, transições e demais ações por estado, verificadas no workflow real.
 
 > **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
 > pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática

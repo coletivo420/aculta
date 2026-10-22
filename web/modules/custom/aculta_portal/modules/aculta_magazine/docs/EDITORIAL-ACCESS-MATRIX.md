@@ -16,13 +16,17 @@ papéis permanecem inalterados.
 `administrator`. Nenhuma permissão foi inferida: todas constam do Config Sync ou
 são concedidas pelo Core a `is_admin`.
 
+**Matriz ator × estado × ação:** `EDITORIAL-ACTOR-STATE-MATRIX.md` (MAG 0.5-B.5)
+consolida a mesma verificação em tabelas de leitura, edição, transições e
+demais ações por estado. Este documento mantém o detalhamento dos contratos.
+
 ## 1. Atores
 
 | Ator | Como existe hoje | Permissões editoriais relevantes | Evidência |
 | --- | --- | --- | --- |
 | Anônimo | visitante sem sessão | `access content` | `user.role.anonymous.yml` |
 | Autenticado sem papel editorial | conta com `authenticated` apenas | `access content`, `access aculta portal` | `user.role.authenticated.yml` |
-| Conta confirmada | conta com `email_confirmed` | `access content`, `view own unpublished content`, `view wiki_entry revisions` | `user.role.email_confirmed.yml` |
+| Conta confirmada | conta com `email_confirmed` | `access content`, `view own unpublished content`, `view latest version`, `view wiki_entry revisions` | `user.role.email_confirmed.yml` |
 | Autor/editor (`content_editor`) | papel concedido manualmente | `create revista content`; `edit own`/`edit any revista content`; `view own`/`view any unpublished content`; `view all revisions`; `view revista revisions`; `revert all revisions`; as oito `use revista transition …` | `user.role.content_editor.yml` |
 | Coautor | conta listada em `co_authors` | nada além do que o papel dela já concede; o contrib acrescenta `view`/`update`/`delete` **condicionados** (ver §5) | `node_co_authors_node_access()` |
 | Administrador | `administrator`, `is_admin: true` | todas as permissões; `bypass node access` | `user.role.administrator.yml` |
@@ -158,8 +162,13 @@ A rota `latest-version` (`/node/{node}/latest`) exige `node.view` **e**
 pendente e a conta tem `view latest version` **e** `view any unpublished
 content`, ou `view latest version` **e** `view own unpublished content` com
 autoria. Resultado prático nesta configuração: `content_editor` tem
-`view latest version` **e** `view any unpublished content` → alcança; nenhum
-outro papel tem `view latest version` → não alcança.
+`view latest version` **e** `view any unpublished content` → alcança qualquer
+Node; `email_confirmed` também tem `view latest version`, mas com
+`view own unpublished content` → alcança **somente o próprio Node** com revisão
+pendente, porque o teste do ramo `own` é a autoria (`uid`), não a coautoria.
+Anônimo e autenticado sem papel editorial não têm `view latest version` → não
+alcançam. Um coautor com `email_confirmed` que não seja o autor vê a revisão pela
+rota canônica, quando ela lhe é acessível, e não pela aba `latest-version`.
 
 ## 5. Coautoria — semântica exata
 

@@ -11,6 +11,7 @@ conteúdo, publicação e mídia.
 - [Auditoria MAG 0.5-A](docs/AUDIT-MAG-0.5-A.md)
 - [Contrato de integração Studio ↔ Magazine](docs/STUDIO-INTEGRATION-CONTRACT.md)
 - [Matriz de acesso editorial](docs/EDITORIAL-ACCESS-MATRIX.md)
+- [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
 - [CHANGELOG](CHANGELOG.md)
 
