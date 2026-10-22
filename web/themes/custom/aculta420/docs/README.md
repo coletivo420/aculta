@@ -61,3 +61,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b3-feedback-audit.md](theme-ux-0.8-b3-feedback-audit.md) — auditoria inicial dos estados e feedback SDC/UI Suite do portal.
 
 - B3: [auditoria e implementação de empty-state](theme-ux-0.8-b3-feedback-audit.md) — SDC compartilhado Wiki/LMS; homologação Runtime pendente.
+
+- [theme-ux-0.8-b4-utility-panels.md](theme-ux-0.8-b4-utility-panels.md) — auditoria de avisos, mensagens, carrinho e painel Minha Conta; correções CSS/SDC e gates Runtime.
