@@ -398,3 +398,17 @@
 }
 .portal-account-overview__profile:hover { border-color: var(--aculta-interactive-border); color: var(--aculta-interactive-text); }
 .portal-account-overview__profile:focus-visible { outline: 2px solid var(--aculta-interactive-border); outline-offset: 2px; }
+
+/* Account panel: safe reflow and contained AJAX content on narrow screens. */
+.portal-account__layout,
+.portal-account__content,
+.portal-account__body { min-inline-size: 0; }
+.portal-account__content { overflow-wrap: anywhere; }
+.portal-account__body :is(img, video, iframe) { max-inline-size: 100%; }
+.portal-account__body :is(pre, .table-responsive) { max-inline-size: 100%; overflow-x: auto; }
+.portal-account__nav:focus-within { scroll-margin-block: 1rem; }
+@media (max-width: 767.98px) {
+  .portal-account__layout { grid-template-columns: minmax(0, 1fr); }
+  .portal-account__nav { position: static; top: auto; }
+  .portal-account__content { padding: clamp(.875rem, 4vw, 1.5rem); }
+}
