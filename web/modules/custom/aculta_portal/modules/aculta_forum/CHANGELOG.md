@@ -1,3 +1,8 @@
+## `0.1.0-dev.218` — variar o link da busca por query string
+
+- O formatter varia sua cache pelos parâmetros da URL usados pelo pager ao
+  montar o destino da resposta. Sem alteração no Runtime ou testes.
+
 ## `0.1.0-dev.217` — abrir na página da resposta encontrada
 
 - O link de busca calcula a página da resposta usando a ordenação e o pager da

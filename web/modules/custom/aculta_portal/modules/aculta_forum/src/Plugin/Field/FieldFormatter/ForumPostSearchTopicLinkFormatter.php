@@ -87,7 +87,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
         ->addCacheableDependency($topic)
         ->addCacheableDependency($post_access)
         ->addCacheableDependency($topic_access)
-        ->addCacheContexts(['domain'])
+        ->addCacheContexts(['domain', 'url.query_args'])
         ->addCacheTags(['aculta_forum_post_list']);
       if (!$post->isPublished() || !$topic->isPublished() || !$post_access->isAllowed() || !$topic_access->isAllowed()) {
         $elements[$delta] = ['#access' => FALSE];
