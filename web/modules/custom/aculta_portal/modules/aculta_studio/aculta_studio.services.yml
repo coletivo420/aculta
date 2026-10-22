@@ -11,6 +11,13 @@ services:
   aculta_studio.listing:
     class: Drupal\aculta_studio\StudioListingBuilder
     arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation']
+  aculta_studio.experience_manager:
+    class: Drupal\aculta_studio\Experience\StudioExperienceManager
+    calls:
+      - [addProvider, ['@aculta_studio.experience.ganjalab420']]
+  aculta_studio.experience.ganjalab420:
+    class: Drupal\aculta_studio\Experience\GanjaLab420ExperienceProvider
+    arguments: ['@?aculta_lms.learning_dashboard_controller']
   aculta_studio.ganjalab420_controller:
     class: Drupal\aculta_studio\Controller\GanjaLab420Controller
-    arguments: ['@?aculta_lms.learning_dashboard_controller']
+    arguments: ['@aculta_studio.experience_manager', '@current_user']
