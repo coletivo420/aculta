@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Context header
+status: experimental
+group: Patterns
+description: 'Contextual page heading under the permanent multidomain shell; the consuming presenter owns title, actions and cache.'
+props:
+  type: object
+  properties:
+    eyebrow:
+      type: ["string", "null"]
+      default: null
+    title:
+      type: string
+      description: 'Plain text page heading. The presenter must suppress the redundant Core title on migrated pages.'
+    subtitle:
+      type: ["string", "null"]
+      default: null
+  required:
+    - title
+slots:
+  breadcrumbs:
+    title: Breadcrumb
+    description: 'Existing authorized breadcrumb render array; never rebuild breadcrumb links here.'
+  back_link:
+    title: Back link
+    description: 'Authorized link to a real destination, provided by the consumer.'
+  actions:
+    title: Actions
+    description: 'Authorized contextual actions prepared by the consumer.'
+assets:
+  css:
+    component:
+      context-header.css: {}
