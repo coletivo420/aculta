@@ -141,7 +141,9 @@ pública e retenção de 90 dias, como `wiki.entries.read`.
 
 Ordem sugerida, depois das Fases 1–4:
 
-1. Contagem de verbetes na view `wiki_entries` e campos faltantes.
+1. Contagem de verbetes na view `wiki_entries` e campos faltantes. A contagem e a
+   paginação foram entregues nesta sessão (ver estado abaixo); os campos do teaser
+   continuam pendentes de decisão.
 2. Upload contextual pela política central `aculta_portal.user_upload_policy`, com aba própria.
 3. Adaptador `wiki` do Fórum: uma discussão por verbete, em Comment no Node. A revisão
    editorial continua separada.
@@ -189,7 +191,8 @@ ao fim da sessão.
 | D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | `39842f8b` | concluída |
 | E1 | Status final deste plano | Encerramento | este commit | concluída |
 | E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
-| E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | nesta entrega | concluída |
+| E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | `44b957ba` | concluída |
+| E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -230,18 +233,27 @@ ao fim da sessão.
   apontam para outro tipo de conteúdo ficam de fora. Verbete excluído sai da
   lista sem erro, e a ordem vem da soma no período (`GROUP BY` em
   `dimensionTotals()`), sem corte fixo.
+- **Listagem com contagem e paginação (Fase 5, item 1).** O display `page_1` da
+  view `wiki_entries` passou a usar pager completo de 12 itens e um cabeçalho
+  `@total verbetes publicados`, exibido inclusive quando não há resultados. O
+  caminho `wiki/verbetes` não mudou; os blocos `block_changes` (5 itens) e
+  `block_recent` continuam com limite fixo, sem paginador. `url.query_args`
+  entrou nos contextos de cache da página para que `?page=N` não sirva o cache
+  da primeira página.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
   `WikiRankingKernelTest` (3 testes: período e título atual, verbete excluído,
-  dimensão sem verbete legível) aprovados. A suíte unitária do
+  dimensão sem verbete legível) e `WikiListingConfigTest` (2 testes: pager e
+  contagem na página, blocos intactos) aprovados. A suíte unitária do
   `aculta_statistics` tem 1 falha pré-existente:
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** A Fase 5 do plano (contagem de verbetes na view,
-  upload contextual, adaptador do Fórum, busca e notificações) e a validação em
-  navegador com ACULTA420 e Olivero depois da ativação. A ativação em si depende
+- **O que ficou faltando.** O restante da Fase 5 do plano (campos do teaser,
+  upload contextual, adaptador do Fórum, busca e notificações, estatísticas de
+  edição e revisão) e a validação em navegador com ACULTA420 e Olivero depois
+  da ativação. A ativação em si depende
   de o ambiente importar a configuração e rodar os passos de atualização com
   backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`

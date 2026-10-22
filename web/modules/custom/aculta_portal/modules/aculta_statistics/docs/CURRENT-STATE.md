@@ -33,7 +33,7 @@ contagens, nunca a autoria privada.
 | Recurso | Onde está | Classificação |
 |---|---|---|
 | Verbetes | Tipo de conteúdo `wiki_entry`, fluxo `wiki_editorial`, campo `field_domain_source` | EXISTENTE FUNCIONAL |
-| Lista pública | View `wiki_entries` (`config/sync/views.view.wiki_entries.yml`), sem campo de contagem | EXISTENTE MAS INCOMPLETO |
+| Lista pública | View `wiki_entries` (`config/sync/views.view.wiki_entries.yml`), com contagem `@total` e pager completo de 12 itens na página | EXISTENTE FUNCIONAL |
 | Leituras por verbete | Beacon `WikiReadController` e métrica `wiki.entries.read` (0.2.0-dev.3) | EXISTENTE FUNCIONAL |
 | Publicações e atualizações por verbete | `WikiProvider` e `WikiPublicationHooks`, métricas `wiki.entries.published` e `wiki.entries.updated` | EXISTENTE FUNCIONAL (sem dados até o `aculta_wiki` ser habilitado no ambiente) |
 | Ranking por verbete | Área Wiki do painel (`StatisticsDashboardController::wikiRanking()`) e exportação CSV | EXISTENTE FUNCIONAL |
