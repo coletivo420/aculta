@@ -402,3 +402,7 @@ Os três drawers de utilidade (Avisos, Mensagens, Carrinho) agora declaram `aria
 ## Atualização B1 — Context Header detectado na branch (2026-10-22)
 
 O componente `aculta420:context-header` **já existe** com schema SDC, Twig, CSS e stories `default`/`editorial`. A próxima atividade **não é criá-lo outra vez**, mas integrar dois consumidores reais e testar ownership de H1, render arrays, UI Patterns/Styles e preservação do shell multidomínio. Ver [plano atualizado de B1](theme-ux-0.8-m2-b1-context-header.md). Não declarar implantação Runtime concluída.
+
+## THEME-UX 0.8 — Continuação a partir da branch atual
+
+A inspeção de 2026-10-22 confirmou que `context-header` e `context-tabs` já existem na branch. Portanto não repetir a implementação B1/B2: avançar para [B5-02](theme-ux-0.8-b5-02-drawer-runtime-gates.md), auditoria de interações das gavetas globais com UI Patterns/Styles e preservação do shell. Depois, B6 consolidará os componentes transversais. Fase **planejada**; Runtime pendente.
