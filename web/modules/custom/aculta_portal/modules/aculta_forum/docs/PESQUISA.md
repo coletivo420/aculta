@@ -1,6 +1,6 @@
 # Pesquisa e evidências — ACULTA Forum
 
-Revisão: 2026-10-20. Base local: `origin/main` `d4a0d66e`. Este documento
+Revisão: 2026-10-22. Base local: `origin/main` `d4a0d66e`. Este documento
 distingue documentação upstream, código instalado e decisões alvo. APIs Drupal
 e dependências devem ser rechecadas no momento de cada implementação.
 
@@ -16,6 +16,43 @@ por vocabulário. A integração e a atualização da tabela `taxonomy_index` fo
 verificadas em `TaxonomyViewsHooks.php` e `TaxonomyHooks.php`. Referências:
 [plugin TaxonomyIndexTid](https://api.drupal.org/api/drupal/core%21modules%21taxonomy%21src%21Plugin%21views%21filter%21TaxonomyIndexTid.php/11.x),
 [integração de Views Taxonomy](https://api.drupal.org/api/drupal/core%21modules%21taxonomy%21src%21Hook%21TaxonomyViewsHooks.php/class/TaxonomyViewsHooks/11.x).
+
+## Investigação de contagens por categoria (2026-10-22)
+
+A View `aculta_forum_categories` parte de `taxonomy_term_field_data` e hoje não
+inclui conteúdo nem contagem. No Core instalado 11.4.10, `NodeViewsData` associa
+o tag `node_access` à tabela base de Node; `Sql::execute()` só adiciona esse
+tag automaticamente quando ele está na tabela base da View. Portanto, uma
+relação futura iniciada na View de Taxonomy precisa pedir explicitamente o tag
+`node_access` na query. A opção de query tags de Views e
+`NodeDatabaseHooks::queryNodeAccessAlter()` são os pontos instalados a validar;
+o hook de acesso descobre a tabela Node na query, aplica os grants do usuário e
+acrescenta o contexto de cache `user.node_grants:view`.
+
+O Core também registra em `TaxonomyViewsHooks` a relação `taxonomy_index.nid` →
+`node_field_data`; o caminho candidato é termo → `taxonomy_index` → Node, com
+filtro fixo para `aculta_forum_topic`, publicado e atribuído à categoria. Domain
+Access 3.0.1 implementa grants no mesmo sistema de Node Access por domínio
+ativo. A camada de query é uma hipótese compatível com o código instalado, não
+prova de que o resultado final respeita todos os acessos e caches do Runtime.
+
+Antes de expor contagens, validar com registros controlados no MariaDB:
+publicado e pendente; autorizado e negado por Node grants; Node no propósito
+`forum` e fora dele; categoria vazia; e alteração/publicação/despublicação com
+invalidação da cache da View. Comparar a consulta/contagem com Entity Access para
+cada conta. Não exibir contagem nem ativar agregação enquanto essa matriz e a
+revisão de SQL/cache não passarem. Nenhum conteúdo ou configuração Runtime foi
+alterado nesta investigação.
+
+Fontes: Core instalado em `web/core/modules/node/src/NodeViewsData.php`,
+`web/core/modules/node/src/Hook/NodeDatabaseHooks.php`,
+`web/core/modules/views/src/Plugin/views/query/Sql.php`,
+`web/core/modules/views/src/Plugin/views/cache/CachePluginBase.php`,
+`web/core/modules/taxonomy/src/TermViewsData.php` e contrib instalado em
+`web/modules/contrib/domain/domain_access/src/Hook/DomainAccessNodeHooks.php`;
+[Views SQL query plugin](https://api.drupal.org/api/drupal/core%21modules%21views%21src%21Plugin%21views%21query%21Sql.php/class/Sql/11.x),
+[Core Node access grants](https://api.drupal.org/api/drupal/core%21modules%21node%21src%21NodeGrantDatabaseStorage.php/11.x),
+[Node access API](https://www.drupal.org/docs/develop/drupal-apis/writing-a-module-that-handles-node-access).
 
 ## Estado real do repositório
 
