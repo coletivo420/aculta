@@ -1,5 +1,7 @@
 # aculta_magazine (Revista)
 
+**Roadmap vigente de realinhamento MAG 0.5:** [ACULTA Magazine — Roadmap](../../../../../../../docs/portal/STUDIO-MAGAZINE-ROADMAP.md). A sequência antiga que condicionava o Studio à conclusão do Magazine foi superada: Magazine fornece capacidades editoriais, GanjaLab/Studio orquestra a experiência e ACULTA420 apresenta por SDC/UI Suite. Implementação futura não é validação Runtime.
+
 Auditoria estrutural F0.1.0: [estado do código, Config Sync, Runtime e plano de
 limpeza](AUDITORIA-F0.1.0.md).
 
