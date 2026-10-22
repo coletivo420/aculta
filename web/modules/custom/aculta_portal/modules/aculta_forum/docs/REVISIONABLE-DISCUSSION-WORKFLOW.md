@@ -114,8 +114,10 @@ testes de workflow; a configuração da política inicial continua sendo a de
    leitura e no composer sem quebrar a ordem cronológica. A dev.146 compara
    assunto/corpo de revisões adjacentes usando Diff contrib dentro da rota
    administrativa contextual; a dev.147 também permite escolher quaisquer duas
-   revisões mostradas na página atual do histórico. Hierarquia visual, seleção
-   entre páginas e homologação visual continuam pendentes. A dev.148 liga a
+   revisões mostradas na página atual do histórico. A dev.151 passa a aceitar
+   IDs do histórico em páginas diferentes e valida no servidor que pertencem ao
+   mesmo post; a rota de comparação revalida o acesso. Hierarquia visual e
+   homologação visual continuam pendentes. A dev.148 liga a
    edição pública dentro da janela do autor, salvando revisão nova sem expor
    campos de moderação ou contexto. A dev.149 conecta os diálogos existentes de
    anexo/galeria ao post e mantém a publicação vinculada ao estado público do

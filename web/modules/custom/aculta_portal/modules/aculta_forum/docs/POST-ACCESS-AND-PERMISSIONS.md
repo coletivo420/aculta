@@ -97,8 +97,9 @@ A comparação de revisões fica em
 O custom access revalida os dois IDs, exige que sejam distintos e pertençam ao
 mesmo post do histórico, além dos critérios de purpose/permissão/tópico desta
 seção. A interface mantém o atalho entre revisões adjacentes e permite selecionar
-duas revisões dentre as 50 exibidas na página atual. Compara somente assunto e
-corpo, não oferece revert/delete e usa o serviço `diff.entity_comparison` do
+duas revisões informando os IDs que aparecem nas páginas do histórico; o
+formulário valida que ambas pertencem ao mesmo post, e a rota revalida vínculo e
+acesso. Compara somente assunto e corpo, não oferece revert/delete e usa o serviço `diff.entity_comparison` do
 Diff 2.1.1 instalado; a rota genérica
 do Diff é específica para Node e não é reutilizada. O Core DiffFormatter escapa
 as linhas resultantes; o controller converte rich text em texto antes de

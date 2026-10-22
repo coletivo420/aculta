@@ -136,10 +136,11 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-forum-post-revision-history']],
     ];
-    if (count($revisionOptions) > 1) {
+    if ($olderRevisionId !== NULL && $revisionOptions !== []) {
       $build['comparison_selection'] = $this->formBuilder->getForm(
         ForumPostRevisionSelectionForm::class,
         $revisionOptions,
+        (int) $olderRevisionId,
       );
     }
     $build['history'] = [

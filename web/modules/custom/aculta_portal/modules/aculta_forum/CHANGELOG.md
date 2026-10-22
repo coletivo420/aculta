@@ -1,3 +1,7 @@
+## `0.1.0-dev.151` — comparar revisões entre páginas do histórico
+
+- O formulário aceita IDs de duas revisões vistos em quaisquer páginas do histórico e valida no servidor que ambas existam e pertençam ao mesmo post. A rota de comparação repete a validação de vínculo e acesso. Sem mudança Runtime; testes e revisão visual pendentes.
+
 ## `0.1.0-dev.150` — navega até respostas em outras páginas
 
 - O contexto da resposta mantém link para o post pai acessível mesmo quando ele está em outra página; o destino usa a mesma ordenação/paginação e preserva os demais pagers e argumentos da URL. Pais ausentes, não publicados ou sem acesso continuam sem URL. Sem rota nova ou alteração Runtime; testes e inspeção visual pendentes.
