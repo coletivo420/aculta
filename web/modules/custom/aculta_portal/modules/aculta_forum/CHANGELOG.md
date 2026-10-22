@@ -1,3 +1,16 @@
+## `0.1.0-dev.235` — registrar o bloqueio do upload contextual da Wiki — 2026-10-22
+
+- Documento apenas. T20 está bloqueada: `wiki_entry` não tem campo de envio do
+  usuário, e `field_wiki_image` é `entity_reference_autocomplete` para Media
+  `image` existente (`auto_create: false`).
+- O papel `email_confirmed` não tem `create media` nem `edit own media`, então
+  não há envio cuja Media se possa publicar com a página visível sem criar
+  permissão e fluxo novos.
+- A aba por consumidor é administrativa (`UserUploadSettingsForm::CONSUMERS`);
+  registrar `wiki` antes do consumidor criaria política sem envio que a use.
+- Decisão humana pendente sobre campo de upload e permissão de Media do
+  verbete. Sem alteração de código, configuração ou Runtime.
+
 ## `0.1.0-dev.234` — localizar a Wiki e registrar pendências de upload e comentários — 2026-10-22
 
 - Documento apenas. A Wiki não tem módulo nem pasta `wiki`: é conteúdo e
