@@ -622,3 +622,9 @@ A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** pr
 ## Ajuste de rota pública GanjaLab420
 
 A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora usa `/ganjalab420` no purpose account; `/minha-aprendizagem` permanece alias de compatibilidade sem redirect nesta fase. Nenhuma mudança de storage, matrícula, LMS ou permissões; realizar `drush cr` e regressões HTTP após deploy, incluindo acessos autenticado/anônimo e Domain purpose. Documento de marca: [GANJALAB-BRANDING.md](../portal/GANJALAB-BRANDING.md).
+
+## Interfaces GanjaLab420 — especificações visuais de 2026-10-22
+
+- [Dashboard do estudante](../portal/GANJALAB420-DASHBOARD-VISUAL.md) — G420-UX 0.2, cursos matriculados, atividade pendente e retomada de estudos.
+- [Sala de Aprendizagem](../portal/GANJALAB420-LEARNING-ROOM-VISUAL.md) — G420-UX 0.4, leitor mobile-first, índice, material, atividade e fórum contextual.
+- **Manter o módulo técnico `aculta_lms`** e seus submódulos. Planos de renomeação técnica para Escola ou GanjaLab LMS estão cancelados. Este acréscimo visual não modifica nem certifica a implementação F0–F17.
