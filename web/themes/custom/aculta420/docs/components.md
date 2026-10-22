@@ -367,3 +367,7 @@ Diretório: `components/patterns/context-header/`. Apresentação contextual aba
 ## `aculta420:context-tabs` — navegação contextual por rotas
 
 SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `items` de âncoras access-checked, incluindo `aria-current=page` preparado pelo provider. Twig possui `<nav>`, CSS usa tokens e flex wrap mobile; stories estáticas GanjaLab e Wiki. **Não** confundir com `product-tabs`, que controla painéis Bootstrap internos. Ainda sem consumidores funcionais; ver [plano B2](theme-ux-0.8-b2-context-tabs.md).
+
+## Context Tabs — primeiro consumidor real no código
+
+`StudioController::linkList()` entrega `#theme: item_list` ao slot `items` do SDC `aculta420:context-tabs` somente para áreas e subtabs. Seções mantêm sua sidebar. O componente é apresentação: não modifica navegação Drupal Ajax, URLs, ACL nem Domain Header. Ver [fases e validação pendente](theme-ux-0.8-b2-context-tabs.md).
