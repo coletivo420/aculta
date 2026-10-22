@@ -30,3 +30,8 @@ pendentes, está em
 - [`docs/TEST-MATRIX.md`](docs/TEST-MATRIX.md) — cobertura planejada.
 - [`CHANGELOG.md`](CHANGELOG.md) — mudanças por versão.
 - [`AGENTS.md`](AGENTS.md) — regras locais para agentes.
+
+
+## Frente planejada: WE SATIVA
+
+[Fundação do WE SATIVA](docs/WE-SATIVA-FOUNDATION.md): experiência editorial própria da Wiki420 com contribuição contextual a partir do verbete, fluxos progressivos mobile-first, Drupal Form API/revisões e autorização por capacidade, independente do GanjaLab/GanjaLab420. A fundação é documental, não altera rotas ou permissões. Autosave Form fica somente para consideração futura.
