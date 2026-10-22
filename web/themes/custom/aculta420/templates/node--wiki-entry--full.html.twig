@@ -2,8 +2,10 @@
 <article{{ attributes.addClass('aculta-wiki-entry') }}>
   {{ title_prefix }}
   {{ title_suffix }}
+  {{ include('aculta420:context-header', { title: label, eyebrow: 'Wiki420 · Enciclopédia livre'|t }, with_context = false) }}
   {{ include('aculta420:wiki-entry', {
     variant: 'article',
+    show_heading: false,
     url: url,
     title: label,
     has_summary: not node.field_wiki_summary.isEmpty and content.field_wiki_summary['#access']|default(true),
