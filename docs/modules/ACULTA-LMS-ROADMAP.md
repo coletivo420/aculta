@@ -618,3 +618,7 @@ A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** pr
 ## Experiências de criador e estudante
 
 **GanjaLab**: criação e edição de cursos via módulo técnico `aculta_studio` e Course Builder planejado. **GanjaLab420**: experiência do estudante, conforme [documentação inicial](../portal/GANJALAB420-LEARNING-UX.md). Ambas compartilham LMS/Group sem novos bancos, matrículas ou notas. A linha visual G420-UX 0.1–0.8 não substitui fases F0–F17, nem altera seus estados e gates. Ver [identidade pública](../portal/GANJALAB-BRANDING.md).
+
+## Ajuste de rota pública GanjaLab420
+
+A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora usa `/ganjalab420` no purpose account; `/minha-aprendizagem` permanece alias de compatibilidade sem redirect nesta fase. Nenhuma mudança de storage, matrícula, LMS ou permissões; realizar `drush cr` e regressões HTTP após deploy, incluindo acessos autenticado/anônimo e Domain purpose. Documento de marca: [GANJALAB-BRANDING.md](../portal/GANJALAB-BRANDING.md).
