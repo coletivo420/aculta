@@ -45,3 +45,9 @@ Para cada problema anexar **captura ou caminho de arquivo + linha**, consumidor 
 
 ## Gate para iniciar B1
 B0-R1 a R4 com evidências armazenadas nos relatórios do tema; shell global preservado; Core/Bootstrap e UI Suite avaliados primeiro; inclusão de novos SDCs justificada. Nenhum gate foi executado nesta atualização.
+
+## Revisão dos critérios de auditoria — SDC/UI Suite primeiro
+
+Acrescentar classificação obrigatória a **cada candidato**: `SDC-CONFORME`, `SDC-PARCIAL`, `LEGADO-MIGRAR` ou `DESCARTAR/SUBSTITUIR`. A matriz só aprova **reutilização direta** do primeiro grupo. O segundo deve ser corrigido, o terceiro migrado antes de reutilizar, e o quarto substituído ou excluído. Registrar também path de `.component.yml`, schema de props, slots, arquivos story, aplicação UI Patterns (quando compatível), tokens/UI Styles, consumidores reais e gaps acessíveis.
+
+**Regra da primeira fatia B1:** se page title/breadcrumb Core e Bootstrap já cumprem a função, eles permanecem providers, mas a **abstração visual compartilhável** deve ter SDC; não promover markup Twig isolado como componente reusable. Se `content-section` já for SDC-conforme, estendê-lo com variante/slots é preferível a novo `context-header`. Componente sem Base SDC/UI Suite não é aprovado para nova adoção.
