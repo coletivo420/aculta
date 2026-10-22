@@ -16,11 +16,11 @@ services:
 
   aculta_document_viewer.docx_builder:
     class: Drupal\aculta_document_viewer\Docx\DocxViewerBuilder
-    arguments: ['@file_url_generator', '@file_system', '@aculta_document_viewer.docx_package_validator', '@extension.list.module', '@logger.channel.aculta_document_viewer']
+    arguments: ['@file_url_generator', '@url_generator', '@file_system', '@aculta_document_viewer.docx_package_validator', '@extension.list.module', '@logger.channel.aculta_document_viewer']
 
   aculta_document_viewer.spreadsheet_builder:
     class: Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder
-    arguments: ['@file_url_generator', '@file_system', '@extension.list.module', '@aculta_document_viewer.spreadsheet_file_validator', '@logger.channel.aculta_document_viewer']
+    arguments: ['@file_url_generator', '@url_generator', '@file_system', '@extension.list.module', '@aculta_document_viewer.spreadsheet_file_validator', '@logger.channel.aculta_document_viewer']
 
   aculta_document_viewer.spreadsheet_file_validator:
     class: Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetFileValidator

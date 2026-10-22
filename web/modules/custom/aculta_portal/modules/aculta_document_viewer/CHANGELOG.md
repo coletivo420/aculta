@@ -1,5 +1,17 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.11 — gerar URL Core para arquivos privados Office — 2026-10-21
+
+- Builders DOCX e planilha usam `/system/files?file=...` para `private://`,
+  pelo mesmo endpoint Core já adotado no viewer PDF neste Runtime. Arquivos
+  `public://` continuam usando `FileUrlGeneratorInterface`; a autorização do
+  download continua sob Core/File.
+- `UrlGeneratorInterface` foi injetado nos builders por DI para gerar a rota
+  `system.files`; nenhuma lógica de acesso foi movida ao tema ou ao Fórum.
+- Runtime de teste confirmou a URL gerada e o embed DOCX, mas o endpoint falhou
+  com `FileException: File must be readable` no `BinaryFileResponse`; o browser
+  mostrou o fallback. Não considerar o download Office privado validado.
+
 ## 0.1.0-dev.10 — remove o guarda CSP duplicado — 2026-10-21
 
 - Removidos do módulo o `CspReportRequestGuardSubscriber`, sua entrada de serviço e seu teste unitário. O guarda continua registrado apenas no `aculta_pdf_viewer` até esse módulo ser desinstalado, o que evita dupla execução enquanto os dois coexistem.

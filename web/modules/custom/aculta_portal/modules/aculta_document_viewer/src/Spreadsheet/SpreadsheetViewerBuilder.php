@@ -10,6 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
 use Psr\Log\LoggerInterface;
@@ -47,6 +48,7 @@ final class SpreadsheetViewerBuilder {
    */
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly UrlGeneratorInterface $urlGenerator,
     private readonly FileSystemInterface $fileSystem,
     private readonly ModuleExtensionList $moduleList,
     private readonly SpreadsheetFileValidator $validator,
@@ -86,7 +88,7 @@ final class SpreadsheetViewerBuilder {
       '#attributes' => [
         'data-aculta-document-viewer' => 'spreadsheet',
         'data-aculta-sheet' => 'true',
-        'data-aculta-sheet-url' => $this->fileUrlGenerator->generateString($uri),
+        'data-aculta-sheet-url' => $this->fileUrl($uri),
         'data-aculta-sheet-format' => strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)),
         'data-aculta-sheet-tabulator' => Url::fromUri('base:libraries/tabulator/dist/tabulator_esm.min.mjs')->toString(),
         'data-aculta-sheet-frame-url' => Url::fromUri('base:' . $modulePath . '/js/sheet-frame.html')->toString(),
@@ -101,6 +103,20 @@ final class SpreadsheetViewerBuilder {
         '#attributes' => ['data-aculta-document-part' => 'frame', 'role' => 'region', 'aria-label' => $title],
       ],
     ];
+  }
+
+  /**
+   * Generates a Core private-file URL using the Runtime-compatible query form.
+   */
+  private function fileUrl(string $uri): string {
+    if (!str_starts_with($uri, 'private://')) {
+      return $this->fileUrlGenerator->generateString($uri);
+    }
+    $url = Url::fromRoute('system.files', ['scheme' => 'private'], [
+      'query' => ['file' => substr($uri, strlen('private://'))],
+    ]);
+    $url->setUrlGenerator($this->urlGenerator);
+    return $url->toString();
   }
 
 }

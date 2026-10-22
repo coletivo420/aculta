@@ -9,6 +9,7 @@ use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -53,6 +54,7 @@ final class DocxViewerBuilderTest extends UnitTestCase {
     $fileSystem->method('realpath')->willReturn($path);
     return new DocxViewerBuilder(
       $this->createMock(FileUrlGeneratorInterface::class),
+      $this->createMock(UrlGeneratorInterface::class),
       $fileSystem,
       new DocxPackageValidator(),
       $this->createMock(ModuleExtensionList::class),

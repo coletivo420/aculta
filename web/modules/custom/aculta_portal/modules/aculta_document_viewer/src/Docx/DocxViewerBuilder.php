@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
 use Psr\Log\LoggerInterface;
@@ -45,6 +46,7 @@ final class DocxViewerBuilder {
    */
   public function __construct(
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
+    private readonly UrlGeneratorInterface $urlGenerator,
     private readonly FileSystemInterface $fileSystem,
     private readonly DocxPackageValidator $validator,
     private readonly ModuleExtensionList $moduleList,
@@ -87,7 +89,7 @@ final class DocxViewerBuilder {
       '#attributes' => [
         'data-aculta-document-viewer' => 'docx',
         'data-aculta-docx' => 'true',
-        'data-aculta-docx-url' => $this->fileUrlGenerator->generateString($uri),
+        'data-aculta-docx-url' => $this->fileUrl($uri),
         'data-aculta-docx-frame-url' => Url::fromUri('base:' . $modulePath . '/docx/docx-frame.html')->toString(),
         'data-aculta-docx-libs' => json_encode($libs, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
         'data-aculta-docx-title' => $title,
@@ -107,6 +109,20 @@ final class DocxViewerBuilder {
    */
   private function isLocalUri(string $uri): bool {
     return str_starts_with($uri, 'public://') || str_starts_with($uri, 'private://');
+  }
+
+  /**
+   * Generates a Core private-file URL using the Runtime-compatible query form.
+   */
+  private function fileUrl(string $uri): string {
+    if (!str_starts_with($uri, 'private://')) {
+      return $this->fileUrlGenerator->generateString($uri);
+    }
+    $url = Url::fromRoute('system.files', ['scheme' => 'private'], [
+      'query' => ['file' => substr($uri, strlen('private://'))],
+    ]);
+    $url->setUrlGenerator($this->urlGenerator);
+    return $url->toString();
   }
 
 }

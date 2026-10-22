@@ -1,8 +1,9 @@
 # ACULTA Document Viewer
 
-`aculta_document_viewer` é o submódulo que fornece a leitura de PDFs compartilhada
-pelas experiências do site. Não pertence ao LMS: conteúdo pode usar o formatter
-de Media `document` ou o formatter `aculta_document_pdf_file` em um campo File direto.
+`aculta_document_viewer` fornece leitores locais compartilhados de PDF, DOCX e
+planilhas. Não pertence ao LMS: conteúdo pode usar o formatter de Media
+`document`, o formatter `aculta_document_pdf_file` em um campo File direto ou
+os builders DOCX/planilha consumidos por integrações como o Fórum.
 
 Padrões globais ficam em ACULTA → Site → Leitor de PDF
 (`/painel-administrativo/aculta/leitor-documentos`). O painel pertence ao módulo Portal;
@@ -24,6 +25,11 @@ padrão e respeita a opção explícita do painel/formatter.
 - O builder incorpora PDFs permanentes em `public://` ou `private://`, somente
   após autorização de Media, campo e File. `private://` usa a rota Core e cache
   de render max-age zero.
+- DOCX e planilhas privados montam `/system/files?file=...`, a forma da rota
+  Core `system.files` usada para arquivos privados neste Runtime. Em
+  2026-10-21, a fixture do Fórum ainda recebeu `FileException: File must be
+  readable` no endpoint; esse caminho requer nova validação no Runtime antes
+  de ser considerado homologado.
 - O esquema `private://` não define a audiência: a permissão da Media governa a
   leitura. Config Sync concede `view media` aos papéis anônimo e autenticado;
   Media publicada com arquivo privado pode ser lida por ambos. Não usar esse
