@@ -117,3 +117,7 @@ Na área Revista, a navegação passa a iniciar em `Meu trabalho → Meus conte�
 ## E-B.2 — listagem pessoal e revisão autorizada
 
 A contagem das abas pessoais de Revista foi alterada para filtrar estados de revisões autorizadas antes de criar a página de 20 resultados, mantendo a distinção `Meu trabalho` versus `Equipe/Moderação`. É implementação não homologada, com custo de varredura do acervo pessoal; benchmarks e testes Kernel/Domain continuam obrigatórios. A criação/editoração ainda utiliza Form API do módulo dono.
+
+## E-B.2-PERF — experiência de listagens extensas
+
+“Meu trabalho” substitui o pager numérico e contagem integral por navegação progressiva “Carregar mais publicações”, com seek no banco, acesso por revisão e orçamento de leitura por requisição. Interface deve tratar estado de lista vazia e botão de continuidade sem prometer contagem total, nunca sugerir fim do acervo enquanto houver cursor. Validação mobile-first, teclado, estado de foco e anúncios acessíveis fica para E-B.2-T/E-B.3. Alterações concorrentes não geram snapshot estável.
