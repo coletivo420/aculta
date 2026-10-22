@@ -47,3 +47,7 @@ A estrutura SDC seria `header` (região interna do `main`) com uma classe de lay
 
 ## Próxima fatia possível fora do homelab
 Preparar as fixtures e o contrato do eventual SDC como documentação, sem criar componentes prematuros; cruzar árvore de templates/presenters com rotas confirmadas por código. A integração funcional B1-02 aguarda consumidores reais e inspeção de DOM.
+
+## Decisão posterior que prevalece — H1 sob responsabilidade do Context Header
+
+A diretriz anterior de preservar preferencialmente o H1 renderizado pelo Core foi **revogada**. A decisão vigente é permitir ao SDC contextual emitir o H1 principal, usando título fornecido pelo Drupal via provider e desativando **somente naquele consumer** a renderização duplicada de page title. O Core mantém semântica e origem dos dados, mas sua **apresentação nativa não é obrigatória**. Ver [contrato M2/B1](theme-ux-0.8-m2-b1-context-header.md) e o plano de execução B1-02. Não usar `display:none` como estratégia de deduplicação, não mexer no shell global.
