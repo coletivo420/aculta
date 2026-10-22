@@ -56,9 +56,12 @@ não salvam os Nodes ainda exigem reindexação explícita do índice, conforme 
 comportamento do processor Core `content_access`.
 
 Os resultados de post usam o view mode `forum_search_result`, com assunto,
-resumo limitado e link ao fragmento `forum-post-{id}` na página canônica do
-tópico. O formatter revalida acesso do post e do Node hospedeiro durante a
-renderização; `ForumPost` não declara uma rota canônica própria.
+resumo limitado e link para o pager da thread que contém o post, seguido do
+fragmento `forum-post-{id}` na página canônica do tópico. A página é calculada
+pela mesma ordenação da thread; o pager Core preserva os demais parâmetros de
+pager e query da URL. O formatter revalida acesso do post e do Node hospedeiro
+durante a renderização e invalida o cache pela tag `aculta_forum_post_list`;
+`ForumPost` não declara uma rota canônica própria.
 
 Essa integração ainda exige validação automatizada integrada antes de reindexar
 ou ativar a configuração no Runtime. A matriz pendente deve cobrir contas

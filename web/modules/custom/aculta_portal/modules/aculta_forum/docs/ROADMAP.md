@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.217` | Abrir na página da resposta encontrada | O formatter da busca usa a posição calculada pelo builder e o pager Core ID 1 para abrir a resposta na página certa; preserva query/pagers existentes e invalida o cache pela tag `aculta_forum_post_list`. Sem Runtime/testes. |
 | `0.1.0-dev.216` | Compartilhar o contrato de paginação da thread | O builder público fornece tamanho/pager ao contador de não lidos e o link usa `PagerManagerInterface` para apontar à primeira página que contém o post. Evita divergência entre paginação e âncora; sem mudança Runtime/testes. |
 | `0.1.0-dev.215` | Invalidar cache de lista ao mudar ForumPost | Plugin tag-based acrescenta `aculta_forum_post_list` à cache de resultados e render da View pública; install, Sync e update `9005` alinhados. Runtime `toca`: update aplicado e `getCacheTags()` confirmou `aculta_forum_post_list`/`node_list`; sem conteúdo criado ou testes automatizados. |
 | `0.1.0-dev.214` | Remover classes de apresentação do markup do Fórum | Progresso e histórico localizam posts pelo atributo funcional `data-aculta-forum-post-timestamp`; classes sem consumidores foram removidas. As classes da comparação continuam por contrato do Diff contrib. Gate módulo-tema passa. Sem testes. |

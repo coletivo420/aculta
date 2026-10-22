@@ -1,3 +1,10 @@
+## `0.1.0-dev.217` — abrir na página da resposta encontrada
+
+- O link de busca calcula a página da resposta usando a ordenação e o pager da
+  thread, preserva os demais parâmetros de pager e mantém a âncora estável.
+- A renderização inclui `aculta_forum_post_list` para invalidar links quando a
+  lista muda. Sem alteração no Runtime ou testes automatizados.
+
 ## `0.1.0-dev.216` — compartilhar a paginação da thread e dos não lidos
 
 - O tamanho de página e o ID do pager são definidos uma vez no builder da

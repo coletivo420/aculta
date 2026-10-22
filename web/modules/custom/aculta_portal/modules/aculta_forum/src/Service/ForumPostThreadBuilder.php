@@ -190,7 +190,7 @@ final class ForumPostThreadBuilder {
           )->toRenderable();
         }
         else {
-          $parentPage = $this->findPostPage($topic, $parent);
+          $parentPage = $this->getPageForPost($topic, $parent);
           if ($parentPage !== NULL) {
             $query = $parentPage === $pager->getCurrentPage()
               ? []
@@ -244,14 +244,24 @@ final class ForumPostThreadBuilder {
   }
 
   /**
-   * Finds the pager page of a public parent using the thread's sort order.
+   * Finds the public thread page containing a post in the thread sort order.
    */
-  private function findPostPage(NodeInterface $topic, ForumPost $parent): ?int {
+  public function getPageForPost(NodeInterface $topic, ForumPost $post): ?int {
+    if ($topic->bundle() !== 'aculta_forum_topic'
+      || !$topic->isPublished()
+      || !$post->isPublished()
+      || $post->get('topic')->target_id != $topic->id()
+      || $post->get('thread_position')->isEmpty()
+      || $post->get('created')->isEmpty()
+      || $post->id() === NULL) {
+      return NULL;
+    }
+
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
     $query = $storage->getQuery()->accessCheck(TRUE);
-    $position = (int) $parent->get('thread_position')->value;
-    $created = (int) $parent->get('created')->value;
-    $parentId = (int) $parent->id();
+    $position = (int) $post->get('thread_position')->value;
+    $created = (int) $post->get('created')->value;
+    $postId = (int) $post->id();
     $preceding = $query->orConditionGroup()
       ->condition('thread_position', $position, '<')
       ->condition($query->andConditionGroup()
@@ -260,7 +270,7 @@ final class ForumPostThreadBuilder {
       ->condition($query->andConditionGroup()
         ->condition('thread_position', $position)
         ->condition('created', $created)
-        ->condition('id', $parentId, '<'));
+        ->condition('id', $postId, '<'));
     $precedingCount = (int) $query
       ->condition('topic.target_id', $topic->id())
       ->condition('status', 1)
