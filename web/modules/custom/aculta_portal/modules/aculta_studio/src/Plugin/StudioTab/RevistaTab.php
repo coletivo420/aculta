@@ -12,11 +12,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Revista tab. The owner is aculta_magazine; the states come from the editorial workflow `revista`.
+ * Revista tab.
  *
- * Publicações lists the nodes by state (Todos, Rascunhos, Em revisão, Publicados, Arquivados) through the
- * listing of the Studio, which keeps the node access of the owner. Edit links resolve on the magazine
- * domain, where the editorial context lives. Criar keeps the create route.
+ * The owner is aculta_magazine; the states come from the editorial workflow
+ * `revista`. Publicações lists the nodes by state (Todos, Rascunhos, Em
+ * revisão, Publicados, Arquivados) through the listing of the Studio, which
+ * keeps the node access of the owner. Editorial operations resolve on the main
+ * domain, as the Core marks every node operation route as an admin route; the
+ * Magazine keeps the route contract and the Studio consumes it. Criar keeps
+ * the create route.
  */
 #[StudioTab(
   id: 'revista',
@@ -25,18 +29,24 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class RevistaTab extends StudioTabBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function isAvailable(): bool {
     return $this->moduleHandler->moduleExists('aculta_magazine');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'create revista content')
       ->orIf(AccessResult::allowedIfHasPermission($account, 'edit any revista content'));
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function sections(AccountInterface $account): array {
     $states = [
       'todos' => ['label' => $this->t('Meus conteúdos'), 'state' => NULL],
@@ -55,7 +65,6 @@ final class RevistaTab extends StudioTabBase {
           'scope' => 'mine',
           'state' => $item['state'],
           'editable' => TRUE,
-          'purpose' => 'magazine',
         ],
         'actions' => [],
       ];
@@ -74,7 +83,7 @@ final class RevistaTab extends StudioTabBase {
             'label' => $this->t('Nova publicação'),
             'weight' => 0,
             'actions' => [
-              $this->routeAction($this->t('Nova publicação'), 'node.add', ['node_type' => 'revista'], $account, 'magazine'),
+              $this->routeAction($this->t('Nova publicação'), 'node.add', ['node_type' => 'revista'], $account, 'main'),
             ],
           ],
         ],
