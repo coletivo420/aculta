@@ -1,3 +1,14 @@
+## `0.1.0-dev.42` — rodar Unit e Kernel do LMS e registrar o resultado medido — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Unit: `tests/src/Unit` — 74 testes, 408 asserções, OK com 8 depreciações do
+  PHPUnit.
+- Kernel: `tests/src/Kernel/SubmissionUploadPolicyKernelTest` — 5 testes,
+  39 asserções, passando. As suítes foram executadas no banco local
+  `aculta_simpletest`; o Runtime não foi tocado.
+- Nenhuma pendência nova: as tarefas de Wiki que motivaram a rodada ficaram
+  bloqueadas em T20–T24 (ver dev.238–dev.234 do `aculta_forum`).
+
 ## `0.1.0-dev.41` — escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
 
 - Nada implementado. O ROADMAP vigente deste adapter fica na seção dev.13 de

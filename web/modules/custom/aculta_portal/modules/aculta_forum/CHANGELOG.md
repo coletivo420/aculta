@@ -1,3 +1,20 @@
+## `0.1.0-dev.238` — rodar Kernel e Unit do Fórum e registrar o resultado medido — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Kernel: `tests/src/Kernel` — 34 testes, 758 asserções, OK com 25 depreciações
+  conhecidas (storage de `comment.comment_body` sem schema instalado no Kernel;
+  já presentes antes desta sequência).
+- Unit: `tests/src/Unit` — 105 testes, 656 asserções, 7 falhas em
+  `ForumTopicDisplayConfigTest`, todas por expectativas desatualizadas em
+  relação a commits de funcionalidade anteriores a esta sequência:
+  `ad33ab56` inclui `aculta_forum.admin_revisionable_posts` no menu sem
+  atualizar a lista esperada; outras divergem da configuração vigente de janela
+  de edição, consumidor de upload (`forum`) e filtros da View pública.
+- Os commits de T19–T25 tocaram somente `CHANGELOG.md` e `docs/ROADMAP.md`;
+  logo as falhas não são regressão desta sequência. Ficam registradas como
+  pendência de teste, para correção junto do commit que alterou cada contrato,
+  e não foram "consertadas" aqui para não reescrever trabalho paralelo.
+
 ## `0.1.0-dev.237` — registrar o bloqueio de T22–T24 por dependência de T21 — 2026-10-22
 
 - Documento apenas. T22 (isolamento de contexto), T23 (smoke de comentários com
