@@ -199,3 +199,12 @@ aculta_forum.post_revision_history:
       aculta_forum_post:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
+
+aculta_forum.post_create:
+  path: '/publicacao/nova'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostSubmissionController::form'
+    _title: 'Responder à discussão'
+  requirements:
+    _custom_access: 'aculta_forum.post_submission_access:access'
+  methods: [GET, HEAD, POST]

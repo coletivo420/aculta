@@ -45,14 +45,17 @@ final class PublicForumContextProvider implements DiscussionContextProviderInter
     $forumPurposeAccess = AccessResult::allowedIf($this->domainPurposeManager->getCurrentPurpose() === 'forum')
       ->addCacheContexts(['domain']);
     $readAccess = $entity->access('view', $account, TRUE)->andIf($forumPurposeAccess);
-    $neutralWrite = AccessResult::neutral()->addCacheableDependency($entity);
+    $writeAccess = $readAccess
+      ->andIf(AccessResult::allowedIf($account->isAuthenticated() && $account->hasPermission('create aculta forum posts'))
+        ->cachePerPermissions()
+        ->addCacheContexts(['user']));
     $neutralModeration = AccessResult::neutral()->addCacheableDependency($entity);
     return new DiscussionContext(
       $entity,
       'public_forum',
       'public_forum:node:' . $uuid,
       $readAccess,
-      $neutralWrite,
+      $writeAccess,
       $neutralModeration,
       $entity->toUrl('canonical'),
       'public_if_entity_accessible',

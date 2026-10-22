@@ -1,4 +1,7 @@
 services:
+  Drupal\aculta_forum\Controller\ForumPostSubmissionController:
+    class: Drupal\aculta_forum\Controller\ForumPostSubmissionController
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@request_stack', '@current_user', '@aculta_forum.discussion_context_resolver']
   Drupal\aculta_forum\Controller\ForumPostModerationFormController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
     arguments: ['@entity_type.manager', '@entity.form_builder']
@@ -77,6 +80,9 @@ services:
   aculta_forum.post_moderation_access:
     class: Drupal\aculta_forum\Access\ForumPostModerationAccess
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_forum.post_submission_access:
+    class: Drupal\aculta_forum\Access\ForumPostSubmissionAccess
+    arguments: ['@entity_type.manager', '@aculta_forum.discussion_context_resolver', '@request_stack']
 
   aculta_forum.search_query_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber
@@ -97,7 +103,7 @@ services:
     arguments: ['@entity_type.manager', '@lock', '@database']
   aculta_forum.post_thread_builder:
     class: Drupal\aculta_forum\Service\ForumPostThreadBuilder
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_forum.discussion_context_resolver', '@pager.manager']
   logger.channel.aculta_forum:
     parent: logger.channel_base
     arguments: ['aculta_forum']

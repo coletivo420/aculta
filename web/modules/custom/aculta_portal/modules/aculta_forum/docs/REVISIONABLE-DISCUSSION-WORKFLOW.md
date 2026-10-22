@@ -108,7 +108,9 @@ testes de workflow; a configuração da política inicial continua sendo a de
    instalar config permanente.
 2. **Workflow e UX:** estados/transições aprovados, roles/permissões por
    transição, Form API/ações de envio e revisão, histórico legível e View de
-   fila. Visual mobile, teclado, leitor de tela e isolamento de cache.
+   fila. Visual mobile, teclado, leitor de tela e isolamento de cache. A dev.143
+   inicia a escrita pública contextual via form mode Core; respostas a posts,
+   comparação de revisões e homologação visual continuam pendentes.
 3. **Migração não destrutiva em código:** mapear Comments apenas quando
    `comment_type=aculta_discussion_post`, host Node de bundle
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore

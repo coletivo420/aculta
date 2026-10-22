@@ -1,3 +1,9 @@
+## `0.1.0-dev.143` — abre a criação contextual de posts revisionáveis
+
+- O botão de resposta usa `DiscussionContextResolver`; formulário `/publicacao/nova?topico={uuid}` revalida o contexto e associa no servidor a autoria e o tópico.
+- Form mode `public_submission` mostra assunto/corpo, mantém estado e referências ocultos, e o `ContentEntityForm` do Core salva a entidade. `ParticipationRules` escolhe estado inicial; conteúdo publicado retorna ao fragmento estável, e envio em revisão retorna ao tópico sem fragmento inexistente.
+- Comments continuam ativos; esta rota cria somente `aculta_forum_post`. Respostas a posts, migração, Runtime e revisão visual seguem pendentes.
+
 ## `0.1.0-dev.142` — exibe histórico administrativo das revisões de posts
 
 - A rota `/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes` mostra ID, instante, autoria, estado, assunto, mensagem e revisão default; a fila permite acessar o histórico.

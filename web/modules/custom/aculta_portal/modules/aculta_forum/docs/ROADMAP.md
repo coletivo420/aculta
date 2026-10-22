@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.143` | Composer público contextual de posts revisionáveis | Link só aparece para conta autenticada com permissão; `DiscussionContextResolver` e rota same-origin revalidam tópico por UUID. Form mode Core oculta estado/referências; `ParticipationRules` define moderação. Comments permanecem ativos; respostas a posts, Runtime e revisão visual pendentes. |
 | `0.1.0-dev.142` | Histórico administrativo das revisões | Fila liga a visão paginada de revisões; mostra autoria, instante, estado, assunto e mensagem de revisão. Acesso restrito ao purpose `main`, permissão administrativa e tópico publicado no purpose `forum`; somente leitura, sem revert/delete. Sem Runtime; comparação textual e revisão visual pendentes. |
 | `0.1.0-dev.141` | Fila Core de moderação dos posts revisionáveis | Aba administrativa lista revisões `review` da entidade via storage `content_moderation_state`; Form API abre revisão exata e Core valida transições. Acesso limitado ao purpose `main`, permissão do módulo e tópico publicado do purpose `forum`. Sem Runtime; histórico e revisão visual pendentes. |
 | `0.1.0-dev.140` | Renderizar posts revisionáveis na página canônica | Hook acrescenta ao tópico `full` posts publicados/acessíveis, paginados em 50 por pager ID 1, com fragmentos estáveis, referências pai visíveis e cache por página/usuário/permissões/domínio. Comments continuam ativos durante migração; não há rota nova nem alteração Runtime. |

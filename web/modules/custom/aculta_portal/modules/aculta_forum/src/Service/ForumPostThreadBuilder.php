@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\AccountProxyInterface;
 
@@ -28,6 +31,7 @@ final class ForumPostThreadBuilder {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DiscussionContextResolver $discussionContextResolver,
     private readonly PagerManagerInterface $pagerManager,
   ) {}
 
@@ -48,13 +52,13 @@ final class ForumPostThreadBuilder {
       return [];
     }
 
-    $topicAccess = $topic->access('view', $this->currentUser, TRUE);
-    if (!$topicAccess->isAllowed()) {
+    $context = $this->discussionContextResolver->resolve($topic, $this->currentUser);
+    $topicAccess = $context?->getReadAccess();
+    if ($context === NULL || $topicAccess === NULL || !$topicAccess->isAllowed()) {
       return [];
     }
 
-    $cacheability = CacheableMetadata::createFromObject($topic)
-      ->addCacheableDependency($topicAccess)
+    $cacheability = CacheableMetadata::createFromObject($context)
       ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.query_args.pagers:' . self::PAGER_ID])
       ->addCacheTags(['aculta_forum_post_list']);
     $build = [
@@ -64,6 +68,12 @@ final class ForumPostThreadBuilder {
         'class' => ['aculta-forum-revisionable-posts'],
       ],
     ];
+    if ($context->getWriteAccess()->isAllowed()) {
+      $build['actions']['create'] = Link::fromTextAndUrl(
+        new TranslatableMarkup('Responder à discussão'),
+        Url::fromRoute('aculta_forum.post_create', [], ['query' => ['topico' => $topic->uuid()]]),
+      )->toRenderable();
+    }
 
     $query = $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
       ->accessCheck(TRUE)

@@ -109,15 +109,16 @@ não concede autorização para criar configuração ou instalar entidades nesta
 
 ## Providers
 
-### `public_forum` — provider implementado na dev.4
+### `public_forum` — provider implementado na dev.4; escrita revisionável em dev.143
 
 - Hospedeiro: Node `aculta_forum_topic`.
 - Público: tópico independente classificado em categoria pública; sem Group membership.
 - Leitura: pública quando publicado e permitido pela política de Domain/purpose; o provider implementado nega fora do purpose `forum` e varia o access result pelo cache context `domain`.
-- Escrita: regras atuais de participação e confirmação de e-mail; moderação conforme política vigente.
+- Escrita de posts revisionáveis: conta autenticada com permissão `create aculta forum posts`, tópico legível e purpose `forum`; `ForumPublicationTimeHooks` consulta `ParticipationRules` para iniciar em `review` ou `published`. A rota contextual usa UUID do tópico em `?topico={uuid}` e revalida a entidade no servidor.
+- Comments existentes seguem ativos durante a migração; o composer revisionável não grava no campo Comment legado.
 - Pesquisa e aviso: elegível para descoberta pública apenas se publicado e acessível.
 - Identificador estável: `public_forum:node:{uuid}`. O UUID é obtido da entidade; não do request.
-- Nesta fase, acesso de escrita e moderação retorna neutral com dependência de cache da entidade. Ações de Comment ainda exigem a verificação nativa de campo/entidade e serão integradas depois.
+- A escrita de Comments continua dependendo da verificação nativa de campo/entidade. A permissão de posts revisionáveis é independente e seu access varia por usuário, permissões e domínio.
 
 ### CTools nas listagens do Fórum
 

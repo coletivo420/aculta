@@ -29,6 +29,7 @@ use Drupal\views\EntityViewsData;
     'access' => '\\Drupal\\Core\\Entity\\EntityAccessControlHandler',
     'form' => [
       'default' => ContentEntityForm::class,
+      'public_submission' => '\\Drupal\\aculta_forum\\Form\\ForumPostSubmissionForm',
     ],
     'views_data' => EntityViewsData::class,
   ],
