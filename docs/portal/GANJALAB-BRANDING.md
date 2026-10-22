@@ -24,3 +24,10 @@ O rótulo público em `aculta_studio.info.yml` e os títulos das rotas `aculta_s
 ## Checklist para migração futura de demais rótulos
 
 Inventariar primeiro menus, breadcrumbs, templates, blocos, links de conta, traduções e testes que mostrem “Studio”/“Estúdio”; distinguir texto público de identificadores técnicos; planejar mudança controlada com compatibilidade e testes. Não substituir globalmente strings; evitar mudanças de API e de domínio nesta fase. Documentar todo novo componente de GanjaLab420 antes de desenvolvê-lo.
+
+## Rotas públicas canônicas — 2026-10-22
+
+- **GanjaLab:** `/ganjalab` e `/ganjalab/{área}/{seção}/{aba}` com níveis intermediários; IDs de rota `aculta_studio.*` mantidos.
+- **GanjaLab420:** `/ganjalab420` para o dashboard pessoal de aprendizagem; ID `aculta_lms.student_dashboard` mantido.
+- **Compatibilidade temporária:** `/studio` e seus três níveis, e `/minha-aprendizagem`, continuam abrindo os mesmos controllers em rotas-espelho legadas. **Ainda não há redirecionamento HTTP para a URL nova.** Antes de remover aliases, auditar links e planejar canonical/301.
+- Permanecem nomes técnicos, purpose `account`, checagens de acesso e contratos existentes. Rebuild de rotas/cache e testes de acesso/URL em runtime são obrigatórios antes de produção.
