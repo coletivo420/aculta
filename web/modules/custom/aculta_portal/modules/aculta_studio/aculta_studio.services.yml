@@ -13,4 +13,4 @@ services:
     arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation']
   aculta_studio.ganjalab420_controller:
     class: Drupal\aculta_studio\Controller\GanjaLab420Controller
-    arguments: ['@aculta_lms.learning_dashboard_controller']
+    arguments: ['@?aculta_lms.learning_dashboard_controller']
