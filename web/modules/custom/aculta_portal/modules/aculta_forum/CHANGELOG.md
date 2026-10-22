@@ -1,3 +1,14 @@
+## `0.1.0-dev.231` — revalidar acesso de anexos pelo host atual
+
+- Media `forum_attachment` só pode ser visualizada no purpose `forum`. Em cada
+  acesso, o Fórum confirma que existe referência atual em Comment, ForumPost ou
+  Gallery ligada a conteúdo publicado e acessível anonimamente; isso evita que
+  publicação Media antiga contorne uma mudança posterior de grants do tópico.
+  A rota canônica retorna 404 fora do purpose Fórum via `ContentPurposeResolver`;
+  o download privado permanece protegido pelo access de Media/File. Acesso varia
+  por Domain e não é cacheado entre requests. Sem fixture Runtime; revisão HTTP
+  pendente.
+
 ## `0.1.0-dev.230` — alinhar guardrails e roadmap do Portal
 
 - Contratos gerais e políticas locais deixam de descrever `drupal/forum` como

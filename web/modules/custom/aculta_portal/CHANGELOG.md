@@ -1,3 +1,11 @@
+## 0.4.1-dev.2 — canonizar Media do Fórum por purpose (2026-10-22)
+
+- `ContentPurposeResolver` associa a rota canônica de Media `forum_attachment`
+  ao purpose `forum`, fazendo o subscriber de domínio responder 404 no purpose
+  incorreto antes do controller. O access do próprio Media e do File continua
+  revalidando host público e download privado.
+- Sem alteração Runtime ou teste automatizado.
+
 ## 0.4.1-dev.1 — remoção do tipo de conteúdo projeto (2026-10-21)
 
 Classificação: PATCH na linha aberta, decidida pelo responsável.

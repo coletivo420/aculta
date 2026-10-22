@@ -57,6 +57,9 @@ motor novo segue por contexto e fases.
   leitura/escrita vigente até a migração e o corte aprovados. Não criar storage
   paralelo de tópico/categoria.
 - Imagens passam por `aculta_image`; avisos pelo `aculta_messenger`.
+- Media `forum_attachment` só é visualizada no purpose `forum` e enquanto uma
+  referência atual a um post público continuar acessível anonimamente; downloads
+  privados revalidam essa regra pelo access da Media e do File.
 - O conteúdo antigo permanece ausente no Runtime de teste; somente as categorias
   ACULTA novas foram preservadas. A retirada executável do contrib ocorreu em dev.50.
 

@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.231` | Revalidar purpose e host dos anexos no acesso | `media_access` restringe `forum_attachment` ao purpose Fórum e exige referência atual acessível em Comment, ForumPost ou Gallery; max-age zero protege mudanças de grants sem save da Media. Revisão direta de Media/File no Runtime pendente. |
 | `0.1.0-dev.230` | Alinhar guardrails/roadmap geral à reconstrução vigente | Documentação geral e política local deixam de apontar o contrib removido como fonte atual e preservam a coexistência de Comments/ForumPost até o corte aprovado. Sem Runtime. |
 | `0.1.0-dev.229` | Eliminar subconsulta correlacionada na agregação de atividade | A consulta agrega `changed` por tópico e junta o maior ID em caso de empate; publicação, idioma, contagem e acesso permanecem iguais. Sem Runtime/testes. |
 | `0.1.0-dev.228` | Executar pré-carga de atividade/autoria uma vez por View | Estatísticas e entidades de autoria são preparadas uma vez por `ViewExecutable`; regra de autoria permanece por linha. Sem Runtime. |

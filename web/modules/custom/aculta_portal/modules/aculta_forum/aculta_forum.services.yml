@@ -33,6 +33,9 @@ services:
   Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks
     arguments: ['@aculta_forum.attachment_cleanup', '@aculta_forum.gallery_publication', '@datetime.time']
+  Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks:
+    class: Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks
+    arguments: ['@aculta_portal.domain_purpose', '@aculta_forum.attachment_publication']
   Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks
     arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']

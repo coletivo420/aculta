@@ -1,3 +1,17 @@
+## dev.231 — acesso à Media e download privado por purpose
+
+- Revisão do Core 11.4.10 confirmou que `view media` permite Media publicada e
+  que download privado revalida as entidades/campos referenciadores. Como os
+  anexos do Fórum são Media compartilhadas, `media_access` agora exige purpose
+  `forum` e referência atual acessível anonimamente por Comment, ForumPost ou
+  Gallery; o resultado não fica cacheado entre requests para cobrir rebuild de
+  grants sem save da Media.
+- Ainda requer validação HTTP no Runtime: visualização canônica da Media e URL
+  privada em `forum`, 404 canônico e download negado em outros purposes, post
+  pendente/retirado, mudança de grants sem salvar a Media, e papéis
+  anônimo/autenticado/moderador.
+  Não houve fixture ou alteração Runtime nesta entrega.
+
 ## dev.194 — saída segura em falhas do auditor migratório
 
 - O comando não inclui mais a mensagem da exceção na saída de terminal. O

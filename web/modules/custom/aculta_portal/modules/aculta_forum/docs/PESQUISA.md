@@ -10,6 +10,31 @@ como ponto de inserir `attachment_before`/`attachment_after` antes da renderiza�
 cacheável. Código instalado verificado em `views.api.php`, `ViewExecutable.php`,
 `AccessManagerInterface.php` e `CacheableMetadata.php`. Referências: [Views pre-render](https://api.drupal.org/api/drupal/core%21modules%21views%21views.api.php/function/hook_views_pre_render/11.x), [AccessManagerInterface](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Access%21AccessManagerInterface.php/interface/AccessManagerInterface/11.x).
 
+## Acesso direto aos anexos privados (2026-10-22)
+
+O papel anônimo do Config Sync possui `view media`; `MediaAccessControlHandler`
+concede `view` a Media publicada com essa permissão, sem consultar o Domain do
+conteúdo que a incorpora. O `FileDownloadHook` local usa
+`FileReferenceResolver` e `File::access('download')`; para arquivos privados,
+`FileAccessControlHandler` concede quando uma entidade referenciadora e o campo
+permitem `view`. Assim, publicar `forum_attachment` sincronizado com um post não
+basta para impedir acesso direto fora do purpose ou após mudança de grants do
+post.
+
+O Core suporta `hook_ENTITY_TYPE_access` como hook de acesso de entidade; um
+resultado `forbidden` impede a concessão padrão. A implementação usa o atributo
+OOP `#[Hook('media_access')]` do Core instalado 11.4.10 e revalida a referência
+pública atual em cada request, sem cache entre requests. Fontes primárias:
+[Entity type access hook](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21entity.api.php/function/hook_ENTITY_TYPE_access/11.x),
+[MediaAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21media%21src%21MediaAccessControlHandler.php/class/MediaAccessControlHandler/11.x),
+[FileAccessControlHandler](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21FileAccessControlHandler.php/11.x) e
+[FileDownloadHook](https://api.drupal.org/api/drupal/core%21modules%21file%21src%21Hook%21FileDownloadHook.php/11.x).
+`ContentPurposeResolver` do Portal também resolve a rota canônica
+`entity.media.canonical` de `forum_attachment` como `forum`, para o subscriber
+aplicar 404 antes do controller quando o host usa outro purpose.
+O gate local é o código-fonte instalado; validação HTTP de Media e download
+privado no Runtime continua pendente.
+
 O filtro categórico usa o plugin Views `taxonomy_index_tid`; Core 11 suporta
 campos `entity_reference` direcionados a `taxonomy_term` e restringe as opções
 por vocabulário. A integração e a atualização da tabela `taxonomy_index` foram

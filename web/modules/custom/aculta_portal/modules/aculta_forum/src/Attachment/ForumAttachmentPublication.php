@@ -225,7 +225,35 @@ final class ForumAttachmentPublication {
     ?ForumPost $current_post = NULL,
     ?int $excluded_post_id = NULL,
   ): void {
-    $is_public = FALSE;
+    $is_public = $this->isPubliclyReferenced($media, $current_comment, $current_topic, $excluded_gallery_id, $current_post, $excluded_post_id);
+    if ($media->isPublished() === $is_public) {
+      return;
+    }
+    $is_public ? $media->setPublished() : $media->setUnpublished();
+    $media->save();
+  }
+
+  /**
+   * Checks current anonymous access through a public Forum host reference.
+   *
+   * This is repeated at access time because publication status alone can become
+   * stale when Node grants or another host access rule changes independently.
+   */
+  public function hasCurrentPublicReference(MediaInterface $media): bool {
+    return $this->isPubliclyReferenced($media);
+  }
+
+  /**
+   * Checks public references, including the current entity during a save.
+   */
+  private function isPubliclyReferenced(
+    MediaInterface $media,
+    ?CommentInterface $current_comment = NULL,
+    ?NodeInterface $current_topic = NULL,
+    ?int $excluded_gallery_id = NULL,
+    ?ForumPost $current_post = NULL,
+    ?int $excluded_post_id = NULL,
+  ): bool {
     // Field references are not reported consistently by Entity Usage; discover
     // Forum galleries from their source field as a second, authoritative path.
     $gallery_ids = $this->entityTypeManager->getStorage('media_gallery')->getQuery()
@@ -239,8 +267,7 @@ final class ForumAttachmentPublication {
       }
       $gallery = $this->entityTypeManager->getStorage('media_gallery')->load($gallery_id);
       if ($gallery instanceof MediaGalleryInterface && $this->isPublicGalleryReference($gallery, $media, $current_topic)) {
-        $is_public = TRUE;
-        break;
+        return TRUE;
       }
     }
 
@@ -266,8 +293,7 @@ final class ForumAttachmentPublication {
         && $this->isForumComment($comment)
         && in_array($media->uuid(), $this->mediaUuids($comment), TRUE)
         && $this->isPublicComment($comment, $current_topic)) {
-        $is_public = TRUE;
-        break;
+        return TRUE;
       }
     }
 
@@ -283,16 +309,10 @@ final class ForumAttachmentPublication {
     }
     foreach ($posts as $post) {
       if ($post instanceof ForumPost && $this->isPublicPost($post, $current_topic)) {
-        $is_public = TRUE;
-        break;
+        return TRUE;
       }
     }
-
-    if ($media->isPublished() === $is_public) {
-      return;
-    }
-    $is_public ? $media->setPublished() : $media->setUnpublished();
-    $media->save();
+    return FALSE;
   }
 
   /**
