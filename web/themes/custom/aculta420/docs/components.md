@@ -359,3 +359,7 @@ Diretório: `components/patterns/context-header/`. Apresentação contextual aba
 ## Context Header — primeiro consumidor Wiki
 
 `node--wiki-entry--full.html.twig` usa `aculta420:context-header` com `title` do label da entidade e `eyebrow` editorial. `aculta420:wiki-entry` tem a prop booleana `show_heading`, default `true`, configurada como `false` apenas na página completa para transferir o H1 sem alterar teasers e outros consumidores. O CSS existente de `.aculta-wiki-article__header` pode exigir adaptação após inspeção visual do Runtime. O component Context Header permanece `experimental` até validações em Drupal e segundo consumidor real.
+
+## Segundo consumidor — GanjaLab420
+
+`LearningDashboardController::student()` passou a renderizar `aculta420:context-header` com título `Meus cursos`, etiqueta GanjaLab420 e subtítulo. `ThemeHooks::preprocessPage()` suprime seletivamente o page-title block nessa rota para evitar H1 concorrente, mantendo o `_title` do Drupal. O tema preserva o shell multidomínio e o LMS mantém a propriedade de acesso/progresso/cache. Ver [homologação pendente](theme-ux-0.8-b1-02e-runtime-validation.md).
