@@ -1,3 +1,10 @@
+## dev.191 — revalidação dos metadados da galeria no callback
+
+- A validação Form API e o callback AJAX exigem título não vazio de até 255
+  caracteres e uma descrição não vazia de até 512 caracteres por imagem. O
+  callback mantém as mesmas guardas antes da criação das entidades.
+- Sem upload autenticado, revisão visual ou fixture Runtime nesta etapa.
+
 ## dev.190 — revalidação de arquivo no callback de anexo
 
 - O callback AJAX repete as guardas de cardinalidade, existência, política

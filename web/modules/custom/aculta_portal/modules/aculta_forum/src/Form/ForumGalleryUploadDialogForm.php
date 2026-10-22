@@ -95,6 +95,11 @@ final class ForumGalleryUploadDialogForm extends FormBase {
    * {@inheritdoc} */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
+    $title = trim((string) $form_state->getValue('title'));
+    if ($title === '' || Unicode::strlen($title) > 255) {
+      $form_state->setErrorByName('title', $this->t('Informe um título de até 255 caracteres.'));
+      return;
+    }
     if ($fids === []) {
       $form_state->setErrorByName('images', $this->t('Envie ao menos uma imagem.'));
       return;
@@ -110,6 +115,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia de até 512 caracteres para cada imagem, uma por linha e na mesma ordem.'));
       return;
     }
+    $form_state->setValue('title', $title);
     foreach ($files as $file) {
       if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum')) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
@@ -134,8 +140,20 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     $fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
     $files = $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
     $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
-    if (count($files) !== count($fids)) {
+    $title = trim((string) $form_state->getValue('title'));
+    if ($fids === [] || count($files) !== count($fids)) {
       $form_state->setErrorByName('images', $this->t('Uma das imagens enviadas não está mais disponível. Envie-a novamente.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
+      return $response;
+    }
+    if ($title === '' || Unicode::strlen($title) > 255) {
+      $form_state->setErrorByName('title', $this->t('Informe um título de até 255 caracteres.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
+      return $response;
+    }
+    if (count($alt_lines) !== count($fids)
+      || array_filter($alt_lines, static fn (string $alt): bool => trim($alt) === '' || Unicode::strlen(trim($alt)) > 512) !== []) {
+      $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia de até 512 caracteres para cada imagem, uma por linha e na mesma ordem.'));
       $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
       return $response;
     }
@@ -172,7 +190,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     }
 
     $gallery = $this->entityTypeManager->getStorage('media_gallery')->create([
-      'title' => $form_state->getValue('title'),
+      'title' => $title,
       'uid' => $this->currentUser->id(),
       'status' => FALSE,
       'field_gallery_purpose' => 'forum',

@@ -1,3 +1,11 @@
+## `0.1.0-dev.191` — revalidar dados da galeria no callback AJAX
+
+- O callback repete a validação de título não vazio (até 255 caracteres) e de
+  uma descrição alternativa por imagem (1–512 caracteres) antes de criar Media
+  e Gallery. Lista vazia, arquivo alterado/removido ou política incompatível
+  falham mantendo o diálogo com erro.
+- Sem upload autenticado, revisão visual ou fixture Runtime nesta etapa.
+
 ## `0.1.0-dev.190` — revalidar anexo antes de criar Media
 
 - O callback AJAX do anexo agora confirma novamente exatamente um arquivo,
