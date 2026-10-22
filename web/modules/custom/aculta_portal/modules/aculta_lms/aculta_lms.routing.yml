@@ -1,8 +1,8 @@
 aculta_lms.student_dashboard:
-  path: '/minha-aprendizagem'
+  path: '/ganjalab420'
   defaults:
     _controller: 'aculta_lms.learning_dashboard_controller:student'
-    _title: 'Aprendizagem'
+    _title: 'GanjaLab420'
   requirements:
     _permission: access aculta portal
     _user_is_logged_in: 'TRUE'
