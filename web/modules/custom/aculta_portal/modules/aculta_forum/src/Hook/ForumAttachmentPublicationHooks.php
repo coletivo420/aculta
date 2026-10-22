@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_forum\Attachment\ForumGalleryPublication;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
@@ -32,6 +33,9 @@ final class ForumAttachmentPublicationHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
+    if ($this->isSynchronizingForumPost($entity)) {
+      return;
+    }
     if ($entity instanceof CommentInterface) {
       $this->publication->syncComment($entity);
       $this->galleryPublication->syncComment($entity);
@@ -57,6 +61,9 @@ final class ForumAttachmentPublicationHooks {
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
+    if ($this->isSynchronizingForumPost($entity)) {
+      return;
+    }
     if ($entity instanceof CommentInterface) {
       $this->publication->syncComment($entity);
       $this->galleryPublication->syncComment($entity);
@@ -93,6 +100,15 @@ final class ForumAttachmentPublicationHooks {
     elseif ($entity instanceof MediaGalleryInterface) {
       $this->galleryPublication->syncDeletedGallery($entity);
     }
+  }
+
+  /**
+   * Avoids attachment publication side effects while importing Forum posts.
+   */
+  private function isSynchronizingForumPost(EntityInterface $entity): bool {
+    return $entity instanceof ForumPost
+      && $entity instanceof SynchronizableInterface
+      && $entity->isSyncing();
   }
 
 }

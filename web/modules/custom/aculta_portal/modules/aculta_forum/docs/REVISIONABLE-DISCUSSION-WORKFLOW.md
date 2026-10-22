@@ -190,7 +190,11 @@ testes de workflow; a configuração da política inicial continua sendo a de
    secundários. O hook também
    não usa o relógio da importação como primeira publicação; quando falta o
    marcador histórico, `ParticipationEditWindow` usa `created` como limite
-   conservador. Fonte: [SynchronizableInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21SynchronizableInterface.php/11.x).
+   conservador. A dev.177 faz os hooks de publicação de anexos ignorarem saves
+   sincronizados do post: durante a importação, os Comments antigos continuam
+   como referência ativa e os hooks de exclusão desses Comments recalculam a
+   visibilidade contextual no corte, já com os posts importados presentes.
+   Fonte: [SynchronizableInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21SynchronizableInterface.php/11.x).
    [TranslatableInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21TypedData%21TranslatableInterface.php/11.x).
    Fontes Migrate: [fonte `ContentEntity` do
    Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [MigrationLookup do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21process%21MigrationLookup.php/class/MigrationLookup/11.x), [encadeamento de migrations](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/chaining-migrations-using-migration_lookup), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).

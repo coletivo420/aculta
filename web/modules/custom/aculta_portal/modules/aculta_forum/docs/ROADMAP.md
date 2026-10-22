@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.177` | Evitar efeitos de anexos durante importação | Hooks de publicação de Media/Gallery ignoram saves sincronizados de `ForumPost`; a remoção normal dos Comments legados no corte reavalia referências com os posts já existentes. Sem execução da migration. |
 | `0.1.0-dev.176` | Reprovar embeds sem destino na migration | O destino confere em lote os UUIDs de Media e Gallery em todas as traduções e interrompe a linha se faltar UUID, entidade ou tipo de destino. Evita salvar referências quebradas; Entity Usage registra as referências quando o post é salvo. Sem execução da migration; integração de anexos e publicação contextual continuam pendentes. |
 | `0.1.0-dev.175` | Reconciliar traduções em reexecuções | Destino remove traduções não padrão que desapareceram da origem e interrompe a linha quando o idioma padrão do Comment mudou, sem converter silenciosamente o idioma padrão do post. Sem execução da migration. |
 | `0.1.0-dev.174` | Preservar estado e timestamp na migration | Hook ignora a seleção de estado e timestamp corrente quando o post é marcado como sincronizado pelo Core Migrate; mantém o estado importado e usa o timestamp `created` como limite conservador quando não há primeira publicação histórica. Sem execução de migration ou Runtime. |

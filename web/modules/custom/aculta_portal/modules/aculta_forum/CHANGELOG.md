@@ -1,3 +1,12 @@
+## `0.1.0-dev.177` — evitar publicação de anexos durante importação
+
+- `ForumAttachmentPublicationHooks` não reconcilia Media/Gallery quando um
+  `ForumPost` está marcado como sincronizado pelo Core Migrate. Isso evita
+  alterar publicação contextual antes do corte, enquanto Comments legados ainda
+  existem; a exclusão normal dos Comments reavalia as referências após importar
+  os posts.
+- Nenhuma migration foi executada; somente lint/PHPCS e gates estáticos.
+
 ## `0.1.0-dev.176` — validar embeds antes de migrar
 
 - O destino verifica em lote os UUIDs de Media e Gallery em todas as traduções
