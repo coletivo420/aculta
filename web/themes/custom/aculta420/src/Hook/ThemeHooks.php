@@ -344,8 +344,10 @@ final class ThemeHooks implements TrustedCallbackInterface {
 
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
-        // The Wiki entry presenter owns the document H1; avoid a duplicate page title.
-        if ($wikiEntryPage && $destination === 'aculta_page_title') {
+        // Wiki entry and student dashboard Context Header SDCs own their H1.
+        // Suppress only their redundant page-title block; preserve route titles.
+        if (($wikiEntryPage || $routeName === 'aculta_lms.student_dashboard')
+          && $destination === 'aculta_page_title') {
           unset($variables['page']['header'][$key]);
           continue;
         }
