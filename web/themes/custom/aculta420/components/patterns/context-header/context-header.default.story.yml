@@ -1,0 +1,12 @@
+name: GanjaLab420 — contexto de aprendizagem
+description: 'Fixture estática: demonstra o cabeçalho da página, não substitui o cabeçalho global.'
+component: aculta420:context-header
+props:
+  eyebrow: GanjaLab420
+  title: Meus cursos
+  subtitle: Acompanhe suas aulas e atividades.
+slots:
+  back_link:
+    markup: '<a href="#">Voltar à área pessoal</a>'
+  actions:
+    markup: '<a class="btn btn-primary" href="#">Explorar cursos</a>'
