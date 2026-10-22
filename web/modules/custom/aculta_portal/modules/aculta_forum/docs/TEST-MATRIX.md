@@ -1,3 +1,19 @@
+## dev.183 — resolver controllers de submissão e edição
+
+- No Core 11.4.10, as rotas com `Class::method` tentavam instanciar os
+  controllers via `ControllerBase::create()`; o autowiring por tipo não encontra
+  serviços com IDs próprios, como `aculta_forum.discussion_context_resolver`.
+  Submissão e edição agora chamam serviços públicos explícitos por
+  `service:method`, mantendo os argumentos DI definidos no YAML.
+- `callable_resolver` foi exercitado sobre as rotas de controller do Fórum:
+  14 resolvidas, zero falhas. Smokes autenticados de GET em
+  `/publicacao/nova?topico={uuid}` ainda retornaram HTTP 500 sem corpo e sem
+  novo registro no watchdog; a causa permanece aberta e o formulário não está
+  validado.
+- Fixture removida por UUID/IDs conferidos. Runtime: 0 tópicos, posts,
+  Comments dedicados e anexos; 10 usuários (baseline). Nenhuma publicação foi
+  criada.
+
 ## dev.182 — renderização de post e tentativa de preview DOCX
 
 - Fonte instalada/Core 11.4.10 confirmou que `viewMultiple()` devolve um array

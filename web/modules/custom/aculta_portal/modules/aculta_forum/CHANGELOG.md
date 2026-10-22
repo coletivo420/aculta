@@ -1,3 +1,18 @@
+## `0.1.0-dev.183` — corrigir resolução dos controllers públicos
+
+- As rotas de submissão e edição agora usam serviços públicos explícitos com
+  `service:method`; argumentos continuam injetados por definição de serviço.
+  No Core 11.4.10, o uso anterior de `Class::method` caía no `create()` de
+  `ControllerBase`, cujo autowiring por tipo não resolve IDs específicos do
+  container, causando exceção para o resolver de contexto.
+- Auditoria pelo `callable_resolver` confirmou 14 controllers/rotas do Fórum sem
+  falhas. A requisição HTTP autenticada à submissão segue respondendo 500 vazio,
+  sem novo evento no watchdog/logs consultados; a abertura e gravação do
+  formulário, a moderação e o motivo do 500 continuam pendentes.
+- Fixture removida após conferir UUIDs; Runtime voltou ao baseline: zero
+  tópicos, posts, Comments dedicados e anexos, dez usuários. Nenhum post foi
+  criado. Estado Dev.
+
 ## `0.1.0-dev.182` — corrigir renderização de posts no Runtime
 
 - `ForumPostThreadBuilder` agora injeta `Drupal\Core\Session\AccountInterface`;

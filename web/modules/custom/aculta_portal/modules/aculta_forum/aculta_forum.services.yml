@@ -7,12 +7,14 @@ services:
     class: Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@migrate.lookup']
 
-  Drupal\aculta_forum\Controller\ForumPostSubmissionController:
+  aculta_forum.post_submission_controller:
     class: Drupal\aculta_forum\Controller\ForumPostSubmissionController
     arguments: ['@entity_type.manager', '@entity.form_builder', '@request_stack', '@current_user', '@aculta_forum.discussion_context_resolver']
-  Drupal\aculta_forum\Controller\ForumPostEditController:
+    public: true
+  aculta_forum.post_edit_controller:
     class: Drupal\aculta_forum\Controller\ForumPostEditController
     arguments: ['@entity.form_builder', '@aculta_forum.post_public_edit_access']
+    public: true
   Drupal\aculta_forum\Controller\ForumPostModerationFormController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
     arguments: ['@entity_type.manager', '@entity.form_builder']

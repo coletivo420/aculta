@@ -221,7 +221,7 @@ aculta_forum.post_revision_compare:
 aculta_forum.post_create:
   path: '/publicacao/nova'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumPostSubmissionController::form'
+    _controller: 'aculta_forum.post_submission_controller:form'
     _title: 'Responder à discussão'
   requirements:
     _custom_access: 'aculta_forum.post_submission_access:access'
@@ -230,7 +230,7 @@ aculta_forum.post_create:
 aculta_forum.post_edit:
   path: '/publicacao/editar'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumPostEditController::edit'
+    _controller: 'aculta_forum.post_edit_controller:edit'
     _title: 'Editar publicação'
   requirements:
     _custom_access: 'aculta_forum.post_public_edit_access:access'
