@@ -1,0 +1,20 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Context tabs
+status: experimental
+group: Patterns
+description: 'Progressively enhanced navigation between real routes under the multidomain shell. Links and access come from the provider.'
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      description: 'Accessible label identifying the navigation.'
+      default: 'Navegação contextual'
+slots:
+  items:
+    title: Navigation links
+    description: 'Access-checked anchor links as render arrays, with aria-current on the active destination.'
+assets:
+  css:
+    component:
+      context-tabs.css: {}
