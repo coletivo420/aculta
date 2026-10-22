@@ -40,3 +40,7 @@ um nome compreensível para quem monta páginas e um token ACULTA420 que cubra a
 função em todos os modos. Não expor valores livres, primitivas de paleta,
 classes Bootstrap genéricas, espaçamentos ad hoc ou combinações que ocultem
 contraste inadequado. Não disponibilizar texto inverso sem superfície compatível.
+
+## Backlog do catálogo — padrões transversais ainda não implementados
+
+O [roadmap visual próprio do tema](visual-cross-product-roadmap.md) define candidatos `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list`, `status-timeline` e outros. **Não listar como SDC existente nem contabilizar nos componentes disponíveis.** Quando qualquer padrão entrar no código, adicionar um story `.story.yml` real, atualizar contagem/inventário e criar demonstrações de mobile, desktop, claro/escuro e estados pertinentes. Preservar o shell global e priorizar variantes dos SDC atuais.
