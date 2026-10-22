@@ -27,17 +27,22 @@ final class ContentIndexStatisticsBridgeTest extends TestCase {
    */
   public function testMissingStatisticsReturnsUnavailable(): void {
     $query = $this->createMock(ContentIndexQueryInterface::class);
-    $query->expects($this->never())->method('query');
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $page = new ContentIndexQueryResult([$entity], 'next-page', new CacheableMetadata());
+    $query->expects($this->once())
+      ->method('query')
+      ->with([], $this->isInstanceOf(AccountInterface::class), NULL, 100)
+      ->willReturn($page);
     $bridge = new ContentIndexStatisticsBridge($query, NULL);
     $account = $this->createMock(AccountInterface::class);
 
     $result = $bridge->aggregateForQuery([], 'wiki.entries.read', 0, 0, $account);
 
     $this->assertFalse($result->available);
-    $this->assertSame([], $result->entities);
+    $this->assertSame([$entity], $result->entities);
     $this->assertSame([], $result->totals);
-    $this->assertNull($result->nextCursor);
-    $this->assertSame(0, $result->cacheability->getCacheMaxAge());
+    $this->assertSame('next-page', $result->nextCursor);
+    $this->assertSame($page->cacheability, $result->cacheability);
   }
 
   /**

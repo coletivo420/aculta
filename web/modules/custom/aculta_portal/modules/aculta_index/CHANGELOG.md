@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.21 — fallback preserva a página do Index
+
+- Sem o Statistics, o bridge ainda consulta e devolve a página autorizada e seu
+  cursor; `available=false` e totais vazios indicam que os indicadores faltam.
+- A ausência do módulo não interrompe conteúdo nem paginação do Index.
+
 ## 0.1.0-dev.20 — resultado correlacionado do bridge
 
 - `ContentIndexStatisticsResult` retorna as entidades autorizadas da página

@@ -15,7 +15,8 @@ final readonly class ContentIndexStatisticsResult {
    * Creates the correlation result.
    *
    * @param bool $available
-   *   TRUE when ACULTA Statistics is enabled and supplied the totals.
+   *   TRUE when ACULTA Statistics is enabled and supplied the totals; the
+   *   content page may still be returned when this is FALSE.
    * @param list<\Drupal\Core\Entity\ContentEntityInterface> $entities
    *   Authorized entities from the same page used for aggregation.
    * @param array<string|int, int> $totals

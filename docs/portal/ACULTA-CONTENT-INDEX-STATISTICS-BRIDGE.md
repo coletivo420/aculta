@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** bridge tipado implementado no código local `0.1.0-dev.20` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
+**Estado:** bridge tipado implementado no código local `0.1.0-dev.21` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -46,7 +46,7 @@ Fallback:
 
 1. Index desabilitado: Statistics segue seus providers e relatórios atuais, sem tentativa de conexão.
 2. Index ativo, provider/filtro ausente: usar a fonte existente do Statistics ou declarar o indicador indisponível; nunca interpretar ausência como zero semântica.
-3. Statistics desabilitado: Index responde somente metadados/identidades; não exibe indicadores artificiais.
+3. Statistics desabilitado: o bridge do Index ainda devolve a página autorizada e o cursor, com `available=false` e sem totais; não exibe indicadores artificiais.
 
 ## Custo e evolução
 

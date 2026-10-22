@@ -6,7 +6,6 @@ namespace Drupal\aculta_index\Statistics;
 
 use Drupal\aculta_index\Query\ContentIndexQueryInterface;
 use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -53,13 +52,11 @@ final class ContentIndexStatisticsBridge {
     ?string $cursor = NULL,
     int $limit = 100,
   ): ContentIndexStatisticsResult {
+    $page = $this->query->query($filters, $account, $cursor, $limit);
     if ($this->statistics === NULL) {
-      $cacheability = new CacheableMetadata();
-      $cacheability->setCacheMaxAge(0);
-      return new ContentIndexStatisticsResult(FALSE, [], [], NULL, $cacheability);
+      return new ContentIndexStatisticsResult(FALSE, $page->entities, [], $page->nextCursor, $page->cacheability);
     }
 
-    $page = $this->query->query($filters, $account, $cursor, $limit);
     $identities = [];
     foreach ($page->entities as $entity) {
       $identities[] = [

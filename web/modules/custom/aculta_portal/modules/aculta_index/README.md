@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.20` — resultado correlacionado de entidades autorizadas e agregados.
-**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush, auditoria incremental diária, consulta segura de relações e bridge Statistics por IDs autorizados implementados. Mais providers e consumidores; não instalado no Runtime.
+**Versão:** `0.1.0-dev.21` — fallback do bridge preserva página autorizada sem Statistics.
+**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush, auditoria incremental diária, consulta segura de relações e bridge Statistics por IDs autorizados implementados. Bridge retorna as entidades autorizadas mesmo quando Statistics está ausente. Mais providers e consumidores; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
