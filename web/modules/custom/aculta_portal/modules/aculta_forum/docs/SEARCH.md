@@ -10,6 +10,10 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
 - `content_access` aplica os grants de Node na indexação e na consulta; o
   processador `entity_status` exclui entidades não publicadas. A View exige
   `access content`.
+- O processor consulta grants pela API de Node Core. Usa `NodeGrantsHelper` via
+  DI em Core 11.4+; `DeprecationHelper` mantém `node_access_grants()` somente no
+  caminho de Core 11.3, ainda incluído no requisito `^11.3`. O fallback não roda
+  no Core atual, onde a função está depreciada.
 - `index_directly: true` reduz o intervalo em que mudanças de estado/acesso
   poderiam aguardar o próximo cron. Alterações de access ainda dependem do
   comportamento de tracking/reindex do Search API; não se deve interpretar o
@@ -120,4 +124,8 @@ configuráveis, conforme o contrato do Portal.
 As referências alertam que mudanças de acesso podem depender de reindexação e
 que Views aplica access checks por padrão. As versões instaladas do Search API
 e Search API DB devem ser consideradas antes de qualquer alteração de
-processadores ou opções.
+processadores ou opções. Core documenta a depreciação de
+[`node_access_grants()` em 11.4](https://api.drupal.org/api/drupal/core%21modules%21node%21node.module/function/node_access_grants/11.x),
+o serviço [`NodeGrantsHelper`](https://api.drupal.org/api/drupal/core%21modules%21node%21src%21NodeGrantsHelper.php/class/NodeGrantsHelper/11.x)
+e o uso de [`DeprecationHelper`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21DeprecationHelper.php/function/DeprecationHelper%3A%3AbackwardsCompatibleCall/11.x)
+para selecionar o caminho pela versão instalada.

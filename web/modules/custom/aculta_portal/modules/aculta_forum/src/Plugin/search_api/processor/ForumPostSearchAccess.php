@@ -235,6 +235,9 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
     $post_items->addCondition('forum_search_post_published', TRUE);
     if (!$query->getOption('search_api_bypass_access') && !$account->hasPermission('bypass node access')) {
       $grant_values = ['node_access__all'];
+      // NodeGrantsHelper is the current API from Core 11.4 onward. The Forum
+      // still supports Core 11.3, where only node_access_grants() is available;
+      // keep that deprecated path version-gated and unreachable on newer Core.
       $grants = DeprecationHelper::backwardsCompatibleCall(
         \Drupal::VERSION,
         '11.4.0',
