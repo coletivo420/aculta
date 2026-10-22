@@ -59,34 +59,35 @@ final class StudioListingBuilder {
       ->condition('type', $bundle)
       ->sort('changed', 'DESC')
       ->range(0, self::LIMIT);
-    // The editorial state lives in content_moderation_state (one entry per node), not in a node field.
-    $stateStorage = $this->entityTypeManager->getStorage('content_moderation_state');
-    $stateQuery = $stateStorage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('content_entity_type_id', 'node')
-      ->condition('workflow', $listing['workflow'] ?? 'revista');
-    if ($state !== NULL) {
-      $stateQuery->condition('moderation_state', $state);
-    }
-    $stateEntities = $stateStorage->loadMultiple($stateQuery->execute());
-    $stateByNode = [];
-    foreach ($stateEntities as $entity) {
-      $stateByNode[(int) $entity->get('content_entity_id')->value] = (string) $entity->get('moderation_state')->value;
-    }
-    if ($state !== NULL) {
-      $query->condition('nid', array_keys($stateByNode) ?: [0], 'IN');
-    }
+    // Never enumerate all moderation state entities with accessCheck(FALSE).
+    // Resolve a visible node's latest revision, then verify revision access
+    // before showing its moderation state or using it for a filtered listing.
     $nids = $query->execute();
-
     $rows = [];
     foreach ($storage->loadMultiple($nids) as $node) {
+      if (!$node->access('view', $account)) {
+        continue;
+      }
+      $currentState = '';
+      $latestId = $storage->getLatestRevisionId($node->id());
+      if ($latestId !== NULL) {
+        $latest = $storage->loadRevision($latestId);
+        if ($latest instanceof NodeInterface && self::canViewRevision($latest, $account)
+          && $latest->hasField('moderation_state')) {
+          $currentState = (string) ($latest->get('moderation_state')->value ?? '');
+        }
+      }
+      // Fail closed: a private latest revision must not be indexed as public
+      // draft/review or cause its metadata to appear in a listing.
+      if ($state !== NULL && $currentState !== $state) {
+        continue;
+      }
       $row = [
         'title' => ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]],
-        'state' => $stateByNode[(int) $node->id()] ?? '',
+        'state' => $currentState,
         'author' => $node->getOwner()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($node->getChangedTime(), 'short'),
       ];
-      // Edição: o formulário administrativo do dono (domínio principal), avaliado com o acesso dele.
       if (!empty($listing['editable'])) {
         $row['edit'] = $this->editLink($node);
       }
