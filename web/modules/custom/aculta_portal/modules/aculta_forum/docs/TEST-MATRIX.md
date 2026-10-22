@@ -1,3 +1,29 @@
+## aculta_forum_lms 0.1.0-dev.38 — formulário de Comment LMS do estudante
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP. Fixture temporária com
+  Curso e Turma, estudante membro das duas, outsider sem membership, e um
+  tópico `aculta_lms_topic` com `field_aculta_discussion` em `Open`.
+- Fecha o DEFERRED de Runtime da dev.98.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante membro — formulário de resposta | 200 | 303 → `/node/530#comment-120` |
+| Outsider — formulário de resposta | 403 | 403, nenhum Comment |
+| Anônimo — formulário de resposta | 403 | — |
+
+- O Comment do estudante é persistido no tópico e nasce despublicado
+  (`status: 0`), entrando na fila de moderação LMS. Causa: o Core
+  `CommentForm` despublica gravações de contas sem `skip comment approval`, e
+  o papel `email_confirmed` tem `post comments` e `skip CAPTCHA`, mas não
+  aquela permissão. O formulário não traz CAPTCHA.
+- O estudante não vê o texto da tentativa do outsider. Cleanup via Entity API
+  removeu Comment, Node, relationships, memberships, Groups e os dois
+  usuários; sessões apagadas. Pós-condição: 1 curso preexistente, 0 tópicos
+  LMS, 0 Comments e 0 usuários `t9.*`. Recibo privado em
+  `/home/aculta/private/aculta/forum-lms-t9-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para envio do estudante membro e negação do outsider.
+
 ## aculta_forum_lms 0.1.0-dev.37 — fila LMS nega Educador de outro curso
 
 - Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por

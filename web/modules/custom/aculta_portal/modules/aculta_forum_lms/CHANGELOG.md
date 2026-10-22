@@ -1,3 +1,24 @@
+## `0.1.0-dev.38` — formulário de Comment LMS do estudante aceito no Runtime — 2026-10-22
+
+- Fecha o DEFERRED de Runtime da dev.98 com envio real (POST) no tópico da
+  turma. Fixture temporária: Curso e Turma, estudante membro das duas,
+  outsider sem membership e um `aculta_lms_topic` com
+  `field_aculta_discussion` em `Open`.
+- GET do formulário de resposta (`/comment/reply/node/{nid}/field_aculta_discussion`):
+  estudante 200, outsider 403, anônimo 403. O formulário não traz CAPTCHA
+  (`skip CAPTCHA` herdado do papel `email_confirmed`).
+- POST do estudante: 303 para `/node/530#comment-120`, Comment persistido no
+  tópico. POST do outsider: 403, nenhum Comment criado. O estudante não vê o
+  texto da tentativa do outsider.
+- O Comment nasce despublicado (`status: 0`) e entra na fila de moderação LMS:
+  o Core `CommentForm` despublica a gravação quando a conta não tem
+  `skip comment approval`, e o papel `email_confirmed` tem `post comments` e
+  `skip CAPTCHA`, mas não essa permissão. É o fluxo de moderação pretendido,
+  não uma falha do adaptador.
+- Fixture, memberships, relationships e sessões removidos; o Runtime voltou a
+  1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibo em
+  `/home/aculta/private/aculta/forum-lms-t9-20261022/smoke-result.json`.
+
 ## `0.1.0-dev.37` — fila LMS nega Educador de outro curso — 2026-10-22
 
 - Smoke GET-only no Runtime de teste repete a fila de moderação da dev.113 com
