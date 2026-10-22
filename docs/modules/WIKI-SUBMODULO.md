@@ -170,25 +170,57 @@ ao fim da sessão.
 
 | ID | Tarefa | Fase do plano | Commit | Estado |
 | --- | --- | --- | --- | --- |
-| A1 | Inventário da Fase 2 e anexo neste documento | Fase 2 | `909663c4` | concluída |
-| A2 | Casca do submódulo (`info.yml`, AGENTS, README, CHANGELOG, ROADMAP, TEST-MATRIX) | Fase 1 | — | pendente |
-| B1 | Mover `WikiController` e `WikiSearchFormBuilder` | Fase 2 | — | pendente |
-| B2 | Mover as três rotas com nomes e caminhos idênticos | Fase 2 | — | pendente |
-| B3 | Revisar pontos `wiki420` de domínio/purpose | Fase 2 | — | pendente |
-| B4 | Testes unitários dos componentes movidos | Fase 2 | — | pendente |
-| C1 | Atualizar regras de conteúdo e `AGENTS.md` do submódulo | Fase 3 | — | pendente |
-| C2 | Conferir a seção de bases legais da política | Fase 3 | — | pendente |
-| D1 | Inventário LGPD com as duas métricas planejadas | Fase 3 (gate) | — | pendente |
-| D2 | Catálogo e retenção instalada | Fase 4 | — | pendente |
-| D3 | `WikiProvider` e testes de publicação/revisão/importação | Fase 4 | — | pendente |
-| D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | — | pendente |
-| E1 | Status final deste plano | Encerramento | — | pendente |
-| E2 | `git push` da branch | Encerramento | — | pendente |
+| A1 | Inventário da Fase 2 e anexo neste documento | Fase 2 | `402622c7` | concluída |
+| A2 | Casca do submódulo (`info.yml`, AGENTS, README, CHANGELOG, ROADMAP, TEST-MATRIX) | Fase 1 | `b7195c45` | concluída |
+| B1 | Mover `WikiController` e `WikiSearchFormBuilder` | Fase 2 | `8208243b` | concluída |
+| B2 | Mover as três rotas com nomes e caminhos idênticos | Fase 2 | `320960cb` | concluída |
+| B3 | Revisar pontos `wiki420` de domínio/purpose | Fase 2 | `1a0c9d77` | concluída, sem mudança de código |
+| B4 | Testes unitários dos componentes movidos | Fase 2 | `a89b3d19` | concluída |
+| C1 | Atualizar regras de conteúdo e `AGENTS.md` do submódulo | Fase 3 | `dfa5dfd0` | concluída |
+| C2 | Conferir a seção de bases legais da política | Fase 3 | `d52f2fb3` | concluída, sem lacuna para a Wiki |
+| D1 | Inventário LGPD com as duas métricas planejadas | Fase 3 (gate) | `2f8b944a` | concluída |
+| D2 | Catálogo e retenção instalada | Fase 4 | `89b1d9d9` | concluída |
+| D3 | `WikiProvider` e testes de publicação/revisão/importação | Fase 4 | `6306768c` | concluída |
+| D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | `39842f8b` | concluída |
+| E1 | Status final deste plano | Encerramento | este commit | concluída |
+| E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
-> `aculta_statistics` descreve a primeira como instantânea. Vale o briefing, e a
-> correção da documentação fica registrada em E1.
+> `aculta_statistics` descrevia a primeira como instantânea. Vale o briefing:
+> o catálogo e a configuração instalada usam 90 dias, e `METRIC-CATALOG.md`
+> foi corrigido nesta sessão.
+
+### Estado ao fim da sessão de 2026-10-22
+
+- **URLs preservadas.** As três rotas (`aculta_portal.wiki_home`,
+  `aculta_portal.wiki_search`, `aculta_portal.wiki_search_preview`) estão em
+  `aculta_wiki.routing.yml` com os mesmos nomes, caminhos, permissões e
+  controladores de antes.
+- **Submódulo desabilitado.** `aculta_wiki` continua fora da instalação: as
+  rotas existem no código, mas não são registradas no Runtime enquanto o
+  módulo não for habilitado. Não houve `updb`, limpeza de cache, ativação de
+  módulo nem qualquer operação no Runtime.
+- **Métricas prontas, sem emissão para conteúdo importado.** O catálogo, a
+  retenção instalada, o `WikiProvider` e o hook de publicação estão no código;
+  conteúdo sincronizado não conta. A produção das métricas só começa quando o
+  `aculta_wiki` for habilitado e verbetes forem publicados.
+- **Nenhum código de `aculta_wiki` no `aculta_statistics`.** A classificação
+  depende do tipo de conteúdo `wiki_entry` e do estado editorial, sem importar
+  classes do submódulo.
+- **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
+  asserções), `WikiProviderTest` (8 testes, 17 asserções) e
+  `WikiPublicationKernelTest` (2 testes, 22 asserções) aprovados. A suíte
+  unitária do `aculta_statistics` tem 1 falha pré-existente:
+  `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
+  `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
+  escopo desta frente.
+- **O que ficou faltando.** Habilitar o `aculta_wiki` (decisão do responsável,
+  depois da base legal para conteúdo publicado e da retenção do painel);
+  construir a Fase 5 (ranking por verbete apenas no painel administrativo);
+  validar em navegador com ACULTA420 e Olivero depois da ativação.
+- **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
+  seguem não versionados e foram deixados intactos.
 
 ## Anexo — Inventário da Fase 2
 

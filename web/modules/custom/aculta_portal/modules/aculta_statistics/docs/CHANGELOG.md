@@ -5,7 +5,20 @@
 - Plano em `docs/modules/WIKI-SUBMODULO.md` (raiz do repositório), com a frente de submódulo `aculta_wiki` e a integração com este módulo.
 - Correção de `CURRENT-STATE.md` e `ROADMAP.md`: o contador de leitura da Wiki já existe (0.2.0-dev.3).
 - `INTEGRATIONS.md` marca publicações e atualizações de verbete como planejadas.
-- Sem código, sem métrica nova e sem mudança de versão.
+- (2026-10-22) Catálogo e configuração instalada: `wiki.entries.published`
+  (primeira publicação de verbete) e `wiki.entries.updated` (revisão publicada
+  de verbete já publicado), sensibilidade pública, retenção de 90 dias.
+- `WikiProvider` classifica a gravação pelo tipo de conteúdo `wiki_entry` e
+  pelo estado editorial, sem importar `aculta_wiki`; conteúdo sincronizado ou
+  importado não conta. `WikiPublicationHooks` escuta `node_insert` e
+  `node_update` e grava a métrica com o ID do verbete como dimensão, sem
+  autoria.
+- `METRIC-CATALOG.md` corrigido: a primeira publicação tem retenção de 90 dias
+  (não instantânea), e o contador de leitura tem fonte e dimensão registradas.
+- Testes: `WikiProviderTest` (8 testes) e `WikiPublicationKernelTest`
+  (2 testes, agregado diário com uma publicação e uma revisão) aprovados. A
+  suíte unitária segue com 1 falha pré-existente em
+  `ForumActivitySubscriberTest` (evento `aculta_forum.post_created`).
 
 ## 0.9.0-dev.6 — contrato `lms.students.by_status` validado no Runtime
 

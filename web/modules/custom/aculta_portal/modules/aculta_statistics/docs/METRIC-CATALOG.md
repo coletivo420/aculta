@@ -120,9 +120,9 @@ Não somar sessões do GA4 com cliques de links ou visualizações internas.
 | `forum.comments.created` | comentários novos legados (Core `comment`) | comentários | categoria | 90 dias | P |
 | `forum.posts.created` | posts revisionáveis novos (`aculta_forum_post`) | posts | — | 90 dias | P |
 | `forum.participants.active` | usuários distintos que postaram no período | pessoas | — | 90 dias | I |
-| `wiki.entries.published` | nós `wiki_entry` publicados | verbetes | domínio | instantâneo | P |
-| `wiki.entries.updated` | nova revisão de `wiki_entry` | revisões | domínio | 90 dias | P |
-| `wiki.entries.read` | **não existe fonte** (Core sem contador) | — | — | — | — |
+| `wiki.entries.published` | primeira publicação de nó `wiki_entry` | verbetes | verbete (ID do nó) | 90 dias | P |
+| `wiki.entries.updated` | revisão publicada de `wiki_entry` já publicado | revisões | verbete (ID do nó) | 90 dias | P |
+| `wiki.entries.read` | beacon `POST /estatisticas/wiki/{node}/leitura` | leituras | verbete (ID do nó) | 90 dias | P |
 
 Usuários distintos (`forum.participants.active`) são pessoas: guardar só a
 contagem, nunca a lista. Cálculo por hash com sal do ambiente, se preciso.
