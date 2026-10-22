@@ -77,3 +77,8 @@ Na UI mobile-first, itens se apresentam como cartões enxutos e o revisor toma *
 ## Retificação de ownership (2026-10-22)
 
 **A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
+
+
+## Interface da moderação — decisão V-0.4-D
+
+**Fila, análise, devolução e publicação são exibidas em GanjaLab (`aculta_studio`)**, consumindo providers e Form API/Content Moderation de `aculta_wiki`. WE SATIVA exibe apenas contribuições próprias e retornos de moderação. [Contrato da janela no GanjaLab](../../../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md). Não desenvolver fila de content editors no WE SATIVA, ainda que seções de planejamento anteriores usem o termo “moderação interna da Wiki”: ele descreve backend/ownership, não frontend separado.
