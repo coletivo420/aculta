@@ -379,3 +379,7 @@ SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `it
 ## `aculta420:empty-state`
 
 Componente neutro em `components/feedback/empty-state/`, com slot `message` para render array traduzido/escapado, slot opcional `actions`, prop `compact` e duas stories. Consumidores de código: Wiki search sem resultados e LMS dashboard sem cursos/certificados. Não determina acesso/erros/query. Não confundir com `messenger-state`/`institutional-notice`. [Auditoria B3](theme-ux-0.8-b3-feedback-audit.md).
+
+## B4 — Utility offcanvas e Minha Conta
+
+`cart-offcanvas` não oferece mais um X puramente visual nos itens: mudanças reais de carrinho pertencem ao Commerce. `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` continuam baseados em Bootstrap offcanvas via SDC, com estilos compartilhados em `css/components/portal-cart.css`. `portal-account.css` apresenta reflow responsivo da navegação/conteúdo da Minha Conta sem alterar sua implementação AJAX. [Auditoria B4](theme-ux-0.8-b4-utility-panels.md). Testar no Drupal antes de homologar.
