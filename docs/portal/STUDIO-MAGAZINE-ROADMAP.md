@@ -96,3 +96,7 @@ O Studio é frontend integrado à Minha Conta. Itens não autorizados não apare
 ## Alinhamento visual LMS Course Builder — 2026-10-22
 
 O planejamento específico [Course Builder mobile-first](STUDIO-LMS-COURSE-BUILDER-VISUAL.md) introduz a linha **CB-UX 0.3.0–0.3.8** como trilha de design e implementação progressiva do marco funcional **Studio Cursos 0.10.0**; não renumera nem marca como concluídas as etapas anteriores. O foco padrão é **Meus cursos** (criados/geridos), com vistas separadas para Equipe e turmas. O construtor apresenta **Curso → Módulo → Item pedagógico** com árvore à esquerda e editor à direita no desktop e **uma tela por tarefa no mobile**; edição por Form API/CKEditor 5 e navegação AJAX progressiva. Reordenação precisa de API canônica, operação equivalente por teclado/mobile e avaliação do impacto em turmas ativas. Acesso a cursos meramente visíveis não equivale a permissão de gestão. O curso pertence a Group/LMS; Studio não persiste a árvore nem notas.
+
+## Identidade GanjaLab / GanjaLab420
+
+O nome público de criação é **GanjaLab** (módulo técnico `aculta_studio`, URL `/studio`); a experiência do estudante é **GanjaLab420**. Consultar [contrato de marca](GANJALAB-BRANDING.md) e [UX de aprendizagem](GANJALAB420-LEARNING-UX.md). Esta definição não altera marcos funcionais nem indica conclusão das interfaces previstas.
