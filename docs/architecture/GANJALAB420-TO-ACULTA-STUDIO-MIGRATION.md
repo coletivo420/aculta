@@ -72,3 +72,9 @@ Separar `LearningDashboardController::student()` entre dados de aprendizagem e c
 ### Registro condicional do Composer
 
 O serviço `aculta_studio.learner_dashboard_composer` é declarado em `aculta_lms.services.yml` (não em `aculta_studio.services.yml`) porque depende de `aculta_lms.learning_dashboard`. O provider Studio usa referência opcional, preservando a instalação do Studio sem LMS. Teste obrigatório: rebuild com Studio habilitado e LMS desabilitado, além do cenário de ambos habilitados.
+
+## G420-C2 — composição de cartões com SDC (2026-10-22)
+
+O Composer Studio reutiliza `aculta420:card` e `aculta420:content-grid` para cursos e certificados e preserva o cabeçalho `aculta420:context-header` e estados vazios `aculta420:empty-state`. O indicador de progresso usa o HTML nativo `progress`, renderizado no slot de conteúdo do SDC, preservando percentuais e avaliação pendente fornecidos pelo LMS. Não reaproveitar componentes legados fora do contrato SDC/UI Suite. O shell global e o cabeçalho multidomínio em `conta.aculta.*` permanecem responsabilidade Portal/tema; a entrada estudante continua `/studio/ganjalab420`.
+
+Gates pendentes: build de container, PHP lint, PHPUnit, fixtures e navegação autenticada no subdomínio de conta, renderização real no tema ACULTA420 com UI Suite e acessibilidade/responsividade. Sem alegação de PASS Runtime.
