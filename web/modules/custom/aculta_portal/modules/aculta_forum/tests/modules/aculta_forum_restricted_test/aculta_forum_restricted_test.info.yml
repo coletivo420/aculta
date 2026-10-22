@@ -1,0 +1,8 @@
+name: 'ACULTA Forum restricted test fixture'
+type: module
+description: 'Registers the production associado entity and restricted forum settings schema for isolated Kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:field
+  - drupal:user

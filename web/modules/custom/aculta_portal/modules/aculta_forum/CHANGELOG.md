@@ -1,3 +1,26 @@
+## `0.1.0-dev.242` — prova de ACL de Group e revogação (XK-C3) — 2026-10-22
+
+- Documento novo
+  [`docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md`](docs/FORUM-PART-0.1-C3-CHARACTERIZATION.md)
+  com a matriz conjunta de acesso, a regra de revogação na checagem e as tags
+  de cache do subsistema `RestrictedForum*`.
+- Teste novo
+  `tests/src/Kernel/RestrictedForumGroupAclKernelTest.php` — 12 testes, 261
+  asserções, OK. Usa Group real, `aculta_associado` real e os serviços de
+  produção, sem habilitar `aculta_forum` nem `aculta_user`; cobre associado
+  ativo, pendente, convidado, suspenso, desligado e ausente, membros de Groups
+  distintos, anônimo, tópico público, Group de outro tipo, `lms_course`
+  recusado, falha do resolvedor com max-age 0 e a sincronização
+  `unchanged`/`added`/`removed`.
+- Fixture novo `tests/modules/aculta_forum_restricted_test`: registra a
+  entidade de produção `AssociadoMarcador` por Reflection e declara o schema de
+  `aculta_forum.settings` usado no teste. Não entra em produção.
+- Verificação registrada: `GroupRelationship::getListCacheTagsToInvalidate()`
+  inclui a tag por usuário e `EntityBase::invalidateTagsOnSave()` a invalida em
+  cada create/update, então `addMember()`/`removeMember()` limpam o cache de
+  `GroupMembership::loadByUser()`; não há defeito de membership obsoleta.
+- Nenhuma mudança funcional, de DI, de schema ou de Runtime.
+
 ## `0.1.0-dev.241` — fundação do fórum restrito de associados (F-GROUP 0.1) — 2026-10-22
 
 - Acrescenta o adaptador `RestrictedForumGroupResolver`: lê
