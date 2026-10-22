@@ -1,0 +1,420 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Kernel;
+
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
+use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Hook\ForumAvisoHooks;
+use Drupal\flag\FlagInterface;
+use Drupal\flag\FlagServiceInterface;
+use Drupal\flag\FlaggingInterface;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+
+/**
+ * Fixes the no-duplicate notice behavior of the existing Forum events.
+ *
+ * Every scenario drives the production service through the same hooks that
+ * receive the Forum events. The only mocked collaborators are the ones that
+ * would otherwise require the full Messenger module: the flag service and the
+ * notice access policy. Entities, revision markers and counters are real.
+ */
+#[Group('aculta_messenger')]
+#[RunTestsInSeparateProcesses]
+final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'filter',
+    'text',
+    'node',
+    'aculta_forum_post_test',
+    'aculta_messenger_aviso_test',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('aculta_forum_post');
+    $this->installEntitySchema('aculta_aviso');
+    $this->installSchema('node', ['node_access']);
+  }
+
+  /**
+   * Counts one notice per follower and never for the author or uid 0.
+   */
+  public function testFirstPublicationRegistersOneNoticePerFollower(): void {
+    $author = $this->createUser('autor');
+    $first = $this->createUser('seguidora_um');
+    $second = $this->createUser('seguidor_dois');
+    $topic = $this->createTopic('Tópico com seguidores');
+    $avisos = $this->createAvisoService([
+      (int) $author->id(),
+      0,
+      (int) $first->id(),
+      (int) $second->id(),
+    ]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    (new ForumAvisoHooks($avisos))->postInsert($post);
+
+    foreach ([$first, $second] as $follower) {
+      $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+      self::assertCount(1, $notices);
+      $aviso = $notices[0];
+      self::assertSame(1, (int) $aviso->get('contador_site')->value);
+      self::assertSame(1, (int) $aviso->get('contador_email')->value);
+      self::assertSame(
+        (int) $post->getRevisionId(),
+        (int) $aviso->get('ultimo_post')->value,
+      );
+      self::assertSame('Tópico com seguidores', $aviso->get('titulo')->value);
+    }
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $author->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * Repeating the same insert event never increases the stored counter.
+   */
+  public function testRepeatedDeliveryOfTheSameEventIsIgnored(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    $hooks = new ForumAvisoHooks($avisos);
+
+    $hooks->postInsert($post);
+    $hooks->postInsert($post);
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $hooks->postInsert($storage->load($post->id()));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(0, $avisos->registrarPost($post));
+  }
+
+  /**
+   * Pending posts and non-default revisions never register a notice.
+   */
+  public function testPendingAndNonDefaultRevisionsRegisterNothing(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $hooks = new ForumAvisoHooks($avisos);
+
+    $pending = $this->createPost($topic, (int) $author->id(), FALSE);
+    $hooks->postInsert($pending);
+    $hooks->postUpdate($pending);
+
+    $published = $this->createPost($topic, (int) $author->id(), TRUE);
+    $published->setNewRevision(TRUE);
+    $published->isDefaultRevision(FALSE);
+    $published->save();
+    self::assertSame(0, $avisos->registrarPost($published));
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * A first publication reported as an update counts exactly once.
+   */
+  public function testFirstPublicationUpdateCountsOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $hooks = new ForumAvisoHooks($avisos);
+    $post = $this->createPost($topic, (int) $author->id(), FALSE);
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $before = $storage->loadUnchanged($post->id());
+    $previousRevision = (int) $post->getRevisionId();
+    $post->set('status', TRUE);
+    $post->set('first_published', time());
+    $post->setNewRevision(TRUE);
+    $post->save();
+    $post->setOriginal($before);
+    self::assertGreaterThan($previousRevision, (int) $post->getRevisionId());
+
+    $hooks->postUpdate($post);
+    $hooks->postUpdate($post);
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(
+      (int) $post->getRevisionId(),
+      (int) $notices[0]->get('ultimo_post')->value,
+    );
+  }
+
+  /**
+   * Editing an already published post does not add another notice.
+   */
+  public function testEditOfPublishedPostDoesNotRegisterNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $hooks = new ForumAvisoHooks($avisos);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    $post->set('first_published', time());
+    $post->save();
+    $hooks->postInsert($post);
+    $firstRevision = (int) $post->getRevisionId();
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $before = $storage->loadUnchanged($post->id());
+    $post->setNewRevision(TRUE);
+    $post->set('body', ['value' => 'Texto corrigido', 'format' => 'plain_text']);
+    $post->save();
+    $post->setOriginal($before);
+
+    $hooks->postUpdate($post);
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame($firstRevision, (int) $notices[0]->get('ultimo_post')->value);
+  }
+
+  /**
+   * A recipient without access to the post is never counted.
+   */
+  public function testRecipientWithoutPostAccessIsSkipped(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(canViewPost: FALSE),
+    );
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    (new ForumAvisoHooks($avisos))->postInsert($post);
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * Topic update notices dedupe by revision and stay apart from responses.
+   */
+  public function testTopicUpdateNoticesAreDeduplicated(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(0, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 11));
+
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame(11, (int) $updates[0]->get('ultimo_evento')->value);
+
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+    self::assertSame(1, $avisos->registrarPost($post));
+
+    self::assertCount(
+      1,
+      $this->loadNotices((int) $follower->id(), (int) $topic->id()),
+    );
+    self::assertCount(
+      1,
+      $this->loadNotices(
+        (int) $follower->id(),
+        (int) $topic->id(),
+        Aviso::TIPO_ATUALIZACAO,
+      ),
+    );
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+  }
+
+  /**
+   * Unpublished or unsupported topics and a missing flag register nothing.
+   */
+  public function testTopicWithoutEligiblePublicationRegistersNothing(): void {
+    $follower = $this->createUser('seguidora');
+    $unpublished = $this->createTopic('Tópico em rascunho', FALSE);
+    $published = $this->createTopic('Tópico publicado');
+
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    self::assertSame(0, $avisos->notificarAtualizacao($unpublished, 5));
+
+    $unsupported = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(supportsTopic: FALSE),
+    );
+    self::assertSame(0, $unsupported->notificarAtualizacao($published, 5));
+
+    $noFlag = $this->createMock(FlagServiceInterface::class);
+    $noFlag->method('getFlagById')->willReturn(NULL);
+    $withoutFlag = new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $noFlag,
+      $this->createAccessPolicy(),
+    );
+    self::assertSame(0, $withoutFlag->notificarAtualizacao($published, 5));
+
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $unpublished->id()),
+    );
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $follower->id(), (int) $published->id()),
+    );
+  }
+
+  /**
+   * Creates a persisted account.
+   */
+  private function createUser(string $name): UserInterface {
+    $user = User::create(['name' => $name, 'status' => 1]);
+    $user->save();
+    return $user;
+  }
+
+  /**
+   * Creates a persisted Forum topic.
+   */
+  private function createTopic(
+    string $title = 'Tópico de teste',
+    bool $published = TRUE,
+  ): NodeInterface {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => $title,
+      'status' => $published ? 1 : 0,
+    ]);
+    $topic->save();
+    return $topic;
+  }
+
+  /**
+   * Creates a persisted Forum post.
+   */
+  private function createPost(
+    NodeInterface $topic,
+    int $author,
+    bool $published,
+  ): ForumPost {
+    $post = ForumPost::create([
+      'uid' => $author,
+      'topic' => $topic->id(),
+      'body' => ['value' => 'Texto do post', 'format' => 'plain_text'],
+      'status' => $published,
+    ]);
+    $post->save();
+    return $post;
+  }
+
+  /**
+   * Builds the service with the given follower accounts.
+   *
+   * @param int[] $followers
+   *   Account ids returned by the flagged topic query.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface|null $policy
+   *   Notice access policy; a permissive default is used when omitted.
+   */
+  private function createAvisoService(
+    array $followers,
+    ?ForumNoticeAccessPolicyInterface $policy = NULL,
+  ): AvisoService {
+    $flaggings = [];
+    foreach ($followers as $uid) {
+      $flagging = $this->createMock(FlaggingInterface::class);
+      $flagging->method('getOwnerId')->willReturn($uid);
+      $flaggings[] = $flagging;
+    }
+    $flag = $this->createMock(FlagInterface::class);
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $flags->method('getFlagById')->with('seguir_topico')->willReturn($flag);
+    $flags->method('getEntityFlaggings')->willReturn($flaggings);
+
+    return new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $flags,
+      $policy ?? $this->createAccessPolicy(),
+    );
+  }
+
+  /**
+   * Builds a permissive notice access policy, optionally denying one check.
+   */
+  private function createAccessPolicy(
+    bool $supportsTopic = TRUE,
+    bool $canViewTopic = TRUE,
+    bool $canViewPost = TRUE,
+  ): ForumNoticeAccessPolicyInterface {
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn($supportsTopic);
+    $policy->method('canViewTopic')->willReturn($canViewTopic);
+    $policy->method('canViewPost')->willReturn($canViewPost);
+    return $policy;
+  }
+
+  /**
+   * Loads a person's notices for a topic and type.
+   *
+   * @return \Drupal\aculta_messenger\Entity\Aviso[]
+   *   Stored notices, newest id last.
+   */
+  private function loadNotices(
+    int $uid,
+    int $nid,
+    string $tipo = Aviso::TIPO_RESPOSTA,
+  ): array {
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_aviso');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('uid', $uid)
+      ->condition('assunto_nid', $nid)
+      ->condition('tipo', $tipo)
+      ->execute();
+    return array_values($storage->loadMultiple($ids));
+  }
+
+}

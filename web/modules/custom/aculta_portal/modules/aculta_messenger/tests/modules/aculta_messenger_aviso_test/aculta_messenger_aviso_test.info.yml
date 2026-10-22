@@ -1,0 +1,8 @@
+name: 'ACULTA Messenger aviso test fixture'
+type: module
+description: 'Registers the production Aviso content entity for isolated Kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:field
+  - drupal:user
