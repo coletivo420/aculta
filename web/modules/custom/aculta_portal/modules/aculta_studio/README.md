@@ -91,3 +91,7 @@ D-A.2-T aplicado: StudioListingBuilder passa a variar listagens por user além d
 ACULTA Studio is the **existing Drupal submodule**, not just the GanjaLab name. GanjaLab is its existing area-based account workspace; GanjaLab420 and WE SATIVA are distinct user experiences under the Studio interface platform, with their actual availability governed by implementing providers. Shared navigation/layout/orchestration belongs here; Wiki and other kernels own data, forms, workflow and access. Do not force WE SATIVA into the account-purpose StudioTab.
 
 [Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+## Atualização STUDIO 0.1-B / D-A.2-T2
+
+STUDIO 0.1-B/D-A.2-T2: documentado contrato de provedores multi-experiência e removida a enumeração irrestrita de content_moderation_state. O estado exibido depende do acesso à última revisão. Limitação de 50 Nodes antes do filtro persiste; usar provider Wiki especializado para futura fila e não tratar listagem genérica como moderadora.
