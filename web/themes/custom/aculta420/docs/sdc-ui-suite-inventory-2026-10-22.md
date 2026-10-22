@@ -69,3 +69,26 @@
 **THEME-UX 0.8-B0-R2:** inspeção em servidor e catálogo UI Patterns, classificação individual com evidência real; em seguida **M1** com stories e schema, e **B1** contextual abaixo do shell multidomínio. Não criar novos SDCs até a validação B0.
 
 **Limitação metodológica:** esta é uma auditoria estática, sem testes ou alterações funcionais. Dados de uso em produção não foram inferidos da simples presença dos arquivos.
+
+## Atualização de execução estática — M1 (2026-10-22)
+
+**Corrigida a lacuna de arquivos stories no repositório**: adicionados
+`content/forum-category/forum-category.default.story.yml`,
+`content/qr-preview/qr-preview.default.story.yml` e
+`content/qr-download/qr-download.default.story.yml`.
+
+- Fotografia anterior: 38 SDCs / 55 stories / 3 sem story.
+- **Após commits:** 38 SDCs / **58 stories** / **0 sem story** na árvore.
+- Os exemplos são determinísticos, sem consultas, sem dados reais, sem uploads e sem geração efetiva de QR. Links fragmentários são demonstrativos.
+- **M1 parcial:** cobertura de arquivo resolvida, mas parsers/schema/story renderer e visualização no UI Patterns Library ainda **PENDENTES** no Runtime.
+- `qr-preview` e `qr-download` usam referência de schema da antiga árvore `project/sdc` enquanto `card` usa a URL de Drupal Core; catalogado para comparação de metadados/validador na etapa M0, sem afirmar invalidade.
+
+A definição de conformidade permanece rígida: *presença de SDC e story não prova SDC-CONFORME*. Para isso, validar metadados, acesso/cache do consumidor, uso UI Patterns/Styles quando apropriado, HTML, acessibilidade e light/dark em Runtime.
+
+## Pendências identificadas para a auditoria fora do servidor
+
+1. Realizar revisão estática cruzada das definições dos 38 arquivos `.component.yml` contra os contratos Core SDC e propriedades usadas nas Twig.
+2. Procurar candidatos legados de apresentação em Twig/CSS/JS que ainda não tenham base SDC — com **evidência de consumidor**, não por extensão de arquivo apenas.
+3. Revisar contrato de heading do `content-section` (h2/h3) e markup de Context Header que usará h1 sem duplicar títulos do Core.
+4. Auditar semântica de navegação `product-tabs` e navegação Ajax Studio antes de promover variante compartilhada.
+5. Evitar alterações automáticas de schemas/markup do QR até validação específica, pois o componente é usado fora do LMS.
