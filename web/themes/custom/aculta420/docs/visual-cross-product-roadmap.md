@@ -202,3 +202,8 @@ O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/ac
 ## USER-PART 0.1-A — dependência visual WE SATIVA
 
 [Inventário de Fórum, LMS e Wiki](../../../../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md) documentado. O tema somente compõe SDC/UI Suite e preserva cabeçalhos global/domínio. A UI de moderação mobile-first deverá receber estados e links autorizados dos respectivos subkernels após a política de primeira participação no `aculta_user` estar comprovada por testes. Não migrar regras ou lógica de participação para CSS/Twig.
+
+
+## XK-10 — visual das centralizações (2026-10-22)
+
+A [auditoria transversal](../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md) define kernels de dados e serviços. Fóruns Group restritos a associados ativos precisam de ACL efetiva, sem esconder conteúdo só por CSS. Wiki/WE SATIVA, LMS, Fórum, Messenger e Group seguem mobile-first, Core SDC/UI Patterns/UI Styles, com Institution Bar e Domain Header preservados. Fase visual só após contratos de acesso/ownership e histórias reais.
