@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Validar no Kernel os providers do Content Index; finalizar `aculta_activity` junto ao Portal; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup; `remote_video` segue sem provider até definir owner ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
+next_phase: 'Homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup; `remote_video` segue sem provider até definir owner ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
 version_note: "0.4.1-dev.9 (scanner de referências de texto por Entity Query/allRevisions)"

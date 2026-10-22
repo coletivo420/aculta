@@ -265,7 +265,6 @@ final class ContentIndexWriter {
   private function replaceRelations(string $generationId, string $providerId, ContentIndexProjection $projection, int $updated): void {
     $this->deleteRelations($generationId, $providerId, $projection->entityTypeId, $projection->entityId, $projection->langcode);
     foreach ($this->uniqueRelations($providerId, $projection) as $relationHash => $relation) {
-      $values = $this->relationValues($relation);
       $this->database->insert('aculta_index_relation')
         ->fields([
           'generation_id' => $generationId,

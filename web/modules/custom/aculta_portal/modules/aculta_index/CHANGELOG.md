@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.25 — Kernel harness para adapters e providers tagged
+
+- Kernel schema tests agora carregam o adapter Media real `aculta_image`; fixtures constroem `DomainPurposeManager` tipado sem habilitar o conjunto integral do Portal.
+- Rebuilder/Schema Kernel: 31 testes / 369 assertions passaram em SQLite temporário; Unit Index/Activity: 31 testes / 136 assertions. Adapter Activity também tem Kernel próprio.
+- Removido valor de relação calculado e não utilizado em `ContentIndexWriter`; nenhuma mudança de payload.
+
 ## 0.1.0-dev.24 — adiar bundle sem módulo proprietário
 
 - `media:remote_video` deixa de ser anunciado como integração ativa. O provider

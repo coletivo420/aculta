@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
 use Drupal\aculta_index\Storage\ContentIndexWriter;
@@ -14,6 +19,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Installs and exercises the initial schema in the test database.
@@ -25,13 +31,40 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_index'];
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'file',
+    'image',
+    'media',
+    'entity_usage',
+    'media_duplicates',
+    'aculta_image',
+    'aculta_index',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // Schema and writer tests do not evaluate Domain-aware Entity Access.
+    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    ));
+  }
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -185,9 +218,9 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
-   * Checks a rebuild can start and terminate cleanly without providers.
+   * Checks a rebuild terminates when providers have no source entities.
    */
-  public function testRebuilderStartsEmptyGenerationWhenNoProvidersExist(): void {
+  public function testRebuilderStartsEmptyGenerationWhenNoSourceEntitiesExist(): void {
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $result = $rebuilder->processNextBatch($generationId);

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "`0.1.0-dev.1` (ownership mínimo do bundle activity e provider tagged do Content Index)"
-next_phase: 'Finalizar provider de atividade com o ACULTA Content Index e o Kernel Portal; confirmar acesso no purpose `main` e ownership dos fluxos editoriais ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+version_note: "`0.1.0-dev.2` (provider descoberto no Kernel e alteração agendada pelo Index)"
+next_phase: 'Homologar Entity Access de Activity no purpose `main` com domínio e grants reais; auditar a ownership dos hooks editoriais legados sem migrá-los por inferência. Runtime permanece sem habilitação ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
