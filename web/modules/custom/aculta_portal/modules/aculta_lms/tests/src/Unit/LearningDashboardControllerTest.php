@@ -55,6 +55,9 @@ final class LearningDashboardControllerTest extends UnitTestCase {
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertContains('lms_course_status_list', $build['#cache']['tags']);
+    self::assertSame('aculta420:context-header', $build['context_header']['#component']);
+    self::assertSame('aculta420:empty-state', $build['courses']['#component']);
+    self::assertSame('aculta420:empty-state', $build['certificates']['#component']);
   }
 
 }
