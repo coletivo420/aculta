@@ -9,8 +9,6 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Checks structured and rich-text references to entities across revisions.
@@ -24,7 +22,7 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
   ) {}
 
   /**
-   * Reports whether an active field or formatted-text field references a File.
+   * Reports whether an active field or formatted-text field references target.
    */
   public function inspect(EntityInterface $target): FileReferenceStatus {
     $targetType = $target->getEntityTypeId();
@@ -75,57 +73,28 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
         }
 
         if (in_array($type, ['text', 'text_long', 'text_with_summary'], TRUE)) {
-          $status = $this->inspectTextField($entityType->isRevisionable(), $fieldName, $definition, $storage, $target);
-          if ($status === FileReferenceStatus::Unverifiable) {
-            return $status;
+          try {
+            $query = $storage->getQuery()->accessCheck(FALSE);
+            if ($entityType->isRevisionable()) {
+              $query->allRevisions();
+            }
+            $matches = $query->condition(
+              $fieldName . '.value',
+              '%' . $this->database->escapeLike($target->uuid()) . '%',
+              'LIKE',
+            )->range(0, 1)->execute();
+            if ($matches !== []) {
+              $found = TRUE;
+            }
           }
-          $found = $found || $status === FileReferenceStatus::Referenced;
+          catch (\Throwable) {
+            return FileReferenceStatus::Unverifiable;
+          }
         }
       }
     }
 
     return $found ? FileReferenceStatus::Referenced : FileReferenceStatus::Clear;
-  }
-
-  /**
-   * Checks a formatted-text field in its current and revision storage tables.
-   */
-  private function inspectTextField(bool $revisionable, string $fieldName, FieldStorageDefinitionInterface $definition, EntityStorageInterface $storage, EntityInterface $target): FileReferenceStatus {
-    if (!method_exists($storage, 'getTableMapping')) {
-      return FileReferenceStatus::Unverifiable;
-    }
-    try {
-      $mapping = $storage->getTableMapping();
-      $column = $mapping->getFieldColumnName($definition, 'value');
-      $tables = [$mapping->getFieldTableName($fieldName)];
-      if ($revisionable && method_exists($mapping, 'getDedicatedRevisionTableName')) {
-        $tables[] = $mapping->getDedicatedRevisionTableName($definition);
-      }
-    }
-    catch (\Throwable) {
-      return FileReferenceStatus::Unverifiable;
-    }
-
-    foreach (array_unique($tables) as $table) {
-      if (!$this->database->schema()->tableExists($table)
-        || !$this->database->schema()->fieldExists($table, $column)) {
-        return FileReferenceStatus::Unverifiable;
-      }
-      try {
-        $query = $this->database->select($table, 'f')
-          ->fields('f', [$column])
-          ->condition('f.' . $column, '%' . $this->database->escapeLike($target->uuid()) . '%', 'LIKE')
-          ->range(0, 1);
-        if ($query->execute()->fetchField() !== FALSE) {
-          return FileReferenceStatus::Referenced;
-        }
-      }
-      catch (\Throwable) {
-        return FileReferenceStatus::Unverifiable;
-      }
-    }
-
-    return FileReferenceStatus::Clear;
   }
 
 }

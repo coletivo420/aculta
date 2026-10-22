@@ -11,6 +11,7 @@ use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
+use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -377,6 +378,14 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       $this->container->get('config.factory'),
     );
 
+    self::assertSame(
+      FileReferenceStatus::Clear,
+      (new FileReferenceInspector(
+        $this->container->get('entity_type.manager'),
+        $this->container->get('entity_field.manager'),
+        $this->container->get('database'),
+      ))->inspect($orphan),
+    );
     self::assertSame(1, $cleanup->cleanup());
     self::assertNull($this->container->get('entity_type.manager')->getStorage('media')->load($orphan->id()));
     self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($orphan_file->id()));

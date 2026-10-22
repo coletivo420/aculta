@@ -1,6 +1,6 @@
 # Política de limpeza de conteúdo e anexos
 
-**Dono da política:** `aculta_portal`. **Estado:** serviço comum de verificação/remoção de File implementado parcialmente em Portal 0.4.1-dev.8; fluxo coordenado de exclusão de conteúdo segue planejado. Nenhuma exclusão automática de posts foi habilitada.
+**Dono da política:** `aculta_portal`. **Estado:** APIs compartilhadas de verificação/remoção de Media/File implementadas parcialmente em Portal 0.4.1-dev.9; fluxo coordenado de exclusão de conteúdo segue planejado. Nenhuma exclusão automática de posts foi habilitada.
 
 ## Objetivo e limites
 

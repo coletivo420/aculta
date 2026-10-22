@@ -2779,6 +2779,11 @@ RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/bu
 
 # Changelog — ACULTA Portal
 
+## 0.4.1-dev.9 — scanner de referências de texto por Entity Query
+
+- A inspeção de embeds em campos formatados usa Entity Query com `allRevisions()` em vez de inferir tabelas físicas; isso cobre corretamente campos base revisionáveis e mantém compatibilidade de banco.
+- O Kernel de limpeza de anexos do Fórum passou em SQLite temporário: 6 testes / 173 assertions. Sem Runtime.
+
 ## 0.4.1-dev.8 — coordenador compartilhado de arquivos sem uso
 
 - Adicionados `aculta_portal.unused_file_cleaner` e `aculta_portal.unused_media_cleaner`: consultam File Usage/Entity Usage quando aplicável, referências estruturadas e embeds UUID em campos de texto/revisões; falham fechados quando não conseguem verificar.

@@ -3445,6 +3445,11 @@
 - Confirmado no Runtime de testes (`aculta_runtime`): `SHOW COLUMNS` lista
   `topic`, e a requisição pública do domínio do Fórum reproduzia o erro SQL.
 
+# `0.1.0-dev.245` — scanner de referências textuais em revisões
+
+- O Portal consulta embeds por Entity Query e `allRevisions()`, cobrindo corretamente campos base do ForumPost.
+- Kernel `ForumAttachmentPublicationKernelTest`: 6 testes / 173 assertions em SQLite temporário; limpeza de órfão e retenção de anexos referenciados passaram.
+
 # `0.1.0-dev.244` — limpeza compartilhada de anexos
 
 - `ForumAttachmentCleanup` mantém a descoberta específica de candidatos e verificações de Fórum, e usa `aculta_portal.unused_media_cleaner` para revalidar/remover Media e `aculta_portal.unused_file_cleaner` para Files.
