@@ -16,6 +16,9 @@
   EntityQuery encontrou 0 Media `forum_attachment` (0 publicadas); por isso
   não foi possível validar os caminhos HTTP sem criar fixture. Nenhum conteúdo
   foi criado ou alterado.
+- O `FileUrlGenerator` do Runtime gerou `/system/files/forum/anexos/exemplo.pdf`
+  para o URI ilustrativo `private://forum/anexos/exemplo.pdf`; isso confirma a
+  forma da rota, sem confirmar a existência ou o acesso a um arquivo.
 
 ## dev.194 — saída segura em falhas do auditor migratório
 
