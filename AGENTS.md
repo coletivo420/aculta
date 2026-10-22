@@ -11,7 +11,7 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 - Faça commits focados; execute gates pertinentes e relate somente testes efetivamente realizados. Respeite versionamento/status dos componentes.
 
 ## Consulte apenas quando aplicável
-- **Regras específicas preservadas:** `docs/operations/AGENT-GUARDRAILS-FULL.md` — localize e leia **somente as seções do escopo**; não carregue o arquivo inteiro.
+- **Índice de regras por escopo:** `docs/operations/AGENT-POLICY-INDEX.md`. Consulte somente o documento local pertinente. `docs/operations/AGENT-GUARDRAILS-FULL.md` é arquivo histórico para auditoria, não contexto padrão.
 - Portal: `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e documentação local.
 - Rotas/domínios: `docs/architecture/ROUTES-SITEMAP.md` e contratos vinculados.
 - Status/releases: `docs/operations/RELEASE-LIFECYCLE.md`; índice gerado, nunca editado manualmente (`php scripts/validate-project-status-index.php`).
