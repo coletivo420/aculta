@@ -99,3 +99,9 @@ ser registrados no changelog da entrega, não copiados para este README.
 ## Retificação de ownership (2026-10-22)
 
 **A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+Centralização é por ownership: User (participação/associados), Messenger (avisos/mensagens), Image/Gallery (mídia), viewers (documentos), Statistics (métricas), Portal (domain/purpose). Group restrito a associado deve exigir situação ativa User + membership Group no Fórum. Auditoria transversal: docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
