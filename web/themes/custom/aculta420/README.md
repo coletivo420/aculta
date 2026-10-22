@@ -44,3 +44,7 @@ Consulte [components/README.md](components/README.md) antes de criar componentes
 Para mudanças coordenadas com funcionalidade do Portal, consulte a
 [fronteira Portal–tema](../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md) e o
 [mapa módulo–tema](../../../../docs/portal/MAPA-MODULO-TEMA.md).
+
+## Planejamento visual compartilhado
+
+O tema passa a concentrar o planejamento de novos padrões visuais multiárea em [docs/visual-cross-product-roadmap.md](docs/visual-cross-product-roadmap.md). O shell multidomínio (Institution Bar + Domain Header) permanece obrigatório em todo o portal; Context Header é exclusivamente interno ao conteúdo. Antes de desenvolver componente: reaproveitar SDC/Core/Bootstrap existentes, comprovar consumidores reais, definir slots/props, documentar stories e validar mobile, WCAG e dark/light. A documentação é um plano, não componentes já implementados.
