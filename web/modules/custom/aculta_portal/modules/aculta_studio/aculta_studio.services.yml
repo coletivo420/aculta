@@ -20,7 +20,7 @@ services:
       - [addProvider, ['@aculta_studio.experience.ganjalab420']]
   aculta_studio.experience.ganjalab420:
     class: Drupal\aculta_studio\Experience\GanjaLab420ExperienceProvider
-    arguments: ['@?aculta_lms.learning_dashboard_controller']
+    arguments: ['@?aculta_studio.learner_dashboard_composer']
   aculta_studio.ganjalab420_controller:
     class: Drupal\aculta_studio\Controller\GanjaLab420Controller
     arguments: ['@aculta_studio.experience_manager', '@current_user']
