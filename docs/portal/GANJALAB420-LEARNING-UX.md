@@ -94,3 +94,7 @@ Modos claro/escuro compartilham estrutura; tokens do ACULTA420 determinam superf
 ## Regra de transição de marca
 
 Nome público da experiência: **GanjaLab420**. Nesta fase manter URLs, machine names, serviços, storage, rotas, menu links e nomenclatura interna existentes, sem criar `ganjalab420` como módulo. Antes de aplicar rótulos ao Runtime, inventariar blocos e menus consumidores para não promover mudança generalizada de conta. Referência à interface de criação: [GanjaLab](GANJALAB-BRANDING.md).
+
+## Rota inicial da experiência
+
+O dashboard de estudante canônico passa a `/ganjalab420` no domínio de conta, usando o mesmo controller e route name de `/minha-aprendizagem`; este último permanece alias temporário. Nenhuma outra rota de sala, avaliação, matrícula ou certificado foi renomeada nesta fase. Ver [contrato de marca](GANJALAB-BRANDING.md).
