@@ -112,3 +112,7 @@ Incluir explicitamente o **H5P como quinto modelo visual**, além de leitura, v�
 ## Atividades e avaliações — especificação dedicada
 
 Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questionários, entregas, H5P, feedback, tentativas e acessibilidade. Contrato visual apenas; `aculta_lms` permanece o módulo técnico.
+
+## Biblioteca de materiais e leitor PDF
+
+[Planejamento G420-UX 0.4.4](GANJALAB420-MATERIALS-PDF-VISUAL.md): materiais da aula, biblioteca por curso, reader PDF mobile-first, imagens, Gallery, vídeo e H5P como recurso integrado. Preservar `aculta_lms` e providers existentes.
