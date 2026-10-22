@@ -1,48 +1,53 @@
-# ACULTA — Política transversal de serviços compartilhados e moderação
+# ACULTA — Política de participação e moderação compartilhada no aculta_user
 
-**Decisão arquitetural aprovada · 2026-10-22 · Estado:** contrato e migração planejada, não refatoração executada.
+**Decisão revisada e vigente · 2026-10-22 · Estado:** especificação, sem refatoração PHP nem alteração de permissões/Runtime.
 
-## Regra geral para todos os submódulos ACULTA
+> **Esta decisão substitui a proposta anterior de mover as regras de primeira participação para o núcleo aculta_portal.** O dono definitivo da política conjunta Fórum + Wiki + demais contextos de contribuição é o **subkernel aculta_user**. Centralização é por responsabilidade, não por posição na árvore de módulos.
 
-**Todo código genuinamente transversal entre dois ou mais subkernels deve ser extraído para o kernel central `aculta_portal`, com interfaces/serviços neutros, testes de contrato e consumidores explícitos.** Evitar que Wiki importe implementações do Fórum, que Fórum dependa de Wiki, ou que a duplicação se espalhe entre LMS, Revista, Fórum, Wiki e Commerce.
+## Responsabilidades
 
-A centralização é **seletiva**, não automática: só migrar comportamentos repetidos com semântica realmente comum, e só após auditoria de consumidores. Contratos de acesso e moderação dependentes de tipo de entidade, workflow, Domain, Group e configurações permanecem nos respectivos submódulos. Não centralizar Twig visual, SDC, CSS, configurações de negócio ou storage de domínio.
+| Camada | Responsabilidade |
+| --- | --- |
+| Drupal Core/contrib | Entity Access, Node/Comment/Revision, Form API, Content Moderation, cache e autenticação |
+| **aculta_user** | Política compartilhada de primeira contribuição/publicação, confiança/isenções, participação por conta, interface neutra para consulta de histórico publicado e decisões cacheáveis; não cria workflows dos produtos |
+| aculta_forum | Adaptador de histórico de discussões, fila de moderação do Fórum, comentários e posts próprios |
+| aculta_wiki | Adaptador de histórico de verbetes publicados, workflow wiki_editorial, propostas de alteração e fila editorial WE SATIVA |
+| aculta_portal | Integração/domain/purpose e serviços transversais do Portal que não pertençam a identidade/participação; **não hospeda a política conjunta de primeira moderação** |
+| aculta420 | Apresentação mobile-first por SDC Core e UI Suite; sem consultas, regras de acesso ou decisões de moderação |
 
-### Padrão de camadas
+## Política vigente e reuso correto
 
-1. **Drupal Core/contrib:** Node, Content Moderation, Entity Access, Form API, Revision, Cacheability e respectivas APIs.
-2. **`aculta_portal` central:** interfaces e serviços transversais de decisão (primeira contribuição), identidade de contexto, políticas de fila, cache, auditoria e eventos neutros quando se provar necessidade de compartilhamento.
-3. **Subkernels:** `aculta_wiki`, `aculta_forum`, LMS e Revista mantêm adapters, seus próprios workflows, content types, queries, moderação específica, acesso e ciclo de vida.
-4. **`aculta_user`:** conta, perfis e confirmação, mantendo papéis/capacidades já existentes e serviço próprio de participação enquanto sua migração é planejada.
-5. **`aculta420`:** somente apresentação Core SDC + UI Suite (UI Patterns/UI Styles); não decide autorização nem moderação.
+O código já existente em `web/modules/custom/aculta_portal/modules/aculta_user/src/ParticipationRules.php` contém `requiresFirstDiscussionModeration()`, ligado à contagem de participações públicas em discussões e às configurações do usuário. **Preservar esse comportamento e seus testes.**
 
-## Caso inicial: primeira participação moderada
+A Wiki usa uma regra correlata, mas distinta: uma conta `email_confirmed` pode criar verbetes e editar os próprios; **o primeiro verbete precisa de revisão de content_editor antes da publicação**, como primeira participação moderada. A existência de um verbete efetivamente publicado do autor identifica que a primeira publicação já ocorreu. **Todas as contribuições e sugestões continuam dependentes do workflow de publicação; a primeira aprovação não concede permissão de publicar diretamente.** O papel `email_confirmed` não obtém `review_to_published`.
 
-**Fórum:** `aculta_user/src/ParticipationRules.php` já expõe `requiresFirstDiscussionModeration()`, com base em participação publicada em discussões, regras configuráveis e isenções. O Fórum consome essa política; esta política não pode ser reutilizada cegamente para Wiki, pois comentários ≠ verbetes.
+A função Fórum `requiresFirstDiscussionModeration()` **não deve ser chamada para verbetes**, porque comentários/posts não são evidência de verbete Wiki publicado. A extensão ficará no próprio `aculta_user` com métodos/contratos explícitos por contexto, preservando a semântica.
 
-**Wiki:** `email_confirmed` cria verbetes, edita os próprios e envia à revisão. **O primeiro verbete de cada colaborador exige revisão explícita de um content editor antes da publicação**, como a primeira participação no Fórum. A contagem de primeira contribuição da Wiki usa o histórico de verbetes **efetivamente publicados** do próprio usuário no domínio/purpose pertinente e ignora rascunhos, envios pendentes e sugestões alheias. O workflow `wiki_editorial` já tem `draft → review → published`. Para preservar a decisão anterior, **todas as sugestões e alterações de terceiros também continuam moderadas**, mesmo depois da primeira publicação. Nunca conceder a `email_confirmed` a transição de publicação.
+## Desenho de extensão no aculta_user (nomes candidatos)
 
-**Política de elegibilidade:** 'primeira publicação pendente' deve ser derivada de fonte oficial, auditável, sem contador JS ou variável de sessão. Ao não existir prova segura de primeira publicação, manter revisão obrigatória (fail closed). Qualquer exceção de administradores ou revisores será explicitamente descrita por capacidade, não inferida da política Fórum.
+- `ParticipationRules::requiresFirstWikiEntryModeration(AccountInterface $account)` (ou política delegada equivalente), baseado em um adaptador de verbetes Wiki publicados.
+- `PublishedContributionLookupInterface`: consulta de participação publicada por contexto (`discussion`, `wiki_entry`), sem transportar detalhes de entidade ao mecanismo de decisão.
+- Adapters isolados por domínio e testes: Fórum continua com queries atuais; Wiki consulta Node `wiki_entry`, revisões efetivamente publicadas, autoria e purpose com critérios acordados.
+- `ParticipationModerationDecision`: dados neutros de `requires_review`, motivo e metadados de cache somente se necessário; **não** guarda drafts, propostas, tickets, mensagens ou informação pessoal sensível.
+- As configurações partilhadas devem permanecer no domínio de `aculta_user` se fizer sentido e ser explicitamente versionadas; não reutilizar automaticamente as flags de primeiro comentário como flag de primeiro verbete.
 
-### Contrato neutro candidato — ainda não implementado
+Nomes acima são **propostas**, não APIs implementadas. Antes de modificar `ParticipationRules`, verificar DI, configurações, cache invalidation e todas as chamadas existentes. O subkernel Wiki **não deve importar implementações internas do Fórum** e o Fórum **não deve depender do código da Wiki**.
 
-- `FirstContributionPolicyInterface`: pergunta se contexto/conta precisa de revisão inicial, recebe contexto tipado e retorna decisão cacheável e justificativa.
-- `ModerationQueueItem`/adaptador neutro de projeção: identificador de origem, entidade/revisão, estado oficial, direito de acesso e ações realmente permitidas; **não** cria entidade universal de moderação.
-- `ModerationDecision`/orquestração: somente quando houver consumidores reais; decisões de publicação executadas pelo kernel proprietário via Content Moderation.
-- Cada subkernel implementa `PublishedParticipationLookupInterface` ou adaptação específica para suas próprias entidades; não transportar queries Wiki ou Fórum ao core central.
-- Configurações transversais: default conservador, cache tags/contexts, logs sem conteúdo pessoal desnecessário, sem sobrescrever políticas de Domain/Group.
+## Onde ficará cada parte da moderação
 
-A lista é desenho **candidato**, não nomes de serviços/API definitivos. Antes de criar PHP: mapear os consumidores e testar a compatibilidade semântica com LMS (cuja política de discussões difere da pública), Revista e fórum contextual da Wiki.
+**aculta_user** pode centralizar toda a camada **conjunta**: políticas de primeira contribuição, critérios comuns, isenções, histórico de confiança, protocolos de decisão, contratos de auditoria e projeções neutras de participação. **aculta_forum/aculta_wiki** continuam donos das suas entidades, grants, fila, transições, query de conteúdo, moderação específica e armazenamento de proposta. Só migrar funcionalidades comprovadamente compartilháveis depois de inventário e testes; não unificar dados de Fórum e Wiki à força.
 
-## Roteiro de migração sem regressão
+O mecanismo de sugestões de alteração em verbetes de terceiros é uma responsabilidade editorial Wiki: a política de confiança pode ser fornecida por `aculta_user`, mas o storage/revision base e aplicação das propostas pertencem a `aculta_wiki`.
 
-| Fase | Trabalho | Gate |
+## Migração em fases, sem regressão
+
+| Etapa | Trabalho | Evidência necessária |
 | --- | --- | --- |
-| SHARED-0.1-A | inventário dos consumidores da participação/moderação e ownership atual | mapa de dependências e riscos |
-| SHARED-0.1-B | ADR: contratos comuns, isolamentos, cache e política de primeira publicação por contexto | desenho aprovado |
-| SHARED-0.1-C | serviços neutros no Portal com testes unitários/Kernel e adaptadores preservando comportamento do Fórum | diff funcional mínimo e nenhum bypass |
-| SHARED-0.1-D | adaptar Wiki ao serviço central, suas próprias queries/workflow e fila; testes por papel e versão | sem publicação antes de aprovação |
-| SHARED-0.1-E | avaliar outros subkernels individualmente, sem generalização forçada | adoção com consumidor real |
-| SHARED-0.1-R | regressão homelab, cache, propósito, roles, auditoria e UI | evidências Runtime |
+| USER-PART 0.1-A | mapear `ParticipationRules`, chamadas, DI e testes Fórum; requisitos da Wiki | inventário dos consumidores |
+| 0.1-B | ADR e contrato de extensão dentro de `aculta_user`; política e lookup por domínio | review de segurança e ownership |
+| 0.1-C | implementar consultas e testes de primeira publicação Wiki, preservando Fórum | unit + Kernel + regressão |
+| 0.1-D | integrar adapter/acesso Wiki, fila e Content Moderation | nenhuma publicação antecipada; grants/cache |
+| 0.1-E | compartilhar outros recursos de participação com contexto real | contratos testados |
+| 0.1-R | homelab, testes de concorrência, roles, Domain e revisão | Runtime comprovado |
 
-**Proibições:** não mover código de `ParticipationRules` diretamente sem preservar suas dependências e contratos; não dar `edit any` ou `publish` a `email_confirmed`; não duplicar a fila de moderação do Fórum dentro da Wiki; não acoplar o domínio Wiki à classe `ForumPostModerationAccess`; não criar nova engine de revisão.
+**Sem mudanças funcionais agora.** Autosave Form permanece futuro. Institution Bar + Domain Header preservados; toda UI compartilha apenas SDC/UI Suite.
