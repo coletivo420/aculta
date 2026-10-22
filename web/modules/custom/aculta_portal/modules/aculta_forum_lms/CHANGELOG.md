@@ -1,3 +1,19 @@
+## `0.1.0-dev.37` — fila LMS nega Educador de outro curso — 2026-10-22
+
+- Smoke GET-only no Runtime de teste repete a fila de moderação da dev.113 com
+  um Comment pendente real e acrescenta o caso de negação entre cursos:
+  Curso A com Turma A, Curso B, estudante membro, um Educador de cada curso.
+- Educador do Curso A recebe 200 no overview (com a Turma A), na fila
+  pendente (Comment e os dois links), nas filas publicada/rejeitada (sem o
+  pendente), nas confirmações de aprovar/rejeitar e no tópico privado.
+- Educador do Curso B recebe 200 no overview mas sem a Turma A; fila, filas
+  por estado, confirmações e tópico privado retornam 403. A negação é do
+  `grade students` no curso pai (`educatorAccess()`), não do papel global
+  `lms_teacher`. Anônimo e estudante também recebem 403.
+- Nenhum POST foi submetido. Fixture, memberships e sessões removidos; o
+  Runtime voltou a 1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibo em
+  `/home/aculta/private/aculta/forum-lms-t8-20261022/smoke-result.json`.
+
 ## `0.1.0-dev.36` — moderação LMS propaga aprovação para os demais contextos — 2026-10-22
 
 - `LmsModerationPropagationKernelTest` exercita a `ParticipationRules` e o

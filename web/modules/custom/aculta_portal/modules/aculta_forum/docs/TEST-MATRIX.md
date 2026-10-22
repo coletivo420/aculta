@@ -1,3 +1,29 @@
+## aculta_forum_lms 0.1.0-dev.37 — fila LMS nega Educador de outro curso
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), somente GET: fixture temporária com
+  Curso A, Turma A dentro dele, Curso B, um estudante membro da turma, um
+  Educador do Curso A e um Educador do Curso B, mais um tópico da turma com um
+  Comment pendente real.
+- Educador do Curso A: overview 200 e lista a Turma A; fila pendente 200 com o
+  Comment e os dois links de moderação; filas publicada/rejeitada 200 sem o
+  Comment pendente; confirmações de aprovar/rejeitar 200 por GET; tópico
+  privado 200.
+- Educador do Curso B: overview 200 sem a Turma A; fila pendente, publicada,
+  rejeitada, ambas as confirmações e o tópico privado retornam 403. A negação
+  vem de `educatorAccess()` (`grade students` no curso pai), não do papel
+  global `lms_teacher`.
+- Anônimo: overview, fila pendente e confirmação retornam 403. Estudante da
+  turma: fila pendente e confirmação retornam 403.
+- Nenhum POST foi submetido; as confirmações foram apenas abertas por GET.
+  Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os três usuários; sessões desses uids apagadas. Pós-condição: 1
+  curso preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t8.*`. Recibo
+  privado em
+  `/home/aculta/private/aculta/forum-lms-t8-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para leitura da fila, visibilidade das ações e negação
+  do Educador de outro curso; transições seguem cobertas por Kernel/dev.114.
+
 ## aculta_forum_lms 0.1.0-dev.36 — propagação da moderação LMS
 
 - `LmsModerationPropagationKernelTest` usa a `ParticipationRules` e o
