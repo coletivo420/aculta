@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
+use Drupal\aculta_index\Drush\Commands\ContentIndexQueueCommand;
+use Drupal\aculta_index\Drush\Commands\ContentIndexRebuildCommand;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -11,6 +13,9 @@ use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Verifies provider-backed rebuild batches against real node storage.
@@ -127,6 +132,43 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
 
     $this->expectException(\RuntimeException::class);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
+  }
+
+  /**
+   * Runs the explicit rebuild lifecycle through its Drush command class.
+   */
+  public function testDrushCommandsRunCompleteEmptyRebuildLifecycle(): void {
+    $queueCommand = ContentIndexQueueCommand::create($this->container);
+    $queueOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $queueCommand->run(new ArrayInput(['action' => 'status']), $queueOutput));
+    $this->assertStringContainsString('activation_ready=yes', $queueOutput->fetch());
+
+    $command = ContentIndexRebuildCommand::create($this->container);
+    $output = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput(['action' => 'start']), $output));
+    $generationId = trim($output->fetch());
+    $this->assertNotSame('', $generationId);
+
+    $batchOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'batch',
+      'generation-id' => $generationId,
+    ]), $batchOutput));
+    $this->assertStringContainsString('"complete":true', $batchOutput->fetch());
+
+    $validateOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'validate',
+      'generation-id' => $generationId,
+    ]), $validateOutput));
+    $this->assertStringContainsString('"validated":true', $validateOutput->fetch());
+
+    $activateOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'activate',
+      'generation-id' => $generationId,
+    ]), $activateOutput));
+    $this->assertSame($generationId, $this->container->get('aculta_index.generation_manager')->getActiveGeneration());
   }
 
   /**

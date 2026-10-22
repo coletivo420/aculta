@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.15` — barreira de ativação e recuperação operacional da fila.
-**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural e gate de ativação implementados. Reconciliação e API segura de relações pendentes; não instalado no Runtime.
+**Versão:** `0.1.0-dev.16` — comandos operacionais para rebuild e fila.
+**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação e comandos Drush operacionais implementados. Reconciliação e API segura de relações pendentes; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -29,4 +29,24 @@ Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cr
 
 `ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural antes de promover a geração. `activate()` bloqueia enquanto providers do inventário têm jobs queued, processing, retry ou dead. Eventos durante a validação também são aplicados à geração `validated`; a mesma linha de estado serializa schedule e troca do ponteiro. Rollback para a geração retained permanece disponível mesmo com jobs pendentes.
 
-O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. Esses métodos são internos e sua saída deve ficar restrita a administradores; um comando/UI de operação continua pendente.
+O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. A CLI Drush permite inspecionar e reparar dead-letters sem criar UI no Kernel.
+
+## Operação via Drush
+
+As operações são explícitas; completar o backfill não ativa a geração:
+
+```text
+drush aculta-index:rebuild start
+drush aculta-index:rebuild batch GENERATION_ID --limit=100
+drush aculta-index:rebuild validate GENERATION_ID
+drush aculta-index:rebuild activate GENERATION_ID
+drush aculta-index:queue status
+drush aculta-index:queue dead --limit=50
+drush aculta-index:queue retry WORK_ID
+```
+
+Execute `batch` repetidamente até `complete=true`, depois valide e ative. O gate
+recusa ativação enquanto a fila dos providers ativos tiver trabalho pendente ou
+dead-letter. A saída de `queue dead` contém identidades de entidades e deve ficar
+restrita ao terminal de operadores autorizados. Os comandos foram implementados
+localmente; a descoberta/execução no Runtime não foi verificada.

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.16 — comandos Drush de rebuild e fila
+
+- `aculta-index:rebuild` fornece ações separadas `start`, `batch`, `validate`
+  e `activate`; concluir backfill não ativa geração automaticamente.
+- `aculta-index:queue` reporta o gate de ativação, lista dead-letters por
+  página e reenvia um job pelo ID. A saída de dead-letter inclui IDs de
+  entidades e fica restrita à CLI administrativa.
+- Comandos implementados em código e documentação; descoberta no Drush do
+  Runtime não foi verificada.
+
 ## 0.1.0-dev.15 — gate de ativação e recuperação da fila
 
 - Ativação de geração validada aguarda a fila dos providers ativos: queued,
