@@ -125,3 +125,8 @@ O mesmo fluxo preserva a ordem e o texto; largura de leitura limitada, escolhas 
 ## C01-A — decisão após auditoria de código e configuração
 
 [Auditoria de ação e permissões](WE-SATIVA-C01-A-ACCESS-AND-CTA-AUDIT.md): o template full oferece `content.links` em `wiki-entry.actions`, enquanto `context-header.actions` está livre. O CTA **Contribuir** terá **um único lugar canônico**, proposto no `context-header.actions` após o kernel fornecer rota, access e render array cacheável. O papel `authenticated` exportado não pode editar verbetes; `content_editor` possui permissões amplas demais para o público colaborador. Portanto, não adicionar CTA fictício nem abrir acessos agora. Próxima fase C01-B: capacidades mínimas, intenções e URLs seguras.
+
+
+## C01-B — regra aprovada: e-mail confirmado contribui, content editor modera
+
+A [matriz C01-B](WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) confirmou que o papel `email_confirmed` exportado já possui `create wiki_entry content`, `edit own wiki_entry content` e envio a `review`, mas não `review_to_published`. A UI deve priorizar o editor autorizado para conteúdo próprio e preparar sugestões em verbetes de terceiros por mecanismo específico, sem conceder `edit any`. `Contribuir` e microtarefas ficam condicionados a destino e acesso reais; um único CTA no Context Header.
