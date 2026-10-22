@@ -111,3 +111,7 @@ Próxima frente: **GANJALAB E-0.1 (editor)**; consulte [ROADMAP.md](docs/ROADMAP
 ## Entrada editorial publication-first — GANJALAB E-A.1
 
 A home canônica `/studio/ganjalab` sob purpose `account` ganhou cabeçalho de criação e cartões de ações de publicação autorizadas pelos módulos donos. Reutiliza `aculta420:context-header`, `card` e `content-grid`, sem novo CSS/Twig nem ações fictícias. A home mantém áreas, seções e abas abaixo da entrada. A experiência é progressiva e os formulários reais continuam onde o dono os oferece. Auditoria e pendências em [docs/GANJALAB-E-A-EDITOR-AUDIT.md](docs/GANJALAB-E-A-EDITOR-AUDIT.md). Não declarar homologação visual/mobile ou cache antes dos testes.
+
+## GANJALAB E-B.1 — Meu trabalho
+
+A Revista apresenta `Meu trabalho → Meus conteúdos` como vista pessoal inicial e preserva filtros de rascunho, revisão, publicação e arquivamento no escopo do autor. O filtro `uid` é aplicado à consulta antes da paginação Drupal (20 candidatos por página), com checagem de entidade/revisão. **Filtro de estado pós-pager ainda é parcial** e requer provider especializado; listagens de equipe e moderação não foram disponibilizadas nesta fase. Esta entrega não modifica workflow, Form API nem ownership dos módulos. Consultar `docs/ROADMAP.md` para gates e limitações.
