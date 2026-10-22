@@ -62,3 +62,15 @@ Isolamento entre estudantes A/B, turmas A/B, histórico e certificados, com cach
 | 0.7-E | testes A/B, variações de emissão, claro/escuro e sem JS | evidências Runtime |
 
 Este documento não modifica código, rotas, entidades ou nomes técnicos e não declara implementadas as telas planejadas.
+
+## Refinamento de protótipos — Conquistas e Certificados (2026-10-22)
+
+**Tela principal mobile:** cabeçalho compacto GanjaLab420, mensagem de reconhecimento sem ranking, lista de certificados **emitidos** e histórico pessoal de cursos; destaque ao certificado somente quando existir entidade oficial. Estado vazio não gera modelo fictício na experiência real.
+
+**Detalhe oficial:** prévia do certificado via documento existente, identificação de curso, emissão e validade conforme fonte autorizada, ações **Ver PDF** e **Verificar autenticidade** usando as rotas oficiais. O QR é produzido pelo kernel `aculta_qrcode`/integração de certificado existente, sem codificar dados pessoais brutos em um componente novo. O preview ilustrativo do planejamento não é certificado válido nem template novo.
+
+**Estados do cartão:** emitido e válido; curso concluído, mas certificado não emitido; revogado. O status vem da fonte canônica e deve ser acessível por texto, não apenas cor. Em caso de revogação, ocultar CTAs que sugiram validade e manter a verificação conforme política atual. Resultado da verificação pública não deve vazar histórico privado.
+
+**Histórico:** diferenciar aulas concluídas, atividades enviadas/avaliadas, conclusão de curso e emissão do certificado. Progresso do LMS não pode ser confundido com emissão. Layout responsivo 320–1440px com mesma hierarquia em light/dark; texto legível e foco/teclado funcionais.
+
+**Próxima fase:** [Consolidação e Homologação Visual 0.8](GANJALAB420-VISUAL-QUALITY-GATES.md). Este refinamento é somente documental.
