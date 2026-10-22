@@ -48,3 +48,5 @@ Para mudanças coordenadas com funcionalidade do Portal, consulte a
 ## Planejamento visual compartilhado
 
 O tema passa a concentrar o planejamento de novos padrões visuais multiárea em [docs/visual-cross-product-roadmap.md](docs/visual-cross-product-roadmap.md). O shell multidomínio (Institution Bar + Domain Header) permanece obrigatório em todo o portal; Context Header é exclusivamente interno ao conteúdo. Antes de desenvolver componente: reaproveitar SDC/Core/Bootstrap existentes, comprovar consumidores reais, definir slots/props, documentar stories e validar mobile, WCAG e dark/light. A documentação é um plano, não componentes já implementados.
+
+A próxima fase do tema está especificada em [docs/theme-ux-0.8-a-ui-suite-audit.md](docs/theme-ux-0.8-a-ui-suite-audit.md), com inventário obrigatório de Core SDC, UI Patterns e UI Styles antes de criar novos padrões. Preservar o cabeçalho multidomínio global.
