@@ -56,3 +56,7 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 - [Conceito visual responsivo — espaço pessoal primeiro](../../../../../../docs/portal/STUDIO-VISUAL-CONCEPT.md): em cada área, “Meus [itens]” é a vista padrão; conteúdo de outros autores aparece apenas em contexto identificado de equipe/moderação e conforme acesso real do provider.
 - [Telas de criação, edição, prévia e revisão](../../../../../../docs/portal/STUDIO-EDITOR-FLOWS.md): shell de editor desktop/mobile, formulários e workflows nativos, estados de erro e critérios de aceitação.
 - Estes contratos **não representam recursos implementados**. O ACULTA420 detém o visual, este módulo coordena interface e permissões dos providers; não criar armazenamento de conteúdo paralelo.
+
+## Planejamento visual específico — LMS Course Builder
+
+O [contrato CB-UX 0.3.0–0.3.8](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md) especifica a construção pedagógica **mobile-first**, com visão inicial “Meus cursos”, árvore/itens no desktop, navegação em uma tela por tarefa no telefone, edição contextual via Form API/CKEditor 5 e reordenação acessível. **É plano, não funcionalidade entregue.** Drupal LMS/Group conservam entidades, relações, notas e permissões; Studio coordena experiência e ACULTA420 implementa o visual.
