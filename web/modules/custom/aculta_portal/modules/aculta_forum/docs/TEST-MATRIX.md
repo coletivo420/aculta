@@ -1,3 +1,36 @@
+## aculta_forum_lms 0.1.0-dev.33 — papéis e Config Sync
+
+- `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
+  exportados pelo caminho real de Config Sync,
+  `GroupRoleStorage::importCreate()`, com as dependências de módulo
+  (`aculta_document_viewer_group`, `aculta_forum_lms`) satisfeitas e stubs de
+  serviço fornecidos pela fixture. O recálculo de dependências e a ordenação
+  de permissões do `preSave()` não se aplicam ao modo de sincronização, então
+  o teste compara o YAML exportado com o storage linha a linha.
+- Papéis verificados: `group.role.lms_course-teacher`,
+  `group.role.lms_course-member`, `group.role.lms_course-course_creator` e
+  `group.role.lms_class-member`. Todos guardam `global_role` e relação Group
+  declarados e nenhum recebe `administer comments`; `grade students` fica só
+  com Educador e criador do curso.
+- `lms_classes.settings` confere exatamente com `config/sync` e com o padrão de
+  instalação do contrib nas chaves que o export não controla. Com Groups
+  reais, o mapeamento `view group_node:aculta_lms_topic entity` →
+  `grade students` dá ao Educador a permissão de tópico na turma; estudante da
+  turma recebe pelo papel de turma; estudante só do curso e terceiro não
+  recebem.
+
+| Cenário | Resultado |
+| --- | --- |
+| Importar os quatro papéis por `importCreate()` | UUID, status, permissões e dependências iguais ao export |
+| Educador do curso na turma | `grade students` no curso e permissão de tópico na turma |
+| Estudante membro do curso e da turma | sem `grade students`; permissão de tópico pelo papel de turma |
+| Estudante só do curso / terceiro | sem `grade students` e sem permissão de tópico na turma |
+| `lms_classes.settings` | idêntico ao export; sem permissão além do mapeamento |
+
+- Teste: 5 testes / 258 asserções PASS; 40 depreciações de Core/contrib (38
+  preexistentes mais duas fontes dos módulos extras habilitados). Nenhuma
+  configuração foi exportada ou alterada e o Runtime não recebeu fixture.
+
 ## aculta_forum_lms 0.1.0-dev.32 — matriz de publicação e rejeição
 
 - `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso com as
@@ -1610,7 +1643,7 @@ continuam pendentes.
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |
 | Moderação por contexto/estado | Fórum mostra abas Publicados, Rejeitados e Aguardando moderação; Revista tem sua própria listagem; Wiki/LMS aguardam adapters; filas não se misturam | Unit Forum: `ForumTopicDisplayConfigTest` + `DiscussionModerationHooksTest`, 37 testes/218 assertions PASS. Runtime `toca`: Views retornaram cada estado do Fórum e a fila Magazine trouxe somente os seus comentários; API de tarefas locais confirmou as três abas sob Fórum. Render API público mostrou somente publicados no tópico e na publicação. Os seis registros `[QA 20261019]` foram removidos; contagem final 0 nos dois destinos. Browser autenticado DEFERRED. RUNTIME STATUS: PARTIAL. |
-| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel: isolamento (6 testes/205 asserções) e matriz de publicação/rejeição (1 teste/61 asserções), ambos PASS; Functional, Route/View/Search/Cache e teste de navegador pendentes. |
+| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; papéis e mapeamento de turma; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel: isolamento (6 testes/205 asserções), matriz de publicação/rejeição (1 teste/61 asserções) e papéis/Config Sync (5 testes/258 asserções), todos PASS; Functional, Route/View/Search/Cache e teste de navegador pendentes. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
 | Contagem de respostas em tópicos | zero e plural; bundle fixo `aculta_forum_topic` com seu campo único de discussão; estados de moderação conforme agregação Core; cache/invalidação | Kernel `ForumTopicMoverKernelTest`: 3 testes/69 assertions PASS em `aculta_simpletest`; aprovação incrementa `comment_count`, despublicação e exclusão o decrementam, pendentes não entram e mover categoria preserva total. `PublicTopicCommentCountViewKernelTest`: 1/11 PASS; Views Core ordena três tópicos por respostas publicadas e mantém primeiro o tópico sem resposta quando outro tópico tem apenas pendente. Cinco depreciações do Domain contrib no Kernel do mover. Runtime `toca`: View pública executada com tópico de QA, Core e campo da View retornaram 2 para respostas publicadas; 1 resposta pendente ficou fora. Firefox/X11 raiz do Fórum 1024 px mostrou “2 respostas” e atividade. Fixture com 3 Comments foi excluída; Runtime voltou a 0 tópicos/Comments. Comparação de ordenação com múltiplos tópicos e invalidação visual após moderação permanecem pendentes. RUNTIME STATUS: PARTIAL. |

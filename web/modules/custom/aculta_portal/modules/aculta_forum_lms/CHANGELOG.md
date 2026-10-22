@@ -1,3 +1,38 @@
+## `0.1.0-dev.33` — papéis e Config Sync do LMS — 2026-10-22
+
+- `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
+  exportados (`lms_course-teacher`, `lms_course-member`,
+  `lms_course-course_creator`, `lms_class-member`) pelo caminho real de
+  Config Sync, `GroupRoleStorage::importCreate()`, em vez de recriá-los com
+  `GroupRole::create()`. A importação preserva `uuid`, `status`, permissões na
+  ordem exportada e as dependências declaradas — recálculo só ocorreria fora
+  do modo de sincronização.
+- As dependências de módulo declaradas nos papéis
+  (`aculta_document_viewer_group` e `aculta_forum_lms`) são validadas pelo
+  Group na importação. O Kernel habilita esses módulos, mais `file`, `image` e
+  `media` (pré-requisitos do plugin de documento), e a fixture
+  `aculta_forum_lms_test` fornece apenas stubs dos serviços de outros módulos
+  (`aculta_lms.class_activity_deadline_manager`, `aculta_lms_h5p.course_access`
+  e `aculta_forum.discussion_context_resolver`) para o container compilar. Os
+  stubs nunca são executados.
+- Cada papel lido de volta é idêntico ao YAML exportado, inclusive
+  `global_role` e a relação Group (`group.relationship_type.lms_course-*` e
+  `group.relationship_type.lms_class-*`). Nenhum papel recebe
+  `administer comments`; somente Educador e criador do curso têm
+  `grade students`.
+- `lms_classes.settings` confere exatamente com o export
+  (`create_default_class` falso, `class_name_pattern` vazio, apenas o
+  mapeamento `view group_node:aculta_lms_topic entity` → `grade students`) e
+  difere do padrão de instalação do contrib apenas nas chaves que o export
+  controla.
+- O mapeamento é exercitado com Groups reais: Educador do curso recebe a
+  permissão de tópico na turma pelo mapeamento, estudante da turma pelo papel
+  de turma, e estudante só do curso ou terceiro não a recebem.
+- Teste: 5 testes / 258 asserções PASS; 40 depreciações de Core/contrib — as 38
+  preexistentes mais duas fontes adicionais vindas dos módulos extras
+  habilitados. PHPCS limpo. Nenhuma configuração foi exportada ou alterada e o
+  Runtime não recebeu fixture.
+
 ## `0.1.0-dev.32` — matriz de publicação e rejeição do LMS — 2026-10-22
 
 - `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso
