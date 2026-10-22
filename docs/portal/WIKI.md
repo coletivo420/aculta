@@ -130,3 +130,8 @@ A especificação transversal das telas Home, busca, categoria, verbete, histór
 ## WE SATIVA — contribuição editorial
 
 Planejada a interface independente [WE SATIVA — Wiki Editor Sativa](WE-SATIVA-VISUAL-EDITOR.md) para criação, revisão e acompanhamento de verbetes por usuários autorizados, sem depender do GanjaLab/GanjaLab420. A Wiki pública e o editor são ambos mobile-first. A implementação futura reutiliza Drupal Node/Form API, revisão e Content Moderation, com apresentação SDC/UI Suite do ACULTA420; este plano não habilita novas permissões ou rotas.
+
+
+## Nova regra editorial — primeiro verbete moderado
+
+Usuários `email_confirmed` podem criar verbetes; **o primeiro verbete necessita revisão e aprovação de um content editor**. O workflow atual mantém a publicação restrita aos editores e todas as novas sugestões sob revisão. A [moderação Wiki/WE SATIVA](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) documenta fila, decisões, revisão, acesso e integração com a [política do kernel central](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md). Reaproveitamento transversal passa pelo `aculta_portal`, sem acoplamento Wiki→Fórum.
