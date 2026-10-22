@@ -351,3 +351,7 @@ O planejamento [GanjaLab420 × ACULTA420](../../../../../docs/portal/GANJALAB420
 O ACULTA420 só compartilha novos padrões de apresentação como **Drupal Core SDC**, preparados para **UI Patterns, UI Patterns Library e UI Styles**. Componentes preexistentes com Twig/Bootstrap puro não são elegíveis à reutilização transversal até sua migração para SDC e testes. Componentes SDC incompletos precisam de alinhamento antes de consumo novo. Conservar interfaces funcionais de terceiros (H5P, PDF.js, Form API) nos donos originais; aplicar SDC à composição visual, sem recodificar players/formulários.
 
 Consultar [roadmap visual transversal](visual-cross-product-roadmap.md) e [matriz operacional B0](theme-ux-0.8-b0-execution-matrix.md) para estados de conformidade e gates. UI Patterns/Styles são usados onde a integração é apropriada; não se requer converter indiscriminadamente todos os displays existentes.
+
+## Novo componente experimental — `aculta420:context-header`
+
+Diretório: `components/patterns/context-header/`. Apresentação contextual abaixo do shell multidomínio; `title` texto simples obrigatório, `eyebrow` e `subtitle` opcionais, slots `breadcrumbs`, `back_link`, `actions`. O Twig renderiza H1 e **exige que o consumer evite emitir outro H1 na mesma página**. Tem stories estáticas educacional/editorial e CSS semântico. Não depende de LMS, Wiki, Group ou Domain. **Não usar em rota de produção antes da revisão B1-02d, prova de consumidores e testes Runtime**. [Contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
