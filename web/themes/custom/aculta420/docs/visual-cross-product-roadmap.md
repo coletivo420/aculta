@@ -81,3 +81,17 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 6. Atualizar catálogo, stories e documentação do **tema** no mesmo commit funcional; conservar a matriz de consumidores cruzados.
 
 **Status deste capítulo:** somente planejamento/documentação; a auditoria Runtime e os protótipos ainda não foram executados.
+
+## Revisão normativa — elegibilidade de reutilização SDC/UI Suite (2026-10-22)
+
+**Regra obrigatória:** apenas reutilizar diretamente componentes que já sejam **Drupal Core SDC**, com schema/slots/assets próprios e aptos ao ecossistema **UI Patterns + UI Styles** do ACULTA420. Um template Twig isolado, widget legado JS, conjunto avulso de classes Bootstrap ou bloco PHP renderizado sem contrato SDC **não conta como componente reutilizável aprovado**. Recursos nativos Drupal/Bootstrap continuam infraestrutura e podem ser insumos, mas sua apresentação reutilizável deve ser encapsulada ou composta por SDC.
+
+**Classificação auditável:**
+1. **SDC-CONFORME:** componente SDC Core válido, metadados e props/slots documentados, integrado/compatível com UI Patterns e estilos semânticos UI Styles; elegível a reuso após checar consumidores e runtime.
+2. **SDC-PARCIAL:** há SDC, mas schema, slots, stories, integração UI Patterns/UI Styles ou acessibilidade exigem alinhamento; corrigir antes de reutilizar em nova área.
+3. **LEGADO-MIGRAR:** padrão visual útil, porém implementado somente em Twig/JS/PHP/Bootstrap sem SDC; pode servir de **referência funcional/visual**, jamais ser copiado ou compartilhado diretamente. Primeiro migrar para SDC e integrar ao catálogo.
+4. **DESCARTAR/SUBSTITUIR:** solução redundante ou incompatível; substituir por SDC do tema e/ou recurso UI Suite apropriado, preservando dados, ACL e providers.
+
+O fluxo passa a ser **inventariar → classificar SDC/UI Suite → adequar/migrar → validar story e consumidores → reutilizar/estender → criar SDC transversal apenas se faltar**. Não reaproveitar componente legado antes do gate de adequação. Exceção: interfaces *funcionais* de terceiros (PDF.js, H5P, formulários Core) são mantidas como providers, não copiadas ou reescritas como componentes; a camada visual compartilhável ao redor delas segue SDC.
+
+**Gate obrigatório:** componente elegível deve ter arquivo `.component.yml` válido e Twig de componente, props/slots explícitos e cache renderizável preservado, histórias no UI Patterns Library, uso de tokens/estilos semânticos UI Styles onde adequados, WCAG 2.2 AA, light/dark e evidência de pelo menos um consumidor real. A integração UI Patterns não deve ser forçada quando incompatível com o consumidor; nesse caso documentar explicitamente a compatibilidade e a razão técnica. A ausência do padrão **bloqueia reutilização em novas áreas**.
