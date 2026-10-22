@@ -55,4 +55,4 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
 
 ### Categorias de usuário
 
-Associado e estudante são categorias representadas por tipos de perfil independentes. Uma mesma conta pode manter os dois perfis; a matrícula em curso ou turma garante o perfil `estudante`, e a situação ativa de associado garante o perfil `associado`. A atualização `aculta_user_update_10011()` migra contas do antigo papel `estudante` para o perfil e remove o papel legado.
+Associado e estudante são categorias representadas por tipos de perfil independentes. Uma mesma conta pode manter os dois perfis; a confirmação real do e-mail ou a matrícula em curso ou turma garante o perfil `estudante`, e a situação ativa de associado garante o perfil `associado`. A atualização `aculta_user_update_10011()` migra contas do antigo papel `estudante` para o perfil e remove o papel legado.

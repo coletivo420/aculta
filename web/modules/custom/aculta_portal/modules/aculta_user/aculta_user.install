@@ -243,3 +243,23 @@ function aculta_user_update_10011(): string {
   }
   return (string) t('Migrated the legacy student role to the student profile category.');
 }
+
+
+/** Concede a categoria estudante a todas as contas cujo e-mail já está confirmado. */
+function aculta_user_update_10012(): string {
+  $users = \Drupal::entityTypeManager()->getStorage('user');
+  $profiles = \Drupal::entityTypeManager()->getStorage('profile');
+  $userData = \Drupal::service('user.data');
+  $uids = $users->getQuery()->accessCheck(FALSE)->condition('roles', 'email_confirmed')->execute();
+  foreach ($users->loadMultiple($uids) as $account) {
+    if (!$userData->get('aculta_portal', (int) $account->id(), 'email_confirmed')) {
+      continue;
+    }
+    $existing = $profiles->getQuery()->accessCheck(FALSE)
+      ->condition('uid', $account->id())->condition('type', 'estudante')->range(0, 1)->execute();
+    if ($existing === []) {
+      $profiles->create(['type' => 'estudante', 'uid' => $account->id()])->save();
+    }
+  }
+  return (string) t('Granted the student category to existing email-confirmed accounts.');
+}

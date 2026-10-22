@@ -28,9 +28,6 @@ final class EnrollmentRoleHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Categoria de perfil concedida ao se matricular. */
-  private const CATEGORY = 'estudante';
-
   /** Tipo de grupo dos cursos. */
   private const GROUP_TYPE_CURSO = 'lms_course';
 
@@ -66,12 +63,9 @@ final class EnrollmentRoleHooks {
     }
     $storage = $this->entityTypeManager->getStorage('profile');
     $existing = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('uid', $conta->id())
-      ->condition('type', self::CATEGORY)
-      ->range(0, 1)
-      ->execute();
+      ->condition('uid', $conta->id())->condition('type', 'estudante')->range(0, 1)->execute();
     if ($existing === []) {
-      $storage->create(['type' => self::CATEGORY, 'uid' => $conta->id()])->save();
+      $storage->create(['type' => 'estudante', 'uid' => $conta->id()])->save();
     }
   }
 
