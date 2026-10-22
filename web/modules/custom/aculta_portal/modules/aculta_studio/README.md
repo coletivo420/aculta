@@ -107,3 +107,7 @@ Este arquivo contém seções históricas anteriores à plataforma multi-experi�
 A lista antiga que diz haver somente aba Revista está desatualizada: há plugins reais Revista, Wiki, Fórum, Cursos e Galerias no diretório `src/Plugin/StudioTab`. Presença de plugin não implica experiência ou integração visual completa. A paginação e o isolamento de permissões/revisões precisam de testes antes de exibir filas moderadoras. G420-C2 tem cards SDC montados em código, mas ainda não foi validada no Runtime nem no browser.
 
 Próxima frente: **GANJALAB E-0.1 (editor)**; consulte [ROADMAP.md](docs/ROADMAP.md). G420-C2-T fica como gate pendente/condicionado aos trabalhos paralelos LMS/tema. Qualquer operação de escrita/edição/moderação permanece no módulo dono; Studio não absorve entidade, workflow nem ACL.
+
+## Entrada editorial publication-first — GANJALAB E-A.1
+
+A home canônica `/studio/ganjalab` sob purpose `account` ganhou cabeçalho de criação e cartões de ações de publicação autorizadas pelos módulos donos. Reutiliza `aculta420:context-header`, `card` e `content-grid`, sem novo CSS/Twig nem ações fictícias. A home mantém áreas, seções e abas abaixo da entrada. A experiência é progressiva e os formulários reais continuam onde o dono os oferece. Auditoria e pendências em [docs/GANJALAB-E-A-EDITOR-AUDIT.md](docs/GANJALAB-E-A-EDITOR-AUDIT.md). Não declarar homologação visual/mobile ou cache antes dos testes.
