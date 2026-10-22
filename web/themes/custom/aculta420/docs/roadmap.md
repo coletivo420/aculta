@@ -382,3 +382,7 @@ A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com du
 ## Fase B2-05 e abertura B3 — auditoria de feedback
 
 [B2-05 static gates](theme-ux-0.8-b2-05-static-gates.md): revisão de código de navegação GanjaLab/Wiki registrada, homologação Runtime PENDENTE. [B3 feedback audit](theme-ux-0.8-b3-feedback-audit.md): inventário inicial dos SDCs existentes `messenger-state` e `institutional-notice`, proposta de estados universais sem reproduzir sistemas Drupal Core. Nenhum novo SDC B3 antes de duas necessidades reais e avaliação UI Suite. Shell multidomínio permanente.
+
+## B3 — primeiro estado neutro reutilizado
+
+`aculta420:empty-state` criado com Core SDC, UI Patterns stories e CSS semântico, conectado em resultados vazios de busca Wiki e listas vazias de cursos/certificados GanjaLab420. [Evidências B3](theme-ux-0.8-b3-feedback-audit.md). Runtime/QA pendentes; Messenger/Site Alert/Studio AJAX preservados.
