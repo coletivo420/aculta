@@ -124,3 +124,7 @@ Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questio
 ## Minhas Turmas e Comunidade — G420-UX 0.6
 
 [Planejamento visual de turmas e comunidade](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md): mural de avisos, discussões contextuais, prazos, participantes autorizados, Group e integração com Fórum/Messenger/User. Planejamento somente; `aculta_lms` permanece inalterado.
+
+## Conquistas, certificados e histórico — UX 0.7
+
+[Contrato visual de Conquistas, Certificados e Histórico](GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md): emissão e validação oficiais de certificados, PDF/QR, histórico pessoal e conquistas opcionais, sem métricas paralelas. `aculta_lms` permanece o módulo técnico. Planejamento apenas.
