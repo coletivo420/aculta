@@ -1,3 +1,13 @@
+## `0.1.0-dev.168` — criar fonte Migrate paginada para Comments do Fórum
+
+- O plugin `aculta_forum_comment` percorre Comments elegíveis por CID em lotes
+  keyset limitados, fixa o CID máximo inicial e produz uma linha por Comment
+  com todas as traduções agrupadas. Inclui somente metadados necessários; não
+  extrai nome, e-mail ou hostname do autor.
+- Core Migrate passa a ser dependência do módulo e entra na configuração
+  sincronizável. O plugin não grava entidades; destino e migrations dependentes
+  ainda serão implementados. Sem Runtime ou execução de migração.
+
 ## `0.1.0-dev.167` — definir migração dos posts e vínculos em duas passagens
 
 - Cada source row representa um Comment (`cid`) e contém seu conjunto de

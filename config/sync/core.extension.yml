@@ -106,6 +106,7 @@ module:
   media_duplicates: 0
   media_gallery: 0
   media_library: 0
+  migrate: 0
   menu_link_content: 0
   menu_ui: 0
   message: 0
