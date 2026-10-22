@@ -134,3 +134,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 ## WES-UX V-0.4-D — moderação visual no GanjaLab (2026-10-22)
 
 [Contrato V09–V12 e janela GanjaLab](../../../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): `aculta_wiki` é fonte dos workflows, revisões, access e fila; `aculta_studio` oferece aba Wiki/Moderação e janela de análise, enquanto WE SATIVA mostra confirmação, ajustes recebidos, ajuda, fontes e mídia ao colaborador. Fases D-A contratos/StudioTab → D-B stories SDC → D-C fila e URLs → D-D transições → D-E Messenger e feedback → D-R homologação. Proibido duplicar painel de moderação no WE SATIVA. Mobile-first, shell multidomínio, SDC/UI Suite.
+
+## V-0.4-R / GanjaLab D-A — auditoria do código existente
+
+[Inventário e contrato da janela Wiki](../../../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
