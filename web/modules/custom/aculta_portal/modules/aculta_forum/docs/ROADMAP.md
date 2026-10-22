@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.202` | Incluir posts revisionáveis na busca pública | Configuração inclui datasource/post fields, filtros unificados e formatter de âncora; processor filtra grants/publicação antes da paginação. Validação automatizada integrada pendente antes de reindexar ou aplicar no Runtime. |
 | `0.1.0-dev.201` | Preservar autoria histórica em Comments anônimos | Destino aceita `uid=0` somente com referência existente a `aculta_legado_autor`; auditoria conta os anônimos sem representação histórica válida. Sem execução de migration ou Runtime. |
 | `0.1.0-dev.200` | Bloquear perda de autoria anônima na migração | Primeira trava tratava todo `uid=0` como não representável; refinada na dev.201 para aceitar referências históricas válidas. Não migra dados de contato. |
 | `0.1.0-dev.199` | Evitar ação duplicada nos cartões PDF | O cartão mantém download/abertura do `aculta_pdf_viewer`; link Core só entra no fallback negado. Sem alteração Runtime; inspeção visual pendente. |
@@ -772,10 +773,13 @@ Fundação pública entregue na dev.86: índice Search API e View `/pesquisar`
 isolados ao bundle de tópico, com acesso/status e filtro dinâmico pelo Domain
 canônico do Growroom420. A dev.87 acrescenta filtro hierárquico por categoria,
 com rótulos dinâmicos; a dev.88 comprova no MariaDB de Kernel que o ID
-`target_id` filtra somente o tópico da categoria. Search API 1.41 ordena por
-relevância decrescente quando a View não define sort. Homologação pública com
-conteúdo real continua pendente sem criar fixtures no Runtime; LMS, Wiki,
-Revista e Comments não entram neste índice público.
+`target_id` filtra somente o tópico da categoria. A dev.202 inclui posts
+revisionáveis com grants do tópico hospedeiro aplicados antes de paginação e
+totais. Search API 1.41 ordena por relevância decrescente quando a View não
+define sort. A matriz automatizada integrada de grants/publicação/purpose e a
+homologação pública com conteúdo real ainda precisam ocorrer antes de reindexar
+ou ativar essa configuração no Runtime. LMS, Wiki, Revista e Comments não entram
+neste índice público.
 
 ## `0.1.0-dev.17` — Consolidação
 

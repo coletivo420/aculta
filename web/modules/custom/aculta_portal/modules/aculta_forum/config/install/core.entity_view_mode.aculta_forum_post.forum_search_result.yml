@@ -1,0 +1,11 @@
+uuid: 6ef37dca-205a-495a-a8da-5a9c49a0bbf1
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_forum
+id: aculta_forum_post.forum_search_result
+label: 'Resultado de busca do Fórum'
+description: 'Resumo público de um post revisionável com link para sua âncora no tópico hospedeiro.'
+targetEntityType: aculta_forum_post
+cache: true

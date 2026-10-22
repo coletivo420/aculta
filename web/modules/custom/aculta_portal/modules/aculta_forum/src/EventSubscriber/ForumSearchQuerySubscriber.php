@@ -36,12 +36,11 @@ final class ForumSearchQuerySubscriber implements EventSubscriberInterface {
 
     $domain = $this->domainPurposeManager->getDomain('forum');
     if ($domain === NULL || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
-      // A positive Node ID cannot match this fail-closed sentinel.
-      $query->addCondition('nid', 0);
+      $query->addCondition('forum_search_domain', '__forum_scope_denied__');
       return;
     }
 
-    $query->addCondition('forum_domain', (string) $domain->id());
+    $query->addCondition('forum_search_domain', (string) $domain->id());
   }
 
 }

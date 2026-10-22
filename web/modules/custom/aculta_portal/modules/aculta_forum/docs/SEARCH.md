@@ -1,8 +1,8 @@
 # Busca pública do Growroom420
 
 `/pesquisar` é uma View de Search API exclusiva do purpose `forum`. O índice
-`aculta_forum` seleciona somente Nodes `aculta_forum_topic`; não indexa Comments,
-Revista, Wiki ou discussões do LMS. A View também fixa o bundle e mantém o
+`aculta_forum` seleciona Nodes `aculta_forum_topic` e posts revisionáveis
+`aculta_forum_post`; não indexa Comments, Revista, Wiki ou discussões do LMS. A View mantém o
 controle de acesso padrão de Search API/Views, sem `skip_access`.
 
 ## Segurança e atualização
@@ -37,41 +37,28 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
 
 ### Posts revisionáveis
 
-O índice continua limitado a Nodes `aculta_forum_topic`; as respostas em
-`aculta_forum_post` ainda não aparecem nos resultados. Não basta adicionar a
-fonte de dados do post ao índice atual: o processador `content_access` do
-Search API 1.41 dá suporte aos datasources Node e Comment. O código instalado
-trata outros tipos como não afetados pelo processador, enquanto o acesso do post
-depende também do tópico hospedeiro, do purpose `forum`, do Domain, dos grants
-de Node e do estado publicado do tópico e do post.
+Desde a dev.202, o índice inclui o datasource `entity:aculta_forum_post` junto
+com `entity:node`. O processor `forum_post_search_access` deriva categoria,
+Domain, estado publicado e grants de visualização do Node hospedeiro; a View
+usa campos unificados para filtros fixos de tipo/categoria/Domain. O branch de
+posts da query Search API exige publicação do post e do tópico e interseção
+com os grants da conta antes do pager e dos totais. O branch de Nodes mantém o
+processor Core `content_access`. O escopo do purpose continua fail-closed no
+`ForumSearchQuerySubscriber`, e a checagem de acesso padrão da View permanece
+habilitada.
 
-Antes de habilitar posts, a integração precisa:
+Os resultados de post usam o view mode `forum_search_result`, com assunto,
+resumo limitado e link ao fragmento `forum-post-{id}` na página canônica do
+tópico. O formatter revalida acesso do post e do Node hospedeiro durante a
+renderização; `ForumPost` não declara uma rota canônica própria.
 
-- indexar assunto e corpo do post, junto com valores coerentes de tipo,
-  categoria e Domain derivados do tópico hospedeiro para filtros fixos da View;
-- aplicar os grants e a política do tópico hospedeiro durante a consulta, antes
-  da paginação e dos totais. A checagem de acesso padrão da View Search API é
-  defesa adicional, mas a documentação upstream alerta que checagens após a
-  busca não refletem corretamente facetas e paginação;
-- combinar os campos de tópico e post nos filtros fixos existentes de tipo,
-  Domain e categoria. O subscriber atual filtra `forum_domain` e falha fechado
-  por `nid=0` fora do purpose; os posts precisam de campos indexados próprios
-  para que o escopo mantenha a mesma semântica nas duas fontes;
-- manter a checagem de acesso da View habilitada e preservar o filtro fixo de
-  bundle e o escopo de Domain, sem filtros expostos que permitam removê-los;
-- apresentar resultados com link para a âncora canônica
-  `forum-post-{id}` dentro do tópico hospedeiro. `ForumPost` não declara rota
-  canônica própria e a thread renderiza essa âncora dentro da página Node; o
-  resultado precisa gerar a URL do tópico e resumir o corpo do post sem expor
-  revisões não públicas;
-- cobrir acesso anônimo/autenticado, tópico ou post não publicado, grants de
-  Node, purpose/Domain incorreto e filtro de categoria antes de reindexar e
-  liberar a integração.
-
-O `entity_status` reconhece entidades publicáveis, mas não substitui as regras
-de acesso do tópico hospedeiro. A implementação deverá reutilizar Search API e
-Views, sem storage paralelo, e validar no código instalado a semântica do
-processador customizado ou de outra estratégia compatível.
+Essa integração ainda exige validação automatizada integrada antes de reindexar
+ou ativar a configuração no Runtime. A matriz pendente deve cobrir contas
+anônimas/autenticadas, grants do tópico, tópico e post não publicados,
+`bypass node access`, purpose/Domain incorreto, filtro de categoria e link de
+resultado. A checagem de acesso final da View é defesa adicional: a documentação
+upstream alerta que checagens feitas só depois da busca não atualizam facetas,
+totais ou paginação.
 
 Não habilitar apenas o processador `role-based access` como substituto dos
 grants do tópico: ele indexa acesso por papel, enquanto Node Access pode variar
@@ -84,7 +71,7 @@ para os Nodes da busca, mas o código instalado 1.41 não aplica esse processor 
 datasources de entidades fora de Node e Comment.
 
 O corpo de Comments não é pesquisado. A interface permite busca textual de
-título e corpo do tópico, com pelo menos três caracteres, além de filtro por
+assunto/corpo dos posts e título/corpo do tópico, com pelo menos três caracteres, além de filtro por
 categoria. O índice armazena o ID inteiro do termo; um hook de formulário
 substitui o controle numérico da View por um select com rótulos hierárquicos
 atuais, traduzidos e filtrados por Entity Access, incluindo os metadados de

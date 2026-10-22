@@ -47,7 +47,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
     $domain->method('id')->willReturn('forum_aculta_org');
     $purpose = $this->domainPurposeManager($domain, $domain);
     $query = $this->forumQuery();
-    $query->expects(self::once())->method('addCondition')->with('forum_domain', 'forum_aculta_org')->willReturn($query);
+    $query->expects(self::once())->method('addCondition')->with('forum_search_domain', 'forum_aculta_org')->willReturn($query);
 
     (new ForumSearchQuerySubscriber($purpose))->onQueryPreExecute(new QueryPreExecuteEvent($query));
   }
@@ -62,7 +62,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
     $mainDomain->method('id')->willReturn('aculta_org');
     $purpose = $this->domainPurposeManager($forumDomain, $mainDomain);
     $query = $this->forumQuery();
-    $query->expects(self::once())->method('addCondition')->with('nid', 0)->willReturn($query);
+    $query->expects(self::once())->method('addCondition')->with('forum_search_domain', '__forum_scope_denied__')->willReturn($query);
 
     (new ForumSearchQuerySubscriber($purpose))->onQueryPreExecute(new QueryPreExecuteEvent($query));
   }
@@ -73,7 +73,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
   public function testMissingForumDomainCannotSearch(): void {
     $purpose = $this->domainPurposeManager(NULL, NULL);
     $query = $this->forumQuery();
-    $query->expects(self::once())->method('addCondition')->with('nid', 0)->willReturn($query);
+    $query->expects(self::once())->method('addCondition')->with('forum_search_domain', '__forum_scope_denied__')->willReturn($query);
 
     (new ForumSearchQuerySubscriber($purpose))->onQueryPreExecute(new QueryPreExecuteEvent($query));
   }

@@ -4,15 +4,17 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.aculta_forum_post.forum_search_result
     - search_api.index.aculta_forum
   module:
+    - aculta_forum
     - node
     - search_api
     - user
 id: aculta_forum_search
 label: 'Pesquisar discussões do Growroom420'
 module: views
-description: 'Busca pública de tópicos do Fórum com categoria selecionável e contexto Domain fixo.'
+description: 'Busca pública de tópicos e posts do Fórum com categoria selecionável e contexto Domain fixo.'
 tag: forum
 base_table: search_api_index_aculta_forum
 base_field: search_api_id
@@ -119,21 +121,23 @@ display:
           min_length: 3
           fields: {  }
         type:
-          id: type
+          id: forum_search_type
           table: search_api_index_aculta_forum
-          field: type
+          field: forum_search_type
           relationship: none
-          admin_label: 'Isolar tópico público'
+          admin_label: 'Isolar tópicos e posts públicos do Fórum'
           plugin_id: search_api_string
-          operator: '='
-          value: aculta_forum_topic
+          operator: IN
+          value:
+            - aculta_forum_topic
+            - aculta_forum_post
           group: 1
           exposed: false
           is_grouped: false
         forum_category:
           id: forum_category
           table: search_api_index_aculta_forum
-          field: forum_category
+          field: forum_search_category
           relationship: none
           group_type: group
           admin_label: 'Categoria pública do Fórum'
@@ -181,6 +185,8 @@ display:
           view_modes:
             'entity:node':
               ':default': teaser
+            'entity:aculta_forum_post':
+              ':default': forum_search_result
       query:
         type: search_api_query
         options: {  }

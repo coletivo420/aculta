@@ -1,3 +1,13 @@
+## `0.1.0-dev.202` — incluir posts revisionáveis na busca pública
+
+- O índice e a View Search API incluem `aculta_forum_post`, com assunto/corpo,
+  categoria e Domain derivados do tópico hospedeiro; filtros fixos continuam
+  no servidor. O processor aplica grants do Node e publicação do tópico/post
+  antes do pager. Resultados usam view mode próprio e link para a âncora do post.
+- A checagem de acesso da View segue ativa. A matriz automatizada de grants,
+  publicação e purpose precisa passar antes de reindexação/Runtime; sem testes
+  ou alteração no Runtime nesta etapa.
+
 ## `0.1.0-dev.201` — preservar autoria histórica em Comments anônimos
 
 - A migração aceita `uid=0` quando a origem contém uma referência existente a

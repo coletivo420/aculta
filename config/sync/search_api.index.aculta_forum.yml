@@ -9,12 +9,13 @@ dependencies:
     - node.type.aculta_forum_topic
     - search_api.server.aculta_database
   module:
+    - aculta_forum
     - node
     - search_api
     - text
 id: aculta_forum
 name: 'Discussões públicas do Growroom420'
-description: 'Índice separado para tópicos públicos do Fórum ACULTA; não inclui comentários contextuais, LMS, Revista ou Wiki.'
+description: 'Índice de tópicos públicos e posts revisionáveis do Fórum ACULTA; não inclui comentários contextuais, LMS, Revista ou Wiki.'
 read_only: false
 field_settings:
   body:
@@ -42,6 +43,62 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_domain_source
+  forum_search_category:
+    label: 'Categoria do Fórum (tópico ou post)'
+    property_path: forum_search_category
+    type: integer
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_domain:
+    label: 'Domain do Fórum (tópico ou post)'
+    property_path: forum_search_domain
+    type: string
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_post_published:
+    label: 'Post publicado'
+    property_path: forum_search_post_published
+    type: boolean
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_topic_grants:
+    label: 'Grants de visualização do tópico hospedeiro'
+    property_path: forum_search_topic_grants
+    type: string
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_topic_id:
+    label: 'Identificador do tópico do Fórum'
+    property_path: forum_search_topic_id
+    type: integer
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_topic_published:
+    label: 'Tópico hospedeiro publicado'
+    property_path: forum_search_topic_published
+    type: boolean
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+  forum_search_type:
+    label: 'Tipo de resultado do Fórum'
+    property_path: forum_search_type
+    type: string
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
   nid:
     label: 'Identificador do tópico'
     datasource_id: 'entity:node'
@@ -76,6 +133,24 @@ field_settings:
     dependencies:
       module:
         - node
+  post_body:
+    label: 'Corpo do post'
+    datasource_id: 'entity:aculta_forum_post'
+    property_path: 'body:value'
+    type: text
+    boost: 1.0
+    dependencies:
+      module:
+        - aculta_forum
+  post_subject:
+    label: 'Assunto do post'
+    datasource_id: 'entity:aculta_forum_post'
+    property_path: subject
+    type: text
+    boost: 5.0
+    dependencies:
+      module:
+        - aculta_forum
   type:
     label: 'Tipo de conteúdo'
     datasource_id: 'entity:node'
@@ -93,6 +168,14 @@ datasource_settings:
     languages:
       default: true
       selected: {  }
+  'entity:aculta_forum_post':
+    bundles:
+      default: false
+      selected:
+        - aculta_forum_post
+    languages:
+      default: true
+      selected: {  }
 processor_settings:
   add_url: {  }
   content_access:
@@ -103,12 +186,17 @@ processor_settings:
     weights:
       preprocess_index: -20
   entity_type: {  }
+  forum_post_search_access:
+    weights:
+      preprocess_index: -35
+      preprocess_query: -40
   html_filter:
     weights:
       preprocess_index: -10
     all_fields: false
     fields:
       - body
+      - post_body
     title: true
     alt: true
     tags:
@@ -124,7 +212,9 @@ processor_settings:
     all_fields: false
     fields:
       - body
+      - post_body
       - title
+      - post_subject
   language_with_fallback: {  }
   tokenizer:
     weights:
@@ -133,7 +223,9 @@ processor_settings:
     all_fields: false
     fields:
       - body
+      - post_body
       - title
+      - post_subject
     spaces: ''
     ignored: ._-
     overlap_cjk: 1
@@ -145,7 +237,9 @@ processor_settings:
     all_fields: false
     fields:
       - body
+      - post_body
       - title
+      - post_subject
 tracker_settings:
   default:
     indexing_order: fifo
