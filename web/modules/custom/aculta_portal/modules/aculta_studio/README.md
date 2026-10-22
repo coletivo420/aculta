@@ -53,6 +53,6 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 
 ## Contrato visual 0.2.0-dev.1 (planejamento, ainda não implementado)
 
-- [Conceito visual responsivo — espaço pessoal primeiro](../../../../../docs/portal/STUDIO-VISUAL-CONCEPT.md): em cada área, “Meus [itens]” é a vista padrão; conteúdo de outros autores aparece apenas em contexto identificado de equipe/moderação e conforme acesso real do provider.
-- [Telas de criação, edição, prévia e revisão](../../../../../docs/portal/STUDIO-EDITOR-FLOWS.md): shell de editor desktop/mobile, formulários e workflows nativos, estados de erro e critérios de aceitação.
+- [Conceito visual responsivo — espaço pessoal primeiro](../../../../../../docs/portal/STUDIO-VISUAL-CONCEPT.md): em cada área, “Meus [itens]” é a vista padrão; conteúdo de outros autores aparece apenas em contexto identificado de equipe/moderação e conforme acesso real do provider.
+- [Telas de criação, edição, prévia e revisão](../../../../../../docs/portal/STUDIO-EDITOR-FLOWS.md): shell de editor desktop/mobile, formulários e workflows nativos, estados de erro e critérios de aceitação.
 - Estes contratos **não representam recursos implementados**. O ACULTA420 detém o visual, este módulo coordena interface e permissões dos providers; não criar armazenamento de conteúdo paralelo.
