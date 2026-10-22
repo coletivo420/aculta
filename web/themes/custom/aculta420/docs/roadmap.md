@@ -354,3 +354,7 @@ O H1 nativo **não precisa ser preservado visualmente**: em consumidores adotant
 ## B1-02b — Contrato visual do Context Header
 
 O [contrato visual B1-02b](theme-ux-0.8-b1-02b-visual-contract.md) estabelece variantes conceituais standard/editorial/compact e o H1 único sob responsabilidade do SDC contextual, com migração seletiva dos consumidores LMS e Wiki. Institution Bar + Domain Header existentes são obrigatórios. **Somente planejamento:** nenhum SDC adicional ou teste Runtime foi executado. Próxima microfase B1-02c depende da validação do DOM e de consumidores reais.
+
+## THEME-UX 0.8-B1-02c — primeiro SDC transversal disponível em código
+
+`aculta420:context-header` está presente no tema com metadados Core SDC, Twig com H1 único condicional ao consumidor, CSS mobile-first tokenizado e duas stories. **Status experimental; sem integração real em LMS/Wiki nem validação UI Patterns Library/Runtime.** A próxima fase B1-02d é migração seletiva de consumidores, com remoção de H1 redundante; manter Institution Bar + Domain Header. Ver [contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
