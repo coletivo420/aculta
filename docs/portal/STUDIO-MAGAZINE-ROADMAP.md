@@ -33,6 +33,31 @@
   integração compartilhada de Fórum/Galeria, permissões e revisão completa do
   workflow e da apresentação. Studio continua bloqueado até o gate 0.5.0.
 
+## Registro de execução — Magazine 0.5-A — 2026-10-22
+
+- Auditoria arquitetural completa publicada em
+  `aculta_magazine/docs/AUDIT-MAG-0.5-A.md`, com inventário do bundle `revista`,
+  campos, displays, workflow, serviços, hooks, testes e segurança, e achados
+  A-01 a A-12 classificados por dono.
+- Documentação normativa criada: `ARCHITECTURE.md` (tabela exata das oito
+  transições do workflow `revista`) e `DEPENDENCY-MATRIX.md` (Studio, User,
+  Forum, Image, Gallery, Document/PDF Viewer, Messenger, Statistics, LMS
+  Resources, Portal/Domain, ACULTA420 e contrib).
+- Config Sync: `node.revista.default` (form) passou a declarar a dependência
+  `workflows.workflow.revista` e os displays `default`, `full` e `teaser`
+  passaram a exibir `content_moderation_control`, espelhando o Runtime. Sem
+  importação, sem `drush cim` e sem alteração persistente no homelab. Os quatro
+  arquivos deixaram de aparecer em `drush config:status`; o drift restante é de
+  outras frentes e não foi tocado.
+- Achados de outros donos apenas documentados, sem correção local: coautoria na
+  interface (A-03, decisão com `aculta_user`), Pathauto legado (A-05), hook de
+  instalação histórico (A-06, mantido para atualização), purpose `main` no link
+  de edição do Studio (A-07) e feed do User consultando bundle `article`
+  (A-12).
+- Próximo: 0.5-B, contratos editoriais consumíveis pelo Studio (acesso,
+  revisão, preview, transições, Form API e domínio), sem segunda interface
+  GanjaLab dentro do Magazine.
+
 ## Registro de execução — Magazine 0.4.0 — 2026-10-21
 
 - O provider contextual do `aculta_forum` passa a reconhecer somente `revista`

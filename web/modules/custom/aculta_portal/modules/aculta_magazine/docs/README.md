@@ -3,6 +3,15 @@
 Auditoria estrutural F0.1.0: [estado do código, Config Sync, Runtime e plano de
 limpeza](AUDITORIA-F0.1.0.md).
 
+Documentação normativa vigente:
+
+- [Arquitetura](ARCHITECTURE.md) — propriedade, modelo de conteúdo, transições
+  exatas do workflow `revista`, hooks, configuração e invariantes.
+- [Matriz de dependências](DEPENDENCY-MATRIX.md) — consumidores, fornecedores,
+  dependências declaradas e bloqueadores.
+- [Auditoria MAG 0.5-A](AUDIT-MAG-0.5-A.md) — inventário, achados A-01 a A-12 e
+  relatório de Config Sync.
+
 > **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
 > pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática
 > de tópicos foi removida. A desinstalação do Drupal Forum contrib e a retirada de

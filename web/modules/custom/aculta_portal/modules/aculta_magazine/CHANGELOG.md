@@ -1,3 +1,30 @@
+## 0.5.0-dev.1 — auditoria arquitetural e contratos — 2026-10-22
+
+- MAG 0.5-A publica a documentação normativa do submódulo:
+  [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (propriedade, modelo de
+  conteúdo, tabela exata de transições do workflow `revista`, hooks e
+  invariantes), [`docs/DEPENDENCY-MATRIX.md`](docs/DEPENDENCY-MATRIX.md)
+  (consumidores, fornecedores, dependências declaradas e bloqueadores) e
+  [`docs/AUDIT-MAG-0.5-A.md`](docs/AUDIT-MAG-0.5-A.md) (inventário completo,
+  achados A-01 a A-12 e relatório de Config Sync).
+- Config Sync: dois desvios comprovados foram corrigidos no repositório, sem
+  importação e sem `drush cim`. O form display `node.revista.default` declara a
+  dependência `workflows.workflow.revista` que o Runtime já tinha; os displays
+  `default`, `full` e `teaser` exibem o componente
+  `content_moderation_control` na mesma posição do estado ativo. Os quatro
+  arquivos agora conferem com o Runtime.
+- Nenhuma alteração persistente no homelab nesta entrada: sem import de
+  configuração, sem migração de conteúdo, sem exclusão e sem mudança de
+  permissões.
+- Achados mantidos sob os donos atuais, apenas documentados: edição de
+  `co_authors` negada a `content_editor` (A-03), `field_coautores` residual
+  (A-04), padrão Pathauto legado (A-05), hook de instalação histórico (A-06),
+  purpose `main` no link de edição do Studio (A-07) e consulta ao bundle
+  `article` no feed do `aculta_user` (A-12).
+- Gates executados nesta entrada: `git diff --check` limpo; YAML dos quatro
+  arquivos validado; `drush config:status` sem entradas `node.revista` após a
+  correção; PHPUnit Unit do submódulo e PHPCS executados em 0.5-B-R.
+
 ## 0.4.0-dev.1 — integrações contextuais Fórum/Galeria — 2026-10-21
 
 - O papel editorial manual `content_editor` recebeu criação/edição do bundle

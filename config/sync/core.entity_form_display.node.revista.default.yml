@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.revista.field_summary
     - field.field.node.revista.field_tags
     - node.type.revista
+    - workflows.workflow.revista
   module:
     - content_moderation
     - datetime

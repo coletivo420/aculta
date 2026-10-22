@@ -6,6 +6,9 @@ conteúdo, publicação e mídia.
 ## Documentação
 
 - [Índice documental](docs/README.md)
+- [Arquitetura normativa](docs/ARCHITECTURE.md)
+- [Matriz de dependências](docs/DEPENDENCY-MATRIX.md)
+- [Auditoria MAG 0.5-A](docs/AUDIT-MAG-0.5-A.md)
 - [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
 - [CHANGELOG](CHANGELOG.md)
 
