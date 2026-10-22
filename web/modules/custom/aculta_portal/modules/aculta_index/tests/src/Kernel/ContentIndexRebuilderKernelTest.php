@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\aculta_index\Drush\Commands\ContentIndexQueueCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexRebuildCommand;
+use Drupal\aculta_index\Drush\Commands\ContentIndexAuditCommand;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -50,6 +51,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       'aculta_index_relation',
       'aculta_index_work',
       'aculta_index_cursor',
+      'aculta_index_audit',
     ]);
     $this->installConfig(['node', 'user']);
     $this->config('user.role.anonymous')->set('permissions', ['access content'])->save();
@@ -169,6 +171,24 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       'generation-id' => $generationId,
     ]), $activateOutput));
     $this->assertSame($generationId, $this->container->get('aculta_index.generation_manager')->getActiveGeneration());
+  }
+
+  /**
+   * Tests the audit command reports and advances a bounded checkpoint.
+   */
+  public function testAuditDrushCommandRunsBoundedCycle(): void {
+    $command = ContentIndexAuditCommand::create($this->container);
+    $startOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput(['action' => 'start']), $startOutput));
+    $this->assertStringContainsString('"status":"running"', $startOutput->fetch());
+
+    $batchOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput(['action' => 'batch']), $batchOutput));
+    $this->assertStringContainsString('"phase":"relations"', $batchOutput->fetch());
+
+    $statusOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput(['action' => 'status']), $statusOutput));
+    $this->assertStringContainsString('"status":"running"', $statusOutput->fetch());
   }
 
   /**

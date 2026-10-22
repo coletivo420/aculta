@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.17 — auditoria incremental agendada
+
+- Checkpoint persistente percorre entradas e relações por ID em lotes limitados
+  e registra apenas contagens de inconsistências.
+- Cron processa no máximo um lote por invocação e inicia um novo ciclo diário.
+- Comando `aculta-index:audit` permite iniciar, avançar e inspecionar auditorias.
+- A validação completa usada pelo rebuild permanece independente; o Runtime
+  ainda não foi atualizado nem verificado.
+
 ## 0.1.0-dev.16 — comandos Drush de rebuild e fila
 
 - `aculta-index:rebuild` fornece ações separadas `start`, `batch`, `validate`

@@ -38,6 +38,7 @@ function aculta_index_entity_translation_delete(\Drupal\Core\Entity\EntityInterf
 function aculta_index_cron(): void {
   \Drupal::service('aculta_index.work_manager')->recover();
   \Drupal::service('aculta_index.cursor_manager')->prune();
+  \Drupal::service('aculta_index.integrity_checker')->runScheduledAuditBatch();
 }
 
 /**

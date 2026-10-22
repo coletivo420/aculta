@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.16` — comandos operacionais para rebuild e fila.
-**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação e comandos Drush operacionais implementados. Reconciliação e API segura de relações pendentes; não instalado no Runtime.
+**Versão:** `0.1.0-dev.17` — auditoria incremental agendada.
+**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush e auditoria incremental diária implementados. API segura de relações pendente; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -50,3 +50,21 @@ recusa ativação enquanto a fila dos providers ativos tiver trabalho pendente o
 dead-letter. A saída de `queue dead` contém identidades de entidades e deve ficar
 restrita ao terminal de operadores autorizados. Os comandos foram implementados
 localmente; a descoberta/execução no Runtime não foi verificada.
+
+## Auditoria incremental
+
+O cron processa no máximo um lote (200 linhas) por execução. O checkpoint percorre
+primeiro entradas e depois relações usando as chaves primárias capturadas no início
+do ciclo. Um ciclo novo só começa após 24 horas do término anterior. O estado
+agrega contagens e não guarda títulos, corpos ou IDs das entidades com problemas.
+
+```text
+drush aculta-index:audit status
+drush aculta-index:audit start
+drush aculta-index:audit batch --limit=200
+```
+
+O comando manual pode continuar um ciclo existente; um novo `start` é recusado
+enquanto outro ciclo estiver em execução. Esta auditoria é operacional e
+incremental. A validação do rebuild continua fazendo suas próprias verificações
+completas antes de permitir ativação.

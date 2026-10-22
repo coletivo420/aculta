@@ -39,6 +39,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'aculta_index_relation',
       'aculta_index_work',
       'aculta_index_cursor',
+      'aculta_index_audit',
     ]);
     aculta_index_install();
   }
@@ -338,6 +339,25 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook creates and initializes the audit checkpoint table.
+   */
+  public function testUpdateHookCreatesAuditCheckpoint(): void {
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $schema->dropTable('aculta_index_audit');
+    $this->assertFalse($schema->tableExists('aculta_index_audit'));
+
+    aculta_index_update_10009();
+
+    $this->assertTrue($schema->tableExists('aculta_index_audit'));
+    $this->assertSame('idle', $database->select('aculta_index_audit', 'audit')
+      ->fields('audit', ['status'])
+      ->condition('audit_id', 1)
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Tests the projection writer is idempotent and rejects stale sequences.
    */
   public function testWriterSynchronizesEntryAndRelationsBySequence(): void {
@@ -483,6 +503,88 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame(1, $result['orphan_entry_count']);
     $this->assertSame(0, $result['orphan_relation_count']);
     $this->assertSame(1, $result['relation_source_missing_count']);
+  }
+
+  /**
+   * Tests incremental audit checkpoints and aggregates without full scans.
+   */
+  public function testIncrementalIntegrityAuditResumesAndCountsFindings(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields([
+        'generation_id' => 'audit-generation',
+        'status' => 'active',
+        'validated' => 1,
+        'activated' => 1,
+      ])
+      ->execute();
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => 'audit-generation', 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+    $this->insertEntry('audit-generation', 'node', '301', 'pt-br');
+    $this->insertEntry('orphan-generation', 'node', '302', 'pt-br');
+    $database->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => 'audit-generation',
+        'provider_id' => 'magazine',
+        'source_entity_type' => 'node',
+        'source_entity_id' => 'missing-source',
+        'source_langcode' => 'pt-br',
+        'relation_type' => 'related_activity',
+        'target_entity_type' => 'node',
+        'target_entity_id' => '999',
+        'target_langcode' => 'und',
+        'relation_hash' => str_repeat('b', 64),
+        'updated' => 1,
+      ])
+      ->execute();
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $started = $checker->startAudit();
+    $this->assertSame('running', $started['status']);
+    $this->assertSame('entries', $started['phase']);
+
+    $firstBatch = $checker->processAuditBatch(1);
+    $this->assertSame('entries', $firstBatch['phase']);
+    $this->assertSame(1, (int) $firstBatch['cursor_id']);
+
+    $state = $firstBatch;
+    while ($state['status'] === 'running') {
+      $state = $checker->processAuditBatch(1);
+    }
+    $this->assertSame('complete', $state['status']);
+    $this->assertFalse($state['valid']);
+    $this->assertSame(1, (int) $state['orphan_entry_count']);
+    $this->assertSame(0, (int) $state['orphan_relation_count']);
+    $this->assertSame(1, (int) $state['relation_source_missing_count']);
+  }
+
+  /**
+   * Tests cron advances batches and waits a day before starting another cycle.
+   */
+  public function testScheduledAuditRunsOneBatchAndHonorsDailyInterval(): void {
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $first = $checker->runScheduledAuditBatch(1);
+    $this->assertSame('running', $first['status']);
+
+    $state = $first;
+    while ($state['status'] === 'running') {
+      $state = $checker->runScheduledAuditBatch(1);
+    }
+    $this->assertSame('complete', $state['status']);
+    $completed = (int) $state['completed'];
+
+    $sameCycle = $checker->runScheduledAuditBatch(1);
+    $this->assertSame('complete', $sameCycle['status']);
+    $this->assertSame($completed, (int) $sameCycle['completed']);
+
+    $this->container->get('database')->update('aculta_index_audit')
+      ->fields(['completed' => $completed - 86400])
+      ->condition('audit_id', 1)
+      ->execute();
+    $newCycle = $checker->runScheduledAuditBatch(1);
+    $this->assertSame('running', $newCycle['status']);
   }
 
   /**

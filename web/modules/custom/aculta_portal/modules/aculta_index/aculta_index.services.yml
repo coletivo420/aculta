@@ -25,7 +25,7 @@ services:
 
   aculta_index.integrity_checker:
     class: Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker
-    arguments: ['@database']
+    arguments: ['@database', '@datetime.time']
 
   Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker: '@aculta_index.integrity_checker'
 
