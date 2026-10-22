@@ -197,3 +197,8 @@ O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/ac
 ## Retificação de ownership (2026-10-22)
 
 **A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
+
+
+## USER-PART 0.1-A — dependência visual WE SATIVA
+
+[Inventário de Fórum, LMS e Wiki](../../../../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md) documentado. O tema somente compõe SDC/UI Suite e preserva cabeçalhos global/domínio. A UI de moderação mobile-first deverá receber estados e links autorizados dos respectivos subkernels após a política de primeira participação no `aculta_user` estar comprovada por testes. Não migrar regras ou lógica de participação para CSS/Twig.
