@@ -1,26 +1,13 @@
-# Cache e contexto dos agentes CLI
+# Uso econômico de contexto — Claude, Codex e DeepSeek
 
-As regras obrigatórias continuam em `AGENTS.md`; este documento descreve somente otimizações de consumo.
+`AGENTS.md` é o contrato compartilhado. Este arquivo é referência operacional, **não** precisa ser lido em toda tarefa.
 
-## Claude Code, Codex e DeepSeek
+- Fixe o modelo por sessão no CLI/perfil local; não altere provedor/modelo automaticamente. Chaves e endpoints ficam fora do Git.
+- Mantenha instruções e definições de ferramentas estáveis para favorecer cache de prefixo; alterações em histórico, ferramentas e compactações podem causar misses.
+- Leia apenas os arquivos e trechos necessários; use busca direcionada e saída limitada. Evite despejar árvores, documentação, testes ou logs completos.
+- Reaproveite a sessão quando o histórico continuar útil; compacte quando o contexto acumulado custar mais que a possível reutilização. Não prolongue sessões apenas para manter cache.
+- Use subagentes somente quando o ganho superar o contexto adicional. Evite instruções duplicadas em cada chamada.
+- Não armazene segredos, dumps ou dados pessoais em prompts, arquivos de contexto ou métricas.
+- Meça tokens de entrada, saída, cache hit/miss e tarefas validadas, quando a API disponibilizar esses dados. Não assuma taxa de cache nem equivalência de cobrança entre provedores.
 
-1. Use **um modelo fixo por sessão**, escolhido explicitamente na inicialização. Não introduza troca automática de modelo no projeto.
-2. Preserve instruções iniciais estáveis; carregue somente os contratos pertinentes à tarefa.
-3. Leia arquivos seletivamente; evite `cat` de diretórios inteiros, logs extensos e repetição de contexto.
-4. Mantenha uma sessão por tarefa/PR, mas compacte quando o contexto ficar obsoleto ou grande demais.
-5. Não copie segredos, `.env`, bancos, dumps ou dados pessoais para prompts ou telemetria.
-6. Verifique consumo e cache hit/miss nas métricas do provedor quando disponíveis; não prometa percentuais de cache.
-7. Subagentes podem ter contextos e cache distintos; use-os apenas quando justificarem custo.
-
-## Modelo fixo: configuração fora do repositório
-
-- **Claude Code com Anthropic:** selecione explicitamente o modelo no lançador/sessão do usuário.
-- **Codex CLI:** fixe o modelo no perfil local do Codex ou no argumento de inicialização, conforme a versão instalada.
-- **Claude Code com DeepSeek API:** use lançador separado, com endpoint e identificadores de modelo confirmados na documentação da API vigente; não armazene chaves no Git.
-- **Codex com DeepSeek API:** configure provedor e modelo no perfil local específico; não sobrescreva o perfil OpenAI.
-
-Configurações de usuário, credenciais e modelos disponíveis variam por ambiente e não devem ser impostas por arquivos versionados do projeto. Mudanças de modelo ou endpoint exigem reinício explícito da sessão para preservar previsibilidade.
-
-## Verificação
-
-Compare tokens de entrada, saída e cache por tarefa concluída, além de testes aprovados. Cache de prefixo depende de correspondência de tokens e retenção pelo provedor, não apenas de manter o terminal aberto.
+**Configuração de modelos:** Claude Code/Anthropic, Codex/OpenAI e Claude Code ou Codex com DeepSeek devem usar perfis/lançadores locais separados e IDs de modelos verificados na API atual. Este repositório não impõe credenciais nem substitui modelos das sessões do usuário.
