@@ -92,3 +92,7 @@ A definição de conformidade permanece rígida: *presença de SDC e story não 
 3. Revisar contrato de heading do `content-section` (h2/h3) e markup de Context Header que usará h1 sem duplicar títulos do Core.
 4. Auditar semântica de navegação `product-tabs` e navegação Ajax Studio antes de promover variante compartilhada.
 5. Evitar alterações automáticas de schemas/markup do QR até validação específica, pois o componente é usado fora do LMS.
+
+## M0-S — relatório subsequente
+
+A [auditoria estrutural M0-S](theme-ux-0.8-m0-s-structural-audit.md) inspecionou contratos selecionados e corrigiu apenas a referência de schema Core em dois SDCs QR. A mudança não altera suas props nem renderização pretendida. Foram identificadas diferenças semânticas que impedem promover `content-section` a Context Header H1 ou `product-tabs` a navegação geral. **Não significa que todos os 38 SDCs estejam homologados**.
