@@ -57,7 +57,13 @@ final class ForumAvisoHooks {
   #[Hook('aculta_forum_post_update')]
   public function postUpdate(ForumPost $post): void {
     $original = $post->getOriginal();
-    if ($post->isPublished() && $original instanceof ForumPost && !$original->isPublished()) {
+    if ($post->isPublished()
+      && $original instanceof ForumPost
+      && !$original->isPublished()
+      && $original->hasField('first_published')
+      && $original->get('first_published')->isEmpty()
+      && $post->hasField('first_published')
+      && !$post->get('first_published')->isEmpty()) {
       $this->avisos->registrarPost($post);
     }
   }

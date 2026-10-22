@@ -34,7 +34,7 @@ Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou 
 | `contador_site` | Respostas novas não lidas. Zera quando a pessoa lê o tópico |
 | `contador_email` | Respostas ainda não enviadas no resumo por e-mail. Zera pelo resumo |
 | `ultimo_comentario` | Último comentário contado (tipo resposta). Garante que cada comentário conta uma vez |
-| `ultimo_post` | Último ID de post revisionável contado. Watermark separado evita colisão com CIDs de Comments |
+| `ultimo_post` | Último ID de revisão de `ForumPost` contado. Watermark separado evita colisão com CIDs de Comments e acompanha a ordem de publicação, mesmo quando a moderação aprova posts fora da ordem de criação |
 | `ultimo_evento` | Última revisão contada (tipo atualização). Garante que cada revisão conta uma vez |
 
 Regras (implementadas em `Aviso\AvisoService`):
@@ -43,7 +43,10 @@ Regras (implementadas em `Aviso\AvisoService`):
 - Só Comment ou `ForumPost` **publicado** conta. Comment pendente conta na aprovação; post pendente conta quando o workflow o publica pela primeira vez.
 - Uma revisão posterior de um post já publicado não cria outro aviso de resposta.
 - Um comentário nunca conta duas vezes: se o identificador não for maior que `ultimo_comentario`, nada muda.
-- Um post revisionável nunca conta duas vezes: seu ID é comparado somente com `ultimo_post`.
+- Uma primeira publicação de post revisionável nunca conta duas vezes: o ID
+  da revisão publicada é comparado somente com `ultimo_post`. Edições,
+  sincronizações e republicações de post já publicado anteriormente não geram
+  outra resposta.
 - Ler o tópico (requisição à rota canônica do nó, usuário autenticado) zera `contador_site` de **todos os tipos**
   daquele tópico.
 - Atualização de tópico seguido (fila de publicação) cria aviso `forum_atualizacao`, sem mensagem.

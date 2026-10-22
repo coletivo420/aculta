@@ -1,9 +1,21 @@
+## 0.1.1-dev.75 — contar aprovação tardia de posts revisionáveis — 2026-10-22
+
+- `ultimo_post` guarda agora o ID da revisão publicada, em vez do ID estável do
+  post. Um post criado antes mas aprovado depois de outro passa a contar no
+  aviso; repetir o mesmo evento continua bloqueado pelo marcador.
+- A integração só registra a transição da primeira publicação, usando o campo
+  imutável `first_published`; retirar e republicar um post não cria outra
+  resposta.
+- Nenhum campo foi adicionado. Testes de persistência e Runtime permanecem
+  pendentes; não houve alteração no Runtime nesta entrega.
+
 ## 0.1.1-dev.74 — avisos de resposta para posts revisionáveis — 2026-10-22
 
 - Posts do `aculta_forum_post` contam no aviso agregado do tópico seguido ao
   serem publicados pela primeira vez; edições posteriores não geram nova
   resposta. Autor, sincronizações e destinatários sem acesso atual são
-  excluídos. Comentários legados mantêm marcador independente (`ultimo_post`).
+  excluídos. Comentários legados mantêm marcador independente
+  (`ultimo_comentario`).
 - Adicionado campo base com post-update. O update não foi executado; validação
   de persistência e Runtime seguem pendentes.
 

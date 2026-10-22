@@ -11,8 +11,10 @@ pendentes. A transferência intencional inclui contagens históricas de resposta
 do tópico de origem que não façam parte da árvore movida, conforme decisão do
 responsável em 2026-10-21.
 Avisos para a primeira publicação de posts revisionáveis foram implementados
-em dev.74, com marcador de post separado; testes de persistência e validação
-Runtime seguem pendentes.
+em dev.74, com marcador de post separado. A dev.75 grava o ID da revisão
+publicada no marcador para não perder aprovações fora da ordem de criação e
+limita a integração à primeira publicação imutável. Testes de persistência e
+validação Runtime seguem pendentes.
 
 ## 0.1.1 — pedidos de amizade e política de novas conversas
 

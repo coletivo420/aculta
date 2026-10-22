@@ -36,10 +36,10 @@ final class AvisoService implements ForumNoticeTransferInterface {
   }
 
   /**
-   * Whether a Forum post has not yet been counted in a response notice.
+   * Whether a ForumPost revision has not yet been counted in a response notice.
    */
-  public static function isNewPost(int $postId, int $ultimoContado): bool {
-    return $postId > $ultimoContado;
+  public static function isNewPost(int $revisionId, int $ultimoContado): bool {
+    return $revisionId > $ultimoContado;
   }
 
   /** Regra de contagem de atualização: uma revisão só conta se é mais nova que a última contada. */
@@ -200,6 +200,10 @@ final class AvisoService implements ForumNoticeTransferInterface {
     if (!$topic instanceof NodeInterface || !$this->accessPolicy->supportsTopic($topic)) {
       return 0;
     }
+    $revisionId = (int) $post->getRevisionId();
+    if ($revisionId <= 0) {
+      return 0;
+    }
     $flag = $this->flagService->getFlagById('seguir_topico');
     if ($flag === NULL) {
       return 0;
@@ -212,13 +216,16 @@ final class AvisoService implements ForumNoticeTransferInterface {
         continue;
       }
       $aviso = $this->avisoDe($uid, (int) $topic->id(), (string) $topic->label(), Aviso::TIPO_RESPOSTA);
+      // Moderation order can differ from entity creation order: an older
+      // pending post may be published after a newer post. Revision IDs follow
+      // the publication saves and keep that first-publication event countable.
       $ultimoPost = (int) $aviso->get('ultimo_post')->value;
-      if (!self::isNewPost((int) $post->id(), $ultimoPost)) {
+      if (!self::isNewPost($revisionId, $ultimoPost)) {
         continue;
       }
       $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
       $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
-      $aviso->set('ultimo_post', (int) $post->id());
+      $aviso->set('ultimo_post', $revisionId);
       $aviso->save();
       $atualizados++;
     }
