@@ -1,0 +1,8 @@
+name: GanjaLab420 sem cursos
+description: 'Fixture estática de estado vazio neutro.'
+component: aculta420:empty-state
+props:
+  compact: true
+slots:
+  message:
+    markup: '<p>Você ainda não está matriculado em nenhum curso.</p>'
