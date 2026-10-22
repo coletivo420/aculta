@@ -83,3 +83,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b6-s1a-l3-priority-assets.md](theme-ux-0.8-b6-s1a-l3-priority-assets.md) — auditoria dirigida de 5 CSS e 3 stories; aponta divergência entre story e contrato do carrinho; revisão exaustiva pendente.
 
 - [theme-ux-0.8-b6-s1a-l3b-asset-findings.md](theme-ux-0.8-b6-s1a-l3b-asset-findings.md) — inspeção de Twig/stories e correção da fixture de carrinho para o contrato `sites`.
+
+- [theme-ux-0.8-b6-s1a-l3c-automated-gate.md](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) — gate estático reproduzível de contratos SDC e stories, ainda pendente de execução em checkout.
