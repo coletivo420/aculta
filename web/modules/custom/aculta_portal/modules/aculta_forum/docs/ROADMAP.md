@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.162` | Limitar mapas auxiliares de relações da auditoria | Pais são resolvidos por lote de origem; marcadores de avisos consultam apenas seus CIDs distintos em lotes. Remove o mapa global de elegibilidade dos Comments. Sets únicos de tópicos, UUIDs e avisos ainda crescem com o relatório. Sem Runtime. |
 | `0.1.0-dev.161` | Paginar a auditoria de migração por CID | Consulta fixa o maior CID e carrega Comments de origem por lotes keyset, sem criar uma lista de todos os IDs antes da leitura; inserções posteriores ao limite ficam fora. Mapas auxiliares ainda crescem com relações/UUIDs. Sem alteração Runtime. |
 | `0.1.0-dev.160` | Exibir série temporal no painel do Fórum | Últimos sete dias UTC mostram tópicos, Comments legados e posts revisionáveis por `aculta_statistics`; integração opcional, cache de 60 segundos, sem dados pessoais. Eventos de entidades sincronizadas são excluídos. Testes, Runtime e revisão visual pendentes. |
 | `0.1.0-dev.159` | Emitir atividade de posts revisionáveis | Criação emite evento mínimo para estatísticas; entidade sincronizada/importada não conta como participação nova. Validação Runtime e testes pendentes. |

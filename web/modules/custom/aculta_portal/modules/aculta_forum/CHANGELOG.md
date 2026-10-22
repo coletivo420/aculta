@@ -1,3 +1,11 @@
+## `0.1.0-dev.162` — limitar mapas de relações aos lotes da auditoria
+
+- A análise pai/filho resolve os Comments pais junto a cada lote de origem e
+  remove o mapa que retinha a associação de todos os Comments elegíveis. Os
+  marcadores Messenger são resolvidos em lotes somente para os CIDs citados.
+- O inventário continua somente leitura. Conjuntos únicos de tópicos, UUIDs e
+  avisos ainda crescem com os dados necessários ao relatório; sem Runtime.
+
 ## `0.1.0-dev.161` — paginar IDs da auditoria de migração
 
 - A auditoria fixa o maior CID de origem no início e busca os Comments em lotes

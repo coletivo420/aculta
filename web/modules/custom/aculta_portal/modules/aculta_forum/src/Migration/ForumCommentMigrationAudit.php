@@ -83,8 +83,6 @@ final class ForumCommentMigrationAudit {
       'existing_revisionable_posts' => 0,
     ];
     $topic_ids = [];
-    $topic_by_comment = [];
-    $parent_references = [];
     $media_uuids = [];
     $gallery_uuids = [];
 
@@ -101,6 +99,7 @@ final class ForumCommentMigrationAudit {
       }
       $last_comment_id = (int) end($batch);
       $eligible_comment_ids = [];
+      $parent_references = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
         if (!$comment instanceof CommentInterface) {
           continue;
@@ -121,7 +120,6 @@ final class ForumCommentMigrationAudit {
         $report['eligible_comments']++;
         $eligible_comment_ids[] = $comment_id;
         $topic_ids[$topic_id] = TRUE;
-        $topic_by_comment[$comment_id] = $topic_id;
         $translations = $comment->getTranslationLanguages();
         if (count($translations) > 1) {
           $report['comments_with_translations']++;
@@ -166,6 +164,29 @@ final class ForumCommentMigrationAudit {
         }
       }
 
+      if ($parent_references !== []) {
+        $parents = $storage->loadMultiple(array_values(array_unique(array_column($parent_references, 'parent_id'))));
+        foreach ($parent_references as $comment_id => $reference) {
+          $parent_id = $reference['parent_id'];
+          if ($parent_id === $comment_id) {
+            $report['self_parent']++;
+            continue;
+          }
+          $parent = $parents[$parent_id] ?? NULL;
+          if (!$parent instanceof CommentInterface) {
+            $report['parent_missing']++;
+            continue;
+          }
+          $parent_topic_id = $this->eligibleTopicId($parent);
+          if ($parent_topic_id === NULL) {
+            $report['parent_outside_scope']++;
+          }
+          elseif ($parent_topic_id !== $reference['topic_id']) {
+            $report['parent_cross_topic']++;
+          }
+        }
+      }
+
       if ($eligible_comment_ids !== []) {
         $flagging_storage = $this->entityTypeManager->getStorage('flagging');
         $flagging_ids = $flagging_storage->getQuery()
@@ -181,41 +202,6 @@ final class ForumCommentMigrationAudit {
       }
     }
 
-    $external_parent_ids = [];
-    foreach ($parent_references as $reference) {
-      // A source query can include comments whose host is outside the eligible
-      // Forum purpose. Resolve every parent not present in the eligible map so
-      // those existing Comments are not reported as missing.
-      if (!isset($topic_by_comment[$reference['parent_id']])) {
-        $external_parent_ids[$reference['parent_id']] = $reference['parent_id'];
-      }
-    }
-    $external_parents = [];
-    foreach (array_chunk(array_values($external_parent_ids), $batch_size) as $batch) {
-      foreach ($storage->loadMultiple($batch) as $parent) {
-        if ($parent instanceof CommentInterface) {
-          $external_parents[(string) $parent->id()] = TRUE;
-        }
-      }
-    }
-    foreach ($parent_references as $comment_id => $reference) {
-      $parent_id = $reference['parent_id'];
-      if ($parent_id === $comment_id) {
-        $report['self_parent']++;
-      }
-      elseif (isset($topic_by_comment[$parent_id])) {
-        if ($topic_by_comment[$parent_id] !== $reference['topic_id']) {
-          $report['parent_cross_topic']++;
-        }
-      }
-      elseif (isset($external_parents[$parent_id])) {
-        $report['parent_outside_scope']++;
-      }
-      else {
-        $report['parent_missing']++;
-      }
-    }
-
     $report['topics'] = count($topic_ids);
     $report['unique_media_references'] = count($media_uuids);
     $report['missing_media_references'] = $this->countMissingEntities('media', array_keys($media_uuids), $batch_size);
@@ -223,7 +209,6 @@ final class ForumCommentMigrationAudit {
     $report['missing_gallery_references'] = $this->countMissingEntities('media_gallery', array_keys($gallery_uuids), $batch_size);
     $report['response_notices'] = $this->inspectResponseNotices(
       array_keys($topic_ids),
-      $topic_by_comment,
       $batch_size,
     );
     ksort($report['body_formats']);
@@ -236,6 +221,24 @@ final class ForumCommentMigrationAudit {
       ->count()
       ->execute();
     return $report;
+  }
+
+  /**
+   * Resolves the eligible public Forum topic for a legacy Forum Comment.
+   */
+  private function eligibleTopicId(CommentInterface $comment): ?string {
+    if ($comment->bundle() !== self::COMMENT_TYPE || $comment->getFieldName() !== self::COMMENT_FIELD) {
+      return NULL;
+    }
+    $topic = $comment->getCommentedEntity();
+    if (!$topic instanceof NodeInterface || $topic->bundle() !== self::TOPIC_BUNDLE
+      || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
+      return NULL;
+    }
+    if ($this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+      return NULL;
+    }
+    return (string) $topic->id();
   }
 
   /**
@@ -257,15 +260,13 @@ final class ForumCommentMigrationAudit {
    *
    * @param list<string> $topic_ids
    *   Eligible public Forum topic IDs.
-   * @param array<string, string> $topic_by_comment
-   *   Eligible source Comment ID to topic ID map.
    * @param int $batch_size
    *   Bounded number of notices or Comments loaded in each batch.
    *
    * @return array<string, int|bool>
    *   Aggregate counts only, or an unavailable marker when Messenger is off.
    */
-  private function inspectResponseNotices(array $topic_ids, array $topic_by_comment, int $batch_size): array {
+  private function inspectResponseNotices(array $topic_ids, int $batch_size): array {
     $result = [
       'available' => $this->moduleHandler->moduleExists('aculta_messenger'),
       'records' => 0,
@@ -300,30 +301,34 @@ final class ForumCommentMigrationAudit {
       }
     }
 
-    $out_of_scope_ids = [];
+    $marker_comment_ids = [];
     foreach ($markers as $marker) {
-      if (!isset($topic_by_comment[$marker['comment_id']])) {
-        $out_of_scope_ids[$marker['comment_id']] = $marker['comment_id'];
-      }
+      $marker_comment_ids[$marker['comment_id']] = $marker['comment_id'];
     }
-    $existing_comments = [];
+    $eligible_topic_by_comment = [];
+    $existing_comment_ids = [];
     $comment_storage = $this->entityTypeManager->getStorage('comment');
-    foreach (array_chunk(array_values($out_of_scope_ids), $batch_size) as $batch) {
+    foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $batch) {
       foreach ($comment_storage->loadMultiple($batch) as $comment) {
         if ($comment instanceof CommentInterface) {
-          $existing_comments[(string) $comment->id()] = TRUE;
+          $comment_id = (string) $comment->id();
+          $existing_comment_ids[$comment_id] = TRUE;
+          $topic_id = $this->eligibleTopicId($comment);
+          if ($topic_id !== NULL) {
+            $eligible_topic_by_comment[$comment_id] = $topic_id;
+          }
         }
       }
     }
     foreach ($markers as $marker) {
       $comment_id = $marker['comment_id'];
-      if (isset($topic_by_comment[$comment_id])) {
+      if (isset($eligible_topic_by_comment[$comment_id])) {
         $result['markers_in_scope']++;
-        if ($topic_by_comment[$comment_id] !== $marker['topic_id']) {
+        if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
           $result['markers_for_other_topic']++;
         }
       }
-      elseif (isset($existing_comments[$comment_id])) {
+      elseif (isset($existing_comment_ids[$comment_id])) {
         $result['markers_outside_scope']++;
       }
       else {
