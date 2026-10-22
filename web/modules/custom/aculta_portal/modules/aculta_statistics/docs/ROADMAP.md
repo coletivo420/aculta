@@ -193,3 +193,9 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos.
 - Antecipado para a 0.2.0-dev.3 por decisão do responsável: contador de leitura da Wiki (`wiki.entries.read`), com beacon e retenção configurável.
 - 0.2.0: configuração de retenção por métrica (Configuration API) e permissão própria; 0.9.0: auditoria das alterações de prazo.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-08: padronizar providers para Wiki, Fórum, LMS, Commerce, User e Messenger; evitar dashboards/contadores paralelos, remover PII e aplicar retenção. Métricas de Group de associados são agregadas e não expõem membership individual.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
