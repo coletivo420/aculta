@@ -119,3 +119,7 @@ A Revista apresenta `Meu trabalho → Meus conteúdos` como vista pessoal inicia
 ## GANJALAB E-B.2 — correção da contagem dos filtros pessoais
 
 As listagens `scope: mine` agora calculam o pager depois de filtrar por estado da **última revisão autorizada**, sem contar nós de terceiros ou rascunhos invisíveis. A consulta usa `accessCheck(TRUE)`, `uid` e lotes de 100; cada revisão exige acesso explícito. O pager exibe 20 itens por página. Isto corrige a ordem lógica do E-B.1, **mas ainda não houve teste Runtime e a varredura integral de candidatos do autor requer gate de performance**. As filas de moderação não usam esse pager.
+
+## Paginação para volumes grandes — E-B.2-PERF
+
+`Meu trabalho` usa cursor `studio_cursor` com seek (`changed`, `nid`) e leitura limitada a até 10 lotes de 100 candidatos por requisição. Não faz mais varredura de todo o acervo do autor para contar páginas. A interface oferece “Carregar mais publicações” em link HTTP real, preservando acesso por nó e revisão, filtros e cache por usuário/cursor. Não existe número total exato de páginas; o avanço pode exigir várias solicitações em estados muito raros. Validação Kernel, concorrência e desempenho real permanecem pendentes. Consultar `docs/ROADMAP.md`.
