@@ -22,3 +22,7 @@
 Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de releases: Git e changelog.
 
 - [Messenger: guia de desenvolvimento do tema](messenger.md): componentes, tokens, atributos, JS e receitas do Messenger.
+
+## Novo caminho: Design System transversal
+
+[Roadmap visual transversal ACULTA420](visual-cross-product-roadmap.md) concentra o planejamento de componentes compartilhados para GanjaLab420, GanjaLab, Revista, Wiki, Fórum, Galeria e Conta. Ele separa o ownership visual do tema das integrações de LMS e kernels, e exige manutenção do cabeçalho multidomínio em todas as telas. Complementa, sem substituir, o [roadmap existente](roadmap.md).
