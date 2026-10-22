@@ -76,7 +76,7 @@
         historyListening = true;
         window.addEventListener('popstate', () => {
           const current = document.getElementById(ROOT_ID);
-          if (current && window.location.pathname.startsWith('/studio')) navigate(current, window.location.href, false);
+          if (current && (window.location.pathname.startsWith('/ganjalab') || window.location.pathname.startsWith('/studio'))) navigate(current, window.location.href, false);
         });
       }
       once('aculta-studio-navigation', `#${ROOT_ID}`, context).forEach((root) => {
