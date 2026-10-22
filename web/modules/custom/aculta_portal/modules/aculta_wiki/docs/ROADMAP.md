@@ -57,3 +57,8 @@ A experiência editorial independente da Wiki420 é definida em [WE-SATIVA-FOUND
 ## WE SATIVA — arquitetura interna WES-UX 0.3 (2026-10-22)
 
 O planejamento aprovado de todas as estruturas internas está em [WE-SATIVA-INTERNAL-ARCHITECTURE.md](../../../../../../../docs/portal/WE-SATIVA-INTERNAL-ARCHITECTURE.md). Fases 0.3-A1 e A2 deverão auditar permissões/workflows e decidir a persistência segura de propostas antes de rotas. Seguem depois wireframes, reuso SDC/UI Suite e integrações incrementais. **Nenhuma implementação funcional liberada por este documento; Autosave Form permanece futuro.**
+
+
+## WE SATIVA C01 — primeira composição visual (2026-10-22)
+
+[Porta contextual de contribuição](../../../../../../../docs/portal/WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md): um CTA autorizado a partir do verbete e seletor de intenções sem ações fictícias. Primeiro auditar `context-header.actions` versus `wiki-entry.actions`; manter um só CTA. Dependência de AccessResult, purpose/domain e URL canônica; proposta sem `update` continua bloqueada até decisão de backend. Projeto mobile-first, SDC/UI Suite, shell global preservado.
