@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.17` — auditoria incremental agendada.
-**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush e auditoria incremental diária implementados. API segura de relações pendente; não instalado no Runtime.
+**Versão:** `0.1.0-dev.18` — consulta segura de relações de saída.
+**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush, auditoria incremental diária e consulta segura de relações implementados. Mais providers e consumidores; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -68,3 +68,12 @@ O comando manual pode continuar um ciclo existente; um novo `start` é recusado
 enquanto outro ciclo estiver em execução. Esta auditoria é operacional e
 incremental. A validação do rebuild continua fazendo suas próprias verificações
 completas antes de permitir ativação.
+
+## Relações de saída
+
+`aculta_index.relation_query` consulta uma relação nomeada para uma identidade de
+origem e retorna somente alvos presentes na geração ativa. A consulta é de um
+salto e unidirecional; não percorre relações recebidas ou grafos recursivos.
+Entity Access é revalidado tanto na origem quanto em até 100 alvos candidatos.
+Relações com idioma `und` selecionam a tradução no idioma padrão do site. A
+resposta usa cursor opaco, não calcula totais/facetas e não é cacheada.

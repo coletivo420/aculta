@@ -48,7 +48,7 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Hooks CRUD, fila deduplicada Core Queue, sequência por identidade, retries e worker inicial implementados; eventos de grants externos e teste de concorrência pendentes |
 | IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, fingerprint, conclusão CAS, validação estrutural, gate de drenagem/ativação, comandos Drush e auditoria incremental diária implementados; fence sincroniza eventos com troca do ponteiro; descoberta Drush no Runtime e rollback homologado pendentes |
 | IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Provider Magazine conectado à fila; Statistics oferece agregação SQL por até 100 dimensões selecionadas; contrato/bridge tipado e mais providers pendentes |
-| IDX 0.1-G | Consultas, cache e medições | Serviço inicial com filtros allowlisted, Entity Access e cursor opaco implementado; API de relações, caches/benchmarks e mais bancos pendentes |
+| IDX 0.1-G | Consultas, cache e medições | Serviço inicial com filtros allowlisted, API de relações nomeadas de saída, Entity Access e cursor opaco implementados; caches/benchmarks e mais bancos pendentes |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |
 
 Ver o [relatório da IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) para inventário, riscos, proveniência e achados de código. Nenhuma fase futura está marcada como concluída por antecipação.

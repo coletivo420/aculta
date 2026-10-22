@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.18 — consulta segura de relações de saída
+
+- Serviço de consulta de uma relação nomeada, unidirecional e limitada a um
+  salto; fonte e alvos passam por Entity Access no momento da consulta.
+- Alvos precisam estar na geração ativa; `und` resolve para o idioma padrão do
+  site. Paginação usa cursor opaco persistido e não calcula totais/facetas.
+- A integração foi validada em Kernel; não há rota ou interface visual nesta
+  fase.
+
 ## 0.1.0-dev.17 — auditoria incremental agendada
 
 - Checkpoint persistente percorre entradas e relações por ID em lotes limitados

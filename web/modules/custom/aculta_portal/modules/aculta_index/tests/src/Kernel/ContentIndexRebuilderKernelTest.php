@@ -271,6 +271,71 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests outgoing relation pagination and access for source and targets.
+   */
+  public function testOutgoingRelationQueryUsesDefaultLanguageAndEntityAccess(): void {
+    $source = Node::create(['type' => 'article', 'title' => 'Source article', 'status' => 1]);
+    $publicTarget = Node::create(['type' => 'article', 'title' => 'Public target', 'status' => 1]);
+    $privateTarget = Node::create(['type' => 'article', 'title' => 'Private target', 'status' => 0]);
+    $privateSource = Node::create(['type' => 'article', 'title' => 'Private source', 'status' => 0]);
+    foreach ([$source, $publicTarget, $privateTarget, $privateSource] as $node) {
+      $node->save();
+    }
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $database = $this->container->get('database');
+    foreach ([
+      [$source, $publicTarget],
+      [$source, $privateTarget],
+      [$privateSource, $publicTarget],
+    ] as [$from, $to]) {
+      $database->insert('aculta_index_relation')
+        ->fields([
+          'generation_id' => $generationId,
+          'provider_id' => 'test_article',
+          'source_entity_type' => 'node',
+          'source_entity_id' => (string) $from->id(),
+          'source_langcode' => $from->language()->getId(),
+          'relation_type' => 'related_item',
+          'target_entity_type' => 'node',
+          'target_entity_id' => (string) $to->id(),
+          'target_langcode' => 'und',
+          'relation_hash' => hash('sha256', $from->id() . ':' . $to->id()),
+          'updated' => 1,
+        ])
+        ->execute();
+    }
+
+    $account = new AnonymousUserSession();
+    $query = $this->container->get('aculta_index.relation_query');
+    $firstPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, NULL, 1);
+    $this->assertCount(0, $firstPage->entities);
+    $this->assertNotNull($firstPage->nextCursor);
+
+    $secondPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $firstPage->nextCursor, 1);
+    $this->assertCount(1, $secondPage->entities);
+    $this->assertSame('Public target', (string) $secondPage->entities[0]->label());
+    $this->assertSame($this->container->get('language_manager')->getDefaultLanguage()->getId(), $secondPage->entities[0]->language()->getId());
+    $this->assertNotNull($secondPage->nextCursor);
+
+    $endPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $secondPage->nextCursor, 1);
+    $this->assertSame([], $endPage->entities);
+    $this->assertNull($endPage->nextCursor);
+
+    $deniedSource = $query->queryOutgoing('node', (string) $privateSource->id(), $privateSource->language()->getId(), 'related_item', $account);
+    $this->assertSame([], $deniedSource->entities);
+    $this->assertNull($deniedSource->nextCursor);
+    $this->assertSame(0, $deniedSource->cacheability->getCacheMaxAge());
+  }
+
+  /**
    * Marks pre-build jobs complete after this test's backfill read their source.
    */
   private function completeBackfilledSourceWork(): void {

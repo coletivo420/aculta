@@ -53,6 +53,12 @@ services:
 
   Drupal\aculta_index\Query\ContentIndexQuery: '@aculta_index.query'
 
+  aculta_index.relation_query:
+    class: Drupal\aculta_index\Query\ContentIndexRelationQuery
+    arguments: ['@database', '@aculta_index.generation_manager', '@aculta_index.access_filter', '@aculta_index.cursor_manager', '@language_manager']
+
+  Drupal\aculta_index\Query\ContentIndexRelationQuery: '@aculta_index.relation_query'
+
   aculta_index.work_manager:
     class: Drupal\aculta_index\Queue\ContentIndexWorkManager
     arguments: ['@database', '@queue', '@datetime.time', '@logger.channel.aculta_index']
