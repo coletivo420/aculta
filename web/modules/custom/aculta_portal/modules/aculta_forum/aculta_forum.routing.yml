@@ -200,6 +200,24 @@ aculta_forum.post_revision_history:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
 
+aculta_forum.post_revision_compare:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostRevisionComparisonController::compare'
+    _title: 'Comparar revisões da publicação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:compareRevisions'
+    aculta_forum_post: '\d+'
+    left_revision: '\d+'
+    right_revision: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD]
+
 aculta_forum.post_create:
   path: '/publicacao/nova'
   defaults:

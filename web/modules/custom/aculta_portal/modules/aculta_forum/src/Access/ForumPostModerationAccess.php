@@ -101,4 +101,38 @@ final class ForumPostModerationAccess {
     return $access;
   }
 
+  /**
+   * Checks comparison access and binds both revisions to the history post.
+   */
+  public function compareRevisions(
+    AccountInterface $account,
+    ForumPost $aculta_forum_post,
+    string $left_revision,
+    string $right_revision,
+  ): AccessResultInterface {
+    $historyAccess = $this->revisionHistory($account, $aculta_forum_post);
+    if (!$historyAccess->isAllowed()) {
+      return $historyAccess;
+    }
+
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $left = $storage->loadRevision($left_revision);
+    $right = $storage->loadRevision($right_revision);
+    if ($left === NULL || $right === NULL) {
+      return AccessResult::forbidden()
+        ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.path']);
+    }
+
+    $belongsToPost = (string) $left->id() === (string) $aculta_forum_post->id()
+      && (string) $right->id() === (string) $aculta_forum_post->id()
+      && (string) $left->getRevisionId() === $left_revision
+      && (string) $right->getRevisionId() === $right_revision
+      && (string) $left->getRevisionId() !== (string) $right->getRevisionId();
+    return $historyAccess
+      ->andIf(AccessResult::allowedIf($belongsToPost)
+        ->addCacheableDependency($left)
+        ->addCacheableDependency($right)
+        ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.path']));
+  }
+
 }

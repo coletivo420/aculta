@@ -33,14 +33,27 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
     assert($storage instanceof RevisionableStorageInterface);
     $entityType = $aculta_forum_post->getEntityType();
-    $revisionIds = $storage->getQuery()
+    $revisionIds = array_keys($storage->getQuery()
       ->accessCheck(FALSE)
       ->allRevisions()
       ->condition($entityType->getKey('id'), $aculta_forum_post->id())
       ->sort($entityType->getKey('revision'), 'DESC')
       ->pager(self::REVISIONS_PER_PAGE)
-      ->execute();
-    $revisions = $storage->loadMultipleRevisions(array_keys($revisionIds));
+      ->execute());
+    $olderRevisionId = NULL;
+    $oldestVisibleRevisionId = end($revisionIds);
+    if ($oldestVisibleRevisionId !== FALSE) {
+      $olderRevisionIds = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->allRevisions()
+        ->condition($entityType->getKey('id'), $aculta_forum_post->id())
+        ->condition($entityType->getKey('revision'), $oldestVisibleRevisionId, '<')
+        ->sort($entityType->getKey('revision'), 'DESC')
+        ->range(0, 1)
+        ->execute();
+      $olderRevisionId = array_key_first($olderRevisionIds);
+    }
+    $revisions = $storage->loadMultipleRevisions($revisionIds);
     $rows = [];
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($aculta_forum_post)
@@ -53,7 +66,8 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       ])
       ->addCacheTags(['aculta_forum_post_list', 'config:system.date']);
 
-    foreach ($revisions as $revision) {
+    foreach ($revisionIds as $index => $revisionId) {
+      $revision = $revisions[$revisionId];
       $cacheability->addCacheableDependency($revision);
       $revisionUser = $revision->getRevisionUser();
       if ($revisionUser instanceof UserInterface) {
@@ -62,6 +76,18 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       $isDefault = $revision->isDefaultRevision();
       $date = $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short');
       $revisionLabel = $revision->getRevisionLogMessage();
+      $operations = [];
+      $previousRevisionId = $revisionIds[$index + 1] ?? $olderRevisionId;
+      if ($previousRevisionId !== NULL) {
+        $operations[] = Link::fromTextAndUrl(
+          $this->t('Comparar com a revisão anterior'),
+          Url::fromRoute('aculta_forum.post_revision_compare', [
+            'aculta_forum_post' => $aculta_forum_post->id(),
+            'left_revision' => $previousRevisionId,
+            'right_revision' => $revisionId,
+          ]),
+        )->toRenderable();
+      }
       $rows[] = [
         ['data' => ['#plain_text' => (string) $revision->getRevisionId()]],
         ['data' => ['#plain_text' => $date]],
@@ -81,6 +107,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
             '#plain_text' => $isDefault ? $this->t('Revisão atual') : $this->t('Histórica'),
           ],
         ],
+        ['data' => $operations],
       ];
     }
 
@@ -94,6 +121,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
         $this->t('Assunto'),
         $this->t('Mensagem da revisão'),
         $this->t('Situação'),
+        $this->t('Operações'),
       ],
       '#rows' => $rows,
       '#empty' => $this->t('Esta publicação ainda não tem revisões.'),

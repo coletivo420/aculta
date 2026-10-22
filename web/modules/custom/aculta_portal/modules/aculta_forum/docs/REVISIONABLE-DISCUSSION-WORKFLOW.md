@@ -111,9 +111,10 @@ testes de workflow; a configuração da política inicial continua sendo a de
    fila. Visual mobile, teclado, leitor de tela e isolamento de cache. A dev.143
    inicia a escrita pública contextual via form mode Core; a dev.144 acrescenta
    respostas a posts publicados no mesmo tópico e a dev.145 identifica o pai na
-   leitura e no composer sem quebrar a ordem cronológica. Hierarquia visual,
-   salto paginado até pai fora da página, comparação de revisões e homologação
-   visual continuam pendentes.
+   leitura e no composer sem quebrar a ordem cronológica. A dev.146 compara
+   assunto/corpo de revisões adjacentes usando Diff contrib dentro da rota
+   administrativa contextual. Hierarquia visual, salto paginado até pai fora da
+   página, comparação não adjacente e homologação visual continuam pendentes.
 3. **Migração não destrutiva em código:** mapear Comments apenas quando
    `comment_type=aculta_discussion_post`, host Node de bundle
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore

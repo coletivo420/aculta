@@ -63,9 +63,10 @@ transição, tópico publicado e purpose `forum`. O histórico administrativo é
 somente leitura em
 `/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes`: requer a
 permissão administrativa e valida o tópico e purpose; lista metadados de todas
-as revisões sem links de revert/delete. Respostas a posts existentes,
-comparação textual e migração dos Comments continuam nas fases seguintes; o
-Fórum legado segue ativo até equivalência e corte aprovados.
+as revisões sem links de revert/delete. Respostas contextuais estão disponíveis
+para posts publicados. A comparação de assunto e corpo está descrita abaixo;
+migração dos Comments e corte continuam pendentes, e o Fórum legado segue ativo
+até equivalência e aprovação.
 
 O histórico adapta a API Core `VersionHistoryController` e usa a API
 `RevisionableStorageInterface`/EntityQuery para carregar revisões paginadas. A
@@ -75,3 +76,21 @@ rotas públicas. Fontes consultadas:
 
 - [Drupal 11.x `VersionHistoryController`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Controller%21VersionHistoryController.php/class/VersionHistoryController/11.x)
 - [Drupal 11.x Entity API — revisões](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21entity.api.php/11.x)
+
+A comparação de revisões fica em
+`/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}`.
+O custom access revalida os dois IDs, exige que sejam distintos e pertençam ao
+mesmo post do histórico, além dos critérios de purpose/permissão/tópico desta
+seção. A interface compara somente assunto e corpo, não oferece revert/delete
+e usa o serviço `diff.entity_comparison` do Diff 2.1.1 instalado; a rota genérica
+do Diff é específica para Node e não é reutilizada. O Core DiffFormatter escapa
+as linhas resultantes; o controller converte rich text em texto antes de
+renderizar a comparação.
+
+Referências primárias consultadas em 2026-10-22:
+
+- [Diff para Drupal — suporte a Drupal 11 e todos os tipos de entidade na linha 2.1](https://www.drupal.org/project/diff)
+- [Diff 2.1.1 — release estável e correções](https://www.drupal.org/project/diff/releases)
+- Código instalado: `web/modules/contrib/diff/src/DiffEntityComparison.php`,
+  `web/modules/contrib/diff/src/DiffEntityParser.php` e
+  `web/core/lib/Drupal/Core/Diff/DiffFormatter.php`.

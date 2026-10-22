@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.146` | Comparar revisões adjacentes de uma publicação | Histórico oferece comparação segura de assunto/corpo para duas revisões do mesmo post, com acesso restrito a `main` e tópico publicado em `forum`; reutiliza Diff 2.1.1 habilitado. Sem revert/delete ou Runtime; comparação não adjacente, testes e visual pendentes. |
 | `0.1.0-dev.145` | Identificar o contexto da resposta | Lista cronológica mostra assunto do post pai acessível, com âncora interna se presente na página; composer confirma o destino da resposta. Sem rota nova, CSS/JS ou Runtime; hierarquia visual, navegação ao pai em outra página e validação visual pendentes. |
 | `0.1.0-dev.144` | Responder a posts revisionáveis | Ação por publicação abre o composer contextual; UUID do pai é resolvido no servidor e só aceita revisão default publicada, acessível e do mesmo tópico. Sem rota nova ou Runtime; apresentação hierárquica, testes e revisão visual pendentes. |
 | `0.1.0-dev.143` | Composer público contextual de posts revisionáveis | Link só aparece para conta autenticada com permissão; `DiscussionContextResolver` e rota same-origin revalidam tópico por UUID. Form mode Core oculta estado/referências; `ParticipationRules` define moderação. Comments permanecem ativos; respostas a posts, Runtime e revisão visual pendentes. |

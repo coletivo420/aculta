@@ -1,3 +1,9 @@
+## `0.1.0-dev.146` — compara revisões de posts
+
+- O histórico administrativo oferece comparação entre revisões adjacentes da mesma publicação, limitada ao assunto e corpo; o Diff contrib fornece a comparação textual e o Core escapa as linhas exibidas.
+- A rota `main` valida no servidor que ambas as revisões pertencem ao post do histórico e que o tópico publicado pertence ao purpose `forum`; sem operação de revert/delete ou mudança Runtime.
+- Reutiliza `drupal/diff` 2.1.1 já instalado/habilitado; nenhuma dependência Composer nova. Smoke e revisão visual ainda pendentes.
+
 ## `0.1.0-dev.145` — identifica o contexto de respostas
 
 - A leitura cronológica apresenta o assunto do post pai junto às respostas publicadas; quando o pai está na página atual, o contexto liga à âncora estável do post.
