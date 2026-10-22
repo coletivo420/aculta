@@ -47,3 +47,29 @@ Contrato `StudioExperienceProviderInterface`, registry `StudioExperienceManager`
 Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManager` no LMS, inclusive autorização, notas e certificados. Cursos mantêm URLs fornecidas pelo Portal/LMS, certificados usam rota de verificação existente; nenhum ACL novo. `#cache.max-age: 0` conservado até aferição em ambiente real. Teste Unit existente atualizado para preservar header e estados vazios SDC; execução PHP lint, PHPUnit, inspeção UI Suite/SDC, contraste dark/light, 320–1440px, navegação por teclado e smoke de domínio conta ainda **pendentes**.
 
 **Próxima C2-T:** fixture de curso matriculado, avaliação pendente e certificado ativo/revogado, testes Kernel/Functional de renderização com SDC e regressão de URLs no purpose account. Após homologação, avaliar um componente de progresso próprio do ACULTA420 apenas se houver segundo consumidor real.
+
+## Replanejamento transversal — 2026-10-22 · STUDIO 0.1-C2-R
+
+**Prioridade ativa: GanjaLab editorial.** G420-C2 permanece implementada estaticamente e não homologada. Não bloquear o desenvolvimento editorial pela construção paralela de componentes LMS/tema. A homologação G420-C2-T fica condicionada a fixtures reais, layout em ACULTA420, contratos dos dados LMS, acessibilidade, mobile, light/dark e gates Domain/HTTP. `aculta420:card`, `content-grid`, `context-header`, `empty-state` são componentes existentes, mas existência de YAML/Twig/story não é evidência de consumidor homologado, comportamento responsivo ou UI Suite validada. Progresso, avaliação pendente, estados de certificado e contexto de turma seguem acoplados aos dados/provedores LMS; não declará-los componentes de design maduros. Não criar um novo componente só para passar o gate.
+
+### Matriz de dependências e frentes
+
+| Frente | Código constatado | Não concluído / dependência | Política |
+| --- | --- | --- | --- |
+| G420-C2 dashboard | Composer no Studio, cards/grid/empty/context-header SDC existentes, dados em `LearningDashboardManager` | fixtures matriculado/não matriculado, certificados válidos/revogados, UI Suite real, Kernel/Functional, browser, mobile/dark, propósito account | congelar novas abstrações e acompanhar trabalho LMS/tema |
+| G420-D salas e turmas | LMS, Group e recursos especializados existentes | adapters e UX integrada, avaliações e materiais/certificados em desenvolvimento paralelo | não iniciar pela UI sem consumidores e autorização confirmados |
+| ACULTA420 | SDC card/grid/header/empty e stories estáticas | verificar render real, contratos de slots, tokens, 320–1440px, dark/light e gates UI Suite | tema é dono do visual; Studio não cria CSS concorrente |
+| GanjaLab editorial | StudioTab/Presenter/Controller/AJAX, plugins Revista/Wiki/Forum/Cursos/Galerias | hardening de consultas, ações reais, jornadas próprias, editor e fila | prioridade imediata |
+| Wiki moderação | proposta e WikiTab existentes | provider autorizado/paginado, grants por revisão, Kernel, Content Moderation | bloqueado para produção |
+| WE SATIVA | contrato UX documentado | provider e entrada própria sob /studio/we-sativa ainda ausentes | backlog; não misturar com moderação GanjaLab |
+
+### Frente prioritária: GANJALAB E-0.1 — Editor Studio
+
+- **E-A inventário/contrato:** conferir consumidores de cada plugin, rotas e forms dos donos, ownership por área, URLs canônicas `conta.aculta.*/studio/ganjalab`, links e dependências; limpar README/docs obsoletos sem remover rotas legadas.
+- **E-B Meu trabalho:** padrão default `Meus conteúdos`, acessos autor/equipe/moderador distintos, filtros autorizados, paginação depois dos grants e render access/cache por item. Prioridade segurança antes de disponibilizar listagens novas.
+- **E-C Jornada editorial Revista:** criar, salvar rascunho, editar, pré-visualizar, enviar para revisão e acompanhar pelo Form API e transições existentes do dono; Studio apenas navegação, composição e feedback.
+- **E-D Editor shell:** layout mobile-first e progressive enhancement, foco, erro, aviso de alterações não salvas e ações contextualizadas via Core SDC + UI Suite do ACULTA420, preservando Institution/Domain Header.
+- **E-E adapters:** estender a Wiki/Fórum/Galerias/Cursos somente após cada dono confirmar forms, ACL e estados; moderação Wiki em microfase própria com provider e testes.
+- **E-R aceite:** testes Unit/Kernel/Functional de dois autores e editor, revisão privada, grants Domain e Group, 403/404, cache quente, no-JS/AJAX, 320–1440px, contraste e teclado.
+
+**Não habilitar nova fila nem ampliar visibilidade de estados no E-A.** Cada microfase terá commit próprio na PR corrente, sem misturar trabalho paralelo. Testes de runtime não executados nesta reclassificação documental.
