@@ -124,3 +124,22 @@ Não renderizar controles de PDF fictícios pelo Studio: o visualizador real ger
 - Layout light/dark, leitor de tela, zoom/reflow e 320–1440px; PDFs sem acessibilidade requerem alternativa de conteúdo quando forem obrigatórios.
 
 **Status:** planejamento visual e contrato de acesso; não implementado.
+
+## Refinamento 0.4.4-C — duas explorações, mídia única (2026-10-22)
+
+**Navegação principal por contexto pedagógico:** curso → módulo → aula → recursos associados. Em paralelo, um filtro **Por tipo** (documento/PDF, vídeo, imagens/Gallery, links e interatividade H5P) permite localizar material conhecido, sem criar cópias. Ambos são apresentações da mesma coleção autorizada. A UI deverá manter a origem curricular visível mesmo na vista Por tipo.
+
+**Wireframe compacto:**
+```text
+GanjaLab420 / Curso / Biblioteca
+[Por aula] [Por tipo]
+POR AULA: Fundamentos → Aula 1 → Guia.pdf · Infográfico
+POR TIPO: [Todos] [PDF] [Vídeo] [Galeria] [H5P]
+          Guia.pdf — Fundamentos / Aula 1
+```
+
+Uma Media referenciada em diversas aulas continua **uma Media/File**, com associações curriculares independentes e visíveis. A biblioteca pode agregá-la em uma entrada e indicar aulas de origem; não prometer remoção global ao desvincular uma aula. Se o provider não oferecer relações contextuais suficientes, registrar lacuna técnica em 0.4.4-A antes de criar novos campos. **H5P deve abrir o player/atividade autorizada, nunca ser tratado como download de documento.**
+
+O Course Builder do GanjaLab poderá futuramente oferecer **Adicionar material existente** consumindo os mesmos serviços, com permissão de editor e validação de Group. Reusar um recurso não altera automaticamente sua publicação ou visibilidade. Retornar do leitor PDF ou outro recurso à aula de origem, restaurando contexto, foco e histórico; cuidar de formulários não enviados.
+
+**Aceite:** busca/filtros com autorização antes de contagem/paginação; deduplicação de File/Media; isolamento de materiais exclusivos por turma; preservação de cache contexts/tags por usuário/Group; leitor PDF único; mobile 320px, teclado e sem JS. Este refinamento permanece **somente documental**.
