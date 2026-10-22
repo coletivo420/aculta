@@ -648,3 +648,7 @@ A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora 
 ## GanjaLab420 — certificados e histórico (UX 0.7)
 
 [Conquistas, Certificados e Histórico](../portal/GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) detalha interface de aluno para certificados oficiais, verificação pública, QR/PDF, histórico e eventuais conquistas reais. Não criar certificado, badge nem score paralelo; manter F0–F17 e `aculta_lms` sem alterações funcionais.
+
+## GanjaLab420 — Consolidação e Homologação Visual (UX 0.8)
+
+[Contrato visual transversal e gates](../portal/GANJALAB420-VISUAL-QUALITY-GATES.md) consolida interfaces de estudante, tokens ACULTA420, acessibilidade, mobile, H5P, PDF, privacidade A/B e testes no Runtime. É planejamento/documentação, sem alterar estados das fases F0–F17 ou o nome `aculta_lms`.
