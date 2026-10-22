@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Presentation;
+namespace Drupal\aculta_wiki\Presentation;
 
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Builds the shared GET search form presented throughout Wiki420.
  */
-final class WikiSearchFormBuilder {
+final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
 
   public function __construct(
     private readonly TranslationInterface $translation,

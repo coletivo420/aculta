@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Controller;
+namespace Drupal\aculta_wiki\Controller;
 
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Cache\CacheableMetadata;

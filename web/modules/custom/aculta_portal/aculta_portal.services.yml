@@ -206,10 +206,7 @@ services:
     arguments: ['@aculta_portal.account_courses', '@string_translation']
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.presentation.wiki_search_form', '@path.matcher']
-  aculta_portal.presentation.wiki_search_form:
-    class: Drupal\aculta_portal\Presentation\WikiSearchFormBuilder
-    arguments: ['@string_translation', '@request_stack']
+    arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@?aculta_wiki.presentation.wiki_search_form', '@path.matcher']
   aculta_portal.content_purpose_resolver:
     class: Drupal\aculta_portal\Domain\ContentPurposeResolver
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

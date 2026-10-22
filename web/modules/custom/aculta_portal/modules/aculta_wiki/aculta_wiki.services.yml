@@ -1,0 +1,4 @@
+services:
+  aculta_wiki.presentation.wiki_search_form:
+    class: Drupal\aculta_wiki\Presentation\WikiSearchFormBuilder
+    arguments: ['@string_translation', '@request_stack']

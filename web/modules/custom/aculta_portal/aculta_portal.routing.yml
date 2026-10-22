@@ -189,7 +189,7 @@ aculta_portal.support_subscription_action:
 aculta_portal.wiki_home:
   path: /wiki
   defaults:
-    _controller: \Drupal\aculta_portal\Controller\WikiController::home
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::home
     _title: Wiki420
   requirements:
     _permission: access content
@@ -223,7 +223,7 @@ aculta_portal.search_suggestions:
 aculta_portal.wiki_search:
   path: /wiki/busca
   defaults:
-    _controller: \Drupal\aculta_portal\Controller\WikiController::search
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::search
     _title: Buscar na Wiki420
   requirements:
     _permission: access content
@@ -231,7 +231,7 @@ aculta_portal.wiki_search:
 aculta_portal.wiki_search_preview:
   path: /wiki/busca/previa
   defaults:
-    _controller: '\Drupal\aculta_portal\Controller\WikiController::preview'
+    _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
   requirements:
     _permission: access content
 
