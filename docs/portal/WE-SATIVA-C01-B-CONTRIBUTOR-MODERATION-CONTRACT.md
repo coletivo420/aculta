@@ -75,3 +75,7 @@ A permissão `edit own wiki_entry content` **não autoriza atualizar qualquer No
 ## Política complementar — primeiro verbete
 
 Além do fluxo de e-mail confirmado e content editor, a regra aprovada exige **moderação obrigatória do primeiro verbete de cada colaborador**, usando histórico de verbetes publicados da Wiki, não participações no Fórum. O [plano específico de moderação](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) e a [política geral de código compartilhado](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md) são fontes de verdade. **Não confundir** primeira publicação com autorização para publicar depois: a transição oficial permanece exclusiva dos editores; todas as sugestões seguem revisão.
+
+## Retificação de ownership (2026-10-22)
+
+**A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
