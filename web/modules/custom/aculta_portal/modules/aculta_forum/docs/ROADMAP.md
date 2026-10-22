@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.154` | Inventariar denúncias/flags de Comments elegíveis | Auditoria conta Flaggings por configuração sem expor autores; a migração deverá recriar as associações pela API do Flag, que impede mover uma flagging. Sem alteração Runtime; testes pendentes. |
 | `0.1.0-dev.153` | Corrigir classificação de pais fora do escopo no inventário | Auditoria resolve pais existentes não elegíveis e separa relações externas de referências realmente ausentes. Sem alteração Runtime; testes pendentes. |
 | `0.1.0-dev.152` | Inventariar Comments antes da migração revisionável | Comando somente leitura mede escopo/purpose, estados, idiomas/traduções, timestamps, autoria histórica, formatos, embeds e integridade pai/filho; não grava IDs nem cria destinos. Migrate API e mapa idempotente pendentes. Sem Runtime; testes pendentes. |
 | `0.1.0-dev.151` | Comparar revisões de páginas diferentes | Seleção aceita IDs mostrados em qualquer página e valida existência/vínculo ao post antes de redirecionar; rota de comparação revalida o acesso. Sem alteração Runtime; testes e revisão visual pendentes. |

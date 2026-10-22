@@ -1,3 +1,10 @@
+## `0.1.0-dev.154` — inventariar flags antes da migração
+
+- A auditoria soma Flagging entities ligadas aos Comments elegíveis e agrupa
+  as contagens pelo ID da configuração de flag. A consulta não divulga quem
+  sinalizou o conteúdo; o inventário confirma o vínculo que precisará ser
+  recriado no destino, pois o Flag contrib não permite mover uma flagging.
+
 ## `0.1.0-dev.153` — distinguir pais existentes fora do escopo
 
 - A auditoria resolve também Comments pais que não entram no escopo elegível.

@@ -52,6 +52,7 @@ final class ForumCommentMigrationAuditCommand extends Command {
       'comments_with_translations' => 'Comments com traduções',
       'media_embeds' => 'Embeds de Media',
       'gallery_embeds' => 'Embeds de Gallery',
+      'flaggings' => 'Denúncias/flags associadas aos Comments elegíveis',
       'topics' => 'Tópicos distintos elegíveis',
       'parent_outside_scope' => 'Pais existentes fora do escopo',
       'parent_missing' => 'Pais ausentes',
@@ -69,6 +70,10 @@ final class ForumCommentMigrationAuditCommand extends Command {
     $output->writeln('Idiomas:');
     foreach ($report['languages'] as $language => $count) {
       $output->writeln(sprintf('  %s: %d', $language, $count));
+    }
+    $output->writeln('Flags por configuração:');
+    foreach ($report['flaggings_by_flag'] as $flag => $count) {
+      $output->writeln(sprintf('  %s: %d', $flag, $count));
     }
     $output->writeln('<comment>Dry run somente leitura: nenhum conteúdo ou configuração foi alterado.</comment>');
     return Command::SUCCESS;

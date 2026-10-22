@@ -58,6 +58,8 @@ final class ForumCommentMigrationAudit {
       'comments_with_translations' => 0,
       'media_embeds' => 0,
       'gallery_embeds' => 0,
+      'flaggings' => 0,
+      'flaggings_by_flag' => [],
       'topics' => 0,
       'parent_outside_scope' => 0,
       'parent_missing' => 0,
@@ -72,6 +74,7 @@ final class ForumCommentMigrationAudit {
     $parent_references = [];
 
     foreach (array_chunk($comment_ids, $batch_size) as $batch) {
+      $eligible_comment_ids = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
         if (!$comment instanceof CommentInterface) {
           continue;
@@ -90,6 +93,7 @@ final class ForumCommentMigrationAudit {
         $comment_id = (string) $comment->id();
         $topic_id = (string) $topic->id();
         $report['eligible_comments']++;
+        $eligible_comment_ids[] = $comment_id;
         $topic_ids[$topic_id] = TRUE;
         $topic_by_comment[$comment_id] = $topic_id;
         $translations = $comment->getTranslationLanguages();
@@ -128,6 +132,20 @@ final class ForumCommentMigrationAudit {
             'parent_id' => $parent_id,
             'topic_id' => $topic_id,
           ];
+        }
+      }
+
+      if ($eligible_comment_ids !== []) {
+        $flagging_storage = $this->entityTypeManager->getStorage('flagging');
+        $flagging_ids = $flagging_storage->getQuery()
+          ->accessCheck(FALSE)
+          ->condition('entity_type', 'comment')
+          ->condition('entity_id', $eligible_comment_ids, 'IN')
+          ->execute();
+        foreach ($flagging_storage->loadMultiple($flagging_ids) as $flagging) {
+          $flag_id = (string) $flagging->getFlagId();
+          $report['flaggings']++;
+          $report['flaggings_by_flag'][$flag_id] = ($report['flaggings_by_flag'][$flag_id] ?? 0) + 1;
         }
       }
     }
@@ -170,6 +188,7 @@ final class ForumCommentMigrationAudit {
     $report['topics'] = count($topic_ids);
     ksort($report['body_formats']);
     ksort($report['languages']);
+    ksort($report['flaggings_by_flag']);
     $report['existing_revisionable_posts'] = (int) $this->entityTypeManager
       ->getStorage('aculta_forum_post')
       ->getQuery()
