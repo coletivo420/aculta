@@ -109,3 +109,7 @@ Priorizar o GanjaLab editorial em `conta.aculta.*/studio/ganjalab` enquanto a ho
 ## E-A.1 — primeira entrega de simplicidade
 
 A home GanjaLab passou a oferecer a pergunta “O que vamos criar hoje?” e cartões com as ações reais de criação já permitidas, via `StudioPresenter` e Core SDC do ACULTA420. O formulário de autoria ainda pode abrir no domínio do módulo dono; isso é etapa intermediária, não editor integrado pronto. O caminho de volta, 'Meu trabalho', navegação por tarefas em dispositivos pequenos e criação/edição inline ficam para E-A.2/E-B/E-C após auditoria de URLs, grants e Form API. Inventário detalhado no roadmap do Studio.
+
+## E-B.1 — Meu trabalho em implementação
+
+Na área Revista, a navegação passa a iniciar em `Meu trabalho → Meus conteúdos`, filtrando por autor antes de paginar. O fluxo básico de criar permanece ligado à rota real do módulo dono. Filtros por estado ainda têm contagem/paginação parcial por serem resolvidos depois da busca de revisões autorizadas; não considerar o painel finalizado. Próximo passo: provider com semântica de revisões e acesso, seguido por cartões SDC mobile-first e continuidade de rascunhos.
