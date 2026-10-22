@@ -100,3 +100,17 @@ function aculta_index_schema(): array {
     ],
   ];
 }
+
+/**
+ * Implements hook_install().
+ */
+function aculta_index_install(): void {
+  \Drupal::database()->insert('aculta_index_state')
+    ->fields([
+      'state_id' => 1,
+      'active_generation' => '',
+      'revision' => 0,
+      'updated' => \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
+}

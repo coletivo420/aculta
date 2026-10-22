@@ -71,6 +71,22 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Checks a fresh install starts with no published generation.
+   */
+  public function testInstallInitializesEmptyActiveGenerationPointer(): void {
+    aculta_index_install();
+
+    $state = $this->container->get('database')->select('aculta_index_state', 'state')
+      ->fields('state', ['active_generation', 'revision'])
+      ->condition('state_id', 1)
+      ->execute()
+      ->fetchAssoc();
+
+    $this->assertSame('', $state['active_generation']);
+    $this->assertSame('0', $state['revision']);
+  }
+
+  /**
    * Checks the provider registry loads without source adapters.
    */
   public function testProviderRegistryLoadsWithoutSourceAdapters(): void {
