@@ -1,9 +1,4 @@
 services:
-  aculta_portal.image_content_index_provider:
-    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
-    arguments: ['image', 'image']
-    tags:
-      - { name: aculta_index.provider }
   aculta_portal.remote_video_content_index_provider:
     class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
     arguments: ['remote_video', 'remote_video']

@@ -23,7 +23,7 @@ O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de
 
 Providers podem implementar opcionalmente `ContentIndexAccessContextProviderInterface` para indicar um purpose canônico de verificação, por exemplo `forum`, `wiki` ou `courses`. O filtro troca temporariamente o Domain, executa Entity Access para o mesmo usuário e restaura o contexto anterior. Sem provider ativo ou sem o Domain pedido, a entrada não é exposta. O Index não infere o purpose a partir de hostname nem reduz regras de grants/Group.
 
-Integrações atuais: Revista (`node:revista`), Wiki (`node:wiki_entry`, só metadados), Fórum (tópicos, ForumPosts e Comments legados), Gallery (`media_gallery` com relações explícitas para `media:image`) e Media (`image`, `document`, `remote_video`, `course_document`, `forum_attachment`). O provider Gallery não cria URL de arquivo nem projeta corpo, alt, autoria ou dados de direitos.
+Integrações atuais: Revista (`node:revista`), Wiki (`node:wiki_entry`, só metadados), Fórum (tópicos, ForumPosts e Comments legados), Gallery (`media_gallery` com relações explícitas para `media:image`) e Media (`image`, `document`, `remote_video`, `course_document`, `forum_attachment`), com registros em `aculta_image`, Document Viewer, PDF Viewer Group e Forum; o provider `remote_video` aguarda definição de módulo dono. O provider Gallery não cria URL de arquivo nem projeta corpo, alt, autoria ou dados de direitos.
 
 ## Estatísticas opcionais
 

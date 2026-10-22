@@ -1,4 +1,10 @@
 services:
+  aculta_image.content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['image', 'image']
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_image.catalog:
     class: Drupal\aculta_image\ImageCatalog
     tags:

@@ -1,5 +1,10 @@
 # Changelog — aculta_image
 
+## 0.1.0-dev.30 — provider de mídia do Content Index
+
+- Registra o provider mínimo de `media:image` no módulo dono; arquivos, URLs e metadados de imagem não são copiados.
+
+
 ## 0.1.0-dev.29 — permite perfil contextual de upload de imagem
 
 - `UploadPolicy::validators()` recebe limite e extensões opcionais para fluxos
