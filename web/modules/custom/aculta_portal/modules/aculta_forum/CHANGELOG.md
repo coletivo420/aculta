@@ -1,3 +1,12 @@
+## `0.1.0-dev.179` — auditar integridade das denúncias migráveis
+
+- A auditoria somente leitura agora conta flaggings globais, donos de usuário
+  ausentes e registros sem timestamp `created` positivo. Os dados são carregados
+  por lote e a saída permanece agregada, sem IDs ou identidade dos denunciantes.
+  Isso documenta pré-condições para recriar associação, escopo e data sem
+  executar a migração.
+- Nenhuma configuração foi importada nem migration executada.
+
 ## `0.1.0-dev.178` — incluir posts revisionáveis na fila de denúncias
 
 - Flag `sinalizar_post_forum` mostra a ação no display de `aculta_forum_post`;

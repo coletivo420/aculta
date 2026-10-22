@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.179` | Auditar integridade das denúncias migráveis | Dry-run conta flags globais, donos ausentes e timestamps `created` inválidos em lotes, sem expor identidade. Nenhuma migration/configuração executada. |
 | `0.1.0-dev.178` | Incluir denúncias de posts revisionáveis | Flag dedicado aparece no display do post, exige permissão e valida publicação/default revision e Domain Fórum; a fila User agrupa o novo tipo sem depender do módulo Fórum. A auditoria mapeia o Flag legado `sinalizar_comentario` ao destino novo. Conversão real das flaggings e preservação do timestamp ainda pendentes; sem import de configuração/Runtime. |
 | `0.1.0-dev.177` | Evitar efeitos de anexos durante importação | Hooks de publicação de Media/Gallery ignoram saves sincronizados de `ForumPost`; a remoção normal dos Comments legados no corte reavalia referências com os posts já existentes. Sem execução da migration. |
 | `0.1.0-dev.176` | Reprovar embeds sem destino na migration | O destino confere em lote os UUIDs de Media e Gallery em todas as traduções e interrompe a linha se faltar UUID, entidade ou tipo de destino. Evita salvar referências quebradas; Entity Usage registra as referências quando o post é salvo. Sem execução da migration; integração de anexos e publicação contextual continuam pendentes. |

@@ -155,7 +155,9 @@ testes de workflow; a configuração da política inicial continua sendo a de
    A dev.178 acrescenta `sinalizar_post_forum`, uma ação separada no display de
    post, com access contextual, guarda de histórico e agregação em
    `aculta_user.ReportQueue`; a auditoria mapeia o ID legado ao ID de destino.
-   Isso prepara o consumidor, mas ainda não migra associações. A estratégia de
+   A dev.179 estende a auditoria para contar flaggings globais, donos ausentes e
+   timestamps `created` inválidos por lotes, sem divulgar identidade. Isso
+   prepara o inventário de pré-condições, mas ainda não migra associações. A estratégia de
    gravar o timestamp histórico por Entity API após criar pela Flag API ainda
    precisa ser validada quanto a eventos, access e deduplicação antes da
    migration. Fonte upstream:

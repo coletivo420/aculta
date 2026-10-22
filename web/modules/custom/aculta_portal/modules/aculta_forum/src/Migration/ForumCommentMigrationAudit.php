@@ -79,6 +79,9 @@ final class ForumCommentMigrationAudit {
       'missing_gallery_references' => 0,
       'flaggings' => 0,
       'flaggings_by_flag' => [],
+      'flaggings_global' => 0,
+      'flaggings_with_missing_owner' => 0,
+      'flaggings_without_valid_created_time' => 0,
       'flaggings_without_post_flag_configuration' => 0,
       'topics' => 0,
       'parent_outside_scope' => 0,
@@ -247,10 +250,31 @@ final class ForumCommentMigrationAudit {
           ->condition('entity_type', 'comment')
           ->condition('entity_id', $eligible_comment_ids, 'IN')
           ->execute();
-        foreach ($flagging_storage->loadMultiple($flagging_ids) as $flagging) {
+        $flaggings = $flagging_storage->loadMultiple($flagging_ids);
+        $flagging_owner_ids = [];
+        foreach ($flaggings as $flagging) {
+          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          if ($owner_id > 0) {
+            $flagging_owner_ids[] = (string) $owner_id;
+          }
+        }
+        $flagging_owners = $flagging_owner_ids === [] ? [] : $this->entityTypeManager
+          ->getStorage('user')
+          ->loadMultiple(array_unique($flagging_owner_ids));
+        foreach ($flaggings as $flagging) {
           $flag_id = (string) $flagging->getFlagId();
           $report['flaggings']++;
           $report['flaggings_by_flag'][$flag_id] = ($report['flaggings_by_flag'][$flag_id] ?? 0) + 1;
+          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          if ($owner_id > 0 && !isset($flagging_owners[$owner_id])) {
+            $report['flaggings_with_missing_owner']++;
+          }
+          if ((bool) $flagging->get('global')->value) {
+            $report['flaggings_global']++;
+          }
+          if ((int) $flagging->getCreatedTime() <= 0) {
+            $report['flaggings_without_valid_created_time']++;
+          }
         }
       }
     }
