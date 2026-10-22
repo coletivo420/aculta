@@ -106,6 +106,11 @@
               return response.text();
             })
             .then((html) => {
+              // A request cancelled by navigation or drawer closing must never
+              // overwrite the current panel after response.text() resolves.
+              if (activeRequest.signal.aborted || request !== activeRequest) {
+                return;
+              }
               const template = document.createElement('template');
               template.innerHTML = html;
               Drupal.detachBehaviors(content, null, 'unload');
@@ -113,13 +118,14 @@
               Drupal.attachBehaviors(content);
             })
             .catch((error) => {
-              if (error.name !== 'AbortError') {
+              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
                 content.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar esta conversa.')));
               }
             })
             .finally(() => {
               if (request === activeRequest) {
                 content.setAttribute('aria-busy', 'false');
+                request = null;
               }
             });
         };
@@ -228,6 +234,11 @@
               return response.text();
             })
             .then((html) => {
+              // A request cancelled by navigation or drawer closing must never
+              // overwrite the current panel after response.text() resolves.
+              if (activeRequest.signal.aborted || request !== activeRequest) {
+                return;
+              }
               const template = document.createElement('template');
               template.innerHTML = html;
               // Detach behaviors of the replaced content, as navigate() does, so listeners do not accumulate.
@@ -236,13 +247,14 @@
               Drupal.attachBehaviors(content);
             })
             .catch((error) => {
-              if (error.name !== 'AbortError') {
+              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
                 content.replaceChildren(document.createTextNode(drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.')));
               }
             })
             .finally(() => {
               if (request === activeRequest) {
                 content.setAttribute('aria-busy', 'false');
+                request = null;
               }
             });
         });
