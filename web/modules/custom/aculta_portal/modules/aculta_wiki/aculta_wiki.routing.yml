@@ -1,0 +1,22 @@
+aculta_portal.wiki_home:
+  path: /wiki
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::home
+    _title: Wiki420
+  requirements:
+    _permission: access content
+
+aculta_portal.wiki_search:
+  path: /wiki/busca
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::search
+    _title: Buscar na Wiki420
+  requirements:
+    _permission: access content
+
+aculta_portal.wiki_search_preview:
+  path: /wiki/busca/previa
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
+  requirements:
+    _permission: access content

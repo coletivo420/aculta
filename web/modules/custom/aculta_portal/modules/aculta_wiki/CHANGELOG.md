@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — rotas movidas — 2026-10-22
+
+- `aculta_portal.wiki_home` (`/wiki`), `aculta_portal.wiki_search`
+  (`/wiki/busca`) e `aculta_portal.wiki_search_preview` (`/wiki/busca/previa`)
+  passam de `aculta_portal.routing.yml` para `aculta_wiki.routing.yml`,
+  mantendo nomes de máquina, caminhos e permissões (`access content`). Nenhuma
+  URL pública muda.
+- Os nomes continuam com o prefixo `aculta_portal.` por serem contrato público
+  citado em tema, testes e documentação; não foram renomeados.
+- Enquanto o módulo `aculta_wiki` estiver desabilitado, as rotas não são
+  registradas pelo Drupal. O Portal não as define mais; não há rota duplicada.
+- Nenhuma operação de Runtime; nenhum cache limpo.
+
 ## Não lançado — controlador e formulário movidos — 2026-10-22
 
 - `WikiController` e `WikiSearchFormBuilder` passam de `aculta_portal` para
