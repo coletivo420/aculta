@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_studio\Experience;
+
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Registry of independent Studio experiences (not GanjaLab StudioTabs).
+ */
+final class StudioExperienceManager {
+
+  /** @var array<string, \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface> */
+  private array $providers = [];
+
+  /**
+   * Adds an experience without silently shadowing an existing identifier.
+   */
+  public function addProvider(StudioExperienceProviderInterface $provider): void {
+    $id = $provider->id();
+    if ($id === '' || isset($this->providers[$id])) {
+      throw new \InvalidArgumentException(sprintf('Invalid or duplicate Studio experience ID: %s', $id));
+    }
+    $this->providers[$id] = $provider;
+  }
+
+  public function get(string $id): ?StudioExperienceProviderInterface {
+    return $this->providers[$id] ?? NULL;
+  }
+
+  /**
+   * Checks availability, domain purpose and user access; always cacheable.
+   */
+  public function access(string $id, string $purpose, AccountInterface $account): AccessResultInterface {
+    $provider = $this->get($id);
+    if ($provider === NULL || !$provider->available() || $provider->purpose() !== $purpose) {
+      return AccessResult::forbidden()->addCacheContexts(['user', 'url.site']);
+    }
+    return $provider->access($account);
+  }
+
+}
