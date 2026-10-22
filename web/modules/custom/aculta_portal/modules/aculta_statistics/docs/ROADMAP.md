@@ -199,3 +199,9 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 XK-08: padronizar providers para Wiki, Fórum, LMS, Commerce, User e Messenger; evitar dashboards/contadores paralelos, remover PII e aplicar retenção. Métricas de Group de associados são agregadas e não expõem membership individual.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B: métricas e dashboards seguem Statistics com providers por produto; eventos Messenger não devem gerar PII ou contagem duplicada; a futura membership Group de associados exige agregação sem identificação individual. Reaproveitar os contratos de eventos publicados apenas com semântica compatível.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
