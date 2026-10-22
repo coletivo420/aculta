@@ -7,7 +7,6 @@ namespace Drupal\aculta_studio\Learning;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -53,7 +52,7 @@ final class LearnerDashboardComposer {
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h3',
-          '#value' => Html::escape((string) $course['label']),
+          '#plain_text' => (string) $course['label'],
         ],
         'progress' => [
           '#type' => 'container',
@@ -82,7 +81,18 @@ final class LearnerDashboardComposer {
       if ($course['url'] instanceof Url) {
         $item['link'] = Link::fromTextAndUrl($this->t('Acessar curso'), $course['url'])->toRenderable();
       }
-      $course_items[] = $item;
+      $course_items[] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:card',
+        '#slots' => [
+          'header' => $item['title'],
+          'content' => [
+            'progress' => $item['progress'],
+            'pending' => $item['pending'] ?? [],
+          ],
+          'footer' => $item['link'] ?? [],
+        ],
+      ];
     }
     $build['courses'] = $course_items === []
       ? [
@@ -91,7 +101,12 @@ final class LearnerDashboardComposer {
         '#props' => ['compact' => TRUE],
         '#slots' => ['message' => ['#plain_text' => $this->t('Você ainda não está matriculado em nenhum curso.')]],
       ]
-      : ['#theme' => 'item_list', '#items' => $course_items];
+      : [
+        '#type' => 'component',
+        '#component' => 'aculta420:content-grid',
+        '#props' => ['columns' => 2],
+        '#slots' => ['items' => $course_items],
+      ];
 
     $build['certificates_title'] = ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Meus certificados')];
     $certificate_items = [];
@@ -100,7 +115,7 @@ final class LearnerDashboardComposer {
         continue;
       }
       $valid = $certificate->get('state')->value === 'active';
-      $certificate_items[] = [
+      $certificate_data = [
         'course' => ['#plain_text' => (string) $certificate->get('course_title')->value],
         'state' => ['#plain_text' => $valid ? $this->t('Válido') : $this->t('Revogado')],
         'issued' => [
@@ -112,6 +127,18 @@ final class LearnerDashboardComposer {
           'codigo' => $certificate->get('verification_code')->value,
         ]))->toRenderable(),
       ];
+      $certificate_items[] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:card',
+        '#slots' => [
+          'header' => $certificate_data['course'],
+          'content' => [
+            'state' => $certificate_data['state'],
+            'issued' => $certificate_data['issued'],
+          ],
+          'footer' => $certificate_data['verify'],
+        ],
+      ];
     }
     $build['certificates'] = $certificate_items === []
       ? [
@@ -120,7 +147,12 @@ final class LearnerDashboardComposer {
         '#props' => ['compact' => TRUE],
         '#slots' => ['message' => ['#plain_text' => $this->t('Nenhum certificado emitido ainda.')]],
       ]
-      : ['#theme' => 'item_list', '#items' => $certificate_items];
+      : [
+        '#type' => 'component',
+        '#component' => 'aculta420:content-grid',
+        '#props' => ['columns' => 2],
+        '#slots' => ['items' => $certificate_items],
+      ];
     CacheableMetadata::createFromRenderArray($build)
       ->addCacheableDependency($data['cache'])
       ->applyTo($build);
