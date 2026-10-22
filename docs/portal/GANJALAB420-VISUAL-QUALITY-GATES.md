@@ -70,3 +70,7 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 ## Planejamento da etapa 0.8-B
 
 [Componentes transversais e navegação](GANJALAB420-SHARED-UI-PLAN.md) especifica os contratos de Context Header, Context Tabs, feedback e layout, com consumidores reutilizáveis em GanjaLab420, GanjaLab, Revista, Wiki, Fórum e Conta. Este avanço permanece documental, sem gate Runtime aprovado.
+
+## Gate obrigatório — shell multidomínio global
+
+Em todas as telas do GanjaLab420 e nos demais purposes, manter **Institution Bar e Domain Header existentes**. Os headers contextuais são internos ao conteúdo. Testar mobile, desktop, light/dark, autenticação, AJAX, navegação sem JS e retorno entre domínios; bloquear entrega com cabeçalho oculto, duplicado ou substituído. Melhorias estéticas são permitidas, reestruturação do shell não. Ver [contrato do shell ACULTA420](../../web/themes/custom/aculta420/docs/shell.md).
