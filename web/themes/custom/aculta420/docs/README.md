@@ -56,3 +56,6 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b2-context-tabs.md](theme-ux-0.8-b2-context-tabs.md) — fase B2, SDC de abas por rotas, auditoria de Studio e integração ainda pendente.
 
 - B2-03: primeiro consumidor de `context-tabs` em `aculta_studio`, com validação visual/Runtime pendente. [Plano B2](theme-ux-0.8-b2-context-tabs.md).
+
+- [theme-ux-0.8-b2-05-static-gates.md](theme-ux-0.8-b2-05-static-gates.md) — checagem estática B2, com homologação no servidor pendente.
+- [theme-ux-0.8-b3-feedback-audit.md](theme-ux-0.8-b3-feedback-audit.md) — auditoria inicial dos estados e feedback SDC/UI Suite do portal.
