@@ -1,3 +1,13 @@
+## 0.4.0-dev.68 — caracterização das políticas compartilhadas (XK 0.1-C1) — 2026-10-22
+
+- `ParticipationRules`, `ParticipationEditWindow`, `EditWindowExemptionInterface`
+  e os hooks consumidores ganharam testes de caracterização Unit e Kernel,
+  sem alteração de código de produção, DI, configuração ou permissões.
+- `docs/USER-PART-0.1-C1-CHARACTERIZATION.md` registra contratos, matriz de
+  testes, cacheability, falha conservadora e pendências conhecidas.
+- `PublishedParticipationLookupInterface` permanece documentada como candidata,
+  não implementada. Nenhum Runtime foi executado.
+
 ## 0.4.0-dev.67 — contrato público de associado ativo para Group — 2026-10-22
 
 - `AssociadoMarker` implementa `ActiveAssociateInterface`

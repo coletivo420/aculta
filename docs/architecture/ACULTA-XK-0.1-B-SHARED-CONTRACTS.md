@@ -1,6 +1,6 @@
 # ACULTA-XK 0.1-B — Contratos compartilhados, ownership e ADRs
 
-**Data:** 2026-10-22 · **Estado:** fundação arquitetural documentada; sem alteração funcional, dependência Composer ou Runtime.
+**Data:** 2026-10-22 · **Estado:** fundação arquitetural documentada e caracterização XK-C1 concluída; sem alteração funcional, dependência Composer ou Runtime.
 **Base:** [Auditoria XK 0.1-A](ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md).
 
 ## ADR-XK-01 — Participação compartilhada pertence ao aculta_user
@@ -51,7 +51,7 @@
 | XK-B1 | User | catálogo de consumers e assinatura dos contracts de participação, sem código PHP |
 | XK-B2 | Messenger | catálogo de eventos, transporte, idempotência e consentimento |
 | XK-B3 | User + Forum | situação de associado, Group model e sincronização segura |
-| XK-C1 | User | testes de caracterização para ParticipationRules/ParticipationEditWindow antes de qualquer refatoração |
+| XK-C1 | User | **concluído em 2026-10-22**: testes de caracterização para ParticipationRules/ParticipationEditWindow/hooks ([evidência](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md)); sem refatoração |
 | XK-C2 | Messenger | adaptar um evento existente sem duplicar aviso, com testes |
 | XK-C3 | Forum | prova de ACL Group e revogação antes da migração |
 | XK-D | Wiki e LMS | consumos graduais, sem alterar isolamento Group nem revisão |

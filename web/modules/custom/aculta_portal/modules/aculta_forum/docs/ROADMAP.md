@@ -1061,3 +1061,12 @@ Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/archit
 XK 0.1-B / ADR-XK-03: especificar relação entre situação `ativo` do associado em User, membership Group e Entity Access; bloquear leitura imediatamente ao suspender/desligar, sem esperar worker. Inventariar Group type, relação do tópico, caches, anexos, Search API, aviso; migração/backfill só após dry-run/backup. Não confundir Group LMS com Forum associado.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
+
+## XK 0.1-C1 — caracterização concluída (2026-10-22)
+
+`ParticipationRules`, `ParticipationEditWindow`, `ParticipationEditWindowHooks` e
+a isenção LMS estão fixados por testes Unit e Kernel no `aculta_user`, sem
+mudança de comportamento, DI ou configuração. As células de ForumPost
+publicado/revisionado continuam cobertas pelo Kernel
+`ForumPostWorkflowKernelTest` deste módulo. `PublishedParticipationLookupInterface`
+segue documentada, não implementada. [Evidência](../../aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md).

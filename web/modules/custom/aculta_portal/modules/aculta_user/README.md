@@ -19,6 +19,7 @@ de usuário. O Drupal User e Profile continuam como fontes de verdade.
 - [Contrato da API de cartões](docs/AUTHOR-CARD-API.md)
 - [Port do Author Pane](docs/AUTHOR-PANE-PORT.md)
 - [Privacidade e acesso dos cartões](docs/PRIVACY-AND-ACCESS.md)
+- [Caracterização da participação compartilhada — USER-PART 0.1-C1](docs/USER-PART-0.1-C1-CHARACTERIZATION.md)
 - [CHANGELOG](CHANGELOG.md)
 
 Para mudanças coordenadas com a apresentação, consulte a
@@ -33,6 +34,16 @@ O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de p
 ## Inventário transversal USER-PART 0.1-A
 
 [Inventário comparativo Fórum, Fórum LMS e Wiki](docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md): preserva os contratos existentes de `ParticipationRules`, `ParticipationHooks`, `ParticipationEditWindow`, moderação contextual Group e workflow Wiki. A centralização priorizada é de **políticas e interfaces em `aculta_user`**; queries, filas e transições de cada domínio permanecem nos kernels respectivos. Próximo marco USER-PART 0.1-B: contrato/ADR e testes de caracterização antes de PHP funcional. Nenhum teste Runtime foi executado.
+
+## Caracterização USER-PART 0.1-C1
+
+[Caracterização das políticas compartilhadas](docs/USER-PART-0.1-C1-CHARACTERIZATION.md):
+`ParticipationRules`, `ParticipationEditWindow`, `EditWindowExemptionInterface`
+e os hooks consumidores estão fixados por testes Unit e Kernel (C1-A a C1-D,
+commits `512fe60d`, `f9e579c0`, `e6a4dc4d` e `aa55a84f`). Nenhuma classe de
+produção, configuração de serviço ou permissão foi alterada.
+`PublishedParticipationLookupInterface` segue **documentada, não implementada**.
+Nenhum Runtime foi executado.
 
 ## Contrato público de associado ativo — F-GROUP 0.1
 

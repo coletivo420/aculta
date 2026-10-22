@@ -45,6 +45,7 @@ O mecanismo de sugestões de alteração em verbetes de terceiros é uma respons
 | --- | --- | --- |
 | USER-PART 0.1-A | mapear `ParticipationRules`, chamadas, DI e testes Fórum; requisitos da Wiki | inventário dos consumidores |
 | 0.1-B | ADR e contrato de extensão dentro de `aculta_user`; política e lookup por domínio | review de segurança e ownership |
+| XK 0.1-C1 | caracterizar políticas e hooks compartilhados antes de refatorar; `PublishedParticipationLookupInterface` só documentada | Unit + Kernel verdes, sem mudança funcional ([evidência](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md)) |
 | 0.1-C | implementar consultas e testes de primeira publicação Wiki, preservando Fórum | unit + Kernel + regressão |
 | 0.1-D | integrar adapter/acesso Wiki, fila e Content Moderation | nenhuma publicação antecipada; grants/cache |
 | 0.1-E | compartilhar outros recursos de participação com contexto real | contratos testados |

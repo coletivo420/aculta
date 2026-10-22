@@ -118,6 +118,10 @@ XK 0.1-B / ADR-XK-01: primeira participação de Wiki passa por contrato de User
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
 
+## XK 0.1-C1 — caracterização concluída (2026-10-22)
+
+As políticas compartilhadas de participação no `aculta_user` estão fixadas por testes Unit e Kernel, sem mudança de comportamento. `PublishedParticipationLookupInterface` foi documentada, **não implementada**: o adapter de verbetes Wiki e a regra do primeiro verbete continuam fora deste marco. Nenhuma alteração neste módulo. [Evidência](../../aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md).
+
 ## WES-UX 0.4 — projeto visual por telas (2026-10-22)
 
 [Inventário de 12 estruturas WE SATIVA](../../../../../../../docs/portal/WE-SATIVA-VISUAL-SCREENS-0.4.md), incluindo entrada pelo verbete, início, Meu trabalho, microtarefas, novo verbete, CKEditor, prévia, revisão, feedback, ajuda, fontes e mídia. Sequência V-0.4-A–R, mobile-first em toda a Wiki, componentes Core SDC/UI Suite exclusivamente, Institution Bar + Domain Header preservados. Cada tela depende de providers, estados e permissões reais; não implementar links fictícios. Autosave apenas futuro.
