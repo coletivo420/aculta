@@ -225,3 +225,21 @@ function aculta_user_update_10005(): void {
     ->execute();
   \Drupal::database()->query("UPDATE {aculta_associado} SET data_adesao = created WHERE data_adesao IS NULL AND situacao = 'ativo'");
 }
+
+
+/** Migra o papel legado estudante para a categoria de perfil e o remove da conta. */
+function aculta_user_update_10011(): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('user');
+  $uids = $storage->getQuery()->accessCheck(FALSE)->condition('roles', 'estudante')->execute();
+  $profiles = \Drupal::entityTypeManager()->getStorage('profile');
+  foreach ($storage->loadMultiple($uids) as $account) {
+    $existing = $profiles->getQuery()->accessCheck(FALSE)
+      ->condition('uid', $account->id())->condition('type', 'estudante')->range(0, 1)->execute();
+    if ($existing === []) {
+      $profiles->create(['type' => 'estudante', 'uid' => $account->id()])->save();
+    }
+    $account->removeRole('estudante');
+    $account->save();
+  }
+  return (string) t('Migrated the legacy student role to the student profile category.');
+}

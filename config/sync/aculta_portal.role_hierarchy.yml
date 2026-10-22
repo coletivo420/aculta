@@ -2,6 +2,5 @@ cadeia:
   - gerente_loja
   - content_editor
   - lms_teacher
-  - estudante
   - email_confirmed
   - authenticated

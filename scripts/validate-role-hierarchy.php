@@ -4,12 +4,12 @@
  * @file
  * Gate: hierarquia de papéis (role_inheritance) e checagens por nome de papel.
  *
- * Decisão do responsável (2026-10-21): cadeia unilateral authenticated < email_confirmed < estudante < lms_teacher <
- * content_editor < gerente_loja < administrator. Associado não é papel (é situação, com pedido e data de adesão; ver
+ * Decisão do responsável (2026-10-21): estudante e associado são categorias, não papéis. Cadeia de papéis: authenticated <
+ * email_confirmed < lms_teacher < content_editor < gerente_loja < administrator. Associado mantém situação e data de adesão; ver
  * docs/ASSOCIADO.md em aculta_user). A herança é transitiva; administrator herda de todos.
  *
  * Verifica no config/sync (sem Runtime):
- * - a cadeia de herança exatamente como decidida (email_confirmed, estudante, lms_teacher,
+ * - a cadeia de herança exatamente como decidida (email_confirmed, lms_teacher,
  *   content_editor, gerente_loja);
  * - o mapa não tem ciclo nem autorreferência;
  * - administrator herda de todos os demais papéis de negócio;
@@ -34,8 +34,7 @@ $errors = [];
 /** Herança decidida: papel => papéis dos quais herda (conjunto exato). */
 $decidida = [
   'email_confirmed' => ['authenticated'],
-  'estudante' => ['email_confirmed'],
-  'lms_teacher' => ['estudante'],
+  'lms_teacher' => ['email_confirmed'],
   'content_editor' => ['lms_teacher'],
   'gerente_loja' => ['content_editor'],
 ];
@@ -79,7 +78,7 @@ foreach (array_keys($decidida) as $papel) {
 }
 
 // Contagem em código customizado (PHP de módulos e tema), excluindo testes.
-$papeis = '(administrator|gerente_loja|lms_teacher|estudante|associado|email_confirmed|wiki_contributor|content_editor|lms_admin)';
+$papeis = '(administrator|gerente_loja|lms_teacher|associado|email_confirmed|wiki_contributor|content_editor|lms_admin)';
 $hasRole = 0;
 $inArray = 0;
 $dirs = [$root . '/web/modules/custom', $root . '/web/themes/custom/aculta420/src'];

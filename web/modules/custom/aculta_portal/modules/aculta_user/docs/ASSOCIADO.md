@@ -39,7 +39,7 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
 - `aculta_user_update_10005`: adiciona situação, data de adesão, motivo e alteração. Contas que já tinham a marca
   passam a "ativo", com a data de adesão igual à data da marca.
 - Configuração: papel `associado` removido, com suas ações; cadeia de herança sem `associado` (`lms_teacher` herda de
-  `estudante`). O gate `scripts/validate-role-hierarchy.php` confere a cadeia decidida.
+  `email_confirmed`). O gate `scripts/validate-role-hierarchy.php` confere a cadeia decidida.
 
 ## Verificação (servidor de testes, 2026-10-21)
 
@@ -52,3 +52,7 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
   os temas aculta420 e Olivero.
 - Teste de Kernel dedicado não foi executado: o `aculta_user` depende de serviços do `aculta_portal` (chaves, CAPTCHA,
   OAuth, Commerce), e a montagem do container de teste não fecha com módulos mínimos. Pendência registrada em `PENDENCIAS.md`.
+
+### Categorias de usuário
+
+Associado e estudante são categorias representadas por tipos de perfil independentes. Uma mesma conta pode manter os dois perfis; a matrícula em curso ou turma garante o perfil `estudante`, e a situação ativa de associado garante o perfil `associado`. A atualização `aculta_user_update_10011()` migra contas do antigo papel `estudante` para o perfil e remove o papel legado.

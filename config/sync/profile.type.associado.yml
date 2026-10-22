@@ -5,7 +5,7 @@ dependencies: {  }
 id: associado
 label: Associado
 display_label: 'Perfil de associado'
-multiple: false
+multiple: true
 registration: false
 roles: {  }
 allow_revisions: false

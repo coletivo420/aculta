@@ -6,5 +6,4 @@ non_hierarchical_roles:
   content_editor: 0
   administrator: 0
   lms_teacher: 0
-  estudante: 0
   gerente_loja: 0

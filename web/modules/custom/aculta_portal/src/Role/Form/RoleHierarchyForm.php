@@ -27,7 +27,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   private const ESTADO = 'aculta_portal.role_hierarchy';
 
   /** Cadeia de partida quando a configuração ainda não existe (instalação). */
-  private const CADEIA_PADRAO = ['gerente_loja', 'content_editor', 'lms_teacher', 'estudante', 'email_confirmed', 'authenticated'];
+  private const CADEIA_PADRAO = ['gerente_loja', 'content_editor', 'lms_teacher', 'email_confirmed', 'authenticated'];
 
   public function __construct(
     ConfigFactoryInterface $config_factory,

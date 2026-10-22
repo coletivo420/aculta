@@ -19,9 +19,11 @@ Quem tem `gerente_loja` recebe, sem gravação extra, as permissões de todos os
 - O mapa efetivo não é gravado: é derivado a cada uso (`HerancaDePapeis::mapa()`).
 
 Cadeia vigente (2026-10-17):
-`gerente_loja > content_editor > lms_teacher > associado > estudante > email_confirmed > authenticated`
+`gerente_loja > content_editor > lms_teacher > email_confirmed > authenticated`
+
+`estudante` e `associado` são categorias de usuário representadas por perfis; não participam da herança de papéis. Cada conta pode ter ambos.
 Os papéis `wiki_contributor` e `lms_admin` foram mesclados em `email_confirmed` e `lms_teacher` (ver PAPEIS-PARTICIPACAO.md).
-Matrícula pode conceder `estudante` antes da confirmação de e-mail; essa concessão não concede as permissões de `email_confirmed`. O marcador de `EmailConfirmationPolicy` é a fonte de verdade dessa condição.
+Matrícula cria a categoria de perfil `estudante`; isso não concede permissões de `email_confirmed`. O marcador de `EmailConfirmationPolicy` é a fonte de verdade da confirmação.
 
 ## 3. Como se edita
 

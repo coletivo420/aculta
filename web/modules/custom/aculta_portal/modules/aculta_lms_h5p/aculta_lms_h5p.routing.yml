@@ -13,7 +13,8 @@ aculta_lms_h5p.student_dashboard:
     _controller: '\Drupal\aculta_lms_h5p\Controller\aculta_H5PDashboardController::student'
     _title: 'Atividades interativas'
   requirements:
-    _role: estudante
+    _permission: access content
+    _user_is_logged_in: 'TRUE'
   options:
     _aculta_domain_purpose: account
 
