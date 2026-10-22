@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\flag\FlagServiceInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
@@ -31,6 +33,13 @@ final class AvisoService implements ForumNoticeTransferInterface {
   /** Regra de contagem: um comentário só conta se é mais novo que o último já contado. */
   public static function isNewComment(int $commentId, int $ultimoContado): bool {
     return $commentId > $ultimoContado;
+  }
+
+  /**
+   * Whether a Forum post has not yet been counted in a response notice.
+   */
+  public static function isNewPost(int $postId, int $ultimoContado): bool {
+    return $postId > $ultimoContado;
   }
 
   /** Regra de contagem de atualização: uma revisão só conta se é mais nova que a última contada. */
@@ -179,6 +188,44 @@ final class AvisoService implements ForumNoticeTransferInterface {
   }
 
   /**
+   * Registers a newly published revisionable post on followed Forum topics.
+   */
+  public function registrarPost(ForumPost $post): int {
+    if (!$post->isPublished() || !$post->isDefaultRevision()
+      || ($post instanceof SynchronizableInterface && $post->isSyncing())
+      || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
+      return 0;
+    }
+    $topic = $post->get('topic')->entity;
+    if (!$topic instanceof NodeInterface || !$this->accessPolicy->supportsTopic($topic)) {
+      return 0;
+    }
+    $flag = $this->flagService->getFlagById('seguir_topico');
+    if ($flag === NULL) {
+      return 0;
+    }
+    $atualizados = 0;
+    foreach ($this->flagService->getEntityFlaggings($flag, $topic) as $flagging) {
+      $uid = (int) $flagging->getOwnerId();
+      if ($uid <= 0 || $uid === (int) $post->getOwnerId()
+        || !$this->accessPolicy->canViewPost($post, $uid)) {
+        continue;
+      }
+      $aviso = $this->avisoDe($uid, (int) $topic->id(), (string) $topic->label(), Aviso::TIPO_RESPOSTA);
+      $ultimoPost = (int) $aviso->get('ultimo_post')->value;
+      if (!self::isNewPost((int) $post->id(), $ultimoPost)) {
+        continue;
+      }
+      $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
+      $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
+      $aviso->set('ultimo_post', (int) $post->id());
+      $aviso->save();
+      $atualizados++;
+    }
+    return $atualizados;
+  }
+
+  /**
    * Transfers whole per-user response aggregates between Forum topics.
    *
    * The historic counter cannot identify individual comments. Moving the whole
@@ -218,6 +265,13 @@ final class AvisoService implements ForumNoticeTransferInterface {
           (int) $target->get('ultimo_comentario')->value,
           (int) $source->get('ultimo_comentario')->value,
         ));
+        $ultimoPost = max(
+          (int) $target->get('ultimo_post')->value,
+          (int) $source->get('ultimo_post')->value,
+        );
+        if ($ultimoPost > (int) $target->get('ultimo_post')->value) {
+          $target->set('ultimo_post', $ultimoPost);
+        }
         $target->set('titulo', mb_substr((string) $destination->label(), 0, 255));
         $target->save();
         $source->delete();
@@ -289,6 +343,7 @@ final class AvisoService implements ForumNoticeTransferInterface {
       'contador_site' => 0,
       'contador_email' => 0,
       'ultimo_comentario' => 0,
+      'ultimo_post' => 0,
       'ultimo_evento' => 0,
     ]);
   }

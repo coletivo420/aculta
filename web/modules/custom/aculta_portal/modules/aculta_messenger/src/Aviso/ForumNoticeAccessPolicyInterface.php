@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\user\UserInterface;
 
@@ -27,5 +28,10 @@ interface ForumNoticeAccessPolicyInterface {
    * Whether the recipient can currently view a published comment.
    */
   public function canViewComment(CommentInterface $comment, int|UserInterface $recipient): bool;
+
+  /**
+   * Whether the recipient can currently view a published default Forum post.
+   */
+  public function canViewPost(ForumPost $post, int|UserInterface $recipient): bool;
 
 }

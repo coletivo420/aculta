@@ -22,7 +22,7 @@ mensagem (ver seção 5).
 
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
-Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (comentário novo em tópico seguido) e
+Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou post revisionável novo em tópico seguido) e
 `forum_atualizacao` (revisão nova de tópico seguido). Cada campo:
 
 | Campo | Função |
@@ -34,13 +34,16 @@ Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (comentário
 | `contador_site` | Respostas novas não lidas. Zera quando a pessoa lê o tópico |
 | `contador_email` | Respostas ainda não enviadas no resumo por e-mail. Zera pelo resumo |
 | `ultimo_comentario` | Último comentário contado (tipo resposta). Garante que cada comentário conta uma vez |
+| `ultimo_post` | Último ID de post revisionável contado. Watermark separado evita colisão com CIDs de Comments |
 | `ultimo_evento` | Última revisão contada (tipo atualização). Garante que cada revisão conta uma vez |
 
 Regras (implementadas em `Aviso\AvisoService`):
 
-- Quem segue o tópico (flag `seguir_topico`) recebe o aviso. Quem escreveu o comentário não recebe aviso dele.
-- Só comentário **publicado** conta. Comentário criado não publicado conta quando for aprovado (`comment_update`).
+- Quem segue o tópico (flag `seguir_topico`) recebe o aviso. A autoria da própria resposta não recebe aviso dela.
+- Só Comment ou `ForumPost` **publicado** conta. Comment pendente conta na aprovação; post pendente conta quando o workflow o publica pela primeira vez.
+- Uma revisão posterior de um post já publicado não cria outro aviso de resposta.
 - Um comentário nunca conta duas vezes: se o identificador não for maior que `ultimo_comentario`, nada muda.
+- Um post revisionável nunca conta duas vezes: seu ID é comparado somente com `ultimo_post`.
 - Ler o tópico (requisição à rota canônica do nó, usuário autenticado) zera `contador_site` de **todos os tipos**
   daquele tópico.
 - Atualização de tópico seguido (fila de publicação) cria aviso `forum_atualizacao`, sem mensagem.
@@ -49,12 +52,13 @@ Regras (implementadas em `Aviso\AvisoService`):
 
 ### 2.1 Elegibilidade e privacidade do contexto
 
-- A integração de seguir/notificar usa exclusivamente tópicos publicados do bundle `aculta_forum_topic` e comentários
-  publicados `aculta_discussion_post`. O bundle Drupal Forum contribuído `forum` não participa desse fluxo.
+- A integração de seguir/notificar usa exclusivamente tópicos publicados do bundle `aculta_forum_topic`, Comments
+  publicados `aculta_discussion_post` e posts publicados/default do bundle `aculta_forum_post`. O bundle Drupal Forum
+  contribuído `forum` não participa desse fluxo.
 - Tópico com autoria histórica em `field_autor_legado` e eventos de sincronização são excluídos.
 - Antes de criar um aviso e antes de mostrá-lo, contá-lo ou incluí-lo no resumo por e-mail, o Messenger carrega a conta
   ativa e revalida acesso de visualização no purpose `forum`, incluindo a atribuição explícita ao Domain público do Fórum.
-- Comentários exigem acesso ao tópico e ao próprio comentário. Se o acesso deixar de existir, o aviso sai das listas e
+- Comments e posts exigem acesso ao tópico e à resposta correspondente na criação do aviso. Se o acesso deixar de existir, o aviso sai das listas e
   contadores; seu contador pendente de e-mail é zerado antes de montar o resumo.
 - O serviço de acesso está em `Aviso\ForumNoticeAccessPolicy`; não depende do módulo Forum nem cria uma segunda fila ou
   entidade. Domain Access determina o acesso ao nó no domínio ativo, então a revalidação executa no purpose correto.
@@ -81,7 +85,8 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `Hook/NoticeAdminHooks`, `EventSubscriber/NoticeAdminRouteSubscriber`: administração dos comunicados.
 - `Entity/Aviso`, `Entity/AvisoAccessControlHandler`: entidade do aviso por pessoa.
 - `Aviso/AvisoService`: regra de contagem, deduplicação e leitura dos avisos por pessoa.
-- `Hook/ForumAvisoHooks`: `comment_insert` e `comment_update` chamam o serviço.
+- `Hook/ForumAvisoHooks`: `comment_insert`/`comment_update` e `aculta_forum_post_insert`/`aculta_forum_post_update`
+  chamam o serviço ao publicar respostas.
 - `EventSubscriber/ForumAvisoReadSubscriber`: leitura do tópico zera o contador do site.
 
 **Assinaturas e eventos**

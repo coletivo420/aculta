@@ -1,9 +1,10 @@
 <?php
-
 /**
  * @file
  * Post-update functions for ACULTA Messenger.
  */
+
+use Drupal\aculta_messenger\Entity\Aviso;
 
 /**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
@@ -79,4 +80,25 @@ function aculta_messenger_post_update_site_alert_read_flag(array &$sandbox): str
   ])->save();
 
   return 'Added the per-user read Flag for Site Alerts.';
+}
+
+/**
+ * Adds the response-notice watermark for revisionable Forum posts.
+ */
+function aculta_messenger_post_update_forum_post_watermark(array &$sandbox): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('ultimo_post', 'aculta_aviso') !== NULL) {
+    return 'The revisionable Forum post notice watermark was already installed.';
+  }
+
+  $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_aviso');
+  $field = Aviso::baseFieldDefinitions($entity_type)['ultimo_post'];
+  $manager->installFieldStorageDefinition(
+    'ultimo_post',
+    'aculta_aviso',
+    'aculta_messenger',
+    $field,
+  );
+
+  return 'Added the revisionable Forum post notice watermark.';
 }

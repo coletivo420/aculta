@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\Core\Hook\Attribute\Hook;
 
 /**
  * Respostas em tópico seguido geram aviso no site (ACULTA Fórum, F5.2).
@@ -39,6 +40,25 @@ final class ForumAvisoHooks {
     if ($comment->isPublished() && $original !== NULL
       && !$original->isPublished()) {
       $this->avisos->registrarResposta($comment);
+    }
+  }
+
+  /**
+   * Implements hook_ENTITY_TYPE_insert() for revisionable Forum posts.
+   */
+  #[Hook('aculta_forum_post_insert')]
+  public function postInsert(ForumPost $post): void {
+    $this->avisos->registrarPost($post);
+  }
+
+  /**
+   * Implements hook_ENTITY_TYPE_update() when moderation first publishes a post.
+   */
+  #[Hook('aculta_forum_post_update')]
+  public function postUpdate(ForumPost $post): void {
+    $original = $post->getOriginal();
+    if ($post->isPublished() && $original instanceof ForumPost && !$original->isPublished()) {
+      $this->avisos->registrarPost($post);
     }
   }
 

@@ -67,6 +67,9 @@ final class Aviso extends ContentEntityBase {
     $fields['ultimo_comentario'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Último comentário contado'))
       ->setDefaultValue(0);
+    $fields['ultimo_post'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Último post revisionável contado'))
+      ->setDefaultValue(0);
     $fields['ultimo_evento'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Última revisão contada'))
       ->setDefaultValue(0);

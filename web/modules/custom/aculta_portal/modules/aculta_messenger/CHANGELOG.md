@@ -1,3 +1,12 @@
+## 0.1.1-dev.74 — avisos de resposta para posts revisionáveis — 2026-10-22
+
+- Posts do `aculta_forum_post` contam no aviso agregado do tópico seguido ao
+  serem publicados pela primeira vez; edições posteriores não geram nova
+  resposta. Autor, sincronizações e destinatários sem acesso atual são
+  excluídos. Comentários legados mantêm marcador independente (`ultimo_post`).
+- Adicionado campo base com post-update. O update não foi executado; validação
+  de persistência e Runtime seguem pendentes.
+
 ## 0.1.1-dev.73 — valida transferência de agregados de resposta — 2026-10-21
 
 - Extrai `ForumNoticeAccessPolicyInterface` para permitir cobertura isolada do

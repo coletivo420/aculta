@@ -1,11 +1,12 @@
 # Avisos e notificações
 
-Status: **política aprovada pelo responsável (2026-10-16)**. Implementação prevista na F5.2 do Fórum.
+Status: **política aprovada pelo responsável (2026-10-16)**. Integração estática de posts revisionáveis registrada em 2026-10-22; validação Runtime pendente.
 Escopo: avisos dentro do site e e-mails de participação (respostas em tópicos seguidos). Não cria sistema novo.
 
 O texto original foi definido para tópicos do Forum contrib. A reconstrução
 aprovada em 2026-10-19 mantém `aculta_messenger` como único dono de entrega e
-estende o contrato a contextos de comentário. Destinatários, agrupamento e
+estende o contrato a contextos de comentário e aos posts revisionáveis que
+substituem os Comments nas discussões públicas. Destinatários, agrupamento e
 opt-in devem ser definidos por contexto; todo envio revalida publicação e acesso
 atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
 `aculta_forum/docs/CONTEXTS.md`.
@@ -21,7 +22,8 @@ atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
 
 ## 2. Aviso no site (obrigatório)
 
-- Quem segue um tópico (flag `seguir_topico`) **recebe o aviso no site**, sem poder desligar. O aviso aparece na caixa
+- Quem segue um tópico (flag `seguir_topico`) **recebe o aviso no site**, sem poder desligar. Uma resposta é um
+  Comment legado publicado ou um `aculta_forum_post` revisionável publicado/default. O aviso aparece na caixa
   de mensagens e no contador da barra do site.
 - O aviso mostra o tópico, o número de respostas novas desde a última leitura e o link para o tópico.
 - Ao abrir o tópico, o contador do aviso é zerado para aquela conta (leitura por flag, como os avisos atuais).
@@ -35,7 +37,8 @@ atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
   resumo. Sem novidade, não há e-mail.
 - O resumo agrupa por tópico: uma linha por tópico seguido, com o número de respostas novas e o link. Nunca um e-mail
   por resposta.
-- Cada resposta entra em no máximo um resumo por conta (deduplicação pelo identificador do comentário).
+- Cada resposta entra em no máximo um resumo por conta. Comments e posts usam watermarks independentes para deduplicar
+  seus identificadores sem colisão.
 
 ## 4. Agrupamento geral: tipo + assunto
 

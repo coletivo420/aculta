@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -74,6 +75,28 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     }
     return (bool) $this->domainPurposeManager->runInPurpose('forum', static function () use ($comment, $account): bool {
       return $comment->access('view', $account, TRUE)->isAllowed();
+    });
+  }
+
+  /**
+   * Checks current access to a published default revisionable Forum post.
+   */
+  public function canViewPost(ForumPost $post, int|UserInterface $recipient): bool {
+    if (!$post->isPublished() || !$post->isDefaultRevision()
+      || ($post instanceof SynchronizableInterface && $post->isSyncing())
+      || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
+      return FALSE;
+    }
+    $topic = $post->get('topic')->entity;
+    $account = $recipient instanceof UserInterface
+      ? $recipient
+      : $this->entityTypeManager->getStorage('user')->load($recipient);
+    if (!$account instanceof UserInterface || !$account->isActive()
+      || !$topic instanceof NodeInterface || !$this->canViewTopic($topic, $account)) {
+      return FALSE;
+    }
+    return (bool) $this->domainPurposeManager->runInPurpose('forum', static function () use ($post, $account): bool {
+      return $post->access('view', $account, TRUE)->isAllowed();
     });
   }
 

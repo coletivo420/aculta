@@ -18,6 +18,8 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `aculta_user_public_profile_actions_alter` | `ProfileOptionsHooks::alterActions` | `src/Hook/ProfileOptionsHooks.php` |
 | `comment_insert` | `ForumAvisoHooks::commentInsert` | `src/Hook/ForumAvisoHooks.php` |
 | `comment_update` | `ForumAvisoHooks::commentUpdate` | `src/Hook/ForumAvisoHooks.php` |
+| `aculta_forum_post_insert` | `ForumAvisoHooks::postInsert` | `src/Hook/ForumAvisoHooks.php` |
+| `aculta_forum_post_update` | `ForumAvisoHooks::postUpdate` | `src/Hook/ForumAvisoHooks.php` |
 | `cron` | `AvisoRetencaoHooks::expirarAvisos` | `src/Hook/AvisoRetencaoHooks.php` |
 | `cron` | `AvisosResumoHooks::cron` | `src/Hook/AvisosResumoHooks.php` |
 | `cron` | `PrivateMessageRetentionHooks::expireDormantThreads` | `src/Hook/PrivateMessageRetentionHooks.php` |
