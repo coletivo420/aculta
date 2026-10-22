@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * ACULTA Studio entrypoint for the GanjaLab420 learner experience.
@@ -16,13 +17,16 @@ use Drupal\aculta_lms\Controller\LearningDashboardController;
 final class GanjaLab420Controller {
 
   public function __construct(
-    private readonly LearningDashboardController $lmsDashboard,
+    private readonly ?LearningDashboardController $lmsDashboard,
   ) {}
 
   /**
    * Presents the student's LMS dashboard without altering its cache policy.
    */
   public function student(): array {
+    if ($this->lmsDashboard === NULL) {
+      throw new NotFoundHttpException();
+    }
     return $this->lmsDashboard->student();
   }
 
