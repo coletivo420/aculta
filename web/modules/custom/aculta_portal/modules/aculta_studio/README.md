@@ -1,4 +1,4 @@
-# ACULTA Studio (`aculta_studio`)
+# GanjaLab (`aculta_studio`)
 
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.
@@ -60,3 +60,7 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 ## Planejamento visual específico — LMS Course Builder
 
 O [contrato CB-UX 0.3.0–0.3.8](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md) especifica a construção pedagógica **mobile-first**, com visão inicial “Meus cursos”, árvore/itens no desktop, navegação em uma tela por tarefa no telefone, edição contextual via Form API/CKEditor 5 e reordenação acessível. **É plano, não funcionalidade entregue.** Drupal LMS/Group conservam entidades, relações, notas e permissões; Studio coordena experiência e ACULTA420 implementa o visual.
+
+## Identidade pública
+
+GanjaLab é a interface de criação. Consulte [identidade pública](../../../../../../docs/portal/GANJALAB-BRANDING.md) e [GanjaLab420: experiência de aprendizagem](../../../../../../docs/portal/GANJALAB420-LEARNING-UX.md). Nomes internos e rotas permanecem inalterados.
