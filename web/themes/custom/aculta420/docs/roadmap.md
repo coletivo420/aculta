@@ -378,3 +378,7 @@ O GanjaLab (`aculta_studio`) integra agora `aculta420:context-tabs` nos menus de
 ## THEME-UX 0.8-B2-04 — segundo consumidor em código
 
 A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com duas URLs Drupal reais e `aria-current=page`. Junto ao GanjaLab, são dois consumidores integrados por código. Ver [B2](theme-ux-0.8-b2-context-tabs.md). Próxima fase B2-05: homologação Runtime e correção de CSS/semântica antes de B3; shell multidomínio obrigatório.
+
+## Fase B2-05 e abertura B3 — auditoria de feedback
+
+[B2-05 static gates](theme-ux-0.8-b2-05-static-gates.md): revisão de código de navegação GanjaLab/Wiki registrada, homologação Runtime PENDENTE. [B3 feedback audit](theme-ux-0.8-b3-feedback-audit.md): inventário inicial dos SDCs existentes `messenger-state` e `institutional-notice`, proposta de estados universais sem reproduzir sistemas Drupal Core. Nenhum novo SDC B3 antes de duas necessidades reais e avaliação UI Suite. Shell multidomínio permanente.
