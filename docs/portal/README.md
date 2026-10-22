@@ -14,6 +14,9 @@
 - [EMAIL-TRANSPORT.md](EMAIL-TRANSPORT.md) — envio de e-mail pela camada de envio E-Mails ACULTA (M0 a M2 concluídas; validado no runtime de teste).
 - [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) — fonte de verdade de cada dado.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — papel do módulo e fronteiras.
+- [ACULTA-CONTENT-INDEX.md](ACULTA-CONTENT-INDEX.md) — catálogo transversal, fronteiras, estado e roadmap do `aculta_index`.
+- [Auditoria IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) — matriz de reaproveitamento, auditoria de Statistics e proveniência dos projetos contrib.
+- [ADR-013 — ACULTA Content Index](../decisions/ADR-013-aculta-content-index.md) — decisão arquitetural do catálogo derivado.
 - [AGENT-TOKEN-ECONOMY.md](AGENT-TOKEN-ECONOMY.md) — roteamento de modelos para agentes.
 - [EDITOR-CKEDITOR5-AUDITORIA.md](EDITOR-CKEDITOR5-AUDITORIA.md) — auditoria do CKEditor 5 Plugin Pack, dependências, submódulos e decisões pendentes.
 - [ADR-009 — sitemap multidomínio](../decisions/ADR-009-sitemap-multidominio.md) — decisão arquitetural do sitemap.
