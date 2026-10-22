@@ -87,3 +87,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b6-s1a-l3c-automated-gate.md](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) — gate estático reproduzível de contratos SDC e stories, ainda pendente de execução em checkout.
 
 - [Plano visual Wiki420](../../../../../docs/portal/WIKI420-VISUAL-EXPERIENCE.md) — experiência enciclopédica mobile-first (Home, busca, verbete, categorias, histórico, discussão), contratos SDC/UI Suite e gates W420-UX 0.1.
+
+- [WE SATIVA — Wiki Editor Sativa](../../../../../docs/portal/WE-SATIVA-VISUAL-EDITOR.md) — planejamento da UI editorial independente e mobile-first da Wiki420, baseada nos SDCs/UI Suite do ACULTA420.
