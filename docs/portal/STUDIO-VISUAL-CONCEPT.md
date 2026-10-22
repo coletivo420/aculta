@@ -62,3 +62,7 @@ Os nomes acima não afirmam implementação. Componentes não consultam Entity, 
 6. **0.2.5:** acessibilidade, regressões, documentação, snapshots e revisão integrada.
 
 **Regras de PR:** seguir a branch/PR aberta, commits apenas do escopo documental desta entrega, sem nova PR, sem merge/rebase/force-push. Nenhuma migração, exclusão de conteúdo, alteração de permissões ou código de Runtime autorizada por este documento.
+
+## Desdobramento visual específico — LMS
+
+Para os cursos, o padrão geral de shell/“Meus” é detalhado no [Course Builder — CB-UX 0.3.0–0.3.8](STUDIO-LMS-COURSE-BUILDER-VISUAL.md). A separação entre currículo de curso e dados de turma, bem como a interface mobile de uma tarefa por vez, são mandatórias quando houver implementação. Este vínculo é documental.
