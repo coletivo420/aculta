@@ -1,3 +1,35 @@
+## `0.1.0-dev.34` — ciclo de vida do módulo LMS — 2026-10-22
+
+- `LmsModuleLifecycleKernelTest` usa o `ModuleInstaller` real para ativar,
+  desativar e reativar `aculta_forum_lms`, a partir dos mesmos pré-requisitos
+  da dev.33 (tipos de Group do LMS, Comment e campos compartilhados de
+  `aculta_forum`, `field_aculta_rejected`) e dos stubs de serviço da fixture
+  `aculta_forum_lms_test`.
+- Ativação: a lista de configuração iguala a linha de base mais exatamente os
+  YAML de `config/install`; cada objeto mantém o `uuid` exportado,
+  `aculta_forum_lms.settings` difere do export só pelo `_core` que o
+  `ConfigInstaller` grava, e bundle, campo, View e serviço
+  `aculta_forum_lms.moderation_manager` existem.
+- Desativação: a lista volta à linha de base, cada nome do adaptador fica
+  vazio, bundle, campo e as duas relações Group somem, nenhum nome de
+  configuração menciona `aculta_lms_topic` ou `aculta_forum_lms`, o serviço
+  sai do container, `core.extension` perde o módulo e
+  `lms_classes.settings` — de outro módulo — não é reescrito.
+- Reativação: os dados de configuração do adaptador são idênticos aos da
+  primeira ativação, sem duplicar nem vazar nomes.
+- O config opcional de H5P é escrito do export apenas durante a chamada de
+  instalação e apagado em `finally`, reproduzindo a dependência que o
+  `aculta_lms_h5p` fornece no site real sem passar a ser configuração do
+  adaptador.
+- O defeito do contrib Group 3.3.5 (`GroupRelationshipType::postDelete()` não
+  chama o pai e deixa bundle obsoleto) está documentado em
+  `aculta_forum/docs/ROADMAP.md`; a desinstalação do teste remove as relações
+  e limpa os caches antes, e todo o resto sai pelo `ModuleInstaller`.
+- Teste: 3 testes / 375 asserções PASS; 37 depreciações de Core/contrib
+  (ViewsConfigUpdater sobre YAML de módulos contrib, preexistentes). PHPCS
+  limpo. Nenhuma configuração foi exportada ou alterada e o Runtime não
+  recebeu fixture.
+
 ## `0.1.0-dev.33` — papéis e Config Sync do LMS — 2026-10-22
 
 - `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group

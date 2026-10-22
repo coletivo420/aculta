@@ -838,6 +838,28 @@ de trabalho contínuo, mais 1–2 semanas de margem se surgirem regressões em
 acesso, cache, dados ou UX. A sequência é de esforço e não representa prazo de
 deploy; produção depende de decisão própria do responsável.
 
+## Defeito upstream conhecido — Group 3.3.5 e desinstalação de relação
+
+`GroupRelationshipType::postDelete()` (contrib `group` 3.3.5,
+`modules/contrib/group/src/Entity/GroupRelationshipType.php:222`) substitui
+`ConfigEntityBundleBase::postDelete()` sem chamar o pai, então a exclusão de um
+tipo de relação não invalida o bundle em `entity_type.bundle.info`. A reconstrução
+posterior do mapa de campos chama `GroupRelationshipStorage::getEntityClass()`,
+carrega um tipo de relação já apagado e falha com
+`Call to a member function getPluginId() on null`. A desinstalação de
+`aculta_forum_lms` cai nesse caminho quando o `ModuleInstaller` remove um
+`FieldConfig` depois de apagar as duas relações do adaptador.
+
+Consequências práticas: o `LmsModuleLifecycleKernelTest` remove as relações
+antes da desinstalação e limpa os caches de bundle e de campos, reproduzindo o
+estado de um `cache rebuild`; no Runtime, o `drush cr` entre a exclusão das
+relações e a remoção dos campos evita o erro, mas o defeito é do contrib.
+
+Risco aceito por ora: nenhum código ACULTA depende do comportamento errado. Não
+substituir a mitigação por patch local sem antes verificar se a versão seguinte
+do Group corrige o `postDelete()`; registrar a correção upstream e reavaliar a
+dependência `drupal/group: ^3.3` quando houver release com o pai chamado.
+
 ## `0.1.0-rc.2` — Correções
 
 Corrigir regressões verificadas e repetir cobertura pertinente.

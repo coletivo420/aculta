@@ -1,3 +1,32 @@
+## aculta_forum_lms 0.1.0-dev.34 — ciclo de vida do módulo
+
+- `LmsModuleLifecycleKernelTest` ativa, desativa e reativa `aculta_forum_lms`
+  pelo `ModuleInstaller` real, sobre os mesmos pré-requisitos da dev.33. A
+  linha de base dos nomes de configuração é capturada antes de qualquer config
+  do adaptador, então a ativação deve acrescentar exatamente os YAML de
+  `config/install` e a desativação deve voltar a ela.
+- O config opcional de H5P (só o `field.field.node.aculta_lms_topic.field_h5p_content`)
+  é escrito do export durante a instalação e apagado em `finally`: simula o
+  `aculta_lms_h5p` ativo sem virar configuração do adaptador nem entrar na
+  linha de base.
+- A desativação remove antes as duas relações Group do adaptador e limpa os
+  caches de bundle e campos, por causa do defeito do Group 3.3.5 registrado em
+  `ROADMAP.md`; o restante da configuração continua saindo pelo
+  `ModuleInstaller`, preservando o sentido das asserções de resíduo.
+
+| Cenário | Resultado |
+| --- | --- |
+| Ativação | Lista = linha de base + exatamente os YAML de `config/install`; `uuid` preservado; bundle, campo, View e serviço presentes |
+| `aculta_forum_lms.settings` | Igual ao export após remover só o `_core` gravado pelo `ConfigInstaller` |
+| Desativação | Lista volta à linha de base; configs do adaptador vazios; bundle, campo e relações ausentes; serviço fora do container; `core.extension` sem o módulo |
+| Configuração de outro módulo | `lms_classes.settings` inalterado pela desativação |
+| Reativação | Snapshot do adaptador idêntico ao da primeira ativação, sem nomes duplicados |
+
+- Teste: 3 testes / 375 asserções PASS; 37 depreciações de Core/contrib
+  (ViewsConfigUpdater sobre YAML de módulos contrib, preexistentes). PHPCS
+  limpo. Nenhuma configuração foi exportada ou alterada e o Runtime não recebeu
+  fixture.
+
 ## aculta_forum_lms 0.1.0-dev.33 — papéis e Config Sync
 
 - `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
