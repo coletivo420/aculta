@@ -259,3 +259,22 @@ configuração) e **revisar** (precisa de ajuste de contrato).
 | `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/INTEGRATIONS.md` | “a Wiki não é módulo”; provedor `WikiProvider` | revisar | C1/E1 corrigem o estado e registram a divergência de retenção |
 | `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/METRIC-CATALOG.md` | Retenção de `wiki.entries.published` como “instantâneo” | revisar | Divergência com o briefing (90 dias para ambas); registrar em E1 |
 | `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/CURRENT-STATE.md` | “a Wiki não é módulo” | revisar | C1/E1 corrigem o estado |
+
+## Anexo — Fronteira Portal ↔ aculta_wiki (revisão da tarefa B3)
+
+Revisão dos cinco pontos do Portal que citam a Wiki420. Nenhum deles é
+funcionalidade da Wiki: todos resolvem domínio, purpose ou apresentação neutra.
+Ficam no Portal, com a justificativa abaixo.
+
+| Arquivo:linha | O que faz | Decisão |
+| --- | --- | --- |
+| `src/Domain/DomainPurposeManager.php:24` | Mapeia o purpose `wiki` para o Domain `wiki420_aculta_org` | fica — é o mapa de domínios da plataforma, não da Wiki |
+| `src/Domain/DomainPurposeManager.php:59` | Comentário sobre o sitemap e o host da Wiki | fica — comentário de contexto do domínio |
+| `src/Domain/ContentPurposeResolver.php:21,66-77,137` | Reconhece `wiki_entry` e rotas de nó da Wiki para atribuir o purpose | fica — resolução de purpose é do host; mover inverteria a dependência |
+| `src/PathProcessor/PurposeFrontPathProcessor.php:37` | Purpose `wiki` serve `/wiki` como raiz | fica — caminho público do domínio, contrato que não muda |
+| `src/EventSubscriber/DomainRouteSubscriber.php:191-197` | Marca `_aculta_domain_purpose: wiki` nas rotas da Wiki e na view | fica — usa nomes de rota e id de view, não classes do submódulo |
+| `src/Presentation/DomainPresentationBuilder.php:105,119,128` | Marca do cabeçalho, formulário de busca e cabeçalho do site | fica — apresentação neutra; o formulário entra por `WikiSearchFormBuilderInterface` opcional (B1) |
+
+Consequência: o submódulo depende do Portal; o Portal não importa nenhuma classe
+de `Drupal\aculta_wiki`. Se a Wiki deixar de existir, o Portal continua
+funcionando com `wiki_search` nulo, e o purpose/domínio permanecem inofensivos.
