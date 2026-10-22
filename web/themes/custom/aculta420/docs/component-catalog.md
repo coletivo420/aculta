@@ -44,3 +44,7 @@ contraste inadequado. Não disponibilizar texto inverso sem superfície compatí
 ## Backlog do catálogo — padrões transversais ainda não implementados
 
 O [roadmap visual próprio do tema](visual-cross-product-roadmap.md) define candidatos `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list`, `status-timeline` e outros. **Não listar como SDC existente nem contabilizar nos componentes disponíveis.** Quando qualquer padrão entrar no código, adicionar um story `.story.yml` real, atualizar contagem/inventário e criar demonstrações de mobile, desktop, claro/escuro e estados pertinentes. Preservar o shell global e priorizar variantes dos SDC atuais.
+
+## Cobertura de stories — fotografia de 2026-10-22
+
+O inventário do GitHub encontrou 38 SDCs e 55 stories antes da adequação M1. Foram adicionadas stories demonstrativas para `forum-category`, `qr-preview` e `qr-download`, totalizando **58 arquivos de stories** e nenhum SDC sem story. A verificação de renderização no UI Patterns Library permanece PENDENTE e a contagem histórica de catálogo deve ser distinguida desta fotografia da branch. Ver [inventário](sdc-ui-suite-inventory-2026-10-22.md).
