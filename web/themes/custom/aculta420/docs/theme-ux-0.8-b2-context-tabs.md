@@ -27,3 +27,13 @@
 - **Depois:** B3 estados/feedback universais em SDC/UI Suite.
 
 **Limitação:** este documento e o SDC não comprovam funcionalidade dos consumidores, renderização no Drupal, validade de esquema ou gates de navegador.
+
+## Execução B2-03 — primeiro consumidor conectado (2026-10-22)
+
+No `aculta_studio/src/Controller/StudioController.php`, o método `linkList()` agora envolve as listas de links do comportamento `tab` (áreas) e `subtab` (abas da seção) com `#type: component`, `#component: aculta420:context-tabs`. O comportamento `section`/sidebar permanece no render anterior por ter outro layout. O render array interno `#theme: item_list`, os links `PortalLinkElement`, atributos `data-aculta-studio` e `aria-current` permanecem. A rotina `studio-navigation.js` intercepta âncoras por atributos, de modo que a composição SDC não exige novo AJAX, novas URLs ou mudança de permissões.
+
+O CSS `context-tabs.css` foi adequado a `ul/li` produzidos por `item_list`, sem remover semântica de lista. O shell multidomínio não sofreu alterações.
+
+**Gates NÃO executados no homelab:** confirmar a estrutura real do slot e do `item_list` renderizado, uma região `nav` para cada grupo, alinhamento visual, acesso por usuário e cache, teclado, comportamento AJAX/pushState/popstate, navegação sem JS, 320/390/768/1280px e dark/light. Também verificar conflitos com CSS legado do Studio. Não marcar PASS com base no código.
+
+**Próxima fase B2-04:** auditar e integrar segundo consumidor real (Wiki ou Conta), evitando alterar ações do verbete e evitando transformar `product-tabs` em tabs de rotas; B2-05 será a homologação.
