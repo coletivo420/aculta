@@ -101,3 +101,7 @@ Este documento **não** altera banco, roles, fluxos existentes nem autoriza excl
 ## Planejamento visual específico — Revista
 
 A proposta mobile-first detalhada para a experiência de post, criação e edição da Revista está em [STUDIO-REVISTA-EDITOR-VISUAL.md](STUDIO-REVISTA-EDITOR-VISUAL.md). O documento detalha o shell CKEditor 5, configurações progressivas, prévia, fluxos editoriais, a prioridade de “Minhas publicações”, separação de fila de equipe e os gates de acessibilidade. **É planejamento; nenhuma tela foi implementada nesta entrega.**
+
+## Sequenciamento aprovado — GANJALAB E-0.1 (2026-10-22)
+
+Priorizar o GanjaLab editorial em `conta.aculta.*/studio/ganjalab` enquanto a homologação G420-C2-T aguarda consumidores reais de LMS e ACULTA420. E-A inventaria rotas/forms e remove divergências documentais; E-B consolida “Meus conteúdos” com autorização/paginação/estado por revisão; E-C integra criação, rascunho, edição, prévia e submissão pelo workflow do módulo dono; E-D aplica somente SDC/UI Suite com fallback HTTP e edição no celular. A fila Wiki e experiências de outros donos só entram após providers especializados e testes de isolamento. Separar meus itens, equipe e moderação também nos modelos de autorização, nunca só em abas visuais. Ver roadmap do submódulo Studio.
