@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.145` | Identificar o contexto da resposta | Lista cronológica mostra assunto do post pai acessível, com âncora interna se presente na página; composer confirma o destino da resposta. Sem rota nova, CSS/JS ou Runtime; hierarquia visual, navegação ao pai em outra página e validação visual pendentes. |
 | `0.1.0-dev.144` | Responder a posts revisionáveis | Ação por publicação abre o composer contextual; UUID do pai é resolvido no servidor e só aceita revisão default publicada, acessível e do mesmo tópico. Sem rota nova ou Runtime; apresentação hierárquica, testes e revisão visual pendentes. |
 | `0.1.0-dev.143` | Composer público contextual de posts revisionáveis | Link só aparece para conta autenticada com permissão; `DiscussionContextResolver` e rota same-origin revalidam tópico por UUID. Form mode Core oculta estado/referências; `ParticipationRules` define moderação. Comments permanecem ativos; respostas a posts, Runtime e revisão visual pendentes. |
 | `0.1.0-dev.142` | Histórico administrativo das revisões | Fila liga a visão paginada de revisões; mostra autoria, instante, estado, assunto e mensagem de revisão. Acesso restrito ao purpose `main`, permissão administrativa e tópico publicado no purpose `forum`; somente leitura, sem revert/delete. Sem Runtime; comparação textual e revisão visual pendentes. |

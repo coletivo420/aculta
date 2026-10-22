@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityRepositoryInterface;
@@ -37,6 +38,47 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       $container->get('datetime.time'),
       $container->get('messenger'),
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $form = parent::buildForm($form, $form_state);
+    $parent = $this->entity->get('parent')->entity;
+    $topic = $this->entity->get('topic')->entity;
+    if ($parent === NULL) {
+      return $form;
+    }
+
+    $parentMetadata = CacheableMetadata::createFromObject($parent);
+    if (!$parent->isPublished()
+      || !$parent->isDefaultRevision()
+      || !$topic instanceof NodeInterface
+      || (string) $parent->get('topic')->target_id !== (string) $topic->id()) {
+      $parentMetadata->applyTo($form);
+      return $form;
+    }
+
+    $parentAccess = $parent->access('view', $this->currentUser(), TRUE);
+    $parentMetadata->addCacheableDependency($parentAccess)->applyTo($form);
+    if (!$parentAccess->isAllowed()) {
+      return $form;
+    }
+
+    $form['reply_context'] = [
+      '#type' => 'container',
+      '#weight' => -100,
+      '#attributes' => [
+        'class' => ['aculta-forum-reply-context'],
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Você está respondendo à publicação: @subject', [
+          '@subject' => $parent->label(),
+        ]),
+      ],
+    ];
+    return $form;
   }
 
   /**

@@ -90,8 +90,10 @@ domínio, execução como unidade consistente, confirmação e trilha de auditor
 
 ACULTA implementará os equivalentes através de Entity/Access/Form APIs Drupal,
 sem copiar Ruby/Rails, storage do Discourse ou nomes de papéis. No Fórum,
-categoria é Taxonomy e tópico é Node; resposta é Comment. Por isso, um movimento
-de comentário requer verificar `entity_id`, `field_name`, `pid`, `thread`,
+categoria é Taxonomy e tópico é Node. Durante a migração, os Comments antigos
+continuam ativos; novas respostas públicas usam `aculta_forum_post`, entidade
+revisionável associada ao tópico e ao post pai. A ferramenta de mover o acervo
+legado ainda precisa verificar `entity_id`, `field_name`, `pid`, `thread`,
 permalinks e estatísticas do Comment nos dois Nodes. A operação não entra no
 Runtime até uma prova de integridade/rollback. Os detalhes e os casos de teste
 estão em [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
@@ -142,7 +144,7 @@ cacheability e estados neutros.
 | Latest, Top, New, Unread, sem resposta | Criar navegações equivalentes em etapas | Views e estado por participante; decisões de leitura ficam no Portal. “Top” só após métrica/prazo aprovados. |
 | Avatar do autor e participantes | Compor cartões/avatares do `aculta_user` | Lista nunca busca campos privados diretamente. |
 | Fluxo linear e timeline | Leitura linear como padrão; navegação para início, primeira resposta não lida e atividade recente | Comment/permalinks; paginar com fallback. Timeline é discreta, acessível e não cobre o botão responder. |
-| Responder e citar no contexto | Responder ao tópico ou comentário; citação preserva atribuição e não copia dados inacessíveis | Dev.53 adiciona **Citar** para comentário publicado e legível nos contextos públicos com provider; rota Core mantém o pai e o formulário só recebe a origem exata, via texto filtrado/escapado e limitado. Citação por seleção e contextos LMS/Wiki seguem pendentes. |
+| Responder e citar no contexto | Responder ao tópico ou post revisionável; citação preserva atribuição e não copia dados inacessíveis | Dev.144 associa a resposta a um post publicado e acessível do mesmo tópico; dev.145 identifica o pai na leitura e no composer. Citação textual por seleção e contextos LMS/Wiki seguem pendentes. |
 | Rascunho/auto-save | Pesquisar opções Core/armazenamento antes de implementar; priorizar recuperação local segura | Não criar entidade de resposta paralela nem guardar conteúdo privado sem política. |
 | Bookmark/seguir/notificações | Reutilizar Flag e ACULTA Messenger | Respeitar opt-in e validar acesso no momento de entrega. |
 | Flags e moderação comunitária | Adotar fila contextual, estados, notas/histórico onde houver contrato adequado e permissões ACULTA | Não adotar trust level, ranking opaco ou automação de ocultação. LMS permanece moderado pelos Educadores. |
@@ -175,7 +177,7 @@ Portal–tema for atualizado.
 
 ### dev.7–8 — leitura, conversa e publicação
 
-- Leitura linear cronológica; resposta contextual a tópico/Comment; links
+- Leitura linear cronológica; resposta contextual a tópico/post revisionável; links
   permanentes; navegação início/fim/primeira não lida.
 - Citação contextual e preview sob filtro seguro; teste teclado/mobile e
   formulário com validação ligada ao autor/contexto.

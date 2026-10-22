@@ -1,3 +1,9 @@
+## `0.1.0-dev.145` — identifica o contexto de respostas
+
+- A leitura cronológica apresenta o assunto do post pai junto às respostas publicadas; quando o pai está na página atual, o contexto liga à âncora estável do post.
+- O composer de resposta identifica o assunto escolhido e revalida visibilidade/cacheabilidade do pai; pai ausente, oculto ou de outro tópico não é descrito.
+- Sem rota nova, CSS/JS ou alteração Runtime. Hierarquia visual, paginação até o pai e revisão visual continuam pendentes.
+
 ## `0.1.0-dev.144` — permite responder a posts revisionáveis
 
 - Cada post publicado mostra ação contextual de resposta para contas autorizadas; o composer recebe UUID do post pai e salva a referência junto ao tópico.

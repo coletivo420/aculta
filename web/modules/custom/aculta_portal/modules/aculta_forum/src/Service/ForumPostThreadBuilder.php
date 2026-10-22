@@ -124,26 +124,74 @@ final class ForumPostThreadBuilder {
       '#value' => new TranslatableMarkup('Respostas da discussão'),
     ];
     $viewableIds = array_fill_keys(array_map(static fn ($post): string => (string) $post->id(), $viewable), TRUE);
+    $externalParentIds = [];
+    foreach ($viewable as $post) {
+      if (!$post->get('parent')->isEmpty()) {
+        $parentId = (string) $post->get('parent')->target_id;
+        if (!isset($viewableIds[$parentId])) {
+          $externalParentIds[$parentId] = $parentId;
+        }
+      }
+    }
+    $parentEntities = $storage->loadMultiple($externalParentIds);
     $renderedPosts = $this->entityTypeManager->getViewBuilder('aculta_forum_post')
       ->viewMultiple($viewable, 'default');
     foreach ($viewable as $delta => $post) {
       $postId = (string) $post->id();
+      $parent = NULL;
+      if (!$post->get('parent')->isEmpty()) {
+        $parentId = (string) $post->get('parent')->target_id;
+        $parent = isset($viewableIds[$parentId])
+          ? ($posts[$parentId] ?? NULL)
+          : ($parentEntities[$parentId] ?? NULL);
+        if ($parent !== NULL
+          && (!$parent->isPublished()
+            || !$parent->isDefaultRevision()
+            || (string) $parent->get('topic')->target_id !== (string) $topic->id())) {
+          $parent = NULL;
+        }
+        if ($parent !== NULL) {
+          $parentAccess = $parent->access('view', $this->currentUser, TRUE);
+          $cacheability->addCacheableDependency($parent)->addCacheableDependency($parentAccess);
+          if (!$parentAccess->isAllowed()) {
+            $parent = NULL;
+          }
+        }
+      }
       $attributes = [
         'id' => 'forum-post-' . $postId,
         'class' => ['aculta-forum-post'],
       ];
-      if (!$post->get('parent')->isEmpty()) {
-        $parentId = (string) $post->get('parent')->target_id;
-        if (isset($viewableIds[$parentId])) {
-          $attributes['data-forum-post-parent'] = $parentId;
-        }
-      }
       $build['posts'][$postId] = [
         '#type' => 'html_tag',
         '#tag' => 'article',
         '#attributes' => $attributes,
         'content' => $renderedPosts[$delta],
       ];
+      if ($parent !== NULL) {
+        $parentLabel = new TranslatableMarkup('Em resposta a: @subject', [
+          '@subject' => $parent->label(),
+        ]);
+        $build['posts'][$postId]['reply_context'] = [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => ['aculta-forum-post__reply-context'],
+          ],
+        ];
+        if (isset($viewableIds[(string) $parent->id()])) {
+          $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(
+            $parentLabel,
+            Url::fromRoute('entity.node.canonical', ['node' => $topic->id()], [
+              'fragment' => 'forum-post-' . $parent->id(),
+            ]),
+          )->toRenderable();
+        }
+        else {
+          $build['posts'][$postId]['reply_context']['parent'] = [
+            '#plain_text' => $parentLabel,
+          ];
+        }
+      }
       if ($canReply) {
         $build['posts'][$postId]['reply'] = Link::fromTextAndUrl(
           new TranslatableMarkup('Responder a esta publicação'),
