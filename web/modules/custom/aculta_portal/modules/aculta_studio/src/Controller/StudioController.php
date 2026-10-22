@@ -149,11 +149,22 @@ final class StudioController {
       }
       $links[] = PortalLinkElement::build($item['label'], $item['url'], $attributes);
     }
-    return [
+    $list = [
       '#theme' => 'item_list',
       '#items' => $links,
       '#attributes' => ['data-portal-ui' => $token, 'data-aculta-studio' => $behaviour . 's', 'aria-label' => $label],
     ];
+    // Areas and subtabs are route navigation, not Bootstrap tab panels.
+    // Keep real links, the Studio AJAX hooks, access and cache on the list.
+    if ($behaviour === 'tab' || $behaviour === 'subtab') {
+      return [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-tabs',
+        '#props' => ['label' => $label],
+        '#slots' => ['items' => $list],
+      ];
+    }
+    return $list;
   }
 
   /**
