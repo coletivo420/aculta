@@ -28,6 +28,11 @@ final class ForumPostThreadBuilder {
    */
   public const PAGER_ID = 1;
 
+  /**
+   * Comment Core uses pager element 0 on public topic pages.
+   */
+  public const COMMENT_PAGER_ID = 0;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
@@ -279,6 +284,22 @@ final class ForumPostThreadBuilder {
       ->execute();
 
     return intdiv($precedingCount, self::POSTS_PER_PAGE);
+  }
+
+  /**
+   * Builds pager query parameters for a link landing on a topic page.
+   *
+   * Search result requests have their own active pager state. A cross-route
+   * link must start the topic's Comment pager at page zero and set only the
+   * ForumPost pager to the requested page.
+   *
+   * @return array<string, string>
+   *   The target topic pager query, independent of the current request.
+   */
+  public function getTopicPagerQuery(int $page): array {
+    $pages = array_fill(0, max(self::PAGER_ID, self::COMMENT_PAGER_ID) + 1, 0);
+    $pages[self::PAGER_ID] = max(0, $page);
+    return ['page' => implode(',', $pages)];
   }
 
 }

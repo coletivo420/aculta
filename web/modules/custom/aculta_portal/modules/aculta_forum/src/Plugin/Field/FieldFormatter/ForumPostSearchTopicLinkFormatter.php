@@ -11,7 +11,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -40,7 +39,6 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
     private readonly AccountProxyInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly ForumPostThreadBuilder $threadBuilder,
-    private readonly PagerManagerInterface $pagerManager,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }
@@ -60,7 +58,6 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
       $container->get('current_user'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('aculta_forum.post_thread_builder'),
-      $container->get('pager.manager'),
     );
   }
 
@@ -87,7 +84,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
         ->addCacheableDependency($topic)
         ->addCacheableDependency($post_access)
         ->addCacheableDependency($topic_access)
-        ->addCacheContexts(['domain', 'url.query_args'])
+        ->addCacheContexts(['domain'])
         ->addCacheTags(['aculta_forum_post_list']);
       if (!$post->isPublished() || !$topic->isPublished() || !$post_access->isAllowed() || !$topic_access->isAllowed()) {
         $elements[$delta] = ['#access' => FALSE];
@@ -106,7 +103,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
         '#type' => 'link',
         '#title' => $this->t('Ver resposta'),
         '#url' => Url::fromRoute('entity.node.canonical', ['node' => $topic->id()], [
-          'query' => $this->pagerManager->getUpdatedParameters([], ForumPostThreadBuilder::PAGER_ID, $page),
+          'query' => $this->threadBuilder->getTopicPagerQuery($page),
           'fragment' => 'forum-post-' . $post->id(),
         ]),
       ];

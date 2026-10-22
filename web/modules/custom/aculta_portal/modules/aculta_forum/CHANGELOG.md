@@ -1,3 +1,10 @@
+## `0.1.0-dev.219` — isolar a paginação do destino da busca
+
+- Links entre `/pesquisar` e o tópico montam `page=0,{página}` para iniciar o
+  pager de Comments no destino em zero e definir somente o pager da thread.
+  Evita carregar paginação e filtros da requisição de busca; substitui a
+  variação ampla de cache introduzida em dev.218. Sem Runtime/testes.
+
 ## `0.1.0-dev.218` — variar o link da busca por query string
 
 - O formatter varia sua cache pelos parâmetros da URL usados pelo pager ao

@@ -95,7 +95,8 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
-| `0.1.0-dev.218` | Variar link da busca por query string | O formatter declara contexto `url.query_args`, pois `PagerManagerInterface` preserva parâmetros atuais ao gerar URL. Evita reutilizar links renderizados para outra query. Sem Runtime/testes. |
+| `0.1.0-dev.219` | Isolar a paginação do destino da busca | Links interrota enviam apenas `page=0,{página}`: Comment pager Core começa em zero e ForumPost pager aponta à resposta, sem query da busca ou seu índice de página. Remove a variação ampla de cache de dev.218. Sem Runtime/testes. |
+| `0.1.0-dev.218` | Variar link da busca por query string | Correção intermediária: formatter declarava contexto `url.query_args` por causa dos parâmetros mesclados pelo PagerManager. Substituída em dev.219 pelo estado explícito do destino, sem query de origem. Sem Runtime/testes. |
 | `0.1.0-dev.217` | Abrir na página da resposta encontrada | O formatter da busca usa a posição calculada pelo builder e o pager Core ID 1 para abrir a resposta na página certa; preserva query/pagers existentes e invalida o cache pela tag `aculta_forum_post_list`. Sem Runtime/testes. |
 | `0.1.0-dev.216` | Compartilhar o contrato de paginação da thread | O builder público fornece tamanho/pager ao contador de não lidos e o link usa `PagerManagerInterface` para apontar à primeira página que contém o post. Evita divergência entre paginação e âncora; sem mudança Runtime/testes. |
 | `0.1.0-dev.215` | Invalidar cache de lista ao mudar ForumPost | Plugin tag-based acrescenta `aculta_forum_post_list` à cache de resultados e render da View pública; install, Sync e update `9005` alinhados. Runtime `toca`: update aplicado e `getCacheTags()` confirmou `aculta_forum_post_list`/`node_list`; sem conteúdo criado ou testes automatizados. |
