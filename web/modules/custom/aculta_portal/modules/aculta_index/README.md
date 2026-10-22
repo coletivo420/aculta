@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.10` — fila incremental Core Queue e worker inicial.
-**Status:** Dev; schema, contratos, gerações, provider Revista, descoberta keyset, checkpoint CAS, writer, revalidação de acesso e registro de mudanças com fila deduplicada implementados. Rebuild integrado, sincronização de relações-alvo, API completa de consulta e reconciliação pendentes; não instalado no Runtime.
+**Versão:** `0.1.0-dev.11` — fila incremental e coordenador inicial de rebuild.
+**Status:** Dev; schema, contratos, gerações, provider Revista, descoberta keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental e coordenação retomável de lotes implementados. Reconciliação, validação final/catch-up do rebuild, sincronização de relações-alvo e API completa de consulta pendentes; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 

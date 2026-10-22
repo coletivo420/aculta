@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.11 — coordenação inicial de backfill retomável
+
+- `ContentIndexRebuilder` percorre providers/tipos em ordem estável, escreve
+  um lote keyset e só então avança o checkpoint por CAS. Repetição do lote é
+  idempotente; sequência incremental mais nova prevalece sobre o backfill.
+- Cada chamada processa no máximo um lote/tipo e informa conclusão sem marcar
+  a geração como validada ou ativá-la. Integridade, drenagem/catch-up e o gate
+  explícito de publicação continuam necessários.
+- Kernel cobre início e término de geração sem providers; percurso real com
+  adapter/entidades e concorrência segue pendente.
+
 ## 0.1.0-dev.10 — fila incremental e projeção contínua
 
 - Hooks de insert/update/delete registram somente identidades e operação; o
@@ -10,7 +21,8 @@
   usa a sequência no writer para rejeitar trabalho obsoleto. Isso mantém deltas
   durante backfill; o orquestrador e o gate de validação ainda serão ligados.
 - Cron recupera dispatch perdido e retries. Política inicial: cinco tentativas,
-  backoff exponencial de 30 segundos até seis horas; registros dead exigem
+  backoff exponencial de 30 segundos até seis horas (confirmada pelo
+  responsável); registros dead exigem
   reparação operacional futura.
 - Não instalar contrib. Core Queue e contratos próprios ACULTA são usados;
   as referências contrib continuam fonte de padrões e proveniência.

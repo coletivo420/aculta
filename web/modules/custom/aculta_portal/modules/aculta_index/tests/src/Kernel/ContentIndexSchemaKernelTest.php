@@ -115,6 +115,24 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Checks a rebuild can start and terminate cleanly without providers.
+   */
+  public function testRebuilderStartsEmptyGenerationWhenNoProvidersExist(): void {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $result = $rebuilder->processNextBatch($generationId);
+
+    $this->assertSame($generationId, $result['generation_id']);
+    $this->assertTrue($result['complete']);
+    $this->assertSame(0, $result['projected']);
+    $this->assertSame('building', $this->container->get('database')->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['status'])
+      ->condition('generation_id', $generationId)
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Tests generations activate only after validation and can be rolled back.
    */
   public function testGenerationLifecycleAndRollback(): void {
