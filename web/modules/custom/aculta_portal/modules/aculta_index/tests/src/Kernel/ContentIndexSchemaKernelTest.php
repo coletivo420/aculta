@@ -280,6 +280,28 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds backfill completion state to older installs.
+   */
+  public function testUpdateHookAddsBackfillCompletion(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields(['generation_id' => 'legacy-backfill-gen', 'status' => 'building'])
+      ->execute();
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_generation', 'backfill_completed');
+    $this->assertFalse($schema->fieldExists('aculta_index_generation', 'backfill_completed'));
+
+    aculta_index_update_10008();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_generation', 'backfill_completed'));
+    $this->assertSame('0', $database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['backfill_completed'])
+      ->condition('generation_id', 'legacy-backfill-gen')
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Tests the projection writer is idempotent and rejects stale sequences.
    */
   public function testWriterSynchronizesEntryAndRelationsBySequence(): void {
