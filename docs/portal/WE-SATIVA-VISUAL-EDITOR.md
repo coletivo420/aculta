@@ -121,3 +121,8 @@ Não criar SDC `we-sativa-*` sem auditoria dos componentes existentes e segundo 
 Viewport 320, 360, 390, 768, 1024, 1280 e 1440px; zoom 200/400%; teclado virtual; reduced motion; sem JavaScript; claro/escuro com a mesma composição; leitor de tela, foco e erro em formulário; CSRF/Form API; revisões simultâneas; anônimo, contribuinte, revisor e admin; Wiki/domain versus outras áreas. O domínio/purpose não deve mudar silenciosamente pela abertura do editor. Evidências e dados reais apenas no ambiente controlado.
 
 **Integração com Wiki pública:** [plano visual](WIKI420-VISUAL-EXPERIENCE.md). A Wiki de leitura e o WE SATIVA seguem ambos mobile-first e compartilham shell/tokens/SDCs, porém têm navegação, objetivos e permissões diferentes.
+
+
+## Direção revisada — contribuição primeiro (WES-UX 0.2)
+
+A [pesquisa comparativa e o plano de entrada contextual](WE-SATIVA-CONTRIBUTION-FIRST-RESEARCH.md) priorizam abrir WE SATIVA **diretamente do verbete**, com seleção de tarefas simples (corrigir, referenciar, melhorar trecho, sugerir mídia) antes do editor completo. As ações só existem com provider e acesso reais. Este rumo complementa as fases WES-UX 0.1, sem substituir Drupal Form API/revisions/workflows ou o shell multidomínio.
