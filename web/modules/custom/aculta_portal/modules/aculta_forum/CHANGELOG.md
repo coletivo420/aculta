@@ -1,3 +1,11 @@
+## `0.1.0-dev.199` — evitar link duplicado no cartão PDF
+
+- Cartões construídos pelo `aculta_pdf_viewer` mantêm as ações próprias de
+  download e abertura sem receber um segundo `file_link` genérico. O link Core
+  continua no fallback quando o builder nega o PDF; DOCX/planilhas continuam
+  usando-o como fallback local.
+- Sem alteração Runtime; revisão visual do cartão pendente.
+
 ## `0.1.0-dev.198` — integrar cartão PDF aos anexos do Fórum
 
 - O formatter de `forum_attachment` delega PDFs reconhecidos pelo MIME e pela

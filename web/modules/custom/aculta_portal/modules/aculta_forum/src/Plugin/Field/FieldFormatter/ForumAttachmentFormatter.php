@@ -145,7 +145,11 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $elements[$delta] = $link;
       if ($viewer !== NULL) {
         $file_cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($viewer));
-        $viewer['link'] = $link;
+        // The PDF viewer supplies its own download/open actions. Office
+        // viewers need the Core file link as their non-JavaScript fallback.
+        if ($extension !== 'pdf') {
+          $viewer['link'] = $link;
+        }
         $elements[$delta] = $viewer;
       }
       $file_cacheability->applyTo($elements[$delta]);

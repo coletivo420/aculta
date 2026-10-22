@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.199` | Evitar ação duplicada nos cartões PDF | O cartão mantém download/abertura do `aculta_pdf_viewer`; link Core só entra no fallback negado. Sem alteração Runtime; inspeção visual pendente. |
 | `0.1.0-dev.198` | Integrar cartão PDF compartilhado aos anexos | Formatter delega `forum_attachment.field_media_forum_attachment` ao `aculta_pdf_viewer`; o builder valida acesso/cache e link Core permanece fallback. Sem Runtime; validação visual/funcional pendente. |
 | `0.1.0-dev.197` | Limitar lotes ao sincronizar anexos no estado do tópico | Mudança de publicação do tópico percorre Comments e posts em lotes de 100, com limite máximo capturado no início; Media e Gallery preservam as regras existentes. Sem alteração Runtime; regressão automatizada pendente. |
 | `0.1.0-dev.196` | Exigir autenticação nos diálogos de upload | Acesso dos diálogos soma autenticação explícita ao formato `forum` e purpose Fórum; cache varia por estado autenticado. Sem validação Runtime. |
