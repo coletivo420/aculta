@@ -104,3 +104,7 @@ O dashboard de estudante canônico passa a `/ganjalab420` no domínio de conta, 
 - [Dashboard, cursos, atividades e conquistas](GANJALAB420-DASHBOARD-VISUAL.md): G420-UX 0.2.0-dev.1; mobile first, continuidade de estudos e progresso real.
 - [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md): planejamento G420-UX 0.4.0-dev.1; índice curricular, leitor multimídia, atividades, PDF, H5P, Fórum contextual e critérios de acesso.
 - **Decisão técnica definitiva neste planejamento:** preservar o nome interno `aculta_lms`; descartar propostas de renomear para `aculta_escola` ou `aculta_ganjalab_lms`. Essas entregas são somente documentação.
+
+## Cinco formatos de sala
+
+Incluir explicitamente o **H5P como quinto modelo visual**, além de leitura, vídeo, atividades e PDF. Ver [Modelos de aula do GanjaLab420](GANJALAB420-LESSON-MODELS-VISUAL.md). A implementação permanece condicional aos gates de integração, segurança e acessibilidade do H5P. Nenhuma renomeação técnica de LMS está autorizada.
