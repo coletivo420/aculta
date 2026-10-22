@@ -6,8 +6,10 @@
   publicação Media antiga contorne uma mudança posterior de grants do tópico.
   A rota canônica retorna 404 fora do purpose Fórum via `ContentPurposeResolver`;
   o download privado permanece protegido pelo access de Media/File. Acesso varia
-  por Domain e não é cacheado entre requests. Sem fixture Runtime; revisão HTTP
-  pendente.
+  por Domain e não é cacheado entre requests. No Runtime de teste `toca`, rebuild
+  de cache registrou o hook `media_access`; há 0 Media `forum_attachment`, então
+  a revisão HTTP de publicação, download e grants ainda depende de fixture
+  autorizada. Nenhum conteúdo foi criado ou alterado.
 
 ## `0.1.0-dev.230` — alinhar guardrails e roadmap do Portal
 

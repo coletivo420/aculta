@@ -10,7 +10,12 @@
   privada em `forum`, 404 canônico e download negado em outros purposes, post
   pendente/retirado, mudança de grants sem salvar a Media, e papéis
   anônimo/autenticado/moderador.
-  Não houve fixture ou alteração Runtime nesta entrega.
+- Runtime de teste `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
+  `forum`: rebuild de cache concluiu e registrou
+  `ForumAttachmentAccessHooks::mediaAccess` em `media_access`. A consulta
+  EntityQuery encontrou 0 Media `forum_attachment` (0 publicadas); por isso
+  não foi possível validar os caminhos HTTP sem criar fixture. Nenhum conteúdo
+  foi criado ou alterado.
 
 ## dev.194 — saída segura em falhas do auditor migratório
 
