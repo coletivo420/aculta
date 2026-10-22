@@ -73,3 +73,7 @@ Rotas públicas canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}
 ## Wiki420 — janela de moderação no GanjaLab (V-0.4-D)
 
 A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por aba `StudioTab` específica/área Wiki com seção Moderação, mantendo a navegação por áreas/seções/abas e AJAX progressivo existentes. [Especificação da janela](../../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): fila autorizada, primeira publicação, revisão de propostas, comparação, devolução para ajustes, publicação, concorrência e acessibilidade mobile/full-screen. `aculta_wiki` mantém dados, grants, formulários e workflow. WE SATIVA permanece ambiente de autoria/acompanhar resultados, não moderador. Nenhum storage/ACL alternativo no Studio.
+
+## V-0.4-R / GanjaLab D-A — auditoria do código existente
+
+[Inventário e contrato da janela Wiki](../../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
