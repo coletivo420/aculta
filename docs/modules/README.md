@@ -18,6 +18,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - [Operações de módulos e infraestrutura](OPERATIONS.md)
 - [Roadmap do ACULTA LMS](ACULTA-LMS-ROADMAP.md)
 - [Auditoria H5P/LMS](LMS-H5P-AUDIT.md)
+- [Wiki420 como submódulo (planejamento)](WIKI-SUBMODULO.md)
 
 ## Componentes próprios
 

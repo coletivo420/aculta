@@ -8,7 +8,7 @@ Legenda: **EXISTENTE E FUNCIONAL**, **EXISTENTE MAS INCOMPLETO**, **AUSENTE**,
 
 ## Resumo
 
-- Não existe `aculta_statistics` nem qualquer painel central de métricas.
+- Existe `aculta_statistics` (0.9.0-dev.5), com painéis por área, retenção por métrica e contadores diários agregados.
 - Há quatro produtores com dados reais: e-mail, links, LMS e fórum.
 - Não há código de Google Analytics, Google Tag ou Search Console no site.
 - Não há módulo `statistics` do Core instalado.
@@ -34,12 +34,13 @@ contagens, nunca a autoria privada.
 |---|---|---|
 | Verbetes | Tipo de conteúdo `wiki_entry`, fluxo `wiki_editorial`, campo `field_domain_source` | EXISTENTE FUNCIONAL |
 | Lista pública | View `wiki_entries` (`config/sync/views.view.wiki_entries.yml`), sem campo de contagem | EXISTENTE MAS INCOMPLETO |
-| Visualizações e edições por verbete | Não existem: o módulo `statistics` do Core não está instalado | AUSENTE |
+| Leituras por verbete | Beacon `WikiReadController` e métrica `wiki.entries.read` (0.2.0-dev.3) | EXISTENTE FUNCIONAL |
+| Publicações e atualizações por verbete | `WikiProvider` ainda não existe | AUSENTE (planejado: Fase 4 de `docs/modules/WIKI-SUBMODULO.md`) |
 | Histórico de revisões | Revisões nativas do Node (`content_moderation` / revisões do Core) | DEVE SER REUTILIZADO como fonte de "atualizações" |
 | Comentários em verbete | Comentários associados ao verbete de origem (AGENTS) | DEVE SER REUTILIZADO |
 
 Regra do AGENTS: a Wiki não é módulo, é conteúdo. Não reimplementar a Wiki no
-Fórum. Contagem de leituras exige decisão, porque o Core não traz esse contador.
+Fórum. O Core não traz contador de leitura; o contador próprio foi decidido e entregue na 0.2.0-dev.3.
 
 ## LMS (`aculta_lms`, `drupal/lms` 1.2.4, `group` 3.3.5)
 

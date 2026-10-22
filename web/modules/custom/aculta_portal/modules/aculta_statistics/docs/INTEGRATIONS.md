@@ -38,7 +38,7 @@ o painel de turma do LMS), com as mesmas permissões.
 ## Wiki (conteúdo `wiki420`)
 
 - **Fonte:** nós `wiki_entry` publicados e revisões do Node.
-- **Métricas:** `wiki.entries.published`, `wiki.entries.updated`.
+- **Métricas:** `wiki.entries.published` e `wiki.entries.updated` são planejadas; o `WikiProvider` ainda não existe (ver `docs/modules/WIKI-SUBMODULO.md`). A leitura, `wiki.entries.read`, já está em produção.
 - **Leitura (implementada na 0.2.0-dev.3):** o Core não traz contador de leitura e o
   módulo `statistics` não está instalado. O contador próprio é um beacon
   `POST /estatisticas/wiki/{node}/leitura`, enviado uma vez por página de verbete publicado

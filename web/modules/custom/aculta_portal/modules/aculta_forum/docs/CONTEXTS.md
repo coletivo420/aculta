@@ -161,7 +161,7 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 
 - Contrato futuro para Node do bundle Wiki com uma discussão por verbete.
 - Renderizado dentro do verbete; comentários não alteram revisão editorial nem criam tópico público.
-- Usa `author_wiki`; criação do provider aguarda a reimplementação da Wiki.
+- Usa `author_wiki`; criação do provider aguarda o submódulo `aculta_wiki` (planejamento em `docs/modules/WIKI-SUBMODULO.md`, Fase 5).
 
 ## Reutilização do Comment
 

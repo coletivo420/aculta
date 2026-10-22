@@ -80,7 +80,7 @@ produtos Google for Nonprofits como ativos antes de sua ativação real.
 
 ## Wiki (regra permanente)
 
-- **Estado atual (2026-10-20, Runtime de teste):** a Wiki funciona como conteúdo no domínio `wiki420` (`wiki420.aculta.org` em produção), com o tipo de conteúdo `wiki_entry` e o fluxo editorial `wiki_editorial`. Havia 7 verbetes, 6 publicados. Não existe um módulo de Wiki habilitado: a implementação é de conteúdo e configuração.
+- **Estado atual (2026-10-20, Runtime de teste):** a Wiki funciona como conteúdo no domínio `wiki420` (`wiki420.aculta.org` em produção), com o tipo de conteúdo `wiki_entry` e o fluxo editorial `wiki_editorial`. Havia 7 verbetes, 6 publicados. Não existe um módulo de Wiki habilitado: a implementação é de conteúdo e configuração. Em planejamento: submódulo `aculta_wiki` (ver `docs/modules/WIKI-SUBMODULO.md`). Enquanto a Fase 2 do plano não estiver concluída, esta descrição continua válida.
 - **Não reimplementar a Wiki no Fórum.** O Fórum (`aculta_forum`, Growroom420) não cria verbetes nem fluxo editorial da Wiki.
 - **Comentários e contexto:** comentários em verbete ficam associados ao verbete de origem. Verbetes não geram tópicos públicos automáticos no Fórum.
 - **Dados pessoais:** a autoria e o conteúdo de verbete são públicos quando publicados. Quem contribui consente na publicação (art. 7º, I da LGPD). A base legal e o uso estão na política de privacidade (seção "Bases legais por uso do site") e no inventário `docs/compliance/LGPD-INVENTARIO.md`.

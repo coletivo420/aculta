@@ -64,7 +64,7 @@ Legenda de base legal (LGPD, art. 7º e 11): **C** consentimento (art. 7º, I); 
 
 1. Encarregado (DPO, pessoa jurídica): designar e publicar a razão social.
 2. Transferência internacional: confirmar com cada prestador (Brevo, Cloudflare, Google) o país de tratamento e as cláusulas contratuais. Mercado Pago: confirmar o mesmo para o checkout ativo na produção.
-3. Wiki: definir a base legal e a retenção quando a wiki for ativada.
+3. Wiki: definir a base legal e a retenção quando a wiki for ativada. Antes de habilitar `aculta_wiki`, incluir na linha de `aculta_statistics` as métricas `wiki.entries.published` e `wiki.entries.updated` (contagens diárias agregadas, sem autoria). Ver `docs/modules/WIKI-SUBMODULO.md`, Fase 4.
 4. Retenção de dados de associado e de pagamento: confirmar os prazos fiscais e de vínculo.
 5. Processo de atendimento aos direitos do titular (art. 18) e de comunicação de incidentes (art. 48): a definir pelo responsável.
 7. Aceite único (2026-10-21): um só formulário, o de Termos e Política (`aculta_user_agreement_terms`). Todas as funções com dado pessoal precisam estar descritas na política publicada. Rastreamento de e-mail desligado até decisão. Ver `docs/portal/ACEITE-UNICO.md`.

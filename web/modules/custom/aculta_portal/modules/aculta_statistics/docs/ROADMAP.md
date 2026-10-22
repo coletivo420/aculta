@@ -20,11 +20,18 @@ Pendente nesta fase:
 
 - SMTP2GO: "entregues" não existe na API documentada (verificado); a métrica vem do Brevo.
 - Commerce Reports: não instalar (sem release estável em D11).
-- Decidir sobre contador de leitura da Wiki e sobre gráficos (`charts`).
+- Decidir sobre gráficos (`charts`). O contador de leitura da Wiki foi decidido e entregue na 0.2.0-dev.3.
 - Decidir sobre QR estático.
 - Schema da tabela `aculta_statistics_daily`: não instalado (sem migração).
 
 Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e conectores.
+
+## 0.10.0 — Wiki (planejada)
+
+- Preparar a integração com o submódulo `aculta_wiki`, conforme `docs/modules/WIKI-SUBMODULO.md` (raiz do repositório).
+- Fase 4 do planejamento: `WikiProvider`, `wiki.entries.published`, `wiki.entries.updated`, ranking por verbete no painel da área Wiki, testes unit, kernel e Runtime.
+- Gate: inventário LGPD atualizado antes de criar as métricas.
+- Não iniciado.
 
 ## 0.4.0 — LMS (em andamento: 0.4.0-dev.1)
 
@@ -138,7 +145,7 @@ Sem remover tabela, dado ou painel antes do passo de migração e da autorizaç�
 - Links: convergência concluída antecipadamente (ver Centralização, abaixo).
 - QR dinâmico (decisão sobre estático).
 - Fórum: série temporal de comentários.
-- Wiki: leitura, se a decisão for tomada.
+- Wiki: leitura entregue na 0.2.0-dev.3; publicações, atualizações e ranking planejados na 0.10.0.
 - Mídia: instrumentar downloads e reproduções.
 - Eventos e Messenger, quando existirem como fonte.
 

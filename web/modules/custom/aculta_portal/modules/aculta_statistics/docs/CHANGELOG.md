@@ -1,5 +1,12 @@
 # Changelog — ACULTA Statistics
 
+## Não lançado — planejamento da integração Wiki
+
+- Plano em `docs/modules/WIKI-SUBMODULO.md` (raiz do repositório), com a frente de submódulo `aculta_wiki` e a integração com este módulo.
+- Correção de `CURRENT-STATE.md` e `ROADMAP.md`: o contador de leitura da Wiki já existe (0.2.0-dev.3).
+- `INTEGRATIONS.md` marca publicações e atualizações de verbete como planejadas.
+- Sem código, sem métrica nova e sem mudança de versão.
+
 ## 0.9.0-dev.5 — contabilizar posts revisionáveis do Fórum
 
 - O assinante reconhece `aculta_forum.post_created` e grava a métrica pública
