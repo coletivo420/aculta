@@ -1,10 +1,18 @@
+## `0.1.0-dev.187` — alinhar tamanho do texto alternativo ao Core
+
+- O diálogo de galeria informa e valida o limite de 512 caracteres por
+  descrição, igual ao widget de imagem do Drupal Core. Unicode é contado pelo
+  utilitário do Core antes da criação de Media.
+- Sem smoke autenticado ou alteração no Runtime nesta etapa.
+
 ## `0.1.0-dev.186` — descrever cada imagem enviada à galeria
 
 - O diálogo de galeria exige uma descrição não vazia por imagem, na mesma
   ordem do upload, e salva cada texto no campo alternativo correspondente.
   Antes, todas as imagens recebiam um rótulo genérico baseado em título e
   posição.
-- O callback revalida arquivos e política antes de criar entidades. Sem smoke
+- O callback revalida arquivos e política antes de criar entidades. O limite
+  individual de 512 caracteres foi alinhado ao widget Core em dev.187. Sem smoke
   autenticado ou alteração no Runtime nesta etapa.
 
 ## `0.1.0-dev.185` — exigir texto alternativo para imagem anexada

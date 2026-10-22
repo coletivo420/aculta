@@ -1,9 +1,17 @@
+## dev.187 — limite por descrição da imagem
+
+- O código do Drupal Core 11.4 limita `ImageWidget` a 512 caracteres no campo
+  `alt`. O diálogo da galeria informa e valida o mesmo limite por linha usando
+  `Unicode::strlen`, antes de criar Media.
+- Sem upload autenticado ou fixture Runtime nesta etapa.
+
 ## dev.186 — descrição alternativa por imagem na galeria
 
 - O campo alt requerido da Media deixa de receber texto genérico. O diálogo
   exige exatamente uma descrição não vazia por arquivo e associa cada linha ao
   File na ordem original do upload; o callback verifica novamente existência e
-  política antes de criar Media.
+  política antes de criar Media. O limite por descrição foi alinhado ao Core em
+  dev.187.
 - Ainda sem upload autenticado, revisão visual ou fixture Runtime desta entrega.
 
 ## dev.185 — texto alternativo no anexo de imagem

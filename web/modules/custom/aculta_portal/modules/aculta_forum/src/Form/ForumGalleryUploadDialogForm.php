@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -69,7 +70,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     $form['image_alts'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Descrição de cada imagem'),
-      '#description' => $this->t('Informe uma descrição por linha, na mesma ordem das imagens enviadas. Todas são obrigatórias.'),
+      '#description' => $this->t('Informe uma descrição por linha, na mesma ordem das imagens enviadas. Todas são obrigatórias e podem ter até 512 caracteres.'),
       '#rows' => 4,
       '#maxlength' => 16384,
     ];
@@ -98,8 +99,8 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     }
     $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
     if (count($alt_lines) !== count($fids)
-      || array_filter($alt_lines, static fn (string $alt): bool => trim($alt) === '') !== []) {
-      $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia para cada imagem, uma por linha e na mesma ordem.'));
+      || array_filter($alt_lines, static fn (string $alt): bool => trim($alt) === '' || Unicode::strlen(trim($alt)) > 512) !== []) {
+      $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia de até 512 caracteres para cada imagem, uma por linha e na mesma ordem.'));
       return;
     }
     foreach ($files as $file) {
