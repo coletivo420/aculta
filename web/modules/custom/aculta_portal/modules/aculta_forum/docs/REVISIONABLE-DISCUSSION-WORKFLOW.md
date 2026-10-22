@@ -159,7 +159,10 @@ testes de workflow; a configuração da política inicial continua sendo a de
    `EntityContentBase` salva cada linha e inclui o idioma no ID de destino quando
    `translations: true`. Usar uma fonte Migrate própria, paginada por keyset, e
    definir como cada tradução reaproveita o ID do post criado pela primeira
-   linha do mesmo Comment. Fontes: [fonte `ContentEntity` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
+   linha do mesmo Comment. A dev.166 acrescenta ao inventário a contagem de
+   pais elegíveis com CID posterior ao filho; se houver, a ordem crescente de
+   CID não basta para resolver a árvore num único passe. Fontes: [fonte
+   `ContentEntity` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [Entity Query do Core 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Query%21QueryInterface.php/interface/QueryInterface/11.x), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o

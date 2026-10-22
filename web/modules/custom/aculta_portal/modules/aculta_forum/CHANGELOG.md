@@ -1,3 +1,10 @@
+## `0.1.0-dev.166` — auditar ordem de pais e filhos por CID
+
+- O inventário identifica relações válidas do mesmo tópico em que o CID do pai
+  é maior que o do filho. A contagem sinaliza árvores que uma importação
+  sequencial por CID não pode resolver por lookup imediato; não expõe IDs.
+- Somente leitura. Nenhuma migração foi executada.
+
 ## `0.1.0-dev.165` — definir os limites do adapter Migrate
 
 - A pesquisa do Core 11.4.10 confirma que `content_entity` materializa a lista

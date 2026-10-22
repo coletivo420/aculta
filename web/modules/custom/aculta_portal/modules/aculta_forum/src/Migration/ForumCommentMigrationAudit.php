@@ -77,6 +77,7 @@ final class ForumCommentMigrationAudit {
       'parent_outside_scope' => 0,
       'parent_missing' => 0,
       'parent_cross_topic' => 0,
+      'parent_after_child' => 0,
       'self_parent' => 0,
       'body_formats' => [],
       'languages' => [],
@@ -183,6 +184,9 @@ final class ForumCommentMigrationAudit {
           }
           elseif ($parent_topic_id !== $reference['topic_id']) {
             $report['parent_cross_topic']++;
+          }
+          elseif ((int) $parent_id > (int) $comment_id) {
+            $report['parent_after_child']++;
           }
         }
       }

@@ -63,6 +63,7 @@ final class ForumCommentMigrationAuditCommand extends Command {
       'parent_outside_scope' => 'Pais existentes fora do escopo',
       'parent_missing' => 'Pais ausentes',
       'parent_cross_topic' => 'Relações pai/filho entre tópicos',
+      'parent_after_child' => 'Pais elegíveis posteriores ao filho por CID',
       'self_parent' => 'Relações de post consigo mesmo',
       'existing_revisionable_posts' => 'Posts revisionáveis existentes',
     ];
