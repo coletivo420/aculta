@@ -10,11 +10,15 @@
       <a class="aculta-wiki-article__tab is-active" href="{{ url }}" aria-current="page">{{ 'Ler'|t }}</a>
       {{ actions }}
     </nav>
+    {% if show_heading is not same as(false) %}
     <header class="aculta-wiki-article__header">
       <p class="aculta-wiki-article__eyebrow">{{ 'Wiki420 · Enciclopédia livre'|t }}</p>
       <h1 class="aculta-wiki-article__title">{{ title }}</h1>
       {% if has_summary %}<div class="aculta-wiki-article__lead">{{ summary }}</div>{% endif %}
     </header>
+    {% elseif has_summary %}
+      <div class="aculta-wiki-article__lead">{{ summary }}</div>
+    {% endif %}
     <div class="aculta-wiki-article__layout">
       <div class="aculta-wiki-article__main">
         <div class="aculta-wiki-article__body">{{ body }}</div>
