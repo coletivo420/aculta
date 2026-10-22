@@ -1,3 +1,16 @@
+## 0.1.1-dev.76 — caracterizar idempotência dos avisos do Fórum — 2026-10-22
+
+- XK-C2: novo teste Kernel `ForumNoticeIdempotencyKernelTest` (8 testes / 148
+  assertions) percorre os eventos reais de primeira publicação de post e de
+  atualização de tópico. Confirma um aviso por destinatário e por revisão,
+  entrega repetida sem novo aviso, contadores intactos, exclusão do autor e de
+  quem perdeu acesso, e isolamento entre respostas e atualizações.
+- Fixture `tests/modules/aculta_messenger_aviso_test` registra a entidade de
+  produção `Aviso` por Reflection, sem habilitar as integrações do Messenger.
+- Nenhum serviço, hook, campo, tipo de aviso ou schema foi alterado; não há
+  mudança de comportamento nem de Runtime. Documentação da caracterização em
+  `docs/MESSENGER-PART-0.1-C2-CHARACTERIZATION.md`.
+
 ## 0.1.1-dev.75 — contar aprovação tardia de posts revisionáveis — 2026-10-22
 
 - `ultimo_post` guarda agora o ID da revisão publicada, em vez do ID estável do

@@ -13,8 +13,12 @@ responsável em 2026-10-21.
 Avisos para a primeira publicação de posts revisionáveis foram implementados
 em dev.74, com marcador de post separado. A dev.75 grava o ID da revisão
 publicada no marcador para não perder aprovações fora da ordem de criação e
-limita a integração à primeira publicação imutável. Testes de persistência e
-validação Runtime seguem pendentes.
+limita a integração à primeira publicação imutável. A dev.76 fecha a
+caracterização de persistência desses avisos (XK-C2): um teste Kernel percorre
+os eventos reais de primeira publicação e de atualização de tópico e confirma
+um aviso por destinatário, sem duplicação e sem mudança de comportamento.
+Validação Runtime e revisão visual seguem pendentes; o lock persistente do
+worker de tópicos não é exercitado.
 
 ## 0.1.1 — pedidos de amizade e política de novas conversas
 
