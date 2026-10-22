@@ -13,6 +13,12 @@
   builders foram descobertos após rebuild; nenhum anexo real existe ainda,
   então preview de arquivo e revisão visual seguem pendentes. Sem import global,
   fixture ou teste automatizado.
+- `filter.format.forum` e `editor.editor.forum` também foram importados
+  seletivamente para instalar o formato restrito e os botões dos diálogos. O
+  papel `email_confirmed` não recebeu permissão: o Sync contém permissões de
+  conteúdo ausentes no papel ativo, então importar o papel inteiro alteraria
+  outros acessos. Usuários comuns continuam sem acesso ao formato no Runtime
+  até revisão da configuração de papéis.
 
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 

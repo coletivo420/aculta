@@ -2,11 +2,13 @@
 
 - Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
   `forum`. `aculta_forum`, `aculta_document_viewer` e `aculta_gallery` estão
-  habilitados. Importação parcial criou somente os sete objetos de configuração
-  ausentes do Media `forum_attachment`; rebuild descobriu o formatter e builders.
+  habilitados. Importação parcial criou sete objetos do Media `forum_attachment`
+  e o formato/editor `forum`; rebuild descobriu formatter e builders.
 - Não há Media `forum_attachment`: preview com arquivo privado, fallback e layout
-  seguem sem validação visual. Nenhuma fixture ou importação global; nenhum
-  teste automatizado executado.
+  seguem sem validação visual. O papel `email_confirmed` não tem permissão de uso
+  do formato no ativo e diverge do Sync; não foi importado para evitar reverter
+  outras permissões. Nenhuma fixture ou importação global; nenhum teste
+  automatizado executado.
 
 ## Revisão visual — listas públicas de atividade (2026-10-21)
 
