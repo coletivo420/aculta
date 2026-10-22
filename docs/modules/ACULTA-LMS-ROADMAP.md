@@ -561,3 +561,19 @@ Prévia de mudanças: `composer require --dry-run`, `composer validate`, `compos
 - [Matriz de segurança](../portal/SECURITY-ACCESS-FILES-MATRIX.md)
 - [LMS Drupal.org](https://www.drupal.org/project/lms)
 - [Opigno Catalogue](https://www.drupal.org/files/Opigno-Catalogue.png), [Training Page](https://www.drupal.org/files/Opigno-Training-Page.png), [Dashboard](https://www.drupal.org/files/Opigno-Dashboard.png): referências visuais/funcionais; não copiar CSS/templates. O [repositório Opigno](https://github.com/Craftmasters/opigno) declara GPL-2.0, e a página do [Opigno LMS Community](https://www.drupal.org/project/opigno_lms) informa licença igual ao Core; qualquer reaproveitamento de código exige confirmar a licença do arquivo/versão exata e preservar avisos/atribuição.
+
+## Alinhamento transversal com ACULTA Studio Course Builder — planejamento visual de 2026-10-22
+
+**Contrato visual:** [STUDIO-LMS-COURSE-BUILDER-VISUAL.md](../portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md) (**CB-UX 0.3.0–0.3.8**). Este alinhamento **não altera os gates F0–F17, RC/Alpha, sua ordem ou estado de execução**. Acrescenta critérios visuais e de integração quando a implementação do construtor entrar na frente Studio Cursos.
+
+| Marcos existentes | Complemento visual e técnico requerido |
+| --- | --- |
+| F4 (Group/LMS) | inventariar modelo canônico de curso, módulo, aula, atividade, ordenação e relações; sem storage paralelo |
+| F6 (página de curso/sala) | distinguir experience do estudante de workspace do educador; preview autenticada conforme acesso |
+| F7 (turmas/memberships) | manter currículo do curso separado de prazos, inscrições, progresso e resultados da turma; provar isolamento Group A/B |
+| F8–F10 (avaliações/H5P) | criação e edição contextual somente com providers existentes e Form API; não inventar tipos, notas, avaliações ou editor próprio |
+| F12 (dashboards) | “Meus cursos” = criados/geridos, não todos visíveis/matriculados; “Equipe” separada, dados/cache por usuário/Group |
+| F15 (integrações) | adicionar mídia, PDF, H5P e Fórum contextual na composição do Course Builder quando seus contratos estiverem prontos |
+| F16/RC (gates) | WCAG 2.2 AA, 320–1440px, light/dark, keyboard move, AJAX/no-JS, salvamento/concorrência, impacto em turmas ativas |
+
+A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** presumir entidade Módulo, tipo específico para vídeo/PDF/H5P, nem capacidade de drag-and-drop no backend. A fase CB-UX 0.3.0 deve provar providers e persistência de ordem antes de qualquer edição/reorganização. Desktop: árvore + editor de item em duas colunas; mobile: estrutura → item → edição, uma tela por vez. Todas as operações revalidam acesso nativo e atualizam cache adequadamente. Preservar especialmente as pendências e riscos já registrados neste roadmap.
