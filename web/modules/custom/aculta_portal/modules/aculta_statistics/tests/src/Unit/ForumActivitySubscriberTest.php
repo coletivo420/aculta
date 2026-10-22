@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 final class ForumActivitySubscriberTest extends TestCase {
 
   /**
+   * Tópico grava a métrica de tópicos, sem dimensão.
    */
   public function testTopicIsRecordedAsTopicMetric(): void {
     $storage = $this->createMock(AggregateStorageInterface::class);
@@ -39,6 +40,16 @@ final class ForumActivitySubscriberTest extends TestCase {
   }
 
   /**
+   * Post revisionável grava a métrica de posts, sem dimensão.
+   */
+  public function testPostIsRecordedAsPostMetric(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->once())->method('record')->with('forum.posts.created', '', 1);
+
+    (new ForumActivitySubscriber($this->recorder($storage)))->onPostCreated();
+  }
+
+  /**
    * Recorder real sobre o catálogo real e o storage informado.
    */
   private function recorder(AggregateStorageInterface $storage): StatisticsRecorder {
@@ -50,7 +61,11 @@ final class ForumActivitySubscriberTest extends TestCase {
    */
   public function testSubscribedEventNames(): void {
     $this->assertSame(
-      ['aculta_forum.topic_created' => 'onTopicCreated', 'aculta_forum.comment_created' => 'onCommentCreated'],
+      [
+        'aculta_forum.topic_created' => 'onTopicCreated',
+        'aculta_forum.comment_created' => 'onCommentCreated',
+        'aculta_forum.post_created' => 'onPostCreated',
+      ],
       ForumActivitySubscriber::getSubscribedEvents(),
     );
   }

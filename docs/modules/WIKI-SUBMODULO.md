@@ -153,6 +153,8 @@ Ordem sugerida, depois das Fases 1–4:
    estado abaixo). Sem rota administrativa própria e sem habilitação no Runtime.
 4. Busca e notificações. Mudam a retenção e exigem atualizar o inventário LGPD de novo.
 5. Estatísticas de edição e revisão por verbete, a partir do histórico do Node.
+   Entregue nesta sessão: `WikiRevisionReport` no `aculta_statistics`, com a área Wiki
+   do painel e CSV (ver estado abaixo). Não cria métrica nem muda retenção.
 
 ## Decisões pendentes (responsável)
 
@@ -202,6 +204,7 @@ ao fim da sessão.
 | E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
 | E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
 | E7 | Adaptador `wiki` do Fórum: provider e discussão por verbete | Fase 5 (item 3) | nesta entrega | concluída |
+| E8 | Histórico de edição e revisão por verbete na área Wiki, com CSV | Fase 5 (item 5) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -296,6 +299,20 @@ ao fim da sessão.
   campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, e o Olivero o
   renderiza pela exibição `full` sem alteração de tema. `aculta_forum_wiki`
   entrou em `config/sync/core.extension.yml` e continua desabilitado no Runtime.
+- **Histórico de edição por verbete (Fase 5, item 5).** O `aculta_statistics`
+  ganhou o `WikiRevisionReport` (`aculta_statistics.wiki_revision_report`), que
+  conta, para cada `wiki_entry`, as revisões guardadas pelo Node, quantas foram
+  publicadas e quantas continuam em rascunho, com a data da última edição. A
+  consulta lê `node`, `node_revision` e `node_field_revision` em tempo de
+  renderização, com `COUNT(DISTINCT vid)`, então tradução não duplica revisão.
+  A área Wiki do painel mostra a tabela `statistics-wiki-revisions` com rascunho
+  pendente primeiro, depois edição mais recente e, no empate, o ID do nó; a
+  lista corta em 50 verbetes, informa o corte e mantém os totais gerais, e o
+  CSV (`/painel-administrativo/aculta/estatisticas/area/wiki/revisoes.csv`)
+  traz todos. Por ser um retrato do histórico, não segue o seletor de período e
+  **não cria métrica nova nem muda retenção** — por isso não há gate de LGPD
+  pendente para este item. O recorte continua dependendo só do tipo de conteúdo
+  `wiki_entry`, sem importar classes do `aculta_wiki`.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
@@ -314,19 +331,24 @@ ao fim da sessão.
   asserções: bundles aceitos, acesso e cache, campo fechado e permissão,
   restrição do host e do campo preservada, verbete não persistido) e a suíte
   unitária do `aculta_forum` continua passando (`105 testes, 799 asserções`).
-  A suíte unitária
-  do `aculta_statistics` tem 1 falha pré-existente:
-  `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
-  `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
-  escopo desta frente.
-- **O que ficou faltando.** O restante da Fase 5 do plano (busca e notificações,
-  estatísticas de edição e revisão), a rota administrativa própria da Wiki e a
-  validação em navegador com ACULTA420 e Olivero depois
-  da ativação — a imagem do card, a aba de upload e a discussão do verbete foram
-  verificadas por configuração e testes, não renderizadas em navegador. A
-  ativação em si depende
-  de o ambiente importar a configuração e rodar os passos de atualização com
-  backup verificado.
+  O histórico de edição tem `WikiRevisionReportKernelTest` (5 testes: contagem
+  de publicadas e rascunhos, pendência antes de recência, outro tipo de
+  conteúdo ignorado, tabela do painel com CSV completo e recorte sem perder
+  totais); `WikiRankingKernelTest` passou a instalar a configuração de
+  `system`, porque a área Wiki agora formata data. Suítes do
+  `aculta_statistics`: kernel `41 testes, 311 asserções` e unitária
+  `105 testes, 428 asserções`, ambas aprovadas. A falha pré-existente de
+  `ForumActivitySubscriberTest::testSubscribedEventNames` (o commit `16537660`
+  incluiu `aculta_forum.post_created` sem atualizar o teste) foi corrigida
+  nesta sessão, junto com um teste do evento de post.
+- **O que ficou faltando.** O restante da Fase 5 do plano (busca e
+  notificações, que mudam a retenção e exigem o pacote LGPD), a rota
+  administrativa própria da Wiki e a validação em navegador com ACULTA420 e
+  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão
+  do verbete e a tabela de revisões foram verificadas por configuração e
+  testes, não renderizadas em navegador. A ativação em si depende de o ambiente
+  importar a configuração e rodar os passos de atualização com backup
+  verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
   seguem não versionados e foram deixados intactos.
 

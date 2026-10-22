@@ -30,6 +30,11 @@ services:
     class: Drupal\aculta_statistics\Wiki\WikiProvider
     arguments: ['@entity_type.manager']
 
+  # Lê o histórico de revisões do Node em tempo de renderização; não grava nada.
+  aculta_statistics.wiki_revision_report:
+    class: Drupal\aculta_statistics\Wiki\WikiRevisionReport
+    arguments: ['@entity_type.manager', '@database']
+
   aculta_statistics.email_provider:
     class: Drupal\aculta_statistics\Email\EmailProvider
     arguments: ['@entity_type.manager']
@@ -108,6 +113,7 @@ services:
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
   Drupal\aculta_statistics\Wiki\WikiProvider: '@aculta_statistics.wiki_provider'
+  Drupal\aculta_statistics\Wiki\WikiRevisionReport: '@aculta_statistics.wiki_revision_report'
   Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
   Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
   # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.

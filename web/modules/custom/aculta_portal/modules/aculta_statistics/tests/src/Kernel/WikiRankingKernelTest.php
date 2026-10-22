@@ -39,7 +39,7 @@ final class WikiRankingKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_statistics', [DailyAggregateStorage::TABLE]);
     $this->installConfig(['aculta_statistics']);
-    $this->installConfig(['user', 'node']);
+    $this->installConfig(['system', 'user', 'node']);
     NodeType::create(['type' => 'wiki_entry', 'name' => 'Verbete'])->save();
     NodeType::create(['type' => 'article', 'name' => 'Artigo'])->save();
     $this->container->get('router.builder')->rebuild();

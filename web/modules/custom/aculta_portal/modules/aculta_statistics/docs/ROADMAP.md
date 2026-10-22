@@ -26,11 +26,12 @@ Pendente nesta fase:
 
 Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e conectores.
 
-## 0.10.0 — Wiki (em andamento: ranking entregue no código)
+## 0.10.0 — Wiki (em andamento: ranking e histórico de edição entregues no código)
 
 - Preparar a integração com o submódulo `aculta_wiki`, conforme `docs/modules/WIKI-SUBMODULO.md` (raiz do repositório).
 - Feito: `WikiProvider`, `wiki.entries.published`, `wiki.entries.updated` e, na área Wiki do painel, o ranking por verbete do período com exportação CSV.
-- Testes: unit (`WikiProviderTest`), kernel (`WikiPublicationKernelTest`, `WikiRankingKernelTest` e `DailyAggregateStorageKernelTest`). Validação no Runtime pendente.
+- Feito: histórico de edição por verbete (`WikiRevisionReport`): revisões, publicadas e rascunhos lidos das tabelas de revisão do Node, com a última edição, pendência primeiro, corte de 50 no painel e CSV completo. Não cria métrica nem muda retenção.
+- Testes: unit (`WikiProviderTest`), kernel (`WikiPublicationKernelTest`, `WikiRankingKernelTest`, `WikiRevisionReportKernelTest` e `DailyAggregateStorageKernelTest`). Validação no Runtime pendente.
 - Gate: inventário LGPD atualizado antes de criar as métricas.
 
 ## 0.4.0 — LMS (em andamento: 0.4.0-dev.1)

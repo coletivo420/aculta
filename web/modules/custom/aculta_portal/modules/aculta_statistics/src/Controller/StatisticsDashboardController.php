@@ -11,9 +11,11 @@ use Drupal\aculta_statistics\Connector\Ga4\Ga4ReportClient;
 use Drupal\aculta_statistics\Connector\SearchConsole\GoogleSearchConsoleClient;
 use Drupal\aculta_statistics\Report\MetricSeries;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
+use Drupal\aculta_statistics\Wiki\WikiRevisionReport;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -54,6 +56,8 @@ final class StatisticsDashboardController extends ControllerBase {
     private readonly TimeInterface $time,
     private readonly Ga4ReportClient $ga4,
     private readonly GoogleSearchConsoleClient $searchConsole,
+    private readonly WikiRevisionReport $wikiRevisions,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -66,6 +70,8 @@ final class StatisticsDashboardController extends ControllerBase {
       $container->get('datetime.time'),
       $container->get(Ga4ReportClient::class),
       $container->get('aculta_statistics.gsc_client'),
+      $container->get(WikiRevisionReport::class),
+      $container->get('date.formatter'),
     );
   }
 
@@ -153,6 +159,7 @@ final class StatisticsDashboardController extends ControllerBase {
     // O ranking é por verbete e só faz sentido na área Wiki.
     if ($area === 'wiki') {
       $build['ranking'] = $this->wikiRanking($today, $days);
+      $build['revisoes'] = $this->wikiRevisionsTable();
     }
 
     // Atalho para os prazos, só para quem administra a retenção. A subaba do
@@ -233,6 +240,99 @@ final class StatisticsDashboardController extends ControllerBase {
       'Content-Type' => 'text/csv; charset=utf-8',
       'Content-Disposition' => 'attachment; filename="' . $filename . '"',
     ]);
+  }
+
+  /**
+   * CSV do histórico de edição: uma linha por verbete, sem corte.
+   */
+  public function wikiRevisionExport(): Response {
+    $lines = ['verbete,revisoes,publicadas,rascunhos,ultima_edicao'];
+    foreach ($this->wikiRevisions->report(NULL)['entries'] as $entry) {
+      $lines[] = $this->csvField((string) $entry['node']->label())
+        . ',' . $entry['revisions']
+        . ',' . $entry['published']
+        . ',' . $entry['drafts']
+        . ',' . ($entry['last_edit'] !== NULL ? gmdate('c', $entry['last_edit']) : '');
+    }
+
+    return new Response(implode("\n", $lines) . "\n", Response::HTTP_OK, [
+      'Content-Type' => 'text/csv; charset=utf-8',
+      'Content-Disposition' => 'attachment; filename="wiki-revisoes.csv"',
+    ]);
+  }
+
+  /**
+   * Edição e revisão por verbete, a partir do histórico de revisões do Node.
+   *
+   * É um retrato do histórico atual, não do período escolhido: revisões antigas
+   * continuam contadas. Nada é gravado nem entra na retenção.
+   */
+  private function wikiRevisionsTable(): array {
+    $report = $this->wikiRevisions->report();
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-wiki-revisions'],
+    ];
+    if ($report['entries'] === []) {
+      $build['vazio'] = [
+        '#markup' => '<p>' . $this->t('Nenhum verbete com histórico de revisão.') . '</p>',
+      ];
+      return $build;
+    }
+
+    $build['resumo'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-note'],
+      '#markup' => '<p>' . $this->t('@entries verbetes com histórico, @revisions revisões, @drafts em rascunho. Retrato do histórico atual, independente do período.', [
+        '@entries' => $report['total_entries'],
+        '@revisions' => $report['total_revisions'],
+        '@drafts' => $report['total_drafts'],
+      ]) . '</p>',
+    ];
+
+    $rows = [];
+    foreach ($report['entries'] as $entry) {
+      $lastEdit = $entry['last_edit'] !== NULL
+        ? $this->dateFormatter->format($entry['last_edit'], 'short')
+        : (string) $this->t('Sem revisão registrada');
+      $rows[] = [
+        ['data' => ['#type' => 'link', '#title' => (string) $entry['node']->label(), '#url' => $entry['node']->toUrl()]],
+        $entry['revisions'],
+        $entry['published'],
+        $entry['drafts'],
+        $lastEdit,
+      ];
+    }
+    $build['tabela'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Edição e revisão por verbete'),
+      '#header' => [
+        $this->t('Verbete'),
+        $this->t('Revisões'),
+        $this->t('Publicadas'),
+        $this->t('Rascunhos'),
+        $this->t('Última edição'),
+      ],
+      '#rows' => $rows,
+    ];
+    if ($report['limit'] !== NULL && $report['total_entries'] > $report['limit']) {
+      $build['corte'] = [
+        '#markup' => '<p>' . $this->t('Mostrando os @shown primeiros de @entries; o CSV traz todos.', [
+          '@shown' => count($report['entries']),
+          '@entries' => $report['total_entries'],
+        ]) . '</p>',
+      ];
+    }
+    $build['exportar'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-note'],
+      'link' => [
+        '#type' => 'link',
+        '#title' => $this->t('Exportar histórico (CSV)'),
+        '#url' => Url::fromRoute('aculta_statistics.wiki_revision_export'),
+      ],
+    ];
+    return $build;
   }
 
   /**

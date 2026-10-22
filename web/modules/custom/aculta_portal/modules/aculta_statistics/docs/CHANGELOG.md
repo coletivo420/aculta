@@ -1,5 +1,31 @@
 # Changelog — ACULTA Statistics
 
+## Não lançado — histórico de edição por verbete na área Wiki
+
+- (2026-10-22) A área Wiki do painel mostra, por verbete, quantas revisões o
+  Node guarda, quantas foram publicadas e quantas continuam em rascunho, com a
+  data da última edição. Rascunho pendente vem primeiro (é o que precisa de
+  revisão); entre iguais, vale a edição mais recente, e o empate final é pelo
+  ID do nó.
+- O `WikiRevisionReport` (`aculta_statistics.wiki_revision_report`) lê
+  `node`, `node_revision` e `node_field_revision` em tempo de renderização e
+  não grava nada: não cria métrica, não entra no catálogo e não muda a
+  retenção. As contagens usam `COUNT(DISTINCT vid)`, então tradução não
+  duplica revisão.
+- Por ser um retrato do histórico, o relatório não segue o seletor de período
+  do painel; o resumo da tabela diz isso. A lista corta em 50 verbetes e
+  informa o corte com os totais gerais; o CSV
+  (`aculta_statistics.wiki_revision_export`, em
+  `/painel-administrativo/aculta/estatisticas/area/wiki/revisoes.csv`) traz
+  todos.
+- `StatisticsDashboardController` passou a receber `DateFormatterInterface`
+  para formatar a última edição no formato curto do site.
+- Testes: `WikiRevisionReportKernelTest` (5 testes: contagem de publicadas e
+  rascunhos, ordem com pendência antes de recência, outro tipo de conteúdo
+  ignorado, tabela do painel com CSV completo e recorte sem perder totais).
+  `WikiRankingKernelTest` passou a instalar a configuração de `system`, já que
+  a área Wiki agora formata data.
+
 ## Não lançado — ranking por verbete na área Wiki
 
 - (2026-10-22) O painel da área Wiki mostra os verbetes mais lidos no período

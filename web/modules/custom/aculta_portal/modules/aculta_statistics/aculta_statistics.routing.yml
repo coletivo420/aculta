@@ -42,6 +42,14 @@ aculta_statistics.wiki_ranking_export:
   requirements:
     _permission: 'administer aculta_statistics'
 
+aculta_statistics.wiki_revision_export:
+  path: '/painel-administrativo/aculta/estatisticas/area/wiki/revisoes.csv'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::wikiRevisionExport'
+    _title: 'Exportar histórico de edição da Wiki'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
 aculta_statistics.area:
   path: '/painel-administrativo/aculta/estatisticas/area/{area}'
   defaults:
