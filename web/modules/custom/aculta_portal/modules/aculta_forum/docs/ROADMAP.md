@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.175` | Reconciliar traduções em reexecuções | Destino remove traduções não padrão que desapareceram da origem e interrompe a linha quando o idioma padrão do Comment mudou, sem converter silenciosamente o idioma padrão do post. Sem execução da migration. |
 | `0.1.0-dev.174` | Preservar estado e timestamp na migration | Hook ignora a seleção de estado e timestamp corrente quando o post é marcado como sincronizado pelo Core Migrate; mantém o estado importado e usa o timestamp `created` como limite conservador quando não há primeira publicação histórica. Sem execução de migration ou Runtime. |
 | `0.1.0-dev.173` | Verificar destino das denúncias migradas | Auditoria conta flaggings sem configuração compatível com `aculta_forum_post`. `sinalizar_comentario` e a fila atuais são Comment-only; antes de migrar, integrar configuração/fila para posts e estabelecer preservação de identidade e timestamp pela Flag API. Smoke Homelab somente leitura: zero flaggings, compatibilidade não validada com dados. |
 | `0.1.0-dev.172` | Identificar pais pela API do Comment Core | Fonte e auditoria distinguem raiz de resposta por `hasParentComment()`; sentinelas `pid` não causam lookup nem contagem falsa de pai ausente. Smoke Homelab sem Comments elegíveis, portanto relações reais não validadas. |

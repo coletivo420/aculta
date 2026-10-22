@@ -182,10 +182,16 @@ testes de workflow; a configuração da política inicial continua sendo a de
    `review`; formato diferente de `forum`, corpo vazio ou publicado/rejeitado
    conflitantes interrompem a importação. A dev.174 evita que
    `ForumPublicationTimeHooks` sobrescreva esses estados durante o save: Core
-   `EntityContentBase::save()` marca a entidade `isSyncing()`. O hook também
+   `EntityContentBase::save()` marca a entidade `isSyncing()`. A dev.175 torna
+   a reexecução com `track_changes` exata para os idiomas: remove traduções
+   não padrão que a origem não tem e falha se o idioma padrão mudou, pois o
+   Core não troca esse padrão implicitamente. Usa
+   `TranslatableInterface::removeTranslation()` para remoção de idiomas
+   secundários. O hook também
    não usa o relógio da importação como primeira publicação; quando falta o
    marcador histórico, `ParticipationEditWindow` usa `created` como limite
    conservador. Fonte: [SynchronizableInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21SynchronizableInterface.php/11.x).
+   [TranslatableInterface 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21TypedData%21TranslatableInterface.php/11.x).
    Fontes Migrate: [fonte `ContentEntity` do
    Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [MigrationLookup do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21process%21MigrationLookup.php/class/MigrationLookup/11.x), [encadeamento de migrations](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/chaining-migrations-using-migration_lookup), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e

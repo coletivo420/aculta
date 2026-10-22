@@ -1,3 +1,12 @@
+## `0.1.0-dev.175` — reconciliar traduções em reexecuções
+
+- Reimportações da migration removem traduções de destino que deixaram de
+  existir no Comment de origem, mantendo o conjunto atual igual à origem.
+  Tradução padrão divergente falha antes de salvar: o post existente não pode
+  trocar idioma padrão implicitamente. A API `removeTranslation()` do Core é
+  usada somente para idiomas não padrão ausentes na linha de origem.
+- Nenhuma migration foi executada; somente lint/PHPCS e gates estáticos.
+
 ## `0.1.0-dev.174` — preservar estado e timestamp na migration
 
 - `ForumPublicationTimeHooks` agora respeita `SynchronizableInterface::isSyncing()`

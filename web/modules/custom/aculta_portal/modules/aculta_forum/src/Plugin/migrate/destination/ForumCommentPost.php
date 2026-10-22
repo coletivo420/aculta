@@ -76,11 +76,34 @@ final class ForumCommentPost extends EntityContentBase {
       }
     }
 
+    if ($old_destination_id_values !== []) {
+      $existing = $this->storage->load(reset($old_destination_id_values));
+      if ($existing instanceof ForumPost && $existing->language()->getId() !== $default_langcode) {
+        throw new MigrateException(sprintf(
+          'Comment %s mudou o idioma padrão de %s para %s; a migration não pode trocar a tradução padrão do post existente.',
+          $source_id,
+          $existing->language()->getId(),
+          $default_langcode,
+        ));
+      }
+    }
+
     $row->setDestinationProperty('langcode', $default_langcode);
     $this->rollbackAction = MigrateIdMapInterface::ROLLBACK_DELETE;
     $entity = $this->getEntity($row, $old_destination_id_values);
     if (!$entity instanceof ForumPost) {
       throw new MigrateException(sprintf('Não foi possível criar o post de destino para o Comment %s.', $source_id));
+    }
+    if ($entity->language()->getId() !== $default_langcode) {
+      throw new MigrateException(sprintf('Comment %s não corresponde ao idioma padrão do post de destino.', $source_id));
+    }
+
+    $source_langcodes = array_map('strval', array_keys($translations));
+    foreach ($entity->getTranslationLanguages() as $language) {
+      $langcode = $language->getId();
+      if ($langcode !== $default_langcode && !in_array($langcode, $source_langcodes, TRUE)) {
+        $entity->removeTranslation($langcode);
+      }
     }
 
     foreach ($translations as $langcode => $values) {
