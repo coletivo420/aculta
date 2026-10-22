@@ -95,3 +95,7 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 O fluxo passa a ser **inventariar → classificar SDC/UI Suite → adequar/migrar → validar story e consumidores → reutilizar/estender → criar SDC transversal apenas se faltar**. Não reaproveitar componente legado antes do gate de adequação. Exceção: interfaces *funcionais* de terceiros (PDF.js, H5P, formulários Core) são mantidas como providers, não copiadas ou reescritas como componentes; a camada visual compartilhável ao redor delas segue SDC.
 
 **Gate obrigatório:** componente elegível deve ter arquivo `.component.yml` válido e Twig de componente, props/slots explícitos e cache renderizável preservado, histórias no UI Patterns Library, uso de tokens/estilos semânticos UI Styles onde adequados, WCAG 2.2 AA, light/dark e evidência de pelo menos um consumidor real. A integração UI Patterns não deve ser forçada quando incompatível com o consumidor; nesse caso documentar explicitamente a compatibilidade e a razão técnica. A ausência do padrão **bloqueia reutilização em novas áreas**.
+
+## Primeiro slice transversal M2/B1
+
+O contrato [Context Header do tema](theme-ux-0.8-m2-b1-context-header.md) prioriza Core page title/breadcrumb e SDC existente antes de criar novo componente. Caso necessário, criar apenas SDC com dois consumidores reais, UI Patterns/Styles e stories, sem substituir Institution Bar e Domain Header. Documentação concluída; execução funcional depende da auditoria Runtime.
