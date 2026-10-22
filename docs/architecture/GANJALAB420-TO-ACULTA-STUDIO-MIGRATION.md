@@ -54,3 +54,17 @@
 ### Próxima microfase: G420-C
 
 Separar `LearningDashboardController::student()` entre dados de aprendizagem e composição visual Studio; preservar metadados de cache e decisões de acesso, sem copiar dados nem modificar URLs. Depois integrar salas e turmas em G420-D. Testar no homelab um estudante matriculado, um não matriculado e um educador que também é estudante, incluindo domínios e fallback sem JS.
+
+## G420-C — Composição Studio e namespace do domínio de conta (2026-10-22)
+
+**Código implementado, homologação pendente.** O dashboard de estudante agora é composto em `Drupal\aculta_studio\Learning\LearnerDashboardComposer`, que recebe `aculta_lms.learning_dashboard` para dados LMS autorizados e cacheáveis. O controller LMS conserva `student()` como adapter para o Composer e `class()` mantém o painel do educador. O provider GanjaLab420 passa a renderizar pelo Composer Studio. Ainda não houve redesenho completo dos cartões; a composição migrou sem alterar o contrato SDC existente (`context-header`, `empty-state`).
+
+**Política global de localização do ACULTA Studio:** interfaces próprias do Studio usam o purpose `account` e a resolução de host pelo Portal/Domain, correspondente ao subdomínio `conta.aculta.*` em cada ambiente. O prefixo `/studio` é o namespace canônico. Não codificar hostname fixo, nem reproduzir o cabeçalho multidomínio dentro do Studio.
+
+- GanjaLab editorial: `/studio/ganjalab` e `/studio/ganjalab/{aba}/{secao}/{sub}`.
+- GanjaLab420 estudante: `/studio/ganjalab420`.
+- `/ganjalab*`, `/ganjalab420`, `/minha-aprendizagem` e `/studio/{aba}...` permanecem temporariamente acessíveis sob purpose account, para compatibilidade; não remover nem publicar redirecionamento permanente sem inventário e validação.
+- WE SATIVA: o antigo planejamento de experiência no purpose wiki exige **migração explícita** do shell Studio para `/studio/we-sativa` sob purpose account. Operações Wiki/API/entidades continuam no domínio e no módulo Wiki conforme regras próprias. **Não declarar rota WE SATIVA migrada** nesta entrega.
+- Futuras experiências Studio devem ter entrada canônica em `/studio/{experiencia}` no propósito account; URLs de recursos dos módulos donos podem permanecer em outros domínios, desde que verifiquem acesso.
+
+**Gates antes de homologar:** inspecionar rotas resolvidas e precedência entre `/studio/ganjalab`, `/studio/ganjalab420` e wildcard legado `/studio/{aba}`; confirmar geração de URLs no host conta de cada ambiente, ausência de acesso cruzado via outros hosts, redirects/aliases sem loop e headers multidomínio preservados; executar lint, Kernel, Functional e smoke de estudante autenticado e anônimo. Revisar testes que instanciam `LearningDashboardController` diretamente após nova injeção do Composer.
