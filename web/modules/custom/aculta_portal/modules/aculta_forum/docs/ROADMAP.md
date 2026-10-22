@@ -7,7 +7,7 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-`0.1.0-dev.185–191` adaptam os diálogos de imagem à política central e exigem
+`0.1.0-dev.185–192` adaptam os diálogos de imagem à política central e exigem
 texto alternativo fornecido pela pessoa autora no
 diálogo de anexo e uma descrição por cada imagem da galeria. O passo seguinte da
 integração continua sendo validar upload real, publicação contextual, acesso

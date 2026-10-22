@@ -1,3 +1,11 @@
+## `0.1.0-dev.192` — manter a classificação de imagem do upload
+
+- O diálogo classifica o Media de imagem pelo controle que recebeu o arquivo,
+  validado por `aculta_image`, em vez de depender somente do MIME reportado.
+  O formatter também reconhece essa referência explícita ao mesmo File; MIME
+  continua como fallback para imagens existentes.
+- Sem upload autenticado ou revisão visual nesta etapa.
+
 ## `0.1.0-dev.191` — revalidar dados da galeria no callback AJAX
 
 - O callback repete a validação de título não vazio (até 255 caracteres) e de

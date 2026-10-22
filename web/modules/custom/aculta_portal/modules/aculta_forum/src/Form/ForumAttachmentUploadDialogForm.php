@@ -179,7 +179,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     if (!$media instanceof MediaInterface) {
       throw new \UnexpectedValueException('The Forum attachment Media bundle could not be created.');
     }
-    if (str_starts_with((string) $file->getMimeType(), 'image/')) {
+    if ($is_image_upload) {
       $media->set('field_media_forum_image', [
         'target_id' => $file->id(),
         'alt' => $image_alt,

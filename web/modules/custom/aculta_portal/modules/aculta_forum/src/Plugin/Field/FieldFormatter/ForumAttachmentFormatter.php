@@ -99,7 +99,13 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
         continue;
       }
 
-      if (str_starts_with((string) $file->getMimeType(), 'image/')) {
+      $image_field = $media->hasField('field_media_forum_image')
+        ? $media->get('field_media_forum_image')
+        : NULL;
+      $field_marks_this_file_as_image = $image_field !== NULL
+        && !$image_field->isEmpty()
+        && (string) $image_field->target_id === (string) $file->id();
+      if (str_starts_with((string) $file->getMimeType(), 'image/') || $field_marks_this_file_as_image) {
         $alt = $media->hasField('field_media_forum_image')
           ? (string) ($media->get('field_media_forum_image')->alt ?: $file->getFilename())
           : $file->getFilename();

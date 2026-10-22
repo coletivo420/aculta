@@ -1,3 +1,10 @@
+## dev.192 — preservar tipo de imagem validado na origem
+
+- O fluxo usa o controle submetido e validado por `UserUploadPolicy::isValidImage`
+  como marcador de imagem no Media. A apresentação reconhece a referência ao
+  mesmo File sem depender exclusivamente de `getMimeType()`.
+- Sem upload autenticado ou revisão visual nesta etapa.
+
 ## dev.191 — revalidação dos metadados da galeria no callback
 
 - A validação Form API e o callback AJAX exigem título não vazio de até 255
