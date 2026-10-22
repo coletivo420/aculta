@@ -24,8 +24,9 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
   indexação, sem criar conteúdo no Runtime.
 - `ForumSearchQuerySubscriber` usa `search_api.query_pre_execute`. Só modifica o
   índice `aculta_forum`, adicionando o identificador do Domain resolvido para o
-  purpose `forum`. Em outro purpose ou sem Domain configurado, adiciona uma
-  condição impossível (`nid = 0`). Não há hostname no código.
+  purpose `forum`. Em outro purpose ou sem Domain configurado, adiciona ao campo
+  `forum_search_domain` o sentinela impossível `__forum_scope_denied__`. Não há
+  hostname no código.
 - O purpose da rota da View é classificado por `DomainRouteSubscriber`. O
   processador e a checagem de acesso da View continuam ativos; filtro de Domain
   não substitui acesso ao Node.
