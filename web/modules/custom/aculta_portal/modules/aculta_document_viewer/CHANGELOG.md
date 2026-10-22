@@ -8,9 +8,12 @@
   download continua sob Core/File.
 - `UrlGeneratorInterface` foi injetado nos builders por DI para gerar a rota
   `system.files`; nenhuma lógica de acesso foi movida ao tema ou ao Fórum.
-- Runtime de teste confirmou a URL gerada e o embed DOCX, mas o endpoint falhou
-  com `FileException: File must be readable` no `BinaryFileResponse`; o browser
-  mostrou o fallback. Não considerar o download Office privado validado.
+- Runtime de teste confirmou HTTP 200 tanto em `/system/files?file=...` quanto
+  em `/system/files/{filepath}` para um DOCX privado criado com proprietário
+  `aculta`, o usuário do PHP-FPM. O `FileException: File must be readable` da
+  primeira tentativa veio de uma fixture criada pelo Drush com outro
+  proprietário. Firefox mostrou o cartão, controles e fallback, mas não
+  confirmou a renderização do conteúdo; a prévia DOCX continua pendente.
 
 ## 0.1.0-dev.10 — remove o guarda CSP duplicado — 2026-10-21
 

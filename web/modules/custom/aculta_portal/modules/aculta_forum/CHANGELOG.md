@@ -12,15 +12,20 @@
   displays padrão de `aculta_forum_post` e `forum_attachment`; as duas galerias
   existentes mantiveram o campo vazio e suas 97 imagens intactas.
 - Firefox ESR headless confirmou tópico/post públicos, markup do viewer DOCX e
-  ausência de overflow em viewports efetivos 500, 768, 1024 e 1428 CSS px. O
-  endpoint privado ainda falha com `FileException: File must be readable` no
-  `BinaryFileResponse`; o viewer anunciou fallback. A tentativa em 320/390 px
-  foi limitada pelo viewport mínimo de 500 px do Firefox headless. Revisão de
-  preview Office permanece pendente.
+  ausência de overflow em viewports efetivos 500, 768, 1024 e 1428 CSS px. A
+  revisão posterior identificou que a primeira fixture tinha proprietário
+  incompatível com o PHP-FPM. Com uma fixture criada sob `aculta`, a entrega do
+  DOCX retornou HTTP 200 em query e path de `system.files`; o Firefox exibiu
+  controles e fallback, sem confirmar a renderização do documento. A tentativa
+  em 320/390 px foi limitada pelo viewport mínimo de 500 px do Firefox
+  headless. Preview Office permanece pendente.
 - Fixture temporária removida: tópico 524, post 1, Media 243 e File 586; o
   Runtime voltou a zero tópicos, posts, comentários dedicados e anexos. Raiz e
   `/categorias` retornaram 200; URL do tópico removido retornou 404. PHP lint
   passou; testes não foram repetidos nesta revisão.
+- Fixture de revalidação DOCX removida: tópico 525, post 2, Media 244 e File
+  587. A verificação final confirmou zero tópicos, posts e anexos de Fórum, zero
+  usos e ausência do arquivo no disco; as 97 imagens da galeria permaneceram.
 
 ## `0.1.0-dev.181` — conectar preview local de Office nos anexos do Fórum
 

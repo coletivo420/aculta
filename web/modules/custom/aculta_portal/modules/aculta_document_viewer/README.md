@@ -25,11 +25,12 @@ padrão e respeita a opção explícita do painel/formatter.
 - O builder incorpora PDFs permanentes em `public://` ou `private://`, somente
   após autorização de Media, campo e File. `private://` usa a rota Core e cache
   de render max-age zero.
-- DOCX e planilhas privados montam `/system/files?file=...`, a forma da rota
-  Core `system.files` usada para arquivos privados neste Runtime. Em
-  2026-10-21, a fixture do Fórum ainda recebeu `FileException: File must be
-  readable` no endpoint; esse caminho requer nova validação no Runtime antes
-  de ser considerado homologado.
+- DOCX e planilhas privados montam `/system/files?file=...`, via rota Core
+  `system.files`. No Runtime de teste, em 2026-10-21, query e path foram ambos
+  servidos com HTTP 200 quando o arquivo da fixture pertencia ao usuário
+  `aculta` do PHP-FPM. O erro `File must be readable` veio de uma fixture
+  criada pelo Drush com proprietário diferente; a entrega do viewer DOCX no
+  navegador continua pendente, pois a captura exibiu o fallback.
 - O esquema `private://` não define a audiência: a permissão da Media governa a
   leitura. Config Sync concede `view media` aos papéis anônimo e autenticado;
   Media publicada com arquivo privado pode ser lida por ambos. Não usar esse
@@ -144,9 +145,11 @@ restaurar cada relação restabeleceu 200. O upload/criação foi confirmado na 
 Firefox como `content_editor`: o arquivo foi selecionado pelo input nativo, a
 Media `document` foi salva e a tela de edição abriu após conceder somente
 `edit own document media` ao papel editorial. A miniatura pública foi gerada no
-Runtime pelo pipeline `aculta_image`. A rota Core `/system/files?file=...` é necessária neste Runtime,
-pois `/system/files/{filepath}` responde 404. Fixtures, uploads, miniatura,
-contas, conteúdo e tokens de login de teste foram removidos. Nesta homologação
+Runtime pelo pipeline `aculta_image`. Em teste posterior do Fórum, query e path
+de `system.files` entregaram HTTP 200 para um DOCX privado com propriedade
+compatível com o PHP-FPM; o Firefox mostrou os controles e o fallback, sem
+confirmar a renderização do conteúdo. Fixtures, uploads, miniatura, contas,
+conteúdo e tokens de login de teste foram removidos. Nesta homologação
 não houve `drush cim` global nem `updb`;
 CDN, policy ImageMagick e migração de arquivos também não fazem parte do módulo.
 
