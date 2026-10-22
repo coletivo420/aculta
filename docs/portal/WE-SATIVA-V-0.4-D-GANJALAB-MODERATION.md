@@ -78,3 +78,7 @@ Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamen
 6. **D-R:** testes Drupal, homelab e verificação visual multirresolução, sem JS e por perfil.
 
 **Invariantes:** primeiro verbete de email_confirmed moderado; novas alterações/sugestões continuam revisadas, publicadas apenas por content_editor. Autosave Form permanece futuro. Nenhuma implementação decorre automaticamente deste documento.
+
+## V-0.4-R / GanjaLab D-A — auditoria do código existente
+
+[Inventário e contrato da janela Wiki](GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
