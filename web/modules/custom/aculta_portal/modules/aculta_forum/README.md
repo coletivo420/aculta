@@ -11,8 +11,8 @@ oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados.
 O índice `/categorias` apresenta nomes e descrições dos termos do Fórum e se
 liga à página de discussões. A View `aculta_forum_categories` agrupa os cartões
 por categoria-pai, com uma seção “Categoria raiz” para termos de topo. A
-inspeção visual com categorias-filhas e os contadores de tópicos continuam
-pendentes.
+atualização `9003` aplica a View em instalações existentes. A inspeção visual
+com categorias-filhas e os contadores de tópicos continuam pendentes.
 `/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
 posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
 vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros

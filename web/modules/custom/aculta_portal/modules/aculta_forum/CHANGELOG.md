@@ -1,3 +1,12 @@
+## `0.1.0-dev.212` — aplicar agrupamento no Sync e em instalações existentes
+
+- A definição agrupada de `/categorias` também foi registrada em
+  `config/sync`; a atualização `9003` adapta a View já instalada sem alterar
+  `block_landing`, o display padrão ou os filtros/acesso existentes.
+- Runtime de teste: atualização `9003` aplicada após conferir View, versão de
+  schema e backup do YAML ativo. Categorias com hierarquia real disponíveis
+  para revisão visual. Testes automatizados não executados.
+
 ## `0.1.0-dev.211` — agrupar categorias por categoria-pai
 
 - A página `/categorias` agrupa cartões pela relação Parent do Taxonomy. Cada

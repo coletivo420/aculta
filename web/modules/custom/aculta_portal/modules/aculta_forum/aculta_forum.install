@@ -120,3 +120,48 @@ function aculta_forum_update_9002(): void {
     ->getFieldStorageDefinitions('aculta_forum_post');
   $definition_update_manager->installFieldableEntityType($entity_type, $field_storage_definitions);
 }
+
+/**
+ * Groups the category page by its parent taxonomy term.
+ */
+function aculta_forum_update_9003(): void {
+  $config_name = 'views.view.aculta_forum_categories';
+  $view = \Drupal::configFactory()->getEditable($config_name);
+  if ($view->isNew()) {
+    throw new RuntimeException('The ACULTA Forum categories View is missing.');
+  }
+
+  $fields = $view->get('display.default.display_options.fields');
+  if (!is_array($fields) || !isset($fields['parent_name'])) {
+    throw new RuntimeException('The parent category field is missing from the ACULTA Forum categories View.');
+  }
+
+  // Reuse the existing field handlers so any locally maintained field
+  // settings are preserved. Only the page display changes; the landing block
+  // and the default display remain untouched.
+  $fields['parent_name']['admin_label'] = 'Título do grupo hierárquico';
+  $fields['parent_name']['label'] = '';
+  $fields['parent_name']['exclude'] = TRUE;
+  $fields['parent_name']['element_type'] = 'h2';
+  $fields['parent_name']['empty'] = 'Categoria raiz';
+  $fields['parent_name']['hide_empty'] = FALSE;
+
+  $page_path = 'display.page_categories.display_options';
+  $view->set($page_path . '.defaults.fields', FALSE);
+  $view->set($page_path . '.defaults.style', FALSE);
+  $view->set($page_path . '.fields', $fields);
+
+  $style = $view->get('display.default.display_options.style') ?? [
+    'type' => 'default',
+    'options' => [],
+  ];
+  $style['options']['grouping'] = [
+    [
+      'field' => 'parent_name',
+      'rendered' => FALSE,
+      'rendered_strip' => FALSE,
+    ],
+  ];
+  $view->set($page_path . '.style', $style);
+  $view->save(TRUE);
+}

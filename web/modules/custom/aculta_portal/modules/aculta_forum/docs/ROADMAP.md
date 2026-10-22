@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.212` | Aplicar agrupamento no Sync e em instalações existentes | O Sync e a atualização `9003` aplicam o agrupamento da página sem substituir filtros, acesso, display padrão ou bloco lateral. Runtime de teste atualizado; 12 categorias e hierarquias disponíveis para revisão visual. Testes automatizados não executados. |
 | `0.1.0-dev.211` | Agrupar visualmente categorias pela categoria-pai | A página `/categorias` usa o agrupamento nativo do Views, preserva a grade por grupo e cria títulos semânticos; o bloco da entrada permanece inalterado. Contadores de tópico ficam pendentes até provar agregação com Node Access e Domain. Inspeção visual pendente; sem testes. Gates Drupal 11+, status index, design foundations e SDC passam; Foundation ainda exige a versão anterior do tema no Runtime, e módulo-tema aponta dívida preexistente. |
 | `0.1.0-dev.210` | Carregar autores da lista pública em lote | ForumPosts, contas User e autores históricos da página são carregados em lote; seleção de atividade e `aculta_user` permanecem como fonte de autoria/apresentação. Validação integrada de performance pendente. Sem teste ou Runtime. |
 | `0.1.0-dev.209` | Mostrar autoria da atividade mais recente na lista pública | Compara atividade de tópico, Comment e ForumPost; a identidade User/histórica de ForumPost usa o builder proprietário `aculta_user`. Validação integrada/browser pendente. Sem teste ou Runtime. |
