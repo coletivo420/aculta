@@ -115,3 +115,7 @@ A home canônica `/studio/ganjalab` sob purpose `account` ganhou cabeçalho de c
 ## GANJALAB E-B.1 — Meu trabalho
 
 A Revista apresenta `Meu trabalho → Meus conteúdos` como vista pessoal inicial e preserva filtros de rascunho, revisão, publicação e arquivamento no escopo do autor. O filtro `uid` é aplicado à consulta antes da paginação Drupal (20 candidatos por página), com checagem de entidade/revisão. **Filtro de estado pós-pager ainda é parcial** e requer provider especializado; listagens de equipe e moderação não foram disponibilizadas nesta fase. Esta entrega não modifica workflow, Form API nem ownership dos módulos. Consultar `docs/ROADMAP.md` para gates e limitações.
+
+## GANJALAB E-B.2 — correção da contagem dos filtros pessoais
+
+As listagens `scope: mine` agora calculam o pager depois de filtrar por estado da **última revisão autorizada**, sem contar nós de terceiros ou rascunhos invisíveis. A consulta usa `accessCheck(TRUE)`, `uid` e lotes de 100; cada revisão exige acesso explícito. O pager exibe 20 itens por página. Isto corrige a ordem lógica do E-B.1, **mas ainda não houve teste Runtime e a varredura integral de candidatos do autor requer gate de performance**. As filas de moderação não usam esse pager.
