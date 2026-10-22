@@ -39,3 +39,9 @@ O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de p
 XK-02/03/04/11: User detém identidade, situação real de associado ativo, amizades, preferências pessoais e política de participação. Expor serviço autoritativo de associação para Group no Fórum; especificar eventos de ativação/suspensão/desligamento, reconciliação e cache; não tratar `associado` como papel. Messenger entrega avisos, User não duplica inbox. Política primeira contribuição Fórum/Wiki permanece em ParticipationRules.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B: contratos compartilhados de primeira participação e elegibilidade de associado ativo ficam no User. Preservar ParticipationRules e ParticipationEditWindow; caracterizar Fórum e exclusões LMS antes de acrescentar lookup da primeira publicação Wiki. Consulta de situação da associação deve ser autoritativa; Group do Fórum é consumidor, não dono dessa situação.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
