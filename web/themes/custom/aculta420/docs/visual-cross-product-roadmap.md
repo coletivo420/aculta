@@ -213,3 +213,7 @@ A [auditoria transversal](../../../../../docs/architecture/ACULTA-CROSS-MODULE-C
 XK 0.1-B: definições de participação, avisos e ACL Group foram registradas antes das alterações visuais. UI do WE SATIVA, Fórum e LMS continua mobile-first, conforme Core SDC/UI Suite; não esconder acesso por CSS e manter Institution Bar + Domain Header multidomínio.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
+
+## WES-UX 0.4 — projeto visual por telas (2026-10-22)
+
+[Inventário de 12 estruturas WE SATIVA](../../../../../docs/portal/WE-SATIVA-VISUAL-SCREENS-0.4.md), incluindo entrada pelo verbete, início, Meu trabalho, microtarefas, novo verbete, CKEditor, prévia, revisão, feedback, ajuda, fontes e mídia. Sequência V-0.4-A–R, mobile-first em toda a Wiki, componentes Core SDC/UI Suite exclusivamente, Institution Bar + Domain Header preservados. Cada tela depende de providers, estados e permissões reais; não implementar links fictícios. Autosave apenas futuro.
