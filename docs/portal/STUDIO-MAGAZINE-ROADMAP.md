@@ -33,6 +33,35 @@
   integração compartilhada de Fórum/Galeria, permissões e revisão completa do
   workflow e da apresentação. Studio continua bloqueado até o gate 0.5.0.
 
+## Registro de execução — Magazine 0.5-B — 2026-10-22
+
+- Contratos editoriais consumíveis pelo Studio publicados em
+  `aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md`,
+  `EDITORIAL-ACCESS-MATRIX.md`, `EDITORIAL-ACTOR-STATE-MATRIX.md` e
+  `ROUTES-DOMAIN-CONTRACT.md`. O inventário parte das rotas, acessos, form
+  modes e revisões reais do Core; onde não há API, o documento registra lacuna.
+- O contrato de formulário (`RevistaFormHooks` + `js/revista-form.js`) agrupa os
+  campos secundários, abre o grupo com erro e leva o foco ao primeiro campo
+  inválido, mantém o envio sem JavaScript e restaura o aviso de alterações não
+  salvas no retorno por bfcache.
+- Testes: Kernel do Magazine para autoria, coautoria, revisão não padrão,
+  preview, transições permitidas e recusadas, purpose/domínio, cache entre
+  contas e validação do formulário; Unit do Portal para a precedência de
+  purpose de rota. Os testes usam os atores reais do Config Sync; nenhum papel,
+  estado ou transição foi inventado.
+- Integração mínima no Studio verificada em 0.5-B.9. O consumidor não pediu
+  wrapper nem adaptador: usa `node.add`, `entity.node.edit_form`,
+  `entity.node.canonical`, revisões, `content_moderation_control` e a listagem
+  do próprio Studio com `accessCheck(TRUE)`. A única divergência de contrato era
+  o purpose das operações, corrigida no consumidor em `7500090c`, commit
+  separado do Magazine.
+- Operações ainda condicionadas a fases posteriores, registradas no contrato:
+  E-B.3 (ações editoriais explícitas, caso apareça consumidor), E-C (editor
+  dedicado) e E-D (revisão/aprovação). Coautoria na interface (B-02) e listagem
+  de coassinados (B-03) dependem de decisão com `aculta_user`/`aculta_studio`.
+- Nenhuma importação de configuração, migração, exclusão ou alteração de
+  permissões foi executada. MAG 0.5-C não foi iniciada.
+
 ## Registro de execução — Magazine 0.5-A — 2026-10-22
 
 - Auditoria arquitetural completa publicada em

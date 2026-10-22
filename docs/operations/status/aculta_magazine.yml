@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: MAG 0.5-B (contratos editoriais para o Studio) sobre a arquitetura e a matriz de dependências publicadas em 0.5-A; o drift de Config Sync do Magazine foi zerado no repositório sem import, restando o workflow do Fórum e diferenças de ambiente; envio de comentário pendente validado no Runtime de teste e overflow horizontal do documento não reproduzido ([roadmap](docs/portal/STUDIO-MAGAZINE-ROADMAP.md))
+next_phase: MAG 0.5-B concluída (contratos editoriais consumíveis pelo Studio, testes e documentação); MAG 0.5-C não iniciada. Pendências registradas no contrato de integração — E-B.2-T (Kernel/Functional do Studio), E-B.3, E-C e E-D; coautoria na interface depende de decisão com aculta_user ([roadmap](docs/portal/STUDIO-MAGAZINE-ROADMAP.md))

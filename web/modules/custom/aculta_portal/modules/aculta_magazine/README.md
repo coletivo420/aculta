@@ -20,6 +20,20 @@ Para políticas editoriais transversais, consulte a
 [documentação de módulos](../../../../../../docs/modules/EDITORIAL-MEDIA.md)
 e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
 
+## Contratos editoriais para o Studio
+
+O Magazine não mantém interface própria para o Studio. O fluxo editorial do
+bundle `revista` é consumido pelos contratos do Core — `node.add`,
+`entity.node.edit_form`, `entity.node.canonical`, revisões,
+`content_moderation_control` e `StateTransitionValidation` — e cada operação é
+decidida por Entity Access/Revision Access, nunca por permissão genérica. As
+operações de escrita resolvem no purpose `main`, porque o Core marca toda rota
+de operação de Node como rota administrativa. Os detalhes estão em
+[STUDIO-INTEGRATION-CONTRACT.md](docs/STUDIO-INTEGRATION-CONTRACT.md) e
+[ROUTES-DOMAIN-CONTRACT.md](docs/ROUTES-DOMAIN-CONTRACT.md); a matriz de acesso
+e a matriz ator × estado × ação descrevem quem pode o quê, sem alterar estados,
+transições ou permissões.
+
 ## Administração editorial
 
 O único bundle de publicação é `revista`. Os Nodes legados foram migrados com

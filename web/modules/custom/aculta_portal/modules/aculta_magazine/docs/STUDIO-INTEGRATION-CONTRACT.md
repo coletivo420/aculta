@@ -1,8 +1,9 @@
 # Contrato de integração Studio ↔ Magazine
 
-**Status:** inventário real (MAG 0.5-B.1). Este documento descreve somente
-contratos que existem no código e na configuração desta branch. O que ainda não
-existe está marcado como lacuna, não como API.
+**Status:** inventário real (MAG 0.5-B.1), revisado na conclusão de MAG 0.5-B
+(0.5-B.9/B.R, 2026-10-22). Este documento descreve somente contratos que
+existem no código e na configuração desta branch. O que ainda não existe está
+marcado como lacuna, não como API.
 
 **Propriedade:** `aculta_magazine` é dono do conteúdo, campos, validações,
 workflow e apresentação editorial. `aculta_studio` é dono da navegação,
@@ -78,21 +79,44 @@ editorial.
 | Peça | Onde | Uso verificado |
 | --- | --- | --- |
 | Aba Revista | `src/Plugin/StudioTab/RevistaTab.php` | `isAvailable()` exige `aculta_magazine`; `access()` exige `create revista content` **ou** `edit any revista content`; seções `publicacoes` (todos, rascunhos, em revisão, publicados, arquivados) e `criar` |
-| Ação de criação | `StudioTabBase::routeAction()` | Resolve `node.add` com `node_type => revista` no purpose `magazine`, com `Url::fromRoute(...)->access($account)` |
+| Ação de criação | `StudioTabBase::routeAction()` | Resolve `node.add` com `node_type => revista` no purpose `main`, com `Url::fromRoute(...)->access($account)` |
 | Listagem | `src/StudioListingBuilder.php` | `scope: mine` (uid da conta), `accessCheck(TRUE)`, paginação por cursor, `canViewRevision()` = `view` **e** `view revision`; cache contexts `user`, `user.permissions`, `url.query_args:studio_cursor`, tag `node_list:revista` |
 | Apresentação | `src/StudioPresenter.php`, `src/Controller/StudioController.php` | Filtra abas/seções por acesso e por ações/listagens disponíveis; renderiza com cache contexts `user.permissions`, `url.path` |
 | Rota do Studio | `aculta_studio.routing.yml` | `/studio/ganjalab/...` canônica, aliases legadas, `_permission: access aculta portal`, `_aculta_domain_purpose: account` |
 
 ## 4. Lacunas reais (0.5-B)
 
-| ID | Lacuna | Evidência | Dono da correção |
-| --- | --- | --- | --- |
-| B-01 | O link de edição da listagem usa o purpose `main`, não `magazine` | `StudioListingBuilder::editLink()` chama `routeUrl('main', 'entity.node.edit_form', ...)` | `aculta_studio` (A-07), commit próprio |
-| B-02 | Coautoria não concede acesso além do que o contrib concede | `node_co_authors_node_access()` só permite `view` de não publicado e `update`/`delete` com `edit/delete own revista content`, e só se a conta estiver em `co_authors`; nenhum papel recebe `edit co-authors of ...` no Config Sync | `aculta_user`/`aculta_magazine`, decisão documentada; sem mudança de regra nesta fase |
-| B-03 | A listagem "Meus conteúdos" é somente por `uid`; não inclui conteúdo coassinado | `StudioListingBuilder` aplica `uid` da conta e `accessCheck(TRUE)` | `aculta_studio`, após decisão de produto; não alterar agora |
-| B-04 | Não há link de preview nem de histórico de revisões na aba Revista | `RevistaTab` só declara listagem e criação; as rotas Core existem | `aculta_studio`, 0.5-B.9 mínimo |
-| B-05 | O grupo de campos secundários é sempre criado fechado e não abre quando contém erro de validação; o foco não é levado ao primeiro campo inválido | `RevistaFormHooks::alter()` grava `#open => FALSE` e não inspeciona erros; o grupo só existe quando ao menos um campo de `SECONDARY` foi movido (`count($secondary) > 6`, contando as seis chaves de definição) | `aculta_magazine`, 0.5-B.3 |
-| B-06 | O aviso de alterações não salvas não é reiniciado no retorno por bfcache | `revista-form.js` não trata `pageshow` | `aculta_magazine`, 0.5-B.3 |
+| ID | Lacuna | Evidência | Dono da correção | Situação em 0.5-B |
+| --- | --- | --- | --- | --- |
+| B-01 | O link de edição da listagem usava o purpose `main`, enquanto a criação e a própria listagem usavam `magazine` | `StudioListingBuilder::editLink()` chama `routeUrl('main', 'entity.node.edit_form', ...)`; `RevistaTab` passava `purpose: magazine` à listagem e `magazine` à criação | `aculta_studio` (A-07), commit próprio | Resolvida em `7500090c` (0.5-B.9): listagem e criação passam a usar `main`, conforme `ROUTES-DOMAIN-CONTRACT.md` §5 |
+| B-02 | Coautoria não concede acesso além do que o contrib concede | `node_co_authors_node_access()` só permite `view` de não publicado e `update`/`delete` com `edit/delete own revista content`, e só se a conta estiver em `co_authors`; nenhum papel recebe `edit co-authors of ...` no Config Sync | `aculta_user`/`aculta_magazine`, decisão documentada; sem mudança de regra nesta fase | Adiada: nenhuma permissão de coautoria foi adicionada; a regra do contrib permanece a fonte de verdade |
+| B-03 | A listagem "Meus conteúdos" é somente por `uid`; não inclui conteúdo coassinado | `StudioListingBuilder` aplica `uid` da conta e `accessCheck(TRUE)` | `aculta_studio`, após decisão de produto; não alterar agora | Adiada: listagem continua por `uid`; mudança exige decisão de produto |
+| B-04 | Não há link de preview nem de histórico de revisões na aba Revista | `RevistaTab` só declara listagem e criação; as rotas Core existem | `aculta_studio` | Adiada: o histórico é alcançável pelo formulário nativo; o preview depende do fluxo do formulário (`POST`/token) e não ganhou link próprio |
+| B-05 | O grupo de campos secundários é sempre criado fechado e não abre quando contém erro de validação; o foco não é levado ao primeiro campo inválido | `RevistaFormHooks::alter()` grava `#open => FALSE` e não inspeciona erros; o grupo só existe quando ao menos um campo de `SECONDARY` foi movido (`count($secondary) > 6`, contando as seis chaves de definição) | `aculta_magazine`, 0.5-B.3 | Resolvida em `d9c3a81f` (0.5-B.3): o grupo é criado aberto quando há erro em campo agrupado e o foco segue o primeiro erro |
+| B-06 | O aviso de alterações não salvas não é reiniciado no retorno por bfcache | `revista-form.js` não trata `pageshow` | `aculta_magazine`, 0.5-B.3 | Resolvida em `d9c3a81f` (0.5-B.3): `pageshow` restaura o estado do aviso |
+
+### 4.1. Operações consumíveis pelo GanjaLab ao fim de 0.5-B
+
+O Studio consome os contratos abaixo sem wrapper próprio. Cada operação vale
+para a conta atual e é decidida por Entity Access/Revision Access do Core.
+
+| Operação | Contrato | Situação |
+| --- | --- | --- |
+| Criar publicação | `node.add` com `node_type: revista` no purpose `main` | Consumível; `createAccess` decide |
+| Abrir o formulário nativo de edição | `entity.node.edit_form` no purpose `main`, exibido só com `$node->access('update')` | Consumível |
+| Ver a publicação | `entity.node.canonical` | Consumível |
+| Ver uma revisão específica | `entity.node.revision` (`view revision`) | Consumível |
+| Seguir o histórico de revisões | `entity.node.version_history` (`view all revisions`) | Consumível |
+| Descobrir e executar transições | `content_moderation_control` no display + `StateTransitionValidation::getValidTransitions()` | Consumível pelo formulário nativo; o Studio não reimplementa a lista |
+| Preview autorizado | `entity.node.preview` (`createAccess`/`update`, `no_cache`) | Alcançável pelo fluxo do formulário; sem link próprio no Studio (B-04) |
+| Listar publicações do autor por estado | `StudioListingBuilder` com `accessCheck(TRUE)`, `uid` e checagem de revisão | Consumível, somente por `uid` (B-03) |
+
+Condicionadas a fases posteriores, fora de 0.5-B:
+
+- **E-B.3** — ações editoriais explícitas no Studio, caso apareça um consumidor
+  que justifique o adaptador de §5.
+- **E-C** — editor dedicado.
+- **E-D** — revisão/aprovação com fluxo próprio.
 
 ## 5. Decisão sobre `MagazineEditorialAdapter`
 
@@ -108,10 +132,12 @@ real que precise, em uma única chamada, de:
 3. metadados de cacheability calculados fora de um `Url`/entidade.
 
 Nenhum desses consumidores existe hoje. Criar o serviço agora seria uma camada
-sem uso, contra a diretiva de evitar wrappers onde o Core basta. A decisão será
-revisada em 0.5-B.9 se a integração mínima provar a necessidade; qualquer
-serviço futuro pertence a `aculta_magazine` e não pode conter HTML, CSS,
-armazenamento paralelo nem lógica própria de publicação.
+sem uso, contra a diretiva de evitar wrappers onde o Core basta. A decisão foi
+revisada na integração mínima de 0.5-B.9: o Studio consome criação, edição,
+listagem e moderação pelos contratos do Core e não pediu nenhuma chamada
+agregada. O adaptador continua sem consumidor real. Qualquer serviço futuro
+pertence a `aculta_magazine` e não pode conter HTML, CSS, armazenamento
+paralelo nem lógica própria de publicação.
 
 ## 6. Limites deste contrato
 
@@ -123,3 +149,8 @@ armazenamento paralelo nem lógica própria de publicação.
   `StudioTab` providers e não altera estados ou transições nesta fase.
 - Operações condicionadas a fases posteriores: E-B.3 (ações editoriais
   explícitas), E-C (editor), E-D (revisão/aprovação) não fazem parte de 0.5-B.
+- A integração mínima de 0.5-B.9 verificou o consumidor real no Studio
+  (`RevistaTab`, `StudioTabBase`, `StudioListingBuilder`) e não alterou
+  permissões, estados, transições nem configuração. A única correção de
+  consumidor foi o purpose das operações (`7500090c`), em commit separado do
+  Magazine.

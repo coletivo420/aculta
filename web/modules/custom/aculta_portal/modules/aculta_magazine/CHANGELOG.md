@@ -1,3 +1,33 @@
+## 0.5.0-dev.3 — contratos editoriais para o Studio — 2026-10-22
+
+- MAG 0.5-B publica os contratos editoriais consumíveis pelo Studio:
+  [`docs/STUDIO-INTEGRATION-CONTRACT.md`](docs/STUDIO-INTEGRATION-CONTRACT.md)
+  (inventário real das rotas, acessos, form modes, revisões e lacunas B-01 a
+  B-06), [`docs/EDITORIAL-ACCESS-MATRIX.md`](docs/EDITORIAL-ACCESS-MATRIX.md)
+  (contratos de acesso por operação, coautoria e cacheability),
+  [`docs/EDITORIAL-ACTOR-STATE-MATRIX.md`](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
+  (ator × estado × ação sobre o workflow real) e
+  [`docs/ROUTES-DOMAIN-CONTRACT.md`](docs/ROUTES-DOMAIN-CONTRACT.md) (purpose
+  das rotas editoriais e regra de links).
+- O contrato do formulário editorial foi implementado em
+  `RevistaFormHooks`: o grupo `revista_secondary` abre quando contém erro de
+  validação e o foco vai ao primeiro campo inválido; `js/revista-form.js`
+  restaura o aviso de alterações não salvas no retorno por bfcache (`pageshow`).
+  Nenhum campo, peso ou regra editorial foi alterado.
+- Testes novos: Kernel do Magazine para autoria, coautoria, revisões, preview,
+  transições, domínio/cache e fluxo do formulário; Unit do Portal para a
+  precedência de purpose de rota
+  (`aculta_portal/tests/src/Unit/ContentPurposeResolverTest.php`). O workflow
+  `revista` permanece com quatro estados e oito transições.
+- Integração mínima de 0.5-B.9 verificada no Studio: a aba Revista consome
+  criação, edição, listagem e moderação pelos contratos do Core. A única
+  correção de consumidor foi o purpose das operações, em commit próprio do
+  Studio (`7500090c`), fora do Magazine.
+- Nenhuma alteração de configuração persistente nesta entrada: sem `drush cim`,
+  sem migração de conteúdo, sem exclusão e sem mudança de permissões, estados ou
+  transições. Nenhuma API fictícia foi criada; o adaptador `§5` segue sem
+  consumidor real.
+
 ## 0.5.0-dev.2 — provider inicial do Content Index
 
 - `MagazineContentIndexProvider` projeta o bundle atual `revista` por idioma,

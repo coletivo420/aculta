@@ -131,7 +131,7 @@ coautoria pela interface.
 | A-04 | `field_coautores` consta em `hidden` do form display sem definição de campo | Legado inofensivo | Documentado; não removido para não criar drift adicional |
 | A-05 | `pathauto.pattern.aculta_article` mantém id/label legados para `revista` | Legado cosmético | Documentado; renomear exigiria reimportação/limpeza de config |
 | A-06 | `aculta_magazine.install:10003` executa comportamento de Fórum | Ownership cruzado | Documentado; **não removido** (recuperação/atualização não confirmadas) |
-| A-07 | `StudioListingBuilder::editLink()` usa purpose `main` para editar Revista, enquanto a criação usa `magazine` | Inconsistência de URL canônica | Corrigido em 0.5-B.3 (consumidor Studio, commit próprio) |
+| A-07 | `StudioListingBuilder::editLink()` usa purpose `main` para editar Revista, enquanto a criação usa `magazine` | Inconsistência de URL canônica | Corrigido em 0.5-B.9 (consumidor Studio, commit `7500090c`): listagem e criação usam `main` |
 | A-08 | `RevistaFormHooks` não abre o grupo “Propriedades secundárias” quando há erro em campo agrupado | Integração Form API | Corrigido em 0.5-B.3 |
 | A-09 | Aviso de alterações não salvas pode ficar permanentemente desligado após restauração por bfcache | Integração JS | Corrigido em 0.5-B.3 |
 | A-10 | Templates de tema para `article`/`blog` permanecem | Obsoleto (tema) | Documentado; pertence ao ACULTA420 |

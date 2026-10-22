@@ -263,5 +263,6 @@ Functional, não apenas teste estático:
   persistente no Runtime foram feitas para produzir este documento.
 - Correções de produto continuam fora desta fase: B-02 (coautoria na interface)
   e B-03 (listagem de coassinados) dependem de decisão com `aculta_user` e
-  `aculta_studio`; B-01 (purpose `main`) e B-04 (links de preview/histórico) são
-  do Studio, em commit próprio.
+  `aculta_studio`; B-04 (links de preview/histórico) segue adiada no Studio.
+  B-01 (purpose `main` nas operações) foi resolvida em `7500090c`, no
+  consumidor Studio, em commit próprio.
