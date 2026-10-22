@@ -45,7 +45,6 @@ final class ForumCommentMigrationAudit {
       ->condition('field_name', self::COMMENT_FIELD)
       ->sort('cid')
       ->execute();
-    $source_ids = array_fill_keys(array_map('strval', $comment_ids), TRUE);
     $report = [
       'source_comments' => count($comment_ids),
       'eligible_comments' => 0,
@@ -135,7 +134,10 @@ final class ForumCommentMigrationAudit {
 
     $external_parent_ids = [];
     foreach ($parent_references as $reference) {
-      if (!isset($source_ids[$reference['parent_id']])) {
+      // A source query can include comments whose host is outside the eligible
+      // Forum purpose. Resolve every parent not present in the eligible map so
+      // those existing Comments are not reported as missing.
+      if (!isset($topic_by_comment[$reference['parent_id']])) {
         $external_parent_ids[$reference['parent_id']] = $reference['parent_id'];
       }
     }

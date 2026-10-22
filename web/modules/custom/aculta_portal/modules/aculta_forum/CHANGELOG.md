@@ -1,3 +1,9 @@
+## `0.1.0-dev.153` — distinguir pais existentes fora do escopo
+
+- A auditoria resolve também Comments pais que não entram no escopo elegível.
+  Relações com pai existente em outro tópico/purpose agora contam como fora do
+  escopo, em vez de pai ausente; a saída continua agregada e sem IDs.
+
 ## `0.1.0-dev.152` — auditar Comments para a migração revisionável
 
 - O comando `drush aculta-forum:audit-comment-migration` gera inventário somente
