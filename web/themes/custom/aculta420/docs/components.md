@@ -371,3 +371,7 @@ SDC experimental em `components/patterns/context-tabs/`: prop `label` e slot `it
 ## Context Tabs — primeiro consumidor real no código
 
 `StudioController::linkList()` entrega `#theme: item_list` ao slot `items` do SDC `aculta420:context-tabs` somente para áreas e subtabs. Seções mantêm sua sidebar. O componente é apresentação: não modifica navegação Drupal Ajax, URLs, ACL nem Domain Header. Ver [fases e validação pendente](theme-ux-0.8-b2-context-tabs.md).
+
+## Context Tabs — segundo consumidor Wiki
+
+`WikiController::contextNavigation()` prepara links Início/Busca com Url::fromRoute, render arrays e `aria-current=page` e entrega `item_list` ao slot do SDC. Agora Studio e Wiki compartilham a apresentação Core SDC/UI Suite, sem atribuir ao tema URLs, ACL ou AJAX. [Gates B2-05 pendentes](theme-ux-0.8-b2-context-tabs.md).
