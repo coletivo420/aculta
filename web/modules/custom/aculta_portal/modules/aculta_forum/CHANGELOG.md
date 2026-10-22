@@ -1,3 +1,18 @@
+## `0.1.0-dev.233` — registrar escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
+
+- Documento apenas. A seção dev.13 do ROADMAP passa a listar o que falta para
+  a busca privada (índice/View por Group, filtro de moderação, reindexação,
+  cache por conta) e para as notificações (evento do Comment LMS, assinatura,
+  idempotência, revalidação de acesso no envio) e fixa o menor recorte aceitável.
+- Busca mínima: a partir do curso/turma, com Group explícito, somente tópicos
+  LMS válidos e Comments publicados, revalidando Entity Access por conta e
+  falhando fechado; sem busca global nem entre cursos.
+- Notificações mínimas: reutilizar Flag/`message_subscribe` e o worker de
+  `aculta_messenger`, avisar só a primeira resposta publicada a quem segue e
+  ainda pode ler, nunca fila de moderação, com revalidação no envio e
+  idempotência por (Comment, destinatário).
+- Nada implementado; sem alteração de código, configuração ou Runtime.
+
 ## `0.1.0-dev.232` — preencher a citação antes do processamento do text_format — 2026-10-22
 
 - `ForumQuoteHooks::commentFormAlter()` roda dentro de

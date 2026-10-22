@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.233` | Registrar escopo mínimo da busca e das notificações privadas LMS | Documento apenas: o ROADMAP do adapter (mantido na seção dev.13 do Fórum, sem `docs/` próprio) lista o que falta em índice/View, filtro de moderação, reindexação, eventos, idempotência e revalidação de acesso, e fixa o menor recorte aceitável — busca só por curso/turma com Group explícito e notificação apenas da primeira resposta publicada via `aculta_messenger`. Nada implementado; sem Runtime/testes. |
 | `0.1.0-dev.231` | Revalidar purpose e host dos anexos no acesso | `media_access` restringe `forum_attachment` ao purpose Fórum e exige referência atual acessível em Comment, ForumPost ou Gallery; max-age zero protege mudanças de grants sem save da Media. A inspeção do Core 11.4.10 confirmou que o download privado passa por File `download`, referência Media `view` e acesso do campo; install e Sync mantêm `uri_scheme: private`. Revisão HTTP direta no Runtime segue pendente por falta de fixture. |
 | `0.1.0-dev.230` | Alinhar guardrails/roadmap geral à reconstrução vigente | Documentação geral e política local deixam de apontar o contrib removido como fonte atual e preservam a coexistência de Comments/ForumPost até o corte aprovado. Sem Runtime. |
 | `0.1.0-dev.229` | Eliminar subconsulta correlacionada na agregação de atividade | A consulta agrega `changed` por tópico e junta o maior ID em caso de empate; publicação, idioma, contagem e acesso permanecem iguais. Sem Runtime/testes. |
@@ -740,6 +741,65 @@ H5P–Fórum para este fluxo, sem criar tópico automático nem contexto públic
 Busca e notificações privadas LMS continuam pendentes. Evidências completas:
 [`aculta_lms_h5p/CHANGELOG.md`](../../aculta_lms_h5p/CHANGELOG.md) e
 [`aculta_forum_lms/CHANGELOG.md`](../../aculta_forum_lms/CHANGELOG.md).
+
+### Busca e notificações privadas LMS — escopo mínimo decidido em 2026-10-22
+
+Este é o ROADMAP vigente do adapter `aculta_forum_lms`; o módulo não mantém
+`docs/` próprio. Nada desta seção foi implementado: a decisão abaixo apenas
+fecha o que falta e o menor recorte aceitável antes de abrir código.
+
+O que falta para busca privada:
+
+- Não existe índice Search API nem datasource para `aculta_lms_topic` ou para
+  os Comments `aculta_discussion_post` desse contexto. O índice público de
+  `SEARCH.md` exclui LMS de propósito e não deve ser reutilizado.
+- Não existe View/rota com argumento de Group. Acesso LMS vem do Group/Entity
+  Access por conta, não dos grants de Node que `content_access` indexa e
+  filtra; um filtro de grants não representa membership de curso/turma.
+- Não há filtro de estado de moderação. Comments pendentes ou rejeitados da
+  turma não podem aparecer, e a moderação do primeiro comentário deixa a maior
+  parte das respostas de estudante pendente até aprovação do Educador.
+- Não há trigger de reindexação quando um Comment é aprovado/rejeitado ou a
+  membership muda, nem prova automatizada de que um estudante não encontra
+  conteúdo de outro curso/turma.
+- Não há entrada de interface, paginação, permalink para o Comment dentro do
+  tópico, estado vazio nem cache contexts por conta/Group.
+
+Escopo mínimo aceito para busca (não implementar agora):
+
+- Busca a partir da página do curso/turma, com Group explícito na rota; sem
+  entrada global, sem busca entre cursos e sem busca pública.
+- Um índice dedicado, restrito a tópicos LMS com relação Group única válida e
+  a Comments publicados; resultado só depois de revalidar Entity Access do
+  tópico e do Comment para a conta atual, falhando fechado.
+- Cache por `user` e pelo Group da rota (`max-age` igual ao do acesso), com
+  prova Kernel de não vazamento entre curso/turma antes de qualquer uso no
+  Runtime. Reindexação por evento fica fora do primeiro recorte; atraso de
+  índice é aceitável desde que o access check em tempo real prevaleça.
+
+O que falta para notificações privadas:
+
+- O Comments LMS não emite evento para `aculta_messenger`; não há assinatura
+  por tópico nem destinatários revalidados no momento da entrega.
+- Não há regra para não notificar fila de moderação, nem idempotência por
+  (Comment, destinatário), nem opt-in/opt-out do estudante.
+- Não há prova de que uma notificação de curso/turma nunca chegue a quem
+  perdeu membership ou acesso ao tópico depois da assinatura.
+
+Escopo mínimo aceito para notificações (não implementar agora):
+
+- Reutilizar Flag/`message_subscribe` e o worker de notificação privada de
+  `aculta_messenger`; nada de fila, armazenamento ou transporte paralelo.
+- Avisar somente a primeira resposta publicada de um tópico que a pessoa segue
+  e ainda pode ler; nunca avisar Comments pendentes, rejeitados ou a fila de
+  moderação.
+- Revalidar acesso no envio, ser idempotente por (Comment, destinatário) e
+  respeitar opt-in; entrega por e-mail e digest ficam fora deste recorte.
+
+Continuam adiados: busca entre cursos, busca global de “meus cursos”,
+relevância ajustada, digest, push e preferências por turma. Qualquer avanço
+exige Kernel próprio e nenhuma rota nova no Runtime antes da prova de
+isolamento.
 
 ## `0.1.0-dev.14` — Contrato Wiki420
 

@@ -1,3 +1,23 @@
+## `0.1.0-dev.41` — escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
+
+- Nada implementado. O ROADMAP vigente deste adapter fica na seção dev.13 de
+  `aculta_forum/docs/ROADMAP.md` (o módulo não mantém `docs/` próprio) e agora
+  lista o que falta e o menor recorte aceitável.
+- Busca: hoje não há índice/datasource LMS, View com argumento de Group, filtro
+  de moderação, reindexação por evento nem prova de não vazamento entre
+  curso/turma. Mínimo aceito: busca a partir do curso/turma com Group explícito,
+  só tópicos válidos e Comments publicados, revalidando Entity Access por conta
+  em tempo real e falhando fechado; sem busca global, entre cursos ou pública.
+- Notificações: o Comment LMS não emite evento para `aculta_messenger`, não há
+  assinatura por tópico, regra contra fila de moderação, idempotência nem
+  opt-in. Mínimo aceito: reutilizar Flag/`message_subscribe` e o worker de
+  notificação privada, avisar só a primeira resposta publicada a quem segue e
+  ainda pode ler, revalidar acesso no envio e ser idempotente por
+  (Comment, destinatário); e-mail e digest ficam fora.
+- Adiados: busca entre cursos/global, relevância ajustada, digest, push e
+  preferências por turma. Qualquer avanço exige Kernel próprio antes de rota
+  no Runtime.
+
 ## `0.1.0-dev.40` — citação de Comment LMS no Runtime — 2026-10-22
 
 - Verifica no Runtime de teste o contrato de citação de
