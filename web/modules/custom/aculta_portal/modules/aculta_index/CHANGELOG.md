@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.6 — checker de integridade do catálogo
+
+- `ContentIndexIntegrityChecker` valida coerência do ponteiro e conta entradas
+  ou relações sem geração e relações sem uma entrada de origem. Retorna somente
+  status e contagens, sem conteúdo projetado.
+- Kernel cobre estado vazio e divergências representativas. O checker é
+  diagnóstico: nenhuma correção ou remoção é feita automaticamente.
+
 ## 0.1.0-dev.5 — enumeração keyset para backfill
 
 - `ContentIndexEntityEnumerator` descobre somente tipos e bundles declarados

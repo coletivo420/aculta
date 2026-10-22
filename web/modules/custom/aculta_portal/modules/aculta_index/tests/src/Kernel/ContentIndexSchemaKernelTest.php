@@ -146,6 +146,60 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests a fresh catalog is internally consistent with an empty pointer.
+   */
+  public function testIntegrityCheckerAcceptsEmptyCatalog(): void {
+    $result = $this->container->get('aculta_index.integrity_checker')->check();
+
+    $this->assertTrue($result['valid']);
+    $this->assertNull($result['active_generation']);
+    $this->assertSame(0, $result['orphan_entry_count']);
+    $this->assertSame(0, $result['orphan_relation_count']);
+  }
+
+  /**
+   * Tests missing generation and relation source rows are reported.
+   */
+  public function testIntegrityCheckerFindsOrphanCatalogRows(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_generation')
+      ->fields([
+        'generation_id' => 'gen-a',
+        'status' => 'active',
+        'validated' => 1,
+        'activated' => 1,
+      ])
+      ->execute();
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => 'gen-a', 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+    $this->insertEntry('missing-generation', 'node', '101', 'pt-br');
+    $database->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => 'gen-a',
+        'provider_id' => 'magazine',
+        'source_entity_type' => 'node',
+        'source_entity_id' => '102',
+        'source_langcode' => 'pt-br',
+        'relation_type' => 'related_activity',
+        'target_entity_type' => 'node',
+        'target_entity_id' => '202',
+        'target_langcode' => 'und',
+        'relation_hash' => str_repeat('a', 64),
+        'updated' => 1,
+      ])
+      ->execute();
+
+    $result = $this->container->get('aculta_index.integrity_checker')->check();
+
+    $this->assertFalse($result['valid']);
+    $this->assertSame(1, $result['orphan_entry_count']);
+    $this->assertSame(0, $result['orphan_relation_count']);
+    $this->assertSame(1, $result['relation_source_missing_count']);
+  }
+
+  /**
    * Checks a duplicate entity and language cannot be stored in one generation.
    */
   public function testEntryIdentityIsUniqueWithinGeneration(): void {

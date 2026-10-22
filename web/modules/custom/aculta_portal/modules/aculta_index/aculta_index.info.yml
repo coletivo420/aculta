@@ -2,7 +2,7 @@ name: ACULTA Content Index
 type: module
 description: 'Catálogo derivado e reconstruível de metadados e relações selecionadas entre conteúdos ACULTA.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.5'
+version: '0.1.0-dev.6'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal

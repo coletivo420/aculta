@@ -20,6 +20,8 @@ Todos os registros de entrada e relação pertencem a uma geração. Consultas p
 
 O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de entidade e último ID; percorre todas as traduções da entidade dentro do mesmo lote. Não usa OFFSET nem serializa entidades. O campo de checkpoint em `aculta_index_generation` existe no schema, mas ainda falta persistir/retomar o cursor a cada lote. Também faltam IDX 0.1-D/E: fila/delta durante o rebuild, operação atômica no driver e recuperação após falha.
 
+`ContentIndexIntegrityChecker` consulta somente as tabelas do catálogo e verifica ponteiro/gerações e fontes de relações. Ele reporta contagens e não corrige nem expurga automaticamente. Os testes Kernel atuais executam em MariaDB; SQLite ainda precisa de harness compatível aprovado para validar portabilidade.
+
 ## Índices e portabilidade
 
 Entradas têm consultas seletivas por geração, tipo/bundle, domínio/estado e provider. Relações são consultáveis por origem ou alvo sem carregar toda a tabela. Chaves compostas preservam IDs string (inclusive tipos que não sejam Node) e idioma.
