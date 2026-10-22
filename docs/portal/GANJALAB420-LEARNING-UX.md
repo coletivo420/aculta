@@ -119,4 +119,8 @@ Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questio
 
 ## Minha Jornada de Aprendizagem — planejamento visual 0.5
 
-[Minha Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) define percurso de aulas, progresso e pendências reais, feedback, turmas e certificados, sem métricas ou dados paralelos. Os contratos da Biblioteca contextual permanecem em [Materiais e PDF](GANJALAB420-MATERIALS-PDF-VISUAL.md). 
+[Minha Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) define percurso de aulas, progresso e pendências reais, feedback, turmas e certificados, sem métricas ou dados paralelos. Os contratos da Biblioteca contextual permanecem em [Materiais e PDF](GANJALAB420-MATERIALS-PDF-VISUAL.md).
+
+## Minhas Turmas e Comunidade — G420-UX 0.6
+
+[Planejamento visual de turmas e comunidade](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md): mural de avisos, discussões contextuais, prazos, participantes autorizados, Group e integração com Fórum/Messenger/User. Planejamento somente; `aculta_lms` permanece inalterado.
