@@ -23,10 +23,9 @@
           </div>
           {% for item in site.items %}
             {# Caixa igual às de aviso e mensagens (alerta do Bootstrap, tokens do tema); o X fecha a caixa. #}
-            <div class="alert alert-info alert-dismissible aculta-cart-offcanvas__caixa fade show" role="listitem">
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
               <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
               <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
             </div>
           {% endfor %}
         {% endif %}{% endfor %}
@@ -41,10 +40,9 @@
             <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
           </div>
           {% for item in site.items %}
-            <div class="alert alert-info alert-dismissible aculta-cart-offcanvas__caixa fade show" role="listitem">
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
               <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
               <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
             </div>
           {% endfor %}
           {% if site.checkout_url %}
