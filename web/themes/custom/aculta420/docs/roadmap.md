@@ -394,3 +394,7 @@ A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com du
 ## B4-02 — proteção das gavetas contra respostas AJAX obsoletas
 
 [Relatório B4-02](theme-ux-0.8-b4-02-ajax-drawer-race.md): `messenger-drawers.js` agora ignora respostas de requests cancelados/superados em Avisos e Mensagens, evita erro obsoleto e encerra `aria-busy` apenas para a requisição ativa. Correção de código commitada; QA em navegador pendente. Próximo B4-03/B5: gates Runtime de overlays e catálogo visual compartilhado, mantendo Institution Bar + Domain Header.
+
+## THEME-UX 0.8-B5 — catálogo de overlays e ARIA (2026-10-22)
+
+Os três drawers de utilidade (Avisos, Mensagens, Carrinho) agora declaram `aria-expanded` e o estado de seus triggers é sincronizado com eventos Bootstrap pelo JS global. Ver [catálogo B5](theme-ux-0.8-b5-overlay-catalog.md). O painel Minha Conta continua usando navegação AJAX própria, não offcanvas. Testes Runtime e foco/backdrop continuam pendentes; preservar Institution Bar + Domain Header. Próximo B5-02.
