@@ -104,4 +104,4 @@ ser registrados no changelog da entrega, não copiados para este README.
 
 Centralização é por ownership: User (participação/associados), Messenger (avisos/mensagens), Image/Gallery (mídia), viewers (documentos), Statistics (métricas), Portal (domain/purpose). Group restrito a associado deve exigir situação ativa User + membership Group no Fórum. Auditoria transversal: docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md.
 
-Plano de dependências e gates: [ACULTA-XK 0.1](../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
