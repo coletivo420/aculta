@@ -44,3 +44,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b1-02-ownership-h1.md](theme-ux-0.8-b1-02-ownership-h1.md) — fase B1-02: consumidores, renderização seletiva e H1 único sob responsabilidade do SDC contextual.
 
 - [theme-ux-0.8-b1-02a-consumer-code-map.md](theme-ux-0.8-b1-02a-consumer-code-map.md) — inventário de rotas/controllers do LMS e H1 existente no SDC Wiki; gate para B1-02b.
+
+- [theme-ux-0.8-b1-02b-visual-contract.md](theme-ux-0.8-b1-02b-visual-contract.md) — contrato visual mobile-first de Context Header, variantes, H1 e UI Suite.
