@@ -1,3 +1,10 @@
+## dev.193 — idade configurada para Files temporários
+
+- A limpeza do Fórum lê `system.file:temporary_maximum_age`, usa o timestamp
+  `changed` como o cron de File Core e não remove temporários quando a idade é
+  zero. Retenção de uma hora continua exclusiva de Media/Galleries órfãos.
+- Sem teste Kernel ou alteração Runtime nesta etapa.
+
 ## dev.192 — preservar tipo de imagem validado na origem
 
 - O fluxo usa o controle submetido e validado por `UserUploadPolicy::isValidImage`

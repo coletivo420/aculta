@@ -354,6 +354,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
         $this->container->get('logger.factory'),
       ),
       new ImageInspector($this->container->get('image.factory')),
+      $this->container->get('config.factory'),
     );
 
     self::assertSame(1, $cleanup->cleanup());

@@ -67,12 +67,12 @@ O Media e a Media Gallery começam não publicados; imagens passam pelo contrato
 `aculta_image`, galerias pelo `aculta_gallery`, e a publicação pública do post
 ou comentário e do tópico controla sua disponibilidade. No Fórum revisionável,
 a limpeza considera referências de todas as revisões para não remover anexos
-mantidos no histórico. Uploads órfãos são limpos
-após uma hora em lote limitado, revalidando embeds atuais, uso do File e
-referências de entidades antes de apagar. Imagens removidas passam por
-`aculta_image`; arquivos não-imagem passam pela exclusão da File API. A regra
-abrange temporários sem vínculo e Media/Galleries órfãos. Os testes de regressão
-estão em
+mantidos no histórico. Media e Galleries sem referência são limpas após uma
+hora em lote limitado, revalidando embeds atuais, uso do File e referências de
+entidades antes de apagar. Files ainda temporários respeitam
+`system.file:temporary_maximum_age`, usando `changed` como o cron File do Core;
+imagens passam por `aculta_image` e arquivos não-imagem pela File API, após
+revalidação de `file_usage` e `entity_usage`. Os testes de regressão estão em
 [`ForumAttachmentPublicationKernelTest`](../../web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumAttachmentPublicationKernelTest.php).
 
 O leitor PDF e a prévia DOCX/planilhas permanecem responsabilidades dos módulos

@@ -7,7 +7,7 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-`0.1.0-dev.185–192` adaptam os diálogos de imagem à política central e exigem
+`0.1.0-dev.185–193` adaptam os diálogos de imagem à política central e exigem
 texto alternativo fornecido pela pessoa autora no
 diálogo de anexo e uma descrição por cada imagem da galeria. O passo seguinte da
 integração continua sendo validar upload real, publicação contextual, acesso
@@ -724,7 +724,7 @@ apresenta os dados preparados pelo Portal, sem assumir lógica de domínio.
 | Dono da capacidade | Integração planejada no Fórum | Ordem e condição de avanço |
 | --- | --- | --- |
 | `aculta_image` | Upload contextual, ingestão, política de extensão/tamanho, processamento, uso e limpeza segura das imagens anexadas. | Primeiro: validar o modal próprio, 10 MB padrão configurável para valor superior, extensões administrativas e vínculo de publicação ao comentário visível. |
-| `aculta_gallery` + `media_gallery` | Criar/inserir galerias pelo editor do Fórum e reaproveitar o display de slides/PhotoSwipe. Galerias são permitidas em todos os purposes; anexos continuam sujeitos à política contextual do Fórum. | Primeiro, junto com imagens: provar publicação/despublicação sincronizada com comentário e tópico, acesso, remoção órfã após uma hora e compatibilidade com usos editoriais existentes. |
+| `aculta_gallery` + `media_gallery` | Criar/inserir galerias pelo editor do Fórum e reaproveitar o display de slides/PhotoSwipe. Galerias são permitidas em todos os purposes; anexos continuam sujeitos à política contextual do Fórum. | Primeiro, junto com imagens: provar publicação/despublicação sincronizada com comentário e tópico, acesso, remoção de Media/Galleries órfãos após uma hora e compatibilidade com usos editoriais existentes. Files temporários seguem `system.file:temporary_maximum_age`. |
 | ACULTA420 / design system | Aplicar modal, cartões e estados de anexo com tokens e componentes existentes; criar componente por domínio apenas quando não houver composição adequada. | Acompanhar cada integração funcional; revisar teclado, leitor de tela, responsividade e temas claro/escuro antes de RC. |
 | Office local | Pré-visualização progressiva de DOCX e, se a validação confirmar suporte seguro e útil, planilhas; manter metadados e download como fallback. | Depois de imagem/Gallery. Validar bibliotecas locais, sanitização, tamanho/tempo de processamento e acesso privado; não transferir anexos para serviços externos. |
 | `aculta_pdf_viewer` | Cartão com miniatura e metadados, link para abrir o leitor completo em outra janela por padrão, com opção administrativa para mesma janela. O PDF não será embutido no comentário. | Por último: aguardar o módulo ACULTA Document Viewer e integrar seu contrato e API reais; não duplicar reader, thumbnail ou conversão no Fórum. |

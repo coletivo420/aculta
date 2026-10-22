@@ -1,3 +1,11 @@
+## `0.1.0-dev.193` — respeitar idade máxima dos Files temporários
+
+- A limpeza de arquivos ainda temporários do diretório privado usa
+  `system.file:temporary_maximum_age` e o campo `changed`, como o cron File do
+  Core. Idade zero desativa essa limpeza; imagens passam pelo `aculta_image`.
+  Media/Galleries órfãos continuam com retenção própria de uma hora.
+- Atualizado o contrato de uploads do Fórum para distinguir as duas retenções.
+
 ## `0.1.0-dev.192` — manter a classificação de imagem do upload
 
 - O diálogo classifica o Media de imagem pelo controle que recebeu o arquivo,

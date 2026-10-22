@@ -9,6 +9,7 @@ use Drupal\aculta_image\ImageInspector;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\entity_usage\EntityUsageInterface;
@@ -17,7 +18,7 @@ use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 
 /**
- * Deletes unattached Forum uploads after the one-hour retention window.
+ * Cleans orphan Forum Media after an hour and temporary Files after Core's age.
  */
 final class ForumAttachmentCleanup {
 
@@ -33,16 +34,24 @@ final class ForumAttachmentCleanup {
     private readonly TimeInterface $time,
     private readonly FileRemover $imageFileRemover,
     private readonly ImageInspector $imageInspector,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
-   * Processes a bounded batch of old orphan Media and temporary files.
+   * Processes a bounded batch of orphan Media and expired temporary files.
    */
   public function cleanup(): int {
-    $cutoff = $this->time->getRequestTime() - self::RETENTION;
+    $requestTime = $this->time->getRequestTime();
+    $cutoff = $requestTime - self::RETENTION;
     $removed = $this->cleanupOrphanMedia($cutoff);
     if ($removed < self::LIMIT) {
-      $removed += $this->cleanupTemporaryFiles($cutoff, self::LIMIT - $removed);
+      $temporaryAge = (int) $this->configFactory->get('system.file')->get('temporary_maximum_age');
+      if ($temporaryAge > 0) {
+        $removed += $this->cleanupTemporaryFiles(
+          $requestTime - $temporaryAge,
+          self::LIMIT - $removed,
+        );
+      }
     }
     return $removed;
   }
@@ -103,9 +112,9 @@ final class ForumAttachmentCleanup {
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('status', FileInterface::STATUS_PERMANENT, '<>')
-      ->condition('created', $cutoff, '<=')
+      ->condition('changed', $cutoff, '<=')
       ->condition('uri', 'private://forum/anexos/%', 'LIKE')
-      ->sort('created')
+      ->sort('changed')
       ->range(0, $limit)
       ->execute();
     $removed = 0;
