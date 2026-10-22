@@ -40,3 +40,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-m2-b1-context-header.md](theme-ux-0.8-m2-b1-context-header.md) — contrato da próxima fase SDC Context Header, consumidores e gates multidomínio.
 
 - [theme-ux-0.8-b1-source-audit.md](theme-ux-0.8-b1-source-audit.md) — inspeção de breadcrumb, H1/H2 e contrato preliminar de Context Header sem duplicar o shell.
+
+- [theme-ux-0.8-b1-02-ownership-h1.md](theme-ux-0.8-b1-02-ownership-h1.md) — fase B1-02: consumidores, renderização seletiva e H1 único sob responsabilidade do SDC contextual.
