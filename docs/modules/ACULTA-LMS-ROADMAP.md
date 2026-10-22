@@ -644,3 +644,7 @@ A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora 
 ## GanjaLab420 — turmas e comunidade (UX 0.6)
 
 [Minhas Turmas e Comunidade](../portal/GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) especifica navegação pessoal, mural, discussões e participantes com acesso Group/Fórum contextual, reutilizando Messenger e User. Sem novo feed, membership, fórum ou entidade. Esta etapa é planejamento visual e não altera o status funcional do LMS.
+
+## GanjaLab420 — certificados e histórico (UX 0.7)
+
+[Conquistas, Certificados e Histórico](../portal/GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) detalha interface de aluno para certificados oficiais, verificação pública, QR/PDF, histórico e eventuais conquistas reais. Não criar certificado, badge nem score paralelo; manter F0–F17 e `aculta_lms` sem alterações funcionais.
