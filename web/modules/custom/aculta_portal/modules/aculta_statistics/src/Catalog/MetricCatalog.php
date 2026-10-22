@@ -23,6 +23,8 @@ final class MetricCatalog {
     $definitions = [
       new MetricDefinition('links.link.clicks', 'Cliques em links curtos', 'cliques', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('wiki.entries.read', 'Leituras de verbetes da Wiki', 'leituras', MetricDefinition::SENSITIVITY_PUBLIC, 90),
+      new MetricDefinition('wiki.entries.published', 'Verbetes da Wiki publicados pela primeira vez', 'publicações', MetricDefinition::SENSITIVITY_PUBLIC, 90),
+      new MetricDefinition('wiki.entries.updated', 'Revisões publicadas de verbetes já publicados', 'revisões', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('forum.topics.created', 'Tópicos criados no Fórum', 'tópicos', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('forum.comments.created', 'Comentários criados no Fórum', 'comentários', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('forum.posts.created', 'Posts revisionáveis criados no Fórum', 'posts', MetricDefinition::SENSITIVITY_PUBLIC, 90),

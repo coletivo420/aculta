@@ -3,6 +3,10 @@ retention:
     days: 90
   - metric: wiki.entries.read
     days: 90
+  - metric: wiki.entries.published
+    days: 90
+  - metric: wiki.entries.updated
+    days: 90
   - metric: forum.topics.created
     days: 90
   - metric: forum.comments.created
