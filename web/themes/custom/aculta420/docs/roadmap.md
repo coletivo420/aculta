@@ -334,3 +334,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## M0-S — auditoria estrutural do tema
 
 [Relatório M0-S](theme-ux-0.8-m0-s-structural-audit.md): inspeção direcionada dos contratos SDC de QR, content-section, product-tabs, course_card, card e forum-category; schemas QR alinhados ao Core. O Context Header não deve reutilizar heading H2/H3 de content-section como H1. Gate Runtime ainda pendente; prosseguir para M2/B1 somente após verificar consumidores reais e shell multidomínio.
+
+## Próxima implementação transversal — M2/B1
+
+[Contrato técnico de Context Header](theme-ux-0.8-m2-b1-context-header.md) define dados/slots, consumidores, uso obrigatório de Core SDC + UI Suite e gates para preservar Institution Bar e Domain Header. A etapa é planejamento, sem componentes novos e com validação Runtime pendente.
