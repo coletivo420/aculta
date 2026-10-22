@@ -95,6 +95,9 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.197` | Limitar lotes ao sincronizar anexos no estado do tópico | Mudança de publicação do tópico percorre Comments e posts em lotes de 100, com limite máximo capturado no início; Media e Gallery preservam as regras existentes. Sem alteração Runtime; regressão automatizada pendente. |
+| `0.1.0-dev.196` | Exigir autenticação nos diálogos de upload | Acesso dos diálogos soma autenticação explícita ao formato `forum` e purpose Fórum; cache varia por estado autenticado. Sem validação Runtime. |
+| `0.1.0-dev.195` | Auditar watermarks distintos do Messenger | Marcadores `ultimo_comentario` e `ultimo_post` são classificados separadamente; só contagens são expostas. |
 | `0.1.0-dev.190` | Revalidar anexo no callback AJAX | Cardinalidade, existência, política compartilhada e texto alternativo são conferidos novamente antes de criar Media. Sem Runtime. |
 | `0.1.0-dev.189` | Aplicar limite de texto alternativo no servidor | Anexo individual exige valor não vazio até 512 caracteres, conforme o campo ImageWidget do Core. Sem Runtime. |
 | `0.1.0-dev.188` | Adaptar os diálogos à política efetiva de imagem | Campo alt só aparece se a imagem estiver habilitada; galeria sem extensões permitidas informa a situação e não oferece criação vazia. Sem Runtime. |

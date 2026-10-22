@@ -1,3 +1,11 @@
+## `0.1.0-dev.197` — limitar memória na sincronização de anexos por tópico
+
+- Ao mudar a publicação de um tópico, os sincronizadores de Media e Gallery
+  agora percorrem Comments e posts em lotes de 100 por ID, com limite máximo
+  capturado no início. A sincronização preserva o mesmo escopo e estado público
+  e deixa de carregar todas as entidades do tópico na memória de uma vez.
+- Sem alteração de Runtime. Não executei testes nesta etapa.
+
 ## `0.1.0-dev.196` — restringir diálogos de upload a contas autenticadas
 
 - Os acessos dos diálogos de anexo e galeria agora exigem conta autenticada,

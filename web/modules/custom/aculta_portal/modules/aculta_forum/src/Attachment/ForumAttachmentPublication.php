@@ -27,6 +27,8 @@ final class ForumAttachmentPublication {
 
   private const PDF_FIELD = 'field_media_forum_attachment';
 
+  private const TOPIC_SYNC_BATCH_SIZE = 100;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -68,43 +70,88 @@ final class ForumAttachmentPublication {
   }
 
   /**
-   * Reconciles all Forum attachments when their topic publication changes.
+   * Reconciles Forum attachments in bounded ID batches when a topic changes.
    */
   public function syncTopic(NodeInterface $topic): void {
     if ($topic->bundle() !== 'aculta_forum_topic' || $topic->isNew()) {
       return;
     }
-    $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+    $max_comment_ids = $comment_storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', self::COMMENT_BUNDLE)
       ->condition('entity_type', 'node')
       ->condition('entity_id', $topic->id())
       ->condition('field_name', self::COMMENT_FIELD)
+      ->sort('cid', 'DESC')
+      ->range(0, 1)
       ->execute();
-    $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids);
-    foreach ($comments as $comment) {
-      if (!$comment instanceof CommentInterface) {
-        continue;
+    $max_comment_id = $max_comment_ids === [] ? 0 : (int) reset($max_comment_ids);
+    $last_comment_id = 0;
+    while ($last_comment_id < $max_comment_id) {
+      $comment_ids = $comment_storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('comment_type', self::COMMENT_BUNDLE)
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', $topic->id())
+        ->condition('field_name', self::COMMENT_FIELD)
+        ->condition('cid', $last_comment_id, '>')
+        ->condition('cid', $max_comment_id, '<=')
+        ->sort('cid')
+        ->range(0, self::TOPIC_SYNC_BATCH_SIZE)
+        ->execute();
+      if ($comment_ids !== []) {
+        $last_comment_id = (int) end($comment_ids);
       }
-      foreach ($this->mediaUuids($comment) as $uuid) {
-        $media = $this->loadAttachmentByUuid($uuid);
-        if ($media instanceof MediaInterface) {
-          $this->syncMedia($media, $comment, $topic);
+      else {
+        break;
+      }
+      foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
+        if (!$comment instanceof CommentInterface) {
+          continue;
+        }
+        foreach ($this->mediaUuids($comment) as $uuid) {
+          $media = $this->loadAttachmentByUuid($uuid);
+          if ($media instanceof MediaInterface) {
+            $this->syncMedia($media, $comment, $topic);
+          }
         }
       }
     }
-    $post_ids = $this->entityTypeManager->getStorage('aculta_forum_post')->getQuery()
+
+    $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $max_post_ids = $post_storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('topic.target_id', $topic->id())
+      ->sort('id', 'DESC')
+      ->range(0, 1)
       ->execute();
-    foreach ($this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($post_ids) as $post) {
-      if (!$post instanceof ForumPost) {
-        continue;
+    $max_post_id = $max_post_ids === [] ? 0 : (int) reset($max_post_ids);
+    $last_post_id = 0;
+    while ($last_post_id < $max_post_id) {
+      $post_ids = $post_storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('topic.target_id', $topic->id())
+        ->condition('id', $last_post_id, '>')
+        ->condition('id', $max_post_id, '<=')
+        ->sort('id')
+        ->range(0, self::TOPIC_SYNC_BATCH_SIZE)
+        ->execute();
+      if ($post_ids !== []) {
+        $last_post_id = (int) end($post_ids);
       }
-      foreach ($this->postMediaUuids($post) as $uuid) {
-        $media = $this->loadAttachmentByUuid($uuid);
-        if ($media instanceof MediaInterface) {
-          $this->syncMedia($media, NULL, $topic, NULL, $post);
+      else {
+        break;
+      }
+      foreach ($post_storage->loadMultiple($post_ids) as $post) {
+        if (!$post instanceof ForumPost) {
+          continue;
+        }
+        foreach ($this->postMediaUuids($post) as $uuid) {
+          $media = $this->loadAttachmentByUuid($uuid);
+          if ($media instanceof MediaInterface) {
+            $this->syncMedia($media, NULL, $topic, NULL, $post);
+          }
         }
       }
     }
