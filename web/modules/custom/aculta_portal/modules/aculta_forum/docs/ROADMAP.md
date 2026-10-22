@@ -142,8 +142,22 @@ Wiki"; `author_wiki` não existe como papel em `config/sync`. A moderação do
 instância, mas criá-la mais o provider significa reimplementar a Wiki — decisão
 adiada pelo próprio documento. T21 fica bloqueada, e T22–T24 dependem dela.
 
+T22–T24 — bloqueadas por dependência de T21 (dev.237):
+
+- T22, isolamento de contexto da Wiki: exige dois hosts reais com discussão
+  aberta para provar que um Comment publicado no LMS não aparece na Wiki e
+  vice-versa. Sem o campo e o provider de T21, o lado Wiki do teste não existe;
+  um Kernel só com LMS não prova o isolamento.
+- T23, smoke de Comments com moderação inicial (`TEST-MATRIX.md`, seção da
+  Wiki): depende do formulário e da rota de comentários da Wiki e de Runtime de
+  teste; sem T21 não há cenário HTTP a registrar.
+- T24, citação em contexto na Wiki (`DISCOURSE-EXPERIENCE.md`, linha sobre
+  citação contextual): a própria especificação condiciona a execução a T19–T23
+  verdes.
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.237` | Registrar o bloqueio de T22–T24 por dependência de T21 | Documento apenas. Sem o campo e o provider de T21, não há lado Wiki para o isolamento de T22, cenário HTTP de T23 nem citação contextual de T24, que a especificação já condiciona a T19–T23 verdes. Nenhum teste ou Runtime executado. |
 | `0.1.0-dev.236` | Registrar o bloqueio dos comentários da Wiki | Documento apenas. `wiki_entry` não tem instância de `field_aculta_discussion` (só `revista`, `aculta_forum_topic` e `aculta_lms_topic` têm), e o `CONTEXTS.md` trata o contexto `wiki` como contrato futuro que "aguarda a reimplementação da Wiki", citando `author_wiki`, papel que não existe em `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a instância e o provider equivale a reimplementar a Wiki. Bloqueia também T22–T24. Sem Runtime/testes. |
 | `0.1.0-dev.235` | Registrar o bloqueio do upload contextual da Wiki | Documento apenas. `wiki_entry` não tem campo de envio do usuário: `field_wiki_image` é referência autocomplete a Media `image` existente (`auto_create: false`) e `email_confirmed` não cria nem edita Media, então não há superfície para a política central nem envio cuja Media se possa publicar. A aba por consumidor é administrativa (`UserUploadSettingsForm::CONSUMERS`), e registrar `wiki` sem consumidor criaria política sem uso. Bloqueada até decisão humana sobre campo de upload e permissão de Media. Sem Runtime/testes. |
 | `0.1.0-dev.234` | Localizar a Wiki e registrar pendências de upload e comentários | Documento apenas. A Wiki não tem módulo: é conteúdo e configuração do `aculta_portal` (Node `wiki_entry`, rotas `/wiki*`, purpose `wiki420`), com regras em `docs/operations/AGENT-CONTENT.md` e no `AGENTS.md` do Portal. Registra as duas pendências que bloqueiam T20–T24: ausência de campo de upload do usuário no verbete e ausência de `field_aculta_discussion`/provider de contexto, já que `PublicationContextProvider` cobre só `revista`. Nada implementado; sem Runtime/testes. |

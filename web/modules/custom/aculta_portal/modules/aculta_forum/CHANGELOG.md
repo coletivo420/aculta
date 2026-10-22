@@ -1,3 +1,11 @@
+## `0.1.0-dev.237` — registrar o bloqueio de T22–T24 por dependência de T21 — 2026-10-22
+
+- Documento apenas. T22 (isolamento de contexto), T23 (smoke de comentários com
+  moderação inicial) e T24 (citação em contexto) dependem de T21; sem campo e
+  provider da Wiki não existe o lado Wiki do isolamento nem cenário HTTP a
+  registrar. T24 já é condicionada pela especificação a T19–T23 verdes.
+- Nenhum Kernel, Unit ou Runtime executado nesta etapa.
+
 ## `0.1.0-dev.236` — registrar o bloqueio dos comentários da Wiki — 2026-10-22
 
 - Documento apenas. T21 está bloqueada: `wiki_entry` não tem instância de
