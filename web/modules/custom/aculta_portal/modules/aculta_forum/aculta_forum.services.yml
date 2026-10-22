@@ -5,6 +5,9 @@ services:
   Drupal\aculta_forum\Controller\ForumPostModerationQueueController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationQueueController
     arguments: ['@entity_type.manager', '@current_user', '@date.formatter', '@aculta_portal.domain_purpose']
+  Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController:
+    class: Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController
+    arguments: ['@entity_type.manager', '@date.formatter']
   Drupal\aculta_forum\Hook\ForumActivityEventHooks:
     class: Drupal\aculta_forum\Hook\ForumActivityEventHooks
     arguments: ['@event_dispatcher', '@datetime.time']

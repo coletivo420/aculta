@@ -183,3 +183,19 @@ aculta_forum.post_moderate:
   options:
     _admin_route: TRUE
   methods: [GET, HEAD, POST]
+
+aculta_forum.post_revision_history:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostRevisionHistoryController::history'
+    _title: 'Histórico de revisões da publicação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:revisionHistory'
+    aculta_forum_post: '\d+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD]

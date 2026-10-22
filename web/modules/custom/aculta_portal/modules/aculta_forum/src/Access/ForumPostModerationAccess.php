@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Access;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -64,6 +65,35 @@ final class ForumPostModerationAccess {
       ->andIf($transitionAccess)
       ->andIf($topicAccess)
       ->addCacheableDependency($post)
+      ->addCacheContexts(['domain', 'user', 'user.permissions']);
+    if ($topic instanceof NodeInterface) {
+      $access->addCacheableDependency($topic);
+    }
+    return $access;
+  }
+
+  /**
+   * Checks access to the revision history of a Forum post.
+   */
+  public function revisionHistory(AccountInterface $account, ForumPost $aculta_forum_post): AccessResultInterface {
+    $context = $this->domainPurposeManager->getCurrentPurpose() === 'main'
+      ? AccessResult::allowed()
+      : AccessResult::forbidden();
+    $topic = $aculta_forum_post->hasField('topic') ? $aculta_forum_post->get('topic')->entity : NULL;
+    $topicPurpose = $topic instanceof NodeInterface
+      && $topic->bundle() === 'aculta_forum_topic'
+      && $topic->isPublished()
+      && $topic->hasField('field_domain_source')
+      && !$topic->get('field_domain_source')->isEmpty()
+      ? $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id)
+      : NULL;
+    $topicAccess = $topicPurpose === 'forum'
+      ? $topic->access('view', $account, TRUE)
+      : AccessResult::forbidden();
+
+    $access = $context
+      ->andIf($topicAccess)
+      ->addCacheableDependency($aculta_forum_post)
       ->addCacheContexts(['domain', 'user', 'user.permissions']);
     if ($topic instanceof NodeInterface) {
       $access->addCacheableDependency($topic);

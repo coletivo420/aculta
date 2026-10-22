@@ -44,5 +44,18 @@ A fila `/painel-administrativo/forum/publicacoes-revisionaveis` e o formulário
 `/painel-administrativo/forum/publicacao/revisao/{revision_id}` usam a revisão
 Core exata e ficam em `main`; o custom access revalida estado `review`,
 transição, tópico publicado e purpose `forum`. A criação pública, o histórico
-administrativo e a migração dos Comments continuam nas fases seguintes; o Fórum
-legado segue ativo até equivalência e corte aprovados.
+administrativo é somente leitura em
+`/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes`: requer a
+permissão administrativa e valida o tópico e purpose; lista metadados de todas
+as revisões sem links de revert/delete. A criação pública, comparação textual e
+migração dos Comments continuam nas fases seguintes; o Fórum legado segue ativo
+até equivalência e corte aprovados.
+
+O histórico adapta a API Core `VersionHistoryController` e usa a API
+`RevisionableStorageInterface`/EntityQuery para carregar revisões paginadas. A
+consulta de revisões usa `accessCheck(FALSE)` porque a autorização administrativa
+e o vínculo com o tópico são verificados antes na rota; não há exposição em
+rotas públicas. Fontes consultadas:
+
+- [Drupal 11.x `VersionHistoryController`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Controller%21VersionHistoryController.php/class/VersionHistoryController/11.x)
+- [Drupal 11.x Entity API — revisões](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21entity.api.php/11.x)

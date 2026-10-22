@@ -9,7 +9,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -89,10 +88,19 @@ final class ForumPostModerationQueueController extends ControllerBase {
         ['data' => ['#plain_text' => $owner?->getDisplayName() ?? $this->t('Pessoa anônima')]],
         ['data' => ['#plain_text' => $this->dateFormatter->format((int) $post->get('created')->value, 'short')]],
         [
-          'data' => Link::fromTextAndUrl(
-            $this->t('Revisar'),
-            Url::fromRoute('aculta_forum.post_moderate', ['revision_id' => (string) $revisionId]),
-          )->toRenderable(),
+          'data' => [
+            '#type' => 'operations',
+            '#links' => [
+              'review' => [
+                'title' => $this->t('Revisar'),
+                'url' => Url::fromRoute('aculta_forum.post_moderate', ['revision_id' => (string) $revisionId]),
+              ],
+              'history' => [
+                'title' => $this->t('Histórico'),
+                'url' => Url::fromRoute('aculta_forum.post_revision_history', ['aculta_forum_post' => $post->id()]),
+              ],
+            ],
+          ],
         ],
       ];
     }

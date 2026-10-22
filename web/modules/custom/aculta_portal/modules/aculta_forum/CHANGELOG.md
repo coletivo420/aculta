@@ -1,3 +1,9 @@
+## `0.1.0-dev.142` — exibe histórico administrativo das revisões de posts
+
+- A rota `/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes` mostra ID, instante, autoria, estado, assunto, mensagem e revisão default; a fila permite acessar o histórico.
+- A rota exige a permissão administrativa no purpose `main` e valida novamente tópico publicado no purpose `forum`; a consulta de todas as revisões ocorre somente depois da autorização da rota e não inclui link de reversão ou exclusão.
+- Sem alteração no Runtime. Histórico público, comparação textual e revisão visual ainda não concluídos.
+
 ## `0.1.0-dev.141` — adiciona fila de revisão dos posts revisionáveis
 
 - Nova aba administrativa consulta `content_moderation_state` do Core e lista revisões em estado `review`; a ação abre a revisão exata em `ContentEntityForm`, com as transições do workflow Core.

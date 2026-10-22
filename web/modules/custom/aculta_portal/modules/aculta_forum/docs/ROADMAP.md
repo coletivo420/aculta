@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.142` | Histórico administrativo das revisões | Fila liga a visão paginada de revisões; mostra autoria, instante, estado, assunto e mensagem de revisão. Acesso restrito ao purpose `main`, permissão administrativa e tópico publicado no purpose `forum`; somente leitura, sem revert/delete. Sem Runtime; comparação textual e revisão visual pendentes. |
 | `0.1.0-dev.141` | Fila Core de moderação dos posts revisionáveis | Aba administrativa lista revisões `review` da entidade via storage `content_moderation_state`; Form API abre revisão exata e Core valida transições. Acesso limitado ao purpose `main`, permissão do módulo e tópico publicado do purpose `forum`. Sem Runtime; histórico e revisão visual pendentes. |
 | `0.1.0-dev.140` | Renderizar posts revisionáveis na página canônica | Hook acrescenta ao tópico `full` posts publicados/acessíveis, paginados em 50 por pager ID 1, com fragmentos estáveis, referências pai visíveis e cache por página/usuário/permissões/domínio. Comments continuam ativos durante migração; não há rota nova nem alteração Runtime. |
 | `0.1.0-dev.139` | Preparar handler e widgets Form API | A entidade passa a declarar `ContentEntityForm`; assunto, corpo e estado usam widgets Core no display `default`. Sem rota, formulário exposto ou alteração no Runtime; a criação aguarda integração contextual e equivalência migratória. |
