@@ -85,3 +85,9 @@ A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por a
 ## D-A.2-T — progresso e próximos gates
 
 D-A.2-T aplicado: StudioListingBuilder passa a variar listagens por user além de user.permissions e filtra cada revisão por view + view revision. Teste unitário de caracterização incluído, execução pendente. A consulta auxiliar de moderation_state, cache de Domain/grants e paginação ainda bloqueiam fila Wiki real.
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+ACULTA Studio is the **existing Drupal submodule**, not just the GanjaLab name. GanjaLab is its existing area-based account workspace; GanjaLab420 and WE SATIVA are distinct user experiences under the Studio interface platform, with their actual availability governed by implementing providers. Shared navigation/layout/orchestration belongs here; Wiki and other kernels own data, forms, workflow and access. Do not force WE SATIVA into the account-purpose StudioTab.
+
+[Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
