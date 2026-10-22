@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Plugin\Field\FieldFormatter;
 use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
 use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder;
 use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_pdf_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -39,6 +40,7 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
     private readonly ImageRenderer $imageRenderer,
     private readonly DocxViewerBuilder $docxViewerBuilder,
     private readonly SpreadsheetViewerBuilder $spreadsheetViewerBuilder,
+    private readonly PdfViewerBuilderInterface $pdfViewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }
@@ -58,6 +60,7 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $container->get('aculta_image.render'),
       $container->get('aculta_document_viewer.docx_builder'),
       $container->get('aculta_document_viewer.spreadsheet_builder'),
+      $container->get('aculta_pdf_viewer.builder'),
     );
   }
 
@@ -125,7 +128,15 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
       $mime = strtolower((string) $file->getMimeType());
       $viewer = NULL;
-      if ($extension === 'docx' && $mime === DocxViewerBuilder::DOCX_MIME) {
+      if ($extension === 'pdf' && $mime === 'application/pdf'
+        && $items->getName() === 'field_media_forum_attachment') {
+        $viewer = $this->pdfViewerBuilder->build($media, 'field_media_forum_attachment');
+        $file_cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($viewer));
+        if (isset($viewer['#access']) && $viewer['#access'] === FALSE) {
+          $viewer = NULL;
+        }
+      }
+      elseif ($extension === 'docx' && $mime === DocxViewerBuilder::DOCX_MIME) {
         $viewer = $this->docxViewerBuilder->build($file, (string) $file->getFilename());
       }
       elseif (isset(SpreadsheetViewerBuilder::FORMATS[$extension]) && in_array($mime, SpreadsheetViewerBuilder::FORMATS[$extension], TRUE)) {

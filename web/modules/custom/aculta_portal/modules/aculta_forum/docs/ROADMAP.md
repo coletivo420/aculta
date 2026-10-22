@@ -67,10 +67,10 @@ Kernel, migração dry-run, backup e aprovação visual.
 3. Por último, cartão PDF integrado ao ACULTA Document Viewer (`aculta_pdf_viewer`),
    miniatura/metadados e abertura em outra janela conforme opção administrativa.
 
-O `aculta_pdf_viewer` agora reconhece o Media `forum_attachment` e serve seu
-campo PDF pela rota privada do Core (`0.1.0-dev.40`). Isso prepara o contrato de
-acesso; o cartão/formatter ainda não foi ligado à apresentação do post e continua
-na etapa 3.
+O `aculta_pdf_viewer` reconhece o Media `forum_attachment` e serve seu campo
+PDF pela rota privada do Core (`0.1.0-dev.40`). A dev.198 liga o formatter do
+Fórum ao builder compartilhado; a validação integrada do cartão, miniatura,
+janela, acesso privado e fallback continua pendente.
 
 Dev.181 conecta DOCX e planilhas do Media `forum_attachment` aos builders locais
 do `aculta_document_viewer`; as configurações ausentes de anexos, editor e
@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.198` | Integrar cartão PDF compartilhado aos anexos | Formatter delega `forum_attachment.field_media_forum_attachment` ao `aculta_pdf_viewer`; o builder valida acesso/cache e link Core permanece fallback. Sem Runtime; validação visual/funcional pendente. |
 | `0.1.0-dev.197` | Limitar lotes ao sincronizar anexos no estado do tópico | Mudança de publicação do tópico percorre Comments e posts em lotes de 100, com limite máximo capturado no início; Media e Gallery preservam as regras existentes. Sem alteração Runtime; regressão automatizada pendente. |
 | `0.1.0-dev.196` | Exigir autenticação nos diálogos de upload | Acesso dos diálogos soma autenticação explícita ao formato `forum` e purpose Fórum; cache varia por estado autenticado. Sem validação Runtime. |
 | `0.1.0-dev.195` | Auditar watermarks distintos do Messenger | Marcadores `ultimo_comentario` e `ultimo_post` são classificados separadamente; só contagens são expostas. |

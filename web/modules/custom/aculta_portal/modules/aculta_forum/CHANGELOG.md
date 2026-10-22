@@ -1,3 +1,13 @@
+## `0.1.0-dev.198` — integrar cartão PDF aos anexos do Fórum
+
+- O formatter de `forum_attachment` delega PDFs reconhecidos pelo MIME e pela
+  extensão ao builder `aculta_pdf_viewer`, que confere Media, campo, File,
+  esquema privado, acesso e cache; imagens e previews Office mantêm seus
+  builders próprios. Se o viewer negar ou não conseguir construir o cartão, o
+  formatter preserva o link Core autorizado.
+- O Fórum declara dependência de `aculta_pdf_viewer`. Sem alteração Runtime;
+  cartão, miniatura, janela e fallback ainda precisam de validação integrada.
+
 ## `0.1.0-dev.197` — limitar memória na sincronização de anexos por tópico
 
 - Ao mudar a publicação de um tópico, os sincronizadores de Media e Gallery
