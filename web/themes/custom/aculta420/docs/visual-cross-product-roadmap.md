@@ -99,3 +99,7 @@ O fluxo passa a ser **inventariar → classificar SDC/UI Suite → adequar/migra
 ## Primeiro slice transversal M2/B1
 
 O contrato [Context Header do tema](theme-ux-0.8-m2-b1-context-header.md) prioriza Core page title/breadcrumb e SDC existente antes de criar novo componente. Caso necessário, criar apenas SDC com dois consumidores reais, UI Patterns/Styles e stories, sem substituir Institution Bar e Domain Header. Documentação concluída; execução funcional depende da auditoria Runtime.
+
+## Decisão B1-02 — H1 contextual e evidência de consumidores
+
+O [plano B1-02](theme-ux-0.8-b1-02-ownership-h1.md) autoriza Context Header SDC a ser o proprietário do único H1 visível em consumidores migrados, sem preservar obrigatoriamente a saída nativa. O título segue provido pelo Drupal; remover duplicação seletivamente e jamais ocultar com CSS. A [inspeção B1-02a](theme-ux-0.8-b1-02a-consumer-code-map.md) detectou que o SDC Wiki `wiki-entry` já produz H1 e precisará de integração coordenada; o shell multidomínio continua obrigatório. Sem implementação Runtime.
