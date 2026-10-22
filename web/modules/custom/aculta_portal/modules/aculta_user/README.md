@@ -33,3 +33,9 @@ O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de p
 ## Inventário transversal USER-PART 0.1-A
 
 [Inventário comparativo Fórum, Fórum LMS e Wiki](docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md): preserva os contratos existentes de `ParticipationRules`, `ParticipationHooks`, `ParticipationEditWindow`, moderação contextual Group e workflow Wiki. A centralização priorizada é de **políticas e interfaces em `aculta_user`**; queries, filas e transições de cada domínio permanecem nos kernels respectivos. Próximo marco USER-PART 0.1-B: contrato/ADR e testes de caracterização antes de PHP funcional. Nenhum teste Runtime foi executado.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-02/03/04/11: User detém identidade, situação real de associado ativo, amizades, preferências pessoais e política de participação. Expor serviço autoritativo de associação para Group no Fórum; especificar eventos de ativação/suspensão/desligamento, reconciliação e cache; não tratar `associado` como papel. Messenger entrega avisos, User não duplica inbox. Política primeira contribuição Fórum/Wiki permanece em ParticipationRules.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
