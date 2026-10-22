@@ -117,3 +117,7 @@ Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/archit
 XK 0.1-B / ADR-XK-01: primeira participação de Wiki passa por contrato de User com lookup próprio de verbetes publicados; toda publicação exige content_editor. Para avisos de edição/revisão, a Wiki produz eventos mínimos para o Messenger sem segunda central. O próximo gate é caracterizar o workflow e não liberar edição de terceiros diretamente.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
+
+## WES-UX 0.4 — projeto visual por telas (2026-10-22)
+
+[Inventário de 12 estruturas WE SATIVA](../../../../../../../docs/portal/WE-SATIVA-VISUAL-SCREENS-0.4.md), incluindo entrada pelo verbete, início, Meu trabalho, microtarefas, novo verbete, CKEditor, prévia, revisão, feedback, ajuda, fontes e mídia. Sequência V-0.4-A–R, mobile-first em toda a Wiki, componentes Core SDC/UI Suite exclusivamente, Institution Bar + Domain Header preservados. Cada tela depende de providers, estados e permissões reais; não implementar links fictícios. Autosave apenas futuro.
