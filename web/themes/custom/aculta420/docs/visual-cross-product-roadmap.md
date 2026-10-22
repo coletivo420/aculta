@@ -225,3 +225,8 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-X
 ## WES-UX V-0.4-C — microtarefas, novo verbete, editor e prévia
 
 [Especificação visual e funcional V05–V08](../../../../../docs/portal/WE-SATIVA-V-0.4-C-EDITOR-FLOWS.md): fluxos progressivos, 12 stories de aceite, Form API com CKEditor 5 **já configurado para o formato wiki**; toolbar exportada, Media integrado e upload direto de imagem desativado. Contas email_confirmed criam e enviam à moderação, content_editor publica. Sugestões de alteração de terceiros dependem de backend seguro. SDC/UI Suite, mobile-first, sem autosave nesta fase. Próximo V-0.4-D.
+
+
+## V-0.4-D — divisão visual WE SATIVA x GanjaLab
+
+[Janela de moderação Wiki no GanjaLab](../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): visualização de fila, comparação e aprovação fica em Studio. WE SATIVA mantém escrita e acompanhamento, sem botões de publicação para colaborador. SDC/UI Suite rege ambas as superfícies, com mobile full-screen na revisão e desktop comparativo, nenhum cabeçalho global duplicado. Contratos entre Studio/Wiki definidos antes de componentizar.
