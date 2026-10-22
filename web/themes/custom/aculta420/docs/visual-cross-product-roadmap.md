@@ -178,3 +178,8 @@ O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_po
 ## WE SATIVA C01 — componente de entrada (WES-UX 0.3-B1)
 
 [Contrato de composição C01](../../../../../docs/portal/WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md): reutilizar `context-header` para convite/heading e `card` para escolhas condicionais, `context-tabs` e `empty-state` apenas se houver consumidor real. Nenhum novo SDC até provar lacuna; primeiro inventariar a ação no Twig full da Wiki e ACL/rotas. Institution Bar e Domain Header seguem inalterados; mobile-first.
+
+
+## WE SATIVA C01-A — escolha de slot e gate de acesso
+
+[Análise C01-A](../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-CTA-AUDIT.md): `context-header.actions` é a posição candidata para um único CTA `Contribuir`, fornecido como render array autorizado pelo kernel Wiki; `wiki-entry.actions` já contém operações Core e **não pode duplicar o convite**. O tema não gera URL/permissão e não remove operações Core por CSS. A próxima etapa C01-B especifica o contrato de intents e o acesso mínimo; o comportamento só será implementado após rota e testes. Mobile-first em Wiki e WE SATIVA, SDC/UI Suite e shell global preservados.
