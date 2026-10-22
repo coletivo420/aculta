@@ -7,6 +7,7 @@ namespace Drupal\aculta_studio\Learning;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -52,7 +53,7 @@ final class LearnerDashboardComposer {
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h3',
-          '#plain_text' => (string) $course['label'],
+          '#value' => Html::escape((string) $course['label']),
         ],
         'progress' => [
           '#type' => 'container',
