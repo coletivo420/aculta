@@ -54,3 +54,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b1-02e-runtime-validation.md](theme-ux-0.8-b1-02e-runtime-validation.md) — gates de homologação do Context Header integrado ao LMS e à Wiki, pendentes de Runtime.
 
 - [theme-ux-0.8-b2-context-tabs.md](theme-ux-0.8-b2-context-tabs.md) — fase B2, SDC de abas por rotas, auditoria de Studio e integração ainda pendente.
+
+- B2-03: primeiro consumidor de `context-tabs` em `aculta_studio`, com validação visual/Runtime pendente. [Plano B2](theme-ux-0.8-b2-context-tabs.md).
