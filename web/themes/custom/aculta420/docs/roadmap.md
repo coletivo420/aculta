@@ -346,3 +346,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## Mudança normativa do Context Header — H1 gerenciado pelo SDC
 
 O H1 nativo **não precisa ser preservado visualmente**: em consumidores adotantes, o `Context Header` poderá produzir o único H1 do documento, com TitleResolver/page title do Core permanecendo fonte dos dados e remoção da duplicação pela composição de render arrays. A migração é seletiva, não global. Ver [contrato revisado](theme-ux-0.8-m2-b1-context-header.md) e [próxima fase B1-02](theme-ux-0.8-b1-02-ownership-h1.md). Sem alteração funcional nesta etapa.
+
+## B1-02a — mapeamento de consumidores no código
+
+[Relatório B1-02a](theme-ux-0.8-b1-02a-consumer-code-map.md): rota e controller do GanjaLab420 identificados; Wiki full já usa SDC com H1. Próxima entrega B1-02b requer DOM real e decisão semântica para compartilhar Context Header sem duplicar títulos, mantendo a barra multidomínio global. Estado: inspeção de código, não implantação.
