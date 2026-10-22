@@ -8,6 +8,7 @@ use Drupal\aculta_user\ParticipationRules;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,13 +38,16 @@ final class ForumPublicationTimeHooks {
     }
 
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
-      if ($entity->isNew() && $entity instanceof EntityOwnerInterface && $entity->hasField('moderation_state')) {
+      $is_syncing = $entity instanceof SynchronizableInterface && $entity->isSyncing();
+      if (!$is_syncing && $entity->isNew() && $entity instanceof EntityOwnerInterface && $entity->hasField('moderation_state')) {
         $owner = $entity->getOwner();
         $entity->set('moderation_state', $owner !== NULL && $this->participationRules->requiresFirstDiscussionModeration($owner)
           ? 'review'
           : 'published');
       }
-      $this->setOnFirstPublication($entity, 'first_published');
+      if (!$is_syncing) {
+        $this->setOnFirstPublication($entity, 'first_published');
+      }
     }
   }
 

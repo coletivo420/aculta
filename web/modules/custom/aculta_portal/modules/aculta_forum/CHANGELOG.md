@@ -1,3 +1,15 @@
+## `0.1.0-dev.174` — preservar estado e timestamp na migration
+
+- `ForumPublicationTimeHooks` agora respeita `SynchronizableInterface::isSyncing()`
+  para posts revisionáveis: importação não substitui `rejected`/`review` por
+  estado inicial da participação nem grava o instante atual como primeira
+  publicação. O destino continua importando `first_published`; quando a origem
+  não tem esse marcador, `ParticipationEditWindow` usa `created` como limite
+  conservador.
+- O comportamento veio da integração entre `EntityContentBase::save()` (Core
+  Migrate marca a entidade como syncing) e o hook de primeira publicação. Não
+  houve execução da migration nem alteração no Runtime.
+
 ## `0.1.0-dev.173` — verificar destino das denúncias migradas
 
 - A auditoria estima quantas flaggings de Comments não têm configuração Flag
