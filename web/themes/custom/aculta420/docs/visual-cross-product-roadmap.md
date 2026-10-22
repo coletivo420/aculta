@@ -133,3 +133,8 @@ O inventário da árvore da PR #297 confirmou **41 SDCs** no tema. A [matriz B6-
 ## B6-S1a-L2 — metadados (2026-10-22)
 
 [Auditoria de metadados L2](theme-ux-0.8-b6-s1a-l2-metadata-audit.md): os 41 arquivos `.component.yml` foram lidos em dois lotes; a árvore registra 41 Twig, 32 CSS e 65 stories, ainda sem inspeção exaustiva do conteúdo. **Quatro componentes de doação referenciam o schema SDC legado** e exigem migração controlada em B6-S2. Próximo slice: **B6-S1a-L3**, revisão integral Twig/CSS/stories; B6-R permanece pendente de homelab.
+
+
+## B6-S1a-L3 — inspeção prioritária de assets (2026-10-22)
+
+A [auditoria B6-S1a-L3](theme-ux-0.8-b6-s1a-l3-priority-assets.md) leu 5 CSS e 3 stories e registrou divergência concreta em `cart-offcanvas.default.story.yml` (`items` ausente da metadata). O inventário atual contém 41 Twig, 32 CSS e 65 stories. **L3b** examinará os assets ainda não inspecionados; **S1b** rastreará consumidores; **S2** tratará correções reproduzidas. Shell multidomínio preservado e Runtime não homologado.
