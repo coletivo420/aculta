@@ -148,3 +148,8 @@ A [auditoria B6-S1a-L3](theme-ux-0.8-b6-s1a-l3-priority-assets.md) leu 5 CSS e 3
 ## B6-S1a-L3c — auditor estático versionado (2026-10-22)
 
 O [gate B6-S1a-L3c](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) adicionou `scripts/audit-aculta420-sdc-assets.php`: varredura somente leitura de metadata/Twig e chaves das stories, schema Core e contagens. **Script ainda não executado com Composer; nenhuma aprovação presumida.** Seguir B6-S1a-L3d (executar, registrar achados), B6-S1b (consumidores) e B6-S2 (correções pequenas). Preservar shell multidomínio e padrão Core SDC/UI Suite.
+
+
+## Wiki420 — trilha visual W420-UX 0.1 (2026-10-22)
+
+O plano [Wiki420 — Experiência visual](../../../../../docs/portal/WIKI420-VISUAL-EXPERIENCE.md) organiza Home, busca, categorias, verbete enciclopédico, revisões, discussão contextual e colaboração, utilizando Core SDC/UI Patterns/UI Styles. **Ownership de componentes, tokens e CSS transversais: ACULTA420; regras, rotas e acesso: aculta_wiki/Core/Portal.** Reutilizar `context-header`, `wiki-entry`, `context-tabs`, `figure`, `empty-state` e `card` apenas após gate por consumidor. Institution Bar + Domain Header preservados. W420-UX 0.1-A é próximo slice estático; 0.1-R é Runtime.
