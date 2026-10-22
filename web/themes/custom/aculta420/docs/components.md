@@ -341,3 +341,7 @@ em `docs/portal/CONTADORES.md` (raiz do repositório).
 ## Auditoria de reutilização GanjaLab420 — 2026-10-22
 
 O planejamento [GanjaLab420 × ACULTA420](../../../../../docs/portal/GANJALAB420-CROSS-VISUAL-AUDIT.md) prioriza componentes existentes e variantes. Criar novos SDCs apenas com contrato de dados/slots, primeiro consumidor real, segundo consumidor mapeado, story UI Patterns, acessibilidade, cache/access nos providers e documentação. Padrões transversais candidatos: context-header, context-tabs, empty-state, content-reader, resource-list e status-timeline. Nenhum foi implementado nesta auditoria.
+
+## Planejamento dos componentes transversais — 0.8-B
+
+[Contratos de Context Header, Context Tabs e Feedback](../../../../../docs/portal/GANJALAB420-SHARED-UI-PLAN.md) orientam o reuso em LMS, Revista, Wiki, Fórum e Conta. Não criar componentes antes de identificar consumidores reais e avaliar Core/Bootstrap/SDCs existentes; cada novo SDC necessita story, contrato de props/slots e testes mobile/light-dark.
