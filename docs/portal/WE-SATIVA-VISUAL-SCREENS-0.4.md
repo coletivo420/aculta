@@ -60,3 +60,8 @@ Mobile 320/360/390px: uma coluna, campos ≥16px, alvos de toque preferencialmen
 ## WES-UX V-0.4-C — microtarefas, novo verbete, editor e prévia
 
 [Especificação visual e funcional V05–V08](WE-SATIVA-V-0.4-C-EDITOR-FLOWS.md): fluxos progressivos, 12 stories de aceite, Form API com CKEditor 5 **já configurado para o formato wiki**; toolbar exportada, Media integrado e upload direto de imagem desativado. Contas email_confirmed criam e enviam à moderação, content_editor publica. Sugestões de alteração de terceiros dependem de backend seguro. SDC/UI Suite, mobile-first, sem autosave nesta fase. Próximo V-0.4-D.
+
+
+## Correção de ownership V-0.4-D — fila e moderação no GanjaLab
+
+**Decisão superior às descrições antigas V09:** a [janela de moderação Wiki](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md) pertence ao **GanjaLab (`aculta_studio`)**, não ao WE SATIVA. V09 designa agora a experiência GanjaLab, e V10–V12 são devolutivas, ajuda e recursos do colaborador no WE SATIVA. O subkernel Wiki mantém workflow, fila lógica, acesso e dados; o Studio só apresenta e delega. Nenhum painel ou transição de content_editor deve ser criado dentro do WE SATIVA. Plano V-0.4-D-A–R antes de Runtime.
