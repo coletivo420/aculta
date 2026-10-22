@@ -89,3 +89,7 @@ Os componentes abaixo possuem `.component.yml` e Twig no tema em `web/themes/cus
 - `docs/portal/GANJALAB420-*.md`
 
 **Limitação:** não houve validação de Runtime, inspeção de HTML resultante nem execução de testes nesta etapa. O status de implementação e compatibilidade de cada componente deve ser revalidado na branch antes de modificar o código.
+
+## Transição 0.8-A → 0.8-B
+
+A matriz de reaproveitamento desta auditoria orienta o [plano 0.8-B de cabeçalhos, abas e estados transversais](GANJALAB420-SHARED-UI-PLAN.md). Verificação estática concluída; validação Runtime e integração efetiva seguem pendentes. Priorizar variantes dos SDC existentes antes de criar abstrações novas.
