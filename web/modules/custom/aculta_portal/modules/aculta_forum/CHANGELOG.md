@@ -1,3 +1,14 @@
+## `0.1.0-dev.171` — auditar impeditivos de conteúdo da migration
+
+- A auditoria conta Comments que têm ao menos uma tradução sem corpo, com
+  formato diferente de `forum`, ou publicada apesar da marca de rejeição.
+  Esses são os mesmos casos que o destino da migration interrompe; contagens
+  agregadas permitem detectá-los sem imprimir conteúdo ou IDs.
+- No smoke Homelab da dev.170, o acervo elegível estava vazio; estes novos
+  cenários também não têm validação Runtime com dados. O comando foi executado
+  novamente no URI de teste do Fórum: todas as três contagens foram 0 e nenhuma
+  escrita ocorreu.
+
 ## `0.1.0-dev.170` — auditar referências de autoria ausentes
 
 - A auditoria paginada verifica em lote se usuários autores e entidades

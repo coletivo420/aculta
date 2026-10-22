@@ -63,6 +63,9 @@ final class ForumCommentMigrationAudit {
       'comments_with_legacy_author' => 0,
       'comments_with_missing_owner' => 0,
       'comments_with_missing_legacy_author' => 0,
+      'comments_with_empty_body_translation' => 0,
+      'comments_with_incompatible_body_format' => 0,
+      'comments_with_rejected_published_translation' => 0,
       'comments_with_publication_timestamp' => 0,
       'comments_with_translations' => 0,
       'media_embeds' => 0,
@@ -133,28 +136,44 @@ final class ForumCommentMigrationAudit {
         if (count($translations) > 1) {
           $report['comments_with_translations']++;
         }
+        $rejected = $comment->hasField('field_aculta_rejected')
+          && (bool) $comment->get('field_aculta_rejected')->value;
+        $has_empty_body = FALSE;
+        $has_incompatible_format = FALSE;
+        $has_rejected_published_translation = FALSE;
         foreach ($translations as $language) {
           $language_id = $language->getId();
           $report['languages'][$language_id] = ($report['languages'][$language_id] ?? 0) + 1;
           $translation = $comment->getTranslation($language_id);
-          if ($translation->hasField('comment_body') && !$translation->get('comment_body')->isEmpty()) {
-            $format = (string) $translation->get('comment_body')->format;
+          $body = $translation->hasField('comment_body') && !$translation->get('comment_body')->isEmpty()
+            ? $translation->get('comment_body')
+            : NULL;
+          $body_value = (string) ($body?->value ?? '');
+          $format = (string) ($body?->format ?? '');
+          if (trim($body_value) === '') {
+            $has_empty_body = TRUE;
+          }
+          if ($format !== 'forum') {
+            $has_incompatible_format = TRUE;
+          }
+          if ($rejected && $translation->isPublished()) {
+            $has_rejected_published_translation = TRUE;
+          }
+          if ($body !== NULL) {
             $report['body_formats'][$format] = ($report['body_formats'][$format] ?? 0) + 1;
-            $this->countEmbeds(
-              (string) $translation->get('comment_body')->value,
-              $report,
-              $media_uuids,
-              $gallery_uuids,
-            );
+            $this->countEmbeds($body_value, $report, $media_uuids, $gallery_uuids);
           }
         }
+        $report['comments_with_empty_body_translation'] += (int) $has_empty_body;
+        $report['comments_with_incompatible_body_format'] += (int) $has_incompatible_format;
+        $report['comments_with_rejected_published_translation'] += (int) $has_rejected_published_translation;
         if ($comment->isPublished()) {
           $report['published_comments']++;
         }
         else {
           $report['unpublished_comments']++;
         }
-        if ($comment->hasField('field_aculta_rejected') && (bool) $comment->get('field_aculta_rejected')->value) {
+        if ($rejected) {
           $report['rejected_comments']++;
         }
         if ($comment->hasField('field_autor_legado') && !$comment->get('field_autor_legado')->isEmpty()) {
