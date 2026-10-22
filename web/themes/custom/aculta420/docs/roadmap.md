@@ -350,3 +350,7 @@ O H1 nativo **não precisa ser preservado visualmente**: em consumidores adotant
 ## B1-02a — mapeamento de consumidores no código
 
 [Relatório B1-02a](theme-ux-0.8-b1-02a-consumer-code-map.md): rota e controller do GanjaLab420 identificados; Wiki full já usa SDC com H1. Próxima entrega B1-02b requer DOM real e decisão semântica para compartilhar Context Header sem duplicar títulos, mantendo a barra multidomínio global. Estado: inspeção de código, não implantação.
+
+## B1-02b — Contrato visual do Context Header
+
+O [contrato visual B1-02b](theme-ux-0.8-b1-02b-visual-contract.md) estabelece variantes conceituais standard/editorial/compact e o H1 único sob responsabilidade do SDC contextual, com migração seletiva dos consumidores LMS e Wiki. Institution Bar + Domain Header existentes são obrigatórios. **Somente planejamento:** nenhum SDC adicional ou teste Runtime foi executado. Próxima microfase B1-02c depende da validação do DOM e de consumidores reais.
