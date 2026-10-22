@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — contagem e paginação da listagem — 2026-10-22
+
+- A view `wiki_entries` (`config/sync/views.view.wiki_entries.yml`) passa a
+  contar e paginar a listagem pública. O display `page_1` (`wiki/verbetes`,
+  caminho inalterado) usa pager completo de 12 itens e cabeçalho
+  `@total verbetes publicados`, exibido inclusive quando não há resultados.
+- Os blocos `block_changes` (5 itens) e `block_recent` mantêm o limite fixo,
+  sem paginador; a troca fica restrita ao display da página.
+- `url.query_args` entra nos contextos de cache da página para que `?page=N`
+  não receba o cache da primeira página.
+- `WikiListingConfigTest` (2 testes) trava o contrato: pager e contagem na
+  página, blocos intactos. Execução: `2 testes, 13 asserções, OK`.
+- Nenhuma operação de Runtime; nenhum cache limpo.
+
 ## Não lançado — testes do controlador e do formulário — 2026-10-22
 
 - Cria testes unitários em `tests/src/Unit` para as duas classes movidas:
