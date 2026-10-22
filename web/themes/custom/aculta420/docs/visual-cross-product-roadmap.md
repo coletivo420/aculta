@@ -168,3 +168,8 @@ O plano [Wiki420 — Experiência visual](../../../../../docs/portal/WIKI420-VIS
 ## WES-UX 0.2-A0 — fundação aprovada e iniciada
 
 O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-FOUNDATION.md) detalha intents, ownership de Form API e controle de acesso, ordem das microfases e restrições de implementação. **Autosave Form postergado**. Primeiro mapear consumidores/rotas/permissões; componentes compartilhados precisam de Core SDC/UI Patterns/UI Styles. Wiki pública e editor permanecem mobile-first com Institution Bar + Domain Header em todas as telas.
+
+
+## WE SATIVA 0.3 — composição da arquitetura interna
+
+[Arquitetura completa das áreas WE SATIVA](../../../../../docs/portal/WE-SATIVA-INTERNAL-ARCHITECTURE.md): início, meu trabalho, contribuir, ajuda e contextos editoriais (novo verbete, editor completo, fontes, mídia, revisões). O tema fornece exclusivamente SDC/UI Patterns/UI Styles, sem duplicar Form API, workflows ou o shell multidomínio. Primeiro validar a conformidade e consumidores de `context-header`, `context-tabs`, `card`, `editorial-card` e `empty-state`. Todas as telas mobile-first.
