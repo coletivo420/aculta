@@ -184,7 +184,9 @@ final class ForumCommentMigrationAudit {
           $report['comments_with_publication_timestamp']++;
         }
 
-        $parent_id = (string) ($comment->get('pid')->target_id ?? '');
+        $parent_id = $comment->hasParentComment()
+          ? (string) $comment->get('pid')->target_id
+          : '';
         if ($parent_id !== '') {
           $parent_references[$comment_id] = [
             'parent_id' => $parent_id,

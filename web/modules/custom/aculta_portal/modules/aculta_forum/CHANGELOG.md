@@ -1,3 +1,14 @@
+## `0.1.0-dev.172` — identificar pais pela API do Comment Core
+
+- Fonte e auditoria usam `CommentInterface::hasParentComment()` para distinguir
+  raízes de referências pai, em vez de interpretar diretamente o valor bruto
+  de `pid`. Raízes não geram lookup nem falso positivo de pai ausente; um ID de
+  pai não resolvido continua sendo inventariado.
+- A API foi conferida no Core 11.4.10 instalado e na
+  [interface CommentInterface 11.x](https://api.drupal.org/api/drupal/core%21modules%21comment%21src%21CommentInterface.php/11.x).
+- O smoke somente leitura do Homelab repetiu 0 Comments elegíveis e 0 pais
+  ausentes; não havia raízes ou relações com dados para cobrir.
+
 ## `0.1.0-dev.171` — auditar impeditivos de conteúdo da migration
 
 - A auditoria conta Comments que têm ao menos uma tradução sem corpo, com

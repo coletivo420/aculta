@@ -194,7 +194,9 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       ];
     }
 
-    $parent_id = $comment->get('pid')->target_id;
+    $parent_id = $comment->hasParentComment()
+      ? $comment->get('pid')->target_id
+      : NULL;
     $legacy_author_id = $comment->hasField('field_autor_legado')
       ? $comment->get('field_autor_legado')->target_id
       : NULL;
