@@ -114,3 +114,8 @@ A [auditoria W420-UX 0.1-A](WIKI420-VISUAL-STATIC-AUDIT.md) registra evidências
 ## WE SATIVA — edição editorial independente
 
 O editor Wiki ganha uma interface própria **WE SATIVA (Wiki Editor Sativa)**, documentada em [WE-SATIVA-VISUAL-EDITOR.md](WE-SATIVA-VISUAL-EDITOR.md). Ela é **separada de GanjaLab/GanjaLab420**, atende contribuintes autorizados mais amplamente, usa Form API/CKEditor e workflow do Drupal sem duplicação, e segue a mesma regra mobile-first que a Wiki pública. O acesso segue capacidades do kernel, não a filiação ao Studio. As duas experiências preservam Institution Bar e Domain Header global e usam exclusivamente o Design System Core SDC/UI Suite.
+
+
+## Contribuição contextual — WE SATIVA 0.2
+
+Na leitura pública, planejar uma ação contextual `Contribuir` quando autorizada, que abre o [WE SATIVA por intenção](WE-SATIVA-CONTRIBUTION-FIRST-RESEARCH.md) com vínculo ao verbete e retorno seguro. Não confundir correção sugerida com edição/publicação efetiva. Interface pública e editor permanecem mobile-first e usam SDC/UI Suite.
