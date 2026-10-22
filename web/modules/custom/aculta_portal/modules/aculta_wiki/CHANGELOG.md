@@ -1,5 +1,44 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — upload da imagem de destaque — 2026-10-22
+
+- O `field_wiki_image` deixa de ser um autocomplete de mídia no formulário do
+  verbete. `WikiEntryImageHooks` (`form_node_wiki_entry_form_alter`) oculta o
+  widget central e abre a aba **"Imagem de destaque"** dentro das abas verticais
+  `advanced`: um `managed_file` em `public://wiki/imagens`, o campo de descrição
+  (até 512 caracteres, como no Fórum), o resumo da imagem atual e a opção de
+  removê-la.
+- A aba consome o **consumidor `wiki` da política central**
+  (`aculta_portal.user_upload_policy`): `UserUploadSettingsForm` ganhou a aba
+  "Wiki", `config/sync/aculta_portal.user_upload.yml` ganhou `consumers.wiki`
+  herdando a política global e `aculta_portal.schema.yml` ganhou o mapeamento.
+  Extensões, tamanho e inspeção da imagem continuam vindo do mesmo serviço que
+  o Fórum usa.
+- `WikiLeadImageUploader` valida na submissão (um arquivo por envio, descrição
+  obrigatória, imagem real dentro da política) e, antes de salvar o verbete, cria
+  uma mídia `image` publicada — título = nome do arquivo, `field_media_image`
+  com `alt` — e aponta `field_wiki_image` para ela.
+- Decisão: **aba em vez de diálogo modal**. Um diálogo não teria como gravar no
+  campo de autocomplete de um nó ainda não salvo sem repetir a mecânica AJAX da
+  Media Library; a aba reusa o padrão do diálogo do Fórum sem esse acoplamento.
+- Decisão: **substituir não apaga**. A mídia anterior fica no banco porque
+  revisões publicadas podem apontar para ela; a limpeza fica para uma frente
+  própria.
+- A aba define `#tree => TRUE` explicitamente: `<details>` não sintetiza essa
+  propriedade e, sem ela, os valores não chegariam sob `wiki_lead_image`.
+- O uploader marca o arquivo como permanente antes de criar a mídia, porque o
+  envio não passa pelo autocomplete que registraria o uso do arquivo e ele
+  seria coletado como temporário.
+- A aba só aparece quando a política do consumidor tem alguma extensão de
+  imagem habilitada; caso contrário o widget central continua visível para não
+  travar o campo.
+- `aculta_wiki.info.yml` passa a declarar `drupal:file` e `drupal:media`.
+- Testes: `WikiLeadImageUploaderTest` (10), `WikiEntryImageHooksTest` (6) e
+  `WikiLeadImagePolicyTest` (3). Suíte do submódulo: `32 testes, 158 asserções,
+  OK`. PHPCS `Drupal,DrupalPractice` limpo nos arquivos novos.
+- Nenhuma operação de Runtime; nenhum cache limpo. A validação em navegador
+  (ACULTA420 e Olivero) fica para depois da importação de configuração.
+
 ## Não lançado — imagem e campos no card da listagem — 2026-10-22
 
 - O view mode `teaser` do `wiki_entry`

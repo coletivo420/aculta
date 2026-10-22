@@ -10,3 +10,5 @@ dependencies:
   - drupal:views
   - drupal:node
   - drupal:content_moderation
+  - drupal:file
+  - drupal:media

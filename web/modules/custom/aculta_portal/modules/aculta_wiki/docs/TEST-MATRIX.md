@@ -1,7 +1,23 @@
 # Matriz de testes — ACULTA Wiki
 
-Cobertura planejada para o submódulo. Nenhum teste foi executado nesta versão:
-o módulo é uma casca sem código.
+Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
+`planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
+
+## Fase 5 — listagem e imagem de destaque
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Envio de imagem válida com descrição | Unit | sem erro de validação | aprovado |
+| Descrição vazia ou acima de 512 caracteres | Unit | erro em `wiki_lead_image][alt` | aprovado |
+| Mais de um arquivo por envio | Unit | erro em `wiki_lead_image][file` | aprovado |
+| Arquivo fora das extensões de imagem da política | Unit | erro em `wiki_lead_image][file` | aprovado |
+| Aba intocada | Unit | nenhum erro e nenhum campo alterado | aprovado |
+| Envio aceito | Unit | mídia `image` publicada com `alt`, campo aponta para ela | aprovado |
+| Reenvio após erro de validação | Unit | reusa a mídia do mesmo `form_state` | aprovado |
+| Caixa de remoção marcada | Unit | `field_wiki_image` esvaziado | aprovado |
+| Formulário do verbete | Unit | aba no grupo `advanced`, `#tree`, validadores `wiki`, ganchos de validação e envio | aprovado |
+| Política sem extensão de imagem | Unit | aba não aparece e o widget central continua visível | aprovado |
+| Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
 
 ## Fase 2 — componentes movidos
 

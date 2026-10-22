@@ -145,6 +145,8 @@ Ordem sugerida, depois das Fases 1–4:
    paginação e os campos do teaser (imagem de destaque, resumo e categorias) foram
    entregues nesta sessão (ver estado abaixo).
 2. Upload contextual pela política central `aculta_portal.user_upload_policy`, com aba própria.
+   Entregue nesta sessão: aba "Imagem de destaque" no formulário do verbete, com o
+   consumidor `wiki` da política (ver estado abaixo).
 3. Adaptador `wiki` do Fórum: uma discussão por verbete, em Comment no Node. A revisão
    editorial continua separada.
 4. Busca e notificações. Mudam a retenção e exigem atualizar o inventário LGPD de novo.
@@ -194,6 +196,7 @@ ao fim da sessão.
 | E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | `44b957ba` | concluída |
 | E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
 | E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
+| E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -251,22 +254,51 @@ ao fim da sessão.
   `object-fit: cover`) e só a exibe quando o campo tem conteúdo e acesso; o
   componente ganhou a story `wiki-entry.teaser.story.yml`. Nenhuma URL mudou e
   os blocos continuam intactos.
+- **Upload da imagem de destaque (Fase 5, item 2).** O campo `field_wiki_image`
+  deixou de ser um autocomplete de mídia: o hook
+  `form_node_wiki_entry_form_alter` (`WikiEntryImageHooks`) oculta o widget
+  central e abre a aba "Imagem de destaque" dentro das abas verticais
+  `advanced`. A aba envia um arquivo por vez (`managed_file` em
+  `public://wiki/imagens`), exige descrição de até 512 caracteres, mostra a
+  imagem atual e oferece removê-la. A validação e o envio usam o **consumidor
+  `wiki`** da política central: `UserUploadPolicy` ganhou a aba "Wiki" em
+  `UserUploadSettingsForm`, o bloco `consumers.wiki` em
+  `config/sync/aculta_portal.user_upload.yml` e o mapeamento correspondente em
+  `aculta_portal.schema.yml`, com padrão herdando a política global. O envio
+  cria uma mídia `image` publicada (título = nome do arquivo, `field_media_image`
+  com `alt`) antes de salvar o verbete, pelo mesmo padrão do diálogo do Fórum;
+  a substituição não apaga a mídia anterior, porque revisões podem apontar para
+  ela. O arquivo enviado nunca passa pelo autocomplete de mídia, então o
+  uploader o marca como permanente antes de criar a mídia. A aba só aparece
+  quando a política do consumidor tem extensão de imagem habilitada; caso
+  contrário o widget central continua visível. `<details>` não sintetiza
+  `#tree`, por isso a aba o define explicitamente — sem isso os valores não
+  chegariam sob `wiki_lead_image`. O `info.yml` passou a declarar
+  `drupal:file` e `drupal:media`, que o fluxo agora usa. Nenhuma URL mudou.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
   `WikiRankingKernelTest` (3 testes: período e título atual, verbete excluído,
   dimensão sem verbete legível), `WikiListingConfigTest` (2 testes: pager e
   contagem na página, blocos intactos) e `WikiTeaserConfigTest` (2 testes:
-  imagem sem link via mídia, ordem e campos ocultos) aprovados. A suíte unitária
+  imagem sem link via mídia, ordem e campos ocultos),
+  `WikiLeadImageUploaderTest` (10 testes: aceite, descrição obrigatória e
+  limite, um arquivo por envio, extensão de imagem, aba intocada, criação da
+  mídia, reuso após erro, remoção e envio vazio),
+  `WikiEntryImageHooksTest` (6 testes: aba e validadores, ganchos de validação
+  e envio, imagem atual, política sem imagem, campo sem acesso e formulário sem
+  o campo) e `WikiLeadImagePolicyTest` (3 testes: consumidor exportado, schema e
+  aba administrativa) aprovados — suíte do submódulo: `32 testes, 158 asserções`.
+  A suíte unitária
   do `aculta_statistics` tem 1 falha pré-existente:
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** O restante da Fase 5 do plano (upload
-  contextual, adaptador do Fórum, busca e notificações, estatísticas de
-  edição e revisão) e a validação em navegador com ACULTA420 e Olivero depois
-  da ativação — a imagem do card foi verificada por configuração e testes, não
-  renderizada em navegador. A ativação em si depende
+- **O que ficou faltando.** O restante da Fase 5 do plano (adaptador do Fórum,
+  busca e notificações, estatísticas de edição e revisão) e a validação em
+  navegador com ACULTA420 e Olivero depois
+  da ativação — a imagem do card e a aba de upload foram verificadas por
+  configuração e testes, não renderizadas em navegador. A ativação em si depende
   de o ambiente importar a configuração e rodar os passos de atualização com
   backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`

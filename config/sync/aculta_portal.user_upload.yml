@@ -5,3 +5,7 @@ consumers:
     inherit_global: true
     allowed_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
     max_size_mb: 10
+  wiki:
+    inherit_global: true
+    allowed_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
+    max_size_mb: 10

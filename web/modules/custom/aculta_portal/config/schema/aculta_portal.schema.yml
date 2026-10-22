@@ -71,6 +71,19 @@ aculta_portal.user_upload:
             max_size_mb:
               type: integer
               label: 'Tamanho máximo por arquivo em megabytes'
+        wiki:
+          type: mapping
+          label: 'Política de upload da imagem de destaque da Wiki'
+          mapping:
+            inherit_global:
+              type: boolean
+              label: 'Usar a política global'
+            allowed_extensions:
+              type: string
+              label: 'Extensões permitidas'
+            max_size_mb:
+              type: integer
+              label: 'Tamanho máximo por arquivo em megabytes'
 
 aculta_portal.appearance:
   type: config_object

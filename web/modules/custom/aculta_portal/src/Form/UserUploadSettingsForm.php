@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 final class UserUploadSettingsForm extends ConfigFormBase {
 
   /** Integrations with their own tab; each may inherit the global policy. */
-  private const CONSUMERS = ['forum', 'lms'];
+  private const CONSUMERS = ['forum', 'lms', 'wiki'];
 
   /** {@inheritdoc} */
   public function getFormId(): string {
@@ -28,7 +28,7 @@ final class UserUploadSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_portal.user_upload');
     $form['introduction'] = [
-      '#plain_text' => $this->t('Esta política central é usada pelos formulários de envio de arquivos para usuários no Portal, incluindo o Fórum e as respostas com arquivo do LMS. Cada área continua responsável por associar o arquivo ao conteúdo e controlar sua publicação e acesso.'),
+      '#plain_text' => $this->t('Esta política central é usada pelos formulários de envio de arquivos para usuários no Portal, incluindo o Fórum, as respostas com arquivo do LMS e a imagem de destaque dos verbetes da Wiki. Cada área continua responsável por associar o arquivo ao conteúdo e controlar sua publicação e acesso.'),
     ];
     $form['policy_tabs'] = ['#type' => 'vertical_tabs'];
     $form['global'] = [
@@ -136,6 +136,7 @@ final class UserUploadSettingsForm extends ConfigFormBase {
     return match ($consumer) {
       'forum' => $this->t('Fórum'),
       'lms' => $this->t('LMS'),
+      'wiki' => $this->t('Wiki'),
     };
   }
 
