@@ -107,6 +107,7 @@ services:
   Drupal\aculta_statistics\Recorder\StatisticsRecorder: '@aculta_statistics.recorder'
   Drupal\aculta_statistics\Visitor\VisitorKey: '@aculta_statistics.visitor_key'
   Drupal\aculta_statistics\Reconciliation\CommerceReconciler: '@aculta_statistics.commerce_reconciler'
+  Drupal\aculta_statistics\Wiki\WikiProvider: '@aculta_statistics.wiki_provider'
   Drupal\aculta_statistics\Email\EmailProviderInterface: '@aculta_statistics.email_provider'
   Drupal\aculta_statistics\Reconciliation\EmailReconciler: '@aculta_statistics.email_reconciler'
   # GA4 (0.6.0): desligado até propriedade e credencial existirem. Ver docs/INTEGRATIONS.md.
