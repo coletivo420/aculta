@@ -114,13 +114,15 @@ testes de workflow; a configuração da política inicial continua sendo a de
    leitura e no composer sem quebrar a ordem cronológica. A dev.146 compara
    assunto/corpo de revisões adjacentes usando Diff contrib dentro da rota
    administrativa contextual; a dev.147 também permite escolher quaisquer duas
-   revisões mostradas na página atual do histórico. Hierarquia visual, salto
-   paginado até pai fora da página, seleção entre páginas e homologação visual
-   continuam pendentes. A dev.148 liga a edição pública dentro da janela do
-   autor, salvando revisão nova sem expor campos de moderação ou contexto. A
-   dev.149 conecta os diálogos existentes de anexo/galeria ao post e mantém a
-   publicação vinculada ao estado público do post e do tópico; a retenção inclui
-   todas as revisões.
+   revisões mostradas na página atual do histórico. Hierarquia visual, seleção
+   entre páginas e homologação visual continuam pendentes. A dev.148 liga a
+   edição pública dentro da janela do autor, salvando revisão nova sem expor
+   campos de moderação ou contexto. A dev.149 conecta os diálogos existentes de
+   anexo/galeria ao post e mantém a publicação vinculada ao estado público do
+   post e do tópico; a retenção inclui todas as revisões. A dev.150 torna
+   navegável o contexto do pai fora da página corrente, calculando sua página
+   com a mesma ordenação e query de acesso da thread e preservando os pagers
+   existentes.
 3. **Migração não destrutiva em código:** mapear Comments apenas quando
    `comment_type=aculta_discussion_post`, host Node de bundle
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore

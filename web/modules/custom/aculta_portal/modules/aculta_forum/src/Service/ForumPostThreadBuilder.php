@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
@@ -14,6 +14,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\user\AccountProxyInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
  * Builds the revisionable posts attached to a public Forum topic.
@@ -187,9 +188,24 @@ final class ForumPostThreadBuilder {
           )->toRenderable();
         }
         else {
-          $build['posts'][$postId]['reply_context']['parent'] = [
-            '#plain_text' => $parentLabel,
-          ];
+          $parentPage = $this->findPostPage($topic, $parent);
+          if ($parentPage !== NULL) {
+            $query = $parentPage === $pager->getCurrentPage()
+              ? []
+              : $this->pagerManager->getUpdatedParameters([], self::PAGER_ID, $parentPage);
+            $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(
+              $parentLabel,
+              Url::fromRoute('entity.node.canonical', ['node' => $topic->id()], [
+                'query' => $query,
+                'fragment' => 'forum-post-' . $parent->id(),
+              ]),
+            )->toRenderable();
+          }
+          else {
+            $build['posts'][$postId]['reply_context']['parent'] = [
+              '#plain_text' => $parentLabel,
+            ];
+          }
         }
       }
       if ($canReply) {
@@ -223,6 +239,34 @@ final class ForumPostThreadBuilder {
 
     $cacheability->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Finds the pager page of a public parent using the thread's sort order.
+   */
+  private function findPostPage(NodeInterface $topic, ForumPost $parent): ?int {
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $query = $storage->getQuery()->accessCheck(TRUE);
+    $position = (int) $parent->get('thread_position')->value;
+    $created = (int) $parent->get('created')->value;
+    $parentId = (int) $parent->id();
+    $preceding = $query->orConditionGroup()
+      ->condition('thread_position', $position, '<')
+      ->condition($query->andConditionGroup()
+        ->condition('thread_position', $position)
+        ->condition('created', $created, '<'))
+      ->condition($query->andConditionGroup()
+        ->condition('thread_position', $position)
+        ->condition('created', $created)
+        ->condition('id', $parentId, '<'));
+    $precedingCount = (int) $query
+      ->condition('topic.target_id', $topic->id())
+      ->condition('status', 1)
+      ->condition($preceding)
+      ->count()
+      ->execute();
+
+    return intdiv($precedingCount, self::POSTS_PER_PAGE);
   }
 
 }

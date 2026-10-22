@@ -1,3 +1,7 @@
+## `0.1.0-dev.150` — navega até respostas em outras páginas
+
+- O contexto da resposta mantém link para o post pai acessível mesmo quando ele está em outra página; o destino usa a mesma ordenação/paginação e preserva os demais pagers e argumentos da URL. Pais ausentes, não publicados ou sem acesso continuam sem URL. Sem rota nova ou alteração Runtime; testes e inspeção visual pendentes.
+
 ## `0.1.0-dev.149` — integra anexos e galerias a posts revisionáveis
 
 - O corpo de `aculta_forum_post` aceita apenas o formato `forum`, habilitando os diálogos CKEditor já integrados com `aculta_portal.user_upload_policy`, `aculta_image` e `aculta_gallery`.
