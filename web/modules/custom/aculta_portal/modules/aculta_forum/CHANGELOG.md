@@ -1,3 +1,11 @@
+## `0.1.0-dev.224` — variar cache pelo pager de Comments
+
+- A thread agora varia também por `url.query_args.pagers:0`, pois os links para
+  posts pais preservam o pager Core de Comments. Evita reutilizar links de uma
+  página de Comments em outra; Core define contexto calculado por pager ID
+  ([API](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Cache%21Context%21PagersCacheContext.php/class/PagersCacheContext/11.x)).
+  Sem Runtime/testes.
+
 ## `0.1.0-dev.223` — manter pagers ativos nos links entre posts
 
 - Links para post pai sempre atualizam o pager da thread pelo Core, inclusive

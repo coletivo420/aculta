@@ -60,7 +60,13 @@ final class ForumPostThreadBuilder {
     }
 
     $cacheability = CacheableMetadata::createFromObject($context)
-      ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.query_args.pagers:' . self::PAGER_ID])
+      ->addCacheContexts([
+        'domain',
+        'user',
+        'user.permissions',
+        'url.query_args.pagers:' . self::COMMENT_PAGER_ID,
+        'url.query_args.pagers:' . self::PAGER_ID,
+      ])
       ->addCacheTags(['aculta_forum_post_list']);
     $canReply = $context->getWriteAccess()->isAllowed();
     $build = [
