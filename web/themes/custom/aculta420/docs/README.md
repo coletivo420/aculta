@@ -26,3 +26,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 ## Novo caminho: Design System transversal
 
 [Roadmap visual transversal ACULTA420](visual-cross-product-roadmap.md) concentra o planejamento de componentes compartilhados para GanjaLab420, GanjaLab, Revista, Wiki, Fórum, Galeria e Conta. Ele separa o ownership visual do tema das integrações de LMS e kernels, e exige manutenção do cabeçalho multidomínio em todas as telas. Complementa, sem substituir, o [roadmap existente](roadmap.md).
+
+- [theme-ux-0.8-a-ui-suite-audit.md](theme-ux-0.8-a-ui-suite-audit.md) — próxima fase de auditoria de componentes/consumidores e uso efetivo das ferramentas UI Suite.
