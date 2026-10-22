@@ -1,3 +1,10 @@
+## 0.4.0-dev.145 — declarar a versão do componente — 2026-10-22
+
+- O módulo não declarava `version` em `aculta_lms_h5p.info.yml`; o índice de status o exibia como "versão não declarada".
+- Método: a última versão numerada deste changelog era `0.4.0-dev.144` (2026-10-18, instalação privada de bibliotecas H5P). As seções seguintes, de 2026-10-18 a 2026-10-21, registram entregas agrupadas por tema e não foram numeradas. Declara-se o próximo incremento da linha, `0.4.0-dev.145`, sem renumerar as seções históricas e sem contar cada seção como uma mudança principal; as próximas marcações seguem a partir de `0.4.0-dev.146`.
+- O marcador histórico `0.4.0-dev.144` foi preservado, conforme a política de não reescrever versões registradas.
+- Documento apenas: nenhum código, serviço, hook, configuração, dependência ou Runtime foi alterado.
+
 ## Padronização do namespace H5P ACULTA — 2026-10-21
 
 - Classes, interfaces, controladores, hooks, formulários, plugins, seletores e arquivos PHP próprios do H5P agora usam `aculta_H5P` no identificador; as pastas/namespaces internos também seguem o prefixo. A integração PHP do Fórum segue a mesma regra.
