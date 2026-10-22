@@ -9,7 +9,7 @@
       once('aculta-discussion-progress', '[data-aculta-discussion-thread]', context).forEach((thread) => {
         const messages = Array.from(
           thread.querySelectorAll(
-            'article.js-comment[id], article.aculta-forum-post[id]',
+            'article.js-comment[id], article[data-aculta-forum-post-timestamp][id]',
           ),
         );
         if (messages.length < 2) {

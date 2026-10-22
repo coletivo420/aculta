@@ -67,7 +67,6 @@ final class ForumPostThreadBuilder {
       '#type' => 'container',
       '#weight' => 90,
       '#attributes' => [
-        'class' => ['aculta-forum-revisionable-posts'],
         'data-aculta-discussion-thread' => '',
         'data-history-node-id' => (string) $topic->id(),
       ],
@@ -167,7 +166,6 @@ final class ForumPostThreadBuilder {
       }
       $attributes = [
         'id' => 'forum-post-' . $postId,
-        'class' => ['aculta-forum-post'],
         'data-aculta-forum-post-timestamp' => (string) $post->get('first_published')->value,
       ];
       $build['posts'][$postId] = [
@@ -182,9 +180,6 @@ final class ForumPostThreadBuilder {
         ]);
         $build['posts'][$postId]['reply_context'] = [
           '#type' => 'container',
-          '#attributes' => [
-            'class' => ['aculta-forum-post__reply-context'],
-          ],
         ];
         if (isset($viewableIds[(string) $parent->id()])) {
           $build['posts'][$postId]['reply_context']['parent'] = Link::fromTextAndUrl(

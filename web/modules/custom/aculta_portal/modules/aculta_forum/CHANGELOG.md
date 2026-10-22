@@ -1,3 +1,11 @@
+## `0.1.0-dev.214` — remover classes de apresentação do Fórum
+
+- Scripts de progresso/histórico localizam posts pelo marcador funcional existente
+  `data-aculta-forum-post-timestamp`; classes de apresentação sem consumidores
+  foram removidas do markup do módulo.
+- `field-name` permanece apenas na comparação de revisões porque o CSS instalado
+  do módulo Diff o consome; o gate registra essa exceção de integração. Sem testes.
+
 ## `0.1.0-dev.213` — corrigir níveis semânticos dos títulos de categoria
 
 - `/categorias` usa H2 para cada categoria-pai e H3 para os links das

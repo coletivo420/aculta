@@ -70,9 +70,6 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     $form['reply_context'] = [
       '#type' => 'container',
       '#weight' => -100,
-      '#attributes' => [
-        'class' => ['aculta-forum-reply-context'],
-      ],
       'description' => [
         '#plain_text' => $this->t('Você está respondendo à publicação: @subject', [
           '@subject' => $parent->label(),

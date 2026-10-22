@@ -54,3 +54,7 @@ Hooks existentes relacionados ao legado aparecem em
 `aculta_magazine/docs/README.md`; sua migração ou remoção exige paridade por
 comportamento, não renomeação em massa. Lifecycles Drupal que exigem hook
 procedural continuam procedurais conforme `DRUPAL-11-STANDARDS.md`.
+
+## Marcadores de comportamento dos posts públicos
+
+`ForumPostThreadBuilder` expõe `data-aculta-forum-post-timestamp` nos artigos de post. Os scripts de progresso e histórico usam esse atributo para localizar posts sem depender de classes de apresentação. As classes `diff`, `diff-responsive-table` e `field-name` na comparação de revisões são requisitos de integração do módulo Diff instalado, não estilos definidos pelo Fórum.

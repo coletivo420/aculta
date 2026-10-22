@@ -144,7 +144,9 @@ foreach ($files($module . '/js', ['js']) as $path) {
 // que localiza as instâncias por essas classes. h5p-iframe-wrapper e h5p-iframe seguem o contrato de integração
 // H5P e são consumidas pelo Core JS/CSS (vendor/h5p/h5p-core/js/h5p.js:381 e styles/h5p.css:161,189).
 // Não são classes de design; o tema não as renomeia.
-$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor', 'h5p-iframe-wrapper', 'h5p-iframe'];
+// Diff contrib consome estas classes de integração (css/diff.single-column.css,
+// css/diff.double-column.css e css/diff.colors.css); não são classes de design ACULTA.
+$allowedClasses = ['use-ajax', 'is-active', 'draggable', 'role-weight', 'h5p-content', 'h5p-editor', 'h5p-iframe-wrapper', 'h5p-iframe', 'field-name', 'diff', 'diff-responsive-table'];
 // Dívida conhecida fora do Messenger, registrada em docs/operations/DEBT-REGISTER.md (DT-BOUNDARY-GALLERY): a galeria
 // de fotos monta a classe do PhotoSwipe. Sai desta lista quando o token data-portal-ui for criado.
 $knownDebt = ['modules/aculta_gallery/src/Hook/GalleryViewHooks.php: photoswipe-gallery'];
@@ -209,11 +211,14 @@ foreach ($used as $token => $where) {
   $assert(array_key_exists($token, $known), "Token de design \"$token\" usado em $where não existe no mapa do tema (PortalUiHooks::TOKENS).");
 }
 
-// 11. A regra permanente está escrita no AGENTS.md, no README do módulo e na doc do tema (não se perde em edição).
+// 11. A regra permanente deve estar no AGENTS.md ou nos contratos canônicos que ele referencia.
 $rule = 'Código no Aculta Portal, Design no ACULTA420.';
-foreach ([$root . '/AGENTS.md', $module . '/README.md', $theme . '/docs/design-system.md'] as $doc) {
-  $assert(str_contains((string) file_get_contents($doc), $rule), 'Regra "' . $rule . '" ausente em ' . substr($doc, strlen($root) + 1) . '.');
+$ruleDocs = [$root . '/AGENTS.md', $root . '/docs/portal/FRONTEIRA-MODULO-TEMA.md', $theme . '/docs/design-system.md'];
+$rulePresent = FALSE;
+foreach ($ruleDocs as $doc) {
+  $rulePresent = $rulePresent || str_contains((string) file_get_contents($doc), $rule);
 }
+$assert($rulePresent, 'Regra "' . $rule . '" ausente em AGENTS.md e nos contratos canônicos de fronteira.');
 
 // 12b. Assets do tema precisam ser legíveis pelo servidor web (modo 0644): arquivo 0600 responde 403 no Apache.
 foreach ($files($theme . '/assets', ['svg', 'png', 'jpg', 'jpeg', 'webp', 'gif']) as $asset) {

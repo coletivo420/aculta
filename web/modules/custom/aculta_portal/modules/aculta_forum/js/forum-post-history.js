@@ -16,7 +16,7 @@
         const nodeId = thread.getAttribute('data-history-node-id');
         const posts = Array.from(
           thread.querySelectorAll(
-            'article.aculta-forum-post[data-aculta-forum-post-timestamp]',
+            'article[data-aculta-forum-post-timestamp]',
           ),
         );
         const unreadCandidates = posts.filter((post) => {
