@@ -1,3 +1,15 @@
+## `0.1.0-dev.165` — definir os limites do adapter Migrate
+
+- A pesquisa do Core 11.4.10 confirma que `content_entity` materializa a lista
+  completa de IDs antes de iterar e que `EntityContentBase` importa/salva uma
+  linha por vez. Com tradução, o mapa de destino inclui também o idioma; isso
+  não resolve sozinho o vínculo de todas as linhas de um Comment ao mesmo post
+  de ID automático.
+- A implementação precisa de fonte paginada e de estratégia explícita de
+  agrupamento/mapa por Comment antes de importar traduções. Não adicionar uma
+  definição executável que não garanta lotes e idempotência. Nenhuma migração foi
+  executada.
+
 ## `0.1.0-dev.164` — permitir traduções de assunto e corpo dos posts
 
 - Os campos `subject` e `body` dos posts revisionáveis passam a aceitar

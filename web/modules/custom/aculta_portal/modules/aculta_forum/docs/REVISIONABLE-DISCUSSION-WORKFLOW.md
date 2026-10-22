@@ -154,6 +154,12 @@ testes de workflow; a configuração da política inicial continua sendo a de
    dev.157 confere existência dos UUIDs de Media/Gallery embutidos e conta
    embeds sem UUID, sem carregar nem registrar conteúdo referenciado; arquivos
    e imagens continuam sob a governança de `aculta_image` e `aculta_gallery`.
+   A pesquisa da dev.165 no Core 11.4.10 confirma que a fonte genérica
+   `content_entity` materializa todos os IDs antes de iterar, enquanto
+   `EntityContentBase` salva cada linha e inclui o idioma no ID de destino quando
+   `translations: true`. Usar uma fonte Migrate própria, paginada por keyset, e
+   definir como cada tradução reaproveita o ID do post criado pela primeira
+   linha do mesmo Comment. Fontes: [fonte `ContentEntity` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o
