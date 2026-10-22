@@ -1,3 +1,26 @@
+## `0.1.0-dev.234` — localizar a Wiki e registrar pendências de upload e comentários — 2026-10-22
+
+- Documento apenas. A Wiki não tem módulo nem pasta `wiki`: é conteúdo e
+  configuração do `aculta_portal` — Node `wiki_entry` ("Verbete", revisável,
+  workflow `wiki_editorial`), rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa`
+  no `WikiController`, campos `field_wiki_*`, Media `field_wiki_image` e purpose
+  Domain `wiki420`.
+- Regras ativas: `web/modules/custom/aculta_portal/AGENTS.md` e a seção
+  "Wiki (regra permanente)" de `docs/operations/AGENT-CONTENT.md`, indexada em
+  `AGENT-POLICY-INDEX.md`. Não existe `AGENTS.md` específico de Wiki, e
+  `AGENT-CONTENT.md` confirma que a implementação é de conteúdo, não de módulo.
+- Pendência de upload (T20): `wiki_entry` não tem campo de envio do usuário;
+  `field_wiki_image` é referência a Media editorial. Não há superfície para a
+  política central `aculta_portal.user_upload_policy` sem criar o campo ou
+  decidir que o Media editorial fica fora da política.
+- Pendência de comentários (T21–T24): `wiki_entry` não tem campo Comment nem
+  `field_aculta_discussion`, e `PublicationContextProvider::HOST_BUNDLES` cobre
+  só `revista`. A moderação de primeiro comentário do `aculta_user` é genérica ao
+  campo, mas a Wiki precisa de instância do campo e de provider/decisão de
+  contexto. O `CONTEXTS.md` já descreve a Wiki como contexto contemplado; a
+  divergência fica registrada para decisão humana, não corrigida aqui.
+- Nada implementado; sem alteração de código, configuração ou Runtime.
+
 ## `0.1.0-dev.233` — registrar escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
 
 - Documento apenas. A seção dev.13 do ROADMAP passa a listar o que falta para

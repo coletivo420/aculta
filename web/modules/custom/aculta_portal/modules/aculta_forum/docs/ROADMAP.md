@@ -96,10 +96,33 @@ roadmap Portal descreve a sequência transversal.
 LMS: migrado no código em 2026-10-22 (consumidor `lms` e aba no Portal
 0.4.0-dev.252; aplicação em `SubmissionImageHooks` no `aculta_lms` 0.1.0-dev.80;
 regressão Kernel em 0.1.0-dev.83). A aba herdava o global e a política efetiva
-não mudou. Wiki: pendente de localização do módulo e de migração.
+não mudou.
+
+Wiki — localizada em 2026-10-22 (dev.234): não existe módulo nem pasta `wiki`;
+`aculta_portal/modules` não tem submódulo de Wiki. O verbete é o Node
+`wiki_entry` ("Verbete", revisável, workflow `wiki_editorial`), com rotas
+`/wiki`, `/wiki/busca` e `/wiki/busca/previa` em `aculta_portal.routing.yml`
+(`WikiController`), os campos `field_wiki_*`, o Media `field_wiki_image` e o
+purpose Domain `wiki420`. As regras ativas são as do Portal
+(`web/modules/custom/aculta_portal/AGENTS.md`) e a seção "Wiki (regra
+permanente)" de `docs/operations/AGENT-CONTENT.md`, indexada em
+`AGENT-POLICY-INDEX.md`; não há `AGENTS.md` próprio de Wiki. Pendências antes de
+T20–T24:
+
+- Upload: `wiki_entry` não tem campo de envio do usuário. `field_wiki_image` é
+  referência a Media editorial, não upload por pessoa, então não há superfície
+  para aplicar `aculta_portal.user_upload_policy` sem antes criar o campo (ou
+  decidir que o Media editorial fica fora da política).
+- Comentários: `wiki_entry` não tem campo Comment nem `field_aculta_discussion`.
+  A moderação de primeiro comentário do `aculta_user` é genérica ao campo, mas
+  `PublicationContextProvider::HOST_BUNDLES` cobre só `revista`, então a Wiki
+  precisa de instância do campo e de provider/decisão de contexto antes de T21.
+  O `CONTEXTS.md` já descreve a Wiki como contexto contemplado; a divergência
+  fica registrada para decisão humana.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.234` | Localizar a Wiki e registrar pendências de upload e comentários | Documento apenas. A Wiki não tem módulo: é conteúdo e configuração do `aculta_portal` (Node `wiki_entry`, rotas `/wiki*`, purpose `wiki420`), com regras em `docs/operations/AGENT-CONTENT.md` e no `AGENTS.md` do Portal. Registra as duas pendências que bloqueiam T20–T24: ausência de campo de upload do usuário no verbete e ausência de `field_aculta_discussion`/provider de contexto, já que `PublicationContextProvider` cobre só `revista`. Nada implementado; sem Runtime/testes. |
 | `0.1.0-dev.233` | Registrar escopo mínimo da busca e das notificações privadas LMS | Documento apenas: o ROADMAP do adapter (mantido na seção dev.13 do Fórum, sem `docs/` próprio) lista o que falta em índice/View, filtro de moderação, reindexação, eventos, idempotência e revalidação de acesso, e fixa o menor recorte aceitável — busca só por curso/turma com Group explícito e notificação apenas da primeira resposta publicada via `aculta_messenger`. Nada implementado; sem Runtime/testes. |
 | `0.1.0-dev.231` | Revalidar purpose e host dos anexos no acesso | `media_access` restringe `forum_attachment` ao purpose Fórum e exige referência atual acessível em Comment, ForumPost ou Gallery; max-age zero protege mudanças de grants sem save da Media. A inspeção do Core 11.4.10 confirmou que o download privado passa por File `download`, referência Media `view` e acesso do campo; install e Sync mantêm `uri_scheme: private`. Revisão HTTP direta no Runtime segue pendente por falta de fixture. |
 | `0.1.0-dev.230` | Alinhar guardrails/roadmap geral à reconstrução vigente | Documentação geral e política local deixam de apontar o contrib removido como fonte atual e preservam a coexistência de Comments/ForumPost até o corte aprovado. Sem Runtime. |
