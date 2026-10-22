@@ -42,8 +42,9 @@ Consumidores atuais:
   `aculta_user.edit_window_exemption`.
 
 Hooks são registrados por atributo de classe; não há entrada de serviço
-duplicada para eles. A ordem das isenções é a ordem das tags, e a janela
-avalia todas as isenções antes de negar.
+duplicada para eles. A isenção declara a prioridade na própria tag
+(`priority: 0`); a janela percorre da maior para a menor prioridade, a primeira
+isenção permitida vence e todas são avaliadas antes de negar.
 
 ### `ParticipationRules`
 
@@ -85,7 +86,10 @@ Comportamento fixado:
 - Host LMS usa `aculta_forum_lms.settings`; demais hosts e entidades sem host
   node usam `aculta_forum.settings`. `aculta_forum_post` ignora a janela LMS.
 - Apenas isenção permitida libera a edição; a primeira isenção permitida vence,
-  inclusive janela zero. A cacheability da isenção é agregada.
+  inclusive janela zero, e a ordem é a prioridade da tag de serviço. A
+  cacheability da isenção é agregada.
+- Isenção que lança exceção é ignorada; a janela do autor prevalece. Uma falha
+  de serviço nunca vira concessão de edição.
 - O estado de publicação (publicado ou não) não é consultado pela janela.
 
 ### `EditWindowExemptionInterface` e a isenção LMS
@@ -98,8 +102,9 @@ Comportamento fixado:
   relação Group única (falha conservadora: mantém a janela do autor);
 - isenta quando o curso concede a permissão contextual de educador, agregando
   `group:<id>`;
-- não captura `\LogicException` lançada pelo provider quando o tópico salvo não
-  tem UUID.
+- é neutra para tópico novo ou sem UUID, sem chamar o provider: a isenção falha
+  fechada e preserva a janela do autor em vez de propagar exceção pelo pipeline
+  de acesso.
 
 ### Hooks
 
@@ -115,10 +120,10 @@ Comportamento fixado:
 | Arquivo | Tipo | Testes |
 | --- | --- | --- |
 | `tests/src/Unit/ParticipationRulesTest.php` | Unit | 23 |
-| `tests/src/Unit/ParticipationEditWindowTest.php` | Unit | 21 |
+| `tests/src/Unit/ParticipationEditWindowTest.php` | Unit | 23 |
 | `tests/src/Unit/ParticipationEditWindowHooksTest.php` | Unit | 9 |
 | `tests/src/Unit/ForumModerationHooksTest.php` | Unit | já existente, complementado em C1-A |
-| `tests/src/Unit/LmsEditWindowExemptionTest.php` | Unit | 7 |
+| `tests/src/Unit/LmsEditWindowExemptionTest.php` | Unit | 8 |
 | `tests/src/Kernel/ParticipationRulesCharacterizationKernelTest.php` | Kernel | 9 |
 | `tests/src/Kernel/SharedParticipationIsolationKernelTest.php` | Kernel | 7 |
 
@@ -135,7 +140,11 @@ ForumPost publicado e revisionado, confirmação de e-mail, isenções, janelas
 expiradas e invalidação por configuração. Ele ocupa o uid 1 com uma conta
 descartável antes de criar as contas de teste: sem isso, a primeira conta criada
 seria superusuária e `hasPermission()` sempre responderia verdadeiro, mascarando
-as decisões da política.
+as decisões da política. A configuração é gravada pelo caminho normal
+(`$this->config()->save()`); os nomes cujo schema não é instalado no ambiente
+mínimo (`aculta_forum.settings`, `aculta_forum_lms.settings`) ficam em
+`$configSchemaCheckerExclusions`, o que pula só a checagem de schema e mantém a
+invalidação de cache do salvamento real.
 
 ## Falha conservadora
 
@@ -146,8 +155,8 @@ as decisões da política.
 | Sem definição de `aculta_forum_post` | evidência considera apenas comentários |
 | Tópico LMS sem relação Group única | isenção neutra; janela do autor prevalece |
 | Isenção que não permite | não altera a decisão da janela |
-| Tópico LMS salvo sem UUID | `\LogicException` não capturada (ver pendências) |
-| Serviço indisponível | não caracterizado em teste: falha de container ocorre antes da decisão; sem fallback silencioso no código |
+| Tópico LMS novo ou salvo sem UUID | isenção neutra sem consultar o provider; janela do autor prevalece |
+| Isenção que lança exceção | ignorada; janela do autor prevalece (fail closed) |
 
 ## `PublishedParticipationLookupInterface` — documentado, não implementado
 
@@ -165,18 +174,28 @@ Enquanto a interface não existir, consumidores continuam usando
 `ParticipationRules` e seus métodos atuais. Nenhuma classe deste marco deve ser
 citada como API publicada.
 
-## Pendências conhecidas (não corrigidas nesta fase)
+## Pendências desta caracterização
 
-1. `LmsDiscussionContextProvider` lança `\LogicException` para tópico salvo sem
-   UUID e `LmsEditWindowExemption` não a captura. O comportamento é conservador
-   (não concede isenção), mas produz erro em vez de `AccessResult` neutro.
-2. Os testes Kernel gravam configuração com `config.storage->write()` porque o
-   schema de `aculta_forum.settings` não é instalado no ambiente mínimo; isso
-   contorna o `ConfigSchemaChecker` apenas no teste.
-3. O contrato de isenção não define ordenação; a ordem efetiva é a das tags de
-   serviço. Uma isenção "permitida" vence mesmo com janela zero.
-4. Não há teste para serviço indisponível; a falha esperada é de container, não
-   de decisão de acesso.
+As pendências levantadas na primeira versão deste documento foram corrigidas
+nesta fase, sem mudança de comportamento intencional:
+
+1. Tópico LMS novo ou salvo sem UUID: `LmsEditWindowExemption` verifica
+   `isNew()` e a existência de UUID antes de resolver o contexto e devolve
+   `AccessResult` neutro. Coberto por `testNewTopicIsNeutral` e
+   `testTopicWithoutAnIdentifierIsNeutral`.
+2. Configuração nos testes Kernel: o salvamento usa `$this->config()->save()`
+   com `$configSchemaCheckerExclusions` para os dois nomes sem schema
+   instalado, em vez de escrever direto no storage.
+3. Ordenação do contrato: a tag declara `priority: 0` e
+   `testFirstAllowedExemptionShortCircuitsTheIteration` fixa que a primeira
+   isenção permitida vence.
+4. Serviço indisponível: `ParticipationEditWindow` ignora a isenção que lança
+   exceção; `testUnavailableExemptionFailsClosed` cobre a falha e o caminho
+   com uma isenção posterior permitida.
+5. `EnrollmentRoleHooksTest` estava desatualizado em relação à migração de
+   estudante de papel para perfil; o teste foi reescrito para o contrato atual
+   (criação do perfil `estudante` só para matrícula de aluno). Não há mudança
+   na implementação.
 
 ## Gates desta fase
 
