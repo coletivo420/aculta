@@ -68,3 +68,7 @@ Separar `LearningDashboardController::student()` entre dados de aprendizagem e c
 - Futuras experiências Studio devem ter entrada canônica em `/studio/{experiencia}` no propósito account; URLs de recursos dos módulos donos podem permanecer em outros domínios, desde que verifiquem acesso.
 
 **Gates antes de homologar:** inspecionar rotas resolvidas e precedência entre `/studio/ganjalab`, `/studio/ganjalab420` e wildcard legado `/studio/{aba}`; confirmar geração de URLs no host conta de cada ambiente, ausência de acesso cruzado via outros hosts, redirects/aliases sem loop e headers multidomínio preservados; executar lint, Kernel, Functional e smoke de estudante autenticado e anônimo. Revisar testes que instanciam `LearningDashboardController` diretamente após nova injeção do Composer.
+
+### Registro condicional do Composer
+
+O serviço `aculta_studio.learner_dashboard_composer` é declarado em `aculta_lms.services.yml` (não em `aculta_studio.services.yml`) porque depende de `aculta_lms.learning_dashboard`. O provider Studio usa referência opcional, preservando a instalação do Studio sem LMS. Teste obrigatório: rebuild com Studio habilitado e LMS desabilitado, além do cenário de ambos habilitados.
