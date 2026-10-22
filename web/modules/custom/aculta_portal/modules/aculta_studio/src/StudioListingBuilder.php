@@ -7,6 +7,7 @@ namespace Drupal\aculta_studio;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -97,10 +98,6 @@ final class StudioListingBuilder {
     if (!empty($listing['editable'])) {
       $header['edit'] = $this->t('Ações');
     }
-    $header = ['title' => $this->t('Título'), 'state' => $this->t('Situação'), 'author' => $this->t('Autor'), 'changed' => $this->t('Atualizado em')];
-    if (!empty($listing['editable'])) {
-      $header['edit'] = $this->t('Ações');
-    }
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
@@ -112,7 +109,7 @@ final class StudioListingBuilder {
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
       '#cache' => [
-        'contexts' => ['user.permissions'],
+        'contexts' => ['user', 'user.permissions'],
         'tags' => ['node_list:' . $bundle],
       ],
     ];
@@ -162,7 +159,7 @@ final class StudioListingBuilder {
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['comment_list']],
+      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => ['comment_list']],
     ];
   }
 
@@ -212,7 +209,7 @@ final class StudioListingBuilder {
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['group_list']],
+      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => ['group_list']],
     ];
   }
 
@@ -235,7 +232,8 @@ final class StudioListingBuilder {
     $rows = [];
     foreach ($ids as $vid => $nid) {
       $revision = $storage->loadRevision($vid);
-      if (!$revision) {
+      // Entity-query access alone is not a substitute for per-revision access.
+      if (!$revision instanceof NodeInterface || !$this->canViewRevision($revision, $this->account)) {
         continue;
       }
       $rows[] = [
@@ -255,10 +253,21 @@ final class StudioListingBuilder {
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['node_list:' . $listing['bundle']]],
+      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => ['node_list:' . $listing['bundle']]],
     ];
   }
 
+
+  /**
+   * Requires both entity visibility and explicit access to the revision.
+   *
+   * A revision can be unpublished even when the default node is public.
+   * A permission to view the node never implicitly authorizes draft history.
+   */
+  public static function canViewRevision(NodeInterface $revision, AccountInterface $account): bool {
+    return $revision->access('view', $account)
+      && $revision->access('view revision', $account);
+  }
 
   /**
    * Edit link to the owner's edit form in the owner's domain. Access is the owner's node access, evaluated there.
