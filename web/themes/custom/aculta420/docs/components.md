@@ -383,3 +383,7 @@ Componente neutro em `components/feedback/empty-state/`, com slot `message` para
 ## B4 — Utility offcanvas e Minha Conta
 
 `cart-offcanvas` não oferece mais um X puramente visual nos itens: mudanças reais de carrinho pertencem ao Commerce. `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` continuam baseados em Bootstrap offcanvas via SDC, com estilos compartilhados em `css/components/portal-cart.css`. `portal-account.css` apresenta reflow responsivo da navegação/conteúdo da Minha Conta sem alterar sua implementação AJAX. [Auditoria B4](theme-ux-0.8-b4-utility-panels.md). Testar no Drupal antes de homologar.
+
+## B5 — contrato de overlays
+
+Os SDCs `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` expõem `aria-controls` e `aria-expanded`, atualizados pelo tema nos eventos `show.bs.offcanvas` e `hidden.bs.offcanvas`. A apresentação segue SDC/UI Suite; Bootstrap gerencia modal/foco e módulos gerenciam AJAX e dados. Minha Conta não usa offcanvas da barra. [Gates B5](theme-ux-0.8-b5-overlay-catalog.md).
