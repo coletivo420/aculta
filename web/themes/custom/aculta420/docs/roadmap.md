@@ -330,3 +330,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## Execução estática 0.8 — M1 e próxima revisão M0-S
 
 [Inventário SDC/UI Suite](sdc-ui-suite-inventory-2026-10-22.md): 38 SDCs; 58 stories após três correções de cobertura (forum-category, qr-preview e qr-download). O [plano de continuação fora do Runtime](theme-ux-0.8-b0-static-followup.md) estabelece comparação de schemas/Twig/stories e análise de cabeçalho contextual. Cobertura de arquivos concluída, renderização e testes Runtime pendentes; não avançar release por este marco.
+
+## M0-S — auditoria estrutural do tema
+
+[Relatório M0-S](theme-ux-0.8-m0-s-structural-audit.md): inspeção direcionada dos contratos SDC de QR, content-section, product-tabs, course_card, card e forum-category; schemas QR alinhados ao Core. O Context Header não deve reutilizar heading H2/H3 de content-section como H1. Gate Runtime ainda pendente; prosseguir para M2/B1 somente após verificar consumidores reais e shell multidomínio.
