@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.14 — validação estrutural de rebuild
+
+- A geração persiste `backfill_completed`; a conclusão é gravada com CAS da
+  revisão do checkpoint e impede validar backfill interrompido ou concorrente.
+- `ContentIndexRebuilder::validate()` verifica fingerprint dos providers e
+  integridade estrutural antes de marcar a geração como validada.
+- Update hook 10008 adiciona a marca às instalações existentes.
+- Kernel cobre o fluxo backfill → validação → ativação. Drenagem/catch-up da
+  fila e reconciliação permanecem pendentes.
+
 ## 0.1.0-dev.13 — consulta paginada e cursor opaco
 
 - `ContentIndexQuery` seleciona no máximo 100 candidatos por página, em ordem

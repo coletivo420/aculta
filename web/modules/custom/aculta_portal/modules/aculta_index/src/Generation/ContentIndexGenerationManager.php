@@ -57,10 +57,36 @@ final class ContentIndexGenerationManager {
       ])
       ->condition('generation_id', $generationId)
       ->condition('status', 'building')
+      ->condition('backfill_completed', 0, '>')
       ->execute();
 
     if ($count !== 1) {
       throw new \InvalidArgumentException(sprintf('Generation %s is missing or is not building.', $generationId));
+    }
+  }
+
+  /**
+   * Marks a backfill complete only for the checkpoint revision just read.
+   *
+   * @param string $generationId
+   *   Building generation identifier.
+   * @param int $expectedRevision
+   *   Checkpoint revision used by the final batch.
+   */
+  public function markBackfillCompleted(string $generationId, int $expectedRevision): void {
+    $updated = $this->database->update('aculta_index_generation')
+      ->fields([
+        'backfill_completed' => $this->time->getRequestTime(),
+        'cursor_revision' => $expectedRevision + 1,
+        'updated' => $this->time->getRequestTime(),
+      ])
+      ->condition('generation_id', $generationId)
+      ->condition('status', 'building')
+      ->condition('cursor_revision', $expectedRevision)
+      ->condition('backfill_completed', 0)
+      ->execute();
+    if ($updated !== 1) {
+      throw new \RuntimeException(sprintf('Backfill checkpoint for generation %s changed or is no longer writable.', $generationId));
     }
   }
 

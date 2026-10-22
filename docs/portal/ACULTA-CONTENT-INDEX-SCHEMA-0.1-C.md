@@ -7,8 +7,8 @@
 
 | Tabela | Uso | Identidade/índices |
 |---|---|---|
-| `aculta_index_generation` | Estado do rebuild, status, timestamps e cursor keyset por provider | PK `generation_id`; índice de status e criação |
-| `aculta_index_state` | Uma linha (`state_id = 1`) aponta para a geração ativa e mantém revisão do ponteiro | PK singleton; troca será transacional |
+| `aculta_index_generation` | Estado do rebuild, status, timestamps, fingerprint, checkpoint keyset e marca CAS de conclusão do backfill | PK `generation_id`; índice de status e criação |
+| `aculta_index_state` | Uma linha (`state_id = 1`) aponta para a geração ativa e mantém revisão do ponteiro | PK singleton; troca transacional |
 | `aculta_index_entry` | Projeção mínima de entidade atual/idioma: provider, tipo/ID, bundle, UUID, label, domínio, publicação, datas, hash e sequência monotônica da origem | Unicidade por geração + entity type + entity ID + langcode; índices de bundle, domínio/publicação e provider |
 | `aculta_index_relation` | Relação dirigida e tipada entre identidades originais | Unicidade por geração + SHA-256 da tupla; índices separados de origem, alvo e tipo |
 
@@ -16,9 +16,9 @@ As relações guardam a identidade do alvo mesmo quando o alvo não tem adapter 
 
 ## Gerações
 
-Todos os registros de entrada e relação pertencem a uma geração. Consultas públicas do serviço de storage devem obter o `active_generation` e restringir a consulta a esse valor. O worker incremental grava nas gerações `active` e `building`, para manter catch-up enquanto o backfill progride; o writer rejeita alterações obsoletas por sequência. Cada geração captura fingerprint SHA-256 dos providers, tipos e bundles habilitados; resume recusa um inventário diferente. A geração ativa permanece disponível até validação. A ativação futura deve, em uma transação, validar o candidato, atualizar o estado da geração anterior e trocar o ponteiro. Rollback repõe o ponteiro anterior enquanto os dados forem mantidos. A limpeza de gerações antigas será explícita e posterior ao período de rollback.
+Todos os registros de entrada e relação pertencem a uma geração. Consultas públicas do serviço de storage devem obter o `active_generation` e restringir a consulta a esse valor. O worker incremental grava nas gerações `active` e `building`, para manter catch-up enquanto o backfill progride; o writer rejeita alterações obsoletas por sequência. Cada geração captura fingerprint SHA-256 dos providers, tipos e bundles habilitados; resume recusa um inventário diferente. A geração ativa permanece disponível durante o backfill e a validação. A ativação troca o ponteiro em transação, atualiza o estado da geração anterior e conserva dados para rollback. Rollback repõe o ponteiro anterior enquanto os dados forem mantidos. A limpeza de gerações antigas será explícita e posterior ao período de rollback.
 
-O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de entidade e último ID; percorre todas as traduções da entidade dentro do mesmo lote. Não usa OFFSET nem serializa entidades. `ContentIndexRebuildCheckpointManager` persiste e retoma esse cursor por CAS, impedindo que outro worker com revisão antiga faça regressão. O orquestrador ainda deve gravar todas as projeções do lote antes de avançar o checkpoint. Também faltam IDX 0.1-D/E: fila/delta durante o rebuild, operação atômica no driver e recuperação após falha.
+O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de entidade e último ID; percorre todas as traduções da entidade dentro do mesmo lote. Não usa OFFSET nem serializa entidades. `ContentIndexRebuildCheckpointManager` persiste e retoma esse cursor por CAS, impedindo que outro worker com revisão antiga faça regressão. O orquestrador grava todas as projeções antes de avançar o checkpoint e registra `backfill_completed` por CAS na última página. `ContentIndexRebuilder::validate()` exige conclusão e inventário estável, depois confere integridade estrutural antes de marcar a geração validada. Catch-up da fila ainda é necessário antes de ativação operacional; reconciliação também permanece pendente.
 
 `ContentIndexIntegrityChecker` consulta somente as tabelas do catálogo e verifica ponteiro/gerações e fontes de relações. Ele reporta contagens e não corrige nem expurga automaticamente. Os testes Kernel atuais executam em MariaDB; SQLite ainda precisa de harness compatível aprovado para validar portabilidade.
 

@@ -19,7 +19,7 @@ services:
 
   aculta_index.rebuilder:
     class: Drupal\aculta_index\Rebuild\ContentIndexRebuilder
-    arguments: ['@aculta_index.generation_manager', '@aculta_index.provider_registry', '@aculta_index.entity_enumerator', '@aculta_index.rebuild_checkpoint', '@aculta_index.writer']
+    arguments: ['@aculta_index.generation_manager', '@aculta_index.provider_registry', '@aculta_index.entity_enumerator', '@aculta_index.rebuild_checkpoint', '@aculta_index.writer', '@aculta_index.integrity_checker']
 
   Drupal\aculta_index\Rebuild\ContentIndexRebuilder: '@aculta_index.rebuilder'
 

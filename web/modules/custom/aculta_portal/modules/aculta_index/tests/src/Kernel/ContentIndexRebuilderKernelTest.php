@@ -80,6 +80,11 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       ->condition('state_id', 1)
       ->execute()
       ->fetchField());
+
+    $validation = $rebuilder->validate($generationId);
+    $this->assertTrue($validation['valid']);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+    $this->assertSame($generationId, $this->container->get('aculta_index.generation_manager')->getActiveGeneration());
   }
 
   /**
@@ -121,7 +126,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     while (!$rebuilder->processNextBatch($generationId, 2)['complete']) {
     }
     $generations = $this->container->get('aculta_index.generation_manager');
-    $generations->markValidated($generationId);
+    $rebuilder->validate($generationId);
     $generations->activate($generationId);
 
     $query = $this->container->get('aculta_index.query');

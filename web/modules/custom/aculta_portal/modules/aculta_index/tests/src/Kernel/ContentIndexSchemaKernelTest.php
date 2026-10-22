@@ -171,11 +171,13 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   public function testGenerationLifecycleAndRollback(): void {
     $manager = $this->container->get('aculta_index.generation_manager');
     $first = $manager->start();
+    $manager->markBackfillCompleted($first, 0);
     $manager->markValidated($first);
     $manager->activate($first);
     $this->assertSame($first, $manager->getActiveGeneration());
 
     $second = $manager->start();
+    $manager->markBackfillCompleted($second, 0);
     $manager->markValidated($second);
     $manager->activate($second);
     $this->assertSame($second, $manager->getActiveGeneration());
@@ -330,6 +332,14 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   public function testBuildingGenerationCannotActivate(): void {
     $manager = $this->container->get('aculta_index.generation_manager');
     $generation = $manager->start();
+
+    try {
+      $manager->markValidated($generation);
+      $this->fail('Expected an incomplete backfill to be rejected.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertNull($manager->getActiveGeneration());
+    }
 
     try {
       $manager->activate($generation);

@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.13` — consulta paginada com cursor opaco e Entity Access.
-**Status:** Dev; schema, contratos, gerações, provider Revista, descoberta keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental e coordenação retomável de lotes implementados. Reconciliação, validação final/catch-up do rebuild, sincronização de relações-alvo e API completa de consulta pendentes; não instalado no Runtime.
+**Versão:** `0.1.0-dev.14` — validação explícita de gerações reconstruídas.
+**Status:** Dev; schema, contratos, gerações, provider Revista, descoberta keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor e validação estrutural de rebuild implementados. Catch-up da fila, reconciliação, sincronização de relações-alvo e API de relações pendentes; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -27,4 +27,4 @@ O submódulo depende do módulo base `aculta_portal`, mas não é ativado por el
 
 Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cria o singleton com geração ativa vazia. Nenhum conteúdo é indexado ou exposto até uma futura reconstrução validada. Desativar/remover o submódulo não afeta as entidades de origem.
 
-`ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O manager não grava projeções nem declara uma geração validada por conta própria: o rebuild deve executar e conferir o backfill antes de chamar `markValidated()`.
+`ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural antes de promover a geração. Drenagem/catch-up da fila ainda é um gate pendente antes de ativação operacional.

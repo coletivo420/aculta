@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_index\Rebuild;
 
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
+use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Storage\ContentIndexWriter;
 
@@ -24,6 +25,7 @@ final class ContentIndexRebuilder {
     private readonly ContentIndexEntityEnumerator $enumerator,
     private readonly ContentIndexRebuildCheckpointManager $checkpoints,
     private readonly ContentIndexWriter $writer,
+    private readonly ContentIndexIntegrityChecker $integrityChecker,
   ) {}
 
   /**
@@ -54,6 +56,7 @@ final class ContentIndexRebuilder {
     }
     $tuples = $this->tuples();
     if ($tuples === []) {
+      $this->generations->markBackfillCompleted($generationId, $checkpoint['revision']);
       return [
         'generation_id' => $generationId,
         'provider_id' => NULL,
@@ -88,10 +91,26 @@ final class ContentIndexRebuilder {
     }
 
     $cursor = (string) ($batch['next_cursor'] ?? $checkpoint['entity_id']);
-    if ($cursor !== '' && $cursor !== $checkpoint['entity_id']) {
-      $this->checkpoints->advance($generationId, $tuple['provider_id'], $tuple['entity_type'], $cursor, $checkpoint['revision']);
-    }
+    $this->generations->markBackfillCompleted($generationId, $checkpoint['revision']);
     return $this->result($generationId, $tuple, $projected, TRUE, $cursor);
+  }
+
+  /**
+   * Validates catalog integrity and promotes a completed build for activation.
+   *
+   * @return array
+   *   Integrity metrics for the validation record; content metadata is omitted.
+   */
+  public function validate(string $generationId): array {
+    if (!hash_equals($this->generations->getProviderFingerprint($generationId), $this->providerFingerprint())) {
+      throw new \UnexpectedValueException('The provider inventory changed before an ACULTA Content Index generation could be validated.');
+    }
+    $integrity = $this->integrityChecker->check();
+    if (!$integrity['valid']) {
+      throw new \UnexpectedValueException('The ACULTA Content Index catalog failed integrity validation.');
+    }
+    $this->generations->markValidated($generationId);
+    return $integrity + ['generation_id' => $generationId, 'validated' => TRUE];
   }
 
   /**

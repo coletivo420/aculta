@@ -27,6 +27,7 @@ function aculta_index_schema(): array {
         'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'validated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'backfill_completed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'activated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
       ],
       'primary key' => ['generation_id'],
@@ -253,5 +254,20 @@ function aculta_index_update_10007(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->indexExists('aculta_index_entry', 'gen_changed')) {
     $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id']);
+  }
+}
+
+/**
+ * Records completion of a generation's backfill before validation.
+ */
+function aculta_index_update_10008(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('aculta_index_generation', 'backfill_completed')) {
+    $schema->addField('aculta_index_generation', 'backfill_completed', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
   }
 }
