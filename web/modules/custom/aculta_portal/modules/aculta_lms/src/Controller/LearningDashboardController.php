@@ -45,7 +45,16 @@ final class LearningDashboardController {
     $data = $this->dashboards->studentDashboard($this->currentUser);
     $build = [
       '#type' => 'container',
-      'courses_title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Meus cursos')],
+      'context_header' => [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-header',
+        '#props' => [
+          'eyebrow' => (string) $this->t('GanjaLab420'),
+          'title' => (string) $this->t('Meus cursos'),
+          'subtitle' => (string) $this->t('Acompanhe suas aulas e certificados.'),
+        ],
+        '#weight' => -100,
+      ],
       '#cache' => ['max-age' => 0],
     ];
     $course_items = [];
