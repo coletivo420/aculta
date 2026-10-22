@@ -159,7 +159,9 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertContains(['type', 'wiki_entry', NULL], $conditions);
     $this->assertContains(['field_domain_source.target_id', 'wiki420_aculta_org', NULL], $conditions);
     $this->assertContains(['status', 1, NULL], $conditions);
-    $this->assertSame('Nenhum verbete publicado corresponde a essa busca.', (string) $build['empty']['#plain_text']);
+    $this->assertSame('component', $build['empty']['#type']);
+    $this->assertSame('aculta420:empty-state', $build['empty']['#component']);
+    $this->assertSame('Nenhum verbete publicado corresponde a essa busca.', (string) $build['empty']['#slots']['message']['#plain_text']);
     $this->assertArrayNotHasKey('results', $build);
   }
 
