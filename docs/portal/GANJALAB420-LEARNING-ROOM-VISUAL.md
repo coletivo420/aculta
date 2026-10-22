@@ -93,3 +93,7 @@ O contrato de [modelos de aula (leitura, vídeo e H5P)](GANJALAB420-LESSON-MODEL
 ## Planejamento de atividades e avaliações — G420-UX 0.4.3
 
 [Atividades e Avaliações](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md) apresenta questionários, envios de documentos, H5P avaliativo, feedback e estados reais do LMS, preservando Form API, notas, tentativas e Group. A experiência permanece dentro do shell compartilhado da Sala.
+
+## Materiais e PDF — fase G420-UX 0.4.4
+
+A [especificação de leitor PDF e biblioteca de materiais](GANJALAB420-MATERIALS-PDF-VISUAL.md) detalha recursos contextuais da aula, acervo do curso e leitor responsivo usando `aculta_pdf_viewer`/Media/Group sem armazenamento paralelo. Planejamento apenas.
