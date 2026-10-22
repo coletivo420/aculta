@@ -8,3 +8,6 @@ aculta_forum.settings:
     edit_window_minutes:
       type: integer
       label: 'Minutes an author can edit a Forum post after its first publication'
+    restricted_group_type:
+      type: string
+      label: 'Group type whose members can read restricted Forum topics (empty disables restricted forums)'

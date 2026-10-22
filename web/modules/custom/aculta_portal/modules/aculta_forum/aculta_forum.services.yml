@@ -151,6 +151,28 @@ services:
     class: Drupal\aculta_forum\Access\ForumReadAccess
     arguments: ['@aculta_portal.domain_purpose']
 
+  aculta_forum.restricted_group_resolver:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver
+    arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.aculta_forum']
+  aculta_forum.restricted_access_policy:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumAccessPolicy
+    arguments: ['@aculta_forum.restricted_group_resolver', '@aculta_user.active_associate', '@logger.channel.aculta_forum']
+  aculta_forum.restricted_membership_sync:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumMembershipSync
+    arguments: ['@entity_type.manager', '@aculta_forum.restricted_group_resolver', '@aculta_user.active_associate', '@lock', '@cache_tags.invalidator', '@logger.channel.aculta_forum']
+  aculta_forum.restricted_grant_rebuilder:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGrantRebuilder
+    arguments: ['@entity_type.manager', '@node.grant_storage', '@cache_tags.invalidator', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Hook\RestrictedForumAccessHooks:
+    class: Drupal\aculta_forum\Hook\RestrictedForumAccessHooks
+    arguments: ['@aculta_forum.restricted_group_resolver', '@aculta_forum.restricted_access_policy', '@aculta_user.active_associate', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Hook\RestrictedForumMembershipHooks:
+    class: Drupal\aculta_forum\Hook\RestrictedForumMembershipHooks
+    arguments: ['@aculta_forum.restricted_membership_sync']
+  Drupal\aculta_forum\Hook\RestrictedForumRelationshipHooks:
+    class: Drupal\aculta_forum\Hook\RestrictedForumRelationshipHooks
+    arguments: ['@entity_type.manager', '@aculta_forum.restricted_grant_rebuilder']
+
   aculta_forum.read_marker:
     class: Drupal\aculta_forum\Service\ForumReadMarker
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@messenger']
