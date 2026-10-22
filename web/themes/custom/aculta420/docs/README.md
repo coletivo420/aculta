@@ -85,3 +85,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b6-s1a-l3b-asset-findings.md](theme-ux-0.8-b6-s1a-l3b-asset-findings.md) — inspeção de Twig/stories e correção da fixture de carrinho para o contrato `sites`.
 
 - [theme-ux-0.8-b6-s1a-l3c-automated-gate.md](theme-ux-0.8-b6-s1a-l3c-automated-gate.md) — gate estático reproduzível de contratos SDC e stories, ainda pendente de execução em checkout.
+
+- [Plano visual Wiki420](../../../../../docs/portal/WIKI420-VISUAL-EXPERIENCE.md) — experiência enciclopédica mobile-first (Home, busca, verbete, categorias, histórico, discussão), contratos SDC/UI Suite e gates W420-UX 0.1.
