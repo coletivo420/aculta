@@ -86,3 +86,9 @@ A [auditoria C01-A](../../../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-
 ## USER-PART 0.1-A — auditoria Fórum + LMS + Wiki
 
 O [inventário transversal](../../aculta_user/docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md) estabelece `aculta_user` como proprietário da política compartilhada; Fórum e LMS mantêm entidades, queries, fila e Group; Wiki mantém workflow e revisões. Prioridade USER-PART 0.1-B (contrato de evidência de publicação) → testes de caracterização → adapter de verbetes Wiki → integração do primeiro verbete moderado. **Não reaproveitar o contador de comentários para calcular experiência Wiki**, nem conceder publicação a `email_confirmed`. Inspeção visual fica após o fechamento dos contratos funcionais.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-01/03/05/06/08: Wiki publica eventos de revisão/ajustes via adapter Messenger com ACL e deduplicação; não cria caixa de avisos. Reaproveita aculta_user para primeira participação, aculta_forum_wiki para discussões, aculta_image e viewers para mídia, aculta_statistics para métricas; mantém moderação e propostas Wiki próprias.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
