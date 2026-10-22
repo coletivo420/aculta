@@ -314,3 +314,7 @@ O planejamento visual originado no GanjaLab420 agora possui **roadmap de impleme
 ## Próxima fase técnica de tema — THEME-UX 0.8-A/B0 com UI Suite
 
 [Plano de auditoria técnica e UI Suite](theme-ux-0.8-a-ui-suite-audit.md) organiza o inventário Runtime de SDC, UI Patterns, UI Patterns Library, UI Styles, Fences e integrações Views/blocks/fields/layouts, com preservação obrigatória do shell multidomínio. Ver [roadmap visual transversal](visual-cross-product-roadmap.md). **Planejado, não executado**.
+
+## Pacote de preparação THEME-UX 0.8-B0
+
+[Matriz de execução e evidências UI Suite](theme-ux-0.8-b0-execution-matrix.md): fases B0-R1 a B0-R4, auditoria do shell em todos os purposes, inventário de SDC, UI Patterns, UI Styles, Fences e stories. Todos os testes do Runtime continuam pendentes. A implementação B1 dependerá do gate B0 documentado.
