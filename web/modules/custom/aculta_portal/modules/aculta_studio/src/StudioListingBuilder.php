@@ -57,8 +57,15 @@ final class StudioListingBuilder {
     $query = $storage->getQuery()
       ->accessCheck(TRUE)
       ->condition('type', $bundle)
-      ->sort('changed', 'DESC')
-      ->range(0, self::LIMIT);
+      ->sort('changed', 'DESC');
+    // Author scope is applied in SQL, before paging and any visible revision checks.
+    if (($listing['scope'] ?? '') === 'mine') {
+      $query->condition('uid', (int) $account->id());
+      $query->pager(20);
+    }
+    else {
+      $query->range(0, self::LIMIT);
+    }
     // Never enumerate all moderation state entities with accessCheck(FALSE).
     // Resolve a visible node's latest revision, then verify revision access
     // before showing its moderation state or using it for a filtered listing.
@@ -109,8 +116,9 @@ final class StudioListingBuilder {
       '#empty' => $this->t('Nenhum item nesta aba.'),
       '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
+      'pager' => ($listing['scope'] ?? '') === 'mine' ? ['#type' => 'pager'] : [],
       '#cache' => [
-        'contexts' => ['user', 'user.permissions'],
+        'contexts' => ['user', 'user.permissions', 'url.query_args.pagers'],
         'tags' => ['node_list:' . $bundle],
       ],
     ];
