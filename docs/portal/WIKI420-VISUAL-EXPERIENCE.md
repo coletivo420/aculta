@@ -105,3 +105,7 @@ Wiki / Categoria / Verbete
 - Stories UI Patterns Library, schema SDC Devel e UI Styles verificados no homelab; nenhuma aprovação implícita a partir da documentação.
 
 **Ownership:** módulo `aculta_wiki` / Core / Portal controla regras; **tema ACULTA420** controla padrões visuais. O presente documento não implementa funcionalidades nem atesta passes Runtime.
+
+## Auditoria inicial concluída (somente código)
+
+A [auditoria W420-UX 0.1-A](WIKI420-VISUAL-STATIC-AUDIT.md) registra evidências diretas de rotas, template full, contratos SDC, CSS e decisões preexistentes. **Não representa inspeção completa dos consumidores nem validação Runtime.** Próxima microfase: mapear controller/Views e H1/busca por rota; após isso elaborar wireframes detalhados com evidência suficiente.
