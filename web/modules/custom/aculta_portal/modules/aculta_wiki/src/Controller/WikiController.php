@@ -11,6 +11,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -55,6 +56,7 @@ final class WikiController extends ControllerBase {
         'contexts' => ['domain', 'user.permissions'],
         'tags' => ['node_list:wiki_entry', 'taxonomy_term_list'],
       ],
+      'context_tabs' => $this->contextNavigation('aculta_portal.wiki_home'),
       'intro' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'wiki-intro'],
@@ -95,6 +97,7 @@ final class WikiController extends ControllerBase {
       '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
       '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
+      'context_tabs' => $this->contextNavigation('aculta_portal.wiki_search'),
     ];
     if ($term === '') {
       return $build;
@@ -120,6 +123,28 @@ final class WikiController extends ControllerBase {
       $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')];
     }
     return $build;
+  }
+
+  /**
+   * Shared accessible route navigation for the two Wiki landing screens.
+   *
+   * Actual URLs and active state are owned by the Wiki provider, not the SDC.
+   */
+  private function contextNavigation(string $activeRoute): array {
+    $links = [];
+    foreach ([
+      'aculta_portal.wiki_home' => $this->t('Início'),
+      'aculta_portal.wiki_search' => $this->t('Busca'),
+    ] as $route => $label) {
+      $attributes = $route === $activeRoute ? ['aria-current' => 'page'] : [];
+      $links[] = Link::fromTextAndUrl($label, Url::fromRoute($route, [], ['attributes' => $attributes]))->toRenderable();
+    }
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420:context-tabs',
+      '#props' => ['label' => (string) $this->t('Navegação da Wiki420')],
+      '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
+    ];
   }
 
   /**
