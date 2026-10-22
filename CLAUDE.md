@@ -1,10 +1,5 @@
 # ACULTA — Claude Code
 
-Leia `AGENTS.md` como fonte canônica das regras obrigatórias. Consulte documentação especializada somente quando a tarefa a exigir; não copie documentos inteiros para prompts. Preserve escopo da PR e alterações de outras frentes. Antes de editar, inspecione arquivos relevantes; execute e relate gates aplicáveis. Nunca invente resultados de testes.
+Siga `AGENTS.md` (regras essenciais). Leia somente as seções pertinentes de `docs/operations/AGENT-GUARDRAILS-FULL.md` e dos contratos do componente afetado. Preserve branch/PR e alterações paralelas; valide e relate testes reais.
 
-## Economia de contexto
-- Mantenha uma sessão por tarefa; reutilize o histórico enquanto útil.
-- Prefira buscas direcionadas e trechos pequenos a dumps do repositório.
-- Não repita instruções ou logs completos a cada turno; resuma apenas novidades.
-- Registre decisões duráveis em arquivos existentes do componente.
-- Não altere modelo durante a sessão; a escolha de provedor/modelo é externa ao repositório.
+Mantenha modelo fixo por sessão (configuração local), contexto enxuto e leituras direcionadas. Não repita logs, árvores ou documentos integrais. Consulte `docs/operations/AGENT-CACHE.md` apenas para ajustes de consumo.
