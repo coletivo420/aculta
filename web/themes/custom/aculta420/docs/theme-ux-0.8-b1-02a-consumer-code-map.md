@@ -27,3 +27,7 @@
 5. Validação mobile, escuro/claro e navegação sem JS antes de marcar PASS.
 
 **Não certificado:** SDCs no Runtime, dois consumidores compartilhando Context Header, acesso/caches e browsers. Este mapeamento é de código fonte, não implantação.
+
+## Continuidade B1-02b
+
+A especificação visual derivada dos consumidores identificados está em [B1-02b — Context Header](theme-ux-0.8-b1-02b-visual-contract.md). A Wiki já emite H1 no SDC artigo e deverá ser migrada sem duplicação. Integração e testes no Runtime permanecem pendentes.
