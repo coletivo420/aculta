@@ -119,3 +119,8 @@ O editor Wiki ganha uma interface própria **WE SATIVA (Wiki Editor Sativa)**, d
 ## Contribuição contextual — WE SATIVA 0.2
 
 Na leitura pública, planejar uma ação contextual `Contribuir` quando autorizada, que abre o [WE SATIVA por intenção](WE-SATIVA-CONTRIBUTION-FIRST-RESEARCH.md) com vínculo ao verbete e retorno seguro. Não confundir correção sugerida com edição/publicação efetiva. Interface pública e editor permanecem mobile-first e usam SDC/UI Suite.
+
+
+## Política comunitária WE SATIVA — C01-B
+
+Usuários com e-mail confirmado podem criar/editar próprios verbetes e submetê-los à revisão conforme capacidades reais; **content editors são responsáveis pela moderação e publicação**. Alterações propostas em verbetes de outras pessoas exigem fluxo de sugestão distinto de acesso direto ao Node. [Contrato de contribuições moderadas](WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md). A Wiki pública mantém leitura mobile-first e CTA único condicional, sem expor revisão não publicada.
