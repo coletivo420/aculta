@@ -63,3 +63,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - B3: [auditoria e implementação de empty-state](theme-ux-0.8-b3-feedback-audit.md) — SDC compartilhado Wiki/LMS; homologação Runtime pendente.
 
 - [theme-ux-0.8-b4-utility-panels.md](theme-ux-0.8-b4-utility-panels.md) — auditoria de avisos, mensagens, carrinho e painel Minha Conta; correções CSS/SDC e gates Runtime.
+
+- [theme-ux-0.8-b4-02-ajax-drawer-race.md](theme-ux-0.8-b4-02-ajax-drawer-race.md) — proteção de Avisos/Mensagens contra AJAX obsoleto e roteiro de testes de drawers.
