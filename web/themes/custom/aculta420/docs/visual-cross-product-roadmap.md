@@ -53,3 +53,31 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 - [Auditoria cruzada](../../../../../docs/portal/GANJALAB420-CROSS-VISUAL-AUDIT.md)
 - [Cabeçalho e navegação 0.8-B](../../../../../docs/portal/GANJALAB420-SHARED-UI-PLAN.md)
 - [Inventário B0/B1](../../../../../docs/portal/GANJALAB420-SHELL-CONTEXT-HEADER-B0-B1.md)
+
+## Decisão de implementação visual — ferramentas UI Suite (2026-10-22)
+
+**Core SDC + UI Patterns + UI Styles são os instrumentos preferenciais**, integrados ao Bootstrap 5 do ACULTA420. O uso de ferramentas já configuradas é obrigatório como **etapa de avaliação** antes de qualquer Twig customizado, nova dependência ou CSS isolado; não obriga a converter todos os displays. Ver [plano UI Suite existente](ui-suite-migration-plan.md) para o inventário real, versões e exceções.
+
+| Ferramenta | Emprego na próxima fase | Limite |
+| --- | --- | --- |
+| **Drupal Core SDC** | contrato canônico de componentes, schemas de props, slots e assets locais | não possui ACL/queries/states funcionais |
+| **UI Patterns 2.x** | mapear reutilização de SDC em Views, fields, formatters, blocks e layouts **onde integração estável já existir** | não converter displays massivamente |
+| **UI Patterns Library** | stories `.story.yml`, variantes e estados para comparação visual com acesso administrativo | não exibir dados reais nem abrir permissões públicas |
+| **UI Styles** | aplicar estilos semânticos ACULTA420 em blocos, Layout Builder, Views e UI Patterns | não duplicar tokens ou liberar valores arbitrários |
+| **SDC Devel** | validações de metadados, propriedades e diagnóstico de componente no desenvolvimento | ferramenta dev, não interface de produção |
+| **Fences** | adequar markup/wrapper semântico de campos quando justificado | não competir com UI Patterns Field no mesmo display sem razão |
+| **Views + UI Patterns** | montar listas/cartões existentes (cursos, materiais, artigos, turmas) | providers e access/cache continuam no Drupal |
+| **Section Library** | considerar composições salvas para site building onde for necessidade real | não substitui SDC; permissões restritas ao administrator |
+| **VVJ (família já aprovada)** | reaproveitar apresentações de Views com consumidores adequados, como Gallery | não usar carrossel em navegação pedagógica por conveniência |
+
+**Não instalar nem ativar UI Suite Bootstrap**: é fonte de ideias revisadas, não dependência nem novo tema base. **Não reinstalar Display Suite/`ui_patterns_ds`**, removidos por falta de consumidor. Não ativar UI Styles para CKEditor sem nova decisão; não tornar Storybook externo pré-requisito para stories no UI Patterns Library.
+
+### Gate UI Suite da fase THEME-UX 0.8-A/B0
+1. Inventariar componentes Core SDC, variantes, histórias e uso UI Patterns em displays reais (Views, campos, blocos e layouts); confirmar módulos habilitados no Runtime antes de assumir capacidades.
+2. Auditar estilos semânticos UI Styles e wrappers Fences existentes; classificar cada lacuna em **reusar SDC / integrar UI Patterns / ajustar UI Styles / variante / novo SDC**.
+3. Prototipar primeira composição de **Context Header** abaixo do cabeçalho multidomínio, preferindo Core page title/breadcrumb + componente `content-section`; só criar novo SDC quando a lacuna for demonstrada.
+4. Prototipar **Context Tabs** com menu/breadcrumb/links do Core e Bootstrap; UI Patterns pode compor apresentação, não controlar o AJAX do GanjaLab.
+5. Prototipar estados genéricos em biblioteca protegida do UI Patterns; garantir acesso, cache, mobile 320px, dark/light e WCAG 2.2 AA no Runtime.
+6. Atualizar catálogo, stories e documentação do **tema** no mesmo commit funcional; conservar a matriz de consumidores cruzados.
+
+**Status deste capítulo:** somente planejamento/documentação; a auditoria Runtime e os protótipos ainda não foram executados.
