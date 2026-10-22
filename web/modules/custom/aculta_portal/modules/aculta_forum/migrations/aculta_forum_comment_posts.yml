@@ -1,0 +1,23 @@
+id: aculta_forum_comment_posts
+label: 'ACULTA Forum: Comments para posts revisionáveis'
+migration_tags:
+  - 'ACULTA Forum'
+source:
+  plugin: aculta_forum_comment
+  comment_batch_size: 200
+  skip_count: true
+  track_changes: true
+process:
+  uid: uid
+  langcode: langcode
+  topic/target_id: topic_id
+  thread_position: cid
+  created: created
+  changed: changed
+  revision_uid: uid
+  revision_timestamp: changed
+  first_published: first_published
+  legacy_author/target_id: legacy_author_id
+destination:
+  plugin: aculta_forum_comment_post
+  validate: true

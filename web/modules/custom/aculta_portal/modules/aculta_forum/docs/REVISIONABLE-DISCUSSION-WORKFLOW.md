@@ -163,11 +163,14 @@ testes de workflow; a configuração da política inicial continua sendo a de
    segunda migration dependente que usa `migration_lookup` para resolver o pai
    depois que todos os posts existem; `no_stub: true` impede criar referências
    provisórias para IDs ausentes. Assim, a hierarquia não depende da ordem por
-   CID; a contagem da dev.166 continua útil para inventário. A migration de
-   relações usará `overwrite_properties: [parent]` para preservar o conteúdo e
-   as traduções gravados no primeiro passe. A dev.168 implementa o plugin de
-   origem limitado por CID, com uma linha por Comment e os idiomas agrupados;
-   destino e definições Migrate ainda pendem. Fontes: [fonte `ContentEntity` do
+   CID; a contagem da dev.166 continua útil para inventário. A dev.168 implementa
+   o plugin de origem limitado por CID, com uma linha por Comment e os idiomas
+   agrupados. A dev.169 acrescenta um destino que salva as traduções juntas e
+   duas definições Core Migrate; a segunda depende do mapa da primeira e usa
+   `overwrite_properties: [parent]`. Essas definições ainda não foram executadas
+   nem validadas em integração. Estados não publicados sem rejeição vão para
+   `review`; formato diferente de `forum`, corpo vazio ou publicado/rejeitado
+   conflitantes interrompem a importação. Fontes: [fonte `ContentEntity` do
    Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [MigrationLookup do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21process%21MigrationLookup.php/class/MigrationLookup/11.x), [encadeamento de migrations](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/chaining-migrations-using-migration_lookup), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do

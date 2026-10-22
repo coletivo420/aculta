@@ -1,0 +1,28 @@
+id: aculta_forum_comment_parents
+label: 'ACULTA Forum: relacionar posts pai e filho'
+migration_tags:
+  - 'ACULTA Forum'
+source:
+  plugin: aculta_forum_comment
+  comment_batch_size: 200
+  skip_count: true
+  track_changes: true
+process:
+  id:
+    plugin: migration_lookup
+    migration: aculta_forum_comment_posts
+    source: cid
+    no_stub: true
+  parent/target_id:
+    plugin: migration_lookup
+    migration: aculta_forum_comment_posts
+    source: parent_cid
+    no_stub: true
+destination:
+  plugin: 'entity:aculta_forum_post'
+  overwrite_properties:
+    - parent
+  validate: true
+migration_dependencies:
+  required:
+    - aculta_forum_comment_posts

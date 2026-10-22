@@ -1,3 +1,14 @@
+## `0.1.0-dev.169` — criar destino multilíngue e migrations de posts/pais
+
+- O destino `aculta_forum_comment_post` grava todas as traduções do Comment em
+  um post e uma revisão. Publicado/rejeitado ficam explícitos por idioma;
+  Comments não publicados entram em `review`. Formatos diferentes de `forum`,
+  corpo vazio e conflito entre publicado/rejeitado falham fechados.
+- Duas definições Core Migrate usam um mapa `cid → post ID`; a segunda depende
+  da primeira, resolve pais com `migration_lookup` e `no_stub`, e só sobrescreve
+  `parent`. Definições não foram executadas; destino/runtime ainda carecem de
+  validação de integração.
+
 ## `0.1.0-dev.168` — criar fonte Migrate paginada para Comments do Fórum
 
 - O plugin `aculta_forum_comment` percorre Comments elegíveis por CID em lotes

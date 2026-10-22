@@ -113,6 +113,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
   public function fields(): array {
     return [
       'cid' => 'ID do Comment de origem',
+      'langcode' => 'Idioma padrão do Comment',
       'parent_cid' => 'ID do Comment pai',
       'topic_id' => 'ID do tópico Node',
       'uid' => 'ID do autor Drupal',
@@ -189,6 +190,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
         'subject' => (string) ($translation->get('subject')->value ?? ''),
         'body_value' => (string) ($body?->value ?? ''),
         'body_format' => (string) ($body?->format ?? ''),
+        'published' => (int) $translation->isPublished(),
       ];
     }
 
@@ -204,6 +206,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
 
     return [
       'cid' => (int) $comment->id(),
+      'langcode' => $comment->language()->getId(),
       'parent_cid' => $parent_id === NULL ? NULL : (int) $parent_id,
       'topic_id' => (int) $topic->id(),
       'uid' => (int) ($comment->getOwnerId() ?? 0),
