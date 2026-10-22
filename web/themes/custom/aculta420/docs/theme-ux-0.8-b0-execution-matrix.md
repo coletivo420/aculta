@@ -51,3 +51,7 @@ B0-R1 a R4 com evidências armazenadas nos relatórios do tema; shell global pre
 Acrescentar classificação obrigatória a **cada candidato**: `SDC-CONFORME`, `SDC-PARCIAL`, `LEGADO-MIGRAR` ou `DESCARTAR/SUBSTITUIR`. A matriz só aprova **reutilização direta** do primeiro grupo. O segundo deve ser corrigido, o terceiro migrado antes de reutilizar, e o quarto substituído ou excluído. Registrar também path de `.component.yml`, schema de props, slots, arquivos story, aplicação UI Patterns (quando compatível), tokens/UI Styles, consumidores reais e gaps acessíveis.
 
 **Regra da primeira fatia B1:** se page title/breadcrumb Core e Bootstrap já cumprem a função, eles permanecem providers, mas a **abstração visual compartilhável** deve ter SDC; não promover markup Twig isolado como componente reusable. Se `content-section` já for SDC-conforme, estendê-lo com variante/slots é preferível a novo `context-header`. Componente sem Base SDC/UI Suite não é aprovado para nova adoção.
+
+## Resultado estático B0-R1
+
+[Inventário de 38 SDCs, 55 stories e backlog M0–M6](sdc-ui-suite-inventory-2026-10-22.md). Evidência apenas de arquivos existentes no GitHub; todas as colunas de Runtime, UI Patterns efetivamente aplicado, acessibilidade e shell por purpose permanecem PENDENTES. Não converter este inventário em PASS de B0.
