@@ -628,3 +628,7 @@ A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora 
 - [Dashboard do estudante](../portal/GANJALAB420-DASHBOARD-VISUAL.md) — G420-UX 0.2, cursos matriculados, atividade pendente e retomada de estudos.
 - [Sala de Aprendizagem](../portal/GANJALAB420-LEARNING-ROOM-VISUAL.md) — G420-UX 0.4, leitor mobile-first, índice, material, atividade e fórum contextual.
 - **Manter o módulo técnico `aculta_lms`** e seus submódulos. Planos de renomeação técnica para Escola ou GanjaLab LMS estão cancelados. Este acréscimo visual não modifica nem certifica a implementação F0–F17.
+
+## Referência H5P — GanjaLab420 Sala de Aprendizagem
+
+[Contrato de modelos de leitura, vídeo e H5P](../portal/GANJALAB420-LESSON-MODELS-VISUAL.md). H5P é variante própria de Sala, não simples embed. A apresentação mobile, o acesso Group, tentativas, notas, arquivos privados, CSP e alternativas acessíveis integram os gates F10/F15/F16 antes de RC. Preservar nomes técnicos `aculta_lms` e `aculta_lms_h5p`.
