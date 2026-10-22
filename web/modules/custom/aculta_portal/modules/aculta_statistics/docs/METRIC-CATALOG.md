@@ -71,6 +71,7 @@ Pendente (fora da 0.5.0-dev.1): separar devolução `hard` e `soft` (`email.boun
 |---|---|---|---|---|---|
 | `forum.topics.created` | `ForumActivityEvent` (`topic_created`) | tópicos | — | 90 dias | P |
 | `forum.comments.created` | `ForumActivityEvent` (`comment_created`) | comentários | — | 90 dias | P |
+| `forum.posts.created` | `ForumActivityEvent` (`post_created`), exceto entidade sincronizada/importada | posts revisionáveis | — | 90 dias | P |
 
 ## LMS (instantâneo diário, fonte: evento `aculta_lms.class_status_snapshot`)
 
@@ -116,7 +117,8 @@ Não somar sessões do GA4 com cliques de links ou visualizações internas.
 | id | fonte | unidade | dimensões | retenção | sens. |
 |---|---|---|---|---|---|
 | `forum.topics.published` | nós `aculta_forum_topic` publicados | tópicos | categoria, domínio | instantâneo | P |
-| `forum.comments.created` | comentários novos (Core `comment`) | comentários | categoria | 90 dias | P |
+| `forum.comments.created` | comentários novos legados (Core `comment`) | comentários | categoria | 90 dias | P |
+| `forum.posts.created` | posts revisionáveis novos (`aculta_forum_post`) | posts | — | 90 dias | P |
 | `forum.participants.active` | usuários distintos que postaram no período | pessoas | — | 90 dias | I |
 | `wiki.entries.published` | nós `wiki_entry` publicados | verbetes | domínio | instantâneo | P |
 | `wiki.entries.updated` | nova revisão de `wiki_entry` | revisões | domínio | 90 dias | P |

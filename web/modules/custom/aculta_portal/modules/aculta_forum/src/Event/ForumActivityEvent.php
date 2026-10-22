@@ -7,7 +7,7 @@ namespace Drupal\aculta_forum\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Atividade criada no Fórum: um tópico ou um comentário novo.
+ * Atividade criada no Fórum: tópico, Comment legado ou post revisionável.
  *
  * Produtor de eventos para `aculta_statistics` e outros consumidores.
  * Carrega só o identificador da entidade e o instante da criação: nenhum autor,
@@ -25,6 +25,11 @@ final class ForumActivityEvent extends Event {
    * Nome do evento para comentário criado num tópico do Fórum.
    */
   public const COMMENT_CREATED = 'aculta_forum.comment_created';
+
+  /**
+   * Nome do evento para post revisionável criado no Fórum.
+   */
+  public const POST_CREATED = 'aculta_forum.post_created';
 
   public function __construct(
     public readonly int $entityId,

@@ -1,3 +1,11 @@
+## `0.1.0-dev.159` — emitir atividade de posts revisionáveis
+
+- A criação de `aculta_forum_post` emite `aculta_forum.post_created` com ID e
+  instante, sem autor ou conteúdo. Entidades sincronizadas/importadas são
+  ignoradas para evitar contar migração como participação nova.
+- O contrato de evento permite que `aculta_statistics` conte posts sem depender
+  do módulo Fórum. Validação Runtime e testes pendentes.
+
 ## `0.1.0-dev.158` — especificar acesso para busca de posts revisionáveis
 
 - A busca pública segue indexando apenas tópicos Node. A documentação registra

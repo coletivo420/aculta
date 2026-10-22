@@ -27,12 +27,13 @@ o painel de turma do LMS), com as mesmas permissões.
 - **Fonte:** contagem de comentários do Core (`comment_count`), tópicos
   publicados (`aculta_forum_topic` filtrado pelo domínio `forum`) e categorias.
 - **Métricas:** `forum.topics.published`, `forum.comments.created`,
+  `forum.posts.created`,
   `forum.participants.active`.
 - **Provedor:** `ForumProvider` consulta contagens; não lê autoria privada.
 - **Regras:** o Fórum não cria builders de perfil; participantes são contados,
   não listados. Comentários de verbete ficam associados à origem.
-- **Produtor (aculta_forum 0.1.0-dev.127):** `ForumActivityEvent` para tópico e comentário criados. O
-  agregado diário é gravado a partir dele. Pendente: trocar a leitura do painel do Fórum para o agregado.
+- **Produtor (aculta_forum 0.1.0-dev.127 e dev.159):** `ForumActivityEvent` para tópico, Comment legado e post revisionável criados. O
+  agregado diário é gravado a partir dele sem autoria/conteúdo; posts sincronizados/importados não geram evento. Pendente: trocar a leitura do painel do Fórum para o agregado.
 
 ## Wiki (conteúdo `wiki420`)
 

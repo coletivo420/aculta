@@ -25,6 +25,7 @@ final class MetricCatalog {
       new MetricDefinition('wiki.entries.read', 'Leituras de verbetes da Wiki', 'leituras', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('forum.topics.created', 'Tópicos criados no Fórum', 'tópicos', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('forum.comments.created', 'Comentários criados no Fórum', 'comentários', MetricDefinition::SENSITIVITY_PUBLIC, 90),
+      new MetricDefinition('forum.posts.created', 'Posts revisionáveis criados no Fórum', 'posts', MetricDefinition::SENSITIVITY_PUBLIC, 90),
       new MetricDefinition('email.messages.queued', 'E-mails solicitados, por tipo (dia da solicitação)', 'mensagens', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('email.messages.accepted', 'E-mails aceitos pelo sistema de envio (dia da solicitação)', 'mensagens', MetricDefinition::SENSITIVITY_INTERNAL, 90),
       new MetricDefinition('email.messages.delivered', 'E-mails confirmados como entregues pelo provedor', 'mensagens', MetricDefinition::SENSITIVITY_INTERNAL, 90),

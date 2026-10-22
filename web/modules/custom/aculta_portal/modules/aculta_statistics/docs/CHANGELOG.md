@@ -1,5 +1,12 @@
 # Changelog — ACULTA Statistics
 
+## 0.9.0-dev.5 — contabilizar posts revisionáveis do Fórum
+
+- O assinante reconhece `aculta_forum.post_created` e grava a métrica pública
+  `forum.posts.created`, com retenção configurada de 90 dias. O evento não leva
+  autoria nem conteúdo e o produtor ignora entidades sincronizadas/importadas.
+- Testes e validação Runtime pendentes.
+
 Formato: entregas por fase, com commits e evidências. Sem versão de manifesto
 até o módulo ser ativado.
 

@@ -85,8 +85,8 @@ Não iniciado: ativação do módulo, `*.info.yml`, `hook_schema`, painel e cone
 
 Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor não conhece o statistics.
 
-- **Fórum (feito, 0.1.0-dev.127 do aculta_forum):** `aculta_forum.topic_created` e `aculta_forum.comment_created`
-  → `forum.topics.created` e `forum.comments.created`. Pendente: validação no Runtime.
+- **Fórum (feito, 0.1.0-dev.127 e dev.159 do aculta_forum):** `aculta_forum.topic_created`, `aculta_forum.comment_created` e `aculta_forum.post_created`
+  → `forum.topics.created`, `forum.comments.created` e `forum.posts.created`. Importações sincronizadas não contam como posts novos. Pendente: validação no Runtime.
 - **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`), estado atual por dia de solicitação (decidido em 2026-10-21). Ver `aculta_mailer/docs/ROADMAP.md`.
 - **LMS (pendente):** instantâneo por turma (`lms.students.by_status`), série diária (decidido em 2026-10-21). Ver `aculta_lms/docs/ROADMAP.md`.
 

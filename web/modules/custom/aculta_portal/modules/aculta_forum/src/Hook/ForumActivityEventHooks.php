@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Event\ForumActivityEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Emite ForumActivityEvent quando cria tópico ou comentário no Fórum.
+ * Emite ForumActivityEvent para criação de tópico, comentário ou post no Fórum.
  *
  * Só criação: edição, movimentação e exclusão não emitem evento. Comentários
  * de outros contextos (publicações, LMS, Wiki) são ignorados.
@@ -52,6 +55,25 @@ final class ForumActivityEventHooks {
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $comment->id(), $this->time->getRequestTime()),
       ForumActivityEvent::COMMENT_CREATED,
+    );
+  }
+
+  /**
+   * Post revisionável criado no Fórum.
+   *
+   * Conteúdo sincronizado/importado não representa atividade nova de membro e
+   * não deve alimentar as métricas públicas de criação.
+   */
+  #[Hook('entity_insert')]
+  public function entityInsert(EntityInterface $entity): void {
+    if (!$entity instanceof ForumPost
+      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())) {
+      return;
+    }
+
+    $this->dispatcher->dispatch(
+      new ForumActivityEvent((int) $entity->id(), $this->time->getRequestTime()),
+      ForumActivityEvent::POST_CREATED,
     );
   }
 
