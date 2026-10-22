@@ -24,6 +24,8 @@
 - Kernel cobre páginas, cursor não legível no banco, filtro de acesso de item
   privado e remoção do cursor ao final. Custo real/volume e concorrência seguem
   pendentes.
+- Kernel também cobre rejeição de cursor por filtros/conta diferentes e revoga
+  resultado após o conteúdo tornar-se privado, antes de a fila incremental rodar.
 
 ## 0.1.0-dev.12 — inventário estável e consultas sem agregados
 

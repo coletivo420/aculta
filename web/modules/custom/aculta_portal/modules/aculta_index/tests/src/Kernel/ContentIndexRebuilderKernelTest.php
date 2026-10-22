@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -148,10 +149,36 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertNotSame($firstPage->nextCursor, $storedHash);
     $this->assertSame(0, $firstPage->cacheability->getCacheMaxAge());
 
+    try {
+      $query->query(['bundle' => 'article'], $account, $firstPage->nextCursor, 2);
+      $this->fail('Expected a cursor bound to different filters to be rejected.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertSame(1, (int) $this->container->get('database')->select('aculta_index_cursor')->countQuery()->execute()->fetchField());
+    }
+    try {
+      $otherAccount = new UserSession(['uid' => 24, 'roles' => ['anonymous']]);
+      $query->query(['published' => TRUE], $otherAccount, $firstPage->nextCursor, 2);
+      $this->fail('Expected a cursor bound to another account to be rejected.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertSame(1, (int) $this->container->get('database')->select('aculta_index_cursor')->countQuery()->execute()->fetchField());
+    }
+
     $secondPage = $query->query(['published' => TRUE], $account, $firstPage->nextCursor, 2);
     $this->assertCount(0, $secondPage->entities);
     $this->assertNull($secondPage->nextCursor);
     $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_cursor')->countQuery()->execute()->fetchField());
+
+    $publicNode = $this->container->get('entity_type.manager')->getStorage('node')->load(1);
+    $publicNode->setUnpublished();
+    $publicNode->save();
+    $this->container->get('entity_type.manager')->getAccessControlHandler('node')->resetCache();
+    $this->assertFalse($publicNode->isPublished());
+    $this->assertFalse($publicNode->access('view', $account));
+    $afterRevocation = $query->query(['published' => TRUE], $account, NULL, 2);
+    $this->assertCount(1, $afterRevocation->entities);
+    $this->assertSame('Article two', (string) $afterRevocation->entities[0]->label());
   }
 
 }
