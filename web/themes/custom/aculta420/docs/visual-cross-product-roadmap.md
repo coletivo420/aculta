@@ -103,3 +103,7 @@ O contrato [Context Header do tema](theme-ux-0.8-m2-b1-context-header.md) priori
 ## Decisão B1-02 — H1 contextual e evidência de consumidores
 
 O [plano B1-02](theme-ux-0.8-b1-02-ownership-h1.md) autoriza Context Header SDC a ser o proprietário do único H1 visível em consumidores migrados, sem preservar obrigatoriamente a saída nativa. O título segue provido pelo Drupal; remover duplicação seletivamente e jamais ocultar com CSS. A [inspeção B1-02a](theme-ux-0.8-b1-02a-consumer-code-map.md) detectou que o SDC Wiki `wiki-entry` já produz H1 e precisará de integração coordenada; o shell multidomínio continua obrigatório. Sem implementação Runtime.
+
+## Avanço B1-02b — contrato visual multiárea
+
+[Contrato visual Context Header](theme-ux-0.8-b1-02b-visual-contract.md) conecta decisões arquiteturais SDC/UI Suite a composição mobile-first para GanjaLab420 e Wiki, H1 único, UI Patterns/Styles e preservação do cabeçalho multidomínio. Próximo B1-02c só cria SDC após evidência Runtime dos consumidores; backlog B2 de abas contextuais permanece posterior.
