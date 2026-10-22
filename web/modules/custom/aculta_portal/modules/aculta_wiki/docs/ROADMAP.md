@@ -142,3 +142,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 
 [Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../../../docs/portal/GANJALAB-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
+
+## D-A.2-T — progresso e próximos gates
+
+D-A.2-T: hardening inicial do GanjaLab no StudioListingBuilder (cache por usuário, checagem explícita de view revision) e teste Unit adicionados. Não equivale a autorização de fila Wiki. Antes de D-C é indispensável provider de revisão Wiki, validação por entidade e revisão, query de moderation_state correta e Kernel com dois usuários/grants.
