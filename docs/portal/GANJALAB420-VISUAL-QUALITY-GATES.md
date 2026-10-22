@@ -62,3 +62,7 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 | 0.8-E | gates completos e homologação controlada | evidências do servidor de desenvolvimento |
 
 **Próximo passo recomendado após 0.8:** comando de execução incremental começando por inventário e componentes reutilizáveis, sem reabrir o redesign de cada tela. Neste commit, planejamento apenas.
+
+## Resultado preliminar 0.8-A — auditoria cruzada de reutilização
+
+[AUDITORIA CRUZADA: GanjaLab420 × ACULTA420](GANJALAB420-CROSS-VISUAL-AUDIT.md) registra os SDCs existentes, lacunas transversais, matriz de consumidores e regra **reutilizar → estender → criar padrão compartilhado**. Evidência estática concluída; Runtime/stories/browser e gate de homologação ainda pendentes. Novos padrões devem beneficiar outras áreas (Revista, Wiki, Fórum, Galeria, Conta e GanjaLab) antes de serem especializações LMS.
