@@ -1,7 +1,6 @@
 # Revisão visual do formulário de resposta com arquivo (LMS)
 
-Revisão no Firefox pelo geckodriver (protocolo W3C WebDriver), com janela no X11 (`DISPLAY`) ou headless com
-`LMS_HEADLESS=1`. Verifica o formulário de resposta do tipo File Upload com a política de upload do LMS
+Revisão no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver (protocolo W3C WebDriver). Não usar headless para validação. Verifica o formulário de resposta do tipo File Upload com a política de upload do LMS
 (aculta_portal, aba `lms`): texto de ajuda, recusa de extensão fora do teto, aceite de PNG, layout sem rolagem
 horizontal e ausência de erros de JavaScript.
 
@@ -30,7 +29,7 @@ LMS_PAGE="https://cursos.aculta.toca.net.br/curso/<curso>/<aula>/<atividade>" \
 | `LMS_LOGIN_URI` | `https://conta.aculta.toca.net.br` | URI do Drush para o link de login |
 | `LMS_USER` | `teste.comum` | Conta de teste |
 | `LMS_OUT` | `.suite-out/lms-upload` | Capturas e `results.json` (fora do Git) |
-| `LMS_HEADLESS` | (janela) | `1` para headless |
+| `LMS_HEADLESS` | (janela) | Não usar para validação; manter a janela na sessão X11 |
 | `GECKODRIVER` | `http://127.0.0.1:4444` | Endereço do geckodriver |
 
 O script termina com código 1 se alguma verificação falhar.

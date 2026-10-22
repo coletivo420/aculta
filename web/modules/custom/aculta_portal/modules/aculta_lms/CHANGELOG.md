@@ -1,5 +1,60 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.84 — rodar Kernel e Unit do LMS e registrar o resultado medido — 2026-10-22
+
+Tarefa: "Rodar os Kernels e unitários dos módulos LMS e Forum alterados; registrar testes/asserções/depreciações em cada CHANGELOG; confirmar git status limpo e listar os commits da sequência."
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Unit: `tests/src/Unit` — 74 testes, 408 asserções, OK com 8 depreciações do
+  PHPUnit.
+- Kernel: `tests/src/Kernel` — 29 testes, 832 asserções, OK com 93
+  depreciações conhecidas, todas de código contrib e já presentes antes desta
+  sequência: anotações de plugin do Group (relação, argumento e acesso de
+  Views), `FieldType`/`EntityType` do Webform, `fraction` e `entity_print`,
+  além do retorno implicitamente anulável de
+  `webform_score_entity_field_access()` e do hook de requisitos legado.
+- Comandos: a partir de `web/core`, com `secrets/simpletest-db.env` carregado
+  no ambiente, `../../vendor/bin/phpunit -c phpunit.xml.dist
+  ../modules/custom/aculta_portal/modules/aculta_lms/tests/src/{Unit,Kernel}`;
+  banco local `aculta_simpletest`; o Runtime de teste não foi tocado.
+- Resultado anteriormente registrado por engano no `aculta_forum_lms`
+  dev.42; este é o registro correto do módulo LMS.
+
+## 0.1.0-dev.83 — regressão Kernel da política central de upload — 2026-10-22
+
+Tarefa: "Migrar anexos LMS para a política central `aculta_portal.user_upload_policy`, com aba própria no painel de uploads. Política efetiva inalterada. Kernel de regressão."
+
+- A migração já estava no código: o `aculta_portal` 0.4.0-dev.252 criou o consumidor `lms` e a aba "LMS" do painel de uploads, e o `aculta_lms` 0.1.0-dev.80 passou a aplicar `restrictValidators(..., 'lms')` em `SubmissionImageHooks`. Esta entrega fecha a verificação e a documentação; a única alteração de produção corrige o texto de ajuda do campo.
+- Correção no texto de ajuda: desde `0361ae05` o hook montava a lista com o teto inteiro da política (`allowedExtensions('lms')`) para não ler `FileExtension` fora da política, então uma atividade mais restrita exibia extensões que ela não aceita — e o `SubmissionImageHooksTest` ficou vermelho. O novo `UserUploadPolicy::acceptedExtensions()` formata a interseção já restrita; o hook exibe essa lista e o gate `validate-aculta-image` segue verde, porque a leitura fica no dono da política.
+- Superfície confirmada: o único upload de usuário do LMS é o campo File Upload da resposta (`form_lms_answer_form_alter`). `aculta_lms`, `aculta_lms_resources`, `aculta_lms_messenger` e `aculta_forum_lms` não têm campos de arquivo próprios; os uploads do editor H5P são administrativos e ficam fora da política de usuário.
+- Novo Kernel `SubmissionUploadPolicyKernelTest` (5 testes, 39 asserções, PASS): herança da aba LMS sobre o global sem mudança de política efetiva (9 extensões, 10 MB, texto de ajuda limitado à interseção); atividade que não amplia extensões (`exe`/`txt` removidos) nem eleva o teto de tamanho; aba LMS salva que restringe para `pdf docx` e 5 MB sem tocar na política global; formulário sem upload intacto; validadores nativos e validador de imagem preservados quando o serviço da política não existe.
+- Política efetiva inalterada: nenhuma configuração foi salva no Runtime de teste; a aba LMS continua herdando o global. O Kernel roda sem habilitar `aculta_portal`/`aculta_lms`, com os serviços reais do `aculta_image`, e sem depreciações.
+- README corrigido: o trecho que descrevia o validador como aplicável só a extensões raster e a delegação de arquivos não raster à validação nativa estava desatualizado desde a dev.80.
+
+## 0.1.0-dev.82 — smoke autenticado da navegação por curso — 2026-10-22
+
+Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): executar o smoke da navegação por curso com conta de Educador e de estudante."
+
+- Smoke HTTP no Runtime de teste com duas contas descartáveis: educador (papel global `lms_teacher` + matrícula no curso 1) e estudante (matrícula no curso 1 e na turma criada para o smoke). Sem senha no repositório; sessão obtida por login único do Drush.
+- A navegação por curso exige aceite vigente dos termos (`aculta_portal.access.protected_route:course`). Contas novas recebiam **403** em `/course/1/start`; após registrar o aceite pelo serviço `aculta_portal.aculta_user_agreement_policy`, o cenário seguiu. Isso é pré-requisito de conta, não defeito de rota.
+- Resultados por cenário (esperado → obtido):
+  - `GET https://cursos.aculta.toca.net.br/group/1` — educador e estudante: **200** → **200** ("Introdução ao Antiproibicionismo | Cursos").
+  - `GET https://cursos.aculta.toca.net.br/course/1/start` — ambos: **302** para a atividade → **302** para `/curso/.../questao-de-revisao`, que responde **200**.
+  - `GET https://conta.aculta.toca.net.br/minha-aprendizagem` — ambos: **200** com o curso, "Acessar curso" e link para `/course/1/start` → **200** ("Aprendizagem | Conta ACULTA").
+  - `GET /painel-administrativo/lms/curso/1/turma/{turma}/painel`, `.../participantes`, `.../atividade/1/prazo` e `.../certificados/emitir` — educador: **200** → **200** (painel com "Curso: Introdução ao Antiproibicionismo", 1 estudante, 14 atividades sem prazo e link da lista de participantes); estudante: **403** → **403** ("Acesso negado").
+- Defeito corrigido no caminho do painel: a célula de prazo era um render array de `Link` sem a chave `data`, e o preprocess de tabela o interpretava como atributos, causando 500 (`Unexpected type for $value (Drupal\Core\Url)`). A célula agora é `['data' => Link::...->toRenderable()]`.
+- Defeito corrigido no formulário de prazo: `ClassActivityDeadlineAccessCheck::access()` declarava `$routeCourse`, mas o parâmetro da rota é `{course}`; o formulário respondia 500 por não resolver o argumento. O parâmetro passou a se chamar `$course` e a variável interna do curso da turma, `$classCourse`.
+- Testes: Unit focal do módulo 5 testes / 18 asserções PASS (`LearningDashboardControllerTest`, `ClassActivityDeadlineManagerTest`, `ClassActivityDeadlineFormTest`); PHPCS nos arquivos alterados sem erro.
+- Cenário removido ao final (turma, relações de turma e de matrícula, situações de curso e de aula, linhas do ledger de aceite e as duas contas). Runtime de teste voltou à linha de base: 1 situação de curso no curso 1, 2 situações de aula, 2 respostas e 0 turmas.
+
+## 0.1.0-dev.81 — download de anexo negado a conta bloqueada — 2026-10-22
+
+- Verificação HTTP no Runtime de teste da rota `/resposta/{lms_answer}/baixar-arquivo`, com cenário descartável (tipo de atividade `t14_upload`, aula, curso, matrícula e resposta com arquivo privado).
+- Conta válida e dona da resposta: `GET` devolve **200**, `Content-Disposition: attachment; filename="t14-<nonce>.txt"` e o conteúdo de 39 bytes.
+- Conta autenticada sem matrícula: **403** (`UploadedAnswerAccessCheck` → `see_details` negado).
+- Conta bloqueada: **404**. O core apaga todas as sessões da conta ao bloquear (`User::postSave`), então a requisição passa a anônima, e o site responde 404 a anônimo nessa rota — mesmo resultado do controle anônimo. Mesmo uma sessão sobrevivente seria recusada pelo provider `Cookie`, que só aceita `users_field_data.status = 1`. O ramo de conta inativa do `UploadedAnswerAccessCheck` (403) continua coberto pelo Kernel `AttemptArchiveLifecycleTest` (dono bloqueado).
+- Cenário removido ao final (resposta, arquivo privado, matrícula, curso, aula, atividade, tipo e campo). O Runtime voltou à linha de base: 1 curso, 10 usuários, 2 respostas, 0 arquivos em `private://lms_file_upload`, tipos `no_answer` e `true_false`.
+
 ## 0.1.0-dev.80 — respostas com arquivo sob a política central de upload
 
 - `SubmissionImageHooks` recebe `aculta_portal.user_upload_policy` (serviço `aculta_lms.submission_image_hooks`) e aplica `restrictValidators(..., 'lms')` ao campo de envio das atividades File Upload. Educadores continuam escolhendo as extensões de cada atividade, mas só dentro da política LMS; limite de tamanho só diminui.

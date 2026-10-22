@@ -1,36 +1,30 @@
 # Configuração do navegador para testes
 
-Registro das configurações que funcionam para validação de navegador (Chromium headless) neste ambiente.
-Aplica-se ao Homelab, com o Claude Code como processo pai. Diagnóstico de 2026-10-12 em [VALIDACAO-NAVEGADOR-2026-10-12.md](../portal/historico/VALIDACAO-NAVEGADOR-2026-10-12.md).
+## Regra vigente
 
-## Regra principal
+Testes de navegador rodam no **Firefox ESR visível na sessão X11 local** (`DISPLAY=:0`), controlado pelo geckodriver (WebDriver W3C). Não use Chromium headless nem Firefox headless. Referências: Firefox ESR 153.4 e geckodriver 0.37.1, verificados em 2026-10-22.
 
-**Remova `DBUS_SESSION_BUS_ADDRESS` do ambiente do Chromium.** Com essa variável definida, o Chromium trava em qualquer requisição de rede (inclusive página local). Sem ela, todas as páginas de teste carregam.
+O Chromium headless travou abas e requisições de rede em várias rodadas, e remover `DBUS_SESSION_BUS_ADDRESS` não resolveu de forma confiável. Por isso ele foi descontinuado para testes.
 
-Use `env -u DBUS_SESSION_BUS_ADDRESS` antes do comando, ou a própria chamada em `scripts/check-browser-hosts.sh`, que já faz isso.
+## Comando
 
-## Comandos
+```
+scripts/check-browser-hosts.sh [URL ...]
+```
 
-| Uso | Comando |
-| --- | --- |
-| Verificação do DOM (título, status, bytes) | `scripts/check-browser-hosts.sh` |
-| Verificação de uma URL | `scripts/check-browser-hosts.sh https://exemplo/` |
-| Captura de tela | `env -u DBUS_SESSION_BUS_ADDRESS chromium --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,900 --virtual-time-budget=6000 --screenshot=/caminho/saida.png URL` |
-
-Flags usadas:
-- `--headless=new` (o modo `old` e o padrão também travaram antes da correção).
-- `--no-sandbox`: necessário no ambiente atual.
-- `--virtual-time-budget=6000`: espera 6 s de JavaScript e animações antes da captura (sem isso, o card do Links aparece transparente).
-
-## Parâmetros do script
+Sem argumentos, usa os hosts de teste (`*.aculta.toca.net.br`) e `example.com` como controle. A saída é uma tabela (URL, código, bytes, título) e um HTML por URL em `OUT_DIR`.
 
 | Variável | Padrão | Função |
 | --- | --- | --- |
-| `TIMEOUT` | 15 | Segundos por URL |
-| `CHROME` | `chromium` | Caminho do navegador |
-| `OUT_DIR` | `/tmp/aculta-browser-check-<data>` | Saída (HTML, stderr, `resumo.txt`) |
+| `DISPLAY` | `:0` | Sessão X11 local |
+| `TIMEOUT` | 15 | Segundos por página |
+| `FIREFOX` | `/usr/bin/firefox-esr` | Binário do Firefox |
+| `GECKODRIVER` | `geckodriver` | Driver WebDriver |
+| `OUT_DIR` | `/tmp/aculta-browser-check-<data>` | Saída (HTML e `resumo.txt`) |
 
-Código de saída: `0` com bytes maiores que zero indica página carregada. `124` indica tempo esgotado.
+Códigos de saída por URL: `0` página carregou; `124` tempo esgotado; `1` erro do WebDriver. O script sai com `2` se faltar a sessão X11, o geckodriver ou o Firefox.
+
+O script só verifica o carregamento. Capturas de tela e medições ficam nas suítes de `tests/browser/`.
 
 ## Hosts e larguras
 
@@ -41,8 +35,8 @@ Código de saída: `0` com bytes maiores que zero indica página carregada. `124
 
 - Não substitui medição de contraste, rolagem horizontal ou foco por teclado.
 - Turnstile aparece como "Verificando…" com o aviso "Somente para teste". É esperado no ambiente de teste.
-- Processos antigos de Chromium de sessões anteriores podem ficar ativos. Verificar com `pgrep -a chromium` antes de uma rodada.
+- Firefox de sessões anteriores pode continuar aberto. Verificar com `pgrep -a firefox-esr`. Fechar só os que não estão em uso, conforme `AGENTS.md`.
 
 ## Atualização
 
-Ao mudar o ambiente (versão do Chromium, sessão, variáveis), refazer o diagnóstico: testar `example.com` com e sem `DBUS_SESSION_BUS_ADDRESS` e atualizar esta página.
+Ao trocar a versão do Firefox ou do geckodriver, rodar o script contra `example.com` e atualizar as versões nesta página e em `AGENTS.md`.

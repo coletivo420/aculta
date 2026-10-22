@@ -25,37 +25,37 @@ final class ClassActivityDeadlineAccessCheck {
   /**
    * Grants access only to an educator who can grade the class's course.
    */
-  public function access(CourseInterface $routeCourse, GroupInterface $group, ActivityInterface $activity): AccessResult {
-    $course = $this->courseForClass($group);
-    if (!$routeCourse instanceof CourseInterface || $routeCourse->bundle() !== 'lms_course'
-      || !$course instanceof CourseInterface || (string) $routeCourse->id() !== (string) $course->id()
-      || !$this->activityBelongsToCourse($activity, $course)) {
+  public function access(CourseInterface $course, GroupInterface $group, ActivityInterface $activity): AccessResult {
+    $classCourse = $this->courseForClass($group);
+    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+      || !$classCourse instanceof CourseInterface || (string) $course->id() !== (string) $classCourse->id()
+      || !$this->activityBelongsToCourse($activity, $classCourse)) {
       $result = AccessResult::forbidden()
-        ->addCacheableDependency($routeCourse)
+        ->addCacheableDependency($course)
         ->addCacheableDependency($group)
         ->addCacheableDependency($activity)
         // A missing parent-course relationship can be added later. Invalidate
         // this negative access result when that Group relationship is saved.
         ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
-      if ($course instanceof CourseInterface) {
+      if ($classCourse instanceof CourseInterface) {
         // Course lesson references can also make the activity eligible later.
-        $result->addCacheableDependency($course);
+        $result->addCacheableDependency($classCourse);
       }
       return $result;
     }
     $account = $this->currentUser;
     return AccessResult::allowedIf(
-      $account->hasPermission('administer lms') || $course->hasPermission('grade students', $account),
+      $account->hasPermission('administer lms') || $classCourse->hasPermission('grade students', $account),
     )
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheTags([
-        'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
+        'group_relationship_list:plugin:lms_classes:group:' . $classCourse->id(),
         'group_relationship_list:plugin:group_membership:group:' . $group->id(),
       ])
       ->addCacheableDependency($group)
       ->addCacheableDependency($activity)
-      ->addCacheableDependency($course);
+      ->addCacheableDependency($classCourse);
   }
 
   /**

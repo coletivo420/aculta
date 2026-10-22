@@ -41,11 +41,11 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertArrayNotHasKey('field_aculta_discussion', $display['hidden']);
 
     $commentBody = $this->syncConfig('field.field.comment.aculta_discussion_post.comment_body');
-    self::assertSame(['usuario_aculta' => 'usuario_aculta'], $commentBody['settings']['allowed_formats']);
-    $textFormat = $this->syncConfig('filter.format.usuario_aculta');
-    self::assertSame('aculta_image', $textFormat['filters']['aculta_imagem_modelo']['provider']);
-    $editor = $this->syncConfig('editor.editor.usuario_aculta');
-    self::assertSame('inline-images', $editor['image_upload']['directory']);
+    self::assertSame(['forum' => 'forum'], $commentBody['settings']['allowed_formats']);
+    $textFormat = $this->syncConfig('filter.format.forum');
+    self::assertSame('media', $textFormat['filters']['media_embed']['provider']);
+    $editor = $this->syncConfig('editor.editor.forum');
+    self::assertSame('forum/anexos', $editor['image_upload']['directory']);
   }
 
   /**

@@ -1,3 +1,157 @@
+## `0.1.0-dev.240` — corrigir as falhas Unit do Fórum — 2026-10-22
+
+- Corrige as sete falhas registradas no dev.239, sem tocar o Runtime.
+- `config/sync/aculta_forum.settings.yml` recebe `edit_window_minutes: 10`,
+  alinhado ao `config/install` desde `164aeff2`.
+- `config/sync/views.view.aculta_forum_public_topics.yml` e
+  `config/sync/views.view.aculta_forum_unread_topics.yml` são republicados a
+  partir de `config/install`, restaurando `aculta_forum_reply_count`,
+  `aculta_forum_last_activity`, `aculta_forum_no_replies`,
+  `aculta_forum_unread_content` e `aculta_forum_unread_posts`. Sem `_core` e
+  com os mesmos UUIDs anteriores.
+- `ForumTopicDisplayConfigTest` passa a esperar a chave
+  `aculta_forum.admin_revisionable_posts` no menu, o formato e o editor
+  `forum` no corpo do comentário, os plugins customizados nas Views e o filtro
+  `aculta_forum_no_replies` na descoberta. Import não usado de
+  `UploadPolicy` removido.
+- Medição (banco local `aculta_simpletest`, Runtime intocado):
+  `tests/src/Unit` — 105 testes, 799 asserções, OK.
+
+## `0.1.0-dev.239` — precisar as causas das falhas Unit do Fórum — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Complementa o dev.238 com a causa de cada uma das 7 falhas de
+  `ForumTopicDisplayConfigTest`, todas anteriores a esta sequência de
+  documentação:
+  - Lista de chaves do menu administrativo: `ad33ab56` incluiu
+    `aculta_forum.admin_revisionable_posts` sem atualizar a expectativa.
+  - Janela de edição: `164aeff2` acrescentou `edit_window_minutes: 10` ao
+    `config/install` e ao formulário, mas a exportação `b6e49d5e`
+    ("sincroniza config/sync com o Runtime de teste") não levou a chave ao
+    `config/sync`; o teste compara instalação e sincronização.
+  - Formato do corpo do comentário: `c56a0cd6` mudou o campo para o formato
+    `forum`, e o teste ainda espera `usuario_aculta`.
+  - Views públicas (listagem, categorias, não lidas e descoberta): `b6e49d5e`
+    exportou as Views do Runtime, que não têm o plugin
+    `aculta_forum_reply_count`, o campo `forum_unread_posts` nem os campos
+    derivados de último comentário, e têm a display `block_landing` nas
+    categorias; a instalação do módulo mantém o contrato anterior.
+- Nenhuma dessas falhas vem dos commits de T19–T25, que só tocam
+  `CHANGELOG.md` e `docs/ROADMAP.md`. A correção pertence aos commits que
+  alteraram cada contrato acima.
+
+## `0.1.0-dev.238` — rodar Kernel e Unit do Fórum e registrar o resultado medido — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Kernel: `tests/src/Kernel` — 34 testes, 758 asserções, OK com 25 depreciações
+  conhecidas (storage de `comment.comment_body` sem schema instalado no Kernel;
+  já presentes antes desta sequência).
+- Unit: `tests/src/Unit` — 105 testes, 656 asserções, 7 falhas em
+  `ForumTopicDisplayConfigTest`, todas por expectativas desatualizadas em
+  relação a commits de funcionalidade anteriores a esta sequência:
+  `ad33ab56` inclui `aculta_forum.admin_revisionable_posts` no menu sem
+  atualizar a lista esperada; outras divergem da configuração vigente de janela
+  de edição, consumidor de upload (`forum`) e filtros da View pública.
+- Os commits de T19–T25 tocaram somente `CHANGELOG.md` e `docs/ROADMAP.md`;
+  logo as falhas não são regressão desta sequência. Ficam registradas como
+  pendência de teste, para correção junto do commit que alterou cada contrato,
+  e não foram "consertadas" aqui para não reescrever trabalho paralelo.
+
+## `0.1.0-dev.237` — registrar o bloqueio de T22–T24 por dependência de T21 — 2026-10-22
+
+- Documento apenas. T22 (isolamento de contexto), T23 (smoke de comentários com
+  moderação inicial) e T24 (citação em contexto) dependem de T21; sem campo e
+  provider da Wiki não existe o lado Wiki do isolamento nem cenário HTTP a
+  registrar. T24 já é condicionada pela especificação a T19–T23 verdes.
+- Nenhum Kernel, Unit ou Runtime executado nesta etapa.
+
+## `0.1.0-dev.236` — registrar o bloqueio dos comentários da Wiki — 2026-10-22
+
+- Documento apenas. T21 está bloqueada: `wiki_entry` não tem instância de
+  `field_aculta_discussion`; as instâncias existentes são `revista`,
+  `aculta_forum_topic` e `aculta_lms_topic`.
+- O `CONTEXTS.md` descreve o contexto `wiki` como contrato futuro que
+  "aguarda a reimplementação da Wiki" e usa `author_wiki`, papel ausente de
+  `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a
+  instância e o provider equivale a reimplementar a Wiki.
+- T22, T23 e T24 dependem de T21 e ficam bloqueadas na sequência. Sem alteração
+  de código, configuração ou Runtime.
+
+## `0.1.0-dev.235` — registrar o bloqueio do upload contextual da Wiki — 2026-10-22
+
+- Documento apenas. T20 está bloqueada: `wiki_entry` não tem campo de envio do
+  usuário, e `field_wiki_image` é `entity_reference_autocomplete` para Media
+  `image` existente (`auto_create: false`).
+- O papel `email_confirmed` não tem `create media` nem `edit own media`, então
+  não há envio cuja Media se possa publicar com a página visível sem criar
+  permissão e fluxo novos.
+- A aba por consumidor é administrativa (`UserUploadSettingsForm::CONSUMERS`);
+  registrar `wiki` antes do consumidor criaria política sem envio que a use.
+- Decisão humana pendente sobre campo de upload e permissão de Media do
+  verbete. Sem alteração de código, configuração ou Runtime.
+
+## `0.1.0-dev.234` — localizar a Wiki e registrar pendências de upload e comentários — 2026-10-22
+
+- Documento apenas. A Wiki não tem módulo nem pasta `wiki`: é conteúdo e
+  configuração do `aculta_portal` — Node `wiki_entry` ("Verbete", revisável,
+  workflow `wiki_editorial`), rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa`
+  no `WikiController`, campos `field_wiki_*`, Media `field_wiki_image` e purpose
+  Domain `wiki420`.
+- Regras ativas: `web/modules/custom/aculta_portal/AGENTS.md` e a seção
+  "Wiki (regra permanente)" de `docs/operations/AGENT-CONTENT.md`, indexada em
+  `AGENT-POLICY-INDEX.md`. Não existe `AGENTS.md` específico de Wiki, e
+  `AGENT-CONTENT.md` confirma que a implementação é de conteúdo, não de módulo.
+- Pendência de upload (T20): `wiki_entry` não tem campo de envio do usuário;
+  `field_wiki_image` é referência a Media editorial. Não há superfície para a
+  política central `aculta_portal.user_upload_policy` sem criar o campo ou
+  decidir que o Media editorial fica fora da política.
+- Pendência de comentários (T21–T24): `wiki_entry` não tem campo Comment nem
+  `field_aculta_discussion`, e `PublicationContextProvider::HOST_BUNDLES` cobre
+  só `revista`. A moderação de primeiro comentário do `aculta_user` é genérica ao
+  campo, mas a Wiki precisa de instância do campo e de provider/decisão de
+  contexto. O `CONTEXTS.md` já descreve a Wiki como contexto contemplado; a
+  divergência fica registrada para decisão humana, não corrigida aqui.
+- Nada implementado; sem alteração de código, configuração ou Runtime.
+
+## `0.1.0-dev.233` — registrar escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
+
+- Documento apenas. A seção dev.13 do ROADMAP passa a listar o que falta para
+  a busca privada (índice/View por Group, filtro de moderação, reindexação,
+  cache por conta) e para as notificações (evento do Comment LMS, assinatura,
+  idempotência, revalidação de acesso no envio) e fixa o menor recorte aceitável.
+- Busca mínima: a partir do curso/turma, com Group explícito, somente tópicos
+  LMS válidos e Comments publicados, revalidando Entity Access por conta e
+  falhando fechado; sem busca global nem entre cursos.
+- Notificações mínimas: reutilizar Flag/`message_subscribe` e o worker de
+  `aculta_messenger`, avisar só a primeira resposta publicada a quem segue e
+  ainda pode ler, nunca fila de moderação, com revalidação no envio e
+  idempotência por (Comment, destinatário).
+- Nada implementado; sem alteração de código, configuração ou Runtime.
+
+## `0.1.0-dev.232` — preencher a citação antes do processamento do text_format — 2026-10-22
+
+- `ForumQuoteHooks::commentFormAlter()` roda dentro de
+  `FormBuilder::prepareForm()`, antes de `doBuildForm()`, quando o elemento
+  `text_format` ainda guarda `#default_value` na própria raiz e só depois copia
+  as propriedades para os filhos `value`/`format`. Como uma resposta nova tem
+  corpo vazio, esse `#default_value` é `NULL`; `isset()` dava falso e o hook
+  retornava sem preencher. A checagem passou a usar `array_key_exists()`,
+  preservando o suporte ao formato já processado (`widget[0]['value']`).
+- Runtime LMS (`https://aculta.toca.net.br`, Tópico 532 na Turma 59 do Curso
+  58): o Comment publicado 122 recebe um único link `Citar` com `quote=122`; o
+  Comment pendente 123 não recebe link e a citação responde 403. O GET de
+  citação retorna 200 com o textarea preenchido:
+  `<blockquote><p>Conteúdo publicado da fixture T12.</p><cite>t12.aluno.20261022</cite></blockquote><p></p>`.
+  O POST grava a resposta (303 para `#comment-124`, `pid` 122, `status: 0`
+  pela moderação da Turma).
+- Forasteiro autenticado: tópico 403, citação 403 e POST 403, sem o texto
+  publicado na resposta. Educador membro do Curso, mas não da Turma, também
+  recebe 403 no tópico e na citação.
+- Unit `ForumQuoteHooksTest` cobre as duas formas do elemento, incluindo
+  `#default_value: NULL`: 7 testes, 25 asserções; PHPCS PASS. Fixture (dois
+  conjuntos de usuários, grupos, tópico e Comments) removida; o Runtime voltou
+  a 0 tópicos LMS e 0 Comments de discussão.
+
 ## `0.1.0-dev.231` — revalidar acesso de anexos pelo host atual
 
 - Media `forum_attachment` só pode ser visualizada no purpose `forum`. Em cada

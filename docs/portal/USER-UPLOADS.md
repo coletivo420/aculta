@@ -85,7 +85,10 @@ O LMS é o segundo consumidor (0.4.0-dev.252). Suas respostas do tipo File Uploa
 têm uma aba própria, `lms`, no mesmo formulário central, com herança da política
 global ou override. Como a atividade é configurada pelo educador, a política LMS
 funciona como teto: `UserUploadPolicy::restrictValidators()` remove extensões
-fora da allowlist do consumidor e só reduz o limite de tamanho. O validador
+fora da allowlist do consumidor e só reduz o limite de tamanho. Para o texto de
+ajuda do campo, `UserUploadPolicy::acceptedExtensions()` devolve a interseção
+efetiva — as extensões da atividade dentro do teto — e não o teto inteiro. O
+validador
 `AcultaLmsSubmissionImage` do `aculta_image` continua aplicado às imagens. O LMS
 mantém as regras de acesso da turma, da atividade e da participação.
 

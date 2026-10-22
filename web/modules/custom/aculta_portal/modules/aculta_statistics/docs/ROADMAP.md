@@ -95,7 +95,7 @@ Cada submódulo produtor emite um evento; o `aculta_statistics` assina. Produtor
 - **Fórum (feito, 0.1.0-dev.127 e dev.159 do aculta_forum):** `aculta_forum.topic_created`, `aculta_forum.comment_created` e `aculta_forum.post_created`
   → `forum.topics.created`, `forum.comments.created` e `forum.posts.created`. Importações sincronizadas não contam como posts novos. Pendente: validação no Runtime.
 - **Mailer (pendente):** `aculta_mailer.status_changed` → métrica de estado (`email.messages.status`), estado atual por dia de solicitação (decidido em 2026-10-21). Ver `aculta_mailer/docs/ROADMAP.md`.
-- **LMS (pendente):** instantâneo por turma (`lms.students.by_status`), série diária (decidido em 2026-10-21). Ver `aculta_lms/docs/ROADMAP.md`.
+- **LMS (feito e validado no Runtime em 2026-10-22):** instantâneo por turma (`lms.students.by_status`), série diária (decidido em 2026-10-21). O `aculta_lms` produz em `ClassStatusSnapshotCronHooks` e o `LmsClassStatusSubscriber` grava por dimensão `curso/turma|situação`. Ver `aculta_lms/docs/ROADMAP.md`.
 
 ## Encerramento do módulo (decisão do responsável, 2026-10-21)
 
@@ -119,8 +119,8 @@ Demais itens (validação visual das áreas, auditoria de segurança e privacida
    dia de solicitação). Backfill de 90 dias disponível por `drush aculta-statistics:backfill-email`.
    Decidido (2026-10-21): o painel de envios do aculta_mailer **continua ao vivo** (operacional, falhas recentes
    em tempo real). A central alimenta as séries. Resumo semanal segue no roadmap de 0.8.0.
-4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora. Bloqueio: produtor de
-   `lms.students.by_status` (instantâneo) ainda inexistente.
+4. **LMS (0.4.0):** contagens da turma em `lms.*`; painel individual fica fora. Produtor de
+   `lms.students.by_status` (instantâneo) implementado no `aculta_lms` e validado no Runtime em 2026-10-22.
 5. **Gate:** `aculta_statistics` é o único gravador de agregados estatísticos (validação a criar).
 
 Sem remover tabela, dado ou painel antes do passo de migração e da autorização do responsável.

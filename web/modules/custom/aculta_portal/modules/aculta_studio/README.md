@@ -1,16 +1,16 @@
-# ACULTA Studio (`aculta_studio`)
+# GanjaLab (`aculta_studio`)
 
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.
 
-- Rota: `/studio` no domínio de conta (`conta.aculta.*/studio`), com `_aculta_domain_purpose: account` e permissão
+- Rota canônica: `/ganjalab` no domínio de conta (`conta.aculta.*/ganjalab`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.
 - Áreas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada área declara se o dono está disponível (`isAvailable()`),
   a permissão de exibição (`access()`) e as seções (`sections()`): cada seção do submenu tem as próprias abas, e cada
   aba lista as ações, cada uma com o acesso da rota do dono.
 - Presenter: `StudioPresenter::visibleTabs()` mostra só abas com dono ativo e permissão concedida, em ordem de peso.
 - Aba atual: argumento `aba` (id do plugin). Sem argumento ou com id desconhecido, a primeira aba visível.
-- Quatro URLs: `/studio`, `/studio/{área}`, `/studio/{área}/{seção}` e `/studio/{área}/{seção}/{aba}`. Segmento
+- Quatro URLs canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}/{seção}` e `/ganjalab/{área}/{seção}/{aba}`. Segmento
   inexistente ou fora do alcance da conta responde 404. Cada nível é um link real; sem JavaScript, a navegação segue normal.
 - Galerias não aparece para a conta de teste: a rota de criação de galeria do dono fica no painel administrativo do
   domínio principal. A conta recebe a permissão de mídia pelo papel, mas o acesso à rota continua negado.
@@ -50,3 +50,21 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 - Sem linhas, a aba mostra "Nenhum item nesta aba".
 - Ainda sem listagem: editor de publicação, fila de moderação do Fórum, revisões da Wiki, seleção de turma nos Cursos
   e navegação visual de Galerias. Cada uma entra quando o dono fornecer a visão correspondente.
+
+## Contrato visual 0.2.0-dev.1 (planejamento, ainda não implementado)
+
+- [Conceito visual responsivo — espaço pessoal primeiro](../../../../../../docs/portal/STUDIO-VISUAL-CONCEPT.md): em cada área, “Meus [itens]” é a vista padrão; conteúdo de outros autores aparece apenas em contexto identificado de equipe/moderação e conforme acesso real do provider.
+- [Telas de criação, edição, prévia e revisão](../../../../../../docs/portal/STUDIO-EDITOR-FLOWS.md): shell de editor desktop/mobile, formulários e workflows nativos, estados de erro e critérios de aceitação.
+- Estes contratos **não representam recursos implementados**. O ACULTA420 detém o visual, este módulo coordena interface e permissões dos providers; não criar armazenamento de conteúdo paralelo.
+
+## Planejamento visual específico — LMS Course Builder
+
+O [contrato CB-UX 0.3.0–0.3.8](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md) especifica a construção pedagógica **mobile-first**, com visão inicial “Meus cursos”, árvore/itens no desktop, navegação em uma tela por tarefa no telefone, edição contextual via Form API/CKEditor 5 e reordenação acessível. **É plano, não funcionalidade entregue.** Drupal LMS/Group conservam entidades, relações, notas e permissões; Studio coordena experiência e ACULTA420 implementa o visual.
+
+## Identidade pública
+
+GanjaLab é a interface de criação. Consulte [identidade pública](../../../../../../docs/portal/GANJALAB-BRANDING.md) e [GanjaLab420: experiência de aprendizagem](../../../../../../docs/portal/GANJALAB420-LEARNING-UX.md). Nomes internos e rotas permanecem inalterados.
+
+## URLs GanjaLab
+
+Rotas públicas canônicas: `/ganjalab`, `/ganjalab/{área}`, `/ganjalab/{área}/{seção}`, `/ganjalab/{área}/{seção}/{aba}` (route names técnicos inalterados). As antigas `/studio` continuam como aliases temporários, sem redirecionamento HTTP automático. O GanjaLab420 usa `/ganjalab420` para dashboard do estudante. Rebuild de rotas e testes no Runtime pendentes. Ver [contrato de marca](../../../../../../docs/portal/GANJALAB-BRANDING.md).

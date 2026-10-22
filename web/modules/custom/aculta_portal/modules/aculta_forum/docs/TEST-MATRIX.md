@@ -1,3 +1,252 @@
+## aculta_forum_lms 0.1.0-dev.40 — citação de Comment LMS
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`). Fixture temporária: Curso 58, Turma 59,
+  estudante membro de ambos, Educador (`lms_teacher`) membro só do Curso,
+  tópico 532 em `Open`, Comment publicado 122 e pendente 123.
+- Cobre `DISCOURSE-EXPERIENCE.md` linha 147: a ação de citação só existe para
+  Comment publicado, legível e respondível no contexto da Turma.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante — tópico 532 | 200; só o Comment 122 tem `Citar` (`quote=122`); pendente 123 sem link | — |
+| Estudante — citação do 122 | 200; textarea com bloco citado e autoria | 303 para `#comment-124`, `pid` 122, `status: 0` (moderação da Turma) |
+| Estudante — citação do 123 (pendente) | 403 | — |
+| Forasteiro autenticado — tópico, citação e POST | 403 | 403 |
+| Educador do Curso fora da Turma — tópico e citação | 403 | — |
+
+- O texto publicado não aparece em nenhuma resposta 403 do forasteiro. Estado
+  final: 0 tópicos LMS e 0 Comments de discussão no Runtime.
+- Causa do prefill vazio corrigida em `aculta_forum` dev.232: no alter o
+  `text_format` ainda não foi processado e `#default_value` é `NULL` para
+  resposta nova, então `isset()` retornava falso.
+
+## aculta_forum_lms 0.1.0-dev.39 — aprovar/rejeitar LMS pela entity_operations
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP com os links de
+  `hook_entity_operation`. Fixture temporária com Curso, Turma, estudante
+  membro, Educador com `lms_teacher` e membership no curso, tópico em `Open` e
+  Comment pendente (`cid` 121, `status: 0`).
+- Cobre a confirmação POST, a revalidação de status e a negação de acesso das
+  dev.109–111.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Educador — confirmação de aprovação, antes de aprovar | 200 | 200 sem `confirm` (erro de obrigatório, estado inalterado); 303 com `confirm=1` |
+| Educador — confirmação de aprovação, depois de aprovado | 403 | — |
+| Educador — confirmação de rejeição, depois de aprovado | 200 | 303 com `confirm=1` |
+| Educador — confirmação de rejeição, depois de rejeitado | 403 | — |
+| Estudante — confirmações e fila pendente | 403 | — |
+| Anônimo — confirmações e fila pendente | 403 | — |
+
+- Estado observado: aprovação grava `status: 1` e `field_aculta_rejected: 0`
+  e move o Comment da fila pendente para a de publicados; o estudante passa a
+  ver o texto. Rejeição grava `status: 0` e `field_aculta_rejected: 1` e move
+  o Comment para a fila de rejeitados; o estudante deixa de ver o texto. As
+  duas transições redirecionam com 303 para a fila pendente.
+- POST sem o checkbox `confirm` retorna 200 com "O campo Confirmo aprovar
+  este comentário. é obrigatório." e não altera o Comment.
+- Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os dois usuários; sessões apagadas. Pós-condição: 1 curso
+  preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t10.*`. Recibos
+  privados em `/home/aculta/private/aculta/forum-lms-t10-20261022/`.
+- RUNTIME STATUS: PASS para aprovação, rejeição, confirmação obrigatória e
+  negação de acesso.
+
+## aculta_forum_lms 0.1.0-dev.38 — formulário de Comment LMS do estudante
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP. Fixture temporária com
+  Curso e Turma, estudante membro das duas, outsider sem membership, e um
+  tópico `aculta_lms_topic` com `field_aculta_discussion` em `Open`.
+- Fecha o DEFERRED de Runtime da dev.98.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Estudante membro — formulário de resposta | 200 | 303 → `/node/530#comment-120` |
+| Outsider — formulário de resposta | 403 | 403, nenhum Comment |
+| Anônimo — formulário de resposta | 403 | — |
+
+- O Comment do estudante é persistido no tópico e nasce despublicado
+  (`status: 0`), entrando na fila de moderação LMS. Causa: o Core
+  `CommentForm` despublica gravações de contas sem `skip comment approval`, e
+  o papel `email_confirmed` tem `post comments` e `skip CAPTCHA`, mas não
+  aquela permissão. O formulário não traz CAPTCHA.
+- O estudante não vê o texto da tentativa do outsider. Cleanup via Entity API
+  removeu Comment, Node, relationships, memberships, Groups e os dois
+  usuários; sessões apagadas. Pós-condição: 1 curso preexistente, 0 tópicos
+  LMS, 0 Comments e 0 usuários `t9.*`. Recibo privado em
+  `/home/aculta/private/aculta/forum-lms-t9-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para envio do estudante membro e negação do outsider.
+
+## aculta_forum_lms 0.1.0-dev.37 — fila LMS nega Educador de outro curso
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), somente GET: fixture temporária com
+  Curso A, Turma A dentro dele, Curso B, um estudante membro da turma, um
+  Educador do Curso A e um Educador do Curso B, mais um tópico da turma com um
+  Comment pendente real.
+- Educador do Curso A: overview 200 e lista a Turma A; fila pendente 200 com o
+  Comment e os dois links de moderação; filas publicada/rejeitada 200 sem o
+  Comment pendente; confirmações de aprovar/rejeitar 200 por GET; tópico
+  privado 200.
+- Educador do Curso B: overview 200 sem a Turma A; fila pendente, publicada,
+  rejeitada, ambas as confirmações e o tópico privado retornam 403. A negação
+  vem de `educatorAccess()` (`grade students` no curso pai), não do papel
+  global `lms_teacher`.
+- Anônimo: overview, fila pendente e confirmação retornam 403. Estudante da
+  turma: fila pendente e confirmação retornam 403.
+- Nenhum POST foi submetido; as confirmações foram apenas abertas por GET.
+  Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os três usuários; sessões desses uids apagadas. Pós-condição: 1
+  curso preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t8.*`. Recibo
+  privado em
+  `/home/aculta/private/aculta/forum-lms-t8-20261022/smoke-result.json`.
+- RUNTIME STATUS: PASS para leitura da fila, visibilidade das ações e negação
+  do Educador de outro curso; transições seguem cobertas por Kernel/dev.114.
+
+## aculta_forum_lms 0.1.0-dev.36 — propagação da moderação LMS
+
+- `LmsModerationPropagationKernelTest` usa a `ParticipationRules` e o
+  `ParticipationHooks` reais (schema de `aculta_user_test`) sobre um tópico
+  público, um blog e um tópico LMS com o mesmo `field_aculta_discussion`.
+- Comment LMS é publicado mesmo com a moderação inicial ativa. Com um Comment
+  não LMS pendente, a criação de `aculta_forum_topic` fica forbidden; o
+  Comment LMS publicado conta como participação aprovada, limpa
+  `firstDiscussionCommentPending` e libera o bloqueio (neutral). O próximo
+  Comment não LMS já nasce publicado.
+- Comment LMS pendente não libera o bloqueio: não conta como participação
+  publicada, o resultado continua forbidden e a consulta de pendências não LMS
+  ignora esse registro. As decisões levam as tags `comment_list` e
+  `config:aculta_user.settings` e os contextos `user`/`user.roles`.
+
+| Cenário | Resultado |
+| --- | --- |
+| Comment não LMS pendente | Criação de tópico forbidden pelo bloqueio temporário |
+| Publicar Comment LMS | Publicado sem moderação; participação aprovada; criação neutral |
+| Próximo Comment não LMS | Publicado, sem nova moderação |
+| Comment LMS pendente | Não conta como aprovação; bloqueio permanece forbidden |
+| Query de pendências não LMS | Ignora o Comment LMS pendente |
+
+- Teste: 2 testes / 46 asserções PASS, sem depreciações. PHPCS limpo. Nenhuma
+  configuração foi alterada e o Runtime não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.35 — campo de discussão fechado
+
+- `LmsClosedDiscussionFieldKernelTest` usa um tópico de turma com estudante
+  membro e resolve o `LmsDiscussionContextProvider` real antes e depois de
+  cada gravação do status Comment no Node, relendo o tópico do storage para
+  observar o estado persistido.
+- A escrita é liberada quando `field_aculta_discussion` está `Open`, negada
+  quando o campo é `Closed` e liberada de novo ao reabrir. A leitura continua
+  permitida com o campo fechado; outsider lê e escreve negado em todos os
+  estados.
+- `field_aculta_rejected` é o marcador de Comment da moderação, não o portão
+  de escrita: o teste publica um Comment rejeitado e a escrita do estudante
+  permanece permitida.
+
+| Cenário | Resultado |
+| --- | --- |
+| Campo aberto | Leitura e escrita do estudante permitidas; moderação forbidden |
+| Fechar o campo | Status `Closed` persistido; escrita forbidden; leitura permitida |
+| Reabrir o campo | Status `Open` persistido; escrita permitida de novo |
+| Cache da negação | Tag `node:<id>` e contexto `user.permissions` presentes |
+| Outsider | Leitura e escrita forbidden em todos os estados |
+| Comment com `field_aculta_rejected` | Não fecha o tópico; escrita segue permitida |
+| Fechar com Comment rejeitado | Escrita forbidden pelo status do campo |
+
+- Teste: 2 testes / 76 asserções PASS; 40 depreciações de Core/contrib
+  (preexistentes). PHPCS limpo. Nenhuma configuração foi alterada e o Runtime
+  não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.34 — ciclo de vida do módulo
+
+- `LmsModuleLifecycleKernelTest` ativa, desativa e reativa `aculta_forum_lms`
+  pelo `ModuleInstaller` real, sobre os mesmos pré-requisitos da dev.33. A
+  linha de base dos nomes de configuração é capturada antes de qualquer config
+  do adaptador, então a ativação deve acrescentar exatamente os YAML de
+  `config/install` e a desativação deve voltar a ela.
+- O config opcional de H5P (só o `field.field.node.aculta_lms_topic.field_h5p_content`)
+  é escrito do export durante a instalação e apagado em `finally`: simula o
+  `aculta_lms_h5p` ativo sem virar configuração do adaptador nem entrar na
+  linha de base.
+- A desativação remove antes as duas relações Group do adaptador e limpa os
+  caches de bundle e campos, por causa do defeito do Group 3.3.5 registrado em
+  `ROADMAP.md`; o restante da configuração continua saindo pelo
+  `ModuleInstaller`, preservando o sentido das asserções de resíduo.
+
+| Cenário | Resultado |
+| --- | --- |
+| Ativação | Lista = linha de base + exatamente os YAML de `config/install`; `uuid` preservado; bundle, campo, View e serviço presentes |
+| `aculta_forum_lms.settings` | Igual ao export após remover só o `_core` gravado pelo `ConfigInstaller` |
+| Desativação | Lista volta à linha de base; configs do adaptador vazios; bundle, campo e relações ausentes; serviço fora do container; `core.extension` sem o módulo |
+| Configuração de outro módulo | `lms_classes.settings` inalterado pela desativação |
+| Reativação | Snapshot do adaptador idêntico ao da primeira ativação, sem nomes duplicados |
+
+- Teste: 3 testes / 375 asserções PASS; 37 depreciações de Core/contrib
+  (ViewsConfigUpdater sobre YAML de módulos contrib, preexistentes). PHPCS
+  limpo. Nenhuma configuração foi exportada ou alterada e o Runtime não recebeu
+  fixture.
+
+## aculta_forum_lms 0.1.0-dev.33 — papéis e Config Sync
+
+- `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
+  exportados pelo caminho real de Config Sync,
+  `GroupRoleStorage::importCreate()`, com as dependências de módulo
+  (`aculta_document_viewer_group`, `aculta_forum_lms`) satisfeitas e stubs de
+  serviço fornecidos pela fixture. O recálculo de dependências e a ordenação
+  de permissões do `preSave()` não se aplicam ao modo de sincronização, então
+  o teste compara o YAML exportado com o storage linha a linha.
+- Papéis verificados: `group.role.lms_course-teacher`,
+  `group.role.lms_course-member`, `group.role.lms_course-course_creator` e
+  `group.role.lms_class-member`. Todos guardam `global_role` e relação Group
+  declarados e nenhum recebe `administer comments`; `grade students` fica só
+  com Educador e criador do curso.
+- `lms_classes.settings` confere exatamente com `config/sync` e com o padrão de
+  instalação do contrib nas chaves que o export não controla. Com Groups
+  reais, o mapeamento `view group_node:aculta_lms_topic entity` →
+  `grade students` dá ao Educador a permissão de tópico na turma; estudante da
+  turma recebe pelo papel de turma; estudante só do curso e terceiro não
+  recebem.
+
+| Cenário | Resultado |
+| --- | --- |
+| Importar os quatro papéis por `importCreate()` | UUID, status, permissões e dependências iguais ao export |
+| Educador do curso na turma | `grade students` no curso e permissão de tópico na turma |
+| Estudante membro do curso e da turma | sem `grade students`; permissão de tópico pelo papel de turma |
+| Estudante só do curso / terceiro | sem `grade students` e sem permissão de tópico na turma |
+| `lms_classes.settings` | idêntico ao export; sem permissão além do mapeamento |
+
+- Teste: 5 testes / 258 asserções PASS; 40 depreciações de Core/contrib (38
+  preexistentes mais duas fontes dos módulos extras habilitados). Nenhuma
+  configuração foi exportada ou alterada e o Runtime não recebeu fixture.
+
+## aculta_forum_lms 0.1.0-dev.32 — matriz de publicação e rejeição
+
+- `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso com as
+  duas decisões de moderação e prova que apenas o Educador contextual altera
+  o estado do Comment.
+- Educador: membro do curso com o papel atribuído pelo mapeamento global
+  `lms_teacher`, herda `grade students` e enxerga a permissão de tópico na
+  turma. Estudante: membro do curso e da turma, sem moderação. Terceiro:
+  autenticado e também com o papel global `lms_teacher`, mas sem membership;
+  o papel global sozinho não concede nada.
+- A matriz é exercitada por `LmsForumModerationManager::commentModerationAccess()`,
+  pela operação devolvida por `LmsCommentModerationOperationsHooks::entityOperation()`
+  e por `applyModerationDecision()`, sempre reconferindo o estado persistido com
+  `loadUnchanged()`.
+
+| Ator | Aprovar pendente | Rejeitar publicado | Operações | Estado após a chamada negada |
+| --- | --- | --- | --- | --- |
+| Educador do curso | Permitido; Comment publicado, `field_aculta_rejected` = 0 | Permitido; Comment despublicado, `field_aculta_rejected` = 1 | Approve + reject (peso 20/21) | — |
+| Estudante do curso/turma | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+| Terceiro com `lms_teacher` global | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+
+- Teste: 1 teste / 61 asserções PASS; 40 depreciações de Core/contrib, as já
+  registradas. Nenhuma entidade de configuração foi exportada ou alterada e o
+  Runtime de teste não recebeu fixture nesta etapa.
+
 ## dev.231 — acesso à Media e download privado por purpose
 
 - Revisão do Core 11.4.10 confirmou que `view media` permite Media publicada e
@@ -1585,7 +1834,7 @@ continuam pendentes.
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |
 | Moderação por contexto/estado | Fórum mostra abas Publicados, Rejeitados e Aguardando moderação; Revista tem sua própria listagem; Wiki/LMS aguardam adapters; filas não se misturam | Unit Forum: `ForumTopicDisplayConfigTest` + `DiscussionModerationHooksTest`, 37 testes/218 assertions PASS. Runtime `toca`: Views retornaram cada estado do Fórum e a fila Magazine trouxe somente os seus comentários; API de tarefas locais confirmou as três abas sob Fórum. Render API público mostrou somente publicados no tópico e na publicação. Os seis registros `[QA 20261019]` foram removidos; contagem final 0 nos dois destinos. Browser autenticado DEFERRED. RUNTIME STATUS: PARTIAL. |
-| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
+| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; papéis e mapeamento de turma; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel: isolamento (6 testes/205 asserções), matriz de publicação/rejeição (1 teste/61 asserções) e papéis/Config Sync (5 testes/258 asserções), todos PASS; Functional, Route/View/Search/Cache e teste de navegador pendentes. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
 | Contagem de respostas em tópicos | zero e plural; bundle fixo `aculta_forum_topic` com seu campo único de discussão; estados de moderação conforme agregação Core; cache/invalidação | Kernel `ForumTopicMoverKernelTest`: 3 testes/69 assertions PASS em `aculta_simpletest`; aprovação incrementa `comment_count`, despublicação e exclusão o decrementam, pendentes não entram e mover categoria preserva total. `PublicTopicCommentCountViewKernelTest`: 1/11 PASS; Views Core ordena três tópicos por respostas publicadas e mantém primeiro o tópico sem resposta quando outro tópico tem apenas pendente. Cinco depreciações do Domain contrib no Kernel do mover. Runtime `toca`: View pública executada com tópico de QA, Core e campo da View retornaram 2 para respostas publicadas; 1 resposta pendente ficou fora. Firefox/X11 raiz do Fórum 1024 px mostrou “2 respostas” e atividade. Fixture com 3 Comments foi excluída; Runtime voltou a 0 tópicos/Comments. Comparação de ordenação com múltiplos tópicos e invalidação visual após moderação permanecem pendentes. RUNTIME STATUS: PARTIAL. |

@@ -132,6 +132,18 @@ final class UserUploadPolicy {
   }
 
   /**
+   * Returns the extensions a restricted validator set accepts, for display.
+   *
+   * Unlike allowedExtensions(), this reflects the intersection between the
+   * consumer allowlist and what the calling activity asked for, so help text
+   * never advertises an extension the upload would reject.
+   */
+  public function acceptedExtensions(array $validators): string {
+    $extensions = (string) ($validators['FileExtension']['extensions'] ?? '');
+    return implode(' ', preg_split('/[\s,]+/', strtolower(trim($extensions)), -1, PREG_SPLIT_NO_EMPTY) ?: []);
+  }
+
+  /**
    * Resolves consumer overrides, falling back to the site-wide policy. */
   private function settings(?string $consumer): array {
     $config = $this->configFactory->get('aculta_portal.user_upload');

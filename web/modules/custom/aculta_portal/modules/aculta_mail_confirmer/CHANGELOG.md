@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mail Confirmer
 
+## Não lançado — metadados do módulo de teste — 2026-10-22
+
+- `tests/modules/aculta_mail_confirmer_test/aculta_mail_confirmer_test.info.yml` ganhou
+  `core_version_requirement`. Sem a chave, o Drupal 11 aborta a descoberta de extensões ao instalar a
+  configuração de `user`, e qualquer teste Kernel do Portal falha antes de executar as asserções.
+
 ## 0.1.0-dev.2 — serviços por injeção, sem `\Drupal::` em src/ — 2026-10-20
 
 - Estado, envio, hash e transições (`getStatus`, `isExpired`, `isPending`, `getHash`, `sendRequest`,

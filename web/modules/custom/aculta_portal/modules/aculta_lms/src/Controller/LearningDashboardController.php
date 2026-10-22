@@ -152,14 +152,16 @@ final class LearningDashboardController {
                 : $this->dateFormatter->format($timestamp, 'long', NULL, $this->educatorTimezone()),
             ],
           ],
-          Link::fromTextAndUrl(
-            $timestamp === NULL ? $this->t('Definir prazo') : $this->t('Alterar prazo'),
-            Url::fromRoute('aculta_lms.class_activity_deadline', [
-              'course' => $course->id(),
-              'group' => $group->id(),
-              'activity' => $activity->id(),
-            ]),
-          )->toRenderable(),
+          [
+            'data' => Link::fromTextAndUrl(
+              $timestamp === NULL ? $this->t('Definir prazo') : $this->t('Alterar prazo'),
+              Url::fromRoute('aculta_lms.class_activity_deadline', [
+                'course' => $course->id(),
+                'group' => $group->id(),
+                'activity' => $activity->id(),
+              ]),
+            )->toRenderable(),
+          ],
         ];
       }
     }

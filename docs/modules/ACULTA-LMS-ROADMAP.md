@@ -540,6 +540,43 @@ genérico do snapshot nega `view` e `create` mesmo ao administrador, enquanto a
 rota pública por código opaco permanece disponível. Kernel: 3 testes / 84
 assertions PASS no MariaDB dedicado; 38 depreciações upstream.
 
+## Auditoria de pendências — Comments e acesso de Group (2026-10-22)
+
+Somente registro: nenhum código, configuração ou dado foi alterado. Foram lidos
+`README.md` e `CHANGELOG.md` de `aculta_lms_h5p`, `aculta_lms_resources` e
+`aculta_lms_messenger`.
+
+- **`aculta_lms_h5p`** (sem versão no manifesto; CHANGELOG datado de 2026-10-21):
+  - Comments: as entradas de F15 que davam a revisão visual do tópico sob o
+    player como pendente foram superadas pelo README e pelos registros
+    seguintes. A conversa H5P–Fórum foi validada no Kernel (isolamento por
+    conteúdo/curso/turma, acesso ao tópico) e em smoke X11 autenticado, que
+    confirmou o tópico correto sob o player e o Node em `cursos` com HTTP 200;
+    curso, atividade e tópico temporários foram removidos. Sem pendência aberta.
+  - Acesso de Group: o contrato (curso/turma, matrícula, Entity Access e
+    permissões do Group) está coberto por Kernel para o resolver de discussão,
+    o formatter de PDF e o estado de tentativa, além da homologação no Runtime
+    de teste. Sem pendência aberta em README/CHANGELOG; resta apenas PHP 8.5
+    não validado, fora do escopo desta auditoria.
+- **`aculta_lms_resources`** (0.1.0-dev.2):
+  - Comments: nenhuma pendência; o módulo referencia conteúdo de origem e não
+    cria Comments.
+  - Acesso de Group: a regra "membros ativos e educadores com permissão
+    contextual, somente enquanto a galeria estiver vinculada ao curso" é provada
+    em Kernel, mas instalação dos campos no Runtime, smoke autenticado e revisão
+    visual continuam pendentes (README, seção "Estado"; CHANGELOG dev.1 e
+    dev.2). Esses itens bloqueiam RC.
+- **`aculta_lms_messenger`** (0.1.0-dev.15):
+  - Comments: o aviso de retorno ao educador após comentário publicado (dev.6)
+    e o aviso de resposta pendente (dev.4) têm cobertura Unit, mas
+    "armazenamento Kernel integrado, visual e Runtime permanecem DEFERRED" —
+    pendência aberta.
+  - Acesso de Group: esses dois avisos revalidam permissão contextual de
+    correção, matrícula e curso, mas a revalidação só foi exercitada em Unit.
+    A revisão visual/acessível da gaveta e a repetição do smoke com sessão
+    autenticada após o aceite vigente seguem pendentes (README, seções "Estado"
+    e "Validação"; CHANGELOG, "Registro de validação Runtime").
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando
@@ -561,3 +598,53 @@ Prévia de mudanças: `composer require --dry-run`, `composer validate`, `compos
 - [Matriz de segurança](../portal/SECURITY-ACCESS-FILES-MATRIX.md)
 - [LMS Drupal.org](https://www.drupal.org/project/lms)
 - [Opigno Catalogue](https://www.drupal.org/files/Opigno-Catalogue.png), [Training Page](https://www.drupal.org/files/Opigno-Training-Page.png), [Dashboard](https://www.drupal.org/files/Opigno-Dashboard.png): referências visuais/funcionais; não copiar CSS/templates. O [repositório Opigno](https://github.com/Craftmasters/opigno) declara GPL-2.0, e a página do [Opigno LMS Community](https://www.drupal.org/project/opigno_lms) informa licença igual ao Core; qualquer reaproveitamento de código exige confirmar a licença do arquivo/versão exata e preservar avisos/atribuição.
+
+## Alinhamento transversal com ACULTA Studio Course Builder — planejamento visual de 2026-10-22
+
+**Contrato visual:** [STUDIO-LMS-COURSE-BUILDER-VISUAL.md](../portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md) (**CB-UX 0.3.0–0.3.8**). Este alinhamento **não altera os gates F0–F17, RC/Alpha, sua ordem ou estado de execução**. Acrescenta critérios visuais e de integração quando a implementação do construtor entrar na frente Studio Cursos.
+
+| Marcos existentes | Complemento visual e técnico requerido |
+| --- | --- |
+| F4 (Group/LMS) | inventariar modelo canônico de curso, módulo, aula, atividade, ordenação e relações; sem storage paralelo |
+| F6 (página de curso/sala) | distinguir experience do estudante de workspace do educador; preview autenticada conforme acesso |
+| F7 (turmas/memberships) | manter currículo do curso separado de prazos, inscrições, progresso e resultados da turma; provar isolamento Group A/B |
+| F8–F10 (avaliações/H5P) | criação e edição contextual somente com providers existentes e Form API; não inventar tipos, notas, avaliações ou editor próprio |
+| F12 (dashboards) | “Meus cursos” = criados/geridos, não todos visíveis/matriculados; “Equipe” separada, dados/cache por usuário/Group |
+| F15 (integrações) | adicionar mídia, PDF, H5P e Fórum contextual na composição do Course Builder quando seus contratos estiverem prontos |
+| F16/RC (gates) | WCAG 2.2 AA, 320–1440px, light/dark, keyboard move, AJAX/no-JS, salvamento/concorrência, impacto em turmas ativas |
+
+A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** presumir entidade Módulo, tipo específico para vídeo/PDF/H5P, nem capacidade de drag-and-drop no backend. A fase CB-UX 0.3.0 deve provar providers e persistência de ordem antes de qualquer edição/reorganização. Desktop: árvore + editor de item em duas colunas; mobile: estrutura → item → edição, uma tela por vez. Todas as operações revalidam acesso nativo e atualizam cache adequadamente. Preservar especialmente as pendências e riscos já registrados neste roadmap.
+
+## Experiências de criador e estudante
+
+**GanjaLab**: criação e edição de cursos via módulo técnico `aculta_studio` e Course Builder planejado. **GanjaLab420**: experiência do estudante, conforme [documentação inicial](../portal/GANJALAB420-LEARNING-UX.md). Ambas compartilham LMS/Group sem novos bancos, matrículas ou notas. A linha visual G420-UX 0.1–0.8 não substitui fases F0–F17, nem altera seus estados e gates. Ver [identidade pública](../portal/GANJALAB-BRANDING.md).
+
+## Ajuste de rota pública GanjaLab420
+
+A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora usa `/ganjalab420` no purpose account; `/minha-aprendizagem` permanece alias de compatibilidade sem redirect nesta fase. Nenhuma mudança de storage, matrícula, LMS ou permissões; realizar `drush cr` e regressões HTTP após deploy, incluindo acessos autenticado/anônimo e Domain purpose. Documento de marca: [GANJALAB-BRANDING.md](../portal/GANJALAB-BRANDING.md).
+
+## Interfaces GanjaLab420 — especificações visuais de 2026-10-22
+
+- [Dashboard do estudante](../portal/GANJALAB420-DASHBOARD-VISUAL.md) — G420-UX 0.2, cursos matriculados, atividade pendente e retomada de estudos.
+- [Sala de Aprendizagem](../portal/GANJALAB420-LEARNING-ROOM-VISUAL.md) — G420-UX 0.4, leitor mobile-first, índice, material, atividade e fórum contextual.
+- **Manter o módulo técnico `aculta_lms`** e seus submódulos. Planos de renomeação técnica para Escola ou GanjaLab LMS estão cancelados. Este acréscimo visual não modifica nem certifica a implementação F0–F17.
+
+## Referência H5P — GanjaLab420 Sala de Aprendizagem
+
+[Contrato de modelos de leitura, vídeo e H5P](../portal/GANJALAB420-LESSON-MODELS-VISUAL.md). H5P é variante própria de Sala, não simples embed. A apresentação mobile, o acesso Group, tentativas, notas, arquivos privados, CSP e alternativas acessíveis integram os gates F10/F15/F16 antes de RC. Preservar nomes técnicos `aculta_lms` e `aculta_lms_h5p`.
+
+## UX de materiais — GanjaLab420 0.4.4
+
+[Leitor PDF e biblioteca de materiais](../portal/GANJALAB420-MATERIALS-PDF-VISUAL.md), usando o `aculta_pdf_viewer` e os kernels de imagem/galeria, com controle de acesso Group, fallback e testes de arquivo privado. Plano visual, sem mudar estados das fases funcionais nem renomear `aculta_lms`.
+
+## UX de acompanhamento de aprendizagem — G420-UX 0.5
+
+[Minha Jornada de Aprendizagem](../portal/GANJALAB420-LEARNING-JOURNEY-VISUAL.md) organiza progresso, status, próximas atividades e certificados em telas mobile-first usando fontes nativas LMS/Group e evitando dashboards duplicados. Planejamento visual apenas; preservar o nome técnico `aculta_lms` e os gates existentes.
+
+## GanjaLab420 — turmas e comunidade (UX 0.6)
+
+[Minhas Turmas e Comunidade](../portal/GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) especifica navegação pessoal, mural, discussões e participantes com acesso Group/Fórum contextual, reutilizando Messenger e User. Sem novo feed, membership, fórum ou entidade. Esta etapa é planejamento visual e não altera o status funcional do LMS.
+
+## GanjaLab420 — certificados e histórico (UX 0.7)
+
+[Conquistas, Certificados e Histórico](../portal/GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) detalha interface de aluno para certificados oficiais, verificação pública, QR/PDF, histórico e eventuais conquistas reais. Não criar certificado, badge nem score paralelo; manter F0–F17 e `aculta_lms` sem alterações funcionais.

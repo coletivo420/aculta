@@ -1,3 +1,306 @@
+## `0.1.0-dev.44` — corrigir a expectativa de formato de comentário — 2026-10-22
+
+- Corrige a falha registrada no dev.43, sem tocar o Runtime.
+- `LmsDiscussionInstallConfigTest` passa a esperar o formato `forum` no campo
+  `comment.comment_body`, `filter.format.forum` com `media_embed` do provider
+  `media` e `editor.editor.forum` com upload em `forum/anexos`, valores
+  vigentes desde `c56a0cd6`.
+- Medição (banco local `aculta_simpletest`, Runtime intocado):
+  `tests/src/Unit` — 25 testes, 292 asserções, OK.
+
+## `0.1.0-dev.43` — corrigir o registro de testes do adapter — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Correção do dev.42: aquela entrada pertence ao módulo `aculta_lms`, não a
+  este adapter, e rodou apenas `SubmissionUploadPolicyKernelTest`. O registro
+  medido do LMS está no `aculta_lms` dev.84.
+- Medição própria deste adapter, nas mesmas condições (banco local
+  `aculta_simpletest`, Runtime intocado):
+  - Unit: `tests/src/Unit` — 25 testes, 288 asserções, 1 falha.
+  - Kernel: `tests/src/Kernel` — 27 testes, 1.355 asserções, OK com 48
+    depreciações conhecidas de contrib.
+- A falha é pré-existente e alheia a esta sequência:
+  `LmsDiscussionInstallConfigTest::testBundleReusesTheSharedCommentField`
+  ainda espera `allowed_formats: usuario_aculta`, mas `c56a0cd6`
+  ("centraliza uploads de usuários e Fórum") passou o campo
+  `comment.comment_body` do bundle para o formato `forum`, que é o valor
+  vigente em `config/sync`. A correção cabe ao commit que mudou o contrato;
+  não foi reescrita aqui para não alterar trabalho paralelo.
+
+## `0.1.0-dev.42` — rodar Unit e Kernel do LMS e registrar o resultado medido — 2026-10-22
+
+- Documento apenas; nenhuma alteração de código, configuração ou Runtime.
+- Unit: `tests/src/Unit` — 74 testes, 408 asserções, OK com 8 depreciações do
+  PHPUnit.
+- Kernel: `tests/src/Kernel/SubmissionUploadPolicyKernelTest` — 5 testes,
+  39 asserções, passando. As suítes foram executadas no banco local
+  `aculta_simpletest`; o Runtime não foi tocado.
+- Nenhuma pendência nova: as tarefas de Wiki que motivaram a rodada ficaram
+  bloqueadas em T20–T24 (ver dev.238–dev.234 do `aculta_forum`).
+
+## `0.1.0-dev.41` — escopo mínimo da busca e das notificações privadas LMS — 2026-10-22
+
+- Nada implementado. O ROADMAP vigente deste adapter fica na seção dev.13 de
+  `aculta_forum/docs/ROADMAP.md` (o módulo não mantém `docs/` próprio) e agora
+  lista o que falta e o menor recorte aceitável.
+- Busca: hoje não há índice/datasource LMS, View com argumento de Group, filtro
+  de moderação, reindexação por evento nem prova de não vazamento entre
+  curso/turma. Mínimo aceito: busca a partir do curso/turma com Group explícito,
+  só tópicos válidos e Comments publicados, revalidando Entity Access por conta
+  em tempo real e falhando fechado; sem busca global, entre cursos ou pública.
+- Notificações: o Comment LMS não emite evento para `aculta_messenger`, não há
+  assinatura por tópico, regra contra fila de moderação, idempotência nem
+  opt-in. Mínimo aceito: reutilizar Flag/`message_subscribe` e o worker de
+  notificação privada, avisar só a primeira resposta publicada a quem segue e
+  ainda pode ler, revalidar acesso no envio e ser idempotente por
+  (Comment, destinatário); e-mail e digest ficam fora.
+- Adiados: busca entre cursos/global, relevância ajustada, digest, push e
+  preferências por turma. Qualquer avanço exige Kernel próprio antes de rota
+  no Runtime.
+
+## `0.1.0-dev.40` — citação de Comment LMS no Runtime — 2026-10-22
+
+- Verifica no Runtime de teste o contrato de citação de
+  `DISCOURSE-EXPERIENCE.md` linha 147 para a Turma. O código alterado é
+  `aculta_forum` (dev.232); este adaptador registra a matriz LMS.
+- Fixture: Curso 58, Turma 59, estudante membro da Turma e do Curso,
+  Educador com `lms_teacher` membro só do Curso, tópico 532 com
+  `field_aculta_discussion` em `Open`, Comment publicado 122 e pendente 123.
+- Estudante no tópico (200): apenas o Comment publicado exibe `Citar`, com
+  `quote=122`. O pendente não exibe link e sua citação responde 403.
+- GET da citação: 200 com o corpo prefixado pelo bloco citado e a autoria.
+  POST: 303 para `#comment-124`, `pid` 122, `status: 0` pela moderação da
+  Turma.
+- Forasteiro autenticado: tópico, citação e POST retornam 403 e não recebem o
+  texto citado. Educador do Curso fora da Turma: 403 no tópico e na citação.
+- Fixture e sessões removidas; Runtime voltou a 0 tópicos LMS e 0 Comments de
+  discussão.
+
+## `0.1.0-dev.39` — aprovar/rejeitar LMS pela entity_operations no Runtime — 2026-10-22
+
+- Fecha a verificação de Runtime das dev.109–111 com POST real a partir dos
+  links de `hook_entity_operation`. Fixture temporária: Curso, Turma,
+  estudante membro, Educador com `lms_teacher` e membership no curso, tópico
+  com `field_aculta_discussion` em `Open` e Comment pendente.
+- A fila pendente do Educador (200) traz o Comment e os dois links
+  `moderacao/approve` e `moderacao/reject` com `destination` para a fila.
+- Confirmação de aprovação: GET 200 com o formulário
+  `aculta_forum_lms_comment_moderation` e checkbox `confirm` obrigatório.
+  POST sem marcar o checkbox retorna 200 com o erro de campo obrigatório e
+  não altera o Comment.
+- POST de aprovação com `confirm=1`: 303 para a fila pendente, Comment
+  publicado (`status: 1`) e `field_aculta_rejected` zerado. O estudante passa a
+  ver o texto no tópico; a fila pendente deixa de listá-lo e a de publicados
+  passa a listá-lo.
+- Revalidação de status: nova confirmação de aprovação retorna 403, a de
+  rejeição retorna 200. POST de rejeição com `confirm=1`: 303 para a fila
+  pendente, Comment despublicado (`status: 0`) com
+  `field_aculta_rejected: 1`. O estudante deixa de ver o texto; a fila de
+  rejeitados passa a listá-lo.
+- Revalidação após rejeição: nova confirmação de rejeição 403, a de aprovação
+  200. Estudante e anônimo recebem 403 nas confirmações e nas filas.
+- Fixture, memberships, relationships e sessões removidos; o Runtime voltou a
+  1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibos em
+  `/home/aculta/private/aculta/forum-lms-t10-20261022/smoke-result.json` e
+  `cleanup-result.json`.
+
+## `0.1.0-dev.38` — formulário de Comment LMS do estudante aceito no Runtime — 2026-10-22
+
+- Fecha o DEFERRED de Runtime da dev.98 com envio real (POST) no tópico da
+  turma. Fixture temporária: Curso e Turma, estudante membro das duas,
+  outsider sem membership e um `aculta_lms_topic` com
+  `field_aculta_discussion` em `Open`.
+- GET do formulário de resposta (`/comment/reply/node/{nid}/field_aculta_discussion`):
+  estudante 200, outsider 403, anônimo 403. O formulário não traz CAPTCHA
+  (`skip CAPTCHA` herdado do papel `email_confirmed`).
+- POST do estudante: 303 para `/node/530#comment-120`, Comment persistido no
+  tópico. POST do outsider: 403, nenhum Comment criado. O estudante não vê o
+  texto da tentativa do outsider.
+- O Comment nasce despublicado (`status: 0`) e entra na fila de moderação LMS:
+  o Core `CommentForm` despublica a gravação quando a conta não tem
+  `skip comment approval`, e o papel `email_confirmed` tem `post comments` e
+  `skip CAPTCHA`, mas não essa permissão. É o fluxo de moderação pretendido,
+  não uma falha do adaptador.
+- Fixture, memberships, relationships e sessões removidos; o Runtime voltou a
+  1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibo em
+  `/home/aculta/private/aculta/forum-lms-t9-20261022/smoke-result.json`.
+
+## `0.1.0-dev.37` — fila LMS nega Educador de outro curso — 2026-10-22
+
+- Smoke GET-only no Runtime de teste repete a fila de moderação da dev.113 com
+  um Comment pendente real e acrescenta o caso de negação entre cursos:
+  Curso A com Turma A, Curso B, estudante membro, um Educador de cada curso.
+- Educador do Curso A recebe 200 no overview (com a Turma A), na fila
+  pendente (Comment e os dois links), nas filas publicada/rejeitada (sem o
+  pendente), nas confirmações de aprovar/rejeitar e no tópico privado.
+- Educador do Curso B recebe 200 no overview mas sem a Turma A; fila, filas
+  por estado, confirmações e tópico privado retornam 403. A negação é do
+  `grade students` no curso pai (`educatorAccess()`), não do papel global
+  `lms_teacher`. Anônimo e estudante também recebem 403.
+- Nenhum POST foi submetido. Fixture, memberships e sessões removidos; o
+  Runtime voltou a 1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibo em
+  `/home/aculta/private/aculta/forum-lms-t8-20261022/smoke-result.json`.
+
+## `0.1.0-dev.36` — moderação LMS propaga aprovação para os demais contextos — 2026-10-22
+
+- `LmsModerationPropagationKernelTest` exercita a `ParticipationRules` e o
+  `ParticipationHooks` reais com o schema de `aculta_user_test`, sobre Nodes
+  `aculta_forum_topic`, `blog` e `aculta_lms_topic` com o campo compartilhado.
+- Comment LMS nunca entra na moderação inicial: o hook o mantém publicado.
+  Com um Comment não LMS pendente, o bloqueio temporário de criação de tópico
+  está ativo (forbidden); publicar um Comment LMS conta como participação
+  aprovada (`hasPublishedDiscussionComment`), zera
+  `firstDiscussionCommentPending` e libera o bloqueio (neutral). Um Comment
+  não LMS posterior já nasce publicado.
+- Comment LMS pendente não libera: continua sem participação publicada, o
+  bloqueio segue forbidden e a consulta de pendências não LMS ignora o
+  registro. Os resultados de acesso mantêm as tags `comment_list` e
+  `config:aculta_user.settings` e os contextos `user`/`user.roles`.
+- Teste: 2 testes / 46 asserções PASS, sem depreciações. PHPCS limpo. Nenhuma
+  configuração foi alterada e o Runtime não recebeu fixture.
+
+## `0.1.0-dev.35` — campo de discussão fechado bloqueia e libera escrita — 2026-10-22
+
+- `LmsClosedDiscussionFieldKernelTest` prova o ciclo pedido na dev.98 sobre um
+  tópico de turma com estudante membro: com `field_aculta_discussion` em
+  `CommentingStatus::Open` a escrita é permitida; fechar o campo para
+  `Closed` persiste o status e torna a escrita forbidden sem esconder a
+  leitura; reabrir para `Open` libera de novo. O outsider não lê nem escreve
+  em nenhum dos estados.
+- A negação carrega a tag de cache `node:<id>` e o contexto
+  `user.permissions`, então o fechamento invalida um resultado "permitido" já
+  cacheado. A moderação do estudante continua forbidden nos dois estados.
+- A tarefa nomeou `field_aculta_rejected`, mas esse campo é o marcador
+  booleano de Comment usado pela moderação: o portão da nova escrita é o
+  status Comment do Node em `field_aculta_discussion`. Um segundo teste
+  publica um Comment com o marcador ligado e confirma que a escrita segue
+  permitida, e que o fechamento real continua negando.
+- Teste: 2 testes / 76 asserções PASS; 40 depreciações de Core/contrib
+  (preexistentes). PHPCS limpo. Nenhuma configuração foi alterada e o Runtime
+  não recebeu fixture.
+
+## `0.1.0-dev.34` — ciclo de vida do módulo LMS — 2026-10-22
+
+- `LmsModuleLifecycleKernelTest` usa o `ModuleInstaller` real para ativar,
+  desativar e reativar `aculta_forum_lms`, a partir dos mesmos pré-requisitos
+  da dev.33 (tipos de Group do LMS, Comment e campos compartilhados de
+  `aculta_forum`, `field_aculta_rejected`) e dos stubs de serviço da fixture
+  `aculta_forum_lms_test`.
+- Ativação: a lista de configuração iguala a linha de base mais exatamente os
+  YAML de `config/install`; cada objeto mantém o `uuid` exportado,
+  `aculta_forum_lms.settings` difere do export só pelo `_core` que o
+  `ConfigInstaller` grava, e bundle, campo, View e serviço
+  `aculta_forum_lms.moderation_manager` existem.
+- Desativação: a lista volta à linha de base, cada nome do adaptador fica
+  vazio, bundle, campo e as duas relações Group somem, nenhum nome de
+  configuração menciona `aculta_lms_topic` ou `aculta_forum_lms`, o serviço
+  sai do container, `core.extension` perde o módulo e
+  `lms_classes.settings` — de outro módulo — não é reescrito.
+- Reativação: os dados de configuração do adaptador são idênticos aos da
+  primeira ativação, sem duplicar nem vazar nomes.
+- O config opcional de H5P é escrito do export apenas durante a chamada de
+  instalação e apagado em `finally`, reproduzindo a dependência que o
+  `aculta_lms_h5p` fornece no site real sem passar a ser configuração do
+  adaptador.
+- O defeito do contrib Group 3.3.5 (`GroupRelationshipType::postDelete()` não
+  chama o pai e deixa bundle obsoleto) está documentado em
+  `aculta_forum/docs/ROADMAP.md`; a desinstalação do teste remove as relações
+  e limpa os caches antes, e todo o resto sai pelo `ModuleInstaller`.
+- Teste: 3 testes / 375 asserções PASS; 37 depreciações de Core/contrib
+  (ViewsConfigUpdater sobre YAML de módulos contrib, preexistentes). PHPCS
+  limpo. Nenhuma configuração foi exportada ou alterada e o Runtime não
+  recebeu fixture.
+
+## `0.1.0-dev.33` — papéis e Config Sync do LMS — 2026-10-22
+
+- `LmsRolePermissionsConfigSyncKernelTest` importa os quatro papéis Group
+  exportados (`lms_course-teacher`, `lms_course-member`,
+  `lms_course-course_creator`, `lms_class-member`) pelo caminho real de
+  Config Sync, `GroupRoleStorage::importCreate()`, em vez de recriá-los com
+  `GroupRole::create()`. A importação preserva `uuid`, `status`, permissões na
+  ordem exportada e as dependências declaradas — recálculo só ocorreria fora
+  do modo de sincronização.
+- As dependências de módulo declaradas nos papéis
+  (`aculta_document_viewer_group` e `aculta_forum_lms`) são validadas pelo
+  Group na importação. O Kernel habilita esses módulos, mais `file`, `image` e
+  `media` (pré-requisitos do plugin de documento), e a fixture
+  `aculta_forum_lms_test` fornece apenas stubs dos serviços de outros módulos
+  (`aculta_lms.class_activity_deadline_manager`, `aculta_lms_h5p.course_access`
+  e `aculta_forum.discussion_context_resolver`) para o container compilar. Os
+  stubs nunca são executados.
+- Cada papel lido de volta é idêntico ao YAML exportado, inclusive
+  `global_role` e a relação Group (`group.relationship_type.lms_course-*` e
+  `group.relationship_type.lms_class-*`). Nenhum papel recebe
+  `administer comments`; somente Educador e criador do curso têm
+  `grade students`.
+- `lms_classes.settings` confere exatamente com o export
+  (`create_default_class` falso, `class_name_pattern` vazio, apenas o
+  mapeamento `view group_node:aculta_lms_topic entity` → `grade students`) e
+  difere do padrão de instalação do contrib apenas nas chaves que o export
+  controla.
+- O mapeamento é exercitado com Groups reais: Educador do curso recebe a
+  permissão de tópico na turma pelo mapeamento, estudante da turma pelo papel
+  de turma, e estudante só do curso ou terceiro não a recebem.
+- Teste: 5 testes / 258 asserções PASS; 40 depreciações de Core/contrib — as 38
+  preexistentes mais duas fontes adicionais vindas dos módulos extras
+  habilitados. PHPCS limpo. Nenhuma configuração foi exportada ou alterada e o
+  Runtime não recebeu fixture.
+
+## `0.1.0-dev.32` — matriz de publicação e rejeição do LMS — 2026-10-22
+
+- `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso
+  (Educador, estudante e terceiro autenticado) com as decisões de aprovar
+  pendente e rejeitar publicado, usando o `LmsForumModerationManager`,
+  o `LmsCommentModerationOperationsHooks` e os papéis importados de
+  `config/sync` (`lms_course-teacher`, `lms_course-member`,
+  `lms_course-course_creator`, `lms_class-member`) com o mapeamento real de
+  `lms_classes.settings`.
+- O terceiro também carrega o papel global `lms_teacher`, provando que o
+  papel global sozinho não modera: sem membership o acesso é negado e nenhuma
+  operação é oferecida. O estudante é membro do curso e da turma e também não
+  modera.
+- O Educador publica o pendente (`status` 1, rejeitado 0) e rejeita o
+  publicado (`status` 0, rejeitado 1); o estado é reconferido com
+  `loadUnchanged()`. As chamadas negadas de estudante e terceiro devolvem
+  FALSE e não alteram o Comment.
+- Matriz registrada em `aculta_forum/docs/TEST-MATRIX.md`. Nenhuma entidade de
+  configuração foi exportada e o Runtime não recebeu fixture.
+- Teste: 1 teste / 61 asserções PASS. Depreciações de Core/contrib permanecem
+  as já registradas.
+
+## `0.1.0-dev.30` — Kernel de instalação do bundle LMS — 2026-10-22
+
+- `LmsTopicBundleInstallKernelTest` instala a configuração padrão do adaptador
+  a partir dos pré-requisitos reais: tipos de Group `lms_course`/`lms_class` do
+  contrib LMS e o Comment/campo de discussão exportados por `aculta_forum`.
+- Confere `aculta_lms_topic` (revisões e preview), o campo
+  `field_aculta_discussion`, os displays default/full/teaser e as duas relações
+  Group Node com cardinalidade 1 por entidade. O config opcional de H5P fica
+  fora quando `aculta_lms_h5p` não está ativo.
+- Só entidades de configuração são instaladas. A fixture
+  `aculta_forum_lms_test`, habilitada no Kernel, registra o schema de
+  `aculta_forum_lms.settings` para que o `ConfigInstaller` valide a
+  configuração simples sem habilitar o adaptador e sua cadeia de dependências.
+- Teste: 4 testes / 129 asserções PASS. Depreciações de Core/contrib
+  permanecem as já registradas.
+
+## `0.1.0-dev.31` — Kernel de isolamento do contexto LMS — 2026-10-22
+
+- `LmsDiscussionContextIsolationKernelTest` instancia
+  `LmsDiscussionContextProvider` diretamente e prova que o contexto falha
+  fechado fora da relação Group exata: nó não suportado, tópico novo, tópico
+  sem relação, com duas relações, ligado a Group fora de `lms_course`/
+  `lms_class`, ou turma sem único curso pai (nenhum ou dois).
+- Prova o caminho permitido: membro do curso lê e responde enquanto o
+  `status` está aberto, fecha a escrita quando a discussão é encerrada, não
+  recebe moderação e mantém as políticas `group_members_only`,
+  `private_search_only` e `membership_revalidated` com ID estável
+  `lms:node:{uuid}`. O não membro não lê nem escreve.
+- Prova o isolamento de turma: membro de uma turma não acessa tópico de outra
+  turma do mesmo curso.
+- Teste: 6 testes / 205 asserções PASS. Depreciações de Core/contrib
+  permanecem as já registradas.
+
 ## `0.1.0-dev.29` — configura janela de edição das discussões LMS — 2026-10-21
 
 - Adiciona configuração administrativa da janela do autor, padrão de 10 minutos desde a primeira publicação; editar não reinicia o prazo e zero desativa edição do autor.

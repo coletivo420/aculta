@@ -266,10 +266,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
-| `conta.aculta` | `/studio` | Página própria do Estúdio: áreas em abas superiores, submenu à esquerda com as seções e abas de cada seção, com ações do dono; cada área aparece só com o dono ativo e a permissão real (sem o shell da conta) | Conta autenticada (`access aculta portal`); visitante recebe 403. Rota em `aculta_studio.routing.yml`. |
-| `conta.aculta` | `/studio/{aba}` | Área do Estúdio (nível 1): abas superiores e submenu da área; 404 para área ausente ou fora do alcance da conta | Conta autenticada (`access aculta portal`). Rota em `aculta_studio.routing.yml`. |
-| `conta.aculta` | `/studio/{aba}/{secao}` | Seção do Estúdio (nível 2): submenu à esquerda e abas internas da seção | Conta autenticada; 404 para seção ausente ou fora do alcance da conta. |
-| `conta.aculta` | `/studio/{aba}/{secao}/{sub}` | Aba interna do Estúdio (nível 3) com as ações do dono | Conta autenticada; 404 para aba ausente ou fora do alcance da conta. |
+| `conta.aculta` | `/studio` | Estúdio: abas de trabalho da conta (hoje Revista); cada aba aparece só com o dono ativo e a permissão do dono | Conta autenticada (`access aculta portal`); visitante recebe 403. Rota em `aculta_studio.routing.yml`. |
 | `conta.aculta` | `/minha-aprendizagem` | Painel pessoal de cursos, progresso, avaliações pendentes e certificados | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; Runtime DEFERRED. |
 | `conta.aculta` | `/atividades-interativas` | Atividades H5P dos cursos acessíveis pela pessoa estudante | Rota `aculta_lms_h5p`, purpose `account`, exige papel `estudante`; lista vazia quando não há curso com H5P acessível. Runtime corrigido após detectar o redirect de `/minha-conta/*` sem rota final. |
 | `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; ativa no Runtime de teste após habilitação em 2026-10-21; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; ainda sem mensagem de teste criada. |
@@ -303,6 +300,7 @@ correspondentes estão habilitados no ambiente.
 | `apoio.aculta` | `/` | Página de apoio com formulário e valores sugeridos | Ativo; fluxo de pagamento continua em `main.aculta`. |
 | `main.aculta` | `/{titulo}` | Página institucional por alias editorial | Dinâmico; depende de nó publicado e domínio associado. |
 | `main.aculta` | `/atividades/{titulo}` | Página de uma atividade cultural | Dinâmico; depende de atividade publicada e domínio. |
+| `main.aculta` | `/projetos/{titulo}` | Página de um projeto cultural/social | Dinâmico; depende de projeto publicado e domínio. |
 | `main.aculta` | `/transparencia/documentos/{titulo}` | Documento institucional público | Dinâmico; depende de documento publicado e access. |
 | `loja.aculta` | `/loja/produto/{categoria}/{titulo}` | Página de produto da loja | Dinâmico; produto publicado; fora do purpose loja responde `404`. |
 | `main.aculta` | `/node/add/article` | Antigo formulário de criação do bundle editorial `article` | Bundle aposentado no Runtime de teste em 2026-10-21; responde 404. |
@@ -341,6 +339,7 @@ correspondentes estão habilitados no ambiente.
 
 | Host | Caminho/padrão | Título / objeto | Estado |
 | --- | --- | --- | --- |
+| `forum.aculta` | `/system/files/{filepath}` | Download de anexo privado do Fórum | Endpoint Core `system.files`; `File::access('download')` revalida a referência Media e o `media_access` do Fórum limita purpose e host público. Runtime pendente. |
 | `conta.aculta` | `/configuracoes/privacidade` | Privacidade do perfil público (formulário) | Exige `access aculta portal`; sem purpose fixo, acessado pela Minha conta. |
 | `conta.aculta` | `/configuracoes/rastreamento-de-e-mail` | Preferência pessoal para aceitar ou revogar rastreamento de abertura/cliques de e-mail | Rota declarada em `aculta_user`; exige autenticação; grava evento no ledger append-only. Runtime após rebuild/migração pendente de smoke. |
 | `main.aculta` | `/painel-administrativo/aculta/termos/aceites` | Consulta administrativa somente leitura de eventos, dados de evidência e verificação HMAC | Exige `administer aculta user agreements`; expõe IP/User-Agent; sem edição. Route registrada no Runtime de teste; smoke anônimo 403. Acesso autenticado pendente. |
@@ -360,7 +359,6 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | Host | Caminho/padrão | Título / objeto | Estado |
 | --- | --- | --- | --- |
 | `main.aculta` | `/webhook/{endpoint}` | Recepção de evento de integração/gateway | Padrão genérico; caminhos concretos definidos pelo módulo ativo e configuração. Nunca presumir acesso público irrestrito. |
-| `forum.aculta` | `/system/files/{filepath}` | Download de anexo privado do Fórum | Endpoint Core `system.files`; `File::access('download')` revalida a referência Media e o `media_access` do Fórum limita purpose e host público. Runtime pendente. |
 | `wiki420.aculta` | `/estatisticas/wiki/{node}/leitura` | Beacon de leitura de verbete publicado da Wiki (POST); grava `wiki.entries.read` com o nid | Acesso público (`_access: TRUE`). 204 quando conta ou quando é repetição do mesmo visitante no verbete (30 min); 429 acima de 60 leituras por visitante por hora; 404 para rascunho, outro tipo de conteúdo ou sem permissão de visualização. Sem IP em claro: identificador pseudonimo no `flood` pela janela. Ver `aculta_statistics/docs/INTEGRATIONS.md`. Ativo no Runtime de teste. |
 | `main.aculta` | `/admin/**` | Administração técnica Drupal Core/contrib | Rotas individuais variam por módulo e continuam sob access upstream; navegação humana ACULTA usa `/painel-administrativo/**`. |
 | `main.aculta` | `/views-bulk-operations/execute/{view_id}/{display_id}` | Inicialização de operações em lote de uma View | Rota técnica condicional ao VBO; a própria View exige access e a Action revalida seleção, permissão e cada tópico. |

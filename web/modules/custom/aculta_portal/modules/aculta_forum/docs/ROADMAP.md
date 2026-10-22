@@ -93,8 +93,91 @@ Wiki e LMS devem migrar em seguida para a mesma política central, com abas
 próprias no painel de uploads quando suas integrações forem concluídas. O
 roadmap Portal descreve a sequência transversal.
 
+LMS: migrado no código em 2026-10-22 (consumidor `lms` e aba no Portal
+0.4.0-dev.252; aplicação em `SubmissionImageHooks` no `aculta_lms` 0.1.0-dev.80;
+regressão Kernel em 0.1.0-dev.83). A aba herdava o global e a política efetiva
+não mudou.
+
+Wiki — localizada em 2026-10-22 (dev.234): não existe módulo nem pasta `wiki`;
+`aculta_portal/modules` não tem submódulo de Wiki. O verbete é o Node
+`wiki_entry` ("Verbete", revisável, workflow `wiki_editorial`), com rotas
+`/wiki`, `/wiki/busca` e `/wiki/busca/previa` em `aculta_portal.routing.yml`
+(`WikiController`), os campos `field_wiki_*`, o Media `field_wiki_image` e o
+purpose Domain `wiki420`. As regras ativas são as do Portal
+(`web/modules/custom/aculta_portal/AGENTS.md`) e a seção "Wiki (regra
+permanente)" de `docs/operations/AGENT-CONTENT.md`, indexada em
+`AGENT-POLICY-INDEX.md`; não há `AGENTS.md` próprio de Wiki. Pendências antes de
+T20–T24:
+
+- Upload: `wiki_entry` não tem campo de envio do usuário. `field_wiki_image` é
+  referência a Media editorial, não upload por pessoa, então não há superfície
+  para aplicar `aculta_portal.user_upload_policy` sem antes criar o campo (ou
+  decidir que o Media editorial fica fora da política).
+- Comentários: `wiki_entry` não tem campo Comment nem `field_aculta_discussion`.
+  A moderação de primeiro comentário do `aculta_user` é genérica ao campo, mas
+  `PublicationContextProvider::HOST_BUNDLES` cobre só `revista`, então a Wiki
+  precisa de instância do campo e de provider/decisão de contexto antes de T21.
+  O `CONTEXTS.md` já descreve a Wiki como contexto contemplado; a divergência
+  fica registrada para decisão humana.
+
+Bloqueio de T20 — upload contextual da Wiki (dev.235): sem campo de envio não
+existe formulário a que a política central se aplique. O widget de
+`field_wiki_image` é `entity_reference_autocomplete` para Media `image`
+existente (`auto_create: false`), e o papel `email_confirmed` não tem `create
+media` nem `edit own media`; publicar Media vinculada à página visível exigiria
+inventar esse fluxo. A aba por consumidor é a de `UserUploadSettingsForm`
+(`CONSUMERS = ['forum', 'lms']`), uma tela administrativa: criar a aba `wiki`
+antes do consumidor só ofereceria uma política que nenhum envio usa. T20 fica
+bloqueada até decisão humana sobre criar o campo de upload e a permissão de
+Media do verbete. T21 (comentários) não depende da carga, então segue.
+
+Bloqueio de T21 — comentários da Wiki (dev.236): `wiki_entry` não tem instância
+de `field_aculta_discussion`; o storage compartilhado existe em
+`config/sync/field.storage.node.field_aculta_discussion.yml`, mas as instâncias
+são só `revista`, `aculta_forum_topic` e `aculta_lms_topic`. O `CONTEXTS.md`
+(seção `wiki`) trata o contexto como "contrato futuro": renderiza dentro do
+verbete, usa `author_wiki` e "a criação do provider aguarda a reimplementação da
+Wiki"; `author_wiki` não existe como papel em `config/sync`. A moderação do
+`aculta_user` é genérica ao campo e passaria a valer assim que houvesse a
+instância, mas criá-la mais o provider significa reimplementar a Wiki — decisão
+adiada pelo próprio documento. T21 fica bloqueada, e T22–T24 dependem dela.
+
+T22–T24 — bloqueadas por dependência de T21 (dev.237):
+
+- T22, isolamento de contexto da Wiki: exige dois hosts reais com discussão
+  aberta para provar que um Comment publicado no LMS não aparece na Wiki e
+  vice-versa. Sem o campo e o provider de T21, o lado Wiki do teste não existe;
+  um Kernel só com LMS não prova o isolamento.
+- T23, smoke de Comments com moderação inicial (`TEST-MATRIX.md`, seção da
+  Wiki): depende do formulário e da rota de comentários da Wiki e de Runtime de
+  teste; sem T21 não há cenário HTTP a registrar.
+- T24, citação em contexto na Wiki (`DISCOURSE-EXPERIENCE.md`, linha sobre
+  citação contextual): a própria especificação condiciona a execução a T19–T23
+  verdes.
+
+Pendência de teste (dev.238, causas precisadas em dev.239): o suite
+`tests/src/Unit` do Fórum tem 7 falhas em `ForumTopicDisplayConfigTest`, todas
+anteriores a esta sequência — `ad33ab56` acrescentou
+`aculta_forum.admin_revisionable_posts` ao menu sem atualizar a lista esperada;
+`164aeff2` criou `edit_window_minutes: 10` no `config/install` e no formulário,
+mas `b6e49d5e` não levou a chave ao `config/sync`; `c56a0cd6` passou o corpo do
+comentário para o formato `forum`, e o teste ainda espera `usuario_aculta`; e a
+mesma exportação `b6e49d5e` trouxe Views do Runtime sem
+`aculta_forum_reply_count`, `forum_unread_posts` e os campos derivados de último
+comentário, divergindo da instalação nas listagens pública, de categorias, de não
+lidas e de descoberta. Não são regressão desta sequência (os commits aqui só
+tocam `CHANGELOG.md` e este `ROADMAP.md`); a correção cabe a quem alterou cada
+contrato.
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.239` | Precisar as causas das falhas Unit do Fórum | Documento apenas. Cada uma das 7 falhas de `ForumTopicDisplayConfigTest` tem causa anterior a esta sequência: menu (`ad33ab56`), `edit_window_minutes` ausente do `config/sync` (`164aeff2` × `b6e49d5e`), formato `forum` no corpo do comentário (`c56a0cd6`) e Views exportadas do Runtime sem os plugins e campos do contrato de instalação (`b6e49d5e`). Nenhum código, configuração ou Runtime tocado. |
+| `0.1.0-dev.238` | Rodar Kernel e Unit do Fórum e registrar o resultado | Documento apenas. Kernel 34 testes/758 asserções OK (25 depreciações conhecidas); Unit 105/656 com 7 falhas pré-existentes em `ForumTopicDisplayConfigTest`, registradas acima como pendência de teste, não regressão desta sequência. Nenhum Runtime tocado. |
+| `0.1.0-dev.237` | Registrar o bloqueio de T22–T24 por dependência de T21 | Documento apenas. Sem o campo e o provider de T21, não há lado Wiki para o isolamento de T22, cenário HTTP de T23 nem citação contextual de T24, que a especificação já condiciona a T19–T23 verdes. Nenhum teste ou Runtime executado. |
+| `0.1.0-dev.236` | Registrar o bloqueio dos comentários da Wiki | Documento apenas. `wiki_entry` não tem instância de `field_aculta_discussion` (só `revista`, `aculta_forum_topic` e `aculta_lms_topic` têm), e o `CONTEXTS.md` trata o contexto `wiki` como contrato futuro que "aguarda a reimplementação da Wiki", citando `author_wiki`, papel que não existe em `config/sync`. A moderação do `aculta_user` é genérica ao campo, mas criar a instância e o provider equivale a reimplementar a Wiki. Bloqueia também T22–T24. Sem Runtime/testes. |
+| `0.1.0-dev.235` | Registrar o bloqueio do upload contextual da Wiki | Documento apenas. `wiki_entry` não tem campo de envio do usuário: `field_wiki_image` é referência autocomplete a Media `image` existente (`auto_create: false`) e `email_confirmed` não cria nem edita Media, então não há superfície para a política central nem envio cuja Media se possa publicar. A aba por consumidor é administrativa (`UserUploadSettingsForm::CONSUMERS`), e registrar `wiki` sem consumidor criaria política sem uso. Bloqueada até decisão humana sobre campo de upload e permissão de Media. Sem Runtime/testes. |
+| `0.1.0-dev.234` | Localizar a Wiki e registrar pendências de upload e comentários | Documento apenas. A Wiki não tem módulo: é conteúdo e configuração do `aculta_portal` (Node `wiki_entry`, rotas `/wiki*`, purpose `wiki420`), com regras em `docs/operations/AGENT-CONTENT.md` e no `AGENTS.md` do Portal. Registra as duas pendências que bloqueiam T20–T24: ausência de campo de upload do usuário no verbete e ausência de `field_aculta_discussion`/provider de contexto, já que `PublicationContextProvider` cobre só `revista`. Nada implementado; sem Runtime/testes. |
+| `0.1.0-dev.233` | Registrar escopo mínimo da busca e das notificações privadas LMS | Documento apenas: o ROADMAP do adapter (mantido na seção dev.13 do Fórum, sem `docs/` próprio) lista o que falta em índice/View, filtro de moderação, reindexação, eventos, idempotência e revalidação de acesso, e fixa o menor recorte aceitável — busca só por curso/turma com Group explícito e notificação apenas da primeira resposta publicada via `aculta_messenger`. Nada implementado; sem Runtime/testes. |
 | `0.1.0-dev.231` | Revalidar purpose e host dos anexos no acesso | `media_access` restringe `forum_attachment` ao purpose Fórum e exige referência atual acessível em Comment, ForumPost ou Gallery; max-age zero protege mudanças de grants sem save da Media. A inspeção do Core 11.4.10 confirmou que o download privado passa por File `download`, referência Media `view` e acesso do campo; install e Sync mantêm `uri_scheme: private`. Revisão HTTP direta no Runtime segue pendente por falta de fixture. |
 | `0.1.0-dev.230` | Alinhar guardrails/roadmap geral à reconstrução vigente | Documentação geral e política local deixam de apontar o contrib removido como fonte atual e preservam a coexistência de Comments/ForumPost até o corte aprovado. Sem Runtime. |
 | `0.1.0-dev.229` | Eliminar subconsulta correlacionada na agregação de atividade | A consulta agrega `changed` por tópico e junta o maior ID em caso de empate; publicação, idioma, contagem e acesso permanecem iguais. Sem Runtime/testes. |
@@ -207,11 +290,11 @@ roadmap Portal descreve a sequência transversal.
 | `0.1.0-dev.116` | Configuração própria na seção do Fórum | `ForumSettingsForm` Core em `/painel-administrativo/forum/configuracoes`, permissão restrita própria e entrada no menu Growroom. PHPUnit 19/246 e PHPCS PASS; smoke Firefox/X11 31/31, tela 200, checkbox `false`, POST confirmou persistência e anônimo 403. Config Runtime ausente foi restaurada ausente; install/sync false; 0 tópicos/Comments. RUNTIME STATUS: PASS para rota, access e gravação do estado seguro; habilitar movimento segue sem teste. |
 | `0.1.0-dev.115` | Seção administrativa própria do Growroom420 | Código e config ativa migrados para `/painel-administrativo/forum`; menu lateral liga ao View de tópicos, categorias, bundle, denúncias e configuração compartilhada User. `drush cr` PASS; rotas/URLs/tarefas locais e access manager UID 1 PASS. Firefox ESR/X11 autenticado GET-only: 27/27, raiz e filas 200, sete caminhos antigos 404, Conteúdo sem a aba do Fórum; Revista segue em sua área. Em 390 px, 3 px de overflow restrito à tabela responsiva vazia; 768 px sem overflow. Fórum permaneceu vazio. RUNTIME STATUS: PARTIAL: filas vazias não exercitam operações sobre comentários reais; administração de categorias não percorrida visualmente. |
 | `0.1.0-dev.114` | Transições Form API LMS e rebuild do cache | Aprovação/rejeição HTTP PASS, fixture limpa (0 tópicos LMS/0 Comments), `drush cr` PASS; controller resolve antes/depois, overview anônimo 403. A falha atribuída ao controller não se reproduziu. |
-| `0.1.0-dev.113` | Validar fila e confirmações de moderação LMS com Comment real | Fixture isolada em Group próprio: fila pendente exibe o Comment e ações aprovar/rejeitar; ambas as confirmações GET retornam 200, sem POST. Filas publicadas/rejeitadas não exibem o Comment; anônimo recebe 403 para fila e tópico. Group, Node, relationship, Comment e sessão removidos; estado LMS restaurado (1 curso existente, 0 tópicos, 0 Comments). RUNTIME STATUS: PARTIAL; transições HTTP não submetidas. |
+| `0.1.0-dev.113` | Validar fila e confirmações de moderação LMS com Comment real | Fixture isolada em Group próprio: fila pendente exibe o Comment e ações aprovar/rejeitar; ambas as confirmações GET retornam 200, sem POST. Filas publicadas/rejeitadas não exibem o Comment; anônimo recebe 403 para fila e tópico. Group, Node, relationship, Comment e sessão removidos; estado LMS restaurado (1 curso existente, 0 tópicos, 0 Comments). RUNTIME STATUS: PARTIAL; transições HTTP submetidas no adapter 0.1.0-dev.39. |
 | `0.1.0-dev.112` | Provar construção das filas LMS pelo controller e View Core | Kernel invoca `LmsForumModerationController::comments()` contra a View instalável e exige display/argumento Group corretos e cache tag contextual. Arquivo: 1/110; suíte Kernel adapter 2/127 PASS (40 depreciações Core/contrib/LMS). PHP CLI 8.4.26 abaixo da baseline 8.5. Smoke autenticado das filas vazias também PASS em dev.111; renderização de linhas com comentários e operações continua pendente. |
-| `0.1.0-dev.111` | Validar entity converters reais na rota LMS de moderação | Kernel executa conversores `entity:group`/`entity:comment` e `CustomAccessCheck`; Educador com Group dono passa; estudante e Group diferente negados. Unit 18/190, Kernel 2/122 PASS (40 depreciações). No Homelab, `drush cr` PASS; controller instanciado; três rotas ativas. Smoke autenticado GET-only como Educador: painel e filas publicadas/rejeitadas/pendentes HTTP 200; anônimo 403; `/` HTTP 200. Sessão temporária específica removida, sem fixtures nem alteração de configuração/conteúdo. Ações e linhas com comentários continuam pendentes; RUNTIME STATUS: PARTIAL. |
-| `0.1.0-dev.110` | Cobrir resolução real de access na rota de moderação LMS | Kernel executa `CustomAccessCheck` do Core com argumentos upcastados; Educador correto permitido, estudante e Group divergente negados. Unit 18/190 e Kernel 2/118 PASS (40 depreciações). Runtime inalterado. RUNTIME STATUS: DEFERRED. |
-| `0.1.0-dev.109` | Ações de aprovação e rejeição em filas LMS | Operações nas Views levam a confirmação Form API; manager valida tópico/Group/estado em leitura e submit. Kernel prova transições, estados e Educador versus estudante/Group incorreto. Unit 18/190 e Kernel 2/112 PASS (40 depreciações). View atualizada por importação parcial de um item; cache rebuild passou. Smoke autenticado não executado; conteúdo LMS permanece vazio. RUNTIME STATUS: PARTIAL. |
+| `0.1.0-dev.111` | Validar entity converters reais na rota LMS de moderação | Kernel executa conversores `entity:group`/`entity:comment` e `CustomAccessCheck`; Educador com Group dono passa; estudante e Group diferente negados. Unit 18/190, Kernel 2/122 PASS (40 depreciações). No Homelab, `drush cr` PASS; controller instanciado; três rotas ativas. Smoke autenticado GET-only como Educador: painel e filas publicadas/rejeitadas/pendentes HTTP 200; anônimo 403; `/` HTTP 200. Sessão temporária específica removida, sem fixtures nem alteração de configuração/conteúdo. Ações e linhas com comentários cobertas no adapter 0.1.0-dev.39; RUNTIME STATUS: PASS. |
+| `0.1.0-dev.110` | Cobrir resolução real de access na rota de moderação LMS | Kernel executa `CustomAccessCheck` do Core com argumentos upcastados; Educador correto permitido, estudante e Group divergente negados. Unit 18/190 e Kernel 2/118 PASS (40 depreciações). Access real coberto no adapter 0.1.0-dev.39: Educador 200; estudante e anônimo 403 nas confirmações e filas. RUNTIME STATUS: PASS. |
+| `0.1.0-dev.109` | Ações de aprovação e rejeição em filas LMS | Operações nas Views levam a confirmação Form API; manager valida tópico/Group/estado em leitura e submit. Kernel prova transições, estados e Educador versus estudante/Group incorreto. Unit 18/190 e Kernel 2/112 PASS (40 depreciações). View atualizada por importação parcial de um item; cache rebuild passou. Smoke autenticado executado no adapter 0.1.0-dev.39: operações na fila, confirmação obrigatória, POSTs 303 de aprovar/rejeitar, revalidação 403 e negação a estudante/anônimo PASS. RUNTIME STATUS: PASS. |
 | `0.1.0-dev.108` | Painel e filas de moderação por Group no LMS | Rotas `/painel-administrativo/lms/forum` e três estados; View Embed sem endpoint global, argumento Group obrigatório e filtros fixos. Unit 18/184 e Kernel 2/102 PASS (40 depreciações de Core/contrib/LMS). Runtime: import parcial da View, cache rebuild, root 200, overview anônimo 403 e Groups inexistentes 404. Sem smoke autenticado ou ações na fila. |
 | `0.1.0-dev.107` | Liberar leitura e aprovação de Comment para Educadores LMS | Adapter dev.15 autoriza somente `view`/`approve` quando o Comment está em `field_aculta_discussion` e o contexto resolvido concede `grade students`. Estudantes mantêm o acesso Core; `update`, `delete` e `administer comments` não são concedidos. Unit 16/165 e Kernel 1/62 PASS; Kernel reporta 37 depreciações Core/contrib/LMS. Rotas/Views das filas ainda não existem; integração Runtime DEFERRED. |
 | `0.1.0-dev.106` | Rastrear adapter LMS e aplicar permissões Group contextuais | `core.extension` inclui adapter e `gnode`. Importação parcial revisada atualiza quatro Group roles e `lms_classes.settings`; os demais campos dos cinco itens coincidiam com a Config Sync e nenhum outro item foi alterado. Kernel 2/74 PASS, HTTP `/` e `/categorias` 200, tópicos/Comments zero. Sem conteúdo real, acesso Runtime ainda não exercitado; UI, Views e filas pendentes. RUNTIME STATUS: PARTIAL. |
@@ -222,7 +305,7 @@ roadmap Portal descreve a sequência transversal.
 | `0.1.0-dev.101` | Verificar coerência entre adapter e Config Sync | Unit confirma dependências de relationship types nos quatro Group roles, permission de leitura contextual e herança `grade students`; não habilita módulo nem importa configuração. Próximo: testar a instalação com o grafo completo de dependências. |
 | `0.1.0-dev.100` | Validar cacheabilidade do acesso LMS | Kernel confirma variação de acesso por usuário/permissões e dependência de cache do tópico para o provider de contexto; nenhum comportamento no Runtime. Adapter ainda aguarda revisão integrada de acesso e filas. |
 | `0.1.0-dev.99` | Configurar Group roles do LMS para tópicos | Config Sync limita visualização Group Node de tópico a membership de curso/turma e Educadores com role contextual; educator permission herda para turma. Kernel lê os quatro Group role configs reais e confirma estudante/Educador, outsider global não autorizado, Comment e moderação. Config Sync não importado. |
-| `0.1.0-dev.98` | Integrar Comment real à autorização contextual LMS | Kernel persiste resposta publicada na turma, prova escrita de estudante, moderação exclusiva de Educador e bloqueio quando o campo está fechado. Kernel adapter 2/57 (38 depreciações), Unit adapter 11/123 e Forum 87/556 PASS. Runtime DEFERRED; filas e habilitação continuam pendentes. |
+| `0.1.0-dev.98` | Integrar Comment real à autorização contextual LMS | Kernel persiste resposta publicada na turma, prova escrita de estudante, moderação exclusiva de Educador e bloqueio quando o campo está fechado. Kernel adapter 2/57 (38 depreciações), Unit adapter 11/123 e Forum 87/556 PASS. Runtime coberto no adapter 0.1.0-dev.38 (envio do estudante 303, outsider 403); habilitação segue pendente. |
 | `0.1.0-dev.97` | Herança de permission Educador nas turmas | Config Sync mapeia `grade students` do curso para visualização Group Node de tópicos. Kernel real com `ClassPermissionCalculator`: Educador permitido; outsider e conta apenas com papel global `lms_teacher` negados. 1 teste/24 assertions PASS, 37 depreciações Core/contrib. Adapter não habilitado e Config Sync não importado no Runtime. |
 | `0.1.0-dev.96` | Corrigir acesso LMS e cobrir escrita/moderação de Comment | Unit cobre estudante matriculado, Educador com `grade students`, permissão de comentar e status aberto/fechado. Corrige combinação AccessResult que negava estudantes e torna a moderação explicitamente contextual. Runtime DEFERRED; adapter ainda desabilitado. |
 | `0.1.0-dev.95` | Provar acesso Group Node no Kernel | MariaDB `aculta_simpletest` com Group 3.3.5/gnode: membro de curso com permission contextual acessa Node de tópico; outsider recebe forbidden. 1 teste/17 assertions PASS; 17 depreciações Core/Group/contrib. Não instala o adapter nem altera Runtime. |
@@ -267,7 +350,7 @@ roadmap Portal descreve a sequência transversal.
 | `0.1.0-dev.56` | Retirar bundle contribuído residual das Flags seguir/salvar | `seguir_topico` e `salvar_topico` agora apontam somente para `aculta_forum_topic`; defaults e Config Sync alinhados; teste exige lista exata (17/215), PHPCS e YAML PASS. Importação parcial das duas Flags após backup, cache rebuild e `config:status` dos alvos PASS; zero flaggings antes/depois, fórum limpo, raiz e `/categorias` HTTP 200. Nenhum dado excluído. RUNTIME STATUS: PASS para a limpeza. |
 | `0.1.0-dev.55` | Propagar cacheabilidade do formato de texto citado | O hook usa `TextProcessed` para compor o quote e propaga tags/contextos/max-age para o formulário. PHPUnit 26/240, PHPCS, Portal 975 e fronteira 1415 PASS; Runtime cache rebuild e resolução do hook/serviços PASS. X11 conferiu a lista de tópicos em 1024/768/390 px e o detalhe em 390 px com três tópicos QA temporários; todos removidos depois. Estado final Runtime: 0 tópicos, 0 Comments, fila Messenger vazia e aliases removidos. Ação Citar/formulário autenticado aguardam conta QA confirmada. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.54` | Agrupar subcategorias por categoria principal | View ordena por nome do pai, depois peso e nome. PHPUnit 17/217 e gates Portal 975, fronteira 1415, mapa 152, pacotes 26, slugs 378 e imagem PASS. Import parcial da View com backup privado; runtime exibiu 4 raízes antes dos 8 filhos agrupados, `/categorias` 200, zero tópico/Comment. Firefox/X11 1024/768/320 sem overflow. RUNTIME STATUS: PARTIAL; tópicos reais/autenticado pendentes. |
-| `0.1.0-dev.53` | Citar resposta pública com segurança contextual | `ForumQuoteHooks` oferece ação apenas para Comment publicado, legível e respondível no contexto resolvido; usa rota Core `comment.reply` e só preenche o pai exato da requisição. Builder tira marcação, limita 1.200 caracteres e escapa autoria/texto; 9/18 Unit e PHPCS PASS. LMS/Wiki aguardam seus providers. Runtime `toca`: cache rebuild, resolução de serviços e Fórum/categorias HTTP 200; zero tópicos/Comments preservados. Link/formulário com Comment real pendentes; RUNTIME STATUS: PARTIAL. |
+| `0.1.0-dev.53` | Citar resposta pública com segurança contextual | `ForumQuoteHooks` oferece ação apenas para Comment publicado, legível e respondível no contexto resolvido; usa rota Core `comment.reply` e só preenche o pai exato da requisição. Builder tira marcação, limita 1.200 caracteres e escapa autoria/texto; 9/18 Unit e PHPCS PASS. LMS validado no Runtime (`https://aculta.toca.net.br`): link `Citar` só no Comment publicado, GET 200 com citação preenchida, POST 303 gravando resposta pendente pela moderação da Turma; forasteiro e Educador fora da Turma recebem 403. Prefill corrigido em dev.232 (`#default_value: NULL` no `text_format` não processado): 7 testes, 25 asserções. Wiki aguarda seu provider. RUNTIME STATUS: PARTIAL (Wiki). |
 | `0.1.0-dev.52` | Categorias visíveis junto à atividade recente | View `block_landing` e bloco CTools apenas na raiz do purpose Fórum; categorias principais filtradas, página `/categorias` permanece completa. Config parcial Runtime, cache rebuild, 17/215 Unit, Foundation 364, SDC 535, Design 2097, Portal 975, fronteira 1411, mapa 152 e Firefox/X11 1024/768/390 claro + 1024/390 escuro PASS. Sem conteúdo criado; teclado, leitores de tela e páginas com tópicos pendentes. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.51` | Isolar moderação/denúncias do Fórum e excluir o acervo histórico | Flag 5 combina hook e permissões com OR; permissão dedicada, hook contextual e guard de `flagging_presave` limitam denúncias a tópicos/comentários públicos contemporâneos. Fila de denúncias exclui legado/outros contextos; Views pendente/rejeitado excluem marcador legado no tópico e comentário, e falham fechado sem campo/relação. Import parcial do papel e cache rebuild PASS no Runtime; smoke autenticado com dados pendente. RUNTIME STATUS: PARTIAL. |
 | `0.1.0-dev.50` | Desinstalar e remover Drupal Forum contrib | Runtime `toca`: uninstall oficial PASS; zerados bundles/configs e tabelas antigas; seis instâncias e storage `field_discussao` vazios removidos via Field API; Composer removeu apenas `drupal/forum`, mantendo `history`. Cache rebuild PASS; Fórum/Revista 200, Conta anônima 302 esperado. Config Sync integral não aplicado; configuração dirigida, revisão de flags e smoke autenticado pendentes. RUNTIME STATUS: PARTIAL. |
@@ -741,6 +824,65 @@ Busca e notificações privadas LMS continuam pendentes. Evidências completas:
 [`aculta_lms_h5p/CHANGELOG.md`](../../aculta_lms_h5p/CHANGELOG.md) e
 [`aculta_forum_lms/CHANGELOG.md`](../../aculta_forum_lms/CHANGELOG.md).
 
+### Busca e notificações privadas LMS — escopo mínimo decidido em 2026-10-22
+
+Este é o ROADMAP vigente do adapter `aculta_forum_lms`; o módulo não mantém
+`docs/` próprio. Nada desta seção foi implementado: a decisão abaixo apenas
+fecha o que falta e o menor recorte aceitável antes de abrir código.
+
+O que falta para busca privada:
+
+- Não existe índice Search API nem datasource para `aculta_lms_topic` ou para
+  os Comments `aculta_discussion_post` desse contexto. O índice público de
+  `SEARCH.md` exclui LMS de propósito e não deve ser reutilizado.
+- Não existe View/rota com argumento de Group. Acesso LMS vem do Group/Entity
+  Access por conta, não dos grants de Node que `content_access` indexa e
+  filtra; um filtro de grants não representa membership de curso/turma.
+- Não há filtro de estado de moderação. Comments pendentes ou rejeitados da
+  turma não podem aparecer, e a moderação do primeiro comentário deixa a maior
+  parte das respostas de estudante pendente até aprovação do Educador.
+- Não há trigger de reindexação quando um Comment é aprovado/rejeitado ou a
+  membership muda, nem prova automatizada de que um estudante não encontra
+  conteúdo de outro curso/turma.
+- Não há entrada de interface, paginação, permalink para o Comment dentro do
+  tópico, estado vazio nem cache contexts por conta/Group.
+
+Escopo mínimo aceito para busca (não implementar agora):
+
+- Busca a partir da página do curso/turma, com Group explícito na rota; sem
+  entrada global, sem busca entre cursos e sem busca pública.
+- Um índice dedicado, restrito a tópicos LMS com relação Group única válida e
+  a Comments publicados; resultado só depois de revalidar Entity Access do
+  tópico e do Comment para a conta atual, falhando fechado.
+- Cache por `user` e pelo Group da rota (`max-age` igual ao do acesso), com
+  prova Kernel de não vazamento entre curso/turma antes de qualquer uso no
+  Runtime. Reindexação por evento fica fora do primeiro recorte; atraso de
+  índice é aceitável desde que o access check em tempo real prevaleça.
+
+O que falta para notificações privadas:
+
+- O Comments LMS não emite evento para `aculta_messenger`; não há assinatura
+  por tópico nem destinatários revalidados no momento da entrega.
+- Não há regra para não notificar fila de moderação, nem idempotência por
+  (Comment, destinatário), nem opt-in/opt-out do estudante.
+- Não há prova de que uma notificação de curso/turma nunca chegue a quem
+  perdeu membership ou acesso ao tópico depois da assinatura.
+
+Escopo mínimo aceito para notificações (não implementar agora):
+
+- Reutilizar Flag/`message_subscribe` e o worker de notificação privada de
+  `aculta_messenger`; nada de fila, armazenamento ou transporte paralelo.
+- Avisar somente a primeira resposta publicada de um tópico que a pessoa segue
+  e ainda pode ler; nunca avisar Comments pendentes, rejeitados ou a fila de
+  moderação.
+- Revalidar acesso no envio, ser idempotente por (Comment, destinatário) e
+  respeitar opt-in; entrega por e-mail e digest ficam fora deste recorte.
+
+Continuam adiados: busca entre cursos, busca global de “meus cursos”,
+relevância ajustada, digest, push e preferências por turma. Qualquer avanço
+exige Kernel próprio e nenhuma rota nova no Runtime antes da prova de
+isolamento.
+
 ## `0.1.0-dev.14` — Contrato Wiki420
 
 Provider futuro, discussão única por verbete, `author_wiki` e navegação interna.
@@ -837,6 +979,28 @@ preparação estável, 2–4 dias. Total aproximado: 15–25 dias úteis, ou 3�
 de trabalho contínuo, mais 1–2 semanas de margem se surgirem regressões em
 acesso, cache, dados ou UX. A sequência é de esforço e não representa prazo de
 deploy; produção depende de decisão própria do responsável.
+
+## Defeito upstream conhecido — Group 3.3.5 e desinstalação de relação
+
+`GroupRelationshipType::postDelete()` (contrib `group` 3.3.5,
+`modules/contrib/group/src/Entity/GroupRelationshipType.php:222`) substitui
+`ConfigEntityBundleBase::postDelete()` sem chamar o pai, então a exclusão de um
+tipo de relação não invalida o bundle em `entity_type.bundle.info`. A reconstrução
+posterior do mapa de campos chama `GroupRelationshipStorage::getEntityClass()`,
+carrega um tipo de relação já apagado e falha com
+`Call to a member function getPluginId() on null`. A desinstalação de
+`aculta_forum_lms` cai nesse caminho quando o `ModuleInstaller` remove um
+`FieldConfig` depois de apagar as duas relações do adaptador.
+
+Consequências práticas: o `LmsModuleLifecycleKernelTest` remove as relações
+antes da desinstalação e limpa os caches de bundle e de campos, reproduzindo o
+estado de um `cache rebuild`; no Runtime, o `drush cr` entre a exclusão das
+relações e a remoção dos campos evita o erro, mas o defeito é do contrib.
+
+Risco aceito por ora: nenhum código ACULTA depende do comportamento errado. Não
+substituir a mitigação por patch local sem antes verificar se a versão seguinte
+do Group corrige o `postDelete()`; registrar a correção upstream e reavaliar a
+dependência `drupal/group: ^3.3` quando houver release com o pai chamado.
 
 ## `0.1.0-rc.2` — Correções
 
