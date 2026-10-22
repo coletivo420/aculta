@@ -96,6 +96,7 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
     $fields['subject'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Assunto'))
       ->setSetting('max_length', 255)
+      ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
     $fields['subject']
       ->setDisplayOptions('form', [
@@ -107,6 +108,7 @@ final class ForumPost extends EditorialContentEntityBase implements EntityOwnerI
       ->setLabel(new TranslatableMarkup('Texto'))
       ->setSetting('allowed_formats', ['forum'])
       ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textarea',

@@ -1,3 +1,11 @@
+## `0.1.0-dev.164` — permitir traduções de assunto e corpo dos posts
+
+- Os campos `subject` e `body` dos posts revisionáveis passam a aceitar
+  traduções, requisito para a futura migração dos idiomas dos Comments. Tópico,
+  pai e posição da thread continuam compartilhados entre traduções.
+- Mudança de schema pendente de atualização de entidade no Runtime; nenhuma
+  migração foi executada.
+
 ## `0.1.0-dev.163` — paginar avisos do Messenger na auditoria
 
 - O inventário seleciona avisos por blocos de tópicos e percorre os IDs de cada
