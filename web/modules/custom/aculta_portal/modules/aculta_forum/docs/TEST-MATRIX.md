@@ -1,3 +1,13 @@
+## dev.181 — descoberta do preview local de Office
+
+- Runtime de teste confirmado em `toca`, Drupal 11.4.10, banco
+  `aculta_runtime`, purpose `forum`. `aculta_forum`, `aculta_document_viewer`
+  e `aculta_gallery` estão habilitados; rebuild de cache descobriu o formatter
+  `aculta_forum_attachment` e os builders DOCX/planilha.
+- Consulta somente leitura encontrou zero Media `forum_attachment`. Sem arquivos
+  reais, preview privado, fallback e layout não foram validados; nenhuma fixture
+  foi criada, configuração importada ou teste automatizado executado.
+
 ## Revisão visual — listas públicas de atividade (2026-10-21)
 
 - Firefox ESR/X11 anônimo no Runtime de teste: `/discussoes/novas`,

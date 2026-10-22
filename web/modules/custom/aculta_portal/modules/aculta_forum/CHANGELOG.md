@@ -7,7 +7,10 @@
   do Core.
 - A dependência do viewer fica explícita no manifest. PDF permanece como link
   até a etapa prevista para integração com o leitor PDF.
-- Validação estática registrada antes do commit; nenhum teste foi executado.
+- Smoke no Runtime de teste (purpose `forum`): cache rebuild e descoberta do
+  formatter e dos dois builders concluíram; não há Media `forum_attachment`,
+  então arquivos reais e revisão visual seguem pendentes. Nenhuma configuração
+  foi importada nem fixture criada; nenhum teste automatizado foi executado.
 
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 
