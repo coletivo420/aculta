@@ -32,3 +32,7 @@ Não usar `role=tab` em botões de offcanvas. Não simular fechamento do item do
 Auditoria do DOM real e ajustes finos da interação de drawers/modais, incluindo estados pós-AJAX e foco. Catalogar regras visuais no tema e manter contratos de comportamento nos módulos existentes, sem inventar novo SDC para invólucro Bootstrap já funcional.
 
 **Nenhum teste de interface no servidor foi executado nesta fase.**
+
+## Encaminhamento B5-02 (2026-10-22)
+
+A fase seguinte está detalhada em [B5-02 — gates Runtime para gavetas](theme-ux-0.8-b5-02-drawer-runtime-gates.md), com matriz de evidências de offcanvas, AJAX, foco, Commerce, mobile e preservação do shell. Todos os testes dependentes de homelab estão **PENDENTES**.
