@@ -66,3 +66,9 @@ o aceite vigente no fluxo ACULTA.
 
 Testes unitários locais, Kernels, smoke de Runtime e gates do Portal são
 registrados no CHANGELOG. Revisão visual autenticada da gaveta: DEFERRED.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-01/12: permanece adapter LMS → aculta_messenger (Message/Message Notify), sem segunda caixa de entrada. Garantir deduplicação, versões de eventos e revalidação de Group, avaliações e consentimento ao entregar.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
