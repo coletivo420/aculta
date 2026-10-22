@@ -108,10 +108,12 @@ criada, então o download real de resposta continua sem smoke positivo.
 
 - Imagens de capa de curso usam `aculta_image` e sua `UploadPolicy`; imagens
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
-  de File/uso compartilhado. Imagens anexadas a respostas do LMS passam pela
-  `UploadPolicy` e por `ImageInspector` antes de serem aceitas; continuam em
-  storage privado e são entregues pela rota de download protegida pela resposta
-  e pela matrícula vigente.
+  de File/uso compartilhado. Arquivos anexados a respostas do LMS passam pela
+  política central `aculta_portal.user_upload_policy`, no consumidor `lms`
+  (aba LMS do painel de uploads), e as imagens rasters também por
+  `AcultaLmsSubmissionImage`/`ImageInspector`. Continuam em storage privado e
+  são entregues pela rota de download protegida pela resposta e pela matrícula
+  vigente.
 - PDFs de material de turma usam Media `course_document`, relação de acesso
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
@@ -136,16 +138,29 @@ adapter Forum LMS: Unit 22/256 assertions e Kernel 2/132 assertions PASS; o
 Kernel registra 43 depreciações upstream e ainda não contém fixture do vínculo
 atividade-discussão.
 
-O validador da resposta só aplica a política quando a extensão autorizada pela
-atividade é raster (`png`, `gif`, `jpg`, `jpeg` ou `webp`). Demais extensões
-mantêm a validação nativa do LMS File Upload. Imagens inválidas, com MIME
-incompatível ou acima de 10 MB são recusadas. Unit cobre imagem válida, arquivo
-inválido, limite de tamanho e delegação de arquivos não raster à validação
-nativa. Kernel `AttemptArchiveLifecycleTest` passou com 8 testes / 322
-assertions, inclusive download privado, revogação de membership e acesso de
-educador. O hook OOP que liga o constraint ao formulário também é descoberto no
-Kernel, e Unit confirma que ele preserva a allowlist da atividade. O smoke ponta
-a ponta de upload e revogação no Runtime ainda está pendente.
+O hook `SubmissionImageHooks::answerFormAlter()` aplica
+`restrictValidators(..., 'lms')` a toda resposta com upload, não só às imagens:
+o educador continua escolhendo as extensões de cada atividade, mas só dentro da
+política central efetiva, e o limite de tamanho só diminui. O texto de ajuda do
+campo mostra a lista realmente aceita — a interseção entre as extensões da
+atividade e a política, não o teto inteiro da política. Com a aba LMS herdando
+o global (padrão), a política efetiva é a mesma de antes da migração: 9
+extensões
+(`png jpg jpeg gif webp pdf docx xls xlsx`) e 10 MB. Imagens inválidas, com MIME
+incompatível, continuam recusadas por `AcultaLmsSubmissionImage`.
+
+Unit `SubmissionImageHooksTest` cobre o acréscimo do validador de imagem, a
+rejeição de extensões fora da política, o texto de ajuda com a lista aceita
+(`png pdf` para uma atividade `png exe pdf txt` sob política `png pdf docx`) e a
+não alteração de formulários sem upload. Kernel `AttemptArchiveLifecycleTest`
+passou com 8 testes / 322 assertions, inclusive download privado, revogação de
+membership e acesso de educador. Kernel `SubmissionUploadPolicyKernelTest`
+(5 testes / 39 assertions) fixa a regressão: herança sem mudança de política,
+atividade que não amplia extensões nem eleva o teto, aba LMS salva que restringe
+sem tocar no global, formulário sem upload intacto e validadores nativos mantidos
+sem o serviço. Upload e download foram verificados por HTTP no Runtime de teste
+(dev.80 e dev.81); o smoke ponta a ponta de revogação no Runtime continua
+pendente.
 
 ## F1 — Fundação
 

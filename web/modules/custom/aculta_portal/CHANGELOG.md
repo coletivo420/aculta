@@ -1,3 +1,16 @@
+## 0.4.1-dev.3 — leitura da interseção restrita da política de upload (2026-10-22)
+
+- `UserUploadPolicy::acceptedExtensions()` devolve, para exibição, as extensões
+  que um conjunto de validadores já restrito aceita — a interseção entre o que a
+  atividade pediu e o teto do consumidor. O `aculta_lms` usa o método no texto de
+  ajuda do campo File Upload: uma atividade mais restrita deixa de anunciar
+  extensões que o próprio upload recusaria.
+- A leitura de `FileExtension` permanece dentro de `UserUploadPolicy`, onde o
+  gate `validate-aculta-image` a autoriza; nenhuma política efetiva ou
+  configuração mudou.
+- Coberto pelo Kernel `SubmissionUploadPolicyKernelTest` do `aculta_lms`
+  (5 testes / 39 asserções).
+
 ## 0.4.1-dev.2 — canonizar Media do Fórum por purpose (2026-10-22)
 
 - `ContentPurposeResolver` associa a rota canônica de Media `forum_attachment`

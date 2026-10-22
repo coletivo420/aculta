@@ -93,6 +93,11 @@ Wiki e LMS devem migrar em seguida para a mesma política central, com abas
 próprias no painel de uploads quando suas integrações forem concluídas. O
 roadmap Portal descreve a sequência transversal.
 
+LMS: migrado no código em 2026-10-22 (consumidor `lms` e aba no Portal
+0.4.0-dev.252; aplicação em `SubmissionImageHooks` no `aculta_lms` 0.1.0-dev.80;
+regressão Kernel em 0.1.0-dev.83). A aba herdava o global e a política efetiva
+não mudou. Wiki: pendente de localização do módulo e de migração.
+
 | Versão | Entrega | Estado |
 | --- | --- | --- |
 | `0.1.0-dev.233` | Registrar escopo mínimo da busca e das notificações privadas LMS | Documento apenas: o ROADMAP do adapter (mantido na seção dev.13 do Fórum, sem `docs/` próprio) lista o que falta em índice/View, filtro de moderação, reindexação, eventos, idempotência e revalidação de acesso, e fixa o menor recorte aceitável — busca só por curso/turma com Group explícito e notificação apenas da primeira resposta publicada via `aculta_messenger`. Nada implementado; sem Runtime/testes. |
