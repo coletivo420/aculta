@@ -1,6 +1,6 @@
-# Contrato de navegação: cada nível do Studio tem URL própria. A ordem é área, seção e aba.
+# Contrato de navegação: cada nível do GanjaLab tem URL própria. A ordem é área, seção e aba.
 aculta_studio.home:
-  path: /studio
+  path: /ganjalab
   defaults:
     _controller: 'aculta_studio.controller:page'
     _title: GanjaLab
@@ -13,7 +13,7 @@ aculta_studio.home:
     _aculta_domain_purpose: account
 
 aculta_studio.area:
-  path: /studio/{aba}
+  path: /ganjalab/{aba}
   defaults:
     _controller: 'aculta_studio.controller:page'
     _title: GanjaLab
@@ -26,7 +26,7 @@ aculta_studio.area:
     _aculta_domain_purpose: account
 
 aculta_studio.section:
-  path: /studio/{aba}/{secao}
+  path: /ganjalab/{aba}/{secao}
   defaults:
     _controller: 'aculta_studio.controller:page'
     _title: GanjaLab
@@ -39,7 +39,7 @@ aculta_studio.section:
     _aculta_domain_purpose: account
 
 aculta_studio.tab:
-  path: /studio/{aba}/{secao}/{sub}
+  path: /ganjalab/{aba}/{secao}/{sub}
   defaults:
     _controller: 'aculta_studio.controller:page'
     _title: GanjaLab
