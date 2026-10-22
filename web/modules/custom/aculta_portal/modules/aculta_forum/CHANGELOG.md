@@ -1,3 +1,14 @@
+## `0.1.0-dev.181` — conectar preview local de Office nos anexos do Fórum
+
+- O formatter do Media `forum_attachment` delega DOCX e planilhas aos builders
+  do `aculta_document_viewer` depois de verificar acesso ao Media, campo e
+  download. Validação do formato/arquivo, iframe isolado e link protegido são
+  mantidos pelo viewer; formatos não suportados ou inválidos continuam com link
+  do Core.
+- A dependência do viewer fica explícita no manifest. PDF permanece como link
+  até a etapa prevista para integração com o leitor PDF.
+- Validação estática registrada antes do commit; nenhum teste foi executado.
+
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 
 - Migration própria lê flaggings `sinalizar_comentario` em lotes keyset e

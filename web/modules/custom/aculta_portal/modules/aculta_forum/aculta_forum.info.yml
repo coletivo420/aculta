@@ -2,13 +2,14 @@ name: ACULTA Forum
 type: module
 description: 'Discussões ACULTA com posts revisionáveis, workflow Core, integração a Comments compartilhados durante a migração e leitura contextual.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.180'
+version: '0.1.0-dev.181'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_image
   - aculta_portal:aculta_user
   - aculta_portal:aculta_gallery
+  - aculta_portal:aculta_document_viewer
   - drupal:media
   - drupal:ckeditor5
   - drupal:editor

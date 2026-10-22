@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\Field\FieldFormatter;
 
+use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
+use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilder;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
@@ -17,7 +19,7 @@ use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Renders Forum images through aculta_image and documents as protected links.
+ * Renders Forum images and delegates local document previews to their owners.
  */
 #[FieldFormatter(
   id: 'aculta_forum_attachment',
@@ -35,6 +37,8 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
     $view_mode,
     array $third_party_settings,
     private readonly ImageRenderer $imageRenderer,
+    private readonly DocxViewerBuilder $docxViewerBuilder,
+    private readonly SpreadsheetViewerBuilder $spreadsheetViewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }
@@ -52,6 +56,8 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('aculta_image.render'),
+      $container->get('aculta_document_viewer.docx_builder'),
+      $container->get('aculta_document_viewer.spreadsheet_builder'),
     );
   }
 
@@ -105,13 +111,26 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
         }
       }
 
-      // PDF and Office reader integrations are later Forum phases; until then
-      // Core's protected file link is the fallback.
-      $elements[$delta] = [
+      $link = [
         '#theme' => 'file_link',
         '#file' => $file,
         '#description' => $items->get($delta)->description ?: NULL,
       ];
+      $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+      $mime = strtolower((string) $file->getMimeType());
+      $viewer = NULL;
+      if ($extension === 'docx' && $mime === DocxViewerBuilder::DOCX_MIME) {
+        $viewer = $this->docxViewerBuilder->build($file, (string) $file->getFilename());
+      }
+      elseif (isset(SpreadsheetViewerBuilder::FORMATS[$extension]) && in_array($mime, SpreadsheetViewerBuilder::FORMATS[$extension], TRUE)) {
+        $viewer = $this->spreadsheetViewerBuilder->build($file, (string) $file->getFilename());
+      }
+      $elements[$delta] = $link;
+      if ($viewer !== NULL) {
+        $file_cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($viewer));
+        $viewer['link'] = $link;
+        $elements[$delta] = $viewer;
+      }
       $file_cacheability->applyTo($elements[$delta]);
     }
     return $elements;

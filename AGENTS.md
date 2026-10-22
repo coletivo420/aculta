@@ -1,5 +1,7 @@
 # ACULTA — agentes CLI
 
+PROJECT-STATUS-INDEX-GUARD: 2026-10-21
+
 Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web/`, módulos `web/modules/custom/`, tema `web/themes/custom/aculta420/`.
 
 ## Regras sempre ativas

@@ -65,6 +65,10 @@ campo PDF pela rota privada do Core (`0.1.0-dev.40`). Isso prepara o contrato de
 acesso; o cartão/formatter ainda não foi ligado à apresentação do post e continua
 na etapa 3.
 
+Dev.181 conecta DOCX e planilhas do Media `forum_attachment` aos builders locais
+do `aculta_document_viewer`; a validação integrada e a revisão visual continuam
+pendentes. PDF segue como download até a etapa 3.
+
 Não criar leitor PDF ou serviço de conversão paralelo no Fórum. Cada etapa exige
 respeitar o contrato de acesso e retenção de anexos privados.
 
