@@ -11,7 +11,7 @@
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
 
-O catálogo não é dono de nenhuma entidade original. O módulo de origem mantém armazenamento, revisões, traduções, workflows, publicação, regras de negócio e acesso. Estar no catálogo não concede visibilidade nem ação. A resposta final revalida a entidade original e seu acesso sob o domínio/grupo pertinente; se a autorização não puder ser determinada, o item não é exposto. Facetas, totais, ordenações e cache também precisam respeitar esse limite.
+O catálogo não é dono de nenhuma entidade original. O módulo de origem mantém armazenamento, revisões, traduções, workflows, publicação, regras de negócio e acesso. Estar no catálogo não concede visibilidade nem ação. `ContentIndexAccessFilter` carrega até 100 candidatos por lote e revalida `Entity Access` na tradução original; falha ao encontrar entidade ou determinar acesso nega exposição. O resultado combina cacheability de decisões permitidas e negadas. Facetas, totais, ordenações e cache também precisam respeitar esse limite.
 
 ## Fronteiras
 
@@ -42,9 +42,9 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 |---|---|---|
 | IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
 | IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
-| IDX 0.1-C | Schema e primeiro provider | Schema testado no Kernel; contratos e provider Magazine implementados; writer pendente |
+| IDX 0.1-C | Schema e primeiro provider | Schema, provider Magazine, writer transacional e filtro de Entity Access testados no Kernel/Unit; integração do writer ao backfill pendente |
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Planejada com Core Queue + estado mínimo de falhas |
-| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS e diagnóstico inicial de integridade implementados; orquestrador, writer, reconciliação e catch-up pendentes |
+| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, writer e diagnóstico inicial implementados; orquestrador, reconciliação e catch-up pendentes |
 | IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Primeiro provider (Magazine) implementado; persistência/eventos ainda pendentes |
 | IDX 0.1-G | Consultas, cache e medições | Pendente |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |

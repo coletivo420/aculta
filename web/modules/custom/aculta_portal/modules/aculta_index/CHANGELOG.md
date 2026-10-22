@@ -1,5 +1,21 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.9 — writer transacional e revalidação de Entity Access
+
+- `ContentIndexWriter` grava uma identidade por entidade/idioma/geração e
+  substitui relações na mesma transação. Hash canônica permite evitar escrita
+  repetida e reparar relações divergentes.
+- `source_sequence` em BIGINT impede jobs antigos de sobrescreverem uma versão
+  nova; conflito de conteúdo com a mesma sequência falha fechado. Exclusões
+  também são condicionadas à sequência.
+- Relação SHA-256 inclui provider e identidade da origem; múltiplas origens
+  podem referenciar o mesmo alvo sem colidir.
+- `ContentIndexAccessFilter` carrega candidatos em lotes de até 100, verifica
+  Entity Access no original e devolve apenas entidades autorizadas com cache
+  tags/contexts/max-age agregados de resultados permitidos e negados.
+- Schema update hook 10002 adiciona `source_sequence`. Kernel cobre gravação,
+  idempotência, relações compartilhadas, exclusão e ordem obsoleta.
+
 ## 0.1.0-dev.8 — checkpoint keyset com compare-and-swap
 
 - `ContentIndexRebuildCheckpointManager` retoma posição por provider, tipo e ID

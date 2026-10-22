@@ -61,6 +61,7 @@ function aculta_index_schema(): array {
         'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'published_at' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'projection_hash' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'source_sequence' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
       ],
       'primary key' => ['entry_id'],
@@ -124,6 +125,22 @@ function aculta_index_update_10001(): void {
   if (!$schema->fieldExists('aculta_index_generation', 'cursor_revision')) {
     $schema->addField('aculta_index_generation', 'cursor_revision', [
       'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds the source change sequence used to reject stale projection jobs.
+ */
+function aculta_index_update_10002(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('aculta_index_entry', 'source_sequence')) {
+    $schema->addField('aculta_index_entry', 'source_sequence', [
+      'type' => 'int',
+      'size' => 'big',
       'unsigned' => TRUE,
       'not null' => TRUE,
       'default' => 0,

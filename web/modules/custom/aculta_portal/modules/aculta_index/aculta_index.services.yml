@@ -23,6 +23,18 @@ services:
 
   Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker: '@aculta_index.integrity_checker'
 
+  aculta_index.writer:
+    class: Drupal\aculta_index\Storage\ContentIndexWriter
+    arguments: ['@database', '@aculta_index.provider_registry', '@datetime.time']
+
+  Drupal\aculta_index\Storage\ContentIndexWriter: '@aculta_index.writer'
+
+  aculta_index.access_filter:
+    class: Drupal\aculta_index\Query\ContentIndexAccessFilter
+    arguments: ['@entity_type.manager']
+
+  Drupal\aculta_index\Query\ContentIndexAccessFilter: '@aculta_index.access_filter'
+
   aculta_index.provider_registry:
     class: Drupal\aculta_index\Provider\ContentIndexProviderRegistry
     arguments: [!tagged_iterator aculta_index.provider]

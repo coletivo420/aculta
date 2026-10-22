@@ -9,7 +9,7 @@
 |---|---|---|
 | `aculta_index_generation` | Estado do rebuild, status, timestamps e cursor keyset por provider | PK `generation_id`; índice de status e criação |
 | `aculta_index_state` | Uma linha (`state_id = 1`) aponta para a geração ativa e mantém revisão do ponteiro | PK singleton; troca será transacional |
-| `aculta_index_entry` | Projeção mínima de entidade atual/idioma: provider, tipo/ID, bundle, UUID, label, domínio, publicação, datas e hash de projeção | Unicidade por geração + entity type + entity ID + langcode; índices de bundle, domínio/publicação e provider |
+| `aculta_index_entry` | Projeção mínima de entidade atual/idioma: provider, tipo/ID, bundle, UUID, label, domínio, publicação, datas, hash e sequência monotônica da origem | Unicidade por geração + entity type + entity ID + langcode; índices de bundle, domínio/publicação e provider |
 | `aculta_index_relation` | Relação dirigida e tipada entre identidades originais | Unicidade por geração + SHA-256 da tupla; índices separados de origem, alvo e tipo |
 
 As relações guardam a identidade do alvo mesmo quando o alvo não tem adapter e não possui entrada no índice. `target_langcode = und` significa relação ao nível da entidade, sem apontar uma tradução específica; para este caso a consulta de relações não deve presumir correspondência com uma única linha de idioma. Não há FK a entidade Drupal nem a outra linha de `entry`: o armazenamento original pode ser de um módulo opcional, o alvo pode não ser indexável e excluir/reconstruir o catálogo não pode alterar o conteúdo original.
@@ -32,11 +32,11 @@ Schema foi declarado com Database Schema API, sem SQL de criação específico d
 
 O schema não guarda corpo, URI de arquivo, usuário, histórico de revisão, notas de estudante ou métricas. `published` é nullable porque algumas entidades não têm publicação; zero/um representam estado explícito quando o provider pode determiná-lo. `domain_id` vazio representa ausência de domínio. A presença da linha não concede acesso; APIs de consulta futuras precisam carregar o original, validar Entity Access e filtrar resultados sem expor totais/facetas privados.
 
-`projection_hash` permite pular gravações quando a projeção não mudou. A normalização estável do hash e a prevenção de overwrite obsoleto serão implementadas junto do writer incremental, não inferidas a partir do timestamp sozinho.
+`projection_hash` permite pular gravações quando a projeção não mudou. `source_sequence` ordena operações CRUD por identidade entidade/idioma e impede overwrite de job atrasado; o timestamp de alteração não é usado como único token de concorrência. A sequência é estado técnico de atualização e não cria identidade por revisão. O `ContentIndexWriter` e o filtro de Entity Access estão implementados; a fila ainda precisa alimentar a sequência em cada evento.
 
 ## Próximos gates
 
-- IDX 0.1-C: definir writer idempotente, comparação de versão e persistência de relações; provider Magazine inicial já existe e não é genérico.
+- IDX 0.1-C: writer idempotente, comparação de versão, persistência de relações e provider Magazine implementados; falta ligar o writer ao backfill.
 - IDX 0.1-D: Core Queue + estado mínimo de falha; remover/invalidar síncronamente mudanças que reduzam exposição; validar versionamento em gravação concorrente.
 - IDX 0.1-E: rebuild keyset, catch-up de delta, ativação transacional, rollback e reconciliação.
 - IDX 0.1-R: kernel/schema nos bancos de teste, concorrência, portabilidade, acesso e benchmark medido.

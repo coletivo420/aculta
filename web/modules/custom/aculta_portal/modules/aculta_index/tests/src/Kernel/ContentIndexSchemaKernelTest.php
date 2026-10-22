@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
+use Drupal\aculta_index\Storage\ContentIndexWriter;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -157,6 +162,73 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds the source sequence on older installs.
+   */
+  public function testUpdateHookAddsSourceSequence(): void {
+    $database = $this->container->get('database');
+    $this->insertEntry('gen-old', 'node', '104', 'pt-br');
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_entry', 'source_sequence');
+    $this->assertFalse($schema->fieldExists('aculta_index_entry', 'source_sequence'));
+
+    aculta_index_update_10002();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_entry', 'source_sequence'));
+    $this->assertSame('0', $database->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['source_sequence'])
+      ->condition('entity_id', '104')
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Tests the projection writer is idempotent and rejects stale sequences.
+   */
+  public function testWriterSynchronizesEntryAndRelationsBySequence(): void {
+    $generation = $this->container->get('aculta_index.generation_manager')->start();
+    $provider = $this->createMock(ContentIndexProviderInterface::class);
+    $provider->method('getProviderId')->willReturn('magazine');
+    $provider->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $writer = new ContentIndexWriter(
+      $this->container->get('database'),
+      new ContentIndexProviderRegistry([$provider]),
+      $this->container->get('datetime.time'),
+    );
+    $first = $this->projection('Original', 10, 'activity-1');
+
+    $this->assertTrue($writer->write($generation, 'magazine', $first, 1));
+    $this->assertFalse($writer->write($generation, 'magazine', $first, 1));
+    $this->assertSame(1, $this->entryCount($generation));
+    $this->assertSame(1, $this->relationCount($generation));
+
+    $secondSource = $this->projection('Outra publicação', 10, 'activity-1', '43');
+    $this->assertTrue($writer->write($generation, 'magazine', $secondSource, 1));
+    $this->assertSame(2, $this->relationCount($generation));
+
+    $latest = $this->projection('Revisada', 11, 'activity-2');
+    $this->assertTrue($writer->write($generation, 'magazine', $latest, 2));
+    $this->assertFalse($writer->write($generation, 'magazine', $first, 1));
+    $this->assertSame('Revisada', $this->entryLabel($generation));
+    $this->assertSame('2', $this->entrySequence($generation));
+    $this->assertSame('activity-2', $this->relationTarget($generation));
+    $this->assertSame(2, $this->relationCount($generation));
+
+    try {
+      $writer->write($generation, 'magazine', $this->projection('Divergente', 11, 'activity-3'), 2);
+      $this->fail('Expected conflicting data for one source sequence to be rejected.');
+    }
+    catch (\LogicException) {
+      $this->assertSame('Revisada', $this->entryLabel($generation));
+      $this->assertSame('activity-2', $this->relationTarget($generation));
+    }
+
+    $this->assertFalse($writer->remove($generation, 'magazine', 'node', '42', 'pt-br', 1));
+    $this->assertTrue($writer->remove($generation, 'magazine', 'node', '42', 'pt-br', 3));
+    $this->assertSame(1, $this->entryCount($generation));
+    $this->assertSame(1, $this->relationCount($generation));
+  }
+
+  /**
    * Tests an unvalidated generation cannot replace the active pointer.
    */
   public function testBuildingGenerationCannotActivate(): void {
@@ -290,6 +362,84 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     return (string) $this->container->get('database')->select('aculta_index_generation', 'generation')
       ->fields('generation', ['status'])
       ->condition('generation_id', $generationId)
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Creates a provider-owned projection fixture.
+   */
+  private function projection(string $label, int $changed, string $activityId, string $entityId = '42'): ContentIndexProjection {
+    return new ContentIndexProjection(
+      'node',
+      $entityId,
+      'pt-br',
+      'revista',
+      'magazine-uuid',
+      $label,
+      'coletivo420_aculta_org',
+      TRUE,
+      1,
+      $changed,
+      NULL,
+      [new ContentIndexRelation('related_activity', 'node', $activityId)],
+    );
+  }
+
+  /**
+   * Counts entries for a generation.
+   */
+  private function entryCount(string $generationId): int {
+    return (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Counts relations for a generation.
+   */
+  private function relationCount(string $generationId): int {
+    return (int) $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->condition('generation_id', $generationId)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Reads the indexed label for the fixture identity.
+   */
+  private function entryLabel(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['label'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '42')
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Reads the indexed source sequence for the fixture identity.
+   */
+  private function entrySequence(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['source_sequence'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '42')
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Reads the first outgoing relation target.
+   */
+  private function relationTarget(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->fields('relation', ['target_entity_id'])
+      ->condition('generation_id', $generationId)
+      ->condition('source_entity_id', '42')
       ->execute()
       ->fetchField();
   }
