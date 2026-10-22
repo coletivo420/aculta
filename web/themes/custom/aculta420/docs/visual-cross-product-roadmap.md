@@ -207,3 +207,9 @@ O [plano WES-MOD 0.1](../../../../../web/modules/custom/aculta_portal/modules/ac
 ## XK-10 — visual das centralizações (2026-10-22)
 
 A [auditoria transversal](../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md) define kernels de dados e serviços. Fóruns Group restritos a associados ativos precisam de ACL efetiva, sem esconder conteúdo só por CSS. Wiki/WE SATIVA, LMS, Fórum, Messenger e Group seguem mobile-first, Core SDC/UI Patterns/UI Styles, com Institution Bar e Domain Header preservados. Fase visual só após contratos de acesso/ownership e histórias reais.
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B: definições de participação, avisos e ACL Group foram registradas antes das alterações visuais. UI do WE SATIVA, Fórum e LMS continua mobile-first, conforme Core SDC/UI Suite; não esconder acesso por CSS e manter Institution Bar + Domain Header multidomínio.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
