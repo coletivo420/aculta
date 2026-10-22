@@ -22,20 +22,15 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
     self::assertStringContainsString("Meus conteúdos", $source);
   }
 
-  public function testOwnerScopeAndRevisionFilterPrecedePageSlice(): void {
+  public function testSeekPagesAreBoundedAndAuthorizationIsChecked(): void {
     $source = file_get_contents(__DIR__ . '/../../../src/StudioListingBuilder.php');
     self::assertIsString($source);
-    $owner = strpos($source, "->condition('uid', (int) \$account->id())");
-    $revision = strpos($source, 'foreach (array_chunk(array_values($nids), 100)');
-    $pager = strpos($source, 'createPager(count($matched), 20)');
-    $slice = strpos($source, 'array_slice($matched, $pager->getCurrentPage() * 20, 20)');
-    self::assertNotFalse($owner);
-    self::assertNotFalse($revision);
-    self::assertNotFalse($pager);
-    self::assertNotFalse($slice);
-    self::assertLessThan($revision, $owner);
-    self::assertLessThan($pager, $revision);
-    self::assertLessThan($slice, $pager);
+    self::assertStringContainsString("->condition('uid', (int) \$account->id())", $source);
+    self::assertStringContainsString("->range(0, 100)", $source);
+    self::assertStringContainsString("for (\$batch = 0; \$batch < 10", $source);
+    self::assertStringContainsString("self::canViewRevision(\$latest, \$account)", $source);
+    self::assertStringContainsString("studio_cursor", $source);
+    self::assertStringNotContainsString("createPager(count(\$matched)", $source);
   }
 
 }
