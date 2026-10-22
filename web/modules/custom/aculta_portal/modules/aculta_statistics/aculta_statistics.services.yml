@@ -26,6 +26,10 @@ services:
     class: Drupal\aculta_statistics\Reconciliation\CommerceReconciler
     arguments: ['@entity_type.manager', '@aculta_statistics.storage']
 
+  aculta_statistics.wiki_provider:
+    class: Drupal\aculta_statistics\Wiki\WikiProvider
+    arguments: ['@entity_type.manager']
+
   aculta_statistics.email_provider:
     class: Drupal\aculta_statistics\Email\EmailProvider
     arguments: ['@entity_type.manager']
