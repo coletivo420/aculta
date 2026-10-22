@@ -278,3 +278,17 @@ Ficam no Portal, com a justificativa abaixo.
 Consequência: o submódulo depende do Portal; o Portal não importa nenhuma classe
 de `Drupal\aculta_wiki`. Se a Wiki deixar de existir, o Portal continua
 funcionando com `wiki_search` nulo, e o purpose/domínio permanecem inofensivos.
+
+## Anexo — Política de privacidade (verificação da tarefa C2)
+
+A seção “Bases legais por uso do site” existe em
+`scripts/institution/politica-de-privacidade.html` e já traz a linha da Wiki:
+
+> **Wiki**, quando ativa: consentimento na contribuição (art. 7º, I), e interesse
+> legítimo na curadoria editorial (art. 7º, IX).
+
+Não há lacuna de base legal. Nada foi inventado e nada foi alterado na política:
+o texto atual cobre contribuição e curadoria. As métricas planejadas
+(`wiki.entries.published`, `wiki.entries.updated`) são contagens diárias
+agregadas, sem autoria e sem IP, e não acrescentam uso de dado pessoal que exija
+nova base; a decisão de mencioná-las na política fica com o responsável.
