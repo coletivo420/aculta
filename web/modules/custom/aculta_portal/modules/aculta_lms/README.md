@@ -467,3 +467,7 @@ Runtime/Homelab não faz parte do teste.
 - [Contratos de integração](../../../../../../docs/portal/LMS-INTEGRATION-CONTRACTS.md)
 - [Matriz de segurança e arquivos](../../../../../../docs/portal/SECURITY-ACCESS-FILES-MATRIX.md)
 - [Changelog](CHANGELOG.md)
+
+## GanjaLab420 — migração para ACULTA Studio (G420-A)
+
+[Contrato e inventário de migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). GanjaLab420 é **a experiência LMS do estudante** dentro de ACULTA Studio. Os entrypoints de `/ganjalab420` e `/minha-aprendizagem` foram transferidos para `aculta_studio.ganjalab420_controller`, que delega ao controlador LMS; o LMS preserva dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com GanjaLab editorial nem com WE SATIVA. A extração da composição visual para Studio será a G420-C; não declarar concluída. Antes do deploy habilitar Studio se necessário e executar testes Function/Kernel e smoke de rotas. 
