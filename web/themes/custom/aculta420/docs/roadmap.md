@@ -398,3 +398,7 @@ A Wiki (`/wiki` e `/wiki/busca`) reutiliza agora `aculta420:context-tabs` com du
 ## THEME-UX 0.8-B5 — catálogo de overlays e ARIA (2026-10-22)
 
 Os três drawers de utilidade (Avisos, Mensagens, Carrinho) agora declaram `aria-expanded` e o estado de seus triggers é sincronizado com eventos Bootstrap pelo JS global. Ver [catálogo B5](theme-ux-0.8-b5-overlay-catalog.md). O painel Minha Conta continua usando navegação AJAX própria, não offcanvas. Testes Runtime e foco/backdrop continuam pendentes; preservar Institution Bar + Domain Header. Próximo B5-02.
+
+## Atualização B1 — Context Header detectado na branch (2026-10-22)
+
+O componente `aculta420:context-header` **já existe** com schema SDC, Twig, CSS e stories `default`/`editorial`. A próxima atividade **não é criá-lo outra vez**, mas integrar dois consumidores reais e testar ownership de H1, render arrays, UI Patterns/Styles e preservação do shell multidomínio. Ver [plano atualizado de B1](theme-ux-0.8-m2-b1-context-header.md). Não declarar implantação Runtime concluída.
