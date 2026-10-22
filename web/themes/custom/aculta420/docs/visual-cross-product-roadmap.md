@@ -183,3 +183,8 @@ O [contrato de fundação WE SATIVA](../../../../../web/modules/custom/aculta_po
 ## WE SATIVA C01-A — escolha de slot e gate de acesso
 
 [Análise C01-A](../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-CTA-AUDIT.md): `context-header.actions` é a posição candidata para um único CTA `Contribuir`, fornecido como render array autorizado pelo kernel Wiki; `wiki-entry.actions` já contém operações Core e **não pode duplicar o convite**. O tema não gera URL/permissão e não remove operações Core por CSS. A próxima etapa C01-B especifica o contrato de intents e o acesso mínimo; o comportamento só será implementado após rota e testes. Mobile-first em Wiki e WE SATIVA, SDC/UI Suite e shell global preservados.
+
+
+## WE SATIVA C01-B — confirmação de e-mail + moderação
+
+[Contrato C01-B](../../../../../docs/portal/WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md): papéis exportados já permitem a `email_confirmed` criar/editar verbetes próprios e enviar à revisão, porém **não publicar**; `content_editor` revê e publica. Microtarefas em conteúdo de terceiros aguardam mecanismo seguro de propostas, sem ampliar `edit any`. O tema exibirá `Contribuir` uma única vez no `context-header.actions`, somente com URL/access válidos, e seguirá mobile-first com shell multidomínio intacto.
