@@ -38,7 +38,7 @@ final class RevistaTab extends StudioTabBase {
   /** {@inheritdoc} */
   public function sections(AccountInterface $account): array {
     $states = [
-      'todos' => ['label' => $this->t('Todos'), 'state' => NULL],
+      'todos' => ['label' => $this->t('Meus conteúdos'), 'state' => NULL],
       'rascunhos' => ['label' => $this->t('Rascunhos'), 'state' => 'draft'],
       'em-revisao' => ['label' => $this->t('Em revisão'), 'state' => 'review'],
       'publicados' => ['label' => $this->t('Publicados'), 'state' => 'published'],
@@ -49,13 +49,13 @@ final class RevistaTab extends StudioTabBase {
       $listTabs[$id] = [
         'label' => $item['label'],
         'weight' => count($listTabs),
-        'listing' => ['bundle' => 'revista', 'state' => $item['state'], 'editable' => TRUE],
+        'listing' => ['bundle' => 'revista', 'scope' => 'mine', 'state' => $item['state'], 'editable' => TRUE],
         'actions' => [],
       ];
     }
     return [
       'publicacoes' => [
-        'label' => $this->t('Publicações'),
+        'label' => $this->t('Meu trabalho'),
         'weight' => 0,
         'tabs' => $listTabs,
       ],
