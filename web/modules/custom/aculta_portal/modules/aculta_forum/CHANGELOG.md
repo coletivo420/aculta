@@ -1,3 +1,27 @@
+## `0.1.0-dev.182` — corrigir renderização de posts no Runtime
+
+- `ForumPostThreadBuilder` agora injeta `Drupal\Core\Session\AccountInterface`;
+  o tipo anterior apontava para um namespace inexistente e fazia a construção
+  do serviço falhar, retornando HTTP 500 nas páginas do Fórum.
+- Cada post usa `EntityViewBuilder::view()` para manter o callback de pré-render
+  no item renderizado. Extrair itens de `viewMultiple()` descartava o pré-render
+  do array pai e deixava o article vazio. A documentação oficial do Core
+  descreve esse processamento diferido em
+  [EntityViewBuilder::viewMultiple()](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21EntityViewBuilder.php/function/EntityViewBuilder%3A%3AviewMultiple/main).
+- No Runtime de teste, importação parcial alinhou `field_gallery_purpose` e os
+  displays padrão de `aculta_forum_post` e `forum_attachment`; as duas galerias
+  existentes mantiveram o campo vazio e suas 97 imagens intactas.
+- Firefox ESR headless confirmou tópico/post públicos, markup do viewer DOCX e
+  ausência de overflow em viewports efetivos 500, 768, 1024 e 1428 CSS px. O
+  endpoint privado ainda falha com `FileException: File must be readable` no
+  `BinaryFileResponse`; o viewer anunciou fallback. A tentativa em 320/390 px
+  foi limitada pelo viewport mínimo de 500 px do Firefox headless. Revisão de
+  preview Office permanece pendente.
+- Fixture temporária removida: tópico 524, post 1, Media 243 e File 586; o
+  Runtime voltou a zero tópicos, posts, comentários dedicados e anexos. Raiz e
+  `/categorias` retornaram 200; URL do tópico removido retornou 404. PHP lint
+  passou; testes não foram repetidos nesta revisão.
+
 ## `0.1.0-dev.181` — conectar preview local de Office nos anexos do Fórum
 
 - O formatter do Media `forum_attachment` delega DOCX e planilhas aos builders

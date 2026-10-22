@@ -28,6 +28,10 @@ teste; a árvore Taxonomy foi preservada como estrutura inicial do fórum.
 | Node | 388 | [TESTE] convivência e apresentações | 84 | Removido em 2026-10-19. |
 | Node | 389 | [TESTE] política de drogas | 86 | Removido em 2026-10-19. |
 | Node | 390 | [TESTE] direitos humanos | 87 | Removido em 2026-10-19. |
+| Node | 524 | [TESTE] ACULTA Forum Office 6d9f7c9a | 83 | Fixture pública temporária de renderização, removida em 2026-10-21. |
+| ForumPost | 1 | [TESTE] ACULTA Forum Office 6d9f7c9a — preview DOCX | Node 524 | Removido em 2026-10-21. |
+| Media | 243 | [TESTE] ACULTA Forum Office 6d9f7c9a | File 586 | Removida em 2026-10-21. |
+| File | 586 | TESTE--ACULTA-Forum-Office-6d9f7c9a.docx | `private://forum-preview-6d9f7c9a.docx` | Removido pelo File API em 2026-10-21; diretório temporário removido. |
 
 Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, URI
 `https://growroom420.aculta.toca.net.br`. O vocabulário alvo tinha 0 termos e o
@@ -52,3 +56,15 @@ sem redirect.
 Não remova Nodes do bundle legado `forum`, termos do vocabulário `forums`,
 vínculos da Revista nem conteúdo de Revista, Wiki ou LMS. Não há rotina
 automática de expurgo.
+
+## Fixture de preview Office — 2026-10-21
+
+A tentativa de pré-visualização usou somente a hierarquia acima (Node 524,
+ForumPost 1, Media 243, File 586) e a categoria preservada 83. A limpeza
+revalidou UUID, título, bundle e referências antes de excluir pela Entity API;
+File foi removido após Media e a referência de uso ficar vazia. Contagem final:
+0 tópicos/posts/Comments dedicados/anexos; galerias Media 11 e 18 mantiveram
+63+34 imagens e o `field_gallery_purpose` opcional permaneceu vazio. A URL da
+fixture retornou HTTP 404. O preview privado falhou com `FileException` e ficou
+registrado como pendência em `TEST-MATRIX.md`; as capturas permanecem fora do
+checkout, no diretório privado indicado acima.

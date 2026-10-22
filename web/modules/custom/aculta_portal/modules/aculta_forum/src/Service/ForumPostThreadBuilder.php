@@ -10,10 +10,10 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Pager\PagerManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\user\AccountProxyInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
@@ -30,7 +30,7 @@ final class ForumPostThreadBuilder {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
+    private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly DiscussionContextResolver $discussionContextResolver,
     private readonly PagerManagerInterface $pagerManager,
@@ -135,10 +135,10 @@ final class ForumPostThreadBuilder {
       }
     }
     $parentEntities = $storage->loadMultiple($externalParentIds);
-    $renderedPosts = $this->entityTypeManager->getViewBuilder('aculta_forum_post')
-      ->viewMultiple($viewable, 'default');
-    foreach ($viewable as $delta => $post) {
+    foreach ($viewable as $post) {
       $postId = (string) $post->id();
+      $renderedPost = $this->entityTypeManager->getViewBuilder('aculta_forum_post')
+        ->view($post, 'default');
       $parent = NULL;
       if (!$post->get('parent')->isEmpty()) {
         $parentId = (string) $post->get('parent')->target_id;
@@ -167,7 +167,7 @@ final class ForumPostThreadBuilder {
         '#type' => 'html_tag',
         '#tag' => 'article',
         '#attributes' => $attributes,
-        'content' => $renderedPosts[$delta],
+        'content' => $renderedPost,
       ];
       if ($parent !== NULL) {
         $parentLabel = new TranslatableMarkup('Em resposta a: @subject', [

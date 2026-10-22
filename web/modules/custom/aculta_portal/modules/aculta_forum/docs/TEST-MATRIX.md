@@ -1,3 +1,26 @@
+## dev.182 — renderização de post e tentativa de preview DOCX
+
+- Fonte instalada/Core 11.4.10 confirmou que `viewMultiple()` devolve um array
+  com pré-render no array pai; a extração de um filho perdia a montagem da
+  entidade. `ForumPostThreadBuilder` agora usa `view()` para cada post. O tipo
+  de usuário do serviço foi corrigido para `Drupal\Core\Session\AccountInterface`.
+- Runtime de teste `toca`, Drupal 11.4.10, purpose `forum`: após importação
+  parcial do campo contextual Gallery e dos displays de post/Media, as duas
+  galerias preexistentes mantiveram 63 e 34 imagens e o campo novo vazio. A
+  fixture pública confirmou acesso anônimo a tópico, post, Media e File; a rota
+  do tópico respondeu 200 e o markup DOCX incluiu controles e fallback.
+- Firefox ESR headless: sem overflow nos viewports efetivos 500, 768, 1024 e
+  1428 CSS px. O mínimo do Firefox impediu validar os pedidos de 320/390 px.
+  O endpoint `/system/files?file=...` terminou em HTTP 500 com
+  `FileException: File must be readable`; o status do viewer informou fallback.
+  `/system/files/{filepath}` retornou 404. Portanto o preview privado não está
+  validado no Runtime.
+- Fixture removida na mesma sessão (Node 524, ForumPost 1, Media 243, File 586).
+  Entity API confirmou 0 tópicos, 0 posts, 0 Comments dedicados e 0 anexos; as
+  galerias 11/18 e suas 97 imagens permaneceram. A URL da fixture retornou 404.
+  Capturas headless em
+  `/home/aculta/private/aculta/visual-tests/forum-office-dev182-6d9f7c9a/`.
+
 ## dev.181 — descoberta do preview local de Office
 
 - Runtime confirmado em `toca`, Drupal 11.4.10, banco `aculta_runtime`, purpose
