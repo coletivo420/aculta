@@ -489,3 +489,7 @@ Levantados na varredura de 2026-10-14: declarados em `css/tokens.css` e sem entr
 | `--aculta-text-muted` | `var(--aculta-green-dark)` | 2 | Textos: destaque, inverso e muted. |
 
 Novo token no 0.6.0-dev.22: `--aculta-motion-quick: 150ms`, usado em `css/components/portal-account.css` para fechar a DT-T19 (durações fora de tokens).
+
+## Planejamento de evolução visual compartilhada — THEME-UX 0.8
+
+Aplicar a regra **reuse-first** de [visual-cross-product-roadmap.md](visual-cross-product-roadmap.md): primeiro os SDCs `card`, `content-section`, `content-grid`, `figure`, `quote`, `author-card`, Messenger, QR e LMS course card; avaliar variantes antes de criar `context-header`, `context-tabs`, `empty-state`, `content-reader`, `resource-list` e `status-timeline`. Cada padrão novo exige consumidor real, segundo consumidor interáreas, schema, story UI Patterns, tokens light/dark com geometria igual, responsividade 320–1440 e acessibilidade. Institution Bar e Domain Header do shell multidomínio são permanentes. É uma proposta de trabalho futuro, não SDC já disponível.
