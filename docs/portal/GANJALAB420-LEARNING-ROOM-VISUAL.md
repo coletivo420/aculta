@@ -89,3 +89,7 @@ Componentes *candidatos* no ACULTA420: `learning-room-shell`, `learning-course-o
 ## Cinco modelos de conteúdo — evolução 0.4.1
 
 O contrato de [modelos de aula (leitura, vídeo e H5P)](GANJALAB420-LESSON-MODELS-VISUAL.md) define cinco variantes do mesmo shell: **leitura, vídeo, atividade, documento/PDF e H5P interativo**. H5P tem exigências próprias de escala no mobile, teclado, tentativas, CSP, arquivos privados, fallback e homologação; não pode ser confundido com um embed de vídeo. O módulo interno continua `aculta_lms`, a integração H5P continua `aculta_lms_h5p`.
+
+## Planejamento de atividades e avaliações — G420-UX 0.4.3
+
+[Atividades e Avaliações](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md) apresenta questionários, envios de documentos, H5P avaliativo, feedback e estados reais do LMS, preservando Form API, notas, tentativas e Group. A experiência permanece dentro do shell compartilhado da Sala.
