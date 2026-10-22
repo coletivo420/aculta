@@ -14,6 +14,11 @@ props:
         - article
         - teaser
       title: Presentation variant
+    show_heading:
+      type: boolean
+      title: Render article heading
+      description: Set false when a separate Context Header SDC owns the page H1.
+      default: true
     url:
       type: string
       title: Canonical entry URL
