@@ -45,3 +45,7 @@ Não afirmar que qualquer consumer foi verificado sem renderização Runtime, co
 - **B1-02e:** atualizar catálogo do tema e documentação dos consumidores, marcar estados reais.
 
 **Próximo passo fora de Runtime:** inspecionar arquivos controller/view builder/temas de páginas candidatas no GitHub para localizar pontos de integração, sem adivinhar route names e sem implementar SDC ocioso.
+
+## B1-02a — auditoria de consumidores no repositório
+
+[Mapa de código do GanjaLab420 e Wiki](theme-ux-0.8-b1-02a-consumer-code-map.md): rota `/ganjalab420` com controller LMS e Wiki verbete completo com H1 já renderizado em SDC. A implementação não pode adicionar segundo H1 ao Wiki; deve migrar o ownership do heading em conjunto com o consumidor. Estes são candidatos **comprovados no código, não consumidores aprovados em Runtime**.
