@@ -1,3 +1,11 @@
+## dev.186 — descrição alternativa por imagem na galeria
+
+- O campo alt requerido da Media deixa de receber texto genérico. O diálogo
+  exige exatamente uma descrição não vazia por arquivo e associa cada linha ao
+  File na ordem original do upload; o callback verifica novamente existência e
+  política antes de criar Media.
+- Ainda sem upload autenticado, revisão visual ou fixture Runtime desta entrega.
+
 ## dev.185 — texto alternativo no anexo de imagem
 
 - Inspeção estática confirmou que o campo de imagem da Media exige `alt`, mas o

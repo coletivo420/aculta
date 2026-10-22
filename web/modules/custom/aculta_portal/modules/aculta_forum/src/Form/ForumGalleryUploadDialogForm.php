@@ -66,6 +66,13 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       '#maxlength' => 255,
     ];
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'images', NULL, TRUE);
+    $form['image_alts'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Descrição de cada imagem'),
+      '#description' => $this->t('Informe uma descrição por linha, na mesma ordem das imagens enviadas. Todas são obrigatórias.'),
+      '#rows' => 4,
+      '#maxlength' => 16384,
+    ];
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
       '#type' => 'submit',
@@ -89,6 +96,12 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       $form_state->setErrorByName('images', $this->t('Uma das imagens enviadas não está disponível. Envie-a novamente.'));
       return;
     }
+    $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
+    if (count($alt_lines) !== count($fids)
+      || array_filter($alt_lines, static fn (string $alt): bool => trim($alt) === '') !== []) {
+      $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia para cada imagem, uma por linha e na mesma ordem.'));
+      return;
+    }
     foreach ($files as $file) {
       if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum')) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
@@ -110,12 +123,24 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       return $response;
     }
 
-    $files = $this->entityTypeManager->getStorage('file')->loadMultiple(array_map('intval', (array) $form_state->getValue('images')));
-    $media_ids = [];
-    foreach ($files as $position => $file) {
-      if (!$file instanceof FileInterface) {
-        continue;
+    $fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
+    $files = $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
+    $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
+    if (count($files) !== count($fids)) {
+      $form_state->setErrorByName('images', $this->t('Uma das imagens enviadas não está mais disponível. Envie-a novamente.'));
+      $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
+      return $response;
+    }
+    foreach ($files as $file) {
+      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum')) {
+        $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
+        $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
+        return $response;
       }
+    }
+    $media_ids = [];
+    foreach ($fids as $position => $fid) {
+      $file = $files[$fid] ?? NULL;
       $media = $this->entityTypeManager->getStorage('media')->create([
         'bundle' => ForumAttachmentPublication::BUNDLE,
         'name' => $file->getFilename(),
@@ -124,10 +149,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
         'field_media_forum_attachment' => ['target_id' => $file->id()],
         'field_media_forum_image' => [
           'target_id' => $file->id(),
-          'alt' => $this->t('Imagem @number da galeria @title', [
-            '@number' => $position + 1,
-            '@title' => $form_state->getValue('title'),
-          ]),
+          'alt' => trim($alt_lines[$position]),
         ],
       ]);
       if (!$media instanceof MediaInterface) {

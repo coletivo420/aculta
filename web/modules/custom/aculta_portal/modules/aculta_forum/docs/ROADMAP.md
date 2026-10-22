@@ -7,10 +7,11 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-`0.1.0-dev.185` exige texto alternativo fornecido pela pessoa autora no diálogo
-de anexo de imagem. O passo seguinte da integração continua sendo validar upload
-real de imagem/galeria, publicação contextual, acesso privado e apresentação no
-navegador, antes de avançar previews Office e cartão PDF.
+`0.1.0-dev.185–186` exigem texto alternativo fornecido pela pessoa autora no
+diálogo de anexo e uma descrição por cada imagem da galeria. O passo seguinte da
+integração continua sendo validar upload real, publicação contextual, acesso
+privado e apresentação no navegador, antes de avançar previews Office e cartão
+PDF.
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 
@@ -93,6 +94,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.186` | Exigir descrição para cada imagem enviada à galeria | O diálogo associa cada linha ao File na ordem de upload, valida quantidade e conteúdo, e repete a verificação de arquivo/política antes de criar Media. Sem alteração Runtime ou revisão visual. |
 | `0.1.0-dev.185` | Exigir texto alternativo no upload de imagem do Fórum | O diálogo de anexo coleta descrição acessível e valida no servidor antes de criar Media; documentos não usam o campo. Sem alteração Runtime ou validação visual. |
 | `0.1.0-dev.184` | Liberar o ciclo público e a moderação de posts revisionáveis | Corrigida colisão de `$messenger` com `FormBase`, namespace da interface `TimeInterface` e chamada booleana de `access()->isAllowed()` na edição/resposta. Form mode/display público alinhados no Sync e Runtime. Smoke autenticado confirmou envio `review`, fila em `main`, aprovação, edição como nova revisão publicada e contexto de resposta; corpo visível no tópico. Fixture, contas, aceite de teste e métrica agregada removidos. Upload contextual, preview DOCX/planilhas, fallback e revisão visual seguem pendentes. |
 | `0.1.0-dev.183` | Resolver controllers dos formulários públicos | Os serviços de submissão e edição usam IDs explícitos e rotas `service:method`; o Core 11.4 confirmou que ambos e os demais controllers do Fórum resolvem pelo `CallableResolver` (14 rotas sem falha). O smoke HTTP autenticado ainda retorna 500 sem corpo e sem novo watchdog; origem não identificada, fluxo não validado. Fixture limpa e Runtime retornou a 0 tópicos/posts/Comments dedicados/anexos e 10 usuários. |
