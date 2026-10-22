@@ -26,14 +26,23 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 1
+    weight: 2
+    region: content
+  field_wiki_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 0
     region: content
   field_wiki_summary:
     type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
   links:
     settings: {  }
@@ -43,7 +52,6 @@ content:
 hidden:
   body: true
   field_domain_source: true
-  field_wiki_image: true
   field_wiki_references: true
   field_wiki_related: true
   langcode: true

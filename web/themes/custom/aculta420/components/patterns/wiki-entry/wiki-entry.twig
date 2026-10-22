@@ -1,5 +1,6 @@
 {% if variant == 'teaser' %}
   <div class="aculta-wiki-card__inner">
+    {% if has_image %}<div class="aculta-wiki-card__image">{{ image }}</div>{% endif %}
     <h2 class="aculta-wiki-card__title">{{ title }}</h2>
     {% if has_summary %}<div class="aculta-wiki-card__summary">{{ summary }}</div>{% endif %}
     {% if has_categories %}<div class="aculta-wiki-card__categories">{{ categories }}</div>{% endif %}

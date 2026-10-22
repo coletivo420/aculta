@@ -141,9 +141,9 @@ pública e retenção de 90 dias, como `wiki.entries.read`.
 
 Ordem sugerida, depois das Fases 1–4:
 
-1. Contagem de verbetes na view `wiki_entries` e campos faltantes. A contagem e a
-   paginação foram entregues nesta sessão (ver estado abaixo); os campos do teaser
-   continuam pendentes de decisão.
+1. Contagem de verbetes na view `wiki_entries` e campos faltantes. A contagem, a
+   paginação e os campos do teaser (imagem de destaque, resumo e categorias) foram
+   entregues nesta sessão (ver estado abaixo).
 2. Upload contextual pela política central `aculta_portal.user_upload_policy`, com aba própria.
 3. Adaptador `wiki` do Fórum: uma discussão por verbete, em Comment no Node. A revisão
    editorial continua separada.
@@ -193,6 +193,7 @@ ao fim da sessão.
 | E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
 | E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | `44b957ba` | concluída |
 | E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
+| E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -240,20 +241,32 @@ ao fim da sessão.
   `block_recent` continuam com limite fixo, sem paginador. `url.query_args`
   entrou nos contextos de cache da página para que `?page=N` não sirva o cache
   da primeira página.
+- **Campos do teaser (Fase 5, item 1).** O view mode `teaser` do `wiki_entry`
+  passou a renderizar `field_wiki_image`, e a ordem do card ficou imagem (peso
+  0), resumo (1) e categorias (2). A imagem usa o mesmo formatador da página do
+  verbete (`entity_reference_entity_view`, view mode `default`, sem link), sem
+  criar view mode de mídia nem nova superfície de Config Sync. O tema
+  (`node--wiki-entry--teaser.html.twig`, SDC `aculta420:wiki-entry` e
+  `wiki-entry.css`) mostra a imagem em recorte 16:9 (`aspect-ratio` +
+  `object-fit: cover`) e só a exibe quando o campo tem conteúdo e acesso; o
+  componente ganhou a story `wiki-entry.teaser.story.yml`. Nenhuma URL mudou e
+  os blocos continuam intactos.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
   `WikiRankingKernelTest` (3 testes: período e título atual, verbete excluído,
-  dimensão sem verbete legível) e `WikiListingConfigTest` (2 testes: pager e
-  contagem na página, blocos intactos) aprovados. A suíte unitária do
-  `aculta_statistics` tem 1 falha pré-existente:
+  dimensão sem verbete legível), `WikiListingConfigTest` (2 testes: pager e
+  contagem na página, blocos intactos) e `WikiTeaserConfigTest` (2 testes:
+  imagem sem link via mídia, ordem e campos ocultos) aprovados. A suíte unitária
+  do `aculta_statistics` tem 1 falha pré-existente:
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** O restante da Fase 5 do plano (campos do teaser,
-  upload contextual, adaptador do Fórum, busca e notificações, estatísticas de
+- **O que ficou faltando.** O restante da Fase 5 do plano (upload
+  contextual, adaptador do Fórum, busca e notificações, estatísticas de
   edição e revisão) e a validação em navegador com ACULTA420 e Olivero depois
-  da ativação. A ativação em si depende
+  da ativação — a imagem do card foi verificada por configuração e testes, não
+  renderizada em navegador. A ativação em si depende
   de o ambiente importar a configuração e rodar os passos de atualização com
   backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`

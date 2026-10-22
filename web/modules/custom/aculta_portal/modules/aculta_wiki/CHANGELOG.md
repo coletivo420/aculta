@@ -1,5 +1,28 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — imagem e campos no card da listagem — 2026-10-22
+
+- O view mode `teaser` do `wiki_entry`
+  (`config/sync/core.entity_view_display.node.wiki_entry.teaser.yml`) passa a
+  renderizar `field_wiki_image` pelo mesmo formatador da página do verbete
+  (`entity_reference_entity_view`, view mode `default`, sem link); o campo sai
+  de `hidden`. A ordem do card fica imagem (peso 0), resumo (1) e categorias
+  (2). Nenhum view mode de mídia novo e nenhuma configuração adicional.
+- O tema exibe a imagem no card: `node--wiki-entry--teaser.html.twig` calcula
+  `has_image` e repassa o campo ao SDC `aculta420:wiki-entry`, que já tinha os
+  slots `image`; `wiki-entry.css` recorta em 16:9 (`aspect-ratio` +
+  `object-fit: cover`) e a story `wiki-entry.teaser.story.yml` cobre o estado
+  com imagem, resumo e categorias.
+- Nenhuma URL muda (`/wiki`, `/wiki/verbetes`, `/wiki/busca`,
+  `/wiki/busca/previa`). Os blocos `block_changes` e `block_recent` não foram
+  tocados.
+- `WikiTeaserConfigTest` (2 testes) trava o contrato: imagem sem link via
+  entidade de mídia, ordem dos campos e `body`/relacionados/referências
+  ocultos. Execução junto da suíte do módulo: `13 testes, 59 asserções, OK`.
+  Validador de SDC: `PASS (41 components, 25 include calls, 610 checks)`.
+- Nenhuma operação de Runtime; nenhum cache limpo. A renderização em navegador
+  (ACULTA420 e Olivero) fica para depois da importação de configuração.
+
 ## Não lançado — contagem e paginação da listagem — 2026-10-22
 
 - A view `wiki_entries` (`config/sync/views.view.wiki_entries.yml`) passa a

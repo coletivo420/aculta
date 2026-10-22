@@ -191,6 +191,18 @@
   background: var(--aculta-surface-raised);
 }
 
+.aculta-wiki-card__image {
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+}
+
+.aculta-wiki-card__image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
 .aculta-wiki-card__title {
   margin: 0 0 0.65rem;
   font: 500 1.3rem/1.3 var(--aculta-font-display);
