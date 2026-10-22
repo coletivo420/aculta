@@ -11,10 +11,11 @@
   do tópico respondeu 200 e o markup DOCX incluiu controles e fallback.
 - Firefox ESR headless: sem overflow nos viewports efetivos 500, 768, 1024 e
   1428 CSS px. O mínimo do Firefox impediu validar os pedidos de 320/390 px.
-  O endpoint `/system/files?file=...` terminou em HTTP 500 com
-  `FileException: File must be readable`; o status do viewer informou fallback.
-  `/system/files/{filepath}` retornou 404. Portanto o preview privado não está
-  validado no Runtime.
+  A primeira fixture, criada pelo Drush com proprietário diferente do PHP-FPM,
+  recebeu `FileException: File must be readable`. Na revalidação com proprietário
+  `aculta`, `/system/files?file=...` e `/system/files/{filepath}` responderam
+  HTTP 200. Firefox exibiu o cartão/controles e o fallback, sem confirmar a
+  renderização DOCX; preview privado segue não validado no Runtime.
 - Fixture removida na mesma sessão (Node 524, ForumPost 1, Media 243, File 586).
   Entity API confirmou 0 tópicos, 0 posts, 0 Comments dedicados e 0 anexos; as
   galerias 11/18 e suas 97 imagens permaneceram. A URL da fixture retornou 404.

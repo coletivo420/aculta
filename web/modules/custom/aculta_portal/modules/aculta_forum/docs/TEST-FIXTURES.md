@@ -65,6 +65,11 @@ revalidou UUID, título, bundle e referências antes de excluir pela Entity API;
 File foi removido após Media e a referência de uso ficar vazia. Contagem final:
 0 tópicos/posts/Comments dedicados/anexos; galerias Media 11 e 18 mantiveram
 63+34 imagens e o `field_gallery_purpose` opcional permaneceu vazio. A URL da
-fixture retornou HTTP 404. O preview privado falhou com `FileException` e ficou
-registrado como pendência em `TEST-MATRIX.md`; as capturas permanecem fora do
-checkout, no diretório privado indicado acima.
+fixture retornou HTTP 404. A primeira resposta privada falhou porque o arquivo
+da fixture tinha proprietário diferente do usuário PHP-FPM. Revalidação com
+arquivo de propriedade `aculta` confirmou HTTP 200 em query e path de
+`system.files`, mas Firefox mostrou o fallback e não confirmou a renderização.
+A fixture de revalidação (Node 525, ForumPost 2, Media 244, File 587) foi
+removida por Entity API; o arquivo privado e as capturas temporárias também
+foram removidos. O Runtime voltou a zero tópicos, posts e anexos; as 97 imagens
+das galerias permaneceram. O preview segue pendente em `TEST-MATRIX.md`.
