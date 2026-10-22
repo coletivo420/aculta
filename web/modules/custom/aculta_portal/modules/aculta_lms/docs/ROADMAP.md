@@ -24,3 +24,9 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
   checkbox separado. Implementado no 0.1.0-dev.79 (`StudentStatusSnapshotEvent`). Vale depois da publicação da função
   na política (`docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`).
 - Não incluir: notas, respostas e progresso individual. O painel individual fica fora da central.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-01/04/05/07/08/12: manter Group de turmas/cursos independente do Group de associados do Fórum; avisos saem por aculta_lms_messenger → Messenger; não criar mensageria LMS paralela. Fórum contextual usa adapter Forum LMS e grants de Group do curso. Viewer/estatísticas usam kernels próprios.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
