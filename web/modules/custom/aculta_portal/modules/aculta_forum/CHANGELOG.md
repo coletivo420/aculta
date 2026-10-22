@@ -4,6 +4,8 @@
   da página e carrega entidades em lotes, junto com os ForumPosts já agregados.
   Remove consultas individuais de usuário/ForumPost por linha, sem mudar as
   regras de seleção de última atividade ou o builder proprietário `aculta_user`.
+- O README esclarece o estado real da View de categorias: cartões indicam a
+  categoria-pai; agrupamento hierárquico e contadores de tópicos seguem pendentes.
 - Não houve alteração Runtime. Validação integrada/performance permanece
   pendente; não foram adicionados nem executados testes.
 
