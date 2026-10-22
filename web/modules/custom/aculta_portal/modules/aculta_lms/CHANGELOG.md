@@ -1,5 +1,13 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.81 — download de anexo negado a conta bloqueada — 2026-10-22
+
+- Verificação HTTP no Runtime de teste da rota `/resposta/{lms_answer}/baixar-arquivo`, com cenário descartável (tipo de atividade `t14_upload`, aula, curso, matrícula e resposta com arquivo privado).
+- Conta válida e dona da resposta: `GET` devolve **200**, `Content-Disposition: attachment; filename="t14-<nonce>.txt"` e o conteúdo de 39 bytes.
+- Conta autenticada sem matrícula: **403** (`UploadedAnswerAccessCheck` → `see_details` negado).
+- Conta bloqueada: **404**. O core apaga todas as sessões da conta ao bloquear (`User::postSave`), então a requisição passa a anônima, e o site responde 404 a anônimo nessa rota — mesmo resultado do controle anônimo. Mesmo uma sessão sobrevivente seria recusada pelo provider `Cookie`, que só aceita `users_field_data.status = 1`. O ramo de conta inativa do `UploadedAnswerAccessCheck` (403) continua coberto pelo Kernel `AttemptArchiveLifecycleTest` (dono bloqueado).
+- Cenário removido ao final (resposta, arquivo privado, matrícula, curso, aula, atividade, tipo e campo). O Runtime voltou à linha de base: 1 curso, 10 usuários, 2 respostas, 0 arquivos em `private://lms_file_upload`, tipos `no_answer` e `true_false`.
+
 ## 0.1.0-dev.80 — respostas com arquivo sob a política central de upload
 
 - `SubmissionImageHooks` recebe `aculta_portal.user_upload_policy` (serviço `aculta_lms.submission_image_hooks`) e aplica `restrictValidators(..., 'lms')` ao campo de envio das atividades File Upload. Educadores continuam escolhendo as extensões de cada atividade, mas só dentro da política LMS; limite de tamanho só diminui.
