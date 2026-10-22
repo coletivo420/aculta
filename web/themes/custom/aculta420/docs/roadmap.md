@@ -358,3 +358,7 @@ O [contrato visual B1-02b](theme-ux-0.8-b1-02b-visual-contract.md) estabelece va
 ## THEME-UX 0.8-B1-02c — primeiro SDC transversal disponível em código
 
 `aculta420:context-header` está presente no tema com metadados Core SDC, Twig com H1 único condicional ao consumidor, CSS mobile-first tokenizado e duas stories. **Status experimental; sem integração real em LMS/Wiki nem validação UI Patterns Library/Runtime.** A próxima fase B1-02d é migração seletiva de consumidores, com remoção de H1 redundante; manter Institution Bar + Domain Header. Ver [contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
+
+## B1-02d — primeira integração Wiki (2026-10-22)
+
+O template `node--wiki-entry--full.html.twig` passou a incluir `aculta420:context-header` como H1 do verbete. O `wiki-entry` recebeu `show_heading` (default true) e o uso na página completa define false para evitar duplicação; o teaser permanece inalterado. **Integração de código commitada, não validada no Runtime.** Verificar a renderização SDC Twig, classes e layout da Wiki, cache, acesso, um H1 e a permanência da Institution Bar e do Domain Header antes de aprovar. Não liberar migração LMS sem inspeção específica.
