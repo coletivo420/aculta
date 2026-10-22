@@ -30,3 +30,9 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
 XK-01/04/05/07/08/12: manter Group de turmas/cursos independente do Group de associados do Fórum; avisos saem por aculta_lms_messenger → Messenger; não criar mensageria LMS paralela. Fórum contextual usa adapter Forum LMS e grants de Group do curso. Viewer/estatísticas usam kernels próprios.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
+
+## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
+
+XK 0.1-B: preservar membership e grants Group de cursos/turmas; não herdar elegibilidade de associado do Fórum. Eventos LMS seguem o adaptador aculta_lms_messenger, sob idempotência e revalidação na entrega. Teste regressão Group depois de qualquer refatoração User/Forum.
+
+Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
