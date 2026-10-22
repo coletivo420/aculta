@@ -1,7 +1,7 @@
 aculta_lms.student_dashboard:
   path: '/ganjalab420'
   defaults:
-    _controller: 'aculta_lms.learning_dashboard_controller:student'
+    _controller: 'aculta_studio.ganjalab420_controller:student'
     _title: 'GanjaLab420'
   requirements:
     _permission: access aculta portal
@@ -117,7 +117,7 @@ aculta_lms.certificate_qr:
 aculta_lms.legacy_student_dashboard:
   path: '/minha-aprendizagem'
   defaults:
-    _controller: 'aculta_lms.learning_dashboard_controller:student'
+    _controller: 'aculta_studio.ganjalab420_controller:student'
     _title: 'GanjaLab420'
   requirements:
     _permission: access aculta portal
