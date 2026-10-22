@@ -71,3 +71,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-m2-b1-context-header.md](theme-ux-0.8-m2-b1-context-header.md) — Context Header já presente na branch; próximo gate de integração com consumidores e UI Patterns.
 
 - [theme-ux-0.8-b5-02-drawer-runtime-gates.md](theme-ux-0.8-b5-02-drawer-runtime-gates.md) — próxima fase de homologação de gavetas, AJAX, foco e shell multidomínio, com matriz de evidências.
+
+- [theme-ux-0.8-b6-consolidation.md](theme-ux-0.8-b6-consolidation.md) — fase B6: inventário atual, consolidação SDC/UI Suite, critérios de reuso e gates de Runtime.
