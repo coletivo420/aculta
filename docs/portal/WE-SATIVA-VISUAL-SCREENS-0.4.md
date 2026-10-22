@@ -52,3 +52,7 @@ Mobile 320/360/390px: uma coluna, campos ≥16px, alvos de toque preferencialmen
 | V-0.4-R | homologação em runtime, acessos, WCAG, cache e visual mobile/desktop |
 
 **Gate:** nenhuma UI planejada autoriza nova rota, permissão, entidade ou aprovação. Primeiro verbete de email_confirmed e sugestões são moderados por content_editor; política comum em aculta_user e workflow Wiki em aculta_wiki. Autosave Form continua futuro.
+
+## WES-UX V-0.4-B — entrada, início e Meu trabalho
+
+[Especificação detalhada das telas V01–V04](WE-SATIVA-V-0.4-B-ENTRY-DASHBOARD-WORK.md): convite contextual único, seletor de intenções com ações realmente disponíveis, início com criação/continuação autorizadas e lista própria de trabalhos com filtros HTTP. Histórias WES-B-01 a WES-B-10, cenários vazios/erro/acesso, mobile-first 320px e claro/escuro. Somente Core SDC/UI Suite, sem rotas fictícias ou novas permissões. Próximo marco V-0.4-C (microtarefas e editor).
