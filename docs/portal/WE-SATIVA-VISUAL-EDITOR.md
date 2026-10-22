@@ -126,3 +126,8 @@ Viewport 320, 360, 390, 768, 1024, 1280 e 1440px; zoom 200/400%; teclado virtual
 ## Direção revisada — contribuição primeiro (WES-UX 0.2)
 
 A [pesquisa comparativa e o plano de entrada contextual](WE-SATIVA-CONTRIBUTION-FIRST-RESEARCH.md) priorizam abrir WE SATIVA **diretamente do verbete**, com seleção de tarefas simples (corrigir, referenciar, melhorar trecho, sugerir mídia) antes do editor completo. As ações só existem com provider e acesso reais. Este rumo complementa as fases WES-UX 0.1, sem substituir Drupal Form API/revisions/workflows ou o shell multidomínio.
+
+
+## Aprovação WES-UX 0.2 — início documental/de fundação
+
+A direção contribuição primeiro está aprovada. O contrato técnico inicial está no [subkernel Wiki](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-FOUNDATION.md). **Autosave Form adiado para backlog futuro**, sem dependência ou ativação. Próxima entrega: auditar permissões/formulários/workflow e entrada a partir do verbete; sem novo módulo ou editor paralelo.
