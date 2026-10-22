@@ -111,6 +111,13 @@ lido, preservando sua página no pager da thread. A View é autenticada e não
 compartilha cache entre usuários. A validação integrada de grants, contagem,
 paginação e destino do link permanece pendente.
 
+As páginas públicas de tópicos incluem ForumPosts publicados na contagem,
+ordenação por respostas, filtro “Sem resposta” e timestamp de atividade. Os
+Comments legados continuam representados pelo agregado `comment_entity_statistics`
+do Core; a autoria mostrada ainda segue esse agregado e não representa um
+ForumPost mais recente até que a View compare a identidade da última atividade.
+Os filtros de acesso a Node e Domain permanecem fixos; validação integrada pendente.
+
 Na página de discussão, o controle “Não lidas” reconhece a classe `.new` nos
 Comments marcados pelo History e nos ForumPosts comparados no cliente ao recibo
 de leitura do tópico. Ele permanece oculto sem mensagem não lida renderizada;

@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.208` | Incluir ForumPost na contagem e atividade da lista pública | Combina Comments e ForumPosts publicados em contagem, ordenação e filtro “Sem resposta”; atividade usa o timestamp mais recente do tópico, Comment ou ForumPost. A autoria exibida ainda é a do último Comment até integrar a identidade do último post; validação integrada pendente. Sem teste ou Runtime. |
 | `0.1.0-dev.205` | Conectar ForumPost à conquista existente de primeira resposta | Game avalia a primeira publicação default de post público pelo trigger `forum_comment`; sem dependência do Fórum, backfill ou Runtime. Validação automatizada integrada pendente. |
 | `0.1.0-dev.206` | Incluir ForumPost no progresso de leitura | A navegação da thread aceita Comments e posts revisionáveis; contas autenticadas comparam `first_published` ao recibo History do Node no cliente, sem variar HTML cacheável por usuário. A View `/discussoes/nao-lidas` e contagens ainda eram Comment-only; extensão da consulta e validação integrada permaneciam pendentes. Sem teste ou Runtime. |
 | `0.1.0-dev.207` | Incluir ForumPost na lista de não lidas | Filtro Views considera `first_published` de posts públicos junto a mudanças de tópico/Comments; uma consulta em lote agrega contagem por recibo e liga à âncora no pager correto. Teste integrado de access, grants, contagem, página/âncora e Runtime permanece pendente. Sem teste ou mudança Runtime. |

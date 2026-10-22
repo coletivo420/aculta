@@ -1,3 +1,15 @@
+## `0.1.0-dev.208` — incluir ForumPost na atividade e contagem de tópicos
+
+- A listagem pública combina Comments publicados e ForumPosts publicados na
+  contagem, ordenação por respostas e filtro “Sem resposta”. A atividade recente
+  considera a atualização do tópico, o último Comment e o último ForumPost.
+- Agregados de ForumPost consultam somente status publicado e idioma padrão;
+  filtros públicos existentes de acesso e Domain permanecem no View. O cartão
+  de autor continua baseado no último Comment até que a View exponha e compare
+  corretamente a autoria da atividade mais recente.
+- Não houve alteração Runtime. Não foram adicionados nem executados testes; a
+  validação integrada da View, contagem, ordenação e filtro permanece pendente.
+
 ## `0.1.0-dev.207` — incluir ForumPost na lista de não lidas
 
 - A View autenticada agora considera posts revisionáveis publicados no filtro

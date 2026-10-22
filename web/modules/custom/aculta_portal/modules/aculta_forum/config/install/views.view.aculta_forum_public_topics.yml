@@ -88,7 +88,7 @@ display:
           group_type: group
           admin_label: ''
           entity_type: node
-          plugin_id: numeric
+          plugin_id: aculta_forum_reply_count
           label: ''
           exclude: false
           alter:
@@ -175,7 +175,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: comment_ces_last_updated
+          plugin_id: aculta_forum_last_activity
           label: ''
           exclude: false
           alter:
@@ -473,7 +473,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: standard
+          plugin_id: aculta_forum_reply_count
           order: DESC
           expose:
             label: 'Respostas publicadas'
@@ -674,7 +674,7 @@ display:
           relationship: none
           group_type: group
           admin_label: 'Somente discussões sem respostas publicadas'
-          plugin_id: numeric
+          plugin_id: aculta_forum_no_replies
           operator: '='
           value:
             min: ''

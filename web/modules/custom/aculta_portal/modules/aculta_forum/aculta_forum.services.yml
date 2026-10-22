@@ -1,4 +1,7 @@
 services:
+  aculta_forum.public_post_statistics:
+    class: Drupal\aculta_forum\Service\ForumPublicPostStatistics
+    arguments: ['@database']
   aculta_forum.comment_migration_audit:
     class: Drupal\aculta_forum\Migration\ForumCommentMigrationAudit
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@module_handler']

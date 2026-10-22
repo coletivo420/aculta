@@ -32,6 +32,25 @@ final class PublicForumViewsDataHooks {
         'no group by' => TRUE,
       ],
     ];
+    $data['comment_entity_statistics']['aculta_forum_reply_count'] = [
+      'title' => 'ACULTA Forum: respostas publicadas',
+      'help' => 'Conta Comments e ForumPosts publicados no tópico.',
+      'field' => [
+        'id' => 'aculta_forum_reply_count',
+        'no group by' => TRUE,
+      ],
+      'sort' => [
+        'id' => 'aculta_forum_reply_count',
+        'no group by' => TRUE,
+      ],
+    ];
+    $data['comment_entity_statistics']['aculta_forum_no_replies'] = [
+      'title' => 'ACULTA Forum: sem respostas públicas',
+      'help' => 'Filtra tópicos sem Comments ou ForumPosts publicados.',
+      'filter' => [
+        'id' => 'aculta_forum_no_replies',
+      ],
+    ];
     $data['history']['aculta_forum_unread_content'] = [
       'title' => 'ACULTA Forum: conteúdo não lido',
       'help' => 'Filtra tópicos com atualização, Comment ou ForumPost ainda não lido.',

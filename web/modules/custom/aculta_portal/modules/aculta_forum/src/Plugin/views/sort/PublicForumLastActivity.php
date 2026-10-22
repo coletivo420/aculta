@@ -8,7 +8,7 @@ use Drupal\views\Attribute\ViewsSort;
 use Drupal\views\Plugin\views\sort\Date;
 
 /**
- * Sorts public forum topics by the most recent node or comment activity.
+ * Sorts public forum topics by the most recent node, Comment, or ForumPost.
  *
  * The Core comment_ces_last_updated sort assigns the return value of
  * Sql::addOrderBy() to a typed property, although that method returns void.
@@ -26,7 +26,11 @@ final class PublicForumLastActivity extends Date {
   public function query(): void {
     $this->ensureMyTable();
     $node_table = $this->query->ensureTable('node_field_data', $this->relationship);
-    $formula = 'GREATEST(' . $node_table . '.changed, ' . $this->tableAlias . '.last_comment_timestamp)';
+    $formula = 'GREATEST(' . $node_table . '.changed, COALESCE(' . $this->tableAlias . '.last_comment_timestamp, 0), '
+      . 'COALESCE((SELECT MAX(forum_post_activity.changed) FROM {aculta_forum_post_field_data} forum_post_activity '
+      . 'WHERE forum_post_activity.topic_target_id = ' . $node_table . '.nid '
+      . 'AND forum_post_activity.status = 1 '
+      . 'AND forum_post_activity.default_langcode = 1), 0))';
     $this->query->addOrderBy(
       NULL,
       $formula,
