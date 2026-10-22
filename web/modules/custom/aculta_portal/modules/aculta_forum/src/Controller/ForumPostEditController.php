@@ -24,7 +24,7 @@ final class ForumPostEditController extends ControllerBase {
    */
   public function edit(): array {
     $post = $this->editAccess->getPost();
-    if ($post === NULL || !$post->access('update', $this->currentUser())->isAllowed()) {
+    if ($post === NULL || !$post->access('update', $this->currentUser(), TRUE)->isAllowed()) {
       throw new NotFoundHttpException();
     }
 

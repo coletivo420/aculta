@@ -35,7 +35,6 @@ hidden:
   legacy_author: true
   moderation_state: true
   parent: true
-  revision_log: true
   revision_timestamp: true
   revision_uid: true
   status: true

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Form;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Datetime\TimeInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\RevisionLogInterface;
@@ -24,7 +24,7 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     EntityRepositoryInterface $entity_repository,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
-    private readonly MessengerInterface $messenger,
+    private readonly MessengerInterface $submissionMessenger,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }
@@ -123,7 +123,7 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
         ? $this->t('Sua publicação foi adicionada à discussão.')
         : $this->t('Sua publicação foi enviada para moderação e aparecerá na discussão depois da aprovação.'))
       : $this->t('Sua publicação foi atualizada.');
-    $this->messenger->addStatus($message);
+    $this->submissionMessenger->addStatus($message);
     $url = $topic->toUrl('canonical');
     if ($this->entity->isPublished()) {
       $url->setOption('fragment', 'forum-post-' . $this->entity->id());

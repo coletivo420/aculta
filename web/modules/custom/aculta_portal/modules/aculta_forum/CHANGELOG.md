@@ -1,3 +1,28 @@
+## `0.1.0-dev.184` — liberar submissão, edição e moderação revisionáveis
+
+- O GET de submissão carregava `ForumPostSubmissionForm`, mas PHP fatalizava ao
+  declarar `$messenger` readonly em conflito com `FormBase::$messenger`. A
+  dependência foi renomeada; o construtor também usava `TimeInterface` no
+  namespace Core, enquanto `ContentEntityForm` injeta
+  `Drupal\Component\Datetime\TimeInterface`.
+- O controller de edição chamava `EntityInterface::access()` sem solicitar
+  `AccessResult`, depois invocava `isAllowed()` sobre o booleano. Acesso de
+  revisão de post pai tinha a mesma omissão; ambos agora passam `TRUE`.
+- O form mode e display `public_submission` não estavam no Config Sync nem no
+  Runtime. O form display limita novos envios/edições a assunto e corpo; os
+  dois objetos foram adicionados a `config/sync` e importados isoladamente no
+  Runtime, sem importar a configuração global.
+- Runtime de teste `toca`, Drupal 11.4.10: GET autenticado do formulário,
+  submissão com CSRF (303), estado inicial `review`, fila acessível em `main`,
+  aprovação pelo papel `content_editor` (revisão 5 `published`), edição do autor
+  (revisão 6 `published`, log preservado) e GET de resposta contextual (200).
+  A página pública exibiu o corpo; a revisão aprovada não permaneceu na fila.
+- Fixtures removidas após confirmar UUIDs. O Runtime voltou ao baseline de zero
+  tópicos, posts, Comments dedicados e anexos e 10 usuários; a única métrica
+  diária de post criada pela fixture foi reposta a zero pelo `AggregateStorage`.
+  Sem envio de e-mail. O Runtime usa PHP 8.4, abaixo da baseline 8.5 do projeto.
+  Estado Dev; upload e previews continuam pendentes.
+
 ## `0.1.0-dev.183` — corrigir resolução dos controllers públicos
 
 - As rotas de submissão e edição agora usam serviços públicos explícitos com

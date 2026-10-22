@@ -1,3 +1,28 @@
+## dev.184 — submissão, edição e moderação revisionáveis
+
+- Runtime `toca`, Drupal 11.4.10, com contas temporárias: GET autenticado do
+  formulário público HTTP 200, sem campos de workflow, status, tópico ou autoria
+  enviados pelo participante; POST com CSRF criou um post em `review` (303).
+- A conta `content_editor` encontrou o post na fila em `main`, aprovou a revisão
+  (303); Entity API confirmou revisão default 5 `published` e a fila não exibiu
+  novamente a pendência aprovada. A página pública do tópico HTTP 200 exibiu o
+  corpo publicado.
+- O autor editou o post publicado; revisão default 6 ficou `published`, com
+  autoria e mensagem de revisão corretas. GET de resposta ao post publicado
+  mostrou o contexto pai (HTTP 200).
+- Exercício direto pelo callable isolou três erros que causavam HTTP 500:
+  propriedade readonly `$messenger` em conflito com `FormBase`, import de
+  `TimeInterface` de namespace inexistente no Core, e `isAllowed()` chamado no
+  booleano retornado por `access()` sem `return_as_object=TRUE`.
+- O Runtime não tinha o form mode nem display `public_submission`; fallback
+  ocultava campos sem reproduzir o contrato do Sync. Os dois objetos foram
+  importados individualmente da configuração do módulo e exportados em
+  `config/sync`. Sem `cim` global.
+- Fixtures e contas foram removidas; Entity API confirmou zero tópicos, posts,
+  Comments dedicados e anexos e 10 usuários. O aceite temporário foi removido
+  pelo hook de exclusão da conta e a única métrica diária criada foi restaurada
+  por `AggregateStorage`. Sem e-mail enviado.
+
 ## dev.183 — resolver controllers de submissão e edição
 
 - No Core 11.4.10, as rotas com `Class::method` tentavam instanciar os

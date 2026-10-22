@@ -56,7 +56,7 @@ final class ForumPostSubmissionController extends ControllerBase {
         || !$parent->isPublished()
         || !$parent->isDefaultRevision()
         || (string) $parent->get('topic')->target_id !== (string) $topic->id()
-        || !$parent->access('view', $this->forumCurrentUser)->isAllowed()) {
+        || !$parent->access('view', $this->forumCurrentUser, TRUE)->isAllowed()) {
         throw new NotFoundHttpException();
       }
     }
