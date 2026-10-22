@@ -108,3 +108,7 @@ O dashboard de estudante canônico passa a `/ganjalab420` no domínio de conta, 
 ## Cinco formatos de sala
 
 Incluir explicitamente o **H5P como quinto modelo visual**, além de leitura, vídeo, atividades e PDF. Ver [Modelos de aula do GanjaLab420](GANJALAB420-LESSON-MODELS-VISUAL.md). A implementação permanece condicional aos gates de integração, segurança e acessibilidade do H5P. Nenhuma renomeação técnica de LMS está autorizada.
+
+## Atividades e avaliações — especificação dedicada
+
+Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questionários, entregas, H5P, feedback, tentativas e acessibilidade. Contrato visual apenas; `aculta_lms` permanece o módulo técnico.
