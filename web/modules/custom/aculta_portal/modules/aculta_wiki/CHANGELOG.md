@@ -1,5 +1,38 @@
 # Changelog — ACULTA Wiki
 
+## Não lançado — busca e aviso de revisão — 2026-10-22
+
+- O `wiki_entry` entra em `bundles.selected` do índice `aculta_conteudo`
+  (`config/sync/search_api.index.aculta_conteudo.yml`), para que verbetes
+  publicados apareçam na busca do site. A busca própria da Wiki
+  (`WikiController::findWikiEntries()`) e as rotas `/wiki`, `/wiki/busca` e
+  `/wiki/busca/previa` não mudam. O `SearchPageController` reaplica
+  `access('view')`, então rascunho e revisão não aparecem.
+- `WikiReviewHooks` (`entity_update`) avisa quando um `wiki_entry` **entra** em
+  revisão, comparando o estado atual com `getOriginal()` — a propriedade
+  `original` está depreciada desde o Drupal 11.2.
+- `WikiReviewMailType` (`aculta_wiki_review`) declara as variáveis `verbete`,
+  `estado` e `link`. `WikiReviewNotifier` enfileira uma mensagem por endereço
+  editorial na fila do `aculta_mailer`, com `MailMessage` (UUID v4, `pt-br`) e
+  contexto **sem o nome de quem editou**.
+- Sem dependência de `aculta_mailer` em `info.yml`: a fila e a URL pública chegam
+  como serviços opcionais (`@?aculta_mailer.queue`,
+  `@?Drupal\aculta_mailer\Api\PublicUrlInterface`); sem o mailer, nada é enviado
+  e nada quebra.
+- Aviso desligado por padrão, sem destinatários. A tela
+  `/painel-administrativo/aculta/wiki` (`aculta_wiki.settings`, permissão
+  `administer aculta_wiki`, item de menu "Wiki420" no painel) liga o aviso,
+  valida os endereços e salva a lista normalizada. A configuração não tem arquivo
+  em `config/sync` nem `config/install`; os padrões vivem no código.
+- Pacote LGPD no mesmo commit: linha `aculta_wiki` e pendência 3 do inventário,
+  cláusula 5 das cláusulas de aceite, bullet da Wiki na política de privacidade,
+  regra em `AGENT-CONTENT.md` e neste `AGENTS.md`.
+- Testes: `WikiReviewNotifierTest` (6), `WikiReviewHooksTest` (8),
+  `WikiReviewMailTypeTest` (3) e `WikiSearchIndexConfigTest` (1). Suíte do
+  submódulo: `52 testes, 240 asserções, OK`.
+- Deploy: verbetes já publicados só entram no índice após
+  `drush search-api:index` no ambiente. Nenhuma operação de Runtime nesta sessão.
+
 ## Não lançado — upload da imagem de destaque — 2026-10-22
 
 - O `field_wiki_image` deixa de ser um autocomplete de mídia no formulário do

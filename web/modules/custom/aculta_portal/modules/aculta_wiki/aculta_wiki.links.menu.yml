@@ -1,0 +1,8 @@
+# Aba Wiki, dentro da aba ACULTA (mesmo pai de Estatísticas). A tela fica em
+# /painel-administrativo/aculta/wiki.
+aculta_wiki.settings:
+  title: Wiki420
+  description: Avisos de revisão e endereços editoriais da Wiki.
+  route_name: aculta_wiki.settings
+  parent: aculta_portal.admin
+  weight: 13

@@ -3,6 +3,34 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## Fase 5 — busca e aviso de revisão
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Índice `aculta_conteudo` exportado | Unit | `wiki_entry` entre os bundles, `index_directly` e `track_changes_in_references` verdadeiros | aprovado |
+| Verbete sai de rascunho para revisão | Unit | `entity_update` dispara o aviso | aprovado |
+| Verbete continua em revisão | Unit | nenhum aviso | aprovado |
+| Verbete publicado entra em revisão | Unit | aviso disparado (compara com `getOriginal()`) | aprovado |
+| Verbete publicado é editado sem mudar de estado | Unit | nenhum aviso | aprovado |
+| Atualização de outro bundle | Unit | nenhum aviso | aprovado |
+| Entidade que não é nó | Unit | nenhum aviso | aprovado |
+| Tipo sem campo `moderation_state` | Unit | nenhum aviso | aprovado |
+| Aviso desligado na configuração | Unit | nenhum aviso | aprovado |
+| Fila do mailer ausente | Unit | nada enfileirado, sem erro | aprovado |
+| Aviso desligado | Unit | nenhuma mensagem enfileirada | aprovado |
+| Lista com endereço inválido | Unit | endereço descartado, envio só aos válidos | aprovado |
+| Dois destinatários cadastrados | Unit | uma mensagem por endereço, mesma correlação lógica | aprovado |
+| Sem URL pública disponível | Unit | contexto com `link` vazio | aprovado |
+| `isEnabled` | Unit | reflete a configuração sem alterar o padrão desligado | aprovado |
+| Tipo de e-mail `aculta_wiki_review` | Unit | ID válido e variáveis `verbete`, `estado`, `link` | aprovado |
+| Assunto e corpo do aviso | Unit | usam os três marcadores e nenhum campo de autoria | aprovado |
+| Contexto do aviso | Unit | sem `autor`, `autora`, `user` ou `uid` | aprovado |
+
+Suíte do submódulo após esta entrega: `52 testes, 240 asserções, OK`. Os cenários
+de navegador (busca do site, verbete publicado no resultado, tela
+`/painel-administrativo/aculta/wiki`) continuam na seção **Navegador** e só rodam
+depois da importação de configuração no servidor de testes.
+
 ## Fase 5 — listagem e imagem de destaque
 
 | Cenário | Tipo | Resultado esperado | Estado |

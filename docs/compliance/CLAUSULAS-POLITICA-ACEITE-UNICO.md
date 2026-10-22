@@ -42,6 +42,25 @@ evidência do aceite (data, versão do texto e identificadores) são mantidos co
 O banner de cookies para visitantes sem conta registra a escolha em cookie no navegador. Não há conta, por isso essa
 escolha não entra no registro de aceites. Ver a exceção em `docs/portal/ACEITE-UNICO.md`.
 
+## 5. Aviso de revisão da Wiki (quando ativa)
+
+Quando um verbete entra em revisão editorial, avisamos as caixas de e-mail
+editoriais cadastradas pela Associação para que a curadoria o revise.
+
+- **Finalidade:** curadoria editorial do conteúdo publicado na Wiki.
+- **Dados:** título do verbete, estado editorial e link de edição. O aviso não
+  traz o nome nem o identificador de quem editou.
+- **Quem vê:** apenas as caixas editoriais cadastradas em
+  `/painel-administrativo/aculta/wiki`. Não é enviado a visitantes nem a pessoas
+  que contribuíram.
+- **Prazo:** o registro do envio segue o prazo do `aculta_mailer` (90 dias, com
+  o endereço guardado só como identificador criptográfico). O conteúdo do
+  verbete segue o prazo em que permanecer publicado.
+- **Base:** interesse legítimo na curadoria editorial (art. 7º, IX), já
+  declarado na política de privacidade para a Wiki.
+- **Estado:** desligado por padrão e sem destinatários enquanto a tela não for
+  salva.
+
 ## Itens para o responsável decidir antes da publicação
 
 - Confirmar o prazo de 90 dias para cada função, ou ajustar nas configurações do `aculta_statistics`.

@@ -20,6 +20,20 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Não importe classes de `aculta_statistics` neste módulo. A integração de
   métricas é feita por eventos e pelo `WikiProvider` do lado da estatística.
 - Conteúdo sincronizado ou importado não gera métrica de publicação.
+- Administração: `/painel-administrativo/aculta/wiki` (`aculta_wiki.settings`,
+  permissão `administer aculta_wiki`) liga o aviso de revisão e cadastra as
+  caixas editoriais. A configuração `aculta_wiki.settings` não tem arquivo em
+  `config/sync` nem `config/install`; os padrões (desligado, sem destinatários)
+  vivem no código.
+- Aviso de revisão: `WikiReviewHooks` (`entity_update`) usa `getOriginal()` para
+  avisar só na **entrada** em revisão. O contexto do e-mail tem título, estado e
+  link de edição — **não inclua o nome de quem editou** sem atualizar o pacote
+  LGPD. A fila do `aculta_mailer` e a URL pública são serviços opcionais
+  (`@?…`); o módulo não depende do mailer em `info.yml`.
+- Busca: o `wiki_entry` está no índice `aculta_conteudo` (`config/sync`). A busca
+  própria da Wiki não mudou e as três rotas seguem sendo o contrato público;
+  verbetes já publicados só entram no índice após `drush search-api:index` no
+  ambiente.
 - Preserve UUIDs e IDs de `config/sync`; a propriedade da configuração ainda é
   decisão pendente do responsável.
 - Teste com o tema ACULTA420 e também com o Olivero: o que é do módulo deve

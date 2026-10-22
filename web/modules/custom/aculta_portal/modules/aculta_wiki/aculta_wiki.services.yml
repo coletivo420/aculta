@@ -12,3 +12,20 @@ services:
       - '@aculta_portal.user_upload_policy'
       - '@aculta_portal.user_upload_dialog_builder'
       - '@aculta_wiki.wiki_lead_image_uploader'
+  Drupal\aculta_wiki\Type\WikiReviewMailType:
+    class: Drupal\aculta_wiki\Type\WikiReviewMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_wiki\Notifier\WikiReviewNotifier:
+    class: Drupal\aculta_wiki\Notifier\WikiReviewNotifier
+    arguments:
+      - '@config.factory'
+      - '@string_translation'
+      - '@uuid'
+      - '@?aculta_mailer.queue'
+      - '@?Drupal\aculta_mailer\Api\PublicUrlInterface'
+  Drupal\aculta_wiki\Hook\WikiReviewHooks:
+    class: Drupal\aculta_wiki\Hook\WikiReviewHooks
+    arguments:
+      - '@Drupal\aculta_wiki\Notifier\WikiReviewNotifier'

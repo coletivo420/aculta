@@ -152,6 +152,9 @@ Ordem sugerida, depois das Fases 1–4:
    com o provider `wiki` e o campo `field_aculta_discussion` no `wiki_entry` (ver
    estado abaixo). Sem rota administrativa própria e sem habilitação no Runtime.
 4. Busca e notificações. Mudam a retenção e exigem atualizar o inventário LGPD de novo.
+   Entregue nesta sessão: `wiki_entry` no índice `aculta_conteudo` e aviso de revisão
+   pela fila do `aculta_mailer`, desligado por padrão, com o pacote LGPD no mesmo
+   commit (ver estado abaixo).
 5. Estatísticas de edição e revisão por verbete, a partir do histórico do Node.
    Entregue nesta sessão: `WikiRevisionReport` no `aculta_statistics`, com a área Wiki
    do painel e CSV (ver estado abaixo). Não cria métrica nem muda retenção.
@@ -205,6 +208,7 @@ ao fim da sessão.
 | E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
 | E7 | Adaptador `wiki` do Fórum: provider e discussão por verbete | Fase 5 (item 3) | nesta entrega | concluída |
 | E8 | Histórico de edição e revisão por verbete na área Wiki, com CSV | Fase 5 (item 5) | nesta entrega | concluída |
+| E9 | Busca no índice do site, aviso de revisão e pacote LGPD | Fase 5 (item 4) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -313,6 +317,44 @@ ao fim da sessão.
   **não cria métrica nova nem muda retenção** — por isso não há gate de LGPD
   pendente para este item. O recorte continua dependendo só do tipo de conteúdo
   `wiki_entry`, sem importar classes do `aculta_wiki`.
+- **Busca no índice do site (Fase 5, item 4).** O `wiki_entry` entrou em
+  `bundles.selected` do índice `aculta_conteudo`
+  (`config/sync/search_api.index.aculta_conteudo.yml`), ao lado de `activity`,
+  `revista`, `document` e `page`. A busca pública da Wiki continua sendo a
+  consulta própria de `WikiController::findWikiEntries()`, com as mesmas três
+  rotas: nenhum caminho mudou. O que muda é a descoberta pelo índice do site,
+  que passa a devolver verbetes publicados; o `SearchPageController` reaplica
+  `access('view')` no resultado, então rascunho e revisão não aparecem, e os
+  termos digitados não são gravados. Verbetes já existentes só entram no índice
+  depois de uma reindexação no ambiente (`drush search-api:index`), passo de
+  deploy, não desta sessão.
+- **Aviso de revisão por e-mail (Fase 5, item 4).** `WikiReviewHooks`
+  (`entity_update`) avisa uma única vez quando um `wiki_entry` **entra** em
+  revisão, comparando o estado atual com `getOriginal()`. O tipo de e-mail
+  `aculta_wiki_review` (`WikiReviewMailType`) declara `verbete`, `estado` e
+  `link`; o `WikiReviewNotifier` enfileira uma mensagem por endereço editorial
+  na fila do `aculta_mailer`, com o contexto limitado a título, estado e link de
+  edição — **o nome de quem editou não vai no aviso**. O `aculta_wiki` não
+  depende do `aculta_mailer` em `info.yml`: a fila e a URL pública chegam como
+  serviços opcionais (`@?aculta_mailer.queue`,
+  `@?Drupal\aculta_mailer\Api\PublicUrlInterface`), e sem o mailer nada é
+  enviado nem quebra. O aviso vem **desligado** e sem destinatários; a tela
+  `/painel-administrativo/aculta/wiki` (`aculta_wiki.settings`, permissão
+  `administer aculta_wiki`) liga o aviso e cadastra as caixas. A configuração
+  `aculta_wiki.settings` não tem arquivo em `config/sync` nem `config/install`:
+  os padrões vivem no código até alguém salvar a tela.
+- **Pacote LGPD da Fase 5, item 4.** No mesmo commit: o inventário
+  (`docs/compliance/LGPD-INVENTARIO.md`) ganhou a linha `aculta_wiki` e a
+  pendência 3 foi atualizada; a cláusula de aviso de revisão entrou em
+  `docs/compliance/CLAUSULAS-POLITICA-ACEITE-UNICO.md`; o bullet da Wiki em
+  `scripts/institution/politica-de-privacidade.html` passou a descrever busca e
+  aviso; `docs/operations/AGENT-CONTENT.md` e o `AGENTS.md` do submódulo
+  registraram o novo escopo. Nenhuma **categoria nova** de dado pessoal foi
+  criada: a busca usa só conteúdo publicado, sem guardar termos, e o aviso usa
+  caixas editoriais da Associação, já cobertas pela linha do `aculta_mailer`
+  (HMAC e registro de 90 dias). A base legal segue a que já está publicada para
+  a Wiki (consentimento na contribuição e interesse legítimo na curadoria
+  editorial); nada foi inventado.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
   asserções), `WikiProviderTest` (8 testes, 17 asserções),
   `WikiPublicationKernelTest` (2 testes, 22 asserções) e
@@ -326,7 +368,16 @@ ao fim da sessão.
   `WikiEntryImageHooksTest` (6 testes: aba e validadores, ganchos de validação
   e envio, imagem atual, política sem imagem, campo sem acesso e formulário sem
   o campo) e `WikiLeadImagePolicyTest` (3 testes: consumidor exportado, schema e
-  aba administrativa) aprovados — suíte do submódulo: `32 testes, 158 asserções`.
+  aba administrativa), `WikiReviewNotifierTest` (6 testes: desligado, sem
+  destinatário válido, sem fila, um aviso por endereço com contexto sem autoria,
+  link vazio sem URL pública e leitura do texto de destinatários),
+  `WikiReviewHooksTest` (8 testes: rascunho→revisão, revisão→revisão,
+  publicado→revisão, outros estados, outro tipo, entidade que não é nó, sem
+  campo de moderação e configuração desligada), `WikiReviewMailTypeTest`
+  (3 testes: identificador e variáveis, uso dos marcadores e ausência de
+  autoria) e `WikiSearchIndexConfigTest` (1 teste: `wiki_entry` no índice com os
+  quatro tipos anteriores e indexação direta) aprovados — suíte do submódulo:
+  `52 testes, 240 asserções`.
   O adaptador do Fórum tem `WikiDiscussionContextProviderTest` (5 testes, 28
   asserções: bundles aceitos, acesso e cache, campo fechado e permissão,
   restrição do host e do campo preservada, verbete não persistido) e a suíte
@@ -341,14 +392,15 @@ ao fim da sessão.
   `ForumActivitySubscriberTest::testSubscribedEventNames` (o commit `16537660`
   incluiu `aculta_forum.post_created` sem atualizar o teste) foi corrigida
   nesta sessão, junto com um teste do evento de post.
-- **O que ficou faltando.** O restante da Fase 5 do plano (busca e
-  notificações, que mudam a retenção e exigem o pacote LGPD), a rota
-  administrativa própria da Wiki e a validação em navegador com ACULTA420 e
-  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão
-  do verbete e a tabela de revisões foram verificadas por configuração e
-  testes, não renderizadas em navegador. A ativação em si depende de o ambiente
-  importar a configuração e rodar os passos de atualização com backup
-  verificado.
+- **O que ficou faltando.** A Fase 5 do plano está completa em código e
+  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420 e
+  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão do
+  verbete, a tabela de revisões e a tela de aviso de revisão foram verificadas
+  por configuração e testes, não renderizadas em navegador. Falta também a
+  reindexação do `aculta_conteudo` no ambiente para que verbetes já publicados
+  apareçam na busca do site (`drush search-api:index`), passo de deploy. A
+  ativação em si depende de o ambiente importar a configuração e rodar os
+  passos de atualização com backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
   seguem não versionados e foram deixados intactos.
 

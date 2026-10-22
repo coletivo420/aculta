@@ -62,6 +62,7 @@ datasource_settings:
         - revista
         - document
         - page
+        - wiki_entry
     languages:
       default: true
       selected: {  }

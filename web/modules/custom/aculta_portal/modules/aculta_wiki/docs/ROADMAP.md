@@ -48,6 +48,25 @@ O plano aprovado e o inventário de referências ficam em
 - Só depois das fases anteriores, com decisão do responsável, backup privado e
   validação no servidor de testes.
 
+### Entregue em código (2026-10-22)
+
+- **Listagem e imagem de destaque:** contagem e paginação da view `wiki_entries`,
+  recorte 16:9 no card e aba "Imagem de destaque" consumindo o consumidor `wiki`
+  da política central de upload. Rotas inalteradas.
+- **Busca no site:** `wiki_entry` em `bundles.selected` de `aculta_conteudo`. A
+  busca própria da Wiki e as três rotas `/wiki`, `/wiki/busca` e
+  `/wiki/busca/previa` não mudaram. Verbetes já publicados entram no índice com
+  `drush search-api:index` no ambiente (passo de deploy, não desta sessão).
+- **Aviso de revisão:** `WikiReviewHooks` (`entity_update`, via `getOriginal()`),
+  `WikiReviewMailType` (`aculta_wiki_review`) e `WikiReviewNotifier` na fila do
+  `aculta_mailer`, como serviços opcionais. Tela
+  `/painel-administrativo/aculta/wiki` (`administer aculta_wiki`). Desligado por
+  padrão, sem destinatários, sem o nome de quem editou no contexto.
+- **Pacote LGPD no mesmo commit:** inventário, cláusulas de aceite, política de
+  privacidade, `AGENT-CONTENT.md` e `AGENTS.md` do submódulo.
+- **Continua pendente:** importação de configuração com backup privado
+  verificado, reindexação no ambiente e revisão visual em ACULTA420 e Olivero.
+
 
 ## WE SATIVA — fundação aprovada (WES-UX 0.2, 2026-10-22)
 

@@ -20,3 +20,13 @@ aculta_portal.wiki_search_preview:
     _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
   requirements:
     _permission: access content
+
+aculta_wiki.settings:
+  path: '/painel-administrativo/aculta/wiki'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiSettingsForm'
+    _title: 'Wiki420'
+  requirements:
+    _permission: 'administer aculta_wiki'
+  options:
+    _admin_route: TRUE
