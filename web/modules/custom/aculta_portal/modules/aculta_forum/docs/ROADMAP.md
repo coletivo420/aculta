@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.221` | Isolar o link de não lidas ao abrir um tópico | `ForumUnreadPosts` usa `getTopicPagerQuery()` para iniciar Comment pager em zero e apontar o pager ForumPost à resposta não lida, sem parâmetros da View de origem. Sem Runtime/testes. |
 | `0.1.0-dev.220` | Aplicar purpose ao cálculo da página do post | `getPageForPost()` compartilha a validação do tópico público usada pela thread: bundle, publicação, Domain associado ao purpose Fórum e purpose atual. Sem Runtime/testes. |
 | `0.1.0-dev.219` | Isolar a paginação do destino da busca | Links interrota enviam apenas `page=0,{página}`: Comment pager Core começa em zero e ForumPost pager aponta à resposta, sem query da busca ou seu índice de página. Remove a variação ampla de cache de dev.218. Sem Runtime/testes. |
 | `0.1.0-dev.218` | Variar link da busca por query string | Correção intermediária: formatter declarava contexto `url.query_args` por causa dos parâmetros mesclados pelo PagerManager. Substituída em dev.219 pelo estado explícito do destino, sem query de origem. Sem Runtime/testes. |

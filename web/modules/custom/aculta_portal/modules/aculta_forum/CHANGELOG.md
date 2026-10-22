@@ -1,3 +1,9 @@
+## `0.1.0-dev.221` — isolar também o link de não lidas
+
+- `ForumUnreadPosts` usa o mesmo estado de pager limpo do tópico empregado pela
+  busca, sem transportar para a rota de destino a página/filtros da View de não
+  lidas. Sem Runtime ou testes automatizados.
+
 ## `0.1.0-dev.220` — aplicar purpose também no cálculo da página
 
 - `getPageForPost()` agora reutiliza a validação de tópico público da thread,
