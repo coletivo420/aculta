@@ -17,9 +17,15 @@ aculta_forum.admin_comments:
   parent: aculta_forum.admin
   weight: 1
 
+aculta_forum.admin_revisionable_posts:
+  title: 'Posts revisionáveis'
+  route_name: aculta_forum.post_moderation_queue
+  parent: aculta_forum.admin
+  weight: 2
+
 aculta_forum.admin_settings:
   title: Configurações
   route_name: aculta_forum.settings
   parent: aculta_forum.admin
-  weight: 2
+  weight: 3
 

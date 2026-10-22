@@ -1,3 +1,9 @@
+## `0.1.0-dev.141` — adiciona fila de revisão dos posts revisionáveis
+
+- Nova aba administrativa consulta `content_moderation_state` do Core e lista revisões em estado `review`; a ação abre a revisão exata em `ContentEntityForm`, com as transições do workflow Core.
+- A fila e a revisão ficam no purpose `main`, exigem `administer aculta forum posts` e revalidam que a revisão pertença a post do Fórum, tópico publicado do purpose `forum` e transição válida. Nenhum conteúdo de outro host entra na fila.
+- Sem criação pública, sem migração e sem alteração no Runtime. O histórico de revisão e a apresentação visual da fila seguem pendentes.
+
 ## `0.1.0-dev.140` — renderiza posts revisionáveis na leitura do tópico
 
 - A página canônica em modo `full` consulta `aculta_forum_post` com EntityQuery e `accessCheck(TRUE)`, limita pelo tópico público/purpose `forum`, e renderiza somente revisão default publicada com o view mode `default`.

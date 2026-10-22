@@ -1,4 +1,10 @@
 services:
+  Drupal\aculta_forum\Controller\ForumPostModerationFormController:
+    class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
+    arguments: ['@entity_type.manager', '@entity.form_builder']
+  Drupal\aculta_forum\Controller\ForumPostModerationQueueController:
+    class: Drupal\aculta_forum\Controller\ForumPostModerationQueueController
+    arguments: ['@entity_type.manager', '@current_user', '@date.formatter', '@aculta_portal.domain_purpose']
   Drupal\aculta_forum\Hook\ForumActivityEventHooks:
     class: Drupal\aculta_forum\Hook\ForumActivityEventHooks
     arguments: ['@event_dispatcher', '@datetime.time']
@@ -65,6 +71,9 @@ services:
   aculta_forum.attachment_upload_access:
     class: Drupal\aculta_forum\Access\ForumAttachmentUploadAccess
     arguments: ['@aculta_portal.domain_purpose']
+  aculta_forum.post_moderation_access:
+    class: Drupal\aculta_forum\Access\ForumPostModerationAccess
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
 
   aculta_forum.search_query_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber

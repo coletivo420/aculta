@@ -158,3 +158,28 @@ aculta_forum.gallery_dialog:
       filter_format:
         type: 'entity:filter_format'
   methods: [GET, HEAD, POST]
+
+aculta_forum.post_moderation_queue:
+  path: '/painel-administrativo/forum/publicacoes-revisionaveis'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostModerationQueueController::queue'
+    _title: 'Publicações aguardando moderação'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:queueAccess'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD]
+
+aculta_forum.post_moderate:
+  path: '/painel-administrativo/forum/publicacao/revisao/{revision_id}'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\ForumPostModerationFormController::form'
+    _title: 'Revisar publicação do Fórum'
+  requirements:
+    _permission: 'administer aculta forum posts'
+    _custom_access: 'aculta_forum.post_moderation_access:reviewRevision'
+    revision_id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]

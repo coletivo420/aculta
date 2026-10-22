@@ -16,6 +16,13 @@ depois do prazo, sem concedê-la enquanto está aberto. A permissão
 `main` e para operações de revisão. Exclusão, revert e operações históricas não
 são concedidos aos autores.
 
+A fila customizada adapta o algoritmo de `content_moderation`
+`ModeratedNodeListBuilder`: consulta revisões `review` no armazenamento interno
+`content_moderation_state` do Core e carrega as revisões da entidade pelo
+`content_entity_revision_id`. O ACULTA não cria storage de fila próprio. A ação
+abre a revisão exata pelo Entity Form do Core, que apresenta as transições
+permitidas pelo workflow.
+
 As transições são explicitamente atribuídas aos papéis existentes. `email_confirmed`
 pode criar/reenviar e editar publicação própria durante a janela; `content_editor`
 pode administrar a fila e aprovar, rejeitar, retirar ou editar publicações. A
@@ -27,11 +34,15 @@ Referências primárias consultadas em 2026-10-21:
 
 - [Drupal 11.x `EntityAccessControlHandler::access()`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21EntityAccessControlHandler.php/function/EntityAccessControlHandler%3A%3Aaccess/11.x)
 - [Drupal 11.x `StateTransitionValidation`](https://api.drupal.org/api/drupal/core%21modules%21content_moderation%21src%21StateTransitionValidation.php/class/StateTransitionValidation/11.x)
+- [Drupal 11.x `ModeratedNodeListBuilder`](https://api.drupal.org/api/drupal/core%21modules%21content_moderation%21src%21ModeratedNodeListBuilder.php/class/ModeratedNodeListBuilder/11.x) — referência para listar IDs de revisão do estado moderado sem storage paralelo.
+- [Drupal 11.x Entity API — rotas `_entity_form`](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21entity.api.php/group/entity_api/11.x)
 - Código instalado: `web/core/lib/Drupal/Core/Entity/EntityAccessControlHandler.php`,
   `web/core/modules/content_moderation/src/StateTransitionValidation.php` e
   `web/core/modules/content_moderation/src/Hook/ContentModerationHooks.php`.
 
-Esses contratos cobrem autorização e workflow. Formulários de criação/edição,
-histórico administrativo, leitura no tópico e migração dos Comments continuam
-nas fases seguintes; o Fórum legado segue ativo até equivalência e corte
-aprovados.
+A fila `/painel-administrativo/forum/publicacoes-revisionaveis` e o formulário
+`/painel-administrativo/forum/publicacao/revisao/{revision_id}` usam a revisão
+Core exata e ficam em `main`; o custom access revalida estado `review`,
+transição, tópico publicado e purpose `forum`. A criação pública, o histórico
+administrativo e a migração dos Comments continuam nas fases seguintes; o Fórum
+legado segue ativo até equivalência e corte aprovados.
