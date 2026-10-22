@@ -106,3 +106,9 @@ são contados enquanto ativos e não simulam estado individual.
 - Release só termina após testes proporcionais e gate de segurança; dados
   privados, conteúdo e configuração de outros módulos não são removidos na
   desinstalação.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-01/02/12: Messenger é centro de conversas e avisos; Private Message, Message/Message Notify, flags, avisos e contadores permanecem suas fontes atuais. Inventariar produtores User/Fórum/LMS/Wiki/Revista; tipar eventos, deduplicar, revalidar acesso/consentimento em cron e na entrega. Preferências de identidade pertencem ao User; não criar outra inbox ou transporte SMTP.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
