@@ -210,3 +210,7 @@ hook OOP. **Não crie** `template_preprocess_*` legado.
 ## 11. Pendências do tema para o Messenger
 
 Ver `MESSENGER-AUDIT.md`, seção 3: A3 (separar o CSS do painel), A4 (regras mortas), A5 (mapeamento de rotas nativas), A6 (JS de alertas dentro da gaveta), A9 (nome do componente `messenger-item`).
+
+## B4-02: consistência da gaveta AJAX
+
+O JS do tema verifica se a resposta ainda corresponde ao `AbortController` ativo antes de substituir o conteúdo da gaveta. Assim, fechar a gaveta ou navegar para outra conversa não deve permitir que respostas antigas sobrescrevam o estado atual. Testes com AJAX e rede lenta ainda são exigidos no Runtime. Ver [B4-02](theme-ux-0.8-b4-02-ajax-drawer-race.md).
