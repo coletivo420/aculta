@@ -105,3 +105,7 @@ A proposta mobile-first detalhada para a experiência de post, criação e ediç
 ## Sequenciamento aprovado — GANJALAB E-0.1 (2026-10-22)
 
 Priorizar o GanjaLab editorial em `conta.aculta.*/studio/ganjalab` enquanto a homologação G420-C2-T aguarda consumidores reais de LMS e ACULTA420. E-A inventaria rotas/forms e remove divergências documentais; E-B consolida “Meus conteúdos” com autorização/paginação/estado por revisão; E-C integra criação, rascunho, edição, prévia e submissão pelo workflow do módulo dono; E-D aplica somente SDC/UI Suite com fallback HTTP e edição no celular. A fila Wiki e experiências de outros donos só entram após providers especializados e testes de isolamento. Separar meus itens, equipe e moderação também nos modelos de autorização, nunca só em abas visuais. Ver roadmap do submódulo Studio.
+
+## E-A.1 — primeira entrega de simplicidade
+
+A home GanjaLab passou a oferecer a pergunta “O que vamos criar hoje?” e cartões com as ações reais de criação já permitidas, via `StudioPresenter` e Core SDC do ACULTA420. O formulário de autoria ainda pode abrir no domínio do módulo dono; isso é etapa intermediária, não editor integrado pronto. O caminho de volta, 'Meu trabalho', navegação por tarefas em dispositivos pequenos e criação/edição inline ficam para E-A.2/E-B/E-C após auditoria de URLs, grants e Form API. Inventário detalhado no roadmap do Studio.
