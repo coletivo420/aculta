@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** bridge tipado implementado no código local `0.1.0-dev.19` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
+**Estado:** bridge tipado implementado no código local `0.1.0-dev.20` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -13,7 +13,7 @@ A integração de indicadores é opcional e ocorre apenas sob demanda do consumi
 
 ## Contrato de correlação (implementado)
 
-`aculta_index.statistics_bridge` recebe filtros, busca uma página via `ContentIndexQuery` (que revalida Entity Access) e encaminha identidades autorizadas sem cruzar tabelas:
+`aculta_index.statistics_bridge` recebe filtros, busca uma página via `ContentIndexQuery` (que revalida Entity Access), encaminha identidades autorizadas sem cruzar tabelas e devolve essa mesma página de entidades junto dos totais e cursor:
 
 ```text
 seleção autorizada → (entity_type, entity_id, langcode) em lotes

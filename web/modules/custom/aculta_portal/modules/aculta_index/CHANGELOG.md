@@ -1,9 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.20 — resultado correlacionado do bridge
+
+- `ContentIndexStatisticsResult` retorna as entidades autorizadas da página
+  usada na agregação, além dos totais e do cursor.
+- Consumidores podem renderizar uma única página sem repetir a consulta e
+  avançar novamente o cursor.
+- Fallback sem Statistics continua indisponível, sem entidades ou totais.
+
 ## 0.1.0-dev.19 — bridge opcional para Statistics
 
 - Serviço `aculta_index.statistics_bridge` seleciona uma página por filtros e
-  encaminha até 100 identidades já autorizadas ao contrato tipado do Portal.
+  encaminha até 100 identidades já autorizadas ao contrato tipado do Portal;
+  retorna as mesmas entidades, totais e cursor em uma resposta correlacionada.
 - Statistics valida permissão, catálogo e dimensões allowlisted, e reutiliza
   sua própria agregação SQL. Sem Statistics, o bridge responde indisponível.
 - Sem junção direta entre tabelas, métricas no Index ou dependência obrigatória.

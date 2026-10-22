@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Selects a bounded candidate page and rechecks source Entity Access.
  */
-final class ContentIndexQuery {
+final class ContentIndexQuery implements ContentIndexQueryInterface {
 
   /**
    * Maximum catalog candidates checked for one request. */

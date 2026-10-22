@@ -16,6 +16,8 @@ final readonly class ContentIndexStatisticsResult {
    *
    * @param bool $available
    *   TRUE when ACULTA Statistics is enabled and supplied the totals.
+   * @param list<\Drupal\Core\Entity\ContentEntityInterface> $entities
+   *   Authorized entities from the same page used for aggregation.
    * @param array<string|int, int> $totals
    *   Totals keyed by authorized entity ID; missing metrics are zero.
    * @param string|null $nextCursor
@@ -25,6 +27,7 @@ final readonly class ContentIndexStatisticsResult {
    */
   public function __construct(
     public bool $available,
+    public array $entities,
     public array $totals,
     public ?string $nextCursor,
     public CacheableMetadata $cacheability,

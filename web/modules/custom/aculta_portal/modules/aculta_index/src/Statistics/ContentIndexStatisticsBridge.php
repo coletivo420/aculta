@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Statistics;
 
-use Drupal\aculta_index\Query\ContentIndexQuery;
+use Drupal\aculta_index\Query\ContentIndexQueryInterface;
 use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
@@ -15,7 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 final class ContentIndexStatisticsBridge {
 
   public function __construct(
-    private readonly ContentIndexQuery $query,
+    private readonly ContentIndexQueryInterface $query,
     private readonly ?ContentEntityMetricAggregatorInterface $statistics,
   ) {}
 
@@ -56,7 +56,7 @@ final class ContentIndexStatisticsBridge {
     if ($this->statistics === NULL) {
       $cacheability = new CacheableMetadata();
       $cacheability->setCacheMaxAge(0);
-      return new ContentIndexStatisticsResult(FALSE, [], NULL, $cacheability);
+      return new ContentIndexStatisticsResult(FALSE, [], [], NULL, $cacheability);
     }
 
     $page = $this->query->query($filters, $account, $cursor, $limit);
@@ -81,7 +81,7 @@ final class ContentIndexStatisticsBridge {
       $dimension = $identity['entity_id'];
       $totals[$dimension] = (int) ($aggregated[$dimension] ?? 0);
     }
-    return new ContentIndexStatisticsResult(TRUE, $totals, $page->nextCursor, $page->cacheability);
+    return new ContentIndexStatisticsResult(TRUE, $page->entities, $totals, $page->nextCursor, $page->cacheability);
   }
 
 }
