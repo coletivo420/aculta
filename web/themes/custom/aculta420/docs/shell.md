@@ -252,3 +252,9 @@ para Offcanvas quando necessário; não criar menu lateral custom em JavaScript.
 - não acoplar light/dark a markup específico;
 - não criar segunda engine de navegação quando Bootstrap já oferece Collapse/Offcanvas;
 - não implementar o redesign completo dentro da Foundation 0.1.0.
+
+## Regra global obrigatória — preservação do cabeçalho multidomínio (2026-10-22)
+
+A **Institution Bar** e o **Domain Header existentes** formam o shell permanente de **todas** as áreas e rotas públicas/autorizadas do portal ACULTA: GanjaLab, GanjaLab420, Revista, Wiki, Fórum, Galeria, Cursos, Loja, Minha Conta e demais purposes. Nenhum novo layout, SDC, rota, aplicação AJAX, fullscreen de página ou interface educacional pode substituir, ocultar indevidamente, duplicar ou criar um cabeçalho global concorrente. **Exceções técnicas genuínas** (por exemplo, visualizador fullscreen nativo do navegador, PDF ou iframe de terceiros) devem ser explicitadas e revisadas, sem reescrever o shell da página.
+
+São permitidos refinamentos de responsividade, tipografia, espaçamento, menus, contraste, acessibilidade e light/dark, mantendo as responsabilidades atuais Portal → DomainPurposeManager → ACULTA420. O componente transversal futuro `context-header` é **somente cabeçalho interno do conteúdo**, abaixo do shell; nunca é substituto de Institution Bar/Domain Header. Gate de revisão: verificar a presença e continuidade do shell em desktop/mobile, routes AJAX/no-JS, domínios e modos de cor.
