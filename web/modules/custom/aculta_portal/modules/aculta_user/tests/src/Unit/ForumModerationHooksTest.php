@@ -10,6 +10,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -216,6 +217,7 @@ final class ForumModerationHooksTest extends TestCase {
     $policy = new EmailConfirmationPolicy(
       $userData,
       $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(ModuleHandlerInterface::class),
     );
     return new ForumModerationHooks(
       $policy,
