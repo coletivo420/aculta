@@ -1,3 +1,23 @@
+## `0.1.0-dev.35` — campo de discussão fechado bloqueia e libera escrita — 2026-10-22
+
+- `LmsClosedDiscussionFieldKernelTest` prova o ciclo pedido na dev.98 sobre um
+  tópico de turma com estudante membro: com `field_aculta_discussion` em
+  `CommentingStatus::Open` a escrita é permitida; fechar o campo para
+  `Closed` persiste o status e torna a escrita forbidden sem esconder a
+  leitura; reabrir para `Open` libera de novo. O outsider não lê nem escreve
+  em nenhum dos estados.
+- A negação carrega a tag de cache `node:<id>` e o contexto
+  `user.permissions`, então o fechamento invalida um resultado "permitido" já
+  cacheado. A moderação do estudante continua forbidden nos dois estados.
+- A tarefa nomeou `field_aculta_rejected`, mas esse campo é o marcador
+  booleano de Comment usado pela moderação: o portão da nova escrita é o
+  status Comment do Node em `field_aculta_discussion`. Um segundo teste
+  publica um Comment com o marcador ligado e confirma que a escrita segue
+  permitida, e que o fechamento real continua negando.
+- Teste: 2 testes / 76 asserções PASS; 40 depreciações de Core/contrib
+  (preexistentes). PHPCS limpo. Nenhuma configuração foi alterada e o Runtime
+  não recebeu fixture.
+
 ## `0.1.0-dev.34` — ciclo de vida do módulo LMS — 2026-10-22
 
 - `LmsModuleLifecycleKernelTest` usa o `ModuleInstaller` real para ativar,

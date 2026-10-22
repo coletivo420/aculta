@@ -1,3 +1,31 @@
+## aculta_forum_lms 0.1.0-dev.35 — campo de discussão fechado
+
+- `LmsClosedDiscussionFieldKernelTest` usa um tópico de turma com estudante
+  membro e resolve o `LmsDiscussionContextProvider` real antes e depois de
+  cada gravação do status Comment no Node, relendo o tópico do storage para
+  observar o estado persistido.
+- A escrita é liberada quando `field_aculta_discussion` está `Open`, negada
+  quando o campo é `Closed` e liberada de novo ao reabrir. A leitura continua
+  permitida com o campo fechado; outsider lê e escreve negado em todos os
+  estados.
+- `field_aculta_rejected` é o marcador de Comment da moderação, não o portão
+  de escrita: o teste publica um Comment rejeitado e a escrita do estudante
+  permanece permitida.
+
+| Cenário | Resultado |
+| --- | --- |
+| Campo aberto | Leitura e escrita do estudante permitidas; moderação forbidden |
+| Fechar o campo | Status `Closed` persistido; escrita forbidden; leitura permitida |
+| Reabrir o campo | Status `Open` persistido; escrita permitida de novo |
+| Cache da negação | Tag `node:<id>` e contexto `user.permissions` presentes |
+| Outsider | Leitura e escrita forbidden em todos os estados |
+| Comment com `field_aculta_rejected` | Não fecha o tópico; escrita segue permitida |
+| Fechar com Comment rejeitado | Escrita forbidden pelo status do campo |
+
+- Teste: 2 testes / 76 asserções PASS; 40 depreciações de Core/contrib
+  (preexistentes). PHPCS limpo. Nenhuma configuração foi alterada e o Runtime
+  não recebeu fixture.
+
 ## aculta_forum_lms 0.1.0-dev.34 — ciclo de vida do módulo
 
 - `LmsModuleLifecycleKernelTest` ativa, desativa e reativa `aculta_forum_lms`
