@@ -1,0 +1,6 @@
+{# Route navigation with ordinary links, not Bootstrap panel tabs or JavaScript-controlled state. #}
+{% if items %}
+<nav class="aculta-context-tabs" aria-label="{{ label|t }}">
+  <div class="aculta-context-tabs__items">{{ items }}</div>
+</nav>
+{% endif %}
