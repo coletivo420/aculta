@@ -10,6 +10,14 @@
       if (typeof bootstrap === 'undefined') {
         return;
       }
+      // Bootstrap owns opening, focus trapping and Escape. Reflect that state
+      // on the corresponding utility icon without another overlay manager.
+      once('aculta-utility-drawer-state', '[data-aculta-utility-drawer]', context).forEach((drawer) => {
+        const trigger = document.querySelector('[aria-controls="' + drawer.id + '"]');
+        if (!trigger) return;
+        drawer.addEventListener('show.bs.offcanvas', () => trigger.setAttribute('aria-expanded', 'true'));
+        drawer.addEventListener('hidden.bs.offcanvas', () => trigger.setAttribute('aria-expanded', 'false'));
+      });
       once('aculta-navigation', '.aculta-navbar', context).forEach((navbar) => {
         const toggle = navbar.querySelector('.aculta-menu-toggle');
         const menu = navbar.querySelector('#aculta-primary-menu');
