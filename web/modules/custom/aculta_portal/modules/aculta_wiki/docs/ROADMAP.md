@@ -62,3 +62,8 @@ O planejamento aprovado de todas as estruturas internas está em [WE-SATIVA-INTE
 ## WE SATIVA C01 — primeira composição visual (2026-10-22)
 
 [Porta contextual de contribuição](../../../../../../../docs/portal/WE-SATIVA-COMPONENT-01-CONTRIBUTION-ENTRY.md): um CTA autorizado a partir do verbete e seletor de intenções sem ações fictícias. Primeiro auditar `context-header.actions` versus `wiki-entry.actions`; manter um só CTA. Dependência de AccessResult, purpose/domain e URL canônica; proposta sem `update` continua bloqueada até decisão de backend. Projeto mobile-first, SDC/UI Suite, shell global preservado.
+
+
+## Repriorização visual e de acesso — C01-A (2026-10-22)
+
+A [auditoria C01-A](../../../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-CTA-AUDIT.md) constatou: o SDC `context-header.actions` pode receber o convite único, enquanto `wiki-entry.actions` já exibe `content.links`; evitar CTA duplicado. O workflow `wiki_editorial` já tem rascunho, revisão e publicação, mas o papel autenticado comum não possui permissões de edição; o papel `content_editor` é privilegiado. **Antes de qualquer rota ou UI WE SATIVA:** (1) desenhar contribuição de mínimo privilégio e mecanismo de propostas sem `update`; (2) mapear todas as permissões e revisão; (3) verificar CKEditor/formatos; (4) selecionar a rota/purpose; (5) integração SDC mobile-first e teste de DOM. Próximo marco **C01-B**. Nenhuma concessão de permissão é autorizada por este roadmap.
