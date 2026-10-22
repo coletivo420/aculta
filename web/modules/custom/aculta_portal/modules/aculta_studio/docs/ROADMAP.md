@@ -73,3 +73,7 @@ Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManage
 - **E-R aceite:** testes Unit/Kernel/Functional de dois autores e editor, revisão privada, grants Domain e Group, 403/404, cache quente, no-JS/AJAX, 320–1440px, contraste e teclado.
 
 **Não habilitar nova fila nem ampliar visibilidade de estados no E-A.** Cada microfase terá commit próprio na PR corrente, sem misturar trabalho paralelo. Testes de runtime não executados nesta reclassificação documental.
+
+## GANJALAB E-A.1 — Entrada simples de publicação (código em 2026-10-22)
+
+`StudioController::welcome()` renderiza na entrada do GanjaLab o SDC `context-header`, cartões `card` e grade `content-grid` com ações filtradas pelos providers `StudioTab`/Presenter e acesso às rotas do dono. Nenhuma entidade ou workflow migrou. Prioridade imediata **E-A.2 testes reais de ações/domain/visual** e **E-B Meu trabalho seguro**, antes de implementar editores inline ou moderação. Auditoria: [GANJALAB-E-A-EDITOR-AUDIT.md](GANJALAB-E-A-EDITOR-AUDIT.md). Sem PASS de Runtime, mobile ou PHP lint nesta sessão.
