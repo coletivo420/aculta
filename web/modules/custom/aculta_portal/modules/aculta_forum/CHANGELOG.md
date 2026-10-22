@@ -1,3 +1,10 @@
+## `0.1.0-dev.226` — remover limite agregado de descrições da galeria
+
+- O textarea não limita mais o total de caracteres com teto fixo que também
+  limitava indiretamente a quantidade de imagens. Cada linha continua validada
+  no servidor até 512 caracteres, e cardinalidade/tamanho dos arquivos seguem
+  a política central. Sem Runtime/testes.
+
 ## `0.1.0-dev.225` — variar cache pela query preservada nos links
 
 - Links entre posts usam `getUpdatedParameters()` e mantêm todos os parâmetros

@@ -79,7 +79,6 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       '#title' => $this->t('Descrição de cada imagem'),
       '#description' => $this->t('Informe uma descrição por linha, na mesma ordem das imagens enviadas. Todas são obrigatórias e podem ter até 512 caracteres.'),
       '#rows' => 4,
-      '#maxlength' => 16384,
     ];
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
