@@ -1,3 +1,11 @@
+## dev.185 — texto alternativo no anexo de imagem
+
+- Inspeção estática confirmou que o campo de imagem da Media exige `alt`, mas o
+  diálogo preenchia esse valor com o nome do arquivo. O formulário agora coleta
+  descrição da pessoa autora e rejeita imagem sem descrição no servidor; PDF e
+  Office não dependem do campo.
+- Ainda sem upload autenticado, revisão visual ou fixture Runtime desta entrega.
+
 ## dev.184 — submissão, edição e moderação revisionáveis
 
 - Runtime `toca`, Drupal 11.4.10, com contas temporárias: GET autenticado do

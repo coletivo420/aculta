@@ -7,6 +7,11 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
+`0.1.0-dev.185` exige texto alternativo fornecido pela pessoa autora no diálogo
+de anexo de imagem. O passo seguinte da integração continua sendo validar upload
+real de imagem/galeria, publicação contextual, acesso privado e apresentação no
+navegador, antes de avançar previews Office e cartão PDF.
+
 ## Direção atual de produto: experiência Discourse Ubuntu
 
 O responsável definiu como referência uma experiência parecida com
@@ -88,6 +93,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.185` | Exigir texto alternativo no upload de imagem do Fórum | O diálogo de anexo coleta descrição acessível e valida no servidor antes de criar Media; documentos não usam o campo. Sem alteração Runtime ou validação visual. |
 | `0.1.0-dev.184` | Liberar o ciclo público e a moderação de posts revisionáveis | Corrigida colisão de `$messenger` com `FormBase`, namespace da interface `TimeInterface` e chamada booleana de `access()->isAllowed()` na edição/resposta. Form mode/display público alinhados no Sync e Runtime. Smoke autenticado confirmou envio `review`, fila em `main`, aprovação, edição como nova revisão publicada e contexto de resposta; corpo visível no tópico. Fixture, contas, aceite de teste e métrica agregada removidos. Upload contextual, preview DOCX/planilhas, fallback e revisão visual seguem pendentes. |
 | `0.1.0-dev.183` | Resolver controllers dos formulários públicos | Os serviços de submissão e edição usam IDs explícitos e rotas `service:method`; o Core 11.4 confirmou que ambos e os demais controllers do Fórum resolvem pelo `CallableResolver` (14 rotas sem falha). O smoke HTTP autenticado ainda retorna 500 sem corpo e sem novo watchdog; origem não identificada, fluxo não validado. Fixture limpa e Runtime retornou a 0 tópicos/posts/Comments dedicados/anexos e 10 usuários. |
 | `0.1.0-dev.182` | Corrigir renderização de posts no Runtime | Corrigida injeção do usuário e preservado o pré-render de cada post na Thread. Configuração parcial alinhou o campo contextual de Gallery e displays ausentes no Runtime sem alterar as 97 imagens existentes. Firefox ESR confirmou um DOCX OOXML completo visível após a correção em `aculta_document_viewer` dev.12; query e path Core retornaram 200 para arquivo de propriedade `aculta`. A captura evidenciou o iframe removido no caminho `done`; agora é mantido no sucesso e encerrado em falha. Sem overflow no viewport efetivo 1354 px; revisão da matriz mobile, planilhas e demais fluxos Office, submissão/moderação e revisão visual aplicável continuam pendentes. |

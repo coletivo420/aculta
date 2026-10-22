@@ -66,6 +66,12 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     ];
 
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'image_file', 'document_file');
+    $form['image_alt'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Descrição da imagem'),
+      '#description' => $this->t('Obrigatória ao enviar uma imagem. Descreva o que ela mostra; documentos não usam este campo.'),
+      '#maxlength' => 512,
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -89,6 +95,10 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     }
 
     $is_image_upload = $image_fids !== [];
+    if ($is_image_upload && trim((string) $form_state->getValue('image_alt')) === '') {
+      $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição para a imagem.'));
+      return;
+    }
     $fid = $is_image_upload ? reset($image_fids) : reset($document_fids);
     $file = $this->entityTypeManager->getStorage('file')->load($fid);
     if (!$file instanceof FileInterface) {
@@ -143,7 +153,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     if (str_starts_with((string) $file->getMimeType(), 'image/')) {
       $media->set('field_media_forum_image', [
         'target_id' => $file->id(),
-        'alt' => $file->getFilename(),
+        'alt' => trim((string) $form_state->getValue('image_alt')),
       ]);
     }
     $media->save();

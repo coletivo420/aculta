@@ -1,3 +1,11 @@
+## `0.1.0-dev.185` — exigir texto alternativo para imagem anexada
+
+- O diálogo contextual de anexo pede uma descrição acessível ao enviar imagem e
+  a validação do servidor exige o texto antes de criar Media. Upload de PDF e
+  Office continua sem esse campo; a galeria mantém seu fluxo próprio.
+- Sem alteração no Runtime nesta etapa. O smoke visual e o upload real seguem
+  pendentes.
+
 ## `0.1.0-dev.184` — liberar submissão, edição e moderação revisionáveis
 
 - O GET de submissão carregava `ForumPostSubmissionForm`, mas PHP fatalizava ao
