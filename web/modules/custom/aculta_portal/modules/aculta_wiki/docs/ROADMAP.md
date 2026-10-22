@@ -76,4 +76,8 @@ A [auditoria C01-A](../../../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-
 
 ## Prioridade: primeira publicação e moderação Wiki (WES-MOD 0.1)
 
-[Plano de moderação da Wiki e WE SATIVA](WE-SATIVA-MODERATION-PLAN.md): qualquer conta com e-mail confirmado pode **criar** verbete; o **primeiro verbete** exige revisão antes de publicação, tal como a primeira participação no Fórum. A transição de publicação pertence aos `content_editor`; novos verbetes e sugestões continuam moderados no workflow vigente. Fila Wiki própria, com contratos neutros compartilhados pelo `aculta_portal`. Antes de novas inspeções visuais: auditar consumidores, registrar ADR do kernel, evitar duplicações e testar a regra de primeira publicação. Não reutilizar contagem de comentários do Fórum para verbetes.
+[Plano de moderação da Wiki e WE SATIVA](WE-SATIVA-MODERATION-PLAN.md): qualquer conta com e-mail confirmado pode **criar** verbete; o **primeiro verbete** exige revisão antes de publicação, tal como a primeira participação no Fórum. A transição de publicação pertence aos `content_editor`; novos verbetes e sugestões continuam moderados no workflow vigente. Fila Wiki própria, com contratos neutros compartilhados pelo `aculta_user`. Antes de novas inspeções visuais: auditar consumidores, registrar ADR do kernel, evitar duplicações e testar a regra de primeira publicação. Não reutilizar contagem de comentários do Fórum para verbetes.
+
+## Retificação de ownership (2026-10-22)
+
+**A política compartilhada de moderação e primeira participação reside em `aculta_user`**, estendendo `ParticipationRules`, sem migração para `aculta_portal`. Wiki e Fórum permanecem donos de filas/workflows e entidades próprias. Esta decisão substitui indicações anteriores de centralizar essa política no Portal. [Contrato revisado](../../../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md).
