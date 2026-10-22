@@ -146,3 +146,9 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 ## D-A.2-T — progresso e próximos gates
 
 D-A.2-T: hardening inicial do GanjaLab no StudioListingBuilder (cache por usuário, checagem explícita de view revision) e teste Unit adicionados. Não equivale a autorização de fila Wiki. Antes de D-C é indispensável provider de revisão Wiki, validação por entidade e revisão, query de moderation_state correta e Kernel com dois usuários/grants.
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+WE SATIVA is an ACULTA Studio user experience hosted within the Wiki purpose, driven by aculta_wiki Form API/CKEditor and editorial access; it is not an independent interface kernel. GanjaLab moderation is another Studio experience at account purpose. Maintain different UIs and common interfaces/SDC base; V-0.4-R and D-A.2-T guards still apply.
+
+[Contrato e roadmap transversal](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
