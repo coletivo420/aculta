@@ -49,12 +49,7 @@ final class ForumPostThreadBuilder {
    *   the public Forum context or is not viewable by the current account.
    */
   public function build(NodeInterface $topic): array {
-    if ($topic->bundle() !== 'aculta_forum_topic'
-      || !$topic->isPublished()
-      || !$topic->hasField('field_domain_source')
-      || $topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager->getCurrentPurpose() !== 'forum'
-      || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+    if (!$this->isPublicForumTopic($topic)) {
       return [];
     }
 
@@ -252,8 +247,7 @@ final class ForumPostThreadBuilder {
    * Finds the public thread page containing a post in the thread sort order.
    */
   public function getPageForPost(NodeInterface $topic, ForumPost $post): ?int {
-    if ($topic->bundle() !== 'aculta_forum_topic'
-      || !$topic->isPublished()
+    if (!$this->isPublicForumTopic($topic)
       || !$post->isPublished()
       || $post->get('topic')->target_id != $topic->id()
       || $post->get('thread_position')->isEmpty()
@@ -300,6 +294,18 @@ final class ForumPostThreadBuilder {
     $pages = array_fill(0, max(self::PAGER_ID, self::COMMENT_PAGER_ID) + 1, 0);
     $pages[self::PAGER_ID] = max(0, $page);
     return ['page' => implode(',', $pages)];
+  }
+
+  /**
+   * Checks that the current request and topic belong to the public Forum.
+   */
+  private function isPublicForumTopic(NodeInterface $topic): bool {
+    return $topic->bundle() === 'aculta_forum_topic'
+      && $topic->isPublished()
+      && $topic->hasField('field_domain_source')
+      && !$topic->get('field_domain_source')->isEmpty()
+      && $this->domainPurposeManager->getCurrentPurpose() === 'forum'
+      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
 }

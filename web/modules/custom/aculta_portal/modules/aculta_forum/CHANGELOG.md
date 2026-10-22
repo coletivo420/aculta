@@ -1,3 +1,10 @@
+## `0.1.0-dev.220` — aplicar purpose também no cálculo da página
+
+- `getPageForPost()` agora reutiliza a validação de tópico público da thread,
+  incluindo publicação, associação a Domain do purpose `forum` e purpose atual.
+  Evita calcular a posição do post em contexto/domínio incorreto. Sem Runtime ou
+  testes automatizados.
+
 ## `0.1.0-dev.219` — isolar a paginação do destino da busca
 
 - Links entre `/pesquisar` e o tópico montam `page=0,{página}` para iniciar o
