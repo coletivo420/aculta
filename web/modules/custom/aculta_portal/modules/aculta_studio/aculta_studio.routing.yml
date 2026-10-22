@@ -3,7 +3,7 @@ aculta_studio.home:
   path: /studio
   defaults:
     _controller: 'aculta_studio.controller:page'
-    _title: Estúdio
+    _title: GanjaLab
     aba: ''
     secao: ''
     sub: ''
@@ -16,7 +16,7 @@ aculta_studio.area:
   path: /studio/{aba}
   defaults:
     _controller: 'aculta_studio.controller:page'
-    _title: Estúdio
+    _title: GanjaLab
     secao: ''
     sub: ''
   requirements:
@@ -29,7 +29,7 @@ aculta_studio.section:
   path: /studio/{aba}/{secao}
   defaults:
     _controller: 'aculta_studio.controller:page'
-    _title: Estúdio
+    _title: GanjaLab
     sub: ''
   requirements:
     _permission: access aculta portal
@@ -42,7 +42,7 @@ aculta_studio.tab:
   path: /studio/{aba}/{secao}/{sub}
   defaults:
     _controller: 'aculta_studio.controller:page'
-    _title: Estúdio
+    _title: GanjaLab
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
