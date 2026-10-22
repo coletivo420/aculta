@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.173` | Verificar destino das denúncias migradas | Auditoria conta flaggings sem configuração compatível com `aculta_forum_post`. `sinalizar_comentario` e a fila atuais são Comment-only; antes de migrar, integrar configuração/fila para posts e estabelecer preservação de identidade e timestamp pela Flag API. Smoke Homelab somente leitura: zero flaggings, compatibilidade não validada com dados. |
 | `0.1.0-dev.172` | Identificar pais pela API do Comment Core | Fonte e auditoria distinguem raiz de resposta por `hasParentComment()`; sentinelas `pid` não causam lookup nem contagem falsa de pai ausente. Smoke Homelab sem Comments elegíveis, portanto relações reais não validadas. |
 | `0.1.0-dev.171` | Auditar impeditivos de conteúdo da migration | Inventário conta Comments com traduções sem corpo, formato incompatível ou publicação incompatível com rejeição, alinhado às validações do destino; somente contagens, sem exposição de conteúdo. Smoke Homelab somente leitura: 0 nos três impeditivos; casos com dados aguardam validação. |
 | `0.1.0-dev.170` | Auditar referências de autoria ausentes | Inventário confere em lotes os usuários autores e `aculta_legado_autor` referenciados; apresenta apenas contagens para reprovar a migração antes da execução. Smoke Homelab somente leitura: acervo elegível vazio, portanto casos com dados não validados. |

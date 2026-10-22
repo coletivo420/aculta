@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\flag\FlagInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -78,6 +79,7 @@ final class ForumCommentMigrationAudit {
       'missing_gallery_references' => 0,
       'flaggings' => 0,
       'flaggings_by_flag' => [],
+      'flaggings_without_post_flag_configuration' => 0,
       'topics' => 0,
       'parent_outside_scope' => 0,
       'parent_missing' => 0,
@@ -262,6 +264,19 @@ final class ForumCommentMigrationAudit {
       array_keys($topic_ids),
       $batch_size,
     );
+    if ($report['flaggings_by_flag'] !== []) {
+      $flags = $this->entityTypeManager->getStorage('flag')->loadMultiple(array_keys($report['flaggings_by_flag']));
+      foreach ($report['flaggings_by_flag'] as $flag_id => $flagging_count) {
+        $flag = $flags[$flag_id] ?? NULL;
+        $bundles = $flag instanceof FlagInterface ? $flag->getBundles() : [];
+        $supports_post = $flag instanceof FlagInterface
+          && $flag->getFlaggableEntityTypeId() === 'aculta_forum_post'
+          && ($bundles === [] || in_array('aculta_forum_post', $bundles, TRUE));
+        if (!$supports_post) {
+          $report['flaggings_without_post_flag_configuration'] += $flagging_count;
+        }
+      }
+    }
     ksort($report['body_formats']);
     ksort($report['languages']);
     ksort($report['flaggings_by_flag']);

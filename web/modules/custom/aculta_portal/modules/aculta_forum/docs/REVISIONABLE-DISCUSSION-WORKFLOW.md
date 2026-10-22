@@ -148,7 +148,17 @@ testes de workflow; a configuração da política inicial continua sendo a de
    ligadas aos Comments elegíveis por configuração de flag, sem expor uid ou
    sessão. O contrib Flag impede transferir uma Flagging existente para outra
    entidade; a migração precisará recriar a associação no destino pela API e
-   validar quantidade, dono/global e timestamp. A dev.155 inventaria os avisos
+   validar quantidade, dono/global e timestamp. A dev.173 confirma no código
+   instalado do Flag 5.1.1 que `FlagServiceInterface::flag()` valida tipo,
+   bundle e duplicidade, mas não aceita timestamp histórico. A configuração
+   versionada `sinalizar_comentario` só aceita Comment `aculta_discussion_post`,
+   e `aculta_user.ReportQueue` só carrega Node e Comment. Logo, ainda falta
+   integrar configuração/fila para `aculta_forum_post` e definir a preservação
+   do timestamp via API sem contornar os contratos do Flag. A auditoria passa a
+   contar associações sem configuração que aceite o destino. Fonte upstream:
+   [API Flag 5.x](https://www.drupal.org/project/flag/issues/3157623); código
+   instalado: `web/modules/contrib/flag/src/FlagServiceInterface.php`,
+   `FlagService.php` e `FlagInterface.php`. A dev.155 inventaria os avisos
    `forum_resposta` do Messenger por tópico elegível e classifica o marcador
    `ultimo_comentario` para guiar a conversão pelo mapa source/destination. A
    dev.157 confere existência dos UUIDs de Media/Gallery embutidos e conta

@@ -1,3 +1,15 @@
+## `0.1.0-dev.173` — verificar destino das denúncias migradas
+
+- A auditoria estima quantas flaggings de Comments não têm configuração Flag
+  para `aculta_forum_post`. A flag atual `sinalizar_comentario` é específica
+  para Comment; a fila `aculta_user` também só carrega Node e Comment.
+- A Flag API 5.1.1 instalada valida tipo/bundle e duplicidade ao criar uma
+  flagging. Seu método público não recebe timestamp histórico. A migração das
+  denúncias depende de configuração e integração da fila para posts, além de
+  preservar dono/global/timestamp; não foi criada configuração nem flagging.
+- Smoke somente leitura no Homelab: 0 flaggings de origem; o caminho do novo
+  contador executou, mas não validou compatibilidade com associações reais.
+
 ## `0.1.0-dev.172` — identificar pais pela API do Comment Core
 
 - Fonte e auditoria usam `CommentInterface::hasParentComment()` para distinguir

@@ -64,6 +64,7 @@ final class ForumCommentMigrationAuditCommand extends Command {
       'gallery_embeds_without_uuid' => 'Embeds de Gallery sem UUID',
       'missing_gallery_references' => 'UUIDs de Gallery sem entidade correspondente',
       'flaggings' => 'Denúncias/flags associadas aos Comments elegíveis',
+      'flaggings_without_post_flag_configuration' => 'Flaggings sem configuração aplicável ao post revisionável',
       'topics' => 'Tópicos distintos elegíveis',
       'parent_outside_scope' => 'Pais existentes fora do escopo',
       'parent_missing' => 'Pais ausentes',
