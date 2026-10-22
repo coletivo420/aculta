@@ -362,3 +362,7 @@ O [contrato visual B1-02b](theme-ux-0.8-b1-02b-visual-contract.md) estabelece va
 ## B1-02d — primeira integração Wiki (2026-10-22)
 
 O template `node--wiki-entry--full.html.twig` passou a incluir `aculta420:context-header` como H1 do verbete. O `wiki-entry` recebeu `show_heading` (default true) e o uso na página completa define false para evitar duplicação; o teaser permanece inalterado. **Integração de código commitada, não validada no Runtime.** Verificar a renderização SDC Twig, classes e layout da Wiki, cache, acesso, um H1 e a permanência da Institution Bar e do Domain Header antes de aprovar. Não liberar migração LMS sem inspeção específica.
+
+## B1-02e — segundo consumidor integrado, homologação pendente
+
+O dashboard GanjaLab420 agora renderiza `aculta420:context-header` como H1 e o hook do tema evita o bloco page-title redundante somente em `aculta_lms.student_dashboard`, preservando `_title`, acesso, cache e shell. Wiki e LMS são agora dois consumidores no código; a [matriz de testes Runtime](theme-ux-0.8-b1-02e-runtime-validation.md) ainda deve ser executada. Próxima trilha visual: B2 Context Tabs em SDC/UI Suite.
