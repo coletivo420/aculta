@@ -1,3 +1,12 @@
+## `0.1.0-dev.225` — variar cache pela query preservada nos links
+
+- Links entre posts usam `getUpdatedParameters()` e mantêm todos os parâmetros
+  da requisição; a thread agora varia por `url.query_args`, incluindo filtros
+  locais além dos pagers. O Core aplica o mesmo contexto aos seus pagers
+  ([API](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Pager%21PagerPreprocess.php/class/PagerPreprocess/11.x)).
+  Esta abrangência substitui a variação apenas pelos IDs 0 e 1 da dev.224.
+  Sem Runtime/testes.
+
 ## `0.1.0-dev.224` — variar cache pelo pager de Comments
 
 - A thread agora varia também por `url.query_args.pagers:0`, pois os links para
