@@ -46,3 +46,8 @@
 ## Resultado da C01-A
 
 **AUDITORIA ESTÁTICA DIRIGIDA: DOCUMENTADA.** A escolha de slot é decisão de design para C01-B, não código implementado. **C01-B** é contrato de intenções, retorno e access; **C01-C** será integração progressiva de um CTA único após backend e testes. Autosave Form permanece fora do escopo atual.
+
+
+## Adendo corretivo — C01-B, papel email_confirmed
+
+A [auditoria complementar C01-B](WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) encontrou o papel exportado `email_confirmed` **já autorizado a criar `wiki_entry`, editar os próprios verbetes e enviar à revisão**, sem a transição de publicação. Portanto, a matriz preliminar de C01-A, limitada aos papéis `authenticated` e `content_editor`, **não deve ser interpretada como ausência de permissão para contas com e-mail confirmado**. Permanece pendente o mecanismo de sugestões para verbetes alheios, pois `edit own` não equivale a `edit any`. A publicação continua reservada aos content editors conforme workflow/access efetivo.
