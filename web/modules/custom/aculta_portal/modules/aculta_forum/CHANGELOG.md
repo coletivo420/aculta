@@ -1,3 +1,12 @@
+## `0.1.0-dev.158` — especificar acesso para busca de posts revisionáveis
+
+- A busca pública segue indexando apenas tópicos Node. A documentação registra
+  os requisitos de escopo, grants do tópico hospedeiro, paginação, Domain,
+  categoria e link canônico que precisam estar cobertos antes de incluir
+  `aculta_forum_post`; `content_access` sozinho não cobre essa entidade.
+- Pesquisa no Search API 1.41 instalado e na documentação upstream. Sem mudança
+  de código funcional ou Runtime.
+
 ## `0.1.0-dev.157` — conferir UUIDs de anexos citados pelos Comments
 
 - A auditoria reúne UUIDs únicos de Media e `media_gallery` encontrados nos

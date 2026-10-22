@@ -35,6 +35,37 @@ controle de acesso padrão de Search API/Views, sem `skip_access`.
 
 ## Limites atuais
 
+### Posts revisionáveis
+
+O índice continua limitado a Nodes `aculta_forum_topic`; as respostas em
+`aculta_forum_post` ainda não aparecem nos resultados. Não basta adicionar a
+fonte de dados do post ao índice atual: o processador `content_access` do
+Search API 1.41 dá suporte aos datasources Node e Comment. O código instalado
+trata outros tipos como não afetados pelo processador, enquanto o acesso do post
+depende também do tópico hospedeiro, do purpose `forum`, do Domain, dos grants
+de Node e do estado publicado do tópico e do post.
+
+Antes de habilitar posts, a integração precisa:
+
+- indexar assunto e corpo do post, junto com valores coerentes de tipo,
+  categoria e Domain para filtros fixos da View;
+- aplicar os grants e a política do tópico hospedeiro durante a consulta, antes
+  da paginação e dos totais. A checagem de acesso padrão da View Search API é
+  defesa adicional, mas a documentação upstream alerta que checagens após a
+  busca não refletem corretamente facetas e paginação;
+- manter a checagem de acesso da View habilitada e preservar o filtro fixo de
+  bundle e o escopo de Domain, sem filtros expostos que permitam removê-los;
+- apresentar resultados com link para a âncora canônica
+  `forum-post-{id}` e um resumo seguro, usando o display de busca do post;
+- cobrir acesso anônimo/autenticado, tópico ou post não publicado, grants de
+  Node, purpose/Domain incorreto e filtro de categoria antes de reindexar e
+  liberar a integração.
+
+O `entity_status` reconhece entidades publicáveis, mas não substitui as regras
+de acesso do tópico hospedeiro. A implementação deverá reutilizar Search API e
+Views, sem storage paralelo, e validar no código instalado a semântica do
+processador customizado ou de outra estratégia compatível.
+
 O corpo de Comments não é pesquisado. A interface permite busca textual de
 título e corpo do tópico, com pelo menos três caracteres, além de filtro por
 categoria. O índice armazena o ID inteiro do termo; um hook de formulário
@@ -63,6 +94,7 @@ configuráveis, conforme o contrato do Portal.
 - [Search API: processors](https://www.drupal.org/docs/8/modules/search-api/getting-started/processors)
 - [Search API: creating a search View](https://www.drupal.org/docs/8/modules/search-api/getting-started/search-forms-and-results-pages/searching-with-views/creating-a-search-view)
 - [Search API: adding an index](https://www.drupal.org/docs/8/modules/search-api/getting-started/adding-an-index)
+- [Search API: custom fields via processor](https://www.drupal.org/docs/8/modules/search-api/developer-documentation/create-custom-fields-using-a-custom-processor)
 
 As referências alertam que mudanças de acesso podem depender de reindexação e
 que Views aplica access checks por padrão. As versões instaladas do Search API

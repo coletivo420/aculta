@@ -131,6 +131,8 @@ testes de workflow; a configuração da política inicial continua sendo a de
    `aculta_forum_topic` e `field_name=field_aculta_discussion`. Migrar a árvore
    pai/filho, autoria, timestamps, conteúdo/format, tradução, estado publicado,
    anexos/embeds, uso dos arquivos, denúncias/flags, busca e avisos de seguidores.
+   A dev.158 detalha os requisitos pendentes para incluir posts revisionáveis na
+   busca pública sem perder grants do tópico, escopo de Domain ou paginação segura.
    Validar contagens, UUIDs de mídia, árvore, estado e destinatários. O script
    deve suportar dry-run, lotes limitados, transação por árvore e idempotência.
    A dev.152 acrescenta `drush aculta-forum:audit-comment-migration`, um

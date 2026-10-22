@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.158` | Definir requisitos de acesso para busca de posts revisionáveis | Posts não entram no índice até que consulta, grants do tópico, Domain, categoria e paginação estejam filtrados com segurança; manter access check padrão da View e link canônico do post. Sem mudança Runtime; ver `SEARCH.md`. |
 | `0.1.0-dev.157` | Validar referências de Media/Gallery do inventário migratório | Conta UUIDs distintos, entidades ausentes e embeds sem UUID, sem conteúdo/PII na saída; processamento permanece com `aculta_image`/`aculta_gallery`. Sem alteração Runtime; testes pendentes. |
 | `0.1.0-dev.156` | Integrar posts revisionáveis à atividade pessoal | A aba de comentários combina posts do Fórum e Comments legados, com acesso revalidado e ordenação cronológica. Sem dependência circular; testes e smoke autenticado pendentes. |
 | `0.1.0-dev.155` | Inventariar agregados e marcadores dos avisos de respostas | Com Messenger habilitado, mede avisos por tópico elegível e valida se `ultimo_comentario` referencia Comment elegível, externo, inexistente ou de outro tópico. Somente leitura; testes pendentes. |
