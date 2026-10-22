@@ -24,3 +24,7 @@ de usuário. O Drupal User e Profile continuam como fontes de verdade.
 Para mudanças coordenadas com a apresentação, consulte a
 [fronteira módulo–tema](../../../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md)
 e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
+
+## Política compartilhada de participação — Fórum e Wiki420
+
+O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de primeira participação e moderação**, estendendo `src/ParticipationRules.php` sem mover a política para `aculta_portal`. A função atual `requiresFirstDiscussionModeration()` é específica das discussões do Fórum; a extensão para Wiki usará histórico próprio de verbetes publicados e contrato compartilhado no User, sem confundir comentários com verbetes. Todo `email_confirmed` pode criar verbetes; o **primeiro verbete** exige moderação e somente `content_editor` aprova/publica, conforme workflow e acesso efetivos. A aprovação do primeiro não concede publicação direta posterior. O Fórum e a Wiki continuam donos de suas filas, revisões, adapters e storage de domínio. Implementação sujeita a inventário DI/chamadores, ADR, testes e homelab. [Política e roadmap USER-PART 0.1](../../../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md) · [Plano de moderação Wiki](../aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md). Autosave Form permanece futuro.
