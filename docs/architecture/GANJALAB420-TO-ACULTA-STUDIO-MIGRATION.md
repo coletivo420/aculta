@@ -78,3 +78,9 @@ O serviço `aculta_studio.learner_dashboard_composer` é declarado em `aculta_lm
 O Composer Studio reutiliza `aculta420:card` e `aculta420:content-grid` para cursos e certificados e preserva o cabeçalho `aculta420:context-header` e estados vazios `aculta420:empty-state`. O indicador de progresso usa o HTML nativo `progress`, renderizado no slot de conteúdo do SDC, preservando percentuais e avaliação pendente fornecidos pelo LMS. Não reaproveitar componentes legados fora do contrato SDC/UI Suite. O shell global e o cabeçalho multidomínio em `conta.aculta.*` permanecem responsabilidade Portal/tema; a entrada estudante continua `/studio/ganjalab420`.
 
 Gates pendentes: build de container, PHP lint, PHPUnit, fixtures e navegação autenticada no subdomínio de conta, renderização real no tema ACULTA420 com UI Suite e acessibilidade/responsividade. Sem alegação de PASS Runtime.
+
+## Reclassificação C2-T e dependências paralelas — 2026-10-22
+
+**G420-C2 entregue como composição de código, NÃO como UX pronta.** `aculta420:card`, `content-grid`, `context-header`, `empty-state` existem em SDC; não está demonstrado que os slots, CSS, UI Suite e todos os estados se comportem no Runtime com dados completos. O progresso continua baseado em elemento HTML `progress` no slot e não constitui padrão transversal homologado. Pendem fixtures de curso com e sem matrícula, avaliação pendente, certificado ativo/revogado; teste de autorização/cache, navegação real em `conta.aculta.*/studio/ganjalab420`, render real, accessibility e 320–1440px. As jornadas sala/turma/atividade/material também dependem de implementação paralela do LMS e do tema.
+
+**Decisão de agenda:** G420-C2-T aguarda maturação desses consumidores; não bloquear a frente GanjaLab editorial. Nenhuma alteração de armazenamento ou rota LMS aqui. Novo foco: `GANJALAB E-0.1` sob o roadmap do ACULTA Studio.
