@@ -70,3 +70,8 @@ A permissão `edit own wiki_entry content` **não autoriza atualizar qualquer No
 | **C01-R** | Drupal homelab: acesso, domínio, publicação, revisões e WCAG 2.2 AA | Pendente |
 
 **Autosave Form fica apenas no backlog futuro.** Não instalar, não depender e não afirmar autosave. Este documento não muda permissões, workflows, rotas, storage ou código de apresentação.
+
+
+## Política complementar — primeiro verbete
+
+Além do fluxo de e-mail confirmado e content editor, a regra aprovada exige **moderação obrigatória do primeiro verbete de cada colaborador**, usando histórico de verbetes publicados da Wiki, não participações no Fórum. O [plano específico de moderação](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-MODERATION-PLAN.md) e a [política geral de código compartilhado](../architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md) são fontes de verdade. **Não confundir** primeira publicação com autorização para publicar depois: a transição oficial permanece exclusiva dos editores; todas as sugestões seguem revisão.
