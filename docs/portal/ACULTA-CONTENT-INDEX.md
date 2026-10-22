@@ -44,9 +44,9 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 |---|---|---|
 | IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
 | IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
-| IDX 0.1-C | Schema e primeiro provider | Schema, provider Magazine, writer transacional e filtro de Entity Access testados no Kernel/Unit; writer do backfill pendente |
+| IDX 0.1-C | Schema e primeiro provider | Schema, provider Magazine, writer transacional e filtro de Entity Access testados no Kernel/Unit; writer integrado ao backfill keyset |
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Hooks CRUD, fila deduplicada Core Queue, sequência por identidade, retries e worker inicial implementados; eventos de grants externos e teste de concorrência pendentes |
-| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, fingerprint, conclusão CAS e validação estrutural implementados; drenagem/catch-up da fila, reconciliação e gate operacional de ativação pendentes; worker grava gerações active/building para preservar deltas |
+| IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Ciclo de gerações, descoberta keyset, checkpoint CAS, fingerprint, conclusão CAS, validação estrutural e gate de drenagem/ativação implementados; fence sincroniza eventos com troca do ponteiro; reconciliação, execução operacional e rollback homologado pendentes |
 | IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Provider Magazine conectado à fila; Statistics oferece agregação SQL por até 100 dimensões selecionadas; contrato/bridge tipado e mais providers pendentes |
 | IDX 0.1-G | Consultas, cache e medições | Serviço inicial com filtros allowlisted, Entity Access e cursor opaco implementado; API de relações, caches/benchmarks e mais bancos pendentes |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |

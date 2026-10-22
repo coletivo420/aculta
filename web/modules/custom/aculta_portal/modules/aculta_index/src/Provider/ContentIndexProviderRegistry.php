@@ -73,6 +73,25 @@ final class ContentIndexProviderRegistry {
   }
 
   /**
+   * Returns a stable digest of provider IDs, supported types, and bundles.
+   */
+  public function fingerprint(): string {
+    $inventory = [];
+    $providers = $this->providers;
+    ksort($providers);
+    foreach ($providers as $providerId => $provider) {
+      $entityTypes = $provider->getSupportedEntityTypes();
+      ksort($entityTypes);
+      foreach ($entityTypes as &$bundles) {
+        sort($bundles);
+      }
+      unset($bundles);
+      $inventory[$providerId] = $entityTypes;
+    }
+    return hash('sha256', json_encode($inventory, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+  }
+
+  /**
    * Returns whether a provider is registered.
    */
   public function has(string $providerId): bool {

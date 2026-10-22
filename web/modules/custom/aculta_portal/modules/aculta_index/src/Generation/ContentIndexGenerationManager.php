@@ -7,6 +7,8 @@ namespace Drupal\aculta_index\Generation;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 
 /**
  * Owns validated generation lifecycle and active-pointer changes.
@@ -20,6 +22,8 @@ final class ContentIndexGenerationManager {
     private readonly Connection $database,
     private readonly UuidInterface $uuid,
     private readonly TimeInterface $time,
+    private readonly ContentIndexWorkManager $workManager,
+    private readonly ContentIndexProviderRegistry $providers,
   ) {}
 
   /**
@@ -97,7 +101,7 @@ final class ContentIndexGenerationManager {
     $transaction = $this->database->startTransaction();
     try {
       $target = $this->database->select('aculta_index_generation', 'generation')
-        ->fields('generation', ['status', 'validated'])
+        ->fields('generation', ['status', 'validated', 'provider_fingerprint'])
         ->condition('generation_id', $generationId)
         ->forUpdate()
         ->execute()
@@ -114,6 +118,22 @@ final class ContentIndexGenerationManager {
         ->fetchAssoc();
       if (!$state) {
         throw new \LogicException('The ACULTA Content Index active-generation pointer is missing.');
+      }
+      if ($target['status'] === 'validated') {
+        if ($target['provider_fingerprint'] !== ''
+          && !hash_equals((string) $target['provider_fingerprint'], $this->providers->fingerprint())) {
+          throw new \RuntimeException('The provider inventory changed after validation; rebuild validation is required again.');
+        }
+        $gate = $this->workManager->getActivationGateState(array_keys($this->providers->all()));
+        if (!$gate['ready']) {
+          throw new \RuntimeException(sprintf(
+            'Generation activation is waiting for source work to drain (queued: %d, processing: %d, retry: %d, dead: %d).',
+            $gate['queued'],
+            $gate['processing'],
+            $gate['retry'],
+            $gate['dead'],
+          ));
+        }
       }
       if ($state['active_generation'] === $generationId) {
         return;
@@ -180,7 +200,7 @@ final class ContentIndexGenerationManager {
   public function getWritableGenerations(): array {
     return array_map('strval', $this->database->select('aculta_index_generation', 'generation')
       ->fields('generation', ['generation_id'])
-      ->condition('status', ['active', 'building'], 'IN')
+      ->condition('status', ['active', 'building', 'validated'], 'IN')
       ->orderBy('created')
       ->execute()
       ->fetchCol());

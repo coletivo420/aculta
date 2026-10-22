@@ -145,6 +145,42 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
         $this->assertSame(0, $status['available_at']);
       }
     }
+
+    $gate = $work->getActivationGateState(['magazine']);
+    $this->assertFalse($gate['ready']);
+    $this->assertSame(1, $gate['dead']);
+    $dead = $work->listDead();
+    $this->assertCount(1, $dead);
+    $this->assertSame('worker_failure', $dead[0]['last_error_code']);
+    $this->assertTrue($work->retryDead($dead[0]['work_id']));
+    $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+    $this->assertSame('queued', $status['status']);
+    $this->assertSame(0, $status['attempts']);
+    $claim = $work->claim($status['work_id']);
+    $this->assertTrue($work->complete($claim['work_id'], $claim['sequence']));
+    $this->assertTrue($work->getActivationGateState(['magazine'])['ready']);
+  }
+
+  /**
+   * Reclaims worker states whose Core Queue lease expired during processing.
+   */
+  public function testWorkManagerRecoversStaleProcessingAsRetry(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $work->schedule('magazine', 'node', 'stuck-1', 'pt_BR');
+    $status = $work->getStatus('magazine', 'node', 'stuck-1', 'pt_BR');
+    $claim = $work->claim($status['work_id']);
+    $this->assertNotNull($claim);
+    $this->container->get('database')->update('aculta_index_work')
+      ->fields(['updated' => $this->container->get('datetime.time')->getRequestTime() - 301])
+      ->condition('work_id', $status['work_id'])
+      ->execute();
+
+    $this->assertSame(0, $work->recover());
+    $status = $work->getStatus('magazine', 'node', 'stuck-1', 'pt_BR');
+    $this->assertSame('retry', $status['status']);
+    $this->assertSame(1, $status['attempts']);
+    $this->assertSame('worker_timeout', $status['last_error_code']);
+    $this->assertSame(1, $work->getActivationGateState(['magazine'])['retry']);
   }
 
   /**

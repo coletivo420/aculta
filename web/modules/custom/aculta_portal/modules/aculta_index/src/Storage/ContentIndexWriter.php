@@ -214,7 +214,7 @@ final class ContentIndexWriter {
       ->condition('generation_id', $generationId)
       ->execute()
       ->fetchField();
-    if (!in_array($status, ['building', 'active'], TRUE)) {
+    if (!in_array($status, ['building', 'validated', 'active'], TRUE)) {
       throw new \InvalidArgumentException(sprintf('Generation %s is missing or not writable.', $generationId));
     }
   }

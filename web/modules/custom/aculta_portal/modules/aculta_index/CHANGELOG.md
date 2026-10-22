@@ -1,5 +1,21 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.15 — gate de ativação e recuperação da fila
+
+- Ativação de geração validada aguarda a fila dos providers ativos: queued,
+  processing, retry e dead-letter bloqueiam a troca; rollback para geração
+  retained continua permitido.
+- Ativação também recalcula o fingerprint dos providers para rejeitar mudanças
+  ocorridas entre validação e publicação.
+- A linha singleton do ponteiro funciona como fence: schedule durante um
+  rebuild é serializado com ativação. Eventos escrevem também na geração
+  validated até a troca atômica do ponteiro.
+- Cron move jobs `processing` sem progresso por cinco minutos a retry com
+  backoff; após cinco falhas passam a dead. `listDead()` e `retryDead()` dão
+  suporte interno de reparação, sem UI/comando administrativo nesta fase.
+- Kernel cobre bloqueio por fila pendente, drenagem antes de ativação, inspeção
+  e reenvio de dead-letter e recuperação de worker interrompido.
+
 ## 0.1.0-dev.14 — validação estrutural de rebuild
 
 - A geração persiste `backfill_completed`; a conclusão é gravada com CAS da

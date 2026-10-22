@@ -84,7 +84,16 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
 
     $validation = $rebuilder->validate($generationId);
     $this->assertTrue($validation['valid']);
-    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+    $generations = $this->container->get('aculta_index.generation_manager');
+    try {
+      $generations->activate($generationId);
+      $this->fail('Expected queued source work to block activation.');
+    }
+    catch (\RuntimeException) {
+      $this->assertNull($generations->getActiveGeneration());
+    }
+    $this->completeBackfilledSourceWork();
+    $generations->activate($generationId);
     $this->assertSame($generationId, $this->container->get('aculta_index.generation_manager')->getActiveGeneration());
   }
 
@@ -101,6 +110,23 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
 
     $this->expectException(\UnexpectedValueException::class);
     $rebuilder->processNextBatch($generationId);
+  }
+
+  /**
+   * Rejects activation if an installed provider changes after validation.
+   */
+  public function testActivationRejectsProviderInventoryDriftAfterValidation(): void {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $rebuilder->processNextBatch($generationId);
+    $rebuilder->validate($generationId);
+    $this->container->get('database')->update('aculta_index_generation')
+      ->fields(['provider_fingerprint' => str_repeat('0', 64)])
+      ->condition('generation_id', $generationId)
+      ->execute();
+
+    $this->expectException(\RuntimeException::class);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
   }
 
   /**
@@ -128,6 +154,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     }
     $generations = $this->container->get('aculta_index.generation_manager');
     $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
     $generations->activate($generationId);
 
     $query = $this->container->get('aculta_index.query');
@@ -179,6 +206,26 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $afterRevocation = $query->query(['published' => TRUE], $account, NULL, 2);
     $this->assertCount(1, $afterRevocation->entities);
     $this->assertSame('Article two', (string) $afterRevocation->entities[0]->label());
+  }
+
+  /**
+   * Marks pre-build jobs complete after this test's backfill read their source.
+   */
+  private function completeBackfilledSourceWork(): void {
+    $database = $this->container->get('database');
+    $work = $this->container->get('aculta_index.work_manager');
+    $workIds = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('provider_id', 'test_article')
+      ->condition('status', 'queued')
+      ->execute()
+      ->fetchCol();
+    foreach ($workIds as $workId) {
+      $claim = $work->claim((int) $workId);
+      if ($claim !== NULL) {
+        $work->complete($claim['work_id'], $claim['sequence']);
+      }
+    }
   }
 
 }
