@@ -51,3 +51,9 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist \
 ```
 
 Resultado medido: 5 testes, 28 asserções, OK.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-05/11: manter discussão contextual no Node wiki_entry e integração de moderação/avisos sem criar tópico público no fórum. Política de identidade e primeira participação no User, avisos no Messenger.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
