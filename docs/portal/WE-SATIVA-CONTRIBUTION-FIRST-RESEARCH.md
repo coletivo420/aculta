@@ -96,3 +96,8 @@ Wiki420 / verbete publicado
 | 0.2-R | homologação no homelab | Core SDC, UI Patterns/UI Styles, ACL/cache, no-JS, browsers e domínio |
 
 **Regra estrutural permanente:** Wiki pública e WE SATIVA 100% mobile-first. Institution Bar + Domain Header multidomínio preservados em todas as telas. Nada desta documentação implanta UI ou muda permissões.
+
+
+## Decisão aprovada — fundação iniciada
+
+**Aprovados:** contribuição contextual a partir do verbete, microtarefas progressivas, WE SATIVA independente, mobile-first em editor e Wiki pública, contratos SDC/UI Suite e shell multidomínio. O [contrato de fundação do subkernel Wiki](../../web/modules/custom/aculta_portal/modules/aculta_wiki/docs/WE-SATIVA-FOUNDATION.md) governa a primeira execução. **Autosave Form é recurso futuro fora do escopo atual:** não instalar nem implementar autosave, mesmo que referenciado como opção de pesquisa acima. As ações de edição só serão expostas com backend/access/rota reais.
