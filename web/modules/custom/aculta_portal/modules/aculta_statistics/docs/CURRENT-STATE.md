@@ -35,7 +35,8 @@ contagens, nunca a autoria privada.
 | Verbetes | Tipo de conteúdo `wiki_entry`, fluxo `wiki_editorial`, campo `field_domain_source` | EXISTENTE FUNCIONAL |
 | Lista pública | View `wiki_entries` (`config/sync/views.view.wiki_entries.yml`), sem campo de contagem | EXISTENTE MAS INCOMPLETO |
 | Leituras por verbete | Beacon `WikiReadController` e métrica `wiki.entries.read` (0.2.0-dev.3) | EXISTENTE FUNCIONAL |
-| Publicações e atualizações por verbete | `WikiProvider` ainda não existe | AUSENTE (planejado: Fase 4 de `docs/modules/WIKI-SUBMODULO.md`) |
+| Publicações e atualizações por verbete | `WikiProvider` e `WikiPublicationHooks`, métricas `wiki.entries.published` e `wiki.entries.updated` | EXISTENTE FUNCIONAL (sem dados até o `aculta_wiki` ser habilitado no ambiente) |
+| Ranking por verbete | Área Wiki do painel (`StatisticsDashboardController::wikiRanking()`) e exportação CSV | EXISTENTE FUNCIONAL |
 | Histórico de revisões | Revisões nativas do Node (`content_moderation` / revisões do Core) | DEVE SER REUTILIZADO como fonte de "atualizações" |
 | Comentários em verbete | Comentários associados ao verbete de origem (AGENTS) | DEVE SER REUTILIZADO |
 

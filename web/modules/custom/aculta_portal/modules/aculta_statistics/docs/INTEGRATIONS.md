@@ -38,7 +38,8 @@ o painel de turma do LMS), com as mesmas permissões.
 ## Wiki (conteúdo `wiki420`)
 
 - **Fonte:** nós `wiki_entry` publicados e revisões do Node.
-- **Métricas:** `wiki.entries.published` e `wiki.entries.updated` são planejadas; o `WikiProvider` ainda não existe (ver `docs/modules/WIKI-SUBMODULO.md`). A leitura, `wiki.entries.read`, já está em produção.
+- **Métricas:** `wiki.entries.published` e `wiki.entries.updated` existem no catálogo e são gravadas pelo `WikiProvider`/`WikiPublicationHooks` (ver `docs/modules/WIKI-SUBMODULO.md`); ficam sem dados até o `aculta_wiki` ser habilitado no ambiente. A leitura, `wiki.entries.read`, já está em produção.
+- **Ranking (implementado na Fase 4):** a área Wiki do painel lista os verbetes mais lidos no período e exporta o mesmo recorte em CSV. A dimensão de `wiki.entries.read` é o ID do nó; o título é resolvido na renderização e verbete excluído sai da lista sem erro.
 - **Leitura (implementada na 0.2.0-dev.3):** o Core não traz contador de leitura e o
   módulo `statistics` não está instalado. O contador próprio é um beacon
   `POST /estatisticas/wiki/{node}/leitura`, enviado uma vez por página de verbete publicado

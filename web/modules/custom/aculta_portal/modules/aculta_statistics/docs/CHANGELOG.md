@@ -1,5 +1,28 @@
 # Changelog — ACULTA Statistics
 
+## Não lançado — ranking por verbete na área Wiki
+
+- (2026-10-22) O painel da área Wiki mostra os verbetes mais lidos no período
+  escolhido (7, 14 ou 30 dias), com o título resolvido na renderização: renomear
+  um verbete atualiza o ranking sem regravar contagem.
+- O ranking usa só a métrica `wiki.entries.read`, cuja dimensão é o ID do nó.
+  Dimensões que não são ID, ou que apontam para conteúdo de outro tipo, ficam
+  de fora. Verbete excluído sai da lista sem erro; se nada sobra, o painel
+  informa que não houve leitura no período.
+- A tabela lista todos os verbetes com leitura no período, do mais lido para o
+  menos lido; no empate, pelo ID. Não há corte fixo, então excluir um verbete
+  não encurta a lista dos demais.
+- A exportação CSV (`aculta_statistics.wiki_ranking_export`, em
+  `/painel-administrativo/aculta/estatisticas/area/wiki/ranking.csv`) usa o
+  mesmo recorte e a mesma ordem da tabela. O título é escapado quando tem
+  vírgula ou aspas.
+- `AggregateStorageInterface::dimensionTotals()` soma cada dimensão no período
+  com uma consulta `GROUP BY`; `WikiReadController::READ_METRIC` passou a
+  nomear a métrica usada pelo beacon.
+- Testes: `WikiRankingKernelTest` (3 testes: período e título atual, verbete
+  excluído, dimensão sem verbete legível) e `DailyAggregateStorageKernelTest`
+  cobre `dimensionTotals` (soma no período, ordem e empate).
+
 ## Não lançado — painel no menu e retenção acessível
 
 - (2026-10-22) O painel ganhou item no menu administrativo: "Estatísticas"

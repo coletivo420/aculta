@@ -1,9 +1,10 @@
 # Wiki420 como submódulo do Portal — planejamento
 
-Status: **implementado até a Fase 4**; o submódulo está declarado em
-`config/sync/core.extension.yml` (ver "Estado ao fim da sessão de 2026-10-22").
-Nenhuma rota foi alterada. No Runtime nada foi habilitado nesta frente: a
-ativação ocorre quando o ambiente importar a configuração.
+Status: **implementado até a Fase 4** (incluindo o ranking por verbete, item 4.4);
+o submódulo está declarado em `config/sync/core.extension.yml` (ver "Estado ao fim
+da sessão de 2026-10-22"). Nenhuma rota foi alterada. No Runtime nada foi
+habilitado nesta frente: a ativação ocorre quando o ambiente importar a
+configuração.
 
 Este documento é a fonte única da frente. Cada fase termina antes da próxima começar.
 
@@ -39,8 +40,10 @@ Este documento é a fonte única da frente. Cada fase termina antes da próxima 
 
 - Existe: `wiki.entries.read`, gravada pelo beacon `WikiReadController` e pelo
   `WikiReadHooks`, com antiabuso por `flood` e retenção de 90 dias. Há testes unitários e de kernel.
-- Não existe: `wiki.entries.published`, `wiki.entries.updated`, `WikiProvider` e ranking por verbete.
-  Esses itens aparecem no `INTEGRATIONS.md`, mas não estão no código.
+- Existe: `wiki.entries.published`, `wiki.entries.updated`, `WikiProvider` e o
+  ranking por verbete na área Wiki do painel, com exportação CSV.
+- Falta na Fase 4: a validação no Runtime (beacon e ranking com dados reais),
+  que depende de o ambiente importar a configuração.
 
 **Divergências corrigidas nesta entrega:** `CURRENT-STATE.md` dizia que o `aculta_statistics`
 não existia e que o contador de leitura não estava decidido. Ambos estavam desatualizados.
@@ -119,9 +122,9 @@ não existia e que o contador de leitura não estava decidido. Ambos estavam des
 4.3. **Fronteira:** o provider lê entidades `wiki_entry` e eventos de publicação. Não importa
 classes do `aculta_wiki`. Se o submódulo não estiver habilitado, o provider não gera dados.
 
-4.4. **Ranking por verbete** no painel da área Wiki: os verbetes mais lidos no período, com
-título resolvido na renderização. Verbetes excluídos saem do ranking sem erro. Exportação CSV
-com o mesmo recorte.
+4.4. **Ranking por verbete** no painel da área Wiki (feito): os verbetes mais lidos no
+período, com título resolvido na renderização. Verbetes excluídos saem do ranking sem erro.
+Exportação CSV com o mesmo recorte.
 
 4.5. **Catálogo e retenção:** registrar as duas métricas no `MetricCatalog` com sensibilidade
 pública e retenção de 90 dias, como `wiki.entries.read`.
@@ -186,6 +189,7 @@ ao fim da sessão.
 | D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | `39842f8b` | concluída |
 | E1 | Status final deste plano | Encerramento | este commit | concluída |
 | E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
+| E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | nesta entrega | concluída |
 
 > **Retenção das métricas.** O briefing pede 90 dias para
 > `wiki.entries.published` e `wiki.entries.updated`. A documentação da
@@ -218,17 +222,28 @@ ao fim da sessão.
 - **Nenhum código de `aculta_wiki` no `aculta_statistics`.** A classificação
   depende do tipo de conteúdo `wiki_entry` e do estado editorial, sem importar
   classes do submódulo.
+- **Ranking por verbete (item 4.4).** A área Wiki do painel passou a listar os
+  verbetes mais lidos no período escolhido (7, 14 ou 30 dias), com o título
+  resolvido na renderização, e a exportar o mesmo recorte em CSV
+  (`/painel-administrativo/aculta/estatisticas/area/wiki/ranking.csv`). A
+  dimensão de `wiki.entries.read` é o ID do nó; dimensões que não são ID ou que
+  apontam para outro tipo de conteúdo ficam de fora. Verbete excluído sai da
+  lista sem erro, e a ordem vem da soma no período (`GROUP BY` em
+  `dimensionTotals()`), sem corte fixo.
 - **Testes.** `WikiControllerTest`/`WikiSearchFormBuilderTest` (9 testes, 34
-  asserções), `WikiProviderTest` (8 testes, 17 asserções) e
-  `WikiPublicationKernelTest` (2 testes, 22 asserções) aprovados. A suíte
-  unitária do `aculta_statistics` tem 1 falha pré-existente:
+  asserções), `WikiProviderTest` (8 testes, 17 asserções),
+  `WikiPublicationKernelTest` (2 testes, 22 asserções) e
+  `WikiRankingKernelTest` (3 testes: período e título atual, verbete excluído,
+  dimensão sem verbete legível) aprovados. A suíte unitária do
+  `aculta_statistics` tem 1 falha pré-existente:
   `ForumActivitySubscriberTest::testSubscribedEventNames`, porque o commit
   `16537660` incluiu `aculta_forum.post_created` sem atualizar o teste. Fora do
   escopo desta frente.
-- **O que ficou faltando.** Construir a Fase 5 (ranking por verbete apenas no
-  painel administrativo); validar em navegador com ACULTA420 e Olivero depois
-  da ativação. A ativação em si depende de o ambiente importar a configuração
-  e rodar os passos de atualização com backup verificado.
+- **O que ficou faltando.** A Fase 5 do plano (contagem de verbetes na view,
+  upload contextual, adaptador do Fórum, busca e notificações) e a validação em
+  navegador com ACULTA420 e Olivero depois da ativação. A ativação em si depende
+  de o ambiente importar a configuração e rodar os passos de atualização com
+  backup verificado.
 - **Fora do Git.** `node_modules/`, `package.json` e `package-lock.json`
   seguem não versionados e foram deixados intactos.
 
