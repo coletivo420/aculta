@@ -11,6 +11,9 @@ Documentação normativa vigente:
   dependências declaradas e bloqueadores.
 - [Auditoria MAG 0.5-A](AUDIT-MAG-0.5-A.md) — inventário, achados A-01 a A-12 e
   relatório de Config Sync.
+- [Contrato de integração Studio ↔ Magazine](STUDIO-INTEGRATION-CONTRACT.md) —
+  inventário real das rotas Core e dos contratos do Magazine e do Studio,
+  lacunas e decisão sobre adaptador.
 
 > **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
 > pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática
