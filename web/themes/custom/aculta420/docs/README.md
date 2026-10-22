@@ -59,3 +59,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 
 - [theme-ux-0.8-b2-05-static-gates.md](theme-ux-0.8-b2-05-static-gates.md) — checagem estática B2, com homologação no servidor pendente.
 - [theme-ux-0.8-b3-feedback-audit.md](theme-ux-0.8-b3-feedback-audit.md) — auditoria inicial dos estados e feedback SDC/UI Suite do portal.
+
+- B3: [auditoria e implementação de empty-state](theme-ux-0.8-b3-feedback-audit.md) — SDC compartilhado Wiki/LMS; homologação Runtime pendente.
