@@ -12,8 +12,6 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class ForumPostUnreadManager {
 
-  private const POSTS_PER_PAGE = 50;
-
   public function __construct(
     private readonly Connection $database,
     private readonly AccountInterface $currentUser,
@@ -95,7 +93,7 @@ final class ForumPostUnreadManager {
       $unread[$topicId] = [
         'count' => (int) $first->unread_count,
         'post_id' => (int) $first->id,
-        'page' => intdiv((int) $first->preceding_count, self::POSTS_PER_PAGE),
+        'page' => intdiv((int) $first->preceding_count, ForumPostThreadBuilder::POSTS_PER_PAGE),
       ];
     }
 

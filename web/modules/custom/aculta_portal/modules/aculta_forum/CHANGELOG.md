@@ -1,3 +1,10 @@
+## `0.1.0-dev.216` — compartilhar a paginação da thread e dos não lidos
+
+- O tamanho de página e o ID do pager são definidos uma vez no builder da
+  thread. O cálculo de página não lida e o link ao primeiro post novo consomem
+  os mesmos valores e `PagerManagerInterface`, evitando divergência de âncora.
+- Sem mudança de URL/comportamento esperado, Runtime ou testes.
+
 ## `0.1.0-dev.215` — invalidar a cache das listas ao publicar ForumPost
 
 - A View pública usa um plugin cache tag-based que também inclui

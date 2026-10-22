@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\views\field;
 
+use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_forum\Service\ForumPostUnreadManager;
 use Drupal\Core\Link;
+use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Url;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -31,6 +33,7 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
     $plugin_id,
     $plugin_definition,
     private readonly ForumPostUnreadManager $unreadManager,
+    private readonly PagerManagerInterface $pagerManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -44,6 +47,7 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
       $plugin_id,
       $plugin_definition,
       $container->get('aculta_forum.post_unread_manager'),
+      $container->get('pager.manager'),
     );
   }
 
@@ -79,7 +83,7 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
       return [];
     }
 
-    $query = ['page' => ',' . $unread['page']];
+    $query = $this->pagerManager->getUpdatedParameters([], ForumPostThreadBuilder::PAGER_ID, $unread['page']);
     $url = Url::fromRoute('entity.node.canonical', ['node' => $topicId], [
       'query' => $query,
       'fragment' => 'forum-post-' . $unread['post_id'],

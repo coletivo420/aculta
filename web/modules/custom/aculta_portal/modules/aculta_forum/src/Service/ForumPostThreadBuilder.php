@@ -21,12 +21,12 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
  */
 final class ForumPostThreadBuilder {
 
-  private const POSTS_PER_PAGE = 50;
+  public const POSTS_PER_PAGE = 50;
 
   /**
    * Pager element distinct from the Comment formatter's element 0.
    */
-  private const PAGER_ID = 1;
+  public const PAGER_ID = 1;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
