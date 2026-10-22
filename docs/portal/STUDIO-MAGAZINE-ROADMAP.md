@@ -86,3 +86,9 @@ O Studio é frontend integrado à Minha Conta. Itens não autorizados não apare
 **Depois Studio (0.6.0–1.0.0)**: implementar submódulo `aculta_studio`, shell no frontend e providers independentes por aba, reaproveitando permissões, Forms e Views do proprietário. Não desenvolver duas frentes em paralelo. Testar editorial, moderadores, Wiki, educadores, Domain, Group e usuários de acesso restrito antes de considerar concluído.
 
 **Fronteira funcional:** projetos permanecem no domínio principal; eventos pertencem a `aculta_eventos`; Galeria e Fórum são subkernels independentes; Studio é ferramenta transversal e Magazine é consumidor.
+
+## Contratos de UX do Studio (2026-10-22; especificação, não implementação)
+
+- [Conceito visual e navegação pessoal-first](STUDIO-VISUAL-CONCEPT.md): `Minhas publicações` e equivalentes são o foco padrão em cada área; conteúdo de terceiros só em vistas de equipe/moderação inequivocamente separadas, após autorização dos donos.
+- [Fluxos de criação, edição, preview e revisão](STUDIO-EDITOR-FLOWS.md): editor desktop/mobile, integração com Form API, CKEditor 5 quando cabível, estados de workflow, feedback e critérios de aceitação.
+- Linha visual `0.2.0-dev.1` é **independente** dos marcos funcionais `0.1.0–1.0.0` deste roadmap; não implica que qualquer fase funcional foi concluída, nem autoriza implementação sem gates.
