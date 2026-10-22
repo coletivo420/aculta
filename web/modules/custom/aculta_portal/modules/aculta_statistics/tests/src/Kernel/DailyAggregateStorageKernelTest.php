@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_statistics\Kernel;
 
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
+use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
+use Drupal\Core\Session\UserSession;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -32,7 +35,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
-   * Gravações do mesmo dia e dimensão somam; dimensões separadas não se misturam.
+   * Gravações somam na mesma dimensão e mantêm dimensões separadas.
    */
   public function testRecordsSumPerDimension(): void {
     $storage = $this->storage();
@@ -46,7 +49,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
-   * Dimensões do dia são devolvidas distintas e ordenadas, só da métrica pedida.
+   * Lista dimensões distintas e ordenadas da métrica pedida.
    */
   public function testDimensionsListsDistinctValuesForMetricAndDay(): void {
     $storage = $this->storage();
@@ -106,6 +109,69 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Statistics bridge aggregates only allowlisted IDs with report permission.
+   */
+  public function testAuthorizedEntityMetricAggregator(): void {
+    $storage = $this->storage();
+    $storage->record('wiki.entries.read', '42', 3);
+    $today = $storage->currentDay();
+    $account = new UserSession([
+      'uid' => 7,
+      'permissions' => ['administer aculta_statistics'],
+    ]);
+    $aggregator = new AuthorizedEntityMetricAggregator(
+      $this->container->get('aculta_statistics.catalog'),
+      $storage,
+    );
+    $this->assertSame([42 => 3], $aggregator->aggregateForAuthorizedEntities(
+      'wiki.entries.read',
+      $today,
+      $today,
+      [['entity_type' => 'node', 'bundle' => 'wiki_entry', 'entity_id' => '42']],
+      $account,
+    ));
+  }
+
+  /**
+   * Statistics bridge denies callers without its report permission.
+   */
+  public function testAuthorizedEntityMetricAggregatorRequiresPermission(): void {
+    $aggregator = new AuthorizedEntityMetricAggregator(
+      $this->container->get('aculta_statistics.catalog'),
+      $this->storage(),
+    );
+    $this->expectException(AccessDeniedHttpException::class);
+    $aggregator->aggregateForAuthorizedEntities(
+      'wiki.entries.read',
+      100,
+      100,
+      [],
+      new UserSession(['uid' => 7]),
+    );
+  }
+
+  /**
+   * Statistics bridge rejects entity dimensions outside metric semantics.
+   */
+  public function testAuthorizedEntityMetricAggregatorRejectsMismatchedBundle(): void {
+    $aggregator = new AuthorizedEntityMetricAggregator(
+      $this->container->get('aculta_statistics.catalog'),
+      $this->storage(),
+    );
+    $this->expectException(\InvalidArgumentException::class);
+    $aggregator->aggregateForAuthorizedEntities(
+      'wiki.entries.read',
+      100,
+      100,
+      [['entity_type' => 'node', 'bundle' => 'article', 'entity_id' => '42']],
+      new UserSession([
+        'uid' => 7,
+        'permissions' => ['administer aculta_statistics'],
+      ]),
+    );
+  }
+
+  /**
    * Identificador fora do formato é recusado.
    */
   public function testRejectsInvalidMetric(): void {
@@ -139,7 +205,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
-   * Substituir um dia troca os totais, zera dimensões ausentes e não toca outros dias.
+   * Substituição troca os totais do dia e preserva os demais.
    */
   public function testReplaceDaySubstitutesOnlyThatDay(): void {
     $storage = $this->storage();
@@ -155,7 +221,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
-   * Substituir com totais vazios apaga o dia (uma conciliação que zera o contador).
+   * Totais vazios removem o dia após uma conciliação.
    */
   public function testReplaceDayWithEmptyTotalsClearsDay(): void {
     $storage = $this->storage();

@@ -59,6 +59,12 @@ services:
 
   Drupal\aculta_index\Query\ContentIndexRelationQuery: '@aculta_index.relation_query'
 
+  aculta_index.statistics_bridge:
+    class: Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge
+    arguments: ['@aculta_index.query', '@?Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface']
+
+  Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge: '@aculta_index.statistics_bridge'
+
   aculta_index.work_manager:
     class: Drupal\aculta_index\Queue\ContentIndexWorkManager
     arguments: ['@database', '@queue', '@datetime.time', '@logger.channel.aculta_index']

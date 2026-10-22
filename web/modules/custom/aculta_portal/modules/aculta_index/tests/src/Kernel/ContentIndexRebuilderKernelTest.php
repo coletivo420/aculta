@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\aculta_index\Drush\Commands\ContentIndexQueueCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexRebuildCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexAuditCommand;
+use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -57,6 +58,17 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->config('user.role.anonymous')->set('permissions', ['access content'])->save();
     aculta_index_install();
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
+  }
+
+  /**
+   * Statistics remains an optional dependency of the Index bridge.
+   */
+  public function testStatisticsBridgeResolvesWithoutStatisticsModule(): void {
+    $bridge = $this->container->get('aculta_index.statistics_bridge');
+    $this->assertInstanceOf(ContentIndexStatisticsBridge::class, $bridge);
+    $result = $bridge->aggregateForQuery([], 'wiki.entries.read', 0, 0, new AnonymousUserSession());
+    $this->assertFalse($result->available);
+    $this->assertSame([], $result->totals);
   }
 
   /**

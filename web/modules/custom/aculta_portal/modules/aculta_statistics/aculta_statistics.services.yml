@@ -6,6 +6,12 @@ services:
     class: Drupal\aculta_statistics\Storage\DailyAggregateStorage
     arguments: ['@database', '@datetime.time']
 
+  aculta_statistics.entity_metric_aggregator:
+    class: Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator
+    arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
+
+  Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface: '@aculta_statistics.entity_metric_aggregator'
+
   aculta_statistics.retention:
     class: Drupal\aculta_statistics\Retention\RetentionPolicy
     arguments: ['@config.factory', '@aculta_statistics.catalog']

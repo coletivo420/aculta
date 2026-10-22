@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.19 — bridge opcional para Statistics
+
+- Serviço `aculta_index.statistics_bridge` seleciona uma página por filtros e
+  encaminha até 100 identidades já autorizadas ao contrato tipado do Portal.
+- Statistics valida permissão, catálogo e dimensões allowlisted, e reutiliza
+  sua própria agregação SQL. Sem Statistics, o bridge responde indisponível.
+- Sem junção direta entre tabelas, métricas no Index ou dependência obrigatória.
+- Runtime não ativado; testes Kernel não executados por falta de `SIMPLETEST_DB`.
+
 ## 0.1.0-dev.18 — consulta segura de relações de saída
 
 - Serviço de consulta de uma relação nomeada, unidirecional e limitada a um

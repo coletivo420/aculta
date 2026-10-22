@@ -1,5 +1,14 @@
 # Changelog — ACULTA Statistics
 
+## 0.9.0-dev.7 — bridge por IDs autorizados do Content Index
+
+- Implementa `AuthorizedEntityMetricAggregator` para métricas allowlisted com
+  dimensão simples de ID de entidade; exige `administer aculta_statistics`.
+- Reutiliza `dimensionTotalsForDimensions()` e mantém armazenamento/catalogação
+  sob Statistics; não instala contrib nem cria dependência do Index.
+- Testes Kernel incluídos, mas não executados nesta sessão: falta
+  `SIMPLETEST_DB`.
+
 ## Não lançado — agregação por dimensões selecionadas
 
 - `AggregateStorageInterface::dimensionTotalsForDimensions()` retorna totais

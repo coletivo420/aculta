@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** contrato arquitetural proposto; nenhuma integração de runtime implementada.  
+**Estado:** bridge tipado implementado no código local `0.1.0-dev.19` / Statistics `0.9.0-dev.7`; não ativado no Runtime.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -9,11 +9,11 @@
 - `aculta_statistics` recebe eventos, define catálogo de métricas, agrega, aplica retenção e consulta indicadores. Não passa a depender da existência do Index.
 - Dados oficiais permanecem nos módulos de origem: Commerce, LMS, e-mail, Wiki/Fórum e outros.
 
-A integração é opcional e unidirecional por consulta: Statistics pode usar o serviço de consulta do Index quando instalado; o Index não chama Statistics durante projeção, evento, fila ou rebuild. Se um consumer do Index quiser indicadores, deve consultar APIs de relatório Statistics após seleção, sem copiar os agregados para as tabelas do Index.
+A integração de indicadores é opcional e ocorre apenas sob demanda do consumidor: o Index não chama Statistics durante projeção, eventos, fila ou rebuild. Quando um consumidor do Index pede indicadores, o bridge seleciona e autoriza primeiro, e só então consulta a API do Statistics; agregados não são copiados para as tabelas do Index.
 
-## Contrato de correlação
+## Contrato de correlação (implementado)
 
-O bridge deve retornar apenas um conjunto paginado de identidades, não entidades hidratadas nem agregados:
+`aculta_index.statistics_bridge` recebe filtros, busca uma página via `ContentIndexQuery` (que revalida Entity Access) e encaminha identidades autorizadas sem cruzar tabelas:
 
 ```text
 seleção autorizada → (entity_type, entity_id, langcode) em lotes
@@ -35,7 +35,7 @@ Nenhuma consulta cruza diretamente `aculta_index_entry` e `aculta_statistics_dai
 
 ## DI, cache e fallback
 
-Statistics continua executável sem `aculta_index`. Um adapter opcional no serviço consumidor deve receber o contrato tipado por service ID opcional e tratar `NULL` como indisponibilidade. Não declarar dependência Drupal obrigatória de Statistics para Index, nem instalar módulos contrib para fazer a ponte.
+Statistics continua executável sem `aculta_index`. O bridge do Index injeta o contrato tipado por referência de serviço opcional e trata `NULL` como indisponibilidade. Não há dependência Drupal obrigatória de Statistics para Index, nem instalação de módulos contrib para fazer a ponte.
 
 Cache de relatório inclui tags de `aculta_statistics` e `aculta_index` quando ambas as fontes foram usadas, mais contexts de permissões e domínio apropriados. Resultado só pode ser cacheado quando a consulta e a agregação forem cache-safe; relatórios administrativos atuais que usam `max-age: 0` não ganham cache por causa da ponte.
 
@@ -51,10 +51,9 @@ O custo principal é uma consulta paginada no índice mais uma ou mais consultas
 
 Conectar primeiro indicadores agregados por bundle/domínio e janela de tempo, pois evitam listas de IDs de alta cardinalidade. Consultas por entidade devem ter um caso de uso e permissão explícitos. Não criar tabela de métricas no Index nem usar relação SQL que multiplique contagens.
 
-## Implementação pendente
+## Limites e pendências
 
-- Definir a interface de consulta e sua localização conforme a decisão sobre a API opcional dos providers.
-- Definir contratos para seleção por tipo/bundle/domínio e cursor.
-- Demonstrar fallback com Statistics ativo e Index ausente.
-- Testar ausência de vazamento, duplicação por relações, cache e custo de batches.
-- Validar métricas no schema existente sem alterar o owner de agregados.
+- A allowlist inicial cobre métricas Wiki por `node/wiki_entry` e solicitações de arquivo por `file/file`; dimensões compostas ficam fora deste bridge.
+- A chamada exige `administer aculta_statistics`; a autorização de cada conteúdo já foi revalidada pelo Index. O bridge não agrega conteúdo não autorizado.
+- Os testes Kernel do aggregator foram escritos, mas não iniciaram nesta sessão porque `SIMPLETEST_DB` não está configurada.
+- Ainda faltam cenários Kernel ponta a ponta, fallback em container sem Statistics e medição de consultas/latência antes de conectar a listagens de Studio.
