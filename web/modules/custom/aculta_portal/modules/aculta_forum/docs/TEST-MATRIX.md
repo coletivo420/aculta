@@ -1,3 +1,28 @@
+## aculta_forum_lms 0.1.0-dev.32 — matriz de publicação e rejeição
+
+- `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso com as
+  duas decisões de moderação e prova que apenas o Educador contextual altera
+  o estado do Comment.
+- Educador: membro do curso com o papel atribuído pelo mapeamento global
+  `lms_teacher`, herda `grade students` e enxerga a permissão de tópico na
+  turma. Estudante: membro do curso e da turma, sem moderação. Terceiro:
+  autenticado e também com o papel global `lms_teacher`, mas sem membership;
+  o papel global sozinho não concede nada.
+- A matriz é exercitada por `LmsForumModerationManager::commentModerationAccess()`,
+  pela operação devolvida por `LmsCommentModerationOperationsHooks::entityOperation()`
+  e por `applyModerationDecision()`, sempre reconferindo o estado persistido com
+  `loadUnchanged()`.
+
+| Ator | Aprovar pendente | Rejeitar publicado | Operações | Estado após a chamada negada |
+| --- | --- | --- | --- | --- |
+| Educador do curso | Permitido; Comment publicado, `field_aculta_rejected` = 0 | Permitido; Comment despublicado, `field_aculta_rejected` = 1 | Approve + reject (peso 20/21) | — |
+| Estudante do curso/turma | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+| Terceiro com `lms_teacher` global | Negado; `applyModerationDecision()` FALSE | Negado; `applyModerationDecision()` FALSE | Nenhuma | Continua pendente (0/0); continua publicado (1, rejeitado 0) |
+
+- Teste: 1 teste / 61 asserções PASS; 40 depreciações de Core/contrib, as já
+  registradas. Nenhuma entidade de configuração foi exportada ou alterada e o
+  Runtime de teste não recebeu fixture nesta etapa.
+
 ## dev.231 — acesso à Media e download privado por purpose
 
 - Revisão do Core 11.4.10 confirmou que `view media` permite Media publicada e
@@ -1585,7 +1610,7 @@ continuam pendentes.
 | Publicação | comentários no Node editorial, conteúdo unpublished, canonical, âncora, sem Node forum gerado | Kernel + Functional; anti-regressão Magazine. |
 | Moderação inicial | Primeiro comentário e pendências em qualquer Node com `field_aculta_discussion`; LMS sem moderação, e comentário LMS publicado libera o bloqueio temporário de tópico | Kernel `PublicDiscussionModerationKernelTest` PASS; Runtime editorial PARTIAL (field/form renderizados sem envio). |
 | Moderação por contexto/estado | Fórum mostra abas Publicados, Rejeitados e Aguardando moderação; Revista tem sua própria listagem; Wiki/LMS aguardam adapters; filas não se misturam | Unit Forum: `ForumTopicDisplayConfigTest` + `DiscussionModerationHooksTest`, 37 testes/218 assertions PASS. Runtime `toca`: Views retornaram cada estado do Fórum e a fila Magazine trouxe somente os seus comentários; API de tarefas locais confirmou as três abas sob Fórum. Render API público mostrou somente publicados no tópico e na publicação. Os seis registros `[QA 20261019]` foram removidos; contagem final 0 nos dois destinos. Browser autenticado DEFERRED. RUNTIME STATUS: PARTIAL. |
-| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel/Functional; Route/View/Search/Cache e teste de navegador. |
+| LMS | duas turmas isoladas, usuário em A e não B, role global estudante sem membership; moderação por Educador com acesso contextual atual e negação para educador sem membership/acesso | Kernel: isolamento (6 testes/205 asserções) e matriz de publicação/rejeição (1 teste/61 asserções), ambos PASS; Functional, Route/View/Search/Cache e teste de navegador pendentes. |
 | Wiki | uma thread por verbete, comentário não altera revisão, acesso de edição distinto | Contract tests nesta fase; integração real só após Wiki. |
 | Busca/Views | filtro de contexto fixo, access query, títulos/trechos/contagens/facets e paginação sem vazamento | Kernel/Functional, index rebuild no ambiente de teste. |
 | Contagem de respostas em tópicos | zero e plural; bundle fixo `aculta_forum_topic` com seu campo único de discussão; estados de moderação conforme agregação Core; cache/invalidação | Kernel `ForumTopicMoverKernelTest`: 3 testes/69 assertions PASS em `aculta_simpletest`; aprovação incrementa `comment_count`, despublicação e exclusão o decrementam, pendentes não entram e mover categoria preserva total. `PublicTopicCommentCountViewKernelTest`: 1/11 PASS; Views Core ordena três tópicos por respostas publicadas e mantém primeiro o tópico sem resposta quando outro tópico tem apenas pendente. Cinco depreciações do Domain contrib no Kernel do mover. Runtime `toca`: View pública executada com tópico de QA, Core e campo da View retornaram 2 para respostas publicadas; 1 resposta pendente ficou fora. Firefox/X11 raiz do Fórum 1024 px mostrou “2 respostas” e atividade. Fixture com 3 Comments foi excluída; Runtime voltou a 0 tópicos/Comments. Comparação de ordenação com múltiplos tópicos e invalidação visual após moderação permanecem pendentes. RUNTIME STATUS: PARTIAL. |

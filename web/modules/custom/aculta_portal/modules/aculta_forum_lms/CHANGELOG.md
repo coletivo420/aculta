@@ -1,3 +1,25 @@
+## `0.1.0-dev.32` — matriz de publicação e rejeição do LMS — 2026-10-22
+
+- `LmsCommentModerationMatrixKernelTest` cruza os três atores do curso
+  (Educador, estudante e terceiro autenticado) com as decisões de aprovar
+  pendente e rejeitar publicado, usando o `LmsForumModerationManager`,
+  o `LmsCommentModerationOperationsHooks` e os papéis importados de
+  `config/sync` (`lms_course-teacher`, `lms_course-member`,
+  `lms_course-course_creator`, `lms_class-member`) com o mapeamento real de
+  `lms_classes.settings`.
+- O terceiro também carrega o papel global `lms_teacher`, provando que o
+  papel global sozinho não modera: sem membership o acesso é negado e nenhuma
+  operação é oferecida. O estudante é membro do curso e da turma e também não
+  modera.
+- O Educador publica o pendente (`status` 1, rejeitado 0) e rejeita o
+  publicado (`status` 0, rejeitado 1); o estado é reconferido com
+  `loadUnchanged()`. As chamadas negadas de estudante e terceiro devolvem
+  FALSE e não alteram o Comment.
+- Matriz registrada em `aculta_forum/docs/TEST-MATRIX.md`. Nenhuma entidade de
+  configuração foi exportada e o Runtime não recebeu fixture.
+- Teste: 1 teste / 61 asserções PASS. Depreciações de Core/contrib permanecem
+  as já registradas.
+
 ## `0.1.0-dev.30` — Kernel de instalação do bundle LMS — 2026-10-22
 
 - `LmsTopicBundleInstallKernelTest` instala a configuração padrão do adaptador
