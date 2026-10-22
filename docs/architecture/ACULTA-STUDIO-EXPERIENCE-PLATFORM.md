@@ -72,3 +72,19 @@ aculta_studio/
 - Corrigir progressivamente a arquitetura documental anterior que chamava `aculta_studio` apenas de GanjaLab; essa decisão prevalece.
 - `StudioListingBuilder` ainda exige revisão da consulta de moderação/revision/cache antes de oferecer fila; nenhuma aprovação sem Node/Revision Access e transição Content Moderation.
 - GanjaLab tem experiência própria de moderador; WE SATIVA experiência própria do colaborador; **ambas são parte de ACULTA Studio** e usam os mesmos fundamentos de UI.
+
+## STUDIO 0.1-B — contrato de experiência (ADR confirmado, API não implementada)
+
+O `StudioTab` continua exclusivo à navegação da experiência **GanjaLab**. A plataforma ACULTA Studio terá um registro separado de experiências próprias, sem transferir o purpose `wiki` para rotas de conta.
+
+**Contrato candidato `StudioExperienceProviderInterface`:** ID estável, rótulo, propósito de domínio, disponibilidade, `AccessResultInterface` cacheável para cada usuário, URL canônica de entrada, slots/componentes existentes e render array de navegação/ações já verificadas pelo dono. O tipo não devolve permissão booleana como substituto de Entity Access.
+
+**Orquestrador:** recebe providers via serviços tagueados somente após existir um primeiro consumidor concreto; resolve purpose com `aculta_portal`, aplica permissão do provider, não guarda conteúdo, oferece navegação progressiva com URL real e Form API do dono. GanjaLab usa seus `StudioTab` existentes; WE SATIVA será um provider próprio que consome formulários do `aculta_wiki`. Nenhum CSS/Twig fora de Core SDC/UI Suite é reaproveitado.
+
+**Fases:** B1 inventário de consumidores; B2 API e cache; B3 provedor inicial Wiki; B4 integração visual e testes de dois propósitos; B-R homelab e regressão.
+
+## STUDIO 0.1-C / D-A.2-T2 — estado técnico
+
+A enumeração sem filtro de `content_moderation_state` no `StudioListingBuilder::build()` foi retirada em favor da leitura da última revisão de Nodes já retornados por consulta com `accessCheck(TRUE)`, após verificação `view` e `view revision` por item. Isso evita carregar todos os estados de moderação no GanjaLab.
+
+**Limite conhecido:** a consulta de Nodes é truncada em 50 antes do filtro de estado e pode produzir uma aba incompleta; última revisão indisponível resulta em ausência de estado (fail closed), não em informação de draft/review. Isso NÃO é provider de fila moderadora. Prioridade seguinte: provider próprio do Wiki baseado em revisões paginadas e controle de acesso por revisão, sem retornar conteúdo não autorizado. Validar em Kernel (duas contas mesmo papel, drafts privados, revisão nova versus default, Content Moderation, grupos LMS e caches quentes). Não afirmar testes executados.
