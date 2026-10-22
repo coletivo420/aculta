@@ -91,3 +91,8 @@ services:
     arguments: ['@aculta_user.heranca_papeis', '@current_user', '@aculta_portal.email_confirmation_policy']
     tags:
       - { name: event_subscriber }
+
+  # Contrato público para consumidores que precisam revalidar a situação ativa
+  # sem ler a entidade aculta_associado.
+  aculta_user.active_associate:
+    alias: aculta_user.associado_marker

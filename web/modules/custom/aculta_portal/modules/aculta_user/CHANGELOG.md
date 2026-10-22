@@ -1,3 +1,16 @@
+## 0.4.0-dev.67 — contrato público de associado ativo para Group — 2026-10-22
+
+- `AssociadoMarker` implementa `ActiveAssociateInterface`
+  (`src/Associado/ActiveAssociateInterface.php`): `isActiveAssociate()` responde
+  pela situação `ativo` de `aculta_associado` e `associateCacheTags()` devolve
+  `aculta_associado_list` e `user:<uid>`.
+- Novo alias de serviço `aculta_user.active_associate` aponta para
+  `aculta_user.associado_marker`; consumidores (Fórum restrito via Group) passam
+  a depender só do contrato, sem papel `associado` e sem cópia de situação em
+  Group.
+- README e `docs/ASSOCIADO.md` documentam o contrato e o papel do consumidor.
+  Testes desta frente são Unit e ficam no Fórum; nenhum Runtime foi alterado.
+
 ## 0.4.0-dev.66 — fila agrega denúncia de post revisionável — 2026-10-21
 
 - `ReportQueue` carrega flaggings de `aculta_forum_post`, em lotes e sem

@@ -34,6 +34,27 @@ O subkernel **`aculta_user` é o proprietário definitivo das regras comuns de p
 
 [Inventário comparativo Fórum, Fórum LMS e Wiki](docs/USER-PART-0.1-A-CROSS-KERNEL-INVENTORY.md): preserva os contratos existentes de `ParticipationRules`, `ParticipationHooks`, `ParticipationEditWindow`, moderação contextual Group e workflow Wiki. A centralização priorizada é de **políticas e interfaces em `aculta_user`**; queries, filas e transições de cada domínio permanecem nos kernels respectivos. Próximo marco USER-PART 0.1-B: contrato/ADR e testes de caracterização antes de PHP funcional. Nenhum teste Runtime foi executado.
 
+## Contrato público de associado ativo — F-GROUP 0.1
+
+Consumidores que precisam da situação de associado — hoje o Fórum restrito, via
+Group — usam `aculta_user.active_associate`
+(`Drupal\aculta_user\Associado\ActiveAssociateInterface`), alias do serviço
+`aculta_user.associado_marker`:
+
+- `isActiveAssociate(AccountInterface $account): bool` — verdadeiro somente para
+  conta não anônima com situação `ativo` em `aculta_associado`.
+- `associateCacheTags(AccountInterface $account): array` — tags
+  `aculta_associado_list` e `user:<uid>`, para o consumidor declarar
+  cacheability.
+
+A situação continua sendo escrita apenas por este submódulo. Consumidores não
+criam papel `associado`, não gravam a situação em storage próprio e não a
+duplicam em Group: membership de Group é consequência da situação, não a fonte.
+Eventos de `aculta_associado` (ativação, suspensão, desligamento, readmissão e
+alteração administrativa) são a base da reconciliação feita pelo consumidor.
+Detalhes da frente no Fórum em
+[`../aculta_forum/docs/RESTRICTED-FORUMS.md`](../aculta_forum/docs/RESTRICTED-FORUMS.md).
+
 ## Auditoria transversal XK 0.1 — 2026-10-22
 
 XK-02/03/04/11: User detém identidade, situação real de associado ativo, amizades, preferências pessoais e política de participação. Expor serviço autoritativo de associação para Group no Fórum; especificar eventos de ativação/suspensão/desligamento, reconciliação e cache; não tratar `associado` como papel. Messenger entrega avisos, User não duplica inbox. Política primeira contribuição Fórum/Wiki permanece em ParticipationRules.

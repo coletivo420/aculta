@@ -53,6 +53,26 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
 - Teste de Kernel dedicado não foi executado: o `aculta_user` depende de serviços do `aculta_portal` (chaves, CAPTCHA,
   OAuth, Commerce), e a montagem do container de teste não fecha com módulos mínimos. Pendência registrada em `PENDENCIAS.md`.
 
+## Contrato para consumidores (F-GROUP 0.1)
+
+- A elegibilidade é lida só por `aculta_user.active_associate`
+  (`Drupal\aculta_user\Associado\ActiveAssociateInterface`), alias do serviço
+  `aculta_user.associado_marker`. `isActiveAssociate()` responde pela situação
+  `ativo`; `associateCacheTags()` devolve `aculta_associado_list` e
+  `user:<uid>`.
+- O Fórum restrito consome esse contrato para sincronizar membership de Group e
+  emitir grants. Group é consumidor, não dono: nenhuma situação é gravada em
+  Group, nenhum papel `associado` volta a existir e a situação não é copiada
+  para storage paralelo.
+- Os hooks de `aculta_associado` (`insert`, `update`, `delete`) são os eventos
+  públicos de ativação, suspensão, desligamento, readmissão e alteração
+  administrativa. Quem consome precisa ser idempotente e tratar falha sem
+  conceder acesso.
+- Perder `ativo` revoga o acesso na próxima revalidação; não há cache de acesso
+  que sobreviva à mudança.
+- Detalhes e riscos no Fórum:
+  [`../../aculta_forum/docs/RESTRICTED-FORUMS.md`](../../aculta_forum/docs/RESTRICTED-FORUMS.md).
+
 ### Categorias de usuário
 
 Associado e estudante são categorias representadas por tipos de perfil independentes. Uma mesma conta pode manter os dois perfis; a confirmação real do e-mail ou a matrícula em curso ou turma garante o perfil `estudante`, e a situação ativa de associado garante o perfil `associado`. A atualização `aculta_user_update_10011()` migra contas do antigo papel `estudante` para o perfil e remove o papel legado.
