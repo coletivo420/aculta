@@ -1,3 +1,15 @@
+## `0.1.0-dev.167` — definir migração dos posts e vínculos em duas passagens
+
+- Cada source row representa um Comment (`cid`) e contém seu conjunto de
+  traduções. Um destino próprio cria/atualiza um único post, grava todas as
+  traduções e salva uma vez, mantendo mapa simples `cid → post ID`.
+- Uma migration dependente resolve `parent_cid` pelo mapa da primeira e aplica
+  somente `parent` no destino com `no_stub`, sem depender da ordem dos CIDs nem
+  criar posts provisórios para pais fora do escopo. As APIs instaladas e
+  upstream confirmam lookup pelo mapa e dependências entre migrations.
+- Arquitetura documentada; plugins/configuração e provas ainda pendentes. Sem
+  execução de migração ou alteração Runtime.
+
 ## `0.1.0-dev.166` — auditar ordem de pais e filhos por CID
 
 - O inventário identifica relações válidas do mesmo tópico em que o CID do pai

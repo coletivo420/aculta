@@ -158,11 +158,15 @@ testes de workflow; a configuração da política inicial continua sendo a de
    `content_entity` materializa todos os IDs antes de iterar, enquanto
    `EntityContentBase` salva cada linha e inclui o idioma no ID de destino quando
    `translations: true`. Usar uma fonte Migrate própria, paginada por keyset, e
-   definir como cada tradução reaproveita o ID do post criado pela primeira
-   linha do mesmo Comment. A dev.166 acrescenta ao inventário a contagem de
-   pais elegíveis com CID posterior ao filho; se houver, a ordem crescente de
-   CID não basta para resolver a árvore num único passe. Fontes: [fonte
-   `ContentEntity` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [Entity Query do Core 11.x](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Entity%21Query%21QueryInterface.php/interface/QueryInterface/11.x), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
+   um destino próprio que receba todas as traduções numa única linha/mapa por
+   Comment (`cid → post ID`) e salve o post uma vez. A dev.167 define uma
+   segunda migration dependente que usa `migration_lookup` para resolver o pai
+   depois que todos os posts existem; `no_stub: true` impede criar referências
+   provisórias para IDs ausentes. Assim, a hierarquia não depende da ordem por
+   CID; a contagem da dev.166 continua útil para inventário. A migration de
+   relações usará `overwrite_properties: [parent]` para preservar o conteúdo e
+   as traduções gravados no primeiro passe. Fontes: [fonte `ContentEntity` do
+   Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21source%21ContentEntity.php/11.x), [destino `EntityContentBase` do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x), [MigrationLookup do Core 11.x](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21process%21MigrationLookup.php/class/MigrationLookup/11.x), [encadeamento de migrations](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/chaining-migrations-using-migration_lookup), [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-api-overview).
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o
