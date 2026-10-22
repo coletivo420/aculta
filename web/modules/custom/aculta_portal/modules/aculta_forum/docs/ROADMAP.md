@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.204` | Rastrear atualização do tópico na busca de posts | Campo oculto `topic:entity:changed` dá ao Search API uma referência indexada para enfileirar posts quando o tópico hospedeiro é salvo; rebuilds de grants sem save ainda exigem reindex explícito. Sem Runtime. |
 | `0.1.0-dev.203` | Atualizar a entrada do módulo para a busca de posts | README descreve tópicos, posts, grants antes da paginação e validação pendente antes do Runtime. |
 | `0.1.0-dev.202` | Incluir posts revisionáveis na busca pública | Configuração inclui datasource/post fields, filtros unificados e formatter de âncora; processor filtra grants/publicação antes da paginação. Validação automatizada integrada pendente antes de reindexar ou aplicar no Runtime. |
 | `0.1.0-dev.201` | Preservar autoria histórica em Comments anônimos | Destino aceita `uid=0` somente com referência existente a `aculta_legado_autor`; auditoria conta os anônimos sem representação histórica válida. Sem execução de migration ou Runtime. |

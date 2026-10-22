@@ -16,7 +16,8 @@ posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
 vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros
 indexados, sem tipo de campo ou lista paralela. Os resultados de post apontam
 para a resposta dentro do tópico e o processador aplica publicação e grants do
-tópico antes de paginação. A integração de posts ainda exige a matriz
+tópico antes de paginação; salvar o tópico também enfileira seus posts para
+reindexação. A integração de posts ainda exige a matriz
 automatizada de acesso antes de reindexação ou ativação no Runtime.
 Quando não há correspondências, a View orienta a ajustar a busca ou explorar
 as categorias.

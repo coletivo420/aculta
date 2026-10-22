@@ -47,6 +47,14 @@ processor Core `content_access`. O escopo do purpose continua fail-closed no
 `ForumSearchQuerySubscriber`, e a checagem de acesso padrão da View permanece
 habilitada.
 
+O campo oculto `post_topic_changed` indexa `topic:entity:changed` para que o
+`track_changes_in_references` do Search API marque posts relacionados quando
+seu Node hospedeiro é salvo. O código instalado constrói o mapa de referências
+a partir dos campos configurados no índice; apenas derivar grants/categoria no
+processor não cria essa relação para o tracker. Rebuilds de `node_access` que
+não salvam os Nodes ainda exigem reindexação explícita do índice, conforme o
+comportamento do processor Core `content_access`.
+
 Os resultados de post usam o view mode `forum_search_result`, com assunto,
 resumo limitado e link ao fragmento `forum-post-{id}` na página canônica do
 tópico. O formatter revalida acesso do post e do Node hospedeiro durante a
@@ -56,7 +64,8 @@ Essa integração ainda exige validação automatizada integrada antes de reinde
 ou ativar a configuração no Runtime. A matriz pendente deve cobrir contas
 anônimas/autenticadas, grants do tópico, tópico e post não publicados,
 `bypass node access`, purpose/Domain incorreto, filtro de categoria e link de
-resultado. A checagem de acesso final da View é defesa adicional: a documentação
+resultado, além da reindexação de posts quando um tópico hospedeiro é salvo.
+A checagem de acesso final da View é defesa adicional: a documentação
 upstream alerta que checagens feitas só depois da busca não atualizam facetas,
 totais ou paginação.
 
@@ -99,6 +108,7 @@ configuráveis, conforme o contrato do Portal.
 - [Search API: common pitfalls](https://www.drupal.org/docs/8/modules/search-api/getting-started/common-pitfalls)
 - [Search API: creating a search View](https://www.drupal.org/docs/8/modules/search-api/getting-started/search-forms-and-results-pages/searching-with-views/creating-a-search-view)
 - [Search API: adding an index](https://www.drupal.org/docs/8/modules/search-api/getting-started/adding-an-index)
+- [Search API: tracking changes in referenced entities](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/elasticsearch-connector/using-elasticsearch-connector-80x/add-a-search-api-index/basic-index-settings)
 - [Search API: custom fields via processor](https://www.drupal.org/docs/8/modules/search-api/developer-documentation/create-custom-fields-using-a-custom-processor)
 
 As referências alertam que mudanças de acesso podem depender de reindexação e

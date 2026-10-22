@@ -151,6 +151,16 @@ field_settings:
     dependencies:
       module:
         - aculta_forum
+  post_topic_changed:
+    label: 'Alteração do tópico hospedeiro (rastreamento Search API)'
+    datasource_id: 'entity:aculta_forum_post'
+    property_path: 'topic:entity:changed'
+    type: integer
+    hidden: true
+    dependencies:
+      module:
+        - aculta_forum
+        - node
   type:
     label: 'Tipo de conteúdo'
     datasource_id: 'entity:node'

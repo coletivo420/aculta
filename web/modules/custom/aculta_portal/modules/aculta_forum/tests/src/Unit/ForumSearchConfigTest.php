@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 final class ForumSearchConfigTest extends UnitTestCase {
 
   /**
-   * Search stays scoped to public Forum topics with access checks enabled.
+   * Search covers public Forum topics and posts with access checks enabled.
    */
   public function testIndexAndViewRemainPublicForumOnly(): void {
     $root = dirname(__DIR__, 3);

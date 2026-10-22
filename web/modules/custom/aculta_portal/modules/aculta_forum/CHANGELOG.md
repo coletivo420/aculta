@@ -1,3 +1,10 @@
+## `0.1.0-dev.204` — rastrear mudanças no tópico hospedeiro da busca
+
+- O índice inclui o campo oculto `post_topic_changed` (`topic:entity:changed`)
+  para o rastreador de referências do Search API enfileirar posts quando o Node
+  hospedeiro é salvo. Um rebuild de grants sem salvar Nodes ainda pede
+  reindexação explícita. Nenhuma reindexação/alteração de Runtime foi feita.
+
 ## `0.1.0-dev.203` — alinhar README à busca de posts revisionáveis
 
 - A entrada principal do módulo agora descreve a busca por tópicos e posts,
