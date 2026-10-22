@@ -142,7 +142,9 @@ testes de workflow; a configuração da política inicial continua sendo a de
    pagina os CIDs por lotes com limite inicial, sem carregar antecipadamente
    todos os IDs. A dev.162 resolve relações pai/filho por lote e deixa de manter
    um mapa global Comment → tópico; referências de avisos são resolvidas em
-   lotes próprios. Ainda não cria posts nem usa o mapa Migrate. A dev.154 também conta Flagging entities
+   lotes próprios. A dev.163 também pagina os registros Messenger por tópico e
+   mantém cada lote de marcadores limitado. Ainda não cria posts nem usa o mapa
+   Migrate. A dev.154 também conta Flagging entities
    ligadas aos Comments elegíveis por configuração de flag, sem expor uid ou
    sessão. O contrib Flag impede transferir uma Flagging existente para outra
    entidade; a migração precisará recriar a associação no destino pela API e

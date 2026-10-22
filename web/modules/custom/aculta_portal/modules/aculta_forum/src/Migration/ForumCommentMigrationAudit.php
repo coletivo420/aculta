@@ -281,61 +281,91 @@ final class ForumCommentMigrationAudit {
     }
 
     $notice_storage = $this->entityTypeManager->getStorage('aculta_aviso');
-    $notice_ids = $notice_storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('tipo', 'forum_resposta')
-      ->condition('assunto_nid', $topic_ids, 'IN')
-      ->execute();
-    $markers = [];
-    foreach (array_chunk($notice_ids, $batch_size) as $batch) {
-      foreach ($notice_storage->loadMultiple($batch) as $notice) {
-        $result['records']++;
-        $comment_id = (int) $notice->get('ultimo_comentario')->value;
-        if ($comment_id > 0) {
-          $result['records_with_comment_marker']++;
-          $markers[$notice->id()] = [
-            'comment_id' => (string) $comment_id,
-            'topic_id' => (string) $notice->get('assunto_nid')->value,
-          ];
-        }
-      }
-    }
-
-    $marker_comment_ids = [];
-    foreach ($markers as $marker) {
-      $marker_comment_ids[$marker['comment_id']] = $marker['comment_id'];
-    }
-    $eligible_topic_by_comment = [];
-    $existing_comment_ids = [];
     $comment_storage = $this->entityTypeManager->getStorage('comment');
-    foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $batch) {
-      foreach ($comment_storage->loadMultiple($batch) as $comment) {
-        if ($comment instanceof CommentInterface) {
-          $comment_id = (string) $comment->id();
-          $existing_comment_ids[$comment_id] = TRUE;
-          $topic_id = $this->eligibleTopicId($comment);
-          if ($topic_id !== NULL) {
-            $eligible_topic_by_comment[$comment_id] = $topic_id;
+
+    foreach (array_chunk($topic_ids, $batch_size) as $topic_batch) {
+      $max_notice_ids = $this->responseNoticeQuery($topic_batch)
+        ->sort('id', 'DESC')
+        ->range(0, 1)
+        ->execute();
+      $max_notice_id = $max_notice_ids === [] ? 0 : (int) reset($max_notice_ids);
+      $last_notice_id = 0;
+      while ($last_notice_id < $max_notice_id) {
+        $notice_ids = $this->responseNoticeQuery($topic_batch)
+          ->condition('id', $last_notice_id, '>')
+          ->condition('id', $max_notice_id, '<=')
+          ->sort('id')
+          ->range(0, $batch_size)
+          ->execute();
+        if ($notice_ids === []) {
+          break;
+        }
+        $last_notice_id = (int) end($notice_ids);
+
+        $markers = [];
+        $marker_comment_ids = [];
+        foreach ($notice_storage->loadMultiple($notice_ids) as $notice) {
+          $result['records']++;
+          $comment_id = (int) $notice->get('ultimo_comentario')->value;
+          if ($comment_id > 0) {
+            $result['records_with_comment_marker']++;
+            $comment_id = (string) $comment_id;
+            $markers[$notice->id()] = [
+              'comment_id' => $comment_id,
+              'topic_id' => (string) $notice->get('assunto_nid')->value,
+            ];
+            $marker_comment_ids[$comment_id] = $comment_id;
+          }
+        }
+
+        $eligible_topic_by_comment = [];
+        $existing_comment_ids = [];
+        foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $comment_batch) {
+          foreach ($comment_storage->loadMultiple($comment_batch) as $comment) {
+            if ($comment instanceof CommentInterface) {
+              $comment_id = (string) $comment->id();
+              $existing_comment_ids[$comment_id] = TRUE;
+              $topic_id = $this->eligibleTopicId($comment);
+              if ($topic_id !== NULL) {
+                $eligible_topic_by_comment[$comment_id] = $topic_id;
+              }
+            }
+          }
+        }
+        foreach ($markers as $marker) {
+          $comment_id = $marker['comment_id'];
+          if (isset($eligible_topic_by_comment[$comment_id])) {
+            $result['markers_in_scope']++;
+            if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
+              $result['markers_for_other_topic']++;
+            }
+          }
+          elseif (isset($existing_comment_ids[$comment_id])) {
+            $result['markers_outside_scope']++;
+          }
+          else {
+            $result['markers_missing']++;
           }
         }
       }
     }
-    foreach ($markers as $marker) {
-      $comment_id = $marker['comment_id'];
-      if (isset($eligible_topic_by_comment[$comment_id])) {
-        $result['markers_in_scope']++;
-        if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
-          $result['markers_for_other_topic']++;
-        }
-      }
-      elseif (isset($existing_comment_ids[$comment_id])) {
-        $result['markers_outside_scope']++;
-      }
-      else {
-        $result['markers_missing']++;
-      }
-    }
     return $result;
+  }
+
+  /**
+   * Creates the source query for response notices on a bounded set of topics.
+   *
+   * @param list<string> $topic_ids
+   *   Eligible public Forum topic IDs.
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   Entity query for response notices.
+   */
+  private function responseNoticeQuery(array $topic_ids): QueryInterface {
+    return $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('tipo', 'forum_resposta')
+      ->condition('assunto_nid', $topic_ids, 'IN');
   }
 
   /**

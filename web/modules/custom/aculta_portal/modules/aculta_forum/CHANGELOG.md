@@ -1,3 +1,10 @@
+## `0.1.0-dev.163` — paginar avisos do Messenger na auditoria
+
+- O inventário seleciona avisos por blocos de tópicos e percorre os IDs de cada
+  bloco em lotes com limite inicial. Carrega e resolve marcadores junto a cada
+  lote; não retém a lista completa de avisos ou marcadores na memória.
+- Somente leitura; IDs e dados pessoais não aparecem na saída. Sem Runtime.
+
 ## `0.1.0-dev.162` — limitar mapas de relações aos lotes da auditoria
 
 - A análise pai/filho resolve os Comments pais junto a cada lote de origem e
