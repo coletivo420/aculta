@@ -43,7 +43,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_response(429, "DeepSeek peak-hour gate")
             self.send_header("Content-Type", "application/json")
             self.send_header("Retry-After", "3600")
-            self.send_header("Content-Length", "46")
+            self.send_header("Content-Length", "45")
             self.end_headers()
             self.wfile.write(b'{"error":"DeepSeek peak-hour gate: blocked"}\n')
             return
@@ -78,7 +78,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 # Check between chunks to stop transmitting once a peak begins.
                 if not allowed():
                     break
-                chunk = resp.read(16384)
+                chunk = resp.read1(16384)
                 if not chunk:
                     break
                 self.wfile.write(chunk)
