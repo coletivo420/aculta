@@ -50,3 +50,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b1-02b-visual-contract.md](theme-ux-0.8-b1-02b-visual-contract.md) — agora inclui o primeiro SDC experimental de Context Header e gates de adoção.
 
 - Integração B1-02d: Wiki verbete completo já chama `aculta420:context-header` (experimental), com supressão localizada do H1 no `wiki-entry`; homologação em Drupal pendente. Ver [contrato visual](theme-ux-0.8-b1-02b-visual-contract.md).
+
+- [theme-ux-0.8-b1-02e-runtime-validation.md](theme-ux-0.8-b1-02e-runtime-validation.md) — gates de homologação do Context Header integrado ao LMS e à Wiki, pendentes de Runtime.
