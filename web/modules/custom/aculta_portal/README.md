@@ -90,3 +90,8 @@ ser registrados no changelog da entrega, não copiados para este README.
 - [Documentação transversal de módulos](../../../../docs/modules/README.md)
 - [Integrações externas](../../../../docs/integrations/README.md)
 - [ACULTA420](../../../themes/custom/aculta420/README.md)
+
+
+## Política de arquitetura transversal ACULTA — código compartilhado
+
+[Contratos de moderação e centralização](../../../../docs/architecture/ACULTA-SHARED-MODERATION-AND-KERNEL-POLICY.md): serviços e código realmente reutilizáveis entre submódulos ACULTA devem migrar para o kernel central `aculta_portal` após auditoria/ADR/testes, mantendo adapters específicos nos respectivos subkernels. Exemplo inicial: princípio da primeira participação do Fórum e primeira publicação da Wiki, com fontes de dados e workflows distintos. Não centralizar regras de negócio exclusivas ou renderização do tema.
