@@ -132,3 +132,7 @@ Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questio
 ## Consolidação visual e homologação — G420-UX 0.8
 
 [Contrato transversal, sistema visual e gates](GANJALAB420-VISUAL-QUALITY-GATES.md) integra Dashboard, Sala/H5P, Atividades, Biblioteca/PDF, Jornada, Turmas e Conquistas. A versão 0.8 consolida documentação e critérios de aceite, não declara interfaces implementadas. `aculta_lms` continua como módulo técnico.
+
+## GanjaLab420 — migração para ACULTA Studio (G420-A)
+
+[Contrato e inventário de migração](../architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). GanjaLab420 é **a experiência LMS do estudante** dentro de ACULTA Studio. Os entrypoints de `/ganjalab420` e `/minha-aprendizagem` foram transferidos para `aculta_studio.ganjalab420_controller`, que delega ao controlador LMS; o LMS preserva dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com GanjaLab editorial nem com WE SATIVA. A extração da composição visual para Studio será a G420-C; não declarar concluída. Antes do deploy habilitar Studio se necessário e executar testes Function/Kernel e smoke de rotas. 
