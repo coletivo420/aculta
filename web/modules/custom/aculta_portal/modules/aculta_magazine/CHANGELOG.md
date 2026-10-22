@@ -1,3 +1,16 @@
+## 0.5.0-dev.2 — provider inicial do Content Index
+
+- `MagazineContentIndexProvider` projeta o bundle atual `revista` por idioma,
+  com label, UUID, domínio, publicação e datas. Rascunhos da revisão padrão
+  podem ser catalogados para consumo editorial; revisões não padrão são
+  excluídas. A autorização continua no Node e será revalidada pela consulta.
+- Projeta somente relações explicitamente configuradas para atividade e mídia
+  editorial. Corpo, resumo, autoria, arquivos e workflow detalhado ficam fora.
+- O serviço usa a tag `aculta_index.provider` e o contrato neutro do Portal;
+  Magazine não depende do submódulo opcional `aculta_index`.
+- Testes Unit cobrem identidade, revisão padrão, bundles não suportados e
+  relações explicitamente permitidas.
+
 ## 0.5.0-dev.1 — auditoria arquitetural e contratos — 2026-10-22
 
 - MAG 0.5-A publica a documentação normativa do submódulo:

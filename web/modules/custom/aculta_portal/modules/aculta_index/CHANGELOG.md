@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.4 — integração inicial da Revista
+
+- O provider Magazine implementa o contrato neutro do Portal e é descoberto
+  pelo serviço `aculta_index.provider_registry` quando ambos os módulos estão
+  ativos. Não foi criada dependência do Magazine ao índice opcional.
+- A projeção fica limitada à revisão padrão, aos metadados editoriais mínimos e
+  às relações explícitas para atividade e imagem. Persistência aguarda o writer.
+
 ## 0.1.0-dev.3 — ciclo inicial de gerações
 
 - Adicionado `ContentIndexGenerationManager` para iniciar geração, registrar

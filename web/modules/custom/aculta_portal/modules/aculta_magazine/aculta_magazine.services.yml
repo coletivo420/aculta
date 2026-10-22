@@ -1,4 +1,9 @@
 services:
+  aculta_magazine.content_index_provider:
+    class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']

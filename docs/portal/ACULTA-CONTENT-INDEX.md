@@ -42,10 +42,10 @@ Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado
 |---|---|---|
 | IDX 0.1-A | Auditoria real, matriz, fontes contrib e ADR | Concluída; documentação commitada |
 | IDX 0.1-B | Fundação opcional e contratos mínimos | Implementada; testes unitários do registry passaram; manifest e status no Portal incluídos |
-| IDX 0.1-C | Schema e primeiro provider | Schema inicial implementado; provider/writer e teste de instalação pendentes |
+| IDX 0.1-C | Schema e primeiro provider | Schema testado no Kernel; contratos e provider Magazine implementados; writer pendente |
 | IDX 0.1-D | Eventos, fila incremental e segurança de revogação | Planejada com Core Queue + estado mínimo de falhas |
 | IDX 0.1-E | Rebuild, checkpoints, reconciliação e rollback | Pendente |
-| IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Pendente |
+| IDX 0.1-F | Providers progressivos e bridge opcional Statistics | Primeiro provider (Magazine) implementado; persistência/eventos ainda pendentes |
 | IDX 0.1-G | Consultas, cache e medições | Pendente |
 | IDX 0.1-R | Homologação de segurança, portabilidade, volume e falhas | Pendente |
 

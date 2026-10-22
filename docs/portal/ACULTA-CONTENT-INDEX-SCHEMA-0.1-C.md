@@ -12,7 +12,7 @@
 | `aculta_index_entry` | Projeção mínima de entidade atual/idioma: provider, tipo/ID, bundle, UUID, label, domínio, publicação, datas e hash de projeção | Unicidade por geração + entity type + entity ID + langcode; índices de bundle, domínio/publicação e provider |
 | `aculta_index_relation` | Relação dirigida e tipada entre identidades originais | Unicidade por geração + SHA-256 da tupla; índices separados de origem, alvo e tipo |
 
-As relações guardam a identidade do alvo mesmo quando o alvo não tem adapter e não possui entrada no índice. Não há FK a entidade Drupal nem a outra linha de `entry`: o armazenamento original pode ser de um módulo opcional, o alvo pode não ser indexável e excluir/reconstruir o catálogo não pode alterar o conteúdo original.
+As relações guardam a identidade do alvo mesmo quando o alvo não tem adapter e não possui entrada no índice. `target_langcode = und` significa relação ao nível da entidade, sem apontar uma tradução específica; para este caso a consulta de relações não deve presumir correspondência com uma única linha de idioma. Não há FK a entidade Drupal nem a outra linha de `entry`: o armazenamento original pode ser de um módulo opcional, o alvo pode não ser indexável e excluir/reconstruir o catálogo não pode alterar o conteúdo original.
 
 ## Gerações
 
@@ -34,7 +34,7 @@ O schema não guarda corpo, URI de arquivo, usuário, histórico de revisão, no
 
 ## Próximos gates
 
-- IDX 0.1-C: definir `ContentIndexProjection`/writer e adicionar provider inicial; não criar provider genérico irrestrito.
+- IDX 0.1-C: definir writer idempotente, comparação de versão e persistência de relações; provider Magazine inicial já existe e não é genérico.
 - IDX 0.1-D: Core Queue + estado mínimo de falha; remover/invalidar síncronamente mudanças que reduzam exposição; validar versionamento em gravação concorrente.
 - IDX 0.1-E: rebuild keyset, catch-up de delta, ativação transacional, rollback e reconciliação.
 - IDX 0.1-R: kernel/schema nos bancos de teste, concorrência, portabilidade, acesso e benchmark medido.

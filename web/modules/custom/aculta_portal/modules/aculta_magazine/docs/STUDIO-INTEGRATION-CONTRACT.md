@@ -68,6 +68,11 @@ ações permitidas nem um adaptador de acesso para o Studio. `RevistaPublication
 não é um contrato de listagem do Studio: ele lê o bundle e serve ao comando de
 migração/inventário, não a telas.
 
+O módulo oferece separadamente `MagazineContentIndexProvider` para o catálogo
+opcional do Portal. Esse provider só descreve metadados e relações; ele não é
+API de listagem do Studio e não altera a checagem de acesso/revisão do fluxo
+editorial.
+
 ## 3. Contratos consumidores no Studio
 
 | Peça | Onde | Uso verificado |

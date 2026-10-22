@@ -6,6 +6,10 @@ namespace Drupal\aculta_portal\ContentIndex;
 
 /**
  * Explicit directed relationship to an original entity identity.
+ *
+ * A target language of `und` means the source reference points to an entity
+ * independently of a specific translation; providers use a language ID when
+ * the reference is explicitly translation-specific.
  */
 final readonly class ContentIndexRelation {
 

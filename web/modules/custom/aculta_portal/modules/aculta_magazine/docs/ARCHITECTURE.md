@@ -29,6 +29,9 @@ field storage ou serviço de agregação próprio do Magazine além dos dois ser
 - Campos próprios: chamada (`field_subtitle`), resumo (`field_summary`), imagem editorial (`field_media_image`,
   obrigatória), créditos, referências (link), atividade relacionada, autor editorial e categoria editorial
   (taxonomias), etiquetas, publicado em (`field_published_at`), metatag, domínio de origem e discussão.
+- `MagazineContentIndexProvider` descreve a identidade por tradução da revisão padrão, publicação e domínio,
+  além das relações explicitamente selecionadas `related_activity` e `editorial_image`. A projeção não copia
+  corpo, resumo, autoria, workflow detalhado ou conteúdo do arquivo; o catálogo não é API de acesso.
 - `body` usa o formato `revista_editorial` (HTML editorial completo; o filtro `filter_html` está desligado, a
   sanitização depende do CKEditor 5 e das permissões de formato).
 - Displays: `default` (administrativo), `full` (tema, via SDC), `teaser` (listagens). Campos virtuais do Entity
@@ -74,9 +77,9 @@ feedback de validação; não pode criar um segundo editor com validação próp
 | --- | --- | --- | --- |
 | `aculta_magazine.post_presentation` | `Presentation\PostPresentation` | `date.formatter`, `entity_type.manager`, `aculta_portal.domain_purpose` | cabeçalho de publicação (autor/data/hora) e ações de compartilhamento; cacheável |
 | `aculta_magazine.publication_bundle_migrator` | `Migration\PublicationBundleMigrator` | `entity_type.manager`, `entity_field.manager`, `database` | migração histórica `article`/`blog` → `revista`, idempotente |
+| `aculta_magazine.content_index_provider` | `ContentIndex\MagazineContentIndexProvider` | contrato neutro do Portal | projeção allowlist de metadados da revisão padrão e relações explícitas; descoberto pelo `aculta_index` opcional |
 
-Nenhum outro serviço é registrado. Não há event subscriber, plugin manager, controller ou rota própria: as rotas
-administrativas vêm de Views e as rotas de conteúdo são as do Core.
+Não há event subscriber, plugin manager, controller ou rota própria: as rotas administrativas vêm de Views e as rotas de conteúdo são as do Core.
 
 ## 6. Configuração
 
@@ -113,6 +116,7 @@ cabeçalho, formulário próprio nem fila de moderação.
 5. Nenhuma duplicação de autoria/coautoria, discussão ou domínio: consumir o dono.
 6. Nenhum componente visual fora do ACULTA420.
 7. Configuração do Magazine só muda com evidência; importação global é proibida.
+8. A projeção de catálogo não inclui corpo, resumo, autoria, arquivos ou workflow detalhado; toda exposição revalida acesso do Node original.
 
 ## 10. Testes
 
