@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.8` — permissão granular para métricas públicas por conteúdo.
+**Versão:** `0.9.0-dev.9` — concessão da permissão granular ao papel content_editor.
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos

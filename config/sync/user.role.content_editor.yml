@@ -17,6 +17,7 @@ dependencies:
     - content_lock
     - content_moderation
     - contextual
+    - aculta_statistics
     - file
     - filter
     - media
@@ -75,6 +76,7 @@ permissions:
   - 'use aculta_forum_post transition edit_published'
   - 'use aculta_forum_post transition withdraw'
   - 'view all revisions'
+  - 'view content-level statistics'
   - 'view any unpublished content'
   - 'view revista revisions'
   - 'view latest version'

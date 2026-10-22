@@ -1,5 +1,15 @@
 # Changelog — ACULTA Statistics
 
+## 0.9.0-dev.9 — permissão de métricas públicas para editores
+
+- O papel `content_editor` recebe `view content-level statistics` em
+  `config/sync/user.role.content_editor.yml`; a dependência de configuração do
+  módulo Statistics foi declarada.
+- Esse papel só acessa métricas públicas allowlisted e continua sujeito ao
+  Entity Access do conteúdo. Relatórios gerais, métricas internas/restritas não
+  são liberados por essa concessão.
+- A alteração está apenas em Config Sync; não foi importada no Runtime.
+
 ## 0.9.0-dev.8 — permissão granular para métricas públicas por conteúdo
 
 - Adiciona `view content-level statistics`: permite consultar somente métricas

@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** bridge tipado implementado no código local `0.1.0-dev.21` / Statistics `0.9.0-dev.8`; não ativado no Runtime.
+**Estado:** bridge tipado implementado no código local `0.1.0-dev.21` / Statistics `0.9.0-dev.9`; concessão de Config Sync pendente de importação no Runtime.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -30,7 +30,8 @@ Nenhuma consulta cruza diretamente `aculta_index_entry` e `aculta_statistics_dai
 - Para a bridge, Statistics exige `view content-level statistics` em métricas
   públicas allowlisted; métricas internas exigem `administer aculta_statistics`
   e as restritas são negadas. Relatórios administrativos continuam exigindo a
-  permissão administrativa.
+  permissão administrativa. O papel `content_editor` recebe a permissão
+  granular via Config Sync; a configuração ainda não foi importada no Runtime.
 - O bridge de seleção filtra o propósito/domínio quando solicitado e não retorna campos privados.
 - Se um relatório apresenta dados por conteúdo, o consumer revalida Entity Access no módulo dono e agrega/suprime células antes de exibir; facetas e totais seguem a mesma regra.
 - A ausência de autorização ou de contexto de domínio resulta em nenhuma identidade. Índice ausente também não significa permissão ampla.
