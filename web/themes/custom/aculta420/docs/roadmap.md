@@ -366,3 +366,7 @@ O template `node--wiki-entry--full.html.twig` passou a incluir `aculta420:contex
 ## B1-02e — segundo consumidor integrado, homologação pendente
 
 O dashboard GanjaLab420 agora renderiza `aculta420:context-header` como H1 e o hook do tema evita o bloco page-title redundante somente em `aculta_lms.student_dashboard`, preservando `_title`, acesso, cache e shell. Wiki e LMS são agora dois consumidores no código; a [matriz de testes Runtime](theme-ux-0.8-b1-02e-runtime-validation.md) ainda deve ser executada. Próxima trilha visual: B2 Context Tabs em SDC/UI Suite.
+
+## THEME-UX 0.8-B2 — Context Tabs em SDC/UI Suite
+
+Novo componente experimental `aculta420:context-tabs` criado com schema Core SDC, CSS tokenizado e duas stories UI Patterns Library. [Plano B2 e evidências](theme-ux-0.8-b2-context-tabs.md) distingue navegação por URLs reais de `product-tabs` (painéis Bootstrap), preservando Institution Bar + Domain Header. A integração com o Studio e a Wiki, assim como testes Runtime, permanecem **pendentes**.
