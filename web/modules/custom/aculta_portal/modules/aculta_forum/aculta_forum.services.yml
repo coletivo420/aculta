@@ -1,4 +1,8 @@
 services:
+  aculta_forum.comment_migration_audit:
+    class: Drupal\aculta_forum\Migration\ForumCommentMigrationAudit
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+
   Drupal\aculta_forum\Controller\ForumPostSubmissionController:
     class: Drupal\aculta_forum\Controller\ForumPostSubmissionController
     arguments: ['@entity_type.manager', '@entity.form_builder', '@request_stack', '@current_user', '@aculta_forum.discussion_context_resolver']

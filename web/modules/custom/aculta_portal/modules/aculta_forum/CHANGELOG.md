@@ -1,3 +1,19 @@
+## `0.1.0-dev.152` — auditar Comments para a migração revisionável
+
+- O comando `drush aculta-forum:audit-comment-migration` gera inventário somente
+  leitura do escopo, hosts/purposes, estados, idiomas, formatos, autoria
+  histórica, timestamps, traduções, embeds Media/Gallery, relações pai/filho e
+  posts revisionáveis existentes. A saída contém contagens, sem IDs ou conteúdo;
+  nenhuma entidade/configuração é alterada. A migração Migrate API, o mapa
+  idempotente e a validação de equivalência seguem pendentes.
+- A inspeção do Core 11.4.10 identificou colisões fatais entre propriedades
+  promovidas por controladores do Fórum e propriedades já declaradas em
+  `ControllerBase`; os nomes das propriedades de DI foram ajustados sem mudar
+  os serviços. No Runtime de testes confirmado (`aculta_runtime`), `drush cr`
+  concluiu e a auditoria encontrou zero Comments de origem e zero posts
+  revisionáveis existentes. Nada foi gravado; o inventário deve ser refeito em
+  cada ambiente antes da migração.
+
 ## `0.1.0-dev.151` — comparar revisões entre páginas do histórico
 
 - O formulário aceita IDs de duas revisões vistos em quaisquer páginas do histórico e valida no servidor que ambas existam e pertençam ao mesmo post. A rota de comparação repete a validação de vínculo e acesso. Sem mudança Runtime; testes e revisão visual pendentes.

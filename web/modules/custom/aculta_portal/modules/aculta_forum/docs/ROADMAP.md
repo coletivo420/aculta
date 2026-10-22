@@ -74,6 +74,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.152` | Inventariar Comments antes da migração revisionável | Comando somente leitura mede escopo/purpose, estados, idiomas/traduções, timestamps, autoria histórica, formatos, embeds e integridade pai/filho; não grava IDs nem cria destinos. Migrate API e mapa idempotente pendentes. Sem Runtime; testes pendentes. |
 | `0.1.0-dev.151` | Comparar revisões de páginas diferentes | Seleção aceita IDs mostrados em qualquer página e valida existência/vínculo ao post antes de redirecionar; rota de comparação revalida o acesso. Sem alteração Runtime; testes e revisão visual pendentes. |
 | `0.1.0-dev.150` | Navegar até o pai fora da página atual | Contexto da resposta liga ao post pai acessível na página correta da thread, preservando os demais pagers e query args; pais ocultos continuam sem link. Sem rota nova ou Runtime; testes e inspeção visual pendentes. |
 | `0.1.0-dev.149` | Integrar anexos e galerias a posts revisionáveis | O formato `forum` fica fixo no corpo; ciclo de publicação de Media/Gallery acompanha post público e tópico; retenção verifica todas as revisões antes de limpeza. Regressão Kernel e Runtime pendentes. |

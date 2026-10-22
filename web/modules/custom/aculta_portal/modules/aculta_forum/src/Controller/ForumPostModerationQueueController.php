@@ -21,8 +21,8 @@ final class ForumPostModerationQueueController extends ControllerBase {
   private const ITEMS_PER_PAGE = 50;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
+    private readonly EntityTypeManagerInterface $forumEntityTypeManager,
+    private readonly AccountProxyInterface $forumCurrentUser,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
@@ -31,7 +31,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
    * Builds a moderation queue using Core's Content Moderation state storage.
    */
   public function queue(): array {
-    $moderationStateStorage = $this->entityTypeManager->getStorage('content_moderation_state');
+    $moderationStateStorage = $this->forumEntityTypeManager->getStorage('content_moderation_state');
     $result = $moderationStateStorage->getAggregateQuery()
       ->accessCheck(TRUE)
       ->aggregate('content_entity_id', 'MAX')
@@ -43,7 +43,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
       ->pager(self::ITEMS_PER_PAGE)
       ->execute();
     $revisionIds = array_column($result, 'content_entity_revision_id');
-    $postStorage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $postStorage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
     $revisions = $revisionIds === [] ? [] : $postStorage->loadMultipleRevisions($revisionIds);
 
     $rows = [];
@@ -57,7 +57,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
       ])
       ->addCacheTags(['aculta_forum_post_list', 'content_moderation_state_list', 'config:system.date']);
     foreach ($revisions as $revisionId => $post) {
-      $access = $post->access('view', $this->currentUser, TRUE);
+      $access = $post->access('view', $this->forumCurrentUser, TRUE);
       $cacheability->addCacheableDependency($post)->addCacheableDependency($access);
       if (!$access->isAllowed() || $post->get('moderation_state')->value !== 'review') {
         continue;
@@ -72,7 +72,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
         || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
         continue;
       }
-      $topicAccess = $topic->access('view', $this->currentUser, TRUE);
+      $topicAccess = $topic->access('view', $this->forumCurrentUser, TRUE);
       $cacheability->addCacheableDependency($topic)->addCacheableDependency($topicAccess);
       if (!$topicAccess->isAllowed()) {
         continue;

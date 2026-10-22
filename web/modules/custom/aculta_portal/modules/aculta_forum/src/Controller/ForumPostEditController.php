@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class ForumPostEditController extends ControllerBase {
 
   public function __construct(
-    private readonly EntityFormBuilderInterface $entityFormBuilder,
+    private readonly EntityFormBuilderInterface $forumEntityFormBuilder,
     private readonly ForumPostPublicEditAccess $editAccess,
   ) {}
 
@@ -28,7 +28,7 @@ final class ForumPostEditController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    return $this->entityFormBuilder->getForm($post, 'public_submission');
+    return $this->forumEntityFormBuilder->getForm($post, 'public_submission');
   }
 
 }

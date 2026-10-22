@@ -25,9 +25,9 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
   private const REVISIONS_PER_PAGE = 50;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityTypeManagerInterface $forumEntityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly FormBuilderInterface $formBuilder,
+    private readonly FormBuilderInterface $revisionFormBuilder,
   ) {}
 
   /**
@@ -45,7 +45,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
    * Builds the administrative history table for a post.
    */
   public function history(ForumPost $aculta_forum_post): array {
-    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
     assert($storage instanceof RevisionableStorageInterface);
     $entityType = $aculta_forum_post->getEntityType();
     $revisionIds = array_keys($storage->getQuery()
@@ -137,7 +137,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       '#attributes' => ['class' => ['aculta-forum-post-revision-history']],
     ];
     if ($olderRevisionId !== NULL && $revisionOptions !== []) {
-      $build['comparison_selection'] = $this->formBuilder->getForm(
+      $build['comparison_selection'] = $this->revisionFormBuilder->getForm(
         ForumPostRevisionSelectionForm::class,
         $revisionOptions,
         (int) $olderRevisionId,

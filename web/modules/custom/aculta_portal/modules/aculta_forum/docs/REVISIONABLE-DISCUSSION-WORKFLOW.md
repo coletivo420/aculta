@@ -132,6 +132,11 @@ testes de workflow; a configuração da política inicial continua sendo a de
    anexos/embeds, uso dos arquivos, denúncias/flags, busca e avisos de seguidores.
    Validar contagens, UUIDs de mídia, árvore, estado e destinatários. O script
    deve suportar dry-run, lotes limitados, transação por árvore e idempotência.
+   A dev.152 acrescenta `drush aculta-forum:audit-comment-migration`, um
+   inventário somente leitura e sem IDs/PII na saída. Ele identifica o escopo
+   elegível, formatos, idiomas/traduções, estados, autoria histórica,
+   timestamps, embeds e referências pai ausentes/externas/cruzadas. Ainda não
+   cria posts nem usa o mapa Migrate.
 4. **Corte e remoção autorizada:** somente depois dos gates de equivalência e
    backup recuperável, ativar a nova leitura/escrita e remover os Comments do
    Fórum via Entity API. Não excluir Comments de outros hosts nem remover o

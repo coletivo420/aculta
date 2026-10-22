@@ -15,20 +15,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class ForumPostModerationFormController extends ControllerBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly EntityFormBuilderInterface $entityFormBuilder,
+    private readonly EntityTypeManagerInterface $forumEntityTypeManager,
+    private readonly EntityFormBuilderInterface $forumEntityFormBuilder,
   ) {}
 
   /**
    * Returns the moderation form for the route's revision identifier.
    */
   public function form(string $revision_id): array {
-    $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision($revision_id);
+    $post = $this->forumEntityTypeManager->getStorage('aculta_forum_post')->loadRevision($revision_id);
     if ($post === NULL) {
       throw new NotFoundHttpException();
     }
 
-    return $this->entityFormBuilder->getForm($post, 'default');
+    return $this->forumEntityFormBuilder->getForm($post, 'default');
   }
 
 }

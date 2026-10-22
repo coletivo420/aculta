@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class ForumPostRevisionComparisonController extends ControllerBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityTypeManagerInterface $forumEntityTypeManager,
     private readonly DiffEntityComparison $entityComparison,
   ) {}
 
@@ -40,7 +40,7 @@ final class ForumPostRevisionComparisonController extends ControllerBase {
    * Builds a read-only subject/body comparison for two post revisions.
    */
   public function compare(ForumPost $aculta_forum_post, string $left_revision, string $right_revision): array {
-    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
     if (!$storage instanceof RevisionableStorageInterface) {
       throw new NotFoundHttpException();
     }
