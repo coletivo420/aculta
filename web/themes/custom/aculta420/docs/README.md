@@ -65,3 +65,5 @@ Histórico de versões: [../CHANGELOG.md](../CHANGELOG.md). Estado de QA de rele
 - [theme-ux-0.8-b4-utility-panels.md](theme-ux-0.8-b4-utility-panels.md) — auditoria de avisos, mensagens, carrinho e painel Minha Conta; correções CSS/SDC e gates Runtime.
 
 - [theme-ux-0.8-b4-02-ajax-drawer-race.md](theme-ux-0.8-b4-02-ajax-drawer-race.md) — proteção de Avisos/Mensagens contra AJAX obsoleto e roteiro de testes de drawers.
+
+- [theme-ux-0.8-b5-overlay-catalog.md](theme-ux-0.8-b5-overlay-catalog.md) — catálogo de gavetas Avisos/Mensagens/Carrinho, Minha Conta e estado ARIA sincronizado com Bootstrap.
