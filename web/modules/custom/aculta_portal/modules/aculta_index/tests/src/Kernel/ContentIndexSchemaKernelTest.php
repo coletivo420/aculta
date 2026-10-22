@@ -434,12 +434,14 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
-   * Checks the provider registry loads without source adapters.
+   * Checks the registry loads kernel-owned media adapters.
    */
-  public function testProviderRegistryLoadsWithoutSourceAdapters(): void {
+  public function testProviderRegistryLoadsKernelMediaAdapters(): void {
     $registry = $this->container->get('aculta_index.provider_registry');
 
-    $this->assertSame([], $registry->all());
+    $providerIds = array_keys($registry->all());
+    sort($providerIds);
+    $this->assertSame(['image', 'remote_video'], $providerIds);
   }
 
   /**

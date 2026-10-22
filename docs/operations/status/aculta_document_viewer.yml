@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Ampliar a validação de prévias Office no Runtime para variantes DOCX, planilhas e viewports menores; um DOCX OOXML completo já foi renderizado no Firefox e o iframe é mantido após sucesso. Depois concluir homologação RC, gates do Portal/tema e revisão visual pré-RC dos consumidores públicos; LMS só após decisão do responsável ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+next_phase: 'Validar em Kernel o provider `media:document` sem interferir nas prévias Office; ampliar validação no Runtime para DOCX, planilhas e viewports menores. Depois concluir homologação RC e revisão visual pré-RC dos consumidores ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+version_note: "`0.1.0-dev.14` (provider mínimo de Media document para o Content Index)"

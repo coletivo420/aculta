@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests original entity access revalidation for catalog candidates.
@@ -59,6 +68,24 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   }
 
   /**
+   * Tests a stale candidate with no enabled provider fails closed.
+   */
+  public function testUnknownProviderCandidateIsDenied(): void {
+    $translation = $this->createMock(ContentEntityInterface::class);
+    $translation->method('bundle')->willReturn('orphan_bundle');
+    $translation->method('getCacheContexts')->willReturn([]);
+    $translation->method('getCacheMaxAge')->willReturn(-1);
+    $translation->expects(self::never())->method('access');
+    $manager = $this->entityManager(['1' => $this->sourceEntity($translation)]);
+
+    $result = (new ContentIndexAccessFilter($manager, new ContentIndexProviderRegistry()))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertSame([], $result->entities);
+  }
+
+  /**
    * Tests the access filter bounds candidates to one page.
    */
   public function testRejectsOversizedCandidatePage(): void {
@@ -74,14 +101,106 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   }
 
   /**
+   * Tests provider access purpose wraps Entity Access and restores the domain.
+   */
+  public function testChecksAccessInProviderPurposeAndRestoresActiveDomain(): void {
+    $previousDomain = $this->createMock(DomainInterface::class);
+    $forumDomain = $this->createMock(DomainInterface::class);
+    $activeDomain = $previousDomain;
+    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
+      return $activeDomain;
+    });
+    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+      $activeDomain = $domain;
+    });
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadMultiple')->with(['1'])->willReturn(['1' => $this->forumTranslation($negotiator, $forumDomain)]);
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
+    $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
+    $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
+    $purposeManager = new DomainPurposeManager(
+      $manager,
+      $negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $provider = new class() implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getProviderId(): string {
+        return 'forum';
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getSupportedEntityTypes(): array {
+        return ['node' => ['aculta_forum_topic']];
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+        return 'forum';
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+        return NULL;
+      }
+
+    };
+    $registry = new ContentIndexProviderRegistry([$provider]);
+
+    $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertCount(1, $result->entities);
+    self::assertSame($previousDomain, $activeDomain);
+    self::assertContains('domain', $result->cacheability->getCacheContexts());
+  }
+
+  /**
    * Creates a source entity mock with one translation.
    */
   private function sourceEntity(ContentEntityInterface $translation): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('hasTranslation')->with('pt-br')->willReturn(TRUE);
     $entity->method('getTranslation')->with('pt-br')->willReturn($translation);
+    $entity->method('getCacheContexts')->willReturn([]);
+    $entity->method('getCacheMaxAge')->willReturn(-1);
     $entity->method('getCacheTags')->willReturn(['source_list']);
     return $entity;
+  }
+
+  /**
+   * Creates a forum translation whose access handler requires Forum purpose.
+   */
+  private function forumTranslation(DomainNegotiatorInterface $negotiator, DomainInterface $forumDomain): ContentEntityInterface {
+    $translation = $this->createMock(ContentEntityInterface::class);
+    $translation->method('bundle')->willReturn('aculta_forum_topic');
+    $translation->method('hasTranslation')->with('pt-br')->willReturn(TRUE);
+    $translation->method('getTranslation')->with('pt-br')->willReturn($translation);
+    $translation->method('getCacheContexts')->willReturn([]);
+    $translation->method('getCacheMaxAge')->willReturn(-1);
+    $translation->method('access')->willReturnCallback(static function () use ($negotiator, $forumDomain): AccessResult {
+      return $negotiator->getActiveDomain() === $forumDomain ? AccessResult::allowed() : AccessResult::forbidden();
+    });
+    $translation->method('getCacheTags')->willReturn(['forum-topic:1']);
+    return $translation;
   }
 
   /**
@@ -95,6 +214,8 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   private function translation(AccessResult $access, array $cacheTags): ContentEntityInterface {
     $translation = $this->createMock(ContentEntityInterface::class);
     $translation->method('access')->with('view', self::anything(), TRUE)->willReturn($access);
+    $translation->method('getCacheContexts')->willReturn([]);
+    $translation->method('getCacheMaxAge')->willReturn(-1);
     $translation->method('getCacheTags')->willReturn($cacheTags);
     return $translation;
   }

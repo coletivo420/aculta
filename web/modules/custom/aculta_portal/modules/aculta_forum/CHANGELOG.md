@@ -1,3 +1,15 @@
+## `0.1.0-dev.243` — provider do Content Index para discussões coexistentes
+
+- Provider opcional cobre tópicos, ForumPosts revisáveis e Comments legados
+  vinculados a tópicos do Fórum. Rejeitados e revisões não padrão ficam fora;
+  corpo e autoria não são projetados.
+- Relações nomeadas apontam para o tópico e para o item pai. O filtro do Index
+  revalida Entity Access sob o purpose canônico `forum`, preservando grants e
+  acesso Group da entidade original.
+- Provider de `forum_attachment` separado projeta só metadados da entidade
+  Media e usa purpose `forum`; não copia arquivo nem URL.
+- Unit tests focados passaram; Kernel/Runtime não executados.
+
 ## `0.1.0-dev.242` — prova de ACL de Group e revogação (XK-C3) — 2026-10-22
 
 - Documento novo

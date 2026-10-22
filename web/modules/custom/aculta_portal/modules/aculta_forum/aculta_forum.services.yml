@@ -1,4 +1,14 @@
 services:
+  aculta_forum.content_index_provider:
+    class: Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+  aculta_forum.attachment_content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['forum_attachment', 'forum_attachment', 'forum']
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_forum.public_post_statistics:
     class: Drupal\aculta_forum\Service\ForumPublicPostStatistics
     arguments: ['@database']

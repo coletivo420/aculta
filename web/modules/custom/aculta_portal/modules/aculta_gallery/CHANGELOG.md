@@ -1,5 +1,14 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.15 — catálogo de galerias e imagens
+
+- Provider opcional registra `media_gallery` no Content Index e projeta título,
+  idioma, datas e publicação; relações de saída `gallery_image` e
+  `gallery_cover` apontam somente para Media `image`.
+- O Index revalida Entity Access de galeria e imagem; o provider não copia
+  descrição, créditos, direitos, arquivo ou metadados de imagem.
+- Teste unitário do provider passou; Runtime e Kernel não foram executados.
+
 ## 0.1.0-dev.14 — renderiza imagens anexadas pelo Fórum
 
 - `aculta_gallery` seleciona View contextual para galerias do Fórum e suporta o Media `forum_attachment` usando `field_media_forum_image`.

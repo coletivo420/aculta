@@ -3,7 +3,7 @@ type: module
 description: 'Álbuns fotográficos e galerias incorporadas do Portal ACULTA, sobre Media Gallery, PhotoSwipe e VVJS. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.14'
+version: '0.1.0-dev.15'
 dependencies:
   - aculta_portal:aculta_image
   - ckeditor5:ckeditor5

@@ -1,4 +1,10 @@
 services:
+  aculta_document_viewer.content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['document', 'document']
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_document_viewer.builder:
     class: Drupal\aculta_document_viewer\Pdf\PdfViewerBuilder
     arguments: ['@file_url_generator', '@url_generator', '@current_user', '@aculta_document_viewer.thumbnail_builder', '@config.factory']

@@ -1,5 +1,22 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.22 — providers do Fórum, mídia e galerias
+
+- Providers opcionais projetam tópicos, ForumPosts e Comments legados do Fórum
+  durante a coexistência; projeção exclui corpos, autores, rejeitados e revisões
+  não padrão. Relations explícitas ligam posts/comentários aos tópicos e pais.
+- Providers de mídia cobrem `image`, `document`, `remote_video`,
+  `course_document` e `forum_attachment`, registrados pelos módulos ACULTA
+  proprietários. Metadados de arquivos, URLs, alt e conteúdo binário são
+  excluídos.
+- Provider Gallery indexa somente título, idioma, datas e estado e emite
+  relações nomeadas para imagens da galeria e capa.
+- O filtro de acesso resolve o provider da entidade e revalida Entity Access no
+  purpose canônico informado, preservando a conta e falhando fechado se o
+  Domain não puder ser ativado.
+- Testes unitários e PHPCS locais passaram; módulos não foram habilitados no
+  Runtime. Kernel/integração de DI pendentes.
+
 ## 0.1.0-dev.21 — fallback preserva a página do Index
 
 - Sem o Statistics, o bridge ainda consulta e devolve a página autorizada e seu

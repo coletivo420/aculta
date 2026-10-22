@@ -1,3 +1,15 @@
+## 0.4.1-dev.5 — contexto canônico de acesso do Content Index e providers Media
+
+- Novo contrato opcional de provider declara purpose para revalidar Entity
+  Access com o mesmo usuário no contexto Domain canônico; ausência do Domain
+  nega exposição em vez de voltar ao purpose da requisição.
+- `MediaContentIndexProvider` oferece projeção mínima aos bundles Media
+  `document`, `remote_video`, `course_document` e `forum_attachment`, com
+  registros nos módulos Portal/Viewer/Group/Fórum donos. A mídia `image` usa
+  registro no Kernel por ser o bundle compartilhado entre experiências.
+- O Index segue opcional. Não houve ativação, import de configuração ou
+  alteração de Runtime.
+
 ## 0.4.1-dev.4 — contrato neutro para o ACULTA Content Index (2026-10-22)
 
 - Adicionado o contrato público `ContentIndexProviderInterface` e os DTOs

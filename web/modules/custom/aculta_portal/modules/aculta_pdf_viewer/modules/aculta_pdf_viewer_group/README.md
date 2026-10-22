@@ -1,5 +1,14 @@
 # ACULTA PDF Viewer — Group
 
+## Content Index
+
+O serviço opcional `course_document_content_index_provider` registra o bundle
+`course_document` no ACULTA Content Index com nome, UUID, idioma, datas e estado
+de publicação. Entity Access continua aplicado pelo Group no consumidor; o
+provider declara o purpose canônico `courses` para a revalidação transversal.
+Nenhum ID de arquivo, URI, URL ou conteúdo do documento é copiado. O serviço
+tagged não torna `aculta_index` uma dependência obrigatória do módulo.
+
 Integra opcionalmente Media `document` ao Group para que documentos vinculados
 a uma turma recebam controle de acesso do grupo. O submódulo depende do
 `aculta_pdf_viewer`, Media e Group; o leitor global continua funcionando sem

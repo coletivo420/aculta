@@ -1,5 +1,13 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.14 — provider de Media document para o Content Index
+
+- Provider opcional `document` projeta somente nome, UUID, idioma, datas e
+  publicação do bundle `media:document`; não copia arquivo, URI, URL nem texto.
+- A autorização continua no Media/File original. A integração do Index não é
+  dependência obrigatória e não altera o viewer.
+- Teste Unit do provider passou; Kernel/Runtime pendentes.
+
 ## 0.1.0-dev.12 — manter o DOCX renderizado visível — 2026-10-22
 
 - `mountDocxViewer()` mantém o iframe sandboxed quando o filho informa sucesso;

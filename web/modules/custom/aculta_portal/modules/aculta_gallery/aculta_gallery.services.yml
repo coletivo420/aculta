@@ -1,4 +1,9 @@
 services:
+  aculta_gallery.content_index_provider:
+    class: Drupal\aculta_gallery\ContentIndex\GalleryContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_gallery.canonical_route_subscriber:
     class: Drupal\aculta_gallery\EventSubscriber\CanonicalGalleryRouteSubscriber
     tags:

@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Manter contrato neutro do Content Index (`0.4.1-dev.4`) e ligar o writer ao backfill keyset; sequência de origem, filtro Entity Access por lote, checkpoint CAS, gerações e provider Revista já existem; depois implementar eventos/Core Queue e catch-up de rebuild ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [roadmap Portal](docs/portal/ROADMAP.md))
+next_phase: 'Validar no Kernel providers Media/Gallery/Fórum e revalidação de Entity Access por purpose canônico; manter contratos neutros do Content Index (`0.4.1-dev.5`) e avançar integração dos consumidores ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [roadmap Portal](docs/portal/ROADMAP.md))'

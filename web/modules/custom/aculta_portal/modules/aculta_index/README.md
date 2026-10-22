@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.21` — fallback do bridge preserva página autorizada sem Statistics.
-**Status:** Dev; schema, contratos, provider Revista, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush, auditoria incremental diária, consulta segura de relações e bridge Statistics por IDs autorizados implementados. Bridge retorna as entidades autorizadas mesmo quando Statistics está ausente. Mais providers e consumidores; não instalado no Runtime.
+**Versão:** `0.1.0-dev.22` — providers progressivos e revalidação por purpose canônico.
+**Status:** Dev; schema, contratos, providers Revista/Wiki/Fórum/Gallery e Media, descoberta/backfill keyset, checkpoint CAS, writer, revalidação de acesso por purpose canônico, fila incremental, consulta paginada com cursor, validação estrutural, gate de ativação, comandos Drush, auditoria incremental diária, consulta segura de relações e bridge Statistics por IDs autorizados implementados em código. Bridge retorna as entidades autorizadas mesmo quando Statistics está ausente. Integração Kernel/DI e Runtime pendente; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -20,6 +20,10 @@ services:
 ```
 
 O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de entidade/bundle durante a construção do container. Os DTOs neutros `ContentIndexProjection` e `ContentIndexRelation` e o contrato `ContentIndexProviderInterface` vivem no namespace base do Portal, portanto podem ser implementados sem dependência do submódulo. O registry não concede nem verifica acesso a conteúdo.
+
+Providers podem implementar opcionalmente `ContentIndexAccessContextProviderInterface` para indicar um purpose canônico de verificação, por exemplo `forum`, `wiki` ou `courses`. O filtro troca temporariamente o Domain, executa Entity Access para o mesmo usuário e restaura o contexto anterior. Sem provider ativo ou sem o Domain pedido, a entrada não é exposta. O Index não infere o purpose a partir de hostname nem reduz regras de grants/Group.
+
+Integrações atuais: Revista (`node:revista`), Wiki (`node:wiki_entry`, só metadados), Fórum (tópicos, ForumPosts e Comments legados), Gallery (`media_gallery` com relações explícitas para `media:image`) e Media (`image`, `document`, `remote_video`, `course_document`, `forum_attachment`). O provider Gallery não cria URL de arquivo nem projeta corpo, alt, autoria ou dados de direitos.
 
 ## Estatísticas opcionais
 

@@ -1,3 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: Matriz de acesso Runtime homologada; manter documentos privados e concluir os gates PV7 compartilhados antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md))
+next_phase: 'Validar no Kernel o provider `course_document` com acesso Group sob purpose `courses`; manter arquivos privados e concluir gates compartilhados antes de RC ([README](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/README.md))'
+version_note: "`0.1.0-dev.5` (provider de documento de turma para o Content Index)"

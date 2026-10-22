@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Query;
 
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,6 +25,8 @@ final class ContentIndexAccessFilter {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ?ContentIndexProviderRegistry $providers = NULL,
+    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
   ) {}
 
   /**
@@ -78,7 +84,35 @@ final class ContentIndexAccessFilter {
           }
 
           $translation = $entity->getTranslation($candidate['langcode']);
-          $access = $translation->access('view', $account, TRUE);
+          $provider = $this->providers?->findForBundle($entityTypeId, $translation->bundle());
+          if ($this->providers !== NULL && $provider === NULL) {
+            // Entries owned by a disabled or removed provider are not checked
+            // under an unknown policy and cannot be exposed from a stale index.
+            continue;
+          }
+          $purpose = $provider instanceof ContentIndexAccessContextProviderInterface
+            ? $provider->getAccessPurpose($translation)
+            : NULL;
+          if ($purpose !== NULL && $this->domainPurposeManager !== NULL) {
+            $cacheability->addCacheContexts(['domain']);
+            $access = $this->domainPurposeManager->runInPurpose(
+              $purpose,
+              static fn (): AccessResultInterface => $translation->access('view', $account, TRUE),
+            );
+            if (!$access instanceof AccessResultInterface) {
+              // A missing or unavailable canonical Domain must never fall back
+              // to the active request's potentially broader access context.
+              continue;
+            }
+          }
+          elseif ($purpose !== NULL) {
+            // A purpose-aware provider without a configured purpose manager
+            // cannot be safely checked in the current request context.
+            continue;
+          }
+          else {
+            $access = $translation->access('view', $account, TRUE);
+          }
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($translation));
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($access));
           if ($access->isAllowed()) {

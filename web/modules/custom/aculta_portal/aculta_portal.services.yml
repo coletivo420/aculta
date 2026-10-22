@@ -1,4 +1,15 @@
 services:
+  aculta_portal.image_content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['image', 'image']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_portal.remote_video_content_index_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['remote_video', 'remote_video']
+    tags:
+      - { name: aculta_index.provider }
+
   aculta_portal.user_upload_policy:
     class: Drupal\aculta_portal\Upload\UserUploadPolicy
     arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']

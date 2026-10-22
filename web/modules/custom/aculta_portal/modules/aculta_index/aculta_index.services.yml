@@ -37,7 +37,7 @@ services:
 
   aculta_index.access_filter:
     class: Drupal\aculta_index\Query\ContentIndexAccessFilter
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_index.provider_registry', '@aculta_portal.domain_purpose']
 
   Drupal\aculta_index\Query\ContentIndexAccessFilter: '@aculta_index.access_filter'
 
