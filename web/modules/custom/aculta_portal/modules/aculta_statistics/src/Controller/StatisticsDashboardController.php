@@ -91,7 +91,7 @@ final class StatisticsDashboardController extends ControllerBase {
       $table[] = [$label, $series['values'][$index]];
     }
 
-    return [
+    $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'statistics-panel'],
       'areas' => $this->areaNavigation($area),
@@ -149,6 +149,22 @@ final class StatisticsDashboardController extends ControllerBase {
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
+
+    // Atalho para os prazos, só para quem administra a retenção. A subaba do
+    // menu já leva lá; o link no painel evita procurar o menu.
+    if ($this->currentUser()->hasPermission('administer aculta_statistics')) {
+      $build['retencao'] = [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'statistics-note'],
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Prazos de retenção'),
+          '#url' => Url::fromRoute('aculta_statistics.retention'),
+        ],
+      ];
+    }
+
+    return $build;
   }
 
   /**

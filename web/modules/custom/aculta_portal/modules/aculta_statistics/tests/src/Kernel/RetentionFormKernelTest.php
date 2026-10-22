@@ -68,6 +68,52 @@ final class RetentionFormKernelTest extends KernelTestBase {
   }
 
   /**
+   * O formulário mostra um campo por métrica do catálogo, com o prazo atual.
+   */
+  public function testFormOffersEveryCatalogMetric(): void {
+    $catalog = $this->container->get('aculta_statistics.catalog')->all();
+
+    $form = RetentionSettingsForm::create($this->container)->buildForm([], new FormState());
+    $fields = array_filter(array_keys($form['retention']), static fn (string $key): bool => $key[0] !== '#');
+
+    $this->assertTrue($form['retention']['#tree']);
+    $this->assertSame(array_keys($catalog), array_values($fields));
+    $this->assertCount(count($catalog), $fields);
+    foreach (array_keys($catalog) as $id) {
+      $this->assertSame('select', $form['retention'][$id]['#type']);
+      $this->assertSame([30, 90, 180, 365, 0], array_keys($form['retention'][$id]['#options']));
+      $this->assertSame(90, $form['retention'][$id]['#default_value']);
+    }
+    $this->assertArrayHasKey('confirm_reduction', $form);
+  }
+
+  /**
+   * Salvar grava o prazo de cada métrica, com "indefinido" como zero.
+   */
+  public function testSubmitPersistsPrazoPerMetric(): void {
+    $catalog = array_keys($this->container->get('aculta_statistics.catalog')->all());
+    $values = $this->valuesWithWikiDays(30, TRUE);
+    $values['retention']['forum.topics.created'] = 0;
+
+    $form_object = RetentionSettingsForm::create($this->container);
+    $form_state = new FormState();
+    $form_state->setValues($values);
+    $form = $form_object->buildForm([], $form_state);
+    $form_object->submitForm($form, $form_state);
+
+    $saved = $this->config('aculta_statistics.settings')->get('retention');
+    $this->assertCount(count($catalog), $saved);
+    $this->assertSame(
+      ['metric' => 'wiki.entries.read', 'days' => 30],
+      array_values(array_filter($saved, static fn (array $row): bool => $row['metric'] === 'wiki.entries.read'))[0],
+    );
+    $this->assertSame(
+      ['metric' => 'forum.topics.created', 'days' => 0],
+      array_values(array_filter($saved, static fn (array $row): bool => $row['metric'] === 'forum.topics.created'))[0],
+    );
+  }
+
+  /**
    * Valida o formulário com os valores informados e devolve os erros por campo.
    *
    * @param array<string, mixed> $values

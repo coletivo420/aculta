@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_statistics\Kernel;
 use Drupal\aculta_statistics\Controller\StatisticsDashboardController;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -19,6 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('aculta_statistics')]
 #[RunTestsInSeparateProcesses]
 final class StatisticsDashboardKernelTest extends KernelTestBase {
+
+  use UserCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -125,6 +128,32 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
 
     $this->assertStringNotContainsString('lms.student.status', $html);
     $this->assertStringNotContainsString('value="lms.student.status"', $html);
+  }
+
+  /**
+   * O atalho para os prazos aparece só para quem administra a retenção.
+   */
+  public function testRetentionLinkOnlyForAdministrators(): void {
+    $this->installEntitySchema('user');
+    $this->installConfig(['user']);
+
+    $this->container->get('current_user')->setAccount($this->createUser(['administer aculta_statistics']));
+    $html = $this->renderOverview();
+    $this->assertStringContainsString('Prazos de retenção', $html);
+    $this->assertStringContainsString('/painel-administrativo/aculta/estatisticas/retencao', $html);
+    $this->assertStringContainsString('data-portal-ui="statistics-note"', $html);
+
+    $this->container->get('current_user')->setAccount($this->createUser());
+    $this->assertStringNotContainsString('Prazos de retenção', $this->renderOverview());
+  }
+
+  /**
+   * Renderiza o painel central sem seleção prévia.
+   */
+  private function renderOverview(): string {
+    $request = Request::create('/painel-administrativo/aculta/estatisticas', 'GET');
+    $page = StatisticsDashboardController::create($this->container)->overview($request);
+    return (string) $this->container->get('renderer')->renderInIsolation($page);
   }
 
 }

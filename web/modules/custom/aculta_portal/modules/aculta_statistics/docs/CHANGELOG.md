@@ -1,5 +1,21 @@
 # Changelog — ACULTA Statistics
 
+## Não lançado — painel no menu e retenção acessível
+
+- (2026-10-22) O painel ganhou item no menu administrativo: "Estatísticas"
+  (peso 12, dentro da aba ACULTA) e, como subaba, "Retenção". Antes o
+  formulário de prazos existia, mas só era alcançável pela URL; agora tem
+  caminho no menu.
+- O painel mostra o atalho "Prazos de retenção" para quem tem
+  `administer aculta_statistics`; sem a permissão, o atalho não aparece.
+- `config/sync` passou a conter `aculta_statistics.settings.yml`, com o mesmo
+  conteúdo da configuração instalada, e a linha `aculta_statistics` em
+  `core.extension.yml` (o `aculta_links` já depende deste módulo). Sem isso, a
+  importação de configuração apagaria os prazos gravados.
+- Testes: `RetentionFormKernelTest` cobre o formulário (um campo por métrica do
+  catálogo, opções 30/90/180/365/indefinido) e a gravação por métrica;
+  `StatisticsDashboardKernelTest` cobre o atalho só com a permissão.
+
 ## Não lançado — planejamento da integração Wiki
 
 - Plano em `docs/modules/WIKI-SUBMODULO.md` (raiz do repositório), com a frente de submódulo `aculta_wiki` e a integração com este módulo.
@@ -15,6 +31,10 @@
   autoria.
 - `METRIC-CATALOG.md` corrigido: a primeira publicação tem retenção de 90 dias
   (não instantânea), e o contador de leitura tem fonte e dimensão registradas.
+- (2026-10-22) `aculta_wiki` habilitado em `config/sync/core.extension.yml`
+  (decisão do responsável). As métricas `wiki.*` continuam sem dados até que
+  existam verbetes publicados; o código do `aculta_statistics` não mudou por
+  causa disso.
 - Testes: `WikiProviderTest` (8 testes) e `WikiPublicationKernelTest`
   (2 testes, agregado diário com uma publicação e uma revisão) aprovados. A
   suíte unitária segue com 1 falha pré-existente em
