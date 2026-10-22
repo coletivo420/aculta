@@ -12,6 +12,7 @@ conteúdo, publicação e mídia.
 - [Contrato de integração Studio ↔ Magazine](docs/STUDIO-INTEGRATION-CONTRACT.md)
 - [Matriz de acesso editorial](docs/EDITORIAL-ACCESS-MATRIX.md)
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
+- [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
 - [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
 - [CHANGELOG](CHANGELOG.md)
 

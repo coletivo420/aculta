@@ -18,6 +18,9 @@ Documentação normativa vigente:
   estados e transições reais do `revista`, coautoria e cacheability.
 - [Matriz ator × estado × ação](EDITORIAL-ACTOR-STATE-MATRIX.md) — leitura,
   edição, transições e demais ações por estado, verificadas no workflow real.
+- [Contrato de rotas e domínios editoriais](ROUTES-DOMAIN-CONTRACT.md) —
+  purpose de cada rota do `revista`, redirecionamento `302`/`404`, URL canônica
+  para o Studio e evidência de Runtime (MAG 0.5-B.7).
 
 > **Discussão contextual:** `field_aculta_discussion` é um campo Comment hospedado
 > pelo Node `revista`; não cria tópicos no Fórum público. A sincronização automática
