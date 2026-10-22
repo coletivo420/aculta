@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.2 — provider inicial do Content Index
+
+- Serviço opcional `aculta_wiki.content_index_provider`, marcado com
+  `aculta_index.provider`, projeta somente metadados allowlisted de
+  `node/wiki_entry`: título, UUID, idioma, bundle, domínio, estado e datas.
+- Corpo, categorias, imagem e todas as relações ficam como dívida técnica até
+  a finalização da Wiki, conforme decisão do responsável. Não foi criada
+  dependência obrigatória do submódulo `aculta_index`.
+- Teste Unit cobre projeção, bundle e limite de revisão padrão. O módulo não foi
+  habilitado no Runtime.
+
 ## Não lançado — busca e aviso de revisão — 2026-10-22
 
 - O `wiki_entry` entra em `bundles.selected` do índice `aculta_conteudo`
