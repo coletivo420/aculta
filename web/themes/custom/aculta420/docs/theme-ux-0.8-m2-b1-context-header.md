@@ -52,3 +52,7 @@ Mobile 320px: linha de retorno e título, ações secundárias recolhíveis **se
 | B1-03 | aplicar a duas áreas e testar shell/no-JS/mobile/dark | evidência do Runtime |
 
 **Escopo desta entrega:** planejamento e critérios. Nenhum novo componente ou alteração de rotas foi implementado.
+
+## Auditoria de código B1 — continuação
+
+[Inspeção de breadcrumb, headings e limites de reuso](theme-ux-0.8-b1-source-audit.md) confirma por código que o breadcrumb já tem template e estilo do tema, `content-section` usa H2/H3 e `product-tabs` possui semântica de painéis internos. Não criar outro breadcrumb ou forçar o SDC editorial a emitir H1. Consumidores reais e DOM ainda não confirmados no Runtime.
