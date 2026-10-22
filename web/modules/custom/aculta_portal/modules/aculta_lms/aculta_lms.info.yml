@@ -7,6 +7,7 @@ version: '0.1.0-dev.80'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal
+  - aculta_portal:aculta_studio
   - aculta_portal:aculta_image
   - aculta_portal:aculta_pdf_viewer_group
   - aculta_portal:aculta_qrcode
