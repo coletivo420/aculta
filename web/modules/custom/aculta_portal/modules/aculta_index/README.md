@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.7` — registry exclusivo por bundle.
-**Status:** Dev; schema, contratos, ciclo validado de gerações, provider Revista, descoberta keyset em lotes e checker de integridade implementados. Writer, checkpoints persistentes, consumers e sincronização ainda pendentes; não instalado no Runtime.
+**Versão:** `0.1.0-dev.8` — checkpoint keyset retomável com CAS.
+**Status:** Dev; schema, contratos, ciclo validado de gerações, provider Revista, descoberta keyset, checkpoint CAS e checker de integridade implementados. Writer, orquestração de rebuild, consumers e sincronização ainda pendentes; não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 

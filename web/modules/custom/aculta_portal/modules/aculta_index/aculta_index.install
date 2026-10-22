@@ -21,6 +21,7 @@ function aculta_index_schema(): array {
         'cursor_entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
         'cursor_entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
         'cursor_langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE, 'default' => ''],
+        'cursor_revision' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'last_error_code' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
         'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
@@ -113,4 +114,19 @@ function aculta_index_install(): void {
       'updated' => \Drupal::time()->getRequestTime(),
     ])
     ->execute();
+}
+
+/**
+ * Adds a compare-and-swap revision to resumable rebuild checkpoints.
+ */
+function aculta_index_update_10001(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('aculta_index_generation', 'cursor_revision')) {
+    $schema->addField('aculta_index_generation', 'cursor_revision', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
 }

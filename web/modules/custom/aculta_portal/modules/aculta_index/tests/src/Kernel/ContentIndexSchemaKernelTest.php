@@ -107,6 +107,34 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests a checkpoint resumes from the committed cursor and rejects races.
+   */
+  public function testCheckpointAdvancesWithCompareAndSwap(): void {
+    $generation = $this->container->get('aculta_index.generation_manager')->start();
+    $manager = $this->container->get('aculta_index.rebuild_checkpoint');
+
+    $initial = $manager->load($generation);
+    $this->assertSame('', $initial['entity_id']);
+    $this->assertSame(0, $initial['revision']);
+
+    $nextRevision = $manager->advance($generation, 'magazine', 'node', '42', $initial['revision']);
+    $this->assertSame(1, $nextRevision);
+    $current = $manager->load($generation);
+    $this->assertSame('magazine', $current['provider']);
+    $this->assertSame('node', $current['entity_type']);
+    $this->assertSame('42', $current['entity_id']);
+    $this->assertSame(1, $current['revision']);
+
+    try {
+      $manager->advance($generation, 'magazine', 'node', '40', $initial['revision']);
+      $this->fail('Expected a stale checkpoint writer to be rejected.');
+    }
+    catch (\RuntimeException) {
+      $this->assertSame('42', $manager->load($generation)['entity_id']);
+    }
+  }
+
+  /**
    * Tests an unvalidated generation cannot replace the active pointer.
    */
   public function testBuildingGenerationCannotActivate(): void {

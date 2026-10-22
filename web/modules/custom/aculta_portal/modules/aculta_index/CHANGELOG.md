@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.8 — checkpoint keyset com compare-and-swap
+
+- `ContentIndexRebuildCheckpointManager` retoma posição por provider, tipo e ID
+  de entidade, após cada lote ter sido gravado pelo futuro orquestrador.
+- Cada avanço exige a revisão lida; workers concorrentes com checkpoint antigo
+  recebem conflito e não substituem um cursor mais novo.
+- Adicionado `cursor_revision` ao schema e update hook idempotente 10001.
+- Kernel cobre avanço, recarga e recusa de checkpoint obsoleto.
+
 ## 0.1.0-dev.7 — propriedade exclusiva de projeção por bundle
 
 - O registry rejeita providers que disputem o mesmo tipo/bundle. O schema
