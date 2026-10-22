@@ -161,3 +161,101 @@ Ordem sugerida, depois das Fases 1–4:
   não importa classes do submódulo.
 - **Configuração:** mover configuração entre módulos pode gerar diferenças no Config Sync.
   A Fase 2 cobre isso.
+
+## Mapa das tarefas desta sessão
+
+O briefing de 2026-10-22 organiza a execução da Fase 1 à Fase 4 em tarefas
+numeradas. Este mapa liga cada tarefa à fase correspondente e registra o estado
+ao fim da sessão.
+
+| ID | Tarefa | Fase do plano | Commit | Estado |
+| --- | --- | --- | --- | --- |
+| A1 | Inventário da Fase 2 e anexo neste documento | Fase 2 | `909663c4` | concluída |
+| A2 | Casca do submódulo (`info.yml`, AGENTS, README, CHANGELOG, ROADMAP, TEST-MATRIX) | Fase 1 | — | pendente |
+| B1 | Mover `WikiController` e `WikiSearchFormBuilder` | Fase 2 | — | pendente |
+| B2 | Mover as três rotas com nomes e caminhos idênticos | Fase 2 | — | pendente |
+| B3 | Revisar pontos `wiki420` de domínio/purpose | Fase 2 | — | pendente |
+| B4 | Testes unitários dos componentes movidos | Fase 2 | — | pendente |
+| C1 | Atualizar regras de conteúdo e `AGENTS.md` do submódulo | Fase 3 | — | pendente |
+| C2 | Conferir a seção de bases legais da política | Fase 3 | — | pendente |
+| D1 | Inventário LGPD com as duas métricas planejadas | Fase 3 (gate) | — | pendente |
+| D2 | Catálogo e retenção instalada | Fase 4 | — | pendente |
+| D3 | `WikiProvider` e testes de publicação/revisão/importação | Fase 4 | — | pendente |
+| D4 | Teste de kernel do agregado diário (opcional) | Fase 4 | — | pendente |
+| E1 | Status final deste plano | Encerramento | — | pendente |
+| E2 | `git push` da branch | Encerramento | — | pendente |
+
+> **Retenção das métricas.** O briefing pede 90 dias para
+> `wiki.entries.published` e `wiki.entries.updated`. A documentação da
+> `aculta_statistics` descreve a primeira como instantânea. Vale o briefing, e a
+> correção da documentação fica registrada em E1.
+
+## Anexo — Inventário da Fase 2
+
+Levantamento feito com Grep em `web/modules/custom`, `web/themes/custom` e
+`config/sync`, excluindo `node_modules`, `vendor`, core e contrib. Classificação:
+**move** (vai para `aculta_wiki`), **fica no Portal** (domínio, purpose, tema ou
+configuração) e **revisar** (precisa de ajuste de contrato).
+
+### `WikiController`
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:28` | Declaração da classe | move | `git mv` para `aculta_wiki/src/Controller/` e namespace `Drupal\aculta_wiki\Controller` |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:192` | `_controller` da rota home | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:226` | `_controller` da rota de busca | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:234` | `_controller` da prévia | move | B2 move a rota inteira |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:162` | `Url::fromRoute('aculta_portal.wiki_search')` | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:67` | `Url::fromUserInput('/wiki/verbetes')` | move | Caminho servido por View; não muda |
+| `web/modules/custom/aculta_portal/src/Controller/ShopController.php:16` | Comentário cita `/wiki` como caminho de purpose | fica no Portal | Comentário de domínio; não é código da Wiki |
+
+### `WikiSearchFormBuilder`
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:15` | Declaração da classe | move | `git mv` para `aculta_wiki/src/Presentation/` |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:34` | Rota `aculta_portal.wiki_search` no formulário | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php:52` | Rota `aculta_portal.wiki_search_preview` | move | Nome de rota não muda |
+| `web/modules/custom/aculta_portal/aculta_portal.services.yml:211` | Definição do serviço | revisar | Definição vai para `aculta_wiki.services.yml`; o Portal passa a injetar a interface de forma opcional |
+| `web/modules/custom/aculta_portal/src/Presentation/DomainPresentationBuilder.php:64` | Tipo do construtor | revisar | Injetar `?WikiSearchFormBuilderInterface` com `@?aculta_wiki.presentation.wiki_search_form`; `wiki_search` fica `NULL` sem o submódulo |
+| `web/modules/custom/aculta_portal/tests/src/Unit/DomainPresentationContractTest.php:20` | Dados de purpose `wiki` | fica no Portal | Teste de contrato de apresentação |
+
+### `aculta_portal.wiki_` (nomes de rota)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:189` | Definição `aculta_portal.wiki_home` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:223` | Definição `aculta_portal.wiki_search` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:231` | Definição `aculta_portal.wiki_search_preview` | move | B2 move com o mesmo nome |
+| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php:191-193` | Atribui `_aculta_domain_purpose: wiki` às rotas | fica no Portal | Concern de domínio; os nomes são estáveis |
+| `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php:65` | `aculta_portal.wiki_home` em `PUBLIC_PORTAL_ROUTES` | fica no Portal | Concern de acesso público do Portal |
+| `web/modules/custom/aculta_portal/tests/src/Unit/DomainRoutePolicyTest.php:66` | Teste da política de rotas | fica no Portal | Cobre nomes estáveis, que não mudam |
+
+### `/wiki` (caminhos)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:190,224,232` | Caminhos `/wiki`, `/wiki/busca`, `/wiki/busca/previa` | move | Caminhos idênticos em `aculta_wiki.routing.yml` |
+| `web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php:30,37` | `FRONT_PATHS['wiki'] = '/wiki'` | fica no Portal | Concern de domínio/purpose |
+| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php:237` | Comentário cita `/wiki` | fica no Portal | Comentário de domínio |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.routing.yml:10` | `/estatisticas/wiki/{node}/leitura` | fica | Beacon de leitura da estatística; URL própria, não é rota da Wiki |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Hook/WikiReadHooks.php:32` | Anexa biblioteca de leitura | fica | Estatística de leitura já existente |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel/WikiReadKernelTest.php:106` | URL do beacon | fica | Teste da estatística |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Unit/WikiReadControllerTest.php:128` | URL do beacon | fica | Teste da estatística |
+| `web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php:244` | Host `wiki420.aculta.org` | fica | Lista de hosts esperados; domínio não muda |
+| `config/sync/views.view.wiki_entries.yml:148` | Caminho `wiki/verbetes` | fica | View de configuração; `config/sync` não muda de dono nesta sessão |
+| `web/themes/custom/aculta420/src/Hook/ThemeHooks.php:260-274` | Marca `wiki420` no cabeçalho | fica | Tema; consome a chave neutra do Portal |
+| `web/themes/custom/aculta420/components/patterns/wiki-entry/wiki-entry.default.story.yml:5` | URL de exemplo | fica | Story do tema |
+
+### Fora dos módulos (documentação a revisar)
+
+| Arquivo:linha | Ocorrência | Classificação | Ação |
+| --- | --- | --- | --- |
+| `docs/operations/AGENT-CONTENT.md:83` | “Não existe um módulo de Wiki habilitado” | revisar | C1 atualiza o estado real: o código existe, mas o módulo não está habilitado |
+| `docs/operations/AGENT-CONTENT.md:87` | Regra de mudança de escopo | revisar | C1 registra a casca e a pendência de habilitação |
+| `scripts/institution/politica-de-privacidade.html:17` | Base legal da Wiki | fica | C2 confere a redação; não inventar base |
+| `docs/compliance/LGPD-INVENTARIO.md:53,67` | Métricas agregadas e pendência da Wiki | revisar | D1 lista as duas métricas; a base legal continua com o responsable |
+| `docs/portal/WIKI.md` | Apresentação e limites da Wiki420 | revisar | Atualizar apenas se o caminho dos componentes mudar |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/INTEGRATIONS.md` | “a Wiki não é módulo”; provedor `WikiProvider` | revisar | C1/E1 corrigem o estado e registram a divergência de retenção |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/METRIC-CATALOG.md` | Retenção de `wiki.entries.published` como “instantâneo” | revisar | Divergência com o briefing (90 dias para ambas); registrar em E1 |
+| `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/CURRENT-STATE.md` | “a Wiki não é módulo” | revisar | C1/E1 corrigem o estado |
