@@ -12,6 +12,8 @@ use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,6 +27,7 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
     private readonly MessengerInterface $submissionMessenger,
+    private readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }
@@ -38,6 +41,7 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time'),
       $container->get('messenger'),
+      $container->get('aculta_forum.post_thread_builder'),
     );
   }
 
@@ -122,8 +126,12 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       : $this->t('Sua publicação foi atualizada.');
     $this->submissionMessenger->addStatus($message);
     $url = $topic->toUrl('canonical');
-    if ($this->entity->isPublished()) {
-      $url->setOption('fragment', 'forum-post-' . $this->entity->id());
+    if ($this->entity instanceof ForumPost && $this->entity->isPublished()) {
+      $page = $this->threadBuilder->getPageForPost($topic, $this->entity);
+      if ($page !== NULL) {
+        $url->setOption('query', $this->threadBuilder->getTopicPagerQuery($page));
+        $url->setOption('fragment', 'forum-post-' . $this->entity->id());
+      }
     }
     $form_state->setRedirectUrl($url);
     return $result;

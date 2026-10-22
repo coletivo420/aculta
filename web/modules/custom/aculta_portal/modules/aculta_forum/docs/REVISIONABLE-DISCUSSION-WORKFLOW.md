@@ -49,8 +49,9 @@ respostas das discussões públicas `aculta_forum_topic`.
   revisão e acesso do destinatário. Rascunho, revisão não publicada e denúncia
   nunca são expostos pela página pública ou por cache compartilhado.
 - Apresentação ocorre dentro da página canônica do tópico; links de post apontam
-  para o slug português do tópico com fragmento estável do post. Não criar
-  slug público baseado em ID numérico.
+  para o slug português do tópico, pager que contém o post e fragmento estável.
+  Após publicar/editar, o formulário também redireciona para essa página. Não
+  criar slug público baseado em ID numérico.
 - Anexos, Media Gallery, flags, Search API, progresso de leitura e avisos são
   associados ao novo post pelo ID da entidade. Consumidores atuais que dependem
   de Comment devem migrar antes de remover os Comments do Fórum.

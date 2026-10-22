@@ -1,3 +1,9 @@
+## `0.1.0-dev.222` — redirecionar post publicado à página correta
+
+- Após publicar ou editar um post publicado, o formulário calcula a página da
+  thread e redireciona ao pager limpo do tópico com a âncora estável. Sem
+  Runtime ou testes automatizados.
+
 ## `0.1.0-dev.221` — isolar também o link de não lidas
 
 - `ForumUnreadPosts` usa o mesmo estado de pager limpo do tópico empregado pela
