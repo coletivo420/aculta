@@ -54,19 +54,33 @@ final class ForumPublicPostStatistics {
       $result = $this->database->query(
         'SELECT post.topic_target_id, COUNT(*) AS post_count,
           MAX(post.changed) AS last_activity,
-          (SELECT latest.id FROM {aculta_forum_post_field_data} latest
-            WHERE latest.topic_target_id = post.topic_target_id
-              AND latest.status = 1
-              AND latest.default_langcode = 1
-            ORDER BY latest.changed DESC, latest.id DESC
-            LIMIT 1
-          ) AS last_post_id
+          MAX(latest_post.last_post_id) AS last_post_id
         FROM {aculta_forum_post_field_data} post
+        LEFT JOIN (
+          SELECT latest.topic_target_id, MAX(latest.id) AS last_post_id
+          FROM {aculta_forum_post_field_data} latest
+          INNER JOIN (
+            SELECT topic_target_id, MAX(changed) AS last_changed
+            FROM {aculta_forum_post_field_data}
+            WHERE topic_target_id IN (:latest_topic_ids[])
+              AND status = 1
+              AND default_langcode = 1
+            GROUP BY topic_target_id
+          ) latest_change
+            ON latest_change.topic_target_id = latest.topic_target_id
+            AND latest_change.last_changed = latest.changed
+          WHERE latest.status = 1
+            AND latest.default_langcode = 1
+          GROUP BY latest.topic_target_id
+        ) latest_post ON latest_post.topic_target_id = post.topic_target_id
         WHERE post.topic_target_id IN (:topic_ids[])
           AND post.status = 1
           AND post.default_langcode = 1
         GROUP BY post.topic_target_id',
-        [':topic_ids[]' => $missingIds],
+        [
+          ':latest_topic_ids[]' => $missingIds,
+          ':topic_ids[]' => $missingIds,
+        ],
       );
 
       foreach ($result as $row) {

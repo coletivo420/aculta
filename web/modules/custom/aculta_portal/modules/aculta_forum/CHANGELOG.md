@@ -1,3 +1,11 @@
+## `0.1.0-dev.229` — agregar último post sem subconsulta correlacionada
+
+- A consulta da página agrega a data mais recente por tópico e junta o ID de
+  desempate por uma relação agregada, em vez de executar uma subconsulta
+  correlacionada para cada tópico. Filtros de publicação/idioma, contagem,
+  ordenação de desempate e acesso permanecem iguais. Lint e gates estáticos;
+  sem testes automatizados ou alteração Runtime.
+
 ## `0.1.0-dev.228` — preparar autores uma vez por View
 
 - A pré-carga de estatísticas, ForumPosts, contas e autores históricos da página
