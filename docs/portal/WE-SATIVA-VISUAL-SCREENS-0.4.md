@@ -65,3 +65,9 @@ Mobile 320/360/390px: uma coluna, campos ≥16px, alvos de toque preferencialmen
 ## Correção de ownership V-0.4-D — fila e moderação no GanjaLab
 
 **Decisão superior às descrições antigas V09:** a [janela de moderação Wiki](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md) pertence ao **GanjaLab (`aculta_studio`)**, não ao WE SATIVA. V09 designa agora a experiência GanjaLab, e V10–V12 são devolutivas, ajuda e recursos do colaborador no WE SATIVA. O subkernel Wiki mantém workflow, fila lógica, acesso e dados; o Studio só apresenta e delega. Nenhum painel ou transição de content_editor deve ser criado dentro do WE SATIVA. Plano V-0.4-D-A–R antes de Runtime.
+
+## Decisão normativa: ACULTA Studio (2026-10-22)
+
+The statement 'independent of GanjaLab' means **different user experience and permissions**, not independent of aculta_studio. WE SATIVA, GanjaLab and GanjaLab420 belong to the ACULTA Studio interface platform and share its neutral UI contracts; user flows remain distinct.
+
+[Contrato e roadmap transversal](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
