@@ -67,7 +67,6 @@ final class StudioListingBuilder {
       $cursor = is_string($rawCursor) && preg_match('/^([0-9]{1,12})-([1-9][0-9]{0,12})$/D', $rawCursor, $parts)
         ? [(int) $parts[1], (int) $parts[2]]
         : NULL;
-      $seen = 0;
       $finished = FALSE;
       // Keep work per HTTP request bounded, including sparse state filters.
       for ($batch = 0; $batch < 10 && count($nids) < 20; $batch++) {
@@ -99,7 +98,6 @@ final class StudioListingBuilder {
             continue;
           }
           $cursor = [$node->getChangedTime(), (int) $node->id()];
-          $seen++;
           if (!$node->access('view', $account)) {
             continue;
           }
