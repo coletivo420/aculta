@@ -540,6 +540,43 @@ genérico do snapshot nega `view` e `create` mesmo ao administrador, enquanto a
 rota pública por código opaco permanece disponível. Kernel: 3 testes / 84
 assertions PASS no MariaDB dedicado; 38 depreciações upstream.
 
+## Auditoria de pendências — Comments e acesso de Group (2026-10-22)
+
+Somente registro: nenhum código, configuração ou dado foi alterado. Foram lidos
+`README.md` e `CHANGELOG.md` de `aculta_lms_h5p`, `aculta_lms_resources` e
+`aculta_lms_messenger`.
+
+- **`aculta_lms_h5p`** (sem versão no manifesto; CHANGELOG datado de 2026-10-21):
+  - Comments: as entradas de F15 que davam a revisão visual do tópico sob o
+    player como pendente foram superadas pelo README e pelos registros
+    seguintes. A conversa H5P–Fórum foi validada no Kernel (isolamento por
+    conteúdo/curso/turma, acesso ao tópico) e em smoke X11 autenticado, que
+    confirmou o tópico correto sob o player e o Node em `cursos` com HTTP 200;
+    curso, atividade e tópico temporários foram removidos. Sem pendência aberta.
+  - Acesso de Group: o contrato (curso/turma, matrícula, Entity Access e
+    permissões do Group) está coberto por Kernel para o resolver de discussão,
+    o formatter de PDF e o estado de tentativa, além da homologação no Runtime
+    de teste. Sem pendência aberta em README/CHANGELOG; resta apenas PHP 8.5
+    não validado, fora do escopo desta auditoria.
+- **`aculta_lms_resources`** (0.1.0-dev.2):
+  - Comments: nenhuma pendência; o módulo referencia conteúdo de origem e não
+    cria Comments.
+  - Acesso de Group: a regra "membros ativos e educadores com permissão
+    contextual, somente enquanto a galeria estiver vinculada ao curso" é provada
+    em Kernel, mas instalação dos campos no Runtime, smoke autenticado e revisão
+    visual continuam pendentes (README, seção "Estado"; CHANGELOG dev.1 e
+    dev.2). Esses itens bloqueiam RC.
+- **`aculta_lms_messenger`** (0.1.0-dev.15):
+  - Comments: o aviso de retorno ao educador após comentário publicado (dev.6)
+    e o aviso de resposta pendente (dev.4) têm cobertura Unit, mas
+    "armazenamento Kernel integrado, visual e Runtime permanecem DEFERRED" —
+    pendência aberta.
+  - Acesso de Group: esses dois avisos revalidam permissão contextual de
+    correção, matrícula e curso, mas a revalidação só foi exercitada em Unit.
+    A revisão visual/acessível da gaveta e a repetição do smoke com sessão
+    autenticada após o aceite vigente seguem pendentes (README, seções "Estado"
+    e "Validação"; CHANGELOG, "Registro de validação Runtime").
+
 ## Ordem, commits e status
 
 Cada fase é uma unidade pequena e commitada na branch autorizada. PR só quando
