@@ -4,7 +4,7 @@
 
 ## Baseline confirmado
 
-HEAD na abertura da fase: `1ecff3a455f81fa67580579da215a3d82a441176`. A árvore registra **41 Twig**, **32 CSS** e **65 `.story.yml`** em `components/`. Estes números são inventário de caminhos; **7 assets foram lidos neste lote**: 5 CSS e 3 stories (oito arquivos ao todo). Os Twig do lote anterior B6-S1a seguem como base, sem alegar reinspeção completa.
+HEAD na abertura da fase: `1ecff3a455f81fa67580579da215a3d82a441176`. A árvore registra **41 Twig**, **32 CSS** e **65 `.story.yml`** em `components/`. Estes números são inventário de caminhos; **8 assets foram lidos neste lote**: 5 CSS e 3 stories. Os Twig do lote anterior B6-S1a seguem como base, sem alegar reinspeção completa.
 
 ## Resultado por asset lido
 
