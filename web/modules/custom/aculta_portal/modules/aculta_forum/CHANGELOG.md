@@ -22,6 +22,11 @@
   o formato `forum`. Após confirmar zero Comments nesse bundle, foi sincronizado
   somente esse objeto de configuração; o Runtime agora restringe o campo ao
   formato `forum`.
+- A configuração central `aculta_portal.user_upload` também estava ausente no
+  Runtime. Foi criada por importação parcial do Sync, registrando a aba Fórum
+  com herança da política global. A comparação confirmou os mesmos nove formatos
+  e limite de 10 MiB efetivos antes e depois; agora o override pode ser
+  administrado explicitamente.
 - O Runtime ainda tem zero `ForumPost` e zero Media `forum_attachment`; o fluxo
   com post/arquivo e a revisão visual seguem pendentes. Nenhuma fixture ou teste
   automatizado foi executado.

@@ -13,6 +13,9 @@
 - O bundle legado dedicado tem zero Comments. O único campo `comment_body` foi
   sincronizado parcialmente para permitir apenas o formato `forum`, conforme o
   CKEditor e o Sync; não houve alteração de outros bundles de comentário.
+- `aculta_portal.user_upload` foi criado pelo import parcial do Sync; a aba
+  Fórum herda a política global. O serviço efetivo continua com os mesmos nove
+  formatos e 10 MiB, e o objeto ativo coincide com o Sync.
 - Há zero `ForumPost` e zero Media `forum_attachment`; submissão, moderação,
   preview privado, fallback e layout seguem sem validação visual. Nenhuma fixture
   ou importação global; nenhum teste automatizado executado.
