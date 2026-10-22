@@ -111,3 +111,7 @@ O [plano B1-02](theme-ux-0.8-b1-02-ownership-h1.md) autoriza Context Header SDC 
 ## Conclusão de código B1-02d, abertura B1-02e/B2
 
 `aculta420:context-header` possui dois consumidores integrados por código: Wiki verbete completo e dashboard `/ganjalab420`. A renderização contextual H1 e a supressão seletiva do page-title estão documentadas na [matriz B1-02e](theme-ux-0.8-b1-02e-runtime-validation.md). Não marcar homologação sem testes. Próximo planejamento visual é B2 (abas de contexto com SDC/UI Suite, sem reutilizar `product-tabs` para navegação de rotas).
+
+## Situação de transição B2 → B3
+
+B2 tem dois consumidores conectados em código (GanjaLab e Wiki) mas permanece pendente de homologação Runtime; ver [B2-05](theme-ux-0.8-b2-05-static-gates.md). A próxima fase B3 inicia por [auditoria de feedback](theme-ux-0.8-b3-feedback-audit.md), reutilizando somente SDCs alinhados a UI Suite, não copiando alertas Drupal e preservando o shell global.
