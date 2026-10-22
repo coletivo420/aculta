@@ -342,3 +342,7 @@ A trilha THEME-UX 0.8 passou a **proibir reutilização direta de padrões legad
 ## THEME-UX 0.8-B1 — Auditoria estática de cabeçalhos
 
 [Relatório de inspeção de breadcrumb e headings](theme-ux-0.8-b1-source-audit.md): confirmado template de breadcrumb existente, CSS tokenizado e limites semânticos de `content-section`/`product-tabs`. Próximo gate B1 depende de DOM e dois consumidores reais; nada autoriza substituir Institution Bar/Domain Header ou criar um SDC sem uso.
+
+## Mudança normativa do Context Header — H1 gerenciado pelo SDC
+
+O H1 nativo **não precisa ser preservado visualmente**: em consumidores adotantes, o `Context Header` poderá produzir o único H1 do documento, com TitleResolver/page title do Core permanecendo fonte dos dados e remoção da duplicação pela composição de render arrays. A migração é seletiva, não global. Ver [contrato revisado](theme-ux-0.8-m2-b1-context-header.md) e [próxima fase B1-02](theme-ux-0.8-b1-02-ownership-h1.md). Sem alteração funcional nesta etapa.
