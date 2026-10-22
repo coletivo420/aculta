@@ -238,3 +238,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-X
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 
 [Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../docs/portal/GANJALAB-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
+
+## D-A.2-T — progresso e próximos gates
+
+D-A.2-T: a base de listagem do GanjaLab ganhou isolamento de cache por usuário e guarda por revisão; revisão visual D-B permanece planejada, condicionada a provider seguro. Não mascarar com SDC problemas de grants; preservar shell multidomínio e mobile-first.
