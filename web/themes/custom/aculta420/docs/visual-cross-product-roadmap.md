@@ -128,3 +128,8 @@ O inventário da árvore da PR #297 confirmou **41 SDCs** no tema. A [matriz B6-
 ## B6-S1a — lote prioritário de contratos (2026-10-22)
 
 [Relatório B6-S1a](theme-ux-0.8-b6-s1a-contract-findings.md): inspecionados 13 contratos SDC e 7 templates Twig, com matriz por componente e três findings de seguimento. Os 41 SDCs e 65 stories foram contados por caminhos na árvore. **Não representa auditoria integral, validação do schema Core nem gate Runtime.** Próxima etapa B6-S1a-L2: metadados restantes e Twig/CSS/stories individualizados, depois consumidores B6-S1b e correções B6-S2. Permanecem inegociáveis o shell multidomínio e o reuso somente por SDC/UI Suite.
+
+
+## B6-S1a-L2 — metadados (2026-10-22)
+
+[Auditoria de metadados L2](theme-ux-0.8-b6-s1a-l2-metadata-audit.md): os 41 arquivos `.component.yml` foram lidos em dois lotes; a árvore registra 41 Twig, 32 CSS e 65 stories, ainda sem inspeção exaustiva do conteúdo. **Quatro componentes de doação referenciam o schema SDC legado** e exigem migração controlada em B6-S2. Próximo slice: **B6-S1a-L3**, revisão integral Twig/CSS/stories; B6-R permanece pendente de homelab.
