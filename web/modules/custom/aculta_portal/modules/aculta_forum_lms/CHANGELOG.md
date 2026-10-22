@@ -1,3 +1,18 @@
+## `0.1.0-dev.30` — Kernel de instalação do bundle LMS — 2026-10-22
+
+- `LmsTopicBundleInstallKernelTest` instala a configuração padrão do adaptador
+  a partir dos pré-requisitos reais: tipos de Group `lms_course`/`lms_class` do
+  contrib LMS e o Comment/campo de discussão exportados por `aculta_forum`.
+- Confere `aculta_lms_topic` (revisões e preview), o campo
+  `field_aculta_discussion`, os displays default/full/teaser e as duas relações
+  Group Node com cardinalidade 1 por entidade. O config opcional de H5P fica
+  fora quando `aculta_lms_h5p` não está ativo.
+- Só entidades de configuração são instaladas; `aculta_forum_lms.settings` não
+  é criado porque o módulo não está habilitado no Kernel e seu schema não é
+  registrado. A configuração simples segue coberta pelo teste de permissões.
+- Teste: 4 testes / 128 asserções PASS. Depreciações de Core/contrib
+  permanecem as já registradas.
+
 ## `0.1.0-dev.29` — configura janela de edição das discussões LMS — 2026-10-21
 
 - Adiciona configuração administrativa da janela do autor, padrão de 10 minutos desde a primeira publicação; editar não reinicia o prazo e zero desativa edição do autor.
