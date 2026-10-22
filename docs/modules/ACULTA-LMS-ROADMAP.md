@@ -640,3 +640,7 @@ A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora 
 ## UX de acompanhamento de aprendizagem — G420-UX 0.5
 
 [Minha Jornada de Aprendizagem](../portal/GANJALAB420-LEARNING-JOURNEY-VISUAL.md) organiza progresso, status, próximas atividades e certificados em telas mobile-first usando fontes nativas LMS/Group e evitando dashboards duplicados. Planejamento visual apenas; preservar o nome técnico `aculta_lms` e os gates existentes.
+
+## GanjaLab420 — turmas e comunidade (UX 0.6)
+
+[Minhas Turmas e Comunidade](../portal/GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) especifica navegação pessoal, mural, discussões e participantes com acesso Group/Fórum contextual, reutilizando Messenger e User. Sem novo feed, membership, fórum ou entidade. Esta etapa é planejamento visual e não altera o status funcional do LMS.
