@@ -1,3 +1,31 @@
+## `0.1.0-dev.39` — aprovar/rejeitar LMS pela entity_operations no Runtime — 2026-10-22
+
+- Fecha a verificação de Runtime das dev.109–111 com POST real a partir dos
+  links de `hook_entity_operation`. Fixture temporária: Curso, Turma,
+  estudante membro, Educador com `lms_teacher` e membership no curso, tópico
+  com `field_aculta_discussion` em `Open` e Comment pendente.
+- A fila pendente do Educador (200) traz o Comment e os dois links
+  `moderacao/approve` e `moderacao/reject` com `destination` para a fila.
+- Confirmação de aprovação: GET 200 com o formulário
+  `aculta_forum_lms_comment_moderation` e checkbox `confirm` obrigatório.
+  POST sem marcar o checkbox retorna 200 com o erro de campo obrigatório e
+  não altera o Comment.
+- POST de aprovação com `confirm=1`: 303 para a fila pendente, Comment
+  publicado (`status: 1`) e `field_aculta_rejected` zerado. O estudante passa a
+  ver o texto no tópico; a fila pendente deixa de listá-lo e a de publicados
+  passa a listá-lo.
+- Revalidação de status: nova confirmação de aprovação retorna 403, a de
+  rejeição retorna 200. POST de rejeição com `confirm=1`: 303 para a fila
+  pendente, Comment despublicado (`status: 0`) com
+  `field_aculta_rejected: 1`. O estudante deixa de ver o texto; a fila de
+  rejeitados passa a listá-lo.
+- Revalidação após rejeição: nova confirmação de rejeição 403, a de aprovação
+  200. Estudante e anônimo recebem 403 nas confirmações e nas filas.
+- Fixture, memberships, relationships e sessões removidos; o Runtime voltou a
+  1 curso preexistente, 0 tópicos LMS e 0 Comments. Recibos em
+  `/home/aculta/private/aculta/forum-lms-t10-20261022/smoke-result.json` e
+  `cleanup-result.json`.
+
 ## `0.1.0-dev.38` — formulário de Comment LMS do estudante aceito no Runtime — 2026-10-22
 
 - Fecha o DEFERRED de Runtime da dev.98 com envio real (POST) no tópico da

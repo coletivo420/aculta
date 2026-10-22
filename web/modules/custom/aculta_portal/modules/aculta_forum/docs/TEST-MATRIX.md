@@ -1,3 +1,36 @@
+## aculta_forum_lms 0.1.0-dev.39 — aprovar/rejeitar LMS pela entity_operations
+
+- Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
+  `https://conta.aculta.toca.net.br`), GET e POST HTTP com os links de
+  `hook_entity_operation`. Fixture temporária com Curso, Turma, estudante
+  membro, Educador com `lms_teacher` e membership no curso, tópico em `Open` e
+  Comment pendente (`cid` 121, `status: 0`).
+- Cobre a confirmação POST, a revalidação de status e a negação de acesso das
+  dev.109–111.
+
+| Ator / rota | GET | POST |
+| --- | --- | --- |
+| Educador — confirmação de aprovação, antes de aprovar | 200 | 200 sem `confirm` (erro de obrigatório, estado inalterado); 303 com `confirm=1` |
+| Educador — confirmação de aprovação, depois de aprovado | 403 | — |
+| Educador — confirmação de rejeição, depois de aprovado | 200 | 303 com `confirm=1` |
+| Educador — confirmação de rejeição, depois de rejeitado | 403 | — |
+| Estudante — confirmações e fila pendente | 403 | — |
+| Anônimo — confirmações e fila pendente | 403 | — |
+
+- Estado observado: aprovação grava `status: 1` e `field_aculta_rejected: 0`
+  e move o Comment da fila pendente para a de publicados; o estudante passa a
+  ver o texto. Rejeição grava `status: 0` e `field_aculta_rejected: 1` e move
+  o Comment para a fila de rejeitados; o estudante deixa de ver o texto. As
+  duas transições redirecionam com 303 para a fila pendente.
+- POST sem o checkbox `confirm` retorna 200 com "O campo Confirmo aprovar
+  este comentário. é obrigatório." e não altera o Comment.
+- Cleanup via Entity API removeu Comment, Node, relationships, memberships,
+  Groups e os dois usuários; sessões apagadas. Pós-condição: 1 curso
+  preexistente, 0 tópicos LMS, 0 Comments e 0 usuários `t10.*`. Recibos
+  privados em `/home/aculta/private/aculta/forum-lms-t10-20261022/`.
+- RUNTIME STATUS: PASS para aprovação, rejeição, confirmação obrigatória e
+  negação de acesso.
+
 ## aculta_forum_lms 0.1.0-dev.38 — formulário de Comment LMS do estudante
 
 - Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por
