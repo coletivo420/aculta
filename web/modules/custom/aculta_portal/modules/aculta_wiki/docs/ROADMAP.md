@@ -72,3 +72,8 @@ A [auditoria C01-A](../../../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-
 ## C01-B0 — participação de e-mail confirmado e moderação (2026-10-22)
 
 **Decisão aprovada:** todo usuário com e-mail confirmado poderá contribuir na Wiki; somente `content_editor` modera/publica sugestões. [Contrato C01-B](../../../../../../../docs/portal/WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) verifica que `user.role.email_confirmed.yml` já possui criação/edição de conteúdo próprio e envio ao estado `review`, sem publicar. Não confundir conta meramente `authenticated` com `email_confirmed`. Corrige-se a inferência incompleta da C01-A; não duplicar papel nem ampliar `edit any`. **Próximos:** C01-B1 conferir atribuição efetiva da confirmação de e-mail e Entity Access; C01-B2 registrar ADR de propostas em verbetes alheios; depois C01-C1 editor de próprios verbetes e C01-C2 microtarefas. C01-R no homelab. Autosave permanece somente futuro; nenhuma permissão, rota ou endpoint foi mudado.
+
+
+## Prioridade: primeira publicação e moderação Wiki (WES-MOD 0.1)
+
+[Plano de moderação da Wiki e WE SATIVA](WE-SATIVA-MODERATION-PLAN.md): qualquer conta com e-mail confirmado pode **criar** verbete; o **primeiro verbete** exige revisão antes de publicação, tal como a primeira participação no Fórum. A transição de publicação pertence aos `content_editor`; novos verbetes e sugestões continuam moderados no workflow vigente. Fila Wiki própria, com contratos neutros compartilhados pelo `aculta_portal`. Antes de novas inspeções visuais: auditar consumidores, registrar ADR do kernel, evitar duplicações e testar a regra de primeira publicação. Não reutilizar contagem de comentários do Fórum para verbetes.
