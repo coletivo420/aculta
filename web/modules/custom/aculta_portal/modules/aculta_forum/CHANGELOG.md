@@ -102,6 +102,11 @@
   `/home/aculta/private/aculta/visual-tests/forum-categories-20261022`.
   O banner global de consentimento aparece sobre o conteúdo até a escolha da
   pessoa; modo escuro, zoom e aparelho real continuam pendentes. Sem testes.
+- A revisão posterior do Fórum em 2026-10-22 confirmou 15/15 verificações
+  Firefox ESR/X11 em 390/768/1024 px, com capturas claras e escuras e sem
+  overflow. A sobreposição foi corrigida no tema ACULTA420 0.6.1-dev.3;
+  capturas inspecionadas em 390 px (claro/escuro) e 1024 px (escuro) mostram os
+  cartões livres. Zoom e aparelho real continuam pendentes.
 
 ## `0.1.0-dev.212` — aplicar agrupamento no Sync e em instalações existentes
 

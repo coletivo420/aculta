@@ -13,8 +13,10 @@ liga à página de discussões. A View `aculta_forum_categories` agrupa os cart�
 por categoria-pai, com uma seção “Categoria raiz” para termos de topo. A
 atualização `9003` aplica a View em instalações existentes; títulos de grupo
 são H2 e links de categoria, H3. Firefox/X11 confirma o reflow sem overflow em
-320–1440 CSS px. Modo escuro, zoom, aparelho real e contadores de tópicos
-continuam pendentes.
+320–1440 CSS px. Após o ajuste do banner global em ACULTA420 0.6.1-dev.3,
+Firefox/X11 capturou `/categorias` em claro e escuro a 390, 768 e 1024 CSS px;
+as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
+1024 px escuro. Zoom, aparelho real e contadores de tópicos continuam pendentes.
 `/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
 posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
 vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros
