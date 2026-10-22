@@ -7,10 +7,12 @@
   do Core.
 - A dependência do viewer fica explícita no manifest. PDF permanece como link
   até a etapa prevista para integração com o leitor PDF.
-- Smoke no Runtime de teste (purpose `forum`): cache rebuild e descoberta do
-  formatter e dos dois builders concluíram; não há Media `forum_attachment`,
-  então arquivos reais e revisão visual seguem pendentes. Nenhuma configuração
-  foi importada nem fixture criada; nenhum teste automatizado foi executado.
+- No Runtime de teste (purpose `forum`), foram importados seletivamente os sete
+  objetos de configuração do bundle e campos de `forum_attachment`, após
+  confirmar que estavam ausentes e não havia Media desse tipo. O formatter e
+  builders foram descobertos após rebuild; nenhum anexo real existe ainda,
+  então preview de arquivo e revisão visual seguem pendentes. Sem import global,
+  fixture ou teste automatizado.
 
 ## `0.1.0-dev.180` — preparar migração de denúncias para posts
 
