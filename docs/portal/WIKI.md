@@ -120,3 +120,8 @@ O contrato futuro deverá limitar a consulta ao bundle/hospedeiro da Wiki e
 respeitar o acesso do verbete. Revisões e edição editorial não entram nessa
 fila. A rota só será ativada junto do provider Wiki e após validação de acesso;
 não existe atualmente um endpoint administrativo Wiki de comentários.
+
+
+## Planejamento visual Wiki420 — W420-UX 0.1.0-dev.1
+
+A especificação transversal das telas Home, busca, categoria, verbete, histórico, discussão e contribuição está em [WIKI420-VISUAL-EXPERIENCE.md](WIKI420-VISUAL-EXPERIENCE.md). O documento é **planejamento**: reaproveita os SDCs existentes do ACULTA420, exige UI Patterns/UI Styles e preserva Institution Bar + Domain Header, com a busca Wiki já integrada. Não cria novas rotas, interfaces funcionais ou providers sem auditoria.
