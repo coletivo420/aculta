@@ -120,7 +120,11 @@ final class WikiController extends ControllerBase {
       $build['results'] = $results;
     }
     else {
-      $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')];
+      $build['empty'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:empty-state',
+        '#slots' => ['message' => ['#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')]],
+      ];
     }
     return $build;
   }
