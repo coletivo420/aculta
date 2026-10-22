@@ -5,6 +5,15 @@ discussion-progress:
     - core/drupal
     - core/once
 
+forum-post-history:
+  js:
+    js/forum-post-history.js: {}
+  dependencies:
+    - core/jquery
+    - core/once
+    - core/drupal
+    - history/api
+
 ckeditor5.attachment:
   js:
     js/ckeditor5/acultaforum-attachment.js: {}

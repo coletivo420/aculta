@@ -7,7 +7,11 @@
   Drupal.behaviors.acultaDiscussionProgress = {
     attach(context) {
       once('aculta-discussion-progress', '[data-aculta-discussion-thread]', context).forEach((thread) => {
-        const messages = Array.from(thread.querySelectorAll('article.js-comment[id]'));
+        const messages = Array.from(
+          thread.querySelectorAll(
+            'article.js-comment[id], article.aculta-forum-post[id]',
+          ),
+        );
         if (messages.length < 2) {
           return;
         }

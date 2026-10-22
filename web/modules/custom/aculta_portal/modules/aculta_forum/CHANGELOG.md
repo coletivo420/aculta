@@ -1,3 +1,13 @@
+## `0.1.0-dev.206` — incluir ForumPost no progresso de leitura
+
+- A thread revisionável publica o NID do tópico e timestamp público de cada
+  post. Para contas autenticadas, um comportamento cliente usa os recibos da API
+  History para aplicar `.new`; a navegação de progresso reconhece posts e
+  Comments. Dados pessoais de leitura não são renderizados no HTML cacheável.
+- A lista `/discussoes/nao-lidas` e sua contagem continuam cobrindo Comments:
+  os plugins History consultam `comment_field_data` e
+  `comment_entity_statistics`, não `ForumPost`. Sem teste ou mudança Runtime.
+
 ## `0.1.0-dev.205` — integrar a primeira publicação de ForumPost às conquistas
 
 - `aculta_game 0.1.0-dev.16` reutiliza o trigger `forum_comment` quando um post

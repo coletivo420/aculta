@@ -68,8 +68,14 @@ final class ForumPostThreadBuilder {
       '#weight' => 90,
       '#attributes' => [
         'class' => ['aculta-forum-revisionable-posts'],
+        'data-aculta-discussion-thread' => '',
+        'data-history-node-id' => (string) $topic->id(),
       ],
     ];
+    $build['#attached']['library'][] = 'aculta_forum/discussion-progress';
+    if ($this->currentUser->isAuthenticated()) {
+      $build['#attached']['library'][] = 'aculta_forum/forum-post-history';
+    }
     if ($context->getWriteAccess()->isAllowed()) {
       $build['actions']['create'] = Link::fromTextAndUrl(
         new TranslatableMarkup('Responder à discussão'),
@@ -162,6 +168,7 @@ final class ForumPostThreadBuilder {
       $attributes = [
         'id' => 'forum-post-' . $postId,
         'class' => ['aculta-forum-post'],
+        'data-aculta-forum-post-timestamp' => (string) $post->getCreatedTime(),
       ];
       $build['posts'][$postId] = [
         '#type' => 'html_tag',

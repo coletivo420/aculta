@@ -103,15 +103,17 @@ público do novo bundle está ativo na raiz do Runtime e `/criar-topico` verific
 Entity Create Access. Releases Portal, User e tema conservam linhas próprias;
 o roadmap detalha as próximas entregas.
 
-A lista personalizada `/discussoes/nao-lidas` também mostra o número de novas
-respostas por tópico e liga diretamente à primeira resposta não lida. Essa
-capacidade usa o campo `node_new_comments` do módulo History, apenas nessa View
-autenticada com cache desativado; o campo esconde contagens vazias.
+A lista personalizada `/discussoes/nao-lidas` mostra o número de novos Comments
+por tópico e liga diretamente ao primeiro Comment não lido. Essa capacidade usa
+o campo `node_new_comments` do History apenas nessa View autenticada com cache
+desativado; o campo esconde contagens vazias. A View ainda não conta posts
+revisionáveis: os plugins instalados leem as tabelas de Comment.
 
-Na página de discussão, o controle “Não lidas” da barra de progresso depende
-somente da classe `.new` que o History aplica aos Comments renderizados para a
-conta autenticada. Ele permanece oculto sem uma mensagem marcada; usa o mesmo
-salto de progresso e não mantém contagem, timestamp ou histórico paralelo.
+Na página de discussão, o controle “Não lidas” reconhece a classe `.new` nos
+Comments marcados pelo History e nos ForumPosts comparados no cliente ao recibo
+de leitura do tópico. Ele permanece oculto sem mensagem não lida renderizada;
+usa o mesmo salto de progresso e não mantém contagem, timestamp ou histórico
+paralelo. O marcador de ForumPost só é carregado para contas autenticadas.
 ## Administração contextual de comentários
 
 A View `aculta_forum_admin_comments` mantém páginas próprias em
