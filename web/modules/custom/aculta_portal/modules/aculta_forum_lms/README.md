@@ -155,3 +155,9 @@ upstream consultada; o fecho foi conferido pelos metadados instalados das
 extensões e por `core.extension`. Na dev.13 o ciclo de ativação foi executado
 no Runtime após revisão do estado limpo; a desinstalação não foi necessária.
 A autorização no Runtime e a reconciliação de Config Sync continuam pendentes.
+
+## Auditoria transversal XK 0.1 — 2026-10-22
+
+XK-05: manter moderação contextual LMS e autorização por Group de curso/turma. Não assumir nem reutilizar memberships de fóruns de associados; somente contratos neutros de User/Forum podem ser compartilhados. Avisos passam pelo Messenger via adapter específico.
+
+Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
