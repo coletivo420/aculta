@@ -178,6 +178,39 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function dimensionTotalsForDimensions(string $metric, int $fromDay, int $toDay, array $dimensions): array {
+    $this->assertMetric($metric);
+    if (count($dimensions) > 100) {
+      throw new \InvalidArgumentException('At most 100 dimensions may be aggregated in one call.');
+    }
+    foreach ($dimensions as $dimension) {
+      if (!is_string($dimension) && !is_int($dimension)) {
+        throw new \InvalidArgumentException('Every selected dimension must be a string or integer.');
+      }
+    }
+    $dimensions = array_values(array_unique(array_map('strval', $dimensions)));
+    if ($dimensions === []) {
+      return [];
+    }
+    foreach ($dimensions as $dimension) {
+      $this->assertDimension($dimension);
+    }
+
+    $query = $this->database->select(self::TABLE, 'stats')
+      ->fields('stats', ['dimension'])
+      ->condition('metric', $metric)
+      ->condition('day', [$fromDay, $toDay], 'BETWEEN')
+      ->condition('dimension', $dimensions, 'IN')
+      ->groupBy('dimension')
+      ->orderBy('dimension');
+    $query->addExpression('SUM(stats.total)', 'total');
+
+    return array_map('intval', $query->execute()->fetchAllKeyed());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function purgeMetricBefore(string $metric, int $day): int {
     $this->assertMetric($metric);
     return (int) $this->database->delete(self::TABLE)

@@ -99,6 +99,28 @@ interface AggregateStorageInterface {
   public function dimensionTotals(string $metric, int $fromDay, int $toDay): array;
 
   /**
+   * Totais no período restritos a um conjunto explícito de dimensões.
+   *
+   * @param string $metric
+   *   Identificador do catálogo.
+   * @param int $fromDay
+   *   Primeiro dia UTC, inclusive.
+   * @param int $toDay
+   *   Último dia UTC, inclusive.
+   * @param list<string|int> $dimensions
+   *   Dimensões selecionadas, limitadas a 100.
+   *
+   * @return array<string|int, int>
+   *   Total por dimensão encontrada. Dimensões sem registro são omitidas.
+   */
+  public function dimensionTotalsForDimensions(
+    string $metric,
+    int $fromDay,
+    int $toDay,
+    array $dimensions,
+  ): array;
+
+  /**
    * Número do dia UTC atual, usado como chave de agregação.
    */
   public function currentDay(): int;

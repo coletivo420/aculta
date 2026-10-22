@@ -13,6 +13,10 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 - Gravação pelo ponto único `aculta_statistics.recorder`: recusa métricas fora do catálogo.
 - Armazenamento diário `aculta_statistics_daily` (`aculta_statistics.install`),
   sem IP, usuário, referrer ou user-agent.
+- A consulta `AggregateStorageInterface::dimensionTotalsForDimensions()` soma
+  até 100 dimensões selecionadas em uma única consulta agrupada; consumidores
+  como o Content Index podem correlacionar uma página já autorizada sem ler
+  todas as dimensões globais. A autorização do conteúdo continua no módulo dono.
 - Retenção por métrica (`RetentionPolicy`): 30, 90, 180, 365 dias ou indefinido. Padrão 90.
 - Cron (`StatisticsCronHooks`): aplica o prazo de cada métrica.
 - Funil de e-mails por dia de solicitação, a partir do `aculta_mail_log` (aceito, entregue, devolvido, falho), recalculado no cron (`EmailReconciler`).

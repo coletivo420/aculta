@@ -1,5 +1,16 @@
 # Changelog — ACULTA Statistics
 
+## Não lançado — agregação por dimensões selecionadas
+
+- `AggregateStorageInterface::dimensionTotalsForDimensions()` retorna totais
+  de até 100 dimensões selecionadas usando uma consulta `GROUP BY` restrita ao
+  conjunto solicitado. Consumidores podem correlacionar métricas com páginas
+  autorizadas do Content Index sem carregar todas as dimensões do período.
+- A API preserva a tabela e catálogo existentes; não adiciona dependência do
+  Index nem transfere métricas para ele.
+- Kernel cobre seleção, período, isolamento de métrica, dimensão ausente,
+  conjunto vazio e limite de parâmetros.
+
 ## Não lançado — histórico de edição por verbete na área Wiki
 
 - (2026-10-22) A área Wiki do painel mostra, por verbete, quantas revisões o

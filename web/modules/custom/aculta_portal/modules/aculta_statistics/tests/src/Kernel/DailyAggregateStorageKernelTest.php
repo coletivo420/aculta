@@ -79,6 +79,33 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Totals for a supplied entity page query only those dimensions in SQL.
+   */
+  public function testDimensionTotalsCanBeRestrictedToSelectedDimensions(): void {
+    $storage = $this->storage();
+    $this->insertRow('wiki.entries.read', '10', 100, 3);
+    $this->insertRow('wiki.entries.read', '10', 102, 2);
+    $this->insertRow('wiki.entries.read', '11', 101, 4);
+    $this->insertRow('wiki.entries.read', '12', 100, 1);
+    $this->insertRow('wiki.entries.read', '11', 99, 50);
+    $this->insertRow('links.link.clicks', '10', 100, 7);
+
+    $this->assertSame(
+      [10 => 5, 11 => 4],
+      $storage->dimensionTotalsForDimensions('wiki.entries.read', 100, 102, ['10', 11, '13']),
+    );
+    $this->assertSame([], $storage->dimensionTotalsForDimensions('wiki.entries.read', 100, 102, []));
+  }
+
+  /**
+   * The selected-dimension aggregate has a fixed parameter bound.
+   */
+  public function testDimensionTotalsRejectMoreThanOneHundredDimensions(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->storage()->dimensionTotalsForDimensions('wiki.entries.read', 100, 102, range(1, 101));
+  }
+
+  /**
    * Identificador fora do formato é recusado.
    */
   public function testRejectsInvalidMetric(): void {
