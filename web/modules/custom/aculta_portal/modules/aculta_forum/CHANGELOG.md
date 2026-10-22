@@ -1,3 +1,10 @@
+## `0.1.0-dev.203` — alinhar README à busca de posts revisionáveis
+
+- A entrada principal do módulo agora descreve a busca por tópicos e posts,
+  o link contextual do resultado e o filtro de grants/publicação anterior à
+  paginação. A matriz automatizada continua pendente antes de reindexar ou
+  ativar a configuração no Runtime.
+
 ## `0.1.0-dev.202` — incluir posts revisionáveis na busca pública
 
 - O índice e a View Search API incluem `aculta_forum_post`, com assunto/corpo,

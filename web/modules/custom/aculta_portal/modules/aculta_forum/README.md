@@ -11,9 +11,13 @@ oferece filtro hierárquico pelo vocabulário próprio, sem termos inventados.
 O índice `/categorias` apresenta nomes e descrições dos termos do Fórum e se
 liga à página de discussões. Ele usa a View `aculta_forum_categories`; a navegação
 visual hierárquica e os contadores de tópicos continuam planejados.
-`/pesquisar` pesquisa título/corpo de tópicos públicos e oferece categoria em
-select hierárquico. Os nomes vêm da Taxonomy atual e respeitam Entity Access;
-o filtro usa IDs inteiros indexados, sem tipo de campo ou lista paralela.
+`/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
+posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
+vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros
+indexados, sem tipo de campo ou lista paralela. Os resultados de post apontam
+para a resposta dentro do tópico e o processador aplica publicação e grants do
+tópico antes de paginação. A integração de posts ainda exige a matriz
+automatizada de acesso antes de reindexação ou ativação no Runtime.
 Quando não há correspondências, a View orienta a ajustar a busca ou explorar
 as categorias.
 Fixtures de tópicos do Runtime de teste são inventariadas em

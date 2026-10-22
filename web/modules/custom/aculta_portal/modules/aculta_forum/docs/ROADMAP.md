@@ -95,6 +95,7 @@ roadmap Portal descreve a sequência transversal.
 
 | Versão | Entrega | Estado |
 | --- | --- | --- |
+| `0.1.0-dev.203` | Atualizar a entrada do módulo para a busca de posts | README descreve tópicos, posts, grants antes da paginação e validação pendente antes do Runtime. |
 | `0.1.0-dev.202` | Incluir posts revisionáveis na busca pública | Configuração inclui datasource/post fields, filtros unificados e formatter de âncora; processor filtra grants/publicação antes da paginação. Validação automatizada integrada pendente antes de reindexar ou aplicar no Runtime. |
 | `0.1.0-dev.201` | Preservar autoria histórica em Comments anônimos | Destino aceita `uid=0` somente com referência existente a `aculta_legado_autor`; auditoria conta os anônimos sem representação histórica válida. Sem execução de migration ou Runtime. |
 | `0.1.0-dev.200` | Bloquear perda de autoria anônima na migração | Primeira trava tratava todo `uid=0` como não representável; refinada na dev.201 para aceitar referências históricas válidas. Não migra dados de contato. |
