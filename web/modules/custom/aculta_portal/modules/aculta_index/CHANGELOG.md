@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.112 — serializar cleanup concorrente
+
+- A seleção da geração `discarding` agora ocorre sob `FOR UPDATE` na transação
+  que envolve a remoção do lote. Dois cron workers não podem escolher a mesma
+  geração e competir pela exclusão de seu último lote.
+- Kernel MariaDB Schema: 1 teste / 16 assertions PASS; Kernel Rebuilder/Drush
+  `cleanup`: 1 teste / 12 assertions PASS. PHPCS Drupal e `php -l` PASS.
+
+
 ## 0.1.0-dev.111 — limitar rollback à geração anterior
 
 - A ativação conserva somente a geração que estava ativa imediatamente antes;

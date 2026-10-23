@@ -347,23 +347,36 @@ final class ContentIndexGenerationManager {
     if ($limit < 1 || $limit > 5000) {
       throw new \InvalidArgumentException('Generation cleanup limit must be between 1 and 5000.');
     }
-    $generationId = $this->database->select('aculta_index_generation', 'generation')
-      ->fields('generation', ['generation_id'])
-      ->condition('status', 'discarding')
-      ->orderBy('created')
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-    if ($generationId === FALSE) {
-      return [
-        'generation_id' => NULL,
-        'relations_removed' => 0,
-        'entries_removed' => 0,
-        'complete' => TRUE,
-      ];
-    }
+    // Lock the chosen generation before delegating so concurrent cron workers
+    // cannot both select it and race with deletion of its final batch.
+    $transaction = $this->database->startTransaction();
+    try {
+      $generationId = $this->database->select('aculta_index_generation', 'generation')
+        ->fields('generation', ['generation_id'])
+        ->condition('status', 'discarding')
+        ->orderBy('created')
+        ->range(0, 1)
+        ->forUpdate()
+        ->execute()
+        ->fetchField();
+      if ($generationId === FALSE) {
+        unset($transaction);
+        return [
+          'generation_id' => NULL,
+          'relations_removed' => 0,
+          'entries_removed' => 0,
+          'complete' => TRUE,
+        ];
+      }
 
-    return ['generation_id' => (string) $generationId] + $this->discardBatch((string) $generationId, $limit);
+      $result = ['generation_id' => (string) $generationId] + $this->discardBatch((string) $generationId, $limit);
+      unset($transaction);
+      return $result;
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
   }
 
   /**
