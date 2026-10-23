@@ -8,9 +8,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Read-only, bounded list of store products the operator may edit.
+ * Cursor-based, read-only product list with entity and store access checks.
  *
- * No customer, order, payment or cross-store information is exposed.
+ * The cursor indicates the last scanned product ID, not an offset. No count
+ * is exposed, including counts for products belonging to other stores.
  */
 final class GreenStashProductReader {
 
@@ -19,45 +20,64 @@ final class GreenStashProductReader {
   ) {}
 
   /**
-   * @return array<int, \Drupal\Core\Entity\EntityInterface>
+   * @return array{items: array, next: ?int}
    */
-  public function listEditable(AccountInterface $account, int $limit = 20): array {
+  public function page(AccountInterface $account, int $before = 0, string $search = '', int $limit = 20): array {
     $limit = max(1, min(20, $limit));
-    $storage = $this->entities->getStorage('commerce_product');
-    $ids = $storage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'produto_loja')
-      ->sort('product_id', 'DESC')
-      ->range(0, 100)
-      ->execute();
-    if (!$ids) {
-      return [];
+    $search = trim($search);
+    if (mb_strlen($search) > 100) {
+      $search = mb_substr($search, 0, 100);
     }
-    $result = [];
-    foreach ($storage->loadMultiple($ids) as $product) {
-      if (!$product->access('view', $account) || !$product->access('update', $account)) {
-        continue;
+    $storage = $this->entities->getStorage('commerce_product');
+    $items = [];
+    $cursor = $before;
+    $hasMore = FALSE;
+
+    // Bounded rounds prevent an unbounded request when access filters are selective.
+    for ($round = 0; $round < 5; $round++) {
+      $query = $storage->getQuery()
+        ->accessCheck(TRUE)
+        ->condition('type', 'produto_loja')
+        ->sort('product_id', 'DESC')
+        ->range(0, 100);
+      if ($cursor > 0) {
+        $query->condition('product_id', $cursor, '<');
       }
-      // Restrict to products in stores the operator can administer.
-      if (!method_exists($product, 'getStores')) {
-        continue;
+      if ($search !== '') {
+        $query->condition('title', $search, 'CONTAINS');
       }
-      $allowedStore = FALSE;
-      foreach ($product->getStores() as $store) {
-        if ($store->access('update', $account)) {
-          $allowedStore = TRUE;
-          break;
+      $ids = array_values($query->execute());
+      if ($ids === []) {
+        break;
+      }
+      foreach ($storage->loadMultiple($ids) as $product) {
+        $cursor = (int) $product->id();
+        if (!$product->access('view', $account) || !$product->access('update', $account)) {
+          continue;
         }
+        $allowed = FALSE;
+        foreach ($product->getStores() as $store) {
+          if ($store->access('update', $account)) {
+            $allowed = TRUE;
+            break;
+          }
+        }
+        if (!$allowed) {
+          continue;
+        }
+        if (count($items) === $limit) {
+          $hasMore = TRUE;
+          break 2;
+        }
+        $items[] = $product;
       }
-      if (!$allowedStore) {
-        continue;
-      }
-      $result[] = $product;
-      if (count($result) >= $limit) {
+      // If a round yielded fewer than the batch size, no further IDs exist.
+      if (count($ids) < 100) {
         break;
       }
     }
-    return $result;
+
+    return ['items' => $items, 'next' => $hasMore ? $cursor : NULL];
   }
 
 }
