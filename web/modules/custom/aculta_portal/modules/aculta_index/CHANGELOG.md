@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.66 — cobrir providers Media de imagem e documento
+
+- Harness Kernel usa Media/File reais para exercitar `media:image` e
+  `media:document` via backfill, update de nome e delete pelo worker
+  (2 testes / 32 assertions). A fixture registra a classe de produção; o mapa
+  separado valida os YAMLs owner de `aculta_image` e `aculta_document_viewer`.
+- O teste não inicializa esses módulos owner completos nem altera sua política
+  de Entity Access; valida o ciclo do catálogo e a allowlist de metadados.
+- Suíte Kernel completa do diretório `aculta_index`: 60 testes / 747 assertions
+  PASS; 1 depreciação upstream e 40 depreciações PHPUnit.
+
 ## 0.1.0-dev.65 — exercitar provider `media:image` no ciclo do Index
 
 - Kernel registra `MediaContentIndexProvider` com bundle `image` e usa Media e
