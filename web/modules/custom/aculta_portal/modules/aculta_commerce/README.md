@@ -28,3 +28,7 @@ Validar compatibilidade das dependências do manifesto com os módulos instalado
 ## Integração com a carteira/carrinhos do Portal
 
 `aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash permanece a experiência Studio de administração da loja. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Integração ainda **não implementada**.
+
+## RETIFICAÇÃO ADR-013 — Abas de administração, não de compra
+
+O `aculta_commerce` fornecerá configuração do checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
