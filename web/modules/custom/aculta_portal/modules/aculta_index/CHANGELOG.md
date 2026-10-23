@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.116 — consultar relações Gallery→image com acesso revalidado
+
+- O Kernel Gallery consulta `gallery_image` pela API outgoing após o rebuild,
+  com provider Gallery e provider `media:image` carregados pelos YAMLs owner.
+- A conta autenticada precisa das permissões de visualização da Gallery e da
+  Media; a consulta inicia no Domain principal, autoriza a Gallery no purpose
+  `magazine` e restaura o contexto. A imagem segue a Entity Access própria.
+- MariaDB dedicado: `ContentIndexGalleryProviderKernelTest`, 2 testes / 48
+  assertions PASS, com 9 depreciações Core/contrib. O owner completo e grants
+  específicos por Gallery/Media não foram habilitados neste harness.
+
 ## 0.1.0-dev.115 — consultar relações Revista→Activity com acesso por Domain
 
 - O Kernel de acesso compila os providers Magazine e Activity pelas declarações

@@ -109,6 +109,18 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
    * The real Gallery provider projects metadata and images through CRUD.
    */
   public function testGalleryProjectionAndImageRelationsFollowCrud(): void {
+    $role = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $role);
+    $role->grantPermission('view published media gallery entities')
+      ->grantPermission('view media')
+      ->save();
+    User::create(['name' => 'gallery-relation-root-fixture', 'status' => TRUE])->save();
+    $reader = User::create([
+      'name' => 'gallery-relation-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
     $image = $this->createImageMedia();
     $gallery = MediaGallery::create([
       'title' => 'Kernel gallery',
@@ -126,6 +138,25 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $generationId = $this->buildAndActivateGeneration();
     $this->assertSame('Kernel gallery', $this->entryLabel($generationId, (string) $gallery->id(), 'gallery'));
     $this->assertSame([(string) $image->id()], $this->galleryImageTargets($generationId, (string) $gallery->id()));
+
+    // Query from the main Domain. The gallery source must be checked in its
+    // canonical Magazine purpose, while the image stays under its own policy.
+    $negotiator = $this->container->get('domain.negotiator');
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain(Domain::load('aculta_org'));
+    $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
+      'media_gallery',
+      (string) $gallery->id(),
+      $gallery->language()->getId(),
+      'gallery_image',
+      $reader,
+    );
+    $this->assertSame([(string) $image->id()], array_map(
+      static fn (Media $entity): string => (string) $entity->id(),
+      $result->entities,
+    ));
+    $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+    $this->assertSame(0, $result->cacheability->getCacheMaxAge());
 
     $gallery->setTitle('Updated gallery');
     $gallery->set('images', []);
