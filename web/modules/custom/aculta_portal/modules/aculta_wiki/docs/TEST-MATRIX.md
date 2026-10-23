@@ -73,6 +73,23 @@ depois da importação de configuração no servidor de testes.
 | Node importado ou sincronizado | Unit | Nenhum evento | planejado |
 | Agregado diário com publicação e revisão | Kernel | Contadores diários separados por métrica | planejado |
 
+## Rotas, grants e cache — Kernel real (dev.13)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Discovery das três rotas públicas da Wiki | Kernel | `/wiki`, `/wiki/busca` e `/wiki/busca/previa` com nomes/caminhos existentes | aprovado |
+| Discovery da página da View | Kernel | `view.wiki_entries.page_1` em `/wiki/verbetes` | aprovado |
+| Permissão de rota pública | Kernel | `access content` permite e negar a permissão bloqueia | aprovado |
+| Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
+| Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
+
+Suíte Kernel da Wiki inicializa `aculta_wiki` e dependências reais, com MariaDB
+isolada. O fixture de grants está apenas em `tests/modules`; Runtime e
+configuração de produção não são usados. Resultado executado: 6 testes, 152
+assertions; 1 warning Core em `EntityStorageBase::loadMultiple()`, 199 avisos
+deprecados Drupal e 7 de PHPUnit. O warning ocorre durante o cenário de grants
+e não falha o teste; permanece para investigação.
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |
@@ -80,7 +97,7 @@ depois da importação de configuração no servidor de testes.
 | Busca com `accessCheck(TRUE)` | Unit | Cache varia por `user.node_grants:view`, inclusive sem resultados | aprovado |
 | CTA para criar verbete | Unit | Usa `createAccess('wiki_entry')` e mantém o `AccessResult` cacheável | aprovado |
 | Busca em URLs de rota pública | Unit | Mantém `aculta_portal.wiki_search` e `aculta_portal.wiki_search_preview` | aprovado (form builder) |
-| Discovery das rotas no Drupal | Kernel | Rotas `/wiki`, `/wiki/busca`, `/wiki/busca/previa` ativas após habilitação controlada | pendente; `SIMPLETEST_DB` não configurada nesta sessão |
+| Discovery das rotas no Runtime | Runtime | Rotas disponíveis após gate de ativação e configuração | pendente; não validado no Runtime |
 
 ## Integração ACULTA Content Index — IDX 0.1
 

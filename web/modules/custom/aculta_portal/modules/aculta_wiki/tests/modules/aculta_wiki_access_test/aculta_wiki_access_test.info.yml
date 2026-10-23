@@ -1,0 +1,7 @@
+name: 'ACULTA Wiki node grants test'
+type: module
+description: 'Provides deterministic per-account Node grants for ACULTA Wiki Kernel tests.'
+package: Testing
+core_version_requirement: ^11
+dependencies:
+  - node:node

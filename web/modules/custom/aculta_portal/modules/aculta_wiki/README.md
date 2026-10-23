@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.13`: rotas públicas e View da listagem são descobertas pelo
+  bootstrap Kernel real; o acesso à busca é caracterizado com grants diferentes
+  entre contas da mesma função. Busca vazia/negativa varia por
+  `user.node_grants:view`. O ciclo de imagem e os contratos do Index continuam
+  conforme dev.12.
 - `0.1.0-dev.12`: upload da imagem de destaque usa armazenamento privado e
   transação compartilhada com o salvamento do verbete; a mídia só é publicada
   quando a revisão submetida do verbete está publicada. O incremento dev.11
@@ -14,6 +19,10 @@ pendentes, está em
   provider opcional do Content Index permanece na versão de projeção 3.
 - Kernel MariaDB também cobre a remoção da imagem na revisão atual: a Media e o
   arquivo são preservados enquanto uma revisão antiga do verbete os referencia.
+- `WikiLeadImageLifecycleKernelTest` inicializa `aculta_wiki` e verifica
+  `/wiki`, `/wiki/busca`, `/wiki/busca/previa`, a View `/wiki/verbetes` e o
+  requisito `access content`. A busca real filtra grants de contas diferentes
+  da mesma função e mantém contexto de cache nos resultados vazios/negativos.
 - O módulo permanece desabilitado no Runtime de teste; a configuração
   exportada e o Runtime não são equivalentes.
 - O módulo **não está habilitado** e não altera o Runtime.

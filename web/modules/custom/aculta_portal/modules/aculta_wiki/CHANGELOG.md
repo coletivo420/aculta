@@ -1,5 +1,21 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.13 — testar rotas e grants com bootstrap real
+
+- O Kernel inicializa os módulos reais da Wiki/Portal e descobre as três rotas
+  públicas e a página da View `/wiki/verbetes`.
+- A busca passa explicitamente a consulta o `current_user` como metadado de
+  conta do Entity Query. Kernel exercita dois usuários da mesma função com
+  grants de visualização distintos; cada um recebe apenas seu verbete. Busca
+  vazia e sem resultados mantém `user.node_grants:view`.
+- Acesso às rotas públicas exige `access content`; o teste verifica permissão
+  concedida e negada. UID 1 não é usado como prova de autorização.
+- A fixture de grants existe apenas em `tests/modules`; Runtime, configuração
+  sincronizada e projeção v3 do Content Index não mudaram.
+- Validação: Kernel MariaDB 6 testes/152 assertions (1 warning do Core em
+  `EntityStorageBase::loadMultiple()`, 199 deprecation notices do Drupal e 7
+  de PHPUnit); Unit 66/338; PHPCS e PHP lint aprovados.
+
 ## 0.1.0-dev.12 — sincronizar visibilidade da imagem de destaque
 
 - O upload guarda o arquivo em `private://wiki/imagens` e prepara o diretório

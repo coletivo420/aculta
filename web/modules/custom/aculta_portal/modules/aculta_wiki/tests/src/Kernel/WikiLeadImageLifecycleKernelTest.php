@@ -12,7 +12,10 @@ use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Session\UserSession;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
@@ -20,11 +23,17 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeAccessRebuild;
+use Drupal\node\NodeGrantsHelper;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use Drupal\user\Entity\Role;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
+use Drupal\aculta_wiki\Controller\WikiController;
+use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Tests Wiki lead image publication and rollback with real entity storage.
@@ -50,7 +59,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    */
   protected function bootKernel(): void {
     // Portal consumes the shared account ledger when aculta_user is present.
-    static::$modules = $this->resolveModuleDependencyClosure(['aculta_lms', 'aculta_user', 'aculta_wiki']);
+    static::$modules = $this->resolveModuleDependencyClosure([
+      'aculta_lms',
+      'aculta_user',
+      'aculta_wiki',
+      'aculta_wiki_access_test',
+    ]);
     parent::bootKernel();
   }
 
@@ -64,13 +78,26 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('profile');
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('domain');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'file', 'media', 'node']);
+    $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain']);
+
+    foreach (['aculta_org' => 'main', 'wiki420_aculta_org' => 'wiki'] as $id => $purpose) {
+      Domain::create([
+        'id' => $id,
+        'hostname' => $purpose . '.example.invalid',
+        'name' => $purpose,
+        'scheme' => 'https',
+        'weight' => 0,
+        'status' => TRUE,
+      ])->save();
+    }
 
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
     FieldStorageConfig::create([
@@ -96,6 +123,42 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'handler' => 'default:media',
         'handler_settings' => ['target_bundles' => ['image' => 'image']],
       ],
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'body',
+      'type' => 'text_with_summary',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'body',
+      'label' => 'Body',
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_summary',
+      'type' => 'text_long',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_summary',
+      'label' => 'Summary',
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_test_grant_uid',
+      'type' => 'integer',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_test_grant_uid',
+      'label' => 'Test grant owner UID',
     ])->save();
 
     foreach (['anonymous', 'authenticated'] as $roleId) {
@@ -240,6 +303,126 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($media->isPublished());
     self::assertTrue($file->access('download', new AnonymousUserSession()));
     self::assertFileExists($file->getFileUri());
+  }
+
+  /**
+   * Public Wiki routes are discovered and enforce their permission contract.
+   */
+  public function testPublicRoutesAndListingViewAreDiscoveredWithAccess(): void {
+    $routeProvider = $this->container->get('router.route_provider');
+    $accessManager = $this->container->get('access_manager');
+    $routePaths = [
+      'aculta_portal.wiki_home' => '/wiki',
+      'aculta_portal.wiki_search' => '/wiki/busca',
+      'aculta_portal.wiki_search_preview' => '/wiki/busca/previa',
+    ];
+    foreach ($routePaths as $routeName => $path) {
+      $route = $routeProvider->getRouteByName($routeName);
+      self::assertSame($path, $route->getPath());
+      self::assertSame('access content', $route->getRequirement('_permission'));
+      self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
+    }
+
+    Role::load('anonymous')->revokePermission('access content')->save();
+    self::assertFalse($accessManager->checkNamedRoute(
+      'aculta_portal.wiki_home',
+      [],
+      new AnonymousUserSession(),
+    ));
+
+    $viewFile = dirname(DRUPAL_ROOT) . '/config/sync/views.view.wiki_entries.yml';
+    View::create(Yaml::parseFile($viewFile))->save();
+    $this->container->get('router.builder')->rebuild();
+    $listingRoute = $routeProvider->getRouteByName('view.wiki_entries.page_1');
+    self::assertSame('/wiki/verbetes', $listingRoute->getPath());
+  }
+
+  /**
+   * Search filters results by grants between users with the same role.
+   */
+  public function testSearchSeparatesResultsForSameRoleUsersWithDifferentGrants(): void {
+    // UID 1 bypasses normal access checks, so the actors use UIDs 2 and 3.
+    $firstReader = new UserSession(['uid' => 2, 'roles' => ['authenticated']]);
+    $secondReader = new UserSession(['uid' => 3, 'roles' => ['authenticated']]);
+    self::assertGreaterThan(1, (int) $firstReader->id());
+    self::assertGreaterThan(1, (int) $secondReader->id());
+    $firstNode = $this->createSearchEntry('Cannabis exclusiva A', (int) $firstReader->id());
+    $secondNode = $this->createSearchEntry('Cannabis exclusiva B', (int) $secondReader->id());
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+
+    $wikiDomain = Domain::load('wiki420_aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $currentUser = $this->container->get('current_user');
+    $controller = WikiController::create($this->container);
+
+    $currentUser->setAccount($firstReader);
+    self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_wiki_access_test'));
+    self::assertTrue($this->container->get('module_handler')->hasImplementations('query_node_access_alter'));
+    self::assertEquals(0, $this->container->get('entity_type.manager')->getAccessControlHandler('node')->checkAllGrants($firstReader));
+    $grants = $this->container->get(NodeGrantsHelper::class)->nodeAccessGrants('view', $firstReader);
+    self::assertSame([(string) $firstReader->id()], $grants['wiki_test_author']);
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $firstEntity = Node::load($firstNode);
+    $firstAccess = $firstEntity->access('view', $firstReader, TRUE);
+    self::assertTrue($firstAccess->isAllowed(), 'The real Wiki entity must allow its author in the Wiki Domain.');
+    $secondEntity = Node::load($secondNode);
+    $secondAccess = $secondEntity->access('view', $firstReader, TRUE);
+    self::assertFalse($secondAccess->isAllowed(), 'The other author’s Wiki entry must be denied.');
+    $firstResults = $this->searchNodeIds('Cannabis', $wikiDomain);
+    self::assertSame([$firstNode], $firstResults);
+
+    $currentUser->setAccount($secondReader);
+    self::assertSame([$secondNode], $this->searchNodeIds('Cannabis', $wikiDomain));
+
+    $currentUser->setAccount($firstReader);
+    $emptyBuild = $controller->search(Request::create('/wiki/busca'));
+    self::assertArrayNotHasKey('results', $emptyBuild);
+    self::assertContains('user.node_grants:view', $emptyBuild['#cache']['contexts']);
+    $negativeBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'termo-inexistente']));
+    self::assertArrayNotHasKey('results', $negativeBuild);
+    self::assertContains('user.node_grants:view', $negativeBuild['#cache']['contexts']);
+  }
+
+  /**
+   * Runs the same access-checked query contract used by WikiController search.
+   *
+   * @return int[]
+   *   Node IDs visible to the current account.
+   */
+  private function searchNodeIds(string $term, Domain $wikiDomain): array {
+    $pattern = '%' . $this->container->get('database')->escapeLike($term) . '%';
+    $query = $this->container->get('entity_type.manager')->getStorage('node')->getQuery()
+      ->accessCheck(TRUE)
+      ->addMetaData('account', $this->container->get('current_user'))
+      ->condition('type', 'wiki_entry')
+      ->condition('field_domain_source.target_id', $wikiDomain->id())
+      ->condition('status', 1)
+      ->range(0, 30)
+      ->sort('title');
+    $matches = $query->orConditionGroup()
+      ->condition('title', $pattern, 'LIKE')
+      ->condition('field_wiki_summary.value', $pattern, 'LIKE')
+      ->condition('body.value', $pattern, 'LIKE');
+    return array_map('intval', array_values($query->condition($matches)->execute()));
+  }
+
+  /**
+   * Creates one published Wiki entry in the real Wiki Domain.
+   */
+  private function createSearchEntry(string $title, int $uid): int {
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => $title,
+      'uid' => $uid,
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_summary' => ['value' => 'Resumo do verbete'],
+      'body' => ['value' => 'Corpo do verbete', 'format' => 'plain_text'],
+      'field_wiki_test_grant_uid' => $uid,
+    ]);
+    $node->save();
+    return (int) $node->id();
   }
 
   /**

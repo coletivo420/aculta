@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.12**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.13**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
@@ -49,7 +49,10 @@ Implementado em dev.11: `WikiController::search()` varia cache por
 `wiki_entry`, preservando o `AccessResult` cacheável. A página inicial também
 declara o contexto de grants usado por `recentChanges()`. Rotas permanecem
 inalteradas. A matriz lista os testes Unit; discovery das rotas e validação
-Kernel/Runtime ainda são gates separados.
+O Kernel real confirma as definições das três rotas, a rota da View e o
+requisito `access content`. O teste de busca usa o query access real com grants
+por conta em contas da mesma função e confirma o contexto de cache para busca
+vazia/negativa. HTTP 200 e ativação continuam gates de Runtime separados.
 
 ### Ciclo de vida da imagem de destaque — dev.12
 

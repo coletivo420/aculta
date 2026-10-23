@@ -43,3 +43,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Imagem de destaque (dev.12): armazenar em `private://wiki/imagens`; a Media
   acompanha o estado publicado do verbete. Testar o ciclo transacional em Kernel
   isolado; não ativar ou importar configuração no Runtime como parte desse teste.
+- Rotas e grants (dev.13): Kernel MariaDB carrega a Wiki real e verifica as
+  rotas, a View e a busca com duas contas da mesma função e grants distintos.
+  A fixture de grants fica em `tests/modules`; UID 1 não serve como prova de
+  acesso. A ativação do Runtime segue pendente.

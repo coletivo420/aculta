@@ -201,6 +201,11 @@ final class WikiControllerTest extends UnitTestCase {
     $conditions = [];
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
+    $account = $this->createMock(AccountInterface::class);
+    $query->expects(self::once())
+      ->method('addMetaData')
+      ->with('account', $account)
+      ->willReturnSelf();
     $query->method('condition')->willReturnCallback(
       static function ($field, $value = NULL, $operator = NULL) use (&$conditions, $query) {
         $conditions[] = [$field, $value, $operator];
@@ -218,7 +223,8 @@ final class WikiControllerTest extends UnitTestCase {
     $nodeStorage->method('getQuery')->willReturn($query);
     $nodeStorage->method('loadMultiple')->with([])->willReturn([]);
 
-    $build = $this->controller($this->domain(), $nodeStorage)->search(Request::create('/wiki/busca', 'GET', ['q' => 'maconha']));
+    $build = $this->controller($this->domain(), $nodeStorage, account: $account)
+      ->search(Request::create('/wiki/busca', 'GET', ['q' => 'maconha']));
 
     $this->assertContains(['type', 'wiki_entry', NULL], $conditions);
     $this->assertContains(['field_domain_source.target_id', 'wiki420_aculta_org', NULL], $conditions);

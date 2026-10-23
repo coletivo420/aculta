@@ -259,6 +259,7 @@ final class WikiController extends ControllerBase {
     $nodeStorage = $this->entities->getStorage('node');
     $query = $nodeStorage->getQuery()
       ->accessCheck(TRUE)
+      ->addMetaData('account', $this->account)
       ->condition('type', 'wiki_entry')
       ->condition('field_domain_source.target_id', $wikiDomain->id())
       ->condition('status', 1)
