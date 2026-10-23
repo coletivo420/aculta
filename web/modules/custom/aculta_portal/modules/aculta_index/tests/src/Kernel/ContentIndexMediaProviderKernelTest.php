@@ -20,11 +20,11 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Verifies the production image Media provider through Index backfill and CRUD.
+ * Verifies production Media providers through Index backfill and CRUD.
  */
 #[Group('aculta_index')]
 #[RunTestsInSeparateProcesses]
-final class ContentIndexImageProviderKernelTest extends KernelTestBase {
+final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
 
   use MediaTypeCreationTrait;
 
@@ -39,7 +39,7 @@ final class ContentIndexImageProviderKernelTest extends KernelTestBase {
     'image',
     'media',
     'aculta_index',
-    'aculta_index_image_test',
+    'aculta_index_media_test',
   ];
 
   /**
@@ -76,6 +76,7 @@ final class ContentIndexImageProviderKernelTest extends KernelTestBase {
     $this->installConfig(['media', 'image', 'system', 'user']);
     aculta_index_install();
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
+    $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
   }
 
   /**
@@ -117,6 +118,35 @@ final class ContentIndexImageProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Document owner provider projects only metadata and follows entity CRUD.
+   */
+  public function testDocumentMediaProjectionFollowsEntityCrud(): void {
+    $media = $this->createDocumentMedia('First document name');
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('document', $registry->findProviderIdForBundle('media', 'document'));
+    self::assertNull($registry->get('document')->getAccessPurpose($media));
+
+    $generationId = $this->buildAndActivateGeneration();
+    self::assertSame('First document name', $this->entryLabel($generationId, (string) $media->id(), 'document'));
+
+    $media->setName('Updated document name');
+    $media->save();
+    $this->processProviderWork('document');
+    self::assertSame('Updated document name', $this->entryLabel($generationId, (string) $media->id(), 'document'));
+
+    $media->delete();
+    $this->processProviderWork('document');
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'document')
+      ->condition('entity_type', 'media')
+      ->condition('entity_id', (string) $media->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Creates an image Media with a source File that must stay out of the Index.
    */
   private function createImageMedia(string $name): Media {
@@ -141,13 +171,62 @@ final class ContentIndexImageProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Creates a document Media with a source File.
+   */
+  private function createDocumentMedia(string $name): Media {
+    $file = File::create([
+      'uri' => 'public://content-index-document-fixture.pdf',
+      'filename' => 'content-index-document-fixture.pdf',
+      'filemime' => 'application/pdf',
+      'status' => TRUE,
+    ]);
+    $file->save();
+
+    $mediaType = MediaType::load('document');
+    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    $media = Media::create([
+      'bundle' => 'document',
+      'name' => $name,
+      'status' => TRUE,
+      $sourceField => ['target_id' => $file->id()],
+    ]);
+    $media->save();
+    return $media;
+  }
+
+  /**
+   * Builds, drains and activates a complete generation for the test providers.
+   */
+  private function buildAndActivateGeneration(): string {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'Media provider backfill should complete.');
+    $this->processProviderWork('image');
+    $this->processProviderWork('document');
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+    return $generationId;
+  }
+
+  /**
    * Processes queued work belonging to the image provider.
    */
   private function processImageWork(): void {
+    $this->processProviderWork('image');
+  }
+
+  /**
+   * Processes queued work belonging to one Media provider.
+   */
+  private function processProviderWork(string $providerId): void {
     $database = $this->container->get('database');
     $ids = $database->select('aculta_index_work', 'work')
       ->fields('work', ['work_id'])
-      ->condition('provider_id', 'image')
+      ->condition('provider_id', $providerId)
       ->condition('status', 'queued')
       ->execute()
       ->fetchCol();
@@ -161,11 +240,11 @@ final class ContentIndexImageProviderKernelTest extends KernelTestBase {
   /**
    * Returns one image projection's label.
    */
-  private function entryLabel(string $generationId, string $entityId): string {
+  private function entryLabel(string $generationId, string $entityId, string $providerId = 'image'): string {
     return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'image')
+      ->condition('provider_id', $providerId)
       ->condition('entity_type', 'media')
       ->condition('entity_id', $entityId)
       ->execute()
