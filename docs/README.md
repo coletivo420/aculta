@@ -20,6 +20,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [decisions/](decisions/) — ADRs vigentes.
 - [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
 - [ADR-012](decisions/ADR-012-aculta420-mobile-first.md) — direção Mobile First do ACULTA420, mantendo Bootstrap, SDC e fronteiras atuais.
+- [ADR-013](decisions/ADR-013-portal-multi-cart-checkout.md) — Portal orquestra carrinhos e seleção de checkout por contexto; abas Comum/Loja/LMS/Doações, responsabilidades, segurança e fases.
 - [Auditoria Mobile First](../web/themes/custom/aculta420/docs/mobile-first-audit.md) — evidências de responsividade do tema, Studio e Runtime.
 
 ## Institucional e compliance
@@ -62,3 +63,7 @@ referências vigentes.
 - [Kernel ACULTA, subkernels e consumidores](architecture/aculta-kernels.md) — contratos normativos de Fórum, Galeria, serviços transversais e Studio.
 - [ADR — Kernel ACULTA e Studio](decisions/ADR-011-aculta-kernels-studio.md) — decisão e limites.
 - [Roadmap Studio/Revista](portal/STUDIO-MAGAZINE-ROADMAP.md) — implementação futura e migração editorial.
+
+## Escopo do ADR-013 (retificação de 2026-10-22)
+
+A coordenação de checkout no Portal e as abas **Comum | Loja | LMS | Doações** são **administrativas**, não uma nova interface pública de carrinho. Preservar integralmente o carrinho já presente na barra multidomínio e o comportamento atual da seleção do checkout. Referência normativa: [ADR-013](decisions/ADR-013-portal-multi-cart-checkout.md).
