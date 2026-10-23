@@ -51,3 +51,16 @@ Fora do alcance de Unit (ficam para Kernel/Browser/homelab): `CartUtility`/`Cart
 - **Configuração:** `aculta_donation.settings` e `DonationSettingsForm` não foram alterados; nada a migrar.
 - **Rollback:** reverter o commit do corte (`git revert`) restaura o subscriber e o serviço antigos; não há configuração a desfazer.
 - **Pendente:** comparação das rotas compiladas e do cabeçalho no servidor de testes (Kernel/Browser/homelab, P-CART T).
+
+## Homologação parcial P-CART T — runtime de testes `toca` (2026-10-22)
+
+Teste reversível por configuração e HTTP local (`curl --resolve` para 127.0.0.1), com backup prévio de `aculta_donation.settings` e restauração ao final (`donation_route: both`, sem `aculta_portal.checkout_settings`). HEAD `18547fee`. Sem pedidos reais, sem credenciais e sem Mercado Pago.
+
+| Cenário | Rotas do Commerce | `/carrinho` (principal) | `/apoiar` (apoio) |
+|---|---|---|---|
+| `donate` | `_access: FALSE` nas três | 403 | 302 (dedicado ativo) |
+| `cart` | abertas | 200 | 403 (dedicado fechado) |
+| `both` | abertas | 200 | 302 |
+| `both` + `common_checkout_enabled: false` | `_access: FALSE` nas três | 403 | 302 (dedicado não depende da chave) |
+
+`loja.../carrinho` redireciona (302) ao domínio principal nos quatro cenários. **Limite:** a comparação é com o comportamento caracterizado pelos testes (asserções originais), não uma execução antes/depois no mesmo runtime. Continuam pendentes: DOM e contador do carrinho do cabeçalho, checkouts de Loja, LMS e Doações em navegador, anônimo e autenticado, webhooks, assinaturas, mobile e claro/escuro, sem JavaScript e Olivero.
