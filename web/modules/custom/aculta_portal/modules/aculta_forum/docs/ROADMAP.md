@@ -7,7 +7,7 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-### Integração ACULTA Content Index — estado 2026-10-23, atualizado após IDX 0.1.0-dev.76
+### Integração ACULTA Content Index — estado 2026-10-23, atualizado após IDX 0.1.0-dev.85
 
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
@@ -26,8 +26,15 @@ consulta seguinte do Index negar os itens imediatamente. Um cenário adicional
 confirma que um tópico público é autorizado pelo purpose `forum` quando a
 requisição começa em `main`, mas negado se o Domain canônico estiver ausente;
 em ambos os cenários o contexto anterior é restaurado. O Kernel focal passou no
-MariaDB com 2 testes / 91 assertions; a suíte Kernel do Index passou com 65 /
-883. Isso prova policy e grants reais sem ativar a cadeia completa do owner.
+MariaDB com 2 testes / 91 assertions; uma cobertura adicional integra a Media
+`forum_attachment` pelo provider do YAML real e chama `ForumAttachmentAccessHooks`
+de produção pelo adapter: fora do purpose a Media é negada, no filtro do Index
+a proprietária da Media não publicada é autorizada e outro usuário é negado;
+o Domain inicial `main` é restaurado. O arquivo focal passou com 3 testes / 143
+assertions, 22 depreciações Core/contrib; PHPCS passou. Esse cenário cobre a
+política para Media não publicada, não a validação de referência pública da
+Media publicada. A suíte Kernel do Index registrada anteriormente passou com
+65 / 883. Isso prova policy e grants reais sem ativar a cadeia completa do owner.
 Boot/DI completo do Fórum e Runtime seguem pendentes antes da ativação. A
 conversão do timestamp Comment foi corrigida; Unit 5/31 cobre bundle fixo sem
 chave no enumerador.

@@ -10,6 +10,9 @@ use Drupal\comment\Entity\Comment;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\node\Entity\Node;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -20,6 +23,59 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_index')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase {
+
+  /**
+   * Forum attachment Media candidates use the production access hook/purpose.
+   */
+  public function testForumAttachmentMediaUsesCanonicalPurposeAndOwnerAccess(): void {
+    $member = $this->createUser('forum-attachment-owner');
+    $outsider = $this->createUser('forum-attachment-outsider');
+    $file = File::create([
+      'uri' => 'public://forum-attachment-index-test.pdf',
+      'filename' => 'forum-attachment-index-test.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $member->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+    $mediaType = MediaType::load('forum_attachment');
+    self::assertInstanceOf(MediaType::class, $mediaType);
+    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    $attachment = Media::create([
+      'bundle' => 'forum_attachment',
+      'name' => 'Unpublished Forum attachment',
+      'status' => FALSE,
+      $sourceField => ['target_id' => $file->id()],
+    ]);
+    $attachment->setOwner($member);
+    $attachment->save();
+
+    $providers = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('forum_attachment', $providers->findProviderIdForBundle('media', 'forum_attachment'));
+    self::assertSame('forum', $providers->get('forum_attachment')->getAccessPurpose($attachment));
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+
+    $candidate = [[
+      'entity_type' => 'media',
+      'entity_id' => (string) $attachment->id(),
+      'langcode' => $attachment->language()->getId(),
+    ],
+    ];
+    $filter = new ContentIndexAccessFilter(
+      $this->container->get('entity_type.manager'),
+      $providers,
+      $this->container->get('aculta_portal.domain_purpose'),
+    );
+    self::assertFalse($attachment->access('view', $member, TRUE)->isAllowed(), 'The production Forum Media hook denies this bundle outside the Forum purpose.');
+    self::assertCount(1, $filter->filter($candidate, $member)->entities, 'The Index applies the canonical Forum purpose, then preserves unpublished Media owner access.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertCount(0, $filter->filter($candidate, $outsider)->entities, 'The Index does not expose an unpublished attachment to another account.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+  }
 
   /**
    * A missing canonical Forum Domain cannot fall back to the active Domain.

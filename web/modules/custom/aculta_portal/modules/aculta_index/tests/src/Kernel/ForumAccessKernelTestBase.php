@@ -19,10 +19,13 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Shared test fixture for Forum Content Index access checks.
@@ -30,6 +33,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 abstract class ForumAccessKernelTestBase extends KernelTestBase {
 
   use CommentTestTrait;
+  use MediaTypeCreationTrait;
 
   protected const GROUP_TYPE = 'associado_forum';
 
@@ -41,8 +45,11 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
+    'file',
     'field',
     'text',
+    'image',
+    'media',
     'node',
     'comment',
     'entity',
@@ -80,6 +87,19 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Register the exact Forum attachment provider declaration without
+    // enabling the complete Forum module dependency chain in this harness.
+    $ownerServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $service = $ownerServices['aculta_forum.attachment_content_index_provider'];
+    $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
+    foreach ($service['tags'] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_forum.attachment_content_index_provider', $definition);
   }
 
   /**
@@ -96,6 +116,8 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     }
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
     $this->installEntitySchema('group');
@@ -105,6 +127,7 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     $this->installEntitySchema('aculta_associado');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
@@ -115,9 +138,10 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'text', 'group', 'domain']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'text', 'group', 'domain', 'media', 'image', 'file']);
     aculta_index_install();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
+    $this->createMediaType('file', ['id' => 'forum_attachment', 'label' => 'Forum attachment']);
     $this->addDefaultCommentField(
       'node',
       'aculta_forum_topic',
