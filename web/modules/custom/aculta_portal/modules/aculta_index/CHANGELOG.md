@@ -16,6 +16,9 @@
   projeção, rebuild e auditoria permanecem inalterados. A validação 10k passou
   em MariaDB: setup 1,414 s, rebuild 18,564 s, auditoria 10,829 s e zero
   divergências. É uma única execução diagnóstica, sem SLO.
+- Uma repetição 100k com essa fixture foi interrompida após aproximadamente
+  15 minutos, sem JSON final. O setup não é o gargalo; analisar a auditoria
+  bidirecional antes de ampliar a escala.
 
 ## Decisões 0.1 registradas — implementação pendente
 

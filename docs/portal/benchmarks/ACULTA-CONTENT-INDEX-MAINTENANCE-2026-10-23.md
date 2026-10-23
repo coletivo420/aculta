@@ -139,3 +139,15 @@ Picos por fase: rebuild 122,5 MiB e auditoria 142,5 MiB. Auditoria p50/p95/máxi
 68 / 93 / 4.352 ms. Setup mediu apenas criação das fontes; não entra no tempo
 de rebuild/auditoria. Uma única repetição não permite inferir tendência nem
 SLO. JSON bruto: `/tmp/aculta-index-maintenance-10000-bulk-2026-10-23.json`.
+
+
+### Tentativa de validação em 100k interrompida
+
+A repetição com semeadura SQL em lote foi iniciada após a validação 10k e
+interrompida manualmente depois de aproximadamente 15 minutos, sem produzir o
+JSON final. Nenhum tempo parcial de rebuild/auditoria foi medido ou será tratado
+como resultado. O worker permanecia ativo em CPU; a demora ocorre depois do
+setup, no fluxo real de manutenção. Como o teste anterior de 100k já reportou
+auditoria de 723 s e a nova tentativa não concluiu em tempo comparável, fica
+pendente analisar o custo da reconciliação bidirecional antes de outra execução
+de grande escala. O método de setup não é o gargalo remanescente.
