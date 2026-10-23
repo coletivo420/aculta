@@ -23,6 +23,11 @@
 
 Cada integração informa seu estado abaixo; a ponte Index–Statistics está
 implementada no código, mas ainda não foi ativada nem verificada no Runtime.
+O Kernel de integração do Index lê e registra as definições reais de catálogo,
+storage e agregador em `aculta_statistics.services.yml`, então resolve o
+agregador tipado pela ponte opcional do Index (SQLite: 1 teste / 22 assertions).
+Esse harness não ativa `aculta_statistics` completo nem valida sua cadeia
+Commerce ou Runtime.
 
 ## Regra geral de migração
 

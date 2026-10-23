@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.102 — compor a ponte Statistics pelo DI owner
+
+- Kernel Statistics lê o YAML real do owner e registra os serviços de catálogo,
+  storage e agregador; o Index resolve sua ponte com o agregador tipado pelo DI.
+- SQLite: 1 teste / 22 assertions PASS, incluindo acesso granular, fallback
+  sem Statistics, negação após despublicação e correlação autorizada de totais.
+- O módulo Statistics completo não é ativado; sua cadeia Commerce e o Runtime
+  permanecem fora do harness.
+
 ## 0.1.0-dev.101 — suíte Kernel completa após integração Wiki
 
 - SQLite: 79 testes / 1.210 assertions passaram; 39 depreciações Core/contrib

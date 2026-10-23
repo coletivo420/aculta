@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
+use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
 use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
-use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,6 +21,9 @@ use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Exercises authorized Index selection and real Statistics aggregation.
@@ -53,6 +56,32 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Compose only the production Statistics services required by the bridge.
+    // This reads the owner's real YAML without enabling its Commerce chain.
+    $statisticsServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    foreach ([
+      'aculta_statistics.catalog',
+      'aculta_statistics.storage',
+      'aculta_statistics.entity_metric_aggregator',
+    ] as $serviceId) {
+      $service = $statisticsServices[$serviceId];
+      $arguments = array_map(
+        static fn (mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
+          ? new Reference(substr($argument, 1))
+          : $argument,
+        $service['arguments'] ?? [],
+      );
+      $container->setDefinition(
+        $serviceId,
+        (new Definition($service['class'], $arguments))->setPublic(TRUE),
+      );
+    }
+    $container->setAlias(ContentEntityMetricAggregatorInterface::class, 'aculta_statistics.entity_metric_aggregator')
+      ->setPublic(TRUE);
   }
 
   /**
@@ -105,10 +134,13 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
 
     $database = $this->container->get('database');
-    $statisticsStorage = new DailyAggregateStorage($database, $this->container->get('datetime.time'));
+    $statisticsStorage = $this->container->get('aculta_statistics.storage');
+    $this->assertInstanceOf(DailyAggregateStorage::class, $statisticsStorage);
     $statisticsStorage->record('wiki.entries.read', (string) $node->id(), 7);
-    $statistics = new AuthorizedEntityMetricAggregator(new MetricCatalog(), $statisticsStorage);
-    $bridge = new ContentIndexStatisticsBridge($this->container->get('aculta_index.query'), $statistics);
+    $statistics = $this->container->get(ContentEntityMetricAggregatorInterface::class);
+    $this->assertInstanceOf(AuthorizedEntityMetricAggregator::class, $statistics);
+    $bridge = $this->container->get('aculta_index.statistics_bridge');
+    $this->assertInstanceOf(ContentIndexStatisticsBridge::class, $bridge);
     Role::create(['id' => 'metric_reader', 'label' => 'Metric reader'])
       ->grantPermission('access content')
       ->grantPermission('view content-level statistics')
