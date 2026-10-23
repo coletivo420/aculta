@@ -25,6 +25,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -1367,6 +1368,46 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField(), 'An unverified entry must not get a destructive repair job.');
+  }
+
+  /**
+   * Audit diagnostics contain timings and counts, not content identities.
+   */
+  public function testIntegrityAuditLogsSafeBatchDiagnostics(): void {
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())
+      ->method('debug')
+      ->with(
+        self::stringContains('Content Index integrity batch completed.'),
+        self::callback(static function (array $context): bool {
+          self::assertSame('entries', $context['@phase']);
+          self::assertSame(0, $context['@scan_count']);
+          self::assertSame(0, $context['@projection_count']);
+          self::assertArrayHasKey('@scan_ms', $context);
+          self::assertArrayHasKey('@reconcile_ms', $context);
+          self::assertArrayHasKey('@checkpoint_ms', $context);
+          self::assertArrayHasKey('@queue_ms', $context);
+          self::assertArrayHasKey('@total_ms', $context);
+          self::assertFalse(array_key_exists('@entity_id', $context));
+          self::assertFalse(array_key_exists('@title', $context));
+          return TRUE;
+        }),
+      );
+    $checker = new ContentIndexIntegrityChecker(
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $this->container->get('aculta_index.provider_registry'),
+      $this->container->get('aculta_index.work_manager'),
+      $this->container->get('aculta_index.entity_enumerator'),
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_index.writer'),
+      $logger,
+    );
+    $checker->startAudit();
+
+    $result = $checker->processAuditBatch(10);
+
+    $this->assertSame('relations', $result['phase']);
   }
 
   /**

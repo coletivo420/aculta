@@ -8,8 +8,9 @@
 - O detalhamento operacional permite separar custo do enumerador/provider do
   custo de comparação do catálogo em futuras auditorias. Não altera o estado
   persistido da auditoria nem seu contrato de consulta.
-- PHPCS Drupal passou; Kernel Schema MariaDB passou (52 testes / 551
-  assertions; uma depreciação Core e 53 depreciações PHPUnit).
+- PHPCS Drupal passou; Kernel Schema MariaDB passou (53 testes / 570
+  assertions; uma depreciação Core e 54 depreciações PHPUnit). O teste focal
+  verifica os campos do log e a ausência de identidade/título.
 
 ## 0.1.0-dev.142 — medir auditoria otimizada em 100k
 
