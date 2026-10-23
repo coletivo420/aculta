@@ -18,10 +18,13 @@ tagged não torna `aculta_index` uma dependência obrigatória do módulo.
 
 O boot/DI desse provider foi validado pelo teste transversal
 `ContentIndexOwnerIntegrationKernelTest` do Index (dev.161, 1 teste / 8
-assertions, 83 depreciações Core/contrib). O Kernel descobriu
-`course_document` pelo YAML real do owner; não instalou schemas/configuração
-nem exerceu o plugin Group com entidades Media/Group persistidas. Essa
-verificação funcional permanece pendente.
+assertions, 83 depreciações Core/contrib). No dev.162, o mesmo harness também
+descobriu a definição real do plugin, criou o relationship type e persistiu
+uma relação usando Group e Media reais (1 teste / 33 assertions; 239
+depreciações Core/contrib). Isso prova descoberta e persistência da relação; o
+teste focal de consulta/acesso do LMS permanece responsável por provar a policy
+de curso, e homologação Runtime segue pendente. O harness é do `aculta_index`
+no Portal; não transfere ownership ao LMS nem ao PDF Viewer Group.
 
 Integra opcionalmente Media `document` ao Group para que documentos vinculados
 a uma turma recebam controle de acesso do grupo. O submódulo depende do

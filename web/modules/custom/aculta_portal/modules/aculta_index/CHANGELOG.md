@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.162 — provar relação Group do owner PDF
+
+- O harness transversal do Index agora também instala schemas auxiliares e
+  configura entidades Group/Media reais para descobrir o plugin
+  `aculta_pdf_viewer_group:course_document`, criar seu relationship type e
+  persistir uma relação de curso→documento. MariaDB dedicado: 1 teste / 33
+  assertions; 239 depreciações Core/contrib, sem falhas.
+- O boot agrupado é apenas uma estratégia do teste sob `aculta_index` para
+  carregar os owners simultaneamente. Ownership permanece em `aculta_portal`;
+  LMS, Fórum, Wiki, Magazine, Gallery, Image e PDF Group fornecem adapters por
+  seus próprios módulos. O teste não instala toda a configuração dos owners nem
+  valida acesso operacional em Runtime.
+
 ## 0.1.0-dev.161 — validar 1M e boot integrado dos owners
 
 - Benchmark MariaDB 1M passou no HEAD atual: rebuild de 1.000.000 de fontes

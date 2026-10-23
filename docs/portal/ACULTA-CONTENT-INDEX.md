@@ -28,6 +28,8 @@
 
 **Validação dev.161 (2026-10-23):** repetição sintética MariaDB 1M passou: rebuild 2.020,081 s (495 projeções/s), auditoria 741,071 s, pico total 216,5 MiB, `base_table` em 2.001/2.001 páginas e zero divergências (1 teste / 16 assertions). `ContentIndexOwnerIntegrationKernelTest` também passou (1/8): boot/DI combinado da closure de 103 módulos encontrou providers de LMS, Fórum, Wiki, Magazine, Gallery, Image, PDF Group e anexo de Fórum pelos services.yml reais (83 depreciações Core/contrib). O teste compila o container, não instala schemas/configuração nem valida Runtime. Sem SLO; veja o [relatório de manutenção](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
+**Validação dev.162 (2026-10-23):** o mesmo harness criou GroupType/Group e Media reais, resolveu o plugin `aculta_pdf_viewer_group:course_document` do owner, criou o relationship type e persistiu a relação curso→documento (MariaDB dedicado: 1 teste / 33 assertions; 239 depreciações Core/contrib). O teste vive no submódulo `aculta_index` do Portal e agrupa owners independentes somente para validar descoberta/integração. O LMS não possui nem hospeda o Kernel do Index; seus testes focais continuam separados. A validação não instala toda a configuração dos módulos nem substitui grants/Domain ou Runtime.
+
 **Runtime de teste (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
 
 ## Propósito e propriedade
@@ -46,6 +48,19 @@ O catálogo não é dono de nenhuma entidade original. O módulo de origem mant�
 | Search API | Busca textual, datasources/tracking e backend de pesquisa. O Index não recria fulltext. |
 | `aculta_studio` | Experiências de gestão/editoriais que consomem APIs; não recebe storage de catálogo. |
 | ACULTA420 | Apresentação SDC/UI Suite, tokens, responsividade e temas claro/escuro. |
+
+### Ownership não é o boot dos testes
+
+O Kernel do `aculta_index` contém um harness transversal que inicializa, em
+conjunto, as raízes owner necessárias para provar descoberta de serviços e
+adapters. Esse agrupamento existe somente para reduzir repetição de setup e
+validar o registro dos providers no container. **Não coloca o Kernel dentro do
+LMS:** `aculta_index` pertence ao `aculta_portal`, depende do Portal, e o LMS,
+Fórum, Wiki, Magazine, Gallery, Image e PDF Group mantêm seus adapters em seus
+próprios módulos. Em produção, cada owner pode ser ativado independentemente;
+quando o Index está habilitado, ele descobre os adapters disponíveis pelas tags
+de serviço. Os testes focais de acesso e regras de negócio continuam separados
+por owner, pois o boot combinado não substitui essa cobertura.
 
 ## Projeção prevista
 
@@ -93,7 +108,7 @@ Revalidação dev.113 em MariaDB: `ContentIndexQueryKernelTest` passou completo 
 
 Evidência IDX 0.1-F: o Kernel `ContentIndexMagazineProviderKernelTest` usa a classe de produção `MagazineContentIndexProvider` para backfill, atualização do título/relação editorial e remoção via worker (1/14). A fixture registra o provider via tag; o mapa de services cobre separadamente o YAML real do owner. Unit `MagazineContentIndexProviderTest` passou com 6 testes / 19 assertions, cobrindo projeção, propósito, relações permitidas, revisão e UUIDs de gallery embeds. Desde dev.115, `ContentIndexMagazineAccessKernelTest` também reconstrói Revista e Activity pelos providers dos YAMLs owner e consulta `related_activity` pela API outgoing; a origem é revalidada em `magazine`, o alvo em `main` e o Domain inicial é restaurado (2/31 MariaDB). Isso cobre Entity Access padrão, sem grants específicos por Domain. O teste transversal dev.161 confirmou o boot/DI real de `aculta_magazine`, sem instalar seus schemas/configuração. Uma tentativa focal de ampliar o boot real habilitando Magazine, User, Image, Forum, Gallery e Portal também não chegou às assertions: após incluir dependências Core/contrib, a compilação da cadeia do Portal parou por ausência de `aculta_mailer.mailer`. O teste temporário foi removido; o harness existente com classe de produção + tag do YAML segue como evidência válida de provider/CRUD, mas não prova o fluxo funcional completo do owner. Wiki possui cobertura de CRUD no harness (1/17), Unit do filtro valida falha fechada sem Domain (9/80), e o Kernel de acesso usa `EntityHooks` real com Domain principal/Wiki reais: primeiro confirma negação no principal, depois autoriza pelo Index no purpose `wiki` e restaura o contexto (1/16). O boot/DI transversal da Wiki passou em dev.161; homologação Runtime segue pendente. O teste de referência `aculta_pdf_viewer_group` foi tentado, mas não iniciou as assertions: a compilação do container falhou primeiro por ausência de `aculta_user.aculta_user_agreement_ledger`; incluindo `aculta_user` na instalação do harness expôs outra referência ausente, `commerce_cart.cart_provider`. O teste foi restaurado sem alterações. Essa tentativa não valida nem invalida a regra de acesso ao curso; o boot/DI transversal dos owners passou em dev.161.
 
-Revalidação em 2026-10-23: `CourseDocumentAccessTest` do owner falhou antes da primeira assertion pela referência ausente `aculta_user.aculta_user_agreement_ledger`; acrescentar `aculta_user` expôs também `commerce_cart.cart_provider`. A integração IDX 0.1 agora tem Kernel focal do `ContentIndexAccessFilter` com Media `course_document` real, File privado, Group real, provider/YAML do owner e Domain `courses` (1/28 SQLite), permitindo estudante membro e negando terceiro/revogação. A relação de acesso é plugin fixture com `entity_access: TRUE`, não a definição Group do owner. O boot/DI do provider PDF passou em dev.161; a descoberta e execução do plugin Group real ainda precisam de Kernel com entidades Group/Media instaladas.
+Revalidação em 2026-10-23: `CourseDocumentAccessTest` do owner falhou antes da primeira assertion pela referência ausente `aculta_user.aculta_user_agreement_ledger`; acrescentar `aculta_user` expôs também `commerce_cart.cart_provider`. A integração IDX 0.1 tem Kernel focal do `ContentIndexAccessFilter` com Media `course_document` real, File privado, Group real, provider/YAML do owner e Domain `courses` (1/28 SQLite), permitindo estudante membro e negando terceiro/revogação. A relação de acesso desse harness é plugin fixture com `entity_access: TRUE`. Em dev.162, outro Kernel transversal descobriu o plugin Group real e persistiu a relação Group→Media; isso não substitui os grants/policy específicos nem a homologação Runtime.
 
 O Kernel `ContentIndexQueryKernelTest` exercita diretamente a API paginada: cursor opaco vinculado à conta e aos filtros da consulta, keyset por ID imutável diante de inserção posterior, revalidação de Entity Access depois de despublicar a fonte, invalidação do cache interno por revisão do catálogo, limites e filtros allowlisted. Revalidação MariaDB em dev.154: 4 testes / 52 assertions, sem depreciações. Uma execução anterior SQLite (2/29) foi evidência provisória; MariaDB é o gate vigente do repositório.
 

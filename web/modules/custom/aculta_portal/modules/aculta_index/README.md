@@ -2,8 +2,15 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.160` — hooks de entidade e cron usam classes OOP com DI; consultas agrupam Entity Access por purpose, inclusive em páginas mistas; Unit, Kernel e benchmark de acesso passaram. Estresse com processos PHP independentes passou em MariaDB (3/56).
-**Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. Benchmarks sintéticos de rebuild/auditoria passaram em 10k, 100k e 1M; a amostra 1M levou 2.137,817 s no rebuild e 724,020 s na auditoria, sem divergências e sem SLO. Em 2026-10-23, o Runtime de teste `toca` foi ativado temporariamente: Drush resolveu `audit status`, `queue status` e `help aculta-index:rebuild`; o catálogo ficou vazio, e após desinstalação o módulo ficou Disabled e zero tabelas do Index permaneceram. Boot/DI completo de alguns módulos owner, execução sobre catálogo com conteúdo, grants operacionais e métricas representativas continuam pendentes.
+**Versão:** `0.1.0-dev.162` — boot/DI transversal descobre os providers pelos YAMLs owners; Kernel também persistiu relação real Group→Media `course_document`.
+**Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. Benchmarks sintéticos de rebuild/auditoria passaram em 10k, 100k e 1M; a repetição 1M mais recente levou 2.020,081 s no rebuild e 741,071 s na auditoria, sem divergências e sem SLO. Em 2026-10-23, o Runtime de teste `toca` foi ativado temporariamente: Drush resolveu `audit status`, `queue status` e `help aculta-index:rebuild`; o catálogo ficou vazio, e após desinstalação o módulo ficou Disabled e zero tabelas do Index permaneceram. O harness combinado é do `aculta_index` sob o Portal; não transfere ownership ao LMS. Instalação de configuração completa dos owners, grants operacionais, execução sobre catálogo com conteúdo e métricas representativas continuam pendentes.
+
+**Boot/DI combinado (dev.162):** `ContentIndexOwnerIntegrationKernelTest` carrega
+roots owners independentes para validar seus adapters no container do Index.
+Além do registry/tag real, agora persiste uma relação com o plugin Group real
+`aculta_pdf_viewer_group:course_document` (MariaDB: 1/33; 239 depreciações
+Core/contrib). O boot de teste não é a arquitetura de produção: `aculta_index`
+é submódulo de `aculta_portal` e cada owner mantém seu adapter e sua policy.
 **Traduções:** no dev.85, `ContentIndexTranslationKernelTest` reconstrói um Node
 com duas línguas, consulta ambas pela API do Index, confirma que atualizar
 `pt-br` preserva `en` e apagar a tradução remove somente sua projeção e seu
@@ -59,9 +66,10 @@ No dev.113, a classe Kernel de consulta MariaDB passou com 3 testes / 40
 assertions, incluindo projeção residual de provider desativado excluída dos
 candidatos. A classe Kernel LMS passou com 4 testes / 210 assertions e 53
 depreciações upstream; agora cobre a aresta `course_document` após rebuild,
-revalidando estudante, visitante e acesso ao documento não publicado. O plugin
-Group é fixture isolada; o owner PDF e o boot/DI completo dos módulos continuam
-sem verificação integral.
+revalidando estudante, visitante e acesso ao documento não publicado. O boot/DI
+conjunto descobre o owner PDF e o Kernel transversal persiste a
+relação Group real; a instalação completa da configuração dos owners e os
+grants/Runtime continuam sem homologação integral.
 
 **Decisão de cobertura LMS:** manter esse harness isolado para provar a projeção,
 rebuild e consulta outgoing `course_document`. O boot integral do owner fica como

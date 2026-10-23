@@ -5,20 +5,27 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
-use PHPUnit\Framework\Attributes\Group;
+use Drupal\media\Entity\Media;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Index adapters registered by their independent owner modules.
  *
- * This combined integration harness boots their declared dependency graph;
- * ownership and provider implementations remain in the source modules.
+ * This Index-owned test harness boots independent owner roots together to
+ * verify discovery. The LMS does not own the Portal Index.
  */
-#[Group('aculta_index')]
+#[TestGroup('aculta_index')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
+
+  use MediaTypeCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -41,6 +48,8 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'aculta_pdf_viewer_group',
       'aculta_forum',
       'aculta_wiki',
+      'schema_web_page',
+      'schema_organization',
       'aculta_index',
     ]);
     parent::bootKernel();
@@ -49,7 +58,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
   /**
    * Boots the full container and discovers adapters from their owner services.
    */
-  public function testPortalLmsOwnerAdaptersAreDiscovered(): void {
+  public function testOwnerAdaptersAreDiscoveredByThePortalIndex(): void {
     $registry = $this->container->get('aculta_index.provider_registry');
 
     self::assertSame('lms_course', $registry->findProviderIdForBundle('group', 'lms_course'));
@@ -60,6 +69,76 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('image', $registry->findProviderIdForBundle('media', 'image'));
     self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
     self::assertSame('forum_attachment', $registry->findProviderIdForBundle('media', 'forum_attachment'));
+
+    $this->assertPdfGroupRelationPluginCanAttachCourseDocument();
+  }
+
+  /**
+   * Exercises the PDF owner's real Group relation plugin with persisted data.
+   */
+  private function assertPdfGroupRelationPluginCanAttachCourseDocument(): void {
+    $this->installSchema('aculta_index', [
+      'aculta_index_generation',
+      'aculta_index_state',
+      'aculta_index_entry',
+      'aculta_index_relation',
+      'aculta_index_work',
+      'aculta_index_cursor',
+      'aculta_index_audit',
+    ]);
+    aculta_index_install();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installConfig(['system', 'user', 'file', 'media', 'group']);
+
+    $this->createMediaType('file', [
+      'id' => 'course_document',
+      'label' => 'Course document',
+    ]);
+    GroupType::create([
+      'id' => 'lms_course',
+      'label' => 'Course',
+      'creator_membership' => FALSE,
+    ])->save();
+
+    $relationManager = $this->container->get('group_relation_type.manager');
+    $relationManager->clearCachedDefinitions();
+    $definition = $relationManager->getDefinition('aculta_pdf_viewer_group:course_document');
+    self::assertSame('media', $definition->getEntityTypeId());
+    self::assertSame('course_document', $definition->getEntityBundle());
+
+    $relationshipTypeStorage = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship_type');
+    self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypeStorage);
+    $relationshipType = $relationshipTypeStorage->createFromPlugin(
+      GroupType::load('lms_course'),
+      'aculta_pdf_viewer_group:course_document',
+    );
+    $relationshipType->save();
+
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Course document relation fixture',
+      'uid' => 1,
+    ]);
+    $course->save();
+    $document = Media::create([
+      'bundle' => 'course_document',
+      'name' => 'Owner plugin document fixture',
+      'status' => FALSE,
+    ]);
+    $document->save();
+    $relationship = $course->addRelationship($document, 'aculta_pdf_viewer_group:course_document');
+
+    self::assertSame('aculta_pdf_viewer_group:course_document', $relationship->getPluginId());
+    self::assertSame((string) $document->id(), (string) $relationship->getEntity()->id());
   }
 
   /**

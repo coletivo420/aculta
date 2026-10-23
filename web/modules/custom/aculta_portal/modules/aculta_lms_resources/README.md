@@ -33,6 +33,13 @@ closure declarada de 103 módulos Portal/LMS e descobriu `lms_course` e
 container e as tags; não instala configuração/schema dos módulos nem substitui
 os testes focados de acesso com Group e Domain. Runtime continua pendente.
 
+No dev.162, o mesmo harness criou GroupType, Group e Media reais, resolveu a
+definição `aculta_pdf_viewer_group:course_document` registrada pelo owner e
+persistiu a relação curso→documento (1 teste / 33 assertions; 239 depreciações
+Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
+hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o
+Runtime permanece pendente.
+
 ### Limpeza coordenada de recursos — dívida de integração em 2026-10-22
 
 O Portal já oferece parcialmente `aculta_portal.unused_file_cleaner` para
