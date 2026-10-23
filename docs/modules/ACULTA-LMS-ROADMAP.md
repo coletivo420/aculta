@@ -437,7 +437,7 @@ subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os cam
 no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
 smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
-Em `aculta_lms_resources` 0.1.0-dev.13, o provider do Content Index também projeta a relação outgoing `course_document` a partir do plugin Group PDF quando disponível. Unit confirma allowlist do bundle e opcionalidade (5 testes / 31 assertions); consulta outgoing Kernel integrada ainda pendente. A evidência Kernel existente do destino valida Group Media e seu filtro de acesso em harness separado.
+Em `aculta_lms_resources` 0.1.0-dev.14, o provider do Content Index projeta a relação outgoing `course_document` a partir do plugin Group PDF quando disponível. Unit confirma allowlist do bundle e opcionalidade (5 testes / 31 assertions). A classe Kernel LMS percorre rebuild e consulta outgoing em MariaDB: estudante membro encontra o documento unpublished e visitante externo é negado (4 testes / 210 assertions, 53 depreciações Core/contrib). O teste registra a declaração/tag do provider Media owner e usa plugin Group fixture isolado; ativação/DI dos módulos owner completos, instalação e Runtime permanecem pendentes.
 
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
 relação outgoing `course_gallery` com providers LMS e Gallery carregados dos

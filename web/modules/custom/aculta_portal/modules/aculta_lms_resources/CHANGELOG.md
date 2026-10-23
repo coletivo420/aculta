@@ -1,5 +1,15 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.14 — validar relação outgoing Curso→Documento no Kernel
+
+- A classe Kernel agora cobre provider LMS, rebuild, relação `course_document`
+  e consulta outgoing com Entity Access: estudante membro recebe o documento
+  privado e usuário externo não o descobre.
+- A fixture usa a declaração/tags YAML do provider de documentos owner e plugin
+  Group isolado; corrige os dois argumentos do serviço LMS no harness.
+- MariaDB: classe Kernel completa 4 testes / 210 assertions; 53 depreciações
+  Core/contrib. Boot completo dos módulos owner e Runtime não foram verificados.
+
 ## 0.1.0-dev.13 — projetar documentos vinculados ao curso
 
 - O provider LMS projeta `course_document` a partir do plugin Group

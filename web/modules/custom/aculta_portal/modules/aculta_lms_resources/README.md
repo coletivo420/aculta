@@ -45,3 +45,10 @@ do provider pela tag/DI do módulo, instalação e smoke autenticado no Runtime 
 revisão visual continuam pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.
 Consulte o
 [roadmap LMS](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
+
+Dev 0.1.0-dev.14. A relação outgoing `course_document` passou a ter cobertura
+Kernel completa no harness LMS: rebuild, consulta pelo estudante membro,
+negação do visitante externo e uso da declaração/tag YAML do provider Media
+owner (4 testes / 210 assertions em MariaDB; 53 depreciações Core/contrib).
+O plugin Group é fixture de teste; a ativação dos módulos owner completos,
+instalação no Runtime e smoke autenticado continuam pendentes.

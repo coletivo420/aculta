@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.113 — cobrir providers desativados e relação LMS→documento
+
+- Kernel de consulta confirma que projeção residual de provider sem registro
+  nunca vira candidata, mesmo com fonte pública ainda existente (1 teste / 11
+  assertions em MariaDB).
+- O Kernel LMS percorre rebuild, relação `course_document` e consulta outgoing:
+  estudante membro encontra o documento unpublished do curso e visitante
+  externo não o descobre. Providers são registrados com suas declarações/tag
+  owner e o plugin Group é fixture isolada (4 testes / 210 assertions na classe
+  em MariaDB; 53 depreciações upstream).
+- O harness do provider LMS agora inclui os dois argumentos declarados no YAML
+  (`domain_purpose` e `group_relation_type.manager`).
+
 ## 0.1.0-dev.112 — serializar cleanup concorrente
 
 - A seleção da geração `discarding` agora ocorre sob `FOR UPDATE` na transação
