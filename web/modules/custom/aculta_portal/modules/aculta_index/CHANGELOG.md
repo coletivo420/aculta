@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.54 — validar o Kernel do Statistics
+
+- Executa `DailyAggregateStorageKernelTest` no MariaDB dedicado de testes:
+  15 testes / 27 assertions PASS. A evidência cobre Statistics isoladamente;
+  bridge ponta a ponta Index→Statistics permanece pendente.
+
 ## 0.1.0-dev.53 — evidência atual da ponte Statistics
 
 - Registra decisão: incompatibilidade de tipo/bundle rejeita a página integral,

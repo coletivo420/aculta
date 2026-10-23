@@ -67,5 +67,5 @@ Conectar primeiro indicadores agregados por bundle/domínio e janela de tempo, p
 - A allowlist inicial cobre métricas Wiki por `node/wiki_entry` e solicitações de arquivo por `file/file`; dimensões compostas ficam fora deste bridge.
 - Métricas públicas allowlisted aceitam a permissão granular `view content-level statistics`; métricas internas exigem permissão administrativa. A autorização de cada conteúdo já foi revalidada pelo Index.
 - Regressão Unit focada executada em 2026-10-23: Index bridge e aggregator Statistics, 8 testes / 47 assertions PASS. Inclui rejeição antes da consulta SQL quando o bundle da página não corresponde à métrica.
-- O Kernel de `aculta_statistics` cobre armazenamento e aggregator no próprio módulo; falta executar e registrar essa suíte nesta microfase.
+- Kernel de `aculta_statistics` executado em 2026-10-23: `DailyAggregateStorageKernelTest`, 15 testes / 27 assertions PASS. Essa suíte valida o storage e o aggregator dentro do Statistics, sem integrar a query/access do Index.
 - Ainda faltam cenário Kernel ponta a ponta entre query/access do Index e serviço real de Statistics, fallback em container sem Statistics nesse mesmo fluxo e medição de consultas/latência antes de conectar a listagens de Studio.
