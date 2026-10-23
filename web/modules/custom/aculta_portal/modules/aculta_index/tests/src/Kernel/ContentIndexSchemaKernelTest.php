@@ -108,6 +108,48 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Cursor tokens are opaque and bound to their account and query.
+   */
+  public function testCursorTokenIsOpaqueAndBoundToAccountAndQuery(): void {
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1000);
+    $database = $this->container->get('database');
+    $manager = new ContentIndexCursorManager($database, $time);
+    $queryHash = str_repeat('c', 64);
+    $token = $manager->create(7, 'generation-a', $queryHash, 0, 987654321);
+
+    $this->assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/', $token);
+    $this->assertTrue($database->schema()->fieldExists('aculta_index_cursor', 'token_hash'));
+    $this->assertFalse($database->schema()->fieldExists('aculta_index_cursor', 'token'));
+    $row = $database->select('aculta_index_cursor', 'cursor')
+      ->fields('cursor', ['token_hash', 'uid', 'generation_id', 'query_hash', 'cursor_entry_id'])
+      ->condition('token_hash', hash('sha256', $token))
+      ->execute()
+      ->fetchAssoc();
+    $this->assertIsArray($row);
+    $this->assertSame(64, strlen($row['token_hash']));
+    $this->assertSame('7', (string) $row['uid']);
+    $this->assertSame('generation-a', $row['generation_id']);
+    $this->assertSame($queryHash, $row['query_hash']);
+    $this->assertSame(987654321, (int) $row['cursor_entry_id']);
+    $this->assertSame(987654321, $manager->load($token, 7, 'generation-a', $queryHash)['entry_id']);
+
+    foreach ([
+      ['uid' => 8, 'generation' => 'generation-a', 'query' => $queryHash],
+      ['uid' => 7, 'generation' => 'generation-b', 'query' => $queryHash],
+      ['uid' => 7, 'generation' => 'generation-a', 'query' => str_repeat('d', 64)],
+    ] as $invalidBinding) {
+      try {
+        $manager->load($token, $invalidBinding['uid'], $invalidBinding['generation'], $invalidBinding['query']);
+        $this->fail('A cursor must not be transferable to another account, generation or query.');
+      }
+      catch (\InvalidArgumentException) {
+        // Expected: all cursor bindings must match.
+      }
+    }
+  }
+
+  /**
    * Cursor pruning deletes no more than the requested bounded batch.
    */
   public function testCursorPruningDeletesExpiredRowsInBoundedBatches(): void {
