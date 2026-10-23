@@ -7,3 +7,14 @@ aculta_commerce.green_stash:
     _permission: 'access aculta green stash'
   options:
     _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_area:
+  path: '/green-stash/{section}'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_controller:page'
+    _title: 'Green Stash'
+  requirements:
+    _permission: 'access aculta green stash'
+    section: 'overview|products|orders|inventory|shipping|promotions|customers|reports|settings'
+  options:
+    _aculta_domain_purpose: account
