@@ -2,7 +2,7 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.166` — boot/DI transversal descobre providers owner, incluindo o provider Portal `media:remote_video`, categoria Wiki, relação Group real `course_document`, bridge `aculta_statistics` e acesso Wiki no bootstrap real.
+**Versão:** `0.1.0-dev.167` — boot/DI transversal descobre providers owner, incluindo o provider Portal `media:remote_video`, categoria Wiki, relação Group real `course_document`, bridge `aculta_statistics` e consulta outgoing Wiki no bootstrap owner real.
 **Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. Benchmarks sintéticos de rebuild/auditoria passaram em 10k, 100k e 1M; a repetição 1M mais recente levou 2.020,081 s no rebuild e 741,071 s na auditoria, sem divergências e sem SLO. Em 2026-10-23, o Runtime de teste `toca` foi ativado temporariamente: Drush resolveu `audit status`, `queue status` e `help aculta-index:rebuild`; o catálogo ficou vazio, e após desinstalação o módulo ficou Disabled e zero tabelas do Index permaneceram. O harness combinado é do `aculta_index` sob o Portal; não transfere ownership ao LMS. Instalação de configuração completa dos owners, grants operacionais, execução sobre catálogo com conteúdo e métricas representativas continuam pendentes.
 
 **Boot/DI combinado (dev.164):** `ContentIndexOwnerIntegrationKernelTest` carrega
@@ -15,14 +15,16 @@ Portal (1/36; 239 depreciações Core/contrib), e reconhece o provider
 produção: `aculta_index` é submódulo de `aculta_portal` e cada owner mantém seu
 adapter e sua policy.
 
-**Integração Wiki (dev.166):** o Kernel owner testa a projeção v3 e o
+**Integração Wiki (dev.167):** o Kernel owner testa a projeção v3 e o
 `ContentIndexAccessFilter` com `aculta_wiki`, Portal e Index descobertos e
 inicializados de verdade, sem bridge de acesso. Fonte e destinos são entidades
 persistidas; conteúdo Wiki é negado no Domain `main`, autorizado em `wiki`,
-destinos não publicados são filtrados e o Domain inicial é restaurado (1 teste /
-34 assertions). A suíte Wiki/Index passou com 6 testes / 181 assertions. O
-`ContentIndexRelationQuery` outgoing continua coberto pelo harness fixture; um
-rebuild completo da closure de todos os providers não foi executado.
+destinos não publicados são filtrados e o Domain inicial é restaurado. A mesma
+prova consulta `related_entry`, `wiki_category` e `wiki_image` pela
+`ContentIndexRelationQuery` real, com providers descobertos pelo container e
+uma geração de teste semeada para os registros necessários (owner: 2 testes /
+86 assertions). A suíte Wiki/Index passou com 6 testes / 187 assertions em
+MariaDB. Não é um rebuild integral nem validação do inventário completo.
 **Traduções:** no dev.85, `ContentIndexTranslationKernelTest` reconstrói um Node
 com duas línguas, consulta ambas pela API do Index, confirma que atualizar
 `pt-br` preserva `en` e apagar a tradução remove somente sua projeção e seu

@@ -296,13 +296,14 @@ aguarda decisão; não remover histórico automaticamente.
   ou homologação Runtime. No preflight read-only de 2026-10-23, a Wiki estava
   ativa e o Index desativado; não houve alteração de Runtime nesta fase.
 
-Atualização WIKI-R1, 2026-10-23: o teste
-`ContentIndexOwnerIntegrationKernelTest::testRealWikiOwnerBootstrapRevalidatesEntityAccess`
-usa a closure real Wiki + Portal + Index e valida a projeção deduplicada e o `ContentIndexAccessFilter`
-com hooks/serviços reais: nega Wiki em `main`, permite no purpose `wiki`, filtra
-Node/Term/Media privados e restaura o Domain inicial (1/34; 231 depreciações).
-A consulta outgoing completa continua no Kernel com bridge fixture; a suíte
-Wiki/Index passou em MariaDB isolada (6/181; 243 depreciações agregadas).
+Atualização WIKI-R1, 2026-10-23: `ContentIndexOwnerIntegrationKernelTest` usa a
+closure real Wiki + Portal + Index e valida projeção deduplicada, filtro de
+acesso, restauração do Domain e as três consultas outgoing (`related_entry`,
+`wiki_category`, `wiki_image`) pelo `ContentIndexRelationQuery` real, sem bridge
+de acesso. A geração de teste é semeada apenas com as identidades necessárias;
+isso não comprova rebuild ou auditoria integral do inventário. A classe owner
+passou com 2 testes / 86 assertions; a suíte Wiki/Index passou com 6 testes /
+187 assertions em MariaDB.
 
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de

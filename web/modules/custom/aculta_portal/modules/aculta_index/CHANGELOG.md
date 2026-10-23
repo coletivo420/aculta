@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.167 — consultar relações Wiki no bootstrap owner real
+
+- `ContentIndexOwnerIntegrationKernelTest` semeia uma geração isolada pelos
+  serviços reais de geração e escrita e consulta `related_entry`,
+  `wiki_category` e `wiki_image` pela `ContentIndexRelationQuery` real. O teste
+  confirma a descoberta dos providers Wiki, categoria e Media, filtra destinos
+  não autorizados sob os grants e restaura o Domain de origem.
+- O cenário cobre apenas as entidades relevantes às relações; não executa
+  rebuild integral nem auditoria de inventário. Focal: 1 teste / 40 assertions;
+  classe owner: 2 testes / 86 assertions. Suíte direcionada Wiki/Index:
+  6 testes / 187 assertions, aprovada em MariaDB; 243 depreciações upstream.
+  PHP lint e PHPCS do arquivo de teste aprovados.
+
 ## 0.1.0-dev.166 — Wiki com bootstrap e acesso reais
 
 - `ContentIndexOwnerIntegrationKernelTest` agora cria verbetes, categorias e

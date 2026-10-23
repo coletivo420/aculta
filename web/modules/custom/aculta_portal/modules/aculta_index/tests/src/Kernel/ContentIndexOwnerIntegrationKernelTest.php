@@ -267,6 +267,31 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'wiki_image:media:' . $publicImage->id(),
     ], $relationKeys, 'The production Wiki provider projects each configured relation once.');
 
+    // Seed an isolated generation through the production writer and lifecycle
+    // services so the actual outgoing query can be exercised with the real
+    // owner registry and Entity Access policies. The test intentionally seeds
+    // only the Wiki identities relevant to the query; full inventory rebuild
+    // integrity is covered by the dedicated rebuilder Kernel suite.
+    $generationManager = $this->container->get('aculta_index.generation_manager');
+    $generationId = $generationManager->start($registry->fingerprint());
+    $writer = $this->container->get('aculta_index.writer');
+    foreach ([$source, $publicTarget, $privateTarget, $privateImageSource] as $entry) {
+      $entryProjection = $registry->get('wiki')->project($entry);
+      if ($entryProjection !== NULL) {
+        $writer->write($generationId, 'wiki', $entryProjection);
+      }
+    }
+    foreach ([$publicCategory, $privateCategory] as $category) {
+      $writer->write($generationId, 'wiki_category', $registry->get('wiki_category')->project($category));
+    }
+    foreach ([$publicImage, $privateImage] as $image) {
+      $writer->write($generationId, 'image', $registry->get('image')->project($image));
+    }
+    $this->processAllQueuedWork();
+    $generationManager->markBackfillCompleted($generationId, 0);
+    $generationManager->markValidated($generationId);
+    $generationManager->activate($generationId);
+
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
@@ -311,6 +336,26 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     ksort($expectedAllowed);
     ksort($allowed);
     self::assertSame($expectedAllowed, $allowed, 'The real Index filter returns only entities viewable under Wiki access rules.');
+
+    foreach ([
+      'related_entry' => [(string) $publicTarget->id()],
+      'wiki_category' => [(string) $publicCategory->id()],
+      'wiki_image' => [(string) $publicImage->id()],
+    ] as $relationType => $expectedIds) {
+      $relationResult = $this->container->get('aculta_index.relation_query')->queryOutgoing(
+        'node',
+        (string) $source->id(),
+        $source->language()->getId(),
+        $relationType,
+        $reader,
+      );
+      self::assertSame(
+        $expectedIds,
+        array_map(static fn ($entity): string => (string) $entity->id(), $relationResult->entities),
+        sprintf('The real outgoing relation query returns only indexed, accessible %s targets.', $relationType),
+      );
+      self::assertSame(0, $relationResult->cacheability->getCacheMaxAge());
+    }
     self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id(), 'The original main Domain is restored.');
     self::assertFalse($source->access('view', $reader), 'Wiki access is not cached into the restored main Domain.');
   }
@@ -356,6 +401,24 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
         'is_default' => $id === 'aculta_org',
         'weight' => 0,
       ])->save();
+    }
+  }
+
+  /**
+   * Completes pending source work before the test activates its generation.
+   */
+  private function processAllQueuedWork(): void {
+    $database = $this->container->get('database');
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance('aculta_index_update');
+    $ids = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('status', 'queued')
+      ->orderBy('work_id')
+      ->execute()
+      ->fetchCol();
+    foreach ($ids as $id) {
+      $worker->processItem(['work_id' => (int) $id]);
     }
   }
 

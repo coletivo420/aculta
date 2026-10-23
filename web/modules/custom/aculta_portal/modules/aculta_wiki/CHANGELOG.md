@@ -12,8 +12,11 @@
   `ContentIndexAccessFilter` com bootstrap integral Wiki + Portal + Index:
   acesso `main`/`wiki`, filtros de origem e alvos privados, restauração do
   Domain (1 teste / 34 asserções; 231 depreciações upstream). A consulta
-  outgoing completa ainda usa bridge fixture nos Kernel do Index.
-- Suíte reexecutada: 6 testes / 181 asserções, aprovada; 243 depreciações
+  outgoing agora também é consultada via `ContentIndexRelationQuery` de produção
+  com providers reais descobertos no mesmo bootstrap (dev.167; owner: 2 testes /
+  86 asserções). A geração de teste contém só as identidades necessárias e não
+  equivale a rebuild/auditoria integral do inventário.
+- Suíte reexecutada: 6 testes / 187 asserções, aprovada; 243 depreciações
   agregadas de Core/contrib/PHPUnit.
 - `aculta_index` estava desativado no Runtime de teste; não houve rebuild,
   importação ou alteração de estado no Runtime.

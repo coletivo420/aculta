@@ -171,8 +171,11 @@ termos pertence à Wiki; o de Media pertence a `aculta_image`. Destinos seguem
 sujeitos a Entity Access na consulta do Index. Alteração semântica futura exige
 incremento da versão e rebuild de geração; esta entrega não dispara rebuild.
 Termos/categorias e imagens não devem bloquear infraestrutura genérica ou
-outros providers do Index. A projeção não inclui corpo, revisão pendente,
-autoria, descrição, URL ou arquivo. Homologação Runtime continua separada.
+outros providers do Index. O Kernel owner agora consulta as três relações
+outgoing por `ContentIndexRelationQuery` real no bootstrap Wiki + Portal + Index;
+a geração é semeada apenas com as identidades relevantes e não valida rebuild
+integral do inventário. A projeção não inclui corpo, revisão pendente, autoria,
+descrição, URL ou arquivo. Homologação Runtime continua separada.
 
 ## Documentação
 
