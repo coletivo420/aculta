@@ -329,8 +329,9 @@ acesso, restauração do Domain e as três consultas outgoing (`related_entry`,
 `wiki_category`, `wiki_image`) pelo `ContentIndexRelationQuery` real, sem bridge
 de acesso. A geração de teste é semeada apenas com as identidades necessárias;
 isso não comprova rebuild ou auditoria integral do inventário. A classe owner
-passou com 2 testes / 86 assertions; a suíte Wiki/Index passou com 6 testes /
-187 assertions em MariaDB.
+passou com 2 testes / 88 assertions. A suíte Wiki/Index completa anterior
+registrou 6 testes / 187 assertions em MariaDB; não foi reexecutada neste
+incremento.
 
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de

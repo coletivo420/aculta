@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.168 — endurecer fixture privada de Media da Wiki
+
+- O Kernel owner verifica diretamente que a Media fixture está não publicada
+  e que a conta leitora não tem `view` nela antes de testar o filtro real.
+  Isso torna explícita a premissa da consulta outgoing que omite destinos sem
+  acesso.
+- A classe owner passou em MariaDB isolada: 2 testes / 88 assertions; 243
+  depreciações upstream. A suíte direcionada completa Wiki/Index não foi
+  reexecutada neste incremento.
+
 ## 0.1.0-dev.167 — consultar relações Wiki no bootstrap owner real
 
 - `ContentIndexOwnerIntegrationKernelTest` semeia uma geração isolada pelos

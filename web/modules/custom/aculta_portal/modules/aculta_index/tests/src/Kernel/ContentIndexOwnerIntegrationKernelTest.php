@@ -222,6 +222,8 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'uid' => 1,
     ]);
     $privateImage->save();
+    self::assertFalse($privateImage->isPublished(), 'The private image fixture must be unpublished.');
+    self::assertFalse($privateImage->access('view', $reader, TRUE)->isAllowed(), 'The reader must not be able to view the unpublished image directly.');
     $source = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Real Wiki owner source',
