@@ -284,3 +284,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-PRODUCT-DETAIL-01 | Homologar rota de detalhe por store e entidade | Testes Kernel e HTTP com produto loja/LMS, lojas concorrentes e operadores sem permissão; acesso indevido retorna 403/404 |
 | GS-PRODUCT-DETAIL-02 | Visual do detalhe do produto via SDC/UI Suite | Componentes ACULTA420 com campos autorizados, 320px+, navegação teclado e contraste light/dark |
 | GS-PRODUCT-DETAIL-03 | Contratos de criação/edição próprios Studio | Form API, permissões de create/update store/product, validações Commerce e transações/revisões comprovadas no homelab |
+
+## Green Stash — GS-EDITOR-0.3-A (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-CREATE-01 | Formulário e rota PT-BR ainda sem homologação Drupal no homelab | Drush cr, acesso anônimo/comum/operador; Form API GET/POST CSRF, createAccess, store update, validação de entidade, salvamento e redirect |
+| GS-CREATE-02 | Produto de rascunho sem variações, SKU e preço | Cadastro assistido próprio Studio, variação e preço com APIs Commerce; publicar só quando consistente |
+| GS-CREATE-03 | Integrar SDC/UI Suite e UX mobile-first no formulário | Stories ACULTA420, 320px+, light/dark, teclado, sem JS, testes no navegador |
