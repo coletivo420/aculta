@@ -227,3 +227,13 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | DT-ME-04 | Endereço sem número na API do Melhor Envio | Documentação não define representação para S/N. Contratação bloqueada com `sn_not_accepted_by_api`; cotação não exige número | Média | Confirmação com o suporte ou no sandbox; enquanto isso, bloqueio mantido | Pendente — sandbox |
 | DT-ME-05 | Tela administrativa da origem e conferência de endereço no Green Stash | Origem só existe em configuração (`settings:origin`, vazia por padrão) | Média | Form API e componentes SDC/UI Suite, com permissões, sem editar o endereço do cliente | Pendente — ME-0.5-B |
 | DT-ME-06 | Comentário de `StreetNumberField::validateNumber()` diz 1 a 4 dígitos | Código e mensagem usam `MAX_DIGITS = 10`; só o comentário está errado | Baixa | Comentário alinhado ao código, sem mudar a regra | Pendente — fase própria |
+
+## Green Stash — dívidas de UX mobile-first (2026-10-23)
+
+| ID | Pendência | Evidência / dependência | Encerramento |
+| --- | --- | --- | --- |
+| GS-UX-01 | Homologar provider/rota/container Green Stash | Hook/container atual sem gate runtime registrado | Drush cr e HTTP/Functional por purpose, guest e operador autorizado |
+| GS-UX-02 | Definir ACL por store, papel e ação | Permissão atual só autoriza entrar | Matriz Commerce access/Entity access e testes contra IDOR e vazamento de contadores |
+| GS-UX-03 | Inventariar componentes SDC/UI Suite realmente reutilizáveis | Plano visual novo em `GREEN-STASH-UX-MOBILE-FIRST.md` | Stories/design gates e matrizes 320px+/claro/escuro |
+| GS-UX-04 | Contratar agregações Stats para cards reais | Sem provider Green Stash de KPIs ainda | Queries autorizadas, paginadas e caches corretos, sem duplicar métricas |
+| GS-UX-05 | Estoque e expedição reais | Comércio Stock/Melhor Envio ainda em etapas próprias | APIs aprovadas, sandbox/homelab e telas com permissões reais |
