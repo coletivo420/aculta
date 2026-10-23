@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.96 — validar acesso do Fórum e documentos LMS
+
+- Kernel SQLite do Fórum: 4 testes / 199 assertions passaram usando o
+  `ContentIndexAccessFilter`, hooks reais de grants do Fórum, Group membership,
+  revogação imediata e Domains. Foram registradas 38 depreciações Core/contrib.
+- Kernel SQLite de `course_document`: 1 teste / 28 assertions passou. O teste
+  usa o provider e a declaração de serviço do YAML real do PDF Viewer Group e
+  uma relação Group fixture com `entity_access: TRUE`; estudante associado
+  recebe acesso, terceiro não, revogação é observada e o Domain `courses` é
+  aplicado/restaurado. O boot/DI completo do módulo owner permanece pendente.
+- Nenhum módulo foi ativado no Runtime. MariaDB segue ocupado pelo benchmark
+  de manutenção de 1 milhão de entidades.
+
 ## 0.1.0-dev.95 — atualizar evidência da suíte Kernel SQLite
 
 - Suíte Kernel completa do Index: 77 testes / 1.166 assertions passaram em
