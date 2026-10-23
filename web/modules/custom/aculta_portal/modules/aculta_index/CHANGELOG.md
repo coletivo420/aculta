@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.132 — tratar status de subprocesso ausente explicitamente
+
+- O harness só prefere o código de saída observado quando é inteiro não-negativo;
+  status ausente ou `-1` usa o resultado de `proc_close()`.
+- PHP lint e PHPCS Drupal passaram; o Kernel MariaDB aguarda o benchmark de 1M.
+
 ## 0.1.0-dev.131 — limitar e drenar subprocessos do teste concorrente
 
 - O harness coleta stdout/stderr simultaneamente e impõe timeout global de 120 s;

@@ -353,7 +353,9 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
         }
         $closeCode = proc_close($workerProcess['process']);
         $processes[$processIndex]['process'] = NULL;
-        $exitCode = $workerProcess['exit_code'] >= 0 ? $workerProcess['exit_code'] : $closeCode;
+        $exitCode = is_int($workerProcess['exit_code']) && $workerProcess['exit_code'] >= 0
+          ? $workerProcess['exit_code']
+          : $closeCode;
         self::assertSame(0, $exitCode, sprintf('Process worker failed: %s', trim($workerProcess['stderr'])));
         $decoded = json_decode(trim($workerProcess['stdout']), TRUE, 512, JSON_THROW_ON_ERROR);
         self::assertIsArray($decoded);
