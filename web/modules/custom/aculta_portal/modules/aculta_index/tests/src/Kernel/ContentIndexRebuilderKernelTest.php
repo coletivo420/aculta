@@ -262,6 +262,47 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Finds a provider-owned source entity missing from the active catalog.
+   */
+  public function testIncrementalAuditFindsSourceMissingFromCatalog(): void {
+    Node::create(['type' => 'sample_content', 'title' => 'Uncatalogued source', 'status' => 1])->save();
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $database = $this->container->get('database');
+    $database->delete('aculta_index_entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_id', '1')
+      ->execute();
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $checker->startAudit();
+    $state = $checker->processAuditBatch(10);
+    $this->assertSame('relations', $state['phase']);
+    $state = $checker->processAuditBatch(10);
+    $this->assertSame('sources', $state['phase']);
+    $state = $checker->processAuditBatch(10);
+    $this->assertSame('complete', $state['status']);
+    $this->assertSame(1, (int) $state['missing_catalog_entry_count']);
+
+    $work = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['operation', 'status'])
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', '1')
+      ->condition('langcode', 'en')
+      ->execute()
+      ->fetchAssoc();
+    $this->assertSame(['operation' => 'project', 'status' => 'queued'], $work);
+  }
+
+  /**
    * Checks query pagination uses an opaque persisted cursor and access checks.
    */
   public function testQueryUsesOpaqueCursorAndReturnsAuthorizedEntities(): void {

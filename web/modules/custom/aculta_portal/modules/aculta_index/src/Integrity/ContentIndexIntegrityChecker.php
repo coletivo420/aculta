@@ -8,8 +8,10 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
+use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
 use Drupal\aculta_index\Storage\ContentIndexWriter;
 use Psr\Log\LoggerInterface;
 
@@ -33,6 +35,7 @@ final class ContentIndexIntegrityChecker {
     private readonly TimeInterface $time,
     private readonly ContentIndexProviderRegistry $providers,
     private readonly ContentIndexWorkManager $work,
+    private readonly ContentIndexEntityEnumerator $enumerator,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ContentIndexWriter $writer,
     private readonly LoggerInterface $logger,
@@ -93,12 +96,16 @@ final class ContentIndexIntegrityChecker {
         'cursor_id' => 0,
         'entry_max_id' => $this->maxId('aculta_index_entry', 'entry_id'),
         'relation_max_id' => $this->maxId('aculta_index_relation', 'relation_id'),
+        'source_provider_cursor' => '',
+        'source_entity_type_cursor' => '',
+        'source_entity_id_cursor' => '',
         'orphan_entry_count' => 0,
         'orphan_relation_count' => 0,
         'relation_source_missing_count' => 0,
         'stale_projection_count' => 0,
         'missing_source_count' => 0,
         'unverified_source_count' => 0,
+        'missing_catalog_entry_count' => 0,
         'active_pointer_valid' => (int) $pointer['valid'],
         'active_generation' => $pointer['generation'] ?? '',
         'created' => $this->time->getRequestTime(),
@@ -147,9 +154,26 @@ final class ContentIndexIntegrityChecker {
         throw new \LogicException('No ACULTA Content Index audit is running.');
       }
 
-      $rows = $state['phase'] === 'entries'
-        ? $this->entryAuditRows((int) $state['cursor_id'], (int) $state['entry_max_id'], (string) $state['active_generation'], $limit)
-        : $this->relationAuditRows((int) $state['cursor_id'], (int) $state['relation_max_id'], $limit);
+      $sourceBatch = NULL;
+      $sourceCursor = NULL;
+      if ($state['phase'] === 'entries') {
+        $rows = $this->entryAuditRows((int) $state['cursor_id'], (int) $state['entry_max_id'], (string) $state['active_generation'], $limit);
+      }
+      elseif ($state['phase'] === 'relations') {
+        $rows = $this->relationAuditRows((int) $state['cursor_id'], (int) $state['relation_max_id'], $limit);
+      }
+      else {
+        $sourceCursor = $this->sourceCursorFromState($state);
+        $sourceBatch = $sourceCursor === NULL
+          ? ['projections' => [], 'next_cursor' => NULL, 'exhausted' => TRUE]
+          : $this->enumerator->nextBatch(
+            $sourceCursor['provider_id'],
+            $sourceCursor['entity_type'],
+            $state['source_entity_id_cursor'] === '' ? NULL : (string) $state['source_entity_id_cursor'],
+            $limit,
+          );
+        $rows = [];
+      }
       $updates = [
         'cursor_id' => $rows === [] ? (int) $state['cursor_id'] : (int) end($rows)['row_id'],
         'updated' => $this->time->getRequestTime(),
@@ -159,6 +183,7 @@ final class ContentIndexIntegrityChecker {
       $orphanRelations = 0;
       $missingRelationSources = 0;
       $sourceAudit = ['stale' => 0, 'missing' => 0, 'unverified' => 0, 'project' => [], 'delete' => []];
+      $sourceCatalogAudit = ['missing' => 0, 'stale' => 0, 'unverified' => 0, 'project' => []];
       foreach ($rows as $row) {
         if ($state['phase'] === 'entries') {
           $orphanEntries += (int) $row['orphan'];
@@ -171,6 +196,13 @@ final class ContentIndexIntegrityChecker {
       if ($state['phase'] === 'entries') {
         $sourceAudit = $this->reconcileEntrySources($rows, (string) $state['active_generation']);
       }
+      elseif ($sourceBatch !== NULL && $sourceCursor !== NULL) {
+        $sourceCatalogAudit = $this->reconcileCatalogCoverage(
+          $sourceCursor['provider_id'],
+          $sourceBatch['projections'],
+          (string) $state['active_generation'],
+        );
+      }
       if ($state['phase'] === 'entries') {
         $updates['orphan_entry_count'] = (int) $state['orphan_entry_count'] + $orphanEntries;
         $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $sourceAudit['stale'];
@@ -180,20 +212,54 @@ final class ContentIndexIntegrityChecker {
       else {
         $updates['orphan_relation_count'] = (int) $state['orphan_relation_count'] + $orphanRelations;
         $updates['relation_source_missing_count'] = (int) $state['relation_source_missing_count'] + $missingRelationSources;
+        if ($state['phase'] === 'sources') {
+          $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $sourceCatalogAudit['stale'];
+          $updates['unverified_source_count'] = (int) $state['unverified_source_count'] + $sourceCatalogAudit['unverified'];
+          $updates['missing_catalog_entry_count'] = (int) $state['missing_catalog_entry_count'] + $sourceCatalogAudit['missing'];
+        }
       }
 
-      $phaseMaximum = $state['phase'] === 'entries' ? (int) $state['entry_max_id'] : (int) $state['relation_max_id'];
-      $phaseFinished = (int) $updates['cursor_id'] >= $phaseMaximum || count($rows) < $limit;
-      if ($phaseFinished && $state['phase'] === 'entries') {
+      $phaseMaximum = $state['phase'] === 'entries'
+        ? (int) $state['entry_max_id']
+        : (int) $state['relation_max_id'];
+      $phaseFinished = $state['phase'] === 'sources'
+        ? (bool) $sourceBatch['exhausted']
+        : ((int) $updates['cursor_id'] >= $phaseMaximum || count($rows) < $limit);
+      if ($state['phase'] === 'sources') {
+        $updates['source_entity_id_cursor'] = $sourceBatch['next_cursor'] ?? (string) $state['source_entity_id_cursor'];
+        if ($phaseFinished) {
+          $nextSourceCursor = $this->nextSourceCursor(
+            (string) $state['source_provider_cursor'],
+            (string) $state['source_entity_type_cursor'],
+          );
+          if ($nextSourceCursor === NULL) {
+            $this->completeAuditFields($updates, $state);
+          }
+          else {
+            $updates['source_provider_cursor'] = $nextSourceCursor['provider_id'];
+            $updates['source_entity_type_cursor'] = $nextSourceCursor['entity_type'];
+            $updates['source_entity_id_cursor'] = '';
+          }
+        }
+      }
+      elseif ($phaseFinished && $state['phase'] === 'entries') {
         $updates['phase'] = 'relations';
         $updates['cursor_id'] = 0;
       }
-      elseif ($phaseFinished) {
-        $currentPointer = $this->activePointer();
-        $samePointer = ($currentPointer['generation'] ?? '') === (string) $state['active_generation'];
-        $updates['active_pointer_valid'] = (int) ((bool) $state['active_pointer_valid'] && $currentPointer['valid'] && $samePointer);
-        $updates['status'] = 'complete';
-        $updates['completed'] = $this->time->getRequestTime();
+      elseif ($phaseFinished && $state['phase'] === 'relations') {
+        $firstSourceCursor = (string) $state['active_generation'] === ''
+          ? NULL
+          : $this->nextSourceCursor(NULL, NULL);
+        if ($firstSourceCursor === NULL) {
+          $this->completeAuditFields($updates, $state);
+        }
+        else {
+          $updates['phase'] = 'sources';
+          $updates['cursor_id'] = 0;
+          $updates['source_provider_cursor'] = $firstSourceCursor['provider_id'];
+          $updates['source_entity_type_cursor'] = $firstSourceCursor['entity_type'];
+          $updates['source_entity_id_cursor'] = '';
+        }
       }
 
       $checkpointed = $this->database->update('aculta_index_audit')
@@ -232,6 +298,16 @@ final class ContentIndexIntegrityChecker {
             );
           }
         }
+        foreach ($sourceCatalogAudit['project'] as $identity) {
+          if ($this->providers->has($identity['provider_id'])) {
+            $this->work->schedule(
+              $identity['provider_id'],
+              $identity['entity_type'],
+              $identity['entity_id'],
+              $identity['langcode'],
+            );
+          }
+        }
       }
       return $this->getAuditState();
     }
@@ -251,7 +327,14 @@ final class ContentIndexIntegrityChecker {
     if ($state === NULL) {
       return ['status' => 'idle'];
     }
-    unset($state['revision'], $state['entry_max_id'], $state['relation_max_id']);
+    unset(
+      $state['revision'],
+      $state['entry_max_id'],
+      $state['relation_max_id'],
+      $state['source_provider_cursor'],
+      $state['source_entity_type_cursor'],
+      $state['source_entity_id_cursor'],
+    );
     $state['valid'] = $state['status'] === 'complete'
       && (bool) $state['active_pointer_valid']
       && (int) $state['orphan_entry_count'] === 0
@@ -259,6 +342,7 @@ final class ContentIndexIntegrityChecker {
       && (int) $state['relation_source_missing_count'] === 0
       && (int) $state['stale_projection_count'] === 0
       && (int) $state['missing_source_count'] === 0
+      && (int) $state['missing_catalog_entry_count'] === 0
       && (int) $state['unverified_source_count'] === 0;
     return $state;
   }
@@ -488,6 +572,146 @@ final class ContentIndexIntegrityChecker {
       }
     }
     return $result;
+  }
+
+  /**
+   * Finds source projections missing or stale in the active catalog generation.
+   *
+   * @param string $providerId
+   *   Provider currently enumerating source entities.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexProjection> $projections
+   *   Bounded provider projections from one entity type.
+   * @param string $generationId
+   *   Generation captured by the audit checkpoint.
+   *
+   * @return array{missing: int, stale: int, unverified: int, project: array}
+   *   Findings and work identities.
+   */
+  private function reconcileCatalogCoverage(string $providerId, array $projections, string $generationId): array {
+    $result = ['missing' => 0, 'stale' => 0, 'unverified' => 0, 'project' => []];
+    if ($projections === [] || !$this->providers->has($providerId)) {
+      return $result;
+    }
+
+    $entityIds = [];
+    $langcodes = [];
+    foreach ($projections as $projection) {
+      if (!$projection instanceof ContentIndexProjection) {
+        $result['unverified']++;
+        continue;
+      }
+      $entityIds[hash('sha256', $projection->entityId)] = $projection->entityId;
+      $langcodes[$projection->langcode] = $projection->langcode;
+    }
+    if ($entityIds === []) {
+      return $result;
+    }
+
+    $provider = $this->providers->get($providerId);
+    $entityTypeId = $projections[0]->entityTypeId;
+    $rows = $this->database->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['entity_id', 'langcode', 'provider_id', 'provider_version', 'projection_hash'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_type', $entityTypeId)
+      ->condition('entity_id', array_values($entityIds), 'IN')
+      ->condition('langcode', array_values($langcodes), 'IN')
+      ->execute();
+    $stored = [];
+    foreach ($rows as $row) {
+      $identityKey = hash('sha256', implode("\0", [$entityTypeId, (string) $row->entity_id, (string) $row->langcode]));
+      $stored[$identityKey] = [
+        'provider_id' => (string) $row->provider_id,
+        'provider_version' => (int) $row->provider_version,
+        'projection_hash' => (string) $row->projection_hash,
+      ];
+    }
+
+    foreach ($projections as $projection) {
+      if (!$projection instanceof ContentIndexProjection) {
+        continue;
+      }
+      $key = hash('sha256', implode("\0", [$entityTypeId, $projection->entityId, $projection->langcode]));
+      $identity = [
+        'provider_id' => $providerId,
+        'entity_type' => $projection->entityTypeId,
+        'entity_id' => $projection->entityId,
+        'langcode' => $projection->langcode,
+      ];
+      if (!isset($stored[$key])) {
+        $result['missing']++;
+        $result['project'][$key] = $identity;
+        continue;
+      }
+      if ($stored[$key]['provider_id'] !== $providerId) {
+        $result['unverified']++;
+        continue;
+      }
+      try {
+        $currentHash = $this->writer->calculateProjectionHash($providerId, $projection);
+      }
+      catch (\Throwable $exception) {
+        $this->logger->warning('Content Index source coverage could not verify a projection. Error class: @class', [
+          '@class' => $exception::class,
+        ]);
+        $result['unverified']++;
+        continue;
+      }
+      if ($stored[$key]['provider_version'] !== $provider->getProjectionVersion()
+        || !hash_equals($stored[$key]['projection_hash'], $currentHash)) {
+        $result['stale']++;
+        $result['project'][$key] = $identity;
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * Returns the provider/type pair stored by an active source audit cursor.
+   */
+  private function sourceCursorFromState(array $state): ?array {
+    if ((string) $state['active_generation'] === '') {
+      return NULL;
+    }
+    $providerId = (string) $state['source_provider_cursor'];
+    $entityTypeId = (string) $state['source_entity_type_cursor'];
+    if (!$this->providers->has($providerId)) {
+      return NULL;
+    }
+    $supported = $this->providers->get($providerId)->getSupportedEntityTypes();
+    return isset($supported[$entityTypeId])
+      ? ['provider_id' => $providerId, 'entity_type' => $entityTypeId]
+      : NULL;
+  }
+
+  /**
+   * Finds the first or next provider/type pair in stable lexical order.
+   */
+  private function nextSourceCursor(?string $afterProviderId, ?string $afterEntityTypeId): ?array {
+    $afterKey = $afterProviderId === NULL ? NULL : $afterProviderId . "\0" . ($afterEntityTypeId ?? '');
+    $providers = $this->providers->all();
+    ksort($providers);
+    foreach ($providers as $providerId => $provider) {
+      $entityTypes = $provider->getSupportedEntityTypes();
+      ksort($entityTypes);
+      foreach ($entityTypes as $entityTypeId => $_bundles) {
+        $key = $providerId . "\0" . $entityTypeId;
+        if ($afterKey === NULL || strcmp($key, $afterKey) > 0) {
+          return ['provider_id' => $providerId, 'entity_type' => $entityTypeId];
+        }
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Marks the audit complete and records whether its generation stayed active.
+   */
+  private function completeAuditFields(array &$updates, array $state): void {
+    $currentPointer = $this->activePointer();
+    $samePointer = ($currentPointer['generation'] ?? '') === (string) $state['active_generation'];
+    $updates['active_pointer_valid'] = (int) ((bool) $state['active_pointer_valid'] && $currentPointer['valid'] && $samePointer);
+    $updates['status'] = 'complete';
+    $updates['completed'] = $this->time->getRequestTime();
   }
 
   /**

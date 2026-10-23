@@ -159,12 +159,16 @@ function aculta_index_schema(): array {
         'status' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'idle'],
         'phase' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE, 'default' => 'entries'],
         'cursor_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'source_provider_cursor' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+        'source_entity_type_cursor' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+        'source_entity_id_cursor' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
         'entry_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'relation_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'orphan_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'stale_projection_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'missing_source_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'unverified_source_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'missing_catalog_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'orphan_relation_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'relation_source_missing_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'active_pointer_valid' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
@@ -421,6 +425,27 @@ function aculta_index_update_10015(): void {
         'not null' => TRUE,
         'default' => 0,
       ]);
+    }
+  }
+}
+
+/**
+ * Adds keyset state for source-to-catalog reconciliation.
+ */
+function aculta_index_update_10016(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    return;
+  }
+  $fields = [
+    'source_provider_cursor' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
+    'source_entity_type_cursor' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
+    'source_entity_id_cursor' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+    'missing_catalog_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+  ];
+  foreach ($fields as $field => $specification) {
+    if (!$schema->fieldExists('aculta_index_audit', $field)) {
+      $schema->addField('aculta_index_audit', $field, $specification);
     }
   }
 }

@@ -31,7 +31,7 @@ services:
 
   aculta_index.integrity_checker:
     class: Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker
-    arguments: ['@database', '@datetime.time', '@aculta_index.provider_registry', '@aculta_index.work_manager', '@entity_type.manager', '@aculta_index.writer', '@logger.channel.aculta_index']
+    arguments: ['@database', '@datetime.time', '@aculta_index.provider_registry', '@aculta_index.work_manager', '@aculta_index.entity_enumerator', '@entity_type.manager', '@aculta_index.writer', '@logger.channel.aculta_index']
 
   Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker: '@aculta_index.integrity_checker'
 

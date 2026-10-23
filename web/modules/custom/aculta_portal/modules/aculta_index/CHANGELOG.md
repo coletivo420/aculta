@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.37 — reconciliação bidirecional
+
+- Auditoria acrescenta fase keyset por provider/entity type para enumerar fontes
+  elegíveis sem entrada na geração ativa e refileirá-las pela fila idempotente.
+- O cursor de origem é persistido sem aparecer na saída operacional; providers
+  habilitados durante um ciclo após seu cursor serão alcançados no ciclo seguinte.
+- Update hook 10016 adiciona cursores provider/type/entity e contador de entradas
+  ausentes no catálogo; Kernel cobre migração e descoberta de fonte ausente.
+
 ## 0.1.0-dev.36 — reconciliação incremental de fontes
 
 - A auditoria carrega, em grupos limitados, fontes da geração ativa e revalida o

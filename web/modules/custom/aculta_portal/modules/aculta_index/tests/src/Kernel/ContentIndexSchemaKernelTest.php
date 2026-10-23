@@ -434,6 +434,33 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds source-to-catalog keyset state and counter.
+   */
+  public function testUpdateHookAddsCatalogCoverageCheckpoint(): void {
+    $schema = $this->container->get('database')->schema();
+    foreach ([
+      'source_provider_cursor',
+      'source_entity_type_cursor',
+      'source_entity_id_cursor',
+      'missing_catalog_entry_count',
+    ] as $field) {
+      $schema->dropField('aculta_index_audit', $field);
+      $this->assertFalse($schema->fieldExists('aculta_index_audit', $field));
+    }
+
+    aculta_index_update_10016();
+
+    foreach ([
+      'source_provider_cursor',
+      'source_entity_type_cursor',
+      'source_entity_id_cursor',
+      'missing_catalog_entry_count',
+    ] as $field) {
+      $this->assertTrue($schema->fieldExists('aculta_index_audit', $field));
+    }
+  }
+
+  /**
    * Tests older catalog entries receive the initial projection version.
    */
   public function testUpdateHookAddsProviderProjectionVersion(): void {
