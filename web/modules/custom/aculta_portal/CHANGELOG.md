@@ -1,3 +1,7 @@
+## 0.4.1-dev.18 — regra de estorno centralizada em MercadoPagoPaymentPolicy — 2026-10-22
+
+- `MercadoPagoPaymentPolicy::bloqueiaEstorno()` passa a ser o único lugar da regra "doações, assinaturas e cursos não têm estorno": `assinatura` entra como constante fixa, e os tipos de pedido e de item extras (doação pelo carrinho e tipo de pedido de curso configurado) chegam por parâmetros opcionais. `RefundEligibilitySubscriber` só reúne a configuração e faz uma chamada. Sem mudança de comportamento em relação a dev.17. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.17 — estorno negado explicitamente para assinatura e doação pelo carrinho — 2026-10-22
 
 - `RefundEligibilitySubscriber` passa a negar estorno também para pedidos `assinatura`, para o `cart_order_type` e itens `cart_item_type` de Doações. Antes, a assinatura só era bloqueada se o tipo do item coincidisse com `donate_item_type`, e a doação feita pelo carrinho (modo `cart`/`both` com tipos próprios) não era coberta. Só acrescenta bloqueio; a regra fixa de `bloqueiaEstorno()` não mudou. Alinha o código a `PAYMENT-DOMAIN-POLICY.md` (sem estorno para doações, assinaturas e cursos). RUNTIME STATUS: DEFERRED.

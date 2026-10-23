@@ -42,29 +42,19 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
     if ($order === NULL) {
       return;
     }
-    // O tipo de pedido de curso é configurável: o configurado também não tem estorno (só acrescenta bloqueio).
-    if (in_array($order->bundle(), $this->settings?->lmsOrderTypes() ?? [], TRUE)) {
-      $event->deny('Doações e cursos não têm estorno.');
-      return;
-    }
     $itens = [];
     foreach ($order->getItems() as $item) {
       $itens[] = $item->bundle();
     }
     $config = $this->configFactory->get('aculta_donation.settings');
-    // Assinatura (doação mensal) e doação feita pelo carrinho também não têm estorno. A regra fixa de `bloqueiaEstorno()`
-    // só olha o tipo de pedido e de item da rota /donate, então estes são acrescentados aqui (só acrescenta bloqueio).
-    $pedidosSemEstorno = array_filter([MercadoPagoSubscriptionRecorder::TIPO_PEDIDO, $config->get('cart_order_type')], 'is_string');
-    $itensSemEstorno = array_filter([$config->get('cart_item_type')], 'is_string');
-    if (in_array($order->bundle(), $pedidosSemEstorno, TRUE) || array_intersect($itens, $itensSemEstorno) !== []) {
-      $event->deny('Doações e cursos não têm estorno.');
-      return;
-    }
+    $texto = static fn(mixed $valor): string => is_string($valor) ? $valor : '';
     if ($this->politica->bloqueiaEstorno(
       $order->bundle(),
       $itens,
-      (string) $config->get('donate_order_type'),
-      (string) $config->get('donate_item_type'),
+      $texto($config->get('donate_order_type')),
+      $texto($config->get('donate_item_type')),
+      [...($this->settings?->lmsOrderTypes() ?? []), $texto($config->get('cart_order_type'))],
+      [$texto($config->get('cart_item_type'))],
     )) {
       $event->deny('Doações e cursos não têm estorno.');
     }

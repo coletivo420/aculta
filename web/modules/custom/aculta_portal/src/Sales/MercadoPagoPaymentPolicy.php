@@ -39,6 +39,11 @@ final class MercadoPagoPaymentPolicy {
   public const TIPO_CURSO = 'curso';
 
   /**
+   * Tipo de pedido de assinatura (doação mensal), criado por aculta_donation.
+   */
+  public const TIPO_ASSINATURA = 'assinatura';
+
+  /**
    * Indica se o pedido não pode ser estornado: doação (pedido ou item) e curso não têm estorno.
    *
    * Cancelamento de pagamento pendente é operação separada e não passa por esta regra.
@@ -51,17 +56,18 @@ final class MercadoPagoPaymentPolicy {
    *   Tipo de pedido de doação configurado em aculta_donation (donate_order_type).
    * @param string $tipoItemDoacao
    *   Tipo de item de doação configurado em aculta_donation (donate_item_type).
+   * @param string[] $tiposPedidoExtras
+   *   Outros tipos de pedido sem estorno: doação pelo carrinho (cart_order_type) e tipo de pedido de curso configurado.
+   * @param string[] $tiposItemExtras
+   *   Outros tipos de item sem estorno: doação pelo carrinho (cart_item_type).
+   *
+   * Local único da regra "doações, assinaturas e cursos não têm estorno". Assinatura e curso são fixos; o restante
+   * vem da configuração e só acrescenta bloqueio.
    */
-  public function bloqueiaEstorno(string $tipoPedido, array $tiposItens, string $tipoPedidoDoacao, string $tipoItemDoacao): bool {
-    if ($tipoPedido === self::TIPO_CURSO || ($tipoPedidoDoacao !== '' && $tipoPedido === $tipoPedidoDoacao)) {
-      return TRUE;
-    }
-    foreach ($tiposItens as $tipo) {
-      if ($tipo === self::TIPO_CURSO || ($tipoItemDoacao !== '' && $tipo === $tipoItemDoacao)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
+  public function bloqueiaEstorno(string $tipoPedido, array $tiposItens, string $tipoPedidoDoacao, string $tipoItemDoacao, array $tiposPedidoExtras = [], array $tiposItemExtras = []): bool {
+    $pedidosSemEstorno = array_filter([self::TIPO_CURSO, self::TIPO_ASSINATURA, $tipoPedidoDoacao, ...$tiposPedidoExtras], static fn(string $t): bool => $t !== '');
+    $itensSemEstorno = array_filter([self::TIPO_CURSO, $tipoItemDoacao, ...$tiposItemExtras], static fn(string $t): bool => $t !== '');
+    return in_array($tipoPedido, $pedidosSemEstorno, TRUE) || array_intersect($tiposItens, $itensSemEstorno) !== [];
   }
 
   /**
