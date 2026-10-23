@@ -1042,6 +1042,82 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       [(int) $currentRelated->id(), (int) $proposedRelated->id()],
       array_map('intval', array_column($replacementTarget->get('field_wiki_related')->getValue(), 'target_id')),
     );
+
+    // A proposal whose target changed after submission cannot partially apply
+    // its fields or record an editorial decision.
+    $this->container->get('current_user')->setAccount($submitter);
+    $staleBaseProposal = $submission->submit(
+      $replacementTarget,
+      'correction',
+      'Corrigir título com base antiga',
+      'O título deve ser revisto.',
+      [],
+      str_repeat('f', 64),
+      ['title' => 'Título de uma revisão obsoleta'],
+    );
+    $staleProposalRevisionId = (int) $staleBaseProposal->getRevisionId();
+    Role::create([
+      'id' => 'wiki_proposal_moderator_without_node_edit_test',
+      'label' => 'Wiki proposal moderator without node edit test',
+      'permissions' => ['moderate wiki proposals'],
+    ])->save();
+    $moderatorWithoutNodeEdit = new UserSession([
+      'uid' => 5,
+      'roles' => ['authenticated', 'wiki_proposal_moderator_without_node_edit_test'],
+    ]);
+    $this->container->get('current_user')->setAccount($moderatorWithoutNodeEdit);
+    $targetBeforeUnauthorizedDecision = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    $targetRevisionBeforeUnauthorizedDecision = (int) $targetBeforeUnauthorizedDecision->getRevisionId();
+    try {
+      $decisionService->decide(
+        $staleBaseProposal,
+        $staleProposalRevisionId,
+        'accepted',
+        'Tentativa sem permissão de editar o verbete.',
+        ['title'],
+      );
+      self::fail('Moderating a proposal must not grant permission to edit or publish its target.');
+    }
+    catch (AccessDeniedHttpException) {
+      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+        ->loadUnchanged($staleBaseProposal->id());
+      $freshTarget = $this->container->get('entity_type.manager')->getStorage('node')
+        ->loadUnchanged((int) $target->id());
+      self::assertSame('submitted', $freshProposal->get('state')->value);
+      self::assertSame($staleProposalRevisionId, (int) $freshProposal->getRevisionId());
+      self::assertSame($targetRevisionBeforeUnauthorizedDecision, (int) $freshTarget->getRevisionId());
+      self::assertSame('Título aprovado pela equipe', $freshTarget->label());
+    }
+
+    $this->container->get('current_user')->setAccount($acceptor);
+    $concurrentTarget = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    $concurrentTarget->setNewRevision(TRUE);
+    $concurrentTarget->set('title', 'Título de edição concorrente');
+    $concurrentTarget->save();
+    $concurrentRevisionId = (int) $concurrentTarget->getRevisionId();
+
+    try {
+      $decisionService->decide(
+        $staleBaseProposal,
+        $staleProposalRevisionId,
+        'accepted',
+        'Tentativa com base obsoleta.',
+        ['title'],
+      );
+      self::fail('A proposal must not apply to a Wiki entry changed after submission.');
+    }
+    catch (ConflictHttpException) {
+      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+        ->loadUnchanged($staleBaseProposal->id());
+      $freshTarget = $this->container->get('entity_type.manager')->getStorage('node')
+        ->loadUnchanged((int) $target->id());
+      self::assertSame('submitted', $freshProposal->get('state')->value);
+      self::assertSame($staleProposalRevisionId, (int) $freshProposal->getRevisionId());
+      self::assertSame($concurrentRevisionId, (int) $freshTarget->getRevisionId());
+      self::assertSame('Título de edição concorrente', $freshTarget->label());
+    }
     $this->container->get('current_user')->setAccount($reviewer);
 
     $historyProposal = $decidedProposal;
@@ -1145,7 +1221,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $firstFormSubmissionId = (int) $redirectProposal->id();
     $proposalForm->submitForm($build, $formState);
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
-    self::assertSame(29, (int) $this->container->get('entity_type.manager')
+    self::assertSame(30, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $this->container->get('current_user')->setAccount($submitter);

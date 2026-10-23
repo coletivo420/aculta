@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.34 — testar conflito de revisão-base editorial
+
+- Kernel cobre aceitação de proposta após uma edição concorrente do verbete.
+  A decisão retorna conflito e preserva a proposta enviada, a revisão mais
+  recente do verbete e seu título. A validação e as permissões existentes
+  permanecem sob o serviço editorial real.
+- Focal: 1 teste / 140 assertions. A classe Kernel completa passou em MariaDB
+  isolada: 10 testes / 455 assertions; 286 depreciações Core/contrib e 11 do
+  PHPUnit.
+
 ## Verificação R1 — Content Index — 2026-10-23
 
 - Confirmado o contrato `WikiContentIndexProvider` v3: `node:wiki_entry`,

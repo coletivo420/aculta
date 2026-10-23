@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.33**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.34**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.34 — conflito da revisão-base em propostas
+
+Kernel cobre a corrida em que o verbete muda após o envio da proposta e antes
+da decisão: a aceitação falha com conflito, não cria revisão decisória da
+proposta e preserva a revisão/título concorrentes do verbete. Um moderador sem
+acesso de edição também não consegue aprovar o campo, sem alterar proposta ou
+verbete. Focal: 1 teste / 140 assertions em MariaDB isolada. A classe Kernel
+passou com 10 testes / 455 assertions; 286 depreciações Core/contrib e 11
+PHPUnit.
 
 ### Incremento dev.33 — retry seguro de imagem após rebuild
 

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.34`: Kernel comprova conflito sem gravação parcial ao aceitar
+  proposta com revisão-base obsoleta e moderador sem acesso editorial. Focal:
+  1 teste / 140 assertions; classe Kernel: 10 testes / 455 assertions,
+  aprovada em MariaDB isolada; 286
+  depreciações Core/contrib e 11 do PHPUnit.
 - `0.1.0-dev.33`: retry de imagem após rebuild limpa caches e estado temporário
   revertido; Kernel confirma novo envio sem órfãs. Focal: 1 teste / 33
   asserções; classe Kernel: 10 testes / 447 asserções; Unit do uploader: 12
