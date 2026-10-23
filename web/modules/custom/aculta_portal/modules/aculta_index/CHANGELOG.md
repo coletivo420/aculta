@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.47 — alinhar status de reconciliação e testes Kernel
+
+- Corrige a documentação do schema: auditoria incremental/reconciliação está
+  implementada e coberta por providers de fixture; grants reais, cobertura dos
+  adapters, Runtime e volume continuam pendentes.
+- Atualiza resultado Kernel combinado Index/Activity/User para 73 testes e 943
+  assertions; registra separadamente a ausência de concorrência entre processos.
+
 ## 0.1.0-dev.46 — proteger retry diante de evento mais recente
 
 - Kernel cobre um novo evento que reabre uma identidade dead, incrementa sua
