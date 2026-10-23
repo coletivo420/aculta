@@ -1,11 +1,12 @@
 # Changelog — ACULTA Content Index
 
-## 0.1.0-dev.26 — acesso canônico fail-closed e validação SQLite
+## 0.1.0-dev.26 — acesso canônico fail-closed e validação MariaDB
 
 - Teste Unit garante que provider com Domain canônico ausente nega exposição,
   sem chamar Entity Access no domínio ativo.
-- Suíte combinada Unit/Kernel de Index e Activity passou em SQLite temporário:
-  65 testes / 533 assertions. MariaDB e Runtime continuam pendentes.
+- Suíte combinada Unit/Kernel de Index e Activity passou no MariaDB dedicado:
+  66 testes / 543 assertions. Uma depreciação upstream e 10 depreciações do
+  PHPUnit; Runtime e volume seguem pendentes.
 
 ## 0.1.0-dev.25 — Kernel harness para adapters e providers tagged
 
