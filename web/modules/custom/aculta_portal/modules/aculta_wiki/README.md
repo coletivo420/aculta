@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.19`: a `WikiTab` existente do GanjaLab consome as filas proprietárias
+  da Wiki. Revisões mostram ação para o Form API nativo do Node; propostas abrem
+  a decisão Wiki em contexto account. Acesso a cada seção é distinto, e
+  moderador de proposta não recebe listagem genérica de verbetes. Runtime e
+  revisão visual Firefox/X11 pendentes.
 - `0.1.0-dev.18`: o backend e Form API registram “pedir ajustes” e “recusar”
   como novas revisões privadas, com nota editorial, checagem de conflito e lock
   contra decisões simultâneas. Kernel MariaDB completo: 8 testes / 301

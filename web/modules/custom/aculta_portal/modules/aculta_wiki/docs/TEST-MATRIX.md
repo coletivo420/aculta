@@ -170,6 +170,16 @@ sob o contexto editorial do GanjaLab e acesso do backend Wiki.
 Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 284 depreciações Drupal/contrib e 9 do PHPUnit.
 
+## Moderação na WikiTab — Kernel combinado (dev.19)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Moderador de propostas no Studio | Kernel | Só seção Moderação/Propostas; sem listagem genérica de verbetes/revisões | aprovado |
+| Fila de propostas no Studio | Kernel | Usa queue Wiki autorizada, pagina e gera links para o Form API proprietário | aprovado |
+| Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
+| Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
+| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first em ACULTA420 e Olivero, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |

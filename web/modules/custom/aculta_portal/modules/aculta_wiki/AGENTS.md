@@ -73,3 +73,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   revisão privada, exige nota, permissão e VID esperado; usa lock de banco para
   impedir duas decisões concorrentes sobre o mesmo estado. Form API está pronto
   para consumo, mas não tem rota nem link Studio.
+- Integração GanjaLab (dev.19): usar a `WikiTab` existente. Revisões consomem
+  `entryRevisions()` do serviço Wiki e edição segue formulário Node/Content
+  Moderation. Propostas consomem `proposals()` e `WikiProposalDecisionForm`;
+  gates de seção não devem conflar moderadores de propostas com os grants de
+  Nodes. Não criar uma segunda fila, aba ou camada de autorização no Studio.

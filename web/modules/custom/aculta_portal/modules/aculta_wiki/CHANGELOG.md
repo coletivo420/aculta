@@ -1,5 +1,21 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.19 — moderação na WikiTab existente do Studio
+
+- `WikiTab` oferece uma seção Moderação com gates separados: transições
+  válidas + edição ampla para fila de revisões; `moderate wiki proposals` para
+  fila de propostas. Moderadores de proposta não ganham as listagens genéricas
+  de verbetes/revisões.
+- `StudioListingBuilder` consome `aculta_wiki.editorial_queue` opcionalmente e
+  renderiza páginas cacheáveis de propostas/revisões. A revisão passa por nova
+  checagem de acesso à rota no purpose `wiki`; “Abrir para revisão” usa o
+  formulário Drupal do Node/Content Moderation. Proposta abre o Form API Wiki,
+  com texto, justificativa, fontes e links à revisão-base/verbete quando a rota
+  autoriza acesso.
+- A rota de decisão da proposta permanece no contexto account/GanjaLab. Nenhuma
+  tabela, ACL, storage ou workflow de moderação foi criada no Studio. Runtime,
+  Firefox/X11, acessibilidade visual e decisão/aplicação do aceite pendentes.
+
 ## 0.1.0-dev.18 — decisões editoriais revisionáveis
 
 - `WikiProposalDecision` e `WikiProposalDecisionForm` permitem pedir ajustes ou

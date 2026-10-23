@@ -34,6 +34,20 @@ aculta_wiki.proposal_submit:
       node:
         type: entity:node
 
+aculta_wiki.proposal_decide:
+  path: '/studio/ganjalab/wiki/propostas/{proposal}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
+    _title: 'Avaliar proposta da Wiki'
+  requirements:
+    _permission: 'moderate wiki proposals'
+    _entity_access: 'aculta_wiki_proposal.update'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
 aculta_wiki.settings:
   path: '/painel-administrativo/aculta/wiki'
   defaults:

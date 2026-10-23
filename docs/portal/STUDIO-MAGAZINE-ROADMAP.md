@@ -2,6 +2,12 @@
 
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
+### Integração editorial Wiki no GanjaLab (Studio dev.2 / Wiki dev.19)
+
+Código integrado à `WikiTab` existente: filas autorizadas de revisões e propostas são consultadas pelo serviço dono
+`aculta_wiki`; decisões e edição seguem seus formulários e controles de acesso. Testes Kernel combinados foram
+executados. Runtime, Firefox ESR/X11, mobile e WCAG continuam pendentes; isso não constitui homologação visual.
+
 Este documento substitui a antiga sequência linear que condicionava a criação do Studio ao fechamento do Magazine. A migração `article`/`blog` → `revista`, já executada no Runtime de teste, permanece documentada em `web/modules/custom/aculta_portal/modules/aculta_magazine/docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` e no CHANGELOG. Não repetir migração, apagar dados ou importar Config Sync global.
 
 ## Produto e fronteiras

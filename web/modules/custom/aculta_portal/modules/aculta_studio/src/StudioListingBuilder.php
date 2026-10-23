@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_wiki\Service\WikiEditorialQueue;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -12,8 +14,8 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Builds the work listings of an area's internal tabs (for example Revista: Todos, Rascunhos, Em revisão).
@@ -34,6 +36,7 @@ final class StudioListingBuilder {
     private readonly AccountInterface $account,
     TranslationInterface $stringTranslation,
     private readonly RequestStack $requestStack,
+    private readonly ?WikiEditorialQueue $wikiEditorialQueue = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -42,6 +45,9 @@ final class StudioListingBuilder {
    * Table of nodes of a bundle in a moderation state (or any state when $state is NULL).
    *
    * @param array{bundle: string, state?: string|null, purpose?: string} $listing
+   *   Listing definition selected by the area owner.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account that receives the rendered listing.
    */
   public function build(array $listing, AccountInterface $account): array {
     if (($listing['entity'] ?? 'node') === 'comment') {
@@ -52,6 +58,12 @@ final class StudioListingBuilder {
     }
     if (($listing['entity'] ?? 'node') === 'group') {
       return $this->buildGroups($listing);
+    }
+    if (($listing['entity'] ?? '') === 'wiki_proposal_queue') {
+      return $this->buildWikiProposalQueue($account);
+    }
+    if (($listing['entity'] ?? '') === 'wiki_entry_review_queue') {
+      return $this->buildWikiEntryReviewQueue($account);
     }
     $bundle = $listing['bundle'];
     $state = $listing['state'] ?? NULL;
@@ -199,6 +211,166 @@ final class StudioListingBuilder {
     return $build;
   }
 
+  /**
+   * Renders the Wiki owner's access-checked pending proposal page.
+   */
+  private function buildWikiProposalQueue(AccountInterface $account): array {
+    if (!$this->wikiEditorialQueue) {
+      return $this->emptyWikiQueue();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $cursor = $request?->query->get('wiki_proposal_cursor');
+    try {
+      $page = $this->wikiEditorialQueue->proposals(is_string($cursor) ? $cursor : NULL);
+    }
+    catch (AccessDeniedHttpException) {
+      return $this->emptyWikiQueue();
+    }
+
+    $rows = [];
+    foreach ($page->getItems() as $proposal) {
+      $rows[] = [
+        'proposal' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $proposal->label(),
+            '#url' => Url::fromRoute('aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]),
+          ],
+        ],
+        'state' => $proposal->get('state')->value,
+      ];
+    }
+
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
+      'table' => [
+        '#type' => 'table',
+        '#header' => ['proposal' => $this->t('Proposta'), 'state' => $this->t('Situação')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhuma proposta aguarda avaliação.'),
+        '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+      ],
+      'pager' => $page->getNextCursor() !== NULL ? [
+        '#type' => 'link',
+        '#title' => $this->t('Carregar mais propostas'),
+        '#url' => Url::fromRoute('aculta_studio.tab', [
+          'aba' => 'wiki',
+          'secao' => 'moderacao',
+          'sub' => 'propostas',
+        ], ['query' => ['wiki_proposal_cursor' => $page->getNextCursor()]]),
+      ] : [],
+    ];
+    CacheableMetadata::createFromObject($page)
+      ->addCacheContexts(['url.query_args:wiki_proposal_cursor'])
+      ->applyTo($build);
+    return $build;
+  }
+
+  /**
+   * Renders the Wiki owner's access-checked current review revisions.
+   */
+  private function buildWikiEntryReviewQueue(AccountInterface $account): array {
+    if (!$this->wikiEditorialQueue) {
+      return $this->emptyWikiQueue();
+    }
+    $request = $this->requestStack->getCurrentRequest();
+    $cursor = $request?->query->get('wiki_revision_cursor');
+    try {
+      $page = $this->wikiEditorialQueue->entryRevisions(is_string($cursor) ? $cursor : NULL);
+    }
+    catch (AccessDeniedHttpException) {
+      return $this->emptyWikiQueue();
+    }
+
+    $cacheability = CacheableMetadata::createFromObject($page)
+      ->addCacheContexts(['url.query_args:wiki_revision_cursor']);
+    $rows = [];
+    foreach ($page->getItems() as $revision) {
+      $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
+        'node' => $revision->id(),
+        'node_revision' => $revision->getRevisionId(),
+      ]);
+      if ($url === NULL) {
+        continue;
+      }
+      $revisionAccess = $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $url->access($account));
+      if (!$revisionAccess) {
+        continue;
+      }
+      $rows[] = [
+        'entry' => ['data' => ['#type' => 'link', '#title' => $revision->label(), '#url' => $url]],
+        'state' => $revision->get('moderation_state')->value,
+        'changed' => $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short'),
+        'action' => $this->wikiRevisionEditLink($revision, $account),
+      ];
+      $cacheability->addCacheableDependency($revision);
+    }
+
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [
+          'entry' => $this->t('Verbete'),
+          'state' => $this->t('Situação'),
+          'changed' => $this->t('Revisada em'),
+          'action' => $this->t('Ação'),
+        ],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum verbete aguarda revisão.'),
+        '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
+      ],
+      'pager' => $page->getNextCursor() !== NULL ? [
+        '#type' => 'link',
+        '#title' => $this->t('Carregar mais verbetes'),
+        '#url' => Url::fromRoute('aculta_studio.tab', [
+          'aba' => 'wiki',
+          'secao' => 'moderacao',
+          'sub' => 'revisoes',
+        ], ['query' => ['wiki_revision_cursor' => $page->getNextCursor()]]),
+      ] : [],
+    ];
+    $cacheability->applyTo($build);
+    return $build;
+  }
+
+  /**
+   * Empty, fail-closed listing used when the Wiki service is unavailable.
+   */
+  private function emptyWikiQueue(): array {
+    return [
+      '#type' => 'container',
+      '#cache' => ['contexts' => ['user', 'user.permissions', 'url.path']],
+      'empty' => ['#plain_text' => $this->t('A fila da Wiki não está disponível.')],
+    ];
+  }
+
+  /**
+   * Links to the owner's native form after checking route access.
+   *
+   * @param \Drupal\node\NodeInterface $revision
+   *   The current pending Node revision.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The editor that will open the native form.
+   *
+   * @return array
+   *   A route link or an empty table cell when access is denied.
+   */
+  private function wikiRevisionEditLink(NodeInterface $revision, AccountInterface $account): array {
+    $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $revision->id()]);
+    if ($url === NULL || !$this->domainPurposes->runInPurpose('wiki', static fn (): bool => $url->access($account))) {
+      return ['data' => ''];
+    }
+    return [
+      'data' => [
+        '#type' => 'link',
+        '#title' => $this->t('Abrir para revisão'),
+        '#url' => $url,
+      ],
+    ];
+  }
 
   /**
    * Table of comments of a bundle by status (0 = not published, e.g. awaiting moderation), with the node

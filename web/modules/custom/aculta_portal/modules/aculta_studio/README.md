@@ -24,9 +24,11 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
 | Aba | Dono | Permissão | Ações |
 | --- | --- | --- | --- |
 | Revista (`revista`) | `aculta_magazine` | `create revista content` | Nova publicação |
+| Wiki (`wiki`) | `aculta_wiki` | criar/editar verbetes ou `moderate wiki proposals` | Verbetes próprios, revisão autorizada e propostas privadas |
 
-Galerias, Fórum, Wiki, Cursos, Projetos, Biblioteca, Métricas e Eventos ainda não têm aba. Cada uma depende de
-uma permissão real do dono (não de nome de papel) e entra como novo plugin.
+Fórum, Cursos, Projetos, Biblioteca, Métricas e Eventos continuam dependendo das integrações dos respectivos donos.
+A aba Wiki existente consome o serviço de fila proprietário de `aculta_wiki`; o Studio não armazena propostas nem
+implementa permissões ou workflow paralelos.
 
 ## Apresentação e fronteira com o tema
 
@@ -37,8 +39,8 @@ O módulo não emite classes de design. Marca as partes com tokens semânticos `
 
 ## Limites
 
-- Sem Runtime de desenvolvimento validado além da aba Revista; revisão visual no Firefox/X11 pendente.
-- Sem Kernel de acesso das abas futuras; cada aba nova precisa do seu teste de acesso.
+- A integração das filas Wiki foi caracterizada em Kernel combinado; Runtime, Firefox/X11, mobile e WCAG permanecem pendentes.
+- A aba Wiki só expõe revisão/propostas mediante as permissões e os serviços autorizados do proprietário.
 - Não substitui Views, Form API, Entity Access nem Workflows dos donos: as ações apenas os invocam.
 - Estado e próximos passos: `docs/operations/status/aculta_studio.yml` e o roadmap em `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`.
 
@@ -85,6 +87,10 @@ A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por a
 ## D-A.2-T — progresso e próximos gates
 
 D-A.2-T aplicado: StudioListingBuilder passa a variar listagens por user além de user.permissions e filtra cada revisão por view + view revision. Teste unitário de caracterização incluído, execução pendente. A consulta auxiliar de moderation_state, cache de Domain/grants e paginação ainda bloqueiam fila Wiki real.
+
+## Integração Wiki no GanjaLab — Studio dev.2 / Wiki dev.19
+
+A `WikiTab` existente separa `Verbetes` e `Moderação`. Revisões são consultadas por `WikiEditorialQueue` e propostas pela fila privada da Wiki; ações abrem os formulários nativos Drupal/Content Moderation ou o Form API proprietário de decisão. O Studio verifica o acesso das rotas sob o purpose Wiki antes de emitir links. Testes Kernel combinados cobrem gates da aba e renderização das filas. A homologação visual em Firefox ESR e o Runtime permanecem pendentes; a Wiki continua desabilitada no Runtime.
 
 ## Decisão normativa: ACULTA Studio (2026-10-22)
 

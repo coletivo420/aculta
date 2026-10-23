@@ -73,6 +73,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // Portal consumes the shared account ledger when aculta_user is present.
     static::$modules = $this->resolveModuleDependencyClosure([
       'aculta_lms',
+      'aculta_studio',
       'aculta_user',
       'aculta_wiki',
       'aculta_wiki_access_test',
@@ -341,6 +342,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => 1], new AnonymousUserSession()));
+    $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
+    self::assertSame('/studio/ganjalab/wiki/propostas/{proposal}/decidir', $decisionRoute->getPath());
+    self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
 
     $proposalTarget = Node::create([
       'type' => 'wiki_entry',
@@ -558,6 +562,18 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
 
+    $wikiTab = $this->container->get('aculta_studio.tab_manager')->createInstance('wiki');
+    self::assertTrue($wikiTab->access($reviewer)->isAllowed());
+    self::assertArrayHasKey('moderacao', $wikiTab->sections($reviewer));
+    self::assertArrayHasKey('propostas', $wikiTab->sections($reviewer)['moderacao']['tabs']);
+    self::assertArrayNotHasKey('verbetes', $wikiTab->sections($reviewer));
+    self::assertArrayNotHasKey('revisoes', $wikiTab->sections($reviewer));
+    self::assertArrayNotHasKey('moderacao', $wikiTab->sections($submitter));
+    $studioProposalListing = $this->container->get('aculta_studio.listing')
+      ->build(['entity' => 'wiki_proposal_queue'], $reviewer);
+    self::assertCount(25, $studioProposalListing['table']['#rows']);
+    self::assertContains('user.permissions', $studioProposalListing['#cache']['contexts']);
+
     $proposalToDecide = $firstPage->getItems()[0];
     $oldProposalRevisionId = (int) $proposalToDecide->getRevisionId();
     $decisionService = $this->container->get('aculta_wiki.proposal_decision');
@@ -737,6 +753,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertContains('user.node_grants:view', $page->getCacheContexts());
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertNull($page->getNextCursor());
+
+    $wikiTab = $this->container->get('aculta_studio.tab_manager')->createInstance('wiki');
+    self::assertArrayHasKey('revisoes', $wikiTab->sections($reviewer)['moderacao']['tabs']);
+    $studioReviewListing = $this->container->get('aculta_studio.listing')
+      ->build(['entity' => 'wiki_entry_review_queue'], $reviewer);
+    self::assertCount(1, $studioReviewListing['table']['#rows']);
+    self::assertSame('Abrir para revisão', (string) $studioReviewListing['table']['#rows'][0]['action']['data']['#title']);
   }
 
   /**

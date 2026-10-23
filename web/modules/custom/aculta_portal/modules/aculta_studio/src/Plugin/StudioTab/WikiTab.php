@@ -12,9 +12,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Wiki tab. The owner is the Wiki (node type wiki_entry, workflow wiki_editorial), without a module of its own.
+ * Wiki tab owned by the Wiki module.
  *
- * Verbetes lists the entries by editorial state through the Studio listing, with the node access of the owner.
+ * The owner provides node type wiki_entry, workflow wiki_editorial, and
+ * authorized queue services. GanjaLab presents those services without owning
+ * data or access rules.
  */
 #[StudioTab(
   id: 'wiki',
@@ -23,18 +25,25 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class WikiTab extends StudioTabBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function isAvailable(): bool {
     return $this->entityTypeManager->getStorage('node_type')->load('wiki_entry') !== NULL;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'edit any wiki_entry content')
-      ->orIf(AccessResult::allowedIfHasPermission($account, 'create wiki_entry content'));
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'create wiki_entry content'))
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'moderate wiki proposals'));
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   public function sections(AccountInterface $account): array {
     $states = [
       'todos' => ['label' => $this->t('Todos'), 'state' => NULL],
@@ -51,8 +60,16 @@ final class WikiTab extends StudioTabBase {
         'actions' => [],
       ];
     }
-    return [
-      'revisoes' => [
+    $sections = [];
+    if ($account->hasPermission('create wiki_entry content') || $account->hasPermission('edit any wiki_entry content')) {
+      $sections['verbetes'] = [
+        'label' => $this->t('Verbetes'),
+        'weight' => 0,
+        'tabs' => $listTabs,
+      ];
+    }
+    if ($account->hasPermission('view wiki_entry revisions')) {
+      $sections['revisoes'] = [
         'label' => $this->t('Revisões'),
         'weight' => 10,
         'tabs' => [
@@ -63,13 +80,40 @@ final class WikiTab extends StudioTabBase {
             'actions' => [],
           ],
         ],
-      ],
-      'verbetes' => [
-        'label' => $this->t('Verbetes'),
-        'weight' => 0,
-        'tabs' => $listTabs,
-      ],
-    ];
+      ];
+    }
+
+    $canReviewEntries = $account->hasPermission('edit any wiki_entry content')
+      && ($account->hasPermission('use wiki_editorial transition review_to_draft')
+        || $account->hasPermission('use wiki_editorial transition review_to_published'));
+    if ($canReviewEntries) {
+      $sections['moderacao'] = [
+        'label' => $this->t('Moderação'),
+        'weight' => 10,
+        'tabs' => [
+          'revisoes' => [
+            'label' => $this->t('Verbetes em revisão'),
+            'weight' => 0,
+            'listing' => ['entity' => 'wiki_entry_review_queue'],
+            'actions' => [],
+          ],
+        ],
+      ];
+    }
+    if ($this->moduleHandler->moduleExists('aculta_wiki') && $account->hasPermission('moderate wiki proposals')) {
+      $sections['moderacao'] ??= [
+        'label' => $this->t('Moderação'),
+        'weight' => 10,
+        'tabs' => [],
+      ];
+      $sections['moderacao']['tabs']['propostas'] = [
+        'label' => $this->t('Propostas'),
+        'weight' => 1,
+        'listing' => ['entity' => 'wiki_proposal_queue'],
+        'actions' => [],
+      ];
+    }
+    return $sections;
   }
 
 }

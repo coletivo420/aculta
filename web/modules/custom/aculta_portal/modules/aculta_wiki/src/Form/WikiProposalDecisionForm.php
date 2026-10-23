@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Form;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -22,6 +25,8 @@ final class WikiProposalDecisionForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly WikiProposalDecision $decision,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly DomainPurposeManager $domainPurposes,
   ) {}
 
   /**
@@ -31,6 +36,8 @@ final class WikiProposalDecisionForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_decision'),
+      $container->get('module_handler'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -57,6 +64,57 @@ final class WikiProposalDecisionForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('Proposta: @title', ['@title' => $proposal->label()]),
       '#markup' => $this->t('O retorno será enviado à pessoa autora e registrado no histórico privado da proposta.'),
+    ];
+    $target = $proposal->get('target')->entity;
+    if ($target !== NULL) {
+      $targetUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $target->id()]);
+      if ($targetUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $targetUrl->access())) {
+        $form['target_link'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Abrir verbete publicado'),
+          '#url' => $targetUrl,
+        ];
+      }
+      $revisionUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
+        'node' => $target->id(),
+        'node_revision' => $proposal->get('target_revision_id')->value,
+      ]);
+      if ($revisionUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $revisionUrl->access())) {
+        $form['base_revision_link'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Abrir revisão-base da proposta'),
+          '#url' => $revisionUrl,
+        ];
+      }
+    }
+    $form['proposed_text'] = [
+      '#type' => 'container',
+      'label' => ['#plain_text' => $this->t('Alteração sugerida')],
+      'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
+    ];
+    $form['rationale'] = [
+      '#type' => 'container',
+      'label' => ['#plain_text' => $this->t('Justificativa')],
+      'text' => ['#plain_text' => (string) $proposal->get('rationale')->value],
+    ];
+    $sourceLinks = [];
+    foreach ($proposal->get('source_uri') as $sourceItem) {
+      $uri = (string) $sourceItem->value;
+      if (!filter_var($uri, FILTER_VALIDATE_URL)
+        || !in_array(strtolower((string) parse_url($uri, PHP_URL_SCHEME)), ['http', 'https'], TRUE)) {
+        continue;
+      }
+      $sourceLinks[] = [
+        '#type' => 'link',
+        '#title' => $uri,
+        '#url' => Url::fromUri($uri),
+        '#attributes' => ['rel' => 'noopener noreferrer'],
+      ];
+    }
+    $form['sources'] = $sourceLinks === [] ? [] : [
+      '#theme' => 'item_list',
+      '#title' => $this->t('Fontes apresentadas'),
+      '#items' => $sourceLinks,
     ];
     $form['expected_revision_id'] = [
       '#type' => 'value',
@@ -127,6 +185,13 @@ final class WikiProposalDecisionForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t('A decisão foi registrada no histórico da proposta.'));
+    if ($this->moduleHandler->moduleExists('aculta_studio')) {
+      $form_state->setRedirect('aculta_studio.tab', [
+        'aba' => 'wiki',
+        'secao' => 'moderacao',
+        'sub' => 'propostas',
+      ]);
+    }
   }
 
 }

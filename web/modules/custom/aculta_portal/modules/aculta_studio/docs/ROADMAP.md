@@ -20,6 +20,10 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 
 **Não criar novo módulo ou renomear machine name.** ACULTA Studio é o submódulo presente. Não copiar cabeçalhos nem criar design system paralelo. `aculta420` fornece visual via Core SDC/UI Suite; `aculta_studio` fornece orquestração e contratos de UI; User/Wiki/Forum/LMS/Messenger mantêm sua lógica. Preservar branch e arquivos de outros agentes. Abrir fases por commits pequenos; não alegar validação em homelab sem executá-la.
 
+### GanjaLab Wiki — integração inicial (Studio dev.2 / Wiki dev.19)
+
+A `WikiTab` existente agora consome a fila autorizada de revisões e propostas fornecida por `aculta_wiki`. Propostas abrem o Form API de decisão; revisões abrem o formulário nativo do Node após checagem de rota no purpose Wiki. Kernel combinado cobre gates de permissão e listagens. Runtime e revisão visual Firefox/X11 ainda não foram homologados; a Wiki segue desabilitada no Runtime.
+
 ## Estado D-A.2-T
 
 Primeira etapa realizada: cache de listagens por usuário, checagem explícita de revisão, teste Unit escrito, ainda sem execução Runtime. **Pendentes**: consulta de content_moderation_state, paginação, isolamento entre usuários/Group/purpose e provider da moderação Wiki. Não implantar fila antes dos gates.

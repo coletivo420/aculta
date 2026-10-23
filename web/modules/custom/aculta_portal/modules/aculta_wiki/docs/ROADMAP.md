@@ -4,10 +4,18 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.18**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.19**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.19 — GanjaLab
+
+A `WikiTab` preexistente consome filas da Wiki: revisões atuais via serviço
+autorizado e propostas via serviço privado. A edição de verbete segue formulário
+Drupal/Content Moderation; decisões de proposta seguem o Form API Wiki. O
+Studio não cria ACL nem storage. Kernel combinado Wiki + Studio caracteriza
+gates de seção/listagem. Runtime e browser visual permanecem pendentes.
 
 ### Incremento dev.18 — decisão editorial sem aplicação automática
 
