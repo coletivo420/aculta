@@ -426,6 +426,31 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests outgoing relation lookup indexes source identity and relation type.
+   */
+  public function testUpdateHookAddsRelationTypeToSourceIndex(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropIndex('aculta_index_relation', 'gen_source');
+    $schema->addIndex(
+      'aculta_index_relation',
+      'gen_source',
+      ['generation_id', 'source_entity_type', 'source_entity_id', 'source_langcode'],
+      aculta_index_schema()['aculta_index_relation'],
+    );
+
+    aculta_index_update_10012();
+
+    $this->assertTrue($schema->indexExists('aculta_index_relation', 'gen_source'));
+    $this->assertSame([
+      'generation_id',
+      'source_entity_type',
+      'source_entity_id',
+      'source_langcode',
+      'relation_type',
+    ], aculta_index_schema()['aculta_index_relation']['indexes']['gen_source']);
+  }
+
+  /**
    * Tests the projection writer is idempotent and rejects stale sequences.
    */
   public function testWriterSynchronizesEntryAndRelationsBySequence(): void {

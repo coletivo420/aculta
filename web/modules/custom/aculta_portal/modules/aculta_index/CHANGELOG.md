@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.31 — índice de relações composto
+
+- O índice `gen_source` passa a incluir `relation_type`, alinhando a estrutura
+  SQL ao filtro de consulta de relações nomeadas. Update hook 10012 migra
+  instalações existentes sem recriar a tabela.
+- Kernel cobre a atualização de schema.
+
 ## 0.1.0-dev.30 — consulta de relações deduplicada e estável
 
 - Alvos alcançados por mais de um edge que resolve para a mesma tradução são

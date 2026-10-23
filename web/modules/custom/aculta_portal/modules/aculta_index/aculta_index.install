@@ -99,7 +99,7 @@ function aculta_index_schema(): array {
         'gen_relation_hash' => ['generation_id', 'relation_hash'],
       ],
       'indexes' => [
-        'gen_source' => ['generation_id', 'source_entity_type', 'source_entity_id', 'source_langcode'],
+        'gen_source' => ['generation_id', 'source_entity_type', 'source_entity_id', 'source_langcode', 'relation_type'],
         'gen_target' => ['generation_id', 'target_entity_type', 'target_entity_id', 'target_langcode'],
         'gen_type' => ['generation_id', 'relation_type'],
       ],
@@ -353,4 +353,19 @@ function aculta_index_update_10011(): void {
   if (!$schema->indexExists('aculta_index_entry', 'gen_entry_id')) {
     $schema->addIndex('aculta_index_entry', 'gen_entry_id', ['generation_id', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
   }
+}
+
+/**
+ * Adds the relation type to the outgoing-source lookup index.
+ */
+function aculta_index_update_10012(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_relation')) {
+    return;
+  }
+  if ($schema->indexExists('aculta_index_relation', 'gen_source')) {
+    $schema->dropIndex('aculta_index_relation', 'gen_source');
+  }
+  $table = aculta_index_schema()['aculta_index_relation'];
+  $schema->addIndex('aculta_index_relation', 'gen_source', $table['indexes']['gen_source'], $table);
 }
