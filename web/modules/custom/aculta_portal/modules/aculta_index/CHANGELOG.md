@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.41 — comparação experimental de índice candidato
+
+- Expande o harness opt-in com um índice composto criado somente no schema
+  temporário do Kernel; coleta plano, leituras, espaço, tempo de criação e uma
+  amostra de 250 gravações pelo writer com/sem o índice.
+- Não altera o schema de produção. O estudo comparativo está em repetição antes
+  de registrar uma decisão de desempenho.
+
+
 ## 0.1.0-dev.40 — harness opt-in de benchmark
 
 - Adiciona Kernel Performance Test opt-in e restrito a `localhost/aculta_simpletest`.

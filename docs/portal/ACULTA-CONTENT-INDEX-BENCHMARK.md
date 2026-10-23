@@ -46,9 +46,11 @@ mede atualmente a gravação sintética da tabela de entradas, consulta keyset
 pelo serviço público (SQL de candidatos, cache e loads limitados de fontes
 ausentes) e leitura de arestas com os índices do schema. Registra p50/p95 de 30
 leituras frias e 30 aquecidas, plano `EXPLAIN`, linhas estimadas e bytes alocados
-nas tabelas. Ele não representa throughput de Entity Access, escrita pelo
-writer, rebuild ou reconciliação; esses workloads continuam pendentes antes da
-homologação final.
+nas tabelas. O harness compara ainda o plano atual com um índice composto criado e removido
+dentro do schema temporário, medindo espaço/build e 250 escritas pelo writer em
+cada variante. Essa amostra não substitui um benchmark amplo de escrita. O teste
+não representa throughput de Entity Access, rebuild ou reconciliação; esses
+workloads continuam pendentes antes da homologação final.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:

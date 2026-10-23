@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Performance;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -195,6 +196,60 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       sort($warmMilliseconds, SORT_NUMERIC);
       sort($coldMilliseconds, SORT_NUMERIC);
 
+      // Compare one plausible filter-first index without changing the module
+      // schema. The Kernel table is test-prefixed and discarded after the run.
+      $schema = $database->schema();
+      $baselineWriter = $this->measureWriterSample(250);
+      $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
+      $baselineEntryBytes = $this->tableStorageBytes('aculta_index_entry');
+      $indexBuildStarted = hrtime(TRUE);
+      $schema->addIndex(
+        'aculta_index_entry',
+        'benchmark_filter_entry',
+        ['generation_id', 'domain_id', 'published', 'entry_id'],
+        aculta_index_schema()['aculta_index_entry'],
+      );
+      $indexBuildMilliseconds = (hrtime(TRUE) - $indexBuildStarted) / 1_000_000;
+      $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
+      $alternativeEntryBytes = $this->tableStorageBytes('aculta_index_entry');
+      $alternativeWriter = $this->measureWriterSample(250);
+      $alternativeColdMilliseconds = [];
+      for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
+        $candidateCache->invalidateGeneration($generationId);
+        $started = hrtime(TRUE);
+        $alternativePage = $query->query($filters, $account, NULL, 100);
+        $alternativeColdMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+        self::assertNotNull($alternativePage->nextCursor);
+      }
+      $alternativeWarmMilliseconds = [];
+      for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
+        $started = hrtime(TRUE);
+        $alternativePage = $query->query($filters, $account, NULL, 100);
+        $alternativeWarmMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+        self::assertNotNull($alternativePage->nextCursor);
+      }
+      sort($alternativeColdMilliseconds, SORT_NUMERIC);
+      sort($alternativeWarmMilliseconds, SORT_NUMERIC);
+      $alternativeIndexComparison = [
+        'index_fields' => ['generation_id', 'domain_id', 'published', 'entry_id'],
+        'build_ms' => round($indexBuildMilliseconds, 3),
+        'baseline_entry_bytes' => $baselineEntryBytes,
+        'alternative_entry_bytes' => $alternativeEntryBytes,
+        'allocated_delta_bytes' => max(0, $alternativeEntryBytes - $baselineEntryBytes),
+        'writer_sample_size' => 250,
+        'baseline_writer_ms' => $baselineWriter['elapsed_ms'],
+        'baseline_writer_rows_per_second' => $baselineWriter['rows_per_second'],
+        'alternative_writer_ms' => $alternativeWriter['elapsed_ms'],
+        'alternative_writer_rows_per_second' => $alternativeWriter['rows_per_second'],
+        'cold_page_p50_ms' => round($this->percentile($alternativeColdMilliseconds, 0.50), 3),
+        'cold_page_p95_ms' => round($this->percentile($alternativeColdMilliseconds, 0.95), 3),
+        'warm_page_p50_ms' => round($this->percentile($alternativeWarmMilliseconds, 0.50), 3),
+        'warm_page_p95_ms' => round($this->percentile($alternativeWarmMilliseconds, 0.95), 3),
+        'sql_plan' => $this->explainCandidateQuery($generationId),
+      ];
+      $schema->dropIndex('aculta_index_entry', 'benchmark_filter_entry');
+      $candidateCache->invalidateGeneration($generationId);
+
       $relationResults = [];
       foreach ([1, 5, 20] as $fanout) {
         $database->delete('aculta_index_relation')
@@ -220,6 +275,7 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
         'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
         'warm_page_p95_ms' => round($this->percentile($warmMilliseconds, 0.95), 3),
         'candidate_sql_plan' => $this->explainCandidateQuery($generationId),
+        'alternative_index' => $alternativeIndexComparison,
         'relation_queries' => $relationResults,
         'table_storage_bytes' => $tableSizes,
         'peak_memory_bytes' => memory_get_peak_usage(TRUE),
@@ -393,6 +449,47 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       'key' => (string) ($plan['key'] ?? ''),
       'rows' => (int) ($plan['rows'] ?? 0),
       'extra' => (string) ($plan['Extra'] ?? ''),
+    ];
+  }
+
+  /**
+   * Measures real writer inserts in a disposable generation.
+   *
+   * @return array{elapsed_ms: float, rows_per_second: int}
+   *   Writer throughput and elapsed time.
+   */
+  private function measureWriterSample(int $sampleSize): array {
+    $database = $this->container->get('database');
+    $generationId = $this->container->get('aculta_index.generation_manager')->start();
+    $writer = $this->container->get('aculta_index.writer');
+    $started = hrtime(TRUE);
+    for ($index = 0; $index < $sampleSize; $index++) {
+      $entityId = 'benchmark-writer-' . $index;
+      $projection = new ContentIndexProjection(
+        'media',
+        $entityId,
+        'en',
+        'image',
+        hash('sha256', $generationId . ':' . $entityId),
+        'Synthetic benchmark image ' . $index,
+        'main',
+        TRUE,
+        1_700_000_000 + $index,
+        1_700_000_000 + $index,
+      );
+      $writer->write($generationId, 'image', $projection, 1);
+    }
+    $elapsedMilliseconds = (hrtime(TRUE) - $started) / 1_000_000;
+    $database->delete('aculta_index_entry')
+      ->condition('generation_id', $generationId)
+      ->execute();
+    $database->delete('aculta_index_generation')
+      ->condition('generation_id', $generationId)
+      ->execute();
+
+    return [
+      'elapsed_ms' => round($elapsedMilliseconds, 3),
+      'rows_per_second' => (int) round($sampleSize / max($elapsedMilliseconds / 1000, 0.000001)),
     ];
   }
 
