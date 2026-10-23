@@ -30,3 +30,15 @@ A escolha de checkout é por carrinho/pedido e não por sessão PHP global; no m
 O carrinho atual da barra multidomínio permanece inalterado e **não haverá quatro abas públicas**. Comum | Loja | LMS | Doações são abas de configuração interna no Portal. Manter `donate|cart|both`, redirecionamentos, order types, checkout dedicado, recorrência e policy de estorno como comportamentos públicos existentes; a migração é de ownership do seletor transversal, sem mudança de UX ou sessão de usuário.
 
 **Fases substitutivas:** D-A caracterizar `DonationSettingsForm` e `CartCheckoutRouteSubscriber` em `donate|cart|both`; D-B implementar provider administrativo mantendo código anterior ativo; D-C integrar formulário da aba administrativa Doações do Portal; D-D transferir a lógica compartilhada após testes de equivalência, dual-read configurável e rollback, desregistrando o antigo subscriber somente no corte; D-T testar checkout e cabeçalho multidomínio intactos. As ideias anteriores de construir novos resolvedores de carrinho público ou tabs do comprador **não integram este escopo**.
+
+## Linha de base P-CART A / D-A — caracterização (2026-10-22)
+
+Testes Unit que fixam o comportamento atual antes de qualquer migração (nenhum código de produção foi alterado):
+
+- `aculta_donation/tests/src/Unit/CartCheckoutRoutesCharacterizationTest.php`: `CartCheckoutRouteSubscriber` e `CartFriendlyRouteSubscriber` (Portal) alteram `commerce_cart.page`; o resultado não depende da ordem. `donate` nega `commerce_cart.page`, `commerce_checkout.checkout` e `commerce_checkout.form` (`_access` FALSE, sem `_permission`); `cart` e `both` produzem exatamente a mesma coleção e deixam o Commerce intacto; configuração ausente ou inválida se comporta como `donate`; o caminho do carrinho é sempre `/carrinho`.
+- `aculta_portal/tests/src/Unit/Cart/CartSiteTest.php`: tipo de pedido → separador do carrinho único (`default`→Loja, `curso`→Cursos, `doacao`→Apoio, `assinatura`→Assinatura; desconhecido→Loja), ordem e rótulos.
+- `aculta_portal/tests/src/Unit/Cart/CartFriendlyRouteSubscriberTest.php`: `/cart` → `/carrinho` sem trocar o nome da rota nem tocar o checkout.
+
+Consumidores de `donation_route` além do subscriber, que o futuro dual-read também precisa cobrir: `DonateBlock`, `QuickDonationBlock`, `DonationController::checkAccess()` e `DonationSettingsForm`. O valor instalado por padrão é `both`; o padrão do formulário é `donate`.
+
+Fora do alcance de Unit (ficam para Kernel/Browser/homelab): `CartUtility`/`CartConsolidator` com carrinhos reais, DOM do cabeçalho, contador, redirecionamento de `CartCheckoutController` e fluxo de pagamento. Execução: `vendor/bin/phpunit -c web/core <caminho>` (27 testes, 88 asserções, OK).
