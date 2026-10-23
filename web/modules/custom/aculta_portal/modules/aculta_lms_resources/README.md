@@ -34,9 +34,12 @@ deve preservar documentos ligados a outras turmas ou conteúdos e respeitar a
 relação Group atual. Não excluir arquivos diretamente; ver
 [política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
-Dev 0.1.0-dev.3. O provider tem cobertura Unit própria (3 testes / 14
-assertions); Unit de recursos preexistente (8 testes / 39 assertions) passou; Kernel
-(2 testes / 46 assertions) já passava na versão anterior e não foi alterado nesta
-subfase. PHP CLI 8.4.26; PHP 8.5 não validado. Instalação e smoke autenticado no
-Runtime e revisão visual continuam pendentes. Consulte o
+Dev 0.1.0-dev.5. O provider tem cobertura Unit e Kernel com Group real:
+estudante por `takeAccess()`, educador por `grade students`, terceiro negado.
+O Kernel passa pelo `ContentIndexAccessFilter`, combina Group Entity Access com
+policy LMS e verifica troca/restauração do purpose `courses` por fixture Domain:
+1 teste / 36 assertions PASS, com 42 deprecações de Core/contrib. A descoberta
+do provider pela tag/DI do módulo, instalação e smoke autenticado no Runtime e
+revisão visual continuam pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.
+Consulte o
 [roadmap LMS](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).

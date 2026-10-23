@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.5 — policy do provider validada com Group real
+
+- Kernel exerce o provider sobre `Group:lms_course`: estudante autorizado por
+  `takeAccess()`, educador por `grade students` contextual e terceiro negado.
+- `ContentIndexAccessFilter` revalida Entity Access e executa o provider no
+  purpose `courses`; o fixture Domain verifica a troca e restauração do contexto.
+- Kernel: 1 teste / 36 assertions PASS, com 42 deprecações upstream. O provider
+  ainda é montado diretamente; descoberta da tag/DI do módulo segue pendente.
+
 ## 0.1.0-dev.4 — versão da projeção no fingerprint do Index
 
 - Provider de cursos declara sua versão de projeção para impedir retomada de
