@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.16**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.17**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.17 — acesso à contribuição
+
+A submissão confirma a conta pela política `aculta_portal.email_confirmation_policy`.
+O link é contextual ao verbete publicado e só aparece a contas confirmadas sem
+acesso de update. O hook agrega metadados de cache de permissão/domínio e dos
+resultados de Entity Access. Kernel prova os estados confirmado e não confirmado.
 
 ### Incremento dev.16 — envio comunitário
 

@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.17`: propostas exigem e-mail confirmado por `aculta_portal`.
+  Verbetes publicados exibem link contextual apenas a colaboradores confirmados
+  sem permissão de edição direta; o render varia cache por conta, permissões e
+  domínio. Kernel completo: 8 testes / 290 assertions, sem warnings (284
+  depreciações Drupal/contrib e 9 PHPUnit); verifica a regra e a recusa de conta
+  não confirmada.
 - `0.1.0-dev.16`: pessoas com `submit wiki proposals` podem abrir o Form API em
   `/wiki/verbetes/{node}/contribuir`. A rota exige acesso de visualização ao
   verbete e o serviço revalida estado e VID-base ao salvar. A proposta continua

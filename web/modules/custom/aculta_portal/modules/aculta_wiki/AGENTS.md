@@ -63,3 +63,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   revalida a revisão-base durante o salvamento. Texto sugerido é texto simples;
   o formulário avisa que ele não altera o verbete automaticamente. Não marcar
   proposta como aceita sem definir e implementar a aplicação editorial.
+- Acesso à contribuição (dev.17): submissão e abertura do formulário também
+  exigem `EmailConfirmationPolicy::isConfirmed()`. Link contextual é renderizado
+  somente para verbete publicado, no purpose Wiki, quando existe permissão de
+  proposta e a pessoa não tem acesso direto de update. Preservar cache contexts
+  de domínio, permissões e cacheability dos resultados de acesso.

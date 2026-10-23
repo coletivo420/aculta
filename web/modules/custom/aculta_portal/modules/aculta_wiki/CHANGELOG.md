@@ -1,5 +1,20 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.17 — acesso confirmado e link contextual
+
+- `WikiProposalSubmission` exige confirmação de e-mail pelo contrato
+  `EmailConfirmationPolicy` além da permissão específica; a checagem também
+  protege o GET do formulário.
+- `WikiProposalLinkHooks` adiciona o link no verbete público somente no purpose
+  `wiki`, para contas confirmadas com permissão de propor e sem acesso de edição
+  direta. Render cache varia por permissões, usuário e domínio e incorpora os
+  resultados de Entity Access.
+- Kernel usa o service hook real e comprova link para contribuinte habilitado,
+  ausência de link para conta não confirmada, submissão negada para conta não
+  confirmada com permissão e persistência para a confirmada. Kernel completo:
+  8 testes / 290 assertions, sem warnings; 284 depreciações Drupal/contrib e
+  9 PHPUnit.
+
 ## 0.1.0-dev.16 — envio de propostas por Form API
 
 - Adiciona `/wiki/verbetes/{node}/contribuir`, protegida por `submit wiki

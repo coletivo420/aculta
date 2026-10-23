@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -34,6 +35,7 @@ use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
+use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -345,6 +347,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'body' => ['value' => 'Texto público', 'format' => 'plain_text'],
     ]);
     $proposalTarget->save();
+    Role::create([
+      'id' => 'wiki_form_contributor_test',
+      'label' => 'Wiki Form contributor test',
+      'permissions' => ['submit wiki proposals'],
+    ])->save();
+    $contributor = new UserSession(['uid' => 7, 'roles' => ['authenticated', 'wiki_form_contributor_test']]);
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $contributor->id());
+    $this->container->get('current_user')->setAccount($contributor);
     $proposalForm = WikiProposalSubmissionForm::create($this->container);
     $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);
     self::assertSame('aculta_wiki_proposal_submission', $proposalForm->getFormId());
@@ -430,7 +440,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])->save();
 
     $submitter = new UserSession(['uid' => 2, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
-    $other = new UserSession(['uid' => 3, 'roles' => ['authenticated']]);
+    $other = new UserSession(['uid' => 3, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
+    $unconfirmed = new UserSession(['uid' => 6, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
     $target = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete público para proposta',
@@ -445,10 +456,36 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     $wikiDomain = Domain::load('wiki420_aculta_org');
     $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $submitter->id());
+    $this->container->get('current_user')->setAccount($submitter);
+
+    $display = $this->createMock(EntityViewDisplayInterface::class);
+    $linkHooks = $this->container->get(WikiProposalLinkHooks::class);
+    self::assertInstanceOf(WikiProposalLinkHooks::class, $linkHooks);
+    $proposalBuild = [];
+    $linkHooks->entityView($proposalBuild, $target, $display, 'full');
+    self::assertArrayHasKey('wiki_proposal_link', $proposalBuild);
+    self::assertContains('user.permissions', $proposalBuild['#cache']['contexts']);
+
+    $unconfirmedBuild = [];
+    $this->container->get('current_user')->setAccount($unconfirmed);
+    $linkHooks->entityView($unconfirmedBuild, $target, $display, 'full');
+    self::assertArrayNotHasKey('wiki_proposal_link', $unconfirmedBuild);
+
     $this->container->get('current_user')->setAccount($submitter);
 
     $submission = $this->container->get('aculta_wiki.proposal_submission');
     self::assertInstanceOf(WikiProposalSubmission::class, $submission);
+    $this->container->get('current_user')->setAccount($unconfirmed);
+    try {
+      $submission->submit($target, 'correction', 'Texto', 'Motivo');
+      self::fail('An unconfirmed account with the submit permission must be denied.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertSame(0, $this->container->get('entity_type.manager')
+        ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+    }
+    $this->container->get('current_user')->setAccount($submitter);
     $staleTarget = clone $target;
     $target->setNewRevision(TRUE);
     $target->setRevisionLogMessage('Atualização concorrente para teste');

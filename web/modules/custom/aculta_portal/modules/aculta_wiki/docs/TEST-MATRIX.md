@@ -139,6 +139,18 @@ Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
 O módulo está desabilitado no Runtime; o endpoint só existe após ativação
 controlada.
 
+## Acesso ao envio de proposta — Kernel real (dev.17)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Conta confirmada com permissão e sem update | Kernel | Link contextual aparece no verbete publicado em purpose Wiki | aprovado |
+| Conta não confirmada com permissão | Kernel | Link não aparece e serviço nega antes de persistir | aprovado |
+| Cache do link | Kernel | Varia por permissões/domínio e inclui metadata de Entity Access | aprovado |
+| Sem permissão de proposta ou fora do domínio Wiki | Kernel | Link ausente | pendente |
+
+Resultado da suíte Kernel da classe: 8 testes / 290 assertions, sem warnings;
+284 depreciações Drupal/contrib e 9 do PHPUnit.
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |

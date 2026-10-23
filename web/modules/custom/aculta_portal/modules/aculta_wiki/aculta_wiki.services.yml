@@ -11,7 +11,7 @@ services:
 
   aculta_wiki.proposal_submission:
     class: Drupal\aculta_wiki\Service\WikiProposalSubmission
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']
 
   aculta_wiki.editorial_queue:
     class: Drupal\aculta_wiki\Service\WikiEditorialQueue
@@ -47,3 +47,6 @@ services:
     class: Drupal\aculta_wiki\Hook\WikiReviewHooks
     arguments:
       - '@Drupal\aculta_wiki\Notifier\WikiReviewNotifier'
+  Drupal\aculta_wiki\Hook\WikiProposalLinkHooks:
+    class: Drupal\aculta_wiki\Hook\WikiProposalLinkHooks
+    arguments: ['@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']

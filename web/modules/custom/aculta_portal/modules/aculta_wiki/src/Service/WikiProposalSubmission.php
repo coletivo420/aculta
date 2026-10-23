@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Service;
 
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -21,6 +22,7 @@ final class WikiProposalSubmission {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposes,
+    private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
   ) {}
 
   /**
@@ -38,14 +40,7 @@ final class WikiProposalSubmission {
     string $rationale,
     array $sourceUris = [],
   ): WikiProposal {
-    if (!$this->currentUser->isAuthenticated() || (int) $this->currentUser->id() < 1) {
-      throw new AccessDeniedHttpException();
-    }
-    $access = $this->entityTypeManager->getAccessControlHandler('aculta_wiki_proposal')
-      ->createAccess(NULL, $this->currentUser, [], TRUE);
-    if (!$access->isAllowed()) {
-      throw new AccessDeniedHttpException();
-    }
+    $this->assertCanSubmit();
 
     // Route/controller entities may be stale after a concurrent publication or
     // withdrawal. Always bind the proposal to the current default revision.
@@ -119,6 +114,29 @@ final class WikiProposalSubmission {
     $proposal->save();
 
     return $proposal;
+  }
+
+  /**
+   * Checks authentication, confirmed e-mail, and proposal-create permission.
+   *
+   * This check also protects the GET form so an unconfirmed account does not
+   * receive an unusable submission screen.
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+   *   When the current account cannot submit proposals.
+   */
+  public function assertCanSubmit(): void {
+    if (!$this->currentUser->isAuthenticated() || (int) $this->currentUser->id() < 1) {
+      throw new AccessDeniedHttpException();
+    }
+    if (!$this->emailConfirmationPolicy->isConfirmed($this->currentUser)) {
+      throw new AccessDeniedHttpException();
+    }
+    $access = $this->entityTypeManager->getAccessControlHandler('aculta_wiki_proposal')
+      ->createAccess(NULL, $this->currentUser, [], TRUE);
+    if (!$access->isAllowed()) {
+      throw new AccessDeniedHttpException();
+    }
   }
 
 }

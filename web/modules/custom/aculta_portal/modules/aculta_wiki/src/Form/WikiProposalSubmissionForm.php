@@ -45,6 +45,7 @@ final class WikiProposalSubmissionForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
+    $this->submission->assertCanSubmit();
     if (!$node instanceof NodeInterface) {
       throw new \InvalidArgumentException('A Wiki entry is required to submit a proposal.');
     }
