@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.163 — validar DI real da ponte Statistics
+
+- O boot combinado do `ContentIndexOwnerIntegrationKernelTest` inclui agora o
+  owner `aculta_statistics` e resolve pelo container real o bridge do Index e
+  `AuthorizedEntityMetricAggregator` registrado pelo Statistics. MariaDB
+  dedicado: 1 teste / 35 assertions; 239 depreciações Core/contrib, sem falhas.
+- Isso comprova a composição DI owner↔contrato, não executa agregação, não
+  instala a configuração/schema completo de Statistics e não homologa grants
+  por domínio/Group/LMS nem Runtime. A correlação funcional segue coberta pelo
+  `ContentIndexStatisticsBridgeKernelTest` (1/17).
+
 ## 0.1.0-dev.162 — provar relação Group do owner PDF
 
 - O harness transversal do Index agora também instala schemas auxiliares e

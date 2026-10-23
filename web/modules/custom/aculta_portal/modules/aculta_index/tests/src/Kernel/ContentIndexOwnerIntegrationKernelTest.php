@@ -11,6 +11,9 @@ use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
+use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
+use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Yaml\Yaml;
@@ -48,6 +51,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'aculta_pdf_viewer_group',
       'aculta_forum',
       'aculta_wiki',
+      'aculta_statistics',
       'schema_web_page',
       'schema_organization',
       'aculta_index',
@@ -60,6 +64,14 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
    */
   public function testOwnerAdaptersAreDiscoveredByThePortalIndex(): void {
     $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertInstanceOf(
+      ContentIndexStatisticsBridge::class,
+      $this->container->get('aculta_index.statistics_bridge'),
+    );
+    self::assertInstanceOf(
+      AuthorizedEntityMetricAggregator::class,
+      $this->container->get(ContentEntityMetricAggregatorInterface::class),
+    );
 
     self::assertSame('lms_course', $registry->findProviderIdForBundle('group', 'lms_course'));
     self::assertSame('forum', $registry->findProviderIdForBundle('node', 'aculta_forum_topic'));

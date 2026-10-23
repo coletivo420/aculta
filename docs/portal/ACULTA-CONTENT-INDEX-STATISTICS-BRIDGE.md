@@ -64,6 +64,7 @@ Conectar primeiro indicadores agregados por bundle/domínio e janela de tempo, p
 
 ## Evidência e limites
 
+- Boot transversal dev.163: `ContentIndexOwnerIntegrationKernelTest` inclui o módulo owner real `aculta_statistics`; o container injeta `AuthorizedEntityMetricAggregator` no bridge do Index pela interface compartilhada (1 teste / 35 assertions; 239 depreciações Core/contrib). Essa prova valida DI e compatibilidade do contrato, mas não instala a configuração/schema operacional do Statistics nem substitui a correlação, os grants ou a homologação Runtime.
 - A allowlist inicial cobre métricas Wiki por `node/wiki_entry` e solicitações de arquivo por `file/file`; dimensões compostas ficam fora deste bridge.
 - Métricas públicas allowlisted aceitam a permissão granular `view content-level statistics`; métricas internas exigem permissão administrativa. A autorização de cada conteúdo já foi revalidada pelo Index.
 - Regressão Unit focada executada em 2026-10-23: Index bridge e aggregator Statistics, 8 testes / 47 assertions PASS. Inclui rejeição antes da consulta SQL quando o bundle da página não corresponde à métrica.
