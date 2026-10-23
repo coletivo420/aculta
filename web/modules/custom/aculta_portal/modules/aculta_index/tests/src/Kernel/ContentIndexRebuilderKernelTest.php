@@ -303,6 +303,50 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Rechecks Entity Access before a queued revocation is applied.
+   */
+  public function testCursorPageHidesEntityMadePrivateWhileCatalogIsStale(): void {
+    foreach (['First article', 'Second article'] as $title) {
+      Node::create([
+        'type' => 'article',
+        'title' => $title,
+        'status' => 1,
+        'created' => 1000,
+        'changed' => 1000,
+      ])->save();
+    }
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $account = new AnonymousUserSession();
+    $query = $this->container->get('aculta_index.query');
+    $firstPage = $query->query(['published' => TRUE], $account, NULL, 1);
+    $this->assertCount(1, $firstPage->entities);
+    $this->assertNotNull($firstPage->nextCursor);
+
+    $privateCandidate = $this->container->get('entity_type.manager')->getStorage('node')->load(1);
+    $privateCandidate->setUnpublished();
+    $privateCandidate->save();
+    $this->container->get('entity_type.manager')->getAccessControlHandler('node')->resetCache();
+    $indexedPublished = $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['published'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '1')
+      ->execute()
+      ->fetchField();
+    $this->assertSame('1', $indexedPublished, 'The test exercises a stale public catalog row before its worker runs.');
+
+    $nextPage = $query->query(['published' => TRUE], $account, $firstPage->nextCursor, 1);
+    $this->assertSame([], $nextPage->entities);
+    $this->assertSame(0, $nextPage->cacheability->getCacheMaxAge());
+  }
+
+  /**
    * Tests outgoing relation pagination and access for source and targets.
    */
   public function testOutgoingRelationQueryUsesDefaultLanguageAndEntityAccess(): void {

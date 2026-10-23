@@ -30,6 +30,8 @@ Schema foi declarado com Database Schema API, sem SQL de criação específico d
 
 Consultas 0.1 usam `generation_id`, filtros allowlisted, `changed DESC` e `entry_id DESC` para keyset. O índice `gen_changed` serve esse percurso. O cursor não contém identidade da origem: um token aleatório por conta/filtros/geração localiza uma linha com hash SHA-256, posição, revisão CAS e expiração de 15 minutos. O cron apaga tokens expirados por lotes. O leitor revalida cada entidade pela API de acesso; as respostas não são armazenáveis em cache neste primeiro contrato.
 
+Um Kernel test no MariaDB deixa deliberadamente uma projeção pública obsoleta após despublicar a entidade e confirma que a página com cursor não a expõe antes da execução do worker incremental. Isso valida a revogação efetiva na leitura apesar do atraso da fila; não valida a latência do worker nem os demais mecanismos externos de grants.
+
 ## Limites de projeção
 
 O schema não guarda corpo, URI de arquivo, usuário, histórico de revisão, notas de estudante ou métricas. `published` é nullable porque algumas entidades não têm publicação; zero/um representam estado explícito quando o provider pode determiná-lo. `domain_id` vazio representa ausência de domínio. A presença da linha não concede acesso; APIs de consulta futuras precisam carregar o original, validar Entity Access e filtrar resultados sem expor totais/facetas privados.
