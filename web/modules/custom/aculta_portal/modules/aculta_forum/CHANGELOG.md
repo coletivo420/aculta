@@ -1,3 +1,14 @@
+## `0.1.0-dev.261` — validar o trigger ForumPost do Game — 2026-10-23
+
+- Kernel com entidades reais de ForumPost prova a política do Game: publicação
+  inicial em tópico publicado do Domain `forum` é elegível; rascunho, revisão
+  não default, Domain fora do Fórum, sincronização, original já publicado,
+  autoria histórica no post ou no tópico e post sem tópico não são.
+- Testes: arquivo 8/100; suíte Kernel do Fórum 67/1.436. Nenhuma conquista,
+  configuração ou Runtime foi alterado; a concessão no Runtime segue pendente.
+- O hook `forumPostSave` continua sem teste próprio porque `BadgeService` é
+  final.
+
 ## `0.1.0-dev.260` — contador de tópicos access-aware nas categorias — 2026-10-23
 
 - Novo campo Views `aculta_forum_category_topic_count` conta tópicos publicados

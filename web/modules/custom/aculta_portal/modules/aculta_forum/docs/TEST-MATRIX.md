@@ -1,3 +1,15 @@
+## Trigger ForumPost do Game — política real, 2026-10-23
+
+- `ForumPostParticipationPolicyKernelTest` (8 testes / 100 asserções, MariaDB):
+  publicação inicial no Domain `forum` é elegível; rascunho, revisão não default,
+  Domain fora do Fórum, entidade sincronizada, original já publicado, autoria
+  histórica no post ou no tópico e post sem tópico não são.
+- Usa o fixture `aculta_forum_post_test` e o `DomainPurposeManager` real, sem
+  tocar conquistas, configuração ou Runtime. A concessão no Runtime continua
+  pendente; o hook `forumPostSave` não tem teste próprio porque `BadgeService`
+  é final.
+- Suíte Kernel do Fórum 67/1.436.
+
 ## Contador de tópicos access-aware — implementação, 2026-10-23
 
 - `ForumCategoryCounterAccessKernelTest` (3 testes / 54 asserções, MariaDB):

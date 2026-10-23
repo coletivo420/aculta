@@ -1,3 +1,15 @@
+## Não lançado — validação automatizada do trigger ForumPost — 2026-10-23
+
+- `Drupal\Tests\aculta_forum\Kernel\ForumPostParticipationPolicyKernelTest`
+  (8 testes / 100 asserções, MariaDB) prova `isEligiblePost()` com entidades
+  reais: publicação inicial no Domain `forum` é elegível; rascunho, revisão não
+  default, Domain fora do Fórum, entidade sincronizada, original já publicado,
+  autoria histórica no post ou no tópico e post sem tópico não são.
+- O teste usa o fixture `aculta_forum_post_test` e o `DomainPurposeManager`
+  real; nenhuma conquista, configuração ou Runtime foi alterado.
+- O hook `forumPostSave` continua sem teste próprio porque `BadgeService` é
+  final; a concessão idempotente do serviço é coberta pelo próprio módulo.
+
 ## 0.1.0-dev.16 — incluir a primeira publicação de ForumPost no trigger atual
 
 - Hooks genéricos de insert/update concedem o trigger existente `forum_comment`
