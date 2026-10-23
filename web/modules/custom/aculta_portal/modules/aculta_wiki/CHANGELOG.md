@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.41 — construir formulário nativo para autoria confirmada
+
+- Kernel carrega o workflow `wiki_editorial` e constrói o formulário Core de
+  `wiki_entry` para a conta confirmada. Confirma campos de conteúdo, ação de
+  salvar, transição `draft_to_review` disponível e opção de publicação ausente.
+- Focal MariaDB: 1 teste / 38 asserções; 199 depreciações Core/contrib e 2 do
+  PHPUnit. O teste não envia o formulário nem persiste a revisão.
+
 ## 0.1.0-dev.40 — route de criação da WE SATIVA no domínio Wiki
 
 - O Kernel confirma que a rota nativa `node.add` permite criação à conta

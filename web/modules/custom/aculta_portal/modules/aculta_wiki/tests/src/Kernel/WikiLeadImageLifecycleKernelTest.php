@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_wiki\Kernel;
 
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
@@ -717,6 +718,63 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('node.add', $build['create']['#url']->getRouteName());
     self::assertSame(['node_type' => 'wiki_entry'], $build['create']['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $build['create']['#url']->getOption('domain')->id());
+  }
+
+  /**
+   * Confirmed Wiki authors receive the native form and review transition only.
+   */
+  public function testConfirmedContributorBuildsNativeDraftForm(): void {
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['workflows', 'content_moderation']);
+    $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
+    Workflow::create(Yaml::parseFile($workflowFile))->save();
+    EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'wiki_entry',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])
+      ->setComponent('body', ['type' => 'text_textarea_with_summary'])
+      ->setComponent('moderation_state', ['type' => 'moderation_state_default'])
+      ->save();
+
+    Role::create([
+      'id' => 'email_confirmed',
+      'label' => 'Confirmed Wiki author test',
+      'permissions' => [
+        'access content',
+        'create wiki_entry content',
+        'edit own wiki_entry content',
+        'view own unpublished content',
+        'use wiki_editorial transition draft_to_review',
+      ],
+    ])->save();
+    $author = new UserSession(['uid' => 43, 'roles' => ['authenticated', 'email_confirmed']]);
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+    $this->container->get('current_user')->setAccount($author);
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+
+    self::assertTrue($this->container->get('aculta_portal.email_confirmation_policy')->isConfirmed($author));
+    self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
+      'node.add',
+      ['node_type' => 'wiki_entry'],
+      $author,
+    ));
+
+    $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
+    $form = $this->container->get('entity.form_builder')->getForm($node, 'default');
+    self::assertArrayHasKey('title', $form);
+    self::assertArrayHasKey('body', $form);
+    self::assertArrayHasKey('actions', $form);
+    self::assertArrayHasKey('submit', $form['actions']);
+    self::assertArrayHasKey('moderation_state', $form);
+    self::assertArrayHasKey('review', $form['moderation_state']['widget'][0]['state']['#options']);
+    self::assertArrayNotHasKey('published', $form['moderation_state']['widget'][0]['state']['#options']);
+
+    $validTransitions = $this->container->get('content_moderation.state_transition_validation')
+      ->getValidTransitions($node, $author);
+    self::assertArrayHasKey('draft_to_review', $validTransitions);
+    self::assertFalse($author->hasPermission('use wiki_editorial transition review_to_published'));
   }
 
   /**

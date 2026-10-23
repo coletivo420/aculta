@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.40**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.41**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.41 — construir o formulário nativo de verbete
+
+Kernel inicializa o workflow `wiki_editorial` real e constrói o formulário
+Core `node.wiki_entry` para uma conta confirmada. A ação de salvar aparece;
+`draft_to_review` é autorizada e o widget não oferece publicação. Focal:
+1 teste / 38 asserções. A submissão pelo Form API e a persistência de um
+rascunho/revisão continuam pendentes.
 
 ### Incremento dev.40 — validar rota de criação no domínio Wiki
 

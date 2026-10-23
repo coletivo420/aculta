@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.41`: Kernel constrói o formulário Core de `wiki_entry` sob a conta
+  confirmada, com o workflow real, campos, ação de salvar e escolha de revisão;
+  a opção de publicação não aparece. Focal: 1 teste / 38 asserções. Submissão e
+  persistência pelo Form API ainda pendentes.
+
 - `0.1.0-dev.40`: o Kernel verifica acesso à rota nativa `node.add` para a
   conta confirmada, e o link “Criar verbete” do workspace conserva os
   parâmetros e o Domain Wiki quando a página está no contexto `main` (focal:

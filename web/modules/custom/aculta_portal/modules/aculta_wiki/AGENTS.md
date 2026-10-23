@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.41: o Kernel constrói o Node Form API real para uma conta confirmada e
+  workflow `wiki_editorial`; comprova `draft_to_review` e ausência da opção de
+  publicação no widget (focal: 1 teste / 38 assertions). Ainda não submete nem
+  persiste o formulário; preservar isso como gate distinto.
+
 - Dev.40: Kernel valida o `node.add` nativo, acesso de criação de conta
   confirmada e link da WE SATIVA explicitamente no Domain Wiki apesar do
   contexto `main` (focal: 1 teste / 41 assertions). Isso não comprova o build

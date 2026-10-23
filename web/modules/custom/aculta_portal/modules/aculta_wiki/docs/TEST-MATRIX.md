@@ -3,7 +3,7 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
-## WE SATIVA no ACULTA Studio (dev.40)
+## WE SATIVA no ACULTA Studio (dev.41)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -11,7 +11,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Meu trabalho | Kernel | Candidatos são limitados por UID; `view` Entity Access é revalidado por item no purpose Wiki | aprovado para verbetes; proposta sem fixture |
 | Acesso e cache | Kernel | Conta confirmada com criação pode entrar; conta alheia sem itens não pode; cache varia por usuário/domínio | aprovado; 286 depreciações Drupal/contrib e 16 PHPUnit na classe |
 | Rota de criação contextual | Kernel | `node.add` autoriza a conta confirmada; o link Studio conserva parâmetros e Domain Wiki quando iniciado em `main` | aprovado (dev.40; 1 teste / 41 asserções) |
-| Formulário Node de criação/edição | Kernel/Functional | Form API nativo constrói e salva revisão no purpose Wiki | planejado |
+| Construção do formulário Node | Kernel | Form API Core, conta confirmada, workflow Wiki, transição `draft_to_review` e sem opção de publicar | aprovado (dev.41; 1 teste / 38 asserções) |
+| Submissão e persistência do Node | Kernel/Functional | Form API nativo grava rascunho e permite envio posterior pela transição oficial | planejado |
 | Paginação | Kernel | Cursor por tipo com ordem estável e acesso revalidado | planejado; tela inicial limita 20 por tipo |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
