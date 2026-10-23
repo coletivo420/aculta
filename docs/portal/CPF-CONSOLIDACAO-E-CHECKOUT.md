@@ -240,6 +240,20 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
   - *Não verificado:* login durante o checkout, múltiplas abas, expiração de sessão e troca de Domain pela lógica do Portal. Exigem teste funcional com o navegador no ambiente de teste, e o gateway de pagamento. O site local responde só com redirecionamento para os domínios públicos, então esses testes não rodam aqui sem configuração.
 - **Duplicação Loja × LMS:** removida na configuração (flow `curso` retirado, tipo `curso` aponta para o flow `default`). A rota de import foi aplicada no ambiente de teste.
 
+## 9.5 Drift de configuração: classificação real (2026-10-23)
+
+Medição feita comparando o conteúdo ativo de cada item com o arquivo de `config/sync` (não só o rótulo do `config:status`):
+
+- **18 itens iguais ao sync.** O `config:status` os listava como "só no sync" ou "diferentes" por artefato de listagem. Não são divergências.
+- **3 itens sem arquivo no sync e fora do banco** (`profile.type.customer`, `filter.format.basic_html`, `field.field.profile.customer.address`). Foram removidos do repositório por outras frentes (`e85c3dbe`, `b66646ef`). Não há o que importar.
+- **29 itens com diferença real** (mais `core.extension`, excluído de propósito):
+  - *Displays de entidade (23):* o banco tem componentes de módulos ativos que o sync não tem (`entity_print_*` em `hidden`, `co_authors`, `content_moderation_control`, `flag_sinalizar_post_forum`, `field_aculta_published_at`). Esses componentes são reincluídos pelos módulos ao salvar.
+  - *Permissões de papéis (2):* `content_editor` (32 mudanças) e `email_confirmed` (11). Importar mudaria quem pode fazer o quê no site.
+  - *Índices de busca (2):* `aculta_conteudo` (3 mudanças de bundles) e `aculta_forum` (6 mudanças em processors). Importar mudaria o comportamento de busca.
+  - *Storage de campos (2):* `field_gallery_purpose` e `field_roster_visible`. Importar mudaria configurações de campos que têm dados.
+
+**Conclusão:** esses 29 itens não são uma correção técnica neutra. Para cada um, é preciso decidir qual lado é a fonte da verdade (repositório ou banco). Importar por cima do banco mudaria permissões, busca e campos com dados, sem que isso esteja no escopo do CPF. Por isso não importei esses itens. Nenhuma configuração foi alterada nesta medição.
+
 ## 10. Pendências
 
 1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1.
