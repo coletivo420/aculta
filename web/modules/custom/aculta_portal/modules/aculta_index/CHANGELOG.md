@@ -10,6 +10,9 @@
 - Auditoria: Kernel focal passou em SQLite dentro da rodada de 64 testes / 728
   assertions e em MariaDB com 1 teste / 13 assertions. Update hook em MariaDB:
   1 teste / 8 assertions; uma depreciação upstream.
+- O teste de janela agora confirma que um bundle não pertencente com ID maior
+  não altera o teto do provider. Repetição focal atual: SQLite e MariaDB, 1
+  teste / 14 assertions em cada banco.
 - PHPCS Drupal e `php -l` passaram nos arquivos alterados.
 
 ## 0.1.0-dev.105 — rejeitar relações com projeção de origem obsoleta

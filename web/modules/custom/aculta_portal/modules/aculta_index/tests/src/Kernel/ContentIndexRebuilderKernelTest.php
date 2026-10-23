@@ -412,6 +412,8 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
    */
   public function testIncrementalAuditDefersSourcesCreatedAfterItsScanWindow(): void {
     Node::create(['type' => 'sample_content', 'title' => 'Indexed before audit', 'status' => 1])->save();
+    NodeType::create(['type' => 'unowned_content', 'name' => 'Unowned content'])->save();
+    Node::create(['type' => 'unowned_content', 'title' => 'Not owned by the provider', 'status' => 1])->save();
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
@@ -425,6 +427,11 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame('relations', $checker->processAuditBatch(10)['phase']);
     $sourcePhase = $checker->processAuditBatch(10);
     $this->assertSame('sources', $sourcePhase['phase']);
+    $this->assertSame('1', (string) $this->container->get('database')->select('aculta_index_audit', 'audit')
+      ->fields('audit', ['source_entity_max_id'])
+      ->condition('audit_id', 1)
+      ->execute()
+      ->fetchField(), 'The ceiling ignores higher IDs in bundles not owned by this provider.');
 
     // This ID is greater than the captured maximum for this provider/type.
     Node::create(['type' => 'sample_content', 'title' => 'Created after source window', 'status' => 1])->save();
