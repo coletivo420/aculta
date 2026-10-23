@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## Verificação R1 — Content Index — 2026-10-23
+
+- Confirmado o contrato `WikiContentIndexProvider` v3: `node:wiki_entry`,
+  revisão padrão, purpose `wiki`, metadados allowlisted e relações nomeadas
+  `related_entry`, `wiki_category` e `wiki_image`. O provider de categoria é
+  da Wiki; o provider de Media continua em `aculta_image`.
+- Os três Kernel do Index/Wiki passaram em MariaDB isolada: 5 testes / 147
+  asserções; a closure real Wiki + Index compilou e descobriu o provider.
+  A cobertura de acesso por relação ainda usa a ponte de fixture do Portal e
+  permanece pendente de um teste único com o bootstrap completo da Wiki.
+- `aculta_index` estava desativado no Runtime de teste; não houve rebuild,
+  importação ou alteração de estado no Runtime.
+
 ## Verificação operacional — 2026-10-23
 
 - O Runtime de teste estava com `aculta_wiki` ativo e `aculta_index`

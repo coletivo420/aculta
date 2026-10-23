@@ -111,9 +111,11 @@ pendentes, está em
   `/wiki`, `/wiki/busca`, `/wiki/busca/previa`, a View `/wiki/verbetes` e o
   requisito `access content`. A busca real filtra grants de contas diferentes
   da mesma função e mantém contexto de cache nos resultados vazios/negativos.
-- O módulo permanece desabilitado no Runtime de teste; a configuração
-  exportada e o Runtime não são equivalentes.
-- O módulo **não está habilitado** e não altera o Runtime.
+- No preflight read-only de 2026-10-23, `aculta_wiki` estava ativo e
+  `aculta_index` desativado no Runtime de teste. A configuração exportada e o
+  estado efetivo do Runtime continuam sendo verificados separadamente.
+- O estado do Runtime varia por ambiente; não inferir habilitação pela
+  existência de código ou configuração exportada.
 - As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` estão definidas neste
   submódulo com os nomes `aculta_portal.wiki_*`; `/wiki/verbetes` permanece
   contrato da listagem. A disponibilidade no site depende da ativação efetiva
@@ -151,6 +153,11 @@ pendentes, está em
   o Domain `main` é restaurado (MariaDB: 3 testes / 84 assertions, 5
   depreciações). O boot combinado dos owners também compila os services reais;
   Runtime e ativação completa permanecem pendentes.
+- Reexecução MariaDB em 2026-10-23 dos três Kernel acima: 5 testes / 147
+  assertions, aprovados; 239 depreciações de Core/contrib/PHPUnit. A closure
+  real Wiki + Index compilou e descobriu os providers do owner. A consulta com
+  origem/alvos reais continua usando o harness de acesso por fixture; ela não
+  equivale a um único teste de acesso com bootstrap integral da Wiki.
 
 ### Handoff para o ACULTA Content Index
 
