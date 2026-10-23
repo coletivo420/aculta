@@ -1,0 +1,5 @@
+services:
+  aculta_index_forum_test.content_index_provider:
+    class: Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }

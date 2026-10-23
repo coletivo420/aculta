@@ -1,7 +1,7 @@
 name: 'ACULTA Index Statistics bridge test'
 type: module
 description: 'Provider fixture for the Index-to-Statistics Kernel test.'
-package: Testing
+package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 dependencies:
   - drupal:node

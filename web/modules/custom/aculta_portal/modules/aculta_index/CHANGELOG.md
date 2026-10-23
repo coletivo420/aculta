@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.59 — integrar tópico do Fórum ao ciclo do Index
+
+- Kernel usa `ForumContentIndexProvider` de produção registrado por fixture,
+  reconstrói tópico, processa update e delete pelo worker: 1 teste / 13
+  assertions PASS em MariaDB. Purpose canônico `forum` é confirmado no provider.
+- A cadeia completa do módulo owner e grants/Domain reais não são ativados neste
+  harness; service-map e testes de política permanecem evidências separadas.
+
 ## 0.1.0-dev.58 — cobrir expiração e poda de cursores
 
 - Kernel confirma que cursor expirado é rejeitado e removido ao ser apresentado.
