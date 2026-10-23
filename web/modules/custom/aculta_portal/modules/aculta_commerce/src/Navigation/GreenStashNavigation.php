@@ -26,17 +26,31 @@ final class GreenStashNavigation {
     'settings' => 'Configurações',
   ];
 
-  public function build(string $section = 'overview'): array {
+  public const SLUGS = [
+    'visao-geral' => 'overview',
+    'produtos' => 'products',
+    'pedidos' => 'orders',
+    'estoque' => 'inventory',
+    'envios' => 'shipping',
+    'promocoes' => 'promotions',
+    'clientes' => 'customers',
+    'relatorios' => 'reports',
+    'configuracoes' => 'settings',
+  ];
+
+  public function build(string $section = 'visao-geral'): array {
+    $section = self::SLUGS[$section] ?? '';
     if (!isset(self::AREAS[$section])) {
       throw new \InvalidArgumentException('Unknown Green Stash area.');
     }
 
     $links = [];
-    foreach (self::AREAS as $key => $label) {
+    foreach (self::SLUGS as $slug => $key) {
+      $label = self::AREAS[$key];
       $links[$key] = [
         '#type' => 'link',
         '#title' => $label,
-        '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['section' => $key]),
+        '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => $slug]),
         '#attributes' => [
           'class' => ['green-stash-navigation__link'],
           'aria-current' => $section === $key ? 'page' : 'false',
