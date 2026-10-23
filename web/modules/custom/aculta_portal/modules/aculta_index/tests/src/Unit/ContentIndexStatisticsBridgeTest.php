@@ -155,4 +155,32 @@ final class ContentIndexStatisticsBridgeTest extends TestCase {
     );
   }
 
+  /**
+   * Statistics rejects a page whose source bundle does not match the metric.
+   */
+  public function testRealStatisticsAdapterRejectsIncompatibleQueryPage(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->willReturnCallback(
+      static fn(string $permission): bool => $permission === 'view content-level statistics',
+    );
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $entity->method('getEntityTypeId')->willReturn('node');
+    $entity->method('bundle')->willReturn('revista');
+    $entity->method('id')->willReturn('53');
+    $query = $this->createMock(ContentIndexQueryInterface::class);
+    $query->method('query')->willReturn(new ContentIndexQueryResult([$entity], NULL, new CacheableMetadata()));
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->never())->method('dimensionTotalsForDimensions');
+    $statistics = new AuthorizedEntityMetricAggregator(new MetricCatalog(), $storage);
+
+    $this->expectException(\InvalidArgumentException::class);
+    (new ContentIndexStatisticsBridge($query, $statistics))->aggregateForQuery(
+      ['bundle' => 'revista'],
+      'wiki.entries.read',
+      100,
+      104,
+      $account,
+    );
+  }
+
 }

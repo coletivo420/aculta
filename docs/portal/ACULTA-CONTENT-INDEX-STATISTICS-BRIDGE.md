@@ -23,6 +23,13 @@ Statistics consulta seu próprio catálogo/armazenamento por métrica e interval
 
 O uso inicial deve trabalhar com uma dimensão compatível com o identificador estatístico que a fonte já registra. O Statistics atual limita dimensões a 128 caracteres e rejeita e-mail; o Index não deve inventar um segundo formato. A tradução/idioma pertence à identidade do catálogo, mas não se deve contar duas vezes uma entidade em métricas que hoje usam somente ID.
 
+Cada métrica do adapter atual aceita uma combinação de tipo/bundle: as métricas
+`wiki.entries.*` aceitam somente `node:wiki_entry`, enquanto
+`media.files.requests` aceita `file:file` e requer permissão administrativa.
+O consumer deve incluir os filtros compatíveis ao pedir a página. Se a página
+autorizada contiver outro bundle, o Statistics rejeita a chamada; a ponte não
+remove itens silenciosamente nem devolve totais parciais.
+
 Nenhuma consulta cruza diretamente `aculta_index_entry` e `aculta_statistics_daily` antes de provar cardinalidade e custo. Relações podem duplicar o conjunto; a seleção deve deduplicar identidade antes de agregar. Para conjuntos grandes, usar lotes com limite medido, não uma lista ilimitada de `IN (...)`.
 
 ## Acesso e privacidade

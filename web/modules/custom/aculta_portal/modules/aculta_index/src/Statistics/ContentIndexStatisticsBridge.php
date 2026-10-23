@@ -23,7 +23,9 @@ final class ContentIndexStatisticsBridge {
    *
    * The Index selects and access-checks the content first. Statistics then
    * validates its own metric, sensitivity, reporting permission and dimension
-   * semantics. The two modules never join their tables directly.
+   * semantics. Callers must filter the Index page to the entity type and bundle
+   * supported by that metric; incompatible pages are rejected instead of
+   * silently omitting items. The two modules never join tables directly.
    *
    * @param array<string, mixed> $filters
    *   Allowlisted Content Index query filters.
@@ -42,6 +44,12 @@ final class ContentIndexStatisticsBridge {
    *
    * @return \Drupal\aculta_index\Statistics\ContentIndexStatisticsResult
    *   Per-entity totals and the content query's continuation token.
+   *
+   * @throws \InvalidArgumentException
+   *   If the metric dimensions or selected entities are incompatible with the
+   *   Statistics contract.
+   * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+   *   If Statistics denies this metric to the account.
    */
   public function aggregateForQuery(
     array $filters,

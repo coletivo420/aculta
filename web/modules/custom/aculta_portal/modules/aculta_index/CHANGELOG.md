@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.49 — contrato de filtros da ponte Statistics
+
+- Documenta que os filtros da página precisam selecionar o tipo/bundle
+  compatível com a métrica; uma página incompatível é rejeitada pelo Statistics,
+  sem descarte silencioso de entidades.
+- Unit da ponte com o aggregator real confirma a rejeição antes de consultar o
+  storage de métricas.
+
 ## 0.1.0-dev.48 — descartar rebuilds incompletos em lotes
 
 - Adiciona o descarte explícito de gerações ainda em `building`, primeiro

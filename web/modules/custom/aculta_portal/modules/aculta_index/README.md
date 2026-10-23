@@ -30,6 +30,8 @@ Integrações atuais: Revista (`node:revista`), Wiki (`node:wiki_entry`, metadad
 
 `aculta_index.statistics_bridge` recebe uma página produzida por `ContentIndexQuery`, cujos itens já passaram pela revalidação de Entity Access, envia no máximo 100 identidades ao contrato `ContentEntityMetricAggregatorInterface` e retorna as mesmas entidades autorizadas com totais e cursor. O consumidor pode renderizar a página sem refazer a consulta. A integração não faz junção entre tabelas. Se Statistics não estiver habilitado, o resultado marca `available=false` e não inventa totais. Statistics valida permissão, catálogo, sensibilidade e semântica de dimensão; somente métricas com dimensão de ID simples explicitamente permitida são aceitas. Métricas e eventos continuam sob propriedade de Statistics.
 
+Os filtros da página precisam corresponder ao tipo e bundle aceitos pela métrica. No adapter atual, `wiki.entries.*` exige `node:wiki_entry` e `media.files.requests` exige `file:file` (além de permissão administrativa). Uma página incompatível é rejeitada pelo Statistics; o bridge não descarta conteúdo nem calcula totais parciais.
+
 ## Ativação
 
 O submódulo depende do módulo base `aculta_portal`, mas não é ativado por ele. Nenhum módulo de origem depende obrigatoriamente de `aculta_index`; integrações futuras devem usar dependência opcional e manter seu comportamento principal sem o índice.
