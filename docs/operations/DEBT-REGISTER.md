@@ -261,3 +261,10 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-CAT-01 | Homologar leitura de `produto_loja` por permissões e stores | Testes Kernel/Functional com papéis e múltiplas lojas, sem vazamento de catálogo |
 | GS-CAT-02 | Substituir amostra de 100 IDs por paginação de verdade | Cursor/pager com filtros e segurança por store, desempenho em volumes altos |
 | GS-CAT-03 | Visual móvel definitivo e testes de navegação PT-BR | SDC/UI Suite, 320px+, acessibilidade, links e cache no homelab |
+
+## Green Stash GS-0.2-C.2 — validações restantes
+
+| ID | Pendência | Critério de encerramento |
+| --- | --- | --- |
+| GS-CAT-04 | Paginação parcial em contas com muitas entidades não autorizadas | Filtragem por store na query, cursor confiável sem salto/lacunas, teste com mais de 500 entidades e permissões seletivas |
+| GS-CAT-05 | Busca e cursor da listagem não homologados | Kernel/Functional de SQL/EntityQuery, HTTP e pesquisa no homelab; conferir `accessCheck` + grants por store e inexistência de dados de LMS |
