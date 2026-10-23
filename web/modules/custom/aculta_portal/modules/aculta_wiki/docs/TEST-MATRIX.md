@@ -3,6 +3,17 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## WE SATIVA no ACULTA Studio (dev.39)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
+| Meu trabalho | Kernel | Candidatos são limitados por UID; `view` Entity Access é revalidado por item no purpose Wiki | aprovado para verbetes; proposta sem fixture |
+| Acesso e cache | Kernel | Conta confirmada com criação pode entrar; conta alheia sem itens não pode; cache varia por usuário/domínio | aprovado; 286 depreciações Drupal/contrib e 16 PHPUnit na classe |
+| Criação/edição contextual | Kernel/Functional | Form API do Node e rotas do dono, revalidados no purpose Wiki | planejado |
+| Paginação | Kernel | Cursor por tipo com ordem estável e acesso revalidado | planejado; tela inicial limita 20 por tipo |
+| Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
+
 ## R2 — ciclo de vida da imagem (dev.33)
 
 | Cenário | Tipo | Resultado esperado | Estado |

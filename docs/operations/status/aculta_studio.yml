@@ -1,6 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'GanjaLab Wiki (Studio dev.2 / Wiki dev.19): integração de filas de revisão e propostas na WikiTab existente, com Kernel combinado executado. Preflight read-only de 2026-10-23 encontrou Wiki ativa no Runtime de teste e Index desativado; raiz `/` responde 200 e `/wiki` responde 404 conforme a política de caminho interno. As filas seguem sem homologação; pendentes Firefox ESR/X11, mobile, WCAG e validação visual/Runtime.'
+version_note: "0.1.0-dev.3 — provider e entrypoint WE SATIVA adicionados em `/studio/we-sativa`, delegando listagem própria ao serviço da Wiki. Kernel Wiki focal: 1/37; classe: 15/612; formulários e homologação visual pendentes."
+next_phase: 'WE SATIVA precisa de cursor/paginação e fluxos Form API; GanjaLab Wiki continua com filas sem homologação visual/Runtime. Preflight read-only de 2026-10-23 encontrou Wiki ativa e Index desativado. Firefox ESR/X11, mobile, WCAG e Runtime seguem pendentes.'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
 # G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T

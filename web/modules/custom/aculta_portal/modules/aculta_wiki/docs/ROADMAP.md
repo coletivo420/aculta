@@ -4,13 +4,25 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.35**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.39**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.39 — entrada inicial WE SATIVA no Studio
+
+Provider de experiência e rota `/studio/we-sativa` em purpose `account` delegam
+ao serviço Wiki `WikiContributorWorkspace`. A primeira tela apresenta verbetes
+e propostas da própria conta e link de criação somente com acesso efetivo.
+Candidatos limitados a 20 itens por tipo e UID. O acesso de cada entidade é
+revalidado no purpose `wiki` antes da renderização; cache varia por usuário,
+permissões e domínio. Kernel focal aprovado: 1 teste / 37 asserções; classe
+MariaDB: 15 testes / 612 asserções, 286 depreciações Drupal/contrib e 16
+PHPUnit. Formulários de autoria, cursor/paginação e revisão visual seguem como
+próximos gates.
 
 ### Incremento dev.35 — exigir transições oficiais no aceite
 

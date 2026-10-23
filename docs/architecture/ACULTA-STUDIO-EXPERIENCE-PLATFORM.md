@@ -95,4 +95,15 @@ A enumeração sem filtro de `content_moderation_state` no `StudioListingBuilder
 
 ## Regra de domínio e URL canônica do Studio — 2026-10-22
 
-Decisão normativa mais recente: **todas as experiências e componentes de interface próprios do ACULTA Studio pertencem ao propósito `account`, servido em `conta.aculta.*`, sob namespace `/studio`**. O domínio é escolhido pelo Portal/Domain para cada ambiente, sem host fixo. GanjaLab editorial tem entrada `/studio/ganjalab`; GanjaLab420 estudante tem entrada `/studio/ganjalab420`. Caminhos antigos continuam como aliases temporários para evitar quebra dos consumidores. Este contrato substitui o planejamento anterior de renderizar o *shell* WE SATIVA no purpose Wiki: futura interface WE SATIVA no Studio deverá usar `/studio/we-sativa` no purpose account, chamando os serviços Wiki sem deslocar suas entidades ou regras de acesso. **WE SATIVA ainda não foi migrada**. O cabeçalho multidomínio global permanece obrigatório em todas as telas; Studio não cria um segundo.
+Decisão normativa mais recente: **todas as experiências e componentes de interface próprios do ACULTA Studio pertencem ao propósito `account`, servido em `conta.aculta.*`, sob namespace `/studio`**. O domínio é escolhido pelo Portal/Domain para cada ambiente, sem host fixo. GanjaLab editorial tem entrada `/studio/ganjalab`; GanjaLab420 estudante tem entrada `/studio/ganjalab420`; WE SATIVA começou em `/studio/we-sativa`. Caminhos antigos continuam como aliases temporários para evitar quebra dos consumidores. Esta regra substitui o planejamento anterior de renderizar o *shell* WE SATIVA no purpose Wiki. A entrega inicial WE SATIVA contém provider, Meu trabalho e link de criação, consumindo o serviço proprietário da Wiki sem deslocar entidades ou regras de acesso; os formulários e restante da jornada seguem pendentes. O cabeçalho multidomínio global permanece obrigatório em todas as telas; Studio não cria um segundo.
+
+### WE SATIVA — entrada inicial no Studio (2026-10-23)
+
+O Studio registra `WeSativaExperienceProvider` e a rota `/studio/we-sativa` no
+purpose `account`; `aculta_wiki.contributor_workspace` decide acesso, lista
+verbetes/propostas próprios e gera links sob purpose `wiki`. A tela limita a 20
+itens de cada tipo e revalida Entity Access antes da renderização. Kernel focal
+Wiki: 1 teste / 37 asserções; classe completa: 15 testes / 612 asserções em
+MariaDB isolada (286 depreciações Drupal/contrib e 16 PHPUnit).
+Form API para criação/edição, prévia, envio, paginação e homologação visual
+continuam pendentes.

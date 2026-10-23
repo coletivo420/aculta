@@ -1,5 +1,14 @@
 # Wiki — instruções locais
 
+- Dev.39 WE SATIVA inicial: `aculta_wiki.contributor_workspace` busca apenas
+  candidatos com UID da própria conta e revalida `view` de cada Node/proposta
+  no purpose `wiki` antes de mostrar dados. A entrada `/studio/we-sativa` fica
+  no purpose `account`; mantenha acesso e dados no serviço Wiki. Até 20 itens
+  por tipo; cursor/paginação e formulários seguem pendentes. Kernel focal
+  aprovado: 1 teste / 37 assertions; 200 depreciações Drupal/contrib e 2 do
+  PHPUnit. A classe Kernel passou em MariaDB isolada: 15 testes / 612
+  assertions; 286 depreciações Drupal/contrib e 16 do PHPUnit.
+
 - Dev.38 R2: Kernel executa `validateUpload()` com `alt` vazio, verifica erro,
   zero Media ligada ao arquivo e File temporário (focal 1/27; classe 14/575).
   O caminho completo de submit do Form API continua pendente.

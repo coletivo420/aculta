@@ -1,4 +1,14 @@
 # Contrato de navegação: cada nível do GanjaLab tem URL própria. A ordem é área, seção e aba.
+aculta_studio.we_sativa:
+  path: /studio/we-sativa
+  defaults:
+    _controller: 'aculta_studio.we_sativa_controller:page'
+    _title: WE SATIVA
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.home:
   path: /studio/ganjalab
   defaults:

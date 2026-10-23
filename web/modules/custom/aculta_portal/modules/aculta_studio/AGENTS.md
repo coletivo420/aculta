@@ -1,5 +1,13 @@
 # Regras específicas — consulta sob demanda
 
+## WE SATIVA — implementação inicial (Studio dev.3 / Wiki dev.39)
+
+`/studio/we-sativa` pertence ao purpose `account` e usa o provider Studio;
+`aculta_wiki.contributor_workspace` é dono dos dados, grants e links Wiki.
+Kernel combinado Wiki/Studio passou: focal 1/37 e classe Wiki 15/612 em
+MariaDB isolada. O próximo bloco é paginação e fluxos Form API; browser visual,
+Runtime e experiência mobile ainda não foram homologados.
+
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 
 ## ACULTA Studio (regra permanente)

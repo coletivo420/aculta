@@ -7,6 +7,15 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.39`: primeira entrada WE SATIVA em `/studio/we-sativa` sob
+  purpose `account`. O Studio encaminha para `WikiContributorWorkspace`, que
+  consulta até 20 verbetes e propostas próprios por UID, revalida acesso por entidade e
+  expõe criação somente após `createAccess('wiki_entry')`. Kernel cobre rota,
+  propósito, isolamento por autoria e retorno ao propósito original (focal:
+  1 teste / 37 asserções; classe: 15 / 612; 286 depreciações Drupal/contrib e
+  16 PHPUnit). Formulários
+  de criação/edição e integração visual mobile ainda não estão concluídos.
+
 - `0.1.0-dev.38`: Kernel executa o validador com `alt` vazio e confirma erro,
   nenhuma Media e File temporário (focal 1 / 27; classe 14 / 575 em MariaDB
   isolada). O submit completo pelo Form API segue pendente; Runtime não mudou.

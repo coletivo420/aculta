@@ -611,6 +611,106 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * WE SATIVA keeps its entrypoint in Studio and lists only the author's Nodes.
+   */
+  public function testWeSativaWorkspaceUsesWikiOwnedAccessAndPurpose(): void {
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'wiki_workspace_creator_test',
+      'label' => 'Wiki workspace creator test',
+      'permissions' => ['access content', 'create wiki_entry content'],
+    ])->save();
+    $author = User::create([
+      'uid' => 17,
+      'name' => 'wiki-workspace-author',
+      'mail' => 'wiki-workspace-author@example.invalid',
+      'status' => TRUE,
+      'roles' => ['wiki_workspace_creator_test'],
+    ]);
+    $author->save();
+    $reader = User::create([
+      'uid' => 18,
+      'name' => 'wiki-workspace-reader',
+      'mail' => 'wiki-workspace-reader@example.invalid',
+      'status' => TRUE,
+    ]);
+    $reader->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+
+    $this->container->get('current_user')->setAccount($author);
+    $own = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Meu verbete WE SATIVA',
+      'uid' => $author->id(),
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => $author->id(),
+      'body' => ['value' => 'Conteúdo próprio', 'format' => 'plain_text'],
+    ]);
+    $own->setOwnerId((int) $author->id());
+    $own->save();
+    $other = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete de outra pessoa',
+      'uid' => $reader->id(),
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => $reader->id(),
+      'body' => ['value' => 'Conteúdo alheio', 'format' => 'plain_text'],
+    ]);
+    $other->setOwnerId((int) $reader->id());
+    $other->save();
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    $ownAccess = $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $own->access('view', $author, TRUE));
+    self::assertTrue($ownAccess->isAllowed());
+    self::assertSame((string) $author->id(), (string) $own->getOwnerId());
+
+    $routes = $this->container->get('router.route_provider');
+    $route = $routes->getRouteByName('aculta_studio.we_sativa');
+    self::assertSame('/studio/we-sativa', $route->getPath());
+    self::assertSame('account', $route->getOption('_aculta_domain_purpose'));
+    $exactEntrypoints = array_filter(
+      $routes->getRoutesByPattern('/studio/we-sativa')->all(),
+      static fn ($candidate): bool => $candidate->getPath() === '/studio/we-sativa',
+    );
+    self::assertCount(1, $exactEntrypoints);
+
+    $workspace = $this->container->get('aculta_wiki.contributor_workspace');
+    self::assertTrue($workspace->access($author)->isAllowed());
+    self::assertFalse($workspace->access($reader)->isAllowed());
+    try {
+      $workspace->build($reader);
+      self::fail('A contributor without creation access or own Wiki work must be denied.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertTrue(TRUE);
+    }
+    $mainDomain = Domain::load('aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($mainDomain);
+    $build = $workspace->build($author);
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertContains('user', $build['#cache']['contexts']);
+    self::assertSame('Meus verbetes', (string) $build['entries']['title']['#value']);
+    $renderedItems = $build['entries']['items']['#items'];
+    self::assertCount(1, $renderedItems);
+    self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#title']);
+    self::assertSame('node.add', $build['create']['#url']->getRouteName());
+  }
+
+  /**
    * Real Mail Confirmer completion grants the configured Wiki create access.
    */
   public function testRegistrationConfirmationUnlocksWikiAuthoringPermission(): void {

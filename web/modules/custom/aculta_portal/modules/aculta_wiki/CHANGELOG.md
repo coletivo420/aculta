@@ -1,5 +1,22 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.39 — primeira tela WE SATIVA no ACULTA Studio
+
+- Adicionado o provider WE SATIVA em `/studio/we-sativa`, no purpose `account`.
+  A Wiki mantém acesso, consulta de verbetes/propostas próprias e geração das
+  ações no purpose `wiki`; Studio só encaminha a experiência.
+- A tela consulta até 20 verbetes próprios e 20 propostas próprias por UID,
+  revalida Entity Access por item e varia cache por conta, permissões e domínio. O link
+  de criação só aparece quando `createAccess('wiki_entry')` autoriza.
+- Kernel do módulo Wiki cobre rota/purpose, conta autorizada, negação a conta
+  sem trabalho, isolamento entre duas autorias e restauração do purpose (focal:
+  1 teste / 37 asserções; classe: 15 testes / 612 asserções em MariaDB isolada;
+  286 depreciações Drupal/contrib e 16 PHPUnit). Integração visual e formulários
+  de criação/edição seguem pendentes.
+- O fixture de grants usado pelos Kernel recebeu seu `FieldConfig` ausente; o
+  teste de busca entre autores agora valida de fato os grants distintos em vez
+  de passar por um campo de grant descartado no save.
+
 ## 0.1.0-dev.38 — falha de validação antes do upload
 
 - Kernel executa o validador real com imagem e descrição alternativa vazia.

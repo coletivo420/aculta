@@ -98,6 +98,17 @@ ACULTA Studio is the **existing Drupal submodule**, not just the GanjaLab name. 
 
 [Contrato e roadmap transversal](../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
 
+## WE SATIVA — primeira entrada implementada (Studio dev.3 / Wiki dev.39)
+
+`/studio/we-sativa` resolve no purpose `account` e delega a consulta para o
+serviço `aculta_wiki.contributor_workspace`. A tela inicial consulta até 20
+verbetes e propostas com UID da conta e revalida Entity Access. Criação só aparece com
+`createAccess('wiki_entry')`; nenhuma fila/moderação é exposta. Kernel real da
+Wiki passou (focal: 1 teste / 37 asserções; classe Kernel: 15 / 612,
+286 depreciações Drupal/contrib e 16 PHPUnit), cobrindo rota, propósito,
+isolamento por autoria e acesso. Formulários de
+autoria, paginação e homologação visual/mobile permanecem pendentes.
+
 ## Atualização STUDIO 0.1-B / D-A.2-T2
 
 STUDIO 0.1-B/D-A.2-T2: documentado contrato de provedores multi-experiência e removida a enumeração irrestrita de content_moderation_state. O estado exibido depende do acesso à última revisão. Limitação de 50 Nodes antes do filtro persiste; usar provider Wiki especializado para futura fila e não tratar listagem genérica como moderadora.

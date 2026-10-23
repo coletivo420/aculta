@@ -16,6 +16,16 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 | 0.1-F | GanjaLab420 e futuras interfaces: inventário de consumidores reais e adaptação, sem inventar rotas | contratos testados por consumidor |
 | 0.1-R | homelab, acessibilidade, HTTP sem JS, AJAX e cache por purpose | evidência real |
 
+### WE SATIVA 0.1-D0 — entrypoint e Meu trabalho (Studio dev.3 / Wiki dev.39)
+
+Implementado `/studio/we-sativa` no purpose `account`, com provider Studio que
+delega os dados ao `aculta_wiki.contributor_workspace`. A tela lista itens
+próprios via UID e revalida Entity Access em cada item; criação e links Wiki
+seguem sob controle do serviço proprietário. Kernel Wiki passou (focal: 1 teste
+/ 37 asserções; classe: 15 / 612, 286 depreciações Drupal/contrib e 16 PHPUnit), cobrindo rota, purpose,
+duas autorias e contexto de cache. Esta entrega é o primeiro bloco, não a experiência editorial completa:
+falta paginação, Form API de autoria, integração SDC/mobile/Olivero e browser.
+
 ## Regras para agentes
 
 **Não criar novo módulo ou renomear machine name.** ACULTA Studio é o submódulo presente. Não copiar cabeçalhos nem criar design system paralelo. `aculta420` fornece visual via Core SDC/UI Suite; `aculta_studio` fornece orquestração e contratos de UI; User/Wiki/Forum/LMS/Messenger mantêm sua lógica. Preservar branch e arquivos de outros agentes. Abrir fases por commits pequenos; não alegar validação em homelab sem executá-la.
