@@ -20,8 +20,8 @@ segura de verbetes e submeter candidatos Media ao Portal ao limpar anexos. A
 Wiki mantém a descoberta de embeds e relações da própria entidade; o Portal
 revalida referências globais e remove os Media órfãos por Entity API.
 As relações `wiki_category` e `wiki_image` do Content Index foram implementadas
-com revalidação de acesso dos alvos; a exclusão segura de anexos continua sendo
-um fluxo separado. Ver
+com revalidação de acesso dos alvos, mas não executam nem substituem o adapter
+de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
 [`CONTENT-CLEANUP-POLICY.md`](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
 - Manifesto com dependências `aculta_portal`, `domain`, `views`, `node` e
@@ -103,17 +103,18 @@ um fluxo separado. Ver
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
 dependências da Wiki, além de Portal/LMS/Fórum. O container real descobriu o
-provider `wiki` pelo YAML owner; o gate passou com 1 teste / 8 assertions (83
-depreciações Core/contrib). Isso comprova boot/DI e registry, sem instalar
-configuração/schema nem homologar Runtime. Categorias e imagens continuam
-adiadas até a Wiki finalizar seus contratos.
+provider `wiki` pelo YAML owner; o gate inicial passou com 1 teste / 8
+assertions (83 depreciações Core/contrib). Isso comprova boot/DI e registry,
+sem instalar configuração/schema nem homologar Runtime. Categorias e imagens
+foram concluídas em dev.10, registrada abaixo.
 
 Atualização IDX 0.1-dev.10 (2026-10-23): essa decisão foi encerrada após a
-definição dos contratos. O provider agora projeta `wiki_category` e `wiki_image`,
-e o owner da categoria foi implementado na Wiki. Kernel MariaDB valida consulta
-das relações e revalida acesso a Term/Media reais (3/84; 5 depreciações). O
-harness é do Index/Portal; a Wiki continua desabilitada e Runtime continua
-pendente.
+definição dos contratos. O provider agora projeta `wiki_category` e
+`wiki_image`, e o owner da categoria foi implementado na Wiki. Kernel MariaDB
+valida consulta das relações e revalida acesso a Term/Media reais (3/84; 5
+depreciações). O harness é do Index/Portal; a Wiki continua desabilitada e
+Runtime continua pendente. Essa integração do Index é separada do adapter para
+limpeza segura de verbetes e anexos, que permanece como dívida do projeto.
 
 ### Entregue em código (2026-10-22)
 

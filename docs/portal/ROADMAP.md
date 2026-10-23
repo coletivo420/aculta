@@ -44,7 +44,8 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
   execução no Runtime sobre catálogo com conteúdo continuam pendentes. Em
   2026-10-23, o smoke temporário no Runtime `toca` confirmou os comandos Drush
   do Index com catálogo vazio; a desinstalação removeu as tabelas e o módulo
-  voltou a Disabled. Relações Wiki para categorias/imagens e
+  voltou a Disabled. Relações Wiki para categorias/imagens foram implementadas
+  no Content Index; a integração separada da Wiki com a política de limpeza e
   `remote_video` sem owner permanecem dívidas deliberadas. Decisões e estados
   estão no [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
 - O submódulo proprietário `aculta_activity` implementa projeção mínima do Node
