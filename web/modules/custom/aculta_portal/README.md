@@ -117,3 +117,7 @@ aculta_studio already is a submodule of aculta_portal and is the shared UI/exper
 `aculta_portal` assumirá a coordenação transversal de contextos de carrinho e da seleção de checkout **por pedido/carrinho**, com abas **Comum | Loja | LMS | Doações**. A aba Comum é agregadora de carrinhos autorizados, e não fusão automática de pedidos. `aculta_commerce`, `aculta_lms` e `aculta_donation` fornecem adaptadores; Drupal Commerce mantém dados/transações e `aculta_pagamentos_mercadopago` é o gateway único compartilhado. Preservar `donate|cart|both`, URLs, o shell e o cabeçalho multidomínio; apresentação no ACULTA420 com SDC/UI Suite e progressive enhancement.
 
 [Decisão e fases](../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). **Status: planejado; nenhum seletor novo habilitado.**
+
+## RETIFICAÇÃO ADR-013 — Interface administrativa, carrinho público preservado
+
+`aculta_portal` será responsável pela coordenação **administrativa** de políticas de carrinho e escolha dos checkouts. As abas **Comum | Loja | LMS | Doações** destinam-se exclusivamente à configuração interna. **O carrinho atual da barra multidomínio, incluindo ícone, posição, contadores, links e seleção existente do checkout, não será modificado.** Não criar carrinho público paralelo, checkout combinado ou nova seleção por usuário/sessão. Drupal Commerce continua fonte da verdade; Mercado Pago gateway compartilhado. Ver [ADR-013](../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Este texto prevalece sobre menções antigas conflitantes.
