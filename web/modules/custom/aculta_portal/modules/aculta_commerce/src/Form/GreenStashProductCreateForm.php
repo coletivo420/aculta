@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_commerce\Store\GreenStashStoreResolver;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,6 +24,7 @@ final class GreenStashProductCreateForm extends FormBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly AccountInterface $account,
     private readonly StudioExperienceManager $experiences,
+    private readonly GreenStashStoreResolver $storeResolver,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -30,28 +32,12 @@ final class GreenStashProductCreateForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_studio.experience_manager'),
+      $container->get('aculta_commerce.green_stash_store_resolver'),
     );
   }
 
   public function getFormId(): string {
     return 'aculta_commerce_green_stash_product_create';
-  }
-
-  /**
-   * Stores must be individually manageable by the operator.
-   *
-   * @return array<string, string>
-   */
-  private function manageableStores(): array {
-    $storage = $this->entities->getStorage('commerce_store');
-    $ids = $storage->getQuery()->accessCheck(TRUE)->execute();
-    $options = [];
-    foreach ($storage->loadMultiple($ids) as $store) {
-      if ($store->access('update', $this->account)) {
-        $options[(string) $store->id()] = (string) $store->label();
-      }
-    }
-    return $options;
   }
 
   private function assertCreateAccess(): void {
@@ -63,8 +49,7 @@ final class GreenStashProductCreateForm extends FormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $this->assertCreateAccess();
-    $stores = $this->manageableStores();
-    if ($stores === []) {
+    if ($this->storeResolver->resolve($this->account) === NULL) {
       throw new AccessDeniedHttpException();
     }
     $form['#attributes']['data-portal-ui'] = 'green-stash-product-create';
@@ -77,13 +62,6 @@ final class GreenStashProductCreateForm extends FormBase {
       '#title' => $this->t('Nome do produto'),
       '#required' => TRUE,
       '#maxlength' => 255,
-    ];
-    $form['store'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Loja'),
-      '#options' => $stores,
-      '#required' => TRUE,
-      '#empty_option' => $this->t('- Selecione -'),
     ];
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
@@ -101,20 +79,13 @@ final class GreenStashProductCreateForm extends FormBase {
     if ($title === '') {
       $form_state->setErrorByName('title', $this->t('Informe o nome do produto.'));
     }
-    $storeId = (string) $form_state->getValue('store');
-    if (!array_key_exists($storeId, $this->manageableStores())) {
-      $form_state->setErrorByName('store', $this->t('A loja selecionada não está disponível para sua conta.'));
-    }
+
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->assertCreateAccess();
-    $storeId = (string) $form_state->getValue('store');
-    if (!array_key_exists($storeId, $this->manageableStores())) {
-      throw new AccessDeniedHttpException();
-    }
-    $store = $this->entities->getStorage('commerce_store')->load($storeId);
-    if ($store === NULL || !$store->access('update', $this->account)) {
+    $store = $this->storeResolver->resolve($this->account);
+    if ($store === NULL) {
       throw new AccessDeniedHttpException();
     }
     $product = $this->entities->getStorage('commerce_product')->create([
