@@ -6,6 +6,9 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\RestrictedForumAccessHooks;
+use Drupal\comment\CommentingStatus;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -33,6 +36,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[Group('aculta_index')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexForumAccessKernelTest extends KernelTestBase {
+
+  use CommentTestTrait;
 
   private const GROUP_TYPE = 'associado_forum';
 
@@ -69,6 +74,7 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
     'field',
     'text',
     'node',
+    'comment',
     'entity',
     'flexible_permissions',
     'options',
@@ -86,6 +92,7 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
@@ -93,6 +100,7 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_associado');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -102,9 +110,16 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['system', 'user', 'node', 'group', 'domain']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'domain']);
     aculta_index_install();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
+    $this->addDefaultCommentField(
+      'node',
+      'aculta_forum_topic',
+      'field_aculta_discussion',
+      CommentingStatus::Open,
+      'aculta_discussion_post',
+    );
     $this->installDomainField();
     $this->createDomains();
     $this->createRestrictedGroupType();
@@ -113,7 +128,7 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
       ->save();
     $authenticated = Role::load('authenticated');
     self::assertInstanceOf(Role::class, $authenticated);
-    $authenticated->grantPermission('access content')->save();
+    $authenticated->grantPermission('access content')->grantPermission('access comments')->save();
   }
 
   /**
@@ -166,6 +181,18 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
     ]);
     $post->save();
 
+    $comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => (int) $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'uid' => $member->id(),
+      'subject' => 'Legacy reply',
+      'comment_body' => ['value' => 'Not projected', 'format' => 'plain_text'],
+      'status' => 1,
+    ]);
+    $comment->save();
+
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
@@ -189,12 +216,20 @@ final class ContentIndexForumAccessKernelTest extends KernelTestBase {
       'langcode' => $post->language()->getId(),
     ],
     ];
+    $commentCandidate = [[
+      'entity_type' => 'comment',
+      'entity_id' => (string) $comment->id(),
+      'langcode' => $comment->language()->getId(),
+    ],
+    ];
 
     self::assertCount(1, $filter->filter($topicCandidate, $member)->entities);
     self::assertCount(1, $filter->filter($postCandidate, $member)->entities);
+    self::assertCount(1, $filter->filter($commentCandidate, $member)->entities);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertCount(0, $filter->filter($topicCandidate, $outsider)->entities);
     self::assertCount(0, $filter->filter($postCandidate, $outsider)->entities);
+    self::assertCount(0, $filter->filter($commentCandidate, $outsider)->entities);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
   }
 
