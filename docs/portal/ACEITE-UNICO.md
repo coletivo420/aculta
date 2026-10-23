@@ -40,7 +40,7 @@ ledger. Decisão do responsável (2026-10-21): manter como exceção de cookie, 
 
 ## Pendências de decisão
 
-- **Publicação da política** com as cláusulas (responsável). Só então `FUNCTION_PUBLISHED` pode virar verdadeiro.
+- **Publicação da política** com as cláusulas (responsável). Minutas em [`docs/compliance/minutas/`](../compliance/minutas/README.md). Só então `FUNCTION_PUBLISHED` pode virar verdadeiro.
 - Nenhuma revisão jurídica adicional é necessária sobre o consentimento embutido no aceite único. Decisão do responsável (2026-10-21): esse consentimento atende o propósito jurídico do projeto.
 
 ## Guardrail

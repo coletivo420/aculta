@@ -27,6 +27,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 
 - [Identidade legal da Associação](institution/IDENTIDADE-LEGAL.md): razão social, CNPJ, endereço e canal de privacidade.
 - [Inventário LGPD](compliance/LGPD-INVENTARIO.md): dados pessoais por módulo, operadores e pendências.
+- [Minutas dos Termos de Uso e da Política de Privacidade](compliance/minutas/README.md): cópias para revisão, regra de não estorno e pendências antes de publicar.
 
 ## Módulos e integrações
 

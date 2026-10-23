@@ -1,6 +1,6 @@
 # Cláusulas propostas para a Política de Privacidade (aceite único)
 
-Rascunho para publicação pelo responsável. **Não publicado.** Decisão do responsável (2026-10-21): o consentimento
+Rascunho para publicação pelo responsável. **Não publicado.** As cláusulas 1, 3 e a de exclusão da conta foram incorporadas à minuta 0.4 da Política (2026-10-22; ver [`minutas/`](minutas/README.md)). Decisão do responsável (2026-10-21): o consentimento
 embutido no aceite único atende o propósito jurídico do projeto; não há revisão jurídica adicional pendente sobre esse ponto. Enquanto o texto não estiver publicado, as funções abaixo permanecem desligadas
 (ver `docs/portal/ACEITE-UNICO.md`).
 
