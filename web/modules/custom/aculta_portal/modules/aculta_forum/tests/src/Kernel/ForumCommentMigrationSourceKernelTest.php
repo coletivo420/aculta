@@ -202,6 +202,19 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Keyset pagination returns every Comment once, in CID order, across batches.
+   */
+  public function testKeysetPaginationReturnsEveryCommentOnce(): void {
+    $created = [];
+    for ($index = 0; $index < 5; $index++) {
+      $created[] = (int) $this->comment($this->topic, 'Resposta ' . $index)->id();
+    }
+    $rows = $this->sourceRows(2);
+    self::assertCount(5, $rows);
+    self::assertSame($created, array_column($rows, 'cid'));
+  }
+
+  /**
    * All translations of one Comment stay in a single source row.
    */
   public function testSourceGroupsTranslationsInOneRow(): void {
@@ -244,9 +257,9 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
    * @return array<int, array<string, mixed>>
    *   Source rows keyed by position.
    */
-  private function sourceRows(): array {
+  private function sourceRows(int $batch_size = 50): array {
     $source = new ForumComment(
-      ['comment_batch_size' => 50],
+      ['comment_batch_size' => $batch_size],
       'aculta_forum_comment',
       [],
       $this->createMock(MigrationInterface::class),

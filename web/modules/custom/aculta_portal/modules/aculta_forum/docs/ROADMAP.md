@@ -208,7 +208,8 @@ testes.
 `ForumCommentMigrationSourceKernelTest` (dev.262) exercita o source
 `aculta_forum_comment` com Comments reais em MariaDB: elegibilidade pelo Domain
 `forum` e contexto público, uma linha por Comment, hierarquia, traduções
-agrupadas, rejeição e autoria histórica. A dev.263 prova as recusas do destino
+agrupadas, rejeição e autoria histórica, e paginação por keyset entre lotes
+(dev.266). A dev.263 prova as recusas do destino
 antes de criar o post (autoria, tradução padrão, rejeição/publicação, corpo,
 formato e embeds), a criação de um post publicado com traduções (dev.264) e a
 atualização idempotente com recusa de troca de idioma padrão (dev.265). A

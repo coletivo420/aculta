@@ -1,3 +1,10 @@
+## `0.1.0-dev.266` — provar a paginação por keyset da fonte — 2026-10-23
+
+- Kernel cria cinco Comments e lê a fonte com lote de dois: todos aparecem uma
+  única vez, em ordem de CID, comprovando o keyset entre lotes.
+- Testes: fonte 5/67; suíte Kernel do Fórum 80/1.697; PHPCS limpo. O lote com
+  map de migração, as relações pai/filho e a equivalência continuam pendentes.
+
 ## `0.1.0-dev.265` — reimportar atualiza o post e protege o idioma padrão — 2026-10-23
 
 - Kernel reimporta a mesma linha com `old_destination_id_values`: o post é
