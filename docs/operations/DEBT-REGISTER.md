@@ -268,3 +268,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | --- | --- | --- |
 | GS-CAT-04 | Paginação parcial em contas com muitas entidades não autorizadas | Filtragem por store na query, cursor confiável sem salto/lacunas, teste com mais de 500 entidades e permissões seletivas |
 | GS-CAT-05 | Busca e cursor da listagem não homologados | Kernel/Functional de SQL/EntityQuery, HTTP e pesquisa no homelab; conferir `accessCheck` + grants por store e inexistência de dados de LMS |
+
+## GS-EDITOR — Interface operacional própria (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/estudio/loja`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
+| GS-EDITOR-02 | Fluxos de estoque/expedição/etiquetas integralmente no Studio | Commerce Stock/Shipping/Melhor Envio operam via controles Green Stash com confirmação/autorização, testes de integração |
+| GS-EDITOR-03 | Auditoria de links administrativos diretos nas experiências Green Stash | Nenhuma ação visível da loja aponta a edit-form administrativa ou `/admin/commerce`, teste regressivo |
