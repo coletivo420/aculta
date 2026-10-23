@@ -82,3 +82,8 @@ services:
   Drupal\aculta_lms\Hook\SubmissionImageHooks:
     class: Drupal\aculta_lms\Hook\SubmissionImageHooks
     arguments: ['@string_translation', '@?aculta_portal.user_upload_policy']
+  aculta_lms.checkout_provider:
+    class: Drupal\aculta_lms\Checkout\LmsCheckoutProvider
+    arguments: ['@aculta_portal.order_type_checkout_flows']
+    tags:
+      - { name: aculta_portal.checkout_provider }

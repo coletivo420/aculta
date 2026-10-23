@@ -1,5 +1,10 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.85 — provider de checkout do Portal (P-CART C) — 2026-10-22
+
+- `LmsCheckoutProvider` declara ao Portal o contexto LMS (tipo de pedido `curso`, checkout comum e flow nativo). Somente leitura; não altera matrícula, curso ou compra. RUNTIME STATUS: DEFERRED.
+- Alinhamento: `aculta_lms.info.yml` estava em dev.80 enquanto o changelog já registrava dev.84.
+
 ## 0.1.0-dev.84 — rodar Kernel e Unit do LMS e registrar o resultado medido — 2026-10-22
 
 Tarefa: "Rodar os Kernels e unitários dos módulos LMS e Forum alterados; registrar testes/asserções/depreciações em cada CHANGELOG; confirmar git status limpo e listar os commits da sequência."

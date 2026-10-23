@@ -239,7 +239,7 @@ em produção. Ver também o
 
 - **P-CART A (concluída em código, 2026-10-22):** baseline do carrinho da barra multidomínio, seleção atual, rotas/config, testes de caracterização Unit. Homologação em Browser/homelab segue em P-CART T.
 - **P-CART B (concluída em código, 2026-10-22):** `aculta_portal/src/Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry` (tag `aculta_portal.checkout_provider`), `CheckoutConfigurationResolver` e `CheckoutPolicyManager`. Somente leitura; nenhum provider registrado e nenhum efeito no site até a P-CART C.
-- **P-CART C:** providers de configuração para Loja, LMS e Doações, com manutenção de seus fluxos próprios.
+- **P-CART C (concluída em código, 2026-10-22):** `ShopCheckoutProvider` (`aculta_commerce`, módulo ainda não habilitado), `LmsCheckoutProvider` (`aculta_lms`) e `DonationCheckoutProvider` (`aculta_donation`), com `OrderTypeCheckoutFlows` no Portal. Somente leitura; fluxos próprios mantidos.
 - **P-CART D:** port/migração progressiva da coordenação de `CartCheckoutRouteSubscriber` do Donation ao Portal, conservando `donate|cart|both` e configurações exportadas, com rollback.
 - **P-CART E:** interface de **administração** com abas Comum, Loja, LMS e Doações, Form API, ACL e SDC/UI Suite.
 - **P-CART F:** auditoria de políticas, conflitos, segurança, Statistics e documentação.

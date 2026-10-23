@@ -1,3 +1,7 @@
+## 0.4.1-dev.14 — providers de checkout e leitura do flow nativo (P-CART C) — 2026-10-22
+
+- Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.13 — contratos centrais de orquestração de checkout (P-CART B) — 2026-10-22
 
 - Novo `Drupal\aculta_portal\Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry`, `CheckoutConfigurationResolver` e `CheckoutPolicyManager`, registrados como serviços. Providers entram pela tag `aculta_portal.checkout_provider` (`tagged_iterator`).

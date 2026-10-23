@@ -1,3 +1,8 @@
+## 0.1.0-dev.22 — provider de checkout do Portal (P-CART C) — 2026-10-22
+
+- `DonationCheckoutProvider` (tag `aculta_portal.checkout_provider`) expõe ao Portal, somente para leitura, o modo (`donate`→dedicado, `cart`→comum, `both`→ambos; ausente ou inválido → `donate`), os tipos de pedido e os checkout flows. `CartCheckoutRouteSubscriber`, `DonationSettingsForm` e `donation_route` permanecem como estavam; o legado só sai na P-CART D, após a equivalência.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.21 — fluxo e campanhas de doação no painel ACULTA — 2026-10-20
 
 - Fluxo em `/painel-administrativo/aculta/doacoes/fluxo` e campanhas em `/painel-administrativo/aculta/doacoes/campanhas`, com itens na aba ACULTA.

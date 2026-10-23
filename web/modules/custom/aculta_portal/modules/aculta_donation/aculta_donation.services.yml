@@ -20,3 +20,9 @@ services:
     class: Drupal\aculta_donation\EventSubscriber\DonationRefundRouteSubscriber
     tags:
       - { name: event_subscriber }
+
+  aculta_donation.checkout_provider:
+    class: Drupal\aculta_donation\Checkout\DonationCheckoutProvider
+    arguments: ['@config.factory', '@aculta_portal.order_type_checkout_flows']
+    tags:
+      - { name: aculta_portal.checkout_provider }

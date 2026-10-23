@@ -412,3 +412,6 @@ services:
     arguments: ['@aculta_portal.checkout_configuration_resolver']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.order_type_checkout_flows:
+    class: Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows
+    arguments: ['@entity_type.manager']
