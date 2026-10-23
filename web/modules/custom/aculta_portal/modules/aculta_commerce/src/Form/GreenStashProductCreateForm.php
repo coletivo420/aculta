@@ -123,9 +123,6 @@ final class GreenStashProductCreateForm extends FormBase {
       'stores' => [$store->id()],
       'status' => FALSE,
     ]);
-    if (!$product->access('create', $this->account)) {
-      throw new AccessDeniedHttpException();
-    }
     $violations = $product->validate();
     if ($violations->count() > 0) {
       $this->messenger()->addError($this->t('Não foi possível validar o rascunho do produto. Verifique a configuração do catálogo.'));
