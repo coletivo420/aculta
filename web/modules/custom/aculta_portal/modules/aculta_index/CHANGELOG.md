@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.124 — documentar retenção única de rollback
+
+- README esclarece que só a geração imediatamente anterior fica `retained` e
+  sincronizada; gerações mais antigas mudam para `discarding` na ativação e
+  saem dos destinos incrementais antes do expurgo em lotes limitados.
+- Comportamento já coberto pelo Kernel de rebuild e limpeza; nenhuma mudança de
+  runtime nesta versão.
+
 ## 0.1.0-dev.123 — alinhar política de limpeza de providers desativados
 
 - README agora registra a decisão: preservar projeções enquanto o provider owner
