@@ -91,7 +91,8 @@ fechar os contratos de acesso e relações da Wiki. Ver
 - A consulta outgoing `related_entry` agora tem cobertura Kernel no Index:
   origem e alvos passam por Entity Access no purpose `wiki` mesmo com a chamada
   iniciada em `main`; alvo unpublished é filtrado e o Domain original é
-  restaurado (2 testes / 32 assertions em SQLite). O harness lê a definição/tag
+  restaurado (2 testes / 32 assertions em SQLite e MariaDB; repetido em
+  MariaDB em 2026-10-23). O harness lê a definição/tag
   do provider no YAML owner e chama a política de acesso Portal por uma ponte
   fixture; não ativa a Wiki nem prova o boot/DI completo.
 - O mapa de services lê o YAML real da Wiki e compila a tag do provider.
