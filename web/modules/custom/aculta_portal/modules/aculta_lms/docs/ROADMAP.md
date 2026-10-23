@@ -40,3 +40,10 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 ## Content Index — adapter de curso (IDX 0.1-F)
 
 O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. Pendentes: Kernel/DI, reconciliação das referências e smoke no Runtime após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+
+## Identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I, 2026-10-23)
+
+- Cursos pagos e gratuitos que passam pelo checkout comercial exigem CPF/CNPJ válido para concluir o pedido. Política compartilhada com a Loja, sem duplicar validação nem o campo (fonte: `/dados/outros-dados`, `aculta_id_cpf`).
+- Flow e pane de checkout compartilhados com a Loja; tipo de pedido `curso` e matrícula inalterados.
+- Matrícula continua dependendo do pagamento concluído. CPF/CNPJ cadastrado não libera matrícula.
+- Pendente: implementação (I-D-LMS) e testes de regressão. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.

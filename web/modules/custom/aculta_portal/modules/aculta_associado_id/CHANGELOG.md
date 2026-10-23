@@ -1,3 +1,8 @@
+## Descontinuado — 2026-10-23
+
+- Decisão do responsável: `aculta_id_cpf` permanece como módulo oficial de CPF/CNPJ. Este submódulo será removido após verificação de Runtime. Nenhuma alteração funcional nesta versão.
+- O código de `src/`, `tests/` e `config/install/` é idêntico ao de `aculta_id_cpf`, após normalizar o nome do módulo.
+
 ## 0.3.0-dev.1 — identidade e escopo Associado ID — 2026-10-13
 
 - Introduz machine name `aculta_associado_id` como identidade canônica para

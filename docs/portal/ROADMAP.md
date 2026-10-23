@@ -19,7 +19,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 ## Estado atual — conferido em 2026-10-22
 
 - Versão: **0.4.1-dev.12** (`aculta_portal.info.yml`; confira o changelog para o estado desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete auditorias anteriores e deve ser lido junto às atualizações datadas do roadmap.
-- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1, `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.29 e `aculta_activity` 0.1.0-dev.4. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
+- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.29 e `aculta_activity` 0.1.0-dev.4. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
 - Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
@@ -247,3 +247,14 @@ em produção. Ver também o
 - **P-CART T (NÃO executada):** exige homelab, navegador e Mercado Pago sandbox. Pendências: comparar rotas compiladas e DOM do carrinho do cabeçalho antes/depois; `donate|cart|both` e a chave global em HTTP real; checkout de Loja, LMS e Doações (anônimo e autenticado); webhooks repetidos e assinaturas; abas em mobile/desktop, claro/escuro e sem JavaScript; apresentação SDC/UI Suite das abas; Olivero sem o ACULTA420. Escopo original: regressão real do cabeçalho e dos três checkouts no homelab, sem alterações visuais ao comprador.
 
 **As seções P-CART anteriores, quando conflitantes, ficam supersedidas por este plano e pelo [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md).**
+
+## Frente CPF — identidade fiscal oficial e checkout compartilhado (2026-10-23)
+
+Decisão de 2026-10-23: cancelar a substituição de `aculta_id_cpf` por `aculta_associado_id`. A implementação `aculta_id_cpf` é o módulo oficial. `aculta_associado_id` será descontinuado e removido de maneira controlada, após auditoria de dependências e Runtime. Os dados de associação pertencem ao domínio de usuários/perfis e não justificam um segundo módulo de identidade fiscal.
+
+Plano completo, inventário e gates: [CPF-CONSOLIDACAO-E-CHECKOUT.md](CPF-CONSOLIDACAO-E-CHECKOUT.md).
+
+- **CPF-R0 a R2 (consolidação):** concluídas. `aculta_portal` usa só `aculta_id_cpf.account_document`.
+- **CPF-R3 (remoção do associado):** BLOQUEADA até verificar Runtime de teste e produção. Local: não habilitado, não instalado.
+- **CPF-CHECKOUT-0.2-I (identidade fiscal compartilhada Loja e LMS):** I-A e I-B documentados; implementação dos checkouts pendente. Doações permanecem dispensadas.
+- **Pendências transversais:** gate de status do índice (falta `aculta_commerce`) e gate Drupal 11 (falta `WikiController.php`), ambos anteriores a esta frente.

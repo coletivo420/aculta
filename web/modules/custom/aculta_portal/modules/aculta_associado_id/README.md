@@ -1,3 +1,5 @@
+> **DESCONTINUADO (2026-10-23).** Não é mais o módulo de identidade fiscal. O módulo oficial é `aculta_id_cpf`. Este diretório permanece somente até a verificação de Runtime exigida em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 4. Não habilitar, não instalar e não referenciar em código novo. O conteúdo abaixo é histórico.
+
 # ACULTA Associado ID
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+**. Versão atual:

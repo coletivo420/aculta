@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-10-23).** Este plano de migração para `aculta_associado_id` está cancelado. Por decisão do responsável, `aculta_id_cpf` é o módulo oficial de CPF/CNPJ; `aculta_associado_id` será descontinuado e removido após verificação de Runtime (ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 4). Os dados de associação pertencem ao domínio de usuários/perfis. O texto abaixo é histórico e não representa a arquitetura vigente.
+
 # ACULTA Associado ID — escopo e migração
 
 ## Identidade e finalidade

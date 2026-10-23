@@ -72,3 +72,10 @@ O gerenciador **não** pertence a `aculta_commerce`: é infraestrutura do `acult
 A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loja | LMS | Doações é exclusivamente administrativa no aculta_portal**; não é uma nova experiência de compra. O carrinho da barra multidomínio e o seletor atual de checkout permanecem intactos. `aculta_commerce` oferece ao Portal configuração/provider do contexto Loja, mas não recebe nem duplica o orquestrador, e Green Stash permanece administração operacional da loja no Studio.
 
 **Fases Comércio-CART:** C-A inventariar tipos/flows/rotas da Loja; C-B provider de configuração do Portal (**entregue e habilitado em 2026-10-22** por decisão do responsável: `ShopCheckoutProvider` e `aculta_commerce.services.yml`; `aculta_commerce` consta em `config/sync/core.extension.yml` e está habilitado no runtime `toca`; o módulo não cria configuração, esquema nem hooks, e o rollback é `drush pm:uninstall aculta_commerce` mais remover a linha do sync); C-C formulários/validações da aba administrativa Loja; C-D integração segura com Green Stash e rotas existentes sem alterar carrinho; C-T regressões visuais/funcionais e pagamentos no homelab. Não executar trabalho de storefront nesta frente. Esta seção substitui referências antigas a abas de carrinho público.
+
+## Identidade fiscal no checkout (CPF-CHECKOUT-0.2-I, 2026-10-23)
+
+- O checkout comercial da Loja exige CPF/CNPJ válido para concluir a compra. Política compartilhada com o LMS; o documento vem de `aculta_id_cpf`, nunca é copiado para o pedido.
+- Flow e pane compartilhados com o LMS; tipo de pedido `default` mantido.
+- Doações ficam fora da exigência padrão.
+- Pendente: implementação (I-D) e testes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.

@@ -70,3 +70,22 @@ Decididas pelo responsável durante a P-CART E, ampliando o que a versão inicia
 5. **Tipo de pedido da Loja** classifica e consolida o carrinho no Portal; a resolução do tipo de pedido de cada produto continua no Commerce (tipo de item).
 
 **P-CART E (2026-10-22):** abas administrativas em `/painel-administrativo/aculta/checkout` (Comum, Loja, LMS) e `/checkout/doacoes` (registrada pelo `aculta_donation`, que é dono do formulário e evita dependência do Portal em módulo opcional). Permissões específicas por aba; sem acesso a pedidos.
+
+## Adendo — identidade fiscal compartilhada (Loja e LMS, 2026-10-23)
+
+Decisão do responsável, registrada em 2026-10-23:
+
+> Em 2026-10-23, o responsável determinou que os checkouts comerciais da Loja e do LMS utilizem a mesma política obrigatória de identidade fiscal, baseada no documento mantido em `/dados/outros-dados` pelo `aculta_id_cpf`. O checkout padrão de doações permanece dispensado. A exigência não se aplica à participação gratuita no LMS nem implica fusão física de carrinhos ou pedidos.
+
+Consequências para esta ADR:
+
+1. **Módulo oficial de CPF/CNPJ:** `aculta_id_cpf` (machine name preservado). `aculta_associado_id` está descontinuado; sua remoção depende de verificação de Runtime e está documentada em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 4.
+2. **Dono do contrato de exigência:** `aculta_portal` define o estado de identidade fiscal e a política de exigência por contexto. Os checkouts de `aculta_commerce` e `aculta_lms` são consumidores. `aculta_donation` é dispensado por padrão.
+3. **A exigência vem do contexto validado do pedido** (tipo de pedido configurado em `CheckoutSettings`, loja e total maior que zero), nunca de URL, parâmetro de sessão ou indicação do navegador.
+4. **Sem cópia do documento:** o CPF/CNPJ não é gravado em pedido, perfil de faturamento, entidade LMS ou sessão. A única fonte é `profile.participante.field_documento`.
+5. **Sem fusão:** Loja, LMS e Doações mantêm tipos de pedido, carrinhos e flows próprios (Commerce indexa carrinhos por tipo, loja e conta).
+6. **Matrícula inalterada:** o LMS continua dono da matrícula. Pagamento concluído continua sendo o gatilho. CPF/CNPJ cadastrado não libera matrícula.
+
+**Auditoria I-A (carrinhos reais):** detalhada em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 5. Resumo: o isolamento por tipo de pedido existe; nenhum checkout comercial exige identidade fiscal hoje; cursos gratuitos geram pedido de total zero que passa pelo checkout comercial.
+
+**Situação:** contrato proposto (I-B) documentado; implementação dos checkouts (I-D) pendente.

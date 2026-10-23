@@ -66,3 +66,7 @@ Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkou
 ## RETIFICAÇÃO ADR-013 — Migração de ownership sem mudar o carrinho
 
 A seleção `donate | cart | both` permanece funcional e inalterada publicamente. O Portal passará a controlar a **configuração administrativa transversal**; Donation continuará dono de campanhas, doação, recorrência e checkout dedicado. As abas **Comum | Loja | LMS | Doações** serão apenas administrativas. **Não modificar o carrinho na barra multidomínio nem a escolha atual de checkout**; não criar tabs do comprador. Ver [roadmap revisado](docs/ROADMAP-MULTI-CART.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+
+## Identidade fiscal
+
+O checkout padrão de doações **não exige CPF/CNPJ** (decisão de 2026-10-23). Os fluxos `doacao` e `assinatura_flow` não recebem o pane de identidade fiscal da Loja e do LMS. Exceção futura, se houver obrigação externa específica, deve ser registrada separadamente com fundamento e finalidade. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
