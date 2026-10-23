@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## Decisões 0.1 registradas — implementação pendente
+
+- Relações removidas aceitam consistência eventual da fila; a aresta pode
+  permanecer até a projeção convergir, enquanto Entity Access da origem e dos
+  alvos é revalidado a cada consulta.
+- `owner_uid` opcional foi autorizado como metadado interno para filtros como
+  “Minha produção”; não será retornado nos DTOs. Coluna, migração, filtro e
+  projeção seletiva pelos providers ainda precisam ser implementados.
+
 ## 0.1.0-dev.138 — proteger hooks iniciais de atualização parcial
 
 - `update_10001`, `10002`, `10004` e `10008` agora ignoram tabelas legadas
