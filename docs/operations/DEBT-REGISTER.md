@@ -192,3 +192,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | DT-COM-05 | Avaliar aritmética `float` e moeda exibida no carrinho, sem regressão visual | `CartUtility::build()` soma `float` e reutiliza última moeda observada | Média | Casos BRL/rounding e múltiplas moedas validados; proposta de correção comparada com baseline | Pendente — runtime |
 | DT-COM-06 | Aguardar contrato central P-CART B antes de registrar provider administrativo de Loja | `aculta_commerce` não contém serviços ativos; ADR-013 designa Portal como coordenador | Média | API real do registry Portal commitada, testes unitários e documentação de DI/ACL | Bloqueado — dependência entre frentes |
 | DT-COM-07 | Definir e validar integração real de catálogo com Content Index | Contrato preliminar em `modules/aculta_commerce/docs/CONTENT-INDEX.md`; API real ainda não identificada neste HEAD | Média | Serviços/adaptadores do índice detectados e homologados para publicação/despublicação/ACL/rebuild | Bloqueado — API externa à frente |
+
+## ACULTA Commerce — novas dívidas Green Stash (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de encerramento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-08 | Executar gates da fundação de acesso Green Stash | `GreenStashAccessPolicy`, permissão restrita, serviço e teste adicionados no Commerce | Alta | PHPUnit PASS, `drush cr`, `drush pm:list`, validação de YAML/DI e permissão no homelab; sem concessão involuntária | Pendente — runtime |
+| DT-COM-09 | Integrar provider Green Stash ao Studio e resolver propósito/domínio de rota | `StudioExperienceProviderInterface`/Manager disponíveis, mas ainda sem rota nem provider commerce; [plano](../../web/modules/custom/aculta_portal/modules/aculta_commerce/docs/GREEN-STASH-0.1.0-D.md) | Alta | Rota própria, provider registrado com segurança, acesso por operação/entidade e testes Kernel/Functional sem afetar GanjaLab | Pendente — próxima fase |
+| DT-COM-10 | Homologar layout Green Stash no ACULTA420 SDC/UI Suite, mobile-first e cabeçalho preservado | Interface ainda não criada e contrato visual pertence ao tema | Média | SDC/UI Suite conforme gate design, acesso keyboard, light/dark, no-JS e regressão multidomínio | Pendente — fase D-D |
