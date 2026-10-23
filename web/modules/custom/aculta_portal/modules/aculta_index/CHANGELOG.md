@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.114 — contenção entre conexões MariaDB
+
+- Kernel usa duas sessões físicas com o mesmo prefixo isolado de teste e um
+  timeout InnoDB de um segundo apenas na sessão concorrente. O agendamento
+  espera a promoção; leitores mantêm o ponteiro antigo até o commit; a mudança
+  recém-agendada bloqueia rollback até concluir a sequência.
+- Dois gerenciadores de limpeza disputam a exclusão final de uma geração. O
+  segundo espera o commit do primeiro e depois não encontra trabalho residual.
+- MariaDB: 2 testes / 23 assertions PASS; PHPCS Drupal, lint e diff check PASS.
+  Trata-se de contenção controlada entre conexões, sem teste de carga ou workers
+  PHP concorrentes. Runtime permanece sem alteração.
+
 ## 0.1.0-dev.113 — cobrir providers desativados e relação LMS→documento
 
 - Kernel de consulta confirma que projeção residual de provider sem registro
