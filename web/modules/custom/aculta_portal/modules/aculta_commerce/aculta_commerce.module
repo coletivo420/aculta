@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * ACULTA Commerce module hooks.
+ *
+ * Studio registration lives in AcultaCommerceServiceProvider.
+ */

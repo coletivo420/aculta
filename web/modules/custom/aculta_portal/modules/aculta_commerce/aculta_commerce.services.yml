@@ -4,3 +4,23 @@ services:
     arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.checkout_provider }
+
+  aculta_commerce.green_stash_access:
+    class: Drupal\aculta_commerce\Access\GreenStashAccessPolicy
+  aculta_commerce.experience.green_stash:
+    class: Drupal\aculta_commerce\Experience\GreenStashExperienceProvider
+    arguments: ['@aculta_commerce.green_stash_access']
+  aculta_commerce.green_stash_controller:
+    class: Drupal\aculta_commerce\Controller\GreenStashController
+    arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@request_stack']
+  aculta_commerce.green_stash_navigation:
+    class: Drupal\aculta_commerce\Navigation\GreenStashNavigation
+  aculta_commerce.green_stash_product_reader:
+    class: Drupal\aculta_commerce\Catalog\GreenStashProductReader
+    arguments: ['@entity_type.manager', '@aculta_commerce.green_stash_store_resolver']
+  aculta_commerce.green_stash_product_controller:
+    class: Drupal\aculta_commerce\Controller\GreenStashProductController
+    arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@entity_type.manager']
+  aculta_commerce.green_stash_store_resolver:
+    class: Drupal\aculta_commerce\Store\GreenStashStoreResolver
+    arguments: ['@entity_type.manager']

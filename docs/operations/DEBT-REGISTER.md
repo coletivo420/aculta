@@ -178,3 +178,123 @@ exigem decisão ou revisão deles. Registradas para não se perderem.
 | --- | --- | --- | --- | --- | --- | --- |
 | DT-K07 | Publicação do Studio no servidor de desenvolvimento (Alpha) | Decisão do responsável (2026-10-21): não aplicável nesta fase; o Studio fica validado no Runtime de teste | Baixa | Decisão registrada: encerrado como não aplicável nesta fase | — | Encerrada (não aplicável nesta fase) |
 | DT-K08 | Validação de leitor de tela com usuário real (além do Orca) | Orca validado com fala gerada e som medido; decisão do responsável (2026-10-21): registrar como pendência para fase futura | Média | Decisão registrada: pendência para fase futura, dono e fase a definir | futura | Pendência registrada |
+
+## ACULTA Commerce — dívidas da fase C-0.1-C2 (2026-10-22)
+
+Estas tarefas dependem de servidor de testes, configuração ativa ou estado de dados e **não** foram dadas como concluídas pela inspeção estática. Donos: `aculta_commerce` (loja) e `aculta_portal` (carrinho transversal).
+
+| ID | Dívida | Evidência | Prioridade | Critério de fechamento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-01 | Executar PHPUnit de caracterização dos separadores, slugs e limites de consolidação | `modules/aculta_commerce/tests/src/Unit/ExistingPortalCartContractTest.php` e `PortalCartConsolidatorBoundaryTest.php`; somente commitados, não executados no homelab | Alta | PHPUnit PASS com versão real do Drupal/Commerce; corrigir fixtures sem mudar contrato público | Pendente — runtime |
+| DT-COM-02 | Caracterizar consolidação real entre loja, curso e doação, incluindo atomicidade/rollback e itens incompatíveis | `src/Cart/CartConsolidator.php` move itens, salva e exclui pedidos; assinatura é exceção | Alta | Kernel/Functional com tipos reais, múltiplas lojas, impostos, frete, cupom, moeda, pagamento e falha injetada; prova de integridade | Pendente — runtime |
+| DT-COM-03 | Mapear configuração instalada da loja: stores, product/variation, order/item types, shipping, checkout, cupons, tributos, domain purpose e gateway | `aculta_commerce` é fundação; `ShopController` e checkout no Portal; sem acesso ao banco do servidor | Alta | Inventário sanitizado e snapshots pré/pós com `drush` e configurações exportadas | Pendente — runtime |
+| DT-COM-04 | Regressão da barra multidomínio, seleção de checkout e três fluxos, com Mercado Pago sandbox | ADR-013 preserva carrinho público; configurações `donate|cart|both` são intencionais | Alta | HTTP/Browser/ACL de loja/LMS/doações, login, domínios, assinaturas, webhook assinado/duplicado e checkout completo; evidências PASS | Pendente — runtime |
+| DT-COM-05 | Avaliar aritmética `float` e moeda exibida no carrinho, sem regressão visual | `CartUtility::build()` soma `float` e reutiliza última moeda observada | Média | Casos BRL/rounding e múltiplas moedas validados; proposta de correção comparada com baseline | Pendente — runtime |
+| DT-COM-06 | Aguardar contrato central P-CART B antes de registrar provider administrativo de Loja | `aculta_commerce` não contém serviços ativos; ADR-013 designa Portal como coordenador | Média | API real do registry Portal commitada, testes unitários e documentação de DI/ACL | Bloqueado — dependência entre frentes |
+| DT-COM-07 | Definir e validar integração real de catálogo com Content Index | Contrato preliminar em `modules/aculta_commerce/docs/CONTENT-INDEX.md`; API real ainda não identificada neste HEAD | Média | Serviços/adaptadores do índice detectados e homologados para publicação/despublicação/ACL/rebuild | Bloqueado — API externa à frente |
+
+## ACULTA Commerce — novas dívidas Green Stash (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de encerramento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-08 | Executar gates da fundação de acesso Green Stash | `GreenStashAccessPolicy`, permissão restrita, serviço e teste adicionados no Commerce | Alta | PHPUnit PASS, `drush cr`, `drush pm:list`, validação de YAML/DI e permissão no homelab; sem concessão involuntária | Pendente — runtime |
+| DT-COM-09 | Integrar provider Green Stash ao Studio e resolver propósito/domínio de rota | `StudioExperienceProviderInterface`/Manager disponíveis, mas ainda sem rota nem provider commerce; [plano](../../web/modules/custom/aculta_portal/modules/aculta_commerce/docs/GREEN-STASH-0.1.0-D.md) | Alta | Rota própria, provider registrado com segurança, acesso por operação/entidade e testes Kernel/Functional sem afetar GanjaLab | Pendente — próxima fase |
+| DT-COM-10 | Homologar layout Green Stash no ACULTA420 SDC/UI Suite, mobile-first e cabeçalho preservado | Interface ainda não criada e contrato visual pertence ao tema | Média | SDC/UI Suite conforme gate design, acesso keyboard, light/dark, no-JS e regressão multidomínio | Pendente — fase D-D |
+
+## ACULTA Commerce — Green Stash D-A/D-B (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de encerramento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-11 | Validar o container e registro condicional do provider Studio Green Stash no homelab | `aculta_commerce.module` aplica `hook_container_alter`, `aculta_commerce.services.yml` registra provider e controller, dependência declarada ao Studio | Alta | `drush cr` PASS; registry com GanjaLab420 e Green Stash, sem duplicação, container compilado sem erro; testes isolados com Commerce habilitado | Pendente — runtime |
+| DT-COM-12 | Homologar rota `/green-stash` e ACL real em múltiplos domínios | Rota purpose account, permission `access aculta green stash`; não há grants novos a roles | Alta | HTTP 403 guest/usuário não autorizado, HTTP 200 usuário explicitamente autorizado no purpose canônico, acesso sem dados de pedidos, sem impacto em GanjaLab/cabeçalho/carrinho | Pendente — runtime |
+| DT-COM-13 | Implementar conteúdo operacional autorizado e design SDC/UI Suite de Green Stash | Provider atual tem só render array informativo e sem dados reais | Média | Controller/permissões por entidade e loja, SDC no tema, mobile, light/dark, fallback sem JS e testes | Pendente — fases seguintes |
+
+## Commerce — frete brasileiro e estoque (2026-10-22)
+
+| ID | Dívida | Evidência | Prioridade | Critério de fechamento | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-COM-14 | Inventariar Commerce Shipping instalado/configurado e dados físicos | `composer.json` já requer `commerce_shipping:^3.0`; shipment default e `AcultaShippingInformation` existentes | Alta | Drush/config/variações, origem/CEP, medidas e fluxo de remessas registrados no homelab | Pendente — runtime |
+| DT-COM-15 | Auditar fonte Melhor Envio e contrato oficial atual Correios, incluindo licença e compatibilidade API | [pesquisa Commerce](../../web/modules/custom/aculta_portal/modules/aculta_commerce/docs/SHIPPING-STOCK-BRAZIL-RESEARCH.md) | Alta | Código fonte versionado analisado, tabela portar/instalar/descartar e testes HTTP com fixture | Pendente — pesquisa de código |
+| DT-COM-16 | Validar `commerce_stock:^3.0` com Commerce 3 e consolidador existente | Contrib estável suporta Drupal 11, porém instalação/estado real desconhecidos | Alta | POC com dados fictícios, concorrência, devolução e excluindo LMS/doação; evidências PASS | Pendente — homelab |
+| DT-COM-17 | Definir transportadoras, conta de integração, CEP de origem e estratégia de etiqueta/rastreio | Nenhum contrato logístico confirmado; não inventar API/credenciais | Média | Decisão comercial registrada e testada em sandbox, sem exposição de segredos | Pendente — decisão operacional |
+| DT-CEP-01 | Testes Kernel e Functional do serviço `aculta_portal_cep.lookup`, do endpoint AJAX e do checkout | Só Unit foi executado (`CepLookupServiceTest`, 9 testes); Kernel exige instalação de teste isolada | Média | Kernel e Functional verdes no homelab, incluindo endpoint sem requisição interna e checkout sem regressão | Pendente — homelab |
+| DT-CEP-02 | Cache negativo para CEP inexistente | CEP não encontrado consulta ViaCEP e BrasilAPI a cada requisição; rate limit de 60/min mitiga | Baixa | Cache curto de resultado negativo com teste de cache e sem resultado positivo | Pendente |
+| DT-CEP-03 | Teste de navegador do autocompletar após a refatoração | `scripts/test-account-address-browser.py` exige Firefox no X11; não executado aqui | Média | 17 verificações PASS no Firefox X11 | Pendente — navegador |
+| DT-CEP-04 | Licença da base local de CEPs (DNE) versionada em `data/cep/` | Risco aceito pelo responsável em 2026-10-18 e 2026-10-19; herdado pelo submódulo | Média | Revisão jurídica registrada ou base substituída | Aceito — revisão pendente |
+| DT-ME-01 | Gate de PHPStan do submódulo | Repositório não tem configuração de PHPStan | Baixa | Configuração aprovada e PHPStan verde | Pendente — decisão de ferramenta |
+| DT-ME-02 | Kernel: snapshot do endereço do pedido | `BillingAddressPane::billingCopy()` congela o perfil fora de `draft`; sem teste de Kernel. Cadastro alterado após o pedido não pode mudar a remessa | Alta | Kernel: após alterar o cadastro com pedido fora de rascunho, perfil de envio e remessa permanecem iguais | Pendente — homelab |
+| DT-ME-03 | Fonte dos dados de remetente e destinatário na contratação | Contrato do carrinho exige `name` e `document` (CPF no destinatário; CPF/CNPJ no remetente). Não há origem confirmada no ACULTA para o remetente | Alta | Decisão do responsável sobre a fonte (perfil, `aculta_id_cpf` ou loja) e teste com dados fictícios | Pendente — decisão do responsável |
+| DT-ME-04 | Endereço sem número na API do Melhor Envio | Documentação não define representação para S/N. Contratação bloqueada com `sn_not_accepted_by_api`; cotação não exige número | Média | Confirmação com o suporte ou no sandbox; enquanto isso, bloqueio mantido | Pendente — sandbox |
+| DT-ME-05 | Tela administrativa da origem e conferência de endereço no Green Stash | Origem só existe em configuração (`settings:origin`, vazia por padrão) | Média | Form API e componentes SDC/UI Suite, com permissões, sem editar o endereço do cliente | Pendente — ME-0.5-B |
+| DT-ME-06 | Comentário de `StreetNumberField::validateNumber()` diz 1 a 4 dígitos | Código e mensagem usam `MAX_DIGITS = 10`; só o comentário está errado | Baixa | Comentário alinhado ao código, sem mudar a regra | Pendente — fase própria |
+
+## Green Stash — dívidas de UX mobile-first (2026-10-23)
+
+| ID | Pendência | Evidência / dependência | Encerramento |
+| --- | --- | --- | --- |
+| GS-UX-01 | Homologar provider/rota/container Green Stash | Hook/container atual sem gate runtime registrado | Drush cr e HTTP/Functional por purpose, guest e operador autorizado |
+| GS-UX-02 | Definir ACL por store, papel e ação | Permissão atual só autoriza entrar | Matriz Commerce access/Entity access e testes contra IDOR e vazamento de contadores |
+| GS-UX-03 | Inventariar componentes SDC/UI Suite realmente reutilizáveis | Plano visual novo em `GREEN-STASH-UX-MOBILE-FIRST.md` | Stories/design gates e matrizes 320px+/claro/escuro |
+| GS-UX-04 | Contratar agregações Stats para cards reais | Sem provider Green Stash de KPIs ainda | Queries autorizadas, paginadas e caches corretos, sem duplicar métricas |
+| GS-UX-05 | Estoque e expedição reais | Comércio Stock/Melhor Envio ainda em etapas próprias | APIs aprovadas, sandbox/homelab e telas com permissões reais |
+
+## Green Stash — gates GS-0.2-A/B (2026-10-23)
+
+| ID | Pendência | Critério para encerrar | Estado |
+| --- | --- | --- | --- |
+| GS-NAV-01 | Compilação de container e rota `/green-stash/{section}` | `drush cr`, HTTP 403/200 conforme permissão e domínio, rotas canônicas, registro Studio e PHPUnit PASS | Pendente — homelab |
+| GS-NAV-02 | Componentes SDC/UI Suite para navegação responsiva real | Tema ACULTA420 renderiza shell mobile-first, tabs/drawer acessível, 320px+ claro/escuro e fallback sem JS; Stories/gates PASS | Pendente — tema |
+| GS-NAV-03 | Navegação por capacidades granulares e dados operacionais reais | Grants Commerce por store e entidade; contadores e áreas sem permissões não aparecem; testes IDOR, acesso e cache | Pendente — GS-0.2-C |
+
+## Green Stash — rotas canônicas e registro de experiência
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-ROUTE-PTBR-01 | Validar URLs PT-BR `/estudio/loja/*`, domínio purpose account e ausência de colisão | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
+| GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
+| GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
+
+## GS-0.2-C — Catálogo operacional inicial (2026-10-23)
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-CAT-01 | Homologar leitura de `produto_loja` por permissões e stores | Testes Kernel/Functional com papéis e múltiplas lojas, sem vazamento de catálogo |
+| GS-CAT-02 | Substituir amostra de 100 IDs por paginação de verdade | Cursor/pager com filtros e segurança por store, desempenho em volumes altos |
+| GS-CAT-03 | Visual móvel definitivo e testes de navegação PT-BR | SDC/UI Suite, 320px+, acessibilidade, links e cache no homelab |
+
+## Green Stash GS-0.2-C.2 — validações restantes
+
+| ID | Pendência | Critério de encerramento |
+| --- | --- | --- |
+| GS-CAT-04 | Paginação parcial em contas com muitas entidades não autorizadas | Filtragem por store na query, cursor confiável sem salto/lacunas, teste com mais de 500 entidades e permissões seletivas |
+| GS-CAT-05 | Busca e cursor da listagem não homologados | Kernel/Functional de SQL/EntityQuery, HTTP e pesquisa no homelab; conferir `accessCheck` + grants por store e inexistência de dados de LMS |
+
+## GS-EDITOR — Interface operacional própria (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/estudio/loja`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
+| GS-EDITOR-02 | Fluxos de estoque/expedição/etiquetas integralmente no Studio | Commerce Stock/Shipping/Melhor Envio operam via controles Green Stash com confirmação/autorização, testes de integração |
+| GS-EDITOR-03 | Auditoria de links administrativos diretos nas experiências Green Stash | Nenhuma ação visível da loja aponta a edit-form administrativa ou `/admin/commerce`, teste regressivo |
+
+## Green Stash GS-EDITOR-0.2 — gates restantes
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-PRODUCT-DETAIL-01 | Homologar rota de detalhe por store e entidade | Testes Kernel e HTTP com produto loja/LMS, lojas concorrentes e operadores sem permissão; acesso indevido retorna 403/404 |
+| GS-PRODUCT-DETAIL-02 | Visual do detalhe do produto via SDC/UI Suite | Componentes ACULTA420 com campos autorizados, 320px+, navegação teclado e contraste light/dark |
+| GS-PRODUCT-DETAIL-03 | Contratos de criação/edição próprios Studio | Form API, permissões de create/update store/product, validações Commerce e transações/revisões comprovadas no homelab |
+
+## Green Stash — GS-EDITOR-0.3-A (2026-10-23)
+
+| ID | Dívida | Encerramento |
+| --- | --- | --- |
+| GS-CREATE-01 | Formulário e rota PT-BR ainda sem homologação Drupal no homelab | Drush cr, acesso anônimo/comum/operador; Form API GET/POST CSRF, createAccess, store update, validação de entidade, salvamento e redirect |
+| GS-CREATE-02 | Produto de rascunho sem variações, SKU e preço | Cadastro assistido próprio Studio, variação e preço com APIs Commerce; publicar só quando consistente |
+| GS-CREATE-03 | Integrar SDC/UI Suite e UX mobile-first no formulário | Stories ACULTA420, 320px+, light/dark, teclado, sem JS, testes no navegador |
+
+## Green Stash loja unica
+| ID | Pendencia | Aceite |
+| --- | --- | --- |
+| GS-SINGLE-STORE-01 | Validar resolucao da unica Commerce store e autorizacao | Testes Kernel/Functional no homelab; nenhuma escolha de loja e associacao correta |
+| GS-SINGLE-STORE-02 | Verificar segregacao de produtos LMS e Doacoes | Apenas produto_loja exibido; checkouts de LMS/Doacoes intocados |

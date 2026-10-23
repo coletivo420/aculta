@@ -10,6 +10,13 @@ services:
     class: Drupal\aculta_portal_cep\Local\CepLocalStore
     arguments: ['@file_system']
 
+  # Consulta compartilhada (endpoint AJAX e módulos PHP, como o Melhor Envio). Não faz requisição à rota AJAX.
+  aculta_portal_cep.lookup:
+    class: Drupal\aculta_portal_cep\Lookup\CepLookupService
+    autowire: true
+
+  Drupal\aculta_portal_cep\Lookup\CepLookupInterface: '@aculta_portal_cep.lookup'
+
   aculta_portal_cep.api_probe:
     class: Drupal\aculta_portal_cep\Status\CepApiProbe
     autowire: true

@@ -49,6 +49,12 @@ ou no checkout que lê o mesmo endereço deve manter o que está aqui. Não repe
 
    Deve terminar com `RESULTADO: 17/17 verificações OK`. Gerar o link antes de cada execução (é de uso único).
 
+## Uso pelo Melhor Envio (logística)
+
+- O Melhor Envio não tem formulário de endereço. O formulário único deste documento é a fonte de verdade para envio.
+- Rua e número são separados por `StreetNumberField::split()`. Regra de número: 1 a 10 dígitos ou S/N. Não alterar sem decisão do responsável.
+- Contrato, matriz de campos e bloqueios (S/N na contratação) em `web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/docs/ADDRESS-CONTRACT.md`.
+
 ## Pendências fora deste documento
 
 - Mercado Pago (checkout): o contrib lê o campo `address`, que os perfis não têm. Adaptador pendente; não pode ser um campo
