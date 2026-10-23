@@ -90,3 +90,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Continuação da submissão (dev.23): após persistir, redirecionar para o ID
   retornado pelo serviço de submissão e a rota de status protegida; não adivinhar
   identificadores nem redirecionar para um registro diferente.
+- Histórico privado (dev.24): listar revisões em páginas limitadas por cursor,
+  revalidando `view revision` para cada uma. Exibir estado e retorno sem nomes de
+  moderadores; cache varia por conta, permissões e cursor.

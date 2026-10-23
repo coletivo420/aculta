@@ -3,6 +3,15 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## Propostas privadas — status e histórico (dev.24)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Histórico da proposta | Kernel | Revisões autorizadas mostram data, estado e retorno, sem identidade de moderador | aprovado (1 teste / 93 assertions) |
+| Paginação do histórico | Kernel | 21 revisões são exibidas em páginas de 20 e 1, com cursor estável | aprovado |
+| Acesso à revisão | Kernel | Cada revisão passa por `view revision` antes de seus campos serem renderizados | aprovado |
+| Histórico de outra conta | Kernel | Acesso à proposta continua negado pelo Entity Access existente | aprovado em dev.22 |
+
 ## Fase 5 — busca e aviso de revisão
 
 | Cenário | Tipo | Resultado esperado | Estado |

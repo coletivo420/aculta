@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.24 — histórico privado de propostas
+
+- A página privada da proposta mostra histórico paginado de revisões, com data,
+  estado e retorno editorial. Cada revisão exige `view revision`; nomes de
+  moderadores não são expostos.
+- A consulta avança por cursor e limita candidatos por requisição. Cache varia
+  por conta, permissões e cursor; decisões seguem armazenadas como revisões da
+  entidade privada já existente.
+- Kernel focal MariaDB: 1 teste / 93 assertions, cobrindo histórico de duas
+  revisões e paginação de 21 revisões. PHPCS e lint dos arquivos alterados
+  passaram. Runtime permanece desabilitado.
+
 ## 0.1.0-dev.23 — continuação da submissão de proposta
 
 - Formulário de contribuição redireciona para `aculta_wiki.proposal_status` com

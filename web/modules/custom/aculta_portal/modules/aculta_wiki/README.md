@@ -7,6 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.24`: o status privado apresenta histórico paginado de revisões
+  autorizadas, com estado e retorno editorial; nomes de moderadores não são
+  expostos. Kernel focal: 1 teste / 93 assertions.
 - `0.1.0-dev.23`: após enviar, a autoria segue diretamente para a página privada
   da proposta recém-criada. Kernel focal do fluxo de submissão: 1 teste / 85
   assertions.

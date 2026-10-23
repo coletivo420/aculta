@@ -702,14 +702,48 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('declined', $declinedProposal->get('state')->value);
     self::assertSame('A evidência apresentada não sustenta esta alteração.', $declinedProposal->get('decision_note')->value);
 
+    $historyProposal = $decidedProposal;
+    for ($index = 0; $index < 19; $index++) {
+      $historyProposal = $decisionService->decide(
+        $historyProposal,
+        (int) $historyProposal->getRevisionId(),
+        'needs_changes',
+        'Nota editorial ' . $index,
+      );
+    }
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed(2);
     $this->container->get('current_user')->setAccount($submitter);
-    $statusBuild = WikiProposalStatusController::create($this->container)->view($declinedProposal);
+    $statusController = WikiProposalStatusController::create($this->container);
+    $historyBuild = $statusController->view(
+      $historyProposal,
+      Request::create('/wiki/propostas/' . $historyProposal->id()),
+    );
+    self::assertCount(20, $historyBuild['history']['table']['#rows']);
+    self::assertNotEmpty($historyBuild['history']['pager']['#url']);
+    $historyCursor = $historyBuild['history']['pager']['#url']->getOption('query')['revision_cursor'];
+    $historyNextPage = $statusController->view(
+      $historyProposal,
+      Request::create('/wiki/propostas/' . $historyProposal->id(), 'GET', ['revision_cursor' => $historyCursor]),
+    );
+    self::assertCount(1, $historyNextPage['history']['table']['#rows']);
+    self::assertSame([], $historyNextPage['history']['pager']);
+
+    $statusBuild = $statusController->view(
+      $declinedProposal,
+      Request::create('/wiki/propostas/' . $declinedProposal->id()),
+    );
     self::assertSame(
       'A evidência apresentada não sustenta esta alteração.',
       $statusBuild['decision_note']['text']['#plain_text'],
     );
     self::assertContains('user', $statusBuild['#cache']['contexts']);
+    self::assertCount(2, $statusBuild['history']['table']['#rows']);
+    self::assertSame('Recusada', $statusBuild['history']['table']['#rows'][0]['state']);
+    self::assertSame(
+      'A evidência apresentada não sustenta esta alteração.',
+      $statusBuild['history']['table']['#rows'][0]['feedback'],
+    );
+    self::assertSame('Enviada', $statusBuild['history']['table']['#rows'][1]['state']);
     $memoryQueue = new class() {
 
       /** @var list<\Drupal\aculta_mailer\Message\MailMessage> */
