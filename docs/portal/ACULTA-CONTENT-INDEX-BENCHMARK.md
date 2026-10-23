@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos, leitura de relações, duas composições experimentais de índice e fixture limitado de Entity Access em Media executados; benchmark amplo de escrita, rebuild, reconciliação e autorização nos providers/grants reais continuam pendentes.
+Estado: consulta de candidatos, leitura de relações, duas composições experimentais de índice, fixtures de Entity Access em Media e no contexto canônico de Domain executados; benchmark amplo de escrita, rebuild e reconciliação continuam pendentes.
 
 ## Matriz fixada
 
@@ -53,12 +53,19 @@ espaço/build e 250 escritas pelo writer em cada variante. O resultado de três
 repetições está em [resultados](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md):
 nenhuma composição demonstrou ganho consistente, e o schema de produção
 permanece sem índices adicionais. O fixture Media não substitui medições com
-grants de domínio/Group/LMS, nem um benchmark amplo de escrita, rebuild ou
+grants de Group/LMS, nem um benchmark amplo de escrita, rebuild ou
 reconciliação; esses workloads continuam pendentes antes da homologação final.
 Uma fumaça de 10k contou 8/6 consultas SQL em cache miss/hit, após aquecer
 metadados do Drupal. Essa amostra única serve para observar o caminho e não
 define meta. Decisão do responsável: registrar métricas, mas definir limites de
 latência e throughput só após telemetria de uso real.
+
+O `ContentIndexAccessCacheBenchmarkTest` mede separadamente 1/12/25/50/100
+entidades através do `ContentIndexAccessFilter`, do provider Wiki e da troca
+para o Domain canônico, com 30 amostras aquecidas por tamanho. Mede o custo
+integrado de autorização e limpeza dos caches de handlers do Core; exclui SQL
+de candidatos e não é comparável diretamente ao harness Media. Resultado
+detalhado: [medição de acesso por Domain](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-23.md).
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
