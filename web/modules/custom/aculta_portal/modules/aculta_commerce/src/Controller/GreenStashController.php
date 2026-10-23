@@ -75,10 +75,10 @@ final class GreenStashController {
               '#tag' => 'h3',
               '#value' => $product->label(),
             ],
-            'edit' => [
-              '#type' => 'link',
-              '#title' => 'Editar produto',
-              '#url' => $product->toUrl('edit-form'),
+            'status' => [
+              '#type' => 'html_tag',
+              '#tag' => 'p',
+              '#value' => 'Edição pelo Green Stash em preparação.',
             ],
           ];
         }
