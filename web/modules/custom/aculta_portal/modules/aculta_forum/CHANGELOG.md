@@ -1,3 +1,18 @@
+## `0.1.0-dev.256` — limpeza de anexos pela API compartilhada (revisões e referências) — 2026-10-23
+
+- Kernel novo cobre a paridade da limpeza: Media embutida apenas em revisão
+  antiga de ForumPost é retida enquanto a revisão existir e liberada quando o
+  post é removido; Media referenciada por outro tipo de conteúdo é retida pelo
+  inspetor compartilhado do Portal; quando o Media órfão é excluído mas o File
+  segue em uso por outro anexo, o arquivo é preservado e não conta como remoção.
+- O teste reaproveita a construção de produção de `ForumAttachmentCleanup` sobre
+  `aculta_portal.unused_media_cleaner`/`unused_file_cleaner`; nenhuma lógica de
+  exclusão foi duplicada no Fórum.
+- Testes: Kernel do arquivo 11/314 e suíte Kernel do Fórum 55/1.253; Unit do
+  Fórum 174/1.008; PHPCS limpo. Concorrência e validação no Runtime seguem
+  pendentes.
+- Sem mudança de configuração, schema, rotas ou Runtime.
+
 ## `0.1.0-dev.255` — download real, índice atrasado, cache e Olivero (F-GROUP 0.7) — 2026-10-23
 
 - Download HTTP do arquivo privado validado: anônimo 403, ativo com membership

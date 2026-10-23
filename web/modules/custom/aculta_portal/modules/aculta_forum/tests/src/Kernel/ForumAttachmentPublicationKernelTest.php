@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_forum\Attachment\ForumGalleryPublication;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
 use Drupal\aculta_image\ImageInspector;
@@ -394,39 +395,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $gallery_draft->save();
     $gallery_comment = $this->commentWithGallery($topic, $gallery_draft->uuid(), CommentInterface::NOT_PUBLISHED);
 
-    $cleanup = new ForumAttachmentCleanup(
-      $this->container->get('entity_type.manager'),
-      $this->container->get('entity_usage.usage'),
-      $this->container->get('database'),
-      $this->container->get('datetime.time'),
-      new UnusedMediaCleaner(
-        new FileReferenceInspector(
-          $this->container->get('entity_type.manager'),
-          $this->container->get('entity_field.manager'),
-          $this->container->get('database'),
-        ),
-        $this->container->get('logger.factory')->get('test'),
-      ),
-      new UnusedFileCleaner(
-        $this->container->get('file.usage'),
-        $this->container->get('database'),
-        new FileReferenceInspector(
-          $this->container->get('entity_type.manager'),
-          $this->container->get('entity_field.manager'),
-          $this->container->get('database'),
-        ),
-        new FileRemover(
-          $this->container->get('file.usage'),
-          $this->container->get('entity_type.manager'),
-          $this->container->get('database'),
-          $this->container->get('file_system'),
-          $this->container->get('logger.factory'),
-        ),
-        new ImageInspector($this->container->get('image.factory')),
-        $this->container->get('logger.factory')->get('test'),
-      ),
-      $this->container->get('config.factory'),
-    );
+    $cleanup = $this->cleanup();
 
     self::assertSame(
       FileReferenceStatus::Clear,
@@ -445,6 +414,105 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     self::assertInstanceOf(CommentInterface::class, $gallery_comment);
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('media')->load($gallery_draft_media->id()));
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($gallery_draft_file->id()));
+  }
+
+  /**
+   * Keeps Media embedded only by a non-default Forum post revision.
+   */
+  public function testCleanupRetainsMediaEmbeddedInForumPostRevision(): void {
+    $old_timestamp = $this->container->get('datetime.time')->getRequestTime() - 3601;
+    $file = $this->createAttachmentFile('revision.pdf');
+    $media = $this->createAttachmentMedia($file, 'revision.pdf', $old_timestamp);
+    $topic = $this->createTopic();
+    $post = ForumPost::create([
+      'uid' => $this->author->id(),
+      'topic' => $topic->id(),
+      'body' => [
+        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $media->uuid()),
+        'format' => 'plain_text',
+      ],
+    ]);
+    $post->save();
+    $post->setNewRevision(TRUE);
+    $post->set('body', ['value' => 'Corpo sem embed.', 'format' => 'plain_text']);
+    $post->save();
+
+    self::assertSame(0, $this->cleanup()->cleanup());
+    $storage = $this->container->get('entity_type.manager');
+    self::assertNotNull($storage->getStorage('media')->load($media->id()));
+    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+
+    // Removing the post also removes the only revision that embedded the Media.
+    $post->delete();
+    self::assertSame(1, $this->cleanup()->cleanup());
+    self::assertNull($storage->getStorage('media')->load($media->id()));
+    self::assertNull($storage->getStorage('file')->load($file->id()));
+  }
+
+  /**
+   * Keeps Media referenced by another content type through the shared API.
+   */
+  public function testCleanupRetainsMediaSharedWithAnotherContentType(): void {
+    $old_timestamp = $this->container->get('datetime.time')->getRequestTime() - 3601;
+    $file = $this->createAttachmentFile('shared.pdf');
+    $media = $this->createAttachmentMedia($file, 'shared.pdf', $old_timestamp);
+    NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'body',
+      'type' => 'text_with_summary',
+      'settings' => [],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'field_name' => 'body',
+      'label' => 'Body',
+    ])->save();
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    Node::create([
+      'type' => 'article',
+      'title' => 'Shared reference',
+      'status' => 1,
+      'uid' => $this->author->id(),
+      'body' => [
+        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $media->uuid()),
+        'format' => 'plain_text',
+      ],
+    ])->save();
+
+    // The Portal inspector must find the embed in another content type before
+    // the shared cleaner removes the Forum candidate.
+    self::assertSame(
+      FileReferenceStatus::Referenced,
+      (new FileReferenceInspector(
+        $this->container->get('entity_type.manager'),
+        $this->container->get('entity_field.manager'),
+        $this->container->get('database'),
+      ))->inspect($media),
+    );
+    self::assertSame(0, $this->cleanup()->cleanup());
+    $storage = $this->container->get('entity_type.manager');
+    self::assertNotNull($storage->getStorage('media')->load($media->id()));
+    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+  }
+
+  /**
+   * Removes the orphan Media but keeps a File used by another attachment.
+   */
+  public function testCleanupKeepsFileSharedWithAnotherAttachment(): void {
+    $old_timestamp = $this->container->get('datetime.time')->getRequestTime() - 3601;
+    $file = $this->createAttachmentFile('partial.pdf');
+    $orphan = $this->createAttachmentMedia($file, 'partial.pdf', $old_timestamp);
+    $shared = $this->createAttachmentMedia($file, 'partial.pdf', $old_timestamp);
+    $shared->setPublished();
+    $shared->save();
+
+    self::assertSame(0, $this->cleanup()->cleanup());
+    $storage = $this->container->get('entity_type.manager');
+    self::assertNull($storage->getStorage('media')->load($orphan->id()));
+    self::assertNotNull($storage->getStorage('media')->load($shared->id()));
+    self::assertNotNull($storage->getStorage('file')->load($file->id()));
   }
 
   /**
@@ -651,6 +719,42 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     return $topic;
+  }
+
+  /**
+   * Builds the production cleanup over the shared Portal Media/File APIs.
+   */
+  private function cleanup(): ForumAttachmentCleanup {
+    $inspector = new FileReferenceInspector(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('entity_field.manager'),
+      $this->container->get('database'),
+    );
+    return new ForumAttachmentCleanup(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('entity_usage.usage'),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      new UnusedMediaCleaner(
+        $inspector,
+        $this->container->get('logger.factory')->get('test'),
+      ),
+      new UnusedFileCleaner(
+        $this->container->get('file.usage'),
+        $this->container->get('database'),
+        $inspector,
+        new FileRemover(
+          $this->container->get('file.usage'),
+          $this->container->get('entity_type.manager'),
+          $this->container->get('database'),
+          $this->container->get('file_system'),
+          $this->container->get('logger.factory'),
+        ),
+        new ImageInspector($this->container->get('image.factory')),
+        $this->container->get('logger.factory')->get('test'),
+      ),
+      $this->container->get('config.factory'),
+    );
   }
 
   /**

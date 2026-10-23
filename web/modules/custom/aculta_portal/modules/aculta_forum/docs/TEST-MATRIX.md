@@ -1,3 +1,18 @@
+## Limpeza de anexos pela API compartilhada — revisões e referências, 2026-10-23
+
+- `ForumAttachmentPublicationKernelTest` (11 testes / 314 asserções, MariaDB):
+  Media embutida só na revisão antiga de ForumPost fica retida enquanto a
+  revisão existir e é removida com o post; Media embutida em outro tipo de
+  conteúdo é retida pelo `FileReferenceInspector` compartilhado; Media órfão
+  excluído com File ainda usado por outro anexo preserva o arquivo e não
+  incrementa a contagem.
+- A construção usa `ForumAttachmentCleanup` de produção sobre
+  `UnusedMediaCleaner`/`UnusedFileCleaner`; nenhuma regra de exclusão foi
+  duplicada.
+- Suíte Kernel do Fórum 55/1.253; Unit 174/1.008; PHPCS limpo. Concorrência,
+  falha durante a exclusão do Media e validação no Runtime permanecem
+  pendentes.
+
 ## F-GROUP 0.7 — download, índice atrasado, cache e Olivero, 2026-10-23
 
 - Download HTTP do arquivo privado: anônimo 403, ativo com membership 200
