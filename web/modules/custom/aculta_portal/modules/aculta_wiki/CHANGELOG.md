@@ -11,7 +11,9 @@
 - O formulário só substitui o handler de salvamento quando encontra o handler
   nativo do formulário de entidade, evitando transações sem callback de commit.
 - Testes Unit e Kernel de MariaDB cobrem visibilidade de Media/arquivo em
-  rascunho e publicação e rollback em falha; resultados ficam na matriz.
+  rascunho e publicação, rollback em falha e remoção preservando a referência
+  histórica (Kernel atualizado: 4 testes / 92 assertions); resultados ficam na
+  matriz.
 - Sem mudança no provider do Content Index ou em sua projeção v3. Nenhuma
   configuração foi importada e Runtime não foi alterado.
 

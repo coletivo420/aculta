@@ -198,6 +198,51 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Removing an image preserves it while an older Node revision references it.
+   */
+  public function testRemovingImagePreservesMediaReferencedByOlderRevision(): void {
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage($owner->id());
+    $state = $this->uploadState((int) $file->id());
+    $form = [];
+    $uploader = $this->uploader();
+    $uploader->applyUpload($form, $state);
+
+    $mediaId = (int) $state->getValue([WikiLeadImageUploader::FIELD, 0, 'target_id']);
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Imagem preservada no histórico',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $mediaId],
+    ]);
+    $formObject = $this->entityForm($node, static fn () => $node->save());
+    $state->setFormObject($formObject);
+    $uploader->prepareNodeSave($form, $state);
+    $uploader->saveNode($form, $state);
+    $oldRevisionId = (int) $node->getRevisionId();
+
+    $removalState = new FormState();
+    $removalState->setValues([WikiLeadImageUploader::TAB => [WikiLeadImageUploader::REMOVE => TRUE]]);
+    $uploader->applyUpload($form, $removalState);
+    $node->setNewRevision(TRUE);
+    $node->set(WikiLeadImageUploader::FIELD, $removalState->getValue([WikiLeadImageUploader::FIELD]));
+    $node->save();
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $oldRevision = $storage->loadRevision($oldRevisionId);
+    $currentNode = $storage->load($node->id());
+    self::assertSame($mediaId, (int) $oldRevision->get(WikiLeadImageUploader::FIELD)->target_id);
+    self::assertTrue($currentNode->get(WikiLeadImageUploader::FIELD)->isEmpty());
+
+    $media = Media::load($mediaId);
+    self::assertInstanceOf(Media::class, $media);
+    self::assertTrue($media->isPublished());
+    self::assertTrue($file->access('download', new AnonymousUserSession()));
+    self::assertFileExists($file->getFileUri());
+  }
+
+  /**
    * Publication states covered by the image visibility test.
    *
    * @return array<string, array{0: bool}>

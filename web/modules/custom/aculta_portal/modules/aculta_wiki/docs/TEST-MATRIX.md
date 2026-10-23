@@ -50,7 +50,8 @@ depois da importação de configuração no servidor de testes.
 | Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |
 | Visibilidade da Media e do arquivo segue estado do verbete | Kernel | rascunho permanece privado; verbete publicado permite acesso | aprovado (2 casos de dados MariaDB) |
 | Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
-| Referência a Media em revisão antiga e remoção/reuso | Kernel | preservar arquivo enquanto revisão ou outro uso referencia a Media | pendente |
+| Remoção em nova revisão com referência antiga | Kernel | revisão antiga mantém a Media; arquivo continua presente e acessível | aprovado (1 teste / 24 assertions em MariaDB) |
+| Reuso da Media em outro conteúdo e limpeza global de referências | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | pendente; depende do contrato transversal do Portal |
 | Falha de validação antes de submit | Kernel | sem Media órfã nem File permanente | pendente |
 
 ## Fase 2 — componentes movidos

@@ -56,9 +56,10 @@ Kernel/Runtime ainda são gates separados.
 O arquivo de destaque fica em armazenamento privado. O upload prepara Media e
 File dentro de transação até o salvamento do Node; a Media acompanha o estado
 publicado da revisão submetida. Rebuild ou falha do salvamento reverte o lote.
-O teste Kernel cobre rascunho, publicação e rollback de falha. Revisões antigas,
-remoção/reuso de Media e limpeza segura de arquivos continuam no gate de
-homologação; a ativação da Wiki no Runtime permanece separada.
+O teste Kernel cobre rascunho, publicação e rollback de falha. Uma revisão nova
+sem imagem preserva o arquivo quando a revisão antiga ainda referencia a Media.
+Reuso entre entidades e limpeza global de referências continuam no contrato
+transversal do Portal; a ativação da Wiki no Runtime permanece separada.
 
 ## Fase 3 — Documentação obrigatória da mudança de escopo
 

@@ -12,6 +12,8 @@ pendentes, está em
   quando a revisão submetida do verbete está publicada. O incremento dev.11
   mantém cache da busca por grants e o CTA usa acesso real de criação. O
   provider opcional do Content Index permanece na versão de projeção 3.
+- Kernel MariaDB também cobre a remoção da imagem na revisão atual: a Media e o
+  arquivo são preservados enquanto uma revisão antiga do verbete os referencia.
 - O módulo permanece desabilitado no Runtime de teste; a configuração
   exportada e o Runtime não são equivalentes.
 - O módulo **não está habilitado** e não altera o Runtime.
