@@ -1,6 +1,6 @@
 # ACULTA Commerce — 0.1.0-dev.1
 
-Submódulo inicial de integração comercial da **loja**. Estado: fundação documental e manifesto, **sem serviços operacionais próprios ativos**. Não habilitar em produção antes da homologação da fase 0.1.0.
+Submódulo inicial de integração comercial da **loja**. A orquestração **multi-carrinho e multi-checkout** pertence ao `aculta_portal`, conforme ADR-013. Estado: fundação documental e manifesto, **sem serviços operacionais próprios ativos**. Não habilitar em produção antes da homologação da fase 0.1.0.
 
 ## Fronteiras imutáveis
 
@@ -24,3 +24,7 @@ Documentos:
 ## Gate de habilitação no servidor de testes
 
 Validar compatibilidade das dependências do manifesto com os módulos instalados, `drush pm:list`, `drush en aculta_commerce -y` apenas no runtime isolado, `drush cr`, `drush updatedb:status` e `php scripts/validate-module-theme-boundary.php`. Não ativar nem instalar automaticamente nesta fase.
+
+## Integração com a carteira/carrinhos do Portal
+
+`aculta_commerce` fornece o contexto **Loja** ao gerenciador transversal do Portal; o Portal administra as abas **Comum | Loja | LMS | Doações**, seleciona modalidade de checkout por carrinho/pedido e preserva o checkout específico de cada módulo. A aba Comum não significa fusão física de pedidos. O Green Stash permanece a experiência Studio de administração da loja. Ver [roadmap](docs/ROADMAP.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Integração ainda **não implementada**.
