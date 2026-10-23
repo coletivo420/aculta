@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 final class CartCheckoutController extends ControllerBase {
 
   public function __construct(
+    #[Autowire(service: 'aculta_portal.cart_consolidator')]
     private readonly CartConsolidator $consolidator,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $purposes,
