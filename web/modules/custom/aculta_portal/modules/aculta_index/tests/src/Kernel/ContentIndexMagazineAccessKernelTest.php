@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\domain\Entity\Domain;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -52,18 +53,23 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
       new Reference('request_stack'),
     ]))->setPublic(TRUE));
 
-    // Load the exact owner service declaration without enabling Magazine's
-    // full dependency chain in this access-focused Kernel harness.
-    $serviceMap = Yaml::parseFile(
-      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_magazine/aculta_magazine.services.yml',
-      Yaml::PARSE_CUSTOM_TAGS,
-    )['services'];
-    $service = $serviceMap['aculta_magazine.content_index_provider'];
-    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
-    foreach ($service['tags'] as $tag) {
-      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    // Compile exact owner declarations while keeping their full dependency
+    // chains out of this access-focused Kernel harness.
+    foreach ([
+      'aculta_magazine' => 'aculta_magazine.content_index_provider',
+      'aculta_activity' => 'aculta_activity.content_index_provider',
+    ] as $owner => $serviceId) {
+      $serviceMap = Yaml::parseFile(
+        DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/' . $owner . '/' . $owner . '.services.yml',
+        Yaml::PARSE_CUSTOM_TAGS,
+      )['services'];
+      $service = $serviceMap[$serviceId];
+      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      foreach ($service['tags'] as $tag) {
+        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      }
+      $container->setDefinition($serviceId, $definition);
     }
-    $container->setDefinition('aculta_magazine.content_index_provider', $definition);
   }
 
   /**
@@ -87,7 +93,9 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     $this->installConfig(['system', 'user', 'node', 'domain']);
     aculta_index_install();
     NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
+    NodeType::create(['type' => 'activity', 'name' => 'Activity'])->save();
     $this->installDomainField();
+    $this->installRelatedActivityField();
     $this->createDomains();
 
     $authenticated = Role::load('authenticated');
@@ -163,6 +171,84 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Queries Magazine's explicit Activity relation across canonical purposes.
+   */
+  public function testOutgoingActivityRelationRechecksBothCanonicalPurposes(): void {
+    User::create(['name' => 'magazine-relation-root-fixture', 'status' => TRUE])->save();
+    $reader = User::create([
+      'name' => 'magazine-relation-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+    $activity = Node::create([
+      'type' => 'activity',
+      'title' => 'Public activity',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+    ]);
+    $activity->save();
+    $publication = Node::create([
+      'type' => 'revista',
+      'title' => 'Magazine item with activity',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'revista420_aculta_org'],
+      'field_related_activity' => [['target_id' => $activity->id()]],
+    ]);
+    $publication->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'Magazine and Activity providers should backfill the generation.');
+    $this->processIndexWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $providers = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('magazine', $providers->findProviderIdForBundle('node', 'revista'));
+    self::assertSame('activity', $providers->findProviderIdForBundle('node', 'activity'));
+    $negotiator = $this->container->get('domain.negotiator');
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain(Domain::load('aculta_org'));
+    $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
+      'node',
+      (string) $publication->id(),
+      $publication->language()->getId(),
+      'related_activity',
+      $reader,
+    );
+
+    self::assertSame([(string) $activity->id()], array_map(
+      static fn (Node $entity): string => (string) $entity->id(),
+      $result->entities,
+    ));
+    self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+    self::assertSame(0, $result->cacheability->getCacheMaxAge());
+  }
+
+  /**
+   * Processes queued work through the production Content Index worker.
+   */
+  private function processIndexWork(): void {
+    $database = $this->container->get('database');
+    $workIds = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('status', 'queued')
+      ->execute()
+      ->fetchCol();
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    foreach ($workIds as $workId) {
+      $worker->processItem(['work_id' => (int) $workId]);
+    }
+  }
+
+  /**
    * Installs the Revista Domain reference used by the production projection.
    */
   private function installDomainField(): void {
@@ -180,6 +266,28 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
       'settings' => [
         'handler' => 'default:domain',
         'handler_settings' => [],
+      ],
+    ])->save();
+  }
+
+  /**
+   * Installs the explicit Magazine-to-Activity reference field.
+   */
+  private function installRelatedActivityField(): void {
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_related_activity',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'node'],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'revista',
+      'field_name' => 'field_related_activity',
+      'label' => 'Related activity',
+      'settings' => [
+        'handler' => 'default:node',
+        'handler_settings' => ['target_bundles' => ['activity' => 'activity']],
       ],
     ])->save();
   }

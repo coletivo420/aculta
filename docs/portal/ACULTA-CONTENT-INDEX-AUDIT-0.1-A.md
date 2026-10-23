@@ -124,3 +124,8 @@ Riscos em aberto: revogação de acesso por grants/Group/domain nem sempre corre
 - Compatibilidade efetiva de Advanced Queue `8.x-1.7` e demais referências com a instalação Composer ativa: não é assumida pelo clone upstream.
 - Métricas de desempenho em qualquer volume: não medidas.
 - Alterações locais de outras frentes foram preservadas. O worktree já continha alterações de config/Magazine e arquivos não rastreados `node_modules/`, `package.json`, `package-lock.json` antes desta auditoria.
+
+
+## Evidência complementar — consulta de relação Magazine→Activity (2026-10-23)
+
+O Kernel de acesso do Index foi ampliado para compilar os providers Magazine e Activity dos YAMLs owner, reconstruir uma geração e consultar `related_activity` pela API outgoing. A publicação é autorizada no purpose `magazine`; a atividade é revalidada em `main`; o Domain original é restaurado. MariaDB dedicado: 2 testes / 31 assertions PASS, com 5 depreciações upstream. O harness não ativa as cadeias DI completas dos owners nem verifica grants específicos além do Entity Access padrão.

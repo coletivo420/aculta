@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.115 — consultar relações Revista→Activity com acesso por Domain
+
+- O Kernel de acesso compila os providers Magazine e Activity pelas declarações
+  YAML reais, reconstrói uma geração e consulta `related_activity` pela API
+  outgoing do Index.
+- A consulta autoriza a publicação no purpose `magazine`, a atividade no
+  purpose `main`, retorna a atividade publicada e restaura o Domain inicial.
+- MariaDB dedicado: `ContentIndexMagazineAccessKernelTest`, 2 testes / 31
+  assertions PASS, com 5 depreciações upstream. O harness não habilita os
+  módulos owner completos nem valida grants específicos fora do Entity Access.
+
 ## 0.1.0-dev.114 — contenção entre conexões MariaDB
 
 - Kernel usa duas sessões físicas com o mesmo prefixo isolado de teste e um
