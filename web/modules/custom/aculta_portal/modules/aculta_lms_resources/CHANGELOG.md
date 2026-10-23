@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.10 — confirmar policy LMS em SQLite
+
+- Repetido `LmsCourseContentIndexAccessKernelTest` em SQLite: 1 teste / 33
+  assertions PASS, com 47 depreciações upstream. A cobertura já existente
+  verifica Entity Access do Group, estudante por `takeAccess()`, educador por
+  permissão contextual, terceiro negado e troca/restauração do Domain.
+- Essa cobertura não executa a consulta outgoing de relações do Index nem
+  habilita o módulo owner completo.
+
 ## 0.1.0-dev.9 — regressão Unit/Kernel da integração Index
 
 - Suíte Unit completa: 12 testes / 57 assertions PASS, incluindo o contrato de

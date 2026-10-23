@@ -34,12 +34,12 @@ deve preservar documentos ligados a outras turmas ou conteúdos e respeitar a
 relação Group atual. Não excluir arquivos diretamente; ver
 [política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
-Dev 0.1.0-dev.9. O provider tem cobertura Unit e Kernel com Group real:
+Dev 0.1.0-dev.10. O provider tem cobertura Unit e Kernel com Group real:
 estudante por `takeAccess()`, educador por `grade students`, terceiro negado.
 O Kernel passa pelo `ContentIndexAccessFilter`, combina Group Entity Access com
 policy LMS e verifica troca/restauração do purpose `courses` com Domains
-persistidos e negotiator real: 1 teste / 33 assertions PASS em MariaDB, com 47
-depreciações de Core/contrib. Unit lê e compila o YAML/tag owner (1/4); o módulo
+persistidos e negotiator real: 1 teste / 33 assertions PASS em MariaDB e em
+SQLite, com 47 depreciações de Core/contrib por execução. Unit lê e compila o YAML/tag owner (1/4); o módulo
 e sua cadeia completa ainda não foram inicializados no Kernel. A descoberta
 do provider pela tag/DI do módulo, instalação e smoke autenticado no Runtime e
 revisão visual continuam pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.100 — registrar policy LMS já coberta pelo filtro
+
+- `LmsCourseContentIndexAccessKernelTest` confirmado em SQLite: 1 teste / 33
+  assertions, 47 depreciações upstream. Já cobre `ContentIndexAccessFilter`,
+  Group Entity Access, policy de estudante/educador, negação de terceiro e
+  troca/restauração do Domain.
+- A lacuna LMS restante é consulta outgoing de relações e recursos do curso
+  end-to-end; o boot/DI owner completo também continua pendente.
+
 ## 0.1.0-dev.99 — registrar provider Wiki pelo YAML owner
 
 - O Kernel de acesso e relação Wiki lê e registra a declaração/tag diretamente
