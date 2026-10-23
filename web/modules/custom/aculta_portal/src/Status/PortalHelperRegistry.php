@@ -249,6 +249,9 @@ final class PortalHelperRegistry {
       'summary' => 'Verifica configuração, credencial e disponibilidade do desafio anti-bot.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
+    'aculta_portal.checkout_configuration_resolver' => ['label' => 'Resolução da configuração de checkout', 'summary' => 'Lê a configuração administrativa de cada contexto de checkout (Loja, LMS, Doações).', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
+    'aculta_portal.checkout_context_registry' => ['label' => 'Registro de contextos de checkout', 'summary' => 'Reúne os providers de contexto de checkout por tag, sem dependência circular.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
+    'aculta_portal.checkout_policy_manager' => ['label' => 'Política de checkout', 'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
   ];
 
   /**

@@ -33,6 +33,7 @@ final class PortalImplementationRegistry {
     'aculta_portal.social_auth_user_created_subscriber' => ['label' => 'Criação de conta Social Auth', 'summary' => 'Aplica políticas do Portal a contas criadas por autenticação social.', 'docs' => 'docs/portal/GUARDRAILS.md'],
     'aculta_portal.social_auth_profile_subscriber' => ['label' => 'Perfil Social Auth', 'summary' => 'Integra dados de perfil do provedor ao perfil Drupal conforme política local.', 'docs' => 'docs/portal/GUARDRAILS.md'],
     'aculta_portal.uploaded_filename_extension_subscriber' => ['label' => 'Normalização da extensão de uploads', 'summary' => 'Padroniza a extensão em minúsculas após a sanitização nativa do Drupal.', 'docs' => 'web/modules/custom/aculta_portal/README.md'],
+    'aculta_portal.commerce_checkout_route_subscriber' => ['label' => 'Rotas globais de checkout', 'summary' => 'Fecha as rotas globais do Commerce quando o checkout comum está desligado, conforme a ADR-013.', 'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md'],
   ];
 
   /** @param string[] $activeImplementationIds Active IDs supplied by Drupal's service container. */

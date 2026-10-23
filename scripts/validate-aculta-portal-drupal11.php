@@ -196,9 +196,10 @@ $check(
 // 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
 // 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
 // 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
+// ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber (rotas globais do Commerce), so the Portal registers fourteen.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 13,
-  'Portal must register exactly thirteen canonical event_subscriber tags (CEP rate limiter in aculta_portal_cep; refund eligibility subscriber for Mercado Pago).',
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 14,
+  'Portal must register exactly fourteen canonical event_subscriber tags (CEP rate limiter in aculta_portal_cep; refund eligibility subscriber for Mercado Pago).',
 );
 
 $legacyProceduralFunctions = [];
@@ -708,7 +709,8 @@ $check(
 
 // P5.2-B/P5.3/P5.4-E: Wiki uses injected Views factory, node storage queries
 // with explicit access checks, and keeps the WIKI Domain/status filters.
-$wikiSource = $read($srcRoot . '/Controller/WikiController.php');
+// O controller de Wiki foi movido para o submódulo aculta_wiki (commit 8208243b).
+$wikiSource = $read($moduleRoot . '/modules/aculta_wiki/src/Controller/WikiController.php');
 $check(
   !str_contains($wikiSource, 'Views::')
     && !str_contains($wikiSource, '\\Drupal::')
