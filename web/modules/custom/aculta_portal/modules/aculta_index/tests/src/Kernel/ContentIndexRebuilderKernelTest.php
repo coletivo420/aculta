@@ -356,6 +356,28 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Exposes bounded cleanup of superseded rollback generations to Drush.
+   */
+  public function testDrushCleanupCommandDiscardsSupersededGeneration(): void {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generations = $this->container->get('aculta_index.generation_manager');
+    $first = $this->buildAndActivateGeneration($rebuilder, $generations);
+    $this->buildAndActivateGeneration($rebuilder, $generations);
+    $this->buildAndActivateGeneration($rebuilder, $generations);
+    self::assertSame('discarding', $this->generationStatus($first));
+
+    $command = ContentIndexRebuildCommand::create($this->container);
+    $output = new BufferedOutput();
+    self::assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'cleanup',
+      '--limit' => 1,
+    ]), $output));
+    self::assertStringContainsString('"generation_id":"' . $first . '"', $output->fetch());
+    self::assertSame('', $this->generationStatus($first));
+    self::assertNotNull($generations->getActiveGeneration());
+  }
+
+  /**
    * Lists dead letters and retries one through the operator command.
    */
   public function testQueueCommandListsAndRetriesDeadLetter(): void {

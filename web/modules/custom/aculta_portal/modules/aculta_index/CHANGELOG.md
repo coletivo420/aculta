@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.111 — limitar rollback à geração anterior
+
+- A ativação conserva somente a geração que estava ativa imediatamente antes;
+  gerações retidas mais antigas passam a `discarding` dentro da transação do
+  ponteiro e deixam de receber eventos incrementais.
+- Cron e `drush aculta-index:rebuild cleanup --limit=500` removem relações,
+  entradas e cursors em lotes limitados. O cleanup não altera entidades fonte.
+- Kernel Schema: 43 testes / 468 assertions passaram em SQLite. O teste focal
+  da transição e expurgo passou; a saída da suíte Rebuilder/PHPCS/lint não foi
+  recuperável após o processo do shell terminar.
+
+
 ## 0.1.0-dev.110 — sincronizar gerações retidas para rollback
 
 - Workers incrementais agora atualizam todas as gerações `retained`, além das

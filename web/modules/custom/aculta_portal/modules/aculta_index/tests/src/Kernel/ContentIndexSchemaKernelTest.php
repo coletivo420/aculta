@@ -469,6 +469,61 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Keeps one rollback target and cleans older generations in batches.
+   */
+  public function testPromotionDiscardsOlderRollbackGeneration(): void {
+    $manager = $this->container->get('aculta_index.generation_manager');
+    $first = $manager->start();
+    $manager->markBackfillCompleted($first, 0);
+    $manager->markValidated($first);
+    $manager->activate($first);
+
+    $second = $manager->start();
+    $manager->markBackfillCompleted($second, 0);
+    $manager->markValidated($second);
+    $manager->activate($second);
+
+    $third = $manager->start();
+    $manager->markBackfillCompleted($third, 0);
+    $manager->markValidated($third);
+    $manager->activate($third);
+
+    $this->assertSame('discarding', $this->generationStatus($first));
+    $this->assertSame('retained', $this->generationStatus($second));
+    $this->assertSame('active', $this->generationStatus($third));
+    $this->insertEntry($first, 'node', 'old-generation-entry', 'pt-br');
+    $this->container->get('database')->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => $first,
+        'provider_id' => 'fixture',
+        'source_entity_type' => 'node',
+        'source_entity_id' => 'old-generation-entry',
+        'source_langcode' => 'pt-br',
+        'relation_type' => 'related_entry',
+        'target_entity_type' => 'node',
+        'target_entity_id' => 'old-generation-target',
+        'target_langcode' => 'pt-br',
+        'relation_hash' => hash('sha256', 'old-generation-relation'),
+        'updated' => 1,
+      ])
+      ->execute();
+
+    $firstBatch = $manager->discardPendingBatch(1);
+    $this->assertSame($first, $firstBatch['generation_id']);
+    $this->assertSame(1, $firstBatch['entries_removed']);
+    $this->assertSame(1, $firstBatch['relations_removed']);
+    $this->assertTrue($firstBatch['complete']);
+    $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_generation')
+      ->condition('generation_id', $first)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    $this->assertSame($third, $manager->getActiveGeneration());
+    $this->assertSame('retained', $this->generationStatus($second));
+    $this->assertNull($manager->discardPendingBatch()['generation_id']);
+  }
+
+  /**
    * Tests a checkpoint resumes from the committed cursor and rejects races.
    */
   public function testCheckpointAdvancesWithCompareAndSwap(): void {

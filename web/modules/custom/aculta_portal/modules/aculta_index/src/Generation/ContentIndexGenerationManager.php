@@ -30,6 +30,7 @@ final class ContentIndexGenerationManager {
    * Starts a rebuild generation and returns its opaque ID.
    */
   public function start(?string $providerFingerprint = NULL): string {
+    $providerFingerprint ??= $this->providers->fingerprint();
     if ($providerFingerprint !== NULL && preg_match('/^[a-f0-9]{64}$/', $providerFingerprint) !== 1) {
       throw new \InvalidArgumentException('Provider inventory fingerprint must be a SHA-256 hex digest.');
     }
@@ -140,6 +141,14 @@ final class ContentIndexGenerationManager {
       }
 
       $now = $this->time->getRequestTime();
+      // Keep only the generation that was active immediately before this
+      // switch. Older rollback targets become non-writable and are removed by
+      // the bounded cleanup worker after the pointer transaction commits.
+      $this->database->update('aculta_index_generation')
+        ->fields(['status' => 'discarding', 'updated' => $now])
+        ->condition('status', 'retained')
+        ->condition('generation_id', $generationId, '<>')
+        ->execute();
       if ($state['active_generation'] !== '') {
         $retained = $this->database->update('aculta_index_generation')
           ->fields(['status' => 'retained', 'updated' => $now])
@@ -326,6 +335,35 @@ final class ContentIndexGenerationManager {
       $transaction->rollBack();
       throw $exception;
     }
+  }
+
+  /**
+   * Cleans one batch from the oldest generation marked for discard.
+   *
+   * @return array{generation_id: string|null, relations_removed: int, entries_removed: int, complete: bool}
+   *   Cleanup progress. An empty generation ID means no cleanup is pending.
+   */
+  public function discardPendingBatch(int $limit = 500): array {
+    if ($limit < 1 || $limit > 5000) {
+      throw new \InvalidArgumentException('Generation cleanup limit must be between 1 and 5000.');
+    }
+    $generationId = $this->database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['generation_id'])
+      ->condition('status', 'discarding')
+      ->orderBy('created')
+      ->range(0, 1)
+      ->execute()
+      ->fetchField();
+    if ($generationId === FALSE) {
+      return [
+        'generation_id' => NULL,
+        'relations_removed' => 0,
+        'entries_removed' => 0,
+        'complete' => TRUE,
+      ];
+    }
+
+    return ['generation_id' => (string) $generationId] + $this->discardBatch((string) $generationId, $limit);
   }
 
   /**

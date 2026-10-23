@@ -39,6 +39,7 @@ function aculta_index_cron(): void {
   \Drupal::service('aculta_index.work_manager')->recover();
   \Drupal::service('aculta_index.cursor_manager')->prune();
   \Drupal::service('aculta_index.integrity_checker')->runScheduledAuditBatch();
+  \Drupal::service('aculta_index.generation_manager')->discardPendingBatch(500);
 }
 
 /**
