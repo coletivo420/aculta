@@ -63,15 +63,56 @@ são estimativas alocadas do InnoDB após `ANALYZE TABLE`, não tamanho lógico 
 Amostras brutas baseline/alternativa estão em
 [CSV comparativo](aculta-index-alternative-2026-10-22.csv).
 
+### Segunda composição de índice
+
+Após a primeira comparação, foi medida outra composição temporária:
+`(generation_id, entity_type, bundle, domain_id, published, entry_id)`. O índice
+anterior `(generation_id, domain_id, published, entry_id)` foi repetido como
+controle. Cada variante foi criada e removida nas tabelas temporárias do Kernel;
+nenhuma delas altera o schema do módulo.
+
+| Entradas | Composição | p50 frio / aquecido (ms) | plano (runs) | espaço adicional mediano | criação mediana | writer baseline / variante (linhas/s) |
+|---:|---|---:|---|---:|---:|---:|
+| 10.000 | domínio/status | 4,350 / 3,041 | índice (3/3) | 1,59 MB | 51 ms | 523 / 518 |
+| 10.000 | tipo/bundle/domínio/status | 5,747 / 6,585 | índice (3/3) | 1,59 MB | 62 ms | 528 / 522 |
+| 100.000 | domínio/status | 5,066 / 3,098 | `PRIMARY` (3/3) | 6,86 MB | 516 ms | 401 / 393 |
+| 100.000 | tipo/bundle/domínio/status | 4,850 / 3,344 | `PRIMARY` (3/3) | 7,91 MB | 477 ms | 474 / 490 |
+| 1.000.000 | domínio/status | 9,394 / 2,927 | `PRIMARY` (3/3) | 59,47 MB | 5,75 s | 353 / 493 |
+| 1.000.000 | tipo/bundle/domínio/status | 5,883 / 4,477 | `PRIMARY` (3/3) | 72,12 MB | 6,89 s | 502 / 457 |
+
+O otimizador selecionou cada índice alternativo somente em 10k. Nessa escala,
+a composição com `entity_type` e `bundle` teve p50 pior, e a amostra do writer
+ficou praticamente empatada. Em 100k e 1M, ambas as alternativas mantiveram
+`PRIMARY`; a composição mais larga alocou cerca de 12,65 MB a mais em 1M que a
+composição anterior. A variação entre runs do writer e das latências é alta e
+não demonstra vantagem consistente. A decisão permanece manter o schema atual
+e reavaliar com telemetria de consultas reais.
+
+### Entity Access real
+
+O harness também mediu páginas com 25 candidatos correspondentes a entidades
+Media reais: 12 publicadas e visíveis pelo papel de teste, 13 não publicadas e
+negadas. Foram feitas 30 consultas frias e 30 aquecidas por escala; medianas
+cold p50 foram 9,805 / 8,785 / 9,456 ms e warm p50 6,799 / 7,105 / 7,349 ms
+para 10k / 100k / 1M. Cada consulta revalidou acesso e carregou no máximo 25
+entidades. Isso confirma o caminho de autorização no fixture Media, mas não
+representa grants de Group/LMS, domínio, revisão, outros bundles nem volume
+operacional; esses cenários seguem pendentes para homologação.
+
+Os resultados brutos das duas composições e das consultas com autorização estão
+em [CSV de composições](aculta-index-alternative-compositions-2026-10-22.csv).
+
 ## Escopo ainda não medido
 
 - Writer incremental e operações idempotentes via `ContentIndexWriter`.
 - Backfill/rebuild e catch-up de deltas com entidades Drupal de origem.
 - Reconciliação por providers reais, memória/throughput de worker e fila.
-- Entity Access com mistura realista de entidades permitidas/negadas e grants de módulos.
+- Entity Access em providers/grants reais de domínio, Group/LMS e outros bundles.
 - Medição de consultas SQL por request e benchmarks de páginas intermediárias/keysets profundos.
 
-Portanto, este resultado qualifica apenas a gravação do fixture, candidate query/cache com IDs fonte ausentes e edge reads. A homologação IDX 0.1-R permanece pendente.
+Portanto, este resultado qualifica a gravação do fixture, candidate query/cache,
+edge reads e um fixture limitado de Entity Access em Media. A homologação
+IDX 0.1-R permanece pendente.
 
 ## Arquivos brutos
 

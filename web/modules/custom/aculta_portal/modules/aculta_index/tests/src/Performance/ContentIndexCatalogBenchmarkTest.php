@@ -7,10 +7,16 @@ namespace Drupal\Tests\aculta_index\Performance;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_index\Cache\ContentIndexCandidateCache;
+use Drupal\aculta_index\Query\ContentIndexQueryInterface;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -28,6 +34,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
 
   use UserCreationTrait;
+  use MediaTypeCreationTrait;
+
+  /**
+   * File entity referenced by the real Media access fixtures.
+   */
+  private string $benchmarkImageFileId;
 
   /**
    * {@inheritdoc}
@@ -73,7 +85,14 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
-    $this->installConfig(['user', 'system']);
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installConfig(['user', 'system', 'image', 'file', 'media', 'entity_usage']);
+    $this->createMediaType('image', ['id' => 'image']);
+    $file = File::create(['uri' => 'public://aculta-index-benchmark.png']);
+    $file->setPermanent();
+    $file->save();
+    $this->benchmarkImageFileId = (string) $file->id();
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -96,7 +115,7 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       self::markTestSkipped('Set ACULTA_INDEX_BENCHMARK=1 to run the 10k/100k/1M catalog benchmark.');
     }
 
-    $account = $this->setUpCurrentUser([], ['access content']);
+    $account = $this->setUpCurrentUser([], ['view media']);
     $database = $this->container->get('database');
     $query = $this->container->get('aculta_index.query');
     $sizes = [10_000, 100_000, 1_000_000];
@@ -196,59 +215,40 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       sort($warmMilliseconds, SORT_NUMERIC);
       sort($coldMilliseconds, SORT_NUMERIC);
 
-      // Compare one plausible filter-first index without changing the module
-      // schema. The Kernel table is test-prefixed and discarded after the run.
-      $schema = $database->schema();
-      $baselineWriter = $this->measureWriterSample(250);
-      $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
-      $baselineEntryBytes = $this->tableStorageBytes('aculta_index_entry');
-      $indexBuildStarted = hrtime(TRUE);
-      $schema->addIndex(
-        'aculta_index_entry',
-        'benchmark_filter_entry',
-        ['generation_id', 'domain_id', 'published', 'entry_id'],
-        aculta_index_schema()['aculta_index_entry'],
+      // Compare two plausible indexes without changing the module schema. The
+      // Kernel table is test-prefixed and each index is dropped after its run.
+      $alternativeIndexes = [];
+      foreach ([
+        'benchmark_filter_entry' => ['generation_id', 'domain_id', 'published', 'entry_id'],
+        'benchmark_type_bundle_domain' => [
+          'generation_id',
+          'entity_type',
+          'bundle',
+          'domain_id',
+          'published',
+          'entry_id',
+        ],
+      ] as $indexName => $indexFields) {
+        $alternativeIndexes[] = $this->measureIndexVariant(
+          $indexName,
+          $indexFields,
+          $generationId,
+          $filters,
+          $account,
+          $query,
+          $candidateCache,
+          $candidateSamples,
+        );
+      }
+
+      $realAccessResults = $this->measureRealEntityAccessQueries(
+        $generationId,
+        $size,
+        $account,
+        $query,
+        $candidateCache,
+        $candidateSamples,
       );
-      $indexBuildMilliseconds = (hrtime(TRUE) - $indexBuildStarted) / 1_000_000;
-      $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
-      $alternativeEntryBytes = $this->tableStorageBytes('aculta_index_entry');
-      $alternativeWriter = $this->measureWriterSample(250);
-      $alternativeColdMilliseconds = [];
-      for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
-        $candidateCache->invalidateGeneration($generationId);
-        $started = hrtime(TRUE);
-        $alternativePage = $query->query($filters, $account, NULL, 100);
-        $alternativeColdMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
-        self::assertNotNull($alternativePage->nextCursor);
-      }
-      $alternativeWarmMilliseconds = [];
-      for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
-        $started = hrtime(TRUE);
-        $alternativePage = $query->query($filters, $account, NULL, 100);
-        $alternativeWarmMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
-        self::assertNotNull($alternativePage->nextCursor);
-      }
-      sort($alternativeColdMilliseconds, SORT_NUMERIC);
-      sort($alternativeWarmMilliseconds, SORT_NUMERIC);
-      $alternativeIndexComparison = [
-        'index_fields' => ['generation_id', 'domain_id', 'published', 'entry_id'],
-        'build_ms' => round($indexBuildMilliseconds, 3),
-        'baseline_entry_bytes' => $baselineEntryBytes,
-        'alternative_entry_bytes' => $alternativeEntryBytes,
-        'allocated_delta_bytes' => max(0, $alternativeEntryBytes - $baselineEntryBytes),
-        'writer_sample_size' => 250,
-        'baseline_writer_ms' => $baselineWriter['elapsed_ms'],
-        'baseline_writer_rows_per_second' => $baselineWriter['rows_per_second'],
-        'alternative_writer_ms' => $alternativeWriter['elapsed_ms'],
-        'alternative_writer_rows_per_second' => $alternativeWriter['rows_per_second'],
-        'cold_page_p50_ms' => round($this->percentile($alternativeColdMilliseconds, 0.50), 3),
-        'cold_page_p95_ms' => round($this->percentile($alternativeColdMilliseconds, 0.95), 3),
-        'warm_page_p50_ms' => round($this->percentile($alternativeWarmMilliseconds, 0.50), 3),
-        'warm_page_p95_ms' => round($this->percentile($alternativeWarmMilliseconds, 0.95), 3),
-        'sql_plan' => $this->explainCandidateQuery($generationId),
-      ];
-      $schema->dropIndex('aculta_index_entry', 'benchmark_filter_entry');
-      $candidateCache->invalidateGeneration($generationId);
 
       $relationResults = [];
       foreach ([1, 5, 20] as $fanout) {
@@ -275,11 +275,12 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
         'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
         'warm_page_p95_ms' => round($this->percentile($warmMilliseconds, 0.95), 3),
         'candidate_sql_plan' => $this->explainCandidateQuery($generationId),
-        'alternative_index' => $alternativeIndexComparison,
+        'alternative_indexes' => $alternativeIndexes,
+        'real_entity_access' => $realAccessResults,
         'relation_queries' => $relationResults,
         'table_storage_bytes' => $tableSizes,
         'peak_memory_bytes' => memory_get_peak_usage(TRUE),
-        'note' => 'Synthetic entity IDs are absent; this measures catalog candidate SQL, bounded failed-source loads, and relation edge reads, not real Entity Access throughput.',
+        'note' => 'Catalog timing uses synthetic absent IDs. A separate sample loads 25 real Media entities and checks Entity Access for each query.',
       ];
       $encodedResult = json_encode($result, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
       if (file_put_contents($outputFile, $encodedResult, FILE_APPEND | LOCK_EX) === FALSE) {
@@ -303,6 +304,95 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
         ->condition('state_id', 1)
         ->execute();
     }
+  }
+
+  /**
+   * Measures a temporary candidate index against the unchanged base schema.
+   *
+   * @param string $indexName
+   *   Temporary schema index name.
+   * @param string[] $indexFields
+   *   Ordered index columns.
+   * @param string $generationId
+   *   Synthetic generation being measured.
+   * @param array $filters
+   *   Candidate query filters.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account used by the public query service.
+   * @param \Drupal\aculta_index\Query\ContentIndexQueryInterface $query
+   *   Public candidate query service.
+   * @param \Drupal\aculta_index\Cache\ContentIndexCandidateCache $candidateCache
+   *   Candidate page cache.
+   * @param int $candidateSamples
+   *   Cold and warm samples to collect.
+   *
+   * @return array
+   *   Measurements for this index variant.
+   */
+  private function measureIndexVariant(
+    string $indexName,
+    array $indexFields,
+    string $generationId,
+    array $filters,
+    AccountInterface $account,
+    ContentIndexQueryInterface $query,
+    ContentIndexCandidateCache $candidateCache,
+    int $candidateSamples,
+  ): array {
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $baselineWriter = $this->measureWriterSample(250);
+    $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
+    $baselineEntryBytes = $this->tableStorageBytes('aculta_index_entry');
+    $indexBuildStarted = hrtime(TRUE);
+    $schema->addIndex(
+      'aculta_index_entry',
+      $indexName,
+      $indexFields,
+      aculta_index_schema()['aculta_index_entry'],
+    );
+    $indexBuildMilliseconds = (hrtime(TRUE) - $indexBuildStarted) / 1_000_000;
+    $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
+    $alternativeEntryBytes = $this->tableStorageBytes('aculta_index_entry');
+    $alternativeWriter = $this->measureWriterSample(250);
+    $coldMilliseconds = [];
+    for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
+      $candidateCache->invalidateGeneration($generationId);
+      $started = hrtime(TRUE);
+      $page = $query->query($filters, $account, NULL, 100);
+      $coldMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+      self::assertNotNull($page->nextCursor);
+    }
+    $warmMilliseconds = [];
+    for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
+      $started = hrtime(TRUE);
+      $page = $query->query($filters, $account, NULL, 100);
+      $warmMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+      self::assertNotNull($page->nextCursor);
+    }
+    sort($coldMilliseconds, SORT_NUMERIC);
+    sort($warmMilliseconds, SORT_NUMERIC);
+    $comparison = [
+      'index_fields' => $indexFields,
+      'build_ms' => round($indexBuildMilliseconds, 3),
+      'baseline_entry_bytes' => $baselineEntryBytes,
+      'alternative_entry_bytes' => $alternativeEntryBytes,
+      'allocated_delta_bytes' => max(0, $alternativeEntryBytes - $baselineEntryBytes),
+      'writer_sample_size' => 250,
+      'baseline_writer_ms' => $baselineWriter['elapsed_ms'],
+      'baseline_writer_rows_per_second' => $baselineWriter['rows_per_second'],
+      'alternative_writer_ms' => $alternativeWriter['elapsed_ms'],
+      'alternative_writer_rows_per_second' => $alternativeWriter['rows_per_second'],
+      'cold_page_p50_ms' => round($this->percentile($coldMilliseconds, 0.50), 3),
+      'cold_page_p95_ms' => round($this->percentile($coldMilliseconds, 0.95), 3),
+      'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
+      'warm_page_p95_ms' => round($this->percentile($warmMilliseconds, 0.95), 3),
+      'sql_plan' => $this->explainCandidateQuery($generationId),
+    ];
+    $schema->dropIndex('aculta_index_entry', $indexName);
+    $candidateCache->invalidateGeneration($generationId);
+
+    return $comparison;
   }
 
   /**
@@ -490,6 +580,88 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
     return [
       'elapsed_ms' => round($elapsedMilliseconds, 3),
       'rows_per_second' => (int) round($sampleSize / max($elapsedMilliseconds / 1000, 0.000001)),
+    ];
+  }
+
+  /**
+   * Measures query access revalidation against real, mixed-publication Media.
+   *
+   * @return array<string, int|float>
+   *   Candidate counts and cold/warm query percentiles.
+   */
+  private function measureRealEntityAccessQueries(
+    string $generationId,
+    int $catalogSize,
+    AccountInterface $account,
+    ContentIndexQueryInterface $query,
+    ContentIndexCandidateCache $candidateCache,
+    int $sampleCount,
+  ): array {
+    $mediaStorage = $this->container->get('entity_type.manager')->getStorage('media');
+    $mediaIds = [];
+    $expectedCandidates = 0;
+    $expectedAuthorized = 0;
+    for ($offset = 0; $offset < 100; $offset++) {
+      $sourceIndex = $catalogSize - 100 + $offset;
+      $mediaId = $sourceIndex + 1;
+      $published = $sourceIndex % 8 === 0;
+      $media = Media::create([
+        'mid' => $mediaId,
+        'bundle' => 'image',
+        'name' => 'Real access fixture ' . $mediaId,
+        'langcode' => 'en',
+        'uid' => $account->id(),
+        'status' => $published,
+        'field_media_image' => [
+          'target_id' => $this->benchmarkImageFileId,
+          'alt' => 'Synthetic access fixture',
+        ],
+      ]);
+      $media->save();
+      $mediaIds[] = (string) $mediaId;
+      if ($sourceIndex % 4 === 0) {
+        $expectedCandidates++;
+        if ($published) {
+          $expectedAuthorized++;
+        }
+      }
+    }
+
+    $filters = [
+      'entity_type' => 'media',
+      'bundle' => 'image',
+      'domain_id' => 'main',
+    ];
+    $coldMilliseconds = [];
+    for ($sample = 0; $sample < $sampleCount; $sample++) {
+      $candidateCache->invalidateGeneration($generationId);
+      $mediaStorage->resetCache($mediaIds);
+      $started = hrtime(TRUE);
+      $page = $query->query($filters, $account, NULL, 100);
+      $coldMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+      self::assertCount($expectedAuthorized, $page->entities);
+    }
+    $warmMilliseconds = [];
+    for ($sample = 0; $sample < $sampleCount; $sample++) {
+      $mediaStorage->resetCache($mediaIds);
+      $started = hrtime(TRUE);
+      $page = $query->query($filters, $account, NULL, 100);
+      $warmMilliseconds[] = (hrtime(TRUE) - $started) / 1_000_000;
+      self::assertCount($expectedAuthorized, $page->entities);
+    }
+    sort($coldMilliseconds, SORT_NUMERIC);
+    sort($warmMilliseconds, SORT_NUMERIC);
+
+    return [
+      'source_entities_available' => count($mediaIds),
+      'candidate_entities_per_query' => $expectedCandidates,
+      'authorized_entities_per_query' => $expectedAuthorized,
+      'denied_entities_per_query' => $expectedCandidates - $expectedAuthorized,
+      'query_samples' => $sampleCount,
+      'cold_page_p50_ms' => round($this->percentile($coldMilliseconds, 0.50), 3),
+      'cold_page_p95_ms' => round($this->percentile($coldMilliseconds, 0.95), 3),
+      'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
+      'warm_page_p95_ms' => round($this->percentile($warmMilliseconds, 0.95), 3),
     ];
   }
 

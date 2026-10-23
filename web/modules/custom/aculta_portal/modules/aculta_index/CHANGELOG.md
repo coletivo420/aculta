@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.43 — medir segunda composição e Entity Access Media
+
+- Compara duas composições de índice temporárias no benchmark, sem alterar o
+  schema do módulo; a composição com `entity_type` e `bundle` não demonstrou
+  ganho consistente.
+- Acrescenta fixture de Media real com acesso permitido e negado para medir o
+  caminho de Entity Access; grants de domínio/Group/LMS permanecem pendentes.
+- Registra três runs por escala, resultados brutos e decisão provisória de
+  manter o schema atual.
+
 ## 0.1.0-dev.42 — registrar resultado do comparativo de índice
 
 - Registra três repetições por escala do índice temporário e do writer.

@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos, leitura de relações e comparativo experimental de índice executados; benchmark amplo de escrita, rebuild, reconciliação e Entity Access real continuam pendentes.
+Estado: consulta de candidatos, leitura de relações, duas composições experimentais de índice e fixture limitado de Entity Access em Media executados; benchmark amplo de escrita, rebuild, reconciliação e autorização nos providers/grants reais continuam pendentes.
 
 ## Matriz fixada
 
@@ -44,13 +44,17 @@ O harness opt-in em
 `web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance/`
 mede atualmente a gravação sintética da tabela de entradas, consulta keyset
 pelo serviço público (SQL de candidatos, cache e loads limitados de fontes
-ausentes) e leitura de arestas com os índices do schema. Registra p50/p95 de 30
-leituras frias e 30 aquecidas, plano `EXPLAIN`, linhas estimadas e bytes alocados
-nas tabelas. O harness compara ainda o plano atual com um índice composto criado e removido
-dentro do schema temporário, medindo espaço/build e 250 escritas pelo writer em
-cada variante. O resultado de três repetições está em [resultados](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md): não houve ganho consistente e o schema de produção permanece sem o índice alternativo. Essa amostra não substitui um benchmark amplo de escrita. O teste
-não representa throughput de Entity Access, rebuild ou reconciliação; esses
-workloads continuam pendentes antes da homologação final.
+ausentes) e leitura de arestas com os índices do schema. Também consulta 25
+entidades Media reais (12 autorizadas e 13 negadas no fixture), revalidando
+Entity Access em 30 leituras frias e aquecidas. Registra p50/p95, plano
+`EXPLAIN`, linhas estimadas e bytes alocados. Compara o plano atual com duas
+composições de índice criadas e removidas dentro do schema temporário, medindo
+espaço/build e 250 escritas pelo writer em cada variante. O resultado de três
+repetições está em [resultados](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md):
+nenhuma composição demonstrou ganho consistente, e o schema de produção
+permanece sem índices adicionais. O fixture Media não substitui medições com
+grants de domínio/Group/LMS, nem um benchmark amplo de escrita, rebuild ou
+reconciliação; esses workloads continuam pendentes antes da homologação final.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
