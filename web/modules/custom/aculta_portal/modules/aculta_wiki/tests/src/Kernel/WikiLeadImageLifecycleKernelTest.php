@@ -1090,6 +1090,43 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame('Título aprovado pela equipe', $freshTarget->label());
     }
 
+    Role::create([
+      'id' => 'wiki_proposal_moderator_without_transition_test',
+      'label' => 'Wiki proposal moderator without transition test',
+      'permissions' => [
+        'moderate wiki proposals',
+        'edit any wiki_entry content',
+        'bypass node access',
+        'view any unpublished content',
+        'view wiki_entry revisions',
+      ],
+    ])->save();
+    $moderatorWithoutTransition = new UserSession([
+      'uid' => 6,
+      'roles' => ['authenticated', 'wiki_proposal_moderator_without_transition_test'],
+    ]);
+    $this->container->get('current_user')->setAccount($moderatorWithoutTransition);
+    try {
+      $decisionService->decide(
+        $staleBaseProposal,
+        $staleProposalRevisionId,
+        'accepted',
+        'Tentativa sem as transições de publicação.',
+        ['title'],
+      );
+      self::fail('Editing the target must not bypass official Wiki publication transitions.');
+    }
+    catch (AccessDeniedHttpException) {
+      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+        ->loadUnchanged($staleBaseProposal->id());
+      $freshTarget = $this->container->get('entity_type.manager')->getStorage('node')
+        ->loadUnchanged((int) $target->id());
+      self::assertSame('submitted', $freshProposal->get('state')->value);
+      self::assertSame($staleProposalRevisionId, (int) $freshProposal->getRevisionId());
+      self::assertSame($targetRevisionBeforeUnauthorizedDecision, (int) $freshTarget->getRevisionId());
+      self::assertSame('Título aprovado pela equipe', $freshTarget->label());
+    }
+
     $this->container->get('current_user')->setAccount($acceptor);
     $concurrentTarget = $this->container->get('entity_type.manager')->getStorage('node')
       ->loadUnchanged((int) $target->id());

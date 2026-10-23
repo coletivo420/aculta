@@ -31,11 +31,11 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | --- | --- | --- | --- |
 | Persistir campos estruturados | Kernel | Submissão via Form API guarda título selecionado na entidade privada | aprovado no teste focal existente; repetir classe após aceite |
 | Aprovar subconjunto e publicar | Kernel | Revisão-base atual recebe campo aprovado e publica por transições oficiais | aprovado (focal: 1 teste / 119 asserções; classe: 9 / 393) |
-| Revisão-base concorrente | Kernel | Aceite conflita sem mudar proposta ou verbete | aprovado (focal: 1 teste / 140 assertions; classe: 10 / 455) |
+| Revisão-base concorrente | Kernel | Aceite conflita sem mudar proposta ou verbete | aprovado (focal: 1 teste / 144 assertions; classe: 10 / 459) |
 | Escolha substituir/acrescentar em referências | Kernel | `append` preserva lista e deduplica URLs; `replace` substitui integralmente | aprovado (focal: 1 teste / 122; classe: 9 / 404) |
 | Escolha substituir/acrescentar em categorias/relações | Kernel | Listas validam destino e substituem/acrescentam sem duplicatas | aprovado (focal: 1 / 132; classe: 9 / 414) |
-| Moderador sem permissão de editar o verbete | Kernel | Aceite negado sem alterar proposta, revisão ou campos | aprovado (incluído no focal: 1 / 140; classe: 10 / 455) |
-| Sem permissão da transição oficial | Kernel | Operação negada sem persistência parcial | backend implementado; teste específico pendente |
+| Moderador sem permissão de editar o verbete | Kernel | Aceite negado sem alterar proposta, revisão ou campos | aprovado (incluído no focal: 1 / 144; classe: 10 / 459) |
+| Sem permissão da transição oficial | Kernel | Operação negada sem persistência parcial | aprovado (incluído no focal: 1 / 144; classe: 10 / 459) |
 | Migração `proposed_fields` | Update hook | Instala armazenamento revisionável em proposta já existente | implementada; não aplicada ao Runtime |
 
 ## Propostas privadas — status e histórico (dev.24)

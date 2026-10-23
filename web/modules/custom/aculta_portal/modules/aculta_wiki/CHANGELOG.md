@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.35 — negar aceite sem transições oficiais
+
+- Kernel verifica que um moderador com permissão de editar o verbete, mas sem
+  as permissões das transições `wiki_editorial`, não consegue aceitar uma
+  proposta. Proposta, revisão e campos permanecem sem alteração.
+- Focal: 1 teste / 144 assertions. A classe Kernel completa passou em MariaDB
+  isolada: 10 testes / 459 assertions; 286 depreciações Core/contrib e 11 do
+  PHPUnit.
+
 ## 0.1.0-dev.34 — testar conflito de revisão-base editorial
 
 - Kernel cobre aceitação de proposta após uma edição concorrente do verbete.

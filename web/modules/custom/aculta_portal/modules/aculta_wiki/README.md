@@ -7,11 +7,13 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.34`: Kernel comprova conflito sem gravação parcial ao aceitar
-  proposta com revisão-base obsoleta e moderador sem acesso editorial. Focal:
-  1 teste / 140 assertions; classe Kernel: 10 testes / 455 assertions,
+- `0.1.0-dev.35`: Kernel comprova que aceite exige transições oficiais e não
+  grava parcialmente em caso de conflito ou falta de acesso editorial. Focal:
+  1 teste / 144 assertions; classe Kernel: 10 testes / 459 assertions,
   aprovada em MariaDB isolada; 286
   depreciações Core/contrib e 11 do PHPUnit.
+- `0.1.0-dev.34`: Kernel cobre conflito de revisão-base e moderador sem
+  permissão de editar o verbete (focal: 1 / 140; classe: 10 / 455).
 - `0.1.0-dev.33`: retry de imagem após rebuild limpa caches e estado temporário
   revertido; Kernel confirma novo envio sem órfãs. Focal: 1 teste / 33
   asserções; classe Kernel: 10 testes / 447 asserções; Unit do uploader: 12
