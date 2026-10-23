@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.81 — integrar a declaração do provider course_document
+
+- Kernel do Index carrega a definição e os argumentos do YAML real de
+  `aculta_pdf_viewer_group`, confirma a tag no registry e cobre backfill,
+  atualização e remoção de Media `course_document` unpublished com File privado
+  (3 testes / 53 assertions
+  no arquivo de providers Media).
+- O harness não ativa o owner completo nem prova os grants de Group; o teste
+  de referência do owner continua bloqueado pela compilação de serviços do
+  Portal, conforme registrado na documentação do Index.
+
 ## 0.1.0-dev.80 — validar acesso Gallery no purpose canônico
 
 - Kernel usa o Entity Access real de `media_gallery`: permissão do owner deixa

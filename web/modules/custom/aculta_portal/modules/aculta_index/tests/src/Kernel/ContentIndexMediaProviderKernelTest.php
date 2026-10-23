@@ -17,7 +17,9 @@ use Drupal\media\Entity\MediaType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies production Media providers through Index backfill and CRUD.
@@ -53,6 +55,18 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Load the exact owner declaration without enabling the Portal dependency
+    // chain in this focused Kernel harness.
+    $serviceFile = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml';
+    $serviceMap = Yaml::parseFile($serviceFile, Yaml::PARSE_CUSTOM_TAGS)['services'];
+    $serviceId = 'aculta_pdf_viewer_group.course_document_content_index_provider';
+    $service = $serviceMap[$serviceId];
+    $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
+    foreach ($service['tags'] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition($serviceId, $definition);
   }
 
   /**
@@ -77,6 +91,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     aculta_index_install();
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
     $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
+    $this->createMediaType('file', ['id' => 'course_document', 'label' => 'Course document']);
   }
 
   /**
@@ -147,6 +162,40 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * The PDF Group owner's real YAML registers the private course document.
+   */
+  public function testCourseDocumentProviderUsesOwnerYamlAndFollowsCrud(): void {
+    $media = $this->createDocumentMedia('Course reading', 'course_document');
+    self::assertFalse($media->isPublished());
+    $mediaType = MediaType::load('course_document');
+    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    self::assertSame('private', parse_url($media->get($sourceField)->entity->getFileUri(), PHP_URL_SCHEME));
+
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
+    self::assertSame('courses', $registry->get('course_document')->getAccessPurpose($media));
+
+    $generationId = $this->buildAndActivateGeneration();
+    self::assertSame('Course reading', $this->entryLabel($generationId, (string) $media->id(), 'course_document'));
+
+    $media->setName('Updated course reading');
+    $media->save();
+    $this->processProviderWork('course_document');
+    self::assertSame('Updated course reading', $this->entryLabel($generationId, (string) $media->id(), 'course_document'));
+
+    $media->delete();
+    $this->processProviderWork('course_document');
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'course_document')
+      ->condition('entity_type', 'media')
+      ->condition('entity_id', (string) $media->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Creates an image Media with a source File that must stay out of the Index.
    */
   private function createImageMedia(string $name): Media {
@@ -173,21 +222,22 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
   /**
    * Creates a document Media with a source File.
    */
-  private function createDocumentMedia(string $name): Media {
+  private function createDocumentMedia(string $name, string $bundle = 'document'): Media {
+    $fileName = 'content-index-' . $bundle . '-fixture.pdf';
     $file = File::create([
-      'uri' => 'public://content-index-document-fixture.pdf',
-      'filename' => 'content-index-document-fixture.pdf',
+      'uri' => ($bundle === 'course_document' ? 'private://course-pdf/' : 'public://') . $fileName,
+      'filename' => $fileName,
       'filemime' => 'application/pdf',
       'status' => TRUE,
     ]);
     $file->save();
 
-    $mediaType = MediaType::load('document');
+    $mediaType = MediaType::load($bundle);
     $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
     $media = Media::create([
-      'bundle' => 'document',
+      'bundle' => $bundle,
       'name' => $name,
-      'status' => TRUE,
+      'status' => $bundle !== 'course_document',
       $sourceField => ['target_id' => $file->id()],
     ]);
     $media->save();
@@ -207,6 +257,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     self::assertTrue($complete, 'Media provider backfill should complete.');
     $this->processProviderWork('image');
     $this->processProviderWork('document');
+    $this->processProviderWork('course_document');
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     return $generationId;
