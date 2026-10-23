@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.39 — plano da matriz de benchmark
+
+- Define catálogos sintéticos de 10k/100k/1M no MariaDB de teste isolado,
+  workloads de consulta, cache, relações, escrita, reconciliação e rebuild.
+- Especifica medições e evidências; não registra resultados nem declara
+  desempenho aprovado. O plano evita criar um milhão de entidades Drupal.
+
 ## 0.1.0-dev.38 — sequência da fila e ownership na reconciliação
 
 - Kernel cobre evento de exclusão recebido após claim de sequência antiga:
