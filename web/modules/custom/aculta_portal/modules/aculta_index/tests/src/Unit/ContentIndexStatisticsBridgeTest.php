@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Unit;
 
+use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
 use Drupal\aculta_index\Query\ContentIndexQueryInterface;
 use Drupal\aculta_index\Query\ContentIndexQueryResult;
-use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
+use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
+use Drupal\aculta_statistics\Catalog\MetricCatalog;
+use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -14,6 +17,7 @@ use Drupal\Core\Session\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Optional Statistics behavior for Index consumers.
@@ -86,6 +90,69 @@ final class ContentIndexStatisticsBridgeTest extends TestCase {
     $this->assertSame([$entity], $result->entities);
     $this->assertSame([42 => 6], $result->totals);
     $this->assertSame('opaque-cursor', $result->nextCursor);
+  }
+
+  /**
+   * Integrates with Statistics' real permission and metric allowlist.
+   */
+  public function testRealStatisticsAdapterAcceptsGranularPublicMetricPermission(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->willReturnCallback(
+      static fn(string $permission): bool => $permission === 'view content-level statistics',
+    );
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $entity->method('getEntityTypeId')->willReturn('node');
+    $entity->method('bundle')->willReturn('wiki_entry');
+    $entity->method('id')->willReturn('53');
+    $page = new ContentIndexQueryResult([$entity], NULL, new CacheableMetadata());
+    $query = $this->createMock(ContentIndexQueryInterface::class);
+    $query->method('query')->willReturn($page);
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->once())
+      ->method('dimensionTotalsForDimensions')
+      ->with('wiki.entries.read', 100, 104, ['53'])
+      ->willReturn(['53' => 9]);
+    $statistics = new AuthorizedEntityMetricAggregator(new MetricCatalog(), $storage);
+
+    $result = (new ContentIndexStatisticsBridge($query, $statistics))->aggregateForQuery(
+      ['bundle' => 'wiki_entry'],
+      'wiki.entries.read',
+      100,
+      104,
+      $account,
+    );
+
+    $this->assertSame([$entity], $result->entities);
+    $this->assertSame([53 => 9], $result->totals);
+    $this->assertTrue($result->available);
+  }
+
+  /**
+   * A non-allowlisted/internal metric remains denied through the bridge.
+   */
+  public function testRealStatisticsAdapterRejectsInternalMetricsForContentPermission(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->willReturnCallback(
+      static fn(string $permission): bool => $permission === 'view content-level statistics',
+    );
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $entity->method('getEntityTypeId')->willReturn('file');
+    $entity->method('bundle')->willReturn('file');
+    $entity->method('id')->willReturn('53');
+    $query = $this->createMock(ContentIndexQueryInterface::class);
+    $query->method('query')->willReturn(new ContentIndexQueryResult([$entity], NULL, new CacheableMetadata()));
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->never())->method('dimensionTotalsForDimensions');
+    $statistics = new AuthorizedEntityMetricAggregator(new MetricCatalog(), $storage);
+
+    $this->expectException(AccessDeniedHttpException::class);
+    (new ContentIndexStatisticsBridge($query, $statistics))->aggregateForQuery(
+      ['entity_type' => 'file'],
+      'media.files.requests',
+      100,
+      104,
+      $account,
+    );
   }
 
 }
