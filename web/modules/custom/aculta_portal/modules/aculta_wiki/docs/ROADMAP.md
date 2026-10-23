@@ -4,10 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.14**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.15**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.15 — consulta editorial
+
+Concluída a primeira camada de consulta do backend editorial: serviço próprio
+com filas paginadas para propostas pendentes e revisões atuais em `review`.
+Revisões passam por acesso de entidade e validação de transições no purpose
+`wiki`; a fila de propostas exige capacidade de moderação. A suíte Kernel MariaDB
+da Wiki passou (8 testes / 274 assertions). Ainda faltam fila resistente a
+candidatos inacessíveis em paginação, decisão/aplicação de propostas por Form
+API, endpoints e integração da `WikiTab` do Studio. Runtime continua pendente.
 
 ## Fase 1 — Casca do submódulo
 

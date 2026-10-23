@@ -108,6 +108,23 @@ O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib 
 do PHPUnit na closure completa de dependências. Não há rota/formulário que
 exponha propostas nesta entrega.
 
+## Consulta editorial — Kernel real (dev.15)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Consulta de propostas pendentes | Kernel | Apenas estados submetidos/autorizados; paginação 25+1 | aprovado |
+| Cursor de proposta inválido | Kernel | Reinicia a consulta sem erro | aprovado |
+| Sem permissão de moderação | Kernel | Serviço nega acesso antes da consulta | aprovado |
+| Revisão atual em `review` | Kernel | Retorna revisão `wiki_entry` atual com `view`, `view revision`, `update` e transição autorizada | aprovado |
+| Revisão anterior ou sem transição válida | Kernel | Não aparece na fila | cobertura parcial: revisão atual e transição válida caracterizadas |
+| Escopo de domínio | Kernel | Consulta dentro do purpose `wiki` e restaura `main` | aprovado |
+| Cache | Kernel | Metadados incluem conta, permissões, grants, domínio e cursor | aprovado |
+| Paginação da fila de revisões com candidatos inacessíveis | Kernel | Enche páginas sem pular resultados válidos | planejado |
+| Resultado/URL da fila no Studio | Kernel/Functional | Operações só por Form API com acesso editorial | planejado |
+
+Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
+284 depreciações Drupal/contrib e 9 do PHPUnit. Não há rota nem UI da fila.
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |

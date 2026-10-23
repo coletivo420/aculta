@@ -51,3 +51,10 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   revisionável e revisão-base; `WikiProposalSubmission` revalida permissão,
   publicação, Entity Access e purpose `wiki`. Não há rota/formulário de envio ou
   operação editorial ativa; manter moderação e concorrência no próximo gate.
+- Fila editorial (dev.15): `aculta_wiki.editorial_queue` consulta propostas
+  pendentes e revisões atuais em `review`. A descoberta interna de VIDs de
+  Content Moderation usa query sem access check porque Core nega acesso à
+  entidade de estado; cada Node segue revalidado por Domain, estado e acessos
+  de entidade, além de transições válidas. Kernel carrega workflow real e usa
+  `email_confirmation_policy`; não criar bypasses para contas não confirmadas.
+  Fila e serviço ainda não têm rota ou integração de UI com Studio.

@@ -7,10 +7,15 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.15`: serviço `aculta_wiki.editorial_queue` consulta propostas
+  pendentes e revisões atuais em `review`. A fila de Nodes revalida acesso de
+  leitura, revisão e atualização e exige transição válida sob o purpose `wiki`;
+  proposta usa permissão editorial e paginação por cursor. Kernel completo da
+  classe: 8 testes / 274 assertions; módulo permanece desabilitado no Runtime.
 - `0.1.0-dev.14`: existe persistência privada revisionável para propostas de
   terceiros, com revisão-base e serviço que valida acesso, publicação e
-  purpose `wiki`. Ainda não há endpoint/formulário, fila de revisão nem aplicação
-  editorial da proposta; essas operações seguem pendentes. Nenhuma expiração
+  purpose `wiki`. Ainda não há endpoint/formulário nem aplicação editorial da
+  proposta; essas operações seguem pendentes. Nenhuma expiração
   automática foi criada; retenção para propostas encerradas aguarda decisão.
 - `0.1.0-dev.13`: rotas públicas e View da listagem são descobertas pelo
   bootstrap Kernel real; o acesso à busca é caracterizado com grants diferentes

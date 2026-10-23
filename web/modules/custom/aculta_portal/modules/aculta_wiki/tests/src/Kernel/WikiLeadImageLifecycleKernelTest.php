@@ -27,9 +27,12 @@ use Drupal\node\NodeAccessRebuild;
 use Drupal\node\NodeGrantsHelper;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
+use Drupal\workflows\Entity\Workflow;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
+use Drupal\aculta_wiki\Service\WikiEditorialQueue;
+use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -470,9 +473,130 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],
     ])));
     self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+
+    for ($index = 0; $index < 25; $index++) {
+      $submission->submit($staleTarget, 'correction', 'Correção ' . $index, 'Justificativa curta.');
+    }
+    $reviewer = new UserSession([
+      'uid' => 4,
+      'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],
+    ]);
+    $this->container->get('current_user')->setAccount($reviewer);
+    $queue = $this->container->get('aculta_wiki.editorial_queue');
+    self::assertInstanceOf(WikiEditorialQueue::class, $queue);
+    $firstPage = $queue->proposals();
+    self::assertCount(25, $firstPage->getItems());
+    self::assertNotNull($firstPage->getNextCursor());
+    self::assertContains('user.permissions', $firstPage->getCacheContexts());
+    $secondPage = $queue->proposals($firstPage->getNextCursor());
+    self::assertCount(1, $secondPage->getItems());
+    self::assertNull($secondPage->getNextCursor());
+    $firstPageIds = array_map(static fn (WikiProposal $item): int => (int) $item->id(), $firstPage->getItems());
+    $secondPageIds = array_map(static fn (WikiProposal $item): int => (int) $item->id(), $secondPage->getItems());
+    self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
+    self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
+
+    $this->container->get('current_user')->setAccount($other);
+    try {
+      $queue->proposals();
+      self::fail('Accounts without the moderation permission must not read the queue.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertTrue(TRUE);
+    }
     $this->container->get('current_user')->setAccount($other);
     $this->expectException(AccessDeniedHttpException::class);
     $submission->submit($target, 'correction', 'Correção', 'Motivo');
+  }
+
+  /**
+   * Pending Wiki Node revisions are queried under Wiki grants and exact VID.
+   */
+  public function testEditorialQueueReturnsAuthorizedLatestReviewRevision(): void {
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['workflows', 'content_moderation']);
+    $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
+    Workflow::create(Yaml::parseFile($workflowFile))->save();
+
+    Role::create([
+      'id' => 'wiki_queue_submitter_test',
+      'label' => 'Wiki queue submitter test',
+      'permissions' => ['use wiki_editorial transition draft_to_review'],
+    ])->save();
+    Role::create([
+      'id' => 'wiki_queue_reviewer_test',
+      'label' => 'Wiki queue reviewer test',
+      'permissions' => [
+        'edit any wiki_entry content',
+        'view any unpublished content',
+        'view wiki_entry revisions',
+        'use wiki_editorial transition review_to_draft',
+        'use wiki_editorial transition review_to_published',
+      ],
+    ])->save();
+
+    $submitter = new UserSession(['uid' => 5, 'roles' => ['authenticated', 'wiki_queue_submitter_test']]);
+    $reviewer = new UserSession(['uid' => 4, 'roles' => ['authenticated', 'wiki_queue_reviewer_test']]);
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $reviewer->id());
+    $this->container->get('current_user')->setAccount($submitter);
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete aguardando edição editorial',
+      'uid' => 5,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => 4,
+      'field_wiki_summary' => ['value' => 'Resumo em revisão'],
+      'body' => ['value' => 'Texto em revisão', 'format' => 'plain_text'],
+      'moderation_state' => 'draft',
+    ]);
+    $node->save();
+    $node->setNewRevision(TRUE);
+    $node->setRevisionLogMessage('Enviado para revisão no teste');
+    $node->set('moderation_state', 'review');
+    $node->save();
+    $reviewRevisionId = (string) $node->getRevisionId();
+    self::assertSame('review', $node->get('moderation_state')->value);
+    self::assertSame($reviewRevisionId, (string) $this->container->get('entity_type.manager')
+      ->getStorage('node')->getLatestRevisionId($node->id()));
+    $moderationStates = $this->container->get('entity_type.manager')
+      ->getStorage('content_moderation_state')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('content_entity_type_id', 'node')
+      ->condition('workflow', 'wiki_editorial')
+      ->condition('moderation_state', 'review')
+      ->condition('content_entity_revision_id', $reviewRevisionId)
+      ->execute();
+    self::assertNotEmpty($moderationStates);
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+
+    $mainDomain = Domain::load('aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($mainDomain);
+    $this->container->get('current_user')->setAccount($reviewer);
+    $reviewEntity = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($reviewRevisionId);
+    self::assertNotEmpty($this->container->get('content_moderation.state_transition_validation')
+      ->getValidTransitions($reviewEntity, $reviewer));
+    self::assertTrue($reviewer->hasPermission('edit any wiki_entry content'));
+    $reviewAccess = $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($reviewRevisionId, $reviewer): array {
+      $revision = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($reviewRevisionId);
+      $updateAccess = $revision->access('update', $reviewer, TRUE);
+      return [
+        $revision->access('view', $reviewer, TRUE)->isAllowed(),
+        $revision->access('view revision', $reviewer, TRUE)->isAllowed(),
+        $updateAccess,
+      ];
+    });
+    self::assertSame([TRUE, TRUE], array_slice($reviewAccess, 0, 2));
+    self::assertTrue($reviewAccess[2]->isAllowed());
+    $queue = $this->container->get('aculta_wiki.editorial_queue');
+    $page = $queue->entryRevisions();
+
+    self::assertCount(1, $page->getItems());
+    self::assertSame($reviewRevisionId, (string) $page->getItems()[0]->getRevisionId());
+    self::assertSame('review', $page->getItems()[0]->get('moderation_state')->value);
+    self::assertContains('user.node_grants:view', $page->getCacheContexts());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertNull($page->getNextCursor());
   }
 
   /**

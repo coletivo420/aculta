@@ -1,5 +1,21 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.15 — consulta editorial autorizada
+
+- `aculta_wiki.editorial_queue` fornece páginas de propostas pendentes e de
+  revisões atuais em `review`, com cursores, cache metadata e acesso por conta.
+- A fila de revisões descobre VIDs a partir dos registros de Content Moderation
+  (cujo acesso de entidade é negado pelo Core), mas só retorna revisões atuais
+  `wiki_entry` do domínio Wiki após revalidar `view`, `view revision`, `update`
+  e transições válidas para a conta atual dentro do purpose `wiki`.
+- Kernel real usa a política Portal `email_confirmed`, role editorial,
+  workflow exportado e Domain principal para provar consulta e restauração do
+  purpose. A fila de propostas cobre paginação 25+1, cursor malformado,
+  permissão e cache. Nenhuma rota nem interface Studio foi adicionada.
+- Validação MariaDB: `WikiLeadImageLifecycleKernelTest`, 8 testes / 274
+  assertions, sem warnings; 284 depreciações Drupal/contrib e 9 PHPUnit.
+  O módulo continua desabilitado no Runtime.
+
 ## 0.1.0-dev.14 — persistência segura de propostas
 
 - Adiciona a entidade privada e revisionável `aculta_wiki_proposal` com vínculo
