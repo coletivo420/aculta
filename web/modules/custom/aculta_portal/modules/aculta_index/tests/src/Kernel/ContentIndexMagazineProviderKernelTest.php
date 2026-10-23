@@ -17,10 +17,12 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Yaml\Yaml;
 
 /**
- * Verifies the production Magazine provider through Index backfill and CRUD.
+ * Verifies production Magazine and Activity providers through Index backfill.
  */
 #[Group('aculta_index')]
 #[RunTestsInSeparateProcesses]
@@ -36,7 +38,6 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
     'text',
     'node',
     'aculta_index',
-    'aculta_index_magazine_test',
   ];
 
   /**
@@ -50,6 +51,24 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Compile the owner declarations so both ends of the explicit Magazine
+    // -> Activity relation participate in the real Index registry.
+    foreach ([
+      'aculta_magazine' => 'aculta_magazine.content_index_provider',
+      'aculta_activity' => 'aculta_activity.content_index_provider',
+    ] as $owner => $serviceId) {
+      $services = Yaml::parseFile(
+        DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/' . $owner . '/' . $owner . '.services.yml',
+        Yaml::PARSE_CUSTOM_TAGS,
+      )['services'];
+      $service = $services[$serviceId];
+      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      foreach ($service['tags'] ?? [] as $tag) {
+        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      }
+      $container->setDefinition($serviceId, $definition);
+    }
   }
 
   /**
@@ -77,7 +96,7 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Backfills a Revista, updates its projection and relation, then deletes it.
+   * Backfills both owners, updates a Revista relation, then deletes the source.
    */
   public function testMagazineProjectionFollowsEntityCrud(): void {
     $activityA = Node::create(['type' => 'activity', 'title' => 'Activity A', 'status' => 1]);
@@ -100,23 +119,28 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
       $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
     }
     $this->assertTrue($complete, 'The Magazine provider backfill should complete.');
-    $this->processMagazineWork();
+    $this->processIndexWork();
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
 
     $database = $this->container->get('database');
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('magazine', $registry->findProviderIdForBundle('node', 'revista'));
+    self::assertSame('activity', $registry->findProviderIdForBundle('node', 'activity'));
     $this->assertSame('First title', $this->entryLabel($generationId, (string) $publication->id()));
+    $this->assertSame('Activity A', $this->entryLabel($generationId, (string) $activityA->id(), 'activity'));
     $this->assertSame([(string) $activityA->id()], $this->relationTargets($generationId, (string) $publication->id()));
 
     $publication->setTitle('Updated title');
     $publication->set('field_related_activity', [['target_id' => $activityB->id()]]);
     $publication->save();
-    $this->processMagazineWork();
+    $this->processIndexWork();
     $this->assertSame('Updated title', $this->entryLabel($generationId, (string) $publication->id()));
+    $this->assertSame('Activity B', $this->entryLabel($generationId, (string) $activityB->id(), 'activity'));
     $this->assertSame([(string) $activityB->id()], $this->relationTargets($generationId, (string) $publication->id()));
 
     $publication->delete();
-    $this->processMagazineWork();
+    $this->processIndexWork();
     $this->assertSame(0, (int) $database->select('aculta_index_entry', 'entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'magazine')
@@ -151,13 +175,12 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Processes all queued work belonging to the Magazine provider.
+   * Processes all queued work through the production Index worker.
    */
-  private function processMagazineWork(): void {
+  private function processIndexWork(): void {
     $database = $this->container->get('database');
     $ids = $database->select('aculta_index_work', 'work')
       ->fields('work', ['work_id'])
-      ->condition('provider_id', 'magazine')
       ->condition('status', 'queued')
       ->execute()
       ->fetchCol();
@@ -171,11 +194,11 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
   /**
    * Returns one Magazine projection's label.
    */
-  private function entryLabel(string $generationId, string $entityId): string {
+  private function entryLabel(string $generationId, string $entityId, string $providerId = 'magazine'): string {
     return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'magazine')
+      ->condition('provider_id', $providerId)
       ->condition('entity_id', $entityId)
       ->execute()
       ->fetchField();

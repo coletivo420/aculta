@@ -24,7 +24,10 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
 - A política de acesso continua delegada ao Entity Access com purpose `main`; o teste Unit verifica a declaração do purpose. Cobertura com domínio real, usuário/grants e purpose ausente permanece no gate de integração/homologação do Portal.
 - Hooks de Activity transferidos do Portal em 0.1.0-dev.4 após auditoria de ownership; não foi encontrada duplicação com Magazine, que agora usa apenas `revista`.
 - Backfill, update e delete já são cobertos no Kernel quando Activity e Index
-  estão ativos. Consulta autorizada no purpose `main` com Domains/grants reais,
+  estão ativos. O Kernel Magazine também compila os providers Magazine e Activity
+  a partir dos YAMLs owner e confirma que `related_activity` aponta para uma
+  entrada `node:activity` no rebuild (MariaDB: 1 teste / 18 assertions). A consulta
+  outgoing e o acesso de Activity no purpose `main` com Domains/grants reais,
   integração de formulários/Metatag e homologação conjunta continuam pendentes;
   Runtime permanece sem habilitação.
 - Manifesto, changelog, status, versão e roadmap atualizados em
