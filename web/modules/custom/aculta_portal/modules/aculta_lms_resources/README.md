@@ -23,8 +23,10 @@ Consultas revalidam Entity Access sob o purpose `courses` e exigem também
 continuam exclusivamente no LMS.
 
 O Media oEmbed compartilhado `remote_video` pertence ao `aculta_portal` e pode
-ser consultado pelo Index como entidade autorizada. O provider LMS ainda não
-declara relação com vídeo. Na configuração revisada, `Group:lms_course` não tem
+ser consultado pelo Index como entidade autorizada. Por decisão do responsável,
+relações de vídeo ficam adiadas até fechar formatos editoriais e contratos de
+acesso dos consumidores. O provider LMS ainda não declara relação com vídeo.
+Na configuração revisada, `Group:lms_course` não tem
 campo direto de Media, `field_description` não seleciona formato de texto e o
 campo `lms_activity.no_answer.field_content` aceita apenas `plain_text`; a fonte
 pedagógica que armazenará embeds precisa ser identificada antes de criar curso→

@@ -77,10 +77,10 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
   descrição de termo, URL ou arquivo e revalida acesso de cada destino.
 - O bundle/provider mínimo de Media `remote_video` pertence ao Portal e está
   disponível para os módulos consumidores. Hoje `filter.format.wiki` permite
-  apenas Media `document`; uso de vídeo na Wiki não está habilitado. Se a Wiki
-  passar a referenciar vídeos, definir antes a allowlist editorial, o acesso ao
-  destino e uma relação outgoing explícita; não inferir links de texto livre nem
-  projetar URL oEmbed/corpo.
+  apenas Media `document`; uso de vídeo na Wiki não está habilitado. Decisão do
+  responsável: adiar relações de vídeo até fechar os formatos editoriais e os
+  contratos de acesso. Não inferir links de texto livre nem projetar URL
+  oEmbed/corpo.
 - Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ### Estado da integração e gates restantes
