@@ -17,7 +17,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Identidade fiscal (CPF ou CNPJ) exigida para concluir pedidos comerciais da Loja e do LMS.
+ * Identidade fiscal (CPF ou CNPJ) exigida nos pedidos da Loja e do LMS.
  *
  * Regras: - Com documento cadastrado: mostra a versão mascarada, somente
  * leitura. Nunca é alterável pelo checkout. - Sem documento e com cifra
@@ -143,7 +143,9 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
   }
 
   /**
-   * Consulta a situação do dono do pedido, nunca do usuário da URL. Visitante é tratado como sem documento.
+   * Consulta a situação do dono do pedido, nunca a do usuário da URL.
+   *
+   * Visitante é tratado como sem documento.
    */
   private function check(): FiscalIdentityCheck {
     $customer = $this->order->getCustomer();

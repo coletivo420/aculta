@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Checkout;
 
 /**
- * Situação da identidade fiscal (CPF ou CNPJ) do titular, para a política de checkout comercial.
+ * Situação da identidade fiscal (CPF ou CNPJ) do titular no checkout.
  */
 enum FiscalIdentityStatus: string {
 

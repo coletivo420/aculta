@@ -47,7 +47,9 @@ final class AccountOtherDataForm extends FormBase {
   }
 
   /**
-   * Resolves the official CPF/CNPJ implementation (aculta_id_cpf); NULL when the module is not enabled.
+   * Resolves the official CPF/CNPJ implementation (aculta_id_cpf).
+   *
+   * NULL when the module is not enabled.
    */
   private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
     return $container->has('aculta_id_cpf.account_document')
@@ -63,7 +65,7 @@ final class AccountOtherDataForm extends FormBase {
   }
 
   /**
-   * Monta o formulário conforme o documento salvo e a disponibilidade do serviço.
+   * Monta o formulário conforme o documento salvo e o serviço disponível.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
@@ -156,7 +158,7 @@ final class AccountOtherDataForm extends FormBase {
   }
 
   /**
-   * Volta ao checkout quando o link trouxe um destino interno de checkout; senão, permanece em Outros Dados.
+   * Volta ao checkout do pedido; senão, permanece em Outros Dados.
    *
    * Só caminhos internos sob /checkout/ são aceitos, para não criar
    * redirecionamento aberto.
@@ -175,7 +177,7 @@ final class AccountOtherDataForm extends FormBase {
   }
 
   /**
-   * Formulário de indisponibilidade: uma única mensagem para todos os caminhos de "cadastro indisponível".
+   * Formulário de indisponibilidade com uma única mensagem.
    */
   private function unavailableForm(array $form): array {
     $form['unavailable'] = ['#plain_text' => (string) $this->unavailableMessage()];

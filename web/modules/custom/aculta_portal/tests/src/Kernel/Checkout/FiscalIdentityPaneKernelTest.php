@@ -20,7 +20,9 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Pane de identidade fiscal com o container do Commerce, sem habilitar aculta_portal.
+ * Pane de identidade fiscal com o container do Commerce.
+ *
+ * Sem habilitar o módulo aculta_portal.
  *
  * As classes do Portal são instanciadas diretamente. Recebem o CheckoutSettings
  * real (configuração ausente = padrões) e um documento simulado.
@@ -64,7 +66,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   }
 
   /**
-   * Cria um serviço de documento simulado com a sequência de situações informada.
+   * Cria um documento simulado com a sequência de situações informada.
    *
    * @param array<int, string|null> $saved
    *   Valores devolvidos por `savedDocument()`, em ordem de chamada.
@@ -127,7 +129,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   }
 
   /**
-   * Executa a validação do pane com a entrada informada e devolve o estado do formulário.
+   * Valida o pane com a entrada informada e devolve o estado.
    *
    * @param \Drupal\aculta_portal\Plugin\Commerce\CheckoutPane\FiscalIdentityPane $pane
    *   Pane a validar.
@@ -184,7 +186,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   }
 
   /**
-   * Verifica que o primeiro cadastro na compra é gravado uma única vez e valida.
+   * Verifica que o primeiro cadastro na compra grava uma única vez.
    */
   public function testFirstRegistrationSavesOnce(): void {
     $doc = $this->document([NULL, self::MASCARA]);

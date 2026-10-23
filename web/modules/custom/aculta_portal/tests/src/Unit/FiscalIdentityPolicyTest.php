@@ -16,7 +16,7 @@ use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Política de identidade fiscal do checkout comercial: Loja e LMS exigem, Doações não.
+ * Identidade fiscal do checkout: Loja e LMS exigem; Doações não.
  */
 #[Group('aculta_portal')]
 final class FiscalIdentityPolicyTest extends UnitTestCase {
@@ -81,7 +81,7 @@ final class FiscalIdentityPolicyTest extends UnitTestCase {
   }
 
   /**
-   * Verifica que, sem serviço de documento, a situação é indisponível (falha fechada).
+   * Verifica que, sem serviço, a situação é indisponível.
    */
   public function testWithoutDocumentServiceFailsClosed(): void {
     $check = (new FiscalIdentityPolicy($this->settings(), NULL))->check($this->createMock(UserInterface::class));

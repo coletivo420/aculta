@@ -9,7 +9,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Política compartilhada de identidade fiscal do checkout comercial (Loja e LMS).
+ * Identidade fiscal compartilhada do checkout comercial (Loja e LMS).
  *
  * Decisão de 2026-10-23: a Loja e o LMS exigem CPF/CNPJ válido para concluir
  * pedidos comerciais. Doações não entram aqui. O documento vem exclusivamente
@@ -36,7 +36,7 @@ final class FiscalIdentityPolicy {
   ) {}
 
   /**
-   * Tipos de pedido comerciais que exigem identidade fiscal: a Loja e os tipos reconhecidos como curso.
+   * Tipos comerciais que exigem identidade fiscal: Loja e cursos.
    *
    * @return list<string>
    *   IDs dos tipos de pedido.
