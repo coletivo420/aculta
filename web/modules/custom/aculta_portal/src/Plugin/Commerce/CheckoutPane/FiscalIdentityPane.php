@@ -13,6 +13,7 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,10 +21,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Regras: - Com documento cadastrado: mostra a versão mascarada, somente
  * leitura. Nunca é alterável pelo checkout. - Sem documento e com cifra
- * disponível: aceita o primeiro cadastro na própria compra. A gravação é única
- * e usa o mesmo serviço de Outros Dados (`/dados/outros-dados`). Depois disso,
- * o campo vira somente leitura. - Sem documento e sem cifra disponível, ou com
- * valor ilegível: falha fechada, com mensagem genérica.
+ * disponível: aceita o primeiro cadastro na própria compra, ou oferece o link
+ * para `/dados/outros-dados` com retorno a este pedido. A gravação é única e
+ * usa o mesmo serviço de Outros Dados. Depois disso, o campo vira somente
+ * leitura. - Sem documento e sem cifra disponível, ou com valor ilegível:
+ * falha fechada, com mensagem genérica.
  *
  * Doações não usam este pane: os flows `doacao` e `assinatura_flow` não o
  * incluem.
@@ -81,6 +83,20 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
             '#maxlength' => 64,
             '#autocomplete' => 'off',
             '#spellcheck' => 'false',
+          ];
+          // Alternativa ao cadastro na própria compra: Outros Dados, com
+          // retorno ao checkout deste pedido.
+          $pane_form['other_data'] = [
+            '#type' => 'link',
+            '#title' => $this->t('Prefiro cadastrar em Outros Dados'),
+            '#url' => Url::fromUri('internal:/dados/outros-dados', [
+              'query' => [
+                'destination' => '/checkout/' . $this->order->id(),
+              ],
+            ]),
+            '#attributes' => [
+              'class' => ['aculta-fiscal-identity-other-data'],
+            ],
           ];
         }
         else {
