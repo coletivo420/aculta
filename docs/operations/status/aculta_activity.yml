@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "`0.1.0-dev.7` (Unit 6/19; teste novo 1/5 confirma dependência só do Kernel Portal e tag do provider; Kernel cobre discovery, rebuild, update e delete quando o Index está ativo: 2/29; boot sem Index segue sem prova de execução)"
-next_phase: 'Homologar Entity Access de Activity no purpose `main` com domínio e grants reais e confirmar edição/Metatag dos formulários; Runtime permanece sem habilitação ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+version_note: "0.1.0-dev.8 (Unit 6/19, 4 depreciações PHPUnit; Kernel owner/CRUD + acesso pelo ContentIndexAccessFilter 3/49 MariaDB, 5 depreciações Core/contrib; Domain `main` persistido, troca/restauração real do negotiator e fail-closed; grants específicos do Portal, boot sem Index e Runtime pendentes)"
+next_phase: 'Cobrir Entity Access específico do Portal para Activity e confirmar edição/Metatag dos formulários; validar boot sem Index e Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

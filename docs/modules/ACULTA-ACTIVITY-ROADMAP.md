@@ -21,17 +21,22 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   o Index ainda está pendente.
 - **Kernel/DI entregue em 0.1.0-dev.5:** o teste ativa `aculta_activity`, descobre a tag no registry e cobre backfill, update e delete do Node `activity` pelo worker real. MariaDB: 2 testes / 29 assertions. A política de domínio/grants continua fora deste teste.
 - **Integração opcional em 0.1.0-dev.6:** Activity depende do Kernel `aculta_portal`, dono dos contratos de provider, e não requer `aculta_index`. A tag fica inerte quando o consumidor está desabilitado. O manifesto/grafo foi revisado; um boot Kernel com Activity habilitado e Index ausente ainda não foi executado.
-- A política de acesso continua delegada ao Entity Access com purpose `main`; o teste Unit verifica a declaração do purpose. Cobertura com domínio real, usuário/grants e purpose ausente permanece no gate de integração/homologação do Portal.
+- A política de acesso continua delegada ao Entity Access com purpose `main`. Em
+  0.1.0-dev.8 o Kernel passa pelo `ContentIndexAccessFilter`, inicia em
+  `courses`, muda para o Domain `main` persistido, restaura o contexto, revalida
+  publicação e falha fechado quando `main` está ausente (3/49 MariaDB, 5
+  depreciações Core/contrib). A fixture usa Entity Access padrão de Node; grants
+  específicos do Portal e boot sem Index continuam pendentes.
 - Hooks de Activity transferidos do Portal em 0.1.0-dev.4 após auditoria de ownership; não foi encontrada duplicação com Magazine, que agora usa apenas `revista`.
 - Backfill, update e delete já são cobertos no Kernel quando Activity e Index
   estão ativos. O Kernel Magazine também compila os providers Magazine e Activity
   a partir dos YAMLs owner e confirma que `related_activity` aponta para uma
-  entrada `node:activity` no rebuild (MariaDB: 1 teste / 18 assertions). A consulta
-  outgoing e o acesso de Activity no purpose `main` com Domains/grants reais,
-  integração de formulários/Metatag e homologação conjunta continuam pendentes;
-  Runtime permanece sem habilitação.
+  entrada `node:activity` no rebuild (MariaDB: 1 teste / 18 assertions). Consulta
+  outgoing de Activity, grants específicos do Portal, integração de
+  formulários/Metatag e homologação conjunta continuam pendentes; Runtime
+  permanece sem habilitação.
 - Manifesto, changelog, status, versão e roadmap atualizados em
-  `0.1.0-dev.7`; manifesto/grafo e status index validados. A matriz de
+  `0.1.0-dev.8`; manifesto/grafo e status index validados. A matriz de
   ownership e a homologação de acesso/formulários continuam no gate conjunto.
 
 ## Posterior

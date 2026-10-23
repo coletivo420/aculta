@@ -1,5 +1,15 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.8 — validar acesso Index no purpose canônico
+
+- Kernel adiciona Domains persistidos `main` e `courses`, usa o negotiator
+  real e passa pelo `ContentIndexAccessFilter` com o provider owner.
+- Consulta ativa em `courses` muda para `main`, restaura o Domain original,
+  revalida publicação atual e falha fechado se o Domain owner estiver ausente.
+- MariaDB: 3 testes / 49 assertions PASS, com 5 depreciações Core/contrib.
+- A fixture usa Entity Access padrão de Node; grants específicos do Portal,
+  boot sem `aculta_index`, Runtime e formulários continuam pendentes.
+
 ## 0.1.0-dev.7 — proteger a integração opcional do Index
 
 - Unit verifica que Activity depende dos contratos do Kernel Portal, não do
