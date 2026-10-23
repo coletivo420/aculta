@@ -12,17 +12,21 @@ Runtime.
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
 O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
-(`aculta_forum` dev.249, 1/6). O harness reduzido do filtro usa o
-`ForumContentIndexProvider` real para validar purpose canônico, restauração do
-Domain e falha fechada sem Domain (`aculta_index` dev.51, suíte focal 7/60).
-Escolheu-se esse harness para a evidência inicial; não substitui Kernel de
-Group/grants nem boot/DI do módulo Drupal. Em `aculta_index` dev.61, Kernel usa
-a classe de produção com tag de fixture e prova backfill/update/delete de tópico,
-Comment Core e ForumPost; verifica relações `forum_topic`/`forum_parent_post`,
-omissão de Comment rejeitado e revisão antiga não padrão (2/50). O fluxo
-corrigiu a conversão do timestamp de Comment para int e o enumerador de bundle
-fixo sem chave (Unit 5/31). Revogação, grants/Domain reais e boot completo do
-owner continuam pendentes antes da ativação.
+(`aculta_forum` dev.249, 1/6). Harness Unit focal valida purpose canônico,
+restauração do Domain e falha fechada sem Domain (`aculta_index` dev.51, 7/60).
+Kernel usa a classe de produção com tag de fixture para backfill/update/delete
+de tópico, Comment Core e ForumPost, relações `forum_topic`/`forum_parent_post`,
+omissão de Comment rejeitado e revisão antiga não padrão (2/51). O Kernel
+`ContentIndexForumAccessKernelTest` integra o filtro aos hooks de produção via
+adapter de fixture no `ModuleHandler`: membro comum com Group membership e
+permissão é autorizado para tópico, ForumPost e Comment legado; visitante é
+negado nos três. `node_grants` e `node_access_records` são invocados pelo hook
+system e o grant é verificado na tabela `node_access`. Remover membership faz a
+consulta seguinte do Index negar os itens imediatamente; o Domain anterior é
+restaurado após cada checagem (1/60, SQLite e MariaDB). Isso prova policy e
+grants reais sem ativar a cadeia completa do owner. Boot/DI do Fórum e Runtime
+seguem pendentes antes da ativação. A conversão do timestamp Comment foi
+corrigida; Unit 5/31 cobre bundle fixo sem chave no enumerador.
 
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 

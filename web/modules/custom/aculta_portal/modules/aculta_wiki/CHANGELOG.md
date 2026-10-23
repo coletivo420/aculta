@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.8 — atualizar evidência de acesso do Content Index
+
+- Kernel `ContentIndexWikiAccessKernelTest` exercita o filtro real com a policy
+  `EntityHooks`, provider de produção e Domains persistidos: nega no purpose
+  `main`, autoriza em `wiki` e restaura o Domain anterior (1/16).
+- O teste usa bridge de fixture e não ativa a cadeia completa da Wiki. O mapa de
+  services valida separadamente o YAML/tag owner. Grants específicos,
+  homologação Runtime e as relações de categorias/imagem continuam pendentes;
+  estas duas relações permanecem adiadas até a finalização da Wiki.
+
 ## 0.1.0-dev.7 — registrar evidência Kernel do Content Index
 
 - Harness Kernel do Index usa `WikiContentIndexProvider` real e cobre backfill,

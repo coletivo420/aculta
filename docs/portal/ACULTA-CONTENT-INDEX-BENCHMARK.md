@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados; benchmark amplo de escrita, rebuild e reconciliação foi medido em 10k, enquanto escalas maiores continuam pendentes.
+Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados. Rebuild/auditoria foram medidos em 10k e 100k em uma repetição diagnóstica por cenário; 1M e repetições adicionais continuam pendentes.
 
 ## Matriz fixada
 

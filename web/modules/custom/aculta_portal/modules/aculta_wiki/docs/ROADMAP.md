@@ -80,17 +80,19 @@ fechar os contratos de acesso e relações da Wiki. Ver
   de bundle/revisão não suportados, deduplicação da relação e declaração do
   purpose `wiki`. O Kernel harness usa a classe real do provider para backfill,
   relação, update e delete (1 teste / 17 assertions), com tag registrada por
-  fixture; isso não valida o YAML owner nem equivale ao filtro de acesso real.
-- Unit focal do filtro também registra o provider Wiki real e confirma que a
-  checagem Entity Access ocorre sob `wiki420_aculta_org`, preserva o usuário e
-  restaura o Domain ativo; sem esse Domain, nega sem chamar Entity Access no
-  contexto corrente (suíte focal 9/80). Grants reais e boot owner seguem
-  pendentes.
-- Pendentes: Kernel de discovery DI pelo YAML owner quando os módulos estiverem habilitados,
-  consulta cruzada com dois usuários/grants no purpose `wiki`, compatibilidade
-  do contrato durante a finalização da Wiki e homologação Runtime. O módulo
-  continua desabilitado; não habilitar ou importar sua configuração como parte
-  desta fase.
+  fixture; o mapa de services cobre separadamente o YAML owner, mas não ativa a
+  cadeia Drupal completa.
+- Unit focal do filtro registra o provider Wiki real e confirma purpose,
+  preservação do usuário, restauração de Domain e falha fechada sem Domain
+  (9/80). O Kernel `ContentIndexWikiAccessKernelTest` usa `EntityHooks`, provider
+  e Domains persistidos reais: nega em `main`, autoriza pelo Index em `wiki` e
+  restaura o Domain anterior (1/16). O teste usa bridge de fixture; não habilita
+  a Wiki nem prova discovery do YAML owner no container Drupal.
+- O mapa de services lê o YAML real da Wiki e compila a tag do provider.
+  Pendentes: boot/DI completo do owner, grants específicos caso sejam
+  acrescentados, compatibilidade do contrato durante a finalização da Wiki e
+  homologação Runtime. O módulo continua desabilitado; não habilitar ou importar
+  sua configuração como parte desta fase.
 - `field_wiki_categories` e `field_wiki_image` seguem como dívida até a
   finalização dos contratos editoriais e de acesso. Não criar providers de
   Taxonomy/Media nesta integração parcial.

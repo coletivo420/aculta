@@ -39,7 +39,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 
 ## Content Index — adapter de curso (IDX 0.1-F)
 
-O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. Pendentes: Kernel/DI, reconciliação das referências e smoke no Runtime após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. O Kernel passa pelo filtro do Index, usa Group e Domains persistidos e negotiator real: estudante permitido por `takeAccess()`, educador por permissão contextual e terceiro negado (1/33 MariaDB). Unit cobre o YAML/tag owner (1/4), mas a cadeia completa do módulo ainda não foi inicializada no Kernel. Pendentes: boot/DI completo, reconciliação das referências e smoke no Runtime após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ## Identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I, 2026-10-23)
 
