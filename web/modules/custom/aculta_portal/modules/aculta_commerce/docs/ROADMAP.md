@@ -30,7 +30,7 @@ Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução
 ## Etapas
 
 - **0.1.0-A (iniciada):** manifesto do novo submódulo, ADRs e inventário preliminar. Pendente: varredura completa de código, `config/sync`, entidades e operações comerciais; documento de caracterização com caminhos e consumidores.
-- **0.1.0-B:** auditoria de gateways e fluxos (loja, LMS, doação) com matriz de end-to-end, webhooks e idempotência. Zero alteração de comportamento.
+- **0.1.0-B (auditoria estática entregue; runtime pendente):** contratos de gateway compartilhado, matriz dos três fluxos, webhooks e idempotência registrados em [PAYMENT-FLOW-CONTRACTS-0.1.0-B.md](PAYMENT-FLOW-CONTRACTS-0.1.0-B.md). **B-01 bloqueador:** subscriber de doações altera rotas globais do Commerce; caracterizar impacto no servidor antes de qualquer correção. Sem mudança de comportamento.
 - **0.1.0-C:** auditoria de catálogo, estoque, taxas, shipping, views, cupons, formulários e ACL. Decisão sobre Commerce Stock mediante validação local.
 - **0.1.0-D:** contrato Green Stash com `StudioExperienceProviderInterface`, configuração de serviço e rotas apenas após verificação dos propósitos de domínio; ACL por operação; testes.
 - **0.2.0:** migração seletiva de código comercial do Portal sem mudar rotas públicas e sem afetar LMS/doação. `ShopController` sem ID fixo, filtros/paginação, preço sem `float`.
@@ -57,3 +57,8 @@ Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução
 ## Regras de colaboração
 
 Permaneça na branch/PR existente; nunca abra outra PR. Não misture arquivos de outras frentes. Não faça reset, force push, migração de dados, ativação em produção ou alterações de checkout antes das provas. Documentação deve acompanhar cada alteração; testes completos no servidor após as fases curtas.
+
+## Histórico de execução
+
+- 2026-10-22 — 0.1.0-A: manifesto, README, índice e inventário de rotas commitados.
+- 2026-10-22 — 0.1.0-B: auditoria estática de gateway Mercado Pago, assinatura de webhook, segregação de métricas e `CartCheckoutRouteSubscriber`; matriz de testes produzida. Testes e caracterização de configurações reais permanecem **PENDENTES** no servidor.
