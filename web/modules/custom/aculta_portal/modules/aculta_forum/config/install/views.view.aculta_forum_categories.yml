@@ -317,6 +317,26 @@ display:
             strip_tags: false
             trim: false
             html: false
+        aculta_forum_category_topic_count:
+          id: aculta_forum_category_topic_count
+          table: taxonomy_term_field_data
+          field: aculta_forum_category_topic_count
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: aculta_forum_category_topic_count
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim_whitespace: false
+            word_boundary: true
+            ellipsis: true
+            strip_tags: false
+            trim: false
+            html: false
       style:
         type: default
         options:
@@ -346,6 +366,7 @@ display:
       contexts:
         - 'languages:language_interface'
         - user.permissions
+        - 'user.node_grants:view'
       tags: {  }
   block_landing:
     id: block_landing

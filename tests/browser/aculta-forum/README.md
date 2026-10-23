@@ -150,14 +150,15 @@ O script imprime JSON e grava capturas e `results.json` com modo `0600` em
 produção. O anexo e o download privado são medidos pelos scripts de
 `aculta_forum/tests/runtime/`, não pelo navegador.
 
-## Olivero em `/categorias`
+## Temas Olivero e ACULTA420 em `/categorias`
 
-`categorias-olivero.py` mede a página `/categorias` com o tema **Olivero** no
-ambiente local: h1, categorias, links `?categoria=`, ausência de erros e de
-overflow, com capturas em 1024 px e na menor largura de janela que o Firefox
-aceita (o script registra a largura real; não usa BiDi). Ele reaproveita
+`categorias-visual.py` mede a página `/categorias` no ambiente local com o tema
+ativo: h1, categorias, links `?categoria=`, contagem de tópicos, ausência de
+erros e de overflow, com capturas em 1024 px e na menor largura de janela que o
+Firefox aceita (o script registra a largura real; não usa BiDi). Ele reaproveita
 `wdlib.py` de `tests/browser/aculta-cpf-checkout/`, resolve os hostnames de
-teste para 127.0.0.1 e não troca o tema. Pré-requisito: Olivero como
+teste para 127.0.0.1 e não troca o tema. Use `SUITE_THEME=olivero` (padrão) ou
+`SUITE_THEME=aculta420`; o caso Olivero exige esse tema como
 `system.theme.default` no Runtime local, com restauração garantida por `trap`.
 
 ```bash
@@ -170,10 +171,12 @@ restore() {
 trap restore EXIT
 vendor/bin/drush config:set system.theme default olivero -y
 vendor/bin/drush cache:rebuild >/dev/null
-DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-categorias-olivero' \
-  python3 -I tests/browser/aculta-forum/categorias-olivero.py
+DISPLAY=:0 SUITE_THEME=olivero \
+SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-categorias-olivero' \
+  python3 -I tests/browser/aculta-forum/categorias-visual.py
 ```
 
-O script confirma que o HTML carrega assets do Olivero e nenhum asset do
-ACULTA420. Ele não prova a grade visual do tema ACULTA420; isso continua na
-suíte `forum-index-visual.mjs`.
+O script confirma que o HTML carrega assets só do tema informado. Com
+`SUITE_THEME=aculta420`, ele mede a grade do tema, o contador de cada cartão e
+o reflow; a inspeção de todas as combinações de cor continua na suíte
+`forum-index-visual.mjs`.

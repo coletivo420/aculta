@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Kernel;
 
+use Drupal\aculta_forum\Plugin\views\field\ForumCategoryTopicCount;
 use Drupal\aculta_forum_counter_test\Hook\CounterGrantsTestHooks;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
@@ -19,6 +20,7 @@ use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\user\Entity\User;
 use Drupal\views\Entity\View;
+use Drupal\views\ResultRow;
 use Drupal\views\Views;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -141,6 +143,32 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
     $this->container->get('state')->set(CounterGrantsTestHooks::ADD_TAG_STATE, FALSE);
     $anonymous = $this->counts(new AnonymousUserSession());
     self::assertSame(['Pública' => 1, 'Restrita' => 1], $anonymous);
+  }
+
+  /**
+   * The field plugin counts and renders only topics the account may view.
+   */
+  public function testFieldPluginRendersAccessAwareCounts(): void {
+    $plugin = new ForumCategoryTopicCount(
+      [],
+      'aculta_forum_category_topic_count',
+      [],
+      $this->container->get('database'),
+    );
+    $plugin->aliases['tid'] = 'tid';
+    $rows = [
+      new ResultRow(['tid' => (int) $this->publicCategory->id()]),
+      new ResultRow(['tid' => (int) $this->restrictedCategory->id()]),
+    ];
+
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
+    $plugin->preRender($rows);
+    self::assertSame('1 tópico', (string) $plugin->render($rows[0])['#value']);
+    self::assertSame('Nenhum tópico', (string) $plugin->render($rows[1])['#value']);
+
+    $this->container->get('current_user')->setAccount($this->member);
+    $plugin->preRender($rows);
+    self::assertSame('1 tópico', (string) $plugin->render($rows[1])['#value']);
   }
 
   /**

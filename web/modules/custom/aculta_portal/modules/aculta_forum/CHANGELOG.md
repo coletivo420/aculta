@@ -1,3 +1,20 @@
+## `0.1.0-dev.260` — contador de tópicos access-aware nas categorias — 2026-10-23
+
+- Novo campo Views `aculta_forum_category_topic_count` conta tópicos publicados
+  e acessíveis por categoria em uma única consulta com a tag `node_access`.
+  Cada cartão mostra "Nenhum tópico", "1 tópico" ou "@count tópicos"; a regra
+  de plural do português trata zero como singular, então o zero tem texto
+  próprio.
+- A View `aculta_forum_categories` (instalação e sync) recebe o campo e o
+  contexto `user.node_grants:view`. O cartão SDC ganha o slot `count` e o tema
+  mapeia o token `forum-category-count`, sem classe de design no módulo.
+- Kernel do arquivo 3/54: o contador sem a tag vaza o restrito; com a tag, o
+  anônimo vê só a categoria pública e o membro vê as duas; o render cobre
+  plural, zero e tradução.
+- Runtime local: 12 cartões com "Nenhum tópico" (banco sem tópicos); suíte
+  visual `categorias-visual.py` 9/9 em ACULTA420 e 9/9 em Olivero, sem erros
+  nem overflow. Suíte Kernel 59/1.336; Unit 174/1.008; PHPCS limpo.
+
 ## `0.1.0-dev.259` — provar contadores access-aware nas categorias — 2026-10-23
 
 - Nova prova Kernel constrói uma View de categorias com agregação COUNT sobre a

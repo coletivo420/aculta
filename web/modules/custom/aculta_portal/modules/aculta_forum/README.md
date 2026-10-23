@@ -19,10 +19,10 @@ as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
 1024 px escuro. Em 2026-10-23 a suíte X11 reconfirmou 15/15 no servidor de testes
 (390/768/1024, claro/escuro e link de salto) e 8/8 com Olivero no ambiente local,
 sem overflow nem assets do ACULTA420; o script fica em
-`tests/browser/aculta-forum/`. Contadores de tópicos seguem pendentes: o Kernel
-de 2026-10-23 provou que a relação reversa não propaga `node_access`, então a
-contagem precisa adicionar a tag explicitamente. Zoom e aparelho real também
-permanecem pendentes.
+`tests/browser/aculta-forum/`. Cada cartão mostra a contagem de tópicos
+publicados e acessíveis à conta; a consulta adiciona `node_access`
+explicitamente porque a relação reversa do Core não propaga a tag. Zoom e
+aparelho real permanecem pendentes.
 `/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
 posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
 vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros

@@ -1,3 +1,17 @@
+## Contador de tópicos access-aware — implementação, 2026-10-23
+
+- `ForumCategoryCounterAccessKernelTest` (3 testes / 54 asserções, MariaDB):
+  a View agregada sem tag conta o restrito; com `node_access`, o anônimo vê só
+  a pública e o membro vê as duas; o campo renderiza "1 tópico", "Nenhum
+  tópico" e "@count tópicos" conforme o plural do português.
+- Config: `aculta_forum_categories` (instalação e sync) com o campo
+  `aculta_forum_category_topic_count` na página e contexto
+  `user.node_grants:view`; o campo é schema-válido ao salvar a View.
+- Runtime local: 12 cartões com "Nenhum tópico" (banco sem tópicos);
+  `categorias-visual.py` 9/9 com ACULTA420 e 9/9 com Olivero, sem erros nem
+  overflow. Tópicos restritos reais no Runtime continuam pendentes.
+- Suíte Kernel do Fórum 59/1.336; Unit 174/1.008; PHPCS limpo.
+
 ## Contadores access-aware nas categorias — prova, 2026-10-23
 
 - `ForumCategoryCounterAccessKernelTest` (2 testes / 36 asserções, MariaDB):
@@ -15,7 +29,7 @@
   390/768/1024 CSS px, claro/escuro, 12 categorias, zero tópicos na listagem
   pública, link de salto com foco e destino corretos, `scrollWidth` igual ao
   viewport e nenhum cartão fora do enquadramento.
-- `categorias-olivero.py`, ambiente local com Olivero: 8/8. H1 "Categorias",
+- `categorias-visual.py`, ambiente local com Olivero: 8/8. H1 "Categorias",
   12 linhas e 12 links `?categoria=`, seis assets do Olivero e nenhum do
   ACULTA420, sem mensagens de erro e sem overflow em 1024 px e na menor janela
   aceita pelo Firefox. Tema restaurado para `aculta420`; capturas e

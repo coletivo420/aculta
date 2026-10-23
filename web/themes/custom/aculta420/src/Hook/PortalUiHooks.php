@@ -365,6 +365,8 @@ final class PortalUiHooks {
     'studio-live' => ['studio__live', 'small', 'text-muted'],
     'studio-listing' => ['table', 'table-hover', 'align-middle', 'studio__listing'],
     'studio-listing-wrap' => ['table-responsive', 'studio__listing-wrap'],
+    // Fórum: contagem de tópicos visíveis no cartão de categoria.
+    'forum-category-count' => ['aculta-forum-category__count'],
   ];
 
   /** Maps tokens on menu link attributes (set by the Portal) to presentation classes, as for other elements. */

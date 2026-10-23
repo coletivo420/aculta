@@ -66,6 +66,14 @@ final class PublicForumViewsDataHooks {
         'no group by' => TRUE,
       ],
     ];
+    $data['taxonomy_term_field_data']['aculta_forum_category_topic_count'] = [
+      'title' => 'ACULTA Forum: tópicos visíveis na categoria',
+      'help' => 'Conta tópicos publicados e acessíveis à conta atual, por categoria.',
+      'field' => [
+        'id' => 'aculta_forum_category_topic_count',
+        'no group by' => TRUE,
+      ],
+    ];
   }
 
 }

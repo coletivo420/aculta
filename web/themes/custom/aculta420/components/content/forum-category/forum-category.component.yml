@@ -16,6 +16,9 @@ slots:
   description:
     title: Descrição
     description: 'Descrição renderizada pelo campo Taxonomy da View, respeitando o formato configurado.'
+  count:
+    title: Contagem de tópicos
+    description: 'Tópicos publicados e acessíveis à conta atual, preparados pelo campo de contagem da View.'
 assets:
   css:
     component:

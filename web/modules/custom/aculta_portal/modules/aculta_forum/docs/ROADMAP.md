@@ -180,7 +180,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 `tests/browser/aculta-forum/forum-index-visual.mjs` passou 15/15 no servidor de
 testes com Firefox ESR/X11: 390/768/1024 CSS px, claro/escuro, link de salto e
 cartões no enquadramento, sem tópicos na listagem pública. Com Olivero no
-ambiente local, `tests/browser/aculta-forum/categorias-olivero.py` passou 8/8:
+ambiente local, `tests/browser/aculta-forum/categorias-visual.py` passou 8/8:
 12 categorias e links `?categoria=` renderizados sem assets do ACULTA420, sem
 erros e sem overflow; o tema voltou a `aculta420` por trap. Zoom, aparelho real
 e contadores access-aware continuam pendentes.
@@ -194,6 +194,14 @@ grants reais em MariaDB. Sem a tag, o anônimo conta o tópico restrito; com
 as duas. O Core não propaga a tag no relacionamento `EntityReverse`, então o
 contador de categorias precisa adicioná-la explicitamente. A implementação da
 contagem na página segue essa decisão.
+
+Implementação (dev.260): o campo `aculta_forum_category_topic_count` conta em
+uma consulta própria com `node_access` e a View da página declara
+`user.node_grants:view`. O cartão SDC recebe o slot `count`, o tema mapeia o
+token e o Olivero renderiza a contagem sem o tema. Runtime local: 12 cartões
+com "Nenhum tópico" (sem tópicos no banco) e suíte `categorias-visual.py` 9/9
+nos dois temas. A validação com tópicos restritos reais fica para o Runtime de
+testes.
 
 ### Moderação revisionável de posts — decisão de 2026-10-21
 
