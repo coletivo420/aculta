@@ -7,8 +7,10 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_index\Query\ContentIndexCursorManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
@@ -75,6 +77,89 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'aculta_index_audit',
     ]);
     aculta_index_install();
+  }
+
+  /**
+   * Expired cursors are rejected and removed when presented again.
+   */
+  public function testExpiredCursorIsRejectedAndDeleted(): void {
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1000);
+    $manager = new ContentIndexCursorManager($this->container->get('database'), $time);
+    $queryHash = str_repeat('a', 64);
+    $token = $manager->create(7, 'generation-a', $queryHash, 0, 1);
+    $tokenHash = hash('sha256', $token);
+    $this->container->get('database')->update('aculta_index_cursor')
+      ->fields(['expires' => 1000])
+      ->condition('token_hash', $tokenHash)
+      ->execute();
+
+    try {
+      $manager->load($token, 7, 'generation-a', $queryHash);
+      $this->fail('An expired cursor must not be resumed.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertSame(0, (int) $this->container->get('database')->select('aculta_index_cursor')
+        ->condition('token_hash', $tokenHash)
+        ->countQuery()
+        ->execute()
+        ->fetchField());
+    }
+  }
+
+  /**
+   * Cursor pruning deletes no more than the requested bounded batch.
+   */
+  public function testCursorPruningDeletesExpiredRowsInBoundedBatches(): void {
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1000);
+    $database = $this->container->get('database');
+    $manager = new ContentIndexCursorManager($database, $time);
+    $queryHash = str_repeat('b', 64);
+    $tokens = [];
+    for ($entryId = 1; $entryId <= 3; $entryId++) {
+      $tokens[] = $manager->create(7, 'generation-a', $queryHash, 0, $entryId);
+    }
+    $futureToken = $manager->create(7, 'generation-a', $queryHash, 0, 4);
+    $expiredHashes = array_map(static fn (string $token): string => hash('sha256', $token), $tokens);
+    $database->update('aculta_index_cursor')
+      ->fields(['expires' => 999])
+      ->condition('token_hash', $expiredHashes, 'IN')
+      ->execute();
+
+    $this->assertSame(2, $manager->prune(2));
+    $this->assertSame(1, $manager->prune(2));
+    $this->assertSame(0, $manager->prune(2));
+    $this->assertSame(1, (int) $database->select('aculta_index_cursor')->countQuery()->execute()->fetchField());
+    $this->assertSame(1, (int) $database->select('aculta_index_cursor')
+      ->condition('token_hash', hash('sha256', $futureToken))
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Cursor cleanup refuses unbounded or empty batches.
+   *
+   * @dataProvider invalidCursorPruneLimitProvider
+   */
+  public function testCursorPruningRejectsInvalidLimits(int $limit): void {
+    $manager = $this->container->get('aculta_index.cursor_manager');
+    $this->expectException(\InvalidArgumentException::class);
+    $manager->prune($limit);
+  }
+
+  /**
+   * Provides invalid cursor cleanup limits.
+   *
+   * @return array<string, array{0: int}>
+   *   Invalid limits.
+   */
+  public static function invalidCursorPruneLimitProvider(): array {
+    return [
+      'zero' => [0],
+      'above maximum' => [5001],
+    ];
   }
 
   /**

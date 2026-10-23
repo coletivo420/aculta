@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.58 — cobrir expiração e poda de cursores
+
+- Kernel confirma que cursor expirado é rejeitado e removido ao ser apresentado.
+- Kernel confirma poda em lotes limitados, preservando cursores válidos, e
+  rejeição de limites vazios ou acima do máximo. Suíte de schema: 39 testes /
+  416 assertions PASS; 1 depreciação de hook upstream e avisos PHPUnit existentes.
+
 ## 0.1.0-dev.57 — integrar Magazine no backfill e CRUD do Index
 
 - Kernel registra a classe de produção `MagazineContentIndexProvider` via tag,
