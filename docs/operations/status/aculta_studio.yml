@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'GanjaLab Wiki (Studio dev.2 / Wiki dev.19): integração de filas de revisão e propostas na WikiTab existente, com Kernel combinado executado. Runtime continua com Wiki desabilitada; pendentes ativação controlada autorizada, Firefox ESR/X11, mobile, WCAG e homologação visual. Não declarar essas filas homologadas no Runtime.'
+next_phase: 'GanjaLab Wiki (Studio dev.2 / Wiki dev.19): integração de filas de revisão e propostas na WikiTab existente, com Kernel combinado executado. Preflight read-only de 2026-10-23 encontrou Wiki ativa no Runtime de teste e Index desativado; `/wiki` retorna 404 por HTTP, portanto filas e rotas seguem sem homologação. Pendentes diagnóstico Runtime, Firefox ESR/X11, mobile, WCAG e homologação visual. Não declarar essas filas homologadas no Runtime.'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
 # G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T

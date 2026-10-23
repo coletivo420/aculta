@@ -21,11 +21,16 @@
 Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`,
 `docs/ROADMAP.md` e `docs/TEST-MATRIX.md`, somente nas seções pertinentes.
 
-- O módulo existe em código desde 2026-10-22 — controlador, formulário de busca,
-  rotas e testes unitários — e **não está habilitado**. Não habilitar, instalar
-  configuração nem executar operações persistentes sem autorização do
-  responsável. Enquanto estiver desabilitado, as rotas da Wiki não são
-  registradas pelo Drupal; o Portal não as define mais.
+- O preflight read-only de 2026-10-23 no host `toca`, URI
+  `https://wiki420.aculta.toca.net.br`, branch
+  `docs/aculta-forum-0.1.0-dev.1` confirmou `aculta_wiki` ativo e
+  `aculta_index` desativado no Runtime de teste. `/wiki` retornou 404 por HTTP,
+  embora a rota seja resolvida, o acesso seja permitido e o controller renderize
+  via CLI; `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornaram 200.
+  Não houve alteração de configuração, cache ou banco. Tratar Runtime como não
+  homologado e repetir o diagnóstico antes de declarar rotas funcionais. Não
+  instalar configuração nem executar outras operações persistentes sem
+  autorização aplicável. O Portal não define mais as rotas da Wiki.
 - Testes unitários: `vendor/bin/phpunit -c web/core/phpunit.xml.dist
   web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit`.
 - Nomes e caminhos de rota são contrato público: `aculta_portal.wiki_home`
