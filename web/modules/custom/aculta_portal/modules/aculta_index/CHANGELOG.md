@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.143 — instrumentar lotes da auditoria
+
+- Cada lote concluído emite uma mensagem `debug` com fase, quantidade lida e
+  projetada, tempos de leitura/projeção, reconciliação, checkpoint, fila e
+  duração total. Não registra IDs nem metadados de conteúdo.
+- O detalhamento operacional permite separar custo do enumerador/provider do
+  custo de comparação do catálogo em futuras auditorias. Não altera o estado
+  persistido da auditoria nem seu contrato de consulta.
+- PHPCS Drupal passou; Kernel Schema MariaDB passou (52 testes / 551
+  assertions; uma depreciação Core e 53 depreciações PHPUnit).
+
 ## 0.1.0-dev.142 — medir auditoria otimizada em 100k
 
 - Repetição MariaDB da auditoria incremental com 100.000 fontes, após o

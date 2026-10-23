@@ -149,6 +149,10 @@ final class ContentIndexIntegrityChecker {
     if ($limit < 1 || $limit > self::MAX_BATCH_SIZE) {
       throw new \InvalidArgumentException(sprintf('Content Index audit batch size must be between 1 and %d.', self::MAX_BATCH_SIZE));
     }
+    $batchStartedAt = hrtime(TRUE);
+    $scanMilliseconds = 0.0;
+    $reconciliationMilliseconds = 0.0;
+    $checkpointMilliseconds = 0.0;
     $transaction = $this->database->startTransaction();
     try {
       $state = $this->loadAuditState(TRUE);
@@ -178,6 +182,7 @@ final class ContentIndexIntegrityChecker {
           );
         $rows = [];
       }
+      $scanMilliseconds = (hrtime(TRUE) - $batchStartedAt) / 1_000_000;
       $updates = [
         'cursor_id' => $rows === [] ? (int) $state['cursor_id'] : (int) end($rows)['row_id'],
         'updated' => $this->time->getRequestTime(),
@@ -197,6 +202,7 @@ final class ContentIndexIntegrityChecker {
           $missingRelationSources += (int) $row['source_missing'];
         }
       }
+      $reconciliationStartedAt = hrtime(TRUE);
       if ($state['phase'] === 'entries') {
         $sourceAudit = $this->reconcileEntrySources($rows, (string) $state['active_generation']);
       }
@@ -207,6 +213,7 @@ final class ContentIndexIntegrityChecker {
           (string) $state['active_generation'],
         );
       }
+      $reconciliationMilliseconds = (hrtime(TRUE) - $reconciliationStartedAt) / 1_000_000;
       if ($state['phase'] === 'entries') {
         $updates['orphan_entry_count'] = (int) $state['orphan_entry_count'] + $orphanEntries;
         $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $sourceAudit['stale'];
@@ -275,12 +282,14 @@ final class ContentIndexIntegrityChecker {
         }
       }
 
+      $checkpointStartedAt = hrtime(TRUE);
       $checkpointed = $this->database->update('aculta_index_audit')
         ->fields($updates)
         ->condition('audit_id', 1)
         ->condition('status', 'running')
         ->condition('revision', $state['revision'])
         ->execute();
+      $checkpointMilliseconds = (hrtime(TRUE) - $checkpointStartedAt) / 1_000_000;
       if ($checkpointed !== 1) {
         throw new \LogicException('The Content Index audit checkpoint changed during batch processing.');
       }
@@ -288,6 +297,7 @@ final class ContentIndexIntegrityChecker {
 
       // Requeue after the audit checkpoint commits. If the active generation
       // changed during the batch, its new rebuild supersedes this repair work.
+      $queueStartedAt = hrtime(TRUE);
       $currentPointer = $this->activePointer();
       if (($currentPointer['generation'] ?? '') === (string) $state['active_generation']) {
         foreach ($sourceAudit['project'] as $identity) {
@@ -322,6 +332,19 @@ final class ContentIndexIntegrityChecker {
           }
         }
       }
+      $queueMilliseconds = (hrtime(TRUE) - $queueStartedAt) / 1_000_000;
+      $projectionCount = $sourceBatch === NULL ? 0 : count($sourceBatch['projections']);
+      $scanCount = $sourceBatch === NULL ? count($rows) : $projectionCount;
+      $this->logger->debug('Content Index integrity batch completed. Phase: @phase; scanned: @scan_count; projections: @projection_count; scan: @scan_ms ms; reconcile: @reconcile_ms ms; checkpoint: @checkpoint_ms ms; queue: @queue_ms ms; total: @total_ms ms.', [
+        '@phase' => $state['phase'],
+        '@scan_count' => $scanCount,
+        '@projection_count' => $projectionCount,
+        '@scan_ms' => round($scanMilliseconds, 3),
+        '@reconcile_ms' => round($reconciliationMilliseconds, 3),
+        '@checkpoint_ms' => round($checkpointMilliseconds, 3),
+        '@queue_ms' => round($queueMilliseconds, 3),
+        '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
+      ]);
       return $this->getAuditState();
     }
     catch (\Throwable $exception) {
