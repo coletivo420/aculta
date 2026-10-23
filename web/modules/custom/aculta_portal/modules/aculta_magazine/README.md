@@ -14,7 +14,7 @@ conteúdo, publicação e mídia.
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
 - [Registro histórico da migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
-- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — o provider declara o contexto canônico `magazine`; Entity Access e Revision Access continuam nos módulos de origem. `aculta_portal` é owner do Media compartilhado `remote_video`; o provider registra apenas metadados mínimos e não copia URL oEmbed. A descoberta de relações entre embeds de vídeo no corpo da Revista e as publicações do Index segue como integração planejada, com o corpo editorial preservado.
+- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — o provider declara o contexto canônico `magazine`; Entity Access e Revision Access continuam nos módulos de origem. `aculta_portal` é owner do Media compartilhado `remote_video`; `filter.format.revista_editorial` já o permite como embed e o provider do Index registra somente metadados mínimos, sem URL oEmbed. A relação entre embeds no corpo da Revista e publicações ainda será projetada pelo adapter Magazine, preservando o corpo editorial.
 - [CHANGELOG](CHANGELOG.md)
 
 Para políticas editoriais transversais, consulte a

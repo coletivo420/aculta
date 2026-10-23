@@ -24,9 +24,12 @@ continuam exclusivamente no LMS.
 
 O Media oEmbed compartilhado `remote_video` pertence ao `aculta_portal` e pode
 ser consultado pelo Index como entidade autorizada. O provider LMS ainda não
-declara uma relação curso→vídeo: o contrato deve apontar o recurso pedagógico
-real (por exemplo, aula ou leitura que contém o embed) antes de indexar links.
-Não copiar URL oEmbed, corpo, progresso ou dados de estudante para o catálogo.
+declara relação com vídeo. Na configuração revisada, `Group:lms_course` não tem
+campo direto de Media, `field_description` não seleciona formato de texto e o
+campo `lms_activity.no_answer.field_content` aceita apenas `plain_text`; a fonte
+pedagógica que armazenará embeds precisa ser identificada antes de criar curso→
+vídeo ou atividade→vídeo. Não copiar URL oEmbed, corpo, progresso ou dados de
+estudante para o catálogo.
 
 ## Estado
 

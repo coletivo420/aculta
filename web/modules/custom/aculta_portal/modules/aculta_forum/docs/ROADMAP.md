@@ -11,10 +11,13 @@ Runtime.
 
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
-O bundle Media `remote_video`, utilizado também pela Revista, Wiki e LMS, passa
-a ser propriedade do Portal; o provider do Portal projeta metadados mínimos.
-O Fórum deve declarar futuramente relações nomeadas para vídeos embutidos em
-Comments/ForumPosts, com Entity Access revalidado e sem copiar URL ou corpo.
+O bundle Media `remote_video` compartilhado passa a ser propriedade do Portal;
+o provider do Portal projeta metadados mínimos. A configuração atual
+`filter.format.forum` permite somente `forum_attachment`; habilitar vídeo remoto
+exige decisão de acesso e fluxo editorial, pois a política de anexos atual é
+específica desse bundle. Depois, o Fórum pode declarar relações nomeadas para
+vídeos embutidos em Comments/ForumPosts, com Entity Access revalidado e sem
+copiar URL ou corpo.
 O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
 (`aculta_forum` dev.249, 1/6). Harness Unit focal valida purpose canônico,
 restauração do Domain e falha fechada sem Domain (`aculta_index` dev.51, 7/60).
