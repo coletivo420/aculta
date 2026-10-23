@@ -8,7 +8,7 @@
   mantém a relação outgoing `course_document`.
 - A versão de projeção passa a 2 quando a capacidade está disponível e fica em
   1 sem o plugin, alterando o fingerprint para exigir rebuild.
-- Unit: 5 testes / 29 assertions PASS, incluindo relação opcional e filtro de
+- Unit: 5 testes / 31 assertions PASS, incluindo relação opcional e filtro de
   bundle; PHPCS Drupal e `php -l` PASS. O Kernel LMS da projeção pela API
   outgoing continua pendente: o harness não descobre o plugin Group owner, e
   habilitar o módulo completo aciona uma referência de serviço ausente no
