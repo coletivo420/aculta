@@ -12,16 +12,17 @@ Runtime.
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
 O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
-(`aculta_forum` dev.248, 1/6). O harness reduzido do filtro usa o
+(`aculta_forum` dev.249, 1/6). O harness reduzido do filtro usa o
 `ForumContentIndexProvider` real para validar purpose canônico, restauração do
 Domain e falha fechada sem Domain (`aculta_index` dev.51, suíte focal 7/60).
 Escolheu-se esse harness para a evidência inicial; não substitui Kernel de
-Group/grants nem boot/DI do módulo Drupal. Em `aculta_index` dev.60, o Kernel
-usa a classe de produção com tag de fixture e prova backfill/update/delete de
-tópico e Comment Core, relação `forum_topic` e omissão de Comment rejeitado
-(1/21); esse fluxo também corrigiu a conversão do timestamp de Comment para int.
-ForumPost revisionável, revogação, grants/Domain reais e relações topic/parent
-continuam pendentes antes da ativação.
+Group/grants nem boot/DI do módulo Drupal. Em `aculta_index` dev.61, Kernel usa
+a classe de produção com tag de fixture e prova backfill/update/delete de tópico,
+Comment Core e ForumPost; verifica relações `forum_topic`/`forum_parent_post`,
+omissão de Comment rejeitado e revisão antiga não padrão (2/50). O fluxo
+corrigiu a conversão do timestamp de Comment para int e o enumerador de bundle
+fixo sem chave (Unit 5/31). Revogação, grants/Domain reais e boot completo do
+owner continuam pendentes antes da ativação.
 
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 

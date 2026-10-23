@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.61 — cobrir ForumPost revisável e bundle fixo
+
+- Kernel cobre ForumPost de produção sem ativar o módulo Forum: backfill,
+  relações `forum_topic`/`forum_parent_post`, nova revisão padrão e exclusão
+  (2 testes / 51 assertions PASS junto do caso Comment/topic).
+- Enumerator aceita entity types sem bundle key apenas quando o provider declara
+  exatamente o próprio entity type como bundle fixo. Unit: 5 testes / 31
+  assertions PASS; outras declarações continuam falhando fechadas.
+- Regressão de rebuild no MariaDB: 14 testes / 200 assertions PASS.
+
 ## 0.1.0-dev.60 — cobrir Comments legados do Fórum
 
 - Kernel cobre tópico e Comment Core ligado: backfill, relação `forum_topic`,

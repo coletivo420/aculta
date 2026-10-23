@@ -51,17 +51,26 @@ final class ContentIndexEntityEnumerator {
 
     $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
     $idKey = $entityType->getKey('id');
-    $bundleKey = $entityType->getKey('bundle');
-    if ($idKey === NULL || $bundleKey === NULL) {
-      throw new \LogicException(sprintf('Provider entity type %s must define both ID and bundle keys.', $entityTypeId));
+    // EntityType::getKey() represents an absent key as an empty string in
+    // current Core definitions and NULL in some test/custom definitions.
+    $bundleKey = $entityType->getKey('bundle') ?: NULL;
+    if ($idKey === NULL) {
+      throw new \LogicException(sprintf('Provider entity type %s must define an ID key.', $entityTypeId));
+    }
+    $supportedBundles = array_values($supported[$entityTypeId]);
+    if ($bundleKey === NULL && $supportedBundles !== [$entityTypeId]) {
+      throw new \LogicException(sprintf(
+        'Provider entity type %s without a bundle key must declare only its own ID as the fixed bundle.',
+        $entityTypeId,
+      ));
     }
 
     $storage = $this->entityTypeManager->getStorage($entityTypeId);
-    $query = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition($bundleKey, $supported[$entityTypeId], 'IN')
-      ->sort($idKey)
-      ->range(0, $limit);
+    $query = $storage->getQuery()->accessCheck(FALSE);
+    if ($bundleKey !== NULL) {
+      $query->condition($bundleKey, $supportedBundles, 'IN');
+    }
+    $query->sort($idKey)->range(0, $limit);
     if ($afterEntityId !== NULL) {
       $query->condition($idKey, $afterEntityId, '>');
     }

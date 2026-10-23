@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -66,6 +67,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('aculta_index', [
@@ -208,6 +210,111 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField());
+  }
+
+  /**
+   * Projects ForumPost revisions and named topic/parent relationships.
+   */
+  public function testRevisionableForumPostsFollowEntityCrud(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico das respostas',
+      'status' => TRUE,
+    ]);
+    $topic->save();
+    $root = ForumPost::create([
+      'uid' => 0,
+      'topic' => $topic->id(),
+      'body' => ['value' => 'Texto privado do post', 'format' => 'plain_text'],
+      'subject' => 'Resposta raiz',
+      'status' => TRUE,
+    ]);
+    $root->save();
+    $reply = ForumPost::create([
+      'uid' => 0,
+      'topic' => $topic->id(),
+      'parent' => $root->id(),
+      'body' => ['value' => 'Texto privado da resposta', 'format' => 'plain_text'],
+      'subject' => 'Resposta filha',
+      'status' => TRUE,
+    ]);
+    $reply->save();
+
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('forum', $registry->findProviderIdForBundle('aculta_forum_post', 'aculta_forum_post'));
+    self::assertSame('forum', $registry->get('forum')->getAccessPurpose($reply));
+
+    $generationId = $this->buildAndActivateGeneration();
+    self::assertSame('Resposta raiz', $this->entryLabel($generationId, (string) $root->id(), 'aculta_forum_post'));
+    self::assertSame('Resposta filha', $this->entryLabel($generationId, (string) $reply->id(), 'aculta_forum_post'));
+    self::assertSame(1, $this->relationCount($generationId, (string) $reply->id(), 'forum_topic', 'node', (string) $topic->id()));
+    self::assertSame(1, $this->relationCount($generationId, (string) $reply->id(), 'forum_parent_post', 'aculta_forum_post', (string) $root->id()));
+
+    $previousRevisionId = $reply->getRevisionId();
+    $reply->setNewRevision(TRUE);
+    $reply->set('subject', 'Resposta filha revisada');
+    $reply->save();
+    $previousRevision = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post')
+      ->loadRevision($previousRevisionId);
+    self::assertFalse($previousRevision->isDefaultRevision());
+    self::assertNull($registry->get('forum')->project($previousRevision));
+    $this->processForumWork();
+    self::assertSame('Resposta filha revisada', $this->entryLabel($generationId, (string) $reply->id(), 'aculta_forum_post'));
+
+    $reply->delete();
+    $this->processForumWork();
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('entity_type', 'aculta_forum_post')
+      ->condition('entity_id', (string) $reply->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    self::assertSame(0, $this->relationCount($generationId, (string) $reply->id(), 'forum_topic'));
+    self::assertSame(0, $this->relationCount($generationId, (string) $reply->id(), 'forum_parent_post'));
+  }
+
+  /**
+   * Builds, drains and activates one complete Index generation.
+   */
+  private function buildAndActivateGeneration(): string {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The Forum provider backfill should complete.');
+    $this->processForumWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+    return $generationId;
+  }
+
+  /**
+   * Counts one named outgoing relation for a Forum source identity.
+   */
+  private function relationCount(
+    string $generationId,
+    string $sourceEntityId,
+    string $relationType,
+    ?string $targetEntityType = NULL,
+    ?string $targetEntityId = NULL,
+  ): int {
+    $query = $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('source_entity_id', $sourceEntityId)
+      ->condition('relation_type', $relationType);
+    if ($targetEntityType !== NULL) {
+      $query->condition('target_entity_type', $targetEntityType);
+    }
+    if ($targetEntityId !== NULL) {
+      $query->condition('target_entity_id', $targetEntityId);
+    }
+    return (int) $query->countQuery()->execute()->fetchField();
   }
 
   /**
