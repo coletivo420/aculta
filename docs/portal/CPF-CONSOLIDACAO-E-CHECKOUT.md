@@ -67,21 +67,17 @@ Limite: a verificação cobre somente o ambiente local acessível a partir desta
 - O código de `aculta_id_cpf` não recebeu funcionalidade do associado, pois não havia diferença a portar.
 - Nenhuma alteração em nomes de campo, storage, chaves, HMAC ou update hooks.
 
-## 4. Remoção do módulo substituto (R3) — BLOQUEADA PARA O DIRETÓRIO
+## 4. Remoção do módulo substituto (R3) — CONCLUÍDA NO AMBIENTE DE TESTE
 
-**Bloqueio operacional:** a pasta `aculta_associado_id/` **não foi removida** nesta rodada. Motivos:
+Verificação feita antes da remoção, no runtime de teste acessível (ambiente local, Drush somente leitura):
 
-1. O Runtime local confirma que o módulo não está habilitado nem instalado, mas os servidores de teste e de produção não foram verificados. Remover o código de um módulo que esteja habilitado em outro ambiente quebra o bootstrap do Drupal.
-2. O update hook `aculta_associado_id_update_10001` tem o mesmo ID e a mesma lógica que o do módulo oficial. Se o associado estiver instalado com schema `10001` em algum ambiente, sua remoção exige procedimento de desinstalação, não só apagar arquivos.
-3. Regra do pedido: não executar `drush pm:uninstall`, `drush updb` nem remover arquivos antes de verificar o Runtime.
+- `aculta_associado_id` não está habilitado (`moduleHandler()->moduleExists` = FALSE) e nunca foi instalado (`system.schema` = `NULL`).
+- Nenhuma configuração ativa referencia o módulo (verificado no export de backup).
+- Nenhum código executável referencia o módulo; restam apenas documentos históricos.
 
-**Procedimento para liberar a remoção (a executar fora desta sessão, em clone do servidor de testes):**
+Ação: removidos o diretório `web/modules/custom/aculta_portal/modules/aculta_associado_id/` e o status `docs/operations/status/aculta_associado_id.yml`. A tabela do README raiz foi regenerada pelo validador.
 
-1. Confirmar em `core.extension` e em `system.schema` de cada ambiente que `aculta_associado_id` está ausente ou não instalado.
-2. Se estiver instalado: fazer backup do banco, `drush pm:uninstall aculta_associado_id` em clone, validar que `aculta_id_cpf` e `field_documento` continuam íntegros, e só depois aplicar no servidor de testes, com autorização operacional.
-3. Remover o diretório `web/modules/custom/aculta_portal/modules/aculta_associado_id/` e `docs/operations/status/aculta_associado_id.yml`, regerar o índice (`php scripts/validate-project-status-index.php --write`) e retirar a linha da tabela.
-
-Enquanto isso, o diretório e o status permanecem marcados como **descontinuados e não utilizados por código ativo**.
+**Pendente antes de produção:** o mesmo teste deve ser feito no servidor de testes (`*.aculta.toca.net.br`) e no de produção (`*.aculta.org`). Se o módulo estiver habilitado em algum deles, ele precisa ser desinstalado primeiro, com backup, em clone. Produção recebe esta mudança somente após todos os módulos, temas e subtemas estarem em RC.
 
 ## 5. Auditoria I-A — carrinhos e checkouts reais
 
@@ -158,7 +154,7 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 | R0 | Inventário e matriz (seção 2) | Matriz completa com riscos | **Concluída** |
 | R1 | Decisões e documentação atualizadas | ADR, roadmaps, status e READMEs coerentes | **Concluída nesta rodada** |
 | R2 | Portal usa só `aculta_id_cpf` | Sem preferência nem fallback ao associado; testes do portal | **Concluída nesta rodada** |
-| R3 | Remoção do diretório do associado | Runtime verificado em todos os ambientes | **BLOQUEADA** (seção 4) |
+| R3 | Remoção do diretório do associado | Runtime verificado; remoção no ambiente de teste | **Concluída no ambiente de teste**; servidor de testes e produção verificados antes da promoção (seção 4) |
 | R4 | Segurança e preservação de dados | Chaves, campos e HMAC inalterados; testes sintéticos de cifra e fingerprint | Parcial: chaves e HMAC inalterados; a suíte existente (248 verificações) cobre a validação e o fingerprint, mas não há teste novo de leitura de cifra antiga |
 | R5 | Roadmap do `aculta_id_cpf` | Fases 0.2-A a 0.2-E registradas | **Concluída nesta rodada** (seção 8) |
 | R6 | Validação e encerramento | Gates reais | Parcial (seção 9) |
@@ -190,7 +186,7 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | `FiscalIdentityPolicyTest` (novo) | **PASS**: 7 testes |
 | `aculta_id_cpf/tests/run.php` | **PASS**: 248 verificações de domínio |
 | `git diff --check` (commits desta rodada) | **PASS** |
-| `php scripts/validate-project-status-index.php` | **FAIL pré-existente**, mesmo resultado da linha de base: falta status de `aculta_commerce`; tabela do README raiz desatualizada. Não corrigido, fora do escopo |
+| `php scripts/validate-project-status-index.php` | **PASS** (38 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
 | `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**, mesmo conjunto de falhas da linha de base (ex.: `WikiController.php` ausente). Nenhuma falha nova relacionada a checkout ou CPF |
 | PHPCS Drupal/DrupalPractice nos arquivos novos | **Não atende o padrão estrito**: comentários de documentação e linhas longas. O repositório não passa nesse padrão (`PortalController.php` tem 67 erros antes desta rodada). Dívida registrada, não corrigida |
 | PHPUnit Kernel | **DEFERRED**: `SIMPLETEST_DB` não está configurado. Não foi apontado para o banco de desenvolvimento compartilhado |
@@ -213,7 +209,7 @@ Aplicar `drush config:import` no runtime alvo, somente com autorização:
 3. **Retorno do link `destination`:** verificar se `/dados/outros-dados` honra o parâmetro e devolve ao checkout do pedido. Se não honrar, o usuário volta ao carrinho e precisa reabrir o pedido.
 4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
 5. **Dívida de PHPCS** nos arquivos novos e nos existentes.
-6. **Runtime de teste e produção:** verificar o estado de `aculta_associado_id` antes da remoção do diretório (seção 4).
-7. **Gates pré-existentes:** status de `aculta_commerce` e `WikiController.php` ausente.
+6. **Runtime de teste e produção:** confirmar que `aculta_associado_id` não está habilitado antes de promover (seção 4).
+7. **Gate Drupal 11:** `WikiController.php` ausente (outra frente).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
 9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): ainda não verificados.

@@ -94,7 +94,7 @@ Pendente: teste em navegador da abertura automática e do fechamento do popup; t
 | Só o administrador torna uma pessoa associada | Implementado (papel `associado`, sem permissões; concessão pelo administrador) | `user.role.associado`, relatório |
 | Papel `associado` basta (sem estado nem data de adesão) — usado por falta de resposta explícita | Implementado; **estado e data de associação pedidos e pendentes** (ver 2.1) | — |
 | RG não é cifrado | Implementado (`field_rg`, texto simples) | `config/install` |
-| CPF/CNPJ continua no campo único existente, cifrado pelo módulo de documento | Mantido | `aculta_associado_id` (campo `field_documento`) |
+| CPF/CNPJ continua no campo único existente, cifrado pelo módulo de documento | Mantido | `aculta_id_cpf` (campo `field_documento`) |
 | Só o administrador exporta o relatório | Implementado (permissão `export aculta associados`) | `AssociadosController` |
 | RG mascarado na tela; completo só na exportação | Implementado | `AssociadosController::mask` |
 | Data de nascimento preenchida pela pessoa | Campo existe; formulário "Informações Básicas" é o `/dados` já existente | `field_data_nascimento` |

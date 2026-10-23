@@ -104,8 +104,7 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 | `web/modules/custom/aculta_portal/modules/aculta_patcher` | 0.1.0-dev.1 | Registro administrativo de diffs Composer e exportação validada para build | Aviso do formulário com `notice-warning` (tema); demais formulários e tabela administrativa nativos do Drupal | Sem contraparte de tema |
 | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p` | sem versão no info.yml | Conteúdo interativo H5P em atividades e cursos: editor, renderização por curso e biblioteca administrativa | Sem template próprio no tema. Tokens `h5p-admin-header`, `h5p-dashboard-course`, `h5p-content-unavailable` e `lms-h5p-course-documents` (`PortalUiHooks`). Classes `h5p-content`, `h5p-editor`, `h5p-iframe-wrapper` e `h5p-iframe` são contratos do H5P Core, não classes de design (exceções do gate de fronteira) | Ativo |
 | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago` | 0.1.0-dev.5 | Gateway Checkout Pro, retorno do popup e webhooks do Mercado Pago | Aviso `portal-payment-notice` (Portal); tokens `checkout-help` e `mercado-pago-credentials-*`. Pendência: o estilo das credenciais está em `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/css/gateway-admin.css` e deveria estar no tema | Ativo |
-| `web/modules/custom/aculta_portal/modules/aculta_id_cpf` | 0.2.0-dev.2 | Validação e campos de CPF | Sem contraparte própria; usa formulários do tema (`forms.css`) | Sem contraparte |
-| `web/modules/custom/aculta_portal/modules/aculta_associado_id` | 0.3.0-dev.1 | Identificador de associado | Sem contraparte própria; usa formulários do tema | Sem contraparte |
+| `web/modules/custom/aculta_portal/modules/aculta_id_cpf` | 0.3.0-dev.1 | Identidade fiscal oficial (CPF/CNPJ) | Sem contraparte própria; usa formulários do tema (`forms.css`) | Sem contraparte |
 
 ## Módulos contrib habilitados
 

@@ -62,7 +62,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `mercadopago_test_access_token` | `MERCADOPAGO_TEST_ACCESS_TOKEN` | Testes | Sim | plain |
 | `mercadopago_test_buyer_password` | `MERCADOPAGO_TEST_BUYER_PASSWORD` | Testes | Sim, senha do comprador de teste | plain |
 | `turnstile_test` | `TURNSTILE_TEST_KEYS_JSON` | Testes | Sim, contém secret | Base64 |
-| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID legado mantido pelo `aculta_associado_id`) | plain |
+| `aculta_id_cpf_fingerprint` | `ACULTA_ID_CPF_FINGERPRINT_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave HMAC do índice CPF/CNPJ (mínimo de 32 bytes; ID mantido pelo `aculta_id_cpf``) | plain |
 | `aculta_document_encryption_key` | `ACULTA_DOCUMENT_ENCRYPTION_KEY` | Produção e testes (provisionamento pendente em produção) | Sim, chave de cifra de documentos de associados/CPF/CNPJ (64 caracteres hexadecimais) | plain |
 | `smtp2go_username` | `SMTP2GO_USERNAME` | Produção e testes (obrigatória nos dois) | Sim | plain |
 | `smtp2go_password` | `SMTP2GO_PASSWORD` | Produção e testes (obrigatória nos dois) | Sim | plain |

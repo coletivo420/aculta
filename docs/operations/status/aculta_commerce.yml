@@ -1,0 +1,3 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+state: Dev
+next_phase: Ativar checkout comercial compartilhado (identidade fiscal, flow default) e cobrir com Kernel ([plano](docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md))

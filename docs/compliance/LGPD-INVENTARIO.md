@@ -15,7 +15,7 @@ Encarregado (DPO): **pessoa jurídica, a designar pelo responsável** (razão so
   cartões, métodos salvos ou histórico de pagamentos pessoais (regra permanente em `AGENTS.md`).
 - **CPF e CNPJ**: coletados quando necessários a cursos e à condição de associado. Em claro, o documento só existe no
   momento da coleta e, quando exigido pelo pagamento, no envio ao Mercado Pago. No banco, ficam cifrados
-  (`aculta_associado_id`, `DocumentCipher`) e com impressão digital pseudonimizada, para unicidade (`aculta_id_cpf`,
+  (`aculta_id_cpf`, `DocumentCipher`) e com impressão digital pseudonimizada, para unicidade (`aculta_id_cpf`,
   `DocumentFingerprint`, chave `ACULTA_ID_CPF_FINGERPRINT_KEY`). Impressão digital é dado pessoal pseudonimizado, não anonimizado.
 - **Endereços de e-mail** no registro de envios: só como identificador criptográfico (`aculta_mailer`).
 - **Segredos** (chaves de cifra, tokens, senhas) ficam no arquivo de segredos do servidor, fora do repositório.
@@ -42,7 +42,7 @@ Legenda de base legal (LGPD, art. 7º e 11): **C** consentimento (art. 7º, I); 
 | `aculta_user` | Apelido, nome, sobrenome, WhatsApp, cidade, UF, data de nascimento, biografia, foto, visibilidade pública | Perfil privado (contrato); perfil público só se a pessoa optar | E; C (público) | Enquanto a conta existir | — |
 | `aculta_user` (`aculta_user_agreement`, implementado em Dev) | UID, tipo e ação de aceite/revogação, data/hora, IP resolvido pelo Drupal, User-Agent, identificadores/revisões e hash dos documentos, HMAC encadeado | Evidenciar aceite de Termos/Privacidade e consentimentos opcionais; auditoria de integridade | A validar pela assessoria jurídica; hipótese de exercício regular de direitos quando aplicável | Enquanto a conta existir; registros apagados com a conta | — |
 | `aculta_id_cpf` | Impressão digital pseudonimizada de CPF/CNPJ | Unicidade de documento (sem exibir o número) | E, O | Enquanto o vínculo existir | — |
-| `aculta_associado_id` | CPF/CNPJ cifrado; documentos cifrados (`ACULTA_DOCUMENT_ENCRYPTION_KEY`) | Condição de associado | E, O | Pelo período de vínculo e obrigações legais | — |
+| `aculta_id_cpf` | CPF/CNPJ cifrado; documentos cifrados (`ACULTA_DOCUMENT_ENCRYPTION_KEY`) | Condição de associado | E, O | Pelo período de vínculo e obrigações legais | — |
 | `aculta_pagamentos_mercadopago` | Referências de pedido, valores, estados; identificação do pagador enviada ao Mercado Pago | Apoios e compras | E, O | Pelo período exigido para registro fiscal e contábil | Mercado Pago |
 | `aculta_donation` | Valor de apoio, dedicatórias (nome da pessoa homenageada), recorrência | Apoios | C, E | Conforme pagamento | Mercado Pago |
 | `aculta_portal_cep` | CEP consultado | Preenchimento de endereço | E | A validar (confirmar se o CEP é gravado no endereço da pessoa) | ViaCEP |
