@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.21`: fila de revisões percorre candidatos em lotes limitados e
+  mantém cursor ao filtrar itens sem acesso. Kernel prova que 26 revisões
+  recentes sem grant não escondem a revisão autorizada anterior. Kernel MariaDB
+  completo: 9 testes / 344 assertions.
 - `0.1.0-dev.20`: rotas e acesso foram repetidos em Kernel com bootstrap real.
   O CTA de colaboração usa `createAccess('wiki_entry')` efetivo: conta
   confirmada com permissão pode abrir; conta sem confirmação segue negada.

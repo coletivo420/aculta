@@ -20,6 +20,16 @@ final class WikiEditorialQueue {
 
   private const PAGE_SIZE = 25;
 
+  /**
+   * Number of raw moderation candidates checked per database query.
+   */
+  private const CANDIDATE_BATCH_SIZE = 100;
+
+  /**
+   * Maximum raw candidates checked for one page request.
+   */
+  private const MAX_CANDIDATES_PER_PAGE = 500;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
@@ -131,60 +141,89 @@ final class WikiEditorialQueue {
         return new WikiEditorialQueuePage([], NULL, $cacheability);
       }
 
-      $stateStorage = $this->entityTypeManager->getStorage('content_moderation_state');
-      $query = $stateStorage->getAggregateQuery()
-        // ContentModerationState is intentionally denied entity access by
-        // Core. The aggregate query discovers candidate VIDs only; below, each
-        // Node revision is revalidated under Wiki purpose and current access.
-        ->accessCheck(FALSE)
-        ->aggregate('content_entity_id', 'MAX')
-        ->groupBy('content_entity_revision_id')
-        ->condition('content_entity_type_id', 'node')
-        ->condition('workflow', 'wiki_editorial')
-        ->condition('moderation_state', 'review')
-        ->sort('content_entity_revision_id', 'DESC')
-        ->range(0, self::PAGE_SIZE + 1);
-      $revisionCursor = $this->parseRevisionCursor($cursor);
-      if ($revisionCursor !== NULL) {
-        $query->condition('content_entity_revision_id', $revisionCursor, '<');
-      }
-
-      $queryRows = $query->execute();
-      $revisionIds = array_map('strval', array_column($queryRows, 'content_entity_revision_id'));
       $storage = $this->entityTypeManager->getStorage('node');
-      $revisions = $revisionIds === [] ? [] : $storage->loadMultipleRevisions($revisionIds);
+      $stateStorage = $this->entityTypeManager->getStorage('content_moderation_state');
       $items = [];
-      foreach ($revisionIds as $revisionId) {
-        $revision = $revisions[$revisionId] ?? NULL;
-        if (!$revision instanceof NodeInterface
-          || (string) $storage->getLatestRevisionId($revision->id()) !== $revisionId
-          || $revision->bundle() !== 'wiki_entry'
-          || !$revision->hasField('field_domain_source')
-          || $revision->get('field_domain_source')->target_id !== $wikiDomain->id()
-          || !$revision->hasField('moderation_state')
-          || $revision->get('moderation_state')->value !== 'review') {
-          continue;
+      $scanCursor = $this->parseRevisionCursor($cursor);
+      $candidateCount = 0;
+      $hasMoreCandidates = FALSE;
+      $hasExtraAuthorizedItem = FALSE;
+
+      while ($candidateCount < self::MAX_CANDIDATES_PER_PAGE) {
+        $batchLimit = min(
+          self::CANDIDATE_BATCH_SIZE,
+          self::MAX_CANDIDATES_PER_PAGE - $candidateCount,
+        );
+        $query = $stateStorage->getAggregateQuery()
+          // Core denies access to ContentModerationState. This query discovers
+          // candidate VIDs only; every Node is revalidated below.
+          ->accessCheck(FALSE)
+          ->aggregate('content_entity_id', 'MAX')
+          ->groupBy('content_entity_revision_id')
+          ->condition('content_entity_type_id', 'node')
+          ->condition('workflow', 'wiki_editorial')
+          ->condition('moderation_state', 'review')
+          ->sort('content_entity_revision_id', 'DESC')
+          ->range(0, $batchLimit);
+        if ($scanCursor !== NULL) {
+          $query->condition('content_entity_revision_id', $scanCursor, '<');
         }
 
-        $viewAccess = $revision->access('view', $this->currentUser, TRUE);
-        $revisionAccess = $revision->access('view revision', $this->currentUser, TRUE);
-        $updateAccess = $revision->access('update', $this->currentUser, TRUE);
-        $transitions = $this->transitionValidation->getValidTransitions($revision, $this->currentUser);
-        $cacheability->addCacheableDependency($revision)
-          ->addCacheableDependency($viewAccess)
-          ->addCacheableDependency($revisionAccess)
-          ->addCacheableDependency($updateAccess);
-        if (!$viewAccess->isAllowed() || !$revisionAccess->isAllowed() || !$updateAccess->isAllowed() || $transitions === []) {
-          continue;
+        $queryRows = $query->execute();
+        $revisionIds = array_map('strval', array_column($queryRows, 'content_entity_revision_id'));
+        if ($revisionIds === []) {
+          $hasMoreCandidates = FALSE;
+          break;
         }
-        $items[] = $revision;
+        $revisions = $storage->loadMultipleRevisions($revisionIds);
+        $hasMoreCandidates = count($revisionIds) === $batchLimit;
+        foreach ($revisionIds as $revisionId) {
+          $scanCursor = (int) $revisionId;
+          $candidateCount++;
+          $revision = $revisions[$revisionId] ?? NULL;
+          if (!$revision instanceof NodeInterface
+            || (string) $storage->getLatestRevisionId($revision->id()) !== $revisionId
+            || $revision->bundle() !== 'wiki_entry'
+            || !$revision->hasField('field_domain_source')
+            || $revision->get('field_domain_source')->target_id !== $wikiDomain->id()
+            || !$revision->hasField('moderation_state')
+            || $revision->get('moderation_state')->value !== 'review') {
+            continue;
+          }
+
+          $viewAccess = $revision->access('view', $this->currentUser, TRUE);
+          $revisionAccess = $revision->access('view revision', $this->currentUser, TRUE);
+          $updateAccess = $revision->access('update', $this->currentUser, TRUE);
+          $transitions = $this->transitionValidation->getValidTransitions($revision, $this->currentUser);
+          $cacheability->addCacheableDependency($revision)
+            ->addCacheableDependency($viewAccess)
+            ->addCacheableDependency($revisionAccess)
+            ->addCacheableDependency($updateAccess);
+          if (!$viewAccess->isAllowed() || !$revisionAccess->isAllowed() || !$updateAccess->isAllowed() || $transitions === []) {
+            continue;
+          }
+          $items[] = $revision;
+          if (count($items) > self::PAGE_SIZE) {
+            $hasExtraAuthorizedItem = TRUE;
+            break 2;
+          }
+        }
+
+        if (!$hasMoreCandidates) {
+          break;
+        }
       }
 
-      $hasMore = count($items) > self::PAGE_SIZE;
-      if ($hasMore) {
+      if ($hasExtraAuthorizedItem) {
         $items = array_slice($items, 0, self::PAGE_SIZE);
         $last = $items[array_key_last($items)];
         $nextCursor = (string) $last->getRevisionId();
+      }
+      elseif ($hasMoreCandidates && $scanCursor !== NULL) {
+        // A bounded scan can return fewer than PAGE_SIZE rows when access
+        // filtering removes candidates. Advancing by the last checked VID
+        // keeps the next page complete without an unbounded database scan.
+        $nextCursor = (string) $scanCursor;
       }
       else {
         $nextCursor = NULL;

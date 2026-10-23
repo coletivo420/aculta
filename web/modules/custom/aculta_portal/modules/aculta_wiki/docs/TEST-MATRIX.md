@@ -83,6 +83,10 @@ depois da importação de configuração no servidor de testes.
 | Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
 | Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
 | CTA inicial — acesso real de criação | Kernel | `createAccess('wiki_entry')`; pessoa confirmada autorizada e não confirmada negada | aprovado (dev.20) |
+| Fila de revisão com candidatos negados | Kernel | 26 VIDs recentes sem grant não ocultam uma revisão autorizada mais antiga | aprovado (dev.21) |
+
+Resultado mais recente da classe Kernel (dev.21): 9 testes / 344 assertions,
+sem warnings; 284 depreciações Drupal/contrib e 10 do PHPUnit.
 
 Suíte Kernel da Wiki inicializa `aculta_wiki` e dependências reais, com MariaDB
 isolada. O fixture de grants está apenas em `tests/modules`; Runtime e

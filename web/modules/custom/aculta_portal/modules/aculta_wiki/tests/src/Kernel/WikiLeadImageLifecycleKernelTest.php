@@ -789,6 +789,40 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->build(['entity' => 'wiki_entry_review_queue'], $reviewer);
     self::assertCount(1, $studioReviewListing['table']['#rows']);
     self::assertSame('Abrir para revisão', (string) $studioReviewListing['table']['#rows'][0]['action']['data']['#title']);
+
+    Role::create([
+      'id' => 'wiki_queue_grant_reviewer_test',
+      'label' => 'Wiki queue grant reviewer test',
+      'permissions' => [
+        'edit any wiki_entry content',
+        'view wiki_entry revisions',
+        'use wiki_editorial transition review_to_draft',
+        'use wiki_editorial transition review_to_published',
+      ],
+    ])->save();
+    $grantReviewer = new UserSession(['uid' => 4, 'roles' => ['authenticated', 'wiki_queue_grant_reviewer_test']]);
+    $this->container->get('current_user')->setAccount($submitter);
+    for ($index = 0; $index < 26; $index++) {
+      $unreadable = Node::create([
+        'type' => 'wiki_entry',
+        'title' => 'Verbete sem grant ' . $index,
+        'uid' => 5,
+        'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+        'field_wiki_test_grant_uid' => 99,
+        'body' => ['value' => 'Texto restrito', 'format' => 'plain_text'],
+        'moderation_state' => 'draft',
+      ]);
+      $unreadable->save();
+      $unreadable->setNewRevision(TRUE);
+      $unreadable->set('moderation_state', 'review');
+      $unreadable->save();
+    }
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    $this->container->get('current_user')->setAccount($grantReviewer);
+    $restrictedPage = $queue->entryRevisions();
+    self::assertCount(1, $restrictedPage->getItems());
+    self::assertSame($reviewRevisionId, (string) $restrictedPage->getItems()[0]->getRevisionId());
   }
 
   /**

@@ -81,3 +81,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Rotas e acesso (dev.20): manter os três nomes/caminhos públicos e testar a
   negação com permissão ausente; o CTA deve usar `createAccess('wiki_entry')`,
   respeitando acesso efetivo e confirmação compartilhada de e-mail.
+- Paginação da fila (dev.21): limitar candidatos por requisição, mas avançar
+  por cursor através de itens sem acesso ou obsoletos; validar cada Node no
+  Domain Wiki e não revelar dados de revisões filtradas.

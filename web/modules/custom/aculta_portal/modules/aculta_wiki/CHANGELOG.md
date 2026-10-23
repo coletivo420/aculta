@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.21 — paginação completa da fila de revisões
+
+- `WikiEditorialQueue::entryRevisions()` percorre candidatos em lotes e
+  revalida Domain, estado, revisão mais recente, Entity Access e transições.
+- Um limite de scan mantém cada requisição finita. Quando filtragem de acesso
+  reduz uma página, o cursor avança pelo último VID verificado para que itens
+  autorizados mais antigos não desapareçam.
+- Kernel cobre 26 revisões sem grant mais recentes que uma revisão visível; o
+  item autorizado continua presente na página.
+- Kernel MariaDB completo: 9 testes / 344 assertions; 284 depreciações
+  Drupal/contrib e 10 do PHPUnit. PHPCS e lint do serviço/teste aprovados.
+  Runtime segue desabilitado.
+
 ## 0.1.0-dev.20 — caracterização de rotas e acesso em Kernel
 
 - Kernel da Wiki verifica novamente bootstrap real e discovery das três rotas
