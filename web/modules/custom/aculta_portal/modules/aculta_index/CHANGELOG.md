@@ -1,5 +1,10 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.135 — alinhar estado do plano de benchmark 1M
+
+- O plano agora distingue a rodada antiga interrompida da repetição corrigida
+  que está ativa; não atribui resultado à execução ainda incompleta.
+
 ## 0.1.0-dev.134 — testar recuperação de falha ao criar item Core Queue
 
 - Teste Kernel comprova que falha de `createItem()` mantém a linha durável em

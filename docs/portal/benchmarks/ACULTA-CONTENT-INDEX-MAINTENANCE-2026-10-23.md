@@ -35,8 +35,9 @@ como tempo do Index.
 A repetição corrigida iniciou em 2026-10-23 às 08:56 BRT no banco dedicado
 `localhost/aculta_simpletest`, com o código que suprime a fila no setup e mede
 setup, rebuild e auditoria separadamente. O teste exige zero jobs criados para
-as fontes sintéticas e zero divergências ao concluir. A execução está em curso;
-nenhum resultado de 1M foi medido ainda.
+as fontes sintéticas e zero divergências ao concluir. A execução segue ativa
+(processo PHPUnit 204077 e worker PHP 204084, verificados em 2026-10-23); nenhum
+resultado de 1M foi medido ainda.
 
 ## Resultados
 
