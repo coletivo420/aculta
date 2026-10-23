@@ -1,3 +1,13 @@
+## `0.1.0-dev.263` — provar as recusas do destino da migração — 2026-10-23
+
+- Kernel exercita `ForumCommentPost::import()` nos contratos que falham antes
+  de criar o post: linha sem conta nem autoria histórica válida, tradução
+  padrão ausente, rejeição combinada com publicação, corpo vazio, formato
+  diferente de `forum`, embed sem UUID e embed cuja entidade não existe.
+- Nenhuma migration foi executada e nenhum post foi criado; o Runtime não foi
+  alterado.
+- Testes: arquivo 5/87; suíte Kernel do Fórum 76/1.579; PHPCS limpo.
+
 ## `0.1.0-dev.262` — provar a fonte da migração de Comments — 2026-10-23
 
 - Kernel exercita `aculta_forum_comment` com Comments reais: um Comment

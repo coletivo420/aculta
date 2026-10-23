@@ -1,3 +1,13 @@
+## Destino da migração de Comments — recusas, 2026-10-23
+
+- `ForumCommentMigrationDestinationKernelTest` (5 testes / 87 asserções,
+  MariaDB): `import()` recusa linha sem conta/autoria histórica, tradução
+  padrão ausente, rejeição com publicação, corpo vazio, formato diferente de
+  `forum`, embed sem UUID e embed de Media inexistente.
+- O destino é instanciado com os serviços reais e uma migration simulada; nada
+  é criado ou migrado.
+- Suíte Kernel do Fórum 76/1.579; PHPCS limpo.
+
 ## Fonte da migração de Comments — prova, 2026-10-23
 
 - `ForumCommentMigrationSourceKernelTest` (4 testes / 56 asserções, MariaDB):
