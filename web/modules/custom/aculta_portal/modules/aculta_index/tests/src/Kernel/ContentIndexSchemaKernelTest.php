@@ -1060,6 +1060,12 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField(), 'Entries without a registered owner remain intact.');
+    $this->assertSame(0, (int) $database->select('aculta_index_work', 'work')
+      ->condition('provider_id', 'fixture')
+      ->condition('entity_id', '301')
+      ->countQuery()
+      ->execute()
+      ->fetchField(), 'An unverified entry must not get a destructive repair job.');
   }
 
   /**

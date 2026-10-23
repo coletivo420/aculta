@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.77 — testar preservação de projeções sem owner ativo
+
+- O Kernel da auditoria incremental confirma que uma projeção cujo provider
+  não está registrado permanece no catálogo e não recebe job de exclusão.
+- Teste focal MariaDB: 1 teste / 20 assertions PASS; uma depreciação de Core
+  e duas depreciações PHPUnit. A suíte Kernel completa não foi repetida após
+  essa asserção; o resultado completo anterior, em dev.76, foi 65/883.
+
 ## 0.1.0-dev.76 — provar falha fechada sem Domain canônico do Fórum
 
 - O Kernel do filtro de acesso cria tópico público no contexto do Domain
