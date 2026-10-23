@@ -8,8 +8,9 @@
   corretamente por falta de provider ativo.
 - Kernel completo em SQLite: 88 testes / 1.324 assertions PASS, 39 depreciações
   Core/contrib, 44 depreciações PHPUnit e 2 skips. Teste focal de Fórum após o
-  ajuste: 2 testes / 109 assertions PASS. Boot/DI owner completo continua
-  pendente.
+  ajuste: 2 testes / 109 assertions PASS; classe completa de acesso do Fórum:
+  4 testes / 199 assertions PASS, com 38 depreciações upstream. Boot/DI owner
+  completo continua pendente.
 
 ## 0.1.0-dev.119 — registrar escopo da evidência Kernel LMS
 
