@@ -237,3 +237,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-UX-03 | Inventariar componentes SDC/UI Suite realmente reutilizáveis | Plano visual novo em `GREEN-STASH-UX-MOBILE-FIRST.md` | Stories/design gates e matrizes 320px+/claro/escuro |
 | GS-UX-04 | Contratar agregações Stats para cards reais | Sem provider Green Stash de KPIs ainda | Queries autorizadas, paginadas e caches corretos, sem duplicar métricas |
 | GS-UX-05 | Estoque e expedição reais | Comércio Stock/Melhor Envio ainda em etapas próprias | APIs aprovadas, sandbox/homelab e telas com permissões reais |
+
+## Green Stash — gates GS-0.2-A/B (2026-10-23)
+
+| ID | Pendência | Critério para encerrar | Estado |
+| --- | --- | --- | --- |
+| GS-NAV-01 | Compilação de container e rota `/green-stash/{section}` | `drush cr`, HTTP 403/200 conforme permissão e domínio, rotas canônicas, registro Studio e PHPUnit PASS | Pendente — homelab |
+| GS-NAV-02 | Componentes SDC/UI Suite para navegação responsiva real | Tema ACULTA420 renderiza shell mobile-first, tabs/drawer acessível, 320px+ claro/escuro e fallback sem JS; Stories/gates PASS | Pendente — tema |
+| GS-NAV-03 | Navegação por capacidades granulares e dados operacionais reais | Grants Commerce por store e entidade; contadores e áreas sem permissões não aparecem; testes IDOR, acesso e cache | Pendente — GS-0.2-C |
