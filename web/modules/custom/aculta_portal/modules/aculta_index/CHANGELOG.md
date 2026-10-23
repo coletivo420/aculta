@@ -14,9 +14,12 @@
   (8.207 ms) contra 152 projeções/s (65.968 ms) antes do batch; auditoria
   manteve latência próxima. Três rodadas e limitações estão no relatório de
   manutenção.
-- Suíte Kernel completa: 63 testes / 809 assertions PASS; 23 depreciações
-  upstream e 41 avisos PHPUnit. Unit do Index: 39 testes / 192 assertions
-  PASS. PHPCS Drupal e PHP lint passaram.
+- Kernel de grants/Domain do Fórum também cobre Comment Core legado durante a
+  coexistência com ForumPost: associado autorizado e visitante negado para ambos.
+- Suíte Kernel completa: 63 testes / 815 assertions PASS na execução atual com
+  SQLite em memória; rodada MariaDB anterior: 63/809. Ambas registraram 23
+  depreciações upstream e 41 avisos PHPUnit. Unit do Index: 39 testes / 192
+  assertions PASS. PHPCS Drupal e PHP lint passaram.
 
 ## 0.1.0-dev.68 — isolar Entity Access ao trocar o Domain canônico
 
