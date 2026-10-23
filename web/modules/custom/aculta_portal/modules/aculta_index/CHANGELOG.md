@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.45 — cobrir reparação de dead-letter via Drush
+
+- Kernel valida listagem, limite e retry operacional de dead-letter pela
+  `aculta-index:queue`; fluxo usa as cinco tentativas/recovery reais.
+- Corrige a documentação do schema, que ainda dizia não haver interface de
+  operação, embora os comandos já estivessem implementados.
+
 ## 0.1.0-dev.44 — contar queries da validação de acesso
 
 - Benchmark de Media registra a contagem de consultas SQL em amostras com cache

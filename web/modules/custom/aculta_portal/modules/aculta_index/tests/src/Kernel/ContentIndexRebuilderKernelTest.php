@@ -206,6 +206,56 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Lists dead letters and retries one through the operator command.
+   */
+  public function testQueueCommandListsAndRetriesDeadLetter(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $work->schedule('test_sample_content', 'node', 'dead-item', 'en');
+    $status = $work->getStatus('test_sample_content', 'node', 'dead-item', 'en');
+    $this->assertNotNull($status);
+    $workId = $status['work_id'];
+
+    for ($attempt = 1; $attempt <= 5; $attempt++) {
+      $claim = $work->claim($status['work_id']);
+      $this->assertNotNull($claim);
+      $this->assertTrue($work->fail($claim['work_id'], $claim['sequence'], 'synthetic_error'));
+      if ($attempt < 5) {
+        $this->container->get('database')->update('aculta_index_work')
+          ->fields(['available_at' => 0])
+          ->condition('work_id', $workId)
+          ->execute();
+        $this->assertSame(1, $work->recover());
+      }
+    }
+
+    $command = ContentIndexQueueCommand::create($this->container);
+    $deadOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'dead',
+      '--limit' => 10,
+    ]), $deadOutput));
+    $this->assertStringContainsString(
+      "test_sample_content\tnode\tdead-item\ten\t5\tsynthetic_error",
+      $deadOutput->fetch(),
+    );
+
+    $invalidLimitOutput = new BufferedOutput();
+    $this->assertSame(Command::FAILURE, $command->run(new ArrayInput([
+      'action' => 'dead',
+      '--limit' => 101,
+    ]), $invalidLimitOutput));
+    $this->assertStringContainsString('--limit precisa estar entre 1 e 100', $invalidLimitOutput->fetch());
+
+    $retryOutput = new BufferedOutput();
+    $this->assertSame(Command::SUCCESS, $command->run(new ArrayInput([
+      'action' => 'retry',
+      'work-id' => (string) $workId,
+    ]), $retryOutput));
+    $this->assertSame('queued', $work->getStatus('test_sample_content', 'node', 'dead-item', 'en')['status']);
+    $this->assertStringContainsString('Job reenfileirado', $retryOutput->fetch());
+  }
+
+  /**
    * Tests the audit command reports and advances a bounded checkpoint.
    */
   public function testAuditDrushCommandRunsBoundedCycle(): void {
