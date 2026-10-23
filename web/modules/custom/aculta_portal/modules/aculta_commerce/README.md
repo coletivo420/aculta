@@ -40,3 +40,7 @@ Permissão restrita `access aculta green stash`, serviço `aculta_commerce.green
 ## Green Stash — ponto de entrada Studio D-A/D-B
 
 Criado provider independente `green_stash` e rota `/green-stash` (purpose `account`) protegida por `access aculta green stash`. O registro no `StudioExperienceManager` ocorre pelo hook de container do próprio Commerce, sem fazer Studio depender de Commerce. O conteúdo é **exclusivamente informativo** até a fase de integração de dados com autorização por entidade/store. Ainda não homologado no servidor. Ver [documentação D](docs/GREEN-STASH-0.1.0-D.md).
+
+## Green Stash — navegação inicial GS-0.2-A/B
+
+Criada navegação progressiva com nove áreas: Visão geral, Produtos, Pedidos, Estoque, Envios, Promoções, Clientes, Relatórios e Configurações, acessíveis via `/green-stash/{section}` no purpose `account`, sem operações de negócio. A permissão `access aculta green stash` protege as rotas e a verificação do Studio permanece no controller. Renderização básica de estado vazio, **sem componentes SDC definitivos ou operações comerciais ativas**. Consultar [proposta mobile-first](docs/GREEN-STASH-UX-MOBILE-FIRST.md).
