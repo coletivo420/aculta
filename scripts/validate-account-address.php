@@ -108,9 +108,15 @@ $check(str_contains($alias, "setComputed(TRUE)") && str_contains($alias, "Billin
 $check(str_contains($aliasList, "ComputedItemListTrait") && str_contains($aliasList, "'field_address'"), 'alias address lê o field_address do mesmo perfil');
 
 // 5b. Base local de CEPs: o controlador consulta a base local antes das APIs externas, e a base não entra no Git.
+// A lógica de consulta mora em CepLookupService (compartilhada). O controlador só delega e não pode duplicá-la.
+$lookupService = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Lookup/CepLookupService.php');
 $check(
-  str_contains($controller, 'aculta_portal_cep.local_store') && strpos($controller, '->local->lookup(') < strpos($controller, 'fromViaCep('),
-  'CepLookupController: base local consultada antes do ViaCEP/BrasilAPI',
+  str_contains($lookupService, 'aculta_portal_cep.local_store') && strpos($lookupService, '->local->lookup(') < strpos($lookupService, 'fromViaCep('),
+  'CepLookupService: base local consultada antes do ViaCEP/BrasilAPI',
+);
+$check(
+  str_contains($controller, '->lookupService->lookup(') && !str_contains($controller, 'fromViaCep('),
+  'CepLookupController: delega à consulta compartilhada, sem duplicar ViaCEP',
 );
 
 // 6. Teste de navegador presente (a barreira só vale se o teste existir).
