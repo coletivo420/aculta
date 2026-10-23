@@ -1,5 +1,23 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.29 — isolamento de versões e paginação por ID
+
+- Cada entrada registra a versão do provider; consultas e relações ignoram
+  projeções antigas até serem reescritas, sem ocultar providers não alterados.
+- Atualização de schema adiciona `provider_version` e troca o índice SQL do
+  keyset mutável para ID imutável.
+- Cursor usa `entry_id DESC`, com vínculo de hash ao contrato de ordenação.
+- Kernel cobre update hooks, atualização de projeção versionada, exclusão de
+  relações obsoletas e estabilidade de página sob alteração concorrente.
+
+## 0.1.0-dev.28 — fingerprint inclui versão da projeção
+
+- Gerações capturam a versão declarada por cada provider; mudança de versão
+  impede validar ou retomar um rebuild feito com projeção anterior.
+- Registry rejeita versão inválida e teste confirma fingerprints distintos.
+- Unit dos providers: 121 testes / 536 assertions; Kernel Index/Activity no
+  MariaDB: 33 testes / 399 assertions.
+
 ## 0.1.0-dev.27 — revalidação de acesso com cursor
 
 - Kernel no MariaDB comprova que uma publicação tornada privada não aparece na

@@ -24,7 +24,7 @@ field storage ou serviço de agregação próprio do Magazine além dos dois ser
 ## 2. Modelo de conteúdo
 
 - Um único bundle: `revista` (`RevistaPublications::CANONICAL_BUNDLE`). `article` e `blog` estão aposentados;
-  a migração canônica está em `MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` e no serviço `PublicationBundleMigrator`.
+  a migração concluída está registrada em `MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`; o utilitário executável foi removido.
 - `new_revision: TRUE`, `preview_mode: 1`, `display_submitted: FALSE`.
 - Campos próprios: chamada (`field_subtitle`), resumo (`field_summary`), imagem editorial (`field_media_image`,
   obrigatória), créditos, referências (link), atividade relacionada, autor editorial e categoria editorial
@@ -76,7 +76,6 @@ feedback de validação; não pode criar um segundo editor com validação próp
 | Serviço | Classe | Dependências | Função |
 | --- | --- | --- | --- |
 | `aculta_magazine.post_presentation` | `Presentation\PostPresentation` | `date.formatter`, `entity_type.manager`, `aculta_portal.domain_purpose` | cabeçalho de publicação (autor/data/hora) e ações de compartilhamento; cacheável |
-| `aculta_magazine.publication_bundle_migrator` | `Migration\PublicationBundleMigrator` | `entity_type.manager`, `entity_field.manager`, `database` | migração histórica `article`/`blog` → `revista`, idempotente |
 | `aculta_magazine.content_index_provider` | `ContentIndex\MagazineContentIndexProvider` | contrato neutro do Portal | projeção allowlist de metadados da revisão padrão e relações explícitas; descoberto pelo `aculta_index` opcional |
 
 Não há event subscriber, plugin manager, controller ou rota própria: as rotas administrativas vêm de Views e as rotas de conteúdo são as do Core.
@@ -126,7 +125,6 @@ cabeçalho, formulário próprio nem fila de moderação.
 | Unit | `PublicationDiscussionHooksTest` | default de discussão e limites |
 | Unit | `MagazineAdminViewsConfigTest` | Views administrativas e `config/install` |
 | Unit | `LegacyForumUpdatesTest` | hooks históricos 10001–10003 são no-op para conteúdo novo |
-| Kernel | `PublicationBundleMigratorKernelTest` | migração de bundle e campos |
 
 A matriz de autorização editorial (atores × estados × ações) é coberta em 0.5-B por Kernel/Unit adicionais; testes
 estáticos não substituem validação de access do Drupal.

@@ -30,6 +30,7 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn('magazine');
     $provider->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $provider->method('getProjectionVersion')->willReturn(1);
     $provider->method('project')->willReturnCallback(static function (ContentEntityInterface $entity): ContentIndexProjection {
       $langcode = $entity->language()->getId();
       return new ContentIndexProjection('node', '42', $langcode, 'revista', 'uuid-' . $langcode, 'Label', NULL, TRUE, 1, 2);

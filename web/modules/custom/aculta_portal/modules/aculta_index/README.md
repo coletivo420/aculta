@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.27` — revalidação de Entity Access durante paginação.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. No MariaDB dedicado, a suíte Unit/Kernel de Index/Activity passou com **67 testes / 555 assertions**. A classe Kernel de rebuild/consulta cobre 9 testes / 128 assertions, inclusive a regressão que nega uma entidade despublicada enquanto a projeção antiga ainda está no catálogo. A cobertura Kernel inclui schema, rebuild, consulta, relações, adapter Activity e adapter Media de `aculta_image`; os demais providers têm testes Unit, mas sua integração Kernel/DI ainda precisa ser concluída. Runtime, desempenho sob volume e compatibilidade em produção seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.28` — fingerprint de rebuild inclui versão explícita por provider.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de providers/Index: **121 testes / 536 assertions**; Kernel Index/Activity no MariaDB: **33 testes / 399 assertions**. A cobertura Kernel inclui schema, rebuild, consulta, relações, adapter Activity e adapter Media de `aculta_image`; os demais providers ainda precisam de integração Kernel/DI. Runtime, desempenho sob volume e compatibilidade em produção seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -19,7 +19,7 @@ services:
       - { name: aculta_index.provider }
 ```
 
-O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de entidade/bundle durante a construção do container. Os DTOs neutros `ContentIndexProjection` e `ContentIndexRelation` e o contrato `ContentIndexProviderInterface` vivem no namespace base do Portal, portanto podem ser implementados sem dependência do submódulo. O registry não concede nem verifica acesso a conteúdo.
+O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de entidade/bundle durante a construção do container. Cada provider declara `getProjectionVersion(): int`; essa versão integra o fingerprint da geração e deve ser incrementada quando a projeção mudar. Gerações parciais com outra versão não podem ser retomadas. Os DTOs neutros `ContentIndexProjection` e `ContentIndexRelation` e o contrato `ContentIndexProviderInterface` vivem no namespace base do Portal, portanto podem ser implementados sem dependência do submódulo. O registry não concede nem verifica acesso a conteúdo.
 
 Providers podem implementar `ContentIndexAccessContextProviderInterface` para indicar um purpose canônico, e `ContentIndexAccessPolicyProviderInterface` para acrescentar uma regra contextual à Entity Access. O filtro troca temporariamente o Domain, combina ambas as decisões para o mesmo usuário e restaura o contexto anterior. Sem provider ativo, Domain pedido ou policy determinável, a entrada não é exposta. O Index não infere purpose por hostname nem reduz grants/Group.
 

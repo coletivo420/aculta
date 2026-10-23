@@ -25,6 +25,13 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
+  public function getProjectionVersion(): int {
+    return 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSupportedEntityTypes(): array {
     return ['node' => ['activity']];
   }

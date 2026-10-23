@@ -391,13 +391,52 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests older catalog entries receive the initial projection version.
+   */
+  public function testUpdateHookAddsProviderProjectionVersion(): void {
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_entry', 'provider_version');
+    $this->insertEntry('gen-provider-version', 'node', '217', 'pt-br');
+    $this->assertFalse($schema->fieldExists('aculta_index_entry', 'provider_version'));
+
+    aculta_index_update_10010();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_entry', 'provider_version'));
+    $this->assertSame('1', $database->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['provider_version'])
+      ->condition('entity_id', '217')
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Tests existing installations receive the immutable-ID query index.
+   */
+  public function testUpdateHookReplacesChangedKeysetIndex(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropIndex('aculta_index_entry', 'gen_entry_id');
+    $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
+    $this->assertTrue($schema->indexExists('aculta_index_entry', 'gen_changed'));
+
+    aculta_index_update_10011();
+
+    $this->assertFalse($schema->indexExists('aculta_index_entry', 'gen_changed'));
+    $this->assertTrue($schema->indexExists('aculta_index_entry', 'gen_entry_id'));
+  }
+
+  /**
    * Tests the projection writer is idempotent and rejects stale sequences.
    */
   public function testWriterSynchronizesEntryAndRelationsBySequence(): void {
     $generation = $this->container->get('aculta_index.generation_manager')->start();
     $provider = $this->createMock(ContentIndexProviderInterface::class);
+    $projectionVersion = 1;
     $provider->method('getProviderId')->willReturn('magazine');
     $provider->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $provider->method('getProjectionVersion')->willReturnCallback(static function () use (&$projectionVersion): int {
+      return $projectionVersion;
+    });
     $writer = new ContentIndexWriter(
       $this->container->get('database'),
       new ContentIndexProviderRegistry([$provider]),
@@ -421,6 +460,11 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame('2', $this->entrySequence($generation));
     $this->assertSame('activity-2', $this->relationTarget($generation));
     $this->assertSame(2, $this->relationCount($generation));
+
+    // A projection version bump rewrites a row without a newer source event.
+    $projectionVersion = 2;
+    $this->assertTrue($writer->write($generation, 'magazine', $latest, 2));
+    $this->assertSame('2', $this->entryProviderVersion($generation));
 
     try {
       $writer->write($generation, 'magazine', $this->projection('Divergente', 11, 'activity-3'), 2);
@@ -643,7 +687,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
         'entity_type' => $entityType,
         'entity_id' => $entityId,
         'langcode' => $langcode,
-        'bundle' => 'article',
+        'bundle' => 'sample_content',
         'uuid' => '',
         'label' => 'Fixture',
         'domain_id' => '',
@@ -727,6 +771,18 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   private function entrySequence(string $generationId): string {
     return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['source_sequence'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '42')
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Reads the provider projection version for the fixture identity.
+   */
+  private function entryProviderVersion(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['provider_version'])
       ->condition('generation_id', $generationId)
       ->condition('entity_id', '42')
       ->execute()

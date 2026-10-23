@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'Validar no Kernel o provider Content Index, purpose canônico `magazine` e suas relações com imagens; depois validar diálogo e galerias do Fórum no navegador/aparelho real antes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
-version_note: "`0.1.0-dev.16` (purpose canônico `magazine` no provider Gallery)"
+version_note: "`0.1.0-dev.17` (provider declara versão de projeção para rebuild)"

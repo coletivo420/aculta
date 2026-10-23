@@ -29,6 +29,13 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getProjectionVersion(): int {
+    return 1;
+  }
+
+  /**
    * {@inheritdoc} */
   public function getSupportedEntityTypes(): array {
     return [

@@ -313,7 +313,7 @@ foreach ($expected_forms as $form_id) {
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($form_id);
   $assert($point && $point->status() && $point->getCaptchaType() === 'turnstile/Turnstile', 'Turnstile is explicitly enabled on approved public form: ' . $form_id);
 }
-foreach (['node_activity_form', 'node_article_form', 'node_project_form', 'contact_message_personal_form'] as $excluded_form) {
+foreach (['node_activity_form', 'node_revista_form', 'node_project_form', 'contact_message_personal_form'] as $excluded_form) {
   $point = \Drupal::entityTypeManager()->getStorage('captcha_point')->load($excluded_form);
   $assert(!$point || !$point->status(), 'Turnstile is not attached to excluded/internal form: ' . $excluded_form);
 }

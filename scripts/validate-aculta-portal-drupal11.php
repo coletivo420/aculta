@@ -18,6 +18,7 @@ require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalHelperR
 require_once $root . '/web/modules/custom/aculta_portal/src/Status/PortalImplementationRegistry.php';
 $moduleRoot = $root . '/web/modules/custom/aculta_portal';
 $srcRoot = $moduleRoot . '/src';
+$activityRoot = $moduleRoot . '/modules/aculta_activity';
 $failures = [];
 $checks = 0;
 
@@ -216,13 +217,20 @@ $check(
 
 $editorialHooks = $srcRoot . '/Hook/EditorialHooks.php';
 $editorialHooksSource = $read($editorialHooks);
+$activityHooksSource = $read($activityRoot . '/src/Hook/ActivityHooks.php');
+$magazineHooks = $moduleRoot . '/modules/aculta_magazine/src/Hook/RevistaContentHooks.php';
+$magazineHooksSource = $read($magazineHooks);
 $check(is_file($editorialHooks), 'P2.2 EditorialHooks class must exist.');
-foreach (['metatag_tags_alter', 'node_presave', 'metatags_alter'] as $hookName) {
+foreach (['metatag_tags_alter', 'metatags_alter'] as $hookName) {
   $check(
     substr_count($editorialHooksSource, "#[Hook('" . $hookName . "')]") === 1,
     'P2 EditorialHooks must implement ' . $hookName . ' as an OOP hook.',
   );
 }
+$check(
+  substr_count($magazineHooksSource, "#[Hook('node_presave')]") === 1,
+  'P2 RevistaContentHooks must own the Revista node_presave hook.',
+);
 
 $hookRuntimeSources = '';
 foreach (glob($srcRoot . '/Hook/*.php') ?: [] as $hookFile) {
@@ -239,7 +247,7 @@ $p2HookOwners = [
   'token_info' => $tokenHooksSource,
   'tokens' => $tokenHooksSource,
   'metatag_tags_alter' => $editorialHooksSource,
-  'node_presave' => $editorialHooksSource,
+  'node_presave' => $magazineHooksSource,
   'metatags_alter' => $editorialHooksSource,
 ];
 // Drupal 11.1+ runs every #[Hook] method of a module, so distinct concerns may
@@ -254,12 +262,14 @@ foreach ($p2MigratedHooks as $hookName) {
 }
 $check(
   preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $tokenHooksSource) === 1
-    && preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $editorialHooksSource) === 1,
-  'P2-R TokenHooks and EditorialHooks must keep strict_types=1.',
+    && preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $editorialHooksSource) === 1
+    && preg_match('/declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\)\\s*;/', $magazineHooksSource) === 1,
+  'P2-R TokenHooks, EditorialHooks, and RevistaContentHooks must keep strict_types=1.',
 );
 $check(
   !str_contains($tokenHooksSource, '\\Drupal::')
-    && !str_contains($editorialHooksSource, '\\Drupal::'),
+    && !str_contains($editorialHooksSource, '\\Drupal::')
+    && !str_contains($magazineHooksSource, '\\Drupal::'),
   'P2-R migrated hook classes must not use Drupal static service locators.',
 );
 $check(
@@ -275,8 +285,8 @@ $check(
   'P2-R metatag_tags_alter signature must preserve definitions by reference.',
 );
 $check(
-  preg_match('/function\\s+nodePresave\\s*\\(NodeInterface\\s+\\$node\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
-  'P2-R node_presave signature must preserve NodeInterface.',
+  preg_match('/function\\s+nodePresave\\s*\\(NodeInterface\\s+\\$node\\)\\s*:\\s*void/', $magazineHooksSource) === 1,
+  'P2-R Revista node_presave signature must preserve NodeInterface.',
 );
 $check(
   preg_match('/function\\s+metatagsAlter\\s*\\(array\\s*&\\$tags,\\s*array\\s*&\\$context\\)\\s*:\\s*void/', $editorialHooksSource) === 1,
@@ -303,7 +313,7 @@ $check(
 );
 $check(
   str_contains($read($srcRoot . '/Account/AccountAddressForm.php'), "'aculta_portal_cep/cep-address'")
-    && str_contains($editorialHooksSource, 'SchemaMetatagManager::serialize')
+    && str_contains($activityHooksSource, 'SchemaMetatagManager::serialize')
     && str_contains($editorialHooksSource, "'courses'")
     && str_contains($editorialHooksSource, "'wiki'"),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
@@ -526,6 +536,8 @@ $check(
 
 $formCallbacks = $srcRoot . '/Form/PortalFormCallbacks.php';
 $formCallbacksSource = $read($formCallbacks);
+$activityFormCallbacksSource = $read($activityRoot . '/src/Form/ActivityFormCallbacks.php');
+$activityServices = $read($activityRoot . '/aculta_activity.services.yml');
 $check(is_file($formCallbacks), 'P3.1 PortalFormCallbacks service class must exist.');
 $check(
   str_contains($services, 'aculta_portal.form_callbacks:'),
@@ -536,16 +548,21 @@ $check(
   'P3.1 form callback service must use PortalFormCallbacks.',
 );
 $check(
-  str_contains($editorialHooksSource, "#[Hook('form_node_form_alter')]"),
-  'P3.1 EditorialHooks must implement form_node_form_alter as OOP.',
+  str_contains($activityHooksSource, "#[Hook('form_node_form_alter')]"),
+  'P3.1 ActivityHooks must implement form_node_form_alter as OOP.',
 );
 $check(
-  str_contains($editorialHooksSource, "'aculta_portal.form_callbacks:validateActivity'"),
-  'P3.1 activity validation must use the Drupal 11.3+ service callback syntax.',
+  str_contains($activityHooksSource, "'aculta_activity.form_callbacks:validateActivity'"),
+  'P3.1 Activity validation must use the owner module service callback.',
 );
 $check(
-  str_contains($formCallbacksSource, 'function validateActivity('),
-  'P3.1 PortalFormCallbacks must provide validateActivity().',
+  str_contains($activityServices, 'aculta_activity.form_callbacks:')
+    && str_contains($activityServices, 'Drupal\\aculta_activity\\Form\\ActivityFormCallbacks'),
+  'P3.1 ActivityFormCallbacks must be registered in the owner module.',
+);
+$check(
+  str_contains($activityFormCallbacksSource, 'function validateActivity('),
+  'P3.1 ActivityFormCallbacks must provide validateActivity().',
 );
 
 $moduleCallbacksPath = $moduleRoot . '/aculta_portal.module';
@@ -611,7 +628,6 @@ foreach ([
 }
 
 $formCallbackRegistrations = [
-  'validateActivity' => [$editorialHooksSource],
   'securityPasswordRedirect' => [$formHooksSource],
   'securityPasswordAfterBuild' => [$formHooksSource],
   'accountPhotoRedirect' => [$portalHooksSource],
@@ -639,9 +655,9 @@ foreach ($formCallbackRegistrations as $methodName => $sources) {
 $check(
   preg_match(
     '/function\s+formNodeFormAlter\s*\(array\s*&\$form,\s*FormStateInterface\s+\$formState,\s*string\s+\$formId\s*\)/',
-    $editorialHooksSource,
+    $activityHooksSource,
   ) === 1,
-  'P3.3 form_node_form_alter must preserve the Drupal 11 base-form hook signature.',
+  'P3.3 Activity form_node_form_alter must preserve the Drupal 11 base-form hook signature.',
 );
 
 $moduleFile = $moduleRoot . '/aculta_portal.module';

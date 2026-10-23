@@ -61,7 +61,7 @@ Observações verificadas:
 | Aviso de alterações não salvas | `js/revista-form.js` | Marca o formulário como alterado e usa `beforeunload` | Biblioteca anexada pelo form alter |
 | Caixa de autores | `src/Hook/ArticleAuthorsHooks.php` + `src/Presentation/PostPresentation.php` | Autoria e coautoria na visualização | `node_view` |
 | Discussão contextual | `src/Hook/PublicationDiscussionHooks.php` | Default do campo Comment em memória para Nodes anteriores ao campo | `node_load` |
-| Bundle e migração | `src/Revista/RevistaPublications.php`, `src/Migration/PublicationBundleMigrator.php` | Inventário de publicações e migração histórica | Entity API |
+| Bundle e histórico | `src/Revista/RevistaPublications.php`, `docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` | Bundle canônico e registro histórico; o migrador foi removido | Entity API |
 | Campos e displays | `config/sync/field.field.node.revista.*`, `core.entity_view_display.node.revista.*` | Modelo editorial, SEO, Pathauto, Metatag, listagens | Config Sync |
 
 O Magazine **não** expõe hoje um serviço de consulta editorial, um serviço de

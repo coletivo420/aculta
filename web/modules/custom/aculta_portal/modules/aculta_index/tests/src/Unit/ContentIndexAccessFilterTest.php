@@ -101,6 +101,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       }
 
       /** {@inheritdoc} */
+      public function getProjectionVersion(): int {
+        return 1;
+      }
+
+      /** {@inheritdoc} */
       public function getSupportedEntityTypes(): array {
         return ['group' => ['lms_course']];
       }
@@ -180,6 +185,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
         return 'forum';
       }
 
+      /** {@inheritdoc} */
+      public function getProjectionVersion(): int {
+        return 1;
+      }
+
       /**
        * {@inheritdoc}
        */
@@ -248,6 +258,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       /** {@inheritdoc} */
       public function getProviderId(): string {
         return 'forum';
+      }
+
+      /** {@inheritdoc} */
+      public function getProjectionVersion(): int {
+        return 1;
       }
 
       /** {@inheritdoc} */

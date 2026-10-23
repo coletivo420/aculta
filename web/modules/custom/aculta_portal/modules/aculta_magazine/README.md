@@ -13,7 +13,7 @@ conteúdo, publicação e mídia.
 - [Matriz de acesso editorial](docs/EDITORIAL-ACCESS-MATRIX.md)
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
-- [Migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
+- [Registro histórico da migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
 - [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — provider editorial revalida acesso no purpose canônico `magazine`; integração futura de Gallery usa referência estruturada.
 - [CHANGELOG](CHANGELOG.md)
 
@@ -39,7 +39,8 @@ transições ou permissões.
 
 O único bundle de publicação é `revista`. Os Nodes legados foram migrados com
 preservação de NID, UUID, revisão e aliases; os bundles `article` e `blog` foram
-aposentados. Publicações e comentários são organizados juntos em
+aposentados. O migrador e o comando Drush foram removidos após a execução; o
+documento de migração é apenas um registro histórico. Publicações e comentários são organizados juntos em
 `/painel-administrativo/conteudo/revista`. A View de comentários é renderizada
 como bloco na mesma página e filtra por tipo, campo, entidade e bundles editoriais.
 Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A

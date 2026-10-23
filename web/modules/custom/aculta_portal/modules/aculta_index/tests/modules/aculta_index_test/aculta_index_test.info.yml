@@ -1,7 +1,7 @@
 name: 'ACULTA Content Index test provider'
 type: module
 description: 'Test fixture provider for rebuild Kernel coverage.'
-package: Testing
+package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 dependencies:
   - drupal:node

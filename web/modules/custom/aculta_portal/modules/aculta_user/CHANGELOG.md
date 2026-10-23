@@ -1,3 +1,7 @@
+## 0.4.0-dev.69 — referências ao bundle Revista canônico
+
+- Feed pessoal de publicações e variante de autoria passam a usar `revista`; removida a consulta quebrada ao bundle aposentado `article`.
+
 ## 0.4.0-dev.68 — caracterização das políticas compartilhadas (XK 0.1-C1) — 2026-10-22
 
 - `ParticipationRules`, `ParticipationEditWindow`, `EditWindowExemptionInterface`

@@ -11,6 +11,3 @@ services:
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']
-  aculta_magazine.publication_bundle_migrator:
-    class: Drupal\aculta_magazine\Migration\PublicationBundleMigrator
-    arguments: ['@entity_type.manager', '@entity_field.manager', '@database']

@@ -31,7 +31,7 @@ seguem responsabilidade de consumidores autorizados, sem duplicação no Forum.
 | `ActivityController` | Aba de atividade Wiki/Fórum/Revista/Comentários/conquistas | perfil/conta | `profile_compact` ou list views | Estender a nova fonte de tópico/comentário; não duplicar consulta de perfil. |
 | `comment--comment-forum.html.twig` | Avatar/nome/data/resposta em cartão de mensagem | Comment contrib | `author_forum` via tema | Removido em ACULTA420 0.6.0-dev.105 depois da limpeza do conteúdo no Runtime de teste. |
 | `node--forum--full.html.twig`, `forum-list.html.twig` | Thread e listagem | Forum contrib | `author_forum` e cards de discussão | Removidos em ACULTA420 0.6.0-dev.105; os presenters do bundle próprio continuam ativos. |
-| `revista-publication` slot **Author box**, `node--article--full`/`node--blog--full` | Identidade, avatar, biografia e redes públicas do autor; papel Autor/Coautor | Magazine/ACULTA420 | `author_editorial` | `aculta_user` prepara identidade autorizada/cacheável; Magazine acrescenta somente a designação editorial; ACULTA420 apresenta o SDC compartilhado. |
+| `revista-publication` slot **Author box**, `node--revista--full` | Identidade, avatar, biografia e redes públicas do autor; papel Autor/Coautor | Magazine/ACULTA420 | `author_editorial` | `aculta_user` prepara identidade autorizada/cacheável; Magazine acrescenta somente a designação editorial; ACULTA420 apresenta o SDC compartilhado. |
 | SDCs `social-links-page`, `editorial-card`, `course_card` | Perfil social, autor editorial/curso | ACULTA420 | várias | Reutilizar onde a função coincide; não declarar que já são Author Cards genéricos. |
 
 ## Ações por caso

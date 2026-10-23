@@ -1,3 +1,7 @@
+## 0.6.1-dev.4 — removidos overrides de bundles editoriais aposentados
+
+- Removidos `node--article--full.html.twig` e `node--blog--full.html.twig`; `revista` é o único bundle editorial ativo.
+
 ## 0.6.1-dev.3 — banner de consentimento sem sobreposição (2026-10-22)
 
 Classificação: PATCH de acessibilidade e reflow.

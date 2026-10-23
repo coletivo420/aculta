@@ -1,5 +1,10 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.5 — versão da projeção no fingerprint do Index
+
+- Provider Wiki declara sua versão de projeção para invalidar rebuilds
+  parciais quando mudar a projeção de metadados ou relações.
+
 ## 0.1.0-dev.4 — relação outgoing de verbetes no Content Index
 
 - `WikiContentIndexProvider` projeta `field_wiki_related` como relação nomeada

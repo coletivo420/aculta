@@ -127,8 +127,9 @@ final class ContentIndexWriter {
       'entity_id' => $projection->entityId,
       'langcode' => $projection->langcode,
     ];
+    $providerVersion = $this->providers->get($providerId)->getProjectionVersion();
     $existing = $this->database->select('aculta_index_entry', 'entry')
-      ->fields('entry', ['entry_id', 'provider_id', 'changed', 'source_sequence', 'projection_hash'])
+      ->fields('entry', ['entry_id', 'provider_id', 'provider_version', 'changed', 'source_sequence', 'projection_hash'])
       ->condition('generation_id', $generationId)
       ->condition('entity_type', $projection->entityTypeId)
       ->condition('entity_id', $projection->entityId)
@@ -138,9 +139,10 @@ final class ContentIndexWriter {
       ->fetchAssoc();
 
     $now = $this->time->getRequestTime();
-    $hash = $this->projectionHash($providerId, $projection);
+    $hash = $this->projectionHash($providerId, $providerVersion, $projection);
     $fields = [
       'provider_id' => $providerId,
+      'provider_version' => $providerVersion,
       'bundle' => $projection->bundle,
       'uuid' => $projection->uuid,
       'label' => $projection->label,
@@ -167,11 +169,13 @@ final class ContentIndexWriter {
     }
     $existingSequence = (int) $existing['source_sequence'];
     $existingChanged = (int) $existing['changed'];
+    $existingProviderVersion = (int) $existing['provider_version'];
     if ($sourceSequence < $existingSequence
       || ($sourceSequence === $existingSequence && $projection->changed < $existingChanged)) {
       return FALSE;
     }
-    if ($sourceSequence === $existingSequence
+    if ($existingProviderVersion === $providerVersion
+      && $sourceSequence === $existingSequence
       && $projection->changed === $existingChanged
       && $existing['projection_hash'] !== $hash) {
       throw new \LogicException('A Content Index source sequence produced conflicting projections.');
@@ -182,7 +186,8 @@ final class ContentIndexWriter {
     if ($sourceSequence === $existingSequence
       && $projection->changed === $existingChanged
       && $existing['projection_hash'] === $hash
-      && $relationsMatch) {
+      && $relationsMatch
+      && $existingProviderVersion === $providerVersion) {
       return FALSE;
     }
 
@@ -235,7 +240,7 @@ final class ContentIndexWriter {
   /**
    * Returns a canonical hash of the provider's allowlisted projection.
    */
-  private function projectionHash(string $providerId, ContentIndexProjection $projection): string {
+  private function projectionHash(string $providerId, int $providerVersion, ContentIndexProjection $projection): string {
     $relations = [];
     foreach ($projection->relations as $relation) {
       $relations[] = $this->relationValues($relation);
@@ -244,6 +249,7 @@ final class ContentIndexWriter {
 
     return hash('sha256', json_encode([
       'provider_id' => $providerId,
+      'provider_version' => $providerVersion,
       'entity_type' => $projection->entityTypeId,
       'entity_id' => $projection->entityId,
       'langcode' => $projection->langcode,

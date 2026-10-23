@@ -83,7 +83,7 @@ final class ActivityController implements ContainerInjectionInterface {
     // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
     return [
       '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],
-      'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, artigos e comentários.')],
+      'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
       'tabs' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => t('Seções de atividade'), 'data-portal-account-data-nav' => 'true'],
@@ -143,11 +143,11 @@ final class ActivityController implements ContainerInjectionInterface {
     );
   }
 
-  /** Artigos da revista (tipo article) de autoria da pessoa, publicados. */
+  /** Publicações da Revista de autoria da pessoa, publicadas. */
   private function revista(int $uid): array {
     $nids = $this->entityTypeManager->getStorage('node')->getQuery()
-      ->accessCheck(FALSE)->condition('type', 'article')->condition('uid', $uid)->condition('status', 1)->execute();
-    return $this->nodeList(array_values($nids), 'article', 'Você ainda não tem artigos publicados na revista.', FALSE);
+      ->accessCheck(FALSE)->condition('type', 'revista')->condition('uid', $uid)->condition('status', 1)->execute();
+    return $this->nodeList(array_values($nids), 'revista', 'Você ainda não tem publicações na Revista.', FALSE);
   }
 
   /** Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */

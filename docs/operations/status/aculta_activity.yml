@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "`0.1.0-dev.2` (provider descoberto no Kernel e alteração agendada pelo Index)"
-next_phase: 'Homologar Entity Access de Activity no purpose `main` com domínio e grants reais; auditar a ownership dos hooks editoriais legados sem migrá-los por inferência. Runtime permanece sem habilitação ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+version_note: "`0.1.0-dev.4` (hooks e validação específicos movidos para o módulo owner)"
+next_phase: 'Homologar Entity Access de Activity no purpose `main` com domínio e grants reais e confirmar edição/Metatag dos formulários; Runtime permanece sem habilitação ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

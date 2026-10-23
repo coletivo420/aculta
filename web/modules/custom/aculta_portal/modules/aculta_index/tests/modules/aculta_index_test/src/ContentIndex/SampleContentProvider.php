@@ -9,20 +9,27 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
- * Projects Article nodes for rebuild integration coverage.
+ * Projects generic content nodes for rebuild integration coverage.
  */
-final class ArticleProvider implements ContentIndexProviderInterface {
+final class SampleContentProvider implements ContentIndexProviderInterface {
 
   /**
    * {@inheritdoc} */
   public function getProviderId(): string {
-    return 'test_article';
+    return 'test_sample_content';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProjectionVersion(): int {
+    return 1;
   }
 
   /**
    * {@inheritdoc} */
   public function getSupportedEntityTypes(): array {
-    return ['node' => ['article']];
+    return ['node' => ['sample_content']];
   }
 
   /**
@@ -32,7 +39,7 @@ final class ArticleProvider implements ContentIndexProviderInterface {
       'node',
       (string) $entity->id(),
       $entity->language()->getId(),
-      'article',
+      'sample_content',
       (string) $entity->uuid(),
       (string) $entity->label(),
       NULL,

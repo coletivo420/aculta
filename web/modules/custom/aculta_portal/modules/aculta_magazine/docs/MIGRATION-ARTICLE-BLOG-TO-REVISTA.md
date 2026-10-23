@@ -1,123 +1,31 @@
-# Migração editorial para `revista`
+# Registro histórico: migração para `revista`
 
-**Estado:** executada no Runtime de teste em 2026-10-21, com autorização do responsável (DT-K02). As seções abaixo descrevem o plano, as salvaguardas e o inventário de execução; o resultado está no roadmap do Studio e Revista.
+Este documento registra a migração já executada no Runtime de teste em
+2026-10-21. **Não é um runbook e não contém comandos reutilizáveis.** O migrador
+e seu comando Drush foram removidos após a conclusão, conforme decisão de
+produto. Uma futura importação de dados `article`/`blog` exige auditoria,
+planejamento e implementação específicos, com autorização para o ambiente.
 
-## Escopo e salvaguardas
+## Resultado registrado
 
-O comando `aculta-magazine:migrate-publications` recria Nodes `article` e
-`blog` pelo Entity API como `revista`, preservando NID, UUID, VID, campos e
-aliases Path Alias (ID, UUID, revisão, caminho e alias). A operação não usa
-`NodeStorage::updateType()`, SQL de escrita nem o conversor legado.
+A operação autorizada converteu 16 Nodes (11 `article`, 5 `blog`) em `revista`,
+preservando NID, UUID e VID original, além de 26 aliases. O inventário anterior
+à operação registrou uma revisão por Node e alias, nenhum Comment hospedado e
+nenhuma referência de entrada detectada. Após a migração, os bundles antigos
+foram aposentados.
 
-Por padrão, o comando só valida o estado e mostra quantidades. `--execute`
-recusa qualquer host que não seja `toca`, banco que não seja
-`aculta_runtime`, URI que não seja o purpose Magazine de teste, dump incompleto
-ou backup de configuração ausente. O backup precisa estar fora do checkout,
-privado e ter menos de 30 minutos.
+Uma verificação posterior identificou que 12 publicações legítimas precisavam
+recuperar o estado publicado do workflow. A Entity API criou uma revisão
+publicada para cada uma; os quatro Nodes de teste permaneceram rascunhos.
 
-A migração só prossegue se cada Node e alias tiver uma revisão, sem traduções,
-Comments hospedados, referências de entrada em campos Entity Reference ou
-registros Entity Usage. Uma condição nova interrompe o processo antes de
-qualquer escrita. A operação ocorre em transação e verifica bundle, IDs, UUIDs,
-revisões e aliases antes do commit. Em falha, a transação é revertida.
+Depois, os quatro Nodes de teste foram removidos em operação separada,
+autorizada para aquele Runtime, com inventário e backup. Nenhum Media, arquivo
+ou entidade compartilhada foi removido. Os backups permanecem privados no
+Runtime e não pertencem ao repositório.
 
-O Runtime inventariado em 2026-10-21 tem 16 Nodes (11 `article`, 5 `blog`),
-uma revisão por Node, 26 aliases com uma revisão cada, zero Comments e nenhuma
-referência de entrada detectada. Os campos editoriais de `article`, `blog` e
-`revista` têm os mesmos nomes e tipos. Revalidar essa forma no dry run; não
-tratar este inventário como autorização para conteúdo de outra instalação.
+## Limites deste registro
 
-## Procedimento no Runtime de desenvolvimento
-
-1. Confirmar `hostname`, `pwd`, branch, estado Git e
-   `drush status --uri=http://revista420.aculta.toca.net.br`. O resultado deve
-   indicar `toca`, `aculta_runtime` e a URI do purpose Magazine.
-2. Rodar primeiro o dry run:
-
-   ```sh
-   php vendor/drush/drush/drush.php aculta-magazine:migrate-publications --uri=http://revista420.aculta.toca.net.br
-   ```
-
-3. Criar backup privado do banco e da configuração ativa em diretórios novos,
-   fora do checkout. Restringir permissões antes de continuar:
-
-   ```sh
-   umask 077
-   php vendor/drush/drush/drush.php sql:dump --gzip --result-file=/tmp/aculta-magazine-before-migration.sql --uri=http://revista420.aculta.toca.net.br
-   mkdir -m 0700 /tmp/aculta-magazine-config-before-migration
-   php vendor/drush/drush/drush.php config:export --destination=/tmp/aculta-magazine-config-before-migration --uri=http://revista420.aculta.toca.net.br
-   chmod -R go-rwx /tmp/aculta-magazine-before-migration.sql.gz /tmp/aculta-magazine-config-before-migration
-   gzip -t /tmp/aculta-magazine-before-migration.sql.gz
-   ```
-
-4. Repetir hostname, branch, URI, banco, dry run e confirmar que os Nodes
-   inventariados continuam os mesmos. O dump deve ter sido criado nos últimos
-   30 minutos e permanecer fora do repositório.
-5. Executar explicitamente:
-
-   ```sh
-   php vendor/drush/drush/drush.php aculta-magazine:migrate-publications --execute --backup-file=/tmp/aculta-magazine-before-migration.sql.gz --config-backup-dir=/tmp/aculta-magazine-config-before-migration --uri=http://revista420.aculta.toca.net.br
-   ```
-
-6. Consultar o bundle por NID, UUID e VID, comparar a contagem dos 26 aliases,
-   verificar ausência de Nodes legados, abrir páginas públicas por alias,
-   revisar watchdog e respostas HTTP. Fazer nova exportação de Config Sync
-   somente quando a limpeza de bundles/configuração estiver planejada e isolada.
-
-## Rollback
-
-Se o comando falhar, ele reverte sua transação; validar contagens e HTTP antes
-de nova tentativa. Se a migração concluir mas uma verificação posterior falhar,
-interromper novas escritas editoriais, guardar os logs minimizados e restaurar
-o dump em uma cópia isolada para validar o procedimento. No Runtime autorizado,
-restaurar apenas com o runbook operacional e depois de confirmar novamente o
-host e banco. Nunca aplicar esse backup em produção nem restaurar sobre dados
-mais recentes sem decisão do responsável.
-
-O export de configuração e o dump pós-configuração de F0.2 são backups
-anteriores à migração de conteúdo; não substituem o dump novo exigido acima.
-
-
-## Resultado do Runtime de teste — 2026-10-21
-
-A migração foi executada em `toca`, URI `http://revista420.aculta.toca.net.br`,
-com banco `aculta_runtime`, após dump gzip e export completo de configuração
-privados. Foram migrados 16 Nodes, preservando NID, UUID, VID original e os 26
-aliases. Não havia Comments, referências de entrada ou Entity Usage nos Nodes
-inventariados. Nenhum conteúdo ou arquivo compartilhado foi excluído.
-
-Após a contagem zero dos bundles antigos, `article` e `blog` foram removidos via
-Entity API. A tela de criação agora tem somente o tipo editorial `revista`.
-Backup do banco: `/tmp/aculta-magazine-before-migration-20261021.sql.gz`;
-backup de configuração: `/tmp/aculta-magazine-before-migration-20261021-config`.
-Esses arquivos são privados do Runtime de teste e não devem ser versionados.
-
-### Correção de estado editorial — 2026-10-21
-
-A inspeção posterior detectou que a recriação dos Nodes havia aplicado o estado
-padrão `draft` do workflow `revista` às 12 publicações que estavam publicadas
-antes da migração. Os mesmos NIDs e UUIDs permaneceram intactos. Após validar
-backup, workflow, permissão de transição e estado de cada Node, a Entity API
-criou uma nova revisão publicada para cada um dos 12 NIDs legítimos. Os quatro
-Nodes identificados como teste continuaram em rascunho. Nada foi excluído.
-
-O migrador agora traduz o status legado para `published`/`draft` quando o bundle
-destino possui workflow e verifica o status no pós-check transacional. O teste
-Kernel instala o workflow e confirma que um Node legado publicado permanece
-publicado após a migração.
-
-### Limpeza de conteúdo de teste — 2026-10-21
-
-Após preservar as 12 publicações legítimas, o Runtime foi inventariado
-novamente. Os únicos Nodes restantes com títulos explícitos de teste eram os
-NIDs 288 (`aculta-image-r2-temporary-20261016`), 290
-(`aculta-image-r3-temporary-20261016`), 375 (`TEMP PV6 article ...`) e 376
-(`TEMP PV6 blog ...`). Cada um foi confirmado como `revista`, com uma revisão,
-sem Comments, referências Entity Reference recebidas, Entity Usage ou redirects;
-os quatro tinham somente seu alias de caminho próprio. Um novo dump gzip e
-export da configuração ativa foram feitos em diretório privado fora do checkout.
-
-Os quatro Nodes e seus aliases foram removidos por APIs Entity em uma
-transação. Nenhum Media, arquivo ou entidade compartilhada foi excluído. As 12
-publicações legítimas permanecem preservadas. O backup gzip passou `gzip -t`;
-seu diretório não deve ser versionado nem restaurado sobre produção.
+Os números e resultados acima descrevem somente o Runtime e a execução de
+2026-10-21. Eles não autorizam alterações em outra instalação. Não há mais
+comando ou serviço neste módulo que converta bundles antigos; uma nova migração
+exige desenho e revisão próprios.

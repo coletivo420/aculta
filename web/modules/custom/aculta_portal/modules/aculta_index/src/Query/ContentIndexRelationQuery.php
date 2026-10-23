@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_index\Query;
 
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -26,6 +27,7 @@ final class ContentIndexRelationQuery {
     private readonly ContentIndexAccessFilter $accessFilter,
     private readonly ContentIndexCursorManager $cursors,
     private readonly LanguageManagerInterface $languageManager,
+    private readonly ContentIndexProviderRegistry $providers,
   ) {}
 
   /**
@@ -83,6 +85,10 @@ final class ContentIndexRelationQuery {
     if (count($sourceAccess->entities) !== 1) {
       return new ContentIndexQueryResult([], NULL, $cacheability);
     }
+    $sourceProvider = $this->providers->findForBundle($sourceEntityType, $sourceAccess->entities[0]->bundle());
+    if ($sourceProvider === NULL) {
+      return new ContentIndexQueryResult([], NULL, $cacheability);
+    }
 
     $queryIdentity = [
       'source_entity_type' => $sourceEntityType,
@@ -94,7 +100,14 @@ final class ContentIndexRelationQuery {
     $queryHash = hash('sha256', json_encode($queryIdentity, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     $uid = (int) $account->id();
     $after = $cursor === NULL ? NULL : $this->cursors->load($cursor, $uid, $generationId, $queryHash);
-    $candidates = $this->loadTargets($generationId, $queryIdentity, $after, $limit);
+    $candidates = $this->loadTargets(
+      $generationId,
+      $queryIdentity,
+      $sourceProvider->getProviderId(),
+      $sourceProvider->getProjectionVersion(),
+      $after,
+      $limit,
+    );
     $targetAccess = $this->accessFilter->filter($candidates, $account);
     $cacheability = $cacheability->merge($targetAccess->cacheability);
 
@@ -132,7 +145,10 @@ final class ContentIndexRelationQuery {
    * @return list<array{entity_type: string, entity_id: string, langcode: string, relation_id: int}>
    *   Candidate targets, not yet authorized.
    */
-  private function loadTargets(string $generationId, array $identity, ?array $after, int $limit): array {
+  private function loadTargets(string $generationId, array $identity, string $sourceProviderId, int $sourceProviderVersion, ?array $after, int $limit): array {
+    if ($this->providers->all() === []) {
+      return [];
+    }
     $query = $this->database->select('aculta_index_relation', 'relation')
       ->fields('target', ['entity_type', 'entity_id', 'langcode']);
     $query->addField('relation', 'relation_id', 'relation_id');
@@ -145,6 +161,8 @@ final class ContentIndexRelationQuery {
         . ' AND relation.source_entity_id = source.entity_id'
         . ' AND relation.source_langcode = source.langcode',
     );
+    $query->condition('source.provider_id', $sourceProviderId)
+      ->condition('source.provider_version', $sourceProviderVersion);
     $query->innerJoin(
       'aculta_index_entry',
       'target',
@@ -154,6 +172,13 @@ final class ContentIndexRelationQuery {
         . ' AND target.langcode = CASE WHEN relation.target_langcode = :index_und THEN :default_langcode ELSE relation.target_langcode END',
       [':index_und' => 'und', ':default_langcode' => $identity['target_langcode']],
     );
+    $currentTargets = $query->orConditionGroup();
+    foreach ($this->providers->all() as $providerId => $provider) {
+      $currentTargets->condition($query->andConditionGroup()
+        ->condition('target.provider_id', $providerId)
+        ->condition('target.provider_version', $provider->getProjectionVersion()));
+    }
+    $query->condition($currentTargets);
     $query->condition('relation.generation_id', $generationId)
       ->condition('relation.source_entity_type', $identity['source_entity_type'])
       ->condition('relation.source_entity_id', $identity['source_entity_id'])

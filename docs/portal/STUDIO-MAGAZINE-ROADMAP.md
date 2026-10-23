@@ -111,8 +111,7 @@ Media `remote_video` ficou preservado. Evidências e backups:
 - Achados de outros donos apenas documentados, sem correção local: coautoria na
   interface (A-03, decisão com `aculta_user`), Pathauto legado (A-05), hook de
   instalação histórico (A-06, mantido para atualização), purpose `main` no link
-  de edição do Studio (A-07) e feed do User consultando bundle `article`
-  (A-12).
+  de edição do Studio (A-07) e feed do User consultando bundle aposentado (A-12, resolvido em `aculta_user` 0.4.0-dev.69; agora consulta `revista`).
 - Próximo: 0.5-B, contratos editoriais consumíveis pelo Studio (acesso,
   revisão, preview, transições, Form API e domínio), sem segunda interface
   GanjaLab dentro do Magazine.

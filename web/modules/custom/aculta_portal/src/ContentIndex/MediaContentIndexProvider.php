@@ -38,6 +38,13 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getProjectionVersion(): int {
+    return 1;
+  }
+
+  /**
    * {@inheritdoc} */
   public function getSupportedEntityTypes(): array {
     return ['media' => [$this->bundle]];

@@ -22,8 +22,7 @@ final class AuthorCardVariantResolverTest extends TestCase {
     $resolver = new AuthorCardVariantResolver();
     foreach ([
       'aculta_forum_topic' => 'author_forum',
-      'article' => 'author_comment',
-      'blog' => 'author_comment',
+      'revista' => 'author_comment',
       'aculta_lms_topic' => 'author_lms',
       'wiki_entry' => 'author_wiki',
     ] as $bundle => $expected) {
@@ -38,9 +37,11 @@ final class AuthorCardVariantResolverTest extends TestCase {
    */
   public function testUnsupportedHostHasNoVariant(): void {
     $resolver = new AuthorCardVariantResolver();
-    $node = $this->createMock(NodeInterface::class);
-    $node->method('bundle')->willReturn('activity');
-    self::assertNull($resolver->forHost($node));
+    foreach (['activity', 'article', 'blog'] as $bundle) {
+      $node = $this->createMock(NodeInterface::class);
+      $node->method('bundle')->willReturn($bundle);
+      self::assertNull($resolver->forHost($node), $bundle);
+    }
 
     self::assertNull($resolver->forHost($this->createMock(TermInterface::class)));
   }

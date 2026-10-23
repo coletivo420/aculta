@@ -81,10 +81,11 @@ categoria Editorial está superada pelo modelo canônico `revista`.
 
 ## Migração concluída
 
-Os 16 Nodes inventariados no Runtime de teste foram migrados pelo comando
-`aculta-magazine:migrate-publications` via Entity API, preservando NID, UUID,
-VID, campos e aliases. `article` e `blog` não existem mais como bundles; a
-configuração mantém somente `revista`. Backup, verificação e rollback estão em
+Os 16 Nodes inventariados no Runtime de teste foram migrados via Entity API,
+preservando NID, UUID, VID, campos e aliases. O utilitário e o comando Drush
+foram removidos após a conclusão; este repositório não fornece mecanismo para
+reexecutar a conversão. `article` e `blog` não existem mais como bundles; a
+configuração mantém somente `revista`. O registro histórico está em
 [`MIGRATION-ARTICLE-BLOG-TO-REVISTA.md`](MIGRATION-ARTICLE-BLOG-TO-REVISTA.md).
 
 ## Privacidade

@@ -252,7 +252,7 @@
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
     {
-      "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+      "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
       "reason": "endereço canônico/metatag por domínio com host de produção (aculta.org) — por ambiente"
     },
     {
@@ -396,7 +396,7 @@
           "with": "  schema_web_site_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:32:\"https://aculta.org/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
         },
         {
-          "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+          "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
           "pattern": "^  schema_article_publisher: .*$",
           "with": "  schema_article_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:32:\"https://aculta.org/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
         },
@@ -511,7 +511,7 @@
           "with": "  schema_web_site_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:40:\"https://aculta.toca.net.br/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
         },
         {
-          "file": "config/sync/metatag.metatag_defaults.node__article.yml",
+          "file": "config/sync/metatag.metatag_defaults.node__revista.yml",
           "pattern": "^  schema_article_publisher: .*$",
           "with": "  schema_article_publisher: 'a:4:{s:5:\"@type\";s:12:\"Organization\";s:3:\"@id\";s:40:\"https://aculta.toca.net.br/#organization\";s:4:\"name\";s:18:\"[institution:name]\";s:3:\"url\";s:17:\"[institution:url]\";}'"
         },

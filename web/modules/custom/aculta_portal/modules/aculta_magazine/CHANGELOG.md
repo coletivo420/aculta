@@ -1,3 +1,20 @@
+## 0.5.0-dev.8 — remoção do migrador legado
+
+- Removidos o serviço, comando Drush e teste do migrador `article`/`blog` →
+  `revista`, pois a migração autorizada foi concluída. O documento passa a ser
+  apenas registro histórico, sem procedimento executável.
+- Ownership do hook `node_presave` de publicação `revista` documentado no
+  `RevistaContentHooks` do Magazine.
+
+## 0.5.0-dev.7 — lifecycle do bundle Revista
+
+- O Magazine registra a primeira data de publicação e omite imagem JSON-LD vazia no bundle `revista`, preservando os comportamentos que antes só alcançavam o bundle aposentado `article`.
+
+## 0.5.0-dev.6 — versão da projeção no fingerprint do Index
+
+- Provider Magazine declara sua versão de projeção; alterações futuras de
+  projeção devem incrementá-la para invalidar gerações parciais antigas.
+
 ## 0.5.0-dev.5 — referência estruturada de Galeria
 
 - `node.revista.field_editorial_gallery` guarda uma referência estruturada a
@@ -133,10 +150,9 @@
 
 ## 0.3.0-dev.1 — migração Entity API preparada — 2026-10-21
 
-- Comando `aculta-magazine:migrate-publications` com dry run padrão e execução
-  restrita a `toca`, `aculta_runtime` e URI do purpose Magazine de teste. Exige
-  dump gzip e export de configuração ativa, ambos privados, recentes e fora do
-  checkout.
+- Foi criada uma ferramenta temporária com prévia e execução restrita ao Runtime
+  de teste, condicionada a dump e export de configuração privados. Ela foi
+  removida após a conclusão da migração; não há comando disponível atualmente.
 - A migração recria Nodes com o mesmo NID, UUID e VID e preserva IDs, UUIDs,
   revisão, caminho e alias das entidades Path Alias. Uma transação, pós-checagens
   e falha fechada protegem as escritas; conteúdo com múltiplas revisões,

@@ -28,6 +28,14 @@ interface ContentIndexProviderInterface {
   public function getSupportedEntityTypes(): array;
 
   /**
+   * Returns the projection schema/semantics version for rebuild fingerprinting.
+   *
+   * Increment this value whenever projected fields, relations, or indexability
+   * semantics change in a way that makes a partially built generation stale.
+   */
+  public function getProjectionVersion(): int;
+
+  /**
    * Projects one entity translation, or returns NULL when it is not indexable.
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection;

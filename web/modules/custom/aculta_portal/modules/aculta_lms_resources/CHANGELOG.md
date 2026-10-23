@@ -1,5 +1,10 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.4 — versão da projeção no fingerprint do Index
+
+- Provider de cursos declara sua versão de projeção para impedir retomada de
+  rebuild com semântica de relações desatualizada.
+
 ## 0.1.0-dev.3 — provider de cursos e recursos para o Content Index
 
 - Registra `Group:lms_course` e relações explícitas para leituras da Revista/Wiki

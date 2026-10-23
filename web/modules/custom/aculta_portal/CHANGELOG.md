@@ -1,3 +1,17 @@
+## 0.4.1-dev.12 — ownership editorial de Activity e limpeza de Magazine
+
+- `EditorialHooks` deixa de executar comportamentos para `article`/`blog` e
+  deixa de possuir hooks específicos do bundle `activity`, agora mantidos por
+  `aculta_activity`.
+- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
+- Removido o migrador já executado de bundles `article`/`blog` para `revista`.
+
+## 0.4.1-dev.10 — versão explícita das projeções do Content Index
+
+- O contrato neutro `ContentIndexProviderInterface` passa a exigir
+  `getProjectionVersion()`; o registry inclui essa versão no fingerprint para
+  impedir resume de geração parcial com projeção alterada.
+
 ## 0.4.1-dev.7 — provider remote_video adiado por ownership indefinido
 
 - Conforme decisão do responsável, `aculta_portal` deixa de registrar provider
@@ -2778,6 +2792,11 @@ RUNTIME STATUS: validada no Runtime oficial (2026-10-09), sem teste humano: `/bu
 - Pendências: `content_access` no índice (hoje o controle de acesso é feito por nó na página); testes de Kernel da busca; QA visual.
 
 # Changelog — ACULTA Portal
+
+## 0.4.1-dev.11 — removidas rotas de bundle editorial aposentado
+
+- `EditorialHooks` deixa de executar comportamentos para `article`/`blog`; metadados e formulário da atividade permanecem no Portal.
+- Publicações atuais são mantidas pelo `aculta_magazine` no bundle `revista`.
 
 ## 0.4.1-dev.9 — scanner de referências de texto por Entity Query
 

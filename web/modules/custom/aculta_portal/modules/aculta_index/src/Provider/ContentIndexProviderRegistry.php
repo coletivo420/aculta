@@ -43,6 +43,9 @@ final class ContentIndexProviderRegistry {
       if (isset($this->providers[$id])) {
         throw new \InvalidArgumentException(sprintf('Duplicate ACULTA Content Index provider ID: %s.', $id));
       }
+      if ($provider->getProjectionVersion() < 1) {
+        throw new \InvalidArgumentException(sprintf('Provider %s must declare a positive projection version.', $id));
+      }
       foreach ($provider->getSupportedEntityTypes() as $entityTypeId => $bundles) {
         if (!is_string($entityTypeId) || preg_match('/^[a-z][a-z0-9_]*$/', $entityTypeId) !== 1 || !is_array($bundles) || $bundles === []) {
           throw new \InvalidArgumentException(sprintf('Provider %s declares an invalid entity type or bundle list.', $id));
@@ -73,7 +76,7 @@ final class ContentIndexProviderRegistry {
   }
 
   /**
-   * Returns a stable digest of provider IDs, supported types, and bundles.
+   * Returns a stable digest of provider IDs, projection versions and bundles.
    */
   public function fingerprint(): string {
     $inventory = [];
@@ -86,7 +89,10 @@ final class ContentIndexProviderRegistry {
         sort($bundles);
       }
       unset($bundles);
-      $inventory[$providerId] = $entityTypes;
+      $inventory[$providerId] = [
+        'projection_version' => $provider->getProjectionVersion(),
+        'entity_types' => $entityTypes,
+      ];
     }
     return hash('sha256', json_encode($inventory, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
   }

@@ -18,9 +18,9 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ## Estado atual — conferido em 2026-10-22
 
-- Versão: **0.4.1-dev.7** (`aculta_portal.info.yml`; confira o changelog para o estado das alterações desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete a auditoria anterior e deve ser lido junto às atualizações datadas do roadmap.
-- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1, `aculta_portal_sitemap` 0.1.1, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.16, `aculta_magazine` 0.5.0-dev.5, `aculta_index` 0.1.0-dev.27 e `aculta_activity` 0.1.0-dev.2. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
-- Tema: `aculta420` 0.6.1-dev.3 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
+- Versão: **0.4.1-dev.12** (`aculta_portal.info.yml`; confira o changelog para o estado desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete auditorias anteriores e deve ser lido junto às atualizações datadas do roadmap.
+- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1, `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.29 e `aculta_activity` 0.1.0-dev.4. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
+- Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
 - Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
@@ -34,10 +34,10 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
   decisões, dívida de `remote_video` e integrações encontram-se no
   [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
 - O submódulo proprietário `aculta_activity` implementa projeção mínima do Node
-  `activity` e adapter tagged; Kernel confirma descoberta, projeção e agendamento
-  incremental. Entregar e homologar junto do `aculta_portal`, sem linha de
-  release independente. O módulo não assume autoria, edição, workflows,
-  apresentação ou migração do conteúdo.
+  `activity`, adapter tagged, hooks de formulário/Metatag e validação condicional;
+  Kernel/Unit cobrem provider e organização do formulário. Entregar e homologar
+  junto do `aculta_portal`, sem linha de release independente. Workflow, autoria,
+  migração e experiência editorial permanecem em decisões futuras.
 - IDX 0.1-R inclui a política de limpeza de posts/anexos. As APIs
   `aculta_portal.unused_file_cleaner` e
   `aculta_portal.unused_media_cleaner` foram implementadas parcialmente:

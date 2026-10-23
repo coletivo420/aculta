@@ -80,6 +80,7 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     ])->save();
 
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
+    NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
     FieldStorageConfig::create([
       'entity_type' => 'node',
       'field_name' => 'field_domain_source',
@@ -178,6 +179,16 @@ final class ActivityControllerKernelTest extends KernelTestBase {
       (int) $negotiator->getActiveDomain()?->id(),
       'The controller restores the account purpose after evaluating Forum access.',
     );
+
+    Node::create([
+      'type' => 'revista',
+      'title' => 'Revista publication',
+      'uid' => $account->id(),
+      'status' => 1,
+    ])->save();
+    $magazineItems = $controller->view('revista')['content']['list']['#items'];
+    self::assertCount(1, $magazineItems);
+    self::assertSame('Revista publication', (string) $magazineItems[0]['#title']);
   }
 
   /**

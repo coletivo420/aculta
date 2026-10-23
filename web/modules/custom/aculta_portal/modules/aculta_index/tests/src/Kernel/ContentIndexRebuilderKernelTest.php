@@ -77,7 +77,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->installConfig(['node', 'user']);
     $this->config('user.role.anonymous')->set('permissions', ['access content'])->save();
     aculta_index_install();
-    NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
+    NodeType::create(['type' => 'sample_content', 'name' => 'Article'])->save();
   }
 
   /**
@@ -95,8 +95,8 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
    * Checks keyset batches resume and persist projections without activation.
    */
   public function testBackfillResumesAndOnlyWritesBuildingGeneration(): void {
-    Node::create(['type' => 'article', 'title' => 'Article one', 'status' => 1])->save();
-    Node::create(['type' => 'article', 'title' => 'Article two', 'status' => 1])->save();
+    Node::create(['type' => 'sample_content', 'title' => 'Content one', 'status' => 1])->save();
+    Node::create(['type' => 'sample_content', 'title' => 'Content two', 'status' => 1])->save();
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
 
@@ -227,9 +227,9 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
    * Checks query pagination uses an opaque persisted cursor and access checks.
    */
   public function testQueryUsesOpaqueCursorAndReturnsAuthorizedEntities(): void {
-    foreach (['Article one', 'Article two', 'Private article'] as $index => $title) {
+    foreach (['Content one', 'Content two', 'Private content'] as $index => $title) {
       $node = Node::create([
-        'type' => 'article',
+        'type' => 'sample_content',
         'title' => $title,
         'created' => 1000,
         'changed' => 1000,
@@ -259,7 +259,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $authorized = $query->query([], $account, NULL, 4);
     $this->assertCount(2, $authorized->entities);
     $labels = array_map(static fn ($entity): string => (string) $entity->label(), $authorized->entities);
-    $this->assertNotContains('Private article', $labels);
+    $this->assertNotContains('Private content', $labels);
     $firstPage = $query->query(['published' => TRUE], $account, NULL, 2);
     $this->assertCount(2, $firstPage->entities);
     $this->assertNotNull($firstPage->nextCursor);
@@ -271,7 +271,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame(0, $firstPage->cacheability->getCacheMaxAge());
 
     try {
-      $query->query(['bundle' => 'article'], $account, $firstPage->nextCursor, 2);
+      $query->query(['bundle' => 'sample_content'], $account, $firstPage->nextCursor, 2);
       $this->fail('Expected a cursor bound to different filters to be rejected.');
     }
     catch (\InvalidArgumentException) {
@@ -299,16 +299,16 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertFalse($publicNode->access('view', $account));
     $afterRevocation = $query->query(['published' => TRUE], $account, NULL, 2);
     $this->assertCount(1, $afterRevocation->entities);
-    $this->assertSame('Article two', (string) $afterRevocation->entities[0]->label());
+    $this->assertSame('Content two', (string) $afterRevocation->entities[0]->label());
   }
 
   /**
    * Rechecks Entity Access before a queued revocation is applied.
    */
   public function testCursorPageHidesEntityMadePrivateWhileCatalogIsStale(): void {
-    foreach (['First article', 'Second article'] as $title) {
+    foreach (['First content', 'Second content'] as $title) {
       Node::create([
-        'type' => 'article',
+        'type' => 'sample_content',
         'title' => $title,
         'status' => 1,
         'created' => 1000,
@@ -347,14 +347,52 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Keeps a page position stable when a later candidate changes timestamp.
+   */
+  public function testCursorUsesImmutableEntryIdWhenEntityChanges(): void {
+    foreach (['Older identity', 'Newer identity'] as $title) {
+      Node::create([
+        'type' => 'sample_content',
+        'title' => $title,
+        'status' => 1,
+        'created' => 1000,
+        'changed' => 1000,
+      ])->save();
+    }
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $query = $this->container->get('aculta_index.query');
+    $account = new AnonymousUserSession();
+    $firstPage = $query->query([], $account, NULL, 1);
+    $this->assertSame('Newer identity', (string) $firstPage->entities[0]->label());
+    $this->assertNotNull($firstPage->nextCursor);
+
+    // A changed-time sort would move this item before the cursor and omit it.
+    $olderNode = $this->container->get('entity_type.manager')->getStorage('node')->load(1);
+    $olderNode->setTitle('Changed after page one');
+    $olderNode->save();
+
+    $secondPage = $query->query([], $account, $firstPage->nextCursor, 1);
+    $this->assertCount(1, $secondPage->entities);
+    $this->assertSame('Changed after page one', (string) $secondPage->entities[0]->label());
+  }
+
+  /**
    * Tests outgoing relation pagination and access for source and targets.
    */
   public function testOutgoingRelationQueryUsesDefaultLanguageAndEntityAccess(): void {
-    $source = Node::create(['type' => 'article', 'title' => 'Source article', 'status' => 1]);
-    $publicTarget = Node::create(['type' => 'article', 'title' => 'Public target', 'status' => 1]);
-    $privateTarget = Node::create(['type' => 'article', 'title' => 'Private target', 'status' => 0]);
-    $privateSource = Node::create(['type' => 'article', 'title' => 'Private source', 'status' => 0]);
-    foreach ([$source, $publicTarget, $privateTarget, $privateSource] as $node) {
+    $source = Node::create(['type' => 'sample_content', 'title' => 'Source content', 'status' => 1]);
+    $publicTarget = Node::create(['type' => 'sample_content', 'title' => 'Public target', 'status' => 1]);
+    $staleTarget = Node::create(['type' => 'sample_content', 'title' => 'Stale target', 'status' => 1]);
+    $privateTarget = Node::create(['type' => 'sample_content', 'title' => 'Private target', 'status' => 0]);
+    $privateSource = Node::create(['type' => 'sample_content', 'title' => 'Private source', 'status' => 0]);
+    foreach ([$source, $publicTarget, $staleTarget, $privateTarget, $privateSource] as $node) {
       $node->save();
     }
 
@@ -369,13 +407,14 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $database = $this->container->get('database');
     foreach ([
       [$source, $publicTarget],
+      [$source, $staleTarget],
       [$source, $privateTarget],
       [$privateSource, $publicTarget],
     ] as [$from, $to]) {
       $database->insert('aculta_index_relation')
         ->fields([
           'generation_id' => $generationId,
-          'provider_id' => 'test_article',
+          'provider_id' => 'test_sample_content',
           'source_entity_type' => 'node',
           'source_entity_id' => (string) $from->id(),
           'source_langcode' => $from->language()->getId(),
@@ -388,6 +427,11 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
         ])
         ->execute();
     }
+    // Old projections are excluded from relation targets until rewritten.
+    $database->update('aculta_index_entry')
+      ->fields(['provider_version' => 0])
+      ->condition('entity_id', (string) $staleTarget->id())
+      ->execute();
 
     $account = new AnonymousUserSession();
     $query = $this->container->get('aculta_index.relation_query');
@@ -419,7 +463,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $work = $this->container->get('aculta_index.work_manager');
     $workIds = $database->select('aculta_index_work', 'work')
       ->fields('work', ['work_id'])
-      ->condition('provider_id', 'test_article')
+      ->condition('provider_id', 'test_sample_content')
       ->condition('status', 'queued')
       ->execute()
       ->fetchCol();

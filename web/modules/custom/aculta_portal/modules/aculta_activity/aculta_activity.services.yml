@@ -1,4 +1,8 @@
 services:
+  aculta_activity.form_callbacks:
+    class: Drupal\aculta_activity\Form\ActivityFormCallbacks
+    arguments: ['@string_translation']
+
   aculta_activity.content_index_provider:
     class: Drupal\aculta_activity\ContentIndex\ActivityContentIndexProvider
     tags:

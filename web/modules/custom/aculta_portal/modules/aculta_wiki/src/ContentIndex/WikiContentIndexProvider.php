@@ -29,6 +29,13 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
   /**
    * {@inheritdoc}
    */
+  public function getProjectionVersion(): int {
+    return 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSupportedEntityTypes(): array {
     return ['node' => ['wiki_entry']];
   }

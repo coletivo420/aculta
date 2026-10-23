@@ -78,7 +78,7 @@ não foi importado nem corrigido.
 | `PublicationDiscussionHooks` | Implementado, testado (Unit) | aplica default de discussão em memória quando `status` ausente |
 | `RevistaFormHooks` | Implementado, **sem teste** | agrupa propriedades secundárias em `details` fechado; não abre o grupo quando há erro |
 | `js/revista-form.js` | Implementado, **sem teste** | aviso `beforeunload`; desliga ao submeter |
-| `RevistaPublications`/migrador | Implementado, testado (Kernel) | `PublicationBundleMigratorKernelTest` |
+| `RevistaPublications` | Implementado; migração concluída e utilitário removido | Registro histórico em `MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` |
 | Views administrativas | Implementado, testado (Unit estático) | `/painel-administrativo/conteudo/revista` (rota `admin/content/revista`), acesso `access content overview`; bloco de comentários com `administer comments` |
 | `aculta_magazine.install` 10001/10002 | **Obsoleto, inofensivo** | no-ops documentados sobre campos de Fórum aposentados |
 | `aculta_magazine.install` 10003 | **Dependente de Fórum** | cria padrão Pathauto e reescreve aliases `/topico/` de Nodes `forum` |
@@ -93,7 +93,7 @@ não foi importado nem corrigido.
 | `RevistaTab` (`aculta_studio`) | Implementado, não homologado | área “Revista”, seção “Meu trabalho”, filtros por estado, ação “Nova publicação” no purpose `magazine` |
 | Link “Editar” da listagem | **Inconsistência de purpose** | `StudioListingBuilder::editLink()` resolve no purpose `main`; a criação usa `magazine`; a rota `entity.node.edit_form` não tem purpose obrigatório |
 | Consulta auxiliar de Group no Studio | `accessCheck(FALSE)` em `group_relationship` | resolve IDs de turmas para um curso; não alimenta listagem de conteúdo; documentado, não alterado |
-| Templates `node--article--full.html.twig` / `node--blog--full.html.twig` | **Obsoleto** | bundles aposentados; pertencem ao tema, não ao Magazine |
+| Templates `node--article--full.html.twig` / `node--blog--full.html.twig` | Removidos em ACULTA420 0.6.1-dev.4 | bundles aposentados; o tema mantém somente o template `revista` |
 | Header multidomínio | Mantido | nenhuma duplicação introduzida |
 
 ### 2.6 Segurança editorial (A.3)

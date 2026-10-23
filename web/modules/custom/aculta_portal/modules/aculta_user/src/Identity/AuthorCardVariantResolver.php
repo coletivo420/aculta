@@ -25,7 +25,7 @@ final class AuthorCardVariantResolver {
 
     return match ($host->bundle()) {
       'aculta_forum_topic' => 'author_forum',
-      'article', 'blog' => 'author_comment',
+      'revista' => 'author_comment',
       'aculta_lms_topic' => 'author_lms',
       'wiki_entry' => 'author_wiki',
       default => NULL,

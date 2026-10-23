@@ -1,5 +1,10 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.17 — versão da projeção no fingerprint do Index
+
+- Provider de Gallery declara sua versão de projeção para validação e retomada
+  seguras de rebuilds.
+
 ## 0.1.0-dev.16 — acesso do provider no purpose Revista
 
 - O provider de `media_gallery` declara o purpose canônico `magazine`, permitindo revalidar acesso a galerias relacionadas a cursos no mesmo contexto que concede acesso aos membros/educadores autorizados.

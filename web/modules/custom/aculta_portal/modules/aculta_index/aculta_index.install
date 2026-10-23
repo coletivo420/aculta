@@ -51,6 +51,7 @@ function aculta_index_schema(): array {
         'entry_id' => ['type' => 'serial', 'not null' => TRUE],
         'generation_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
         'provider_id' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+        'provider_version' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 1],
         'entity_type' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
         'entity_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
         'langcode' => ['type' => 'varchar', 'length' => 12, 'not null' => TRUE],
@@ -73,7 +74,7 @@ function aculta_index_schema(): array {
       'indexes' => [
         'gen_bundle' => ['generation_id', 'entity_type', 'bundle', 'langcode'],
         'gen_domain_pub' => ['generation_id', 'domain_id', 'published', 'changed'],
-        'gen_changed' => ['generation_id', 'changed', 'entry_id'],
+        'gen_entry_id' => ['generation_id', 'entry_id'],
         'gen_provider' => ['generation_id', 'provider_id'],
       ],
     ],
@@ -283,7 +284,7 @@ function aculta_index_update_10006(): void {
 function aculta_index_update_10007(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->indexExists('aculta_index_entry', 'gen_changed')) {
-    $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id']);
+    $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
   }
 }
 
@@ -320,5 +321,36 @@ function aculta_index_update_10009(): void {
         'updated' => \Drupal::time()->getRequestTime(),
       ])
       ->execute();
+  }
+}
+
+/**
+ * Records the provider projection version on each catalog entry.
+ */
+function aculta_index_update_10010(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_entry') && !$schema->fieldExists('aculta_index_entry', 'provider_version')) {
+    $schema->addField('aculta_index_entry', 'provider_version', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 1,
+    ]);
+  }
+}
+
+/**
+ * Replaces the mutable changed sort index with the immutable ID keyset index.
+ */
+function aculta_index_update_10011(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
+  if ($schema->indexExists('aculta_index_entry', 'gen_changed')) {
+    $schema->dropIndex('aculta_index_entry', 'gen_changed');
+  }
+  if (!$schema->indexExists('aculta_index_entry', 'gen_entry_id')) {
+    $schema->addIndex('aculta_index_entry', 'gen_entry_id', ['generation_id', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
   }
 }

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'Provider Content Index implementado para tópicos, ForumPosts e Comments coexistentes, com purpose canônico; executar Kernel/DI e verificar autorização Group/grants, revogação, relações topic/parent e eventos CRUD antes de ativar. Homologar a limpeza de anexos usando as APIs compartilhadas de Media/File. Também permanecem: revisão visual de `/categorias`, validação MariaDB das Views, Search API/grants, trigger aculta_game, upload e previews Office, homologação PDF e concorrência HTTP/cache ([roadmap](web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md))'
-version_note: "0.1.0-dev.245 (limpeza Portal verificada com ForumPost e revisões em Kernel)"
+version_note: "0.1.0-dev.246 (provider declara versão de projeção para rebuild)"

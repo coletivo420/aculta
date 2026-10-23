@@ -49,14 +49,14 @@ services:
 
   aculta_index.query:
     class: Drupal\aculta_index\Query\ContentIndexQuery
-    arguments: ['@database', '@aculta_index.generation_manager', '@aculta_index.access_filter', '@aculta_index.cursor_manager']
+    arguments: ['@database', '@aculta_index.generation_manager', '@aculta_index.access_filter', '@aculta_index.cursor_manager', '@aculta_index.provider_registry']
 
   Drupal\aculta_index\Query\ContentIndexQuery: '@aculta_index.query'
   Drupal\aculta_index\Query\ContentIndexQueryInterface: '@aculta_index.query'
 
   aculta_index.relation_query:
     class: Drupal\aculta_index\Query\ContentIndexRelationQuery
-    arguments: ['@database', '@aculta_index.generation_manager', '@aculta_index.access_filter', '@aculta_index.cursor_manager', '@language_manager']
+    arguments: ['@database', '@aculta_index.generation_manager', '@aculta_index.access_filter', '@aculta_index.cursor_manager', '@language_manager', '@aculta_index.provider_registry']
 
   Drupal\aculta_index\Query\ContentIndexRelationQuery: '@aculta_index.relation_query'
 

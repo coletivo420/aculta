@@ -22,6 +22,7 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn('magazine');
     $provider->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $provider->method('getProjectionVersion')->willReturn(1);
 
     $registry = new ContentIndexProviderRegistry([$provider]);
 
@@ -58,6 +59,7 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn('magazine');
     $provider->method('getSupportedEntityTypes')->willReturn(['node' => []]);
+    $provider->method('getProjectionVersion')->willReturn(1);
 
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Provider magazine declares an invalid entity type or bundle list.');
@@ -71,9 +73,11 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
     $first = $this->createMock(ContentIndexProviderInterface::class);
     $first->method('getProviderId')->willReturn('magazine');
     $first->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $first->method('getProjectionVersion')->willReturn(1);
     $second = $this->createMock(ContentIndexProviderInterface::class);
     $second->method('getProviderId')->willReturn('custom');
     $second->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $second->method('getProjectionVersion')->willReturn(1);
 
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Entity bundle node:revista is declared by both providers magazine and custom.');
@@ -92,12 +96,32 @@ final class ContentIndexProviderRegistryTest extends UnitTestCase {
   }
 
   /**
+   * Projection changes invalidate a resumable generation fingerprint.
+   */
+  public function testFingerprintIncludesProjectionVersion(): void {
+    $first = new ContentIndexProviderRegistry([$this->provider('magazine', 1)]);
+    $nextProjection = new ContentIndexProviderRegistry([$this->provider('magazine', 2)]);
+
+    self::assertNotSame($first->fingerprint(), $nextProjection->fingerprint());
+  }
+
+  /**
+   * Projection versions must be positive integers.
+   */
+  public function testRejectsNonPositiveProjectionVersion(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('Provider magazine must declare a positive projection version.');
+    new ContentIndexProviderRegistry([$this->provider('magazine', 0)]);
+  }
+
+  /**
    * Creates a provider mock with the given ID.
    */
-  private function provider(string $id): ContentIndexProviderInterface {
+  private function provider(string $id, int $version = 1): ContentIndexProviderInterface {
     $provider = $this->createMock(ContentIndexProviderInterface::class);
     $provider->method('getProviderId')->willReturn($id);
     $provider->method('getSupportedEntityTypes')->willReturn([]);
+    $provider->method('getProjectionVersion')->willReturn($version);
     return $provider;
   }
 

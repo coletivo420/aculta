@@ -39,6 +39,13 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * {@inheritdoc}
    */
+  public function getProjectionVersion(): int {
+    return 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSupportedEntityTypes(): array {
     return ['group' => ['lms_course']];
   }

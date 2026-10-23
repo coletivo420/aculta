@@ -1,7 +1,8 @@
 # Publicações da Revista: campos, imagens e política editorial
 
-Documento vivo. Vale para as publicações da Revista (tipos `article` = Notícia, incluindo o conteúdo do PodPlant, e
-`blog`) e para os futuros tipos de vídeo e galeria, quando forem criados (ver `aculta_magazine/docs/README.md`).
+Documento histórico em revisão. As publicações atuais da Revista usam somente o
+bundle `revista`; `article` e `blog` foram aposentados. Ver o contrato vigente em
+`aculta_magazine/docs/README.md`.
 Implementação: submódulo `aculta_magazine` (função) e tema ACULTA420 (aparência).
 
 ## 1. Campos da publicação
@@ -80,12 +81,13 @@ recorte para verticais). Enquanto não for criado, a foto aparece em até 480 px
 ## 5. SEO e compartilhamento (edição e miniatura)
 
 - **Onde editar:** no formulário da publicação, o grupo **"SEO e compartilhamento"** (campo `field_meta_tags`, Metatag).
-  Vale para `article` (Notícia), `blog`, `activity` e `project`. Config do grupo: `EditorialHooks::formNodeFormAlter`
-  (módulo `aculta_portal`).
+  A validação e organização dos campos de `activity` pertencem a
+  `ActivityHooks::formNodeFormAlter` (`aculta_activity`). A Revista usa sua
+  configuração editorial própria.
 - **Quem edita:** papel `content_editor` tem acesso de edição ao campo. Verificado no Homelab com a conta do editor.
 - **Descrição (metadescrição):** preencher no próprio grupo. Usar uma frase de 120 a 160 caracteres.
 - **Miniatura para compartilhamento (WhatsApp, Telegram, Facebook, Reddit):** a tag `og:image` usa a imagem destacada da
-  publicação (`field_media_image`), por `[node:image]` no padrão `metatag_defaults.node__article` e `node__blog`.
+  publicação (`field_media_image`), por `[node:image]` no padrão `metatag_defaults.node__revista`.
   Título e descrição das prévias vêm de `og_title` e `og_description`.
 - **Proporção recomendada da miniatura:** a imagem destacada é 3:2 (1800×1200), que as redes exibem bem. Imagem
   quadrada também funciona, mas a prévia fica menor.

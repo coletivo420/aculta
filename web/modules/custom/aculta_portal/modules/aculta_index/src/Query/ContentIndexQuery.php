@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_index\Query;
 
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
@@ -23,6 +24,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     private readonly ContentIndexGenerationManager $generations,
     private readonly ContentIndexAccessFilter $accessFilter,
     private readonly ContentIndexCursorManager $cursors,
+    private readonly ContentIndexProviderRegistry $providers,
   ) {}
 
   /**
@@ -46,7 +48,12 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
       throw new \InvalidArgumentException(sprintf('Content Index candidate limit must be between 1 and %d.', self::MAX_CANDIDATES));
     }
     $filters = $this->normalizeFilters($filters);
-    $queryHash = hash('sha256', json_encode($filters, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    // Include sort semantics in the cursor binding so cursors issued by older
+    // versions cannot be resumed against the immutable-ID keyset.
+    $queryHash = hash('sha256', json_encode([
+      'filters' => $filters,
+      'sort' => 'entry_id_desc_v1',
+    ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     $generationId = $this->generations->getActiveGeneration();
     $cacheability = new CacheableMetadata();
     $cacheability->setCacheMaxAge(0);
@@ -64,10 +71,10 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     if (count($candidates) === $limit) {
       $last = end($candidates);
       if ($cursor === NULL) {
-        $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, $last['changed'], $last['entry_id']);
+        $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, 0, $last['entry_id']);
       }
       else {
-        $this->cursors->advance($cursor, $uid, $generationId, $queryHash, $last['changed'], $last['entry_id'], $after['revision']);
+        $this->cursors->advance($cursor, $uid, $generationId, $queryHash, 0, $last['entry_id'], $after['revision']);
         $nextCursor = $cursor;
       }
     }
@@ -79,7 +86,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
   }
 
   /**
-   * Loads candidate identities and sort fields from the active generation.
+   * Loads candidate identities in immutable entry ID order.
    *
    * @param string $generationId
    *   Generation selected by the active pointer.
@@ -90,13 +97,23 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
    * @param int $limit
    *   Maximum candidates in this page.
    *
-   * @return list<array{entity_type: string, entity_id: string, langcode: string, changed: int, entry_id: int}>
+   * @return list<array{entity_type: string, entity_id: string, langcode: string, entry_id: int}>
    *   Candidate identities; not yet authorized.
    */
   private function loadCandidates(string $generationId, array $filters, ?array $after, int $limit): array {
+    if ($this->providers->all() === []) {
+      return [];
+    }
     $query = $this->database->select('aculta_index_entry', 'entry')
-      ->fields('entry', ['entry_id', 'entity_type', 'entity_id', 'langcode', 'changed'])
+      ->fields('entry', ['entry_id', 'entity_type', 'entity_id', 'langcode'])
       ->condition('generation_id', $generationId);
+    $compatibleProviders = $query->orConditionGroup();
+    foreach ($this->providers->all() as $providerId => $provider) {
+      $compatibleProviders->condition($query->andConditionGroup()
+        ->condition('provider_id', $providerId)
+        ->condition('provider_version', $provider->getProjectionVersion()));
+    }
+    $query->condition($compatibleProviders);
     if ($filters['entity_type'] !== NULL) {
       $query->condition('entity_type', $filters['entity_type']);
     }
@@ -110,15 +127,9 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
       $query->condition('published', (int) $filters['published']);
     }
     if ($after !== NULL) {
-      $afterCondition = $query->orConditionGroup()
-        ->condition('changed', $after['changed'], '<')
-        ->condition($query->andConditionGroup()
-          ->condition('changed', $after['changed'])
-          ->condition('entry_id', $after['entry_id'], '<'));
-      $query->condition($afterCondition);
+      $query->condition('entry_id', $after['entry_id'], '<');
     }
     $rows = $query
-      ->orderBy('changed', 'DESC')
       ->orderBy('entry_id', 'DESC')
       ->range(0, $limit)
       ->execute()
@@ -130,7 +141,6 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
         'entity_type' => (string) $row->entity_type,
         'entity_id' => (string) $row->entity_id,
         'langcode' => (string) $row->langcode,
-        'changed' => (int) $row->changed,
         'entry_id' => (int) $row->entry_id,
       ];
     }

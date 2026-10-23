@@ -167,6 +167,6 @@ A checagem posterior ao corte detectou que os 12 Nodes editoriais legítimos,
 embora mantivessem identidade e conteúdo, haviam recebido `draft` pelo default
 do workflow novo. Foram restaurados como `published` pela Entity API, com uma
 nova revisão e registro explicativo; os quatro Nodes de teste continuam como
-rascunhos. O migrador e o Kernel agora verificam a preservação de publicação.
+rascunhos. A migração concluída preservou o estado editorial; o migrador e o teste Kernel específico foram removidos após a execução.
 Os bundles ativos confirmados são 11 ao todo, com `revista` como o único bundle
 editorial; os tipos e rotas `article`/`blog` não existem no Runtime.

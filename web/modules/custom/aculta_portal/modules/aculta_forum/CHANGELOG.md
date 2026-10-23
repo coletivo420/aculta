@@ -1,3 +1,8 @@
+## `0.1.0-dev.246` — versão da projeção no fingerprint do Index
+
+- Provider do Fórum declara sua versão de projeção para que rebuilds parciais
+  não sejam retomados após mudança de semântica.
+
 ## `0.1.0-dev.243` — provider do Content Index para discussões coexistentes
 
 - Provider opcional cobre tópicos, ForumPosts revisáveis e Comments legados

@@ -9,13 +9,10 @@ use Drupal\aculta_portal\Plugin\metatag\Tag\PostalAddressTag;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\CurrentPathStack;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
-use Drupal\schema_metatag\SchemaMetatagManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -26,8 +23,6 @@ final class EditorialHooks {
   public function __construct(
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $domainPurposeManager,
-    #[Autowire(service: 'string_translation')]
-    private readonly TranslationInterface $translation,
     #[Autowire(service: 'path.current')]
     private readonly CurrentPathStack $currentPath,
   ) {}
@@ -62,32 +57,11 @@ final class EditorialHooks {
     }
   }
 
-  /** Records the first actual publication time for articles. */
-  #[Hook('node_presave')]
-  public function nodePresave(NodeInterface $node): void {
-    if ($node->bundle() === 'article'
-      && $node->isPublished()
-      && $node->hasField('field_published_at')
-      && $node->get('field_published_at')->isEmpty()) {
-      $node->set('field_published_at', gmdate('Y-m-d\\TH:i:s'));
-    }
-  }
-
   /** Adds canonical and structured metadata owned by the Portal. */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
     $entity = $context['entity'] ?? NULL;
     $node = $entity instanceof NodeInterface ? $entity : NULL;
-
-    if ($node !== NULL
-      && in_array($node->bundle(), ['article', 'activity'], TRUE)
-      && $node->get('field_media_image')->isEmpty()) {
-      foreach (['schema_article_image', 'schema_event_image', 'schema_web_page_image'] as $id) {
-        if (str_contains((string) ($tags[$id] ?? ''), '[node:image]')) {
-          unset($tags[$id]);
-        }
-      }
-    }
 
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
       $canonical = $this->domainPurposeManager->canonicalRouteUrl(
@@ -129,110 +103,6 @@ final class EditorialHooks {
       }
     }
 
-    if ($node === NULL || $node->bundle() !== 'activity') {
-      return;
-    }
-
-    $locations = [];
-    $mode = $node->get('field_modality')->value;
-    if (in_array($mode, ['presencial', 'hibrido'], TRUE)
-      && !$node->get('field_place_name')->isEmpty()) {
-      $place = [
-        '@type' => 'Place',
-        'name' => $node->get('field_place_name')->value,
-      ];
-      $address = ['@type' => 'PostalAddress'];
-      foreach ([
-        'streetAddress' => 'field_event_street',
-        'addressLocality' => 'field_event_city',
-        'addressRegion' => 'field_event_region',
-        'postalCode' => 'field_event_postal',
-        'addressCountry' => 'field_event_country',
-      ] as $key => $field) {
-        if (!$node->get($field)->isEmpty()) {
-          $address[$key] = $node->get($field)->value;
-        }
-      }
-      if (count($address) > 1) {
-        $place['address'] = $address;
-      }
-      $locations[] = $place;
-    }
-
-    if (in_array($mode, ['online', 'hibrido'], TRUE)
-      && !$node->get('field_online_url')->isEmpty()) {
-      $locations[] = [
-        '@type' => 'VirtualLocation',
-        'url' => $node->get('field_online_url')->uri,
-      ];
-    }
-
-    // Respect explicit editorial overrides of location.
-    if (empty($tags['schema_event_location']) && $locations !== []) {
-      $tags['schema_event_location'] = SchemaMetatagManager::serialize(
-        count($locations) === 1 ? $locations[0] : $locations,
-      );
-    }
-  }
-
-
-  /** Groups editorial fields on node forms and attaches service validation. */
-  #[Hook('form_node_form_alter')]
-  public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
-    $node = $formState->getFormObject()->getEntity();
-    // Blog (Revista) tem o mesmo espaço editorial e de SEO que a Notícia.
-    if (!in_array($node->bundle(), ['article', 'blog', 'activity'], TRUE)) {
-      return;
-    }
-
-    $groups = [
-      'editorial_content' => [
-        $this->translation->translate('Conteúdo'),
-        -40,
-        ['title', 'body', 'field_summary', 'field_subtitle', 'field_editorial_category', 'field_tags', 'field_editorial_author', 'field_credits', 'field_references'],
-      ],
-      'editorial_image' => [
-        $this->translation->translate('Imagem'),
-        -30,
-        ['field_media_image', 'field_gallery'],
-      ],
-      'editorial_relations' => [
-        $this->translation->translate('Relacionamentos'),
-        -20,
-        ['field_related_activity'],
-      ],
-      'editorial_seo' => [
-        $this->translation->translate('SEO e compartilhamento'),
-        70,
-        ['field_meta_tags'],
-      ],
-    ];
-
-    foreach ($groups as $id => [$title, $weight, $fields]) {
-      $form[$id] = [
-        '#type' => 'details',
-        '#title' => $title,
-        // Grupo com campo obrigatório (imagem editorial) abre por padrão: com o grupo fechado, o
-        // navegador não alcança o campo para validar e o botão "Adicionar mídia" fica sob o campo seguinte.
-        '#open' => in_array($id, ['editorial_content', 'editorial_image'], TRUE),
-        '#weight' => $weight,
-      ];
-      foreach ($fields as $field) {
-        if (isset($form[$field])) {
-          $form[$field]['#group'] = $id;
-        }
-      }
-    }
-
-    if (isset($form['author'])) {
-      $form['author']['#title'] = $this->translation->translate('Conta responsável pelo cadastro');
-    }
-    if (isset($form['options'])) {
-      $form['options']['#title'] = $this->translation->translate('Publicação');
-    }
-    if ($node->bundle() === 'activity') {
-      $form['#validate'][] = 'aculta_portal.form_callbacks:validateActivity';
-    }
   }
 
 }
