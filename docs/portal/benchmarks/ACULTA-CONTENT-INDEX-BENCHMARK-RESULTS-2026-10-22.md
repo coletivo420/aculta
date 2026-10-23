@@ -1,5 +1,23 @@
 # Resultados iniciais — ACULTA Content Index (2026-10-22)
 
+## Auditoria incremental 100k — 2026-10-23
+
+Uma rodada MariaDB com 100.000 fontes, limite de cache do enumerador 500,
+terminou antes da alteração dev.146 que limita o cache da passagem
+catálogo→fonte. Rebuild: 216,558 s (462 projeções/s); auditoria: 471,662 s;
+402 batches; fase source→catalog: 437,109 s (p50 2,152 s, p95 3,926 s, máximo
+6,547 s); pico de auditoria: 492 MiB. Não foram encontradas fontes, entradas ou
+projeções divergentes. Diagnóstico sem SLO e sem repetição. Como a mudança de
+cache descrita acima ainda não estava no processo, estes números são baseline,
+não evidência de desempenho da correção.
+
+Após dev.146, uma repetição em 10.000 fontes passou: rebuild 18,094 s;
+auditoria 6,352 s em 42 batches; pico 128,5 MiB; zero divergências. A fase
+source→catalog levou 3,469 s (p95 183 ms; máximo 187 ms). Uma execução local
+diagnóstica; os limites de cache e instrumentação afetam o custo, não há SLO.
+Ainda é necessário repetir 100k para validar a mudança na escala que revelou o
+acúmulo de cache.
+
 Executados três runs por escala no MariaDB de teste isolado. Os arquivos CSV anexos guardam as nove linhas de consulta e as 27 combinações de leitura de relações. São medições locais de catálogo sintético; **não** são SLO, benchmark de Entity Access real nem aprovação de desempenho.
 
 ## Ambiente

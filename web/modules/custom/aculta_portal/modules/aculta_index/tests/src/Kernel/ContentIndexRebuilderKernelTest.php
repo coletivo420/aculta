@@ -592,6 +592,35 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Incremental entry reconciliation evicts loaded entities after each batch.
+   */
+  public function testIncrementalAuditResetsLoadedSourceCaches(): void {
+    $node = Node::create(['type' => 'sample_content', 'title' => 'Cache audit source', 'status' => 1]);
+    $node->save();
+    $nodeId = (string) $node->id();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $nodeStorage->resetCache([$nodeId]);
+    $cachedBeforeAudit = $nodeStorage->load($nodeId);
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $checker->startAudit();
+    $entryAudit = $checker->processAuditBatch(10);
+
+    $this->assertSame('relations', $entryAudit['phase']);
+    $loadedAfterAudit = $nodeStorage->load($nodeId);
+    $this->assertNotSame($cachedBeforeAudit, $loadedAfterAudit);
+    $this->assertSame($nodeId, (string) $loadedAfterAudit->id());
+  }
+
+  /**
    * Caps each source-reconciliation scan at its captured entity ID maximum.
    */
   public function testIncrementalAuditDefersSourcesCreatedAfterItsScanWindow(): void {

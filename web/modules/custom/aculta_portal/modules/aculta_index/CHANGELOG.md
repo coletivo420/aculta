@@ -1,5 +1,19 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.146 — limitar cache de entidades na reconciliação
+
+- A auditoria de entradas agora descarta em lotes limitados as entidades fonte
+  e alvos de relações carregados para comparação. Projeções que falham limpam
+  os caches de entidades de conteúdo e descartam a fila pendente.
+- Kernel de rebuild/auditoria passou em MariaDB (21 testes / 295 assertions);
+  o novo teste confirma que o cache de fonte é liberado na transição de fase.
+  PHPCS e lint passaram.
+- A rodada 100k cache 500 concluída antes desta alteração levou 471,662 s na
+  auditoria (437,109 s na fase source→catalog), pico 492 MiB e zero divergências.
+  Ela é baseline, não valida a correção recém-introduzida. Após a mudança, o
+  benchmark 10k passou (1 / 16): auditoria 6,352 s, pico 128,5 MiB e zero
+  divergências. Uma execução não define SLO nem comprova comportamento em 100k.
+
 ## 0.1.0-dev.145 — tornar métricas detalhadas opt-in
 
 - Diagnósticos do checker e do enumerador agora exigem

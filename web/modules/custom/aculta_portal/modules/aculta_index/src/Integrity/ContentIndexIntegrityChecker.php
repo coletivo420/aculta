@@ -10,6 +10,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
@@ -28,9 +29,26 @@ final class ContentIndexIntegrityChecker {
   private readonly bool $diagnosticsEnabled;
 
   /**
+   * Source and relation cache identities retained during entry reconciliation.
+   *
+   * @var array<string, array<string, string>>
+   */
+  private array $pendingAuditCacheResetIds = [];
+
+  /**
+   * Number of distinct pending source and relation cache identities.
+   */
+  private int $pendingAuditCacheResetCount = 0;
+
+  /**
    * Maximum rows inspected by one incremental audit batch.
    */
   private const MAX_BATCH_SIZE = 500;
+
+  /**
+   * Maximum source identities retained across audit entry batches.
+   */
+  private const SOURCE_AUDIT_CACHE_RESET_ENTITY_LIMIT = 5_000;
 
   /**
    * Minimum delay between completed scheduled audit cycles.
@@ -245,6 +263,9 @@ final class ContentIndexIntegrityChecker {
       $phaseFinished = $state['phase'] === 'sources'
         ? (bool) $sourceBatch['exhausted']
         : ((int) $updates['cursor_id'] >= $phaseMaximum || count($rows) < $limit);
+      if ($state['phase'] === 'entries' && $phaseFinished) {
+        $this->flushAuditEntityCaches();
+      }
       if ($state['phase'] === 'sources') {
         $updates['source_entity_id_cursor'] = $sourceBatch['next_cursor'] ?? (string) $state['source_entity_id_cursor'];
         if ($phaseFinished) {
@@ -535,6 +556,8 @@ final class ContentIndexIntegrityChecker {
     }
 
     $entitiesByType = [];
+    $cacheResetIdsByType = $idsByType;
+    $resetAllCaches = FALSE;
     foreach ($idsByType as $entityTypeId => $entityIds) {
       $loadedEntities = $this->entityTypeManager
         ->getStorage($entityTypeId)
@@ -586,6 +609,7 @@ final class ContentIndexIntegrityChecker {
           $indexable = $provider->isIndexable($entity->getTranslation($row['langcode']));
         }
         catch (\Throwable $exception) {
+          $resetAllCaches = TRUE;
           $this->logger->warning('Content Index source eligibility could not be verified. Error class: @class', [
             '@class' => $exception::class,
           ]);
@@ -607,6 +631,7 @@ final class ContentIndexIntegrityChecker {
       try {
         $projection = $provider->project($entity->getTranslation($row['langcode']));
         if ($projection === NULL) {
+          $resetAllCaches = TRUE;
           $result['missing']++;
           $result['delete'][$key] = $identity;
           continue;
@@ -614,12 +639,19 @@ final class ContentIndexIntegrityChecker {
         if ($projection->entityTypeId !== $row['entity_type']
           || $projection->entityId !== $row['entity_id']
           || $projection->langcode !== $row['langcode']) {
+          $resetAllCaches = TRUE;
           $result['unverified']++;
           continue;
+        }
+        foreach ($projection->relations as $relation) {
+          if ($relation instanceof ContentIndexRelation) {
+            $cacheResetIdsByType[$relation->targetEntityTypeId][hash('sha256', $relation->targetEntityId)] = $relation->targetEntityId;
+          }
         }
         $currentHash = $this->writer->calculateProjectionHash($row['provider_id'], $projection);
       }
       catch (\Throwable $exception) {
+        $resetAllCaches = TRUE;
         // A changed bundle is outside the provider's declared ownership.
         $this->logger->warning('Content Index source reconciliation could not project a source. Error class: @class', [
           '@class' => $exception::class,
@@ -633,7 +665,61 @@ final class ContentIndexIntegrityChecker {
         $result['project'][$key] = $identity;
       }
     }
+    if ($resetAllCaches) {
+      $this->resetAllContentEntityStorageCaches();
+      $this->pendingAuditCacheResetIds = [];
+      $this->pendingAuditCacheResetCount = 0;
+    }
+    else {
+      $this->queueAuditEntityCacheReset($cacheResetIdsByType);
+    }
     return $result;
+  }
+
+  /**
+   * Queues loaded sources and relation targets for a bounded cache reset.
+   *
+   * @param array<string, array<string, string>> $entityIdsByType
+   *   Entity IDs keyed by type and hashed identity.
+   */
+  private function queueAuditEntityCacheReset(array $entityIdsByType): void {
+    foreach ($entityIdsByType as $entityTypeId => $entityIds) {
+      foreach ($entityIds as $key => $entityId) {
+        if (!isset($this->pendingAuditCacheResetIds[$entityTypeId][$key])) {
+          $this->pendingAuditCacheResetIds[$entityTypeId][$key] = $entityId;
+          $this->pendingAuditCacheResetCount++;
+        }
+      }
+    }
+    if ($this->pendingAuditCacheResetCount >= self::SOURCE_AUDIT_CACHE_RESET_ENTITY_LIMIT) {
+      $this->flushAuditEntityCaches();
+    }
+  }
+
+  /**
+   * Evicts pending source and relation entities from storage caches.
+   */
+  private function flushAuditEntityCaches(): void {
+    foreach ($this->pendingAuditCacheResetIds as $entityTypeId => $entityIds) {
+      if (!$this->entityTypeManager->hasDefinition($entityTypeId)
+        || !$this->entityTypeManager->getDefinition($entityTypeId)->entityClassImplements(ContentEntityInterface::class)) {
+        continue;
+      }
+      $this->entityTypeManager->getStorage($entityTypeId)->resetCache(array_values($entityIds));
+    }
+    $this->pendingAuditCacheResetIds = [];
+    $this->pendingAuditCacheResetCount = 0;
+  }
+
+  /**
+   * Clears all content entity caches after an unverifiable projection.
+   */
+  private function resetAllContentEntityStorageCaches(): void {
+    foreach ($this->entityTypeManager->getDefinitions() as $entityTypeId => $entityType) {
+      if ($entityType->entityClassImplements(ContentEntityInterface::class)) {
+        $this->entityTypeManager->getStorage($entityTypeId)->resetCache();
+      }
+    }
   }
 
   /**
