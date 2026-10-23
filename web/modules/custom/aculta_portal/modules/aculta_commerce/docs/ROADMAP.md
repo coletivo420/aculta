@@ -94,3 +94,7 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 - Rota **não é declarada pronta para uso operacional**: o provider renderiza apenas mensagem de preparação. A permissão de entrada não autoriza visualizar/alterar entidades de Commerce e nenhum papel recebeu grants.
 - **Próxima fase D-C:** caracterizar provider/rota no homelab e adicionar dashboard exclusivamente administrativo com isolamento de loja e permissions Commerce. **D-D:** apresentação SDC/UI Suite e gates de tema. Dívidas DT-COM-11 a DT-COM-13 no registro central.
 - Preservados carrinho multidomínio, CheckoutSlugMap, CartConsolidator, flows e gateway Mercado Pago.
+
+## Pesquisa e próxima frente COM-SF — Frete brasileiro / estoque (2026-10-22)
+
+[Pesquisa comparativa e roteiro de implementação](SHIPPING-STOCK-BRAZIL-RESEARCH.md): manter `commerce_shipping:^3.0` já presente, auditar código `melhor_envio` antes de copiar/portar, avaliar integração Correios pela API moderna, instalar preferencialmente `commerce_stock:^3.0` em homelab (sem reimplementar), testar consolidação loja/LMS/doação e preservação do carrinho multidomínio. Decisões de shipping carriers, estoque, etiquetas e telas Green Stash são fases separadas, sem alterar gateway. Dívidas DT-COM-14–17 em `docs/operations/DEBT-REGISTER.md`. Sem dependências novas ativadas nesta etapa.
