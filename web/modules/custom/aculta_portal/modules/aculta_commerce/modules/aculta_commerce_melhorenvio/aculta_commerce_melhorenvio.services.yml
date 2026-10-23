@@ -1,0 +1,6 @@
+services:
+  # Adaptador fino de endereço: valida o CEP do perfil de envio e, se faltar dado, pede sugestão à consulta compartilhada.
+  # Não grava endereço e não faz requisição à rota AJAX.
+  aculta_commerce_melhorenvio.address_adapter:
+    class: Drupal\aculta_commerce_melhorenvio\Address\ShippingAddressAdapter
+    autowire: true

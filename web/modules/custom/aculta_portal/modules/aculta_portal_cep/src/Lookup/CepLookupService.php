@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Devolve o mesmo formato de Drupal Address: postal_code, address_line1, dependent_locality, locality e
  * administrative_area. Não guarda endereço: o resultado é só uma sugestão para quem chamou.
  */
-final class CepLookupService {
+final class CepLookupService implements CepLookupInterface {
 
   private const VIACEP = 'https://viacep.com.br/ws/%s/json/';
   private const BRASILAPI = 'https://brasilapi.com.br/api/cep/v2/%s';

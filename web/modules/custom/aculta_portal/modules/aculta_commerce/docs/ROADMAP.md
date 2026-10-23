@@ -2,6 +2,11 @@
 
 Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução por commits isolados na PR já aberta.
 
+## Melhor Envio — dependência de CEP (ME-CEP 0.1)
+
+- Auditoria em `docs/portal/CEP-SHARED-LOOKUP-0.1.md`. Serviço `aculta_portal_cep.lookup` e adaptador `aculta_commerce_melhorenvio` concluídos (Unit). Kernel pendente (DT-CEP-01).
+- O submódulo `aculta_commerce_melhorenvio` fica em `modules/aculta_commerce_melhorenvio/` dentro de `aculta_commerce`. Roteiro em `modules/aculta_commerce_melhorenvio/docs/ROADMAP.md`.
+
 ## Decisões normativas
 
 1. Loja, LMS e doações preservam regras e checkouts próprios; **aculta_portal coordena a configuração administrativa (Comum/Loja/LMS/Doações) e preserva o checkout e a consolidação atual do carrinho público**. Ver [ADR-013](../../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).

@@ -2,6 +2,12 @@
 
 Consulta de CEP e autocompletar do endereço do Portal. Substitui o módulo contrib `cep_autocomplete` (1.0.0), que foi portado para cá e desinstalado. O Portal faz a consulta por conta própria, sem depender de módulo de terceiros.
 
+## Serviço PHP compartilhado
+
+- `aculta_portal_cep.lookup` (`Lookup\CepLookupService`, interface `Lookup\CepLookupInterface`): a única implementação da consulta. Usado pelo endpoint AJAX e pelos módulos PHP (como `aculta_commerce_melhorenvio`). Ordem das fontes, cache e fallback são os mesmos do endpoint.
+- Não faz requisição HTTP à rota AJAX. CEP não encontrado ou inválido devolve `NULL`, sem exceção.
+- Documentação da fase: `docs/portal/CEP-SHARED-LOOKUP-0.1.md`.
+
 ## O que faz
 
 - **Endpoint AJAX** `/aculta_portal_cep/{cep}` (8 dígitos). Responde só a requisições AJAX (`X-Requested-With`); acesso direto no navegador recebe 403.
