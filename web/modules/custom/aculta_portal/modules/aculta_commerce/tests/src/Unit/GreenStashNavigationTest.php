@@ -14,12 +14,13 @@ final class GreenStashNavigationTest extends UnitTestCase {
 
   public function testEachAreaIsReadOnlyAndHasItsOwnRoute(): void {
     $navigation = new GreenStashNavigation();
-    foreach (GreenStashNavigation::AREAS as $key => $label) {
-      $render = $navigation->build($key);
+    foreach (GreenStashNavigation::SLUGS as $slug => $key) {
+      $label = GreenStashNavigation::AREAS[$key];
+      $render = $navigation->build($slug);
       self::assertSame('green-stash-entry', $render['#attributes']['data-portal-ui']);
       self::assertSame($label, $render['heading']['#value']);
       self::assertCount(count(GreenStashNavigation::AREAS), $render['navigation']['items']);
-      self::assertSame('page', $render['navigation']['items'][$key]['#attributes']['aria-current']);
+      self::assertSame('page', $render['navigation']['items'][$slug]['#attributes']['aria-current']);
       self::assertSame('aculta_commerce.green_stash_area', $render['navigation']['items'][$key]['#url']->getRouteName());
       self::assertArrayNotHasKey('orders', $render);
       self::assertArrayNotHasKey('products', $render);
