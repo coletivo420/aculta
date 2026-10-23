@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "`0.1.0-dev.5` (provider Index: Kernel cobre backfill, update e delete em 2/29)"
+version_note: "`0.1.0-dev.6` (adapter não depende de `aculta_index`; Kernel existente cobre discovery, rebuild, update e delete quando o Index está ativo: 2/29)"
 next_phase: 'Homologar Entity Access de Activity no purpose `main` com domínio e grants reais e confirmar edição/Metatag dos formulários; Runtime permanece sem habilitação ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

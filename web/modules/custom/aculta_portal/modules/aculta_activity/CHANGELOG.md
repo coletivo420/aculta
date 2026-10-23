@@ -1,5 +1,16 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.6 — manter Content Index como integração opcional
+
+- A dependência direta de `aculta_index` foi substituída pela dependência do
+  Kernel `aculta_portal`, dono dos contratos compartilhados do provider. O
+  adapter continua registrado pela tag `aculta_index.provider`; sem o submódulo
+  Index, Activity pode ser habilitado sem carregar ou exigir o catálogo.
+- O Kernel existente valida descoberta da tag, rebuild, update e delete quando
+  Index está ativo (2/29 MariaDB). Não foi executado um boot com Activity sem
+  Index nesta microfase; a alteração foi verificada no manifesto e no grafo de
+  dependências declarado.
+
 ## 0.1.0-dev.5 — cobrir ciclo CRUD do provider Index
 
 - Kernel ativa `aculta_activity` e verifica backfill, atualização e exclusão

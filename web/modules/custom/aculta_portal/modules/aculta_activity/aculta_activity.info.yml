@@ -3,8 +3,8 @@ type: module
 description: 'Ownership boundary and Content Index adapter for Portal activity nodes.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.5'
+version: '0.1.0-dev.6'
 dependencies:
-  - aculta_portal:aculta_index
+  - aculta_portal:aculta_portal
   - node:node
   - schema_metatag:schema_metatag
