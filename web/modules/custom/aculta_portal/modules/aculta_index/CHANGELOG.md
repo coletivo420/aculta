@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.148 — repetir gates Unit e Kernel após otimização de auditoria
+
+- Unit completo passou (50 testes / 241 assertions; 14 depreciações PHPUnit).
+- `ContentIndexSchemaKernelTest` passou no MariaDB (53 / 570; 1 depreciação
+  Drupal Core e 54 PHPUnit). `ContentIndexRebuilderKernelTest` passou (21 /
+  295), incluindo a regressão de limpeza de cache adicionada em dev.146.
+- Nenhuma falha. O aviso de diretório browser_output não gravável é do setup
+  PHPUnit e não afeta estas suítes de Kernel.
+
 ## 0.1.0-dev.147 — validar reconciliação 100k após limpeza de cache
 
 - Repetição MariaDB em 100k com limite operacional 5.000 e a limpeza de cache

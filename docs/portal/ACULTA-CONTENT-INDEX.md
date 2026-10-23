@@ -8,6 +8,8 @@
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
 **Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens.
 
+**Validação dev.148 (2026-10-23):** Unit 50/241; Kernel Schema MariaDB 53/570; Kernel Rebuilder MariaDB 21/295. O benchmark de manutenção 100k dev.147 fechou em 92,913 s de auditoria, pico 137,5 MiB e zero divergências; as tentativas 1M continuam sem resultado válido. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
