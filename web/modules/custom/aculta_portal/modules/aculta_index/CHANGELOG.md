@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.130 — separar descoberta Drush de execução operacional
+
+- A verificação temporária autorizada no Runtime `toca` confirmou a descoberta
+  live de `audit`, `queue` e `rebuild`; a documentação agora diferencia essa
+  prova de listagem da execução operacional dos comandos contra um catálogo.
+- O módulo foi desinstalado após o smoke check e permanece desativado no Runtime.
+
 ## 0.1.0-dev.129 — garantir limpeza dos arquivos do harness concorrente
 
 - A limpeza dos arquivos temporários agora cobre falhas parciais ao alocar ou
