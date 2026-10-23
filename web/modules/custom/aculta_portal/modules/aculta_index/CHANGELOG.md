@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.137 — tornar update do índice tolerante à tabela ausente
+
+- `update_10007` agora retorna sem erro quando `aculta_index_entry` não existe;
+  teste Kernel cobre a instalação parcial sem recriar a tabela.
+- PHP lint e PHPCS Drupal passaram. Kernel MariaDB segue pendente durante o
+  benchmark de 1M.
+
 ## 0.1.0-dev.136 — cobrir hooks históricos do schema de fila e cursor
 
 - Kernel tests exercitam `update_10003`, `10005`, `10006` e `10007`: criação

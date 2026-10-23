@@ -292,6 +292,9 @@ function aculta_index_update_10006(): void {
  */
 function aculta_index_update_10007(): void {
   $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
   if (!$schema->indexExists('aculta_index_entry', 'gen_changed')) {
     $schema->addIndex('aculta_index_entry', 'gen_changed', ['generation_id', 'changed', 'entry_id'], aculta_index_schema()['aculta_index_entry']);
   }

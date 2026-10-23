@@ -776,6 +776,18 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the changed-order index update tolerates a missing entry table.
+   */
+  public function testUpdateHookSkipsChangedOrderIndexWhenEntryTableIsMissing(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropTable('aculta_index_entry');
+
+    aculta_index_update_10007();
+
+    $this->assertFalse($schema->tableExists('aculta_index_entry'));
+  }
+
+  /**
    * Tests the update hook adds provider inventory identity to older installs.
    */
   public function testUpdateHookAddsProviderFingerprint(): void {
