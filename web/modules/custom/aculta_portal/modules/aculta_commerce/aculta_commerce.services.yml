@@ -15,3 +15,6 @@ services:
   aculta_commerce.green_stash_product_controller:
     class: Drupal\aculta_commerce\Controller\GreenStashProductController
     arguments: ['@aculta_studio.experience_manager', '@current_user', '@aculta_commerce.green_stash_navigation', '@aculta_commerce.green_stash_product_reader', '@entity_type.manager']
+  aculta_commerce.green_stash_store_resolver:
+    class: Drupal\aculta_commerce\Store\GreenStashStoreResolver
+    arguments: ['@entity_type.manager']
