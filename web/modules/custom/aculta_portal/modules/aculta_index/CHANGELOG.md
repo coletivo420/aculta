@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.56 — preservar a página autorizada sem Statistics
+
+- Kernel confirma no mesmo fluxo que a ausência do aggregator deixa a página
+  autorizada e o cursor disponíveis, com `available=false` e sem totais.
+- Regressão `ContentIndexStatisticsBridgeKernelTest`: 1 teste / 17 assertions
+  PASS, incluindo correlação real, fallback e revogação de acesso da fonte.
+
 ## 0.1.0-dev.55 — correlacionar a página autorizada com Statistics em Kernel
 
 - Kernel usa `ContentIndexQuery`/Entity Access reais e o aggregator/storage

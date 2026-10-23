@@ -129,6 +129,18 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     $this->assertSame((string) $node->id(), (string) $result->entities[0]->id());
     $this->assertSame([(string) $node->id() => 7], $result->totals);
 
+    $fallback = (new ContentIndexStatisticsBridge($this->container->get('aculta_index.query'), NULL))
+      ->aggregateForQuery(
+        ['entity_type' => 'node', 'bundle' => 'wiki_entry', 'published' => TRUE],
+        'wiki.entries.read',
+        $statisticsStorage->currentDay(),
+        $statisticsStorage->currentDay(),
+        $reader,
+      );
+    $this->assertFalse($fallback->available);
+    $this->assertCount(1, $fallback->entities);
+    $this->assertSame([], $fallback->totals);
+
     // A stale public projection must not outlive a source access revocation.
     $node->setUnpublished()->save();
     $deniedResult = $bridge->aggregateForQuery(
