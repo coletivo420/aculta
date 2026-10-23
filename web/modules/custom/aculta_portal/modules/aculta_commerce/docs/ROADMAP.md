@@ -128,3 +128,11 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 - Rotas PT-BR mantidas; corrigidas as chaves de links para usar os próprios slugs PT-BR. Não foi implementada consulta privada de pedidos, pagamentos, clientes nem métricas.
 - **Gate GS-0.2-C.2**: revisar segregação por store (especialmente produtos presentes em mais de uma store); paginação baseada em filtros de acesso, performance em catálogos extensos, cache contexts e testes Kernel/Functional.
 - **Gate homelab**: `drush cr`, instalação em site de teste, testes da matriz operador sem permissão / operador com permissões Commerce / multi-store / usuário comum, correção de alias e tradução e validação SDC. Nenhuma operação financeira habilitada.
+
+## GS-0.2-C.2 — Catálogo com busca e paginação por cursor (2026-10-23)
+
+- `GreenStashProductReader::page()` oferece busca `busca` em título e cursor `antes`, mantendo `accessCheck(TRUE)`, `view/update` da entidade e `update` em ao menos uma loja associada. Não há query de contagem nem exposição de produtos LMS.
+- Rota PT-BR mantida: `/estudio/loja/produtos`. Render API exibe formulário GET acessível, resultado em lista simples e link Próxima página; acesso/consulta não são cacheados publicamente.
+- Segurança: limite de 20 produtos por página, leitura de até cinco lotes de 100 IDs por solicitação. **Limitação:** se muitas entidades forem filtradas por grants, uma página pode ser parcial e não oferecer Próxima página embora existam produtos mais antigos. Não chamar isso de paginação exaustiva até integrar store filtering à consulta.
+- Sem funcionalidades de pedidos ou pagamento; SDC mobile-first ainda pendente, conforme GS-NAV-02.
+- Gates pendentes: Kernel/Functional para grants em produto e store, segurança de cursor e entrada de busca; desempenho em alto volume e regressão após `drush cr` no homelab.
