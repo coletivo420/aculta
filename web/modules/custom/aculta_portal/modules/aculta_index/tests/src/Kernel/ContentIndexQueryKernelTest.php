@@ -149,6 +149,45 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
   }
 
   /**
+   * A projection left by an unregistered owner is never a query candidate.
+   */
+  public function testQueryExcludesProjectionFromDisabledProvider(): void {
+    $reader = User::create(['name' => 'content-index-disabled-provider-reader', 'status' => 1]);
+    $reader->save();
+    $source = Node::create([
+      'type' => 'sample_content',
+      'title' => 'Disabled provider source',
+      'status' => TRUE,
+    ]);
+    $source->save();
+    $this->buildAndActivateGeneration();
+
+    // Simulate a provider being disabled after its last projection was
+    // written. The source still exists and is publicly viewable, so Entity
+    // Access alone would not hide this stale catalog entry.
+    $database = $this->container->get('database');
+    $activeGeneration = $database->select('aculta_index_state', 'state')
+      ->fields('state', ['active_generation'])
+      ->condition('state_id', 1)
+      ->execute()
+      ->fetchField();
+    self::assertIsString($activeGeneration);
+    $database->update('aculta_index_entry')
+      ->fields(['provider_id' => 'disabled_owner'])
+      ->condition('generation_id', $activeGeneration)
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', (string) $source->id())
+      ->execute();
+
+    $page = $this->container->get('aculta_index.query')->query([
+      'entity_type' => 'node',
+      'bundle' => 'sample_content',
+    ], $reader);
+
+    self::assertSame([], $page->entities, 'Entries are candidates only when their owner provider remains registered.');
+  }
+
+  /**
    * Queries without an active generation are empty and bounds stay enforced.
    */
   public function testQueryRequiresValidFiltersAndBoundedCandidateLimit(): void {
