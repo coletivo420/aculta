@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Unit;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider;
+use Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
@@ -162,7 +163,9 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     });
 
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('loadMultiple')->with(['1'])->willReturn(['1' => $this->forumTranslation($negotiator, $forumDomain)]);
+    $storage->method('loadMultiple')->with(['1'])->willReturn([
+      '1' => $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:1'),
+    ]);
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -181,6 +184,53 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $registry = new ContentIndexProviderRegistry([$provider]);
 
     $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertCount(1, $result->entities);
+    self::assertSame($previousDomain, $activeDomain);
+    self::assertContains('domain', $result->cacheability->getCacheContexts());
+  }
+
+  /**
+   * Wiki Entity Access runs in the canonical Wiki purpose and restores Domain.
+   */
+  public function testChecksWikiAccessInCanonicalPurpose(): void {
+    $previousDomain = $this->createMock(DomainInterface::class);
+    $wikiDomain = $this->createMock(DomainInterface::class);
+    $activeDomain = $previousDomain;
+    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
+      return $activeDomain;
+    });
+    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+      $activeDomain = $domain;
+    });
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadMultiple')->with(['1'])->willReturn([
+      '1' => $this->purposeTranslation('wiki_entry', $negotiator, $wikiDomain, 'wiki-entry:1'),
+    ]);
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
+    $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->expects(self::once())->method('load')->with('wiki420_aculta_org')->willReturn($wikiDomain);
+    $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
+    $purposeManager = new DomainPurposeManager(
+      $manager,
+      $negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+
+    $result = (new ContentIndexAccessFilter(
+      $manager,
+      new ContentIndexProviderRegistry([new WikiContentIndexProvider()]),
+      $purposeManager,
+    ))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));
 
@@ -249,17 +299,17 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   /**
    * Creates a forum translation whose access handler requires Forum purpose.
    */
-  private function forumTranslation(DomainNegotiatorInterface $negotiator, DomainInterface $forumDomain): NodeInterface {
+  private function purposeTranslation(string $bundle, DomainNegotiatorInterface $negotiator, DomainInterface $purposeDomain, string $cacheTag): NodeInterface {
     $translation = $this->createMock(NodeInterface::class);
-    $translation->method('bundle')->willReturn('aculta_forum_topic');
+    $translation->method('bundle')->willReturn($bundle);
     $translation->method('hasTranslation')->with('pt-br')->willReturn(TRUE);
     $translation->method('getTranslation')->with('pt-br')->willReturn($translation);
     $translation->method('getCacheContexts')->willReturn([]);
     $translation->method('getCacheMaxAge')->willReturn(-1);
-    $translation->method('access')->willReturnCallback(static function () use ($negotiator, $forumDomain): AccessResult {
-      return $negotiator->getActiveDomain() === $forumDomain ? AccessResult::allowed() : AccessResult::forbidden();
+    $translation->method('access')->willReturnCallback(static function () use ($negotiator, $purposeDomain): AccessResult {
+      return $negotiator->getActiveDomain() === $purposeDomain ? AccessResult::allowed() : AccessResult::forbidden();
     });
-    $translation->method('getCacheTags')->willReturn(['forum-topic:1']);
+    $translation->method('getCacheTags')->willReturn([$cacheTag]);
     return $translation;
   }
 

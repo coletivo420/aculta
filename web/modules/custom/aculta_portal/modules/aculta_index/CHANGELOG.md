@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.63 — validar purpose canônico Wiki no filtro
+
+- Unit exercita o `WikiContentIndexProvider` real com o
+  `ContentIndexAccessFilter`: Entity Access só permite a entidade sob o Domain
+  `wiki420_aculta_org`, preserva o usuário e restaura o Domain anterior.
+- A suíte focal passou com 8 testes / 70 assertions. Não substitui teste de
+  grants reais ou Kernel com Domain instalado.
+
 ## 0.1.0-dev.62 — cobrir provider Wiki no ciclo do Index
 
 - Kernel usa `WikiContentIndexProvider` de produção via tag de fixture sem
