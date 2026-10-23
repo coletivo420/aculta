@@ -24,6 +24,15 @@ continuam exclusivamente no LMS.
 
 ## Estado
 
+### Content Index: boot/DI do owner — validação dev.161
+
+`ContentIndexOwnerIntegrationKernelTest`, no módulo `aculta_index`, carregou a
+closure declarada de 103 módulos Portal/LMS e descobriu `lms_course` e
+`course_document` pelos services.yml dos owners reais. O gate passou em
+1 teste / 8 assertions (83 depreciações Core/contrib). Isso confirma o boot do
+container e as tags; não instala configuração/schema dos módulos nem substitui
+os testes focados de acesso com Group e Domain. Runtime continua pendente.
+
 ### Limpeza coordenada de recursos — dívida de integração em 2026-10-22
 
 O Portal já oferece parcialmente `aculta_portal.unused_file_cleaner` para

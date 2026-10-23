@@ -38,7 +38,7 @@ assertions, 38 depreciações Core/contrib; PHPCS passou. A fixture inclui Media
 Gallery para executar a validação real de referências, mas não ativa a cadeia
 completa do owner. A suíte Kernel do Index registrada anteriormente passou com
 65 / 883. Isso prova policy e grants reais sem ativar a cadeia completa do owner.
-Boot/DI completo do Fórum e Runtime seguem pendentes antes da ativação. A
+Boot/DI completo do Fórum passou no teste transversal dev.161; Runtime segue pendente antes da ativação. A
 conversão do timestamp Comment foi corrigida; Unit 5/31 cobre bundle fixo sem
 chave no enumerador.
 
