@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.20 — caracterização de rotas e acesso em Kernel
+
+- Kernel da Wiki verifica novamente bootstrap real e discovery das três rotas
+  públicas, seus nomes/caminhos e a negação quando `access content` é removida.
+- Novo cenário exercita o CTA inicial com Entity API: conta autorizada e com
+  e-mail confirmado recebe acesso; conta sem confirmação é negada. O resultado
+  continua cacheável por permissões.
+- Kernel MariaDB completo: 9 testes / 342 assertions; 284 depreciações
+  Drupal/contrib e 10 depreciações PHPUnit. Unit: 66 testes / 338 assertions;
+  3 depreciações PHPUnit.
+- Sem alteração de Runtime; a Wiki permanece desabilitada.
+
 ## 0.1.0-dev.19 — moderação na WikiTab existente do Studio
 
 - `WikiTab` oferece uma seção Moderação com gates separados: transições

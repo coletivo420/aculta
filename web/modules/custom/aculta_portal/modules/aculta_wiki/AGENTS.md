@@ -78,3 +78,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   Moderation. Propostas consomem `proposals()` e `WikiProposalDecisionForm`;
   gates de seção não devem conflar moderadores de propostas com os grants de
   Nodes. Não criar uma segunda fila, aba ou camada de autorização no Studio.
+- Rotas e acesso (dev.20): manter os três nomes/caminhos públicos e testar a
+  negação com permissão ausente; o CTA deve usar `createAccess('wiki_entry')`,
+  respeitando acesso efetivo e confirmação compartilhada de e-mail.

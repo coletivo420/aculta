@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.19**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.20**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.20 — rotas e acesso em Kernel
+
+Reexecutada a classe Kernel com bootstrap Wiki real. As rotas públicas preservam
+nomes e caminhos e respeitam `access content`. O CTA usa o acesso efetivo de
+criação do Node e inclui a política compartilhada de e-mail confirmado. Não foi
+necessário alterar Runtime. Resultado: 9 testes / 342 assertions.
 
 ### Incremento dev.19 — GanjaLab
 

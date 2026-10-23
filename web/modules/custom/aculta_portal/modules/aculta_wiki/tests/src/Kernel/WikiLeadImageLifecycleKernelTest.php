@@ -384,6 +384,35 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Home collaboration action follows live Node create access and its cache.
+   */
+  public function testHomeCollaborationUsesRuntimeNodeCreateAccess(): void {
+    Role::create([
+      'id' => 'wiki_home_creator_test',
+      'label' => 'Wiki home creator test',
+      'permissions' => ['create wiki_entry content'],
+    ])->save();
+    $creator = new UserSession(['uid' => 14, 'roles' => ['authenticated', 'wiki_home_creator_test']]);
+    $reader = new UserSession(['uid' => 15, 'roles' => ['authenticated']]);
+    $wikiDomain = Domain::load('wiki420_aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $currentUser = $this->container->get('current_user');
+    $controller = WikiController::create($this->container);
+
+    self::assertTrue($creator->hasPermission('create wiki_entry content'));
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $creator->id());
+    $currentUser->setAccount($creator);
+    $creatorBuild = $controller->home();
+    self::assertTrue($creatorBuild['collaboration']['#access']->isAllowed());
+    self::assertContains('user.permissions', $creatorBuild['collaboration']['#access']->getCacheContexts());
+
+    $currentUser->setAccount($reader);
+    $readerBuild = $controller->home();
+    self::assertFalse($readerBuild['collaboration']['#access']->isAllowed());
+    self::assertContains('user.permissions', $readerBuild['collaboration']['#access']->getCacheContexts());
+  }
+
+  /**
    * Search filters results by grants between users with the same role.
    */
   public function testSearchSeparatesResultsForSameRoleUsersWithDifferentGrants(): void {

@@ -62,7 +62,7 @@ depois da importação de configuração no servidor de testes.
 | `WikiController::search` | Unit | Busca vazia e busca com menos de `MIN_CHARS`; limite de `MAX_CHARS` | planejado |
 | `WikiController::preview` | Unit | Prévia abaixo do mínimo não consulta o banco; resposta com contagem e links | planejado |
 | `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | planejado |
-| Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | planejado |
+| Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
 
 ## Fase 4 — métricas de publicação
 
@@ -82,13 +82,15 @@ depois da importação de configuração no servidor de testes.
 | Permissão de rota pública | Kernel | `access content` permite e negar a permissão bloqueia | aprovado |
 | Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
 | Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
+| CTA inicial — acesso real de criação | Kernel | `createAccess('wiki_entry')`; pessoa confirmada autorizada e não confirmada negada | aprovado (dev.20) |
 
 Suíte Kernel da Wiki inicializa `aculta_wiki` e dependências reais, com MariaDB
 isolada. O fixture de grants está apenas em `tests/modules`; Runtime e
-configuração de produção não são usados. Último resultado executado: 7 testes,
-225 assertions, sem warnings; 284 avisos de depreciação Drupal/contrib e 8 do
-PHPUnit. A configuração Core `filter` foi instalada na fixture para usar o
-formato de fallback real e evitar warning falso de `entity_usage`.
+configuração de produção não são usados. Resultado dev.20: 9 testes / 342
+assertions, sem warnings; 284 avisos de depreciação Drupal/contrib e 10 do
+PHPUnit. Unit: 66 testes / 338 assertions, 3 depreciações PHPUnit. A
+configuração Core `filter` foi instalada na fixture para usar o formato de
+fallback real e evitar warning falso de `entity_usage`.
 
 ## Persistência de propostas — Kernel real (dev.14)
 
@@ -210,12 +212,11 @@ configuração da Wiki. Runtime permanece pendente.
 O boot transversal `ContentIndexOwnerIntegrationKernelTest` também resolve e
 habilita a closure real de dependências de `aculta_wiki` e `aculta_index`, compila
 o container e confirma o registry via tags owner (1 teste / 8 assertions,
-registrado no roadmap em 2026-10-23). Nesta sessão, o teste Unit da Wiki passou
-(61 testes / 277 assertions; 3 depreciações PHPUnit). A repetição do Kernel não
-foi possível: `SIMPLETEST_DB` não está configurada neste ambiente. Essa
-limitação não invalida o resultado Kernel registrado anteriormente, mas impede
-uma nova confirmação nesta sessão. Nenhum Runtime ou banco persistente foi
-alterado.
+registrado em 2026-10-23). Registro histórico de execução: naquela rodada, o
+teste Unit passou com 61 testes / 277 assertions e a repetição do Kernel não
+ocorreu porque `SIMPLETEST_DB` não estava configurada. Nesta atualização dev.20,
+o Kernel foi executado com MariaDB isolada (resultados acima); nenhum Runtime
+ou banco persistente foi alterado.
 
 ## Navegador
 

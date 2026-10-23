@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.20`: rotas e acesso foram repetidos em Kernel com bootstrap real.
+  O CTA de colaboração usa `createAccess('wiki_entry')` efetivo: conta
+  confirmada com permissão pode abrir; conta sem confirmação segue negada.
+  Suíte MariaDB: 9 testes / 342 assertions; Runtime segue desabilitado.
 - `0.1.0-dev.19`: a `WikiTab` existente do GanjaLab consome as filas proprietárias
   da Wiki. Revisões mostram ação para o Form API nativo do Node; propostas abrem
   a decisão Wiki em contexto account. Acesso a cada seção é distinto, e
