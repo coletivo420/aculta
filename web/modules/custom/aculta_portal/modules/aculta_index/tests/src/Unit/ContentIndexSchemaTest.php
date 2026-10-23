@@ -29,6 +29,7 @@ final class ContentIndexSchemaTest extends UnitTestCase {
 
     self::assertArrayHasKey('aculta_index_generation', $schema);
     self::assertArrayHasKey('aculta_index_state', $schema);
+    self::assertArrayHasKey('source_entity_max_id', $schema['aculta_index_audit']['fields']);
     self::assertArrayHasKey('active_generation', $schema['aculta_index_state']['fields']);
     self::assertArrayHasKey('cursor_entity_id', $schema['aculta_index_generation']['fields']);
   }

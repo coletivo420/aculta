@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.106 — limitar janela de auditoria por provider/type
+
+- A fase de fontes captura o maior ID indexável ao entrar em cada par
+  provider/entity type; lotes respeitam esse teto, deixando novas entidades
+  para o próximo ciclo incremental.
+- Update hook 10017 adiciona o checkpoint e reinicia como `idle` uma auditoria
+  que já estava rodando sem o novo teto.
+- Auditoria: Kernel focal passou em SQLite dentro da rodada de 64 testes / 728
+  assertions e em MariaDB com 1 teste / 13 assertions. Update hook em MariaDB:
+  1 teste / 8 assertions; uma depreciação upstream.
+- PHPCS Drupal e `php -l` passaram nos arquivos alterados.
+
 ## 0.1.0-dev.105 — rejeitar relações com projeção de origem obsoleta
 
 - A consulta outgoing não devolve alvos quando o registro da origem usa uma

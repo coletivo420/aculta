@@ -408,6 +408,40 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Caps each source-reconciliation scan at its captured entity ID maximum.
+   */
+  public function testIncrementalAuditDefersSourcesCreatedAfterItsScanWindow(): void {
+    Node::create(['type' => 'sample_content', 'title' => 'Indexed before audit', 'status' => 1])->save();
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $checker->startAudit();
+    $this->assertSame('relations', $checker->processAuditBatch(10)['phase']);
+    $sourcePhase = $checker->processAuditBatch(10);
+    $this->assertSame('sources', $sourcePhase['phase']);
+
+    // This ID is greater than the captured maximum for this provider/type.
+    Node::create(['type' => 'sample_content', 'title' => 'Created after source window', 'status' => 1])->save();
+    $firstCycle = $checker->processAuditBatch(10);
+    $this->assertSame('complete', $firstCycle['status']);
+    $this->assertSame(0, (int) $firstCycle['missing_catalog_entry_count']);
+
+    // The next daily cycle captures the new ceiling and discovers the source.
+    $checker->startAudit();
+    $checker->processAuditBatch(10);
+    $checker->processAuditBatch(10);
+    $nextCycle = $checker->processAuditBatch(10);
+    $this->assertSame('complete', $nextCycle['status']);
+    $this->assertSame(1, (int) $nextCycle['missing_catalog_entry_count']);
+  }
+
+  /**
    * Checks query pagination uses an opaque persisted cursor and access checks.
    */
   public function testQueryUsesOpaqueCursorAndReturnsAuthorizedEntities(): void {

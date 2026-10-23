@@ -162,6 +162,7 @@ function aculta_index_schema(): array {
         'source_provider_cursor' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => ''],
         'source_entity_type_cursor' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''],
         'source_entity_id_cursor' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+        'source_entity_max_id' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
         'entry_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'relation_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'orphan_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
@@ -448,4 +449,29 @@ function aculta_index_update_10016(): void {
       $schema->addField('aculta_index_audit', $field, $specification);
     }
   }
+}
+
+/**
+ * Adds the captured source ID ceiling for finite audit keyset windows.
+ */
+function aculta_index_update_10017(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_audit')) {
+    return;
+  }
+  if (!$schema->fieldExists('aculta_index_audit', 'source_entity_max_id')) {
+    $schema->addField('aculta_index_audit', 'source_entity_max_id', [
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+      'default' => '',
+    ]);
+  }
+  // A running audit has no ceiling for its current source/type cursor. Restart
+  // that derived scan on the next cron/manual batch rather than treating the
+  // empty migration default as an already captured empty window.
+  \Drupal::database()->update('aculta_index_audit')
+    ->fields(['status' => 'idle'])
+    ->condition('status', 'running')
+    ->execute();
 }

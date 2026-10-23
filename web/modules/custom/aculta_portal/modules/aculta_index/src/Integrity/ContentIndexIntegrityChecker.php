@@ -99,6 +99,7 @@ final class ContentIndexIntegrityChecker {
         'source_provider_cursor' => '',
         'source_entity_type_cursor' => '',
         'source_entity_id_cursor' => '',
+        'source_entity_max_id' => '',
         'orphan_entry_count' => 0,
         'orphan_relation_count' => 0,
         'relation_source_missing_count' => 0,
@@ -164,13 +165,15 @@ final class ContentIndexIntegrityChecker {
       }
       else {
         $sourceCursor = $this->sourceCursorFromState($state);
-        $sourceBatch = $sourceCursor === NULL
+        $sourceMaximum = (string) $state['source_entity_max_id'];
+        $sourceBatch = $sourceCursor === NULL || $sourceMaximum === ''
           ? ['projections' => [], 'next_cursor' => NULL, 'exhausted' => TRUE]
           : $this->enumerator->nextBatch(
             $sourceCursor['provider_id'],
             $sourceCursor['entity_type'],
             $state['source_entity_id_cursor'] === '' ? NULL : (string) $state['source_entity_id_cursor'],
             $limit,
+            $sourceMaximum,
           );
         $rows = [];
       }
@@ -234,11 +237,16 @@ final class ContentIndexIntegrityChecker {
           );
           if ($nextSourceCursor === NULL) {
             $this->completeAuditFields($updates, $state);
+            $updates['source_entity_max_id'] = '';
           }
           else {
             $updates['source_provider_cursor'] = $nextSourceCursor['provider_id'];
             $updates['source_entity_type_cursor'] = $nextSourceCursor['entity_type'];
             $updates['source_entity_id_cursor'] = '';
+            $updates['source_entity_max_id'] = $this->enumerator->maximumEntityId(
+              $nextSourceCursor['provider_id'],
+              $nextSourceCursor['entity_type'],
+            ) ?? '';
           }
         }
       }
@@ -259,6 +267,10 @@ final class ContentIndexIntegrityChecker {
           $updates['source_provider_cursor'] = $firstSourceCursor['provider_id'];
           $updates['source_entity_type_cursor'] = $firstSourceCursor['entity_type'];
           $updates['source_entity_id_cursor'] = '';
+          $updates['source_entity_max_id'] = $this->enumerator->maximumEntityId(
+            $firstSourceCursor['provider_id'],
+            $firstSourceCursor['entity_type'],
+          ) ?? '';
         }
       }
 
@@ -334,6 +346,7 @@ final class ContentIndexIntegrityChecker {
       $state['source_provider_cursor'],
       $state['source_entity_type_cursor'],
       $state['source_entity_id_cursor'],
+      $state['source_entity_max_id'],
     );
     $state['valid'] = $state['status'] === 'complete'
       && (bool) $state['active_pointer_valid']

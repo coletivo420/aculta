@@ -672,6 +672,28 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds a maximum-ID checkpoint for source audits.
+   */
+  public function testUpdateHookAddsSourceAuditMaximumId(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropField('aculta_index_audit', 'source_entity_max_id');
+    $this->assertFalse($schema->fieldExists('aculta_index_audit', 'source_entity_max_id'));
+    $this->container->get('database')->update('aculta_index_audit')
+      ->fields(['status' => 'running'])
+      ->condition('audit_id', 1)
+      ->execute();
+
+    aculta_index_update_10017();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_audit', 'source_entity_max_id'));
+    $this->assertSame('idle', $this->container->get('database')->select('aculta_index_audit', 'audit')
+      ->fields('audit', ['status'])
+      ->condition('audit_id', 1)
+      ->execute()
+      ->fetchField(), 'A legacy in-progress source scan restarts without a captured maximum.');
+  }
+
+  /**
    * Tests older catalog entries receive the initial projection version.
    */
   public function testUpdateHookAddsProviderProjectionVersion(): void {

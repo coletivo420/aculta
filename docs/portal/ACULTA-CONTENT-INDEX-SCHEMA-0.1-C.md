@@ -22,6 +22,8 @@ O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de en
 
 `ContentIndexIntegrityChecker::check()` valida ponteiro, gerações, relações e versões das projeções sem alterar dados. A auditoria incremental, separada, percorre entradas e fontes em lotes com checkpoint: refileira hashes divergentes e fontes sem entrada, e agenda remoção apenas quando o provider ativo confirma fonte/tradução ausente ou fora de seu ownership. Providers desabilitados ou sem ownership verificável são preservados. Essa reconciliação está implementada e tem Kernel tests com provider de fixture; cobertura abrangente dos adapters, grants reais, Runtime e volume continua pendente. O comando operacional é `drush aculta-index:audit status|start|batch`.
 
+Na fase de fontes, o checkpoint guarda um teto keyset por provider/entity type. O teto é capturado quando cada par entra na fase; novos IDs acima dele ficam para o ciclo seguinte, mantendo cada varredura finita sem OFFSET. O update hook 10017 adiciona o campo e reinicia auditorias antigas ainda em execução, para não interpretar o valor de migração vazio como uma janela realmente vazia.
+
 ## Índices e portabilidade
 
 Entradas têm consultas seletivas por geração, tipo/bundle, domínio/estado e provider. Relações são consultáveis por origem ou alvo sem carregar toda a tabela. Chaves compostas preservam IDs string (inclusive tipos que não sejam Node) e idioma.

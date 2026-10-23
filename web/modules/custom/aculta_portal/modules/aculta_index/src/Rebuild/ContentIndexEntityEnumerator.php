@@ -42,18 +42,68 @@ final class ContentIndexEntityEnumerator {
   ) {}
 
   /**
+   * Captures the greatest currently indexable source ID for an audit window.
+   *
+   * @return string|null
+   *   Maximum entity ID, or NULL when the provider has no matching sources.
+   */
+  public function maximumEntityId(string $providerId, string $entityTypeId): ?string {
+    $provider = $this->providers->get($providerId);
+    $supported = $provider->getSupportedEntityTypes();
+    if (!isset($supported[$entityTypeId])) {
+      throw new \InvalidArgumentException(sprintf('Provider %s does not support entity type %s.', $providerId, $entityTypeId));
+    }
+    if (!$this->entityTypeManager->hasDefinition($entityTypeId)) {
+      return NULL;
+    }
+
+    $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
+    $idKey = $entityType->getKey('id');
+    $bundleKey = $entityType->getKey('bundle') ?: NULL;
+    if ($idKey === NULL) {
+      throw new \LogicException(sprintf('Provider entity type %s must define an ID key.', $entityTypeId));
+    }
+    $supportedBundles = array_values($supported[$entityTypeId]);
+    if ($bundleKey === NULL && $supportedBundles !== [$entityTypeId]) {
+      throw new \LogicException(sprintf(
+        'Provider entity type %s without a bundle key must declare only its own ID as the fixed bundle.',
+        $entityTypeId,
+      ));
+    }
+
+    $query = $this->entityTypeManager->getStorage($entityTypeId)->getQuery()->accessCheck(FALSE);
+    if ($bundleKey !== NULL) {
+      $query->condition($bundleKey, $supportedBundles, 'IN');
+    }
+    $ids = array_values($query->sort($idKey, 'DESC')->range(0, 1)->execute());
+    return $ids === [] ? NULL : (string) reset($ids);
+  }
+
+  /**
    * Loads one bounded keyset page and projects each entity translation.
    *
    * Entity query access checks are disabled because this is a privileged
    * background discovery operation. Returned projections remain internal to
    * the catalog writer; consumer queries must authorize source entities.
    *
+   * @param string $providerId
+   *   Registered provider that owns the source type.
+   * @param string $entityTypeId
+   *   Source entity type to scan.
+   * @param string|null $afterEntityId
+   *   Exclusive keyset cursor from the previous batch.
+   * @param int $limit
+   *   Maximum number of source entities to load.
+   * @param string|null $maximumEntityId
+   *   Optional inclusive keyset ceiling for finite reconciliation windows.
+   *   NULL leaves rebuild discovery unbounded.
+   *
    * @return array
    *   An array with `projections` (a list of projection DTOs), `next_cursor`
    *   (the final entity ID or NULL) and `exhausted` (whether this was the last
    *   page).
    */
-  public function nextBatch(string $providerId, string $entityTypeId, ?string $afterEntityId = NULL, int $limit = 100): array {
+  public function nextBatch(string $providerId, string $entityTypeId, ?string $afterEntityId = NULL, int $limit = 100, ?string $maximumEntityId = NULL): array {
     if ($limit < 1 || $limit > self::MAX_BATCH_SIZE) {
       throw new \InvalidArgumentException(sprintf('Content Index batch size must be between 1 and %d.', self::MAX_BATCH_SIZE));
     }
@@ -91,6 +141,9 @@ final class ContentIndexEntityEnumerator {
     $query->sort($idKey)->range(0, $limit);
     if ($afterEntityId !== NULL) {
       $query->condition($idKey, $afterEntityId, '>');
+    }
+    if ($maximumEntityId !== NULL) {
+      $query->condition($idKey, $maximumEntityId, '<=');
     }
     $ids = array_values($query->execute());
     if ($ids === []) {
