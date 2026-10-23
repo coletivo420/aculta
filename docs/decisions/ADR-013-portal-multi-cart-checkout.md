@@ -92,3 +92,14 @@ Consequências para esta ADR:
 
 **Unificação do checkout comercial (2026-10-23):** Loja (tipo `default`) e LMS (tipo `curso`) passam a usar um único flow, o `default`, com o pane `aculta_fiscal_identity`. O flow `curso`, duplicado, sai da configuração. Os tipos de pedido continuam separados, como o responsável determinou. Login obrigatório e cadastro dentro do checkout permitido, como no LMS. Doações mantêm os flows `doacao` e `assinatura_flow`, sem o pane.
 
+## Adendo — estado do `aculta_commerce` (2026-10-23)
+
+O texto de **Estado de implementação (2026-10-22)** descreve `aculta_commerce` como "módulo ainda não habilitado". Essa afirmação fica preservada como registro do que se verificou naquela data; não é o estado atual.
+
+Medição de 2026-10-23, somente leitura, no runtime local:
+
+- `drush pm:list --status=enabled` lista `aculta_commerce`.
+- `config/sync/core.extension.yml` o declara habilitado (`aculta_commerce: 0`).
+
+Portanto a divergência apontada na pendência 8 de `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md` é real: a ADR estava desatualizada em relação ao repositório e ao runtime local. Nenhum código ou configuração foi alterado por este adendo; a verificação nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`) continua pendente de acesso. A frase original permanece sem edição para manter o histórico da decisão.
+
