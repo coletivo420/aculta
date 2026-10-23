@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.87 — registrar limite de rollback retido
+
+- Código e README esclarecem que gerações `retained` não recebem eventos
+  incrementais e, portanto, não devem ser usadas como rollback seguro após
+  mudanças na geração ativa. A escolha entre sincronizar uma ou todas as
+  gerações retidas ou limitar o período de rollback aguarda decisão.
+- Nenhuma semântica operacional foi alterada nesta etapa.
+
 ## 0.1.0-dev.86 — cobrir consulta paginada no Kernel
 
 - `ContentIndexQueryKernelTest` exercita a API de consulta com catálogo e fonte

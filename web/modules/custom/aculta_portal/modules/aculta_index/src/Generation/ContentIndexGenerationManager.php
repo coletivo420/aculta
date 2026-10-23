@@ -192,10 +192,11 @@ final class ContentIndexGenerationManager {
   }
 
   /**
-   * Returns generations that must receive live changes during a rebuild.
+   * Returns generations that receive live source changes.
    *
    * @return list<string>
-   *   Active and building generation IDs.
+   *   Active, building, and validated generation IDs. Retained generations are
+   *   excluded pending the rollback synchronization/retention policy.
    */
   public function getWritableGenerations(): array {
     return array_map('strval', $this->database->select('aculta_index_generation', 'generation')
