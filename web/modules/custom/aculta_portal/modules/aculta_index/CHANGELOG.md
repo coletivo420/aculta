@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.109 — registrar provider Fórum pelo YAML owner
+
+- O Kernel tópico/ForumPost carrega `aculta_forum.content_index_provider` da
+  definição e tag reais de `aculta_forum.services.yml`; a declaração duplicada
+  foi removida da fixture. O módulo fixture continua somente para o entity type
+  de teste `ForumPost`.
+- SQLite e MariaDB: 2 testes / 51 assertions passaram em cada banco.
+- PHPCS Drupal e `php -l` passaram no harness alterado.
+
 ## 0.1.0-dev.108 — registrar providers Media pelos YAMLs owner
 
 - O Kernel Media agora compila `image` e `document` pelas definições e tags dos

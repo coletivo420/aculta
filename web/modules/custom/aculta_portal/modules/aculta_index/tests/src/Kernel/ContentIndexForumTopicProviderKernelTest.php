@@ -22,6 +22,8 @@ use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies the production Forum provider through Index backfill and CRUD.
@@ -57,6 +59,19 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Compile the provider declaration from the Forum owner without enabling
+    // its complete dependency chain in this focused Kernel harness.
+    $ownerServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $service = $ownerServices['aculta_forum.content_index_provider'];
+    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+    foreach ($service['tags'] ?? [] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_forum.content_index_provider', $definition);
   }
 
   /**
