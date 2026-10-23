@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce\Controller;
 
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\aculta_commerce\Navigation\GreenStashNavigation;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,9 +18,10 @@ final class GreenStashController {
   public function __construct(
     private readonly StudioExperienceManager $experiences,
     private readonly AccountInterface $account,
+    private readonly GreenStashNavigation $navigation,
   ) {}
 
-  public function page(): array {
+  public function page(string $section = 'overview'): array {
     $provider = $this->experiences->get('green_stash');
     if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
@@ -28,7 +30,10 @@ final class GreenStashController {
       throw new AccessDeniedHttpException();
     }
 
-    return $provider->build();
+    if (!isset(GreenStashNavigation::AREAS[$section])) {
+      throw new NotFoundHttpException();
+    }
+    return $this->navigation->build($section);
   }
 
 }
