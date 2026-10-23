@@ -11,13 +11,13 @@ Runtime.
 
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
-O bundle Media `remote_video` compartilhado passa a ser propriedade do Portal;
-o provider do Portal projeta metadados mínimos. A configuração atual
-`filter.format.forum` permite somente `forum_attachment`; habilitar vídeo remoto
-exige decisão de acesso e fluxo editorial, pois a política de anexos atual é
-específica desse bundle. Depois, o Fórum pode declarar relações nomeadas para
-vídeos embutidos em Comments/ForumPosts, com Entity Access revalidado e sem
-copiar URL ou corpo.
+O bundle Media `remote_video` compartilhado pertence ao Portal; seu provider
+projeta metadados mínimos. A configuração atual `filter.format.forum` permite
+somente `forum_attachment`, e o fluxo editorial de upload é específico desse
+bundle. Decisão do responsável: adiar suporte e relações de vídeo no Fórum até
+fechar os formatos editoriais e contratos de acesso dos consumidores. Depois,
+avaliar relações nomeadas para Comments/ForumPosts, revalidando Entity Access e
+sem copiar URL ou corpo.
 O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
 (`aculta_forum` dev.249, 1/6). Harness Unit focal valida purpose canônico,
 restauração do Domain e falha fechada sem Domain (`aculta_index` dev.51, 7/60).
@@ -119,9 +119,14 @@ PASS/DEFERRED e os riscos residuais ficam em
   Firefox ESR/X11 com perfis isolados e reversão completa. Só o ativo com
   membership lê o tópico e baixa o anexo. O ambiente voltou a
   `restricted_group_type` vazio e `realm=all` (21 linhas).
-- Próxima microfase **F-GROUP 0.5**: busca e contagem sob grants no Runtime,
-  revisão dos consumidores que tratam Media publicada como pública e matriz de
-  cache de página.
+- Gate medido (0.5): cache e regressão pública. O restrito nega anônimo e
+  suspenso e libera o ativo; o público é 200 para todos; a home anônima só
+  mostra o público; o 403 anônimo é cacheado sem título e autenticados são
+  `UNCACHEABLE`. Suspender leva a 403 e reativar volta a 200 sem `drush cr`.
+  A galeria segue a mesma regra da Media. A ativação usa role sincronizada
+  insider; a policy de acesso não é cacheada.
+- Próxima microfase **F-GROUP 0.6**: busca e contagem sob grants no Runtime,
+  com reindexação da fixture, e download HTTP real do arquivo privado.
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

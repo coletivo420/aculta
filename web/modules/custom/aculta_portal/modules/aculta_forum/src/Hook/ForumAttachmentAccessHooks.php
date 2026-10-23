@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\media\MediaInterface;
+use Drupal\media_gallery\MediaGalleryInterface;
 
 /**
  * Restricts Forum attachment Media to currently public Forum references.
@@ -22,6 +23,48 @@ final class ForumAttachmentAccessHooks {
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly ForumAttachmentPublication $attachmentPublication,
   ) {}
+
+  /**
+   * Applies purpose and current-host access to Forum Gallery.
+   *
+   * A published gallery follows the requesting account access to its host
+   * post or comment. The slideshow still filters each image by media_access.
+   */
+  #[Hook('entity_access')]
+  public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
+    if (!$entity instanceof MediaGalleryInterface
+      || !$entity->hasField('field_gallery_purpose')
+      || $entity->get('field_gallery_purpose')->value !== 'forum'
+      || !in_array($operation, ['view', 'view label'], TRUE)) {
+      return NULL;
+    }
+
+    if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+      return AccessResult::forbidden('Galerias do Fórum só podem ser acessadas no purpose Fórum.')
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['domain', 'user.permissions']);
+    }
+
+    // Unpublished galleries stay governed by the Gallery owner/moderator.
+    if (!$entity->isPublished()) {
+      return AccessResult::neutral()
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['user.permissions'])
+        ->setCacheMaxAge(0);
+    }
+
+    if (!$this->attachmentPublication->hasCurrentPublicGalleryReference($entity, $account)) {
+      return AccessResult::forbidden('A galeria não tem referência acessível à conta no Fórum.')
+        ->addCacheableDependency($entity)
+        ->addCacheContexts(['domain', 'user'])
+        ->setCacheMaxAge(0);
+    }
+
+    return AccessResult::allowed()
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['domain', 'user'])
+      ->setCacheMaxAge(0);
+  }
 
   /**
    * Applies purpose and current-host access to Forum attachment Media.

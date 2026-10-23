@@ -9,9 +9,9 @@ autorização do responsável. Produção não participa.
 
 | Script | Modo | Efeito |
 | --- | --- | --- |
-| `fgroup-provision.php` | `provision` | Cria Group type `forum_associados`, relação de tópico, role de membro com `view group_node:aculta_forum_topic entity`, um Group, quatro contas `fgroup_teste_*`, um tópico publicado e as situações em `aculta_associado`; ativa `restricted_group_type` e executa o rebuild de `node_access`. |
-| `fgroup-provision.php` | `teardown` | Desliga a frente, executa o rebuild, remove Group, tópico, contas, associações, role e Group type e invalida caches. O conteúdo preexistente não é tocado. |
-| `fgroup-measure.php` | leitura | Mede `node_access`, `node->access('view')` e a query com tag `node_access` por conta; cria e remove um anexo privado de teste para medir `media_access` e o download do File. |
+| `fgroup-provision.php` | `provision` | Cria Group type `forum_associados`, relação de tópico, role de membro **sincronizada insider** com `authenticated` e `view group_node:aculta_forum_topic entity`, um Group, quatro contas `fgroup_teste_*`, um tópico restrito, um tópico público e as situações em `aculta_associado`; ativa `restricted_group_type` e executa o rebuild de `node_access`. |
+| `fgroup-provision.php` | `teardown` | Desliga a frente, executa o rebuild, remove Group, tópicos, galerias, Media, Files, contas, associações, role e Group type e invalida caches. O conteúdo preexistente não é tocado. |
+| `fgroup-measure.php` | leitura | Mede `node_access`, `node->access('view')` e a query com tag `node_access` por conta, para o tópico restrito e o público; mede a listagem global; cria e remove um anexo privado e uma galeria de teste para medir `media_access`, `file->access('download')` e `entity_access` da galeria. |
 
 ## Execução
 
@@ -42,6 +42,15 @@ tópico restrito tiver grant `all:0` ou se o rebuild não concluir. Nesse caso,
 rodar o `teardown`; se o estado não voltar ao inicial, restaurar o backup
 validado. O `teardown` não apaga conteúdo preexistente.
 
+## Cache, regressão e revogação
+
+O `measure` não faz HTTP. A matriz de cache/regressão é medida com `curl`
+seguindo redirects (`-L`) e contando "Tópico restrito" e "Tópico público" no
+corpo, com `X-Drupal-Cache` e `X-Drupal-Dynamic-Cache`. A revogação é medida
+gerando um link único de login, suspendendo a conta com
+`aculta_user.active_associate->definir(uid, 'suspenso', 1, ...)` e reativando em
+seguida, sem `drush cr` entre as etapas: espera-se 200 → 403 → 200.
+
 ## Limitações
 
 - O navegador não está aqui: o teste visual fica em
@@ -51,5 +60,7 @@ validado. O `teardown` não apaga conteúdo preexistente.
 - O `measure` cria o anexo com autor uid 1 para que o Comment seja publicado;
   contas de teste sem permissão de moderação têm o Comment pendente, como no
   fluxo real.
-- Busca e contagem sob grants, cache de página e regressão do fórum público no
-  Runtime continuam fora destes scripts.
+- O arquivo físico do anexo não é gravado se `private://forum/anexos` não
+  existir; o resultado traz `file_exists` e `image_file_exists`. O acesso de
+  download é medido, mas o download HTTP real fica pendente.
+- Busca e contagem sob grants continuam fora destes scripts.

@@ -1,3 +1,30 @@
+## F-GROUP 0.5 — cache, regressão pública e galeria, 2026-10-23
+
+- Revisão de consumidores: `UnusedMediaCleaner` recusa Media publicada,
+  `ForumAttachmentCleanup` só remove `status=0`, listagens administrativas
+  exigem permissão e o Index revalida Entity Access. O formato `forum` só
+  embute `forum_attachment`; PDF/documento revalidam Media e File.
+- Galeria: `ForumGalleryPublication` publica pela referência ativa e
+  `ForumAttachmentAccessHooks::entityAccess()` decide por conta. Kernel novo:
+  galeria publicada, anônimo negado, membro liberado.
+- Correção de cache: `RestrictedForumAccessPolicy::result()` usa
+  `setCacheMaxAge(0)`; sem isso o `cache.access` mantinha o 403 após reativar.
+- Correção de role: a fixture e a ativação usam role sincronizada insider
+  (`authenticated`); a role individual se perdia quando o sync recriava a
+  membership.
+- Runtime: restrito 539 com `aculta_forum_restricted:69`; público 540 com
+  `all:0`. Acesso e listagem só para o ativo com membership; público para
+  todos. Home anônima só com o público.
+- Cache: 403 anônimo MISS→HIT sem título; home anônima HIT só com o público;
+  autenticados `UNCACHEABLE`. Suspender: 200→403; reativar: 403→200, sem
+  `drush cr` entre as etapas.
+- Galeria no Runtime: publicada, referência anônima falsa, `view` só para o
+  ativo com membership.
+- Anexo: Media e `file->access('download')` liberados só ao membro; arquivo
+  físico não gravado (`file_exists: false`), download HTTP pendente.
+- Estado final: `restricted_group_type` vazio, `realm=all:21`, zero tópicos,
+  contas, galerias, Media e Files da fixture.
+
 ## F-GROUP 0.4 — anexos e Runtime controlado, 2026-10-23
 
 - Kernel `ForumAttachmentPublicationKernelTest`: 7 testes / 201 asserções OK.

@@ -234,7 +234,7 @@ final class ForumGalleryPublication {
     foreach ($comments as $comment) {
       if ($comment instanceof CommentInterface
         && in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)
-        && $this->attachmentPublication->isPublicForumComment($comment, $current_topic)) {
+        && $this->attachmentPublication->isPublicForumComment($comment, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
       }
@@ -250,7 +250,7 @@ final class ForumGalleryPublication {
       }
     }
     foreach ($posts as $post) {
-      if ($post instanceof ForumPost && $this->attachmentPublication->isPublicPost($post, $current_topic)) {
+      if ($post instanceof ForumPost && $this->attachmentPublication->isPublicPost($post, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
       }

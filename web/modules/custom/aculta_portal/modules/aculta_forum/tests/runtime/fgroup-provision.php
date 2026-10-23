@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Provisiona e remove a fixture da validação F-GROUP no Runtime de testes.
  */
 
 declare(strict_types=1);
@@ -27,11 +28,13 @@ use Drupal\group\PermissionScopeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeAccessRebuild;
 use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 
 const FGROUP_TYPE = 'forum_associados';
 const FGROUP_ROLE = 'forum_associados-membro';
 const FGROUP_PREFIX = 'fgroup_teste_';
 const FGROUP_TOPIC_TITLE = '[TESTE F-GROUP] Tópico restrito';
+const FGROUP_PUBLIC_TOPIC_TITLE = '[TESTE F-GROUP] Tópico público';
 
 $mode = $extra[0] ?? 'provision';
 $entity_type_manager = \Drupal::entityTypeManager();
@@ -51,10 +54,34 @@ if ($mode === 'teardown') {
   $nids = $node_storage->getQuery()
     ->accessCheck(FALSE)
     ->condition('type', 'aculta_forum_topic')
-    ->condition('title', FGROUP_TOPIC_TITLE)
+    ->condition('title', '[TESTE F-GROUP]%', 'LIKE')
     ->execute();
   if ($nids !== []) {
     $node_storage->delete($node_storage->loadMultiple($nids));
+  }
+  $gallery_storage = $entity_type_manager->getStorage('media_gallery');
+  $gallery_ids = $gallery_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('title', '[TESTE F-GROUP]%', 'LIKE')
+    ->execute();
+  foreach ($gallery_storage->loadMultiple($gallery_ids) as $gallery) {
+    $gallery->delete();
+  }
+  $media_storage = $entity_type_manager->getStorage('media');
+  $media_ids = $media_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('name', 'fgroup-%', 'LIKE')
+    ->execute();
+  foreach ($media_storage->loadMultiple($media_ids) as $media) {
+    $media->delete();
+  }
+  $file_storage = $entity_type_manager->getStorage('file');
+  $file_ids = $file_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('uri', 'private://forum/anexos/fgroup-%', 'LIKE')
+    ->execute();
+  foreach ($file_storage->loadMultiple($file_ids) as $file) {
+    $file->delete();
   }
   $user_storage = $entity_type_manager->getStorage('user');
   $uids = $user_storage->getQuery()
@@ -123,7 +150,10 @@ $role = GroupRole::load(FGROUP_ROLE) ?? GroupRole::create([
   'id' => FGROUP_ROLE,
   'label' => 'Membro (teste)',
   'group_type' => FGROUP_TYPE,
-  'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+  // Synchronized insider role: every authenticated member inherits the
+  // permission, including after membership is recreated by the sync.
+  'scope' => PermissionScopeInterface::INSIDER_ID,
+  'global_role' => RoleInterface::AUTHENTICATED_ID,
   'permissions' => ['view group_node:aculta_forum_topic entity'],
 ]);
 $role->save();
@@ -160,9 +190,7 @@ foreach ($accounts as $suffix => $data) {
       ->definir((int) $user->id(), $data['situacao'], 1, 'Fixture F-GROUP');
   }
   if ($data['member'] && $group->getMember($user) === FALSE) {
-    $group->addRelationship($user, 'group_membership', [
-      'group_roles' => [FGROUP_ROLE],
-    ])->save();
+    $group->addRelationship($user, 'group_membership')->save();
   }
 }
 
@@ -183,6 +211,23 @@ $topic = $topic_ids === []
   : $topic_storage->load(reset($topic_ids));
 $topic->save();
 $ids['topic'] = (int) $topic->id();
+
+$public_ids = $topic_storage->getQuery()
+  ->accessCheck(FALSE)
+  ->condition('type', 'aculta_forum_topic')
+  ->condition('title', FGROUP_PUBLIC_TOPIC_TITLE)
+  ->execute();
+$public_topic = $public_ids === []
+  ? Node::create([
+    'type' => 'aculta_forum_topic',
+    'title' => FGROUP_PUBLIC_TOPIC_TITLE,
+    'status' => 1,
+    'uid' => 1,
+    'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+  ])
+  : $topic_storage->load(reset($public_ids));
+$public_topic->save();
+$ids['public_topic'] = (int) $public_topic->id();
 
 $existing = $entity_type_manager->getStorage('group_relationship')->getQuery()
   ->accessCheck(FALSE)

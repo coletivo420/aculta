@@ -125,7 +125,10 @@ class RestrictedForumAccessPolicy {
           'node_list',
         ],
       ));
-    return $result;
+    // The access result must not survive in the access cache: suspension,
+    // reactivation and membership changes have to take effect on the next
+    // request without a cache rebuild. The tags remain for other consumers.
+    return $result->setCacheMaxAge(0);
   }
 
 }

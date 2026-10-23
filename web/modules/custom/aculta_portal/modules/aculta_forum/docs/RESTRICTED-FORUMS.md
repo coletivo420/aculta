@@ -103,12 +103,13 @@ ordem, com aprovação do responsável e backup do banco:
 1. Criar o tipo de Group (por exemplo `forum_associados`), com os plugins de
    conteúdo de tópico e de categoria habilitados pelo administrador do Group.
    Nenhum `group.type.*` novo é distribuído pelo módulo nesta fase.
-2. Conceder à role de membro do Group a permissão de grupo
-   `view group_node:aculta_forum_topic entity`. O módulo Group **proíbe** a
-   leitura de qualquer entidade agrupada sem uma permissão de grupo; sem esta
-   permissão, nem o associado ativo com membership lê o tópico, mesmo com o
-   grant de `node_access` correto. O teste Kernel da F-GROUP 0.2 reproduz a
-   ausência desse passo para isolar a causa.
+2. Criar a role de membro como **sincronizada insider** com a role global
+   `authenticated` e a permissão `view group_node:aculta_forum_topic entity`.
+   O módulo Group **proíbe** a leitura de qualquer entidade agrupada sem uma
+   permissão de grupo; sem ela, nem o associado ativo com membership lê o
+   tópico, mesmo com o grant de `node_access` correto. A role individual não é
+   reatribuída quando o sync recria a membership após uma suspensão, então a
+   reativação voltaria sem acesso; a role sincronizada não tem esse problema.
 3. Configurar o tipo:
    `drush config:set aculta_forum.settings restricted_group_type forum_associados -y`
    (equivalente em `config/sync`; não executado aqui).
@@ -302,7 +303,31 @@ acesso revalidado pela conta.
 - Teste Kernel novo em `ForumAttachmentPublicationKernelTest`: com a permissão
   de comentário anônimo revogada (host não legível anonimamente), a Media é
   publicada, o anônimo é negado e a conta autorizada é liberada.
-- Suíte: Unit 169/992 OK; Kernel do Fórum 51/1.140 OK; PHPCS limpo.
+- **Galerias.** `ForumGalleryPublication::syncGallery()` publica pela referência
+  ativa (mesma regra) e `ForumAttachmentAccessHooks::entityAccess()` decide a
+  galeria `forum` por conta, com `hasCurrentPublicGalleryReference()`. O
+  slideshow continua filtrando cada imagem por `media->access()`. Teste Kernel
+  próprio: galeria publicada, anônimo negado, membro liberado.
+- **Documentos e Media embutida.** O formato `forum` só permite
+  `media_embed` com o bundle `forum_attachment`; não há botão `entity_embed`
+  configurado. Os visualizadores de PDF e documento revalidam
+  `media->access('view')` e `file->access('download')`. A revisão não encontrou
+  embed de outro bundle no Fórum.
+- **Consumidores de Media publicada.** `UnusedMediaCleaner` recusa Media
+  publicada (`OwnerRejected`); `ForumAttachmentCleanup` só remove `status=0` e
+  recheca antes de apagar; listagens administrativas exigem permissão; o Index
+  revalida Entity Access. Nenhum consumidor público trata `status=1` como
+  acesso irrestrito.
+- **Cache de acesso.** `RestrictedForumAccessPolicy::result()` agora aplica
+  `setCacheMaxAge(0)`. Sem isso, o `cache.access` mantinha o 403 depois da
+  reativação do associado. A revalidação passa a ocorrer em toda requisição,
+  como o contrato já prometia.
+- **Role de ativação.** A fixture e a documentação passam a usar role
+  **sincronizada insider** com `authenticated` (`global_role`), não individual.
+  O `RestrictedForumMembershipSync` recria a membership sem roles; com role
+  individual, a reativação voltava sem a permissão
+  `view group_node:aculta_forum_topic entity` e o Group negava o tópico.
+- Suíte: Unit 169/992 OK; Kernel do Fórum 52/1.170 OK; PHPCS limpo.
 
 ## F-GROUP-E — Runtime controlado de 2026-10-23 (executado e revertido)
 
@@ -315,10 +340,11 @@ Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
 - **Estado inicial:** `restricted_group_type` vazio, `node_access` só
   `realm=all` (21 linhas), zero tópicos do Fórum, Group types apenas
   `lms_class`/`lms_course`.
-- **Fixture:** Group type `forum_associados`, role de membro com
-  `view group_node:aculta_forum_topic entity`, um Group, um tópico publicado,
-  quatro contas (ativo com membership, ativo sem, suspenso com, comum) e as
-  situações correspondentes em `aculta_associado`.
+- **Fixture:** Group type `forum_associados`, role de membro **sincronizada
+  insider** com `authenticated` e `view group_node:aculta_forum_topic entity`,
+  um Group, um tópico restrito e um tópico público (sem Group), quatro contas
+  (ativo com membership, ativo sem, suspenso com, comum) e as situações
+  correspondentes em `aculta_associado`.
 - **Ativação:** `restricted_group_type=forum_associados`, rebuild de
   `node_access`, `drush cr`. O tópico recebeu uma linha
   `aculta_forum_restricted`/gid do Group e nenhum `all:0`.
@@ -338,24 +364,40 @@ Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
   closed, sem acesso nem para o membro.
 - **Anexos, depois de B:** Media publicada, referência anônima falsa;
   `media->access('view')` e `file->access('download')` permitidos só ao
-  associado ativo com membership. O arquivo privado existia no disco
-  (`private://forum/anexos/`), então o download real foi exercitado.
-- **Reversão:** `restricted_group_type=''`, rebuild, remoção de Group, tópico,
-  contas, associações, role e Group type. Estado final conferido:
-  `realm=all:21`, zero tópicos, zero contas `fgroup_teste_*`, Group type
-  ausente, nenhum arquivo privado da fixture. O backup permanece como garantia.
+  associado ativo com membership. O `File` existe no banco e o acesso de
+  download foi medido, mas o arquivo físico **não** foi gravado: o diretório
+  `private://forum/anexos` não existia e não foi criado nesta sessão
+  (`file_exists: false`). O download HTTP real do arquivo fica pendente.
+- **Galeria, depois de B:** galeria `forum` publicada, referência anônima falsa
+  e `gallery->access('view')` liberado só ao associado ativo com membership;
+  anônimo e suspenso negados.
+- **Regressão pública:** o tópico público (grant `all:0`) responde 200 e é
+  legível por anônimo, ativo, suspenso e comum; a home anônima mostra o título
+  público e não o restrito. O ativo vê os dois; o suspenso vê só o público.
+- **Cache de página:** o 403 anônimo do restrito é cacheado (`X-Drupal-Cache`
+  MISS e depois HIT), sem título; a home anônima é HIT e só contém o público.
+  Respostas autenticadas são `UNCACHEABLE`; não há vazamento entre contas.
+- **Revogação e reativação:** com a role sincronizada e a política sem cache,
+  suspender o associado leva de 200 a 403 na requisição seguinte e reativar
+  volta a 200, **sem** `drush cr` entre as etapas.
+- **Reversão:** `restricted_group_type=''`, rebuild, remoção de Group, tópicos,
+  galerias, Media/Files da fixture, contas, associações, role e Group type.
+  Estado final conferido: `realm=all:21`, zero tópicos, zero contas
+  `fgroup_teste_*`, Group type, galerias, Media e Files da fixture ausentes. O
+  backup permanece como garantia.
 - **Limitações:** busca e contagem não foram medidas (índice não provisionado);
-  a matriz de cache de página e a regressão do fórum público no Runtime
-  continuam pendentes.
+  o download HTTP do arquivo físico e a matriz de cache de busca continuam
+  pendentes.
 
 ## Próxima microfase recomendada
 
 **F-GROUP 0.5 — busca e contagem sob grants.** Validar o datasource
 `ContentEntity` e a paginação/contagem com `node_access` no Runtime, incluindo
 o caso de índice atrasado; cobrir em Kernel o processador de busca que já
-revalida a publicação e os grants do tópico. Em seguida, revisar os
-consumidores que tratam `status = 1` da Media como público (limpeza, views,
-feeds) por causa da F-GROUP 0.4. Só depois avaliar a ativação em produção.
+revalida a publicação e os grants do tópico. O índice `aculta_forum` já tem
+`content_access` e o processor `forum_post_search_access` configurados, mas a
+medição real depende de reindexar a fixture. O download HTTP do arquivo físico
+também fica para essa janela. Só depois avaliar a ativação em produção.
 
 ## Referências
 

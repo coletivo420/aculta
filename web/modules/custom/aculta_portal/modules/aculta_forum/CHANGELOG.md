@@ -1,3 +1,26 @@
+## `0.1.0-dev.253` — galeria restrita, cache de acesso e regressão pública — 2026-10-23
+
+- `ForumGalleryPublication` publica a galeria `forum` pela referência ativa e
+  `ForumAttachmentAccessHooks::entityAccess()` decide a conta; o slideshow
+  continua filtrando cada imagem por `media->access()`. Kernel novo cobre
+  anônimo negado e membro liberado.
+- `RestrictedForumAccessPolicy::result()` passa a usar `setCacheMaxAge(0)`.
+  Sem isso, o `cache.access` mantinha o 403 depois da reativação do associado;
+  suspender e reativar agora têm efeito na requisição seguinte, sem `drush cr`.
+- Ativação documentada com role **sincronizada insider** (`authenticated`): a
+  role individual não é reatribuída quando o sync recria a membership após a
+  suspensão, o que deixava a reativação sem acesso.
+- Revisão de consumidores: limpeza, listagens administrativas, Index, formato
+  `forum`, PDF/documento e galeria não tratam `status=1` como acesso
+  irrestrito.
+- Runtime: restrito negado a anônimo/suspenso e liberado ao ativo; público
+  legível por todos; home anônima só com o público; 403 anônimo cacheado sem
+  título; autenticados `UNCACHEABLE`. Galeria e acesso de download medidos.
+  O arquivo físico do anexo não foi gravado (`file_exists: false`), então o
+  download HTTP real fica pendente.
+- Suíte: Unit 169/992 e Kernel 52/1.170 PASS; PHPCS limpo. Fixture removida e
+  ambiente restaurado a `realm=all:21`.
+
 ## `0.1.0-dev.252` — anexos pela conta e Runtime controlado (F-GROUP 0.4) — 2026-10-23
 
 - `ForumAttachmentPublication` separa publicação de acesso: a Media é

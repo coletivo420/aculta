@@ -476,6 +476,63 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   }
 
   /**
+   * A restricted Gallery publishes and the account decides access.
+   *
+   * The anonymous comment permission is revoked to reproduce a host that the
+   * anonymous account cannot read. The Gallery must still be published by the
+   * active reference, while entity_access denies the anonymous account and
+   * allows the account that can read the host.
+   */
+  public function testRestrictedGalleryPublishesAndAccountAccessDecides(): void {
+    $anonymous_role = Role::load('anonymous');
+    $anonymous_role->revokePermission('access comments')->save();
+    $authenticated_role = Role::load('authenticated');
+    $authenticated_role->grantPermission('access content');
+    $authenticated_role->grantPermission('access comments');
+    $authenticated_role->save();
+    $member = User::create([
+      'name' => 'fgroup_gallery_member',
+      'mail' => 'fgroup_gallery_member@example.invalid',
+      'status' => 1,
+    ]);
+    $member->save();
+
+    $topic = $this->createTopic();
+    $file = $this->createAttachmentFile('gallery-restrito.jpg');
+    $media = $this->createAttachmentMedia($file, 'gallery-restrito.jpg', $this->container->get('datetime.time')->getRequestTime());
+    $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->create([
+      'title' => '[TESTE F-GROUP] Galeria restrita',
+      'uid' => $this->author->id(),
+      'status' => FALSE,
+      'field_gallery_purpose' => 'forum',
+      'images' => [['target_id' => $media->id()]],
+    ]);
+    self::assertInstanceOf(MediaGalleryInterface::class, $gallery);
+    $gallery->save();
+    $comment = $this->commentWithGallery($topic, $gallery->uuid(), CommentInterface::PUBLISHED);
+
+    $gallery_publication = new ForumGalleryPublication($this->container->get('entity_type.manager'), $this->publication);
+    $gallery_publication->syncComment($comment);
+    $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->loadUnchanged($gallery->id());
+    self::assertInstanceOf(MediaGalleryInterface::class, $gallery);
+    self::assertTrue($gallery->isPublished(), 'A referência ativa publica a Galeria.');
+    self::assertFalse($this->publication->hasCurrentPublicGalleryReference($gallery), 'A conta anônima não tem referência acessível.');
+    self::assertTrue($this->publication->hasCurrentPublicGalleryReference($gallery, $member), 'A conta com acesso ao Comment tem referência acessível.');
+
+    $hooks = new ForumAttachmentAccessHooks($this->purpose, $this->publication);
+    $anonymous_result = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
+    );
+    self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Galeria de referência restrita.');
+    $member_result = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->entityAccess($gallery, 'view', $member),
+    );
+    self::assertTrue($member_result?->isAllowed(), 'A conta que lê o host lê a Galeria publicada.');
+  }
+
+  /**
    * Removing a Forum Gallery image unpublishes its detached Media.
    */
   public function testRemovedGalleryImageUnpublishesMedia(): void {

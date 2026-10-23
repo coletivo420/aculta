@@ -111,9 +111,11 @@ servidor por `entity_access` e por grants de nó no realm
 membro do Group, a permissão `view group_node:aculta_forum_topic entity` — sem
 ela o próprio Group nega a leitura. A F-GROUP 0.2 provou em Kernel os grants
 reais, o handler de acesso, a listagem filtrada e o rebuild por tópico; a 0.3
-provou a herança em posts e Comments; a 0.4 publica a Media de anexo
-referenciado por tópico publicado e revalida a conta em `media_access` e no
-download privado do File. O Runtime de testes foi validado em janela
+provou a herança em posts e Comments; a 0.4 publica a Media e a Galeria
+referenciadas por tópico publicado e revalida a conta em `media_access`,
+`entity_access` da galeria e no download privado do File. A ativação usa role
+sincronizada insider (`authenticated`), não individual, e o resultado de acesso
+do tópico restrito não é cacheado. O Runtime de testes foi validado em janela
 controlada, com backup, e revertido ao estado inicial. Inventário, decisões,
 matriz de testes, riscos e a próxima microfase estão em
 [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).

@@ -262,6 +262,40 @@ final class ForumAttachmentPublication {
   }
 
   /**
+   * Checks current access through a published Forum Gallery reference.
+   *
+   * Anonymous by default. With an account, the host post or comment access is
+   * evaluated for that account, so a restricted gallery follows the same rule
+   * as a restricted attachment.
+   */
+  public function hasCurrentPublicGalleryReference(MediaGalleryInterface $gallery, ?AccountInterface $account = NULL): bool {
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+    $comment_ids = $comment_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('comment_type', self::COMMENT_BUNDLE)
+      ->condition('entity_type', 'node')
+      ->condition('field_name', self::COMMENT_FIELD)
+      ->condition('comment_body.value', '%' . $gallery->uuid() . '%', 'LIKE')
+      ->execute();
+    foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
+      if ($comment instanceof CommentInterface
+        && $this->isForumComment($comment)
+        && in_array($gallery->uuid(), $this->galleryUuids($comment), TRUE)
+        && $this->isPublicComment($comment, NULL, $account)) {
+        return TRUE;
+      }
+    }
+    foreach ($this->findPostsReferencing($gallery->uuid(), 'media_gallery') as $post) {
+      if ($post instanceof ForumPost
+        && in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
+        && $this->isPublicPost($post, NULL, $account)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
    * Checks active references, including the current entity during a save.
    *
    * With $check_access FALSE the reference is considered active from a
@@ -389,8 +423,8 @@ final class ForumAttachmentPublication {
   /**
    * Exposes Forum visibility for Gallery publication synchronization.
    */
-  public function isPublicForumComment(CommentInterface $comment, ?NodeInterface $current_topic = NULL, ?AccountInterface $account = NULL): bool {
-    return $this->isForumComment($comment) && $this->isPublicComment($comment, $current_topic, $account);
+  public function isPublicForumComment(CommentInterface $comment, ?NodeInterface $current_topic = NULL, ?AccountInterface $account = NULL, bool $check_access = TRUE): bool {
+    return $this->isForumComment($comment) && $this->isPublicComment($comment, $current_topic, $account, $check_access);
   }
 
   /**
