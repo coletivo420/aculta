@@ -77,7 +77,7 @@ final class ContentIndexWorkManager {
     for ($attempt = 0; $attempt < 3; $attempt++) {
       $transaction = $this->database->startTransaction();
       try {
-        $this->lockActivationFenceIfRebuilding();
+        $this->lockActivationFenceIfNecessary();
         $existing = $this->database->select('aculta_index_work', 'work')
           ->fields('work', ['work_id', 'sequence', 'status'])
           ->condition('provider_id', $providerId)
@@ -186,7 +186,7 @@ final class ContentIndexWorkManager {
     }
     $transaction = $this->database->startTransaction();
     try {
-      $this->lockActivationFenceIfRebuilding();
+      $this->lockActivationFenceIfNecessary();
       $work = $this->database->select('aculta_index_work', 'work')
         ->fields('work', ['provider_id'])
         ->condition('work_id', $workId)
@@ -501,16 +501,16 @@ final class ContentIndexWorkManager {
   }
 
   /**
-   * Serializes source scheduling with a rebuild's active-pointer activation.
+   * Serializes scheduling with rebuild and retained-generation activation.
    */
-  private function lockActivationFenceIfRebuilding(): void {
-    $rebuilding = $this->database->select('aculta_index_generation', 'generation')
+  private function lockActivationFenceIfNecessary(): void {
+    $fenced = $this->database->select('aculta_index_generation', 'generation')
       ->fields('generation', ['generation_id'])
-      ->condition('status', ['building', 'validated'], 'IN')
+      ->condition('status', ['building', 'validated', 'retained'], 'IN')
       ->range(0, 1)
       ->execute()
       ->fetchField();
-    if ($rebuilding === FALSE) {
+    if ($fenced === FALSE) {
       return;
     }
     $state = $this->database->select('aculta_index_state', 'state')

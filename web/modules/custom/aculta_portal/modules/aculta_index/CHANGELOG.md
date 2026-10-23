@@ -1,5 +1,22 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.110 — sincronizar gerações retidas para rollback
+
+- Workers incrementais agora atualizam todas as gerações `retained`, além das
+  ativas e em rebuild; gravações e remoções obedecem a mesma sequência de
+  origem e invalidam o cache da geração correspondente.
+- A ativação de uma geração retida exige fingerprint atual dos providers e
+  fila sem itens queued, processing, retry ou dead. Agendamento e retry de
+  trabalho compartilham o fence da linha de estado enquanto há geração retida,
+  evitando uma nova mudança entre drenagem e troca do ponteiro.
+- Kernel MariaDB: cenário de atualização, bloqueio de rollback enquanto há
+  trabalho pendente, rollback com projeção atual e exclusão nas duas gerações
+  passou (1 teste / 23 assertions). Suíte `ContentIndexRebuilderKernelTest`
+  completa: 18 testes / 259 assertions PASS em MariaDB. PHPCS Drupal e
+  `php -l` passaram.
+- A política de retenção foi escolhida; o custo cresce com o número de
+  gerações retidas e deverá ser medido antes de definir expurgo/limite.
+
 ## 0.1.0-dev.109 — registrar provider Fórum pelo YAML owner
 
 - O Kernel tópico/ForumPost carrega `aculta_forum.content_index_provider` da

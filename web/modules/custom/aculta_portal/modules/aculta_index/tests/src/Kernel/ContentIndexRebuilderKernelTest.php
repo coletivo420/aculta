@@ -8,6 +8,9 @@ use Drupal\aculta_index\Drush\Commands\ContentIndexQueueCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexRebuildCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexAuditCommand;
 use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
+use Drupal\aculta_index\Rebuild\ContentIndexRebuilder;
+use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -162,6 +165,125 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->completeBackfilledSourceWork();
     $generations->activate($generationId);
     $this->assertSame($generationId, $this->container->get('aculta_index.generation_manager')->getActiveGeneration());
+  }
+
+  /**
+   * Keeps retained rollback generations current with incremental source work.
+   */
+  public function testIncrementalWorkUpdatesRetainedRollbackGeneration(): void {
+    $node = Node::create([
+      'type' => 'sample_content',
+      'title' => 'Before retained-generation update',
+      'status' => TRUE,
+    ]);
+    $node->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generations = $this->container->get('aculta_index.generation_manager');
+    $first = $this->buildAndActivateGeneration($rebuilder, $generations);
+    $second = $this->buildAndActivateGeneration($rebuilder, $generations);
+    self::assertSame('retained', $this->generationStatus($first));
+
+    $database = $this->container->get('database');
+    $providerFingerprint = $database->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['provider_fingerprint'])
+      ->condition('generation_id', $first)
+      ->execute()
+      ->fetchField();
+    $database->update('aculta_index_generation')
+      ->fields(['provider_fingerprint' => str_repeat('0', 64)])
+      ->condition('generation_id', $first)
+      ->execute();
+    try {
+      $generations->activate($first);
+      self::fail('Rollback must reject a retained generation with a stale provider inventory.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('provider inventory', $exception->getMessage());
+      self::assertSame($second, $generations->getActiveGeneration());
+    }
+    $database->update('aculta_index_generation')
+      ->fields(['provider_fingerprint' => $providerFingerprint])
+      ->condition('generation_id', $first)
+      ->execute();
+
+    $node->setTitle('After retained-generation update');
+    $node->save();
+    $status = $this->container->get('aculta_index.work_manager')->getStatus(
+      'test_sample_content',
+      'node',
+      (string) $node->id(),
+      $node->language()->getId(),
+    );
+    self::assertIsArray($status);
+    self::assertSame('queued', $status['status']);
+    self::assertContains($first, $generations->getWritableGenerations());
+    try {
+      $generations->activate($first);
+      self::fail('Rollback must wait until retained-generation updates drain.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('source work to drain', $exception->getMessage());
+      self::assertSame($second, $generations->getActiveGeneration());
+    }
+
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    $worker->processItem(['work_id' => $status['work_id']]);
+
+    foreach ([$first, $second] as $generationId) {
+      self::assertSame(
+        'After retained-generation update',
+        $database->select('aculta_index_entry', 'entry')
+          ->fields('entry', ['label'])
+          ->condition('generation_id', $generationId)
+          ->condition('entity_type', 'node')
+          ->condition('entity_id', (string) $node->id())
+          ->condition('langcode', $node->language()->getId())
+          ->execute()
+          ->fetchField(),
+        'Both active and retained generations receive the current projection.',
+      );
+    }
+
+    $generations->activate($first);
+    self::assertSame($first, $generations->getActiveGeneration());
+    self::assertSame(
+      'After retained-generation update',
+      $database->select('aculta_index_entry', 'entry')
+        ->fields('entry', ['label'])
+        ->condition('generation_id', $generations->getActiveGeneration())
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id())
+        ->condition('langcode', $node->language()->getId())
+        ->execute()
+        ->fetchField(),
+      'Rollback reactivates a generation already synchronized to current source state.',
+    );
+
+    $node->delete();
+    $deleteStatus = $this->container->get('aculta_index.work_manager')->getStatus(
+      'test_sample_content',
+      'node',
+      (string) $node->id(),
+      $node->language()->getId(),
+    );
+    self::assertIsArray($deleteStatus);
+    self::assertSame('delete', $deleteStatus['operation']);
+    $worker->processItem(['work_id' => $deleteStatus['work_id']]);
+    foreach ([$first, $second] as $generationId) {
+      self::assertSame(
+        0,
+        (int) $database->select('aculta_index_entry', 'entry')
+          ->condition('generation_id', $generationId)
+          ->condition('entity_type', 'node')
+          ->condition('entity_id', (string) $node->id())
+          ->countQuery()
+          ->execute()
+          ->fetchField(),
+        'Deletes remove the source projection from active and retained generations.',
+      );
+    }
   }
 
   /**
@@ -753,6 +875,30 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame([], $deniedSource->entities);
     $this->assertNull($deniedSource->nextCursor);
     $this->assertSame(0, $deniedSource->cacheability->getCacheMaxAge());
+  }
+
+  /**
+   * Builds, validates, drains queued source work, and activates a generation.
+   */
+  private function buildAndActivateGeneration(ContentIndexRebuilder $rebuilder, ContentIndexGenerationManager $generations): string {
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 20)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $generations->activate($generationId);
+    return $generationId;
+  }
+
+  /**
+   * Reads a generation status for lifecycle assertions.
+   */
+  private function generationStatus(string $generationId): string {
+    return (string) $this->container->get('database')->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['status'])
+      ->condition('generation_id', $generationId)
+      ->execute()
+      ->fetchField();
   }
 
   /**

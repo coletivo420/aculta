@@ -119,10 +119,10 @@ final class ContentIndexGenerationManager {
       if (!$state) {
         throw new \LogicException('The ACULTA Content Index active-generation pointer is missing.');
       }
-      if ($target['status'] === 'validated') {
-        if ($target['provider_fingerprint'] !== ''
-          && !hash_equals((string) $target['provider_fingerprint'], $this->providers->fingerprint())) {
-          throw new \RuntimeException('The provider inventory changed after validation; rebuild validation is required again.');
+      if (in_array($target['status'], ['validated', 'retained'], TRUE)) {
+        if ($target['provider_fingerprint'] === ''
+          || !hash_equals((string) $target['provider_fingerprint'], $this->providers->fingerprint())) {
+          throw new \RuntimeException('The provider inventory changed or cannot be verified; rebuild validation is required again.');
         }
         $gate = $this->workManager->getActivationGateState(array_keys($this->providers->all()));
         if (!$gate['ready']) {
@@ -195,13 +195,14 @@ final class ContentIndexGenerationManager {
    * Returns generations that receive live source changes.
    *
    * @return list<string>
-   *   Active, building, and validated generation IDs. Retained generations are
-   *   excluded pending the rollback synchronization/retention policy.
+   *   Active, building, validated, and retained generation IDs. Retained
+   *   generations stay synchronized so a validated rollback target reflects
+   *   current source state.
    */
   public function getWritableGenerations(): array {
     return array_map('strval', $this->database->select('aculta_index_generation', 'generation')
       ->fields('generation', ['generation_id'])
-      ->condition('status', ['active', 'building', 'validated'], 'IN')
+      ->condition('status', ['active', 'building', 'validated', 'retained'], 'IN')
       ->orderBy('created')
       ->execute()
       ->fetchCol());
