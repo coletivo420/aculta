@@ -151,6 +151,25 @@ controlada.
 Resultado da suíte Kernel da classe: 8 testes / 290 assertions, sem warnings;
 284 depreciações Drupal/contrib e 9 do PHPUnit.
 
+## Decisão editorial de proposta — Kernel real (dev.18)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Pedido de ajustes via Form API | Kernel | Nova revisão padrão privada, nota editorial e estado `needs_changes` | aprovado |
+| Recusa | Kernel | Nova revisão com estado `declined` e motivo | aprovado |
+| Revisão anterior da proposta | Kernel | Continua disponível com estado anterior e nota original | aprovado |
+| Decisão com VID esperado obsoleto | Kernel | Conflito, sem gravar revisão extra | aprovado |
+| Conta colaboradora sem permissão editorial | Kernel | Decisão negada | aprovado |
+| Nota vazia | Kernel | Serviço rejeita antes de persistir | aprovado |
+| Nota maior que 5.000 caracteres | Kernel | Form/service rejeita antes de persistir | planejado |
+| Aceite e aplicação na revisão do verbete | Kernel | Só publica por workflow após aplicação editorial e conferência do VID-base | pendente de decisão de fluxo |
+| Concorrência real entre duas sessões MariaDB | Kernel | Lock serializa; segunda ação obsoleta recebe conflito | planejado; lock implementado, concorrência multiprocesso não executada |
+
+O formulário de decisão não tem rota nem integração no Studio; seu consumo fica
+sob o contexto editorial do GanjaLab e acesso do backend Wiki.
+Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
+284 depreciações Drupal/contrib e 9 do PHPUnit.
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |

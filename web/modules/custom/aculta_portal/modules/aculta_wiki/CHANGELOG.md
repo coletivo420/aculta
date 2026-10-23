@@ -1,5 +1,21 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.18 — decisões editoriais revisionáveis
+
+- `WikiProposalDecision` e `WikiProposalDecisionForm` permitem pedir ajustes ou
+  recusar proposta com nota obrigatória em texto simples. Cada decisão grava
+  nova revisão privada e conserva o estado anterior no histórico.
+- Serviço exige `moderate wiki proposals`, confere revisão-base do formulário,
+  estado pendente e acesso de atualização. Um lock `FOR UPDATE` na entidade
+  serializa decisões concorrentes; submissão obsoleta recebe conflito.
+- Aceite/aplicação do conteúdo segue indisponível até definir se o editor aplica
+  manualmente em uma revisão do verbete. O Form API de decisão não tem rota nem
+  integração Studio nesta entrega.
+- Kernel focal verifica decisão, nova revisão, preservação da antiga, conflito
+  obsoleto, nota obrigatória, recusa e negação a colaborador. Suíte Kernel
+  MariaDB: 8 testes / 301 assertions, sem warnings; 284 depreciações Drupal/
+  contrib e 9 PHPUnit.
+
 ## 0.1.0-dev.17 — acesso confirmado e link contextual
 
 - `WikiProposalSubmission` exige confirmação de e-mail pelo contrato

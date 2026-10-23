@@ -68,3 +68,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   somente para verbete publicado, no purpose Wiki, quando existe permissão de
   proposta e a pessoa não tem acesso direto de update. Preservar cache contexts
   de domínio, permissões e cacheability dos resultados de acesso.
+- Decisão de proposta (dev.18): `WikiProposalDecision` aceita só `needs_changes`
+  e `declined` até a semântica de aceite/aplicação no Node ser decidida. Salva
+  revisão privada, exige nota, permissão e VID esperado; usa lock de banco para
+  impedir duas decisões concorrentes sobre o mesmo estado. Form API está pronto
+  para consumo, mas não tem rota nem link Studio.

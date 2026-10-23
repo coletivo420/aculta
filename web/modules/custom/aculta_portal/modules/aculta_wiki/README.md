@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.18`: o backend e Form API registram “pedir ajustes” e “recusar”
+  como novas revisões privadas, com nota editorial, checagem de conflito e lock
+  contra decisões simultâneas. Kernel MariaDB completo: 8 testes / 301
+  assertions, sem warnings (284 depreciações Drupal/contrib e 9 PHPUnit).
+  Aceite/aplicação e integração Studio seguem pendentes até decidir como o
+  conteúdo entra no Node.
 - `0.1.0-dev.17`: propostas exigem e-mail confirmado por `aculta_portal`.
   Verbetes publicados exibem link contextual apenas a colaboradores confirmados
   sem permissão de edição direta; o render varia cache por conta, permissões e
@@ -24,8 +30,7 @@ pendentes, está em
   classe: 8 testes / 274 assertions; módulo permanece desabilitado no Runtime.
 - `0.1.0-dev.14`: existe persistência privada revisionável para propostas de
   terceiros, com revisão-base e serviço que valida acesso, publicação e
-  purpose `wiki`. Ainda não há interface de decisão nem aplicação editorial da
-  proposta. Nenhuma expiração
+  purpose `wiki`. Nenhuma expiração
   automática foi criada; retenção para propostas encerradas aguarda decisão.
 - `0.1.0-dev.13`: rotas públicas e View da listagem são descobertas pelo
   bootstrap Kernel real; o acesso à busca é caracterizado com grants diferentes

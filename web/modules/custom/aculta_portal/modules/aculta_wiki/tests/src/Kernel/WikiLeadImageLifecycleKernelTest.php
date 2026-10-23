@@ -33,13 +33,16 @@ use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
+use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -554,6 +557,66 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $secondPageIds = array_map(static fn (WikiProposal $item): int => (int) $item->id(), $secondPage->getItems());
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
+
+    $proposalToDecide = $firstPage->getItems()[0];
+    $oldProposalRevisionId = (int) $proposalToDecide->getRevisionId();
+    $decisionService = $this->container->get('aculta_wiki.proposal_decision');
+    self::assertInstanceOf(WikiProposalDecision::class, $decisionService);
+    $decisionForm = WikiProposalDecisionForm::create($this->container);
+    $decisionState = new FormState();
+    $decisionForm->buildForm([], $decisionState, $proposalToDecide);
+    $decisionState->setValues([
+      'expected_revision_id' => $oldProposalRevisionId,
+      'decision' => 'needs_changes',
+      'decision_note' => 'Inclua uma fonte para esta afirmação.',
+    ]);
+    $decisionBuild = [];
+    $decisionForm->validateForm($decisionBuild, $decisionState);
+    self::assertFalse($decisionState->hasAnyErrors());
+    $decisionForm->submitForm($decisionBuild, $decisionState);
+    $decidedProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->load($proposalToDecide->id());
+    self::assertSame('needs_changes', $decidedProposal->get('state')->value);
+    self::assertSame('Inclua uma fonte para esta afirmação.', $decidedProposal->get('decision_note')->value);
+    self::assertNotSame($oldProposalRevisionId, (int) $decidedProposal->getRevisionId());
+    self::assertSame('submitted', $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->loadRevision($oldProposalRevisionId)->get('state')->value);
+
+    try {
+      $decisionService->decide($proposalToDecide, $oldProposalRevisionId, 'declined', 'Revisão obsoleta.');
+      self::fail('A proposal changed after the reviewer opened the form.');
+    }
+    catch (ConflictHttpException) {
+      self::assertSame('needs_changes', $decidedProposal->get('state')->value);
+    }
+
+    try {
+      $decisionService->decide($decidedProposal, (int) $decidedProposal->getRevisionId(), 'declined', ' ');
+      self::fail('An editorial decision requires a non-empty note.');
+    }
+    catch (UnprocessableEntityHttpException) {
+      self::assertSame('needs_changes', $decidedProposal->get('state')->value);
+    }
+
+    $this->container->get('current_user')->setAccount($other);
+    try {
+      $decisionService->decide($decidedProposal, (int) $decidedProposal->getRevisionId(), 'declined', 'Sem permissão.');
+      self::fail('A contributor must not moderate proposals.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertSame('needs_changes', $decidedProposal->get('state')->value);
+    }
+
+    $this->container->get('current_user')->setAccount($reviewer);
+    $proposalToDecline = $secondPage->getItems()[0];
+    $declinedProposal = $decisionService->decide(
+      $proposalToDecline,
+      (int) $proposalToDecline->getRevisionId(),
+      'declined',
+      'A evidência apresentada não sustenta esta alteração.',
+    );
+    self::assertSame('declined', $declinedProposal->get('state')->value);
+    self::assertSame('A evidência apresentada não sustenta esta alteração.', $declinedProposal->get('decision_note')->value);
 
     $this->container->get('current_user')->setAccount($submitter);
     $formState = new FormState();

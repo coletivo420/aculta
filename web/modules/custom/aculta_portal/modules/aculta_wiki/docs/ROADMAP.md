@@ -4,10 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.17**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.18**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.18 — decisão editorial sem aplicação automática
+
+A API Form grava pedido de ajustes/recusa em nova revisão e dá feedback textual.
+O lock de linha no banco evita que dois revisores decidam com base na mesma
+versão; o VID esperado também rejeita formulários obsoletos. Aceite e aplicação
+ao verbete aguardam definição de fluxo. A integração da fila/Form com GanjaLab
+no Studio também segue pendente; não foi criada interface editorial paralela.
+Kernel MariaDB passou com 8 testes / 301 assertions; 284 depreciações
+Drupal/contrib e 9 PHPUnit.
 
 ### Incremento dev.17 — acesso à contribuição
 
