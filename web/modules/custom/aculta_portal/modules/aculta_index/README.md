@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.37` — reconciliação incremental bidirecional entre providers e catálogo.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **44 testes / 505 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media e reconciliação bidirecional de fontes. PHPCS Drupal passou. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.38` — segurança da sequência da fila e decisão de ownership na reconciliação.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **71 testes / 899 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media, reconciliação bidirecional e evento novo após claim antigo. PHPCS Drupal passou. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -90,8 +90,11 @@ hash canônico; projeções divergentes são refileiradas e fontes confirmadamen
 ausentes são removidas via work manager. A fase `sources` percorre providers e
 tipos pelo enumerador keyset e encontra entidades elegíveis sem entrada no
 catálogo, também refileirando-as. Ownership/provider indisponível é contado e
-preservado; providers desabilitados e gerações retidas não são apagados. O cursor
-persistido identifica provider, entity type e último ID, sem expor IDs no estado
+preservado; providers desabilitados e gerações retidas não são apagados. Quando
+o provider volta a ser habilitado, ele retoma ownership e a auditoria valida as
+fontes antes de reenfileirar projeções ou remoções. O Portal não mantém manifesto
+para excluir dados de um owner indisponível. O cursor persistido identifica
+provider, entity type e último ID, sem expor IDs no estado
 Drush. A validação do rebuild mantém suas verificações estruturais da geração em
 construção.
 

@@ -150,6 +150,32 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * A newly scheduled event cannot be completed by an older in-flight claim.
+   */
+  public function testWorkManagerKeepsNewerEventQueuedAfterStaleClaimCompletes(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $workId = $work->schedule('magazine', 'node', 'in-flight-1', 'pt_BR', 'project');
+    $oldClaim = $work->claim($workId);
+    $this->assertNotNull($oldClaim);
+
+    // Model an entity event arriving after a worker claimed the old sequence.
+    $newSequence = $work->schedule('magazine', 'node', 'in-flight-1', 'pt_BR', 'delete');
+    $this->assertSame($oldClaim['sequence'] + 1, $newSequence);
+    $this->assertFalse($work->complete($oldClaim['work_id'], $oldClaim['sequence']));
+    $this->assertFalse($work->fail($oldClaim['work_id'], $oldClaim['sequence'], 'worker_failure'));
+
+    $status = $work->getStatus('magazine', 'node', 'in-flight-1', 'pt_BR');
+    $this->assertSame('queued', $status['status']);
+    $this->assertSame('delete', $status['operation']);
+    $this->assertSame($newSequence, $status['sequence']);
+
+    $newClaim = $work->claim($workId);
+    $this->assertSame($newSequence, $newClaim['sequence']);
+    $this->assertSame('delete', $newClaim['operation']);
+    $this->assertTrue($work->complete($workId, $newSequence));
+  }
+
+  /**
    * Checks approved retry count and exponential delay before dead-letter.
    */
   public function testWorkManagerRetriesFiveTimesThenMarksDead(): void {

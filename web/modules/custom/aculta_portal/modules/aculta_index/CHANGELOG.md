@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.38 — sequência da fila e ownership na reconciliação
+
+- Kernel cobre evento de exclusão recebido após claim de sequência antiga:
+  conclusão/falha antigas não podem encerrar o novo trabalho enfileirado.
+- Decisão: limpeza de projeções de provider desativado aguarda a reativação do
+  módulo proprietário. O provider revalidado confirma existência/ownership; o
+  Portal não recebe manifesto para excluir projeções sem essa autoridade.
+- Decisão: Entity Access é revalidado em cada consulta; eventos extras de grants
+  externos não são requisito de 0.1. A fila mantém responsabilidade por
+  metadados e projeções, não pela segurança de leitura.
+- Regressão combinada Kernel Index/Activity/User: 71 testes, 899 assertions;
+  seis deprecações upstream observadas.
+
 ## 0.1.0-dev.37 — reconciliação bidirecional
 
 - Auditoria acrescenta fase keyset por provider/entity type para enumerar fontes
