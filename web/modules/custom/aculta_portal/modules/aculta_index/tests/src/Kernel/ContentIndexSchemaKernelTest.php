@@ -11,6 +11,8 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Query\ContentIndexCursorManager;
+use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
@@ -1143,6 +1145,99 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField(), 'An unverified entry must not get a destructive repair job.');
+  }
+
+  /**
+   * Deletes an orphan only after its owner provider is registered again.
+   */
+  public function testAuditCleansOwnerProjectionAfterProviderReactivation(): void {
+    $database = $this->container->get('database');
+    $generationId = 'owner-reactivation-generation';
+    $database->insert('aculta_index_generation')
+      ->fields([
+        'generation_id' => $generationId,
+        'status' => 'active',
+        'validated' => 1,
+        'activated' => 1,
+      ])
+      ->execute();
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => $generationId, 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+    $this->insertEntry($generationId, 'media', '909', 'pt-br');
+    $database->update('aculta_index_entry')
+      ->fields([
+        'provider_id' => 'image',
+        'bundle' => 'image',
+        'provider_version' => 1,
+      ])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '909')
+      ->execute();
+
+    $registeredProviders = $this->container->get('aculta_index.provider_registry');
+    self::assertTrue($registeredProviders->has('image'));
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $workManager = $this->container->get('aculta_index.work_manager');
+    $emptyRegistry = new ContentIndexProviderRegistry();
+    $disabledOwnerChecker = new ContentIndexIntegrityChecker(
+      $database,
+      $this->container->get('datetime.time'),
+      $emptyRegistry,
+      $workManager,
+      new ContentIndexEntityEnumerator($emptyRegistry, $entityTypeManager),
+      $entityTypeManager,
+      $this->container->get('aculta_index.writer'),
+      $this->container->get('logger.channel.aculta_index'),
+    );
+    $finishAudit = static function (ContentIndexIntegrityChecker $checker): array {
+      $state = $checker->startAudit();
+      while ($state['status'] === 'running') {
+        $state = $checker->processAuditBatch(10);
+      }
+      return $state;
+    };
+
+    $disabledAudit = $finishAudit($disabledOwnerChecker);
+    self::assertSame(1, (int) $disabledAudit['unverified_source_count']);
+    self::assertSame(0, (int) $disabledAudit['missing_source_count']);
+    self::assertSame(1, (int) $database->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'image')
+      ->condition('entity_id', '909')
+      ->countQuery()
+      ->execute()
+      ->fetchField(), 'An unavailable owner cannot authorize cleanup.');
+    self::assertNull($workManager->getStatus('image', 'media', '909', 'pt-br'));
+
+    $ownerReadyChecker = new ContentIndexIntegrityChecker(
+      $database,
+      $this->container->get('datetime.time'),
+      $registeredProviders,
+      $workManager,
+      new ContentIndexEntityEnumerator($registeredProviders, $entityTypeManager),
+      $entityTypeManager,
+      $this->container->get('aculta_index.writer'),
+      $this->container->get('logger.channel.aculta_index'),
+    );
+    $ownerReadyAudit = $finishAudit($ownerReadyChecker);
+    self::assertSame(1, (int) $ownerReadyAudit['missing_source_count']);
+    self::assertSame(0, (int) $ownerReadyAudit['unverified_source_count']);
+    $repair = $workManager->getStatus('image', 'media', '909', 'pt-br');
+    self::assertIsArray($repair);
+    self::assertSame('queued', $repair['status']);
+
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    $worker->processItem(['work_id' => $repair['work_id']]);
+    self::assertSame(0, (int) $database->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'image')
+      ->condition('entity_id', '909')
+      ->countQuery()
+      ->execute()
+      ->fetchField(), 'Reactivated owner verification lets the worker remove only the derived row.');
   }
 
   /**

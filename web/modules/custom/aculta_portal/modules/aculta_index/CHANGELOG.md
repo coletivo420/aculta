@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.122 — limpar projeção órfã após reativar o owner
+
+- Kernel simula provider Image desabilitado: a auditoria marca a fonte como
+  não verificável, preserva a projeção e não agenda trabalho destrutivo.
+  Reativado o registry, a auditoria confirma a fonte ausente, agenda `delete` e
+  o worker remove somente a linha derivada.
+- `ContentIndexSchemaKernelTest`: 44 testes / 483 assertions PASS em SQLite;
+  o cenário focal passou com 1/15. PHPCS Drupal e `php -l` PASS. A classe
+  registra uma depreciação Core e 45 avisos PHPUnit. Suíte Kernel completa:
+  89 testes / 1.342 assertions PASS em SQLite, com 39 depreciações
+  Core/contrib, 45 depreciações PHPUnit e 2 skips.
+
 ## 0.1.0-dev.121 — manter estável o cursor de relações
 
 - A regressão de relações agora insere um novo alvo de maior ID depois da
