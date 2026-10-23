@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.133 — restringir teste de processos a MySQL/MariaDB
+
+- O estresse entre processos exige `innodb_lock_wait_timeout`; em outros drivers
+  Kernel o teste é explicitamente pulado, em vez de falhar ao abrir a conexão.
+- PHP lint, PHPCS Drupal e o validador de status passaram. Execução MariaDB
+  permanece pendente até o benchmark de 1M liberar o banco.
+
 ## 0.1.0-dev.132 — tratar status de subprocesso ausente explicitamente
 
 - O harness só prefere o código de saída observado quando é inteiro não-negativo;

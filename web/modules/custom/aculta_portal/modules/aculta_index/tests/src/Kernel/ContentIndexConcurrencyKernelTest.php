@@ -175,6 +175,9 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
     if (!function_exists('proc_open')) {
       self::markTestSkipped('This process-level concurrency test requires proc_open.');
     }
+    if ($this->container->get('database')->driver() !== 'mysql') {
+      self::markTestSkipped('This process-level concurrency test requires MySQL/MariaDB InnoDB semantics.');
+    }
 
     $providerId = 'process_stress';
     $entityTypeId = 'node';
