@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'IDX 0.1-G/R — medir writer, rebuild, reconciliação e Entity Access real em 10k/100k/1M no MariaDB de teste; manter relações de Wiki categories/image e ownership de `remote_video` como dívidas ([roadmap](docs/portal/ACULTA-CONTENT-INDEX.md))'
-version_note: "`0.1.0-dev.51` (suíte Unit do Index 34/153 PASS, 9 deprecações; harness Fórum 7/60; Group/grants Kernel pendentes)"
+version_note: "`0.1.0-dev.52` (suíte Unit do Index 35/155 PASS, 10 deprecações; mapa de 10 providers ACULTA validado; página Statistics incompatível é rejeitada integralmente)"

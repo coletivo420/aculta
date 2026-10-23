@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.52 — mapa Unit dos providers ACULTA registrados
+
+- Compila em um registry tagueado os service YAMLs dos nove módulos owner e
+  valida os dez registros provider/type/bundle atuais, detectando tags ausentes,
+  declarações divergentes e conflitos de ownership.
+- Suíte Unit do Index: 35 testes / 155 assertions PASS, 10 deprecações PHPUnit.
+- A ponte Statistics rejeita a página inteira quando algum item é incompatível
+  com a métrica selecionada; não devolve totais parciais nem filtra itens.
+
 ## 0.1.0-dev.51 — regressão Unit do submódulo
 
 - Suíte `aculta_index/tests/src/Unit` executada após os harnesses de Statistics

@@ -6,7 +6,7 @@
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 **Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
-**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md).
+**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens.
 
 ## Propósito e propriedade
 
