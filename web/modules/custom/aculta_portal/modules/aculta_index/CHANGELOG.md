@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.50 — harness do filtro usa o provider real do Fórum
+
+- Os testes de purpose canônico e Domain ausente agora registram o
+  `ForumContentIndexProvider` de produção no registry e passam pelo
+  `ContentIndexAccessFilter`; o acesso continua isolado com doubles de storage,
+  negotiator e entidades.
+- Unit focado: 7 testes / 60 assertions PASS. Group/grants reais e Runtime
+  continuam pendentes, conforme o recorte de harness reduzido escolhido.
+
 ## 0.1.0-dev.49 — contrato de filtros da ponte Statistics
 
 - Documenta que os filtros da página precisam selecionar o tipo/bundle

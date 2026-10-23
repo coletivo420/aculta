@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
-use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
@@ -18,6 +18,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -176,42 +177,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $provider = new class() implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getProviderId(): string {
-        return 'forum';
-      }
-
-      /** {@inheritdoc} */
-      public function getProjectionVersion(): int {
-        return 1;
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getSupportedEntityTypes(): array {
-        return ['node' => ['aculta_forum_topic']];
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getAccessPurpose(ContentEntityInterface $entity): ?string {
-        return 'forum';
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-        return NULL;
-      }
-
-    };
+    $provider = new ForumContentIndexProvider();
     $registry = new ContentIndexProviderRegistry([$provider]);
 
     $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
@@ -227,7 +193,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
    * A missing canonical purpose domain denies access without fallback.
    */
   public function testMissingProviderPurposeDomainFailsClosed(): void {
-    $translation = $this->createMock(ContentEntityInterface::class);
+    $translation = $this->createMock(NodeInterface::class);
     $translation->method('bundle')->willReturn('aculta_forum_topic');
     $translation->method('getCacheContexts')->willReturn([]);
     $translation->method('getCacheMaxAge')->willReturn(-1);
@@ -253,34 +219,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $provider = new class() implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
-
-      /** {@inheritdoc} */
-      public function getProviderId(): string {
-        return 'forum';
-      }
-
-      /** {@inheritdoc} */
-      public function getProjectionVersion(): int {
-        return 1;
-      }
-
-      /** {@inheritdoc} */
-      public function getSupportedEntityTypes(): array {
-        return ['node' => ['aculta_forum_topic']];
-      }
-
-      /** {@inheritdoc} */
-      public function getAccessPurpose(ContentEntityInterface $entity): ?string {
-        return 'forum';
-      }
-
-      /** {@inheritdoc} */
-      public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-        return NULL;
-      }
-
-    };
+    $provider = new ForumContentIndexProvider();
 
     $result = (new ContentIndexAccessFilter(
       $manager,
@@ -310,8 +249,8 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   /**
    * Creates a forum translation whose access handler requires Forum purpose.
    */
-  private function forumTranslation(DomainNegotiatorInterface $negotiator, DomainInterface $forumDomain): ContentEntityInterface {
-    $translation = $this->createMock(ContentEntityInterface::class);
+  private function forumTranslation(DomainNegotiatorInterface $negotiator, DomainInterface $forumDomain): NodeInterface {
+    $translation = $this->createMock(NodeInterface::class);
     $translation->method('bundle')->willReturn('aculta_forum_topic');
     $translation->method('hasTranslation')->with('pt-br')->willReturn(TRUE);
     $translation->method('getTranslation')->with('pt-br')->willReturn($translation);
