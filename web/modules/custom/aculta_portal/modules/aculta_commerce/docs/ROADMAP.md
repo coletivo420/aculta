@@ -87,3 +87,10 @@ A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loj
 ## 0.1.0-D — Green Stash (execução parcial, 2026-10-22)
 
 Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`, com permissão `access aculta green stash` restrita, serviço e teste unitário, sem atribuir permissão a roles e sem registrar rota/provider Studio. Detalhes e sequência em [GREEN-STASH-0.1.0-D.md](GREEN-STASH-0.1.0-D.md). Próximo passo D-A/D-B: resolver o contrato de domínio e registrar provider + rota próprios com testes; D-C/D-D ficam condicionados a isolamento por store/order type e SDC/UI Suite. **Sem impacto no carrinho multidomínio e checkout público.**
+
+## Green Stash D-A/D-B — Código entregue (2026-10-22)
+
+- Criados provider Studio `green_stash`, controller, rota `/green-stash` sob purpose `account`, registro de serviço condicionado ao módulo Commerce, dependência Studio e teste unitário de contrato.
+- Rota **não é declarada pronta para uso operacional**: o provider renderiza apenas mensagem de preparação. A permissão de entrada não autoriza visualizar/alterar entidades de Commerce e nenhum papel recebeu grants.
+- **Próxima fase D-C:** caracterizar provider/rota no homelab e adicionar dashboard exclusivamente administrativo com isolamento de loja e permissions Commerce. **D-D:** apresentação SDC/UI Suite e gates de tema. Dívidas DT-COM-11 a DT-COM-13 no registro central.
+- Preservados carrinho multidomínio, CheckoutSlugMap, CartConsolidator, flows e gateway Mercado Pago.
