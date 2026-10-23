@@ -1,0 +1,7 @@
+name: 'ACULTA Index Magazine provider test'
+type: module
+description: 'Registers the production Magazine provider for Index Kernel coverage.'
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node

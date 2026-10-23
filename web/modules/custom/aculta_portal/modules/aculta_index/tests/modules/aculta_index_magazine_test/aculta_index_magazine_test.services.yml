@@ -1,0 +1,5 @@
+services:
+  aculta_index_magazine_test.content_index_provider:
+    class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }

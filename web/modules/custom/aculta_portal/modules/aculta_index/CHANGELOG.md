@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.57 — integrar Magazine no backfill e CRUD do Index
+
+- Kernel registra a classe de produção `MagazineContentIndexProvider` via tag,
+  reconstrói uma publicação, aplica update de título/relação e remove entrada e
+  relação após delete pelo worker. 1 teste / 14 assertions PASS.
+- A fixture isola a cadeia de dependências do módulo owner; o teste de mapa
+  separado confirma o service YAML real. Purpose/domain e grants reais seguem
+  pendentes de homologação.
+
 ## 0.1.0-dev.56 — preservar a página autorizada sem Statistics
 
 - Kernel confirma no mesmo fluxo que a ausência do aggregator deixa a página
