@@ -224,6 +224,22 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 - **Erro restante, de outra frente:** o índice `search_api` `aculta_forum` (Discussões públicas) referencia o campo "Categoria do Fórum (tópico ou post)", sem definição de dados. Esse erro acontece no import e no rebuild de rotas. Enquanto não for corrigido, o import completo continua bloqueado.
 - **Kernel do pane:** PASS desde a rodada final, sem habilitar `aculta_portal`.
 
+## 9.4 Estado final desta rodada (pendências da condição de objetivo)
+
+- **Índice `search_api` `aculta_forum`:** corrigido. O processor `ForumPostSearchAccess` importava `ContainerFactoryPluginInterface` do namespace Symfony, então a classe não carregava e o plugin não era descoberto. Commit `4de26782`. A importação do índice passou a funcionar.
+- **Import de configuração:** cada arquivo do drift foi importado individualmente, com `--partial` (sem deleções e sem `core.extension`). Todos os imports reportaram sucesso. Após o import, o `config:status` ainda mostra 35 diferentes e 16 só no sync. Causas identificadas:
+  - Módulos contrib reincluem componentes ao salvar displays: `node_co_authors` (`co_authors`) e `content_moderation` (`moderation_state`) voltam ao display de `node.activity` logo após a gravação. O import não consegue deixar esses displays idênticos ao sync.
+  - Itens "só no sync" que foram gravados continuam listados nessa categoria pelo `config:status`, mesmo com o item presente no banco. Não investigado até o fim.
+  - `core.extension` segue excluído de propósito (desinstalaria módulos com dados).
+  - Os 34 itens só no banco foram preservados, por segurança.
+  
+  Conclusão: a paridade total do drift não é alcançável só por import. Ela depende de decisões sobre os módulos contrib e sobre o sync.
+- **Gate Drupal 11+:** PASS (1151 verificações). Três falhas foram corrigidas: caminho do `WikiController` (movido para `aculta_wiki`), registros de status dos helpers de checkout e do subscriber da ADR-013, e a contagem de subscribers, agora quatorze. Commit `e02608c0`.
+- **Cenários de sessão:**
+  - *Verificado em Kernel (Commerce, sem o Portal):* carrinhos de loja, curso e doação coexistem para a mesma conta; o mesmo tipo não é duplicado; carrinhos de lojas diferentes são separados. Arquivo `CartIsolationKernelTest`, 3 testes passando.
+  - *Não verificado:* login durante o checkout, múltiplas abas, expiração de sessão e troca de Domain pela lógica do Portal. Exigem teste funcional com o navegador no ambiente de teste, e o gateway de pagamento. O site local responde só com redirecionamento para os domínios públicos, então esses testes não rodam aqui sem configuração.
+- **Duplicação Loja × LMS:** removida na configuração (flow `curso` retirado, tipo `curso` aponta para o flow `default`). A rota de import foi aplicada no ambiente de teste.
+
 ## 10. Pendências
 
 1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1.
