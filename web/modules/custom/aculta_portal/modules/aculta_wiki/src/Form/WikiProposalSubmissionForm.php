@@ -126,7 +126,7 @@ final class WikiProposalSubmissionForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
     try {
-      $this->submission->submit(
+      $proposal = $this->submission->submit(
         $node,
         (string) $form_state->getValue('intent'),
         (string) $form_state->getValue('proposed_text'),
@@ -140,7 +140,7 @@ final class WikiProposalSubmissionForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t('Proposta enviada para avaliação editorial.'));
-    $form_state->setRedirect('entity.node.canonical', ['node' => $node->id()]);
+    $form_state->setRedirect('aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
   }
 
   /**

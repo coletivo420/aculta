@@ -4,10 +4,16 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.22**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.23**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.23 — continuação da submissão
+
+Ao enviar contribuição, o Form API redireciona para a rota privada da proposta
+persistida. A autoria pode conferir status e retorno imediatamente, sem depender
+da notificação por e-mail. Kernel focal: 1 teste / 85 assertions.
 
 ### Incremento dev.22 — status e retorno privado ao autor
 

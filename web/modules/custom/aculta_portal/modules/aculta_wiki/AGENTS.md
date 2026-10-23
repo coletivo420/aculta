@@ -87,3 +87,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Retorno da proposta (dev.22): status privado exige Entity Access real no
   parâmetro `{proposal}`; notificação assíncrona usa Mailer opcional e somente
   e-mail confirmado. Não incluir texto sugerido ou dados pessoais no aviso.
+- Continuação da submissão (dev.23): após persistir, redirecionar para o ID
+  retornado pelo serviço de submissão e a rota de status protegida; não adivinhar
+  identificadores nem redirecionar para um registro diferente.

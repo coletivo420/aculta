@@ -753,7 +753,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalForm->validateForm($build, $formState);
     self::assertFalse($formState->hasAnyErrors());
     $proposalForm->submitForm($build, $formState);
-    self::assertSame('entity.node.canonical', $formState->getRedirect()->getRouteName());
+    self::assertSame('aculta_wiki.proposal_status', $formState->getRedirect()->getRouteName());
+    $redirectProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->load($formState->getRedirect()->getRouteParameters()['proposal']);
+    self::assertInstanceOf(WikiProposal::class, $redirectProposal);
+    self::assertSame('correction', $redirectProposal->get('intent')->value);
     self::assertSame(27, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 

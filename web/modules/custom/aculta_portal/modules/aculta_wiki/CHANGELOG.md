@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.23 — continuação da submissão de proposta
+
+- Formulário de contribuição redireciona para `aculta_wiki.proposal_status` com
+  o ID da proposta que acabou de salvar. A autoria chega à própria página de
+  status sem precisar abrir o e-mail.
+- Kernel focal cobre persistência, destino de redirect e vínculo ao registro
+  recém-criado (1 teste / 85 assertions); PHPCS e lint passaram. A suíte Kernel
+  completa não foi repetida após esta mudança.
+- Runtime permanece desabilitado.
+
 ## 0.1.0-dev.22 — retorno privado à autoria
 
 - Nova rota de status `/wiki/propostas/{proposal}` mostra proposta, estado,

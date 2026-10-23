@@ -7,6 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.23`: após enviar, a autoria segue diretamente para a página privada
+  da proposta recém-criada. Kernel focal do fluxo de submissão: 1 teste / 85
+  assertions.
 - `0.1.0-dev.22`: pessoas autoras podem abrir status e retorno da própria
   proposta em `/wiki/propostas/{proposal}`. Decisões de ajustes/recusa enfileiram
   um e-mail mínimo para contas ativas e confirmadas, com link canônico privado.

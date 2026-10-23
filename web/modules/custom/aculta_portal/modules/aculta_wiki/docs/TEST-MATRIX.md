@@ -86,6 +86,7 @@ depois da importação de configuração no servidor de testes.
 | Fila de revisão com candidatos negados | Kernel | 26 VIDs recentes sem grant não ocultam uma revisão autorizada mais antiga | aprovado (dev.21) |
 | Status privado da proposta | Kernel | Autoria lê status/nota; outra conta é negada pelo Entity Access da entidade | aprovado (dev.22) |
 | Aviso de decisão | Kernel | Fila em memória recebe estado, nota e URL privada; sem texto sugerido ou envio real | aprovado (dev.22) |
+| Redirect da submissão | Kernel | Abre a página privada do registro recém-persistido | aprovado (dev.23; 1 teste / 85 assertions) |
 
 Resultado Kernel dev.22: 9 testes / 355 assertions; 286 depreciações
 Drupal/contrib e 10 do PHPUnit. A suíte Unit passou com 66 testes / 338
