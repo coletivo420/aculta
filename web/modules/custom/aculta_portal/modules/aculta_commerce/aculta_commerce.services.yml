@@ -7,3 +7,5 @@ services:
   aculta_commerce.green_stash_controller:
     class: Drupal\aculta_commerce\Controller\GreenStashController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_commerce.green_stash_navigation:
+    class: Drupal\aculta_commerce\Navigation\GreenStashNavigation
