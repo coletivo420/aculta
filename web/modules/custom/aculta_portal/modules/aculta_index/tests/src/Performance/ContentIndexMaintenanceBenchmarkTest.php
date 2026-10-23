@@ -127,6 +127,14 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     if (!str_starts_with($outputFile, $temporaryDirectory)) {
       throw new \RuntimeException('The maintenance benchmark result must be written inside sys_get_temp_dir().');
     }
+    $progressFile = $outputFile . '.progress.json';
+    $runStarted = hrtime(TRUE);
+    $this->writeProgress($progressFile, [
+      'status' => 'running',
+      'phase' => 'source_setup',
+      'source_count' => $this->sourceCount,
+      'updated_at' => gmdate(DATE_ATOM),
+    ]);
 
     $sourceSetupStarted = hrtime(TRUE);
     // Source creation is outside the measured rebuild. Temporarily hide the
@@ -148,6 +156,13 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     $sourceSetupMilliseconds = (hrtime(TRUE) - $sourceSetupStarted) / 1_000_000;
     $sourceSetupMemoryBytes = memory_get_usage(TRUE);
     $sourceSetupPeakMemoryBytes = memory_get_peak_usage(TRUE);
+    $this->writeProgress($progressFile, [
+      'status' => 'running',
+      'phase' => 'rebuild',
+      'source_count' => $this->sourceCount,
+      'source_setup_elapsed_ms' => round($sourceSetupMilliseconds, 3),
+      'updated_at' => gmdate(DATE_ATOM),
+    ]);
     memory_reset_peak_usage();
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
@@ -159,6 +174,17 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $batch = $rebuilder->processNextBatch($generationId, 500);
       $rebuildBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
       $rebuildBatchCount++;
+      $this->writeProgress($progressFile, [
+        'status' => 'running',
+        'phase' => 'rebuild',
+        'source_count' => $this->sourceCount,
+        'batch_count' => $rebuildBatchCount,
+        'last_batch_elapsed_ms' => round(end($rebuildBatchTimes), 3),
+        'elapsed_ms' => round((hrtime(TRUE) - $rebuildStarted) / 1_000_000, 3),
+        'cursor_entity_id' => $batch['cursor_entity_id'],
+        'complete' => $batch['complete'],
+        'updated_at' => gmdate(DATE_ATOM),
+      ]);
       if ($rebuildBatchCount > (int) ceil($this->sourceCount / 500) + 2) {
         throw new \RuntimeException('The benchmark rebuild did not reach its source checkpoint within the expected batches.');
       }
@@ -193,12 +219,26 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     $auditBatchCount = 0;
     do {
       $batchStarted = hrtime(TRUE);
+      $processedPhase = $auditPhase;
       $audit = $integrityChecker->processAuditBatch(self::AUDIT_BATCH_LIMIT);
       $batchElapsed = (hrtime(TRUE) - $batchStarted) / 1_000_000;
       $auditBatchTimes[] = $batchElapsed;
       $auditBatchTimesByPhase[$auditPhase][] = $batchElapsed;
       $auditPhase = (string) ($audit['phase'] ?? $auditPhase);
       $auditBatchCount++;
+      $this->writeProgress($progressFile, [
+        'status' => $audit['status'],
+        'phase' => $processedPhase,
+        'next_phase' => $auditPhase,
+        'source_count' => $this->sourceCount,
+        'batch_count' => $auditBatchCount,
+        'last_batch_elapsed_ms' => round($batchElapsed, 3),
+        'elapsed_ms' => round((hrtime(TRUE) - $auditStarted) / 1_000_000, 3),
+        'missing_source_count' => (int) $audit['missing_source_count'],
+        'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],
+        'stale_projection_count' => (int) $audit['stale_projection_count'],
+        'updated_at' => gmdate(DATE_ATOM),
+      ]);
       // The audit has separate catalog-to-source and source-to-catalog
       // checkpoint passes, each bounded by the configured batch size.
       if ($auditBatchCount > (int) ceil($this->sourceCount / self::AUDIT_BATCH_LIMIT) * 2 + 20) {
@@ -266,7 +306,32 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     if (file_put_contents($outputFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL, LOCK_EX) === FALSE) {
       throw new \RuntimeException('Could not write the Content Index maintenance benchmark result.');
     }
+    $this->writeProgress($progressFile, [
+      'status' => 'complete',
+      'phase' => 'complete',
+      'source_count' => $this->sourceCount,
+      'elapsed_ms' => round((hrtime(TRUE) - $runStarted) / 1_000_000, 3),
+      'result_file' => basename($outputFile),
+      'updated_at' => gmdate(DATE_ATOM),
+    ]);
     self::assertFileExists($outputFile);
+  }
+
+  /**
+   * Writes a compact atomic progress snapshot outside measured batch timers.
+   *
+   * @param string $path
+   *   Destination JSON path in the system temporary directory.
+   * @param array<string, mixed> $progress
+   *   Safe diagnostic values for the active benchmark phase.
+   */
+  private function writeProgress(string $path, array $progress): void {
+    $temporaryPath = $path . '.' . getmypid() . '.tmp';
+    $encoded = json_encode($progress, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+    if (file_put_contents($temporaryPath, $encoded, LOCK_EX) === FALSE || !rename($temporaryPath, $path)) {
+      @unlink($temporaryPath);
+      throw new \RuntimeException('Could not write the Content Index maintenance benchmark progress file.');
+    }
   }
 
   /**

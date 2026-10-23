@@ -9,6 +9,8 @@
   índice SQL novo até medição específica.
 - Query aceita qualquer UID unsigned 32-bit como filtro, mantém Entity Access
   como autorização final e não acrescenta o UID ao DTO de resultado.
+- Benchmark harness grava snapshots atômicos `.progress.json` com fase, lote,
+  tempo e contadores; o smoke test 10k concluiu.
 - Query/Schema Kernel MariaDB passou (56 testes / 603 assertions); providers e
   Index Unit passou (320 / 1.667; 42 depreciações PHPUnit).
 
