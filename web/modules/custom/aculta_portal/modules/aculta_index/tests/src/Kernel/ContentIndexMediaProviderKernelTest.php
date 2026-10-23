@@ -56,17 +56,27 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
       new RequestStack(),
     ));
 
-    // Load the exact owner declaration without enabling the Portal dependency
+    // Load exact owner declarations without enabling the Portal dependency
     // chain in this focused Kernel harness.
-    $serviceFile = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml';
-    $serviceMap = Yaml::parseFile($serviceFile, Yaml::PARSE_CUSTOM_TAGS)['services'];
-    $serviceId = 'aculta_pdf_viewer_group.course_document_content_index_provider';
-    $service = $serviceMap[$serviceId];
-    $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
-    foreach ($service['tags'] as $tag) {
-      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    $ownerServices = [
+      [
+        'file' => '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+        'id' => 'aculta_pdf_viewer_group.course_document_content_index_provider',
+      ],
+      [
+        'file' => '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
+        'id' => 'aculta_forum.attachment_content_index_provider',
+      ],
+    ];
+    foreach ($ownerServices as $ownerService) {
+      $serviceMap = Yaml::parseFile(DRUPAL_ROOT . $ownerService['file'], Yaml::PARSE_CUSTOM_TAGS)['services'];
+      $service = $serviceMap[$ownerService['id']];
+      $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
+      foreach ($service['tags'] as $tag) {
+        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      }
+      $container->setDefinition($ownerService['id'], $definition);
     }
-    $container->setDefinition($serviceId, $definition);
   }
 
   /**
@@ -92,6 +102,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
     $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
     $this->createMediaType('file', ['id' => 'course_document', 'label' => 'Course document']);
+    $this->createMediaType('file', ['id' => 'forum_attachment', 'label' => 'Forum attachment']);
   }
 
   /**
@@ -196,6 +207,40 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * The Forum owner's real YAML registers private Forum attachment Media.
+   */
+  public function testForumAttachmentProviderUsesOwnerYamlAndFollowsCrud(): void {
+    $media = $this->createDocumentMedia('Forum attachment', 'forum_attachment');
+    self::assertFalse($media->isPublished());
+    $mediaType = MediaType::load('forum_attachment');
+    $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
+    self::assertSame('private', parse_url($media->get($sourceField)->entity->getFileUri(), PHP_URL_SCHEME));
+
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('forum_attachment', $registry->findProviderIdForBundle('media', 'forum_attachment'));
+    self::assertSame('forum', $registry->get('forum_attachment')->getAccessPurpose($media));
+
+    $generationId = $this->buildAndActivateGeneration();
+    self::assertSame('Forum attachment', $this->entryLabel($generationId, (string) $media->id(), 'forum_attachment'));
+
+    $media->setName('Updated Forum attachment');
+    $media->save();
+    $this->processProviderWork('forum_attachment');
+    self::assertSame('Updated Forum attachment', $this->entryLabel($generationId, (string) $media->id(), 'forum_attachment'));
+
+    $media->delete();
+    $this->processProviderWork('forum_attachment');
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum_attachment')
+      ->condition('entity_type', 'media')
+      ->condition('entity_id', (string) $media->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Creates an image Media with a source File that must stay out of the Index.
    */
   private function createImageMedia(string $name): Media {
@@ -225,7 +270,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
   private function createDocumentMedia(string $name, string $bundle = 'document'): Media {
     $fileName = 'content-index-' . $bundle . '-fixture.pdf';
     $file = File::create([
-      'uri' => ($bundle === 'course_document' ? 'private://course-pdf/' : 'public://') . $fileName,
+      'uri' => (in_array($bundle, ['course_document', 'forum_attachment'], TRUE) ? 'private://' . $bundle . '/' : 'public://') . $fileName,
       'filename' => $fileName,
       'filemime' => 'application/pdf',
       'status' => TRUE,
@@ -237,7 +282,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $media = Media::create([
       'bundle' => $bundle,
       'name' => $name,
-      'status' => $bundle !== 'course_document',
+      'status' => !in_array($bundle, ['course_document', 'forum_attachment'], TRUE),
       $sourceField => ['target_id' => $file->id()],
     ]);
     $media->save();
@@ -258,6 +303,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $this->processProviderWork('image');
     $this->processProviderWork('document');
     $this->processProviderWork('course_document');
+    $this->processProviderWork('forum_attachment');
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     return $generationId;

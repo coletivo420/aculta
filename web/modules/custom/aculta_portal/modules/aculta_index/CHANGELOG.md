@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.84 — integrar provider forum_attachment no Kernel
+
+- Kernel do Index carrega a declaração do YAML real de `aculta_forum`, confirma
+  o provider `forum_attachment`, o purpose `forum` e o ciclo CRUD para Media
+  unpublished com File privado. Arquivo de providers Media: 4 testes / 76
+  assertions; não ativa o owner nem testa a policy de publicação do Fórum.
+
 ## 0.1.0-dev.83 — validar atualização e remoção de tradução
 
 - Kernel confirma que a atualização do título `pt-br` mantém intacta a
