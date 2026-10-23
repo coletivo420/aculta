@@ -83,7 +83,8 @@ fechar os contratos de acesso e relações da Wiki. Ver
   fixture; isso não valida o YAML owner nem equivale ao filtro de acesso real.
 - Unit focal do filtro também registra o provider Wiki real e confirma que a
   checagem Entity Access ocorre sob `wiki420_aculta_org`, preserva o usuário e
-  restaura o Domain ativo (suíte focal 8/70); grants reais e boot owner seguem
+  restaura o Domain ativo; sem esse Domain, nega sem chamar Entity Access no
+  contexto corrente (suíte focal 9/80). Grants reais e boot owner seguem
   pendentes.
 - Pendentes: Kernel de discovery DI pelo YAML owner quando os módulos estiverem habilitados,
   consulta cruzada com dois usuários/grants no purpose `wiki`, compatibilidade

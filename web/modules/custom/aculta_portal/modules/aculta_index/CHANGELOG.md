@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.64 — falhar fechado sem Domain Wiki
+
+- Unit confirma que a ausência de `wiki420_aculta_org` nega o candidato e não
+  chama Entity Access no contexto ativo. Suíte focal: 9 testes / 80 assertions.
+- PHPCS Drupal e PHP lint passaram; permanece pendente validar grants reais.
+
 ## 0.1.0-dev.63 — validar purpose canônico Wiki no filtro
 
 - Unit exercita o `WikiContentIndexProvider` real com o

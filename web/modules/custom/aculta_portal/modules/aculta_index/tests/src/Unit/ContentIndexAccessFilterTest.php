@@ -240,6 +240,49 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   }
 
   /**
+   * A missing Wiki Domain denies the candidate without active-context fallback.
+   */
+  public function testMissingWikiPurposeDomainFailsClosed(): void {
+    $translation = $this->createMock(NodeInterface::class);
+    $translation->method('bundle')->willReturn('wiki_entry');
+    $translation->method('getCacheContexts')->willReturn([]);
+    $translation->method('getCacheMaxAge')->willReturn(-1);
+    $translation->expects(self::never())->method('access');
+
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->method('loadMultiple')->with(['1'])->willReturn([
+      '1' => $this->sourceEntity($translation),
+    ]);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->expects(self::once())->method('load')->with('wiki420_aculta_org')->willReturn(NULL);
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
+    $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $manager->method('getStorage')->willReturnCallback(
+      static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
+    );
+    $purposeManager = new DomainPurposeManager(
+      $manager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+
+    $result = (new ContentIndexAccessFilter(
+      $manager,
+      new ContentIndexProviderRegistry([new WikiContentIndexProvider()]),
+      $purposeManager,
+    ))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertSame([], $result->entities);
+    self::assertContains('domain', $result->cacheability->getCacheContexts());
+  }
+
+  /**
    * A missing canonical purpose domain denies access without fallback.
    */
   public function testMissingProviderPurposeDomainFailsClosed(): void {
