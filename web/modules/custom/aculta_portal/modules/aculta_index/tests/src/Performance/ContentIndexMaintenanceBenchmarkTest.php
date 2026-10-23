@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Performance;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
@@ -250,6 +251,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $diagnosticLogger,
       $this->cacheResetEntityLimit,
+      new Settings(['aculta_index_diagnostics' => TRUE]),
     );
     $integrityChecker = new ContentIndexIntegrityChecker(
       $database,
@@ -260,6 +262,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.writer'),
       $diagnosticLogger,
+      new Settings(['aculta_index_diagnostics' => TRUE]),
     );
     $auditPhase = (string) $integrityChecker->startAudit()['phase'];
     $auditBatchTimes = [];

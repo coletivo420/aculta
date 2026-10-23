@@ -8,6 +8,7 @@ use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Site\Settings;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -48,17 +49,24 @@ final class ContentIndexEntityEnumerator {
    */
   private readonly int $cacheResetEntityLimit;
 
+  /**
+   * Whether per-batch diagnostics are enabled for this process.
+   */
+  private readonly bool $diagnosticsEnabled;
+
   public function __construct(
     private readonly ContentIndexProviderRegistry $providers,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     ?LoggerInterface $logger = NULL,
     int $cacheResetEntityLimit = self::CACHE_RESET_ENTITY_LIMIT,
+    ?Settings $settings = NULL,
   ) {
     if ($cacheResetEntityLimit < 1 || $cacheResetEntityLimit > self::CACHE_RESET_ENTITY_LIMIT) {
       throw new \InvalidArgumentException(sprintf('Cache reset entity limit must be between 1 and %d.', self::CACHE_RESET_ENTITY_LIMIT));
     }
     $this->logger = $logger ?? new NullLogger();
     $this->cacheResetEntityLimit = $cacheResetEntityLimit;
+    $this->diagnosticsEnabled = (bool) ($settings?->get('aculta_index_diagnostics', FALSE) ?? FALSE);
   }
 
   /**
@@ -289,6 +297,9 @@ final class ContentIndexEntityEnumerator {
     float $cacheMilliseconds,
     int $batchStartedAt,
   ): void {
+    if (!$this->diagnosticsEnabled) {
+      return;
+    }
     $this->logger->debug('Content Index enumeration batch completed. Provider: @provider; entity type: @entity_type; limit: @limit; sources: @source_count; projections: @projection_count; entity query: @query_ms ms; load multiple: @load_ms ms; project: @project_ms ms; cache reset: @cache_ms ms; total: @total_ms ms.', [
       '@provider' => $providerId,
       '@entity_type' => $entityTypeId,

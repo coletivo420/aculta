@@ -1,8 +1,20 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.145 — tornar métricas detalhadas opt-in
+
+- Diagnósticos do checker e do enumerador agora exigem
+  `$settings['aculta_index_diagnostics'] = TRUE`; ficam desligados por padrão
+  para evitar uma mensagem `debug` por lote no dblog/watchdog.
+- O benchmark e testes habilitam a opção explicitamente. A medição do limite
+  de cache segue restrita ao harness; o default operacional permanece 5.000.
+- Unit comprova que os logs ficam desligados sem a configuração.
+- Kernel Schema MariaDB passou (53 testes / 570 assertions; 1 depreciação Core,
+  54 PHPUnit); Unit do enumerador passou (7 / 59; 3 depreciações PHPUnit);
+  benchmark opt-in 10k passou (1 / 16). PHPCS e lint passaram.
+
 ## 0.1.0-dev.144 — medir etapas e limite de cache do enumerador
 
-- O enumerador registra timings `debug` para Entity Query, `loadMultiple`,
+- O enumerador registra timings `debug`, quando habilitado, para Entity Query, `loadMultiple`,
   projeção de traduções e limpeza de cache, sem registrar IDs. A configuração
   de produção continua com o limite de 5.000 identidades.
 - O harness permite variar o limite por `ACULTA_INDEX_MAINTENANCE_CACHE_RESET_LIMIT`.
@@ -18,7 +30,8 @@
 
 ## 0.1.0-dev.143 — instrumentar lotes da auditoria
 
-- Cada lote concluído emite uma mensagem `debug` com fase, quantidade lida e
+- Cada lote concluído emite, quando os diagnósticos estão habilitados, uma
+  mensagem `debug` com fase, quantidade lida e
   projetada, tempos de leitura/projeção, reconciliação, checkpoint, fila e
   duração total. Não registra IDs nem metadados de conteúdo.
 - O harness de manutenção captura esses logs em `audit_stage_metrics` no JSON,

@@ -8,6 +8,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
@@ -20,6 +21,11 @@ use Psr\Log\LoggerInterface;
  * Checks catalog structure and runs resumable, bounded integrity audits.
  */
 final class ContentIndexIntegrityChecker {
+
+  /**
+   * Whether per-batch diagnostics are enabled for this process.
+   */
+  private readonly bool $diagnosticsEnabled;
 
   /**
    * Maximum rows inspected by one incremental audit batch.
@@ -40,7 +46,10 @@ final class ContentIndexIntegrityChecker {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ContentIndexWriter $writer,
     private readonly LoggerInterface $logger,
-  ) {}
+    ?Settings $settings = NULL,
+  ) {
+    $this->diagnosticsEnabled = (bool) ($settings?->get('aculta_index_diagnostics', FALSE) ?? FALSE);
+  }
 
   /**
    * Checks aggregate catalog consistency for generation validation.
@@ -335,16 +344,18 @@ final class ContentIndexIntegrityChecker {
       $queueMilliseconds = (hrtime(TRUE) - $queueStartedAt) / 1_000_000;
       $projectionCount = $sourceBatch === NULL ? 0 : count($sourceBatch['projections']);
       $scanCount = $sourceBatch === NULL ? count($rows) : $projectionCount;
-      $this->logger->debug('Content Index integrity batch completed. Phase: @phase; scanned: @scan_count; projections: @projection_count; scan: @scan_ms ms; reconcile: @reconcile_ms ms; checkpoint: @checkpoint_ms ms; queue: @queue_ms ms; total: @total_ms ms.', [
-        '@phase' => $state['phase'],
-        '@scan_count' => $scanCount,
-        '@projection_count' => $projectionCount,
-        '@scan_ms' => round($scanMilliseconds, 3),
-        '@reconcile_ms' => round($reconciliationMilliseconds, 3),
-        '@checkpoint_ms' => round($checkpointMilliseconds, 3),
-        '@queue_ms' => round($queueMilliseconds, 3),
-        '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
-      ]);
+      if ($this->diagnosticsEnabled) {
+        $this->logger->debug('Content Index integrity batch completed. Phase: @phase; scanned: @scan_count; projections: @projection_count; scan: @scan_ms ms; reconcile: @reconcile_ms ms; checkpoint: @checkpoint_ms ms; queue: @queue_ms ms; total: @total_ms ms.', [
+          '@phase' => $state['phase'],
+          '@scan_count' => $scanCount,
+          '@projection_count' => $projectionCount,
+          '@scan_ms' => round($scanMilliseconds, 3),
+          '@reconcile_ms' => round($reconciliationMilliseconds, 3),
+          '@checkpoint_ms' => round($checkpointMilliseconds, 3),
+          '@queue_ms' => round($queueMilliseconds, 3),
+          '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
+        ]);
+      }
       return $this->getAuditState();
     }
     catch (\Throwable $exception) {

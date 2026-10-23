@@ -13,7 +13,7 @@ services:
 
   aculta_index.entity_enumerator:
     class: Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator
-    arguments: ['@aculta_index.provider_registry', '@entity_type.manager', '@logger.channel.aculta_index']
+    arguments: ['@aculta_index.provider_registry', '@entity_type.manager', '@logger.channel.aculta_index', 5000, '@settings']
 
   Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator: '@aculta_index.entity_enumerator'
 
@@ -31,7 +31,7 @@ services:
 
   aculta_index.integrity_checker:
     class: Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker
-    arguments: ['@database', '@datetime.time', '@aculta_index.provider_registry', '@aculta_index.work_manager', '@aculta_index.entity_enumerator', '@entity_type.manager', '@aculta_index.writer', '@logger.channel.aculta_index']
+    arguments: ['@database', '@datetime.time', '@aculta_index.provider_registry', '@aculta_index.work_manager', '@aculta_index.entity_enumerator', '@entity_type.manager', '@aculta_index.writer', '@logger.channel.aculta_index', '@settings']
 
   Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker: '@aculta_index.integrity_checker'
 

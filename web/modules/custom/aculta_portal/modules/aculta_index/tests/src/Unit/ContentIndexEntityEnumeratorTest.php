@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
@@ -138,7 +139,13 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
           return TRUE;
         }),
       );
-    $batch = (new ContentIndexEntityEnumerator($registry, $manager, $logger))->nextBatch('magazine', 'node', '41', 2);
+    $batch = (new ContentIndexEntityEnumerator(
+      $registry,
+      $manager,
+      $logger,
+      5_000,
+      new Settings(['aculta_index_diagnostics' => TRUE]),
+    ))->nextBatch('magazine', 'node', '41', 2);
 
     self::assertSame(['pt-br', 'en'], array_map(static fn (ContentIndexProjection $projection): string => $projection->langcode, $batch['projections']));
     self::assertSame([
@@ -202,7 +209,9 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
     $manager->method('getStorage')->with('aculta_forum_post')->willReturn($storage);
     $manager->method('getDefinitions')->willReturn(['aculta_forum_post' => $entityType]);
 
-    $batch = (new ContentIndexEntityEnumerator($registry, $manager))
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::never())->method('debug');
+    $batch = (new ContentIndexEntityEnumerator($registry, $manager, $logger))
       ->nextBatch('forum', 'aculta_forum_post', NULL, 10);
 
     self::assertSame(['42'], array_map(

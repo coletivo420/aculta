@@ -9,6 +9,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -1402,6 +1403,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.writer'),
       $logger,
+      new Settings(['aculta_index_diagnostics' => TRUE]),
     );
     $checker->startAudit();
 

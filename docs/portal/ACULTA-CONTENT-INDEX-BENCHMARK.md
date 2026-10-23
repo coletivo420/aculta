@@ -93,6 +93,8 @@ e limpeza de cache do enumerador. O parâmetro opcional
 `ACULTA_INDEX_MAINTENANCE_CACHE_RESET_LIMIT` aceita de 1 a 5.000 identidades;
 sem ele, o cenário usa o padrão operacional de 5.000. Não mudar o padrão de
 produção com base somente no fixture 10k.
+O harness habilita os logs detalhados diretamente no serviço de teste; em
+ambientes Drupal, só são emitidos com `$settings['aculta_index_diagnostics'] = TRUE`.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
