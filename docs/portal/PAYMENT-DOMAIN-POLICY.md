@@ -156,7 +156,7 @@ Decisão do responsável (2026-10-17, versão final):
   etapa de checkout no MAIN, com a sessão compartilhada pelo `cookie_domain` do ambiente.
 - **Gateway no MAIN.** A notificação do Mercado Pago, o retorno e o cancelamento
   são gerados no domínio principal por `Routing\PaymentDomainPathProcessor`.
-- **Sem estorno** para doações, assinaturas e cursos. A regra é aplicada pelo evento de elegibilidade do gateway (`MercadoPagoPaymentPolicy::bloqueiaEstorno()`). A assinatura terá cancelamento. Cancelamento de pagamento pendente é operação separada, não estorno.
+- **Sem estorno** para doações, assinaturas e cursos. A regra é aplicada pelo evento de elegibilidade do gateway (`RefundEligibilitySubscriber`, que usa `MercadoPagoPaymentPolicy::bloqueiaEstorno()` e acrescenta assinatura, doação pelo carrinho e o tipo de pedido de curso configurado). A assinatura terá cancelamento. Cancelamento de pagamento pendente é operação separada, não estorno.
 - **Entrada de apoio sem cache.** As rotas que criam pedido de doação são
   `no_cache`, para que cada visita tenha o próprio pedido e a própria sessão.
 

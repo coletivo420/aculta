@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class RefundEligibilitySubscriberTest extends UnitTestCase {
 
-  private function allowed(string $orderType, array $itemTypes, array $checkout = [], bool $withSettings = TRUE): bool {
+  private function allowed(string $orderType, array $itemTypes, array $checkout = [], bool $withSettings = TRUE, array $donation = []): bool {
     $items = array_map(function (string $type): OrderItemInterface {
       $item = $this->createMock(OrderItemInterface::class);
       $item->method('bundle')->willReturn($type);
@@ -33,7 +33,7 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
     $payment = $this->createMock(PaymentInterface::class);
     $payment->method('getOrder')->willReturn($order);
     $factory = $this->getConfigFactoryStub([
-      'aculta_donation.settings' => ['donate_order_type' => 'doacao', 'donate_item_type' => 'donation'],
+      'aculta_donation.settings' => $donation + ['donate_order_type' => 'doacao', 'donate_item_type' => 'donation'],
       CheckoutSettings::CONFIG => $checkout,
     ]);
     $subscriber = new RefundEligibilitySubscriber($factory, new MercadoPagoPaymentPolicy(), $withSettings ? new CheckoutSettings($factory) : NULL);
@@ -52,6 +52,7 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
       'pedido curso' => ['curso', ['curso']],
       'pedido doação' => ['doacao', ['donation']],
       'item curso em pedido da loja' => ['default', ['curso']],
+      'assinatura com item de outro tipo' => ['assinatura', ['default']],
     ];
   }
 
@@ -66,6 +67,15 @@ final class RefundEligibilitySubscriberTest extends UnitTestCase {
 
   public function testSemConfigurarOMesmoTipoNaoEBloqueadoPorEngano(): void {
     $this->assertTrue($this->allowed('aula', ['default'], []));
+  }
+
+  public function testDoacaoPeloCarrinhoNaoTemEstorno(): void {
+    $this->assertFalse($this->allowed('doacao_carrinho', ['default'], [], TRUE, ['cart_order_type' => 'doacao_carrinho']));
+    $this->assertFalse($this->allowed('default', ['item_doacao_carrinho'], [], TRUE, ['cart_item_type' => 'item_doacao_carrinho']));
+  }
+
+  public function testCarrinhoDeDoacaoNaoConfiguradoNaoBloqueiaALoja(): void {
+    $this->assertTrue($this->allowed('default', ['default'], [], TRUE, ['cart_order_type' => NULL, 'cart_item_type' => NULL]));
   }
 
 }

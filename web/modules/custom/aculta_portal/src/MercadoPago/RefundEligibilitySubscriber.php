@@ -52,6 +52,14 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
       $itens[] = $item->bundle();
     }
     $config = $this->configFactory->get('aculta_donation.settings');
+    // Assinatura (doação mensal) e doação feita pelo carrinho também não têm estorno. A regra fixa de `bloqueiaEstorno()`
+    // só olha o tipo de pedido e de item da rota /donate, então estes são acrescentados aqui (só acrescenta bloqueio).
+    $pedidosSemEstorno = array_filter([MercadoPagoSubscriptionRecorder::TIPO_PEDIDO, $config->get('cart_order_type')], 'is_string');
+    $itensSemEstorno = array_filter([$config->get('cart_item_type')], 'is_string');
+    if (in_array($order->bundle(), $pedidosSemEstorno, TRUE) || array_intersect($itens, $itensSemEstorno) !== []) {
+      $event->deny('Doações e cursos não têm estorno.');
+      return;
+    }
     if ($this->politica->bloqueiaEstorno(
       $order->bundle(),
       $itens,
