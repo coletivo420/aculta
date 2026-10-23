@@ -58,6 +58,8 @@ Evidência IDX 0.1-F: o Kernel `ContentIndexMagazineProviderKernelTest` usa a cl
 
 O Kernel `ContentIndexImageProviderKernelTest` usa Media/File reais com `MediaContentIndexProvider` configurado para `media:image`; cobre backfill, update e delete pelo worker (1/15). A fixture registra a tag e o mapa de serviços valida separadamente o YAML owner de `aculta_image`. Esse teste também detectou e corrigiu timestamps numéricos retornados como strings após carga do Media. Não habilita todo o módulo `aculta_image` nem comprova seus grants no Runtime.
 
+Após essa integração, o diretório Kernel do `aculta_index` passou completo: 59 testes / 730 assertions; houve 1 depreciação upstream e 40 avisos PHPUnit.
+
 O Kernel `ContentIndexForumTopicProviderKernelTest` aplica o mesmo harness à classe de produção `ForumContentIndexProvider`, registrando-a pela tag e cobrindo backfill, update, delete e declaração do purpose `forum` (1/13). A service-map valida separadamente o YAML do Fórum. A integração não ativa todas as dependências do owner nem substitui os testes de Entity Access/grants reais.
 
 O mesmo harness registra o entity type de produção `ForumPost` pela sua definição atributada, sem ativar o módulo completo. Kernel cobre relações para tópico e post pai, atualização de revisão padrão e remoção (2/51 total para o harness Fórum). O enumerador keyset trata entity types sem bundle key somente quando o provider declara o próprio tipo como bundle único (Unit 5/31); o boot completo do owner e grants reais seguem pendentes.

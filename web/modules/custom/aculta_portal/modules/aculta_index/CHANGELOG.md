@@ -8,6 +8,8 @@
   mapa valida separadamente a configuração real do owner.
 - O cenário revelou que timestamps Media podem vir como strings numéricas;
   casts explícitos corrigem o `TypeError` na projeção.
+- Suíte Kernel completa do diretório `aculta_index`: 59 testes / 730 assertions
+  PASS; 1 depreciação upstream e 40 depreciações PHPUnit.
 
 ## 0.1.0-dev.64 — falhar fechado sem Domain Wiki
 
