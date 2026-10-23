@@ -284,6 +284,33 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * A dead-letter cannot be retried after its owner provider is disabled.
+   */
+  public function testDeadLetterRetryRequiresRegisteredProvider(): void {
+    $database = $this->container->get('database');
+    $workId = (int) $database->insert('aculta_index_work')
+      ->fields([
+        'provider_id' => 'disabled_owner',
+        'entity_type' => 'node',
+        'entity_id' => 'retired-source',
+        'langcode' => 'en',
+        'sequence' => 5,
+        'operation' => 'project',
+        'status' => 'dead',
+        'attempts' => 5,
+        'available_at' => 0,
+        'last_error_code' => 'synthetic_error',
+        'created' => 1,
+        'updated' => 1,
+      ])
+      ->execute();
+
+    $work = $this->container->get('aculta_index.work_manager');
+    $this->assertFalse($work->retryDead($workId));
+    $this->assertSame('dead', $work->getStatus('disabled_owner', 'node', 'retired-source', 'en')['status']);
+  }
+
+  /**
    * Tests the audit command reports and advances a bounded checkpoint.
    */
   public function testAuditDrushCommandRunsBoundedCycle(): void {
