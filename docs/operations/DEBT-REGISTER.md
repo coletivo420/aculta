@@ -276,3 +276,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/estudio/loja`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
 | GS-EDITOR-02 | Fluxos de estoque/expedição/etiquetas integralmente no Studio | Commerce Stock/Shipping/Melhor Envio operam via controles Green Stash com confirmação/autorização, testes de integração |
 | GS-EDITOR-03 | Auditoria de links administrativos diretos nas experiências Green Stash | Nenhuma ação visível da loja aponta a edit-form administrativa ou `/admin/commerce`, teste regressivo |
+
+## Green Stash GS-EDITOR-0.2 — gates restantes
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-PRODUCT-DETAIL-01 | Homologar rota de detalhe por store e entidade | Testes Kernel e HTTP com produto loja/LMS, lojas concorrentes e operadores sem permissão; acesso indevido retorna 403/404 |
+| GS-PRODUCT-DETAIL-02 | Visual do detalhe do produto via SDC/UI Suite | Componentes ACULTA420 com campos autorizados, 320px+, navegação teclado e contraste light/dark |
+| GS-PRODUCT-DETAIL-03 | Contratos de criação/edição próprios Studio | Form API, permissões de create/update store/product, validações Commerce e transações/revisões comprovadas no homelab |
