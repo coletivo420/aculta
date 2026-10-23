@@ -1,6 +1,6 @@
 # ACULTA Content Index ↔ ACULTA Statistics
 
-**Estado:** bridge tipado implementado no código local `0.1.0-dev.21` / Statistics `0.9.0-dev.9`; concessão de Config Sync pendente de importação no Runtime.
+**Estado:** bridge tipado implementado; concessão de Config Sync pendente de importação no Runtime. A política de página incompatível foi decidida: rejeitar a chamada integralmente, sem totais parciais.
 **Fontes locais auditadas:** `modules/aculta_statistics/src/Storage/DailyAggregateStorage.php`, `AggregateStorageInterface.php`, `Recorder/StatisticsRecorder.php`, `Catalog/MetricCatalog.php`, `Controller/StatisticsDashboardController.php` e serviços de reconciliadores/providers.
 
 ## Donos e direção
@@ -62,9 +62,10 @@ O custo principal é uma consulta paginada no índice mais uma ou mais consultas
 
 Conectar primeiro indicadores agregados por bundle/domínio e janela de tempo, pois evitam listas de IDs de alta cardinalidade. Consultas por entidade devem ter um caso de uso e permissão explícitos. Não criar tabela de métricas no Index nem usar relação SQL que multiplique contagens.
 
-## Limites e pendências
+## Evidência e limites
 
 - A allowlist inicial cobre métricas Wiki por `node/wiki_entry` e solicitações de arquivo por `file/file`; dimensões compostas ficam fora deste bridge.
 - Métricas públicas allowlisted aceitam a permissão granular `view content-level statistics`; métricas internas exigem permissão administrativa. A autorização de cada conteúdo já foi revalidada pelo Index.
-- Os testes Kernel do aggregator foram escritos, mas não iniciaram nesta sessão porque `SIMPLETEST_DB` não está configurada.
-- Ainda faltam cenários Kernel ponta a ponta, fallback em container sem Statistics e medição de consultas/latência antes de conectar a listagens de Studio.
+- Regressão Unit focada executada em 2026-10-23: Index bridge e aggregator Statistics, 8 testes / 47 assertions PASS. Inclui rejeição antes da consulta SQL quando o bundle da página não corresponde à métrica.
+- O Kernel de `aculta_statistics` cobre armazenamento e aggregator no próprio módulo; falta executar e registrar essa suíte nesta microfase.
+- Ainda faltam cenário Kernel ponta a ponta entre query/access do Index e serviço real de Statistics, fallback em container sem Statistics nesse mesmo fluxo e medição de consultas/latência antes de conectar a listagens de Studio.

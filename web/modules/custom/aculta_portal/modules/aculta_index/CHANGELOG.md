@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.53 — evidência atual da ponte Statistics
+
+- Registra decisão: incompatibilidade de tipo/bundle rejeita a página integral,
+  sem totais parciais ou remoção silenciosa de itens.
+- Regressão Unit conjunta Index bridge + Statistics aggregator: 8 testes /
+  47 assertions PASS; Kernel ponta a ponta e latência seguem pendentes.
+
 ## 0.1.0-dev.52 — mapa Unit dos providers ACULTA registrados
 
 - Compila em um registry tagueado os service YAMLs dos nove módulos owner e
