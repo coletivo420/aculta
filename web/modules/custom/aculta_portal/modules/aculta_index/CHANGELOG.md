@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.104 — identificar limitação do benchmark 1M em andamento
+
+- Documentado que a execução 1M ativa começou antes do isolamento dos eventos
+  na criação sintética e da instrumentação por fase da auditoria.
+- Snapshot observado: checkpoint `node:49.000`, revisão 98; estimativas
+  InnoDB: 995.136 Nodes, 994.044 jobs e 48.156 entradas. São dados parciais,
+  sem valor como resultado de desempenho final.
+- Não iniciar outra execução até a atual terminar; depois repetir com o harness
+  corrigido antes de comparar 1M.
+
 ## 0.1.0-dev.103 — suíte Kernel completa com bridge por DI
 
 - SQLite: 79 testes / 1.213 assertions passaram; 39 depreciações Core/contrib

@@ -22,6 +22,22 @@ nem definem SLO.
 - Não há traduções adicionais nem relações no fixture. Falhas, concorrência
   entre processos, outros providers, Domains e grants não foram medidos.
 
+## Execução de 1M em andamento — evidência intermediária, não resultado
+
+A execução MariaDB iniciada em 2026-10-23 às 04:17 BRT carregou o harness antes
+dos commits `c401f504` (05:57 BRT), que desativa temporariamente o registry
+durante a criação sintética para não criar jobs incrementais, e `9bc4f952`
+(06:03 BRT), que mede a cauda da auditoria por fase. Portanto ela não mede essas
+duas alterações e não serve como resultado final da versão corrigida.
+
+Na observação intermediária, o InnoDB estimava 995.136 Nodes, 994.044 linhas de
+fila incremental e 48.156 entradas no catálogo; o checkpoint do rebuild estava
+em `node:49.000`, revisão 98, estado `building`. `TABLE_ROWS` é estimativa do
+`information_schema`, não contagem exata. O volume de fila decorre do harness
+antigo e não deve ser atribuído ao custo medido do rebuild/auditoria. A execução
+deve terminar antes de repetir 1M com o harness atual; não comparar essa rodada
+com os resultados de 10k/100k nem registrar seu tempo como capacidade do Index.
+
 ## Resultados
 
 | Run | Rebuild total (ms) | Projeções/s | Lote rebuild p50 / p95 (ms) | Auditoria total (ms) | Lotes auditados | Lote audit p50 / p95 (ms) | Pico memória (MiB) |
