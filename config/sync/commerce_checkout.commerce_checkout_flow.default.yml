@@ -20,12 +20,15 @@ configuration:
     login:
       step: login
       weight: 0
-      allow_guest_checkout: true
-      allow_registration: false
+      allow_guest_checkout: false
+      allow_registration: true
     contact_information:
       step: order_information
       weight: 1
       double_entry: true
+    aculta_fiscal_identity:
+      step: review
+      weight: 2
     review:
       step: review
       weight: 3
@@ -33,7 +36,7 @@ configuration:
       step: complete
       weight: 4
       message:
-        value: "O número do seu pedido é [commerce_order:order_number].\r\nVocê pode acompanhar seu pedido em Minha conta > Meus pedidos."
+        value: "O número do seu pedido é [commerce_order:order_number].\r\nVocê pode acompanhar seu pedido em Minha conta > Meus pedidos. Cursos são liberados após a confirmação do pagamento."
         format: plain_text
       display_pane_summaries: true
     order_summary:
