@@ -111,3 +111,9 @@ Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../../docs/arc
 aculta_studio already is a submodule of aculta_portal and is the shared UI/experience platform for GanjaLab, GanjaLab420, WE SATIVA and future own-account experiences. Portal remains owner of Domain/purpose, not Studio's experience presentation or Wiki's workflow.
 
 [Contrato e roadmap transversal](../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+
+## Carrinhos e checkout — decisão arquitetural ADR-013
+
+`aculta_portal` assumirá a coordenação transversal de contextos de carrinho e da seleção de checkout **por pedido/carrinho**, com abas **Comum | Loja | LMS | Doações**. A aba Comum é agregadora de carrinhos autorizados, e não fusão automática de pedidos. `aculta_commerce`, `aculta_lms` e `aculta_donation` fornecem adaptadores; Drupal Commerce mantém dados/transações e `aculta_pagamentos_mercadopago` é o gateway único compartilhado. Preservar `donate|cart|both`, URLs, o shell e o cabeçalho multidomínio; apresentação no ACULTA420 com SDC/UI Suite e progressive enhancement.
+
+[Decisão e fases](../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). **Status: planejado; nenhum seletor novo habilitado.**
