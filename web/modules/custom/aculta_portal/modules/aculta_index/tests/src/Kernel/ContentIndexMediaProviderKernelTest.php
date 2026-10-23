@@ -41,7 +41,6 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     'image',
     'media',
     'aculta_index',
-    'aculta_index_media_test',
   ];
 
   /**
@@ -59,6 +58,14 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     // Load exact owner declarations without enabling the Portal dependency
     // chain in this focused Kernel harness.
     $ownerServices = [
+      [
+        'file' => '/modules/custom/aculta_portal/modules/aculta_image/aculta_image.services.yml',
+        'id' => 'aculta_image.content_index_provider',
+      ],
+      [
+        'file' => '/modules/custom/aculta_portal/modules/aculta_document_viewer/aculta_document_viewer.services.yml',
+        'id' => 'aculta_document_viewer.content_index_provider',
+      ],
       [
         'file' => '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
         'id' => 'aculta_pdf_viewer_group.course_document_content_index_provider',

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.108 — registrar providers Media pelos YAMLs owner
+
+- O Kernel Media agora compila `image` e `document` pelas definições e tags dos
+  serviços reais de `aculta_image` e `aculta_document_viewer`; as tags duplicadas
+  em fixture foram removidas. Providers PDF Group e Forum continuam lidos dos
+  respectivos YAMLs owners.
+- SQLite e MariaDB: 4 testes / 76 assertions passaram em cada banco.
+- PHPCS Drupal e `php -l` passaram no harness alterado.
+
 ## 0.1.0-dev.107 — registrar providers Gallery e Image pelos YAMLs owner
 
 - O Kernel Gallery agora carrega as definições/tag reais de
