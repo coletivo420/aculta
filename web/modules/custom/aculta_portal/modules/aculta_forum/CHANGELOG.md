@@ -1,3 +1,13 @@
+## `0.1.0-dev.262` — provar a fonte da migração de Comments — 2026-10-23
+
+- Kernel exercita `aculta_forum_comment` com Comments reais: um Comment
+  elegível vira uma linha com tópico, autoria, timestamps, hierarquia,
+  marcadores de rejeição/autoria histórica e todas as traduções agrupadas.
+- Tópico fora do Domain `forum`, tópico de outro bundle e Comment fora do
+  contexto público do Fórum não geram linha.
+- Testes: arquivo 4/56; suíte Kernel do Fórum 71/1.492. A migration não foi
+  executada, nenhum dado foi migrado e o Runtime não foi alterado.
+
 ## `0.1.0-dev.261` — validar o trigger ForumPost do Game — 2026-10-23
 
 - Kernel com entidades reais de ForumPost prova a política do Game: publicação

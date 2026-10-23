@@ -1,3 +1,14 @@
+## Fonte da migração de Comments — prova, 2026-10-23
+
+- `ForumCommentMigrationSourceKernelTest` (4 testes / 56 asserções, MariaDB):
+  Comment elegível gera uma linha com `topic_id`, `uid`, `created`/`changed`,
+  `parent_cid`, `first_published`, marcadores de rejeição e autoria histórica e
+  todas as traduções em `translations`; resposta mantém o `parent_cid`.
+- Tópico fora do Domain `forum`, tópico de outro bundle e Comment de outro
+  contexto não geram linhas. O plugin é instanciado diretamente, sem executar a
+  migration nem tocar dados.
+- Suíte Kernel do Fórum 71/1.492; PHPCS limpo.
+
 ## Trigger ForumPost do Game — política real, 2026-10-23
 
 - `ForumPostParticipationPolicyKernelTest` (8 testes / 100 asserções, MariaDB):

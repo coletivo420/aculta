@@ -203,6 +203,14 @@ com "Nenhum tópico" (sem tópicos no banco) e suíte `categorias-visual.py` 9/9
 nos dois temas. A validação com tópicos restritos reais fica para o Runtime de
 testes.
 
+### Migração de Comments — prova da fonte em 2026-10-23
+
+`ForumCommentMigrationSourceKernelTest` (dev.262) exercita o source
+`aculta_forum_comment` com Comments reais em MariaDB: elegibilidade pelo Domain
+`forum` e contexto público, uma linha por Comment, hierarquia, traduções
+agrupadas, rejeição e autoria histórica. A execução da migration, o destino em
+lote e a comparação de equivalência continuam pendentes e exigem autorização.
+
 ### Moderação revisionável de posts — decisão de 2026-10-21
 
 O responsável decidiu substituir os Comments Core das discussões públicas do
