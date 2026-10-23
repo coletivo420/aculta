@@ -245,3 +245,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-NAV-01 | Compilação de container e rota `/green-stash/{section}` | `drush cr`, HTTP 403/200 conforme permissão e domínio, rotas canônicas, registro Studio e PHPUnit PASS | Pendente — homelab |
 | GS-NAV-02 | Componentes SDC/UI Suite para navegação responsiva real | Tema ACULTA420 renderiza shell mobile-first, tabs/drawer acessível, 320px+ claro/escuro e fallback sem JS; Stories/gates PASS | Pendente — tema |
 | GS-NAV-03 | Navegação por capacidades granulares e dados operacionais reais | Grants Commerce por store e entidade; contadores e áreas sem permissões não aparecem; testes IDOR, acesso e cache | Pendente — GS-0.2-C |
+
+## Green Stash — rotas canônicas e registro de experiência
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-ROUTE-PTBR-01 | Validar URLs PT-BR `/estudio/loja/*`, domínio purpose account e ausência de colisão | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
+| GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
+| GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
