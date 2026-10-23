@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.134 — testar recuperação de falha ao criar item Core Queue
+
+- Teste Kernel comprova que falha de `createItem()` mantém a linha durável em
+  `queued`, e que `recover()` recria o item após o prazo e permite claim.
+- PHP lint e PHPCS Drupal passaram. A execução Kernel MariaDB segue pendente
+  enquanto o benchmark de 1M usa o banco dedicado.
+
 ## 0.1.0-dev.133 — restringir teste de processos a MySQL/MariaDB
 
 - O estresse entre processos exige `innodb_lock_wait_timeout`; em outros drivers

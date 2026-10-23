@@ -9,6 +9,8 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Query\ContentIndexCursorManager;
 use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
@@ -23,6 +25,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -406,6 +409,102 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $dead = $work->getStatus('disabled_owner', 'media', 'disabled-owner-1', 'pt_BR');
     $this->assertSame('dead', $dead['status']);
     $this->assertSame(5, $dead['attempts']);
+  }
+
+  /**
+   * Re-dispatches durable queued work after Core Queue insertion fails.
+   */
+  public function testWorkManagerRecoversQueuedWorkAfterQueueDispatchFailure(): void {
+    $queue = new class() implements QueueInterface {
+
+      /**
+       * Whether item creation should fail.
+       */
+      public bool $fail = TRUE;
+
+      /**
+       * @var list<array{work_id: int}>
+       */
+      public array $items = [];
+
+      /**
+       * {@inheritdoc}
+       */
+      public function createItem($data) {
+        if ($this->fail) {
+          return FALSE;
+        }
+        if (!is_array($data) || !isset($data['work_id'])) {
+          throw new \InvalidArgumentException('Unexpected process-test queue payload.');
+        }
+        $this->items[] = ['work_id' => (int) $data['work_id']];
+        return count($this->items);
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function numberOfItems() {
+        return count($this->items);
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function claimItem($lease_time = 3600) {
+        return FALSE;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function deleteItem($item) {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function releaseItem($item) {
+        return FALSE;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function createQueue() {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function deleteQueue() {}
+
+    };
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->willReturn($queue);
+    $database = $this->container->get('database');
+    $work = new ContentIndexWorkManager(
+      $database,
+      $queueFactory,
+      $this->container->get('datetime.time'),
+      $this->container->get('aculta_index.provider_registry'),
+      new NullLogger(),
+    );
+
+    $this->assertSame(1, $work->schedule('magazine', 'node', 'queue-dispatch-failure', 'pt_BR'));
+    $status = $work->getStatus('magazine', 'node', 'queue-dispatch-failure', 'pt_BR');
+    $this->assertIsArray($status);
+    $this->assertSame('queued', $status['status']);
+    $this->assertSame(0, $queue->numberOfItems());
+    $database->update('aculta_index_work')
+      ->fields(['updated' => $this->container->get('datetime.time')->getRequestTime() - 301])
+      ->condition('work_id', $status['work_id'])
+      ->execute();
+
+    $queue->fail = FALSE;
+    $this->assertSame(1, $work->recover());
+    $this->assertSame([['work_id' => $status['work_id']]], $queue->items);
+    $claim = $work->claim($status['work_id']);
+    $this->assertNotNull($claim);
+    $this->assertSame(1, $claim['sequence']);
   }
 
   /**
