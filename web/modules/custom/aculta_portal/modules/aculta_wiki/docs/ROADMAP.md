@@ -74,6 +74,21 @@ fechar os contratos de acesso e relações da Wiki. Ver
   corpo nem substitui revisão, workflow ou acesso.
 - Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
+### Estado da integração e gates restantes
+
+- Unit `WikiContentIndexProviderTest` cobre a allowlist de metadados, rejeição
+  de bundle/revisão não suportados, deduplicação da relação e declaração do
+  purpose `wiki`. Isso valida o provider isolado; não equivale a um teste de
+  discovery DI ou ao filtro de acesso do Index.
+- Pendentes: Kernel do registro tagged quando os módulos estiverem habilitados,
+  consulta cruzada com dois usuários/grants no purpose `wiki`, compatibilidade
+  do contrato durante a finalização da Wiki e homologação Runtime. O módulo
+  continua desabilitado; não habilitar ou importar sua configuração como parte
+  desta fase.
+- `field_wiki_categories` e `field_wiki_image` seguem como dívida até a
+  finalização dos contratos editoriais e de acesso. Não criar providers de
+  Taxonomy/Media nesta integração parcial.
+
 ### Entregue em código (2026-10-22)
 
 - **Listagem e imagem de destaque:** contagem e paginação da view `wiki_entries`,

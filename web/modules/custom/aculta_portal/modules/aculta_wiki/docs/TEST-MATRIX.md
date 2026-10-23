@@ -26,7 +26,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Assunto e corpo do aviso | Unit | usam os três marcadores e nenhum campo de autoria | aprovado |
 | Contexto do aviso | Unit | sem `autor`, `autora`, `user` ou `uid` | aprovado |
 
-Suíte do submódulo após esta entrega: `52 testes, 240 asserções, OK`. Os cenários
+Suíte do submódulo verificada em 2026-10-22: `57 testes, 258 asserções, OK`,
+com duas deprecações do PHPUnit. Os cenários
 de navegador (busca do site, verbete publicado no resultado, tela
 `/painel-administrativo/aculta/wiki`) continuam na seção **Navegador** e só rodam
 depois da importação de configuração no servidor de testes.
@@ -65,6 +66,21 @@ depois da importação de configuração no servidor de testes.
 | Revisão publicada de verbete já publicado | Unit | Um evento `wiki.entries.updated`, nenhum `published` | planejado |
 | Node importado ou sincronizado | Unit | Nenhum evento | planejado |
 | Agregado diário com publicação e revisão | Kernel | Contadores diários separados por métrica | planejado |
+
+## Integração ACULTA Content Index — IDX 0.1
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Provider Wiki | Unit | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados e propósito canônico `wiki` | aprovado |
+| Relação `field_wiki_related` | Unit | Relações outgoing `related_entry` deduplicadas | aprovado |
+| Discovery da tag `aculta_index.provider` | Kernel | Provider encontrado quando Wiki e Index estão habilitados, sem dependência obrigatória | pendente |
+| Consulta do Index com grants Wiki | Kernel | Mesmo usuário, Entity Access no purpose `wiki`, negação fechada quando o domínio não resolve | pendente |
+| Categorias e imagem | Contrato/Kernel | Providers e acesso definidos após finalização da Wiki | adiado |
+| Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
+
+O provider está em código, mas `aculta_wiki` permanece desabilitado. Os testes
+aprovados nesta seção são unitários e não demonstram integração DI ou autorização
+em uma instalação completa.
 
 ## Navegador
 

@@ -7,7 +7,7 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.4`: provider opcional do Content Index implementado para
+- `0.1.0-dev.6`: provider opcional do Content Index implementado para
   metadados allowlisted e relação outgoing `related_entry`; categorias e
   imagem seguem adiadas. O módulo permanece desabilitado.
 - O módulo **não está habilitado** e não altera o Runtime.
@@ -31,6 +31,11 @@ pendentes, está em
   dívida até a finalização da Wiki. O provider só é descoberto quando `aculta_wiki` e
   `aculta_index` estiverem habilitados; não cria dependência obrigatória entre
   eles nem habilita o módulo.
+- `WikiContentIndexProviderTest` cobre metadados allowlisted, revisão padrão,
+  deduplicação de `related_entry` e declaração do purpose canônico `wiki`.
+  Ainda faltam Kernel de discovery DI e consulta do Index com usuário/grants no
+  purpose `wiki`; o módulo continua desabilitado e não foi habilitado nesta
+  fase.
 
 ## Documentação
 

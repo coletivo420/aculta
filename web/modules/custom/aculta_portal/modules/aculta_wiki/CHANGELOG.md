@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.6 — documentar gates de integração do Content Index
+
+- Registra a cobertura Unit existente do provider, sem tratá-la como prova de
+  discovery DI ou autorização integrada.
+- Acrescenta à matriz os Kernel e Runtime ainda pendentes; categorias e imagem
+  permanecem adiadas até a finalização dos contratos da Wiki.
+- Suíte Unit da Wiki executada: 57 testes, 258 assertions; 2 deprecações do
+  PHPUnit observadas.
+- A Wiki permanece desabilitada; nenhuma configuração ou estado do Runtime foi
+  alterado.
+
 ## 0.1.0-dev.5 — versão da projeção no fingerprint do Index
 
 - Provider Wiki declara sua versão de projeção para invalidar rebuilds
