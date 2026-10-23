@@ -21,7 +21,7 @@ final class GreenStashController {
     private readonly GreenStashNavigation $navigation,
   ) {}
 
-  public function page(string $section = 'overview'): array {
+  public function page(string $secao = 'visao-geral'): array {
     $provider = $this->experiences->get('green_stash');
     if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
@@ -30,10 +30,10 @@ final class GreenStashController {
       throw new AccessDeniedHttpException();
     }
 
-    if (!isset(GreenStashNavigation::AREAS[$section])) {
+    if (!isset(GreenStashNavigation::SLUGS[$secao])) {
       throw new NotFoundHttpException();
     }
-    return $this->navigation->build($section);
+    return $this->navigation->build($secao);
   }
 
 }
