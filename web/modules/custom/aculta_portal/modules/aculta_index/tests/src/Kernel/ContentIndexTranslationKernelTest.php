@@ -101,6 +101,14 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame(1, $this->entryCount($generationId, (string) $node->id(), 'en'));
     self::assertSame(1, $this->entryCount($generationId, (string) $node->id(), 'pt-br'));
+    self::assertSame('Default language title', $this->entryLabel($generationId, (string) $node->id(), 'en'));
+    self::assertSame('Título em português', $this->entryLabel($generationId, (string) $node->id(), 'pt-br'));
+
+    $node->getTranslation('pt-br')->setTitle('Título revisado');
+    $node->save();
+    $this->processIndexWork();
+    self::assertSame('Default language title', $this->entryLabel($generationId, (string) $node->id(), 'en'));
+    self::assertSame('Título revisado', $this->entryLabel($generationId, (string) $node->id(), 'pt-br'));
 
     $node->removeTranslation('pt-br');
     $node->save();
@@ -157,6 +165,22 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField();
+  }
+
+  /**
+   * Reads one projected label by source language.
+   */
+  private function entryLabel(string $generationId, string $entityId, string $langcode): ?string {
+    $label = $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['label'])
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', $entityId)
+      ->condition('langcode', $langcode)
+      ->execute()
+      ->fetchField();
+    return $label === FALSE ? NULL : (string) $label;
   }
 
 }

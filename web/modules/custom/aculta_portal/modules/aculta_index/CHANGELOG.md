@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.83 — validar atualização e remoção de tradução
+
+- Kernel confirma que a atualização do título `pt-br` mantém intacta a
+  projeção `en` e que remover a tradução exclui somente sua própria entrada
+  (1 teste / 17 assertions no MariaDB dedicado).
+
 ## 0.1.0-dev.82 — cobrir exclusão de tradução no catálogo
 
 - Kernel cria Node traduzível, reconstrói as duas identidades de idioma e
