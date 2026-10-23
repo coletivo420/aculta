@@ -5,10 +5,15 @@
 - Cada lote concluído emite uma mensagem `debug` com fase, quantidade lida e
   projetada, tempos de leitura/projeção, reconciliação, checkpoint, fila e
   duração total. Não registra IDs nem metadados de conteúdo.
+- O harness de manutenção captura esses logs em `audit_stage_metrics` no JSON,
+  com totais e p50/p95/máximo para cada etapa e fase. A amostra 10k levou 9,15 s
+  na auditoria; 6,75 s ficaram no scan fonte→catálogo e 0,21 s na comparação
+  contra o catálogo. Uma execução, sem SLO.
 - O detalhamento operacional permite separar custo do enumerador/provider do
   custo de comparação do catálogo em futuras auditorias. Não altera o estado
   persistido da auditoria nem seu contrato de consulta.
-- PHPCS Drupal passou; Kernel Schema MariaDB passou (53 testes / 570
+- O benchmark opt-in passou em 10k (1 teste / 15 assertions); PHPCS Drupal
+  passou; Kernel Schema MariaDB passou (53 testes / 570
   assertions; uma depreciação Core e 54 depreciações PHPUnit). O teste focal
   verifica os campos do log e a ausência de identidade/título.
 

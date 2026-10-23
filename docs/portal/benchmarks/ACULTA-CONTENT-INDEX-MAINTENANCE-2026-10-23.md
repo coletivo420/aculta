@@ -199,3 +199,24 @@ permite afirmar causalidade nem extrapolar linearmente para 1M. O próximo passo
 JSON bruto está em
 `/tmp/aculta-index-maintenance-100000-indexability-owneruid-2026-10-23.json`;
 checkpoints foram gravados no arquivo `.progress.json` correspondente.
+
+## Instrumentação por etapa da auditoria — 10k, uma execução
+
+No dev.143, o harness passou a capturar as métricas estruturadas do checker. A
+rodada 10k levou 9,150 s na auditoria (20 lotes de entries, 1 de relations e 21
+de sources) e concluiu com zero divergências. Os tempos detalhados confirmam
+que a passagem fonte→catálogo é dominada por `scan` — Entity Query, carga,
+projeção e limpeza de cache — e não pela comparação SQL do catálogo:
+
+| Fase | Scan (s) | Reconciliação (s) | Checkpoint (s) | Fila (s) | Total instrumentado (s) |
+|---|---:|---:|---:|---:|---:|
+| Entries | 0,071 | 1,952 | 0,012 | 0,019 | 2,076 |
+| Relations | 0,000 | 0,000 | 0,001 | 0,001 | 0,003 |
+| Sources | 6,751 | 0,212 | 0,012 | 0,023 | 7,045 |
+
+Na fase sources, o scan teve p50/p95/máximo de 106 / 537 / 4.333 ms por lote;
+a reconciliação teve p50/p95/máximo de 10 / 12 / 12 ms. A amostra identifica
+`ContentIndexEntityEnumerator::nextBatch()` e seus loads/projeções como o
+próximo alvo de profiling fino. Não prova qual operação interna domina e não
+deve ser extrapolada linearmente para 100k ou 1M. O JSON está em
+`/tmp/aculta-index-maintenance-10000-stages-2026-10-23.json`.

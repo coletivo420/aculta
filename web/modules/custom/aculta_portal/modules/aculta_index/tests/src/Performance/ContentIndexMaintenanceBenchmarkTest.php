@@ -9,11 +9,13 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\domain\DomainNegotiatorInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -210,7 +212,29 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       ->condition('state_id', 1)
       ->execute();
 
-    $integrityChecker = $this->container->get('aculta_index.integrity_checker');
+    $diagnosticLogger = new class() extends NullLogger {
+
+      /** @var list<array<string, mixed>> */
+      public array $auditDiagnostics = [];
+
+      /** {@inheritdoc} */
+      public function log($level, string|\Stringable $message, array $context = []): void {
+        if ($level === 'debug' && str_contains((string) $message, 'Content Index integrity batch completed.')) {
+          $this->auditDiagnostics[] = $context;
+        }
+      }
+
+    };
+    $integrityChecker = new ContentIndexIntegrityChecker(
+      $database,
+      $this->container->get('datetime.time'),
+      $this->container->get('aculta_index.provider_registry'),
+      $this->container->get('aculta_index.work_manager'),
+      $this->container->get('aculta_index.entity_enumerator'),
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_index.writer'),
+      $diagnosticLogger,
+    );
     $auditPhase = (string) $integrityChecker->startAudit()['phase'];
     $auditBatchTimes = [];
     $auditBatchTimesByPhase = [];
@@ -265,6 +289,25 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
         'batch_max_ms' => round(max($samples), 3),
       ];
     }
+    self::assertCount($auditBatchCount, $diagnosticLogger->auditDiagnostics);
+    $auditStageMetrics = [];
+    foreach ($diagnosticLogger->auditDiagnostics as $diagnostic) {
+      $phase = (string) ($diagnostic['@phase'] ?? 'unknown');
+      foreach (['scan', 'reconcile', 'checkpoint', 'queue', 'total'] as $stage) {
+        $auditStageMetrics[$phase][$stage][] = (float) $diagnostic['@' . $stage . '_ms'];
+      }
+    }
+    foreach ($auditStageMetrics as $phase => $stages) {
+      foreach ($stages as $stage => $samples) {
+        sort($samples, SORT_NUMERIC);
+        $auditStageMetrics[$phase][$stage] = [
+          'elapsed_ms' => round(array_sum($samples), 3),
+          'p50_ms' => round($this->percentile($samples, 0.50), 3),
+          'p95_ms' => round($this->percentile($samples, 0.95), 3),
+          'max_ms' => round(max($samples), 3),
+        ];
+      }
+    }
     $payload = [
       'benchmark' => 'provider_backfill_and_incremental_audit',
       'date' => gmdate('Y-m-d'),
@@ -295,6 +338,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'audit_batch_p95_ms' => round($this->percentile($auditBatchTimes, 0.95), 3),
       'audit_batch_max_ms' => round(max($auditBatchTimes), 3),
       'audit_phase_metrics' => $auditPhaseMetrics,
+      'audit_stage_metrics' => $auditStageMetrics,
       'audit_peak_memory_bytes' => $auditPeakMemoryBytes,
       'missing_source_count' => (int) $audit['missing_source_count'],
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],

@@ -85,6 +85,9 @@ bidirecional com Nodes sintéticos. Cada operação usa o provider fixture
 `sample_content`; criação das fontes e troca do ponteiro ativo ficam fora dos
 tempos. Resultado, CSV e limitações estão em
 [rebuild e auditoria](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+Desde dev.143, o JSON inclui tempo por etapa (scan/projeção, reconciliação,
+checkpoint e fila) separado por fase. Isso permite distinguir descoberta e
+projeção do custo de comparar o catálogo.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
