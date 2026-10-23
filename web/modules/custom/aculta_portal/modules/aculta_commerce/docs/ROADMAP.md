@@ -107,3 +107,7 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 ## Green Stash — UX mobile-first (2026-10-23)
 
 [Plano de navegação, telas e componentes](GREEN-STASH-UX-MOBILE-FIRST.md). Experiência independente no Studio; navegação Início, Produtos, Pedidos, Estoque, Envios, Promoções, Clientes, Relatórios e Configurações. Em 320px priorizar quatro destinos + Mais, listas em cartões e ações contextuais; desktop oferece sidebar e tabela. Reutilizar SDC/UI Suite do ACULTA420, nunca mexer no cabeçalho multidomínio. Próxima etapa GS-0.2-A: contratos/ACL de navegação; GS-0.2-B: shell com estados vazios; GS-0.2-C: dados operacionais reais. Plano **não implementado em UI**.
+
+## GS-0.2-A/B — navegação inicial implementada (2026-10-23)
+
+`GreenStashNavigation` fornece nove áreas navegáveis com rotas internas `/green-stash/{section}`, controladas por `access aculta green stash` e purpose `account`. O controller aplica também os checks do StudioExperienceManager. Render arrays têm heading, navegação acessível e estado de preparação sem dados privados ou operações financeiras. Teste Unit criado: `GreenStashNavigationTest`. **Não existe nesta fase UI SDC final, bottom navigation nem listagem real de produtos/pedidos; não alegar interface operacional pronta.** Próximo GS-0.2-C: autorização por store/entidade + dados reais paginados; parte visual SDC/UI Suite no tema após auditoria. PHP/Kernel/Browser e rotas no homelab pendentes.
