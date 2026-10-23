@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.105 — rejeitar relações com projeção de origem obsoleta
+
+- A consulta outgoing não devolve alvos quando o registro da origem usa uma
+  versão antiga do provider, mesmo que a entidade original permaneça visível.
+- `ContentIndexRebuilderKernelTest`: 16 testes / 222 assertions passaram em
+  MariaDB e SQLite. PHPCS Drupal e `php -l` do teste passaram.
+
 ## 0.1.0-dev.104 — identificar limitação do benchmark 1M em andamento
 
 - Documentado que a execução 1M ativa começou antes do isolamento dos eventos

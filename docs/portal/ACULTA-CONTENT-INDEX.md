@@ -39,6 +39,8 @@ O desenho de implementação combina: revogação/bloqueio síncrono quando uma 
 
 Contrato decidido para consultas 0.1: páginas de até 100 candidatos, sem totais ou facetas. O serviço filtra cada página por Entity Access e retorna cursor aleatório vinculado a conta, filtros e geração; só o hash do token é persistido. O cursor não expõe IDs. Sua presença quando uma página chega ao limite pode sinalizar continuação, opção aceita para limitar custo sem varrer um conjunto irrestrito. Respostas iniciais têm cache max-age 0. O arquivo Kernel de rebuild/consulta passou com 15/211 e verifica que consultas de conteúdo e relações rejeitam limites 0 e 101. Se totals/facetas forem adicionados depois, só poderão refletir entidades autorizadas e deverão ser medidos em volume.
 
+O `ContentIndexRebuilderKernelTest` foi repetido em MariaDB e SQLite (16 testes / 222 assertions em cada): relações são omitidas quando a projeção da origem usa uma versão obsoleta do provider, mesmo que a entidade-fonte ainda passe em Entity Access. Projeções-alvo obsoletas também permanecem excluídas.
+
 Core Queue foi escolhida para a fila incremental. `aculta_index` manterá estado mínimo próprio para contagem/timing de falhas e dead-letter, pois a Queue Core fornece lease/recuperação de item expirado, mas não o histórico operacional específico requerido. Política confirmada: cinco tentativas com backoff exponencial de 30 segundos até seis horas. Não instalar Advanced Queue. O fluxo precisa sobreviver a módulo de origem desabilitado, rebuild concorrente, job fora de ordem, relação removida e acesso revogado.
 
 ## Fases

@@ -696,6 +696,18 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame('Public target', (string) $targets[0]->label());
     $this->assertSame($this->container->get('language_manager')->getDefaultLanguage()->getId(), $targets[0]->language()->getId());
 
+    // A relation edge is unusable if its source projection belongs to an old
+    // provider contract, even when the source entity itself remains viewable.
+    $database->update('aculta_index_entry')
+      ->fields(['provider_version' => 0])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', (string) $source->id())
+      ->execute();
+    $staleSource = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account);
+    $this->assertSame([], $staleSource->entities, 'Relations from an obsolete source projection are not exposed.');
+    $this->assertNull($staleSource->nextCursor);
+
     $deniedSource = $query->queryOutgoing('node', (string) $privateSource->id(), $privateSource->language()->getId(), 'related_item', $account);
     $this->assertSame([], $deniedSource->entities);
     $this->assertNull($deniedSource->nextCursor);
