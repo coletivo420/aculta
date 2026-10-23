@@ -19,6 +19,7 @@ alt, direitos, descrição e URLs não entram no catálogo.
 
 O provider declara o purpose canônico `magazine`, inclusive quando uma galeria
 é alcançada por relação de curso. O Kernel do Index usa as entidades reais
-`media_gallery` e Media e cobre backfill, relação `gallery_image`, atualização
-e remoção (1 teste / 21 assertions). O harness não habilita o módulo owner
-`aculta_gallery` completo nem substitui a homologação de acesso no Runtime.
+`media_gallery`, Media e Domain, cobrindo backfill, relação `gallery_image`,
+atualização, remoção e Entity Access no purpose `magazine`, com falha fechada
+quando esse Domain falta (2 testes / 44 assertions). O harness não habilita o
+módulo owner `aculta_gallery` completo nem substitui a homologação no Runtime.

@@ -1,12 +1,20 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.80 — validar acesso Gallery no purpose canônico
+
+- Kernel usa o Entity Access real de `media_gallery`: permissão do owner deixa
+  a conta comum visualizar publicada e nega rascunho; falta do Domain canônico
+  `magazine` falha fechado e restaura o Domain original (2 testes / 44
+  assertions, junto do ciclo CRUD de dev.79).
+- `aculta_gallery` completo e autorização Runtime continuam fora do harness.
+
 ## 0.1.0-dev.79 — cobrir provider Gallery com entidades reais
 
 - Kernel ativa `media_gallery` e Media do repositório, registra os providers
-  Gallery e image pelo harness e cobre backfill, relação `gallery_image`,
+  Gallery e image pela tag de fixture e cobre backfill, relação `gallery_image`,
   update e delete via worker (1 teste / 21 assertions).
-- O teste não habilita o módulo owner completo `aculta_gallery` nem prova
-  autorização/grants no Runtime; a validação separada do YAML owner permanece.
+- O teste não habilita o módulo owner completo `aculta_gallery`; o YAML owner
+  continua validado separadamente.
 
 ## 0.1.0-dev.78 — fixar teto de candidatos nas consultas
 

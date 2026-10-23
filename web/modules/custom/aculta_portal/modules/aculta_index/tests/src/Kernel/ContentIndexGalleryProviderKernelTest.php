@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\Entity\Domain;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media_gallery\Entity\MediaGallery;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Verifies Gallery projections and selected image relations through Index.
@@ -45,6 +46,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     'media_library',
     'photoswipe',
     'media_gallery',
+    'domain',
     'aculta_index',
     'aculta_index_gallery_test',
   ];
@@ -54,12 +56,12 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
-      $this->createMock(EntityTypeManagerInterface::class),
-      $this->createMock(DomainNegotiatorInterface::class),
-      $this->createMock(ConfigFactoryInterface::class),
-      new RequestStack(),
-    ));
+    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+      new Reference('entity_type.manager'),
+      new Reference('domain.negotiator'),
+      new Reference('config.factory'),
+      new Reference('request_stack'),
+    ]))->setPublic(TRUE));
   }
 
   /**
@@ -71,6 +73,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('media_gallery');
+    $this->installEntitySchema('domain');
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
@@ -81,9 +84,10 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['media', 'image', 'media_gallery', 'system', 'user']);
+    $this->installConfig(['media', 'image', 'media_gallery', 'domain', 'system', 'user']);
     aculta_index_install();
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
+    $this->createDomains();
   }
 
   /**
@@ -127,6 +131,71 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Gallery Entity Access is checked in the canonical purpose and fails closed.
+   */
+  public function testGalleryAccessUsesMagazinePurposeAndFailsClosed(): void {
+    // Keep the tested reader away from Core's UID 1 access bypass.
+    User::create(['name' => 'gallery-access-root-fixture', 'status' => TRUE])->save();
+    $role = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $role);
+    $role->grantPermission('view published media gallery entities')->save();
+    $reader = User::create([
+      'name' => 'gallery-index-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+
+    $published = MediaGallery::create([
+      'title' => 'Published gallery',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'langcode' => 'en',
+    ]);
+    $published->save();
+    $unpublished = MediaGallery::create([
+      'title' => 'Unpublished gallery',
+      'status' => FALSE,
+      'uid' => $reader->id(),
+      'langcode' => 'en',
+    ]);
+    $unpublished->save();
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get('domain.negotiator');
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+
+    $filter = $this->container->get('aculta_index.access_filter');
+    $candidates = [
+      [
+        'entity_type' => 'media_gallery',
+        'entity_id' => (string) $published->id(),
+        'langcode' => 'en',
+      ],
+      [
+        'entity_type' => 'media_gallery',
+        'entity_id' => (string) $unpublished->id(),
+        'langcode' => 'en',
+      ],
+    ];
+    $result = $filter->filter($candidates, $reader);
+    $this->assertCount(1, $result->entities);
+    $this->assertSame((string) $published->id(), (string) $result->entities[0]->id());
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+
+    $magazineDomain = Domain::load('revista420_aculta_org');
+    self::assertInstanceOf(Domain::class, $magazineDomain);
+    $magazineDomain->delete();
+    $this->assertCount(0, $filter->filter([$candidates[0]], $reader)->entities);
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+  }
+
+  /**
    * Creates a real image Media entity for the Gallery base reference field.
    */
   private function createImageMedia(): Media {
@@ -147,6 +216,23 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     ]);
     $image->save();
     return $image;
+  }
+
+  /**
+   * Creates the active and canonical Magazine Domains for access checks.
+   */
+  private function createDomains(): void {
+    foreach (['aculta_org' => 'main', 'revista420_aculta_org' => 'magazine'] as $id => $name) {
+      Domain::create([
+        'id' => $id,
+        'hostname' => $name . '.example.invalid',
+        'name' => $name,
+        'scheme' => 'https',
+        'status' => TRUE,
+        'is_default' => $id === 'aculta_org',
+        'weight' => 0,
+      ])->save();
+    }
   }
 
   /**
