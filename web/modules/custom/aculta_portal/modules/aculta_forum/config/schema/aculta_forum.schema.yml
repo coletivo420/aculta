@@ -11,3 +11,19 @@ aculta_forum.settings:
     restricted_group_type:
       type: string
       label: 'Group type whose members can read restricted Forum topics (empty disables restricted forums)'
+
+# Valor do filtro de tópicos sem respostas (plugin aculta_forum_no_replies). O plugin ignora o valor na consulta;
+# o schema existe para que a configuração da view seja validada na importação.
+views.filter_value.aculta_forum_no_replies:
+  type: mapping
+  label: 'Valor do filtro sem respostas'
+  mapping:
+    min:
+      type: string
+      label: 'Mínimo'
+    max:
+      type: string
+      label: 'Máximo'
+    value:
+      type: string
+      label: 'Valor'
