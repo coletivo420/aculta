@@ -9,3 +9,8 @@ services:
   aculta_commerce_melhorenvio.address_mapper:
     class: Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper
     autowire: true
+
+  # Par origem/destino para cotação, contratação e etiqueta. Origem vem de configuração; destino do perfil de envio.
+  aculta_commerce_melhorenvio.shipment_address_binder:
+    class: Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder
+    autowire: true
