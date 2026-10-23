@@ -48,6 +48,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -608,9 +609,35 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $other,
     ));
 
+    $proposalStorage = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal');
     for ($index = 0; $index < 25; $index++) {
-      $submission->submit($staleTarget, 'correction', 'Correção ' . $index, 'Justificativa curta.');
+      $seedProposal = $proposalStorage->create([
+        'uid' => $submitter->id(),
+        'subject' => 'Correção de teste ' . $index,
+        'target' => $target->id(),
+        'target_revision_id' => $target->getRevisionId(),
+        'intent' => 'correction',
+        'proposed_text' => 'Correção ' . $index,
+        'rationale' => 'Justificativa curta.',
+        'state' => 'submitted',
+      ]);
+      $seedProposal->setNewRevision(TRUE);
+      $seedProposal->isDefaultRevision(TRUE);
+      $seedProposal->save();
     }
+    $flood = $this->container->get('flood');
+    $flood->clear('aculta_wiki.proposal_submission', (string) $submitter->id());
+    for ($index = 0; $index < 10; $index++) {
+      $flood->register('aculta_wiki.proposal_submission', 3600, (string) $submitter->id());
+    }
+    try {
+      $submission->submit($staleTarget, 'correction', 'Excesso', 'Tentativa além do limite.');
+      self::fail('An author must be rate limited after ten proposals in one hour.');
+    }
+    catch (TooManyRequestsHttpException) {
+      self::assertSame(26, $proposalStorage->getQuery()->accessCheck(FALSE)->count()->execute());
+    }
+    $flood->clear('aculta_wiki.proposal_submission', (string) $submitter->id());
     $reviewer = new UserSession([
       'uid' => 4,
       'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],

@@ -123,7 +123,8 @@ fallback real e evitar warning falso de `entity_usage`.
 | Envio fora do purpose Wiki | Kernel | Serviço nega antes de persistir | aprovado |
 | Fonte insegura | Kernel | Rejeita URI `javascript:` antes de persistir | aprovado |
 | Alvo alterado após carregar a página | Kernel | Serviço recarrega o Node e salva o VID padrão atual | aprovado |
-| Limite de abuso e idempotência | Kernel | Rejeitar submissão excessiva/duplicada | planejado |
+| Limite de abuso | Kernel | A 11ª proposta em uma hora recebe HTTP 429 e não persiste | aprovado (focal: 1 teste / 94 assertions) |
+| Idempotência de reenvio concorrente | Kernel | POST repetido com o mesmo token não cria duplicata | planejado |
 | Decisão editorial e histórico | Kernel | Form API/Content Moderation cria revisão e bloqueia aplicação quando o VID-base ficou obsoleto | planejado |
 
 O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib e

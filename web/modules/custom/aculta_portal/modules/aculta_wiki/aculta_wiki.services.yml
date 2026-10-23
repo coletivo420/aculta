@@ -11,7 +11,7 @@ services:
 
   aculta_wiki.proposal_submission:
     class: Drupal\aculta_wiki\Service\WikiProposalSubmission
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy', '@flood']
 
   aculta_wiki.editorial_queue:
     class: Drupal\aculta_wiki\Service\WikiEditorialQueue

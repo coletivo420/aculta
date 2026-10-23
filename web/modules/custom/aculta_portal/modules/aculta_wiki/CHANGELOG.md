@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.25 — limite de submissão comunitária
+
+- A submissão usa Flood do Drupal para limitar cada conta a 10 propostas por
+  hora, alinhada ao limite de solicitações sociais do `aculta_user`.
+- Ao exceder o limite, responde HTTP 429 antes de persistir a proposta. Kernel
+  focal: 1 teste / 94 assertions; classe completa: 9 testes / 366 assertions.
+  PHPCS, lint e validadores do Portal passaram. Runtime desabilitado.
+- Idempotência para reenvio simultâneo do mesmo formulário continua pendente.
+
 ## 0.1.0-dev.24 — histórico privado de propostas
 
 - A página privada da proposta mostra histórico paginado de revisões, com data,

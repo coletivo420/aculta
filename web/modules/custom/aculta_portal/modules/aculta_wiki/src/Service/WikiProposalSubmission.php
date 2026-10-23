@@ -7,22 +7,31 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 /**
  * Creates private proposals against the published Wiki revision.
  */
 final class WikiProposalSubmission {
 
+  private const FLOOD_EVENT = 'aculta_wiki.proposal_submission';
+
+  private const FLOOD_LIMIT = 10;
+
+  private const FLOOD_WINDOW = 3600;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
+    private readonly FloodInterface $flood,
   ) {}
 
   /**
@@ -111,7 +120,12 @@ final class WikiProposalSubmission {
     }
     $proposal->setNewRevision(TRUE);
     $proposal->isDefaultRevision(TRUE);
+    $identifier = (string) $this->currentUser->id();
+    if (!$this->flood->isAllowed(self::FLOOD_EVENT, self::FLOOD_LIMIT, self::FLOOD_WINDOW, $identifier)) {
+      throw new TooManyRequestsHttpException(self::FLOOD_WINDOW, 'O limite temporário de propostas foi atingido. Tente novamente mais tarde.');
+    }
     $proposal->save();
+    $this->flood->register(self::FLOOD_EVENT, self::FLOOD_WINDOW, $identifier);
 
     return $proposal;
   }

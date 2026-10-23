@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.24**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.25**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.25 — limite de submissão comunitária
+
+`WikiProposalSubmission` aplica Flood do Drupal: até 10 propostas por conta em
+uma hora. A tentativa seguinte recebe HTTP 429 antes de salvar. Kernel focal
+MariaDB: 1 teste / 94 assertions; classe completa: 9 testes / 366 assertions.
+Idempotência entre reenvios concorrentes continua pendente.
 
 ### Incremento dev.24 — histórico privado de propostas
 
