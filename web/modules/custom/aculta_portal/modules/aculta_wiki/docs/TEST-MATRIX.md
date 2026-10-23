@@ -67,6 +67,15 @@ depois da importação de configuração no servidor de testes.
 | Node importado ou sincronizado | Unit | Nenhum evento | planejado |
 | Agregado diário com publicação e revisão | Kernel | Contadores diários separados por métrica | planejado |
 
+## Controller — cache e acesso (dev.11)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Busca com `accessCheck(TRUE)` | Unit | Cache varia por `user.node_grants:view`, inclusive sem resultados | aprovado |
+| CTA para criar verbete | Unit | Usa `createAccess('wiki_entry')` e mantém o `AccessResult` cacheável | aprovado |
+| Busca em URLs de rota pública | Unit | Mantém `aculta_portal.wiki_search` e `aculta_portal.wiki_search_preview` | aprovado (form builder) |
+| Discovery das rotas no Drupal | Kernel | Rotas `/wiki`, `/wiki/busca`, `/wiki/busca/previa` ativas após habilitação controlada | pendente; `SIMPLETEST_DB` não configurada nesta sessão |
+
 ## Integração ACULTA Content Index — IDX 0.1
 
 | Cenário | Tipo | Resultado esperado | Estado |

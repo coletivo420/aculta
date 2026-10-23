@@ -7,10 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.10`: provider opcional do Content Index projeta metadados
-  allowlisted e relações outgoing `related_entry`, `wiki_category` e
-  `wiki_image` (versão de projeção 3). O módulo permanece desabilitado no
-  Runtime de teste; a configuração exportada e o Runtime não são equivalentes.
+- `0.1.0-dev.11`: busca varia cache por grants de visualização de Nodes e o CTA
+  de colaboração usa o acesso real de criação de `wiki_entry`. O provider
+  opcional do Content Index permanece na versão de projeção 3.
+- O módulo permanece desabilitado no Runtime de teste; a configuração
+  exportada e o Runtime não são equivalentes.
 - O módulo **não está habilitado** e não altera o Runtime.
 - As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` estão definidas neste
   submódulo com os nomes `aculta_portal.wiki_*`; `/wiki/verbetes` permanece

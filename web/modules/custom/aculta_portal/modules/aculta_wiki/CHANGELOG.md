@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.11 — caracterizar grants e criação de verbetes
+
+- Busca e página inicial agora variam cache por `user.node_grants:view`, pois a
+  query de resultados aplica `accessCheck(TRUE)` e a listagem recente revalida
+  acesso por entidade.
+- O CTA de colaboração usa `EntityAccessControlHandler::createAccess()` para
+  `node:wiki_entry`; o `AccessResult` mantém seus metadados de cache no render.
+- Rotas públicas e configuração não mudaram. Testes Unit e gates aplicáveis
+  ficam registrados na matriz desta versão; não houve validação no Runtime.
+
 ## Auditoria R1 — 2026-10-23
 
 - Handoff documentado: provider Wiki v3 cobre metadados allowlisted e relações

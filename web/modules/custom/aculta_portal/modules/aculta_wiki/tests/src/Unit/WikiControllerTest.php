@@ -9,11 +9,15 @@ use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityAccessControlHandlerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\ConditionInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -21,6 +25,7 @@ use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\views\ViewExecutableFactory;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,16 +46,48 @@ final class WikiControllerTest extends UnitTestCase {
   private ?array $lastPreviewedBuild = NULL;
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+    $urlGenerator->method('generateFromRoute')->willReturn('/generated-route');
+    $container = new ContainerBuilder();
+    $container->set('url_generator', $urlGenerator);
+    $pathValidator = $this->createMock(PathValidatorInterface::class);
+    $pathValidator->method('getUrlIfValidWithoutAccessCheck')->willReturn(NULL);
+    $container->set('path.validator', $pathValidator);
+    \Drupal::setContainer($container);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    \Drupal::unsetContainer();
+    parent::tearDown();
+  }
+
+  /**
    * Entity manager whose `domain` storage resolves (or not) the Wiki Domain.
    */
-  private function entityManager(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL): EntityTypeManagerInterface {
+  private function entityManager(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL): EntityTypeManagerInterface {
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->willReturn($domain);
+    $viewStorage = $this->createMock(EntityStorageInterface::class);
+    $viewStorage->method('load')->willReturn(NULL);
 
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->method('getStorage')->willReturnCallback(
-      static fn ($entityType) => $entityType === 'domain' ? $domainStorage : $nodeStorage,
+      static fn ($entityType) => match ($entityType) {
+        'domain' => $domainStorage,
+        'view' => $viewStorage,
+        default => $nodeStorage,
+      },
     );
+    if ($nodeAccess !== NULL) {
+      $entities->method('getAccessControlHandler')->with('node')->willReturn($nodeAccess);
+    }
 
     return $entities;
   }
@@ -70,7 +107,7 @@ final class WikiControllerTest extends UnitTestCase {
   /**
    * Builds the controller with a stub translator and the given Domain.
    */
-  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL): WikiController {
+  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL): WikiController {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translateString')
       ->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
@@ -84,12 +121,12 @@ final class WikiControllerTest extends UnitTestCase {
     );
 
     $controller = new WikiController(
-      $this->entityManager($domain, $nodeStorage),
+      $this->entityManager($domain, $nodeStorage, $nodeAccess),
       $this->createMock(ViewExecutableFactory::class),
       $this->domainPurpose($domain),
       $this->createMock(Connection::class),
       $this->createMock(DateFormatterInterface::class),
-      $this->createMock(AccountInterface::class),
+      $account ?? $this->createMock(AccountInterface::class),
       $renderer,
     );
 
@@ -116,9 +153,36 @@ final class WikiControllerTest extends UnitTestCase {
 
     $this->assertSame('wiki-search-results', $build['#attributes']['data-portal-ui']);
     $this->assertSame('Buscar na Wiki420', (string) $build['title']['#value']);
-    $this->assertSame(['url.query_args:q', 'domain', 'user.permissions'], $build['#cache']['contexts']);
+    $this->assertSame(['url.query_args:q', 'domain', 'user.permissions', 'user.node_grants:view'], $build['#cache']['contexts']);
     $this->assertArrayNotHasKey('empty', $build);
     $this->assertArrayNotHasKey('results', $build);
+  }
+
+  /**
+   * Search cache varies by node grants because the query applies node access.
+   */
+  public function testSearchCacheVariesByNodeGrants(): void {
+    $build = $this->controller(NULL)->search(Request::create('/wiki/busca'));
+
+    self::assertContains('user.node_grants:view', $build['#cache']['contexts']);
+  }
+
+  /**
+   * Collaboration CTA uses bundle create access and preserves its cache data.
+   */
+  public function testHomeCollaborationUsesNodeCreateAccess(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $access = AccessResult::allowed()->addCacheContexts(['user.permissions']);
+    $nodeAccess = $this->createMock(EntityAccessControlHandlerInterface::class);
+    $nodeAccess->expects(self::once())
+      ->method('createAccess')
+      ->with('wiki_entry', $account, [], TRUE)
+      ->willReturn($access);
+
+    $build = $this->controller(NULL, NULL, $nodeAccess, $account)->home();
+
+    self::assertSame($access, $build['collaboration']['#access']);
+    self::assertContains('user.node_grants:view', $build['#cache']['contexts']);
   }
 
   /**

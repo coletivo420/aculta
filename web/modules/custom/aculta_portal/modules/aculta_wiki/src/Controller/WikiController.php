@@ -53,7 +53,7 @@ final class WikiController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-home'],
       '#cache' => [
-        'contexts' => ['domain', 'user.permissions'],
+        'contexts' => ['domain', 'user.permissions', 'user.node_grants:view'],
         'tags' => ['node_list:wiki_entry', 'taxonomy_term_list'],
       ],
       'context_tabs' => $this->contextNavigation('aculta_portal.wiki_home'),
@@ -72,13 +72,27 @@ final class WikiController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Quer colaborar? Proponha um verbete.'),
         '#url' => Url::fromRoute('node.add', ['node_type' => 'wiki_entry']),
-        '#access' => $this->account->hasPermission('create wiki_entry content'),
+        '#access' => $this->entities
+          ->getAccessControlHandler('node')
+          ->createAccess('wiki_entry', $this->account, [], TRUE),
       ],
-      'categories_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Categorias da Wiki420')],
+      'categories_title' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h2',
+        '#value' => $this->t('Categorias da Wiki420'),
+      ],
       'categories' => $this->viewBlock('wiki_categories', 'block_1'),
-      'recent_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Verbetes recentes')],
+      'recent_title' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h2',
+        '#value' => $this->t('Verbetes recentes'),
+      ],
       'recent' => $this->viewBlock('wiki_entries', 'block_recent'),
-      'changes_title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Alterações recentes da Wiki420')],
+      'changes_title' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h2',
+        '#value' => $this->t('Alterações recentes da Wiki420'),
+      ],
       'changes' => $this->recentChanges(),
     ];
     return $build;
@@ -95,8 +109,15 @@ final class WikiController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-search-results'],
-      '#cache' => ['contexts' => ['url.query_args:q', 'domain', 'user.permissions'], 'tags' => ['node_list:wiki_entry']],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h1', '#value' => $this->t('Buscar na Wiki420')],
+      '#cache' => [
+        'contexts' => ['url.query_args:q', 'domain', 'user.permissions', 'user.node_grants:view'],
+        'tags' => ['node_list:wiki_entry'],
+      ],
+      'title' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'h1',
+        '#value' => $this->t('Buscar na Wiki420'),
+      ],
       'context_tabs' => $this->contextNavigation('aculta_portal.wiki_search'),
     ];
     if ($term === '') {
@@ -105,7 +126,10 @@ final class WikiController extends ControllerBase {
     $term = mb_substr($term, 0, SearchPageController::MAX_CHARS);
     $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
     if (!$wikiDomain) {
-      $build['empty'] = ['#type' => 'item', '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.')];
+      $build['empty'] = [
+        '#type' => 'item',
+        '#plain_text' => $this->t('A busca da Wiki420 está indisponível no momento.'),
+      ];
       return $build;
     }
     $viewBuilder = $this->entities->getViewBuilder('node');
@@ -116,14 +140,25 @@ final class WikiController extends ControllerBase {
     // pt-BR plural rules use the singular form for 0, so the count is only
     // shown when there is at least one visible result.
     if ($results) {
-      $build['count'] = ['#type' => 'item', '#plain_text' => $this->formatPlural(count($results), '1 verbete encontrado.', '@count verbetes encontrados.')];
+      $build['count'] = [
+        '#type' => 'item',
+        '#plain_text' => $this->formatPlural(
+          count($results),
+          '1 verbete encontrado.',
+          '@count verbetes encontrados.',
+        ),
+      ];
       $build['results'] = $results;
     }
     else {
       $build['empty'] = [
         '#type' => 'component',
         '#component' => 'aculta420:empty-state',
-        '#slots' => ['message' => ['#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.')]],
+        '#slots' => [
+          'message' => [
+            '#plain_text' => $this->t('Nenhum verbete publicado corresponde a essa busca.'),
+          ],
+        ],
       ];
     }
     return $build;
@@ -217,7 +252,7 @@ final class WikiController extends ControllerBase {
    * Finds visible Wiki420 entries for both complete and interactive searches.
    *
    * @return \Drupal\node\NodeInterface[]
-   *   Published entries within the Wiki domain that the current account can view.
+   *   Published entries in the Wiki domain visible to the current account.
    */
   private function findWikiEntries(string $term, DomainInterface $wikiDomain, int $limit): array {
     $pattern = '%' . $this->database->escapeLike($term) . '%';
@@ -253,7 +288,7 @@ final class WikiController extends ControllerBase {
   }
 
   /**
-   * Lists published Wiki420 entries by latest update, without public authorship.
+   * Lists recent published Wiki420 entries without public authorship.
    */
   private function recentChanges(): array {
     $build = [

@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.10**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.11**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
@@ -29,18 +29,27 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
 - Documentação de entrada e regras locais.
 - Saída: validadores do repositório passam; módulo continua desabilitado.
 
-## Fase 2 — Mover o código inteiro
+## Fase 2 — Rotas, acesso e busca
 
-- `WikiController`, `WikiSearchFormBuilder` e as três rotas
-  `aculta_portal.wiki_*` passam para o submódulo, com nomes e caminhos
-  idênticos.
+- **Código movido:** `WikiController`, `WikiSearchFormBuilder` e as três rotas
+  `aculta_portal.wiki_*` estão no submódulo, preservando nomes e caminhos.
 - Os pontos de domínio e purpose (`DomainPurposeManager`,
   `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`).
   A Wiki não redefine purpose nem host.
-- Saída: Unit e kernel do controlador e da busca; `drush cr` sem erro; Config
+- **Gates pendentes:** Unit e Kernel de discovery/acesso das rotas; `drush cr`
+  sem erro; Config
   Sync sem diferenças; HTTP 200 em `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
   `/wiki/busca/previa` no domínio `wiki420`; backup privado antes de qualquer
   `updb`.
+
+### Incremento de acesso e cache — dev.11
+
+Implementado em dev.11: `WikiController::search()` varia cache por
+`user.node_grants:view`, e o CTA na home consulta `createAccess()` para
+`wiki_entry`, preservando o `AccessResult` cacheável. A página inicial também
+declara o contexto de grants usado por `recentChanges()`. Rotas permanecem
+inalteradas. A matriz lista os testes Unit; discovery das rotas e validação
+Kernel/Runtime ainda são gates separados.
 
 ## Fase 3 — Documentação obrigatória da mudança de escopo
 
