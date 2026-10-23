@@ -26,7 +26,7 @@ O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de en
 
 Entradas têm consultas seletivas por geração, tipo/bundle, domínio/estado e provider. Relações são consultáveis por origem ou alvo sem carregar toda a tabela. Chaves compostas preservam IDs string (inclusive tipos que não sejam Node) e idioma.
 
-Schema foi declarado com Database Schema API, sem SQL de criação específico do driver. A instalação e consultas exercitadas nos Kernel tests passaram em MariaDB. SQLite não é backend de teste suportado pelo projeto; não há medição de latência, volume ou tamanho de índice nesta fase.
+Schema foi declarado com Database Schema API, sem SQL de criação específico do driver. A instalação e consultas passaram anteriormente nos Kernel tests com MariaDB. Em 2026-10-23, a suíte Kernel completa do Index também passou em SQLite em memória (63 testes / 815 assertions), como execução suplementar local; isso não substitui os gates MariaDB do Portal nem homologa SQLite como backend operacional. Não há medição de latência, volume ou tamanho de índice nesta fase.
 
 Consultas de entidades usam `generation_id`, filtros allowlisted e `entry_id DESC` para keyset imutável. Relações deduplicam por identidade do alvo resolvida e usam o `entry_id` do alvo para manter a mesma ordenação estável; o índice `gen_source` atende origem e tipo de relação na consulta nomeada. O cursor não contém identidade da origem: um token aleatório por conta/filtros/geração localiza uma linha com hash SHA-256, posição, revisão CAS e expiração de 15 minutos. O cron apaga tokens expirados por lotes. O leitor revalida cada entidade pela API de acesso; as respostas não são armazenáveis em cache neste primeiro contrato.
 
