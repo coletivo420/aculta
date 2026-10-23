@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.151 — consolidar o resumo de status
+
+- README inicial agora resume a implementação, integração, benchmark 1M e
+  pendências atuais sem repetir métricas históricas que foram superadas.
+- Nenhum comportamento de runtime foi alterado.
+
 ## 0.1.0-dev.150 — concluir benchmark de manutenção 1M
 
 - Com a descoberta `base_table`, rebuild/auditoria 1M concluíram em MariaDB:
