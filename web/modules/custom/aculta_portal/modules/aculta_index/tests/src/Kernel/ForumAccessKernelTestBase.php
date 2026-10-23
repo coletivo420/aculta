@@ -50,6 +50,10 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     'text',
     'image',
     'media',
+    'media_library',
+    'views',
+    'photoswipe',
+    'media_gallery',
     'node',
     'comment',
     'entity',
@@ -118,6 +122,7 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('media_gallery');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
     $this->installEntitySchema('group');
@@ -138,10 +143,26 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'text', 'group', 'domain', 'media', 'image', 'file']);
+    $this->installConfig([
+      'system', 'user', 'node', 'comment', 'text', 'group', 'domain',
+      'media', 'image', 'file', 'media_library', 'views', 'photoswipe',
+      'media_gallery',
+    ]);
     aculta_index_install();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
     $this->createMediaType('file', ['id' => 'forum_attachment', 'label' => 'Forum attachment']);
+    FieldStorageConfig::create([
+      'entity_type' => 'media_gallery',
+      'field_name' => 'field_gallery_purpose',
+      'type' => 'string',
+      'settings' => ['max_length' => 32, 'is_ascii' => FALSE, 'case_sensitive' => FALSE],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'media_gallery',
+      'bundle' => 'media_gallery',
+      'field_name' => 'field_gallery_purpose',
+      'label' => 'Gallery purpose',
+    ])->save();
     $this->addDefaultCommentField(
       'node',
       'aculta_forum_topic',

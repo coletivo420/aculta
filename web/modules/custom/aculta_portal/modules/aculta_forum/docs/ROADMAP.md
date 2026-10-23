@@ -26,14 +26,17 @@ consulta seguinte do Index negar os itens imediatamente. Um cenário adicional
 confirma que um tópico público é autorizado pelo purpose `forum` quando a
 requisição começa em `main`, mas negado se o Domain canônico estiver ausente;
 em ambos os cenários o contexto anterior é restaurado. O Kernel focal passou no
-MariaDB com 2 testes / 91 assertions; uma cobertura adicional integra a Media
+MariaDB com 2 testes / 91 assertions; a cobertura adicional integra Media
 `forum_attachment` pelo provider do YAML real e chama `ForumAttachmentAccessHooks`
-de produção pelo adapter: fora do purpose a Media é negada, no filtro do Index
-a proprietária da Media não publicada é autorizada e outro usuário é negado;
-o Domain inicial `main` é restaurado. O arquivo focal passou com 3 testes / 143
-assertions, 22 depreciações Core/contrib; PHPCS passou. Esse cenário cobre a
-política para Media não publicada, não a validação de referência pública da
-Media publicada. A suíte Kernel do Index registrada anteriormente passou com
+de produção pelo adapter. Fora do purpose a Media é negada; no Index, a Media
+não publicada é autorizada para sua dona e negada para outro usuário, com
+restauração do Domain inicial `main`. Um segundo caso publicado confirma que
+Comment e tópico públicos autorizam a Media publicada mesmo quando a consulta
+começa em `main`; após despublicar o tópico, o Index nega o anexo embora a flag
+publicada da Media permaneça ligada. O arquivo focal passou com 4 testes / 199
+assertions, 38 depreciações Core/contrib; PHPCS passou. A fixture inclui Media
+Gallery para executar a validação real de referências, mas não ativa a cadeia
+completa do owner. A suíte Kernel do Index registrada anteriormente passou com
 65 / 883. Isso prova policy e grants reais sem ativar a cadeia completa do owner.
 Boot/DI completo do Fórum e Runtime seguem pendentes antes da ativação. A
 conversão do timestamp Comment foi corrigida; Unit 5/31 cobre bundle fixo sem

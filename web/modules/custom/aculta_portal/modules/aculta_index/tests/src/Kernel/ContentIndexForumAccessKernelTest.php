@@ -7,13 +7,16 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\RestrictedForumAccessHooks;
 use Drupal\comment\Entity\Comment;
+use Drupal\comment\CommentInterface;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\node\Entity\Node;
+use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -74,6 +77,93 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertCount(1, $filter->filter($candidate, $member)->entities, 'The Index applies the canonical Forum purpose, then preserves unpublished Media owner access.');
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertCount(0, $filter->filter($candidate, $outsider)->entities, 'The Index does not expose an unpublished attachment to another account.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+  }
+
+  /**
+   * Published attachment candidates require a currently public Forum embed.
+   */
+  public function testPublishedForumAttachmentLosesAccessWithItsHost(): void {
+    $author = $this->createUser('published-forum-attachment-author');
+    $viewer = $this->createUser('published-forum-attachment-viewer');
+    foreach (['anonymous', 'authenticated'] as $roleId) {
+      $role = Role::load($roleId);
+      self::assertInstanceOf(Role::class, $role);
+      $role->grantPermission('view media');
+      if ($roleId === 'anonymous') {
+        $role->grantPermission('access content')->grantPermission('access comments');
+      }
+      $role->save();
+    }
+
+    $file = File::create([
+      'uri' => 'public://forum-attachment-public-index-test.pdf',
+      'filename' => 'forum-attachment-public-index-test.pdf',
+      'filemime' => 'application/pdf',
+      'uid' => $author->id(),
+    ]);
+    $file->setPermanent();
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'forum_attachment',
+      'name' => 'Published Forum attachment',
+      'status' => TRUE,
+      'field_media_forum_attachment' => ['target_id' => $file->id()],
+    ]);
+    $media->setOwner($author);
+    $media->save();
+
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Public attachment host',
+      'status' => TRUE,
+      'uid' => $author->id(),
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+    ]);
+    $topic->save();
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => (int) $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author->id(),
+      'subject' => 'Public attachment reference',
+      'comment_body' => [
+        'value' => sprintf('<drupal-media data-entity-type="media" data-entity-uuid="%s"></drupal-media>', $media->uuid()),
+        'format' => 'plain_text',
+      ],
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+
+    $providers = $this->container->get('aculta_index.provider_registry');
+    $filter = new ContentIndexAccessFilter(
+      $this->container->get('entity_type.manager'),
+      $providers,
+      $this->container->get('aculta_portal.domain_purpose'),
+    );
+    $candidate = [[
+      'entity_type' => 'media',
+      'entity_id' => (string) $media->id(),
+      'langcode' => $media->language()->getId(),
+    ],
+    ];
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+
+    self::assertTrue($topic->access('view', new AnonymousUserSession(), TRUE)->isAllowed());
+    self::assertTrue($comment->access('view', new AnonymousUserSession(), TRUE)->isAllowed());
+    self::assertTrue($media->isPublished(), 'The fixture deliberately starts with a published Media projection.');
+    self::assertCount(1, $filter->filter($candidate, $viewer)->entities, 'The Index exposes the published Media through its currently public Comment reference.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+
+    $topic->setUnpublished();
+    $topic->save();
+    self::assertTrue($media->isPublished(), 'Host changes do not synchronously rewrite this Media fixture.');
+    self::assertCount(0, $filter->filter($candidate, $viewer)->entities, 'The Index must not trust a stale published flag after the host becomes private.');
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
   }
 
