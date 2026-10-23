@@ -1,5 +1,19 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.68 — isolar Entity Access ao trocar o Domain canônico
+
+- `ContentIndexAccessFilter` limpa os caches locais de Entity Access para
+  entidades de conteúdo antes e depois de cada autorização com `purpose`.
+  O Core não inclui cache contexts na chave desse cache interno, então uma
+  avaliação anterior em outro Domain podia causar falso bloqueio ou exposição,
+  inclusive em verificações aninhadas (ForumPost → tópico).
+- Kernel Wiki usa `EntityHooks` real do Portal, provider de produção e Domains
+  persistidos; confirma negação direta fora de `wiki`, autorização pelo Index
+  em `wiki`, revalidação após cache negativo prévio e restauração do Domain
+  (1 teste / 16 assertions PASS).
+- Suíte Kernel completa do Index: 62 testes / 797 assertions PASS; 23
+  depreciações upstream e 40 avisos PHPUnit. PHPCS Drupal e PHP lint passaram.
+
 ## 0.1.0-dev.67 — validar grants e Domain reais do Fórum
 
 - Kernel passa pelo `ContentIndexAccessFilter` com `ForumContentIndexProvider`,

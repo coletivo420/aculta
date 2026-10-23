@@ -97,10 +97,22 @@ final class ContentIndexAccessFilter {
             : NULL;
           if ($purpose !== NULL && $this->domainPurposeManager !== NULL) {
             $cacheability->addCacheContexts(['domain']);
-            $access = $this->domainPurposeManager->runInPurpose(
-              $purpose,
-              fn (): AccessResultInterface => $this->checkEntityAccess($translation, $account, $provider),
-            );
+            // Core's in-request Entity Access cache is keyed by entity,
+            // operation, language and account, but not by cache contexts such
+            // as Domain. Clear content handlers before and after changing the
+            // purpose so a result from another Domain cannot deny or expose
+            // this candidate, including nested access checks on related
+            // entities (for example a ForumPost's topic).
+            $this->resetContentEntityAccessCaches();
+            try {
+              $access = $this->domainPurposeManager->runInPurpose(
+                $purpose,
+                fn (): AccessResultInterface => $this->checkEntityAccess($translation, $account, $provider),
+              );
+            }
+            finally {
+              $this->resetContentEntityAccessCaches();
+            }
             if (!$access instanceof AccessResultInterface) {
               // A missing or unavailable canonical Domain must never fall back
               // to the active request's potentially broader access context.
@@ -132,6 +144,22 @@ final class ContentIndexAccessFilter {
     }
 
     return new ContentIndexAccessResult($allowed, $cacheability);
+  }
+
+  /**
+   * Clears in-request access results that can depend on Domain.
+   *
+   * Content Index access checks can change the active Domain around a source
+   * entity check. Drupal's local Entity Access cache does not include cache
+   * contexts in its key, so cached outcomes for nested content entities must
+   * also be discarded on both sides of that context switch.
+   */
+  private function resetContentEntityAccessCaches(): void {
+    foreach ($this->entityTypeManager->getDefinitions() as $entityTypeId => $entityType) {
+      if ($entityType->entityClassImplements(ContentEntityInterface::class)) {
+        $this->entityTypeManager->getAccessControlHandler($entityTypeId)->resetCache();
+      }
+    }
   }
 
   /**
