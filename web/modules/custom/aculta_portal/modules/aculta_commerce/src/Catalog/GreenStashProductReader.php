@@ -22,6 +22,24 @@ final class GreenStashProductReader {
   /**
    * @return array{items: array, next: ?int}
    */
+  /**
+   * Only expose a store product when both entity and store permit management.
+   */
+  public function canManage(\Drupal\Core\Entity\EntityInterface $product, AccountInterface $account): bool {
+    if ($product->bundle() !== 'produto_loja'
+      || !$product->access('view', $account)
+      || !$product->access('update', $account)
+      || !method_exists($product, 'getStores')) {
+      return FALSE;
+    }
+    foreach ($product->getStores() as $store) {
+      if ($store->access('update', $account)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
   public function page(AccountInterface $account, int $before = 0, string $search = '', int $limit = 20): array {
     $limit = max(1, min(20, $limit));
     $search = trim($search);
@@ -53,17 +71,7 @@ final class GreenStashProductReader {
       }
       foreach ($storage->loadMultiple($ids) as $product) {
         $cursor = (int) $product->id();
-        if (!$product->access('view', $account) || !$product->access('update', $account)) {
-          continue;
-        }
-        $allowed = FALSE;
-        foreach ($product->getStores() as $store) {
-          if ($store->access('update', $account)) {
-            $allowed = TRUE;
-            break;
-          }
-        }
-        if (!$allowed) {
+        if (!$this->canManage($product, $account)) {
           continue;
         }
         if (count($items) === $limit) {
