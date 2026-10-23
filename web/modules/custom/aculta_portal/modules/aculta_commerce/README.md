@@ -32,3 +32,7 @@ Validar compatibilidade das dependências do manifesto com os módulos instalado
 ## RETIFICAÇÃO ADR-013 — Abas de administração, não de compra
 
 O `aculta_commerce` fornecerá configuração do checkout da **Loja** à orquestração administrativa do `aculta_portal`. **Comum | Loja | LMS | Doações** são exclusivamente abas internas administrativas; não criar uma interface de carrinho público. O carrinho da barra multidomínio e o seletor de checkout atuais são preservados. Green Stash continua gestão da loja no Studio. O Mercado Pago continua gateway transversal. Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+
+## Green Stash — fundação 0.1.0-D
+
+Permissão restrita `access aculta green stash`, serviço `aculta_commerce.green_stash_access` e teste de caracterização implementados. **Ainda não há rota, provider Studio, controller nem acesso a entidades**: o gate de entrada não concede operações de Commerce. Ver [plano D](docs/GREEN-STASH-0.1.0-D.md). Não habilitar em produção sem `drush cr`, PHPUnit, validação de permissões e homologação de dependências.
