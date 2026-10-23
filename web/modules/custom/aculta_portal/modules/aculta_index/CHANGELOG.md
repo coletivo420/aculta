@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.117 — ocultar imagem não publicada em relação de Gallery
+
+- A Gallery da fixture contém uma imagem publicada e outra não publicada. A
+  projeção conserva ambas as relações; a consulta outgoing retorna só a imagem
+  autorizada pela Entity Access da Media.
+- MariaDB dedicado: `ContentIndexGalleryProviderKernelTest`, 2 testes / 51
+  assertions PASS, com 9 depreciações Core/contrib. Não há validação de grants
+  próprios dos módulos owner ou de arquivos protegidos no Runtime.
+
 ## 0.1.0-dev.116 — consultar relações Gallery→image com acesso revalidado
 
 - O Kernel Gallery consulta `gallery_image` pela API outgoing após o rebuild,

@@ -121,12 +121,16 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       'roles' => ['authenticated'],
     ]);
     $reader->save();
-    $image = $this->createImageMedia();
+    $image = $this->createImageMedia('Published image');
+    $unpublishedImage = $this->createImageMedia('Private image', FALSE);
     $gallery = MediaGallery::create([
       'title' => 'Kernel gallery',
       'status' => TRUE,
       'langcode' => 'en',
-      'images' => [['target_id' => $image->id()]],
+      'images' => [
+        ['target_id' => $image->id()],
+        ['target_id' => $unpublishedImage->id()],
+      ],
     ]);
     $gallery->save();
 
@@ -137,7 +141,10 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
 
     $generationId = $this->buildAndActivateGeneration();
     $this->assertSame('Kernel gallery', $this->entryLabel($generationId, (string) $gallery->id(), 'gallery'));
-    $this->assertSame([(string) $image->id()], $this->galleryImageTargets($generationId, (string) $gallery->id()));
+    $indexedTargets = $this->galleryImageTargets($generationId, (string) $gallery->id());
+    $this->assertCount(2, $indexedTargets, 'Both linked images are indexed as explicit relation targets.');
+    $this->assertContains((string) $image->id(), $indexedTargets);
+    $this->assertContains((string) $unpublishedImage->id(), $indexedTargets);
 
     // Query from the main Domain. The gallery source must be checked in its
     // canonical Magazine purpose, while the image stays under its own policy.
@@ -155,6 +162,10 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       static fn (Media $entity): string => (string) $entity->id(),
       $result->entities,
     ));
+    $this->assertNotContains((string) $unpublishedImage->id(), array_map(
+      static fn (Media $entity): string => (string) $entity->id(),
+      $result->entities,
+    ), 'A linked unpublished image is omitted when the account cannot view it.');
     $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
     $this->assertSame(0, $result->cacheability->getCacheMaxAge());
 
@@ -244,7 +255,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
   /**
    * Creates a real image Media entity for the Gallery base reference field.
    */
-  private function createImageMedia(): Media {
+  private function createImageMedia(string $name = 'Gallery image fixture', bool $published = TRUE): Media {
     $file = File::create([
       'uri' => 'public://content-index-gallery-fixture.jpg',
       'filename' => 'content-index-gallery-fixture.jpg',
@@ -256,8 +267,8 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $sourceField = $mediaType->getSource()->getSourceFieldDefinition($mediaType)->getName();
     $image = Media::create([
       'bundle' => 'image',
-      'name' => 'Gallery image fixture',
-      'status' => TRUE,
+      'name' => $name,
+      'status' => $published,
       $sourceField => ['target_id' => $file->id()],
     ]);
     $image->save();
