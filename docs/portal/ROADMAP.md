@@ -190,3 +190,17 @@ quanto ausências esperadas, sem alterar a árvore de trabalho.
 Essa etapa define e valida o conteúdo do pacote; não autoriza upload nem deploy
 em produção. Ver também o
 [planejamento do aculta_deployer](../../web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md).
+
+## Frente prioritária P-CART — Multi-carrinho e seleção contextual (ADR-013, 2026-10-22)
+
+O `aculta_portal` é o orquestrador de carrinhos e seleção de checkout, não `aculta_commerce` nem `aculta_donation`. Interface em abas **Comum, Loja, LMS, Doações**, mobile-first e SDC/UI Suite via tema ACULTA420. O carrinho comum lista pedidos distintos com ações por checkout, sem criar pedido ou pagamento conjunto por padrão. Mercado Pago segue compartilhado e Drupal Commerce segue fonte de verdade. A opção `donate|cart|both` é funcional e deve ser preservada.
+
+- **P-CART 0.1:** auditar tipos de pedidos, carrinhos de sessão, roteamento, providers, modo de checkout e registros reais.
+- **P-CART 0.2:** registry e interfaces neutros no Portal + testes unitários, sem alteração de comportamento.
+- **P-CART 0.3:** providers de Loja/LMS/Doações e seleção por pedido/entidade, com ACL e fallback.
+- **P-CART 0.4:** migração gradual do subscriber de Donation para Portal, preservando configuração, histórico e rotas.
+- **P-CART 0.5:** render arrays e abas internas Comum/Loja/LMS/Doações, AJAX progressivo, fallback HTTP; apresentação exclusiva no tema.
+- **P-CART 0.6:** persistência contextual temporária de seleção, consistência de carrinhos e métricas derivadas em Statistics; sem novos armazenamentos transacionais.
+- **P-CART T:** homologação no homelab dos três checkouts, carrinhos concorrentes, domínios, guest/auth, checkout comum/dedicado, webhook/reembolso, regressão SDC, mobile/light/dark, rollback documentado.
+
+[Detalhamento e limites normativos](../decisions/ADR-013-portal-multi-cart-checkout.md).
