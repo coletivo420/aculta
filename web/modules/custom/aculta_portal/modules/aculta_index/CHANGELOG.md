@@ -1,5 +1,36 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.35 — reparação automática de projeções antigas
+
+- Auditoria incremental reenfileira identidades da geração ativa quando a versão
+  armazenada diverge da versão de um provider ainda registrado. A fila deduplica
+  o reparo e o worker projeta novamente o estado atual da fonte.
+- Reenfileiramento ocorre depois de persistir o checkpoint e só se a geração
+  continuar ativa; entradas de providers desabilitados permanecem sem remoção
+  automática até confirmação de ownership/configuração e validação da fonte.
+- Kernel verifica a identidade e o estado do reparo criado pela auditoria.
+
+## 0.1.0-dev.34 — revisão monotônica do cache de candidatos
+
+- Cache de candidatos passa a usar revisão monotônica da geração, avançada na
+  mesma transação das projeções. A consulta só grava resultados se a revisão
+  permanecer igual ao longo da leitura, impedindo repovoamento obsoleto após
+  invalidação concorrente.
+- Update hook 10014 adiciona `candidate_revision`; Kernel verifica migração,
+  incremento idempotente no writer e invalidação após remoção.
+- A validação recebe a geração-alvo do rebuild e compara as versões dos
+  providers nessa geração, permitindo substituir uma ativa antiga e defasada.
+
+## 0.1.0-dev.33 — cache de candidatos e versão de projeção
+
+- A auditoria estrutural conta projeções da geração ativa com versão divergente
+  do provider atualmente registrado; providers desabilitados e gerações retidas
+  não entram nessa contagem. O resultado continua sendo somente diagnóstico.
+- Adicionado cache interno de páginas limitadas de identidades candidatas, com
+  TTL de 60 segundos e invalidação por geração após escrita/remoção pelo writer.
+  Entidades e Entity Access continuam sendo reavaliados em toda consulta.
+- Kernel cobre detecção de versão antiga e update hook do contador.
+
 ## 0.1.0-dev.32 — escopo da auditoria operacional
 
 - Documenta que a auditoria incremental atual verifica integridade estrutural

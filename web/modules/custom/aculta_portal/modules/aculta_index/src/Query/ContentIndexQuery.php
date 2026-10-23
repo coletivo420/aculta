@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Query;
 
+use Drupal\aculta_index\Cache\ContentIndexCandidateCache;
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -25,6 +26,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     private readonly ContentIndexAccessFilter $accessFilter,
     private readonly ContentIndexCursorManager $cursors,
     private readonly ContentIndexProviderRegistry $providers,
+    private readonly ContentIndexCandidateCache $candidateCache,
   ) {}
 
   /**
@@ -63,7 +65,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
 
     $uid = (int) $account->id();
     $after = $cursor === NULL ? NULL : $this->cursors->load($cursor, $uid, $generationId, $queryHash);
-    $candidates = $this->loadCandidates($generationId, $filters, $after, $limit);
+    $candidates = $this->loadConsistentCandidates($generationId, $filters, $after, $limit);
     $access = $this->accessFilter->filter($candidates, $account);
     $cacheability = $cacheability->merge($access->cacheability);
 
@@ -83,6 +85,66 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     }
 
     return new ContentIndexQueryResult($access->entities, $nextCursor, $cacheability);
+  }
+
+  /**
+   * Reads a cached or SQL candidate page from one stable generation revision.
+   *
+   * A concurrent writer advances the revision in the same transaction as its
+   * projection change. One retry avoids returning a page cached or loaded
+   * across that change without waiting indefinitely under continuous writes.
+   * Entity Access is still revalidated by the caller after this method.
+   *
+   * @param string $generationId
+   *   Active generation selected for the query.
+   * @param array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null} $filters
+   *   Normalized allowlisted query filters.
+   * @param array{changed: int, entry_id: int, revision: int}|null $after
+   *   Private keyset cursor state.
+   * @param int $limit
+   *   Maximum candidate identities in the page.
+   *
+   * @return list<array{entity_type: string, entity_id: string, langcode: string, entry_id: int}>
+   *   Candidate identities only.
+   */
+  private function loadConsistentCandidates(string $generationId, array $filters, ?array $after, int $limit): array {
+    $queryKey = hash('sha256', json_encode([
+      'filters' => $filters,
+      'after_entry_id' => $after['entry_id'] ?? NULL,
+      'limit' => $limit,
+      'provider_fingerprint' => $this->providers->fingerprint(),
+      'sort' => 'entry_id_desc_v1',
+    ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    $revision = $this->candidateCache->getGenerationRevision($generationId);
+
+    for ($attempt = 0; $attempt < 2; $attempt++) {
+      if ($revision === NULL) {
+        return $this->loadCandidates($generationId, $filters, $after, $limit);
+      }
+
+      $candidates = $this->candidateCache->get($generationId, $revision, $queryKey);
+      $confirmedRevision = $this->candidateCache->getGenerationRevision($generationId);
+      if ($confirmedRevision !== $revision) {
+        $revision = $confirmedRevision;
+        continue;
+      }
+      if ($candidates !== NULL) {
+        return $candidates;
+      }
+
+      $candidates = $this->loadCandidates($generationId, $filters, $after, $limit);
+      $confirmedRevision = $this->candidateCache->getGenerationRevision($generationId);
+      if ($confirmedRevision === $revision) {
+        $this->candidateCache->set($generationId, $revision, $queryKey, $candidates);
+        return $candidates;
+      }
+      $revision = $confirmedRevision;
+      if ($attempt === 1) {
+        return $this->loadCandidates($generationId, $filters, $after, $limit);
+      }
+    }
+
+    return $this->loadCandidates($generationId, $filters, $after, $limit);
   }
 
   /**

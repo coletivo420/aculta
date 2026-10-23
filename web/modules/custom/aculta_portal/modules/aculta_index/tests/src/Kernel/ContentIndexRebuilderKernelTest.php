@@ -303,6 +303,52 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Candidate pages are invalidated when a projection is removed.
+   */
+  public function testCandidateCacheInvalidatesAfterProjectionRemoval(): void {
+    foreach (['First identity', 'Second identity'] as $title) {
+      Node::create([
+        'type' => 'sample_content',
+        'title' => $title,
+        'status' => 1,
+        'created' => 1000,
+        'changed' => 1000,
+      ])->save();
+    }
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $query = $this->container->get('aculta_index.query');
+    $account = new AnonymousUserSession();
+    $firstPage = $query->query([], $account, NULL, 1);
+    $this->assertSame('Second identity', (string) $firstPage->entities[0]->label());
+
+    $langcode = (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['langcode'])
+      ->condition('generation_id', $generationId)
+      ->condition('entity_id', '2')
+      ->execute()
+      ->fetchField();
+    $this->container->get('aculta_index.writer')->remove(
+      $generationId,
+      'test_sample_content',
+      'node',
+      '2',
+      $langcode,
+      1,
+    );
+
+    $afterRemoval = $query->query([], $account, NULL, 1);
+    $this->assertCount(1, $afterRemoval->entities);
+    $this->assertSame('First identity', (string) $afterRemoval->entities[0]->label());
+  }
+
+  /**
    * Rechecks Entity Access before a queued revocation is applied.
    */
   public function testCursorPageHidesEntityMadePrivateWhileCatalogIsStale(): void {
@@ -428,8 +474,8 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
         ->execute();
     }
     // The same resolved translation can be reached by both an entity-level
-    // (und) edge and an explicit default-language edge; query results are unique
-    // by target identity rather than relation row.
+    // (und) edge and an explicit default-language edge. Results are unique by
+    // target identity rather than relation row.
     $database->insert('aculta_index_relation')
       ->fields([
         'generation_id' => $generationId,

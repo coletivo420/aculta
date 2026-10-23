@@ -391,6 +391,32 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds the stale projection audit counter.
+   */
+  public function testUpdateHookAddsStaleProjectionAuditCounter(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropField('aculta_index_audit', 'stale_projection_count');
+    $this->assertFalse($schema->fieldExists('aculta_index_audit', 'stale_projection_count'));
+
+    aculta_index_update_10013();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_audit', 'stale_projection_count'));
+  }
+
+  /**
+   * Tests the update hook adds the candidate cache revision.
+   */
+  public function testUpdateHookAddsCandidateCacheRevision(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropField('aculta_index_generation', 'candidate_revision');
+    $this->assertFalse($schema->fieldExists('aculta_index_generation', 'candidate_revision'));
+
+    aculta_index_update_10014();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_generation', 'candidate_revision'));
+  }
+
+  /**
    * Tests older catalog entries receive the initial projection version.
    */
   public function testUpdateHookAddsProviderProjectionVersion(): void {
@@ -466,16 +492,20 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       $this->container->get('database'),
       new ContentIndexProviderRegistry([$provider]),
       $this->container->get('datetime.time'),
+      $this->container->get('aculta_index.candidate_cache'),
     );
     $first = $this->projection('Original', 10, 'activity-1');
 
     $this->assertTrue($writer->write($generation, 'magazine', $first, 1));
+    $this->assertSame(1, $this->candidateRevision($generation));
     $this->assertFalse($writer->write($generation, 'magazine', $first, 1));
+    $this->assertSame(1, $this->candidateRevision($generation));
     $this->assertSame(1, $this->entryCount($generation));
     $this->assertSame(1, $this->relationCount($generation));
 
     $secondSource = $this->projection('Outra publicação', 10, 'activity-1', '43');
     $this->assertTrue($writer->write($generation, 'magazine', $secondSource, 1));
+    $this->assertSame(2, $this->candidateRevision($generation));
     $this->assertSame(2, $this->relationCount($generation));
 
     $latest = $this->projection('Revisada', 11, 'activity-2');
@@ -565,6 +595,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertNull($result['active_generation']);
     $this->assertSame(0, $result['orphan_entry_count']);
     $this->assertSame(0, $result['orphan_relation_count']);
+    $this->assertSame(0, $result['stale_projection_count']);
   }
 
   /**
@@ -607,6 +638,49 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame(1, $result['orphan_entry_count']);
     $this->assertSame(0, $result['orphan_relation_count']);
     $this->assertSame(1, $result['relation_source_missing_count']);
+    $this->assertSame(0, $result['stale_projection_count']);
+  }
+
+  /**
+   * A clean rebuild can validate while the old active projection is stale.
+   */
+  public function testIntegrityCheckEvaluatesTheRequestedGeneration(): void {
+    $database = $this->container->get('database');
+    foreach ([['old-generation', 'active'], ['new-generation', 'building']] as [$generationId, $status]) {
+      $database->insert('aculta_index_generation')
+        ->fields([
+          'generation_id' => $generationId,
+          'status' => $status,
+          'validated' => (int) ($status === 'active'),
+          'activated' => (int) ($status === 'active'),
+        ])
+        ->execute();
+    }
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => 'old-generation', 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+    foreach ([['old-generation', 'old'], ['new-generation', 'new']] as [$generationId, $entityId]) {
+      $this->insertEntry($generationId, 'media', $entityId, 'pt-br');
+      $database->update('aculta_index_entry')
+        ->fields([
+          'provider_id' => 'image',
+          'provider_version' => $entityId === 'old' ? 0 : 1,
+        ])
+        ->condition('generation_id', $generationId)
+        ->condition('entity_id', $entityId)
+        ->execute();
+    }
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $activeHealth = $checker->check();
+    $buildHealth = $checker->check('new-generation');
+
+    $this->assertSame(1, $activeHealth['stale_projection_count']);
+    $this->assertFalse($activeHealth['valid']);
+    $this->assertSame('new-generation', $buildHealth['checked_generation']);
+    $this->assertSame(0, $buildHealth['stale_projection_count']);
+    $this->assertTrue($buildHealth['valid']);
   }
 
   /**
@@ -627,6 +701,12 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       ->condition('state_id', 1)
       ->execute();
     $this->insertEntry('audit-generation', 'node', '301', 'pt-br');
+    $this->insertEntry('audit-generation', 'media', '303', 'pt-br');
+    $database->update('aculta_index_entry')
+      ->fields(['provider_id' => 'image', 'provider_version' => 0])
+      ->condition('generation_id', 'audit-generation')
+      ->condition('entity_id', '303')
+      ->execute();
     $this->insertEntry('orphan-generation', 'node', '302', 'pt-br');
     $database->insert('aculta_index_relation')
       ->fields([
@@ -660,8 +740,22 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame('complete', $state['status']);
     $this->assertFalse($state['valid']);
     $this->assertSame(1, (int) $state['orphan_entry_count']);
+    $this->assertSame(1, (int) $state['stale_projection_count']);
     $this->assertSame(0, (int) $state['orphan_relation_count']);
     $this->assertSame(1, (int) $state['relation_source_missing_count']);
+    $repair = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['provider_id', 'entity_type', 'entity_id', 'langcode', 'status'])
+      ->condition('provider_id', 'image')
+      ->condition('entity_id', '303')
+      ->execute()
+      ->fetchAssoc();
+    $this->assertSame([
+      'provider_id' => 'image',
+      'entity_type' => 'media',
+      'entity_id' => '303',
+      'langcode' => 'pt-br',
+      'status' => 'queued',
+    ], $repair);
   }
 
   /**
@@ -731,6 +825,17 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   private function generationStatus(string $generationId): string {
     return (string) $this->container->get('database')->select('aculta_index_generation', 'generation')
       ->fields('generation', ['status'])
+      ->condition('generation_id', $generationId)
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
+   * Reads a generation's candidate cache revision.
+   */
+  private function candidateRevision(string $generationId): int {
+    return (int) $this->container->get('database')->select('aculta_index_generation', 'generation')
+      ->fields('generation', ['candidate_revision'])
       ->condition('generation_id', $generationId)
       ->execute()
       ->fetchField();

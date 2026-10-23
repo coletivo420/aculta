@@ -28,6 +28,7 @@ function aculta_index_schema(): array {
         'updated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'validated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'backfill_completed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'candidate_revision' => ['type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'activated' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
       ],
       'primary key' => ['generation_id'],
@@ -161,6 +162,7 @@ function aculta_index_schema(): array {
         'entry_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'relation_max_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'orphan_entry_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'stale_projection_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'orphan_relation_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'relation_source_missing_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'active_pointer_valid' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
@@ -368,4 +370,35 @@ function aculta_index_update_10012(): void {
   }
   $table = aculta_index_schema()['aculta_index_relation'];
   $schema->addIndex('aculta_index_relation', 'gen_source', $table['indexes']['gen_source'], $table);
+}
+
+/**
+ * Adds the finding counter for stale active-generation provider projections.
+ */
+function aculta_index_update_10013(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_audit') && !$schema->fieldExists('aculta_index_audit', 'stale_projection_count')) {
+    $schema->addField('aculta_index_audit', 'stale_projection_count', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
+}
+
+/**
+ * Adds a monotonic revision for safe candidate cache invalidation.
+ */
+function aculta_index_update_10014(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_generation') && !$schema->fieldExists('aculta_index_generation', 'candidate_revision')) {
+    $schema->addField('aculta_index_generation', 'candidate_revision', [
+      'type' => 'int',
+      'size' => 'big',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ]);
+  }
 }

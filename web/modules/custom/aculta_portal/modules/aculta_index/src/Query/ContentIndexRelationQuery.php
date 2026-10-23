@@ -118,8 +118,7 @@ final class ContentIndexRelationQuery {
     if (count($candidates) === $limit) {
       $last = end($candidates);
       if ($cursor === NULL) {
-        // Use the target entry key: duplicate edges resolving to the same target
-        // collapse to one result and target order remains immutable.
+        // Duplicate edges collapse; the key keeps target order immutable.
         $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, 0, $last['entry_id']);
       }
       else {
@@ -135,12 +134,16 @@ final class ContentIndexRelationQuery {
   }
 
   /**
-   * Loads distinct current-generation target identities in immutable entry order.
+   * Loads distinct current-generation target identities in entry order.
    *
    * @param string $generationId
    *   Active generation selected by the generation pointer.
    * @param array{source_entity_type: string, source_entity_id: string, source_langcode: string, relation_type: string, target_langcode: string} $identity
    *   Validated query identity and default target language.
+   * @param string $sourceProviderId
+   *   Provider that owns the source projection.
+   * @param int $sourceProviderVersion
+   *   Current projection version for the source provider.
    * @param array{changed: int, entry_id: int, revision: int}|null $after
    *   Persisted private keyset state.
    * @param int $limit
@@ -149,7 +152,14 @@ final class ContentIndexRelationQuery {
    * @return list<array{entity_type: string, entity_id: string, langcode: string, entry_id: int}>
    *   Candidate targets, not yet authorized.
    */
-  private function loadTargets(string $generationId, array $identity, string $sourceProviderId, int $sourceProviderVersion, ?array $after, int $limit): array {
+  private function loadTargets(
+    string $generationId,
+    array $identity,
+    string $sourceProviderId,
+    int $sourceProviderVersion,
+    ?array $after,
+    int $limit,
+  ): array {
     if ($this->providers->all() === []) {
       return [];
     }

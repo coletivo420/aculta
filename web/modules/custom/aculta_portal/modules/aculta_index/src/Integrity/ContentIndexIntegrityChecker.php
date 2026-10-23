@@ -6,6 +6,8 @@ namespace Drupal\aculta_index\Integrity;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 
 /**
  * Checks catalog structure and runs resumable, bounded integrity audits.
@@ -25,31 +27,42 @@ final class ContentIndexIntegrityChecker {
   public function __construct(
     private readonly Connection $database,
     private readonly TimeInterface $time,
+    private readonly ContentIndexProviderRegistry $providers,
+    private readonly ContentIndexWorkManager $work,
   ) {}
 
   /**
    * Checks aggregate catalog consistency for generation validation.
    *
+   * @param string|null $generationId
+   *   Generation whose provider projection versions should be checked; defaults
+   *   to the active generation for operational health checks.
+   *
    * @return array
    *   Consistency state and counts only. No projected content is returned.
    */
-  public function check(): array {
+  public function check(?string $generationId = NULL): array {
     $pointer = $this->activePointer();
+    $checkedGeneration = $generationId ?? $pointer['generation'];
     $orphanEntryCount = $this->countOrphanEntries();
     $orphanRelationCount = $this->countOrphanRelations();
     $relationSourceMissingCount = $this->countMissingRelationSources();
+    $staleProjectionCount = $this->countStaleProjections($checkedGeneration);
     $valid = $pointer['valid']
       && $orphanEntryCount === 0
       && $orphanRelationCount === 0
-      && $relationSourceMissingCount === 0;
+      && $relationSourceMissingCount === 0
+      && $staleProjectionCount === 0;
 
     return [
       'valid' => $valid,
       'active_generation' => $pointer['generation'],
+      'checked_generation' => $checkedGeneration,
       'active_generation_count' => $pointer['active_count'],
       'orphan_entry_count' => $orphanEntryCount,
       'orphan_relation_count' => $orphanRelationCount,
       'relation_source_missing_count' => $relationSourceMissingCount,
+      'stale_projection_count' => $staleProjectionCount,
     ];
   }
 
@@ -76,6 +89,7 @@ final class ContentIndexIntegrityChecker {
         'orphan_entry_count' => 0,
         'orphan_relation_count' => 0,
         'relation_source_missing_count' => 0,
+        'stale_projection_count' => 0,
         'active_pointer_valid' => (int) $pointer['valid'],
         'active_generation' => $pointer['generation'] ?? '',
         'created' => $this->time->getRequestTime(),
@@ -125,7 +139,7 @@ final class ContentIndexIntegrityChecker {
       }
 
       $rows = $state['phase'] === 'entries'
-        ? $this->entryAuditRows((int) $state['cursor_id'], (int) $state['entry_max_id'], $limit)
+        ? $this->entryAuditRows((int) $state['cursor_id'], (int) $state['entry_max_id'], (string) $state['active_generation'], $limit)
         : $this->relationAuditRows((int) $state['cursor_id'], (int) $state['relation_max_id'], $limit);
       $updates = [
         'cursor_id' => $rows === [] ? (int) $state['cursor_id'] : (int) end($rows)['row_id'],
@@ -135,9 +149,26 @@ final class ContentIndexIntegrityChecker {
       $orphanEntries = 0;
       $orphanRelations = 0;
       $missingRelationSources = 0;
+      $staleProjections = 0;
+      $staleIdentities = [];
       foreach ($rows as $row) {
         if ($state['phase'] === 'entries') {
           $orphanEntries += (int) $row['orphan'];
+          $staleProjections += (int) $row['stale'];
+          if ($row['stale']) {
+            $identityKey = hash('sha256', implode("\0", [
+              $row['provider_id'],
+              $row['entity_type'],
+              $row['entity_id'],
+              $row['langcode'],
+            ]));
+            $staleIdentities[$identityKey] = [
+              'provider_id' => $row['provider_id'],
+              'entity_type' => $row['entity_type'],
+              'entity_id' => $row['entity_id'],
+              'langcode' => $row['langcode'],
+            ];
+          }
         }
         else {
           $orphanRelations += (int) $row['orphan'];
@@ -146,6 +177,7 @@ final class ContentIndexIntegrityChecker {
       }
       if ($state['phase'] === 'entries') {
         $updates['orphan_entry_count'] = (int) $state['orphan_entry_count'] + $orphanEntries;
+        $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $staleProjections;
       }
       else {
         $updates['orphan_relation_count'] = (int) $state['orphan_relation_count'] + $orphanRelations;
@@ -173,6 +205,22 @@ final class ContentIndexIntegrityChecker {
         ->condition('revision', $state['revision'])
         ->execute();
       unset($transaction);
+
+      // Requeue after the audit checkpoint commits. If the active generation
+      // changed during the batch, its new rebuild supersedes this repair work.
+      $currentPointer = $this->activePointer();
+      if (($currentPointer['generation'] ?? '') === (string) $state['active_generation']) {
+        foreach ($staleIdentities as $identity) {
+          if ($this->providers->has($identity['provider_id'])) {
+            $this->work->schedule(
+              $identity['provider_id'],
+              $identity['entity_type'],
+              $identity['entity_id'],
+              $identity['langcode'],
+            );
+          }
+        }
+      }
       return $this->getAuditState();
     }
     catch (\Throwable $exception) {
@@ -194,7 +242,8 @@ final class ContentIndexIntegrityChecker {
       && (bool) $state['active_pointer_valid']
       && (int) $state['orphan_entry_count'] === 0
       && (int) $state['orphan_relation_count'] === 0
-      && (int) $state['relation_source_missing_count'] === 0;
+      && (int) $state['relation_source_missing_count'] === 0
+      && (int) $state['stale_projection_count'] === 0;
     return $state;
   }
 
@@ -231,15 +280,23 @@ final class ContentIndexIntegrityChecker {
   /**
    * Reads entry IDs and whether each references a known generation.
    *
-   * @return list<array{row_id: int, orphan: bool}>
+   * @return list<array>
    *   Bounded scan rows.
    */
-  private function entryAuditRows(int $after, int $maximum, int $limit): array {
+  private function entryAuditRows(int $after, int $maximum, string $activeGeneration, int $limit): array {
     if ($maximum === 0 || $after >= $maximum) {
       return [];
     }
     $query = $this->database->select('aculta_index_entry', 'entry')
-      ->fields('entry', ['entry_id']);
+      ->fields('entry', [
+        'entry_id',
+        'generation_id',
+        'provider_id',
+        'entity_type',
+        'entity_id',
+        'langcode',
+        'provider_version',
+      ]);
     $query->addField('generation', 'generation_id', 'found_generation');
     $query->leftJoin('aculta_index_generation', 'generation', 'entry.generation_id = generation.generation_id');
     $rows = $query->condition('entry.entry_id', $after, '>')
@@ -249,9 +306,49 @@ final class ContentIndexIntegrityChecker {
       ->execute();
     $result = [];
     foreach ($rows as $row) {
-      $result[] = ['row_id' => (int) $row->entry_id, 'orphan' => $row->found_generation === NULL];
+      $isActiveGeneration = $activeGeneration !== '' && (string) $row->generation_id === $activeGeneration;
+      $result[] = [
+        'row_id' => (int) $row->entry_id,
+        'orphan' => $row->found_generation === NULL,
+        'stale' => $isActiveGeneration && $this->isStaleProjection((string) $row->provider_id, (int) $row->provider_version),
+        'provider_id' => (string) $row->provider_id,
+        'entity_type' => (string) $row->entity_type,
+        'entity_id' => (string) $row->entity_id,
+        'langcode' => (string) $row->langcode,
+      ];
     }
     return $result;
+  }
+
+  /**
+   * Counts entries in one generation with a mismatched provider version.
+   *
+   * Providers that are disabled are ignored.
+   */
+  private function countStaleProjections(?string $generationId): int {
+    if ($generationId === NULL || $generationId === '') {
+      return 0;
+    }
+
+    $count = 0;
+    foreach ($this->providers->all() as $providerId => $provider) {
+      $count += (int) $this->database->select('aculta_index_entry', 'entry')
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', $providerId)
+        ->condition('provider_version', $provider->getProjectionVersion(), '<>')
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+    return $count;
+  }
+
+  /**
+   * Determines whether a projection's provider version needs reindexing.
+   */
+  private function isStaleProjection(string $providerId, int $storedVersion): bool {
+    return $this->providers->has($providerId)
+      && $storedVersion !== $this->providers->get($providerId)->getProjectionVersion();
   }
 
   /**

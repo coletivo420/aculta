@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.32` — escopo operacional da auditoria esclarecido.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **38 testes / 448 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hook do índice composto, adapter Activity e Media. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.35` — reparação incremental automática para projeções de provider desatualizadas.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **40 testes / 457 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity e Media, além do refileiramento de projeção obsoleta. PHPCS Drupal passou. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -35,7 +35,7 @@ O submódulo depende do módulo base `aculta_portal`, mas não é ativado por el
 
 Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cria o singleton com geração ativa vazia. Nenhum conteúdo é indexado ou exposto até uma futura reconstrução validada. Desativar/remover o submódulo não afeta as entidades de origem.
 
-`ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural antes de promover a geração. `activate()` bloqueia enquanto providers do inventário têm jobs queued, processing, retry ou dead. Eventos durante a validação também são aplicados à geração `validated`; a mesma linha de estado serializa schedule e troca do ponteiro. Rollback para a geração retained permanece disponível mesmo com jobs pendentes.
+`ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural na geração em construção antes de promovê-la. Projeções antigas na geração ativa não bloqueiam um rebuild novo já produzido pela versão corrente dos providers. `activate()` bloqueia enquanto providers do inventário têm jobs queued, processing, retry ou dead. Eventos durante a validação também são aplicados à geração `validated`; a mesma linha de estado serializa schedule e troca do ponteiro. Rollback para a geração retained permanece disponível mesmo com jobs pendentes.
 
 O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. A CLI Drush permite inspecionar e reparar dead-letters sem criar UI no Kernel.
 
@@ -65,6 +65,13 @@ O cron processa no máximo um lote (200 linhas) por execução. O checkpoint per
 primeiro entradas e depois relações usando as chaves primárias capturadas no início
 do ciclo. Um ciclo novo só começa após 24 horas do término anterior. O estado
 agrega contagens e não guarda títulos, corpos ou IDs das entidades com problemas.
+Quando uma entrada da geração ativa usa uma versão antiga de provider ainda
+registrado, o lote agenda novamente sua identidade no work manager após persistir
+o checkpoint. A fila deduplica o trabalho e o worker relê a entidade pelo provider
+atual; se a geração ativa trocar durante o lote, a reparação daquela geração é
+descartada. Versões de providers desabilitados não são reenfileiradas nem removidas:
+isso depende de ownership e configuração confirmados e de validação posterior da
+fonte.
 
 ```text
 drush aculta-index:audit status
@@ -76,12 +83,26 @@ O comando manual pode continuar um ciclo existente; um novo `start` é recusado
 enquanto outro ciclo estiver em execução. Esta auditoria é operacional e
 incremental: verifica integridade estrutural das linhas do catálogo (gerações
 referenciadas, existência da projeção de origem para relações e ponteiro ativo).
-Ela **não** enumera as entidades de origem, não detecta projeções ausentes ou
-desatualizadas, não compara `provider_version` e não repara divergências. A
-validação do rebuild continua fazendo suas próprias verificações completas
-estruturais antes de permitir ativação. Reconciliação fonte↔catálogo com cursor
-por provider, detecção de versões antigas e reparação segura seguem pendentes
-para IDX 0.1-E; o cron atual não deve ser descrito como autorreparação.
+Ela **não** enumera as entidades de origem, não detecta projeções ausentes nem
+repara divergências. Na geração ativa, também conta projeções cuja
+`provider_version` diverge do provider registrado; providers desabilitados e
+gerações retidas são ignorados. A validação do rebuild continua fazendo suas
+próprias verificações estruturais completas antes de permitir ativação.
+Reconciliação fonte↔catálogo por provider, cursor e reparação segura seguem
+pendentes para IDX 0.1-E; o cron atual não deve ser descrito como
+autorreparação.
+
+## Cache interno de candidatos
+
+A consulta guarda somente a página limitada de identidades candidatas por até
+60 segundos. A chave inclui geração, revisão monotônica, filtros, posição
+keyset, limite e fingerprint dos providers. O writer incrementa a revisão na
+mesma transação em que grava ou remove projeções e invalida as páginas da
+geração. Uma consulta que concorre com escrita só armazena a página se a revisão
+não mudou durante a leitura. Entidades originais e Entity Access são resolvidos
+novamente em toda chamada; o DTO continua sem cacheabilidade compartilhável
+(max-age 0). Escritas diretas ao catálogo fora do writer podem permanecer
+visíveis até o TTL expirar e não fazem parte do contrato de invalidação.
 
 ## Relações de saída
 

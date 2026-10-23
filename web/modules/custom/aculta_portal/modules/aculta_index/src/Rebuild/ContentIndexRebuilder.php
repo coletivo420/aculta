@@ -105,7 +105,7 @@ final class ContentIndexRebuilder {
     if (!hash_equals($this->generations->getProviderFingerprint($generationId), $this->providers->fingerprint())) {
       throw new \UnexpectedValueException('The provider inventory changed before an ACULTA Content Index generation could be validated.');
     }
-    $integrity = $this->integrityChecker->check();
+    $integrity = $this->integrityChecker->check($generationId);
     if (!$integrity['valid']) {
       throw new \UnexpectedValueException('The ACULTA Content Index catalog failed integrity validation.');
     }
