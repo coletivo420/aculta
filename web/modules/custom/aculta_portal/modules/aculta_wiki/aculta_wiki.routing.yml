@@ -47,6 +47,19 @@ aculta_wiki.proposal_status:
       proposal:
         type: entity:aculta_wiki_proposal
 
+aculta_wiki.proposal_withdraw:
+  path: '/wiki/propostas/{proposal}/retirar'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm'
+    _title: 'Retirar proposta da Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
 aculta_wiki.proposal_decide:
   path: '/studio/ganjalab/wiki/propostas/{proposal}/decidir'
   defaults:

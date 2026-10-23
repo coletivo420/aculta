@@ -101,3 +101,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Concorrência (dev.27): Kernel segura o lock numa segunda conexão MariaDB e
   confirma que a segunda tentativa não cria duplicata. Não declarar cobertura
   multiprocesso PHP até executar um worker independente.
+- Retirada (dev.28): apenas autoria autenticada com acesso de leitura pode
+  retirar estados `submitted` ou `needs_changes`; revalidar VID sob lock e gravar
+  nova revisão `withdrawn`, preservando versões e sem apagar a proposta.

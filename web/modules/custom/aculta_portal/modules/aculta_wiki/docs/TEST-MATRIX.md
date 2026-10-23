@@ -12,6 +12,16 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Acesso à revisão | Kernel | Cada revisão passa por `view revision` antes de seus campos serem renderizados | aprovado |
 | Histórico de outra conta | Kernel | Acesso à proposta continua negado pelo Entity Access existente | aprovado em dev.22 |
 
+## Retirada de proposta pela autoria (dev.28)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Retirar estado `submitted` | Kernel | Form API confirma e grava nova revisão `withdrawn`; anterior permanece | aprovado (focal: 1 teste / 110 assertions; classe: 9 / 384) |
+| Retirar estado `needs_changes` | Kernel | Nova revisão encerra a proposta e preserva o retorno na revisão anterior | aprovado |
+| Outra pessoa autora | Kernel | Serviço nega retirada por Entity Access/ownership | aprovado |
+| Revisão-base obsoleta | Kernel | Conflito sem revisão extra | implementação; teste direto pendente |
+| Reabrir proposta retirada | Kernel | Estado final impede nova decisão editorial | coberto pelo gate de estado da decisão; teste específico pendente |
+
 ## Fase 5 — busca e aviso de revisão
 
 | Cenário | Tipo | Resultado esperado | Estado |

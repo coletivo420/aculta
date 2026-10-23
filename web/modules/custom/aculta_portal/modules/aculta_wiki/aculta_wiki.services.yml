@@ -21,6 +21,10 @@ services:
     class: Drupal\aculta_wiki\Service\WikiProposalDecision
     arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.proposal_outcome_notifier']
 
+  aculta_wiki.proposal_withdrawal:
+    class: Drupal\aculta_wiki\Service\WikiProposalWithdrawal
+    arguments: ['@entity_type.manager', '@current_user', '@database']
+
   aculta_wiki.proposal_outcome_notifier:
     class: Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier
     arguments:

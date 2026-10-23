@@ -43,6 +43,7 @@ use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
+use Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm;
 use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
 use Drupal\aculta_wiki\Controller\WikiProposalStatusController;
 use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
@@ -355,6 +356,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => 1], new AnonymousUserSession()));
+    $withdrawRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_withdraw');
+    self::assertSame('/wiki/propostas/{proposal}/retirar', $withdrawRoute->getPath());
+    self::assertSame('proposal.view', $withdrawRoute->getRequirement('_entity_access'));
     $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
     self::assertSame('/studio/ganjalab/wiki/propostas/{proposal}/decidir', $decisionRoute->getPath());
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
@@ -882,6 +886,58 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
     self::assertSame(27, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+
+    $this->container->get('current_user')->setAccount($submitter);
+    $withdrawal = $this->container->get('aculta_wiki.proposal_withdrawal');
+    $pendingProposal = $submission->submit($target, 'improve', 'Ajustar a descrição.', 'A frase atual está ambígua.');
+    $statusController = WikiProposalStatusController::create($this->container);
+    $pendingStatus = $statusController->view(
+      $pendingProposal,
+      Request::create('/wiki/propostas/' . $pendingProposal->id()),
+    );
+    self::assertArrayHasKey('withdraw', $pendingStatus);
+    $withdrawalForm = WikiProposalWithdrawalForm::create($this->container);
+    $withdrawalState = new FormState();
+    $withdrawalBuild = $withdrawalForm->buildForm([], $withdrawalState, $pendingProposal);
+    self::assertArrayHasKey('confirm', $withdrawalBuild);
+    $withdrawalState->setValues([
+      'confirm' => 1,
+      'expected_revision_id' => $pendingProposal->getRevisionId(),
+    ]);
+    $withdrawalForm->validateForm($withdrawalBuild, $withdrawalState);
+    self::assertFalse($withdrawalState->hasAnyErrors());
+    $withdrawalForm->submitForm($withdrawalBuild, $withdrawalState);
+    self::assertSame('aculta_wiki.proposal_status', $withdrawalState->getRedirect()->getRouteName());
+    $withdrawnProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->load($pendingProposal->id());
+    self::assertSame('withdrawn', $withdrawnProposal->get('state')->value);
+    self::assertNotSame((int) $pendingProposal->getRevisionId(), (int) $withdrawnProposal->getRevisionId());
+    self::assertSame('submitted', $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->loadRevision($pendingProposal->getRevisionId())->get('state')->value);
+
+    $reopenedProposal = $submission->submit($target, 'reference', 'Incluir estudo recente.', 'Esta fonte amplia a cobertura.');
+    $this->container->get('current_user')->setAccount($reviewer);
+    $needsChangesProposal = $decisionService->decide(
+      $reopenedProposal,
+      (int) $reopenedProposal->getRevisionId(),
+      'needs_changes',
+      'Explique a relação entre a fonte e a afirmação.',
+    );
+    $this->container->get('current_user')->setAccount($submitter);
+    $withdrawnAfterChanges = $withdrawal->withdraw($needsChangesProposal, (int) $needsChangesProposal->getRevisionId());
+    self::assertSame('withdrawn', $withdrawnAfterChanges->get('state')->value);
+    self::assertNull($withdrawnAfterChanges->get('decision_note')->value);
+    self::assertSame('needs_changes', $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->loadRevision($needsChangesProposal->getRevisionId())->get('state')->value);
+
+    $this->container->get('current_user')->setAccount($other);
+    try {
+      $withdrawal->withdraw($withdrawnProposal, (int) $withdrawnProposal->getRevisionId());
+      self::fail('Another author must not withdraw a private proposal.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertSame('withdrawn', $withdrawnProposal->get('state')->value);
+    }
 
     $this->container->get('current_user')->setAccount($other);
     try {

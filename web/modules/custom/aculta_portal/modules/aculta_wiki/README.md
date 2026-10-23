@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.28`: autoria pode retirar propostas enviadas ou devolvidas, com
+  confirmação Form API, nova revisão privada e preservação do histórico.
+  Kernel focal: 1 teste / 110 assertions; classe completa: 9 testes / 384
+  assertions.
 - `0.1.0-dev.27`: Kernel usa uma segunda conexão MariaDB para testar lock
   concorrente do token, recusa sem duplicar e replay posterior. Focal: 1 teste /
   99 assertions; classe completa: 9 testes / 371 assertions. Processos PHP

@@ -92,6 +92,15 @@ final class WikiProposalStatusController extends ControllerBase {
       ];
     }
 
+    if ((int) $proposal->getOwnerId() === (int) $account->id()
+      && in_array($state, ['submitted', 'needs_changes'], TRUE)) {
+      $build['withdraw'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Retirar proposta'),
+        '#url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()]),
+      ];
+    }
+
     $history = $this->proposalHistory($proposal, $account, $request);
     $build['history'] = $history;
     $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($history));

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.28 — retirada de proposta pela autoria
+
+- A autoria pode retirar propostas em `submitted` ou `needs_changes` por Form
+  API e confirmação explícita. O backend valida autoria, Entity Access, estado e
+  revisão esperada, e grava `withdrawn` numa nova revisão privada.
+- A retirada limpa a nota exibida como retorno atual, mas mantém a revisão
+  anterior no histórico. Kernel focal: 1 teste / 110 assertions. Runtime
+  desabilitado. Classe Kernel completa: 9 testes / 384 assertions.
+
 ## 0.1.0-dev.27 — concorrência idempotente em MariaDB
 
 - Kernel mantém o lock de idempotência por uma segunda conexão MariaDB enquanto
