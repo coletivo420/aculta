@@ -44,3 +44,7 @@ Criado provider independente `green_stash` e rota `/green-stash` (purpose `accou
 ## Green Stash — navegação inicial GS-0.2-A/B
 
 Criada navegação progressiva com nove áreas: Visão geral, Produtos, Pedidos, Estoque, Envios, Promoções, Clientes, Relatórios e Configurações, acessíveis via `/green-stash/{section}` no purpose `account`, sem operações de negócio. A permissão `access aculta green stash` protege as rotas e a verificação do Studio permanece no controller. Renderização básica de estado vazio, **sem componentes SDC definitivos ou operações comerciais ativas**. Consultar [proposta mobile-first](docs/GREEN-STASH-UX-MOBILE-FIRST.md).
+
+## Rotas PT-BR do Green Stash
+
+Entrada canônica `/estudio/loja`; páginas internas `/estudio/loja/{secao}` com slugs `visao-geral`, `produtos`, `pedidos`, `estoque`, `envios`, `promocoes`, `clientes`, `relatorios` e `configuracoes`. Identificadores internos Drupal continuam estáveis. Registro no Studio pelo `AcultaCommerceServiceProvider`, não por hook container. **A área ainda mostra somente estado de preparação**, sem listas ou ações financeiras. Validar container, roteamento e permissões no homelab.
