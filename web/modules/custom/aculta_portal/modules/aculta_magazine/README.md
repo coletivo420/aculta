@@ -14,7 +14,7 @@ conteúdo, publicação e mídia.
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
 - [Registro histórico da migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
-- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — provider editorial revalida acesso no purpose canônico `magazine`; integração futura de Gallery usa referência estruturada.
+- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — o provider declara o contexto canônico `magazine` para as consultas do catálogo; Entity Access e Revision Access continuam sendo decididos pelos módulos de origem, enquanto o isolamento multidomínio da Revista é aplicado nas rotas. A integração de Gallery usa referência estruturada.
 - [CHANGELOG](CHANGELOG.md)
 
 Para políticas editoriais transversais, consulte a
