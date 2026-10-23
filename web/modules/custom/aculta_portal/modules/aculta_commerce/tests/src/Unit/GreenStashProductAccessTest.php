@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_commerce\Unit;
 
 use Drupal\aculta_commerce\Catalog\GreenStashProductReader;
+use Drupal\aculta_commerce\Store\GreenStashStoreResolver;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,7 +18,7 @@ final class GreenStashProductAccessTest extends UnitTestCase {
 
   public function testNonShopProductIsDenied(): void {
     $manager = $this->createMock(EntityTypeManagerInterface::class);
-    $reader = new GreenStashProductReader($manager);
+    $reader = new GreenStashProductReader($manager, new GreenStashStoreResolver($manager));
     $account = $this->createMock(AccountInterface::class);
     $product = $this->createMock(EntityInterface::class);
     $product->method('bundle')->willReturn('produto_curso');
