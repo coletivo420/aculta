@@ -16,8 +16,12 @@ O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
 `ForumContentIndexProvider` real para validar purpose canônico, restauração do
 Domain e falha fechada sem Domain (`aculta_index` dev.51, suíte focal 7/60).
 Escolheu-se esse harness para a evidência inicial; não substitui Kernel de
-Group/grants nem boot/DI do módulo Drupal. Antes da ativação, esses cenários
-devem provar revogação, relações topic/parent e sincronização CRUD no Kernel.
+Group/grants nem boot/DI do módulo Drupal. Em `aculta_index` dev.60, o Kernel
+usa a classe de produção com tag de fixture e prova backfill/update/delete de
+tópico e Comment Core, relação `forum_topic` e omissão de Comment rejeitado
+(1/21); esse fluxo também corrigiu a conversão do timestamp de Comment para int.
+ForumPost revisionável, revogação, grants/Domain reais e relações topic/parent
+continuam pendentes antes da ativação.
 
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 

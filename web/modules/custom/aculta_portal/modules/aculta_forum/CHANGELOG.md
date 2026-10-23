@@ -1,3 +1,12 @@
+## `0.1.0-dev.249` — corrigir timestamp de Comment no provider Index
+
+- `ForumContentIndexProvider` normaliza `Comment::getCreatedTime()` para int,
+  conforme o contrato de projeção do Index.
+- Kernel integrado cobre Comments legados, relação com tópico, atualização,
+  exclusão e omissão de comentário rejeitado (1 teste / 21 assertions PASS).
+- O harness usa a classe de produção e tag de fixture; ForumPost revisionável,
+  boot completo e grants/Domain reais permanecem pendentes.
+
 ## `0.1.0-dev.248` — contrato DI dos providers de Index
 
 - Teste Unit lê `aculta_forum.services.yml`, compila os serviços tagueados no

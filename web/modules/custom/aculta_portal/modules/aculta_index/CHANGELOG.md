@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.60 — cobrir Comments legados do Fórum
+
+- Kernel cobre tópico e Comment Core ligado: backfill, relação `forum_topic`,
+  update, delete e exclusão da relação (1 teste / 21 assertions PASS).
+- Comment marcado `field_aculta_rejected` não entra no catálogo. A projeção do
+  timestamp usa inteiro, corrigindo o tipo retornado por `Comment::getCreatedTime()`.
+- Fixture usa provider de produção com tag de teste; Fórum completo, ForumPost
+  revisionável e grants/Domain reais continuam pendentes.
+
 ## 0.1.0-dev.59 — integrar tópico do Fórum ao ciclo do Index
 
 - Kernel usa `ForumContentIndexProvider` de produção registrado por fixture,

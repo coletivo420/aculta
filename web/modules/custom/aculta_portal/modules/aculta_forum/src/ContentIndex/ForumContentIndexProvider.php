@@ -131,7 +131,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     ?int $publishedAt = NULL,
   ): ContentIndexProjection {
     $created = $entity instanceof CommentInterface
-      ? $entity->getCreatedTime()
+      ? (int) $entity->getCreatedTime()
       : (int) ($entity->get('created')->value ?? 0);
     $changed = (int) ($entity->get('changed')->value ?? $created);
     return new ContentIndexProjection(

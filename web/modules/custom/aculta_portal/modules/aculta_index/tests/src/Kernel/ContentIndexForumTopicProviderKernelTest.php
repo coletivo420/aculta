@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
+use Drupal\comment\CommentingStatus;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -24,6 +29,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[RunTestsInSeparateProcesses]
 final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
 
+  use CommentTestTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -33,6 +40,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     'field',
     'text',
     'node',
+    'comment',
     'aculta_index',
     'aculta_index_forum_test',
   ];
@@ -57,7 +65,9 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -67,21 +77,61 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['node', 'user', 'system']);
+    $this->installConfig(['node', 'user', 'system', 'comment']);
     aculta_index_install();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
+    $this->addDefaultCommentField(
+      'node',
+      'aculta_forum_topic',
+      'field_aculta_discussion',
+      CommentingStatus::Open,
+      'aculta_discussion_post',
+    );
+    FieldStorageConfig::create([
+      'entity_type' => 'comment',
+      'field_name' => 'field_aculta_rejected',
+      'type' => 'boolean',
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'comment',
+      'bundle' => 'aculta_discussion_post',
+      'field_name' => 'field_aculta_rejected',
+      'label' => 'Rejected',
+    ])->save();
   }
 
   /**
    * Backfills a Forum topic, updates its projection, then deletes it.
    */
-  public function testForumTopicProjectionFollowsEntityCrud(): void {
+  public function testForumTopicsAndCommentsFollowEntityCrud(): void {
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => 'Tópico inicial',
       'status' => TRUE,
     ]);
     $topic->save();
+    $comment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => (int) $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'uid' => 0,
+      'subject' => 'Resposta inicial',
+      'comment_body' => ['value' => 'Texto que não deve ser projetado', 'format' => 'plain_text'],
+      'status' => 1,
+    ]);
+    $comment->save();
+    $rejectedComment = Comment::create([
+      'entity_type' => 'node',
+      'entity_id' => (int) $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+      'uid' => 0,
+      'subject' => 'Resposta rejeitada',
+      'field_aculta_rejected' => TRUE,
+      'status' => 1,
+    ]);
+    $rejectedComment->save();
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum', $registry->findProviderIdForBundle('node', 'aculta_forum_topic'));
@@ -99,6 +149,49 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
 
     self::assertSame('Tópico inicial', $this->entryLabel($generationId, (string) $topic->id()));
+    self::assertSame('Resposta inicial', $this->entryLabel($generationId, (string) $comment->id(), 'comment'));
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('entity_type', 'comment')
+      ->condition('entity_id', (string) $rejectedComment->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    self::assertSame(1, (int) $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('source_entity_type', 'comment')
+      ->condition('source_entity_id', (string) $comment->id())
+      ->condition('relation_type', 'forum_topic')
+      ->condition('target_entity_id', (string) $topic->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+
+    $comment->setSubject('Resposta atualizada');
+    $comment->save();
+    $this->processForumWork();
+    self::assertSame('Resposta atualizada', $this->entryLabel($generationId, (string) $comment->id(), 'comment'));
+
+    $comment->delete();
+    $this->processForumWork();
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('entity_type', 'comment')
+      ->condition('entity_id', (string) $comment->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'forum')
+      ->condition('source_entity_type', 'comment')
+      ->condition('source_entity_id', (string) $comment->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
 
     $topic->setTitle('Tópico atualizado');
     $topic->save();
@@ -110,6 +203,7 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'forum')
+      ->condition('entity_type', 'node')
       ->condition('entity_id', (string) $topic->id())
       ->countQuery()
       ->execute()
@@ -137,11 +231,12 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
   /**
    * Returns the label of one Forum topic entry in a generation.
    */
-  private function entryLabel(string $generationId, string $entityId): string {
+  private function entryLabel(string $generationId, string $entityId, string $entityType = 'node'): string {
     return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'forum')
+      ->condition('entity_type', $entityType)
       ->condition('entity_id', $entityId)
       ->execute()
       ->fetchField();
