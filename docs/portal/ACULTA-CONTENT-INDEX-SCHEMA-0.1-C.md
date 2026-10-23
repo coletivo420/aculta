@@ -20,13 +20,13 @@ Todos os registros de entrada e relação pertencem a uma geração. Consultas p
 
 O `ContentIndexEntityEnumerator` identifica o progresso por provider, tipo de entidade e último ID; percorre todas as traduções da entidade dentro do mesmo lote. Não usa OFFSET nem serializa entidades. `ContentIndexRebuildCheckpointManager` persiste e retoma esse cursor por CAS, impedindo que outro worker com revisão antiga faça regressão. O orquestrador grava todas as projeções antes de avançar o checkpoint e registra `backfill_completed` por CAS na última página. `ContentIndexRebuilder::validate()` exige conclusão e inventário estável, depois confere integridade estrutural antes de marcar a geração validada. A ativação exige que os estados queued, processing, retry e dead dos providers ativos cheguem a zero; cron recupera jobs processing sem progresso e a reparação dead-letter é interna, ainda sem interface de operação. Reconciliação permanece pendente.
 
-`ContentIndexIntegrityChecker` consulta somente as tabelas do catálogo e verifica ponteiro/gerações e fontes de relações. Ele reporta contagens e não corrige nem expurga automaticamente. Os testes Kernel atuais executam em MariaDB; SQLite ainda precisa de harness compatível aprovado para validar portabilidade.
+`ContentIndexIntegrityChecker` consulta somente as tabelas do catálogo e verifica ponteiro/gerações e fontes de relações. Ele reporta contagens e não corrige nem expurga automaticamente. Em 2026-10-22, a suíte Unit/Kernel do Index e Activity passou com SQLite em memória (65 testes, 533 assertions), cobrindo instalação e consulta do schema, paginação e relações. MariaDB, Runtime e portabilidade sob volume ainda precisam de validação própria.
 
 ## Índices e portabilidade
 
 Entradas têm consultas seletivas por geração, tipo/bundle, domínio/estado e provider. Relações são consultáveis por origem ou alvo sem carregar toda a tabela. Chaves compostas preservam IDs string (inclusive tipos que não sejam Node) e idioma.
 
-Schema foi declarado com Database Schema API, sem SQL de criação específico do driver. Os testes atuais conferem o contrato da definição; ainda é necessário instalar e consultar schema em MariaDB e SQLite dentro dos harnesses de teste aprovados. Não há medição de latência, volume ou tamanho de índice nesta fase.
+Schema foi declarado com Database Schema API, sem SQL de criação específico do driver. A instalação e consultas exercitadas nos Kernel tests passaram no SQLite em memória; falta repetir os gates em MariaDB. Não há medição de latência, volume ou tamanho de índice nesta fase.
 
 Consultas 0.1 usam `generation_id`, filtros allowlisted, `changed DESC` e `entry_id DESC` para keyset. O índice `gen_changed` serve esse percurso. O cursor não contém identidade da origem: um token aleatório por conta/filtros/geração localiza uma linha com hash SHA-256, posição, revisão CAS e expiração de 15 minutos. O cron apaga tokens expirados por lotes. O leitor revalida cada entidade pela API de acesso; as respostas não são armazenáveis em cache neste primeiro contrato.
 

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'IDX 0.1-F — concluir Kernel/DI de todos os providers e homologar acesso de Activity/LMS; criar campo estruturado Revista→Gallery e migrar embeds legados; manter Wiki categories/image e ownership de `remote_video` como dívidas ([roadmap](docs/portal/ACULTA-CONTENT-INDEX.md))'
-version_note: "`0.1.0-dev.25` (Kernel dos adapters Media/Activity e registry tagged)"
+version_note: "`0.1.0-dev.26` (acesso canônico fail-closed; Kernel/Unit SQLite: 65 testes)"

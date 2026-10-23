@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.26 — acesso canônico fail-closed e validação SQLite
+
+- Teste Unit garante que provider com Domain canônico ausente nega exposição,
+  sem chamar Entity Access no domínio ativo.
+- Suíte combinada Unit/Kernel de Index e Activity passou em SQLite temporário:
+  65 testes / 533 assertions. MariaDB e Runtime continuam pendentes.
+
 ## 0.1.0-dev.25 — Kernel harness para adapters e providers tagged
 
 - Kernel schema tests agora carregam o adapter Media real `aculta_image`; fixtures constroem `DomainPurposeManager` tipado sem habilitar o conjunto integral do Portal.
