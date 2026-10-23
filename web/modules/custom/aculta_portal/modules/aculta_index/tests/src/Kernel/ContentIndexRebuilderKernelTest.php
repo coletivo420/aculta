@@ -870,6 +870,36 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $query = $this->container->get('aculta_index.relation_query');
     $page = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, NULL, 1);
     $targets = $page->entities;
+    $this->assertNotNull($page->nextCursor, 'The first candidate page leaves a continuation cursor.');
+
+    // A new target gets a larger immutable entry ID after page one. It must
+    // not jump ahead of the cursor and appear during the same traversal.
+    $lateTarget = Node::create([
+      'type' => 'sample_content',
+      'title' => 'Created after relation page one',
+      'status' => 1,
+    ]);
+    $lateTarget->save();
+    $provider = $this->container->get('aculta_index.provider_registry')->get('test_sample_content');
+    $projection = $provider->project($lateTarget);
+    $this->assertNotNull($projection);
+    $this->container->get('aculta_index.writer')->write($generationId, 'test_sample_content', $projection);
+    $database->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => $generationId,
+        'provider_id' => 'test_sample_content',
+        'source_entity_type' => 'node',
+        'source_entity_id' => (string) $source->id(),
+        'source_langcode' => $source->language()->getId(),
+        'relation_type' => 'related_item',
+        'target_entity_type' => 'node',
+        'target_entity_id' => (string) $lateTarget->id(),
+        'target_langcode' => 'und',
+        'relation_hash' => hash('sha256', 'late-target:' . $lateTarget->id()),
+        'updated' => 1,
+      ])
+      ->execute();
+
     $pages = 1;
     while ($page->nextCursor !== NULL) {
       $page = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $page->nextCursor, 1);
@@ -879,6 +909,10 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     }
     $this->assertCount(1, $targets, 'A target reached by both und and explicit default-language edges appears once.');
     $this->assertSame('Public target', (string) $targets[0]->label());
+    $this->assertNotContains('Created after relation page one', array_map(
+      static fn ($entity): string => (string) $entity->label(),
+      $targets,
+    ), 'A new higher-ID target is not inserted before an existing cursor.');
     $this->assertSame($this->container->get('language_manager')->getDefaultLanguage()->getId(), $targets[0]->language()->getId());
 
     // A relation edge is unusable if its source projection belongs to an old

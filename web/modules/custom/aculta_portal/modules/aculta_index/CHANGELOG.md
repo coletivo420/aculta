@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.121 — manter estável o cursor de relações
+
+- A regressão de relações agora insere um novo alvo de maior ID depois da
+  primeira página e confirma que o cursor ativo não o introduz na travessia.
+  O mesmo caso verifica fallback `und` para o idioma padrão e deduplicação de
+  arestas `und`/idioma explícito.
+- `ContentIndexRebuilderKernelTest`: 19 testes / 274 assertions PASS em SQLite;
+  o teste focal passou com 1/22. PHP lint e PHPCS Drupal PASS. A repetição
+  MariaDB aguarda o benchmark de 1M ainda ativo.
+
 ## 0.1.0-dev.120 — corrigir providers do harness de acesso do Fórum
 
 - O harness carrega as declarações reais de `aculta_forum.content_index_provider`
