@@ -189,8 +189,9 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | `php scripts/validate-project-status-index.php` | **PASS** (38 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
 | `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**, mesmo conjunto de falhas da linha de base (ex.: `WikiController.php` ausente). Nenhuma falha nova relacionada a checkout ou CPF |
 | PHPCS Drupal/DrupalPractice nos arquivos novos | **Não atende o padrão estrito**: comentários de documentação e linhas longas. O repositório não passa nesse padrão (`PortalController.php` tem 67 erros antes desta rodada). Dívida registrada, não corrigida |
-| PHPUnit Kernel | **DEFERRED**: `SIMPLETEST_DB` não está configurado. Não foi apontado para o banco de desenvolvimento compartilhado |
-| Config Sync | **Verificado em parte**: YAML válido. `drush config:status` mostra o tipo `curso` e o flow `default` diferentes do ativo, como esperado. A aplicação exige `config:import` autorizado |
+| PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
+| PHPUnit Kernel do pane de identidade fiscal | **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
+| Config Sync | **Import parcial aplicado** no ambiente de teste (`config:import --partial` só com `commerce_checkout.commerce_checkout_flow.default` e `commerce_order.commerce_order_type.curso`); flow `curso` removido com `config:delete`. Import completo **não** foi feito: ver 9.2 |
 | Gates de Loja, LMS e Doações no servidor de testes | **DEFERRED** |
 
 ## 9.1 Efeitos de runtime ao ativar a configuração
@@ -201,6 +202,18 @@ Aplicar `drush config:import` no runtime alvo, somente com autorização:
 - O tipo `curso` passa a usar o flow `default`.
 - O flow `default` passa a exigir login e a incluir o pane `aculta_fiscal_identity` na etapa de revisão. Compras da Loja sem CPF/CNPJ válido deixam de ser concluídas.
 - Cursos gratuitos que passam pelo checkout também passam a exigir CPF/CNPJ, como decidido.
+
+## 9.2 Por que o import completo não foi feito
+
+`drush config:status` no runtime de teste: 64 itens diferentes, 47 só no sync, 35 só no banco. Um `config:import` completo teria:
+
+- **Apagado 35 itens só no banco**, entre eles `field.storage.profile.address`, `field.storage.message.*` e `message.template.*`. Apagar storage de campo destrói dados. Não executado.
+- **Desinstalado módulos** ao importar `core.extension`: o banco tem `ckeditor5_plugin_pack*`, `entity_print`, `google_tag`, `aculta_document_viewer`, `aculta_editor` e `aculta_lms_messenger` que o sync não tem. Não executado.
+- **Falhado na validação:** o sync depende de `aculta_lms_resources`, `aculta_wiki` e `aculta_forum_wiki`, habilitados no sync e ausentes no banco. Resolver isso exige instalar módulos, o que é decisão à parte.
+
+Backup do estado ativo antes de qualquer alteração: export em `scratchpad/active` (1301 arquivos). O drift restante é de outras frentes e segue pendente de decisão.
+
+**Verificação sobre preenchimento do CPF em compra:** no código, nenhum caminho de compra ou pagamento grava CPF/CNPJ. Pagamento (`aculta_pagamentos_mercadopago`) não trata identificação. O único ponto de gravação é `AccountOtherDataForm`. Assim, Outros Dados só mostra o documento se a pessoa já o salvou ali, e mostra mascarado e bloqueado. Se a intenção for preencher a partir de uma compra, isso contraria a regra de não sobrescrever e exige decisão.
 
 ## 10. Pendências
 
