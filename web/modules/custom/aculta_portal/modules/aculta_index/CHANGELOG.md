@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.72 — revalidar policy LMS no MariaDB de teste
+
+- `LmsCourseContentIndexAccessKernelTest` passou no MariaDB local dedicado:
+  1 teste / 33 assertions. O cenário usa curso Group e Domain persistidos e
+  confirma estudante via `takeAccess()`, educador via permissão contextual e
+  negação a terceiro; 47 depreciações reportadas por Core/contrib.
+- Mantido o padrão escolhido para os providers: harness de teste com classe
+  de produção e verificação separada do service YAML real; o boot completo do
+  owner e de toda sua cadeia de dependências segue pendente.
+
 ## 0.1.0-dev.71 — validar bridge Statistics com conta não privilegiada
 
 - Kernel do bridge reserva UID 1 e associa o papel de métricas com `addRole()`;
