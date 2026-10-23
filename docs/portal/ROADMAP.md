@@ -229,26 +229,16 @@ Essa etapa define e valida o conteúdo do pacote; não autoriza upload nem deplo
 em produção. Ver também o
 [planejamento do aculta_deployer](../../web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md).
 
-## Frente prioritária P-CART — Multi-carrinho e seleção contextual (ADR-013, 2026-10-22)
+## Frente prioritária P-CART — Multi-carrinho e seleção contextual (SUPERSEDIDA) (ADR-013, 2026-10-22)
 
-O `aculta_portal` é o orquestrador de carrinhos e seleção de checkout, não `aculta_commerce` nem `aculta_donation`. Interface em abas **Comum, Loja, LMS, Doações**, mobile-first e SDC/UI Suite via tema ACULTA420. O carrinho comum lista pedidos distintos com ações por checkout, sem criar pedido ou pagamento conjunto por padrão. Mercado Pago segue compartilhado e Drupal Commerce segue fonte de verdade. A opção `donate|cart|both` é funcional e deve ser preservada.
-
-- **P-CART 0.1:** auditar tipos de pedidos, carrinhos de sessão, roteamento, providers, modo de checkout e registros reais.
-- **P-CART 0.2:** registry e interfaces neutros no Portal + testes unitários, sem alteração de comportamento.
-- **P-CART 0.3:** providers de Loja/LMS/Doações e seleção por pedido/entidade, com ACL e fallback.
-- **P-CART 0.4:** migração gradual do subscriber de Donation para Portal, preservando configuração, histórico e rotas.
-- **P-CART 0.5:** render arrays e abas internas Comum/Loja/LMS/Doações, AJAX progressivo, fallback HTTP; apresentação exclusiva no tema.
-- **P-CART 0.6:** persistência contextual temporária de seleção, consistência de carrinhos e métricas derivadas em Statistics; sem novos armazenamentos transacionais.
-- **P-CART T:** homologação no homelab dos três checkouts, carrinhos concorrentes, domínios, guest/auth, checkout comum/dedicado, webhook/reembolso, regressão SDC, mobile/light/dark, rollback documentado.
-
-[Detalhamento e limites normativos](../decisions/ADR-013-portal-multi-cart-checkout.md).
+**Supersedida.** O plano anterior (P-CART 0.1–0.6) descrevia abas e lista de pedidos como interface do comprador e persistência de seleção por sessão. Isso foi revogado: a coordenação é **administrativa** e o carrinho da barra multidomínio e a seleção atual de checkout ficam inalterados. O plano vigente está na seção seguinte e no [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md).
 
 ## RETIFICAÇÃO VIGENTE — P-CART administrativo (ADR-013, 2026-10-22)
 
 **Esta seção substitui a interpretação anterior de “interface multi-carrinho” como interface do usuário.** As quatro abas **Comum | Loja | LMS | Doações** serão **exclusivamente administrativas**. O carrinho já presente na **barra multidomínio** (posição, contador, aparência, links e comportamento) e a seleção atual dos checkouts são contratos imutáveis durante a refatoração. Não criar novo carrinho público, carrinho agregado, checkout unificado ou seleção persistida por sessão.
 
-- **P-CART A:** baseline do carrinho da barra multidomínio, seleção atual, rotas/config, testes de caracterização.
-- **P-CART B:** interfaces/registry da orquestração e configurações no módulo principal Portal, sem alterar checkout.
+- **P-CART A (concluída em código, 2026-10-22):** baseline do carrinho da barra multidomínio, seleção atual, rotas/config, testes de caracterização Unit. Homologação em Browser/homelab segue em P-CART T.
+- **P-CART B (concluída em código, 2026-10-22):** `aculta_portal/src/Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry` (tag `aculta_portal.checkout_provider`), `CheckoutConfigurationResolver` e `CheckoutPolicyManager`. Somente leitura; nenhum provider registrado e nenhum efeito no site até a P-CART C.
 - **P-CART C:** providers de configuração para Loja, LMS e Doações, com manutenção de seus fluxos próprios.
 - **P-CART D:** port/migração progressiva da coordenação de `CartCheckoutRouteSubscriber` do Donation ao Portal, conservando `donate|cart|both` e configurações exportadas, com rollback.
 - **P-CART E:** interface de **administração** com abas Comum, Loja, LMS e Doações, Form API, ACL e SDC/UI Suite.

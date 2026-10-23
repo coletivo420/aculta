@@ -1,3 +1,9 @@
+## 0.4.1-dev.13 — contratos centrais de orquestração de checkout (P-CART B) — 2026-10-22
+
+- Novo `Drupal\aculta_portal\Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry`, `CheckoutConfigurationResolver` e `CheckoutPolicyManager`, registrados como serviços. Providers entram pela tag `aculta_portal.checkout_provider` (`tagged_iterator`).
+- Somente leitura e sem efeito público: nenhum provider registrado ainda, nenhuma rota, subscriber, carrinho ou checkout alterado (ADR-013).
+- Testes Unit: `Unit/Checkout/CheckoutOrchestrationTest.php`. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.12 — ownership editorial de Activity e limpeza de Magazine
 
 - `EditorialHooks` deixa de executar comportamentos para `article`/`blog` e

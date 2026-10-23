@@ -396,3 +396,19 @@ services:
 
   Drupal\aculta_mailer\Transport\SecretWriterInterface:
     alias: aculta_portal.secret_writer_adapter
+  aculta_portal.checkout_context_registry:
+    class: Drupal\aculta_portal\Checkout\CheckoutContextRegistry
+    autowire: false
+    arguments: [!tagged_iterator aculta_portal.checkout_provider]
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.checkout_configuration_resolver:
+    class: Drupal\aculta_portal\Checkout\CheckoutConfigurationResolver
+    arguments: ['@aculta_portal.checkout_context_registry']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.checkout_policy_manager:
+    class: Drupal\aculta_portal\Checkout\CheckoutPolicyManager
+    arguments: ['@aculta_portal.checkout_configuration_resolver']
+    tags:
+      - { name: aculta_portal.helper }
