@@ -26,6 +26,10 @@ Códigos de saída por URL: `0` página carregou; `124` tempo esgotado; `1` erro
 
 O script só verifica o carregamento. Capturas de tela e medições ficam nas suítes de `tests/browser/`.
 
+## Scripts reutilizáveis
+
+Todo script de teste visual deve ser salvo em `tests/browser/<frente>/`, com README local, e não apenas em `/tmp`. O catálogo do que existe hoje, a convenção de pastas e as regras de evidência estão em `tests/browser/README.md`; consulte-o antes de escrever um script novo.
+
 ## Hosts e larguras
 
 - Hosts de teste: `aculta.toca.net.br`, `links.aculta.toca.net.br`, `conta.aculta.toca.net.br/entrar`, `apoio.aculta.toca.net.br`. Controle: `example.com`.
