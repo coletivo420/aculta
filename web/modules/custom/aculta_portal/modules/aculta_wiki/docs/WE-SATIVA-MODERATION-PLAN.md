@@ -25,6 +25,12 @@ E-mail confirmado → WE SATIVA → Novo verbete
   → atualizar Meu trabalho + verbete público somente após transição real
 ```
 
+`create_new_draft` is permitted from both `published` and `draft`. The second
+source keeps the initial Node form's default state selectable as `draft`, so
+contributors can save a private draft and later choose the separate
+`draft_to_review` transition. The role `email_confirmed` still has no
+`review_to_published` permission.
+
 **Primeiro verbete:** identificar revisão inicial pela consulta canônica à história de publicações pertencentes à conta; essa decisão será derivada do serviço compartilhado de aculta_user + lookup Wiki, sem consultar comentários do Fórum. Testar criação de dois rascunhos simultâneos, primeira aprovação tardia, mudança de autor e edição concorrente. Para evitar condição de corrida, a fila não pode liberar publicação por UI apenas porque outro verbete foi publicado.
 
 ## Estrutura da moderação interna da Wiki

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.42`: o workflow mantém a gravação inicial no estado `draft` como
+  escolha explícita do formulário Core. Kernel submete o Node como rascunho e
+  depois cria revisão `review` por `draft_to_review`; publicação segue
+  indisponível à autoria confirmada (focal: 1 teste / 54 asserções).
+
 - `0.1.0-dev.41`: Kernel constrói o formulário Core de `wiki_entry` sob a conta
   confirmada, com o workflow real, campos, ação de salvar e escolha de revisão;
   a opção de publicação não aparece. Focal: 1 teste / 38 asserções. Submissão e

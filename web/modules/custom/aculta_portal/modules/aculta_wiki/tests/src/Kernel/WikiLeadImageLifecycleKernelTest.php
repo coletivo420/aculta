@@ -721,7 +721,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Confirmed Wiki authors receive the native form and review transition only.
+   * Confirmed Wiki authors receive a native draft form without publish access.
    */
   public function testConfirmedContributorBuildsNativeDraftForm(): void {
     $this->installEntitySchema('content_moderation_state');
@@ -746,6 +746,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'create wiki_entry content',
         'edit own wiki_entry content',
         'view own unpublished content',
+        'use wiki_editorial transition create_new_draft',
         'use wiki_editorial transition draft_to_review',
       ],
     ])->save();
@@ -762,19 +763,68 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ));
 
     $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
-    $form = $this->container->get('entity.form_builder')->getForm($node, 'default');
+    $formObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
+    $formObject->setEntity($node);
+    $formState = new FormState();
+    $formState->setFormObject($formObject);
+    $formBuilder = $this->container->get('form_builder');
+    $form = $formBuilder->buildForm($formObject, $formState);
     self::assertArrayHasKey('title', $form);
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);
     self::assertArrayHasKey('submit', $form['actions']);
     self::assertArrayHasKey('moderation_state', $form);
-    self::assertArrayHasKey('review', $form['moderation_state']['widget'][0]['state']['#options']);
-    self::assertArrayNotHasKey('published', $form['moderation_state']['widget'][0]['state']['#options']);
+    $moderationWidget = $form['moderation_state']['widget'][0]['state'];
+    self::assertArrayHasKey('draft', $moderationWidget['#options']);
+    self::assertArrayHasKey('review', $moderationWidget['#options']);
+    self::assertArrayNotHasKey('published', $moderationWidget['#options']);
+    self::assertSame('draft', $moderationWidget['#default_value']);
 
     $validTransitions = $this->container->get('content_moderation.state_transition_validation')
       ->getValidTransitions($node, $author);
+    self::assertArrayHasKey('create_new_draft', $validTransitions);
     self::assertArrayHasKey('draft_to_review', $validTransitions);
     self::assertFalse($author->hasPermission('use wiki_editorial transition review_to_published'));
+
+    $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Verbete salvo como rascunho');
+    $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
+    $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $formState->setValue($moderationWidget['#parents'], 'draft');
+    $formState->setTriggeringElement($form['actions']['submit']);
+    $formBuilder->submitForm($formObject, $formState);
+
+    self::assertSame([], $formState->getErrors());
+    $savedEntity = $formObject->getEntity();
+    self::assertInstanceOf(Node::class, $savedEntity);
+    self::assertNotEmpty($savedEntity->id());
+    $savedNode = Node::load($savedEntity->id());
+    self::assertInstanceOf(Node::class, $savedNode);
+    self::assertSame('Verbete salvo como rascunho', $savedNode->label());
+    self::assertSame('draft', $savedNode->get('moderation_state')->value);
+    self::assertFalse($savedNode->isPublished());
+
+    $draftRevisionId = (int) $savedNode->getRevisionId();
+    $editFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');
+    $editFormObject->setEntity($savedNode);
+    $editFormState = new FormState();
+    $editFormState->setFormObject($editFormObject);
+    $editForm = $formBuilder->buildForm($editFormObject, $editFormState);
+    $editModerationWidget = $editForm['moderation_state']['widget'][0]['state'];
+    self::assertArrayHasKey('review', $editModerationWidget['#options']);
+    self::assertArrayNotHasKey('published', $editModerationWidget['#options']);
+
+    $editFormState->setValue($editForm['title']['widget'][0]['value']['#parents'], 'Verbete enviado para revisão');
+    $editFormState->setValue($editForm['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
+    $editFormState->setValue($editForm['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $editFormState->setValue($editModerationWidget['#parents'], 'review');
+    $editFormState->setTriggeringElement($editForm['actions']['submit']);
+    $formBuilder->submitForm($editFormObject, $editFormState);
+
+    self::assertSame([], $editFormState->getErrors());
+    $reviewRevision = $editFormObject->getEntity();
+    self::assertGreaterThan($draftRevisionId, (int) $reviewRevision->getRevisionId());
+    self::assertSame('review', $reviewRevision->get('moderation_state')->value);
+    self::assertFalse($reviewRevision->isPublished());
   }
 
   /**

@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.42: `create_new_draft` aceita origem `draft` para o formulário Core
+  selecionar o estado inicial; Kernel persiste um Node privado em `draft` e
+  depois uma nova revisão em `review` por `draft_to_review` (1 teste / 54
+  assertions). Não conceder `review_to_published` a `email_confirmed`.
+
 - Dev.41: o Kernel constrói o Node Form API real para uma conta confirmada e
   workflow `wiki_editorial`; comprova `draft_to_review` e ausência da opção de
   publicação no widget (focal: 1 teste / 38 assertions). Ainda não submete nem

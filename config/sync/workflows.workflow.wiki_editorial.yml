@@ -27,9 +27,12 @@ type_settings:
       published: false
       default_revision: false
   transitions:
+    # Include the initial draft state so contributors can save before they
+    # explicitly choose draft_to_review in the native Node form.
     create_new_draft:
       label: 'Criar rascunho de nova revisão'
       from:
+        - draft
         - published
       to: draft
       weight: 3

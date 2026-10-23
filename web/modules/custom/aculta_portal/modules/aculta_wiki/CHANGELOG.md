@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.42 — salvar rascunho e enviar revisão pelo Form API nativo
+
+- O workflow `wiki_editorial` agora permite a transição `create_new_draft` a
+  partir de `draft`, além de `published`. Isso disponibiliza o estado inicial
+  `draft` como destino selecionável, sem mudar a permissão já exportada.
+- O Kernel submete o formulário Core: primeira gravação cria Node não publicado
+  em `draft`; novo submit cria revisão em `review` pela transição
+  `draft_to_review`. A autora continua sem permissão/opção para publicar.
+- Focal MariaDB: 1 teste / 54 asserções; 201 depreciações Core/contrib e 2 do
+  PHPUnit. Config Sync foi atualizado, sem importação no Runtime.
+
 ## 0.1.0-dev.41 — construir formulário nativo para autoria confirmada
 
 - Kernel carrega o workflow `wiki_editorial` e constrói o formulário Core de
