@@ -47,7 +47,7 @@ final class GreenStashNavigation {
     $links = [];
     foreach (self::SLUGS as $slug => $key) {
       $label = self::AREAS[$key];
-      $links[$key] = [
+      $links[$slug] = [
         '#type' => 'link',
         '#title' => $label,
         '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => $slug]),
