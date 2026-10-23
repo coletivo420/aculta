@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.126 — validar comandos Drush no Runtime de teste
+
+- No Homelab `toca` (Drupal 11.4.10, Drush 13.8.0), `drush list --raw`
+  exibiu audit, queue e rebuild após ativação temporária autorizada.
+- Antes da desinstalação, entradas, relações e jobs eram zero e não havia geração
+  ativa. `pm:uninstall` restaurou o módulo desabilitado e removeu todas as tabelas
+  `aculta_index_*`; não houve rebuild nem alteração de conteúdo original.
+- `system.site` mantém `langcode` e `default_langcode` em `pt-br`, iguais ao Sync.
+  Não foi importada configuração; `config:status` ainda reporta diferenças em
+  `core.extension` e `system.site`, sem baseline anterior para atribuí-las.
+
 ## 0.1.0-dev.125 — verificar descoberta dos comandos Drush
 
 - Teste Unit usa a estratégia instalada no Drush 13.8 para descobrir os três
