@@ -19,7 +19,7 @@ final class GreenStashStoreResolver {
 
   public function resolve(AccountInterface $account): ?object {
     $storage = $this->entities->getStorage('commerce_store');
-    $ids = $storage->getQuery()->accessCheck(TRUE)->range(0, 2)->execute();
+    $ids = $storage->getQuery()->accessCheck(FALSE)->range(0, 2)->execute();
     if (count($ids) !== 1) {
       return NULL;
     }
