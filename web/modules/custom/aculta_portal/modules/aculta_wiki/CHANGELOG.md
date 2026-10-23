@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.16 — envio de propostas por Form API
+
+- Adiciona `/wiki/verbetes/{node}/contribuir`, protegida por `submit wiki
+  proposals` e pelo acesso de visualização do Node. O formulário fornece tipo,
+  texto simples, justificativa e até dez fontes HTTP(S) (uma por linha).
+- A submissão chama `WikiProposalSubmission`, que revalida conta, verbete,
+  publicação, propósito e revisão-base corrente. O formulário informa que a
+  proposta não altera o verbete automaticamente. Não foi adicionada UI para
+  moderar nem aplicar propostas; o significado operacional do estado `accepted`
+  depende da definição do fluxo editorial.
+- Kernel MariaDB cobre discovery/acesso da rota, construção do Form API,
+  validação e submissão via callback; o serviço existente cobre acesso e
+  persistência privadas.
+
 ## 0.1.0-dev.15 — consulta editorial autorizada
 
 - `aculta_wiki.editorial_queue` fornece páginas de propostas pendentes e de

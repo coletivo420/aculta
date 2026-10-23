@@ -58,3 +58,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   de entidade, além de transições válidas. Kernel carrega workflow real e usa
   `email_confirmation_policy`; não criar bypasses para contas não confirmadas.
   Fila e serviço ainda não têm rota ou integração de UI com Studio.
+- Envio de propostas (dev.16): `/wiki/verbetes/{node}/contribuir` usa Form API,
+  permission `submit wiki proposals` e `_entity_access: node.view`. O serviço
+  revalida a revisão-base durante o salvamento. Texto sugerido é texto simples;
+  o formulário avisa que ele não altera o verbete automaticamente. Não marcar
+  proposta como aceita sem definir e implementar a aplicação editorial.

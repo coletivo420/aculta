@@ -125,6 +125,20 @@ exponha propostas nesta entrega.
 Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
 284 depreciações Drupal/contrib e 9 do PHPUnit. Não há rota nem UI da fila.
 
+## Envio contextual de proposta — Kernel real (dev.16)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Rota de contribuição | Kernel | `/wiki/verbetes/{node}/contribuir`, exige `submit wiki proposals` e `node.view` | aprovado |
+| Formulário | Kernel | Form API constrói intenção, texto, justificativa e fontes | aprovado |
+| Validação do formulário | Kernel | Texto/justificativa obrigatórios e fontes apenas HTTP(S), máximo dez | aprovado (válido exercitado; inválidos no serviço) |
+| Callback de submissão | Kernel | Persiste pela API proprietária, atualiza revisão-base e redireciona ao verbete | aprovado |
+| Autorização e purpose no serviço | Kernel | Mantém proteção contra conta sem permissão, domínio incorreto e alvo despublicado | aprovado na cobertura do serviço dev.14 |
+| Aplicar o conteúdo sugerido ao Node | Kernel | Exige decisão editorial explícita e revisão nova autorizada | pendente de definição do fluxo |
+
+O módulo está desabilitado no Runtime; o endpoint só existe após ativação
+controlada.
+
 ## Controller — cache e acesso (dev.11)
 
 | Cenário | Tipo | Resultado esperado | Estado |

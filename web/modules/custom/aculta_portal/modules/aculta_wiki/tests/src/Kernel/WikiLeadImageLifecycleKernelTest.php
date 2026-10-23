@@ -33,6 +33,7 @@ use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -330,6 +331,27 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
 
+    $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
+    self::assertSame('/wiki/verbetes/{node}/contribuir', $proposalRoute->getPath());
+    self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
+    self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
+    self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => 1], new AnonymousUserSession()));
+
+    $proposalTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Alvo do formulário de contribuição',
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'body' => ['value' => 'Texto público', 'format' => 'plain_text'],
+    ]);
+    $proposalTarget->save();
+    $proposalForm = WikiProposalSubmissionForm::create($this->container);
+    $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);
+    self::assertSame('aculta_wiki_proposal_submission', $proposalForm->getFormId());
+    self::assertArrayHasKey('proposed_text', $proposalBuild);
+    self::assertArrayHasKey('rationale', $proposalBuild);
+    self::assertArrayHasKey('source_uris', $proposalBuild);
+
     Role::load('anonymous')->revokePermission('access content')->save();
     self::assertFalse($accessManager->checkNamedRoute(
       'aculta_portal.wiki_home',
@@ -495,6 +517,24 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $secondPageIds = array_map(static fn (WikiProposal $item): int => (int) $item->id(), $secondPage->getItems());
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
+
+    $this->container->get('current_user')->setAccount($submitter);
+    $formState = new FormState();
+    $proposalForm = WikiProposalSubmissionForm::create($this->container);
+    $proposalForm->buildForm([], $formState, $target);
+    $formState->setValues([
+      'intent' => 'correction',
+      'proposed_text' => 'Texto sugerido pelo Form API',
+      'rationale' => 'Ajuste comprovado pela fonte.',
+      'source_uris' => 'https://example.invalid/referencia',
+    ]);
+    $build = [];
+    $proposalForm->validateForm($build, $formState);
+    self::assertFalse($formState->hasAnyErrors());
+    $proposalForm->submitForm($build, $formState);
+    self::assertSame('entity.node.canonical', $formState->getRedirect()->getRouteName());
+    self::assertSame(27, (int) $this->container->get('entity_type.manager')
+      ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $this->container->get('current_user')->setAccount($other);
     try {

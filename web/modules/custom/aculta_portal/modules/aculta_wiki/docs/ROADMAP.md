@@ -4,10 +4,19 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.15**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.16**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.16 — envio comunitário
+
+O endpoint Form API para proposta contextual está implementado. Exige a
+permissão específica e Entity Access do verbete, e usa o serviço de submissão
+para atualizar o VID-base no instante do envio. O conteúdo não altera o Node.
+Ainda aguardam definição: semântica do aceite, aplicação no workflow `wiki_editorial`,
+revisão concorrente durante a decisão e integração de moderação na WikiTab do
+Studio. Runtime continua pendente.
 
 ### Incremento dev.15 — consulta editorial
 

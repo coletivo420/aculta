@@ -21,6 +21,19 @@ aculta_portal.wiki_search_preview:
   requirements:
     _permission: access content
 
+aculta_wiki.proposal_submit:
+  path: '/wiki/verbetes/{node}/contribuir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalSubmissionForm'
+    _title: 'Contribuir com este verbete'
+  requirements:
+    _permission: 'submit wiki proposals'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 aculta_wiki.settings:
   path: '/painel-administrativo/aculta/wiki'
   defaults:

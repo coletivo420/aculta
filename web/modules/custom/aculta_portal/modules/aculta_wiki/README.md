@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.16`: pessoas com `submit wiki proposals` podem abrir o Form API em
+  `/wiki/verbetes/{node}/contribuir`. A rota exige acesso de visualização ao
+  verbete e o serviço revalida estado e VID-base ao salvar. A proposta continua
+  privada e não é aplicada automaticamente. Kernel verifica rota e callback.
 - `0.1.0-dev.15`: serviço `aculta_wiki.editorial_queue` consulta propostas
   pendentes e revisões atuais em `review`. A fila de Nodes revalida acesso de
   leitura, revisão e atualização e exige transição válida sob o purpose `wiki`;
@@ -14,8 +18,8 @@ pendentes, está em
   classe: 8 testes / 274 assertions; módulo permanece desabilitado no Runtime.
 - `0.1.0-dev.14`: existe persistência privada revisionável para propostas de
   terceiros, com revisão-base e serviço que valida acesso, publicação e
-  purpose `wiki`. Ainda não há endpoint/formulário nem aplicação editorial da
-  proposta; essas operações seguem pendentes. Nenhuma expiração
+  purpose `wiki`. Ainda não há interface de decisão nem aplicação editorial da
+  proposta. Nenhuma expiração
   automática foi criada; retenção para propostas encerradas aguarda decisão.
 - `0.1.0-dev.13`: rotas públicas e View da listagem são descobertas pelo
   bootstrap Kernel real; o acesso à busca é caracterizado com grants diferentes
