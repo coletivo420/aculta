@@ -4,9 +4,9 @@ Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução
 
 ## Decisões normativas
 
-1. Loja, LMS e doações preservam regras e checkouts próprios; **aculta_portal coordena a interface multi-carrinho (Comum/Loja/LMS/Doações) e seleção contextual de checkout** sem fundir pedidos automaticamente. Ver [ADR-013](../../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
+1. Loja, LMS e doações preservam regras e checkouts próprios; **aculta_portal coordena a configuração administrativa (Comum/Loja/LMS/Doações) e preserva o checkout e a consolidação atual do carrinho público**. Ver [ADR-013](../../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
 2. Mercado Pago é um gateway compartilhado centralizado em `aculta_pagamentos_mercadopago` para loja, LMS e doações. Reutilizar a integração e os contratos atuais; alteração de webhook exige regressão nas três áreas.
-3. `aculta_commerce` concentra capacidades próprias da loja e fornece provider de contexto para o orquestrador **no aculta_portal**; Drupal Commerce permanece fonte de verdade. Nenhum armazenamento paralelo de pedidos, carrinhos, pagamentos ou estoque.
+3. `aculta_commerce` concentra capacidades próprias da loja e fornece provider de contexto para o orquestrador **no aculta_portal**; Drupal Commerce permanece fonte de verdade. Nenhum armazenamento paralelo de pedidos, carrinhos, pagamentos ou estoque. **Já existe `CartConsolidator` no Portal que consolida pedidos não-recorrentes; preservar essa regra, não projetar outra.**
 4. Green Stash será uma **experiência independente do ACULTA Studio**, jamais uma aba do GanjaLab. Usar `StudioExperienceProviderInterface`, com acesso real a serviços e entidades proprietárias. Não pressupor que `account` permita administrar a loja: resolver purpose e grants explicitamente.
 5. ACULTA420 detém o visual, baseado exclusivamente em SDC/UI Suite; mobile-first, sem substituir o cabeçalho multidomínio.
 6. Estatísticas comerciais via `aculta_statistics`. Ler agregados para indicadores; consultas operacionais de pedidos através de Commerce.
@@ -72,3 +72,7 @@ O gerenciador **não** pertence a `aculta_commerce`: é infraestrutura do `acult
 A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loja | LMS | Doações é exclusivamente administrativa no aculta_portal**; não é uma nova experiência de compra. O carrinho da barra multidomínio e o seletor atual de checkout permanecem intactos. `aculta_commerce` oferece ao Portal configuração/provider do contexto Loja, mas não recebe nem duplica o orquestrador, e Green Stash permanece administração operacional da loja no Studio.
 
 **Fases Comércio-CART:** C-A inventariar tipos/flows/rotas da Loja; C-B provider de configuração do Portal; C-C formulários/validações da aba administrativa Loja; C-D integração segura com Green Stash e rotas existentes sem alterar carrinho; C-T regressões visuais/funcionais e pagamentos no homelab. Não executar trabalho de storefront nesta frente. Esta seção substitui referências antigas a abas de carrinho público.
+
+## Verificação pós-auditoria C-0.1-C1 (2026-10-22)
+
+[Auditoria do código vigente](CURRENT-CODE-AUDIT-0.1.0-C.md): `CartSite`, `CartUtility`, `CartConsolidator` e `CheckoutSlugMap` já implementam carrinho público único e consolidação de pedidos `curso/default/doacao`, exceto assinaturas. Foram introduzidos testes de caracterização **sem alteração de comportamento** em `tests/src/Unit/ExistingPortalCartContractTest.php`. Execução do PHPUnit e validação real ficam pendentes do ambiente local/homelab. Fases seguintes: C-0.1-C2 configurar fixtures e testar consolidator transacional, C-0.1-C3 provider administrativo da Loja somente depois de P-CART B, C-0.1-D Studio Green Stash. Qualquer sugestão antiga de quatro abas públicas ou proibição de consolidação de pedidos está supersedida pelo comportamento atual e ADR-013.
