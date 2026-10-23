@@ -7,7 +7,7 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
-### Integração ACULTA Content Index — estado 2026-10-23
+### Integração ACULTA Content Index — estado 2026-10-23, atualizado após IDX 0.1.0-dev.76
 
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
 registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
@@ -22,11 +22,15 @@ adapter de fixture no `ModuleHandler`: membro comum com Group membership e
 permissão é autorizado para tópico, ForumPost e Comment legado; visitante é
 negado nos três. `node_grants` e `node_access_records` são invocados pelo hook
 system e o grant é verificado na tabela `node_access`. Remover membership faz a
-consulta seguinte do Index negar os itens imediatamente; o Domain anterior é
-restaurado após cada checagem (1/60, SQLite e MariaDB). Isso prova policy e
-grants reais sem ativar a cadeia completa do owner. Boot/DI do Fórum e Runtime
-seguem pendentes antes da ativação. A conversão do timestamp Comment foi
-corrigida; Unit 5/31 cobre bundle fixo sem chave no enumerador.
+consulta seguinte do Index negar os itens imediatamente. Um cenário adicional
+confirma que um tópico público é autorizado pelo purpose `forum` quando a
+requisição começa em `main`, mas negado se o Domain canônico estiver ausente;
+em ambos os cenários o contexto anterior é restaurado. O Kernel focal passou no
+MariaDB com 2 testes / 91 assertions; a suíte Kernel do Index passou com 65 /
+883. Isso prova policy e grants reais sem ativar a cadeia completa do owner.
+Boot/DI completo do Fórum e Runtime seguem pendentes antes da ativação. A
+conversão do timestamp Comment foi corrigida; Unit 5/31 cobre bundle fixo sem
+chave no enumerador.
 
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 
