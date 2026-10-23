@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.38 — falha de validação antes do upload
+
+- Kernel executa o validador real com imagem e descrição alternativa vazia.
+  O FormState registra o erro, nenhuma Media é criada e o File continua
+  temporário. A integração completa do Form API que interrompe o submit segue
+  pendente na matriz.
+- Focal: 1 teste / 27 asserções; classe completa em MariaDB isolada:
+  14 testes / 575 asserções, 286 depreciações Core/contrib e 15 PHPUnit.
+- Runtime não foi alterado. Acesso ao arquivo por revisão publicada histórica
+  continua pendente de decisão.
+
 ## 0.1.0-dev.37 — sincronizar a Media em mudanças do verbete
 
 - Hooks de inserção, atualização e exclusão sincronizam o status da Media de destaque

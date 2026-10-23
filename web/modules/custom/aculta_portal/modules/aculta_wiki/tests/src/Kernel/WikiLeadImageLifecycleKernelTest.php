@@ -380,6 +380,31 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Validation failure before submit creates no Media and keeps File temporary.
+   */
+  public function testUploadValidationFailureDoesNotPersistMediaOrFile(): void {
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $fileId = (int) $file->id();
+    $state = $this->uploadState($fileId);
+    $state->setValue([WikiLeadImageUploader::TAB, WikiLeadImageUploader::ALT], '  ');
+
+    $form = [];
+    $this->uploader()->validateUpload($form, $state);
+
+    self::assertArrayHasKey('wiki_lead_image][alt', $state->getErrors());
+    $mediaCount = $this->container->get('entity_type.manager')->getStorage('media')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('field_media_image.target_id', $fileId)
+      ->count()
+      ->execute();
+    self::assertSame(0, (int) $mediaCount);
+    $fileStorage = $this->container->get('entity_type.manager')->getStorage('file');
+    $fileStorage->resetCache([$fileId]);
+    self::assertTrue($fileStorage->load($fileId)->isTemporary());
+  }
+
+  /**
    * A form rebuild retries the same upload without a stale Media or File cache.
    */
   public function testRebuiltUploadCanBeRetriedWithoutOrphans(): void {

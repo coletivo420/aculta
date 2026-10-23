@@ -392,6 +392,10 @@ Media despublicada, Core ainda permite baixar o arquivo quando uma revisão
 publicada anterior o referencia. Resta decidir se esse acesso deve seguir a
 autorização Core da revisão ou o estado atual do verbete.
 
+Dev.38 acrescenta o caso focal do validador: erro de `alt` não cria Media nem
+torna permanente o File (Kernel focal 1 / 27; classe completa 14 / 575). O
+fluxo completo de submissão Form API com falha de validação permanece pendente.
+
 
 ## Prioridade: primeira publicação e moderação Wiki (WES-MOD 0.1)
 

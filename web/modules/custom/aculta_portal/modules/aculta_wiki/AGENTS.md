@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.38 R2: Kernel executa `validateUpload()` com `alt` vazio, verifica erro,
+  zero Media ligada ao arquivo e File temporário (focal 1/27; classe 14/575).
+  O caminho completo de submit do Form API continua pendente.
 - Dev.37 R2: `WikiEntryImageHooks` sincroniza Media de destaque após insert,
   update e delete de Nodes; mantenha-a publicada enquanto outro Node publicado
   referir a mesma entidade. Teste MariaDB cobre duas referências, última

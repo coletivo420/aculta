@@ -7,6 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.38`: Kernel executa o validador com `alt` vazio e confirma erro,
+  nenhuma Media e File temporário (focal 1 / 27; classe 14 / 575 em MariaDB
+  isolada). O submit completo pelo Form API segue pendente; Runtime não mudou.
 - `0.1.0-dev.37`: inserção, atualização e exclusão sincronizam o status da
   Media de destaque com os Nodes publicados que a referenciam. Kernel cobre
   publicação, despublicação, exclusão do último Node e reuso (2 focais / 56;

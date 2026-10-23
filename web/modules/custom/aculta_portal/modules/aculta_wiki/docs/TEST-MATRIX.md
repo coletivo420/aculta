@@ -109,6 +109,7 @@ depois da importação de configuração no servidor de testes.
 | Remoção em nova revisão com referência antiga | Kernel | revisão antiga mantém a Media; arquivo continua presente e acessível | aprovado (1 teste / 24 assertions em MariaDB) |
 | Reuso da Media em outro conteúdo e limpeza global de referências | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | pendente; depende do contrato transversal do Portal |
 | Falha de validação antes de submit | Kernel | sem Media órfã nem File permanente | pendente |
+| Validador de upload inválido | Kernel | `alt` vazio produz erro; nenhuma Media é criada e o File permanece temporário | aprovado (dev.38; focal 1 / 27; classe 14 / 575) |
 | Arquivo privado após despublicar com revisão publicada anterior | Kernel | decidir se download segue a autorização Core da revisão histórica ou o estado atual; Core atualmente permite download | pendente de decisão |
 
 ## Fase 2 — componentes movidos
