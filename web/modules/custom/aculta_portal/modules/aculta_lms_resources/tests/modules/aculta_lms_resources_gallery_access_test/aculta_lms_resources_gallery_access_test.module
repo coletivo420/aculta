@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Runs the production LMS Gallery access hook in an isolated Kernel harness.
+ */
+
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_entity_access().
+ */
+function aculta_lms_resources_gallery_access_test_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  return \Drupal::service('aculta_lms_resources_gallery_access_test.gallery_access')
+    ->entityAccess($entity, $operation, $account);
+}

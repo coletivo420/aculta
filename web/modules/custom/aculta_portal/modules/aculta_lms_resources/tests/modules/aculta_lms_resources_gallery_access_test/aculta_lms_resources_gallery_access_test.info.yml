@@ -1,0 +1,5 @@
+name: ACULTA LMS Gallery access test
+type: module
+description: 'Runs the production LMS Gallery access policy in an isolated Index Kernel harness.'
+package: Testing
+core_version_requirement: ^11.3

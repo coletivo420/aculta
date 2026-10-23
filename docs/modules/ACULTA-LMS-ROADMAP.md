@@ -437,6 +437,17 @@ subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os cam
 no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
 smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
+Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
+relação outgoing `course_gallery` com providers LMS e Gallery carregados dos
+YAMLs owner. Estudante autorizado por `take course` e educador por `grade
+students` recebem a galeria vinculada; terceiro é negado. A checagem troca do
+Domain `courses` para o purpose canônico `magazine` e restaura o contexto
+original, mesmo após uma decisão Entity Access negativa ter sido armazenada no
+cache local. Suíte Kernel MariaDB: 3 testes / 152 assertions PASS, 52
+depreciações upstream. O hook de acesso Gallery delega à classe de produção por
+uma fixture de teste; boot integral dos módulos, Runtime e smoke visual seguem
+pendentes.
+
 **F16 — hardening inicial em curso.** A reemissão de certificados agora usa o
 lock do Core por UUID da conclusão para impedir duas versões ativas em
 requisições concorrentes; uma segunda emissão enquanto o lock está ocupado

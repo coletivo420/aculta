@@ -72,6 +72,14 @@ O Kernel `ContentIndexMediaProviderKernelTest` usa Media/File reais e agora regi
 
 O Kernel `ContentIndexGalleryProviderKernelTest` ativa a entidade real `media_gallery` e Media de imagem. As definições e tags dos providers `gallery` e `image` são lidas dos YAMLs owners `aculta_gallery` e `aculta_image`, sem módulo fixture duplicando essas declarações. O teste cobre backfill, relação `gallery_image`, update/delete via worker e acesso real: permissão permite publicação, rascunho é negado, falta do Domain canônico `magazine` falha fechado e o Domain original é restaurado (SQLite e MariaDB, 2/44 cada). O harness requer `views`, `media_library`, `photoswipe`, `text` e Domain, presentes no repositório; não habilita os módulos owner completos nem comprova Runtime.
 
+O Kernel LMS também consulta a relação `course_gallery` por providers registrados
+dos YAMLs owner de LMS e Gallery. Membership `take course` e permissão de
+educador `grade students` autorizam; terceiro é negado. A consulta revalida o
+Group em `courses`, a galeria em `magazine`, invalida a decisão Entity Access
+negativa em cache antes de trocar o purpose e restaura o Domain iniciador.
+MariaDB: suíte focal LMS 3/152; o hook Gallery de produção é delegado por uma
+fixture de teste, portanto boot integral dos módulos owner continua pendente.
+
 `ContentIndexMagazineAccessKernelTest` valida a consulta do provider `revista` pelo filtro de acesso do Index com Domain e Entity Access reais. O harness carrega a declaração de serviço diretamente do YAML do owner, sem ativar a cadeia inteira de Magazine. Conteúdo publicado é permitido, rascunho negado, o Domain inicial é restaurado e a falta do Domain canônico `magazine` falha fechado (SQLite 1/17, 5 depreciações upstream). MariaDB e boot completo do owner seguem pendentes.
 
 Checkpoint histórico anterior às integrações de Fórum, LMS e bridge Statistics: Kernel 62 testes / 797 assertions, com 23 depreciações upstream e 40 avisos PHPUnit. A suíte Kernel completa atual passou em dev.103 no SQLite com 79/1.213, 39 depreciações Core/contrib e 42 do PHPUnit, sem falhas. A última suíte Kernel completa no MariaDB de teste segue em dev.76 com 65/883; a próxima rodada MariaDB aguarda o benchmark de 1M. Em dev.77, a auditoria focal passou com 1/20.

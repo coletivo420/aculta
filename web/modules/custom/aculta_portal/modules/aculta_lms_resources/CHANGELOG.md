@@ -1,5 +1,19 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.12 — consulta Index de galerias vinculadas ao curso
+
+- O Kernel consulta `course_gallery` por meio dos providers LMS e Gallery cujas
+  definições e tags são carregadas dos YAMLs owner. Estudante com `take course`
+  e educador com `grade students` encontram a galeria vinculada; terceiro é
+  negado.
+- O teste também prova Entity Access no purpose canônico `magazine`, troca do
+  Domain do curso para `courses`, restauração do contexto original e limpeza do
+  cache de acesso que poderia reter uma decisão negativa anterior.
+- MariaDB dedicado: suíte Kernel completa 3 testes / 152 assertions PASS, com
+  52 depreciações de Core/contrib. O hook owner `GalleryCourseAccessHooks` é
+  delegado por módulo de teste; boot completo de Gallery/LMS e Runtime seguem
+  pendentes.
+
 ## 0.1.0-dev.11 — consulta LMS curso→recursos no Content Index
 
 - O Kernel monta a declaração de produção do provider pelo YAML owner, ativa

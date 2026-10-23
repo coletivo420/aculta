@@ -18,6 +18,7 @@ use Drupal\domain\Entity\Domain;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\media_gallery\Entity\MediaGallery;
 use Drupal\domain\DomainInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -68,12 +69,16 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     'group',
     'domain',
     'views',
+    'media_library',
+    'photoswipe',
+    'media_gallery',
     'options',
     'text',
     'node',
     'lms',
     'lms_classes',
     'aculta_index',
+    'aculta_lms_resources_gallery_access_test',
   ];
 
   /**
@@ -128,6 +133,17 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       $magazineDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
     $container->setDefinition('aculta_magazine.content_index_provider', $magazineDefinition);
+    $galleryServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_gallery/aculta_gallery.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $galleryService = $galleryServices['aculta_gallery.content_index_provider'];
+    $galleryDefinition = (new Definition($galleryService['class'], $galleryService['arguments'] ?? []))
+      ->setPublic(TRUE);
+    foreach ($galleryService['tags'] ?? [] as $tag) {
+      $galleryDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_gallery.content_index_provider', $galleryDefinition);
   }
 
   /**
@@ -159,6 +175,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('media_gallery');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
@@ -175,11 +192,17 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['node', 'system', 'file', 'image', 'media']);
+    $this->installConfig(['node', 'system', 'file', 'image', 'media', 'media_library', 'photoswipe', 'views', 'text']);
     aculta_index_install();
     NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
+    $this->createMediaType('oembed:video', ['id' => 'remote_video', 'label' => 'Remote video']);
+    $this->createMediaType('video_file', ['id' => 'video', 'label' => 'Video']);
+    $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
+    $this->createMediaType('audio_file', ['id' => 'audio', 'label' => 'Audio']);
+    $this->installConfig(['media_gallery']);
     $this->installCourseReadingField();
+    $this->installCourseGalleryField();
   }
 
   /**
@@ -347,6 +370,100 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Queries a Gallery relation through the production course membership hook.
+   */
+  public function testCourseGalleryRelationUsesMembershipAccessInMagazinePurpose(): void {
+    $owner = $this->createUser(['administer lms']);
+    $student = $this->createUser();
+    $educator = $this->createUser();
+    $outsider = $this->createUser();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com galeria do Index',
+      'uid' => $owner->id(),
+    ]);
+    $course->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_gallery_student',
+      'label' => 'Estudante da galeria',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['take course', 'view group'],
+    ])->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_gallery_educator',
+      'label' => 'Educador da galeria',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students', 'view group'],
+    ])->save();
+    $course->addMember($student, ['group_roles' => ['lms_course-index_gallery_student']]);
+    $course->addMember($educator, ['group_roles' => ['lms_course-index_gallery_educator']]);
+
+    $gallery = MediaGallery::create([
+      'title' => 'Galeria autorizada pelo curso',
+      'status' => TRUE,
+      'images' => [],
+    ]);
+    $gallery->save();
+    $course->set('field_lms_galleries', [['target_id' => $gallery->id()]]);
+    $course->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The course, Gallery and Media providers should backfill the generation.');
+    $this->processAllIndexWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $providers = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('lms_course', $providers->findProviderIdForBundle('group', 'lms_course'));
+    self::assertSame('gallery', $providers->findProviderIdForBundle('media_gallery', 'media_gallery'));
+    self::assertFalse(
+      $gallery->access('view', $student, TRUE)->isAllowed(),
+      'Gallery access is not granted in the initiating main Domain.',
+    );
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    foreach ([$student, $educator] as $authorizedAccount) {
+      $this->domainSwitches = [];
+      $result = $relationQuery->queryOutgoing(
+        'group',
+        (string) $course->id(),
+        $course->language()->getId(),
+        'course_gallery',
+        $authorizedAccount,
+        NULL,
+        10,
+      );
+      self::assertSame([(string) $gallery->id()], array_map(
+        static fn ($entity): string => (string) $entity->id(),
+        $result->entities,
+      ));
+      self::assertSame(
+        ['cursos_aculta_org', 'aculta_org', 'revista420_aculta_org', 'aculta_org'],
+        $this->domainSwitches,
+        'The Index checks course and Gallery access in their respective canonical Domains.',
+      );
+    }
+    $this->domainSwitches = [];
+    $denied = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_gallery',
+      $outsider,
+      NULL,
+      10,
+    );
+    self::assertSame([], $denied->entities, 'An outsider cannot discover the linked gallery.');
+    self::assertSame(['cursos_aculta_org', 'aculta_org'], $this->domainSwitches);
+  }
+
+  /**
    * Installs the explicit LMS reading reference field for the real Group type.
    */
   private function installCourseReadingField(): void {
@@ -365,6 +482,29 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       'settings' => [
         'handler' => 'default:node',
         'handler_settings' => ['target_bundles' => ['revista' => 'revista']],
+      ],
+    ])->save();
+  }
+
+  /**
+   * Installs the explicit LMS gallery reference field for the real Group type.
+   */
+  private function installCourseGalleryField(): void {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lms_galleries',
+      'entity_type' => 'group',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'media_gallery'],
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_lms_galleries',
+      'entity_type' => 'group',
+      'bundle' => 'lms_course',
+      'label' => 'Course galleries',
+      'settings' => [
+        'handler' => 'default:media_gallery',
+        'handler_settings' => [],
       ],
     ])->save();
   }
