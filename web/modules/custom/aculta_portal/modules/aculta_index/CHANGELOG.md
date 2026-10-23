@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.125 — verificar descoberta dos comandos Drush
+
+- Teste Unit usa a estratégia instalada no Drush 13.8 para descobrir os três
+  comandos em `src/Drush/Commands` e confirma os atributos Symfony `AsCommand`.
+- PASS: 1 teste / 8 assertions, PHP lint e PHPCS Drupal. O módulo permanece
+  desabilitado no Runtime; sua listagem live continua pendente de instalação.
+
 ## 0.1.0-dev.124 — documentar retenção única de rollback
 
 - README esclarece que só a geração imediatamente anterior fica `retained` e
