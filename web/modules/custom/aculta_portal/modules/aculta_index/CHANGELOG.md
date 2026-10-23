@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.32 — escopo da auditoria operacional
+
+- Documenta que a auditoria incremental atual verifica integridade estrutural
+  do catálogo e não enumera fontes, detecta projeções ausentes/antigas ou faz
+  reparação automática.
+- Registra reconciliação fonte↔catálogo, cursor por provider, detecção de
+  `provider_version` obsoleta e reparação segura como trabalho pendente de
+  IDX 0.1-E; nenhuma capacidade de runtime foi declarada como implementada.
+
 ## 0.1.0-dev.31 — índice de relações composto
 
 - O índice `gen_source` passa a incluir `relation_type`, alinhando a estrutura

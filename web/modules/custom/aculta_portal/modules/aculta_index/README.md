@@ -2,7 +2,7 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.31` — projeções versionadas, relações deduplicadas e índice composto de origem/tipo.
+**Versão:** `0.1.0-dev.32` — escopo operacional da auditoria esclarecido.
 **Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **38 testes / 448 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hook do índice composto, adapter Activity e Media. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
@@ -74,8 +74,14 @@ drush aculta-index:audit batch --limit=200
 
 O comando manual pode continuar um ciclo existente; um novo `start` é recusado
 enquanto outro ciclo estiver em execução. Esta auditoria é operacional e
-incremental. A validação do rebuild continua fazendo suas próprias verificações
-completas antes de permitir ativação.
+incremental: verifica integridade estrutural das linhas do catálogo (gerações
+referenciadas, existência da projeção de origem para relações e ponteiro ativo).
+Ela **não** enumera as entidades de origem, não detecta projeções ausentes ou
+desatualizadas, não compara `provider_version` e não repara divergências. A
+validação do rebuild continua fazendo suas próprias verificações completas
+estruturais antes de permitir ativação. Reconciliação fonte↔catálogo com cursor
+por provider, detecção de versões antigas e reparação segura seguem pendentes
+para IDX 0.1-E; o cron atual não deve ser descrito como autorreparação.
 
 ## Relações de saída
 
