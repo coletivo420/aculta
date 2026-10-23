@@ -7,6 +7,9 @@ Versão atual: `0.1.0-dev.1`. Plano de referência: `docs/operations/` e `docs/p
 - **Serviço central de CEP (ME-CEP 0.1): concluído.** O adaptador usa `aculta_portal_cep.lookup`. Não há fallback de
   consulta de CEP no submódulo.
 - Não iniciar ME-0.2-A (cálculo de frete) sem o adaptador de CEP e seus testes em verde.
+- **Endereço único do ACULTA (ME-ADDRESS 0.1): concluído na parte de código e Unit.** Contrato e matriz de campos em
+  `docs/ADDRESS-CONTRACT.md`. O Melhor Envio não tem formulário de endereço. Pendências de Kernel e de dados reais estão
+  em DT-ME-02 a DT-ME-06 no registro central.
 
 ## Fases
 

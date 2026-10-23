@@ -2,58 +2,71 @@
 
 Integração logística com o Melhor Envio. Submódulo do `aculta_commerce`, versão `0.1.0-dev.1`.
 
-Status: **fundação** (ME-0.1-B) e **adaptador de CEP** (ME-CEP 0.1-C). Ainda não há cotação de frete, contratação,
-etiqueta, rastreamento nem integração com a API do Melhor Envio. Ver [ROADMAP](docs/ROADMAP.md).
+Status: **fundação**, **endereço único** (ME-ADDRESS 0.1) e **consulta de CEP compartilhada** (ME-CEP 0.1). Ainda não há
+cotação de frete, contratação, etiqueta, rastreamento nem chamadas à API do Melhor Envio. Ver [ROADMAP](docs/ROADMAP.md).
 
 ## Responsabilidades
 
-- Adaptar o endereço de envio do pedido para o Melhor Envio (CEP de destino validado).
-- Usar a consulta de CEP compartilhada do Portal (`aculta_portal_cep`). Não existe segundo sistema de consulta.
+- Transformar o endereço do ACULTA em dados logísticos para o Melhor Envio (cotação, contratação, etiqueta).
+- Usar a consulta de CEP do Portal (`aculta_portal_cep`). Não existe segundo sistema de consulta.
 - Futuro: método de envio do Drupal Commerce Shipping, cotação, contratação e etiquetas (fases ME-0.2 em diante).
 
 Fora de escopo, por regra de arquitetura:
 
-- Carrinho, pedido, produto e pagamento: continuam no Drupal Commerce, no Portal e no Mercado Pago.
-- Endereço: fica no Profile/Order do Commerce. O submódulo não guarda cópia.
-- Checkout: nenhum campo de CEP novo. Preservados `CartConsolidator`, `CartUtility`, `CartSite`,
+- **Formulário de endereço:** não existe. O Melhor Envio não tem formulário para o comprador. O formulário único do ACULTA
+  (`AccountAddressForm`) é a fonte de verdade.
+- **Endereço persistente:** fica no Profile/Order do Commerce. O submódulo não guarda cópia nem declara campos.
+- **Carrinho, pedido, produto e pagamento:** continuam no Drupal Commerce, no Portal e no Mercado Pago.
+- **Checkout:** nenhum campo novo. Preservados `CartConsolidator`, `CartUtility`, `CartSite`,
   `AcultaShippingInformation` e `BillingAddressPane`.
+
+Contrato completo e matriz de campos: [docs/ADDRESS-CONTRACT.md](docs/ADDRESS-CONTRACT.md).
 
 ## Componentes
 
 | Serviço | Classe | Papel |
 |---|---|---|
-| `aculta_commerce_melhorenvio.address_adapter` | `Address\ShippingAddressAdapter` | Valida o CEP do perfil, pede sugestão só quando faltam campos e devolve um resultado com `status`. |
+| `aculta_commerce_melhorenvio.address_adapter` | `Address\ShippingAddressAdapter` | Valida o CEP do perfil e pede sugestão à consulta só quando faltam campos. Não grava. |
+| `aculta_commerce_melhorenvio.address_mapper` | `Address\MelhorEnvioAddressMapper` | Mapeia o endereço do ACULTA para o logístico por finalidade (cotação ou contratação). Puro: sem HTTP e sem gravação. |
+| `aculta_commerce_melhorenvio.shipment_address_binder` | `Address\ShipmentAddressBinder` | Monta origem (configuração) e destino (perfil de envio do pedido) para cotação e contratação. |
 
-### Contrato do adaptador
+### Mapeamento (`MelhorEnvioAddressMapper`)
 
-`resolve(array $address): array` recebe os campos do Drupal Address e devolve:
+- Rua e número: `StreetNumberField::split()` do `aculta_portal`. Não há regex própria aqui.
+- Complemento (`address_line2`): preservado e opcional.
+- Cotação (`PURPOSE_QUOTE`): exige só CEP.
+- Contratação (`PURPOSE_SHIPMENT`): exige rua, número (1 a 10 dígitos), bairro, cidade, UF e país BR.
+- S/N: bloqueia a contratação com `sn_not_accepted_by_api`. Nunca vira zero. A cotação aceita.
+- O resultado é `LogisticsAddress`. Quando `errors` não está vazio, nenhum campo deve ser usado.
 
-- `status`: `complete`, `suggested`, `not_found`, `invalid_postal_code` ou `unavailable`.
-- `postal_code`: CEP com 8 dígitos (ou `NULL` quando inválido).
-- `missing`: campos vazios que o CEP poderia preencher.
-- `suggestion`: só os campos de `missing` encontrados na consulta.
+### Origem e destino (`ShipmentAddressBinder`)
 
-Regras:
+- Destino: o perfil de envio da remessa, recebido pelo chamador. Não consulta o cadastro atual do usuário.
+- Origem: `aculta_commerce_melhorenvio.settings:origin`. Vazia por padrão, então as operações bloqueiam até ser preenchida.
+  Não há CEP de origem fixado no código.
+
+### Regras do adaptador de CEP (`ShippingAddressAdapter`)
 
 1. Endereço completo não consulta a base de CEP.
 2. CEP com máscara é normalizado antes de qualquer uso.
 3. Nunca sobrescreve campo já preenchido, nem número ou complemento.
 4. CEP não encontrado não gera endereço inventado.
 5. Falha da consulta resulta em `unavailable` e não interrompe o checkout.
-6. O adaptador não grava nada. Quem decide salvar é o formulário do Commerce, pelo fluxo normal.
-7. Disponibilidade de frete não é decidida aqui. Ela vem da cotação real do Melhor Envio (fase ME-0.2-A).
+6. Disponibilidade de frete não é decidida aqui. Ela vem da cotação real do Melhor Envio (ME-0.2-A).
 
 ## Dependências
 
-- `aculta_portal_cep` (serviço `aculta_portal_cep.lookup`, interface `CepLookupInterface`).
+- `aculta_portal` (`StreetNumberField`, perfis e formulário de endereço).
+- `aculta_portal_cep` (`CepLookupInterface`, serviço `aculta_portal_cep.lookup`).
 - Previsto para ME-0.2-A: `commerce_shipping` e `aculta_commerce`.
 
 ## Testes
 
-- Unit: `tests/src/Unit/ShippingAddressAdapterTest.php` (7 testes).
-- Kernel e Functional: pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas no registro central.
+- Unit: 29 testes em `tests/src/Unit/` (adaptador de CEP 7, mapper 17, binder 5). Executados e aprovados.
+- Kernel e Functional: pendentes. Ver a matriz em `docs/ROADMAP.md` e as dívidas em `docs/operations/DEBT-REGISTER.md`.
 
 ## Segurança e LGPD
 
 - Nenhum token, CPF, CNPJ ou endereço vai para log.
 - O CEP é o único dado do endereço enviado à consulta externa, como já acontecia com o endpoint AJAX.
+- O mapper e o binder não fazem HTTP nem gravação.
