@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.85 — consultar traduções autorizadas por idioma
+
+- O Kernel também consulta as duas traduções pela API do Index, confirma os
+  títulos atuais e verifica que a remoção mantém somente `en` (1 teste / 20
+  assertions no MariaDB dedicado). A fixture concede `access content` à role
+  anônima para exercitar Entity Access real do Node.
+
 ## 0.1.0-dev.84 — integrar provider forum_attachment no Kernel
 
 - Kernel do Index carrega a declaração do YAML real de `aculta_forum`, confirma

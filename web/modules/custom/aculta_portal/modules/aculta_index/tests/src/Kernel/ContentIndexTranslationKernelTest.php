@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -73,6 +74,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
       'aculta_index_audit',
     ]);
     $this->installConfig(['system', 'user', 'node', 'language', 'content_translation']);
+    $this->config('user.role.anonymous')->set('permissions', ['access content'])->save();
     aculta_index_install();
     NodeType::create(['type' => 'sample_content', 'name' => 'Sample content'])->save();
     $this->createLanguageFromLangcode('pt-br');
@@ -103,12 +105,20 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
     self::assertSame(1, $this->entryCount($generationId, (string) $node->id(), 'pt-br'));
     self::assertSame('Default language title', $this->entryLabel($generationId, (string) $node->id(), 'en'));
     self::assertSame('Título em português', $this->entryLabel($generationId, (string) $node->id(), 'pt-br'));
+    self::assertSame([
+      'en' => 'Default language title',
+      'pt-br' => 'Título em português',
+    ], $this->queryLabels());
 
     $node->getTranslation('pt-br')->setTitle('Título revisado');
     $node->save();
     $this->processIndexWork();
     self::assertSame('Default language title', $this->entryLabel($generationId, (string) $node->id(), 'en'));
     self::assertSame('Título revisado', $this->entryLabel($generationId, (string) $node->id(), 'pt-br'));
+    self::assertSame([
+      'en' => 'Default language title',
+      'pt-br' => 'Título revisado',
+    ], $this->queryLabels());
 
     $node->removeTranslation('pt-br');
     $node->save();
@@ -116,6 +126,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
 
     self::assertSame(1, $this->entryCount($generationId, (string) $node->id(), 'en'));
     self::assertSame(0, $this->entryCount($generationId, (string) $node->id(), 'pt-br'));
+    self::assertSame(['en' => 'Default language title'], $this->queryLabels());
   }
 
   /**
@@ -181,6 +192,22 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
       ->execute()
       ->fetchField();
     return $label === FALSE ? NULL : (string) $label;
+  }
+
+  /**
+   * Returns authorized query results keyed by their actual source language.
+   *
+   * @return array<string, string>
+   *   Projected titles keyed by langcode.
+   */
+  private function queryLabels(): array {
+    $result = $this->container->get('aculta_index.query')->query([], new AnonymousUserSession(), NULL, 10);
+    $labels = [];
+    foreach ($result->entities as $translation) {
+      $labels[$translation->language()->getId()] = (string) $translation->label();
+    }
+    ksort($labels);
+    return $labels;
   }
 
 }
