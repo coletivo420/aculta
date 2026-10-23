@@ -210,7 +210,8 @@ testes.
 `forum` e contexto público, uma linha por Comment, hierarquia, traduções
 agrupadas, rejeição e autoria histórica. A dev.263 prova as recusas do destino
 antes de criar o post (autoria, tradução padrão, rejeição/publicação, corpo,
-formato e embeds) e a criação de um post publicado com traduções (dev.264). A
+formato e embeds), a criação de um post publicado com traduções (dev.264) e a
+atualização idempotente com recusa de troca de idioma padrão (dev.265). A
 execução da migration, o lote com map de migração e a comparação de equivalência
 continuam pendentes e exigem autorização.
 

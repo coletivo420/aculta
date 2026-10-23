@@ -1,3 +1,12 @@
+## `0.1.0-dev.265` — reimportar atualiza o post e protege o idioma padrão — 2026-10-23
+
+- Kernel reimporta a mesma linha com `old_destination_id_values`: o post é
+  atualizado no lugar, sem duplicar, e as traduções recebem os novos valores.
+- Trocar o idioma padrão de um post existente é recusado com `MigrateException`
+  e o conteúdo anterior permanece.
+- Testes: destino 8/190; suíte Kernel do Fórum 79/1.686; PHPCS limpo. O lote
+  com map de migração e a execução real continuam pendentes.
+
 ## `0.1.0-dev.264` — provar a criação de um post pela migração — 2026-10-23
 
 - Kernel importa uma linha válida no destino: cria o ForumPost publicado com
