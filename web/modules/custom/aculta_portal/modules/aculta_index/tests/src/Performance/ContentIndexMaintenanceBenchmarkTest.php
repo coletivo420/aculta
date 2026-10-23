@@ -121,6 +121,8 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     $this->createSyntheticSources();
     $sourceSetupMilliseconds = (hrtime(TRUE) - $sourceSetupStarted) / 1_000_000;
     $sourceSetupMemoryBytes = memory_get_usage(TRUE);
+    $sourceSetupPeakMemoryBytes = memory_get_peak_usage(TRUE);
+    memory_reset_peak_usage();
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $rebuildBatchTimes = [];
@@ -136,6 +138,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       }
     } while (!$batch['complete']);
     $rebuildMilliseconds = (hrtime(TRUE) - $rebuildStarted) / 1_000_000;
+    $rebuildPeakMemoryBytes = memory_get_peak_usage(TRUE);
     $projectedCount = (int) $this->container->get('database')->select('aculta_index_entry')
       ->condition('generation_id', $generationId)
       ->countQuery()
@@ -161,6 +164,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     $integrityChecker->startAudit();
     $auditBatchTimes = [];
     $auditStarted = hrtime(TRUE);
+    memory_reset_peak_usage();
     $auditBatchCount = 0;
     do {
       $batchStarted = hrtime(TRUE);
@@ -174,6 +178,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       }
     } while ($audit['status'] === 'running');
     $auditMilliseconds = (hrtime(TRUE) - $auditStarted) / 1_000_000;
+    $auditPeakMemoryBytes = memory_get_peak_usage(TRUE);
     self::assertSame('complete', $audit['status']);
     self::assertSame(0, (int) $audit['missing_source_count']);
     self::assertSame(0, (int) $audit['missing_catalog_entry_count']);
@@ -190,6 +195,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'source_count' => $this->sourceCount,
       'source_setup_elapsed_ms' => round($sourceSetupMilliseconds, 3),
       'source_setup_memory_bytes' => $sourceSetupMemoryBytes,
+      'source_setup_peak_memory_bytes' => $sourceSetupPeakMemoryBytes,
       'provider_id' => 'test_sample_content',
       'rebuild_batch_limit' => 500,
       'writer_transaction_batch_size' => 500,
@@ -199,6 +205,8 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'rebuild_rows_per_second' => (int) round($this->sourceCount / max($rebuildMilliseconds / 1000, 0.000001)),
       'rebuild_batch_p50_ms' => round($this->percentile($rebuildBatchTimes, 0.50), 3),
       'rebuild_batch_p95_ms' => round($this->percentile($rebuildBatchTimes, 0.95), 3),
+      'rebuild_batch_max_ms' => round(max($rebuildBatchTimes), 3),
+      'rebuild_peak_memory_bytes' => $rebuildPeakMemoryBytes,
       'audit_batch_limit' => 200,
       'audit_batch_count' => $auditBatchCount,
       'audit_status' => $audit['status'],
@@ -206,10 +214,12 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'audit_batches_per_second' => (int) round($auditBatchCount / max($auditMilliseconds / 1000, 0.000001)),
       'audit_batch_p50_ms' => round($this->percentile($auditBatchTimes, 0.50), 3),
       'audit_batch_p95_ms' => round($this->percentile($auditBatchTimes, 0.95), 3),
+      'audit_batch_max_ms' => round(max($auditBatchTimes), 3),
+      'audit_peak_memory_bytes' => $auditPeakMemoryBytes,
       'missing_source_count' => (int) $audit['missing_source_count'],
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],
       'stale_projection_count' => (int) $audit['stale_projection_count'],
-      'peak_memory_bytes' => memory_get_peak_usage(TRUE),
+      'peak_memory_bytes' => max($sourceSetupPeakMemoryBytes, $rebuildPeakMemoryBytes, $auditPeakMemoryBytes),
       'scope' => 'Real Drupal Node storage, test provider, production enumerator, writer, rebuild and incremental integrity audit. Source-entity creation and activation are excluded from timing.',
       'slo' => FALSE,
     ];

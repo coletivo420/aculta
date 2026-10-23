@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.75 — medir memória e cauda por fase de manutenção
+
+- Benchmark agora reseta e reporta pico de memória para setup, rebuild e
+  auditoria separadamente; também registra o maior lote além de p50/p95.
+- MariaDB 11.8.6, Drupal 11.4.10, PHP 8.4.26: rodada 10k passou (1/13), com
+  rebuild 8,289 s, pico 122,5 MiB; auditoria 9,914 s, pico 142,5 MiB e maior
+  lote 4,110 s. A criação Entity API levou 64,917 s.
+- Rodada pós-cache 100k passou (1/13): rebuild 113,511 s / 881 projeções/s;
+  auditoria 723,219 s / 1.002 batches; nenhuma divergência; pico total 534,0
+  MiB. A auditoria teve p50/p95 de 135,161/272,519 ms, mas o máximo por lote
+  não foi registrado nessa versão do harness. Uma execução não permite atribuir
+  causalidade à alteração do cache; 1M segue pendente.
+
 ## 0.1.0-dev.74 — limitar cache de entidades entre batches de manutenção
 
 - O enumerador acumula identidades de fontes e alvos declarados nas relações
@@ -12,8 +25,8 @@
   zero divergências e pico de 142,5 MiB. Os tempos variam; não definem SLO.
 - Existe um baseline anterior de 100k sem a limpeza por batches: rebuild
   126,108 s / 793 projeções/s, auditoria 135,318 s / 1.002 batches, zero
-  divergências e pico 532,5 MiB. A repetição de 100k com a estratégia atual e
-  a medição de 1M seguem pendentes; detalhes em benchmark de manutenção.
+  divergências e pico 532,5 MiB. A comparação com a rodada atual ainda não
+  permite conclusão causal; a medição de 1M segue pendente.
 - Testes: Unit 39/202; Kernel completo MariaDB 64/852; PHPCS Drupal e PHP lint.
 
 ## 0.1.0-dev.73 — parametrizar escala do benchmark de manutenção
