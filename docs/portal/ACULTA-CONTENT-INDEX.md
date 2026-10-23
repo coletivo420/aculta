@@ -16,6 +16,8 @@
 
 **Validação dev.155 (2026-10-23):** `ContentIndexTranslationKernelTest` exercita também o dispatcher cron real e confirma a remoção de um cursor expirado pelo hook OOP (`2/28`). A suíte Kernel completa passou em MariaDB com 103 testes / 1.526 assertions, sem falhas (39 depreciações Core/contrib e 54 PHPUnit).
 
+**Validação dev.156 (2026-10-23):** suíte Unit completa passou com 50 testes / 241 assertions (14 depreciações PHPUnit); o gate Drupal 11+ passou com 1.159 checks. Somadas à validação MariaDB dev.155, não há falhas nos gates automatizados executados nesta microfase.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.

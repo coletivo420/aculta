@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.156 — repetir Unit após migração dos hooks
+
+- Suíte Unit inteira passou: 50 testes / 241 assertions; 14 depreciações
+  PHPUnit, sem falhas.
+- Kernel completo permanece em 103 testes / 1.526 assertions; Drupal 11+
+  gate passou com 1.159 checks.
+
 ## 0.1.0-dev.155 — validar execução do hook cron OOP
 
 - Kernel agora chama `cron` pelo dispatcher do Drupal e verifica que o hook
