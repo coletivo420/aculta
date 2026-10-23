@@ -183,18 +183,18 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | Gate | Resultado |
 |---|---|
 | PHP lint dos arquivos alterados | **PASS** |
-| `phpunit` Unit do `aculta_portal` (todos os testes Unit) | **PASS**: 321 testes, 803 asserções; 6 deprecações já existentes |
+| `phpunit` Unit do `aculta_portal` (todos os testes Unit) | **PASS**: 324 testes, 810 asserções; 6 deprecações já existentes (medição final em 9.6 › Gates finais) |
 | Testes Unit de Loja, LMS e Doações (caracterização, `CourseOrderEnrollmentManagerTest`, providers) | **PASS**: 43 testes |
 | `FiscalIdentityPolicyTest` (novo) | **PASS**: 7 testes |
 | `aculta_id_cpf/tests/run.php` | **PASS**: 248 verificações de domínio |
 | `git diff --check` (commits desta rodada) | **PASS** |
 | `php scripts/validate-project-status-index.php` | **PASS** (39 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
-| `php scripts/validate-aculta-portal-drupal11.php` | **PASS** (1151 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 (ver 237) |
-| PHPUnit Kernel do `aculta_portal` (suíte completa, com `SIMPLETEST_DB` do banco dedicado de teste) | **PASS**: 41 testes, 618 asserções; 90 deprecações registradas (as exibidas vêm de contrib), sem falhas |
+| `php scripts/validate-aculta-portal-drupal11.php` | **PASS** (1159 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 |
+| PHPUnit Kernel do `aculta_portal` (suíte completa, com `SIMPLETEST_DB` do banco dedicado de teste) | **PASS**: 53 testes, 831 asserções; 90 deprecações registradas (as exibidas vêm de contrib), sem falhas |
 | PHPCS Drupal/DrupalPractice nos arquivos novos e no formulário de Outros dados | **0 erros**; restam 16 avisos de linha longa (acima de 80 colunas), sem efeito funcional |
 | PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
 | PHPUnit Kernel do pane de identidade fiscal | **PASS** (6 testes), sem habilitar `aculta_portal`: classes instanciadas diretamente com o container do Commerce. Antes, a tentativa de habilitar o Portal esbarrava em dezenas de dependências. Histórico: **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
-| Config Sync | **Import parcial aplicado** no ambiente de teste (`config:import --partial` só com `commerce_checkout.commerce_checkout_flow.default` e `commerce_order.commerce_order_type.curso`); flow `curso` removido com `config:delete`. Import completo **não** foi feito: ver 9.2 |
+| Config Sync | **Rodada anterior:** import parcial aplicado no ambiente de teste (`config:import --partial` só com `commerce_checkout.commerce_checkout_flow.default` e `commerce_order.commerce_order_type.curso`); flow `curso` removido com `config:delete`. Import completo **não** foi feito: ver 9.2. **Rodada de 2026-10-23:** nenhum import aplicado, nenhum arquivo de `config/sync` editado; os 46 itens divergentes foram reclassificados e a decisão por grupo está em 9.5. Nenhum item existe só no sync; os 31 só-no-banco incluem `core.extension`, que não deve ser importado. |
 | Gates de Loja, LMS e Doações no servidor de testes | **DEFERRED** |
 
 ## 9.1 Efeitos de runtime ao ativar a configuração
@@ -230,7 +230,7 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 ## 9.4 Estado final desta rodada (pendências da condição de objetivo)
 
 - **Índice `search_api` `aculta_forum`:** corrigido. O processor `ForumPostSearchAccess` importava `ContainerFactoryPluginInterface` do namespace Symfony, então a classe não carregava e o plugin não era descoberto. Commit `4de26782`. A importação do índice passou a funcionar.
-- **Import de configuração:** cada arquivo do drift foi importado individualmente, com `--partial` (sem deleções e sem `core.extension`). Todos os imports reportaram sucesso. Após o import, o `config:status` ainda mostra 35 diferentes e 16 só no sync. Causas identificadas:
+- **Import de configuração:** cada arquivo do drift foi importado individualmente, com `--partial` (sem deleções e sem `core.extension`). Todos os imports reportaram sucesso. Após o import, o `config:status` ainda mostra 35 diferentes e 16 só no sync. Causas identificadas (contagens do `config:status` neste bullet; a medição pelo conteúdo bruto, em 9.5, corrige para 0 só no sync e 31 só no banco):
   - Módulos contrib reincluem componentes ao salvar displays: `node_co_authors` (`co_authors`) e `content_moderation` (`moderation_state`) voltam ao display de `node.activity` logo após a gravação. O import não consegue deixar esses displays idênticos ao sync.
   - Itens "só no sync" que foram gravados continuam listados nessa categoria pelo `config:status`, mesmo com o item presente no banco. Não investigado até o fim.
   - `core.extension` segue excluído de propósito (desinstalaria módulos com dados).
@@ -244,28 +244,45 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
   - *Não exercitado:* múltiplas abas simultâneas e expiração por TTL da sessão. O descarte da sessão por logout foi verificado; o vencimento por tempo exigiria aguardar o `cookie_lifetime` configurado.
 - **Duplicação Loja × LMS:** removida na configuração (flow `curso` retirado, tipo `curso` aponta para o flow `default`). A rota de import foi aplicada no ambiente de teste.
 
-## 9.5 Drift de configuração: classificação real (2026-10-23)
+## 9.5 Drift de configuração: classificação real e decisão (2026-10-23)
 
-Medição feita comparando o conteúdo ativo de cada item com o arquivo de `config/sync` (não só o rótulo do `config:status`):
+Medição refeita comparando o conteúdo bruto de cada objeto ativo (tabela `config` do banco de teste) com o arquivo correspondente em `config/sync`, sem depender do rótulo do `config:status`. Esta seção substitui a contagem anterior de 29 itens, que estava incompleta.
 
-- **18 itens iguais ao sync.** O `config:status` os listava como "só no sync" ou "diferentes" por artefato de listagem. Não são divergências.
-- **3 itens sem arquivo no sync e fora do banco** (`profile.type.customer`, `filter.format.basic_html`, `field.field.profile.customer.address`). Foram removidos do repositório por outras frentes (`e85c3dbe`, `b66646ef`). Não há o que importar.
-- **29 itens com diferença real** (mais `core.extension`, excluído de propósito). Reclassificação refeita comparando conteúdo com rótulos corretos e reproduzindo o caminho exato do importador:
-  - *Somente ordem (4):* `user.role.content_editor` (51 permissões), `user.role.email_confirmed` (25), `search_api.index.aculta_conteudo` (bundles) e `search_api.index.aculta_forum` (campos dos processors). Os **conjuntos são idênticos** ao sync; só a ordem difere. Não há mudança de permissão nem de busca.
-  - *Displays de entidade (23):* o banco tem componentes derivados de módulos ativos que o sync não tem (`entity_print_view_*`, `search_api_excerpt`, `co_authors`, `private_message_link`, `content_moderation_control`, `flag_sinalizar_post_forum`, `address`, `field_media_*`). O sync, por sua vez, tem entradas obsoletas que o banco não tem (`hidden.revision_log`, `hidden.moderation_state`).
-  - *Campos (2):* `field.field.media_gallery.media_gallery.field_gallery_purpose` traz no sync `settings.max_length/is_ascii/case_sensitive`, que são *storage settings* de um campo `string`; `field.storage.group.field_roster_visible` traz no sync `settings.on_label/off_label`, que são *field settings* do plugin `boolean`. O banco tem `settings` vazio porque é o formato que o plugin aceita.
+**Universo medido:** 46 objetos com conteúdo diferente (45 sem `core.extension`), 31 só no banco e **0 só no sync**. Como não há nenhum item só no sync, a direção que converge é reexportar o ativo; importar o sync por cima do banco aproxima no máximo os 45 e nunca elimina os 31 só-no-banco. Os 18 itens que o `config:status` listava como "só no sync" continuam confirmados como artefato de listagem, e os 3 removidos do repositório por outras frentes (`profile.type.customer`, `filter.format.basic_html`, `field.field.profile.customer.address`) não existem em nenhum dos lados.
 
-**Por que o import não converge (provado):**
+**Passo 1 — classificação dos 46:**
 
-1. **O importador escreve.** Com um display isolado, mudar `status: true` para `false` no arquivo e rodar `config:import --partial` alterou o banco. O `[success]` não é artefato de listagem.
-2. **Displays:** `ConfigEntityStorage::updateFromStorageRecord()` monta a entidade nova com `mapFromStorageRecords()`, e `EntityDisplayBase::init()` **recria como `hidden`** todo campo exibível do bundle ausente de `content`/`hidden`. O importador copia esse `hidden` já recomposto para a entidade viva. Prova: partindo de um `hidden` com as 5 chaves do sync, `mapFromStorageRecords` devolveu 11. Remover componentes por import é impossível por desenho.
-3. **Campos:** `FieldConfig::preSave()` e `FieldStorageConfig::preSave()` filtram `settings` pelas chaves que o plugin suporta e repõem os defaults. Chaves no lugar errado são descartadas ao salvar.
-4. **Papéis e índices:** `StorableConfigBase::castValue()` aplica `ksort`/`sort` conforme `orderby` do schema sempre que o save não é "trusted". Em Drupal 11.4, `trustData()` está depreciado e sem chamadores, então o save do import nunca é trusted; um arquivo fora de ordem **nunca** converge.
+- **Só ordem de chaves de mapa (7):** `core.entity_form_display.group.lms_course.default`, `core.entity_form_display.node.aculta_lms_topic.default`, `field.field.commerce_product.produto_loja.field_imagens`, `search_api.index.aculta_forum`, `views.view.aculta_forum_categories`, `views.view.aculta_forum_search` e `views.view.wiki_entries`. As chaves e os valores são os mesmos; só a ordem difere. O banco está na ordem canônica gravada por `preSave()` (`ksort` de `content`/`hidden` em `EntityDisplayBase`, `field_settings` em `search_api\Index`); o arquivo está na ordem de inserção manual.
+- **Só ordem de lista (3):** `user.role.content_editor` (51 permissões), `user.role.email_confirmed` (25) e `search_api.index.aculta_conteudo` (bundles). Conjuntos idênticos; o banco está ordenado (`sort()` de `castValue()`) e o arquivo não.
+- **Displays de entidade (23):** `core.entity_form_display.*` e `core.entity_view_display.*`. O banco tem componentes derivados de módulos ativos que o sync não tem (`entity_print_view_*`, `search_api_excerpt`, `co_authors`, `private_message_link`, `content_moderation_control`, `flag_sinalizar_post_forum`, `address`, `field_media_*`). O sync tem entradas obsoletas que o banco não tem (`hidden.revision_log`, `hidden.moderation_state`).
+- **Campos, mídia e workflow (11):** 9 `field.field.*`/`field.storage.*`, `media.type.forum_attachment` e `workflows.workflow.aculta_forum_post`. Em 9 deles a única diferença é o `uuid` do banco, ausente no arquivo; em 2 há `settings` reais: `field.field.media_gallery.media_gallery.field_gallery_purpose` traz no sync `settings.max_length/is_ascii/case_sensitive`, que são *storage settings* de um campo `string`, e `field.storage.group.field_roster_visible` traz `settings.on_label/off_label`, que são *field settings* do plugin `boolean`. O banco tem `settings` vazio porque é o formato que o plugin aceita.
+- **Formato de texto (1):** `filter.format.full_html` está `langcode: en` no sync, enquanto o banco está `pt-br` e os outros 7 formatos do sync já são `pt-br`.
+- **`core.extension` (1, fora dos 45):** 23 módulos só no banco (`aculta_document_viewer`, `aculta_document_viewer_group`, `aculta_editor`, `aculta_lms_messenger`, `aculta_lms_resources`, `ckeditor5_plugin_pack` e 13 subplugins, `entity_print`, `google_tag`), nenhum só no sync, pesos e tema idênticos.
 
-**Decisão desta frente:** não importar os 29. Nenhuma configuração foi alterada; o backup anterior continua idêntico ao ativo, conferido item a item. A correção para quem responde por cada item:
+**Passo 2 — por que o import parcial não convergiu (provado no código e medido):**
 
-- os 4 de ordem: ordenar as sequências no arquivo de `config/sync` conforme o schema. Muda só a ordem e o `config:status` converge;
-- os 25 restantes: o sync está desatualizado em relação ao site (módulos ativos). O caminho é reexportar o ativo (`drush config:export` desses itens), com revisão de quem responde por `aculta_index`, `aculta_wiki` e fórum — não importar por cima do banco.
+1. **Itens de lista.** `ConfigImporter::importConfig()` não usa `updateFromStorageRecord()`: cria um `Config` puro, aplica `initWithData($old_data)` e `setData($source_data)` e chama `$config->save()`. Em `Config::save()`, quando os dados não são "trusted" — o caso do importador —, `castValue()` reordena as sequências conforme o `orderby` do schema. Medição: nos 3 itens o banco está ordenado e o arquivo **não**; os conjuntos são iguais. Logo, o import grava na ordem canônica e a comparação nunca zera **enquanto o arquivo estiver fora de ordem**. Para esse grupo, ordenar o arquivo é o único conserto; importar de novo é inútil.
+2. **Itens de mapa.** Aqui são os módulos que reordenam ao salvar, como suspeitado: `EntityDisplayBase::preSave()` faz `ksort` de `content`/`hidden` e `search_api\Index::preSave()` faz `ksort` de `field_settings`. O banco está nessa forma; o arquivo, não. Vale o mesmo remédio do item 1.
+3. **Itens de valor.** As 35 diferenças de valor fora de `core.extension` não mostram nenhum vestígio do import parcial: o banco ainda tem `uuid` onde o sync não tem, `filter.format.full_html` ainda está `pt-br` e os dois campos ainda têm `settings: []`. Conclusão: o import não chegou a esses itens — não é o `castValue` que os impede. Além disso, `StorageComparer::addChangelistUpdate()` só trata `uuid` diferente como recriação quando o **arquivo** tem `uuid`; sem `uuid` no arquivo, a operação seria uma atualização simples.
+4. **Displays.** `EntityDisplayBase::init()` recria como `hidden` todo campo exibível do bundle ausente de `content`/`hidden`; o import copia esse `hidden` já recomposto. Remover componentes de um display por import é impossível por desenho.
+5. **Campos.** `FieldConfig::preSave()` e `FieldStorageConfig::preSave()` filtram `settings` pelas chaves que o plugin suporta e repõem os defaults; chaves no lugar errado são descartadas ao salvar.
+
+**Passo 3 — efeito nos três pontos pedidos:** nenhum. Em `user.role.content_editor` (51 permissões) e `user.role.email_confirmed` (25) o conjunto de permissões é idêntico ao sync; em `search_api.index.aculta_conteudo` os bundles são idênticos; em `search_api.index.aculta_forum` os campos dos processors e os datasources são idênticos; as dependências de todos os itens de ordem também. Não há mudança de permissão nem de indexação/busca decorrente do drift.
+
+**Passo 4 — decisão:** `config/sync` é a fonte da verdade, mas a divergência não se resolve por import. Correção por grupo:
+
+- **10 itens de ordem:** corrigir a ordem nos arquivos de `config/sync` para a forma canônica. Os 5 de `aculta_index`, `aculta_wiki` e fórum (`search_api.index.aculta_conteudo`, `search_api.index.aculta_forum`, `views.view.wiki_entries`, `views.view.aculta_forum_categories`, `views.view.aculta_forum_search`) ficam com os donos dessas frentes e não são tocados aqui. Os 2 form displays de LMS e `field.field.commerce_product.produto_loja.field_imagens` cabem a esta frente; os 2 papéis são globais e podem ser normalizados por quem responde por permissões.
+- **23 displays e 11 campos/mídia/workflow:** o sync é mais antigo que o banco. O caminho é `drush config:export` desses itens no ambiente de teste, com revisão dos donos, e nunca importar por cima do banco. Para os 9 que diferem só por `uuid`, a reexportação grava o `uuid`; para os 2 com `settings`, grava o formato aceito pelo plugin.
+- **`filter.format.full_html`:** trocar `langcode` para `pt-br` no arquivo do sync. Correção de uma linha, na rodada de configuração de quem responde pelos formatos.
+- **`core.extension`:** não importar. Os 23 módulos a mais no banco são a causa raiz dos 23 displays e dos 31 itens só no banco; importar apagaria esses 31 objetos, entre eles `field.storage.profile.address` e os campos de `message.template.aculta_msg_lms_notice`.
+
+**Execução da decisão (2026-10-23, mesma rodada):**
+
+- **Corrigidos no sync, por reordenação textual** (sem reexportar e sem importar): os dois form displays de LMS (`group.lms_course.default`, `node.aculta_lms_topic.default`), `field.field.commerce_product.produto_loja.field_imagens` (posição de `third_party_settings`), os dois papéis (`content_editor`, 51 permissões; `email_confirmed`, 25) e `filter.format.full_html` (`langcode: en` → `pt-br`). As listas foram ordenadas pelo valor sem as aspas, que é a forma que `castValue()` grava; ordenar pelo texto com aspas deixava `access content` depois de `access content overview`.
+- **Não tocados, por pertencerem a outras frentes:** `search_api.index.aculta_conteudo`, `search_api.index.aculta_forum`, `views.view.wiki_entries`, `views.view.aculta_forum_categories` e `views.view.aculta_forum_search`. O índice de conteúdo chegou a ser reordenado nesta rodada e foi revertido ao original ao se confirmar o dono.
+- **Medição após as correções:** 40 objetos divergentes (39 sem `core.extension`), 31 só no banco e 0 só no sync — eram 46/45. Os seis itens corrigidos agora comparam idênticos ao ativo.
+- **Gates e suítes:** `PROJECT STATUS INDEX: PASS (39 components)`; `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1159 checks)`; Unit do `aculta_portal` `324 tests, 810 assertions` OK (6 deprecations); Kernel `53 tests, 831 assertions` OK (90 deprecations), com `SIMPLETEST_DB` só em variável de ambiente.
+- **Nada foi importado e nenhum objeto do banco foi alterado.** O backup anterior continua idêntico ao ativo, conferido item a item.
 
 ## 9.6 Verificação de navegador da frente CPF + checkout (2026-10-23)
 
@@ -302,9 +319,10 @@ Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DI
 
 ### Gates finais
 
-- `php scripts/validate-aculta-portal-drupal11.php` → `PROJECT STATUS INDEX: PASS (39 componentes)` e `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1155 checks)`.
-- Unit: `324 tests, 810 assertions, OK` (6 deprecations).
-- Kernel, com `SIMPLETEST_DB` exportado de `secrets/simpletest-db.env`: `53 tests, 831 assertions, OK` (90 deprecations).
+- `php scripts/validate-project-status-index.php` → `PROJECT STATUS INDEX: PASS (39 components)`.
+- `php scripts/validate-aculta-portal-drupal11.php` → `PROJECT STATUS INDEX: PASS (39 components)` e `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1159 checks)`.
+- Unit: `324 tests, 810 assertions, OK` (6 deprecations), sem falhas.
+- Kernel, com `SIMPLETEST_DB` exportado de `secrets/simpletest-db.env` apenas como variável de ambiente: `53 tests, 831 assertions, OK` (90 deprecations).
 
 ## 10. Pendências
 
@@ -321,8 +339,10 @@ Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DI
     - **PASS — anônimo antes do login:** pedido 117 criado anonimamente e preservado depois do login.
     - **PASS — troca de Domain:** `loja.aculta.toca.net.br/carrinho` redireciona (302) para `aculta.toca.net.br/carrinho`.
     - **PASS — logout:** depois de sair, `/finalizar-compra/119/revisao` responde 403 e `/carrinho` mostra o carrinho vazio.
-    - **Pendente — múltiplas abas e expiração por TTL:** não exercitadas. A sessão é única por cookie de domínio `.aculta.toca.net.br`, mas duas abas simultâneas e o vencimento por tempo não foram testados.
-10. **Drift dos 29 itens de configuração:** classificado e decidido em 9.5 (4 de ordem + 25 com sync desatualizado). Nada importado. A correção depende dos donos de `aculta_index`, `aculta_wiki` e fórum e de uma rodada de `config:export` revisada.
+    - **Acesso:** já documentado e em uso nesta rodada. Host `conta.aculta.toca.net.br`, conta `teste.comum` (uid 5) e senha em `secrets/teste_comum.env`, conforme `docs/operations/TESTE-COMUM.md`; o próprio documento proíbe pedir outra senha ou copiá-la para saídas. Nada a solicitar ao responsável.
+    - **Pendente — múltiplas abas:** não exercitadas. A sessão é única por cookie de domínio `.aculta.toca.net.br`, mas duas abas simultâneas (por exemplo, carrinho e checkout abertos ao mesmo tempo) não foram testadas.
+    - **Pendente — expiração por TTL:** não exercitada. Não há `cookie_lifetime` em `config/sync` nem nos `settings.php` do repositório, então vale o padrão do Drupal (2 000 000 s, cerca de 23 dias); o valor efetivo do servidor de testes não foi inspecionado. Exercitar o vencimento exigiria encurtar a configuração do ambiente compartilhado ou aguardar o prazo, o que não foi feito para não alterar o ambiente.
+10. **Drift dos 46 itens de configuração (45 sem `core.extension`):** reclassificado e decidido em 9.5. A contagem anterior de 29 estava incompleta — faltavam 6 diferenças de ordem de mapa, 9 campos/mídia/workflow que diferem só pelo `uuid` e `filter.format.full_html`. Não há item só no sync; o conjunto só-no-banco é de 31. Execução em 9.5: já corrigidos no sync 6 itens (2 form displays de LMS, 1 campo da Loja, 2 papéis e o `langcode` de `full_html`); nada importado e nenhum objeto do banco alterado. Medição final: 40 divergentes (39 sem `core.extension`), 31 só no banco, 0 só no sync. Pendente, por grupo: os 5 itens de ordem dos donos de `aculta_index`, `aculta_wiki` e fórum; reexportar do ativo, com revisão, os 23 displays e os 11 campos/mídia/workflow; e manter `core.extension` fora de qualquer import.
 11. **Verificação de navegador no servidor de testes (2026-10-23):** Firefox ESR visível em `DISPLAY=:0`, via geckodriver, com `scripts/check-browser-hosts.sh`; sem processos do navegador restantes ao final.
     - **PASS — carregamento dos hosts:** `aculta.toca.net.br`, `links.aculta.toca.net.br`, `conta.aculta.toca.net.br/entrar` e `apoio.aculta.toca.net.br` carregaram (código 0, títulos esperados), com `example.com` como controle. A home da loja (`loja.aculta.toca.net.br/`) responde 200.
     - **PASS — rotas da frente, anônimo:** `conta.../dados` e `.../painel-administrativo/aculta/checkout` respondem 403; `loja.../checkout/{id}` responde 301 para `/finalizar-compra/{id}`, como em `CheckoutSlugMap` e `DomainPurposeRequestSubscriber`.

@@ -28,9 +28,9 @@ content:
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-  field_lms_activity:
-    type: entity_reference_autocomplete
-    weight: 5
+  co_authors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
     region: content
     settings:
       match_operator: CONTAINS
@@ -38,9 +38,19 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  co_authors:
-    type: entity_reference_autocomplete_tags
-    weight: 17
+  field_h5p_content:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: { }
+  field_lms_activity:
+    type: entity_reference_autocomplete
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
@@ -53,16 +63,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_h5p_content:
-    type: entity_reference_autocomplete
-    weight: 6
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: { }
   title:
     type: string_textfield
     weight: -5

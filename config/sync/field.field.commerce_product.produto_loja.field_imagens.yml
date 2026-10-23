@@ -7,6 +7,9 @@ dependencies:
     - field.storage.commerce_product.field_imagens
   module:
     - image
+third_party_settings:
+  aculta_image:
+    policy: default
 id: commerce_product.produto_loja.field_imagens
 field_name: field_imagens
 entity_type: commerce_product
@@ -36,6 +39,3 @@ settings:
     width: null
     height: null
 field_type: image
-third_party_settings:
-  aculta_image:
-    policy: default
