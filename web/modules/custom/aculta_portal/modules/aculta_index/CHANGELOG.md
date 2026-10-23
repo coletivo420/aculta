@@ -1,11 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.92 — registrar Kernel SQLite da fila
+
+- `ContentIndexRebuilderKernelTest`: 16 testes / 220 assertions passaram em
+  SQLite, incluindo retry recusado para provider owner desativado.
+- A execução MariaDB e o benchmark de 1M seguem pendentes enquanto o processo
+  anterior continua ativo.
+
 ## 0.1.0-dev.91 — cobrir retry de owner desativado
 
 - Kernel de fila agora registra que um dead-letter não pode ser reenviado
   quando o provider proprietário não está registrado; o estado continua `dead`.
-- O teste ainda aguarda execução com MariaDB após o benchmark de 1M. PHP lint,
-  PHPCS e validadores de pacote/status serão executados nesta etapa.
+- PHP lint, PHPCS e validadores passaram nesta fase.
 
 ## 0.1.0-dev.90 — isolar a criação de fontes do benchmark
 
