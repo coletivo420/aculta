@@ -108,24 +108,25 @@ em [CSV de composições](aculta-index-alternative-compositions-2026-10-22.csv).
 
 ### Amostra ampliada do writer (2026-10-23)
 
-Para reduzir o ruído da amostra anterior, repetimos a comparação de escrita com
-1.000 projeções novas por variante no catálogo de 10.000 entradas. Cada rodada
-mede escrita pelo `ContentIndexWriter` em uma geração descartável, primeiro sem
-índice adicional e depois com cada composição temporária. Foram três rodadas
-sequenciais no mesmo host:
+No catálogo de 10.000 entradas, cada variante mediu três operações pelo
+`ContentIndexWriter`, com 1.000 identidades por operação: inserção, replay
+idempotente e atualização de projeção. Cada comparação foi feita numa geração
+descartável, sem índice adicional e com cada composição temporária, em três
+rodadas sequenciais no mesmo host:
 
-| Composição temporária | Rodada 1 baseline / alternativa (linhas/s) | Rodada 2 baseline / alternativa | Rodada 3 baseline / alternativa | Mediana baseline / alternativa |
-|---|---:|---:|---:|---:|
-| domínio/status | 551 / 544 | 580 / 577 | 155 / 240 | 551 / 544 |
-| tipo/bundle/domínio/status | 475 / 560 | 570 / 574 | 574 / 575 | 570 / 574 |
+| Operação (linhas/s medianas) | domínio/status baseline / alternativa | tipo/bundle/domínio/status baseline / alternativa |
+|---|---:|---:|
+| Inserção | 574 / 579 | 581 / 575 |
+| Replay idempotente | 1.723 / 1.705 | 1.709 / 1.685 |
+| Atualização | 542 / 513 | 541 / 530 |
 
-A terceira rodada da primeira composição teve throughput muito abaixo das
-outras duas, indicando ruído de carga ou variação do host. As medianas seguem
-próximas e as composições não mostram ganho consistente. Portanto, permanece a
-decisão de não adicionar índices ao schema 0.1. Esta coleta mede somente
-1.000 inserções no tamanho de catálogo 10k; não substitui writer sustentado em
-100k/1M, atualizações idempotentes, reconstrução, reconciliação, nem estabelece
-SLO. Os valores brutos estão em
+Houve dispersão por rodada: uma alternativa teve 176 inserções/s e outra
+221 atualizações/s, enquanto os pares das outras rodadas ficaram perto de suas
+medianas. Essa variação reforça que não há evidência de ganho consistente para
+índice composto; permanece a decisão de não adicionar índices ao schema 0.1.
+Esta coleta cobre somente 1.000 identidades por operação no tamanho de catálogo
+10k. Não mede writer sustentado em 100k/1M, rebuild, reconciliação ou grants
+reais, e não estabelece SLO. Os valores brutos estão em
 [CSV da amostra ampliada](aculta-index-writer-1000-2026-10-23.csv).
 
 ## Escopo ainda não medido

@@ -67,11 +67,12 @@ integrado de autorização e limpeza dos caches de handlers do Core; exclui SQL
 de candidatos e não é comparável diretamente ao harness Media. Resultado
 detalhado: [medição de acesso por Domain](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-23.md).
 
-O writer também tem uma comparação adicional de 1.000 projeções novas por
-variante, em três rodadas no catálogo de 10.000 entradas. Os valores de
-throughput oscilaram amplamente e não demonstraram vantagem estável para os
-índices temporários; detalhes e limites estão no relatório de resultados de
-2026-10-22, com coleta complementar datada de 2026-10-23.
+O writer também tem uma comparação adicional de 1.000 projeções por variante
+em três rodadas no catálogo de 10.000 entradas, cobrindo inserção, replay
+idempotente e atualização. Os valores de throughput oscilaram e não
+demonstraram vantagem estável para os índices temporários; detalhes e limites
+estão no relatório de resultados, com coleta complementar datada de
+2026-10-23.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:

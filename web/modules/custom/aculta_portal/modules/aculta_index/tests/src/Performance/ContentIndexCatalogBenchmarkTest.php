@@ -381,10 +381,18 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       'alternative_entry_bytes' => $alternativeEntryBytes,
       'allocated_delta_bytes' => max(0, $alternativeEntryBytes - $baselineEntryBytes),
       'writer_sample_size' => $writerSampleSize,
-      'baseline_writer_ms' => $baselineWriter['elapsed_ms'],
-      'baseline_writer_rows_per_second' => $baselineWriter['rows_per_second'],
-      'alternative_writer_ms' => $alternativeWriter['elapsed_ms'],
-      'alternative_writer_rows_per_second' => $alternativeWriter['rows_per_second'],
+      'baseline_writer_ms' => $baselineWriter['insert_elapsed_ms'],
+      'baseline_writer_rows_per_second' => $baselineWriter['insert_rows_per_second'],
+      'baseline_writer_idempotent_ms' => $baselineWriter['idempotent_elapsed_ms'],
+      'baseline_writer_idempotent_rows_per_second' => $baselineWriter['idempotent_rows_per_second'],
+      'baseline_writer_update_ms' => $baselineWriter['update_elapsed_ms'],
+      'baseline_writer_update_rows_per_second' => $baselineWriter['update_rows_per_second'],
+      'alternative_writer_ms' => $alternativeWriter['insert_elapsed_ms'],
+      'alternative_writer_rows_per_second' => $alternativeWriter['insert_rows_per_second'],
+      'alternative_writer_idempotent_ms' => $alternativeWriter['idempotent_elapsed_ms'],
+      'alternative_writer_idempotent_rows_per_second' => $alternativeWriter['idempotent_rows_per_second'],
+      'alternative_writer_update_ms' => $alternativeWriter['update_elapsed_ms'],
+      'alternative_writer_update_rows_per_second' => $alternativeWriter['update_rows_per_second'],
       'cold_page_p50_ms' => round($this->percentile($coldMilliseconds, 0.50), 3),
       'cold_page_p95_ms' => round($this->percentile($coldMilliseconds, 0.95), 3),
       'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
@@ -545,19 +553,19 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
   }
 
   /**
-   * Measures real writer inserts in a disposable generation.
+   * Measures inserts, idempotent writes and updates in a disposable generation.
    *
-   * @return array{elapsed_ms: float, rows_per_second: int}
-   *   Writer throughput and elapsed time.
+   * @return array<string, int|float>
+   *   Writer timings and throughput by operation.
    */
   private function measureWriterSample(int $sampleSize): array {
     $database = $this->container->get('database');
     $generationId = $this->container->get('aculta_index.generation_manager')->start();
     $writer = $this->container->get('aculta_index.writer');
-    $started = hrtime(TRUE);
+    $projections = [];
     for ($index = 0; $index < $sampleSize; $index++) {
       $entityId = 'benchmark-writer-' . $index;
-      $projection = new ContentIndexProjection(
+      $projections[] = new ContentIndexProjection(
         'media',
         $entityId,
         'en',
@@ -569,9 +577,39 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
         1_700_000_000 + $index,
         1_700_000_000 + $index,
       );
-      $writer->write($generationId, 'image', $projection, 1);
     }
-    $elapsedMilliseconds = (hrtime(TRUE) - $started) / 1_000_000;
+
+    $insertElapsed = $this->measureWriterOperation(static function () use ($projections, $generationId, $writer): void {
+      foreach ($projections as $projection) {
+        $writer->write($generationId, 'image', $projection, 1);
+      }
+    });
+    $idempotentElapsed = $this->measureWriterOperation(static function () use ($projections, $generationId, $writer): void {
+      foreach ($projections as $projection) {
+        if ($writer->write($generationId, 'image', $projection, 1)) {
+          throw new \LogicException('An identical Content Index writer replay must be idempotent.');
+        }
+      }
+    });
+    $updatedProjections = array_map(static fn (ContentIndexProjection $projection): ContentIndexProjection => new ContentIndexProjection(
+      $projection->entityTypeId,
+      $projection->entityId,
+      $projection->langcode,
+      $projection->bundle,
+      $projection->uuid,
+      $projection->label . ' updated',
+      $projection->domainId,
+      $projection->published,
+      $projection->created,
+      $projection->changed + 1,
+      $projection->publishedAt,
+      $projection->relations,
+    ), $projections);
+    $updateElapsed = $this->measureWriterOperation(static function () use ($updatedProjections, $generationId, $writer): void {
+      foreach ($updatedProjections as $projection) {
+        $writer->write($generationId, 'image', $projection, 2);
+      }
+    });
     $database->delete('aculta_index_entry')
       ->condition('generation_id', $generationId)
       ->execute();
@@ -580,9 +618,33 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       ->execute();
 
     return [
-      'elapsed_ms' => round($elapsedMilliseconds, 3),
-      'rows_per_second' => (int) round($sampleSize / max($elapsedMilliseconds / 1000, 0.000001)),
+      'sample_size' => $sampleSize,
+      'insert_elapsed_ms' => round($insertElapsed, 3),
+      'insert_rows_per_second' => $this->rowsPerSecond($sampleSize, $insertElapsed),
+      'idempotent_elapsed_ms' => round($idempotentElapsed, 3),
+      'idempotent_rows_per_second' => $this->rowsPerSecond($sampleSize, $idempotentElapsed),
+      'update_elapsed_ms' => round($updateElapsed, 3),
+      'update_rows_per_second' => $this->rowsPerSecond($sampleSize, $updateElapsed),
     ];
+  }
+
+  /**
+   * Measures the elapsed time of one complete writer operation sample.
+   *
+   * @param callable(): void $operation
+   *   Writer operation to run.
+   */
+  private function measureWriterOperation(callable $operation): float {
+    $started = hrtime(TRUE);
+    $operation();
+    return (hrtime(TRUE) - $started) / 1_000_000;
+  }
+
+  /**
+   * Converts elapsed milliseconds to whole rows per second.
+   */
+  private function rowsPerSecond(int $rows, float $elapsedMilliseconds): int {
+    return (int) round($rows / max($elapsedMilliseconds / 1000, 0.000001));
   }
 
   /**

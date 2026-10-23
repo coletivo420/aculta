@@ -1,7 +1,7 @@
-catalog_entries,writer_sample_size,run,temporary_index,baseline_rows_per_second,alternative_rows_per_second
-10000,1000,1,"generation_id,domain_id,published,entry_id",551,544
-10000,1000,2,"generation_id,domain_id,published,entry_id",580,577
-10000,1000,3,"generation_id,domain_id,published,entry_id",155,240
-10000,1000,1,"generation_id,entity_type,bundle,domain_id,published,entry_id",475,560
-10000,1000,2,"generation_id,entity_type,bundle,domain_id,published,entry_id",570,574
-10000,1000,3,"generation_id,entity_type,bundle,domain_id,published,entry_id",574,575
+catalog_entries,sample_size,run,temporary_index,baseline_insert_rows_per_second,alternative_insert_rows_per_second,baseline_idempotent_rows_per_second,alternative_idempotent_rows_per_second,baseline_update_rows_per_second,alternative_update_rows_per_second
+10000,1000,1,"generation_id,domain_id,published,entry_id",575,575,1729,1788,534,513
+10000,1000,2,"generation_id,domain_id,published,entry_id",574,583,1723,1691,542,539
+10000,1000,3,"generation_id,domain_id,published,entry_id",569,579,1686,1705,543,221
+10000,1000,1,"generation_id,entity_type,bundle,domain_id,published,entry_id",572,575,1709,1709,541,535
+10000,1000,2,"generation_id,entity_type,bundle,domain_id,published,entry_id",581,176,1708,1597,536,513
+10000,1000,3,"generation_id,entity_type,bundle,domain_id,published,entry_id",581,579,1751,1685,542,530
