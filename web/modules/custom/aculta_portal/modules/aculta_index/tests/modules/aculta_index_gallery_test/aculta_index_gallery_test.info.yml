@@ -1,0 +1,5 @@
+name: ACULTA Content Index Gallery fixture
+type: module
+description: 'Kernel fixture registering production Gallery and Media providers.'
+package: Testing
+core_version_requirement: ^11.3

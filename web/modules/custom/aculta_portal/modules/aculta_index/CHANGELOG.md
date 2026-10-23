@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.79 — cobrir provider Gallery com entidades reais
+
+- Kernel ativa `media_gallery` e Media do repositório, registra os providers
+  Gallery e image pelo harness e cobre backfill, relação `gallery_image`,
+  update e delete via worker (1 teste / 21 assertions).
+- O teste não habilita o módulo owner completo `aculta_gallery` nem prova
+  autorização/grants no Runtime; a validação separada do YAML owner permanece.
+
 ## 0.1.0-dev.78 — fixar teto de candidatos nas consultas
 
 - Kernel verifica que as consultas de conteúdo e de relações rejeitam limites
