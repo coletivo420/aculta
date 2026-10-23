@@ -105,6 +105,14 @@ fechar os contratos de acesso e relações da Wiki. Ver
   finalização dos contratos editoriais e de acesso. Não criar providers de
   Taxonomy/Media nesta integração parcial.
 
+Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
+`ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
+dependências da Wiki, além de Portal/LMS/Fórum. O container real descobriu o
+provider `wiki` pelo YAML owner; o gate passou com 1 teste / 8 assertions (83
+depreciações Core/contrib). Isso comprova boot/DI e registry, sem instalar
+configuração/schema nem homologar Runtime. Categorias e imagens continuam
+adiadas até a Wiki finalizar seus contratos.
+
 ### Entregue em código (2026-10-22)
 
 - **Listagem e imagem de destaque:** contagem e paginação da view `wiki_entries`,

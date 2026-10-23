@@ -42,6 +42,14 @@ Boot/DI completo do Fórum e Runtime seguem pendentes antes da ativação. A
 conversão do timestamp Comment foi corrigida; Unit 5/31 cobre bundle fixo sem
 chave no enumerador.
 
+Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
+`ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
+dependências Portal/LMS e a raiz do owner Fórum. O container real descobriu
+`forum` e `forum_attachment` pelo YAML do Fórum; o gate passou com 1 teste / 8
+assertions (83 depreciações Core/contrib). Isso comprova boot/DI e registry,
+sem instalar configuração/schema nem substituir a cobertura de grants acima.
+Homologação no Runtime continua pendente.
+
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 
 `ForumAttachmentCleanup` agora conserva a responsabilidade de localizar Media

@@ -1,5 +1,23 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.161 — validar 1M e boot integrado dos owners
+
+- Benchmark MariaDB 1M passou no HEAD atual: rebuild de 1.000.000 de fontes
+  em 2.020,081 s (495 projeções/s), auditoria bidirecional em 741,071 s,
+  pico de 216,5 MiB e zero divergências. As 2.001 páginas de IDs usaram
+  `base_table`; a carga e projeção continuam na Entity API. Execução sintética,
+  sem SLO; veja o relatório de manutenção.
+- `ContentIndexOwnerIntegrationKernelTest` passou em 1 teste / 8 assertions.
+  O container compilou a closure de 103 módulos dos owners Portal, LMS, Fórum,
+  Wiki, Magazine, Gallery, Image e PDF Group; o registry descobriu seus
+  providers reais por DI/tag. Não instala schemas/configuração nem homologa
+  Runtime. PHPUnit reportou 83 depreciações Core/contrib.
+- O Kernel LMS isolado foi preservado após uma tentativa de ampliar seu setup
+  falhar antes das assertions por falta do handler `default:media_gallery`;
+  a repetição do harness anterior passou (4 testes / 208 assertions, 53
+  depreciações upstream). O teste combinado cobre a descoberta de serviços sem
+  misturar essa fixture de policy.
+
 ## 0.1.0-dev.160 — revalidar concorrência entre processos PHP
 
 - `ContentIndexConcurrencyKernelTest` passou novamente no MariaDB dedicado:

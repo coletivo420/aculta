@@ -1,5 +1,24 @@
 # Rebuild e auditoria — ACULTA Content Index (2026-10-23)
 
+## Repetição 1M — árvore atual após keyset (dev.160)
+
+O benchmark MariaDB passou com 1.000.000 de Nodes sintéticos, carga e projeção
+pela Entity API e descoberta de IDs pela tabela base. O setup ficou fora das
+fases de rebuild e auditoria:
+
+| Fontes | Setup (s) | Rebuild (s) | Projeções/s | Audit (s) | Batches de auditoria | Pico audit (MiB) | ID query p50/p95 (ms) | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1.000.000 | 145,731 | 2.020,081 | 495 | 741,071 | 4.002 | 216,5 | 1,567 / 2,348 | 0 |
+
+O rebuild usou 2.001 batches; as 2.001 páginas de IDs escolheram `base_table`.
+A auditoria completou 2.000 batches de entradas, 1 de relações e 2.001 de
+fontes. Seu p50/p95 por batch foi 143,431/558,224 ms; o p95 de batch do rebuild
+foi 5.491,146 ms e o máximo 18.423,821 ms, com alguns lotes acima do ritmo
+mediano. O pico do rebuild foi 210,5 MiB e o pico total da auditoria, 216,5
+MiB. Não houve fonte ausente, entrada ausente nem projeção antiga. PHPUnit
+passou com 1 teste / 16 assertions; a execução levou 48m31s. É uma execução
+sintética única, sem relações e sem SLO.
+
 ## Escala 1M — resultado válido após otimizar descoberta (dev.150)
 
 O benchmark MariaDB concluiu 1.000.000 fontes sintéticas com zero fontes

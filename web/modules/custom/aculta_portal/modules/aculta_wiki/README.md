@@ -41,7 +41,9 @@ pendentes, está em
   provider compilado do YAML owner e a policy Portal real via fixture. Origem e
   alvo são revalidados no Domain `wiki`, alvo não publicado é filtrado e o
   contexto `main` é restaurado (2 testes / 32 assertions, SQLite e MariaDB).
-  Boot/DI completo da Wiki e homologação Runtime seguem pendentes.
+  O boot/DI do owner foi comprovado no teste transversal
+  `ContentIndexOwnerIntegrationKernelTest` (1/8, 83 depreciações Core/contrib);
+  homologação Runtime segue pendente.
 
 ## Documentação
 
