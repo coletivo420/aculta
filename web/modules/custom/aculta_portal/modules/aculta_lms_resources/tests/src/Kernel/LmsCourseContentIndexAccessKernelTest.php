@@ -13,6 +13,7 @@ use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_lms_resources\ContentIndex\LmsCourseContentIndexProvider;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\Entity\Domain;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
@@ -33,7 +34,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   use UserCreationTrait;
 
   /**
-   * Canonical domains supplied during the current access test.
+   * Canonical domain IDs activated during the current access test.
    *
    * @var list<string>
    */
@@ -55,6 +56,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     'filter',
     'flexible_permissions',
     'group',
+    'domain',
     'views',
     'options',
     'text',
@@ -67,22 +69,18 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $defaultDomain = $this->createMock(DomainInterface::class);
-    $defaultDomain->method('id')->willReturn('aculta_org');
-    $coursesDomain = $this->createMock(DomainInterface::class);
-    $coursesDomain->method('id')->willReturn('cursos_aculta_org');
     $domainStorage = $this->createMock(EntityStorageInterface::class);
-    $domainStorage->method('load')->with('cursos_aculta_org')->willReturn($coursesDomain);
+    $domainStorage->method('load')->willReturnCallback(static fn (string $id): ?Domain => Domain::load($id));
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($domainStorage);
-    $activeDomain = $defaultDomain;
+    $activeDomain = NULL;
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domainNegotiator->method('getActiveDomain')->willReturnCallback(
-      static function (bool $reset = FALSE) use (&$activeDomain, $defaultDomain): DomainInterface {
+      static function (bool $reset = FALSE) use (&$activeDomain): ?DomainInterface {
         if ($reset) {
-          $activeDomain = $defaultDomain;
+          $activeDomain = NULL;
         }
-        return $activeDomain;
+        return $activeDomain ?? Domain::load('aculta_org');
       },
     );
     $domainNegotiator->method('setActiveDomain')->willReturnCallback(
@@ -105,6 +103,17 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['group', 'lms', 'lms_classes', 'user']);
+    $this->installEntitySchema('domain');
+    foreach (['aculta_org' => 'main', 'cursos_aculta_org' => 'courses'] as $id => $name) {
+      Domain::create([
+        'id' => $id,
+        'hostname' => $name . '.example.invalid',
+        'name' => $name,
+        'scheme' => 'https',
+        'weight' => 0,
+        'status' => TRUE,
+      ])->save();
+    }
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('entity_usage', ['entity_usage']);

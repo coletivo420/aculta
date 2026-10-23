@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.6 — fixtures de Domain persistidos
+
+- O Kernel de acesso do provider agora cria e consulta entidades Domain reais
+  (`aculta_org` e `cursos_aculta_org`) para comprovar a troca/restauração do
+  purpose `courses`; negociação continua isolada por mock.
+- `php -l` e PHPCS Drupal passaram. Kernel não foi reexecutado nesta sessão
+  porque `SIMPLETEST_DB` não está configurada; a evidência 1/36 de dev.5
+  corresponde à versão anterior do fixture.
+
 ## 0.1.0-dev.5 — policy do provider validada com Group real
 
 - Kernel exerce o provider sobre `Group:lms_course`: estudante autorizado por
