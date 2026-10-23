@@ -1,6 +1,6 @@
 # ACULTA Activity
 
-**Versão:** `0.1.0-dev.6` — adapter desacoplado da ativação do Content Index.
+**Versão:** `0.1.0-dev.7` — contrato da integração opcional do Index coberto por Unit.
 
 Módulo mínimo que estabelece `aculta_activity` como proprietário do bundle
 Node `activity`, seus hooks de formulário/Metatag, validação condicional e

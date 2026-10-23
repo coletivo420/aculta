@@ -1,5 +1,14 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.7 — proteger a integração opcional do Index
+
+- Unit verifica que Activity depende dos contratos do Kernel Portal, não do
+  submódulo `aculta_index`, e que seu provider continua registrado pela tag
+  `aculta_index.provider`.
+- Unit Activity: 6 testes / 19 assertions PASS (teste novo: 1/5). Isso protege
+  o manifesto e o contrato de descoberta; não substitui um boot Kernel com
+  Index desabilitado.
+
 ## 0.1.0-dev.6 — manter Content Index como integração opcional
 
 - A dependência direta de `aculta_index` foi substituída pela dependência do
