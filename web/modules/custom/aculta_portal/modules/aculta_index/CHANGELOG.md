@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.89 — vincular cursor aos filtros da consulta
+
+- O Kernel da API paginada também tenta reutilizar o cursor com outro conjunto
+  de filtros, espera rejeição e confirma que o token original continua válido
+  para a consulta que o criou.
+- Teste focal SQLite: 2 testes / 29 assertions; PHPCS passou.
+
 ## 0.1.0-dev.88 — atualizar evidência da suíte SQLite
 
 - Suíte Kernel completa do Index passou em SQLite: 75 testes / 1.140

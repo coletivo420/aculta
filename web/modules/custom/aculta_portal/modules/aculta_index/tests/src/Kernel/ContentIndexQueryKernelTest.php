@@ -117,6 +117,14 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
       // The cursor remains available to its owner after the rejected attempt.
     }
 
+    try {
+      $query->query(['entity_type' => 'node', 'bundle' => 'sample_content', 'published' => TRUE], $reader, $firstPage->nextCursor, 2);
+      self::fail('A cursor must not be reused with different filters.');
+    }
+    catch (\InvalidArgumentException) {
+      // The original filter-bound cursor remains available to its owner.
+    }
+
     // A newly indexed item sorts before the cursor and cannot shift the next
     // page. Candidate-cache invalidation makes it visible to fresh queries.
     $newNode = Node::create([
