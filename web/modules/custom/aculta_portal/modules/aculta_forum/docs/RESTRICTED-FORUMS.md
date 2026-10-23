@@ -1,11 +1,13 @@
-# Fóruns restritos para associados ativos — F-GROUP 0.1
+# Fóruns restritos para associados ativos — F-GROUP 0.1 e 0.2
 
-Documento da frente **F-GROUP 0.1**. Cobre o inventário (F-GROUP-A), as
-decisões de contrato e a fundação implementada (F-GROUP-B) e o limite do que foi
-provado (F-GROUP-C). **Nenhum Runtime foi alterado**: não houve import de
-configuração, criação de Group, rebuild de `node_access` nem migração de dados.
-Os gates executados são Unit/PHPCS/PHPStan; tudo que exige bootstrap Drupal com
-o módulo Group instalado está marcado como **DEFERRED**.
+Documento da frente **F-GROUP 0.1** (inventário e fundação) e **F-GROUP 0.2**
+(prova funcional em Kernel). Cobre o inventário (F-GROUP-A), as decisões de
+contrato e a fundação implementada (F-GROUP-B), o limite do que foi provado
+(F-GROUP-C) e a prova de grants reais em Kernel (F-GROUP-D). **Nenhum Runtime
+foi alterado**: não houve import de configuração, criação de Group, rebuild de
+`node_access` em ambiente nem migração de dados. O rebuild da F-GROUP 0.2
+ocorreu apenas no banco isolado de testes Kernel. Os gates executados são
+Unit/Kernel/PHPCS/PHPStan; o Runtime de testes segue **DEFERRED**.
 
 ## Escopo e limites
 
@@ -97,25 +99,44 @@ ordem, com aprovação do responsável e backup do banco:
 1. Criar o tipo de Group (por exemplo `forum_associados`), com os plugins de
    conteúdo de tópico e de categoria habilitados pelo administrador do Group.
    Nenhum `group.type.*` novo é distribuído pelo módulo nesta fase.
-2. Configurar o tipo:
+2. Conceder à role de membro do Group a permissão de grupo
+   `view group_node:aculta_forum_topic entity`. O módulo Group **proíbe** a
+   leitura de qualquer entidade agrupada sem uma permissão de grupo; sem esta
+   permissão, nem o associado ativo com membership lê o tópico, mesmo com o
+   grant de `node_access` correto. O teste Kernel da F-GROUP 0.2 reproduz a
+   ausência desse passo para isolar a causa.
+3. Configurar o tipo:
    `drush config:set aculta_forum.settings restricted_group_type forum_associados -y`
    (equivalente em `config/sync`; não executado aqui).
-3. Criar o Group e relacionar tópicos ou categorias restritas.
-4. Reconstruir os grants, porque ativar `hook_node_grants` coloca o site em modo
+4. Criar o Group e relacionar tópicos ou categorias restritas.
+5. Reconstruir os grants, porque ativar `hook_node_grants` coloca o site em modo
    de grants e a tabela `node_access` fica incompleta até o rebuild:
    `drush php:eval '\Drupal::service("Drupal\node\NodeAccessRebuild")->rebuild();'`
-5. `drush cr` e validar listagem, busca, URL direta, anexos e contadores com
+6. `drush cr` e validar listagem, busca, URL direta, anexos e contadores com
    conta ativa, suspensa, desligada, pendente e visitante.
 
-Sem o passo 4, listagens e busca podem ficar inconsistentes mesmo com o acesso
-direto corretamente bloqueado pelo `entity_access`.
+Sem o passo 2, o `entity_access` do Fórum deixa de ser o único veto: o próprio
+Group nega. Sem o passo 5, listagens e busca podem ficar inconsistentes mesmo
+com o acesso direto corretamente bloqueado pelo `entity_access`.
 
 ## Matriz de testes
 
-Resultado desta frente (2026-10-22): `tests/src/Unit/RestrictedForum` — **60
+Resultado da F-GROUP 0.1 (2026-10-22): `tests/src/Unit/RestrictedForum` — **60
 testes, 167 asserções, OK**; PHPCS limpo no diretório de testes e nos arquivos
-de produção tocados; PHPStan nível 5 OK. Nenhum teste Runtime, Kernel,
-Functional ou de navegador foi executado.
+de produção tocados; PHPStan nível 5 OK.
+
+Resultado da F-GROUP 0.2 (2026-10-23), no banco isolado `aculta_simpletest`:
+
+- `RestrictedForumGroupAclKernelTest` — 12 testes, 261 asserções, OK.
+- `RestrictedForumNodeAccessRebuildKernelTest` — **4 testes, 92 asserções, OK**:
+  hooks de produção registrados no fixture, `NodeAccessRebuild` do Core,
+  linhas reais em `node_access`, `NodeAccessControlHandler::access()` e consulta
+  com a tag `node_access`.
+- Suíte Kernel completa do Fórum — **50 testes, 1.112 asserções, OK**.
+- PHPCS Drupal/DrupalPractice limpo nos arquivos novos; PHPUnit reporta apenas
+  deprecations de Core/Group já existentes no ambiente.
+
+Nenhum teste Runtime, Functional ou de navegador foi executado nesta frente.
 
 | Cenário obrigatório | Cobertura | Resultado |
 | --- | --- | --- |
@@ -125,7 +146,12 @@ Functional ou de navegador foi executado.
 | Desligado | Mesma regra de situação não ativa | PASS (Unit) |
 | Pendente/convidado | Mesma regra de situação não ativa | PASS (Unit) |
 | Usuário comum com e-mail confirmado | Sem situação ativa, logo sem grant nem acesso | PASS (Unit) |
-| URL direta | Política `forbidden` delegada por `entity_access` | PASS (Unit); Runtime DEFERRED |
+| URL direta | Política `forbidden` delegada por `entity_access` | PASS (Unit) e PASS (Kernel, handler real); Runtime DEFERRED |
+| Grant real por Group | `RestrictedForumNodeAccessRebuildKernelTest::testRebuildWritesRealmGrantOnlyForRestrictedTopic` | PASS (Kernel) |
+| Membership no acesso de entidade | `testActiveMemberReadsRestrictedTopicThroughEntityAccess` (ativo+membro lê; ativo sem membership, suspenso com membership antiga e anônimo não leem; tópico público lê para todos) | PASS (Kernel) |
+| Filtragem de listagem | `testNodeAccessQueryFiltersListing` (query com tag `node_access` por conta) | PASS (Kernel) |
+| Rebuild de um tópico | `testGrantRebuilderUpdatesSingleTopicWithoutFullRebuild` (público → restrito → público) | PASS (Kernel) |
+| Permissão de grupo ausente | Group proíbe a leitura de conteúdo agrupado sem `view group_node:aculta_forum_topic entity`; documentado como passo de ativação | Confirmado (Kernel) |
 | Conteúdo restrito em busca | Depende de Search API e node grants no Runtime | DEFERRED — índice não provisionado |
 | Anexos e mídia | Hooks de anexo ainda não conhecem Group | DEFERRED — implementação pendente |
 | Invalidação de cache | Asserções de tags na sincronização e no rebuild | PASS (Unit) |
@@ -133,11 +159,10 @@ Functional ou de navegador foi executado.
 | Regressão do fórum público | Sem tipo configurado e tópico público não recebem grant restrito; outros bundles/operações seguem `neutral` | PASS (Unit); Runtime DEFERRED |
 | Regressão do Group LMS | `lms_course`/`lms_class` recusados com log de erro | PASS (Unit) |
 
-**Motivo dos DEFERRED:** os testes restantes exigem bootstrap Drupal com o
-módulo Group instalado, um tipo de Group real, relações de conteúdo e rebuild de
-`node_access` no banco de testes. Isso altera estado compartilhado do Runtime de
-teste e não é autorizado nesta sessão; o rebuild é destrutivo para a tabela de
-grants até concluir.
+**Motivo dos DEFERRED restantes:** busca exige Search API indexado; anexos e
+posts revisionáveis ainda não herdam o Group; e a validação Runtime exige janela
+aprovada, backup e rebuild da tabela `node_access` do ambiente de testes. O
+rebuild executado na F-GROUP 0.2 foi somente no banco Kernel isolado.
 
 ## Riscos residuais
 
@@ -151,6 +176,10 @@ grants até concluir.
   produção.
 - **Posts e comentários.** O acesso ao tópico não se propaga automaticamente ao
   post revisionável nem ao Comment; é preciso revalidar no handler do post.
+- **Permissão de grupo.** Sem `view group_node:aculta_forum_topic entity` na
+  role de membro, o módulo Group nega a leitura de todos os tópicos agrupados,
+  inclusive para o associado ativo. É um veto independente do Fórum e precisa
+  ser verificado na ativação e após qualquer alteração de roles do Group.
 - **Modo de grants global.** Ativar `hook_node_grants` afeta todo o site até o
   rebuild terminar; executar em janela controlada, com backup.
 - **Lock sem retry.** Uma corrida perdida no lock deixa a membership
@@ -172,15 +201,38 @@ grants até concluir.
 - Firefox ESR visível em `DISPLAY=:0` via geckodriver para a validação
   autenticada de navegador.
 
+## F-GROUP-D — prova funcional em Kernel (concluída)
+
+`RestrictedForumNodeAccessRebuildKernelTest` registra os hooks de produção no
+fixture `aculta_forum_restricted_test` (adaptador fino
+`RestrictedForumAccessTestHooks`, que só delega) e exercita o caminho real:
+
+- `NodeAccessRebuild::rebuild()` grava `realm=aculta_forum_restricted` com o gid
+  do Group no tópico restrito e o grant público `all:0` no tópico sem Group.
+- `NodeAccessControlHandler::access('view')` libera apenas o associado `ativo`
+  com membership e role de grupo; nega ativo sem membership, suspenso com
+  membership antiga e anônimo, sem afetar o tópico público.
+- Consulta `SELECT nid FROM node` com tag `node_access` e
+  `addMetaData('account', …)` devolve a mesma visão, provando a filtragem de
+  listagem.
+- `RestrictedForumGrantRebuilder::rebuildForTopic()` acompanha a inclusão e a
+  remoção da relação de Group sem rebuild global.
+
+A prova revelou uma dependência de ativação que não estava documentada: o
+módulo Group nega a leitura de conteúdo agrupado sem a permissão de grupo
+`view group_node:aculta_forum_topic entity` na role de membro. O passo foi
+incorporado à seção Ativação.
+
 ## Próxima microfase recomendada
 
-**F-GROUP 0.2 — prova funcional do tópico restrito em Kernel e Runtime
-controlado.** Criar um teste Kernel com Group instalado que provisiona o tipo
-`forum_associados`, um Group, um tópico relacionado e contas ativa/suspensa,
-exercitando `entity_access` e grants de verdade (incluindo o rebuild); depois
-repetir em Runtime de testes com backup e janela aprovada, validando listagem,
-URL direta e busca. Só depois estender o recorte a posts revisionáveis e anexos,
-que são os dois riscos que hoje impedem ativar a frente em produção.
+**F-GROUP 0.3 — herança da restrição em posts revisionáveis e anexos.** O
+acesso ao tópico não se propaga hoje ao `aculta_forum_post` nem ao Comment, e a
+regra de anexo público ignora o Group. Implementar e testar em Kernel a
+revalidação por tópico nos handlers de post, de comentário e de mídia, com
+download privado revalidando a mesma condição. Em paralelo, preparar o roteiro
+de Runtime controlado (backup, janela aprovada, rebuild de `node_access`,
+listagem, URL direta e busca) para executar quando autorizado. Só depois ativar
+em produção.
 
 ## Referências
 

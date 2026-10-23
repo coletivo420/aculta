@@ -62,12 +62,13 @@ integração continua sendo validar upload real, publicação contextual, acesso
 privado e apresentação no navegador, antes de avançar previews Office e cartão
 PDF.
 
-## F-GROUP 0.1 — fóruns restritos de associados (fundação pronta, desligada)
+## F-GROUP 0.1 e 0.2 — fóruns restritos de associados (fundação pronta, desligada)
 
-Estado em 2026-10-22: inventário (A), contratos e fundação (B) e testes Unit da
-unidade mínima (C) concluídos; **sem alteração de Runtime, sem import de
-configuração e sem rebuild de `node_access`**. O contrato completo, a matriz de
-testes com PASS/DEFERRED e os riscos residuais ficam em
+Estado em 2026-10-23: inventário (A), contratos e fundação (B), testes Unit da
+unidade mínima (C) e prova funcional em Kernel com grants reais (D) concluídos;
+**sem alteração de Runtime, sem import de configuração e sem rebuild de
+`node_access` em ambiente**. O contrato completo, a matriz de testes com
+PASS/DEFERRED e os riscos residuais ficam em
 [`RESTRICTED-FORUMS.md`](RESTRICTED-FORUMS.md).
 
 - A elegibilidade continua em `aculta_user`: `ActiveAssociateInterface`
@@ -81,13 +82,20 @@ testes com PASS/DEFERRED e os riscos residuais ficam em
 - Leitura restrita usa `entity_access` mais grants de nó no realm
   `aculta_forum_restricted`; falha do resolver fecha o acesso. Tópico público não
   recebe grant restrito.
-- Gate medido: `tests/src/Unit/RestrictedForum` — 60 testes, 167 asserções, OK;
-  PHPCS/PHPStan limpos. Nenhum teste Kernel, Runtime, Functional ou de navegador
-  foi executado.
-- Próxima microfase **F-GROUP 0.2**: prova Kernel/Runtime com tipo de Group,
-  tópico restrito real e `NodeAccessRebuild`, seguida do recorte de posts
-  revisionáveis e anexos — os dois riscos que hoje impedem ativar a frente em
-  produção.
+- Gate medido (0.1): `tests/src/Unit/RestrictedForum` — 60 testes, 167
+  asserções, OK; PHPCS/PHPStan limpos.
+- Gate medido (0.2): `RestrictedForumNodeAccessRebuildKernelTest` — 4 testes,
+  92 asserções, OK; suíte Kernel do Fórum com 50 testes e 1.112 asserções, OK.
+  Os hooks de produção rodam sobre `NodeAccessRebuild`, `node_access`,
+  `NodeAccessControlHandler` e query com tag `node_access`. O rebuild foi
+  executado apenas no banco isolado de testes Kernel.
+- A prova revelou que o módulo Group exige a permissão de grupo
+  `view group_node:aculta_forum_topic entity` na role de membro; sem ela, o
+  Group nega a leitura mesmo para o associado ativo. Passo documentado na
+  ativação.
+- Próxima microfase **F-GROUP 0.3**: herança da restrição em posts revisionáveis
+  e anexos, com testes Kernel dos handlers, e roteiro de Runtime controlado
+  (backup, janela aprovada, rebuild, listagem, URL direta e busca).
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

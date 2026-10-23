@@ -1,3 +1,24 @@
+## F-GROUP 0.2 — grants reais do tópico restrito em Kernel, 2026-10-23
+
+- Banco isolado `aculta_simpletest`, via `SIMPLETEST_DB` de
+  `secrets/simpletest-db.env`; nenhum Runtime foi tocado.
+- `RestrictedForumNodeAccessRebuildKernelTest` (4 testes / 92 asserções, OK)
+  registra os hooks de produção no fixture `aculta_forum_restricted_test` e
+  exercita o caminho real: `NodeAccessRebuild`, `node_access`,
+  `NodeAccessControlHandler::access()` e query com tag `node_access`.
+- Casos cobertos: grant `realm=aculta_forum_restricted` por gid no tópico
+  relacionado e `all:0` no tópico público; ativo com membership lê; ativo sem
+  membership, suspenso com membership antiga e anônimo não leem; listagem
+  filtrada por conta; `rebuildForTopic()` acompanha inclusão e remoção da
+  relação.
+- Descoberta de ativação: o módulo Group proíbe a leitura de conteúdo agrupado
+  sem `view group_node:aculta_forum_topic entity` na role de membro. O teste
+  concede a permissão; a ausência dela foi reproduzida e documentada em
+  `RESTRICTED-FORUMS.md`.
+- Suíte Kernel completa do Fórum: 50 testes / 1.112 asserções, OK. PHPCS
+  Drupal/DrupalPractice limpo nos arquivos novos. Deprecations reportadas são
+  de Core/Group, não do Fórum.
+
 ## aculta_forum_lms 0.1.0-dev.40 — citação de Comment LMS
 
 - Runtime de teste (`https://aculta.toca.net.br`, sessão iniciada por

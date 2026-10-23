@@ -5,4 +5,5 @@ package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 dependencies:
   - drupal:field
+  - drupal:node
   - drupal:user

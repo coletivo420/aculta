@@ -97,7 +97,7 @@ comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
 [Wiki](../../../../../../docs/portal/WIKI.md) e
 [notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
 
-## Fóruns restritos para associados ativos — F-GROUP 0.1
+## Fóruns restritos para associados ativos — F-GROUP 0.1 e 0.2
 
 A fundação do fórum restrito existe e está **desligada por padrão**: enquanto
 `aculta_forum.settings.restricted_group_type` estiver vazio, nenhum Group é
@@ -107,8 +107,11 @@ elegibilidade é a situação `ativo` de `aculta_associado`, lida em `aculta_use
 e nunca um papel. Group é consumidor, não dono dessa situação, e os tipos do LMS
 (`lms_course`, `lms_class`) são recusados. O acesso de leitura é revalidado no
 servidor por `entity_access` e por grants de nó no realm
-`aculta_forum_restricted`; ativar exige rebuild de `node_access`. Inventário,
-decisões, matriz de testes, riscos e a próxima microfase estão em
+`aculta_forum_restricted`; ativar exige rebuild de `node_access` e, na role de
+membro do Group, a permissão `view group_node:aculta_forum_topic entity` — sem
+ela o próprio Group nega a leitura. A F-GROUP 0.2 provou em Kernel os grants
+reais, o handler de acesso, a listagem filtrada e o rebuild por tópico.
+Inventário, decisões, matriz de testes, riscos e a próxima microfase estão em
 [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md). Nenhum Runtime foi
 alterado.
 

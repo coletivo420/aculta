@@ -1,3 +1,22 @@
+## `0.1.0-dev.250` — grants reais do fórum restrito em Kernel (F-GROUP 0.2) — 2026-10-23
+
+- Novo `RestrictedForumNodeAccessRebuildKernelTest` (4 testes / 92 asserções
+  PASS) registra os hooks de produção no fixture `aculta_forum_restricted_test`
+  e exercita `NodeAccessRebuild`, a tabela `node_access`,
+  `NodeAccessControlHandler::access()` e consulta com tag `node_access`.
+- O fixture ganhou `services.yml` com os serviços de produção instanciados sobre
+  o banco do teste e um adaptador fino `RestrictedForumAccessTestHooks`, que só
+  delega aos três hooks reais.
+- Prova: grant `aculta_forum_restricted` por gid no tópico relacionado,
+  `all:0` no tópico público, leitura apenas para associado `ativo` com
+  membership, listagem filtrada por conta e rebuild de um tópico acompanhando
+  inclusão/remoção da relação.
+- Descoberta de ativação: o módulo Group proíbe a leitura de conteúdo agrupado
+  sem `view group_node:aculta_forum_topic entity` na role de membro. Passo
+  incorporado a `docs/RESTRICTED-FORUMS.md`.
+- Suíte Kernel do Fórum: 50 testes / 1.112 asserções PASS; PHPCS
+  Drupal/DrupalPractice limpo nos arquivos novos. Nenhum Runtime alterado.
+
 ## `0.1.0-dev.249` — corrigir timestamp de Comment no provider Index
 
 - `ForumContentIndexProvider` normaliza `Comment::getCreatedTime()` para int,
