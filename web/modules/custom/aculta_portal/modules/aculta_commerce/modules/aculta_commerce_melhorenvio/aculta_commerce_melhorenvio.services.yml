@@ -4,3 +4,8 @@ services:
   aculta_commerce_melhorenvio.address_adapter:
     class: Drupal\aculta_commerce_melhorenvio\Address\ShippingAddressAdapter
     autowire: true
+
+  # Mapeamento puro para o endereço logístico (cotação, contratação e etiqueta). Sem HTTP e sem gravação.
+  aculta_commerce_melhorenvio.address_mapper:
+    class: Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper
+    autowire: true
