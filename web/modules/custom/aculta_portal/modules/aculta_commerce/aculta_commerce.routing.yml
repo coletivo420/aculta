@@ -18,3 +18,14 @@ aculta_commerce.green_stash_area:
     secao: 'visao-geral|produtos|pedidos|estoque|envios|promocoes|clientes|relatorios|configuracoes'
   options:
     _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_product_detail:
+  path: '/estudio/loja/produtos/{produto}'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_product_controller:detail'
+    _title: 'Detalhes do produto'
+  requirements:
+    _permission: 'access aculta green stash'
+    produto: '[1-9][0-9]*'
+  options:
+    _aculta_domain_purpose: account
