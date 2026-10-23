@@ -46,6 +46,11 @@ final class GreenStashController {
       $before = is_string($before) && preg_match('/^[1-9][0-9]{0,17}$/', $before) ? (int) $before : 0;
       $search = $request?->query->get('busca', '') ?? '';
       $search = is_string($search) ? mb_substr(trim($search), 0, 100) : '';
+      $build['create'] = [
+        '#type' => 'link',
+        '#title' => 'Novo produto',
+        '#url' => Url::fromRoute('aculta_commerce.green_stash_product_create'),
+      ];
       $build['search'] = [
         '#type' => 'container',
         'form' => [
