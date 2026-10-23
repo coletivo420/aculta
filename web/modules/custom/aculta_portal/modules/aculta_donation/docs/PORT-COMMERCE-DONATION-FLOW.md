@@ -21,7 +21,7 @@ Status (2026-10-17): **port aplicado** (código, blocos, configuração, Compose
 |---|---|---|
 | `NewOrder` | `Drupal\aculta_donation\NewOrder` (mesmo nome de classe, sem subpasta) | Cria pedido e item de doação; doação mensal cria pedido `assinatura` |
 | `Controller\DonationController` | `Controller\DonationController` | `/donate`, passos do checkout, doação rápida |
-| `EventSubscriber\CartCheckoutRouteSubscriber` | `EventSubscriber\...` | Redireciona o carrinho para o checkout de doação |
+| `EventSubscriber\CartCheckoutRouteSubscriber` | `EventSubscriber\...` | Redireciona o carrinho para o checkout de doação. **Movido em 2026-10-22 (P-CART D)** para `aculta_portal` como `CommerceCheckoutRouteSubscriber`, com o aviso de origem GPL preservado; classe removida do Donation |
 | `Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow` (+ `MultistepWithDonation`, `PaneSummaryData`) | `Plugin\Commerce\CheckoutFlow\...` | Fluxo `doacao` |
 | `Plugin\Commerce\CheckoutPane\*` (DonationItemPaneBase, DonationCheckoutPane, AddDonationPane, MemorialCheckoutPane, ThankYouPane) | mesmos nomes | Painéis de doação, homenagem e agradecimento |
 | `Plugin\Field\FieldWidget\DonationLevelWidget` | mesmo nome | Campo de valor |

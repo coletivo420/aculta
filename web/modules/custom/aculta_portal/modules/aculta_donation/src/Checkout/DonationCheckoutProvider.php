@@ -16,7 +16,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Contexto Doações: lê `aculta_donation.settings` e traduz `donation_route` para o vocabulário neutro do Portal.
  *
  * donate → dedicado, cart → comum, both → os dois. Valor ausente ou desconhecido equivale a `donate`, como na
- * decisão atual de rotas (ver CartCheckoutRoutesCharacterizationTest). A assinatura recorrente usa o tipo
+ * decisão de rotas anterior (ver CartCheckoutRoutesCharacterizationTest). Declara que controla as rotas globais do
+ * Commerce (`gatesCommonCheckout`), efeito que antes estava no subscriber do próprio Donation. A assinatura recorrente usa o tipo
  * `assinatura`, fixo em `NewOrder`.
  */
 final class DonationCheckoutProvider implements CheckoutContextProviderInterface {
@@ -57,7 +58,7 @@ final class DonationCheckoutProvider implements CheckoutContextProviderInterface
       $config->get('cart_checkout_flow'),
       $this->flows->flowId(self::SUBSCRIPTION_ORDER_TYPE),
     ], 'is_string'));
-    return new CheckoutContextConfiguration('donation', $mode, $orderTypes, $flows);
+    return new CheckoutContextConfiguration('donation', $mode, $orderTypes, $flows, TRUE);
   }
 
 }

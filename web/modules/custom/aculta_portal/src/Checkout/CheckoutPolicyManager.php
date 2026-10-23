@@ -25,6 +25,21 @@ final class CheckoutPolicyManager {
   }
 
   /**
+   * Se as rotas globais de carrinho e checkout do Commerce ficam disponíveis.
+   *
+   * Fechadas somente quando algum contexto registrado que as controla não admite o checkout comum. Sem contexto
+   * controlador (por exemplo, Donation desabilitado), ficam como o Commerce as define.
+   */
+  public function commonCheckoutRoutesAvailable(): bool {
+    foreach ($this->resolver->resolveAll() as $configuracao) {
+      if ($configuracao->gatesCommonCheckout && !$configuracao->mode->allowsCommon()) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
    * Tipos de pedido reivindicados por mais de um contexto.
    *
    * Evita reatribuir em silêncio tipos de pedido de outra experiência (ADR-013).

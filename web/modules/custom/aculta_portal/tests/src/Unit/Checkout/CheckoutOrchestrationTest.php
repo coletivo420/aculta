@@ -146,4 +146,39 @@ final class CheckoutOrchestrationTest extends UnitTestCase {
     $this->assertSame([], $policy->orderTypeConflicts());
   }
 
+  public function testRotasGlobaisFechamSoQuandoContextoControladorNaoAdmiteComum(): void {
+    $gate = static fn(string $id, CheckoutMode $modo): CheckoutContextProviderInterface => new class($id, $modo) implements CheckoutContextProviderInterface {
+
+      public function __construct(private readonly string $id, private readonly CheckoutMode $mode) {}
+
+      public function id(): string {
+        return $this->id;
+      }
+
+      public function label(): string {
+        return $this->id;
+      }
+
+      public function weight(): int {
+        return 0;
+      }
+
+      public function configuration(): CheckoutContextConfiguration {
+        return new CheckoutContextConfiguration($this->id, $this->mode, [], [], TRUE);
+      }
+
+    };
+    $this->assertFalse($this->policy([$gate('donation', CheckoutMode::Dedicated)])->commonCheckoutRoutesAvailable());
+    $this->assertTrue($this->policy([$gate('donation', CheckoutMode::Common)])->commonCheckoutRoutesAvailable());
+    $this->assertTrue($this->policy([$gate('donation', CheckoutMode::Both)])->commonCheckoutRoutesAvailable());
+  }
+
+  public function testContextoSemGateNaoFechaAsRotasGlobais(): void {
+    $this->assertTrue($this->policy([$this->provider('lms', 1, CheckoutMode::Dedicated)])->commonCheckoutRoutesAvailable());
+  }
+
+  public function testSemProvidersAsRotasGlobaisFicamDisponiveis(): void {
+    $this->assertTrue($this->policy([])->commonCheckoutRoutesAvailable());
+  }
+
 }

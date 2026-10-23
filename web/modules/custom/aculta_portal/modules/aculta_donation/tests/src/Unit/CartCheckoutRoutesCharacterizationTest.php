@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_donation\Unit;
 
-use Drupal\aculta_donation\EventSubscriber\CartCheckoutRouteSubscriber;
+use Drupal\aculta_donation\Checkout\DonationCheckoutProvider;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
+use Drupal\aculta_portal\Checkout\CheckoutConfigurationResolver;
+use Drupal\aculta_portal\Checkout\CheckoutContextRegistry;
+use Drupal\aculta_portal\Checkout\CheckoutPolicyManager;
+use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\aculta_portal\EventSubscriber\CartFriendlyRouteSubscriber;
+use Drupal\aculta_portal\EventSubscriber\CommerceCheckoutRouteSubscriber;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteBuildEvent;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -17,9 +23,10 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Caracteriza a decisão atual de rotas de carrinho e checkout (P-CART A).
  *
- * Dois subscribers alteram `commerce_cart.page`: o do Portal troca o caminho e o do Donation controla o acesso.
- * Este teste registra que o resultado não depende da ordem e que `donate`, `cart` e `both` se comportam como hoje.
- * Serve de baseline de equivalência para a migração do seletor (P-CART D).
+ * Dois subscribers do Portal alteram `commerce_cart.page`: um troca o caminho e o outro controla o acesso conforme a
+ * política de checkout. Este teste fixa que o resultado não depende da ordem e que `donate`, `cart` e `both` se
+ * comportam como antes da migração do seletor (P-CART D). As asserções são as da linha de base P-CART A, escritas
+ * contra o `CartCheckoutRouteSubscriber` do Donation, hoje removido.
  */
 #[Group('aculta_donation')]
 final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
@@ -33,12 +40,27 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
   }
 
   /**
+   * Subscriber de disponibilidade do Portal, alimentado pelo provider do Donation.
+   *
+   * @param array<string, mixed> $settings
+   */
+  private function subscriber(array $settings, bool $donationRegistrado = TRUE): CommerceCheckoutRouteSubscriber {
+    $providers = $donationRegistrado
+      ? [new DonationCheckoutProvider(
+        $this->getConfigFactoryStub(['aculta_donation.settings' => $settings]),
+        new OrderTypeCheckoutFlows($this->createMock(EntityTypeManagerInterface::class)),
+      )]
+      : [];
+    return new CommerceCheckoutRouteSubscriber(new CheckoutPolicyManager(new CheckoutConfigurationResolver(new CheckoutContextRegistry($providers))));
+  }
+
+  /**
    * @param array<string, mixed> $settings
    */
   private function aplicar(array $settings, bool $donationPrimeiro): RouteCollection {
     $colecao = $this->colecao();
     $evento = new RouteBuildEvent($colecao);
-    $donation = new CartCheckoutRouteSubscriber($this->getConfigFactoryStub(['aculta_donation.settings' => $settings]));
+    $donation = $this->subscriber($settings);
     $portal = new CartFriendlyRouteSubscriber();
     if ($donationPrimeiro) {
       $donation->onAlterRoutes($evento);
@@ -126,9 +148,15 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
   public function testColecaoSemRotasDoCommerceNaoQuebra(): void {
     $colecao = new RouteCollection();
     $colecao->add('outra.rota', new Route('/outra'));
-    (new CartCheckoutRouteSubscriber($this->getConfigFactoryStub(['aculta_donation.settings' => ['donation_route' => 'donate']])))
-      ->onAlterRoutes(new RouteBuildEvent($colecao));
+    $this->subscriber(['donation_route' => 'donate'])->onAlterRoutes(new RouteBuildEvent($colecao));
     $this->assertCount(1, $colecao);
+  }
+
+  public function testSemDonationRegistradoAsRotasDoCommerceFicamIntactas(): void {
+    $colecao = $this->colecao();
+    $antes = $this->resumo($colecao);
+    $this->subscriber([], FALSE)->onAlterRoutes(new RouteBuildEvent($colecao));
+    $this->assertSame($antes, $this->resumo($colecao));
   }
 
 }

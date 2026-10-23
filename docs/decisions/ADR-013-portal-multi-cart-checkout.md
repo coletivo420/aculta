@@ -54,3 +54,7 @@ Antes e depois da migração, comparar as mesmas rotas, configs, botões, contad
 ## Regras de execução
 
 Fases pequenas, commits isolados na branch/PR existente. Não forçar push, reset, apagar dados, criar PR, mudar checkout ativo sem baseline ou tocar código de outros agentes. Documentar cada etapa em Portal, Commerce e Donation; executar localmente o possível e deixar somente gates dependentes do homelab.
+
+## Estado de implementação (2026-10-22)
+
+P-CART A a D concluídas em código: testes de caracterização, contratos e registry no Portal, providers de Loja (`aculta_commerce`, módulo ainda não habilitado), LMS e Doações, e o seletor das rotas globais agora no Portal (`CommerceCheckoutRouteSubscriber`), com o subscriber do Donation removido após a prova de equivalência. Homologação em servidor de testes pendente (P-CART T).

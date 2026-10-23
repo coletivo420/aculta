@@ -7,12 +7,6 @@ services:
     class: Drupal\aculta_donation\NewOrder
     arguments: ['@commerce_store.current_store', '@current_user', '@request_stack', '@entity_type.manager']
 
-  aculta_donation.route_subscriber:
-    class: Drupal\aculta_donation\EventSubscriber\CartCheckoutRouteSubscriber
-    arguments: ['@config.factory']
-    tags:
-      - { name: event_subscriber }
-
   aculta_donation.refund_access:
     class: Drupal\aculta_donation\Access\DonationRefundAccess
 

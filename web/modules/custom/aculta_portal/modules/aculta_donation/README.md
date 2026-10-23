@@ -46,14 +46,14 @@ colaboradores). Avisos de licença em `LICENSE.txt` e em `docs/ORIGEM-COMMERCE-D
 
 ## Testes
 
-- Unitários: `tests/src/Unit/DonationCampaignSelectorTest.php` e `tests/src/Unit/CartCheckoutSubscriberTest.php`.
+- Unitários: `tests/src/Unit/DonationCampaignSelectorTest.php`, `tests/src/Unit/CartCheckoutRoutesCharacterizationTest.php` (equivalência de `donate|cart|both` nas rotas) e `tests/src/Unit/DonationCheckoutProviderTest.php`.
   Execução: `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit`.
 - Runtime de testes: habilitado e verificado por HTTP e por API (ver CHANGELOG). Testes de Kernel do fluxo: pendentes.
 - Navegador: pendente (conferência visual do fluxo e dos blocos).
 
 ## Roadmap de integração: Portal multi-carrinho / checkout (ADR-013)
 
-A seleção `donate | cart | both` é **funcionalidade intencional**, preservada na migração. A propriedade das políticas transversais de carrinho/checkout, atualmente parcialmente em `CartCheckoutRouteSubscriber` e `DonationSettingsForm`, migrará para `aculta_portal`, que fornecerá quatro abas **Comum | Loja | LMS | Doações**. O módulo Donation continua responsável por campanhas, pedidos e checkout dedicado, recorrência e proibição de estorno. Não mover gateway Mercado Pago. A aba Comum não agrega pedidos incompatíveis em pedido único.
+A seleção `donate | cart | both` é **funcionalidade intencional**, preservada na migração. A propriedade das políticas transversais de carrinho/checkout, era parcialmente do `CartCheckoutRouteSubscriber` (removido em 2026-10-22; a decisão de rotas agora é do `CommerceCheckoutRouteSubscriber` do Portal, alimentado por `DonationCheckoutProvider`) e segue em `DonationSettingsForm` (inalterado), e migra para `aculta_portal`, que fornecerá quatro abas administrativas **Comum | Loja | LMS | Doações**. O módulo Donation continua responsável por campanhas, pedidos e checkout dedicado, recorrência e proibição de estorno. Não mover gateway Mercado Pago. A aba Comum não agrega pedidos incompatíveis em pedido único.
 
 - **D-CART.1:** inventariar `donation_route`, settings exportados e dependências dos consumidores; teste de caracterização das modalidades.
 - **D-CART.2:** implementar provider `donation` segundo interfaces do Portal, com acesso por pedido e seleção de carrinho compatível.

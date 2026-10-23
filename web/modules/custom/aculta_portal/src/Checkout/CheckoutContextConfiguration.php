@@ -23,12 +23,16 @@ final class CheckoutContextConfiguration {
    *   Tipos de pedido do Commerce que o contexto reivindica.
    * @param list<string> $checkoutFlowIds
    *   Checkout flows do Commerce que o contexto utiliza.
+   * @param bool $gatesCommonCheckout
+   *   TRUE quando a modalidade do contexto também liga ou desliga as rotas globais de carrinho e checkout do
+   *   Commerce (hoje, só Doações). Declara o efeito existente; não o cria.
    */
   public function __construct(
     public readonly string $contextId,
     public readonly CheckoutMode $mode,
     array $orderTypeIds = [],
     array $checkoutFlowIds = [],
+    public readonly bool $gatesCommonCheckout = FALSE,
   ) {
     $this->orderTypeIds = self::normalize($orderTypeIds);
     $this->checkoutFlowIds = self::normalize($checkoutFlowIds);

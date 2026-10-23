@@ -1,3 +1,8 @@
+## 0.1.0-dev.23 — decisão de rotas globais passa ao Portal (P-CART D) — 2026-10-22
+
+- Removidos `CartCheckoutRouteSubscriber`, seu serviço `aculta_donation.route_subscriber` e `CartCheckoutSubscriberTest` (cobertura mantida em `CartCheckoutRoutesCharacterizationTest`, agora contra o subscriber do Portal). `DonationCheckoutProvider` passa a declarar `gatesCommonCheckout`.
+- `donation_route`, `DonationSettingsForm` e os modos `donate|cart|both` inalterados. Rollback: `git revert` do commit. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.22 — provider de checkout do Portal (P-CART C) — 2026-10-22
 
 - `DonationCheckoutProvider` (tag `aculta_portal.checkout_provider`) expõe ao Portal, somente para leitura, o modo (`donate`→dedicado, `cart`→comum, `both`→ambos; ausente ou inválido → `donate`), os tipos de pedido e os checkout flows. `CartCheckoutRouteSubscriber`, `DonationSettingsForm` e `donation_route` permanecem como estavam; o legado só sai na P-CART D, após a equivalência.

@@ -415,3 +415,9 @@ services:
   aculta_portal.order_type_checkout_flows:
     class: Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows
     arguments: ['@entity_type.manager']
+  aculta_portal.commerce_checkout_route_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\CommerceCheckoutRouteSubscriber
+    arguments: ['@aculta_portal.checkout_policy_manager']
+    tags:
+      - { name: event_subscriber }
+      - { name: aculta_portal.implementation }

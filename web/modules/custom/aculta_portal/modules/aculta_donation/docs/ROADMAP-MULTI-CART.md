@@ -42,3 +42,12 @@ Testes Unit que fixam o comportamento atual antes de qualquer migração (nenhum
 Consumidores de `donation_route` além do subscriber, que o futuro dual-read também precisa cobrir: `DonateBlock`, `QuickDonationBlock`, `DonationController::checkAccess()` e `DonationSettingsForm`. O valor instalado por padrão é `both`; o padrão do formulário é `donate`.
 
 Fora do alcance de Unit (ficam para Kernel/Browser/homelab): `CartUtility`/`CartConsolidator` com carrinhos reais, DOM do cabeçalho, contador, redirecionamento de `CartCheckoutController` e fluxo de pagamento. Execução: `vendor/bin/phpunit -c web/core <caminho>` (27 testes, 88 asserções, OK).
+
+## Corte do seletor — P-CART D / D-D (2026-10-22)
+
+`CartCheckoutRouteSubscriber` foi removido do Donation e substituído por `aculta_portal/src/EventSubscriber/CommerceCheckoutRouteSubscriber`, que consulta `CheckoutPolicyManager::commonCheckoutRoutesAvailable()`. O `DonationCheckoutProvider` declara `gatesCommonCheckout` (efeito que já existia: o modo do Donation liga e desliga as rotas globais do Commerce, inclusive para Loja e LMS; ver B-01 em `aculta_commerce/docs/PAYMENT-FLOW-CONTRACTS-0.1.0-B.md`). Só há um subscriber ativo por vez.
+
+- **Equivalência:** as asserções da linha de base acima passam inalteradas contra a nova cadeia; `donation_route` ausente ou inválido continua equivalendo a `donate`; sem Donation habilitado, as rotas ficam como o Commerce as define.
+- **Configuração:** `aculta_donation.settings` e `DonationSettingsForm` não foram alterados; nada a migrar.
+- **Rollback:** reverter o commit do corte (`git revert`) restaura o subscriber e o serviço antigos; não há configuração a desfazer.
+- **Pendente:** comparação das rotas compiladas e do cabeçalho no servidor de testes (Kernel/Browser/homelab, P-CART T).
