@@ -1,14 +1,15 @@
 # Changelog — ACULTA Content Index
 
-## 0.1.0-dev.164 — verificar provider owner de categorias Wiki
+## 0.1.0-dev.164 — integrar relações Wiki de categoria e imagem
 
-- O mapa de serviços do Index reconhece também o adapter
-  `taxonomy_term:wiki_category` registrado pelo próprio módulo `aculta_wiki`.
-  O Kernel transversal compila o owner atualizado e confirma sua descoberta:
-  1 teste / 36 assertions; 239 depreciações Core/contrib.
-- A projeção das relações Wiki e a autorização de Term/Media foram verificadas
-  pelos testes Unit/Kernel do owner; nenhuma entidade ou configuração do Runtime
-  foi ativada ou alterada.
+- `WikiContentIndexProvider` projeta `related_entry`, `wiki_category` e
+  `wiki_image`; o provider mínimo `taxonomy_term:wiki_category` pertence à
+  Wiki e Media usa o provider existente de `aculta_image`.
+- Kernel MariaDB consulta as três relações e revalida Entity Access de Node,
+  Term e Media (3 testes / 84 assertions); Unit Wiki: 61/277. O boot combinado
+  confirma o registro do provider de categoria (1/36; 239 depreciações
+  Core/contrib). Nenhuma entidade ou configuração do Runtime foi ativada ou
+  alterada.
 
 ## 0.1.0-dev.163 — validar DI real da ponte Statistics
 
