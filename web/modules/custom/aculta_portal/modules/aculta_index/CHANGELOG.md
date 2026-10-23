@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.82 — cobrir exclusão de tradução no catálogo
+
+- Kernel cria Node traduzível, reconstrói as duas identidades de idioma e
+  remove apenas a entrada da tradução excluída após o worker (1 teste / 13
+  assertions no MariaDB dedicado).
+
 ## 0.1.0-dev.81 — integrar a declaração do provider course_document
 
 - Kernel do Index carrega a definição e os argumentos do YAML real de
