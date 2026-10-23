@@ -67,6 +67,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
       ->with('aculta_pdf_viewer_group:course_document')
       ->willReturn([$documents, $wrongDocument]);
     $projection = $this->createProvider($relationManager)->project($course);
+    self::assertSame(2, $this->createProvider($relationManager)->getProjectionVersion());
 
     self::assertNotNull($projection);
     self::assertSame('group', $projection->entityTypeId);
