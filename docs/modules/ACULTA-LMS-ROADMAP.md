@@ -437,6 +437,8 @@ subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os cam
 no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
 smoke autenticado e revisão visual; esses itens bloqueiam RC.
 
+Em `aculta_lms_resources` 0.1.0-dev.13, o provider do Content Index também projeta a relação outgoing `course_document` a partir do plugin Group PDF quando disponível. Unit confirma allowlist do bundle e opcionalidade (5 testes / 31 assertions); consulta outgoing Kernel integrada ainda pendente. A evidência Kernel existente do destino valida Group Media e seu filtro de acesso em harness separado.
+
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
 relação outgoing `course_gallery` com providers LMS e Gallery carregados dos
 YAMLs owner. Estudante autorizado por `take course` e educador por `grade
