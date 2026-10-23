@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -31,6 +32,7 @@ final class WikiProposalDecision {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly Connection $database,
+    private readonly WikiProposalOutcomeNotifier $notifier,
   ) {}
 
   /**
@@ -100,6 +102,7 @@ final class WikiProposalDecision {
       $current->set('decision_note', $note);
       $current->setRevisionLogMessage($decision === 'needs_changes' ? 'Proposta devolvida para ajustes' : 'Proposta recusada');
       $current->save();
+      $this->notifier->notify($current);
       unset($transaction);
 
       return $current;

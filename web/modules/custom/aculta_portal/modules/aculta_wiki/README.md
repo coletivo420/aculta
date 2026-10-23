@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.22`: pessoas autoras podem abrir status e retorno da própria
+  proposta em `/wiki/propostas/{proposal}`. Decisões de ajustes/recusa enfileiram
+  um e-mail mínimo para contas ativas e confirmadas, com link canônico privado.
+  Entity Access agora usa o parâmetro `{proposal}` nas duas rotas editoriais.
+  Kernel completo: 9 testes / 355 assertions.
 - `0.1.0-dev.21`: fila de revisões percorre candidatos em lotes limitados e
   mantém cursor ao filtrar itens sem acesso. Kernel prova que 26 revisões
   recentes sem grant não escondem a revisão autorizada anterior. Kernel MariaDB

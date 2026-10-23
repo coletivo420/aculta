@@ -34,6 +34,19 @@ aculta_wiki.proposal_submit:
       node:
         type: entity:node
 
+aculta_wiki.proposal_status:
+  path: '/wiki/propostas/{proposal}'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiProposalStatusController::view'
+    _title: 'Minha proposta para a Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: entity:aculta_wiki_proposal
+
 aculta_wiki.proposal_decide:
   path: '/studio/ganjalab/wiki/propostas/{proposal}/decidir'
   defaults:
@@ -41,7 +54,7 @@ aculta_wiki.proposal_decide:
     _title: 'Avaliar proposta da Wiki'
   requirements:
     _permission: 'moderate wiki proposals'
-    _entity_access: 'aculta_wiki_proposal.update'
+    _entity_access: 'proposal.update'
   options:
     _aculta_domain_purpose: account
     parameters:

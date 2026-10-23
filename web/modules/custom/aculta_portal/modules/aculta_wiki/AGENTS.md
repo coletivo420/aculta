@@ -84,3 +84,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Paginação da fila (dev.21): limitar candidatos por requisição, mas avançar
   por cursor através de itens sem acesso ou obsoletos; validar cada Node no
   Domain Wiki e não revelar dados de revisões filtradas.
+- Retorno da proposta (dev.22): status privado exige Entity Access real no
+  parâmetro `{proposal}`; notificação assíncrona usa Mailer opcional e somente
+  e-mail confirmado. Não incluir texto sugerido ou dados pessoais no aviso.

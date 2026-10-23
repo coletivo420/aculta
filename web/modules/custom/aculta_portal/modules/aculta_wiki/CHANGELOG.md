@@ -1,5 +1,23 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.22 — retorno privado à autoria
+
+- Nova rota de status `/wiki/propostas/{proposal}` mostra proposta, estado,
+  fontes e nota editorial somente conforme Entity Access do proprietário ou
+  equipe editorial. O verbete relacionado só vira link se estiver acessível.
+- `WikiProposalOutcomeNotifier` envia à fila opcional do Mailer um aviso para
+  autoria ativa e com e-mail confirmado. Inclui estado, nota e URL canônica da
+  página privada; não inclui o texto sugerido nem dados privados do verbete.
+- `WikiProposalDecision` enfileira o retorno junto da transação de decisão.
+  Sem Mailer, conta ativa/confirmada ou URL canônica, não tenta envio.
+- Corrigidos os requisitos `_entity_access` das rotas de status e decisão para
+  usar o parâmetro real `{proposal}`; Kernel confirma autoria permitida e outra
+  conta negada, além do payload do aviso com fila em memória.
+- Kernel MariaDB completo: 9 testes / 355 assertions; 286 depreciações
+  Drupal/contrib e 10 do PHPUnit. Unit: 66 testes / 338 assertions; 3
+  depreciações PHPUnit. Lint e PHPCS dos arquivos desta frente passaram.
+- Runtime permanece desabilitado; nenhum e-mail foi enviado nesta validação.
+
 ## 0.1.0-dev.21 — paginação completa da fila de revisões
 
 - `WikiEditorialQueue::entryRevisions()` percorre candidatos em lotes e

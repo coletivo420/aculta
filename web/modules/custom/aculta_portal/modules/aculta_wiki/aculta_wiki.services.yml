@@ -19,7 +19,16 @@ services:
 
   aculta_wiki.proposal_decision:
     class: Drupal\aculta_wiki\Service\WikiProposalDecision
-    arguments: ['@entity_type.manager', '@current_user', '@database']
+    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.proposal_outcome_notifier']
+
+  aculta_wiki.proposal_outcome_notifier:
+    class: Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier
+    arguments:
+      - '@string_translation'
+      - '@aculta_portal.email_confirmation_policy'
+      - '@aculta_portal.domain_purpose'
+      - '@uuid'
+      - '@?aculta_mailer.queue'
 
   aculta_wiki.presentation.wiki_search_form:
     class: Drupal\aculta_wiki\Presentation\WikiSearchFormBuilder
@@ -36,6 +45,11 @@ services:
       - '@aculta_wiki.wiki_lead_image_uploader'
   Drupal\aculta_wiki\Type\WikiReviewMailType:
     class: Drupal\aculta_wiki\Type\WikiReviewMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  Drupal\aculta_wiki\Type\WikiProposalOutcomeMailType:
+    class: Drupal\aculta_wiki\Type\WikiProposalOutcomeMailType
     arguments: ['@string_translation']
     tags:
       - { name: aculta_mailer.type }

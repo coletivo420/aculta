@@ -84,6 +84,12 @@ depois da importação de configuração no servidor de testes.
 | Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
 | CTA inicial — acesso real de criação | Kernel | `createAccess('wiki_entry')`; pessoa confirmada autorizada e não confirmada negada | aprovado (dev.20) |
 | Fila de revisão com candidatos negados | Kernel | 26 VIDs recentes sem grant não ocultam uma revisão autorizada mais antiga | aprovado (dev.21) |
+| Status privado da proposta | Kernel | Autoria lê status/nota; outra conta é negada pelo Entity Access da entidade | aprovado (dev.22) |
+| Aviso de decisão | Kernel | Fila em memória recebe estado, nota e URL privada; sem texto sugerido ou envio real | aprovado (dev.22) |
+
+Resultado Kernel dev.22: 9 testes / 355 assertions; 286 depreciações
+Drupal/contrib e 10 do PHPUnit. A suíte Unit passou com 66 testes / 338
+assertions e 3 depreciações PHPUnit.
 
 Resultado mais recente da classe Kernel (dev.21): 9 testes / 344 assertions,
 sem warnings; 284 depreciações Drupal/contrib e 10 do PHPUnit.

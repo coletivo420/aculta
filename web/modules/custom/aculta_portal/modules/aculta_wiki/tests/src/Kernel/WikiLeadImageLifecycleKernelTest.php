@@ -19,6 +19,7 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\profile\Entity\ProfileType;
 use Drupal\file\Entity\File;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
@@ -28,7 +29,9 @@ use Drupal\node\NodeAccessRebuild;
 use Drupal\node\NodeGrantsHelper;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\workflows\Entity\Workflow;
+use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
@@ -38,6 +41,8 @@ use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
+use Drupal\aculta_wiki\Controller\WikiProposalStatusController;
+use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -345,6 +350,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
     self::assertSame('/studio/ganjalab/wiki/propostas/{proposal}/decidir', $decisionRoute->getPath());
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
+    self::assertSame('proposal.update', $decisionRoute->getRequirement('_entity_access'));
 
     $proposalTarget = Node::create([
       'type' => 'wiki_entry',
@@ -478,6 +484,26 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $submitter = new UserSession(['uid' => 2, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
     $other = new UserSession(['uid' => 3, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
     $unconfirmed = new UserSession(['uid' => 6, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    User::create([
+      'uid' => 2,
+      'name' => 'wiki-proposal-author',
+      'mail' => 'author@example.invalid',
+      'status' => 1,
+      'roles' => ['wiki_proposal_submitter_test'],
+    ])->save();
     $target = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete público para proposta',
@@ -568,6 +594,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],
     ])));
     self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $proposalStatusRoute = $this->container->get('router.route_provider')->getRouteByName('aculta_wiki.proposal_status');
+    self::assertSame('/wiki/propostas/{proposal}', $proposalStatusRoute->getPath());
+    $accessManager = $this->container->get('access_manager');
+    self::assertTrue($accessManager->checkNamedRoute(
+      'aculta_wiki.proposal_status',
+      ['proposal' => $proposal->id()],
+      $submitter,
+    ));
+    self::assertFalse($accessManager->checkNamedRoute(
+      'aculta_wiki.proposal_status',
+      ['proposal' => $proposal->id()],
+      $other,
+    ));
 
     for ($index = 0; $index < 25; $index++) {
       $submission->submit($staleTarget, 'correction', 'Correção ' . $index, 'Justificativa curta.');
@@ -662,6 +701,43 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     );
     self::assertSame('declined', $declinedProposal->get('state')->value);
     self::assertSame('A evidência apresentada não sustenta esta alteração.', $declinedProposal->get('decision_note')->value);
+
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed(2);
+    $this->container->get('current_user')->setAccount($submitter);
+    $statusBuild = WikiProposalStatusController::create($this->container)->view($declinedProposal);
+    self::assertSame(
+      'A evidência apresentada não sustenta esta alteração.',
+      $statusBuild['decision_note']['text']['#plain_text'],
+    );
+    self::assertContains('user', $statusBuild['#cache']['contexts']);
+    $memoryQueue = new class() {
+
+      /** @var list<\Drupal\aculta_mailer\Message\MailMessage> */
+      public array $items = [];
+
+      /** Stores a message captured by the notifier test. */
+      public function enqueue(MailMessage $message): void {
+        $this->items[] = $message;
+      }
+
+    };
+    $outcomeNotifier = new WikiProposalOutcomeNotifier(
+      $this->container->get('string_translation'),
+      $this->container->get('aculta_portal.email_confirmation_policy'),
+      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('uuid'),
+      $memoryQueue,
+    );
+    self::assertTrue($outcomeNotifier->notify($declinedProposal));
+    self::assertCount(1, $memoryQueue->items);
+    self::assertSame('aculta_wiki_proposal_outcome', $memoryQueue->items[0]->type);
+    self::assertSame('author@example.invalid', $memoryQueue->items[0]->to);
+    self::assertSame([
+      'subject',
+      'state',
+      'decision_note',
+      'proposal_url',
+    ], array_keys($memoryQueue->items[0]->context));
 
     $this->container->get('current_user')->setAccount($submitter);
     $formState = new FormState();

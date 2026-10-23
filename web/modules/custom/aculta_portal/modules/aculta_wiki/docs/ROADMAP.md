@@ -4,10 +4,19 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.21**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.22**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.22 — status e retorno privado ao autor
+
+A autoria consulta resultado e nota na rota protegida pela permissão de proposta
+própria e pelo Entity Access da entidade. A decisão envia aviso assíncrono pelo
+Mailer opcional apenas para conta ativa com e-mail confirmado. O link é
+canônico no propósito Wiki; o aviso não contém o texto sugerido.
+Kernel MariaDB completo: 9 testes / 355 assertions; Unit: 66 testes / 338
+assertions.
 
 ### Incremento dev.21 — fila sem perda por filtragem de acesso
 
