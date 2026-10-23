@@ -55,3 +55,9 @@ instalação no Runtime e smoke autenticado continuam pendentes.
 
 Dev 0.1.0-dev.15 corrige somente o pacote da fixture Kernel para `ACULTA Portal`,
 em conformidade com o gate de componentes próprios.
+
+Dev 0.1.0-dev.16 repete o Kernel LMS/Index em MariaDB: 4 testes / 208
+assertions, incluindo acesso de estudante e educador, terceiro negado e relações
+de leitura, galeria e documento. O teste usa Group real e plugin fixture para a
+relação PDF; as 53 depreciações são de Core/contrib. Boot owner e Runtime seguem
+pendentes.

@@ -1,5 +1,15 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.16 — revalidar acesso e relações do Index em MariaDB
+
+- Repetido `LmsCourseContentIndexAccessKernelTest` no MariaDB dedicado:
+  4 testes / 208 assertions, sem falhas; PHPUnit reportou 53 depreciações
+  upstream. O harness cobre estudante (`takeAccess()`), educador (permissão
+  contextual), terceiro negado, Domain canônico `courses` e relações de leitura,
+  galeria e documento com providers/YAMLs owner e plugin Group fixture.
+- O teste comprova o fluxo da API do Index com entidades e Group reais; não
+  comprova boot completo de `aculta_lms_resources` nem homologação Runtime.
+
 ## 0.1.0-dev.15 — pacote da fixture alinhado ao Portal
 
 - O módulo fixture do Kernel usa `package: ACULTA Portal`, inclusive nos

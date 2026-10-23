@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'F15: boot completo dos módulos owner, instalar campos no Runtime de teste e fazer smoke autenticado/visual ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-version_note: "0.1.0-dev.15 (Unit provider 5/31 PASS; Kernel LMS/Index 4/210 PASS em MariaDB, 53 depreciações Core/contrib; inclui leituras, galerias e course_document com plugin Group fixture; providers compilados dos YAMLs owner. Pacote da fixture alinhado ao Portal; gate de componentes próprios 59 checks PASS. Boot owner e Runtime pendentes)"
+version_note: "0.1.0-dev.16 (Unit provider 5/31 PASS; Kernel LMS/Index 4/208 PASS em MariaDB, 53 depreciações Core/contrib; inclui policy de estudante/educador, leituras, galerias e course_document com plugin Group fixture; providers compilados dos YAMLs owner. Boot owner e Runtime pendentes)"
