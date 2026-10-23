@@ -6,7 +6,8 @@
   permanecer até a projeção convergir, enquanto Entity Access da origem e dos
   alvos é revalidado a cada consulta.
 - `owner_uid` opcional foi autorizado como metadado interno para filtros como
-  “Minha produção”; não será retornado nos DTOs. Coluna, migração, filtro e
+  “Minha produção”; o filtro poderá receber qualquer UID, sempre com Entity
+  Access revalidado, e não retornará o UID nos DTOs. Coluna, migração, filtro e
   projeção seletiva pelos providers ainda precisam ser implementados.
 
 ## 0.1.0-dev.138 — proteger hooks iniciais de atualização parcial
