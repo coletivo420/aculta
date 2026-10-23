@@ -8,6 +8,8 @@ use Drupal\aculta_portal\Access\EmailConfirmedAccessCheck;
 use Drupal\aculta_portal\Access\ProtectedRouteAccessCheck;
 use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\commerce_checkout\Controller\CheckoutController;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -90,6 +92,85 @@ final class ProtectedRouteAccessCheckTest extends UnitTestCase {
     );
 
     self::assertFalse($checker->course($routeMatch, $student)->isAllowed());
+  }
+
+  /**
+   * Visitante anônimo com carrinho na sessão chega ao passo de login.
+   *
+   * O Commerce permite o anônimo pelo carrinho; e-mail e termos ainda não se
+   * aplicam, e os neutros não podem anular esse acesso (neutro é negado).
+   */
+  public function testAnonymousCheckoutKeepsCommerceAccess(): void {
+    $checker = $this->checkoutChecker(AccessResult::allowed()->cachePerUser());
+
+    $result = $checker->checkout($this->checkoutRouteMatch(), $this->anonymousAccount());
+
+    self::assertTrue($result->isAllowed());
+  }
+
+  /** Anônimo cujo carrinho o Commerce não reconhece continua barrado. */
+  public function testAnonymousCheckoutWithoutCartIsDenied(): void {
+    $checker = $this->checkoutChecker(AccessResult::forbidden()->cachePerUser());
+
+    $result = $checker->checkout($this->checkoutRouteMatch(), $this->anonymousAccount());
+
+    self::assertTrue($result->isForbidden());
+  }
+
+  /** Autenticado com e-mail pendente continua barrado mesmo com o Commerce liberando. */
+  public function testAuthenticatedCheckoutStillRequiresConfirmedEmail(): void {
+    $userData = $this->createMock(UserModuleDataInterface::class);
+    $userData->method('get')->willReturn(FALSE);
+    $checker = $this->checkoutChecker(
+      AccessResult::allowed()->cachePerUser(),
+      new EmailConfirmedAccessCheck(new EmailConfirmationPolicy(
+        $userData,
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(ModuleHandlerInterface::class),
+      )),
+    );
+
+    $student = $this->createMock(AccountInterface::class);
+    $student->method('isAnonymous')->willReturn(FALSE);
+    $student->method('hasPermission')->willReturn(FALSE);
+    $student->method('id')->willReturn('7');
+
+    self::assertTrue($checker->checkout($this->checkoutRouteMatch(), $student)->isForbidden());
+  }
+
+  /** Checker de checkout com o Commerce substituído pelo resultado informado. */
+  private function checkoutChecker(AccessResult $commerceAccess, ?EmailConfirmedAccessCheck $emailCheck = NULL): ProtectedRouteAccessCheck {
+    $controller = $this->createMock(CheckoutController::class);
+    $controller->method('checkAccess')->willReturn($commerceAccess);
+    $classResolver = $this->createMock(ClassResolverInterface::class);
+    $classResolver->method('getInstanceFromDefinition')
+      ->with(CheckoutController::class)
+      ->willReturn($controller);
+
+    return new ProtectedRouteAccessCheck(
+      $emailCheck ?? new EmailConfirmedAccessCheck(new EmailConfirmationPolicy(
+        $this->createMock(UserModuleDataInterface::class),
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(ModuleHandlerInterface::class),
+      )),
+      $classResolver,
+      new AcultaUserAgreementPolicy($this->acceptedTermsLedger()),
+    );
+  }
+
+  /** Rota do formulário de checkout com um pedido de loja. */
+  private function checkoutRouteMatch(): RouteMatchInterface {
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('bundle')->willReturn('default');
+    $routeMatch = $this->createMock(RouteMatchInterface::class);
+    $routeMatch->method('getParameter')->with('commerce_order')->willReturn($order);
+    return $routeMatch;
+  }
+
+  private function anonymousAccount(): AccountInterface {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAnonymous')->willReturn(TRUE);
+    return $account;
   }
 
   /**

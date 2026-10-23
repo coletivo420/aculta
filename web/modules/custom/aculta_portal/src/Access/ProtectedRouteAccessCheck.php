@@ -30,11 +30,18 @@ final class ProtectedRouteAccessCheck {
   /** Checkout do Commerce: rota /checkout/{pedido}/{etapa}. */
   public function checkout(RouteMatchInterface $routeMatch, AccountInterface $account): AccessResult {
     $commerce = $this->classResolver->getInstanceFromDefinition(CheckoutController::class);
+    $commerceAccess = $commerce->checkAccess($routeMatch, $account);
+    // Antes do login não há e-mail nem aceite a verificar: o Commerce já decide
+    // o visitante anônimo pela sessão do carrinho. Combinar os resultados
+    // neutros com um acesso permitido o tornaria neutro -- e neutro é negado.
+    if ($account->isAnonymous()) {
+      return $commerceAccess;
+    }
     $order = $routeMatch->getParameter('commerce_order');
     $emailAccess = $order instanceof OrderInterface && $order->bundle() === 'curso'
       ? AccessResult::allowed()->cachePerUser()
       : $this->emailCheck->access($account);
-    return $commerce->checkAccess($routeMatch, $account)
+    return $commerceAccess
       ->andIf($emailAccess)
       ->andIf($this->terms($account));
   }
