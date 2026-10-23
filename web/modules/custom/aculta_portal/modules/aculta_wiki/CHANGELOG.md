@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.26 — idempotência da submissão
+
+- Cada formulário tem token aleatório; submissões repetidas da mesma chave
+  devolvem a proposta original por até 24 horas. Lock serializa os POSTs e a
+  referência expira sem guardar o texto submetido.
+- Salvamento, registro Flood e referência idempotente compartilham a transação
+  do banco. Kernel focal: 1 teste / 97 assertions, incluindo replay direto e
+  pelo Form API; classe completa: 9 testes / 369 assertions. PHPCS e lint
+  passaram. Runtime desabilitado.
+
 ## 0.1.0-dev.25 — limite de submissão comunitária
 
 - A submissão usa Flood do Drupal para limitar cada conta a 10 propostas por

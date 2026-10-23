@@ -124,7 +124,8 @@ fallback real e evitar warning falso de `entity_usage`.
 | Fonte insegura | Kernel | Rejeita URI `javascript:` antes de persistir | aprovado |
 | Alvo alterado após carregar a página | Kernel | Serviço recarrega o Node e salva o VID padrão atual | aprovado |
 | Limite de abuso | Kernel | A 11ª proposta em uma hora recebe HTTP 429 e não persiste | aprovado (focal: 1 teste / 94 assertions) |
-| Idempotência de reenvio concorrente | Kernel | POST repetido com o mesmo token não cria duplicata | planejado |
+| Reenvio com o mesmo token | Kernel | POST direto repetido e replay Form API retornam a proposta existente | aprovado (focal: 1 teste / 97 assertions; classe: 9 / 369) |
+| Concorrência entre POSTs idempotentes | Kernel | Lock serializa; segundo pedido retorna a proposta original após o primeiro | implementação; teste multiprocesso pendente |
 | Decisão editorial e histórico | Kernel | Form API/Content Moderation cria revisão e bloqueia aplicação quando o VID-base ficou obsoleto | planejado |
 
 O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib e

@@ -7,6 +7,9 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
@@ -26,12 +29,17 @@ final class WikiProposalSubmission {
 
   private const FLOOD_WINDOW = 3600;
 
+  private const IDEMPOTENCY_TTL = 86400;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
     private readonly FloodInterface $flood,
+    private readonly LockBackendInterface $lock,
+    private readonly KeyValueExpirableFactoryInterface $keyValueExpirableFactory,
+    private readonly Connection $database,
   ) {}
 
   /**
@@ -48,6 +56,7 @@ final class WikiProposalSubmission {
     string $proposedText,
     string $rationale,
     array $sourceUris = [],
+    ?string $idempotencyToken = NULL,
   ): WikiProposal {
     $this->assertCanSubmit();
 
@@ -100,34 +109,72 @@ final class WikiProposalSubmission {
     }
     $validatedSources = array_values(array_unique($validatedSources));
 
-    $intentLabel = WikiProposal::INTENTS[$intent];
-    $subjectSuffix = ' — ' . $intentLabel;
-    $subject = mb_substr(trim($target->label()), 0, 255 - mb_strlen($subjectSuffix)) . $subjectSuffix;
-    $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')->create([
-      'uid' => $this->currentUser->id(),
-      'subject' => $subject,
-      'target' => $target->id(),
-      'target_revision_id' => $target->getRevisionId(),
-      'intent' => $intent,
-      'proposed_text' => $proposedText,
-      'rationale' => $rationale,
-      'source_uri' => array_map(static fn (string $sourceUri): array => ['value' => $sourceUri], $validatedSources),
-      'state' => 'submitted',
-      'revision_log' => 'Proposta enviada',
-    ]);
-    if (!$proposal instanceof WikiProposal) {
-      throw new \LogicException('Wiki proposal storage returned an unexpected entity.');
+    $idempotencyToken ??= bin2hex(random_bytes(32));
+    if (!preg_match('/^[a-f0-9]{64}$/D', $idempotencyToken)) {
+      throw new UnprocessableEntityHttpException('Token de envio inválido. Recarregue o formulário.');
     }
-    $proposal->setNewRevision(TRUE);
-    $proposal->isDefaultRevision(TRUE);
     $identifier = (string) $this->currentUser->id();
-    if (!$this->flood->isAllowed(self::FLOOD_EVENT, self::FLOOD_LIMIT, self::FLOOD_WINDOW, $identifier)) {
-      throw new TooManyRequestsHttpException(self::FLOOD_WINDOW, 'O limite temporário de propostas foi atingido. Tente novamente mais tarde.');
+    $idempotencyKey = hash('sha256', $identifier . ':' . $idempotencyToken);
+    $lockName = 'aculta_wiki.proposal_submission:' . $idempotencyKey;
+    if (!$this->lock->acquire($lockName, 30.0)) {
+      $this->lock->wait($lockName, 5);
+      if (!$this->lock->acquire($lockName, 30.0)) {
+        throw new TooManyRequestsHttpException(5, 'Este envio ainda está sendo processado. Tente novamente em alguns segundos.');
+      }
     }
-    $proposal->save();
-    $this->flood->register(self::FLOOD_EVENT, self::FLOOD_WINDOW, $identifier);
 
-    return $proposal;
+    $store = $this->keyValueExpirableFactory->get('aculta_wiki_proposal_submissions');
+    try {
+      $existingId = $store->get($idempotencyKey);
+      if (is_numeric($existingId)) {
+        $existing = $this->entityTypeManager->getStorage('aculta_wiki_proposal')->load((int) $existingId);
+        if ($existing instanceof WikiProposal && (int) $existing->getOwnerId() === (int) $identifier) {
+          return $existing;
+        }
+        $store->delete($idempotencyKey);
+      }
+
+      if (!$this->flood->isAllowed(self::FLOOD_EVENT, self::FLOOD_LIMIT, self::FLOOD_WINDOW, $identifier)) {
+        throw new TooManyRequestsHttpException(self::FLOOD_WINDOW, 'O limite temporário de propostas foi atingido. Tente novamente mais tarde.');
+      }
+
+      $intentLabel = WikiProposal::INTENTS[$intent];
+      $subjectSuffix = ' — ' . $intentLabel;
+      $subject = mb_substr(trim($target->label()), 0, 255 - mb_strlen($subjectSuffix)) . $subjectSuffix;
+      $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')->create([
+        'uid' => $this->currentUser->id(),
+        'subject' => $subject,
+        'target' => $target->id(),
+        'target_revision_id' => $target->getRevisionId(),
+        'intent' => $intent,
+        'proposed_text' => $proposedText,
+        'rationale' => $rationale,
+        'source_uri' => array_map(static fn (string $sourceUri): array => ['value' => $sourceUri], $validatedSources),
+        'state' => 'submitted',
+        'revision_log' => 'Proposta enviada',
+      ]);
+      if (!$proposal instanceof WikiProposal) {
+        throw new \LogicException('Wiki proposal storage returned an unexpected entity.');
+      }
+      $proposal->setNewRevision(TRUE);
+      $proposal->isDefaultRevision(TRUE);
+      $transaction = $this->database->startTransaction();
+      try {
+        $proposal->save();
+        $this->flood->register(self::FLOOD_EVENT, self::FLOOD_WINDOW, $identifier);
+        $store->setWithExpire($idempotencyKey, (int) $proposal->id(), self::IDEMPOTENCY_TTL);
+        unset($transaction);
+      }
+      catch (\Throwable $exception) {
+        $transaction->rollBack();
+        throw $exception;
+      }
+
+      return $proposal;
+    }
+    finally {
+      $this->lock->release($lockName);
+    }
   }
 
   /**

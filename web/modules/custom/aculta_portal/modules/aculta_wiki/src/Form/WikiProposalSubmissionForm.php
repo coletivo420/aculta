@@ -50,6 +50,11 @@ final class WikiProposalSubmissionForm extends FormBase {
       throw new \InvalidArgumentException('A Wiki entry is required to submit a proposal.');
     }
     $form_state->set('wiki_proposal_target_id', (int) $node->id());
+    $submissionToken = $form_state->get('wiki_proposal_submission_token');
+    if (!is_string($submissionToken)) {
+      $submissionToken = bin2hex(random_bytes(32));
+      $form_state->set('wiki_proposal_submission_token', $submissionToken);
+    }
 
     $form['intro'] = [
       '#type' => 'item',
@@ -83,6 +88,10 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#description' => $this->t('Opcional. Uma URL HTTP ou HTTPS por linha, até dez fontes.'),
       '#rows' => 4,
       '#maxlength' => 20480,
+    ];
+    $form['submission_token'] = [
+      '#type' => 'hidden',
+      '#value' => $submissionToken,
     ];
     $form['actions']['submit'] = [
       '#type' => 'submit',
@@ -132,6 +141,7 @@ final class WikiProposalSubmissionForm extends FormBase {
         (string) $form_state->getValue('proposed_text'),
         (string) $form_state->getValue('rationale'),
         $this->getSourceUris((string) $form_state->getValue('source_uris')),
+        (string) $form_state->getValue('submission_token'),
       );
     }
     catch (UnprocessableEntityHttpException $exception) {

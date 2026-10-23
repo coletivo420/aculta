@@ -94,5 +94,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   revalidando `view revision` para cada uma. Exibir estado e retorno sem nomes de
   moderadores; cache varia por conta, permissões e cursor.
 - Proteção de envio (dev.25): usar Flood Core, 10 propostas por conta em 3.600
-  segundos; lançar 429 antes de salvar excedentes. O limite não garante
-  idempotência contra POSTs concorrentes.
+  segundos; lançar 429 antes de salvar excedentes.
+- Idempotência (dev.26): token aleatório por formulário, indexado por hash de
+  conta/token no KeyValue expirable por 24h; lock e gravação transacional. O
+  replay retorna a mesma proposta e não consome nova cota Flood.

@@ -7,10 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.26`: reenvios do mesmo formulário retornam a proposta criada por
+  até 24 horas; lock e transação protegem a gravação. Kernel focal: 1 teste / 97
+  assertions; concorrência multiprocesso segue pendente.
 - `0.1.0-dev.25`: submissões limitadas a 10 por hora por conta via Flood Core;
   excedentes recebem HTTP 429 sem persistência. Kernel focal: 1 teste / 94
-  assertions; classe completa: 9 testes / 366 assertions. Idempotência entre
-  POSTs simultâneos segue pendente.
+  assertions; classe completa antes da idempotência: 9 testes / 366 assertions.
 - `0.1.0-dev.24`: o status privado apresenta histórico paginado de revisões
   autorizadas, com estado e retorno editorial; nomes de moderadores não são
   expostos. Kernel focal: 1 teste / 93 assertions.

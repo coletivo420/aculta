@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.25**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.26**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.26 — idempotência da submissão
+
+Token por formulário com expiração de 24 horas faz reenvios devolverem a
+proposta original. Lock serializa requisições e gravação de entidade, Flood e
+token ocorre na mesma transação. Kernel focal MariaDB: 1 teste / 97 assertions,
+com replay direto e via Form API; classe completa: 9 testes / 369 assertions.
 
 ### Incremento dev.25 — limite de submissão comunitária
 

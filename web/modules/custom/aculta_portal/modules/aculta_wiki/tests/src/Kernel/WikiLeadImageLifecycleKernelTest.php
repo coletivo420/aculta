@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\KeyValueStore\DatabaseStorageExpirable;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
@@ -104,6 +105,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_wiki_proposal');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
+    $this->container->get('database')->schema()->createTable(
+      'key_value_expire',
+      DatabaseStorageExpirable::schemaDefinition(),
+    );
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain', 'filter']);
@@ -580,7 +585,18 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'Dados do estudo revisado',
       'A referência atual não cobre este ponto.',
       ['https://example.invalid/pesquisa', 'https://example.invalid/dados'],
+      str_repeat('a', 64),
     );
+    $replayedProposal = $submission->submit(
+      $staleTarget,
+      'reference',
+      'Payload duplicado ignorado',
+      'A mesma chave de envio precisa retornar a proposta original.',
+      [],
+      str_repeat('a', 64),
+    );
+    self::assertSame((int) $proposal->id(), (int) $replayedProposal->id());
+    self::assertSame('Dados do estudo revisado', $replayedProposal->get('proposed_text')->value);
 
     self::assertSame((int) $submitter->id(), (int) $proposal->getOwnerId());
     self::assertSame('submitted', $proposal->get('state')->value);
@@ -809,6 +825,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'proposed_text' => 'Texto sugerido pelo Form API',
       'rationale' => 'Ajuste comprovado pela fonte.',
       'source_uris' => 'https://example.invalid/referencia',
+      'submission_token' => $formState->get('wiki_proposal_submission_token'),
     ]);
     $build = [];
     $proposalForm->validateForm($build, $formState);
@@ -819,6 +836,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->load($formState->getRedirect()->getRouteParameters()['proposal']);
     self::assertInstanceOf(WikiProposal::class, $redirectProposal);
     self::assertSame('correction', $redirectProposal->get('intent')->value);
+    $firstFormSubmissionId = (int) $redirectProposal->id();
+    $proposalForm->submitForm($build, $formState);
+    self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
     self::assertSame(27, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
