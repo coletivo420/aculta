@@ -111,3 +111,11 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 ## GS-0.2-A/B — navegação inicial implementada (2026-10-23)
 
 `GreenStashNavigation` fornece nove áreas navegáveis com rotas internas `/green-stash/{section}`, controladas por `access aculta green stash` e purpose `account`. O controller aplica também os checks do StudioExperienceManager. Render arrays têm heading, navegação acessível e estado de preparação sem dados privados ou operações financeiras. Teste Unit criado: `GreenStashNavigationTest`. **Não existe nesta fase UI SDC final, bottom navigation nem listagem real de produtos/pedidos; não alegar interface operacional pronta.** Próximo GS-0.2-C: autorização por store/entidade + dados reais paginados; parte visual SDC/UI Suite no tema após auditoria. PHP/Kernel/Browser e rotas no homelab pendentes.
+
+## GS-0.2-B.1 — Correção de rotas PT-BR e descoberta Studio (2026-10-23)
+
+- URLs canônicas: `/estudio/loja`, `/estudio/loja/visao-geral`, `/estudio/loja/produtos`, `/estudio/loja/pedidos`, `/estudio/loja/estoque`, `/estudio/loja/envios`, `/estudio/loja/promocoes`, `/estudio/loja/clientes`, `/estudio/loja/relatorios`, `/estudio/loja/configuracoes`. URLs não usam acentos para estabilidade.
+- IDs internos de rota `aculta_commerce.green_stash[_area]`, entidades, namespaces e API PHP preservados. O parâmetro de URL é `secao`; mapeamento explícito de slug público PT-BR para identificadores internos.
+- Registro do provider Green Stash migrado do hook `aculta_commerce_container_alter` para `AcultaCommerceServiceProvider::alter()`, mecanismo Drupal próprio de alteração de definições de serviço. Continuidade condicionada a compilação do container e teste no homelab.
+- Não adicionar redirecionamento público legado de `/green-stash` até revisar links de terceiros e rotas históricas. As rotas anteriores não foram homologadas para produção, mas validar a necessidade de redirecionamento HTTP 301/308 no ambiente.
+- GS-0.2-C: **antes de exibir consultas reais**, implementar filtro por store/entidade e assegurar que totais/contadores não vazem dados. O shell de navegação atual ainda não implementa o design mobile-first do tema.
