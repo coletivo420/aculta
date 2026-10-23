@@ -1,3 +1,9 @@
 services:
   aculta_commerce.green_stash_access:
     class: Drupal\aculta_commerce\Access\GreenStashAccessPolicy
+  aculta_commerce.experience.green_stash:
+    class: Drupal\aculta_commerce\Experience\GreenStashExperienceProvider
+    arguments: ['@aculta_commerce.green_stash_access']
+  aculta_commerce.green_stash_controller:
+    class: Drupal\aculta_commerce\Controller\GreenStashController
+    arguments: ['@aculta_studio.experience_manager', '@current_user']
