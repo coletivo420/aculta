@@ -32,12 +32,11 @@ foi interrompida em `node:220500`, com 220.500 entradas e 1.000.000 jobs ainda
 queued. O resultado parcial é somente diagnóstico; não comparar nem reportar
 como tempo do Index.
 
-A repetição corrigida iniciou em 2026-10-23 às 08:56 BRT no banco dedicado
+A repetição corrigida iniciou em 2026-10-23 no banco dedicado
 `localhost/aculta_simpletest`, com o código que suprime a fila no setup e mede
 setup, rebuild e auditoria separadamente. O teste exige zero jobs criados para
-as fontes sintéticas e zero divergências ao concluir. A execução segue ativa
-(processo PHPUnit 204077 e worker PHP 204084, verificados em 2026-10-23); nenhum
-resultado de 1M foi medido ainda.
+as fontes sintéticas e zero divergências ao concluir. Foi interrompida após
+cerca de 58 minutos e não produziu resultado de 1M; ver seção abaixo.
 
 ## Resultados
 
@@ -172,3 +171,31 @@ enquanto sources permaneceu dominante (~7,2 s). Pico subiu ~6 MiB. São duas
 execuções individuais, não pareadas; não isolam causalidade e não definem SLO.
 A auditoria de 100k precisa ser medida novamente antes de considerar 1M. JSON
 bruto: `/tmp/aculta-index-maintenance-10000-indexability-fast-2026-10-23.json`.
+
+## Auditoria após otimização em 100k — uma execução, sem SLO
+
+Após a decisão de repetir 100k com `ContentIndexIndexabilityProviderInterface`,
+o harness foi executado no banco MariaDB de teste em 2026-10-23. A fixture foi
+semeada por SQL em lotes; enumeração, carga, projeção, rebuild e auditoria
+usaram o caminho real do Index e a Entity API. Esta rodada também inclui o
+campo opcional `owner_uid`. O setup levou 12,26 s e ficou fora dos tempos de
+manutenção.
+
+| Escala | Rebuild (s) | Projeções/s | Lotes rebuild | Auditoria (s) | Lotes audit | Pico rebuild / audit (MiB) | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 100.000 | 209,542 | 477 | 201 | 724,666 | 402 | 136 / 558 | 0 |
+
+O rebuild p50/p95/máximo por lote foi 565 / 5.507 / 6.176 ms. A auditoria
+distribuiu-se em entries: 34,814 s (200 lotes), relations: 0,005 s (1 lote),
+sources: 689,766 s (201 lotes). Na fase sources, p50 foi 225 ms, p95 28,31 s e
+máximo 72,71 s por lote. A memória de pico da auditoria foi 558 MiB. O teste
+concluiu em 15m50s, com zero fontes ausentes, zero entradas ausentes e zero
+projeções obsoletas; PHPUnit passou (1 teste / 14 assertions).
+
+Embora a checagem rápida tenha reduzido trabalho na fase entries, a fase
+sources segue dominante e apresenta cauda longa nesta amostra. Uma execução não
+permite afirmar causalidade nem extrapolar linearmente para 1M. O próximo passo
+é analisar e otimizar essa passagem antes de outra rodada de grande escala. O
+JSON bruto está em
+`/tmp/aculta-index-maintenance-100000-indexability-owneruid-2026-10-23.json`;
+checkpoints foram gravados no arquivo `.progress.json` correspondente.

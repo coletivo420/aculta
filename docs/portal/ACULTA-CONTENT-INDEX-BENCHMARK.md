@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados. Rebuild/auditoria foram medidos em 10k e 100k em uma repetição diagnóstica por cenário. Duas tentativas anteriores de 1M via Entity API foram interrompidas sem tempos válidos. A fixture agora é semeada por SQL em lotes, a partir do mapeamento real do storage e de uma entidade-semente criada pela Entity API; enumeração, carga, projeção, rebuild e auditoria continuam no caminho real do Index. A validação 10k passou sem divergências. Uma tentativa 100k com a nova fixture foi interrompida após aproximadamente 15 min, sem JSON final; a auditoria precisa de análise antes de ampliar novamente.
+Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados. Rebuild/auditoria foram medidos em 10k e 100k em execuções diagnósticas. Duas tentativas anteriores de 1M foram interrompidas sem tempos válidos. A fixture agora é semeada por SQL em lotes, a partir do mapeamento real do storage e de uma entidade-semente criada pela Entity API; enumeração, carga, projeção, rebuild e auditoria continuam no caminho real do Index. A repetição 100k após a otimização de elegibilidade concluiu sem divergências: rebuild 209,542 s e auditoria 724,666 s; a passagem source→catalog domina (689,766 s, p95 de lote 28,31 s). A cauda longa precisa ser analisada antes de nova rodada de 1M.
 
 ## Matriz fixada
 
@@ -81,9 +81,9 @@ estão no relatório de resultados, com coleta complementar datada de
 2026-10-23.
 
 Um harness separado mede backfill real pela API Drupal e auditoria incremental
-bidirecional com 10.000 Nodes sintéticos, em três repetições. Cada operação
-usa o provider fixture `sample_content`; criação das fontes e troca do ponteiro
-ativo ficam fora dos tempos. Resultado, CSV e limitações estão em
+bidirecional com Nodes sintéticos. Cada operação usa o provider fixture
+`sample_content`; criação das fontes e troca do ponteiro ativo ficam fora dos
+tempos. Resultado, CSV e limitações estão em
 [rebuild e auditoria](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
 Execução controlada do harness, após carregar o arquivo local de configuração

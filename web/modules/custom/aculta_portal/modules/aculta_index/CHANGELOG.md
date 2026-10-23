@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.142 — medir auditoria otimizada em 100k
+
+- Repetição MariaDB da auditoria incremental com 100.000 fontes, após o
+  contrato rápido de elegibilidade: rebuild 209,542 s; auditoria 724,666 s;
+  zero divergências. A passagem source→catalog consumiu 689,766 s, com p95 de
+  lote 28,31 s e máximo de 72,71 s; pico da auditoria 558 MiB.
+- PHPUnit do benchmark passou (1 teste / 14 assertions). É uma medição
+  diagnóstica isolada, sem SLO; não extrapolar para 1M. Análise/otimização da
+  passagem source→catalog precede nova rodada de grande escala.
+- Relatório detalhado e plano atualizados em `docs/portal/benchmarks/` e
+  `docs/portal/ACULTA-CONTENT-INDEX-BENCHMARK.md`.
+
 ## 0.1.0-dev.141 — adicionar filtro interno de owner UID
 
 - `owner_uid` opcional foi adicionado ao projection, schema do catálogo e
