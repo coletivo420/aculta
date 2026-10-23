@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.55 — correlacionar a página autorizada com Statistics em Kernel
+
+- Kernel usa `ContentIndexQuery`/Entity Access reais e o aggregator/storage
+  Statistics reais com provider de fixture `wiki_entry`.
+- A página pública devolve seus totais; após a policy da fonte revogar acesso,
+  a projeção candidata não devolve entidade nem total. 1 teste / 14 assertions
+  PASS em MariaDB; grants reais dos módulos owner continuam pendentes.
+
 ## 0.1.0-dev.54 — validar o Kernel do Statistics
 
 - Executa `DailyAggregateStorageKernelTest` no MariaDB dedicado de testes:
