@@ -62,6 +62,7 @@ final class ContentIndexAccessFilter {
       }
 
       $allowedInChunk = [];
+      $purposeChecks = [];
       foreach ($byType as $entityTypeId => $ids) {
         if (!$this->entityTypeManager->hasDefinition($entityTypeId)) {
           continue;
@@ -97,40 +98,66 @@ final class ContentIndexAccessFilter {
             : NULL;
           if ($purpose !== NULL && $this->domainPurposeManager !== NULL) {
             $cacheability->addCacheContexts(['domain']);
-            // Core's in-request Entity Access cache is keyed by entity,
-            // operation, language and account, but not by cache contexts such
-            // as Domain. Clear content handlers before and after changing the
-            // purpose so a result from another Domain cannot deny or expose
-            // this candidate, including nested access checks on related
-            // entities (for example a ForumPost's topic).
-            $this->resetContentEntityAccessCaches();
-            try {
-              $access = $this->domainPurposeManager->runInPurpose(
-                $purpose,
-                fn (): AccessResultInterface => $this->checkEntityAccess($translation, $account, $provider),
-              );
-            }
-            finally {
-              $this->resetContentEntityAccessCaches();
-            }
-            if (!$access instanceof AccessResultInterface) {
-              // A missing or unavailable canonical Domain must never fall back
-              // to the active request's potentially broader access context.
-              continue;
-            }
+            $purposeChecks[$purpose][] = [
+              'candidate' => $candidate,
+              'translation' => $translation,
+              'provider' => $provider,
+            ];
+            continue;
           }
-          elseif ($purpose !== NULL) {
+          if ($purpose !== NULL) {
             // A purpose-aware provider without a configured purpose manager
             // cannot be safely checked in the current request context.
             continue;
           }
-          else {
-            $access = $this->checkEntityAccess($translation, $account, $provider);
-          }
+
+          $access = $this->checkEntityAccess($translation, $account, $provider);
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($translation));
           $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($access));
           if ($access->isAllowed()) {
             $allowedInChunk[$this->candidateKey($candidate)] = $translation;
+          }
+        }
+      }
+
+      foreach ($purposeChecks as $purpose => $checks) {
+        // Core's in-request Entity Access cache is keyed by entity, operation,
+        // language and account, but not by cache contexts such as Domain.
+        // Every check in this group shares one canonical purpose, so clear
+        // content handlers once before and after the group. This also covers
+        // nested checks on related entities (for example a ForumPost's topic).
+        $this->resetContentEntityAccessCaches();
+        try {
+          $accessResults = $this->domainPurposeManager->runInPurpose(
+            $purpose,
+            function () use ($checks, $account): array {
+              $results = [];
+              foreach ($checks as $check) {
+                $key = $this->candidateKey($check['candidate']);
+                $results[$key] = $this->checkEntityAccess($check['translation'], $account, $check['provider']);
+              }
+              return $results;
+            },
+          );
+        }
+        finally {
+          $this->resetContentEntityAccessCaches();
+        }
+        if (!is_array($accessResults)) {
+          // A missing canonical Domain must never fall back to the active
+          // request's potentially broader access context.
+          continue;
+        }
+        foreach ($checks as $check) {
+          $key = $this->candidateKey($check['candidate']);
+          $access = $accessResults[$key] ?? NULL;
+          if (!$access instanceof AccessResultInterface) {
+            continue;
+          }
+          $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($check['translation']));
+          $cacheability = $cacheability->merge(CacheableMetadata::createFromObject($access));
+          if ($access->isAllowed()) {
+            $allowedInChunk[$key] = $check['translation'];
           }
         }
       }

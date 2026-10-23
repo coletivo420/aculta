@@ -16,6 +16,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityAccessControlHandlerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -163,17 +164,22 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     });
 
     $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('loadMultiple')->with(['1'])->willReturn([
+    $storage->method('loadMultiple')->with(['1', '2'])->willReturn([
       '1' => $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:1'),
+      '2' => $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:2'),
     ]);
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $entityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
+    $accessHandler = $this->createMock(EntityAccessControlHandlerInterface::class);
+    $accessHandler->expects(self::exactly(2))->method('resetCache');
     $manager = $this->createMock(EntityTypeManagerInterface::class);
-    $manager->method('getDefinitions')->willReturn([]);
+    $manager->method('getDefinitions')->willReturn(['node' => $entityType]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $manager->expects(self::exactly(2))->method('getAccessControlHandler')->with('node')->willReturn($accessHandler);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
-    $domainStorage->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
+    $domainStorage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
     $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
     $purposeManager = new DomainPurposeManager(
       $manager,
@@ -186,9 +192,10 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
 
     $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+      ['entity_type' => 'node', 'entity_id' => '2', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));
 
-    self::assertCount(1, $result->entities);
+    self::assertCount(2, $result->entities);
     self::assertSame($previousDomain, $activeDomain);
     self::assertContains('domain', $result->cacheability->getCacheContexts());
   }

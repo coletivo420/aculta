@@ -26,7 +26,7 @@ A medição não é SLO e não inclui a consulta SQL de candidatos do catálogo.
   latências individuais estão no [CSV bruto]
   (aculta-index-forum-access-2026-10-23.csv).
 
-## Resultados
+## Baseline antes de agrupar o purpose
 
 | Candidatos | Acesso do membro | p50 mediano (ms) | p95 mediano (ms) | Acesso do visitante | p50 mediano (ms) | p95 mediano (ms) |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -36,13 +36,37 @@ A medição não é SLO e não inclui a consulta SQL de candidatos do catálogo.
 | 50 | 50 permitidos | 305.501 | 522.265 | 0 permitido | 178.137 | 282.105 |
 | 100 | 100 permitidos | 703.354 | 1009.602 | 0 permitido | 357.591 | 501.705 |
 
-Com os hooks realmente registrados e sem usar UID 1, a latência de 100
-candidatos ficou em aproximadamente 0,70 s p50 para membro e 0,36 s p50 para
-visitante. O custo do membro cresceu com o número de candidatos e merece
-otimização; o limite fixo de 100 permanece uma decisão de segurança e não deve
-ser elevado com base nesta medição. Os resultados variam entre processos e
-hardware. A fixture usa um Group compartilhado e não representa diversidade de
-papéis, múltiplos grupos nem cache de uma instalação real.
+## Agrupamento por purpose canônico
+
+O filtro agora agrupa as verificações de uma página pelo mesmo purpose. Para
+cada grupo, limpa os caches de Entity Access uma vez antes e depois, mantendo a
+checagem individual de cada entidade e a restauração do Domain. Uma asserção
+Unit confirma que dois tópicos sob `forum` compartilham uma resolução do Domain
+e somente dois ciclos de reset de cache, sem pular as duas decisões de acesso.
+
+Repeti a medição em três processos, com o mesmo fixture e 900 amostras no total.
+Cada execução passou com 395 assertions e reportou 38 depreciações de
+Core/contrib. Percentis continuam nearest-rank; a tabela mostra a mediana dos
+p50/p95 calculados por processo.
+
+| Candidatos | Membro p50/p95 (ms) | Visitante p50/p95 (ms) |
+|---:|---:|---:|
+| 1 | 4,773 / 9,794 | 2,384 / 3,048 |
+| 12 | 43,898 / 70,511 | 20,689 / 38,297 |
+| 25 | 99,667 / 186,152 | 43,604 / 69,600 |
+| 50 | 199,114 / 335,962 | 82,025 / 158,700 |
+| 100 | 386,011 / 566,662 | 182,232 / 293,314 |
+
+No tamanho 100, a mediana caiu de 703,354/1.009,602 ms para 386,011/566,662
+ms no membro (45,1%/43,9%) e de 357,591/501,705 ms para 182,232/293,314 ms no
+visitante (49,0%/41,5%). Os resultados indicam ganho nesta fixture, sem definir
+SLO nem garantir o mesmo perfil em produção. O limite fixo de 100 permanece
+inalterado. Os dados brutos estão no [CSV das execuções agrupadas]
+(aculta-index-forum-access-grouped-2026-10-23.csv); o baseline permanece no
+[CSV anterior](aculta-index-forum-access-2026-10-23.csv).
+
+A fixture usa um Group compartilhado e não representa diversidade de papéis,
+múltiplos grupos nem cache de uma instalação real.
 
 ## Reprodução
 

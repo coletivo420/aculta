@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.157 — agrupar revalidação pelo purpose
+
+- `ContentIndexAccessFilter` agora limpa caches de Entity Access uma vez antes
+  e depois do grupo por purpose; cada entidade continua passando pela checagem
+  própria, e falha sem Domain continua negada.
+- Unit cobre duas entidades em `forum` com uma resolução do Domain e exatamente
+  dois ciclos de reset. Forum Kernel 4/199, Wiki Kernel 2/32; suítes completas
+  Unit 50/250 e Kernel MariaDB 103/1.526 passaram.
+- Três medições por processo reduziram p50/p95 em 100 candidatos para membro de
+  703/1.010 ms a 386/567 ms e visitante de 358/502 ms a 182/293 ms. Evidências
+  e amostras em `docs/portal/benchmarks/ACULTA-CONTENT-INDEX-FORUM-ACCESS-2026-10-23.md`.
+
 ## 0.1.0-dev.156 — repetir Unit após migração dos hooks
 
 - Suíte Unit inteira passou: 50 testes / 241 assertions; 14 depreciações

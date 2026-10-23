@@ -18,6 +18,8 @@
 
 **Validação dev.156 (2026-10-23):** suíte Unit completa passou com 50 testes / 241 assertions (14 depreciações PHPUnit); o gate Drupal 11+ passou com 1.159 checks. Somadas à validação MariaDB dev.155, não há falhas nos gates automatizados executados nesta microfase.
 
+**Validação dev.157 (2026-10-23):** o filtro agrupa checagens de Entity Access por purpose canônico e limpa os handlers uma vez antes/depois de cada grupo, mantendo a decisão por entidade e falha fechada. Unit (50/250), Kernel completa MariaDB (103/1.526), Fórum grants/Domain (4/199) e Wiki Domain/relações (2/32) passaram. Três execuções do benchmark Fórum mostram redução de 45%/44% no p50/p95 de membros e 49%/42% de visitantes para páginas de 100; veja [método, comparação e CSV](benchmarks/ACULTA-CONTENT-INDEX-FORUM-ACCESS-2026-10-23.md). É uma fixture sintética, sem SLO.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
