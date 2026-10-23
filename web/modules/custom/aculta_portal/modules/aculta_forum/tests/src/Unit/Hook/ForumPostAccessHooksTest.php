@@ -10,6 +10,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
@@ -59,6 +60,23 @@ final class ForumPostAccessHooksTest extends TestCase {
     $wrongPurpose = new ForumPostAccessHooks($this->domainPurposeManager('aculta_org'));
     self::assertTrue($wrongPurpose->entityAccess($post, 'update', $account)?->isForbidden());
     self::assertTrue($hooks->entityAccess($this->post($this->topic(FALSE), 17), 'update', $account)?->isForbidden());
+  }
+
+  /**
+   * A restricted topic denies its posts even when the post is published.
+   *
+   * The Forum post hook composes the topic access result. When the topic
+   * policy forbids the account (restricted forum without active associate
+   * membership), view and update must be denied, and no ownership branch may
+   * bypass the topic decision.
+   */
+  public function testRestrictedTopicAccessPropagatesToPost(): void {
+    $hooks = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $post = $this->post($this->topic(TRUE, AccessResult::forbidden('Conteúdo restrito.')), 17);
+    $owner = $this->account(17);
+
+    self::assertTrue($hooks->entityAccess($post, 'view', $owner)?->isForbidden());
+    self::assertTrue($hooks->entityAccess($post, 'update', $owner)?->isForbidden());
   }
 
   /**
@@ -115,13 +133,13 @@ final class ForumPostAccessHooksTest extends TestCase {
   /**
    * Builds a Node topic in the Forum purpose.
    */
-  private function topic(bool $published): Node {
+  private function topic(bool $published, ?AccessResultInterface $access = NULL): Node {
     $topic = $this->createMock(Node::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $topic->method('hasField')->with('field_domain_source')->willReturn(TRUE);
     $topic->method('get')->with('field_domain_source')->willReturn(new ForumPostAccessFieldList('forum_aculta_org'));
     $topic->method('isPublished')->willReturn($published);
-    $topic->method('access')->willReturn(AccessResult::allowed());
+    $topic->method('access')->willReturn($access ?? AccessResult::allowed());
     $topic->method('getCacheTags')->willReturn([]);
     $topic->method('getCacheContexts')->willReturn([]);
     $topic->method('getCacheMaxAge')->willReturn(-1);

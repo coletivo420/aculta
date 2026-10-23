@@ -170,12 +170,14 @@ rebuild executado na F-GROUP 0.2 foi somente no banco Kernel isolado.
   resultados não forem validados com grants, um índice desatualizado pode expor
   total ou trecho de tópico restrito. Risco aceito apenas com a frente desligada
   (padrão).
-- **Anexos.** `ForumAttachmentPublication::hasCurrentPublicReference()` e os
-  hooks de acesso de anexo não consideram o Group do tópico; um anexo de tópico
-  restrito pode ser servido por URL de mídia/arquivo. Bloqueia a ativação em
-  produção.
-- **Posts e comentários.** O acesso ao tópico não se propaga automaticamente ao
-  post revisionável nem ao Comment; é preciso revalidar no handler do post.
+- **Anexos.** A referência pública usa sempre a conta anônima. Isso impede o
+  vazamento de anexo de tópico restrito (fail closed), mas também o nega ao
+  associado ativo; a frente 0.4 precisa decidir a conta do request no download.
+  Bloqueia a ativação em produção enquanto o requisito de anexos nesses tópicos
+  não estiver resolvido.
+- **Posts e comentários.** A herança existe por composição: o hook do post
+  revalida `$topic->access()` e o Core Comment revalida o host. Falta a prova
+  Kernel com o módulo completo e a matriz de cache sob o purpose `forum`.
 - **Permissão de grupo.** Sem `view group_node:aculta_forum_topic entity` na
   role de membro, o módulo Group nega a leitura de todos os tópicos agrupados,
   inclusive para o associado ativo. É um veto independente do Fórum e precisa
@@ -223,16 +225,35 @@ módulo Group nega a leitura de conteúdo agrupado sem a permissão de grupo
 `view group_node:aculta_forum_topic entity` na role de membro. O passo foi
 incorporado à seção Ativação.
 
+## F-GROUP 0.3 — auditoria de herança (posts, comentários e anexos)
+
+Auditoria de código em 2026-10-23, sem alteração de produção:
+
+- **Posts revisionáveis — herdado.** `ForumPostAccessHooks::publicAccess()`
+  compõe `$topic->access('view', $account, TRUE)` antes de decidir `view` e
+  `update`. Um tópico restrito que nega a conta nega o post, inclusive ao dono.
+  `tests/src/Unit/Hook/ForumPostAccessHooksTest::testRestrictedTopicAccessPropagatesToPost`
+  cobre `view` e `update` com tópico `forbidden`.
+- **Comments — herdado pelo Core.** `CommentAccessControlHandler::checkAccess()`
+  aplica `andIf($comment->getCommentedEntity()->access('view', $account, TRUE))`.
+  O Comment de tópico restrito nega a conta, e não há hook do Fórum a duplicar.
+- **Anexos — fail closed, com limitação.** `ForumAttachmentPublication::
+  isPublicComment()` e `isPublicPost()` avaliam o host com
+  `AnonymousUserSession`; um post/comment de tópico restrito deixa de ser
+  referência pública, e `ForumAttachmentAccessHooks::mediaAccess()` nega a
+  Media. O anexo **não vaza**, mas também não é servido ao associado ativo: a
+  verificação usa sempre a conta anônima. A correção exige decidir a conta do
+  request no download, não só no purpose.
+
 ## Próxima microfase recomendada
 
-**F-GROUP 0.3 — herança da restrição em posts revisionáveis e anexos.** O
-acesso ao tópico não se propaga hoje ao `aculta_forum_post` nem ao Comment, e a
-regra de anexo público ignora o Group. Implementar e testar em Kernel a
-revalidação por tópico nos handlers de post, de comentário e de mídia, com
-download privado revalidando a mesma condição. Em paralelo, preparar o roteiro
-de Runtime controlado (backup, janela aprovada, rebuild de `node_access`,
-listagem, URL direta e busca) para executar quando autorizado. Só depois ativar
-em produção.
+**F-GROUP 0.4 — anexos de tópico restrito para a conta atual.** Tornar
+`hasCurrentPublicReference()`/download cientes da conta autenticada, de modo
+que o associado ativo com membership receba o anexo e os demais continuem
+negados; cobrir em Kernel a Media, o File e o embed no post. Em paralelo,
+preparar o roteiro de Runtime controlado (backup, janela aprovada, rebuild de
+`node_access`, listagem, URL direta e busca) para executar quando autorizado.
+Só depois ativar em produção.
 
 ## Referências
 

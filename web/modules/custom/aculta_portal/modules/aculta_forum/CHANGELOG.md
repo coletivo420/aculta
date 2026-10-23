@@ -1,3 +1,16 @@
+## `0.1.0-dev.251` — herança do tópico restrito em posts e auditoria de anexos (F-GROUP 0.3) — 2026-10-23
+
+- Unit `ForumPostAccessHooksTest` ganha
+  `testRestrictedTopicAccessPropagatesToPost`: com `$topic->access()` forbidden,
+  `view` e `update` do post são negados, inclusive para o dono. 4 testes /
+  84 asserções PASS.
+- Auditoria: o Comment já herda a restrição pelo Core
+  (`CommentAccessControlHandler` revalida o host); os anexos usam a conta
+  anônima como referência pública, então anexo de tópico restrito é negado a
+  todos (fail closed), sem acesso ainda para o associado ativo.
+- Nenhuma alteração de produção. A correção dos anexos para a conta atual fica
+  na F-GROUP 0.4; documentação atualizada em `RESTRICTED-FORUMS.md`.
+
 ## `0.1.0-dev.250` — grants reais do fórum restrito em Kernel (F-GROUP 0.2) — 2026-10-23
 
 - Novo `RestrictedForumNodeAccessRebuildKernelTest` (4 testes / 92 asserções

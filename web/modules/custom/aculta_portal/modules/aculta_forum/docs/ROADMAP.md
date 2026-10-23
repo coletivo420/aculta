@@ -93,9 +93,14 @@ PASS/DEFERRED e os riscos residuais ficam em
   `view group_node:aculta_forum_topic entity` na role de membro; sem ela, o
   Group nega a leitura mesmo para o associado ativo. Passo documentado na
   ativação.
-- Próxima microfase **F-GROUP 0.3**: herança da restrição em posts revisionáveis
-  e anexos, com testes Kernel dos handlers, e roteiro de Runtime controlado
-  (backup, janela aprovada, rebuild, listagem, URL direta e busca).
+- Gate medido (0.3): `ForumPostAccessHooksTest` — 4 testes, 84 asserções, OK.
+  O post herda `$topic->access()`; o Comment herda pelo Core; o anexo de tópico
+  restrito é negado a todos (a referência pública usa conta anônima), sem
+  vazamento e ainda sem acesso para o associado ativo.
+- Próxima microfase **F-GROUP 0.4**: anexos para a conta atual no download,
+  cobrindo Media, File e embed do post em Kernel; em paralelo, roteiro de
+  Runtime controlado (backup, janela aprovada, rebuild, listagem, URL direta e
+  busca).
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

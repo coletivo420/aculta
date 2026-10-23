@@ -1,3 +1,18 @@
+## F-GROUP 0.3 — auditoria de herança de acesso, 2026-10-23
+
+- Unit `ForumPostAccessHooksTest`: 4 testes / 84 asserções OK. Novo caso
+  `testRestrictedTopicAccessPropagatesToPost` prova que `view` e `update` do
+  post são negados quando `$topic->access()` é `forbidden` (tópico restrito sem
+  associado ativo com membership), inclusive para o dono.
+- Auditoria de código: `CommentAccessControlHandler` revalida o host
+  (`getCommentedEntity()->access('view')`), então o Comment de tópico restrito
+  também é negado. `ForumAttachmentPublication::isPublicComment/isPublicPost`
+  avaliam o host como anônimo, logo um anexo de tópico restrito deixa de ser
+  referência pública e a Media é negada — fail closed, sem vazamento, mas ainda
+  sem acesso para o associado ativo.
+- Nenhuma alteração de produção nesta microfase; a correção dos anexos para a
+  conta atual fica na F-GROUP 0.4.
+
 ## F-GROUP 0.2 — grants reais do tópico restrito em Kernel, 2026-10-23
 
 - Banco isolado `aculta_simpletest`, via `SIMPLETEST_DB` de
