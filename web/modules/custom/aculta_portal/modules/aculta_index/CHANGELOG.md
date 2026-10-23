@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.118 — corrigir mapa dos providers no Unit
+
+- O service-map Unit agora declara o `GroupRelationTypeManagerInterface`
+  sintético exigido pelo provider LMS e cobre a compilação quando o plugin PDF
+  opcional não está instalado; a versão de projeção esperada é 1.
+- Unit do Index: 39 testes / 204 assertions PASS, com 10 depreciações PHPUnit.
+
 ## 0.1.0-dev.117 — ocultar imagem não publicada em relação de Gallery
 
 - A Gallery da fixture contém uma imagem publicada e outra não publicada. A

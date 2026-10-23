@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -43,6 +44,10 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $container = new ContainerBuilder();
     $purposeServiceId = 'aculta_portal.domain_purpose';
     $container->setDefinition($purposeServiceId, (new Definition(DomainPurposeManager::class))
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE));
+    $relationTypeManagerServiceId = 'group_relation_type.manager';
+    $container->setDefinition($relationTypeManagerServiceId, (new Definition(GroupRelationTypeManagerInterface::class))
       ->setSynthetic(TRUE)
       ->setPublic(TRUE));
 
@@ -81,6 +86,9 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+    $relationTypeManager = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
+    $container->set($relationTypeManagerServiceId, $relationTypeManager);
 
     $registry = $container->get('aculta_index.provider_registry');
     self::assertInstanceOf(ContentIndexProviderRegistry::class, $registry);
@@ -100,6 +108,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'magazine' => ['node' => ['revista']],
       'wiki' => ['node' => ['wiki_entry']],
     ], $this->providerMap($registry));
+    self::assertSame(1, $registry->get('lms_course')->getProjectionVersion(), 'The service map compiles without the optional PDF Group plugin.');
   }
 
   /**
