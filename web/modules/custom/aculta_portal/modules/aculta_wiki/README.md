@@ -11,6 +11,10 @@ pendentes, está em
   revertido; Kernel confirma novo envio sem órfãs. Focal: 1 teste / 33
   asserções; classe Kernel: 10 testes / 447 asserções; Unit do uploader: 12
   testes / 79 asserções.
+- Preflight read-only de 2026-10-23: Wiki ativa e Index desativado no Runtime de
+  teste. Na URI `wiki420`, `/` entrega a home (200); `/wiki` responde 404
+  intencionalmente por ser o caminho interno da raiz. Listagem, busca e prévia
+  retornam 200. Runtime ainda não está homologado integralmente.
 - `0.1.0-dev.32`: Kernel cobre `append`/`replace` em categorias e relações, com
   deduplicação e destinos visíveis no domínio Wiki. Focal: 1 teste / 132
   asserções; classe Kernel: 9 testes / 414 asserções. Runtime desabilitado.

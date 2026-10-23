@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## Verificação operacional — 2026-10-23
+
+- O Runtime de teste estava com `aculta_wiki` ativo e `aculta_index`
+  desativado. No host `wiki420`, `/` respondeu 200 e `/wiki` 404 conforme a
+  política multidomínio: `/wiki` é caminho interno usado para servir a raiz.
+  `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` responderam 200.
+- Verificação read-only; nenhuma configuração, cache ou banco foi alterado.
+  Homologação integral permanece pendente.
+
 ## 0.1.0-dev.33 — retry seguro de upload após rebuild
 
 - Rollback invalida caches de File e Media e limpa a chave temporária no

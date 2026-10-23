@@ -21,7 +21,9 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
 | Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado |
 | Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado |
-| Ativação Runtime | Operacional | Módulos/configuração habilitados e smoke test | pendente; não executado |
+| Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | aprovado em preflight read-only (2026-10-23) |
+| Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | aprovado em preflight read-only (2026-10-23) |
+| Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |
 
 ## Aplicação editorial de propostas (dev.29)
 
