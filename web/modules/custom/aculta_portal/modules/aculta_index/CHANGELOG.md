@@ -1,5 +1,10 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.51 — regressão Unit do submódulo
+
+- Suíte `aculta_index/tests/src/Unit` executada após os harnesses de Statistics
+  e Fórum: 34 testes / 153 assertions PASS, 9 depreciações PHPUnit.
+
 ## 0.1.0-dev.50 — harness do filtro usa o provider real do Fórum
 
 - Os testes de purpose canônico e Domain ausente agora registram o
