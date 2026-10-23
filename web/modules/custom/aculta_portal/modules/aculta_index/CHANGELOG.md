@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.153 — migrar hooks runtime para OOP com DI
+
+- Removidos hooks procedurais de CRUD e cron de `aculta_index.module`.
+- Hooks de entidade e manutenção agora são descobertos pelo Core por atributos
+  `#[Hook]` e recebem registry, fila e serviços de manutenção por DI.
+- Kernel de traduções passou (1 teste / 20 assertions); suíte Kernel completa
+  passou em MariaDB (102 / 1.518). PHPCS Drupal e lint passaram.
+
 ## 0.1.0-dev.152 — executar suíte Kernel completa em MariaDB
 
 - Suíte Kernel inteira do `aculta_index` passou em MariaDB: 102 testes / 1.518

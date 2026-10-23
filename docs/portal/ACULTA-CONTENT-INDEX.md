@@ -10,6 +10,8 @@
 
 **Validação dev.152 (2026-10-23):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib; 54 PHPUnit). Os benchmarks 10k, 100k e 1M passaram; em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. As 2.001 páginas usaram descoberta `base_table`. Medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
+**Validação dev.153 (2026-10-23):** hooks runtime do Index foram migrados de `aculta_index.module` para classes `#[Hook]` com DI. Kernel de tradução passou (1/20) e a suíte Kernel completa voltou a passar em MariaDB (102/1.518; 39 depreciações Core/contrib e 54 PHPUnit); PHPCS Drupal e lint passaram. A migração não altera contratos ou ordem de manutenção.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
