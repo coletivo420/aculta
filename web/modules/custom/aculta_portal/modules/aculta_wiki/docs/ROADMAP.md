@@ -4,8 +4,11 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.33**. Código e testes do
-submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
+Linha do projeto `aculta_wiki`: **0.1.0-dev.33**. Em preflight read-only de
+2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
+teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
+intencionalmente por ser o caminho interno da raiz. Runtime segue sem
+homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -184,10 +187,10 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
 - **Kernel verificado em dev.13:** discovery das três rotas públicas, rota da
   View `/wiki/verbetes`, requisito `access content`, buscas com dois usuários e
   grants diferentes. Runtime e `drush cr` no homelab permanecem pendentes.
-- **Gates pendentes:** Config
-  Sync sem diferenças; HTTP 200 em `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
-  `/wiki/busca/previa` no domínio `wiki420`; backup privado antes de qualquer
-  `updb`.
+- **Gates pendentes:** Config Sync sem diferenças; HTTP 200 em `/`,
+  `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` no domínio `wiki420`
+  (verificados em 2026-10-23); `/wiki` deve responder 404 direto pela política
+  multidomínio; backup privado antes de qualquer `updb`.
 
 ### Incremento de acesso e cache — dev.11
 
@@ -290,8 +293,8 @@ aguarda decisão; não remover histórico automaticamente.
   inclui o `ContentIndexOwnerIntegrationKernelTest`, que habilita a closure real
   de dependências, compila o container e descobre `wiki` pelo registry (1/8).
   Isso não instala toda a configuração da Wiki nem substitui grants adicionais
-  ou homologação Runtime. O módulo continua desabilitado; não habilitar ou
-  importar sua configuração como parte desta fase.
+  ou homologação Runtime. No preflight read-only de 2026-10-23, a Wiki estava
+  ativa e o Index desativado; não houve alteração de Runtime nesta fase.
 
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
@@ -305,9 +308,10 @@ Atualização IDX 0.1-dev.10 (2026-10-23): essa decisão foi encerrada após a
 definição dos contratos. O provider agora projeta `wiki_category` e
 `wiki_image`, e o owner da categoria foi implementado na Wiki. Kernel MariaDB
 valida consulta das relações e revalida acesso a Term/Media reais (3/84; 5
-depreciações). O harness é do Index/Portal; a Wiki continua desabilitada e
-Runtime continua pendente. Essa integração do Index é separada do adapter para
-limpeza segura de verbetes e anexos, que permanece como dívida do projeto.
+depreciações). O harness é do Index/Portal. O preflight read-only de
+2026-10-23 encontrou a Wiki ativa e Runtime ainda pendente de homologação. Essa
+integração do Index é separada do adapter para limpeza segura de verbetes e
+anexos, que permanece como dívida do projeto.
 
 ### Entregue em código (2026-10-22)
 
