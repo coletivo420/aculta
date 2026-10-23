@@ -19,7 +19,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 ## Estado atual — conferido em 2026-10-23
 
 - Versão: **0.4.1-dev.21** (`aculta_portal.info.yml`; confira o changelog para o estado desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete auditorias anteriores e deve ser lido junto às atualizações datadas do roadmap.
-- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.114 e `aculta_activity` 0.1.0-dev.7. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
+- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.158 (manifest conferido em 2026-10-23) e `aculta_activity` 0.1.0-dev.7. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
 - Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
@@ -30,13 +30,18 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ### Conteúdo transversal e Activity — atualização 2026-10-23
 
-- O `aculta_index` 0.1.0-dev.114 está em desenvolvimento dentro do Kernel Portal.
-  Providers Magazine, Wiki, Fórum, Gallery, Media, LMS e Activity estão em código;
-  Kernel cobre grants do Fórum, acesso Wiki por Domain canônico, policy LMS e
-  bridge Statistics. Boot completo dos owners e Runtime seguem pendentes.
-  Rebuild/auditoria 10k e 100k foram medidos; 1M e análise da cauda longa da
-  auditoria 100k permanecem pendentes. Decisões, dívida de `remote_video` e
-  estados por microfase estão no [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
+- O `aculta_index` 0.1.0-dev.158 permanece em desenvolvimento dentro do Kernel
+  Portal. Providers Magazine, Wiki, Fórum, Activity, Gallery, Media e LMS, além
+  da ponte opcional de Statistics, estão implementados; o catálogo segue
+  derivado e revalida Entity Access nas consultas. Em 2026-10-23, Unit passou
+  (51/262) e Kernel MariaDB passou (103/1.526). Rebuild/auditoria sintéticos
+  10k/100k/1M passaram; em 1M levaram 2.137,817 s e 724,020 s, sem divergências
+  e sem SLO. Três execuções Fórum indicam melhora ao agrupar as checagens por
+  purpose; detalhes e CSV estão no [relatório do benchmark](benchmarks/ACULTA-CONTENT-INDEX-FORUM-ACCESS-2026-10-23.md).
+  Boot/DI completo dos owners, grants operacionais, carga representativa e
+  Runtime continuam pendentes. Relações Wiki para categorias/imagens e
+  `remote_video` sem owner permanecem dívidas deliberadas. Decisões e estados
+  estão no [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
 - O submódulo proprietário `aculta_activity` implementa projeção mínima do Node
   `activity`, adapter tagged, hooks de formulário/Metatag e validação condicional;
   Kernel cobre provider, backfill e ciclo CRUD pelo worker real (2/29); Unit
