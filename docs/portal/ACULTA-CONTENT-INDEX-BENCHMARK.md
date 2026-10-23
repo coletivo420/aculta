@@ -122,6 +122,8 @@ O relatório JSON é gravado no diretório temporário do sistema; ajuste
 desse diretório. Tamanho fora da matriz fixada é rejeitado. A criação das
 entidades sintéticas não integra o tempo medido; rebuild e auditoria têm
 checkpoints independentes, limites de batch explícitos e percentis nearest-rank.
+O JSON registra ainda duração e memória do setup para distinguir esse custo do
+processamento medido.
 
 ## Resultados de 2026-10-22
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_index\Rebuild;
 
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -17,6 +18,23 @@ final class ContentIndexEntityEnumerator {
    * Maximum keyset page size to bound query and entity memory use.
    */
   private const MAX_BATCH_SIZE = 500;
+
+  /**
+   * Maximum distinct cached content entities retained across batches.
+   */
+  private const CACHE_RESET_ENTITY_LIMIT = 5_000;
+
+  /**
+   * Content entities to evict at the next bounded cache reset.
+   *
+   * @var array<string, array<string, bool>>
+   */
+  private array $pendingCacheResetIds = [];
+
+  /**
+   * Number of distinct pending cache identities.
+   */
+  private int $pendingCacheResetCount = 0;
 
   public function __construct(
     private readonly ContentIndexProviderRegistry $providers,
@@ -76,32 +94,64 @@ final class ContentIndexEntityEnumerator {
     }
     $ids = array_values($query->execute());
     if ($ids === []) {
+      $this->flushCacheResetQueue();
       return ['projections' => [], 'next_cursor' => NULL, 'exhausted' => TRUE];
     }
 
-    $entities = $storage->loadMultiple($ids);
     $projections = [];
-    foreach ($ids as $id) {
-      $entity = $entities[$id] ?? NULL;
-      if (!$entity instanceof ContentEntityInterface) {
-        continue;
+    $cacheIds = [$entityTypeId => array_fill_keys(array_map('strval', $ids), TRUE)];
+    $projectionSucceeded = FALSE;
+    $exhausted = count($ids) < $limit;
+    try {
+      $entities = $storage->loadMultiple($ids);
+      foreach ($ids as $id) {
+        $entity = $entities[$id] ?? NULL;
+        if (!$entity instanceof ContentEntityInterface) {
+          continue;
+        }
+        foreach ($entity->getTranslationLanguages() as $langcode => $language) {
+          if (!$entity->hasTranslation($langcode)) {
+            continue;
+          }
+          $translation = $entity->getTranslation($langcode);
+          $projection = $provider->project($translation);
+          if ($projection === NULL) {
+            continue;
+          }
+          if ($projection->entityTypeId !== $entityTypeId
+            || $projection->entityId !== (string) $entity->id()
+            || $projection->langcode !== $langcode
+            || $projection->bundle !== $entity->bundle()) {
+            throw new \UnexpectedValueException(sprintf('Provider %s returned a projection that does not match its source entity translation.', $providerId));
+          }
+          $projections[] = $projection;
+          foreach ($projection->relations as $relation) {
+            if ($relation instanceof ContentIndexRelation) {
+              $cacheIds[$relation->targetEntityTypeId][$relation->targetEntityId] = TRUE;
+            }
+          }
+        }
       }
-      foreach ($entity->getTranslationLanguages() as $langcode => $language) {
-        if (!$entity->hasTranslation($langcode)) {
-          continue;
+      $projectionSucceeded = TRUE;
+    }
+    finally {
+      // Bound Drupal's static entity caches across keyset batches. Reset only
+      // source IDs and relation targets carried by successful projections;
+      // this avoids invalidating unrelated cache entries. Cache invalidation
+      // itself is costly, so accumulate at most a fixed number of identities
+      // before flushing, and flush at provider exhaustion. On projection
+      // failure target identities may be incomplete, so clear all content
+      // entity storages before propagating the error.
+      if (!$projectionSucceeded) {
+        $this->pendingCacheResetIds = [];
+        $this->pendingCacheResetCount = 0;
+        $this->resetAllContentEntityStorageCaches();
+      }
+      else {
+        $this->queueCacheResetIds($cacheIds);
+        if ($this->pendingCacheResetCount >= self::CACHE_RESET_ENTITY_LIMIT || $exhausted) {
+          $this->flushCacheResetQueue();
         }
-        $translation = $entity->getTranslation($langcode);
-        $projection = $provider->project($translation);
-        if ($projection === NULL) {
-          continue;
-        }
-        if ($projection->entityTypeId !== $entityTypeId
-          || $projection->entityId !== (string) $entity->id()
-          || $projection->langcode !== $langcode
-          || $projection->bundle !== $entity->bundle()) {
-          throw new \UnexpectedValueException(sprintf('Provider %s returned a projection that does not match its source entity translation.', $providerId));
-        }
-        $projections[] = $projection;
       }
     }
 
@@ -110,6 +160,49 @@ final class ContentIndexEntityEnumerator {
       'next_cursor' => (string) end($ids),
       'exhausted' => count($ids) < $limit,
     ];
+  }
+
+  /**
+   * Queues source and relation target identities for a bounded cache reset.
+   *
+   * @param array<string, array<string, bool>> $entityIds
+   *   Entity IDs read or projected by this batch, keyed by entity type.
+   */
+  private function queueCacheResetIds(array $entityIds): void {
+    foreach ($entityIds as $entityTypeId => $ids) {
+      foreach (array_keys($ids) as $id) {
+        if (!isset($this->pendingCacheResetIds[$entityTypeId][$id])) {
+          $this->pendingCacheResetIds[$entityTypeId][$id] = TRUE;
+          $this->pendingCacheResetCount++;
+        }
+      }
+    }
+  }
+
+  /**
+   * Evicts pending content entities from storage static caches.
+   */
+  private function flushCacheResetQueue(): void {
+    foreach ($this->pendingCacheResetIds as $entityTypeId => $ids) {
+      if (!$this->entityTypeManager->hasDefinition($entityTypeId)
+        || !$this->entityTypeManager->getDefinition($entityTypeId)->entityClassImplements(ContentEntityInterface::class)) {
+        continue;
+      }
+      $this->entityTypeManager->getStorage($entityTypeId)->resetCache(array_keys($ids));
+    }
+    $this->pendingCacheResetIds = [];
+    $this->pendingCacheResetCount = 0;
+  }
+
+  /**
+   * Clears every content entity storage after a provider projection failure.
+   */
+  private function resetAllContentEntityStorageCaches(): void {
+    foreach ($this->entityTypeManager->getDefinitions() as $entityTypeId => $entityType) {
+      if ($entityType->entityClassImplements(ContentEntityInterface::class)) {
+        $this->entityTypeManager->getStorage($entityTypeId)->resetCache();
+      }
+    }
   }
 
 }

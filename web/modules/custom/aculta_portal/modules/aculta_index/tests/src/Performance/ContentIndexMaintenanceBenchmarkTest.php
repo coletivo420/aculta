@@ -117,7 +117,10 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       throw new \RuntimeException('The maintenance benchmark result must be written inside sys_get_temp_dir().');
     }
 
+    $sourceSetupStarted = hrtime(TRUE);
     $this->createSyntheticSources();
+    $sourceSetupMilliseconds = (hrtime(TRUE) - $sourceSetupStarted) / 1_000_000;
+    $sourceSetupMemoryBytes = memory_get_usage(TRUE);
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $rebuildBatchTimes = [];
@@ -185,6 +188,8 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'php' => PHP_VERSION,
       'database' => $database->version(),
       'source_count' => $this->sourceCount,
+      'source_setup_elapsed_ms' => round($sourceSetupMilliseconds, 3),
+      'source_setup_memory_bytes' => $sourceSetupMemoryBytes,
       'provider_id' => 'test_sample_content',
       'rebuild_batch_limit' => 500,
       'writer_transaction_batch_size' => 500,

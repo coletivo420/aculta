@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -33,7 +34,20 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
     $provider->method('getProjectionVersion')->willReturn(1);
     $provider->method('project')->willReturnCallback(static function (ContentEntityInterface $entity): ContentIndexProjection {
       $langcode = $entity->language()->getId();
-      return new ContentIndexProjection('node', '42', $langcode, 'revista', 'uuid-' . $langcode, 'Label', NULL, TRUE, 1, 2);
+      return new ContentIndexProjection(
+        'node',
+        '42',
+        $langcode,
+        'revista',
+        'uuid-' . $langcode,
+        'Label',
+        NULL,
+        TRUE,
+        1,
+        2,
+        NULL,
+        [new ContentIndexRelation('editorial_image', 'media', 'media-9')],
+      );
     });
     $registry = new ContentIndexProviderRegistry([$provider]);
 
@@ -66,12 +80,41 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('getQuery')->willReturn($query);
     $storage->method('loadMultiple')->with(['42'])->willReturn(['42' => $entity]);
+    $storage->expects(self::once())->method('resetCache')->with(['42']);
+    $relatedStorage = $this->createMock(EntityStorageInterface::class);
+    $relatedStorage->expects(self::once())->method('resetCache')->with(['media-9']);
+    $nonContentStorage = $this->createMock(EntityStorageInterface::class);
+    $nonContentStorage->expects(self::never())->method('resetCache');
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getKey')->willReturnMap([['id', 'nid'], ['bundle', 'type']]);
+    $entityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
+    $relatedEntityType = $this->createMock(EntityTypeInterface::class);
+    $relatedEntityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
+    $nonContentEntityType = $this->createMock(EntityTypeInterface::class);
+    $nonContentEntityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(FALSE);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
-    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
-    $manager->method('getDefinition')->with('node')->willReturn($entityType);
-    $manager->method('getStorage')->with('node')->willReturn($storage);
+    $manager->method('hasDefinition')->willReturnCallback(
+      static fn (string $entityTypeId): bool => in_array($entityTypeId, ['node', 'media', 'file'], TRUE),
+    );
+    $manager->method('getDefinition')->willReturnCallback(static function (string $entityTypeId) use ($entityType, $relatedEntityType, $nonContentEntityType): EntityTypeInterface {
+      return match ($entityTypeId) {
+        'node' => $entityType,
+        'media' => $relatedEntityType,
+        'file' => $nonContentEntityType,
+      };
+    });
+    $manager->method('getStorage')->willReturnCallback(static function (string $entityTypeId) use ($storage, $relatedStorage, $nonContentStorage): EntityStorageInterface {
+      return match ($entityTypeId) {
+        'node' => $storage,
+        'media' => $relatedStorage,
+        'file' => $nonContentStorage,
+      };
+    });
+    $manager->method('getDefinitions')->willReturn([
+      'node' => $entityType,
+      'media' => $relatedEntityType,
+      'file' => $nonContentEntityType,
+    ]);
 
     $batch = (new ContentIndexEntityEnumerator($registry, $manager))->nextBatch('magazine', 'node', '41', 2);
 
@@ -127,12 +170,15 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('getQuery')->willReturn($query);
     $storage->method('loadMultiple')->with(['42'])->willReturn(['42' => $entity]);
+    $storage->expects(self::once())->method('resetCache')->with(['42']);
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getKey')->willReturnMap([['id', 'id'], ['bundle', '']]);
+    $entityType->method('entityClassImplements')->with(ContentEntityInterface::class)->willReturn(TRUE);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('hasDefinition')->with('aculta_forum_post')->willReturn(TRUE);
     $manager->method('getDefinition')->with('aculta_forum_post')->willReturn($entityType);
     $manager->method('getStorage')->with('aculta_forum_post')->willReturn($storage);
+    $manager->method('getDefinitions')->willReturn(['aculta_forum_post' => $entityType]);
 
     $batch = (new ContentIndexEntityEnumerator($registry, $manager))
       ->nextBatch('forum', 'aculta_forum_post', NULL, 10);

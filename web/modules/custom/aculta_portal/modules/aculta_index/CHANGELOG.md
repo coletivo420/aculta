@@ -1,5 +1,21 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.74 — limitar cache de entidades entre batches de manutenção
+
+- O enumerador acumula identidades de fontes e alvos declarados nas relações
+  até 5.000 por processo e então limpa somente os IDs/type storages usados;
+  também limpa ao terminar o provider. Erro de projeção limpa todos os caches
+  de entidades de conteúdo, pois os alvos carregados podem ser desconhecidos.
+- Benchmark passa a registrar separadamente tempo e memória de criação da
+  fixture. MariaDB, uma repetição em 10k com a estratégia final: setup 62,96 s,
+  rebuild 8,480 s (1.179 projeções/s), auditoria 10,332 s / 102 batches,
+  zero divergências e pico de 142,5 MiB. Os tempos variam; não definem SLO.
+- Existe um baseline anterior de 100k sem a limpeza por batches: rebuild
+  126,108 s / 793 projeções/s, auditoria 135,318 s / 1.002 batches, zero
+  divergências e pico 532,5 MiB. A repetição de 100k com a estratégia atual e
+  a medição de 1M seguem pendentes; detalhes em benchmark de manutenção.
+- Testes: Unit 39/202; Kernel completo MariaDB 64/852; PHPCS Drupal e PHP lint.
+
 ## 0.1.0-dev.73 — parametrizar escala do benchmark de manutenção
 
 - O harness de rebuild/auditoria aceita apenas 10k, 100k ou 1M fontes sintéticas

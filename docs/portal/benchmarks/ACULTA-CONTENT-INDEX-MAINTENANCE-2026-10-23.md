@@ -64,3 +64,26 @@ Os resultados brutos estão em
 reproduzir, use `ACULTA_INDEX_MAINTENANCE_BENCHMARK=1` e
 `ACULTA_INDEX_MAINTENANCE_BENCHMARK_OUTPUT` sob `sys_get_temp_dir()`. O teste
 recusa qualquer `SIMPLETEST_DB` que não seja o banco local dedicado.
+
+## Escala e cache do enumerador — diagnóstico de uma repetição
+
+Os resultados abaixo são uma única execução por cenário, sem SLO. O JSON agora
+separa o tempo/memória de criação sintética dos intervalos de rebuild e
+auditoria. A gravação de fontes segue pela Entity API; não representa o custo
+do índice.
+
+| Escala / estratégia | Setup (s) | Rebuild (s) | Projeções/s | Auditoria (s) | Batches de auditoria | Audit p50 / p95 (ms) | Pico do processo (MiB) | Divergências |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 10k, antes de limitar cache | não medido | 7,818 | 1.279 | 4,416 | 102 | 36,092 / 83,386 | 146,5 | 0 |
+| 10k, cache de fontes/relações acumulado até 5k IDs | 62,963 | 8,480 | 1.179 | 10,332 | 102 | 63,750 / 86,940 | 142,5 | 0 |
+| 100k, antes de limitar cache | não medido | 126,108 | 793 | 135,318 | 1.002 | 154,450 / 332,304 | 532,5 | 0 |
+
+No cache limitado, o enumerador limpa IDs de fontes e alvos explícitos em lotes
+de até 5.000 identidades e descarrega ao terminar cada provider. Em falha de
+projeção, limpa todos os storages de entidades de conteúdo, pois as referências
+carregadas podem não ser conhecidas. A amostra 10k sugere menor pico que seu
+run anterior, com custo de rebuild e auditoria maior; uma repetição isolada não
+separa esse efeito da variabilidade do ambiente. O benchmark 100k ainda não foi
+repetido com a alteração, e 1M permanece pendente. O cache reset por identidade
+é verificado pela Unit de `ContentIndexEntityEnumeratorTest`; a suíte Kernel
+completa do Index passou em MariaDB com 64 testes / 852 assertions.
