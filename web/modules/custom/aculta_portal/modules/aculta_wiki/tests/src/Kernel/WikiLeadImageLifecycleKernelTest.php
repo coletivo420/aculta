@@ -369,11 +369,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $secondEntity = Node::load($secondNode);
     $secondAccess = $secondEntity->access('view', $firstReader, TRUE);
     self::assertFalse($secondAccess->isAllowed(), 'The other author’s Wiki entry must be denied.');
-    $firstResults = $this->searchNodeIds('Cannabis', $wikiDomain);
-    self::assertSame([$firstNode], $firstResults);
+    $firstSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
+    self::assertSame([$firstNode], array_map('intval', array_keys($firstSearch['results'])));
 
     $currentUser->setAccount($secondReader);
-    self::assertSame([$secondNode], $this->searchNodeIds('Cannabis', $wikiDomain));
+    $secondSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
+    self::assertSame([$secondNode], array_map('intval', array_keys($secondSearch['results'])));
 
     $currentUser->setAccount($firstReader);
     $emptyBuild = $controller->search(Request::create('/wiki/busca'));
@@ -382,29 +383,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $negativeBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'termo-inexistente']));
     self::assertArrayNotHasKey('results', $negativeBuild);
     self::assertContains('user.node_grants:view', $negativeBuild['#cache']['contexts']);
-  }
-
-  /**
-   * Runs the same access-checked query contract used by WikiController search.
-   *
-   * @return int[]
-   *   Node IDs visible to the current account.
-   */
-  private function searchNodeIds(string $term, Domain $wikiDomain): array {
-    $pattern = '%' . $this->container->get('database')->escapeLike($term) . '%';
-    $query = $this->container->get('entity_type.manager')->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->addMetaData('account', $this->container->get('current_user'))
-      ->condition('type', 'wiki_entry')
-      ->condition('field_domain_source.target_id', $wikiDomain->id())
-      ->condition('status', 1)
-      ->range(0, 30)
-      ->sort('title');
-    $matches = $query->orConditionGroup()
-      ->condition('title', $pattern, 'LIKE')
-      ->condition('field_wiki_summary.value', $pattern, 'LIKE')
-      ->condition('body.value', $pattern, 'LIKE');
-    return array_map('intval', array_values($query->condition($matches)->execute()));
   }
 
   /**
