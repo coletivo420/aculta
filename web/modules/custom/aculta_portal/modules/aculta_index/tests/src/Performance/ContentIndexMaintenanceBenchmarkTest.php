@@ -11,6 +11,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
@@ -165,6 +166,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     finally {
       $this->container->set('aculta_index.provider_registry', $providerRegistry);
     }
+    $this->removeEntityApiSeedWork();
     self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_work', 'work')
       ->condition('provider_id', 'test_sample_content')
       ->countQuery()
@@ -525,6 +527,45 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
         throw new \RuntimeException('Bulk-seeded Drupal Node fixture has an unexpected bundle.');
       }
     }
+  }
+
+  /**
+   * Removes the one incremental item emitted by the Entity API seed save.
+   *
+   * The test harness bulk-seeds the remaining sources through storage table
+   * mappings so fixture creation does not enqueue one item per source. The
+   * hook dispatcher may already hold the original provider registry before
+   * the temporary empty registry is installed, so the Entity API seed can
+   * still produce one work row. Remove only that known synthetic item using
+   * the Queue API and its matching work identity.
+   */
+  private function removeEntityApiSeedWork(): void {
+    $database = $this->container->get('database');
+    $workIds = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->execute()
+      ->fetchCol();
+    if ($workIds === []) {
+      return;
+    }
+    if (count($workIds) !== 1) {
+      throw new \UnexpectedValueException('Synthetic Entity API setup produced more than one incremental work item.');
+    }
+
+    $queue = $this->container->get('queue')->get(ContentIndexWorkManager::QUEUE_ID);
+    $item = $queue->claimItem();
+    if (!$item || (int) ($item->data['work_id'] ?? 0) !== (int) $workIds[0]) {
+      if ($item) {
+        $queue->releaseItem($item);
+      }
+      throw new \UnexpectedValueException('The synthetic seed work item could not be matched to its Core Queue item.');
+    }
+    $queue->deleteItem($item);
+    $database->delete('aculta_index_work')
+      ->condition('work_id', (int) $workIds[0])
+      ->execute();
   }
 
   /**

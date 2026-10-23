@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.159 — repetir benchmark 100k com descoberta keyset
+
+- O harness de manutenção remove, pela Queue API e pela identidade exata, o
+  único job que pode ser emitido ao salvar a entidade-semente via Entity API;
+  a semeadura SQL em lote continua fora da medição e não cria fila por fonte.
+- Kernel de rebuild passou com 21 testes / 295 assertions. Benchmark MariaDB
+  100k passou: rebuild 182,150 s (549 projeções/s), auditoria 68,991 s,
+  137,5 MiB, zero divergências e `base_table` em 201/201 consultas de IDs.
+  Consulta de IDs p50/p95: 1,101/1,684 ms. Uma amostra sintética, sem SLO.
+
 ## 0.1.0-dev.158 — cobrir páginas de múltiplos purposes
 
 - Unit confirma página mista Wiki/Fórum: o filtro entra nos dois Domains

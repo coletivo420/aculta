@@ -17,6 +17,25 @@ transacional; a leitura de IDs é somente uma parte do custo. Uma execução
 sintética, sem relações, sem SLO e sem inferência de carga de produção. O
 processo PHPUnit levou 49m55s incluindo inicialização e setup.
 
+## Repetição 100k — árvore atual (dev.159)
+
+Após a escolha de priorizar descoberta keyset direta, o Kernel de rebuild passou
+com 21 testes / 295 assertions e o benchmark foi repetido no banco MariaDB
+dedicado. A preparação levou 11,140 s e ficou fora do intervalo medido:
+
+| Fontes | Rebuild (s) | Projeções/s | Audit (s) | Batches de audit | Pico audit (MiB) | ID query p50/p95 (ms) | Estratégias | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| 100.000 | 182,150 | 549 | 68,991 | 402 | 137,5 | 1,101 / 1,684 | `base_table` 201/201 | 0 |
+
+O detalhamento do enumerador somou 228,081 ms de descoberta de IDs, 18,754 s
+em `loadMultiple`, 9,108 s em projeção e 7,610 s em invalidação de cache. O
+resultado confirma que a seleção de candidatos não usa EntityQuery para Node;
+a carga e projeção continuam na Entity API. A execução é sintética e única,
+sem relações e sem SLO. O ajuste feito nesta rodada foi apenas no harness: ele
+remove pelo Queue API o item exato emitido pela entidade-semente, pois o hook
+Drupal já instanciado conserva o registry original durante a semeadura. Não
+houve alteração da implementação de produção nesta microfase.
+
 ## Keyset pela tabela base — diagnóstico 10k/100k (dev.149)
 
 O EntityQuery do Drupal para Node revisionável juntava a tabela base à tabela

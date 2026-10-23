@@ -22,6 +22,8 @@
 
 **Validação dev.158 (2026-10-23):** a suíte Unit passou com 51 testes / 262 assertions; o caso novo exercita uma página com verbetes Wiki e tópicos do Fórum, verifica uma resolução por purpose, autorização individual, ordem dos resultados e restauração do Domain inicial. Kernel completo e benchmark de dev.157 permanecem a evidência integrada da implementação.
 
+**Validação dev.159 (2026-10-23):** repetição MariaDB 100k confirmou a estratégia keyset do enumerador na árvore atual: `base_table` em 201/201 consultas; rebuild 182,150 s (549 projeções/s), auditoria 68,991 s, pico 137,5 MiB e zero divergências. IDs: p50/p95 1,101/1,684 ms. O Kernel de rebuild passou com 21 testes / 295 assertions. O teste 1M citado no relatório é um resultado anterior válido dessa estratégia; não havia processo 1M ativo nesta sessão e nenhum novo 1M foi iniciado. A amostra é sintética e não estabelece SLO.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
