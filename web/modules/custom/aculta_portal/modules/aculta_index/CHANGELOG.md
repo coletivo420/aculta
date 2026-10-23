@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.136 — cobrir hooks históricos do schema de fila e cursor
+
+- Kernel tests exercitam `update_10003`, `10005`, `10006` e `10007`: criação
+  idempotente de tabelas, preservação de cursor existente e criação do índice.
+- PHP lint e PHPCS Drupal passaram; execução Kernel aguarda o benchmark 1M.
+
 ## 0.1.0-dev.135 — alinhar estado do plano de benchmark 1M
 
 - O plano agora distingue a rodada antiga interrompida da repetição corrigida

@@ -695,6 +695,87 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook creates the durable work table on older installs.
+   */
+  public function testUpdateHookCreatesWorkTable(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropTable('aculta_index_work');
+    $this->assertFalse($schema->tableExists('aculta_index_work'));
+
+    aculta_index_update_10003();
+    aculta_index_update_10003();
+
+    $this->assertTrue($schema->tableExists('aculta_index_work'));
+    $this->assertTrue($schema->fieldExists('aculta_index_work', 'sequence'));
+    $this->assertTrue($schema->indexExists('aculta_index_work', 'status_available'));
+  }
+
+  /**
+   * Tests the update hook creates opaque cursor storage on older installs.
+   */
+  public function testUpdateHookCreatesCursorTable(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropTable('aculta_index_cursor');
+    $this->assertFalse($schema->tableExists('aculta_index_cursor'));
+
+    aculta_index_update_10005();
+    aculta_index_update_10005();
+
+    $this->assertTrue($schema->tableExists('aculta_index_cursor'));
+    $this->assertTrue($schema->fieldExists('aculta_index_cursor', 'token_hash'));
+    $this->assertTrue($schema->indexExists('aculta_index_cursor', 'owner_expiry'));
+  }
+
+  /**
+   * Tests the cursor revision migration preserves existing cursor rows.
+   */
+  public function testUpdateHookAddsCursorRevision(): void {
+    $database = $this->container->get('database');
+    $database->insert('aculta_index_cursor')
+      ->fields([
+        'token_hash' => hash('sha256', 'legacy-cursor'),
+        'uid' => 2,
+        'generation_id' => 'legacy-cursor-generation',
+        'query_hash' => hash('sha256', 'legacy-query'),
+        'cursor_changed' => 10,
+        'cursor_entry_id' => 42,
+        'expires' => 200,
+        'created' => 100,
+        'updated' => 100,
+      ])
+      ->execute();
+    $schema = $database->schema();
+    $schema->dropField('aculta_index_cursor', 'cursor_revision');
+    $this->assertFalse($schema->fieldExists('aculta_index_cursor', 'cursor_revision'));
+
+    aculta_index_update_10006();
+    aculta_index_update_10006();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_cursor', 'cursor_revision'));
+    $cursor = $database->select('aculta_index_cursor', 'cursor')
+      ->fields('cursor', ['cursor_changed', 'cursor_entry_id', 'cursor_revision'])
+      ->condition('token_hash', hash('sha256', 'legacy-cursor'))
+      ->execute()
+      ->fetchAssoc();
+    $this->assertSame('10', $cursor['cursor_changed']);
+    $this->assertSame('42', $cursor['cursor_entry_id']);
+    $this->assertSame('0', $cursor['cursor_revision']);
+  }
+
+  /**
+   * Tests the intermediate changed-order index migration is idempotent.
+   */
+  public function testUpdateHookAddsChangedOrderIndex(): void {
+    $schema = $this->container->get('database')->schema();
+    $this->assertFalse($schema->indexExists('aculta_index_entry', 'gen_changed'));
+
+    aculta_index_update_10007();
+    aculta_index_update_10007();
+
+    $this->assertTrue($schema->indexExists('aculta_index_entry', 'gen_changed'));
+  }
+
+  /**
    * Tests the update hook adds provider inventory identity to older installs.
    */
   public function testUpdateHookAddsProviderFingerprint(): void {
