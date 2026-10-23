@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\user\UserInterface;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -13,12 +14,14 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Outros Dados: CPF ou CNPJ da pessoa, gravado uma única vez.
  *
- * Antes de salvar, mostra o campo. Depois, mostra o valor formatado em somente leitura. A validação e a
- * cifra ficam no contrato AccountDocumentInterface. O formulário nunca inclui a entrada em mensagens de erro.
+ * Antes de salvar, mostra o campo. Depois, mostra o valor formatado em somente
+ * leitura. A validação e a cifra ficam no contrato AccountDocumentInterface. O
+ * formulário nunca inclui a entrada em mensagens de erro.
  */
 final class AccountOtherDataForm extends FormBase {
 
@@ -27,14 +30,19 @@ final class AccountOtherDataForm extends FormBase {
     private readonly AccountInterface $currentUser,
     private readonly EntityTypeManagerInterface $entities,
     private readonly MessengerInterface $messages,
+    private readonly RequestStack $requests,
   ) {}
 
+  /**
+   * Cria o formulário com as dependências do container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       self::accountDocumentService($container),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('messenger'),
+      $container->get('request_stack'),
     );
   }
 
@@ -47,10 +55,16 @@ final class AccountOtherDataForm extends FormBase {
       : NULL;
   }
 
+  /**
+   * Identificador do formulário.
+   */
   public function getFormId(): string {
     return 'aculta_portal_account_other_data';
   }
 
+  /**
+   * Monta o formulário conforme o documento salvo e a disponibilidade do serviço.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     if ($this->document === NULL || !$this->document->isAvailable()) {
@@ -66,8 +80,10 @@ final class AccountOtherDataForm extends FormBase {
     }
 
     if ($saved !== NULL) {
-      // A máscara completa do CNPJ tem barra; a do CPF não. O rótulo mostra o tipo que foi gravado.
-      // Campo desabilitado: mesma caixa da digitação, sem edição e sem envio. O valor já vem mascarado do serviço.
+      // A máscara completa do CNPJ tem barra; a do CPF não. O rótulo mostra o
+      // tipo que foi gravado.
+      // Campo desabilitado: mesma caixa da digitação, sem edição e sem envio. O
+      // valor já vem mascarado do serviço.
       $form['saved'] = [
         '#type' => 'textfield',
         '#title' => str_contains($saved, '/') ? $this->t('CNPJ') : $this->t('CPF'),
@@ -104,6 +120,9 @@ final class AccountOtherDataForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Valida a entrada antes de gravar, sem incluí-la em mensagens.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($this->document === NULL) {
       $form_state->setErrorByName('document', $this->unavailableMessage());
@@ -117,13 +136,17 @@ final class AccountOtherDataForm extends FormBase {
     $form_state->set('canonical', $canonical);
   }
 
+  /**
+   * Grava o documento e volta ao checkout, quando o link trouxe destino válido.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     try {
       $this->document->save($this->user(), (string) $form_state->get('canonical'));
       $this->messages->addStatus($this->t('Documento salvo.'));
     }
     catch (\LogicException) {
-      // Mesma mensagem para "já cadastrado em outra conta" e "já salvo": não revela se o documento existe.
+      // Mesma mensagem para "já cadastrado em outra conta" e "já salvo": não
+      // revela se o documento existe.
       $this->messages->addError($this->t('Não foi possível salvar este documento.'));
     }
     catch (\RuntimeException) {
@@ -135,10 +158,11 @@ final class AccountOtherDataForm extends FormBase {
   /**
    * Volta ao checkout quando o link trouxe um destino interno de checkout; senão, permanece em Outros Dados.
    *
-   * Só caminhos internos sob /checkout/ são aceitos, para não criar redirecionamento aberto.
+   * Só caminhos internos sob /checkout/ são aceitos, para não criar
+   * redirecionamento aberto.
    */
   private function returnUrl(): Url {
-    $destination = (string) \Drupal::request()->query->get('destination', '');
+    $destination = (string) $this->requests->getCurrentRequest()?->query->get('destination', '');
     if (str_starts_with($destination, '/checkout/') && !str_starts_with($destination, '//')) {
       try {
         return Url::fromUserInput($destination);
@@ -158,11 +182,17 @@ final class AccountOtherDataForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Mensagem genérica de indisponibilidade.
+   */
   private function unavailableMessage(): TranslatableMarkup {
     return $this->t('Este cadastro não está disponível neste ambiente.');
   }
 
-  private function user(): \Drupal\user\UserInterface {
+  /**
+   * Auxiliar do formulário.
+   */
+  private function user(): UserInterface {
     return $this->entities->getStorage('user')->load($this->currentUser->id());
   }
 

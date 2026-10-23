@@ -9,16 +9,14 @@ namespace Drupal\aculta_portal\Checkout;
  */
 enum FiscalIdentityStatus: string {
 
-  /**
- * Documento válido cadastrado em Outros Dados. */
+  // Documento válido cadastrado em Outros Dados.
   case Valid = 'valid';
 
-  /**
- * Nenhum documento cadastrado. */
+  // Nenhum documento cadastrado.
   case Missing = 'missing';
 
-  /**
- * Não é possível confirmar o cadastro agora (serviço ausente ou valor ilegível). Falha fechada. */
+  // Não é possível confirmar o cadastro agora (serviço ausente ou valor
+  // ilegível). Falha fechada.
   case Unavailable = 'unavailable';
 
 }

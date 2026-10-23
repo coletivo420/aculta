@@ -18,13 +18,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Identidade fiscal (CPF ou CNPJ) exigida para concluir pedidos comerciais da Loja e do LMS.
  *
- * Regras:
- * - Com documento cadastrado: mostra a versão mascarada, somente leitura. Nunca é alterável pelo checkout.
- * - Sem documento e com cifra disponível: aceita o primeiro cadastro na própria compra. A gravação é única e usa o
- *   mesmo serviço de Outros Dados (`/dados/outros-dados`). Depois disso, o campo vira somente leitura.
- * - Sem documento e sem cifra disponível, ou com valor ilegível: falha fechada, com mensagem genérica.
+ * Regras: - Com documento cadastrado: mostra a versão mascarada, somente
+ * leitura. Nunca é alterável pelo checkout. - Sem documento e com cifra
+ * disponível: aceita o primeiro cadastro na própria compra. A gravação é única
+ * e usa o mesmo serviço de Outros Dados (`/dados/outros-dados`). Depois disso,
+ * o campo vira somente leitura. - Sem documento e sem cifra disponível, ou com
+ * valor ilegível: falha fechada, com mensagem genérica.
  *
- * Doações não usam este pane: os flows `doacao` e `assinatura_flow` não o incluem.
+ * Doações não usam este pane: os flows `doacao` e `assinatura_flow` não o
+ * incluem.
  */
 #[CommerceCheckoutPane(
   id: 'aculta_fiscal_identity',
@@ -34,8 +36,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneInterface {
 
+  /**
+   * Política de identidade fiscal do checkout.
+   *
+   * @var \Drupal\aculta_portal\Checkout\FiscalIdentityPolicy
+   */
   private FiscalIdentityPolicy $policy;
 
+  /**
+   * Cria o pane com a política de identidade fiscal.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     $instance->policy = $container->get('aculta_portal.fiscal_identity_policy');
@@ -97,7 +107,8 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
       $form_state->setError($pane_form, $this->t('Não é possível concluir a compra sem um CPF ou CNPJ válido cadastrado.'));
       return;
     }
-    // Primeiro cadastro na própria compra: mesma validação e mesma gravação única de Outros Dados.
+    // Primeiro cadastro na própria compra: mesma validação e mesma gravação
+    // única de Outros Dados.
     $raw = trim((string) $form_state->getValue(array_merge($pane_form['#parents'], ['document'])));
     if ($raw === '') {
       $form_state->setError($pane_form, $this->t('Informe seu CPF ou CNPJ para concluir a compra.'));
@@ -105,7 +116,8 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
     }
     $canonical = $this->policy->canonicalize($raw);
     if ($canonical === NULL || !$this->policy->fill($this->order->getCustomer(), $canonical)) {
-      // Mensagem genérica: não revela se o documento é inválido, já existe em outra conta ou não pode ser gravado.
+      // Mensagem genérica: não revela se o documento é inválido, já existe em
+      // outra conta ou não pode ser gravado.
       $form_state->setError($pane_form, $this->t('Não foi possível salvar este CPF ou CNPJ. Verifique o número e tente novamente.'));
       return;
     }
@@ -125,9 +137,11 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
     return $this->policy->check($customer);
   }
 
+  /**
+   * Mensagem genérica de indisponibilidade.
+   */
   private function unavailableMessage(): TranslatableMarkup {
     return $this->t('Não foi possível confirmar seu CPF ou CNPJ agora. Tente novamente mais tarde.');
   }
-
 
 }
