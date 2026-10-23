@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.9 — confirmar consulta de relações do Index em MariaDB
+
+- Kernel do Content Index consulta `related_entry` com a classe do provider e
+  a policy Entity Access de produção, usando Domains persistidos. A origem e os
+  alvos são revalidados no purpose canônico `wiki`; alvo não publicado é
+  filtrado e o Domain `main` é restaurado.
+- O teste compila a declaração e a tag a partir do YAML owner, mas usa bridge
+  fixture para a policy Portal; não ativa a cadeia completa de DI da Wiki.
+- MariaDB dedicado: 2 testes / 32 assertions PASS; 5 depreciações do módulo
+  Domain. A cobertura já estava aprovada em SQLite; categories/image continuam
+  adiadas até finalizar contratos da Wiki.
+
 ## 0.1.0-dev.8 — atualizar evidência de acesso do Content Index
 
 - Kernel `ContentIndexWikiAccessKernelTest` exercita o filtro real com a policy

@@ -7,7 +7,7 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.6`: provider opcional do Content Index implementado para
+- `0.1.0-dev.9`: provider opcional do Content Index implementado para
   metadados allowlisted e relação outgoing `related_entry`; categorias e
   imagem seguem adiadas. O módulo permanece desabilitado.
 - O módulo **não está habilitado** e não altera o Runtime.
@@ -35,8 +35,13 @@ pendentes, está em
   deduplicação de `related_entry` e declaração do purpose canônico `wiki`.
 - `ContentIndexWikiProviderKernelTest` cobre backfill e CRUD com a classe real
   do provider (1 teste / 17 assertions); usa tag de fixture e não habilita o
-  módulo Wiki nem valida Domain/grants reais. Discovery no YAML owner e consulta
-  do Index com usuário/grants no purpose `wiki` continuam pendentes.
+  módulo Wiki nem valida Domain/grants reais. A declaração/tag owner e a
+  consulta autorizada são cobertas separadamente pelo teste seguinte.
+- `ContentIndexWikiAccessKernelTest` consulta a relação `related_entry` com o
+  provider compilado do YAML owner e a policy Portal real via fixture. Origem e
+  alvo são revalidados no Domain `wiki`, alvo não publicado é filtrado e o
+  contexto `main` é restaurado (2 testes / 32 assertions, SQLite e MariaDB).
+  Boot/DI completo da Wiki e homologação Runtime seguem pendentes.
 
 ## Documentação
 
