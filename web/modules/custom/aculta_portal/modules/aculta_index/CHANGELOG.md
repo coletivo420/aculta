@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.86 — cobrir consulta paginada no Kernel
+
+- `ContentIndexQueryKernelTest` exercita a API de consulta com catálogo e fonte
+  reais: cursor opaco vinculado à conta, ordem keyset estável após inserção,
+  revalidação de acesso depois de despublicação, invalidação do cache de
+  candidatos, limite de candidatos, filtros permitidos e resposta sem geração
+  ativa (2 testes / 29 assertions em SQLite temporário).
+- A execução MariaDB fica pendente enquanto o benchmark de manutenção de 1M
+  continua usando o banco dedicado.
+
 ## 0.1.0-dev.85 — consultar traduções autorizadas por idioma
 
 - O Kernel também consulta as duas traduções pela API do Index, confirma os
