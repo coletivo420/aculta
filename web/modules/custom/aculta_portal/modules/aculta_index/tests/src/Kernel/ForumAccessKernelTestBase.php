@@ -92,18 +92,23 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       new RequestStack(),
     ));
 
-    // Register the exact Forum attachment provider declaration without
-    // enabling the complete Forum module dependency chain in this harness.
+    // Register the exact Forum provider declarations without enabling the
+    // complete Forum module dependency chain in this harness.
     $ownerServices = Yaml::parseFile(
       DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
-    $service = $ownerServices['aculta_forum.attachment_content_index_provider'];
-    $definition = (new Definition($service['class'], $service['arguments']))->setPublic(TRUE);
-    foreach ($service['tags'] as $tag) {
-      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    foreach ([
+      'aculta_forum.content_index_provider',
+      'aculta_forum.attachment_content_index_provider',
+    ] as $serviceId) {
+      $service = $ownerServices[$serviceId];
+      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      foreach ($service['tags'] as $tag) {
+        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      }
+      $container->setDefinition($serviceId, $definition);
     }
-    $container->setDefinition('aculta_forum.attachment_content_index_provider', $definition);
   }
 
   /**
