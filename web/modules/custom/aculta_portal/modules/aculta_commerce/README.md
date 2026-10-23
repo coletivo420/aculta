@@ -56,3 +56,7 @@ A rota `/estudio/loja/produtos` agora aceita parâmetros GET `busca` (título, a
 ## Contrato obrigatório de edição Green Stash
 
 O Green Stash substitui a interface operacional nativa Commerce para a loja. Produtos, variações, estoque e envios devem ser geridos por fluxos Studio, **não** por links para `edit-form` administrativo. O link nativo anterior foi retirado da listagem até existir a edição própria. Usar Commerce como backend e ACULTA420 SDC/UI Suite na apresentação. Ver [contrato de operações](docs/GREEN-STASH-OPERATIONS-CONTRACT.md).
+
+## GS-EDITOR-0.2 — Detalhe sem painel administrativo
+
+A listagem de produtos agora abre `/estudio/loja/produtos/{produto}`. O controller próprio exibe detalhes mínimos em modo leitura e verifica acessos à entidade, store e experiência Studio. Nenhum link abre o formulário nativo Commerce. A criação e edição próprias ainda são próximas fases; esta tela **não permite alterar produtos**. Ver o [roadmap](docs/ROADMAP.md).
