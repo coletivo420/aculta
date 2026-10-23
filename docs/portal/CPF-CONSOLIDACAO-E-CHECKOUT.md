@@ -103,7 +103,7 @@ Confirmado por leitura do código (CartProvider do Commerce em `vendor/drupal/co
 | 1 | Loja e Doações coexistindo | Isolados por tipo de pedido | `CartProvider` |
 | 2 | Anônimo antes do login | Carrinho por sessão, sem fusão automática verificada | Não testado |
 | 3 | Login durante checkout | Não verificado | Pendente de teste Functional |
-| 4 | Retorno de `/dados/outros-dados` | **Não implementado** (não há exigência ainda) | Código |
+| 4 | Retorno de `/dados/outros-dados` | **Implementado:** só aceita destino interno sob `/checkout/`; senão, volta ao próprio formulário | `AccountOtherDataForm::returnUrl`, commits `d46f39e8d` e `c729daafc` |
 | 5 | Múltiplas abas | Não verificado | Pendente |
 | 6 | Doação sem CPF | Permitido (não há exigência) | Código |
 | 7 | Loja com CPF | Não há verificação, portanto a regra ainda não existe | Código |
@@ -121,7 +121,7 @@ Confirmado por leitura do código (CartProvider do Commerce em `vendor/drupal/co
 
 ## 6. Contrato compartilhado proposto (I-B)
 
-Ainda **não implementado**. Proposta para validação antes do código:
+**Parcialmente implementado em `aculta_portal`:** estado, política e pane de checkout (criados antes da consolidação em `aculta_portal`). Os consumidores Loja e LMS usam o mesmo pane, por configuração de flow. Doações continuam fora. A tabela abaixo mantém a proposta original como referência.
 
 | Peça | Dono | Responsabilidade |
 |---|---|---|
@@ -129,7 +129,7 @@ Ainda **não implementado**. Proposta para validação antes do código:
 | `aculta_id_cpf.account_document` (existente) | `aculta_id_cpf` | Única implementação de CPF/CNPJ. |
 | Estado de identidade fiscal (novo, somente leitura) | `aculta_portal` | Retorna `documento ausente` / `válido` / `inválido` / `indisponível`, tipo (CPF ou CNPJ) e representação mascarada. Não expõe o valor completo. |
 | Política de exigência por contexto (nova) | `aculta_portal` | Recebe o **contexto validado do pedido** (tipo de pedido, loja, total > 0) e devolve se a exigência se aplica. Não lê URL, parâmetro de sessão nem indicação do navegador. |
-| Checkout pane ou validação de pedido | `aculta_commerce` e `aculta_lms` (consumidores) | Mostra o aviso, oferece `/dados/outros-dados`, e revalida no servidor antes da conclusão. |
+| Checkout pane ou validação de pedido | `aculta_portal` (`FiscalIdentityPane`), habilitado nos flows de Loja e LMS | Mostra o aviso, aceita o primeiro cadastro e oferece `/dados/outros-dados` com retorno a este pedido (`abb8d80df`); revalida no servidor antes da conclusão. |
 | Dispensa | `aculta_donation` | Declara que o contexto de doação não exige o documento. |
 
 Regras de implementação propostas:
@@ -267,11 +267,11 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 ## 10. Pendências
 
 1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1.
-2. **Kernel do checkout:** cobrir visibilidade do pane (Loja, LMS e Doações), bloqueio na revisão sem documento, aviso com link, documento mascarado, falha fechada, e que o checkout não grava o documento. Requer `SIMPLETEST_DB` de ambiente de teste.
-3. **Retorno do link `destination`:** verificar se `/dados/outros-dados` honra o parâmetro e devolve ao checkout do pedido. Se não honrar, o usuário volta ao carrinho e precisa reabrir o pedido.
+2. **Kernel do checkout: COBERTO.** `FiscalIdentityPaneKernelTest` cobre visibilidade (Loja, LMS e Doações), bloqueio na revisão sem documento, aviso com link, documento mascarado, falha fechada e a garantia de que o checkout não grava documento já existente. 12 testes, 343 asserções, PASS com `SIMPLETEST_DB` de ambiente (mapeado de `secrets/simpletest-db.env`). O run emite 72 deprecations, todas do core 11.4 (`DefaultHtmlRouteProvider::getEntityTypeIdKeyType`), nenhuma dos arquivos desta frente.
+3. **Retorno do link `destination`: COBERTO.** `AccountOtherDataForm::returnUrl` (`d46f39e8d`) aceita apenas caminho interno sob `/checkout/`; URL externa, relativa de protocolo, caminho fora do checkout, vazio e ausente voltam para `/dados/outros-dados`. `AccountOtherDataFormKernelTest` cobre os seis casos, PASS.
 4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
-5. **Avisos de linha longa** (16) nos arquivos de identidade fiscal e no formulário. Sem erros.
-6. **Runtime de teste e produção:** confirmar que `aculta_associado_id` não está habilitado antes de promover (seção 4).
+5. **Avisos de linha longa: RESOLVIDO.** A medição encontrou **15 avisos** (não 16) em seis arquivos de identidade fiscal e no formulário, nenhum erro. Os docblocks foram encurtados (commit `76c194002`); `phpcs --standard=Drupal,DrupalPractice` nos sete arquivos agora termina com código 0, sem erros nem avisos.
+6. **Runtime de teste e produção:** `aculta_associado_id` **não está habilitado** no runtime local (`pm:list` = 0) e **não aparece** em `config/sync/core.extension.yml`. O mesmo teste continua pendente nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`), que exigem acesso.
 7. **Gate Drupal 11:** resolvido. O `WikiController` foi movido para `aculta_wiki` e o gate passa (1151 verificações).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
 9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): não verificados. Bloqueado por acesso: é preciso a URL do site de testes (`*.aculta.toca.net.br`) e uma conta de teste. Enquanto isso, ficam como pendência documentada, sem PASS/FAIL.
