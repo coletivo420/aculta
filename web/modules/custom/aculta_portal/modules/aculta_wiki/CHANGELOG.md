@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.32 — modos de lista em categorias e relações
+
+- Kernel prova a escolha por proposta: categorias acrescentadas com
+  deduplicação e depois substituídas; relações substituídas e depois
+  acrescentadas com deduplicação.
+- Submissão revalida categoria e verbete relacionado visível no domínio Wiki;
+  aplicação revalida destino publicado, idioma/Domain e acesso antes da revisão.
+- Focal: 1 teste / 132 asserções; classe Kernel: 9 testes / 414 asserções.
+  Depreciações upstream registradas. Runtime desabilitado.
+
 ## 0.1.0-dev.31 — modos de lista em propostas
 
 - Kernel aplica duas propostas sucessivas para demonstrar que `append` preserva

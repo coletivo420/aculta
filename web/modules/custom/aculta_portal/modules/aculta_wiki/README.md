@@ -7,6 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.32`: Kernel cobre `append`/`replace` em categorias e relações, com
+  deduplicação e destinos visíveis no domínio Wiki. Focal: 1 teste / 132
+  asserções; classe Kernel: 9 testes / 414 asserções. Runtime desabilitado.
 - `0.1.0-dev.31`: Kernel prova `append` e `replace` para referências em propostas
   sucessivas; append deduplica URLs e replace remove valores anteriores.
   Focal: 1 teste / 122 asserções; classe Kernel: 9 testes / 404 asserções.

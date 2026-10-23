@@ -30,6 +30,8 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeAccessRebuild;
 use Drupal\node\NodeGrantsHelper;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -493,10 +495,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * Proposal submission is private, revision-based, and Wiki-purpose bound.
    */
   public function testProposalSubmissionUsesPrivateRevisionedEntityAndAccess(): void {
+    $this->installEntitySchema('taxonomy_term');
+    $this->installConfig(['taxonomy']);
     $this->installEntitySchema('content_moderation_state');
     $this->installConfig(['workflows', 'content_moderation']);
     $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
     Workflow::create(Yaml::parseFile($workflowFile))->save();
+    Vocabulary::create(['vid' => 'wiki_category', 'name' => 'Wiki categories'])->save();
     FieldStorageConfig::create([
       'entity_type' => 'node',
       'field_name' => 'field_wiki_references',
@@ -510,6 +515,28 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_name' => 'field_wiki_references',
       'label' => 'References',
     ])->save();
+    foreach ([
+      'field_wiki_categories' => ['target_type' => 'taxonomy_term', 'bundles' => ['wiki_category' => 'wiki_category']],
+      'field_wiki_related' => ['target_type' => 'node', 'bundles' => ['wiki_entry' => 'wiki_entry']],
+    ] as $fieldName => $settings) {
+      FieldStorageConfig::create([
+        'entity_type' => 'node',
+        'field_name' => $fieldName,
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => $settings['target_type']],
+        'cardinality' => -1,
+      ])->save();
+      FieldConfig::create([
+        'entity_type' => 'node',
+        'bundle' => 'wiki_entry',
+        'field_name' => $fieldName,
+        'label' => $fieldName,
+        'settings' => [
+          'handler' => 'default:' . $settings['target_type'],
+          'handler_settings' => ['target_bundles' => $settings['bundles']],
+        ],
+      ])->save();
+    }
     Role::create([
       'id' => 'wiki_proposal_submitter_test',
       'label' => 'Wiki proposal submitter test',
@@ -547,6 +574,32 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'status' => 1,
       'roles' => ['wiki_proposal_submitter_test'],
     ])->save();
+    $currentCategory = Term::create(['vid' => 'wiki_category', 'name' => 'Categoria atual']);
+    $currentCategory->save();
+    $proposedCategory = Term::create(['vid' => 'wiki_category', 'name' => 'Categoria proposta']);
+    $proposedCategory->save();
+    $currentRelated = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete relacionado atual',
+      'uid' => 3,
+      'status' => TRUE,
+      'moderation_state' => 'published',
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => 2,
+      'body' => ['value' => 'Texto relacionado atual', 'format' => 'plain_text'],
+    ]);
+    $currentRelated->save();
+    $proposedRelated = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete relacionado proposto',
+      'uid' => 3,
+      'status' => TRUE,
+      'moderation_state' => 'published',
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => 2,
+      'body' => ['value' => 'Texto relacionado proposto', 'format' => 'plain_text'],
+    ]);
+    $proposedRelated->save();
     $target = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete público para proposta',
@@ -556,6 +609,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
       'field_wiki_test_grant_uid' => 2,
       'field_wiki_references' => [['uri' => 'https://example.invalid/current', 'title' => 'Fonte atual']],
+      'field_wiki_categories' => [['target_id' => $currentCategory->id()]],
+      'field_wiki_related' => [['target_id' => $currentRelated->id()]],
       'body' => ['value' => 'Conteúdo publicado', 'format' => 'plain_text'],
     ]);
     $target->save();
@@ -839,6 +894,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
           ['uri' => 'https://example.invalid/new', 'title' => 'Fonte nova'],
           ['uri' => 'https://example.invalid/current', 'title' => 'Fonte repetida'],
         ],
+        'field_wiki_categories' => [(int) $currentCategory->id(), (int) $proposedCategory->id()],
+        'field_wiki_related' => [(int) $currentRelated->id(), (int) $proposedRelated->id()],
       ],
     );
     Role::create([
@@ -863,8 +920,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       (int) $acceptedCandidate->getRevisionId(),
       'accepted',
       'Título conferido e publicado.',
-      ['title', 'field_wiki_references'],
-      ['field_wiki_references' => 'append'],
+      ['title', 'field_wiki_references', 'field_wiki_categories', 'field_wiki_related'],
+      [
+        'field_wiki_references' => 'append',
+        'field_wiki_categories' => 'append',
+        'field_wiki_related' => 'replace',
+      ],
     );
     $publishedTarget = Node::load((int) $target->id());
     self::assertSame('accepted', $acceptedProposal->get('state')->value);
@@ -873,6 +934,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(
       ['https://example.invalid/current', 'https://example.invalid/new'],
       array_column($publishedTarget->get('field_wiki_references')->getValue(), 'uri'),
+    );
+    self::assertSame(
+      [(int) $currentCategory->id(), (int) $proposedCategory->id()],
+      array_map('intval', array_column($publishedTarget->get('field_wiki_categories')->getValue(), 'target_id')),
+    );
+    self::assertSame(
+      [(int) $currentRelated->id(), (int) $proposedRelated->id()],
+      array_map('intval', array_column($publishedTarget->get('field_wiki_related')->getValue(), 'target_id')),
     );
     self::assertNotSame((int) $currentTarget->getRevisionId(), (int) $publishedTarget->getRevisionId());
     $this->container->get('current_user')->setAccount($submitter);
@@ -883,7 +952,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'A fonte antiga foi substituída.',
       [],
       str_repeat('d', 64),
-      ['field_wiki_references' => [['uri' => 'https://example.invalid/replacement', 'title' => 'Fonte substituta']]],
+      [
+        'field_wiki_references' => [['uri' => 'https://example.invalid/replacement', 'title' => 'Fonte substituta']],
+        'field_wiki_categories' => [(int) $currentCategory->id()],
+        'field_wiki_related' => [(int) $currentRelated->id(), (int) $proposedRelated->id()],
+      ],
     );
     $this->container->get('current_user')->setAccount($acceptor);
     $replacementProposal = $decisionService->decide(
@@ -891,8 +964,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       (int) $replacementCandidate->getRevisionId(),
       'accepted',
       'Referência substituída após conferência.',
-      ['field_wiki_references'],
-      ['field_wiki_references' => 'replace'],
+      ['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'],
+      [
+        'field_wiki_references' => 'replace',
+        'field_wiki_categories' => 'replace',
+        'field_wiki_related' => 'append',
+      ],
     );
     $replacementTarget = $this->container->get('entity_type.manager')->getStorage('node')
       ->loadUnchanged((int) $target->id());
@@ -900,6 +977,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(
       ['https://example.invalid/replacement'],
       array_column($replacementTarget->get('field_wiki_references')->getValue(), 'uri'),
+    );
+    self::assertSame(
+      [(int) $currentCategory->id()],
+      array_map('intval', array_column($replacementTarget->get('field_wiki_categories')->getValue(), 'target_id')),
+    );
+    self::assertSame(
+      [(int) $currentRelated->id(), (int) $proposedRelated->id()],
+      array_map('intval', array_column($replacementTarget->get('field_wiki_related')->getValue(), 'target_id')),
     );
     $this->container->get('current_user')->setAccount($reviewer);
 

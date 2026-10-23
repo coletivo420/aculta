@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.31**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.32**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.32 — listas de categorias e relações
+
+Kernel prova `append` e `replace` para categorias e relações em propostas
+sucessivas, com deduplicação e revalidação de acesso/domain dos destinos.
+Focal: 1 teste / 132 asserções; classe Kernel: 9 testes / 414 asserções.
+Runtime segue desabilitado.
 
 ### Incremento dev.31 — listas de propostas
 

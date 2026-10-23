@@ -1,5 +1,7 @@
 # Wiki — instruções locais
 
+- Dev.32: Kernel prova `replace`/`append` para categorias e relações da Wiki,
+  com acesso e domínio revalidados na aplicação.
 - Dev.31: Kernel prova as escolhas `append` e `replace` em referências, com
   deduplicação. Manter testes de integração correspondentes para categorias e
   relações ao ampliar essa área.
