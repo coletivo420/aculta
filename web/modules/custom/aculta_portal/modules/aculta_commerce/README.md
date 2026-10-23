@@ -64,3 +64,6 @@ A listagem de produtos agora abre `/estudio/loja/produtos/{produto}`. O controll
 ## GS-EDITOR-0.3-A — Novo produto sem painel administrativo
 
 Novo formulário Studio em `/estudio/loja/produtos/novo`: cria rascunho de produto `produto_loja` com nome e loja selecionada (somente lojas editáveis pelo operador). Persiste na entidade Commerce nativa, não cria entidades paralelas e não publica. Link `Novo produto` aparece na listagem. **Ainda não permite variações, preço, imagens ou estoque**; requer homologação antes da habilitação no servidor.
+
+## Loja unica
+O Green Stash utiliza somente a loja comercial existente. Novo produto solicita apenas nome e associa automaticamente a unica Commerce store, apos verificar permissao. LMS e Doacoes nao sao novas lojas nem opcoes do formulario. Nenhum ID de loja fixo; configuracoes ambiguas falham fechadas.
