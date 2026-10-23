@@ -16,7 +16,7 @@ concede visualização aos membros ativos e educadores do curso somente enquanto
 estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
 
 O provider do Content Index projeta somente `Group:lms_course` e relações
-explícitas `course_reading` (`revista`/`wiki_entry`) e `course_gallery`.
+explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery` e `course_document`, esta última quando o plugin PDF Group opcional está registrado.
 Consultas revalidam Entity Access sob o purpose `courses` e exigem também
 `takeAccess()` ou a permissão contextual de educador (`administer members` ou
 `grade students`). Aulas, progresso, matrículas, respostas, notas e certificados

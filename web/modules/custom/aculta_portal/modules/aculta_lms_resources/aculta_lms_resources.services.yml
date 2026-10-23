@@ -1,7 +1,7 @@
 services:
   aculta_lms_resources.course_content_index_provider:
     class: Drupal\aculta_lms_resources\ContentIndex\LmsCourseContentIndexProvider
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_purpose', '@group_relation_type.manager']
     tags:
       - { name: aculta_index.provider }
 

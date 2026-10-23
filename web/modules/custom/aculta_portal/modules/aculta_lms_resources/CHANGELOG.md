@@ -1,5 +1,21 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.13 — projetar documentos vinculados ao curso
+
+- O provider LMS projeta `course_document` a partir do plugin Group
+  `aculta_pdf_viewer_group:course_document`, quando registrado. O owner PDF e
+  o provider Media mantêm controle do bundle e de seu acesso; o provider LMS
+  mantém a relação outgoing `course_document`.
+- A versão de projeção passa a 2 quando a capacidade está disponível e fica em
+  1 sem o plugin, alterando o fingerprint para exigir rebuild.
+- Unit: 5 testes / 29 assertions PASS, incluindo relação opcional e filtro de
+  bundle; PHPCS Drupal e `php -l` PASS. O Kernel LMS da projeção pela API
+  outgoing continua pendente: o harness não descobre o plugin Group owner, e
+  habilitar o módulo completo aciona uma referência de serviço ausente no
+  Portal. O Kernel de acesso existente para `course_document` permanece como
+  evidência separada do filtro e da policy do destino.
+
+
 ## 0.1.0-dev.12 — consulta Index de galerias vinculadas ao curso
 
 - O Kernel consulta `course_gallery` por meio dos providers LMS e Gallery cujas

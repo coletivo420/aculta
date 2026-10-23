@@ -14,7 +14,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 
@@ -27,6 +29,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly GroupRelationTypeManagerInterface $relationTypeManager,
   ) {}
 
   /**
@@ -40,7 +43,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return $this->relationTypeManager->hasDefinition('aculta_pdf_viewer_group:course_document') ? 2 : 1;
   }
 
   /**
@@ -94,6 +97,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
     $relations = [];
     $this->appendNodeRelations($entity, 'field_lms_readings', $relations);
     $this->appendGalleryRelations($entity, $relations);
+    $this->appendDocumentRelations($entity, $relations);
 
     return new ContentIndexProjection(
       'group',
@@ -151,6 +155,27 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
         continue;
       }
       $relations[] = new ContentIndexRelation('course_gallery', 'media_gallery', (string) $target->id());
+    }
+  }
+
+  /**
+   * Adds access-controlled PDF documents attached through the Group plugin.
+   *
+   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   *   Course containing the Group relation.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations to append.
+   */
+  private function appendDocumentRelations(CourseInterface $course, array &$relations): void {
+    $pluginId = 'aculta_pdf_viewer_group:course_document';
+    if (!$this->relationTypeManager->hasDefinition($pluginId)) {
+      return;
+    }
+    foreach ($course->getRelatedEntities($pluginId) as $target) {
+      if (!$target instanceof MediaInterface || $target->bundle() !== 'course_document') {
+        continue;
+      }
+      $relations[] = new ContentIndexRelation('course_document', 'media', (string) $target->id());
     }
   }
 

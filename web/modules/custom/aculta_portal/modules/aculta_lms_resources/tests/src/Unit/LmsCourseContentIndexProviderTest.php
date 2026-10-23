@@ -15,7 +15,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -52,21 +54,48 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $galleries->method('isEmpty')->willReturn(FALSE);
     $galleries->method('referencedEntities')->willReturn([$gallery]);
 
-    $course = $this->createCourse($readings, $galleries);
-    $projection = $this->createProvider()->project($course);
+    $documents = $this->createMock(MediaInterface::class);
+    $documents->method('bundle')->willReturn('course_document');
+    $documents->method('id')->willReturn('41');
+    $wrongDocument = $this->createMock(MediaInterface::class);
+    $wrongDocument->method('bundle')->willReturn('document');
+    $wrongDocument->method('id')->willReturn('42');
+    $course = $this->createCourse($readings, $galleries, [$documents, $wrongDocument]);
+    $relationManager = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relationManager->method('hasDefinition')->with('aculta_pdf_viewer_group:course_document')->willReturn(TRUE);
+    $course->method('getRelatedEntities')
+      ->with('aculta_pdf_viewer_group:course_document')
+      ->willReturn([$documents, $wrongDocument]);
+    $projection = $this->createProvider($relationManager)->project($course);
 
     self::assertNotNull($projection);
     self::assertSame('group', $projection->entityTypeId);
     self::assertSame('lms_course', $projection->bundle);
     self::assertSame('cursos_aculta_org', $projection->domainId);
-    self::assertSame(['course_reading', 'course_reading', 'course_gallery'], array_map(
+    self::assertSame(['course_reading', 'course_reading', 'course_gallery', 'course_document'], array_map(
       static fn ($relation): string => $relation->type,
       $projection->relations,
     ));
-    self::assertSame(['17', '21', '31'], array_map(
+    self::assertSame(['17', '21', '31', '41'], array_map(
       static fn ($relation): string => $relation->targetEntityId,
       $projection->relations,
     ));
+  }
+
+  /**
+   * An absent optional relation plugin does not expose document edges.
+   */
+  public function testDocumentRelationIsOptionalWhenPluginIsAbsent(): void {
+    $course = $this->createCourse();
+    $course->expects(self::never())->method('getRelatedEntities');
+    $manager = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with('aculta_pdf_viewer_group:course_document')->willReturn(FALSE);
+
+    $projection = $this->createProvider($manager)->project($course);
+
+    self::assertNotNull($projection);
+    self::assertSame(1, $this->createProvider($manager)->getProjectionVersion());
+    self::assertSame([], $projection->relations);
   }
 
   /**
@@ -111,6 +140,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
   private function createCourse(
     ?EntityReferenceFieldItemListInterface $readings = NULL,
     ?EntityReferenceFieldItemListInterface $galleries = NULL,
+    array $documents = [],
   ): CourseInterface {
     $language = $this->createMock(LanguageInterface::class);
     $language->method('getId')->willReturn('pt-br');
@@ -127,6 +157,9 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheTags')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
+    if ($documents !== []) {
+      $course->method('getRelatedEntities')->with('aculta_pdf_viewer_group:course_document')->willReturn($documents);
+    }
     $course->method('hasField')->willReturnMap([
       ['field_lms_readings', $readings !== NULL],
       ['field_lms_galleries', $galleries !== NULL],
@@ -141,7 +174,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
   /**
    * Creates the provider with a canonical courses Domain fixture.
    */
-  private function createProvider(): LmsCourseContentIndexProvider {
+  private function createProvider(?GroupRelationTypeManagerInterface $relationTypeManager = NULL): LmsCourseContentIndexProvider {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn('cursos_aculta_org');
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -154,7 +187,9 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    return new LmsCourseContentIndexProvider($domainPurposeManager);
+    $relationTypeManager ??= $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
+    return new LmsCourseContentIndexProvider($domainPurposeManager, $relationTypeManager);
   }
 
 }

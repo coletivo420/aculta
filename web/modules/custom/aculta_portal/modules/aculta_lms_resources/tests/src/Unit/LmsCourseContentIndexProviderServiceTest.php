@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -41,6 +42,8 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
       ->setSynthetic(TRUE)
       ->setPublic(TRUE);
     $container->setDefinition($purposeServiceId, $purposeDefinition);
+    $relationManagerId = 'group_relation_type.manager';
+    $container->setDefinition($relationManagerId, (new Definition())->setSynthetic(TRUE)->setPublic(TRUE));
     $providerService = (new Definition($providerDefinition['class']))
       ->setArguments(array_map(
         static fn (string $argument): Reference => new Reference(substr($argument, 1)),
@@ -61,6 +64,7 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+    $container->set($relationManagerId, $this->createMock(GroupRelationTypeManagerInterface::class));
 
     $registry = $container->get('aculta_index.provider_registry');
     self::assertInstanceOf(ContentIndexProviderRegistry::class, $registry);
