@@ -22,6 +22,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Index filtering under the Portal's production Wiki access policy.
@@ -52,6 +53,19 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       new Reference('config.factory'),
       new Reference('request_stack'),
     ]))->setPublic(TRUE));
+
+    // Register the provider declaration from the owner YAML without enabling
+    // the unfinished Wiki module or its unrelated service dependency chain.
+    $ownerServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $service = $ownerServices['aculta_wiki.content_index_provider'];
+    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+    foreach ($service['tags'] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_wiki.content_index_provider', $definition);
   }
 
   /**

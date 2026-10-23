@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.99 — registrar provider Wiki pelo YAML owner
+
+- O Kernel de acesso e relação Wiki lê e registra a declaração/tag diretamente
+  de `aculta_wiki.services.yml`; a fixture não declara mais um provider paralelo.
+- SQLite: 2 testes / 32 assertions passaram. A ponte de teste para o hook de
+  acesso do Portal permanece isolada; a Wiki não é habilitada e o boot/DI
+  completo continua pendente.
+
 ## 0.1.0-dev.98 — consultar relações Wiki com access real
 
 - Kernel Wiki passa `related_entry` pelo `ContentIndexRelationQuery` e pelo
