@@ -94,24 +94,26 @@ Confirmado por leitura do código (CartProvider do Commerce em `vendor/drupal/co
 | Matrícula | `CourseOrderEnrollmentManager::synchronize` concede a matrícula somente se o pedido estiver `completed` e pago, ou com pagamento `completed`/`partially_refunded` com saldo. |
 | Curso gratuito | Variação com preço zero **também gera pedido** e passa pelo checkout comercial, pois `courseVariation()` só exige `getPrice() !== NULL`. |
 | Documento | Lido e gravado somente por `AccountOtherDataForm` e `PortalController`, via `AccountDocumentInterface`. |
-| Domínio | ADR-013 registra que o Commerce resolve o tipo de item e o portal coordena. A verificação de isolamento entre Domains **não foi feita** nesta rodada. |
+| Domínio | ADR-013 registra que o Commerce resolve o tipo de item e o portal coordena. A troca de Domain foi verificada no navegador em 2026-10-23 (cenário 8 e 9.6); o isolamento entre lojas segue coberto em Kernel por `CartIsolationKernelTest`. |
 
 ### Cenários da seção 8 (pedido I-A)
 
 | # | Cenário | Situação | Evidência |
 |---|---|---|---|
 | 1 | Loja e Doações coexistindo | Isolados por tipo de pedido | `CartProvider` |
-| 2 | Anônimo antes do login | Carrinho por sessão, sem fusão automática verificada | Não testado |
-| 3 | Login durante checkout | Não verificado | Pendente de teste Functional |
+| 2 | Anônimo antes do login | **PASS (navegador, 2026-10-23):** carrinho anônimo por sessão; o login não funde nem troca o pedido | Pedido 117: produto no host da loja, carrinho em `aculta.toca.net.br/carrinho`, cookie `SSESS…` de domínio `.aculta.toca.net.br`; depois do login, mesmo pedido e mesmo item |
+| 3 | Login durante checkout | **PASS (navegador, 2026-10-23):** login no próprio pane avança o mesmo pedido | Pedido 119: `/carrinho/finalizar` → `/finalizar-compra/119/entrar`; login em `#edit-login-returning-customer-*` → `/finalizar-compra/119/informacoes-do-pedido?check_logged_in=1` |
 | 4 | Retorno de `/dados/outros-dados` | **Implementado:** só aceita destino interno sob `/checkout/`; senão, volta ao próprio formulário | `AccountOtherDataForm::returnUrl`, commits `d46f39e8d` e `c729daafc` |
-| 5 | Múltiplas abas | Não verificado | Pendente |
+| 5 | Múltiplas abas | **Não exercitado** | A sessão é única por cookie de domínio `.aculta.toca.net.br`, mas duas abas simultâneas não foram testadas |
 | 6 | Doação sem CPF | Permitido (não há exigência) | Código |
-| 7 | Loja com CPF | Não há verificação, portanto a regra ainda não existe | Código |
-| 8 | Troca de Domain/Store | Carrinho por loja; isolamento de Domain não auditado | Pendente |
+| 7 | Loja com CPF | **PASS (navegador, 2026-10-23):** o pane de identidade fiscal exige CPF/CNPJ na Loja e bloqueia a conclusão sem documento | Pedido 113: vazio e inválido permanecem em `revisao`; válido conclui (9.6) |
+| 8 | Troca de Domain/Store | **PASS (navegador, 2026-10-23):** o carrinho do host da loja redireciona para o MAIN | `loja.aculta.toca.net.br/carrinho` → 302 → `https://aculta.toca.net.br/carrinho` |
 | 9 | LMS | Consumidor implementado (`CourseEnrollmentPurchaseForm`) | Código |
-| 10 | Logout/expiração | Carrinho segue `CartSession`; comportamento não verificado | Pendente |
+| 10 | Logout/expiração | **PASS para logout; expiração por TTL não exercitada** | Após sair, `/finalizar-compra/119/revisao` responde 403 e `/carrinho` mostra "Seu carrinho de compras está vazio." |
 
-**Conclusão de I-A:** o isolamento por tipo de pedido existe na camada do Commerce. Porém **nenhum checkout comercial exige identidade fiscal hoje**, então a política ainda não está implementada para Loja nem LMS.
+Os cenários 2, 3, 8 e 10 foram re-verificados no navegador em 2026-10-23, depois da implementação do pane de identidade fiscal. Evidências completas em 9.6.
+
+**Conclusão de I-A:** o isolamento por tipo de pedido existe na camada do Commerce. Na medição original, **nenhum checkout comercial exigia identidade fiscal**, então a política ainda não estava implementada para Loja nem LMS. *(Atualização de 2026-10-23: a política foi implementada em `aculta_portal` e verificada no navegador — ver 9.6.)*
 
 ### Divergências encontradas
 
@@ -238,7 +240,8 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 - **Gate Drupal 11+:** PASS (1151 verificações). Três falhas foram corrigidas: caminho do `WikiController` (movido para `aculta_wiki`), registros de status dos helpers de checkout e do subscriber da ADR-013, e a contagem de subscribers, agora quatorze. Commit `e02608c0`.
 - **Cenários de sessão:**
   - *Verificado em Kernel (Commerce, sem o Portal):* carrinhos de loja, curso e doação coexistem para a mesma conta; o mesmo tipo não é duplicado; carrinhos de lojas diferentes são separados. Arquivo `CartIsolationKernelTest`, 3 testes passando.
-  - *Não verificado:* login durante o checkout, múltiplas abas, expiração de sessão e troca de Domain pela lógica do Portal. Exigem teste funcional com o navegador no ambiente de teste, e o gateway de pagamento. O site local responde só com redirecionamento para os domínios públicos, então esses testes não rodam aqui sem configuração.
+  - *Verificado em navegador no servidor de testes (2026-10-23):* carrinho anônimo preservado depois do login (pedido 117), login no pane durante o checkout (pedido 119) e troca de Domain (loja → MAIN). Evidências em 9.6.
+  - *Não exercitado:* múltiplas abas simultâneas e expiração por TTL da sessão. O descarte da sessão por logout foi verificado; o vencimento por tempo exigiria aguardar o `cookie_lifetime` configurado.
 - **Duplicação Loja × LMS:** removida na configuração (flow `curso` retirado, tipo `curso` aponta para o flow `default`). A rota de import foi aplicada no ambiente de teste.
 
 ## 9.5 Drift de configuração: classificação real (2026-10-23)
@@ -264,6 +267,45 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 - os 4 de ordem: ordenar as sequências no arquivo de `config/sync` conforme o schema. Muda só a ordem e o `config:status` converge;
 - os 25 restantes: o sync está desatualizado em relação ao site (módulos ativos). O caminho é reexportar o ativo (`drush config:export` desses itens), com revisão de quem responde por `aculta_index`, `aculta_wiki` e fórum — não importar por cima do banco.
 
+## 9.6 Verificação de navegador da frente CPF + checkout (2026-10-23)
+
+Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DISPLAY=:0` via geckodriver, perfil temporário em `/tmp`; conta `teste.comum` (uid 5), conforme `docs/operations/TESTE-COMUM.md`. Nenhuma configuração do ambiente foi alterada.
+
+### Correções feitas antes dos testes
+
+- **Autowiring do `CartCheckoutController`:** o serviço falhava com `AutowiringFailedException` ("Cannot autowire service ... argument `$consolidator`"), registrado às 09:35 de 2026-10-23. O `#[Autowire(service: 'aculta_portal.cart_consolidator')]` no construtor resolve. Sem ele, `/carrinho/finalizar` não carrega.
+- **403 do checkout anônimo:** `ProtectedRouteAccessCheck::checkout()` combinava o acesso do Commerce com os checks de e-mail e termos. Para anônimo os dois são neutros, e neutro combinado com permitido continua neutro — e neutro é negado. Agora o anônimo devolve só o acesso do Commerce, que já decide pela sessão do carrinho; o autenticado continua exigindo e-mail confirmado e termos. Coberto por três testes Unit novos.
+
+### Evidências
+
+| Cenário | Resultado | Evidência |
+|---|---|---|
+| Carrinho anônimo por sessão | PASS | Produto no host `shop` (`loja.aculta.toca.net.br/product/9`) → carrinho em `aculta.toca.net.br/carrinho` (`views-form-commerce-cart-form-default-117`); cookie `SSESS…` com domínio `.aculta.toca.net.br` |
+| Login no pane do checkout | PASS | Pedido 119: `/finalizar-compra/119/entrar`; login em `#edit-login-returning-customer-name` / `-password` → `/finalizar-compra/119/informacoes-do-pedido?check_logged_in=1` |
+| Mesmo pedido depois do login | PASS | Pedido 117 mantém o id e o item depois do login pela conta |
+| Troca de Domain | PASS | `loja.aculta.toca.net.br/carrinho` → 302 → `https://aculta.toca.net.br/carrinho` |
+| Logout | PASS | Após "Sair": `/finalizar-compra/119/revisao` → 403 "Acesso negado"; `/carrinho` → "Seu carrinho de compras está vazio." |
+| Pane fiscal — vazio | PASS | Pedido 113 em `revisao`: permanece no passo, "Informe seu CPF ou CNPJ para concluir a compra." |
+| Pane fiscal — inválido | PASS | `123.456.789-00`: permanece em `revisao`, "Não foi possível salvar este CPF ou CNPJ. Verifique o número e tente novamente." |
+| Pane fiscal — válido | PASS | CPF sintético válido (checksum de teste) → `/finalizar-compra/113/concluido`, h1 "Pedido concluído", sem mensagens |
+| Documento já gravado | PASS | Pedido 114 em `revisao`: campo ausente e texto "Documento cadastrado: 111.44*.***-**. Não pode ser alterado." |
+| Múltiplas abas | Não exercitado | — |
+| Expiração por TTL | Não exercitado | Só o descarte por logout foi verificado |
+
+### Limitações do ambiente (não são falhas desta frente)
+
+- **Gateway de pagamento desabilitado:** o gateway `mercado_pago` está com `status=false`, então `PaymentInformation::buildPaneForm()` emite "Não existem gateways de pagamento disponíveis para este pedido." e o checkout não avança além de `informacoes-do-pedido`. Para exercitar o pane fiscal, o total dos pedidos de teste foi zerado. Nada na configuração foi alterado.
+- **`profile.type.customer` ausente:** o pedido 113 falhou com 500 (`PluginNotFoundException: The "entity:profile:customer" plugin does not exist.`, log de 23-Oct-2026 10:13:26) ao tentar criar o perfil de cobrança. Os tipos existentes são `administrator, associado, authenticated, email_confirmed, estudante, gerente_loja, lms_teacher`. O tipo foi removido do repositório por outras frentes (`e85c3dbe`, `b66646ef`), como registra 9.5. É configuração de outra frente; não foi alterada.
+- **403 em deep link depois do logout:** `/finalizar-compra/{id}/{step}` devolve 403 sem CTA de login, enquanto a entrada `/carrinho/finalizar` mostra o pane. Avaliar se convém redirecionar o deep link para a entrada.
+- **LMS no navegador:** não testado nesta rodada; a cobertura de LMS vem do `FiscalIdentityPaneKernelTest` (12 testes, 343 asserções).
+- **Olivero:** não testado nesta rodada. Trocar `system.theme` é global e afetaria o trabalho de outros agentes no mesmo ambiente.
+
+### Gates finais
+
+- `php scripts/validate-aculta-portal-drupal11.php` → `PROJECT STATUS INDEX: PASS (39 componentes)` e `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1155 checks)`.
+- Unit: `324 tests, 810 assertions, OK` (6 deprecations).
+- Kernel, com `SIMPLETEST_DB` exportado de `secrets/simpletest-db.env`: `53 tests, 831 assertions, OK` (90 deprecations).
+
 ## 10. Pendências
 
 1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1. Medição local de 2026-10-23: `aculta_portal.checkout_settings` **não existe** no runtime local nem em `config/sync`; valem os padrões de `config/install` (`common_checkout_enabled: true`, `shop_order_type: default`, `lms_order_type: curso`). O flow `default` do runtime local já contém `aculta_fiscal_identity` e o flow `curso` não existe, então a unificação está aplicada no banco local; nos servidores de teste e produção continua pendente de verificação.
@@ -274,11 +316,18 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 6. **Runtime de teste e produção:** `aculta_associado_id` **não está habilitado** no runtime local (`pm:list` = 0) e **não aparece** em `config/sync/core.extension.yml`. O mesmo teste continua pendente nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`), que exigem acesso.
 7. **Gate Drupal 11:** resolvido. O `WikiController` foi movido para `aculta_wiki` e o gate passa (1151 verificações).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local e o `core.extension` do sync o listam como habilitado. Registrado em adendo datado da própria ADR (2026-10-23, commit `84cc65051`), com a frase original preservada. A correção do texto antigo, se desejada, é decisão do responsável.
-9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): não verificados. Bloqueado por acesso: é preciso a URL do site de testes (`*.aculta.toca.net.br`) e uma conta de teste. Enquanto isso, ficam como pendência documentada, sem PASS/FAIL.
+9. **Cenários de sessão da seção 5:** verificados no servidor de testes em 2026-10-23, com a conta `teste.comum` (uid 5). Detalhes em 9.6.
+    - **PASS — login durante o checkout:** pedido 119; o login no próprio pane avança o mesmo pedido para `informacoes-do-pedido` com `?check_logged_in=1`.
+    - **PASS — anônimo antes do login:** pedido 117 criado anonimamente e preservado depois do login.
+    - **PASS — troca de Domain:** `loja.aculta.toca.net.br/carrinho` redireciona (302) para `aculta.toca.net.br/carrinho`.
+    - **PASS — logout:** depois de sair, `/finalizar-compra/119/revisao` responde 403 e `/carrinho` mostra o carrinho vazio.
+    - **Pendente — múltiplas abas e expiração por TTL:** não exercitadas. A sessão é única por cookie de domínio `.aculta.toca.net.br`, mas duas abas simultâneas e o vencimento por tempo não foram testados.
 10. **Drift dos 29 itens de configuração:** classificado e decidido em 9.5 (4 de ordem + 25 com sync desatualizado). Nada importado. A correção depende dos donos de `aculta_index`, `aculta_wiki` e fórum e de uma rodada de `config:export` revisada.
 11. **Verificação de navegador no servidor de testes (2026-10-23):** Firefox ESR visível em `DISPLAY=:0`, via geckodriver, com `scripts/check-browser-hosts.sh`; sem processos do navegador restantes ao final.
     - **PASS — carregamento dos hosts:** `aculta.toca.net.br`, `links.aculta.toca.net.br`, `conta.aculta.toca.net.br/entrar` e `apoio.aculta.toca.net.br` carregaram (código 0, títulos esperados), com `example.com` como controle. A home da loja (`loja.aculta.toca.net.br/`) responde 200.
     - **PASS — rotas da frente, anônimo:** `conta.../dados` e `.../painel-administrativo/aculta/checkout` respondem 403; `loja.../checkout/{id}` responde 301 para `/finalizar-compra/{id}`, como em `CheckoutSlugMap` e `DomainPurposeRequestSubscriber`.
     - **Observação 1:** `loja.aculta.toca.net.br/loja-da-aculta`, listado em `docs/operations/NAVEGADOR-TESTES.md`, responde 404; a home da loja publica produtos em `/loja/produto/...`.
     - **Observação 2:** `/checkout` na loja, no apoio e na conta responde 302 para `https://aculta.toca.net.br/checkout`, que responde 403 para anônimo. É compatível com rota comum fechada; confirmar com acesso autenticado.
-    - **FAIL/bloqueado — cenários de sessão:** login durante o checkout, múltiplas abas, troca de Domain e expiração continuam sem conta de teste (item 9). Nenhum PASS foi atribuído a eles.
+    - **PASS — cenários de sessão:** login durante o checkout, carrinho anônimo, troca de Domain e logout, com a conta de teste (item 9 e 9.6). Continuam pendentes múltiplas abas e expiração por TTL.
+    - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
+    - **Pendente — fiscal no LMS e tema Olivero:** não exercitados no navegador nesta rodada.
