@@ -24,3 +24,9 @@ A escolha de checkout é por carrinho/pedido e não por sessão PHP global; no m
 ## Trabalho reservado ao servidor
 
 `drush cget aculta_donation.settings`, listar `commerce_order_type`, `commerce_order_item_type`, `commerce_checkout_flow`, `commerce_payment_gateway` e módulos habilitados. Sanitizar logs, nunca expor chaves de pagamento. Testar `donate`, `cart`, `both`, doação avulsa e recorrente, carrinhos simultâneos, redirecionamento multidomínio, política de estorno e acesso por entidade. Não executar alterações de configuração em produção.
+
+## RETIFICAÇÃO VIGENTE — Centralização **administrativa** (2026-10-22)
+
+O carrinho atual da barra multidomínio permanece inalterado e **não haverá quatro abas públicas**. Comum | Loja | LMS | Doações são abas de configuração interna no Portal. Manter `donate|cart|both`, redirecionamentos, order types, checkout dedicado, recorrência e policy de estorno como comportamentos públicos existentes; a migração é de ownership do seletor transversal, sem mudança de UX ou sessão de usuário.
+
+**Fases substitutivas:** D-A caracterizar `DonationSettingsForm` e `CartCheckoutRouteSubscriber` em `donate|cart|both`; D-B implementar provider administrativo mantendo código anterior ativo; D-C integrar formulário da aba administrativa Doações do Portal; D-D transferir a lógica compartilhada após testes de equivalência, dual-read configurável e rollback, desregistrando o antigo subscriber somente no corte; D-T testar checkout e cabeçalho multidomínio intactos. As ideias anteriores de construir novos resolvedores de carrinho público ou tabs do comprador **não integram este escopo**.
