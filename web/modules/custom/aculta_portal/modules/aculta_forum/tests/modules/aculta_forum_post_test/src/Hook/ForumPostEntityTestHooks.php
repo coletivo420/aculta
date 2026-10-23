@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum_post_test\Hook;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\content_moderation\Entity\Handler\ModerationHandler;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -38,7 +39,14 @@ final class ForumPostEntityTestHooks {
     $definition = $attributes[0]->newInstance();
     $definition->setClass(ForumPost::class);
     $definition->setProvider('aculta_forum_post_test');
-    $entity_types['aculta_forum_post'] = $definition->get();
+    $entity_type = $definition->get();
+    // Production discovers the entity type before alters, so Content
+    // Moderation adds its handler. The fixture adds the type during the alter,
+    // after that hook may have run; restore the handler for parity.
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $entity_type->setHandlerClass('moderation', ModerationHandler::class);
+    }
+    $entity_types['aculta_forum_post'] = $entity_type;
   }
 
 }

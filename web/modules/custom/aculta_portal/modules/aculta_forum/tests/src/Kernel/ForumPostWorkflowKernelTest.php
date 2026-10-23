@@ -85,6 +85,7 @@ final class ForumPostWorkflowKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('content_moderation_state');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);

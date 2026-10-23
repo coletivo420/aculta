@@ -1,3 +1,14 @@
+## `0.1.0-dev.264` — provar a criação de um post pela migração — 2026-10-23
+
+- Kernel importa uma linha válida no destino: cria o ForumPost publicado com
+  tópico, posição na thread, timestamps, autoria e estado de moderação, e
+  adiciona a tradução `pt-br` com assunto, corpo e publicação próprios.
+- O fixture `aculta_forum_post_test` restaura o handler de Content Moderation,
+  que a descoberta de produção recebe antes dos alters; o teste de workflow
+  passa a instalar o schema de `content_moderation_state`.
+- Testes: destino 6/142; suíte Kernel do Fórum 77/1.638; PHPCS limpo. Nenhuma
+  migration foi executada em lote e o Runtime não foi alterado.
+
 ## `0.1.0-dev.263` — provar as recusas do destino da migração — 2026-10-23
 
 - Kernel exercita `ForumCommentPost::import()` nos contratos que falham antes

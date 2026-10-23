@@ -1,12 +1,17 @@
-## Destino da migração de Comments — recusas, 2026-10-23
+## Destino da migração de Comments — recusas e criação, 2026-10-23
 
-- `ForumCommentMigrationDestinationKernelTest` (5 testes / 87 asserções,
+- `ForumCommentMigrationDestinationKernelTest` (6 testes / 142 asserções,
   MariaDB): `import()` recusa linha sem conta/autoria histórica, tradução
   padrão ausente, rejeição com publicação, corpo vazio, formato diferente de
   `forum`, embed sem UUID e embed de Media inexistente.
-- O destino é instanciado com os serviços reais e uma migration simulada; nada
-  é criado ou migrado.
-- Suíte Kernel do Fórum 76/1.579; PHPCS limpo.
+- Uma linha válida cria o ForumPost publicado com tópico, thread, timestamps,
+  autoria e `moderation_state`, e adiciona a tradução `pt-br` com valores
+  próprios.
+- O destino é instanciado com os serviços reais e uma migration simulada; o
+  map de migração e o lote não são exercitados.
+- Fixture: `aculta_forum_post_test` restaura o handler de Content Moderation
+  para paridade com a descoberta de produção.
+- Suíte Kernel do Fórum 77/1.638; PHPCS limpo.
 
 ## Fonte da migração de Comments — prova, 2026-10-23
 

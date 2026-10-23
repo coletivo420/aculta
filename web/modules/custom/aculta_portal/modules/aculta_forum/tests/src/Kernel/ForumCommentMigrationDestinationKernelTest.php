@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Kernel;
 
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Plugin\migrate\destination\ForumCommentPost;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -35,6 +40,9 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     'image',
     'media',
     'migrate',
+    'workflows',
+    'content_moderation',
+    'language',
     'aculta_forum_post_test',
   ];
 
@@ -48,13 +56,41 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    // The workflow must exist before the ForumPost schema is installed so the
+    // moderation_state field is part of the bundle.
+    $this->container->get('config.storage')->write('workflows.workflow.aculta_forum_post', [
+      'langcode' => 'pt-br',
+      'status' => TRUE,
+      'id' => 'aculta_forum_post',
+      'label' => 'Forum post migration test workflow',
+      'type' => 'content_moderation',
+      'type_settings' => [
+        'states' => [
+          'draft' => ['label' => 'Draft', 'weight' => 0, 'published' => FALSE, 'default_revision' => FALSE],
+          'review' => ['label' => 'Review', 'weight' => 1, 'published' => FALSE, 'default_revision' => FALSE],
+          'published' => ['label' => 'Published', 'weight' => 2, 'published' => TRUE, 'default_revision' => TRUE],
+          'rejected' => ['label' => 'Rejected', 'weight' => 3, 'published' => FALSE, 'default_revision' => TRUE],
+        ],
+        'transitions' => [
+          'approve' => ['label' => 'Approve', 'from' => ['review'], 'to' => 'published', 'weight' => 0],
+          'edit_published' => ['label' => 'Edit published', 'from' => ['published'], 'to' => 'published', 'weight' => 1],
+          'reject' => ['label' => 'Reject', 'from' => ['review'], 'to' => 'rejected', 'weight' => 2],
+        ],
+        'entity_types' => ['aculta_forum_post' => ['aculta_forum_post']],
+        'default_moderation_state' => 'draft',
+      ],
+    ]);
+    $this->container->get('config.factory')->reset('workflows.workflow.aculta_forum_post');
+    $this->container->get('entity_type.bundle.info')->clearCachedBundles();
+
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('content_moderation_state');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'file', 'image', 'media']);
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'file', 'image', 'media', 'workflows', 'content_moderation']);
 
     $entity_type_manager = $this->container->get('entity_type.manager');
     $this->destination = new ForumCommentPost(
@@ -70,6 +106,76 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
       $this->container->get('entity_type.bundle.info'),
       $entity_type_manager,
     );
+  }
+
+  /**
+   * A valid row creates the post with all translations and publication state.
+   */
+  public function testValidRowCreatesPublishedPostWithTranslations(): void {
+    ConfigurableLanguage::createFromLangcode('pt-br')->save();
+    NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Tópico'])->save();
+    $author = User::create(['name' => 'autora', 'status' => 1]);
+    $author->save();
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico',
+      'status' => 1,
+      'uid' => $author->id(),
+    ]);
+    $topic->save();
+
+    $row = $this->row([
+      'uid' => (int) $author->id(),
+      'translations' => [
+        'en' => [
+          'subject' => 'First reply',
+          'body_value' => 'Body in English',
+          'body_format' => 'forum',
+          'published' => 1,
+        ],
+        'pt-br' => [
+          'subject' => 'Primeira resposta',
+          'body_value' => 'Corpo em português',
+          'body_format' => 'forum',
+          'published' => 1,
+        ],
+      ],
+    ]);
+    foreach ([
+      'uid' => (int) $author->id(),
+      'topic' => ['target_id' => (int) $topic->id()],
+      'thread_position' => 10,
+      'created' => 1700000000,
+      'changed' => 1700000100,
+      'first_published' => 1700000000,
+      'revision_uid' => (int) $author->id(),
+      'revision_timestamp' => 1700000100,
+    ] as $name => $value) {
+      $row->setDestinationProperty($name, $value);
+    }
+
+    $ids = $this->destination->import($row);
+    self::assertGreaterThan(0, (int) $ids[0]);
+
+    $post = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post')
+      ->load(reset($ids));
+    self::assertInstanceOf(ForumPost::class, $post);
+    self::assertSame('en', $post->language()->getId());
+    self::assertTrue($post->isPublished());
+    self::assertSame('First reply', $post->get('subject')->value);
+    self::assertSame((int) $topic->id(), (int) $post->get('topic')->target_id);
+    self::assertSame(10, (int) $post->get('thread_position')->value);
+    self::assertTrue($post->getEntityType()->hasHandlerClass('moderation'), 'Entity type has moderation handler.');
+    $bundles = $this->container->get('entity_type.bundle.info')->getBundleInfo('aculta_forum_post');
+    self::assertSame('aculta_forum_post', $bundles['aculta_forum_post']['workflow'] ?? NULL, 'Bundle workflow exists.');
+    self::assertTrue($this->container->get('content_moderation.moderation_information')->isModeratedEntity($post), 'Entity is moderated.');
+    self::assertSame('published', $post->get('moderation_state')->value);
+    self::assertTrue($post->hasTranslation('pt-br'));
+    $translation = $post->getTranslation('pt-br');
+    self::assertSame('Primeira resposta', $translation->get('subject')->value);
+    self::assertSame('Corpo em português', $translation->get('body')->value);
+    self::assertTrue($translation->isPublished());
   }
 
   /**
