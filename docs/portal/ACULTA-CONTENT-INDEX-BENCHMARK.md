@@ -74,6 +74,12 @@ demonstraram vantagem estável para os índices temporários; detalhes e limites
 estão no relatório de resultados, com coleta complementar datada de
 2026-10-23.
 
+Um harness separado mede backfill real pela API Drupal e auditoria incremental
+bidirecional com 10.000 Nodes sintéticos, em três repetições. Cada operação
+usa o provider fixture `sample_content`; criação das fontes e troca do ponteiro
+ativo ficam fora dos tempos. Resultado, CSV e limitações estão em
+[rebuild e auditoria](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
 
@@ -94,6 +100,18 @@ O teste verifica antes do boot que `SIMPLETEST_DB` aponta para
 `localhost/aculta_simpletest`. O cenário de consulta distribui as linhas entre
 quatro domínios e marca 90% como publicadas; o filtro `main` + publicado mede
 uma seleção aproximada de 22,5%, além do limite keyset de 100 candidatos.
+
+Para repetir apenas o benchmark de rebuild/auditoria em 10k fontes:
+
+```sh
+ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 \
+  ../../vendor/bin/phpunit -c phpunit.xml.dist \
+  ../modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance/ContentIndexMaintenanceBenchmarkTest.php
+```
+
+O relatório JSON é gravado no diretório temporário do sistema; ajuste
+`ACULTA_INDEX_MAINTENANCE_BENCHMARK_OUTPUT` somente para outro caminho dentro
+desse diretório. A criação das entidades sintéticas não integra o tempo medido.
 
 ## Resultados de 2026-10-22
 

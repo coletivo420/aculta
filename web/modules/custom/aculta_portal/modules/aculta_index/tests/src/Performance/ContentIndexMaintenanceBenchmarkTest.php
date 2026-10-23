@@ -1,0 +1,231 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_index\Performance;
+
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\NodeType;
+use Drupal\domain\DomainNegotiatorInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Opt-in benchmark for provider-backed rebuild and incremental audit.
+ *
+ * @group aculta_index
+ * @group performance
+ */
+#[Group('aculta_index')]
+#[Group('performance')]
+#[RunTestsInSeparateProcesses]
+final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
+
+  /**
+   * Source nodes used by the synthetic provider.
+   */
+  private const SOURCE_COUNT = 10_000;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'text',
+    'node',
+    'aculta_index',
+    'aculta_index_test',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    ));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    $databaseUrl = getenv('SIMPLETEST_DB') ?: '';
+    $databaseParts = parse_url($databaseUrl);
+    if (!is_array($databaseParts)
+      || ($databaseParts['host'] ?? '') !== 'localhost'
+      || trim((string) ($databaseParts['path'] ?? ''), '/') !== 'aculta_simpletest') {
+      throw new \RuntimeException('The ACULTA Content Index maintenance benchmark requires the dedicated localhost aculta_simpletest database.');
+    }
+
+    parent::setUp();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
+    $this->installConfig(['system', 'user', 'node']);
+    $this->installSchema('aculta_index', [
+      'aculta_index_generation',
+      'aculta_index_state',
+      'aculta_index_entry',
+      'aculta_index_relation',
+      'aculta_index_work',
+      'aculta_index_cursor',
+      'aculta_index_audit',
+    ]);
+    aculta_index_install();
+    NodeType::create(['type' => 'sample_content', 'name' => 'Synthetic benchmark content'])->save();
+  }
+
+  /**
+   * Measures provider backfill and two-direction audit over real Node storage.
+   *
+   * Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run 10,000 synthetic sources.
+   */
+  public function testRebuildAndIncrementalAuditAtTenThousandSources(): void {
+    if (getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run the 10k rebuild and audit benchmark.');
+    }
+
+    $temporaryDirectory = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $outputFile = getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK_OUTPUT')
+      ?: $temporaryDirectory . 'aculta-index-maintenance-benchmark-' . getmypid() . '.json';
+    if (!str_starts_with($outputFile, $temporaryDirectory)) {
+      throw new \RuntimeException('The maintenance benchmark result must be written inside sys_get_temp_dir().');
+    }
+
+    $this->createSyntheticSources();
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $rebuildBatchTimes = [];
+    $rebuildStarted = hrtime(TRUE);
+    $rebuildBatchCount = 0;
+    do {
+      $batchStarted = hrtime(TRUE);
+      $batch = $rebuilder->processNextBatch($generationId, 500);
+      $rebuildBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
+      $rebuildBatchCount++;
+      if ($rebuildBatchCount > (int) ceil(self::SOURCE_COUNT / 500) + 2) {
+        throw new \RuntimeException('The benchmark rebuild did not reach its source checkpoint within the expected batches.');
+      }
+    } while (!$batch['complete']);
+    $rebuildMilliseconds = (hrtime(TRUE) - $rebuildStarted) / 1_000_000;
+    $projectedCount = (int) $this->container->get('database')->select('aculta_index_entry')
+      ->condition('generation_id', $generationId)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    self::assertSame(self::SOURCE_COUNT, $projectedCount);
+
+    // The fixture's source insert events are outside the measured rebuild.
+    // A direct active-pointer switch keeps the maintenance benchmark isolated
+    // from its independently queued incremental jobs; activation is covered
+    // by ContentIndexRebuilderKernelTest.
+    $database = $this->container->get('database');
+    $database->update('aculta_index_generation')
+      ->fields(['status' => 'active'])
+      ->condition('generation_id', $generationId)
+      ->execute();
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => $generationId, 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+
+    $integrityChecker = $this->container->get('aculta_index.integrity_checker');
+    $integrityChecker->startAudit();
+    $auditBatchTimes = [];
+    $auditStarted = hrtime(TRUE);
+    $auditBatchCount = 0;
+    do {
+      $batchStarted = hrtime(TRUE);
+      $audit = $integrityChecker->processAuditBatch(200);
+      $auditBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
+      $auditBatchCount++;
+      if ($auditBatchCount > self::SOURCE_COUNT + 20) {
+        throw new \RuntimeException('The benchmark audit did not finish within the bounded checkpoint allowance.');
+      }
+    } while ($audit['status'] === 'running');
+    $auditMilliseconds = (hrtime(TRUE) - $auditStarted) / 1_000_000;
+    self::assertSame('complete', $audit['status']);
+    self::assertSame(0, (int) $audit['missing_source_count']);
+    self::assertSame(0, (int) $audit['missing_catalog_entry_count']);
+    self::assertSame(0, (int) $audit['stale_projection_count']);
+
+    sort($rebuildBatchTimes, SORT_NUMERIC);
+    sort($auditBatchTimes, SORT_NUMERIC);
+    $payload = [
+      'benchmark' => 'provider_backfill_and_incremental_audit',
+      'date' => gmdate('Y-m-d'),
+      'drupal' => \Drupal::VERSION,
+      'php' => PHP_VERSION,
+      'database' => $database->version(),
+      'source_count' => self::SOURCE_COUNT,
+      'provider_id' => 'test_sample_content',
+      'rebuild_batch_limit' => 500,
+      'rebuild_batch_count' => $rebuildBatchCount,
+      'rebuild_projected_count' => $projectedCount,
+      'rebuild_elapsed_ms' => round($rebuildMilliseconds, 3),
+      'rebuild_rows_per_second' => (int) round(self::SOURCE_COUNT / max($rebuildMilliseconds / 1000, 0.000001)),
+      'rebuild_batch_p50_ms' => round($this->percentile($rebuildBatchTimes, 0.50), 3),
+      'rebuild_batch_p95_ms' => round($this->percentile($rebuildBatchTimes, 0.95), 3),
+      'audit_batch_limit' => 200,
+      'audit_batch_count' => $auditBatchCount,
+      'audit_status' => $audit['status'],
+      'audit_elapsed_ms' => round($auditMilliseconds, 3),
+      'audit_batches_per_second' => (int) round($auditBatchCount / max($auditMilliseconds / 1000, 0.000001)),
+      'audit_batch_p50_ms' => round($this->percentile($auditBatchTimes, 0.50), 3),
+      'audit_batch_p95_ms' => round($this->percentile($auditBatchTimes, 0.95), 3),
+      'missing_source_count' => (int) $audit['missing_source_count'],
+      'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],
+      'stale_projection_count' => (int) $audit['stale_projection_count'],
+      'peak_memory_bytes' => memory_get_peak_usage(TRUE),
+      'scope' => 'Real Drupal Node storage, test provider, production enumerator, writer, rebuild and incremental integrity audit. Source-entity creation and activation are excluded from timing.',
+      'slo' => FALSE,
+    ];
+    if (file_put_contents($outputFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL, LOCK_EX) === FALSE) {
+      throw new \RuntimeException('Could not write the Content Index maintenance benchmark result.');
+    }
+    self::assertFileExists($outputFile);
+  }
+
+  /**
+   * Creates the synthetic source entities outside the measured intervals.
+   */
+  private function createSyntheticSources(): void {
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    for ($start = 0; $start < self::SOURCE_COUNT; $start += 100) {
+      for ($index = $start; $index < min($start + 100, self::SOURCE_COUNT); $index++) {
+        $storage->create([
+          'type' => 'sample_content',
+          'title' => 'Synthetic maintenance source ' . $index,
+          'status' => 1,
+          'created' => 1_700_000_000 + $index,
+          'changed' => 1_700_000_000 + $index,
+        ])->save();
+      }
+    }
+  }
+
+  /**
+   * Calculates a nearest-rank percentile.
+   *
+   * @param list<float> $samples
+   *   Sorted elapsed-time samples in milliseconds.
+   * @param float $fraction
+   *   Percentile fraction between zero and one.
+   */
+  private function percentile(array $samples, float $fraction): float {
+    return $samples[(int) ceil((count($samples) - 1) * $fraction)];
+  }
+
+}
