@@ -107,17 +107,21 @@ O teste verifica antes do boot que `SIMPLETEST_DB` aponta para
 quatro domínios e marca 90% como publicadas; o filtro `main` + publicado mede
 uma seleção aproximada de 22,5%, além do limite keyset de 100 candidatos.
 
-Para repetir apenas o benchmark de rebuild/auditoria em 10k fontes:
+Para repetir o benchmark de rebuild/auditoria em uma escala da matriz (padrão
+10k; válidas 10k/100k/1M), configure `ACULTA_INDEX_MAINTENANCE_BENCHMARK_SIZE`:
 
 ```sh
 ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 \
+ACULTA_INDEX_MAINTENANCE_BENCHMARK_SIZE=100000 \
   ../../vendor/bin/phpunit -c phpunit.xml.dist \
   ../modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance/ContentIndexMaintenanceBenchmarkTest.php
 ```
 
 O relatório JSON é gravado no diretório temporário do sistema; ajuste
 `ACULTA_INDEX_MAINTENANCE_BENCHMARK_OUTPUT` somente para outro caminho dentro
-desse diretório. A criação das entidades sintéticas não integra o tempo medido.
+desse diretório. Tamanho fora da matriz fixada é rejeitado. A criação das
+entidades sintéticas não integra o tempo medido; rebuild e auditoria têm
+checkpoints independentes, limites de batch explícitos e percentis nearest-rank.
 
 ## Resultados de 2026-10-22
 

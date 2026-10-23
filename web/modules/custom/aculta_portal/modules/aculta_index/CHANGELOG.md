@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.73 — parametrizar escala do benchmark de manutenção
+
+- O harness de rebuild/auditoria aceita apenas 10k, 100k ou 1M fontes sintéticas
+  no MariaDB de teste dedicado; 10k continua padrão. Corrigidos o limite dos
+  batches de auditoria em suas duas passagens e o cálculo nearest-rank dos
+  percentis.
+- PHPCS Drupal e PHP lint passaram. Fumaça MariaDB em 10k: 1 teste / 13
+  assertions; rebuild 7.818 s (1.279 projeções/s), auditoria 4.416 s, 102
+  batches e nenhuma divergência. Setup das entidades fica fora desses tempos.
+- Uma tentativa de 100k foi interrompida antes de completar a criação de fontes
+  (98.701 inseridas, sem JSON); as 18 tabelas do prefixo PHPUnit órfão foram
+  removidas. Resultados de 100k e 1M permanecem pendentes.
+
 ## 0.1.0-dev.72 — revalidar policy LMS no MariaDB de teste
 
 - `LmsCourseContentIndexAccessKernelTest` passou no MariaDB local dedicado:

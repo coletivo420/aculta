@@ -29,7 +29,12 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
   /**
    * Source nodes used by the synthetic provider.
    */
-  private const SOURCE_COUNT = 10_000;
+  private const DEFAULT_SOURCE_COUNT = 10_000;
+
+  /**
+   * Approved synthetic fixture scale for this process.
+   */
+  private int $sourceCount = self::DEFAULT_SOURCE_COUNT;
 
   /**
    * {@inheritdoc}
@@ -90,16 +95,24 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
   /**
    * Measures provider backfill and two-direction audit over real Node storage.
    *
-   * Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run 10,000 synthetic sources.
+   * Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run synthetic sources.
+   * ACULTA_INDEX_MAINTENANCE_BENCHMARK_SIZE accepts 10000, 100000 or 1000000.
    */
-  public function testRebuildAndIncrementalAuditAtTenThousandSources(): void {
+  public function testRebuildAndIncrementalAuditAtConfiguredScale(): void {
     if (getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK') !== '1') {
-      self::markTestSkipped('Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run the 10k rebuild and audit benchmark.');
+      self::markTestSkipped('Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run the rebuild and audit benchmark.');
+    }
+    $requestedSize = getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK_SIZE');
+    if ($requestedSize !== FALSE && $requestedSize !== '') {
+      if (!in_array($requestedSize, ['10000', '100000', '1000000'], TRUE)) {
+        throw new \InvalidArgumentException('Maintenance benchmark size must be one of 10000, 100000 or 1000000.');
+      }
+      $this->sourceCount = (int) $requestedSize;
     }
 
     $temporaryDirectory = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     $outputFile = getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK_OUTPUT')
-      ?: $temporaryDirectory . 'aculta-index-maintenance-benchmark-' . getmypid() . '.json';
+      ?: $temporaryDirectory . 'aculta-index-maintenance-' . $this->sourceCount . '-' . getmypid() . '.json';
     if (!str_starts_with($outputFile, $temporaryDirectory)) {
       throw new \RuntimeException('The maintenance benchmark result must be written inside sys_get_temp_dir().');
     }
@@ -115,7 +128,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $batch = $rebuilder->processNextBatch($generationId, 500);
       $rebuildBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
       $rebuildBatchCount++;
-      if ($rebuildBatchCount > (int) ceil(self::SOURCE_COUNT / 500) + 2) {
+      if ($rebuildBatchCount > (int) ceil($this->sourceCount / 500) + 2) {
         throw new \RuntimeException('The benchmark rebuild did not reach its source checkpoint within the expected batches.');
       }
     } while (!$batch['complete']);
@@ -125,7 +138,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       ->countQuery()
       ->execute()
       ->fetchField();
-    self::assertSame(self::SOURCE_COUNT, $projectedCount);
+    self::assertSame($this->sourceCount, $projectedCount);
 
     // The fixture's source insert events are outside the measured rebuild.
     // A direct active-pointer switch keeps the maintenance benchmark isolated
@@ -151,7 +164,9 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $audit = $integrityChecker->processAuditBatch(200);
       $auditBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
       $auditBatchCount++;
-      if ($auditBatchCount > self::SOURCE_COUNT + 20) {
+      // The audit has separate catalog-to-source and source-to-catalog
+      // checkpoint passes, each bounded by the configured batch size.
+      if ($auditBatchCount > (int) ceil($this->sourceCount / 200) * 2 + 20) {
         throw new \RuntimeException('The benchmark audit did not finish within the bounded checkpoint allowance.');
       }
     } while ($audit['status'] === 'running');
@@ -169,14 +184,14 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'drupal' => \Drupal::VERSION,
       'php' => PHP_VERSION,
       'database' => $database->version(),
-      'source_count' => self::SOURCE_COUNT,
+      'source_count' => $this->sourceCount,
       'provider_id' => 'test_sample_content',
       'rebuild_batch_limit' => 500,
       'writer_transaction_batch_size' => 500,
       'rebuild_batch_count' => $rebuildBatchCount,
       'rebuild_projected_count' => $projectedCount,
       'rebuild_elapsed_ms' => round($rebuildMilliseconds, 3),
-      'rebuild_rows_per_second' => (int) round(self::SOURCE_COUNT / max($rebuildMilliseconds / 1000, 0.000001)),
+      'rebuild_rows_per_second' => (int) round($this->sourceCount / max($rebuildMilliseconds / 1000, 0.000001)),
       'rebuild_batch_p50_ms' => round($this->percentile($rebuildBatchTimes, 0.50), 3),
       'rebuild_batch_p95_ms' => round($this->percentile($rebuildBatchTimes, 0.95), 3),
       'audit_batch_limit' => 200,
@@ -204,8 +219,8 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    */
   private function createSyntheticSources(): void {
     $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    for ($start = 0; $start < self::SOURCE_COUNT; $start += 100) {
-      for ($index = $start; $index < min($start + 100, self::SOURCE_COUNT); $index++) {
+    for ($start = 0; $start < $this->sourceCount; $start += 100) {
+      for ($index = $start; $index < min($start + 100, $this->sourceCount); $index++) {
         $storage->create([
           'type' => 'sample_content',
           'title' => 'Synthetic maintenance source ' . $index,
@@ -226,7 +241,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    *   Percentile fraction between zero and one.
    */
   private function percentile(array $samples, float $fraction): float {
-    return $samples[(int) ceil((count($samples) - 1) * $fraction)];
+    return $samples[max(0, (int) ceil(count($samples) * $fraction) - 1)];
   }
 
 }
