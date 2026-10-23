@@ -102,3 +102,8 @@ Ver o [relatório da IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) para invent
 
 
 Paginação da consulta 0.1 usa ID interno imutável em ordem decrescente; alteração de `changed` não desloca resultados entre páginas. Cursors existentes são vinculados ao contrato de ordenação e não podem ser retomados após mudança desse contrato. Em Kernel no MariaDB, três casos focais passaram com 47 assertions: edição entre páginas mantém a sequência por ID, o token fica vinculado a conta/filtros, e uma despublicação deixa de aparecer mesmo quando a projeção ainda está marcada como pública.
+
+
+## Regressão Unit de providers (2026-10-23)
+
+Durante o benchmark MariaDB de 1M, rodei as suítes Unit sem conexão ao banco, em seus escopos de provider/integração: `aculta_index` 39/204; `aculta_activity` 4/13; `aculta_forum` 3/14; `aculta_gallery` 2/13; `aculta_lms_resources` 13/70; `aculta_magazine` 24/96; `aculta_wiki` 57/258; e contratos compartilhados do Portal 2/8. Todas passaram; foram reportadas 37 depreciações PHPUnit/upstream no conjunto. A suíte MariaDB completa continua adiada enquanto o benchmark ativo usa o banco dedicado.

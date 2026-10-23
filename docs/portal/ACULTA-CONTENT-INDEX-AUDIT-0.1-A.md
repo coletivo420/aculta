@@ -134,3 +134,8 @@ O Kernel de acesso do Index foi ampliado para compilar os providers Magazine e A
 ## Evidência complementar — consulta de relação Gallery→image (2026-10-23)
 
 O Kernel Gallery consulta `gallery_image` pela API outgoing após rebuild, com providers registrados dos YAMLs owner. A Gallery é revalidada em `magazine`; a Media passa por sua Entity Access. MariaDB dedicado: 2 testes / 51 assertions PASS, com 9 depreciações Core/contrib. Uma imagem não publicada permanece relacionada na projeção, mas é omitida da consulta por Entity Access. O harness não ativa os owners completos nem valida grants específicos de Gallery ou Media.
+
+
+## Regressão Unit dos adapters (2026-10-23)
+
+Resultados verificados sem banco: Index 39/204, Activity 4/13, Fórum 3/14, Gallery 2/13, LMS Resources 13/70, Magazine 24/96, Wiki 57/258 e contratos compartilhados do Portal 2/8. Todas passaram; conjunto com 37 depreciações PHPUnit/upstream. Isso não substitui Kernel, boot completo dos owners nem Runtime.
