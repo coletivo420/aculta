@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.97 — repetir Kernel completo após integrações
+
+- Suíte Kernel completa do Index em SQLite: 78 testes / 1.194 assertions
+  passaram; 39 depreciações Core/contrib e 42 depreciações PHPUnit.
+- Inclui Fórum grants/Domain e o novo Kernel `course_document`; sem falhas.
+- MariaDB completo continua pendente enquanto o benchmark de 1 milhão está
+  ativo.
+
 ## 0.1.0-dev.96 — validar acesso do Fórum e documentos LMS
 
 - Kernel SQLite do Fórum: 4 testes / 199 assertions passaram usando o
