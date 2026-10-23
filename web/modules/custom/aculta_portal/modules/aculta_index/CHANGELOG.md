@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.103 — suíte Kernel completa com bridge por DI
+
+- SQLite: 79 testes / 1.213 assertions passaram; 39 depreciações Core/contrib
+  e 42 depreciações PHPUnit.
+- Inclui a ponte Statistics composta com serviços selecionados do YAML owner e
+  o bridge opcional do Index via DI. MariaDB completo segue aguardando o
+  benchmark de 1 milhão.
+
 ## 0.1.0-dev.102 — compor a ponte Statistics pelo DI owner
 
 - Kernel Statistics lê o YAML real do owner e registra os serviços de catálogo,
