@@ -252,6 +252,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $diagnosticLogger,
       $this->cacheResetEntityLimit,
       new Settings(['aculta_index_diagnostics' => TRUE]),
+      $this->container->get('database'),
     );
     $integrityChecker = new ContentIndexIntegrityChecker(
       $database,
@@ -340,7 +341,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     self::assertCount($auditPhaseMetrics['sources']['batch_count'], $diagnosticLogger->enumerationDiagnostics);
     $enumerationStageMetrics = [];
     foreach ([
-      'entity_query' => '@query_ms',
+      'id_query' => '@query_ms',
       'load_multiple' => '@load_ms',
       'project' => '@project_ms',
       'cache_reset' => '@cache_ms',
@@ -355,6 +356,10 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
         'max_ms' => round(max($samples), 3),
       ];
     }
+    $enumerationIdQueryStrategies = array_count_values(array_map(
+      static fn (array $diagnostic): string => (string) $diagnostic['@query_strategy'],
+      $diagnosticLogger->enumerationDiagnostics,
+    ));
     $payload = [
       'benchmark' => 'provider_backfill_and_incremental_audit',
       'date' => gmdate('Y-m-d'),
@@ -388,6 +393,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'audit_phase_metrics' => $auditPhaseMetrics,
       'audit_stage_metrics' => $auditStageMetrics,
       'enumerator_stage_metrics' => $enumerationStageMetrics,
+      'enumerator_id_query_strategies' => $enumerationIdQueryStrategies,
       'audit_peak_memory_bytes' => $auditPeakMemoryBytes,
       'missing_source_count' => (int) $audit['missing_source_count'],
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],

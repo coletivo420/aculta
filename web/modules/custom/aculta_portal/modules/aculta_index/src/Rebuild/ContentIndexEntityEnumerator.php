@@ -6,6 +6,7 @@ namespace Drupal\aculta_index\Rebuild;
 
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
@@ -54,12 +55,20 @@ final class ContentIndexEntityEnumerator {
    */
   private readonly bool $diagnosticsEnabled;
 
+  /**
+   * Cached base-table ID query metadata, or FALSE when storage is unsupported.
+   *
+   * @var array<string, array{table: string, id_column: string, bundle_column: ?string}|false>
+   */
+  private array $baseTableIdQueryMetadata = [];
+
   public function __construct(
     private readonly ContentIndexProviderRegistry $providers,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     ?LoggerInterface $logger = NULL,
     int $cacheResetEntityLimit = self::CACHE_RESET_ENTITY_LIMIT,
     ?Settings $settings = NULL,
+    private readonly ?Connection $database = NULL,
   ) {
     if ($cacheResetEntityLimit < 1 || $cacheResetEntityLimit > self::CACHE_RESET_ENTITY_LIMIT) {
       throw new \InvalidArgumentException(sprintf('Cache reset entity limit must be between 1 and %d.', self::CACHE_RESET_ENTITY_LIMIT));
@@ -99,6 +108,16 @@ final class ContentIndexEntityEnumerator {
       ));
     }
 
+    $baseTable = $this->getBaseTableIdQueryMetadata($entityTypeId, $idKey, $bundleKey);
+    if ($baseTable !== NULL) {
+      $query = $this->database->select($baseTable['table'], 'source');
+      $query->addExpression('MAX(source.' . $baseTable['id_column'] . ')', 'maximum_id');
+      if ($baseTable['bundle_column'] !== NULL) {
+        $query->condition('source.' . $baseTable['bundle_column'], $supportedBundles, 'IN');
+      }
+      $maximumId = $query->execute()->fetchField();
+      return $maximumId === FALSE || $maximumId === NULL ? NULL : (string) $maximumId;
+    }
     $query = $this->entityTypeManager->getStorage($entityTypeId)->getQuery()->accessCheck(FALSE);
     if ($bundleKey !== NULL) {
       $query->condition($bundleKey, $supportedBundles, 'IN');
@@ -162,20 +181,42 @@ final class ContentIndexEntityEnumerator {
     }
 
     $storage = $this->entityTypeManager->getStorage($entityTypeId);
-    $query = $storage->getQuery()->accessCheck(FALSE);
-    if ($bundleKey !== NULL) {
-      $query->condition($bundleKey, $supportedBundles, 'IN');
-    }
-    $query->sort($idKey)->range(0, $limit);
-    if ($afterEntityId !== NULL) {
-      $query->condition($idKey, $afterEntityId, '>');
-    }
-    if ($maximumEntityId !== NULL) {
-      $query->condition($idKey, $maximumEntityId, '<=');
-    }
     $batchStartedAt = hrtime(TRUE);
     $queryStartedAt = hrtime(TRUE);
-    $ids = array_values($query->execute());
+    $baseTable = $this->getBaseTableIdQueryMetadata($entityTypeId, $idKey, $bundleKey);
+    if ($baseTable !== NULL) {
+      $query = $this->database->select($baseTable['table'], 'source')
+        ->fields('source', [$baseTable['id_column']]);
+      if ($baseTable['bundle_column'] !== NULL) {
+        $query->condition('source.' . $baseTable['bundle_column'], $supportedBundles, 'IN');
+      }
+      if ($afterEntityId !== NULL) {
+        $query->condition('source.' . $baseTable['id_column'], $afterEntityId, '>');
+      }
+      if ($maximumEntityId !== NULL) {
+        $query->condition('source.' . $baseTable['id_column'], $maximumEntityId, '<=');
+      }
+      $ids = $query->orderBy('source.' . $baseTable['id_column'], 'ASC')
+        ->range(0, $limit)
+        ->execute()
+        ->fetchCol();
+      $queryStrategy = 'base_table';
+    }
+    else {
+      $query = $storage->getQuery()->accessCheck(FALSE);
+      if ($bundleKey !== NULL) {
+        $query->condition($bundleKey, $supportedBundles, 'IN');
+      }
+      $query->sort($idKey)->range(0, $limit);
+      if ($afterEntityId !== NULL) {
+        $query->condition($idKey, $afterEntityId, '>');
+      }
+      if ($maximumEntityId !== NULL) {
+        $query->condition($idKey, $maximumEntityId, '<=');
+      }
+      $ids = array_values($query->execute());
+      $queryStrategy = 'entity_query';
+    }
     $queryMilliseconds = (hrtime(TRUE) - $queryStartedAt) / 1_000_000;
     if ($ids === []) {
       $cacheStartedAt = hrtime(TRUE);
@@ -188,6 +229,7 @@ final class ContentIndexEntityEnumerator {
         0,
         0,
         $queryMilliseconds,
+        $queryStrategy,
         0,
         0,
         $cacheMilliseconds,
@@ -269,6 +311,7 @@ final class ContentIndexEntityEnumerator {
       count($ids),
       count($projections),
       $queryMilliseconds,
+      $queryStrategy,
       $loadMilliseconds,
       $projectionMilliseconds,
       $cacheMilliseconds,
@@ -292,6 +335,7 @@ final class ContentIndexEntityEnumerator {
     int $sourceCount,
     int $projectionCount,
     float $queryMilliseconds,
+    string $queryStrategy,
     float $loadMilliseconds,
     float $projectionMilliseconds,
     float $cacheMilliseconds,
@@ -300,18 +344,80 @@ final class ContentIndexEntityEnumerator {
     if (!$this->diagnosticsEnabled) {
       return;
     }
-    $this->logger->debug('Content Index enumeration batch completed. Provider: @provider; entity type: @entity_type; limit: @limit; sources: @source_count; projections: @projection_count; entity query: @query_ms ms; load multiple: @load_ms ms; project: @project_ms ms; cache reset: @cache_ms ms; total: @total_ms ms.', [
+    $this->logger->debug('Content Index enumeration batch completed. Provider: @provider; entity type: @entity_type; limit: @limit; sources: @source_count; projections: @projection_count; ID discovery: @query_strategy in @query_ms ms; load multiple: @load_ms ms; project: @project_ms ms; cache reset: @cache_ms ms; total: @total_ms ms.', [
       '@provider' => $providerId,
       '@entity_type' => $entityTypeId,
       '@limit' => $limit,
       '@source_count' => $sourceCount,
       '@projection_count' => $projectionCount,
+      '@query_strategy' => $queryStrategy,
       '@query_ms' => round($queryMilliseconds, 3),
       '@load_ms' => round($loadMilliseconds, 3),
       '@project_ms' => round($projectionMilliseconds, 3),
       '@cache_ms' => round($cacheMilliseconds, 3),
       '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
     ]);
+  }
+
+  /**
+   * Gets safe base-table columns for keyset ID discovery when available.
+   *
+   * EntityQuery can join revision and data tables and group every revision for
+   * revisionable content. That makes repeated keyset pages expensive on large
+   * entity tables. A direct candidate-ID query is safe only when the storage
+   * mapping confirms that ID and bundle columns live on the base table. Entity
+   * API remains responsible for loading and projecting candidates.
+   *
+   * @param string $entityTypeId
+   *   Entity type being enumerated.
+   * @param string $idKey
+   *   Entity type ID key.
+   * @param string|null $bundleKey
+   *   Entity type bundle key, if any.
+   *
+   * @return array{table: string, id_column: string, bundle_column: ?string}|null
+   *   Verified base table query metadata, or NULL to use EntityQuery.
+   */
+  private function getBaseTableIdQueryMetadata(string $entityTypeId, string $idKey, ?string $bundleKey): ?array {
+    if (array_key_exists($entityTypeId, $this->baseTableIdQueryMetadata)) {
+      return $this->baseTableIdQueryMetadata[$entityTypeId] ?: NULL;
+    }
+    if ($this->database === NULL) {
+      $this->baseTableIdQueryMetadata[$entityTypeId] = FALSE;
+      return NULL;
+    }
+    $entityType = $this->entityTypeManager->getDefinition($entityTypeId);
+    $baseTable = $entityType->getBaseTable();
+    $storage = $this->entityTypeManager->getStorage($entityTypeId);
+    if (!is_string($baseTable) || $baseTable === '' || !method_exists($storage, 'getTableMapping')) {
+      $this->baseTableIdQueryMetadata[$entityTypeId] = FALSE;
+      return NULL;
+    }
+    $mapping = $storage->getTableMapping();
+    if (!method_exists($mapping, 'getAllColumns') || !method_exists($mapping, 'getColumnNames')
+      || !$this->database->schema()->tableExists($baseTable)) {
+      $this->baseTableIdQueryMetadata[$entityTypeId] = FALSE;
+      return NULL;
+    }
+    $columns = $mapping->getAllColumns($baseTable);
+    $idColumns = $mapping->getColumnNames($idKey);
+    $idColumn = reset($idColumns);
+    $bundleColumn = NULL;
+    if ($bundleKey !== NULL) {
+      $bundleColumns = $mapping->getColumnNames($bundleKey);
+      $bundleColumn = reset($bundleColumns);
+    }
+    if (!is_string($idColumn) || !in_array($idColumn, $columns, TRUE)
+      || ($bundleKey !== NULL && (!is_string($bundleColumn) || !in_array($bundleColumn, $columns, TRUE)))) {
+      $this->baseTableIdQueryMetadata[$entityTypeId] = FALSE;
+      return NULL;
+    }
+    $this->baseTableIdQueryMetadata[$entityTypeId] = [
+      'table' => $baseTable,
+      'id_column' => $idColumn,
+      'bundle_column' => is_string($bundleColumn) ? $bundleColumn : NULL,
+    ];
+    return $this->baseTableIdQueryMetadata[$entityTypeId];
   }
 
   /**

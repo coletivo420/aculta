@@ -1,5 +1,31 @@
 # Rebuild e auditoria — ACULTA Content Index (2026-10-23)
 
+## Keyset pela tabela base — diagnóstico 10k/100k (dev.149)
+
+O EntityQuery do Drupal para Node revisionável juntava a tabela base à tabela
+de dados, agrupava e ordenava as revisões. Em 1M, depois de 33 lotes de 500 em
+541,174 s, o `EXPLAIN` estimou ~994k linhas inspecionadas por página e indicou
+temporary/filesort; a tentativa foi interrompida sem JSON final. Isso não é um
+tempo de benchmark válido. A limpeza removeu somente as 17 tabelas efêmeras do
+prefixo PHPUnit `test80597948` no banco `aculta_simpletest`.
+
+O dev.149 consulta a tabela base via Database API quando o mapeamento real do
+storage confirma as colunas de ID e bundle. Entity API segue carregando e
+projetando as entidades. A estratégia é confirmada por `base_table` em cada
+lote; storage sem esse mapeamento segue no fallback EntityQuery.
+
+| Escala | Setup (s) | Rebuild (s) | Projeções/s | Auditoria (s) | Pico auditoria (MiB) | ID query p50/p95 (ms) | Estratégias de lote | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| 10k | 1,462 | 17,781 | 562 | 6,858 | 126,5 | 0,703 / 0,781 | base_table 21/21 | 0 |
+| 100k | 11,646 | 181,043 | 552 | 68,983 | 137,5 | 1,103 / 1,557 | base_table 201/201 | 0 |
+
+As amostras são únicas e não definem SLO. A consulta de ID mede apenas seleção
+de candidatos; os tempos totais ainda incluem carga pela Entity API, projeção,
+gravação, invalidadores/cache e demais estágios. Uma consulta SQL direta no
+banco de teste leu 500 IDs por chave primária em 1,3 ms (e sem hint, com bundle,
+em 5,9 ms); esse microteste explica o ganho potencial, mas não substitui o
+benchmark de rebuild.
+
 ## Repetição 100k após limpeza de cache da auditoria (dev.147)
 
 Uma execução MariaDB, com a mudança dev.146 que limpa caches de fontes e alvos

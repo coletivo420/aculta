@@ -1,5 +1,24 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.149 — usar keyset pela tabela base quando seguro
+
+- A descoberta de IDs consulta a tabela base do storage quando o mapeamento
+  confirma que ID e bundle residem nela; outros storages continuam com
+  EntityQuery. Carga e projeção permanecem na Entity API.
+- A tentativa de 1M com EntityQuery foi encerrada após 33 lotes/541 s; o plano
+  estimava ~994k linhas por página devido a join, group e filesort. Sem JSON
+  final, não é um resultado do benchmark. As 17 tabelas do prefixo temporário
+  foram removidas do banco isolado após o SIGINT.
+- Com a nova descoberta, 10k passou (1 / 16): rebuild 17,781 s, auditoria
+  6,858 s, zero divergências; 21/21 lotes usaram `base_table`, ID query p95
+  0,781 ms. Em 100k passou (1 / 16): rebuild 181,043 s, auditoria 68,983 s,
+  pico 137,5 MiB e zero divergências; 201/201 lotes usaram `base_table`, ID
+  query p50/p95 1,103/1,557 ms. Amostras únicas, sem SLO.
+- Unit enumerador passou (7 / 59); Rebuilder Kernel MariaDB passou
+  (21 / 295). PHPCS Drupal e lint passaram. Tentativa de Kernel SQLite não
+  iniciou: este repositório proíbe SQLite para testes Drupal e exige
+  `SIMPLETEST_DB` MariaDB.
+
 ## 0.1.0-dev.148 — repetir gates Unit e Kernel após otimização de auditoria
 
 - Unit completo passou (50 testes / 241 assertions; 14 depreciações PHPUnit).
