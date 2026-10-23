@@ -62,3 +62,7 @@ A seleção `donate | cart | both` é **funcionalidade intencional**, preservada
 - **D-CART.T:** testes Kernel/Functional/Browser, cenário loja+LMS+doação simultâneos, Mercado Pago sandbox, rollback e logs sanitizados no homelab.
 
 Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Planejamento somente: os controllers/subscribers não foram modificados.
+
+## RETIFICAÇÃO ADR-013 — Migração de ownership sem mudar o carrinho
+
+A seleção `donate | cart | both` permanece funcional e inalterada publicamente. O Portal passará a controlar a **configuração administrativa transversal**; Donation continuará dono de campanhas, doação, recorrência e checkout dedicado. As abas **Comum | Loja | LMS | Doações** serão apenas administrativas. **Não modificar o carrinho na barra multidomínio nem a escolha atual de checkout**; não criar tabs do comprador. Ver [roadmap revisado](docs/ROADMAP-MULTI-CART.md) e [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md).
