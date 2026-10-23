@@ -92,6 +92,34 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Both query APIs enforce the fixed candidate limit before doing work.
+   */
+  public function testContentAndRelationQueriesRejectOutOfRangeLimits(): void {
+    $account = new AnonymousUserSession();
+    $query = $this->container->get('aculta_index.query');
+    foreach ([0, 101] as $limit) {
+      try {
+        $query->query([], $account, NULL, $limit);
+        $this->fail(sprintf('The content query must reject candidate limit %d.', $limit));
+      }
+      catch (\InvalidArgumentException $exception) {
+        $this->assertSame('Content Index candidate limit must be between 1 and 100.', $exception->getMessage());
+      }
+    }
+
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    foreach ([0, 101] as $limit) {
+      try {
+        $relationQuery->queryOutgoing('node', '1', 'en', 'related_item', $account, NULL, $limit);
+        $this->fail(sprintf('The relation query must reject candidate limit %d.', $limit));
+      }
+      catch (\InvalidArgumentException $exception) {
+        $this->assertSame('Content Index relation candidate limit must be between 1 and 100.', $exception->getMessage());
+      }
+    }
+  }
+
+  /**
    * Checks keyset batches resume and persist projections without activation.
    */
   public function testBackfillResumesAndOnlyWritesBuildingGeneration(): void {

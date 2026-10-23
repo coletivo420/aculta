@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.78 — fixar teto de candidatos nas consultas
+
+- Kernel verifica que as consultas de conteúdo e de relações rejeitam limites
+  fora da faixa 1–100 antes de consultar o catálogo (teste focal 1/11).
+- O arquivo Kernel de rebuild e consulta passou completo: 15 testes / 211
+  assertions no MariaDB dedicado.
+- Não altera os resultados válidos nem a política de autorização.
+
 ## 0.1.0-dev.77 — testar preservação de projeções sem owner ativo
 
 - O Kernel da auditoria incremental confirma que uma projeção cujo provider
