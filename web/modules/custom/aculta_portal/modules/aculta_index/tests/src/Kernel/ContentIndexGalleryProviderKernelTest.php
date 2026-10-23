@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Gallery projections and selected image relations through Index.
@@ -48,7 +49,6 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     'media_gallery',
     'domain',
     'aculta_index',
-    'aculta_index_gallery_test',
   ];
 
   /**
@@ -62,6 +62,21 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
       new Reference('config.factory'),
       new Reference('request_stack'),
     ]))->setPublic(TRUE));
+
+    // Compile the actual owner provider declarations without enabling their
+    // modules or loading unrelated dependency chains into this Kernel.
+    foreach ([
+      'aculta_gallery' => 'aculta_gallery.content_index_provider',
+      'aculta_image' => 'aculta_image.content_index_provider',
+    ] as $owner => $serviceId) {
+      $servicesFile = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/' . $owner . '/' . $owner . '.services.yml';
+      $service = Yaml::parseFile($servicesFile, Yaml::PARSE_CUSTOM_TAGS)['services'][$serviceId];
+      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      foreach ($service['tags'] ?? [] as $tag) {
+        $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+      }
+      $container->setDefinition($serviceId, $definition);
+    }
   }
 
   /**

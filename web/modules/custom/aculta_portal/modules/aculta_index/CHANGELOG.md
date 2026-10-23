@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.107 — registrar providers Gallery e Image pelos YAMLs owner
+
+- O Kernel Gallery agora carrega as definições/tag reais de
+  `aculta_gallery.services.yml` e `aculta_image.services.yml`, sem duplicar as
+  declarações em uma fixture de provider.
+- SQLite e MariaDB: 2 testes / 44 assertions passaram em cada banco. Nove
+  depreciações vêm de Media Gallery, PhotoSwipe e Drupal contrib/Core.
+- PHPCS Drupal e `php -l` passaram no harness alterado.
+
 ## 0.1.0-dev.106 — limitar janela de auditoria por provider/type
 
 - A fase de fontes captura o maior ID indexável ao entrar em cada par
