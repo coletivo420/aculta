@@ -16,7 +16,11 @@ são H2 e links de categoria, H3. Firefox/X11 confirma o reflow sem overflow em
 320–1440 CSS px. Após o ajuste do banner global em ACULTA420 0.6.1-dev.3,
 Firefox/X11 capturou `/categorias` em claro e escuro a 390, 768 e 1024 CSS px;
 as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
-1024 px escuro. Zoom, aparelho real e contadores de tópicos continuam pendentes.
+1024 px escuro. Em 2026-10-23 a suíte X11 reconfirmou 15/15 no servidor de testes
+(390/768/1024, claro/escuro e link de salto) e 8/8 com Olivero no ambiente local,
+sem overflow nem assets do ACULTA420; o script fica em
+`tests/browser/aculta-forum/`. Zoom, aparelho real e contadores de tópicos
+continuam pendentes.
 `/pesquisar` pesquisa título/corpo de tópicos públicos e assunto/corpo dos
 posts revisionáveis publicados, com categoria em select hierárquico. Os nomes
 vêm da Taxonomy atual e respeitam Entity Access; o filtro usa IDs inteiros

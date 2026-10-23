@@ -1,3 +1,16 @@
+## `0.1.0-dev.258` — revisão visual de `/categorias` com X11 e Olivero — 2026-10-23
+
+- Firefox ESR/X11 no servidor de testes: `forum-index-visual.mjs` passou 15/15
+  em 390/768/1024 CSS px, claro/escuro, com link de salto funcional e 12
+  categorias no enquadramento, sem tópicos na listagem pública.
+- Olivero no ambiente local: novo `tests/browser/aculta-forum/categorias-olivero.py`
+  passou 8/8; 12 categorias e links `?categoria=` renderizam sem assets do
+  ACULTA420, sem erros e sem overflow. O tema foi restaurado para `aculta420`
+  por trap.
+- O script documenta as limitações: sem BiDi, a menor largura medida é a que o
+  Firefox aceita na janela; zoom e aparelho real seguem pendentes.
+- Sem alteração de configuração versionada, conteúdo ou código do módulo.
+
 ## `0.1.0-dev.257` — falha na exclusão e auditoria dos caminhos de limpeza — 2026-10-23
 
 - Fixture `aculta_forum_cleanup_test` simula falha em `hook_entity_predelete`

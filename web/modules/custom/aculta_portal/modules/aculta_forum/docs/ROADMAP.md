@@ -175,6 +175,16 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 [`DISCOURSE-EXPERIENCE.md`](DISCOURSE-EXPERIENCE.md) e
 [`MOVE-TOOLS.md`](MOVE-TOOLS.md).
 
+### Revisão visual de `/categorias` — 2026-10-23
+
+`tests/browser/aculta-forum/forum-index-visual.mjs` passou 15/15 no servidor de
+testes com Firefox ESR/X11: 390/768/1024 CSS px, claro/escuro, link de salto e
+cartões no enquadramento, sem tópicos na listagem pública. Com Olivero no
+ambiente local, `tests/browser/aculta-forum/categorias-olivero.py` passou 8/8:
+12 categorias e links `?categoria=` renderizados sem assets do ACULTA420, sem
+erros e sem overflow; o tema voltou a `aculta420` por trap. Zoom, aparelho real
+e contadores access-aware continuam pendentes.
+
 ### Moderação revisionável de posts — decisão de 2026-10-21
 
 O responsável decidiu substituir os Comments Core das discussões públicas do

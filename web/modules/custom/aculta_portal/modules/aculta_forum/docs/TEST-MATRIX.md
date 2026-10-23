@@ -1,3 +1,18 @@
+## Revisão visual de `/categorias` — X11 e Olivero, 2026-10-23
+
+- `forum-index-visual.mjs`, servidor de testes, Firefox ESR/X11: 15/15.
+  390/768/1024 CSS px, claro/escuro, 12 categorias, zero tópicos na listagem
+  pública, link de salto com foco e destino corretos, `scrollWidth` igual ao
+  viewport e nenhum cartão fora do enquadramento.
+- `categorias-olivero.py`, ambiente local com Olivero: 8/8. H1 "Categorias",
+  12 linhas e 12 links `?categoria=`, seis assets do Olivero e nenhum do
+  ACULTA420, sem mensagens de erro e sem overflow em 1024 px e na menor janela
+  aceita pelo Firefox. Tema restaurado para `aculta420`; capturas e
+  `results.json` ficam fora do checkout.
+- Limitações: sem BiDi neste script, a largura estreita é a janela mínima do
+  Firefox; zoom e aparelho real permanecem pendentes. A grade visual do
+  ACULTA420 não é avaliada pelo caso Olivero.
+
 ## Limpeza de anexos pela API compartilhada — revisões, referências e falha, 2026-10-23
 
 - `ForumAttachmentPublicationKernelTest` (12 testes / 343 asserções, MariaDB):

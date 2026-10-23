@@ -149,3 +149,31 @@ O script imprime JSON e grava capturas e `results.json` com modo `0600` em
 `SUITE_OUT`. Não cria conteúdo além do login, não altera senhas e não roda em
 produção. O anexo e o download privado são medidos pelos scripts de
 `aculta_forum/tests/runtime/`, não pelo navegador.
+
+## Olivero em `/categorias`
+
+`categorias-olivero.py` mede a página `/categorias` com o tema **Olivero** no
+ambiente local: h1, categorias, links `?categoria=`, ausência de erros e de
+overflow, com capturas em 1024 px e na menor largura de janela que o Firefox
+aceita (o script registra a largura real; não usa BiDi). Ele reaproveita
+`wdlib.py` de `tests/browser/aculta-cpf-checkout/`, resolve os hostnames de
+teste para 127.0.0.1 e não troca o tema. Pré-requisito: Olivero como
+`system.theme.default` no Runtime local, com restauração garantida por `trap`.
+
+```bash
+cd /home/piradopirata/projetos/aculta
+vendor/bin/drush theme:enable olivero -y
+restore() {
+  vendor/bin/drush config:set system.theme default aculta420 -y >/dev/null
+  vendor/bin/drush cache:rebuild >/dev/null
+}
+trap restore EXIT
+vendor/bin/drush config:set system.theme default olivero -y
+vendor/bin/drush cache:rebuild >/dev/null
+DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-categorias-olivero' \
+  python3 -I tests/browser/aculta-forum/categorias-olivero.py
+```
+
+O script confirma que o HTML carrega assets do Olivero e nenhum asset do
+ACULTA420. Ele não prova a grade visual do tema ACULTA420; isso continua na
+suíte `forum-index-visual.mjs`.
