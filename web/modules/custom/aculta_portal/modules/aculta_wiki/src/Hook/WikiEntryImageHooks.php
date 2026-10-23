@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
 
@@ -129,6 +130,36 @@ final class WikiEntryImageHooks {
         ]);
       }
       $form['actions']['submit']['#submit'] = $submitHandlers;
+    }
+  }
+
+  /**
+   * Synchronizes lead image visibility after a Wiki Node is inserted.
+   */
+  #[Hook('entity_insert')]
+  public function entityInsert(EntityInterface $entity): void {
+    if ($entity instanceof NodeInterface) {
+      $this->uploader->syncPublishedMedia($entity);
+    }
+  }
+
+  /**
+   * Synchronizes lead image visibility after a Wiki Node is updated.
+   */
+  #[Hook('entity_update')]
+  public function entityUpdate(EntityInterface $entity): void {
+    if ($entity instanceof NodeInterface) {
+      $this->uploader->syncPublishedMedia($entity);
+    }
+  }
+
+  /**
+   * Reconciles image publication after a Wiki Node is deleted.
+   */
+  #[Hook('entity_delete')]
+  public function entityDelete(EntityInterface $entity): void {
+    if ($entity instanceof NodeInterface) {
+      $this->uploader->syncPublishedMedia($entity, TRUE);
     }
   }
 

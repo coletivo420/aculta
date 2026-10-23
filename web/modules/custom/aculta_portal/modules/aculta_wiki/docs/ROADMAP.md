@@ -381,6 +381,17 @@ A [auditoria C01-A](../../../../../../../docs/portal/WE-SATIVA-C01-A-ACCESS-AND-
 
 **Decisão aprovada:** todo usuário com e-mail confirmado poderá contribuir na Wiki; somente `content_editor` modera/publica sugestões. [Contrato C01-B](../../../../../../../docs/portal/WE-SATIVA-C01-B-CONTRIBUTOR-MODERATION-CONTRACT.md) verifica que `user.role.email_confirmed.yml` já possui criação/edição de conteúdo próprio e envio ao estado `review`, sem publicar. Não confundir conta meramente `authenticated` com `email_confirmed`. Corrige-se a inferência incompleta da C01-A; não duplicar papel nem ampliar `edit any`. **C01-B1 parcial (dev.36):** Kernel inicializa Mail Confirmer real, aceita confirmação do realm `aculta_registration` e verifica atribuição do papel e autorização de criação. Falta caracterizar configuração importada e Runtime. **Próximos:** fechar C01-B1 no ambiente de teste; C01-B2 ADR de propostas em verbetes alheios; depois C01-C1 editor de próprios verbetes e C01-C2 microtarefas. C01-R no homelab. Autosave permanece somente futuro; nenhuma permissão, rota ou endpoint foi mudado.
 
+## R2 — sincronização de publicação da imagem (dev.37)
+
+Hooks reais de Node recalculam o status da Media de destaque após inserção,
+atualização e exclusão. A Media permanece publicada se algum Node publicado
+ainda a referenciar e fica privada após a última referência publicada ser
+desativada. Kernel MariaDB cobre publicação, despublicação, reuso e exclusão do
+último Node (2 focais / 56 asserções; classe completa 13 / 548). Mesmo com a
+Media despublicada, Core ainda permite baixar o arquivo quando uma revisão
+publicada anterior o referencia. Resta decidir se esse acesso deve seguir a
+autorização Core da revisão ou o estado atual do verbete.
+
 
 ## Prioridade: primeira publicação e moderação Wiki (WES-MOD 0.1)
 

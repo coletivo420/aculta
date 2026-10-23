@@ -250,6 +250,95 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * An existing lead image follows later publication state changes.
+   */
+  public function testExistingLeadMediaFollowsNodePublicationChanges(): void {
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $file->setPermanent();
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem existente',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      'field_media_image' => [
+        'target_id' => $file->id(),
+        'alt' => 'Descrição da imagem existente',
+      ],
+    ]);
+    $media->save();
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Imagem existente acompanha o workflow',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $media->id()],
+    ]);
+    $node->save();
+    $sharedNode = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Outro verbete usa a mesma imagem',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $media->id()],
+    ]);
+    $sharedNode->save();
+
+    $node->setPublished();
+    $node->save();
+    $mediaStorage = $this->container->get('entity_type.manager')->getStorage('media');
+    $mediaStorage->resetCache([(int) $media->id()]);
+    self::assertTrue($mediaStorage->load($media->id())->isPublished());
+    self::assertTrue($file->access('download', new AnonymousUserSession()));
+
+    $node->setUnpublished();
+    $node->save();
+    $mediaStorage->resetCache([(int) $media->id()]);
+    self::assertTrue($mediaStorage->load($media->id())->isPublished(), 'A second published Wiki entry still uses the Media.');
+
+    $sharedNode->setUnpublished();
+    $sharedNode->save();
+    $mediaStorage->resetCache([(int) $media->id()]);
+    self::assertFalse($mediaStorage->load($media->id())->isPublished());
+    self::assertTrue($file->access('download', new AnonymousUserSession()), 'Core still authorizes a file referenced by a published historical revision.');
+  }
+
+  /**
+   * Deleting the final published host makes its lead Media private.
+   */
+  public function testDeletingLastPublishedLeadImageReferenceUnpublishesMedia(): void {
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $file->setPermanent();
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem do verbete removido',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      'field_media_image' => ['target_id' => $file->id(), 'alt' => 'Imagem'],
+    ]);
+    $media->save();
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Último verbete com imagem',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $media->id()],
+    ]);
+    $node->save();
+
+    $node->delete();
+
+    $mediaStorage = $this->container->get('entity_type.manager')->getStorage('media');
+    $mediaStorage->resetCache([(int) $media->id()]);
+    self::assertFalse($mediaStorage->load($media->id())->isPublished());
+  }
+
+  /**
    * A failed Node save rolls back staged Media and File permanence together.
    */
   public function testFailedNodeSaveRollsBackMediaAndFileState(): void {

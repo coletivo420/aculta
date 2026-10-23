@@ -103,10 +103,13 @@ depois da importação de configuração no servidor de testes.
 | Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
 | Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |
 | Visibilidade da Media e do arquivo segue estado do verbete | Kernel | rascunho permanece privado; verbete publicado permite acesso | aprovado (2 casos de dados MariaDB) |
+| Media existente em mudança posterior de publicação | Kernel | atualização sincroniza status; outro Node publicado mantém a Media pública até retirar sua última referência | aprovado (dev.37; focal: 1 / 29; classe: 13 / 548) |
+| Exclusão do último Node que publica a Media | Kernel | hook de exclusão despublica a Media após apagar o último Node atual que a referencia | aprovado (dev.37; focal: 1 / 27; classe: 13 / 548) |
 | Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
 | Remoção em nova revisão com referência antiga | Kernel | revisão antiga mantém a Media; arquivo continua presente e acessível | aprovado (1 teste / 24 assertions em MariaDB) |
 | Reuso da Media em outro conteúdo e limpeza global de referências | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | pendente; depende do contrato transversal do Portal |
 | Falha de validação antes de submit | Kernel | sem Media órfã nem File permanente | pendente |
+| Arquivo privado após despublicar com revisão publicada anterior | Kernel | decidir se download segue a autorização Core da revisão histórica ou o estado atual; Core atualmente permite download | pendente de decisão |
 
 ## Fase 2 — componentes movidos
 

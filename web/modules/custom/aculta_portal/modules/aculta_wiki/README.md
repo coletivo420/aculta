@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.37`: inserção, atualização e exclusão sincronizam o status da
+  Media de destaque com os Nodes publicados que a referenciam. Kernel cobre
+  publicação, despublicação, exclusão do último Node e reuso (2 focais / 56;
+  classe Kernel: 13 testes / 548 asserções em MariaDB isolada). Mesmo com Media
+  privada, Core permite acesso ao arquivo por revisão histórica publicada; a
+  política desse caso segue pendente.
 - `0.1.0-dev.36`: Kernel usa o Mail Confirmer real (`aculta_registration`),
   confirma a conta e verifica o papel `email_confirmed` e a permissão efetiva
   de criar `wiki_entry` via Entity Access. Focal: 1 teste / 33 asserções;

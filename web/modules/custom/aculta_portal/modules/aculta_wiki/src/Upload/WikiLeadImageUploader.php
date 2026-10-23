@@ -224,6 +224,39 @@ final class WikiLeadImageUploader {
   }
 
   /**
+   * Reconciles lead image publication after a Wiki Node is saved.
+   *
+   * The current default revision controls this verbete's public image. Shared
+   * Media remains published while another published Node still references it.
+   */
+  public function syncPublishedMedia(NodeInterface $node, bool $deleted = FALSE): void {
+    if ($node->bundle() !== 'wiki_entry'
+      || !$node->hasField(self::FIELD)
+      || $node->get(self::FIELD)->isEmpty()) {
+      return;
+    }
+
+    $media = $node->get(self::FIELD)->entity;
+    if (!$media instanceof MediaInterface || $media->bundle() !== 'image') {
+      return;
+    }
+
+    $publicReferences = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition(self::FIELD, $media->id())
+      ->condition('status', 1)
+      ->range(0, 1)
+      ->execute();
+    $shouldPublish = (!$deleted && $node->isPublished()) || $publicReferences !== [];
+    if ($media->isPublished() === $shouldPublish) {
+      return;
+    }
+
+    $shouldPublish ? $media->setPublished() : $media->setUnpublished();
+    $media->save();
+  }
+
+  /**
    * Saves the Node and commits or rolls back its staged lead image atomically.
    */
   public function saveNode(array &$form, FormStateInterface $form_state): void {

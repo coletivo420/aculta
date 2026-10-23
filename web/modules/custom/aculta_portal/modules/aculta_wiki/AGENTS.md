@@ -1,5 +1,11 @@
 # Wiki — instruções locais
 
+- Dev.37 R2: `WikiEntryImageHooks` sincroniza Media de destaque após insert,
+  update e delete de Nodes; mantenha-a publicada enquanto outro Node publicado
+  referir a mesma entidade. Teste MariaDB cobre duas referências, última
+  retirada e exclusão do último Node.
+  Core ainda permite acesso ao arquivo por revisão histórica publicada mesmo
+  com Media privada; a política desse caso segue pendente.
 - Dev.36 WES-C01-B1 parcial: teste Kernel usa `aculta_mail_confirmer` no realm
   `aculta_registration`, valida o hook real de confirmação do Portal, papel
   `email_confirmed` e `createAccess('wiki_entry')`. Renovar o cache do handler

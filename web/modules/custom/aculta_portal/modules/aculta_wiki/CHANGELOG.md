@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.37 — sincronizar a Media em mudanças do verbete
+
+- Hooks de inserção, atualização e exclusão sincronizam o status da Media de destaque
+  com o estado publicado do verbete. Uma referência em outro Node publicado
+  mantém a Media pública; a última referência publicada removida a torna
+  privada.
+- Kernel cobre publicação, despublicação, exclusão do último verbete e reuso
+  da mesma Media por dois verbetes. Focais: 2 testes / 56 asserções; classe
+  completa em MariaDB isolada: 13 testes / 548 asserções, 286 depreciações
+  Core/contrib e 14 PHPUnit.
+- Teste confirma que Core ainda permite baixar o arquivo quando uma revisão
+  publicada anterior o referencia, embora a Media atual esteja privada. A
+  decisão de produto sobre esse acesso histórico continua pendente.
+
 ## 0.1.0-dev.36 — caracterizar confirmação real de autoria
 
 - Kernel inicializa o Mail Confirmer e confirma uma conta pelo fluxo de hash do
