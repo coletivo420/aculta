@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.35` — reparação incremental automática para projeções de provider desatualizadas.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **40 testes / 457 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity e Media, além do refileiramento de projeção obsoleta. PHPCS Drupal passou. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.36` — reconciliação incremental de fontes e projeções ativas.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **42 testes / 480 assertions**. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media e reconciliação incremental de fontes. PHPCS Drupal passou. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -68,10 +68,13 @@ agrega contagens e não guarda títulos, corpos ou IDs das entidades com problem
 Quando uma entrada da geração ativa usa uma versão antiga de provider ainda
 registrado, o lote agenda novamente sua identidade no work manager após persistir
 o checkpoint. A fila deduplica o trabalho e o worker relê a entidade pelo provider
-atual; se a geração ativa trocar durante o lote, a reparação daquela geração é
-descartada. Versões de providers desabilitados não são reenfileiradas nem removidas:
-isso depende de ownership e configuração confirmados e de validação posterior da
-fonte.
+atual. O mesmo lote carrega fontes em grupos limitados e compara o hash canônico da
+projeção. Fonte ausente, tradução removida ou bundle que saiu do ownership
+confirmado agenda exclusão; hash divergente agenda nova projeção. Provider,
+entity type ou bundle sem ownership verificável é contado e preservado. Todo job
+é agendado depois do checkpoint e somente se a geração auditada continuar ativa.
+Política de limpeza de providers desativados ainda depende da decisão operacional
+em aberto; a auditoria não os apaga.
 
 ```text
 drush aculta-index:audit status
@@ -80,17 +83,15 @@ drush aculta-index:audit batch --limit=200
 ```
 
 O comando manual pode continuar um ciclo existente; um novo `start` é recusado
-enquanto outro ciclo estiver em execução. Esta auditoria é operacional e
-incremental: verifica integridade estrutural das linhas do catálogo (gerações
-referenciadas, existência da projeção de origem para relações e ponteiro ativo).
-Ela **não** enumera as entidades de origem, não detecta projeções ausentes nem
-repara divergências. Na geração ativa, também conta projeções cuja
-`provider_version` diverge do provider registrado; providers desabilitados e
-gerações retidas são ignorados. A validação do rebuild continua fazendo suas
-próprias verificações estruturais completas antes de permitir ativação.
-Reconciliação fonte↔catálogo por provider, cursor e reparação segura seguem
-pendentes para IDX 0.1-E; o cron atual não deve ser descrito como
-autorreparação.
+enquanto outro ciclo estiver em execução. A auditoria verifica estrutura e
+reconcilia entradas da geração ativa em lotes limitados: carrega entidades por
+tipo, reavalia o provider proprietário e compara o hash canônico da projeção.
+Ela refileira projeções divergentes e fontes confirmadamente ausentes via work
+manager; ownership/provider indisponível é contado e preservado. Providers
+desabilitados e gerações retidas não são apagados. A varredura de entradas do
+catálogo não enumera o universo de fontes, portanto ainda não encontra conteúdos
+que nunca receberam entrada ou ficaram ausentes do catálogo. A validação do
+rebuild mantém suas verificações estruturais da geração em construção.
 
 ## Cache interno de candidatos
 

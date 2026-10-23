@@ -6,8 +6,12 @@ namespace Drupal\aculta_index\Integrity;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
+use Drupal\aculta_index\Storage\ContentIndexWriter;
+use Psr\Log\LoggerInterface;
 
 /**
  * Checks catalog structure and runs resumable, bounded integrity audits.
@@ -29,6 +33,9 @@ final class ContentIndexIntegrityChecker {
     private readonly TimeInterface $time,
     private readonly ContentIndexProviderRegistry $providers,
     private readonly ContentIndexWorkManager $work,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ContentIndexWriter $writer,
+    private readonly LoggerInterface $logger,
   ) {}
 
   /**
@@ -90,6 +97,8 @@ final class ContentIndexIntegrityChecker {
         'orphan_relation_count' => 0,
         'relation_source_missing_count' => 0,
         'stale_projection_count' => 0,
+        'missing_source_count' => 0,
+        'unverified_source_count' => 0,
         'active_pointer_valid' => (int) $pointer['valid'],
         'active_generation' => $pointer['generation'] ?? '',
         'created' => $this->time->getRequestTime(),
@@ -149,26 +158,10 @@ final class ContentIndexIntegrityChecker {
       $orphanEntries = 0;
       $orphanRelations = 0;
       $missingRelationSources = 0;
-      $staleProjections = 0;
-      $staleIdentities = [];
+      $sourceAudit = ['stale' => 0, 'missing' => 0, 'unverified' => 0, 'project' => [], 'delete' => []];
       foreach ($rows as $row) {
         if ($state['phase'] === 'entries') {
           $orphanEntries += (int) $row['orphan'];
-          $staleProjections += (int) $row['stale'];
-          if ($row['stale']) {
-            $identityKey = hash('sha256', implode("\0", [
-              $row['provider_id'],
-              $row['entity_type'],
-              $row['entity_id'],
-              $row['langcode'],
-            ]));
-            $staleIdentities[$identityKey] = [
-              'provider_id' => $row['provider_id'],
-              'entity_type' => $row['entity_type'],
-              'entity_id' => $row['entity_id'],
-              'langcode' => $row['langcode'],
-            ];
-          }
         }
         else {
           $orphanRelations += (int) $row['orphan'];
@@ -176,8 +169,13 @@ final class ContentIndexIntegrityChecker {
         }
       }
       if ($state['phase'] === 'entries') {
+        $sourceAudit = $this->reconcileEntrySources($rows, (string) $state['active_generation']);
+      }
+      if ($state['phase'] === 'entries') {
         $updates['orphan_entry_count'] = (int) $state['orphan_entry_count'] + $orphanEntries;
-        $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $staleProjections;
+        $updates['stale_projection_count'] = (int) $state['stale_projection_count'] + $sourceAudit['stale'];
+        $updates['missing_source_count'] = (int) $state['missing_source_count'] + $sourceAudit['missing'];
+        $updates['unverified_source_count'] = (int) $state['unverified_source_count'] + $sourceAudit['unverified'];
       }
       else {
         $updates['orphan_relation_count'] = (int) $state['orphan_relation_count'] + $orphanRelations;
@@ -198,19 +196,22 @@ final class ContentIndexIntegrityChecker {
         $updates['completed'] = $this->time->getRequestTime();
       }
 
-      $this->database->update('aculta_index_audit')
+      $checkpointed = $this->database->update('aculta_index_audit')
         ->fields($updates)
         ->condition('audit_id', 1)
         ->condition('status', 'running')
         ->condition('revision', $state['revision'])
         ->execute();
+      if ($checkpointed !== 1) {
+        throw new \LogicException('The Content Index audit checkpoint changed during batch processing.');
+      }
       unset($transaction);
 
       // Requeue after the audit checkpoint commits. If the active generation
       // changed during the batch, its new rebuild supersedes this repair work.
       $currentPointer = $this->activePointer();
       if (($currentPointer['generation'] ?? '') === (string) $state['active_generation']) {
-        foreach ($staleIdentities as $identity) {
+        foreach ($sourceAudit['project'] as $identity) {
           if ($this->providers->has($identity['provider_id'])) {
             $this->work->schedule(
               $identity['provider_id'],
@@ -220,11 +221,24 @@ final class ContentIndexIntegrityChecker {
             );
           }
         }
+        foreach ($sourceAudit['delete'] as $identity) {
+          if ($this->providers->has($identity['provider_id'])) {
+            $this->work->schedule(
+              $identity['provider_id'],
+              $identity['entity_type'],
+              $identity['entity_id'],
+              $identity['langcode'],
+              'delete',
+            );
+          }
+        }
       }
       return $this->getAuditState();
     }
     catch (\Throwable $exception) {
-      $transaction->rollBack();
+      if (isset($transaction)) {
+        $transaction->rollBack();
+      }
       throw $exception;
     }
   }
@@ -243,7 +257,9 @@ final class ContentIndexIntegrityChecker {
       && (int) $state['orphan_entry_count'] === 0
       && (int) $state['orphan_relation_count'] === 0
       && (int) $state['relation_source_missing_count'] === 0
-      && (int) $state['stale_projection_count'] === 0;
+      && (int) $state['stale_projection_count'] === 0
+      && (int) $state['missing_source_count'] === 0
+      && (int) $state['unverified_source_count'] === 0;
     return $state;
   }
 
@@ -295,7 +311,9 @@ final class ContentIndexIntegrityChecker {
         'entity_type',
         'entity_id',
         'langcode',
+        'bundle',
         'provider_version',
+        'projection_hash',
       ]);
     $query->addField('generation', 'generation_id', 'found_generation');
     $query->leftJoin('aculta_index_generation', 'generation', 'entry.generation_id = generation.generation_id');
@@ -310,11 +328,14 @@ final class ContentIndexIntegrityChecker {
       $result[] = [
         'row_id' => (int) $row->entry_id,
         'orphan' => $row->found_generation === NULL,
-        'stale' => $isActiveGeneration && $this->isStaleProjection((string) $row->provider_id, (int) $row->provider_version),
         'provider_id' => (string) $row->provider_id,
         'entity_type' => (string) $row->entity_type,
         'entity_id' => (string) $row->entity_id,
         'langcode' => (string) $row->langcode,
+        'bundle' => (string) $row->bundle,
+        'provider_version' => (int) $row->provider_version,
+        'projection_hash' => (string) $row->projection_hash,
+        'active_generation' => $isActiveGeneration,
       ];
     }
     return $result;
@@ -344,11 +365,129 @@ final class ContentIndexIntegrityChecker {
   }
 
   /**
-   * Determines whether a projection's provider version needs reindexing.
+   * Revalidates active source rows in bounded batches under their owner.
+   *
+   * Missing or no-longer-indexable sources are queued for deletion only when
+   * the registered provider still owns the stored entity type and bundle.
+   * Providers/types/bundles whose ownership cannot be confirmed are retained.
+   *
+   * @param list<array> $rows
+   *   Rows selected by the structural audit cursor.
+   * @param string $activeGeneration
+   *   Generation captured when this audit cycle began.
+   *
+   * @return array{stale: int, missing: int, unverified: int, project: array, delete: array}
+   *   Findings and deduplicated work identities.
    */
-  private function isStaleProjection(string $providerId, int $storedVersion): bool {
-    return $this->providers->has($providerId)
-      && $storedVersion !== $this->providers->get($providerId)->getProjectionVersion();
+  private function reconcileEntrySources(array $rows, string $activeGeneration): array {
+    $result = ['stale' => 0, 'missing' => 0, 'unverified' => 0, 'project' => [], 'delete' => []];
+    $eligible = [];
+    $idsByType = [];
+    foreach ($rows as $row) {
+      if ($activeGeneration === '' || !$row['active_generation']) {
+        continue;
+      }
+      if (!$this->providers->has($row['provider_id'])) {
+        $result['unverified']++;
+        continue;
+      }
+      $provider = $this->providers->get($row['provider_id']);
+      $supported = $provider->getSupportedEntityTypes();
+      if (!in_array($row['bundle'], $supported[$row['entity_type']] ?? [], TRUE)
+        || !$this->entityTypeManager->hasDefinition($row['entity_type'])) {
+        $result['unverified']++;
+        continue;
+      }
+      $eligible[] = $row;
+      $idsByType[$row['entity_type']][hash('sha256', $row['entity_id'])] = $row['entity_id'];
+    }
+
+    $entitiesByType = [];
+    foreach ($idsByType as $entityTypeId => $entityIds) {
+      $loadedEntities = $this->entityTypeManager
+        ->getStorage($entityTypeId)
+        ->loadMultiple(array_values($entityIds));
+      foreach ($loadedEntities as $entity) {
+        if ($entity instanceof ContentEntityInterface) {
+          $entitiesByType[$entityTypeId][hash('sha256', (string) $entity->id())] = $entity;
+        }
+      }
+    }
+
+    foreach ($eligible as $row) {
+      $key = hash('sha256', implode("\0", [
+        $row['provider_id'],
+        $row['entity_type'],
+        $row['entity_id'],
+        $row['langcode'],
+      ]));
+      $identity = [
+        'provider_id' => $row['provider_id'],
+        'entity_type' => $row['entity_type'],
+        'entity_id' => $row['entity_id'],
+        'langcode' => $row['langcode'],
+      ];
+      $entity = $entitiesByType[$row['entity_type']][hash('sha256', $row['entity_id'])] ?? NULL;
+      if (!$entity instanceof ContentEntityInterface) {
+        $result['missing']++;
+        $result['delete'][$key] = $identity;
+        continue;
+      }
+      $supportedBundles = $this->providers->get($row['provider_id'])
+        ->getSupportedEntityTypes()[$row['entity_type']] ?? [];
+      if (!in_array($entity->bundle(), $supportedBundles, TRUE)) {
+        // The provider still owns the stored bundle, but no longer owns the
+        // current source bundle. Remove only this provider's old projection.
+        $result['missing']++;
+        $result['delete'][$key] = $identity;
+        continue;
+      }
+      if (!$entity->hasTranslation($row['langcode'])) {
+        $result['missing']++;
+        $result['delete'][$key] = $identity;
+        continue;
+      }
+
+      $provider = $this->providers->get($row['provider_id']);
+      try {
+        $projection = $provider->project($entity->getTranslation($row['langcode']));
+      }
+      catch (\Throwable $exception) {
+        $this->logger->warning('Content Index source reconciliation could not project a source. Error class: @class', [
+          '@class' => $exception::class,
+        ]);
+        $result['unverified']++;
+        continue;
+      }
+      if ($projection === NULL) {
+        $result['missing']++;
+        $result['delete'][$key] = $identity;
+        continue;
+      }
+      if ($projection->entityTypeId !== $row['entity_type']
+        || $projection->entityId !== $row['entity_id']
+        || $projection->langcode !== $row['langcode']) {
+        $result['unverified']++;
+        continue;
+      }
+      try {
+        $currentHash = $this->writer->calculateProjectionHash($row['provider_id'], $projection);
+      }
+      catch (\Throwable $exception) {
+        // A changed bundle is outside the provider's declared ownership.
+        $this->logger->warning('Content Index source reconciliation could not verify a projection. Error class: @class', [
+          '@class' => $exception::class,
+        ]);
+        $result['unverified']++;
+        continue;
+      }
+      if ($row['provider_version'] !== $provider->getProjectionVersion()
+        || !hash_equals($row['projection_hash'], $currentHash)) {
+        $result['stale']++;
+        $result['project'][$key] = $identity;
+      }
+    }
+    return $result;
   }
 
   /**

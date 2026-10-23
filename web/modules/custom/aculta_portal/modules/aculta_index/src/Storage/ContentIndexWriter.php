@@ -289,6 +289,26 @@ final class ContentIndexWriter {
   }
 
   /**
+   * Calculates the canonical hash used to compare a source with its projection.
+   *
+   * @param string $providerId
+   *   Registered provider that owns the projection.
+   * @param \Drupal\aculta_portal\ContentIndex\ContentIndexProjection $projection
+   *   Current source projection.
+   *
+   * @return string
+   *   SHA-256 fingerprint using the provider's current projection version.
+   */
+  public function calculateProjectionHash(string $providerId, ContentIndexProjection $projection): string {
+    $this->assertProviderOwnsProjection($providerId, $projection);
+    return $this->projectionHash(
+      $providerId,
+      $this->providers->get($providerId)->getProjectionVersion(),
+      $projection,
+    );
+  }
+
+  /**
    * Replaces one source translation's outgoing relations atomically.
    */
   private function replaceRelations(string $generationId, string $providerId, ContentIndexProjection $projection, int $updated): void {

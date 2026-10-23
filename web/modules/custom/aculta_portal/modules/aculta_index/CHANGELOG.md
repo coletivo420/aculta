@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.36 — reconciliação incremental de fontes
+
+- A auditoria carrega, em grupos limitados, fontes da geração ativa e revalida o
+  ownership do provider antes de qualquer reparação ou exclusão.
+- Hash canônico divergente agenda reindexação; fonte ausente, idioma removido ou
+  bundle fora do ownership atual agenda exclusão pela fila deduplicada. Providers,
+  tipos e bundles sem ownership verificável são preservados e contabilizados.
+- Novos contadores de fontes ausentes/não verificáveis têm update hook 10015.
+- Kernel cobre source delete, source drift, ownership não verificável e migração.
+
 ## 0.1.0-dev.35 — reparação automática de projeções antigas
 
 - Auditoria incremental reenfileira identidades da geração ativa quando a versão

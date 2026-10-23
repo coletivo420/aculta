@@ -224,6 +224,44 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Requeues an existing source whose current projection differs from storage.
+   */
+  public function testIncrementalAuditRequeuesDivergedExistingProjection(): void {
+    Node::create(['type' => 'sample_content', 'title' => 'Current source', 'status' => 1])->save();
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $database = $this->container->get('database');
+    $database->update('aculta_index_entry')
+      ->fields(['projection_hash' => str_repeat('0', 64)])
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'test_sample_content')
+      ->execute();
+
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $checker->startAudit();
+    $state = $checker->processAuditBatch(10);
+    $this->assertSame(1, (int) $state['stale_projection_count']);
+    $this->assertSame(0, (int) $state['missing_source_count']);
+    $this->assertSame(0, (int) $state['unverified_source_count']);
+
+    $work = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['operation', 'status'])
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', '1')
+      ->condition('langcode', 'en')
+      ->execute()
+      ->fetchAssoc();
+    $this->assertSame(['operation' => 'project', 'status' => 'queued'], $work);
+  }
+
+  /**
    * Checks query pagination uses an opaque persisted cursor and access checks.
    */
   public function testQueryUsesOpaqueCursorAndReturnsAuthorizedEntities(): void {

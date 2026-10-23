@@ -417,6 +417,23 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds bounded source-reconciliation counters.
+   */
+  public function testUpdateHookAddsSourceReconciliationCounters(): void {
+    $schema = $this->container->get('database')->schema();
+    foreach (['missing_source_count', 'unverified_source_count'] as $field) {
+      $schema->dropField('aculta_index_audit', $field);
+      $this->assertFalse($schema->fieldExists('aculta_index_audit', $field));
+    }
+
+    aculta_index_update_10015();
+
+    foreach (['missing_source_count', 'unverified_source_count'] as $field) {
+      $this->assertTrue($schema->fieldExists('aculta_index_audit', $field));
+    }
+  }
+
+  /**
    * Tests older catalog entries receive the initial projection version.
    */
   public function testUpdateHookAddsProviderProjectionVersion(): void {
@@ -703,7 +720,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->insertEntry('audit-generation', 'node', '301', 'pt-br');
     $this->insertEntry('audit-generation', 'media', '303', 'pt-br');
     $database->update('aculta_index_entry')
-      ->fields(['provider_id' => 'image', 'provider_version' => 0])
+      ->fields(['provider_id' => 'image', 'bundle' => 'image', 'provider_version' => 0])
       ->condition('generation_id', 'audit-generation')
       ->condition('entity_id', '303')
       ->execute();
@@ -740,11 +757,13 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $this->assertSame('complete', $state['status']);
     $this->assertFalse($state['valid']);
     $this->assertSame(1, (int) $state['orphan_entry_count']);
-    $this->assertSame(1, (int) $state['stale_projection_count']);
+    $this->assertSame(0, (int) $state['stale_projection_count']);
+    $this->assertSame(1, (int) $state['missing_source_count']);
+    $this->assertSame(1, (int) $state['unverified_source_count']);
     $this->assertSame(0, (int) $state['orphan_relation_count']);
     $this->assertSame(1, (int) $state['relation_source_missing_count']);
     $repair = $database->select('aculta_index_work', 'work')
-      ->fields('work', ['provider_id', 'entity_type', 'entity_id', 'langcode', 'status'])
+      ->fields('work', ['provider_id', 'entity_type', 'entity_id', 'langcode', 'operation', 'status'])
       ->condition('provider_id', 'image')
       ->condition('entity_id', '303')
       ->execute()
@@ -754,8 +773,16 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       'entity_type' => 'media',
       'entity_id' => '303',
       'langcode' => 'pt-br',
+      'operation' => 'delete',
       'status' => 'queued',
     ], $repair);
+    $this->assertSame(1, (int) $database->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', 'audit-generation')
+      ->condition('provider_id', 'fixture')
+      ->condition('entity_id', '301')
+      ->countQuery()
+      ->execute()
+      ->fetchField(), 'Entries without a registered owner remain intact.');
   }
 
   /**
