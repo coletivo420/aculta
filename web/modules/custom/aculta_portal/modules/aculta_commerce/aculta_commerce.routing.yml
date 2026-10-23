@@ -1,5 +1,5 @@
 aculta_commerce.green_stash:
-  path: '/green-stash'
+  path: '/estudio/loja'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
     _title: 'Green Stash'
@@ -9,12 +9,12 @@ aculta_commerce.green_stash:
     _aculta_domain_purpose: account
 
 aculta_commerce.green_stash_area:
-  path: '/green-stash/{section}'
+  path: '/estudio/loja/{secao}'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
     _title: 'Green Stash'
   requirements:
     _permission: 'access aculta green stash'
-    section: 'overview|products|orders|inventory|shipping|promotions|customers|reports|settings'
+    secao: 'visao-geral|produtos|pedidos|estoque|envios|promocoes|clientes|relatorios|configuracoes'
   options:
     _aculta_domain_purpose: account
