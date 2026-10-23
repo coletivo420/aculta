@@ -111,7 +111,9 @@ em [CSV de composições](aculta-index-alternative-compositions-2026-10-22.csv).
 - Writer incremental e operações idempotentes via `ContentIndexWriter`.
 - Backfill/rebuild e catch-up de deltas com entidades Drupal de origem.
 - Reconciliação por providers reais, memória/throughput de worker e fila.
-- Entity Access em providers/grants reais de domínio, Group/LMS e outros bundles.
+- Entity Access medido em throughput com providers/grants reais de domínio,
+  Group/LMS e outros bundles. Um Kernel funcional do Fórum agora exercita
+  Entity Access, Group grants e Domain canônico, mas não mede desempenho.
 - Medição de consultas SQL por request e benchmarks de páginas intermediárias/keysets profundos.
 
 Portanto, este resultado qualifica a gravação do fixture, candidate query/cache,

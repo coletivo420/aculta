@@ -1,5 +1,20 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.67 — validar grants e Domain reais do Fórum
+
+- Kernel passa pelo `ContentIndexAccessFilter` com `ForumContentIndexProvider`,
+  `RestrictedForumAccessHooks`, `ForumPostAccessHooks`, Group e Domains reais.
+  Associado ativo e membro consulta tópico e resposta; usuário externo é
+  negado; o purpose `forum` é aplicado e o Domain anterior restaurado; as
+  funções reais `node_grants` e `node_access_records` são exercitadas sobre a
+  membership e o tópico persistidos (1 teste / 34 assertions PASS).
+- Fixture registra as classes de política de produção e o entity type real
+  `AssociadoMarcador`; não habilita a cadeia completa do owner Fórum nem mede
+  desempenho. Grupos, relacionamento, membership, node grants e Domains são
+  entidades reais no banco Kernel.
+- Suíte Kernel completa: 61 testes / 781 assertions PASS; 23 depreciações
+  upstream e 40 avisos PHPUnit. PHPCS Drupal e PHP lint passaram.
+
 ## 0.1.0-dev.66 — cobrir providers Media de imagem e documento
 
 - Harness Kernel usa Media/File reais para exercitar `media:image` e

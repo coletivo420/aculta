@@ -1,0 +1,8 @@
+name: 'ACULTA Index Forum access integration test'
+type: module
+description: 'Registers production Forum access hooks and associate marker for Index Kernel coverage.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:node
+

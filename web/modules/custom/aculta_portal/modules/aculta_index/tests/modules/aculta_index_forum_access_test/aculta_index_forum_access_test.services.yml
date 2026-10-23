@@ -1,0 +1,20 @@
+services:
+  aculta_index_forum_access_test.group_resolver:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver
+    arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.aculta_index_forum_access_test']
+  aculta_index_forum_access_test.associate_marker:
+    class: Drupal\aculta_user\Associado\AssociadoMarker
+    arguments: ['@entity_type.manager', '@datetime.time']
+  aculta_index_forum_access_test.access_policy:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumAccessPolicy
+    arguments: ['@aculta_index_forum_access_test.group_resolver', '@aculta_index_forum_access_test.associate_marker', '@logger.channel.aculta_index_forum_access_test']
+  Drupal\aculta_forum\Hook\RestrictedForumAccessHooks:
+    class: Drupal\aculta_forum\Hook\RestrictedForumAccessHooks
+    arguments: ['@aculta_index_forum_access_test.group_resolver', '@aculta_index_forum_access_test.access_policy', '@aculta_index_forum_access_test.associate_marker', '@logger.channel.aculta_index_forum_access_test']
+  Drupal\aculta_forum\Hook\ForumPostAccessHooks:
+    class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
+    arguments: ['@aculta_portal.domain_purpose']
+  logger.channel.aculta_index_forum_access_test:
+    parent: logger.channel_base
+    arguments: ['aculta_index_forum_access_test']
+
