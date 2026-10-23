@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.31 — modos de lista em propostas
+
+- Kernel aplica duas propostas sucessivas para demonstrar que `append` preserva
+  valores atuais e deduplica URLs, e `replace` substitui a lista integralmente.
+- Focal: 1 teste / 122 asserções; classe Kernel: 9 testes / 404 asserções.
+  Categorias e relações seguem validadas na submissão/aplicação, com cenários
+  Kernel específicos pendentes. Depreciações upstream registradas.
+
 ## 0.1.0-dev.30 — regressão Kernel de rotas e acesso
 
 - Kernel confirma uma única rota para `/wiki`, `/wiki/busca`,

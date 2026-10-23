@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.31: Kernel prova as escolhas `append` e `replace` em referências, com
+  deduplicação. Manter testes de integração correspondentes para categorias e
+  relações ao ampliar essa área.
 - Dev.30 R2: Kernel com bootstrap real garante rota única para Início, Busca,
   Prévia e listagem; a listagem exige acesso autenticado e mantém purpose `wiki`.
   Busca usa `user.node_grants:view` também em entradas vazias/malformadas.

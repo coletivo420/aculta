@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.31`: Kernel prova `append` e `replace` para referências em propostas
+  sucessivas; append deduplica URLs e replace remove valores anteriores.
+  Focal: 1 teste / 122 asserções; classe Kernel: 9 testes / 404 asserções.
+  Categorias/relações ainda precisam de casos Kernel específicos.
 - `0.1.0-dev.30`: R2 reforça unicidade das rotas e acesso/purpose da listagem
   com Kernel real; busca confirma isolamento por grants e cache em entradas
   negativas, vazias e malformadas. Focal: 2 testes / 93 asserções.

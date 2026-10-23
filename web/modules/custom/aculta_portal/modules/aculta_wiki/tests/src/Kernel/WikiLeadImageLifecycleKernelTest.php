@@ -497,6 +497,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installConfig(['workflows', 'content_moderation']);
     $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
     Workflow::create(Yaml::parseFile($workflowFile))->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_references',
+      'type' => 'link',
+      'settings' => ['title' => 1, 'link_type' => 16],
+      'cardinality' => -1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_references',
+      'label' => 'References',
+    ])->save();
     Role::create([
       'id' => 'wiki_proposal_submitter_test',
       'label' => 'Wiki proposal submitter test',
@@ -542,6 +555,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'moderation_state' => 'published',
       'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
       'field_wiki_test_grant_uid' => 2,
+      'field_wiki_references' => [['uri' => 'https://example.invalid/current', 'title' => 'Fonte atual']],
       'body' => ['value' => 'Conteúdo publicado', 'format' => 'plain_text'],
     ]);
     $target->save();
@@ -819,7 +833,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'A proposta atualiza a redação do título.',
       [],
       str_repeat('b', 64),
-      ['title' => 'Título aprovado pela equipe'],
+      [
+        'title' => 'Título aprovado pela equipe',
+        'field_wiki_references' => [
+          ['uri' => 'https://example.invalid/new', 'title' => 'Fonte nova'],
+          ['uri' => 'https://example.invalid/current', 'title' => 'Fonte repetida'],
+        ],
+      ],
     );
     Role::create([
       'id' => 'wiki_proposal_acceptor_test',
@@ -843,13 +863,44 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       (int) $acceptedCandidate->getRevisionId(),
       'accepted',
       'Título conferido e publicado.',
-      ['title'],
+      ['title', 'field_wiki_references'],
+      ['field_wiki_references' => 'append'],
     );
     $publishedTarget = Node::load((int) $target->id());
     self::assertSame('accepted', $acceptedProposal->get('state')->value);
     self::assertSame('Título aprovado pela equipe', $publishedTarget->label());
     self::assertSame('published', $publishedTarget->get('moderation_state')->value);
+    self::assertSame(
+      ['https://example.invalid/current', 'https://example.invalid/new'],
+      array_column($publishedTarget->get('field_wiki_references')->getValue(), 'uri'),
+    );
     self::assertNotSame((int) $currentTarget->getRevisionId(), (int) $publishedTarget->getRevisionId());
+    $this->container->get('current_user')->setAccount($submitter);
+    $replacementCandidate = $submission->submit(
+      $publishedTarget,
+      'reference',
+      'Substituir referências',
+      'A fonte antiga foi substituída.',
+      [],
+      str_repeat('d', 64),
+      ['field_wiki_references' => [['uri' => 'https://example.invalid/replacement', 'title' => 'Fonte substituta']]],
+    );
+    $this->container->get('current_user')->setAccount($acceptor);
+    $replacementProposal = $decisionService->decide(
+      $replacementCandidate,
+      (int) $replacementCandidate->getRevisionId(),
+      'accepted',
+      'Referência substituída após conferência.',
+      ['field_wiki_references'],
+      ['field_wiki_references' => 'replace'],
+    );
+    $replacementTarget = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    self::assertSame('accepted', $replacementProposal->get('state')->value);
+    self::assertSame(
+      ['https://example.invalid/replacement'],
+      array_column($replacementTarget->get('field_wiki_references')->getValue(), 'uri'),
+    );
     $this->container->get('current_user')->setAccount($reviewer);
 
     $historyProposal = $decidedProposal;
@@ -953,7 +1004,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $firstFormSubmissionId = (int) $redirectProposal->id();
     $proposalForm->submitForm($build, $formState);
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
-    self::assertSame(28, (int) $this->container->get('entity_type.manager')
+    self::assertSame(29, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $this->container->get('current_user')->setAccount($submitter);
