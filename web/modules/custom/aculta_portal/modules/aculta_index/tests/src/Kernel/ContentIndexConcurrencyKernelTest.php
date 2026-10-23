@@ -277,23 +277,85 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
           throw new \RuntimeException('Could not start a Content Index process worker.');
         }
         fclose($pipes[0]);
-        $processes[] = ['process' => $process, 'pipes' => $pipes];
+        stream_set_blocking($pipes[1], FALSE);
+        stream_set_blocking($pipes[2], FALSE);
+        $processes[] = [
+          'process' => $process,
+          'pipes' => $pipes,
+          'stdout' => '',
+          'stderr' => '',
+          'exit_code' => NULL,
+          'finished' => FALSE,
+        ];
       }
 
       if (file_put_contents($barrierPath, 'start', LOCK_EX) === FALSE) {
         throw new \RuntimeException('Could not release the process-test barrier.');
       }
 
+      $deadline = microtime(TRUE) + 120;
+      $runningProcesses = count($processes);
+      $openPipes = count($processes) * 2;
+      while ($runningProcesses > 0 || $openPipes > 0) {
+        if (microtime(TRUE) >= $deadline) {
+          throw new \RuntimeException('Timed out waiting for Content Index process workers.');
+        }
+
+        $read = [];
+        $pipeOwners = [];
+        foreach ($processes as $processIndex => $workerProcess) {
+          foreach ([1, 2] as $pipeIndex) {
+            $pipe = $workerProcess['pipes'][$pipeIndex];
+            if (is_resource($pipe)) {
+              $read[] = $pipe;
+              $pipeOwners[(int) $pipe] = [$processIndex, $pipeIndex];
+            }
+          }
+        }
+        if ($read !== []) {
+          $write = NULL;
+          $except = NULL;
+          $selected = stream_select($read, $write, $except, 0, 200_000);
+          if ($selected === FALSE) {
+            throw new \RuntimeException('Could not collect Content Index process-worker output.');
+          }
+          foreach ($read as $pipe) {
+            [$processIndex, $pipeIndex] = $pipeOwners[(int) $pipe];
+            $stream = $pipeIndex === 1 ? 'stdout' : 'stderr';
+            $processes[$processIndex][$stream] .= (string) fread($pipe, 8192);
+            if (feof($pipe)) {
+              fclose($pipe);
+              $processes[$processIndex]['pipes'][$pipeIndex] = NULL;
+              $openPipes--;
+            }
+          }
+        }
+
+        foreach ($processes as $processIndex => $workerProcess) {
+          if ($workerProcess['finished']) {
+            continue;
+          }
+          $status = proc_get_status($workerProcess['process']);
+          if (!$status['running']) {
+            $processes[$processIndex]['finished'] = TRUE;
+            $processes[$processIndex]['exit_code'] = $status['exitcode'];
+            $runningProcesses--;
+          }
+        }
+      }
+
       $results = [];
       foreach ($processes as $processIndex => $workerProcess) {
-        $stdout = stream_get_contents($workerProcess['pipes'][1]);
-        $stderr = stream_get_contents($workerProcess['pipes'][2]);
-        fclose($workerProcess['pipes'][1]);
-        fclose($workerProcess['pipes'][2]);
-        $exitCode = proc_close($workerProcess['process']);
+        foreach ([1, 2] as $pipeIndex) {
+          if (is_resource($workerProcess['pipes'][$pipeIndex])) {
+            fclose($workerProcess['pipes'][$pipeIndex]);
+          }
+        }
+        $closeCode = proc_close($workerProcess['process']);
         $processes[$processIndex]['process'] = NULL;
-        self::assertSame(0, $exitCode, sprintf('Process worker failed: %s', trim((string) $stderr)));
-        $decoded = json_decode(trim((string) $stdout), TRUE, 512, JSON_THROW_ON_ERROR);
+        $exitCode = $workerProcess['exit_code'] >= 0 ? $workerProcess['exit_code'] : $closeCode;
+        self::assertSame(0, $exitCode, sprintf('Process worker failed: %s', trim($workerProcess['stderr'])));
+        $decoded = json_decode(trim($workerProcess['stdout']), TRUE, 512, JSON_THROW_ON_ERROR);
         self::assertIsArray($decoded);
         $results[] = $decoded;
       }

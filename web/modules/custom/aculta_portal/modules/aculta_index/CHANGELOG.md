@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.131 — limitar e drenar subprocessos do teste concorrente
+
+- O harness coleta stdout/stderr simultaneamente e impõe timeout global de 120 s;
+  travamentos encerram subprocessos e removem arquivos temporários no `finally`.
+- PHP lint e PHPCS Drupal passaram. Execução Kernel MariaDB aguarda o benchmark
+  de 1M no banco dedicado.
+
 ## 0.1.0-dev.130 — separar descoberta Drush de execução operacional
 
 - A verificação temporária autorizada no Runtime `toca` confirmou a descoberta
