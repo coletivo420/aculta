@@ -18,7 +18,9 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies the production Wiki provider through Index backfill and CRUD.
@@ -37,7 +39,6 @@ final class ContentIndexWikiProviderKernelTest extends KernelTestBase {
     'text',
     'node',
     'aculta_index',
-    'aculta_index_wiki_test',
   ];
 
   /**
@@ -51,6 +52,19 @@ final class ContentIndexWikiProviderKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Compile the production provider declaration from the owner module
+    // without enabling the Wiki's unrelated service dependencies.
+    $ownerServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $service = $ownerServices['aculta_wiki.content_index_provider'];
+    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+    foreach ($service['tags'] ?? [] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_wiki.content_index_provider', $definition);
   }
 
   /**
