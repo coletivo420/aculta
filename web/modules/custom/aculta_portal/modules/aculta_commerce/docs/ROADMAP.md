@@ -119,3 +119,12 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 - Registro do provider Green Stash migrado do hook `aculta_commerce_container_alter` para `AcultaCommerceServiceProvider::alter()`, mecanismo Drupal próprio de alteração de definições de serviço. Continuidade condicionada a compilação do container e teste no homelab.
 - Não adicionar redirecionamento público legado de `/green-stash` até revisar links de terceiros e rotas históricas. As rotas anteriores não foram homologadas para produção, mas validar a necessidade de redirecionamento HTTP 301/308 no ambiente.
 - GS-0.2-C: **antes de exibir consultas reais**, implementar filtro por store/entidade e assegurar que totais/contadores não vazem dados. O shell de navegação atual ainda não implementa o design mobile-first do tema.
+
+## GS-0.2-C.1 — Primeira consulta comercial de leitura (2026-10-23)
+
+- A rota `/estudio/loja/produtos` agora apresenta um primeiro subconjunto de produtos `produto_loja` que passam simultaneamente em `view` e `update` da entidade, **além de** `update` em pelo menos uma store associada; não expõe produtos de LMS e não introduz CRUD alternativo.
+- Leitor `Catalog/GreenStashProductReader.php`: query com `accessCheck(TRUE)`, amostra limitada a 100 IDs e exibição de até 20 produtos; sem totais e sem alegação de paginação completa. Ação `Editar produto` usa rota nativa Commerce.
+- Renderização provisória em Render API, com seção do catálogo não cacheada (`max-age: 0`). O tema ACULTA420 continua proprietário da futura UI SDC/UI Suite mobile-first.
+- Rotas PT-BR mantidas; corrigidas as chaves de links para usar os próprios slugs PT-BR. Não foi implementada consulta privada de pedidos, pagamentos, clientes nem métricas.
+- **Gate GS-0.2-C.2**: revisar segregação por store (especialmente produtos presentes em mais de uma store); paginação baseada em filtros de acesso, performance em catálogos extensos, cache contexts e testes Kernel/Functional.
+- **Gate homelab**: `drush cr`, instalação em site de teste, testes da matriz operador sem permissão / operador com permissões Commerce / multi-store / usuário comum, correção de alias e tradução e validação SDC. Nenhuma operação financeira habilitada.
