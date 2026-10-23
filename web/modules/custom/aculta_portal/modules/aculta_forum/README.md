@@ -97,7 +97,7 @@ comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
 [Wiki](../../../../../../docs/portal/WIKI.md) e
 [notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
 
-## Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.4
+## Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.7
 
 A fundação do fórum restrito existe e está **desligada por padrão**: enquanto
 `aculta_forum.settings.restricted_group_type` estiver vazio, nenhum Group é

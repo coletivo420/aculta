@@ -77,13 +77,17 @@ integração continua sendo validar upload real, publicação contextual, acesso
 privado e apresentação no navegador, antes de avançar previews Office e cartão
 PDF.
 
-## F-GROUP 0.1 e 0.2 — fóruns restritos de associados (fundação pronta, desligada)
+## F-GROUP 0.1 a 0.7 — fóruns restritos de associados (desligados por padrão)
 
-Estado em 2026-10-23: inventário (A), contratos e fundação (B), testes Unit da
-unidade mínima (C) e prova funcional em Kernel com grants reais (D) concluídos;
-**sem alteração de Runtime, sem import de configuração e sem rebuild de
-`node_access` em ambiente**. O contrato completo, a matriz de testes com
-PASS/DEFERRED e os riscos residuais ficam em
+Estado em 2026-10-23: fases técnicas 0.1–0.7 concluídas. Incluem inventário,
+fundação, grants reais em Kernel, herança em posts/Comments/anexos, galeria,
+cache de acesso, regressão pública, busca/contagem sob grants, download HTTP
+real, índice atrasado fechado (fail closed), cache da View de busca e matriz
+com Olivero. O Runtime de testes foi alterado somente em janela controlada,
+com backup validado, e **revertido ao estado inicial** (frente desligada,
+`realm=all:21`). A ativação em produção é uma decisão operacional do
+responsável, não uma alteração desta frente. O contrato completo, a matriz de
+testes e os riscos residuais ficam em
 [`RESTRICTED-FORUMS.md`](RESTRICTED-FORUMS.md).
 
 - A elegibilidade continua em `aculta_user`: `ActiveAssociateInterface`
