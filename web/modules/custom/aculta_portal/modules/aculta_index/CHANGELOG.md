@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.160 — revalidar concorrência entre processos PHP
+
+- `ContentIndexConcurrencyKernelTest` passou novamente no MariaDB dedicado:
+  3 testes / 56 assertions, incluindo quatro processos produtores, disputa de
+  claim e proteção contra conclusão de sequência obsoleta. Sem falhas.
+- Confirma no HEAD atual o gate IDX 0.1-D de processos PHP independentes;
+  a execução não altera o escopo nem a política de retries.
+
 ## 0.1.0-dev.159 — repetir benchmark 100k com descoberta keyset
 
 - O harness de manutenção remove, pela Queue API e pela identidade exata, o

@@ -24,6 +24,8 @@
 
 **Validação dev.159 (2026-10-23):** repetição MariaDB 100k confirmou a estratégia keyset do enumerador na árvore atual: `base_table` em 201/201 consultas; rebuild 182,150 s (549 projeções/s), auditoria 68,991 s, pico 137,5 MiB e zero divergências. IDs: p50/p95 1,101/1,684 ms. O Kernel de rebuild passou com 21 testes / 295 assertions. O teste 1M citado no relatório é um resultado anterior válido dessa estratégia; não havia processo 1M ativo nesta sessão e nenhum novo 1M foi iniciado. A amostra é sintética e não estabelece SLO.
 
+**Validação dev.160 (2026-10-23):** `ContentIndexConcurrencyKernelTest` passou integralmente em MariaDB (3 testes / 56 assertions), incluindo produtores PHP independentes, disputa de claim e preservação da sequência após conclusão obsoleta. O gate confirma as condições executadas na árvore atual; não é um benchmark de throughput de produção.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
