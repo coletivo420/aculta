@@ -1,5 +1,21 @@
 # Rebuild e auditoria — ACULTA Content Index (2026-10-23)
 
+## Repetição 100k após limpeza de cache da auditoria (dev.147)
+
+Uma execução MariaDB, com a mudança dev.146 que limpa caches de fontes e alvos
+entre lotes da fase catálogo→fonte, usou o limite operacional do enumerador
+5.000. Rebuild: 204,842 s (488 projeções/s); auditoria: 92,913 s em 402
+batches; pico da auditoria: 137,5 MiB; zero fontes ausentes, entradas ausentes
+ou projeções divergentes. A fase de entradas levou 29,658 s; a de relações
+4 ms; a fase source→catalog, 63,178 s (p50 289 ms, p95 645 ms, máximo 885 ms).
+
+Uma execução anterior em 100k, com limite 500 e código anterior à limpeza da
+fase de entradas, levou 471,662 s na auditoria, 437,109 s em source→catalog,
+379,890 s em cache reset do enumerador e pico 492 MiB. Em 10k, três rodadas
+anteriores também mostraram picos de lote menores com 500, mas p95 típico um
+pouco maior. A comparação 100k é diagnóstica e mistura duas mudanças; não
+prova causalidade nem define SLO. O limite operacional permanece 5.000.
+
 Medição opt-in da reconstrução por provider e da auditoria incremental
 bidirecional sobre 10.000 Nodes sintéticos em MariaDB de teste. São três
 repetições executadas sequencialmente; não representam capacidade de produção

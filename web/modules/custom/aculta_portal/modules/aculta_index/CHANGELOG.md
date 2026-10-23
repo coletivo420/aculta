@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.147 — validar reconciliação 100k após limpeza de cache
+
+- Repetição MariaDB em 100k com limite operacional 5.000 e a limpeza de cache
+  da auditoria: rebuild 204,842 s; auditoria 92,913 s; pico 137,5 MiB; zero
+  divergências. A fase source→catalog levou 63,178 s (p95 645 ms; máximo
+  885 ms). Uma execução diagnóstica, sem SLO.
+- Comparação com a execução 100k anterior de limite 500: auditoria 471,662 s,
+  fase source→catalog 437,109 s, limpeza de cache do enumerador 379,890 s e
+  pico 492 MiB. São execuções únicas e houve mudança de código; a comparação
+  mostra que 500 é uma escolha ruim neste harness, não isola causalidade.
+- Benchmark, suíte Kernel Rebuilder (21 / 295), PHPCS, lint e índice de status
+  do projeto passaram. O padrão operacional permanece 5.000.
+
 ## 0.1.0-dev.146 — limitar cache de entidades na reconciliação
 
 - A auditoria de entradas agora descarta em lotes limitados as entidades fonte
