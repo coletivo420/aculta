@@ -1,0 +1,9 @@
+aculta_commerce.green_stash:
+  path: '/green-stash'
+  defaults:
+    _controller: 'aculta_commerce.green_stash_controller:page'
+    _title: 'Green Stash'
+  requirements:
+    _permission: 'access aculta green stash'
+  options:
+    _aculta_domain_purpose: account
