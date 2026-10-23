@@ -2,25 +2,7 @@
 
 /**
  * @file
- * Independent Studio experience registration when ACULTA Commerce is enabled.
- */
-
-declare(strict_types=1);
-
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
-/**
- * Implements hook_container_alter().
+ * ACULTA Commerce module hooks.
  *
- * Studio retains its independent default provider; Commerce registers its
- * provider only when both modules are enabled. No hard Studio -> Commerce
- * dependency is introduced.
+ * Studio registration lives in AcultaCommerceServiceProvider.
  */
-function aculta_commerce_container_alter(ContainerBuilder $container): void {
-  if ($container->hasDefinition('aculta_studio.experience_manager')
-    && $container->hasDefinition('aculta_commerce.experience.green_stash')) {
-    $container->getDefinition('aculta_studio.experience_manager')
-      ->addMethodCall('addProvider', [new Reference('aculta_commerce.experience.green_stash')]);
-  }
-}
