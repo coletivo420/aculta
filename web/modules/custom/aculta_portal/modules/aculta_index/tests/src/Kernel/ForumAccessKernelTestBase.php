@@ -16,6 +16,7 @@ use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
@@ -31,6 +32,8 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
   use CommentTestTrait;
 
   protected const GROUP_TYPE = 'associado_forum';
+
+  protected const MEMBER_ROLE = 'associado_forum_member';
 
   /**
    * {@inheritdoc}
@@ -203,6 +206,13 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       'label' => 'Restricted forum',
       'creator_membership' => FALSE,
       'creator_wizard' => FALSE,
+    ])->save();
+    $this->container->get('entity_type.manager')->getStorage('group_role')->create([
+      'id' => self::MEMBER_ROLE,
+      'label' => 'Forum member',
+      'group_type' => self::GROUP_TYPE,
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['view group_node:aculta_forum_topic entity'],
     ])->save();
     $relationshipTypes = $this->container->get('entity_type.manager')->getStorage('group_relationship_type');
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypes);

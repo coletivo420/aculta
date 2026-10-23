@@ -1,5 +1,22 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.70 — integrar os hooks reais de grants do Fórum no Kernel
+
+- Fixture Kernel registra os hooks `entity_access`, `node_grants` e
+  `node_access_records` via `ModuleHandler`, encaminhando às classes de produção
+  do Fórum. O módulo owner completo continua fora do escopo do harness.
+- Conta UID 1 é reservada: o teste usa membro comum com papel Group explícito e
+  permissão de visualizar conteúdo do tipo. Verifica grants gravados no
+  `node_access`, autorização do tópico, ForumPost e Comment legado, negação de
+  visitante e revogação de membership observada pela consulta seguinte do Index.
+- Benchmark refeito em três processos no MariaDB local dedicado. As medições
+  anteriores usavam UID 1 e não provavam o caminho comum de grants; foram
+  substituídas. Com 100 candidatos, p50 foi 703 ms para membro e 358 ms para
+  visitante; resultados completos e CSV bruto documentam custo e limites.
+- Kernel focado: 1 teste / 60 assertions PASS, 22 depreciações upstream.
+- Suíte Kernel completa do Index: 64 testes / 850 assertions PASS em SQLite em
+  memória, com 23 depreciações upstream e 42 avisos PHPUnit.
+
 ## 0.1.0-dev.69 — gravação transacional em lote
 
 - `ContentIndexWriter::writeBatch()` grava até 500 projeções em uma transação,
@@ -15,8 +32,9 @@
   manteve latência próxima. Três rodadas e limitações estão no relatório de
   manutenção.
 - Kernel de grants/Domain do Fórum cobre tópico, ForumPost e Comment Core
-  legado; associado é autorizado e visitante negado nos três. A fixture restaura
-  o Domain após cada checagem (44 assertions).
+  legado; hook de teste encaminha ao código de produção, grants Core são
+  registrados e membership revogada é negada na leitura seguinte. A fixture
+  restaura o Domain após cada checagem (60 assertions).
 - Kernel verifica que o cursor guarda apenas SHA-256 do token e rejeita reuso
   com outra conta, geração ou consulta.
 - Harness opt-in do Fórum mede Entity Access com Group membership/grants e

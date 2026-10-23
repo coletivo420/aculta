@@ -14,6 +14,11 @@ services:
   Drupal\aculta_forum\Hook\ForumPostAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumPostAccessHooks
     arguments: ['@aculta_portal.domain_purpose']
+  aculta_index_forum_access_test.forum_access_hooks:
+    class: Drupal\aculta_index_forum_access_test\Hook\ForumAccessTestHooks
+    arguments:
+      - '@Drupal\aculta_forum\Hook\RestrictedForumAccessHooks'
+      - '@Drupal\aculta_forum\Hook\ForumPostAccessHooks'
   logger.channel.aculta_index_forum_access_test:
     parent: logger.channel_base
     arguments: ['aculta_index_forum_access_test']

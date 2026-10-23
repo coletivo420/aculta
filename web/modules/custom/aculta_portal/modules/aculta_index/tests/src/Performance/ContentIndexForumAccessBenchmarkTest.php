@@ -34,6 +34,7 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
       self::markTestSkipped('Set ACULTA_INDEX_FORUM_ACCESS_BENCHMARK=1 to measure Forum Entity Access.');
     }
 
+    $this->createUser('forum-access-benchmark-root-fixture');
     $member = $this->createUser('forum-access-benchmark-member');
     $this->setAssociateActive($member);
     $outsider = $this->createUser('forum-access-benchmark-outsider');
@@ -43,7 +44,7 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
       'uid' => $member->id(),
     ]);
     $group->save();
-    $group->addMember($member);
+    $group->addMember($member, ['group_roles' => [self::MEMBER_ROLE]]);
 
     $candidates = [];
     for ($index = 0; $index < 100; $index++) {
@@ -141,10 +142,12 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
     $rawSamples = array_map(static fn (float $sample): float => round($sample, 3), $samples);
     sort($samples, SORT_NUMERIC);
     self::assertSame($expectedAuthorized, $authorizedPerRun);
+    $p50Index = max(0, (int) ceil(0.50 * count($samples)) - 1);
+    $p95Index = max(0, (int) ceil(0.95 * count($samples)) - 1);
     return [
       'authorized_per_run' => $authorizedPerRun,
-      'p50_ms' => round($samples[(int) ceil((count($samples) - 1) * 0.50)], 3),
-      'p95_ms' => round($samples[(int) ceil((count($samples) - 1) * 0.95)], 3),
+      'p50_ms' => round($samples[$p50Index], 3),
+      'p95_ms' => round($samples[$p95Index], 3),
       'samples_ms' => $rawSamples,
     ];
   }

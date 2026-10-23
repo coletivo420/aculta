@@ -25,6 +25,9 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
    * Revalidates topic and discussion entities with real Group grants.
    */
   public function testIndexFilterUsesForumDomainAndRestrictedGroupAccess(): void {
+    // UID 1 bypasses Drupal entity access. Reserve it so the tested member
+    // exercises the ordinary Group grants and Forum policy path.
+    $this->createUser('forum-kernel-root-fixture');
     $member = $this->createUser('forum-member');
     $this->setAssociateActive($member);
     $outsider = $this->createUser('forum-outsider');
@@ -34,7 +37,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
       'uid' => $member->id(),
     ]);
     $group->save();
-    $group->addMember($member);
+    $group->addMember($member, ['group_roles' => [self::MEMBER_ROLE]]);
 
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
@@ -61,6 +64,19 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
       'grant_delete' => 0,
     ],
     ], $forumAccessHooks->nodeAccessRecords($topic));
+    self::assertTrue($member->hasPermission('access content'));
+    self::assertContains(self::MEMBER_ROLE, array_keys($group->getMember($member)->getRoles(FALSE)));
+    self::assertSame(
+      [RestrictedForumAccessHooks::REALM => [(int) $group->id()]],
+      \Drupal::moduleHandler()->invokeAll('node_grants', [$member, 'view']),
+    );
+    self::assertSame(1, (int) $this->container->get('database')->select('node_access', 'na')
+      ->condition('nid', (int) $topic->id())
+      ->condition('realm', RestrictedForumAccessHooks::REALM)
+      ->condition('gid', (int) $group->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
 
     $post = ForumPost::create([
       'uid' => $member->id(),
@@ -118,6 +134,24 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
       self::assertCount(1, $filter->filter($candidate, $member)->entities);
       self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
       self::assertCount(0, $filter->filter($candidate, $outsider)->entities);
+      self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    }
+
+    // Grants can change outside entity saves, so the next Index query must
+    // observe membership revocation without waiting for queue processing.
+    $group->removeMember($member);
+    self::assertFalse($group->getMember($member));
+    self::assertFalse($member->hasPermission('bypass node access'));
+    self::assertSame(
+      [],
+      \Drupal::moduleHandler()->invokeAll('node_grants', [$member, 'view']),
+    );
+    foreach ($candidates as $index => $candidate) {
+      self::assertCount(
+        0,
+        $filter->filter($candidate, $member)->entities,
+        sprintf('Revoked membership must deny candidate %d.', $index),
+      );
       self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     }
   }
