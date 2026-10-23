@@ -1,5 +1,22 @@
 # Rebuild e auditoria — ACULTA Content Index (2026-10-23)
 
+## Escala 1M — resultado válido após otimizar descoberta (dev.150)
+
+O benchmark MariaDB concluiu 1.000.000 fontes sintéticas com zero fontes
+ausentes, entradas ausentes ou projeções divergentes. O tempo de setup fica
+fora dos tempos medidos de rebuild e auditoria:
+
+| Fontes | Setup (s) | Rebuild (s) | Projeções/s | Auditoria (s) | Batches de auditoria | Pico auditoria (MiB) | ID query p50/p95 (ms) | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1.000.000 | 129,094 | 2.137,817 | 468 | 724,020 | 4.002 | 214,5 | 1,518 / 2,154 | 0 |
+
+As 2.001 páginas do rebuild usaram descoberta `base_table`. A auditoria fez
+2.000 batches para entradas, 1 para relações e 2.001 para fontes. As métricas
+de indexador continuam incluindo carga/projeção via Entity API e gravação
+transacional; a leitura de IDs é somente uma parte do custo. Uma execução
+sintética, sem relações, sem SLO e sem inferência de carga de produção. O
+processo PHPUnit levou 49m55s incluindo inicialização e setup.
+
 ## Keyset pela tabela base — diagnóstico 10k/100k (dev.149)
 
 O EntityQuery do Drupal para Node revisionável juntava a tabela base à tabela

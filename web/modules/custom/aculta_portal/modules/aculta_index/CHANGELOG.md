@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.150 — concluir benchmark de manutenção 1M
+
+- Com a descoberta `base_table`, rebuild/auditoria 1M concluíram em MariaDB:
+  setup 129,094 s; rebuild 2.137,817 s (468 projeções/s); auditoria 724,020 s;
+  pico 214,5 MiB; zero fontes/entradas ausentes e zero projeções divergentes.
+- As 2.001 páginas do enumerador usaram `base_table`; ID query p50/p95
+  1,518/2,154 ms. Auditoria percorreu 2.000 batches de entradas, 1 de relações
+  e 2.001 de fontes. Benchmark passou (1 / 16 assertions), sem SLO e com uma
+  única execução sintética.
+- O gate de escala 1M agora tem resultado válido; Runtime, volumes reais,
+  cargas com relações e homologação completa continuam pendentes.
+
 ## 0.1.0-dev.149 — usar keyset pela tabela base quando seguro
 
 - A descoberta de IDs consulta a tabela base do storage quando o mapeamento
