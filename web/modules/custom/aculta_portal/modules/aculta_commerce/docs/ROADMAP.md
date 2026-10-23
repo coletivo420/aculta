@@ -166,3 +166,7 @@ Green Stash gerencia uma unica loja comercial. Nenhum seletor de loja no cadastr
 ## Conciliação das frentes Portal e Green Stash (2026-10-23)
 
 O registro de serviços preserva `aculta_commerce.checkout_provider` e os serviços da experiência Green Stash na mesma definição YAML. A entrega C-B e a identidade fiscal locais foram mantidas junto das fases remotas GS-EDITOR e do resolvedor de loja única. A conciliação altera o código do branch; não confirma instalação nem homologação de Green Stash no Runtime.
+
+Validação da conciliação (dev.3): a fixture do leitor foi atualizada para receber o resolvedor obrigatório de loja. Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. Foi registrado o status documental do novo submódulo Melhor Envio; nenhuma credencial, chamada à API logística ou operação de checkout foi executada.
+
+Gate módulo/tema após conciliação: removida a classe visual própria dos links Green Stash em favor de `data-portal-ui`. Permanecem cinco violações anteriores à integração em Studio, LMS e Wiki; o gate global não está aprovado. Gate estático de endereço PASS; nenhuma revisão visual foi executada nesta fase.

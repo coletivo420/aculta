@@ -52,7 +52,7 @@ final class GreenStashNavigation {
         '#title' => $label,
         '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => $slug]),
         '#attributes' => [
-          'class' => ['green-stash-navigation__link'],
+          'data-portal-ui' => 'green-stash-navigation-link',
           'aria-current' => $section === $key ? 'page' : 'false',
         ],
       ];

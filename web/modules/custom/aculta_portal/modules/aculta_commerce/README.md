@@ -1,6 +1,8 @@
-# ACULTA Commerce — 0.1.0-dev.1
+# ACULTA Commerce — 0.1.0-dev.3
 
-Submódulo inicial de integração comercial da **loja**. A orquestração **multi-carrinho e multi-checkout** pertence ao `aculta_portal`, conforme ADR-013. Estado: fundação documental e manifesto, **sem serviços operacionais próprios ativos**. Não habilitar em produção antes da homologação da fase 0.1.0.
+Submódulo de integração comercial da **loja**, em estado Dev. O provider de configuração do checkout e a experiência Green Stash estão em código. A orquestração de checkout pertence ao `aculta_portal`, conforme ADR-013. As seções abaixo registram a evolução por fase; afirmações sobre ausência de serviços ou rotas descrevem a fundação histórica. A cadeia completa de Green Stash ainda exige homologação no Runtime.
+
+Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. O gate de endereço passou; o gate global módulo/tema mantém cinco violações anteriores em Studio, LMS e Wiki, sem violações restantes em Commerce. Nenhum fluxo de pagamento ou serviço externo foi executado nesta validação.
 
 ## Fronteiras imutáveis
 
@@ -13,7 +15,7 @@ Submódulo inicial de integração comercial da **loja**. A orquestração **mul
 - **Studio:** `aculta_studio` hospeda a experiência **Green Stash**, distinta de GanjaLab, GanjaLab420 e WE SATIVA.
 - **Tema:** `aculta420` é o dono da implementação visual SDC/UI Suite e preserva o cabeçalho multidomínio.
 
-## Estado
+## Fundação (histórico)
 
 Não há `aculta_commerce` na árvore anterior desta branch; há `ShopController`, checkout panes, relatórios e integração com Mercado Pago no Portal. Esta primeira entrega **não move entidades, não altera checkout, não registra rotas nem habilita serviços**. O próximo passo é caracterização completa, classificação de ownership e migração incremental.
 

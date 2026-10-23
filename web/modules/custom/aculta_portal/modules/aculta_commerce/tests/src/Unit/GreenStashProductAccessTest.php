@@ -27,7 +27,7 @@ final class GreenStashProductAccessTest extends UnitTestCase {
 
   public function testNoEntityAccessIsDenied(): void {
     $manager = $this->createMock(EntityTypeManagerInterface::class);
-    $reader = new GreenStashProductReader($manager);
+    $reader = new GreenStashProductReader($manager, new GreenStashStoreResolver($manager));
     $account = $this->createMock(AccountInterface::class);
     $product = $this->createMock(EntityInterface::class);
     $product->method('bundle')->willReturn('produto_loja');
