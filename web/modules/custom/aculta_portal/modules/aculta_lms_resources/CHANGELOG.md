@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.7 — contrato de registro por tag
+
+- Teste Unit lê `aculta_lms_resources.services.yml`, instancia o provider pela
+  definição declarada e compila um registry com `TaggedIteratorArgument` real.
+  Confirma ID e ownership de `group:lms_course` (1 teste / 4 assertions).
+- A integração do service file com o container Drupal de um Kernel que habilite
+  o módulo ainda não foi provada; o teste deliberadamente não ativa a cadeia de
+  dependências do Portal/Gallery/LMS.
+
 ## 0.1.0-dev.6 — fixtures de Domain persistidos
 
 - O Kernel de acesso do provider agora cria e consulta entidades Domain reais
