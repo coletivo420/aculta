@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'F15: validar descoberta do provider Content Index pela tag/DI; instalar campos no Runtime de teste e fazer smoke autenticado/visual ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-version_note: "0.1.0-dev.9 (Unit 12/57 PASS; Kernel Group/Entity Access + real Domain negotiator 1/33 PASS, 47 upstream deprecations; Runtime pending)"
+next_phase: 'F15: boot completo dos módulos owner, instalar campos no Runtime de teste e fazer smoke autenticado/visual ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
+version_note: "0.1.0-dev.11 (Unit 12/57 PASS; Kernel policy + consulta de relação Index 2/85 PASS em MariaDB, 48 depreciações Core/contrib; providers LMS/Magazine compilados dos YAMLs owner; boot owner e Runtime pendentes)"

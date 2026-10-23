@@ -8,6 +8,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -17,8 +19,13 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\domain\DomainInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\Definition;
@@ -34,6 +41,7 @@ use Symfony\Component\Yaml\Yaml;
 final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
 
   use UserCreationTrait;
+  use MediaTypeCreationTrait;
 
   /**
    * Canonical domain IDs activated during the current access test.
@@ -62,8 +70,10 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     'views',
     'options',
     'text',
+    'node',
     'lms',
     'lms_classes',
+    'aculta_index',
   ];
 
   /**
@@ -107,6 +117,17 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
     $container->setDefinition('aculta_lms_resources.course_content_index_provider', $definition);
+    $magazineServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_magazine/aculta_magazine.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $magazineService = $magazineServices['aculta_magazine.content_index_provider'];
+    $magazineDefinition = (new Definition($magazineService['class'], $magazineService['arguments'] ?? []))
+      ->setPublic(TRUE);
+    foreach ($magazineService['tags'] ?? [] as $tag) {
+      $magazineDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_magazine.content_index_provider', $magazineDefinition);
   }
 
   /**
@@ -116,7 +137,11 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installConfig(['group', 'lms', 'lms_classes', 'user']);
     $this->installEntitySchema('domain');
-    foreach (['aculta_org' => 'main', 'cursos_aculta_org' => 'courses'] as $id => $name) {
+    foreach ([
+      'aculta_org' => 'main',
+      'cursos_aculta_org' => 'courses',
+      'revista420_aculta_org' => 'magazine',
+    ] as $id => $name) {
       Domain::create([
         'id' => $id,
         'hostname' => $name . '.example.invalid',
@@ -131,11 +156,30 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
     $this->domainSwitches = [];
     $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
+    $this->installSchema('aculta_index', [
+      'aculta_index_generation',
+      'aculta_index_state',
+      'aculta_index_entry',
+      'aculta_index_relation',
+      'aculta_index_work',
+      'aculta_index_cursor',
+      'aculta_index_audit',
+    ]);
+    $this->installConfig(['node', 'system', 'file', 'image', 'media']);
+    aculta_index_install();
+    NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
+    $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
+    $this->installCourseReadingField();
   }
 
   /**
@@ -197,6 +241,150 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     self::assertSame(['cursos_aculta_org', 'aculta_org'], $this->domainSwitches, 'The educator access check uses and restores its canonical Domain.');
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose(), 'The Domain context is restored after educator access.');
     self::assertCount(0, $filter->filter($candidate, $outsider)->entities, 'An unrelated account is denied.');
+  }
+
+  /**
+   * Runs a real course resource relation through rebuild, query and access.
+   */
+  public function testCourseReadingRelationQueryRevalidatesCourseAndTargetAccess(): void {
+    $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
+    $authenticated->grantPermission('access content')->save();
+    $owner = $this->createUser(['administer lms']);
+    $student = $this->createUser();
+    $educator = $this->createUser();
+    $outsider = $this->createUser();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso de recursos do Index',
+      'uid' => $owner->id(),
+    ]);
+    $course->save();
+
+    GroupRole::create([
+      'id' => 'lms_course-index_reader',
+      'label' => 'Estudante do teste de consulta',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['take course', 'view group'],
+    ])->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_grader',
+      'label' => 'Educador do teste de consulta',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['grade students', 'view group'],
+    ])->save();
+    $course->addMember($student, ['group_roles' => ['lms_course-index_reader']]);
+    $course->addMember($educator, ['group_roles' => ['lms_course-index_grader']]);
+
+    $publishedReading = Node::create([
+      'type' => 'revista',
+      'title' => 'Leitura publicada',
+      'status' => TRUE,
+    ]);
+    $publishedReading->save();
+    $privateReading = Node::create([
+      'type' => 'revista',
+      'title' => 'Leitura em rascunho',
+      'status' => FALSE,
+    ]);
+    $privateReading->save();
+    $course->set('field_lms_readings', [
+      ['target_id' => $publishedReading->id()],
+      ['target_id' => $privateReading->id()],
+    ]);
+    $course->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The course and reading providers should backfill the generation.');
+    $this->processAllIndexWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    $studentReadings = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_reading',
+      $student,
+      NULL,
+      10,
+    );
+    self::assertSame([(string) $publishedReading->id()], array_map(
+      static fn ($entity): string => (string) $entity->id(),
+      $studentReadings->entities,
+    ), 'The student sees only currently accessible reading resources.');
+
+    $educatorReadings = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_reading',
+      $educator,
+      NULL,
+      10,
+    );
+    self::assertSame([(string) $publishedReading->id()], array_map(
+      static fn ($entity): string => (string) $entity->id(),
+      $educatorReadings->entities,
+    ), 'An educator with contextual grading permission can query course resources.');
+    $outsiderReadings = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_reading',
+      $outsider,
+      NULL,
+      10,
+    );
+    self::assertSame([], $outsiderReadings->entities, 'A user without course access cannot discover its resources.');
+  }
+
+  /**
+   * Installs the explicit LMS reading reference field for the real Group type.
+   */
+  private function installCourseReadingField(): void {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lms_readings',
+      'entity_type' => 'group',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'node'],
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_lms_readings',
+      'entity_type' => 'group',
+      'bundle' => 'lms_course',
+      'label' => 'Course readings',
+      'settings' => [
+        'handler' => 'default:node',
+        'handler_settings' => ['target_bundles' => ['revista' => 'revista']],
+      ],
+    ])->save();
+  }
+
+  /**
+   * Drains queued projections through the production Index worker.
+   */
+  private function processAllIndexWork(): void {
+    $database = $this->container->get('database');
+    $ids = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('status', 'queued')
+      ->orderBy('work_id')
+      ->execute()
+      ->fetchCol();
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    foreach ($ids as $id) {
+      $worker->processItem(['work_id' => (int) $id]);
+    }
   }
 
 }

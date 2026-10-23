@@ -104,8 +104,8 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
       (string) $entity->label(),
       $domain->id(),
       $entity->isPublished(),
-      max(0, $entity->getCreatedTime()),
-      max(0, $entity->getChangedTime()),
+      max(0, (int) $entity->getCreatedTime()),
+      max(0, (int) $entity->getChangedTime()),
       NULL,
       $relations,
     );

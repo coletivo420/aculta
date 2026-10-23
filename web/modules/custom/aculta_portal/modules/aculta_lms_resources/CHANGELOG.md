@@ -1,5 +1,20 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.11 — consulta LMS curso→recursos no Content Index
+
+- O Kernel monta a declaração de produção do provider pelo YAML owner, ativa
+  uma geração real do Index e consulta a relação outgoing `course_reading`.
+- Estudante com `takeAccess()` e educador com `grade students` recebem somente
+  o recurso publicado; terceiro sem acesso ao curso e leitura em rascunho não
+  são expostos. Os providers de curso e Revista são compilados de seus YAMLs
+  owner e registrados no container do Index.
+- MariaDB: 2 testes / 85 assertions PASS, com 48 depreciações de Core/contrib.
+  Unit: 12 testes / 57 assertions PASS, com 10 depreciações do PHPUnit.
+- A integração real revelou e corrigiu os timestamps `created`/`changed` de
+  Group: são convertidos para inteiro antes de criar a projeção.
+- O Kernel não inicializa a cadeia completa dos módulos owner; o acesso editorial
+  do destino continua coberto pelos testes específicos de Magazine.
+
 ## 0.1.0-dev.10 — confirmar policy LMS em SQLite
 
 - Repetido `LmsCourseContentIndexAccessKernelTest` em SQLite: 1 teste / 33
