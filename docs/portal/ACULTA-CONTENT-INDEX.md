@@ -79,4 +79,4 @@ Limpeza de posts/anexos é uma política operacional separada do catálogo. O fl
 Ver o [relatório da IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md) para inventário, riscos, proveniência e achados de código. Nenhuma fase futura está marcada como concluída por antecipação.
 
 
-Paginação da consulta 0.1 usa ID interno imutável em ordem decrescente; alteração de `changed` não desloca resultados entre páginas. Cursors existentes são vinculados ao contrato de ordenação e não podem ser retomados após mudança desse contrato.
+Paginação da consulta 0.1 usa ID interno imutável em ordem decrescente; alteração de `changed` não desloca resultados entre páginas. Cursors existentes são vinculados ao contrato de ordenação e não podem ser retomados após mudança desse contrato. Em Kernel no MariaDB, três casos focais passaram com 47 assertions: edição entre páginas mantém a sequência por ID, o token fica vinculado a conta/filtros, e uma despublicação deixa de aparecer mesmo quando a projeção ainda está marcada como pública.
