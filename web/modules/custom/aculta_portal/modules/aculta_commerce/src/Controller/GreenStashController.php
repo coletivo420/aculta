@@ -75,10 +75,10 @@ final class GreenStashController {
               '#tag' => 'h3',
               '#value' => $product->label(),
             ],
-            'status' => [
-              '#type' => 'html_tag',
-              '#tag' => 'p',
-              '#value' => 'Edição pelo Green Stash em preparação.',
+            'detail' => [
+              '#type' => 'link',
+              '#title' => 'Ver detalhes',
+              '#url' => Url::fromRoute('aculta_commerce.green_stash_product_detail', ['produto' => $product->id()]),
             ],
           ];
         }
