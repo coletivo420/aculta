@@ -172,6 +172,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'source_count' => self::SOURCE_COUNT,
       'provider_id' => 'test_sample_content',
       'rebuild_batch_limit' => 500,
+      'writer_transaction_batch_size' => 500,
       'rebuild_batch_count' => $rebuildBatchCount,
       'rebuild_projected_count' => $projectedCount,
       'rebuild_elapsed_ms' => round($rebuildMilliseconds, 3),

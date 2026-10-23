@@ -38,6 +38,27 @@ lotes, pois as fases usam checkpoints separados e incluem confirmações de fim.
 O pico de memória é o máximo do processo PHPUnit, que também mantém a fixture
 Drupal carregada; não deve ser atribuído somente ao worker.
 
+## Comparação após `writeBatch()` (0.1.0-dev.69)
+
+O baseline acima grava cada projeção numa transação. A versão `dev.69` faz o
+rebuild gravar até 500 projeções em uma transação, avança a revisão do cache
+uma vez por lote alterado e invalida páginas após o commit. Foram repetidos o
+mesmo fixture e as mesmas três rodadas. A criação das fontes continuou fora do
+tempo:
+
+| Implementação | Rebuild mediano (ms) | Projeções/s | Lote p50 / p95 (ms) | Auditoria mediana (ms) | Lote audit p50 / p95 (ms) | Pico memória (MiB) |
+|---|---:|---:|---:|---:|---:|---:|
+| Writer por projeção | 65.968,250 | 152 | 3.370,800 / 4.697,937 | 4.573,084 | 38,017 / 83,551 | 148,5 |
+| Writer em lote de até 500 | 8.207,047 | 1.218 | 406,693 / 448,049 | 4.485,881 | 36,646 / 82,709 | 146,5 |
+
+No fixture de 10k, o rebuild em lote foi aproximadamente 8 vezes mais rápido.
+Tempo e percentis da auditoria ficaram próximos; sua memória máxima caiu de
+148,5 para 146,5 MiB. O resultado sustenta o batching neste cenário, não uma
+garantia operacional. Não mede contenção entre rebuild e eventos incrementais,
+concorrência entre processos nem backfill com traduções/relations. O CSV com as
+seis rodadas está em
+[comparação antes/depois](aculta-index-maintenance-batch-comparison-10k-2026-10-23.csv).
+
 Os resultados brutos estão em
 [CSV de três rodadas](aculta-index-maintenance-10k-2026-10-23.csv). Para
 reproduzir, use `ACULTA_INDEX_MAINTENANCE_BENCHMARK=1` e

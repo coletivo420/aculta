@@ -1,5 +1,23 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.69 — gravação transacional em lote
+
+- `ContentIndexWriter::writeBatch()` grava até 500 projeções em uma transação,
+  valida ownership antes da escrita, mantém proteção de sequência e reverte o
+  lote inteiro em conflito. A revisão do cache de candidatos avança uma vez
+  por lote alterado; a invalidação ocorre após o commit.
+- `ContentIndexRebuilder` usa a escrita em lote depois de carregar e projetar
+  cada página keyset. Escritas incrementais unitárias preservam a API
+  `write()` e delegam para o mesmo caminho.
+- Kernel confirma revisão única, replay idempotente e rollback integral diante
+  de conflito dentro do lote. Benchmark 10k: mediana de 1.218 projeções/s
+  (8.207 ms) contra 152 projeções/s (65.968 ms) antes do batch; auditoria
+  manteve latência próxima. Três rodadas e limitações estão no relatório de
+  manutenção.
+- Suíte Kernel completa: 63 testes / 809 assertions PASS; 23 depreciações
+  upstream e 41 avisos PHPUnit. Unit do Index: 39 testes / 192 assertions
+  PASS. PHPCS Drupal e PHP lint passaram.
+
 ## 0.1.0-dev.68 — isolar Entity Access ao trocar o Domain canônico
 
 - `ContentIndexAccessFilter` limpa os caches locais de Entity Access para

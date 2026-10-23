@@ -71,11 +71,8 @@ final class ContentIndexRebuilder {
     $tuple = $tuples[$index];
     $after = $checkpoint['provider'] === '' ? NULL : ($checkpoint['entity_id'] !== '' ? $checkpoint['entity_id'] : NULL);
     $batch = $this->enumerator->nextBatch($tuple['provider_id'], $tuple['entity_type'], $after, $limit);
-    $projected = 0;
-    foreach ($batch['projections'] as $projection) {
-      $this->writer->write($generationId, $tuple['provider_id'], $projection, 0);
-      $projected++;
-    }
+    $projected = count($batch['projections']);
+    $this->writer->writeBatch($generationId, $tuple['provider_id'], $batch['projections'], 0);
 
     if (!$batch['exhausted']) {
       $cursor = (string) $batch['next_cursor'];

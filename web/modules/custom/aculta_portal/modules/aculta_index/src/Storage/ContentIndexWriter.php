@@ -22,6 +22,11 @@ final class ContentIndexWriter {
    */
   private const MAX_RETRIES = 3;
 
+  /**
+   * Maximum number of projections written in one transaction.
+   */
+  private const MAX_BATCH_SIZE = 500;
+
   public function __construct(
     private readonly Connection $database,
     private readonly ContentIndexProviderRegistry $providers,
@@ -42,25 +47,73 @@ final class ContentIndexWriter {
     ContentIndexProjection $projection,
     int $sourceSequence = 0,
   ): bool {
+    return $this->writeBatch($generationId, $providerId, [$projection], $sourceSequence) > 0;
+  }
+
+  /**
+   * Writes a bounded set of projections atomically.
+   *
+   * The generation lock is held for the transaction. A changed batch advances
+   * the candidate revision once and invalidates cached candidate pages once.
+   * If a compare-and-swap conflict or identity race occurs, the whole batch is
+   * rolled back and retried to keep its writes atomic.
+   *
+   * @param string $generationId
+   *   Writable target generation.
+   * @param string $providerId
+   *   Provider that owns each projection.
+   * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexProjection> $projections
+   *   Projections to write. Empty batches are no-ops.
+   * @param int $sourceSequence
+   *   Monotonic source event sequence; defaults to rebuild/backfill sequence 0.
+   *
+   * @return int
+   *   Number of identities that changed.
+   */
+  public function writeBatch(string $generationId, string $providerId, array $projections, int $sourceSequence = 0): int {
     if ($sourceSequence < 0) {
       throw new \InvalidArgumentException('Content Index source sequence must be non-negative.');
     }
-    $this->assertProviderOwnsProjection($providerId, $projection);
+    if (count($projections) > self::MAX_BATCH_SIZE) {
+      throw new \InvalidArgumentException(sprintf('Content Index writer batches may contain at most %d projections.', self::MAX_BATCH_SIZE));
+    }
+    if ($projections === []) {
+      return 0;
+    }
+
+    foreach ($projections as $projection) {
+      if (!$projection instanceof ContentIndexProjection) {
+        throw new \InvalidArgumentException('Content Index writer batches accept only ContentIndexProjection values.');
+      }
+      $this->assertProviderOwnsProjection($providerId, $projection);
+    }
 
     for ($attempt = 0; $attempt < self::MAX_RETRIES; $attempt++) {
       $transaction = $this->database->startTransaction();
       try {
-        $result = $this->writeOnce($generationId, $providerId, $projection, $sourceSequence);
-        if ($result === TRUE) {
+        $this->assertWritableGeneration($generationId);
+        $changedCount = 0;
+        $retryBatch = FALSE;
+        foreach ($projections as $projection) {
+          $result = $this->writeOnce($generationId, $providerId, $projection, $sourceSequence, TRUE);
+          if ($result === NULL) {
+            $retryBatch = TRUE;
+            break;
+          }
+          $changedCount += (int) $result;
+        }
+        if ($retryBatch) {
+          $transaction->rollBack();
+          continue;
+        }
+        if ($changedCount > 0) {
           $this->incrementCandidateRevision($generationId);
         }
         unset($transaction);
-        if ($result !== NULL) {
-          if ($result) {
-            $this->candidateCache->invalidateGeneration($generationId);
-          }
-          return $result;
+        if ($changedCount > 0) {
+          $this->candidateCache->invalidateGeneration($generationId);
         }
+        return $changedCount;
       }
       catch (IntegrityConstraintViolationException $exception) {
         $transaction->rollBack();
@@ -74,7 +127,7 @@ final class ContentIndexWriter {
       }
     }
 
-    throw new \RuntimeException('Content Index projection write exceeded its concurrency retry limit.');
+    throw new \RuntimeException('Content Index projection batch exceeded its concurrency retry limit.');
   }
 
   /**
@@ -129,8 +182,11 @@ final class ContentIndexWriter {
     string $providerId,
     ContentIndexProjection $projection,
     int $sourceSequence,
+    bool $generationLocked = FALSE,
   ): ?bool {
-    $this->assertWritableGeneration($generationId);
+    if (!$generationLocked) {
+      $this->assertWritableGeneration($generationId);
+    }
     $identity = [
       'generation_id' => $generationId,
       'entity_type' => $projection->entityTypeId,

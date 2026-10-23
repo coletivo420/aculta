@@ -750,6 +750,45 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Checks batch writes commit atomically and bump the candidate revision once.
+   */
+  public function testWriterBatchIsAtomicAndAdvancesCandidateRevisionOnce(): void {
+    $generation = $this->container->get('aculta_index.generation_manager')->start();
+    $provider = $this->createMock(ContentIndexProviderInterface::class);
+    $provider->method('getProviderId')->willReturn('magazine');
+    $provider->method('getSupportedEntityTypes')->willReturn(['node' => ['revista']]);
+    $provider->method('getProjectionVersion')->willReturn(1);
+    $writer = new ContentIndexWriter(
+      $this->container->get('database'),
+      new ContentIndexProviderRegistry([$provider]),
+      $this->container->get('datetime.time'),
+      $this->container->get('aculta_index.candidate_cache'),
+    );
+    $batch = [
+      $this->projection('Publicação 1', 10, 'activity-1', '42'),
+      $this->projection('Publicação 2', 11, 'activity-2', '43'),
+    ];
+
+    $this->assertSame(2, $writer->writeBatch($generation, 'magazine', $batch, 1));
+    $this->assertSame(1, $this->candidateRevision($generation));
+    $this->assertSame(2, $this->entryCount($generation));
+    $this->assertSame(0, $writer->writeBatch($generation, 'magazine', $batch, 1));
+    $this->assertSame(1, $this->candidateRevision($generation));
+
+    try {
+      $writer->writeBatch($generation, 'magazine', [
+        $this->projection('Publicação 3', 12, 'activity-3', '44'),
+        $this->projection('Conflito na mesma sequência', 10, 'activity-1', '42'),
+      ], 1);
+      $this->fail('Expected the conflicting projection to roll back the complete batch.');
+    }
+    catch (\LogicException) {
+      $this->assertSame(2, $this->entryCount($generation));
+      $this->assertSame(1, $this->candidateRevision($generation));
+    }
+  }
+
+  /**
    * Tests an unvalidated generation cannot replace the active pointer.
    */
   public function testBuildingGenerationCannotActivate(): void {

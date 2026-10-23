@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.68` — isolamento do cache interno de Entity Access nas verificações de Domain canônico.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; suíte Kernel do Index em MariaDB: **62 testes / 797 assertions**, com 23 depreciações upstream e 40 avisos PHPUnit. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media, reconciliação bidirecional, interleaving de eventos com claim antigo, Domain+grants reais do Fórum e isolamento entre caches de Entity Access da Wiki e do Domain atual. PHPCS Drupal passou. Benchmarks de autorização continuam limitados a fixtures; os testes Fórum/Wiki são evidência funcional, não medição de throughput. Runtime, concorrência entre processos, desempenho operacional, integração Kernel/DI completa dos owners e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.69` — escrita transacional em lote no rebuild.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit do Index: **39 testes / 192 assertions**; suíte Kernel do Index em MariaDB: **63 testes / 809 assertions**, com 23 depreciações upstream e 41 avisos PHPUnit. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media, reconciliação bidirecional, interleaving de eventos com claim antigo, lote transacional atômico, Domain+grants reais do Fórum e isolamento entre caches de Entity Access da Wiki e do Domain atual. PHPCS Drupal passou. Writer por lote medido em fixture de 10k teve mediana de 1.218 projeções/s, contra 152/s por projeção; autorização continua limitada a fixtures, sem SLO. Runtime, concorrência entre processos, desempenho operacional em dados reais, integração Kernel/DI completa dos owners e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Plano de benchmark:** [matriz IDX 0.1-G/R](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-BENCHMARK.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
@@ -25,6 +25,21 @@ O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de
 Providers podem implementar `ContentIndexAccessContextProviderInterface` para indicar um purpose canônico, e `ContentIndexAccessPolicyProviderInterface` para acrescentar uma regra contextual à Entity Access. O filtro troca temporariamente o Domain, combina ambas as decisões para o mesmo usuário e restaura o contexto anterior. Sem provider ativo, Domain pedido ou policy determinável, a entrada não é exposta. O Index não infere purpose por hostname nem reduz grants/Group.
 
 Integrações atuais: Revista (`node:revista`), Wiki (`node:wiki_entry`, metadados e relação `related_entry`), Fórum (tópicos, ForumPosts e Comments legados), Gallery (`media_gallery` com relações explícitas para `media:image`) e LMS (`group:lms_course` com relações `course_reading` e `course_gallery`), Media (`image`, `document`, `course_document`, `forum_attachment`), com registros em `aculta_image`, Document Viewer, PDF Viewer Group e Forum. `remote_video` está adiado como dívida até haver módulo proprietário; nenhum provider é registrado. O provider Gallery não cria URL de arquivo nem projeta corpo, alt, autoria ou dados de direitos.
+
+## Escrita e reconstrução
+
+`ContentIndexWriter::write()` continua sendo a API incremental por identidade.
+O rebuild chama `writeBatch()` com páginas de até 500 projeções: o lote inteiro
+é gravado numa transação, conflitos revertem o lote para repetição pelo
+checkpoint e a revisão do cache de candidatos avança uma vez após alterações.
+A invalidação de cache acontece depois do commit. O limite de lote acompanha o
+máximo do enumerador e do rebuilder; operações incrementais de worker continuam
+usando escrita unitária.
+
+Em fixture de 10.000 Nodes, o backfill de três rodadas passou de mediana
+65,97 s para 8,21 s após o batching. Isso mede o provider fixture e o banco
+local dedicado; não é SLO nem previsão de produção. Consulte a
+[comparação completa](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
 ## Estatísticas opcionais
 

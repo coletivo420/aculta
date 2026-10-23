@@ -125,25 +125,29 @@ Houve dispersão por rodada: uma alternativa teve 176 inserções/s e outra
 medianas. Essa variação reforça que não há evidência de ganho consistente para
 índice composto; permanece a decisão de não adicionar índices ao schema 0.1.
 Esta coleta cobre somente 1.000 identidades por operação no tamanho de catálogo
-10k. Não mede writer sustentado em 100k/1M, rebuild, reconciliação ou grants
-reais, e não estabelece SLO. Os valores brutos estão em
+10k. Não mede writer sustentado em 100k/1M nem grants reais e não estabelece
+SLO. Os valores brutos estão em
 [CSV da amostra ampliada](aculta-index-writer-1000-2026-10-23.csv).
 
 ## Escopo ainda não medido
 
-- Writer incremental e operações idempotentes via `ContentIndexWriter`.
-- Backfill/rebuild e catch-up de deltas com entidades Drupal de origem.
-- Reconciliação por providers reais, memória/throughput de worker e fila.
+- Writer sustentado em escalas 100k/1M, concorrência, falha e catch-up de deltas.
+- Backfill/rebuild e reconciliação além de 10k fontes, e em providers proprietários
+  com relações/traduções; a medição de 10k está em
+  [rebuild e auditoria](ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 - Entity Access medido em throughput com providers/grants reais de domínio,
   Group/LMS e outros bundles. Um Kernel funcional do Fórum agora exercita
   Entity Access, Group grants e Domain canônico, mas não mede desempenho.
 - Medição de consultas SQL por request e benchmarks de páginas intermediárias/keysets profundos.
 
-Portanto, este resultado qualifica a gravação do fixture, candidate query/cache,
-edge reads e um fixture limitado de Entity Access em Media. A homologação
-IDX 0.1-R permanece pendente.
+Portanto, estes resultados qualificam a gravação do fixture, candidate
+query/cache, edge reads e fixtures limitados de Entity Access em Media/Wiki,
+além de writer e manutenção até 10k. A homologação IDX 0.1-R permanece
+pendente.
 
 ## Arquivos brutos
 
 - [CSV de query/catálogo](benchmarks/aculta-index-query-2026-10-22.csv).
 - [CSV de relações](benchmarks/aculta-index-relations-2026-10-22.csv).
+- [CSV de writer, insert/idempotência/update](benchmarks/aculta-index-writer-1000-2026-10-23.csv).
+- [CSV de rebuild/auditoria por rodada e variante](benchmarks/aculta-index-maintenance-batch-comparison-10k-2026-10-23.csv).
