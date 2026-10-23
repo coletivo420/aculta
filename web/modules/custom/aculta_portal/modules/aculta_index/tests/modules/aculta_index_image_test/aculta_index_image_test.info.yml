@@ -1,0 +1,8 @@
+name: 'ACULTA Content Index image provider test'
+type: module
+description: 'Registers the production image provider for isolated Index Kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_portal:aculta_index
+  - drupal:media

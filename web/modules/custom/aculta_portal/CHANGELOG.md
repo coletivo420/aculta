@@ -1,3 +1,12 @@
+## 0.4.1-dev.21 — normalizar timestamps do provider Media do Content Index
+
+- `MediaContentIndexProvider` converte explicitamente os timestamps da entidade
+  para inteiros antes de criar a projeção; o Media real do Core pode retornar
+  valores numéricos como strings após load.
+- Kernel MariaDB do Index cobre `media:image` em backfill, update e delete
+  usando Media/File reais; não habilita `aculta_image` completo nem altera
+  Runtime.
+
 ## Não lançado — identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I) — 2026-10-23
 
 - Política única `FiscalIdentityPolicy` (aculta_portal) para o checkout comercial de Loja e LMS. Doações ficam dispensadas. A consulta usa o contrato `AccountDocumentInterface` de `aculta_id_cpf`, sem copiar o documento para pedido, perfil ou sessão. Falha fechada.

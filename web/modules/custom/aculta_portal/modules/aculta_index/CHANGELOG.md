@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.65 — exercitar provider `media:image` no ciclo do Index
+
+- Kernel registra `MediaContentIndexProvider` com bundle `image` e usa Media e
+  File reais para backfill, atualização do nome e exclusão via worker
+  (1 teste / 15 assertions). A fixture não ativa `aculta_image`; o teste de
+  mapa valida separadamente a configuração real do owner.
+- O cenário revelou que timestamps Media podem vir como strings numéricas;
+  casts explícitos corrigem o `TypeError` na projeção.
+
 ## 0.1.0-dev.64 — falhar fechado sem Domain Wiki
 
 - Unit confirma que a ausência de `wiki420_aculta_org` nega o candidato e não

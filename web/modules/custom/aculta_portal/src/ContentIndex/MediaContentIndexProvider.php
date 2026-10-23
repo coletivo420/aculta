@@ -12,7 +12,9 @@ use Drupal\media\MediaInterface;
  *
  * The provider stores only the media entity identity, name, language, dates,
  * publication state and bundle. It never copies source URLs, file IDs, URIs,
- * alt text or document contents.
+ * alt text or document contents. Media timestamp accessors may return numeric
+ * strings after storage loads, so normalize them before building the
+ * projection.
  */
 final class MediaContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
 
@@ -74,8 +76,8 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
       (string) $entity->getName(),
       NULL,
       $entity->isPublished(),
-      max(0, $entity->getCreatedTime()),
-      max(0, $entity->getChangedTime()),
+      max(0, (int) $entity->getCreatedTime()),
+      max(0, (int) $entity->getChangedTime()),
     );
   }
 
