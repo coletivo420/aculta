@@ -103,3 +103,7 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 ## Pesquisa e próxima frente COM-SF — Frete brasileiro / estoque (2026-10-22)
 
 [Pesquisa comparativa e roteiro de implementação](SHIPPING-STOCK-BRAZIL-RESEARCH.md): manter `commerce_shipping:^3.0` já presente, auditar código `melhor_envio` antes de copiar/portar, avaliar integração Correios pela API moderna, instalar preferencialmente `commerce_stock:^3.0` em homelab (sem reimplementar), testar consolidação loja/LMS/doação e preservação do carrinho multidomínio. Decisões de shipping carriers, estoque, etiquetas e telas Green Stash são fases separadas, sem alterar gateway. Dívidas DT-COM-14–17 em `docs/operations/DEBT-REGISTER.md`. Sem dependências novas ativadas nesta etapa.
+
+## Green Stash — UX mobile-first (2026-10-23)
+
+[Plano de navegação, telas e componentes](GREEN-STASH-UX-MOBILE-FIRST.md). Experiência independente no Studio; navegação Início, Produtos, Pedidos, Estoque, Envios, Promoções, Clientes, Relatórios e Configurações. Em 320px priorizar quatro destinos + Mais, listas em cartões e ações contextuais; desktop oferece sidebar e tabela. Reutilizar SDC/UI Suite do ACULTA420, nunca mexer no cabeçalho multidomínio. Próxima etapa GS-0.2-A: contratos/ACL de navegação; GS-0.2-B: shell com estados vazios; GS-0.2-C: dados operacionais reais. Plano **não implementado em UI**.
