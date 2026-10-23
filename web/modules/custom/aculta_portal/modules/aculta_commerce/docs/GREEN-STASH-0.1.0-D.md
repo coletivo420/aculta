@@ -24,3 +24,12 @@
 ## Dívida de ambiente
 
 A permissão e o serviço ainda não foram validados por `drush cr`/PHPUnit no servidor. Não declarar PASS. A ativação do módulo continua dependente do gate de dependências `aculta_commerce.info.yml`. Não criar dados de produtos/pedidos nem alterar gateway Mercado Pago nesta fase.
+
+## D-A/D-B implementado sem operações comerciais (2026-10-22)
+
+- `GreenStashExperienceProvider` implementa o contrato Studio existente com ID `green_stash`, purpose `account` e rota `aculta_commerce.green_stash`.
+- Rota administrativa própria `/green-stash`, permission gate estrito; não coincide com GanjaLab.
+- `GreenStashController` reutiliza `StudioExperienceManager` para disponibilidade, purpose e acesso; provider entrega apenas mensagem preparatória, **não** produtos, pedidos, estatísticas privadas ou funções financeiras.
+- `aculta_commerce_container_alter` registra o provider no serviço Studio somente quando Commerce está habilitado, preservando GanjaLab e evitando referência obrigatória a Commerce dentro do Studio.
+- Adicionada dependência explícita a `aculta_studio`. Validar namespace do dependency key e ordem real de serviços no homelab; cache rebuild, container compilation, route access, guest/auth e permission matrix permanecem pendentes.
+- **Não houve alteração no carrinho público, consolidador, checkout ou Mercado Pago.**
