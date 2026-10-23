@@ -1,3 +1,14 @@
+## `0.1.0-dev.259` — provar contadores access-aware nas categorias — 2026-10-23
+
+- Nova prova Kernel constrói uma View de categorias com agregação COUNT sobre a
+  relação reversa de `field_aculta_categories` e grants reais em MariaDB.
+- Sem a tag, o relacionamento `EntityReverse` do Core não propaga `node_access`
+  e o anônimo conta tópicos restritos. Com a tag adicionada pelo alter, o
+  anônimo vê só a categoria pública e o membro vê as duas.
+- A implementação da contagem deve adicionar `node_access` explicitamente; a
+  próxima microfase aplica isso na View e na apresentação.
+- Testes: arquivo 2/36, suíte Kernel do Fórum 58/1.318; PHPCS limpo.
+
 ## `0.1.0-dev.258` — revisão visual de `/categorias` com X11 e Olivero — 2026-10-23
 
 - Firefox ESR/X11 no servidor de testes: `forum-index-visual.mjs` passou 15/15

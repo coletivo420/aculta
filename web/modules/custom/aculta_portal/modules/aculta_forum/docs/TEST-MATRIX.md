@@ -1,3 +1,14 @@
+## Contadores access-aware nas categorias — prova, 2026-10-23
+
+- `ForumCategoryCounterAccessKernelTest` (2 testes / 36 asserções, MariaDB):
+  View de taxonomy com `reverse__node__field_aculta_categories`, `COUNT`
+  agregado e grants reais. Sem a tag `node_access`, o anônimo conta pública e
+  restrita; com a tag adicionada pelo alter, o anônimo conta só a pública e o
+  membro conta as duas.
+- Fixture `aculta_forum_counter_test` fornece o realm de grant e o alter
+  condicionado por state; não usa conteúdo real.
+- Suíte Kernel do Fórum 58/1.318; PHPCS limpo.
+
 ## Revisão visual de `/categorias` — X11 e Olivero, 2026-10-23
 
 - `forum-index-visual.mjs`, servidor de testes, Firefox ESR/X11: 15/15.

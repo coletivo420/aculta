@@ -185,6 +185,16 @@ ambiente local, `tests/browser/aculta-forum/categorias-olivero.py` passou 8/8:
 erros e sem overflow; o tema voltou a `aculta420` por trap. Zoom, aparelho real
 e contadores access-aware continuam pendentes.
 
+### Contadores access-aware — prova de 2026-10-23
+
+`ForumCategoryCounterAccessKernelTest` constrói uma View de taxonomy com a
+relação reversa `reverse__node__field_aculta_categories`, agregação `COUNT` e
+grants reais em MariaDB. Sem a tag, o anônimo conta o tópico restrito; com
+`node_access` adicionada pelo alter, o anônimo vê uma categoria e o membro vê
+as duas. O Core não propaga a tag no relacionamento `EntityReverse`, então o
+contador de categorias precisa adicioná-la explicitamente. A implementação da
+contagem na página segue essa decisão.
+
 ### Moderação revisionável de posts — decisão de 2026-10-21
 
 O responsável decidiu substituir os Comments Core das discussões públicas do
