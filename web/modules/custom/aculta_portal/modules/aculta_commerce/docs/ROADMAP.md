@@ -140,3 +140,9 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 ## Decisão obrigatória — Green Stash substitui operação administrativa Commerce (2026-10-23)
 
 [Contrato operacional Green Stash](GREEN-STASH-OPERATIONS-CONTRACT.md): todas as operações cotidianas da loja (novo/editar produtos, variações, estoque, expedição, etiquetas) devem ocorrer em rotas próprias PT-BR dentro de `/estudio/loja`. Usar Commerce/Stock/Shipping como backend; não apontar operadores para `edit-form` ou `/painel-administrativo`. Primeiro commit removeu o link nativo de edição e exibiu estado preparatório. Próximo GS-EDITOR-0.2: página interna de detalhe, acesso por loja e entidade, depois formulários Studio de criação e edição. Não considerar a fase concluída antes dos testes end-to-end com operador sem acesso administrativo Drupal.
+
+## GS-EDITOR-0.2 — Detalhe próprio de produto (2026-10-23)
+
+Implementado endpoint de leitura `/estudio/loja/produtos/{produto}`, com controller independente GreenStashProductController, status de publicação e retorno à listagem. A listagem aponta para o detalhe interno Studio, nunca para `edit-form`/painel administrativo. O mesmo método `GreenStashProductReader::canManage` é usado na listagem e no detalhe e exige `produto_loja`, acesso view/update de entidade e update em uma store associada. Rota exige entrada Green Stash e validação do ExperienceManager. Testes unitários básicos de negação criados, **não executados no homelab**. O detalhe é read-only, sem imagem, variações, alterações ou novos formulários.
+
+Próxima fase GS-EDITOR-0.3: criação própria de produtos via Form API com API/validações Commerce, destino `/estudio/loja/produtos/novo`; antes de liberar, auditar store access no create, regras de SKU/variações, CSRF, validação de formulário e edição concorrente. SDC/UI Suite mobile-first continua dependência do tema.
