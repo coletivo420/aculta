@@ -66,3 +66,9 @@ Permaneça na branch/PR existente; nunca abra outra PR. Não misture arquivos de
 ## Alinhamento transversal — ADR-013 (2026-10-22)
 
 O gerenciador **não** pertence a `aculta_commerce`: é infraestrutura do `aculta_portal`. O Commerce entrega provider de contexto `store` e lógica de produto, frete, promoção, fulfillment e Green Stash. As quatro abas de carrinho pertencem ao Portal; **Green Stash é gerenciamento administrativo da loja no Studio**, não carrinho. Roadmap de integração: C-0.1 contratos de provider e tipos de pedidos, C-0.2 rotas e autorização por contexto; C-0.3 dados de catálogo, preços e estoque para a aba Loja; C-0.4 componentes SDC/UI Suite no tema; C-0.5 homologação loja + LMS + doação no homelab. Não implementar checkout unificado físico sem ADR adicional.
+
+## RETIFICAÇÃO VIGENTE — Integração administrativa com Portal (2026-10-22)
+
+A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loja | LMS | Doações é exclusivamente administrativa no aculta_portal**; não é uma nova experiência de compra. O carrinho da barra multidomínio e o seletor atual de checkout permanecem intactos. `aculta_commerce` oferece ao Portal configuração/provider do contexto Loja, mas não recebe nem duplica o orquestrador, e Green Stash permanece administração operacional da loja no Studio.
+
+**Fases Comércio-CART:** C-A inventariar tipos/flows/rotas da Loja; C-B provider de configuração do Portal; C-C formulários/validações da aba administrativa Loja; C-D integração segura com Green Stash e rotas existentes sem alterar carrinho; C-T regressões visuais/funcionais e pagamentos no homelab. Não executar trabalho de storefront nesta frente. Esta seção substitui referências antigas a abas de carrinho público.
