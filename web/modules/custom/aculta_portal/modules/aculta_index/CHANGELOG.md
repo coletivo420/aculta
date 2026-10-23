@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.88 — atualizar evidência da suíte SQLite
+
+- Suíte Kernel completa do Index passou em SQLite: 75 testes / 1.140
+  assertions; Unit completa: 39 testes / 202 assertions.
+- A execução Kernel reportou 39 depreciações de Core/contrib e 42 do PHPUnit;
+  Unit reportou 10 depreciações PHPUnit. Nenhuma falha. A validação MariaDB
+  continua pendente enquanto o benchmark de manutenção de 1M estiver ativo.
+
 ## 0.1.0-dev.87 — registrar limite de rollback retido
 
 - Código e README esclarecem que gerações `retained` não recebem eventos
