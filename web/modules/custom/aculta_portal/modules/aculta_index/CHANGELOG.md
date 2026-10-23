@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.123 — alinhar política de limpeza de providers desativados
+
+- README agora registra a decisão: preservar projeções enquanto o provider owner
+  estiver desativado ou sem ownership verificável; após reativação, a auditoria
+  valida a ausência da fonte e só então enfileira a exclusão da projeção derivada.
+- Nenhuma mudança de runtime; cenário validado no Kernel em dev.122.
+
 ## 0.1.0-dev.122 — limpar projeção órfã após reativar o owner
 
 - Kernel simula provider Image desabilitado: a auditoria marca a fonte como
