@@ -149,15 +149,17 @@ pendentes, está em
 - `ContentIndexWikiAccessKernelTest` consulta `related_entry`, `wiki_category`
   e `wiki_image` com providers dos YAMLs owners Wiki e Image, dados reais Node,
   Term e Media e a policy Portal via fixture. Entity Access filtra categoria e
-  imagem não publicadas; a origem/alvo Wiki são revalidados no purpose `wiki` e
-  o Domain `main` é restaurado (MariaDB: 3 testes / 84 assertions, 5
-  depreciações). O boot combinado dos owners também compila os services reais;
-  Runtime e ativação completa permanecem pendentes.
-- Reexecução MariaDB em 2026-10-23 dos três Kernel acima: 5 testes / 147
-  assertions, aprovados; 239 depreciações de Core/contrib/PHPUnit. A closure
-  real Wiki + Index compilou e descobriu os providers do owner. A consulta com
-  origem/alvos reais continua usando o harness de acesso por fixture; ela não
-  equivale a um único teste de acesso com bootstrap integral da Wiki.
+  imagem não publicadas; a consulta outgoing revalida origem/alvos em purpose
+  `wiki` e restaura `main` (MariaDB: 3 testes / 84 assertions, 5 depreciações).
+- Em dev.166, `ContentIndexOwnerIntegrationKernelTest` com a closure real Wiki +
+  Portal + Index testa projeção/deduplicação e `ContentIndexAccessFilter` com
+  hooks e serviços reais, sem bridge de acesso. Acesso é negado em `main`,
+  revalidado em `wiki`, alvos não publicados são filtrados e o Domain original
+  é restaurado (1 teste / 34 assertions; 231 depreciações).
+- Reexecução MariaDB isolada em 2026-10-23 dos três Kernel Wiki/Index: 6 testes /
+  181 assertions, aprovados; 243 depreciações agregadas de Core/contrib/PHPUnit.
+  A consulta outgoing end-to-end continua coberta pelo harness de acesso com
+  fixture; não houve rebuild integral do inventário nem alteração no Runtime.
 
 ### Handoff para o ACULTA Content Index
 

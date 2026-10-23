@@ -8,8 +8,13 @@
   da Wiki; o provider de Media continua em `aculta_image`.
 - Os três Kernel do Index/Wiki passaram em MariaDB isolada: 5 testes / 147
   asserções; a closure real Wiki + Index compilou e descobriu o provider.
-  A cobertura de acesso por relação ainda usa a ponte de fixture do Portal e
-  permanece pendente de um teste único com o bootstrap completo da Wiki.
+- Em dev.166, o Kernel de owner passou a verificar a projeção real e o
+  `ContentIndexAccessFilter` com bootstrap integral Wiki + Portal + Index:
+  acesso `main`/`wiki`, filtros de origem e alvos privados, restauração do
+  Domain (1 teste / 34 asserções; 231 depreciações upstream). A consulta
+  outgoing completa ainda usa bridge fixture nos Kernel do Index.
+- Suíte reexecutada: 6 testes / 181 asserções, aprovada; 243 depreciações
+  agregadas de Core/contrib/PHPUnit.
 - `aculta_index` estava desativado no Runtime de teste; não houve rebuild,
   importação ou alteração de estado no Runtime.
 

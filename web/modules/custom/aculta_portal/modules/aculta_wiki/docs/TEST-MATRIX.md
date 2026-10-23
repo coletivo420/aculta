@@ -266,18 +266,18 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Relações `field_wiki_related`, `field_wiki_categories`, `field_wiki_image` | Unit | `related_entry`, `wiki_category`, `wiki_image` deduplicadas, com tipos-alvo allowlisted | aprovado |
 | Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
 | Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
-| Declaração/tag owner `aculta_index.provider` | Kernel | Boot da closure real Wiki + Index, discovery dos providers via tags e registry, sem importar a configuração do Runtime | aprovado (1 teste / 8 assertions; repetido em MariaDB isolada em 2026-10-23) |
-| Consulta do Index e relações sob acesso Wiki | Kernel | Mesmo usuário, Entity Access e policy Portal em purpose `wiki`; alvo não publicado filtrado; Domain original restaurado | aprovado (2 testes / 32 assertions; MariaDB e SQLite) |
-| Relações categoria e imagem | Kernel | `wiki_category`/`wiki_image` consultam os providers owners; Entity Access filtra alvos unpublished | aprovado (incluído no conjunto Wiki/Index: 5 testes / 147 assertions; 239 depreciações) |
+| Declaração/tag owner e bootstrap real | Kernel | Closure Wiki + Portal + Index, provider tagueado descoberto e container compilado | aprovado (owner: 2 testes / 80 assertions; focal real: 1 / 34) |
+| Projeção e filtro sob acesso real | Kernel | Provider v3, relação deduplicada, `EntityHooks` real, `main` nega, `wiki` autoriza, alvos privados filtrados e Domain restaurado | aprovado (1 teste / 34 assertions; 231 depreciações) |
+| Consulta outgoing e relações sob acesso Wiki | Kernel | Mesmo usuário, Entity Access e policy Portal em purpose `wiki`; alvo não publicado filtrado; Domain original restaurado | aprovado (MariaDB: 3 testes / 84 assertions; bridge de acesso fixture) |
+| Relações categoria e imagem | Kernel | `wiki_category`/`wiki_image` consultam providers owners; Entity Access filtra alvos unpublished | aprovado (incluído na suíte Wiki/Index: 6 testes / 181 assertions; 243 depreciações agregadas) |
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
 Os adapters estão em código. No preflight read-only de 2026-10-23,
 `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de teste; não
 houve rebuild nem alteração de configuração. O harness Kernel de discovery
-carrega a closure real Wiki + Index. As consultas de relação usam entidades
-reais e uma bridge fixture para a policy Portal; permanece pendente combinar a
-consulta autorizada com o bootstrap integral da Wiki no mesmo teste. Runtime
-segue sem homologação integral.
+carrega a closure real Wiki + Index. Um teste focal agora combina bootstrap real,
+projeção Wiki e filtro de Entity Access sem bridge; a consulta outgoing completa
+segue no harness fixture. Runtime segue sem homologação integral.
 
 O boot transversal `ContentIndexOwnerIntegrationKernelTest` também resolve e
 habilita a closure real de dependências de `aculta_wiki` e `aculta_index`, compila

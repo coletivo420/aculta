@@ -8,11 +8,21 @@ use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
 use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
 use Drupal\aculta_statistics\Bridge\AuthorizedEntityMetricAggregator;
@@ -94,6 +104,259 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertNotNull(FieldConfig::loadByName('media', 'remote_video', 'field_media_oembed_video'));
 
     $this->assertPdfGroupRelationPluginCanAttachCourseDocument();
+  }
+
+  /**
+   * Boots the real Wiki/Portal/Index modules and filters Wiki-owned entities.
+   *
+   * This complements the narrower relation-query fixture tests: here the real
+   * Portal entity_access hook, Domain service and all owner service tags are
+   * discovered by Drupal's Kernel container without a bridge module.
+   */
+  public function testRealWikiOwnerBootstrapRevalidatesEntityAccess(): void {
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('domain');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installSchema('aculta_statistics', ['aculta_statistics_daily']);
+    $this->installSchema('aculta_index', [
+      'aculta_index_generation',
+      'aculta_index_state',
+      'aculta_index_entry',
+      'aculta_index_relation',
+      'aculta_index_work',
+      'aculta_index_cursor',
+      'aculta_index_audit',
+    ]);
+    $this->installConfig(['system', 'user', 'node', 'domain', 'taxonomy', 'media', 'file']);
+    ProfileType::create([
+      'id' => 'authenticated',
+      'label' => 'Authenticated test profile',
+      'display_label' => 'Authenticated test profile',
+      'multiple' => FALSE,
+      'registration' => FALSE,
+      'roles' => ['authenticated'],
+      'allow_revisions' => FALSE,
+      'new_revision' => FALSE,
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'settings' => ['max_length' => 80, 'case_sensitive' => FALSE, 'is_ascii' => FALSE],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+      'settings' => [],
+      'translatable' => FALSE,
+    ])->save();
+    aculta_index_install();
+
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_domain_source',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'domain'],
+    ])->save();
+    NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry', 'new_revision' => TRUE])->save();
+    Vocabulary::create(['vid' => 'wiki_category', 'name' => 'Wiki categories'])->save();
+    $this->createMediaType('file', ['id' => 'image', 'label' => 'Image']);
+    $this->installWikiIndexFields();
+    $this->createWikiIndexDomains();
+
+    $authenticated = Role::load('authenticated');
+    self::assertInstanceOf(Role::class, $authenticated);
+    $authenticated->grantPermission('access content')->grantPermission('view media')->save();
+    User::create(['name' => 'wiki-index-owner-root', 'status' => TRUE])->save();
+    $reader = User::create([
+      'name' => 'wiki-index-real-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+
+    $publicTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Visible Wiki target',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $publicTarget->save();
+    $privateTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Private Wiki target',
+      'status' => FALSE,
+      'uid' => 1,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $privateTarget->save();
+    $publicCategory = Term::create(['vid' => 'wiki_category', 'name' => 'Visible category', 'status' => TRUE]);
+    $publicCategory->save();
+    $privateCategory = Term::create(['vid' => 'wiki_category', 'name' => 'Private category', 'status' => FALSE]);
+    $privateCategory->save();
+    $publicImage = Media::create([
+      'bundle' => 'image',
+      'name' => 'Visible image',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+    ]);
+    $publicImage->save();
+    $privateImage = Media::create([
+      'bundle' => 'image',
+      'name' => 'Private image',
+      'status' => FALSE,
+      'uid' => 1,
+    ]);
+    $privateImage->save();
+    $source = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Real Wiki owner source',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_related' => [
+        ['target_id' => $publicTarget->id()],
+        ['target_id' => $publicTarget->id()],
+        ['target_id' => $privateTarget->id()],
+      ],
+      'field_wiki_categories' => [
+        ['target_id' => $publicCategory->id()],
+        ['target_id' => $privateCategory->id()],
+      ],
+      'field_wiki_image' => ['target_id' => $publicImage->id()],
+    ]);
+    $source->save();
+    $privateImageSource = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Real Wiki private image source',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_image' => ['target_id' => $privateImage->id()],
+    ]);
+    $privateImageSource->save();
+
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame(3, $registry->get('wiki')->getProjectionVersion());
+    $projection = $registry->get('wiki')->project($source);
+    self::assertNotNull($projection);
+    $relationKeys = [];
+    foreach ($projection->relations as $relation) {
+      $relationKeys[] = implode(':', [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId]);
+    }
+    sort($relationKeys);
+    self::assertSame([
+      'related_entry:node:' . $publicTarget->id(),
+      'related_entry:node:' . $privateTarget->id(),
+      'wiki_category:taxonomy_term:' . $publicCategory->id(),
+      'wiki_category:taxonomy_term:' . $privateCategory->id(),
+      'wiki_image:media:' . $publicImage->id(),
+    ], $relationKeys, 'The production Wiki provider projects each configured relation once.');
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    self::assertFalse($source->access('view', $reader), 'The real Portal hook denies Wiki source access in main.');
+
+    $candidates = [];
+    foreach ([$source, $publicTarget, $privateTarget, $privateImageSource] as $node) {
+      $candidates[] = [
+        'entity_type' => 'node',
+        'entity_id' => (string) $node->id(),
+        'langcode' => $node->language()->getId(),
+      ];
+    }
+    foreach ([$publicCategory, $privateCategory] as $term) {
+      $candidates[] = [
+        'entity_type' => 'taxonomy_term',
+        'entity_id' => (string) $term->id(),
+        'langcode' => $term->language()->getId(),
+      ];
+    }
+    foreach ([$publicImage, $privateImage] as $media) {
+      $candidates[] = [
+        'entity_type' => 'media',
+        'entity_id' => (string) $media->id(),
+        'langcode' => $media->language()->getId(),
+      ];
+    }
+    $filtered = $this->container->get('aculta_index.access_filter')->filter($candidates, $reader);
+    $allowed = [];
+    foreach ($filtered->entities as $entity) {
+      $allowed[$entity->getEntityTypeId() . ':' . $entity->id()] = TRUE;
+    }
+    $expectedAllowed = [
+      'media:' . $publicImage->id() => TRUE,
+      'node:' . $source->id() => TRUE,
+      'node:' . $publicTarget->id() => TRUE,
+      'node:' . $privateImageSource->id() => TRUE,
+      'taxonomy_term:' . $publicCategory->id() => TRUE,
+    ];
+    ksort($expectedAllowed);
+    ksort($allowed);
+    self::assertSame($expectedAllowed, $allowed, 'The real Index filter returns only entities viewable under Wiki access rules.');
+    self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id(), 'The original main Domain is restored.');
+    self::assertFalse($source->access('view', $reader), 'Wiki access is not cached into the restored main Domain.');
+  }
+
+  /**
+   * Installs fields that mirror the current Wiki relationship config.
+   */
+  private function installWikiIndexFields(): void {
+    $fields = [
+      'field_wiki_related' => ['node', -1],
+      'field_wiki_categories' => ['taxonomy_term', -1],
+      'field_wiki_image' => ['media', 1],
+    ];
+    foreach ($fields as $fieldName => [$targetType, $cardinality]) {
+      FieldStorageConfig::create([
+        'entity_type' => 'node',
+        'field_name' => $fieldName,
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => $targetType],
+        'cardinality' => $cardinality,
+      ])->save();
+      FieldConfig::create([
+        'entity_type' => 'node',
+        'bundle' => 'wiki_entry',
+        'field_name' => $fieldName,
+        'label' => $fieldName,
+        'settings' => ['handler' => 'default:' . $targetType, 'handler_settings' => []],
+      ])->save();
+    }
+  }
+
+  /**
+   * Creates the canonical MAIN and Wiki Domains for the production service.
+   */
+  private function createWikiIndexDomains(): void {
+    foreach (['aculta_org' => 'main', 'wiki420_aculta_org' => 'wiki'] as $id => $name) {
+      Domain::create([
+        'id' => $id,
+        'hostname' => $name . '.example.invalid',
+        'name' => $name,
+        'scheme' => 'https',
+        'status' => TRUE,
+        'is_default' => $id === 'aculta_org',
+        'weight' => 0,
+      ])->save();
+    }
   }
 
   /**

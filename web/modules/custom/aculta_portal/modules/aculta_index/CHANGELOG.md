@@ -1,5 +1,18 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.166 — Wiki com bootstrap e acesso reais
+
+- `ContentIndexOwnerIntegrationKernelTest` agora cria verbetes, categorias e
+  mídias com a closure real Wiki + Portal + Index; usa a descoberta de hooks e
+  serviços sem bridge de acesso. O provider Wiki real projeta relações v3
+  deduplicadas, e `ContentIndexAccessFilter` autoriza apenas alvos visíveis em
+  `wiki`, nega-os em `main` e restaura o Domain de origem.
+- Focal: 1 teste / 34 assertions; suíte Wiki/Index: 6 testes / 181 assertions,
+  aprovada em MariaDB isolada; 243 depreciações agregadas upstream.
+- O teste não executa rebuild completo do inventário, não importa config e não
+  altera o Runtime. A consulta outgoing end-to-end permanece no harness de
+  acesso por fixture.
+
 ## 0.1.0-dev.165 — integrar `remote_video` do owner Portal
 
 - O Portal fornece defaults do bundle Media `remote_video` (`oembed:video`),
