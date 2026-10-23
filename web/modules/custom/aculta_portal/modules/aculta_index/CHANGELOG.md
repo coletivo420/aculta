@@ -5,6 +5,8 @@
 - Kernel no MariaDB comprova que uma publicação tornada privada não aparece na
   página seguinte enquanto a projeção pública antiga ainda aguarda o worker
   incremental (1 teste / 12 assertions).
+- A suíte combinada Unit/Kernel de Index e Activity passou no MariaDB dedicado:
+  67 testes / 555 assertions; Runtime e volume seguem pendentes.
 
 ## 0.1.0-dev.26 — acesso canônico fail-closed e validação MariaDB
 
