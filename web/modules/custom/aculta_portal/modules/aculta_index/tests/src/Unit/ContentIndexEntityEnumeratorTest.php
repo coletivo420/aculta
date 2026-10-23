@@ -16,6 +16,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests bounded, translation-aware keyset discovery.
@@ -116,7 +117,28 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
       'file' => $nonContentEntityType,
     ]);
 
-    $batch = (new ContentIndexEntityEnumerator($registry, $manager))->nextBatch('magazine', 'node', '41', 2);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())
+      ->method('debug')
+      ->with(
+        self::stringContains('Content Index enumeration batch completed.'),
+        self::callback(static function (array $context): bool {
+          self::assertSame('magazine', $context['@provider']);
+          self::assertSame('node', $context['@entity_type']);
+          self::assertSame(2, $context['@limit']);
+          self::assertSame(1, $context['@source_count']);
+          self::assertSame(2, $context['@projection_count']);
+          self::assertArrayHasKey('@query_ms', $context);
+          self::assertArrayHasKey('@load_ms', $context);
+          self::assertArrayHasKey('@project_ms', $context);
+          self::assertArrayHasKey('@cache_ms', $context);
+          self::assertArrayHasKey('@total_ms', $context);
+          self::assertFalse(array_key_exists('@entity_id', $context));
+          self::assertFalse(array_key_exists('@title', $context));
+          return TRUE;
+        }),
+      );
+    $batch = (new ContentIndexEntityEnumerator($registry, $manager, $logger))->nextBatch('magazine', 'node', '41', 2);
 
     self::assertSame(['pt-br', 'en'], array_map(static fn (ContentIndexProjection $projection): string => $projection->langcode, $batch['projections']));
     self::assertSame([
@@ -224,6 +246,32 @@ final class ContentIndexEntityEnumeratorTest extends UnitTestCase {
 
     $this->expectException(\InvalidArgumentException::class);
     (new ContentIndexEntityEnumerator($registry, $manager))->nextBatch('missing', 'node', NULL, $limit);
+  }
+
+  /**
+   * Cache reset thresholds are positive and remain bounded by the default.
+   *
+   * @dataProvider invalidCacheResetEntityLimitProvider
+   */
+  public function testRejectsInvalidCacheResetEntityLimit(int $limit): void {
+    $registry = new ContentIndexProviderRegistry();
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+
+    $this->expectException(\InvalidArgumentException::class);
+    new ContentIndexEntityEnumerator($registry, $manager, NULL, $limit);
+  }
+
+  /**
+   * Provides invalid cache reset thresholds.
+   *
+   * @return array<string, array{0: int}>
+   *   Invalid values.
+   */
+  public static function invalidCacheResetEntityLimitProvider(): array {
+    return [
+      'zero' => [0],
+      'above default maximum' => [5_001],
+    ];
   }
 
   /**
