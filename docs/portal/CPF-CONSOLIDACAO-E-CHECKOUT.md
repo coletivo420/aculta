@@ -246,13 +246,22 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 
 - **18 itens iguais ao sync.** O `config:status` os listava como "só no sync" ou "diferentes" por artefato de listagem. Não são divergências.
 - **3 itens sem arquivo no sync e fora do banco** (`profile.type.customer`, `filter.format.basic_html`, `field.field.profile.customer.address`). Foram removidos do repositório por outras frentes (`e85c3dbe`, `b66646ef`). Não há o que importar.
-- **29 itens com diferença real** (mais `core.extension`, excluído de propósito):
-  - *Displays de entidade (23):* o banco tem componentes de módulos ativos que o sync não tem (`entity_print_*` em `hidden`, `co_authors`, `content_moderation_control`, `flag_sinalizar_post_forum`, `field_aculta_published_at`). Esses componentes são reincluídos pelos módulos ao salvar.
-  - *Permissões de papéis (2):* `content_editor` (32 mudanças) e `email_confirmed` (11). Importar mudaria quem pode fazer o quê no site.
-  - *Índices de busca (2):* `aculta_conteudo` (3 mudanças de bundles) e `aculta_forum` (6 mudanças em processors). Importar mudaria o comportamento de busca.
-  - *Storage de campos (2):* `field_gallery_purpose` e `field_roster_visible`. Importar mudaria configurações de campos que têm dados.
+- **29 itens com diferença real** (mais `core.extension`, excluído de propósito). Reclassificação refeita comparando conteúdo com rótulos corretos e reproduzindo o caminho exato do importador:
+  - *Somente ordem (4):* `user.role.content_editor` (51 permissões), `user.role.email_confirmed` (25), `search_api.index.aculta_conteudo` (bundles) e `search_api.index.aculta_forum` (campos dos processors). Os **conjuntos são idênticos** ao sync; só a ordem difere. Não há mudança de permissão nem de busca.
+  - *Displays de entidade (23):* o banco tem componentes derivados de módulos ativos que o sync não tem (`entity_print_view_*`, `search_api_excerpt`, `co_authors`, `private_message_link`, `content_moderation_control`, `flag_sinalizar_post_forum`, `address`, `field_media_*`). O sync, por sua vez, tem entradas obsoletas que o banco não tem (`hidden.revision_log`, `hidden.moderation_state`).
+  - *Campos (2):* `field.field.media_gallery.media_gallery.field_gallery_purpose` traz no sync `settings.max_length/is_ascii/case_sensitive`, que são *storage settings* de um campo `string`; `field.storage.group.field_roster_visible` traz no sync `settings.on_label/off_label`, que são *field settings* do plugin `boolean`. O banco tem `settings` vazio porque é o formato que o plugin aceita.
 
-**Conclusão:** esses 29 itens não são uma correção técnica neutra. Para cada um, é preciso decidir qual lado é a fonte da verdade (repositório ou banco). Importar por cima do banco mudaria permissões, busca e campos com dados, sem que isso esteja no escopo do CPF. Por isso não importei esses itens. Nenhuma configuração foi alterada nesta medição.
+**Por que o import não converge (provado):**
+
+1. **O importador escreve.** Com um display isolado, mudar `status: true` para `false` no arquivo e rodar `config:import --partial` alterou o banco. O `[success]` não é artefato de listagem.
+2. **Displays:** `ConfigEntityStorage::updateFromStorageRecord()` monta a entidade nova com `mapFromStorageRecords()`, e `EntityDisplayBase::init()` **recria como `hidden`** todo campo exibível do bundle ausente de `content`/`hidden`. O importador copia esse `hidden` já recomposto para a entidade viva. Prova: partindo de um `hidden` com as 5 chaves do sync, `mapFromStorageRecords` devolveu 11. Remover componentes por import é impossível por desenho.
+3. **Campos:** `FieldConfig::preSave()` e `FieldStorageConfig::preSave()` filtram `settings` pelas chaves que o plugin suporta e repõem os defaults. Chaves no lugar errado são descartadas ao salvar.
+4. **Papéis e índices:** `StorableConfigBase::castValue()` aplica `ksort`/`sort` conforme `orderby` do schema sempre que o save não é "trusted". Em Drupal 11.4, `trustData()` está depreciado e sem chamadores, então o save do import nunca é trusted; um arquivo fora de ordem **nunca** converge.
+
+**Decisão desta frente:** não importar os 29. Nenhuma configuração foi alterada; o backup anterior continua idêntico ao ativo, conferido item a item. A correção para quem responde por cada item:
+
+- os 4 de ordem: ordenar as sequências no arquivo de `config/sync` conforme o schema. Muda só a ordem e o `config:status` converge;
+- os 25 restantes: o sync está desatualizado em relação ao site (módulos ativos). O caminho é reexportar o ativo (`drush config:export` desses itens), com revisão de quem responde por `aculta_index`, `aculta_wiki` e fórum — não importar por cima do banco.
 
 ## 10. Pendências
 
@@ -264,4 +273,5 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 6. **Runtime de teste e produção:** confirmar que `aculta_associado_id` não está habilitado antes de promover (seção 4).
 7. **Gate Drupal 11:** `WikiController.php` ausente (outra frente).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
-9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): ainda não verificados.
+9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): não verificados. Bloqueado por acesso: é preciso a URL do site de testes (`*.aculta.toca.net.br`) e uma conta de teste. Enquanto isso, ficam como pendência documentada, sem PASS/FAIL.
+10. **Drift dos 29 itens de configuração:** classificado e decidido em 9.5 (4 de ordem + 25 com sync desatualizado). Nada importado. A correção depende dos donos de `aculta_index`, `aculta_wiki` e fórum e de uma rodada de `config:export` revisada.
