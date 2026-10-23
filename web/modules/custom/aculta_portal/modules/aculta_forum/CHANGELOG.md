@@ -1,3 +1,18 @@
+## `0.1.0-dev.254` — busca e contagem sob grants (F-GROUP 0.6) — 2026-10-23
+
+- Novo Unit `ForumPostSearchAccessTest` (4 testes / 11 asserções) cobre o grant
+  público, o grant restrito do membro, o abort sem `access content` e o bypass.
+- Runtime: índice `aculta_forum` indexado com um tópico restrito e um público.
+  Com `range(0,1)` por conta, anônimo/sem membership/suspenso/comum recebem
+  total 1 (público) e o ativo com membership recebe total 2; o total é filtrado
+  antes da paginação. A View `/pesquisar?keys=fgroup` confirma o mesmo por HTTP.
+- A medição em CLI roda em `runInPurpose('forum', ...)`; fora do purpose, o
+  subscriber aplica `__forum_scope_denied__` e zera o resultado.
+- Teardown desindexa os itens (`indexed_total=0`) e restaura
+  `realm=all:21` e `restricted_group_type` vazio. Suíte Unit: 173/1.003 PASS.
+- Script `tests/runtime/fgroup-search.php` documenta o fluxo. Restam download
+  HTTP do anexo, cache da busca, índice atrasado e Olivero na F-GROUP 0.7.
+
 ## `0.1.0-dev.253` — galeria restrita, cache de acesso e regressão pública — 2026-10-23
 
 - `ForumGalleryPublication` publica a galeria `forum` pela referência ativa e

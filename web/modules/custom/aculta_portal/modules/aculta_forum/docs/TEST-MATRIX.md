@@ -1,3 +1,22 @@
+## F-GROUP 0.6 — busca e contagem sob grants, 2026-10-23
+
+- Unit `ForumPostSearchAccessTest`: 4 testes / 11 asserções OK. Cobre o grant
+  público, o grant restrito do membro, o abort sem `access content` e o bypass.
+- Runtime: dois tópicos indexados no `aculta_forum` (`aculta_database`).
+  Consulta `keys=fgroup`, `range(0,1)` e `search_api_access_account` dentro do
+  purpose `forum`: anônimo total 1/página pública; ativo com membership total
+  2/página 1; ativo sem, suspenso e comum total 1. O total é filtrado antes da
+  paginação.
+- View `/pesquisar?keys=fgroup`: anônimo 200 só com o público; membro com os
+  dois; suspenso só com o público.
+- Em CLI, fora do purpose, o `ForumSearchQuerySubscriber` aplica
+  `forum_search_domain = __forum_scope_denied__`; a medição roda em
+  `runInPurpose('forum', ...)`.
+- Teardown: itens desindexados (`indexed_total=0`, tabela base vazia);
+  `restricted_group_type` vazio e `realm=all:21`.
+- Suíte Unit total: 173 testes / 1.003 asserções OK. PHPCS do Unit e do script
+  sem erros.
+
 ## F-GROUP 0.5 — cache, regressão pública e galeria, 2026-10-23
 
 - Revisão de consumidores: `UnusedMediaCleaner` recusa Media publicada,

@@ -1,4 +1,4 @@
-# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.5
+# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.6
 
 Documento das frentes **F-GROUP 0.1** (inventário e fundação), **0.2** (prova de
 grants em Kernel), **0.3** (herança em posts/comments e auditoria de anexos) e
@@ -190,17 +190,19 @@ Nenhum teste Runtime, Functional ou de navegador foi executado nesta frente.
 | Filtragem de listagem | `testNodeAccessQueryFiltersListing` (query com tag `node_access` por conta) | PASS (Kernel) |
 | Rebuild de um tópico | `testGrantRebuilderUpdatesSingleTopicWithoutFullRebuild` (público → restrito → público) | PASS (Kernel) |
 | Permissão de grupo ausente | Group proíbe a leitura de conteúdo agrupado sem `view group_node:aculta_forum_topic entity`; documentado como passo de ativação | Confirmado (Kernel) |
-| Conteúdo restrito em busca | Depende de Search API e node grants no Runtime | DEFERRED — índice não provisionado |
+| Conteúdo restrito em busca | `ForumPostSearchAccessTest` (Unit) e índice `aculta_forum` no Runtime | PASS (Unit e Runtime: anônimo 1, membro 2, suspenso 1) |
+| Contagem e paginação sob grants | Total filtrado antes de `range(0,1)` no Runtime | PASS (Runtime) |
 | Anexos e mídia | Media publicada pela referência; `media_access` e File revalidam a conta | PASS (Kernel) e PASS (Runtime: Media e download só para membro ativo) |
 | Invalidação de cache | Asserções de tags na sincronização e no rebuild | PASS (Unit) |
 | Isolamento de Group | Consultas só pelo tipo configurado; relação de outro tipo ignorada | PASS (Unit) |
-| Regressão do fórum público | Sem tipo configurado e tópico público não recebem grant restrito; outros bundles/operações seguem `neutral` | PASS (Unit); Runtime DEFERRED |
+| Regressão do fórum público | Sem tipo configurado e tópico público não recebem grant restrito; outros bundles/operações seguem `neutral` | PASS (Unit e Runtime: público 200 para todos) |
 | Regressão do Group LMS | `lms_course`/`lms_class` recusados com log de erro | PASS (Unit) |
 
-**Motivo dos DEFERRED restantes:** busca e contagem exigem Search API indexado
-no Runtime; a matriz de cache de página e a regressão do fórum público no
-Runtime ainda não foram medidas. Anexos, posts e Comments foram validados em
-Kernel e no Runtime controlado de 2026-10-23 (ver F-GROUP-E).
+**Motivo dos DEFERRED restantes:** o download HTTP do arquivo privado, o cache
+da View de busca, o caso de índice atrasado e a repetição com o tema Olivero
+ficam para a F-GROUP 0.7. Anexos, galeria, posts, Comments, busca, contagem,
+cache de página e regressão pública foram validados em Kernel/Unit e no Runtime
+controlado de 2026-10-23 (ver F-GROUP-E e F-GROUP 0.6).
 
 ## Riscos residuais
 
@@ -385,19 +387,50 @@ Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
   Estado final conferido: `realm=all:21`, zero tópicos, zero contas
   `fgroup_teste_*`, Group type, galerias, Media e Files da fixture ausentes. O
   backup permanece como garantia.
-- **Limitações:** busca e contagem não foram medidas (índice não provisionado);
-  o download HTTP do arquivo físico e a matriz de cache de busca continuam
-  pendentes.
+- **Limitações:** o download HTTP do arquivo físico e a matriz de cache de
+  busca continuam pendentes. A busca e a contagem foram medidas na F-GROUP 0.6.
+
+## F-GROUP 0.6 — busca e contagem sob grants (concluída)
+
+O índice `aculta_forum` tem `content_access` e o processor
+`forum_post_search_access`. A validação de 2026-10-23:
+
+- **Unit** `ForumPostSearchAccessTest` (4 testes / 11 asserções): a conta
+  anônima recebe `node_access__all` e `node_access_all:0`; o membro recebe
+  também `node_access_aculta_forum_restricted:<gid>`; conta sem `access
+  content` aborta; `search_api_bypass_access` omite a condição de grants.
+- **Runtime:** dois tópicos (restrito e público) indexados no servidor
+  `aculta_database`. Consulta `keys=fgroup` com `range(0,1)` e
+  `search_api_access_account` por conta:
+
+  | Conta | Total | Página |
+  | --- | --- | --- |
+  | Anônimo | 1 | público |
+  | Ativo com membership | 2 | público |
+  | Ativo sem membership | 1 | público |
+  | Suspenso com membership | 1 | público |
+  | Comum | 1 | público |
+
+  O total é filtrado **antes** da paginação: o membro tem total 2 e página 1.
+- **View pública:** `/pesquisar?keys=fgroup` anônima → 200, só o público;
+  membro ativo → os dois; suspenso → só o público.
+- **Contexto:** em CLI a query precisa rodar em
+  `runInPurpose('forum', ...)`; fora do purpose, o
+  `ForumSearchQuerySubscriber` adiciona `forum_search_domain =
+  __forum_scope_denied__` e o resultado é zero (comportamento esperado, não
+  falha de grants).
+- **Limpeza:** ao remover a fixture, o Search API desindexou os itens
+  (`indexed_total=0`, tabela base vazia). O ambiente voltou a
+  `restricted_group_type` vazio e `realm=all:21`.
 
 ## Próxima microfase recomendada
 
-**F-GROUP 0.6 — busca e contagem sob grants.** Validar o datasource
-`ContentEntity` e a paginação/contagem com `node_access` no Runtime, incluindo
-o caso de índice atrasado; cobrir em Kernel o processador de busca que já
-revalida a publicação e os grants do tópico. O índice `aculta_forum` já tem
-`content_access` e o processor `forum_post_search_access` configurados, mas a
-medição real depende de reindexar a fixture. O download HTTP do arquivo físico
-também fica para essa janela. Só depois avaliar a ativação em produção.
+**F-GROUP 0.7 — fechamento operacional antes da ativação.** Baixar o arquivo
+privado por HTTP com a conta autorizada e negá-lo às demais; medir o cache da
+View de busca e o caso de índice atrasado (item restrito ainda no índice após
+perder o grant); repetir a matriz de contas com o tema Olivero; e revisar o
+backup/rollback do Runtime com o roteiro operacional. Só depois avaliar a
+ativação em produção.
 
 ## Referências
 

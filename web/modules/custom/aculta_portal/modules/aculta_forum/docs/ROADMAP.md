@@ -125,8 +125,14 @@ PASS/DEFERRED e os riscos residuais ficam em
   `UNCACHEABLE`. Suspender leva a 403 e reativar volta a 200 sem `drush cr`.
   A galeria segue a mesma regra da Media. A ativação usa role sincronizada
   insider; a policy de acesso não é cacheada.
-- Próxima microfase **F-GROUP 0.6**: busca e contagem sob grants no Runtime,
-  com reindexação da fixture, e download HTTP real do arquivo privado.
+- Gate medido (0.6): busca e contagem sob grants. Unit do processor (4/11) e
+  Runtime com o índice `aculta_forum`: anônimo/sem membership/suspenso/comum
+  total 1 (público), ativo com membership total 2; `range(0,1)` prova a
+  filtragem antes da paginação. A View `/pesquisar` confirma por HTTP. Os itens
+  foram desindexados no teardown.
+- Próxima microfase **F-GROUP 0.7**: download HTTP do arquivo privado, cache
+  da View de busca, índice atrasado e repetição com Olivero antes de avaliar a
+  ativação em produção.
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

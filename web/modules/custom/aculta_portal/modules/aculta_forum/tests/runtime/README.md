@@ -12,6 +12,7 @@ autorização do responsável. Produção não participa.
 | `fgroup-provision.php` | `provision` | Cria Group type `forum_associados`, relação de tópico, role de membro **sincronizada insider** com `authenticated` e `view group_node:aculta_forum_topic entity`, um Group, quatro contas `fgroup_teste_*`, um tópico restrito, um tópico público e as situações em `aculta_associado`; ativa `restricted_group_type` e executa o rebuild de `node_access`. |
 | `fgroup-provision.php` | `teardown` | Desliga a frente, executa o rebuild, remove Group, tópicos, galerias, Media, Files, contas, associações, role e Group type e invalida caches. O conteúdo preexistente não é tocado. |
 | `fgroup-measure.php` | leitura | Mede `node_access`, `node->access('view')` e a query com tag `node_access` por conta, para o tópico restrito e o público; mede a listagem global; cria e remove um anexo privado e uma galeria de teste para medir `media_access`, `file->access('download')` e `entity_access` da galeria. |
+| `fgroup-search.php` | leitura | Indexa o `aculta_forum` e consulta `keys=fgroup` com `range(0,1)` por conta dentro do purpose `forum`; imprime total e página, provando que o filtro de grants ocorre antes da paginação. |
 
 ## Execução
 
@@ -41,6 +42,17 @@ Interromper se qualquer conta não elegível receber `can_view: true`, se o
 tópico restrito tiver grant `all:0` ou se o rebuild não concluir. Nesse caso,
 rodar o `teardown`; se o estado não voltar ao inicial, restaurar o backup
 validado. O `teardown` não apaga conteúdo preexistente.
+
+## Busca
+
+O `fgroup-search.php` roda entre o provision e o teardown. Ele indexa o
+`aculta_forum` e consulta por conta. A query precisa rodar dentro de
+`aculta_portal.domain_purpose->runInPurpose('forum', ...)`: fora do purpose, o
+`ForumSearchQuerySubscriber` adiciona a condição sentinela
+`forum_search_domain = __forum_scope_denied__` e o resultado é zero em CLI.
+A View pública `/pesquisar?keys=fgroup` pode ser medida por HTTP com e sem o
+cookie de login; espera-se o público para todos e o restrito só para o ativo
+com membership.
 
 ## Cache, regressão e revogação
 

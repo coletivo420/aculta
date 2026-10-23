@@ -115,9 +115,11 @@ provou a herança em posts e Comments; a 0.4 publica a Media e a Galeria
 referenciadas por tópico publicado e revalida a conta em `media_access`,
 `entity_access` da galeria e no download privado do File. A ativação usa role
 sincronizada insider (`authenticated`), não individual, e o resultado de acesso
-do tópico restrito não é cacheado. O Runtime de testes foi validado em janela
-controlada, com backup, e revertido ao estado inicial. Inventário, decisões,
-matriz de testes, riscos e a próxima microfase estão em
+do tópico restrito não é cacheado. A busca e a contagem filtram os grants antes
+da paginação: anônimo e suspenso veem só o tópico público; o ativo com
+membership vê os dois. O Runtime de testes foi validado em janela controlada,
+com backup, e revertido ao estado inicial. Inventário, decisões, matriz de
+testes, riscos e a próxima microfase estão em
 [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).
 
 ## Estado confirmado na auditoria
