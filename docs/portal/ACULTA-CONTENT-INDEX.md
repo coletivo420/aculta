@@ -26,6 +26,8 @@
 
 **Validação dev.160 (2026-10-23):** `ContentIndexConcurrencyKernelTest` passou integralmente em MariaDB (3 testes / 56 assertions), incluindo produtores PHP independentes, disputa de claim e preservação da sequência após conclusão obsoleta. O gate confirma as condições executadas na árvore atual; não é um benchmark de throughput de produção.
 
+**Runtime de teste (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
