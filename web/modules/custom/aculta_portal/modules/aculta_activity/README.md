@@ -1,5 +1,7 @@
 # ACULTA Activity
 
+**Versão:** `0.1.0-dev.5` — ciclo CRUD do provider coberto em Kernel.
+
 Módulo mínimo que estabelece `aculta_activity` como proprietário do bundle
 Node `activity`, seus hooks de formulário/Metatag, validação condicional e
 adapter no ACULTA Content Index. O Index recebe somente título, identidade,

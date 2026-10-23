@@ -35,7 +35,8 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
   [roadmap do Content Index](ACULTA-CONTENT-INDEX.md).
 - O submódulo proprietário `aculta_activity` implementa projeção mínima do Node
   `activity`, adapter tagged, hooks de formulário/Metatag e validação condicional;
-  Kernel/Unit cobrem provider e organização do formulário. Entregar e homologar
+  Kernel cobre provider, backfill e ciclo CRUD pelo worker real (2/29); Unit
+  cobre organização do formulário. Entregar e homologar
   junto do `aculta_portal`, sem linha de release independente. Workflow, autoria,
   migração e experiência editorial permanecem em decisões futuras.
 - IDX 0.1-R inclui a política de limpeza de posts/anexos. As APIs

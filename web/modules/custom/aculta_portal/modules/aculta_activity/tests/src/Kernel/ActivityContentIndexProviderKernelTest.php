@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_activity\Kernel;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -58,6 +59,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -102,6 +104,79 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertSame('Encontro de teste', $projection->label);
     self::assertSame([], $projection->relations);
     self::assertSame('main', $provider->getAccessPurpose($node));
+  }
+
+  /**
+   * Tests backfill, incremental update and deletion through the real worker.
+   */
+  public function testActivityProjectionFollowsEntityCrud(): void {
+    $activity = Node::create([
+      'type' => 'activity',
+      'title' => 'Atividade inicial',
+      'status' => TRUE,
+      'created' => 100,
+      'changed' => 200,
+    ]);
+    $activity->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The Activity provider backfill should complete.');
+    $this->processActivityWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    self::assertSame('Atividade inicial', $this->entryLabel($generationId, (string) $activity->id()));
+
+    $activity->setTitle('Atividade atualizada');
+    $activity->save();
+    $this->processActivityWork();
+    self::assertSame('Atividade atualizada', $this->entryLabel($generationId, (string) $activity->id()));
+
+    $activity->delete();
+    $this->processActivityWork();
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'activity')
+      ->condition('entity_id', (string) $activity->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Processes queued work belonging to the Activity provider.
+   */
+  private function processActivityWork(): void {
+    $database = $this->container->get('database');
+    $ids = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('provider_id', 'activity')
+      ->condition('status', 'queued')
+      ->execute()
+      ->fetchCol();
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    foreach ($ids as $id) {
+      $worker->processItem(['work_id' => (int) $id]);
+    }
+  }
+
+  /**
+   * Returns the label of one Activity entry in a generation.
+   */
+  private function entryLabel(string $generationId, string $entityId): string {
+    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry', ['label'])
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'activity')
+      ->condition('entity_id', $entityId)
+      ->execute()
+      ->fetchField();
   }
 
 }

@@ -1,5 +1,11 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.5 — cobrir ciclo CRUD do provider Index
+
+- Kernel ativa `aculta_activity` e verifica backfill, atualização e exclusão
+  através do worker real do Index: 2 testes / 29 assertions PASS em MariaDB.
+- A fixture instala `node_access`, necessário ao delete do Node no Core.
+
 ## 0.1.0-dev.4 — hooks e validação sob ownership do Activity
 
 - Movidos para `aculta_activity` os hooks de formulário e Metatag exclusivos do
