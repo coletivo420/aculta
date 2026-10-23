@@ -181,13 +181,14 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | Gate | Resultado |
 |---|---|
 | PHP lint dos arquivos alterados | **PASS** |
-| `phpunit` Unit do `aculta_portal` (todos os testes Unit) | **PASS**: 314 testes, 785 asserções; 6 deprecações já existentes |
+| `phpunit` Unit do `aculta_portal` (todos os testes Unit) | **PASS**: 321 testes, 803 asserções; 6 deprecações já existentes |
 | Testes Unit de Loja, LMS e Doações (caracterização, `CourseOrderEnrollmentManagerTest`, providers) | **PASS**: 43 testes |
 | `FiscalIdentityPolicyTest` (novo) | **PASS**: 7 testes |
 | `aculta_id_cpf/tests/run.php` | **PASS**: 248 verificações de domínio |
 | `git diff --check` (commits desta rodada) | **PASS** |
-| `php scripts/validate-project-status-index.php` | **PASS** (38 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
-| `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**, mesmo conjunto de falhas da linha de base (ex.: `WikiController.php` ausente). Nenhuma falha nova relacionada a checkout ou CPF |
+| `php scripts/validate-project-status-index.php` | **PASS** (39 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
+| `php scripts/validate-aculta-portal-drupal11.php` | **PASS** (1151 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 (ver 237) |
+| PHPUnit Kernel do `aculta_portal` (suíte completa, com `SIMPLETEST_DB` do banco dedicado de teste) | **PASS**: 41 testes, 618 asserções; 90 deprecações registradas (as exibidas vêm de contrib), sem falhas |
 | PHPCS Drupal/DrupalPractice nos arquivos novos e no formulário de Outros dados | **0 erros**; restam 16 avisos de linha longa (acima de 80 colunas), sem efeito funcional |
 | PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
 | PHPUnit Kernel do pane de identidade fiscal | **PASS** (6 testes), sem habilitar `aculta_portal`: classes instanciadas diretamente com o container do Commerce. Antes, a tentativa de habilitar o Portal esbarrava em dezenas de dependências. Histórico: **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
@@ -271,7 +272,7 @@ Medição feita comparando o conteúdo ativo de cada item com o arquivo de `conf
 4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
 5. **Avisos de linha longa** (16) nos arquivos de identidade fiscal e no formulário. Sem erros.
 6. **Runtime de teste e produção:** confirmar que `aculta_associado_id` não está habilitado antes de promover (seção 4).
-7. **Gate Drupal 11:** `WikiController.php` ausente (outra frente).
+7. **Gate Drupal 11:** resolvido. O `WikiController` foi movido para `aculta_wiki` e o gate passa (1151 verificações).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
 9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): não verificados. Bloqueado por acesso: é preciso a URL do site de testes (`*.aculta.toca.net.br`) e uma conta de teste. Enquanto isso, ficam como pendência documentada, sem PASS/FAIL.
 10. **Drift dos 29 itens de configuração:** classificado e decidido em 9.5 (4 de ordem + 25 com sync desatualizado). Nada importado. A correção depende dos donos de `aculta_index`, `aculta_wiki` e fórum e de uma rodada de `config:export` revisada.
