@@ -84,15 +84,12 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Resolves the canonical implementation, retaining the legacy service during migration.
+   * Resolves the official CPF/CNPJ implementation (aculta_id_cpf); NULL when the module is not enabled.
    */
   private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
-    foreach (['aculta_associado_id.account_document', 'aculta_id_cpf.account_document'] as $service_id) {
-      if ($container->has($service_id)) {
-        return $container->get($service_id);
-      }
-    }
-    return NULL;
+    return $container->has('aculta_id_cpf.account_document')
+      ? $container->get('aculta_id_cpf.account_document')
+      : NULL;
   }
 
   /**
