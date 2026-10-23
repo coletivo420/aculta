@@ -1,3 +1,5 @@
+> **Retificação arquitetural — 2026-10-22:** O código `CartCheckoutRouteSubscriber` tem finalidade **intencional** de selecionar checkout dedicado/comum/ambos. B-01 deixa de ser tratado como remoção de funcionalidade e passa a ser a **migração da orquestração para `aculta_portal`**, com preservação de `donate|cart|both`, compatibilidade e controle contextual por pedido. Ver [ADR-013](../../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Os achados abaixo permanecem como pontos de caracterização e testes, não prova de erro operacional.
+
 # ACULTA Commerce 0.1.0-B — Contratos de pagamento e isolamento
 
 Data: 2026-10-22. Base: inspeção estática da branch `docs/aculta-forum-0.1.0-dev.1`. Nenhuma afirmação de PASS em runtime.
