@@ -52,3 +52,7 @@ Entrada canônica `/estudio/loja`; páginas internas `/estudio/loja/{secao}` com
 ## Catálogo inicial com busca (GS-0.2-C.2)
 
 A rota `/estudio/loja/produtos` agora aceita parâmetros GET `busca` (título, até 100 caracteres) e `antes` (cursor numérico de paginação), apresenta até 20 produtos autorizados e só gera links nativos Commerce de edição. O leitor aplica acesso da entidade e permissão na loja, sem divulgar totais privados. A interface ainda é provisória e **não substitui** os componentes SDC/UI Suite planejados para o ACULTA420. Testes de integração e homologação permanecem pendentes.
+
+## Contrato obrigatório de edição Green Stash
+
+O Green Stash substitui a interface operacional nativa Commerce para a loja. Produtos, variações, estoque e envios devem ser geridos por fluxos Studio, **não** por links para `edit-form` administrativo. O link nativo anterior foi retirado da listagem até existir a edição própria. Usar Commerce como backend e ACULTA420 SDC/UI Suite na apresentação. Ver [contrato de operações](docs/GREEN-STASH-OPERATIONS-CONTRACT.md).
