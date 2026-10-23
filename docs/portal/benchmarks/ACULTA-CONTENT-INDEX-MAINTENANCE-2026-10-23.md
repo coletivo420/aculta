@@ -22,22 +22,21 @@ nem definem SLO.
 - Não há traduções adicionais nem relações no fixture. Falhas, concorrência
   entre processos, outros providers, Domains e grants não foram medidos.
 
-## Execução de 1M em andamento — evidência intermediária, não resultado
+## Primeira execução de 1M interrompida; repetição corrigida em andamento
 
-A execução MariaDB iniciada em 2026-10-23 às 04:17 BRT carregou o harness antes
+A execução antiga iniciou em 2026-10-23 às 04:17 BRT e carregou o harness antes
 dos commits `c401f504` (05:57 BRT), que desativa temporariamente o registry
 durante a criação sintética para não criar jobs incrementais, e `9bc4f952`
-(06:03 BRT), que mede a cauda da auditoria por fase. Portanto ela não mede essas
-duas alterações e não serve como resultado final da versão corrigida.
+(06:03 BRT), que mede a cauda da auditoria por fase. Após decisão do responsável,
+foi interrompida em `node:220500`, com 220.500 entradas e 1.000.000 jobs ainda
+queued. O resultado parcial é somente diagnóstico; não comparar nem reportar
+como tempo do Index.
 
-Observações anteriores às 06:50 BRT mostravam 81.056 entradas e checkpoint
-`node:82.500`, revisão 98, estado `building`. Às 07:45 BRT, uma consulta
-direta ao prefixo temporário do processo confirmou exatamente 220.500 entradas,
-checkpoint `node:220500`, revisão 441 e 1.000.000 jobs ainda `queued`. A
-execução continua avançando. O volume de fila decorre do harness antigo e não
-deve ser atribuído ao custo medido do rebuild/auditoria. A execução deve
-terminar antes de repetir 1M com o harness atual; não comparar essa rodada com
-os resultados de 10k/100k nem registrar seu tempo como capacidade do Index.
+A repetição corrigida iniciou em 2026-10-23 às 08:56 BRT no banco dedicado
+`localhost/aculta_simpletest`, com o código que suprime a fila no setup e mede
+setup, rebuild e auditoria separadamente. O teste exige zero jobs criados para
+as fontes sintéticas e zero divergências ao concluir. A execução está em curso;
+nenhum resultado de 1M foi medido ainda.
 
 ## Resultados
 

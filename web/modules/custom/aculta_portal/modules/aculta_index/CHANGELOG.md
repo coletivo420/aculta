@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.127 — repetir benchmark 1M com harness corrigido
+
+- A execução antiga foi interrompida após a decisão do responsável, com cerca de
+  220.500/1.000.000 entradas e 1.000.000 jobs pendentes; o resultado parcial é
+  diagnóstico e não será usado como medição.
+- Nova execução iniciada em 2026-10-23 às 08:56 BRT no `aculta_simpletest`, com
+  supressão de jobs durante o setup e métricas separadas por fase. Resultado
+  ainda pendente.
+
 ## 0.1.0-dev.126 — validar comandos Drush no Runtime de teste
 
 - No Homelab `toca` (Drupal 11.4.10, Drush 13.8.0), `drush list --raw`
