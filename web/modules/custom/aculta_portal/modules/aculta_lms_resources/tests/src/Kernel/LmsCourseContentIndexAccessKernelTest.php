@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
-use Drupal\aculta_lms_resources\ContentIndex\LmsCourseContentIndexProvider;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -22,7 +21,10 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Content Index LMS policy with real Group courses and memberships.
@@ -91,6 +93,20 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+
+    // Compile the provider's production declaration and tag from the owner
+    // module without enabling its full dependency chain in this Kernel.
+    $ownerServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_lms_resources/aculta_lms_resources.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $service = $ownerServices['aculta_lms_resources.course_content_index_provider'];
+    $definition = (new Definition($service['class'], [new Reference('aculta_portal.domain_purpose')]))
+      ->setPublic(TRUE);
+    foreach ($service['tags'] ?? [] as $tag) {
+      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_lms_resources.course_content_index_provider', $definition);
   }
 
   /**
@@ -154,7 +170,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $course->addMember($student, ['group_roles' => ['lms_course-index_student']]);
     $course->addMember($educator, ['group_roles' => ['lms_course-index_educator']]);
 
-    $provider = new LmsCourseContentIndexProvider($this->container->get('aculta_portal.domain_purpose'));
+    $provider = $this->container->get('aculta_lms_resources.course_content_index_provider');
     $providers = new ContentIndexProviderRegistry([$provider]);
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
