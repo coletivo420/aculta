@@ -182,7 +182,7 @@ final class WikiLeadImageUploader {
       $form_state->setValue([self::FIELD], [['target_id' => (int) $media->id()]]);
     }
     catch (\Throwable $exception) {
-      $this->rollbackSubmission();
+      $this->rollbackSubmission($form_state);
       throw $exception;
     }
   }
@@ -218,7 +218,7 @@ final class WikiLeadImageUploader {
       $media->save();
     }
     catch (\Throwable $exception) {
-      $this->rollbackSubmission();
+      $this->rollbackSubmission($form_state);
       throw $exception;
     }
   }
@@ -229,7 +229,7 @@ final class WikiLeadImageUploader {
   public function saveNode(array &$form, FormStateInterface $form_state): void {
     $formObject = $form_state->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
-      $this->rollbackSubmission();
+      $this->rollbackSubmission($form_state);
       throw new \UnexpectedValueException('O formulário da Wiki não é um formulário de entidade.');
     }
 
@@ -237,12 +237,12 @@ final class WikiLeadImageUploader {
       $formObject->save($form, $form_state);
     }
     catch (\Throwable $exception) {
-      $this->rollbackSubmission();
+      $this->rollbackSubmission($form_state);
       throw $exception;
     }
 
     if ($form_state->isRebuilding()) {
-      $this->rollbackSubmission();
+      $this->rollbackSubmission($form_state);
     }
     else {
       $this->commitSubmission();
@@ -297,10 +297,22 @@ final class WikiLeadImageUploader {
   /**
    * Rolls back the image transaction after a failed Node submission.
    */
-  private function rollbackSubmission(): void {
+  private function rollbackSubmission(FormStateInterface $form_state): void {
     $transaction = $this->submissionTransaction;
     $this->submissionTransaction = NULL;
     $transaction?->rollBack();
+
+    // Database rollback does not invalidate entity objects already loaded in
+    // Drupal's static caches. A rebuilt form may retry the same managed file,
+    // so make it look temporary again and discard the rolled-back Media ID.
+    $stored = $form_state->get(self::STORAGE_KEY);
+    $fid = $this->uploadedFids($form_state)[0] ?? (is_array($stored) ? (int) ($stored['fid'] ?? 0) : 0);
+    if ($fid > 0) {
+      $this->entityTypeManager->getStorage('file')->resetCache([$fid]);
+    }
+    $mediaId = is_array($stored) ? (int) ($stored['media_id'] ?? 0) : 0;
+    $this->entityTypeManager->getStorage('media')->resetCache($mediaId > 0 ? [$mediaId] : NULL);
+    $form_state->set(self::STORAGE_KEY, NULL);
   }
 
 }

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.33 — retry seguro de upload após rebuild
+
+- Rollback invalida caches de File e Media e limpa a chave temporária no
+  FormState. Um retry do mesmo upload passa a carregar o arquivo temporário e
+  criar uma nova Media dentro da transação nova.
+- Kernel cobre rebuild/rollback, reenvio do mesmo arquivo, publicação final e
+  ausência de Media órfã. Focal: 1 teste / 33 asserções; classe Kernel: 10
+  testes / 447 asserções; Unit do uploader: 12 testes / 79 asserções.
+- Depreciações upstream registradas. Runtime desabilitado.
+
 ## 0.1.0-dev.32 — modos de lista em categorias e relações
 
 - Kernel prova a escolha por proposta: categorias acrescentadas com

@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.32**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.33**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.33 — retry seguro de imagem após rebuild
+
+Falhas/rebuilds revertem Media e File em transação, limpam caches das entidades
+e removem a chave temporária do FormState. Kernel prova nova tentativa com o
+mesmo arquivo e ausência de órfãos (focal: 1 teste / 33 asserções; classe: 10
+testes / 447 asserções). Unit do uploader: 12 testes / 79 asserções.
 
 ### Incremento dev.32 — listas de categorias e relações
 

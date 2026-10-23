@@ -3,6 +3,16 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## R2 — ciclo de vida da imagem (dev.33)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Media/File acompanham publicação | Kernel | Imagem de rascunho fica privada; publicação torna Media e download acessíveis | aprovado previamente |
+| Falha/rebuild e retry do mesmo arquivo | Kernel | Rollback limpa caches/chave; retry grava um único Media ligado ao Node | aprovado (focal: 1 / 33; classe: 10 / 447; Unit: 12 / 79) |
+| Falha no Node save | Kernel | Media removida e File volta a temporário | aprovado previamente |
+| Remoção com revisão antiga | Kernel | Media/File permanecem enquanto revisão ainda referencia a imagem | aprovado previamente |
+| Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
+
 ## R2 — rotas, domínio e acesso (dev.30)
 
 | Cenário | Tipo | Resultado esperado | Estado |

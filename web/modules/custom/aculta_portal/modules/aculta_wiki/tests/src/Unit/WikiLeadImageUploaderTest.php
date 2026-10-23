@@ -204,7 +204,10 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
     self::assertSame(!$rebuild, $transaction->committed);
     self::assertSame($rebuild, $transaction->rolledBack);
     self::assertSame([['target_id' => 12]], $form_state->getValue([WikiLeadImageUploader::FIELD]));
-    self::assertSame(['fid' => 5, 'media_id' => 12], $form_state->get(WikiLeadImageUploader::STORAGE_KEY));
+    self::assertSame(
+      $rebuild ? NULL : ['fid' => 5, 'media_id' => 12],
+      $form_state->get(WikiLeadImageUploader::STORAGE_KEY),
+    );
   }
 
   /**

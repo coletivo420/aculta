@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.33`: retry de imagem após rebuild limpa caches e estado temporário
+  revertido; Kernel confirma novo envio sem órfãs. Focal: 1 teste / 33
+  asserções; classe Kernel: 10 testes / 447 asserções; Unit do uploader: 12
+  testes / 79 asserções.
 - `0.1.0-dev.32`: Kernel cobre `append`/`replace` em categorias e relações, com
   deduplicação e destinos visíveis no domínio Wiki. Focal: 1 teste / 132
   asserções; classe Kernel: 9 testes / 414 asserções. Runtime desabilitado.

@@ -291,6 +291,62 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * A form rebuild retries the same upload without a stale Media or File cache.
+   */
+  public function testRebuiltUploadCanBeRetriedWithoutOrphans(): void {
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage($owner->id());
+    $fileId = (int) $file->id();
+    $state = $this->uploadState($fileId);
+    $form = [];
+    $uploader = $this->uploader();
+    $uploader->applyUpload($form, $state);
+    $rolledBackMediaId = (int) $state->getValue([WikiLeadImageUploader::FIELD, 0, 'target_id']);
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Imagem após reconstrução do formulário',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $rolledBackMediaId],
+    ]);
+    $attempt = 0;
+    $formObject = $this->entityForm($node, function () use (&$attempt, $state, $node): void {
+      if ($attempt++ === 0) {
+        $state->setRebuild();
+        return;
+      }
+      $state->setRebuild(FALSE);
+      $node->save();
+    });
+    $state->setFormObject($formObject);
+
+    $uploader->prepareNodeSave($form, $state);
+    $uploader->saveNode($form, $state);
+
+    self::assertNull(Media::load($rolledBackMediaId));
+    self::assertNull(Node::load((int) $node->id()));
+    self::assertNull($state->get(WikiLeadImageUploader::STORAGE_KEY));
+    $fileStorage = $this->container->get('entity_type.manager')->getStorage('file');
+    $fileStorage->resetCache([$fileId]);
+    self::assertTrue($fileStorage->load($fileId)->isTemporary());
+
+    $uploader->applyUpload($form, $state);
+    $savedMediaId = (int) $state->getValue([WikiLeadImageUploader::FIELD, 0, 'target_id']);
+    $node->set(WikiLeadImageUploader::FIELD, $state->getValue([WikiLeadImageUploader::FIELD]));
+    $uploader->prepareNodeSave($form, $state);
+    $uploader->saveNode($form, $state);
+
+    $savedMedia = Media::load($savedMediaId);
+    self::assertInstanceOf(Media::class, $savedMedia);
+    self::assertTrue($savedMedia->isPublished());
+    self::assertTrue(Node::load((int) $node->id())->get(WikiLeadImageUploader::FIELD)->entity->access('view', new AnonymousUserSession()));
+    self::assertSame(1, (int) $this->container->get('entity_type.manager')->getStorage('media')
+      ->getQuery()->accessCheck(FALSE)->condition('field_media_image.target_id', $fileId)->count()->execute());
+    $fileStorage->resetCache([$fileId]);
+    self::assertFalse($fileStorage->load($fileId)->isTemporary());
+  }
+
+  /**
    * Removing an image preserves it while an older Node revision references it.
    */
   public function testRemovingImagePreservesMediaReferencedByOlderRevision(): void {

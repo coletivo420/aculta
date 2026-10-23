@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.33 R2: ao reverter upload por erro/rebuild, invalidar caches de File/Media
+  e limpar a referência temporária do FormState. Isso permite tentar o mesmo
+  upload de novo sem duplicar Media nem tratar como permanente o arquivo cujo
+  commit foi revertido.
 - Dev.32: Kernel prova `replace`/`append` para categorias e relações da Wiki,
   com acesso e domínio revalidados na aplicação.
 - Dev.31: Kernel prova as escolhas `append` e `replace` em referências, com
