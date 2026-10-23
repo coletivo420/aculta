@@ -30,12 +30,12 @@ durante a criação sintética para não criar jobs incrementais, e `9bc4f952`
 (06:03 BRT), que mede a cauda da auditoria por fase. Portanto ela não mede essas
 duas alterações e não serve como resultado final da versão corrigida.
 
-Na observação às 06:41 BRT, o InnoDB estimava 995.136 Nodes, 994.044 linhas de
-fila incremental e 60.990 entradas no catálogo; o checkpoint do rebuild estava
-em `node:62.000`, revisão 98, estado `building`. Uma observação anterior do
-mesmo processo registrava 48.156 entradas e checkpoint `node:49.000`, portanto
-o rebuild continua avançando. `TABLE_ROWS` é estimativa do `information_schema`,
-não contagem exata. O volume de fila decorre do harness antigo e não deve ser
+Na observação às 06:50 BRT, o InnoDB estimava 995.136 Nodes, 994.044 linhas de
+fila incremental e 81.056 entradas no catálogo; o checkpoint do rebuild estava
+em `node:82.500`, revisão 98, estado `building`. A observação das 06:41
+registrava 60.990 entradas e checkpoint `node:62.000`, portanto o rebuild
+continua avançando. `TABLE_ROWS` é estimativa do `information_schema`, não
+contagem exata. O volume de fila decorre do harness antigo e não deve ser
 atribuído ao custo medido do rebuild/auditoria. A execução deve terminar antes
 de repetir 1M com o harness atual; não comparar essa rodada com os resultados de
 10k/100k nem registrar seu tempo como capacidade do Index.
