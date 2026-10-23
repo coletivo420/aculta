@@ -1,61 +1,56 @@
-# ADR — Carrinhos e checkout multi-contexto no ACULTA Portal
+# ADR-013 — Coordenação administrativa de carrinhos e checkouts no ACULTA Portal
 
-**Status:** aprovado para planejamento; implementação e migração pendentes. **Data:** 2026-10-22.
+**Status:** aprovado como planejamento; nenhuma alteração funcional habilitada. **Revisão:** 2026-10-22. Esta versão substitui integralmente a proposta anterior de interface pública multi-carrinho.
 
-## Decisão
+## Decisão obrigatória
 
-O **aculta_portal** é o dono da coordenação transversal de carrinhos, seleção de checkout, resolução de contexto e navegação de compras. **Não** delegar essa função ao `aculta_commerce` nem ao `aculta_donation`. O Drupal Commerce permanece fonte de verdade de pedidos, itens, carrinhos, preços, flows, pagamentos e estoque.
+O `aculta_portal` será proprietário da **orquestração técnica e administrativa** de carrinhos e da seleção de modalidades de checkout de Loja, LMS e Doações. **Não criar novo carrinho público, não alterar o carrinho existente na barra multidomínio nem modificar a experiência ou os critérios atuais de seleção do checkout.**
 
-- `aculta_commerce`: catálogo, operações da loja e Green Stash (Studio); fornece adaptador de contexto `store`.
-- `aculta_lms`: compra de cursos, autorização e concessão de matrícula; fornece adaptador `lms`.
-- `aculta_donation`: doação dedicada, campanha e recorrência; fornece adaptador `donation` e preserva `donate|cart|both`.
-- `aculta_pagamentos_mercadopago`: gateway central usado por loja, LMS e doações; sem cópia de código ou separação artificial de gateway.
-- `aculta_statistics`: métricas derivadas e segmentadas; evitar duplicação de pedidos/receita.
-- `aculta_studio`: Green Stash é interface administrativa própria da loja e não o carrinho do comprador.
+A mudança consiste em reunir contratos, seleção e configurações hoje dispersas em uma infraestrutura central de administração, com transferência progressiva de ownership — **não uma migração de UX do consumidor**.
 
-## Interface funcional: quatro abas internas
+## Contratos de preservação
 
-| Aba | Função | Ação de checkout |
-|---|---|---|
-| **Comum** | Visão consolidada de todos os carrinhos autorizados e elegíveis, separados por origem, loja, moeda e pedido | Encaminha cada grupo ao checkout adequado. **Não** cria pedido único nem soma impostos e frete incompatíveis |
-| **Loja** | Carrinho de produtos, variações e frete | Checkout comercial configurado para o pedido |
-| **LMS** | Carrinho de cursos e acesso educativo | Checkout LMS configurado para o pedido, matrícula após confirmação válida |
-| **Doações** | Carrinho de doação avulsa e campanhas, inclusive entrada dedicada | `donate`, `cart` ou `both`; assinatura permanece fluxo segregado |
+1. O **carrinho atual da barra multidomínio** permanece em sua posição, com o mesmo ícone, contador, comportamento, visibilidade, links, estilo e interações. Auditar código e criar testes de caracterização antes de tocar nesses contratos. Proibido mover o carrinho para `main`, criar página pública de quatro abas ou substituir menus públicos.
+2. O atual seletor de checkout deve funcionar exatamente como antes, inclusive as três modalidades do Donation `donate`, `cart` e `both`, suas rotas, requisitos, redirecionamentos e configurabilidade.
+3. **Drupal Commerce** mantém carrinhos, pedidos, order items, flows, preços, shipping e transações; **Mercado Pago central** em `aculta_pagamentos_mercadopago` atende loja, LMS e doações, preservados seus webhooks e regras de estorno.
+4. `aculta_commerce` administra Loja e Green Stash; `aculta_lms` administra compras e matrículas educacionais; `aculta_donation` mantém campanhas, doações, checkout dedicado, assinaturas e regras específicas. Providers de configuração podem ser integrados ao Portal, sem perda dos fluxos originais.
+5. `aculta_portal` não cria entidades duplicadas nem faz suposições de classificação usando somente o domínio: tipo de pedido, item, store e regras proprietárias continuam determinantes.
+6. Não alterar configuração armazenada, IDs ou pedidos históricos sem compatibilidade testada e rollback.
 
-A aba Comum é uma **interface agregadora**, não um novo tipo de pedido por padrão. Um checkout efetivamente unificado só poderá ser desenvolvido com ADR posterior que detalhe compatibilidade de order item types, moedas, lojas, regras fiscais, shipping, campanhas, recorrência, estados, reembolsos e fulfillment. Pedidos incompatíveis nunca devem ser fundidos automaticamente.
+## Interface interna administrativa: quatro abas
 
-A navegação será mobile-first: abas internas ou seletor acessível em telas estreitas, indicação de contagem, estado vazio por contexto, filtros de elegibilidade, atualização AJAX progressiva com fallback HTTP, foco/teclado/ARIA, clareza de subtotais por pedido e moeda e decisões explícitas antes do pagamento. O carrinho permanece na área `main`; cabeçalho multidomínio mantido globalmente. Tema `aculta420` implementa componentes apenas em SDC/UI Suite, light/dark.
+**Comum | Loja | LMS | Doações** são abas **administrativas exclusivas**, dentro do painel interno do Portal. Não são mostradas ao consumidor nem substituem o carrinho global.
 
-## Contratos técnicos propostos (não existentes ainda)
+- **Comum:** visão e configuração transversal de disponibilidade, roteamento, opções de checkout compartilhadas, políticas globais, prioridades/resolução de conflito, diagnósticos e referências de integração. Não cria pedido/carrinho agregado.
+- **Loja:** mapeamentos de tipos de pedido/item, opções do checkout comercial, estados operacionais e configuração do provider `aculta_commerce`; gestão detalhada da loja continua no Green Stash.
+- **LMS:** associações de tipos e flows educacionais, regras de elegibilidade/entitlement e referências ao provider do LMS; não modifica matrícula nem curso diretamente.
+- **Doações:** painel das opções existentes `donate|cart|both`, mapeamentos, checkout dedicado/comum, assinaturas e regras configuráveis mantendo `aculta_donation` dono do negócio.
 
-- `aculta_portal.checkout_context_registry`: descoberta de providers por tag/interface; IDs estáveis `store`, `lms`, `donation`, extensíveis; usar dependency injection e evitar dependências circulares.
-- `CheckoutContextProviderInterface`: `id()`, `label()`, `supports(OrderInterface)`, `access(OrderInterface, AccountInterface)`, `allowedCheckoutModes(OrderInterface)`, `resolveCheckoutRoute(OrderInterface)`; implementação adaptada às APIs instaladas após inventário.
-- `CartContextResolver`: consulta `CartProviderInterface`, `CartSessionInterface` e Commerce; seleciona carrinhos por tipo/itens/loja/conta, não `reset(getCartIds())`. Verifica ownership e cache contexts/tags.
-- `CheckoutSelectionManager`: decide modalidade `dedicated`, `common`, `both` por provider e entidade; conserva escolha por **contexto de carrinho/pedido**, não por sessão PHP global compartilhada. Sessão só guarda seleção temporária com namespace/contexto, jamais autoriza compras.
-- `CartDashboardController`: fornece render arrays e APIs de interação com políticas explícitas; não cria storage próprio. Rotas públicas e checkout existentes preservados inicialmente.
-- `CartCheckoutRouteSubscriber` hoje em donation: funcionalidade legítima de habilitar ou desabilitar entradas; port/migração progressiva para Portal, **sem remover comportamentos antes de caracterizar o sistema real**.
+A interface deve ter rotas internas com **permissões administrativas específicas**, access checks no servidor, Form API e Config API, validação e mensagens de erro; impedir exposição de segredos. Layout em abas SDC/UI Suite no tema `aculta420`, mobile-first, light/dark, teclado/ARIA; AJAX apenas progressivo com fallback HTTP. **Não modificar o cabeçalho multidomínio.** O painel administrativo pode ser renderizado na região `main` sem mover o carrinho público.
 
-## Segurança e limites
+## Contratos técnicos propostos, ainda não implementados
 
-1. Nunca selecionar pedido só pela primeira ID da sessão; validar store, dono, estado, tipo, elegibilidade, conteúdo e acesso.
-2. Preservar requisitos nativos de acesso do Commerce, CSRF, acesso por entidade e proteção de cache. Rota compilada não pode depender do pedido atual; avaliação contextual ocorre por requisição.
-3. Não expor pedidos de LMS/doação em Green Stash; `main` e `shop` são purposes de domínio, não tipos de negócio.
-4. O webhook Mercado Pago permanece único; reconciliação idempotente e políticas de estorno continuam com módulos proprietários.
-5. Não indexar carrinhos, endereços ou pagamentos no ACULTA Content Index. Apenas catálogo público com adaptadores autorizados.
-6. Migrar `aculta_donation.settings` por leitura compatível antes de corte; preservar históricos, IDs e configuração exportada.
+- Serviço central `aculta_portal.checkout_policy_manager` ou nome equivalente, como camada sobre Commerce e os providers.
+- Registry de providers por contrato explícito e tags de serviços; providers de Loja, LMS e Doações indicam políticas e valores de configuração **sem** dependência circular entre Portal e submódulos.
+- Separar **configuração administrativa** de **avaliação de acesso em runtime**. Não armazenar preferências novas por usuário/sessão e não alterar a seleção atual sem testes de equivalência.
+- Portar/adaptar a coordenação transversal de `aculta_donation/src/EventSubscriber/CartCheckoutRouteSubscriber.php` e `DonationSettingsForm.php` gradualmente, conservando todas as modalidades atuais. Preservar os métodos próprios de checkout do Donation e o gateway.
+- Uma rota global compilada não pode ser tornada específica de pedido via parâmetro de sessão. Caracterizar primeiro os efeitos atuais e somente então migrar seu ownership, sem mudanças observáveis.
+- Administrar mapeamentos via validação dos tipos de pedido/checkout flow já existentes; evitar reatribuir silenciosamente tipos de pedido de outras experiências.
 
-## Plano versionado
+## Fases de entrega
 
-- **P-0.1-A:** inventariar rotas, serviços, `config/sync`, order/item types, checkout flows e consumidores dos três contextos. Reproduzir `donate|cart|both`.
-- **P-0.1-B:** interfaces e registry neutros no Portal, sem mudança de rotas; testes unitários de seleção, conflitos, sem provider e cache.
-- **P-0.1-C:** adaptadores Donation/Commerce/LMS, guardas de conflito e modo comum por contexto; não duplicar checkout.
-- **P-0.1-D:** resolução de carrinhos simultâneos e seleção por entidade, contratos de acesso; testar convidado e autenticado.
-- **P-0.2-A:** migrar propriedade do subscriber e da configuração global para Portal com deprecation transitória, teste de equivalência de rotas e rollback; telas de doação continuam no Donation.
-- **P-0.2-B:** aba **Comum** mais Loja/LMS/Doações, render arrays e componentes SDC/UI Suite; URLs acessíveis, fallback sem JS e AJAX progressivo.
-- **P-0.2-C:** habilitar seleção de checkout por contexto e persistência da preferência dentro dos limites da sessão, com validação no pedido; jamais na sessão inteira.
-- **P-0.3:** pagamentos e fluxos ponta a ponta no homelab, observabilidade via Statistics, hardening, performance e testes UI.
-- **P-1.0:** estabilização após aceite e documentação de manutenção.
+- **P-CART A — Caracterização:** localizar componentes e testes do carrinho multidomínio (ícone, contador, comportamento, URLs), roteamento, seletores `donate|cart|both`, configs e order types. Capturar linha de base.
+- **P-CART B — Contratos:** registry e interfaces de configuração no Portal, sem mudar o público; testes unitários.
+- **P-CART C — Integração:** providers de Loja/LMS/Doações e leituras administrativas compatíveis; testes Kernel, sem corte de configuração.
+- **P-CART D — Transferência do seletor:** portar coordenação do subscriber para Portal por passos, compatibilidade de config antiga e testes de equivalência/rollback. Não duplicar subscribers ativos.
+- **P-CART E — Administração:** quatro abas **internas** Comum/Loja/LMS/Doações; UI Suite/SDC, Form API, ACL e fallback sem JS; NÃO criar carrinho público.
+- **P-CART F — Hardening:** configuração, segurança, conflito de ownership, observabilidade com Statistics quando relevante; não indexar pedidos/carrinhos no Content Index.
+- **P-CART T — Homologação:** homelab, testes unitários/Kernel/Functional/Browser, três fluxos no sandbox, gestão das configurações e regressão visual e de comportamento do carrinho do cabeçalho; registrar PASS/FAIL e rollback.
 
-## Gates no servidor de testes
+## Gates rígidos no servidor de testes
 
-Validar checkout da loja, compra LMS e doação avulsa/recorrente, carrinhos simultâneos e alternância das quatro abas; reentrada e logout; domínio multi-host; alteração de `donation_route`; checkout dedicado e comum; Mercado Pago sandbox, webhook assinado/repetido, estados e estorno autorizado; renderização mobile/light/dark e fallback sem JavaScript. Registrar PASS/FAIL sanitizados e procedimentos de rollback. **Sem runtime verificado, nenhuma migração de rotas está homologada.**
+Antes e depois da migração, comparar as mesmas rotas, configs, botões, contadores, redirecionamentos, ordem dos checkouts, status HTTP, permissões, DOM e modo mobile/desktop do carrinho multidomínio. Confirmar `donate|cart|both`, pedidos de Loja/LMS/Doações, guest/auth, domínio cruzado, checkout e webhook assinado, assinaturas, pagamentos e estornos conforme política. Rodar suíte do Portal/tema e testes de acessibilidade. Sem essas provas, declarar **BLOCKED/DEFERRED**, jamais PASS.
+
+## Regras de execução
+
+Fases pequenas, commits isolados na branch/PR existente. Não forçar push, reset, apagar dados, criar PR, mudar checkout ativo sem baseline ou tocar código de outros agentes. Documentar cada etapa em Portal, Commerce e Donation; executar localmente o possível e deixar somente gates dependentes do homelab.
