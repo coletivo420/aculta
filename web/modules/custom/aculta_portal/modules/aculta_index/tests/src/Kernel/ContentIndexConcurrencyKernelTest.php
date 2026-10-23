@@ -240,18 +240,23 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
     $configurationPath = tempnam(sys_get_temp_dir(), 'aculta-index-process-db-');
     $barrierPath = tempnam(sys_get_temp_dir(), 'aculta-index-process-barrier-');
     if ($configurationPath === FALSE || $barrierPath === FALSE) {
+      if (is_string($configurationPath)) {
+        @unlink($configurationPath);
+      }
+      if (is_string($barrierPath)) {
+        @unlink($barrierPath);
+      }
       throw new \RuntimeException('Could not allocate temporary process-test files.');
     }
-    chmod($configurationPath, 0600);
-    unlink($barrierPath);
-    $configuration = json_encode(['connection' => $connectionOptions], JSON_THROW_ON_ERROR);
-    if (file_put_contents($configurationPath, $configuration, LOCK_EX) !== strlen($configuration)) {
-      unlink($configurationPath);
-      throw new \RuntimeException('Could not write temporary process-test database options.');
-    }
-
     $processes = [];
     try {
+      chmod($configurationPath, 0600);
+      unlink($barrierPath);
+      $configuration = json_encode(['connection' => $connectionOptions], JSON_THROW_ON_ERROR);
+      if (file_put_contents($configurationPath, $configuration, LOCK_EX) !== strlen($configuration)) {
+        throw new \RuntimeException('Could not write temporary process-test database options.');
+      }
+
       foreach ($workers as $worker) {
         $descriptors = [
           0 => ['pipe', 'r'],

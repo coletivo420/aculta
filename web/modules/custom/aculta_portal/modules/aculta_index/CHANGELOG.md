@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.129 — garantir limpeza dos arquivos do harness concorrente
+
+- A limpeza dos arquivos temporários agora cobre falhas parciais ao alocar ou
+  gravar opções do banco de teste; credenciais de conexão permanecem em arquivo
+  temporário com modo `0600` e são removidas em `finally`.
+- PHP lint e PHPCS Drupal passaram. O Kernel MariaDB segue aguardando o benchmark
+  de 1M no banco dedicado.
+
 ## 0.1.0-dev.128 — adicionar estresse concorrente com processos PHP
 
 - Kernel MariaDB cria quatro produtores PHP com 25 eventos cada para a mesma
