@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.40 — route de criação da WE SATIVA no domínio Wiki
+
+- O Kernel confirma que a rota nativa `node.add` permite criação à conta
+  confirmada com a permissão da Wiki. O link “Criar verbete” gerado no
+  workspace do Studio conserva os parâmetros da rota e aponta explicitamente
+  para o domínio Wiki, mesmo com o Domain ativo em `main`.
+- Focal MariaDB: 1 teste / 41 asserções; rota pública/listagem + CTA: 2 testes
+  / 81 asserções; busca/grants/cache: 1 teste / 40 asserções. Depreciações
+  Core/contrib registradas; a classe Kernel completa não foi reexecutada.
+- A construção e o envio completos do Node Form API seguem como próximo gate.
+
 ## 0.1.0-dev.39 — primeira tela WE SATIVA no ACULTA Studio
 
 - Adicionado o provider WE SATIVA em `/studio/we-sativa`, no purpose `account`.

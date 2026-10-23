@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.39**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.40**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.40 — validar rota de criação no domínio Wiki
+
+Kernel comprova que a rota Core `node.add` autoriza a conta confirmada com
+`create wiki_entry content`. O workspace Studio cria o link com parâmetros
+`node_type=wiki_entry` e Domain `wiki420_aculta_org`, mesmo quando o Domain
+ativo da consulta é `main`. Focal: 1 teste / 41 asserções. O formulário Node
+nativo ainda precisa de teste Kernel de construção e submit.
 
 ### Incremento dev.39 — entrada inicial WE SATIVA no Studio
 

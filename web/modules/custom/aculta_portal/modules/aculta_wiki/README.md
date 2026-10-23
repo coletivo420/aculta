@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.40`: o Kernel verifica acesso à rota nativa `node.add` para a
+  conta confirmada, e o link “Criar verbete” do workspace conserva os
+  parâmetros e o Domain Wiki quando a página está no contexto `main` (focal:
+  1 teste / 41 asserções). O build e submit do formulário nativo ainda estão
+  pendentes.
+
 - `0.1.0-dev.39`: primeira entrada WE SATIVA em `/studio/we-sativa` sob
   purpose `account`. O Studio encaminha para `WikiContributorWorkspace`, que
   consulta até 20 verbetes e propostas próprios por UID, revalida acesso por entidade e

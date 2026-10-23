@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.40: Kernel valida o `node.add` nativo, acesso de criação de conta
+  confirmada e link da WE SATIVA explicitamente no Domain Wiki apesar do
+  contexto `main` (focal: 1 teste / 41 assertions). Isso não comprova o build
+  nem o submit completo do Node Form API; mantenha esse gate pendente.
+
 - Dev.39 WE SATIVA inicial: `aculta_wiki.contributor_workspace` busca apenas
   candidatos com UID da própria conta e revalida `view` de cada Node/proposta
   no purpose `wiki` antes de mostrar dados. A entrada `/studio/we-sativa` fica

@@ -682,6 +682,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $route = $routes->getRouteByName('aculta_studio.we_sativa');
     self::assertSame('/studio/we-sativa', $route->getPath());
     self::assertSame('account', $route->getOption('_aculta_domain_purpose'));
+    $nodeAddRoute = $routes->getRouteByName('node.add');
+    self::assertSame('/node/add/{node_type}', $nodeAddRoute->getPath());
+    self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
+      'node.add',
+      ['node_type' => 'wiki_entry'],
+      $author,
+    ));
     $exactEntrypoints = array_filter(
       $routes->getRoutesByPattern('/studio/we-sativa')->all(),
       static fn ($candidate): bool => $candidate->getPath() === '/studio/we-sativa',
@@ -708,6 +715,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(1, $renderedItems);
     self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#title']);
     self::assertSame('node.add', $build['create']['#url']->getRouteName());
+    self::assertSame(['node_type' => 'wiki_entry'], $build['create']['#url']->getRouteParameters());
+    self::assertSame('wiki420_aculta_org', $build['create']['#url']->getOption('domain')->id());
   }
 
   /**
