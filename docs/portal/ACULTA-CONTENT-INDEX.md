@@ -14,6 +14,8 @@
 
 **Validação dev.154 (2026-10-23):** `ContentIndexQueryKernelTest` passou em MariaDB (4 testes / 52 assertions, sem depreciações), incluindo os cursors persistidos e opacos, keyset por ID imutável, revalidação de acesso, cache interno de candidatos e validação dos filtros.
 
+**Validação dev.155 (2026-10-23):** `ContentIndexTranslationKernelTest` exercita também o dispatcher cron real e confirma a remoção de um cursor expirado pelo hook OOP (`2/28`). A suíte Kernel completa passou em MariaDB com 103 testes / 1.526 assertions, sem falhas (39 depreciações Core/contrib e 54 PHPUnit).
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.

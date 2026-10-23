@@ -130,6 +130,37 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
   }
 
   /**
+   * The OOP cron hook discovers and prunes expired opaque cursors.
+   */
+  public function testCronHookPrunesExpiredCursor(): void {
+    $database = $this->container->get('database');
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $tokenHash = hash('sha256', 'expired Content Index cursor');
+    $database->insert('aculta_index_cursor')
+      ->fields([
+        'token_hash' => $tokenHash,
+        'uid' => 1,
+        'generation_id' => 'expired-generation',
+        'query_hash' => hash('sha256', 'expired query'),
+        'cursor_changed' => 0,
+        'cursor_entry_id' => 1,
+        'cursor_revision' => 0,
+        'expires' => $now - 1,
+        'created' => $now - 100,
+        'updated' => $now - 100,
+      ])
+      ->execute();
+
+    $this->container->get('module_handler')->invokeAll('cron');
+
+    self::assertSame(0, (int) $database->select('aculta_index_cursor', 'cursor')
+      ->condition('token_hash', $tokenHash)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Builds and activates a complete generation for the translation fixture.
    */
   private function buildAndActivateGeneration(): string {

@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.155 — validar execução do hook cron OOP
+
+- Kernel agora chama `cron` pelo dispatcher do Drupal e verifica que o hook
+  OOP remove cursors expirados: 2 testes / 28 assertions.
+- Suíte Kernel completa MariaDB passou com 103 testes / 1.526 assertions;
+  39 depreciações Core/contrib e 54 PHPUnit, sem falhas.
+
 ## 0.1.0-dev.154 — validar consulta paginada em MariaDB
 
 - `ContentIndexQueryKernelTest` passou em MariaDB: 4 testes / 52 assertions,
