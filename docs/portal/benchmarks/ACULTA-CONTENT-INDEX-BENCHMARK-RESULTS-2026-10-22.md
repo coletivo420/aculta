@@ -106,6 +106,28 @@ caminho: 8 no cache miss e 6 no cache hit. A contagem é exploratória e de uma
 Os resultados brutos das duas composições e das consultas com autorização estão
 em [CSV de composições](aculta-index-alternative-compositions-2026-10-22.csv).
 
+### Amostra ampliada do writer (2026-10-23)
+
+Para reduzir o ruído da amostra anterior, repetimos a comparação de escrita com
+1.000 projeções novas por variante no catálogo de 10.000 entradas. Cada rodada
+mede escrita pelo `ContentIndexWriter` em uma geração descartável, primeiro sem
+índice adicional e depois com cada composição temporária. Foram três rodadas
+sequenciais no mesmo host:
+
+| Composição temporária | Rodada 1 baseline / alternativa (linhas/s) | Rodada 2 baseline / alternativa | Rodada 3 baseline / alternativa | Mediana baseline / alternativa |
+|---|---:|---:|---:|---:|
+| domínio/status | 551 / 544 | 580 / 577 | 155 / 240 | 551 / 544 |
+| tipo/bundle/domínio/status | 475 / 560 | 570 / 574 | 574 / 575 | 570 / 574 |
+
+A terceira rodada da primeira composição teve throughput muito abaixo das
+outras duas, indicando ruído de carga ou variação do host. As medianas seguem
+próximas e as composições não mostram ganho consistente. Portanto, permanece a
+decisão de não adicionar índices ao schema 0.1. Esta coleta mede somente
+1.000 inserções no tamanho de catálogo 10k; não substitui writer sustentado em
+100k/1M, atualizações idempotentes, reconstrução, reconciliação, nem estabelece
+SLO. Os valores brutos estão em
+[CSV da amostra ampliada](aculta-index-writer-1000-2026-10-23.csv).
+
 ## Escopo ainda não medido
 
 - Writer incremental e operações idempotentes via `ContentIndexWriter`.

@@ -1,0 +1,7 @@
+catalog_entries,writer_sample_size,run,temporary_index,baseline_rows_per_second,alternative_rows_per_second
+10000,1000,1,"generation_id,domain_id,published,entry_id",551,544
+10000,1000,2,"generation_id,domain_id,published,entry_id",580,577
+10000,1000,3,"generation_id,domain_id,published,entry_id",155,240
+10000,1000,1,"generation_id,entity_type,bundle,domain_id,published,entry_id",475,560
+10000,1000,2,"generation_id,entity_type,bundle,domain_id,published,entry_id",570,574
+10000,1000,3,"generation_id,entity_type,bundle,domain_id,published,entry_id",574,575

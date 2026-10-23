@@ -49,8 +49,8 @@ entidades Media reais (12 autorizadas e 13 negadas no fixture), revalidando
 Entity Access em 30 leituras frias e aquecidas. Registra p50/p95, plano
 `EXPLAIN`, linhas estimadas e bytes alocados. Compara o plano atual com duas
 composições de índice criadas e removidas dentro do schema temporário, medindo
-espaço/build e 250 escritas pelo writer em cada variante. O resultado de três
-repetições está em [resultados](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md):
+espaço/build e escrita pelo writer em cada variante. O resultado inicial de
+três repetições está em [resultados](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md):
 nenhuma composição demonstrou ganho consistente, e o schema de produção
 permanece sem índices adicionais. O fixture Media não substitui medições com
 grants de Group/LMS, nem um benchmark amplo de escrita, rebuild ou
@@ -66,6 +66,12 @@ para o Domain canônico, com 30 amostras aquecidas por tamanho. Mede o custo
 integrado de autorização e limpeza dos caches de handlers do Core; exclui SQL
 de candidatos e não é comparável diretamente ao harness Media. Resultado
 detalhado: [medição de acesso por Domain](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-23.md).
+
+O writer também tem uma comparação adicional de 1.000 projeções novas por
+variante, em três rodadas no catálogo de 10.000 entradas. Os valores de
+throughput oscilaram amplamente e não demonstraram vantagem estável para os
+índices temporários; detalhes e limites estão no relatório de resultados de
+2026-10-22, com coleta complementar datada de 2026-10-23.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:

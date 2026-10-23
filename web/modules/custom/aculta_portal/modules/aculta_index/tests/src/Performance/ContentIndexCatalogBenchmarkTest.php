@@ -342,7 +342,8 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
   ): array {
     $database = $this->container->get('database');
     $schema = $database->schema();
-    $baselineWriter = $this->measureWriterSample(250);
+    $writerSampleSize = 1_000;
+    $baselineWriter = $this->measureWriterSample($writerSampleSize);
     $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
     $baselineEntryBytes = $this->tableStorageBytes('aculta_index_entry');
     $indexBuildStarted = hrtime(TRUE);
@@ -355,7 +356,7 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
     $indexBuildMilliseconds = (hrtime(TRUE) - $indexBuildStarted) / 1_000_000;
     $database->query('ANALYZE TABLE {aculta_index_entry}')->fetchAll();
     $alternativeEntryBytes = $this->tableStorageBytes('aculta_index_entry');
-    $alternativeWriter = $this->measureWriterSample(250);
+    $alternativeWriter = $this->measureWriterSample($writerSampleSize);
     $coldMilliseconds = [];
     for ($repeat = 0; $repeat < $candidateSamples; $repeat++) {
       $candidateCache->invalidateGeneration($generationId);
@@ -379,7 +380,7 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       'baseline_entry_bytes' => $baselineEntryBytes,
       'alternative_entry_bytes' => $alternativeEntryBytes,
       'allocated_delta_bytes' => max(0, $alternativeEntryBytes - $baselineEntryBytes),
-      'writer_sample_size' => 250,
+      'writer_sample_size' => $writerSampleSize,
       'baseline_writer_ms' => $baselineWriter['elapsed_ms'],
       'baseline_writer_rows_per_second' => $baselineWriter['rows_per_second'],
       'alternative_writer_ms' => $alternativeWriter['elapsed_ms'],
