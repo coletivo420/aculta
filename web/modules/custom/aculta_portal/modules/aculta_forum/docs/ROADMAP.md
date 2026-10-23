@@ -7,6 +7,18 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
+### Integração ACULTA Content Index — estado 2026-10-23
+
+O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
+registrados com `aculta_index.provider` no arquivo real de serviços do Fórum.
+O teste Unit lê esse YAML e compila os serviços pelo registry tagueado
+(`aculta_forum` dev.248, 1/6). O harness reduzido do filtro usa o
+`ForumContentIndexProvider` real para validar purpose canônico, restauração do
+Domain e falha fechada sem Domain (`aculta_index` dev.51, suíte focal 7/60).
+Escolheu-se esse harness para a evidência inicial; não substitui Kernel de
+Group/grants nem boot/DI do módulo Drupal. Antes da ativação, esses cenários
+devem provar revogação, relações topic/parent e sincronização CRUD no Kernel.
+
 ### Política comum de limpeza de anexos — integração inicial 2026-10-22
 
 `ForumAttachmentCleanup` agora conserva a responsabilidade de localizar Media

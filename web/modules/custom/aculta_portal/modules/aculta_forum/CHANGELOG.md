@@ -1,3 +1,12 @@
+## `0.1.0-dev.248` — contrato DI dos providers de Index
+
+- Teste Unit lê `aculta_forum.services.yml`, compila os serviços tagueados no
+  `ContentIndexProviderRegistry` e confirma ownership de tópicos, ForumPosts,
+  Comments legados e Media `forum_attachment`.
+- Suíte Unit de Content Index do Fórum: 3 testes / 14 assertions PASS, 4
+  depreciações PHPUnit. Boot do módulo Drupal e Kernel Group/grants permanecem
+  pendentes.
+
 ## `0.1.0-dev.247` — propósito canônico nas respostas do Index
 
 - Unit do provider confirma `forum` para `ForumPost` revisável e Comment legado
