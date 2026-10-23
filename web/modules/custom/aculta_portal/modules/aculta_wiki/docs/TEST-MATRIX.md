@@ -3,6 +3,17 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## Aplicação editorial de propostas (dev.29)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Persistir campos estruturados | Kernel | Submissão via Form API guarda título selecionado na entidade privada | aprovado no teste focal existente; repetir classe após aceite |
+| Aprovar subconjunto e publicar | Kernel | Revisão-base atual recebe campo aprovado e publica por transições oficiais | aprovado (focal: 1 teste / 119 asserções; classe: 9 / 393) |
+| Revisão-base concorrente | Kernel | Aceite conflita sem mudar proposta ou verbete | backend implementado; teste específico pendente |
+| Escolha substituir/acrescentar por lista | Kernel | Referências/categorias/relações substituem ou acrescentam com deduplicação | backend implementado; testes de campos de lista pendentes |
+| Sem permissão editorial ou de transição | Kernel | Operação negada sem persistência parcial | backend implementado; teste específico pendente |
+| Migração `proposed_fields` | Update hook | Instala armazenamento revisionável em proposta já existente | implementada; não aplicada ao Runtime |
+
 ## Propostas privadas — status e histórico (dev.24)
 
 | Cenário | Tipo | Resultado esperado | Estado |

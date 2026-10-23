@@ -81,6 +81,38 @@ final class WikiProposal extends RevisionableContentEntityBase implements Entity
   ];
 
   /**
+   * Editorial fields that authors may propose for a Wiki entry.
+   *
+   * The editor may apply any subset when accepting a proposal.
+   *
+   * @var array<string, string>
+   */
+  public const EDITORIAL_FIELDS = [
+    'title' => 'Título',
+    'field_wiki_summary' => 'Resumo',
+    'body' => 'Corpo',
+    'field_wiki_references' => 'Referências',
+    'field_wiki_categories' => 'Categorias',
+    'field_wiki_related' => 'Ver também',
+    'field_wiki_image' => 'Imagem',
+  ];
+
+  /**
+   * Returns the structured editorial values stored with this proposal.
+   *
+   * @return array<string, mixed>
+   *   Proposed field values keyed by the allowlisted Node field name.
+   */
+  public function getProposedFields(): array {
+    $item = $this->get('proposed_fields')->first();
+    if ($item === NULL) {
+      return [];
+    }
+    $value = $item->getValue();
+    return is_array($value) ? $value : [];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
@@ -119,6 +151,11 @@ final class WikiProposal extends RevisionableContentEntityBase implements Entity
       ->setRequired(TRUE)
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE);
+
+    $fields['proposed_fields'] = BaseFieldDefinition::create('map')
+      ->setLabel(new TranslatableMarkup('Campos propostos'))
+      ->setDescription(new TranslatableMarkup('Valores estruturados para campos editoriais permitidos da Wiki.'))
+      ->setRevisionable(TRUE);
 
     $fields['rationale'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Justificativa'))

@@ -4,10 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.28**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.29**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.29 — aplicação editorial de propostas
+
+Propostas podem conter valores estruturados dos campos editoriais autorizados.
+Na aceitação, a equipe escolhe campos e, para cada lista, substituição ou
+acréscimo. O backend revalida revisão-base, acesso e transições do workflow e
+grava a revisão publicada e decisão em uma transação. A atualização de schema
+foi criada, mas não aplicada ao Runtime. Kernel focal: 1 teste / 119 asserções;
+classe completa: 9 testes / 393 asserções. Testes de listas, conflitos e acesso
+negado especificamente para o novo aceite permanecem no próximo incremento.
 
 ### Incremento dev.28 — retirada de proposta
 

@@ -59,6 +59,8 @@ final class WikiProposalDecisionForm extends FormBase {
       throw new ConflictHttpException('Esta proposta já recebeu uma decisão final.');
     }
     $form_state->set('wiki_proposal_id', (int) $proposal->id());
+    $proposedFields = $proposal->getProposedFields();
+    $form_state->set('wiki_proposal_fields', array_keys($proposedFields));
 
     $form['proposal'] = [
       '#type' => 'item',
@@ -92,6 +94,51 @@ final class WikiProposalDecisionForm extends FormBase {
       'label' => ['#plain_text' => $this->t('Alteração sugerida')],
       'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
     ];
+    if ($proposedFields !== []) {
+      $form['proposed_fields'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Valores propostos'),
+        '#open' => TRUE,
+      ];
+      foreach ($proposedFields as $fieldName => $value) {
+        if (!isset(WikiProposal::EDITORIAL_FIELDS[$fieldName])) {
+          continue;
+        }
+        $form['proposed_fields'][$fieldName] = [
+          '#type' => 'item',
+          '#title' => WikiProposal::EDITORIAL_FIELDS[$fieldName],
+          '#markup' => '<pre>' . htmlspecialchars($this->formatProposedValue($fieldName, $value), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</pre>',
+        ];
+      }
+      $form['approved_fields'] = [
+        '#type' => 'checkboxes',
+        '#title' => $this->t('Campos aprovados para aplicação'),
+        '#options' => array_intersect_key(WikiProposal::EDITORIAL_FIELDS, $proposedFields),
+        '#description' => $this->t('Escolha o subconjunto que será aplicado ao verbete.'),
+        '#states' => ['visible' => [':input[name="decision"]' => ['value' => 'accepted']]],
+      ];
+      $form['list_modes'] = ['#type' => 'container'];
+      foreach (['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'] as $fieldName) {
+        if (!array_key_exists($fieldName, $proposedFields)) {
+          continue;
+        }
+        $form['list_modes'][$fieldName] = [
+          '#type' => 'select',
+          '#title' => $this->t('@field: como aplicar', ['@field' => WikiProposal::EDITORIAL_FIELDS[$fieldName]]),
+          '#options' => [
+            'replace' => $this->t('Substituir a lista atual'),
+            'append' => $this->t('Acrescentar itens à lista atual'),
+          ],
+          '#default_value' => 'replace',
+          '#states' => [
+            'visible' => [
+              ':input[name="decision"]' => ['value' => 'accepted'],
+              ':input[name="approved_fields[' . $fieldName . ']"]' => ['checked' => TRUE],
+            ],
+          ],
+        ];
+      }
+    }
     $form['rationale'] = [
       '#type' => 'container',
       'label' => ['#plain_text' => $this->t('Justificativa')],
@@ -126,13 +173,14 @@ final class WikiProposalDecisionForm extends FormBase {
       '#options' => [
         'needs_changes' => $this->t('Pedir ajustes'),
         'declined' => $this->t('Recusar'),
+        'accepted' => $this->t('Aceitar e aplicar campos'),
       ],
       '#required' => TRUE,
     ];
     $form['decision_note'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Retorno para a pessoa autora'),
-      '#description' => $this->t('Explique o que precisa mudar ou o motivo da recusa. Texto simples, até 5.000 caracteres.'),
+      '#description' => $this->t('Registre o retorno editorial para a pessoa autora. Texto simples, até 5.000 caracteres.'),
       '#required' => TRUE,
       '#maxlength' => 5000,
       '#rows' => 5,
@@ -156,6 +204,13 @@ final class WikiProposalDecisionForm extends FormBase {
     if (!in_array($form_state->getValue('decision'), WikiProposalDecision::DECISIONS, TRUE)) {
       $form_state->setErrorByName('decision', $this->t('Escolha uma decisão disponível.'));
     }
+    if ($form_state->getValue('decision') === 'accepted') {
+      $approved = array_values(array_filter((array) $form_state->getValue('approved_fields')));
+      $available = (array) $form_state->get('wiki_proposal_fields');
+      if ($approved === [] || array_diff($approved, $available) !== []) {
+        $form_state->setErrorByName('approved_fields', $this->t('Selecione ao menos um campo proposto para aplicar.'));
+      }
+    }
   }
 
   /**
@@ -173,6 +228,8 @@ final class WikiProposalDecisionForm extends FormBase {
         (int) $form_state->getValue('expected_revision_id'),
         (string) $form_state->getValue('decision'),
         (string) $form_state->getValue('decision_note'),
+        array_values(array_filter((array) $form_state->getValue('approved_fields'))),
+        (array) $form_state->getValue('list_modes'),
       );
     }
     catch (ConflictHttpException $exception) {
@@ -192,6 +249,37 @@ final class WikiProposalDecisionForm extends FormBase {
         'sub' => 'propostas',
       ]);
     }
+  }
+
+  /**
+   * Formats proposal values as escaped plain text for editorial review.
+   */
+  private function formatProposedValue(string $fieldName, mixed $value): string {
+    if (in_array($fieldName, ['field_wiki_summary', 'body'], TRUE)) {
+      return (string) ($value['value'] ?? '');
+    }
+    if ($fieldName === 'field_wiki_references') {
+      return implode("\n", array_map(static fn (array $item): string => trim(($item['title'] ?? '') . ' | ' . ($item['uri'] ?? ''), ' |'), (array) $value));
+    }
+    if (in_array($fieldName, ['field_wiki_categories', 'field_wiki_related', 'field_wiki_image'], TRUE)) {
+      $type = match ($fieldName) {
+        'field_wiki_categories' => 'taxonomy_term',
+        'field_wiki_related' => 'node',
+        default => 'media',
+      };
+      $storage = $this->entityTypeManager->getStorage($type);
+      $ids = $fieldName === 'field_wiki_image' ? [$value] : (array) $value;
+      $labels = [];
+      foreach ($ids as $id) {
+        $entity = is_numeric($id) ? $storage->load((int) $id) : NULL;
+        $labels[] = $entity !== NULL && $entity->access('view') ? (string) $entity->label() : (string) $this->t('[indisponível]');
+      }
+      return implode("\n", $labels);
+    }
+    if (is_array($value)) {
+      return (string) ($value['value'] ?? json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    }
+    return (string) $value;
   }
 
 }

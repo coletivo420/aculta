@@ -482,6 +482,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * Proposal submission is private, revision-based, and Wiki-purpose bound.
    */
   public function testProposalSubmissionUsesPrivateRevisionedEntityAndAccess(): void {
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['workflows', 'content_moderation']);
+    $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
+    Workflow::create(Yaml::parseFile($workflowFile))->save();
     Role::create([
       'id' => 'wiki_proposal_submitter_test',
       'label' => 'Wiki proposal submitter test',
@@ -490,7 +494,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     Role::create([
       'id' => 'wiki_proposal_reviewer_test',
       'label' => 'Wiki proposal reviewer test',
-      'permissions' => ['view any wiki proposals', 'moderate wiki proposals'],
+      'permissions' => [
+        'view any wiki proposals',
+        'moderate wiki proposals',
+      ],
     ])->save();
 
     $submitter = new UserSession(['uid' => 2, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
@@ -521,6 +528,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'title' => 'Verbete público para proposta',
       'uid' => 3,
       'status' => TRUE,
+      'moderation_state' => 'published',
       'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
       'field_wiki_test_grant_uid' => 2,
       'body' => ['value' => 'Conteúdo publicado', 'format' => 'plain_text'],
@@ -790,6 +798,49 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('declined', $declinedProposal->get('state')->value);
     self::assertSame('A evidência apresentada não sustenta esta alteração.', $declinedProposal->get('decision_note')->value);
 
+    $this->container->get('current_user')->setAccount($submitter);
+    $currentTarget = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    $acceptedCandidate = $submission->submit(
+      $currentTarget,
+      'improve',
+      'Atualização editorial aprovada',
+      'A proposta atualiza a redação do título.',
+      [],
+      str_repeat('b', 64),
+      ['title' => 'Título aprovado pela equipe'],
+    );
+    Role::create([
+      'id' => 'wiki_proposal_acceptor_test',
+      'label' => 'Wiki proposal acceptor test',
+      'permissions' => [
+        'view any wiki proposals',
+        'moderate wiki proposals',
+        'edit any wiki_entry content',
+        'bypass node access',
+        'view any unpublished content',
+        'view wiki_entry revisions',
+        'use wiki_editorial transition create_new_draft',
+        'use wiki_editorial transition draft_to_review',
+        'use wiki_editorial transition review_to_published',
+      ],
+    ])->save();
+    $acceptor = new UserSession(['uid' => 4, 'roles' => ['authenticated', 'wiki_proposal_acceptor_test']]);
+    $this->container->get('current_user')->setAccount($acceptor);
+    $acceptedProposal = $decisionService->decide(
+      $acceptedCandidate,
+      (int) $acceptedCandidate->getRevisionId(),
+      'accepted',
+      'Título conferido e publicado.',
+      ['title'],
+    );
+    $publishedTarget = Node::load((int) $target->id());
+    self::assertSame('accepted', $acceptedProposal->get('state')->value);
+    self::assertSame('Título aprovado pela equipe', $publishedTarget->label());
+    self::assertSame('published', $publishedTarget->get('moderation_state')->value);
+    self::assertNotSame((int) $currentTarget->getRevisionId(), (int) $publishedTarget->getRevisionId());
+    $this->container->get('current_user')->setAccount($reviewer);
+
     $historyProposal = $decidedProposal;
     for ($index = 0; $index < 19; $index++) {
       $historyProposal = $decisionService->decide(
@@ -868,6 +919,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $formState->setValues([
       'intent' => 'correction',
       'proposed_text' => 'Texto sugerido pelo Form API',
+      'proposed_fields_selected' => [
+        'title' => 'title',
+      ],
+      'field_values' => [
+        'title' => 'Novo título sugerido',
+      ],
       'rationale' => 'Ajuste comprovado pela fonte.',
       'source_uris' => 'https://example.invalid/referencia',
       'submission_token' => $formState->get('wiki_proposal_submission_token'),
@@ -881,10 +938,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->load($formState->getRedirect()->getRouteParameters()['proposal']);
     self::assertInstanceOf(WikiProposal::class, $redirectProposal);
     self::assertSame('correction', $redirectProposal->get('intent')->value);
+    self::assertSame(['value' => 'Novo título sugerido'], $redirectProposal->getProposedFields()['title']);
     $firstFormSubmissionId = (int) $redirectProposal->id();
     $proposalForm->submitForm($build, $formState);
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
-    self::assertSame(27, (int) $this->container->get('entity_type.manager')
+    self::assertSame(28, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $this->container->get('current_user')->setAccount($submitter);

@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.29 — aplicação editorial de propostas
+
+- Autoria seleciona campos editoriais e envia valores tipados para proposta.
+  Na aceitação, a equipe escolhe o subconjunto aplicado e, por campo de lista,
+  define substituir ou acrescentar; itens repetidos são deduplicados.
+- Aplicação revalida o domínio, a revisão-base, Entity/Field Access, referências
+  e permissões de cada transição `published → draft → review → published`.
+  A proposta e a nova revisão publicada são salvas na mesma transação.
+- `proposed_fields` é revisionável e recebe update hook para instalações
+  existentes. Runtime continua desabilitado; nenhuma atualização foi aplicada.
+- Kernel focal: 1 teste / 119 asserções; classe completa: 9 testes / 393
+  asserções. Há depreciações upstream do Core/contrib, sem falhas de teste.
+
 ## 0.1.0-dev.28 — retirada de proposta pela autoria
 
 - A autoria pode retirar propostas em `submitted` ou `needs_changes` por Form

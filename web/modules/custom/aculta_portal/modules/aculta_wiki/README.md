@@ -7,10 +7,17 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.29`: propostas guardam valores estruturados nos campos editoriais
+  permitidos. Na aceitação, a equipe escolhe os campos aprovados e, para cada
+  lista de referências, categorias ou relações, escolhe substituir ou
+  acrescentar. A aplicação exige revisão-base atual, acesso editorial e as
+  transições oficiais do workflow até `published`; a atualização é transacional.
+  Focal: 1 teste / 119 asserções. Classe Kernel: 9 testes / 393 asserções.
+  Runtime desabilitado.
 - `0.1.0-dev.28`: autoria pode retirar propostas enviadas ou devolvidas, com
   confirmação Form API, nova revisão privada e preservação do histórico.
   Kernel focal: 1 teste / 110 assertions; classe completa: 9 testes / 384
-  assertions.
+  assertions antes do dev.29.
 - `0.1.0-dev.27`: Kernel usa uma segunda conexão MariaDB para testar lock
   concorrente do token, recusa sem duplicar e replay posterior. Focal: 1 teste /
   99 assertions; classe completa: 9 testes / 371 assertions. Processos PHP

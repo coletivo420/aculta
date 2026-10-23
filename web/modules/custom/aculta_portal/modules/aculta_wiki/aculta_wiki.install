@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Wiki.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Installs structured field values on existing Wiki proposal entities.
+ */
+function aculta_wiki_update_10001(): void {
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_wiki_proposal');
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
+    'proposed_fields',
+    'aculta_wiki_proposal',
+    'aculta_wiki',
+    $definitions['proposed_fields'],
+  );
+}

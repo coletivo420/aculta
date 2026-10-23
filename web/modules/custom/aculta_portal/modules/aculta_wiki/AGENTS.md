@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.29: proposta editorial guarda campos tipados e a aceitação aplica um
+  subconjunto, com modo substituir/acrescentar em cada lista, após revalidar
+  revisão-base, Entity/Field Access e transições oficiais. Preservar a gravação
+  da proposta e do Node na mesma transação; nunca aplicar proposta obsoleta.
+
 Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`,
 `docs/ROADMAP.md` e `docs/TEST-MATRIX.md`, somente nas seções pertinentes.
 
