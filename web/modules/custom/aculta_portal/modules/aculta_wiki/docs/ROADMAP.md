@@ -79,9 +79,10 @@ fechar os contratos de acesso e relações da Wiki. Ver
 - Unit `WikiContentIndexProviderTest` cobre a allowlist de metadados, rejeição
   de bundle/revisão não suportados, deduplicação da relação e declaração do
   purpose `wiki`. O Kernel harness usa a classe real do provider para backfill,
-  relação, update e delete (1 teste / 17 assertions), com tag registrada por
-  fixture; o mapa de services cobre separadamente o YAML owner, mas não ativa a
-  cadeia Drupal completa.
+  relação, update e delete (1 teste / 17 assertions em SQLite e MariaDB;
+  MariaDB repetido em 2026-10-23), com tag registrada por fixture; o mapa de
+  services cobre separadamente o YAML owner, mas não ativa a cadeia Drupal
+  completa.
 - Unit focal do filtro registra o provider Wiki real e confirma purpose,
   preservação do usuário, restauração de Domain e falha fechada sem Domain
   (9/80). O Kernel `ContentIndexWikiAccessKernelTest` usa `EntityHooks`, provider
