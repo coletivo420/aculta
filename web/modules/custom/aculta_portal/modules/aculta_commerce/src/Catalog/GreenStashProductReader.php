@@ -6,6 +6,7 @@ namespace Drupal\aculta_commerce\Catalog;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_commerce\Store\GreenStashStoreResolver;
 
 /**
  * Cursor-based, read-only product list with entity and store access checks.
@@ -17,6 +18,7 @@ final class GreenStashProductReader {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
+    private readonly GreenStashStoreResolver $storeResolver,
   ) {}
 
   /**
@@ -32,8 +34,12 @@ final class GreenStashProductReader {
       || !method_exists($product, 'getStores')) {
       return FALSE;
     }
+    $managed = $this->storeResolver->resolve($account);
+    if ($managed === NULL) {
+      return FALSE;
+    }
     foreach ($product->getStores() as $store) {
-      if ($store->access('update', $account)) {
+      if ((string) $store->id() === (string) $managed->id()) {
         return TRUE;
       }
     }
