@@ -10,6 +10,7 @@ use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
+use Drupal\aculta_forum_cleanup_test\Hook\CleanupFailureTestHooks;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
@@ -86,6 +87,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     'workflows',
     'content_moderation',
     'aculta_forum_post_test',
+    'aculta_forum_cleanup_test',
   ];
 
   /**
@@ -719,6 +721,32 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     return $topic;
+  }
+
+  /**
+   * Retains Media and File when the shared API fails to delete the Media.
+   */
+  public function testCleanupKeepsEntitiesWhenMediaDeletionFails(): void {
+    $old_timestamp = $this->container->get('datetime.time')->getRequestTime() - 3601;
+    $file = $this->createAttachmentFile('retry.pdf');
+    $media = $this->createAttachmentMedia($file, 'retry.pdf', $old_timestamp);
+    $state = $this->container->get('state');
+    $state->set(CleanupFailureTestHooks::STATE_KEY, TRUE);
+    try {
+      // The failed Media must not consume the batch slot nor remove the File.
+      self::assertSame(0, $this->cleanup()->cleanup());
+    }
+    finally {
+      $state->set(CleanupFailureTestHooks::STATE_KEY, FALSE);
+    }
+    $storage = $this->container->get('entity_type.manager');
+    self::assertNotNull($storage->getStorage('media')->load($media->id()));
+    self::assertNotNull($storage->getStorage('file')->load($file->id()));
+
+    // The next run retries and removes both entities.
+    self::assertSame(1, $this->cleanup()->cleanup());
+    self::assertNull($storage->getStorage('media')->load($media->id()));
+    self::assertNull($storage->getStorage('file')->load($file->id()));
   }
 
   /**

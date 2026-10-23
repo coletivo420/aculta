@@ -69,11 +69,14 @@ gates: Kernel para revisão/embeds e arquivo compartilhado, concorrência/falha
 parcial e confirmar que todos os caminhos de limpeza usam o serviço comum. Não
 ampliar exclusão de posts por cron.
 
-Kernel de 2026-10-23 (dev.256) cobre revisão antiga de ForumPost, referência
-compartilhada por outro tipo de conteúdo e File preservado quando o Media órfão
-é excluído, com a construção de produção dos serviços compartilhados. Ficam
-pendentes concorrência, falha durante a exclusão do Media e a validação no
-Runtime de testes.
+Kernel de 2026-10-23 (dev.256–257) cobre revisão antiga de ForumPost,
+referência compartilhada por outro tipo de conteúdo, File preservado quando o
+Media órfão é excluído e falha simulada na exclusão do Media, que mantém
+Media/File e recupera no lote seguinte, com a construção de produção dos
+serviços compartilhados. A auditoria dos caminhos confirmou que o Fórum não
+exclui Media/File fora de `ForumAttachmentCleanup` e que
+`aculta_image.ImageCleanup` usa o serviço compartilhado quando disponível. Ficam
+pendentes concorrência real na limpeza e validação no Runtime de testes.
 Contrato e estado global: [política do Portal](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
 `0.1.0-dev.185–193` adaptam os diálogos de imagem à política central e exigem

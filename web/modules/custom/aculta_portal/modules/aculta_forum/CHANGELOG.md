@@ -1,3 +1,18 @@
+## `0.1.0-dev.257` — falha na exclusão e auditoria dos caminhos de limpeza — 2026-10-23
+
+- Fixture `aculta_forum_cleanup_test` simula falha em `hook_entity_predelete`
+  de Media `forum_attachment`. O Kernel prova que a API compartilhada devolve
+  `Unverifiable`, mantém Media e File, não conta remoção e recupera no lote
+  seguinte.
+- Auditoria dos caminhos: o Fórum não chama `delete()` em Media/File fora de
+  `ForumAttachmentCleanup`; a galeria exclui apenas a entidade de galeria; e
+  `aculta_image.ImageCleanup` usa `aculta_portal.unused_file_cleaner` quando
+  disponível. Concorrência real na limpeza e validação no Runtime seguem
+  pendentes.
+- Testes: arquivo 12/343, Kernel do Fórum 56/1.282, Unit 174/1.008; PHPCS
+  limpo.
+- Sem alteração de configuração, schema, rotas ou Runtime.
+
 ## `0.1.0-dev.256` — limpeza de anexos pela API compartilhada (revisões e referências) — 2026-10-23
 
 - Kernel novo cobre a paridade da limpeza: Media embutida apenas em revisão
