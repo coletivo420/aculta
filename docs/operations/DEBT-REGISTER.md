@@ -292,3 +292,9 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-CREATE-01 | Formulário e rota PT-BR ainda sem homologação Drupal no homelab | Drush cr, acesso anônimo/comum/operador; Form API GET/POST CSRF, createAccess, store update, validação de entidade, salvamento e redirect |
 | GS-CREATE-02 | Produto de rascunho sem variações, SKU e preço | Cadastro assistido próprio Studio, variação e preço com APIs Commerce; publicar só quando consistente |
 | GS-CREATE-03 | Integrar SDC/UI Suite e UX mobile-first no formulário | Stories ACULTA420, 320px+, light/dark, teclado, sem JS, testes no navegador |
+
+## Green Stash loja unica
+| ID | Pendencia | Aceite |
+| --- | --- | --- |
+| GS-SINGLE-STORE-01 | Validar resolucao da unica Commerce store e autorizacao | Testes Kernel/Functional no homelab; nenhuma escolha de loja e associacao correta |
+| GS-SINGLE-STORE-02 | Verificar segregacao de produtos LMS e Doacoes | Apenas produto_loja exibido; checkouts de LMS/Doacoes intocados |
