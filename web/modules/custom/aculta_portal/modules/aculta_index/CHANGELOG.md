@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.158 — cobrir páginas de múltiplos purposes
+
+- Unit confirma página mista Wiki/Fórum: o filtro entra nos dois Domains
+  canônicos, conserva a ordem original dos candidatos e restaura o Domain de
+  entrada. Unit completo passou com 51 testes / 262 assertions; 14 depreciações
+  PHPUnit e nenhuma falha.
+
 ## 0.1.0-dev.157 — agrupar revalidação pelo purpose
 
 - `ContentIndexAccessFilter` agora limpa caches de Entity Access uma vez antes

@@ -201,6 +201,71 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   }
 
   /**
+   * Mixed Wiki and Forum candidates retain order across canonical purposes.
+   */
+  public function testGroupsMixedProvidersAndRestoresCandidateOrder(): void {
+    $previousDomain = $this->createMock(DomainInterface::class);
+    $wikiDomain = $this->createMock(DomainInterface::class);
+    $forumDomain = $this->createMock(DomainInterface::class);
+    $activeDomain = $previousDomain;
+    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
+      return $activeDomain;
+    });
+    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+      $activeDomain = $domain;
+    });
+
+    $wikiOne = $this->purposeTranslation('wiki_entry', $negotiator, $wikiDomain, 'wiki-entry:1');
+    $forum = $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:2');
+    $wikiThree = $this->purposeTranslation('wiki_entry', $negotiator, $wikiDomain, 'wiki-entry:3');
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->method('loadMultiple')->with(['1', '2', '3'])->willReturn([
+      '1' => $wikiOne,
+      '2' => $forum,
+      '3' => $wikiThree,
+    ]);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->expects(self::exactly(2))->method('load')->willReturnCallback(
+      static function (string $id) use ($wikiDomain, $forumDomain): ?DomainInterface {
+        return match ($id) {
+          'wiki420_aculta_org' => $wikiDomain,
+          'forum_aculta_org' => $forumDomain,
+          default => NULL,
+        };
+      },
+    );
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([]);
+    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
+    $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $manager->method('getStorage')->willReturnCallback(
+      static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
+    );
+    $purposeManager = new DomainPurposeManager(
+      $manager,
+      $negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $registry = new ContentIndexProviderRegistry([
+      new WikiContentIndexProvider(),
+      new ForumContentIndexProvider(),
+    ]);
+
+    $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+      ['entity_type' => 'node', 'entity_id' => '2', 'langcode' => 'pt-br'],
+      ['entity_type' => 'node', 'entity_id' => '3', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertSame([$wikiOne, $forum, $wikiThree], $result->entities);
+    self::assertSame($previousDomain, $activeDomain);
+  }
+
+  /**
    * Wiki Entity Access runs in the canonical Wiki purpose and restores Domain.
    */
   public function testChecksWikiAccessInCanonicalPurpose(): void {
