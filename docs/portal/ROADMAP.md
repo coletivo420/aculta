@@ -19,7 +19,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 ## Estado atual — conferido em 2026-10-23
 
 - Versão: **0.4.1-dev.21** (`aculta_portal.info.yml`; confira o changelog para o estado desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete auditorias anteriores e deve ser lido junto às atualizações datadas do roadmap.
-- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.75 e `aculta_activity` 0.1.0-dev.6. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
+- Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.76 e `aculta_activity` 0.1.0-dev.6. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
 - Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
@@ -30,7 +30,7 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 ### Conteúdo transversal e Activity — atualização 2026-10-23
 
-- O `aculta_index` 0.1.0-dev.75 está em desenvolvimento dentro do Kernel Portal.
+- O `aculta_index` 0.1.0-dev.76 está em desenvolvimento dentro do Kernel Portal.
   Providers Magazine, Wiki, Fórum, Gallery, Media, LMS e Activity estão em código;
   Kernel cobre grants do Fórum, acesso Wiki por Domain canônico, policy LMS e
   bridge Statistics. Boot completo dos owners e Runtime seguem pendentes.

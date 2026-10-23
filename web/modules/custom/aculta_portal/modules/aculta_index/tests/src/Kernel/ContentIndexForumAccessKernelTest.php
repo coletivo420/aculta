@@ -22,6 +22,50 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase {
 
   /**
+   * A missing canonical Forum Domain cannot fall back to the active Domain.
+   */
+  public function testMissingForumDomainFailsClosed(): void {
+    $this->createUser('forum-kernel-root-fixture');
+    $viewer = $this->createUser('forum-public-viewer');
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Public topic',
+      'status' => TRUE,
+      'uid' => $viewer->id(),
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+    ]);
+    $topic->save();
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    $filter = new ContentIndexAccessFilter(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_index.provider_registry'),
+      $this->container->get('aculta_portal.domain_purpose'),
+    );
+    $candidate = [
+      [
+        'entity_type' => 'node',
+        'entity_id' => (string) $topic->id(),
+        'langcode' => $topic->language()->getId(),
+      ],
+    ];
+
+    self::assertCount(1, $filter->filter($candidate, $viewer)->entities);
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+
+    $forumDomain = Domain::load('forum_aculta_org');
+    self::assertInstanceOf(Domain::class, $forumDomain);
+    $forumDomain->delete();
+
+    self::assertCount(0, $filter->filter($candidate, $viewer)->entities);
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+  }
+
+  /**
    * Revalidates topic and discussion entities with real Group grants.
    */
   public function testIndexFilterUsesForumDomainAndRestrictedGroupAccess(): void {

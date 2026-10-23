@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.76 — provar falha fechada sem Domain canônico do Fórum
+
+- O Kernel do filtro de acesso cria tópico público no contexto do Domain
+  principal, confirma acesso no purpose `forum` e então remove o Domain
+  canônico; a consulta seguinte nega o tópico e restaura o contexto principal.
+- A cobertura de Fórum agora soma 2 testes / 91 assertions no MariaDB,
+  incluindo hooks de produção, Group grants e revogação imediata. A suíte
+  Kernel completa passou: 65 testes / 883 assertions; 23 depreciações de
+  Core/contrib e 42 depreciações PHPUnit.
+- O harness ainda não inicializa a cadeia DI completa do módulo owner.
+
 ## 0.1.0-dev.75 — medir memória e cauda por fase de manutenção
 
 - Benchmark agora reseta e reporta pico de memória para setup, rebuild e
