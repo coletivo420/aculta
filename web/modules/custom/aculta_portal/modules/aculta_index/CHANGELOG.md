@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.119 — registrar escopo da evidência Kernel LMS
+
+- Decisão: manter harness isolado para a relação `course_document`, que cobre
+  projeção, rebuild e consulta outgoing com revalidação de acesso.
+- Boot/DI completo do owner continua pendente por referências ausentes a serviços
+  de módulos não relacionados ao fluxo (`aculta_user` e `commerce_cart`); fica
+  como dívida de homologação, sem ampliar esta microfase.
+
 ## 0.1.0-dev.118 — corrigir mapa dos providers no Unit
 
 - O service-map Unit agora declara o `GroupRelationTypeManagerInterface`
