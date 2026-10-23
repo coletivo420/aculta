@@ -214,6 +214,72 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
   }
 
   /**
+   * A missing canonical purpose domain denies access without fallback.
+   */
+  public function testMissingProviderPurposeDomainFailsClosed(): void {
+    $translation = $this->createMock(ContentEntityInterface::class);
+    $translation->method('bundle')->willReturn('aculta_forum_topic');
+    $translation->method('getCacheContexts')->willReturn([]);
+    $translation->method('getCacheMaxAge')->willReturn(-1);
+    $translation->expects(self::never())->method('access');
+
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->method('loadMultiple')->with(['1'])->willReturn([
+      '1' => $this->sourceEntity($translation),
+    ]);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn(NULL);
+    $entityType = $this->createMock(EntityTypeInterface::class);
+    $entityType->method('getListCacheTags')->willReturn(['node_list']);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
+    $manager->method('getDefinition')->with('node')->willReturn($entityType);
+    $manager->method('getStorage')->willReturnCallback(
+      static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
+    );
+    $purposeManager = new DomainPurposeManager(
+      $manager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $provider = new class() implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+
+      /** {@inheritdoc} */
+      public function getProviderId(): string {
+        return 'forum';
+      }
+
+      /** {@inheritdoc} */
+      public function getSupportedEntityTypes(): array {
+        return ['node' => ['aculta_forum_topic']];
+      }
+
+      /** {@inheritdoc} */
+      public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+        return 'forum';
+      }
+
+      /** {@inheritdoc} */
+      public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+        return NULL;
+      }
+
+    };
+
+    $result = (new ContentIndexAccessFilter(
+      $manager,
+      new ContentIndexProviderRegistry([$provider]),
+      $purposeManager,
+    ))->filter([
+      ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
+    ], $this->createMock(AccountInterface::class));
+
+    self::assertSame([], $result->entities);
+    self::assertContains('domain', $result->cacheability->getCacheContexts());
+  }
+
+  /**
    * Creates a source entity mock with one translation.
    */
   private function sourceEntity(ContentEntityInterface $translation): ContentEntityInterface {
