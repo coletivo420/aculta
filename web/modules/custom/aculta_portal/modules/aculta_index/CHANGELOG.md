@@ -1,5 +1,19 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.71 — validar bridge Statistics com conta não privilegiada
+
+- Kernel do bridge reserva UID 1 e associa o papel de métricas com `addRole()`;
+  verifica explicitamente a permissão granular antes de consultar Statistics.
+  A fixture registra a permissão de mesmo machine name sem ativar o módulo
+  Statistics completo e sua cadeia Commerce.
+- A revisão revelou que a fixture anterior criava o leitor como UID 1, fazendo
+  o Core contornar access e ocultar a ausência da permissão no role. Com a
+  conta comum, o bridge retorna a página autorizada, agregados, fallback sem
+  Statistics e nega conteúdo despublicado.
+- Kernel focal MariaDB: 1 teste / 19 assertions PASS. Suíte Kernel completa do
+  Index: 64 testes / 852 assertions PASS; 23 depreciações Drupal/contrib e 42
+  depreciações PHPUnit.
+
 ## 0.1.0-dev.70 — integrar os hooks reais de grants do Fórum no Kernel
 
 - Fixture Kernel registra os hooks `entity_access`, `node_grants` e

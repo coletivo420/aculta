@@ -113,8 +113,14 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
       ->grantPermission('access content')
       ->grantPermission('view content-level statistics')
       ->save();
-    $reader = User::create(['name' => 'metric-reader', 'status' => 1, 'roles' => ['metric_reader']]);
+    // UID 1 bypasses Drupal's ordinary entity access checks. Reserve it so
+    // this test proves the bridge filters results for a regular account.
+    User::create(['name' => 'statistics-bridge-root-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'metric-reader', 'status' => 1]);
+    $reader->addRole('metric_reader');
     $reader->save();
+    $this->assertNotSame('1', (string) $reader->id(), 'The tested reader must not use Drupal UID 1.');
+    $this->assertTrue($reader->hasPermission('view content-level statistics'), 'The regular reader has the granular Statistics permission.');
 
     $result = $bridge->aggregateForQuery(
       ['entity_type' => 'node', 'bundle' => 'wiki_entry', 'published' => TRUE],
