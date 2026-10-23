@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.36 WES-C01-B1 parcial: teste Kernel usa `aculta_mail_confirmer` no realm
+  `aculta_registration`, valida o hook real de confirmação do Portal, papel
+  `email_confirmed` e `createAccess('wiki_entry')`. Renovar o cache do handler
+  após confirmação representa a requisição seguinte. Focal 1/33; classe
+  completa 11/492 em MariaDB isolada. Runtime permanece sem homologação.
 - Dev.33 R2: ao reverter upload por erro/rebuild, invalidar caches de File/Media
   e limpar a referência temporária do FormState. Isso permite tentar o mesmo
   upload de novo sem duplicar Media nem tratar como permanente o arquivo cujo

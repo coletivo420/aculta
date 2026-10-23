@@ -497,6 +497,63 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Real Mail Confirmer completion grants the configured Wiki create access.
+   */
+  public function testRegistrationConfirmationUnlocksWikiAuthoringPermission(): void {
+    $this->installEntitySchema('aculta_mail_confirmer');
+    $this->installConfig(['aculta_mail_confirmer']);
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'email_confirmed',
+      'label' => 'Confirmed email test role',
+      'permissions' => ['access content', 'create wiki_entry content'],
+    ])->save();
+    $author = User::create([
+      'uid' => 2,
+      'name' => 'wiki-confirmation-author',
+      'mail' => 'wiki-confirmation-author@example.invalid',
+      'status' => TRUE,
+    ]);
+    $author->save();
+
+    $policy = $this->container->get('aculta_portal.email_confirmation_policy');
+    $nodeAccess = $this->container->get('entity_type.manager')->getAccessControlHandler('node');
+    self::assertFalse($policy->isConfirmed($author));
+    self::assertFalse($nodeAccess->createAccess('wiki_entry', $author, [], TRUE)->isAllowed());
+
+    $manager = $this->container->get('aculta_mail_confirmer');
+    $confirmation = $manager->createConfirmation((string) $author->getEmail());
+    $confirmation->setRealm('aculta_registration');
+    $confirmation->setProperty('user', (int) $author->id());
+    $confirmation->save();
+    self::assertTrue($manager->confirmWithHash($confirmation, $manager->getHash($confirmation)));
+    $confirmation->save();
+
+    $confirmedAuthor = User::load($author->id());
+    self::assertInstanceOf(User::class, $confirmedAuthor);
+    self::assertTrue($policy->isConfirmed($confirmedAuthor));
+    self::assertTrue($confirmedAuthor->hasRole('email_confirmed'));
+    self::assertTrue($confirmedAuthor->hasPermission('create wiki_entry content'));
+    // A separate request has a fresh handler cache after the confirmation.
+    $nodeAccess->resetCache();
+    $createAccess = $nodeAccess->createAccess('wiki_entry', $confirmedAuthor, [], TRUE);
+    self::assertTrue($createAccess->isAllowed());
+    self::assertContains('user.permissions', $createAccess->getCacheContexts());
+  }
+
+  /**
    * Search filters results by grants between users with the same role.
    */
   public function testSearchSeparatesResultsForSameRoleUsersWithDifferentGrants(): void {

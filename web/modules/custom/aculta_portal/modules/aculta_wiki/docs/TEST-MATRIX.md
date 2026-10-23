@@ -137,6 +137,7 @@ depois da importação de configuração no servidor de testes.
 | Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
 | Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
 | CTA inicial — acesso real de criação | Kernel | `createAccess('wiki_entry')`; pessoa confirmada autorizada e não confirmada negada | aprovado (dev.20) |
+| Confirmação pelo Mail Confirmer real | Kernel | Confirmação `aculta_registration` aciona hook Portal, atribui `email_confirmed` e permite `createAccess('wiki_entry')` | aprovado (dev.36; focal: 1 / 33; classe: 11 / 492; 286 depreciações Core/contrib, 12 PHPUnit) |
 | Fila de revisão com candidatos negados | Kernel | 26 VIDs recentes sem grant não ocultam uma revisão autorizada mais antiga | aprovado (dev.21) |
 | Status privado da proposta | Kernel | Autoria lê status/nota; outra conta é negada pelo Entity Access da entidade | aprovado (dev.22) |
 | Aviso de decisão | Kernel | Fila em memória recebe estado, nota e URL privada; sem texto sugerido ou envio real | aprovado (dev.22) |

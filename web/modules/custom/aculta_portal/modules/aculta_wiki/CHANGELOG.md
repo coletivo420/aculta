@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.36 — caracterizar confirmação real de autoria
+
+- Kernel inicializa o Mail Confirmer e confirma uma conta pelo fluxo de hash do
+  realm `aculta_registration`; o hook real do Portal marca a conta confirmada
+  e concede `email_confirmed`. Entity Access autoriza `create wiki_entry`
+  após renovar o cache do handler, como numa requisição nova.
+- O cenário instala o perfil/nickname que `aculta_user` exige no hook de
+  criação de conta. Focal: 1 teste / 33 asserções; classe Kernel completa em
+  MariaDB isolada: 11 testes / 492 asserções, 286 depreciações Core/contrib e
+  12 PHPUnit.
+- Evidência cobre o bootstrap e o acesso no teste; a configuração e o Runtime
+  continuam sem homologação por este cenário.
+
 ## 0.1.0-dev.35 — negar aceite sem transições oficiais
 
 - Kernel verifica que um moderador com permissão de editar o verbete, mas sem

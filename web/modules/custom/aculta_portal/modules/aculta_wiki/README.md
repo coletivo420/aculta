@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.36`: Kernel usa o Mail Confirmer real (`aculta_registration`),
+  confirma a conta e verifica o papel `email_confirmed` e a permissão efetiva
+  de criar `wiki_entry` via Entity Access. Focal: 1 teste / 33 asserções;
+  classe Kernel: 11 testes / 492 asserções em MariaDB isolada. Runtime e
+  configuração importada continuam sem homologação por este cenário.
 - `0.1.0-dev.35`: Kernel comprova que aceite exige transições oficiais e não
   grava parcialmente em caso de conflito ou falta de acesso editorial. Focal:
   1 teste / 144 assertions; classe Kernel: 10 testes / 459 assertions,
