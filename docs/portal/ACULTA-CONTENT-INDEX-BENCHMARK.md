@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados. Rebuild/auditoria foram medidos em 10k e 100k em uma repetição diagnóstica por cenário. A rodada antiga de Entity API 1M foi interrompida em 220.500 fontes; a rodada corrigida está em andamento no `aculta_simpletest`, sem resultado ainda. Repetições adicionais continuam pendentes.
+Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados. Rebuild/auditoria foram medidos em 10k e 100k em uma repetição diagnóstica por cenário. Duas tentativas anteriores de 1M via Entity API foram interrompidas sem tempos válidos. A fixture agora é semeada por SQL em lotes, a partir do mapeamento real do storage e de uma entidade-semente criada pela Entity API; enumeração, carga, projeção, rebuild e auditoria continuam no caminho real do Index. A validação 10k passou sem divergências; repetir e ampliar para 100k/1M continua pendente.
 
 ## Matriz fixada
 

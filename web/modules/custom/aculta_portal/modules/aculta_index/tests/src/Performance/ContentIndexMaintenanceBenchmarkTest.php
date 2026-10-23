@@ -33,6 +33,11 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
   private const DEFAULT_SOURCE_COUNT = 10_000;
 
   /**
+   * Number of synthetic entities inserted in one SQL batch per storage table.
+   */
+  private const SOURCE_SETUP_BATCH_SIZE = 1_000;
+
+  /**
    * Approved synthetic fixture scale for this process.
    */
   private int $sourceCount = self::DEFAULT_SOURCE_COUNT;
@@ -264,17 +269,105 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    */
   private function createSyntheticSources(): void {
     $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    for ($start = 0; $start < $this->sourceCount; $start += 100) {
-      for ($index = $start; $index < min($start + 100, $this->sourceCount); $index++) {
-        $storage->create([
-          'type' => 'sample_content',
-          'title' => 'Synthetic maintenance source ' . $index,
-          'status' => 1,
-          'created' => 1_700_000_000 + $index,
-          'changed' => 1_700_000_000 + $index,
-        ])->save();
+    $database = $this->container->get('database');
+    $seed = $storage->create([
+      'type' => 'sample_content',
+      'title' => 'Synthetic maintenance source 0',
+      'status' => 1,
+      'created' => 1_700_000_000,
+      'changed' => 1_700_000_000,
+    ]);
+    $seed->save();
+
+    $tableMapping = $storage->getTableMapping();
+    $columnsByTable = [];
+    $seedRowsByTable = [];
+    foreach ($tableMapping->getTableNames() as $tableName) {
+      $columns = $tableMapping->getAllColumns($tableName);
+      if ($columns === [] || !in_array('nid', $columns, TRUE)) {
+        continue;
+      }
+      $row = $database->select($tableName, 'seed')
+        ->fields('seed', $columns)
+        ->condition('nid', (string) $seed->id())
+        ->execute()
+        ->fetchAssoc();
+      if (!is_array($row)) {
+        throw new \RuntimeException(sprintf('Could not read the Drupal Node seed row from %s.', $tableName));
+      }
+      $columnsByTable[$tableName] = $columns;
+      $seedRowsByTable[$tableName] = $row;
+    }
+    if ($columnsByTable === []) {
+      throw new \RuntimeException('Could not discover Drupal Node storage tables for the benchmark seed.');
+    }
+
+    $maximumIdQuery = $database->select('node');
+    $maximumIdQuery->addExpression('MAX(nid)', 'maximum_id');
+    $maximumId = (int) $maximumIdQuery->execute()->fetchField();
+    $nextId = $maximumId + 1;
+    $batchSize = self::SOURCE_SETUP_BATCH_SIZE;
+    for ($offset = 1; $offset < $this->sourceCount; $offset += $batchSize) {
+      $batchEnd = min($offset + $batchSize, $this->sourceCount);
+      $transaction = $database->startTransaction();
+      try {
+        foreach ($columnsByTable as $tableName => $columns) {
+          $insert = $database->insert($tableName)->fields($columns);
+          for ($index = $offset; $index < $batchEnd; $index++) {
+            $nid = $nextId + $index - 1;
+            $timestamp = 1_700_000_000 + $index;
+            $row = $seedRowsByTable[$tableName];
+            $fieldValues = [
+              'nid' => (string) $nid,
+              'vid' => (string) $nid,
+              'uuid' => $this->syntheticUuid($index),
+              'title' => 'Synthetic maintenance source ' . $index,
+              'created' => $timestamp,
+              'changed' => $timestamp,
+              'revision_timestamp' => $timestamp,
+            ];
+            foreach ($fieldValues as $fieldName => $value) {
+              foreach ($tableMapping->getColumnNames($fieldName) as $columnName) {
+                if (array_key_exists($columnName, $row)) {
+                  $row[$columnName] = $value;
+                }
+              }
+            }
+            $insert->values(array_values($row));
+          }
+          $insert->execute();
+        }
+        unset($transaction);
+      }
+      catch (\Throwable $exception) {
+        $transaction->rollBack();
+        throw $exception;
       }
     }
+
+    $storage->resetCache();
+    $sampleIds = [$seed->id(), (string) ($nextId + $this->sourceCount - 2)];
+    $loaded = $storage->loadMultiple($sampleIds);
+    if (count($loaded) !== count($sampleIds)) {
+      throw new \RuntimeException('Bulk-seeded Drupal Node fixtures could not be loaded through Entity API.');
+    }
+    foreach ($loaded as $entity) {
+      if ($entity->bundle() !== 'sample_content') {
+        throw new \RuntimeException('Bulk-seeded Drupal Node fixture has an unexpected bundle.');
+      }
+    }
+  }
+
+  /**
+   * Creates a stable UUID-shaped value for a synthetic source row.
+   */
+  private function syntheticUuid(int $index): string {
+    $hex = md5('aculta-index-maintenance-' . $index);
+    return substr($hex, 0, 8) . '-'
+      . substr($hex, 8, 4) . '-'
+      . substr($hex, 12, 4) . '-'
+      . substr($hex, 16, 4) . '-'
+      . substr($hex, 20, 12);
   }
 
   /**

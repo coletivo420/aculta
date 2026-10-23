@@ -23,7 +23,11 @@ if ($argc !== 7) {
   exit(2);
 }
 
-require $argv[1];
+$classLoader = require $argv[1];
+$drupalRoot = getcwd();
+$classLoader->addPsr4('Drupal\\mysql\\', $drupalRoot . '/core/modules/mysql/src');
+$classLoader->addPsr4('Drupal\\aculta_index\\', $drupalRoot . '/modules/custom/aculta_portal/modules/aculta_index/src');
+$classLoader->addPsr4('Drupal\\aculta_portal\\', $drupalRoot . '/modules/custom/aculta_portal/src');
 
 try {
   $configuration = json_decode((string) file_get_contents($argv[2]), TRUE, 512, JSON_THROW_ON_ERROR);
@@ -152,6 +156,6 @@ try {
   }
 }
 catch (\Throwable $exception) {
-  fwrite(STDERR, $exception::class . "\n");
+  fwrite(STDERR, $exception::class . ': ' . $exception->getMessage() . "\n");
   exit(1);
 }

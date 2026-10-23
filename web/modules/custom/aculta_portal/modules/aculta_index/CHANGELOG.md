@@ -1,5 +1,22 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.139 — validar concorrência PHP e semear fixture em lote
+
+- O worker subprocesso registra o autoload do driver MySQL Core e dos
+  namespaces `aculta_index`/`aculta_portal`; o teste de estresse passou em
+  MariaDB (3 testes / 56 assertions).
+- Kernel de schema passou em MariaDB (51 testes / 544 assertions); uma
+  depreciação Core e 52 depreciações PHPUnit foram reportadas.
+- A rodada corrigida de 1M foi interrompida após ~58 minutos por lentidão de
+  setup; não produziu métricas válidas. Evidência parcial estimada está em
+  `/tmp/aculta-index-maintenance-1000000-interrupted-2026-10-23.json`.
+- A fixture do benchmark agora cria uma entidade-semente pela Entity API e
+  semeia as demais linhas usando o `TableMapping` real do Node em lotes SQL de
+  1.000. Entity API continua usada para validar carga de amostras; enumeração,
+  projeção, rebuild e auditoria permanecem inalterados. A validação 10k passou
+  em MariaDB: setup 1,414 s, rebuild 18,564 s, auditoria 10,829 s e zero
+  divergências. É uma única execução diagnóstica, sem SLO.
+
 ## Decisões 0.1 registradas — implementação pendente
 
 - Relações removidas aceitam consistência eventual da fila; a aresta pode

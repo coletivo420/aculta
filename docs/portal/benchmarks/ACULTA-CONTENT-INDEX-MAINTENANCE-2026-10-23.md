@@ -22,7 +22,7 @@ nem definem SLO.
 - Não há traduções adicionais nem relações no fixture. Falhas, concorrência
   entre processos, outros providers, Domains e grants não foram medidos.
 
-## Primeira execução de 1M interrompida; repetição corrigida em andamento
+## Tentativas de 1M interrompidas — diagnóstico, sem resultado
 
 A execução antiga iniciou em 2026-10-23 às 04:17 BRT e carregou o harness antes
 dos commits `c401f504` (05:57 BRT), que desativa temporariamente o registry
@@ -108,3 +108,34 @@ para explicar a diferença nem atribuí-la ao cache. O pico global ficou parecid
 com o baseline, mas aquela rodada não isolava memória por fase. Comparações são
 diagnósticas, de uma repetição e sem SLO; 1M permanece pendente. Unit verifica o
 reset por identidade; Kernel Index MariaDB passou 64/852.
+
+
+## Tentativa de 1M interrompida — diagnóstico, sem resultado
+
+A repetição corrigida foi iniciada às 08:56 BRT e interrompida por orientação do
+responsável às 09:54:53 BRT, após cerca de 58 minutos. O processo terminou com
+exit code 130 e não escreveu o JSON final. Uma leitura somente de metadados
+InnoDB imediatamente antes da interrupção estimou 994.564 linhas em
+`node_field_data` e 548.455 em `aculta_index_entry`. São estimativas de tabela,
+não contagens exatas, timings, taxa ou divergências. Não usar esses números como
+benchmark nem para declarar desempenho adequado. O diagnóstico bruto está em
+`/tmp/aculta-index-maintenance-1000000-interrupted-2026-10-23.json`.
+
+O responsável aprovou semear tabelas Node em lote, mantendo Entity API no
+caminho de enumeração, carga, projeção, rebuild e auditoria. A implementação
+cria uma entidade-semente pela Entity API, deriva colunas do `TableMapping` do
+storage e insere registros sintéticos em transações limitadas a 1.000 entidades
+por lote. O teste carrega a primeira e a última entidades semeadas novamente
+pela Entity API antes de iniciar as medições. Essa técnica acelera a fixture,
+não substitui nem altera a implementação medida do Index.
+
+## Validação da semeadura em lote — uma execução, sem SLO
+
+| Escala | Setup (ms) | Rebuild (ms) | Projeções/s | Rebuild p50 / p95 / max (ms) | Audit (ms) | Lotes de audit | Pico total (MiB) | Divergências |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 10.000 | 1.414 | 18.564 | 539 | 407 / 5.500 / 5.668 | 10.829 | 102 | 142,5 | 0 |
+
+Picos por fase: rebuild 122,5 MiB e auditoria 142,5 MiB. Auditoria p50/p95/máximo:
+68 / 93 / 4.352 ms. Setup mediu apenas criação das fontes; não entra no tempo
+de rebuild/auditoria. Uma única repetição não permite inferir tendência nem
+SLO. JSON bruto: `/tmp/aculta-index-maintenance-10000-bulk-2026-10-23.json`.
