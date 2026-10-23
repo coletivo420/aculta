@@ -63,3 +63,7 @@ referências vigentes.
 - [Kernel ACULTA, subkernels e consumidores](architecture/aculta-kernels.md) — contratos normativos de Fórum, Galeria, serviços transversais e Studio.
 - [ADR — Kernel ACULTA e Studio](decisions/ADR-011-aculta-kernels-studio.md) — decisão e limites.
 - [Roadmap Studio/Revista](portal/STUDIO-MAGAZINE-ROADMAP.md) — implementação futura e migração editorial.
+
+## Escopo do ADR-013 (retificação de 2026-10-22)
+
+A coordenação de checkout no Portal e as abas **Comum | Loja | LMS | Doações** são **administrativas**, não uma nova interface pública de carrinho. Preservar integralmente o carrinho já presente na barra multidomínio e o comportamento atual da seleção do checkout. Referência normativa: [ADR-013](decisions/ADR-013-portal-multi-cart-checkout.md).
