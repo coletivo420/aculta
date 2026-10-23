@@ -169,6 +169,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
@@ -214,6 +215,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
@@ -258,6 +260,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $manager->method('getStorage')->willReturnCallback(
@@ -301,6 +304,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('getListCacheTags')->willReturn(['node_list']);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getDefinitions')->willReturn([]);
     $manager->method('hasDefinition')->with('node')->willReturn(TRUE);
     $manager->method('getDefinition')->with('node')->willReturn($entityType);
     $manager->method('getStorage')->willReturnCallback(
