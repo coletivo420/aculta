@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,12 +30,15 @@ final class CheckoutCommonForm extends ConfigFormBase {
 
   private RouteBuilderInterface $routeBuilder;
 
+  private LoggerInterface $logger;
+
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->registry = $container->get('aculta_portal.checkout_context_registry');
     $instance->policy = $container->get('aculta_portal.checkout_policy_manager');
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->routeBuilder = $container->get('router.builder');
+    $instance->logger = $container->get('logger.factory')->get('aculta_portal_checkout');
     return $instance;
   }
 
@@ -96,8 +100,13 @@ final class CheckoutCommonForm extends ConfigFormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->config(CheckoutSettings::CONFIG)->set('common_checkout_enabled', (bool) $form_state->getValue('common_checkout_enabled'))->save();
+    $novo = (bool) $form_state->getValue('common_checkout_enabled');
+    $anterior = (new CheckoutSettings($this->configFactory()))->commonCheckoutEnabled();
+    $this->config(CheckoutSettings::CONFIG)->set('common_checkout_enabled', $novo)->save();
     $this->routeBuilder->setRebuildNeeded();
+    if ($novo !== $anterior) {
+      $this->logger->warning('Checkout comum do Commerce @estado (uid @uid).', ['@estado' => $novo ? 'habilitado' : 'desabilitado', '@uid' => $this->currentUser()->id()]);
+    }
     parent::submitForm($form, $form_state);
   }
 

@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,12 +30,15 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
 
   protected RouteBuilderInterface $routeBuilder;
 
+  protected LoggerInterface $logger;
+
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->validator = $container->get('aculta_portal.checkout_mapping_validator');
     $instance->flows = $container->get('aculta_portal.order_type_checkout_flows');
     $instance->routeBuilder = $container->get('router.builder');
+    $instance->logger = $container->get('logger.factory')->get('aculta_portal_checkout');
     return $instance;
   }
 
@@ -91,11 +95,20 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $tipo = (string) $form_state->getValue('order_type');
+    $anterior = $this->currentOrderType(new CheckoutSettings($this->configFactory()));
     $this->config(CheckoutSettings::CONFIG)->set($this->settingKey(), $tipo)->save();
     $tipoDePedido = $this->entityTypeManager->getStorage('commerce_order_type')->load($tipo);
     $tipoDePedido?->setThirdPartySetting('commerce_checkout', 'checkout_flow', (string) $form_state->getValue('checkout_flow'));
     $tipoDePedido?->save();
     $this->routeBuilder->setRebuildNeeded();
+    // Auditoria sem segredos: contexto, valores antes e depois e a conta que alterou.
+    $this->logger->notice('Checkout @contexto alterado: tipo de pedido @de para @para, checkout flow @flow (uid @uid).', [
+      '@contexto' => $this->contextId(),
+      '@de' => $anterior,
+      '@para' => $tipo,
+      '@flow' => (string) $form_state->getValue('checkout_flow'),
+      '@uid' => $this->currentUser()->id(),
+    ]);
     parent::submitForm($form, $form_state);
   }
 

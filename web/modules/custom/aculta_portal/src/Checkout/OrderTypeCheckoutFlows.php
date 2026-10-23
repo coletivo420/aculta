@@ -16,14 +16,22 @@ final class OrderTypeCheckoutFlows {
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
-  /** NULL quando o tipo de pedido não existe ou não tem flow associado. */
+  /** Flow que o Commerce usa quando o tipo de pedido não define nenhum (DefaultCheckoutFlowResolver). */
+  public const COMMERCE_DEFAULT_FLOW = 'default';
+
+  /**
+   * Flow efetivo do tipo de pedido, com o mesmo fallback do Commerce; NULL quando o tipo não existe.
+   */
   public function flowId(string $orderTypeId): ?string {
     if (!$this->entityTypeManager->hasDefinition('commerce_order_type')) {
       return NULL;
     }
     $type = $this->entityTypeManager->getStorage('commerce_order_type')->load($orderTypeId);
-    $flow = $type?->getThirdPartySetting('commerce_checkout', 'checkout_flow');
-    return is_string($flow) && $flow !== '' ? $flow : NULL;
+    if ($type === NULL) {
+      return NULL;
+    }
+    $flow = $type->getThirdPartySetting('commerce_checkout', 'checkout_flow');
+    return is_string($flow) && $flow !== '' ? $flow : self::COMMERCE_DEFAULT_FLOW;
   }
 
 }

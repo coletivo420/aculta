@@ -35,9 +35,12 @@ final class OrderTypeCheckoutFlowsTest extends UnitTestCase {
     $this->assertSame('curso', $this->flows(TRUE, 'curso')->flowId('curso'));
   }
 
-  public function testNullQuandoNaoHaFluxoTipoOuCommerce(): void {
-    $this->assertNull($this->flows(TRUE, NULL)->flowId('x'));
-    $this->assertNull($this->flows(TRUE, '')->flowId('x'));
+  public function testTipoSemFluxoUsaOFallbackNativoDoCommerce(): void {
+    $this->assertSame('default', $this->flows(TRUE, NULL)->flowId('x'));
+    $this->assertSame('default', $this->flows(TRUE, '')->flowId('x'));
+  }
+
+  public function testNullQuandoNaoHaTipoOuCommerce(): void {
     $this->assertNull($this->flows(TRUE, 'curso', FALSE)->flowId('x'));
     $this->assertNull($this->flows(FALSE, 'curso')->flowId('x'));
   }

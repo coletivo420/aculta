@@ -41,8 +41,8 @@ final class LmsCheckoutProviderTest extends UnitTestCase {
     $this->assertSame(['curso'], $config->checkoutFlowIds);
   }
 
-  public function testSemFluxoNoCommerceNaoInventaUm(): void {
-    $this->assertSame([], $this->provider(NULL)->configuration()->checkoutFlowIds);
+  public function testTipoSemFluxoUsaOFallbackNativoDoCommerce(): void {
+    $this->assertSame(['default'], $this->provider(NULL)->configuration()->checkoutFlowIds);
   }
 
   public function testTipoConfiguradoVemPrimeiroEOHistoricoCursoContinuaDeclarado(): void {

@@ -1,3 +1,8 @@
+## 0.4.1-dev.20 — auditoria das alterações de checkout e flow efetivo (P-CART F) — 2026-10-22
+
+- As abas Comum, Loja e LMS registram no canal `aculta_portal_checkout` quem alterou o quê (contexto, valores antes e depois, uid), sem segredos; desligar o checkout comum gera aviso.
+- `OrderTypeCheckoutFlows` passa a devolver o flow efetivo, com o mesmo fallback `default` do `DefaultCheckoutFlowResolver` do Commerce quando o tipo de pedido não define flow (antes, vazio). Diagnóstico e campo da aba refletem o que o Commerce usa de fato. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.19 — interface administrativa Carrinhos e checkouts (P-CART E) — 2026-10-22
 
 - Abas **Comum | Loja | LMS** em `/painel-administrativo/aculta/checkout[/loja|/lms]` (menu ACULTA > Carrinhos e checkouts), com Form API, Config API, abas por tarefas locais (funcionam sem JavaScript) e permissões separadas: `administer aculta checkout common|shop|lms`. Nenhuma dá acesso a pedidos.
