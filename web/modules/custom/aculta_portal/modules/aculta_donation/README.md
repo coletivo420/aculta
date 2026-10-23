@@ -50,3 +50,15 @@ colaboradores). Avisos de licença em `LICENSE.txt` e em `docs/ORIGEM-COMMERCE-D
   Execução: `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Unit`.
 - Runtime de testes: habilitado e verificado por HTTP e por API (ver CHANGELOG). Testes de Kernel do fluxo: pendentes.
 - Navegador: pendente (conferência visual do fluxo e dos blocos).
+
+## Roadmap de integração: Portal multi-carrinho / checkout (ADR-013)
+
+A seleção `donate | cart | both` é **funcionalidade intencional**, preservada na migração. A propriedade das políticas transversais de carrinho/checkout, atualmente parcialmente em `CartCheckoutRouteSubscriber` e `DonationSettingsForm`, migrará para `aculta_portal`, que fornecerá quatro abas **Comum | Loja | LMS | Doações**. O módulo Donation continua responsável por campanhas, pedidos e checkout dedicado, recorrência e proibição de estorno. Não mover gateway Mercado Pago. A aba Comum não agrega pedidos incompatíveis em pedido único.
+
+- **D-CART.1:** inventariar `donation_route`, settings exportados e dependências dos consumidores; teste de caracterização das modalidades.
+- **D-CART.2:** implementar provider `donation` segundo interfaces do Portal, com acesso por pedido e seleção de carrinho compatível.
+- **D-CART.3:** mudar gradualmente ownership do subscriber/configuração transversal, preservando compatibilidade de configurações existentes e rotas de doação; remover registro legado somente após equivalência comprovada.
+- **D-CART.4:** integrar aba Doações e Comum (avulsa e dedicada; assinaturas continuam segregadas); verificar domínio, sessão, ACL e acesso anônimo.
+- **D-CART.T:** testes Kernel/Functional/Browser, cenário loja+LMS+doação simultâneos, Mercado Pago sandbox, rollback e logs sanitizados no homelab.
+
+Ver [ADR-013](../../../../../../docs/decisions/ADR-013-portal-multi-cart-checkout.md). Planejamento somente: os controllers/subscribers não foram modificados.
