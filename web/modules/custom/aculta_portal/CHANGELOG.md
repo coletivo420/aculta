@@ -1,3 +1,11 @@
+## Não lançado — identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I) — 2026-10-23
+
+- Política única `FiscalIdentityPolicy` (aculta_portal) para o checkout comercial de Loja e LMS. Doações ficam dispensadas. A consulta usa o contrato `AccountDocumentInterface` de `aculta_id_cpf`, sem copiar o documento para pedido, perfil ou sessão. Falha fechada.
+- Pane `aculta_fiscal_identity`: sem campo de entrada. Mostra o documento mascarado, aviso com link para `/dados/outros-dados`, ou mensagem genérica. Valida ao enviar a revisão, no servidor.
+- Flow `default` passa a ser o checkout comercial compartilhado. Login obrigatório e cadastro permitido. O tipo `curso` usa o flow `default`; o flow `curso` foi removido. Ativação depende de `config:import` autorizado.
+- Preferência pelo serviço do `aculta_associado_id` removida de `PortalController` e `AccountOtherDataForm`.
+- Testes Unit: `FiscalIdentityPolicyTest` (7). Kernel pendente. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.20 — auditoria das alterações de checkout e flow efetivo (P-CART F) — 2026-10-22
 
 - As abas Comum, Loja e LMS registram no canal `aculta_portal_checkout` quem alterou o quê (contexto, valores antes e depois, uid), sem segredos; desligar o checkout comum gera aviso.

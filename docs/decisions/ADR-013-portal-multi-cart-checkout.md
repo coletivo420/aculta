@@ -88,4 +88,7 @@ Consequências para esta ADR:
 
 **Auditoria I-A (carrinhos reais):** detalhada em `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 5. Resumo: o isolamento por tipo de pedido existe; nenhum checkout comercial exige identidade fiscal hoje; cursos gratuitos geram pedido de total zero que passa pelo checkout comercial.
 
-**Situação:** contrato proposto (I-B) documentado; implementação dos checkouts (I-D) pendente.
+**Situação:** contrato implementado (`FiscalIdentityPolicy`, `FiscalIdentityPane`); configuração do checkout comercial unificada no flow `default`; ativação em runtime pendente de `config:import` autorizado.
+
+**Unificação do checkout comercial (2026-10-23):** Loja (tipo `default`) e LMS (tipo `curso`) passam a usar um único flow, o `default`, com o pane `aculta_fiscal_identity`. O flow `curso`, duplicado, sai da configuração. Os tipos de pedido continuam separados, como o responsável determinou. Login obrigatório e cadastro dentro do checkout permitido, como no LMS. Doações mantêm os flows `doacao` e `assinatura_flow`, sem o pane.
+

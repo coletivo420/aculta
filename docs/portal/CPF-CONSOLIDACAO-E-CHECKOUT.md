@@ -1,6 +1,6 @@
 # CPF/CNPJ — consolidação em `aculta_id_cpf` e identidade fiscal compartilhada no checkout
 
-**Data:** 2026-10-23. **Branch:** `docs/aculta-forum-0.1.0-dev.1` (PR #297). **Status:** fases R0–R1 e I-A/I-B concluídas; demais fases pendentes conforme seção 7.
+**Data:** 2026-10-23. **Branch:** `docs/aculta-forum-0.1.0-dev.1` (PR #297). **Status:** R0–R2 e R5 concluídas; R3 bloqueada; I-A, I-B e a implementação compartilhada de I-D/I-D-LMS feitas em código e configuração, com ativação em runtime pendente. Ver seções 7 a 10.
 
 Este documento registra a inventariação (R0), as decisões do responsável e a auditoria dos carrinhos e checkouts (I-A). A decisão arquitetural vigente está em [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md), seção "Adendo — identidade fiscal compartilhada".
 
@@ -147,7 +147,7 @@ Regras de implementação propostas:
 
 1. **Duplicação entre Loja e LMS:** flow e pane compartilhados. Tipos de pedido permanecem separados (`default` para Loja, `curso` para LMS); a lógica de checkout comercial existe uma vez. O tipo `curso` e a regra de matrícula não mudam. Doações permanecem separadas.
 2. **Curso com total zero que passa pelo checkout:** exige CPF/CNPJ válido para concluir. A exigência é aplicada ao checkout comercial, não ao valor do pedido. Matrícula sem checkout comercial, se existir, continua fora da regra.
-3. **Guest checkout:** não. Login obrigatório, como hoje nos flows `default` e `curso`.
+3. **Guest checkout:** não. Login obrigatório. **Correção:** o flow `default` da Loja permitia compra sem conta (`allow_guest_checkout: true`); o flow `curso` já exigia login. A mudança torna a Loja mais restrita. Cadastro dentro do checkout passa a ser permitido, como no LMS.
 
 ## 7. Fases
 
@@ -159,15 +159,15 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 | R1 | Decisões e documentação atualizadas | ADR, roadmaps, status e READMEs coerentes | **Concluída nesta rodada** |
 | R2 | Portal usa só `aculta_id_cpf` | Sem preferência nem fallback ao associado; testes do portal | **Concluída nesta rodada** |
 | R3 | Remoção do diretório do associado | Runtime verificado em todos os ambientes | **BLOQUEADA** (seção 4) |
-| R4 | Segurança e preservação de dados | Chaves, campos e HMAC inalterados; testes sintéticos de cifra e fingerprint | Parcial: chaves e HMAC inalterados; testes de continuidade pendentes |
+| R4 | Segurança e preservação de dados | Chaves, campos e HMAC inalterados; testes sintéticos de cifra e fingerprint | Parcial: chaves e HMAC inalterados; a suíte existente (248 verificações) cobre a validação e o fingerprint, mas não há teste novo de leitura de cifra antiga |
 | R5 | Roadmap do `aculta_id_cpf` | Fases 0.2-A a 0.2-E registradas | **Concluída nesta rodada** (seção 8) |
 | R6 | Validação e encerramento | Gates reais | Parcial (seção 9) |
 | I-A | Inventário e caracterização multi-carrinho | Seção 5 | **Concluída** (caracterização por teste Kernel pendente) |
-| I-B | Contrato de identidade fiscal | Seção 6 aprovada | **Proposta documentada**; implementação pendente |
-| I-C | Imutabilidade após cadastro | Bloqueio no servidor, não só no formulário | Pendente |
-| I-D | Checkout da Loja | Exige documento válido; revalida no servidor | Pendente |
-| I-D-LMS | Checkout do LMS (cursos pagos e gratuitos com checkout) | Mesmo flow e pane da Loja; matrícula inalterada | Pendente |
-| I-E | Isolamento de Doações | Testes de regressão | Pendente |
+| I-B | Contrato de identidade fiscal | Política única `FiscalIdentityPolicy` sobre `AccountDocumentInterface` (sem interface nova) | **Concluída em código** (commit `6034a13e`), com 7 testes Unit |
+| I-C | Imutabilidade após cadastro | Bloqueio no servidor, não só no formulário | **Já existente** em `AccountDocumentStore` (gravação única; segunda gravação lança `LogicException`). Teste de servidor pendente |
+| I-D | Checkout da Loja | Exige documento válido; revalida no servidor | **Implementado em código e configuração** (commits `6034a13e`, `3344ca0d`): pane `aculta_fiscal_identity` no flow `default`. Ativação: `drush config:import` autorizado |
+| I-D-LMS | Checkout do LMS (cursos pagos e gratuitos com checkout) | Mesmo flow e pane da Loja; matrícula inalterada | **Implementado em configuração** (tipo `curso` aponta para o flow `default`; flow `curso` removido). Matrícula e estorno não mudaram. Ativação pendente |
+| I-E | Isolamento de Doações | Testes de regressão | **Parcial**: flows `doacao` e `assinatura_flow` não mudaram; testes Unit de caracterização de Doações passam (43 testes com Loja e LMS). Kernel pendente |
 | I-F | Sessões, acesso e regressões | Testes Functional/Kernel | Pendente |
 
 ## 8. Roadmap do `aculta_id_cpf` (R5)
@@ -182,19 +182,38 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 
 ## 9. Validação (R6)
 
-| Gate | Resultado nesta rodada |
+| Gate | Resultado |
 |---|---|
-| PHP lint dos arquivos alterados | Ver seção de execução do relatório |
-| Testes unitários `aculta_id_cpf` (`tests/run.php`) | `PASS: 248 domain checks` |
-| `php scripts/validate-project-status-index.php` | **FAIL pré-existente**: falta `aculta_commerce` no status; tabela do README raiz desatualizada. Não corrigido por estar fora do escopo. |
-| `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**: arquivo `WikiController.php` ausente. Não relacionado a CPF. |
-| `git diff --check` | Ver relatório |
-| PHPCS Drupal/DrupalPractice, PHPUnit Kernel, Config Sync, testes de Loja/LMS/Doações | **DEFERRED**: não executados nesta rodada |
+| PHP lint dos arquivos alterados | **PASS** |
+| `phpunit` Unit do `aculta_portal` (todos os testes Unit) | **PASS**: 314 testes, 785 asserções; 6 deprecações já existentes |
+| Testes Unit de Loja, LMS e Doações (caracterização, `CourseOrderEnrollmentManagerTest`, providers) | **PASS**: 43 testes |
+| `FiscalIdentityPolicyTest` (novo) | **PASS**: 7 testes |
+| `aculta_id_cpf/tests/run.php` | **PASS**: 248 verificações de domínio |
+| `git diff --check` (commits desta rodada) | **PASS** |
+| `php scripts/validate-project-status-index.php` | **FAIL pré-existente**, mesmo resultado da linha de base: falta status de `aculta_commerce`; tabela do README raiz desatualizada. Não corrigido, fora do escopo |
+| `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**, mesmo conjunto de falhas da linha de base (ex.: `WikiController.php` ausente). Nenhuma falha nova relacionada a checkout ou CPF |
+| PHPCS Drupal/DrupalPractice nos arquivos novos | **Não atende o padrão estrito**: comentários de documentação e linhas longas. O repositório não passa nesse padrão (`PortalController.php` tem 67 erros antes desta rodada). Dívida registrada, não corrigida |
+| PHPUnit Kernel | **DEFERRED**: `SIMPLETEST_DB` não está configurado. Não foi apontado para o banco de desenvolvimento compartilhado |
+| Config Sync | **Verificado em parte**: YAML válido. `drush config:status` mostra o tipo `curso` e o flow `default` diferentes do ativo, como esperado. A aplicação exige `config:import` autorizado |
+| Gates de Loja, LMS e Doações no servidor de testes | **DEFERRED** |
+
+## 9.1 Efeitos de runtime ao ativar a configuração
+
+Aplicar `drush config:import` no runtime alvo, somente com autorização:
+
+- O flow `commerce_checkout.commerce_checkout_flow.curso` será **removido** do ativo. Nenhum pedido guarda o ID do flow, mas pedidos em checkout de curso que estejam na etapa de login ou de revisão precisam ser conferidos depois da importação.
+- O tipo `curso` passa a usar o flow `default`.
+- O flow `default` passa a exigir login e a incluir o pane `aculta_fiscal_identity` na etapa de revisão. Compras da Loja sem CPF/CNPJ válido deixam de ser concluídas.
+- Cursos gratuitos que passam pelo checkout também passam a exigir CPF/CNPJ, como decidido.
 
 ## 10. Pendências
 
-1. Procedimento administrativo de correção (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
-2. Verificação do Runtime nos servidores de teste e produção (seção 4).
-3. Corrigir os dois gates pré-existentes (status do `aculta_commerce`; `WikiController`).
-4. Testes Kernel de caracterização de carrinho e checkout (I-A completo).
-5. Divergência entre ADR-013 e o estado do `aculta_commerce` no Runtime.
+1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1.
+2. **Kernel do checkout:** cobrir visibilidade do pane (Loja, LMS e Doações), bloqueio na revisão sem documento, aviso com link, documento mascarado, falha fechada, e que o checkout não grava o documento. Requer `SIMPLETEST_DB` de ambiente de teste.
+3. **Retorno do link `destination`:** verificar se `/dados/outros-dados` honra o parâmetro e devolve ao checkout do pedido. Se não honrar, o usuário volta ao carrinho e precisa reabrir o pedido.
+4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
+5. **Dívida de PHPCS** nos arquivos novos e nos existentes.
+6. **Runtime de teste e produção:** verificar o estado de `aculta_associado_id` antes da remoção do diretório (seção 4).
+7. **Gates pré-existentes:** status de `aculta_commerce` e `WikiController.php` ausente.
+8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
+9. **Cenários de sessão da seção 5** (login durante checkout, múltiplas abas, troca de Domain, expiração): ainda não verificados.
