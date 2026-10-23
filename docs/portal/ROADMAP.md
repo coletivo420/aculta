@@ -204,3 +204,17 @@ O `aculta_portal` é o orquestrador de carrinhos e seleção de checkout, não `
 - **P-CART T:** homologação no homelab dos três checkouts, carrinhos concorrentes, domínios, guest/auth, checkout comum/dedicado, webhook/reembolso, regressão SDC, mobile/light/dark, rollback documentado.
 
 [Detalhamento e limites normativos](../decisions/ADR-013-portal-multi-cart-checkout.md).
+
+## RETIFICAÇÃO VIGENTE — P-CART administrativo (ADR-013, 2026-10-22)
+
+**Esta seção substitui a interpretação anterior de “interface multi-carrinho” como interface do usuário.** As quatro abas **Comum | Loja | LMS | Doações** serão **exclusivamente administrativas**. O carrinho já presente na **barra multidomínio** (posição, contador, aparência, links e comportamento) e a seleção atual dos checkouts são contratos imutáveis durante a refatoração. Não criar novo carrinho público, carrinho agregado, checkout unificado ou seleção persistida por sessão.
+
+- **P-CART A:** baseline do carrinho da barra multidomínio, seleção atual, rotas/config, testes de caracterização.
+- **P-CART B:** interfaces/registry da orquestração e configurações no módulo principal Portal, sem alterar checkout.
+- **P-CART C:** providers de configuração para Loja, LMS e Doações, com manutenção de seus fluxos próprios.
+- **P-CART D:** port/migração progressiva da coordenação de `CartCheckoutRouteSubscriber` do Donation ao Portal, conservando `donate|cart|both` e configurações exportadas, com rollback.
+- **P-CART E:** interface de **administração** com abas Comum, Loja, LMS e Doações, Form API, ACL e SDC/UI Suite.
+- **P-CART F:** auditoria de políticas, conflitos, segurança, Statistics e documentação.
+- **P-CART T:** regressão real do cabeçalho e dos três checkouts no homelab, sem alterações visuais ao comprador.
+
+**As seções P-CART anteriores, quando conflitantes, ficam supersedidas por este plano e pelo [ADR-013](../decisions/ADR-013-portal-multi-cart-checkout.md).**
