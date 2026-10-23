@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.154 — validar consulta paginada em MariaDB
+
+- `ContentIndexQueryKernelTest` passou em MariaDB: 4 testes / 52 assertions,
+  cobrindo cursor opaco, paginação por ID imutável, revalidação de Entity
+  Access, cache de candidatos e filtros allowlisted.
+- A repetição não produziu deprecações nem falhas.
+
 ## 0.1.0-dev.153 — migrar hooks runtime para OOP com DI
 
 - Removidos hooks procedurais de CRUD e cron de `aculta_index.module`.

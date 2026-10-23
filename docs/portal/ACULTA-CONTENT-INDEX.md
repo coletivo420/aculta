@@ -12,6 +12,8 @@
 
 **Validação dev.153 (2026-10-23):** hooks runtime do Index foram migrados de `aculta_index.module` para classes `#[Hook]` com DI. Kernel de tradução passou (1/20) e a suíte Kernel completa voltou a passar em MariaDB (102/1.518; 39 depreciações Core/contrib e 54 PHPUnit); PHPCS Drupal e lint passaram. A migração não altera contratos ou ordem de manutenção.
 
+**Validação dev.154 (2026-10-23):** `ContentIndexQueryKernelTest` passou em MariaDB (4 testes / 52 assertions, sem depreciações), incluindo os cursors persistidos e opacos, keyset por ID imutável, revalidação de acesso, cache interno de candidatos e validação dos filtros.
+
 ## Propósito e propriedade
 
 O Content Index será um catálogo SQL derivado, reconstruível e incremental de conteúdos e relações selecionados. Ele permitirá que consumidores autorizados descubram, filtrem, relacionem e contabilizem itens de vários submódulos por contratos comuns.
@@ -77,7 +79,7 @@ Evidência IDX 0.1-F: o Kernel `ContentIndexMagazineProviderKernelTest` usa a cl
 
 Revalidação em 2026-10-23: `CourseDocumentAccessTest` do owner falhou antes da primeira assertion pela referência ausente `aculta_user.aculta_user_agreement_ledger`; acrescentar `aculta_user` expôs também `commerce_cart.cart_provider`. A integração IDX 0.1 agora tem Kernel focal do `ContentIndexAccessFilter` com Media `course_document` real, File privado, Group real, provider/YAML do owner e Domain `courses` (1/28 SQLite), permitindo estudante membro e negando terceiro/revogação. A relação de acesso é plugin fixture com `entity_access: TRUE`, não a definição Group do owner. Permanecem pendentes o boot/DI e a descoberta do plugin real `aculta_pdf_viewer_group` na cadeia completa do owner.
 
-O Kernel `ContentIndexQueryKernelTest` exercita diretamente a API paginada: cursor opaco vinculado à conta e aos filtros da consulta, keyset por ID imutável diante de inserção posterior, revalidação de Entity Access depois de despublicar a fonte, invalidação do cache interno por revisão do catálogo, limites e filtros allowlisted (2 testes / 29 assertions no SQLite temporário). A repetição MariaDB fica pendente para não concorrer com as próximas escalas do benchmark de manutenção.
+O Kernel `ContentIndexQueryKernelTest` exercita diretamente a API paginada: cursor opaco vinculado à conta e aos filtros da consulta, keyset por ID imutável diante de inserção posterior, revalidação de Entity Access depois de despublicar a fonte, invalidação do cache interno por revisão do catálogo, limites e filtros allowlisted. Revalidação MariaDB em dev.154: 4 testes / 52 assertions, sem depreciações. Uma execução anterior SQLite (2/29) foi evidência provisória; MariaDB é o gate vigente do repositório.
 
 O teste Unit `ContentIndexDrushCommandDiscoveryTest` aplica a descoberta de módulos do Drush 13.8 ao diretório de produção e confirma os três comandos e seus atributos `AsCommand` (1/8). A listagem live também passou no Runtime `toca` (Drupal 11.4.10, Drush 13.8): `audit`, `queue` e `rebuild` apareceram após ativação temporária autorizada. A inspeção confirmou zero entradas/relações/jobs e geração ativa vazia; desinstalei o módulo e confirmei que as tabelas derivadas foram removidas e ele voltou a disabled. Isso confirma descoberta, não a execução operacional dos comandos contra um catálogo. Não houve rebuild nem alteração de conteúdo original. `system.site` continua com `pt-br` conforme o Sync; não importei configuração, pois o estado-base de outras diferenças em `core.extension`/`system.site` não havia sido registrado.
 
