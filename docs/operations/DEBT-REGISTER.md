@@ -253,3 +253,11 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | GS-ROUTE-PTBR-01 | Validar URLs PT-BR `/estudio/loja/*`, domínio purpose account e ausência de colisão | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
 | GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
 | GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
+
+## GS-0.2-C — Catálogo operacional inicial (2026-10-23)
+
+| ID | Pendência | Critério de aceite |
+| --- | --- | --- |
+| GS-CAT-01 | Homologar leitura de `produto_loja` por permissões e stores | Testes Kernel/Functional com papéis e múltiplas lojas, sem vazamento de catálogo |
+| GS-CAT-02 | Substituir amostra de 100 IDs por paginação de verdade | Cursor/pager com filtros e segurança por store, desempenho em volumes altos |
+| GS-CAT-03 | Visual móvel definitivo e testes de navegação PT-BR | SDC/UI Suite, 320px+, acessibilidade, links e cache no homelab |
