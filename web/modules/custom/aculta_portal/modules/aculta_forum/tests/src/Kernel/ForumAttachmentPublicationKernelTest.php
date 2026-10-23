@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_forum\Attachment\ForumGalleryPublication;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
+use Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\FileRemover;
@@ -293,6 +294,55 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     $topic->save();
     $this->publication->syncTopic($topic);
     self::assertFalse($this->isAttachmentPublished($media), 'An unpublished host topic removes public attachment access.');
+  }
+
+  /**
+   * A restricted reference publishes the Media and the account decides access.
+   *
+   * The anonymous comment permission is revoked to reproduce a host that the
+   * anonymous account cannot read, as in a restricted topic. Publication must
+   * still happen (F-GROUP 0.4, option B), while media_access denies the
+   * anonymous account and allows the account that can read the host.
+   */
+  public function testRestrictedReferencePublishesMediaAndAccountAccessDecides(): void {
+    $anonymous_role = Role::load('anonymous');
+    $anonymous_role->revokePermission('access comments')->save();
+    $authenticated_role = Role::load('authenticated');
+    $authenticated_role->grantPermission('access content');
+    $authenticated_role->grantPermission('access comments');
+    $authenticated_role->save();
+    $member = User::create([
+      'name' => 'fgroup_member',
+      'mail' => 'fgroup_member@example.invalid',
+      'status' => 1,
+    ]);
+    $member->save();
+
+    $topic = $this->createTopic();
+    $file = $this->createAttachmentFile('restrito.pdf');
+    $media = $this->createAttachmentMedia($file, 'restrito.pdf', $this->container->get('datetime.time')->getRequestTime());
+    $comment = $this->comment($topic, $media, CommentInterface::PUBLISHED);
+    $this->registerEmbedUsage($media, $comment);
+    $this->publication->syncComment($comment);
+
+    self::assertTrue($this->isAttachmentPublished($media), 'A referência em tópico publicado publica a Media.');
+    // syncComment saves a separate Media instance; reload for the access hook.
+    $media = $this->container->get('entity_type.manager')->getStorage('media')->load($media->id());
+    self::assertFalse($this->publication->hasCurrentPublicReference($media), 'A conta anônima não tem referência acessível.');
+    self::assertTrue($this->publication->hasCurrentPublicReference($media, $member), 'A conta com acesso ao Comment tem referência acessível.');
+
+    $hooks = new ForumAttachmentAccessHooks($this->purpose, $this->publication);
+    $anonymous_result = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
+    );
+    self::assertTrue($anonymous_result?->isForbidden(), 'O anônimo não lê a Media de referência restrita.');
+
+    $member_result = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->mediaAccess($media, 'view', $member),
+    );
+    self::assertTrue($member_result?->isAllowed(), 'A conta que lê o host lê a Media publicada.');
   }
 
   /**

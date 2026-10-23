@@ -120,3 +120,32 @@ diretório privado de `SUITE_OUT`.
 O roteiro pressupõe as instâncias versionadas `field_autor_legado` nos bundles
 do Fórum e Comment ACULTA; se faltarem no Runtime, primeiro faça uma importação
 parcial limitada a esses dois arquivos, com backup e revisão dos alvos.
+
+## F-GROUP — tópico e anexo restritos
+
+`fgroup-runtime.py` valida, em Firefox ESR visível, o acesso de duas contas ao
+tópico restrito da fixture F-GROUP: o associado ativo com membership deve ver o
+título e o tópico na listagem; o suspenso com membership deve receber 403 e não
+ver o título. Cada conta roda em um **perfil novo** porque o cookie de sessão
+usa `Domain=.aculta.toca.net.br`; reaproveitar o perfil faz o segundo login
+herdar a sessão do primeiro, o que produz falso positivo.
+
+Pré-requisito: a fixture provisionada por
+`aculta_forum/tests/runtime/fgroup-provision.php` e o desligamento posterior com
+`teardown`. Gere os links únicos no host de conta, sem imprimi-los:
+
+```sh
+export DRUSH_OPTIONS_URI=https://conta.aculta.toca.net.br
+L1=$(php vendor/drush/drush/drush.php user:login --name=fgroup_teste_ativo_membro --no-browser | tail -1)
+L2=$(php vendor/drush/drush/drush.php user:login --name=fgroup_teste_suspenso_membro --no-browser | tail -1)
+DISPLAY=:0 SUITE_BASE=https://growroom420.aculta.toca.net.br \
+SUITE_TOPIC_URL=https://growroom420.aculta.toca.net.br/node/<nid> \
+SUITE_OUT=/home/<usuario>/private/aculta/visual-tests/forum-fgroup \
+SUITE_LOGIN_ATIVO="$L1" SUITE_LOGIN_SUSPENSO="$L2" \
+python3 tests/browser/aculta-forum/fgroup-runtime.py
+```
+
+O script imprime JSON e grava capturas e `results.json` com modo `0600` em
+`SUITE_OUT`. Não cria conteúdo além do login, não altera senhas e não roda em
+produção. O anexo e o download privado são medidos pelos scripts de
+`aculta_forum/tests/runtime/`, não pelo navegador.

@@ -1,3 +1,29 @@
+## F-GROUP 0.4 — anexos e Runtime controlado, 2026-10-23
+
+- Kernel `ForumAttachmentPublicationKernelTest`: 7 testes / 201 asserções OK.
+  Novo caso prova a opção B: referência em host não legível anonimamente
+  publica a Media, o anônimo é negado e a conta autorizada é liberada.
+- Suíte Kernel do Fórum: 51 testes / 1.140 asserções OK. Unit: 169 / 992 OK.
+  PHPCS Drupal/DrupalPractice limpo nos arquivos alterados.
+- Runtime de testes (`toca`, `aculta_runtime`, Drupal 11.4.10): backup
+  validado (`gzip -t`, SHA-256 `72714d90…`), fixture provisionada, ativação
+  com rebuild e `drush cr`, medição e reversão completa.
+- Por conta: anônimo, ativo sem membership, suspenso com membership e comum
+  recebem FALSE/vazio em `node->access('view')` e na query `node_access`;
+  ativo com membership recebe TRUE e o único NID da listagem.
+- HTTP anônimo: `/node/<nid>` → 403 sem título; home → 200 sem o título.
+- Firefox ESR/X11 com perfis isolados: ativo com membership vê título e
+  listagem; suspenso com membership recebe 403, sem título e ausente da
+  listagem. Capturas privadas fora do checkout.
+- Anexo antes de B: Media despublicada e negada a todos (fail closed). Depois
+  de B: Media publicada, `media->access('view')` e
+  `file->access('download')` liberados só ao ativo com membership; arquivo
+  físico em `private://` exercitado.
+- Estado final: `restricted_group_type` vazio, `realm=all:21`, zero tópicos,
+  zero contas `fgroup_teste_*`, Group type ausente, nenhum arquivo da fixture.
+- Pendente: busca/contagem, cache de página e regressão do fórum público no
+  Runtime.
+
 ## F-GROUP 0.3 — auditoria de herança de acesso, 2026-10-23
 
 - Unit `ForumPostAccessHooksTest`: 4 testes / 84 asserções OK. Novo caso

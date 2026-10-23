@@ -48,18 +48,23 @@ final class ForumAttachmentAccessHooks {
       return $access->addCacheContexts(['user.permissions'])->setCacheMaxAge(0);
     }
 
-    // Do not let a stale published flag bypass current Node grants or host
-    // publication. The file download access handler also checks Media access.
-    if (!$this->attachmentPublication->hasCurrentPublicReference($entity)) {
-      return AccessResult::forbidden('O anexo não tem referência pública acessível no Fórum.')
+    // A published attachment follows the access of the requesting account to
+    // the published host. The restricted topic policy decides through
+    // node_access, so a non-member is denied even though the Media is
+    // published. The private file download handler rechecks this Media access.
+    if (!$this->attachmentPublication->hasCurrentPublicReference($entity, $account)) {
+      return AccessResult::forbidden('O anexo não tem referência acessível à conta no Fórum.')
         ->addCacheableDependency($entity)
-        ->addCacheContexts(['domain', 'user.permissions'])
+        ->addCacheContexts(['domain', 'user'])
         ->setCacheMaxAge(0);
     }
 
     // Host grants can change without saving the Media entity. Recompute access
     // on the next request instead of caching this result beyond this request.
-    return $access->addCacheContexts(['user.permissions'])->setCacheMaxAge(0);
+    return AccessResult::allowed()
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['domain', 'user'])
+      ->setCacheMaxAge(0);
   }
 
 }

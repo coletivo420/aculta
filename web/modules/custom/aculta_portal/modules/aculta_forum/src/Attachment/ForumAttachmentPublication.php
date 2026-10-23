@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\media\MediaInterface;
@@ -225,7 +226,19 @@ final class ForumAttachmentPublication {
     ?ForumPost $current_post = NULL,
     ?int $excluded_post_id = NULL,
   ): void {
-    $is_public = $this->isPubliclyReferenced($media, $current_comment, $current_topic, $excluded_gallery_id, $current_post, $excluded_post_id);
+    // Publication follows an active reference in a published host, including a
+    // restricted topic. Account access is revalidated by the media_access hook
+    // and by the private file handler, so the published flag alone never grants
+    // access to a non-member.
+    $is_public = $this->isPubliclyReferenced(
+      $media,
+      $current_comment,
+      $current_topic,
+      $excluded_gallery_id,
+      $current_post,
+      $excluded_post_id,
+      check_access: FALSE,
+    );
     if ($media->isPublished() === $is_public) {
       return;
     }
@@ -234,17 +247,27 @@ final class ForumAttachmentPublication {
   }
 
   /**
-   * Checks current anonymous access through a public Forum host reference.
+   * Checks current access through a published Forum host reference.
+   *
+   * Anonymous by default, preserving the public rule. When an account is
+   * given, the host access is evaluated for that account, so an active
+   * associate with membership can read an attachment of a restricted topic
+   * while everyone else remains denied.
    *
    * This is repeated at access time because publication status alone can become
    * stale when Node grants or another host access rule changes independently.
    */
-  public function hasCurrentPublicReference(MediaInterface $media): bool {
-    return $this->isPubliclyReferenced($media);
+  public function hasCurrentPublicReference(MediaInterface $media, ?AccountInterface $account = NULL): bool {
+    return $this->isPubliclyReferenced($media, account: $account);
   }
 
   /**
-   * Checks public references, including the current entity during a save.
+   * Checks active references, including the current entity during a save.
+   *
+   * With $check_access FALSE the reference is considered active from a
+   * published host without evaluating any account; this drives publication.
+   * With TRUE (default) the host access is evaluated for $account, falling
+   * back to the anonymous account.
    */
   private function isPubliclyReferenced(
     MediaInterface $media,
@@ -253,6 +276,8 @@ final class ForumAttachmentPublication {
     ?int $excluded_gallery_id = NULL,
     ?ForumPost $current_post = NULL,
     ?int $excluded_post_id = NULL,
+    ?AccountInterface $account = NULL,
+    bool $check_access = TRUE,
   ): bool {
     // Field references are not reported consistently by Entity Usage; discover
     // Forum galleries from their source field as a second, authoritative path.
@@ -266,7 +291,7 @@ final class ForumAttachmentPublication {
         continue;
       }
       $gallery = $this->entityTypeManager->getStorage('media_gallery')->load($gallery_id);
-      if ($gallery instanceof MediaGalleryInterface && $this->isPublicGalleryReference($gallery, $media, $current_topic)) {
+      if ($gallery instanceof MediaGalleryInterface && $this->isPublicGalleryReference($gallery, $media, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
@@ -292,7 +317,7 @@ final class ForumAttachmentPublication {
       if ($comment instanceof CommentInterface
         && $this->isForumComment($comment)
         && in_array($media->uuid(), $this->mediaUuids($comment), TRUE)
-        && $this->isPublicComment($comment, $current_topic)) {
+        && $this->isPublicComment($comment, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
@@ -308,7 +333,7 @@ final class ForumAttachmentPublication {
       }
     }
     foreach ($posts as $post) {
-      if ($post instanceof ForumPost && $this->isPublicPost($post, $current_topic)) {
+      if ($post instanceof ForumPost && $this->isPublicPost($post, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
@@ -325,9 +350,16 @@ final class ForumAttachmentPublication {
   }
 
   /**
-   * Checks anonymous access using the Forum purpose and host publication.
+   * Checks access using the Forum purpose and host publication.
+   *
+   * With $check_access FALSE, only the published host state is required.
    */
-  private function isPublicComment(CommentInterface $comment, ?NodeInterface $current_topic = NULL): bool {
+  private function isPublicComment(
+    CommentInterface $comment,
+    ?NodeInterface $current_topic = NULL,
+    ?AccountInterface $account = NULL,
+    bool $check_access = TRUE,
+  ): bool {
     $topic = $current_topic instanceof NodeInterface
       && (string) $current_topic->id() === (string) $comment->getCommentedEntityId()
       ? $current_topic
@@ -344,24 +376,27 @@ final class ForumAttachmentPublication {
     if ($purpose !== 'forum') {
       return FALSE;
     }
-    $anonymous = new AnonymousUserSession();
+    if (!$check_access) {
+      return TRUE;
+    }
+    $account ??= new AnonymousUserSession();
     return (bool) $this->domainPurposeManager->runInPurpose(
       'forum',
-      static fn (): bool => $comment->access('view', $anonymous, TRUE)->isAllowed(),
+      static fn (): bool => $comment->access('view', $account, TRUE)->isAllowed(),
     );
   }
 
   /**
    * Exposes Forum visibility for Gallery publication synchronization.
    */
-  public function isPublicForumComment(CommentInterface $comment, ?NodeInterface $current_topic = NULL): bool {
-    return $this->isForumComment($comment) && $this->isPublicComment($comment, $current_topic);
+  public function isPublicForumComment(CommentInterface $comment, ?NodeInterface $current_topic = NULL, ?AccountInterface $account = NULL): bool {
+    return $this->isForumComment($comment) && $this->isPublicComment($comment, $current_topic, $account);
   }
 
   /**
-   * Checks anonymous access to a published post in a public Forum topic.
+   * Checks access to a published post in a published Forum topic.
    */
-  public function isPublicPost(ForumPost $post, ?NodeInterface $current_topic = NULL): bool {
+  public function isPublicPost(ForumPost $post, ?NodeInterface $current_topic = NULL, ?AccountInterface $account = NULL, bool $check_access = TRUE): bool {
     $topic = $current_topic instanceof NodeInterface
       && (string) $current_topic->id() === (string) $post->get('topic')->target_id
       ? $current_topic
@@ -376,11 +411,14 @@ final class ForumAttachmentPublication {
       || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return FALSE;
     }
+    if (!$check_access) {
+      return TRUE;
+    }
 
-    $anonymous = new AnonymousUserSession();
+    $account ??= new AnonymousUserSession();
     return (bool) $this->domainPurposeManager->runInPurpose(
       'forum',
-      static fn (): bool => $post->access('view', $anonymous, TRUE)->isAllowed(),
+      static fn (): bool => $post->access('view', $account, TRUE)->isAllowed(),
     );
   }
 
@@ -468,6 +506,8 @@ final class ForumAttachmentPublication {
     MediaGalleryInterface $gallery,
     MediaInterface $media,
     ?NodeInterface $current_topic = NULL,
+    ?AccountInterface $account = NULL,
+    bool $check_access = TRUE,
   ): bool {
     if (!$gallery->isPublished()
       || !$gallery->hasField('field_gallery_purpose')
@@ -490,14 +530,14 @@ final class ForumAttachmentPublication {
       if ($comment instanceof CommentInterface
         && $this->isForumComment($comment)
         && in_array($gallery->uuid(), $this->galleryUuids($comment), TRUE)
-        && $this->isPublicComment($comment, $current_topic)) {
+        && $this->isPublicComment($comment, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }
     foreach ($this->findPostsReferencing($gallery->uuid(), 'media_gallery') as $post) {
       if ($post instanceof ForumPost
         && in_array($gallery->uuid(), $this->postGalleryUuids($post), TRUE)
-        && $this->isPublicPost($post, $current_topic)) {
+        && $this->isPublicPost($post, $current_topic, $account, $check_access)) {
         return TRUE;
       }
     }

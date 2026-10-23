@@ -1,13 +1,17 @@
-# Fóruns restritos para associados ativos — F-GROUP 0.1 e 0.2
+# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.4
 
-Documento da frente **F-GROUP 0.1** (inventário e fundação) e **F-GROUP 0.2**
-(prova funcional em Kernel). Cobre o inventário (F-GROUP-A), as decisões de
-contrato e a fundação implementada (F-GROUP-B), o limite do que foi provado
-(F-GROUP-C) e a prova de grants reais em Kernel (F-GROUP-D). **Nenhum Runtime
-foi alterado**: não houve import de configuração, criação de Group, rebuild de
-`node_access` em ambiente nem migração de dados. O rebuild da F-GROUP 0.2
-ocorreu apenas no banco isolado de testes Kernel. Os gates executados são
-Unit/Kernel/PHPCS/PHPStan; o Runtime de testes segue **DEFERRED**.
+Documento das frentes **F-GROUP 0.1** (inventário e fundação), **0.2** (prova de
+grants em Kernel), **0.3** (herança em posts/comments e auditoria de anexos) e
+**0.4** (anexos pela conta atual). Cobre o inventário (F-GROUP-A), as decisões
+de contrato e a fundação (F-GROUP-B), o limite do que foi provado (F-GROUP-C) e
+as provas em Kernel (F-GROUP-D) e em Runtime controlado (F-GROUP-E).
+
+O Runtime de testes foi alterado apenas na janela controlada de 2026-10-23,
+com backup verificado, e **revertido ao estado inicial**: a fixture foi
+removida, `restricted_group_type` voltou a vazio e `node_access` voltou a
+`realm=all` (21 linhas). Produção não foi tocada. Os gates executados são
+Unit, Kernel, PHPCS e o roteiro de Runtime; busca/contagem e a matriz de cache
+de página no Runtime seguem **DEFERRED**.
 
 ## Escopo e limites
 
@@ -179,23 +183,23 @@ Nenhum teste Runtime, Functional ou de navegador foi executado nesta frente.
 | Desligado | Mesma regra de situação não ativa | PASS (Unit) |
 | Pendente/convidado | Mesma regra de situação não ativa | PASS (Unit) |
 | Usuário comum com e-mail confirmado | Sem situação ativa, logo sem grant nem acesso | PASS (Unit) |
-| URL direta | Política `forbidden` delegada por `entity_access` | PASS (Unit) e PASS (Kernel, handler real); Runtime DEFERRED |
+| URL direta | Política `forbidden` delegada por `entity_access` | PASS (Unit), PASS (Kernel) e PASS (Runtime: HTTP 403 anônimo, 200 só para membro ativo) |
 | Grant real por Group | `RestrictedForumNodeAccessRebuildKernelTest::testRebuildWritesRealmGrantOnlyForRestrictedTopic` | PASS (Kernel) |
 | Membership no acesso de entidade | `testActiveMemberReadsRestrictedTopicThroughEntityAccess` (ativo+membro lê; ativo sem membership, suspenso com membership antiga e anônimo não leem; tópico público lê para todos) | PASS (Kernel) |
 | Filtragem de listagem | `testNodeAccessQueryFiltersListing` (query com tag `node_access` por conta) | PASS (Kernel) |
 | Rebuild de um tópico | `testGrantRebuilderUpdatesSingleTopicWithoutFullRebuild` (público → restrito → público) | PASS (Kernel) |
 | Permissão de grupo ausente | Group proíbe a leitura de conteúdo agrupado sem `view group_node:aculta_forum_topic entity`; documentado como passo de ativação | Confirmado (Kernel) |
 | Conteúdo restrito em busca | Depende de Search API e node grants no Runtime | DEFERRED — índice não provisionado |
-| Anexos e mídia | Hooks de anexo ainda não conhecem Group | DEFERRED — implementação pendente |
+| Anexos e mídia | Media publicada pela referência; `media_access` e File revalidam a conta | PASS (Kernel) e PASS (Runtime: Media e download só para membro ativo) |
 | Invalidação de cache | Asserções de tags na sincronização e no rebuild | PASS (Unit) |
 | Isolamento de Group | Consultas só pelo tipo configurado; relação de outro tipo ignorada | PASS (Unit) |
 | Regressão do fórum público | Sem tipo configurado e tópico público não recebem grant restrito; outros bundles/operações seguem `neutral` | PASS (Unit); Runtime DEFERRED |
 | Regressão do Group LMS | `lms_course`/`lms_class` recusados com log de erro | PASS (Unit) |
 
-**Motivo dos DEFERRED restantes:** busca exige Search API indexado; anexos e
-posts revisionáveis ainda não herdam o Group; e a validação Runtime exige janela
-aprovada, backup e rebuild da tabela `node_access` do ambiente de testes. O
-rebuild executado na F-GROUP 0.2 foi somente no banco Kernel isolado.
+**Motivo dos DEFERRED restantes:** busca e contagem exigem Search API indexado
+no Runtime; a matriz de cache de página e a regressão do fórum público no
+Runtime ainda não foram medidas. Anexos, posts e Comments foram validados em
+Kernel e no Runtime controlado de 2026-10-23 (ver F-GROUP-E).
 
 ## Riscos residuais
 
@@ -203,11 +207,13 @@ rebuild executado na F-GROUP 0.2 foi somente no banco Kernel isolado.
   resultados não forem validados com grants, um índice desatualizado pode expor
   total ou trecho de tópico restrito. Risco aceito apenas com a frente desligada
   (padrão).
-- **Anexos.** A referência pública usa sempre a conta anônima. Isso impede o
-  vazamento de anexo de tópico restrito (fail closed), mas também o nega ao
-  associado ativo; a frente 0.4 precisa decidir a conta do request no download.
-  Bloqueia a ativação em produção enquanto o requisito de anexos nesses tópicos
-  não estiver resolvido.
+- **Anexos publicados.** A Media é publicada quando há referência ativa em
+  post/comment publicado de tópico publicado, inclusive restrito, e o acesso é
+  revalidado pela conta em `media_access` e no download privado do File. Anexo
+  de tópico restrito continua negado a anônimo, suspenso e sem membership. O
+  ponto de atenção mudou de "vazamento" para "mídia publicada": views,
+  limpeza e outros consumidores que tratam `status = 1` como público precisam
+  ser revistos antes de ampliar o uso.
 - **Posts e comentários.** A herança existe por composição: o hook do post
   revalida `$topic->access()` e o Core Comment revalida o host. Falta a prova
   Kernel com o módulo completo e a matriz de cache sob o purpose `forum`.
@@ -229,12 +235,14 @@ rebuild executado na F-GROUP 0.2 foi somente no banco Kernel isolado.
 
 ## Dependências de homelab
 
-- Drush com acesso a `config:set`, `php:eval` e `cache:rebuild` no ambiente de
-  testes (`*.aculta.toca.net.br`); nada foi executado nesta sessão.
+- Drush no checkout do servidor de testes `toca` (Runtime `aculta_runtime`,
+  banco `aculta_runtime`), confirmado com `drush status` em 2026-10-23.
 - Módulo Group `^3.3` e banco de testes com tipo de Group provisionado.
 - Search API com índice do Fórum para a validação de busca.
 - Firefox ESR visível em `DISPLAY=:0` via geckodriver para a validação
-  autenticada de navegador.
+  autenticada de navegador; o login centraliza em
+  `conta.aculta.toca.net.br` e o cookie de sessão usa
+  `Domain=.aculta.toca.net.br`.
 
 ## F-GROUP-D — prova funcional em Kernel (concluída)
 
@@ -270,23 +278,84 @@ Auditoria de código em 2026-10-23, sem alteração de produção:
 - **Comments — herdado pelo Core.** `CommentAccessControlHandler::checkAccess()`
   aplica `andIf($comment->getCommentedEntity()->access('view', $account, TRUE))`.
   O Comment de tópico restrito nega a conta, e não há hook do Fórum a duplicar.
-- **Anexos — fail closed, com limitação.** `ForumAttachmentPublication::
-  isPublicComment()` e `isPublicPost()` avaliam o host com
-  `AnonymousUserSession`; um post/comment de tópico restrito deixa de ser
-  referência pública, e `ForumAttachmentAccessHooks::mediaAccess()` nega a
-  Media. O anexo **não vaza**, mas também não é servido ao associado ativo: a
-  verificação usa sempre a conta anônima. A correção exige decidir a conta do
-  request no download, não só no purpose.
+- **Anexos — resolvido na 0.4.** Na época da 0.3 a referência era sempre
+  anônima e o anexo ficava negado a todos. A 0.4 separou publicação de acesso:
+  a Media é publicada por referência ativa em host publicado e o acesso é
+  revalidado pela conta. Ver a seção seguinte.
+
+## F-GROUP 0.4 — anexos pela conta atual (concluída)
+
+Implementação escolhida: **publicar a Media do tópico restrito** (opção B), com
+acesso revalidado pela conta.
+
+- `ForumAttachmentPublication::isPubliclyReferenced()` ganhou `$account` e
+  `$check_access`. A publicação (`syncMedia`) usa `check_access: FALSE` e passa
+  a considerar referência em post/comment de tópico publicado, inclusive
+  restrito. `hasCurrentPublicReference($media, $account)` avalia o host para a
+  conta, caindo no anônimo quando nenhuma é dada.
+- `ForumAttachmentAccessHooks::mediaAccess()` decide para a Media publicada:
+  `forbidden` para conta sem referência acessível e `allowed` para a conta que
+  lê o post/comment. Mídia não publicada continua neutra (dono/moderador).
+- O download privado do File já revalida a Media via `FileReferenceResolver`;
+  com o hook decisivo, a cadeia File → Media → tópico fecha sem permissão
+  ampla. Nenhum hook de `file_access` foi adicionado.
+- Teste Kernel novo em `ForumAttachmentPublicationKernelTest`: com a permissão
+  de comentário anônimo revogada (host não legível anonimamente), a Media é
+  publicada, o anônimo é negado e a conta autorizada é liberada.
+- Suíte: Unit 169/992 OK; Kernel do Fórum 51/1.140 OK; PHPCS limpo.
+
+## F-GROUP-E — Runtime controlado de 2026-10-23 (executado e revertido)
+
+Ambiente: host `toca`, Runtime `aculta_runtime`, banco `aculta_runtime`,
+Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
+
+- **Backup:** `aculta_runtime-pre-fgroup-20261023.sql.gz`, 4.773.934 bytes,
+  `gzip -t` OK, SHA-256
+  `72714d90d807e88219a770567c2bcd92ba3f8745a4a2da3739b085fe6fc36dd0`.
+- **Estado inicial:** `restricted_group_type` vazio, `node_access` só
+  `realm=all` (21 linhas), zero tópicos do Fórum, Group types apenas
+  `lms_class`/`lms_course`.
+- **Fixture:** Group type `forum_associados`, role de membro com
+  `view group_node:aculta_forum_topic entity`, um Group, um tópico publicado,
+  quatro contas (ativo com membership, ativo sem, suspenso com, comum) e as
+  situações correspondentes em `aculta_associado`.
+- **Ativação:** `restricted_group_type=forum_associados`, rebuild de
+  `node_access`, `drush cr`. O tópico recebeu uma linha
+  `aculta_forum_restricted`/gid do Group e nenhum `all:0`.
+- **Medição por conta (Drush):** `node->access('view')` e query com tag
+  `node_access` — anônimo, ativo sem membership, suspenso com membership e
+  comum: FALSE/vazio; ativo com membership: TRUE e único NID na listagem.
+- **HTTP anônimo:** `https://growroom420.aculta.toca.net.br/node/<nid>` → 403,
+  sem título; a home → 200, sem o título restrito.
+- **Firefox ESR/X11:** sessões isoladas por conta (o cookie
+  `Domain=.aculta.toca.net.br` é compartilhado, então cada conta exige um
+  perfil limpo). Ativo com membership: título visível e presente na listagem.
+  Suspenso com membership: 403, sem título e ausente da listagem. Capturas
+  privadas em
+  `/home/piradopirata/private/aculta/visual-tests/forum-fgroup-20261023/`.
+- **Anexos, antes de B:** Media não publicada, referência anônima falsa e
+  `media->access('view')` falso para anônimo, membro ativo e suspenso — fail
+  closed, sem acesso nem para o membro.
+- **Anexos, depois de B:** Media publicada, referência anônima falsa;
+  `media->access('view')` e `file->access('download')` permitidos só ao
+  associado ativo com membership. O arquivo privado existia no disco
+  (`private://forum/anexos/`), então o download real foi exercitado.
+- **Reversão:** `restricted_group_type=''`, rebuild, remoção de Group, tópico,
+  contas, associações, role e Group type. Estado final conferido:
+  `realm=all:21`, zero tópicos, zero contas `fgroup_teste_*`, Group type
+  ausente, nenhum arquivo privado da fixture. O backup permanece como garantia.
+- **Limitações:** busca e contagem não foram medidas (índice não provisionado);
+  a matriz de cache de página e a regressão do fórum público no Runtime
+  continuam pendentes.
 
 ## Próxima microfase recomendada
 
-**F-GROUP 0.4 — anexos de tópico restrito para a conta atual.** Tornar
-`hasCurrentPublicReference()`/download cientes da conta autenticada, de modo
-que o associado ativo com membership receba o anexo e os demais continuem
-negados; cobrir em Kernel a Media, o File e o embed no post. Em paralelo,
-preparar o roteiro de Runtime controlado (backup, janela aprovada, rebuild de
-`node_access`, listagem, URL direta e busca) para executar quando autorizado.
-Só depois ativar em produção.
+**F-GROUP 0.5 — busca e contagem sob grants.** Validar o datasource
+`ContentEntity` e a paginação/contagem com `node_access` no Runtime, incluindo
+o caso de índice atrasado; cobrir em Kernel o processador de busca que já
+revalida a publicação e os grants do tópico. Em seguida, revisar os
+consumidores que tratam `status = 1` da Media como público (limpeza, views,
+feeds) por causa da F-GROUP 0.4. Só depois avaliar a ativação em produção.
 
 ## Referências
 

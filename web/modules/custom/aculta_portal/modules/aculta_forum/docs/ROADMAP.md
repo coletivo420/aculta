@@ -102,13 +102,19 @@ PASS/DEFERRED e os riscos residuais ficam em
   Group nega a leitura mesmo para o associado ativo. Passo documentado na
   ativação.
 - Gate medido (0.3): `ForumPostAccessHooksTest` — 4 testes, 84 asserções, OK.
-  O post herda `$topic->access()`; o Comment herda pelo Core; o anexo de tópico
-  restrito é negado a todos (a referência pública usa conta anônima), sem
-  vazamento e ainda sem acesso para o associado ativo.
-- Próxima microfase **F-GROUP 0.4**: anexos para a conta atual no download,
-  cobrindo Media, File e embed do post em Kernel; em paralelo, roteiro de
-  Runtime controlado (backup, janela aprovada, rebuild, listagem, URL direta e
-  busca).
+  O post herda `$topic->access()` e o Comment herda pelo Core.
+- Gate medido (0.4): anexos pela conta — `ForumAttachmentPublicationKernelTest`
+  com 7 testes e 201 asserções; Kernel do Fórum 51/1.140 e Unit 169/992, OK.
+  A Media é publicada por referência em tópico publicado e o acesso é
+  revalidado em `media_access` e no download privado.
+- Runtime controlado de 2026-10-23: backup validado, fixture provisionada,
+  rebuild de `node_access`, medição por seis perfis, HTTP anônimo 403,
+  Firefox ESR/X11 com perfis isolados e reversão completa. Só o ativo com
+  membership lê o tópico e baixa o anexo. O ambiente voltou a
+  `restricted_group_type` vazio e `realm=all` (21 linhas).
+- Próxima microfase **F-GROUP 0.5**: busca e contagem sob grants no Runtime,
+  revisão dos consumidores que tratam Media publicada como pública e matriz de
+  cache de página.
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

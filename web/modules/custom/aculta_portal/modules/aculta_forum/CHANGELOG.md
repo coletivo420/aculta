@@ -1,3 +1,22 @@
+## `0.1.0-dev.252` — anexos pela conta e Runtime controlado (F-GROUP 0.4) — 2026-10-23
+
+- `ForumAttachmentPublication` separa publicação de acesso: a Media é
+  publicada por referência ativa em post/comment de tópico publicado, inclusive
+  restrito (`check_access: FALSE`), e `hasCurrentPublicReference()` avalia o
+  host para a conta informada. `ForumAttachmentAccessHooks` passa a decidir
+  `allowed`/`forbidden` para a Media publicada, e o download privado do File
+  revalida a Media.
+- Kernel do Fórum: 51 testes / 1.140 asserções PASS; Unit 169 / 992 PASS;
+  PHPCS limpo.
+- Runtime de testes de 2026-10-23, com backup validado e reversão completa:
+  grants, `node->access`, query `node_access`, HTTP anônimo 403 e Firefox
+  ESR/X11 com perfis isolados confirmam acesso só ao ativo com membership.
+  Anexo e download negados a anônimo/suspenso e liberados ao membro ativo.
+- Fixture removida e frente desligada; `node_access` voltou a `realm=all`
+  (21 linhas). Scripts de provisionamento/medição em `tests/runtime/` e teste
+  de navegador em `tests/browser/aculta-forum/`. Nenhuma alteração de
+  produção.
+
 ## `0.1.0-dev.251` — herança do tópico restrito em posts e auditoria de anexos (F-GROUP 0.3) — 2026-10-23
 
 - Unit `ForumPostAccessHooksTest` ganha
