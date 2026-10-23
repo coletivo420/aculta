@@ -1,4 +1,4 @@
-# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.4
+# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.5
 
 Documento das frentes **F-GROUP 0.1** (inventário e fundação), **0.2** (prova de
 grants em Kernel), **0.3** (herança em posts/comments e auditoria de anexos) e
@@ -284,7 +284,7 @@ Auditoria de código em 2026-10-23, sem alteração de produção:
   a Media é publicada por referência ativa em host publicado e o acesso é
   revalidado pela conta. Ver a seção seguinte.
 
-## F-GROUP 0.4 — anexos pela conta atual (concluída)
+## F-GROUP 0.4 e 0.5 — anexos, galeria e cache (concluídas)
 
 Implementação escolhida: **publicar a Media do tópico restrito** (opção B), com
 acesso revalidado pela conta.
@@ -391,7 +391,7 @@ Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
 
 ## Próxima microfase recomendada
 
-**F-GROUP 0.5 — busca e contagem sob grants.** Validar o datasource
+**F-GROUP 0.6 — busca e contagem sob grants.** Validar o datasource
 `ContentEntity` e a paginação/contagem com `node_access` no Runtime, incluindo
 o caso de índice atrasado; cobrir em Kernel o processador de busca que já
 revalida a publicação e os grants do tópico. O índice `aculta_forum` já tem
