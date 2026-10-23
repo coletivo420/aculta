@@ -7,19 +7,21 @@ namespace Drupal\aculta_lms\Checkout;
 use Drupal\aculta_portal\Checkout\CheckoutContextConfiguration;
 use Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface;
 use Drupal\aculta_portal\Checkout\CheckoutMode;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Contexto LMS: compras de curso, pedidos do tipo `curso`, no carrinho e no checkout comuns do Commerce.
+ * Contexto LMS: compras de curso, pedidos do tipo configurado (padrão `curso`) e o histórico `curso`, no carrinho e no checkout comuns do Commerce.
  *
- * O tipo `curso` é fixo no LMS (`CourseOrderEnrollmentManager`, `CourseEnrollmentPurchaseForm`); o provider apenas o declara.
+ * O LMS lê o mesmo valor de `CheckoutSettings` ao criar compras e reconhecer pedidos; o provider apenas o declara.
  */
 final class LmsCheckoutProvider implements CheckoutContextProviderInterface {
 
-  public const ORDER_TYPE = 'curso';
-
-  public function __construct(private readonly OrderTypeCheckoutFlows $flows) {}
+  public function __construct(
+    private readonly OrderTypeCheckoutFlows $flows,
+    private readonly CheckoutSettings $settings,
+  ) {}
 
   public function id(): string {
     return 'lms';
@@ -34,7 +36,8 @@ final class LmsCheckoutProvider implements CheckoutContextProviderInterface {
   }
 
   public function configuration(): CheckoutContextConfiguration {
-    return new CheckoutContextConfiguration('lms', CheckoutMode::Common, [self::ORDER_TYPE], array_filter([$this->flows->flowId(self::ORDER_TYPE)]));
+    $tipos = $this->settings->lmsOrderTypes();
+    return new CheckoutContextConfiguration('lms', CheckoutMode::Common, $tipos, array_filter([$this->flows->flowId($this->settings->lmsOrderType())]));
   }
 
 }

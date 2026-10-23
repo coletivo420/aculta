@@ -1,6 +1,6 @@
 services:
   aculta_commerce.checkout_provider:
     class: Drupal\aculta_commerce\Checkout\ShopCheckoutProvider
-    arguments: ['@aculta_portal.order_type_checkout_flows']
+    arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.checkout_provider }

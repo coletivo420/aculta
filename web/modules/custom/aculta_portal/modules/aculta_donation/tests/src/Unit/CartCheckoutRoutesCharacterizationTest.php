@@ -9,6 +9,7 @@ use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\aculta_portal\Checkout\CheckoutConfigurationResolver;
 use Drupal\aculta_portal\Checkout\CheckoutContextRegistry;
 use Drupal\aculta_portal\Checkout\CheckoutPolicyManager;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\aculta_portal\EventSubscriber\CartFriendlyRouteSubscriber;
 use Drupal\aculta_portal\EventSubscriber\CommerceCheckoutRouteSubscriber;
@@ -51,7 +52,10 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
         new OrderTypeCheckoutFlows($this->createMock(EntityTypeManagerInterface::class)),
       )]
       : [];
-    return new CommerceCheckoutRouteSubscriber(new CheckoutPolicyManager(new CheckoutConfigurationResolver(new CheckoutContextRegistry($providers))));
+    return new CommerceCheckoutRouteSubscriber(new CheckoutPolicyManager(
+      new CheckoutConfigurationResolver(new CheckoutContextRegistry($providers)),
+      new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => []])),
+    ));
   }
 
   /**

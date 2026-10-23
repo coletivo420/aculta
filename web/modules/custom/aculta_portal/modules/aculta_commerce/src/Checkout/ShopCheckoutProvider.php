@@ -7,17 +7,19 @@ namespace Drupal\aculta_commerce\Checkout;
 use Drupal\aculta_portal\Checkout\CheckoutContextConfiguration;
 use Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface;
 use Drupal\aculta_portal\Checkout\CheckoutMode;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Contexto Loja: pedidos do tipo `default`, no carrinho e no checkout comuns do Commerce.
+ * Contexto Loja: pedidos do tipo configurado em `aculta_portal.checkout_settings` (padrão `default`), no carrinho e no checkout comuns do Commerce.
  */
 final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
 
-  public const ORDER_TYPE = 'default';
-
-  public function __construct(private readonly OrderTypeCheckoutFlows $flows) {}
+  public function __construct(
+    private readonly OrderTypeCheckoutFlows $flows,
+    private readonly CheckoutSettings $settings,
+  ) {}
 
   public function id(): string {
     return 'shop';
@@ -32,7 +34,8 @@ final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
   }
 
   public function configuration(): CheckoutContextConfiguration {
-    return new CheckoutContextConfiguration('shop', CheckoutMode::Common, [self::ORDER_TYPE], array_filter([$this->flows->flowId(self::ORDER_TYPE)]));
+    $tipo = $this->settings->shopOrderType();
+    return new CheckoutContextConfiguration('shop', CheckoutMode::Common, [$tipo], array_filter([$this->flows->flowId($tipo)]));
   }
 
 }

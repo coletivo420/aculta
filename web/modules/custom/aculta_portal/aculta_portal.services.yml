@@ -190,10 +190,10 @@ services:
     arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
   aculta_portal.cart_consolidator:
     class: Drupal\aculta_portal\Cart\CartConsolidator
-    arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user']
+    arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user', '@aculta_portal.checkout_settings']
   aculta_portal.cart_utility:
     class: Drupal\aculta_portal\Cart\CartUtility
-    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@commerce_cart.cart_provider', '@aculta_portal.domain_purpose', '@string_translation', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.search_utility:
@@ -373,7 +373,7 @@ services:
     class: Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy
   aculta_portal.mercado_pago.refund_eligibility_subscriber:
     class: Drupal\aculta_portal\MercadoPago\RefundEligibilitySubscriber
-    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy']
+    arguments: ['@config.factory', '@aculta_portal.mercado_pago.payment_policy', '@aculta_portal.checkout_settings']
     tags:
       - { name: event_subscriber }
   aculta_portal.mercado_pago.payment_service:
@@ -402,6 +402,9 @@ services:
     arguments: [!tagged_iterator aculta_portal.checkout_provider]
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.checkout_settings:
+    class: Drupal\aculta_portal\Checkout\CheckoutSettings
+    arguments: ['@config.factory']
   aculta_portal.checkout_configuration_resolver:
     class: Drupal\aculta_portal\Checkout\CheckoutConfigurationResolver
     arguments: ['@aculta_portal.checkout_context_registry']
@@ -409,7 +412,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.checkout_policy_manager:
     class: Drupal\aculta_portal\Checkout\CheckoutPolicyManager
-    arguments: ['@aculta_portal.checkout_configuration_resolver']
+    arguments: ['@aculta_portal.checkout_configuration_resolver', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.order_type_checkout_flows:

@@ -69,7 +69,7 @@ services:
     arguments: ['@entity_type.manager', '@string_translation']
   aculta_lms.course_order_enrollment:
     class: Drupal\aculta_lms\CourseOrderEnrollmentManager
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.helper }
       - { name: aculta_portal.implementation }
@@ -84,6 +84,6 @@ services:
     arguments: ['@string_translation', '@?aculta_portal.user_upload_policy']
   aculta_lms.checkout_provider:
     class: Drupal\aculta_lms\Checkout\LmsCheckoutProvider
-    arguments: ['@aculta_portal.order_type_checkout_flows']
+    arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.checkout_provider }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms;
 
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
@@ -22,13 +23,19 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {}
+
+  /** Whether the order is a course purchase: the configured course order type or the legacy `curso`. */
+  public function isCourseOrder(OrderInterface $order): bool {
+    return in_array($order->bundle(), $this->checkoutSettings?->lmsOrderTypes() ?? [CheckoutSettings::LEGACY_LMS_ORDER_TYPE], TRUE);
+  }
 
   /**
    * Synchronizes one course order after Commerce saves it.
    */
   public function synchronize(OrderInterface $order): void {
-    if ($order->bundle() !== 'curso') {
+    if (!$this->isCourseOrder($order)) {
       return;
     }
 

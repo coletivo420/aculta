@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Checkout\LmsCheckoutProvider;
 use Drupal\aculta_portal\Checkout\CheckoutMode;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -19,7 +20,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_lms')]
 final class LmsCheckoutProviderTest extends UnitTestCase {
 
-  private function provider(?string $flow): LmsCheckoutProvider {
+  private function provider(?string $flow, array $settings = []): LmsCheckoutProvider {
     $type = $this->createMock(ConfigEntityInterface::class);
     $type->method('getThirdPartySetting')->willReturn($flow);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -27,7 +28,7 @@ final class LmsCheckoutProviderTest extends UnitTestCase {
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('hasDefinition')->willReturn(TRUE);
     $manager->method('getStorage')->willReturn($storage);
-    return new LmsCheckoutProvider(new OrderTypeCheckoutFlows($manager));
+    return new LmsCheckoutProvider(new OrderTypeCheckoutFlows($manager), new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => $settings])));
   }
 
   public function testDeclaraContextoModoTipoEFluxo(): void {
@@ -42,6 +43,12 @@ final class LmsCheckoutProviderTest extends UnitTestCase {
 
   public function testSemFluxoNoCommerceNaoInventaUm(): void {
     $this->assertSame([], $this->provider(NULL)->configuration()->checkoutFlowIds);
+  }
+
+  public function testTipoConfiguradoVemPrimeiroEOHistoricoCursoContinuaDeclarado(): void {
+    $config = $this->provider('curso_novo', ['lms_order_type' => 'curso_novo'])->configuration();
+    $this->assertSame(['curso', 'curso_novo'], $config->orderTypeIds);
+    $this->assertSame(['curso_novo'], $config->checkoutFlowIds);
   }
 
 }

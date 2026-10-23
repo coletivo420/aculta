@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface;
 use Drupal\aculta_portal\Checkout\CheckoutContextRegistry;
 use Drupal\aculta_portal\Checkout\CheckoutMode;
 use Drupal\aculta_portal\Checkout\CheckoutPolicyManager;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -48,8 +49,11 @@ final class CheckoutOrchestrationTest extends UnitTestCase {
     };
   }
 
-  private function policy(array $providers): CheckoutPolicyManager {
-    return new CheckoutPolicyManager(new CheckoutConfigurationResolver(new CheckoutContextRegistry($providers)));
+  private function policy(array $providers, array $settings = []): CheckoutPolicyManager {
+    return new CheckoutPolicyManager(
+      new CheckoutConfigurationResolver(new CheckoutContextRegistry($providers)),
+      new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => $settings])),
+    );
   }
 
   #[DataProvider('modos')]
@@ -179,6 +183,25 @@ final class CheckoutOrchestrationTest extends UnitTestCase {
 
   public function testSemProvidersAsRotasGlobaisFicamDisponiveis(): void {
     $this->assertTrue($this->policy([])->commonCheckoutRoutesAvailable());
+  }
+
+  public function testChaveGlobalDesligadaFechaAsRotasEOCheckoutComumDeTodosOsContextos(): void {
+    $providers = [$this->provider('lms', 1, CheckoutMode::Both), $this->provider('shop', 2, CheckoutMode::Common)];
+    $policy = $this->policy($providers, ['common_checkout_enabled' => FALSE]);
+    $this->assertFalse($policy->commonCheckoutRoutesAvailable());
+    $this->assertFalse($policy->allowsCommon('lms'));
+    $this->assertFalse($policy->allowsCommon('shop'));
+    // O checkout dedicado não depende da chave do comum.
+    $this->assertTrue($policy->allowsDedicated('lms'));
+  }
+
+  public function testChaveGlobalAusenteOuLigadaMantemOComportamentoAnterior(): void {
+    $providers = [$this->provider('shop', 1, CheckoutMode::Common)];
+    foreach ([[], ['common_checkout_enabled' => TRUE]] as $settings) {
+      $policy = $this->policy($providers, $settings);
+      $this->assertTrue($policy->commonCheckoutRoutesAvailable());
+      $this->assertTrue($policy->allowsCommon('shop'));
+    }
   }
 
 }

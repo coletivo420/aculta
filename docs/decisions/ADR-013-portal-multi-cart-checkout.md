@@ -58,3 +58,13 @@ Fases pequenas, commits isolados na branch/PR existente. Não forçar push, rese
 ## Estado de implementação (2026-10-22)
 
 P-CART A a D concluídas em código: testes de caracterização, contratos e registry no Portal, providers de Loja (`aculta_commerce`, módulo ainda não habilitado), LMS e Doações, e o seletor das rotas globais agora no Portal (`CommerceCheckoutRouteSubscriber`), com o subscriber do Donation removido após a prova de equivalência. Homologação em servidor de testes pendente (P-CART T).
+
+## Adendo — decisões do responsável (2026-10-22)
+
+Decididas pelo responsável durante a P-CART E, ampliando o que a versão inicial deste ADR previa:
+
+1. **Configuração própria do Portal** `aculta_portal.checkout_settings`: `common_checkout_enabled`, `shop_order_type` e `lms_order_type`. Padrões idênticos ao comportamento anterior (`true`, `default`, `curso`); sem a config, valem os padrões. Não guarda preferência por usuário ou sessão.
+2. **Chave global do checkout comum:** com `common_checkout_enabled` falso, as rotas globais do Commerce (`commerce_cart.page`, `commerce_checkout.checkout`, `commerce_checkout.form`) ficam fechadas, como no modo `donate`, e o checkout comum deixa de ser permitido a todos os contextos. O checkout dedicado de Doações não depende dela.
+3. **Tipo de pedido do LMS configurável:** o LMS (`CourseOrderEnrollmentManager`, `EnrollmentFormHooks`, `CourseOrderHooks`, `CourseEnrollmentPurchaseForm`), o separador do carrinho (`CartUtility`) e a consolidação (`CartConsolidator`) leem `lms_order_type`. O tipo histórico `curso` continua reconhecido para que pedidos já feitos mantenham matrícula, separador e ausência de estorno.
+4. **Estorno:** curso e doações **não têm estorno**. A regra fixa em `curso` não muda; `RefundEligibilitySubscriber` apenas **acrescenta** o tipo de pedido de curso configurado à lista de bloqueio. Isso deve constar nas políticas do site e nos termos de uso (ver pendência em `docs/portal/ROADMAP.md`).
+5. **Tipo de pedido da Loja** classifica e consolida o carrinho no Portal; a resolução do tipo de pedido de cada produto continua no Commerce (tipo de item).

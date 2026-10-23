@@ -1,3 +1,8 @@
+## 0.4.1-dev.16 — configuração de checkout, chave global e tipo de pedido de curso configurável (P-CART E) — 2026-10-22
+
+- Nova config `aculta_portal.checkout_settings` (schema e padrões que reproduzem o comportamento anterior) e serviço `CheckoutSettings`. `CheckoutPolicyManager` passa a respeitar a chave global `common_checkout_enabled`.
+- `CartUtility` e `CartConsolidator` reconhecem o tipo de pedido de curso configurado (e o histórico `curso`); `RefundEligibilitySubscriber` nega estorno também para o tipo configurado (só acrescenta bloqueio). Decisões em ADR-013, adendo de 2026-10-22. RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.15 — seleção das rotas globais de checkout centralizada (P-CART D) — 2026-10-22
 
 - Novo `CommerceCheckoutRouteSubscriber` e `CheckoutPolicyManager::commonCheckoutRoutesAvailable()`: a decisão que o `CartCheckoutRouteSubscriber` do Donation tomava (rotas do Commerce fechadas quando `donation_route` é `donate`) passa a ser do Portal, com comportamento idêntico. `CheckoutContextConfiguration` ganha `gatesCommonCheckout`.

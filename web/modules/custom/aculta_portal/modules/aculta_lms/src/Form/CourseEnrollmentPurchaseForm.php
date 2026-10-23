@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Form;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\commerce_cart\CartManagerInterface;
 use Drupal\commerce_cart\CartProviderInterface;
@@ -47,6 +48,8 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
     private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.checkout_settings')]
+    private readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {
     $this->stringTranslation = $translation;
   }
@@ -132,9 +135,10 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     }
 
     $store = $this->currentStore->getStore();
-    $cart = $this->cartProvider->getCart('curso', $store);
+    $orderType = $this->checkoutSettings?->lmsOrderType() ?? CheckoutSettings::LEGACY_LMS_ORDER_TYPE;
+    $cart = $this->cartProvider->getCart($orderType, $store);
     if (!$cart instanceof OrderInterface) {
-      $cart = $this->cartProvider->createCart('curso', $store, $this->account);
+      $cart = $this->cartProvider->createCart($orderType, $store, $this->account);
     }
     $item = $this->cartManager->createOrderItem($variation);
     $item->set('field_course_class', ['target_id' => $class->id()]);

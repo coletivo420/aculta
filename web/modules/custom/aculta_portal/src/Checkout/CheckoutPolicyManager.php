@@ -12,25 +12,32 @@ namespace Drupal\aculta_portal\Checkout;
  */
 final class CheckoutPolicyManager {
 
-  public function __construct(private readonly CheckoutConfigurationResolver $resolver) {}
+  public function __construct(
+    private readonly CheckoutConfigurationResolver $resolver,
+    private readonly CheckoutSettings $settings,
+  ) {}
 
   /** Contexto desconhecido nunca libera checkout. */
   public function allowsDedicated(string $contextId): bool {
     return $this->resolver->resolve($contextId)?->mode->allowsDedicated() ?? FALSE;
   }
 
-  /** Contexto desconhecido nunca libera checkout. */
+  /** Contexto desconhecido nunca libera checkout; com a chave global desligada, nenhum contexto usa o comum. */
   public function allowsCommon(string $contextId): bool {
-    return $this->resolver->resolve($contextId)?->mode->allowsCommon() ?? FALSE;
+    return $this->settings->commonCheckoutEnabled() && ($this->resolver->resolve($contextId)?->mode->allowsCommon() ?? FALSE);
   }
 
   /**
    * Se as rotas globais de carrinho e checkout do Commerce ficam disponíveis.
    *
-   * Fechadas somente quando algum contexto registrado que as controla não admite o checkout comum. Sem contexto
-   * controlador (por exemplo, Donation desabilitado), ficam como o Commerce as define.
+   * Fechadas quando a chave global do checkout comum está desligada ou quando algum contexto registrado que as
+   * controla não admite o checkout comum. Sem contexto controlador (por exemplo, Donation desabilitado) e com a
+   * chave ligada, ficam como o Commerce as define.
    */
   public function commonCheckoutRoutesAvailable(): bool {
+    if (!$this->settings->commonCheckoutEnabled()) {
+      return FALSE;
+    }
     foreach ($this->resolver->resolveAll() as $configuracao) {
       if ($configuracao->gatesCommonCheckout && !$configuracao->mode->allowsCommon()) {
         return FALSE;

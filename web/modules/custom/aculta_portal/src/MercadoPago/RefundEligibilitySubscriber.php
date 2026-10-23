@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\MercadoPago;
 
 use Drupal\aculta_pagamentos_mercadopago\Event\RefundEligibilityEvent;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Sales\MercadoPagoPaymentPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,6 +24,7 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MercadoPagoPaymentPolicy $politica,
+    private readonly ?CheckoutSettings $settings = NULL,
   ) {}
 
   /**
@@ -38,6 +40,11 @@ final class RefundEligibilitySubscriber implements EventSubscriberInterface {
   public function onRefundEligibility(RefundEligibilityEvent $event): void {
     $order = $event->getPayment()->getOrder();
     if ($order === NULL) {
+      return;
+    }
+    // O tipo de pedido de curso é configurável: o configurado também não tem estorno (só acrescenta bloqueio).
+    if (in_array($order->bundle(), $this->settings?->lmsOrderTypes() ?? [], TRUE)) {
+      $event->deny('Doações e cursos não têm estorno.');
       return;
     }
     $itens = [];

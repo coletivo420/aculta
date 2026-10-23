@@ -23,7 +23,7 @@ final class CourseOrderHooks {
   #[Hook('commerce_order_update')]
   public function orderSaved(EntityInterface $entity): void {
     if (!$entity instanceof OrderInterface
-      || $entity->bundle() !== 'curso'
+      || !$this->enrollments->isCourseOrder($entity)
       || ($entity instanceof SynchronizableInterface && $entity->isSyncing())) {
       return;
     }

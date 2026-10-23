@@ -1,5 +1,9 @@
 # Changelog — aculta_lms
 
+## 0.1.0-dev.86 — tipo de pedido de curso lido da configuração do Portal (P-CART E) — 2026-10-22
+
+- `CourseOrderEnrollmentManager::isCourseOrder()`, `EnrollmentFormHooks`, `CourseOrderHooks` e `CourseEnrollmentPurchaseForm` usam `CheckoutSettings` em vez do literal `curso`. Novas compras usam o tipo configurado; pedidos `curso` históricos seguem reconhecidos. Padrão sem mudança (`curso`). O tipo de item e a variação `curso` não mudam. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.85 — provider de checkout do Portal (P-CART C) — 2026-10-22
 
 - `LmsCheckoutProvider` declara ao Portal o contexto LMS (tipo de pedido `curso`, checkout comum e flow nativo). Somente leitura; não altera matrícula, curso ou compra. RUNTIME STATUS: DEFERRED.

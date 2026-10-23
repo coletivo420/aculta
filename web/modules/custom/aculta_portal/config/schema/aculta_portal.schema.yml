@@ -144,3 +144,17 @@ aculta_portal.role_hierarchy:
       label: 'Papéis da cadeia, do mais alto ao mais baixo'
       sequence:
         type: string
+
+aculta_portal.checkout_settings:
+  type: config_object
+  label: 'Configurações de checkout do ACULTA Portal'
+  mapping:
+    common_checkout_enabled:
+      type: boolean
+      label: 'Checkout comum do Commerce habilitado'
+    shop_order_type:
+      type: string
+      label: 'Tipo de pedido da Loja'
+    lms_order_type:
+      type: string
+      label: 'Tipo de pedido do LMS'

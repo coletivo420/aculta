@@ -24,6 +24,7 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\lms_classes\ClassHelper;
 use Drupal\user\UserInterface;
+use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -40,6 +41,8 @@ final class EnrollmentFormHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'aculta_lms.course_order_enrollment')]
     private readonly CourseOrderEnrollmentManagerInterface $enrollments,
+    #[Autowire(service: 'aculta_portal.checkout_settings')]
+    private readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {}
 
   /**
@@ -83,7 +86,7 @@ final class EnrollmentFormHooks {
       return AccessResult::forbidden('A matrícula está vinculada a um pedido; a origem não pôde ser validada.')
         ->addCacheableDependency($entity);
     }
-    if ($order->bundle() !== 'curso') {
+    if (!in_array($order->bundle(), $this->checkoutSettings?->lmsOrderTypes() ?? [CheckoutSettings::LEGACY_LMS_ORDER_TYPE], TRUE)) {
       return AccessResult::forbidden('Matrículas concedidas por compras pagas não podem ser removidas manualmente.')
         ->addCacheableDependency($entity)
         ->addCacheableDependency($order);
