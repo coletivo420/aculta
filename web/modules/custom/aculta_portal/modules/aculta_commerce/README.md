@@ -60,3 +60,7 @@ O Green Stash substitui a interface operacional nativa Commerce para a loja. Pro
 ## GS-EDITOR-0.2 — Detalhe sem painel administrativo
 
 A listagem de produtos agora abre `/estudio/loja/produtos/{produto}`. O controller próprio exibe detalhes mínimos em modo leitura e verifica acessos à entidade, store e experiência Studio. Nenhum link abre o formulário nativo Commerce. A criação e edição próprias ainda são próximas fases; esta tela **não permite alterar produtos**. Ver o [roadmap](docs/ROADMAP.md).
+
+## GS-EDITOR-0.3-A — Novo produto sem painel administrativo
+
+Novo formulário Studio em `/estudio/loja/produtos/novo`: cria rascunho de produto `produto_loja` com nome e loja selecionada (somente lojas editáveis pelo operador). Persiste na entidade Commerce nativa, não cria entidades paralelas e não publica. Link `Novo produto` aparece na listagem. **Ainda não permite variações, preço, imagens ou estoque**; requer homologação antes da habilitação no servidor.
