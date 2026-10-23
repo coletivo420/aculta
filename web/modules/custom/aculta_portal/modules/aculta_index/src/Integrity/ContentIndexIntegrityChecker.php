@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
@@ -546,33 +547,47 @@ final class ContentIndexIntegrityChecker {
       }
 
       $provider = $this->providers->get($row['provider_id']);
+      if ($provider instanceof ContentIndexIndexabilityProviderInterface) {
+        try {
+          $indexable = $provider->isIndexable($entity->getTranslation($row['langcode']));
+        }
+        catch (\Throwable $exception) {
+          $this->logger->warning('Content Index source eligibility could not be verified. Error class: @class', [
+            '@class' => $exception::class,
+          ]);
+          $result['unverified']++;
+          continue;
+        }
+        if (!$indexable) {
+          $result['missing']++;
+          $result['delete'][$key] = $identity;
+        }
+        // Full hashes and provider versions are compared during the source
+        // coverage pass, which projects each currently discoverable source
+        // once. Avoid rebuilding rich projections in this entry pass.
+        continue;
+      }
+
+      // Providers without the optional eligibility contract retain complete
+      // source verification in this pass.
       try {
         $projection = $provider->project($entity->getTranslation($row['langcode']));
-      }
-      catch (\Throwable $exception) {
-        $this->logger->warning('Content Index source reconciliation could not project a source. Error class: @class', [
-          '@class' => $exception::class,
-        ]);
-        $result['unverified']++;
-        continue;
-      }
-      if ($projection === NULL) {
-        $result['missing']++;
-        $result['delete'][$key] = $identity;
-        continue;
-      }
-      if ($projection->entityTypeId !== $row['entity_type']
-        || $projection->entityId !== $row['entity_id']
-        || $projection->langcode !== $row['langcode']) {
-        $result['unverified']++;
-        continue;
-      }
-      try {
+        if ($projection === NULL) {
+          $result['missing']++;
+          $result['delete'][$key] = $identity;
+          continue;
+        }
+        if ($projection->entityTypeId !== $row['entity_type']
+          || $projection->entityId !== $row['entity_id']
+          || $projection->langcode !== $row['langcode']) {
+          $result['unverified']++;
+          continue;
+        }
         $currentHash = $this->writer->calculateProjectionHash($row['provider_id'], $projection);
       }
       catch (\Throwable $exception) {
         // A changed bundle is outside the provider's declared ownership.
-        $this->logger->warning('Content Index source reconciliation could not verify a projection. Error class: @class', [
+        $this->logger->warning('Content Index source reconciliation could not project a source. Error class: @class', [
           '@class' => $exception::class,
         ]);
         $result['unverified']++;

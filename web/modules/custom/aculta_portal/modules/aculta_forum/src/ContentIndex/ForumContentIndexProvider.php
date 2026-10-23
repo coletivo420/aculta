@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -20,7 +21,7 @@ use Drupal\comment\CommentInterface;
  * Text bodies, authors, rejected comments, and non-default ForumPost revisions
  * are excluded. Access is rechecked in the canonical Forum purpose.
  */
-final class ForumContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class ForumContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc} */
@@ -57,12 +58,34 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
+      return !($entity instanceof RevisionableInterface) || $entity->isDefaultRevision();
+    }
+    if ($entity instanceof ForumPost) {
+      return $entity->isDefaultRevision();
+    }
+    if (!$entity instanceof CommentInterface || $entity->bundle() !== 'aculta_discussion_post') {
+      return FALSE;
+    }
+    if ($entity->hasField('field_aculta_rejected')
+      && !$entity->get('field_aculta_rejected')->isEmpty()
+      && (bool) $entity->get('field_aculta_rejected')->value) {
+      return FALSE;
+    }
+    $topic = $entity->getCommentedEntity();
+    return $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic';
+  }
+
+  /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+    if (!$this->isIndexable($entity)) {
+      return NULL;
+    }
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
-      if ($entity instanceof RevisionableInterface && !$entity->isDefaultRevision()) {
-        return NULL;
-      }
       return $this->projection(
         $entity,
         (string) $entity->label(),
@@ -72,9 +95,6 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     }
 
     if ($entity instanceof ForumPost) {
-      if (!$entity->isDefaultRevision()) {
-        return NULL;
-      }
       $relations = [];
       $topic = $entity->get('topic')->entity;
       if ($topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic') {
@@ -88,13 +108,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     }
 
     if ($entity instanceof CommentInterface && $entity->bundle() === 'aculta_discussion_post') {
-      if ($entity->hasField('field_aculta_rejected') && !$entity->get('field_aculta_rejected')->isEmpty() && (bool) $entity->get('field_aculta_rejected')->value) {
-        return NULL;
-      }
       $topic = $entity->getCommentedEntity();
-      if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
-        return NULL;
-      }
       $relations = [new ContentIndexRelation('forum_topic', 'node', (string) $topic->id())];
       $parent = $entity->getParentComment();
       if ($parent instanceof CommentInterface && $parent->bundle() === 'aculta_discussion_post') {

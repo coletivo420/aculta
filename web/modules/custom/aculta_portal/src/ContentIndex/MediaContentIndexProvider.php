@@ -16,7 +16,7 @@ use Drupal\media\MediaInterface;
  * strings after storage loads, so normalize them before building the
  * projection.
  */
-final class MediaContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class MediaContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   public function __construct(
     private readonly string $providerId,
@@ -61,9 +61,16 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof MediaInterface && $entity->bundle() === $this->bundle;
+  }
+
+  /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof MediaInterface || $entity->bundle() !== $this->bundle) {
+    if (!$this->isIndexable($entity)) {
       return NULL;
     }
 

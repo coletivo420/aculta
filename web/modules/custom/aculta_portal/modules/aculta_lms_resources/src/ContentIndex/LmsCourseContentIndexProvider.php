@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms_resources\ContentIndex;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -25,7 +26,7 @@ use Drupal\node\NodeInterface;
  *
  * Progress, lessons, membership, answers and certificates remain owned by LMS.
  */
-final class LmsCourseContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface, ContentIndexAccessPolicyProviderInterface {
+final class LmsCourseContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface, ContentIndexAccessPolicyProviderInterface {
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
@@ -65,6 +66,16 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * {@inheritdoc}
    */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof CourseInterface
+      && $entity->getEntityTypeId() === 'group'
+      && $entity->bundle() === 'lms_course'
+      && $this->domainPurposeManager->getDomain('courses') !== NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function checkAccess(ContentEntityInterface $entity, AccountInterface $account): AccessResultInterface {
     if (!$entity instanceof CourseInterface || $entity->bundle() !== 'lms_course') {
       return AccessResult::forbidden();
@@ -88,7 +99,6 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
       || $entity->bundle() !== 'lms_course') {
       return NULL;
     }
-
     $domain = $this->domainPurposeManager->getDomain('courses');
     if ($domain === NULL) {
       return NULL;

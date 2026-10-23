@@ -495,6 +495,10 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $checker = $this->container->get('aculta_index.integrity_checker');
     $checker->startAudit();
     $state = $checker->processAuditBatch(10);
+    $this->assertSame('relations', $state['phase']);
+    do {
+      $state = $checker->processAuditBatch(10);
+    } while ($state['status'] === 'running');
     $this->assertSame(1, (int) $state['stale_projection_count']);
     $this->assertSame(0, (int) $state['missing_source_count']);
     $this->assertSame(0, (int) $state['unverified_source_count']);
@@ -508,6 +512,42 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       ->execute()
       ->fetchAssoc();
     $this->assertSame(['operation' => 'project', 'status' => 'queued'], $work);
+  }
+
+  /**
+   * Defers complete projection hashing to the source-coverage audit pass.
+   */
+  public function testIncrementalAuditRemovesSourcesNoLongerIndexable(): void {
+    $node = Node::create(['type' => 'sample_content', 'title' => 'Current source', 'status' => 1]);
+    $node->save();
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+    }
+    $rebuilder->validate($generationId);
+    $this->completeBackfilledSourceWork();
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $node->setTitle('Excluded from sample index');
+    $node->save();
+    $checker = $this->container->get('aculta_index.integrity_checker');
+    $checker->startAudit();
+    $state = $checker->processAuditBatch(10);
+    while ($state['status'] === 'running') {
+      $state = $checker->processAuditBatch(10);
+    }
+
+    $this->assertSame(1, (int) $state['missing_source_count']);
+    $this->assertSame(0, (int) $state['stale_projection_count']);
+    $work = $this->container->get('database')->select('aculta_index_work', 'work')
+      ->fields('work', ['operation', 'status'])
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', (string) $node->id())
+      ->condition('langcode', 'en')
+      ->execute()
+      ->fetchAssoc();
+    $this->assertSame(['operation' => 'delete', 'status' => 'queued'], $work);
   }
 
   /**

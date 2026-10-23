@@ -38,6 +38,11 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
   private const SOURCE_SETUP_BATCH_SIZE = 1_000;
 
   /**
+   * Maximum supported batch for measuring audit checkpoint overhead.
+   */
+  private const AUDIT_BATCH_LIMIT = 500;
+
+  /**
    * Approved synthetic fixture scale for this process.
    */
   private int $sourceCount = self::DEFAULT_SOURCE_COUNT;
@@ -188,7 +193,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     $auditBatchCount = 0;
     do {
       $batchStarted = hrtime(TRUE);
-      $audit = $integrityChecker->processAuditBatch(200);
+      $audit = $integrityChecker->processAuditBatch(self::AUDIT_BATCH_LIMIT);
       $batchElapsed = (hrtime(TRUE) - $batchStarted) / 1_000_000;
       $auditBatchTimes[] = $batchElapsed;
       $auditBatchTimesByPhase[$auditPhase][] = $batchElapsed;
@@ -196,7 +201,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       $auditBatchCount++;
       // The audit has separate catalog-to-source and source-to-catalog
       // checkpoint passes, each bounded by the configured batch size.
-      if ($auditBatchCount > (int) ceil($this->sourceCount / 200) * 2 + 20) {
+      if ($auditBatchCount > (int) ceil($this->sourceCount / self::AUDIT_BATCH_LIMIT) * 2 + 20) {
         throw new \RuntimeException('The benchmark audit did not finish within the bounded checkpoint allowance.');
       }
     } while ($audit['status'] === 'running');
@@ -241,7 +246,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'rebuild_batch_p95_ms' => round($this->percentile($rebuildBatchTimes, 0.95), 3),
       'rebuild_batch_max_ms' => round(max($rebuildBatchTimes), 3),
       'rebuild_peak_memory_bytes' => $rebuildPeakMemoryBytes,
-      'audit_batch_limit' => 200,
+      'audit_batch_limit' => self::AUDIT_BATCH_LIMIT,
       'audit_batch_count' => $auditBatchCount,
       'audit_status' => $audit['status'],
       'audit_elapsed_ms' => round($auditMilliseconds, 3),

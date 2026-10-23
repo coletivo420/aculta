@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
@@ -14,7 +15,7 @@ use Drupal\node\NodeInterface;
 /**
  * Projects current Revista publication metadata and explicit editorial links.
  */
-final class MagazineContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class MagazineContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc}
@@ -49,8 +50,15 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof NodeInterface && $entity->bundle() === 'revista' && $entity->isDefaultRevision();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'revista' || !$entity->isDefaultRevision()) {
+    if (!$this->isIndexable($entity)) {
       return NULL;
     }
 

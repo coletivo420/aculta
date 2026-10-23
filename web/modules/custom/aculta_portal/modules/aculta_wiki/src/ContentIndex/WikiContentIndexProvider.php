@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
@@ -17,7 +18,7 @@ use Drupal\node\NodeInterface;
  * Taxonomy and media relations remain deferred until the Wiki module's content
  * and access contracts are finalized.
  */
-final class WikiContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class WikiContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc}
@@ -52,8 +53,15 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
   /**
    * {@inheritdoc}
    */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof NodeInterface && $entity->bundle() === 'wiki_entry' && $entity->isDefaultRevision();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'wiki_entry' || !$entity->isDefaultRevision()) {
+    if (!$this->isIndexable($entity)) {
       return NULL;
     }
 

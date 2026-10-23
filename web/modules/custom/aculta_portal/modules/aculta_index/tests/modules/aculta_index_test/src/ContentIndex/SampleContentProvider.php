@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Drupal\aculta_index_test\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Projects generic content nodes for rebuild integration coverage.
  */
-final class SampleContentProvider implements ContentIndexProviderInterface {
+final class SampleContentProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface {
 
   /**
    * {@inheritdoc} */
@@ -33,8 +35,20 @@ final class SampleContentProvider implements ContentIndexProviderInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof NodeInterface
+      && $entity->bundle() === 'sample_content'
+      && $entity->label() !== 'Excluded from sample index';
+  }
+
+  /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+    if (!$this->isIndexable($entity)) {
+      return NULL;
+    }
     return new ContentIndexProjection(
       'node',
       (string) $entity->id(),

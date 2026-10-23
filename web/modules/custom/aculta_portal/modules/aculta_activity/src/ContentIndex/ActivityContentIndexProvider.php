@@ -6,6 +6,7 @@ namespace Drupal\aculta_activity\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
@@ -13,7 +14,7 @@ use Drupal\node\NodeInterface;
 /**
  * Projects the minimal metadata of Portal activity nodes into the Index.
  */
-final class ActivityContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class ActivityContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc}
@@ -46,8 +47,15 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof NodeInterface && $entity->bundle() === 'activity' && $entity->isDefaultRevision();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'activity' || !$entity->isDefaultRevision()) {
+    if (!$this->isIndexable($entity)) {
       return NULL;
     }
 

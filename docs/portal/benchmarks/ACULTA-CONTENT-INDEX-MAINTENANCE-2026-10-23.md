@@ -151,3 +151,24 @@ setup, no fluxo real de manutenção. Como o teste anterior de 100k já reportou
 auditoria de 723 s e a nova tentativa não concluiu em tempo comparável, fica
 pendente analisar o custo da reconciliação bidirecional antes de outra execução
 de grande escala. O método de setup não é o gargalo remanescente.
+
+
+## Reconciliação com checagem rápida de elegibilidade — uma execução, sem SLO
+
+Após o diagnóstico 100k, providers ganharam o contrato opcional
+`ContentIndexIndexabilityProviderInterface`. Na passagem catálogo→fonte, a
+auditoria agora verifica existência, bundle, tradução e elegibilidade sem
+reconstruir a projeção completa; a passagem fonte→catálogo ainda projeta todas
+as fontes e confere fingerprints/versões. Providers sem o contrato preservam a
+checagem anterior.
+
+| Cenário | Auditoria total (ms) | Batches (entries/relations/sources) | Pico audit (MiB) | Divergências |
+|---|---:|---:|---:|---:|
+| Antes do contrato, lote 500 | 10.103 | 20 / 1 / 21 | 146,5 | 0 |
+| Contrato rápido, lote 500 | 9.299 | 20 / 1 / 21 | 152,5 | 0 |
+
+A redução total observada foi ~8%; a fase entries caiu de 3,06 s para 1,99 s,
+enquanto sources permaneceu dominante (~7,2 s). Pico subiu ~6 MiB. São duas
+execuções individuais, não pareadas; não isolam causalidade e não definem SLO.
+A auditoria de 100k precisa ser medida novamente antes de considerar 1M. JSON
+bruto: `/tmp/aculta-index-maintenance-10000-indexability-fast-2026-10-23.json`.

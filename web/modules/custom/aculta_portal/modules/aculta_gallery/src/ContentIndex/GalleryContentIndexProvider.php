@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_gallery\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
@@ -18,7 +19,7 @@ use Drupal\media_gallery\MediaGalleryInterface;
  * It does not copy descriptions, credits, rights text, file details or image
  * metadata. Source entities and their Entity Access handlers remain owners.
  */
-final class GalleryContentIndexProvider implements ContentIndexProviderInterface, ContentIndexAccessContextProviderInterface {
+final class GalleryContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
   /**
    * {@inheritdoc} */
@@ -49,11 +50,18 @@ final class GalleryContentIndexProvider implements ContentIndexProviderInterface
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function isIndexable(ContentEntityInterface $entity): bool {
+    return $entity instanceof MediaGalleryInterface
+      && $entity->getEntityTypeId() === 'media_gallery'
+      && $entity->bundle() === 'media_gallery';
+  }
+
+  /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof MediaGalleryInterface
-      || $entity->getEntityTypeId() !== 'media_gallery'
-      || $entity->bundle() !== 'media_gallery') {
+    if (!$this->isIndexable($entity)) {
       return NULL;
     }
 

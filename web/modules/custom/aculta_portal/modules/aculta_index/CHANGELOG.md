@@ -1,5 +1,21 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.140 — reduzir custo da reconciliação de entradas
+
+- Novo contrato opcional `ContentIndexIndexabilityProviderInterface` deixa
+  adapters de owner responderem rapidamente se uma entidade continua
+  indexável, sem construir relações/metadados completos no percurso catálogo→
+  fonte. Hashes completos continuam conferidos no percurso fonte→catálogo.
+- Activity, Fórum, Revista, Wiki, Gallery, Media e LMS implementam o contrato;
+  providers sem ele mantêm a verificação anterior.
+- Kernel de rebuild/auditoria passou em MariaDB (20 testes / 285 assertions),
+  incluindo fonte que deixa de ser indexável. Unit dos módulos/providers e
+  Index passou (312 / 1.656; 40 depreciações PHPUnit).
+- Em 10k, uma execução com lote de auditoria 500 levou 9,18 s (42 batches,
+  pico 152,5 MiB), contra 10,10 s/42 batches antes do caminho rápido (153,6
+  MiB). Resultado diagnóstico; uma repetição por cenário não define SLO. Ver
+  relatório de benchmark.
+
 ## 0.1.0-dev.139 — validar concorrência PHP e semear fixture em lote
 
 - O worker subprocesso registra o autoload do driver MySQL Core e dos
