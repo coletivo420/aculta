@@ -2,8 +2,8 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.28` — fingerprint de rebuild inclui versão explícita por provider.
-**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de providers/Index: **121 testes / 536 assertions**; Kernel Index/Activity no MariaDB: **33 testes / 399 assertions**. A cobertura Kernel inclui schema, rebuild, consulta, relações, adapter Activity e adapter Media de `aculta_image`; os demais providers ainda precisam de integração Kernel/DI. Runtime, desempenho sob volume e compatibilidade em produção seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
+**Versão:** `0.1.0-dev.30` — projeções versionadas e paginação de relações por identidade de destino imutável.
+**Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; Kernel Index/Activity/User em MariaDB: **37 testes / 442 assertions**. O Kernel cobre schema, rebuild, consultas, relações, adapter Activity e Media. Runtime, desempenho sob volume, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
@@ -84,4 +84,6 @@ origem e retorna somente alvos presentes na geração ativa. A consulta é de um
 salto e unidirecional; não percorre relações recebidas ou grafos recursivos.
 Entity Access é revalidado tanto na origem quanto em até 100 alvos candidatos.
 Relações com idioma `und` selecionam a tradução no idioma padrão do site. A
-resposta usa cursor opaco, não calcula totais/facetas e não é cacheada.
+resposta usa cursor opaco, não calcula totais/facetas e não é cacheada. Edges
+que resolvem ao mesmo alvo e idioma aparecem uma única vez; a paginação usa o
+`entry_id` imutável do alvo.

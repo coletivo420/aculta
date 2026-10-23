@@ -97,7 +97,10 @@ final class ContentIndexRelationQuery {
       'relation_type' => $relationType,
       'target_langcode' => $this->languageManager->getDefaultLanguage()->getId(),
     ];
-    $queryHash = hash('sha256', json_encode($queryIdentity, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    $queryHash = hash('sha256', json_encode([
+      'identity' => $queryIdentity,
+      'sort' => 'target_entry_id_desc_v1',
+    ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     $uid = (int) $account->id();
     $after = $cursor === NULL ? NULL : $this->cursors->load($cursor, $uid, $generationId, $queryHash);
     $candidates = $this->loadTargets(
@@ -115,11 +118,12 @@ final class ContentIndexRelationQuery {
     if (count($candidates) === $limit) {
       $last = end($candidates);
       if ($cursor === NULL) {
-        // The cursor's integer key slot holds relation_id for this query kind.
-        $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, 0, $last['relation_id']);
+        // Use the target entry key: duplicate edges resolving to the same target
+        // collapse to one result and target order remains immutable.
+        $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, 0, $last['entry_id']);
       }
       else {
-        $this->cursors->advance($cursor, $uid, $generationId, $queryHash, 0, $last['relation_id'], $after['revision']);
+        $this->cursors->advance($cursor, $uid, $generationId, $queryHash, 0, $last['entry_id'], $after['revision']);
         $nextCursor = $cursor;
       }
     }
@@ -131,7 +135,7 @@ final class ContentIndexRelationQuery {
   }
 
   /**
-   * Loads current-generation target identities in descending relation order.
+   * Loads distinct current-generation target identities in immutable entry order.
    *
    * @param string $generationId
    *   Active generation selected by the generation pointer.
@@ -142,7 +146,7 @@ final class ContentIndexRelationQuery {
    * @param int $limit
    *   Maximum number of candidates to return.
    *
-   * @return list<array{entity_type: string, entity_id: string, langcode: string, relation_id: int}>
+   * @return list<array{entity_type: string, entity_id: string, langcode: string, entry_id: int}>
    *   Candidate targets, not yet authorized.
    */
   private function loadTargets(string $generationId, array $identity, string $sourceProviderId, int $sourceProviderVersion, ?array $after, int $limit): array {
@@ -150,8 +154,7 @@ final class ContentIndexRelationQuery {
       return [];
     }
     $query = $this->database->select('aculta_index_relation', 'relation')
-      ->fields('target', ['entity_type', 'entity_id', 'langcode']);
-    $query->addField('relation', 'relation_id', 'relation_id');
+      ->fields('target', ['entity_type', 'entity_id', 'langcode', 'entry_id']);
     $query->innerJoin(
       'aculta_index_entry',
       'source',
@@ -185,10 +188,10 @@ final class ContentIndexRelationQuery {
       ->condition('relation.source_langcode', $identity['source_langcode'])
       ->condition('relation.relation_type', $identity['relation_type']);
     if ($after !== NULL) {
-      $query->condition('relation.relation_id', $after['entry_id'], '<');
+      $query->condition('target.entry_id', $after['entry_id'], '<');
     }
     $rows = $query->distinct()
-      ->orderBy('relation.relation_id', 'DESC')
+      ->orderBy('target.entry_id', 'DESC')
       ->range(0, $limit)
       ->execute();
 
@@ -198,7 +201,7 @@ final class ContentIndexRelationQuery {
         'entity_type' => (string) $row->entity_type,
         'entity_id' => (string) $row->entity_id,
         'langcode' => (string) $row->langcode,
-        'relation_id' => (int) $row->relation_id,
+        'entry_id' => (int) $row->entry_id,
       ];
     }
     return $candidates;

@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.30 — consulta de relações deduplicada e estável
+
+- Alvos alcançados por mais de um edge que resolve para a mesma tradução são
+  retornados uma vez. Paginação ordena pelo `entry_id` imutável do alvo e vincula
+  cursores ao contrato `target_entry_id_desc_v1`.
+- Kernel cobre edges `und` e idioma padrão explícito para a mesma entidade.
+
 ## 0.1.0-dev.29 — isolamento de versões e paginação por ID
 
 - Cada entrada registra a versão do provider; consultas e relações ignoram

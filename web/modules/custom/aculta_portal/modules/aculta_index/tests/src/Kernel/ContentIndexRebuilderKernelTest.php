@@ -427,6 +427,24 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
         ])
         ->execute();
     }
+    // The same resolved translation can be reached by both an entity-level
+    // (und) edge and an explicit default-language edge; query results are unique
+    // by target identity rather than relation row.
+    $database->insert('aculta_index_relation')
+      ->fields([
+        'generation_id' => $generationId,
+        'provider_id' => 'test_sample_content',
+        'source_entity_type' => 'node',
+        'source_entity_id' => (string) $source->id(),
+        'source_langcode' => $source->language()->getId(),
+        'relation_type' => 'related_item',
+        'target_entity_type' => 'node',
+        'target_entity_id' => (string) $publicTarget->id(),
+        'target_langcode' => $this->container->get('language_manager')->getDefaultLanguage()->getId(),
+        'relation_hash' => hash('sha256', 'same-target-explicit-language'),
+        'updated' => 1,
+      ])
+      ->execute();
     // Old projections are excluded from relation targets until rewritten.
     $database->update('aculta_index_entry')
       ->fields(['provider_version' => 0])
@@ -435,19 +453,18 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
 
     $account = new AnonymousUserSession();
     $query = $this->container->get('aculta_index.relation_query');
-    $firstPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, NULL, 1);
-    $this->assertCount(0, $firstPage->entities);
-    $this->assertNotNull($firstPage->nextCursor);
-
-    $secondPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $firstPage->nextCursor, 1);
-    $this->assertCount(1, $secondPage->entities);
-    $this->assertSame('Public target', (string) $secondPage->entities[0]->label());
-    $this->assertSame($this->container->get('language_manager')->getDefaultLanguage()->getId(), $secondPage->entities[0]->language()->getId());
-    $this->assertNotNull($secondPage->nextCursor);
-
-    $endPage = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $secondPage->nextCursor, 1);
-    $this->assertSame([], $endPage->entities);
-    $this->assertNull($endPage->nextCursor);
+    $page = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, NULL, 1);
+    $targets = $page->entities;
+    $pages = 1;
+    while ($page->nextCursor !== NULL) {
+      $page = $query->queryOutgoing('node', (string) $source->id(), $source->language()->getId(), 'related_item', $account, $page->nextCursor, 1);
+      $targets = array_merge($targets, $page->entities);
+      $pages++;
+      $this->assertLessThanOrEqual(5, $pages, 'The relation cursor terminates within the candidate set.');
+    }
+    $this->assertCount(1, $targets, 'A target reached by both und and explicit default-language edges appears once.');
+    $this->assertSame('Public target', (string) $targets[0]->label());
+    $this->assertSame($this->container->get('language_manager')->getDefaultLanguage()->getId(), $targets[0]->language()->getId());
 
     $deniedSource = $query->queryOutgoing('node', (string) $privateSource->id(), $privateSource->language()->getId(), 'related_item', $account);
     $this->assertSame([], $deniedSource->entities);
