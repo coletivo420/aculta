@@ -98,3 +98,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Idempotência (dev.26): token aleatório por formulário, indexado por hash de
   conta/token no KeyValue expirable por 24h; lock e gravação transacional. O
   replay retorna a mesma proposta e não consome nova cota Flood.
+- Concorrência (dev.27): Kernel segura o lock numa segunda conexão MariaDB e
+  confirma que a segunda tentativa não cria duplicata. Não declarar cobertura
+  multiprocesso PHP até executar um worker independente.

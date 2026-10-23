@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.27 — concorrência idempotente em MariaDB
+
+- Kernel mantém o lock de idempotência por uma segunda conexão MariaDB enquanto
+  tenta o replay. A operação concorrente responde 429 sem duplicar; após liberar
+  o lock, o replay retorna a proposta original.
+- Kernel focal: 1 teste / 99 assertions; classe completa: 9 testes / 371
+  assertions. Prova lock entre conexões independentes; execução com processos
+  PHP separados continua pendente. Runtime desabilitado.
+
 ## 0.1.0-dev.26 — idempotência da submissão
 
 - Cada formulário tem token aleatório; submissões repetidas da mesma chave

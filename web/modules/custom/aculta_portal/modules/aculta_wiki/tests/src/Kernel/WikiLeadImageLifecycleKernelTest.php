@@ -9,6 +9,8 @@ use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\KeyValueStore\DatabaseStorageExpirable;
+use Drupal\Core\Lock\DatabaseLockBackend;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
@@ -587,6 +589,45 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ['https://example.invalid/pesquisa', 'https://example.invalid/dados'],
       str_repeat('a', 64),
     );
+    $competitorKey = 'wiki_proposal_idempotency_competitor';
+    $database = $this->container->get('database');
+    Database::addConnectionInfo($competitorKey, 'default', $database->getConnectionOptions());
+    $competitor = Database::getConnection('default', $competitorKey);
+    $competitorLock = new DatabaseLockBackend($competitor);
+    $contendedSubmission = new WikiProposalSubmission(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('current_user'),
+      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.email_confirmation_policy'),
+      $this->container->get('flood'),
+      new DatabaseLockBackend($database),
+      $this->container->get('keyvalue.expirable'),
+      $database,
+    );
+    $idempotencyLockName = 'aculta_wiki.proposal_submission:' . hash(
+      'sha256',
+      $submitter->id() . ':' . str_repeat('a', 64),
+    );
+    self::assertTrue($competitorLock->acquire($idempotencyLockName, 30.0));
+    try {
+      $contendedSubmission->submit(
+        $staleTarget,
+        'reference',
+        'Mesmo token durante lock externo',
+        'A segunda conexão não pode criar outro registro.',
+        [],
+        str_repeat('a', 64),
+      );
+      self::fail('A competing connection must prevent a duplicate submission.');
+    }
+    catch (TooManyRequestsHttpException) {
+      self::assertSame(1, $this->container->get('entity_type.manager')
+        ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+    }
+    finally {
+      $competitorLock->release($idempotencyLockName);
+      Database::removeConnection($competitorKey);
+    }
     $replayedProposal = $submission->submit(
       $staleTarget,
       'reference',

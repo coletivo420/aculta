@@ -4,10 +4,16 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.26**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.27**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.27 — concorrência idempotente em MariaDB
+
+Kernel segura o lock com uma segunda conexão física, verifica 429 sem duplicata
+e depois o replay da proposta existente. Focal: 1 teste / 99 assertions; classe
+completa: 9 testes / 371 assertions. O teste multiprocesso permanece pendente.
 
 ### Incremento dev.26 — idempotência da submissão
 

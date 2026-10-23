@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.27`: Kernel usa uma segunda conexão MariaDB para testar lock
+  concorrente do token, recusa sem duplicar e replay posterior. Focal: 1 teste /
+  99 assertions; classe completa: 9 testes / 371 assertions. Processos PHP
+  separados ainda não foram testados.
 - `0.1.0-dev.26`: reenvios do mesmo formulário retornam a proposta criada por
   até 24 horas; lock e transação protegem a gravação. Kernel focal: 1 teste / 97
   assertions; concorrência multiprocesso segue pendente.
