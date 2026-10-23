@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.42 — registrar resultado do comparativo de índice
+
+- Registra três repetições por escala do índice temporário e do writer.
+- Mantém o schema do módulo sem índice composto alternativo: não houve ganho
+  consistente e o otimizador preferiu `PRIMARY` a partir de 100k entradas.
+- Guarda CSV bruto e limita explicitamente o alcance da conclusão ao fixture.
+
+
 ## 0.1.0-dev.41 — comparação experimental de índice candidato
 
 - Expande o harness opt-in com um índice composto criado somente no schema

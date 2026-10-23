@@ -35,6 +35,34 @@ A métrica de inserção é a carga sintética direta em batches de 500 pelo Dat
 
 As leituras de relação são Database API contra a tabela de edges, sem resolver/autorizar entidades alvo. O fan-out 20 grava no máximo 200.000 edges. Variação observada: percentis de página e tamanho InnoDB não são monotônicos entre runs; não há evidência para definir limite de latência ou aprovar volume de produção.
 
+## Comparativo de índice composto
+
+Foi comparado, em três runs completos por escala, o plano atual com um índice
+composto temporário `(generation_id, domain_id, published, entry_id)`. O índice
+foi criado e removido apenas nas tabelas prefixadas do Kernel; nenhuma alteração
+foi feita ao schema do módulo. A amostra de escrita mede 250 projeções por
+variante através do `ContentIndexWriter` em uma geração descartável.
+
+| Entradas | p50 frio: atual / alternativo (ms) | p50 aquecido: atual / alternativo (ms) | plano alternativo (runs) | espaço adicional mediano | criação mediana | writer atual / alternativo (linhas/s, mediana) |
+|---:|---:|---:|---|---:|---:|---:|
+| 10.000 | 4,561 / 4,512 | 2,931 / 2,967 | índice composto (3/3) | 1,59 MB | 52 ms | 503 / 548 |
+| 100.000 | 4,610 / 4,961 | 2,999 / 2,861 | `PRIMARY` (3/3) | 6,86 MB | 501 ms | 381 / 364 |
+| 1.000.000 | 4,240 / 7,980 | 2,724 / 6,864 | `PRIMARY` (3/3) | 59,38 MB | 5,83 s | 544 / 532 |
+
+A alternativa não apresentou ganho consistente. Em 10k, quando o otimizador a
+selecionou, as medianas de consulta praticamente empataram. Em 100k e 1M o
+otimizador manteve `PRIMARY`; o índice adicional ocupou espaço sem ser usado.
+A amostra curta do writer variou entre runs e não demonstra benefício. A decisão
+provisória para 0.1 é manter o schema atual; reabrir apenas com telemetria de
+consulta real que indique seletividade/custo diferente do fixture.
+
+A latência alternativa em 1M variou mais que a atual apesar do mesmo plano
+`PRIMARY`; como a coleta mede variantes sequencialmente, isso é ruído temporal e
+não deve ser interpretado como regressão causada pelo índice. Bytes de storage
+são estimativas alocadas do InnoDB após `ANALYZE TABLE`, não tamanho lógico exato.
+Amostras brutas baseline/alternativa estão em
+[CSV comparativo](aculta-index-alternative-2026-10-22.csv).
+
 ## Escopo ainda não medido
 
 - Writer incremental e operações idempotentes via `ContentIndexWriter`.
