@@ -119,6 +119,39 @@ Sem o passo 2, o `entity_access` do Fórum deixa de ser o único veto: o própri
 Group nega. Sem o passo 5, listagens e busca podem ficar inconsistentes mesmo
 com o acesso direto corretamente bloqueado pelo `entity_access`.
 
+## Roteiro de Runtime controlado (não executado)
+
+Este roteiro só deve ser executado no ambiente de testes
+`*.aculta.toca.net.br`, com autorização explícita, janela reservada e backup
+verificado. Produção `*.aculta.org` não participa desta fase.
+
+1. **Backup e reversão.** Gerar dump do banco e da configuração antes de
+   qualquer escrita; validar o dump com `gzip -t` e guardar o hash. Registrar o
+   estado de `node_access` (`SELECT realm, COUNT(*) FROM node_access GROUP BY
+   realm`) e a configuração `aculta_forum.settings`.
+2. **Provisionamento.** Criar o tipo de Group, os plugins de conteúdo, a role
+   de membro e a permissão `view group_node:aculta_forum_topic entity`; criar
+   um Group de teste e relacionar um tópico de teste. Não usar conteúdo real.
+3. **Ativação.** `config:set restricted_group_type`, rebuild de `node_access`,
+   `drush cr`. Confirmar que a tabela tem grants por nó e nenhum `nid = 0`
+   indevido.
+4. **Matriz de contas.** Com anônimo, autenticado sem associação, associado
+   `pendente`, `convidado`, `suspenso`, `desligado` e `ativo` com e sem
+   membership, medir: listagem `/`, URL direta do tópico, busca, contadores,
+   link de primeiro não lido e download de anexo. Esperado: só `ativo` com
+   membership lê; todos os demais recebem 403/ausência, sem título na resposta.
+5. **Cache e domínio.** Repetir após `drush cr` e após mudar a situação de um
+   associado; confirmar revogação imediata e que o domínio `main` não serve o
+   tópico restrito.
+6. **Desligamento.** `config:set restricted_group_type ''`, rebuild e `drush cr`
+   restauram o fórum público. O conteúdo e as relações não são apagados.
+   Restaurar o backup apenas se a validação falhar.
+
+Critérios de interrupção: qualquer resposta 200 com título de tópico restrito
+para conta não elegível, qualquer grant `all:0` em tópico restrito, ou rebuild
+incompleto. Nesses casos, desligar a frente e restaurar o backup antes de
+investigar.
+
 ## Matriz de testes
 
 Resultado da F-GROUP 0.1 (2026-10-22): `tests/src/Unit/RestrictedForum` — **60
