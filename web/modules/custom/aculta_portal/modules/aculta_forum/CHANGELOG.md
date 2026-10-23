@@ -1,3 +1,10 @@
+## `0.1.0-dev.247` — propósito canônico nas respostas do Index
+
+- Unit do provider confirma `forum` para `ForumPost` revisável e Comment legado
+  `aculta_discussion_post`, e nega Comment de outro bundle.
+- Unit focado: 2 testes / 8 assertions PASS, 3 deprecações PHPUnit. Kernel de
+  Entity Access/Group, DI e Runtime continuam pendentes.
+
 ## `0.1.0-dev.246` — versão da projeção no fingerprint do Index
 
 - Provider do Fórum declara sua versão de projeção para que rebuilds parciais
