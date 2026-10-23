@@ -1,5 +1,11 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.138 — proteger hooks iniciais de atualização parcial
+
+- `update_10001`, `10002`, `10004` e `10008` agora ignoram tabelas legadas
+  ausentes; teste Kernel cobre a atualização interrompida sem recriá-las.
+- PHP lint e PHPCS Drupal passaram. Kernel aguarda o fim do benchmark 1M.
+
 ## 0.1.0-dev.137 — tornar update do índice tolerante à tabela ausente
 
 - `update_10007` agora retorna sem erro quando `aculta_index_entry` não existe;

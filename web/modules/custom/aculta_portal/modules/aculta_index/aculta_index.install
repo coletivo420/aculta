@@ -211,6 +211,9 @@ function aculta_index_install(): void {
  */
 function aculta_index_update_10001(): void {
   $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
   if (!$schema->fieldExists('aculta_index_generation', 'cursor_revision')) {
     $schema->addField('aculta_index_generation', 'cursor_revision', [
       'type' => 'int',
@@ -226,6 +229,9 @@ function aculta_index_update_10001(): void {
  */
 function aculta_index_update_10002(): void {
   $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_entry')) {
+    return;
+  }
   if (!$schema->fieldExists('aculta_index_entry', 'source_sequence')) {
     $schema->addField('aculta_index_entry', 'source_sequence', [
       'type' => 'int',
@@ -252,6 +258,9 @@ function aculta_index_update_10003(): void {
  */
 function aculta_index_update_10004(): void {
   $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
   if (!$schema->fieldExists('aculta_index_generation', 'provider_fingerprint')) {
     $schema->addField('aculta_index_generation', 'provider_fingerprint', [
       'type' => 'varchar',
@@ -305,6 +314,9 @@ function aculta_index_update_10007(): void {
  */
 function aculta_index_update_10008(): void {
   $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('aculta_index_generation')) {
+    return;
+  }
   if (!$schema->fieldExists('aculta_index_generation', 'backfill_completed')) {
     $schema->addField('aculta_index_generation', 'backfill_completed', [
       'type' => 'int',

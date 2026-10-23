@@ -788,6 +788,23 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests early field updates tolerate missing legacy tables.
+   */
+  public function testUpdateHooksSkipFieldsWhenLegacyTablesAreMissing(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropTable('aculta_index_generation');
+    $schema->dropTable('aculta_index_entry');
+
+    aculta_index_update_10001();
+    aculta_index_update_10002();
+    aculta_index_update_10004();
+    aculta_index_update_10008();
+
+    $this->assertFalse($schema->tableExists('aculta_index_generation'));
+    $this->assertFalse($schema->tableExists('aculta_index_entry'));
+  }
+
+  /**
    * Tests the update hook adds provider inventory identity to older installs.
    */
   public function testUpdateHookAddsProviderFingerprint(): void {
