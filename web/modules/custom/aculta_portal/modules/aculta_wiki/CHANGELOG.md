@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.10 — integrar categorias e imagens ao Content Index
+
+- `WikiContentIndexProvider` agora projeta relações outgoing allowlisted:
+  `related_entry`, `wiki_category` e `wiki_image`; a projeção passa à versão 3.
+- Novo `WikiCategoryContentIndexProvider` indexa somente metadados mínimos de
+  `taxonomy_term:wiki_category` no próprio owner `aculta_wiki`, com purpose
+  canônico `wiki`. A dependência Core `taxonomy` foi declarada.
+- Imagens apontam a `media:image` e usam o provider que já pertence a
+  `aculta_image`; nenhum arquivo, URL, descrição de categoria ou corpo é copiado.
+- Kernel MariaDB consulta as relações via Index com Node, Term e Media reais,
+  e filtra categoria/imagem não publicadas por Entity Access (3 testes / 84
+  assertions; 5 depreciações). Unit da Wiki: 61 testes / 277 assertions; 3
+  depreciações PHPUnit. A Wiki permanece desabilitada no Runtime.
+
 ## 0.1.0-dev.9 — confirmar consulta de relações do Index em MariaDB
 
 - Kernel do Content Index consulta `related_entry` com a classe do provider e

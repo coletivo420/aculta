@@ -54,6 +54,8 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     $node->method('hasField')->willReturnMap([
       ['field_domain_source', TRUE],
       ['field_wiki_related', TRUE],
+      ['field_wiki_categories', FALSE],
+      ['field_wiki_image', FALSE],
     ]);
     $node->method('get')->willReturnMap([
       ['field_domain_source', $domain],
@@ -99,6 +101,8 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     $node->method('hasField')->willReturnMap([
       ['field_domain_source', FALSE],
       ['field_wiki_related', TRUE],
+      ['field_wiki_categories', FALSE],
+      ['field_wiki_image', FALSE],
     ]);
     $node->method('get')->with('field_wiki_related')->willReturn($relations);
 
@@ -108,6 +112,56 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     self::assertSame([
       ['related_entry', 'node', '71'],
       ['related_entry', 'node', '72'],
+    ], array_map(
+      static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
+      $projection->relations,
+    ));
+  }
+
+  /**
+   * Projects category and image fields as named outgoing relations.
+   */
+  public function testProjectsWikiCategoryAndImageRelations(): void {
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('pt-br');
+    $categories = $this->createMock(FieldItemListInterface::class);
+    $categories->method('isEmpty')->willReturn(FALSE);
+    $categories->method('getValue')->willReturn([
+      ['target_id' => '31'],
+      ['target_id' => '32'],
+      ['target_id' => '31'],
+    ]);
+    $image = $this->createMock(FieldItemListInterface::class);
+    $image->method('isEmpty')->willReturn(FALSE);
+    $image->method('getValue')->willReturn([['target_id' => '91']]);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+    $node->method('isDefaultRevision')->willReturn(TRUE);
+    $node->method('id')->willReturn('51');
+    $node->method('language')->willReturn($language);
+    $node->method('uuid')->willReturn('wiki-entry-uuid');
+    $node->method('label')->willReturn('Cannabis medicinal');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('getCreatedTime')->willReturn(100);
+    $node->method('getChangedTime')->willReturn(200);
+    $node->method('hasField')->willReturnMap([
+      ['field_domain_source', FALSE],
+      ['field_wiki_related', FALSE],
+      ['field_wiki_categories', TRUE],
+      ['field_wiki_image', TRUE],
+    ]);
+    $node->method('get')->willReturnMap([
+      ['field_wiki_categories', $categories],
+      ['field_wiki_image', $image],
+    ]);
+
+    $projection = (new WikiContentIndexProvider())->project($node);
+
+    self::assertNotNull($projection);
+    self::assertSame([
+      ['wiki_category', 'taxonomy_term', '31'],
+      ['wiki_category', 'taxonomy_term', '32'],
+      ['wiki_image', 'media', '91'],
     ], array_map(
       static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
       $projection->relations,

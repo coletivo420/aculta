@@ -4,7 +4,8 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: começa em **0.1.0-dev.1**, casca sem código.
+Linha do projeto `aculta_wiki`: **0.1.0-dev.10**. Código e testes do
+submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -18,8 +19,9 @@ contrato do provider Wiki a descoberta de referências necessárias à exclusão
 segura de verbetes e submeter candidatos Media ao Portal ao limpar anexos. A
 Wiki mantém a descoberta de embeds e relações da própria entidade; o Portal
 revalida referências globais e remove os Media órfãos por Entity API.
-`field_wiki_categories` e `field_wiki_image` permanecem adiados até
-fechar os contratos de acesso e relações da Wiki. Ver
+As relações `wiki_category` e `wiki_image` do Content Index foram implementadas
+com revalidação de acesso dos alvos; a exclusão segura de anexos continua sendo
+um fluxo separado. Ver
 [`CONTENT-CLEANUP-POLICY.md`](../../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
 - Manifesto com dependências `aculta_portal`, `domain`, `views`, `node` e
@@ -67,43 +69,36 @@ fechar os contratos de acesso e relações da Wiki. Ver
 - Projeta metadados mínimos e declara o purpose canônico `wiki` para revalidar
   Entity Access em consultas originadas por outros domínios, com o usuário e
   grants atuais. A falha em resolver o domínio deve negar exposição.
-- Relações `field_wiki_related`, `field_wiki_categories` e `field_wiki_image`
-  não são tratadas todas da mesma forma: `field_wiki_related` já é projetado
-  como relação outgoing `related_entry`; categorias e imagem permanecem dívida
-  até a finalização dos contratos de conteúdo e acesso. O provider não copia
-  corpo nem substitui revisão, workflow ou acesso.
+- Relações outgoing explícitas: `field_wiki_related` → `related_entry`
+  (`node:wiki_entry`); `field_wiki_categories` → `wiki_category`
+  (`taxonomy_term:wiki_category`); `field_wiki_image` → `wiki_image`
+  (`media:image`). Provider mínimo de categoria pertence a `aculta_wiki`; o
+  provider de imagem pertence a `aculta_image`. O Index não copia corpo,
+  descrição de termo, URL ou arquivo e revalida acesso de cada destino.
 - Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ### Estado da integração e gates restantes
 
-- Unit `WikiContentIndexProviderTest` cobre a allowlist de metadados, rejeição
-  de bundle/revisão não suportados, deduplicação da relação e declaração do
-  purpose `wiki`. O Kernel harness usa a classe real do provider para backfill,
-  relação, update e delete (1 teste / 17 assertions em SQLite e MariaDB;
-  MariaDB repetido em 2026-10-23), com tag registrada por fixture; o mapa de
-  services cobre separadamente o YAML owner, mas não ativa a cadeia Drupal
-  completa.
+- Unit do provider Wiki cobre a allowlist, revisão padrão, três relações
+  nomeadas e deduplicação; `WikiCategoryContentIndexProviderTest` cobre a
+  projeção de `taxonomy_term:wiki_category`, purpose `wiki` e revisão padrão.
+  A suíte Unit passou em 2026-10-23 (61 testes / 277 assertions; 3
+  depreciações PHPUnit).
 - Unit focal do filtro registra o provider Wiki real e confirma purpose,
   preservação do usuário, restauração de Domain e falha fechada sem Domain
   (9/80). O Kernel `ContentIndexWikiAccessKernelTest` usa `EntityHooks`, provider
   e Domains persistidos reais: nega em `main`, autoriza pelo Index em `wiki` e
   restaura o Domain anterior (1/16). O teste usa bridge de fixture; não habilita
   a Wiki nem prova discovery do YAML owner no container Drupal.
-- A consulta outgoing `related_entry` agora tem cobertura Kernel no Index:
-  origem e alvos passam por Entity Access no purpose `wiki` mesmo com a chamada
-  iniciada em `main`; alvo unpublished é filtrado e o Domain original é
-  restaurado (2 testes / 32 assertions em SQLite e MariaDB; repetido em
-  MariaDB em 2026-10-23). O harness lê a definição/tag
-  do provider no YAML owner e chama a política de acesso Portal por uma ponte
-  fixture; não ativa a Wiki nem prova o boot/DI completo.
-- O mapa de services lê o YAML real da Wiki e compila a tag do provider.
-  Pendentes: boot/DI completo do owner, grants específicos caso sejam
-  acrescentados, compatibilidade do contrato durante a finalização da Wiki e
+- `ContentIndexWikiAccessKernelTest` consulta `related_entry`, `wiki_category`
+  e `wiki_image` pelo Index usando os YAMLs reais de `aculta_wiki` e
+  `aculta_image`. Entidades Node, Taxonomy Term e Media são persistidas; Entity
+  Access omite alvos não publicados, e o Domain `main` é restaurado. MariaDB:
+  3 testes / 84 assertions, 5 depreciações.
+- O mapa de services e o boot combinado do Index carregam as tags owner. Isso
+  não instala toda a configuração da Wiki nem substitui grants adicionais ou
   homologação Runtime. O módulo continua desabilitado; não habilitar ou importar
   sua configuração como parte desta fase.
-- `field_wiki_categories` e `field_wiki_image` seguem como dívida até a
-  finalização dos contratos editoriais e de acesso. Não criar providers de
-  Taxonomy/Media nesta integração parcial.
 
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
@@ -112,6 +107,13 @@ provider `wiki` pelo YAML owner; o gate passou com 1 teste / 8 assertions (83
 depreciações Core/contrib). Isso comprova boot/DI e registry, sem instalar
 configuração/schema nem homologar Runtime. Categorias e imagens continuam
 adiadas até a Wiki finalizar seus contratos.
+
+Atualização IDX 0.1-dev.10 (2026-10-23): essa decisão foi encerrada após a
+definição dos contratos. O provider agora projeta `wiki_category` e `wiki_image`,
+e o owner da categoria foi implementado na Wiki. Kernel MariaDB valida consulta
+das relações e revalida acesso a Term/Media reais (3/84; 5 depreciações). O
+harness é do Index/Portal; a Wiki continua desabilitada e Runtime continua
+pendente.
 
 ### Entregue em código (2026-10-22)
 

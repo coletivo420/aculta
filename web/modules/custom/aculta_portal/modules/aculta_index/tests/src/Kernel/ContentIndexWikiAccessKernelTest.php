@@ -14,8 +14,12 @@ use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -31,14 +35,21 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
 
+  use MediaTypeCreationTrait;
+
   /**
    * {@inheritdoc} */
   protected static $modules = [
     'system',
     'user',
     'field',
+    'text',
+    'file',
+    'image',
+    'media',
     'node',
     'domain',
+    'taxonomy',
     'aculta_index',
     'aculta_index_wiki_access_test',
   ];
@@ -54,18 +65,34 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       new Reference('request_stack'),
     ]))->setPublic(TRUE));
 
-    // Register the provider declaration from the owner YAML without enabling
-    // the unfinished Wiki module or its unrelated service dependency chain.
-    $ownerServices = Yaml::parseFile(
-      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.services.yml',
-      Yaml::PARSE_CUSTOM_TAGS,
-    )['services'];
-    $service = $ownerServices['aculta_wiki.content_index_provider'];
-    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
-    foreach ($service['tags'] as $tag) {
-      $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    // Load the actual owner declarations without enabling the unfinished Wiki
+    // module or its unrelated dependency chain.
+    $serviceFiles = [
+      '/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.services.yml' => [
+        'aculta_wiki.content_index_provider',
+        'aculta_wiki.category_content_index_provider',
+      ],
+      '/modules/custom/aculta_portal/modules/aculta_image/aculta_image.services.yml' => [
+        'aculta_image.content_index_provider',
+      ],
+    ];
+    foreach ($serviceFiles as $file => $serviceIds) {
+      $services = Yaml::parseFile(DRUPAL_ROOT . $file, Yaml::PARSE_CUSTOM_TAGS)['services'];
+      foreach ($serviceIds as $serviceId) {
+        $service = $services[$serviceId];
+        $arguments = array_map(
+          static fn (mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
+            ? new Reference(substr($argument, 1))
+            : $argument,
+          $service['arguments'] ?? [],
+        );
+        $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
+        foreach ($service['tags'] as $tag) {
+          $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+        }
+        $container->setDefinition($serviceId, $definition);
+      }
     }
-    $container->setDefinition('aculta_wiki.content_index_provider', $definition);
   }
 
   /**
@@ -75,7 +102,11 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('domain');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('file', ['file_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -85,15 +116,19 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'aculta_index_cursor',
       'aculta_index_audit',
     ]);
-    $this->installConfig(['system', 'user', 'node', 'domain']);
+    $this->installConfig(['system', 'user', 'node', 'domain', 'taxonomy', 'media', 'file']);
     aculta_index_install();
     NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry'])->save();
+    Vocabulary::create(['vid' => 'wiki_category', 'name' => 'Wiki categories'])->save();
+    $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
     $this->installDomainField();
     $this->createDomains();
     $this->installRelatedEntryField();
+    $this->installCategoryField();
+    $this->installImageField();
     $authenticated = Role::load('authenticated');
     self::assertInstanceOf(Role::class, $authenticated);
-    $authenticated->grantPermission('access content')->save();
+    $authenticated->grantPermission('access content')->grantPermission('view media')->save();
   }
 
   /**
@@ -234,13 +269,120 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Queries Wiki categories and images through their owner providers.
+   */
+  public function testCategoryAndImageRelationsRevalidateTargetAccess(): void {
+    User::create(['name' => 'wiki-relations-root', 'status' => TRUE])->save();
+    $reader = User::create([
+      'name' => 'wiki-relations-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+
+    $publicCategory = Term::create([
+      'vid' => 'wiki_category',
+      'name' => 'Public category',
+      'status' => TRUE,
+    ]);
+    $publicCategory->save();
+    $privateCategory = Term::create([
+      'vid' => 'wiki_category',
+      'name' => 'Private category',
+      'status' => FALSE,
+    ]);
+    $privateCategory->save();
+    $publicImage = Media::create([
+      'bundle' => 'image',
+      'name' => 'Public image',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+    ]);
+    $publicImage->save();
+    $privateImage = Media::create([
+      'bundle' => 'image',
+      'name' => 'Private image',
+      'status' => FALSE,
+      'uid' => $reader->id(),
+    ]);
+    $privateImage->save();
+
+    $source = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Relations source',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_categories' => [
+        ['target_id' => $publicCategory->id()],
+        ['target_id' => $privateCategory->id()],
+      ],
+      'field_wiki_image' => ['target_id' => $publicImage->id()],
+    ]);
+    $source->save();
+    $privateImageSource = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Private image relation source',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_image' => ['target_id' => $privateImage->id()],
+    ]);
+    $privateImageSource->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
+    }
+    self::assertTrue($complete, 'The Index backfill should complete for Wiki records and targets.');
+    $this->processWikiWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    $categories = $relationQuery->queryOutgoing(
+      'node',
+      (string) $source->id(),
+      $source->language()->getId(),
+      'wiki_category',
+      $reader,
+    );
+    self::assertCount(1, $categories->entities);
+    self::assertSame('Public category', (string) $categories->entities[0]->label());
+    $images = $relationQuery->queryOutgoing(
+      'node',
+      (string) $source->id(),
+      $source->language()->getId(),
+      'wiki_image',
+      $reader,
+    );
+    self::assertCount(1, $images->entities);
+    self::assertSame('Public image', (string) $images->entities[0]->label());
+    $deniedImage = $relationQuery->queryOutgoing(
+      'node',
+      (string) $privateImageSource->id(),
+      $privateImageSource->language()->getId(),
+      'wiki_image',
+      $reader,
+    );
+    self::assertCount(0, $deniedImage->entities);
+    self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+  }
+
+  /**
    * Processes incremental Wiki work after the backfill.
    */
   private function processWikiWork(): void {
     $database = $this->container->get('database');
     $ids = $database->select('aculta_index_work', 'work')
       ->fields('work', ['work_id'])
-      ->condition('provider_id', 'wiki')
       ->condition('status', 'queued')
       ->execute()
       ->fetchCol();
@@ -288,6 +430,52 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'settings' => [
         'handler' => 'default:node',
         'handler_settings' => ['target_bundles' => ['wiki_entry' => 'wiki_entry']],
+      ],
+    ])->save();
+  }
+
+  /**
+   * Installs the multi-value category reference on Wiki entries.
+   */
+  private function installCategoryField(): void {
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_categories',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'taxonomy_term'],
+      'cardinality' => -1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_categories',
+      'label' => 'Wiki categories',
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => ['target_bundles' => ['wiki_category' => 'wiki_category']],
+      ],
+    ])->save();
+  }
+
+  /**
+   * Installs the single-value image reference on Wiki entries.
+   */
+  private function installImageField(): void {
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_image',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'media'],
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_image',
+      'label' => 'Wiki image',
+      'settings' => [
+        'handler' => 'default:media',
+        'handler_settings' => ['target_bundles' => ['image' => 'image']],
       ],
     ])->save();
   }

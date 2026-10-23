@@ -7,9 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.9`: provider opcional do Content Index implementado para
-  metadados allowlisted e relação outgoing `related_entry`; categorias e
-  imagem seguem adiadas. O módulo permanece desabilitado.
+- `0.1.0-dev.10`: provider opcional do Content Index projeta metadados
+  allowlisted e relações outgoing `related_entry`, `wiki_category` e
+  `wiki_image`. O módulo permanece desabilitado.
 - O módulo **não está habilitado** e não altera o Runtime.
 - As rotas públicas continuam definidas em `aculta_portal.routing.yml` até a
   Fase 2. Os caminhos `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
@@ -26,24 +26,27 @@ pendentes, está em
 - Configuração continua em `config/sync`, com UUIDs e IDs preservados. A
   propriedade de cada item é decisão pendente do responsável.
 - `WikiContentIndexProvider` projeta título, UUID, bundle, idioma, domínio,
-  publicação, datas e apenas `field_wiki_related` como `related_entry`; não
-  projeta corpo, categorias ou mídia. Relações de categoria/imagem ficam como
-  dívida até a finalização da Wiki. O provider só é descoberto quando `aculta_wiki` e
-  `aculta_index` estiverem habilitados; não cria dependência obrigatória entre
-  eles nem habilita o módulo.
-- `WikiContentIndexProviderTest` cobre metadados allowlisted, revisão padrão,
-  deduplicação de `related_entry` e declaração do purpose canônico `wiki`.
+  publicação, datas e relações allowlisted de `field_wiki_related` (`related_entry`),
+  `field_wiki_categories` (`wiki_category`) e `field_wiki_image` (`wiki_image`).
+  `WikiCategoryContentIndexProvider` projeta apenas metadados mínimos para
+  `taxonomy_term:wiki_category`; imagens usam o provider `media:image` já
+  registrado por `aculta_image`. Nenhum provider copia corpo, descrição de
+  termo, URL, arquivo ou binário. Os serviços só são descobertos pelas tags
+  quando Index e owners estão ativos; não há dependência obrigatória entre
+  `aculta_wiki` e `aculta_index`.
+- Os testes Unit cobrem metadados allowlisted, revisão padrão, deduplicação das
+  relações nomeadas, purpose `wiki` e a projeção mínima da categoria.
 - `ContentIndexWikiProviderKernelTest` cobre backfill e CRUD com a classe real
   do provider (1 teste / 17 assertions); usa tag de fixture e não habilita o
   módulo Wiki nem valida Domain/grants reais. A declaração/tag owner e a
   consulta autorizada são cobertas separadamente pelo teste seguinte.
-- `ContentIndexWikiAccessKernelTest` consulta a relação `related_entry` com o
-  provider compilado do YAML owner e a policy Portal real via fixture. Origem e
-  alvo são revalidados no Domain `wiki`, alvo não publicado é filtrado e o
-  contexto `main` é restaurado (2 testes / 32 assertions, SQLite e MariaDB).
-  O boot/DI do owner foi comprovado no teste transversal
-  `ContentIndexOwnerIntegrationKernelTest` (1/8, 83 depreciações Core/contrib);
-  homologação Runtime segue pendente.
+- `ContentIndexWikiAccessKernelTest` consulta `related_entry`, `wiki_category`
+  e `wiki_image` com providers dos YAMLs owners Wiki e Image, dados reais Node,
+  Term e Media e a policy Portal via fixture. Entity Access filtra categoria e
+  imagem não publicadas; a origem/alvo Wiki são revalidados no purpose `wiki` e
+  o Domain `main` é restaurado (MariaDB: 3 testes / 84 assertions, 5
+  depreciações). O boot combinado dos owners também compila os services reais;
+  Runtime e ativação completa permanecem pendentes.
 
 ## Documentação
 

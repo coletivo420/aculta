@@ -72,17 +72,18 @@ depois da importação de configuração no servidor de testes.
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Provider Wiki | Unit | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados e propósito canônico `wiki` | aprovado |
-| Relação `field_wiki_related` | Unit | Relações outgoing `related_entry` deduplicadas | aprovado |
+| Relações `field_wiki_related`, `field_wiki_categories`, `field_wiki_image` | Unit | `related_entry`, `wiki_category`, `wiki_image` deduplicadas, com tipos-alvo allowlisted | aprovado |
+| Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
 | Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
-| Declaração/tag owner `aculta_index.provider` | Kernel | YAML owner carregado e provider da produção registrado no harness; boot DI automático do módulo ainda pendente | aprovado (2 testes / 32 assertions; MariaDB e SQLite) |
+| Declaração/tag owner `aculta_index.provider` | Kernel | YAML owner carregado e providers reais registrados; boot combinado compila o container, sem instalar toda a configuração do owner | aprovado (boot transversal Index 1/36; acesso MariaDB 3/84) |
 | Consulta do Index e relações sob acesso Wiki | Kernel | Mesmo usuário, Entity Access e policy Portal em purpose `wiki`; alvo não publicado filtrado; Domain original restaurado | aprovado (2 testes / 32 assertions; MariaDB e SQLite) |
-| Categorias e imagem | Contrato/Kernel | Providers e acesso definidos após finalização da Wiki | adiado |
+| Relações categoria e imagem | Kernel | `wiki_category`/`wiki_image` consultam os providers owners; Entity Access filtra alvos unpublished | aprovado (3 testes / 84 assertions em MariaDB; 5 depreciações) |
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
-O provider está em código, mas `aculta_wiki` permanece desabilitado. O harness
-Kernel lê e compila a declaração/tag do YAML owner e usa bridge fixture para a
-policy Portal; não demonstra boot DI completo nem autorização numa instalação
-completa. Runtime permanece pendente.
+Os adapters estão em código, mas `aculta_wiki` permanece desabilitado. O harness
+Kernel lê as declarações/tag dos YAMLs owners e usa bridge fixture para a policy
+Portal; comprova consulta com entidades reais, sem habilitar ou instalar toda a
+configuração da Wiki. Runtime permanece pendente.
 
 ## Navegador
 

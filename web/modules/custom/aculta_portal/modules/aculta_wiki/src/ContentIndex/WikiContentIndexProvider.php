@@ -14,10 +14,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Projects allowlisted metadata and outgoing related-entry links.
- *
- * Taxonomy and media relations remain deferred until the Wiki module's content
- * and access contracts are finalized.
+ * Projects allowlisted metadata and explicitly configured Wiki relationships.
  */
 final class WikiContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
@@ -32,7 +29,7 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 2;
+    return 3;
   }
 
   /**
@@ -72,14 +69,22 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
     }
 
     $relations = [];
-    if ($entity->hasField('field_wiki_related') && !$entity->get('field_wiki_related')->isEmpty()) {
-      foreach ($entity->get('field_wiki_related')->getValue() as $item) {
+    foreach ([
+      'field_wiki_related' => ['related_entry', 'node'],
+      'field_wiki_categories' => ['wiki_category', 'taxonomy_term'],
+      'field_wiki_image' => ['wiki_image', 'media'],
+    ] as $fieldName => [$relationType, $targetEntityType]) {
+      if (!$entity->hasField($fieldName) || $entity->get($fieldName)->isEmpty()) {
+        continue;
+      }
+      foreach ($entity->get($fieldName)->getValue() as $item) {
         $targetId = $item['target_id'] ?? NULL;
         if ($targetId === NULL || $targetId === '') {
           continue;
         }
         $targetId = (string) $targetId;
-        $relations[$targetId] = new ContentIndexRelation('related_entry', 'node', $targetId);
+        $key = $relationType . ':' . $targetEntityType . ':' . $targetId;
+        $relations[$key] = new ContentIndexRelation($relationType, $targetEntityType, $targetId);
       }
     }
 

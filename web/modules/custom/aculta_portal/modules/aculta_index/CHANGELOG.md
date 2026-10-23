@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.164 — verificar provider owner de categorias Wiki
+
+- O mapa de serviços do Index reconhece também o adapter
+  `taxonomy_term:wiki_category` registrado pelo próprio módulo `aculta_wiki`.
+  O Kernel transversal compila o owner atualizado e confirma sua descoberta:
+  1 teste / 36 assertions; 239 depreciações Core/contrib.
+- A projeção das relações Wiki e a autorização de Term/Media foram verificadas
+  pelos testes Unit/Kernel do owner; nenhuma entidade ou configuração do Runtime
+  foi ativada ou alterada.
+
 ## 0.1.0-dev.163 — validar DI real da ponte Statistics
 
 - O boot combinado do `ContentIndexOwnerIntegrationKernelTest` inclui agora o

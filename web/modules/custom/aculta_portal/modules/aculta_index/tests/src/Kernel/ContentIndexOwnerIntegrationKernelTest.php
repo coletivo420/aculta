@@ -76,6 +76,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('lms_course', $registry->findProviderIdForBundle('group', 'lms_course'));
     self::assertSame('forum', $registry->findProviderIdForBundle('node', 'aculta_forum_topic'));
     self::assertSame('wiki', $registry->findProviderIdForBundle('node', 'wiki_entry'));
+    self::assertSame('wiki_category', $registry->findProviderIdForBundle('taxonomy_term', 'wiki_category'));
     self::assertSame('magazine', $registry->findProviderIdForBundle('node', 'revista'));
     self::assertSame('gallery', $registry->findProviderIdForBundle('media_gallery', 'media_gallery'));
     self::assertSame('image', $registry->findProviderIdForBundle('media', 'image'));

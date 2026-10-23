@@ -2,17 +2,18 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.163` — boot/DI transversal descobre providers owner, persiste a relação Group real `course_document` e resolve a bridge com `aculta_statistics` pelo container owner.
+**Versão:** `0.1.0-dev.164` — boot/DI transversal descobre providers owner, inclusive categoria Wiki, persiste a relação Group real `course_document` e resolve a bridge com `aculta_statistics` pelo container owner.
 **Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. Benchmarks sintéticos de rebuild/auditoria passaram em 10k, 100k e 1M; a repetição 1M mais recente levou 2.020,081 s no rebuild e 741,071 s na auditoria, sem divergências e sem SLO. Em 2026-10-23, o Runtime de teste `toca` foi ativado temporariamente: Drush resolveu `audit status`, `queue status` e `help aculta-index:rebuild`; o catálogo ficou vazio, e após desinstalação o módulo ficou Disabled e zero tabelas do Index permaneceram. O harness combinado é do `aculta_index` sob o Portal; não transfere ownership ao LMS. Instalação de configuração completa dos owners, grants operacionais, execução sobre catálogo com conteúdo e métricas representativas continuam pendentes.
 
-**Boot/DI combinado (dev.163):** `ContentIndexOwnerIntegrationKernelTest` carrega
+**Boot/DI combinado (dev.164):** `ContentIndexOwnerIntegrationKernelTest` carrega
 roots owners independentes para validar seus adapters no container do Index.
 Além do registry/tag real, agora persiste uma relação com o plugin Group real
 `aculta_pdf_viewer_group:course_document` (MariaDB: 1/33; 239 depreciações
 Core/contrib) e resolve o aggregator real do Statistics pela interface do
-Portal (1/35; 239 depreciações Core/contrib). O boot de teste não é a arquitetura
-de produção: `aculta_index` é submódulo de `aculta_portal` e cada owner mantém
-seu adapter e sua policy.
+Portal (1/36; 239 depreciações Core/contrib), e reconhece o provider
+`taxonomy_term:wiki_category` da Wiki. O boot de teste não é a arquitetura de
+produção: `aculta_index` é submódulo de `aculta_portal` e cada owner mantém seu
+adapter e sua policy.
 **Traduções:** no dev.85, `ContentIndexTranslationKernelTest` reconstrói um Node
 com duas línguas, consulta ambas pela API do Index, confirma que atualizar
 `pt-br` preserva `en` e apagar a tradução remove somente sua projeção e seu
