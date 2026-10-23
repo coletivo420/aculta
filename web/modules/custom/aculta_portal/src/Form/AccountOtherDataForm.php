@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -128,7 +129,25 @@ final class AccountOtherDataForm extends FormBase {
     catch (\RuntimeException) {
       $this->messages->addError($this->t('Não foi possível salvar agora. Tente novamente mais tarde.'));
     }
-    $form_state->setRedirect('aculta_portal.my_data_other');
+    $form_state->setRedirectUrl($this->returnUrl());
+  }
+
+  /**
+   * Volta ao checkout quando o link trouxe um destino interno de checkout; senão, permanece em Outros Dados.
+   *
+   * Só caminhos internos sob /checkout/ são aceitos, para não criar redirecionamento aberto.
+   */
+  private function returnUrl(): Url {
+    $destination = (string) \Drupal::request()->query->get('destination', '');
+    if (str_starts_with($destination, '/checkout/') && !str_starts_with($destination, '//')) {
+      try {
+        return Url::fromUserInput($destination);
+      }
+      catch (\InvalidArgumentException) {
+        // Destino inválido: cai no caminho padrão abaixo.
+      }
+    }
+    return Url::fromRoute('aculta_portal.my_data_other');
   }
 
   /**
