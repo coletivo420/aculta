@@ -175,15 +175,19 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       ->execute();
 
     $integrityChecker = $this->container->get('aculta_index.integrity_checker');
-    $integrityChecker->startAudit();
+    $auditPhase = (string) $integrityChecker->startAudit()['phase'];
     $auditBatchTimes = [];
+    $auditBatchTimesByPhase = [];
     $auditStarted = hrtime(TRUE);
     memory_reset_peak_usage();
     $auditBatchCount = 0;
     do {
       $batchStarted = hrtime(TRUE);
       $audit = $integrityChecker->processAuditBatch(200);
-      $auditBatchTimes[] = (hrtime(TRUE) - $batchStarted) / 1_000_000;
+      $batchElapsed = (hrtime(TRUE) - $batchStarted) / 1_000_000;
+      $auditBatchTimes[] = $batchElapsed;
+      $auditBatchTimesByPhase[$auditPhase][] = $batchElapsed;
+      $auditPhase = (string) ($audit['phase'] ?? $auditPhase);
       $auditBatchCount++;
       // The audit has separate catalog-to-source and source-to-catalog
       // checkpoint passes, each bounded by the configured batch size.
@@ -200,6 +204,17 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
 
     sort($rebuildBatchTimes, SORT_NUMERIC);
     sort($auditBatchTimes, SORT_NUMERIC);
+    $auditPhaseMetrics = [];
+    foreach ($auditBatchTimesByPhase as $phase => $samples) {
+      sort($samples, SORT_NUMERIC);
+      $auditPhaseMetrics[$phase] = [
+        'batch_count' => count($samples),
+        'elapsed_ms' => round(array_sum($samples), 3),
+        'batch_p50_ms' => round($this->percentile($samples, 0.50), 3),
+        'batch_p95_ms' => round($this->percentile($samples, 0.95), 3),
+        'batch_max_ms' => round(max($samples), 3),
+      ];
+    }
     $payload = [
       'benchmark' => 'provider_backfill_and_incremental_audit',
       'date' => gmdate('Y-m-d'),
@@ -229,6 +244,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'audit_batch_p50_ms' => round($this->percentile($auditBatchTimes, 0.50), 3),
       'audit_batch_p95_ms' => round($this->percentile($auditBatchTimes, 0.95), 3),
       'audit_batch_max_ms' => round(max($auditBatchTimes), 3),
+      'audit_phase_metrics' => $auditPhaseMetrics,
       'audit_peak_memory_bytes' => $auditPeakMemoryBytes,
       'missing_source_count' => (int) $audit['missing_source_count'],
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],

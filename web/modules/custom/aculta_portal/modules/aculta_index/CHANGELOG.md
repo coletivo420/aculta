@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.93 — medir cauda da auditoria por fase
+
+- O benchmark agora separa duração, p50, p95 e máximo dos lotes de auditoria
+  por fase (`entries`, `relations` e `sources`) para localizar caudas longas.
+- Não muda a política de lotes ou a auditoria em produção. A nova medição ainda
+  não foi executada; o processo MariaDB atual começou antes desta alteração.
+
 ## 0.1.0-dev.92 — registrar Kernel SQLite da fila
 
 - `ContentIndexRebuilderKernelTest`: 16 testes / 220 assertions passaram em
