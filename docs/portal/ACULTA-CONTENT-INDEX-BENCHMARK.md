@@ -55,6 +55,10 @@ nenhuma composição demonstrou ganho consistente, e o schema de produção
 permanece sem índices adicionais. O fixture Media não substitui medições com
 grants de domínio/Group/LMS, nem um benchmark amplo de escrita, rebuild ou
 reconciliação; esses workloads continuam pendentes antes da homologação final.
+Uma fumaça de 10k contou 8/6 consultas SQL em cache miss/hit, após aquecer
+metadados do Drupal. Essa amostra única serve para observar o caminho e não
+define meta. Decisão do responsável: registrar métricas, mas definir limites de
+latência e throughput só após telemetria de uso real.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:

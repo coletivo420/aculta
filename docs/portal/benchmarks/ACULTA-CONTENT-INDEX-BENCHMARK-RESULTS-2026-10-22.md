@@ -99,6 +99,10 @@ entidades. Isso confirma o caminho de autorização no fixture Media, mas não
 representa grants de Group/LMS, domínio, revisão, outros bundles nem volume
 operacional; esses cenários seguem pendentes para homologação.
 
+Uma execução de fumaça separada, em 10k, contou as consultas SQL do mesmo
+caminho: 8 no cache miss e 6 no cache hit. A contagem é exploratória e de uma
+única amostra; ela não foi adicionada como gate ou SLO.
+
 Os resultados brutos das duas composições e das consultas com autorização estão
 em [CSV de composições](aculta-index-alternative-compositions-2026-10-22.csv).
 

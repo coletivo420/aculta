@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.44 — contar queries da validação de acesso
+
+- Benchmark de Media registra a contagem de consultas SQL em amostras com cache
+  de candidatos miss/hit, aquecendo metadados de Drupal antes da coleta.
+- Uma fumaça observou 8/6 queries; o resultado é exploratório e não estabelece
+  SLO. Limites de latência/throughput aguardam telemetria de uso real.
+
 ## 0.1.0-dev.43 — medir segunda composição e Entity Access Media
 
 - Compara duas composições de índice temporárias no benchmark, sem alterar o

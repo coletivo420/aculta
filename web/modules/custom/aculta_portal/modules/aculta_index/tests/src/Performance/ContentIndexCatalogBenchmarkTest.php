@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Performance;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_index\Cache\ContentIndexCandidateCache;
@@ -632,6 +633,20 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       'bundle' => 'image',
       'domain_id' => 'main',
     ];
+    // Warm one-time Drupal metadata/config loads outside the sample.
+    $candidateCache->invalidateGeneration($generationId);
+    $mediaStorage->resetCache($mediaIds);
+    $query->query($filters, $account, NULL, 100);
+    $candidateCache->invalidateGeneration($generationId);
+    $mediaStorage->resetCache($mediaIds);
+    Database::startLog('aculta_index_access_cold');
+    $query->query($filters, $account, NULL, 100);
+    $coldQueryCount = count(Database::getLog('aculta_index_access_cold'));
+    $mediaStorage->resetCache($mediaIds);
+    Database::startLog('aculta_index_access_warm');
+    $query->query($filters, $account, NULL, 100);
+    $warmQueryCount = count(Database::getLog('aculta_index_access_warm'));
+
     $coldMilliseconds = [];
     for ($sample = 0; $sample < $sampleCount; $sample++) {
       $candidateCache->invalidateGeneration($generationId);
@@ -658,6 +673,8 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
       'authorized_entities_per_query' => $expectedAuthorized,
       'denied_entities_per_query' => $expectedCandidates - $expectedAuthorized,
       'query_samples' => $sampleCount,
+      'sql_queries_cold_sample' => $coldQueryCount,
+      'sql_queries_warm_sample' => $warmQueryCount,
       'cold_page_p50_ms' => round($this->percentile($coldMilliseconds, 0.50), 3),
       'cold_page_p95_ms' => round($this->percentile($coldMilliseconds, 0.95), 3),
       'warm_page_p50_ms' => round($this->percentile($warmMilliseconds, 0.50), 3),
