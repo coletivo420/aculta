@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -118,7 +119,22 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
     }
 
     $sourceSetupStarted = hrtime(TRUE);
-    $this->createSyntheticSources();
+    // Source creation is outside the measured rebuild. Temporarily hide the
+    // providers so entity hooks do not persist one incremental work row per
+    // synthetic source; the real registry is restored before rebuild/audit.
+    $providerRegistry = $this->container->get('aculta_index.provider_registry');
+    $this->container->set('aculta_index.provider_registry', new ContentIndexProviderRegistry());
+    try {
+      $this->createSyntheticSources();
+    }
+    finally {
+      $this->container->set('aculta_index.provider_registry', $providerRegistry);
+    }
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_work', 'work')
+      ->condition('provider_id', 'test_sample_content')
+      ->countQuery()
+      ->execute()
+      ->fetchField(), 'Synthetic source setup must not persist incremental work rows.');
     $sourceSetupMilliseconds = (hrtime(TRUE) - $sourceSetupStarted) / 1_000_000;
     $sourceSetupMemoryBytes = memory_get_usage(TRUE);
     $sourceSetupPeakMemoryBytes = memory_get_peak_usage(TRUE);
@@ -146,10 +162,8 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       ->fetchField();
     self::assertSame($this->sourceCount, $projectedCount);
 
-    // The fixture's source insert events are outside the measured rebuild.
-    // A direct active-pointer switch keeps the maintenance benchmark isolated
-    // from its independently queued incremental jobs; activation is covered
-    // by ContentIndexRebuilderKernelTest.
+    // A direct active-pointer switch isolates event delivery; activation is
+    // covered by ContentIndexRebuilderKernelTest.
     $database = $this->container->get('database');
     $database->update('aculta_index_generation')
       ->fields(['status' => 'active'])
@@ -220,7 +234,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],
       'stale_projection_count' => (int) $audit['stale_projection_count'],
       'peak_memory_bytes' => max($sourceSetupPeakMemoryBytes, $rebuildPeakMemoryBytes, $auditPeakMemoryBytes),
-      'scope' => 'Real Drupal Node storage, test provider, production enumerator, writer, rebuild and incremental integrity audit. Source-entity creation and activation are excluded from timing.',
+      'scope' => 'Real Drupal Node storage, test provider, production enumerator, writer, rebuild and incremental integrity audit. Source-entity creation and activation are excluded from rebuild/audit timing; incremental work is suppressed during fixture creation.',
       'slo' => FALSE,
     ];
     if (file_put_contents($outputFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL, LOCK_EX) === FALSE) {

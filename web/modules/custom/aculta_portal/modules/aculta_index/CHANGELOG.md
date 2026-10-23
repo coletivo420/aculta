@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.90 — isolar a criação de fontes do benchmark
+
+- Durante a criação de Nodes sintéticos, o benchmark agora usa um registry
+  temporariamente vazio para evitar persistir um job incremental por fonte.
+  O registry real é restaurado antes do rebuild e da auditoria.
+- PHP lint e PHPCS passaram. O teste focal não foi repetido porque a execução
+  MariaDB de 1M iniciada antes desta alteração ainda está ativa; os resultados
+  dessa execução não incluem esta mudança.
+
 ## 0.1.0-dev.89 — vincular cursor aos filtros da consulta
 
 - O Kernel da API paginada também tenta reutilizar o cursor com outro conjunto
