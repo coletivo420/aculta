@@ -136,3 +136,7 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 - Segurança: limite de 20 produtos por página, leitura de até cinco lotes de 100 IDs por solicitação. **Limitação:** se muitas entidades forem filtradas por grants, uma página pode ser parcial e não oferecer Próxima página embora existam produtos mais antigos. Não chamar isso de paginação exaustiva até integrar store filtering à consulta.
 - Sem funcionalidades de pedidos ou pagamento; SDC mobile-first ainda pendente, conforme GS-NAV-02.
 - Gates pendentes: Kernel/Functional para grants em produto e store, segurança de cursor e entrada de busca; desempenho em alto volume e regressão após `drush cr` no homelab.
+
+## Decisão obrigatória — Green Stash substitui operação administrativa Commerce (2026-10-23)
+
+[Contrato operacional Green Stash](GREEN-STASH-OPERATIONS-CONTRACT.md): todas as operações cotidianas da loja (novo/editar produtos, variações, estoque, expedição, etiquetas) devem ocorrer em rotas próprias PT-BR dentro de `/estudio/loja`. Usar Commerce/Stock/Shipping como backend; não apontar operadores para `edit-form` ou `/painel-administrativo`. Primeiro commit removeu o link nativo de edição e exibiu estado preparatório. Próximo GS-EDITOR-0.2: página interna de detalhe, acesso por loja e entidade, depois formulários Studio de criação e edição. Não considerar a fase concluída antes dos testes end-to-end com operador sem acesso administrativo Drupal.
