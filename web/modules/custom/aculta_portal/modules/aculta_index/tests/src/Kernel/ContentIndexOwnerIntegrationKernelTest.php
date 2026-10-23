@@ -9,7 +9,9 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
 use Drupal\aculta_portal\Statistics\ContentEntityMetricAggregatorInterface;
@@ -78,10 +80,18 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('wiki', $registry->findProviderIdForBundle('node', 'wiki_entry'));
     self::assertSame('wiki_category', $registry->findProviderIdForBundle('taxonomy_term', 'wiki_category'));
     self::assertSame('magazine', $registry->findProviderIdForBundle('node', 'revista'));
+    self::assertSame('remote_video', $registry->findProviderIdForBundle('media', 'remote_video'));
     self::assertSame('gallery', $registry->findProviderIdForBundle('media_gallery', 'media_gallery'));
     self::assertSame('image', $registry->findProviderIdForBundle('media', 'image'));
     self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
     self::assertSame('forum_attachment', $registry->findProviderIdForBundle('media', 'forum_attachment'));
+
+    $this->installEntitySchema('media');
+    $this->installConfig(['aculta_portal']);
+    $remoteVideoType = MediaType::load('remote_video');
+    self::assertNotNull($remoteVideoType);
+    self::assertSame('oembed:video', $remoteVideoType->getSource()->getPluginId());
+    self::assertNotNull(FieldConfig::loadByName('media', 'remote_video', 'field_media_oembed_video'));
 
     $this->assertPdfGroupRelationPluginCanAttachCourseDocument();
   }

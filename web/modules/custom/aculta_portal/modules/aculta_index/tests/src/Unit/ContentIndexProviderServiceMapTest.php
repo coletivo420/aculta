@@ -31,6 +31,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
   public function testEnabledAdapterServiceFilesCompileIntoOneRegistry(): void {
     $moduleDirectory = dirname(__DIR__, 4);
     $serviceFiles = [
+      '../aculta_portal.services.yml',
       'aculta_activity/aculta_activity.services.yml',
       'aculta_document_viewer/aculta_document_viewer.services.yml',
       'aculta_forum/aculta_forum.services.yml',
@@ -106,6 +107,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       'image' => ['media' => ['image']],
       'lms_course' => ['group' => ['lms_course']],
       'magazine' => ['node' => ['revista']],
+      'remote_video' => ['media' => ['remote_video']],
       'wiki' => ['node' => ['wiki_entry']],
       'wiki_category' => ['taxonomy_term' => ['wiki_category']],
     ], $this->providerMap($registry));

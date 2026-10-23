@@ -75,6 +75,10 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
   (`media:image`). Provider mínimo de categoria pertence a `aculta_wiki`; o
   provider de imagem pertence a `aculta_image`. O Index não copia corpo,
   descrição de termo, URL ou arquivo e revalida acesso de cada destino.
+- O Media `remote_video` é compartilhado por Revista, Wiki, Fórum e LMS e seu
+  bundle/provider mínimo pertence ao Portal. A Wiki ainda precisa definir uma
+  relação outgoing explícita se vídeos forem referenciados em seus verbetes;
+  não inferir links de qualquer texto nem projetar URL oEmbed/corpo.
 - Referência: [arquitetura e roadmap do ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ### Estado da integração e gates restantes

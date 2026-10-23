@@ -98,6 +98,10 @@ um Media deixar de aparecer no Content Index. Ver
 - A Revista fornece provider de metadados e revalida Entity Access no purpose
   canônico `magazine`; o catálogo não assume propriedade do conteúdo ou da
   autorização.
+- O bundle Media compartilhado `remote_video` pertence ao `aculta_portal` e
+  pode ser consultado pelo Index após revalidação de Entity Access. A descoberta
+  da relação publicação→vídeo embutido precisa de contrato explícito do provider
+  Magazine; não projetar URL oEmbed nem copiar o corpo.
 - `field_editorial_gallery` estabelece relação estruturada com Gallery sem
   substituir o embed de apresentação. O comando
   `aculta-magazine:migrate-gallery-references` oferece prévia e execução em

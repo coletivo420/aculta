@@ -1,4 +1,9 @@
 services:
+  aculta_portal.content_index_remote_video_provider:
+    class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
+    arguments: ['remote_video', 'remote_video']
+    tags:
+      - { name: aculta_index.provider }
   aculta_portal.file_reference_inspector:
     class: Drupal\aculta_portal\Cleanup\FileReferenceInspector
     arguments: ['@entity_type.manager', '@entity_field.manager', '@database']

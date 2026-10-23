@@ -1,9 +1,12 @@
 uuid: 7612e2fd-c763-46a7-bd94-e45a2173b6bd
 langcode: pt-br
 status: true
-dependencies: {  }
-_core:
-  default_config_hash: NsVkvD5RbJS6kL-3uUgn718RpXYxCy8_-mQoS9jUU1U
+dependencies:
+  enforced:
+    module:
+      - aculta_portal
+  module:
+    - media
 id: remote_video
 label: 'Vídeo remoto'
 description: 'Vídeos incorporados por URL de provedor suportado, como os registros audiovisuais dos projetos. Use somente destinos reais e autorizados.'

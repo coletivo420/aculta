@@ -1,5 +1,21 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.165 — integrar `remote_video` do owner Portal
+
+- O Portal fornece defaults do bundle Media `remote_video` (`oembed:video`),
+  campo e displays-base, e registra o provider genérico do Index no service YAML
+  do owner. As telas de Media Library ficam em `config/optional` para não criar
+  dependência obrigatória de `media_library`.
+- Service-map e Kernel transversal validam descoberta/tag, configuração do
+  bundle, campo de origem e tipo do provider. O provider não copia URL, HTML,
+  thumbnail nem dados pessoais. Relações de embeds permanecem nos módulos
+  consumidores e ainda não foram implementadas. Entity Access é revalidado no
+  contexto da consulta, sem purpose fixo de Magazine, Wiki, Fórum ou LMS.
+- Service-map: 1 teste / 3 assertions. Kernel owner: 1 teste / 46 assertions,
+  com 239 depreciações Core/contrib.
+- Kernel Media: 5 testes / 101 assertions; criação, atualização e exclusão de
+  `media:remote_video` percorrem a fila e a projeção não armazena a URL oEmbed.
+
 ## 0.1.0-dev.164 — integrar relações Wiki de categoria e imagem
 
 - `WikiContentIndexProvider` projeta `related_entry`, `wiki_category` e

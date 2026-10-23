@@ -1,0 +1,22 @@
+uuid: c72d484e-9cce-4a69-aef0-a73108b8c504
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_portal
+  config:
+    - field.storage.media.field_media_oembed_video
+    - media.type.remote_video
+id: media.remote_video.field_media_oembed_video
+field_name: field_media_oembed_video
+entity_type: media
+bundle: remote_video
+label: 'URL do vídeo'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

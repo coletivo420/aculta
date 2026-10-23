@@ -22,6 +22,12 @@ Consultas revalidam Entity Access sob o purpose `courses` e exigem também
 `grade students`). Aulas, progresso, matrículas, respostas, notas e certificados
 continuam exclusivamente no LMS.
 
+O Media oEmbed compartilhado `remote_video` pertence ao `aculta_portal` e pode
+ser consultado pelo Index como entidade autorizada. O provider LMS ainda não
+declara uma relação curso→vídeo: o contrato deve apontar o recurso pedagógico
+real (por exemplo, aula ou leitura que contém o embed) antes de indexar links.
+Não copiar URL oEmbed, corpo, progresso ou dados de estudante para o catálogo.
+
 ## Estado
 
 ### Content Index: boot/DI do owner — validação dev.161

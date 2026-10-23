@@ -1,3 +1,11 @@
+## 0.4.1-dev.22 — assumir o bundle compartilhado `remote_video`
+
+- `aculta_portal` fornece a configuração default do Media `remote_video`, seu
+  campo oEmbed e o provider mínimo do Content Index; a Media Library permanece
+  opcional.
+- Revista, Wiki, Fórum e LMS ficam documentados como consumidores. Este commit
+  não altera conteúdo Runtime nem cria links/relações implícitos entre entidades.
+
 ## 0.4.1-dev.21 — normalizar timestamps do provider Media do Content Index
 
 - `MediaContentIndexProvider` converte explicitamente os timestamps da entidade

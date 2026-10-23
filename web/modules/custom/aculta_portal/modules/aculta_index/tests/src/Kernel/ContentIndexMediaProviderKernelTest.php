@@ -59,6 +59,10 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     // chain in this focused Kernel harness.
     $ownerServices = [
       [
+        'file' => '/modules/custom/aculta_portal/aculta_portal.services.yml',
+        'id' => 'aculta_portal.content_index_remote_video_provider',
+      ],
+      [
         'file' => '/modules/custom/aculta_portal/modules/aculta_image/aculta_image.services.yml',
         'id' => 'aculta_image.content_index_provider',
       ],
@@ -110,6 +114,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
     $this->createMediaType('file', ['id' => 'course_document', 'label' => 'Course document']);
     $this->createMediaType('file', ['id' => 'forum_attachment', 'label' => 'Forum attachment']);
+    $this->createMediaType('oembed:video', ['id' => 'remote_video', 'label' => 'Remote video']);
   }
 
   /**
@@ -172,6 +177,52 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'document')
+      ->condition('entity_type', 'media')
+      ->condition('entity_id', (string) $media->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * Portal's shared remote video projection excludes the oEmbed source URL.
+   */
+  public function testRemoteVideoProviderUsesPortalOwnerAndFollowsCrud(): void {
+    $videoUrl = 'https://www.youtube.com/watch?v=content-index-fixture';
+    $media = Media::create([
+      'bundle' => 'remote_video',
+      'name' => 'Remote lecture',
+      'status' => TRUE,
+      'field_media_oembed_video' => ['value' => $videoUrl],
+    ]);
+    $media->save();
+
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('remote_video', $registry->findProviderIdForBundle('media', 'remote_video'));
+    self::assertNull($registry->get('remote_video')->getAccessPurpose($media));
+
+    $generationId = $this->buildAndActivateGeneration();
+    self::assertSame('Remote lecture', $this->entryLabel($generationId, (string) $media->id(), 'remote_video'));
+    $projectionRow = $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->fields('entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'remote_video')
+      ->condition('entity_id', (string) $media->id())
+      ->execute()
+      ->fetchAssoc();
+    self::assertIsArray($projectionRow);
+    self::assertStringNotContainsString($videoUrl, serialize($projectionRow));
+
+    $media->setName('Updated remote lecture');
+    $media->save();
+    $this->processProviderWork('remote_video');
+    self::assertSame('Updated remote lecture', $this->entryLabel($generationId, (string) $media->id(), 'remote_video'));
+
+    $media->delete();
+    $this->processProviderWork('remote_video');
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'remote_video')
       ->condition('entity_type', 'media')
       ->condition('entity_id', (string) $media->id())
       ->countQuery()
@@ -311,6 +362,7 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     $this->processProviderWork('document');
     $this->processProviderWork('course_document');
     $this->processProviderWork('forum_attachment');
+    $this->processProviderWork('remote_video');
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
     return $generationId;
