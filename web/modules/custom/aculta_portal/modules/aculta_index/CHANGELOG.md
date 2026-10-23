@@ -1,5 +1,20 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.144 — medir etapas e limite de cache do enumerador
+
+- O enumerador registra timings `debug` para Entity Query, `loadMultiple`,
+  projeção de traduções e limpeza de cache, sem registrar IDs. A configuração
+  de produção continua com o limite de 5.000 identidades.
+- O harness permite variar o limite por `ACULTA_INDEX_MAINTENANCE_CACHE_RESET_LIMIT`.
+  Em três execuções 10k por limite, 500 reduziu a mediana da auditoria de 9,06
+  para 8,63 s e o máximo de lote de 4.351 para 711 ms; o p95 de lote subiu de
+  549 para 706 ms. O pico de memória foi 152,5 vs 150,5 MiB. Cenários
+  diagnósticos, sem SLO; a escolha do limite operacional segue pendente.
+- Unit do enumerador passou (5 testes / 41 assertions); benchmark 10k passou
+  em seis execuções (1 / 16 cada); PHPCS e lint passaram.
+- Após a injeção do logger de enumerador no container, Kernel Schema MariaDB
+  passou (53 testes / 570 assertions; uma depreciação Core e 54 PHPUnit).
+
 ## 0.1.0-dev.143 — instrumentar lotes da auditoria
 
 - Cada lote concluído emite uma mensagem `debug` com fase, quantidade lida e

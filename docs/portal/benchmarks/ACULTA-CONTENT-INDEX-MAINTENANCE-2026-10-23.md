@@ -220,3 +220,24 @@ a reconciliação teve p50/p95/máximo de 10 / 12 / 12 ms. A amostra identifica
 próximo alvo de profiling fino. Não prova qual operação interna domina e não
 deve ser extrapolada linearmente para 100k ou 1M. O JSON está em
 `/tmp/aculta-index-maintenance-10000-stages-2026-10-23.json`.
+
+## Comparação diagnóstica do limite de cache — 10k, três execuções por limite
+
+O harness permite variar o limite de identidades enfileiradas antes de chamar
+`resetCache()`. O padrão atual de produção é 5.000; `500` foi usado somente no
+enumerador criado pelo benchmark. As rodadas foram alternadas entre limites
+para reduzir viés de ordem. Todas concluíram sem divergências.
+
+| Limite | Auditoria mediana (s) | Fase sources mediana (s) | Lote sources p50 / p95 / max (ms) | Reset agregado mediano (s) | Reset p50 / p95 / max (ms) | Pico audit (MiB) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 5.000 | 9,06 | 6,96 | 119 / 549 / 4.351 | 4,68 | 0 / 448 / 4.237 | 152,5 |
+| 500 | 8,63 | 6,55 | 289 / 706 / 711 | 4,54 | 180 / 570 / 598 | 150,5 |
+
+Com limite 500, a mediana total caiu 4,7% e o máximo por lote caiu 83,7%, mas
+o p95 de lote subiu 28,7%: os resets custam moderadamente em quase todos os
+lotes, em vez de se concentrarem nos poucos lotes que descarregam 5.000 IDs.
+O tempo agregado de reset ficou próximo (diferença mediana de 3%), portanto o
+principal ganho observado é reduzir a cauda, não reduzir substancialmente o
+trabalho total. São três amostras por cenário, em fixture 10k, sem SLO; não
+justificam por si só mudar o limite operacional, especialmente antes da
+validação em 100k. JSONs ficam em `/tmp/aculta-index-maintenance-10000-*2026-10-23.json`.

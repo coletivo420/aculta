@@ -13,7 +13,7 @@ services:
 
   aculta_index.entity_enumerator:
     class: Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator
-    arguments: ['@aculta_index.provider_registry', '@entity_type.manager']
+    arguments: ['@aculta_index.provider_registry', '@entity_type.manager', '@logger.channel.aculta_index']
 
   Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator: '@aculta_index.entity_enumerator'
 

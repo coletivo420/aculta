@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
+use Drupal\aculta_index\Rebuild\ContentIndexEntityEnumerator;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -48,6 +49,11 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    * Approved synthetic fixture scale for this process.
    */
   private int $sourceCount = self::DEFAULT_SOURCE_COUNT;
+
+  /**
+   * Enumerator cache-reset threshold selected for the current benchmark.
+   */
+  private int $cacheResetEntityLimit = 5_000;
 
   /**
    * {@inheritdoc}
@@ -121,6 +127,14 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
         throw new \InvalidArgumentException('Maintenance benchmark size must be one of 10000, 100000 or 1000000.');
       }
       $this->sourceCount = (int) $requestedSize;
+    }
+    $requestedCacheLimit = getenv('ACULTA_INDEX_MAINTENANCE_CACHE_RESET_LIMIT');
+    if ($requestedCacheLimit !== FALSE && $requestedCacheLimit !== '') {
+      $parsedCacheLimit = filter_var($requestedCacheLimit, FILTER_VALIDATE_INT);
+      if ($parsedCacheLimit === FALSE || $parsedCacheLimit < 1 || $parsedCacheLimit > 5_000) {
+        throw new \InvalidArgumentException('Maintenance benchmark cache reset limit must be between 1 and 5000.');
+      }
+      $this->cacheResetEntityLimit = $parsedCacheLimit;
     }
 
     $temporaryDirectory = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -217,20 +231,32 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       /** @var list<array<string, mixed>> */
       public array $auditDiagnostics = [];
 
+      /** @var list<array<string, mixed>> */
+      public array $enumerationDiagnostics = [];
+
       /** {@inheritdoc} */
       public function log($level, string|\Stringable $message, array $context = []): void {
         if ($level === 'debug' && str_contains((string) $message, 'Content Index integrity batch completed.')) {
           $this->auditDiagnostics[] = $context;
         }
+        elseif ($level === 'debug' && str_contains((string) $message, 'Content Index enumeration batch completed.')) {
+          $this->enumerationDiagnostics[] = $context;
+        }
       }
 
     };
+    $enumerator = new ContentIndexEntityEnumerator(
+      $this->container->get('aculta_index.provider_registry'),
+      $this->container->get('entity_type.manager'),
+      $diagnosticLogger,
+      $this->cacheResetEntityLimit,
+    );
     $integrityChecker = new ContentIndexIntegrityChecker(
       $database,
       $this->container->get('datetime.time'),
       $this->container->get('aculta_index.provider_registry'),
       $this->container->get('aculta_index.work_manager'),
-      $this->container->get('aculta_index.entity_enumerator'),
+      $enumerator,
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.writer'),
       $diagnosticLogger,
@@ -308,6 +334,24 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
         ];
       }
     }
+    self::assertCount($auditPhaseMetrics['sources']['batch_count'], $diagnosticLogger->enumerationDiagnostics);
+    $enumerationStageMetrics = [];
+    foreach ([
+      'entity_query' => '@query_ms',
+      'load_multiple' => '@load_ms',
+      'project' => '@project_ms',
+      'cache_reset' => '@cache_ms',
+      'total' => '@total_ms',
+    ] as $stage => $contextKey) {
+      $samples = array_map(static fn (array $diagnostic): float => (float) $diagnostic[$contextKey], $diagnosticLogger->enumerationDiagnostics);
+      sort($samples, SORT_NUMERIC);
+      $enumerationStageMetrics[$stage] = [
+        'elapsed_ms' => round(array_sum($samples), 3),
+        'p50_ms' => round($this->percentile($samples, 0.50), 3),
+        'p95_ms' => round($this->percentile($samples, 0.95), 3),
+        'max_ms' => round(max($samples), 3),
+      ];
+    }
     $payload = [
       'benchmark' => 'provider_backfill_and_incremental_audit',
       'date' => gmdate('Y-m-d'),
@@ -330,6 +374,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'rebuild_batch_max_ms' => round(max($rebuildBatchTimes), 3),
       'rebuild_peak_memory_bytes' => $rebuildPeakMemoryBytes,
       'audit_batch_limit' => self::AUDIT_BATCH_LIMIT,
+      'enumerator_cache_reset_entity_limit' => $this->cacheResetEntityLimit,
       'audit_batch_count' => $auditBatchCount,
       'audit_status' => $audit['status'],
       'audit_elapsed_ms' => round($auditMilliseconds, 3),
@@ -339,6 +384,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
       'audit_batch_max_ms' => round(max($auditBatchTimes), 3),
       'audit_phase_metrics' => $auditPhaseMetrics,
       'audit_stage_metrics' => $auditStageMetrics,
+      'enumerator_stage_metrics' => $enumerationStageMetrics,
       'audit_peak_memory_bytes' => $auditPeakMemoryBytes,
       'missing_source_count' => (int) $audit['missing_source_count'],
       'missing_catalog_entry_count' => (int) $audit['missing_catalog_entry_count'],

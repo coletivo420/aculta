@@ -8,6 +8,8 @@ use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Enumerates provider-owned current entities by keyset for backfill workers.
@@ -36,10 +38,28 @@ final class ContentIndexEntityEnumerator {
    */
   private int $pendingCacheResetCount = 0;
 
+  /**
+   * Logger used for safe per-batch diagnostics.
+   */
+  private readonly LoggerInterface $logger;
+
+  /**
+   * Maximum distinct cache identities retained between bounded resets.
+   */
+  private readonly int $cacheResetEntityLimit;
+
   public function __construct(
     private readonly ContentIndexProviderRegistry $providers,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-  ) {}
+    ?LoggerInterface $logger = NULL,
+    int $cacheResetEntityLimit = self::CACHE_RESET_ENTITY_LIMIT,
+  ) {
+    if ($cacheResetEntityLimit < 1 || $cacheResetEntityLimit > self::CACHE_RESET_ENTITY_LIMIT) {
+      throw new \InvalidArgumentException(sprintf('Cache reset entity limit must be between 1 and %d.', self::CACHE_RESET_ENTITY_LIMIT));
+    }
+    $this->logger = $logger ?? new NullLogger();
+    $this->cacheResetEntityLimit = $cacheResetEntityLimit;
+  }
 
   /**
    * Captures the greatest currently indexable source ID for an audit window.
@@ -145,9 +165,26 @@ final class ContentIndexEntityEnumerator {
     if ($maximumEntityId !== NULL) {
       $query->condition($idKey, $maximumEntityId, '<=');
     }
+    $batchStartedAt = hrtime(TRUE);
+    $queryStartedAt = hrtime(TRUE);
     $ids = array_values($query->execute());
+    $queryMilliseconds = (hrtime(TRUE) - $queryStartedAt) / 1_000_000;
     if ($ids === []) {
+      $cacheStartedAt = hrtime(TRUE);
       $this->flushCacheResetQueue();
+      $cacheMilliseconds = (hrtime(TRUE) - $cacheStartedAt) / 1_000_000;
+      $this->logBatchDiagnostics(
+        $providerId,
+        $entityTypeId,
+        $limit,
+        0,
+        0,
+        $queryMilliseconds,
+        0,
+        0,
+        $cacheMilliseconds,
+        $batchStartedAt,
+      );
       return ['projections' => [], 'next_cursor' => NULL, 'exhausted' => TRUE];
     }
 
@@ -155,8 +192,14 @@ final class ContentIndexEntityEnumerator {
     $cacheIds = [$entityTypeId => array_fill_keys(array_map('strval', $ids), TRUE)];
     $projectionSucceeded = FALSE;
     $exhausted = count($ids) < $limit;
+    $loadMilliseconds = 0.0;
+    $projectionMilliseconds = 0.0;
+    $cacheMilliseconds = 0.0;
     try {
+      $loadStartedAt = hrtime(TRUE);
       $entities = $storage->loadMultiple($ids);
+      $loadMilliseconds = (hrtime(TRUE) - $loadStartedAt) / 1_000_000;
+      $projectionStartedAt = hrtime(TRUE);
       foreach ($ids as $id) {
         $entity = $entities[$id] ?? NULL;
         if (!$entity instanceof ContentEntityInterface) {
@@ -185,9 +228,11 @@ final class ContentIndexEntityEnumerator {
           }
         }
       }
+      $projectionMilliseconds = (hrtime(TRUE) - $projectionStartedAt) / 1_000_000;
       $projectionSucceeded = TRUE;
     }
     finally {
+      $cacheStartedAt = hrtime(TRUE);
       // Bound Drupal's static entity caches across keyset batches. Reset only
       // source IDs and relation targets carried by successful projections;
       // this avoids invalidating unrelated cache entries. Cache invalidation
@@ -202,17 +247,60 @@ final class ContentIndexEntityEnumerator {
       }
       else {
         $this->queueCacheResetIds($cacheIds);
-        if ($this->pendingCacheResetCount >= self::CACHE_RESET_ENTITY_LIMIT || $exhausted) {
+        if ($this->pendingCacheResetCount >= $this->cacheResetEntityLimit || $exhausted) {
           $this->flushCacheResetQueue();
         }
       }
+      $cacheMilliseconds = (hrtime(TRUE) - $cacheStartedAt) / 1_000_000;
     }
+
+    $this->logBatchDiagnostics(
+      $providerId,
+      $entityTypeId,
+      $limit,
+      count($ids),
+      count($projections),
+      $queryMilliseconds,
+      $loadMilliseconds,
+      $projectionMilliseconds,
+      $cacheMilliseconds,
+      $batchStartedAt,
+    );
 
     return [
       'projections' => $projections,
       'next_cursor' => (string) end($ids),
       'exhausted' => count($ids) < $limit,
     ];
+  }
+
+  /**
+   * Logs per-batch timings without source identities or projected metadata.
+   */
+  private function logBatchDiagnostics(
+    string $providerId,
+    string $entityTypeId,
+    int $limit,
+    int $sourceCount,
+    int $projectionCount,
+    float $queryMilliseconds,
+    float $loadMilliseconds,
+    float $projectionMilliseconds,
+    float $cacheMilliseconds,
+    int $batchStartedAt,
+  ): void {
+    $this->logger->debug('Content Index enumeration batch completed. Provider: @provider; entity type: @entity_type; limit: @limit; sources: @source_count; projections: @projection_count; entity query: @query_ms ms; load multiple: @load_ms ms; project: @project_ms ms; cache reset: @cache_ms ms; total: @total_ms ms.', [
+      '@provider' => $providerId,
+      '@entity_type' => $entityTypeId,
+      '@limit' => $limit,
+      '@source_count' => $sourceCount,
+      '@projection_count' => $projectionCount,
+      '@query_ms' => round($queryMilliseconds, 3),
+      '@load_ms' => round($loadMilliseconds, 3),
+      '@project_ms' => round($projectionMilliseconds, 3),
+      '@cache_ms' => round($cacheMilliseconds, 3),
+      '@total_ms' => round((hrtime(TRUE) - $batchStartedAt) / 1_000_000, 3),
+    ]);
   }
 
   /**

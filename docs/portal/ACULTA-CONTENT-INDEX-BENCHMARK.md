@@ -88,6 +88,11 @@ tempos. Resultado, CSV e limitações estão em
 Desde dev.143, o JSON inclui tempo por etapa (scan/projeção, reconciliação,
 checkpoint e fila) separado por fase. Isso permite distinguir descoberta e
 projeção do custo de comparar o catálogo.
+Desde dev.144, o harness também coleta Entity Query, `loadMultiple`, projeção
+e limpeza de cache do enumerador. O parâmetro opcional
+`ACULTA_INDEX_MAINTENANCE_CACHE_RESET_LIMIT` aceita de 1 a 5.000 identidades;
+sem ele, o cenário usa o padrão operacional de 5.000. Não mudar o padrão de
+produção com base somente no fixture 10k.
 
 Execução controlada do harness, após carregar o arquivo local de configuração
 do banco de teste sem imprimir a URL:
