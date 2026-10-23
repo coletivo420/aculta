@@ -410,6 +410,10 @@ services:
     arguments: ['@aculta_portal.checkout_context_registry']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.fiscal_identity_policy:
+    class: Drupal\aculta_portal\Checkout\FiscalIdentityPolicy
+    arguments: ['@aculta_portal.checkout_settings', '@?aculta_id_cpf.account_document']
+
   aculta_portal.checkout_policy_manager:
     class: Drupal\aculta_portal\Checkout\CheckoutPolicyManager
     arguments: ['@aculta_portal.checkout_configuration_resolver', '@aculta_portal.checkout_settings']
