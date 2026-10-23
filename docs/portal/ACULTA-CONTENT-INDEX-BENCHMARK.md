@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: planejado; nenhuma medição de volume foi executada por este documento.
+Estado: medições iniciais executadas para consulta de candidatos e leitura de relações; writer, rebuild, reconciliação e Entity Access real continuam pendentes.
 
 ## Matriz fixada
 
@@ -14,12 +14,16 @@ apenas as próprias linhas ao terminar.
 
 | Operação | Cenário | Evidência |
 |---|---|---|
-| Consulta keyset | Primeira página e páginas intermediárias, filtros por provider/type/bundle/idioma/domínio | p50/p95, linhas examinadas e tempo SQL |
+| Consulta keyset | Primeira página e páginas intermediárias, filtros por provider/type/bundle/idioma/domínio | p50/p95, plano `EXPLAIN`, linhas estimadas e tempo SQL |
 | Cache de candidatos | Aquecimento, hit, revisão alterada e repovoamento | latência e consultas SQL por chamada |
 | Relações de saída | Fontes com 1, 5 e 20 arestas por entidade | p50/p95 e linhas examinadas |
 | Escrita incremental | Inserção, atualização idempotente e exclusão de projeção | entidades/segundo e tempo transacional |
 | Reconciliação | Auditoria keyset com lotes, checkpoint e projeções divergentes | entidades/segundo, tempo por lote e memória máxima |
 | Reconstrução | Backfill de uma geração nova e catch-up de deltas | entidades/segundo, duração total, memória e tamanho das tabelas |
+
+Para relações, cada densidade (`1`, `5` e `20` arestas por fonte) usa a mesma
+amostra fixa de **10.000 fontes**. O teto é 200.000 edges por execução dessa
+operação; a quantidade de entradas do catálogo não multiplica esse volume.
 
 Executar pelo menos três repetições por tamanho e operação, separando primeira
 execução (cache frio) de execuções aquecidas. Registrar versões de Drupal/PHP/
@@ -35,6 +39,47 @@ fixtures realistas separadas, com públicos permitidos e negados, e registrar
 consultas por página. Os tamanhos de um milhão medem principalmente catálogo,
 relações, fila e manutenção; não exigem criar um milhão de Nodes no ambiente de
 teste.
+
+O harness opt-in em
+`web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance/`
+mede atualmente a gravação sintética da tabela de entradas, consulta keyset
+pelo serviço público (SQL de candidatos, cache e loads limitados de fontes
+ausentes) e leitura de arestas com os índices do schema. Registra p50/p95 de 30
+leituras frias e 30 aquecidas, plano `EXPLAIN`, linhas estimadas e bytes alocados
+nas tabelas. Ele não representa throughput de Entity Access, escrita pelo
+writer, rebuild ou reconciliação; esses workloads continuam pendentes antes da
+homologação final.
+
+Execução controlada do harness, após carregar o arquivo local de configuração
+do banco de teste sem imprimir a URL:
+
+```sh
+cd web/core
+set -a && . ../../secrets/simpletest-db.env && set +a
+export BROWSERTEST_OUTPUT_DIRECTORY=/tmp/aculta-browser-out
+mkdir -p "$BROWSERTEST_OUTPUT_DIRECTORY"
+ACULTA_INDEX_BENCHMARK=1 \
+  ../../vendor/bin/phpunit -c phpunit.xml.dist \
+  ../modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance
+```
+
+O padrão executa 10k/100k/1M. `ACULTA_INDEX_BENCHMARK_SIZES=10000` permite uma
+execução curta de fumaça. Os resultados JSONL são gravados somente em `sys_get_temp_dir()`;
+`ACULTA_INDEX_BENCHMARK_OUTPUT` pode escolher outro nome dentro desse diretório.
+O teste verifica antes do boot que `SIMPLETEST_DB` aponta para
+`localhost/aculta_simpletest`. O cenário de consulta distribui as linhas entre
+quatro domínios e marca 90% como publicadas; o filtro `main` + publicado mede
+uma seleção aproximada de 22,5%, além do limite keyset de 100 candidatos.
+
+## Resultados de 2026-10-22
+
+A primeira rodada foi repetida três vezes em cada escala. O resumo, CSVs e
+limitações estão em [Resultados iniciais](benchmarks/ACULTA-CONTENT-INDEX-BENCHMARK-RESULTS-2026-10-22.md).
+O plano usou a chave `PRIMARY` nas três escalas; a inserção sintética ficou em
+13,7k–16,5k linhas/s, e a página aquecida teve p50 mediano de 2,9–5,8 ms.
+Esses números não são SLO: a consulta carregou IDs fonte ausentes e, portanto,
+não mede throughput de Entity Access nem uso com grants reais. A tabela de
+resultados discrimina cada run e a amostra fixa de relações de 10.000 fontes.
 
 ## Critérios de saída
 

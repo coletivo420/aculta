@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.40 — harness opt-in de benchmark
+
+- Adiciona Kernel Performance Test opt-in e restrito a `localhost/aculta_simpletest`.
+- Mede inserção sintética, páginas keyset frias/aquecidas e leituras de relações
+  para 10k/100k/1M entradas; fan-out usa amostra fixa de 10k fontes e até 200k
+  edges. Resultados JSONL vão para o diretório temporário.
+- Writer incremental, Entity Access real, rebuild e reconciliação permanecem
+  fora deste harness e não têm resultado de desempenho ainda.
+
 ## 0.1.0-dev.39 — plano da matriz de benchmark
 
 - Define catálogos sintéticos de 10k/100k/1M no MariaDB de teste isolado,
