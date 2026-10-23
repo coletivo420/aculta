@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.95 — atualizar evidência da suíte Kernel SQLite
+
+- Suíte Kernel completa do Index: 77 testes / 1.166 assertions passaram em
+  SQLite; 39 depreciações Core/contrib e 42 depreciações PHPUnit, sem falhas.
+- Inclui `ContentIndexMagazineAccessKernelTest` (1/17). MariaDB continua
+  pendente enquanto o benchmark de 1M usa o banco dedicado.
+
 ## 0.1.0-dev.94 — validar Entity Access da Revista no Index
 
 - Kernel usa o provider Magazine declarado no YAML owner, Domains e Entity
