@@ -2,7 +2,7 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.151` — documentação de status consolidada após os benchmarks 10k/100k/1M.
+**Versão:** `0.1.0-dev.152` — suíte Kernel completa passou em MariaDB; benchmark 10k/100k/1M concluído.
 **Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. O benchmark sintético de rebuild/auditoria passou em 10k, 100k e 1M; a amostra 1M levou 2.137,817 s no rebuild e 724,020 s na auditoria, sem divergências e sem SLO. Boot/DI completo de alguns módulos owner, validação Runtime, grants operacionais e métricas representativas continuam pendentes. `aculta_index` não está instalado no Runtime.
 **Traduções:** no dev.85, `ContentIndexTranslationKernelTest` reconstrói um Node
 com duas línguas, consulta ambas pela API do Index, confirma que atualizar
@@ -73,7 +73,7 @@ microfase; a fixture não é evidência de boot completo do owner.
 **Plano de benchmark:** [matriz IDX 0.1-G/R](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-BENCHMARK.md).
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 
-**Validação mais recente (dev.150):** Unit enumerador 7/59; `ContentIndexRebuilderKernelTest` MariaDB 21/295; benchmarks 10k, 100k e 1M passaram (1/16 cada). PHPCS Drupal e lint passaram. Em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. Detalhes de evidência e limitações estão no [relatório de escala](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+**Validação mais recente (dev.152):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib e 54 PHPUnit); Unit do enumerador 7/59; benchmarks 10k, 100k e 1M passaram (1/16 cada). PHPCS Drupal e lint passaram. Em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. Detalhes no [relatório de escala](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
 No dev.141, o catálogo guarda `owner_uid` somente quando o provider identifica ownership por `EntityOwnerInterface`; filtros aceitam qualquer UID, mas cada entidade ainda passa por Entity Access, e o UID não é uma propriedade extra do DTO de consulta. A atualização `10018` adiciona a coluna nullable e os providers incrementam suas versões de projeção para forçar rebuild. Não há índice SQL específico antes de medição.
 

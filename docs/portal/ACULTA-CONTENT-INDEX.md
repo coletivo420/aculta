@@ -8,7 +8,7 @@
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
 **Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens.
 
-**Validação dev.150 (2026-10-23):** Unit enumerador 7/59; Kernel Rebuilder MariaDB 21/295; benchmarks de manutenção 10k, 100k e 1M passaram (1/16 cada). Em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências; as 2.001 páginas usaram descoberta `base_table`. É uma medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+**Validação dev.152 (2026-10-23):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib; 54 PHPUnit). Os benchmarks 10k, 100k e 1M passaram; em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. As 2.001 páginas usaram descoberta `base_table`. Medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
 ## Propósito e propriedade
 

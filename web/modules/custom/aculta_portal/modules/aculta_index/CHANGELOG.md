@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.152 — executar suíte Kernel completa em MariaDB
+
+- Suíte Kernel inteira do `aculta_index` passou em MariaDB: 102 testes / 1.518
+  assertions, sem falhas. Drupal/Core/contrib reportaram 39 depreciações e
+  PHPUnit reportou 54 depreciações.
+- A suíte inclui integração dos providers, acesso, rebuild, auditoria, schema,
+  filas, relações e bridge. Isso não valida boot/DI completo de todos os owners
+  nem o Runtime.
+
 ## 0.1.0-dev.151 — consolidar o resumo de status
 
 - README inicial agora resume a implementação, integração, benchmark 1M e
