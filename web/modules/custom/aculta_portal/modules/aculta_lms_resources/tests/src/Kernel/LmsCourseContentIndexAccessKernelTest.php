@@ -17,8 +17,11 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
+use Drupal\group\Entity\GroupType;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\media_gallery\Entity\MediaGallery;
+use Drupal\media\Entity\Media;
 use Drupal\domain\DomainInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -116,7 +119,10 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
     $service = $ownerServices['aculta_lms_resources.course_content_index_provider'];
-    $definition = (new Definition($service['class'], [new Reference('aculta_portal.domain_purpose')]))
+    $definition = (new Definition($service['class'], [
+      new Reference('aculta_portal.domain_purpose'),
+      new Reference('group_relation_type.manager'),
+    ]))
       ->setPublic(TRUE);
     foreach ($service['tags'] ?? [] as $tag) {
       $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
@@ -144,6 +150,18 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       $galleryDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
     $container->setDefinition('aculta_gallery.content_index_provider', $galleryDefinition);
+
+    $pdfServices = Yaml::parseFile(
+      DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_pdf_viewer/modules/aculta_pdf_viewer_group/aculta_pdf_viewer_group.services.yml',
+      Yaml::PARSE_CUSTOM_TAGS,
+    )['services'];
+    $pdfService = $pdfServices['aculta_pdf_viewer_group.course_document_content_index_provider'];
+    $pdfDefinition = (new Definition($pdfService['class'], $pdfService['arguments'] ?? []))
+      ->setPublic(TRUE);
+    foreach ($pdfService['tags'] ?? [] as $tag) {
+      $pdfDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
+    }
+    $container->setDefinition('aculta_pdf_viewer_group.course_document_content_index_provider', $pdfDefinition);
   }
 
   /**
@@ -199,7 +217,9 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $this->createMediaType('oembed:video', ['id' => 'remote_video', 'label' => 'Remote video']);
     $this->createMediaType('video_file', ['id' => 'video', 'label' => 'Video']);
     $this->createMediaType('file', ['id' => 'document', 'label' => 'Document']);
+    $this->createMediaType('file', ['id' => 'course_document', 'label' => 'Course document']);
     $this->createMediaType('audio_file', ['id' => 'audio', 'label' => 'Audio']);
+    $this->createCourseDocumentRelationType();
     $this->installConfig(['media_gallery']);
     $this->installCourseReadingField();
     $this->installCourseGalleryField();
@@ -464,6 +484,84 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Queries a course-document relation through its owner provider and access.
+   */
+  public function testCourseDocumentRelationUsesCourseMembershipAccess(): void {
+    $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
+    $authenticated->grantPermission('view media')->save();
+    $owner = $this->createUser(['administer lms']);
+    $student = $this->createUser();
+    $outsider = $this->createUser();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com documento do Index',
+      'uid' => $owner->id(),
+    ]);
+    $course->save();
+    GroupRole::create([
+      'id' => 'lms_course-index_document_student',
+      'label' => 'Estudante do documento',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => [
+        'take course',
+        'view group',
+        'view aculta_pdf_viewer_group:course_document entity',
+        'view any unpublished aculta_pdf_viewer_group:course_document entity',
+      ],
+    ])->save();
+    $course->addMember($student, ['group_roles' => ['lms_course-index_document_student']]);
+
+    $document = Media::create([
+      'bundle' => 'course_document',
+      'name' => 'Leitura privada do curso',
+      'status' => FALSE,
+    ]);
+    $document->save();
+    $course->addRelationship($document, 'aculta_pdf_viewer_group:course_document')->save();
+
+    $generationId = $this->buildCourseResourceGeneration();
+    $registry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('lms_course', $registry->findProviderIdForBundle('group', 'lms_course'));
+    self::assertSame('course_document', $registry->findProviderIdForBundle('media', 'course_document'));
+
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    $studentDocuments = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_document',
+      $student,
+      NULL,
+      10,
+    );
+    self::assertSame([(string) $document->id()], array_map(
+      static fn ($entity): string => (string) $entity->id(),
+      $studentDocuments->entities,
+    ), 'A student with course membership can query its unpublished document.');
+
+    $outsideDocuments = $relationQuery->queryOutgoing(
+      'group',
+      (string) $course->id(),
+      $course->language()->getId(),
+      'course_document',
+      $outsider,
+      NULL,
+      10,
+    );
+    self::assertSame([], $outsideDocuments->entities, 'An outsider cannot discover a course document.');
+
+    self::assertSame(1, (int) $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->condition('generation_id', $generationId)
+      ->condition('source_entity_id', (string) $course->id())
+      ->condition('target_entity_id', (string) $document->id())
+      ->condition('relation_type', 'course_document')
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Installs the explicit LMS reading reference field for the real Group type.
    */
   private function installCourseReadingField(): void {
@@ -507,6 +605,39 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
         'handler_settings' => [],
       ],
     ])->save();
+  }
+
+  /**
+   * Creates the fixture relation that mirrors the PDF owner plugin ID.
+   */
+  private function createCourseDocumentRelationType(): void {
+    $this->container->get('group_relation_type.manager')->clearCachedDefinitions();
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('group_relationship_type');
+    self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $storage);
+    $id = $storage->getRelationshipTypeId('lms_course', 'aculta_pdf_viewer_group:course_document');
+    if (!$storage->load($id)) {
+      $groupType = GroupType::load('lms_course');
+      self::assertInstanceOf(GroupType::class, $groupType);
+      $storage->createFromPlugin($groupType, 'aculta_pdf_viewer_group:course_document')->save();
+    }
+  }
+
+  /**
+   * Rebuilds and activates a generation with all source work drained.
+   */
+  private function buildCourseResourceGeneration(): string {
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 50)['complete'];
+    }
+    self::assertTrue($complete, 'The course and document providers should backfill the generation.');
+    $this->processAllIndexWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+    return $generationId;
   }
 
   /**
