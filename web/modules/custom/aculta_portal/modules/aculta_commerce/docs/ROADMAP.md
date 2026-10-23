@@ -76,3 +76,10 @@ A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loj
 ## Verificação pós-auditoria C-0.1-C1 (2026-10-22)
 
 [Auditoria do código vigente](CURRENT-CODE-AUDIT-0.1.0-C.md): `CartSite`, `CartUtility`, `CartConsolidator` e `CheckoutSlugMap` já implementam carrinho público único e consolidação de pedidos `curso/default/doacao`, exceto assinaturas. Foram introduzidos testes de caracterização **sem alteração de comportamento** em `tests/src/Unit/ExistingPortalCartContractTest.php`. Execução do PHPUnit e validação real ficam pendentes do ambiente local/homelab. Fases seguintes: C-0.1-C2 configurar fixtures e testar consolidator transacional, C-0.1-C3 provider administrativo da Loja somente depois de P-CART B, C-0.1-D Studio Green Stash. Qualquer sugestão antiga de quatro abas públicas ou proibição de consolidação de pedidos está supersedida pelo comportamento atual e ADR-013.
+
+## C-0.1-C2 — Avanço de código e dívidas (2026-10-22)
+
+- Criado `tests/src/Unit/PortalCartConsolidatorBoundaryTest.php` com duas provas não mutantes: carrinho vazio retorna NULL e assinatura isolada não é consolidada nem excluída.
+- Mantidos `CartConsolidator`, `CartUtility`, `CartSite`, rota e barra multidomínio **sem alterações**; nenhuma lógica de checkout mudada.
+- Registro central de dívida atualizado em `docs/operations/DEBT-REGISTER.md` sob IDs **DT-COM-01 a DT-COM-07**, com responsáveis e critérios de saída. Execução de PHPUnit, fixtures e testes de pagamento **não foi realizada neste ambiente**.
+- A fase C-0.1-C2 permanece **parcial** até DT-COM-01/02/03/04; C-0.1-C3 depende de P-CART B (DT-COM-06). Não declarar gates PASS.
