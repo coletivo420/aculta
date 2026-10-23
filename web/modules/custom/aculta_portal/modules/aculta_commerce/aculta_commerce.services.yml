@@ -1,0 +1,3 @@
+services:
+  aculta_commerce.green_stash_access:
+    class: Drupal\aculta_commerce\Access\GreenStashAccessPolicy
