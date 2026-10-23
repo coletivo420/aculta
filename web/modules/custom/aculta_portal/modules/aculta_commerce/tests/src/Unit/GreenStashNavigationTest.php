@@ -21,7 +21,7 @@ final class GreenStashNavigationTest extends UnitTestCase {
       self::assertSame($label, $render['heading']['#value']);
       self::assertCount(count(GreenStashNavigation::AREAS), $render['navigation']['items']);
       self::assertSame('page', $render['navigation']['items'][$slug]['#attributes']['aria-current']);
-      self::assertSame('aculta_commerce.green_stash_area', $render['navigation']['items'][$key]['#url']->getRouteName());
+      self::assertSame('aculta_commerce.green_stash_area', $render['navigation']['items'][$slug]['#url']->getRouteName());
       self::assertArrayNotHasKey('orders', $render);
       self::assertArrayNotHasKey('products', $render);
     }
