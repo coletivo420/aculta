@@ -29,3 +29,13 @@ aculta_commerce.green_stash_product_detail:
     produto: '[1-9][0-9]*'
   options:
     _aculta_domain_purpose: account
+
+aculta_commerce.green_stash_product_create:
+  path: '/estudio/loja/produtos/novo'
+  defaults:
+    _form: '\Drupal\aculta_commerce\Form\GreenStashProductCreateForm'
+    _title: 'Novo produto'
+  requirements:
+    _permission: 'access aculta green stash'
+  options:
+    _aculta_domain_purpose: account
