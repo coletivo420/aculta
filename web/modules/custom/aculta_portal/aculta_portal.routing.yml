@@ -399,3 +399,30 @@ aculta_portal.cart_checkout:
     _access: 'TRUE'
   options:
     no_cache: true
+aculta_portal.checkout_common:
+  path: /painel-administrativo/aculta/checkout
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm'
+    _title: Carrinhos e checkouts
+  requirements:
+    _permission: administer aculta checkout common
+  options:
+    _admin_route: true
+aculta_portal.checkout_shop:
+  path: /painel-administrativo/aculta/checkout/loja
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutShopForm'
+    _title: Checkout da Loja
+  requirements:
+    _permission: administer aculta checkout shop
+  options:
+    _admin_route: true
+aculta_portal.checkout_lms:
+  path: /painel-administrativo/aculta/checkout/lms
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutLmsForm'
+    _title: Checkout do LMS
+  requirements:
+    _permission: administer aculta checkout lms
+  options:
+    _admin_route: true

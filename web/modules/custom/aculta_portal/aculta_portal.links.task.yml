@@ -140,3 +140,21 @@ aculta_portal.admin_subtab_implantacao:
   base_route: aculta_portal.admin
   parent_id: aculta_portal.admin_tab_seguranca
   weight: 3
+
+# Abas administrativas de Carrinhos e checkouts (ADR-013). Só administração: não alteram o carrinho público.
+# A aba Doações é registrada pelo aculta_donation, que é dono do formulário.
+aculta_portal.checkout_tab_comum:
+  title: 'Comum'
+  route_name: aculta_portal.checkout_common
+  base_route: aculta_portal.checkout_common
+  weight: 0
+aculta_portal.checkout_tab_loja:
+  title: 'Loja'
+  route_name: aculta_portal.checkout_shop
+  base_route: aculta_portal.checkout_common
+  weight: 10
+aculta_portal.checkout_tab_lms:
+  title: 'LMS'
+  route_name: aculta_portal.checkout_lms
+  base_route: aculta_portal.checkout_common
+  weight: 20

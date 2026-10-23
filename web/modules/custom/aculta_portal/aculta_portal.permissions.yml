@@ -34,3 +34,16 @@ administer aculta role hierarchy:
   title: Administrar hierarquia de papéis
   description: Definir de quais papéis cada papel herda permissões (painel de configurações).
   restrict access: true
+
+administer aculta checkout common:
+  title: Administrar o checkout comum do ACULTA
+  description: Ligar ou desligar o checkout comum do Commerce e ver o diagnóstico dos contextos de checkout. Não dá acesso aos pedidos.
+  restrict access: true
+administer aculta checkout shop:
+  title: Administrar o checkout da Loja do ACULTA
+  description: Escolher o tipo de pedido e o checkout flow da Loja. Não dá acesso aos pedidos nem ao Green Stash.
+  restrict access: true
+administer aculta checkout lms:
+  title: Administrar o checkout do LMS do ACULTA
+  description: Escolher o tipo de pedido e o checkout flow das compras de curso. Não altera matrículas nem conteúdo pedagógico.
+  restrict access: true

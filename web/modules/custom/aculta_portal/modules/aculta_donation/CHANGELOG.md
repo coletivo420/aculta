@@ -1,3 +1,7 @@
+## 0.1.0-dev.24 — aba Doações em Carrinhos e checkouts (P-CART E) — 2026-10-22
+
+- Rota `/painel-administrativo/aculta/checkout/doacoes` e tarefa local "Doações" reutilizam o `DonationSettingsForm` (mesma validação, mesma config `aculta_donation.settings` e mesma permissão); `donate|cart|both` inalterados. A tela antiga em `doacoes/fluxo` continua. RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.23 — decisão de rotas globais passa ao Portal (P-CART D) — 2026-10-22
 
 - Removidos `CartCheckoutRouteSubscriber`, seu serviço `aculta_donation.route_subscriber` e `CartCheckoutSubscriberTest` (cobertura mantida em `CartCheckoutRoutesCharacterizationTest`, agora contra o subscriber do Portal). `DonationCheckoutProvider` passa a declarar `gatesCommonCheckout`.

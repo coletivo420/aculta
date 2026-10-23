@@ -95,3 +95,9 @@ aculta_portal.config_flood_unblock:
   route_name: flood_control.unblock_form
   parent: user.admin_index
   weight: 14
+aculta_portal.checkout_common:
+  title: Carrinhos e checkouts
+  description: 'Checkout comum, Loja, LMS e Doações: modalidades, tipos de pedido e diagnóstico.'
+  route_name: aculta_portal.checkout_common
+  parent: aculta_portal.admin
+  weight: 8

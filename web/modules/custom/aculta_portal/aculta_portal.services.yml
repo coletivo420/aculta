@@ -424,3 +424,6 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
+  aculta_portal.checkout_mapping_validator:
+    class: Drupal\aculta_portal\Checkout\CheckoutMappingValidator
+    arguments: ['@aculta_portal.checkout_configuration_resolver']

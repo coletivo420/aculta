@@ -1,3 +1,9 @@
+## 0.4.1-dev.19 — interface administrativa Carrinhos e checkouts (P-CART E) — 2026-10-22
+
+- Abas **Comum | Loja | LMS** em `/painel-administrativo/aculta/checkout[/loja|/lms]` (menu ACULTA > Carrinhos e checkouts), com Form API, Config API, abas por tarefas locais (funcionam sem JavaScript) e permissões separadas: `administer aculta checkout common|shop|lms`. Nenhuma dá acesso a pedidos.
+- Comum: chave global do checkout comum, diagnóstico dos providers, conflitos e referência dos gateways (sem credenciais). Loja e LMS: tipo de pedido e checkout flow nativo, com validação de conflito entre contextos (`CheckoutMappingValidator`). Salvar reconstrói as rotas.
+- Não altera o carrinho da barra multidomínio. Apresentação via tema (SDC/UI Suite) ainda pendente. RUNTIME STATUS: DEFERRED (formulários e acesso verificados por API no runtime local; navegador pendente).
+
 ## 0.4.1-dev.18 — regra de estorno centralizada em MercadoPagoPaymentPolicy — 2026-10-22
 
 - `MercadoPagoPaymentPolicy::bloqueiaEstorno()` passa a ser o único lugar da regra "doações, assinaturas e cursos não têm estorno": `assinatura` entra como constante fixa, e os tipos de pedido e de item extras (doação pelo carrinho e tipo de pedido de curso configurado) chegam por parâmetros opcionais. `RefundEligibilitySubscriber` só reúne a configuração e faz uma chamada. Sem mudança de comportamento em relação a dev.17. RUNTIME STATUS: DEFERRED.
