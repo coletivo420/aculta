@@ -52,3 +52,6 @@ negação do visitante externo e uso da declaração/tag YAML do provider Media
 owner (4 testes / 210 assertions em MariaDB; 53 depreciações Core/contrib).
 O plugin Group é fixture de teste; a ativação dos módulos owner completos,
 instalação no Runtime e smoke autenticado continuam pendentes.
+
+Dev 0.1.0-dev.15 corrige somente o pacote da fixture Kernel para `ACULTA Portal`,
+em conformidade com o gate de componentes próprios.

@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.15 — pacote da fixture alinhado ao Portal
+
+- O módulo fixture do Kernel usa `package: ACULTA Portal`, inclusive nos
+  testes, conforme o contrato de componentes próprios. A mudança é de metadado;
+  não altera a policy nem as relações de curso.
+- Gates estáticos: componentes próprios 59 checks PASS; Drupal 11+ 1.151
+  checks PASS; índice de status gerado e diff check PASS.
+
 ## 0.1.0-dev.14 — validar relação outgoing Curso→Documento no Kernel
 
 - A classe Kernel agora cobre provider LMS, rebuild, relação `course_document`
