@@ -18,7 +18,6 @@ declare(strict_types=1);
  *   drush php:script tests/runtime/fgroup-measure.php
  */
 
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Database\Statement\FetchAs;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -30,6 +29,7 @@ const FGROUP_TOPIC_TITLE = '[TESTE F-GROUP] Tópico restrito';
 const FGROUP_PUBLIC_TOPIC_TITLE = '[TESTE F-GROUP] Tópico público';
 const FGROUP_PREFIX = 'fgroup_teste_';
 
+$keep = ($extra[0] ?? '') === 'keep';
 $entity_type_manager = \Drupal::entityTypeManager();
 $database = \Drupal::database();
 
@@ -111,21 +111,16 @@ foreach ($accounts as $label => $account) {
 // Anexo fail closed: media privada embutida em Comment do tópico restrito.
 $author = $accounts['ativo_membro'];
 $file = File::create([
-  'uri' => 'private://forum/anexos/fgroup-teste.pdf',
+  'uri' => 'private://fgroup-teste.pdf',
   'filename' => 'fgroup-teste.pdf',
   'filemime' => 'application/pdf',
   'uid' => 1,
 ]);
-$directory = 'private://forum/anexos';
-\Drupal::service('file_system')->prepareDirectory(
-  $directory,
-  FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS,
-);
 file_put_contents($file->getFileUri(), 'fixture F-GROUP');
 $file->setPermanent();
 $file->save();
 $image_file = File::create([
-  'uri' => 'private://forum/anexos/fgroup-gallery.png',
+  'uri' => 'private://fgroup-gallery.png',
   'filename' => 'fgroup-gallery.png',
   'filemime' => 'image/png',
   'uid' => 1,
@@ -168,6 +163,7 @@ $result['attachment'] = [
     ->hasCurrentPublicReference($media),
   'file_exists' => ($pdf_path = \Drupal::service('file_system')->realpath($file->getFileUri())) !== FALSE && file_exists($pdf_path),
   'image_file_exists' => ($image_path = \Drupal::service('file_system')->realpath($image_file->getFileUri())) !== FALSE && file_exists($image_path),
+  'download_url' => $file->createFileUrl(),
   'media_view' => [],
   'file_download' => [],
 ];
@@ -229,11 +225,13 @@ foreach ($media_accounts as $label => $account) {
   );
 }
 
-$gallery_comment->delete();
-$gallery->delete();
-$comment->delete();
-$media->delete();
-$file->delete();
-$image_file->delete();
+if (!$keep) {
+  $gallery_comment->delete();
+  $gallery->delete();
+  $comment->delete();
+  $media->delete();
+  $file->delete();
+  $image_file->delete();
+}
 
 echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;

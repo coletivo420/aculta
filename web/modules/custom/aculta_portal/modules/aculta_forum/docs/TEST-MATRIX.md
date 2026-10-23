@@ -1,3 +1,20 @@
+## F-GROUP 0.7 — download, índice atrasado, cache e Olivero, 2026-10-23
+
+- Download HTTP do arquivo privado: anônimo 403, ativo com membership 200
+  (15 bytes do conteúdo), suspenso 403. Arquivo em `private://fgroup-teste.pdf`
+  (a raiz privada é gravável; `forum/anexos` é do usuário do PHP-FPM).
+- Índice atrasado: `RestrictedForumGrantRebuilder` usa `getItemId()`,
+  `trackItemsInserted()` e `server->deleteItems()`. Público antes de reindexar
+  2/2; restrito antes de reindexar 1/1 (item ausente, fail closed);
+  `remaining` com o tópico; após reindexar anônimo 1 e membro 2.
+- Cache da busca: público MISS→HIT com o título; após restringir e reindexar,
+  MISS sem o título e HIT seguinte sem ele.
+- Olivero: anônimo 403 no restrito e busca só pública; membro 200 e busca com
+  os dois; suspenso 403 e busca só pública; tema restaurado para aculta420.
+- Testes: Unit 174/1.008, Kernel 52/1.170, rebuilder 6/21; PHPCS limpo.
+- Teardown: tema aculta420, `restricted_group_type` vazio, `realm=all:21`,
+  zero tópicos/contas/Media/galerias/Files e zero itens no índice.
+
 ## F-GROUP 0.6 — busca e contagem sob grants, 2026-10-23
 
 - Unit `ForumPostSearchAccessTest`: 4 testes / 11 asserções OK. Cobre o grant

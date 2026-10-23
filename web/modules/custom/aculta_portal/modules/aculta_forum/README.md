@@ -117,10 +117,13 @@ referenciadas por tópico publicado e revalida a conta em `media_access`,
 sincronizada insider (`authenticated`), não individual, e o resultado de acesso
 do tópico restrito não é cacheado. A busca e a contagem filtram os grants antes
 da paginação: anônimo e suspenso veem só o tópico público; o ativo com
-membership vê os dois. O Runtime de testes foi validado em janela controlada,
-com backup, e revertido ao estado inicial. Inventário, decisões, matriz de
-testes, riscos e a próxima microfase estão em
-[`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).
+membership vê os dois. O download privado do anexo também foi validado por
+HTTP. Ao mudar a relação de Group, o tópico e seus posts saem do índice
+imediatamente e voltam após a reindexação (fail closed), e o Page Cache da
+busca é invalidado; a matriz também passou com o tema Olivero. O Runtime de
+testes foi validado em janela controlada, com backup, e revertido ao estado
+inicial. Inventário, decisões, matriz de testes, riscos e a próxima fase estão
+em [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).
 
 ## Estado confirmado na auditoria
 

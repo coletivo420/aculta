@@ -13,6 +13,7 @@ autorização do responsável. Produção não participa.
 | `fgroup-provision.php` | `teardown` | Desliga a frente, executa o rebuild, remove Group, tópicos, galerias, Media, Files, contas, associações, role e Group type e invalida caches. O conteúdo preexistente não é tocado. |
 | `fgroup-measure.php` | leitura | Mede `node_access`, `node->access('view')` e a query com tag `node_access` por conta, para o tópico restrito e o público; mede a listagem global; cria e remove um anexo privado e uma galeria de teste para medir `media_access`, `file->access('download')` e `entity_access` da galeria. |
 | `fgroup-search.php` | leitura | Indexa o `aculta_forum` e consulta `keys=fgroup` com `range(0,1)` por conta dentro do purpose `forum`; imprime total e página, provando que o filtro de grants ocorre antes da paginação. |
+| `fgroup-index-freshness.php` | escrita na relação | Remove e recria a relação do tópico com o Group, mede o índice antes/depois da reindexação e confirma que o item sai do servidor no intervalo (fail closed). |
 
 ## Execução
 
@@ -72,7 +73,12 @@ seguida, sem `drush cr` entre as etapas: espera-se 200 → 403 → 200.
 - O `measure` cria o anexo com autor uid 1 para que o Comment seja publicado;
   contas de teste sem permissão de moderação têm o Comment pendente, como no
   fluxo real.
-- O arquivo físico do anexo não é gravado se `private://forum/anexos` não
-  existir; o resultado traz `file_exists` e `image_file_exists`. O acesso de
-  download é medido, mas o download HTTP real fica pendente.
-- Busca e contagem sob grants continuam fora destes scripts.
+- `private://forum/anexos` pertence ao usuário do PHP-FPM e não é gravável pelo
+  Drush como `piradopirata`; o `fgroup-measure.php` grava o arquivo na raiz
+  `private://`, que é gravável. Use `fgroup-measure.php keep` para preservar o
+  arquivo e medir `/system/files/<nome>` por HTTP antes do teardown. O
+  resultado traz `file_exists`, `image_file_exists` e `download_url`.
+- O cache da busca é medido por `curl` em `/pesquisar?keys=fgroup` antes/depois
+  de restringir e reindexar: a primeira resposta deve ser MISS sem o título.
+- Olivero exige trocar `system.theme default`, medir e restaurar `aculta420` no
+  mesmo comando, com `trap`.

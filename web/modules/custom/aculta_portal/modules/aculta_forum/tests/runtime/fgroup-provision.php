@@ -76,10 +76,11 @@ if ($mode === 'teardown') {
     $media->delete();
   }
   $file_storage = $entity_type_manager->getStorage('file');
-  $file_ids = $file_storage->getQuery()
-    ->accessCheck(FALSE)
-    ->condition('uri', 'private://forum/anexos/fgroup-%', 'LIKE')
-    ->execute();
+  $file_query = $file_storage->getQuery()->accessCheck(FALSE);
+  $file_or = $file_query->orConditionGroup()
+    ->condition('uri', 'private://fgroup-%', 'LIKE')
+    ->condition('uri', 'private://forum/anexos/fgroup-%', 'LIKE');
+  $file_ids = $file_query->condition($file_or)->execute();
   foreach ($file_storage->loadMultiple($file_ids) as $file) {
     $file->delete();
   }

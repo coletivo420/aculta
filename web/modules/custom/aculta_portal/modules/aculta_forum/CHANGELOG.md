@@ -1,3 +1,21 @@
+## `0.1.0-dev.255` — download real, índice atrasado, cache e Olivero (F-GROUP 0.7) — 2026-10-23
+
+- Download HTTP do arquivo privado validado: anônimo 403, ativo com membership
+  200 (15 bytes), suspenso 403. A fixture usa a raiz `private://` porque
+  `private://forum/anexos` pertence ao usuário do PHP-FPM.
+- Índice atrasado corrigido: `RestrictedForumGrantRebuilder` usa o item ID do
+  datasource e, após gravar os grants, chama `trackItemsInserted()` e
+  `deleteItems()` no servidor. O tópico restrito fica ausente do índice até a
+  reindexação (fail closed); sem a correção o anônimo via o título restrito.
+- Cache da View de busca: MISS após a restrição/reindexação, título ausente;
+  HIT seguinte sem ele. Não há vazamento entre contas.
+- Olivero: matriz de contas e busca confirmadas; tema restaurado para
+  aculta420 no mesmo comando, com trap.
+- Testes: Unit 174/1.008, Kernel 52/1.170, rebuilder 6/21 PASS; PHPCS limpo.
+- Teardown: tema aculta420, restricted_group_type vazio, realm=all:21, zero
+  tópicos/contas/Media/galerias/Files e zero itens no índice. As fases técnicas
+  0.1–0.7 estão concluídas; a ativação em produção depende de aprovação.
+
 ## `0.1.0-dev.254` — busca e contagem sob grants (F-GROUP 0.6) — 2026-10-23
 
 - Novo Unit `ForumPostSearchAccessTest` (4 testes / 11 asserções) cobre o grant

@@ -130,9 +130,13 @@ PASS/DEFERRED e os riscos residuais ficam em
   total 1 (público), ativo com membership total 2; `range(0,1)` prova a
   filtragem antes da paginação. A View `/pesquisar` confirma por HTTP. Os itens
   foram desindexados no teardown.
-- Próxima microfase **F-GROUP 0.7**: download HTTP do arquivo privado, cache
-  da View de busca, índice atrasado e repetição com Olivero antes de avaliar a
-  ativação em produção.
+- Gate medido (0.7): download HTTP do anexo (anônimo 403, membro 200,
+  suspenso 403); índice atrasado fechado com `trackItemsInserted` +
+  `deleteItems` (item ausente até reindexar); cache da busca MISS/HIT sem
+  vazamento; matriz confirmada com Olivero e tema restaurado.
+- **Fases técnicas 0.1–0.7 concluídas.** A ativação em produção é uma decisão
+  operacional do responsável, com janela, backup verificado e o roteiro de
+  Runtime; não é uma alteração desta frente.
 
 ## Direção atual de produto: experiência Discourse Ubuntu
 

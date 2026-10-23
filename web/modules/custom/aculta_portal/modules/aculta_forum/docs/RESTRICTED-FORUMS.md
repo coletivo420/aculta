@@ -1,4 +1,4 @@
-# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.6
+# Fóruns restritos para associados ativos — F-GROUP 0.1 a 0.7
 
 Documento das frentes **F-GROUP 0.1** (inventário e fundação), **0.2** (prova de
 grants em Kernel), **0.3** (herança em posts/comments e auditoria de anexos) e
@@ -206,10 +206,13 @@ controlado de 2026-10-23 (ver F-GROUP-E e F-GROUP 0.6).
 
 ## Riscos residuais
 
-- **Busca e contagem.** Enquanto o datasource `ContentEntity` e a contagem de
-  resultados não forem validados com grants, um índice desatualizado pode expor
-  total ou trecho de tópico restrito. Risco aceito apenas com a frente desligada
-  (padrão).
+- **Busca e contagem.** Validadas em Unit e Runtime: os grants são aplicados
+  antes da paginação e o Page Cache é invalidado quando o índice muda. O
+  `RestrictedForumGrantRebuilder` marca o tópico e seus posts para reindexação
+  e remove a cópia do servidor imediatamente; no intervalo até a indexação o
+  item fica ausente (fail closed), então o membro pode deixar de ver o tópico
+  por um instante, mas o anônimo não vê o grant antigo. A reindexação depende
+  do cron/post-request do Search API.
 - **Anexos publicados.** A Media é publicada quando há referência ativa em
   post/comment publicado de tópico publicado, inclusive restrito, e o acesso é
   revalidado pela conta em `media_access` e no download privado do File. Anexo
@@ -388,7 +391,9 @@ Drupal 11.4.10, PHP 8.4.26, branch `docs/aculta-forum-0.1.0-dev.1`.
   `fgroup_teste_*`, Group type, galerias, Media e Files da fixture ausentes. O
   backup permanece como garantia.
 - **Limitações:** o download HTTP do arquivo físico e a matriz de cache de
-  busca continuam pendentes. A busca e a contagem foram medidas na F-GROUP 0.6.
+  busca foram medidos na F-GROUP 0.7. O endereço `private://forum/anexos` é do
+  usuário do PHP-FPM; o Drush como `piradopirata` não escreve nele, então a
+  fixture usou a raiz `private://` gravável.
 
 ## F-GROUP 0.6 — busca e contagem sob grants (concluída)
 
@@ -423,14 +428,47 @@ O índice `aculta_forum` tem `content_access` e o processor
   (`indexed_total=0`, tabela base vazia). O ambiente voltou a
   `restricted_group_type` vazio e `realm=all:21`.
 
-## Próxima microfase recomendada
+## F-GROUP 0.7 — fechamento operacional (concluída)
 
-**F-GROUP 0.7 — fechamento operacional antes da ativação.** Baixar o arquivo
-privado por HTTP com a conta autorizada e negá-lo às demais; medir o cache da
-View de busca e o caso de índice atrasado (item restrito ainda no índice após
-perder o grant); repetir a matriz de contas com o tema Olivero; e revisar o
-backup/rollback do Runtime com o roteiro operacional. Só depois avaliar a
-ativação em produção.
+Medido em 2026-10-23 no Runtime de testes, com a fixture provisionada e o
+teardown no final:
+
+- **Download HTTP real.** Arquivo privado em `private://fgroup-teste.pdf`
+  (a raiz privada é gravável; `private://forum/anexos` pertence ao usuário do
+  PHP-FPM e não é gravável pelo Drush como `piradopirata`). O
+  `file->createFileUrl()` apontou para `/system/files/fgroup-teste.pdf`:
+  anônimo → 403; ativo com membership → 200 com os 15 bytes do arquivo;
+  suspenso → 403. A cadeia File → Media → tópico está fechada no HTTP.
+- **Índice atrasado.** O `RestrictedForumGrantRebuilder` passou a usar o item
+  ID do datasource (`getItemId()`) e, após gravar os grants, marca o tópico e
+  seus posts com `trackItemsInserted()` e remove a cópia do servidor com
+  `deleteItems()`. Antes, o anônimo via o título restrito até a reindexação
+  (total 2); agora o item fica **ausente** (fail closed) no intervalo e volta
+  ao membro após a indexação. Medição: público antes de reindexar 2/2;
+  restrito antes de reindexar 1/1; `remaining` com o tópico; após reindexar
+  anônimo 1 e membro 2.
+- **Cache da View de busca.** Com o tópico público, a página anônima fica MISS
+  e depois HIT com o título. Após restringir e reindexar, a primeira resposta
+  é **MISS** (a invalidação do índice alcançou o Page Cache) e o título some;
+  a seguinte é HIT sem o título. Não há vazamento de cache entre contas.
+- **Tema Olivero.** Com `system.theme default=olivero`: anônimo 403 no
+  restrito, 200 no público e busca só com o público; ativo com membership 200
+  no restrito e busca com os dois; suspenso 403 e busca só com o público. O
+  tema foi restaurado para `aculta420` no mesmo comando, com `trap`.
+- **Testes:** Unit 174/1.008, Kernel 52/1.170 e rebuilder 6/21 PASS; PHPCS
+  limpo.
+- **Teardown:** tema `aculta420`, `restricted_group_type` vazio,
+  `realm=all:21`, zero tópicos, contas, Media, galerias, Files da fixture e
+  zero itens no índice.
+
+## Próxima fase — ativação em produção (decisão do responsável)
+
+As fases técnicas 0.1–0.7 estão concluídas. A ativação em produção não é uma
+tarefa de implementação desta sessão: exige aprovação do responsável, janela,
+backup verificado e execução do roteiro de Runtime com o tipo de Group real.
+Antes dela, revisar os consumidores de Media publicada listados na F-GROUP 0.4
+e confirmar que o produto aceita que anexos/galerias restritos fiquem ausentes
+do índice durante a reindexação.
 
 ## Referências
 
