@@ -9,6 +9,10 @@ services:
     tags:
       - { name: aculta_index.provider }
 
+  aculta_wiki.proposal_submission:
+    class: Drupal\aculta_wiki\Service\WikiProposalSubmission
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose']
+
   aculta_wiki.presentation.wiki_search_form:
     class: Drupal\aculta_wiki\Presentation\WikiSearchFormBuilder
     arguments: ['@string_translation', '@request_stack']

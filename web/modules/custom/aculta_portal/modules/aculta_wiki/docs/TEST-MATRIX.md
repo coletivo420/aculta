@@ -85,10 +85,28 @@ depois da importação de configuração no servidor de testes.
 
 Suíte Kernel da Wiki inicializa `aculta_wiki` e dependências reais, com MariaDB
 isolada. O fixture de grants está apenas em `tests/modules`; Runtime e
-configuração de produção não são usados. Resultado executado: 6 testes, 152
-assertions; 1 warning Core em `EntityStorageBase::loadMultiple()`, 199 avisos
-deprecados Drupal e 7 de PHPUnit. O warning ocorre durante o cenário de grants
-e não falha o teste; permanece para investigação.
+configuração de produção não são usados. Último resultado executado: 7 testes,
+225 assertions, sem warnings; 284 avisos de depreciação Drupal/contrib e 8 do
+PHPUnit. A configuração Core `filter` foi instalada na fixture para usar o
+formato de fallback real e evitar warning falso de `entity_usage`.
+
+## Persistência de propostas — Kernel real (dev.14)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Submissão autorizada no purpose Wiki | Kernel | Entidade privada salva com autor, intenção, múltiplas fontes e VID-base do verbete publicado | aprovado (1 teste / 37 assertions) |
+| Leitura da proposta | Kernel | Autora e equipe editorial autorizada podem ler; outra conta não | aprovado |
+| Escrita da proposta pelo participante | Kernel | Autora não pode atualizar a proposta existente | aprovado |
+| Envio sem permissão | Kernel | Serviço nega antes de persistir | aprovado |
+| Envio fora do purpose Wiki | Kernel | Serviço nega antes de persistir | aprovado |
+| Fonte insegura | Kernel | Rejeita URI `javascript:` antes de persistir | aprovado |
+| Alvo alterado após carregar a página | Kernel | Serviço recarrega o Node e salva o VID padrão atual | aprovado |
+| Limite de abuso e idempotência | Kernel | Rejeitar submissão excessiva/duplicada | planejado |
+| Decisão editorial e histórico | Kernel | Form API/Content Moderation cria revisão e bloqueia aplicação quando o VID-base ficou obsoleto | planejado |
+
+O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib e
+do PHPUnit na closure completa de dependências. Não há rota/formulário que
+exponha propostas nesta entrega.
 
 ## Controller — cache e acesso (dev.11)
 

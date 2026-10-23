@@ -16,6 +16,7 @@ dependencies:
     - captcha
     - comment
     - content_moderation
+    - aculta_wiki
     - filter
     - flag
     - node
@@ -37,6 +38,7 @@ permissions:
   - 'post comments'
   - 'report aculta forum content'
   - 'skip CAPTCHA'
+  - 'submit wiki proposals'
   - 'update own email_confirmed profile'
   - 'use aculta_forum_post transition create_draft'
   - 'use aculta_forum_post transition edit_published'
@@ -49,5 +51,6 @@ permissions:
   - 'use wiki_editorial transition review_to_draft'
   - 'view latest version'
   - 'view own email_confirmed profile'
+  - 'view own wiki proposals'
   - 'view own unpublished content'
   - 'view wiki_entry revisions'

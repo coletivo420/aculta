@@ -16,6 +16,7 @@ dependencies:
     - comment
     - content_lock
     - content_moderation
+    - aculta_wiki
     - contextual
     - aculta_statistics
     - file
@@ -54,6 +55,7 @@ permissions:
   - 'edit own document media'
   - 'edit own revista content'
   - 'moderar denuncias do forum'
+  - 'moderate wiki proposals'
   - 'revert all revisions'
   - 'use aculta_forum_post transition approve'
   - 'use aculta_forum_post transition create_draft'
@@ -76,6 +78,7 @@ permissions:
   - 'use wiki_editorial transition review_to_draft'
   - 'use wiki_editorial transition review_to_published'
   - 'view all revisions'
+  - 'view any wiki proposals'
   - 'view any unpublished content'
   - 'view content-level statistics'
   - 'view latest version'

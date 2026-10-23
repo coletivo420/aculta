@@ -29,11 +29,14 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
+use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Tests Wiki lead image publication and rollback with real entity storage.
@@ -82,11 +85,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('aculta_wiki_proposal');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain']);
+    $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain', 'filter']);
 
     foreach (['aculta_org' => 'main', 'wiki420_aculta_org' => 'wiki'] as $id => $purpose) {
       Domain::create([
@@ -383,6 +387,92 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $negativeBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'termo-inexistente']));
     self::assertArrayNotHasKey('results', $negativeBuild);
     self::assertContains('user.node_grants:view', $negativeBuild['#cache']['contexts']);
+  }
+
+  /**
+   * Proposal submission is private, revision-based, and Wiki-purpose bound.
+   */
+  public function testProposalSubmissionUsesPrivateRevisionedEntityAndAccess(): void {
+    Role::create([
+      'id' => 'wiki_proposal_submitter_test',
+      'label' => 'Wiki proposal submitter test',
+      'permissions' => ['submit wiki proposals', 'view own wiki proposals'],
+    ])->save();
+    Role::create([
+      'id' => 'wiki_proposal_reviewer_test',
+      'label' => 'Wiki proposal reviewer test',
+      'permissions' => ['view any wiki proposals', 'moderate wiki proposals'],
+    ])->save();
+
+    $submitter = new UserSession(['uid' => 2, 'roles' => ['authenticated', 'wiki_proposal_submitter_test']]);
+    $other = new UserSession(['uid' => 3, 'roles' => ['authenticated']]);
+    $target = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete público para proposta',
+      'uid' => 3,
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => 2,
+      'body' => ['value' => 'Conteúdo publicado', 'format' => 'plain_text'],
+    ]);
+    $target->save();
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    $wikiDomain = Domain::load('wiki420_aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get('current_user')->setAccount($submitter);
+
+    $submission = $this->container->get('aculta_wiki.proposal_submission');
+    self::assertInstanceOf(WikiProposalSubmission::class, $submission);
+    $staleTarget = clone $target;
+    $target->setNewRevision(TRUE);
+    $target->setRevisionLogMessage('Atualização concorrente para teste');
+    $target->save();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('aculta_org'));
+    try {
+      $submission->submit($staleTarget, 'reference', 'Texto', 'Justificativa');
+      self::fail('Submission outside the Wiki purpose must be denied.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertTrue(TRUE);
+    }
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+
+    try {
+      $submission->submit($staleTarget, 'reference', 'Texto', 'Justificativa', ['javascript:alert(1)']);
+      self::fail('Non-HTTP source URLs must be rejected.');
+    }
+    catch (UnprocessableEntityHttpException) {
+      self::assertSame(0, $this->container->get('entity_type.manager')
+        ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+    }
+
+    $proposal = $submission->submit(
+      $staleTarget,
+      'reference',
+      'Dados do estudo revisado',
+      'A referência atual não cobre este ponto.',
+      ['https://example.invalid/pesquisa', 'https://example.invalid/dados'],
+    );
+
+    self::assertSame((int) $submitter->id(), (int) $proposal->getOwnerId());
+    self::assertSame('submitted', $proposal->get('state')->value);
+    self::assertSame('reference', $proposal->get('intent')->value);
+    self::assertCount(2, $proposal->get('source_uri'));
+    self::assertSame((int) $target->getRevisionId(), (int) $proposal->get('target_revision_id')->value);
+    self::assertTrue($proposal->access('view', $submitter));
+    self::assertFalse($proposal->access('view', $other));
+    self::assertFalse($proposal->access('update', $submitter));
+    self::assertTrue($proposal->access('view', new UserSession([
+      'uid' => 4,
+      'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],
+    ])));
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->container->get('current_user')->setAccount($other);
+    $this->expectException(AccessDeniedHttpException::class);
+    $submission->submit($target, 'correction', 'Correção', 'Motivo');
   }
 
   /**

@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.13**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.14**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
@@ -36,8 +36,10 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
 - Os pontos de domínio e purpose (`DomainPurposeManager`,
   `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`).
   A Wiki não redefine purpose nem host.
-- **Gates pendentes:** Unit e Kernel de discovery/acesso das rotas; `drush cr`
-  sem erro; Config
+- **Kernel verificado em dev.13:** discovery das três rotas públicas, rota da
+  View `/wiki/verbetes`, requisito `access content`, buscas com dois usuários e
+  grants diferentes. Runtime e `drush cr` no homelab permanecem pendentes.
+- **Gates pendentes:** Config
   Sync sem diferenças; HTTP 200 em `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
   `/wiki/busca/previa` no domínio `wiki420`; backup privado antes de qualquer
   `updb`.
@@ -50,8 +52,8 @@ Implementado em dev.11: `WikiController::search()` varia cache por
 declara o contexto de grants usado por `recentChanges()`. Rotas permanecem
 inalteradas. A matriz lista os testes Unit; discovery das rotas e validação
 O Kernel real confirma as definições das três rotas, a rota da View e o
-requisito `access content`. O teste de busca usa o query access real com grants
-por conta em contas da mesma função e confirma o contexto de cache para busca
+requisito `access content`. O teste de busca usa o controller real, com grants
+por conta em contas da mesma função, e confirma o contexto de cache para busca
 vazia/negativa. HTTP 200 e ativação continuam gates de Runtime separados.
 
 ### Ciclo de vida da imagem de destaque — dev.12
@@ -63,6 +65,22 @@ O teste Kernel cobre rascunho, publicação e rollback de falha. Uma revisão no
 sem imagem preserva o arquivo quando a revisão antiga ainda referencia a Media.
 Reuso entre entidades e limpeza global de referências continuam no contrato
 transversal do Portal; a ativação da Wiki no Runtime permanece separada.
+
+### Persistência de propostas para verbetes de terceiros — dev.14
+
+`aculta_wiki_proposal` é uma entidade própria, revisionável e privada, com
+referência ao verbete e ao VID-base, intenção allowlisted, texto simples,
+justificativa, até dez fontes HTTP(S), estado e nota editorial. `WikiProposalSubmission` valida
+permissão de envio, purpose `wiki`, acesso de leitura, publicação e ausência de
+permissão de atualização direta no verbete. Cada decisão deve gravar uma nova
+revisão da proposta. Kernel MariaDB verifica gravação e isolamento de acesso.
+
+Este incremento não disponibiliza endpoint/formulário nem a aplicação de uma
+proposta ao Node. Continuam gates: antispam/limite de submissão, transições de
+decisão pela Form API/Content Moderation, detecção de revisão-base obsoleta,
+fila editorial paginada e feedback ao autor. O Studio ainda não consome essa
+entidade. Política de retenção/expiração de propostas recusadas ou retiradas
+aguarda decisão; não remover histórico automaticamente.
 
 ## Fase 3 — Documentação obrigatória da mudança de escopo
 

@@ -1,5 +1,30 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.14 — persistência segura de propostas
+
+- Adiciona a entidade privada e revisionável `aculta_wiki_proposal` com vínculo
+  ao verbete e à revisão-base, intenção allowlisted, texto proposto,
+  justificativa, múltiplas fontes, estado e retorno editorial. Cada decisão posterior deve
+  gravar nova revisão para manter histórico.
+- Acesso separa envio, leitura própria, leitura editorial e moderação. A pessoa
+  autora não pode atualizar nem excluir a proposta; moderadores obtêm acesso
+  apenas pelas permissões dedicadas.
+- `WikiProposalSubmission` exige `submit wiki proposals`, propósito `wiki`,
+  verbete publicado e visível, revisão padrão e ausência de acesso direto de
+  atualização. O texto é armazenado sem formato HTML; até dez fontes aceitam
+  somente URLs HTTP(S).
+- Kernel MariaDB exercita persistência, revisão-base, privacidade, acesso de
+  moderador, purpose, recarga após edição concorrente, rejeição de URL insegura
+  e negação de conta sem permissão (1 teste / 37 assertions, sem
+  warning; depreciações Drupal/contrib permanecem).
+- Suíte Kernel real completa: 7 testes / 225 assertions, sem warnings (284
+  depreciações Drupal/contrib e 8 do PHPUnit). Unit: 66/338; PHPCS e PHP lint
+  aprovados.
+- Não há rota, formulário ou aplicação da proposta no Node nesta entrega. O
+  módulo e Runtime continuam desabilitados; configuração de roles antecipa as
+  capacidades para ativação futura. Política de retenção/expiração não foi
+  escolhida e não há remoção automática de propostas.
+
 ## 0.1.0-dev.13 — testar rotas e grants com bootstrap real
 
 - O Kernel inicializa os módulos reais da Wiki/Portal e descobre as três rotas
@@ -12,9 +37,9 @@
   concedida e negada. UID 1 não é usado como prova de autorização.
 - A fixture de grants existe apenas em `tests/modules`; Runtime, configuração
   sincronizada e projeção v3 do Content Index não mudaram.
-- Validação: Kernel MariaDB 6 testes/152 assertions (1 warning do Core em
-  `EntityStorageBase::loadMultiple()`, 199 deprecation notices do Drupal e 7
-  de PHPUnit); Unit 66/338; PHPCS e PHP lint aprovados.
+- Validação inicial: Kernel MariaDB 6 testes/152 assertions (1 warning do Core
+  em `EntityStorageBase::loadMultiple()`, registrado para investigação); Unit
+  66/338; PHPCS e PHP lint aprovados.
 
 ## 0.1.0-dev.12 — sincronizar visibilidade da imagem de destaque
 

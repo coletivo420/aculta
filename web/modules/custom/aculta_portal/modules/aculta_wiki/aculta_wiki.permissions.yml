@@ -2,3 +2,14 @@ administer aculta_wiki:
   title: 'Administrar a Wiki420'
   description: 'Ligar os avisos de revisão e escolher as caixas editoriais que os recebem.'
   restrict access: true
+submit wiki proposals:
+  title: 'Enviar propostas para a Wiki'
+  description: 'Sugerir alterações em verbetes publicados sem permissão de edição direta.'
+view own wiki proposals:
+  title: 'Ver minhas propostas para a Wiki'
+view any wiki proposals:
+  title: 'Ver propostas da Wiki'
+moderate wiki proposals:
+  title: 'Revisar propostas da Wiki'
+administer wiki proposals:
+  title: 'Administrar propostas da Wiki'

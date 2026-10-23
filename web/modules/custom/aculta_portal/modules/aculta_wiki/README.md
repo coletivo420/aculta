@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.14`: existe persistência privada revisionável para propostas de
+  terceiros, com revisão-base e serviço que valida acesso, publicação e
+  purpose `wiki`. Ainda não há endpoint/formulário, fila de revisão nem aplicação
+  editorial da proposta; essas operações seguem pendentes. Nenhuma expiração
+  automática foi criada; retenção para propostas encerradas aguarda decisão.
 - `0.1.0-dev.13`: rotas públicas e View da listagem são descobertas pelo
   bootstrap Kernel real; o acesso à busca é caracterizado com grants diferentes
   entre contas da mesma função. Busca vazia/negativa varia por

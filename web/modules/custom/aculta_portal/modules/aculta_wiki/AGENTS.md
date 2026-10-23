@@ -47,3 +47,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   rotas, a View e a busca com duas contas da mesma função e grants distintos.
   A fixture de grants fica em `tests/modules`; UID 1 não serve como prova de
   acesso. A ativação do Runtime segue pendente.
+- Propostas editoriais (dev.14): `aculta_wiki_proposal` mantém proposta privada
+  revisionável e revisão-base; `WikiProposalSubmission` revalida permissão,
+  publicação, Entity Access e purpose `wiki`. Não há rota/formulário de envio ou
+  operação editorial ativa; manter moderação e concorrência no próximo gate.
