@@ -188,9 +188,9 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | `git diff --check` (commits desta rodada) | **PASS** |
 | `php scripts/validate-project-status-index.php` | **PASS** (38 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
 | `php scripts/validate-aculta-portal-drupal11.php` | **FAIL pré-existente**, mesmo conjunto de falhas da linha de base (ex.: `WikiController.php` ausente). Nenhuma falha nova relacionada a checkout ou CPF |
-| PHPCS Drupal/DrupalPractice nos arquivos novos | **Não atende o padrão estrito**: comentários de documentação e linhas longas. O repositório não passa nesse padrão (`PortalController.php` tem 67 erros antes desta rodada). Dívida registrada, não corrigida |
+| PHPCS Drupal/DrupalPractice nos arquivos novos e no formulário de Outros dados | **0 erros**; restam 16 avisos de linha longa (acima de 80 colunas), sem efeito funcional |
 | PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
-| PHPUnit Kernel do pane de identidade fiscal | **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
+| PHPUnit Kernel do pane de identidade fiscal | **PASS** (6 testes), sem habilitar `aculta_portal`: classes instanciadas diretamente com o container do Commerce. Antes, a tentativa de habilitar o Portal esbarrava em dezenas de dependências. Histórico: **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
 | Config Sync | **Import parcial aplicado** no ambiente de teste (`config:import --partial` só com `commerce_checkout.commerce_checkout_flow.default` e `commerce_order.commerce_order_type.curso`); flow `curso` removido com `config:delete`. Import completo **não** foi feito: ver 9.2 |
 | Gates de Loja, LMS e Doações no servidor de testes | **DEFERRED** |
 
@@ -222,7 +222,7 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 - **Ambiente de teste:** `aculta_lms_resources`, `aculta_wiki` e `aculta_forum_wiki` foram habilitados.
 - **Import parcial:** duas rodadas `config:import --partial` (sem deleções, sem `core.extension`). Drift caiu de 63/46 para 36/16 diferenças. Os 34 itens só-no-banco foram preservados.
 - **Erro restante, de outra frente:** o índice `search_api` `aculta_forum` (Discussões públicas) referencia o campo "Categoria do Fórum (tópico ou post)", sem definição de dados. Esse erro acontece no import e no rebuild de rotas. Enquanto não for corrigido, o import completo continua bloqueado.
-- **Kernel do pane:** segue DEFERRED pelo mesmo motivo da seção 9 (container do `aculta_portal`).
+- **Kernel do pane:** PASS desde a rodada final, sem habilitar `aculta_portal`.
 
 ## 10. Pendências
 
@@ -230,7 +230,7 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 2. **Kernel do checkout:** cobrir visibilidade do pane (Loja, LMS e Doações), bloqueio na revisão sem documento, aviso com link, documento mascarado, falha fechada, e que o checkout não grava o documento. Requer `SIMPLETEST_DB` de ambiente de teste.
 3. **Retorno do link `destination`:** verificar se `/dados/outros-dados` honra o parâmetro e devolve ao checkout do pedido. Se não honrar, o usuário volta ao carrinho e precisa reabrir o pedido.
 4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
-5. **Dívida de PHPCS** nos arquivos novos e nos existentes.
+5. **Avisos de linha longa** (16) nos arquivos de identidade fiscal e no formulário. Sem erros.
 6. **Runtime de teste e produção:** confirmar que `aculta_associado_id` não está habilitado antes de promover (seção 4).
 7. **Gate Drupal 11:** `WikiController.php` ausente (outra frente).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local o lista como habilitado.
