@@ -222,6 +222,41 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * A new source event supersedes dead work before an operator can retry it.
+   */
+  public function testNewEventReopensDeadLetterAndMakesOldRetryStale(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $work->schedule('magazine', 'node', 'dead-race', 'pt_BR', 'project');
+    $status = $work->getStatus('magazine', 'node', 'dead-race', 'pt_BR');
+    $this->assertNotNull($status);
+    $workId = $status['work_id'];
+
+    $this->container->get('database')->update('aculta_index_work')
+      ->fields([
+        'status' => 'dead',
+        'attempts' => 5,
+        'last_error_code' => 'worker_failure',
+      ])
+      ->condition('work_id', $workId)
+      ->execute();
+
+    $sequence = $work->schedule('magazine', 'node', 'dead-race', 'pt_BR', 'delete');
+
+    $this->assertSame(2, $sequence);
+    $this->assertFalse($work->retryDead($workId), 'An operator retry cannot replace a newer source event.');
+    $latest = $work->getStatus('magazine', 'node', 'dead-race', 'pt_BR');
+    $this->assertSame('queued', $latest['status']);
+    $this->assertSame('delete', $latest['operation']);
+    $this->assertSame(2, $latest['sequence']);
+    $this->assertSame(0, $latest['attempts']);
+    $this->assertSame('', $latest['last_error_code']);
+
+    $claim = $work->claim($workId);
+    $this->assertSame(2, $claim['sequence']);
+    $this->assertSame('delete', $claim['operation']);
+  }
+
+  /**
    * Reclaims worker states whose Core Queue lease expired during processing.
    */
   public function testWorkManagerRecoversStaleProcessingAsRetry(): void {

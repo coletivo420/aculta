@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.46 — proteger retry diante de evento mais recente
+
+- Kernel cobre um novo evento que reabre uma identidade dead, incrementa sua
+  sequência e torna indisponível o retry da dead-letter anterior.
+- O worker recebe e processa a operação atual enfileirada, sem reviver estado
+  operacional obsoleto.
+
 ## 0.1.0-dev.45 — cobrir reparação de dead-letter via Drush
 
 - Kernel valida listagem, limite e retry operacional de dead-letter pela
