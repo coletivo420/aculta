@@ -6,6 +6,7 @@ namespace Drupal\aculta_gallery\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
@@ -31,7 +32,7 @@ final class GalleryContentIndexProvider implements ContentIndexProviderInterface
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -97,6 +98,7 @@ final class GalleryContentIndexProvider implements ContentIndexProviderInterface
       max(0, $entity->getChangedTime()),
       NULL,
       $relations,
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

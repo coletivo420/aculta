@@ -7,7 +7,8 @@ namespace Drupal\aculta_portal\ContentIndex;
 /**
  * Minimal, allowlisted projection of one original entity translation.
  *
- * Deliberately excludes body text, revisions, user identifiers and files.
+ * Deliberately excludes body text, revisions, personal data and files. The
+ * optional owner UID is an internal filter key and is never part of query DTOs.
  */
 final readonly class ContentIndexProjection {
 
@@ -38,6 +39,9 @@ final readonly class ContentIndexProjection {
    *   Publication timestamp, when applicable.
    * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
    *   Explicit relationships selected by the provider.
+   * @param int|null $ownerUid
+   *   Internal source owner ID for allowlisted filtering, when ownership is
+   *   explicit and available.
    */
   public function __construct(
     public string $entityTypeId,
@@ -52,6 +56,7 @@ final readonly class ContentIndexProjection {
     public int $changed,
     public ?int $publishedAt = NULL,
     public array $relations = [],
+    public ?int $ownerUid = NULL,
   ) {
     if ($entityTypeId === '' || strlen($entityTypeId) > 32 || preg_match('/^[a-z][a-z0-9_]*$/', $entityTypeId) !== 1) {
       throw new \InvalidArgumentException('Content Index entity type ID is invalid.');
@@ -73,6 +78,9 @@ final readonly class ContentIndexProjection {
     }
     if ($created < 0 || $changed < 0 || ($publishedAt !== NULL && $publishedAt < 0)) {
       throw new \InvalidArgumentException('Content Index timestamps must be non-negative.');
+    }
+    if ($ownerUid !== NULL && ($ownerUid < 0 || $ownerUid > 4_294_967_295)) {
+      throw new \InvalidArgumentException('Content Index owner UID must fit an unsigned 32-bit user ID.');
     }
     foreach ($relations as $relation) {
       if (!$relation instanceof ContentIndexRelation) {

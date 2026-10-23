@@ -43,7 +43,7 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -85,6 +85,7 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
       $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

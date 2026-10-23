@@ -960,6 +960,19 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests the update hook adds optional internal owner metadata.
+   */
+  public function testUpdateHookAddsOwnerUidField(): void {
+    $schema = $this->container->get('database')->schema();
+    $schema->dropField('aculta_index_entry', 'owner_uid');
+    $this->assertFalse($schema->fieldExists('aculta_index_entry', 'owner_uid'));
+
+    aculta_index_update_10018();
+
+    $this->assertTrue($schema->fieldExists('aculta_index_entry', 'owner_uid'));
+  }
+
+  /**
    * Tests older catalog entries receive the initial projection version.
    */
   public function testUpdateHookAddsProviderProjectionVersion(): void {
@@ -1247,7 +1260,7 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       $database->update('aculta_index_entry')
         ->fields([
           'provider_id' => 'image',
-          'provider_version' => $entityId === 'old' ? 0 : 1,
+          'provider_version' => $entityId === 'old' ? 0 : 2,
         ])
         ->condition('generation_id', $generationId)
         ->condition('entity_id', $entityId)

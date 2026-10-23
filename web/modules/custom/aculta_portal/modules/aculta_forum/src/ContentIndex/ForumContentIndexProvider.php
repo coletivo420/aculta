@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\ContentIndex;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -33,7 +34,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -161,6 +162,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
       max(0, $changed),
       $publishedAt !== NULL && $publishedAt > 0 ? $publishedAt : NULL,
       $relations,
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

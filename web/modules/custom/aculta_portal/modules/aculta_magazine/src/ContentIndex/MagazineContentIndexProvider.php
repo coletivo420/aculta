@@ -6,6 +6,7 @@ namespace Drupal\aculta_magazine\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
@@ -28,7 +29,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -92,6 +93,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
       max(0, (int) $entity->getChangedTime()),
       $publishedAt,
       array_values($relations),
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

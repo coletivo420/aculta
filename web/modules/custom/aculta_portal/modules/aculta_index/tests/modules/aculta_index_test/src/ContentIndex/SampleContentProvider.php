@@ -6,6 +6,7 @@ namespace Drupal\aculta_index_test\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
@@ -60,6 +61,7 @@ final class SampleContentProvider implements ContentIndexProviderInterface, Cont
       $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

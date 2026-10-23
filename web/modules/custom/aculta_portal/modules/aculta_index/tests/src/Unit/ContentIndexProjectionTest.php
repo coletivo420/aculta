@@ -33,11 +33,13 @@ final class ContentIndexProjectionTest extends UnitTestCase {
       2,
       3,
       [$relation],
+      ownerUid: 42,
     );
 
     self::assertSame('1', $projection->entityId);
     self::assertSame('pt-br', $projection->langcode);
     self::assertSame([$relation], $projection->relations);
+    self::assertSame(42, $projection->ownerUid);
   }
 
   /**
@@ -69,6 +71,14 @@ final class ContentIndexProjectionTest extends UnitTestCase {
       'invalid relation value' => [
         [...$base, NULL, ['not-a-relation']],
         'Content Index projections accept only ContentIndexRelation values.',
+      ],
+      'negative owner UID' => [
+        [...$base, NULL, [], -1],
+        'Content Index owner UID must fit an unsigned 32-bit user ID.',
+      ],
+      'owner UID exceeds schema range' => [
+        [...$base, NULL, [], 4_294_967_296],
+        'Content Index owner UID must fit an unsigned 32-bit user ID.',
       ],
     ];
   }

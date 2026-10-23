@@ -1,5 +1,17 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.141 — adicionar filtro interno de owner UID
+
+- `owner_uid` opcional foi adicionado ao projection, schema do catálogo e
+  `update_10018`; providers incrementam projection version para reconstrução.
+- Activity, Forum, Revista, Wiki, Gallery, Media e LMS projetam apenas o owner
+  declarado por `EntityOwnerInterface`; ownership ausente fica NULL. Não há
+  índice SQL novo até medição específica.
+- Query aceita qualquer UID unsigned 32-bit como filtro, mantém Entity Access
+  como autorização final e não acrescenta o UID ao DTO de resultado.
+- Query/Schema Kernel MariaDB passou (56 testes / 603 assertions); providers e
+  Index Unit passou (320 / 1.667; 42 depreciações PHPUnit).
+
 ## 0.1.0-dev.140 — reduzir custo da reconciliação de entradas
 
 - Novo contrato opcional `ContentIndexIndexabilityProviderInterface` deixa

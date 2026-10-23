@@ -8,6 +8,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -44,7 +45,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return $this->relationTypeManager->hasDefinition('aculta_pdf_viewer_group:course_document') ? 2 : 1;
+    return $this->relationTypeManager->hasDefinition('aculta_pdf_viewer_group:course_document') ? 3 : 2;
   }
 
   /**
@@ -122,6 +123,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
       max(0, (int) $entity->getChangedTime()),
       NULL,
       $relations,
+      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

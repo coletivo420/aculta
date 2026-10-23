@@ -32,8 +32,8 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
   /**
    * Queries current source entities with a fixed candidate scan bound.
    *
-   * Supported filters are `entity_type`, `bundle`, `domain_id`, and
-   * `published`.
+   * Supported filters are `entity_type`, `bundle`, `domain_id`, `published`
+   * and `owner_uid`. The owner UID is never returned in result DTOs.
    * Neither totals nor facets are calculated or returned.
    *
    * @param array<string, mixed> $filters
@@ -97,7 +97,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
    *
    * @param string $generationId
    *   Active generation selected for the query.
-   * @param array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null} $filters
+   * @param array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null, owner_uid: int|null} $filters
    *   Normalized allowlisted query filters.
    * @param array{changed: int, entry_id: int, revision: int}|null $after
    *   Private keyset cursor state.
@@ -152,7 +152,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
    *
    * @param string $generationId
    *   Generation selected by the active pointer.
-   * @param array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null} $filters
+   * @param array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null, owner_uid: int|null} $filters
    *   Normalized allowlisted filters.
    * @param array{changed: int, entry_id: int, revision: int}|null $after
    *   Private keyset state, when continuing a query.
@@ -188,6 +188,9 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
     if ($filters['published'] !== NULL) {
       $query->condition('published', (int) $filters['published']);
     }
+    if ($filters['owner_uid'] !== NULL) {
+      $query->condition('owner_uid', $filters['owner_uid']);
+    }
     if ($after !== NULL) {
       $query->condition('entry_id', $after['entry_id'], '<');
     }
@@ -215,11 +218,11 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
    * @param array<string, mixed> $filters
    *   User-supplied filters.
    *
-   * @return array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null}
+   * @return array{entity_type: string|null, bundle: string|null, domain_id: string|null, published: bool|null, owner_uid: int|null}
    *   Stable normalized filter values.
    */
   private function normalizeFilters(array $filters): array {
-    $allowed = ['entity_type', 'bundle', 'domain_id', 'published'];
+    $allowed = ['entity_type', 'bundle', 'domain_id', 'published', 'owner_uid'];
     if (array_diff(array_keys($filters), $allowed) !== []) {
       throw new \InvalidArgumentException('Content Index query contains an unsupported filter.');
     }
@@ -228,6 +231,7 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
       'bundle' => $this->machineNameFilter($filters['bundle'] ?? NULL, 'bundle'),
       'domain_id' => $this->stringFilter($filters['domain_id'] ?? NULL, 'domain_id', 128),
       'published' => NULL,
+      'owner_uid' => $this->ownerUidFilter($filters['owner_uid'] ?? NULL),
     ];
     if (array_key_exists('published', $filters) && $filters['published'] !== NULL) {
       if (!is_bool($filters['published'])) {
@@ -236,6 +240,22 @@ final class ContentIndexQuery implements ContentIndexQueryInterface {
       $normalized['published'] = $filters['published'];
     }
     return $normalized;
+  }
+
+  /**
+   * Validates an optional unsigned Drupal user ID.
+   */
+  private function ownerUidFilter(mixed $value): ?int {
+    if ($value === NULL) {
+      return NULL;
+    }
+    if (is_string($value) && preg_match('/^(0|[1-9][0-9]{0,9})$/', $value) === 1) {
+      $value = (int) $value;
+    }
+    if (!is_int($value) || $value < 0 || $value > 4_294_967_295) {
+      throw new \InvalidArgumentException('Content Index owner_uid filter must be an unsigned 32-bit integer.');
+    }
+    return $value;
   }
 
   /**

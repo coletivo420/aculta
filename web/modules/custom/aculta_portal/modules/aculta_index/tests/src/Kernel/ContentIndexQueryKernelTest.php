@@ -188,6 +188,41 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
   }
 
   /**
+   * Filters by internal owner metadata and still applies Entity Access.
+   */
+  public function testOwnerUidFilterUsesAnyUidWithoutReturningOwnerMetadata(): void {
+    $reader = User::create(['name' => 'content-index-owner-reader', 'status' => 1]);
+    $reader->save();
+    $other = User::create(['name' => 'content-index-owner-other', 'status' => 1]);
+    $other->save();
+    $ownedByReader = Node::create([
+      'type' => 'sample_content',
+      'title' => 'Owned by query reader',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+    ]);
+    $ownedByReader->save();
+    $ownedByOther = Node::create([
+      'type' => 'sample_content',
+      'title' => 'Owned by another account',
+      'status' => TRUE,
+      'uid' => $other->id(),
+    ]);
+    $ownedByOther->save();
+    $this->buildAndActivateGeneration();
+
+    $query = $this->container->get('aculta_index.query');
+    $readerPage = $query->query(['owner_uid' => (string) $reader->id()], $reader);
+    self::assertSame([(string) $ownedByReader->id()], $this->entityIds($readerPage->entities));
+    self::assertArrayNotHasKey('owner_uid', get_object_vars($readerPage));
+
+    // The consumer may choose another UID; source Entity Access remains the
+    // final gate for the same requesting account.
+    $otherPage = $query->query(['owner_uid' => (int) $other->id()], $reader);
+    self::assertSame([(string) $ownedByOther->id()], $this->entityIds($otherPage->entities));
+  }
+
+  /**
    * Queries without an active generation are empty and bounds stay enforced.
    */
   public function testQueryRequiresValidFiltersAndBoundedCandidateLimit(): void {
@@ -215,6 +250,16 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
     }
     catch (\InvalidArgumentException) {
       // Expected for an unsupported filter.
+    }
+
+    foreach ([-1, 4_294_967_296, TRUE, '1.5'] as $ownerUid) {
+      try {
+        $query->query(['owner_uid' => $ownerUid], $account);
+        self::fail('Invalid owner_uid filters must be rejected.');
+      }
+      catch (\InvalidArgumentException) {
+        // Expected for non-unsigned-32-bit UIDs.
+      }
     }
   }
 

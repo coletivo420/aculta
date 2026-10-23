@@ -60,6 +60,7 @@ function aculta_index_schema(): array {
         'uuid' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
         'label' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
         'domain_id' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''],
+        'owner_uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE],
         'published' => ['type' => 'int', 'size' => 'tiny', 'not null' => FALSE],
         'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
         'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
@@ -489,4 +490,18 @@ function aculta_index_update_10017(): void {
     ->fields(['status' => 'idle'])
     ->condition('status', 'running')
     ->execute();
+}
+
+/**
+ * Adds optional internal source-owner filtering metadata.
+ */
+function aculta_index_update_10018(): void {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_index_entry') && !$schema->fieldExists('aculta_index_entry', 'owner_uid')) {
+    $schema->addField('aculta_index_entry', 'owner_uid', [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    ]);
+  }
 }
