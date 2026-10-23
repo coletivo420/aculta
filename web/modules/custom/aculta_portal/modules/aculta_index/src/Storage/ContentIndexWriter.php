@@ -227,6 +227,7 @@ final class ContentIndexWriter {
     $status = $this->database->select('aculta_index_generation', 'generation')
       ->fields('generation', ['status'])
       ->condition('generation_id', $generationId)
+      ->forUpdate()
       ->execute()
       ->fetchField();
     if (!in_array($status, ['building', 'validated', 'active'], TRUE)) {

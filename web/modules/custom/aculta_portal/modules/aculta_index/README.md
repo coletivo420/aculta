@@ -2,7 +2,7 @@
 
 Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
 
-**Versão:** `0.1.0-dev.42` — resultado do comparativo de índice candidato temporário.
+**Versão:** `0.1.0-dev.48` — descarte retomável de rebuilds incompletos.
 **Status:** Dev; schema, contratos, providers Magazine/Wiki/Fórum/Gallery/Media/LMS/Activity, descoberta/backfill keyset, checkpoint CAS, writer, fila incremental, rebuild por geração, consultas com cursor, relações nomeadas, auditoria e bridge opcional de Statistics implementados em código. O fingerprint combina ID, versão de projeção, entity types e bundles; mudança de versão bloqueia retomada de geração parcial. Unit de Index e providers ACULTA executados: **135 testes / 598 assertions**; suíte Kernel Index/Activity/User em MariaDB, executada em 2026-10-22: **73 testes / 943 assertions**, com 6 deprecações upstream. O Kernel cobre schema, rebuild, consultas, relações, update hooks, adapter Activity/Media, reconciliação bidirecional e interleaving de eventos com claim antigo. PHPCS Drupal passou. O benchmark opt-in mediu duas composições temporárias por 10k/100k/1M e Entity Access em fixture Media pública/negada; resultados são iniciais e não medem grants reais de domínio/Group/LMS. Runtime, concorrência entre processos, desempenho operacional, integração Kernel/DI dos demais providers e compatibilidade operacional seguem pendentes. O bridge mantém os itens autorizados quando Statistics está ausente. Não instalado no Runtime.
 **Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 **Plano de benchmark:** [matriz IDX 0.1-G/R](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-BENCHMARK.md).
@@ -38,7 +38,7 @@ Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cr
 
 `ContentIndexGenerationManager` cria gerações `building`, permite ativar somente estados validados e mantém a geração anterior como `retained` para rollback. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural na geração em construção antes de promovê-la. Projeções antigas na geração ativa não bloqueiam um rebuild novo já produzido pela versão corrente dos providers. `activate()` bloqueia enquanto providers do inventário têm jobs queued, processing, retry ou dead. Eventos durante a validação também são aplicados à geração `validated`; a mesma linha de estado serializa schedule e troca do ponteiro. Rollback para a geração retained permanece disponível mesmo com jobs pendentes.
 
-O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. A CLI Drush permite inspecionar e reparar dead-letters sem criar UI no Kernel.
+O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. A CLI Drush permite inspecionar e reparar dead-letters sem criar UI no Kernel. Retry manual exige que o provider proprietário esteja registrado no container ativo. Se o módulo owner estiver desabilitado/removido, o item permanece em dead-letter e não é reenfileirado sem autoridade de projeção.
 
 ## Operação via Drush
 
@@ -49,6 +49,8 @@ drush aculta-index:rebuild start
 drush aculta-index:rebuild batch GENERATION_ID --limit=100
 drush aculta-index:rebuild validate GENERATION_ID
 drush aculta-index:rebuild activate GENERATION_ID
+drush aculta-index:rebuild discard GENERATION_ID
+drush aculta-index:rebuild discard-batch GENERATION_ID --limit=500
 drush aculta-index:queue status
 drush aculta-index:queue dead --limit=50
 drush aculta-index:queue retry WORK_ID
@@ -59,6 +61,14 @@ recusa ativação enquanto a fila dos providers ativos tiver trabalho pendente o
 dead-letter. A saída de `queue dead` contém identidades de entidades e deve ficar
 restrita ao terminal de operadores autorizados. Os comandos foram implementados
 localmente; a descoberta/execução no Runtime não foi verificada.
+
+Uma geração parcial incompatível ou abandonada pode ser encerrada com `discard`
+somente enquanto estiver em `building`. Repita `discard-batch` até `complete=true`;
+cada chamada remove no máximo o limite solicitado de entradas e relações, apaga
+os cursors persistidos dessa geração e, por último, remove seu registro. A troca
+para `discarding` impede novas escritas e remove a geração dos destinos de eventos
+incrementais. Gerações ativas, validadas e retidas para rollback não são aceitas.
+O procedimento afeta apenas dados derivados do índice, nunca entidades de origem.
 
 ## Auditoria incremental
 

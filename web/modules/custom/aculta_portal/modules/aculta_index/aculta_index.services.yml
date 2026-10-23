@@ -74,7 +74,7 @@ services:
 
   aculta_index.work_manager:
     class: Drupal\aculta_index\Queue\ContentIndexWorkManager
-    arguments: ['@database', '@queue', '@datetime.time', '@logger.channel.aculta_index']
+    arguments: ['@database', '@queue', '@datetime.time', '@aculta_index.provider_registry', '@logger.channel.aculta_index']
 
   Drupal\aculta_index\Queue\ContentIndexWorkManager: '@aculta_index.work_manager'
 

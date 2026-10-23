@@ -180,16 +180,16 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
    */
   public function testWorkManagerRetriesFiveTimesThenMarksDead(): void {
     $work = $this->container->get('aculta_index.work_manager');
-    $work->schedule('magazine', 'node', 'retry-1', 'pt_BR');
+    $work->schedule('image', 'node', 'retry-1', 'pt_BR');
     $database = $this->container->get('database');
     $delays = [30, 60, 120, 240];
 
     for ($attempt = 1; $attempt <= 5; $attempt++) {
-      $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+      $status = $work->getStatus('image', 'node', 'retry-1', 'pt_BR');
       $claim = $work->claim($status['work_id']);
       $this->assertNotNull($claim);
       $this->assertTrue($work->fail($claim['work_id'], $claim['sequence'], 'worker_failure'));
-      $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+      $status = $work->getStatus('image', 'node', 'retry-1', 'pt_BR');
       $this->assertSame($attempt, $status['attempts']);
 
       if ($attempt < 5) {
@@ -206,19 +206,19 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       }
     }
 
-    $gate = $work->getActivationGateState(['magazine']);
+    $gate = $work->getActivationGateState(['image']);
     $this->assertFalse($gate['ready']);
     $this->assertSame(1, $gate['dead']);
     $dead = $work->listDead();
     $this->assertCount(1, $dead);
     $this->assertSame('worker_failure', $dead[0]['last_error_code']);
     $this->assertTrue($work->retryDead($dead[0]['work_id']));
-    $status = $work->getStatus('magazine', 'node', 'retry-1', 'pt_BR');
+    $status = $work->getStatus('image', 'node', 'retry-1', 'pt_BR');
     $this->assertSame('queued', $status['status']);
     $this->assertSame(0, $status['attempts']);
     $claim = $work->claim($status['work_id']);
     $this->assertTrue($work->complete($claim['work_id'], $claim['sequence']));
-    $this->assertTrue($work->getActivationGateState(['magazine'])['ready']);
+    $this->assertTrue($work->getActivationGateState(['image'])['ready']);
   }
 
   /**
@@ -226,8 +226,8 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
    */
   public function testNewEventReopensDeadLetterAndMakesOldRetryStale(): void {
     $work = $this->container->get('aculta_index.work_manager');
-    $work->schedule('magazine', 'node', 'dead-race', 'pt_BR', 'project');
-    $status = $work->getStatus('magazine', 'node', 'dead-race', 'pt_BR');
+    $work->schedule('image', 'node', 'dead-race', 'pt_BR', 'project');
+    $status = $work->getStatus('image', 'node', 'dead-race', 'pt_BR');
     $this->assertNotNull($status);
     $workId = $status['work_id'];
 
@@ -240,11 +240,11 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
       ->condition('work_id', $workId)
       ->execute();
 
-    $sequence = $work->schedule('magazine', 'node', 'dead-race', 'pt_BR', 'delete');
+    $sequence = $work->schedule('image', 'node', 'dead-race', 'pt_BR', 'delete');
 
     $this->assertSame(2, $sequence);
     $this->assertFalse($work->retryDead($workId), 'An operator retry cannot replace a newer source event.');
-    $latest = $work->getStatus('magazine', 'node', 'dead-race', 'pt_BR');
+    $latest = $work->getStatus('image', 'node', 'dead-race', 'pt_BR');
     $this->assertSame('queued', $latest['status']);
     $this->assertSame('delete', $latest['operation']);
     $this->assertSame(2, $latest['sequence']);
@@ -254,6 +254,29 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     $claim = $work->claim($workId);
     $this->assertSame(2, $claim['sequence']);
     $this->assertSame('delete', $claim['operation']);
+  }
+
+  /**
+   * An operator cannot retry work after its owning provider is disabled.
+   */
+  public function testDeadLetterRetryRequiresRegisteredProvider(): void {
+    $work = $this->container->get('aculta_index.work_manager');
+    $work->schedule('image', 'media', 'disabled-owner-1', 'pt_BR');
+    $status = $work->getStatus('image', 'media', 'disabled-owner-1', 'pt_BR');
+    $this->container->get('database')->update('aculta_index_work')
+      ->fields([
+        'provider_id' => 'disabled_owner',
+        'status' => 'dead',
+        'attempts' => 5,
+        'last_error_code' => 'worker_failure',
+      ])
+      ->condition('work_id', $status['work_id'])
+      ->execute();
+
+    $this->assertFalse($work->retryDead($status['work_id']));
+    $dead = $work->getStatus('disabled_owner', 'media', 'disabled-owner-1', 'pt_BR');
+    $this->assertSame('dead', $dead['status']);
+    $this->assertSame(5, $dead['attempts']);
   }
 
   /**
@@ -908,6 +931,69 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
 
     $this->expectException(IntegrityConstraintViolationException::class);
     $this->insertEntry('gen-a', 'node', '123', 'pt-br');
+  }
+
+  /**
+   * Discards only incomplete generations and deletes their rows in batches.
+   */
+  public function testDiscardBuildingGenerationIsBoundedAndProtectsActiveGeneration(): void {
+    $database = $this->container->get('database');
+    foreach ([['gen-building', 'building'], ['gen-active', 'active']] as [$id, $status]) {
+      $database->insert('aculta_index_generation')->fields([
+        'generation_id' => $id,
+        'status' => $status,
+        'provider_fingerprint' => '',
+        'created' => 1,
+        'updated' => 1,
+        'validated' => $status === 'active' ? 1 : 0,
+      ])->execute();
+    }
+    $database->update('aculta_index_state')
+      ->fields(['active_generation' => 'gen-active', 'revision' => 1])
+      ->condition('state_id', 1)
+      ->execute();
+
+    $this->insertEntry('gen-building', 'node', 'discard-1', 'pt-br');
+    $this->insertEntry('gen-building', 'node', 'discard-2', 'pt-br');
+    $this->insertEntry('gen-active', 'node', 'keep-active', 'pt-br');
+    foreach (['discard-1', 'discard-2'] as $entityId) {
+      $database->insert('aculta_index_relation')->fields([
+        'generation_id' => 'gen-building',
+        'provider_id' => 'fixture',
+        'source_entity_type' => 'node',
+        'source_entity_id' => $entityId,
+        'source_langcode' => 'pt-br',
+        'relation_type' => 'related_entry',
+        'target_entity_type' => 'node',
+        'target_entity_id' => 'target-' . $entityId,
+        'target_langcode' => 'pt-br',
+        'relation_hash' => hash('sha256', $entityId),
+        'updated' => 1,
+      ])->execute();
+    }
+
+    $manager = $this->container->get('aculta_index.generation_manager');
+    try {
+      $manager->discardBuilding('gen-active');
+      $this->fail('The active generation must not be eligible for discard.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->assertSame(1, $this->entryCount('gen-active'));
+    }
+
+    $manager->discardBuilding('gen-building');
+    $this->assertNotContains('gen-building', $manager->getWritableGenerations());
+    $first = $manager->discardBatch('gen-building', 1);
+    $this->assertSame(1, $first['entries_removed']);
+    $this->assertSame(1, $first['relations_removed']);
+    $this->assertFalse($first['complete']);
+    $second = $manager->discardBatch('gen-building', 1);
+    $this->assertSame(1, $second['entries_removed']);
+    $this->assertSame(1, $second['relations_removed']);
+    $this->assertTrue($second['complete']);
+    $this->assertSame(0, $this->entryCount('gen-building'));
+    $this->assertSame(0, $this->relationCount('gen-building'));
+    $this->assertSame('gen-active', $manager->getActiveGeneration());
   }
 
   /**

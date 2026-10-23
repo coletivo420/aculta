@@ -36,8 +36,8 @@ final class ContentIndexRebuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
-    $this->addArgument('action', InputArgument::REQUIRED, 'Ação: start, batch, validate ou activate.');
-    $this->addArgument('generation-id', InputArgument::OPTIONAL, 'ID da geração para batch, validate ou activate.');
+    $this->addArgument('action', InputArgument::REQUIRED, 'Ação: start, batch, validate, activate, discard ou discard-batch.');
+    $this->addArgument('generation-id', InputArgument::OPTIONAL, 'ID da geração para batch, validate, activate ou descarte.');
     $this->addOption('limit', NULL, InputOption::VALUE_REQUIRED, 'Entidades por lote (1 a 500).', 100);
   }
 
@@ -76,13 +76,28 @@ final class ContentIndexRebuildCommand extends Command {
         $output->writeln('<info>Geração ativa: ' . $generationId . '.</info>');
         return Command::SUCCESS;
       }
+      if ($action === 'discard') {
+        $this->generations->discardBuilding($generationId);
+        $output->writeln('<info>Geração marcada para descarte: ' . $generationId . '.</info>');
+        return Command::SUCCESS;
+      }
+      if ($action === 'discard-batch') {
+        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
+        if ($limit === FALSE || $limit < 1 || $limit > 5000) {
+          $output->writeln('<error>--limit precisa estar entre 1 e 5000 para descarte.</error>');
+          return Command::FAILURE;
+        }
+        $result = $this->generations->discardBatch($generationId, $limit);
+        $output->writeln(json_encode($result, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+        return Command::SUCCESS;
+      }
     }
     catch (\Throwable $exception) {
       $output->writeln('<error>' . $exception->getMessage() . '</error>');
       return Command::FAILURE;
     }
 
-    $output->writeln('<error>Ação inválida; use start, batch, validate ou activate.</error>');
+    $output->writeln('<error>Ação inválida; use start, batch, validate, activate, discard ou discard-batch.</error>');
     return Command::FAILURE;
   }
 

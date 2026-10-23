@@ -1,5 +1,16 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.48 — descartar rebuilds incompletos em lotes
+
+- Adiciona o descarte explícito de gerações ainda em `building`, primeiro
+  bloqueando novas escritas e removendo a geração do conjunto que recebe eventos.
+- Remove entradas, relações e cursors derivados em lotes limitados; gerações
+  ativa, validada ou retida para rollback são recusadas.
+- Retry manual de dead-letter só re-enfileira itens cujo provider está registrado;
+  owners desativados permanecem em dead para inspeção até reativação.
+- Adiciona cobertura Kernel para o limite de descarte e preservação da geração
+  ativa, e para retry recusado quando o provider owner não está registrado.
+
 ## 0.1.0-dev.47 — alinhar status de reconciliação e testes Kernel
 
 - Corrige a documentação do schema: auditoria incremental/reconciliação está

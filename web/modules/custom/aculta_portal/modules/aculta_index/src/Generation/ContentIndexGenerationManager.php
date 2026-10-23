@@ -207,6 +207,126 @@ final class ContentIndexGenerationManager {
   }
 
   /**
+   * Stops a partial rebuild before its derived rows are removed in batches.
+   *
+   * Only a building generation can be discarded. Validated generations may be
+   * awaiting activation and retained generations are rollback targets, so both
+   * require a separate lifecycle decision.
+   */
+  public function discardBuilding(string $generationId): void {
+    $transaction = $this->database->startTransaction();
+    try {
+      $generation = $this->database->select('aculta_index_generation', 'generation')
+        ->fields('generation', ['status'])
+        ->condition('generation_id', $generationId)
+        ->forUpdate()
+        ->execute()
+        ->fetchAssoc();
+      if (!$generation || $generation['status'] !== 'building') {
+        throw new \InvalidArgumentException(sprintf('Generation %s is missing or is not an incomplete building generation.', $generationId));
+      }
+      $activeGeneration = $this->getActiveGeneration();
+      if ($activeGeneration === $generationId) {
+        throw new \LogicException('The active Content Index generation cannot be discarded.');
+      }
+      $updated = $this->database->update('aculta_index_generation')
+        ->fields(['status' => 'discarding', 'updated' => $this->time->getRequestTime()])
+        ->condition('generation_id', $generationId)
+        ->condition('status', 'building')
+        ->execute();
+      if ($updated !== 1) {
+        throw new \RuntimeException(sprintf('Generation %s changed while discard was starting.', $generationId));
+      }
+      unset($transaction);
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
+  }
+
+  /**
+   * Removes a discarding generation's derived rows with a bounded batch.
+   *
+   * @return array{relations_removed: int, entries_removed: int, complete: bool}
+   *   Number of rows removed and whether the generation record was removed.
+   */
+  public function discardBatch(string $generationId, int $limit = 500): array {
+    if ($limit < 1 || $limit > 5000) {
+      throw new \InvalidArgumentException('Generation cleanup limit must be between 1 and 5000.');
+    }
+    $transaction = $this->database->startTransaction();
+    try {
+      $generation = $this->database->select('aculta_index_generation', 'generation')
+        ->fields('generation', ['status'])
+        ->condition('generation_id', $generationId)
+        ->forUpdate()
+        ->execute()
+        ->fetchAssoc();
+      if (!$generation || $generation['status'] !== 'discarding') {
+        throw new \InvalidArgumentException(sprintf('Generation %s is not marked for discard.', $generationId));
+      }
+
+      $relationIds = $this->database->select('aculta_index_relation', 'relation')
+        ->fields('relation', ['relation_id'])
+        ->condition('generation_id', $generationId)
+        ->orderBy('relation_id')
+        ->range(0, $limit)
+        ->execute()
+        ->fetchCol();
+      $relationsRemoved = $relationIds === [] ? 0 : $this->database->delete('aculta_index_relation')
+        ->condition('relation_id', $relationIds, 'IN')
+        ->condition('generation_id', $generationId)
+        ->execute();
+
+      $entryIds = $this->database->select('aculta_index_entry', 'entry')
+        ->fields('entry', ['entry_id'])
+        ->condition('generation_id', $generationId)
+        ->orderBy('entry_id')
+        ->range(0, $limit)
+        ->execute()
+        ->fetchCol();
+      $entriesRemoved = $entryIds === [] ? 0 : $this->database->delete('aculta_index_entry')
+        ->condition('entry_id', $entryIds, 'IN')
+        ->condition('generation_id', $generationId)
+        ->execute();
+
+      $hasRelations = $this->database->select('aculta_index_relation', 'relation')
+        ->fields('relation', ['relation_id'])
+        ->condition('generation_id', $generationId)
+        ->range(0, 1)
+        ->execute()
+        ->fetchField() !== FALSE;
+      $hasEntries = $this->database->select('aculta_index_entry', 'entry')
+        ->fields('entry', ['entry_id'])
+        ->condition('generation_id', $generationId)
+        ->range(0, 1)
+        ->execute()
+        ->fetchField() !== FALSE;
+      $complete = !$hasRelations && !$hasEntries;
+      if ($complete) {
+        $this->database->delete('aculta_index_cursor')
+          ->condition('generation_id', $generationId)
+          ->execute();
+        $this->database->delete('aculta_index_generation')
+          ->condition('generation_id', $generationId)
+          ->condition('status', 'discarding')
+          ->execute();
+      }
+      unset($transaction);
+      return [
+        'relations_removed' => $relationsRemoved,
+        'entries_removed' => $entriesRemoved,
+        'complete' => $complete,
+      ];
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
+  }
+
+  /**
    * Returns the provider inventory fingerprint of a building generation.
    */
   public function getProviderFingerprint(string $generationId): string {

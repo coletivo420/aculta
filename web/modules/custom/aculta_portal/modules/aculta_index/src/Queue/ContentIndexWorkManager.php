@@ -7,6 +7,7 @@ namespace Drupal\aculta_index\Queue;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Core\Queue\QueueFactory;
 use Psr\Log\LoggerInterface;
 
@@ -44,6 +45,7 @@ final class ContentIndexWorkManager {
     private readonly Connection $database,
     private readonly QueueFactory $queues,
     private readonly TimeInterface $time,
+    private readonly ContentIndexProviderRegistry $providers,
     private readonly LoggerInterface $logger,
   ) {}
 
@@ -185,6 +187,17 @@ final class ContentIndexWorkManager {
     $transaction = $this->database->startTransaction();
     try {
       $this->lockActivationFenceIfRebuilding();
+      $work = $this->database->select('aculta_index_work', 'work')
+        ->fields('work', ['provider_id'])
+        ->condition('work_id', $workId)
+        ->condition('status', 'dead')
+        ->forUpdate()
+        ->execute()
+        ->fetchAssoc();
+      if (!$work || !$this->providers->has((string) $work['provider_id'])) {
+        unset($transaction);
+        return FALSE;
+      }
       $updated = $this->database->update('aculta_index_work')
         ->fields([
           'status' => 'queued',
