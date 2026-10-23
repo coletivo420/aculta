@@ -32,6 +32,7 @@ final class GreenStashProductReader {
     $items = [];
     $cursor = $before;
     $hasMore = FALSE;
+    $lastEmitted = NULL;
 
     // Bounded rounds prevent an unbounded request when access filters are selective.
     for ($round = 0; $round < 5; $round++) {
@@ -70,6 +71,7 @@ final class GreenStashProductReader {
           break 2;
         }
         $items[] = $product;
+        $lastEmitted = (int) $product->id();
       }
       // If a round yielded fewer than the batch size, no further IDs exist.
       if (count($ids) < 100) {
@@ -77,7 +79,7 @@ final class GreenStashProductReader {
       }
     }
 
-    return ['items' => $items, 'next' => $hasMore ? $cursor : NULL];
+    return ['items' => $items, 'next' => $hasMore ? $lastEmitted : NULL];
   }
 
 }
