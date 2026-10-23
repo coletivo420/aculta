@@ -48,3 +48,7 @@ Criada navegação progressiva com nove áreas: Visão geral, Produtos, Pedidos,
 ## Rotas PT-BR do Green Stash
 
 Entrada canônica `/estudio/loja`; páginas internas `/estudio/loja/{secao}` com slugs `visao-geral`, `produtos`, `pedidos`, `estoque`, `envios`, `promocoes`, `clientes`, `relatorios` e `configuracoes`. Identificadores internos Drupal continuam estáveis. Registro no Studio pelo `AcultaCommerceServiceProvider`, não por hook container. **A área ainda mostra somente estado de preparação**, sem listas ou ações financeiras. Validar container, roteamento e permissões no homelab.
+
+## Catálogo inicial com busca (GS-0.2-C.2)
+
+A rota `/estudio/loja/produtos` agora aceita parâmetros GET `busca` (título, até 100 caracteres) e `antes` (cursor numérico de paginação), apresenta até 20 produtos autorizados e só gera links nativos Commerce de edição. O leitor aplica acesso da entidade e permissão na loja, sem divulgar totais privados. A interface ainda é provisória e **não substitui** os componentes SDC/UI Suite planejados para o ACULTA420. Testes de integração e homologação permanecem pendentes.
