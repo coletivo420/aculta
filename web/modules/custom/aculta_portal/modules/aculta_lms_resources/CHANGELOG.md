@@ -1,5 +1,12 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.9 — regressão Unit/Kernel da integração Index
+
+- Suíte Unit completa: 12 testes / 57 assertions PASS, incluindo o contrato de
+  serviço tagueado (1/4).
+- Kernel Group/Entity Access com Domains persistidos e negotiator real: 1 teste /
+  33 assertions PASS, com 47 depreciações upstream.
+
 ## 0.1.0-dev.8 — negotiator Domain real no teste de acesso
 
 - O Kernel cria os Domains canônicos persistidos e delega a fixture de
