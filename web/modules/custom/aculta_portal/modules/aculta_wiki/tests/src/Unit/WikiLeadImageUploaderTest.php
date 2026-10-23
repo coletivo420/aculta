@@ -10,16 +10,24 @@ use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Transaction;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -102,34 +110,115 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
   }
 
   /**
-   * O envio cria mídia publicada e aponta o campo para ela.
+   * Media publication follows the submitted revision; failures roll back.
    */
-  public function testCreatesPublishedImageMediaAndPointsTheFieldAtIt(): void {
+  #[DataProvider('submissionPublicationStates')]
+  public function testImageAndNodeShareTransactionAcrossPublicationStates(bool $published, bool $rebuild): void {
     $file = $this->file();
     $file->expects(self::once())->method('isTemporary')->willReturn(TRUE);
     $file->expects(self::once())->method('setPermanent');
     $file->expects(self::once())->method('save');
+    $database = $this->createMock(Connection::class);
+    $transaction = new class() extends Transaction {
+
+      /**
+       * Whether the test transaction was committed.
+       */
+      public bool $committed = FALSE;
+
+      /**
+       * Whether the test transaction was rolled back.
+       */
+      public bool $rolledBack = FALSE;
+
+      public function __construct() {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function __destruct() {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function commitOrRelease(): void {
+        $this->committed = TRUE;
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      public function rollBack() {
+        $this->rolledBack = TRUE;
+      }
+
+    };
+    $database->expects(self::once())->method('startTransaction')->willReturn($transaction);
     $media = $this->createMock(MediaInterface::class);
     $media->method('id')->willReturn(12);
-    $media->expects(self::once())->method('set')->with('field_media_image', [
-      'target_id' => 5,
-      'alt' => 'Gato malhado',
-    ]);
-    $media->expects(self::once())->method('save');
+    $mediaValues = [];
+    $media->expects(self::exactly(2))->method('set')->willReturnCallback(
+      static function (string $field, mixed $value) use (&$mediaValues, $media): MediaInterface {
+        $mediaValues[$field] = $value;
+        return $media;
+      },
+    );
+    $media->expects(self::exactly(2))->method('save');
     $media_storage = $this->createMock(EntityStorageInterface::class);
     $media_storage->expects(self::once())->method('create')->with([
       'bundle' => 'image',
       'name' => 'gato.png',
       'uid' => 7,
-      'status' => TRUE,
+      'status' => FALSE,
     ])->willReturn($media);
+    $media_storage->expects(self::once())->method('load')->with(12)->willReturn($media);
     $form_state = $this->formState(['file' => [5], 'alt' => 'Gato malhado']);
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('__get')->with('target_id')->willReturn(12);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+    $node->method('hasField')->with(WikiLeadImageUploader::FIELD)->willReturn(TRUE);
+    $node->method('get')->with(WikiLeadImageUploader::FIELD)->willReturn($field);
+    $node->method('isPublished')->willReturn($published);
+    $form_object = $this->createMock(EntityFormInterface::class);
+    $form_object->method('getEntity')->willReturn($node);
+    $form_object->expects(self::once())->method('save')->willReturnCallback(
+      static function (array $form, FormStateInterface $state) use ($rebuild): void {
+        if ($rebuild) {
+          $state->setRebuild();
+        }
+      },
+    );
+    $form_state->setFormObject($form_object);
     $form = [];
 
-    $this->uploader($file, $media_storage)->applyUpload($form, $form_state);
+    $uploader = $this->uploader($file, $media_storage, $database);
+    $uploader->applyUpload($form, $form_state);
+    $uploader->prepareNodeSave($form, $form_state);
+    $uploader->saveNode($form, $form_state);
 
+    self::assertSame([
+      'field_media_image' => ['target_id' => 5, 'alt' => 'Gato malhado'],
+      'status' => $published,
+    ], $mediaValues);
+    self::assertSame(!$rebuild, $transaction->committed);
+    self::assertSame($rebuild, $transaction->rolledBack);
     self::assertSame([['target_id' => 12]], $form_state->getValue([WikiLeadImageUploader::FIELD]));
     self::assertSame(['fid' => 5, 'media_id' => 12], $form_state->get(WikiLeadImageUploader::STORAGE_KEY));
+  }
+
+  /**
+   * Publication and failed-save cases for the shared image transaction.
+   *
+   * @return array<string, array{0: bool, 1: bool}>
+   *   Submitted publication state and whether the node form rebuilds on error.
+   */
+  public static function submissionPublicationStates(): array {
+    return [
+      'published node commits published media' => [TRUE, FALSE],
+      'draft node commits unpublished media' => [FALSE, FALSE],
+      'failed node save rolls back staged media' => [TRUE, TRUE],
+    ];
   }
 
   /**
@@ -177,7 +266,7 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
   /**
    * Builds an uploader over the real Portal policy and a fixed image mock.
    */
-  private function uploader(?FileInterface $file = NULL, ?EntityStorageInterface $media_storage = NULL): WikiLeadImageUploader {
+  private function uploader(?FileInterface $file = NULL, ?EntityStorageInterface $media_storage = NULL, ?Connection $database = NULL): WikiLeadImageUploader {
     $file_storage = $this->createMock(EntityStorageInterface::class);
     $file_storage->method('load')->with(5)->willReturn($file);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -205,8 +294,17 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
 
     $current_user = $this->createMock(AccountProxyInterface::class);
     $current_user->method('id')->willReturn(7);
+    $file_system = $this->createMock(FileSystemInterface::class);
+    $file_system->method('prepareDirectory')->willReturn(TRUE);
 
-    return new WikiLeadImageUploader($entity_type_manager, $policy, $current_user, $this->getStringTranslationStub());
+    return new WikiLeadImageUploader(
+      $entity_type_manager,
+      $database ?? $this->createMock(Connection::class),
+      $file_system,
+      $policy,
+      $current_user,
+      $this->getStringTranslationStub(),
+    );
   }
 
   /**
@@ -225,7 +323,7 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
     $file = $this->createMock(FileInterface::class);
     $file->method('getFilename')->willReturn($filename);
     $file->method('getSize')->willReturn(1000);
-    $file->method('getFileUri')->willReturn('public://wiki/imagens/' . $filename);
+    $file->method('getFileUri')->willReturn('private://wiki/imagens/' . $filename);
     $file->method('id')->willReturn(5);
     return $file;
   }

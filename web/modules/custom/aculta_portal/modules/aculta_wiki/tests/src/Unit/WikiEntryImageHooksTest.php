@@ -12,8 +12,10 @@ use Drupal\aculta_wiki\Hook\WikiEntryImageHooks;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -47,7 +49,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     self::assertSame('advanced', $form['wiki_lead_image']['#group']);
     self::assertTrue($form['wiki_lead_image']['#tree']);
     self::assertSame('managed_file', $form['wiki_lead_image']['file']['#type']);
-    self::assertSame('public://wiki/imagens', $form['wiki_lead_image']['file']['#upload_location']);
+    self::assertSame('private://wiki/imagens', $form['wiki_lead_image']['file']['#upload_location']);
     self::assertFalse($form['wiki_lead_image']['file']['#multiple']);
     self::assertSame([
       'FileExtension' => ['extensions' => 'png jpg jpeg gif webp'],
@@ -73,7 +75,8 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     self::assertSame([
       'aculta_wiki.wiki_lead_image_uploader:applyUpload',
       '::submitForm',
-      '::save',
+      'aculta_wiki.wiki_lead_image_uploader:prepareNodeSave',
+      'aculta_wiki.wiki_lead_image_uploader:saveNode',
     ], $form['actions']['submit']['#submit']);
   }
 
@@ -100,6 +103,19 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
 
     self::assertArrayNotHasKey('wiki_lead_image', $form);
     self::assertTrue($form['field_wiki_image']['#access']);
+  }
+
+  /**
+   * Keeps the Core widget if this form cannot wrap its entity save handler.
+   */
+  public function testLeavesTheCoreWidgetWithoutAnEntitySaveHandler(): void {
+    $form = $this->entryForm();
+    $form['actions']['submit']['#submit'] = ['::submitForm'];
+
+    $this->hooks('png jpg jpeg gif webp', 10)->formAlter($form, $this->formState());
+
+    self::assertTrue($form['field_wiki_image']['#access']);
+    self::assertArrayNotHasKey(WikiLeadImageUploader::TAB, $form);
   }
 
   /**
@@ -145,6 +161,8 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
   private function uploader(UserUploadPolicy $policy): WikiLeadImageUploader {
     return new WikiLeadImageUploader(
       $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(Connection::class),
+      $this->createMock(FileSystemInterface::class),
       $policy,
       $this->createMock(AccountProxyInterface::class),
       $this->getStringTranslationStub(),

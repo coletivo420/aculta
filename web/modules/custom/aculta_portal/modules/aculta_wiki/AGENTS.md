@@ -40,3 +40,6 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   funcionar sem o tema.
 - Use os gates pertinentes ao diff. Não deduza o estado do Runtime a partir
   desta documentação.
+- Imagem de destaque (dev.12): armazenar em `private://wiki/imagens`; a Media
+  acompanha o estado publicado do verbete. Testar o ciclo transacional em Kernel
+  isolado; não ativar ou importar configuração no Runtime como parte desse teste.

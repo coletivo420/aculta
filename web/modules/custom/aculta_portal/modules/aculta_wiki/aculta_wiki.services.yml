@@ -14,7 +14,7 @@ services:
     arguments: ['@string_translation', '@request_stack']
   aculta_wiki.wiki_lead_image_uploader:
     class: Drupal\aculta_wiki\Upload\WikiLeadImageUploader
-    arguments: ['@entity_type.manager', '@aculta_portal.user_upload_policy', '@current_user', '@string_translation']
+    arguments: ['@entity_type.manager', '@database', '@file_system', '@aculta_portal.user_upload_policy', '@current_user', '@string_translation']
   Drupal\aculta_wiki\Hook\WikiEntryImageHooks:
     class: Drupal\aculta_wiki\Hook\WikiEntryImageHooks
     arguments:

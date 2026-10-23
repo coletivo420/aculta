@@ -57,6 +57,11 @@ final class WikiEntryImageHooks {
       return;
     }
 
+    $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
+    if (!in_array('::save', $submitHandlers, TRUE)) {
+      return;
+    }
+
     $form_object = $form_state->getFormObject();
     $node = $form_object instanceof ContentEntityFormInterface ? $form_object->getEntity() : NULL;
     $current = $node instanceof NodeInterface ? $this->currentImage($node) : NULL;
@@ -110,11 +115,20 @@ final class WikiEntryImageHooks {
 
     $form['#validate'][] = 'aculta_wiki.wiki_lead_image_uploader:validateUpload';
     // The save button defines its own #submit list, which replaces the
-    // form-level one; prepend so the Media exists before the node is saved.
+    // form-level list. Keep Core's submitForm, align Media publication after
+    // the submitted revision is built, and wrap Node::save in a transaction.
     if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#submit'] = array_merge([
+      $submitHandlers = array_merge([
         'aculta_wiki.wiki_lead_image_uploader:applyUpload',
-      ], $form['actions']['submit']['#submit'] ?? []);
+      ], $submitHandlers);
+      $saveHandler = array_search('::save', $submitHandlers, TRUE);
+      if ($saveHandler !== FALSE) {
+        $submitHandlers[$saveHandler] = 'aculta_wiki.wiki_lead_image_uploader:saveNode';
+        array_splice($submitHandlers, $saveHandler, 0, [
+          'aculta_wiki.wiki_lead_image_uploader:prepareNodeSave',
+        ]);
+      }
+      $form['actions']['submit']['#submit'] = $submitHandlers;
     }
   }
 

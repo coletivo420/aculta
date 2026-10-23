@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.11**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.12**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
@@ -50,6 +50,15 @@ Implementado em dev.11: `WikiController::search()` varia cache por
 declara o contexto de grants usado por `recentChanges()`. Rotas permanecem
 inalteradas. A matriz lista os testes Unit; discovery das rotas e validação
 Kernel/Runtime ainda são gates separados.
+
+### Ciclo de vida da imagem de destaque — dev.12
+
+O arquivo de destaque fica em armazenamento privado. O upload prepara Media e
+File dentro de transação até o salvamento do Node; a Media acompanha o estado
+publicado da revisão submetida. Rebuild ou falha do salvamento reverte o lote.
+O teste Kernel cobre rascunho, publicação e rollback de falha. Revisões antigas,
+remoção/reuso de Media e limpeza segura de arquivos continuam no gate de
+homologação; a ativação da Wiki no Runtime permanece separada.
 
 ## Fase 3 — Documentação obrigatória da mudança de escopo
 

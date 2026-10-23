@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Upload;
 
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Transaction;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Validates and stores the lead image of a Wiki entry as image Media.
@@ -19,7 +24,7 @@ use Drupal\media\MediaInterface;
  * The upload controls live in the "Imagem de destaque" tab of the verbete
  * form. This service owns both halves so the same rules run on add and edit:
  * the policy validators from aculta_portal (consumer "wiki") decide what is
- * accepted, and a published image Media connects the file to
+ * accepted, and an image Media connects the file to
  * field_wiki_image.
  */
 final class WikiLeadImageUploader {
@@ -62,17 +67,24 @@ final class WikiLeadImageUploader {
   public const STORAGE_KEY = 'aculta_wiki.lead_image';
 
   /**
-   * Public directory that receives the verbete images.
+   * Private directory that receives the verbete images.
    */
-  public const DIRECTORY = 'public://wiki/imagens';
+  public const DIRECTORY = 'private://wiki/imagens';
 
   /**
    * Maximum length of the alt text, as in the Forum upload dialog.
    */
   public const ALT_MAX_LENGTH = 512;
 
+  /**
+   * Transaction spanning the lead Media and its Wiki Node submission.
+   */
+  private ?Transaction $submissionTransaction = NULL;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly Connection $database,
+    private readonly FileSystemInterface $fileSystem,
     private readonly UserUploadPolicy $uploadPolicy,
     private readonly AccountProxyInterface $currentUser,
     TranslationInterface $stringTranslation,
@@ -135,32 +147,106 @@ final class WikiLeadImageUploader {
       return;
     }
 
-    $media = $this->storedMedia($form_state, $fid);
-    if ($media === NULL) {
-      // Media's file source does not register File API usage for this
-      // reference; keep the upload out of temporary-file garbage collection.
-      if ($file->isTemporary()) {
-        $file->setPermanent();
-        $file->save();
+    $this->submissionTransaction ??= $this->database->startTransaction();
+    try {
+      $directory = self::DIRECTORY;
+      if (!$this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+        throw new \UnexpectedValueException('O diretório privado das imagens de destaque da Wiki não está disponível.');
       }
-      $media = $this->entityTypeManager->getStorage('media')->create([
-        'bundle' => 'image',
-        'name' => $file->getFilename(),
-        'uid' => $this->currentUser->id(),
-        'status' => TRUE,
-      ]);
-      if (!$media instanceof MediaInterface) {
-        throw new \UnexpectedValueException('A mídia da imagem de destaque da Wiki não pôde ser criada.');
+      $media = $this->storedMedia($form_state, $fid);
+      if ($media === NULL) {
+        // The file and Media rows must commit or roll back with the Wiki Node.
+        // The private scheme also prevents a draft's file URL bypassing Media
+        // entity access before that transaction is complete.
+        if ($file->isTemporary()) {
+          $file->setPermanent();
+          $file->save();
+        }
+        $media = $this->entityTypeManager->getStorage('media')->create([
+          'bundle' => 'image',
+          'name' => $file->getFilename(),
+          'uid' => $this->currentUser->id(),
+          'status' => FALSE,
+        ]);
+        if (!$media instanceof MediaInterface) {
+          throw new \UnexpectedValueException('A mídia da imagem de destaque da Wiki não pôde ser criada.');
+        }
+        $media->set('field_media_image', [
+          'target_id' => $fid,
+          'alt' => $this->altValue($form_state),
+        ]);
+        $media->save();
+        $form_state->set(self::STORAGE_KEY, ['fid' => $fid, 'media_id' => (int) $media->id()]);
       }
-      $media->set('field_media_image', [
-        'target_id' => $fid,
-        'alt' => $this->altValue($form_state),
-      ]);
-      $media->save();
-      $form_state->set(self::STORAGE_KEY, ['fid' => $fid, 'media_id' => (int) $media->id()]);
+
+      $form_state->setValue([self::FIELD], [['target_id' => (int) $media->id()]]);
+    }
+    catch (\Throwable $exception) {
+      $this->rollbackSubmission();
+      throw $exception;
+    }
+  }
+
+  /**
+   * Aligns new Media status with the submitted Wiki revision.
+   */
+  public function prepareNodeSave(array &$form, FormStateInterface $form_state): void {
+    if ($this->submissionTransaction === NULL) {
+      return;
     }
 
-    $form_state->setValue([self::FIELD], [['target_id' => (int) $media->id()]]);
+    try {
+      $stored = $form_state->get(self::STORAGE_KEY);
+      $media = is_array($stored)
+        ? $this->entityTypeManager->getStorage('media')->load((int) ($stored['media_id'] ?? 0))
+        : NULL;
+      $formObject = $form_state->getFormObject();
+      $node = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
+      $imageTargetId = $node instanceof NodeInterface && $node->hasField(self::FIELD)
+        ? $node->get(self::FIELD)->target_id
+        : NULL;
+      if (!$media instanceof MediaInterface
+        || !$node instanceof NodeInterface
+        || $node->bundle() !== 'wiki_entry'
+        || (string) $imageTargetId !== (string) $media->id()) {
+        throw new \UnexpectedValueException('O formulário não manteve a referência esperada da imagem de destaque da Wiki.');
+      }
+
+      // This row remains uncommitted until the Node save succeeds. Pending
+      // revisions therefore never make their lead Media publicly accessible.
+      $media->set('status', $node->isPublished());
+      $media->save();
+    }
+    catch (\Throwable $exception) {
+      $this->rollbackSubmission();
+      throw $exception;
+    }
+  }
+
+  /**
+   * Saves the Node and commits or rolls back its staged lead image atomically.
+   */
+  public function saveNode(array &$form, FormStateInterface $form_state): void {
+    $formObject = $form_state->getFormObject();
+    if (!$formObject instanceof EntityFormInterface) {
+      $this->rollbackSubmission();
+      throw new \UnexpectedValueException('O formulário da Wiki não é um formulário de entidade.');
+    }
+
+    try {
+      $formObject->save($form, $form_state);
+    }
+    catch (\Throwable $exception) {
+      $this->rollbackSubmission();
+      throw $exception;
+    }
+
+    if ($form_state->isRebuilding()) {
+      $this->rollbackSubmission();
+    }
+    else {
+      $this->commitSubmission();
+    }
   }
 
   /**
@@ -197,6 +283,24 @@ final class WikiLeadImageUploader {
    */
   private function errorName(string $element): string {
     return self::TAB . '][' . $element;
+  }
+
+  /**
+   * Commits the image transaction after a successful Node save.
+   */
+  private function commitSubmission(): void {
+    $transaction = $this->submissionTransaction;
+    $this->submissionTransaction = NULL;
+    $transaction?->commitOrRelease();
+  }
+
+  /**
+   * Rolls back the image transaction after a failed Node submission.
+   */
+  private function rollbackSubmission(): void {
+    $transaction = $this->submissionTransaction;
+    $this->submissionTransaction = NULL;
+    $transaction?->rollBack();
   }
 
 }

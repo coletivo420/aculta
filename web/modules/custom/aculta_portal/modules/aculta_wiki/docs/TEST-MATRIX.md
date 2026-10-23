@@ -47,6 +47,11 @@ depois da importação de configuração no servidor de testes.
 | Formulário do verbete | Unit | aba no grupo `advanced`, `#tree`, validadores `wiki`, ganchos de validação e envio | aprovado |
 | Política sem extensão de imagem | Unit | aba não aparece e o widget central continua visível | aprovado |
 | Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
+| Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |
+| Visibilidade da Media e do arquivo segue estado do verbete | Kernel | rascunho permanece privado; verbete publicado permite acesso | aprovado (2 casos de dados MariaDB) |
+| Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
+| Referência a Media em revisão antiga e remoção/reuso | Kernel | preservar arquivo enquanto revisão ou outro uso referencia a Media | pendente |
+| Falha de validação antes de submit | Kernel | sem Media órfã nem File permanente | pendente |
 
 ## Fase 2 — componentes movidos
 

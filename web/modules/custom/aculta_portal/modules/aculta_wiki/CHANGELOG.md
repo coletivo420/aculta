@@ -1,5 +1,20 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.12 — sincronizar visibilidade da imagem de destaque
+
+- O upload guarda o arquivo em `private://wiki/imagens` e prepara o diretório
+  pelo serviço de arquivos do Drupal.
+- Media e permanência do File são preparadas em transação com o Node. A Media
+  permanece despublicada durante a submissão e recebe o estado da revisão
+  submetida imediatamente antes de salvar o verbete; erro ou rebuild reverte a
+  transação.
+- O formulário só substitui o handler de salvamento quando encontra o handler
+  nativo do formulário de entidade, evitando transações sem callback de commit.
+- Testes Unit e Kernel de MariaDB cobrem visibilidade de Media/arquivo em
+  rascunho e publicação e rollback em falha; resultados ficam na matriz.
+- Sem mudança no provider do Content Index ou em sua projeção v3. Nenhuma
+  configuração foi importada e Runtime não foi alterado.
+
 ## 0.1.0-dev.11 — caracterizar grants e criação de verbetes
 
 - Busca e página inicial agora variam cache por `user.node_grants:view`, pois a
