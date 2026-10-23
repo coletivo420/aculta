@@ -84,7 +84,7 @@ negativa em cache antes de trocar o purpose e restaura o Domain iniciador.
 MariaDB: suíte focal LMS 3/152; o hook Gallery de produção é delegado por uma
 fixture de teste, portanto boot integral dos módulos owner continua pendente.
 
-`ContentIndexMagazineAccessKernelTest` valida a consulta do provider `revista` pelo filtro de acesso do Index com Domain e Entity Access reais. O harness carrega a declaração de serviço diretamente do YAML do owner, sem ativar a cadeia inteira de Magazine. Conteúdo publicado é permitido, rascunho negado, o Domain inicial é restaurado e a falta do Domain canônico `magazine` falha fechado (SQLite 1/17, 5 depreciações upstream). MariaDB e boot completo do owner seguem pendentes.
+`ContentIndexMagazineAccessKernelTest` valida a API do Index com providers Magazine e Activity carregados dos YAMLs owner e Domain/Entity Access reais. Além de permitir publicação e negar rascunho, consulta `related_activity`, autoriza a origem no purpose `magazine`, o alvo em `main`, restaura o Domain de entrada e falha fechado quando o Domain `magazine` falta (MariaDB: 2 testes / 31 assertions; 5 depreciações Domain). O boot/DI completo do owner e grants editoriais além do Entity Access continuam pendentes.
 
 Checkpoint histórico anterior às integrações de Fórum, LMS e bridge Statistics: Kernel 62 testes / 797 assertions, com 23 depreciações upstream e 40 avisos PHPUnit. A suíte Kernel completa atual passou em dev.103 no SQLite com 79/1.213, 39 depreciações Core/contrib e 42 do PHPUnit, sem falhas. A última suíte Kernel completa no MariaDB de teste segue em dev.76 com 65/883; a próxima rodada MariaDB aguarda o benchmark de 1M. Em dev.77, a auditoria focal passou com 1/20.
 
