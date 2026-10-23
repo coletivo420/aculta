@@ -73,14 +73,15 @@ depois da importação de configuração no servidor de testes.
 | --- | --- | --- | --- |
 | Provider Wiki | Unit | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados e propósito canônico `wiki` | aprovado |
 | Relação `field_wiki_related` | Unit | Relações outgoing `related_entry` deduplicadas | aprovado |
-| Discovery da tag `aculta_index.provider` | Kernel | Provider encontrado quando Wiki e Index estão habilitados, sem dependência obrigatória | pendente |
+| Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
+| Discovery da tag `aculta_index.provider` no owner | Kernel | Provider encontrado pelo YAML real quando Wiki e Index estão habilitados, sem dependência obrigatória | pendente |
 | Consulta do Index com grants Wiki | Kernel | Mesmo usuário, Entity Access no purpose `wiki`, negação fechada quando o domínio não resolve | pendente |
 | Categorias e imagem | Contrato/Kernel | Providers e acesso definidos após finalização da Wiki | adiado |
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
-O provider está em código, mas `aculta_wiki` permanece desabilitado. Os testes
-aprovados nesta seção são unitários e não demonstram integração DI ou autorização
-em uma instalação completa.
+O provider está em código, mas `aculta_wiki` permanece desabilitado. O harness
+Kernel usa a classe de produção registrada por fixture e não demonstra discovery
+pelo YAML owner, integração DI ou autorização em uma instalação completa.
 
 ## Navegador
 

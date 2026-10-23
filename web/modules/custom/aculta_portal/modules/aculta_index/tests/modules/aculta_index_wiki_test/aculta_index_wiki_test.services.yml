@@ -1,0 +1,5 @@
+services:
+  aculta_index_wiki_test.content_index_provider:
+    class: Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }

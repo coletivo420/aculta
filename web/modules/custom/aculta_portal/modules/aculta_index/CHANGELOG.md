@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.62 — cobrir provider Wiki no ciclo do Index
+
+- Kernel usa `WikiContentIndexProvider` de produção via tag de fixture sem
+  habilitar `aculta_wiki`; cobre backfill, `related_entry` deduplicada, update
+  de revisão padrão e delete (1 teste / 17 assertions PASS).
+- Discovery pelo YAML do owner, consulta integrada com Domain/grants reais,
+  Runtime e categorias/imagem seguem pendentes.
+
 ## 0.1.0-dev.61 — cobrir ForumPost revisável e bundle fixo
 
 - Kernel cobre ForumPost de produção sem ativar o módulo Forum: backfill,

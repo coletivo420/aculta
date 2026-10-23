@@ -78,9 +78,10 @@ fechar os contratos de acesso e relações da Wiki. Ver
 
 - Unit `WikiContentIndexProviderTest` cobre a allowlist de metadados, rejeição
   de bundle/revisão não suportados, deduplicação da relação e declaração do
-  purpose `wiki`. Isso valida o provider isolado; não equivale a um teste de
-  discovery DI ou ao filtro de acesso do Index.
-- Pendentes: Kernel do registro tagged quando os módulos estiverem habilitados,
+  purpose `wiki`. O Kernel harness usa a classe real do provider para backfill,
+  relação, update e delete (1 teste / 17 assertions), com tag registrada por
+  fixture; isso não valida o YAML owner nem equivale ao filtro de acesso real.
+- Pendentes: Kernel de discovery DI pelo YAML owner quando os módulos estiverem habilitados,
   consulta cruzada com dois usuários/grants no purpose `wiki`, compatibilidade
   do contrato durante a finalização da Wiki e homologação Runtime. O módulo
   continua desabilitado; não habilitar ou importar sua configuração como parte

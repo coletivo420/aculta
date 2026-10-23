@@ -1,5 +1,12 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.7 — registrar evidência Kernel do Content Index
+
+- Harness Kernel do Index usa `WikiContentIndexProvider` real e cobre backfill,
+  `related_entry` deduplicada, update de revisão padrão e delete (1/17).
+- O módulo continua desabilitado; YAML owner, Domain/grants reais, Runtime e
+  relações de categoria/imagem permanecem pendentes/adiadas.
+
 ## 0.1.0-dev.6 — documentar gates de integração do Content Index
 
 - Registra a cobertura Unit existente do provider, sem tratá-la como prova de

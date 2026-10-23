@@ -33,9 +33,10 @@ pendentes, está em
   eles nem habilita o módulo.
 - `WikiContentIndexProviderTest` cobre metadados allowlisted, revisão padrão,
   deduplicação de `related_entry` e declaração do purpose canônico `wiki`.
-  Ainda faltam Kernel de discovery DI e consulta do Index com usuário/grants no
-  purpose `wiki`; o módulo continua desabilitado e não foi habilitado nesta
-  fase.
+- `ContentIndexWikiProviderKernelTest` cobre backfill e CRUD com a classe real
+  do provider (1 teste / 17 assertions); usa tag de fixture e não habilita o
+  módulo Wiki nem valida Domain/grants reais. Discovery no YAML owner e consulta
+  do Index com usuário/grants no purpose `wiki` continuam pendentes.
 
 ## Documentação
 
