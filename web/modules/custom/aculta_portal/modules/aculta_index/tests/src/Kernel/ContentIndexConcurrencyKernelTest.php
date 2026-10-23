@@ -169,6 +169,149 @@ final class ContentIndexConcurrencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Independent PHP processes cannot lose source sequences or double-claim.
+   */
+  public function testConcurrentPhpProcessesSerializeScheduleAndClaim(): void {
+    if (!function_exists('proc_open')) {
+      self::markTestSkipped('This process-level concurrency test requires proc_open.');
+    }
+
+    $providerId = 'process_stress';
+    $entityTypeId = 'node';
+    $entityId = 'process-stress-1';
+    $langcode = 'pt-br';
+    $workManager = $this->container->get('aculta_index.work_manager');
+    self::assertSame(1, $workManager->schedule($providerId, $entityTypeId, $entityId, $langcode));
+    $initial = $workManager->getStatus($providerId, $entityTypeId, $entityId, $langcode);
+    self::assertIsArray($initial);
+
+    $processCount = 4;
+    $iterationsPerProcess = 25;
+    $producerResults = $this->runProcessWorkers(array_fill(0, $processCount, [
+      'action' => 'schedule',
+      'iterations' => $iterationsPerProcess,
+      'work_id' => 0,
+    ]));
+    $sequences = [];
+    foreach ($producerResults as $result) {
+      self::assertIsArray($result['sequences'] ?? NULL);
+      array_push($sequences, ...$result['sequences']);
+    }
+    sort($sequences, SORT_NUMERIC);
+    $expectedSequences = range(2, 1 + $processCount * $iterationsPerProcess);
+    self::assertSame($expectedSequences, $sequences, 'Concurrent event producers must reserve every sequence exactly once.');
+
+    $queued = $workManager->getStatus($providerId, $entityTypeId, $entityId, $langcode);
+    self::assertIsArray($queued);
+    self::assertSame(101, $queued['sequence']);
+    self::assertSame('queued', $queued['status']);
+
+    $claimResults = $this->runProcessWorkers(array_fill(0, $processCount, [
+      'action' => 'claim',
+      'iterations' => 0,
+      'work_id' => $queued['work_id'],
+    ]));
+    $claims = array_values(array_filter(array_column($claimResults, 'claim'), 'is_array'));
+    self::assertCount(1, $claims, 'Only one independent process may claim a queued sequence.');
+    self::assertSame(101, $claims[0]['sequence']);
+
+    self::assertSame(102, $workManager->schedule($providerId, $entityTypeId, $entityId, $langcode));
+    self::assertFalse($workManager->complete($queued['work_id'], $claims[0]['sequence']), 'A late completion cannot mark a newer event done.');
+    $latest = $workManager->getStatus($providerId, $entityTypeId, $entityId, $langcode);
+    self::assertIsArray($latest);
+    self::assertSame(102, $latest['sequence']);
+    self::assertSame('queued', $latest['status']);
+  }
+
+  /**
+   * Runs production work-manager operations in PHP processes on this DB prefix.
+   *
+   * @param list<array{action: string, iterations: int, work_id: int}> $workers
+   *   Concurrent worker specifications.
+   *
+   * @return list<array<string, mixed>>
+   *   Decoded JSON worker results.
+   */
+  private function runProcessWorkers(array $workers): array {
+    $testDirectory = dirname(__DIR__, 2);
+    $workerScript = $testDirectory . '/fixtures/content-index-process-worker.php';
+    $autoload = DRUPAL_ROOT . '/../vendor/autoload.php';
+    $connectionOptions = $this->container->get('database')->getConnectionOptions();
+    $configurationPath = tempnam(sys_get_temp_dir(), 'aculta-index-process-db-');
+    $barrierPath = tempnam(sys_get_temp_dir(), 'aculta-index-process-barrier-');
+    if ($configurationPath === FALSE || $barrierPath === FALSE) {
+      throw new \RuntimeException('Could not allocate temporary process-test files.');
+    }
+    chmod($configurationPath, 0600);
+    unlink($barrierPath);
+    $configuration = json_encode(['connection' => $connectionOptions], JSON_THROW_ON_ERROR);
+    if (file_put_contents($configurationPath, $configuration, LOCK_EX) !== strlen($configuration)) {
+      unlink($configurationPath);
+      throw new \RuntimeException('Could not write temporary process-test database options.');
+    }
+
+    $processes = [];
+    try {
+      foreach ($workers as $worker) {
+        $descriptors = [
+          0 => ['pipe', 'r'],
+          1 => ['pipe', 'w'],
+          2 => ['pipe', 'w'],
+        ];
+        $process = proc_open([
+          PHP_BINARY,
+          $workerScript,
+          $autoload,
+          $configurationPath,
+          $barrierPath,
+          $worker['action'],
+          (string) $worker['iterations'],
+          (string) $worker['work_id'],
+        ], $descriptors, $pipes, DRUPAL_ROOT);
+        if (!is_resource($process)) {
+          throw new \RuntimeException('Could not start a Content Index process worker.');
+        }
+        fclose($pipes[0]);
+        $processes[] = ['process' => $process, 'pipes' => $pipes];
+      }
+
+      if (file_put_contents($barrierPath, 'start', LOCK_EX) === FALSE) {
+        throw new \RuntimeException('Could not release the process-test barrier.');
+      }
+
+      $results = [];
+      foreach ($processes as $processIndex => $workerProcess) {
+        $stdout = stream_get_contents($workerProcess['pipes'][1]);
+        $stderr = stream_get_contents($workerProcess['pipes'][2]);
+        fclose($workerProcess['pipes'][1]);
+        fclose($workerProcess['pipes'][2]);
+        $exitCode = proc_close($workerProcess['process']);
+        $processes[$processIndex]['process'] = NULL;
+        self::assertSame(0, $exitCode, sprintf('Process worker failed: %s', trim((string) $stderr)));
+        $decoded = json_decode(trim((string) $stdout), TRUE, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($decoded);
+        $results[] = $decoded;
+      }
+      return $results;
+    }
+    finally {
+      foreach ($processes as $workerProcess) {
+        if (is_resource($workerProcess['process'])) {
+          proc_terminate($workerProcess['process']);
+          foreach ([1, 2] as $pipeIndex) {
+            if (is_resource($workerProcess['pipes'][$pipeIndex])) {
+              fclose($workerProcess['pipes'][$pipeIndex]);
+            }
+          }
+          proc_close($workerProcess['process']);
+        }
+      }
+      @unlink($configurationPath);
+      @unlink($barrierPath);
+    }
+  }
+
+  /**
    * Opens a second physical session with the Kernel's isolated table prefix.
    */
   private function openCompetitor(): Connection {

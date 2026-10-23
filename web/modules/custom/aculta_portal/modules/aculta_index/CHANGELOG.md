@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.128 — adicionar estresse concorrente com processos PHP
+
+- Kernel MariaDB cria quatro produtores PHP com 25 eventos cada para a mesma
+  identidade, exige sequência sem perda/duplicação e disputa um claim entre
+  quatro consumidores independentes; uma conclusão antiga não pode encerrar o
+  evento mais recente.
+- PHP lint e PHPCS Drupal passaram. A execução Kernel aguarda o benchmark 1M
+  corrigido terminar, para não competir pelo banco `aculta_simpletest`.
+
 ## 0.1.0-dev.127 — repetir benchmark 1M com harness corrigido
 
 - A execução antiga foi interrompida após a decisão do responsável, com cerca de
