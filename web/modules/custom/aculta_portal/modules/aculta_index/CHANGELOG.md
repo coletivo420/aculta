@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.94 — validar Entity Access da Revista no Index
+
+- Kernel usa o provider Magazine declarado no YAML owner, Domains e Entity
+  Access reais; publicação fica visível, rascunho permanece negado, o Domain
+  inicial é restaurado e a ausência de `magazine` falha fechado.
+- SQLite: 1 teste / 17 assertions passou, com 5 depreciações do módulo Domain.
+  PHPCS passou; Kernel MariaDB aguarda o benchmark 1M.
+
 ## 0.1.0-dev.93 — medir cauda da auditoria por fase
 
 - O benchmark agora separa duração, p50, p95 e máximo dos lotes de auditoria
