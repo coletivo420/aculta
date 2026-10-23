@@ -13,7 +13,8 @@
   anteriores usavam UID 1 e não provavam o caminho comum de grants; foram
   substituídas. Com 100 candidatos, p50 foi 703 ms para membro e 358 ms para
   visitante; resultados completos e CSV bruto documentam custo e limites.
-- Kernel focado: 1 teste / 60 assertions PASS, 22 depreciações upstream.
+- Kernel focado: 1 teste / 60 assertions PASS em SQLite em memória e no MariaDB
+  local dedicado; 22 depreciações upstream em cada execução.
 - Suíte Kernel completa do Index: 64 testes / 850 assertions PASS em SQLite em
   memória, com 23 depreciações upstream e 42 avisos PHPUnit.
 
