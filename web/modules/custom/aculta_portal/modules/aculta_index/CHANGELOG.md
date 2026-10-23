@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.101 — suíte Kernel completa após integração Wiki
+
+- SQLite: 79 testes / 1.210 assertions passaram; 39 depreciações Core/contrib
+  e 42 depreciações PHPUnit.
+- Inclui a consulta segura da relação Wiki e todas as integrações existentes.
+  MariaDB completo continua pendente enquanto o benchmark de 1 milhão está
+  ativo.
+
 ## 0.1.0-dev.100 — registrar policy LMS já coberta pelo filtro
 
 - `LmsCourseContentIndexAccessKernelTest` confirmado em SQLite: 1 teste / 33
