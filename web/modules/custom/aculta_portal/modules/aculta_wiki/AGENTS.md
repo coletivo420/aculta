@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.30 R2: Kernel com bootstrap real garante rota única para Início, Busca,
+  Prévia e listagem; a listagem exige acesso autenticado e mantém purpose `wiki`.
+  Busca usa `user.node_grants:view` também em entradas vazias/malformadas.
+
 - Dev.29: proposta editorial guarda campos tipados e a aceitação aplica um
   subconjunto, com modo substituir/acrescentar em cada lista, após revalidar
   revisão-base, Entity/Field Access e transições oficiais. Preservar a gravação

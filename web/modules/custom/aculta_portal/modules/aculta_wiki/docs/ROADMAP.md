@@ -4,10 +4,17 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.29**. Código e testes do
+Linha do projeto `aculta_wiki`: **0.1.0-dev.30**. Código e testes do
 submódulo existem, mas a Wiki permanece desabilitada até o gate de habilitação.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.30 — R2: Kernel de rotas e acesso
+
+O Kernel real confirma rota única para Início, Busca, Prévia e listagem, além do
+purpose `wiki` e acesso autenticado na View. A busca distingue grants por conta
+e conserva contexto de acesso em respostas negativas, vazias e `q[]` malformado.
+Focal: 2 testes / 93 asserções. A ativação no Runtime segue pendente.
 
 ### Incremento dev.29 — aplicação editorial de propostas
 

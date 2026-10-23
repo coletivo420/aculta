@@ -3,6 +3,16 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
+## R2 — rotas, domínio e acesso (dev.30)
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | aprovado (2 testes focais / 93 asserções) |
+| Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
+| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado |
+| Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado |
+| Ativação Runtime | Operacional | Módulos/configuração habilitados e smoke test | pendente; não executado |
+
 ## Aplicação editorial de propostas (dev.29)
 
 | Cenário | Tipo | Resultado esperado | Estado |

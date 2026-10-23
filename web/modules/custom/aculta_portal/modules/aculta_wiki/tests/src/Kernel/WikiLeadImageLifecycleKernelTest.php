@@ -347,6 +347,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     foreach ($routePaths as $routeName => $path) {
       $route = $routeProvider->getRouteByName($routeName);
       self::assertSame($path, $route->getPath());
+      self::assertCount(1, $routeProvider->getRoutesByPattern($path), 'The Wiki path must have one route owner.');
       self::assertSame('access content', $route->getRequirement('_permission'));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
@@ -399,6 +400,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('router.builder')->rebuild();
     $listingRoute = $routeProvider->getRouteByName('view.wiki_entries.page_1');
     self::assertSame('/wiki/verbetes', $listingRoute->getPath());
+    self::assertCount(1, $routeProvider->getRoutesByPattern('/wiki/verbetes'));
+    self::assertSame('wiki', $listingRoute->getOption('_aculta_domain_purpose'));
+    self::assertTrue($accessManager->checkNamedRoute(
+      'view.wiki_entries.page_1',
+      [],
+      new UserSession(['uid' => 42, 'roles' => ['authenticated']]),
+    ));
   }
 
   /**
@@ -476,6 +484,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $negativeBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'termo-inexistente']));
     self::assertArrayNotHasKey('results', $negativeBuild);
     self::assertContains('user.node_grants:view', $negativeBuild['#cache']['contexts']);
+    $malformedBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => ['termo']]));
+    self::assertArrayNotHasKey('results', $malformedBuild);
+    self::assertContains('user.node_grants:view', $malformedBuild['#cache']['contexts']);
   }
 
   /**

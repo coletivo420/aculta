@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.30 — regressão Kernel de rotas e acesso
+
+- Kernel confirma uma única rota para `/wiki`, `/wiki/busca`,
+  `/wiki/busca/previa` e `/wiki/verbetes`, e verifica acesso/purpose `wiki` da
+  View de listagem sob bootstrap real do módulo.
+- Busca no Kernel cobre grants divergentes por conta, resultados negativos,
+  termo vazio e parâmetro `q[]` malformado; contexts preservam
+  `user.node_grants:view`. Focal: 2 testes / 93 asserções.
+- Runtime continua desabilitado; nenhum import/configuração persistente foi
+  executado.
+
 ## 0.1.0-dev.29 — aplicação editorial de propostas
 
 - Autoria seleciona campos editoriais e envia valores tipados para proposta.

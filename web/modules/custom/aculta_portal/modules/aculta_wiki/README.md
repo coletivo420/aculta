@@ -7,6 +7,9 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.30`: R2 reforça unicidade das rotas e acesso/purpose da listagem
+  com Kernel real; busca confirma isolamento por grants e cache em entradas
+  negativas, vazias e malformadas. Focal: 2 testes / 93 asserções.
 - `0.1.0-dev.29`: propostas guardam valores estruturados nos campos editoriais
   permitidos. Na aceitação, a equipe escolhe os campos aprovados e, para cada
   lista de referências, categorias ou relações, escolhe substituir ou
