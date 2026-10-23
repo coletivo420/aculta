@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## Auditoria R1 — 2026-10-23
+
+- Handoff documentado: provider Wiki v3 cobre metadados allowlisted e relações
+  `related_entry`, `wiki_category` e `wiki_image`; os providers de categoria e
+  Media mantêm ownership na Wiki e em `aculta_image`, respectivamente.
+- Confirmado no código e na evidência existente o boot combinado real de Wiki +
+  Index, com discovery por tag e registry. Não repetido nesta sessão porque
+  `SIMPLETEST_DB` não está configurada.
+- Unit Wiki executado: 61 testes / 277 assertions aprovados, 3 depreciações
+  PHPUnit. Sem mudança de projeção, portanto a versão permanece 3; rebuild de
+  geração segue necessário após mudanças semânticas e não é disparado aqui.
+- Runtime e geração do Index não foram alterados.
+
 ## 0.1.0-dev.10 — integrar categorias e imagens ao Content Index
 
 - `WikiContentIndexProvider` agora projeta relações outgoing allowlisted:

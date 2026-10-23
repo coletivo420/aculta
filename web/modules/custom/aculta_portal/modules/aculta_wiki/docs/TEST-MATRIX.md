@@ -75,7 +75,7 @@ depois da importação de configuração no servidor de testes.
 | Relações `field_wiki_related`, `field_wiki_categories`, `field_wiki_image` | Unit | `related_entry`, `wiki_category`, `wiki_image` deduplicadas, com tipos-alvo allowlisted | aprovado |
 | Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
 | Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
-| Declaração/tag owner `aculta_index.provider` | Kernel | YAML owner carregado e providers reais registrados; boot combinado compila o container, sem instalar toda a configuração do owner | aprovado (boot transversal Index 1/36; acesso MariaDB 3/84) |
+| Declaração/tag owner `aculta_index.provider` | Kernel | Boot da closure real Wiki + Index, discovery dos providers via tags e registry, sem importar a configuração do Runtime | aprovado anteriormente (1 teste / 8 assertions); não repetido nesta sessão, sem `SIMPLETEST_DB` |
 | Consulta do Index e relações sob acesso Wiki | Kernel | Mesmo usuário, Entity Access e policy Portal em purpose `wiki`; alvo não publicado filtrado; Domain original restaurado | aprovado (2 testes / 32 assertions; MariaDB e SQLite) |
 | Relações categoria e imagem | Kernel | `wiki_category`/`wiki_image` consultam os providers owners; Entity Access filtra alvos unpublished | aprovado (3 testes / 84 assertions em MariaDB; 5 depreciações) |
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
@@ -84,6 +84,16 @@ Os adapters estão em código, mas `aculta_wiki` permanece desabilitado. O harne
 Kernel lê as declarações/tag dos YAMLs owners e usa bridge fixture para a policy
 Portal; comprova consulta com entidades reais, sem habilitar ou instalar toda a
 configuração da Wiki. Runtime permanece pendente.
+
+O boot transversal `ContentIndexOwnerIntegrationKernelTest` também resolve e
+habilita a closure real de dependências de `aculta_wiki` e `aculta_index`, compila
+o container e confirma o registry via tags owner (1 teste / 8 assertions,
+registrado no roadmap em 2026-10-23). Nesta sessão, o teste Unit da Wiki passou
+(61 testes / 277 assertions; 3 depreciações PHPUnit). A repetição do Kernel não
+foi possível: `SIMPLETEST_DB` não está configurada neste ambiente. Essa
+limitação não invalida o resultado Kernel registrado anteriormente, mas impede
+uma nova confirmação nesta sessão. Nenhum Runtime ou banco persistente foi
+alterado.
 
 ## Navegador
 

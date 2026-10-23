@@ -9,11 +9,13 @@ pendentes, está em
 
 - `0.1.0-dev.10`: provider opcional do Content Index projeta metadados
   allowlisted e relações outgoing `related_entry`, `wiki_category` e
-  `wiki_image`. O módulo permanece desabilitado.
+  `wiki_image` (versão de projeção 3). O módulo permanece desabilitado no
+  Runtime de teste; a configuração exportada e o Runtime não são equivalentes.
 - O módulo **não está habilitado** e não altera o Runtime.
-- As rotas públicas continuam definidas em `aculta_portal.routing.yml` até a
-  Fase 2. Os caminhos `/wiki`, `/wiki/verbetes`, `/wiki/busca` e
-  `/wiki/busca/previa` são contrato e não mudam.
+- As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` estão definidas neste
+  submódulo com os nomes `aculta_portal.wiki_*`; `/wiki/verbetes` permanece
+  contrato da listagem. A disponibilidade no site depende da ativação efetiva
+  do módulo no Runtime.
 
 ## Limites
 
@@ -47,6 +49,19 @@ pendentes, está em
   o Domain `main` é restaurado (MariaDB: 3 testes / 84 assertions, 5
   depreciações). O boot combinado dos owners também compila os services reais;
   Runtime e ativação completa permanecem pendentes.
+
+### Handoff para o ACULTA Content Index
+
+O contrato Wiki está em `WikiContentIndexProvider` v3: `node:wiki_entry`,
+revisão padrão, purpose `wiki`, metadados allowlisted e relações
+`related_entry` → `node:wiki_entry`, `wiki_category` →
+`taxonomy_term:wiki_category` e `wiki_image` → `media:image`. O provider dos
+termos pertence à Wiki; o de Media pertence a `aculta_image`. Destinos seguem
+sujeitos a Entity Access na consulta do Index. Alteração semântica futura exige
+incremento da versão e rebuild de geração; esta entrega não dispara rebuild.
+Termos/categorias e imagens não devem bloquear infraestrutura genérica ou
+outros providers do Index. A projeção não inclui corpo, revisão pendente,
+autoria, descrição, URL ou arquivo. Homologação Runtime continua separada.
 
 ## Documentação
 

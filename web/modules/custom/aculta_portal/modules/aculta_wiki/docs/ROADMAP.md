@@ -102,9 +102,11 @@ de limpeza. A exclusão segura de anexos continua sendo um fluxo separado. Ver
   Access omite alvos não publicados, e o Domain `main` é restaurado. MariaDB:
   3 testes / 84 assertions, 5 depreciações.
 - O mapa de services e o boot combinado do Index carregam as tags owner. Isso
-  não instala toda a configuração da Wiki nem substitui grants adicionais ou
-  homologação Runtime. O módulo continua desabilitado; não habilitar ou importar
-  sua configuração como parte desta fase.
+  inclui o `ContentIndexOwnerIntegrationKernelTest`, que habilita a closure real
+  de dependências, compila o container e descobre `wiki` pelo registry (1/8).
+  Isso não instala toda a configuração da Wiki nem substitui grants adicionais
+  ou homologação Runtime. O módulo continua desabilitado; não habilitar ou
+  importar sua configuração como parte desta fase.
 
 Atualização IDX 0.1-dev.161 (2026-10-23): o teste transversal
 `ContentIndexOwnerIntegrationKernelTest` carregou a closure completa de
