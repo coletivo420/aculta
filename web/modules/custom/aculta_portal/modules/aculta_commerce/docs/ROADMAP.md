@@ -83,3 +83,7 @@ A arquitetura normativa é o ADR-013 revisado: **a interface de abas Comum | Loj
 - Mantidos `CartConsolidator`, `CartUtility`, `CartSite`, rota e barra multidomínio **sem alterações**; nenhuma lógica de checkout mudada.
 - Registro central de dívida atualizado em `docs/operations/DEBT-REGISTER.md` sob IDs **DT-COM-01 a DT-COM-07**, com responsáveis e critérios de saída. Execução de PHPUnit, fixtures e testes de pagamento **não foi realizada neste ambiente**.
 - A fase C-0.1-C2 permanece **parcial** até DT-COM-01/02/03/04; C-0.1-C3 depende de P-CART B (DT-COM-06). Não declarar gates PASS.
+
+## 0.1.0-D — Green Stash (execução parcial, 2026-10-22)
+
+Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`, com permissão `access aculta green stash` restrita, serviço e teste unitário, sem atribuir permissão a roles e sem registrar rota/provider Studio. Detalhes e sequência em [GREEN-STASH-0.1.0-D.md](GREEN-STASH-0.1.0-D.md). Próximo passo D-A/D-B: resolver o contrato de domínio e registrar provider + rota próprios com testes; D-C/D-D ficam condicionados a isolamento por store/order type e SDC/UI Suite. **Sem impacto no carrinho multidomínio e checkout público.**
