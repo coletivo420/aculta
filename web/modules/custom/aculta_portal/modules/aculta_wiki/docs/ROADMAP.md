@@ -88,6 +88,11 @@ fechar os contratos de acesso e relações da Wiki. Ver
   e Domains persistidos reais: nega em `main`, autoriza pelo Index em `wiki` e
   restaura o Domain anterior (1/16). O teste usa bridge de fixture; não habilita
   a Wiki nem prova discovery do YAML owner no container Drupal.
+- A consulta outgoing `related_entry` agora tem cobertura Kernel no Index:
+  origem e alvos passam por Entity Access no purpose `wiki` mesmo com a chamada
+  iniciada em `main`; alvo unpublished é filtrado e o Domain original é
+  restaurado (2 testes / 32 assertions em SQLite). O teste usa provider e
+  política de acesso de produção via harness, sem ativar o módulo Wiki.
 - O mapa de services lê o YAML real da Wiki e compila a tag do provider.
   Pendentes: boot/DI completo do owner, grants específicos caso sejam
   acrescentados, compatibilidade do contrato durante a finalização da Wiki e

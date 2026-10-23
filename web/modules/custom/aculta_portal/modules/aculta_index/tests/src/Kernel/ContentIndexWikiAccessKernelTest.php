@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\aculta_portal\Hook\EntityHooks;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -75,6 +76,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry'])->save();
     $this->installDomainField();
     $this->createDomains();
+    $this->installRelatedEntryField();
     $authenticated = Role::load('authenticated');
     self::assertInstanceOf(Role::class, $authenticated);
     $authenticated->grantPermission('access content')->save();
@@ -145,6 +147,97 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Checks relation source and targets in the canonical Wiki Domain.
+   */
+  public function testRelatedEntriesRevalidateSourceAndTargetsInWikiDomain(): void {
+    User::create(['name' => 'wiki-relation-root', 'status' => TRUE])->save();
+    $reader = User::create([
+      'name' => 'wiki-relation-reader',
+      'status' => TRUE,
+      'roles' => ['authenticated'],
+    ]);
+    $reader->save();
+
+    $publicTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Public related entry',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $publicTarget->save();
+    $privateTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Private related entry',
+      'status' => FALSE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $privateTarget->save();
+    $source = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Related entries source',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_related' => [
+        ['target_id' => $publicTarget->id()],
+        ['target_id' => $privateTarget->id()],
+      ],
+    ]);
+    $source->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
+    }
+    self::assertTrue($complete, 'The Wiki provider backfill should complete.');
+    $this->processWikiWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    self::assertFalse($source->access('view', $reader), 'Wiki source is not visible from main purpose.');
+
+    $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
+      'node',
+      (string) $source->id(),
+      $source->language()->getId(),
+      'related_entry',
+      $reader,
+    );
+    self::assertCount(1, $result->entities, 'Only the currently authorized Wiki target is returned.');
+    self::assertSame('Public related entry', (string) $result->entities[0]->label());
+    self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id(), 'The initiating Domain is restored.');
+    self::assertFalse($source->access('view', $reader), 'The relation query does not leak cached Wiki access into main purpose.');
+    self::assertSame(0, $result->cacheability->getCacheMaxAge());
+  }
+
+  /**
+   * Processes incremental Wiki work after the backfill.
+   */
+  private function processWikiWork(): void {
+    $database = $this->container->get('database');
+    $ids = $database->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('provider_id', 'wiki')
+      ->condition('status', 'queued')
+      ->execute()
+      ->fetchCol();
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    foreach ($ids as $id) {
+      $worker->processItem(['work_id' => (int) $id]);
+    }
+  }
+
+  /**
    * Installs the Wiki entry's Domain reference field. */
   private function installDomainField(): void {
     FieldStorageConfig::create([
@@ -159,6 +252,29 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'field_name' => 'field_domain_source',
       'label' => 'Domain',
       'settings' => ['handler' => 'default:domain', 'handler_settings' => []],
+    ])->save();
+  }
+
+  /**
+   * Installs the outgoing related-entry field used by the Wiki provider.
+   */
+  private function installRelatedEntryField(): void {
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_related',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'node'],
+      'cardinality' => -1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_related',
+      'label' => 'Related Wiki entries',
+      'settings' => [
+        'handler' => 'default:node',
+        'handler_settings' => ['target_bundles' => ['wiki_entry' => 'wiki_entry']],
+      ],
     ])->save();
   }
 

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.98 — consultar relações Wiki com access real
+
+- Kernel Wiki passa `related_entry` pelo `ContentIndexRelationQuery` e pelo
+  filtro de produção: source e targets são revalidados no Domain `wiki` mesmo
+  quando a consulta começa em `main`; somente o target publicado é exposto e o
+  Domain original é restaurado. SQLite: 2 testes / 32 assertions, 5
+  depreciações do Domain contrib.
+- Categorias/imagens, ativação da Wiki, boot completo do owner e Runtime seguem
+  fora desta microfase.
+
 ## 0.1.0-dev.97 — repetir Kernel completo após integrações
 
 - Suíte Kernel completa do Index em SQLite: 78 testes / 1.194 assertions
