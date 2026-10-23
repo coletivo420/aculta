@@ -1,6 +1,6 @@
 # Plano de benchmark — ACULTA Content Index
 
-Estado: consulta de candidatos, leitura de relações, duas composições experimentais de índice, fixtures de Entity Access em Media e no contexto canônico de Domain executados; benchmark amplo de escrita, rebuild e reconciliação continuam pendentes.
+Estado: consulta de candidatos e leitura de relações em 10k/100k/1M, duas composições experimentais de índice, Entity Access em Media e no Domain canônico da Wiki, além de Forum Group grants, executados; benchmark amplo de escrita, rebuild e reconciliação foi medido em 10k, enquanto escalas maiores continuam pendentes.
 
 ## Matriz fixada
 
@@ -66,6 +66,12 @@ para o Domain canônico, com 30 amostras aquecidas por tamanho. Mede o custo
 integrado de autorização e limpeza dos caches de handlers do Core; exclui SQL
 de candidatos e não é comparável diretamente ao harness Media. Resultado
 detalhado: [medição de acesso por Domain](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-23.md).
+
+O `ContentIndexForumAccessBenchmarkTest` mede 1/12/25/50/100 candidatos com 100
+tópicos ligados a um Group real, comparando um associado membro e um visitante
+externo. Três execuções MariaDB com 30 amostras por conta/tamanho passaram nos
+assertions de autorização; medianas e 900 latências individuais estão em
+[Entity Access com Group grants do Fórum](benchmarks/ACULTA-CONTENT-INDEX-FORUM-ACCESS-2026-10-23.md).
 
 O writer também tem uma comparação adicional de 1.000 projeções por variante
 em três rodadas no catálogo de 10.000 entradas, cobrindo inserção, replay

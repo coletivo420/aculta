@@ -14,11 +14,15 @@
   (8.207 ms) contra 152 projeções/s (65.968 ms) antes do batch; auditoria
   manteve latência próxima. Três rodadas e limitações estão no relatório de
   manutenção.
-- Kernel de grants/Domain do Fórum também cobre Comment Core legado durante a
-  coexistência com ForumPost: associado autorizado e visitante negado para ambos.
+- Kernel de grants/Domain do Fórum cobre tópico, ForumPost e Comment Core
+  legado; associado é autorizado e visitante negado nos três. A fixture restaura
+  o Domain após cada checagem (44 assertions).
 - Kernel verifica que o cursor guarda apenas SHA-256 do token e rejeita reuso
   com outra conta, geração ou consulta.
-- Suíte Kernel completa: 64 testes / 830 assertions PASS na execução atual com
+- Harness opt-in do Fórum mede Entity Access com Group membership/grants e
+  Domain `forum` em páginas até 100 candidatos, para associado e visitante;
+  três execuções e CSV bruto registrados, sem definir SLO.
+- Suíte Kernel completa: 64 testes / 834 assertions PASS na execução atual com
   SQLite em memória; rodada MariaDB anterior: 63/809. Ambas registraram 23
   depreciações upstream; a execução atual registrou 42 avisos PHPUnit e a
   rodada MariaDB anterior, 41. Unit do Index: 39 testes / 192
