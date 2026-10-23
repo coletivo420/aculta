@@ -127,4 +127,27 @@ final class FiscalIdentityPolicyTest extends UnitTestCase {
     $this->assertSame('52998*********', $check->masked);
   }
 
+  public function testPrimeiroCadastroGravaUmaVez(): void {
+    $doc = $this->createMock(AccountDocumentInterface::class);
+    $doc->method('canSave')->willReturn(TRUE);
+    $doc->expects($this->once())->method('save');
+    $this->assertTrue((new FiscalIdentityPolicy($this->settings(), $doc))->fill($this->createMock(UserInterface::class), '52998224725'));
+  }
+
+  public function testGravacaoRecusadaNaoVazaDetalhe(): void {
+    $doc = $this->createMock(AccountDocumentInterface::class);
+    $doc->method('canSave')->willReturn(TRUE);
+    $doc->method('save')->willThrowException(new \LogicException('Document already registered.'));
+    $this->assertFalse((new FiscalIdentityPolicy($this->settings(), $doc))->fill($this->createMock(UserInterface::class), '52998224725'));
+  }
+
+  public function testSemCifraNaoPreenche(): void {
+    $doc = $this->createMock(AccountDocumentInterface::class);
+    $doc->method('canSave')->willReturn(FALSE);
+    $doc->expects($this->never())->method('save');
+    $policy = new FiscalIdentityPolicy($this->settings(), $doc);
+    $this->assertFalse($policy->canFill());
+    $this->assertFalse($policy->fill($this->createMock(UserInterface::class), '52998224725'));
+  }
+
 }

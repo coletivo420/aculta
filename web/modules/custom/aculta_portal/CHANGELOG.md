@@ -14,6 +14,8 @@
 - Flow `default` passa a ser o checkout comercial compartilhado. Login obrigatório e cadastro permitido. O tipo `curso` usa o flow `default`; o flow `curso` foi removido. Ativação depende de `config:import` autorizado.
 - Preferência pelo serviço do `aculta_associado_id` removida de `PortalController` e `AccountOtherDataForm`.
 - Testes Unit: `FiscalIdentityPolicyTest` (7). Kernel pendente. RUNTIME STATUS: DEFERRED.
+- Pane de identidade fiscal aceita o primeiro cadastro na própria compra (gravação única, mesmo serviço de Outros Dados). Depois de salvo, o checkout mostra o valor mascarado e não editável. Mensagens de erro genéricas.
+- Outros Dados volta ao checkout quando o link traz destino interno sob `/checkout/`.
 
 ## 0.4.1-dev.20 — auditoria das alterações de checkout e flow efetivo (P-CART F) — 2026-10-22
 

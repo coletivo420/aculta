@@ -215,6 +215,15 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 
 **Verificação sobre preenchimento do CPF em compra:** no código, nenhum caminho de compra ou pagamento grava CPF/CNPJ. Pagamento (`aculta_pagamentos_mercadopago`) não trata identificação. O único ponto de gravação é `AccountOtherDataForm`. Assim, Outros Dados só mostra o documento se a pessoa já o salvou ali, e mostra mascarado e bloqueado. Se a intenção for preencher a partir de uma compra, isso contraria a regra de não sobrescrever e exige decisão.
 
+## 9.3 Atualização de 2026-10-23 (decisões do responsável)
+
+- **Preenchimento na compra:** se o cliente ainda não tem CPF/CNPJ, o pane de identidade fiscal aceita o primeiro cadastro na própria compra. Usa a mesma validação e a mesma gravação única de Outros Dados. Depois de salvo, o checkout mostra o valor mascarado e não editável, e o servidor recusa nova gravação. Isso substitui a regra anterior de "não criar campo no checkout", que foi revogada por esta decisão.
+- **Validação e gravação:** a gravação ocorre em `validatePaneForm`, porque é o ponto em que o Commerce ainda pode bloquear a conclusão. Se outro pane falhar depois, o documento já validado permanece salvo. É o mesmo titular e o mesmo valor, então não há inconsistência. Mensagens de erro são genéricas: inválido, já existente e não gravável recebem o mesmo texto.
+- **Ambiente de teste:** `aculta_lms_resources`, `aculta_wiki` e `aculta_forum_wiki` foram habilitados.
+- **Import parcial:** duas rodadas `config:import --partial` (sem deleções, sem `core.extension`). Drift caiu de 63/46 para 36/16 diferenças. Os 34 itens só-no-banco foram preservados.
+- **Erro restante, de outra frente:** o índice `search_api` `aculta_forum` (Discussões públicas) referencia o campo "Categoria do Fórum (tópico ou post)", sem definição de dados. Esse erro acontece no import e no rebuild de rotas. Enquanto não for corrigido, o import completo continua bloqueado.
+- **Kernel do pane:** segue DEFERRED pelo mesmo motivo da seção 9 (container do `aculta_portal`).
+
 ## 10. Pendências
 
 1. **Ativação em runtime:** `config:import` autorizado no ambiente de testes antes de qualquer produção. Ver 9.1.

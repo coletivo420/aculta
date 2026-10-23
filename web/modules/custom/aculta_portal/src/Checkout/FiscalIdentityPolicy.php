@@ -56,4 +56,31 @@ final class FiscalIdentityPolicy {
     return new FiscalIdentityCheck(FiscalIdentityStatus::Valid, $masked);
   }
 
+  /** TRUE quando o checkout pode gravar o primeiro documento (cifra, HMAC e campos disponíveis). */
+  public function canFill(): bool {
+    return $this->document !== NULL && $this->document->canSave();
+  }
+
+  /** Valida a entrada e devolve o valor canônico, ou NULL. Nunca inclui a entrada em mensagens. */
+  public function canonicalize(string $input): ?string {
+    return $this->document?->canonicalize($input);
+  }
+
+  /**
+   * Grava o primeiro documento do titular, uma única vez. FALSE quando já existe, é duplicado ou não pode ser gravado.
+   * A mensagem ao usuário é sempre a mesma, para não revelar se o documento existe em outra conta.
+   */
+  public function fill(UserInterface $account, string $canonical): bool {
+    if (!$this->canFill()) {
+      return FALSE;
+    }
+    try {
+      $this->document->save($account, $canonical);
+      return TRUE;
+    }
+    catch (\LogicException | \RuntimeException) {
+      return FALSE;
+    }
+  }
+
 }
