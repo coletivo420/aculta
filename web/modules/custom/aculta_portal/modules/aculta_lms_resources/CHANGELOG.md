@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.8 — negotiator Domain real no teste de acesso
+
+- O Kernel cria os Domains canônicos persistidos e delega a fixture de
+  `DomainNegotiatorInterface` ao serviço `domain.negotiator` real para verificar
+  a troca para `courses` e restauração do contexto anterior.
+- Kernel MariaDB: 1 teste / 33 assertions PASS, 47 depreciações upstream. O
+  provider ainda é montado diretamente neste teste; o contrato YAML/tag tem
+  cobertura Unit separada (1/4), sem ativar o módulo real no Kernel.
+
 ## 0.1.0-dev.7 — contrato de registro por tag
 
 - Teste Unit lê `aculta_lms_resources.services.yml`, instancia o provider pela

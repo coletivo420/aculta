@@ -73,19 +73,15 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $domainStorage->method('load')->willReturnCallback(static fn (string $id): ?Domain => Domain::load($id));
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($domainStorage);
-    $activeDomain = NULL;
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domainNegotiator->method('getActiveDomain')->willReturnCallback(
-      static function (bool $reset = FALSE) use (&$activeDomain): ?DomainInterface {
-        if ($reset) {
-          $activeDomain = NULL;
-        }
-        return $activeDomain ?? Domain::load('aculta_org');
+      static function (bool $reset = FALSE): ?DomainInterface {
+        return \Drupal::service('domain.negotiator')->getActiveDomain($reset);
       },
     );
     $domainNegotiator->method('setActiveDomain')->willReturnCallback(
-      function (DomainInterface $domain) use (&$activeDomain): void {
-        $activeDomain = $domain;
+      function (DomainInterface $domain): void {
+        \Drupal::service('domain.negotiator')->setActiveDomain($domain);
         $this->domainSwitches[] = $domain->id();
       },
     );
@@ -114,6 +110,10 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
         'status' => TRUE,
       ])->save();
     }
+    $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $domainNegotiator->getActiveDomain();
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $this->domainSwitches = [];
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('entity_usage', ['entity_usage']);

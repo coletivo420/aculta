@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'F15: validar descoberta do provider Content Index pela tag/DI; instalar campos no Runtime de teste e fazer smoke autenticado/visual ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-version_note: "0.1.0-dev.7 (contract Unit compiles actual service YAML/tag into registry: 1/4; Drupal module Kernel/Runtime pending; Domain-fixture Kernel dev.6 awaits SIMPLETEST_DB)"
+version_note: "0.1.0-dev.8 (Kernel access uses persisted canonical Domains and real domain.negotiator: 1/33, 47 upstream deprecations; tag contract Unit 1/4; Runtime pending)"
