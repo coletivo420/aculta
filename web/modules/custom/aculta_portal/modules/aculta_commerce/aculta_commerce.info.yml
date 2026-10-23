@@ -12,3 +12,4 @@ dependencies:
   - commerce:commerce_cart
   - commerce:commerce_checkout
   - commerce:commerce_payment
+  - aculta_studio:aculta_studio
