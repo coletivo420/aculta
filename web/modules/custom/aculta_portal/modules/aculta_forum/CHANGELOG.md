@@ -1,3 +1,12 @@
+## `0.1.0-dev.280` — provar revogação de acesso ao anexo — 2026-10-24
+
+- Kernel despublica o tópico hospedeiro e confirma que a Media do Fórum deixa
+  de ser acessível à conta na checagem seguinte; republicar devolve o acesso.
+  O teste reseta os caches estáticos da entidade porque o Comment guarda a
+  referência ao host no campo, como numa requisição nova.
+- Testes: anexos 12/346; suíte Kernel do Fórum 104/2.138; PHPCS limpo. Nenhuma
+  configuração ou Runtime foi alterado.
+
 ## `0.1.0-dev.279` — reverter migrations dependentes na ordem correta — 2026-10-24
 
 - O Kernel importa o relacionamento pai/filho pelo map real, depois reverte a

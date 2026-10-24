@@ -346,6 +346,28 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       fn () => $hooks->mediaAccess($media, 'view', $member),
     );
     self::assertTrue($member_result?->isAllowed(), 'A conta que lê o host lê a Media publicada.');
+
+    // Losing access to the host must deny the Media on the next check.
+    $topic->setUnpublished()->save();
+    // The Comment holds the host reference in its field cache; a real request
+    // would reload it, so reset the static caches before rechecking access.
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
+    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
+    self::assertFalse($this->publication->hasCurrentPublicReference($media, $member), 'Reference no longer public for member.');
+    $revoked = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->mediaAccess($media, 'view', $member),
+    );
+    self::assertTrue($revoked?->isForbidden(), 'A perda de acesso ao tópico nega a Media.');
+
+    $topic->setPublished()->save();
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$topic->id()]);
+    $this->container->get('entity_type.manager')->getStorage('comment')->resetCache([$comment->id()]);
+    $restored = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->mediaAccess($media, 'view', $member),
+    );
+    self::assertTrue($restored?->isAllowed(), 'Republicar o tópico devolve o acesso.');
   }
 
   /**
