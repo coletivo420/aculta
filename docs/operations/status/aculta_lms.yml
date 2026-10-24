@@ -7,3 +7,7 @@ next_phase: 'Respostas com arquivo sob a política central de upload (0.1.0-dev.
 # (matrícula, avaliação pendente, certificados ativo/revogado), grants/cache,
 # validação browser e Domain account. Prioridade da frente Studio mudou para
 # GANJALAB E-0.1; não interpretar isto como suspensão do desenvolvimento LMS.
+
+# 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
+# Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
+# Gate: scripts/validate-no-temporary-route-aliases.php.
