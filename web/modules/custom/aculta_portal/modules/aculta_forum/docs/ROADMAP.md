@@ -77,9 +77,10 @@ equivalência seguem pendentes.
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
 passou em MariaDB Simpletest, 14 testes / 266 assertions. Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
-provam ordem inversa, replays, locks no writer, migração paginada do dev.80 e
-retenção de seis meses. Concorrência entre processos e homologação Runtime ainda
-não foram simuladas; F-M1 permanece parcial.
+provam ordem inversa, replays, migração de chaves legadas e retenção de seis
+meses. O writer usa lock por agregado e a migração processa lotes de até 500
+chaves; o teste atual não simula contenção entre processos nem atravessa o
+limite de lote. Homologação Runtime segue pendente; F-M1 permanece parcial.
 
 ### Sequência recomendada e paralelismo
 
