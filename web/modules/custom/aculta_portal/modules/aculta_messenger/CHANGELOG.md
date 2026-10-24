@@ -1750,3 +1750,12 @@ composição não receberam esse requisito, pois precisam permitir navegação G
 Validação: `PostRouteCsrfRequirementTest` **1/5 PASS**, PHP lint, PHPCS, gate Drupal 11+ e índice de status PASS. O teste
 verifica o contrato YAML das rotas; POST HTTP integrado e Runtime continuam pendentes.
 
+## 0.1.1-dev.164 — revalidar idempotência do digest — 2026-10-24
+
+Revalidação regressiva conjunta do resumo do Fórum, recuperação de snapshots aceitos e deduplicação persistente do
+ACULTA Mailer. Não foi necessária alteração na lógica de entrega nesta microfase.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/776 PASS**; `AcultaMailerKernelTest` **5/28 PASS**;
+`AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**. Sem SMTP externo ou Runtime;
+dois ciclos completos do digest em boots Drupal concorrentes continuam pendentes.
+
