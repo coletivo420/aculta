@@ -42,14 +42,18 @@ final class AvisosPrivacyForm {
         '#default_value' => $this->preferencias->resumoEmailLigado($uid),
       ],
       'email_respostas' => [
-        '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Incluir respostas novas no resumo'),
-        '#default_value' => $this->preferencias->tipoNoResumo($uid, Aviso::TIPO_RESPOSTA),
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails de respostas em tópicos seguidos'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto.'),
+        '#options' => $this->emailModeOptions(),
+        '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_RESPOSTA),
       ],
       'email_atualizacoes' => [
-        '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Incluir atualizações de tópicos no resumo'),
-        '#default_value' => $this->preferencias->tipoNoResumo($uid, Aviso::TIPO_ATUALIZACAO),
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails de atualizações de tópicos'),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto.'),
+        '#options' => $this->emailModeOptions(),
+        '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_ATUALIZACAO),
       ],
       'email_aprendizagem' => [
         '#type' => 'select',
@@ -86,9 +90,15 @@ final class AvisosPrivacyForm {
     $this->preferencias->salvar(
       (int) $this->currentUser->id(),
       (bool) $formState->getValue('resumo_email'),
-      (bool) $formState->getValue('email_respostas'),
-      (bool) $formState->getValue('email_atualizacoes'),
+      $formState->getValue('email_respostas') === AvisoPreferencias::EMAIL_DIGEST,
+      $formState->getValue('email_atualizacoes') === AvisoPreferencias::EMAIL_DIGEST,
     );
+    foreach ([Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO] as $category) {
+      $mode = $formState->getValue('email_' . ($category === Aviso::TIPO_RESPOSTA ? 'respostas' : 'atualizacoes'));
+      if (is_string($mode)) {
+        $this->preferencias->saveEmailMode((int) $this->currentUser->id(), $category, $mode);
+      }
+    }
     $mode = $formState->getValue('email_aprendizagem');
     if (is_string($mode)) {
       $this->preferencias->saveEmailMode((int) $this->currentUser->id(), 'aprendizagem', $mode);

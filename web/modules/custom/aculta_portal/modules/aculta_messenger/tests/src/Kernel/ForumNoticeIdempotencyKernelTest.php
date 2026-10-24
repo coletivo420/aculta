@@ -694,6 +694,29 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Direct-email outbox fields are added without replacing the event ledger.
+   */
+  public function testDirectEmailPostUpdateAddsLedgerColumnsIdempotently(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $table = ForumNoticeEventSchema::TABLE;
+    foreach (['email_status', 'email_attempts', 'email_updated'] as $field) {
+      $schema->dropField($table, $field);
+    }
+    $schema->dropIndex($table, 'email_status');
+
+    aculta_messenger_update_10002();
+    aculta_messenger_update_10002();
+
+    self::assertTrue($schema->fieldExists($table, 'email_status'));
+    self::assertTrue($schema->fieldExists($table, 'email_attempts'));
+    self::assertTrue($schema->fieldExists($table, 'email_updated'));
+    self::assertTrue($schema->indexExists($table, 'email_status'));
+  }
+
+  /**
    * The unified event ledger preserves keys from the prior Comment-only table.
    */
   public function testPostUpdateMigratesLegacyCommentKeysAcrossBatches(): void {

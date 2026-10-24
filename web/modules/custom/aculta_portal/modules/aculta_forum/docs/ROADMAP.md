@@ -19,7 +19,7 @@ reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. `aculta_messenger
-0.1.1-dev.92` publica pelo contrato compartilhado os avisos de Comment,
+0.1.1-dev.96` publica pelo contrato compartilhado os avisos de Comment,
 primeira publicação de ForumPost e revisão de tópico; o consumer preserva o
 ledger/`aculta_aviso` e revalida acesso. Kernel MariaDB previamente executado
 cobre round-trip/replay dos três eventos, autoria própria, revogação de acesso
@@ -45,8 +45,9 @@ intervenção.
    contextual **não é chat**.
 3. **Avisos de acompanhamento:** `seguir_topico` define seguidores elegíveis;
    o Messenger mantém `aculta_aviso` agrupado por conta/tipo/tópico, informa
-   respostas/atualizações e coordena digest diário **opt-in** via
-   `aculta_mailer`. Não enviar avisos de posts pendentes, rejeitados ou de
+   respostas/atualizações e coordena e-mail direto ou resumo/digest (com opção
+   de desligar e controle geral de digest) via `aculta_mailer`, conforme F-D42.
+   O aviso no site não pode ser desligado. Não enviar avisos de posts pendentes, rejeitados ou de
    conteúdo ao qual o destinatário perdeu acesso.
 4. **Mensagens privadas:** um membro pode iniciar conversa com outro por meio
    do serviço geral Private Message/`aculta_messenger`, desde que elegível.
@@ -69,7 +70,7 @@ intervenção.
 | **F-M0 — baseline e alinhamento** | P0 | Catalogar hooks/eventos Fórum → Messenger, `seguir_topico`, `aculta_aviso`, os tipos de publicação Comment/ForumPost, telas e preferências; corrigir documentação normativa e registrar F-D41. | Matriz produtor → publicação → seguidores → aviso → digest; documentação sem proposta vigente de chat automático; distinguir evidência histórica de Runtime atual. |
 | **F-M1 — caracterização e segurança** | P0 | Fixar em Unit/Kernel a primeira publicação, aprovação tardia, republicação, autoria própria, seguidores removidos, revisões fora de ordem, movimento de subárvore e eventos concorrentes. | Um aviso por destinatário e evento elegível, marcadores `ultimo_comentario`/`ultimo_post` independentes, nenhuma divulgação antes de publicar. Reutilizar XK-C2, não repetir testes desnecessariamente. |
 | **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar Comments publicados/aprovados, primeira publicação de ForumPost e revisões de tópico ao publisher; preservar `aculta_aviso`, ledger, digest e F-D21. | Um evento por destinatário elegível, replay idempotente, acesso/assinatura revalidados e zero fluxo paralelo. Provar round-trip Kernel para os três tipos e comparação com o comportamento anterior; nenhuma dependência cíclica. |
-| **F-M3 — acompanhamento/UX** | P1 | Homologar seguir/deixar de seguir, contador no sino e página Avisos, leitura pelo tópico, URLs canônicas, estados vazio/carregando, digest opt-in e ação opcional de iniciar conversa **com um membro**, não com o tópico. | Navegador autenticado, duas contas e mobile/teclado; nenhuma thread criada por seguir/comentar; e-mail apenas pelo Mailer sob transporte controlado. |
+| **F-M3 — acompanhamento/UX** | P1 | Homologar seguir/deixar de seguir, contador no sino e página Avisos, leitura pelo tópico, URLs canônicas, estados vazio/carregando, modos de e-mail off/direto/resumo sob F-D42 e ação opcional de iniciar conversa **com um membro**, não com o tópico. | Navegador autenticado, duas contas e mobile/teclado; nenhuma thread criada por seguir/comentar; e-mail apenas pelo Mailer sob transporte controlado. |
 | **F-M4 — contextos protegidos** | P1 | Garantir acesso por purpose/Domain, status de publicação, Group, matrícula e situação associativa em conteúdo, Search API, links, previews, avisos e digest; manter a frente F-GROUP desligada por padrão. | Revogação efetiva sem vazamento em contagens, páginas, anexos, resultados e avisos; matriz anônimo/comum/ativo/suspenso/sem membership, com cache/grants. |
 | **F-M5 — migração e interoperabilidade** | P1 | Completar equivalência de Comments legados → ForumPosts revisionáveis: source/destination Migrate, árvores, CID → IDs/revisões, History, flags, denúncias, anexos, permalinks, índices e marcadores de avisos. | Dry-run com mapas auditáveis, backup/rollback, testes Kernel/MariaDB, prova de não duplicar/perder avisos e homologação controlada; nenhuma migração sem autorização operacional. |
 | **F-M6 — experiência e administração** | P2 | Consolidar moderação/revisão, fila administrativa, mover comentários com impactos em seguidores, notificações e anexos; completar busca e indexação access-aware, previews e responsividade. | Testes de acesso, edição, workflow, filas e ferramentas; Firefox ESR/X11 versionado, tema ACULTA420 e Olivero; sem regressão de conteúdos contextuais. |
@@ -153,8 +154,9 @@ verdade enquanto uma mudança explícita não for aprovada e testada.
 - O Messenger possui integração atual com `aculta_aviso`, Kernel de
   idempotência XK-C2 e publisher público mínimo; o consumidor do Fórum, a
   equivalência de persistência e a entrega comparativa continuam pendentes.
-- A homologação de e-mail deve respeitar a política F-D21 (digest opt-in);
-  nenhuma notificação imediata nova é autorizada apenas por este plano.
+- A entrega de e-mail deve respeitar F-D42: modos individuais off/direto/resumo,
+  controle geral de digest e limites administrativos do Mailer. Notificação no site
+  é obrigatória; nenhuma entrega de e-mail ignora autorização atual ou política administrativa.
 
 **Referências normativas:** [decisão F-D41](DECISOES.md),
 [arquitetura](ARQUITETURA.md), [ownership](OWNERSHIP.md),

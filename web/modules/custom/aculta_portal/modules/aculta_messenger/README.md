@@ -30,9 +30,19 @@ pelas políticas User/Messenger.
 O roadmap próprio Messenger M0–M7 mantém prioridade, versões e
 contratos independentes.
 
+## Adaptadores de aviso
+
+Fórum, LMS, Wiki e Loja encaminham avisos à infraestrutura compartilhada. O
+aviso no site é obrigatório; por categoria, a pessoa pode escolher e-mail
+desligado, direto ou resumo diário, sujeito às políticas administrativas do
+ACULTA Mailer. O resumo também respeita o controle geral de digest. Os adapters
+mantêm fontes de verdade e autorizações nos módulos produtores e revalidam
+acesso antes da entrega. Loja usa `aculta_commerce_messenger`; seu consumidor de
+`store.order_placed` preserva o recibo nativo como fallback e para convidados.
+
 ## ACULTA Messenger 0.1.1
 
-A versão `0.1.1-dev.93` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.96` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\EventSubscriber;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutboxInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\aculta_messenger\Aviso\ForumNoticeRegistrarInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -21,6 +25,8 @@ final class ForumNoticeEventSubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ForumNoticeRegistrarInterface $avisos,
+    private readonly ?AvisoPreferenciasInterface $preferences = NULL,
+    private readonly ?ForumNoticeEmailOutboxInterface $emailOutbox = NULL,
   ) {}
 
   /**
@@ -65,7 +71,9 @@ final class ForumNoticeEventSubscriber implements EventSubscriberInterface {
       ->loadByProperties(['uuid' => $event->sourceEntityUuid()]);
     $comment = reset($comments);
     if ($comment instanceof CommentInterface) {
-      $this->avisos->registrarResposta($comment, $event->recipientUid());
+      if ($this->avisos->registrarResposta($comment, $event->recipientUid()) > 0) {
+        $this->queueDirectEmail($event, Aviso::TIPO_RESPOSTA, 'comment', (int) $comment->id());
+      }
     }
   }
 
@@ -80,7 +88,9 @@ final class ForumNoticeEventSubscriber implements EventSubscriberInterface {
     }
     $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision((int) $revisionId);
     if ($post instanceof ForumPost && $post->uuid() === $event->sourceEntityUuid()) {
-      $this->avisos->registrarPost($post, $event->recipientUid());
+      if ($this->avisos->registrarPost($post, $event->recipientUid()) > 0) {
+        $this->queueDirectEmail($event, Aviso::TIPO_RESPOSTA, 'forum_post_revision', (int) $revisionId);
+      }
     }
   }
 
@@ -95,7 +105,17 @@ final class ForumNoticeEventSubscriber implements EventSubscriberInterface {
     }
     $topic = $this->entityTypeManager->getStorage('node')->loadRevision((int) $revisionId);
     if ($topic instanceof NodeInterface && $topic->uuid() === $event->sourceEntityUuid()) {
-      $this->avisos->notificarAtualizacao($topic, (int) $revisionId, $event->recipientUid());
+      if ($this->avisos->notificarAtualizacao($topic, (int) $revisionId, $event->recipientUid()) > 0) {
+        $this->queueDirectEmail($event, Aviso::TIPO_ATUALIZACAO, 'topic_revision', (int) $revisionId);
+      }
+    }
+  }
+
+  /**
+   * Queues an immediate email only after the site notice is recorded once. */
+  private function queueDirectEmail(MessengerNoticeEvent $event, string $category, string $sourceType, int $sourceId): void {
+    if ($this->preferences?->emailMode($event->recipientUid(), $category) === AvisoPreferencias::EMAIL_IMMEDIATE) {
+      $this->emailOutbox?->queue($event->recipientUid(), $sourceType, $sourceId);
     }
   }
 

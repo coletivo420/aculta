@@ -38,3 +38,23 @@ function aculta_messenger_update_10001(): void {
   ];
   $field_storage->setSetting('allowed_values', $allowed_values)->save();
 }
+
+/**
+ * Adds the Forum direct-email outbox columns to the existing idempotency ledger.
+ */
+function aculta_messenger_update_10002(): void {
+  $table = ForumNoticeEventSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists($table)) {
+    return;
+  }
+  $definition = ForumNoticeEventSchema::definition();
+  foreach (['email_status', 'email_attempts', 'email_updated'] as $field) {
+    if (!$schema->fieldExists($table, $field)) {
+      $schema->addField($table, $field, $definition['fields'][$field]);
+    }
+  }
+  if (!$schema->indexExists($table, 'email_status')) {
+    $schema->addIndex($table, 'email_status', ['email_status', 'email_updated'], $definition);
+  }
+}

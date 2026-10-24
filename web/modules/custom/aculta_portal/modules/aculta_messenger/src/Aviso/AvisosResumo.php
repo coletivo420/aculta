@@ -129,6 +129,11 @@ final class AvisosResumo {
         continue;
       }
       if (!$this->preferencias->tipoNoResumo($uid, (string) $aviso->get('tipo')->value)) {
+        // A switch to direct/off must not leave these counts to reappear in a
+        // later digest after the user changes their preference again.
+        if ((int) $aviso->get('contador_email')->value > 0) {
+          $aviso->set('contador_email', 0)->save();
+        }
         continue;
       }
       $daFila[] = $aviso;

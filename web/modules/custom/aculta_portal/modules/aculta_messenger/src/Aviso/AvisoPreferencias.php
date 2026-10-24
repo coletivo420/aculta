@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Aviso;
 
+use Drupal\aculta_messenger\Entity\Aviso as ForumAviso;
 use Drupal\user\UserDataInterface;
-use Drupal\aculta_messenger\Entity\Aviso;
 
 /**
  * Controles individuais de avisos (ACULTA Messenger, F5.2).
@@ -52,6 +52,9 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    *   TRUE quando o tipo está incluído.
    */
   public function tipoNoResumo(int $uid, string $tipo): bool {
+    if (in_array($tipo, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
+      return $this->emailMode($uid, $tipo) === self::EMAIL_DIGEST;
+    }
     $valor = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $tipo);
     return $valor === NULL ? TRUE : (bool) $valor;
   }
@@ -64,9 +67,17 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    */
   public function emailMode(int $uid, string $category): string {
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
-    return in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)
-      ? $mode
-      : self::EMAIL_DIGEST;
+    if (in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
+      return $mode;
+    }
+    // Preserve existing reply/update choices until the person selects a mode.
+    if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
+      $legacy = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $category);
+      if ($legacy !== NULL && !(bool) $legacy) {
+        return self::EMAIL_OFF;
+      }
+    }
+    return self::EMAIL_DIGEST;
   }
 
   /**
@@ -90,8 +101,8 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    * Grava as preferências. Não altera os avisos no site. */
   public function salvar(int $uid, bool $resumoEmail, bool $respostas, bool $atualizacoes): void {
     $this->userData->set(self::MODULO, $uid, 'avisos_resumo_email', $resumoEmail ? 1 : 0);
-    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . Aviso::TIPO_RESPOSTA, $respostas ? 1 : 0);
-    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . Aviso::TIPO_ATUALIZACAO, $atualizacoes ? 1 : 0);
+    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . ForumAviso::TIPO_RESPOSTA, $respostas ? 1 : 0);
+    $this->userData->set(self::MODULO, $uid, 'avisos_resumo_' . ForumAviso::TIPO_ATUALIZACAO, $atualizacoes ? 1 : 0);
   }
 
 }

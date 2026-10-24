@@ -54,6 +54,24 @@ final class ForumNoticeEventSchema {
           'not null' => TRUE,
           'default' => 0,
         ],
+        'email_status' => [
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => TRUE,
+          'default' => 'none',
+        ],
+        'email_attempts' => [
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'email_updated' => [
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ],
       ],
       'primary key' => ['id'],
       'unique keys' => [
@@ -62,6 +80,7 @@ final class ForumNoticeEventSchema {
       'indexes' => [
         'created' => ['created'],
         'topic' => ['nid'],
+        'email_status' => ['email_status', 'email_updated'],
       ],
     ];
   }

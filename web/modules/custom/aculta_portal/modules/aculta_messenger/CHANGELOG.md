@@ -1,3 +1,24 @@
+## 0.1.1-dev.96 — entrega direta configurável para avisos do Fórum — 2026-10-24
+
+- A preferência de cada categoria do Fórum agora seleciona sem e-mail, resumo
+  diário ou envio direto; os avisos na central continuam obrigatórios. O resumo
+  geral continua controlando o digest, e o ACULTA Mailer aplica as políticas
+  administrativas de entrega.
+- O outbox direto reutiliza o ledger idempotente existente e registra estado,
+  tentativas e lease na mesma tabela por update aditivo. O QueueWorker revalida
+  conta ativa/confirmada, preferência, assinatura, publicação, autoria, Domain
+  e acesso antes de enviar; não cria aviso, entidade ou tabela paralelos.
+- O consumidor da Loja (`aculta_commerce_messenger`) permanece incluído na
+  matriz de adapters junto com LMS, Wiki e Fórum. `store.order_placed` usa
+  Message/central, digest ou envio direto via Mailer e fallback do recibo
+  Commerce conforme contrato do adapter. Unit 6/43 para Loja foi registrado na
+  implementação dev.1; Kernel e Runtime da Loja permanecem pendentes.
+- Unit Messenger: 86 testes / 412 assertions PASS; PHPCS Drupal/DrupalPractice
+  passou após correções; lint dos arquivos PHP do outbox/worker passou. Kernel
+  específico da alteração, gates de configuração e Runtime ainda pendentes; a
+  homologação MariaDB do ledger anteriormente aprovada não cobre as colunas
+  novas de e-mail.
+
 ## 0.1.1-dev.95 — revalidar preferências de categoria no digest — 2026-10-24
 
 - O digest compartilhado confere o modo atual de cada categoria fornecida por
