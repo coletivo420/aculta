@@ -1,7 +1,7 @@
 services:
   aculta_wiki.contributor_workspace:
     class: Drupal\aculta_wiki\Service\WikiContributorWorkspace
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation', '@request_stack']
 
   aculta_wiki.content_index_provider:
     class: Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider

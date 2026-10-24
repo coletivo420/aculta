@@ -735,6 +735,130 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Owner-scoped entries and proposals continue by separate keyset cursors.
+   */
+  public function testWeSativaWorkspacePaginatesOwnerEntriesAndProposals(): void {
+    ProfileType::create(['id' => 'email_confirmed', 'label' => 'Confirmed account profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'email_confirmed',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'wiki_workspace_pagination_test',
+      'label' => 'Wiki workspace pagination test',
+      'permissions' => [
+        'access content',
+        'create wiki_entry content',
+        'edit own wiki_entry content',
+        'view own wiki proposals',
+      ],
+    ])->save();
+    $avatar = File::create([
+      'uri' => 'public://wiki-workspace-pagination-avatar.png',
+      'status' => 0,
+    ]);
+    $avatar->save();
+    $author = User::create([
+      'uid' => 17,
+      'name' => 'wiki-workspace-pagination-author',
+      'mail' => 'wiki-workspace-pagination-author@example.invalid',
+      'status' => TRUE,
+      'roles' => ['wiki_workspace_pagination_test', 'email_confirmed'],
+      'user_picture' => ['target_id' => $avatar->id()],
+    ]);
+    $author->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+    $this->container->get('current_user')->setAccount($author);
+    for ($index = 1; $index <= 21; $index++) {
+      $node = Node::create([
+        'type' => 'wiki_entry',
+        'title' => sprintf('Verbete paginado %02d', $index),
+        'uid' => $author->id(),
+        'status' => TRUE,
+        'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+        'field_wiki_test_grant_uid' => $author->id(),
+      ]);
+      $node->save();
+      WikiProposal::create([
+        'uid' => $author->id(),
+        'subject' => sprintf('Proposta paginada %02d', $index),
+        'target' => ['target_id' => $node->id()],
+        'target_revision_id' => $node->getRevisionId(),
+        'intent' => 'correction',
+        'proposed_text' => 'Correção com fonte.',
+        'rationale' => 'Ajuste editorial.',
+        'state' => 'submitted',
+      ])->save();
+    }
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    Domain::create([
+      'id' => 'conta_aculta_org',
+      'hostname' => 'account.example.invalid',
+      'name' => 'account',
+      'scheme' => 'https',
+      'status' => TRUE,
+      'is_default' => FALSE,
+      'weight' => 1,
+    ])->save();
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('aculta_org'));
+    $workspace = $this->container->get('aculta_wiki.contributor_workspace');
+    self::assertSame(17, (int) $author->id());
+    self::assertSame(21, (int) $this->container->get('entity_type.manager')->getStorage('node')->getQuery()->accessCheck(FALSE)->condition('type', 'wiki_entry')->condition('uid', 17)->count()->execute());
+    self::assertSame(21, (int) $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->condition('uid', 17)->count()->execute());
+    self::assertTrue($workspace->access($author)->isAllowed(), 'Owner-scoped work or create access should expose the workspace.');
+    $requestStack = $this->container->get('request_stack');
+    $requestStack->push(Request::create('/studio/we-sativa'));
+    try {
+      $firstPage = $workspace->build($author);
+    }
+    finally {
+      $requestStack->pop();
+    }
+
+    $firstEntries = $firstPage['entries']['items']['#items'];
+    $firstProposals = $firstPage['proposals']['items']['#items'];
+    self::assertCount(20, $firstEntries);
+    self::assertCount(20, $firstProposals);
+    self::assertArrayHasKey('next_page', $firstPage['entries']);
+    self::assertArrayHasKey('next_page', $firstPage['proposals']);
+    $entryUrl = $firstPage['entries']['next_page']['#url'];
+    $proposalUrl = $firstPage['proposals']['next_page']['#url'];
+    self::assertSame('conta_aculta_org', $entryUrl->getOption('domain')->id());
+    self::assertSame('conta_aculta_org', $proposalUrl->getOption('domain')->id());
+    $query = [
+      'wiki_node_cursor' => $entryUrl->getOption('query')['wiki_node_cursor'],
+      'wiki_proposal_cursor' => $proposalUrl->getOption('query')['wiki_proposal_cursor'],
+    ];
+    self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_node_cursor']);
+    self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_proposal_cursor']);
+
+    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+    try {
+      $secondPage = $workspace->build($author);
+    }
+    finally {
+      $requestStack->pop();
+    }
+    self::assertCount(1, $secondPage['entries']['items']['#items']);
+    self::assertCount(1, $secondPage['proposals']['items']['#items']);
+    self::assertArrayNotHasKey('next_page', $secondPage['entries']);
+    self::assertArrayNotHasKey('next_page', $secondPage['proposals']);
+    self::assertSame(['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'], array_values(array_intersect(
+      ['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'],
+      $secondPage['#cache']['contexts'],
+    )));
+  }
+
+  /**
    * Confirmed Wiki authors receive a native draft form without publish access.
    */
   public function testConfirmedContributorBuildsNativeDraftForm(): void {

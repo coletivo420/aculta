@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.47: Meu Trabalho tem paginação keyset separada para verbetes e propostas,
+  links GET no Domain da conta e cache variado pelos dois cursores. A consulta
+  limita candidatos por UID e revalida `view`/`update` antes de renderizar.
+  Kernel MariaDB: 2/84; 200 depreciações upstream e 3 PHPUnit.
+
 - Dev.46: boot real Wiki + Image + Portal + Index comprova provider v3,
   consulta de relações por grants, rejeição de revisão pendente não padrão,
   revisão padrão publicada ainda projetável e negação sem Domain Wiki. Kernel

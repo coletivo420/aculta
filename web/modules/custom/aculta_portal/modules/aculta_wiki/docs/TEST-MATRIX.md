@@ -3,7 +3,7 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
-## WE SATIVA no ACULTA Studio (dev.44)
+## WE SATIVA no ACULTA Studio (dev.47)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -16,7 +16,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
 | Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |
 | Envio para revisão | Kernel | Novo submit grava revisão `review` pela transição oficial `draft_to_review`, sem publicar | aprovado (dev.42; incluído no focal) |
-| Paginação | Kernel | Cursor por tipo com ordem estável e acesso revalidado | planejado; tela inicial limita 20 por tipo |
+| Paginação | Kernel | Cursores independentes para verbetes/propostas, ordem estável, acesso revalidado e cache por URL | aprovado (dev.47; focal combinado: 2 testes / 84 asserções; cursor posicional, links GET) |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
 ## R2 — ciclo de vida da imagem (dev.43)

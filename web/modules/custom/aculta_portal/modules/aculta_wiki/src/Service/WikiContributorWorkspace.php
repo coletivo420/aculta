@@ -15,6 +15,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\node\NodeInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -33,6 +34,7 @@ final class WikiContributorWorkspace {
     private readonly EntityTypeManagerInterface $entities,
     private readonly DomainPurposeManager $domainPurposes,
     TranslationInterface $stringTranslation,
+    private readonly RequestStack $requestStack,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -83,7 +85,13 @@ final class WikiContributorWorkspace {
       throw new AccessDeniedHttpException();
     }
     $cacheability = CacheableMetadata::createFromObject($access)
-      ->addCacheContexts(['user', 'user.permissions', 'domain'])
+      ->addCacheContexts([
+        'user',
+        'user.permissions',
+        'domain',
+        'url.query_args:wiki_node_cursor',
+        'url.query_args:wiki_proposal_cursor',
+      ])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
     $build = [
       '#type' => 'container',
@@ -107,9 +115,11 @@ final class WikiContributorWorkspace {
       }
     }
 
-    $nodeCandidates = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $cacheability): array {
+    $nodeCursor = $this->requestCursor('wiki_node_cursor');
+    $nodePage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $nodeCursor, $cacheability): array {
       $items = [];
-      foreach ($this->ownNodes($account) as $node) {
+      $page = $this->ownNodes($account, $nodeCursor);
+      foreach ($page['items'] as $node) {
         if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry') {
           continue;
         }
@@ -117,10 +127,10 @@ final class WikiContributorWorkspace {
         $cacheability->addCacheableDependency($node)->addCacheableDependency($view);
         $items[] = [$node, $view];
       }
-      return $items;
+      return ['items' => $items, 'next_cursor' => $page['next_cursor']];
     });
     $nodeLinks = [];
-    foreach ($nodeCandidates ?? [] as [$node, $view]) {
+    foreach ($nodePage['items'] ?? [] as [$node, $view]) {
       if (!$view->isAllowed()) {
         continue;
       }
@@ -145,10 +155,18 @@ final class WikiContributorWorkspace {
       }
     }
     $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $this->t('Você ainda não criou verbetes.'));
+    if (is_string($nodePage['next_cursor'] ?? NULL)) {
+      $next = $this->nextPageLink($this->t('Mais verbetes'), 'wiki_node_cursor', $nodePage['next_cursor']);
+      if ($next !== NULL) {
+        $build['entries']['next_page'] = $next;
+      }
+    }
 
-    $proposalCandidates = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $cacheability): array {
+    $proposalCursor = $this->requestCursor('wiki_proposal_cursor');
+    $proposalPage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $proposalCursor, $cacheability): array {
       $items = [];
-      foreach ($this->ownProposals($account) as $proposal) {
+      $page = $this->ownProposals($account, $proposalCursor);
+      foreach ($page['items'] as $proposal) {
         if (!$proposal instanceof WikiProposal) {
           continue;
         }
@@ -156,10 +174,10 @@ final class WikiContributorWorkspace {
         $cacheability->addCacheableDependency($proposal)->addCacheableDependency($view);
         $items[] = [$proposal, $view];
       }
-      return $items;
+      return ['items' => $items, 'next_cursor' => $page['next_cursor']];
     });
     $proposalLinks = [];
-    foreach ($proposalCandidates ?? [] as [$proposal, $view]) {
+    foreach ($proposalPage['items'] ?? [] as [$proposal, $view]) {
       if (!$view->isAllowed()) {
         continue;
       }
@@ -170,6 +188,12 @@ final class WikiContributorWorkspace {
       }
     }
     $build['proposals'] = $this->listSection($this->t('Minhas propostas'), $proposalLinks, $this->t('Você ainda não enviou propostas.'));
+    if (is_string($proposalPage['next_cursor'] ?? NULL)) {
+      $next = $this->nextPageLink($this->t('Mais propostas'), 'wiki_proposal_cursor', $proposalPage['next_cursor']);
+      if ($next !== NULL) {
+        $build['proposals']['next_page'] = $next;
+      }
+    }
     $cacheability->applyTo($build);
     return $build;
   }
@@ -177,12 +201,12 @@ final class WikiContributorWorkspace {
   /**
    * Finds a bounded set of candidate Nodes authored by the account.
    *
-   * @return array<int, \Drupal\node\NodeInterface>
-   *   Candidate Nodes; callers must still check Entity Access.
+   * @return array{items: array<int, \Drupal\node\NodeInterface>, next_cursor: string|null}
+   *   Candidate Nodes and a continuation position; callers still check access.
    */
-  private function ownNodes(AccountInterface $account): array {
+  private function ownNodes(AccountInterface $account, ?string $cursor): array {
     $storage = $this->entities->getStorage('node');
-    $ids = $storage->getQuery()
+    $query = $storage->getQuery()
       // Owner-scoped candidates only; each loaded entity must pass view access
       // in build() before its fields are included in the response.
       ->accessCheck(FALSE)
@@ -190,28 +214,122 @@ final class WikiContributorWorkspace {
       ->condition('uid', $account->id())
       ->sort('changed', 'DESC')
       ->sort('nid', 'DESC')
-      ->range(0, self::PAGE_SIZE)
-      ->execute();
-    return array_values($storage->loadMultiple($ids));
+      ->range(0, self::PAGE_SIZE + 1);
+    $position = $this->parseCursor($cursor);
+    if ($position !== NULL) {
+      $query->condition($query->orConditionGroup()
+        ->condition('changed', $position[0], '<')
+        ->condition($query->andConditionGroup()
+          ->condition('changed', $position[0])
+          ->condition('nid', $position[1], '<')));
+    }
+    $ids = array_values($query->execute());
+    $hasMore = count($ids) > self::PAGE_SIZE;
+    $ids = array_slice($ids, 0, self::PAGE_SIZE);
+    $items = array_values($storage->loadMultiple($ids));
+    $last = $items === [] ? NULL : $items[array_key_last($items)];
+    return [
+      'items' => $items,
+      'next_cursor' => $hasMore && $last instanceof NodeInterface
+        ? $this->formatCursor((int) $last->getChangedTime(), (int) $last->id())
+        : NULL,
+    ];
   }
 
   /**
    * Finds a bounded set of candidate proposals authored by the account.
    *
-   * @return array<int, \Drupal\aculta_wiki\Entity\WikiProposal>
-   *   Candidate proposals; callers must still check Entity Access.
+   * @return array{items: array<int, \Drupal\aculta_wiki\Entity\WikiProposal>, next_cursor: string|null}
+   *   Candidate proposals and a continuation position; access is rechecked.
    */
-  private function ownProposals(AccountInterface $account): array {
+  private function ownProposals(AccountInterface $account, ?string $cursor): array {
     $storage = $this->entities->getStorage('aculta_wiki_proposal');
-    $ids = $storage->getQuery()
+    $query = $storage->getQuery()
       // Owner-scoped candidates only; every proposal is revalidated below.
       ->accessCheck(FALSE)
       ->condition('uid', $account->id())
       ->sort('changed', 'DESC')
       ->sort('id', 'DESC')
-      ->range(0, self::PAGE_SIZE)
-      ->execute();
-    return array_values($storage->loadMultiple($ids));
+      ->range(0, self::PAGE_SIZE + 1);
+    $position = $this->parseCursor($cursor);
+    if ($position !== NULL) {
+      $query->condition($query->orConditionGroup()
+        ->condition('changed', $position[0], '<')
+        ->condition($query->andConditionGroup()
+          ->condition('changed', $position[0])
+          ->condition('id', $position[1], '<')));
+    }
+    $ids = array_values($query->execute());
+    $hasMore = count($ids) > self::PAGE_SIZE;
+    $ids = array_slice($ids, 0, self::PAGE_SIZE);
+    $items = array_values($storage->loadMultiple($ids));
+    $last = $items === [] ? NULL : $items[array_key_last($items)];
+    return [
+      'items' => $items,
+      'next_cursor' => $hasMore && $last instanceof WikiProposal
+        ? $this->formatCursor((int) $last->get('changed')->value, (int) $last->id())
+        : NULL,
+    ];
+  }
+
+  /**
+   * Reads a scalar pagination cursor from the active request.
+   */
+  private function requestCursor(string $key): ?string {
+    $value = $this->requestStack->getCurrentRequest()?->query->all()[$key] ?? NULL;
+    return is_string($value) ? $value : NULL;
+  }
+
+  /**
+   * Parses a timestamp-ID keyset position; malformed cursors restart at page 1.
+   *
+   * @return array{0: int, 1: int}|null
+   *   Position or NULL when absent/invalid.
+   */
+  private function parseCursor(?string $cursor): ?array {
+    if (!is_string($cursor) || preg_match('/^([0-9]{1,12})-([1-9][0-9]{0,12})$/D', $cursor, $parts) !== 1) {
+      return NULL;
+    }
+    return [(int) $parts[1], (int) $parts[2]];
+  }
+
+  /**
+   * Formats the keyset position for either owner-scoped listing.
+   */
+  private function formatCursor(int $changed, int $id): string {
+    return $changed . '-' . $id;
+  }
+
+  /**
+   * Creates a normal GET continuation link in the account-purpose Domain.
+   *
+   * Other list cursors are preserved so each section can advance independently.
+   *
+   * @param string $label
+   *   Link label.
+   * @param string $cursorKey
+   *   Query argument associated with the list.
+   * @param string $cursor
+   *   New position.
+   *
+   * @return array<string, mixed>|null
+   *   Renderable link or NULL when the account Domain is unavailable.
+   */
+  private function nextPageLink(\Stringable|string $label, string $cursorKey, string $cursor): ?array {
+    $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    if ($url === NULL) {
+      return NULL;
+    }
+    $requestQuery = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
+    $query = [];
+    foreach (['wiki_node_cursor', 'wiki_proposal_cursor'] as $key) {
+      if (isset($requestQuery[$key]) && is_string($requestQuery[$key])) {
+        $query[$key] = $requestQuery[$key];
+      }
+    }
+    $query[$cursorKey] = $cursor;
+    $url->setOption('query', $query);
+    return Link::fromTextAndUrl($label, $url)->toRenderable();
   }
 
   /**

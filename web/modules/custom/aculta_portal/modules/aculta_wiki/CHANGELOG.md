@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.47 — paginar Meu Trabalho na WE SATIVA
+
+- Verbetes e propostas próprios têm cursores keyset independentes por
+  `changed` e ID, ordenação estável e 20 candidatos por página. Entity Access
+  continua revalidado por item no purpose Wiki; cursores não concedem acesso.
+- Links GET preservam o outro cursor e usam o Domain da conta. Cache inclui
+  `url.query_args:wiki_node_cursor` e `url.query_args:wiki_proposal_cursor`.
+  Paginação funciona sem JavaScript.
+- Kernel MariaDB focal combinado: 2 testes / 84 asserções; 200 depreciações
+  Drupal/Core/contrib e 3 PHPUnit. Runtime não foi alterado.
+
 ## 0.1.0-dev.46 — validar revisão pendente e falha sem Domain
 
 - No bootstrap real Wiki + Image + Portal + Index, revisão pendente não padrão
