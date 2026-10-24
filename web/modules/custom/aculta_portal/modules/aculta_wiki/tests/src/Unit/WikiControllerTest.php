@@ -250,6 +250,36 @@ final class WikiControllerTest extends UnitTestCase {
   }
 
   /**
+   * The complete search caps long input before escaping/query construction.
+   */
+  public function testSearchTruncatesTermToMaximumLength(): void {
+    $term = str_repeat('x', SearchPageController::MAX_CHARS + 20);
+    $cappedTerm = mb_substr($term, 0, SearchPageController::MAX_CHARS);
+    $account = $this->createMock(AccountInterface::class);
+    $conditionGroup = $this->createMock(ConditionInterface::class);
+    $conditionGroup->method('condition')->willReturnSelf();
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(TRUE)->willReturnSelf();
+    $query->method('addMetaData')->with('account', $account)->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->with(0, 30)->willReturnSelf();
+    $query->method('sort')->with('title')->willReturnSelf();
+    $query->method('orConditionGroup')->willReturn($conditionGroup);
+    $query->method('execute')->willReturn([]);
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->method('getQuery')->willReturn($query);
+    $nodeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('escapeLike')->with($cappedTerm)->willReturn($cappedTerm);
+
+    $build = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
+      ->search(Request::create('/wiki/busca', 'GET', ['q' => $term]));
+
+    self::assertSame('component', $build['empty']['#type']);
+    self::assertArrayNotHasKey('results', $build);
+  }
+
+  /**
    * Prévia pede pelo menos o mínimo de caracteres e não é cacheável.
    */
   public function testPreviewRejectsShortTerm(): void {

@@ -1332,3 +1332,8 @@
 - A busca completa ainda precisa de teste próprio do limite; contagem renderizada
   da prévia segue pendente. Nenhuma alteração em Runtime ou comportamento de UI.
 
+## 0.1.0-dev.99 — cobrir o limite da busca completa
+
+- `WikiControllerTest` garante o truncamento para `MAX_CHARS` antes de escapar
+  e consultar; suite focal passou (11 testes / 70 asserções). Runtime intocado.
+

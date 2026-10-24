@@ -215,8 +215,8 @@ depois da importação de configuração no servidor de testes.
 | Componente | Tipo | Cenários | Estado |
 | --- | --- | --- | --- |
 | `WikiController::home` | Unit / Kernel | Página inicial responde 200 no purpose `wiki`; sem blocos quando o purpose é outro | parcial: Unit cobre CTA por `createAccess()`; resposta por purpose ainda pendente |
-| `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado e acesso/cache de grants | aprovado (`WikiControllerTest` 10 testes / 59 asserções; limite da rota completa ainda sem teste explícito) |
-| `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 10/59; contagem textual renderizada segue sem teste) |
+| `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado, truncamento em `MAX_CHARS` e acesso/cache de grants | aprovado (`WikiControllerTest` 11 testes / 70 asserções) |
+| `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 11/70; contagem textual renderizada segue sem teste) |
 | `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | aprovado (4 testes / 18 asserções) |
 | Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
 

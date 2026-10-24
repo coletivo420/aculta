@@ -4,13 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.98**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.99**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.99 — limite na busca completa
+
+O Unit da busca completa agora garante que uma query excedente é truncada para
+`MAX_CHARS` antes de `escapeLike()` e da construção da Entity Query. Com os
+cenários da prévia e entrada malformada, `WikiControllerTest` passou em 11/70.
+Runtime intocado.
 
 ### Incremento dev.98 — limite e acesso dos resultados da prévia
 

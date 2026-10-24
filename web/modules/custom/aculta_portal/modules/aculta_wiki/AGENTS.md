@@ -30,6 +30,9 @@
 
 # Wiki — instruções locais
 
+- Dev.99: Unit garante truncamento de query longa da busca em `MAX_CHARS`
+  antes do escape/Entity Query; `WikiControllerTest` 11/70.
+
 - Dev.98: `WikiControllerTest` cobre limite/Entity Access/links da prévia
   (10/59); busca completa ainda sem teste do limite. Runtime intocado.
 
