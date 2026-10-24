@@ -27,6 +27,19 @@ final class StudioExperienceManager {
     $this->providers[$id] = $provider;
   }
 
+  /**
+   * Registered providers in their configured order.
+   *
+   * Availability, authorization and route existence must still be checked
+   * by consumers; this inventory grants no permissions.
+   *
+   * @return array<string, \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface>
+   *   Providers keyed by stable experience ID.
+   */
+  public function all(): array {
+    return $this->providers;
+  }
+
   public function get(string $id): ?StudioExperienceProviderInterface {
     return $this->providers[$id] ?? NULL;
   }
