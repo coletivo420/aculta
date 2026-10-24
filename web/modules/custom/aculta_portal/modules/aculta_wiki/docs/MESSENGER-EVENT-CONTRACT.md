@@ -1,7 +1,7 @@
 # Contrato Wiki → ACULTA Messenger — avisos editoriais
 
-**Estado:** escopo funcional Wiki v1 decidido; API consumidora aguarda revisão do
-owner `aculta_messenger`.
+**Estado:** eventos e fila Wiki implementados; integração de entrega depende do
+contrato público genérico de registro de avisos do `aculta_messenger`.
 **Escopo:** avisos pessoais no site. Os e-mails transacionais da Wiki continuam
 ativos e independentes; este contrato não os substitui.
 
@@ -71,11 +71,11 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
   precisa deduplicar.
 - O consumidor persiste um aviso por destinatário e versão do evento. Repetir a
   mesma entrega não cria outro aviso; uma decisão posterior é outro evento.
-- A API pública do Messenger para registrar avisos ainda não está definida. O
-  owner deve fornecer o contrato de escrita/idempotência correspondente aos
-  hooks de leitura/contagem já existentes; a integração não deve escrever
-  diretamente na entidade privada de avisos do Fórum nem usar a API do adapter
-  LMS como se fosse transversal.
+- `MessengerNoticePublisherInterface` publica envelopes para consumidores; ele
+  não persiste avisos por si só. O Messenger ainda precisa publicar um contrato
+  genérico para registro/idempotência e leitura/contagem. A Wiki não deve gravar
+  diretamente na entidade `aculta_aviso` específica do Fórum nem usar a API de
+  registro do adapter LMS como se fosse transversal.
 - O envio do evento não reverte a decisão editorial já confirmada. Falhas ficam
   registradas e o item continua pendente para retry, sem busy-loop na mesma
   execução de cron.
@@ -99,6 +99,6 @@ isolado confirmou que rollback também remove o item (1/8). Uma
 exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
 limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
 exceção e conserva o item. Assim, o fluxo ainda não entrega avisos de site: o
-consumer Messenger e sua API pública de gravação/idempotência precisam ser
-implementados antes de habilitar processamento funcional. Os notifiers de
-e-mail atuais continuam independentes.
+contrato genérico de registro e o consumer Messenger precisam ser implementados
+antes de habilitar processamento funcional. Os notifiers de e-mail atuais
+continuam independentes.

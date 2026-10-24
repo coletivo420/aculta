@@ -15,16 +15,19 @@ diretamente.
 
 ## Próximas fases Wiki ↔ Messenger — avisos editoriais
 
-Estas fases complementam o roadmap editorial, dependem do contrato mínimo
-publicado em `aculta_messenger 0.1.1-dev.79` e não autorizam criar uma inbox ou
-armazenamento paralelo. Seguir conteúdo significa receber avisos conforme
-acesso e preferências; nunca cria conversa ou grupo.
+Estas fases complementam o roadmap editorial. `aculta_messenger 0.1.1-dev.90`
+já oferece um envelope/event publisher compartilhado, mas esse publisher apenas
+despacha fatos: não persiste avisos genéricos. Antes da integração funcional, o
+Messenger precisa expor o contrato compartilhado de registro/idempotência e a
+Wiki precisa de um adapter consumidor que revalide destinatário e acesso. Não
+criar inbox ou armazenamento paralelo. Seguir conteúdo significa receber avisos
+conforme acesso e preferências; nunca cria conversa ou grupo.
 
 | Fase | Trabalho | Critério de aceite |
 | --- | --- | --- |
-| **W-MSG1 — fechar contrato e consumidores** | Revisar `MESSENGER-EVENT-CONTRACT.md` contra `MessengerNoticeEvent` e registrar um consumer Wiki idempotente, preservando a fila durável e o retry atual. | Envelope allowlisted, chave estável por evento/revisão/destinatário, falha retentável e nenhum evento descartado sem confirmação. |
-| **W-MSG2 — destinatário e autorização** | Resolver autoria da proposta e editores elegíveis para revisão; revalidar status, revisão publicada, permissões, Domain/purpose e acesso na geração e abertura do aviso. | Autores/editores inelegíveis não recebem aviso; rascunhos e revisões inacessíveis não vazam em links, contagens ou e-mail. |
-| **W-MSG3 — entrega sem duplicação** | Usar a persistência e API de central suportadas pelo Messenger/Drupal existentes, mantendo os e-mails transacionais atuais via Mailer conforme política. Não criar entidade de aviso, inbox ou transporte SMTP Wiki. | Reprocessamento não duplica; opt-out de e-mail não elimina aviso no site; transporte de teste comprova preferências e digest aplicáveis. Bloquear adapter se não houver API de gravação compatível, documentando a dependência concreta. |
+| **W-MSG1 — contrato de registro compartilhado** | Fechar com o owner do Messenger uma API pública para registrar avisos por destinatário, usando o publisher/envelope existente para transportar fatos; não gravar diretamente na entidade `aculta_aviso` nem reutilizar a API específica do adapter Forum/LMS. | Contrato versionado define deduplicação, preferência de canal, leitura/contagem, revalidação de acesso, falhas retentáveis e armazenamento existente; compatibilidade testada sem nova entidade/inbox. |
+| **W-MSG2 — adapter consumidor e autorização** | Adaptar os eventos Wiki enfileirados ao contrato compartilhado; resolver autoria da proposta e editores elegíveis para revisão; revalidar status, revisão publicada, permissões, Domain/purpose e acesso na geração e abertura do aviso. | Autores/editores inelegíveis não recebem aviso; rascunhos e revisões inacessíveis não vazam em links, contagens ou e-mail; replay idempotente preserva fila em falha. |
+| **W-MSG3 — entrega sem duplicação** | Usar a persistência e API de central suportadas pelo Messenger/Drupal existentes, mantendo os e-mails transacionais atuais via Mailer conforme política. Não criar entidade de aviso, inbox ou transporte SMTP Wiki. | Reprocessamento não duplica; opt-out de e-mail não elimina aviso no site; transporte de teste comprova preferências aplicáveis. |
 | **W-MSG4 — caracterização e homologação** | Cobrir Kernel/integração de fila e consumer; testar aprovação, ajustes solicitados, revisão pública, revogação de acesso, retry, histórico e adapter opcional desabilitado. | Testes reproduzíveis aprovados; Runtime/browser só registrados após execução autorizada e com evidência separada. |
 
 **Fora do escopo:** chat automático por verbete, membership de thread derivada de
@@ -44,10 +47,10 @@ do consumer ou sua ausência deixa o item para nova tentativa depois do lease de
 60 segundos, sem limite de tentativas e sem retry imediato. Os e-mails atuais
 permanecem independentes. Unit passou 18/73 e o Kernel da fila 1/8. A tentativa
 de Kernel abrangente da decisão parou após 94 asserções porque o Studio paralelo
-não registrou `aculta_studio.tab_manager`. O publisher público mínimo do Messenger já existe em
-`aculta_messenger 0.1.1-dev.79`, mas o consumer Wiki e a persistência de aviso
-ainda não estão integrados; sem consumer registrado, o worker conserva a fila
-e nenhum aviso de site é entregue.
+não registrou `aculta_studio.tab_manager`. O publisher de eventos do Messenger
+está disponível em `aculta_messenger 0.1.1-dev.90`, mas o consumer Wiki e o
+contrato público de registro genérico de aviso ainda não estão integrados; sem
+consumer registrado, o worker conserva a fila e nenhum aviso de site é entregue.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -69,10 +72,11 @@ O payload carrega UUID/revisão e os dados mínimos de destinatário/estado; a
 identificação e o acesso são revalidados pelo consumer. A decisão do responsável
 é manter e-mails transacionais e adicionar avisos pessoais no site, com fila
 persistente/retry e deduplicação. A especificação está em
-[`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor e QueueWorker Wiki foram implementados em dev.113; o publisher
-público do Messenger está disponível, mas falta o consumer que mapeie o contrato
-a uma persistência já suportada e revalide acesso. A revisão de integração deve
-confirmar a idempotência e a elegibilidade do destinatário antes de ativar entrega.
+[`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor e o
+QueueWorker Wiki foram implementados em dev.113; o publisher de eventos do
+Messenger está disponível, mas falta o contrato público de registro genérico e
+o consumer que mapeie o evento a uma persistência suportada e revalide acesso.
+A revisão deve confirmar idempotência e elegibilidade antes de ativar entrega.
 
 ### Incremento dev.110 — CTA para o início WE SATIVA
 

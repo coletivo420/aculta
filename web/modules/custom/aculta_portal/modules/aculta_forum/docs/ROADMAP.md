@@ -18,16 +18,20 @@ reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 **Base inspecionada:** `aculta_forum 0.1.0-dev.281`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
-administrativas já possuem implementações e testes. `aculta_messenger 0.1.1-dev.88` publica pelo contrato compartilhado os avisos de Comment, primeira publicação de ForumPost e revisão de tópico; o consumer preserva o ledger/`aculta_aviso` e revalida acesso. Kernel MariaDB cobre round-trip/replay dos três eventos, autor próprio e revogação de acesso entre publicação e consumo; Runtime e comparação de digest permanecem pendentes. As fases técnicas
-**F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
-mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.88` mantém os avisos existentes
-e publica Comments, primeira publicação de ForumPost e revisões de tópico por
-`MessengerNoticeEvent`/`MessengerNoticePublisherInterface`; o LMS consome quatro
-tipos. A prova do ciclo Fórum pelo publisher cobre os três tipos em Kernel
-MariaDB e revalida a autorização no consumo; comparação de digest e Runtime
-continuam pendentes. Verificar a versão do HEAD e o estado do Runtime antes de
-cada intervenção.
+administrativas já possuem implementações e testes. `aculta_messenger
+0.1.1-dev.90` publica pelo contrato compartilhado os avisos de Comment,
+primeira publicação de ForumPost e revisão de tópico; o consumer preserva o
+ledger/`aculta_aviso` e revalida acesso. Kernel MariaDB previamente executado
+cobre round-trip/replay dos três eventos, autoria própria, revogação de acesso
+entre publicação e consumo e agregação do resumo diário com Mailer mockado.
+Unit Messenger cobre também a leitura de tópico com parâmetro `NodeInterface`
+upcast pelo Router. Runtime permanece pendente.
+
+As fases técnicas **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas
+como concluídas, mas a funcionalidade permanece **desligada por padrão** e sem
+autorização de ativação produtiva. O LMS consome quatro tipos pelo envelope
+compartilhado. Verificar a versão do HEAD e o estado do Runtime antes de cada
+intervenção.
 
 ### Diretrizes de produto e limites
 
