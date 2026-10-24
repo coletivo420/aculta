@@ -7,20 +7,30 @@ namespace Drupal\Tests\aculta_messenger\Integration\Wiki\Kernel;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\NullLogger;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests Wiki event delivery through real shared Message storage. */
@@ -38,6 +48,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     'filter',
     'options',
     'message',
+    'node',
   ];
 
   /**
@@ -47,7 +58,26 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('message');
-    $this->installConfig(['system', 'user', 'filter', 'message']);
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
+    $this->installConfig(['system', 'user', 'filter', 'message', 'node']);
+    NodeType::create([
+      'type' => 'wiki_entry',
+      'name' => 'Wiki entry',
+      'new_revision' => TRUE,
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'moderation_state',
+      'type' => 'string',
+      'settings' => ['max_length' => 32],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'moderation_state',
+      'bundle' => 'wiki_entry',
+      'label' => 'Moderation state',
+    ])->save();
     MessageTemplate::create([
       'template' => WikiNoticeManager::TEMPLATE,
       'label' => 'Wiki notice',
@@ -132,6 +162,67 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Central read state rejects a superseded Wiki source.
+   */
+  public function testCentralReadStateChangesForCurrentReviewerOnly(): void {
+    $reviewer = $this->createUser();
+    $role = Role::create(['id' => 'wiki_reviewer', 'label' => 'Wiki reviewer']);
+    foreach ([
+      'edit any wiki_entry content',
+      'use wiki_editorial transition review_to_draft',
+      'use wiki_editorial transition review_to_published',
+      'view all wiki_entry revisions',
+    ] as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+    $reviewer->addRole($role->id());
+    $reviewer->save();
+
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete em revisão',
+      'uid' => $reviewer->id(),
+      'status' => 1,
+      'moderation_state' => 'review',
+    ]);
+    $entry->save();
+
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $event = new MessengerNoticeEvent(
+      'wiki.review_requested',
+      'aculta_wiki',
+      'node',
+      (string) $entry->uuid(),
+      (string) $entry->getRevisionId(),
+      (int) $reviewer->id(),
+      'wiki',
+      new \DateTimeImmutable('2026-10-24T12:00:00+00:00'),
+      'wiki:review_requested:' . $entry->uuid() . ':' . $entry->getRevisionId() . ':' . $reviewer->id(),
+      ['notice_type' => 'review_requested', 'mail_policy' => 'user_preference'],
+    );
+    $message = $manager->record($event);
+    self::assertNotNull($message);
+    self::assertSame(0, (int) $message->get('field_aculta_wiki_read')->value);
+
+    $central = new NoticeReadStateManager(
+      $this->container->get('entity_type.manager'),
+      ['wiki' => $manager],
+    );
+    self::assertTrue($central->setRead((int) $message->id(), $reviewer, TRUE));
+    $storage = $this->container->get('entity_type.manager')->getStorage('message');
+    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+
+    $entry->set('moderation_state', 'published');
+    $entry->setNewRevision(TRUE);
+    $entry->save();
+    self::assertFalse($central->setRead((int) $message->id(), $reviewer, FALSE));
+    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+  }
+
+  /**
    * Creates an active account for the notice recipient.
    */
   private function createUser(): User {
@@ -165,17 +256,41 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   /**
    * Creates the real Message manager with isolated dependencies.
    */
-  private function manager(AvisoPreferenciasInterface $preferences, ?QueueFactory $queueFactory = NULL): WikiNoticeManager {
+  private function manager(
+    AvisoPreferenciasInterface $preferences,
+    ?QueueFactory $queueFactory = NULL,
+    ?DomainPurposeManager $domainPurposes = NULL,
+  ): WikiNoticeManager {
     $queueFactory ??= $this->createMock(QueueFactory::class);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     return new WikiNoticeManager(
       $this->container->get('entity_type.manager'),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      $domainPurposes ?? (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
       $preferences,
       $queueFactory,
       $lock,
       new NullLogger(),
+    );
+  }
+
+  /**
+   * Builds canonical Wiki URLs without enabling the Domain module.
+   */
+  private function domainPurposeManager(): DomainPurposeManager {
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('isHttps')->willReturn(FALSE);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('wiki420_aculta_org')->willReturn($domain);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('domain')->willReturn($domainStorage);
+    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $negotiator->method('getActiveDomain')->willReturn(NULL);
+    return new DomainPurposeManager(
+      $entities,
+      $negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
     );
   }
 

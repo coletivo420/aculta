@@ -2,7 +2,9 @@
 
 A correlação do resumo do Fórum agora inclui a geração monotônica do tópico, calculada em uma consulta agrupada ao ledger de eventos já existente. Um evento novo no mesmo tópico e tipo recebe outra correlação mesmo quando a contagem pendente volta a 1; replay do mesmo evento continua usando a geração anterior. Não há tabela nova nem update de schema.
 
-Validação: Kernel MariaDB `ForumNoticeIdempotency` 30/677 PASS, incluindo aprovação do Comment mais antigo depois do novo, com contagem pendente repetida e correlações distintas entre os dois digests. Unit Messenger 133/791 e Integration Messenger 62/622 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos da implementação PASS. Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit. Gate Drupal 11+, índice e `git diff --check` PASS. Sem Runtime, transporte externo ou stress de processos independentes.
+Validação: Kernel MariaDB `ForumNoticeIdempotency` 30/677 PASS, incluindo aprovação do Comment mais antigo depois do novo, com contagem pendente repetida e correlações distintas entre os dois digests. Unit Messenger 133/791 e Integration Messenger 64/672 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos da implementação PASS. Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit. Gate Drupal 11+, índice e `git diff --check` PASS. Sem Runtime, transporte externo ou stress de processos independentes.
+
+A central também ganhou caminhos positivos de leitura/releitura para Wiki e LMS no Kernel: ambos passam pelo `NoticeReadStateManager`, persistem o campo do `Message` real e negam alteração depois da revogação da fonte. Wiki usa revisão de Node real; LMS isola os objetos de matrícula/curso, mantendo manager, dispatcher, usuário e armazenamento `Message` reais. A suíte Integration após estes testes: 64/672 PASS, com 2 deprecações Core/contrib e 7 notices PHPUnit. Não houve Runtime/browser.
 
 ## 0.1.1-dev.137 — filtrar leitura antes do limite da central — 2026-10-24
 
