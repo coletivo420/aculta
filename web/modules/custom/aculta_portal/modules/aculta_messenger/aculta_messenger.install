@@ -72,3 +72,16 @@ function aculta_messenger_update_10003(): void {
 function aculta_messenger_update_10004(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Adds stable Mailer correlation IDs to the existing Forum event ledger.
+ */
+function aculta_messenger_update_10005(): void {
+  $table = ForumNoticeEventSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists($table) || $schema->fieldExists($table, 'email_correlation')) {
+    return;
+  }
+  $definition = ForumNoticeEventSchema::definition();
+  $schema->addField($table, 'email_correlation', $definition['fields']['email_correlation']);
+}

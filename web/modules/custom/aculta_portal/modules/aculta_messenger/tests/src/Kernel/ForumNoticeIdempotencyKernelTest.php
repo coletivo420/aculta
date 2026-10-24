@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
@@ -23,10 +24,12 @@ use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\flag\FlagInterface;
@@ -43,6 +46,7 @@ use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Psr\Log\LoggerInterface;
 
 /**
  * Fixes the no-duplicate notice behavior of the existing Forum events.
@@ -750,18 +754,64 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $database = $this->container->get('database');
     $schema = $database->schema();
     $table = ForumNoticeEventSchema::TABLE;
-    foreach (['email_status', 'email_attempts', 'email_updated'] as $field) {
+    foreach (['email_status', 'email_attempts', 'email_correlation', 'email_updated'] as $field) {
       $schema->dropField($table, $field);
     }
     $schema->dropIndex($table, 'email_status');
 
     aculta_messenger_update_10002();
     aculta_messenger_update_10002();
+    aculta_messenger_update_10005();
+    aculta_messenger_update_10005();
 
     self::assertTrue($schema->fieldExists($table, 'email_status'));
     self::assertTrue($schema->fieldExists($table, 'email_attempts'));
+    self::assertTrue($schema->fieldExists($table, 'email_correlation'));
     self::assertTrue($schema->fieldExists($table, 'email_updated'));
     self::assertTrue($schema->indexExists($table, 'email_status'));
+  }
+
+  /**
+   * Outbox retries preserve one valid Mailer correlation ID for an event.
+   */
+  public function testOutboxClaimKeepsCorrelationIdAcrossRetries(): void {
+    $database = $this->container->get('database');
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $id = (int) $database->insert(ForumNoticeEventSchema::TABLE)
+      ->fields([
+        'uid' => 35,
+        'event_type' => 'comment',
+        'event_id' => 810,
+        'nid' => 72,
+        'created' => $now,
+        'email_status' => 'queued',
+        'email_attempts' => 0,
+        'email_correlation' => '',
+        'email_updated' => $now,
+      ])
+      ->execute();
+
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $this->createMock(QueueFactory::class),
+      $this->container->get('datetime.time'),
+      $this->createConfiguredMock(UuidInterface::class, ['generate' => '01234567-89ab-4cde-8fab-0123456789ab']),
+      $this->createMock(LoggerInterface::class),
+    );
+    $firstClaim = $outbox->claim($id);
+    self::assertNotNull($firstClaim);
+    $correlation = (string) $firstClaim['email_correlation'];
+    self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $correlation);
+    self::assertSame(1, (int) $firstClaim['email_attempts']);
+
+    $database->update(ForumNoticeEventSchema::TABLE)
+      ->fields(['email_updated' => $now - 601])
+      ->condition('id', $id)
+      ->execute();
+    $retryClaim = $outbox->claim($id);
+    self::assertNotNull($retryClaim);
+    self::assertSame($correlation, $retryClaim['email_correlation']);
+    self::assertSame(2, (int) $retryClaim['email_attempts']);
   }
 
   /**

@@ -87,7 +87,7 @@ services:
       - { name: event_subscriber }
   aculta_messenger.forum_notice_email_outbox:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox
-    arguments: ['@database', '@queue', '@datetime.time', '@logger.channel.aculta_messenger']
+    arguments: ['@database', '@queue', '@datetime.time', '@uuid', '@logger.channel.aculta_messenger']
   Drupal\aculta_messenger\Hook\ForumNoticeEmailHooks:
     class: Drupal\aculta_messenger\Hook\ForumNoticeEmailHooks
     arguments: ['@aculta_messenger.forum_notice_email_outbox']

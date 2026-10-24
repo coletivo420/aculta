@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\QueueFactory;
 use Psr\Log\LoggerInterface;
@@ -37,6 +38,7 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
     private readonly Connection $database,
     private readonly QueueFactory $queueFactory,
     private readonly TimeInterface $time,
+    private readonly UuidInterface $uuid,
     private readonly LoggerInterface $logger,
   ) {}
 
@@ -70,11 +72,15 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
     if ($record === NULL) {
       return NULL;
     }
+    $fields = [
+      'email_status' => self::STATUS_PROCESSING,
+      'email_updated' => $now,
+    ];
+    if ((string) ($record['email_correlation'] ?? '') === '') {
+      $fields['email_correlation'] = $this->uuid->generate();
+    }
     $update = $this->database->update(ForumNoticeEventSchema::TABLE)
-      ->fields([
-        'email_status' => self::STATUS_PROCESSING,
-        'email_updated' => $now,
-      ])
+      ->fields($fields)
       ->expression('email_attempts', 'email_attempts + 1')
       ->condition('id', $id);
     if ($record['email_status'] === self::STATUS_QUEUED) {

@@ -66,6 +66,12 @@ final class ForumNoticeEventSchema {
           'not null' => TRUE,
           'default' => 0,
         ],
+        'email_correlation' => [
+          'type' => 'varchar',
+          'length' => 36,
+          'not null' => TRUE,
+          'default' => '',
+        ],
         'email_updated' => [
           'type' => 'int',
           'unsigned' => TRUE,

@@ -1,3 +1,15 @@
+## 0.1.1-dev.104 — persistir correlação UUID do e-mail direto do Fórum — 2026-10-24
+
+- O outbox do Fórum gera um UUID v4 ao reivindicar pela primeira vez uma
+  tentativa e o preserva para replays. `ForumNoticeEmailWorker` envia esse
+  correlation ID aceito pelo contrato do ACULTA Mailer; exceção do transporte
+  atualiza o estado retryable/terminal conforme o contador do ledger existente.
+- Update aditivo `10005` cria a coluna no ledger atual, sem nova tabela. Unit do
+  worker: 2 testes / 33 assertions; Kernel de update idempotente e correlação
+  estável entre claims: 2 / 39 PASS. Kernel completo ForumNoticeIdempotency:
+  26 testes / 581 assertions; Units Messenger + adapters: 126 / 765 PASS.
+  Runtime não atualizado.
+
 ## 0.1.1-dev.103 — encerrar retries de LMS e Doações com estado terminal — 2026-10-24
 
 - Exceções de transporte do Mailer agora consomem tentativas em LMS e Doações.

@@ -135,13 +135,19 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     $summary = $category === Aviso::TIPO_ATUALIZACAO
       ? 'Um tópico que você segue foi atualizado.'
       : 'Uma resposta foi publicada em um tópico que você segue.';
-    $result = $this->mailer->deliver(new MailMessage(
-      ForumNoticeMailType::ID,
-      (string) $recipient->getEmail(),
-      'pt-br',
-      ['summary' => $summary, 'url' => $url->toString()],
-      'forum-notice-' . (int) $event['id'],
-    ));
+    try {
+      $result = $this->mailer->deliver(new MailMessage(
+        ForumNoticeMailType::ID,
+        (string) $recipient->getEmail(),
+        'pt-br',
+        ['summary' => $summary, 'url' => $url->toString()],
+        (string) $event['email_correlation'],
+      ));
+    }
+    catch (\Throwable) {
+      $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);
+      return;
+    }
     if ($result->sent) {
       $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_SENT);
       return;
