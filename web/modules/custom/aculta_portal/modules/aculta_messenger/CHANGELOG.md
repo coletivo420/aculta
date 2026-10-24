@@ -7,7 +7,8 @@ adicional. A falha por interrupção do processo entre salvar a mensagem e criar
 periódico.
 
 Validação: `FriendshipNoticeSubscriberTest` 7/82 e suíte Unit Messenger 127/737 PASS; PHPCS Drupal/DrupalPractice e
-PHP lint PASS. Sem Kernel de fila ou Runtime nesta microfase.
+PHP lint PASS. Regressão do digest no MariaDB: ForumNoticeIdempotency Kernel 28/633 PASS; deduplicação persistida
+do Mailer: AcultaMailer Kernel 3/15 PASS. Sem Kernel específico da fila de amizade ou Runtime nesta microfase.
 
 ## 0.1.1-dev.134 — alinhar lease do digest ao transporte — 2026-10-24
 
