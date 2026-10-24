@@ -23,6 +23,10 @@
   porque a rota/provider e `aculta_wiki.contributor_workspace` não estão no
   container ativo; 0/2 verificações. Sem `drush cr`/Runtime write, a interface
   visual segue sem homologação. Script limita-se a GET e não envia formulários.
+- Regressão da fila editorial de revisões ampliada: 26 candidatos sem grant não
+  ocultam nem deslocam 26 revisões autorizadas paginadas em 25+1. A segunda
+  página termina sem cursor e todos os itens são as revisões atuais. Kernel
+  MariaDB focal: 1/101; 198 depreciações Core/contrib e 2 PHPUnit.
 
 ## 0.1.0-dev.76 — submissão real da imagem pelo Form API
 

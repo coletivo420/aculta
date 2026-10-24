@@ -7,6 +7,10 @@
 - Smoke visual WE SATIVA: script Firefox ESR visível adicionado. O Runtime de
   teste não registra a rota/provider nem o serviço `aculta_wiki` no container;
   rebuild necessário aguarda autorização. Não tente contornar via HTTP/cache.
+- Fila editorial R3: Kernel MariaDB agora cobre 26 revisões autorizadas em duas
+  páginas depois de 26 candidatos sem grant; 1/101, 198 depreciações
+  Core/contrib e 2 PHPUnit. Nenhum resultado duplicado/perdido; container
+  Runtime intocado.
 
 - Dev.77: formulário `wiki_entry` oferece retorno para o workspace somente com
   rota Studio disponível e `WikiContributorWorkspace::access()` permitido;

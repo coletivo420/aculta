@@ -30,6 +30,11 @@ pendentes, está em
   Requer rebuild do container para validar a integração visual; não foi
   executado sem autorização. Evidências temporárias em `/tmp/aculta-wiki-we-sativa`.
 
+- Fila editorial de revisões: regressão Kernel MariaDB cobre 26 candidatos sem
+  grant seguidos por 26 revisões autorizadas, duas páginas 25+1, sem perda ou
+  repetição e apenas VIDs atuais. Focal: 1/101; 198 depreciações Core/contrib e
+  2 PHPUnit.
+
 - `0.1.0-dev.76`: envio de imagem pelo formulário Node/Form API real passou em
   Kernel MariaDB. Upload `managed_file` resulta em Media privada para Node
   `draft`; classe de ciclo da imagem: 23/1.036, PHP lint e PHPCS aprovados.

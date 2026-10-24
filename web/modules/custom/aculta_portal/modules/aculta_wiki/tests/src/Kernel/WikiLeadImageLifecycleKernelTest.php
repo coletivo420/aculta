@@ -32,6 +32,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeInterface;
 use Drupal\node\NodeAccessRebuild;
 use Drupal\node\NodeGrantsHelper;
 use Drupal\taxonomy\Entity\Term;
@@ -2449,7 +2450,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   /**
    * Pending Wiki Node revisions are queried under Wiki grants and exact VID.
    */
-  public function testEditorialQueueReturnsAuthorizedLatestReviewRevision(): void {
+  public function testEditorialQueuePaginatesAuthorizedRevisionsPastDeniedCandidates(): void {
     $this->installEntitySchema('content_moderation_state');
     $this->installConfig(['workflows', 'content_moderation']);
     $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
@@ -2554,6 +2555,21 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])->save();
     $grantReviewer = new UserSession(['uid' => 4, 'roles' => ['authenticated', 'wiki_queue_grant_reviewer_test']]);
     $this->container->get('current_user')->setAccount($submitter);
+    for ($index = 0; $index < 25; $index++) {
+      $authorized = Node::create([
+        'type' => 'wiki_entry',
+        'title' => 'Verbete autorizado para revisão ' . $index,
+        'uid' => 5,
+        'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+        'field_wiki_test_grant_uid' => 4,
+        'body' => ['value' => 'Texto autorizável', 'format' => 'plain_text'],
+        'moderation_state' => 'draft',
+      ]);
+      $authorized->save();
+      $authorized->setNewRevision(TRUE);
+      $authorized->set('moderation_state', 'review');
+      $authorized->save();
+    }
     for ($index = 0; $index < 26; $index++) {
       $unreadable = Node::create([
         'type' => 'wiki_entry',
@@ -2572,9 +2588,30 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     $this->container->get('current_user')->setAccount($grantReviewer);
-    $restrictedPage = $queue->entryRevisions();
-    self::assertCount(1, $restrictedPage->getItems());
-    self::assertSame($reviewRevisionId, (string) $restrictedPage->getItems()[0]->getRevisionId());
+    $firstAuthorizedPage = $queue->entryRevisions();
+    self::assertCount(25, $firstAuthorizedPage->getItems());
+    self::assertNotNull($firstAuthorizedPage->getNextCursor());
+    $firstPageIds = array_map(
+      static fn (NodeInterface $item): string => (string) $item->getRevisionId(),
+      $firstAuthorizedPage->getItems(),
+    );
+    $secondAuthorizedPage = $queue->entryRevisions($firstAuthorizedPage->getNextCursor());
+    self::assertCount(1, $secondAuthorizedPage->getItems());
+    self::assertNull($secondAuthorizedPage->getNextCursor());
+    $secondPageIds = array_map(
+      static fn (NodeInterface $item): string => (string) $item->getRevisionId(),
+      $secondAuthorizedPage->getItems(),
+    );
+    $allAuthorizedIds = array_merge($firstPageIds, $secondPageIds);
+    self::assertCount(26, array_unique($allAuthorizedIds));
+    self::assertContains($reviewRevisionId, $allAuthorizedIds);
+    foreach (array_merge($firstAuthorizedPage->getItems(), $secondAuthorizedPage->getItems()) as $revision) {
+      $latestRevisionId = $this->container->get('entity_type.manager')
+        ->getStorage('node')
+        ->getLatestRevisionId($revision->id());
+      self::assertSame((string) $latestRevisionId, (string) $revision->getRevisionId());
+      self::assertSame('review', $revision->get('moderation_state')->value);
+    }
   }
 
   /**

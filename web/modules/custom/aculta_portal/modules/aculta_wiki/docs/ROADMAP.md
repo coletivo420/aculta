@@ -44,6 +44,11 @@ provider `we_sativa` nem `aculta_wiki.contributor_workspace`. Resultado: 0/2
 checks. É necessário reconstruir o container Drupal para validar o código atual;
 isso continua pendente de autorização. Nenhuma alteração no Runtime foi feita.
 
+Na fila editorial de revisões, o Kernel agora cria 26 candidatos sem grant
+mais 26 revisões autorizadas. A consulta retorna 25+1 em cursores estáveis,
+sem duplicação ou perda, e valida que cada item é a revisão atual. MariaDB
+focal: 1 teste / 101 assertions, 198 depreciações Core/contrib e 2 PHPUnit.
+
 ### Incremento dev.76 — envio real da imagem no Form API
 
 O Kernel agora submete um verbete de autoria confirmada pelo formulário nativo

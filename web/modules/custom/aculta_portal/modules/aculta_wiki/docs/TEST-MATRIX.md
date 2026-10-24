@@ -258,7 +258,7 @@ exponha propostas nesta entrega.
 | Revisão anterior ou sem transição válida | Kernel | Não aparece na fila | cobertura parcial: revisão atual e transição válida caracterizadas |
 | Escopo de domínio | Kernel | Consulta dentro do purpose `wiki` e restaura `main` | aprovado |
 | Cache | Kernel | Metadados incluem conta, permissões, grants, domínio e cursor | aprovado |
-| Paginação da fila de revisões com candidatos inacessíveis | Kernel | Enche páginas sem pular resultados válidos | planejado |
+| Paginação da fila de revisões com candidatos inacessíveis | Kernel MariaDB | Ignora 26 candidatos negados, retorna 26 revisões autorizadas em páginas 25+1 e conserva somente a revisão atual | aprovado no HEAD (1 teste / 101 asserções; 198 depreciações Core/contrib, 2 PHPUnit) |
 | Resultado/URL da fila no Studio | Kernel/Functional | Operações só por Form API com acesso editorial | planejado |
 
 Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
