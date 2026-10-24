@@ -1,3 +1,13 @@
+## `0.1.0-dev.316` — History preservado na migração de Comments — 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` passa a criar um recibo de leitura
+  (`history` uid/tópico) antes da migração e prova que ele permanece com o
+  mesmo timestamp após importar raiz e resposta: o recibo é por Node, então a
+  conversão Comment → ForumPost não o duplica nem o apaga.
+- Fecha o item “History” da equivalência de F-M5 em dados sintéticos; flags,
+  árvore, conteúdo e embeds já tinham prova própria.
+- Testes: migração 5/165; suíte Kernel do Fórum 150/2.862; PHPCS limpo.
+
 ## `0.1.0-dev.315` — pré-visualização de anexo e mover comentário na UI — 2026-10-24
 
 - Novo teste de navegador `tests/browser/aculta-forum/synthetic-preview-and-move.py`

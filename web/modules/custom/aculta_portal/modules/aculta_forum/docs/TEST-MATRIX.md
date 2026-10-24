@@ -37,6 +37,14 @@
   obrigatória, cancelar no painel e erro sem consentimento.
 - Unit 181/1.019; Kernel do Fórum 147/2.807; PHPCS limpo.
 
+## Migração — History preservado, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (5 testes / 165 asserções, MariaDB):
+  recibo de leitura por Node (`history` uid/nid/timestamp) permanece idêntico
+  após importar raiz e resposta; dois posts criados. Recibo é por Node, não por
+  Comment, então não há duplicação nem remoção na conversão.
+- Suíte Kernel do Fórum 150/2.862; PHPCS limpo.
+
 ## Migração de Comments — equivalência de árvore aninhada, 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` (4 testes / 144 asserções, MariaDB):

@@ -49,6 +49,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     'text',
     'node',
     'comment',
+    'history',
     'language',
     'domain',
     'migrate',
@@ -111,9 +112,10 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('history', ['history']);
     $this->installConfig([
       'system', 'user', 'field', 'filter', 'text', 'node', 'comment',
-      'language', 'domain', 'migrate', 'workflows', 'content_moderation',
+      'history', 'language', 'domain', 'migrate', 'workflows', 'content_moderation',
     ]);
     ConfigurableLanguage::createFromLangcode('pt-br')->save();
 
@@ -234,6 +236,29 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
     self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $reply->id()]));
     self::assertSame([], $post_migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
+  }
+
+  /**
+   * Node-level read receipts survive the Comment-to-post migration unchanged.
+   */
+  public function testHistoryReceiptsArePreserved(): void {
+    $this->container->get('database')->insert('history')
+      ->fields(['uid' => (int) $this->author->id(), 'nid' => (int) $this->topic->id(), 'timestamp' => 1700000123])
+      ->execute();
+    $root = $this->comment('Raiz');
+    $this->comment('Resposta', $root);
+
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration(), implode("\n", $this->migrationMessages));
+
+    $row = $this->container->get('database')->select('history', 'h')
+      ->fields('h', ['uid', 'nid', 'timestamp'])
+      ->condition('h.uid', (int) $this->author->id())
+      ->condition('h.nid', (int) $this->topic->id())
+      ->execute()
+      ->fetchObject();
+    self::assertNotNull($row);
+    self::assertSame(1700000123, (int) $row->timestamp);
+    self::assertSame(2, $this->postCount());
   }
 
   /**
