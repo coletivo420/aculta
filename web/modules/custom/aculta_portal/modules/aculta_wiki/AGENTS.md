@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.69: Kernel proprietário inicia Wiki + Image + Portal + Index, descobre
+  owners reais e completa/valida/ativa geração v4 no banco dedicado (1/42; 201
+  depreciações Core/contrib). Runtime/inventário da instalação não cobertos.
+
 - Dev.68: R1 revalidada: Unit dos providers 9/40; Kernels Index provider 1/17,
   acesso 7/238 e owner/bootstrap 2/88, aprovados em MariaDB dedicada. O rebuild
   integral do inventário e a ativação Runtime seguem pendentes.

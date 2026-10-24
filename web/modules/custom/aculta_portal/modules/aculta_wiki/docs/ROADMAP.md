@@ -4,13 +4,24 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.68**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.69**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.69 — geração Wiki v4 no Kernel owner
+
+O teste Wiki-owned `WikiContentIndexRebuildKernelTest` inicia o container com
+Wiki, Image, Portal e Index reais, descobre os providers por tag e executa o
+rebuilder de produção sobre todo o conteúdo semeado. Confirma fingerprint v4,
+entrada sem `owner_uid`, projeção de metadados e relações deduplicadas de
+verbete/categoria/imagem; valida e ativa a geração isolada. MariaDB: 1 teste /
+42 asserções, 201 depreciações Core/contrib; PHP lint e PHPCS passaram. O teste
+não carrega a configuração exportada completa nem representa o inventário do
+Runtime, cuja reconstrução permanece fora do escopo sem autorização operacional.
 
 ### Incremento dev.68 — revalidar Content Index R1
 

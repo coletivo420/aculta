@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.69`: Kernel proprietário inicializa Wiki + Image + Portal + Index,
+  descobre os três providers, executa geração v4 completa para o inventário de
+  teste e valida fingerprint, campos projetados e relações (1/42; 201
+  depreciações Core/contrib). A geração é ativada somente no banco de teste;
+  instalação/inventário do Runtime não foram auditados.
+
 - `0.1.0-dev.68`: R1 revalidada no HEAD após os incrementos recentes. Unit Wiki:
   9/40 (3 depreciações PHPUnit); Kernels reais Index provider 1/17, acesso
   7/238 (201 depreciações) e owner/bootstrap 2/88 (243 depreciações), aprovados

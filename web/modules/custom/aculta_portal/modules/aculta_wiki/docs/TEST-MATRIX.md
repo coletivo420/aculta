@@ -28,6 +28,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 ## Regressão Content Index — dev.61
 
+| Geração Wiki-owned | Kernel MariaDB | Bootstrap real Wiki/Image/Portal/Index, discovery, fingerprint v4, inventário semeado, owner_uid omitido, relações deduplicadas, validação e ativação isolada | aprovado (dev.69; 1/42; 201 depreciações Core/contrib); Runtime e configuração exportada completa não cobertos |
+
 Revalidação no HEAD dev.68: Wiki Unit dos providers, 9 testes / 40 asserções
 (3 depreciações PHPUnit); Kernel provider 1/17; Kernel acesso/relações 7/238
 (201 depreciações); Kernel owner/bootstrap 2/88 (243 depreciações). Os três

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.69 — rebuild Wiki v4 em Kernel proprietário
+
+- Adicionado `WikiContentIndexRebuildKernelTest`, que inicializa os módulos
+  reais Wiki + Image + Portal + Index e descobre os owners por tag/container.
+- Uma geração isolada percorre o inventário semeado, compara fingerprint,
+  confirma `provider_version` 4 sem `owner_uid`, deduplica `related_entry` e
+  projeta categoria/imagem; valida e ativa a geração no banco dedicado.
+- MariaDB: 1 teste / 42 asserções, aprovado; 201 depreciações Core/contrib.
+  Isso não é rebuild do inventário do Runtime nem valida instalação completa.
+
 ## 0.1.0-dev.68 — revalidar integração Content Index
 
 - Reexecutados os dois testes Unit dos providers Wiki/categoria: 9 testes / 40
