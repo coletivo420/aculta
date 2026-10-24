@@ -176,6 +176,7 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('target_id')->willReturn(12);
     $node = $this->createMock(NodeInterface::class);
+    $node->method('isNew')->willReturn(TRUE);
     $node->method('bundle')->willReturn('wiki_entry');
     $node->method('hasField')->with(WikiLeadImageUploader::FIELD)->willReturn(TRUE);
     $node->method('get')->with(WikiLeadImageUploader::FIELD)->willReturn($field);

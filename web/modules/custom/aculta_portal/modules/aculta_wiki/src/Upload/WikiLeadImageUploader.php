@@ -77,6 +77,11 @@ final class WikiLeadImageUploader {
   public const ALT_MAX_LENGTH = 512;
 
   /**
+   * Hidden form value capturing the Wiki revision opened by the author.
+   */
+  public const EXPECTED_REVISION = 'aculta_wiki_expected_revision_id';
+
+  /**
    * Transaction spanning the lead Media and its Wiki Node submission.
    */
   private ?Transaction $submissionTransaction = NULL;
@@ -122,6 +127,25 @@ final class WikiLeadImageUploader {
     }
     if (!$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
       $form_state->setErrorByName($this->errorName(self::FILE), $this->t('A imagem não atende às extensões ou ao tamanho permitidos.'));
+    }
+  }
+
+  /**
+   * Rejects a Wiki edit form whose base revision is no longer current.
+   */
+  public function validateExpectedRevision(array &$form, FormStateInterface $form_state): void {
+    $formObject = $form_state->getFormObject();
+    $node = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry' || $node->isNew()) {
+      return;
+    }
+
+    $expectedRevisionId = filter_var($form_state->getValue(self::EXPECTED_REVISION), FILTER_VALIDATE_INT);
+    $current = $this->entityTypeManager->getStorage('node')->loadUnchanged($node->id());
+    if (!$current instanceof NodeInterface
+      || $expectedRevisionId === FALSE
+      || (int) $current->getRevisionId() !== $expectedRevisionId) {
+      $form_state->setErrorByName('title', $this->t('Este verbete mudou desde que você abriu o formulário. Recarregue a página para continuar com a versão atual.'));
     }
   }
 
@@ -267,6 +291,32 @@ final class WikiLeadImageUploader {
     }
 
     try {
+      $node = $formObject->getEntity();
+      if ($node instanceof NodeInterface && $node->bundle() === 'wiki_entry' && !$node->isNew()) {
+        // Lock the current Node row in the same transaction used for upload
+        // rollback. Proposal decisions use this row lock too, so a direct edit
+        // cannot race an approved proposal between comparison and save.
+        $this->submissionTransaction ??= $this->database->startTransaction();
+        $lockedId = $this->database->select('node', 'node')
+          ->fields('node', ['nid'])
+          ->condition('nid', $node->id())
+          ->forUpdate()
+          ->execute()
+          ->fetchField();
+        $current = $lockedId
+          ? $this->entityTypeManager->getStorage('node')->loadUnchanged($node->id())
+          : NULL;
+        $expectedRevisionId = filter_var($form_state->getValue(self::EXPECTED_REVISION), FILTER_VALIDATE_INT);
+        if (!$current instanceof NodeInterface
+          || $expectedRevisionId === FALSE
+          || (int) $current->getRevisionId() !== $expectedRevisionId) {
+          $this->rollbackSubmission($form_state);
+          $form_state->setErrorByName('title', $this->t('Este verbete mudou enquanto você enviava o formulário. Recarregue a página para continuar com a versão atual.'));
+          $form_state->setRebuild();
+          return;
+        }
+      }
+
       $formObject->save($form, $form_state);
     }
     catch (\Throwable $exception) {

@@ -1280,6 +1280,117 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * A stale WE SATIVA edit cannot overwrite a newer default revision.
+   */
+  public function testConcurrentWikiEditFormRejectsStaleRevision(): void {
+    ProfileType::create(['id' => 'email_confirmed', 'label' => 'Confirmed account profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'email_confirmed',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'email_confirmed',
+      'label' => 'Confirmed Wiki author test',
+      'permissions' => ['access content', 'edit own wiki_entry content'],
+    ])->save();
+    $author = User::create([
+      'name' => 'wiki-concurrent-author',
+      'status' => TRUE,
+      'roles' => ['email_confirmed'],
+    ]);
+    $author->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+    $this->container->get('current_user')->setAccount($author);
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+
+    $nodeType = NodeType::load('wiki_entry');
+    self::assertInstanceOf(NodeType::class, $nodeType);
+    $nodeType->setNewRevision(TRUE);
+    $nodeType->save();
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Versão aberta pela autora',
+      'status' => TRUE,
+      'uid' => $author->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $entry->setNewRevision(TRUE);
+    $entry->save();
+    $openedRevisionId = (int) $entry->getRevisionId();
+
+    EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'wiki_entry',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])->setComponent('body', ['type' => 'text_textarea_with_summary'])->save();
+    $formObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');
+    $formObject->setEntity(Node::load($entry->id()));
+    $formState = new FormState();
+    $formState->setFormObject($formObject);
+    $formBuilder = $this->container->get('form_builder');
+    $form = $formBuilder->buildForm($formObject, $formState);
+    self::assertSame($openedRevisionId, (int) $form[WikiLeadImageUploader::EXPECTED_REVISION]['#value']);
+
+    $concurrent = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($entry->id());
+    self::assertInstanceOf(Node::class, $concurrent);
+    $concurrent->setNewRevision(TRUE);
+    $concurrent->setTitle('Versão mais recente de outra sessão');
+    $concurrent->save();
+    $latestRevisionId = (int) $concurrent->getRevisionId();
+
+    $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Alteração desatualizada');
+    $formState->setValue([WikiLeadImageUploader::EXPECTED_REVISION], $openedRevisionId);
+    $formState->setTriggeringElement($form['actions']['submit']);
+    $formBuilder->submitForm($formObject, $formState);
+
+    self::assertArrayHasKey('title', $formState->getErrors());
+    $current = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($entry->id());
+    self::assertInstanceOf(Node::class, $current);
+    self::assertSame($latestRevisionId, (int) $current->getRevisionId());
+    self::assertSame('Versão mais recente de outra sessão', $current->label());
+
+    // Also exercise the narrow race after Form API validation but before the
+    // save handler. The transactional row lock must reject this second stale
+    // submission even though it passed the earlier validation phase.
+    $raceBaseRevisionId = (int) $current->getRevisionId();
+    $raceFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');
+    $raceFormObject->setEntity($current);
+    $raceFormState = new FormState();
+    $raceFormState->setFormObject($raceFormObject);
+    $raceForm = $formBuilder->buildForm($raceFormObject, $raceFormState);
+    $raceFormState->setValue($raceForm['title']['widget'][0]['value']['#parents'], 'Corrida desatualizada');
+    $raceFormState->setValue([WikiLeadImageUploader::EXPECTED_REVISION], $raceBaseRevisionId);
+    $uploader = $this->container->get('aculta_wiki.wiki_lead_image_uploader');
+    $uploader->validateExpectedRevision($raceForm, $raceFormState);
+    self::assertSame([], $raceFormState->getErrors());
+
+    $lastWriter = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($entry->id());
+    self::assertInstanceOf(Node::class, $lastWriter);
+    $lastWriter->setNewRevision(TRUE);
+    $lastWriter->setTitle('Versão salva entre validação e submit');
+    $lastWriter->save();
+    $lastRevisionId = (int) $lastWriter->getRevisionId();
+
+    $raceFormObject->submitForm($raceForm, $raceFormState);
+    $uploader->saveNode($raceForm, $raceFormState);
+    self::assertArrayHasKey('title', $raceFormState->getErrors());
+    self::assertTrue($raceFormState->isRebuilding());
+    $current = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($entry->id());
+    self::assertInstanceOf(Node::class, $current);
+    self::assertSame($lastRevisionId, (int) $current->getRevisionId());
+    self::assertSame('Versão salva entre validação e submit', $current->label());
+  }
+
+  /**
    * Real Mail Confirmer completion grants the configured Wiki create access.
    */
   public function testRegistrationConfirmationUnlocksWikiAuthoringPermission(): void {

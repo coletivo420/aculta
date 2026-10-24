@@ -4,13 +4,27 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.69**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.70**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.70 — revisão concorrente no editor próprio
+
+O Form API de edição do Node Wiki declara a revisão-base aberta. A validação
+rejeita revisões obsoletas; no submit, Wiki abre transação, bloqueia a linha
+principal com `FOR UPDATE` e verifica novamente antes de delegar o save ao
+formulário Core. Isso serializa a edição com a decisão de proposta, que já usa
+o mesmo bloqueio de linha. Kernel real cobre conflito antes do submit e uma
+corrida após a validação, sem gravar o conteúdo obsoleto (1/37); a criação e a
+transição `draft` → `review` passaram (1/67). Unit do uploader: 12/79.
+Regressão completa da classe Kernel de mídia: 22 testes / 995 asserções, 291
+depreciações Core/contrib e 23 PHPUnit. PHPCS e PHP lint passaram.
+Homologação visual/autenticada e concorrência em processos HTTP separados ainda
+permanecem como cobertura futura.
 
 ### Incremento dev.69 — geração Wiki v4 no Kernel owner
 

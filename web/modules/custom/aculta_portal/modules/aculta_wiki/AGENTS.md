@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.70: Core Node Form de edição está protegido contra revisão obsoleta; lock
+  de linha e comparação no save handler fecham a janela após validação. Kernel
+  focal de conflito 1/37; criação/revisão normal 1/67; Unit uploader 12/79;
+  classe Kernel mídia 22/995 (291 depreciações Core/contrib, 23 PHPUnit).
+
 - Dev.69: Kernel proprietário inicia Wiki + Image + Portal + Index, descobre
   owners reais e completa/valida/ativa geração v4 no banco dedicado (1/42; 201
   depreciações Core/contrib). Runtime/inventário da instalação não cobertos.

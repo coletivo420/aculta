@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.70 — impedir sobrescrita concorrente no editor WE SATIVA
+
+- Formulários de criação e edição usam o wrapper proprietário da Wiki; o
+  formulário de edição agora também recebe o hook específico do Core.
+- A revisão-base é enviada no Form API e conferida na validação. No salvamento,
+  uma transação bloqueia a linha do Node (`FOR UPDATE`) e confere novamente a
+  revisão antes de persistir, serializando com decisões de propostas.
+- Kernel real prova rejeição de formulário obsoleto e corrida entre validação
+  e submit (1/37; 203 depreciações). O fluxo confirmado draft → review passou
+  (1/67). Unit do uploader passou (12/79); PHPCS e PHP lint passaram.
+- A classe Kernel completa de mídia e autorias passou: 22 testes / 995
+  asserções, 291 depreciações Core/contrib e 23 depreciações PHPUnit.
+
 ## 0.1.0-dev.69 — rebuild Wiki v4 em Kernel proprietário
 
 - Adicionado `WikiContentIndexRebuildKernelTest`, que inicializa os módulos

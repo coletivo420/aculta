@@ -18,12 +18,11 @@ use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Replaces the raw Media autocomplete with the Wiki lead image upload tab.
+ * Customizes native Wiki Node forms for the lead image and safe revision saves.
  *
- * The verbete form keeps the same routes and fields; only the widget for
- * field_wiki_image changes. The tab reuses the central upload policy (consumer
- * "wiki") through the same helper the Forum uses, so extensions, size limits
- * and the alt text rule stay in one place.
+ * The verbete form keeps its Core routes and fields. The image tab reuses the
+ * central upload policy (consumer "wiki"), while edits capture and lock their
+ * base revision before saving.
  */
 final class WikiEntryImageHooks {
 
@@ -42,7 +41,31 @@ final class WikiEntryImageHooks {
    * Adds the "Imagem de destaque" tab to the wiki_entry node form.
    */
   #[Hook('form_node_wiki_entry_form_alter')]
+  #[Hook('form_node_wiki_entry_edit_form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state): void {
+    $form_object = $form_state->getFormObject();
+    $node = $form_object instanceof ContentEntityFormInterface ? $form_object->getEntity() : NULL;
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry') {
+      return;
+    }
+
+    if (!$node->isNew()) {
+      $form[WikiLeadImageUploader::EXPECTED_REVISION] = [
+        '#type' => 'hidden',
+        '#value' => (int) $node->getRevisionId(),
+      ];
+      $form['#validate'][] = 'aculta_wiki.wiki_lead_image_uploader:validateExpectedRevision';
+    }
+
+    // Serialize updates to the current Wiki revision and preserve Core's
+    // EntityForm save behavior even when image upload controls are unavailable.
+    $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
+    $saveHandler = array_search('::save', $submitHandlers, TRUE);
+    if ($saveHandler !== FALSE) {
+      $submitHandlers[$saveHandler] = 'aculta_wiki.wiki_lead_image_uploader:saveNode';
+      $form['actions']['submit']['#submit'] = $submitHandlers;
+    }
+
     $field = WikiLeadImageUploader::FIELD;
     if (!isset($form[$field])) {
       return;
@@ -59,7 +82,8 @@ final class WikiEntryImageHooks {
     }
 
     $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
-    if (!in_array('::save', $submitHandlers, TRUE)) {
+    if (!in_array('::save', $submitHandlers, TRUE)
+      && !in_array('aculta_wiki.wiki_lead_image_uploader:saveNode', $submitHandlers, TRUE)) {
       return;
     }
 
@@ -125,6 +149,9 @@ final class WikiEntryImageHooks {
       $saveHandler = array_search('::save', $submitHandlers, TRUE);
       if ($saveHandler !== FALSE) {
         $submitHandlers[$saveHandler] = 'aculta_wiki.wiki_lead_image_uploader:saveNode';
+      }
+      $saveHandler = array_search('aculta_wiki.wiki_lead_image_uploader:saveNode', $submitHandlers, TRUE);
+      if ($saveHandler !== FALSE) {
         array_splice($submitHandlers, $saveHandler, 0, [
           'aculta_wiki.wiki_lead_image_uploader:prepareNodeSave',
         ]);

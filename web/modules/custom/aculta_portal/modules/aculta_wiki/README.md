@@ -7,6 +7,13 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.70`: edição própria WE SATIVA agora preserva conflitos. O Form API
+  carrega a revisão-base, valida antes do submit e revalida com lock transacional
+  do Node no save handler; Kernel cobre sessão obsoleta e corrida após validação
+  (1/37), além do fluxo normal draft → review (1/67). Unit do uploader: 12/79.
+  Classe Kernel de mídia completa: 22/995; 291 depreciações Core/contrib e 23
+  PHPUnit.
+
 - `0.1.0-dev.69`: Kernel proprietário inicializa Wiki + Image + Portal + Index,
   descobre os três providers, executa geração v4 completa para o inventário de
   teste e valida fingerprint, campos projetados e relações (1/42; 201

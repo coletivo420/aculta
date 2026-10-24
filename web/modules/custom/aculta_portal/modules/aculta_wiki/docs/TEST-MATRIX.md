@@ -16,6 +16,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
 | Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |
 | Envio para revisão | Kernel | Novo submit grava revisão `review` pela transição oficial `draft_to_review`, sem publicar | aprovado (dev.42; incluído no focal) |
+| Edição concorrente própria | Kernel MariaDB | Form API compara revisão-base e o save handler revalida sob `FOR UPDATE`, inclusive mudança entre validação e submit | aprovado (dev.70; 1/37; 203 depreciações Core/contrib/PHPUnit) |
+| Edição própria normal após proteção | Kernel MariaDB | Node Form Core salva rascunho e executa transição oficial `draft_to_review` | aprovado (dev.70; 1/67; 203 depreciações Core/contrib/PHPUnit) |
 | Paginação | Kernel | Cursores independentes para verbetes/propostas, ordem estável, acesso revalidado e cache por URL | aprovado (dev.47; focal combinado: 2 testes / 84 asserções; cursor posicional, links GET) |
 | Composição SDC do Meu Trabalho | Kernel | Cabeçalho, seções, cards, grade, estado vazio e ações autorizadas usam componentes existentes | aprovado (dev.54; focal combinado: 2 testes / 89 asserções) |
 | Status privado da proposta | Kernel | SDCs existentes exibem estado, conteúdo, retorno e histórico; retirada apenas para autoria em estado elegível | aprovado (dev.56; focal: 1 teste / 148 asserções) |
