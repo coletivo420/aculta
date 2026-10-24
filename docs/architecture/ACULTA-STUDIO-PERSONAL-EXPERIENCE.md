@@ -1,5 +1,17 @@
 # ACULTA Studio — Hub e Meu Espaço
 
+## Contrato de rotas vigente após limpeza global (dev.11)
+
+Hub em `/studio` (`aculta_studio.hub`), Marley em
+`/studio/marley` e Meu Espaço em `/studio/pessoal`; o perfil
+público `/u/{apelido}` continua independente. Nenhum alias temporário
+de capitalização, prévia ou caminhos anteriores é mantido. A política
+em `AGENTS.md` aplica-se ao Studio e a todos os módulos. As descrições
+de aliases em dev.7–10 abaixo são **históricas**, não destinos atuais.
+Sem homologação Runtime nesta alteração.
+
+
+
 **Arquitetura-alvo, 2026-10-24.** A fase documental P0 foi concluída; a P1-A já possui implementação inicial em código (`0.1.0-dev.8`), ainda **sem homologação PHPUnit/Runtime**. As demais fases são planejamento; nenhum dado, formulário ou shell antigo foi migrado.
 
 ## Atualização P1-C — hub real e entrada editorial minúscula (dev.10)
