@@ -10,6 +10,18 @@ aculta_studio.personal:
   options:
     _aculta_domain_purpose: account
 
+# P2-A: profile editor entry is private, not the public /u/{apelido}.
+aculta_studio.personal_profile:
+  path: /studio/pessoal/perfil
+  defaults:
+    _controller: 'aculta_studio.personal_profile_controller:page'
+    _title: 'Meu Perfil'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.we_sativa:
   path: /studio/we-sativa
   defaults:
