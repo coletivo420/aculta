@@ -3,6 +3,30 @@
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
+## Interface de perfil no Studio — contrato documental STUDIO-P0
+
+A experiência **Meu Espaço** será futuramente a interface de edição do
+perfil, sem mudar a propriedade dos dados e das autorizações:
+`aculta_user` mantém `PublicProfilePolicy`, o perfil público
+`/u/{apelido}` em `main`, apelido, biografia, redes, foto/avatar,
+amizades e controles de visibilidade; User/Profile continuam as entidades
+fontes. Nenhuma tela `/studio/pessoal/perfil` existe ainda.
+
+O Studio deverá compor os formulários **existentes** — inclusive
+`UserPictureForm`, `AvatarCropForm`, `ProfileVisibilityForm`,
+bio e redes — preservando sorteio pendente/recorte e políticas de
+autores/editores. A conta pessoal no purpose `account` pode editar apenas
+a própria identidade; conseguir editar **não** torna dados públicos.
+Não expor endereço, documentos, e-mail privado nem informações de membros
+na Author Card. Atividades pessoais continuam autorizadas pelo User e
+entidades hospedeiras; não duplicar armazenamento no Studio.
+
+**P0 = documentação apenas**. Nenhum arquivo funcional User ou fluxo
+de foto foi migrado. Referências:
+[plano STUDIO-P0–P7](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md),
+[privacidade dos cartões](docs/PRIVACY-AND-ACCESS.md) e
+[contrato da foto](docs/FOTO-PERFIL.md).
+
 ## Estado atual
 
 - `0.4.0-dev.70`: o contrato `PublishedParticipationLookupInterface` agora
