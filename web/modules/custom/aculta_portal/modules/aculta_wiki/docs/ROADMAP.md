@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.80**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.81**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.81 — imagem em aceite editorial
+
+Kernel MariaDB cobre proposta de Media publicada, seleção do campo de imagem
+no Form API e aplicação na revisão publicada por transições oficiais; Entity
+Access da mídia é revalidado pelo serviço de decisão. A classe passou (24/1.137;
+291 depreciações Core/contrib e 25 PHPUnit) e PHPCS passou. A proposta usa Media
+existente e publicada; Runtime intocado.
 
 ### Incremento dev.80 — lock de proposta entre processos
 

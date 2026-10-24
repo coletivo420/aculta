@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.81`: aceite editorial no Form API inclui imagem publicada
+  selecionada pelo editor; revisão publicada recebe a referência validada
+  (Kernel focal 1/167; classe 24/1.137). Runtime intocado.
+
 - `0.1.0-dev.80`: Kernel MariaDB valida contenção do lock de idempotência entre
   processos PHP independentes e ausência de proposta duplicada (24/1.134).
   Runtime intocado.

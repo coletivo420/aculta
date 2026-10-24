@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.81 — aceite de imagem em proposta editorial
+
+- Kernel cobre proposta de imagem existente e publicada, seleção pelo editor
+  no Form API e aplicação na revisão publicada pela sequência oficial do
+  workflow. O serviço revalida o acesso da mídia durante a decisão.
+- `WikiLeadImageLifecycleKernelTest`: 24 testes / 1.137 assertions, 291
+  depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+
 ## 0.1.0-dev.80 — lock de idempotência entre processos
 
 - Kernel MariaDB inicia um processo PHP independente que adquire o lock de

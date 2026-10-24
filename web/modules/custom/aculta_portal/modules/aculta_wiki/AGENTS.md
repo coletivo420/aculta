@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.81: aceite editorial por Form API aplica imagem publicada selecionada
+  quando a revisão do verbete é publicada. Kernel 24/1.137; Runtime intocado.
+
 - Dev.80: lock de idempotência entre processos validado com MariaDB e classe
   real de submissão; Kernel usa `NullLockBackend` e injeta `DatabaseLockBackend`
   explicitamente. Classe 24/1.134; Runtime intocado.

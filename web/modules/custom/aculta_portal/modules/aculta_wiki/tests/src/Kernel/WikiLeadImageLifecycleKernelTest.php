@@ -2071,6 +2071,20 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($submitter);
     $currentTarget = $this->container->get('entity_type.manager')->getStorage('node')
       ->loadUnchanged((int) $target->id());
+    $proposedImageFile = $this->createTemporaryPrivateImage((int) $submitter->id());
+    $proposedImageFile->setPermanent();
+    $proposedImageFile->save();
+    $proposedImage = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem editorial proposta',
+      'uid' => $submitter->id(),
+      'status' => TRUE,
+      'field_media_image' => [
+        'target_id' => $proposedImageFile->id(),
+        'alt' => 'Imagem proposta para o verbete',
+      ],
+    ]);
+    $proposedImage->save();
     $acceptedCandidate = $submission->submit(
       $currentTarget,
       'improve',
@@ -2086,6 +2100,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         ],
         'field_wiki_categories' => [(int) $currentCategory->id(), (int) $proposedCategory->id()],
         'field_wiki_related' => [(int) $currentRelated->id(), (int) $proposedRelated->id()],
+        'field_wiki_image' => (int) $proposedImage->id(),
       ],
     );
     Role::create([
@@ -2122,6 +2137,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_wiki_references' => 'field_wiki_references',
       'field_wiki_categories' => 'field_wiki_categories',
       'field_wiki_related' => 'field_wiki_related',
+      'field_wiki_image' => 'field_wiki_image',
     ]);
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#parents'], 'append');
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_categories']['#parents'], 'append');
@@ -2137,6 +2153,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('accepted', $acceptedProposal->get('state')->value);
     self::assertSame('Título aprovado pela equipe', $publishedTarget->label());
     self::assertSame('published', $publishedTarget->get('moderation_state')->value);
+    self::assertSame((int) $proposedImage->id(), (int) $publishedTarget->get('field_wiki_image')->target_id);
+    self::assertTrue(Media::load((int) $proposedImage->id())->isPublished());
     self::assertSame(
       ['https://example.invalid/current', 'https://example.invalid/new'],
       array_column($publishedTarget->get('field_wiki_references')->getValue(), 'uri'),
