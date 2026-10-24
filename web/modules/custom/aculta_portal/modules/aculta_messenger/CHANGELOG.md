@@ -1,3 +1,12 @@
+## 0.1.1-dev.176 — cobrir IDOR nas ações por membro
+
+O teste do controller usa os métodos de opções e relação por membro para confirmar que IDs manipulados não abrem ações
+para uma conta externa à thread nem para o próprio usuário. Os métodos respondem com 404 antes de processar ações ou
+carregar formulários.
+
+Validação: `MessagesControllerMemberAccessTest` **1/16 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. A validação
+HTTP com sessão e roteador completo permanece pendente.
+
 ## 0.1.1-dev.175 — exercitar autorização Core na resposta de conversa
 
 O Kernel carrega a definição de produção `aculta_messenger.drawer_reply`, constrói a rota pelos access checks do Drupal
