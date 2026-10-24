@@ -34,6 +34,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/we-sativa' => 'aculta_studio.we_sativa',
       '/studio/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
       '/studio/pessoal' => 'aculta_studio.personal',
+      '/studio/inicio' => 'aculta_studio.hub_preview',
     ];
 
     foreach ($expected as $path => $owner) {
@@ -62,6 +63,26 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $order = array_keys($routes);
     self::assertTrue(array_search('aculta_studio.personal', $order, TRUE)
       < array_search('aculta_studio.legacy_area', $order, TRUE));
+  }
+
+  /**
+   * The preview route is explicit, safe and leaves /studio on Marley.
+   */
+  public function testHubPreviewDoesNotTakeOverTheLegacyStudioHome(): void {
+    $module = dirname(__DIR__, 3);
+    $routes = Yaml::decode(file_get_contents($module . '/aculta_studio.routing.yml'));
+    $preview = $routes['aculta_studio.hub_preview'];
+
+    self::assertSame('/studio/inicio', $preview['path']);
+    self::assertSame('account', $preview['options']['_aculta_domain_purpose']);
+    self::assertSame(['GET', 'HEAD'], $preview['methods']);
+    self::assertSame('TRUE', $preview['requirements']['_user_is_logged_in']);
+    self::assertSame('access aculta portal', $preview['requirements']['_permission']);
+    self::assertSame('/studio', $routes['aculta_studio.legacy_home']['path']);
+    self::assertSame('aculta_studio.marley_controller:legacyPage',
+      $routes['aculta_studio.legacy_home']['defaults']['_controller']);
+    self::assertTrue(array_search('aculta_studio.hub_preview', array_keys($routes), TRUE)
+      < array_search('aculta_studio.legacy_area', array_keys($routes), TRUE));
   }
 
   /**
