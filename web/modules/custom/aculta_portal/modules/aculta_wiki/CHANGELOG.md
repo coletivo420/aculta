@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.54 — compor Meu Trabalho com SDCs existentes
+
+- O workspace WE SATIVA usa `context-header`, `content-section`, `content-grid`,
+  `card` e `empty-state` existentes no tema ACULTA420. A Wiki mantém a consulta,
+  autorização, Domain e paginação; ações de criação/edição dependem das
+  verificações de acesso existentes.
+- Kernel focal: 2 testes / 89 asserções; classe completa MariaDB: 21 testes /
+  923 asserções, com 291 depreciações upstream/PHPUnit. PHPCS e PHP lint
+  passaram; visual Firefox ESR e Runtime não foram homologados.
+
 ## 0.1.0-dev.53 — percorrer limpeza de imagens em lotes rotativos
 
 - A limpeza mantém um cursor expirável por sete dias e percorre os arquivos

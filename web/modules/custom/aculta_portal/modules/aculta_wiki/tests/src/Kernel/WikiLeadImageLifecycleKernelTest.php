@@ -900,17 +900,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $build = $workspace->build($author);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertContains('user', $build['#cache']['contexts']);
-    self::assertSame('Meus verbetes', (string) $build['entries']['title']['#value']);
-    $renderedItems = $build['entries']['items']['#items'];
+    self::assertSame('WE SATIVA', $build['header']['#props']['title']);
+    self::assertSame('aculta420:context-header', $build['header']['#component']);
+    self::assertSame('Meus verbetes', $build['entries']['#props']['title']);
+    self::assertSame('aculta420:content-section', $build['entries']['#component']);
+    $renderedItems = $build['entries']['#slots']['body']['items']['#slots']['items'];
     self::assertCount(1, $renderedItems);
-    self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['entry']['#title']);
-    self::assertSame('entity.node.edit_form', $renderedItems[0]['edit']['#url']->getRouteName());
-    self::assertSame('wiki420_aculta_org', $renderedItems[0]['edit']['#url']->getOption('domain')->id());
+    self::assertSame('aculta420:card', $renderedItems[0]['#component']);
+    self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#slots']['header']['#title']);
+    self::assertSame('entity.node.edit_form', $renderedItems[0]['#slots']['footer']['#url']->getRouteName());
+    self::assertSame('wiki420_aculta_org', $renderedItems[0]['#slots']['footer']['#url']->getOption('domain')->id());
     self::assertTrue($this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $this->container
       ->get('access_manager')->checkNamedRoute('entity.node.edit_form', ['node' => $own->id()], $author)));
-    self::assertSame('node.add', $build['create']['#url']->getRouteName());
-    self::assertSame(['node_type' => 'wiki_entry'], $build['create']['#url']->getRouteParameters());
-    self::assertSame('wiki420_aculta_org', $build['create']['#url']->getOption('domain')->id());
+    $createLink = $build['header']['#slots']['actions'];
+    self::assertSame('node.add', $createLink['#url']->getRouteName());
+    self::assertSame(['node_type' => 'wiki_entry'], $createLink['#url']->getRouteParameters());
+    self::assertSame('wiki420_aculta_org', $createLink['#url']->getOption('domain')->id());
+    self::assertSame('aculta420:content-grid', $build['entries']['#slots']['body']['items']['#component']);
   }
 
   /**
@@ -1003,14 +1009,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $requestStack->pop();
     }
 
-    $firstEntries = $firstPage['entries']['items']['#items'];
-    $firstProposals = $firstPage['proposals']['items']['#items'];
+    $firstEntries = $firstPage['entries']['#slots']['body']['items']['#slots']['items'];
+    $firstProposals = $firstPage['proposals']['#slots']['body']['items']['#slots']['items'];
     self::assertCount(20, $firstEntries);
     self::assertCount(20, $firstProposals);
-    self::assertArrayHasKey('next_page', $firstPage['entries']);
-    self::assertArrayHasKey('next_page', $firstPage['proposals']);
-    $entryUrl = $firstPage['entries']['next_page']['#url'];
-    $proposalUrl = $firstPage['proposals']['next_page']['#url'];
+    self::assertArrayHasKey('next_page', $firstPage['entries']['#slots']['body']);
+    self::assertArrayHasKey('next_page', $firstPage['proposals']['#slots']['body']);
+    $entryUrl = $firstPage['entries']['#slots']['body']['next_page']['#url'];
+    $proposalUrl = $firstPage['proposals']['#slots']['body']['next_page']['#url'];
     self::assertSame('conta_aculta_org', $entryUrl->getOption('domain')->id());
     self::assertSame('conta_aculta_org', $proposalUrl->getOption('domain')->id());
     $query = [
@@ -1027,10 +1033,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     finally {
       $requestStack->pop();
     }
-    self::assertCount(1, $secondPage['entries']['items']['#items']);
-    self::assertCount(1, $secondPage['proposals']['items']['#items']);
-    self::assertArrayNotHasKey('next_page', $secondPage['entries']);
-    self::assertArrayNotHasKey('next_page', $secondPage['proposals']);
+    self::assertCount(1, $secondPage['entries']['#slots']['body']['items']['#slots']['items']);
+    self::assertCount(1, $secondPage['proposals']['#slots']['body']['items']['#slots']['items']);
+    self::assertArrayNotHasKey('next_page', $secondPage['entries']['#slots']['body']);
+    self::assertArrayNotHasKey('next_page', $secondPage['proposals']['#slots']['body']);
     self::assertSame(['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'], array_values(array_intersect(
       ['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'],
       $secondPage['#cache']['contexts'],

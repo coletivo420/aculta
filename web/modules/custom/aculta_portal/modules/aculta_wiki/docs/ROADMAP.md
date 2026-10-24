@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.53**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.54**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.54 — composição SDC do Meu Trabalho
+
+`WikiContributorWorkspace` monta a área da pessoa colaboradora com os SDCs
+existentes `context-header`, `content-section`, `content-grid`, `card` e
+`empty-state`. Consulta, autorização, purpose/Domain e paginação continuam no
+serviço Wiki. Kernel focal: 2 testes / 89 asserções; classe completa MariaDB:
+21 testes / 923 asserções, com 291 depreciações upstream/PHPUnit. PHPCS e PHP
+lint passaram. Falta validar visualmente com Firefox ESR em ACULTA420 e Olivero;
+Runtime não foi alterado.
 
 ### Incremento dev.53 — lotes rotativos para a limpeza de imagens
 

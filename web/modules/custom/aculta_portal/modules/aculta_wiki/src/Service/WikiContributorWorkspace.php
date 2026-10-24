@@ -96,12 +96,15 @@ final class WikiContributorWorkspace {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
-      'title' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'h1',
-        '#value' => $this->t('WE SATIVA'),
+      'header' => [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-header',
+        '#props' => [
+          'eyebrow' => (string) $this->t('Wiki420'),
+          'title' => (string) $this->t('WE SATIVA'),
+          'subtitle' => (string) $this->t('Acompanhe seus verbetes e propostas para a Wiki420.'),
+        ],
       ],
-      'intro' => ['#plain_text' => $this->t('Acompanhe seus verbetes e propostas para a Wiki420.')],
     ];
 
     $create = $this->domainPurposes->runInPurpose('wiki', fn () => $this->entities
@@ -111,7 +114,9 @@ final class WikiContributorWorkspace {
     if ($create->isAllowed()) {
       $url = $this->domainPurposes->routeUrl('wiki', 'node.add', ['node_type' => 'wiki_entry']);
       if ($url !== NULL) {
-        $build['create'] = Link::fromTextAndUrl($this->t('Criar verbete'), $url)->toRenderable();
+        $createLink = Link::fromTextAndUrl($this->t('Criar verbete'), $url)->toRenderable();
+        $createLink['#attributes']['data-portal-ui'] = 'we-sativa-create';
+        $build['header']['#slots']['actions'] = $createLink;
       }
     }
 
@@ -134,12 +139,15 @@ final class WikiContributorWorkspace {
       if (!$view->isAllowed()) {
         continue;
       }
-      $label = $this->t('@title — @state', ['@title' => $node->label(), '@state' => $this->nodeState($node)]);
       $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
       if ($url !== NULL) {
         $item = [
-          '#type' => 'container',
-          'entry' => Link::fromTextAndUrl($label, $url)->toRenderable(),
+          '#type' => 'component',
+          '#component' => 'aculta420:card',
+          '#slots' => [
+            'header' => Link::fromTextAndUrl((string) $node->label(), $url)->toRenderable(),
+            'content' => ['#plain_text' => $this->nodeState($node)],
+          ],
         ];
         $update = $this->domainPurposes->runInPurpose('wiki', fn () => $node->access('update', $account, TRUE));
         if ($update instanceof AccessResultInterface) {
@@ -147,20 +155,18 @@ final class WikiContributorWorkspace {
           if ($update->isAllowed()) {
             $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $node->id()]);
             if ($editUrl !== NULL) {
-              $item['edit'] = Link::fromTextAndUrl($this->t('Editar'), $editUrl)->toRenderable();
+              $item['#slots']['footer'] = Link::fromTextAndUrl($this->t('Editar'), $editUrl)->toRenderable();
             }
           }
         }
         $nodeLinks[] = $item;
       }
     }
-    $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $this->t('Você ainda não criou verbetes.'));
+    $nodeNextPage = NULL;
     if (is_string($nodePage['next_cursor'] ?? NULL)) {
-      $next = $this->nextPageLink($this->t('Mais verbetes'), 'wiki_node_cursor', $nodePage['next_cursor']);
-      if ($next !== NULL) {
-        $build['entries']['next_page'] = $next;
-      }
+      $nodeNextPage = $this->nextPageLink($this->t('Mais verbetes'), 'wiki_node_cursor', $nodePage['next_cursor']);
     }
+    $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $this->t('Você ainda não criou verbetes.'), $nodeNextPage);
 
     $proposalCursor = $this->requestCursor('wiki_proposal_cursor');
     $proposalPage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $proposalCursor, $cacheability): array {
@@ -181,19 +187,23 @@ final class WikiContributorWorkspace {
       if (!$view->isAllowed()) {
         continue;
       }
-      $label = $this->t('@title — @state', ['@title' => $proposal->label(), '@state' => $this->proposalState($proposal)]);
       $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
       if ($url !== NULL) {
-        $proposalLinks[] = Link::fromTextAndUrl($label, $url)->toRenderable();
+        $proposalLinks[] = [
+          '#type' => 'component',
+          '#component' => 'aculta420:card',
+          '#slots' => [
+            'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
+            'content' => ['#plain_text' => $this->proposalState($proposal)],
+          ],
+        ];
       }
     }
-    $build['proposals'] = $this->listSection($this->t('Minhas propostas'), $proposalLinks, $this->t('Você ainda não enviou propostas.'));
+    $proposalNextPage = NULL;
     if (is_string($proposalPage['next_cursor'] ?? NULL)) {
-      $next = $this->nextPageLink($this->t('Mais propostas'), 'wiki_proposal_cursor', $proposalPage['next_cursor']);
-      if ($next !== NULL) {
-        $build['proposals']['next_page'] = $next;
-      }
+      $proposalNextPage = $this->nextPageLink($this->t('Mais propostas'), 'wiki_proposal_cursor', $proposalPage['next_cursor']);
     }
+    $build['proposals'] = $this->listSection($this->t('Minhas propostas'), $proposalLinks, $this->t('Você ainda não enviou propostas.'), $proposalNextPage);
     $cacheability->applyTo($build);
     return $build;
   }
@@ -368,17 +378,37 @@ final class WikiContributorWorkspace {
    *   Renderable links authorized by the owner module.
    * @param string|\Stringable $emptyMessage
    *   Text shown when no authorized item is available.
+   * @param array<string, mixed>|null $nextPage
+   *   Optional authorized continuation link.
    *
    * @return array<string, mixed>
    *   Render array for the section.
    */
-  private function listSection(\Stringable|string $title, array $items, \Stringable|string $emptyMessage): array {
-    return [
+  private function listSection(\Stringable|string $title, array $items, \Stringable|string $emptyMessage, ?array $nextPage = NULL): array {
+    $bodyItems = $items === []
+      ? [
+        '#type' => 'component',
+        '#component' => 'aculta420:empty-state',
+        '#slots' => ['message' => ['#plain_text' => $emptyMessage]],
+      ]
+      : [
+        '#type' => 'component',
+        '#component' => 'aculta420:content-grid',
+        '#props' => ['columns' => 2],
+        '#slots' => ['items' => $items],
+      ];
+    $body = [
       '#type' => 'container',
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $title],
-      'items' => $items === []
-        ? ['#plain_text' => $emptyMessage]
-        : ['#theme' => 'item_list', '#items' => $items],
+      'items' => $bodyItems,
+    ];
+    if ($nextPage !== NULL) {
+      $body['next_page'] = $nextPage;
+    }
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420:content-section',
+      '#props' => ['title' => (string) $title],
+      '#slots' => ['body' => $body],
     ];
   }
 

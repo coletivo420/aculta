@@ -1,5 +1,11 @@
 # Wiki — instruções locais
 
+- Dev.54: workspace WE SATIVA usa SDCs existentes do ACULTA420 para cabeçalho,
+  cards, seções, grade e estados vazios. O serviço Wiki preserva Entity Access,
+  purpose/Domain e cursores independentes. Focal MariaDB: 2 testes / 89
+  asserções; classe Kernel completa 21/923, 291 depreciações upstream/PHPUnit.
+  Homologação visual ainda pendente.
+
 - Dev.53: a limpeza de imagem usa cursor `keyvalue.expirable` (TTL 7 dias) e
   percorre candidatos por ID em lotes rotativos de 25, evitando starvation por
   arquivos retidos. Testes Kernel cobrem referência em outro bundle Node, falha
