@@ -152,7 +152,7 @@ final class NewConversationController extends ControllerBase {
    * successful POST answers with the new conversation and an invalid one with the form and its errors.
    */
   public function compose(UserInterface $user, Request $request): Response {
-    if ((int) $user->id() === (int) $this->account->id() || !$user->isActive()) {
+    if ((int) $user->id() === (int) $this->account->id() || !$this->policy->canReceiveMessages($user)) {
       throw new NotFoundHttpException();
     }
     $formState = new FormState();
@@ -200,7 +200,8 @@ final class NewConversationController extends ControllerBase {
     $found = [];
     $staff = $this->account->hasRole('administrator') || $this->account->hasRole('content_editor');
     foreach ($this->entityTypes->getStorage('user')->loadMultiple($ids) as $user) {
-      if (!$user instanceof UserInterface || $this->banManager->isCurrentUserBannedByUser((int) $user->id())) {
+      if (!$user instanceof UserInterface || !$this->policy->canReceiveMessages($user)
+        || $this->banManager->isCurrentUserBannedByUser((int) $user->id())) {
         continue;
       }
       $preference = $this->userData->get('aculta_messenger', (int) $user->id(), 'message_privacy');

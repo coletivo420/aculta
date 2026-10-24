@@ -7,6 +7,7 @@ namespace Drupal\aculta_messenger\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Shared limits for direct and voluntary group conversations.
@@ -80,6 +81,15 @@ final class ConversationPolicy {
    */
   public function sendLimitPerHour(): int {
     return $this->clamp((int) $this->get('send_limit_per_hour', self::DEFAULT_SEND_LIMIT_PER_HOUR), 1, 1000);
+  }
+
+  /**
+   * Whether an account is currently eligible to receive a private message.
+   */
+  public function canReceiveMessages(UserInterface $recipient): bool {
+    return $recipient->isActive()
+      && $recipient->hasPermission('use private messaging system')
+      && $recipient->hasPermission('access user profiles');
   }
 
   /**

@@ -1,3 +1,15 @@
+## 0.1.1-dev.131 — validar elegibilidade de destinatários de conversa — 2026-10-24
+
+A busca da gaveta e o envio de primeira mensagem agora usam a mesma política: o destinatário precisa estar ativo e ter
+as permissões `use private messaging system` e `access user profiles`. O endpoint de início pelo perfil também revalida
+essas condições; IDs enviados manualmente não contornam a validação. Bloqueios e preferência de amizade continuam sendo
+validados separadamente.
+
+Validação: Unit Messenger 123/681 PASS, incluindo busca, envio com ID manipulado e permissões ausentes; PHPCS Drupal/
+DrupalPractice limpo nos novos testes e em `ConversationPolicy`; PHP lint e gate Drupal 11+ (1155 checks) PASS. PHPCS
+dos arquivos maiores de formulário/controlador continua apontando erros e avisos preexistentes fora das linhas alteradas.
+Sem homologação Runtime.
+
 ## 0.1.1-dev.130 — manter filtros únicos nos links da central — 2026-10-24
 
 Ao abrir um aviso e voltar à central, a origem e o estado de leitura selecionados agora substituem parâmetros de filtro

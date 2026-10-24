@@ -9,7 +9,7 @@ Portal. Revisão: 2026-10-14.
 | --- | --- | --- | --- |
 | Ver caixa postal | Usuário autenticado com `use private messaging system` e `access user profiles` | Rota nativa do Private Message; as duas permissões são exigidas | Inbox upstream `no_cache`; validar contexts/tags do thread |
 | Ver thread/mensagem | Participante autorizado ou administrador conforme regra upstream | Entity access `private_message_thread.view` / `private_message.view` e handlers próprios | Não compartilhar entre contas; cache context da thread |
-| Iniciar conversa | Membro habilitado e destinatário que aceita contato | Permissões, elegibilidade, bloqueio e rate limit confirmados no upstream | Sem cache de formulário/destinatários privados |
+| Iniciar conversa | Membro habilitado e destinatário que aceita contato | Destinatário ativo com `use private messaging system` e `access user profiles`; preferência, bloqueio e rate limit revalidados no servidor | Sem cache de formulário/destinatários privados |
 | Receber e-mail | Destinatário válido, elegível e permitido | Revalidar status da conta, access, preferências e assinatura na entrega | Não guardar conteúdo privado em cache compartilhado |
 | Ver comunicado | Público explicitamente segmentado | Node access, publicação, validade e membership quando necessário | Tags/contextos de entidade, usuário e grupo conforme decisão |
 | Assinar evento | Usuário autorizado a assinar o contexto | Flag/Message Subscribe e access atual da entidade | Contexto de usuário e dependências da entidade |
@@ -39,6 +39,12 @@ Messenger e deve ser reavaliado após métricas de uso controladas.
 Um callback separado consulta `private_message.ban_manager` e rejeita também
 destinatários que bloquearam o remetente, inclusive quando o modo nativo estiver
 configurado como passivo. A resposta é genérica para reduzir enumeração.
+
+A busca da gaveta e o envio de primeira mensagem aplicam a política central
+`ConversationPolicy::canReceiveMessages()`: o destinatário deve estar ativo e
+ter as duas permissões nativas exigidas para usar a caixa postal. O formulário
+revalida os IDs enviados pelo navegador, e a rota iniciada pelo perfil falha
+fechada para destinatários inelegíveis. A busca não revela esses membros.
 
 O evento de notificação é processado pela fila do Core após o hook nativo. A
 entrega revalida thread, usuário ativo, permissões e ambos os sentidos de

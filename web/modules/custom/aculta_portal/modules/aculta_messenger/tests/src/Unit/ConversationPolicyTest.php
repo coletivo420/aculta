@@ -104,6 +104,32 @@ final class ConversationPolicyTest extends UnitTestCase {
   }
 
   /**
+   * A recipient must be active and have both permissions used by the inbox.
+   */
+  public function testRecipientMustBeEligibleForPrivateMessaging(): void {
+    $policy = $this->policy();
+    $state = (object) [
+      'active' => TRUE,
+      'permissions' => ['use private messaging system', 'access user profiles'],
+    ];
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturnCallback(static fn(): bool => $state->active);
+    $recipient->method('hasPermission')->willReturnCallback(static fn(string $permission): bool => in_array($permission, $state->permissions, TRUE));
+
+    self::assertTrue($policy->canReceiveMessages($recipient));
+
+    $state->permissions = ['use private messaging system'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+
+    $state->permissions = ['access user profiles'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+
+    $state->active = FALSE;
+    $state->permissions = ['use private messaging system', 'access user profiles'];
+    self::assertFalse($policy->canReceiveMessages($recipient));
+  }
+
+  /**
    * Creates a thread fixture with the requested member count.
    */
   private function thread(int $members): PrivateMessageThreadInterface {

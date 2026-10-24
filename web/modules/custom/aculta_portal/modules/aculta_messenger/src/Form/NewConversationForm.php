@@ -251,7 +251,7 @@ final class NewConversationForm extends FormBase {
     $recipients = [];
     foreach ($this->recipientIds($formState) as $uid) {
       $user = $uid > 0 ? $this->entityTypes->getStorage('user')->load($uid) : NULL;
-      if (!$user instanceof UserInterface || !$user->isActive()) {
+      if (!$user instanceof UserInterface || !$this->policy->canReceiveMessages($user)) {
         if ($strict) {
           return [];
         }
