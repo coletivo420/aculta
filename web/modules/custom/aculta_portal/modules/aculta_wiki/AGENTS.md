@@ -39,6 +39,10 @@
 
 # Wiki — instruções locais
 
+# Dev.109: `/studio/we-sativa/inicio` é entrypoint `account` servido pelo Studio;
+# `WikiContributorWorkspace` mantém dados, acesso, cache e links autorizados.
+# Dois Kernels integrados passaram (2/205). Runtime e visual pendentes.
+
 - Dev.104: decisão editorial espera lock MariaDB do Node mantido por processo
   com conexão independente; depois aplica a nova revisão. Focal 1/216; classe
   completa 27/1.468, incluindo conflito de base obsoleta sem escrita parcial;

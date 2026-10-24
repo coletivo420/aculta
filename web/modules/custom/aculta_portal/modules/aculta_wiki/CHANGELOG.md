@@ -1461,3 +1461,13 @@
   presave Domain não interferiu no upload privado, alinhamento da publicação,
   retenção por revisões nem rollback. Runtime intocado.
 
+## 0.1.0-dev.109 — início da WE SATIVA no Studio
+
+- Adicionada a rota `/studio/we-sativa/inicio` no purpose `account`, exposta
+  pelo provider Studio e composta pelo serviço proprietário da Wiki. A página
+  oferece criação apenas com `createAccess()` e acesso da rota, retomada do
+  primeiro rascunho próprio editável e autorizado, link para Meu Trabalho e
+  orientação editorial. O workspace oferece retorno ao início com acesso
+  revalidado. Kernels focais passaram em 2 testes / 205 asserções; o bootstrap
+  reportou 200 depreciações Core/contrib e 3 PHPUnit. Runtime e browser pendentes.
+

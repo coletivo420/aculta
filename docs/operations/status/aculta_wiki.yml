@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.108 — autoria confirmada recebe aviso privado quando proposta é aceita/publicada; Kernel focal 1/220. Content Index R1 v4 e rotas/acesso R2 revalidados; integração de avisos pessoais Messenger e Runtime seguem pendentes."
-next_phase: 'Definir contrato de avisos privados da Wiki com o owner Messenger; depois homologar rotas/WE SATIVA em Runtime autorizado com Firefox ESR/X11 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.109 — início WE SATIVA em `/studio/we-sativa/inicio`; Kernel integrado 2/205. Rota/container do Runtime e validação visual seguem pendentes."
+next_phase: 'Content Index R1: revisar o contrato atual da projeção Wiki v4, relações de imagem/categoria e handoff ao owner Index; depois homologar WE SATIVA no Runtime autorizado ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

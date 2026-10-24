@@ -21,10 +21,12 @@ final class WikiNodeGrantTestHooks {
    */
   #[Hook('node_grants')]
   public function nodeGrants(AccountInterface $account, string $operation): array {
-    if ($operation !== 'view') {
-      return [];
+    if ($operation === 'update') {
+      return ['wiki_test_editor' => [(string) $account->id()]];
     }
-    return ['wiki_test_author' => [(string) $account->id()]];
+    return $operation === 'view'
+      ? ['wiki_test_author' => [(string) $account->id()]]
+      : [];
   }
 
   /**
@@ -38,14 +40,25 @@ final class WikiNodeGrantTestHooks {
     if ($node->bundle() !== 'wiki_entry' || !$node->hasField('field_wiki_test_grant_uid') || $node->get('field_wiki_test_grant_uid')->isEmpty()) {
       return [];
     }
-    return [[
-      'realm' => 'wiki_test_author',
-      'gid' => (int) $node->get('field_wiki_test_grant_uid')->value,
-      'grant_view' => 1,
-      'grant_update' => 0,
-      'grant_delete' => 0,
-    ],
+    $records = [
+      [
+        'realm' => 'wiki_test_author',
+        'gid' => (int) $node->get('field_wiki_test_grant_uid')->value,
+        'grant_view' => 1,
+        'grant_update' => 0,
+        'grant_delete' => 0,
+      ],
     ];
+    if ($node->hasField('field_wiki_test_update_uid') && !$node->get('field_wiki_test_update_uid')->isEmpty()) {
+      $records[] = [
+        'realm' => 'wiki_test_editor',
+        'gid' => (int) $node->get('field_wiki_test_update_uid')->value,
+        'grant_view' => 0,
+        'grant_update' => 1,
+        'grant_delete' => 0,
+      ];
+    }
+    return $records;
   }
 
 }

@@ -203,6 +203,18 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_name' => 'field_wiki_test_grant_uid',
       'label' => 'Test grant owner UID',
     ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_wiki_test_update_uid',
+      'type' => 'integer',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'wiki_entry',
+      'field_name' => 'field_wiki_test_update_uid',
+      'label' => 'Test grant editor UID',
+    ])->save();
 
     foreach (['anonymous', 'authenticated'] as $roleId) {
       $role = $this->container->get('entity_type.manager')->getStorage('user_role')->load($roleId);
@@ -1204,6 +1216,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $route = $routes->getRouteByName('aculta_studio.we_sativa');
     self::assertSame('/studio/we-sativa', $route->getPath());
     self::assertSame('account', $route->getOption('_aculta_domain_purpose'));
+    $startRoute = $routes->getRouteByName('aculta_studio.we_sativa_start');
+    self::assertSame('/studio/we-sativa/inicio', $startRoute->getPath());
+    self::assertSame('account', $startRoute->getOption('_aculta_domain_purpose'));
     $nodeAddRoute = $routes->getRouteByName('node.add');
     self::assertSame('/node/add/{node_type}', $nodeAddRoute->getPath());
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
@@ -1249,6 +1264,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(['node_type' => 'wiki_entry'], $createLink['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $createLink['#url']->getOption('domain')->id());
     self::assertSame('aculta420:content-grid', $build['entries']['#slots']['body']['items']['#component']);
+    $startBuild = $workspace->buildStart($author);
+    self::assertSame('Seu espaço de contribuição', $startBuild['header']['#props']['title']);
+    self::assertSame('aculta420:context-header', $startBuild['header']['#component']);
+    self::assertSame('node.add', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
+    self::assertSame('aculta420:content-section', $startBuild['guide']['#component']);
     $intentPage = WikiContributionIntentController::create($this->container)->page($own);
     $ownIntentCards = $intentPage['choices']['#slots']['body']['#slots']['items'];
     self::assertCount(1, $ownIntentCards, 'An editable own entry offers only the native full-edit action.');
@@ -1489,7 +1509,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     Role::create([
       'id' => 'wiki_workspace_state_filter_test',
       'label' => 'Wiki workspace state filter test',
-      'permissions' => ['access content', 'create wiki_entry content', 'edit own wiki_entry content'],
+      'permissions' => [
+        'access content',
+        'create wiki_entry content',
+        'edit own wiki_entry content',
+        'view own unpublished content',
+        'use wiki_editorial transition create_new_draft',
+        'use wiki_editorial transition draft_to_review',
+      ],
     ])->save();
     $author = User::create([
       'uid' => 71,
@@ -1524,6 +1551,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'moderation_state' => $state,
         'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
         'field_wiki_test_grant_uid' => $author->id(),
+        'field_wiki_test_update_uid' => $state === 'draft' ? $author->id() : NULL,
       ]);
       $node->save();
       if ($state === 'draft') {
@@ -1539,6 +1567,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'moderation_state' => 'draft',
         'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
         'field_wiki_test_grant_uid' => $author->id(),
+        'field_wiki_test_update_uid' => $author->id(),
       ]);
       $node->save();
       $expectedDraftIds[] = (int) $node->id();
@@ -1547,6 +1576,15 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
 
     $workspace = $this->container->get('aculta_wiki.contributor_workspace');
+    $latestDraft = Node::load((int) end($expectedDraftIds));
+    $latestDraftUpdateAccess = $this->container->get('aculta_portal.domain_purpose')
+      ->runInPurpose('wiki', fn () => $latestDraft->access('update', $author, TRUE));
+    self::assertTrue($latestDraftUpdateAccess->isAllowed());
+    $startBuild = $workspace->buildStart($author);
+    self::assertSame('Continuar de onde parou', $startBuild['continue']['#props']['title']);
+    $continueLink = $startBuild['continue']['#slots']['body']['#slots']['header'];
+    self::assertSame('entity.node.edit_form', $continueLink['#url']->getRouteName());
+    self::assertStringContainsString('Rascunho paginado 22', (string) $continueLink['#title']);
     $requestStack = $this->container->get('request_stack');
     $cases = [
       'all' => ['count' => 20, 'state' => NULL],

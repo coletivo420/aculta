@@ -9,6 +9,16 @@ aculta_studio.we_sativa:
   options:
     _aculta_domain_purpose: account
 
+aculta_studio.we_sativa_start:
+  path: /studio/we-sativa/inicio
+  defaults:
+    _controller: 'aculta_studio.we_sativa_controller:start'
+    _title: WE SATIVA
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.home:
   path: /studio/ganjalab
   defaults:

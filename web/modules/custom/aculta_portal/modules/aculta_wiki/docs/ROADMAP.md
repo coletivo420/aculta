@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.108**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.109**. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -13,6 +13,16 @@ rota também não existem no container ativo. Runtime segue sem homologação
 integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.109 — início WE SATIVA
+
+O Studio expõe `/studio/we-sativa/inicio` sob purpose `account`. A Wiki continua
+dona de dados e acesso: a página mostra criação mediante Entity Access e rota,
+retomada de um rascunho próprio atualizável, Meu Trabalho quando acessível e
+orientação editorial. O workspace inclui retorno à página inicial. Dois testes
+Kernel integrados passaram (205 asserções; 200 depreciações Core/contrib e 3
+PHPUnit). A rota/container do Runtime e a validação visual Firefox ESR/X11,
+320px e Olivero seguem pendentes.
 
 ### Incremento dev.108 — avisar aceite da proposta
 

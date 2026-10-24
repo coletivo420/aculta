@@ -130,6 +130,17 @@ final class WikiContributorWorkspace {
       ],
     ];
 
+    $startUrl = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa_start');
+    if ($startUrl !== NULL) {
+      $startAccess = $this->domainPurposes->runInPurpose('account', fn () => $startUrl->access($account, TRUE));
+      if ($startAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($startAccess);
+        if ($startAccess->isAllowed()) {
+          $build['header']['#slots']['back_link'] = Link::fromTextAndUrl($this->t('Início WE SATIVA'), $startUrl)->toRenderable();
+        }
+      }
+    }
+
     $create = $this->domainPurposes->runInPurpose('wiki', fn () => $this->entities
       ->getAccessControlHandler('node')->createAccess('wiki_entry', $account, [], TRUE));
     $create ??= AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions', 'domain']);
@@ -240,6 +251,126 @@ final class WikiContributorWorkspace {
       $proposalNextPage = $this->nextPageLink($this->t('Mais propostas'), 'wiki_proposal_cursor', $proposalPage['next_cursor']);
     }
     $build['proposals'] = $this->listSection($this->t('Minhas propostas'), $proposalLinks, $this->t('Você ainda não enviou propostas.'), $proposalNextPage);
+    $cacheability->applyTo($build);
+    return $build;
+  }
+
+  /**
+   * Builds the WE SATIVA start page with actions authorized by their owners.
+   *
+   * @return array<string, mixed>
+   *   Start page render array.
+   */
+  public function buildStart(AccountInterface $account): array {
+    $access = $this->access($account);
+    if (!$access->isAllowed()) {
+      throw new AccessDeniedHttpException();
+    }
+    $cacheability = CacheableMetadata::createFromObject($access)
+      ->addCacheContexts(['user', 'user.permissions', 'domain'])
+      ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
+    $build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'we-sativa-start'],
+      'header' => [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-header',
+        '#props' => [
+          'eyebrow' => (string) $this->t('Wiki420'),
+          'title' => (string) $this->t('Seu espaço de contribuição'),
+          'subtitle' => (string) $this->t('Crie um verbete ou continue um trabalho que já começou.'),
+        ],
+      ],
+    ];
+
+    $create = $this->domainPurposes->runInPurpose('wiki', fn () => $this->entities
+      ->getAccessControlHandler('node')->createAccess('wiki_entry', $account, [], TRUE));
+    if ($create instanceof AccessResultInterface) {
+      $cacheability->addCacheableDependency($create);
+      if ($create->isAllowed()) {
+        $createUrl = $this->domainPurposes->routeUrl('wiki', 'node.add', ['node_type' => 'wiki_entry']);
+        if ($createUrl !== NULL) {
+          $routeAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $createUrl->access($account, TRUE));
+          if ($routeAccess instanceof AccessResultInterface) {
+            $cacheability->addCacheableDependency($routeAccess);
+            if ($routeAccess->isAllowed()) {
+              $build['header']['#slots']['actions'] = Link::fromTextAndUrl($this->t('Criar verbete'), $createUrl)->toRenderable();
+            }
+          }
+        }
+      }
+    }
+
+    $drafts = $this->domainPurposes->runInPurpose('wiki', fn () => $this->ownNodes($account, NULL, 'in_progress'));
+    foreach ($drafts['items'] as $draft) {
+      if (!$draft instanceof NodeInterface) {
+        continue;
+      }
+      $update = $this->domainPurposes->runInPurpose('wiki', fn () => $draft->access('update', $account, TRUE));
+      $cacheability->addCacheableDependency($draft);
+      if (!$update instanceof AccessResultInterface) {
+        continue;
+      }
+      $cacheability->addCacheableDependency($update);
+      if (!$update->isAllowed()) {
+        continue;
+      }
+      $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $draft->id()]);
+      if ($editUrl === NULL) {
+        continue;
+      }
+      $routeAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $editUrl->access($account, TRUE));
+      if (!$routeAccess instanceof AccessResultInterface) {
+        continue;
+      }
+      $cacheability->addCacheableDependency($routeAccess);
+      if (!$routeAccess->isAllowed()) {
+        continue;
+      }
+      $build['continue'] = [
+        '#type' => 'component',
+        '#component' => 'aculta420:content-section',
+        '#props' => ['title' => (string) $this->t('Continuar de onde parou')],
+        '#slots' => [
+          'body' => [
+            '#type' => 'component',
+            '#component' => 'aculta420:card',
+            '#slots' => [
+              'header' => Link::fromTextAndUrl($this->t('Continuar: @title', ['@title' => $draft->label()]), $editUrl)->toRenderable(),
+              'content' => ['#plain_text' => $this->t('Rascunho salvo. Você pode continuar editando antes de enviar para revisão.')],
+            ],
+          ],
+        ],
+      ];
+      break;
+    }
+
+    $workUrl = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    if ($workUrl !== NULL) {
+      $workAccess = $this->domainPurposes->runInPurpose('account', fn () => $workUrl->access($account, TRUE));
+      if ($workAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($workAccess);
+        if ($workAccess->isAllowed()) {
+          $build['work'] = Link::fromTextAndUrl($this->t('Ver meu trabalho'), $workUrl)->toRenderable();
+        }
+      }
+    }
+
+    $build['guide'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:content-section',
+      '#props' => ['title' => (string) $this->t('Contribua com cuidado')],
+      '#slots' => [
+        'body' => [
+          '#type' => 'component',
+          '#component' => 'aculta420:card',
+          '#slots' => [
+            'header' => ['#plain_text' => $this->t('Use fontes que outras pessoas possam conferir')],
+            'content' => ['#plain_text' => $this->t('Sugestões para verbetes publicados passam por revisão editorial. Indique de onde vem a informação e explique a mudança proposta.')],
+          ],
+        ],
+      ],
+    ];
     $cacheability->applyTo($build);
     return $build;
   }

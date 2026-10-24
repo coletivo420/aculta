@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * WE SATIVA adapter; Wiki owns the contributor data and access decisions.
  */
-final class WeSativaExperienceProvider implements StudioExperienceProviderInterface {
+final class WeSativaExperienceProvider implements StudioExperienceProviderInterface, StartPageExperienceProviderInterface {
 
   public function __construct(
     private readonly ?WikiContributorWorkspace $workspace,
@@ -71,6 +71,16 @@ final class WeSativaExperienceProvider implements StudioExperienceProviderInterf
       throw new NotFoundHttpException();
     }
     return $this->workspace->build($this->currentUser);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildStart(): array {
+    if ($this->workspace === NULL) {
+      throw new NotFoundHttpException();
+    }
+    return $this->workspace->buildStart($this->currentUser);
   }
 
 }

@@ -4,6 +4,14 @@
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
+### Incremento Studio dev.6 — início WE SATIVA
+
+Adicionada a rota `/studio/we-sativa/inicio`, purpose `account`, com um provider
+de página inicial opcional. O provider encaminha o render ao serviço Wiki,
+responsável por dados, autorização e cache. O Kernel integrado validou a rota e
+os links condicionados a acesso (2 testes / 205 asserções junto ao owner Wiki).
+Runtime e Firefox ESR/X11, incluindo 320px e Olivero, permanecem pendentes.
+
 ### Incremento Studio dev.4 — disponibilidade da aba Wiki
 
 `WikiTab::isAvailable()` exige o módulo proprietário `aculta_wiki` além do

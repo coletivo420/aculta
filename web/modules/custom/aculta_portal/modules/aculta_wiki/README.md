@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.109`: a entrada WE SATIVA agora tem `/studio/we-sativa/inicio`
+  no purpose `account`, com criação, retomada de rascunho autorizado e guia
+  editorial. O serviço Wiki mantém dados, Entity Access e cache; o workspace
+  liga de volta ao início. Kernels focais passaram em 2 testes / 205
+  asserções; Runtime/visual permanecem pendentes.
+
 - `0.1.0-dev.108`: autoria confirmada recebe aviso privado quando sua proposta
   é aceita e publicada, além de devolvida/recusada. O aviso contém apenas o
   assunto, estado, nota e URL privada; integração com avisos pessoais do
