@@ -1,3 +1,11 @@
+## 0.1.1-dev.82 — provar a migração do ledger em lotes — 2026-10-24
+
+- O Kernel de idempotência agora migra 501 chaves legadas em duas chamadas:
+  comprova que o primeiro lote de 500 preserva a tabela antiga e que a última
+  chave é migrada antes da remoção. Kernel MariaDB: 14 testes / 271 assertions.
+- Sem mudança de comportamento de produção; post-update segue não aplicado no
+  Runtime. PHPCS Drupal/DrupalPractice e PHP lint do teste: PASS.
+
 ## 0.1.1-dev.81 — serializar e deduplicar todos os avisos do Fórum — 2026-10-24
 
 - O ledger passou a registrar Comment, revisão de `ForumPost` e revisão de

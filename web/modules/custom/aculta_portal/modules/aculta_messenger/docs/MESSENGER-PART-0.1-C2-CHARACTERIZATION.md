@@ -1,6 +1,6 @@
 # MESSENGER-PART 0.1-C2 — caracterização da idempotência dos avisos do Fórum
 
-**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-ups dev.80–dev.81.
+**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-ups dev.80–dev.82.
 A execução dos post-updates no Runtime permanece pendente.
 **Base:** [ADR-XK-02](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md)
 e [roadmap do submódulo](ROADMAP.md).
@@ -77,7 +77,7 @@ o autor do post, quem perdeu acesso ao post (`canViewPost()`) ou ao tópico
 ## Teste entregue
 
 `tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, MariaDB
-Simpletest dedicada, 14 testes / 266 assertions.
+Simpletest dedicada, 14 testes / 271 assertions.
 
 | Teste | Célula |
 | --- | --- |
@@ -90,7 +90,7 @@ Simpletest dedicada, 14 testes / 266 assertions.
 | `testOutOfOrderPostAndTopicRevisionsAreCountedOnce` | revisões de ForumPost e tópico fora de ordem contam uma vez; replay é ignorado |
 | `testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch` | ledger vencido é removido; chave ainda dentro da retenção permanece |
 | `testPostUpdateCreatesCommentLedgerIdempotently` | update legado cria schema ausente e aceita reexecução |
-| `testPostUpdateMigratesLegacyCommentKeys` | migra chaves dev.80 para o ledger unificado e remove tabela antiga após cópia |
+| `testPostUpdateMigratesLegacyCommentKeysAcrossBatches` | migra 501 chaves em lotes de 500; conserva a tabela antiga durante o primeiro lote e a remove após copiar a última chave |
 | `testEditOfPublishedPostDoesNotRegisterANotice` | edição revisionada de post publicado não soma |
 | `testRecipientWithoutPostAccessIsSkipped` | política de acesso negando o post |
 | `testTopicUpdateNoticesAreDeduplicated` | mesma revisão uma vez, revisão seguinte soma, tipos isolados |
@@ -117,7 +117,8 @@ Simpletest dedicada, 14 testes / 266 assertions.
 - Validação Runtime e revisão visual: continuam pendentes.
 - Lock persistente do worker de tópicos (`aculta_messenger:forum_topic_updated:*`)
   não é exercitado; o teste cobre a segunda barreira, no serviço.
-- Os follow-ups dev.80–dev.81 adicionam/migram o ledger e instalam locks; os
+- Os follow-ups dev.80–dev.81 adicionam/migram o ledger e instalam locks; o
+  dev.82 cobre a fronteira do lote da migração. Os
   post-updates ainda não foram executados no Runtime. Concorrência entre
   processos não foi simulada no Kernel.
 - Wiki, LMS e Revista não têm produtor nesta fase e não foram tocados.

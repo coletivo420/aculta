@@ -23,7 +23,7 @@ A matriz é caracterização inicial baseada em código e evidências documentai
 
 ## M1 — Estabilização 0.1.1 RC
 
-**Nesta revisão (dev.81):** Comments, revisões de `ForumPost` e atualizações de tópico usam ledger transacional por evento; processamento fora de ordem não perde avisos e lock serializa incrementos do mesmo agregado. A migração do ledger dev.80 é paginada; post-update ainda não foi executado no Runtime. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
+**Nesta revisão (dev.82):** Comments, revisões de `ForumPost` e atualizações de tópico usam ledger transacional por evento; processamento fora de ordem não perde avisos e lock serializa incrementos do mesmo agregado. Kernel comprova a migração do ledger dev.80 em lotes de 500; post-update ainda não foi executado no Runtime. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
 **Pendente:** cenários de amizade, bloqueio bilateral, autorização/IDOR, usuários inativos, grupos voluntários (incluindo fallback/teclado), retenção paginada e recuperação de falhas, transporte de teste e revisão visual autenticada. Não rodar limpeza em dados reais.
 **Aceite:** gates estáticos e automatizados pertinentes aprovados; smoke visual/Runtime identificado separadamente antes de RC conforme ciclo.
 

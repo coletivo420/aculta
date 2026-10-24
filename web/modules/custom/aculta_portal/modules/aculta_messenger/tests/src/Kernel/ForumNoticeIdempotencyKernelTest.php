@@ -362,34 +362,53 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   /**
    * The unified event ledger preserves keys from the prior Comment-only table.
    */
-  public function testPostUpdateMigratesLegacyCommentKeys(): void {
+  public function testPostUpdateMigratesLegacyCommentKeysAcrossBatches(): void {
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
     require_once dirname(__DIR__, 3) . '/aculta_messenger.post_update.php';
 
     $database = $this->container->get('database');
     $schema = $database->schema();
     $schema->dropTable(ForumNoticeEventSchema::TABLE);
-    $database->insert(ForumCommentNoticeSchema::TABLE)
-      ->fields(['uid' => 7, 'cid' => 40, 'nid' => 99, 'created' => 1_800_000_000])
-      ->execute();
+    for ($cid = 1_001; $cid <= 1_501; $cid++) {
+      $database->insert(ForumCommentNoticeSchema::TABLE)
+        ->fields(['uid' => 7, 'cid' => $cid, 'nid' => 99, 'created' => 1_800_000_000])
+        ->execute();
+    }
     $sandbox = [];
-    do {
-      aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
-    } while (($sandbox['#finished'] ?? 0) < 1);
+    aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
+
+    self::assertLessThan(1, $sandbox['#finished']);
+    self::assertTrue($schema->tableExists(ForumCommentNoticeSchema::TABLE));
+    self::assertSame(500, (int) $database->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+
+    aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
 
     self::assertTrue($schema->tableExists(ForumNoticeEventSchema::TABLE));
     self::assertFalse($schema->tableExists(ForumCommentNoticeSchema::TABLE));
+    self::assertSame(501, (int) $database->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
     $event = $database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['uid', 'event_type', 'event_id', 'nid', 'created'])
+      ->condition('event_id', 1_001)
       ->execute()
       ->fetchAssoc();
     self::assertSame([
       'uid' => '7',
       'event_type' => 'comment',
-      'event_id' => '40',
+      'event_id' => '1001',
       'nid' => '99',
       'created' => '1800000000',
     ], $event);
+    self::assertSame(1_501, (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['event_id'])
+      ->condition('event_id', 1_501)
+      ->execute()
+      ->fetchField());
   }
 
   /**

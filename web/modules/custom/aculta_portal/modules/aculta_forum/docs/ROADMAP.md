@@ -15,13 +15,13 @@ histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,
 reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 
-**Base inspecionada:** `aculta_forum 0.1.0-dev.274`, com Growroom420
+**Base inspecionada:** `aculta_forum 0.1.0-dev.275`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.81` mantém os avisos existentes e já oferece
+ativação produtiva. `aculta_messenger 0.1.1-dev.82` mantém os avisos existentes e já oferece
 o envelope `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`; o LMS
 consome quatro tipos pelo publisher, enquanto o adapter do Fórum ainda não foi
 implementado. A API é uma base disponível, não prova de integração completa.
@@ -75,12 +75,13 @@ evitou falha do map. Pai/filho via `migration_lookup`, dry-run/rollback e
 equivalência seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 14 testes / 266 assertions. Ledger por evento
+passou em MariaDB Simpletest, 14 testes / 271 assertions. Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
 provam ordem inversa, replays, migração de chaves legadas e retenção de seis
 meses. O writer usa lock por agregado e a migração processa lotes de até 500
-chaves; o teste atual não simula contenção entre processos nem atravessa o
-limite de lote. Homologação Runtime segue pendente; F-M1 permanece parcial.
+chaves; o Kernel comprova a passagem do limite (501 registros em duas chamadas).
+Contenção entre processos não foi simulada. Homologação Runtime segue pendente;
+F-M1 permanece parcial.
 
 ### Sequência recomendada e paralelismo
 
