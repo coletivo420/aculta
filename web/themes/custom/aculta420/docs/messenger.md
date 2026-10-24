@@ -120,6 +120,8 @@ Se um token "não pinta", confira primeiro o elemento que o módulo montou. O er
 
 `js/messenger-drawers.js` é o único arquivo de comportamento da gaveta. Ele usa `once()` e `Drupal.attachBehaviors`, então novo conteúdo carregado por `fetch` ganha comportamento sem recarregar a página.
 
+Ao abrir a gaveta ou navegar dentro dela, o JS apresenta `feedback/messenger-state` no estado `loading`; erro HTTP/rede apresenta a variante `error` com `role="alert"`. A biblioteca `messenger-drawers` carrega o CSS do SDC, pois fragmentos `fetch` não reaplicam anexos de biblioteca da resposta.
+
 | Atributo | Papel | Comportamento |
 | --- | --- | --- |
 | `data-aculta-drawer-url` | Gaveta (`messenger-trigger`) | URL carregada ao abrir |
@@ -128,6 +130,7 @@ Se um token "não pinta", confira primeiro o elemento que o módulo montou. O er
 | `data-aculta-conversation-url` | Links e botões | Carrega a visão na gaveta por `fetch` |
 | `data-aculta-conversation-view` | Conversa | Rola até a última mensagem |
 | `data-aculta-drawer-action` | Formulário "Opções" | Envia por `fetch` e substitui a gaveta |
+| `data-aculta-drawer-state` | Estado transitório da gaveta | `loading` ou `error`, gerado pelo tema durante AJAX |
 | `data-aculta-new-conversation` | Busca de membro | Impede Enter de enviar a busca |
 | `data-aculta-new-conversation-form` | Primeira mensagem | Envia por `fetch` |
 | `data-aculta-open-conversation` | Perfil: "Iniciar conversa" | Abre a gaveta na nova conversa |

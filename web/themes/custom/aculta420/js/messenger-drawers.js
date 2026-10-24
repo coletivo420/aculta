@@ -80,6 +80,17 @@
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
+        const showDrawerState = (state, message) => {
+          if (!content) {
+            return;
+          }
+          const feedback = document.createElement('div');
+          feedback.className = `aculta-messenger-state aculta-messenger-state--${state}`;
+          feedback.setAttribute('role', state === 'error' ? 'alert' : 'status');
+          feedback.dataset.acultaDrawerState = state;
+          feedback.textContent = message;
+          content.replaceChildren(feedback);
+        };
 
         // Drupal's nested confirmation modal handles Escape first. Keep that
         // key from reaching Bootstrap's document-level Offcanvas listener,
@@ -99,6 +110,7 @@
           const activeRequest = new AbortController();
           request = activeRequest;
           content.setAttribute('aria-busy', 'true');
+          showDrawerState('loading', Drupal.t('Carregando conversa…'));
           fetch(url, {
             method: 'GET',
             credentials: 'same-origin',
@@ -128,7 +140,7 @@
             })
             .catch((error) => {
               if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
-                content.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar esta conversa.')));
+                showDrawerState('error', Drupal.t('Não foi possível carregar esta conversa.'));
               }
             })
             .finally(() => {
@@ -224,6 +236,7 @@
           const activeRequest = new AbortController();
           request = activeRequest;
           content.setAttribute('aria-busy', 'true');
+          showDrawerState('loading', Drupal.t('Carregando…'));
 
           fetch(endpoint, {
             method: 'GET',
@@ -257,7 +270,7 @@
             })
             .catch((error) => {
               if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
-                content.replaceChildren(document.createTextNode(drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.')));
+                showDrawerState('error', drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.'));
               }
             })
             .finally(() => {

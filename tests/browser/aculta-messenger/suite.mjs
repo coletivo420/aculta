@@ -135,17 +135,14 @@ await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"]'
 await b.exec(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"] input[name=remove]').click(); return 1;`);
 check('A: "Sim" removes the friendship: the member menu shows "Adicionar amigo"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Adicionar amigo')`, 'add btn'));
 // B now only receives messages from friends (set through user.data, as the Configurações form does), before A removes the friendship.
-check('A: not a friend of a friends-only member: the notice replaces the reply box', await b.waitFor(`${b.C}.querySelector('.aculta-messenger-notice')`, 'notice'));
-const n1 = await b.notice();
-const n1Button = await b.exec(`const x = ${b.C}.querySelector('.aculta-messenger-notice__action'); return x ? x.value || x.textContent.trim() : null;`);
-check('A: friends-only notice text', (n1 || '').includes('Essa pessoa só recebe mensagens de Amigos,') && (n1Button || '').includes('pedido de Amizade'), `${n1} | ${n1Button}`);
-await b.shot('A-friends-only-notice');
+check('A: friends-only privacy does not disable replies in the existing conversation', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'existing thread reply'));
+await b.shot('A-existing-thread-after-unfriend');
 
-// Send the request through the notice link.
-await b.exec(`${b.C}.querySelector('.aculta-messenger-notice__action').click(); return 1;`);
-check('A: the notice then says the request is already sent', await b.waitText('você já enviou pedido de amizade, aguarde', 15000));
-check('A: no reply box while the request is pending', !(await b.hasReplyBox()));
-await b.shot('A-pending-notice');
+// Friends-only is enforced when creating a new conversation; friendship requests remain available in the member menu.
+await b.openOptions('teste.b');
+await b.clickByText('input[type=submit]', 'Adicionar amigo');
+check('A: after unfriend, a new friendship request can be sent from the member menu', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Cancelar pedido de amizade')`, 'cancel request'));
+check('A: friendship request does not remove access to the existing reply box', await b.hasReplyBox());
 
 // ---------- Phase 5: B accepts through the menu, then blocks A through its dialog ----------
 await b.open(B);
@@ -275,6 +272,11 @@ check('B: the block dialog opens for the keyboard regression check', await b.wai
 await b.pressKey('\uE00C');
 check('B: Escape closes only the modal and keeps the drawer open', await b.waitFor(`${b.C}.getClientRects().length && !document.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.getClientRects().length`, 'Escape preserves drawer'));
 check('B: the block action remains available after Escape', (await b.panelItems()).includes('button:Bloquear'));
+
+// Drawer loading and network errors use the shared accessible Messenger state component.
+await b.exec(`const drawer = document.querySelector('[data-aculta-drawer-url][data-aculta-drawer-count="messages"]'); const original = window.fetch; window.fetch = (...args) => { window.fetch = original; return new Promise((resolve, reject) => setTimeout(() => original(...args).then(resolve, reject), 500)); }; drawer.acultaNavigate('/mensagens/conversa/999999999/painel'); return 1;`);
+check('B: conversation drawer announces its loading state', await b.waitFor(`${b.C}.querySelector('[data-aculta-drawer-state="loading"][role="status"]')?.textContent.includes('Carregando conversa')`, 'drawer loading state'));
+check('B: conversation drawer exposes failures as an alert', await b.waitFor(`${b.C}.querySelector('[data-aculta-drawer-state="error"][role="alert"]')?.textContent.includes('Não foi possível carregar esta conversa')`, 'drawer error state'));
 
 // ---------- Errors and report ----------
 check('no JavaScript errors in the drawer', (await b.errors()).length === 0, JSON.stringify(await b.errors()));

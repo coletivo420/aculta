@@ -89,6 +89,7 @@ messenger-drawers:
   css:
     theme:
       components/content/messenger-item/messenger-item.css: {}
+      components/feedback/messenger-state/messenger-state.css: {}
       css/components/messenger-drawer.css: {}
   js:
     js/messenger-drawers.js: {}

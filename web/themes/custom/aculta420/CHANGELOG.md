@@ -1,3 +1,11 @@
+## 0.6.1-dev.10 — estados de carregamento e erro na gaveta — 2026-10-24
+
+A gaveta agora apresenta o SDC `messenger-state` durante carregamentos AJAX e anuncia falhas de navegação como alerta.
+A biblioteca `messenger-drawers` carrega o CSS do componente para garantir a apresentação também nas respostas de
+fragmentos buscadas por `fetch`.
+
+Validação: suíte de navegador do Messenger, Firefox ESR visível no Runtime de teste: **76/76 verificações aprovadas**.
+
 ## 0.6.1-dev.9 — não fechar a gaveta ao dispensar confirmação com Escape — 2026-10-24
 
 Escape fecha a confirmação de amizade/bloqueio sem propagar ao listener do Bootstrap Offcanvas, mantendo a conversa aberta. O contrato atualizado está em `docs/messenger.md`.

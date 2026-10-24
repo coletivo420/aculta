@@ -56,7 +56,7 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 | 1 | "Iniciar nova conversa", busca, nova conversa, botões "Cancelar" e "Voltar para o início" (classe e ordem) |
 | 2 | Barra da conversa, menu da thread, "Limpar histórico" em duas etapas, pedido de amizade |
 | 3 | Aceite pelo destinatário |
-| 4 | "Desfazer amizade" em janela de confirmação (cancelar, Escape e confirmar), aviso "só amigos" |
+| 4 | "Desfazer amizade" em janela de confirmação; preferência "só amigos" não bloqueia resposta em thread existente |
 | 5 | Aceite, "Bloquear" em janela de confirmação, avisos de quem bloqueou e de quem foi bloqueado |
 | 6 | Desbloqueio pelo menu |
 | 7 | Escape fecha só a janela de bloqueio e mantém a gaveta aberta; bloqueio e desbloqueio pelo aviso |
@@ -65,6 +65,7 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 | 10 | "Limpar histórico" só para quem confirma, e a outra parte continua vendo o histórico |
 | 11 | Caixa "Opções" do perfil `/u/teste-b`: sem "Limpar histórico", "Iniciar conversa" abre a gaveta na nova conversa |
 | 12 | Conversa em grupo: menu só com "Limpar histórico", limpeza só para quem confirma |
+| 13 | Estado visual e anunciado de carregamento e erro recuperável na gaveta |
 
 ## Limites
 
@@ -73,5 +74,5 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 
 ## Execução registrada
 
-Em 2026-10-24, a suíte completa passou com **75/75 verificações** no Runtime de teste, em Firefox ESR visível (`DISPLAY=:0`).
+Em 2026-10-24, a suíte completa passou com **76/76 verificações** no Runtime de teste com Firefox ESR visível (`DISPLAY=:0`), incluindo estados loading/error e a preferência friends-only em conversa existente.
 O teste usa o diálogo do Drupal/jQuery UI para confirmar amizade e bloqueio, e comprova que Escape fecha o modal sem fechar a gaveta.
