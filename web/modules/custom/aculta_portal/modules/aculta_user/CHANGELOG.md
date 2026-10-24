@@ -1,3 +1,8 @@
+## 0.4.0-dev.71 — remoção de aliases temporários em desenvolvimento (2026-10-24)
+
+- Removidos aliases legados de troca de e-mail /seguranca/email e /seguranca/email/{user}; removido controller de redirecionamento órfão. E-mail e segurança continuam no Portal e nas suas rotas legítimas; /u/{apelido} preservado. Testes não executados neste incremento.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
 ## 0.4.0-dev.70 — evidência publicada por contexto
 
 - Implementados `PublishedParticipationLookupInterface`, o valor agregado
