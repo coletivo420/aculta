@@ -1741,3 +1741,12 @@ concorrência durante transporte e perda do lock renovado; Kernels MariaDB de id
 transporte em processos independentes e suspensão acima da lease seguem pendentes. PHPCS Drupal/DrupalPractice PASS. Duas deprecações de plugins Message via annotations foram reportadas pelo Kernel de
 amizade. Sem Runtime ou SMTP.
 
+## 0.1.1-dev.163 — exigir CSRF de rota nas ações POST — 2026-10-24
+
+As quatro rotas POST-only de resposta e ações de relacionamento agora exigem também o `_csrf_token` do Core. Os formulários
+continuam usando seus tokens/validações próprios; essa camada valida a origem da requisição no roteamento. GET/POST de
+composição não receberam esse requisito, pois precisam permitir navegação GET e já passam pelo Form API no POST.
+
+Validação: `PostRouteCsrfRequirementTest` **1/5 PASS**, PHP lint, PHPCS, gate Drupal 11+ e índice de status PASS. O teste
+verifica o contrato YAML das rotas; POST HTTP integrado e Runtime continuam pendentes.
+
