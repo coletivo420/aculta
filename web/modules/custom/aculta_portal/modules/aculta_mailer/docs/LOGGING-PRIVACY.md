@@ -8,7 +8,7 @@ Entidade `aculta_mail_log` (uma por mensagem, identificada pelo correlation ID):
 
 | Campo | Conteúdo |
 |---|---|
-| `correlation_id` | UUID v4 da mensagem (também em `X-Aculta-Mail-ID`). |
+| `correlation_id` | UUID v4 aleatório ou UUID v5 estável da entrega lógica (também em `X-Aculta-Mail-ID`). |
 | `type` | Tipo do e-mail (`account_created`, `achievement_earned`, ...). |
 | `recipient_hash` | HMAC-SHA256 do endereço normalizado (minúsculas, sem espaços), com `hash_salt` do ambiente. |
 | `langcode`, `transport`, `attempts` | Idioma, transporte usado e número da tentativa. |
@@ -51,6 +51,7 @@ permanece. Pendência: a fila não tem prazo próprio de expiração; itens pres
 ## Limites
 
 - `sent` não prova entrega. Entrega depende de webhooks de provedor (F10).
+- Uma correlação v5 repetida não é enviada novamente quando este registro ativo mostra o mesmo tipo, destinatário HMAC e estado `sent`. Chaves devem ser HMACadas com `hash_salt` e não podem conter texto pessoal. A proteção não opera com logging desligado e não cobre a falha simultânea da aceitação externa e da gravação local.
 - Aberturas e cliques não são registrados (F11, opt-in).
 
 ## Reenvio (0.1.0-dev.38)

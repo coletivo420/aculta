@@ -6,12 +6,13 @@ namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Envio pela API: tipo registrado por tag, hook_mail do módulo e cabeçalho de correlação.
+ * Envio pela API, renderização pelo hook_mail e cabeçalho de correlação.
  */
 #[Group('aculta_mailer')]
 #[RunTestsInSeparateProcesses]
@@ -54,6 +55,26 @@ final class AcultaMailerKernelTest extends KernelTestBase {
     $this->assertSame('Assunto de teste para Maria', $last['subject']);
     $this->assertStringContainsString('https://example.invalid/x', (string) $last['body']);
     $this->assertSame(self::CORRELATION, $last['headers']['X-Aculta-Mail-ID']);
+  }
+
+  /**
+   * Repeated successful delivery with the same correlation sends only once.
+   */
+  public function testAcceptedCorrelationIsNotDeliveredTwice(): void {
+    $correlationId = MessageIdFactory::correlationIdFor('kernel-idempotency-test');
+    $message = new MailMessage(
+      'aculta_mailer_test_message',
+      'destino@example.invalid',
+      'pt-br',
+      ['name' => 'Maria'],
+      $correlationId,
+    );
+
+    $this->assertTrue($this->mailer()->send($message));
+    $this->assertTrue($this->mailer()->send($message));
+
+    $mails = $this->container->get('state')->get('system.test_mail_collector', []);
+    $this->assertCount(1, $mails);
   }
 
   /**

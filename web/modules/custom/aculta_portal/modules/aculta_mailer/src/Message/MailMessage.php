@@ -17,7 +17,8 @@ final readonly class MailMessage {
 
   private const LANGCODE_PATTERN = '/^[a-z]{2,3}(-[a-zA-Z0-9]{2,8})?$/';
 
-  private const CORRELATION_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/';
+  private const CORRELATION_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-'
+    . '[45][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
 
   /**
    * Cria a mensagem validada.
@@ -31,7 +32,7 @@ final readonly class MailMessage {
    * @param array<string, mixed> $context
    *   Valores autorizados para o template. Chaves em snake_case; ver a classe para o formato permitido.
    * @param string $correlationId
-   *   UUID v4 minúsculo gerado por `MessageIdFactory`.
+   *   UUID v4 ou v5 minúsculo do `MessageIdFactory`.
    *
    * @throws \InvalidArgumentException
    *   Quando algum campo viola o contrato.
@@ -53,7 +54,7 @@ final readonly class MailMessage {
       throw new \InvalidArgumentException('Idioma de e-mail inválido.');
     }
     if (preg_match(self::CORRELATION_PATTERN, $correlationId) !== 1) {
-      throw new \InvalidArgumentException('Correlation ID deve ser UUID v4 minúsculo.');
+      throw new \InvalidArgumentException('Correlation ID deve ser UUID v4 ou v5 minúsculo.');
     }
     foreach ($context as $key => $value) {
       if (!is_string($key) || preg_match(self::TYPE_PATTERN, $key) !== 1) {
@@ -77,6 +78,13 @@ final readonly class MailMessage {
       is_array($data['context'] ?? NULL) ? $data['context'] : [],
       (string) ($data['correlation_id'] ?? ''),
     );
+  }
+
+  /**
+   * Indicates whether this correlation is deterministic and safe for retries.
+   */
+  public function hasIdempotentCorrelation(): bool {
+    return $this->correlationId[14] === '5';
   }
 
   /**

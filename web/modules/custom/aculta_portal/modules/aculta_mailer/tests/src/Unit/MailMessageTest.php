@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Unit;
 
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -29,6 +30,18 @@ final class MailMessageTest extends UnitTestCase {
     $this->assertSame('account_created', $message->type);
     $this->assertSame('pt-br', $message->langcode);
     $this->assertSame($context, $message->context);
+    $this->assertFalse($message->hasIdempotentCorrelation());
+  }
+
+  /**
+   * Accepts UUID v5 correlation IDs used for stable idempotent deliveries.
+   */
+  public function testAcceptsUuidV5Correlation(): void {
+    $id = MessageIdFactory::correlationIdFor('logical-delivery');
+    $message = new MailMessage('account_created', 'pessoa@example.com', 'pt-br', [], $id);
+
+    $this->assertSame($id, $message->correlationId);
+    $this->assertTrue($message->hasIdempotentCorrelation());
   }
 
   /**
@@ -96,7 +109,7 @@ final class MailMessageTest extends UnitTestCase {
   }
 
   /**
-   * Aceita lista de linhas escalares (um nível de aninhamento), como o resumo de avisos.
+   * Aceita linhas escalares aninhadas, como no resumo de avisos.
    */
   public function testAcceptsRowsOfScalars(): void {
     $rows = [['tipo' => 'resposta', 'titulo' => 'Tópico', 'quantidade' => 2]];

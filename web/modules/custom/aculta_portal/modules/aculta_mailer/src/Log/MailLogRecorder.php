@@ -85,6 +85,28 @@ final class MailLogRecorder {
   }
 
   /**
+   * Checks whether this exact logical delivery was already accepted.
+   *
+   * @param \Drupal\aculta_mailer\Message\MailMessage $message
+   *   Message identity to check.
+   *
+   * @return bool
+   *   TRUE when a successful log matches correlation, type and recipient.
+   */
+  public function wasAccepted(MailMessage $message): bool {
+    if (!$this->logSettings->enabled()) {
+      return FALSE;
+    }
+    $found = $this->entityTypeManager->getStorage(self::ENTITY_TYPE)->loadByProperties([
+      'correlation_id' => $message->correlationId,
+      'type' => $message->type,
+      'recipient_hash' => $this->hashRecipient($message->to),
+      'status' => MailStatus::Sent->value,
+    ]);
+    return $found !== [];
+  }
+
+  /**
    * Cancela o conteúdo guardado para reenvio das mensagens anteriores do mesmo destinatário e tipo.
    *
    * Usado quando o usuário pede um novo link de uso único: o link antigo não é reaproveitado. Exceção: a retentativa

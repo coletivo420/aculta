@@ -157,6 +157,7 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - Exceção de transporte mantém o lote pendente para retry e não interrompe os outros destinatários do cron. O log não
   inclui destinatário, conteúdo do aviso nem texto da exceção.
 - `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
+- A correlação do digest é um UUID v5 com chave HMAC pelo `hash_salt`, baseado no UID, destinatário e identificadores/tipos/quantidades do lote; títulos e conteúdo ficam fora. Se o Mailer já registrou a mesma correlação, tipo e destinatário como aceitos, um retry confirma os IDs sem novo envio. O reconhecimento entre Forum e adapters roda na transação padrão compartilhada; erro de qualquer confirmação reverte todas. A deduplicação Mailer depende do Mail Log ativo e persistido; não oferece atomicidade com o provedor externo.
 
 ## 8. Funções do módulo, resumo dos novos componentes
 

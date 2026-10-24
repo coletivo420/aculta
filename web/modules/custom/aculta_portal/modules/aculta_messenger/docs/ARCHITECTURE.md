@@ -32,6 +32,14 @@ site. Preferências aplicam-se por categoria/evento, e a entrega revalida polít
 momento do envio. A sequência de integração é LMS → Wiki → Fórum → Loja → Doações, sem
 duplicar o transporte nem manter fluxos de e-mail legados após migração.
 
+O digest combina as origens por destinatário sob lock. Sua correlação UUID v5 usa uma
+chave HMACada com `hash_salt` e o manifesto de IDs/tipos/quantidades, sem incluir títulos
+ou conteúdo. Após o Mailer aceitar o e-mail, o reconhecimento de todos os adapters e a
+gravação do intervalo rodam numa transação da conexão padrão Drupal; uma falha reverte
+todo o lote. O Mailer suprime retries cuja correlação, tipo e destinatário já constem como
+aceitos no Mail Log ativo. Essa mitigação exige log persistido e não cria atomicidade com
+SMTP/provedor externo.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |

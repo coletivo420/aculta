@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
@@ -32,6 +33,7 @@ use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Lock\PersistentDatabaseLockBackend;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Language\LanguageInterface;
@@ -370,7 +372,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $userData,
       $this->container->get('datetime.time'),
       $avisos,
-      $this->container->get('uuid'),
+      $this->container->get('settings'),
+      $this->container->get('database'),
       $this->container->get('lock.persistent'),
     );
     // A second backend instance models a separate request sharing the same DB
@@ -383,7 +386,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $userData,
       $this->container->get('datetime.time'),
       $avisos,
-      $this->container->get('uuid'),
+      $this->container->get('settings'),
+      $this->container->get('database'),
       new PersistentDatabaseLockBackend($this->container->get('database')),
     );
 
@@ -392,6 +396,75 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertCount(1, $notices);
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
     self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * Rolls back all digest acknowledgements when one adapter fails.
+   */
+  public function testDigestAcknowledgementsRollbackAsOneBatch(): void {
+    $author = $this->createUser('autor_digest_rollback');
+    $follower = $this->createUser('seguidor_digest_rollback');
+    $follower->setEmail('digest-rollback@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $topic = $this->createTopic('Digest transacional');
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($comment));
+
+    $database = $this->container->get('database');
+    $database->schema()->createTable('aculta_messenger_digest_ack_test', [
+      'fields' => [
+        'id' => ['type' => 'int', 'size' => 'normal', 'not null' => TRUE],
+        'acknowledged' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['id'],
+    ]);
+    $database->insert('aculta_messenger_digest_ack_test')->fields(['id' => 1, 'acknowledged' => 0])->execute();
+    $provider = new FailOnceDigestAckProvider($uid, $database);
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    $notice = $this->loadNotices($uid, (int) $topic->id())[0];
+    self::assertSame(1, (int) $notice->get('contador_email')->value, 'Forum email count rolls back when the adapter acknowledgement fails.');
+    self::assertSame(0, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
+
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame($correlations[0], $correlations[1]);
+    $notice = $this->loadNotices($uid, (int) $topic->id())[0];
+    self::assertSame(0, (int) $notice->get('contador_email')->value);
+    self::assertSame(1, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
   }
 
   /**
@@ -431,7 +504,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $userData,
       $this->container->get('datetime.time'),
       $avisos,
-      $this->container->get('uuid'),
+      $this->container->get('settings'),
+      $this->container->get('database'),
       $this->container->get('lock.persistent'),
     );
 
@@ -1284,5 +1358,65 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       ->execute();
     return array_values($storage->loadMultiple($ids));
   }
+
+}
+
+/**
+ * Digest provider that fails after updating its source once.
+ */
+final class FailOnceDigestAckProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * Whether the synthetic first failure has happened.
+   */
+  private bool $failed = FALSE;
+
+  public function __construct(
+    private readonly int $uid,
+    private readonly Connection $database,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return [$this->uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    if ($uid !== $this->uid) {
+      return [];
+    }
+    return [
+      [
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 998,
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->database->update('aculta_messenger_digest_ack_test')
+      ->fields(['acknowledged' => 1])
+      ->condition('id', 1)
+      ->execute();
+    if (!$this->failed) {
+      $this->failed = TRUE;
+      throw new \RuntimeException('Synthetic acknowledgement failure.');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {}
 
 }

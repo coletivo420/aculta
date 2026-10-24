@@ -27,6 +27,27 @@ final class MessageIdFactoryTest extends UnitTestCase {
   }
 
   /**
+   * Stable idempotency keys produce lowercase UUID v5 correlations.
+   */
+  public function testStableCorrelationIdForIdempotencyKey(): void {
+    $first = MessageIdFactory::correlationIdFor('digest:uid:17:batch:abc123');
+    $second = MessageIdFactory::correlationIdFor('digest:uid:17:batch:abc123');
+    $other = MessageIdFactory::correlationIdFor('digest:uid:17:batch:def456');
+
+    $this->assertSame($first, $second);
+    $this->assertNotSame($first, $other);
+    $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $first);
+  }
+
+  /**
+   * Rejects empty idempotency keys.
+   */
+  public function testRejectsEmptyIdempotencyKey(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    MessageIdFactory::correlationIdFor('');
+  }
+
+  /**
    * Monta o Message-ID com o host recebido por configuração.
    */
   public function testBuildsMessageIdWithConfiguredHost(): void {

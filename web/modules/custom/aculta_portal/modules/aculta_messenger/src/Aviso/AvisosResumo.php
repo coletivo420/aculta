@@ -7,10 +7,12 @@ namespace Drupal\aculta_messenger\Aviso;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Site\Settings;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
-use Drupal\Component\Uuid\UuidInterface;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Mail\AvisosResumoMailType;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -48,7 +50,8 @@ final class AvisosResumo {
     private readonly UserDataInterface $userData,
     private readonly TimeInterface $time,
     private readonly AvisoService $avisos,
-    private readonly UuidInterface $uuid,
+    private readonly Settings $settings,
+    private readonly Connection $database,
     private readonly LockBackendInterface $lock,
     iterable $digestProviders = [],
     private readonly ?LoggerInterface $logger = NULL,
@@ -235,6 +238,11 @@ final class AvisosResumo {
       array_push($linhas, ...$eligibleRows);
       $providersWithRows[] = [
         'provider' => $provider,
+        'manifest_rows' => array_map(static fn(array $row): array => [
+          'tipo' => (string) ($row['tipo'] ?? ''),
+          'delivery_id' => (int) $row['delivery_id'],
+          'quantidade' => (int) ($row['quantidade'] ?? 1),
+        ], $eligibleRows),
         'delivery_ids' => array_values(array_unique(array_map(
           static fn(array $row): int => (int) ($row['delivery_id'] ?? 0),
           $eligibleRows,
@@ -244,9 +252,37 @@ final class AvisosResumo {
     if ($linhas === []) {
       return FALSE;
     }
+    $entregasManifesto = [];
+    foreach ($daFila as $aviso) {
+      $entregasManifesto[] = [
+        'origem' => 'forum',
+        'nid' => $aviso['nid'],
+        'tipo' => $aviso['tipo'],
+        'quantidade' => $aviso['quantidade'],
+      ];
+    }
+    foreach ($providersWithRows as $providerRows) {
+      foreach ($providerRows['manifest_rows'] as $manifestRow) {
+        $entregasManifesto[] = [
+          'origem' => get_class($providerRows['provider']),
+          'id' => $manifestRow['delivery_id'],
+          'tipo' => $manifestRow['tipo'],
+          'quantidade' => $manifestRow['quantidade'],
+        ];
+      }
+    }
+    usort($entregasManifesto, static fn(array $a, array $b): int => strcmp(serialize($a), serialize($b)));
+    $hashSalt = (string) $this->settings->get('hash_salt', '');
+    $recipientKey = hash_hmac('sha256', mb_strtolower(trim((string) $conta->getEmail())), $hashSalt);
+    $manifesto = hash_hmac('sha256', serialize([
+      'uid' => $uid,
+      'recipient' => $recipientKey,
+      'entregas' => $entregasManifesto,
+    ]), $hashSalt);
+    $correlationId = MessageIdFactory::correlationIdFor($manifesto);
     $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), self::LANGCODE, [
       'resumo' => AvisosResumoMailType::formatLinhas($linhas),
-    ], $this->uuid->generate());
+    ], $correlationId);
     try {
       $resultado = $this->mailer->deliver($mensagem);
     }
@@ -271,19 +307,30 @@ final class AvisosResumo {
       }
       return FALSE;
     }
-    foreach ($daFila as $aviso) {
-      $this->avisos->acknowledgeEmailCount($uid, $aviso['nid'], $aviso['tipo'], $aviso['quantidade']);
-    }
-    foreach ($providersWithRows as $providerRows) {
-      $deliveryIds = array_values(array_filter($providerRows['delivery_ids'], static fn(int $id): bool => $id > 0));
-      if ($deliveryIds !== []) {
-        $providerRows['provider']->markDigestSent($uid, $deliveryIds);
+    // Every adapter uses Drupal's shared database connection. Commit all
+    // acknowledgements together so a failed source leaves the exact same batch
+    // available for the stable Mailer correlation on the next cron run.
+    $transaction = $this->database->startTransaction();
+    try {
+      foreach ($daFila as $aviso) {
+        $this->avisos->acknowledgeEmailCount($uid, $aviso['nid'], $aviso['tipo'], $aviso['quantidade']);
       }
+      foreach ($providersWithRows as $providerRows) {
+        $deliveryIds = array_values(array_filter($providerRows['delivery_ids'], static fn(int $id): bool => $id > 0));
+        if ($deliveryIds !== []) {
+          $providerRows['provider']->markDigestSent($uid, $deliveryIds);
+        }
+      }
+      // Do not postpone a failed source for 20 hours just because another
+      // source delivered successfully in this combined digest.
+      if (!$providerLookupFailed) {
+        $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
+      }
+      $transaction->commitOrRelease();
     }
-    // Do not postpone a failed source for 20 hours just because another source
-    // delivered successfully in this combined digest.
-    if (!$providerLookupFailed) {
-      $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
     }
     return TRUE;
   }

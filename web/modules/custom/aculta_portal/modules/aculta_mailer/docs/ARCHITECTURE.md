@@ -35,7 +35,7 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
 | `AcultaMailerInterface` | Ponto de entrada de envio. Implementação na fase F2. |
 | `MailMessage` | Value object imutável: tipo, destinatário, idioma, contexto escalar e ID de correlação. Valida a entrada. |
 | `MailStatus` | Enum com estados e transições permitidas. |
-| `MessageIdFactory` | Gera `Message-ID` e ID de correlação. O host do `Message-ID` é recebido por construtor (vem do `aculta_deployer`). |
+| `MessageIdFactory` | Gera `Message-ID`, correlação UUID v4 aleatória e correlação UUID v5 determinística para chaves de idempotência. O host do `Message-ID` é recebido por construtor (vem do `aculta_deployer`). |
 | `RetrySchedule` | Política de retry: atraso por tentativa e classificação de erro permanente/temporário. |
 
 ## 4. Decisões de arquitetura
@@ -52,6 +52,7 @@ Drupal Core Mail (symfony_mailer) → Symfony Mailer → transporte (DSN)
 6. **Submódulo opt-in.** O módulo não é habilitado por `aculta_portal` nesta fase, e não entra em `core.extension`.
    A integração só ocorre em fase própria, com testes e migração.
 7. **Sem novo segredo.** Nenhuma credencial é adicionada nesta fase.
+8. **Correlação idempotente.** `AcultaMailer` não reenvia uma mensagem se o registro ativo já confirmar a mesma correlação, tipo e destinatário como aceita. O UUID v5 é reservado a retries da mesma entrega lógica; mensagens novas continuam usando UUID v4. O consumidor deve fornecer uma chave HMACada com `hash_salt`, sem texto pessoal ou conteúdo. Essa proteção depende do registro de e-mails habilitado e não equivale a uma transação com o provedor externo.
 
 ## 4.1 Transportes
 

@@ -87,6 +87,11 @@ final class AcultaMailer implements AcultaMailerInterface {
       ]);
       return SendResult::failed(DeliveryError::Permanent, NULL);
     }
+    // A stable correlation may be retried after its caller failed to persist
+    // the acknowledgement. Do not deliver the same accepted message twice.
+    if ($message->hasIdempotentCorrelation() && $this->log->wasAccepted($message)) {
+      return SendResult::sent();
+    }
 
     // Link de uso único: um pedido novo substitui o anterior. O conteúdo guardado do pedido antigo é cancelado,
     // e o novo pedido gera outra cifra, com conteúdo novo. Exceção: a retentativa automática da mesma mensagem

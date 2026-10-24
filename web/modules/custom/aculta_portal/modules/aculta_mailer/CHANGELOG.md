@@ -1,3 +1,12 @@
+## 0.1.0-dev.70 — correlação estável e supressão de reenvio aceito — 2026-10-24
+
+`MessageIdFactory::correlationIdFor()` gera UUID v5 para a mesma chave lógica; `MailMessage` aceita UUID v4 e v5.
+Antes de iniciar o transporte, o Mailer consulta o registro ativo por correlação, tipo, HMAC do destinatário e estado
+`sent`, retornando sucesso para um retry já aceito. Correlações v4 de mensagens novas mantêm o comportamento anterior.
+
+Validação: Mailer Unit 157/317 e Kernel 42/193; o Kernel reenvia a mesma correlação e confirma somente um transporte.
+Não há garantia transacional com SMTP/provedor; a proteção exige log ativo e registro persistido.
+
 ## 0.1.0-dev.69 (regressão do container, sem mudança de versão)
 
 - A nota da dev.22 dizia que `LmsForumModerationController` (do `aculta_forum_lms`) quebrava o rebuild do container. Reproduzido no servidor de testes: `drush --uri=https://aculta.toca.net.br cache:rebuild` retorna `[success] Cache rebuild complete.` com código 0 em 2026-10-22. A falha antiga não se reproduz; o container resolve o controller.

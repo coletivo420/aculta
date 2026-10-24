@@ -1,3 +1,17 @@
+## 0.1.1-dev.129 — correlação idempotente para retries do digest — 2026-10-24
+
+O Messenger identifica um digest pelo UID, HMAC do destinatário e IDs/tipos/quantidades do lote, sem incluir títulos
+ou texto de usuário na chave. Se o Mailer já registrou a mesma entrega lógica como aceita, um retry retorna sucesso
+sem enviar novamente. O Messenger confirma todos os adapters e o intervalo do resumo dentro de uma transação da
+conexão padrão do Drupal; falha parcial reverte a confirmação inteira e preserva o mesmo lote/correlação para retry.
+
+Validação: teste de retry após falha de confirmação mantém a correlação; Kernel Mailer confirma que correlação aceita
+não é transportada duas vezes; Forum Kernel comprova no MariaDB rollback entre dois storages e retry com a mesma
+correlação. Unit Messenger 120/660, Integration MariaDB 61/616, Forum Kernel 28/633, Mailer Unit 157/317 e
+Mailer Kernel 42/193 PASS. A chave usa HMAC do `hash_salt` para não expor endereços nem IDs em correlações. A proteção depende do log do Mailer
+ativo e persistido; não cobre perda do registro após aceitação no provedor. Integration registra 2 deprecações
+Core/contrib e 7 notices PHPUnit.
+
 ## 0.1.1-dev.128 — robustecer destinatários de grupo e retry do digest — 2026-10-24
 
 Quando um provider falha ao montar suas linhas, o resumo ainda entrega as demais origens, confirma somente os itens

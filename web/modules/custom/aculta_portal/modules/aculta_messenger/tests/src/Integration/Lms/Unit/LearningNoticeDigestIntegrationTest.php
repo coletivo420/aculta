@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Transaction;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -108,10 +110,12 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $wikiProvider = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $capturedRows = [];
+    $correlations = [];
     $mailer->expects($this->exactly(2))
       ->method('deliver')
-      ->willReturnCallback(static function (MailMessage $message) use (&$capturedRows): SendResult {
+      ->willReturnCallback(static function (MailMessage $message) use (&$capturedRows, &$correlations): SendResult {
         $capturedRows[] = $message->context['resumo'];
+        $correlations[] = $message->correlationId;
         return count($capturedRows) === 1
           ? SendResult::failed(DeliveryError::Temporary, 450)
           : SendResult::sent();
@@ -128,6 +132,38 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $this->assertSame([], $wikiProvider->discarded);
     $this->assertSame([[501]], $lmsProvider->markedDeliveryIds);
     $this->assertSame([[802]], $wikiProvider->markedDeliveryIds);
+    $this->assertSame($correlations[0], $correlations[1], 'The same pending batch reuses its idempotency correlation.');
+  }
+
+  /**
+   * Reuses correlation after accepted mail and failed provider acknowledgement.
+   */
+  public function testAcceptedDigestAcknowledgementRetryKeepsCorrelation(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $provider->failAcknowledgeAttempts = 1;
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $failedTransaction = new TestLearningDigestTransaction();
+    $successfulTransaction = new TestLearningDigestTransaction();
+    $database = $this->createMock(Connection::class);
+    $database->expects($this->exactly(2))->method('startTransaction')->willReturnOnConsecutiveCalls($failedTransaction, $successfulTransaction);
+    $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database);
+
+    $this->assertSame(0, $summary->enviarResumos(), 'The accepted e-mail is not acknowledged when provider persistence fails.');
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertTrue($failedTransaction->rolledBack);
+    $this->assertFalse($failedTransaction->committed);
+    $this->assertTrue($successfulTransaction->committed);
+    $this->assertFalse($successfulTransaction->rolledBack);
+    $this->assertSame($correlations[0], $correlations[1]);
+    $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
   }
 
   /**
@@ -177,7 +213,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL): AvisosResumo {
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -230,10 +266,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           ),
         ),
       ),
-      $this->createConfiguredMock(UuidInterface::class, ['generate' => '00000000-0000-4000-8000-000000000001']),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $database ?? $this->createDatabaseConnection(),
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       is_array($provider) ? $provider : [$provider],
     );
+  }
+
+  /**
+   * Creates a connection for tests without rollback assertions.
+   */
+  private function createDatabaseConnection(): Connection {
+    $database = $this->createMock(Connection::class);
+    $database->method('startTransaction')->willReturn(new TestLearningDigestTransaction());
+    return $database;
   }
 
 }
@@ -242,6 +288,11 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
  * Minimal digest provider standing in for the LMS Message-backed provider.
  */
 final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * Number of acknowledgement attempts to fail before recording state.
+   */
+  public int $failAcknowledgeAttempts = 0;
 
   /**
    * Recipients whose entries were acknowledged after successful delivery.
@@ -308,6 +359,10 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    * {@inheritdoc}
    */
   public function markDigestSent(int $uid, array $deliveryIds): void {
+    if ($this->failAcknowledgeAttempts > 0) {
+      $this->failAcknowledgeAttempts--;
+      throw new \RuntimeException('Synthetic provider acknowledgement failure.');
+    }
     $this->marked[] = $uid;
     $this->markedDeliveryIds[] = $deliveryIds;
   }
@@ -318,5 +373,46 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
   public function discardDigest(int $uid): void {
     $this->discarded[] = $uid;
   }
+
+}
+
+/**
+ * Transaction double that records explicit commit and rollback calls.
+ */
+final class TestLearningDigestTransaction extends Transaction {
+
+  /**
+   * Whether the transaction committed.
+   */
+  public bool $committed = FALSE;
+
+  /**
+   * Whether the transaction rolled back.
+   */
+  public bool $rolledBack = FALSE;
+
+  /**
+   * Creates the transaction double without opening a database transaction.
+   */
+  public function __construct() {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function commitOrRelease(): void {
+    $this->committed = TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rollBack(): void {
+    $this->rolledBack = TRUE;
+  }
+
+  /**
+   * No database resources are held by this test double.
+   */
+  public function __destruct() {}
 
 }

@@ -13,12 +13,14 @@ use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Transaction;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Site\Settings;
 use Psr\Log\LoggerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
@@ -93,7 +95,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       $userData,
       $time,
       (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
-      $this->createMock(UuidInterface::class),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
       $lock,
       [$provider],
     );
@@ -172,8 +175,6 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
-    $uuid = $this->createMock(UuidInterface::class);
-    $uuid->method('generate')->willReturn('ed8396bf-4b6c-44e5-ae9c-f7d825f9307c');
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $logger = $this->createMock(LoggerInterface::class);
@@ -186,7 +187,8 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       $userData,
       $time,
       (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
-      $uuid,
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
       $lock,
       [$failedLookupProvider, $provider, $healthyProvider],
       $logger,
@@ -245,8 +247,6 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
-    $uuid = $this->createMock(UuidInterface::class);
-    $uuid->method('generate')->willReturn('ed8396bf-4b6c-44e5-ae9c-f7d825f9307c');
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects(self::once())->method('acquire')->with('aculta_messenger.avisos_resumo.27', 120.0)->willReturn(TRUE);
     $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
@@ -262,12 +262,49 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       $userData,
       $time,
       (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
-      $uuid,
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
       $lock,
       [$provider],
     );
 
     self::assertSame(0, $summary->enviarResumos());
   }
+
+  /**
+   * Creates a connection with transaction doubles for digest acknowledgement.
+   */
+  private function databaseConnection(): Connection {
+    $database = $this->createMock(Connection::class);
+    $database->method('startTransaction')->willReturn(new TestAvisosDigestTransaction());
+    return $database;
+  }
+
+}
+
+/**
+ * Transaction double without database side effects.
+ */
+final class TestAvisosDigestTransaction extends Transaction {
+
+  /**
+   * Creates a transaction double without database side effects.
+   */
+  public function __construct() {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function commitOrRelease(): void {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rollBack() {}
+
+  /**
+   * No database resources are held by this test double.
+   */
+  public function __destruct() {}
 
 }
