@@ -14,6 +14,14 @@ integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação R2 — ciclo de vida da imagem no HEAD `b5995d171`
+
+Em 2026-10-24, `WikiLeadImageLifecycleKernelTest` passou completa no MariaDB
+isolado: 27 testes / 1.475 asserções. O teste cobre acesso privado/público,
+revisões pendentes, falha/retry e limpeza com retenção de referências antigas.
+PHPUnit reportou 291 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
+no Runtime, filesystem instalado ou configuração.
+
 ### Incremento dev.106 — composição da home Wiki
 
 Kernel invoca `WikiController::home()` sob purpose Wiki e verifica o render

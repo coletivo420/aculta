@@ -219,6 +219,10 @@ depois da importação de configuração no servidor de testes.
 | Validador de upload inválido | Kernel | `alt` vazio produz erro; nenhuma Media é criada e o File permanece temporário | aprovado (dev.38; focal 1 / 27; classe 14 / 575) |
 | Arquivo privado após despublicar com revisão publicada anterior | Kernel | Core pode autorizar pela revisão antiga; hook da Wiki nega e o endpoint bloqueia o download | aprovado (dev.43; invocado por ModuleHandler no Kernel) |
 
+Revalidação da classe Kernel completa em 2026-10-24, HEAD `b5995d171`:
+27 testes / 1.475 asserções aprovados em MariaDB isolado. PHPUnit reportou 291
+depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
+
 ## Fase 2 — componentes movidos
 
 | Componente | Tipo | Cenários | Estado |

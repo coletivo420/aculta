@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação R2 do ciclo de imagem no HEAD `b5995d171` (2026-10-24): classe
+  Kernel MariaDB completa aprovada, 27 testes / 1.475 asserções; 291
+  depreciações Core/contrib e 28 PHPUnit. Upload, visibilidade, revisão
+  pendente, rollback/retry e limpeza segura seguem aprovados. Runtime intocado.
+
 - `0.1.0-dev.106`: Kernel compõe `WikiController::home()` sob purpose Wiki e
   verifica categorias, verbetes recentes e alterações recentes (focal combinado
   1/88). HTTP 200 renderizado segue pendente porque o bootstrap não ativa o tema

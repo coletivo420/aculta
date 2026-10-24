@@ -1,3 +1,11 @@
+## Revalidação R2 — ciclo de vida da imagem no HEAD `b5995d171`
+
+- `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27 testes /
+  1.475 asserções. Cobertura inclui upload privado, publicação alinhada ao
+  verbete, revisão pendente, rollback e retry, retenção de revisões antigas e
+  limpeza segura. Foram reportadas 291 depreciações Core/contrib e 28 PHPUnit.
+  Sem alteração de código, Runtime, filesystem ou configuração instalada.
+
 ## 0.1.0-dev.95 — confirmar CKEditor 5 no formulário de autoria
 
 - O Kernel carrega `filter.format.wiki` e `editor.editor.wiki` exportados e
