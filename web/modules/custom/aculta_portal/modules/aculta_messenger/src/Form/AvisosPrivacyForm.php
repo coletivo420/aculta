@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -26,6 +27,7 @@ final class AvisosPrivacyForm {
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
     private readonly AvisoPreferencias $preferencias,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly MessengerInterface $messenger,
@@ -167,7 +169,8 @@ final class AvisosPrivacyForm {
       return $details;
     }
 
-    $rows = [];
+    $flaggings = [];
+    $topicIds = [];
     foreach ($this->flagService->getAllFlaggingByUser($this->currentUser) as $flagging) {
       if (!$flagging instanceof FlaggingInterface
         || $flagging->getFlagId() !== 'seguir_topico'
@@ -175,7 +178,20 @@ final class AvisosPrivacyForm {
         || (int) $flagging->getOwnerId() !== (int) $this->currentUser->id()) {
         continue;
       }
-      $topic = $flagging->getFlaggable();
+      $topicId = (string) $flagging->getFlaggableId();
+      if (!ctype_digit($topicId) || (int) $topicId < 1) {
+        continue;
+      }
+      $flaggings[] = $flagging;
+      $topicIds[] = $topicId;
+    }
+
+    $topics = $topicIds === []
+      ? []
+      : $this->entityTypeManager->getStorage('node')->loadMultiple(array_values(array_unique($topicIds)));
+    $rows = [];
+    foreach ($flaggings as $flagging) {
+      $topic = $topics[$flagging->getFlaggableId()] ?? NULL;
       if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
         continue;
       }
@@ -234,7 +250,8 @@ final class AvisosPrivacyForm {
     if (!$flag instanceof FlagInterface) {
       return 0;
     }
-    $removed = 0;
+    $flaggings = [];
+    $topicIds = [];
     foreach ($this->flagService->getAllFlaggingByUser($this->currentUser) as $flagging) {
       if (!$flagging instanceof FlaggingInterface
         || !isset($selected[(string) $flagging->id()])
@@ -243,15 +260,29 @@ final class AvisosPrivacyForm {
         || (int) $flagging->getOwnerId() !== (int) $this->currentUser->id()) {
         continue;
       }
-      $topic = $flagging->getFlaggable();
-      if ($topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic') {
-        try {
-          $this->flagService->unflag($flag, $topic, $this->currentUser);
-          $removed++;
-        }
-        catch (\LogicException) {
-          // Another request may have removed this same personal flagging first.
-        }
+      $topicId = (string) $flagging->getFlaggableId();
+      if (ctype_digit($topicId) && (int) $topicId > 0) {
+        $flaggings[] = $flagging;
+        $topicIds[] = $topicId;
+      }
+    }
+    if ($topicIds === []) {
+      return 0;
+    }
+
+    $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_values(array_unique($topicIds)));
+    $removed = 0;
+    foreach ($flaggings as $flagging) {
+      $topic = $topics[$flagging->getFlaggableId()] ?? NULL;
+      if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
+        continue;
+      }
+      try {
+        $this->flagService->unflag($flag, $topic, $this->currentUser);
+        $removed++;
+      }
+      catch (\LogicException) {
+        // Another request may have removed this same personal flagging first.
       }
     }
     return $removed;

@@ -112,7 +112,7 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 **Assinaturas e eventos**
 
-- Na privacidade da conta, Messenger lista as Flags `seguir_topico` pertencentes à pessoa e permite removê-las em lote. O link e o título do tópico só aparecem se o acesso atual permitir; itens indisponíveis recebem rótulo genérico e ainda podem ser desassinados. O submit reconsulta as Flags da conta e só remove IDs que continuam pertencendo à pessoa. Não cria storage, não muda acesso nem apaga avisos históricos.
+- Na privacidade da conta, Messenger lista as Flags `seguir_topico` pertencentes à pessoa e permite removê-las em lote. Os nodes são carregados em um lote pela Entity API. O link e o título do tópico só aparecem se o acesso atual permitir; itens indisponíveis recebem rótulo genérico e ainda podem ser desassinados. O submit reconsulta as Flags da conta e só remove IDs que continuam pertencendo à pessoa, carregando os alvos selecionados em lote antes de usar `FlagServiceInterface::unflag()`. Não cria storage, não muda acesso nem apaga avisos históricos.
 
 - `Hook/MessageSubscribeHooks`: aplica `message_subscribe_get_subscribers_alter` para remover destinatários de Message Subscribe em tópicos do ACULTA Fórum e Comments hospedados neles (F-D21); outros contextos mantêm os candidatos contrib. O hook aditivo `get_subscribers` não cancelava os destinatários do contrib.
 - `Hook/MessageSubscribeEventHooks`, `Plugin/QueueWorker/MessageSubscribeEventWorker`: fila do evento de publicação

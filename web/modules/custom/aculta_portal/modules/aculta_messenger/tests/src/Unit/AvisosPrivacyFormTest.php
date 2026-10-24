@@ -154,7 +154,14 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       $otherUserFollowing,
       $otherFlag,
     ]);
-    $formBuilder = $this->formBuilder($account, new AvisoPreferencias($this->createMock(UserDataInterface::class)), $flagService);
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->expects(self::once())
+      ->method('loadMultiple')
+      ->with(['501', '502'])
+      ->willReturn([501 => $followedTopic, 502 => $privateTopic]);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('node')->willReturn($nodeStorage);
+    $formBuilder = $this->formBuilder($account, new AvisoPreferencias($this->createMock(UserDataInterface::class)), $flagService, NULL, $entityTypeManager);
     $form = [];
 
     $formBuilder->build($form);
@@ -191,6 +198,10 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       $ownFollowing,
       $otherUserFollowing,
     ]);
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->expects(self::once())->method('loadMultiple')->with(['501'])->willReturn([501 => $topic]);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('node')->willReturn($nodeStorage);
     $flagService->expects(self::once())->method('unflag')->with($flag, $topic, $account);
     $messenger = $this->createMock(MessengerInterface::class);
     $messenger->expects(self::once())->method('addStatus');
@@ -199,6 +210,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       new AvisoPreferencias($this->createMock(UserDataInterface::class)),
       $flagService,
       $messenger,
+      $entityTypeManager,
     );
     $formState = new FormState();
     $formState->setValue(['assinaturas', 'topics'], [
@@ -218,10 +230,12 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     AvisoPreferencias $preferences,
     ?FlagServiceInterface $flagService = NULL,
     ?MessengerInterface $messenger = NULL,
+    ?EntityTypeManagerInterface $entityTypeManager = NULL,
   ): AvisosPrivacyForm {
     return new AvisosPrivacyForm(
       $account,
       $preferences,
+      $entityTypeManager ?? $this->createMock(EntityTypeManagerInterface::class),
       $flagService ?? $this->createMock(FlagServiceInterface::class),
       $this->domainPurposeManager(),
       $messenger ?? $this->createMock(MessengerInterface::class),
@@ -251,6 +265,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $flagging->method('getOwnerId')->willReturn($uid);
     $flagging->method('getFlagId')->willReturn($flagId);
     $flagging->method('getFlaggableType')->willReturn('node');
+    $flagging->method('getFlaggableId')->willReturn($topic->id());
     $flagging->method('getFlaggable')->willReturn($topic);
     return $flagging;
   }

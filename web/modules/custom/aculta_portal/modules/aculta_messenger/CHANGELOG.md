@@ -1,3 +1,12 @@
+## 0.1.1-dev.157 — carregar tópicos seguidos em lote — 2026-10-24
+
+A lista de assinaturas e seu cancelamento múltiplo agora carregam os nodes com `loadMultiple()` da Entity API após
+revalidar Flag, tipo e proprietário. Títulos e rotas continuam condicionados ao acesso atual; nodes ausentes ou de bundle
+inesperado são ignorados. Isso evita um load individual por Flag sem adicionar storage ou contornar a API de remoção.
+
+Validação: `AvisosPrivacyFormTest` **5/55 PASS**, incluindo uma única carga em lote para múltiplos tópicos na listagem e
+na remoção; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime visual ainda pendente.
+
 ## 0.1.1-dev.156 — serializar o rate limit de mensagens privadas — 2026-10-24
 
 O formulário nativo mantém um lock persistente por remetente do início da checagem Flood até a persistência da mensagem.
