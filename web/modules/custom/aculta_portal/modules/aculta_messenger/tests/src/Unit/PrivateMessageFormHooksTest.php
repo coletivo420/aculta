@@ -32,6 +32,7 @@ final class PrivateMessageFormHooksTest extends UnitTestCase {
         ],
       ],
       'actions' => ['submit' => []],
+      '#submit' => ['private_message_add_form_submit'],
     ];
 
     $hooks->formAlter($form, new FormState(), 'private_message_add_form');
@@ -40,6 +41,7 @@ final class PrivateMessageFormHooksTest extends UnitTestCase {
       'aculta_messenger.private_message_form_validator:registerRateLimit',
       end($form['#submit']),
     );
+    self::assertSame('private_message_add_form_submit', reset($form['#submit']));
     self::assertSame([
       'aculta_messenger.private_message_form_validator:validateBlockedRecipients',
       'aculta_messenger.private_message_form_validator:validateNewConversationPrivacy',
