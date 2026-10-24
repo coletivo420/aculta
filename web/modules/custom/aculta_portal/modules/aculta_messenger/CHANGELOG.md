@@ -1,3 +1,13 @@
+## 0.1.1-dev.118 — verificar retry do e-mail Wiki pela fila Drupal — 2026-10-24
+
+- Kernel MariaDB combina `WikiNoticeEmailWorker` com `DatabaseQueue`: exceção do
+  Mailer mantém o item, o claim espera a lease e, expirado o item de teste, a
+  nova tentativa confirma `sent` e remove a fila. A chamada é direta ao worker;
+  o loop do Core Cron e concorrência entre processos ainda não foram testados.
+- Kernels Messenger/adapters: 35 testes / 712 assertions PASS, com 2
+  deprecações de descoberta Message e 4 notices PHPUnit. Unit: 144/888 PASS;
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem SMTP real.
+
 ## 0.1.1-dev.117 — caracterizar exceções de privacidade para equipe — 2026-10-24
 
 - Testes Unit garantem que administradores e editores podem iniciar conversas
