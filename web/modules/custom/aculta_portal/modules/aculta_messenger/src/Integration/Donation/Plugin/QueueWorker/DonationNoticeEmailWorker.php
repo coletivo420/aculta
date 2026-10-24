@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Donation\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -118,7 +119,7 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       if ($result->sent) {
         $message->set('field_aculta_msg_delivery', 'sent')->save();
       }
-      elseif ($result->cancelled || $attempts >= self::MAX_ATTEMPTS) {
+      elseif ($result->cancelled || $result->error === DeliveryError::Permanent || $attempts >= self::MAX_ATTEMPTS) {
         $message->set('field_aculta_msg_delivery', $result->cancelled ? 'cancelled' : 'failed')->save();
       }
       else {

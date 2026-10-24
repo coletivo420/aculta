@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -128,6 +129,9 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       return;
     }
     $this->finish($message, 'failed');
+    if ($result->error === DeliveryError::Permanent) {
+      return;
+    }
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Wiki notice email delivery failed.');
     }

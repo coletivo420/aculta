@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Integration\Commerce\Unit;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface;
@@ -58,6 +60,20 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
    */
   public function testWikiMailerExceptionConsumesOneAttempt(): void {
     $this->assertMailerExceptionConsumesAttempt('wiki', 'aculta_msg_wiki_notice');
+  }
+
+  /**
+   * Permanent Commerce failures become terminal without a retry.
+   */
+  public function testCommercePermanentMailerFailureIsTerminal(): void {
+    $this->assertPermanentMailerFailureIsTerminal('commerce', 'aculta_msg_commerce_order_notice');
+  }
+
+  /**
+   * Permanent Wiki failures become terminal without a retry.
+   */
+  public function testWikiPermanentMailerFailureIsTerminal(): void {
+    $this->assertPermanentMailerFailureIsTerminal('wiki', 'aculta_msg_wiki_notice');
   }
 
   /**
@@ -134,6 +150,53 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
           : 'Wiki notice email delivery failed.';
         self::assertSame($expected, $exception->getMessage());
       }
+    });
+    self::assertSame(1, $state['field_aculta_messenger_attempts']);
+    self::assertSame('failed', $state['field_aculta_msg_delivery']);
+  }
+
+  /**
+   * Checks a permanent Mailer result is not retried by the queue worker.
+   */
+  private function assertPermanentMailerFailureIsTerminal(string $adapter, string $bundle): void {
+    $message = $this->message($bundle, 'pending', 0);
+    $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
+    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field($state[$field]));
+    $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
+      $state[$field] = $value;
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('getEmail')->willReturn('member@example.invalid');
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('load')->with(101)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($recipient);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $manager = $this->createAdapterManager($adapter);
+    $manager->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Aviso disponível.',
+      'url' => Url::fromUri('https://aculta.example/aviso'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, $adapter === 'commerce' ? 'loja' : 'wiki')
+      ->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+
+    $this->withUrlAssembler(function () use ($adapter, $entities, $manager, $mailer, $lock, $preferences): void {
+      $this->worker($adapter, $entities, $manager, $mailer, $lock, $preferences)
+        ->processItem(['message_id' => 101]);
     });
     self::assertSame(1, $state['field_aculta_messenger_attempts']);
     self::assertSame('failed', $state['field_aculta_msg_delivery']);

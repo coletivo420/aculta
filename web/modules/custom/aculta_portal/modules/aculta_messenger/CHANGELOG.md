@@ -1,3 +1,12 @@
+## 0.1.1-dev.122 — respeitar falhas permanentes nas filas diretas — 2026-10-24
+
+- Workers diretos de Fórum, LMS, Wiki, Loja e Doações encerram como `failed`
+  erros permanentes do Mailer sem consumir retries restantes. Cancelamentos
+  continuam terminais; erros temporários/exceções mantêm retry limitado.
+- Unit Messenger 116/626 e Integration 52/532 PASS; Kernel 27/609 PASS na
+  rodada anterior da mesma frente. PHPCS Drupal/DrupalPractice PASS. Integração
+  mantém 2 deprecações Core/contrib e 4 notices PHPUnit. Sem SMTP real.
+
 ## 0.1.1-dev.121 — encerrar digest após falha permanente — 2026-10-24
 
 - Erro permanente retornado pelo ACULTA Mailer encerra a pendência somente no

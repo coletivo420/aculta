@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Commerce\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -129,6 +130,9 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       return;
     }
     $this->finish($message, 'failed');
+    if ($result->error === DeliveryError::Permanent) {
+      return;
+    }
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Commerce order notice email delivery failed.');
     }

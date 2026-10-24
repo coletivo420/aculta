@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
@@ -155,6 +156,10 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     }
     if ($result->cancelled) {
       $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_CANCELLED);
+      return;
+    }
+    if ($result->error === DeliveryError::Permanent) {
+      $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_FAILED);
       return;
     }
     $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);

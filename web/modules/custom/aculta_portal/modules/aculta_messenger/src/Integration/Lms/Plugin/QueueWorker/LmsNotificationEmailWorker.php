@@ -14,6 +14,7 @@ use Drupal\message\MessageInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -151,6 +152,9 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     }
     if (!$result->sent) {
       $message->set(self::DELIVERY_FIELD, 'failed')->save();
+      if ($result->error === DeliveryError::Permanent) {
+        return;
+      }
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');
       }
