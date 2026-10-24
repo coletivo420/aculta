@@ -1,3 +1,13 @@
+## 0.1.1-dev.126 — comprovar persistência de leitura dos avisos da Loja — 2026-10-24
+
+Kernel MariaDB cobre `CommerceOrderNoticeManager::setRead()` com Message persistido: marca e desmarca o campo nativo,
+revalida titularidade e acesso ao pedido, e rejeita alteração por outra conta sem modificar o estado. A fixture usa
+`DomainPurposeManager` e `CheckoutSettings` inicializados com dependências Drupal, sem objeto parcialmente inicializado.
+
+Validação: Kernel Comércio 3/40; Integration Messenger 58/586; PHPCS Drupal/DrupalPractice, PHP lint e
+`git diff --check` PASS. A suíte Integration reporta deprecações de annotations Message no Core/contrib e notices
+PHPUnit (2 deprecações e 6 notices na suíte completa). Runtime visual e Kernels LMS/Wiki continuam pendentes.
+
 ## 0.1.1-dev.125 — comprovar persistência de leitura de avisos de Doações — 2026-10-24
 
 Kernel MariaDB cobre `DonationNoticeManager::setRead()` com a entidade Message persistida: marca e desmarca o campo
