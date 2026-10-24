@@ -223,6 +223,112 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Digest includes and acknowledges a currently eligible review notice.
+   */
+  public function testReviewDigestIncludesAndAcknowledgesEligibleMessage(): void {
+    $reviewer = $this->createReviewer('wiki_digest_reviewer');
+    $entry = $this->createReviewEntry($reviewer);
+    $uid = (int) $reviewer->id();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
+    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $message = $manager->record($this->reviewEvent($uid, $entry));
+    self::assertNotNull($message);
+
+    $rows = $manager->digestRowsFor($uid);
+
+    self::assertCount(1, $rows);
+    self::assertSame('wiki', $rows[0]['tipo']);
+    self::assertSame(1, $rows[0]['quantidade']);
+    self::assertSame((int) $message->id(), $rows[0]['delivery_id']);
+    $manager->markDigestSent($uid, [$rows[0]['delivery_id']]);
+    $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value);
+  }
+
+  /**
+   * A review that is published before digest delivery is omitted and discarded.
+   */
+  public function testDigestDiscardsReviewAfterSourceRevisionIsPublished(): void {
+    $reviewer = $this->createReviewer('wiki_digest_revoked_reviewer');
+    $entry = $this->createReviewEntry($reviewer);
+    $uid = (int) $reviewer->id();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
+    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $message = $manager->record($this->reviewEvent($uid, $entry));
+    self::assertNotNull($message);
+    self::assertCount(1, $manager->digestRowsFor($uid));
+
+    $entry->setNewRevision(TRUE);
+    $entry->set('moderation_state', 'published');
+    $entry->save();
+
+    self::assertSame([], $manager->digestRowsFor($uid));
+    $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value, 'A revoked review is discarded from email and is not retried later.');
+  }
+
+  /**
+   * Creates an account authorized to review Wiki revisions.
+   */
+  private function createReviewer(string $name): User {
+    $reviewer = User::create([
+      'name' => $name,
+      'mail' => $name . '@example.invalid',
+      'status' => 1,
+    ]);
+    $role = Role::create(['id' => $name . '_role', 'label' => 'Wiki reviewer']);
+    foreach ([
+      'edit any wiki_entry content',
+      'use wiki_editorial transition review_to_draft',
+      'use wiki_editorial transition review_to_published',
+      'view all wiki_entry revisions',
+    ] as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+    $reviewer->addRole($role->id());
+    $reviewer->save();
+    return $reviewer;
+  }
+
+  /**
+   * Creates a published Wiki node currently awaiting editorial review.
+   */
+  private function createReviewEntry(User $reviewer): Node {
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete para digest',
+      'uid' => $reviewer->id(),
+      'status' => 1,
+      'moderation_state' => 'review',
+    ]);
+    $entry->save();
+    return $entry;
+  }
+
+  /**
+   * Builds a canonical review-request event tied to a real Node revision.
+   */
+  private function reviewEvent(int $uid, Node $entry): MessengerNoticeEvent {
+    return new MessengerNoticeEvent(
+      'wiki.review_requested',
+      'aculta_wiki',
+      'node',
+      (string) $entry->uuid(),
+      (string) $entry->getRevisionId(),
+      $uid,
+      'wiki',
+      new \DateTimeImmutable('2026-10-24T12:00:00+00:00'),
+      'wiki:review_requested:' . $entry->uuid() . ':' . $entry->getRevisionId() . ':' . $uid,
+      ['notice_type' => 'review_requested', 'mail_policy' => 'user_preference'],
+    );
+  }
+
+  /**
    * Creates an active account for the notice recipient.
    */
   private function createUser(): User {

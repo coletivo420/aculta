@@ -40,7 +40,7 @@ LMS publica eventos educacionais; Messenger persiste avisos e define canais. Avi
 
 ## M5 — Wiki, Loja, Doações e demais (0.3.0)
 
-Consumers Wiki/Loja/Doações centralizados em Message. Site obrigatório; e-mail off/direto/digest; Mailer transporta. Kernels LMS/Wiki/Loja anteriores 6/64 PASS; Donation Kernel 2/22 PASS, incluindo deduplicação, pagamentos distintos e rejeição de pedido inacessível. Donation direct Mailer worker 2/27 PASS, cobrindo envio imediato e opt-out revalidado. Recibo nativo permanece para convidados e fallback. Completar digest/revogação, concorrência, update/configuração instalada e Runtime. Revista segue após inventário de workflows/destinatários reais.
+Consumers Wiki/Loja/Doações centralizados em Message. Site obrigatório; e-mail off/direto/digest; Mailer transporta. Kernels LMS/Wiki/Loja anteriores 6/64 PASS; Donation Kernel 2/22 PASS, incluindo deduplicação, pagamentos distintos e rejeição de pedido inacessível. Donation direct Mailer worker 2/27 PASS, cobrindo envio imediato e opt-out revalidado. Dev.177 cobre digest da revisão Wiki elegível e descarte após publicação antes da entrega: `WikiNoticePersistenceKernelTest` 6/105 PASS (2 deprecações de annotations Core/contrib, 3 notices PHPUnit). Loja/Doação digest, concorrência, update/configuração instalada e Runtime continuam pendentes. Recibo nativo permanece para convidados e fallback. Revista segue após inventário de workflows/destinatários reais.
 
 ## M6 — Experiência e administração (0.3.0)
 

@@ -1,3 +1,13 @@
+## 0.1.1-dev.177 — validar digest e revogação na Wiki
+
+O Kernel da integração Wiki agora prova o caminho de e-mail em modo digest com Node e Message reais: revisão em estado
+`review` e permissões atuais aparecem como uma linha com `delivery_id`, e o acknowledgement marca somente o registro
+selecionado. Se uma nova revisão for publicada antes do digest, o provider não devolve a linha e a descarta do canal de
+e-mail. O aviso obrigatório no site permanece no Message.
+
+Validação: `WikiNoticePersistenceKernelTest` **6/105 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel reporta
+2 deprecações conhecidas de annotations Core/contrib e 3 notices PHPUnit. Cron, SMTP e Runtime não foram executados.
+
 ## 0.1.1-dev.176 — cobrir IDOR nas ações por membro
 
 O teste do controller usa os métodos de opções e relação por membro para confirmar que IDs manipulados não abrem ações
