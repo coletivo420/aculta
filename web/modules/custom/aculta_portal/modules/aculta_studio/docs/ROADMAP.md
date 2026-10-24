@@ -4,6 +4,26 @@
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
+## Incremento STUDIO-P1-C — hub canônico e Marley (dev.10, aguardando gates)
+
+**Implementado no Git:** `/studio` renderiza o hub autorizado; Marley
+mantém `aculta_studio.home` em **`/studio/marley`**, e todas as suas
+subrotas canônicas continuam minúsculas. `/studio/Marley` e
+`/studio/inicio` são redirecionamentos temporários 302 apenas GET/HEAD.
+A filtragem de catálogo e as áreas reais do `MarleyPresenter` permanecem.
+Os testes Unit de rotas e do hub foram atualizados para essa decisão.
+
+**Não executado nesta edição:** PHPUnit, Kernel/Functional, reconstrução
+de cache de rotas, teste autenticado no purpose `account` e Firefox ESR/X11.
+Sem evidência de homologação do Runtime. Preservar P2/P3 para editor pessoal
+e formulários; não mover dados, `AccountShellBuilder`, login, pagamentos,
+mensageria ou `/u/{apelido}`.
+
+**Critérios de validação antes do próximo incremento:** testar usuário comum
+sem Marley, editor com Marley, módulo Wiki/LMS ausente, links canônicos e
+redirects GET/HEAD; confirmar /studio apenas como hub, a home
+/studio/marley, o logout, cache/acesso e fallback sem JavaScript.
+
 ## Incremento STUDIO-P1-B — código dev.9, validação pendente
 
 - **Implementado em Git:** provider de metadados Marley com acesso vinculado
@@ -25,11 +45,11 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 
 ## STUDIO-P0–P7 — migração futura de Minha Conta e Meu Perfil (decisão 2026-10-24)
 
-**P0 documental concluída; P1-A e P1-B implementadas em código até a dev.9, sem homologação Runtime.**
+**P0 documental concluída; P1-A–P1-C implementadas em código até a dev.10, sem homologação Runtime.**
 Foi registrada a experiência `pessoal` e sua rota `/studio/pessoal`, com
 controller autorizado, links para a Conta e testes Unit adicionados. **Nenhum
 teste PHPUnit/Kernel/Runtime foi executado nesta edição pelo GitHub**;
-P1-A requer gates antes de ser considerada homologada. O hub canônico `/studio`, editor pessoal e navegação unificada seguem pendentes;
+P1-A requer gates antes de ser considerada homologada. O editor pessoal e a navegação contextual unificada seguem pendentes;
 a ponte Marley e a prévia `/studio/inicio` já existem em código.
 A arquitetura de referência está em
 [Hub e Meu Espaço](../../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
