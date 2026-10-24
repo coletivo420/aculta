@@ -299,8 +299,9 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
 Os adapters estão em código. O teste owner consulta as três relações pela API real
-com os providers descobertos pelo container, mas não executa rebuild nem auditoria
-integral do inventário. No preflight read-only de 2026-10-23,
+com os providers descobertos pelo container. O cenário dev.48 executa um backfill
+e ativa uma geração isolada com dados da fixture; isso não equivale a reconstruir
+ou auditar o inventário completo instalado. No preflight read-only de 2026-10-23,
 `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de teste; não
 houve rebuild nem alteração de configuração. Runtime segue sem homologação integral.
 
