@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.82: WE SATIVA exclui propostas de outra autoria na fixture de paginação;
+  focal 1/42, classe Kernel 24/1.139. Runtime intocado.
+
 - WE SATIVA: Kernel existente pagina 21 propostas próprias em 20+1, junto de
   21 verbetes; focal 1/40. Isolamento contra propostas de terceiros não foi
   caracterizado por esse teste.

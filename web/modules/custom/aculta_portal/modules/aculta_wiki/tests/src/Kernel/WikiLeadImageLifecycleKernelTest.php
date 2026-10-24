@@ -1092,6 +1092,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $author->save();
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
     $this->container->get('current_user')->setAccount($author);
+    $ownedProposalIds = [];
     for ($index = 1; $index <= 21; $index++) {
       $node = Node::create([
         'type' => 'wiki_entry',
@@ -1102,7 +1103,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'field_wiki_test_grant_uid' => $author->id(),
       ]);
       $node->save();
-      WikiProposal::create([
+      $proposal = WikiProposal::create([
         'uid' => $author->id(),
         'subject' => sprintf('Proposta paginada %02d', $index),
         'target' => ['target_id' => $node->id()],
@@ -1111,8 +1112,37 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'proposed_text' => 'Correção com fonte.',
         'rationale' => 'Ajuste editorial.',
         'state' => 'submitted',
-      ])->save();
+      ]);
+      $proposal->save();
+      $ownedProposalIds[] = (int) $proposal->id();
     }
+    $otherAuthor = User::create([
+      'uid' => 18,
+      'name' => 'wiki-workspace-other-author',
+      'mail' => 'wiki-workspace-other-author@example.invalid',
+      'status' => TRUE,
+    ]);
+    $otherAuthor->save();
+    $otherNode = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete de outra autoria no workspace',
+      'uid' => $otherAuthor->id(),
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => $otherAuthor->id(),
+    ]);
+    $otherNode->save();
+    $otherProposal = WikiProposal::create([
+      'uid' => $otherAuthor->id(),
+      'subject' => 'Proposta privada de outra autoria',
+      'target' => ['target_id' => $otherNode->id()],
+      'target_revision_id' => $otherNode->getRevisionId(),
+      'intent' => 'correction',
+      'proposed_text' => 'Esta proposta não deve aparecer no workspace de outra pessoa.',
+      'rationale' => 'Isolamento entre autorias.',
+      'state' => 'submitted',
+    ]);
+    $otherProposal->save();
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     Domain::create([
@@ -1143,6 +1173,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $firstProposals = $firstPage['proposals']['#slots']['body']['items']['#slots']['items'];
     self::assertCount(20, $firstEntries);
     self::assertCount(20, $firstProposals);
+    $firstProposalIds = array_map(
+      static fn (array $item): int => (int) $item['#slots']['header']['#url']->getRouteParameters()['proposal'],
+      $firstProposals,
+    );
+    self::assertNotContains((int) $otherProposal->id(), $firstProposalIds);
     self::assertArrayHasKey('next_page', $firstPage['entries']['#slots']['body']);
     self::assertArrayHasKey('next_page', $firstPage['proposals']['#slots']['body']);
     $entryUrl = $firstPage['entries']['#slots']['body']['next_page']['#url'];
@@ -1164,7 +1199,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $requestStack->pop();
     }
     self::assertCount(1, $secondPage['entries']['#slots']['body']['items']['#slots']['items']);
-    self::assertCount(1, $secondPage['proposals']['#slots']['body']['items']['#slots']['items']);
+    $secondProposals = $secondPage['proposals']['#slots']['body']['items']['#slots']['items'];
+    self::assertCount(1, $secondProposals);
+    $secondProposalId = (int) $secondProposals[0]['#slots']['header']['#url']->getRouteParameters()['proposal'];
+    self::assertEqualsCanonicalizing($ownedProposalIds, array_merge($firstProposalIds, [$secondProposalId]));
     self::assertArrayNotHasKey('next_page', $secondPage['entries']['#slots']['body']);
     self::assertArrayNotHasKey('next_page', $secondPage['proposals']['#slots']['body']);
     self::assertSame(['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'], array_values(array_intersect(

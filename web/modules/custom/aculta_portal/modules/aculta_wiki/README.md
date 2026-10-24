@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.82`: Kernel WE SATIVA inclui propostas de outra autoria e confirma
+  que não aparecem no workspace de quem não é dono; paginação própria continua
+  20+1 (focal 1/42; classe 24/1.139). Runtime intocado.
+
 - A matriz WE SATIVA foi reconciliada com Kernel já existente: verbetes e
   propostas próprias paginam 20+1, com cursores e links no Domain `account`
   (focal 1/40). O teste não caracteriza candidatos de terceiros.

@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.82 — isolamento das propostas no WE SATIVA
+
+- A fixture de paginação inclui proposta de outra autoria; o workspace mantém
+  apenas as 21 propostas próprias nas duas páginas 20+1 e não expõe o ID
+  externo.
+- `WikiLeadImageLifecycleKernelTest`: focal 1/42; classe completa 24/1.139,
+  291 depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+
 ## 0.1.0-dev.81 — aceite de imagem em proposta editorial
 
 - Kernel cobre proposta de imagem existente e publicada, seleção pelo editor
