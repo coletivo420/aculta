@@ -117,7 +117,10 @@ final class WikiProposalDecisionForm extends FormBase {
         '#description' => $this->t('Escolha o subconjunto que será aplicado ao verbete.'),
         '#states' => ['visible' => [':input[name="decision"]' => ['value' => 'accepted']]],
       ];
-      $form['list_modes'] = ['#type' => 'container'];
+      $form['list_modes'] = [
+        '#type' => 'container',
+        '#tree' => TRUE,
+      ];
       foreach (['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'] as $fieldName) {
         if (!array_key_exists($fieldName, $proposedFields)) {
           continue;

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.59`: o formulário GanjaLab preserva escolhas individuais de
+  `list_modes`; Kernel usa FormBuilder e aplica proposta pelo caminho de
+  decisão, inclusive modos append/replace (focal: 1/154; classe completa:
+  21/939, 291 depreciações Core/contrib/PHPUnit).
+
 - `0.1.0-dev.58`: `field_values` preserva a árvore no Form API. Kernel usa
   `FormBuilder` para processar o formulário, valida os valores e persiste o
   título selecionado na proposta (focal: 1 teste / 59 asserções; classe: 21 /

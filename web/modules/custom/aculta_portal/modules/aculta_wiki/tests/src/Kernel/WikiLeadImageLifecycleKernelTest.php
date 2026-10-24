@@ -1772,18 +1772,32 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])->save();
     $acceptor = new UserSession(['uid' => 4, 'roles' => ['authenticated', 'wiki_proposal_acceptor_test']]);
     $this->container->get('current_user')->setAccount($acceptor);
-    $acceptedProposal = $decisionService->decide(
-      $acceptedCandidate,
-      (int) $acceptedCandidate->getRevisionId(),
-      'accepted',
-      'Título conferido e publicado.',
-      ['title', 'field_wiki_references', 'field_wiki_categories', 'field_wiki_related'],
-      [
-        'field_wiki_references' => 'append',
-        'field_wiki_categories' => 'append',
-        'field_wiki_related' => 'replace',
-      ],
-    );
+    $decisionFormObject = WikiProposalDecisionForm::create($this->container);
+    $decisionState = new FormState();
+    $decisionState->addBuildInfo('args', [$acceptedCandidate]);
+    $decisionBuild = $this->container->get('form_builder')->buildForm($decisionFormObject, $decisionState);
+    self::assertSame(['list_modes', 'field_wiki_references'], $decisionBuild['list_modes']['field_wiki_references']['#parents']);
+    self::assertSame(['list_modes', 'field_wiki_categories'], $decisionBuild['list_modes']['field_wiki_categories']['#parents']);
+    self::assertSame(['list_modes', 'field_wiki_related'], $decisionBuild['list_modes']['field_wiki_related']['#parents']);
+    $decisionState->setValue($decisionBuild['expected_revision_id']['#parents'], (int) $acceptedCandidate->getRevisionId());
+    $decisionState->setValue($decisionBuild['decision']['#parents'], 'accepted');
+    $decisionState->setValue($decisionBuild['decision_note']['#parents'], 'Título conferido e publicado.');
+    $decisionState->setValue($decisionBuild['approved_fields']['#parents'], [
+      'title' => 'title',
+      'field_wiki_references' => 'field_wiki_references',
+      'field_wiki_categories' => 'field_wiki_categories',
+      'field_wiki_related' => 'field_wiki_related',
+    ]);
+    $decisionState->setValue($decisionBuild['list_modes']['field_wiki_references']['#parents'], 'append');
+    $decisionState->setValue($decisionBuild['list_modes']['field_wiki_categories']['#parents'], 'append');
+    $decisionState->setValue($decisionBuild['list_modes']['field_wiki_related']['#parents'], 'replace');
+    $decisionFormObject->validateForm($decisionBuild, $decisionState);
+    self::assertSame([], $decisionState->getErrors());
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use (&$decisionBuild, $decisionFormObject, $decisionState): void {
+      $decisionFormObject->submitForm($decisionBuild, $decisionState);
+    });
+    $acceptedProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->load($acceptedCandidate->id());
     $publishedTarget = Node::load((int) $target->id());
     self::assertSame('accepted', $acceptedProposal->get('state')->value);
     self::assertSame('Título aprovado pela equipe', $publishedTarget->label());

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.59 — preservar modos de lista no Form API do GanjaLab
+
+- O container `list_modes` agora preserva valores no Form API; sem `#tree`, as
+  escolhas individuais não chegavam ao serviço que aplica a proposta.
+- Kernel constrói e valida o formulário real, aplica uma proposta via Form API
+  e confirma escolhas append/replace distintas para referências, categorias e
+  relações (focal: 1 teste / 154 asserções). A classe Kernel completa passou:
+  21 testes / 939 asserções, com 291 depreciações Core/contrib/PHPUnit.
+  PHPCS e PHP lint passaram.
+
 ## 0.1.0-dev.58 — preservar valores editoriais no Form API
 
 - `field_values` agora declara `#tree`, alinhando a estrutura processada pelo

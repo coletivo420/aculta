@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.59: `list_modes` usa `#tree`; Kernel FormBuilder aplica modos append/
+  replace escolhidos em referências, categorias e relações (focal 1/154;
+  classe 21/939, 291 depreciações Core/contrib/PHPUnit). PHPCS e PHP lint
+  passaram.
+
 - Dev.58: `field_values` usa `#tree` para que os values processados sejam lidos
   pelo serviço de submissão; Kernel FormBuilder cobre validação e persistência
   do campo título (1/59); classe completa 21/935, com 291 depreciações
