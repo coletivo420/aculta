@@ -119,6 +119,21 @@ Kernel focado no ledger passou com 24 testes / 533 assertions. Essa prova não
 substitui a homologação Runtime nem valida a configuração real do Mailer; F-M2
 continua parcial.
 
+**Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
+publicação, fila de moderação, edição pública, formulário de moderação por
+revisão, histórico, comparação de revisões e opções do Fórum estão provados em
+Kernel MariaDB; `/categorias` passou 9/9 em ACULTA420 e 9/9 em Olivero no
+ambiente local simulado, e o índice de Discussões não apresentou erro visível
+nos dois temas. Faltam upload/preview de anexos autenticados, fluxos
+administrativos autenticados (mover tópico na UI) e reflow em aparelho real.
+
+**Correções de defeitos reais (dev.307–dev.308):** o formulário de seleção de
+revisões não carregava em PHP 8.4 (propriedade `readonly $routeMatch` colidia
+com `FormBase`) e o acesso ao diálogo de anexo importava
+`Drupal\user\AccountInterface`, inexistente, falhando com `TypeError` em toda
+chamada. Ambos corrigidos e cobertos por Kernel; smoke de carregamento confirma
+todas as classes de `src/` e todos os imports de produção.
+
 ### Sequência recomendada e paralelismo
 
 - **Imediato:** manter F-M1 parcial até a validação operacional autorizada; em paralelo, continuar provas restantes de

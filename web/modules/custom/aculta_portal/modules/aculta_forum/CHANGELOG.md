@@ -1,3 +1,14 @@
+## `0.1.0-dev.309` — consolidar estado do roadmap do Fórum — 2026-10-24
+
+- O roadmap registra as provas de F-M6 (controladores, moderação, histórico,
+  comparação, opções) e a revisão visual local nos dois temas, além dos dois
+  defeitos reais corrigidos em dev.307–dev.308.
+- O status do componente passa a listar como pendências somente itens que
+  dependem de homologação/autorização fora do código do Fórum: Runtime do
+  Messenger, anexos autenticados, fluxo de mover tópico na UI, migração sobre
+  dados reais, F-GROUP e RC/Alpha/deploy.
+- Sem alteração de Runtime nesta fase.
+
 ## `0.1.0-dev.308` — corrigir acesso ao diálogo de anexos — 2026-10-24
 
 - Corrigido defeito real: `ForumAttachmentUploadAccess` importava
