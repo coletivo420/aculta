@@ -75,6 +75,8 @@ final class AcultaMailerKernelTest extends KernelTestBase {
     $this->assertTrue($this->mailer()->send($message));
     $this->assertTrue($this->mailer()->send($message));
     $this->assertTrue($this->mailer()->wasAcceptedCorrelation($correlationId, $message->type));
+    $this->assertTrue($this->mailer()->wasAcceptedCorrelation($correlationId, $message->type, 'destino@example.invalid'));
+    $this->assertFalse($this->mailer()->wasAcceptedCorrelation($correlationId, $message->type, 'outra-pessoa@example.invalid'));
     $this->config('aculta_mailer.log')->set('enabled', FALSE)->save();
     $this->assertTrue(
       $this->mailer()->wasAcceptedCorrelation($correlationId, $message->type),

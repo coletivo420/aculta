@@ -114,17 +114,24 @@ final class MailLogRecorder {
   }
 
   /**
-   * Checks an opaque correlation without requiring the original recipient.
+   * Checks an opaque correlation, optionally scoped to its recipient.
    */
-  public function wasAcceptedCorrelation(string $correlationId, string $type): bool {
+  public function wasAcceptedCorrelation(string $correlationId, string $type, ?string $recipient = NULL): bool {
     if ($correlationId === '' || $type === '') {
       return FALSE;
     }
-    return $this->entityTypeManager->getStorage(self::ENTITY_TYPE)->loadByProperties([
+    $properties = [
       'correlation_id' => $correlationId,
       'type' => $type,
       'status' => MailStatus::Sent->value,
-    ]) !== [];
+    ];
+    if ($recipient !== NULL) {
+      if ($recipient === '' || !$this->recipientKeyAvailable()) {
+        return FALSE;
+      }
+      $properties['recipient_hash'] = $this->hashRecipient($recipient);
+    }
+    return $this->entityTypeManager->getStorage(self::ENTITY_TYPE)->loadByProperties($properties) !== [];
   }
 
   /**

@@ -1602,3 +1602,9 @@ Kernel de persistência de conversa e Runtime não executados nesta microfase.
 O adapter do ACULTA User e o consumer do Messenger agora confirmam que `changed` no evento corresponde à versão persistida da amizade. Eventos internos obsoletos ou com versão divergente não são publicados nem criam aviso, preservando a deduplicação da transição original.
 
 Validação: `FriendshipNoticeEventProducerTest` e `FriendshipNoticeSubscriberTest`, 10 testes / 91 assertions PASS; suíte Unit Messenger completa, 137 testes / 820 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Kernel integrado User/Messenger, Runtime e envio de e-mail não executados nesta microfase.
+## 0.1.1-dev.148 — confirmar destinatário no retry do digest — 2026-10-24
+
+A reconciliação do snapshot do digest agora confirma que o Mailer aceitou correlação, tipo e destinatário atuais. O Mailer compara o endereço recebido apenas pelo HMAC armazenado no log. Isso impede que um snapshot incompatível ou corrompido confirme pendências de outra conta; o snapshot continua sem endereço.
+
+Validação: Kernel Mailer com destinatário correto/incorreto; Integration LMS confirma o destinatário recebido na recuperação. Demais gates pendentes nesta microfase.
+

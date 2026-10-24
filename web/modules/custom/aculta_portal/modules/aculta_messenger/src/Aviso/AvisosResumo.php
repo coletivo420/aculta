@@ -154,7 +154,7 @@ final class AvisosResumo {
     // Recover the exact batch if the Mailer accepted it but a later
     // acknowledgement failed. This prevents a newly grown pending batch from
     // receiving a different correlation and resending already delivered rows.
-    if ($this->recuperarDigestAceito($uid)) {
+    if ($this->recuperarDigestAceito($uid, (string) $conta->getEmail())) {
       return TRUE;
     }
     if (!$this->preferencias->resumoEmailLigado($uid)) {
@@ -371,7 +371,7 @@ final class AvisosResumo {
   /**
    * Reconciles the exact batch left before an accepted Mailer acknowledgement.
    */
-  private function recuperarDigestAceito(int $uid): bool {
+  private function recuperarDigestAceito(int $uid, string $recipient): bool {
     $snapshot = $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
     if (!is_array($snapshot) || !is_string($snapshot['correlation_id'] ?? NULL)) {
       if ($snapshot !== NULL) {
@@ -379,7 +379,7 @@ final class AvisosResumo {
       }
       return FALSE;
     }
-    if (!$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL)) {
+    if (!$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL, $recipient)) {
       // A retryable/non-accepted attempt can be rebuilt from current pending
       // rows. Its stable correlation will be reused if the batch is unchanged.
       $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');

@@ -151,9 +151,10 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       });
     $mailer->expects($this->once())
       ->method('wasAcceptedCorrelation')
-      ->willReturnCallback(static function (string $correlationId, string $type) use (&$correlations): bool {
+      ->willReturnCallback(static function (string $correlationId, string $type, ?string $recipient = NULL) use (&$correlations): bool {
         self::assertSame($correlations[0], $correlationId);
         self::assertSame(AvisosResumo::CHAVE_MAIL, $type);
+        self::assertSame('student@example.test', $recipient);
         return TRUE;
       });
     $failedTransaction = new TestLearningDigestTransaction();

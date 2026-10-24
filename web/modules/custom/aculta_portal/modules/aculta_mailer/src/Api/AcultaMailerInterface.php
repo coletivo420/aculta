@@ -45,6 +45,9 @@ interface AcultaMailerInterface {
    *   Stable, opaque correlation ID generated for one logical delivery.
    * @param string $type
    *   Registered mail type.
+   * @param string|null $recipient
+   *   Optional recipient address to verify against the Mailer log. Callers
+   *   reconciling a durable delivery snapshot should provide it.
    *
    * @return bool
    *   TRUE when the active Mailer log records an accepted delivery.
@@ -52,6 +55,7 @@ interface AcultaMailerInterface {
   public function wasAcceptedCorrelation(
     string $correlationId,
     string $type,
+    ?string $recipient = NULL,
   ): bool;
 
 }

@@ -115,8 +115,8 @@ final class AcultaMailer implements AcultaMailerInterface {
   /**
    * {@inheritdoc}
    */
-  public function wasAcceptedCorrelation(string $correlationId, string $type): bool {
-    return $this->log->wasAcceptedCorrelation($correlationId, $type);
+  public function wasAcceptedCorrelation(string $correlationId, string $type, ?string $recipient = NULL): bool {
+    return $this->log->wasAcceptedCorrelation($correlationId, $type, $recipient);
   }
 
   /**
