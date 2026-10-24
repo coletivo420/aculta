@@ -4,6 +4,20 @@ Este documento é o índice operacional dos caminhos HTTP do projeto: páginas
 públicas, conta, administração, endpoints técnicos, caminhos removidos e
 redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitui.
 
+## Rotas canônicas sem compatibilidade transitória — 2026-10-24
+
+Durante o desenvolvimento não há aliases temporários de rota. Os caminhos
+retirados de Studio, Ganjalab, Fórum administrativo, User e páginas antigas
+de Conta/Commerce respondem 404, sem redirects para versões antigas.
+Usar `/studio`, `/studio/marley`, `/studio/ganjalab`,
+`/studio/pessoal`, `/dados/endereco` e `/pedidos`.
+O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
+contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
+não rotas temporárias de compatibilidade.** Redirecionamentos funcionais de
+autenticação, checkout, troca de purpose e códigos QR/curtos ficam sujeitos
+às políticas próprias. Código e documentação atualizados; homologação
+Runtime pendente. Gate: `scripts/validate-no-temporary-route-aliases.php`.
+
 ## Convenções e fonte de verdade
 
 - Identificadores de host usam a forma `*.aculta`, sem hostname de ambiente:
@@ -149,15 +163,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisao/{aculta_forum_post_revision}/excluir` | Confirmação administrativa experimental para excluir revisão | Retirado antes da ativação: UI e política de exclusão de revisão ainda não estão integradas; rota não deve existir no Runtime. |
 | `main.aculta` | `/painel-administrativo/forum/{node}/mover-categoria` | Ação direta de mover tópico público | Redireciona localmente para `/painel-administrativo/forum`; mantém `move aculta forum topics` e conversão de Node; não move conteúdo. Runtime RouteProvider resolve; HTTP positivo não testado porque o Fórum não tem fixtures. |
 | `main.aculta` | `/painel-administrativo/forum/comentarios/{comment}/mover` | Formulário para mover comentário e respostas descendentes entre tópicos públicos | `_form` `ForumCommentMoveForm`, conversão de Comment e permissão `move aculta forum comments`; config desabilitada por padrão. Fluxo HTTP/Form API e viewports 390/768 confirmados no Runtime de teste com fixtures temporárias removidas; produção não confirmada. |
-| `main.aculta` | `/painel-administrativo/forum/comentario/{comment}/mover` | Caminho singular anterior para mover comentário | Redirect local declarado para `/painel-administrativo/forum`; GET/HEAD/POST; não move conteúdo. |
 | `main.aculta` | `/painel-administrativo/forum/denuncias` | Fila de denúncias do Growroom420 | Rota declarada por `aculta_user`, atualmente redireciona para a entrada central; exige `moderar denuncias do forum`. A raiz não apresenta este caminho como link até a fila ter uma tela ativa. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum` | Antigo acesso ao conteúdo do Fórum sob Conteúdo geral | Redirect local declarado (302) para `/painel-administrativo/forum`; `access content overview`; GET/HEAD/POST. Runtime RouteProvider resolve; sessão autenticada anteriormente retornou 302. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/{node}/mover-categoria` | Antigo caminho da ação de mover tópico sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST; não move conteúdo. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/comentario/{comment}/mover` | Antigo caminho da ação de mover comentário sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST; não move conteúdo. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/comentarios` | Antigo caminho agregado dos comentários do Fórum sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/comentarios/publicados` | Antiga fila de comentários publicados sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/comentarios/rejeitados` | Antiga fila de comentários rejeitados sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST. |
-| `main.aculta` | `/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao` | Antiga fila de moderação sob Conteúdo | Redirect local declarado (302) para `/painel-administrativo/forum`; GET/HEAD/POST. |
 | `main.aculta` | `/painel-administrativo/estrutura/taxonomy/manage/{taxonomy_vocabulary}/overview` | Administração genérica de termos Taxonomy | Rota Core fora da seção do Fórum; os links específicos do Fórum foram removidos. Runtime gera URL para UID 1; anônimo 403. |
 | `main.aculta` | `/painel-administrativo/estrutura/types/manage/{node_type}` | Administração genérica de tipos de conteúdo | Rota Core fora da seção do Fórum; os links específicos do Fórum foram removidos. Runtime gera URL para UID 1; anônimo 403. |
 | `main.aculta` | `/painel-administrativo/lms/forum` | Índice de cursos e turmas cuja moderação de discussões pertence ao Educador atual | Ativa no Runtime de teste após rebuild; lista fóruns agrupada por curso, com filas das turmas dentro do curso. Acesso anônimo negado (403). |
@@ -257,8 +263,6 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/foto` | Foto de perfil | Condicional à configuração de perfil/imagens; próprio usuário. |
 | `conta.aculta` | `/seguranca` | Painel de segurança e e-mail da conta | Conta autenticada; próprio usuário. |
 | `conta.aculta` | `/seguranca/senha` | Alteração de senha | Conta autenticada; validação de senha vigente. |
-| `conta.aculta` | `/seguranca/email` | Caminho legado da troca de e-mail (`aculta_user_changemail.legado`) | Sem página própria: `302` para a aba E-mail da Segurança. Conta autenticada. |
-| `conta.aculta` | `/seguranca/email/{user}` | Caminho legado com `{user}` (`aculta_user_changemail.legado_usuario`) | `302` para a aba E-mail da Segurança; `{user}` precisa ser a própria conta (outra conta recebe `403`). |
 | `conta.aculta` | `/seguranca/email/cancelar/{user}` | Cancelamento de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
 | `conta.aculta` | `/identidade/editar` | Edição técnica/legada do perfil próprio | Navegação redirecionada para `/seguranca`; acesso alheio é negado. |
 | `conta.aculta` | `/identidade/{user}` | Perfil técnico/legado de usuário | Para o próprio usuário redireciona à raiz da Conta; perfil alheio não é exibido. |
@@ -268,8 +272,6 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | `conta.aculta` | `/studio` | **Hub geral ACULTA Studio** | Declarado em `aculta_studio`, route ID `aculta_studio.legacy_home` preservado; requer login e `access aculta portal`, lista somente experiências autorizadas; código dev.10, Runtime ainda não homologado. |
 | `conta.aculta` | `/studio/marley` | **Entrada inicial canônica de Marley (minúscula)** | Declarada por `aculta_studio.home`; mantém controlador, áreas e acesso editoriais; purpose `account`. Runtime da dev.10 ainda não homologado. |
-| `conta.aculta` | `/studio/Marley` | Alias histórico de capitalização do Marley | HTTP 302 apenas GET/HEAD para `/studio/marley`, via `aculta_studio.legacy_marley_capitalized`; não usar em novos links. |
-| `conta.aculta` | `/studio/inicio` | Prévia antiga do hub | HTTP 302 apenas GET/HEAD para `/studio`, via `aculta_studio.hub_preview`; não usar em novos links. |
 | `conta.aculta` | `/studio/pessoal` | Entrada mínima Meu Espaço | `aculta_studio.personal`, autenticado no purpose `account`; ainda usa links à Conta original, sem editor pessoal; Runtime não homologado. |
 | `conta.aculta` | `/studio/marley/{aba}` | Área editorial Marley, como Revista, Wiki, Cursos, Fórum ou Galerias | Declarada em `aculta_studio`; plugin, disponibilidade e permissão do módulo dono determinam acesso; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
@@ -277,19 +279,6 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/studio/ganjalab` | Dashboard pessoal ACULTA Studio Ganjalab | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; purpose `account`. Runtime não verificado nesta refatoração. |
 | `conta.aculta` | `/studio/we-sativa` | Experiência de contribuição WE SATIVA | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `account`. Estado Runtime permanece conforme status do Studio. |
 | `conta.aculta` | `/studio/we-sativa/inicio` | Página inicial de contribuição WE SATIVA | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `account`. |
-| `conta.aculta` | `/studio/{aba}` | Alias dinâmico de área do Studio | Declarado em `aculta_studio`; IDs de área não canônicos continuam resolvidos pelo presenter Marley; `/studio/ganjalab` está reservado à rota estática estudantil. |
-| `conta.aculta` | `/studio/{aba}/{secao}` | Alias dinâmico de seção do Studio | Declarado em `aculta_studio`; requer área/seção autorizada; prefixo `ganjalab` redireciona para o equivalente Marley em GET/HEAD. |
-| `conta.aculta` | `/studio/{aba}/{secao}/{sub}` | Alias dinâmico de aba do Studio | Declarado em `aculta_studio`; requer área/seção/aba autorizada; prefixo `ganjalab` redireciona para o equivalente Marley em GET/HEAD. |
-| `conta.aculta` | `/studio/ganjalab420` | Entrada estudantil legada | Declarada em `aculta_lms`; GET/HEAD recebe 302 para `/studio/ganjalab`; outros métodos não são redirecionados; conta autenticada. |
-| `conta.aculta` | `/ganjalab420` | Entrada estudantil legada | Declarada em `aculta_lms`; GET/HEAD recebe 302 para `/studio/ganjalab`; outros métodos não são redirecionados; conta autenticada. |
-| `conta.aculta` | `/minha-aprendizagem` | Entrada estudantil legada | Declarada em `aculta_lms`; GET/HEAD recebe 302 para `/studio/ganjalab`; outros métodos não são redirecionados; conta autenticada. |
-| `conta.aculta` | `/ganjalab` | Entrada editorial legada de Marley | Declarada em `aculta_studio`; GET/HEAD recebe 302 para `/studio/marley`; outros métodos não são redirecionados; exige `access aculta portal`. |
-| `conta.aculta` | `/ganjalab/{aba}` | Área editorial legada de Marley | Declarada em `aculta_studio`; GET/HEAD recebe 302 para o nível equivalente em `/studio/marley`; outros métodos não são redirecionados. |
-| `conta.aculta` | `/ganjalab/{aba}/{secao}` | Seção editorial legada de Marley | Declarada em `aculta_studio`; GET/HEAD recebe 302 para o nível equivalente em `/studio/marley`; outros métodos não são redirecionados. |
-| `conta.aculta` | `/ganjalab/{aba}/{secao}/{sub}` | Aba editorial legada de Marley | Declarada em `aculta_studio`; GET/HEAD recebe 302 para o nível equivalente em `/studio/marley`; outros métodos não são redirecionados. |
-| `conta.aculta` | `/studio/ganjalab/{aba}` | Nível editorial legado profundo | Declarada em `aculta_studio`; GET/HEAD recebe 302 para `/studio/marley/{aba}`; `/studio/ganjalab` sem sufixo é exclusivamente a rota estudantil. |
-| `conta.aculta` | `/studio/ganjalab/{aba}/{secao}` | Nível editorial legado profundo | Declarada em `aculta_studio`; GET/HEAD recebe 302 para o nível equivalente Marley; `/studio/ganjalab` sem sufixo é exclusivamente a rota estudantil. |
-| `conta.aculta` | `/studio/ganjalab/{aba}/{secao}/{sub}` | Nível editorial legado profundo | Declarada em `aculta_studio`; GET/HEAD recebe 302 para o nível equivalente Marley; `/studio/ganjalab` sem sufixo é exclusivamente a rota estudantil. |
 | `conta.aculta` | `/atividades-interativas` | Atividades H5P dos cursos acessíveis pela pessoa estudante | Rota `aculta_lms_h5p`, purpose `account`, exige papel `estudante`; lista vazia quando não há curso com H5P acessível. Runtime corrigido após detectar o redirect de `/minha-conta/*` sem rota final. |
 | `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; ativa no Runtime de teste após habilitação em 2026-10-21; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; ainda sem mensagem de teste criada. |
 | `conta.aculta` | `/meu-apoio` | Histórico de apoio/doações da pessoa | Conta autenticada; dados próprios. |
@@ -446,21 +435,12 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | Origem | Destino | Título / objeto | Código/condição |
 | --- | --- | --- | --- |
 | `/` | `conta.aculta:/entrar` | Entrada da área de conta para visitante anônimo | `302`; usuário autenticado recebe a visão geral da conta. |
-| `/minha-conta/atividades-interativas` | `conta.aculta:/atividades-interativas` | Endereço legado do painel H5P de estudante | `301` aplicado pelo `DomainPurposeRequestSubscriber`; rota final exige papel `estudante`. Runtime de teste confirmado em 2026-10-21. |
 | `/user` | `conta.aculta:/` | Página legada de usuário do Core | `302` para a raiz da Conta. |
 | `/user/{uid}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para o dono; acesso ao perfil de outra pessoa é negado. |
 | `/identidade/editar` | `conta.aculta:/seguranca` | Edição legada do próprio perfil | `302` para o painel de segurança; usuário alheio recebe negação. |
 | `/identidade/{user}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para a raiz da conta; usuário alheio recebe negação. |
-| `/seguranca/email` | `conta.aculta:/seguranca` | Caminho legado da troca de e-mail (`aculta_user_changemail.legado`) | `302` para a aba E-mail da Segurança, após validar login. |
-| `/seguranca/email/{user}` | `conta.aculta:/seguranca` | Caminho legado com `{user}` (`aculta_user_changemail.legado_usuario`) | `302` para a aba E-mail da Segurança, só para a própria conta; outra conta recebe `403`. |
 | `/user/change-mail` e `/user/{user}/change-mail` | — | Caminhos do contrib `change_mail_page`, removido | Sem rota (`404`). Nenhum link do site aponta para eles. |
 | `/carrinho` em `loja.aculta` | `/carrinho` em `main.aculta` | Continuação da compra no domínio responsável pelo checkout | `302` cross-purpose confiável, via política de domínio. |
-| `/enderecos` | `conta.aculta:/dados/endereco` | Lista legada de endereços | `302` para endereço único. |
-| `/enderecos/novo/{tipo}` | `conta.aculta:/dados/endereco` | Criação legada de endereço | `302` para endereço único. |
-| `/enderecos/{perfil}/editar` | `conta.aculta:/dados/endereco` | Edição legada de endereço | `302` para endereço único. |
-| `/enderecos/{perfil}/excluir` | `conta.aculta:/dados/endereco` | Exclusão legada de endereço | `302` para endereço único. |
-| `/enderecos/{perfil}/padrao` | `conta.aculta:/dados/endereco` | Seleção legada de endereço padrão | `302` para endereço único. |
-| `/pagamentos` | `/pedidos` | Página antiga de meios de pagamento pessoais | `301` legado registrado; confirmar comportamento no ambiente antes de alterar. |
 | `/product/{id}` | Alias canônico `/loja/produto/{categoria}/{titulo}` | URL técnica antiga de produto Commerce | `301` quando houver redirect/alias e produto publicado. |
 | Submissão de `/busca` | `/busca?q={termo}` | Envio do formulário de busca | `302`; termo vai na query string. |
 
