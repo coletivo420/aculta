@@ -1707,7 +1707,7 @@ que detém o lock. Isso protege o contador do Fórum e os acknowledgements dos a
 por um worker obsoleto.
 
 Validação: `AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**, incluindo
-concorrência durante transporte e perda do lock renovado; Kernels MariaDB de idempotência e amizade **34/759 PASS**, incluindo contenção do lock entre processos.
-PHPCS Drupal/DrupalPractice PASS. Duas deprecações de plugins Message via annotations foram reportadas pelo Kernel de
+concorrência durante transporte e perda do lock renovado; Kernels MariaDB de idempotência e amizade **34/759 PASS**, incluindo contenção do lock entre processos. Dois workers Drupal completos disputando o
+transporte em processos independentes e suspensão acima da lease seguem pendentes. PHPCS Drupal/DrupalPractice PASS. Duas deprecações de plugins Message via annotations foram reportadas pelo Kernel de
 amizade. Sem Runtime ou SMTP.
 
