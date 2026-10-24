@@ -1,3 +1,12 @@
+## Controlador de publicação — construção do rascunho, 2026-10-24
+
+- `ForumPostSubmissionControllerKernelTest` (2 testes / 41 asserções, MariaDB):
+  tópico ausente ou desconhecido e resposta pai desconhecida resultam em
+  `NotFoundHttpException`; tópico válido com pai publicado no purpose `forum`
+  entrega ao form builder um rascunho com autor, tópico, pai e
+  `moderation_state = draft`.
+- Suíte Kernel do Fórum 128/2.474; PHPCS limpo.
+
 ## Histórico e comparação de revisões — acesso, 2026-10-24
 
 - `ForumPostRevisionAccessKernelTest` (3 testes / 39 asserções, MariaDB):

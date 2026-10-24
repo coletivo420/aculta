@@ -1,3 +1,11 @@
+## `0.1.0-dev.297` — provar a construção do formulário público de publicação — 2026-10-24
+
+- Novo Kernel `ForumPostSubmissionControllerKernelTest`: tópico vazio ou
+  desconhecido e resposta pai desconhecida resultam em `NotFoundHttpException`;
+  tópico válido com pai publicado no purpose `forum` entrega ao form builder um
+  rascunho com autor, tópico, pai e `moderation_state = draft`.
+- Testes: controlador 2/41; suíte Kernel do Fórum 128/2.474; PHPCS limpo.
+
 ## `0.1.0-dev.296` — provar acesso ao histórico e à comparação de revisões — 2026-10-24
 
 - Novo Kernel `ForumPostRevisionAccessKernelTest`: histórico liberado só no
