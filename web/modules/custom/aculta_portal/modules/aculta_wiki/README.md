@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Gate Runtime WE SATIVA (2026-10-24): Firefox visível encontrou 404 porque
+  `aculta_studio.we_sativa` não consta na tabela de rotas, embora Wiki/Studio
+  estejam ativos. Kernel isolado passou 1/54. Rebuild/cache/import não foram
+  executados; homologação aguarda autorização operacional.
+
 - `0.1.0-dev.97`: Kernel verifica o link da fila de propostas no GanjaLab, a
   rota de decisão, o ID correspondente e o acesso do moderador (1/205).
   Runtime e interface visual intocados.

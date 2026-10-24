@@ -1317,3 +1317,11 @@
 - Focal MariaDB: 1 teste / 205 asserções; 202 depreciações Core/contrib e 2 do
   PHPUnit. Nenhuma alteração no Runtime ou interface instalada.
 
+## Revalidação do Runtime WE SATIVA — 2026-10-24 (sem mudança funcional)
+
+- Firefox ESR visível: 0/2 checks, pois `/studio/we-sativa` responde a página
+  404 da Conta. Drush somente leitura confirmou os módulos Wiki/Studio ativos,
+  mas a rota não consta na tabela `router`; Kernel isolado do workspace passou
+  (1/54). Nenhum rebuild, cache clear, import de configuração ou gravação de
+  conteúdo foi executado. É necessário autorizar o gate operacional de rotas.
+

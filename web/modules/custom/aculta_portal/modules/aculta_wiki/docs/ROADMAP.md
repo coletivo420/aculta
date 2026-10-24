@@ -12,6 +12,17 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Gate operacional WE SATIVA — 2026-10-24
+
+Firefox ESR visível no host de teste autenticou e recebeu 404 em
+`/studio/we-sativa` (0/2 checks). Drush somente leitura confirmou Drupal
+11.4.10, `aculta_runtime`, `aculta_studio`/`aculta_wiki` ativos e ausência de
+`aculta_studio.we_sativa` na tabela `router`; as rotas GanjaLab antigas estão
+presentes. Em contraste, o Kernel isolado do workspace passou (1/54), provando
+discovery/DI no bootstrap de teste. Não executei rebuild de rotas, cache,
+importação de configuração ou alteração de conteúdo; homologação visual fica
+pendente de autorização operacional.
+
 ### Incremento dev.97 — link de decisão da fila no GanjaLab
 
 O Kernel de envio/proposta também constrói a lista autorizada no Studio e agora

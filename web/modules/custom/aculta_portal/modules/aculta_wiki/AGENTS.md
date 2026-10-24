@@ -30,6 +30,10 @@
 
 # Wiki — instruções locais
 
+- Gate Runtime WE SATIVA (2026-10-24): Firefox 0/2; rota ausente da tabela
+  `router` com módulos ativos. Kernel isolado passou 1/54. Sem rebuild/cache/
+  import; ativação operacional exige autorização.
+
 - Dev.92: proposta contextual em duas etapas Form API; Back preserva valores;
   revisão-base detecta conflito e exige confirmação após rebase explícito.
   Kernel focal 1/202; Runtime e visual intocados.
