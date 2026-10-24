@@ -4,8 +4,7 @@ O teste do formulário de privacidade verifica que todas as categorias integrada
 permitidos pelo Messenger. Desabilitar envio direto na administração remove essa opção de cada categoria sem remover o
 opt-out individual, digest ou os avisos obrigatórios no site.
 
-Validação: formulário e serviços de preferência/configuração **12/76 PASS**; PHPCS Drupal/DrupalPractice e PHP lint
-PASS. O smoke visual e a aplicação da configuração no Runtime continuam pendentes.
+Validação: formulário e serviços de preferência/configuração **12/76 PASS**; suíte Unit inteira do Messenger **158/1.058 PASS**; PHPCS Drupal/DrupalPractice, PHP lint, índice de status e `git diff --check` PASS. O smoke visual e a aplicação da configuração no Runtime continuam pendentes.
 
 ## 0.1.1-dev.179 — cobrir idempotência dos digests da Loja e Doação
 
