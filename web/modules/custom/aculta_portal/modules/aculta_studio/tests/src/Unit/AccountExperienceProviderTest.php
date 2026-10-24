@@ -73,6 +73,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     self::assertSame([
       'aculta_portal.my_data',
       'aculta_studio.account_address',
+      'aculta_studio.account_documents',
       'aculta_studio.account_security',
       'aculta_studio.account_password',
       'aculta_studio.account_connections',
