@@ -54,11 +54,17 @@ final class MessengerNoticeEvent extends Event {
     self::assertIdentifier($sourceModule, 'source module');
     self::assertIdentifier($sourceEntityType, 'source entity type');
     self::assertIdentifier($purpose, 'purpose');
-    if ($sourceEntityUuid === '' || strlen($sourceEntityUuid) > 128
-      || $recipientUid < 1 || $idempotencyKey === '' || strlen($idempotencyKey) > 255) {
+    if (self::containsControlCharacters($sourceEntityUuid)
+      || trim($sourceEntityUuid) === ''
+      || strlen($sourceEntityUuid) > 128
+      || $recipientUid < 1
+      || self::containsControlCharacters($idempotencyKey)
+      || trim($idempotencyKey) === ''
+      || strlen($idempotencyKey) > 255) {
       throw new \InvalidArgumentException('A source UUID, positive recipient UID and idempotency key are required.');
     }
-    if ($sourceRevisionOrVersion !== NULL && strlen($sourceRevisionOrVersion) > 128) {
+    if ($sourceRevisionOrVersion !== NULL
+      && (strlen($sourceRevisionOrVersion) > 128 || self::containsControlCharacters($sourceRevisionOrVersion))) {
       throw new \InvalidArgumentException('Source revision/version must not exceed 128 characters.');
     }
     self::assertMetadata($metadata);
@@ -160,10 +166,17 @@ final class MessengerNoticeEvent extends Event {
       if (!is_string($key) || !preg_match('/^[a-z][a-z0-9_]{0,63}$/', $key)
         || preg_match('/email|body|message|content|answer|grade|note|password|token|phone|address/i', $key)
         || (!is_scalar($value) && $value !== NULL)
-        || (is_string($value) && strlen($value) > 255)) {
+        || (is_string($value) && (strlen($value) > 255 || self::containsControlCharacters($value)))) {
         throw new \InvalidArgumentException('Notice metadata must be flat, small and non-sensitive.');
       }
     }
+  }
+
+  /**
+   * Rejects ASCII control characters in values that cross module boundaries.
+   */
+  private static function containsControlCharacters(string $value): bool {
+    return preg_match('/[\x00-\x1F\x7F]/', $value) === 1;
   }
 
 }

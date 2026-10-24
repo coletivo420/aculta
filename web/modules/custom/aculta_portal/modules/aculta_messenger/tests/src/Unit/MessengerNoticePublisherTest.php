@@ -54,6 +54,28 @@ final class MessengerNoticePublisherTest extends UnitTestCase {
   }
 
   /**
+   * Rejects control characters in identifiers and metadata crossing modules.
+   */
+  public function testControlCharactersAreRejectedFromEnvelopeValues(): void {
+    $cases = [
+      fn() => $this->event([], "opaque\n-uuid"),
+      fn() => $this->event([], 'opaque-uuid', "event:key\r84"),
+      fn() => $this->event(['mail_policy' => "user\npreference"]),
+      fn() => $this->event([], 'opaque-uuid', 'event:key', "v3\0"),
+    ];
+
+    foreach ($cases as $case) {
+      try {
+        $case();
+        self::fail('Control characters must not cross the event envelope.');
+      }
+      catch (\InvalidArgumentException) {
+        self::assertTrue(TRUE);
+      }
+    }
+  }
+
+  /**
    * Confirms publisher dispatches through the public event name.
    */
   public function testPublisherDispatchesTheEnvelopeToTheNamedEvent(): void {
@@ -69,17 +91,22 @@ final class MessengerNoticePublisherTest extends UnitTestCase {
   /**
    * Creates an event fixture for these unit tests.
    */
-  private function event(array $metadata): MessengerNoticeEvent {
+  private function event(
+    array $metadata,
+    string $sourceUuid = 'opaque-uuid',
+    string $idempotencyKey = 'lms:enrollment:opaque-uuid:v3:84',
+    ?string $version = 'v3',
+  ): MessengerNoticeEvent {
     return new MessengerNoticeEvent(
       'lms.enrollment.created',
       'aculta_lms',
       'group',
-      'opaque-uuid',
-      'v3',
+      $sourceUuid,
+      $version,
       84,
       'account',
       new \DateTimeImmutable('2026-10-24T12:00:00+00:00'),
-      'lms:enrollment:opaque-uuid:v3:84',
+      $idempotencyKey,
       $metadata,
     );
   }

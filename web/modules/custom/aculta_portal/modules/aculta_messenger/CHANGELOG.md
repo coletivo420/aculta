@@ -1,3 +1,13 @@
+## 0.1.1-dev.100 — endurecer valores do envelope de eventos — 2026-10-24
+
+- `MessengerNoticeEvent` agora rejeita caracteres ASCII de controle nos UUIDs
+  de origem, revisões/versões, chaves de idempotência e valores textuais de
+  metadados, além dos limites de tamanho e formato já existentes.
+- Teste Unit cobre LF, CR e NUL nos campos do contrato. Messenger Unit e
+  publishers LMS, Doação, Loja e Wiki: 105 testes / 491 assertions PASS.
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime não
+  executado.
+
 ## 0.1.1-dev.99 — integrar eventos de doação ao núcleo — 2026-10-24
 
 - `aculta_messenger` registra o consumer opcional de Doações, persistindo
