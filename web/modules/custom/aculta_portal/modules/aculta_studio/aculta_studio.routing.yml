@@ -1,5 +1,5 @@
 # Marley ocupa as rotas editoriais; os IDs de área funcionais permanecem estáveis.
-# P1-A: personal Studio entry, without replacing /studio (legacy Marley).
+# P1-A: personal entry preserved; /studio now belongs to the global hub.
 # P1-C: /studio is the global hub; /studio/inicio remains a safe redirect.
 aculta_studio.hub_preview:
   path: /studio/inicio
@@ -45,7 +45,7 @@ aculta_studio.we_sativa_start:
     _aculta_domain_purpose: account
 
 aculta_studio.home:
-  path: /studio/Marley
+  path: /studio/marley
   defaults:
     _controller: 'aculta_studio.marley_controller:page'
     _title: 'ACULTA Studio Marley'
@@ -96,10 +96,10 @@ aculta_studio.tab:
   options:
     _aculta_domain_purpose: account
 
-# Keep old, lowercase Marley entry available via a GET/HEAD-only 302.
-# Its canonical route ID stays aculta_studio.home at /studio/Marley.
-aculta_studio.legacy_marley_lowercase:
-  path: /studio/marley
+# Historical capitalized entry is a temporary safe-method alias.
+# Canonical Marley entry remains lower-case /studio/marley.
+aculta_studio.legacy_marley_capitalized:
+  path: /studio/Marley
   defaults:
     _controller: 'aculta_studio.marley_controller:legacyEditorial'
     _title: 'ACULTA Studio Marley'
