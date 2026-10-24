@@ -9,7 +9,6 @@ use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -164,13 +163,6 @@ final class ForumAdminOverviewController extends ControllerBase {
         ],
       ],
     ];
-  }
-
-  /**
-   * Sends Forum administrative tool paths to the central Forum panel.
-   */
-  public function redirectToOverview(): LocalRedirectResponse {
-    return new LocalRedirectResponse('/painel-administrativo/forum', 302);
   }
 
 }
