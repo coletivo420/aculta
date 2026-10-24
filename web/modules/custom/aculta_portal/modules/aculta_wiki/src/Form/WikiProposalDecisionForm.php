@@ -62,16 +62,29 @@ final class WikiProposalDecisionForm extends FormBase {
     $proposedFields = $proposal->getProposedFields();
     $form_state->set('wiki_proposal_fields', array_keys($proposedFields));
 
-    $form['proposal'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Proposta: @title', ['@title' => $proposal->label()]),
-      '#markup' => $this->t('O retorno será enviado à pessoa autora e registrado no histórico privado da proposta.'),
+    $form['#attributes']['data-portal-ui'] = 'wiki-proposal-decision';
+    $form['proposal_header'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:context-header',
+      '#props' => [
+        'eyebrow' => (string) $this->t('GanjaLab · Moderação Wiki'),
+        'title' => (string) $this->t('Proposta: @title', ['@title' => $proposal->label()]),
+        'subtitle' => (string) $this->t('Revise a contribuição e registre uma decisão editorial.'),
+      ],
+    ];
+    $contributionBody = [
+      '#type' => 'container',
+      'intro' => ['#plain_text' => $this->t('O retorno será enviado à pessoa autora e registrado no histórico privado da proposta.')],
+    ];
+    $form['editorial_decision'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Decisão editorial'),
     ];
     $target = $proposal->get('target')->entity;
     if ($target !== NULL) {
       $targetUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $target->id()]);
       if ($targetUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $targetUrl->access())) {
-        $form['target_link'] = [
+        $form['proposal_header']['#slots']['actions']['target'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir verbete publicado'),
           '#url' => $targetUrl,
@@ -82,20 +95,20 @@ final class WikiProposalDecisionForm extends FormBase {
         'node_revision' => $proposal->get('target_revision_id')->value,
       ]);
       if ($revisionUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $revisionUrl->access())) {
-        $form['base_revision_link'] = [
+        $form['proposal_header']['#slots']['actions']['base_revision'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir revisão-base da proposta'),
           '#url' => $revisionUrl,
         ];
       }
     }
-    $form['proposed_text'] = [
+    $contributionBody['proposed_text'] = [
       '#type' => 'container',
       'label' => ['#plain_text' => $this->t('Alteração sugerida')],
       'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
     ];
     if ($proposedFields !== []) {
-      $form['proposed_fields'] = [
+      $contributionBody['proposed_fields'] = [
         '#type' => 'details',
         '#title' => $this->t('Valores propostos'),
         '#open' => TRUE,
@@ -104,20 +117,20 @@ final class WikiProposalDecisionForm extends FormBase {
         if (!isset(WikiProposal::EDITORIAL_FIELDS[$fieldName])) {
           continue;
         }
-        $form['proposed_fields'][$fieldName] = [
+        $contributionBody['proposed_fields'][$fieldName] = [
           '#type' => 'item',
           '#title' => WikiProposal::EDITORIAL_FIELDS[$fieldName],
           '#markup' => '<pre>' . htmlspecialchars($this->formatProposedValue($fieldName, $value), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</pre>',
         ];
       }
-      $form['approved_fields'] = [
+      $form['editorial_decision']['approved_fields'] = [
         '#type' => 'checkboxes',
         '#title' => $this->t('Campos aprovados para aplicação'),
         '#options' => array_intersect_key(WikiProposal::EDITORIAL_FIELDS, $proposedFields),
         '#description' => $this->t('Escolha o subconjunto que será aplicado ao verbete.'),
         '#states' => ['visible' => [':input[name="decision"]' => ['value' => 'accepted']]],
       ];
-      $form['list_modes'] = [
+      $form['editorial_decision']['list_modes'] = [
         '#type' => 'container',
         '#tree' => TRUE,
       ];
@@ -125,7 +138,7 @@ final class WikiProposalDecisionForm extends FormBase {
         if (!array_key_exists($fieldName, $proposedFields)) {
           continue;
         }
-        $form['list_modes'][$fieldName] = [
+        $form['editorial_decision']['list_modes'][$fieldName] = [
           '#type' => 'select',
           '#title' => $this->t('@field: como aplicar', ['@field' => WikiProposal::EDITORIAL_FIELDS[$fieldName]]),
           '#options' => [
@@ -142,7 +155,7 @@ final class WikiProposalDecisionForm extends FormBase {
         ];
       }
     }
-    $form['rationale'] = [
+    $contributionBody['rationale'] = [
       '#type' => 'container',
       'label' => ['#plain_text' => $this->t('Justificativa')],
       'text' => ['#plain_text' => (string) $proposal->get('rationale')->value],
@@ -161,16 +174,22 @@ final class WikiProposalDecisionForm extends FormBase {
         '#attributes' => ['rel' => 'noopener noreferrer'],
       ];
     }
-    $form['sources'] = $sourceLinks === [] ? [] : [
+    $contributionBody['sources'] = $sourceLinks === [] ? [] : [
       '#theme' => 'item_list',
       '#title' => $this->t('Fontes apresentadas'),
       '#items' => $sourceLinks,
+    ];
+    $form['contribution'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420:content-section',
+      '#props' => ['title' => (string) $this->t('Contribuição recebida')],
+      '#slots' => ['body' => $contributionBody],
     ];
     $form['expected_revision_id'] = [
       '#type' => 'value',
       '#value' => (int) $proposal->getRevisionId(),
     ];
-    $form['decision'] = [
+    $form['editorial_decision']['decision'] = [
       '#type' => 'select',
       '#title' => $this->t('Decisão'),
       '#options' => [
@@ -180,7 +199,7 @@ final class WikiProposalDecisionForm extends FormBase {
       ],
       '#required' => TRUE,
     ];
-    $form['decision_note'] = [
+    $form['editorial_decision']['decision_note'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Retorno para a pessoa autora'),
       '#description' => $this->t('Registre o retorno editorial para a pessoa autora. Texto simples, até 5.000 caracteres.'),

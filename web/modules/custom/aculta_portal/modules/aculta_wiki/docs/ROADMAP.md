@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.59**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.60**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.60 — decisão editorial no GanjaLab
+
+A tela de moderação compõe o contexto da proposta com SDCs existentes: cabeçalho
+com links autorizados ao verbete/revisão-base e seção para resumo, campos
+propostos, justificativa e fontes. Campos de decisão continuam no Form API e
+Wiki mantém seu backend/acesso. Kernel focal: 1/156; classe completa: 21/941,
+291 depreciações Core/contrib/PHPUnit. PHPCS/PHP lint passaram. Validação visual
+e Runtime permanecem pendentes.
 
 ### Incremento dev.59 — escolhas de lista no formulário GanjaLab
 

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.60 — compor revisão de propostas no GanjaLab com SDC
+
+- A tela de decisão usa `context-header` e `content-section` existentes para
+  identificar a proposta, abrir links autorizados ao verbete/revisão-base e
+  revisar contribuição, valores, justificativa e fontes. Controles decisórios
+  seguem no Form API sob propriedade da Wiki.
+- Kernel focal passou com 1 teste / 156 asserções; classe completa: 21 testes /
+  941 asserções e 291 depreciações Core/contrib/PHPUnit. PHPCS e PHP lint
+  passaram. Firefox visual e Runtime não foram homologados.
+
 ## 0.1.0-dev.59 — preservar modos de lista no Form API do GanjaLab
 
 - O container `list_modes` agora preserva valores no Form API; sem `#tree`, as

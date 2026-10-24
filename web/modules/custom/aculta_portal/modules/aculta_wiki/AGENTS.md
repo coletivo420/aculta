@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.60: formulário de moderação GanjaLab compõe contexto da proposta por
+  `context-header`/`content-section`; decisão permanece Form API. Kernel focal
+  1/156; classe completa 21/941, 291 depreciações Core/contrib/PHPUnit. PHPCS,
+  PHP lint passaram; validação visual pendente.
+
 - Dev.59: `list_modes` usa `#tree`; Kernel FormBuilder aplica modos append/
   replace escolhidos em referências, categorias e relações (focal 1/154;
   classe 21/939, 291 depreciações Core/contrib/PHPUnit). PHPCS e PHP lint

@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.60`: formulário de moderação no GanjaLab compõe cabeçalho,
+  links de contexto e contribuição usando SDCs; decisões e campos permanecem
+  em Form API. Kernel focal: 1/156; classe completa: 21/941, 291 depreciações.
+
 - `0.1.0-dev.59`: o formulário GanjaLab preserva escolhas individuais de
   `list_modes`; Kernel usa FormBuilder e aplica proposta pelo caminho de
   decisão, inclusive modos append/replace (focal: 1/154; classe completa:
