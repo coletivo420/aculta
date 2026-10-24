@@ -4,7 +4,7 @@
 
 ## ACULTA Studio — Hub e Meu Espaço (planejamento P0, 2026-10-24)
 
-- [Hub geral e migração de Minha Conta e Meu Perfil](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md) — **contrato-alvo**, fases P0–P7, ownership, navegação, rotas futuras e anti-regressão; não implementado.
+- [Hub geral e migração de Minha Conta e Meu Perfil](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md) — contrato-alvo, fases P0–P7, ownership, navegação e anti-regressão; P1-A possui entrada pessoal mínima no código, ainda sem homologação Runtime.
 - [Identidade atual do Studio](ACULTA-STUDIO-IDENTITY.md) — Marley, Ganjalab e WE SATIVA e seus caminhos já existentes, com distinção explícita do futuro hub.
 - [Menu atual da Minha Conta](ACCOUNT-MENU.md) — comportamento existente mantido durante a transição, inclusive raiz do domínio de conta e proteção de `/minha-conta`.
 - [Plataforma e experiências](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md) — contratos arquiteturais do Studio e a nova frente P0.
