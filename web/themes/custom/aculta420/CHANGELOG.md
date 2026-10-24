@@ -1,3 +1,14 @@
+## 0.6.1-dev.5 — ajustar busca da Wiki para não causar overflow
+
+Classificação: PATCH visual responsivo.
+
+- O submit do formulário de busca no cabeçalho Wiki deixa de herdar a largura
+  `100%` do `.form-control` dentro do item flex e passa a ocupar só seu conteúdo.
+- Firefox ESR visível no Runtime de teste, com CSS atual carregado diretamente
+  por GET no browser: 46/46 verificações, sem overflow em 320, 390 ou 1280 px.
+  O agregado/cache do Runtime não foi reconstruído; Olivero, contraste,
+  teclado/leitor de tela e demais larguras permanecem sem validação.
+
 ## 0.6.1-dev.4 — removidos overrides de bundles editoriais aposentados
 
 - Removidos `node--article--full.html.twig` e `node--blog--full.html.twig`; `revista` é o único bundle editorial ativo.

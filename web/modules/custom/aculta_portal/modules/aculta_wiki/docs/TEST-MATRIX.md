@@ -23,7 +23,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Submit da proposta pelo Form API | Kernel | `FormBuilder` mantém `field_values` estruturado e o campo selecionado é persistido na entidade privada | aprovado (dev.58; focal: 1/59; classe: 21/935, 291 depreciações) |
 | Decisão da proposta pelo Form API | Kernel | `FormBuilder` preserva modos selecionados individualmente e a aplicação oficial usa append/replace configurados | aprovado (dev.59; focal: 1/154; classe: 21/939, 291 depreciações) |
 | Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
-| Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
+| Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Host de teste: home, listagem, busca e `/wiki` interno; 1280/390/320 px | aprovado para o CSS candidato em ACULTA420 (46/46; CSS direto por GET); agregado Runtime e Olivero pendentes |
+| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | pendente |
 
 ## Regressão Content Index — dev.61
 

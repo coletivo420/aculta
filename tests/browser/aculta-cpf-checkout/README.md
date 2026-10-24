@@ -30,7 +30,9 @@ As senhas nunca são impressas. `wdlib.py` cria um perfil temporário
 Biblioteca mínima: sobe o geckodriver em uma porta livre, inicia o Firefox ESR
 com `-profile` e `-no-remote`, e expõe `get`, `js`, `find`, `exists`, `type`,
 `click`, `submit`, `title`, `url`, `source`, `new_tab`, `switch`, `handles` e
-`close`. Use-a a partir de outro script da pasta.
+`close`. `Driver(bidi=True)` também negocia WebDriver BiDi e disponibiliza
+`websocket_url` para recursos como viewport móvel sem depender do tamanho mínimo
+da janela do gerenciador X11. Use-a a partir de outro script da pasta.
 
 ### `login-probe.py`
 

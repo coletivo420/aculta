@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.67: Firefox ESR/X11, 46/46 em home/listagem/busca a 1280/390/320 px;
+  submit do cabeçalho corrigido no `aculta420` 0.6.1-dev.5. CSS atual entrou
+  por GET browser-only; agregado Runtime, Olivero e WCAG integral pendentes.
+
 - Dev.66: Kernel caracteriza limite de 5.000 caracteres, bloqueio de proposta
   retirada, conflito de revisão-base, subconjunto/modes e transição oficial
   (1/159; 201 depreciações Core/contrib, 2 PHPUnit). PHPCS/lint passam; teste

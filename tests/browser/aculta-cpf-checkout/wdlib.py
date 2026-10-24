@@ -12,7 +12,7 @@ class WDError(Exception):
 
 
 class Driver:
-    def __init__(self, prefs=None):
+    def __init__(self, prefs=None, bidi=False):
         s = socket.socket(); s.bind(("127.0.0.1", 0)); self.port = s.getsockname()[1]; s.close()
         self.base = f"http://127.0.0.1:{self.port}"
         self.profile = tempfile.mkdtemp(prefix="aculta-ff-", dir="/tmp")
@@ -27,9 +27,20 @@ class Driver:
         opts = {"binary": FIREFOX, "args": ["-profile", self.profile, "-no-remote"]}
         if prefs:
             opts["prefs"] = prefs
-        caps = {"capabilities": {"alwaysMatch": {
-            "browserName": "firefox", "acceptInsecureCerts": True, "moz:firefoxOptions": opts}}}
-        self.session = self.req("POST", "/session", caps, timeout=120)["sessionId"]
+        always_match = {
+            "browserName": "firefox",
+            "acceptInsecureCerts": True,
+            "moz:firefoxOptions": opts,
+        }
+        if bidi:
+            always_match["webSocketUrl"] = True
+        caps = {"capabilities": {"alwaysMatch": always_match}}
+        session_info = self.req("POST", "/session", caps, timeout=120)
+        self.session = session_info["sessionId"]
+        self.capabilities = session_info.get("capabilities", {})
+        self.websocket_url = self.capabilities.get("webSocketUrl")
+        if bidi and not self.websocket_url:
+            raise RuntimeError("Geckodriver não forneceu o endpoint WebDriver BiDi.")
         self.req("POST", f"/session/{self.session}/timeouts",
                  {"pageLoad": TIMEOUT * 1000, "script": TIMEOUT * 1000})
 

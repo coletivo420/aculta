@@ -74,6 +74,7 @@
 
 .aculta-wiki-header-search .form-submit {
   flex: 0 0 auto;
+  width: auto;
   min-height: 2.75rem;
   padding-inline: 1rem;
 }

@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.67 — validar reflow da busca e páginas públicas
+
+- Criada suíte visual reutilizável Firefox ESR (`tests/browser/aculta-wiki/`).
+  No host público do Runtime de teste, home, listagem e busca foram verificadas
+  em 1280, 390 e 320 CSS px; 46/46 checagens passaram e `/wiki` continuou 404.
+- A primeira rodada identificou overflow no submit do formulário de busca do
+  cabeçalho. A correção está em `aculta420` 0.6.1-dev.5: `width: auto` remove o
+  conflito com `.form-control`. Com a folha atual carregada por GET somente no
+  navegador, a segunda rodada confirmou `scrollWidth == clientWidth` em todas
+  as páginas/larguras.
+- Teste sem login e sem escrita no Runtime. O agregado do tema no Runtime não
+  foi atualizado; Olivero e acessibilidade completa permanecem pendentes.
+
 ## 0.1.0-dev.66 — fechar limites de decisão de propostas
 
 - Kernel testa rejeição de nota editorial acima de 5.000 caracteres e que uma

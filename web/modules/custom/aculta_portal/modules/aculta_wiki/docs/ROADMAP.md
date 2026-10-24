@@ -4,13 +4,24 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.66**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.67**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.67 — reflow visual da Wiki
+
+A suíte reutilizável `tests/browser/aculta-wiki/visual.py` abriu no Firefox ESR
+visível e conferiu `/`, `/wiki/verbetes`, `/wiki/busca` e 404 de `/wiki` no host
+de teste. Antes da correção, mediu o submit da busca fora da página: o
+`.form-control` de largura 100% também ocupava um item flex próprio. O tema
+`aculta420` 0.6.1-dev.5 define `width: auto`; a folha foi carregada por GET no
+browser sem mexer no agregado do servidor. Resultado: 46/46, sem overflow a
+1280/390/320 CSS px, main/H1 presentes e sem erros visíveis. Runtime agregado,
+Olivero e WCAG completa não foram homologados.
 
 ### Incremento dev.66 — limites do backend de propostas
 

@@ -4,6 +4,8 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.1-dev.5 | Corrigida largura do submit da busca no cabeçalho Wiki | Firefox ESR/X11, CSS candidato direto, 46/46; sem overflow em 320/390/1280 px | Largura intrínseca evita que `.form-control` ultrapasse o formulário flex; agregado Runtime e Olivero pendentes |
+| 0.6.1-dev.4 | Removidos overrides de Article e Blog aposentados | Changelog registra alteração compatível no tema | `revista` permanece com override próprio |
 | 0.6.1-dev.3 | Banner de consentimento no fluxo normal para não cobrir conteúdo | Firefox ESR/X11: 15/15; capturas 390/768/1024 px em claro/escuro; sem overflow; foco do link de salto verificado | Sai da posição fixa e permanece após o rodapé; cartões sem sobreposição nas capturas inspecionadas |
 | 0.6.1-dev.2 | Hierarquia semântica de grupos e cartões de categoria | Firefox ESR/X11, seis viewports, sem overflow; modo escuro/zoom/dispositivo real pendentes | Grupo H2; categoria H3 com tipografia existente; Foundation espera `0.6.1-dev.2` |
 | 0.6.0-dev.147 | Template da publicação `revista` conectado ao SDC existente | Código criado; revisão visual no Runtime pendente | `node--revista--full.html.twig` reutiliza `revista-publication` sem duplicar CSS ou lógica editorial |

@@ -49,7 +49,7 @@ $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
-$assert(($info['version'] ?? NULL) === '0.6.1-dev.3', 'Theme metadata marks the current version 0.6.1-dev.3.');
+$assert(($info['version'] ?? NULL) === '0.6.1-dev.5', 'Theme metadata marks the current version 0.6.1-dev.5.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -320,9 +320,6 @@ $expectedTemplates = [
   'comment--aculta-discussion-post.html.twig',
   // Caixa do Google com logo do tema e estado "Conectado" (f96bb4d, já no main; a allowlist não foi atualizada na época).
   'login-with.html.twig',
-  // Modelo padrão da Revista (0.6.0-dev.21): Notícia e blog chamam o mesmo componente revista-publication.
-  'node--article--full.html.twig',
-  'node--blog--full.html.twig',
   // Modelo canônico da Revista reutiliza o componente editorial compartilhado.
   'node--revista--full.html.twig',
   // Site Alert keeps native scheduling/access and delegates presentation to the theme SDC.
