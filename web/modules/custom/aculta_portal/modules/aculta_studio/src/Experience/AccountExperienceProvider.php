@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Experience;
 
+use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -16,6 +17,8 @@ use Drupal\Core\Url;
  * The legacy account UI remains available at the ACCOUNT domain root (/).
  */
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
+
+  public function __construct(private readonly ?AccountDocumentInterface $documents = NULL) {}
 
   public function id(): string {
     return 'conta';
@@ -47,6 +50,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    */
   public function build(): array {
+    $items = $this->links();
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-account-home'],
@@ -55,7 +59,23 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       ],
       'sections' => [
         '#theme' => 'item_list',
-        '#items' => [
+        '#items' => $items,
+      ],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'url.site'],
+        'max-age' => 0,
+      ],
+    ];
+  }
+
+  /**
+   * Builds only owner-backed account links; hide unavailable document editor.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Link render arrays.
+   */
+  private function links(): array {
+    $items = [
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Informações cadastrais (formulário original)'),
@@ -65,11 +85,6 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Endereço'),
             '#url' => Url::fromRoute('aculta_studio.account_address'),
-          ],
-          [
-            '#type' => 'link',
-            '#title' => new TranslatableMarkup('Documentos'),
-            '#url' => Url::fromRoute('aculta_studio.account_documents'),
           ],
           [
             '#type' => 'link',
@@ -102,13 +117,15 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
             // A Minha Conta original é preservada em /conta-legada (rota oficial), e não é a raiz.
             '#url' => Url::fromRoute('aculta_portal.dashboard'),
           ],
-        ],
-      ],
-      '#cache' => [
-        'contexts' => ['user', 'user.permissions', 'url.site'],
-        'max-age' => 0,
-      ],
     ];
+    if ($this->documents?->isAvailable()) {
+      array_splice($items, 2, 0, [[
+        '#type' => 'link',
+        '#title' => new TranslatableMarkup('Documentos'),
+        '#url' => Url::fromRoute('aculta_studio.account_documents'),
+      ]]);
+    }
+    return $items;
   }
 
 }
