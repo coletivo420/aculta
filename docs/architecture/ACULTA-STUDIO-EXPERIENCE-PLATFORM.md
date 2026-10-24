@@ -13,6 +13,19 @@ Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/
 
 **Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio e WE SATIVA permanecem conforme o contrato vigente.
 
+## Entrada vigente Studio — P1-C, dev.10 (2026-10-24)
+
+No código, **`/studio` é o hub** e **`/studio/marley` é a entrada
+canônica do Marley**, sempre em minúsculas. O route ID editorial
+`aculta_studio.home` continua inalterado. Os caminhos
+`/studio/Marley` e `/studio/inicio` agora são aliases 302 GET/HEAD;
+não representam URLs canônicas. Os caminhos internos de Marley
+`/studio/marley/{aba}/...` continuam como antes.
+
+Esse incremento ainda não foi homologado no Runtime; as fases de
+formulários pessoais/conta e navegação contextual seguem planejadas.
+O texto histórico abaixo deve ser interpretado conforme essa definição.
+
 ## Nova frente documental — Hub e Meu Espaço (STUDIO-P0, 2026-10-24)
 
 **Atualização de implementação P1-B (dev.9):** Marley agora também
