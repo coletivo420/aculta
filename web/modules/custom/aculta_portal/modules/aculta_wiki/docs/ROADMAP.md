@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.61**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.62**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.62 — regressão Kernel de rotas e acesso
+
+No HEAD atual, passaram os cenários Kernel de rotas públicas/listagem, CTA da
+home e busca por usuários com o mesmo papel e grants distintos (3 testes / 127
+asserções; 283 depreciações Core/contrib/PHPUnit). O contrato já está coberto
+por controller/Entity Access/cacheability e não demandou mudança no código.
+Runtime permanece intocado; a validação HTTP documentada é read-only e a
+homologação integral continua pendente.
 
 ### Incremento dev.61 — regressão R1 no HEAD atual
 

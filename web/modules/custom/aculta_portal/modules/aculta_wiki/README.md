@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.62`: rotas, listing, CTA e busca com grants foram revalidados em
+  Kernel no MariaDB isolado (3/127; 283 depreciações Core/contrib/PHPUnit).
+  Código de rota/acesso e Runtime não mudaram.
+
 - `0.1.0-dev.61`: R1 revalidada após as mudanças de interface: Unit Wiki 66/341;
   três Kernels Index/Wiki em MariaDB isolada 10/343 (243 depreciações de
   Core/contrib/PHPUnit). Provider v4 e fingerprint permanecem inalterados;

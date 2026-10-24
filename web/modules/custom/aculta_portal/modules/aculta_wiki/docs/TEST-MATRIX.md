@@ -53,14 +53,15 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 21 testes / 918
 asserções, 291 depreciações Core/contrib/PHPUnit; sem falhas.
 
-## R2 — rotas, domínio e acesso (dev.30)
+## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | aprovado (2 testes focais / 93 asserções) |
+| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | aprovado (dev.30; revalidado dev.62) |
 | Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
-| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado |
-| Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado |
+| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado (dev.62; Kernel combinado 3 testes / 127 asserções) |
+| Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado (dev.62) |
+| CTA de criação | Kernel | Permissão cacheável acompanha Entity API `createAccess()` | aprovado (dev.62) |
 | Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | aprovado em preflight read-only (2026-10-23) |
 | Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | aprovado em preflight read-only (2026-10-23) |
 | Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |

@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.62 — revalidar rotas e acesso em Kernel
+
+- Reexecutados os cenários Kernel de discovery das rotas/listagem, acesso ao
+  CTA de criação e busca com grants diferentes no mesmo papel. Passaram 3
+  testes / 127 asserções em MariaDB isolada; 283 depreciações de Core/contrib/
+  PHPUnit foram reportadas.
+- O controller já aplica Entity Access, contexto `user.node_grants:view` em
+  buscas positivas/vazias/negativas/malformadas e `createAccess()` cacheável.
+  Nenhuma alteração de código ou Runtime foi necessária nesta regressão.
+
 ## 0.1.0-dev.61 — revalidar integração Wiki com Content Index
 
 - No HEAD após as mudanças de interface WE SATIVA/GanjaLab, a suíte Unit Wiki

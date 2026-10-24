@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.62: regressão Kernel de rotas/acesso no HEAD: discovery e listagem,
+  CTA por `createAccess()` e busca entre grants (3/127; 283 depreciações
+  Core/contrib/PHPUnit). Controller permanece sem alteração; Runtime intocado.
+
 - Dev.61: regressão R1 após mudanças de interface: Unit 66/341 (3 PHPUnit
   depreciações); Kernels provider/acesso/owner real 10/343 em MariaDB isolada
   (243 depreciações Core/contrib/PHPUnit). Projeção v4 sem mudança; Runtime e
