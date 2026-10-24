@@ -173,6 +173,11 @@ final class AccountOtherDataForm extends FormBase {
         // Destino inválido: cai no caminho padrão abaixo.
       }
     }
+    // No checkout return requested: preserve the page where editing began.
+    // The document is stored by the same owner service in both contexts.
+    if ($this->requests->getCurrentRequest()?->attributes->get('_route') === 'aculta_studio.account_documents') {
+      return Url::fromRoute('aculta_studio.account_documents');
+    }
     return Url::fromRoute('aculta_portal.my_data_other');
   }
 
