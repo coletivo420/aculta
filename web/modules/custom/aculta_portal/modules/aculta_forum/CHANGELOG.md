@@ -1,3 +1,11 @@
+## `0.1.0-dev.296` — provar acesso ao histórico e à comparação de revisões — 2026-10-24
+
+- Novo Kernel `ForumPostRevisionAccessKernelTest`: histórico liberado só no
+  purpose `main` com acesso ao tópico publicado; comparação aceita duas
+  revisões distintas do mesmo post e recusa revisão repetida, inexistente ou de
+  outro post.
+- Testes: revisões 3/39; suíte Kernel do Fórum 126/2.433; PHPCS limpo.
+
 ## `0.1.0-dev.295` — provar o "marcar tudo como lido" sem tópicos — 2026-10-24
 
 - Novo Kernel `ForumMarkAllReadFormKernelTest`: sem tópicos acessíveis, o

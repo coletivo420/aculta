@@ -1,3 +1,11 @@
+## Histórico e comparação de revisões — acesso, 2026-10-24
+
+- `ForumPostRevisionAccessKernelTest` (3 testes / 39 asserções, MariaDB):
+  histórico apenas no purpose `main` com tópico publicado acessível; comparação
+  exige duas revisões distintas do mesmo post e recusa repetida, inexistente ou
+  de outro post.
+- Suíte Kernel do Fórum 126/2.433; PHPCS limpo.
+
 ## Marcar tudo como lido — estado vazio, 2026-10-24
 
 - `ForumMarkAllReadFormKernelTest` (2 testes / 19 asserções, MariaDB): sem
