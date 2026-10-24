@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Unit\ContentIndex;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -15,9 +16,8 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Forum-owned Content Index providers are service-tagged.
- *
- * @group aculta_forum
  */
+#[Group('aculta_forum')]
 final class ForumContentIndexProviderServiceTest extends UnitTestCase {
 
   /**

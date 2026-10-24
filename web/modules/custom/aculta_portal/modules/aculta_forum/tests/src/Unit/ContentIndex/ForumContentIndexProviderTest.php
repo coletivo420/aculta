@@ -10,19 +10,18 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * @coversDefaultClass \Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
- * @group aculta_forum
+ * Tests Forum-owned Content Index provider metadata.
  */
+#[CoversClass(ForumContentIndexProvider::class)]
+#[Group('aculta_forum')]
 final class ForumContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests coexistence sources and canonical access purpose.
-   *
-   * @covers ::getProviderId
-   * @covers ::getSupportedEntityTypes
-   * @covers ::getAccessPurpose
    */
   public function testDeclaresBothDiscussionSystemsAndForumPurpose(): void {
     $provider = new ForumContentIndexProvider();
@@ -44,8 +43,6 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
 
   /**
    * Tests both legacy and revisionable replies use the canonical Forum purpose.
-   *
-   * @covers ::getAccessPurpose
    */
   public function testRepliesUseTheCanonicalForumPurpose(): void {
     $provider = new ForumContentIndexProvider();
