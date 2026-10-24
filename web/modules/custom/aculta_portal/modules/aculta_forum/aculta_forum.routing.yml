@@ -30,18 +30,6 @@ aculta_forum.mark_all_read:
   requirements:
     _custom_access: 'aculta_forum.read_access:access'
 
-aculta_forum.topic_move:
-  path: '/painel-administrativo/forum/{node}/mover-categoria'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'move aculta forum topics'
-  options:
-    parameters:
-      node:
-        type: 'entity:node'
-  methods: [GET, HEAD, POST]
-
 aculta_forum.comment_move:
   path: '/painel-administrativo/forum/comentarios/{comment}/mover'
   defaults:
