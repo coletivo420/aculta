@@ -28,4 +28,9 @@ interface CommerceOrderNoticeManagerInterface {
    * Counts unread notices that remain accessible to the customer. */
   public function unreadCount(int $uid): int;
 
+  /**
+   * Sets the read state after revalidating ownership and order access.
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool;
+
 }

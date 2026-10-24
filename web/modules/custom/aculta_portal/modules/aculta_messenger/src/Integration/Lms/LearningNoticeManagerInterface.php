@@ -63,6 +63,11 @@ interface LearningNoticeManagerInterface {
   public function markRead(MessageInterface $message): void;
 
   /**
+   * Sets the read state after revalidating ownership and LMS access.
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool;
+
+  /**
    * Returns user IDs with pending digest entries.
    *
    * @return int[]

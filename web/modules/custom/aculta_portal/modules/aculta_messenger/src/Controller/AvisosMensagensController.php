@@ -124,7 +124,7 @@ final class AvisosMensagensController extends ControllerBase {
    */
   private function conteudoAvisos(array $filters): array {
     // Dentro da própria aba a lista já é completa: sem o link Ver todos.
-    return $this->mensagens->alertsBuild($filters)['build'];
+    return $this->mensagens->alertsBuild($filters, TRUE)['build'];
   }
 
   /**

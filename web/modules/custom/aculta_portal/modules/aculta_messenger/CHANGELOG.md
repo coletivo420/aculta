@@ -1,3 +1,13 @@
+## 0.1.1-dev.119 — permitir alterar leitura na central — 2026-10-24
+
+- A central de Avisos oferece ações para marcar como lido/não lido mensagens de
+  LMS, Wiki, Loja e Doações. Cada adapter revalida destinatário e acesso e usa
+  seu campo de leitura existente; adapters opcionais ausentes falham fechados.
+  Fórum, comunicados e Site Alert mantêm suas ações nativas. Sem storage novo.
+- Unit direcionado: 11 testes / 63 assertions PASS; PHPCS Drupal/DrupalPractice
+  dos serviços e testes novos PASS. Kernel de persistência e revisão visual no
+  Runtime ainda pendentes. A suíte Kernel regressiva `ForumNoticeIdempotency` passou (26/587), mas não exercita especificamente a persistência do toggle.
+
 ## 0.1.1-dev.118 — verificar retry do e-mail Wiki pela fila Drupal — 2026-10-24
 
 - Kernel MariaDB combina `WikiNoticeEmailWorker` com `DatabaseQueue`: exceção do

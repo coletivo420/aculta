@@ -37,6 +37,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 
 /**
  * Registers core-owned notice integrations for enabled domain modules.
@@ -72,6 +73,22 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
 
     if ($container->hasDefinition('Drupal\\aculta_donation\\Hook\\DonationNoticeEventPublisher')) {
       $this->registerDonationAdapter($container);
+    }
+
+    $readStateAdapters = [];
+    foreach ([
+      'lms' => 'aculta_messenger.lms_notice_manager',
+      'wiki' => 'aculta_messenger.wiki_notice_manager',
+      'commerce' => 'aculta_messenger.commerce_notice_manager',
+      'donation' => 'aculta_messenger.donation_notice_manager',
+    ] as $adapter => $service) {
+      if ($container->hasDefinition($service)) {
+        $readStateAdapters[$adapter] = new Reference($service);
+      }
+    }
+    if ($container->hasDefinition('aculta_messenger.notice_read_state')) {
+      $container->getDefinition('aculta_messenger.notice_read_state')
+        ->setArgument(1, new ServiceLocatorArgument($readStateAdapters));
     }
   }
 

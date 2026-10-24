@@ -28,4 +28,9 @@ interface WikiNoticeManagerInterface {
    * Counts only unread notices whose source remains accessible. */
   public function unreadCount(int $uid): int;
 
+  /**
+   * Sets the read state after revalidating ownership and source access.
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool;
+
 }

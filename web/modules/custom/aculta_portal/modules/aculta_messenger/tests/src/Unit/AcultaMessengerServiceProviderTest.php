@@ -9,6 +9,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 
 /**
  * Tests optional domain integrations in the Messenger service container.
@@ -56,6 +57,22 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertTrue($container->hasDefinition('aculta_messenger.donation_notice_manager'));
     self::assertTrue($container->hasDefinition('aculta_messenger.donation_notice_event_consumer'));
     self::assertFalse($container->hasDefinition('aculta_messenger.lms_notice_manager'));
+  }
+
+  /**
+   * Read-state dispatch uses only the optional adapters compiled into the site.
+   */
+  public function testReadStateLocatorContainsOnlyEnabledAdapters(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('aculta_messenger.notice_read_state', new Definition());
+    $container->setDefinition('aculta_wiki.proposal_decision', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    $argument = $container->getDefinition('aculta_messenger.notice_read_state')->getArgument(1);
+    self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
+    self::assertSame(['wiki'], array_keys($argument->getValues()));
+    self::assertSame('aculta_messenger.wiki_notice_manager', (string) $argument->getValues()['wiki']);
   }
 
 }

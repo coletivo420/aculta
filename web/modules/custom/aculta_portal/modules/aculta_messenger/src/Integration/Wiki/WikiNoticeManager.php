@@ -176,6 +176,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'wiki',
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
+          'data-aculta-notice-message-id' => (string) $message->id(),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.wiki_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
@@ -198,6 +199,19 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       }
     }
     return $count;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
+    if ($this->resolve($message, $account) === NULL) {
+      return FALSE;
+    }
+    if ((bool) $message->get(self::READ_FIELD)->value !== $read) {
+      $message->set(self::READ_FIELD, $read ? 1 : 0)->save();
+    }
+    return TRUE;
   }
 
   /**

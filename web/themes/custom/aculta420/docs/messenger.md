@@ -64,6 +64,8 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | --- | --- | --- |
 | `conversation-action` | `aculta-messenger-options__action` | Botões do menu "Opções" e das janelas |
 | `conversation-notice-action` | `aculta-messenger-notice__action` | Ação do aviso de bloqueio/privacidade |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | Formulário de leitura de aviso na central |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | Botão para marcar aviso lido/não lido |
 | `messenger-back-link` | `aculta-messenger-back-link` | "← Todas as conversas" |
 | `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | Contêiner da conversa na gaveta |
 | `messenger-conversation-toolbar` | `aculta-messenger-conversation-toolbar` | Barra da conversa (voltar e Opções) |

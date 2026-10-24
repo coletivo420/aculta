@@ -1,3 +1,11 @@
+## 0.6.1-dev.8 — ações de leitura na central de avisos — 2026-10-24
+
+Classificação: PATCH de integração visual.
+
+- Adiciona estilos de layout, foco e hover para os controles de leitura da
+  central do Messenger e mapeia os tokens `notice-read-state-form` e
+  `notice-read-state-action`. Revisão visual no Firefox ESR/Runtime pendente.
+
 ## 0.6.1-dev.7 — schema das configurações do tema e render da home Wiki — 2026-10-24
 
 Classificação: PATCH de compatibilidade do tema.

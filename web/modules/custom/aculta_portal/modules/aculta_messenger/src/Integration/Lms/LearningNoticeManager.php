@@ -446,6 +446,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'aprendizagem',
           'data-aculta-notice-read' => (bool) $message->get(self::READ_FIELD)->value ? 'read' : 'unread',
+          'data-aculta-notice-message-id' => (string) $message->id(),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.lms_notice_open', [
           'message' => $message->id(),
@@ -484,6 +485,19 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!(bool) $message->get(self::READ_FIELD)->value) {
       $message->set(self::READ_FIELD, 1)->save();
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
+    if ($this->resolve($message, $account) === NULL) {
+      return FALSE;
+    }
+    if ((bool) $message->get(self::READ_FIELD)->value !== $read) {
+      $message->set(self::READ_FIELD, $read ? 1 : 0)->save();
+    }
+    return TRUE;
   }
 
   /**

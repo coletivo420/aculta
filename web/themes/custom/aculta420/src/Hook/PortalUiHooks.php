@@ -97,6 +97,8 @@ final class PortalUiHooks {
     'new-conversation-cancel' => ['btn', 'aculta-new-conversation-cancel'],
     'conversation-action' => ['aculta-messenger-options__action'],
     'conversation-notice-action' => ['aculta-messenger-notice__action'],
+    'notice-read-state-form' => ['aculta-notice-read-state-form'],
+    'notice-read-state-action' => ['aculta-notice-read-state-action'],
     'new-conversation-links' => ['d-flex', 'flex-wrap', 'gap-2', 'mt-2'],
     'new-conversation-message' => ['form-control'],
     'new-conversation-results' => ['list-group'],

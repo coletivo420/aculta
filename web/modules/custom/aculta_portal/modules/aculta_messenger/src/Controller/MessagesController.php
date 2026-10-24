@@ -40,6 +40,7 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -74,6 +75,7 @@ final class MessagesController extends ControllerBase {
     private readonly AvisoService $avisos,
     private readonly EmailPendingAviso $emailPendingAviso,
     private readonly NoticeListFilter $noticeListFilter,
+    private readonly NoticeReadActionBuilder $noticeReadActionBuilder,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -98,6 +100,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.aviso_service'),
       $container->get('aculta_messenger.email_pending_aviso'),
       $container->get('aculta_messenger.notice_list_filter'),
+      $container->get('aculta_messenger.notice_read_action_builder'),
       $container->get('module_handler'),
     );
   }
@@ -698,7 +701,7 @@ final class MessagesController extends ControllerBase {
    *
    * @return array{build: array, contador: int}
    */
-  public function alertsBuild(array $filters = []): array {
+  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE): array {
     $filters = $this->noticeListFilter->normalize($filters);
     $hasFilters = $filters['origem'] !== '' || $filters['leitura'] !== '';
     $storage = $this->entityTypes->getStorage('site_alert');
@@ -806,6 +809,10 @@ final class MessagesController extends ControllerBase {
         }
       }
       unset($item);
+    }
+
+    if ($includeReadActions && $this->account->isAuthenticated()) {
+      $items = $this->noticeReadActionBuilder->attach($items, $this->account);
     }
 
     if ($items === []) {

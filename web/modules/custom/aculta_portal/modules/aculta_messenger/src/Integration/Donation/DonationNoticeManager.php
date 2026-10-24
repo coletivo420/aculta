@@ -218,6 +218,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
           'data-portal-ui' => 'notice-summary notice-summary-persistent',
           'data-aculta-notice-origin' => 'doacao',
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
+          'data-aculta-notice-message-id' => (string) $message->id(),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.donation_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
@@ -314,11 +315,18 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   /**
    * Marks an owned notice read after current source access is revalidated. */
   public function markRead(MessageInterface $message, AccountInterface $account): bool {
+    return $this->setRead($message, $account, TRUE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRead(MessageInterface $message, AccountInterface $account, bool $read): bool {
     if ($this->resolve($message, $account) === NULL) {
       return FALSE;
     }
-    if (!(bool) $message->get(self::READ_FIELD)->value) {
-      $message->set(self::READ_FIELD, 1)->save();
+    if ((bool) $message->get(self::READ_FIELD)->value !== $read) {
+      $message->set(self::READ_FIELD, $read ? 1 : 0)->save();
     }
     return TRUE;
   }

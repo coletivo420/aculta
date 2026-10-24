@@ -33,6 +33,13 @@ services:
       - '@module_handler'
   aculta_messenger.notice_list_filter:
     class: Drupal\aculta_messenger\Service\NoticeListFilter
+  aculta_messenger.notice_read_state:
+    class: Drupal\aculta_messenger\Service\NoticeReadStateManager
+    arguments: ['@entity_type.manager', []]
+  Drupal\aculta_messenger\Service\NoticeReadStateManagerInterface: '@aculta_messenger.notice_read_state'
+  aculta_messenger.notice_read_action_builder:
+    class: Drupal\aculta_messenger\Service\NoticeReadActionBuilder
+    arguments: ['@entity_type.manager', '@form_builder']
   aculta_messenger.unread_thread_counter:
     class: Drupal\aculta_messenger\Service\UnreadThreadCounter
     arguments:
