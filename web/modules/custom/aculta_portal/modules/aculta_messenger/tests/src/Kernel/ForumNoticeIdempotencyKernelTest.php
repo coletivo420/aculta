@@ -441,9 +441,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       [$uid],
       $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE),
     );
-    $firstComment = $this->createPersistedComment($topic, (int) $author->id());
-    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
-    self::assertSame(1, $avisos->registrarResposta($firstComment));
+    // The higher Comment ID is approved and delivered first; approval of the
+    // older Comment must still become a new digest generation afterwards.
+    $newerComment = $this->createPublishedComment($topic, (int) $author->id(), 20);
+    $olderComment = $this->createPublishedComment($topic, (int) $author->id(), 10);
+    self::assertSame(1, $avisos->registrarResposta($newerComment));
 
     $correlations = [];
     $mailer = $this->createMock(AcultaMailerInterface::class);
@@ -473,7 +475,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertSame(1, $summary->enviarResumos());
     $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
-    self::assertSame(1, $avisos->registrarResposta($secondComment));
+    self::assertSame(1, $avisos->registrarResposta($olderComment));
     self::assertSame(1, $summary->enviarResumos());
     self::assertNotSame($correlations[0], $correlations[1], 'A later event with the same pending quantity is a distinct logical digest.');
   }
