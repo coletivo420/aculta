@@ -21,7 +21,7 @@ coexistência; Search API, categorias, moderação, anexos/galerias e ferramenta
 administrativas já possuem implementações e testes. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.82` mantém os avisos existentes e já oferece
+ativação produtiva. `aculta_messenger 0.1.1-dev.83` mantém os avisos existentes e já oferece
 o envelope `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`; o LMS
 consome quatro tipos pelo publisher, enquanto o adapter do Fórum ainda não foi
 implementado. A API é uma base disponível, não prova de integração completa.
@@ -75,13 +75,13 @@ evitou falha do map. Pai/filho via `migration_lookup`, dry-run/rollback e
 equivalência seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 14 testes / 271 assertions. Ledger por evento
+passou em MariaDB Simpletest, 15 testes / 294 assertions. Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
 provam ordem inversa, replays, migração de chaves legadas e retenção de seis
 meses. O writer usa lock por agregado e a migração processa lotes de até 500
-chaves; o Kernel comprova a passagem do limite (501 registros em duas chamadas).
-Contenção entre processos não foi simulada. Homologação Runtime segue pendente;
-F-M1 permanece parcial.
+chaves; o Kernel comprova a passagem do limite (501 registros em duas chamadas)
+e o writer espera/retenta após lock ocupado (via mock, sem concorrência entre
+processos). Homologação Runtime segue pendente; F-M1 permanece parcial.
 
 ### Sequência recomendada e paralelismo
 

@@ -15,6 +15,7 @@ use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_messenger\Hook\ForumAvisoHooks;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
@@ -299,6 +300,39 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertCount(1, $updates);
     self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
     self::assertSame(20, (int) $updates[0]->get('ultimo_evento')->value);
+  }
+
+  /**
+   * A busy aggregate lock is waited on and retried before recording an event.
+   */
+  public function testLockContentionWaitsAndRetriesBeforeCountingNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $lockName = sprintf(
+      'aculta_messenger:notice:%d:%d:%s',
+      $follower->id(),
+      $topic->id(),
+      Aviso::TIPO_RESPOSTA,
+    );
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))
+      ->method('acquire')
+      ->with($lockName, 60.0)
+      ->willReturnOnConsecutiveCalls(FALSE, TRUE);
+    $lock->expects(self::once())
+      ->method('wait')
+      ->with($lockName, 60);
+    $lock->expects(self::once())
+      ->method('release')
+      ->with($lockName);
+
+    $avisos = $this->createAvisoService([(int) $follower->id()], lock: $lock);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertSame(1, $avisos->registrarPost($post));
+    self::assertSame(1, (int) $this->loadNotices((int) $follower->id(), (int) $topic->id())[0]
+      ->get('contador_site')->value);
   }
 
   /**
@@ -608,10 +642,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
    *   Account ids returned by the flagged topic query.
    * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface|null $policy
    *   Notice access policy; a permissive default is used when omitted.
+   * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   *   Optional lock backend for retry characterization.
    */
   private function createAvisoService(
     array $followers,
     ?ForumNoticeAccessPolicyInterface $policy = NULL,
+    ?LockBackendInterface $lock = NULL,
   ): AvisoService {
     $flaggings = [];
     foreach ($followers as $uid) {
@@ -630,7 +667,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $policy ?? $this->createAccessPolicy(),
       $this->container->get('database'),
       $this->container->get('datetime.time'),
-      $this->container->get('lock'),
+      $lock ?? $this->container->get('lock'),
     );
   }
 

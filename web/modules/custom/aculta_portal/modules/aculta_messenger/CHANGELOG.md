@@ -1,3 +1,10 @@
+## 0.1.1-dev.83 — caracterizar espera e retry do lock — 2026-10-24
+
+- O Kernel simula lock ocupado no agregado: aquisição falha, o writer espera,
+  retenta, persiste um único aviso e libera o lock. A prova exercita o caminho
+  de retry com LockBackend mock; não simula processos concorrentes. MariaDB:
+  15 testes / 294 assertions. PHPCS Drupal/DrupalPractice e PHP lint: PASS.
+
 ## 0.1.1-dev.82 — provar a migração do ledger em lotes — 2026-10-24
 
 - O Kernel de idempotência agora migra 501 chaves legadas em duas chamadas:
