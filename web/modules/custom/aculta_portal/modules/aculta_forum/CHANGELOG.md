@@ -1,3 +1,12 @@
+## `0.1.0-dev.274` — provar o link de não lidas — 2026-10-23
+
+- Kernel exercita `ForumUnreadPosts`: tópico com duas não lidas gera o link
+  "2 novas publicações" para a primeira publicação não lida, com página e
+  âncora; tópico sem pendência não renderiza link.
+- Testes: leitura 7/95; a suíte completa permanece verde em 98/2.007 antes
+  desta adição e não foi reexecutada no encerramento; PHPCS limpo.
+- A View `/discussoes/nao-lidas` e o Runtime continuam pendentes.
+
 ## `0.1.0-dev.273` — provar a leitura de posts revisionáveis — 2026-10-23
 
 - Kernel exercita `ForumPostUnreadManager`: anônimo não recebe dados; post mais

@@ -1,11 +1,14 @@
 ## Leitura de ForumPosts — recibo do History, 2026-10-23
 
-- `ForumPostUnreadManagerKernelTest` (5 testes / 68 asserções, MariaDB):
+- `ForumPostUnreadManagerKernelTest` (7 testes / 95 asserções, MariaDB):
   anônimo sem dados; posts após o recibo ou o limite do History são não lidos;
   posts anteriores ao recibo são lidos; a página do primeiro não lido usa a
   contagem de posts que o precedem; recibo após o último post zera a pendência.
+- `ForumUnreadPosts` gera o link de duas não lidas para a primeira publicação,
+  com página/âncora, e não renderiza quando não há pendência.
 - A View `/discussoes/nao-lidas` e o Runtime continuam pendentes.
-- Suíte Kernel do Fórum 98/2.007; PHPCS limpo.
+- Suíte Kernel do Fórum 98/2.007 antes desta adição; arquivo 7/95; PHPCS
+  limpo.
 
 ## Agregação de ForumPosts na listagem — serviço, 2026-10-23
 
