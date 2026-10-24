@@ -1,3 +1,13 @@
+## `0.1.0-dev.292` — provar o acesso ao formulário público de publicação — 2026-10-24
+
+- Novo Kernel `ForumPostSubmissionAccessKernelTest`: anônimo, tópico ausente,
+  UUID desconhecido e purpose fora do Fórum não são liberados; membro com
+  `create aculta forum posts` em tópico publicado do purpose `forum` pode
+  enviar; resposta exige post pai publicado e do mesmo tópico.
+- O fixture `aculta_forum_post_test` passa a delegar `entity_access` para os
+  hooks de produção, tornando as checagens de acesso realistas.
+- Testes: envio 4/55; suíte Kernel do Fórum 117/2.321; PHPCS limpo.
+
 ## `0.1.0-dev.291` — restringir a fila de moderação ao purpose main — 2026-10-24
 
 - Novo Kernel `ForumPostModerationAccessKernelTest`: a fila de revisões é

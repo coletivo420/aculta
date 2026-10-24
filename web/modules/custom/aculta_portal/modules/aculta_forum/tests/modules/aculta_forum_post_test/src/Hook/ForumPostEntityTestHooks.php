@@ -7,7 +7,12 @@ namespace Drupal\aculta_forum_post_test\Hook;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\content_moderation\Entity\Handler\ModerationHandler;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
+use Drupal\aculta_forum\Hook\ForumPostAccessHooks;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
@@ -28,6 +33,23 @@ final class ForumPostEntityTestHooks {
         ],
       ],
     ];
+  }
+
+  /**
+   * Implements hook_entity_access() with the production Forum rules.
+   *
+   * The fixture registers the entity but not the Forum module, so its access
+   * hook must be delegated explicitly for realistic Kernel access checks.
+   */
+  #[Hook('entity_access')]
+  public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
+    $purpose = new DomainPurposeManager(
+      \Drupal::entityTypeManager(),
+      \Drupal::service('domain.negotiator'),
+      \Drupal::configFactory(),
+      \Drupal::service('request_stack'),
+    );
+    return (new ForumPostAccessHooks($purpose))->entityAccess($entity, $operation, $account);
   }
 
   /**

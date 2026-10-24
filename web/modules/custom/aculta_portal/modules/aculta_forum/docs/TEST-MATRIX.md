@@ -1,3 +1,13 @@
+## Formulário público de publicação — acesso, 2026-10-24
+
+- `ForumPostSubmissionAccessKernelTest` (4 testes / 55 asserções, MariaDB):
+  anônimo, tópico ausente, UUID desconhecido e purpose fora do Fórum não são
+  liberados; membro com `create aculta forum posts` pode enviar no purpose
+  `forum`; resposta exige pai publicado e do mesmo tópico.
+- O fixture `aculta_forum_post_test` delega `entity_access` aos hooks de
+  produção; a suíte Kernel do Fórum passou 117/2.321.
+- PHPCS limpo.
+
 ## Fila de moderação apenas no purpose main, 2026-10-24
 
 - `ForumPostModerationAccessKernelTest` (1 teste / 9 asserções, MariaDB):
