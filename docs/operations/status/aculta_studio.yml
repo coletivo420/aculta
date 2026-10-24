@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.14 — S-R3-A código: Conta Studio endereço, segurança, senha e conexões usam render/forms Portal, navegação própria; dados cadastrais permanecem no legado para não misturar apelido. Unit escritos, sem execução Drupal/Runtime."
-next_phase: 'Executar Unit/Kernel/Functional, gates endereço e ausência de aliases, navegador Firefox ESR/X11 com usuário normal/OAuth e comparativo / vs /studio/conta. S-R3-B: separar campo nickname do cadastro, integrar seções privadas, documentos/pedidos e preservar a Conta legada permanentemente.'
+version_note: "0.1.0-dev.17 — S-R3-B1: Documentos na Conta Studio reutilizam Form API Portal + owner opcional aculta_id_cpf; retorno contextual, testes novos escritos (não executados). Hub em / ACCOUNT, legado em /conta-legada permanente."
+next_phase: 'Primeiro executar PHPUnit Unit atualizado, Kernel/Functional, gate de aliases e smoke da raiz Studio / vs /conta-legada. Testar CPF/CNPJ com módulo ativo/ausente, chave indisponível, duplicidade, formulário no-JS e retorno de checkout. Depois S-R3-B2: separar cadastro privado e apelido público sem quebrar o formulário legado; comparação visual funcional antes do aceite.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.
