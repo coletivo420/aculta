@@ -59,17 +59,12 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Informações cadastrais'),
-            '#url' => Url::fromRoute('aculta_studio.account_data'),
+            '#url' => Url::fromRoute('aculta_portal.my_data'),
           ],
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Endereço'),
             '#url' => Url::fromRoute('aculta_portal.my_data_address'),
-          ],
-          [
-            '#type' => 'link',
-            '#title' => new TranslatableMarkup('Documentos e outros dados'),
-            '#url' => Url::fromRoute('aculta_portal.my_data_other'),
           ],
           [
             '#type' => 'link',
