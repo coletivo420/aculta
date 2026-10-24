@@ -42,7 +42,7 @@ workspace service and WE SATIVA routes.
   permissão real do dono, nunca nome de papel) e `actions()` (ação com o acesso da rota do dono). Ação para outro
   domínio usa `DomainPurposeManager::routeUrl()` e avalia o acesso com `runInPurpose()`.
 - Nenhuma rota ou ação do Studio contorna Form API, Entity Access, Content Moderation nem as permissões do dono.
-- Quatro URLs, uma por nível: `/studio`, `/studio/{área}`, `/studio/{área}/{seção}` e `/studio/{área}/{seção}/{aba}`.
+- **Rotas canônicas, sem aliases:** `/studio` é o hub geral; `/studio/marley` é a entrada editorial; as áreas e seções de Marley usam `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}` e `/studio/marley/{aba}/{secao}/{sub}`. Ganjalab, WE SATIVA e pessoal mantêm seus prefixes canônicos. Não criar `/studio/{aba}` genérico nem redirects temporários de compatibilidade; URLs aposentadas respondem 404.
   Cada aba principal, opção de submenu e aba interna tem URL própria; o AJAX melhora a troca, mas não é a única forma de
   acesso. Segmento fora do alcance da conta responde 404. Os níveis são: áreas em abas superiores (uma por dono);
   submenu à esquerda com as seções da área; abas internas da seção, com as ações no painel. Cada área implementa `sections()` com esses níveis. Apresentação: tokens `data-portal-ui`
