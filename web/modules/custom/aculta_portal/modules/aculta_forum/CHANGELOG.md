@@ -1,3 +1,11 @@
+## `0.1.0-dev.302` — provar a comparação entre revisões — 2026-10-24
+
+- Novo Kernel `ForumPostRevisionComparisonControllerKernelTest`: a comparação
+  mostra somente o campo alterado, com rótulo em português e contexto de
+  domínio em cache; revisão repetida, inexistente ou de outra publicação
+  resultam em não encontrado.
+- Testes: comparação 2/31; suíte Kernel do Fórum 137/2.634; PHPCS limpo.
+
 ## `0.1.0-dev.301` — provar o histórico de revisões da publicação — 2026-10-24
 
 - Novo Kernel `ForumPostRevisionHistoryControllerKernelTest`: a tabela lista a

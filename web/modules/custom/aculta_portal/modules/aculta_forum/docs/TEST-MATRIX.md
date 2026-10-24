@@ -1,3 +1,11 @@
+## Comparação de revisões — somente diferenças, 2026-10-24
+
+- `ForumPostRevisionComparisonControllerKernelTest` (2 testes / 31 asserções,
+  MariaDB): a tabela mostra apenas o assunto alterado e omite o texto igual,
+  com contexto de domínio no cache; revisão repetida, inexistente ou de outra
+  publicação resultam em não encontrado.
+- Suíte Kernel do Fórum 137/2.634; PHPCS limpo.
+
 ## Histórico de revisões — ordem e operações, 2026-10-24
 
 - `ForumPostRevisionHistoryControllerKernelTest` (1 teste / 30 asserções,
