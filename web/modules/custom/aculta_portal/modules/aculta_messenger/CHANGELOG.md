@@ -7,7 +7,10 @@
   escolher o storage existente.
 - M2 permanece parcial: adapters e consumidores ainda não migraram para o
   publisher. Unit do contrato: 4 testes / 16 assertions PASS; Unit Messenger
-  completo: 64 / 297; LMS Messenger: 18 / 88.
+  completo: 64 / 297; LMS Messenger: 21 / 83.
+- Caracterização dos avisos do Fórum ampliada: aprovação tardia de um post
+  após publicação de outro conta uma vez e resiste ao replay; Kernel dedicado
+  passou em 9 testes / 168 assertions (MariaDB Simpletest).
 
 ## 0.1.1-dev.78 — alinhar privacidade e conversas voluntárias — 2026-10-24
 

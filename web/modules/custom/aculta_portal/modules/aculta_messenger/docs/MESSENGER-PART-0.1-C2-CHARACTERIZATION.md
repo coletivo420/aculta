@@ -11,7 +11,8 @@ no próprio aviso persistente. Alterar o produtor seria uma mudança de
 comportamento sem defeito comprovado, proibida nesta fase. A entrega, portanto,
 fixa por testes de persistência o contrato que já existe:
 
-- o evento de **primeira publicação** de um `aculta_forum_post` revisionável;
+- o evento de **primeira publicação** de um `aculta_forum_post` revisionável,
+  inclusive quando posts são aprovados fora da ordem de criação;
 - o evento de **tópico atualizado**, que compartilha o mesmo aviso agregado.
 
 Comentários legados mantêm o caminho próprio (`ForumAvisoHooksTest`, Unit) e não
@@ -72,8 +73,8 @@ o autor do post, quem perdeu acesso ao post (`canViewPost()`) ou ao tópico
 
 ## Teste entregue
 
-`tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, SQLite em
-memória, 8 testes / 148 assertions.
+`tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, MariaDB
+Simpletest dedicada, 9 testes / 168 assertions.
 
 | Teste | Célula |
 | --- | --- |
@@ -81,6 +82,7 @@ memória, 8 testes / 148 assertions.
 | `testRepeatedDeliveryOfTheSameEventIsIgnored` | entrega repetida, inclusive entidade recarregada |
 | `testPendingAndNonDefaultRevisionsRegisterNothing` | post pendente, update sem original e revisão não-default |
 | `testFirstPublicationUpdateCountsOnce` | transição de primeira publicação contada uma vez |
+| `testOutOfOrderPostApprovalCountsEachPublicationOnce` | post aprovado depois de outro já publicado soma uma vez; replay não duplica |
 | `testEditOfPublishedPostDoesNotRegisterANotice` | edição revisionada de post publicado não soma |
 | `testRecipientWithoutPostAccessIsSkipped` | política de acesso negando o post |
 | `testTopicUpdateNoticesAreDeduplicated` | mesma revisão uma vez, revisão seguinte soma, tipos isolados |
@@ -93,7 +95,8 @@ memória, 8 testes / 148 assertions.
   `Aviso` pelo atributo `ContentEntityType`, com provider do fixture. É o único
   código de fixture novo; não entra em produção.
 - `content_moderation` não é habilitado: `isPublished()` lê o campo `status`, e
-  o teste controla `first_published` e `setNewRevision()` diretamente.
+  o teste controla `first_published` e `setNewRevision()` diretamente. O Kernel
+  executa no MariaDB Simpletest dedicado, nunca em SQLite ou no Runtime.
 - Flag e política são mocks de interface; entidades, revisões, marcadores e
   contadores são persistidos de verdade.
 - O bootstrap do PHPUnit registra PSR-4 de todas as extensões descobertas, o que

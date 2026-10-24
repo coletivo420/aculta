@@ -180,6 +180,48 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * A delayed approval counts after a newer post was already published.
+   */
+  public function testOutOfOrderPostApprovalCountsEachPublicationOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $hooks = new ForumAvisoHooks($avisos);
+
+    // This post is created first but remains pending until after the second
+    // post has already been published and counted.
+    $delayed = $this->createPost($topic, (int) $author->id(), FALSE);
+    $newer = $this->createPost($topic, (int) $author->id(), TRUE);
+    $hooks->postInsert($newer);
+
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_forum_post');
+    $beforeApproval = $storage->loadUnchanged($delayed->id());
+    $delayed->set('status', TRUE);
+    $delayed->set('first_published', time());
+    $delayed->setNewRevision(TRUE);
+    $delayed->save();
+    $delayed->setOriginal($beforeApproval);
+
+    $hooks->postUpdate($delayed);
+    $hooks->postUpdate($delayed);
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(
+      (int) $delayed->getRevisionId(),
+      (int) $notices[0]->get('ultimo_post')->value,
+    );
+    self::assertGreaterThan(
+      (int) $newer->getRevisionId(),
+      (int) $delayed->getRevisionId(),
+    );
+  }
+
+  /**
    * Editing an already published post does not add another notice.
    */
   public function testEditOfPublishedPostDoesNotRegisterNotice(): void {

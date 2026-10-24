@@ -15,7 +15,7 @@ histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,
 reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 
-**Base inspecionada:** `aculta_forum 0.1.0-dev.273`, com Growroom420
+**Base inspecionada:** `aculta_forum 0.1.0-dev.274`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. As fases técnicas
@@ -67,6 +67,13 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 | **F-M5 — migração e interoperabilidade** | P1 | Completar equivalência de Comments legados → ForumPosts revisionáveis: source/destination Migrate, árvores, CID → IDs/revisões, History, flags, denúncias, anexos, permalinks, índices e marcadores de avisos. | Dry-run com mapas auditáveis, backup/rollback, testes Kernel/MariaDB, prova de não duplicar/perder avisos e homologação controlada; nenhuma migração sem autorização operacional. |
 | **F-M6 — experiência e administração** | P2 | Consolidar moderação/revisão, fila administrativa, mover comentários com impactos em seguidores, notificações e anexos; completar busca e indexação access-aware, previews e responsividade. | Testes de acesso, edição, workflow, filas e ferramentas; Firefox ESR/X11 versionado, tema ACULTA420 e Olivero; sem regressão de conteúdos contextuais. |
 | **F-M7 — gates, RC e Alpha** | P1 após os bloqueadores | Corrigir regressões, validar configurações, atualização de schema, cache, filas, versionamento, checklist operacional e documentação do release. | Gates Unit/Kernel/Functional e revisão visual aplicável antes de RC; Alpha após deploy autorizado no servidor de teste, nunca inferido de evidências anteriores; produção só após aprovação separada. |
+
+**Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
+passou em MariaDB Simpletest, 9 testes / 168 assertions. O novo cenário prova
+que aprovação tardia de `ForumPost` após uma publicação posterior é contada
+uma única vez, sem quebrar os contadores nem a deduplicação por replay. Isso
+não encerra F-M1: comentários legados, concorrência e homologação Runtime seguem
+pendentes.
 
 ### Sequência recomendada e paralelismo
 
