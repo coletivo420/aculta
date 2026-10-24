@@ -79,7 +79,12 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         || $message->get('field_aculta_msg_delivery')->value !== 'pending') {
         return;
       }
-      $attempts = (int) $message->get('field_aculta_messenger_attempts')->value + 1;
+      $currentAttempts = (int) $message->get('field_aculta_messenger_attempts')->value;
+      if ($currentAttempts >= self::MAX_ATTEMPTS) {
+        $message->set('field_aculta_msg_delivery', 'failed')->save();
+        return;
+      }
+      $attempts = $currentAttempts + 1;
       $message->set('field_aculta_messenger_attempts', $attempts)->save();
       $uid = (int) $message->getOwnerId();
       $recipient = $this->entityTypeManager->getStorage('user')->load($uid);
@@ -93,13 +98,22 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         return;
       }
 
-      $result = $this->mailer->deliver(new MailMessage(
-        'doacao_aviso_pessoal',
-        (string) $recipient->getEmail(),
-        'pt-br',
-        ['summary' => $notice['email_summary'], 'url' => $notice['url']->toString()],
-        (string) $message->uuid(),
-      ));
+      try {
+        $result = $this->mailer->deliver(new MailMessage(
+          'doacao_aviso_pessoal',
+          (string) $recipient->getEmail(),
+          'pt-br',
+          ['summary' => $notice['email_summary'], 'url' => $notice['url']->toString()],
+          (string) $message->uuid(),
+        ));
+      }
+      catch (\Throwable) {
+        $message->set('field_aculta_msg_delivery', $attempts >= self::MAX_ATTEMPTS ? 'failed' : 'pending')->save();
+        if ($attempts < self::MAX_ATTEMPTS) {
+          throw new \RuntimeException('Donation notice e-mail delivery failed.');
+        }
+        return;
+      }
       if ($result->sent) {
         $message->set('field_aculta_msg_delivery', 'sent')->save();
       }

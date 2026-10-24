@@ -1,3 +1,13 @@
+## 0.1.1-dev.103 — encerrar retries de LMS e Doações com estado terminal — 2026-10-24
+
+- Exceções de transporte do Mailer agora consomem tentativas em LMS e Doações.
+  A fila reprocessa falhas somente abaixo do limite; após a última tentativa,
+  o estado fica `failed` terminal. O worker de Doações também encerra itens
+  legados que permaneçam `pending` com o limite já esgotado.
+- Unit Messenger + adapters: 125 testes / 744 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime, Queue API
+  operacional e transporte real não foram homologados.
+
 ## 0.1.1-dev.102 — limitar retries e impedir replay de e-mail direto — 2026-10-24
 
 - Workers LMS, Wiki e Loja agora adquirem o lock antes de carregar o Message;

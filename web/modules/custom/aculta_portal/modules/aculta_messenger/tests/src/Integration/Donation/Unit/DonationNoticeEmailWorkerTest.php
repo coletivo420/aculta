@@ -89,6 +89,43 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * A thrown Mailer error persists an attempt and retries below the limit.
+   */
+  public function testMailerExceptionConsumesAttemptAndRetries(): void {
+    $message = $this->message('pending');
+    $setCalls = [];
+    $message->expects(self::exactly(2))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$setCalls, $message): MessageInterface {
+      $setCalls[] = [$field, $value];
+      return $message;
+    });
+    $message->expects(self::exactly(2))->method('save')->willReturn(1);
+    [$entities, $recipient] = $this->entities($message);
+    $notices = $this->createMock(DonationNoticeManagerInterface::class);
+    $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
+      'email_summary' => 'Aviso de doação.',
+      'url' => Url::fromUri('https://aculta.org/meu-apoio/pedidos/100'),
+    ]);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'doacao')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')->willThrowException(new \RuntimeException('Transport failure'));
+
+    $this->withUrlAssembler(function () use ($entities, $notices, $preferences, $mailer): void {
+      try {
+        $this->worker($entities, $notices, $preferences, $mailer)->processItem(['message_id' => 101]);
+        self::fail('A transient Mailer exception must be rethrown for queue retry.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Donation notice e-mail delivery failed.', $exception->getMessage());
+      }
+    });
+    self::assertSame([
+      ['field_aculta_messenger_attempts', 1],
+      ['field_aculta_msg_delivery', 'pending'],
+    ], $setCalls);
+  }
+
+  /**
    * Creates Message and active donor fixtures for the queue worker. */
   private function entities(MessageInterface $message): array {
     $recipient = $this->createMock(UserInterface::class);
