@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,6 +33,7 @@ final class AccountBioForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountProxyInterface $currentUserService,
     private readonly CsrfTokenGenerator $csrfToken,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /**
@@ -42,6 +44,7 @@ final class AccountBioForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('csrf_token'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -57,13 +60,18 @@ final class AccountBioForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
-    $form['#action'] = Url::fromRoute('aculta_user.bio_form')->toString();
-    $form['#attributes']['data-aculta-bio-form'] = '';
-    $form['#attributes']['data-portal-ui'] = 'account-bio-dialog';
-    $form['#attached']['library'][] = 'aculta_user/account-bio-form';
-    $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
-      'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
-    ];
+    $studio = $this->isStudioEditor();
+    // Studio has a full-page Form API fallback. Existing Minha Conta modals
+    // retain their owner AJAX/JSON behavior and unchanged submission route.
+    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.personal_bio' : 'aculta_user.bio_form')->toString();
+    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
+    if (!$studio) {
+      $form['#attributes']['data-aculta-bio-form'] = '';
+      $form['#attached']['library'][] = 'aculta_user/account-bio-form';
+      $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
+        'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
+      ];
+    }
     $form['bio'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Bio'),
@@ -75,12 +83,14 @@ final class AccountBioForm extends FormBase {
     // e o clique nesses proxies não dispara o envio deste formulário.
     $form['actions'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
-    $form['actions']['clear'] = [
-      '#type' => 'button',
-      '#value' => $this->t('Limpar'),
-      '#attributes' => ['data-aculta-bio-clear' => '', 'data-portal-ui' => 'button-secondary'],
-      '#weight' => -1,
-    ];
+    if (!$studio) {
+      $form['actions']['clear'] = [
+        '#type' => 'button',
+        '#value' => $this->t('Limpar'),
+        '#attributes' => ['data-aculta-bio-clear' => '', 'data-portal-ui' => 'button-secondary'],
+        '#weight' => -1,
+      ];
+    }
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar bio'),
@@ -106,7 +116,16 @@ final class AccountBioForm extends FormBase {
     $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
-    $form_state->setRedirect('aculta_portal.dashboard');
+    $form_state->setRedirect($this->isStudioEditor()
+      ? 'aculta_studio.personal_profile'
+      : 'aculta_portal.dashboard');
+  }
+
+  /**
+   * Returns whether this same owner form is serving the Studio editor.
+   */
+  private function isStudioEditor(): bool {
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_bio';
   }
 
   /**
