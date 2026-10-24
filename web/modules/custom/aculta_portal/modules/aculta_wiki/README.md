@@ -7,6 +7,14 @@ pendentes, está em
 
 ## Estado atual
 
+- Contrato Wiki→Messenger v1 documentado em
+  [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois
+  eventos versionados por revisão (verbete enviado à fila e resultado de
+  proposta), destinatários por acesso atual, payload mínimo, e-mails atuais
+  preservados e fila persistente com retry. Escopo decidido; API pública de
+  escrita do Messenger ainda depende de revisão do owner e produtores Wiki não
+  estão implementados.
+
 - `0.1.0-dev.111`: `aculta_wiki_update_10001()` instala a definição da entidade
   `aculta_wiki_proposal` quando o módulo já estava habilitado antes dela existir,
   e só instala `proposed_fields` quando ainda ausente. Kernel isolado simulando

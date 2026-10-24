@@ -1,3 +1,13 @@
+## Contrato Wiki → Messenger v1 — avisos editoriais
+
+- Escopo decidido: aviso de revisão de verbete para contas `content_editor`
+  atualmente autorizadas e resultado de proposta para sua autoria. Payload
+  mínimo por UUID/revisão, deduplicação por destinatário e fila persistente com
+  retry; os e-mails transacionais existentes permanecem ativos.
+- A especificação está em `docs/MESSENGER-EVENT-CONTRACT.md`. A Wiki ainda não
+  emite os eventos; a API pública de registro de avisos do Messenger precisa de
+  revisão do owner antes do adapter.
+
 ## 0.1.0-dev.111 — instalar schema de propostas em Wiki já ativa
 
 - O update `aculta_wiki_update_10001()` cobre instalações em que a Wiki já

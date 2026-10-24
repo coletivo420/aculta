@@ -7,6 +7,9 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
+| Contrato Wiki→Messenger v1 | Revisão de contrato | Dois fatos editoriais, payload privado mínimo, destinatários revalidados, deduplicação por revisão e fila persistente; e-mails mantidos | especificado; API de registro Messenger e producers ainda pendentes |
+| Evento: verbete enviado para revisão | Kernel MariaDB + QueueWorker | Dispara apenas na transição editorial para `review`; um aviso por editor autorizado e revisão; retry/idempotência | planejado pelo contrato v1 |
+| Evento: resultado da proposta | Kernel MariaDB + QueueWorker | `needs_changes`, `declined`, `accepted` após commit; destinatária autora; retry/idempotência sem conteúdo da proposta | planejado pelo contrato v1 |
 | CTA da home Wiki para WE SATIVA | Kernel MariaDB | `createAccess()` e acesso da rota no Domain `account`; fallback nativo e cacheável; restaura purpose Wiki | aprovado dev.110; classe de ciclo de imagem 27/1.504, 304 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform |
 | Update 10001 instala entidade tardia | Kernel MariaDB | Registra entidade de proposta e cria as quatro tabelas ausentes, incluindo `proposed_fields` | aprovado dev.111; 1 teste / 30 asserções; 197 depreciações Core/contrib, uma PHP/Webform e 2 PHPUnit |
 | CTA e início no Runtime | Firefox ESR/X11, sessão autenticada | Home Wiki → início account → Meu Trabalho → formulário/retorno; 1280/390/320 px | aprovado dev.111, Runtime 2026-10-24; 19/19 verificações após `updb` 10001 + `drush cr`; sem escrita de conteúdo |

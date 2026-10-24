@@ -25,6 +25,18 @@ isolado simulou a ausência das quatro tabelas, executou o hook real e passou em
 update 10001, criou as tabelas ausentes, não encontrou updates restantes e foi
 seguido por `drush cr`. Nenhuma configuração ou conteúdo foi importado.
 
+### Contrato Wiki → Messenger v1 — avisos editoriais
+
+O contrato define dois eventos: entrada de revisão `wiki_entry` na fila, para
+contas `content_editor` com acesso atual, e decisão da proposta para sua autoria.
+O payload carrega UUID/revisão e os dados mínimos de destinatário/estado; a
+identificação e o acesso são revalidados pelo consumer. A decisão do responsável
+é manter e-mails transacionais e adicionar avisos pessoais no site, com fila
+persistente/retry e deduplicação. A especificação está em
+[`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor/QueueWorker
+Wiki e a API de registro pública do Messenger ainda não foram implementados;
+antes do adapter, o owner Messenger precisa revisar o contrato de escrita.
+
 ### Incremento dev.110 — CTA para o início WE SATIVA
 
 A home Wiki encaminha para `/studio/we-sativa/inicio` no Domain `account`

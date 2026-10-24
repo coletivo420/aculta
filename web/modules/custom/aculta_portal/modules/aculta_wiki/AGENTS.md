@@ -39,6 +39,11 @@
 
 # Wiki — instruções locais
 
+# Contrato Wiki→Messenger v1: review-request para editoras/es com acesso atual e
+# outcome para autoria; eventos versionados por revisão em fila persistente com
+# retry. E-mails atuais permanecem. API de escrita do Messenger e producers Wiki
+# aguardam revisão/implementação; ver docs/MESSENGER-EVENT-CONTRACT.md.
+
 # Dev.111: update_10001 instala o schema completo de aculta_wiki_proposal quando
 # ausente e instala proposed_fields apenas se necessário. Kernel simulado passou
 # 1/30. Runtime de teste aplicou update 10001 e drush cr; Firefox ESR/X11 passou
