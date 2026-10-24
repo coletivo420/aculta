@@ -1,3 +1,12 @@
+## 0.1.1-dev.187 — validar dispatch real dos hooks da central
+
+O teste de contrato agora passa pelo HookCollector, instala o mapa produzido no `ModuleHandler` e executa os hooks via
+`alter()`. Isso cobre descoberta, resolução do listener e agregação de avisos/contadores por adapters opcionais, além
+dos testes diretos do dispatcher.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime ou navegador nesta validação.
+
 ## 0.1.1-dev.186 — registrar hooks de adapters na central
 
 O Drupal só descobre hooks PHP em `src/Hook`; os quatro hooks antes armazenados em `src/Integration/*/Hook` não eram

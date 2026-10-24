@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\AcultaMessengerServiceProvider;
+use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 use Drupal\aculta_messenger\Hook\PersonalNoticeAdapterHooks;
 use Drupal\Component\FileCache\FileCacheFactory;
+use Drupal\Core\Cache\NullBackend;
+use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\KeyValueStore\KeyValueMemoryFactory;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Drupal\Core\Hook\HookCollectorPass;
+use Drupal\Core\Utility\CallableResolver;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 
@@ -124,6 +130,90 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
     self::assertSame(['lms', 'wiki', 'commerce', 'donation'], array_keys($argument->getValues()));
+  }
+
+  /**
+   * Discovered hooks dispatch through Drupal's ModuleHandler alter API.
+   */
+  public function testDiscoveredHooksDispatchThroughModuleHandler(): void {
+    $container = new ContainerBuilder();
+    $modulePath = dirname(__DIR__, 3);
+    $container->setParameter('container.modules', [
+      'aculta_messenger' => ['pathname' => $modulePath . '/aculta_messenger.info.yml'],
+    ]);
+    $container->setDefinition(PersonalNoticeAdapterHooks::class, new Definition(PersonalNoticeAdapterHooks::class));
+
+    $previousConfiguration = FileCacheFactory::getConfiguration();
+    $previousPrefix = FileCacheFactory::getPrefix();
+    FileCacheFactory::setConfiguration([FileCacheFactory::DISABLE_CACHE => TRUE]);
+    FileCacheFactory::setPrefix('aculta_messenger_hook_dispatch_test');
+    try {
+      (new HookCollectorPass())->process($container);
+    }
+    finally {
+      FileCacheFactory::setConfiguration($previousConfiguration);
+      FileCacheFactory::setPrefix($previousPrefix);
+    }
+    $hookData = $container->getParameter('.hook_data');
+    self::assertSame(
+      [PersonalNoticeAdapterHooks::class . '::noticesAlter' => 'aculta_messenger'],
+      $hookData['hook_list']['aculta_messenger_personal_notices_alter'],
+    );
+
+    $account = $this->createMock(AccountInterface::class);
+    $lms = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $lms->expects(self::once())
+      ->method('addPersonalNotices')
+      ->willReturnCallback(static function (array &$items): void {
+        $items[] = 'lms';
+      });
+    $lms->expects(self::once())->method('unreadCount')->with(42)->willReturn(2);
+    $wiki = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $wiki->expects(self::once())
+      ->method('addPersonalNotices')
+      ->willReturnCallback(static function (array &$items): void {
+        $items[] = 'wiki';
+      });
+    $wiki->expects(self::once())->method('unreadCount')->with(42)->willReturn(3);
+    $dispatcher = new PersonalNoticeAdapterHooks(['lms' => $lms, 'wiki' => $wiki]);
+    $callableResolver = $this->createMock(CallableResolver::class);
+    $callableResolver->expects(self::exactly(2))
+      ->method('getCallableFromDefinition')
+      ->willReturnCallback(static function (string $definition) use ($dispatcher): array {
+        [$class, $method] = explode('::', $definition, 2);
+        self::assertSame(PersonalNoticeAdapterHooks::class, $class);
+        return [$dispatcher, $method];
+      });
+
+    $keyValue = new KeyValueMemoryFactory();
+    foreach ($hookData as $key => $value) {
+      $keyValue->get('hook_data')->set($key, $value);
+    }
+    $modules = [
+      'aculta_messenger' => [
+        'type' => 'module',
+        'pathname' => $modulePath . '/aculta_messenger.info.yml',
+        'filename' => NULL,
+      ],
+    ];
+    $moduleHandler = new ModuleHandler(
+      DRUPAL_ROOT,
+      $modules,
+      $keyValue,
+      $callableResolver,
+      new NullBackend('bootstrap'),
+    );
+    self::assertTrue($moduleHandler->hasImplementations('aculta_messenger_personal_notices_alter'));
+    $items = [];
+    $count = 0;
+    $uid = 42;
+    $filters = ['origem' => 'wiki'];
+
+    $moduleHandler->alter('aculta_messenger_personal_notices', $items, $account, $filters);
+    $moduleHandler->alter('aculta_messenger_personal_notice_count', $count, $uid);
+
+    self::assertSame(['lms', 'wiki'], $items);
+    self::assertSame(5, $count);
   }
 
 }

@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.187: teste atravessa o HookCollector e o `ModuleHandler::alter()` real para provar que os hooks descobertos acionam o dispatcher, agregam avisos e somam contadores dos adapters opcionais. Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597 PASS**; PHPCS/PHP lint PASS.
 - Dev.186: os hooks PHP da central para agregação/contagem de avisos agora residem em `src/Hook`, onde Drupal 11 os descobre. `PersonalNoticeAdapterHooks` encaminha aos adapters opcionais LMS, Wiki, Loja e Doações pelo contrato `PersonalNoticeAdapterInterface`. Unit Messenger + Integration Unit LMS **197/1.380 PASS**; PHPCS/PHP lint PASS. Próxima frente priorizada: reforçar idempotência do digest; Runtime permanece pendente.
 - Auditoria de idempotência do digest — 2026-10-24: reexecução dos Kernels de digest do Messenger e ACULTA Mailer **39/801 PASS** em MariaDB dedicado. A cobertura existente confirma correlação estável por manifesto, recuperação do lote aceito, acknowledgement transacional/seletivo, chegada de novos avisos durante transporte e contenção do lock via processos PHP independentes. Lacuna restante: executar dois workers Drupal completos concorrendo pelo mesmo destinatário; transporte externo e Runtime continuam sem homologação.
 - Validação pós-discovery — 2026-10-24: suítes Unit dos managers LMS, Wiki, Loja e Doações **57/506 PASS**. A agregação aditiva no kernel preserva a validação de acesso feita por cada fonte; contagem simplificada sem revalidar permissões foi descartada por risco de expor itens revogados.
