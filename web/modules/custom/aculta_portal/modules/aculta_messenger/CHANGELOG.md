@@ -1,3 +1,12 @@
+## 0.1.1-dev.180 — cobrir a política administrativa de e-mail entre categorias
+
+O teste do formulário de privacidade verifica que todas as categorias integradas obedecem à mesma política de modos
+permitidos pelo Messenger. Desabilitar envio direto na administração remove essa opção de cada categoria sem remover o
+opt-out individual, digest ou os avisos obrigatórios no site.
+
+Validação: formulário e serviços de preferência/configuração **12/76 PASS**; PHPCS Drupal/DrupalPractice e PHP lint
+PASS. O smoke visual e a aplicação da configuração no Runtime continuam pendentes.
+
 ## 0.1.1-dev.179 — cobrir idempotência dos digests da Loja e Doação
 
 Os Kernels de Loja e Doação verificam replay do evento, leitura repetida sem consumo e confirmação seletiva por

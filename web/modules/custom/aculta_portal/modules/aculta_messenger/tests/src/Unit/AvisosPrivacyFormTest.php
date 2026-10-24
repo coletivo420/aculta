@@ -92,6 +92,47 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   }
 
   /**
+   * Admin email policy is applied consistently to every shared origin.
+   */
+  public function testBuildAppliesAdministrativePolicyAcrossAllOrigins(): void {
+    $categories = [
+      'forum_resposta',
+      'forum_atualizacao',
+      'aprendizagem',
+      'wiki',
+      'loja',
+      'doacao',
+    ];
+    $emailModes = array_fill_keys($categories, ['digest' => TRUE, 'immediate' => FALSE]);
+    $settings = $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => ['email_modes' => $emailModes],
+    ]);
+    $preferences = new AvisoPreferencias($this->createMock(UserDataInterface::class), $settings);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(27);
+    $formBuilder = $this->formBuilder($account, $preferences);
+    $form = [];
+
+    $formBuilder->build($form);
+
+    $elements = [
+      'email_respostas',
+      'email_atualizacoes',
+      'email_aprendizagem',
+      'email_wiki',
+      'email_loja',
+      'email_doacao',
+    ];
+    foreach ($elements as $element) {
+      self::assertSame(
+        [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
+        array_keys($form['avisos'][$element]['#options']),
+        $element,
+      );
+    }
+  }
+
+  /**
    * Saves per-origin modes while preserving mandatory site notices.
    */
   public function testSubmitSavesModesForAllIntegratedOrigins(): void {
