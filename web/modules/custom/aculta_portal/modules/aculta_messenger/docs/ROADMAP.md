@@ -110,3 +110,5 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 - Dev.169, política de preferências: modo de e-mail agora falha fechado para categoria ausente do catálogo compartilhado, e gravação inválida é recusada. Preferências/formulários/digest 14/149 e Unit Messenger 152/941 PASS; PHPCS/PHP lint e gate Drupal 11+ passam após regenerar o índice.
 
 - Dev.170, contadores de Site Alert: o header filtra por acesso e consulta Flags de dispensa em lote; a central reutiliza alertas visíveis e estados pessoais que já carregou. `MessengerCountsTest` cobre acesso, dispensa, uso dos dados pré-carregados e anonimato.
+
+- Dev.171, CSRF de mensagens: `PostRouteCsrfRequirementTest` agora exercita o verificador Core para os quatro endpoints POST, extraídos do YAML com os parâmetros reais, e cobre token ausente, inválido e válido; 2/35 PASS. HTTP funcional e Runtime ainda pendentes.

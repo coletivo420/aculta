@@ -1,3 +1,9 @@
+## 0.1.1-dev.171 — validar CSRF Core nos quatro caminhos POST
+
+A cobertura de `CsrfAccessCheck` agora constrói as rotas pelos quatro registros POST do YAML real, substitui seus parâmetros e verifica token ausente, inválido e válido para cada caminho. Mantém explícito que a execução HTTP completa ainda não foi exercitada.
+
+Validação: `PostRouteCsrfRequirementTest` 2/35 e Unit Messenger 155/993 PASS; PHPCS Drupal/DrupalPractice e PHP lint focal, índice e gate Drupal 11+ (1.155 checks) PASS. HTTP/Runtime não executados.
+
 ## 0.1.1-dev.168 — exercitar verificação de CSRF do Core
 
 O teste das quatro rotas POST agora também exercita `CsrfAccessCheck` do Drupal: token ausente e inválido são negados; token válido para o caminho com parâmetro de thread é permitido e não cacheável. Isso complementa a validação declarativa do YAML. Request HTTP/Runtime ainda pendentes.

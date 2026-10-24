@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Access\CsrfAccessCheck;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
@@ -49,41 +49,63 @@ final class PostRouteCsrfRequirementTest extends UnitTestCase {
    * Core rejects absent and invalid route tokens and accepts a valid one.
    */
   public function testDrupalCsrfAccessCheckValidatesRouteAndParameters(): void {
-    $route = new Route(
-      '/mensagens/conversa/{private_message_thread}/responder',
-      [],
-      ['_csrf_token' => 'TRUE'],
-      [],
-      '',
-      [],
-      ['POST'],
-    );
-    $routeMatch = $this->createMock(RouteMatchInterface::class);
-    $routeMatch->method('getRawParameters')->willReturn(new ParameterBag([
-      'private_message_thread' => '42',
-    ]));
+    $route_file = dirname(__DIR__, 3) . '/aculta_messenger.routing.yml';
+    $definitions = Yaml::decode(file_get_contents($route_file));
+    $scenarios = [];
+    foreach ($definitions as $name => $definition) {
+      if (($definition['methods'] ?? []) !== ['POST']) {
+        continue;
+      }
+      preg_match_all('/\{([^}]+)\}/', $definition['path'], $matches);
+      $parameters = [];
+      foreach ($matches[1] as $parameter) {
+        $parameters[$parameter] = $parameter === 'user' ? '84' : '42';
+      }
+      $path = preg_replace_callback(
+        '/\{([^}]+)\}/',
+        static fn(array $match): string => $parameters[$match[1]],
+        ltrim($definition['path'], '/'),
+      );
+      $scenarios[$name] = [
+        'route' => new Route(
+          $definition['path'],
+          $definition['defaults'] ?? [],
+          $definition['requirements'] ?? [],
+          $definition['options'] ?? [],
+          '',
+          [],
+          $definition['methods'],
+        ),
+        'parameters' => $parameters,
+        'path' => $path,
+      ];
+    }
+    self::assertCount(4, $scenarios);
     $tokens = $this->createMock(CsrfTokenGenerator::class);
-    $tokens->expects(self::exactly(3))
+    $tokens->expects(self::exactly(count($scenarios) * 3))
       ->method('validate')
-      ->willReturnMap([
-        ['', 'mensagens/conversa/42/responder', FALSE],
-        ['invalid', 'mensagens/conversa/42/responder', FALSE],
-        ['valid', 'mensagens/conversa/42/responder', TRUE],
-      ]);
+      ->willReturnCallback(static function (string $token, string $path) use ($scenarios): bool {
+        self::assertContains($path, array_column($scenarios, 'path'));
+        return $token === 'valid';
+      });
     $checker = new CsrfAccessCheck($tokens);
 
-    foreach (['', 'invalid'] as $token) {
-      $request = Request::create('/mensagens/conversa/42/responder', 'POST');
-      if ($token !== '') {
-        $request->query->set('token', $token);
+    foreach ($scenarios as $scenario) {
+      $routeMatch = $this->createMock(RouteMatchInterface::class);
+      $routeMatch->method('getRawParameters')->willReturn(new ParameterBag($scenario['parameters']));
+      foreach (['', 'invalid'] as $token) {
+        $request = Request::create('/' . $scenario['path'], 'POST');
+        if ($token !== '') {
+          $request->query->set('token', $token);
+        }
+        self::assertFalse($checker->access($scenario['route'], $request, $routeMatch)->isAllowed());
       }
-      self::assertFalse($checker->access($route, $request, $routeMatch)->isAllowed());
+      $request = Request::create('/' . $scenario['path'], 'POST');
+      $request->query->set('token', 'valid');
+      $result = $checker->access($scenario['route'], $request, $routeMatch);
+      self::assertTrue($result->isAllowed());
+      self::assertSame(0, $result->getCacheMaxAge());
     }
-    $request = Request::create('/mensagens/conversa/42/responder', 'POST');
-    $request->query->set('token', 'valid');
-    $result = $checker->access($route, $request, $routeMatch);
-    self::assertTrue($result->isAllowed());
-    self::assertSame(0, $result->getCacheMaxAge());
   }
 
 }
