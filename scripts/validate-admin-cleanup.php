@@ -62,6 +62,7 @@ $expected = [
   'aculta_forum_admin_comments',
   'aculta_forum_admin_topics',
   'aculta_forum_categories',
+  'aculta_forum_gallery_slides',
   'aculta_forum_lms_admin_comments',
   'aculta_forum_public_topics',
   'aculta_forum_search',
