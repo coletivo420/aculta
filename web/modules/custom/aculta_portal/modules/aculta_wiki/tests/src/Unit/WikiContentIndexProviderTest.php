@@ -46,6 +46,7 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     $node->method('language')->willReturn($language);
     $node->method('uuid')->willReturn('wiki-entry-uuid');
     $node->method('label')->willReturn('Cannabis medicinal');
+    $node->method('getOwnerId')->willReturn('777');
     $node->method('isPublished')->willReturn(TRUE);
     $node->method('getCreatedTime')->willReturn(100);
     $node->method('getChangedTime')->willReturn(200);
@@ -66,11 +67,13 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
 
     self::assertNotNull($projection);
     self::assertSame('wiki', (new WikiContentIndexProvider())->getProviderId());
+    self::assertSame(4, (new WikiContentIndexProvider())->getProjectionVersion());
     self::assertSame(['node' => ['wiki_entry']], (new WikiContentIndexProvider())->getSupportedEntityTypes());
     self::assertSame('51', $projection->entityId);
     self::assertSame('pt-br', $projection->langcode);
     self::assertSame('wiki420_aculta_org', $projection->domainId);
     self::assertSame('Cannabis medicinal', $projection->label);
+    self::assertNull($projection->ownerUid, 'The source author is not part of the Wiki Index projection.');
     self::assertTrue($projection->published);
     self::assertSame([], $projection->relations);
   }

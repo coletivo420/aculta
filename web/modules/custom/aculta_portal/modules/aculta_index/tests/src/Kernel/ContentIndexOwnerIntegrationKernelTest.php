@@ -253,7 +253,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     $privateImageSource->save();
 
     $registry = $this->container->get('aculta_index.provider_registry');
-    self::assertSame(3, $registry->get('wiki')->getProjectionVersion());
+    self::assertSame(4, $registry->get('wiki')->getProjectionVersion());
     $projection = $registry->get('wiki')->project($source);
     self::assertNotNull($projection);
     $relationKeys = [];

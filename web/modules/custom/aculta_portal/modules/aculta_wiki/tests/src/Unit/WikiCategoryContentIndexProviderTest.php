@@ -61,6 +61,7 @@ final class WikiCategoryContentIndexProviderTest extends UnitTestCase {
     self::assertTrue($projection->published);
     self::assertSame(100, $projection->created);
     self::assertSame(200, $projection->changed);
+    self::assertNull($projection->ownerUid, 'Category author data is not part of the Wiki Index projection.');
     self::assertSame([], $projection->relations);
   }
 

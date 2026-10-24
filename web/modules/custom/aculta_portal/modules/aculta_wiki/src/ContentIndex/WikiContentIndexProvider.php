@@ -6,7 +6,6 @@ namespace Drupal\aculta_wiki\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
-use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
@@ -29,7 +28,7 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 3;
+    return 4;
   }
 
   /**
@@ -100,7 +99,6 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
       relations: array_values($relations),
-      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

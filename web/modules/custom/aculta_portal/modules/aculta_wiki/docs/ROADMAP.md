@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.49**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.50**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.50 — excluir UID autoral do provider Wiki
+
+O provider `node:wiki_entry` deixa de preencher `owner_uid`; a coluna interna do
+Index não deve armazenar identidade autoral que a Wiki não usa. A versão sobe a
+4 e o fingerprint muda. Antes de ativar uma projeção v4, é necessária uma nova
+geração em ambiente controlado. Unit: 9/40; Kernel Wiki/Index: 7/236;
+bootstrap owner: 1/42; focal de persistência: 1/38. Gates genéricos de drift no
+backfill/ativação: 2/16. Nenhum rebuild no Runtime.
 
 ### Incremento dev.49 — sincronizar relação em update/delete incremental
 

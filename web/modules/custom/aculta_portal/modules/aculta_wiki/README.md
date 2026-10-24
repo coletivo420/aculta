@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.50`: o provider Wiki v4 não persiste `owner_uid`; a ausência foi
+  verificada no provider unitário e na entrada real do Index. O fingerprint muda
+  e exige uma geração nova antes da ativação. O gate genérico de backfill e
+  ativação rejeita fingerprints antigos (2/16). Sem rebuild em Runtime.
+
 - `0.1.0-dev.49`: o Kernel owner real atualiza o destino `related_entry`, remove
   a relação anterior e limpa saída ao excluir o verbete. Classe Index:
   7 testes / 234 asserções; projeção v3 mantida.
@@ -241,7 +246,7 @@ pendentes, está em
 
 ### Handoff para o ACULTA Content Index
 
-O contrato Wiki está em `WikiContentIndexProvider` v3: `node:wiki_entry`,
+O contrato Wiki está em `WikiContentIndexProvider` v4 (categoria v1): `node:wiki_entry`,
 revisão padrão, purpose `wiki`, metadados allowlisted e relações
 `related_entry` → `node:wiki_entry`, `wiki_category` →
 `taxonomy_term:wiki_category` e `wiki_image` → `media:image`. O provider dos
@@ -252,7 +257,7 @@ Termos/categorias e imagens não devem bloquear infraestrutura genérica ou
 outros providers do Index. O Kernel owner agora consulta as três relações
 outgoing por `ContentIndexRelationQuery` real no bootstrap Wiki + Portal + Index;
 a geração é semeada apenas com as identidades relevantes e não valida rebuild
-integral do inventário. A projeção não inclui corpo, revisão pendente, autoria,
+integral do inventário. A projeção não inclui corpo, revisão pendente, UID autoral,
 descrição, URL ou arquivo. Homologação Runtime continua separada.
 
 ## Documentação

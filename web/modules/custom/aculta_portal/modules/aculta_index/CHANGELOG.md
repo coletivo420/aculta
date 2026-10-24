@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.173 — atualizar contrato de privacidade do provider Wiki
+
+- A projeção `node:wiki_entry` agora omite `owner_uid`; a alteração é do owner
+  Wiki e incrementa sua versão para 4, mudando o fingerprint do registry.
+- Kernel Wiki/Index completo: 7 testes / 236 asserções; a prova de bootstrap
+  owner adicional: 1 teste / 42 asserções. Os testes genéricos de backfill e
+  ativação recusam fingerprint antigo (2 / 16). Sem alteração Runtime.
+
 ## 0.1.0-dev.172 — sincronizar relação Wiki em update/delete real
 
 - O cenário owner real agora confirma que alterar `field_wiki_related` troca

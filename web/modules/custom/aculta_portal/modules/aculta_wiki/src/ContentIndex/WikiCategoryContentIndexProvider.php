@@ -6,7 +6,6 @@ namespace Drupal\aculta_wiki\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
-use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -75,7 +74,6 @@ final class WikiCategoryContentIndexProvider implements ContentIndexProviderInte
       $entity->isPublished(),
       max(0, (int) $entity->getRevisionCreationTime()),
       max(0, (int) $entity->getChangedTime()),
-      ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }
 

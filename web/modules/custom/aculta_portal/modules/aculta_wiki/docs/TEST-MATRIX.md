@@ -283,7 +283,8 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Provider Wiki | Unit | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados e propósito canônico `wiki` | aprovado |
+| Provider Wiki | Unit/Kernel | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados, purpose `wiki` e ausência de `owner_uid` | aprovado (dev.50; provider v4) |
+| Compatibilidade de fingerprint | Kernel | Geração vinculada a inventário antigo é recusada no backfill e na ativação | aprovado (2 testes / 16 asserções; gate genérico do Index) |
 | Relações `field_wiki_related`, `field_wiki_categories`, `field_wiki_image` | Unit | `related_entry`, `wiki_category`, `wiki_image` deduplicadas, com tipos-alvo allowlisted | aprovado |
 | Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
 | Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
@@ -293,13 +294,13 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Revisão pendente não padrão | Kernel | Provider não projeta revisão pendente; revisão padrão publicada continua disponível | aprovado (dev.46) |
 | Domain Wiki ausente | Kernel | Access filter falha fechado sem recorrer ao Domain ativo | aprovado (dev.46) |
 | Regressão direcionada de providers e acesso Wiki | Kernel | Bootstrap owner, discovery real, providers Wiki e consulta de relações | aprovado (dev.46; 6 testes / 185 asserções; 201 depreciações upstream) |
-| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe a projeção; edição atualiza hash/rótulo e troca relações; exclusão remove entrada e outgoing | aprovado (dev.49; focal: 1 teste / 37 asserções; classe owner: 7/234; 201 depreciações upstream) |
+| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe projeção v4 sem UID; edição atualiza hash/rótulo e troca relações; exclusão remove entrada e outgoing | aprovado (dev.50; focal: 1 teste / 38 asserções; classe owner: 7/236; 201 depreciações upstream) |
 
 
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
 Os adapters estão em código. O teste owner consulta as três relações pela API real
-com os providers descobertos pelo container. O cenário dev.49 executa um backfill
+com os providers descobertos pelo container. O cenário dev.50 executa um backfill
 e ativa uma geração isolada com dados da fixture; isso não equivale a reconstruir
 ou auditar o inventário completo instalado. No preflight read-only de 2026-10-23,
 `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de teste; não

@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.50 — remover UID autoral da projeção do Index
+
+- `WikiContentIndexProvider` não grava mais `owner_uid`; o ID de quem criou o
+  verbete não é necessário à busca Wiki e não pertence à projeção pública.
+- A projeção de Nodes sobe para v4 e muda o fingerprint do inventário. Uma
+  geração nova precisa ser reconstruída antes da ativação; nenhuma reconstrução
+  ou alteração no Runtime foi iniciada.
+- Unit: 9 testes / 40 asserções; Kernel Wiki/Index: 7 / 236 e bootstrap owner
+  real: 1 / 42; focal de persistência: 1 / 38. Gates genéricos recusam drift
+  de fingerprint no backfill/ativação: 2 / 16. Depreciações upstream: 201 na
+  classe Wiki/Index e 231 no owner.
+
 ## 0.1.0-dev.49 — revalidar relações no ciclo incremental real do Index
 
 - A integração owner real comprova que atualizar `field_wiki_related` substitui

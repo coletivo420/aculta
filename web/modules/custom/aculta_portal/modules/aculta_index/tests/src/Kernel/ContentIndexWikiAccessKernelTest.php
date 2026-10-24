@@ -128,7 +128,8 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_wiki'));
     $providers = $this->container->get('aculta_index.provider_registry');
     self::assertSame('wiki', $providers->findForBundle('node', 'wiki_entry')->getProviderId());
-    self::assertSame(3, $providers->get('wiki')->getProjectionVersion());
+    self::assertSame(4, $providers->get('wiki')->getProjectionVersion());
+    self::assertSame(1, $providers->get('wiki_category')->getProjectionVersion());
     self::assertSame('wiki_category', $providers->findForBundle('taxonomy_term', 'wiki_category')->getProviderId());
     self::assertSame('image', $providers->findForBundle('media', 'image')->getProviderId());
     self::assertCount(1, array_filter(
@@ -225,7 +226,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $database = $this->container->get('database');
     $getEntry = static function () use ($database, $generationId, $entry): array|false {
       return $database->select('aculta_index_entry', 'entry')
-        ->fields('entry', ['label', 'provider_version', 'projection_hash'])
+        ->fields('entry', ['label', 'owner_uid', 'provider_version', 'projection_hash'])
         ->condition('generation_id', $generationId)
         ->condition('provider_id', 'wiki')
         ->condition('entity_type', 'node')
@@ -249,7 +250,8 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     };
     $initial = $getEntry();
     self::assertIsArray($initial, 'The initial Wiki projection is present.');
-    self::assertSame(3, (int) $initial['provider_version']);
+    self::assertNull($initial['owner_uid'], 'The source author UID is not persisted in the Wiki projection.');
+    self::assertSame(4, (int) $initial['provider_version']);
     self::assertSame([(string) $firstTarget->id()], $getRelatedTargets());
 
     $entry->setTitle('Wiki after incremental update')

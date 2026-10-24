@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.50: provider de Node omite `owner_uid`, não projetando o UID autoral
+  interno do Index. `getProjectionVersion()` passou a 4 e altera o fingerprint;
+  uma nova geração deve ser reconstruída antes de servir a projeção. Sem rebuild
+  ou alteração no Runtime.
+
 - Dev.49: ciclo Index real também troca a projeção de `field_wiki_related` e
   verifica remoção da relação antiga e limpeza após delete da origem. Classe
   owner completa: 7/234; 201 depreciações upstream. R1 sem alteração no Runtime.
