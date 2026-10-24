@@ -951,7 +951,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertInstanceOf(WikiProposal::class, $actualProposal);
     self::assertSame(['value' => 'Título revisado pelo Form API'], $actualProposal->getProposedFields()['title']);
 
-    // Exercise the full HTTP route and render path for the public Wiki home.
+    // Load the production Views used by the public Wiki home.
     foreach (['wiki_categories', 'wiki_entries'] as $viewId) {
       $viewFile = dirname(DRUPAL_ROOT) . '/config/sync/views.view.' . $viewId . '.yml';
       View::create(Yaml::parseFile($viewFile))->save();
