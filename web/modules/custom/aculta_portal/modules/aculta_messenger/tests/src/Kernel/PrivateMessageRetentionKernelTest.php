@@ -43,6 +43,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     'message_notify',
     'private_message',
     'private_message_notify',
+    'aculta_messenger_retention_test',
   ];
 
   /**
@@ -128,6 +129,41 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     self::assertNotNull($threads->load($recentThread->id()));
     self::assertNotNull($privateMessages->load($recentMessage->id()));
     self::assertNotNull($notices->load($recentNotice->id()));
+  }
+
+  /**
+   * Rolls back deleted thread and private message when notice deletion fails.
+   */
+  public function testNoticeDeletionFailureRestoresThreadAndPrivateMessage(): void {
+    $first = User::create(['name' => 'retention_rollback_first', 'status' => 1]);
+    $first->save();
+    $second = User::create(['name' => 'retention_rollback_second', 'status' => 1]);
+    $second->save();
+    $timestamp = self::NOW - (200 * 86400);
+    $thread = $this->createThread([$first, $second], (int) $first->id(), $timestamp, 'Rollback conversation');
+    $privateMessage = $thread->getMessages(TRUE)[0];
+    $notice = $this->createNotice((int) $first->id(), (int) $privateMessage->id());
+    $this->container->get('state')->set('aculta_messenger_retention_test.fail_notice_delete', TRUE);
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(self::NOW);
+    $hook = new PrivateMessageRetentionHooks(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      $time,
+      $this->container->get('logger.factory'),
+      new ConversationPolicy($this->container->get('config.factory')),
+      $this->container->get('state'),
+    );
+
+    $hook->expireDormantThreads();
+
+    $threads = $this->container->get('entity_type.manager')->getStorage('private_message_thread');
+    $privateMessages = $this->container->get('entity_type.manager')->getStorage('private_message');
+    $notices = $this->container->get('entity_type.manager')->getStorage('message');
+    self::assertNotNull($threads->load($thread->id()), 'The thread deletion is rolled back.');
+    self::assertNotNull($privateMessages->load($privateMessage->id()), 'Private Message lifecycle deletions are rolled back.');
+    self::assertNotNull($notices->load($notice->id()), 'The notice remains available after the failed cleanup transaction.');
   }
 
   /**

@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.173` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.174` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -80,7 +80,8 @@ continuam pendentes.
 A retenção de conversas usa cursor persistido para não deixar falhas antigas
 barrar lotes seguintes. Unit cobre paginação e rollback; o Kernel MariaDB cria
 threads, mensagens privadas e avisos Message reais, removendo apenas dados com
-mais de seis meses e preservando uma conversa recente. Runtime não foi usado e
+mais de seis meses e preservando uma conversa recente. Também prova rollback
+transacional real quando a exclusão do aviso falha. Runtime não foi usado e
 nenhuma limpeza foi executada em dados reais.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo

@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\message\MessageInterface;
+
+/**
+ * Implements hook_entity_predelete().
+ */
+function aculta_messenger_retention_test_entity_predelete(\Drupal\Core\Entity\EntityInterface $entity): void {
+  if (!$entity instanceof MessageInterface
+    || $entity->bundle() !== 'aculta_msg_private_notification'
+    || !\Drupal::state()->get('aculta_messenger_retention_test.fail_notice_delete', FALSE)) {
+    return;
+  }
+
+  throw new \RuntimeException('Controlled failure while deleting a retention notice fixture.');
+}

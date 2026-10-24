@@ -1,3 +1,12 @@
+## 0.1.1-dev.174 — provar rollback da retenção em banco real
+
+O Kernel MariaDB agora injeta uma falha ao excluir o aviso Message após a exclusão de thread/mensagens ter começado.
+O rollback confirma que os três registros permanecem no banco. Com a prova de sucesso da dev.173, a suíte cobre os dois
+resultados do ciclo transacional em storages reais, sem executar limpeza no Runtime.
+
+Validação: `PrivateMessageRetentionKernelTest` **2/29 PASS**; PHPCS Drupal/DrupalPractice e PHP lint dos fixtures PASS.
+O Kernel emite 10 deprecações conhecidas de annotations/validators do Core/contrib. Runtime segue pendente.
+
 ## 0.1.1-dev.173 — caracterizar retenção em storage real
 
 Adicionado Kernel MariaDB para a retenção de conversas com entidades reais de Private Message e Message. O ciclo do
