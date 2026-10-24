@@ -12,7 +12,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Adapts identity-owned friendship transitions to the shared notice API. */
+ * Adapts identity-owned friendship transitions to the shared notice API.
+ */
 final class FriendshipNoticeEventProducer implements EventSubscriberInterface {
 
   public const REQUESTED = 'aculta_user.friendship_requested';
@@ -42,7 +43,8 @@ final class FriendshipNoticeEventProducer implements EventSubscriberInterface {
     $friendship = $this->entityTypeManager->getStorage('aculta_friendship')->load($event->friendshipId);
     if (!$friendship instanceof AcultaFriendshipInterface
       || $friendship->getRequesterId() !== $event->requesterId
-      || $friendship->getRecipientId() !== $event->recipientId) {
+      || $friendship->getRecipientId() !== $event->recipientId
+      || (int) $friendship->get('changed')->value !== $event->changed) {
       return;
     }
 

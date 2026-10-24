@@ -1551,3 +1551,9 @@ Validação: Unit focal de privacidade/hooks 12/41 e suíte Unit Messenger 135/7
 PASS. PHPCS limpo nos validators e teste novo; classes maiores mantêm avisos/erros anteriores não relacionados.
 Kernel de persistência de conversa e Runtime não executados nesta microfase.
 
+
+## 0.1.1-dev.142 — validar versão persistida dos eventos de amizade — 2026-10-24
+
+O adapter do ACULTA User e o consumer do Messenger agora confirmam que `changed` no evento corresponde à versão persistida da amizade. Eventos internos obsoletos ou com versão divergente não são publicados nem criam aviso, preservando a deduplicação da transição original.
+
+Validação: `FriendshipNoticeEventProducerTest` e `FriendshipNoticeSubscriberTest`, 10 testes / 91 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS. Kernel integrado User/Messenger, Runtime e envio de e-mail não executados nesta microfase.

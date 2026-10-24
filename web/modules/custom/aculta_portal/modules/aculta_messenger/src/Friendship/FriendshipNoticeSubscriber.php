@@ -67,6 +67,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
       ->loadByProperties(['uuid' => $event->sourceEntityUuid()]);
     $friendship = reset($matches);
     if (!$friendship instanceof AcultaFriendshipInterface
+      || (int) $friendship->get('changed')->value !== (int) $event->sourceRevisionOrVersion()
       || ($transition === FriendshipChangedEvent::REQUESTED
         && ($friendship->getStatus() !== FriendshipStatus::Pending->value
           || $event->recipientUid() !== $friendship->getRecipientId()))

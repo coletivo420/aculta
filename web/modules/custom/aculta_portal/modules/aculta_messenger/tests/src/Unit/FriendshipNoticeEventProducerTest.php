@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
@@ -16,18 +17,23 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Tests the ACULTA User to Messenger event adapter. */
+ * Tests the ACULTA User to Messenger event adapter.
+ */
 #[CoversClass(FriendshipNoticeEventProducer::class)]
 #[Group('aculta_messenger')]
 final class FriendshipNoticeEventProducerTest extends UnitTestCase {
 
   /**
-   * A request publishes a recipient-scoped event without personal data. */
+   * A request publishes a recipient-scoped event without personal data.
+   */
   public function testRequestPublishesCanonicalNoticeEvent(): void {
     $friendship = $this->createMock(AcultaFriendshipInterface::class);
     $friendship->method('getRequesterId')->willReturn(10);
     $friendship->method('getRecipientId')->willReturn(20);
     $friendship->method('uuid')->willReturn('friendship-uuid');
+    $changed = $this->createMock(FieldItemListInterface::class);
+    $changed->method('__get')->with('value')->willReturn(1700000000);
+    $friendship->method('get')->with('changed')->willReturn($changed);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('44')->willReturn($friendship);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -59,6 +65,28 @@ final class FriendshipNoticeEventProducerTest extends UnitTestCase {
     $friendship = $this->createMock(AcultaFriendshipInterface::class);
     $friendship->method('getRequesterId')->willReturn(11);
     $friendship->method('getRecipientId')->willReturn(20);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with('44')->willReturn($friendship);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_friendship')->willReturn($storage);
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->expects(self::never())->method('publish');
+
+    (new FriendshipNoticeEventProducer($manager, $publisher))->publish(
+      new FriendshipChangedEvent(FriendshipChangedEvent::REQUESTED, '44', 10, 20, 1700000000),
+    );
+  }
+
+  /**
+   * A source event with a stale persisted timestamp is not published.
+   */
+  public function testStaleSourceVersionDoesNotPublish(): void {
+    $friendship = $this->createMock(AcultaFriendshipInterface::class);
+    $friendship->method('getRequesterId')->willReturn(10);
+    $friendship->method('getRecipientId')->willReturn(20);
+    $changed = $this->createMock(FieldItemListInterface::class);
+    $changed->method('__get')->with('value')->willReturn(1700000001);
+    $friendship->method('get')->with('changed')->willReturn($changed);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('44')->willReturn($friendship);
     $manager = $this->createMock(EntityTypeManagerInterface::class);

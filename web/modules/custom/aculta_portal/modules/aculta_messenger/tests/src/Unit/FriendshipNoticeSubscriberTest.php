@@ -184,6 +184,26 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
   }
 
   /**
+   * A stale event version cannot create a notice for a newer friendship state.
+   */
+  public function testStaleSourceVersionDoesNotCreateNotice(): void {
+    $friendship = $this->friendship(FriendshipStatus::Pending->value, 1700000001);
+    $entityTypeManager = $this->entityTypeManager(
+      $this->createMock(EntityStorageInterface::class),
+      $this->createMock(EntityStorageInterface::class),
+      $this->friendshipStorage($friendship),
+    );
+    $entityTypeManager->getStorage('user')->expects(self::never())->method('load');
+    $entityTypeManager->getStorage('message')->expects(self::never())->method('getQuery');
+    $entityTypeManager->getStorage('message')->expects(self::never())->method('create');
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::never())->method('enqueue');
+
+    (new FriendshipNoticeSubscriber($entityTypeManager, $this->lock(), $queue))
+      ->consume($this->event(FriendshipChangedEvent::REQUESTED));
+  }
+
+  /**
    * Asserts the transition creates a Message for the expected recipient.
    */
   private function assertNoticeForTransition(string $transition, int $requesterId, int $recipientId, int $noticeRecipientId): void {
@@ -248,13 +268,14 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
   /**
    * Creates the friendship used to revalidate the source event.
    */
-  private function friendship(string $status): AcultaFriendshipInterface {
+  private function friendship(string $status, int $changed = 1700000000): AcultaFriendshipInterface {
     $friendship = $this->createMock(AcultaFriendshipInterface::class);
     $friendship->method('uuid')->willReturn('friendship-uuid');
     $friendship->method('id')->willReturn('44');
     $friendship->method('getRequesterId')->willReturn(10);
     $friendship->method('getRecipientId')->willReturn(20);
     $friendship->method('getStatus')->willReturn($status);
+    $friendship->method('get')->with('changed')->willReturn($this->fieldValue($changed));
     return $friendship;
   }
 
