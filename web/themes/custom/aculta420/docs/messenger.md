@@ -141,7 +141,7 @@ Pontos de atenção:
 
 - O JS expõe `drawer.acultaNavigate(url)` no elemento da gaveta. É assim que o perfil abre a nova conversa. Não renomeie sem atualizar `data-aculta-open-conversation`.
 - Os botões da janela de confirmação são `input type=submit` no Form API. O clique é cancelado no JS (`preventDefault`). Sem JS, a janela não abre.
-- O diálogo é um `<dialog>` nativo dentro do formulário. A marcação é montada com `inline_template` no módulo (achado A2 da auditoria); o estilo fica em `messenger-item.css`.
+- O diálogo é aberto por `Drupal.dialog` (jQuery UI) dentro do formulário. A pergunta começa oculta em `data-aculta-dialog`; o tema remove `hidden` ao abrir. Escape fecha apenas o modal: a gaveta intercepta a propagação antes do Bootstrap Offcanvas. O estilo fica em `messenger-drawer.css`.
 
 ## 7. CSS
 
@@ -194,7 +194,7 @@ hook OOP. **Não crie** `template_preprocess_*` legado.
 
 ### Mudar a aparência da janela de confirmação
 
-1. Edite as regras `dialog[data-aculta-dialog]` em `messenger-item.css`.
+1. Edite as regras `[data-aculta-dialog]` em `css/components/messenger-drawer.css`.
 2. Confira os dois casos: bloquear (`data-aculta-dialog="ban"`) e desfazer amizade (`data-aculta-dialog="remove"`).
 
 ### Criar um componente de estado novo

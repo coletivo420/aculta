@@ -162,13 +162,14 @@ export class Browser {
     await wd('POST', this.p(`/element/${Object.values(el)[0]}/value`), { text });
   }
 
+  // Sends one real keyboard action through W3C WebDriver (for example, Escape: \uE00C).
+  async pressKey(key) {
+    await wd('POST', this.p('/actions'), { actions: [{ type: 'key', id: 'messenger-keyboard', actions: [{ type: 'keyDown', value: key }, { type: 'keyUp', value: key }] }] });
+  }
+
   async clearAndType(selector, text) {
     await this.exec(`const i = document.querySelector(${JSON.stringify(selector)}); if (i) { i.focus(); i.value = ''; i.dispatchEvent(new Event('input', { bubbles: true })); } return 1;`);
     await this.typeIn(selector, text);
   }
 
-  // The confirmation dialog of an action ("ban" or "remove") is open.
-  async dialogOpen(name) {
-    return this.exec(`const d = document.querySelector('dialog[data-aculta-dialog="${name}"]'); return !!(d && d.open);`);
-  }
 }

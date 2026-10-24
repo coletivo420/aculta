@@ -265,6 +265,17 @@ check('group: the group message is still there for B', groupId ? await b.openThr
 check('group: B still sees the group message', await b.waitText(GROUP_MSG, 10000));
 await b.shot('group-B');
 
+// Keyboard regression: closing the nested Drupal confirmation must not dismiss the Bootstrap drawer.
+await b.exec(`${b.C}.querySelector('.aculta-messenger-back-link').click(); return 1;`);
+await b.waitFor(`!${b.C}.querySelector('.aculta-messenger-conversation-toolbar')`, 'return to conversation list');
+check('B: the one-to-one conversation remains available after the group view', await b.openConversation(A));
+await b.openOptions(A);
+await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="ban"]').click(); return 1;`);
+check('B: the block dialog opens for the keyboard regression check', await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.getClientRects().length`, 'B ban dialog'));
+await b.pressKey('\uE00C');
+check('B: Escape closes only the modal and keeps the drawer open', await b.waitFor(`${b.C}.getClientRects().length && !document.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.getClientRects().length`, 'Escape preserves drawer'));
+check('B: the block action remains available after Escape', (await b.panelItems()).includes('button:Bloquear'));
+
 // ---------- Errors and report ----------
 check('no JavaScript errors in the drawer', (await b.errors()).length === 0, JSON.stringify(await b.errors()));
 await b.close();

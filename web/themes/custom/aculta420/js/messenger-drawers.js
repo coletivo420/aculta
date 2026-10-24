@@ -81,6 +81,15 @@
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
 
+        // Drupal's nested confirmation modal handles Escape first. Keep that
+        // key from reaching Bootstrap's document-level Offcanvas listener,
+        // which would otherwise close both the modal and the whole drawer.
+        drawer.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && event.target instanceof Element && event.target.closest('.ui-dialog')) {
+            event.stopPropagation();
+          }
+        });
+
         // init carries a POST body for the new-conversation form; the answer replaces the drawer content either way.
         const navigate = (url, init = {}) => {
           if (!content || !url) {

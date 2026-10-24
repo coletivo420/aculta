@@ -1,3 +1,9 @@
+## 0.6.1-dev.9 — não fechar a gaveta ao dispensar confirmação com Escape — 2026-10-24
+
+Escape fecha a confirmação de amizade/bloqueio sem propagar ao listener do Bootstrap Offcanvas, mantendo a conversa aberta. O contrato atualizado está em `docs/messenger.md`.
+
+Validação: suíte visível de navegador do Messenger em Firefox ESR (`DISPLAY=:0`), 75/75 verificações PASS; Escape fechou o modal e manteve gaveta e ação de bloqueio disponíveis. Sem mudança de autorização ou estado no módulo.
+
 ## 0.6.1-dev.8 — ações de leitura na central de avisos — 2026-10-24
 
 Classificação: PATCH de integração visual.
