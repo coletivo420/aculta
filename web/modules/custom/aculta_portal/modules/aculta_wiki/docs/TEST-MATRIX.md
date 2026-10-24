@@ -73,8 +73,8 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 24 testes / 1.129
-asserções, 291 depreciações Core/contrib e 25 PHPUnit; aprovada em dev.79.
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 24 testes / 1.134
+asserções, 291 depreciações Core/contrib e 25 PHPUnit; aprovada em dev.80.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 
@@ -241,7 +241,7 @@ fallback real e evitar warning falso de `entity_usage`.
 | Limite de abuso | Kernel | A 11ª proposta em uma hora recebe HTTP 429 e não persiste | aprovado (focal: 1 teste / 94 assertions) |
 | Reenvio com o mesmo token | Kernel | POST direto repetido e replay Form API retornam a proposta existente | aprovado (focal: 1 teste / 99 assertions; classe: 9 / 371) |
 | Contenção entre conexões idempotentes | Kernel MariaDB | Segundo DB connection aguarda, não persiste duplicata e replay posterior lê a proposta | aprovado (focal: 1 teste / 99 assertions) |
-| Concorrência entre processos PHP | Kernel | Workers independentes submetem o mesmo token e produzem uma entidade | pendente |
+| Concorrência entre processos PHP | Kernel MariaDB | Worker independente segura o lock; submissão concorrente não duplica proposta e replay retorna a existente | aprovado (dev.80; focal 1/164; classe 24/1.134; `DatabaseLockBackend` explícito porque o container Kernel substitui `@lock` por `NullLockBackend`) |
 | Decisão editorial e histórico | Kernel | Form API/Content Moderation cria revisão e bloqueia aplicação quando o VID-base ficou obsoleto | planejado |
 
 O Kernel focal passou sem warning; existem avisos de depreciação Core/contrib e

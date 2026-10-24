@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.80`: Kernel MariaDB valida contenção do lock de idempotência entre
+  processos PHP independentes e ausência de proposta duplicada (24/1.134).
+  Runtime intocado.
+
 - `0.1.0-dev.79`: Kernel prova que uma revisão pendente mantém a imagem da
   revisão pública visível e deixa a imagem substituta privada (classe completa
   24/1.129). Runtime intocado.

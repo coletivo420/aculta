@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.80 — lock de idempotência entre processos
+
+- Kernel MariaDB inicia um processo PHP independente que adquire o lock de
+  submissão; a classe real de submissão com `DatabaseLockBackend` recebe 429 e
+  não persiste outra proposta até o lock ser liberado. Replay posterior mantém
+  uma única entidade.
+- O container Kernel fornece `NullLockBackend`; por isso o cenário injeta
+  explicitamente o backend MariaDB de produção. Não é evidência de bootstrap do
+  serviço de lock no Runtime.
+- `WikiLeadImageLifecycleKernelTest`: 24 testes / 1.134 assertions, 291
+  depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+
 ## 0.1.0-dev.79 — visibilidade em revisão não padrão
 
 - Kernel MariaDB cobre um verbete publicado cuja nova revisão ainda não padrão

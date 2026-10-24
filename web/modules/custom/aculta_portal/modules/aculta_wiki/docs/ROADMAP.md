@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.79**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.80**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.80 — lock de proposta entre processos
+
+Kernel MariaDB executa worker PHP separado para adquirir a chave de idempotência
+e confirma que outra chamada do serviço real não persiste proposta duplicada
+enquanto o lock existe; após liberar, replay retorna a entidade já criada. A
+classe Kernel passou (24/1.134; 291 depreciações Core/contrib e 25 PHPUnit) e
+PHPCS passou. O harness Kernel injeta `NullLockBackend`, então o teste constrói
+`DatabaseLockBackend` explicitamente; bootstrap do lock no Runtime segue sem
+homologação. Nenhuma mudança Runtime.
 
 ### Incremento dev.79 — imagem em revisão pendente
 

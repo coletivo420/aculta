@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.80: lock de idempotência entre processos validado com MariaDB e classe
+  real de submissão; Kernel usa `NullLockBackend` e injeta `DatabaseLockBackend`
+  explicitamente. Classe 24/1.134; Runtime intocado.
+
 - Dev.79: Kernel comprova visibilidade alinhada à revisão pública quando uma
   revisão pendente troca a imagem. Classe MariaDB 24/1.129; Runtime intocado.
 

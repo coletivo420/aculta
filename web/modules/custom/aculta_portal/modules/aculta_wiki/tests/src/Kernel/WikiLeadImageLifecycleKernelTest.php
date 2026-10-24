@@ -1906,6 +1906,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     );
     self::assertSame((int) $proposal->id(), (int) $replayedProposal->id());
     self::assertSame('Dados do estudo revisado', $replayedProposal->get('proposed_text')->value);
+    $this->assertProposalLockIsSharedAcrossPhpProcesses($target, (int) $submitter->id());
 
     self::assertSame((int) $submitter->id(), (int) $proposal->getOwnerId());
     self::assertSame('submitted', $proposal->get('state')->value);
@@ -2510,6 +2511,114 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($other);
     $this->expectException(AccessDeniedHttpException::class);
     $submission->submit($target, 'correction', 'Correção', 'Motivo');
+  }
+
+  /**
+   * Verifies the production lock and proposal service across PHP processes.
+   */
+  private function assertProposalLockIsSharedAcrossPhpProcesses(
+    NodeInterface $target,
+    int $uid,
+  ): void {
+    if (!function_exists('proc_open')) {
+      self::markTestSkipped('proc_open is required for the cross-process lock regression.');
+    }
+
+    $token = str_repeat('b', 64);
+    $lockName = 'aculta_wiki.proposal_submission:' . hash('sha256', $uid . ':' . $token);
+    $workerCode = <<<'PHP'
+require 'web/autoload.php';
+$loader = require 'vendor/autoload.php';
+$loader->addPsr4('Drupal\\mysql\\', 'web/core/modules/mysql/src');
+$options = unserialize(base64_decode(trim(fgets(STDIN))), ['allowed_classes' => FALSE]);
+$lockName = trim(fgets(STDIN));
+\Drupal\Core\Database\Database::addConnectionInfo('wiki_proposal_process_lock', 'default', $options);
+$connection = \Drupal\Core\Database\Database::getConnection('default', 'wiki_proposal_process_lock');
+$lock = new \Drupal\Core\Lock\DatabaseLockBackend($connection);
+if (!$lock->acquire($lockName, 45.0)) {
+  fwrite(STDOUT, "lock-not-acquired\n");
+  exit(2);
+}
+fwrite(STDOUT, "ready:" . $connection->getPrefix() . "\n");
+fflush(STDOUT);
+fgets(STDIN);
+$lock->release($lockName);
+fwrite(STDOUT, "released\n");
+PHP;
+    $pipes = [];
+    $process = proc_open(
+      [PHP_BINARY, '-r', $workerCode],
+      [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+      $pipes,
+      dirname(DRUPAL_ROOT),
+    );
+    self::assertIsResource($process);
+    stream_set_timeout($pipes[1], 15);
+    stream_set_timeout($pipes[2], 15);
+    $exitCode = NULL;
+    try {
+      $database = $this->container->get('database');
+      fwrite($pipes[0], base64_encode(serialize($database->getConnectionOptions())) . "\n" . $lockName . "\n");
+      fflush($pipes[0]);
+      $ready = fgets($pipes[1]);
+      if (!is_string($ready) || !str_starts_with($ready, 'ready:')) {
+        self::fail('PHP lock worker failed: ' . substr((string) stream_get_contents($pipes[2]), 0, 500));
+      }
+
+      $database = $this->container->get('database');
+      $productionLock = new DatabaseLockBackend($database);
+      self::assertFalse(
+        $productionLock->acquire($lockName, 30.0),
+        'The production lock backend must see the worker lock. Main=' . get_class($productionLock)
+          . ', main prefix=' . $database->getPrefix()
+          . ', worker prefix=' . trim(substr($ready, strlen('ready:'))),
+      );
+      $beforeCount = (int) $this->container->get('entity_type.manager')
+        ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute();
+      $submission = new WikiProposalSubmission(
+        $this->container->get('entity_type.manager'),
+        $this->container->get('current_user'),
+        $this->container->get('aculta_portal.domain_purpose'),
+        $this->container->get('aculta_portal.email_confirmation_policy'),
+        $this->container->get('flood'),
+        $productionLock,
+        $this->container->get('keyvalue.expirable'),
+        $database,
+      );
+      try {
+        $submission->submit(
+          $target,
+          'reference',
+          'Submissão sob lock de outro processo',
+          'O mesmo token não pode criar uma segunda proposta.',
+          [],
+          $token,
+        );
+        self::fail('The proposal service must reject a token locked by another process.');
+      }
+      catch (TooManyRequestsHttpException) {
+        self::assertSame($beforeCount, (int) $this->container->get('entity_type.manager')
+          ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+      }
+
+      fwrite($pipes[0], "release\n");
+      fflush($pipes[0]);
+      self::assertSame("released\n", fgets($pipes[1]));
+    }
+    finally {
+      if (is_resource($pipes[0])) {
+        @fwrite($pipes[0], "release\n");
+        fclose($pipes[0]);
+      }
+      if (is_resource($pipes[1])) {
+        fclose($pipes[1]);
+      }
+      if (is_resource($pipes[2])) {
+        fclose($pipes[2]);
+      }
+      $exitCode = proc_close($process);
+    }
+    self::assertSame(0, $exitCode);
   }
 
   /**
