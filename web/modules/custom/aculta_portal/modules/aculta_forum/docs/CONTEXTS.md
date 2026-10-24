@@ -9,10 +9,28 @@ bundle enviado pelo cliente ou presença de dados arbitrários.
 **Inicialização limpa:** por F-D33, Nodes `forum`, Comments `comment_forum`,
 termos do vocabulário `forums` e vínculos antigos `field_discussao` foram
 removidos do Runtime de teste em 2026-10-20; nenhum tópico ou comentário antigo
-será importado. A extensão contrib ainda aguarda retirada oficial depois da
-auditoria de consumidores/configuração. As 12 categorias do vocabulário novo
+será importado. A retirada oficial do Drupal Forum contrib no Runtime de teste e no
+Composer foi concluída posteriormente (dev.50); ver `README.md` e
+`MIGRATION-REMOVAL.md`. A presente seção registra o baseline de 2026-10-20. As 12 categorias do vocabulário novo
 `aculta_forum_categories` permanecem. Conteúdo editorial hospedeiro e seus
 comentários diretos foram preservados.
+
+## Discussão contextual não é chat (F-D41)
+
+O contexto define onde um tópico ou Comment pode ser lido, respondido e
+moderado. Growroom público, publicação da Revista, curso/turma LMS e verbete
+Wiki possuem conteúdo e regras próprias. **Nenhum desses contextos cria uma
+thread de mensagens privadas nem um grupo de chat automaticamente.**
+
+O acompanhamento de conteúdo pode gerar aviso pessoal na central do
+`aculta_messenger` e, quando autorizado, resumo por e-mail com
+`aculta_mailer`. O Fórum fornece o fato publicado, a assinatura/Flag e o
+contexto para revalidação de acesso. Conversar com outro usuário é ação
+voluntária separada, utilizando o Private Message integrado ao Messenger.
+
+Referências: F-D41 em [`DECISOES.md`](DECISOES.md) e fases F-M0–F-M7 em
+[`ROADMAP.md`](ROADMAP.md). O contrato de eventos transversal ADR-XK-02
+permanece planejamento até haver implementação pública verificável.
 
 ## Interface do contexto
 
