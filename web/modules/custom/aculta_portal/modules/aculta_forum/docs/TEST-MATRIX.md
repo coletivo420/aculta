@@ -1,3 +1,12 @@
+## Denúncia importada no ForumPost — contexto, 2026-10-23
+
+- `ForumFlaggingMigrationContextKernelTest` (5 testes / 94 asserções, MariaDB):
+  a denúncia com a identidade da origem é salva no post mapeado e o `presave`
+  deixa de ser autorizado depois; dono/timestamp divergentes, origem fora do
+  Domain `forum`, post de outro tópico e denúncia duplicada são recusados.
+- `MigrateLookupInterface` é simulado; o map real e o lote não são exercitados.
+- Suíte Kernel do Fórum 87/1.838; PHPCS limpo.
+
 ## Destino da migração de Comments — recusas e criação, 2026-10-23
 
 - `ForumCommentMigrationDestinationKernelTest` (9 testes / 216 asserções,

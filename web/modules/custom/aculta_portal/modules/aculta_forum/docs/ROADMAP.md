@@ -209,7 +209,8 @@ testes.
 `aculta_forum_comment` com Comments reais em MariaDB: elegibilidade pelo Domain
 `forum` e contexto público, uma linha por Comment, hierarquia, traduções
 agrupadas, rejeição e autoria histórica, e paginação por keyset entre lotes
-(dev.266) e as denúncias elegíveis com identidade preservada (dev.268). A dev.263 prova as recusas do destino
+(dev.266), as denúncias elegíveis com identidade preservada (dev.268) e a
+validação de identidade da denúncia no post destino (dev.269). A dev.263 prova as recusas do destino
 antes de criar o post (autoria, tradução padrão, rejeição/publicação, corpo,
 formato e embeds), a criação de um post publicado com traduções (dev.264) e a
 atualização idempotente com recusa de troca de idioma padrão (dev.265) e a

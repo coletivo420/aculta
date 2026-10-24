@@ -1,3 +1,13 @@
+## `0.1.0-dev.269` — provar a denúncia importada no post — 2026-10-23
+
+- Kernel exercita `ForumFlaggingMigrationContext`: a denúncia de destino com a
+  mesma identidade da origem é salva no ForumPost mapeado e o contexto deixa de
+  autorizar o presave depois. Dono/timestamp divergentes, origem fora do Domain
+  `forum`, post de outro tópico e duplicidade no destino são recusados.
+- O map de migração é simulado com `MigrateLookupInterface`; nenhuma migration
+  foi executada e nenhum dado foi convertido.
+- Testes: contexto 5/94; suíte Kernel do Fórum 87/1.838; PHPCS limpo.
+
 ## `0.1.0-dev.268` — provar a fonte das denúncias — 2026-10-23
 
 - Kernel cria o Flag `sinalizar_comentario` e duas Flaggings; a fonte
