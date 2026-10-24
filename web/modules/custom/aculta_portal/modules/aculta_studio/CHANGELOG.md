@@ -1,3 +1,30 @@
+## 0.1.0-dev.9 — STUDIO-P1-B: ponte Marley e prévia do hub (2026-10-24)
+
+- `MarleyExperienceProvider` registra Marley no `StudioExperienceManager`,
+  sem substituir `MarleyTabManager` nem alterar seu controller, abas e rotas.
+  A visibilidade do provider exige autenticação, `access aculta portal` e ao
+  menos uma área com ações efetivamente autorizadas pelo `MarleyPresenter`.
+  Como o presenter não fornece cacheability agregada de plugins, a decisão
+  dinâmica possui `max-age: 0` até existir contrato específico seguro.
+- O manager expõe `all()` para o inventário ordenado dos providers registrados,
+  **sem conceder permissões**. Configuração inclui pessoal, Marley, Ganjalab
+  e WE SATIVA. Disponibilidade, acesso e existência de rota continuam
+  obrigatórios na apresentação.
+- Nova prévia segura em `/studio/inicio` (purpose account, GET/HEAD,
+  autenticado). `StudioHubPreviewController` lista links reais de
+  experiências autorizadas e ignora provider de módulo opcional cujo destino
+  não existe. A página não contém dados pessoais nem substitui o shell da
+  Conta.
+- A rota `/studio` **permanece exatamente no controller de compatibilidade do
+  Marley**. As rotas existentes de Ganjalab, WE SATIVA e Meu Espaço permanecem.
+- Testes Unit adicionados para ponte Marley, descoberta/ACL do hub,
+  enumeração do registro e metadados/precedência das rotas.
+  **Testes PHPUnit, Kernel, Runtime e Firefox ESR/X11 não executados por esta
+  edição no GitHub**. Não afirmar homologação ou RC.
+- Próximo passo: validar PHPUnit/Kernel/HTTP autenticado e decidir a entrega
+  controlada da nova home `/studio`, com inventário dos links legados;
+  a migração dos formulários permanece P2/P3.
+
 ## 0.1.0-dev.8 — STUDIO-P1-A: entrada pessoal inicial — 2026-10-24
 
 - Provider `PersonalExperienceProvider` (`pessoal`) registrado no
