@@ -5,8 +5,10 @@
   Access, limita a seis resultados e revalida acesso ao renderizar. Resultados
   são sugestões: não impedem salvar e a ação não persiste o Node em criação.
 - Kernel MariaDB cobre grants diferentes, rascunho e outro Domain; só o título
-  público autorizado aparece (1 teste / 34 asserções). PHPCS/lint passaram;
-  198 depreciações upstream e 2 PHPUnit. Runtime e visual intocados.
+  público autorizado aparece (1 teste / 34 asserções). PHPCS/lint e gate Drupal 11
+  passaram; 198 depreciações upstream e 2 PHPUnit. O validador Portal–tema segue
+  falhando em 12 ocorrências preexistentes no escopo Wiki/Portal; a nova classe
+  não referencia tema. Runtime e visual intocados.
 
 ## Revalidação R2 — rotas e acesso no HEAD `c610030dd`
 

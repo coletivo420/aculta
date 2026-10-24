@@ -7,7 +7,7 @@ pendentes, está em
 
 ## Estado atual
 
-- `0.1.0-dev.94`: a criação oferece busca não bloqueante de até seis títulos publicados e visíveis no Domain Wiki; Entity Access é revalidado. Kernel MariaDB 1/34; PHPCS/lint passaram. Runtime e visual intocados.
+- `0.1.0-dev.94`: a criação oferece busca não bloqueante de até seis títulos publicados e visíveis no Domain Wiki; Entity Access é revalidado. Kernel MariaDB 1/34; PHPCS/lint e gate Drupal 11 passaram. O gate Portal–tema reporta 12 ocorrências existentes fora da nova classe. Runtime e visual intocados.
 
 - R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB passaram (3/148), incluindo rotas, CTA por `createAccess()` e cache/grants da busca. Runtime não foi alterado nem homologado.
 

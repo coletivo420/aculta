@@ -18,7 +18,9 @@ O formulário de criação pode consultar títulos semelhantes por uma ação pr
 A consulta retorna no máximo seis verbetes publicados do Domain Wiki sujeitos
 a Entity Access; links são revalidados antes de exibir. A sugestão não bloqueia
 nem salva a criação. Kernel MariaDB focal passou (1/34; 198 depreciações
-upstream, 2 PHPUnit); PHPCS/lint passaram. Runtime e Firefox não executados.
+upstream, 2 PHPUnit); PHPCS/lint e gate Drupal 11 passaram. O validador
+Portal–tema apontou 12 ocorrências em código/testes Wiki/Portal já existentes; a
+nova classe não referencia tema. Runtime e Firefox não executados.
 
 ### Revalidação R2 — rotas e acesso no HEAD `c610030dd`
 
