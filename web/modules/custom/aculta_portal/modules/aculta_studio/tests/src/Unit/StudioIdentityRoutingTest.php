@@ -24,6 +24,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $expected = [
       '/studio' => 'aculta_studio.hub',
       '/studio/conta' => 'aculta_studio.account',
+      '/studio/conta/endereco' => 'aculta_studio.account_address',
+      '/studio/conta/seguranca' => 'aculta_studio.account_security',
+      '/studio/conta/seguranca/senha' => 'aculta_studio.account_password',
+      '/studio/conta/conexoes' => 'aculta_studio.account_connections',
       '/studio/perfil' => 'aculta_studio.profile',
       '/studio/perfil/privacidade' => 'aculta_studio.profile_privacy',
       '/studio/perfil/bio' => 'aculta_studio.profile_bio',
@@ -49,7 +53,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
    */
   public function testHubAccountAndProfileAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.account'] as $id) {
+    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.account_address', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
@@ -59,6 +63,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
+    }
+    self::assertArrayNotHasKey('aculta_studio.account_data', $routes);
+    foreach (['aculta_studio.account_address', 'aculta_studio.account_security', 'aculta_studio.account_password', 'aculta_studio.account_connections'] as $id) {
+      self::assertTrue($routes[$id]['options']['no_cache']);
     }
     self::assertSame('aculta_studio.hub_controller:page',
       $routes['aculta_studio.hub']['defaults']['_controller']);
