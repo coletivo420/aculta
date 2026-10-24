@@ -1,3 +1,10 @@
+## 0.1.1-dev.115 — testar retry e liberação do lock após exceção — 2026-10-24
+
+- O teste integrado provoca uma exceção no primeiro envio, verifica liberação
+  do lock e confirma que a mesma linha é enviada e reconhecida na tentativa
+  seguinte. Unit Messenger + adapters: 142 testes / 876 assertions PASS;
+  PHPCS Drupal/DrupalPractice e PHP lint PASS. Transporte permanece controlado.
+
 ## 0.1.1-dev.114 — cobrir lock do digest entre requisições — 2026-10-24
 
 - Kernel MariaDB usa um segundo `PersistentDatabaseLockBackend` sobre a mesma

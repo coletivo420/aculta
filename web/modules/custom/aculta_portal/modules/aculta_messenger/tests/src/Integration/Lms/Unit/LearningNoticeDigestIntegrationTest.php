@@ -79,14 +79,24 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   public function testTransportExceptionKeepsLmsRowsPending(): void {
     $provider = new TestLearningDigestProvider([27]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects($this->once())
+    $attempt = 0;
+    $mailer->expects($this->exactly(2))
       ->method('deliver')
-      ->willThrowException(new \RuntimeException('Synthetic transport failure.'));
-    $summary = $this->createSummary($provider, $mailer, TRUE);
+      ->willReturnCallback(static function () use (&$attempt): SendResult {
+        if (++$attempt === 1) {
+          throw new \RuntimeException('Synthetic transport failure.');
+        }
+        return SendResult::sent();
+      });
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 120.0)->willReturn(TRUE);
+    $lock->expects($this->exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
 
     $this->assertSame(0, $summary->enviarResumos());
-    $this->assertSame([], $provider->marked);
-    $this->assertSame([], $provider->markedDeliveryIds);
+    $this->assertSame(1, $summary->enviarResumos(), 'The same pending rows are retried after the failed transport attempt.');
+    $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
     $this->assertSame([], $provider->discarded);
   }
 
@@ -121,7 +131,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(TestLearningDigestProvider $provider, AcultaMailerInterface $mailer, bool $optIn): AvisosResumo {
+  private function createSummary(TestLearningDigestProvider $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -175,7 +185,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         ),
       ),
       $this->createConfiguredMock(UuidInterface::class, ['generate' => '00000000-0000-4000-8000-000000000001']),
-      $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
+      $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       [$provider],
     );
   }
