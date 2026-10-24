@@ -41,6 +41,42 @@ já dispõe de um builder neutro de cartões; o ACULTA420 apresenta o SDC
 experimental compartilhado. A integração dos cartões nas discussões atuais e no
 motor novo segue por contexto e fases.
 
+## Direção de comunicação e novas fases — F-D41 (2026-10-24)
+
+**O Fórum é um sistema de discussões e conteúdo, não um sistema de chat
+privado.** O novo plano F-M0–F-M7 organiza a consolidação do módulo com a
+plataforma compartilhada `aculta_messenger`, sem reiniciar as implementações
+já entregues nem presumir que a futura API de eventos esteja disponível.
+
+- **Tópico público e resposta:** `aculta_forum_topic`,
+  `aculta_forum_post` revisionável e Comments legados em migração;
+  a publicação só gera atividade visível conforme moderação, access e Domain.
+- **Discussão contextual:** Comments de Revista, LMS e Wiki permanecem
+  associados às respectivas entidades, providers e regras de acesso. Não são
+  conversas privadas, nem criam automaticamente threads de Messenger.
+- **Seguir conteúdo:** a Flag `seguir_topico` e a publicação autorizada
+  alimentam avisos pessoais do Messenger (`aculta_aviso`), agregados por
+  usuário/tipo/tópico e com resumo diário por e-mail opt-in. Seguir não
+  concede acesso e não cria grupos de conversa.
+- **Conversar com membro:** ação explícita de perfil/autor que utiliza as
+  conversas normais do Private Message integrado ao Messenger, respeitando
+  os bloqueios e a política de privacidade.
+- **Transporte:** `aculta_mailer`; o Fórum não envia SMTP, não administra
+  inbox e não implementa worker próprio de avisos.
+- **Migração:** manter `aculta_aviso`, watermarks separados para Comment e
+  ForumPost, e os hooks existentes enquanto a API transversal ADR-XK-02
+  não for implementada, caracterizada e migrada sem duplicação.
+
+As principais pendências do Fórum continuam sendo provas de migração de
+Comments para ForumPosts, anexos/limpeza, Search API/grants e contagens
+access-aware, homologação de telas/fluxos e eventual ativação **autorizada**
+dos fóruns restritos (F-GROUP 0.1–0.7 concluídos tecnicamente, desligados
+por padrão).
+
+**Plano vigente:** [fases F-M0–F-M7](docs/ROADMAP.md).
+**Decisão:** [F-D41](docs/DECISOES.md).
+**Contrato transversal:** [Avisos e notificações](../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md).
+
 ## Arquitetura e regras
 
 - A administração do Growroom fica em `/painel-administrativo/forum`. Os
