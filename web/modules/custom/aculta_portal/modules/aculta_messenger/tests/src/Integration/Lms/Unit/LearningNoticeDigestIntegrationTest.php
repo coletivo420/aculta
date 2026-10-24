@@ -61,6 +61,28 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Duplicate provider deliveries are rendered and acknowledged once.
+   */
+  public function testDuplicateDeliveryIdsAreIncludedOnlyOnce(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $provider->additionalRows[] = [
+      'tipo' => 'aprendizagem',
+      'titulo' => 'Atividade no curso',
+      'quantidade' => 1,
+      'delivery_id' => 501,
+    ];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->with($this->callback(static fn (MailMessage $message): bool => substr_count($message->context['resumo'], 'Atividade no curso') === 1))
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
+  }
+
+  /**
    * A failed email must leave LMS digest rows available for a later run.
    */
   public function testFailedDigestDeliveryKeepsLmsRowsPending(): void {

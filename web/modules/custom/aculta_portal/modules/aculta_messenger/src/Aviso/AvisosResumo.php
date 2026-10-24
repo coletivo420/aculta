@@ -252,13 +252,21 @@ final class AvisosResumo {
       if ($providerRows === []) {
         continue;
       }
-      $eligibleRows = array_values(array_filter(
-        $providerRows,
-        fn(array $row): bool => is_int($row['delivery_id'] ?? NULL)
-          && $row['delivery_id'] > 0
-          && (($row['tipo'] ?? NULL) === NULL
-            || $this->preferencias->emailMode($uid, (string) $row['tipo']) === AvisoPreferencias::EMAIL_DIGEST),
-      ));
+      $eligibleRowsByDeliveryId = [];
+      foreach ($providerRows as $row) {
+        if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {
+          continue;
+        }
+        if (($row['tipo'] ?? NULL) !== NULL
+          && $this->preferencias->emailMode($uid, (string) $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
+          continue;
+        }
+        // Provider implementations are extensible and may join through more
+        // than one relation. A delivery ID represents one persisted notice;
+        // never repeat that notice in the email or its idempotency manifest.
+        $eligibleRowsByDeliveryId[$row['delivery_id']] ??= $row;
+      }
+      $eligibleRows = array_values($eligibleRowsByDeliveryId);
       if ($eligibleRows === []) {
         // Preferences can change after a provider queued a digest row. Clear
         // those pending records instead of sending after the user opted out

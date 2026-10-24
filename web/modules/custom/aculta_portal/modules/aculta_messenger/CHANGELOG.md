@@ -1777,3 +1777,9 @@ A lista agrupa avisos Message de LMS, Wiki, Loja e Doações quando compartilham
 
 Validação: `NoticeRelatedGrouperTest` 2/13 PASS; PHPCS Drupal/DrupalPractice dos arquivos novos e adapters tocados PASS; lint PHP focal PASS; smoke visual pendente.
 
+## 0.1.1-dev.167 — deduplicar linhas de digest por delivery ID — 2026-10-24
+
+O Messenger agora remove linhas duplicadas emitidas pelo mesmo provider antes de montar o corpo e o manifesto do digest. Um `delivery_id` representa uma única notificação persistida e aparece/é confirmado uma só vez, mesmo se uma consulta do provider duplicar o registro.
+
+Validação: `LearningNoticeDigestIntegrationTest` 15/118 PASS; suíte LMS Integration Unit + `AvisosResumoProviderPreferenceTest` 38/371 PASS; Kernel MariaDB de recuperação/lease 2/54 PASS; Unit Messenger 150/932 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Mailer real ou Runtime.
+
