@@ -1,3 +1,16 @@
+## 0.4.1-dev.25 — mesmos formulários de endereço em Conta Studio e legado (2026-10-24)
+
+- `PortalHooks` agora reconhece o ID de rota
+  `aculta_studio.account_address` além de
+  `aculta_portal.my_data_address`, preservando ocultação de campos
+  redundantes, país BR, Número/S-N, CEP, builders e o mesmo Profile
+  Commerce. Não mudou entidade, schema nem checkout.
+- `PortalFormCallbacks::addressRedirect` retorna ao editor pelo qual
+  o usuário salvou, sem mudar o retorno original da Conta legada.
+- Gate `scripts/validate-account-address.php` ampliado aos dois
+  editores; teste Unit do callback criado. **Execução desses gates,
+  Kernel/Runtime/Firefox pendente** nesta edição GitHub.
+
 ## 0.4.1-dev.24 — política global sem aliases temporários (2026-10-24)
 
 - Removidos redirects de /minha-conta/* (agora 404), URLs antigas de address-book Commerce e listagem /pagamentos, bem como handlers órfãos. As rotas canônicas /, /dados/endereco e /pedidos permanecem; fluxos funcionais de autenticação, checkout e pagamento não foram alterados. Testes Runtime pendentes.
