@@ -33,8 +33,8 @@ services:
   aculta_studio.account_controller:
     class: Drupal\aculta_studio\Controller\AccountController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
-  aculta_studio.personal_profile_controller:
-    class: Drupal\aculta_studio\Controller\PersonalProfileController
+  aculta_studio.profile_controller:
+    class: Drupal\aculta_studio\Controller\StudioProfileController
     arguments:
       - '@entity_type.manager'
       - '@current_user'
