@@ -1,3 +1,13 @@
+## Listagem pública sob grants antes da paginação, 2026-10-24
+
+- `PublicForumListingAccessKernelTest` (2 testes / 26 asserções, MariaDB):
+  View baseada em nodes com pager de uma linha. Anônimo: total 1, só o tópico
+  público. Membro: total 2 e a segunda página mostra o restrito. O node access
+  filtra antes da paginação e o total reflete o grant.
+- Usa o fixture de grant `aculta_forum_counter_test`; sem custom plugins do
+  Fórum, prova o comportamento da View pública.
+- Suíte Kernel do Fórum 106/2.164; PHPCS limpo.
+
 ## Lote da migração de Comments — mapa persistente, 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` (1 teste / 26 asserções, MariaDB):

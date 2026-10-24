@@ -1,3 +1,12 @@
+## `0.1.0-dev.281` — provar grants antes da paginação na listagem — 2026-10-24
+
+- Kernel executa uma View pública baseada em nodes com pager de uma linha: o
+  anônimo vê total 1 e só o tópico público; o membro vê total 2 e a segunda
+  página traz o tópico restrito. O filtro de node access ocorre antes da
+  paginação e a contagem total respeita o grant.
+- Testes: listagem 2/26; suíte Kernel do Fórum 106/2.164; PHPCS limpo. Nenhuma
+  configuração ou Runtime foi alterado.
+
 ## `0.1.0-dev.280` — provar revogação de acesso ao anexo — 2026-10-24
 
 - Kernel despublica o tópico hospedeiro e confirma que a Media do Fórum deixa
