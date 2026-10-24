@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.180` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.181` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -110,6 +110,11 @@ O formulário de privacidade testa a mesma restrição administrativa de modos p
 Fórum, Aprendizagem, Wiki, Loja e Doações: a opção direta pode ser removida sem
 remover `off`, digest ou os avisos obrigatórios no site. `AvisosPrivacyFormTest`
 e os testes de preferência/configuração passaram em conjunto (12/76).
+
+MAG 0.5-H foi inventariada: a Revista tem `uid`/`co_authors` e publica por
+transições do workflow, mas não há assinatura editorial nem publisher de avisos.
+Os destinatários (autor/coautores e exclusão de quem publica) aguardam definição;
+por isso a categoria `revista` e o consumer ainda não foram ativados.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
 de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da

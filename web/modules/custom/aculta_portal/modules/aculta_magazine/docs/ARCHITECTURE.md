@@ -128,3 +128,22 @@ cabeçalho, formulário próprio nem fila de moderação.
 
 A matriz de autorização editorial (atores × estados × ações) é coberta em 0.5-B por Kernel/Unit adicionais; testes
 estáticos não substituem validação de access do Drupal.
+
+## 11. Integração com avisos do ACULTA Messenger
+
+Inventário de 2026-10-24: o Magazine tem um único bundle `revista`, revisão editorial no workflow (`draft`, `review`,
+`published`, `archived`), autor em `node.uid` e coautores em `co_authors`. A publicação pode resultar de `publish`
+(`draft` → `published`) ou `review_to_published` (`review` → `published`). O código atual não tem publisher de eventos
+do Messenger nem mecanismo de assinatura de publicações. Comentários seguem no Node e não constituem audiência de
+notificação.
+
+Não emitir aviso de rascunho, edição comum, revisão salva, arquivamento ou comentário. Um evento candidato é uma
+transição efetivamente salva para `published`; os destinatários ainda dependem de decisão editorial sobre autor e
+coautores e sobre excluir a conta que executou a publicação. Essa audiência não deve ser inferida de permissões de
+edição nem de quem comentou.
+
+Quando o contrato de destinatários for aprovado, o Magazine será responsável apenas por publicar o evento de origem
+através do contrato compartilhado. `aculta_messenger` será dono da validação, deduplicação, Message, central, política
+de e-mail e revalidação da publicação; `aculta_mailer` continuará dono do transporte. A categoria `revista` deverá
+entrar nas preferências compartilhadas antes de habilitar entrega por e-mail. Nenhuma conversa privada ou thread será
+criada pelo evento. Até essa decisão, a integração permanece não implementada e não há consumer Magazine no Messenger.

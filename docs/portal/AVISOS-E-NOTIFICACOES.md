@@ -56,13 +56,23 @@ O evento, a contagem, a apresentação, o link de abertura e a entrega revalidam
 - Assinatura e payload enfileirado não são autorização.
 - O link deve usar rota canônica resolvida pelo propósito correto; não fixar host de ambiente.
 
-## 5. Integração futura com API de eventos
+## 5. Revista: integração ainda em definição
+
+O bundle `revista` tem workflow editorial real, autor (`node.uid`) e coautores (`co_authors`), mas não tem assinatura de
+publicações nem publisher/consumer Messenger implementado. O evento candidato é a transição persistida para
+`published`; rascunho, edição comum, revisão salva, arquivamento e Comments não notificam automaticamente. A audiência
+(autor/coautores e se o ator deve ser excluído) aguarda decisão editorial. Comentários contextuais continuam sendo
+Comments da publicação; não criam chats, grupos ou threads privadas. Se aprovado, Magazine publica apenas o evento e
+Messenger aplica Message, acesso, deduplicação, avisos no site e modos de e-mail; a categoria `revista` deve ser
+incluída nas preferências compartilhadas antes da entrega por e-mail.
+
+## 6. Integração futura com API de eventos
 
 `aculta_forum` publica informações mínimas sobre evento, entidade/revisão e contexto. A política de destinatários continua vinculada às assinaturas e ao acesso do conteúdo; `aculta_messenger` concentra agregação, idempotência, estado de leitura e coordenação de canais; `aculta_mailer` faz o envio.
 
 A ADR-XK-02 propõe um envelope com tipo de evento, módulo, UUID/revisão, destinatário, propósito, data e chave de idempotência. **É contrato planejado, não uma API já implementada.** Migrar os produtores gradualmente e comparar resultados lado a lado, sem disparo duplo.
 
-## 6. Critérios de aceite e referências
+## 7. Critérios de aceite e referências
 
 - Seguir não cria thread nem concede leitura de conteúdo restrito.
 - Primeira resposta publicada conta uma vez; edições e republicações não a duplicam.

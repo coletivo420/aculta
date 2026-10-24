@@ -1,6 +1,6 @@
 # ACULTA Messenger: documentação do projeto
 
-Versões de referência: `aculta_messenger` 0.1.1-dev.30, `aculta_portal` 0.4.0-dev.31, tema `aculta420` 0.6.0-dev.52.
+Versões verificadas nesta revisão: `aculta_messenger` 0.1.1-dev.181, `aculta_portal` 0.4.1-dev.29, tema `aculta420` 0.6.1-dev.12.
 Auditoria de fronteiras: [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
 Guia do tema: [`web/themes/custom/aculta420/docs/messenger.md`](../../web/themes/custom/aculta420/docs/messenger.md).
 Documentos anteriores do submódulo (em parte desatualizados, ver auditoria A8): `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/`.
@@ -25,7 +25,7 @@ Princípios:
 | --- | --- | --- |
 | Core/contrib | `private_message`, `message*`, `flag`, `site_alert` | Threads, mensagens, bloqueio (`private_message.ban_manager`), notificações, avisos, leitura. |
 | `aculta_user` | `web/modules/custom/aculta_portal/modules/aculta_user/` | `FriendshipManager`, `aculta_friendship`, página `/u/`, hook `aculta_user_public_profile_actions`. |
-| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos e todos os consumers/adapters de LMS, Wiki, Fórum, Loja e Doações. |
+| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos e consumers/adapters de LMS, Wiki, Fórum, Loja e Doações. A integração Magazine está em inventário: aguarda definição da audiência antes de ativar consumer. |
 | `aculta420` | `web/themes/custom/aculta420/` | SDC `messenger-*`, `messenger-drawers.js`, `counters.js`, tokens `data-portal-ui`, CSS do painel. |
 
 Dependências declaradas do submódulo: `aculta_portal:aculta_portal`, `aculta_portal:aculta_user`, `private_message`, `message`, `message_notify`, `message_subscribe`.

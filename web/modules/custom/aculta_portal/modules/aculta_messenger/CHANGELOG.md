@@ -1,3 +1,14 @@
+## 0.1.1-dev.181 — inventariar a integração editorial da Revista
+
+O roadmap M5/MAG 0.5-H agora registra os pontos reais do Magazine (`revista`, workflow, `uid`, `co_authors`) e a
+ausência de assinatura/publicador. A transição salva para `published` é o único evento candidato nesta análise; a
+seleção de destinatários aguarda definição editorial. Não foi criado consumer, categoria paralela, inbox ou conversa.
+
+Validação: revisão cruzada dos contratos Magazine/Messenger e do workflow versionado; `RevistaEditorialAccessKernelTest`
+e `RevistaPublicationsTest` **13/506 PASS**; suíte Unit Messenger 158/1.058 PASS e Kernels de persistência
+LMS/Wiki/Loja/Doações 18/289 PASS. O Kernel confirma workflow/access existente, não integração de avisos. Sem Runtime
+e sem entrega de e-mail da Revista.
+
 ## 0.1.1-dev.180 — cobrir a política administrativa de e-mail entre categorias
 
 O teste do formulário de privacidade verifica que todas as categorias integradas obedecem à mesma política de modos
