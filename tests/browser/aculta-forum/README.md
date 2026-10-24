@@ -236,3 +236,24 @@ DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-sintetic
   Fórum.
 - uid 1 no dump local; as regras de autorização de não-superusuário seguem nos
   Kernels access-aware.
+
+## Acessibilidade pré-deploy
+
+`accessibility-readonly.py` abre páginas públicas e administrativas do Fórum
+com sessão autenticada e mede, sem submeter formulário: `h1` único, hierarquia
+de títulos sem salto, nome acessível dos controles, `alt` das imagens, texto
+dos links, IDs únicos e indicador de foco ao percorrer o conteúdo principal
+com Tab.
+
+```bash
+DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-a11y' \
+  SUITE_THEME=olivero python3 -I tests/browser/aculta-forum/accessibility-readonly.py
+```
+
+- `SUITE_THEME` (`olivero` ou `aculta420`) troca o tema padrão **local** antes
+  da medição e restaura o original no `finally`; sem a variável, mede o tema
+  ativo.
+- O toolbar global de administração fica fora da amostra de foco por ser
+  mobília do tema; as paradas são contadas dentro de `<main>`.
+- Não cria conteúdo, não envia formulário e não dispara e-mail.
+- Rodada do candidato RC: 49/49 em ACULTA420 e 49/49 em Olivero.
