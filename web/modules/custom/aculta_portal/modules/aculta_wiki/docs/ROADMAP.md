@@ -4,13 +4,26 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.87**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.88**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.88 — filtros de estado no Meu Trabalho WE SATIVA
+
+O workspace agora expõe os filtros GET `Em andamento`, `Em revisão`,
+`Publicados` e `Todos` para os verbetes próprios. Como `moderation_state` não é
+campo consultável diretamente pela Entity Query de Node, o serviço seleciona
+candidatos pelo estado de publicação, lê workflow state na entidade carregada e
+limita cada varredura a 500 Nodes. Cursor de estado é keyset por `changed`/ID;
+cursor de proposta permanece separado e é preservado ao alternar filtros. Links
+usam Domain `account`, resetam o cursor de verbetes e anunciam o filtro ativo.
+Kernel focal passou (1/141), incluindo paginação de 20+3 verbetes sem perda ou
+duplicação; os três Kernels do workspace passaram (3/235).
+PHPCS/lint passaram; Runtime intocado.
 
 ### Revalidação no HEAD `d3bfd3715` — Content Index e ciclo de imagem
 

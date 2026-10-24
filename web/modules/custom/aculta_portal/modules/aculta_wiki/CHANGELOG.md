@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.88 — filtros de estado no Meu Trabalho WE SATIVA
+
+- Adiciona navegação GET para `Em andamento` (rascunho), `Em revisão`,
+  `Publicados` e `Todos`, baseada nos estados oficiais do workflow.
+- O Domain `account`, o cursor independente das propostas, o marcador
+  acessível `aria-current` e o cache context do filtro são preservados. A
+  consulta faz varredura limitada e revalida Entity Access antes de renderizar.
+- Kernel focal passou com 1 teste / 141 assertions; três Kernels WE SATIVA
+  passaram com 3 / 235, incluindo página 20+3 sem perda ou duplicação de
+  verbetes filtrados. PHPCS Drupal/DrupalPractice e PHP lint passaram.
+  Runtime intocado.
+
 ## Revalidação no HEAD `d3bfd3715` — sem alteração de versão ou código
 
 - Content Index: providers Unit Wiki/categoria 9 testes / 40 assertions;

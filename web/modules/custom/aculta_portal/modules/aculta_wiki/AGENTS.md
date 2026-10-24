@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.88: Meu Trabalho filtra verbetes por `draft`, `review`, `published` ou
+  todos; estado lido da entidade, busca limitada/cursor estável, links no
+  Domain `account`, cursor de propostas separado. Kernel focal 1/141 e
+  workspace 3/235; PHPCS/lint passam; Runtime intocado.
+
 - Revalidação no HEAD `d3bfd3715`: Content Index Unit 9/40 e quatro Kernels
   MariaDB 11/385; projeção v4 inalterada. Ciclo de imagem Kernel 25/1.187;
   291 depreciações Core/contrib e 26 PHPUnit. Runtime intocado.

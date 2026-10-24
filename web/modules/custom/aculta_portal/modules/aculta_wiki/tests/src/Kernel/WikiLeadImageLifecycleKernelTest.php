@@ -1351,6 +1351,169 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * WE SATIVA entry filters follow workflow state and keep proposals separate.
+   */
+  public function testWeSativaWorkspaceFiltersOwnEntriesByWorkflowState(): void {
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['workflows', 'content_moderation']);
+    $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
+    Workflow::create(Yaml::parseFile($workflowFile))->save();
+    ProfileType::create(['id' => 'email_confirmed', 'label' => 'Confirmed account profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'email_confirmed',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'wiki_workspace_state_filter_test',
+      'label' => 'Wiki workspace state filter test',
+      'permissions' => ['access content', 'create wiki_entry content', 'edit own wiki_entry content'],
+    ])->save();
+    $author = User::create([
+      'uid' => 71,
+      'name' => 'wiki-workspace-state-author',
+      'status' => TRUE,
+      'roles' => ['wiki_workspace_state_filter_test'],
+    ]);
+    $author->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+    $this->container->get('current_user')->setAccount($author);
+    Domain::create([
+      'id' => 'conta_aculta_org',
+      'hostname' => 'account.example.invalid',
+      'name' => 'account',
+      'scheme' => 'https',
+      'status' => TRUE,
+      'is_default' => FALSE,
+      'weight' => 1,
+    ])->save();
+
+    $expectedDraftIds = [];
+    foreach ([
+      'draft' => ['Rascunho WE SATIVA', FALSE],
+      'review' => ['Em revisão WE SATIVA', FALSE],
+      'published' => ['Publicado WE SATIVA', TRUE],
+    ] as $state => [$title, $published]) {
+      $node = Node::create([
+        'type' => 'wiki_entry',
+        'title' => $title,
+        'uid' => $author->id(),
+        'status' => $published,
+        'moderation_state' => $state,
+        'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+        'field_wiki_test_grant_uid' => $author->id(),
+      ]);
+      $node->save();
+      if ($state === 'draft') {
+        $expectedDraftIds[] = (int) $node->id();
+      }
+    }
+    for ($index = 1; $index <= 22; $index++) {
+      $node = Node::create([
+        'type' => 'wiki_entry',
+        'title' => sprintf('Rascunho paginado %02d', $index),
+        'uid' => $author->id(),
+        'status' => FALSE,
+        'moderation_state' => 'draft',
+        'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+        'field_wiki_test_grant_uid' => $author->id(),
+      ]);
+      $node->save();
+      $expectedDraftIds[] = (int) $node->id();
+    }
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+
+    $workspace = $this->container->get('aculta_wiki.contributor_workspace');
+    $requestStack = $this->container->get('request_stack');
+    $cases = [
+      'all' => ['count' => 20, 'state' => NULL],
+      'in_progress' => ['count' => 20, 'state' => 'draft'],
+      'review' => ['count' => 1, 'state' => 'review'],
+      'published' => ['count' => 1, 'state' => 'published'],
+      'malformed' => ['count' => 20, 'state' => NULL],
+    ];
+    foreach ($cases as $filter => $expectation) {
+      $query = ['wiki_proposal_cursor' => '1720000000-9'];
+      if ($filter === 'malformed') {
+        $query['wiki_node_state'] = ['review'];
+      }
+      elseif ($filter !== 'all') {
+        $query['wiki_node_state'] = $filter;
+      }
+      $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+      try {
+        $build = $workspace->build($author);
+      }
+      finally {
+        $requestStack->pop();
+      }
+
+      $items = $build['entries']['#slots']['body']['items']['#slots']['items'];
+      self::assertCount($expectation['count'], $items, 'Filter ' . $filter . ' returns the expected page size.');
+      if ($expectation['state'] !== NULL) {
+        foreach ($items as $item) {
+          $nodeId = (int) $item['#slots']['header']['#url']->getRouteParameters()['node'];
+          $node = Node::load($nodeId);
+          self::assertSame($expectation['state'], $node->get('moderation_state')->value);
+        }
+      }
+      self::assertContains('url.query_args:wiki_node_state', $build['#cache']['contexts']);
+
+      $filterLinks = $build['entries']['#slots']['body']['filters']['#slots']['items']['#items'];
+      self::assertCount(4, $filterLinks);
+      foreach ($filterLinks as $link) {
+        self::assertSame('conta_aculta_org', $link['#url']->getOption('domain')->id());
+        self::assertSame('1720000000-9', $link['#url']->getOption('query')['wiki_proposal_cursor']);
+        self::assertArrayNotHasKey('wiki_node_cursor', $link['#url']->getOption('query'));
+      }
+      $activeLinks = array_filter($filterLinks, static fn (array $link): bool => isset($link['#url']->getOption('attributes')['aria-current']));
+      self::assertCount(1, $activeLinks);
+      $activeLink = reset($activeLinks);
+      self::assertSame($filter === 'malformed' ? 'all' : $filter, $activeLink['#url']->getOption('query')['wiki_node_state'] ?? 'all');
+    }
+
+    $requestStack->push(Request::create('/studio/we-sativa', 'GET', [
+      'wiki_node_state' => 'in_progress',
+      'wiki_proposal_cursor' => '1720000000-9',
+    ]));
+    try {
+      $firstDraftPage = $workspace->build($author);
+    }
+    finally {
+      $requestStack->pop();
+    }
+    $firstDraftItems = $firstDraftPage['entries']['#slots']['body']['items']['#slots']['items'];
+    self::assertArrayHasKey('next_page', $firstDraftPage['entries']['#slots']['body']);
+    $nextQuery = $firstDraftPage['entries']['#slots']['body']['next_page']['#url']->getOption('query');
+    self::assertSame('in_progress', $nextQuery['wiki_node_state']);
+    self::assertSame('1720000000-9', $nextQuery['wiki_proposal_cursor']);
+    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $nextQuery));
+    try {
+      $secondDraftPage = $workspace->build($author);
+    }
+    finally {
+      $requestStack->pop();
+    }
+    $secondDraftItems = $secondDraftPage['entries']['#slots']['body']['items']['#slots']['items'];
+    self::assertCount(3, $secondDraftItems);
+    $draftIds = [];
+    foreach (array_merge($firstDraftItems, $secondDraftItems) as $item) {
+      $draftIds[] = (int) $item['#slots']['header']['#url']->getRouteParameters()['node'];
+    }
+    self::assertCount(23, array_unique($draftIds));
+    self::assertEqualsCanonicalizing($expectedDraftIds, $draftIds);
+    self::assertArrayNotHasKey('next_page', $secondDraftPage['entries']['#slots']['body']);
+  }
+
+  /**
    * Confirmed Wiki authors receive a native draft form without publish access.
    */
   public function testConfirmedContributorBuildsNativeDraftForm(): void {

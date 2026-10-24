@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.88`: Meu Trabalho WE SATIVA agora filtra verbetes por rascunho,
+  revisão, publicado ou todos. O workflow é lido da entidade; consulta e
+  paginação são limitadas, Domain `account` e cache GET preservados, e a
+  paginação de propostas segue independente. Kernel focal 1/141; suíte
+  workspace 3/235. Runtime intocado.
+
 - Revalidação no HEAD `d3bfd3715` (sem alteração de código): providers Wiki/
   categoria Content Index passaram em 9/40; quatro Kernels MariaDB de R1 em
   11/385. O ciclo completo da imagem passou em 25/1.187. A projeção permanece

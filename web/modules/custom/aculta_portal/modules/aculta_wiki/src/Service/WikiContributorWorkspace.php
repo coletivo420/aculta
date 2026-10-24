@@ -30,6 +30,28 @@ final class WikiContributorWorkspace {
 
   private const PAGE_SIZE = 20;
 
+  /**
+   * Number of own Node candidates inspected to fill a filtered page.
+   */
+  private const NODE_CANDIDATE_BATCH_SIZE = 100;
+
+  /**
+   * Bounded scan cap so stale or rare states cannot create unbounded queries.
+   */
+  private const MAX_NODE_CANDIDATES_PER_PAGE = 500;
+
+  /**
+   * Contributor-visible workflow filters for their own entries.
+   *
+   * @var array<string, array{state: string|null}>
+   */
+  private const ENTRY_FILTERS = [
+    'in_progress' => ['state' => 'draft'],
+    'review' => ['state' => 'review'],
+    'published' => ['state' => 'published'],
+    'all' => ['state' => NULL],
+  ];
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly DomainPurposeManager $domainPurposes,
@@ -90,6 +112,7 @@ final class WikiContributorWorkspace {
         'user.permissions',
         'domain',
         'url.query_args:wiki_node_cursor',
+        'url.query_args:wiki_node_state',
         'url.query_args:wiki_proposal_cursor',
       ])
       ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
@@ -121,9 +144,10 @@ final class WikiContributorWorkspace {
     }
 
     $nodeCursor = $this->requestCursor('wiki_node_cursor');
-    $nodePage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $nodeCursor, $cacheability): array {
+    $nodeState = $this->requestEntryState();
+    $nodePage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $nodeCursor, $nodeState, $cacheability): array {
       $items = [];
-      $page = $this->ownNodes($account, $nodeCursor);
+      $page = $this->ownNodes($account, $nodeCursor, $nodeState);
       foreach ($page['items'] as $node) {
         if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry') {
           continue;
@@ -166,7 +190,19 @@ final class WikiContributorWorkspace {
     if (is_string($nodePage['next_cursor'] ?? NULL)) {
       $nodeNextPage = $this->nextPageLink($this->t('Mais verbetes'), 'wiki_node_cursor', $nodePage['next_cursor']);
     }
-    $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $this->t('Você ainda não criou verbetes.'), $nodeNextPage);
+    $emptyEntriesMessage = match ($nodeState) {
+      'in_progress' => $this->t('Você não tem rascunhos em andamento.'),
+      'review' => $this->t('Você não tem verbetes em revisão.'),
+      'published' => $this->t('Você ainda não tem verbetes publicados.'),
+      default => $this->t('Você ainda não criou verbetes.'),
+    };
+    $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $emptyEntriesMessage, $nodeNextPage);
+    $entryBody = $build['entries']['#slots']['body'];
+    $build['entries']['#slots']['body'] = [
+      '#type' => 'container',
+      'filters' => $this->entryFilters($nodeState),
+      ...$entryBody,
+    ];
 
     $proposalCursor = $this->requestCursor('wiki_proposal_cursor');
     $proposalPage = $this->domainPurposes->runInPurpose('wiki', function () use ($account, $proposalCursor, $cacheability): array {
@@ -214,35 +250,83 @@ final class WikiContributorWorkspace {
    * @return array{items: array<int, \Drupal\node\NodeInterface>, next_cursor: string|null}
    *   Candidate Nodes and a continuation position; callers still check access.
    */
-  private function ownNodes(AccountInterface $account, ?string $cursor): array {
+  private function ownNodes(AccountInterface $account, ?string $cursor, string $state): array {
     $storage = $this->entities->getStorage('node');
-    $query = $storage->getQuery()
-      // Owner-scoped candidates only; each loaded entity must pass view access
-      // in build() before its fields are included in the response.
-      ->accessCheck(FALSE)
-      ->condition('type', 'wiki_entry')
-      ->condition('uid', $account->id())
-      ->sort('changed', 'DESC')
-      ->sort('nid', 'DESC')
-      ->range(0, self::PAGE_SIZE + 1);
+    $workflowState = self::ENTRY_FILTERS[$state]['state'];
     $position = $this->parseCursor($cursor);
-    if ($position !== NULL) {
-      $query->condition($query->orConditionGroup()
-        ->condition('changed', $position[0], '<')
-        ->condition($query->andConditionGroup()
-          ->condition('changed', $position[0])
-          ->condition('nid', $position[1], '<')));
+    $items = [];
+    $scanCursor = $position;
+    $candidateCount = 0;
+    $hasMoreCandidates = FALSE;
+    while ($candidateCount < self::MAX_NODE_CANDIDATES_PER_PAGE) {
+      $batchSize = min(self::NODE_CANDIDATE_BATCH_SIZE, self::MAX_NODE_CANDIDATES_PER_PAGE - $candidateCount);
+      $query = $storage->getQuery()
+        // Owner-scoped candidates only; loaded Nodes still pass view access
+        // in build() before any title or workflow state is rendered.
+        ->accessCheck(FALSE)
+        ->condition('type', 'wiki_entry')
+        ->condition('uid', $account->id())
+        ->sort('changed', 'DESC')
+        ->sort('nid', 'DESC')
+        ->range(0, $batchSize);
+      if ($workflowState === 'published') {
+        $query->condition('status', 1);
+      }
+      elseif ($workflowState !== NULL) {
+        // Moderation state is provided by Content Moderation and is not an
+        // Entity Query property on Node. Publication status bounds candidates;
+        // the actual state is checked after loading each entity below.
+        $query->condition('status', 0);
+      }
+      if ($scanCursor !== NULL) {
+        $query->condition($query->orConditionGroup()
+          ->condition('changed', $scanCursor[0], '<')
+          ->condition($query->andConditionGroup()
+            ->condition('changed', $scanCursor[0])
+            ->condition('nid', $scanCursor[1], '<')));
+      }
+      $ids = array_map('intval', array_values($query->execute()));
+      if ($ids === []) {
+        $hasMoreCandidates = FALSE;
+        break;
+      }
+      $hasMoreCandidates = count($ids) === $batchSize;
+      foreach ($storage->loadMultiple($ids) as $node) {
+        if (!$node instanceof NodeInterface) {
+          continue;
+        }
+        $scanCursor = [(int) $node->getChangedTime(), (int) $node->id()];
+        $candidateCount++;
+        $nodeState = $node->hasField('moderation_state') ? (string) $node->get('moderation_state')->value : '';
+        if ($workflowState === NULL || $nodeState === $workflowState) {
+          $items[] = $node;
+          if (count($items) > self::PAGE_SIZE) {
+            break 2;
+          }
+        }
+      }
+      if (!$hasMoreCandidates) {
+        break;
+      }
     }
-    $ids = array_values($query->execute());
-    $hasMore = count($ids) > self::PAGE_SIZE;
-    $ids = array_slice($ids, 0, self::PAGE_SIZE);
-    $items = array_values($storage->loadMultiple($ids));
-    $last = $items === [] ? NULL : $items[array_key_last($items)];
+
+    $hasExtra = count($items) > self::PAGE_SIZE;
+    if ($hasExtra) {
+      $items = array_slice($items, 0, self::PAGE_SIZE);
+      $last = $items[array_key_last($items)];
+      $nextCursor = $this->formatCursor((int) $last->getChangedTime(), (int) $last->id());
+    }
+    elseif ($hasMoreCandidates && $scanCursor !== NULL) {
+      // A bounded scan may fill less than a page after state filtering. Advance
+      // past the final inspected candidate so the next request can continue.
+      $nextCursor = $this->formatCursor($scanCursor[0], $scanCursor[1]);
+    }
+    else {
+      $nextCursor = NULL;
+    }
     return [
       'items' => $items,
-      'next_cursor' => $hasMore && $last instanceof NodeInterface
-        ? $this->formatCursor((int) $last->getChangedTime(), (int) $last->id())
-        : NULL,
+      'next_cursor' => $nextCursor,
     ];
   }
 
@@ -291,6 +375,51 @@ final class WikiContributorWorkspace {
   }
 
   /**
+   * Returns the allowlisted own-entry filter from the current GET request.
+   */
+  private function requestEntryState(): string {
+    $state = $this->requestStack->getCurrentRequest()?->query->all()['wiki_node_state'] ?? NULL;
+    return is_string($state) && isset(self::ENTRY_FILTERS[$state]) ? $state : 'all';
+  }
+
+  /**
+   * Builds account-domain filter links and marks the active filter accessibly.
+   */
+  private function entryFilters(string $active): array {
+    $links = [];
+    foreach (self::ENTRY_FILTERS as $state => $filter) {
+      $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+      if ($url === NULL) {
+        continue;
+      }
+      $query = [];
+      if ($state !== 'all') {
+        $query['wiki_node_state'] = $state;
+      }
+      $requestQuery = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
+      if (isset($requestQuery['wiki_proposal_cursor']) && is_string($requestQuery['wiki_proposal_cursor'])) {
+        $query['wiki_proposal_cursor'] = $requestQuery['wiki_proposal_cursor'];
+      }
+      $url->setOption('query', $query);
+      $attributes = $state === $active ? ['aria-current' => 'page'] : [];
+      $url->setOption('attributes', $attributes);
+      $label = match ($state) {
+        'in_progress' => $this->t('Em andamento'),
+        'review' => $this->t('Em revisão'),
+        'published' => $this->t('Publicados'),
+        default => $this->t('Todos'),
+      };
+      $links[] = Link::fromTextAndUrl($label, $url)->toRenderable();
+    }
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420:context-tabs',
+      '#props' => ['label' => (string) $this->t('Filtrar meus verbetes')],
+      '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
+    ];
+  }
+
+  /**
    * Parses a timestamp-ID keyset position; malformed cursors restart at page 1.
    *
    * @return array{0: int, 1: int}|null
@@ -332,7 +461,7 @@ final class WikiContributorWorkspace {
     }
     $requestQuery = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
     $query = [];
-    foreach (['wiki_node_cursor', 'wiki_proposal_cursor'] as $key) {
+    foreach (['wiki_node_cursor', 'wiki_node_state', 'wiki_proposal_cursor'] as $key) {
       if (isset($requestQuery[$key]) && is_string($requestQuery[$key])) {
         $query[$key] = $requestQuery[$key];
       }
