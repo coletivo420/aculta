@@ -167,8 +167,9 @@ final class AvisosResumo {
     // Recover the exact batch if the Mailer accepted it but a later
     // acknowledgement failed. This prevents a newly grown pending batch from
     // receiving a different correlation and resending already delivered rows.
-    if ($this->recuperarDigestAceito($uid, (string) $conta->getEmail())) {
-      return TRUE;
+    $recuperacao = $this->recuperarDigestAceito($uid, (string) $conta->getEmail());
+    if ($recuperacao !== NULL) {
+      return $recuperacao;
     }
     if (!$this->preferencias->resumoEmailLigado($uid)) {
       foreach ($this->forumAvisosPendentes($uid) as $aviso) {
@@ -391,21 +392,38 @@ final class AvisosResumo {
   }
 
   /**
-   * Reconciles the exact batch left before an accepted Mailer acknowledgement.
+   * Reconciles or defers the exact batch saved before Mailer delivery.
+   *
+   * A recent unaccepted snapshot may belong to a transport that is still
+   * running after its recipient lock lease expired. Keep that manifest stable
+   * until the transport timeout window has elapsed, rather than building a
+   * different correlation from a batch that grew during the in-flight send.
+   *
+   * @return bool|null
+   *   TRUE when an accepted snapshot was reconciled, FALSE when another
+   *   attempt should wait for the in-flight transport window, or NULL when no
+   *   usable snapshot exists and the current pending batch can be built.
    */
-  private function recuperarDigestAceito(int $uid, string $recipient): bool {
+  private function recuperarDigestAceito(int $uid, string $recipient): ?bool {
     $snapshot = $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
     if (!is_array($snapshot) || !is_string($snapshot['correlation_id'] ?? NULL)) {
       if ($snapshot !== NULL) {
         $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       }
-      return FALSE;
+      return NULL;
     }
     if (!$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL, $recipient)) {
-      // A retryable/non-accepted attempt can be rebuilt from current pending
-      // rows. Its stable correlation will be reused if the batch is unchanged.
+      $created = (int) ($snapshot['created'] ?? 0);
+      if ($created > 0 && ($this->time->getRequestTime() - $created) < self::LOCK_LEASE_SECONDS) {
+        // The original worker may still be inside its Mailer call after its
+        // lock expired. Keep the exact correlation for a later retry.
+        $this->logger?->notice('Daily notice digest is waiting for its in-flight delivery window before retrying.');
+        return FALSE;
+      }
+      // The transport window elapsed without acceptance. Rebuild from current
+      // pending rows; an unchanged batch retains its deterministic correlation.
       $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
-      return FALSE;
+      return NULL;
     }
 
     $providers = [];

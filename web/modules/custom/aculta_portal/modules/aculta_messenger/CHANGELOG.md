@@ -1759,3 +1759,15 @@ Validação: `ForumNoticeIdempotencyKernelTest` **34/776 PASS**; `AcultaMailerKe
 `AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**. Sem SMTP externo ou Runtime;
 dois ciclos completos do digest em boots Drupal concorrentes continuam pendentes.
 
+## 0.1.1-dev.165 — preservar manifesto durante transporte concorrente — 2026-10-24
+
+Se uma lease expirar enquanto a chamada de transporte ainda está em andamento, outro worker não apaga o snapshot não
+aceito para montar um manifesto maior com nova correlação. Ele aguarda até o fim da janela de 180 s; o worker original
+que perdeu a lease não confirma linhas, e o cron seguinte reconcilia o aceite persistido do Mailer. Se não houve aceite
+ao fim da janela, o retry reconstrói o lote pendente. Isso evita sobreposição de e-mails durante o timeout de transporte
+configurado, preservando o storage existente em `user.data`.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/773 PASS**; Unit/Integration de digest **18/195 PASS**; PHPCS e PHP
+lint PASS. O teste injeta uma lease expirada enquanto o transporte está ativo, confirma que o novo worker não envia um
+segundo manifesto e verifica recuperação posterior sem nova entrega.
+

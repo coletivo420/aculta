@@ -423,9 +423,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
-   * An expired digest lease cannot let the stale worker consume newer events.
+   * An expired lease does not start an overlapping digest during transport.
    */
-  public function testExpiredDigestLeaseCannotAcknowledgeAsStaleWorker(): void {
+  public function testExpiredLeaseDefersRetryWhileDigestTransportIsInFlight(): void {
     $author = $this->createUser('autor_digest_lease_expirada');
     $follower = $this->createUser('seguidor_digest_lease_expirada');
     $follower->setEmail('digest-lease@example.test');
@@ -440,7 +440,6 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $topic = $this->createTopic('Digest com lease expirada');
     $firstComment = $this->createPersistedComment($topic, (int) $author->id());
     $secondComment = $this->createPersistedComment($topic, (int) $author->id());
-    $thirdComment = $this->createPersistedComment($topic, (int) $author->id());
     $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
     $avisos = $this->createAvisoService([$uid], $policy);
     self::assertSame(1, $avisos->registrarResposta($firstComment));
@@ -448,26 +447,28 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $database = $this->container->get('database');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $deliveries = 0;
+    $acceptedCorrelations = [];
     $concurrentSummary = NULL;
-    $mailer->expects(self::exactly(2))
+    $mailer->expects(self::once())
       ->method('deliver')
-      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$concurrentSummary, $database, $avisos, $secondComment, $thirdComment, $uid): SendResult {
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$acceptedCorrelations, &$concurrentSummary, $database, $avisos, $secondComment, $uid): SendResult {
         $deliveries++;
         self::assertSame('digest-lease@example.test', $message->to);
-        if ($deliveries === 1) {
-          self::assertSame('Respostas novas em "Digest com lease expirada": 1', $message->context['resumo']);
-          self::assertSame(1, $avisos->registrarResposta($secondComment));
-          $database->update('semaphore')
-            ->fields(['expire' => microtime(TRUE) - 1])
-            ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
-            ->execute();
-          self::assertSame(1, $concurrentSummary->enviarResumos(), 'A new lock owner can process the recipient after the original lease expires.');
-        }
-        else {
-          self::assertSame('Respostas novas em "Digest com lease expirada": 2', $message->context['resumo']);
-          self::assertSame(1, $avisos->registrarResposta($thirdComment), 'A third event arrives after the replacement worker captured its batch.');
-        }
+        self::assertSame('Respostas novas em "Digest com lease expirada": 1', $message->context['resumo']);
+        self::assertSame(1, $avisos->registrarResposta($secondComment));
+        $database->update('semaphore')
+          ->fields(['expire' => microtime(TRUE) - 1])
+          ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
+          ->execute();
+        self::assertSame(0, $concurrentSummary->enviarResumos(), 'A replacement worker waits instead of sending an overlapping manifest.');
+        $acceptedCorrelations[$message->correlationId] = TRUE;
         return SendResult::sent();
+      });
+    $mailer->method('wasAcceptedCorrelation')
+      ->willReturnCallback(static function (string $correlationId, string $type, ?string $recipient = NULL) use (&$acceptedCorrelations): bool {
+        return $type === AvisosResumo::CHAVE_MAIL
+          && $recipient === 'digest-lease@example.test'
+          && isset($acceptedCorrelations[$correlationId]);
       });
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
@@ -499,12 +500,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       new PersistentDatabaseLockBackend($database),
     );
 
-    self::assertSame(0, $summary->enviarResumos(), 'The stale worker leaves acknowledgement to the replacement lock owner.');
-    self::assertSame(2, $deliveries);
+    self::assertSame(0, $summary->enviarResumos(), 'The stale worker defers acknowledgement after losing its lease.');
+    self::assertSame(1, $summary->enviarResumos(), 'The next run reconciles the exact batch accepted by the Mailer.');
+    self::assertSame(1, $deliveries);
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'Only the third event, absent from both captured batches, remains pending.');
-    self::assertSame((string) $thirdComment->id(), $notices[0]->get('ultimo_comentario')->value);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The event added after the snapshot remains pending for the next digest.');
+    self::assertSame((string) $secondComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 
   /**

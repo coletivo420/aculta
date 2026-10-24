@@ -94,7 +94,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects($this->exactly(3))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
     $lock->expects($this->exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
-    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(1_800_000_000, 1_800_000_181, 1_800_000_181);
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock, NULL, NULL, $time);
 
     $this->assertSame(0, $summary->enviarResumos());
     $this->assertSame(1, $summary->enviarResumos(), 'The same pending rows are retried after the failed transport attempt.');
@@ -121,7 +123,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           ? SendResult::failed(DeliveryError::Temporary, 450)
           : SendResult::sent();
       });
-    $summary = $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE);
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturnOnConsecutiveCalls(1_800_000_000, 1_800_000_181, 1_800_000_181);
+    $summary = $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE, NULL, NULL, NULL, $time);
 
     $this->assertSame(0, $summary->enviarResumos());
     $this->assertSame([], $lmsProvider->marked);
@@ -379,7 +383,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL): AvisosResumo {
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -433,7 +437,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       $mailer,
       $emailPolicy,
       $userData,
-      $this->createConfiguredMock(TimeInterface::class, ['getRequestTime' => 1_800_000_000]),
+      $time ?? $this->createConfiguredMock(TimeInterface::class, ['getRequestTime' => 1_800_000_000]),
       new AvisoService(
         $entityTypeManager,
         $this->createMock(FlagServiceInterface::class),
