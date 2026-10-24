@@ -1,3 +1,11 @@
+## Revalidação R2 — ciclo de vida da imagem no HEAD `369db1537`
+
+- A classe Kernel MariaDB `WikiLeadImageLifecycleKernelTest` passou completa:
+  26 testes / 1.382 asserções. Cobriu upload/validação, mídia privada/publicada,
+  revisão pendente, falha e retry, referências históricas e limpeza de órfãs.
+  PHPUnit reportou 291 depreciações Core/contrib e 27 PHPUnit. Sem mudança de
+  código, Runtime, filesystem ou configuração instalada.
+
 ## Revalidação R1 no HEAD `b8e486673` — sem alteração de código
 
 - Providers Wiki/categoria e quatro Kernels Wiki-owned/Index passaram em 20 testes

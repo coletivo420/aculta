@@ -1,3 +1,6 @@
+- R2 imagem revalidada no HEAD `369db1537`: classe Kernel MariaDB completa passou
+  26/1.382; Runtime/filesystem/configuração instalada intocados.
+
 - R1 revalidada no HEAD `b8e486673`: providers Wiki/categoria + quatro Kernels
   Wiki-owned/Index, 20/425; projeção v4 e fingerprint inalterados. Runtime e
   rebuild instalado intocados.

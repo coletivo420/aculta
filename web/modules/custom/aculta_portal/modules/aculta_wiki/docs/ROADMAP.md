@@ -12,6 +12,14 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação R2 — ciclo de vida da imagem no HEAD `369db1537`
+
+`WikiLeadImageLifecycleKernelTest` passou completo em MariaDB (26 testes / 1.382
+asserções; 291 depreciações Core/contrib e 27 PHPUnit). A classe cobre validação
+e upload pelo Form API, publicação da Media/File, revisões pendentes, falha e
+retry, referências históricas e limpeza segura de órfãs. Não houve alteração de
+código, Runtime, filesystem ou configuração instalada.
+
 ### Revalidação WIKI-R1 no HEAD `b8e486673`
 
 Os dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes /

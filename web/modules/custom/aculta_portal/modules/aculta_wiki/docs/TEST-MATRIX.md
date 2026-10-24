@@ -77,7 +77,7 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Media/File acompanham publicação | Kernel | Imagem de rascunho fica privada; publicação torna Media e download acessíveis | aprovado previamente |
-| Falha/rebuild e retry do mesmo arquivo | Kernel | Rollback limpa caches/chave; retry grava um único Media ligado ao Node | aprovado (focal: 1 / 33; classe: 10 / 447; Unit: 12 / 79) |
+| Falha/rebuild e retry do mesmo arquivo | Kernel | Rollback limpa caches/chave; retry grava um único Media ligado ao Node | aprovado (classe completa revalidada no HEAD `369db1537`: inclui cenário) |
 | Falha no Node save | Kernel | Media removida e File volta a temporário | aprovado previamente |
 | Remoção com revisão antiga | Kernel | Media/File permanecem enquanto revisão ainda referencia a imagem | aprovado previamente |
 | Upload no formulário Node real | Kernel MariaDB | Form API processa `managed_file`, salva `draft` com alt e mantém Media/File sem acesso público | aprovado (dev.76; focal 1/41; classe 23/1.036) |
