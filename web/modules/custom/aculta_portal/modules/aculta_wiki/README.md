@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.71`: smoke reutilizável de teclado verifica foco visível e limites
+  de viewport no campo/submit da busca, em Firefox ESR. O CSS agregado atual do
+  Runtime de teste falha no submit (x=336 a 320 px; x=1282 a 1280 px); a folha
+  candidata carregada por GET no browser passa 22/22. O agregado não foi
+  atualizado; Olivero e WCAG integral continuam pendentes.
+
 - `0.1.0-dev.70`: edição própria WE SATIVA agora preserva conflitos. O Form API
   carrega a revisão-base, valida antes do submit e revalida com lock transacional
   do Node no save handler; Kernel cobre sessão obsoleta e corrida após validação

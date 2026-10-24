@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.70**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.71**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.71 — teclado e foco da busca
+
+`tests/browser/aculta-wiki/keyboard.py` percorre a busca com Tab no Firefox ESR
+visível e verifica foco visível e campo/submit dentro da viewport, em 1280 e
+320 px. No CSS agregado do Runtime, o submit ultrapassa a borda (x=1282 em
+1280 px; x=336 em 320 px), portanto o smoke falha 18/20. Carregando a folha
+candidata atual por GET no navegador, passa 22/22 e o submit fica em x=238–304
+em 320 px. O tema/agregado do Runtime não foi alterado; homologação publicada,
+Olivero e WCAG completa seguem pendentes.
 
 ### Incremento dev.70 — revisão concorrente no editor próprio
 

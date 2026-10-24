@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.71: Firefox ESR visível validou navegação por teclado na busca. O smoke
+  exige que campo e submit focados caibam na viewport: Runtime agregado falha
+  (18/20; submit em x=336 numa viewport de 320 px), folha candidata carregada
+  somente por GET passa (22/22). Agregado do Runtime não atualizado.
+
 - Dev.70: Core Node Form de edição está protegido contra revisão obsoleta; lock
   de linha e comparação no save handler fecham a janela após validação. Kernel
   focal de conflito 1/37; criação/revisão normal 1/67; Unit uploader 12/79;

@@ -30,3 +30,20 @@ presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
 caminho interno `/wiki` responde 404 por GET. Testa apenas o tema ativo no
 servidor. Olivero, leitores de tela, teclado e WCAG 2.2 AA precisam de sessões
 separadas.
+
+## Teclado
+
+`keyboard.py` percorre a página de busca com Tab real via WebDriver no Firefox
+ESR, em 1280 e 320 CSS px. Confere foco visível, alcance do campo e do botão de
+pesquisa; digita um termo sem enviar o formulário. Continua sendo somente GET,
+sem login ou escrita persistente.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+SUITE_OUT=/tmp/aculta-wiki-keyboard DISPLAY=:0 \
+  python3 -I tests/browser/aculta-wiki/keyboard.py
+```
+
+Para aplicar a folha Wiki atual por GET do browser quando o agregado do Runtime
+estiver desatualizado, defina também `WIKI_CSS_OVERRIDE=1`; isso mede o CSS
+candidato, não a publicação do agregado.

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.71 — smoke de teclado da busca em viewport móvel
+
+- Adicionado `tests/browser/aculta-wiki/keyboard.py`, com WebDriver compartilhado
+  e Firefox ESR visível; não envia a busca nem grava dados.
+- O foco deve ter indicador visível, e campo/submit precisam caber na viewport.
+  O CSS agregado do Runtime de teste falha (18/20): submit em x=336 a 320 px e
+  x=1282 a 1280 px. A folha candidata carregada por GET passou 22/22. O
+  agregado do Runtime não foi atualizado nem homologado.
+
 ## 0.1.0-dev.70 — impedir sobrescrita concorrente no editor WE SATIVA
 
 - Formulários de criação e edição usam o wrapper proprietário da Wiki; o
