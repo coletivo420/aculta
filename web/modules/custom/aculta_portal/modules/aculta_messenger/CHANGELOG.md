@@ -1,3 +1,13 @@
+## 0.1.1-dev.175 — exercitar autorização Core na resposta de conversa
+
+O Kernel carrega a definição de produção `aculta_messenger.drawer_reply`, constrói a rota pelos access checks do Drupal
+e usa entidades Private Message reais. Confirma que CSRF válido e associação à thread são necessários: membro com token
+passa; token ausente/inválido e pessoa externa com token válido são negados. A rota permanece limitada a POST. O teste
+não executa o roteador HTTP completo nem Runtime.
+
+Validação: `PrivateMessageRouteAccessKernelTest` **1/12 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+emite 7 deprecações conhecidas de annotations/validators do Core/contrib.
+
 ## 0.1.1-dev.174 — provar rollback da retenção em banco real
 
 O Kernel MariaDB agora injeta uma falha ao excluir o aviso Message após a exclusão de thread/mensagens ter começado.

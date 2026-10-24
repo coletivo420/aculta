@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.174` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.175` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -83,6 +83,12 @@ threads, mensagens privadas e avisos Message reais, removendo apenas dados com
 mais de seis meses e preservando uma conversa recente. Também prova rollback
 transacional real quando a exclusão do aviso falha. Runtime não foi usado e
 nenhuma limpeza foi executada em dados reais.
+
+O Kernel de rotas também usa a definição de produção da resposta pela gaveta e o
+AccessManager/Core para confirmar CSRF e autorização por associação à thread:
+membro com token válido passa; token ausente/inválido e pessoa externa são
+negados. A rota segue POST-only. Essa prova não executa o roteador HTTP nem o
+Runtime.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
 de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da
