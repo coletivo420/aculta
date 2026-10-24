@@ -1,5 +1,19 @@
 # Regras específicas — consulta sob demanda
 
+## Decisão atual: experiências Conta/Perfil independentes
+
+Não reintroduzir a experiência `pessoal`. Usar somente
+`/studio/conta` e `/studio/perfil` como experiências separadas;
+perfil público em `/u/{apelido}` é independente. O legado da Conta
+permanece na raiz `/` de ACCOUNT **mesmo após a homologação**, com
+`/minha-conta` técnico 404. Não fazer redirects temporários, não
+retirar `AccountShellBuilder`, não misturar Form API cadastral com
+editor público nem duplicar User/Profile.
+
+[Contrato atual](../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+As regras históricas abaixo devem ser lidas à luz desta decisão.
+
+
 ## WikiTab availability and access (Studio dev.5)
 
 The tab checks both the owner module `aculta_wiki` and its `wiki_entry` bundle.
