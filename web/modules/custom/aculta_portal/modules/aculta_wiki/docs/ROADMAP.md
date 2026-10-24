@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.43**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.44**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.44 — edição própria e prévia na WE SATIVA
+
+Meu Trabalho mostra a rota Core de edição apenas quando `Node::access('update')`
+autoriza a conta para aquele verbete no purpose `wiki`; URL é montada no Domain
+Wiki e o resultado de acesso alimenta cacheability. Kernel confirma o formulário
+Core e o handler de prévia do Node: conteúdo temporário no tempstore, preview
+permitido à autora, negado a outra conta, sem alterar a revisão persistida.
+Focal combinado: 2 testes / 111 asserções. A execução programática cobre o
+handler de prévia; não equivale a uma requisição HTTP/browser completa.
 
 ### Incremento dev.43 — download da imagem conforme publicação atual
 

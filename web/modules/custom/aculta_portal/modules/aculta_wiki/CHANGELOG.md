@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.44 — edição própria e prévia na WE SATIVA
+
+- Workspace só oferece “Editar” após validar `Node::access('update')` para a
+  conta atual no purpose `wiki`; a URL nativa `entity.node.edit_form` é gerada
+  no domínio Wiki. O resultado de acesso participa dos metadados de cache.
+- Kernel com conta `email_confirmed` verifica acesso de edição próprio e negação
+  a outra conta. O formulário Core oferece preview; o handler nativo guarda a
+  entidade temporária no tempstore, permite visualização apenas à autora e não
+  altera a revisão salva.
+- Focal MariaDB: 2 testes / 111 asserções; 203 depreciações Drupal/Core/contrib
+  e 3 do PHPUnit. Runtime não foi alterado.
+
 ## 0.1.0-dev.43 — sincronizar download de imagem com verbetes publicados
 
 - Hook `file_download` nega arquivos `private://wiki/imagens` sem referência

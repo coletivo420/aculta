@@ -127,7 +127,21 @@ final class WikiContributorWorkspace {
       $label = $this->t('@title — @state', ['@title' => $node->label(), '@state' => $this->nodeState($node)]);
       $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
       if ($url !== NULL) {
-        $nodeLinks[] = Link::fromTextAndUrl($label, $url)->toRenderable();
+        $item = [
+          '#type' => 'container',
+          'entry' => Link::fromTextAndUrl($label, $url)->toRenderable(),
+        ];
+        $update = $this->domainPurposes->runInPurpose('wiki', fn () => $node->access('update', $account, TRUE));
+        if ($update instanceof AccessResultInterface) {
+          $cacheability->addCacheableDependency($update);
+          if ($update->isAllowed()) {
+            $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $node->id()]);
+            if ($editUrl !== NULL) {
+              $item['edit'] = Link::fromTextAndUrl($this->t('Editar'), $editUrl)->toRenderable();
+            }
+          }
+        }
+        $nodeLinks[] = $item;
       }
     }
     $build['entries'] = $this->listSection($this->t('Meus verbetes'), $nodeLinks, $this->t('Você ainda não criou verbetes.'));

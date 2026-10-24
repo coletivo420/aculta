@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.44`: WE SATIVA mostra ação de edição somente após revalidar
+  `update` do próprio verbete no purpose Wiki e envia o link ao Domain Wiki.
+  Kernel confirma o formulário Core, preview privado via tempstore e que a
+  prévia não cria revisão nem altera o rascunho (2 testes / 111 asserções).
+
 - `0.1.0-dev.43`: acesso ao download das imagens privadas acompanha referências
   atuais de verbetes publicados. Revisões antigas preservam os arquivos sem
   deixá-los disponíveis após a remoção/despublicação; outro verbete publicado

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.43 (acesso de download `private://wiki/imagens` segue referências atuais de verbetes publicados; revisão histórica preserva arquivo sem manter acesso público. Media anterior é reconciliada ao remover/trocar referência. Kernel imagem 8/237; 203 depreciações Drupal/Core/contrib e 9 PHPUnit. Runtime não alterado)"
-next_phase: 'WE SATIVA: implementar edição própria e preview com revisão concorrente e acesso revalidado; fechar paginação/cursor. Revisão visual Firefox ESR/X11, Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.44 (WE SATIVA: edição própria revalidada no purpose Wiki e preview via tempstore sem gravar revisão. Kernel focais 2/111; 203 depreciações Drupal/Core/contrib e 3 PHPUnit. Runtime não alterado)"
+next_phase: 'WE SATIVA: fechar paginação/cursor, edição por requisição HTTP e revisão concorrente. Revisão visual Firefox ESR/X11, Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

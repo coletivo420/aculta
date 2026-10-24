@@ -625,7 +625,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * WE SATIVA keeps its entrypoint in Studio and lists only the author's Nodes.
    */
   public function testWeSativaWorkspaceUsesWikiOwnedAccessAndPurpose(): void {
-    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    ProfileType::create(['id' => 'email_confirmed', 'label' => 'Confirmed account profile'])->save();
     FieldStorageConfig::create([
       'entity_type' => 'profile',
       'field_name' => 'field_nickname',
@@ -634,14 +634,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])->save();
     FieldConfig::create([
       'entity_type' => 'profile',
-      'bundle' => 'authenticated',
+      'bundle' => 'email_confirmed',
       'field_name' => 'field_nickname',
       'label' => 'Nickname',
     ])->save();
     Role::create([
       'id' => 'wiki_workspace_creator_test',
       'label' => 'Wiki workspace creator test',
-      'permissions' => ['access content', 'create wiki_entry content'],
+      'permissions' => ['access content', 'create wiki_entry content', 'edit own wiki_entry content'],
     ])->save();
     $author = User::create([
       'uid' => 17,
@@ -724,7 +724,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('Meus verbetes', (string) $build['entries']['title']['#value']);
     $renderedItems = $build['entries']['items']['#items'];
     self::assertCount(1, $renderedItems);
-    self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#title']);
+    self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['entry']['#title']);
+    self::assertSame('entity.node.edit_form', $renderedItems[0]['edit']['#url']->getRouteName());
+    self::assertSame('wiki420_aculta_org', $renderedItems[0]['edit']['#url']->getOption('domain')->id());
+    self::assertTrue($this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $this->container
+      ->get('access_manager')->checkNamedRoute('entity.node.edit_form', ['node' => $own->id()], $author)));
     self::assertSame('node.add', $build['create']['#url']->getRouteName());
     self::assertSame(['node_type' => 'wiki_entry'], $build['create']['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $build['create']['#url']->getOption('domain')->id());
@@ -736,6 +740,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   public function testConfirmedContributorBuildsNativeDraftForm(): void {
     $this->installEntitySchema('content_moderation_state');
     $this->installConfig(['workflows', 'content_moderation']);
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
     $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
     Workflow::create(Yaml::parseFile($workflowFile))->save();
     EntityFormDisplay::create([
@@ -760,7 +777,22 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'use wiki_editorial transition draft_to_review',
       ],
     ])->save();
-    $author = new UserSession(['uid' => 43, 'roles' => ['authenticated', 'email_confirmed']]);
+    $avatar = File::create([
+      'uri' => 'public://wiki-form-author-avatar.png',
+      'filename' => 'wiki-form-author-avatar.png',
+      'status' => TRUE,
+    ]);
+    $avatar->save();
+    $authorEntity = User::create([
+      'uid' => 43,
+      'name' => 'wiki-form-author',
+      'mail' => 'wiki-form-author@example.invalid',
+      'status' => TRUE,
+      'roles' => ['email_confirmed'],
+      'user_picture' => ['target_id' => $avatar->id()],
+    ]);
+    $authorEntity->save();
+    $author = $authorEntity;
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
     $this->container->get('current_user')->setAccount($author);
     $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
@@ -810,6 +842,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $savedNode = Node::load($savedEntity->id());
     self::assertInstanceOf(Node::class, $savedNode);
     self::assertSame('Verbete salvo como rascunho', $savedNode->label());
+    self::assertSame((string) $author->id(), (string) $savedNode->getOwnerId());
     self::assertSame('draft', $savedNode->get('moderation_state')->value);
     self::assertFalse($savedNode->isPublished());
 
@@ -822,6 +855,42 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $editModerationWidget = $editForm['moderation_state']['widget'][0]['state'];
     self::assertArrayHasKey('review', $editModerationWidget['#options']);
     self::assertArrayNotHasKey('published', $editModerationWidget['#options']);
+    self::assertArrayHasKey('preview', $editForm['actions']);
+
+    $previewNode = Node::load((int) $savedNode->id());
+    self::assertInstanceOf(Node::class, $previewNode);
+    $previewFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');
+    $previewFormObject->setEntity($previewNode);
+    $previewFormState = new FormState();
+    $previewFormState->setFormObject($previewFormObject);
+    $previewForm = $formBuilder->buildForm($previewFormObject, $previewFormState);
+    $previewFormState->setTriggeringElement($previewForm['actions']['preview']);
+    $previewFormObject->submitForm($previewForm, $previewFormState);
+    $previewFormObject->getEntity()->setTitle('Prévia sem salvar');
+    $previewFormObject->getEntity()->set('body', ['value' => 'Texto de prévia com fonte.', 'format' => 'plain_text']);
+    $previewFormObject->getEntity()->set('moderation_state', 'draft');
+    $previewFormObject->getEntity()->setOwnerId((int) $author->id());
+    $previewFormObject->preview($previewForm, $previewFormState);
+
+    self::assertSame([], $previewFormState->getErrors());
+    self::assertSame('entity.node.preview', $previewFormState->getRedirect()->getRouteName());
+    self::assertSame((string) $previewNode->uuid(), $previewFormState->getRedirect()->getRouteParameters()['node_preview']);
+    $previewState = $this->container->get('tempstore.private')->get('node_preview')->get($previewNode->uuid());
+    self::assertInstanceOf(FormState::class, $previewState);
+    $previewEntity = $previewState->getFormObject()->getEntity();
+    self::assertSame('Prévia sem salvar', $previewEntity->label());
+    self::assertSame((string) $author->id(), (string) $previewEntity->getOwnerId());
+    $previewAccess = $this->container->get('access_check.node.preview')->access($author, $previewEntity);
+    self::assertTrue($previewAccess->isAllowed(), sprintf(
+      'Preview access denied for owner %s / author %s.',
+      $previewEntity->getOwnerId(),
+      $author->id(),
+    ));
+    $otherAuthor = new UserSession(['uid' => 44, 'roles' => ['authenticated', 'email_confirmed']]);
+    self::assertFalse($this->container->get('access_check.node.preview')->access($otherAuthor, $previewEntity)->isAllowed());
+    $unchangedNode = Node::load((int) $savedNode->id());
+    self::assertSame('Verbete salvo como rascunho', $unchangedNode->label());
+    self::assertSame($draftRevisionId, (int) $unchangedNode->getRevisionId());
 
     $editFormState->setValue($editForm['title']['widget'][0]['value']['#parents'], 'Verbete enviado para revisão');
     $editFormState->setValue($editForm['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');

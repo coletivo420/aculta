@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.44: Meu Trabalho oferece “Editar” somente após revalidar `update` do Node
+  para a autora no purpose Wiki e monta a rota Core no Domain Wiki. Kernel
+  comprova preview nativo no tempstore privado, acesso só à autora e ausência
+  de gravação da prévia (focal combinado: 2 testes / 111 asserções).
+
 - Dev.43: download de imagem privada é permitido só se algum verbete publicado
   atualmente a referenciar. Troca/remoção da imagem também reconcilia a Media
   anterior; revisões antigas preservam o arquivo, mas não reabrem o download
