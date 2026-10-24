@@ -1,3 +1,11 @@
+## `0.1.0-dev.303` — provar as opções do Fórum — 2026-10-24
+
+- Novo Kernel `ForumSettingsFormKernelTest`: mover comentários continua
+  desligado por padrão, o prazo de edição começa em 10 minutos com mínimo zero
+  e obrigatoriedade; o envio grava o valor informado e converte negativos em
+  zero.
+- Testes: configurações 2/8; suíte Kernel do Fórum 139/2.642; PHPCS limpo.
+
 ## `0.1.0-dev.302` — provar a comparação entre revisões — 2026-10-24
 
 - Novo Kernel `ForumPostRevisionComparisonControllerKernelTest`: a comparação

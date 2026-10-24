@@ -1,3 +1,10 @@
+## Opções do Fórum — padrões e limites, 2026-10-24
+
+- `ForumSettingsFormKernelTest` (2 testes / 8 asserções, MariaDB): mover
+  comentários desligado por padrão, prazo de edição com padrão 10 e mínimo zero;
+  o envio grava o valor e converte negativos em zero.
+- Suíte Kernel do Fórum 139/2.642; PHPCS limpo.
+
 ## Comparação de revisões — somente diferenças, 2026-10-24
 
 - `ForumPostRevisionComparisonControllerKernelTest` (2 testes / 31 asserções,
