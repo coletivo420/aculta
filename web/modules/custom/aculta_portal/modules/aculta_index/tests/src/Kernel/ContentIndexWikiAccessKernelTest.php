@@ -136,6 +136,75 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * A pending non-default revision cannot replace the public projection.
+   */
+  public function testPendingRevisionDoesNotReplacePublishedDefaultProjection(): void {
+    $this->createTestUser('wiki-revision-bootstrap');
+    $owner = $this->createTestUser('wiki-revision-owner');
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Published default revision',
+      'status' => TRUE,
+      'uid' => $owner->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $entry->save();
+    $publishedRevisionId = (int) $entry->getRevisionId();
+
+    $pendingRevision = Node::load($entry->id());
+    self::assertInstanceOf(Node::class, $pendingRevision);
+    $pendingRevision->setNewRevision(TRUE);
+    $pendingRevision->isDefaultRevision(FALSE);
+    $pendingRevision->setUnpublished();
+    $pendingRevision->setTitle('Pending unpublished revision');
+    $pendingRevision->save();
+
+    $revisionStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $storedPendingRevision = $revisionStorage->loadRevision($pendingRevision->getRevisionId());
+    self::assertInstanceOf(Node::class, $storedPendingRevision);
+    self::assertFalse($storedPendingRevision->isDefaultRevision());
+    self::assertNull($this->container->get('aculta_index.provider_registry')->get('wiki')->project($storedPendingRevision));
+
+    $defaultRevision = Node::load($entry->id());
+    self::assertInstanceOf(Node::class, $defaultRevision);
+    self::assertSame($publishedRevisionId, (int) $defaultRevision->getRevisionId());
+    self::assertTrue($defaultRevision->isPublished());
+    self::assertNotNull($this->container->get('aculta_index.provider_registry')->get('wiki')->project($defaultRevision));
+  }
+
+  /**
+   * Missing canonical Wiki Domain fails closed instead of using main access.
+   */
+  public function testAccessFilterFailsClosedWhenWikiDomainIsMissing(): void {
+    $this->createTestUser('wiki-no-domain-bootstrap');
+    $reader = $this->createTestUser('wiki-no-domain-reader');
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Wiki entry without purpose Domain',
+      'status' => TRUE,
+      'uid' => $reader->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $entry->save();
+    Domain::load('wiki420_aculta_org')->delete();
+
+    $mainDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $mainDomain);
+    $negotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $negotiator->getActiveDomain();
+    $negotiator->setActiveDomain($mainDomain);
+    $result = $this->container->get('aculta_index.access_filter')->filter([[
+      'entity_type' => 'node',
+      'entity_id' => (string) $entry->id(),
+      'langcode' => $entry->language()->getId(),
+    ],
+    ], $reader);
+
+    self::assertSame([], $result->entities);
+    self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
+  }
+
+  /**
    * Resolves transitive module dependencies in dependency order.
    *
    * @param string[] $roots

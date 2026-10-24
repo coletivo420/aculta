@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.170 — provar revisão padrão e ausência de Domain na Wiki
+
+- A consulta real comprova que revisão pendente não padrão não substitui a
+  projeção pública e que a ausência do Domain canônico Wiki bloqueia o acesso.
+- Classe MariaDB com Wiki, Image, Portal e Index reais: 6 testes / 185
+  asserções; 201 depreciações Drupal/Core/contrib. Sem rebuild integral ou
+  Runtime.
+
 ## 0.1.0-dev.169 — testar acesso Wiki sem bridges de fixture
 
 - `ContentIndexWikiAccessKernelTest` substitui o registro manual de services e

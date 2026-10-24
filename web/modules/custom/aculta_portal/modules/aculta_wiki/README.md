@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.46`: Kernel real também prova que uma revisão não padrão pendente
+  não substitui a revisão publicada projetada e que a falta do Domain Wiki nega
+  a consulta. Classe: 6 testes / 185 asserções; 201 depreciações upstream.
+
 - `0.1.0-dev.45`: Kernel do Index agora inicializa `aculta_wiki`, `aculta_image`,
   Portal e Index reais, sem ponte YAML de providers ou acesso. Discovery confirma
   owner único de `node:wiki_entry`, categoria e Media; consultas outgoing filtram

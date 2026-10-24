@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.45**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.46**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.46 — revisão pendente e ausência de Domain
+
+O provider real recusa uma revisão não padrão pendente enquanto a revisão padrão
+publicada continua projetável. A camada de acesso do Index também falha fechada
+sem o Domain canônico Wiki. Classe Kernel MariaDB: 6 testes / 185 asserções,
+201 depreciações Drupal/Core/contrib. Projection v3 preservada; nenhum rebuild
+ou Runtime.
 
 ### Incremento dev.45 — bootstrap real para Content Index
 

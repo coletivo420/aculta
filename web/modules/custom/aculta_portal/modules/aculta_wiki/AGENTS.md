@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.46: boot real Wiki + Image + Portal + Index comprova provider v3,
+  consulta de relações por grants, rejeição de revisão pendente não padrão,
+  revisão padrão publicada ainda projetável e negação sem Domain Wiki. Kernel
+  MariaDB: 6/185, 201 depreciações upstream. Sem rebuild/Runtime.
+
 - Dev.45: `ContentIndexWikiAccessKernelTest` inicializa a closure real de Wiki,
   Image, Portal e Index; container descobre providers por tag sem bridge fixture.
   Consulta as três relações, verifica grants e restaura Domain. MariaDB: 4/125;

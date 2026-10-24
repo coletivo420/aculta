@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.46 — validar revisão pendente e falha sem Domain
+
+- No bootstrap real Wiki + Image + Portal + Index, revisão pendente não padrão
+  é rejeitada pelo provider e a revisão padrão publicada continua projetável.
+- A consulta do Index falha fechada quando o Domain canônico `wiki` não existe,
+  sem cair no acesso do Domain ativo.
+- A classe Kernel passou em MariaDB: 6 testes / 185 asserções; 201 depreciações
+  Drupal/Core/contrib. Projection v3 sem alteração; nenhum rebuild ou Runtime.
+
 ## 0.1.0-dev.45 — provar providers e acesso com bootstrap real
 
 - O Kernel transversal habilita a closure real de `aculta_wiki`, `aculta_image`,
