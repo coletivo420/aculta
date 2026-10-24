@@ -52,7 +52,7 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 
 ## Evidências desta revisão — 2026-10-24
 
-- Digest/idempotência — Dev.150–152: adapters ACULTA usam IDs estáveis (`lms`, `wiki`, `commerce`, `donation`) via subinterface opcional; providers que só implementam o contrato anterior permanecem válidos. Snapshots antigos com `class` continuam recuperáveis; novos snapshots de adapters estáveis gravam `provider_id`. A troca de classe preserva a correlação, e o Kernel simula a refatoração entre aceite e confirmação sem reenvio. Suíte focal Unit/Kernel MariaDB 47/889, PHPCS Drupal/DrupalPractice, PHP lint, YAML e índice PASS. Runtime/SMTP não usados.
+- Digest/idempotência — Dev.150–153: adapters ACULTA usam IDs estáveis (`lms`, `wiki`, `commerce`, `donation`) via subinterface opcional; providers que só implementam o contrato anterior permanecem válidos. Snapshots antigos com `class` continuam recuperáveis; novos snapshots de adapters estáveis gravam `provider_id`. A troca de classe preserva a correlação, e o Kernel simula a refatoração entre aceite e confirmação sem reenvio. Reentrada de uma segunda execução completa enquanto o primeiro transporte está ativo é recusada pelo lock: Integration 12/92 PASS; contenção do backend em processos independentes segue coberta no Kernel. Dois boots Drupal concorrentes e transporte lento permanecem pendentes.
 
 - Unit Messenger + integrações e publishers: 126 testes / 657 assertions PASS.
 - Kernels MariaDB LMS/Wiki/Loja: 6 testes / 64 assertions PASS; deprecações de descoberta de Message vieram de Core/contrib.

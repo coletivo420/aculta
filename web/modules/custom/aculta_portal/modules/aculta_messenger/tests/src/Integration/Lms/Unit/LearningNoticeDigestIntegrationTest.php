@@ -233,6 +233,43 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A competing full digest run cannot enter while delivery is in progress.
+   */
+  public function testConcurrentDigestRunDuringTransportDoesNotDuplicateDelivery(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $lockHeld = FALSE;
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(2))
+      ->method('acquire')
+      ->willReturnCallback(static function () use (&$lockHeld): bool {
+        if ($lockHeld) {
+          return FALSE;
+        }
+        $lockHeld = TRUE;
+        return TRUE;
+      });
+    $lock->expects($this->once())
+      ->method('release')
+      ->willReturnCallback(static function () use (&$lockHeld): void {
+        $lockHeld = FALSE;
+      });
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $competingSummary = $this->createSummary($provider, $mailer, TRUE, $lock);
+    $competingResult = NULL;
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturnCallback(static function () use ($competingSummary, &$competingResult): SendResult {
+        $competingResult = $competingSummary->enviarResumos();
+        return SendResult::sent();
+      });
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame(0, $competingResult, 'A competing run skips the locked recipient while the first transport is active.');
+    $this->assertSame([[501]], $provider->markedDeliveryIds);
+  }
+
+  /**
    * A definitive failure discards only the e-mail copy of a digest entry.
    */
   public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {

@@ -1,3 +1,12 @@
+## 0.1.1-dev.153 — bloquear digests concorrentes durante transporte — 2026-10-24
+
+Teste de integração reentra em um segundo `AvisosResumo::enviarResumos()` enquanto o primeiro está no transporte. O
+lock persistente do destinatário impede a segunda entrega; o primeiro confirma seu lote e libera o lock.
+
+Validação: `LearningNoticeDigestIntegrationTest` **12/92 PASS**, incluindo a execução concorrente no transporte;
+PHPCS Drupal/DrupalPractice e PHP lint PASS. A contenção multiprocesso do backend segue coberta separadamente pelo
+Kernel; dois boots completos de Drupal em processos concorrentes e transporte lento ainda não foram homologados.
+
 ## 0.1.1-dev.152 — identidade do digest como extensão compatível — 2026-10-24
 
 A identidade estável passou para `AvisoDigestProviderIdentityInterface`, subinterface opcional. Providers existentes que
