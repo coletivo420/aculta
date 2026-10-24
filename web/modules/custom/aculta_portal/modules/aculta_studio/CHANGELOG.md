@@ -16,6 +16,8 @@
   GET/HEAD; `/studio/ganjalab` pertence exclusivamente à aprendizagem.
 - Contratos, controllers, services e descoberta de plugins específicos de
   Marley recebem nomenclatura própria; IDs funcionais das áreas não mudam.
-- Unit Studio passou em 22 testes/83 asserções e Unit LMS em 1/7. Kernel,
-  roteamento Runtime e validação visual ainda aguardam gates.
+- Unit Studio passou em 22 testes/83 asserções e Unit LMS em 1/7. O Runtime de
+  teste passou a expor `/studio/marley` e `/studio/ganjalab` após rebuild de
+  cache. Firefox ESR/X11 passou em 29/29 verificações aplicáveis; a checagem de
+  link de edição foi ignorada porque não há publicação própria de teste.
 

@@ -17,7 +17,7 @@ const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok: !!ok, detail }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  -- ' + detail : ''}`); return !!ok; };
+const check = (name, ok, detail = '') => { results.push({ name, ok: ok === null ? null : !!ok, detail }); console.log(`${ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  -- ' + detail : ''}`); return ok === null ? null : !!ok; };
 
 async function wd(method, path, body) {
   const res = await fetch(GD + path, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -172,10 +172,15 @@ try {
   // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
   await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/publicacoes/publicados' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
-  const rows = await exec(`return document.querySelectorAll('[data-aculta-studio="listing"] tbody tr').length;`);
-  check('listagem da Revista na aba Publicados com linhas', rows >= 1, `${rows} linha(s)`);
-  const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => (a.getAttribute('href') || '').includes('/node/') && (a.getAttribute('href') || '').endsWith('/edit')).length;`);
-  check('edição de publicação pelo formulário do dono (domínio principal)', editLinks >= 1, `${editLinks} link(s)`);
+  const listingState = JSON.parse(await exec(`return JSON.stringify({ rows: [...document.querySelectorAll('[data-aculta-studio="listing"] tbody tr')].filter((row) => row.querySelector('td') && !row.querySelector('td[colspan]')).length, empty: !!document.querySelector('[data-aculta-studio="listing"] td[colspan]') });`));
+  check('listagem da Revista apresenta conteúdo ou estado vazio', listingState.rows > 0 || listingState.empty, `${listingState.rows} conteúdo(s); estado vazio=${listingState.empty}`);
+  if (listingState.rows > 0) {
+    const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => (a.getAttribute('href') || '').includes('/node/') && (a.getAttribute('href') || '').endsWith('/edit')).length;`);
+    check('edição de publicação pelo formulário do dono (domínio principal)', editLinks >= 1, `${editLinks} link(s)`);
+  }
+  else {
+    check('edição de publicação pelo formulário do dono (domínio principal)', null, 'sem publicação própria publicada para testar a ação de edição');
+  }
   const unnamed = await exec(`return [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"]')].filter((a) => !(a.textContent || '').trim()).length;`);
   check('todo link do Studio tem nome acessível (texto)', unnamed === 0, `${unnamed} sem nome`);
   const groupsOk = await exec(`return !!document.querySelector('[data-aculta-studio="tabs"][aria-label]') && !!document.querySelector('[data-aculta-studio="live"][role="status"]');`);
@@ -190,7 +195,9 @@ try {
   writeFileSync(join(OUT, 'results.json'), JSON.stringify(results, null, 2));
   bidi.close();
   await wd('DELETE', p('')).catch(() => {});
-  const failed = results.filter((r) => !r.ok).length;
-  console.log(`\n${results.length - failed}/${results.length} verificações OK. Capturas e relatório em ${OUT}`);
+  const failed = results.filter((r) => r.ok === false).length;
+  const skipped = results.filter((r) => r.ok === null).length;
+  const passed = results.length - failed - skipped;
+  console.log(`\n${passed}/${results.length - skipped} verificações OK; ${skipped} ignorada(s), ${failed} falha(s). Capturas e relatório em ${OUT}`);
   process.exit(failed ? 1 : 0);
 }

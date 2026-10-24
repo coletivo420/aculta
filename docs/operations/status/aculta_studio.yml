@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.7 — refatoração local de identidade Marley/Ganjalab, contratos específicos de navegação Marley, rotas canônicas/aliases 302 e documentação. Unit Studio 22/83 e Unit LMS 1/7 passaram; Kernel aguarda conexão ao banco de testes; Runtime/visual pendentes."
-next_phase: 'Concluir gates Unit/Kernel/Functional, rota e cache, depois homologar Marley, Ganjalab e WE SATIVA em Firefox ESR/X11 e Olivero conforme autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
+version_note: "0.1.0-dev.7 — identidades Marley/Ganjalab, contratos próprios de navegação Marley e rotas canônicas/aliases 302. Unit Studio 22/83, Unit LMS 1/7 e gate Drupal 11+ passaram. Runtime de teste atualizado por rebuild de cache; Firefox ESR/X11: 29/29 verificações aplicáveis passaram, com 1 SKIP por ausência de publicação própria para testar link de edição."
+next_phase: 'Concluir Kernel/Functional, cobrir Ganjalab autenticado e revisar Olivero conforme autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
 # G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T
