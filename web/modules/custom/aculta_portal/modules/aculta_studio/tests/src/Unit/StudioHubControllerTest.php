@@ -41,7 +41,8 @@ final class StudioHubControllerTest extends UnitTestCase {
    */
   public function testHubListsOnlyVisibleRoutedExperiences(): void {
     $manager = new StudioExperienceManager();
-    $manager->addProvider($this->provider('pessoal', 'Meu Espaço', TRUE, TRUE));
+    $manager->addProvider($this->provider('conta', 'Minha Conta', TRUE, TRUE));
+    $manager->addProvider($this->provider('perfil', 'Meu Perfil', TRUE, TRUE));
     $manager->addProvider($this->provider('marley', 'Marley', FALSE, TRUE));
     $manager->addProvider($this->provider('ganjalab', 'Ganjalab', TRUE, FALSE));
     $manager->addProvider($this->provider('we_sativa', 'WE SATIVA', TRUE, TRUE));
@@ -50,7 +51,8 @@ final class StudioHubControllerTest extends UnitTestCase {
       $manager,
       $this->account(TRUE, TRUE),
       $this->routes([
-        'aculta_studio.personal',
+        'aculta_studio.account',
+        'aculta_studio.profile',
         'aculta_studio.home',
         // No WE SATIVA route: provider must be skipped.
       ]),
@@ -60,10 +62,12 @@ final class StudioHubControllerTest extends UnitTestCase {
     self::assertSame('studio-hub', $build['#attributes']['data-portal-ui']);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertSame('item_list', $build['experiences']['#theme']);
-    self::assertCount(1, $build['experiences']['#items']);
+    self::assertCount(2, $build['experiences']['#items']);
     $link = $build['experiences']['#items'][0];
-    self::assertSame('Meu Espaço', $link['#title']);
-    self::assertSame('aculta_studio.personal', $link['#url']->getRouteName());
+    self::assertSame('Minha Conta', $link['#title']);
+    self::assertSame('aculta_studio.account', $link['#url']->getRouteName());
+    self::assertSame('Meu Perfil', $build['experiences']['#items'][1]['#title']);
+    self::assertSame('aculta_studio.profile', $build['experiences']['#items'][1]['#url']->getRouteName());
   }
 
   /**
@@ -124,7 +128,8 @@ final class StudioHubControllerTest extends UnitTestCase {
 
       public function routeName(): string {
         return match ($this->idValue) {
-          'pessoal' => 'aculta_studio.personal',
+          'conta' => 'aculta_studio.account',
+          'perfil' => 'aculta_studio.profile',
           'marley' => 'aculta_studio.home',
           'ganjalab' => 'aculta_lms.student_dashboard',
           default => 'aculta_studio.' . $this->idValue,
