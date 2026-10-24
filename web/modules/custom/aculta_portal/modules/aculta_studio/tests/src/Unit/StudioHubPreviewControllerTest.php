@@ -39,7 +39,7 @@ final class StudioHubPreviewControllerTest extends UnitTestCase {
   /**
    * Only available, authorized and routed providers are presented.
    */
-  public function testPreviewListsOnlyVisibleRoutedExperiences(): void {
+  public function testHubListsOnlyVisibleRoutedExperiences(): void {
     $manager = new StudioExperienceManager();
     $manager->addProvider($this->provider('pessoal', 'Meu Espaço', TRUE, TRUE));
     $manager->addProvider($this->provider('marley', 'Marley', FALSE, TRUE));
@@ -51,19 +51,36 @@ final class StudioHubPreviewControllerTest extends UnitTestCase {
       $this->account(TRUE, TRUE),
       $this->routes([
         'aculta_studio.personal',
-        'aculta_studio.marley',
+        'aculta_studio.home',
         // No WE SATIVA route: provider must be skipped.
       ]),
     );
     $build = $controller->page();
 
-    self::assertSame('studio-hub-preview', $build['#attributes']['data-portal-ui']);
+    self::assertSame('studio-hub', $build['#attributes']['data-portal-ui']);
     self::assertSame(0, $build['#cache']['max-age']);
     self::assertSame('item_list', $build['experiences']['#theme']);
     self::assertCount(1, $build['experiences']['#items']);
     $link = $build['experiences']['#items'][0];
     self::assertSame('Meu Espaço', $link['#title']);
     self::assertSame('aculta_studio.personal', $link['#url']->getRouteName());
+  }
+
+  /**
+   * Authorized editors see Marley using its canonical route ID.
+   */
+  public function testAuthorizedMarleyLinkUsesCanonicalHome(): void {
+    $manager = new StudioExperienceManager();
+    $manager->addProvider($this->provider('marley', 'ACULTA Studio Marley', TRUE, TRUE));
+    $build = (new StudioHubPreviewController(
+      $manager, $this->account(TRUE, TRUE), $this->routes(['aculta_studio.home'])
+    ))->page();
+
+    self::assertCount(1, $build['experiences']['#items']);
+    self::assertSame(
+      'aculta_studio.home',
+      $build['experiences']['#items'][0]['#url']->getRouteName()
+    );
   }
 
   /**
