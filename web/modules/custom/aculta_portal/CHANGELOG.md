@@ -1,3 +1,11 @@
+## 0.4.1-dev.27 — editor de endereço do Studio recebe país, Número e S/N (2026-10-24)
+
+- `PortalHooks::formAlter` aplicava o bloco de endereço (país padrão, Número/S-N, botão "Salvar endereço",
+  remoção de campos redundantes) só quando o caminho era `/dados/endereco`. Em `/studio/conta/endereco` o
+  bloco não rodava. Agora a condição usa a identidade da rota (`$isAddressRoute`), que cobre o Portal e o
+  Studio com o mesmo Profile Commerce.
+- Gate `scripts/validate-account-address.php` passa. Teste em Kernel/Firefox pendente.
+
 ## 0.4.1-dev.26 — raiz da Conta serve o hub do Studio; Minha Conta original em /conta-legada (2026-10-24)
 
 - `PurposeFrontPathProcessor::FRONT_PATHS` ganha `account => /studio`. A raiz `/` do Domain ACCOUNT serve

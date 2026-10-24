@@ -554,8 +554,9 @@ final class PortalHooks {
       return;
     }
 
+    // Portal (/dados/endereco) e Studio (/studio/conta/endereco) usam o mesmo editor de endereço.
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
-      && $path === '/dados/endereco'
+      && $isAddressRoute
       && (int) $entity->getOwnerId() === (int) $this->currentUser->id()) {
       // The Portal and Commerce edit the same customer Profile Address.
       $allowed = ['field_address', 'actions', 'form_build_id', 'form_token', 'form_id'];
