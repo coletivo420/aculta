@@ -21,6 +21,7 @@ use Drupal\aculta_messenger\EventSubscriber\ForumCommentMoveSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
@@ -337,14 +338,14 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::once())
-      ->method('send')
+      ->method('deliver')
       ->with(self::callback(static fn(MailMessage $message): bool =>
         $message->type === AvisosResumo::CHAVE_MAIL
         && $message->to === 'seguidor@example.test'
         && $message->langcode === 'pt-br'
         && $message->context['resumo'] === 'Respostas novas em "Resumo compartilhado": 2'
       ))
-      ->willReturn(TRUE);
+      ->willReturn(SendResult::sent());
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
       $this->container->get('entity_type.manager'),

@@ -16,6 +16,8 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
@@ -44,9 +46,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $provider = new TestLearningDigestProvider([27]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects($this->once())
-      ->method('send')
+      ->method('deliver')
       ->with($this->callback(static fn (MailMessage $message): bool => $message->langcode === 'pt-br'))
-      ->willReturn(TRUE);
+      ->willReturn(SendResult::sent());
     $summary = $this->createSummary($provider, $mailer, TRUE);
 
     $this->assertSame(1, $summary->enviarResumos());
@@ -60,7 +62,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   public function testFailedDigestDeliveryKeepsLmsRowsPending(): void {
     $provider = new TestLearningDigestProvider([27]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects($this->once())->method('send')->willReturn(FALSE);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Temporary, 450));
     $summary = $this->createSummary($provider, $mailer, TRUE);
 
     $this->assertSame(0, $summary->enviarResumos());
@@ -74,7 +78,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   public function testOptOutDiscardsLmsRowsWithoutSending(): void {
     $provider = new TestLearningDigestProvider([27]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects($this->never())->method('send');
+    $mailer->expects($this->never())->method('deliver');
     $summary = $this->createSummary($provider, $mailer, FALSE);
 
     $this->assertSame(0, $summary->enviarResumos());

@@ -196,7 +196,19 @@ final class AvisosResumo {
     $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), self::LANGCODE, [
       'resumo' => AvisosResumoMailType::formatLinhas($linhas),
     ], $this->uuid->generate());
-    if (!$this->mailer->send($mensagem)) {
+    $resultado = $this->mailer->deliver($mensagem);
+    if (!$resultado->sent) {
+      if ($resultado->cancelled) {
+        // A política administrativa suspendeu este tipo de e-mail. Descarte
+        // somente a entrega por e-mail; os avisos obrigatórios no site ficam.
+        foreach ($daFila as $aviso) {
+          $aviso->set('contador_email', 0);
+          $aviso->save();
+        }
+        foreach ($providersWithRows as $provider) {
+          $provider->discardDigest($uid);
+        }
+      }
       return FALSE;
     }
     foreach ($daFila as $aviso) {

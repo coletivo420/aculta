@@ -1,3 +1,14 @@
+## 0.1.1-dev.105 — encerrar digest suspenso pela política administrativa — 2026-10-24
+
+- `AvisosResumo` agora usa o resultado tipado do ACULTA Mailer. Quando a política
+  cancela o envio, remove somente as pendências de e-mail do resumo e preserva
+  os avisos obrigatórios no site; falhas temporárias continuam pendentes para
+  retry. Integração cobre cancelamento, falha temporária e entrega aceita.
+- Unit Messenger + adapters: 129 testes / 806 assertions PASS. Kernel
+  `ForumNoticeIdempotency`: 26 testes / 581 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Nenhum Runtime,
+  configuração de produção ou transporte real foi alterado.
+
 ## 0.1.1-dev.104 — persistir correlação UUID do e-mail direto do Fórum — 2026-10-24
 
 - O outbox do Fórum gera um UUID v4 ao reivindicar pela primeira vez uma
