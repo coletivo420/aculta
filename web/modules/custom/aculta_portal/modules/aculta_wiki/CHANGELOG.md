@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## Revalidação WIKI-R1 no HEAD `5504aced2` — sem alteração de código
+
+- Os dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes
+  / 425 asserções; projeção v4 e fingerprint não mudaram. PHPUnit reportou 243
+  depreciações upstream e 3 depreciações PHPUnit.
+- Execução isolada com MariaDB; sem alteração de arquivos do `aculta_index`, sem
+  ativação ou rebuild no Runtime.
+
 ## 0.1.0-dev.89 — seletor contextual de contribuição WE SATIVA
 
 - O CTA em verbetes publicados abre uma página contextual com edição nativa

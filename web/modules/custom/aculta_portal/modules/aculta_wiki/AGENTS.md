@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- WIKI-R1 revalidada no HEAD `5504aced2`: providers Wiki/categoria e Kernels
+  Wiki-owned/Index 20/425; projeção v4/fingerprint inalterados, 243 depreciações
+  upstream + 3 PHPUnit. Runtime e rebuild instalado intocados.
+
 - Dev.89: CTA público leva ao seletor contextual WE SATIVA; edição direta é
   mostrada somente com update access e participantes confirmados recebem as
   quatro intenções de proposta existentes. Kernel focal 3/311, PHPCS/lint

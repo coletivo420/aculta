@@ -12,6 +12,14 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação WIKI-R1 no HEAD `5504aced2`
+
+Sem mudança de código ou contrato: os dois providers Unit e quatro Kernels
+Wiki-owned/Index passaram em 20 testes / 425 asserções. A projeção continua v4
+com fingerprint estável; PHPUnit reportou 243 depreciações upstream e 3 PHPUnit.
+Os testes usaram MariaDB isolada; `aculta_index` não foi ativado nem reconstruído
+no Runtime.
+
 ### Incremento dev.89 — seletor contextual WE SATIVA
 
 O CTA dos verbetes públicos aponta para um seletor com destinos funcionais:

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação WIKI-R1 no HEAD `5504aced2`: providers Wiki/categoria e Kernels
+  Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4 e
+  fingerprint mantidos. Foram reportadas 243 depreciações upstream e 3 do
+  PHPUnit. Runtime e rebuild instalado intocados.
+
 - `0.1.0-dev.89`: CTA contextual abre seletor WE SATIVA para verbetes públicos.
   Pessoas autorizadas a editar recebem somente a edição nativa; demais pessoas
   confirmadas recebem quatro intenções allowlisted que levam ao formulário de
