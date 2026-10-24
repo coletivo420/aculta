@@ -72,6 +72,10 @@ final class NoticeListFilterTest extends UnitTestCase {
       '/avisos?keep=1#lista',
       $filter->appendToUrl('/avisos?keep=1#lista', ['origem' => 'invalid']),
     );
+    self::assertSame(
+      '/avisos?keep=1&origem=wiki&leitura=unread#lista',
+      $filter->appendToUrl('/avisos?keep=1&origem=forum&leitura=read#lista', ['origem' => 'wiki', 'leitura' => 'unread']),
+    );
   }
 
 }

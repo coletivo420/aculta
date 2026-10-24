@@ -42,8 +42,15 @@ final class NoticeListFilter {
       $fragment = substr($url, $fragmentPosition);
       $url = substr($url, 0, $fragmentPosition);
     }
-    $separator = str_contains($url, '?') ? '&' : '?';
-    return $url . $separator . http_build_query($filters, '', '&', PHP_QUERY_RFC3986) . $fragment;
+    [$path, $queryString] = array_pad(explode('?', $url, 2), 2, '');
+    $query = [];
+    if ($queryString !== '') {
+      parse_str($queryString, $query);
+    }
+    // Replace existing filter keys instead of appending duplicates. Query
+    // parameters unrelated to the notice filters remain intact.
+    $query = array_replace($query, $filters);
+    return $path . '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986) . $fragment;
   }
 
   /**

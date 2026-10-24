@@ -1,3 +1,10 @@
+## 0.1.1-dev.130 — manter filtros únicos nos links da central — 2026-10-24
+
+Ao abrir um aviso e voltar à central, a origem e o estado de leitura selecionados agora substituem parâmetros de filtro
+anteriores na URL, preservando os demais parâmetros, sem acumular `origem` ou `leitura` duplicados.
+
+Validação: `NoticeListFilterTest` 4/7 PASS; suíte Unit Messenger 120/661 PASS; PHP lint e PHPCS Drupal/DrupalPractice nos arquivos alterados PASS.
+
 ## 0.1.1-dev.129 — correlação idempotente para retries do digest — 2026-10-24
 
 O Messenger identifica um digest pelo UID, HMAC do destinatário e IDs/tipos/quantidades do lote, sem incluir títulos
