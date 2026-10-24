@@ -12,6 +12,8 @@ use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,6 +25,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
 
   public function __construct(
     private readonly LearningNoticeManagerInterface $notices,
+    private readonly MessengerNoticePublisherInterface $publisher,
     private readonly LoggerInterface $logger,
   ) {}
 
@@ -46,28 +49,43 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    * Handles a persisted enrollment and its transactional email.
    */
   public function courseEnrollment(CourseEnrollmentEvent $event): void {
-    $this->record($event->membershipUuid, 'enrollment', (int) $event->accountId);
+    $this->publish('enrollment', 'group_relationship', $event->membershipUuid, (int) $event->accountId, TRUE);
   }
 
   /**
    * Handles a persisted certificate issue and its transactional email.
    */
   public function certificateIssued(CertificateIssuedEvent $event): void {
-    $this->record($event->certificateUuid, 'certificate', (int) $event->accountId);
+    $this->publish('certificate', 'aculta_course_certificate', $event->certificateUuid, (int) $event->accountId, TRUE);
   }
 
   /**
    * Records completion for the site and shared daily digest.
    */
   public function courseCompleted(CourseCompletedEvent $event): void {
-    $this->record($event->sourceStatusUuid, 'completion', (int) $event->accountId, FALSE);
+    $this->publish(
+      'completion',
+      'lms_course_status',
+      $event->sourceStatusUuid,
+      (int) $event->accountId,
+      FALSE,
+      '1',
+      $event->completedAt,
+    );
   }
 
   /**
    * Records the new result for the learner's site and digest notices. */
   public function answerEvaluated(AnswerEvaluatedEvent $event): void {
     try {
-      $this->notices->record($event->answerUuid, 'evaluation', (int) $event->accountId, FALSE, $event->publicationVersion);
+      $this->publish(
+        'evaluation',
+        'lms_answer',
+        $event->answerUuid,
+        (int) $event->accountId,
+        FALSE,
+        $event->publicationVersion,
+      );
     }
     catch (\Throwable $exception) {
       $this->logger->error('Could not record LMS evaluation notice: @message', ['@message' => $exception->getMessage()]);
@@ -127,14 +145,35 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
   /**
    * Persists one deduplicated notice without breaking the LMS transaction.
    */
-  private function record(string $sourceUuid, string $type, int $uid, bool $sendEmail = TRUE): void {
+  private function publish(
+    string $noticeType,
+    string $sourceEntityType,
+    string $sourceUuid,
+    int $uid,
+    bool $sendEmail,
+    string $version = '1',
+    ?\DateTimeImmutable $occurredAt = NULL,
+  ): void {
     try {
-      $this->notices->record($sourceUuid, $type, $uid, $sendEmail);
+      $eventType = 'lms.' . $noticeType;
+      $mailPolicy = $sendEmail ? 'transactional' : 'site_digest';
+      $this->publisher->publish(new MessengerNoticeEvent(
+        $eventType,
+        'aculta_lms',
+        $sourceEntityType,
+        $sourceUuid,
+        $version,
+        $uid,
+        'account',
+        $occurredAt ?? new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+        implode(':', [$eventType, $sourceUuid, $version, $uid]),
+        ['notice_type' => $noticeType, 'mail_policy' => $mailPolicy],
+      ));
     }
     catch (\Throwable $exception) {
-      $this->logger->error('Could not persist LMS notification @type: @message', [
-        '@type' => $type,
-        '@message' => $exception->getMessage(),
+      $this->logger->error('Could not publish LMS notice @type (@exception).', [
+        '@type' => $noticeType,
+        '@exception' => $exception::class,
       ]);
     }
   }

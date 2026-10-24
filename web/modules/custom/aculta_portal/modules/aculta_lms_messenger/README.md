@@ -7,17 +7,17 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão `0.1.0-dev.15`. Matrícula, certificado, conclusão, avaliação publicada,
-resposta aberta pendente, conteúdo liberado, retorno do educador e definição ou
-alteração de prazo por atividade/turma geram avisos no painel multidomínio. O
-prazo fica em relação Group específica da turma, não na atividade LMS. Adotou-se
-provisoriamente a recomendação de avisar ao salvar e lembrar na janela anterior
-de 24 horas; cron enfileira UUID/version opacos e o worker revalida o estado,
-sem e-mail transacional. Matrícula e
-certificado têm e-mail transacional mínimo; conclusão, avaliação e resposta
-pendente entram no resumo diário opt-in. Um link revalida acesso e encaminha ao
-purpose correto. Republicações de avaliação usam versão opaca para deduplicar.
-Opt-out limpa só o e-mail pendente; os avisos no site permanecem.
+Versão 0.1.0-dev.16. Matrícula, certificado, conclusão e avaliação publicada
+passam pelo contrato de evento do Messenger e o consumer LMS usa o
+LearningNoticeManager existente para persistência Message, deduplicação, fila e
+digest. Submissão, feedback, liberação e prazo ainda chamam o manager após
+resolver os destinatários elegíveis no LMS.
+
+Matrícula e certificado têm e-mail transacional mínimo; conclusão, avaliação e
+resposta pendente entram no resumo diário opt-in. Um link revalida acesso e
+encaminha ao purpose correto. Republicações de avaliação usam versão opaca
+para deduplicar. Opt-out limpa só o e-mail pendente; os avisos no site
+permanecem.
 Matrícula na turma é validada pela permissão `take course` herdada no curso pai
 por `lms_classes`, além da membership ativa na turma.
 

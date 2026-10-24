@@ -29,7 +29,7 @@ A matriz é caracterização inicial baseada em código e evidências documentai
 
 ## M2 — API central de eventos (0.2.0)
 
-Implementado nesta execução: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publicam envelope pequeno via EventDispatcher Drupal, com metadata validada e sem persistência própria. Ainda pendente: consumidores que revalidam destinatário/access, deduplicam e encaminham ao storage existente; integração incremental dos produtores Fórum, User e LMS; central e e-mail conforme política. Interfaces pequenas, DI, payload mínimo, retry observável e sem novo subsistema de storage. Migrar gradualmente com testes comparativos, sem disparo duplo.
+Implementado nesta execução: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publicam envelope pequeno via EventDispatcher Drupal, com metadata validada e sem persistência própria. O adapter LMS já consome quatro tipos e encaminha ao Message existente pelo manager idempotente; a cobertura restante inclui revalidação, consumidores de outros módulos, integração gradual do Fórum/User/LMS e canais da central/e-mail. Interfaces pequenas, DI, payload mínimo, retry observável e sem novo subsistema de storage. Migrar gradualmente com testes comparativos, sem disparo duplo.
 
 **Aceite:** testes de contrato/idempotência/ACL; eventos repetidos não duplicam; opt-out não remove aviso do site; adapters opcionais ausentes não causam erro.
 
@@ -39,7 +39,7 @@ Fórum conserva `seguir_topico`, avisos atuais/agregação por usuário-tipo-tó
 
 ## M4 — LMS (0.2.0)
 
-Evoluir `aculta_lms_messenger` como adapter de matrícula, certificado, conclusão, avaliação, feedback, liberação e prazos. Revalidar permissão na geração, entrega e abertura; manter cursos, atividades, Groups e matrículas sob ownership LMS. Sem chat de turma ou caixa educacional paralela. Testar storage, idempotência, digest/transacional e revogação.
+Matrícula, certificado, conclusão e avaliação já publicam pelo envelope compartilhado nesta execução; o consumer mantém Message, fila e digest existentes. Evoluir `aculta_lms_messenger` como adapter de feedback, submissão, liberação e prazos. Revalidar permissão na geração, entrega e abertura; manter cursos, atividades, Groups e matrículas sob ownership LMS. Sem chat de turma ou caixa educacional paralela. Migrar os produtores que ainda chamam o manager diretamente e testar storage, idempotência, digest/transacional e revogação.
 
 ## M5 — Wiki, Revista e demais (0.3.0)
 

@@ -14,6 +14,8 @@ use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\aculta_lms_messenger\EventSubscriber\LearningNotificationSubscriber;
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,11 +34,17 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    */
   public function testEnrollmentCreatesMessengerNoticeAndTransactionalEmail(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
-    $manager->expects($this->once())
-      ->method('record')
-      ->with('membership-uuid', 'enrollment', 27, TRUE);
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->expects($this->once())
+      ->method('publish')
+      ->with(self::callback(static fn(MessengerNoticeEvent $notice): bool =>
+        $notice->eventType() === 'lms.enrollment'
+        && $notice->sourceEntityUuid() === 'membership-uuid'
+        && $notice->recipientUid() === 27
+        && $notice->metadata()['mail_policy'] === 'transactional'
+      ));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
     $subscriber->courseEnrollment(new CourseEnrollmentEvent('membership-uuid', '10', '11', '27'));
   }
 
@@ -45,11 +53,17 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    */
   public function testCertificateCreatesMessengerNoticeAndTransactionalEmail(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
-    $manager->expects($this->once())
-      ->method('record')
-      ->with('certificate-uuid', 'certificate', 27, TRUE);
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->expects($this->once())
+      ->method('publish')
+      ->with(self::callback(static fn(MessengerNoticeEvent $notice): bool =>
+        $notice->eventType() === 'lms.certificate'
+        && $notice->sourceEntityUuid() === 'certificate-uuid'
+        && $notice->recipientUid() === 27
+        && $notice->metadata()['mail_policy'] === 'transactional'
+      ));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
     $subscriber->certificateIssued(new CertificateIssuedEvent('certificate-uuid', '27'));
   }
 
@@ -58,11 +72,17 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    */
   public function testCompletionCreatesSiteNoticeWithoutTransactionalEmail(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
-    $manager->expects($this->once())
-      ->method('record')
-      ->with('status-uuid', 'completion', 27, FALSE);
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->expects($this->once())
+      ->method('publish')
+      ->with(self::callback(static fn(MessengerNoticeEvent $notice): bool =>
+        $notice->eventType() === 'lms.completion'
+        && $notice->sourceEntityUuid() === 'status-uuid'
+        && $notice->recipientUid() === 27
+        && $notice->metadata()['mail_policy'] === 'site_digest'
+      ));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
     $subscriber->courseCompleted(new CourseCompletedEvent(
       'status-uuid',
       '10',
@@ -75,11 +95,17 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * An evaluated answer creates only the site and digest notices. */
   public function testEvaluationCreatesSiteNoticeWithoutTransactionalEmail(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
-    $manager->expects($this->once())
-      ->method('record')
-      ->with('answer-uuid', 'evaluation', 27, FALSE, str_repeat('a', 32));
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->expects($this->once())
+      ->method('publish')
+      ->with(self::callback(static fn(MessengerNoticeEvent $notice): bool =>
+        $notice->eventType() === 'lms.evaluation'
+        && $notice->sourceEntityUuid() === 'answer-uuid'
+        && $notice->sourceRevisionOrVersion() === str_repeat('a', 32)
+        && $notice->metadata()['mail_policy'] === 'site_digest'
+      ));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
     $subscriber->answerEvaluated(new AnswerEvaluatedEvent('answer-uuid', '27', str_repeat('a', 32)));
   }
 
@@ -92,7 +118,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
       ->method('recordSubmissionForEducators')
       ->with('answer-uuid', str_repeat('b', 32));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
     $subscriber->answerSubmitted(new AnswerSubmittedEvent('answer-uuid', str_repeat('b', 32)));
   }
 
@@ -105,7 +131,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
       ->method('recordContentReleaseForLearners')
       ->with('lesson-uuid', 'lms_lesson', str_repeat('c', 32));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
     $subscriber->contentReleased(new CourseContentReleasedEvent('lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
   }
 
@@ -117,7 +143,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
       ->method('recordEducatorFeedbackForLearner')
       ->with('comment-uuid', str_repeat('d', 32));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
     $subscriber->educatorFeedbackPublished(new EducatorFeedbackPublishedEvent('comment-uuid', str_repeat('d', 32)));
   }
 
@@ -129,7 +155,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
       ->method('recordActivityDeadlineForLearners')
       ->with('deadline-uuid', str_repeat('e', 32));
 
-    $subscriber = new LearningNotificationSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
     $subscriber->activityDeadlineAssigned(new ActivityDeadlineAssignedEvent('deadline-uuid', str_repeat('e', 32)));
   }
 
@@ -138,13 +164,21 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    */
   public function testPersistFailureIsLoggedAndDoesNotBreakSourceTransaction(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
-    $manager->method('record')->willThrowException(new \RuntimeException('storage unavailable'));
+    $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
+    $publisher->method('publish')->willThrowException(new \RuntimeException('dispatch unavailable'));
     $logger = $this->createMock(LoggerInterface::class);
     $logger->expects($this->once())->method('error');
 
-    $subscriber = new LearningNotificationSubscriber($manager, $logger);
+    $subscriber = new LearningNotificationSubscriber($manager, $publisher, $logger);
     $subscriber->certificateIssued(new CertificateIssuedEvent('certificate-uuid', '27'));
     $this->addToAssertionCount(1);
+  }
+
+  /**
+   * Creates a publisher mock for event routes not under test.
+   */
+  private function publisher(): MessengerNoticePublisherInterface {
+    return $this->createMock(MessengerNoticePublisherInterface::class);
   }
 
 }

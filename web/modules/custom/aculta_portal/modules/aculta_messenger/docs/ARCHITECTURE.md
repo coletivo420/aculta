@@ -46,7 +46,7 @@ Rotas de membro pertencem ao purpose `account`; administração usa `main`. URLs
 
 **Objetivo:** API mínima comum e migração progressiva de produtores reais, mantendo storage e comportamento válidos; experiência integrada de avisos e conversas com permissões e preferências consistentes.
 
-**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador agora restringe “só amigos” somente à criação de conversa. O publisher/event envelope M2 foi adicionado sem storage; integração de consumidores continua parcial. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
+**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador agora restringe “só amigos” somente à criação de conversa. O publisher/event envelope M2 foi adicionado sem storage; adapter LMS consome quatro tipos pelo contrato e mantém o Message/digest existente. Consumidores e integrações restantes continuam parciais. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
 
 ## Histórico
 

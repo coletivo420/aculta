@@ -13,9 +13,15 @@ services:
     arguments: ['@aculta_lms_messenger.notice_manager', '@current_user']
   aculta_lms_messenger.notification_subscriber:
     class: Drupal\aculta_lms_messenger\EventSubscriber\LearningNotificationSubscriber
-    arguments: ['@aculta_lms_messenger.notice_manager', '@logger.channel.aculta_lms_messenger']
+    arguments: ['@aculta_lms_messenger.notice_manager', '@aculta_messenger.notice_event_publisher', '@logger.channel.aculta_lms_messenger']
     tags:
       - { name: event_subscriber }
   logger.channel.aculta_lms_messenger:
     parent: logger.channel_base
     arguments: ['aculta_lms_messenger']
+
+  aculta_lms_messenger.notice_event_subscriber:
+    class: Drupal\aculta_lms_messenger\EventSubscriber\LearningNoticeEventSubscriber
+    arguments: ['@aculta_lms_messenger.notice_manager', '@logger.channel.aculta_lms_messenger']
+    tags:
+      - { name: event_subscriber }

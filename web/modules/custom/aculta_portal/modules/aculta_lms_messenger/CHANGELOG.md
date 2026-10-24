@@ -1,3 +1,12 @@
+## 0.1.0-dev.16 — consumir eventos pelo contrato compartilhado — 2026-10-24
+
+- Matrícula, certificado, conclusão e avaliação agora publicam envelope mínimo
+  MessengerNoticeEvent; o consumer LMS verifica módulo/tipo/origem declarados
+  e entrega ao LearningNoticeManager, que mantém Message, idempotência, fila e
+  digest existentes. Submissão, feedback, liberação e prazo continuam no
+  caminho anterior enquanto resolvem conjuntos de destinatários no LMS.
+- Sem nova entidade ou storage. Unit LMS/Messenger: 21 testes / 83 assertions PASS; PHPCS Drupal/DrupalPractice PASS. YAML do serviço parseado. Kernel MariaDB não executado por falta de SIMPLETEST_DB; Runtime não revalidado.
+
 # Changelog — aculta_lms_messenger
 
 ## 0.1.0-dev.15 — tolerar conclusão com curso removido — 2026-10-21
