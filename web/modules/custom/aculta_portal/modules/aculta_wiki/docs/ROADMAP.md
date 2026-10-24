@@ -12,6 +12,14 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação WIKI-R1 no HEAD `b8e486673`
+
+Os dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes /
+425 asserções. Relações `related_entry`, `wiki_category` e `wiki_image`, projeção
+v4 e fingerprint continuam estáveis; foram reportadas 243 depreciações upstream
+e 3 do PHPUnit. O teste roda em banco isolado; não ativa `aculta_index` nem
+reconstrói a geração do Runtime.
+
 ### Incremento dev.93 — criação guiada de verbetes
 
 O formulário Node nativo organiza os campos editoriais e apresenta instruções

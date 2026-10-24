@@ -1,3 +1,7 @@
+- R1 revalidada no HEAD `b8e486673`: providers Wiki/categoria + quatro Kernels
+  Wiki-owned/Index, 20/425; projeção v4 e fingerprint inalterados. Runtime e
+  rebuild instalado intocados.
+
 - Dev.93: formulário Core organiza a criação, explica título/síntese/texto e
   separa salvar rascunho de enviar para revisão via transição oficial. Kernel
   MariaDB 1/77; tentativa de forçar publicação negada. Runtime/visual intocados.

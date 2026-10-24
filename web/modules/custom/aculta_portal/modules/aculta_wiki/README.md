@@ -7,6 +7,8 @@ pendentes, está em
 
 ## Estado atual
 
+- R1 revalidada no HEAD `b8e486673`: dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4 e fingerprint inalterados. PHPUnit reportou 243 depreciações upstream e 3 PHPUnit. Runtime e rebuild instalado intocados.
+
 - `0.1.0-dev.93`: criação guiada pelo formulário Core; “Salvar rascunho” e
   “Enviar para revisão” são ações separadas, respeitando a transição oficial.
   Teste Kernel MariaDB focal 1/77, incluindo tentativa de publicação pelo campo

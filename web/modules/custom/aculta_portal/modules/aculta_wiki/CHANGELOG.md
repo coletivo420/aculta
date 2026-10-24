@@ -1,3 +1,11 @@
+## Revalidação R1 no HEAD `b8e486673` — sem alteração de código
+
+- Providers Wiki/categoria e quatro Kernels Wiki-owned/Index passaram em 20 testes
+  / 425 asserções. Projeção v4, relações `related_entry`, `wiki_category` e
+  `wiki_image` e fingerprint permanecem sem mudança; 243 depreciações upstream
+  e 3 do PHPUnit. Runtime não foi ativado e nenhuma geração instalada foi
+  reconstruída.
+
 ## 0.1.0-dev.93 — criação guiada e envio explícito para revisão
 
 - O formulário nativo organiza título, síntese, texto, referências, categorias
