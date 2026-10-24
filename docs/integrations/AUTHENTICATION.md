@@ -22,9 +22,10 @@ redirecionamento ao provedor; quando o parâmetro ACULTA de purpose não é
 propagado pelo módulo upstream, o Portal conserva o purpose já capturado para o
 mesmo path **e query** em vez de sobrescrevê-lo com ACCOUNT. Quando não há página anterior ou destino explícito, o destino público padrão é
 a raiz do Domain ACCOUNT (`/` em `conta.aculta.org` ou no alias Homelab).
-A visão geral (rota `aculta_portal.dashboard`) é servida somente nessa raiz.
-O caminho técnico `/minha-conta` não é público: requisição direta responde 404
-(guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter`), no mesmo padrão de `/apoio`.
+A raiz serve o hub do ACULTA Studio (`aculta_studio.hub`, caminho interno `/studio`), no mesmo padrão de `/apoio`.
+A Minha Conta original (rota `aculta_portal.dashboard`) fica em `/conta-legada`.
+O caminho `/minha-conta` não é rota: requisição direta responde 404
+(guarda em `DomainPurposeRequestSubscriber::onRequestBeforeRouter`), e `/studio` direto também responde 404.
 Nenhum link gerado aponta para esse caminho.
 
 A página genérica de perfil do Drupal não é publicada. A rota técnica
@@ -130,7 +131,7 @@ interação de navegador nesta alteração.
 - a UI genérica de `/user` foi removida da experiência: `user.page` é mantida
   apenas como rota técnica de compatibilidade e redireciona usuários autenticados
   para a raiz ACCOUNT; `/identidade` não é destino de login;
-- `/minha-conta` não é público: responde 404. A front page do Domain ACCOUNT resolve a visão geral na raiz.
+- `/minha-conta` não é rota: responde 404. A front page do Domain ACCOUNT (`/studio`) é o hub do Studio na raiz; a Minha Conta original fica em `/conta-legada`.
 - Os links de login renderizados em MAIN, MAGAZINE, WIKI e COURSES carregaram
   `destination` com o caminho visível e o purpose respectivo.
 - O link Google gerado em `/entrar` preservou `destination`; o início OAuth

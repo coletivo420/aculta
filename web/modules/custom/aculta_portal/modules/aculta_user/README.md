@@ -9,8 +9,8 @@ pelo ACULTA User. Suas rotas Studio de edição são
 `/studio/perfil/redes/{rede}`, com Form API original.
 
 `/studio/conta` pertence à administração de cadastro/segurança do Portal.
-**Minha Conta antiga em `/` permanece permanentemente e não deve perder
-seus formulários/modal/JS**. `/minha-conta` direto continua 404.
+**Minha Conta antiga em `/conta-legada` permanece permanentemente e não deve perder
+seus formulários/modal/JS**. `/minha-conta` direto responde 404.
 Não há `/studio/pessoal/*` nem aliases. Testes Runtime pendentes.
 [Contrato](../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 Registros P0/P2-A abaixo são históricos.

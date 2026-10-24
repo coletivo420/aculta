@@ -7,9 +7,10 @@
 - `/studio/perfil` — **Meu Perfil Studio**, identidade pública editável;
 - `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa` —
   experiências distintas;
-- `/` no Domain ACCOUNT — **Minha Conta legada permanente**, com shell
+- `/` no Domain ACCOUNT — **hub do ACULTA Studio** (caminho interno `/studio`);
+- `/conta-legada` — **Minha Conta legada permanente**, com shell
   e formulários preservados para comparação;
-- `/minha-conta` — caminho técnico não acessível diretamente (404);
+- `/minha-conta` — não é rota; responde 404;
 - `/u/{apelido}` no purpose MAIN — perfil público independente.
 
 Não existe `/studio/pessoal` nem alias temporário. A fase dev.13

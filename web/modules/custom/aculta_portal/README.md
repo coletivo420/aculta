@@ -13,9 +13,9 @@ Portal conserva Domain/Purpose, formulários, confirmação de e-mail, seguranç
 endereços e os contratos compartilhados de checkout. User/Profile e os
 demais owners não mudam de fonte de verdade.
 
-**Estado:** somente alinhamento documental; a home `/` de `account`, o
-`AccountShellBuilder`, os formulários e caminhos antigos continuam ativos;
-`/minha-conta` segue técnico e bloqueado. O Studio não deverá aninhar seu
+**Estado:** a raiz `/` de `account` serve o hub do Studio; a Minha Conta
+original está em `/conta-legada`; o `AccountShellBuilder`, os formulários e
+caminhos antigos continuam ativos; `/minha-conta` não é rota e responde 404. O Studio não deverá aninhar seu
 shell dentro do shell Conta; o corte fica para fases testadas e autorizadas.
 O perfil público `/u/{apelido}` permanece em `main`.
 

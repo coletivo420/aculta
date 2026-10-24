@@ -23,9 +23,10 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 na raiz `/` do domínio de conta, incluindo `AccountShellBuilder`,
 `PortalController`, `account-navigation.js`, formulários, hooks,
 integrações e estado de navegação. A rota técnica
-`aculta_portal.dashboard` permanece declarada em `/minha-conta`,
-**mas requisições HTTP diretas para `/minha-conta` ou filhos continuam
-404**, como antes. Não habilitar esse caminho nem criar redirect/alias.
+`aculta_portal.dashboard` foi movida para `/conta-legada` (versão 0.4.1-dev.26).
+A raiz `/` do Domain ACCOUNT passou a servir o hub do Studio. Requisições
+HTTP diretas para `/minha-conta` ou filhos respondem 404, sem redirect nem alias.
+Não habilitar esse caminho nem criar redirect/alias.
 A interface legada será usada para comparar versões visual e
 funcionalmente, inclusive depois de aprovado o Studio.
 
@@ -91,8 +92,8 @@ A separação funcional do campo é tarefa S-R3-B/S-R4.
 
 O Portal passou a reconhecer ambos os **route IDs** de endereço, para não
 perder `StreetNumberField`, os builders e o retorno contextual após
-salvar. A Conta legada permanece intocada na raiz `/`, e
-`/minha-conta` HTTP direto continua 404. Os demais destinos
+salvar. A Conta legada permanece intocada em `/conta-legada`, a raiz `/`
+é o hub do Studio, e `/minha-conta` HTTP direto responde 404. Os demais destinos
 (Apoio, pedidos, preferências e cadastro) ainda apontam para os owners
 originais neste incremento, sem alegar migração concluída.
 
@@ -121,7 +122,7 @@ PHPUnit/Kernel/Functional e homologação no Runtime/Firefox.
 ## Testes e não regressão
 
 - O dashboard do Portal e `/` no purpose account continuam funcionando;
-  `/minha-conta` direto é 404; nenhuma alteração no subscriber.
+  `/minha-conta` direto é 404; `/conta-legada` é a Minha Conta original.
 - `/studio/conta` e `/studio/perfil` têm providers independentes e
   links distintos no hub; nunca um provider `pessoal`.
 - Conta nunca apresenta editor público próprio; Perfil nunca renderiza

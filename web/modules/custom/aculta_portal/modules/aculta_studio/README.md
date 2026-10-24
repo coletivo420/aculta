@@ -12,8 +12,8 @@ da interface Studio é própria; o shell da Conta original não é aninhado.
 O cadastro privado `/dados` permanece na Conta original até que
 `field_nickname` seja extraído do formulário misto. Apoio, pedidos
 e preferências ainda usam suas rotas originais neste incremento.
-**A Conta legada em `/` é permanente, não uma rota a retirar.**
-`/minha-conta` direto continua 404. Testes Unit escritos e
+**A Conta legada em `/conta-legada` é permanente, não uma rota a retirar. A raiz `/` é o hub do Studio.**
+`/minha-conta` direto responde 404 e a Minha Conta original está em `/conta-legada`. Testes Unit escritos e
 gates de endereço ampliados; validação Runtime/Firefox pendente.
 
 ## Contrato vigente — Conta e Perfil separados (dev.13)
@@ -23,10 +23,10 @@ A arquitetura foi corrigida: **Minha Conta Studio** fica em
 como experiências independentes no hub `/studio`. `/studio/pessoal/*`
 não existe mais e **não tem alias de compatibilidade**.
 
-Minha Conta **legada é permanente** na raiz `/` do Domain ACCOUNT,
+Minha Conta **legada é permanente** em `/conta-legada` no Domain ACCOUNT,
 com shell, menus, dados e formulários intactos, para comparação
-antes e depois do aceite. O caminho técnico direto `/minha-conta`
-continua 404; não o habilitar. Conta Studio reutiliza links/forms
+antes e depois do aceite. A raiz `/` do Domain ACCOUNT é o hub do Studio.
+O caminho `/minha-conta` responde 404; não o habilitar. Conta Studio reutiliza links/forms
 do Portal e Perfil Studio apenas funções do ACULTA User; o apelido
 ainda exige editor isolado futuro. Nenhum PHP/Unit/Kernel/Runtime ou
 Firefox foi executado nesta edição pelo GitHub.
