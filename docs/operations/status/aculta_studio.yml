@@ -1,8 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.8 — P1-A implementada em código: provider pessoal, controller autorizado, rota /studio/pessoal no purpose account, testes Unit adicionados. PHPUnit/Kernel/Runtime/Firefox ainda não executados para P1-A; manter evidências históricas dev.7 no CHANGELOG."
-next_phase: 'P1-A: executar testes Unit/routing, Kernel/Functional e smoke autenticado /studio/pessoal com purpose account; P1-B: conectar Marley ao registry e desenvolver hub /studio sem quebrar legacy. Após gate, P2-P7 conforme roadmap. As homologações dev.7 não abrangem P1-A ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
+version_note: "0.1.0-dev.9 — P1-A e P1-B em código: entrada /studio/pessoal, bridge Marley, registry all(), prévia /studio/inicio com controle de acesso. Unit/Kernel/Runtime/Firefox não executados para dev.9; evidência dev.7 preservada no CHANGELOG."
+next_phase: 'Executar PHPUnit, Kernel/Functional e smoke autenticado de /studio/inicio em account (membro comum, editor, sem Wiki/LMS); avaliar o corte futuro de /studio somente após auditoria de compatibilidade e aprovação. P2/P3 continuam pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
+# 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
+# a home /studio continua legado Marley, sem Runtime homologado.
 # 2026-10-24: STUDIO-P0 documental — proposta de Hub `/studio` e experiencia
 # pessoal `/studio/pessoal`, menu unificado, editor de perfil privado e perfil
 # publico `/u/{apelido}` preservado em main. P1-A codigo adicionado (nao homologado);
