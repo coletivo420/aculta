@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.72 — caracterizar indicador de foco e nome acessível
+
+- O smoke compara outline e box-shadow do controle focado com uma cópia do
+  mesmo elemento sem foco; sombra normal do campo não é aceita como indicador.
+- Confirma nome acessível resolvido do campo (`Pesquisar na Wiki420`) e do
+  submit (`Buscar`), e inclui os estados do campo/botão no resumo JSON.
+- Firefox ESR visível: folha candidata 22/22; agregado Runtime continua 18/20
+  por extrapolar o submit horizontalmente em desktop e mobile. Nenhuma alteração
+  de Runtime, além da observação read-only, foi feita.
+
 ## 0.1.0-dev.71 — smoke de teclado da busca em viewport móvel
 
 - Adicionado `tests/browser/aculta-wiki/keyboard.py`, com WebDriver compartilhado

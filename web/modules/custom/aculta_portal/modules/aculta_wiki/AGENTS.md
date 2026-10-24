@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.72: o smoke de teclado compara outline/box-shadow do foco com uma cópia
+  sem foco e exige nomes acessíveis no campo/submit. CSS candidato: 22/22;
+  Runtime agregado: 18/20 pelas duas falhas de viewport no submit.
+
 - Dev.71: Firefox ESR visível validou navegação por teclado na busca. O smoke
   exige que campo e submit focados caibam na viewport: Runtime agregado falha
   (18/20; submit em x=336 numa viewport de 320 px), folha candidata carregada

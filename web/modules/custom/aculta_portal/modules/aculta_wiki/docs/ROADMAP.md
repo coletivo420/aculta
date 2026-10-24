@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.71**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.72**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.72 — foco e nome acessível no smoke
+
+O smoke Firefox compara outline e box-shadow dos elementos focados com cópias
+sem foco, para não contar uma sombra normal como indicador de foco. Também
+exige nomes acessíveis para o campo e o submit e grava ambos no resumo. No
+Runtime agregado, somente o submit falha o limite horizontal (18/20); com a
+folha candidata por GET, 22/22 passaram. O teste não avalia leitores de tela,
+contraste nem homologação do agregado publicado.
 
 ### Incremento dev.71 — teclado e foco da busca
 

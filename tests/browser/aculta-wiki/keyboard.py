@@ -68,14 +68,31 @@ def focus_state():
       const rect = el.getBoundingClientRect();
       const style = getComputedStyle(el);
       const labels = [...(el.labels || [])].map((label) => label.innerText.trim()).filter(Boolean);
-      const outlineVisible = style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0;
-      const shadowVisible = style.boxShadow !== 'none';
+      const labelledBy = (el.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean)
+        .map((id) => document.getElementById(id)?.innerText.trim() || '').filter(Boolean);
+      const normal = el.cloneNode(false);
+      normal.removeAttribute('id');
+      normal.setAttribute('aria-hidden', 'true');
+      normal.style.setProperty('position', 'fixed', 'important');
+      normal.style.setProperty('left', '-10000px', 'important');
+      normal.style.setProperty('top', '0', 'important');
+      normal.style.setProperty('visibility', 'hidden', 'important');
+      document.body.appendChild(normal);
+      const normalStyle = getComputedStyle(normal);
+      const outlineVisible = style.outlineStyle !== 'none'
+        && parseFloat(style.outlineWidth) > 0
+        && (style.outlineStyle !== normalStyle.outlineStyle
+          || style.outlineWidth !== normalStyle.outlineWidth
+          || style.outlineColor !== normalStyle.outlineColor
+          || style.outlineOffset !== normalStyle.outlineOffset);
+      const shadowVisible = style.boxShadow !== 'none' && style.boxShadow !== normalStyle.boxShadow;
+      normal.remove();
       return {
         tag: el.tagName,
         type: el.getAttribute('type') || '',
         name: el.getAttribute('name') || '',
         text: (el.innerText || el.value || '').trim().slice(0, 100),
-        accessibleName: el.getAttribute('aria-label') || labels.join(' ') || el.getAttribute('title') || el.getAttribute('placeholder') || '',
+        accessibleName: el.getAttribute('aria-label') || labelledBy.join(' ') || labels.join(' ') || el.getAttribute('title') || el.getAttribute('placeholder') || ((el.tagName === 'INPUT' && ['button', 'submit', 'reset'].includes(el.type)) ? el.value : '') || '',
         focusVisible: el.matches(':focus-visible'),
         indicator: outlineVisible || shadowVisible,
         rect: {left: Math.round(rect.left), top: Math.round(rect.top), right: Math.round(rect.right), bottom: Math.round(rect.bottom)},
@@ -107,6 +124,7 @@ try:
 
         stops = []
         search = None
+        submit = None
         for step in range(1, 45):
             press_tab()
             state = focus_state()
@@ -125,7 +143,7 @@ try:
 
         check(
             f"{name}: campo de busca alcançável por Tab",
-            search is not None and search["withinViewport"],
+            search is not None and search["accessibleName"] and search["withinViewport"],
             search or "não encontrado em 44 tabs",
         )
         if search is not None:
@@ -138,12 +156,12 @@ try:
             )
             check(
                 f"{name}: submit da busca alcançável por Tab",
-                is_submit and submit["focusVisible"] and submit["indicator"] and submit["visible"] and submit["withinViewport"],
+                is_submit and submit["accessibleName"] and submit["focusVisible"] and submit["indicator"] and submit["visible"] and submit["withinViewport"],
                 submit or "submit não recebeu foco",
             )
             screenshot = driver.req("GET", session + "/screenshot")
             (OUT / f"keyboard-search-submit-{name}.png").write_bytes(base64.b64decode(screenshot))
-        summary["sizes"][name] = {"width": width, "focus_stops": stops, "search": search}
+        summary["sizes"][name] = {"width": width, "focus_stops": stops, "search": search, "submit": submit}
 
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
 finally:

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.72`: o smoke compara indicador de foco computado com o estado sem
+  foco, exige nome acessível no campo e submit e registra ambos no JSON. Com o
+  CSS candidato passou 22/22; o agregado Runtime permanece em 18/20 devido ao
+  submit fora da viewport, sem ter sido alterado.
+
 - `0.1.0-dev.71`: smoke reutilizável de teclado verifica foco visível e limites
   de viewport no campo/submit da busca, em Firefox ESR. O CSS agregado atual do
   Runtime de teste falha no submit (x=336 a 320 px; x=1282 a 1280 px); a folha
