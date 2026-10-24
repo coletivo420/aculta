@@ -30,6 +30,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Lock\PersistentDatabaseLockBackend;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Language\LanguageInterface;
@@ -339,18 +340,18 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $deliveries = 0;
-    $mailer->expects(self::exactly(2))
+    $concurrentSummary = NULL;
+    $mailer->expects(self::once())
       ->method('deliver')
-      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, $avisos, $lateComment): SendResult {
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$concurrentSummary, $avisos, $lateComment): SendResult {
         $deliveries++;
         self::assertSame(AvisosResumo::CHAVE_MAIL, $message->type);
         self::assertSame('seguidor@example.test', $message->to);
         self::assertSame('pt-br', $message->langcode);
-        self::assertSame(
-          'Respostas novas em "Resumo compartilhado": ' . ($deliveries === 1 ? '2' : '1'),
-          $message->context['resumo'],
-        );
+        self::assertSame('Respostas novas em "Resumo compartilhado": 2', $message->context['resumo']);
         if ($deliveries === 1) {
+          self::assertInstanceOf(AvisosResumo::class, $concurrentSummary);
+          self::assertSame(0, $concurrentSummary->enviarResumos(), 'A separate request skips the recipient while its persistent lock is held.');
           self::assertSame(1, $avisos->registrarResposta($lateComment), 'A new event arrives while the first digest is being sent.');
         }
         return SendResult::sent();
@@ -371,15 +372,24 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $this->container->get('uuid'),
       $this->container->get('lock.persistent'),
     );
+    // A second backend instance models a separate request sharing the same DB
+    // semaphore table; reusing one backend would renew its own lock.
+    $concurrentSummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('uuid'),
+      new PersistentDatabaseLockBackend($this->container->get('database')),
+    );
 
     self::assertSame(1, $summary->enviarResumos());
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
-    $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
-    self::assertSame(1, $summary->enviarResumos());
-    $notices = $this->loadNotices($uid, (int) $topic->id());
-    self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
     self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 

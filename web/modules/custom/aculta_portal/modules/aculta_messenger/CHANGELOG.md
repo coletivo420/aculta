@@ -1,3 +1,12 @@
+## 0.1.1-dev.114 — cobrir lock do digest entre requisições — 2026-10-24
+
+- Kernel MariaDB usa um segundo `PersistentDatabaseLockBackend` sobre a mesma
+  tabela semaphore durante a chamada ao Mailer. A execução concorrente não envia
+  outro resumo, e o evento novo recebido durante o primeiro envio permanece
+  pendente. ForumNoticeIdempotency: 26 testes / 587 assertions PASS.
+- Ainda não é teste com processos de SO independentes; o stress multiprocesso e
+  o transporte lento/real permanecem pendentes.
+
 ## 0.1.1-dev.113 — exigir ID estável nos itens do digest — 2026-10-24
 
 - O Messenger não envia linhas de providers sem `delivery_id` inteiro positivo;
