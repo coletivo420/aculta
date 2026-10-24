@@ -1,4 +1,16 @@
 # Marley ocupa as rotas editoriais; os IDs de área funcionais permanecem estáveis.
+# P1-A: personal Studio entry, without replacing /studio (legacy Marley).
+aculta_studio.personal:
+  path: /studio/pessoal
+  defaults:
+    _controller: 'aculta_studio.personal_controller:page'
+    _title: 'Meu Espaço'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.we_sativa:
   path: /studio/we-sativa
   defaults:
