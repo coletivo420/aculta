@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
+use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\Core\Session\AccountInterface;
@@ -64,7 +65,9 @@ final class AccountExperienceProviderTest extends UnitTestCase {
    * The new entry links to existing forms, never to /minha-conta.
    */
   public function testLinksReuseExistingAccountRoutes(): void {
-    $build = (new AccountExperienceProvider())->build();
+    $document = $this->createMock(AccountDocumentInterface::class);
+    $document->method('isAvailable')->willReturn(TRUE);
+    $build = (new AccountExperienceProvider($document))->build();
 
     self::assertSame('studio-account-home', $build['#attributes']['data-portal-ui']);
     self::assertSame('item_list', $build['sections']['#theme']);
@@ -82,6 +85,21 @@ final class AccountExperienceProviderTest extends UnitTestCase {
       'aculta_portal.dashboard',
     ], $routes);
     self::assertContains('user', $build['#cache']['contexts']);
+  }
+
+  /**
+   * A missing CPF/CNPJ owner cannot create a broken account link.
+   */
+  public function testDocumentsHiddenWhenOwnerUnavailable(): void {
+    $items = (new AccountExperienceProvider())->build()['sections']['#items'];
+    $routeNames = array_map(static fn (array $item): string =>
+      $item['#url']->getRouteName(), $items);
+    self::assertNotContains('aculta_studio.account_documents', $routeNames);
+
+    $service = $this->createMock(AccountDocumentInterface::class);
+    $service->method('isAvailable')->willReturn(FALSE);
+    $hidden = (new AccountExperienceProvider($service))->build()['sections']['#items'];
+    self::assertCount(count($items), $hidden);
   }
 
 }
