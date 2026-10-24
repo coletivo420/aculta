@@ -3,8 +3,9 @@
 O ACULTA Mailer agora mantém envios com correlação idempotente em estado temporário enquanto o log de aceite estiver
 desativado. Isso preserva os itens de digest para retry e evita tratar um envio não deduplicável como sucesso.
 
-Validação: Kernel do Mailer 5 testes/24 asserções PASS. Kernel do Messenger e Integration digest não foram executados
-neste incremento; Runtime e transporte externo não testados.
+Validação: Kernel do Mailer 5 testes/24 asserções PASS; `AvisosResumoProviderPreferenceTest` 4/63 PASS confirma que
+falha temporária não descarta nem confirma IDs do provider; PHPCS e PHP lint do teste PASS. Kernel do Messenger e
+Integration digest não foram executados neste incremento; Runtime e transporte externo não testados.
 
 ## 0.1.1-dev.143 — testar lock do digest entre processos — 2026-10-24
 

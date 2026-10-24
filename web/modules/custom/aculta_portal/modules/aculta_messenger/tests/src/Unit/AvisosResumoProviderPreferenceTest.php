@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
@@ -243,6 +244,80 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       ->method('deliver')
       ->with(self::isInstanceOf(MailMessage::class))
       ->willReturn(SendResult::cancelled());
+    $mailer->expects(self::never())->method('send');
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn(1_792_800_000);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
+    $summary = new AvisosResumo(
+      $entities,
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $entities,
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
+      $userData,
+      $time,
+      (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
+      new Settings(['hash_salt' => 'unit-test-hash-salt']),
+      $this->databaseConnection(),
+      $lock,
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+  }
+
+  /**
+   * A temporary Mailer failure keeps provider rows pending for a safe retry.
+   */
+  public function testTemporaryMailerFailureKeepsDigestRowsPending(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('getEmail')->willReturn('member@example.test');
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($query);
+    $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+      'avisos_resumo_email' => TRUE,
+      'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
+      'avisos_resumo_ultimo' => 0,
+      'email_confirmed' => TRUE,
+      default => NULL,
+    });
+    $userData->expects(self::never())->method('set');
+    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider->method('pendingRecipientIds')->willReturn([27]);
+    $provider->method('digestRowsFor')->with(27)->willReturn([
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
+    ]);
+    $provider->expects(self::never())->method('discardDigest');
+    $provider->expects(self::never())->method('markDigestSent');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->with(self::isInstanceOf(MailMessage::class))
+      ->willReturn(SendResult::failed(DeliveryError::Temporary, NULL));
     $mailer->expects(self::never())->method('send');
 
     $time = $this->createMock(TimeInterface::class);
