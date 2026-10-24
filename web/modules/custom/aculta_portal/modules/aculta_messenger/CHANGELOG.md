@@ -1,3 +1,14 @@
+## 0.1.1-dev.135 — recuperar fila recusada de amizade — 2026-10-24
+
+O consumer de amizade agora verifica a resposta da Queue API. Se a fila recusar o item ou lançar erro, a mensagem
+persistente passa a `failed` com zero tentativas, o Messenger registra o ID técnico e propaga a falha. O replay do mesmo
+evento, sob a chave idempotente existente, encontra a mensagem e reenvia somente o item da fila, sem criar aviso
+adicional. A falha por interrupção do processo entre salvar a mensagem e criar o item ainda não tem reconciliador
+periódico.
+
+Validação: `FriendshipNoticeSubscriberTest` 7/82 e suíte Unit Messenger 127/737 PASS; PHPCS Drupal/DrupalPractice e
+PHP lint PASS. Sem Kernel de fila ou Runtime nesta microfase.
+
 ## 0.1.1-dev.134 — alinhar lease do digest ao transporte — 2026-10-24
 
 O lock persistente por destinatário do digest agora usa lease de 180 segundos, alinhada aos workers de e-mail direto e

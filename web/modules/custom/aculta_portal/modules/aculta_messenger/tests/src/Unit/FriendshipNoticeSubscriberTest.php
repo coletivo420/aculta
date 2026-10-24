@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
@@ -18,6 +19,8 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
+use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -69,12 +72,109 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $messageStorage = $this->createMock(EntityStorageInterface::class);
     $messageStorage->method('getQuery')->willReturn($query);
     $messageStorage->expects(self::never())->method('create');
+    $existingMessage = $this->createMock(MessageInterface::class);
+    $delivery = $this->createMock(FieldItemListInterface::class);
+    $delivery->method('__get')->with('value')->willReturn('sent');
+    $attempts = $this->createMock(FieldItemListInterface::class);
+    $attempts->method('__get')->with('value')->willReturn(1);
+    $existingMessage->method('get')->willReturnMap([
+      ['field_aculta_msg_delivery', $delivery],
+      ['field_aculta_messenger_attempts', $attempts],
+    ]);
+    $messageStorage->expects(self::once())->method('load')->with(83)->willReturn($existingMessage);
 
     $entityTypeManager = $this->entityTypeManager($userStorage, $messageStorage);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
 
-    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock());
+    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock(), new NullLogger());
+    $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
+  }
+
+  /**
+   * A failed enqueue is retried by replaying the same idempotent event.
+   */
+  public function testReplayQueuesExistingMessageAfterEnqueueFailure(): void {
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([83]);
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('id')->willReturn('83');
+    $message->method('get')->willReturnMap([
+      ['field_aculta_msg_delivery', $this->fieldValue('failed')],
+      ['field_aculta_messenger_attempts', $this->fieldValue(0)],
+    ]);
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'pending')->willReturnSelf();
+    $message->expects(self::once())->method('save');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $storage->expects(self::never())->method('create');
+    $storage->expects(self::once())->method('load')->with(83)->willReturn($message);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(501);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
+    $subscriber = new FriendshipNoticeSubscriber(
+      $this->entityTypeManager(
+        $userStorage,
+        $storage,
+        $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
+      ),
+      $queueFactory,
+      $this->lock(),
+      new NullLogger(),
+    );
+
+    $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
+  }
+
+  /**
+   * Queue refusal is logged and the persisted notice is left replayable.
+   */
+  public function testQueueRefusalMarksNoticeFailedAndThrows(): void {
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('id')->willReturn('83');
+    $message->expects(self::exactly(2))->method('save');
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'failed')->willReturnSelf();
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $storage->expects(self::once())->method('create')->willReturn($message);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(FALSE);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())->method('error')->with(
+      'Could not queue friendship notice email for Message @id.',
+      ['@id' => '83'],
+    );
+    $subscriber = new FriendshipNoticeSubscriber(
+      $this->entityTypeManager(
+        $userStorage,
+        $storage,
+        $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
+      ),
+      $queueFactory,
+      $this->lock(),
+      $logger,
+    );
+
+    $this->expectException(\RuntimeException::class);
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -109,6 +209,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       ),
       $queueFactory,
       $lock,
+      new NullLogger(),
     );
 
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
@@ -135,7 +236,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
 
-    (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock()))
+    (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock(), new NullLogger()))
       ->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -180,7 +281,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $userStorage,
       $messageStorage,
       $this->friendshipStorage($this->friendship($status)),
-    ), $queueFactory, $this->lock());
+    ), $queueFactory, $this->lock(), new NullLogger());
     $subscriber->consume($this->event($transition, $requesterId, $recipientId));
   }
 
@@ -229,6 +330,15 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
    */
   private function lock(): LockBackendInterface {
     return $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]);
+  }
+
+  /**
+   * Creates a field item list exposing one configured value.
+   */
+  private function fieldValue(mixed $value): FieldItemListInterface {
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('__get')->with('value')->willReturn($value);
+    return $field;
   }
 
   /**

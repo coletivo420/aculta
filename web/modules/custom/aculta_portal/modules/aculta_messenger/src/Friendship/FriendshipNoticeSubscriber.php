@@ -11,6 +11,8 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\message\MessageInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -37,6 +39,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
+    private readonly LoggerInterface $logger,
   ) {}
 
   /**
@@ -101,6 +104,13 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         ->range(0, 1)
         ->execute();
       if ($existing !== []) {
+        $message = $storage->load(reset($existing));
+        if ($message instanceof MessageInterface
+          && $message->get('field_aculta_msg_delivery')->value === 'failed'
+          && (int) $message->get('field_aculta_messenger_attempts')->value === 0) {
+          $message->set('field_aculta_msg_delivery', 'pending')->save();
+          $this->enqueue($message);
+        }
         return;
       }
 
@@ -113,10 +123,31 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         'field_aculta_messenger_attempts' => 0,
       ]);
       $message->save();
-      $this->queueFactory->get(self::EMAIL_QUEUE)->createItem(['message_id' => (int) $message->id()]);
+      $this->enqueue($message);
     }
     finally {
       $this->lock->release($lockId);
+    }
+  }
+
+  /**
+   * Queues one direct email and leaves a replayable failed state on error.
+   */
+  private function enqueue(MessageInterface $message): void {
+    try {
+      $itemId = $this->queueFactory->get(self::EMAIL_QUEUE)->createItem([
+        'message_id' => (int) $message->id(),
+      ]);
+      if ($itemId === FALSE) {
+        throw new \RuntimeException('Friendship notice email could not be queued.');
+      }
+    }
+    catch (\Throwable $exception) {
+      $message->set('field_aculta_msg_delivery', 'failed')->save();
+      $this->logger->error('Could not queue friendship notice email for Message @id.', [
+        '@id' => $message->id(),
+      ]);
+      throw $exception;
     }
   }
 
