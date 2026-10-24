@@ -10,6 +10,26 @@ Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta
 deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
 smoke autenticado e revisão visual permanecem pendentes.
 
+## Integração planejada com Meu Espaço no Studio (STUDIO-P0)
+
+Quando `/studio/pessoal` existir, Studio poderá apresentar **somente
+atalhos, resumos e contadores autorizados** da central de Avisos e
+Mensagens, e acesso às preferências de comunicação. As fontes de verdade
+permanecem no `aculta_messenger`: tipos Message, `aculta_aviso`,
+Private Message, conversas voluntárias, deduplicação, bloqueios, leitura,
+retenção e canais; e-mail é transportado por `aculta_mailer`.
+
+**Proibido:** criar inbox do Studio, copiar estado de leitura, fazer envio
+direto, mudar destinatários ou criar thread ao exibir participação pessoal.
+O Studio não deverá deduzir permissão para conversar a partir do acesso ao
+perfil público. Preferências de contato e visibilidade são revalidadas
+pelas políticas User/Messenger.
+
+**Estado:** integração futura, sem código alterado. Fonte:
+[Hub/Meu Espaço e marcos STUDIO-P0–P7](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+O roadmap próprio Messenger M0–M7 mantém prioridade, versões e
+contratos independentes.
+
 ## ACULTA Messenger 0.1.1
 
 A versão `0.1.1-dev.84` inclui o envelope mínimo `MessengerNoticeEvent` e
