@@ -143,11 +143,18 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $provider->failAcknowledgeAttempts = 1;
     $correlations = [];
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects($this->exactly(2))
+    $mailer->expects($this->once())
       ->method('deliver')
       ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
         $correlations[] = $message->correlationId;
         return SendResult::sent();
+      });
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->willReturnCallback(static function (string $correlationId, string $type) use (&$correlations): bool {
+        self::assertSame($correlations[0], $correlationId);
+        self::assertSame(AvisosResumo::CHAVE_MAIL, $type);
+        return TRUE;
       });
     $failedTransaction = new TestLearningDigestTransaction();
     $successfulTransaction = new TestLearningDigestTransaction();
@@ -161,7 +168,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $this->assertFalse($failedTransaction->committed);
     $this->assertTrue($successfulTransaction->committed);
     $this->assertFalse($successfulTransaction->rolledBack);
-    $this->assertSame($correlations[0], $correlations[1]);
+    $this->assertCount(1, $correlations, 'A Mailer-accepted batch is reconciled without a second delivery attempt.');
     $this->assertSame([27], $provider->marked);
     $this->assertSame([[501]], $provider->markedDeliveryIds);
   }
@@ -251,14 +258,24 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => $type === 'user' ? $userStorage : $noticeStorage);
 
+    $data = [];
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static function (string $module, int $uid, string $key) use ($optIn): mixed {
+    $userData->method('get')->willReturnCallback(static function (string $module, int $uid, string $key) use ($optIn, &$data): mixed {
+      if (array_key_exists($key, $data[$module][$uid] ?? [])) {
+        return $data[$module][$uid][$key];
+      }
       return match ($key) {
         'avisos_resumo_email' => $optIn,
         'email_confirmed' => TRUE,
         'avisos_resumo_ultimo' => 0,
         default => NULL,
       };
+    });
+    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$data): void {
+      $data[$module][$uid][$key] = $value;
+    });
+    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$data): void {
+      unset($data[$module][$uid][$key]);
     });
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
