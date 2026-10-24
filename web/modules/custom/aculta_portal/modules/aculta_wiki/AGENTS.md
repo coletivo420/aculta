@@ -1,3 +1,7 @@
+- Dev.105: Kernel cobre o purpose da home Wiki com o subscriber real: raiz Wiki
+  aceita `/wiki` como caminho interno e Domain principal recebe 404 (1/84;
+  199 depreciações upstream e 2 PHPUnit). Runtime intocado.
+
 - Dev.97: Kernel valida URL e acesso do link de decisão das propostas na fila
   do Studio (1/205; 202 depreciações Core/contrib, 2 PHPUnit). Runtime/visual
   intocados.

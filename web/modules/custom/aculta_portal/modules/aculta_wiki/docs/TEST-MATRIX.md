@@ -223,7 +223,7 @@ depois da importação de configuração no servidor de testes.
 
 | Componente | Tipo | Cenários | Estado |
 | --- | --- | --- | --- |
-| `WikiController::home` | Unit / Kernel | Página inicial responde 200 no purpose `wiki`; sem blocos quando o purpose é outro | parcial: Unit cobre CTA por `createAccess()`; resposta por purpose ainda pendente |
+| Purpose da rota home Wiki | Kernel MariaDB | Subscriber aceita o caminho interno `/wiki` quando servido pela raiz Wiki e devolve 404 no Domain principal | aprovado (dev.105; 1 teste / 84 asserções; 199 depreciações upstream, 2 PHPUnit) |
 | `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado, truncamento em `MAX_CHARS` e acesso/cache de grants | aprovado (`WikiControllerTest` 11 testes / 70 asserções) |
 | `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 11/70; contagem textual renderizada segue sem teste) |
 | `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | aprovado (4 testes / 18 asserções) |

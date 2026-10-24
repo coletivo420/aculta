@@ -808,8 +808,37 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertFalse($directRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE));
     self::assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
 
-    // Public Wiki routes must not be served from the main Portal domain.
+    // The internal Wiki home is served from the Wiki root, but not from the
+    // main Portal host. Exercise the real purpose subscriber for both cases.
+    $purposeSubscriber = $this->container->get('aculta_portal.domain_purpose_subscriber');
+    $wikiHomeRequest = Request::create('/wiki');
+    $wikiHomeRequest->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
+    $wikiHomeRequest->attributes->set('_route', 'aculta_portal.wiki_home');
+    $wikiHomeRequest->attributes->set('_route_object', $routeProvider->getRouteByName('aculta_portal.wiki_home'));
+    $wikiHomeEvent = new RequestEvent(
+      $this->container->get('kernel'),
+      $wikiHomeRequest,
+      HttpKernelInterface::MAIN_REQUEST,
+    );
+    $purposeSubscriber->onRequest($wikiHomeEvent);
+    self::assertNull($wikiHomeEvent->getResponse(), 'The Wiki home is accepted when the Wiki root serves it.');
+
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $mainHomeRequest = Request::create('https://main.example.invalid/wiki');
+    $mainHomeRequest->attributes->set('_route', 'aculta_portal.wiki_home');
+    $mainHomeRequest->attributes->set('_route_object', $routeProvider->getRouteByName('aculta_portal.wiki_home'));
+    $mainHomeEvent = new RequestEvent(
+      $this->container->get('kernel'),
+      $mainHomeRequest,
+      HttpKernelInterface::MAIN_REQUEST,
+    );
+    $purposeSubscriber->onRequest($mainHomeEvent);
+    self::assertNotNull($mainHomeEvent->getResponse());
+    self::assertSame(404, $mainHomeEvent->getResponse()->getStatusCode());
+    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
+
+    // Public Wiki routes must not be served from the main Portal domain.
     $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
     $searchRoute = $routeProvider->getRouteByName('aculta_portal.wiki_search');
     $wrongPurposeRequest = Request::create('https://main.example.invalid/wiki/busca');

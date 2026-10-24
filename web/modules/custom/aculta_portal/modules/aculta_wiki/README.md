@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.105`: Kernel caracteriza a home Wiki através do subscriber real:
+  o Domain Wiki aceita o caminho `/wiki` servido pela raiz, e o Domain principal
+  responde 404 (1 teste / 84 asserções; 199 depreciações upstream e 2 PHPUnit).
+  Nenhuma alteração no Runtime.
+
 - Integração Studio dev.5: `create wiki_entry content` não abre o inventário
   editorial do GanjaLab; autoria própria permanece na WE SATIVA. A `WikiTab`
   exige permissão editorial, revisão ou moderação de propostas, e só expõe a

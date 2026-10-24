@@ -64,6 +64,13 @@
 
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.105 — caracterizar acesso da home por Domain
+
+- Kernel exercita `DomainPurposeRequestSubscriber` com a rota real da home:
+  caminho `/wiki` com marcador de raiz é aceito no Domain Wiki; o mesmo caminho
+  no Domain principal responde 404. Focal MariaDB: 1 teste / 84 asserções,
+  199 depreciações Core/contrib e 2 PHPUnit. Runtime intocado.
+
 ## 0.1.0-dev.104 — validar serialização da decisão editorial
 
 - Kernel MariaDB usa um processo PHP e conexão independentes para manter o lock
