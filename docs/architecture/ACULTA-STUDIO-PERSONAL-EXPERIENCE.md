@@ -1,5 +1,19 @@
 # ACULTA Studio — Hub e Meu Espaço
 
+## STUDIO-P2-A — página de edição privada adicionada (dev.12)
+
+A nova rota `/studio/pessoal/perfil` abre um painel privado no
+purpose `account`: compõe componentes do User para edição modal de
+bio/redes, link para o editor oficial de foto/avatar, formulário atual
+de apelido e link público autorizado exclusivamente pelo serviço
+`aculta_user.public_profile_link`. **A página pública `/u/{apelido}`
+continua separada** e nunca é inferida a partir do login.
+
+A P2-A não migrou Form API, dados, shell nem o cadastro; P2-B deve
+resolver navegação contextual, privacidade/apelido integrados e
+fallback sem JS. Unit tests foram criados, mas PHPUnit, Kernel e
+Runtime ainda não foram executados.
+
 ## Contrato de rotas vigente após limpeza global (dev.11)
 
 Hub em `/studio` (`aculta_studio.hub`), Marley em
