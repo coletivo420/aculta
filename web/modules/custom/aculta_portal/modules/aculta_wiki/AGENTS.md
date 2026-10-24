@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.45: `ContentIndexWikiAccessKernelTest` inicializa a closure real de Wiki,
+  Image, Portal e Index; container descobre providers por tag sem bridge fixture.
+  Consulta as três relações, verifica grants e restaura Domain. MariaDB: 4/125;
+  projection v3 inalterada, sem rebuild ou Runtime.
+
 - Dev.44: Meu Trabalho oferece “Editar” somente após revalidar `update` do Node
   para a autora no purpose Wiki e monta a rota Core no Domain Wiki. Kernel
   comprova preview nativo no tempstore privado, acesso só à autora e ausência

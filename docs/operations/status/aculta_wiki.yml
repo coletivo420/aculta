@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.44 (WE SATIVA: edição própria revalidada no purpose Wiki e preview via tempstore sem gravar revisão. Kernel focais 2/111; 203 depreciações Drupal/Core/contrib e 3 PHPUnit. Runtime não alterado)"
-next_phase: 'WE SATIVA: fechar paginação/cursor, edição por requisição HTTP e revisão concorrente. Revisão visual Firefox ESR/X11, Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.45 (Content Index: closure real Wiki + Image + Portal + Index, providers descobertos por tag e consultas outgoing das três relações com Entity Access e Domain restaurado. Kernel MariaDB 4/125; 201 depreciações upstream. Projeção v3; sem rebuild/Runtime)"
+next_phase: 'Content Index: adicionar regressão de revisão publicada substituída por revisão pendente e falha fechada sem Domain; depois fechar paginação/cursor da WE SATIVA. Revisão visual Firefox ESR/X11, Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

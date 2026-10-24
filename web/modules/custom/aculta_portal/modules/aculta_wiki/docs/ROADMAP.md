@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.44**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.45**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.45 — bootstrap real para Content Index
+
+`ContentIndexWikiAccessKernelTest` carrega a closure real de Wiki, Image,
+Portal e Index, compila o container sem fixture de provider ou ponte de acesso,
+e consulta `related_entry`, `wiki_category` e `wiki_image` pela API outgoing.
+Permissões distintas filtram destinos, e o Domain de entrada é restaurado.
+MariaDB: 4 testes / 125 asserções; 201 depreciações Drupal/Core/contrib.
+Projection v3 segue compatível; não houve rebuild, alteração de Runtime ou
+prova de reconstrução integral do inventário.
 
 ### Incremento dev.44 — edição própria e prévia na WE SATIVA
 

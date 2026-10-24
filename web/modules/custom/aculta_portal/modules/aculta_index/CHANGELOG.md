@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.169 — testar acesso Wiki sem bridges de fixture
+
+- `ContentIndexWikiAccessKernelTest` substitui o registro manual de services e
+  fixture de acesso pelo bootstrap real de Wiki, Image, Portal e Index. A closure
+  real compila, descobre providers por tag e consulta relações pela API real.
+- MariaDB: 4 testes / 125 asserções; 201 depreciações Drupal/Core/contrib.
+  Sem rebuild integral, mudança de schema ou Runtime.
+
 ## 0.1.0-dev.168 — endurecer fixture privada de Media da Wiki
 
 - O Kernel owner verifica diretamente que a Media fixture está não publicada

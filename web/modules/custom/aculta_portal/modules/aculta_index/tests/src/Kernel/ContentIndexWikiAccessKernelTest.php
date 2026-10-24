@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
-use Drupal\aculta_portal\Hook\EntityHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Symfony\Component\Yaml\Yaml;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\aculta_portal\Hook\EntityHooks;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
@@ -22,11 +24,9 @@ use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use Drupal\profile\Entity\ProfileType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Verifies Index filtering under the Portal's production Wiki access policy.
@@ -39,60 +39,21 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = [
-    'system',
-    'user',
-    'field',
-    'text',
-    'file',
-    'image',
-    'media',
-    'node',
-    'domain',
-    'taxonomy',
-    'aculta_index',
-    'aculta_index_wiki_access_test',
-  ];
+  protected static $modules = [];
 
   /**
-   * {@inheritdoc} */
-  public function register(ContainerBuilder $container): void {
-    parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
-      new Reference('entity_type.manager'),
-      new Reference('domain.negotiator'),
-      new Reference('config.factory'),
-      new Reference('request_stack'),
-    ]))->setPublic(TRUE));
-
-    // Load the actual owner declarations without enabling the unfinished Wiki
-    // module or its unrelated dependency chain.
-    $serviceFiles = [
-      '/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.services.yml' => [
-        'aculta_wiki.content_index_provider',
-        'aculta_wiki.category_content_index_provider',
-      ],
-      '/modules/custom/aculta_portal/modules/aculta_image/aculta_image.services.yml' => [
-        'aculta_image.content_index_provider',
-      ],
-    ];
-    foreach ($serviceFiles as $file => $serviceIds) {
-      $services = Yaml::parseFile(DRUPAL_ROOT . $file, Yaml::PARSE_CUSTOM_TAGS)['services'];
-      foreach ($serviceIds as $serviceId) {
-        $service = $services[$serviceId];
-        $arguments = array_map(
-          static fn (mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
-            ? new Reference(substr($argument, 1))
-            : $argument,
-          $service['arguments'] ?? [],
-        );
-        $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
-        foreach ($service['tags'] as $tag) {
-          $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
-        }
-        $container->setDefinition($serviceId, $definition);
-      }
-    }
+   * Boots the real Wiki, Image, Portal, and Index modules and dependencies.
+   */
+  protected function bootKernel(): void {
+    static::$modules = $this->resolveModuleDependencyClosure([
+      'aculta_index',
+      'aculta_image',
+      'aculta_lms',
+      'aculta_studio',
+      'aculta_user',
+      'aculta_wiki',
+    ]);
+    parent::bootKernel();
   }
 
   /**
@@ -100,13 +61,34 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installEntitySchema('node');
     $this->installEntitySchema('domain');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    foreach (PerfilDoPapel::TIPOS as $type) {
+      ProfileType::create(['id' => $type, 'label' => $type])->save();
+    }
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    foreach (PerfilDoPapel::TIPOS as $type) {
+      FieldConfig::create([
+        'entity_type' => 'profile',
+        'bundle' => $type,
+        'field_name' => 'field_nickname',
+        'label' => 'Nickname',
+      ])->save();
+    }
+    $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -118,6 +100,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     ]);
     $this->installConfig(['system', 'user', 'node', 'domain', 'taxonomy', 'media', 'file']);
     aculta_index_install();
+    $this->installDomainFieldStorage();
     NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki entry'])->save();
     Vocabulary::create(['vid' => 'wiki_category', 'name' => 'Wiki categories'])->save();
     $this->createMediaType('image', ['id' => 'image', 'label' => 'Image']);
@@ -128,25 +111,83 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installImageField();
     $authenticated = Role::load('authenticated');
     self::assertInstanceOf(Role::class, $authenticated);
-    $authenticated->grantPermission('access content')->grantPermission('view media')->save();
+    $authenticated->grantPermission('access content')->save();
+    Role::create([
+      'id' => 'wiki_index_media_reader',
+      'label' => 'Wiki Index media reader',
+      'permissions' => ['access content', 'view media'],
+    ])->save();
+  }
+
+  /**
+   * Real service tag discovery gives each Wiki bundle a single owner.
+   */
+  public function testRealModulesDiscoverWikiAndMediaProviders(): void {
+    self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_wiki'));
+    $providers = $this->container->get('aculta_index.provider_registry');
+    self::assertSame('wiki', $providers->findForBundle('node', 'wiki_entry')->getProviderId());
+    self::assertSame(3, $providers->get('wiki')->getProjectionVersion());
+    self::assertSame('wiki_category', $providers->findForBundle('taxonomy_term', 'wiki_category')->getProviderId());
+    self::assertSame('image', $providers->findForBundle('media', 'image')->getProviderId());
+    self::assertCount(1, array_filter(
+      $providers->all(),
+      static fn ($provider): bool => in_array('wiki_entry', $provider->getSupportedEntityTypes()['node'] ?? [], TRUE),
+    ));
+  }
+
+  /**
+   * Resolves transitive module dependencies in dependency order.
+   *
+   * @param string[] $roots
+   *   Root modules whose real dependency graph should boot.
+   *
+   * @return string[]
+   *   Module IDs ordered with dependencies before dependents.
+   */
+  private function resolveModuleDependencyClosure(array $roots): array {
+    $discovery = new ExtensionDiscovery(DRUPAL_ROOT);
+    $discovery->setProfileDirectories([]);
+    $extensions = $discovery->scan('module');
+    $ordered = [];
+    $visited = [];
+    $visiting = [];
+    $visit = function (string $module) use (&$visit, &$ordered, &$visited, &$visiting, $extensions): void {
+      if (isset($visited[$module])) {
+        return;
+      }
+      if (isset($visiting[$module])) {
+        throw new \LogicException(sprintf('Circular module dependency detected at %s.', $module));
+      }
+      if (!isset($extensions[$module])) {
+        throw new \RuntimeException(sprintf('Required module %s is unavailable.', $module));
+      }
+      $visiting[$module] = TRUE;
+      $info = Yaml::parseFile(DRUPAL_ROOT . '/' . $extensions[$module]->getPathname());
+      foreach ($info['dependencies'] ?? [] as $dependency) {
+        if (!is_string($dependency)) {
+          continue;
+        }
+        $dependency = substr($dependency, strrpos($dependency, ':') === FALSE ? 0 : strrpos($dependency, ':') + 1);
+        if (isset($extensions[$dependency])) {
+          $visit($dependency);
+        }
+      }
+      unset($visiting[$module]);
+      $visited[$module] = TRUE;
+      $ordered[] = $module;
+    };
+    foreach ($roots as $root) {
+      $visit($root);
+    }
+    return $ordered;
   }
 
   /**
    * Canonical Wiki access works from another active Domain and restores it. */
   public function testFilterUsesWikiEntityAccessInCanonicalDomain(): void {
     // Keep the reader away from Drupal's uid 1 superuser shortcut.
-    User::create([
-      'name' => 'wiki-index-first-user',
-      'mail' => 'wiki-index-first-user@example.invalid',
-      'status' => 1,
-    ])->save();
-    $reader = User::create([
-      'name' => 'wiki-index-reader',
-      'mail' => 'wiki-index-reader@example.invalid',
-      'status' => 1,
-      'roles' => ['authenticated'],
-    ]);
-    $reader->save();
+    $this->createTestUser('wiki-index-first-user');
+    $reader = $this->createTestUser('wiki-index-reader');
     $entry = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Canonical Wiki entry',
@@ -178,7 +219,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     }
     self::assertTrue(
       $hasPolicyDenial,
-      'Drupal invokes the fixture bridge to the production Portal entity access policy.',
+      'Drupal invokes the production Portal entity access hook.',
     );
 
     self::assertFalse($entry->access('view', $reader), 'The Portal policy blocks Wiki access in the main purpose.');
@@ -199,13 +240,8 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
    * Checks relation source and targets in the canonical Wiki Domain.
    */
   public function testRelatedEntriesRevalidateSourceAndTargetsInWikiDomain(): void {
-    User::create(['name' => 'wiki-relation-root', 'status' => TRUE])->save();
-    $reader = User::create([
-      'name' => 'wiki-relation-reader',
-      'status' => TRUE,
-      'roles' => ['authenticated'],
-    ]);
-    $reader->save();
+    $this->createTestUser('wiki-relation-root');
+    $reader = $this->createTestUser('wiki-relation-reader');
 
     $publicTarget = Node::create([
       'type' => 'wiki_entry',
@@ -272,13 +308,9 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
    * Queries Wiki categories and images through their owner providers.
    */
   public function testCategoryAndImageRelationsRevalidateTargetAccess(): void {
-    User::create(['name' => 'wiki-relations-root', 'status' => TRUE])->save();
-    $reader = User::create([
-      'name' => 'wiki-relations-reader',
-      'status' => TRUE,
-      'roles' => ['authenticated'],
-    ]);
-    $reader->save();
+    $this->createTestUser('wiki-relations-bootstrap');
+    $root = $this->createTestUser('wiki-relations-root');
+    $reader = $this->createTestUser('wiki-relations-reader', ['authenticated', 'wiki_index_media_reader']);
 
     $publicCategory = Term::create([
       'vid' => 'wiki_category',
@@ -303,7 +335,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'bundle' => 'image',
       'name' => 'Private image',
       'status' => FALSE,
-      'uid' => $reader->id(),
+      'uid' => $root->id(),
     ]);
     $privateImage->save();
 
@@ -370,7 +402,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       (string) $privateImageSource->id(),
       $privateImageSource->language()->getId(),
       'wiki_image',
-      $reader,
+      $root,
     );
     self::assertCount(0, $deniedImage->entities);
     self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
@@ -394,14 +426,44 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   }
 
   /**
-   * Installs the Wiki entry's Domain reference field. */
-  private function installDomainField(): void {
+   * Creates a real account while keeping AvatarPool outside this access test.
+   */
+  private function createTestUser(string $name, array $roles = ['authenticated']): User {
+    $avatar = File::create([
+      'uri' => 'public://wiki-index-avatar-' . bin2hex(random_bytes(4)) . '.png',
+      'status' => 0,
+    ]);
+    $avatar->save();
+    $user = User::create([
+      'name' => $name,
+      'mail' => $name . '@example.invalid',
+      'status' => TRUE,
+      'roles' => $roles,
+      'user_picture' => ['target_id' => $avatar->id()],
+    ]);
+    $user->save();
+    return $user;
+  }
+
+  /**
+   * Installs the Domain reference storage before Node type creation.
+   */
+  private function installDomainFieldStorage(): void {
     FieldStorageConfig::create([
       'entity_type' => 'node',
       'field_name' => 'field_domain_source',
       'type' => 'entity_reference',
       'settings' => ['target_type' => 'domain'],
     ])->save();
+  }
+
+  /**
+   * Installs the Wiki entry's Domain reference field.
+   */
+  private function installDomainField(): void {
+    if (FieldConfig::loadByName('node', 'wiki_entry', 'field_domain_source')) {
+      return;
+    }
     FieldConfig::create([
       'entity_type' => 'node',
       'bundle' => 'wiki_entry',

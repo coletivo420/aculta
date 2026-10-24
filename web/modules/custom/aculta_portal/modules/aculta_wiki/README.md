@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.45`: Kernel do Index agora inicializa `aculta_wiki`, `aculta_image`,
+  Portal e Index reais, sem ponte YAML de providers ou acesso. Discovery confirma
+  owner único de `node:wiki_entry`, categoria e Media; consultas outgoing filtram
+  origem/destinos e restauram Domain (4 testes / 125 asserções).
+
 - `0.1.0-dev.44`: WE SATIVA mostra ação de edição somente após revalidar
   `update` do próprio verbete no purpose Wiki e envia o link ao Domain Wiki.
   Kernel confirma o formulário Core, preview privado via tempstore e que a

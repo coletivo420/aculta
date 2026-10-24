@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.45 — provar providers e acesso com bootstrap real
+
+- O Kernel transversal habilita a closure real de `aculta_wiki`, `aculta_image`,
+  Portal e Index. Registro por `aculta_index.provider` confirma owner único para
+  `node:wiki_entry`, `taxonomy_term:wiki_category` e `media:image`.
+- Consultas reais testam `related_entry`, `wiki_category` e `wiki_image`, com
+  Entity Access para leitores com grants distintos e restauração do Domain.
+  A ponte de fixture para registrar providers e política Portal foi removida.
+- MariaDB isolada: classe focal 4 testes / 125 asserções; 201 depreciações
+  Drupal/Core/contrib. O teste não faz rebuild integral nem valida Runtime.
+  A projeção permanece v3; nenhuma reconstrução foi iniciada.
+
 ## 0.1.0-dev.44 — edição própria e prévia na WE SATIVA
 
 - Workspace só oferece “Editar” após validar `Node::access('update')` para a
