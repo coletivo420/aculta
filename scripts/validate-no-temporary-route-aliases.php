@@ -78,7 +78,7 @@ else {
     || str_contains($domainRoute, 'PaymentMethodsRedirectController::redirectToOrders')) {
     $failures[] = 'Portal still exposes obsolete Commerce redirect aliases';
   }
-  if (!str_contains($domainRequest, "$accountPath === '/minha-conta'")
+  if (!str_contains($domainRequest, "\$accountPath === '/minha-conta'")
     || !str_contains($domainRequest, 'Response::HTTP_NOT_FOUND')) {
     $failures[] = 'Technical account prefix must be rejected without an alias';
   }
