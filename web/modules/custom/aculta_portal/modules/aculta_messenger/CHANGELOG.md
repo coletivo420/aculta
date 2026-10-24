@@ -1,3 +1,12 @@
+## 0.1.1-dev.95 — revalidar preferências de categoria no digest — 2026-10-24
+
+- O digest compartilhado confere o modo atual de cada categoria fornecida por
+  adapters. Se a pessoa mudou de resumo para direto/desativado, pendências da
+  categoria são descartadas sem remover o aviso obrigatório do site.
+- Unit: `AvisosResumoProviderPreferenceTest` verifica opt-out depois da
+  enfileiração; Loja revalida também a categoria antes de expor linhas.
+- Unit Messenger: 82 testes / 386 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint no serviço/teste PASS. Kernel não executado (SIMPLETEST_DB ausente); Runtime não homologado.
+
 ## 0.1.1-dev.93 — usar relógio Drupal na fila de avisos do Fórum — 2026-10-24
 
 - `MessageSubscribeEventWorker` usa `datetime.time` para aplicar o limite de

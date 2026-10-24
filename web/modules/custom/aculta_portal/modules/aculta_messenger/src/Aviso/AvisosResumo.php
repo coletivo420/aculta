@@ -144,10 +144,23 @@ final class AvisosResumo {
         continue;
       }
       $providerRows = $provider->digestRowsFor($uid);
-      if ($providerRows !== []) {
-        array_push($linhas, ...$providerRows);
-        $providersWithRows[] = $provider;
+      if ($providerRows === []) {
+        continue;
       }
+      $eligibleRows = array_values(array_filter(
+        $providerRows,
+        fn(array $row): bool => ($row['tipo'] ?? NULL) === NULL
+          || $this->preferencias->emailMode($uid, (string) $row['tipo']) === AvisoPreferencias::EMAIL_DIGEST,
+      ));
+      if ($eligibleRows === []) {
+        // Preferences can change after a provider queued a digest row. Clear
+        // those pending records instead of sending after the user opted out
+        // or switched that category to direct delivery.
+        $provider->discardDigest($uid);
+        continue;
+      }
+      array_push($linhas, ...$eligibleRows);
+      $providersWithRows[] = $provider;
     }
     if ($linhas === []) {
       return FALSE;

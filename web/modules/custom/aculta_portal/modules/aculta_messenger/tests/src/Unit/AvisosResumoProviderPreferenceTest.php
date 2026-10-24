@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Unit;
+
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\AvisosResumo;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Tests category opt-out revalidation for shared digest providers.
+ */
+#[CoversClass(AvisosResumo::class)]
+#[Group('aculta_messenger')]
+final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
+
+  /**
+   * Discards a pending category when the current mode is no longer digest.
+   */
+  public function testDiscardsCategoryAfterSwitchToOff(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('getEmail')->willReturn('member@example.test');
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $noticeStorage = $this->createMock(EntityStorageInterface::class);
+    $noticeStorage->method('getQuery')->willReturn($query);
+    $noticeStorage->method('loadMultiple')->with([])->willReturn([]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'aculta_aviso' => $noticeStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+      'avisos_resumo_email' => TRUE,
+      'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_OFF,
+      'avisos_resumo_ultimo' => 0,
+      'email_confirmed' => TRUE,
+      default => NULL,
+    });
+    $provider = $this->createMock(AvisoDigestProviderInterface::class);
+    $provider->method('pendingRecipientIds')->willReturn([27]);
+    $provider->method('digestRowsFor')->with(27)->willReturn([
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1],
+    ]);
+    $provider->expects(self::once())->method('discardDigest')->with(27);
+    $provider->expects(self::never())->method('markDigestSent');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('send');
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method("getRequestTime")->willReturn(1_792_800_000);
+    $summary = new AvisosResumo(
+      $entities,
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $entities,
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
+      $userData,
+      $time,
+      (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
+      $this->createMock(UuidInterface::class),
+      [$provider],
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+  }
+
+}

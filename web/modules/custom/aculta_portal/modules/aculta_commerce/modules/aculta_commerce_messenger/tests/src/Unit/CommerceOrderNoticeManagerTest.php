@@ -97,6 +97,34 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
   }
 
   /**
+   * Drops queued digest items when the user later disables Loja email.
+   */
+  public function testDigestRevalidatesCurrentCategoryPreference(): void {
+    $account = $this->createMock(UserInterface::class);
+    $account->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('execute')->willReturn([]);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($query);
+    $messageStorage->method('loadMultiple')->with([])->willReturn([]);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'user' => $userStorage,
+      'message' => $messageStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('resumoEmailLigado')->with(27)->willReturn(TRUE);
+    $preferences->expects(self::once())->method('emailMode')->with(27, 'loja')->willReturn(AvisoPreferencias::EMAIL_OFF);
+
+    self::assertSame([], $this->manager($entities, $preferences, $this->createMock(QueueFactory::class))->digestRowsFor(27));
+  }
+
+  /**
    * Creates the manager using only mocked I/O dependencies. */
   private function manager(
     EntityTypeManagerInterface $entities,
