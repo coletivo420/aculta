@@ -13,7 +13,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -74,7 +73,7 @@ final class MarleyController {
       $build['welcome'] = $this->welcome($areas);
     }
 
-    // Nível 1: a área pedida, ou a primeira quando a URL é /studio.
+    // Nível 1: a área pedida, ou a primeira quando a URL é /studio/marley.
     if ($aba === '') {
       $aba = (string) array_key_first($areas);
     }
@@ -184,51 +183,6 @@ final class MarleyController {
       ],
     ];
     return $build;
-  }
-
-  /**
-   * Keeps generic Studio URLs working and moves the old editorial prefix.
-   *
-   * /studio/ganjalab itself is now owned by the learner experience. Deeper
-   * paths remain recognizable as editorial URLs and receive a temporary
-   * redirect to the equivalent Marley path.
-   */
-  public function legacyPage(string $aba = '', string $secao = '', string $sub = ''): array|RedirectResponse {
-    if ($aba !== 'ganjalab') {
-      return $this->page($aba, $secao, $sub);
-    }
-
-    return $this->redirectToMarley($secao, $sub);
-  }
-
-  /**
-   * Redirects the non-colliding former /ganjalab editorial paths.
-   */
-  public function legacyEditorial(string $aba = '', string $secao = '', string $sub = ''): RedirectResponse {
-    return $this->redirectToMarley($aba, $secao, $sub);
-  }
-
-  /**
-   * Builds a safe 302 destination under the canonical Marley route tree.
-   */
-  private function redirectToMarley(string $aba = '', string $secao = '', string $sub = ''): RedirectResponse {
-    $parameters = [];
-    if ($aba !== '') {
-      $parameters['aba'] = $aba;
-    }
-    if ($aba !== '' && $secao !== '') {
-      $parameters['secao'] = $secao;
-    }
-    if ($aba !== '' && $secao !== '' && $sub !== '') {
-      $parameters['sub'] = $sub;
-    }
-    $route = match (count($parameters)) {
-      0 => 'aculta_studio.home',
-      1 => 'aculta_studio.area',
-      2 => 'aculta_studio.section',
-      default => 'aculta_studio.tab',
-    };
-    return new RedirectResponse(Url::fromRoute($route, $parameters)->toString(), 302);
   }
 
   /**
