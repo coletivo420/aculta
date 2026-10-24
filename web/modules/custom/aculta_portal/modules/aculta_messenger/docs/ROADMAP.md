@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.190 amplia o isolamento da central para falha de inicialização lazy do serviço pelo locator, antes da chamada do adapter. A origem falha fechada e as demais seguem; **222/1.634 PASS** na suíte Unit Messenger + managers LMS/Wiki/Loja/Doações, PHPCS/PHP lint PASS.
 - Dev.189: cada chamada ao adapter da central é isolada; erro de listagem descarta linhas parciais, erro de contagem não bloqueia a central, e adapters saudáveis continuam. Logs não incluem UID nem conteúdo. Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **221/1.619 PASS**; PHPCS/PHP lint PASS.
 - Dev.188: reforça o submit de remoção de inscrições do Fórum contra alteração dos IDs no POST: o teste cobre owner alheio, Flag diferente, target que não é Node e Node fora do bundle do Fórum; só a inscrição própria correta é removida. `AvisosPrivacyFormTest` **6/61 PASS**; conjunto Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597 PASS**; PHPCS/PHP lint PASS.
 - Dev.187: teste atravessa o HookCollector e o `ModuleHandler::alter()` real para provar que os hooks descobertos acionam o dispatcher, agregam avisos e somam contadores dos adapters opcionais. Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597 PASS**; PHPCS/PHP lint PASS.

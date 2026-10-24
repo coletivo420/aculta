@@ -41,7 +41,13 @@ final class PersonalNoticeAdapterHooks {
   #[Hook('aculta_messenger_personal_notices_alter')]
   public function noticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
     foreach (self::ADAPTERS as $id) {
-      $adapter = $this->adapter($id);
+      try {
+        $adapter = $this->adapter($id);
+      }
+      catch (\Throwable $exception) {
+        $this->logAdapterInitializationFailure($id, $exception, 'list');
+        continue;
+      }
       if ($adapter instanceof PersonalNoticeAdapterInterface) {
         // Keep partial output from a failing optional adapter out of the shared
         // list while allowing independent origins to continue contributing.
@@ -65,7 +71,13 @@ final class PersonalNoticeAdapterHooks {
   #[Hook('aculta_messenger_personal_notice_count_alter')]
   public function unreadCountAlter(int &$count, int $uid): void {
     foreach (self::ADAPTERS as $id) {
-      $adapter = $this->adapter($id);
+      try {
+        $adapter = $this->adapter($id);
+      }
+      catch (\Throwable $exception) {
+        $this->logAdapterInitializationFailure($id, $exception, 'count');
+        continue;
+      }
       if ($adapter instanceof PersonalNoticeAdapterInterface) {
         try {
           $count += $adapter->unreadCount($uid);
@@ -93,6 +105,17 @@ final class PersonalNoticeAdapterHooks {
   private function logAdapterFailure(PersonalNoticeAdapterInterface $adapter, \Throwable $exception, string $operation): void {
     $this->logger?->error('Optional personal notice adapter failed during @operation with @exception.', [
       '@adapter' => get_class($adapter),
+      '@operation' => $operation,
+      '@exception' => get_class($exception),
+    ]);
+  }
+
+  /**
+   * Logs a lazy service construction failure without user data or content.
+   */
+  private function logAdapterInitializationFailure(string $adapterId, \Throwable $exception, string $operation): void {
+    $this->logger?->error('Optional personal notice adapter @adapter could not initialize during @operation with @exception.', [
+      '@adapter' => $adapterId,
       '@operation' => $operation,
       '@exception' => get_class($exception),
     ]);

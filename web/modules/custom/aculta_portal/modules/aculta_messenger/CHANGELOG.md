@@ -1,3 +1,11 @@
+## 0.1.1-dev.190 — isolar inicialização lazy de adapters
+
+O isolamento também cobre falhas ao resolver/construir um adapter no service locator, antes da chamada de listagem ou
+contagem. A origem que falha é registrada por ID e as demais continuam contribuindo.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **222/1.634 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
 ## 0.1.1-dev.189 — isolar falhas dos adapters na central
 
 Uma exceção durante a montagem de avisos descarta a contribuição parcial do adapter que falhou e não interrompe outras

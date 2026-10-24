@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -116,6 +117,58 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
 
     self::assertSame(['forum'], $items);
     self::assertSame(4, $count);
+  }
+
+  /**
+   * A lazy adapter construction failure does not prevent other adapters.
+   */
+  public function testAdapterInitializationFailuresAreIsolated(): void {
+    $healthy = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $healthy->expects(self::once())
+      ->method('addPersonalNotices')
+      ->willReturnCallback(static function (array &$items): void {
+        $items[] = 'healthy';
+      });
+    $healthy->expects(self::once())->method('unreadCount')->with(42)->willReturn(3);
+    $container = new class($healthy) implements ContainerInterface {
+
+      public function __construct(private readonly PersonalNoticeAdapterInterface $healthy) {}
+
+      /** {@inheritdoc} */
+      public function get(string $id): mixed {
+        if ($id === 'lms') {
+          throw new \RuntimeException('Sensitive construction details');
+        }
+        return $id === 'wiki' ? $this->healthy : NULL;
+      }
+
+      /** {@inheritdoc} */
+      public function has(string $id): bool {
+        return in_array($id, ['lms', 'wiki'], TRUE);
+      }
+
+    };
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::exactly(2))
+      ->method('error')
+      ->with(
+        'Optional personal notice adapter @adapter could not initialize during @operation with @exception.',
+        self::callback(static function (array $context): bool {
+          self::assertSame(\RuntimeException::class, $context['@exception']);
+          self::assertSame('lms', $context['@adapter']);
+          self::assertStringNotContainsString('Sensitive construction details', serialize($context));
+          return in_array($context['@operation'], ['list', 'count'], TRUE);
+        }),
+      );
+    $hooks = new PersonalNoticeAdapterHooks($container, $logger);
+    $items = [];
+    $count = 0;
+
+    $hooks->noticesAlter($items, $this->createMock(AccountInterface::class));
+    $hooks->unreadCountAlter($count, 42);
+
+    self::assertSame(['healthy'], $items);
+    self::assertSame(3, $count);
   }
 
 }
