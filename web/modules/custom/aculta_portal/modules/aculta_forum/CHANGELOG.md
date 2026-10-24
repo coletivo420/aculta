@@ -1,3 +1,11 @@
+## `0.1.0-dev.299` — provar o formulário público de edição — 2026-10-24
+
+- Novo Kernel `ForumPostEditControllerKernelTest`: a autora abre o modo
+  `public_submission` para a própria publicação publicada no purpose `forum`;
+  UUID ausente ou desconhecido, publicação de outra pessoa, fora do purpose e
+  publicação despublicada resultam em não encontrado.
+- Testes: edição 2/32; suíte Kernel do Fórum 132/2.545; PHPCS limpo.
+
 ## `0.1.0-dev.298` — provar a fila de moderação do Fórum — 2026-10-24
 
 - Novo Kernel `ForumPostModerationQueueControllerKernelTest`: a fila lista

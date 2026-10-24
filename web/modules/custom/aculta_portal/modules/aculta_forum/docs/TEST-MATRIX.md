@@ -1,3 +1,11 @@
+## Formulário público de edição — autoria e purpose, 2026-10-24
+
+- `ForumPostEditControllerKernelTest` (2 testes / 32 asserções, MariaDB): a
+  autora recebe o modo `public_submission` para a própria publicação publicada
+  no purpose `forum`; UUID ausente ou desconhecido, publicação de outra pessoa,
+  fora do purpose e publicação despublicada resultam em não encontrado.
+- Suíte Kernel do Fórum 132/2.545; PHPCS limpo.
+
 ## Fila de moderação — filtro de purpose e estado, 2026-10-24
 
 - `ForumPostModerationQueueControllerKernelTest` (2 testes / 39 asserções,
