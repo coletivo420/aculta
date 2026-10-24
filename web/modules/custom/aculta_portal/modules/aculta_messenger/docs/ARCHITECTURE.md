@@ -37,8 +37,12 @@ chave HMACada com `hash_salt` e o manifesto de IDs/tipos/quantidades, sem inclui
 ou conteúdo. Após o Mailer aceitar o e-mail, o reconhecimento de todos os adapters e a
 gravação do intervalo rodam numa transação da conexão padrão Drupal; uma falha reverte
 todo o lote. O Mailer suprime retries cuja correlação, tipo e destinatário já constem como
-aceitos no Mail Log ativo. Essa mitigação exige log persistido e não cria atomicidade com
-SMTP/provedor externo.
+aceitos no Mail Log ativo. Antes do envio, o Messenger persiste em `user.data` somente a
+correlação, instante e IDs/contadores do lote. Se uma confirmação falhar após o aceite, o
+retry consulta a correlação e confirma exatamente o manifesto salvo antes de processar
+eventos novos; o snapshot não guarda destinatário nem conteúdo. Um adapter opcional que
+esteja indisponível mantém o lote aceito retido, sem novo envio duplicado. Essa mitigação
+exige log persistido e não cria atomicidade entre o transporte externo e o Mail Log.
 
 ## Fontes de verdade e armazenamento
 

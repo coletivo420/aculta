@@ -668,7 +668,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   /**
    * Rolls back all digest acknowledgements when one adapter fails.
    */
-  public function testDigestAcknowledgementsRollbackAsOneBatch(): void {
+  public function testAcceptedDigestRetryReconcilesSnapshotAfterBatchGrows(): void {
     $author = $this->createUser('autor_digest_rollback');
     $follower = $this->createUser('seguidor_digest_rollback');
     $follower->setEmail('digest-rollback@example.test');
@@ -698,11 +698,15 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $provider = new FailOnceDigestAckProvider($uid, $database);
     $correlations = [];
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::exactly(2))
+    $mailer->expects(self::once())
       ->method('deliver')
       ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
         $correlations[] = $message->correlationId;
         return SendResult::sent();
+      });
+    $mailer->method('wasAcceptedCorrelation')
+      ->willReturnCallback(static function (string $correlationId, string $type) use (&$correlations): bool {
+        return $type === AvisosResumo::CHAVE_MAIL && in_array($correlationId, $correlations, TRUE);
       });
     $summary = new AvisosResumo(
       $this->container->get('entity_type.manager'),
@@ -727,10 +731,15 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, (int) $notice->get('contador_email')->value, 'Forum email count rolls back when the adapter acknowledgement fails.');
     self::assertSame(0, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
 
+    // A new Forum event arrives after the transport accepted the first
+    // manifest but the adapter acknowledgement rolled back. Recovery must
+    // acknowledge only the saved first batch and avoid a second email.
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($secondComment));
     self::assertSame(1, $summary->enviarResumos());
-    self::assertSame($correlations[0], $correlations[1]);
+    self::assertCount(1, $correlations);
     $notice = $this->loadNotices($uid, (int) $topic->id())[0];
-    self::assertSame(0, (int) $notice->get('contador_email')->value);
+    self::assertSame(1, (int) $notice->get('contador_email')->value, 'The later Forum event stays pending after recovery of the accepted snapshot.');
     self::assertSame(1, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
   }
 

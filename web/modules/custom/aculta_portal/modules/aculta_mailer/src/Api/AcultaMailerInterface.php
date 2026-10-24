@@ -38,4 +38,20 @@ interface AcultaMailerInterface {
    */
   public function deliver(MailMessage $message, ?string $transport = NULL): SendResult;
 
+  /**
+   * Checks whether an opaque idempotency correlation was accepted previously.
+   *
+   * @param string $correlationId
+   *   Stable, opaque correlation ID generated for one logical delivery.
+   * @param string $type
+   *   Registered mail type.
+   *
+   * @return bool
+   *   TRUE when the active Mailer log records an accepted delivery.
+   */
+  public function wasAcceptedCorrelation(
+    string $correlationId,
+    string $type,
+  ): bool;
+
 }

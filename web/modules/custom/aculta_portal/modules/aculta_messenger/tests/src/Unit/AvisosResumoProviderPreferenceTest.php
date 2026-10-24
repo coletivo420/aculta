@@ -170,9 +170,17 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $failedLookupProvider->method('digestRowsFor')->willReturn([]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects(self::exactly(2))->method('deliver')->with(self::isInstanceOf(MailMessage::class))->willReturn(SendResult::sent());
-    $userData->expects(self::once())
+    $userData->expects(self::exactly(3))
       ->method('set')
-      ->with('aculta_messenger', 28, 'avisos_resumo_ultimo', 1_792_800_000);
+      ->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value): void {
+        self::assertSame('aculta_messenger', $module);
+        self::assertContains($uid, [27, 28]);
+        self::assertContains($key, ['avisos_resumo_em_andamento', 'avisos_resumo_ultimo']);
+        if ($key === 'avisos_resumo_ultimo') {
+          self::assertSame(28, $uid);
+          self::assertSame(1_792_800_000, $value);
+        }
+      });
 
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
@@ -231,7 +239,9 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       'email_confirmed' => TRUE,
       default => NULL,
     });
-    $userData->expects(self::never())->method('set');
+    $userData->expects(self::once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isType('array'));
     $provider = $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
@@ -305,7 +315,9 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       'email_confirmed' => TRUE,
       default => NULL,
     });
-    $userData->expects(self::never())->method('set');
+    $userData->expects(self::once())
+      ->method('set')
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isType('array'));
     $provider = $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([

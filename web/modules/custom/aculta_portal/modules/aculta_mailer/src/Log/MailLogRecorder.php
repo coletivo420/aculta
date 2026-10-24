@@ -114,6 +114,20 @@ final class MailLogRecorder {
   }
 
   /**
+   * Checks an opaque correlation without requiring the original recipient.
+   */
+  public function wasAcceptedCorrelation(string $correlationId, string $type): bool {
+    if ($correlationId === '' || $type === '') {
+      return FALSE;
+    }
+    return $this->entityTypeManager->getStorage(self::ENTITY_TYPE)->loadByProperties([
+      'correlation_id' => $correlationId,
+      'type' => $type,
+      'status' => MailStatus::Sent->value,
+    ]) !== [];
+  }
+
+  /**
    * Cancela o conteúdo guardado para reenvio das mensagens anteriores do mesmo destinatário e tipo.
    *
    * Usado quando o usuário pede um novo link de uso único: o link antigo não é reaproveitado. Exceção: a retentativa

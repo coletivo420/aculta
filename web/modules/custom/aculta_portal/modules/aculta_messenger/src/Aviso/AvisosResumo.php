@@ -151,6 +151,12 @@ final class AvisosResumo {
     if ($conta === NULL) {
       return FALSE;
     }
+    // Recover the exact batch if the Mailer accepted it but a later
+    // acknowledgement failed. This prevents a newly grown pending batch from
+    // receiving a different correlation and resending already delivered rows.
+    if ($this->recuperarDigestAceito($uid)) {
+      return TRUE;
+    }
     if (!$this->preferencias->resumoEmailLigado($uid)) {
       foreach ($this->forumAvisosPendentes($uid) as $aviso) {
         $this->avisos->clearPendingEmailCount(
@@ -295,6 +301,19 @@ final class AvisosResumo {
     $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), self::LANGCODE, [
       'resumo' => AvisosResumoMailType::formatLinhas($linhas),
     ], $correlationId);
+    $snapshot = [
+      'correlation_id' => $correlationId,
+      'created' => $agora,
+      'provider_lookup_failed' => $providerLookupFailed,
+      'forum' => $daFila,
+      'providers' => array_map(static fn(array $providerRows): array => [
+        'class' => get_class($providerRows['provider']),
+        'delivery_ids' => $providerRows['delivery_ids'],
+      ], $providersWithRows),
+    ];
+    // Store IDs and counters only (no recipient address or notice content) so
+    // the accepted transport can be reconciled after a process interruption.
+    $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
     try {
       $resultado = $this->mailer->deliver($mensagem);
     }
@@ -316,6 +335,7 @@ final class AvisosResumo {
         foreach ($providersWithRows as $providerRows) {
           $providerRows['provider']->discardDigest($uid);
         }
+        $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       }
       return FALSE;
     }
@@ -338,6 +358,7 @@ final class AvisosResumo {
       if (!$providerLookupFailed) {
         $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
       }
+      $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       $transaction->commitOrRelease();
     }
     catch (\Throwable $exception) {
@@ -345,6 +366,76 @@ final class AvisosResumo {
       throw $exception;
     }
     return TRUE;
+  }
+
+  /**
+   * Reconciles the exact batch left before an accepted Mailer acknowledgement.
+   */
+  private function recuperarDigestAceito(int $uid): bool {
+    $snapshot = $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+    if (!is_array($snapshot) || !is_string($snapshot['correlation_id'] ?? NULL)) {
+      if ($snapshot !== NULL) {
+        $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+      }
+      return FALSE;
+    }
+    if (!$this->mailer->wasAcceptedCorrelation($snapshot['correlation_id'], self::CHAVE_MAIL)) {
+      // A retryable/non-accepted attempt can be rebuilt from current pending
+      // rows. Its stable correlation will be reused if the batch is unchanged.
+      $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+      return FALSE;
+    }
+
+    $providers = [];
+    foreach ($this->digestProviders as $provider) {
+      if ($provider instanceof AvisoDigestProviderInterface) {
+        $providers[get_class($provider)] = $provider;
+      }
+    }
+    foreach (($snapshot['providers'] ?? []) as $providerSnapshot) {
+      if (!isset($providers[$providerSnapshot['class'] ?? ''])) {
+        // Keep the snapshot until its optional adapter is enabled again; a
+        // second email would duplicate a batch the Mailer already accepted.
+        $this->logger?->error('Accepted digest awaits unavailable adapter @provider acknowledgement.', [
+          '@provider' => (string) ($providerSnapshot['class'] ?? 'unknown'),
+        ]);
+        return TRUE;
+      }
+    }
+
+    $transaction = $this->database->startTransaction();
+    try {
+      foreach (($snapshot['forum'] ?? []) as $notice) {
+        if (is_array($notice) && (int) ($notice['nid'] ?? 0) > 0) {
+          $this->avisos->acknowledgeEmailCount(
+            $uid,
+            (int) $notice['nid'],
+            (string) ($notice['tipo'] ?? ''),
+            (int) ($notice['quantidade'] ?? 0),
+          );
+        }
+      }
+      foreach (($snapshot['providers'] ?? []) as $providerSnapshot) {
+        $provider = $providers[$providerSnapshot['class']];
+        $deliveryIds = array_values(array_filter(
+          array_map('intval', $providerSnapshot['delivery_ids'] ?? []),
+          static fn(int $id): bool => $id > 0,
+        ));
+        if ($deliveryIds !== []) {
+          $provider->markDigestSent($uid, $deliveryIds);
+        }
+      }
+      if (empty($snapshot['provider_lookup_failed'])) {
+        $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', (int) ($snapshot['created'] ?? $this->time->getRequestTime()));
+      }
+      $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
+      $transaction->commitOrRelease();
+      return TRUE;
+    }
+    catch (\Throwable $exception) {
+      $transaction->rollBack();
+      throw $exception;
+    }
   }
 
   /**

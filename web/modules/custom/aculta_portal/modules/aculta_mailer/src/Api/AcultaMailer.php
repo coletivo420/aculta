@@ -113,6 +113,13 @@ final class AcultaMailer implements AcultaMailerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function wasAcceptedCorrelation(string $correlationId, string $type): bool {
+    return $this->log->wasAcceptedCorrelation($correlationId, $type);
+  }
+
+  /**
    * Performs delivery after the idempotency lock, when one is required.
    */
   private function deliverUnlocked(MailMessage $message, ?string $transport = NULL): SendResult {

@@ -74,6 +74,12 @@ final class AcultaMailerKernelTest extends KernelTestBase {
 
     $this->assertTrue($this->mailer()->send($message));
     $this->assertTrue($this->mailer()->send($message));
+    $this->assertTrue($this->mailer()->wasAcceptedCorrelation($correlationId, $message->type));
+    $this->config('aculta_mailer.log')->set('enabled', FALSE)->save();
+    $this->assertTrue(
+      $this->mailer()->wasAcceptedCorrelation($correlationId, $message->type),
+      'Existing acceptance remains recoverable after logging is disabled.',
+    );
 
     $mails = $this->container->get('state')->get('system.test_mail_collector', []);
     $this->assertCount(1, $mails);

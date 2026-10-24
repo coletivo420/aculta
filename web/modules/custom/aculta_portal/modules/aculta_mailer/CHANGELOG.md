@@ -1,3 +1,11 @@
+## 0.1.0-dev.73 — consulta de aceite por correlação — 2026-10-24
+
+O contrato público do Mailer agora permite consultar se uma correlação opaca foi aceita, sem exigir o endereço original.
+O Messenger usa essa consulta para reconciliar o manifesto persistido após uma interrupção durante o acknowledgement.
+
+Validação: `AcultaMailerKernelTest` 5 testes/26 asserções PASS, incluindo consulta por correlação; Unit Mailer
+157/317 PASS. O registro de aceite continua sujeito à retenção administrativa configurada.
+
 ## 0.1.0-dev.72 — retry idempotente exige log de aceite — 2026-10-24
 
 Envios com correlação idempotente agora falham de forma temporária quando o registro de e-mail está desativado.

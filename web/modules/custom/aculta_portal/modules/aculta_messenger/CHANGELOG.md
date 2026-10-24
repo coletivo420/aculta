@@ -1,3 +1,15 @@
+## 0.1.1-dev.145 — reconciliar manifesto aceito do digest — 2026-10-24
+
+Antes de enviar um digest, o Messenger persiste apenas correlação, instante e IDs/contadores da remessa, sem endereço ou
+conteúdo. Se o Mailer registrou o aceite e uma confirmação de origem falhou, o retry confirma o manifesto original
+atomicamente antes de considerar novos itens pendentes. Assim, novos eventos recebidos na janela de recuperação
+permanecem para um resumo posterior e não alteram a correlação do e-mail já entregue. Se um adapter opcional estiver
+indisponível, o manifesto fica retido e não causa reenvio duplicado.
+
+Validação: `ForumNoticeIdempotencyKernelTest` 32/725 PASS, incluindo crescimento do lote após aceite e rollback;
+Unit Messenger 138/848 PASS; Kernel Mailer 5/26 e Unit Mailer 157/317 PASS; índice PASS. Runtime e transporte real
+não testados. O aceite externo anterior ao registro local continua fora da garantia.
+
 ## 0.1.1-dev.144 — digest exige idempotência persistida — 2026-10-24
 
 O ACULTA Mailer agora mantém envios com correlação idempotente em estado temporário enquanto o log de aceite estiver
