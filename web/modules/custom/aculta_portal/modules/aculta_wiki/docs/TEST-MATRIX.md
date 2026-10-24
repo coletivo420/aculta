@@ -26,7 +26,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Decisão da proposta pelo Form API | Kernel | `FormBuilder` preserva modos selecionados individualmente e a aplicação oficial usa append/replace configurados | aprovado (dev.59; focal: 1/154; classe: 21/939, 291 depreciações) |
 | Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
 | Páginas públicas e reflow Wiki | Browser Firefox ESR visível | Host de teste: home, listagem, busca e `/wiki` interno; 1280/390/320 px | aprovado para o CSS candidato em ACULTA420 (46/46; CSS direto por GET); agregado Runtime e Olivero pendentes |
-| Teclado da busca | Browser Firefox ESR visível | Tab real, foco distinto do estado normal, nomes acessíveis, campo/submit na viewport em 1280/320 px | dev.72: CSS agregado falha 18/20 (submit sai da tela); CSS candidato por GET passa 22/22; leitor de tela/contraste e agregado Runtime pendentes |
+| Teclado da busca | Browser Firefox ESR visível | Tab real, foco distinto do estado normal, nomes WebDriver-computed, campo/submit na viewport em 1280/320 px | dev.73: CSS agregado falha 18/20 (submit sai da tela); CSS candidato por GET passa 22/22; leitor de tela/contraste e agregado Runtime pendentes |
 | Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | pendente |
 
 ## Regressão Content Index — dev.61

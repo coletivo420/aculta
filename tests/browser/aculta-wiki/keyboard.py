@@ -61,6 +61,11 @@ def press_tab():
     })
 
 
+def computed_accessible_name(selector):
+    element = driver.find(selector)["element-6066-11e4-a52e-4f735466cecf"]
+    return driver.req("GET", f"{session}/element/{element}/computedlabel")
+
+
 def focus_state():
     return driver.js("""return (() => {
       const el = document.activeElement;
@@ -141,22 +146,26 @@ try:
                 search = state
                 break
 
+        if search is not None:
+            search["accessibleName"] = computed_accessible_name('input[name="q"], input[type="search"]')
         check(
             f"{name}: campo de busca alcançável por Tab",
-            search is not None and search["accessibleName"] and search["withinViewport"],
+            search is not None and search["accessibleName"] == "Pesquisar na Wiki420" and search["withinViewport"],
             search or "não encontrado em 44 tabs",
         )
         if search is not None:
             driver.type('input[name="q"], input[type="search"]', "maconha")
             press_tab()
             submit = focus_state()
+            if submit is not None:
+                submit["accessibleName"] = computed_accessible_name('input[type="submit"], button[type="submit"]')
             is_submit = submit is not None and (
                 submit["tag"] == "BUTTON"
                 or (submit["tag"] == "INPUT" and submit["type"] == "submit")
             )
             check(
                 f"{name}: submit da busca alcançável por Tab",
-                is_submit and submit["accessibleName"] and submit["focusVisible"] and submit["indicator"] and submit["visible"] and submit["withinViewport"],
+                is_submit and submit["accessibleName"] == "Buscar" and submit["focusVisible"] and submit["indicator"] and submit["visible"] and submit["withinViewport"],
                 submit or "submit não recebeu foco",
             )
             screenshot = driver.req("GET", session + "/screenshot")

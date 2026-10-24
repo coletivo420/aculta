@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.73 — nome acessível computado pelo Firefox
+
+- O smoke consulta o nome acessível com WebDriver `computedlabel` para o campo
+  de busca e o botão submit, usando o algoritmo implementado no Firefox ESR.
+- No host de teste, os nomes foram `Pesquisar na Wiki420` e `Buscar`. O CSS
+  candidato passou 22/22; o CSS agregado continua 18/20 por overflow horizontal
+  no submit. Runtime permaneceu somente leitura.
+
 ## 0.1.0-dev.72 — caracterizar indicador de foco e nome acessível
 
 - O smoke compara outline e box-shadow do controle focado com uma cópia do

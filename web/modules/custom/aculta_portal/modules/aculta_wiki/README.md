@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.73`: nome acessível do campo e do submit é obtido via WebDriver
+  `computedlabel` do Firefox; o host de teste reportou “Pesquisar na Wiki420” e
+  “Buscar”. O candidato segue 22/22, agregado Runtime 18/20.
+
 - `0.1.0-dev.72`: o smoke compara indicador de foco computado com o estado sem
   foco, exige nome acessível no campo e submit e registra ambos no JSON. Com o
   CSS candidato passou 22/22; o agregado Runtime permanece em 18/20 devido ao

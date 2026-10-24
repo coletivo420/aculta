@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.73: nomes de input/submit agora vêm do comando WebDriver `computedlabel`
+  do Firefox, não só da árvore heurística do script. Confirmado no host de teste:
+  `Pesquisar na Wiki420` e `Buscar`; CSS candidato 22/22, agregado Runtime 18/20.
+
 - Dev.72: o smoke de teclado compara outline/box-shadow do foco com uma cópia
   sem foco e exige nomes acessíveis no campo/submit. CSS candidato: 22/22;
   Runtime agregado: 18/20 pelas duas falhas de viewport no submit.
