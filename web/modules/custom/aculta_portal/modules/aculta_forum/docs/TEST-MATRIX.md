@@ -1,3 +1,10 @@
+## Marcar tudo como lido — estado vazio, 2026-10-24
+
+- `ForumMarkAllReadFormKernelTest` (2 testes / 19 asserções, MariaDB): sem
+  tópicos acessíveis o formulário informa e redireciona para o domínio do
+  Fórum; fora do purpose `forum` a contagem elegível é zero.
+- Suíte Kernel do Fórum 123/2.394; PHPCS limpo.
+
 ## Thread revisionável no tópico público, 2026-10-24
 
 - `ForumPostThreadHooksKernelTest` (2 testes / 26 asserções, MariaDB): o modo

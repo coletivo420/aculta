@@ -1,3 +1,10 @@
+## `0.1.0-dev.295` — provar o "marcar tudo como lido" sem tópicos — 2026-10-24
+
+- Novo Kernel `ForumMarkAllReadFormKernelTest`: sem tópicos acessíveis, o
+  formulário informa que não há discussões e redireciona para o domínio do
+  Fórum; fora do purpose `forum` a contagem elegível é zero.
+- Testes: formulário 2/19; suíte Kernel do Fórum 123/2.394; PHPCS limpo.
+
 ## `0.1.0-dev.294` — provar a injecção da thread no tópico público — 2026-10-24
 
 - Novo Kernel `ForumPostThreadHooksKernelTest`: a visualização `full` dentro do
