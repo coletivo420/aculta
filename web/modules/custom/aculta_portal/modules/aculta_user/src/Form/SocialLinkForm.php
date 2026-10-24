@@ -61,7 +61,7 @@ final class SocialLinkForm extends FormBase {
 
     $studio = $this->isStudioEditor();
     $form['#action'] = Url::fromRoute(
-      $studio ? 'aculta_studio.personal_social' : 'aculta_user.redes_form',
+      $studio ? 'aculta_studio.profile_social' : 'aculta_user.redes_form',
       ['rede' => $rede],
     )->toString();
     $form['#attributes']['data-portal-ui'] = $studio ? 'studio-social-form' : 'social-link-dialog';
@@ -112,7 +112,7 @@ final class SocialLinkForm extends FormBase {
     $this->networks->setLink($profile, $rede, $uri);
     $profile->save();
     $form_state->setRedirect($this->isStudioEditor()
-      ? 'aculta_studio.personal_profile'
+      ? 'aculta_studio.profile'
       : 'aculta_portal.dashboard');
   }
 
@@ -120,7 +120,7 @@ final class SocialLinkForm extends FormBase {
    * Returns whether this same owner form serves a full-page Studio screen.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_social';
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_social';
   }
 
   /**
