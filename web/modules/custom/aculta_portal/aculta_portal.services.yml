@@ -157,7 +157,7 @@ services:
       - { name: aculta_portal.helper }
   aculta_portal.form_callbacks:
     class: Drupal\aculta_portal\Form\PortalFormCallbacks
-    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.aculta_user_agreement_registration', '@aculta_portal.registration_mail_policy']
+    arguments: ['@messenger', '@current_user', '@user.data', '@entity_type.manager', '@string_translation', '@user.auth', '@user.flood_control', '@config.factory', '@aculta_portal.email_confirmation_requester', '@aculta_portal.aculta_user_agreement_registration', '@aculta_portal.registration_mail_policy', '@current_route_match']
   aculta_portal.search_results:
     class: Drupal\aculta_portal\Search\SearchResults
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
