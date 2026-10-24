@@ -15,7 +15,7 @@ interface LearningNoticeManagerInterface {
   /**
    * Records a notice once per source and recipient.
    */
-  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface;
+  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1', bool $includeInDigest = TRUE): ?MessageInterface;
 
   /**
    * Publishes pending-answer events for current course graders.

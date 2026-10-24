@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Dev.18: produtores LMS publicam pelo MessengerNoticeEvent e e-mail transacional usa AcultaMailerInterface; Unit 24/137, Kernel SQLite round-trip/replay 2/18, PHPCS PASS; sem envio real ou nova validação Runtime. F13: revisão visual/acessível autenticada pendente; F16: referências ausentes e provider de digest cobertos ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'
+next_phase: 'Dev.19: site obrigatório; e-mail selecionável por pessoa (off/resumo diário/direto), com digest geral opt-in e política administrativa Mailer. Unit 27/165 e PHPCS PASS; Kernel não executado (SIMPLETEST_DB ausente). Sem e-mail real ou Runtime ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'

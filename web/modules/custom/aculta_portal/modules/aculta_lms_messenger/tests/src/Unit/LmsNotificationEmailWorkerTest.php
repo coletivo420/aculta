@@ -7,101 +7,195 @@ namespace Drupal\Tests\aculta_lms_messenger\Unit;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\aculta_lms_messenger\Plugin\QueueWorker\LmsNotificationEmailWorker;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Lock\LockBackendInterface;
-use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use Symfony\Component\DependencyInjection\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
- * Tests LMS transactional delivery through the shared ACULTA Mailer API.
+ * Tests LMS email delivery through ACULTA Mailer and current preferences.
  */
 #[CoversClass(LmsNotificationEmailWorker::class)]
 #[Group('aculta_lms_messenger')]
 final class LmsNotificationEmailWorkerTest extends UnitTestCase {
 
   /**
-   * Revalidates LMS access and sends only scalar context through ACULTA Mailer.
+   * Sends through Mailer only when the user currently selects direct delivery.
    */
-  public function testSendsThroughMailerAfterCurrentAccessCheck(): void {
-    $message = $this->createMock(MessageInterface::class);
-    $message->method('bundle')->willReturn('aculta_msg_lms_notice');
-    $message->method('getOwnerId')->willReturn(27);
-    $message->method('uuid')->willReturn('01234567-89ab-4cde-8fab-0123456789ab');
-    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field(match ($field) {
-      'field_aculta_msg_delivery' => 'pending',
-      'field_aculta_messenger_attempts' => 0,
-      default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
-    }));
-    $message->method('set')->willReturnSelf();
+  public function testImmediatePreferenceSendsAfterCurrentAccessCheck(): void {
+    $message = $this->message('pending');
     $message->expects(self::exactly(2))->method('save')->willReturn(1);
-
-    $recipient = $this->createMock(UserInterface::class);
-    $recipient->method('isActive')->willReturn(TRUE);
-    $recipient->method('getEmail')->willReturn('student@example.invalid');
-
-    $messageStorage = $this->createMock(EntityStorageInterface::class);
-    $messageStorage->method('load')->with(101)->willReturn($message);
-    $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(27)->willReturn($recipient);
-    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $entityTypeManager->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
-      'message' => $messageStorage,
-      'user' => $userStorage,
-      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
-    });
-
+    [$entities, $recipient] = $this->entities($message);
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())->method('resolve')->with($message, $recipient)->willReturn([
       'email_summary' => 'Certificado emitido.',
       'url' => Url::fromUri('https://aculta.org/minha-conta/certificados'),
     ]);
-
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'aprendizagem')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::once())->method('send')->with(self::callback(static fn(MailMessage $mail): bool =>
+    $mailer->expects(self::once())->method('deliver')->with(self::callback(static fn(MailMessage $mail): bool =>
       $mail->type === 'lms_transactional_notice'
       && $mail->to === 'student@example.invalid'
       && $mail->langcode === 'pt-br'
-      && $mail->context === [
-        'summary' => 'Certificado emitido.',
-        'url' => 'https://aculta.org/minha-conta/certificados',
-      ]
-      && $mail->correlationId === '01234567-89ab-4cde-8fab-0123456789ab'
-    ))->willReturn(TRUE);
+      && $mail->context['summary'] === 'Certificado emitido.'
+    ))->willReturn(SendResult::sent());
+    $lock = $this->lock();
 
-    $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::once())->method('acquire')->with('aculta_lms_messenger:message:101', 60.0)->willReturn(TRUE);
-    $lock->expects(self::once())->method('release')->with('aculta_lms_messenger:message:101');
-    $worker = new LmsNotificationEmailWorker([], 'test', [], $entityTypeManager, $notices, $mailer, $lock);
-
-    $urlAssembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
-    $urlAssembler->method('assemble')->willReturn('https://aculta.org/minha-conta/certificados');
-    $container = new Container();
-    $container->set('unrouted_url_assembler', $urlAssembler);
-    \Drupal::setContainer($container);
-    try {
-      $worker->processItem(['message_id' => 101]);
-    }
-    finally {
-      \Drupal::unsetContainer();
-    }
+    $this->withUrlAssembler(function () use ($entities, $notices, $preferences, $mailer, $lock): void {
+      $this->worker($entities, $notices, $preferences, $mailer, $lock)->processItem(['message_id' => 101]);
+    });
   }
 
   /**
-   * Creates a field-list fixture with one value.
+   * Cancels a queued direct email if the user changed the mode before delivery.
+   */
+  public function testEmailOptOutCancelsPendingDirectSend(): void {
+    $message = $this->message('pending');
+    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'cancelled')->willReturnSelf();
+    $message->expects(self::once())->method('save')->willReturn(1);
+    [$entities] = $this->entities($message);
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $lock = $this->lock();
+
+    $this->worker($entities, $notices, $preferences, $mailer, $lock)->processItem(['message_id' => 101]);
+  }
+
+  /**
+   * Creates a queued notice message mock.
+   *
+   * @param string $delivery
+   *   Current delivery state.
+   *
+   * @return \Drupal\message\MessageInterface
+   *   The configured message mock.
+   */
+  private function message(string $delivery): MessageInterface {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn('aculta_msg_lms_notice');
+    $message->method('getOwnerId')->willReturn(27);
+    $message->method('uuid')->willReturn('01234567-89ab-4cde-8fab-0123456789ab');
+    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field(match ($field) {
+      'field_aculta_msg_delivery' => $delivery,
+      'field_aculta_messenger_attempts' => 0,
+      default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
+    }));
+    $message->method('set')->willReturnSelf();
+    return $message;
+  }
+
+  /**
+   * Creates entity storage mocks for the worker.
+   *
+   * @param \Drupal\message\MessageInterface $message
+   *   Notice message to return from storage.
+   *
+   * @return array{0: \Drupal\Core\Entity\EntityTypeManagerInterface, 1: \Drupal\user\UserInterface}
+   *   Entity manager and recipient account.
+   */
+  private function entities(MessageInterface $message): array {
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('27');
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('getEmail')->willReturn('student@example.invalid');
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('load')->with(101)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($recipient);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'message' => $messageStorage,
+      'user' => $userStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+    return [$entities, $recipient];
+  }
+
+  /**
+   * Instantiates the worker with controlled dependencies.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entities
+   *   Entity manager mock.
+   * @param \Drupal\aculta_lms_messenger\LearningNoticeManagerInterface $notices
+   *   Notice manager mock.
+   * @param \Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface $preferences
+   *   Preference service mock.
+   * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface $mailer
+   *   Mailer mock.
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
+   *   Lock backend mock.
+   *
+   * @return \Drupal\aculta_lms_messenger\Plugin\QueueWorker\LmsNotificationEmailWorker
+   *   Configured worker.
+   */
+  private function worker(
+    EntityTypeManagerInterface $entities,
+    LearningNoticeManagerInterface $notices,
+    AvisoPreferenciasInterface $preferences,
+    AcultaMailerInterface $mailer,
+    LockBackendInterface $lock,
+  ): LmsNotificationEmailWorker {
+    return new LmsNotificationEmailWorker([], 'test', [], $entities, $notices, $preferences, $mailer, $lock);
+  }
+
+  /**
+   * Creates an available lock backend mock. */
+  private function lock(): LockBackendInterface {
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->method('acquire')->willReturn(TRUE);
+    return $lock;
+  }
+
+  /**
+   * Creates a field list mock containing one scalar value.
+   *
+   * @param mixed $value
+   *   Field value.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface
+   *   Field list mock.
    */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);
     return $field;
+  }
+
+  /**
+   * Runs a callback with a controlled URL assembler in Drupal's container.
+   *
+   * @param callable $callback
+   *   Callback to execute.
+   */
+  private function withUrlAssembler(callable $callback): void {
+    $assembler = $this->createMock(UnroutedUrlAssemblerInterface::class);
+    $assembler->method('assemble')->willReturn('https://aculta.org/minha-conta/certificados');
+    $container = new Container();
+    $container->set('unrouted_url_assembler', $assembler);
+    \Drupal::setContainer($container);
+    try {
+      $callback();
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
   }
 
 }

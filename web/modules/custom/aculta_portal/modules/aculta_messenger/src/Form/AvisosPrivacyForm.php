@@ -13,7 +13,7 @@ use Drupal\aculta_messenger\Entity\Aviso;
 /**
  * Bloco "Avisos" da página de privacidade da conta (ACULTA Messenger, F5.2).
  *
- * Os avisos no site são obrigatórios. O bloco só controla o resumo por e-mail: a chave geral e cada tipo.
+ * Os avisos no site são obrigatórios. O bloco controla e-mail direto e resumo.
  */
 final class AvisosPrivacyForm {
 
@@ -22,7 +22,9 @@ final class AvisosPrivacyForm {
     private readonly AvisoPreferencias $preferencias,
   ) {}
 
-  /** Monta o bloco dentro do formulário de privacidade. */
+  /**
+   * Monta o bloco dentro do formulário de privacidade.
+   */
   public function build(array &$form): void {
     $uid = (int) $this->currentUser->id();
     $form['avisos'] = [
@@ -49,10 +51,23 @@ final class AvisosPrivacyForm {
         '#title' => new TranslatableMarkup('Incluir atualizações de tópicos no resumo'),
         '#default_value' => $this->preferencias->tipoNoResumo($uid, Aviso::TIPO_ATUALIZACAO),
       ],
+      'email_aprendizagem' => [
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails de aprendizagem'),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. Administradores podem limitar cada tipo pelo ACULTA Mailer.'),
+        '#options' => [
+          AvisoPreferencias::EMAIL_OFF => new TranslatableMarkup('Sem e-mail'),
+          AvisoPreferencias::EMAIL_DIGEST => new TranslatableMarkup('Resumo diário'),
+          AvisoPreferencias::EMAIL_IMMEDIATE => new TranslatableMarkup('Envio direto'),
+        ],
+        '#default_value' => $this->preferencias->emailMode($uid, 'aprendizagem'),
+      ],
     ];
   }
 
-  /** Submit do bloco: grava as preferências individuais. Não altera os avisos no site. */
+  /**
+   * Grava as preferências individuais sem alterar os avisos no site.
+   */
   public function submit(array &$form, FormStateInterface $formState): void {
     $this->preferencias->salvar(
       (int) $this->currentUser->id(),
@@ -60,6 +75,10 @@ final class AvisosPrivacyForm {
       (bool) $formState->getValue('email_respostas'),
       (bool) $formState->getValue('email_atualizacoes'),
     );
+    $mode = $formState->getValue('email_aprendizagem');
+    if (is_string($mode)) {
+      $this->preferencias->saveEmailMode((int) $this->currentUser->id(), 'aprendizagem', $mode);
+    }
   }
 
 }

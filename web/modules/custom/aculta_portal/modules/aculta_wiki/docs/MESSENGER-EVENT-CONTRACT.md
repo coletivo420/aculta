@@ -1,9 +1,11 @@
 # Contrato Wiki → ACULTA Messenger — avisos editoriais
 
-**Estado:** eventos e fila Wiki implementados; integração de entrega depende do
-contrato público genérico de registro de avisos do `aculta_messenger`.
-**Escopo:** avisos pessoais no site. Os e-mails transacionais da Wiki continuam
-ativos e independentes; este contrato não os substitui.
+**Estado:** eventos e fila Wiki implementados; consumer e integração de entrega
+ao Messenger ainda pendentes.
+**Escopo:** avisos pessoais obrigatórios no site e canais de e-mail governados
+por preferência da pessoa (desativado, direto ou resumo/digest) e política
+administrativa do ACULTA Mailer. O estado atual ainda contém e-mails legados;
+eles só serão removidos junto da migração comprovada para evitar duplicação.
 
 ## Eventos da Wiki
 
@@ -49,10 +51,9 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
   efetiva `edit any wiki_entry content`, transição de revisão e acesso à revisão
   específica através do serviço de fila Wiki. Para propostas, conferir
   propriedade e `view` da revisão da proposta.
-- A gravação do aviso não dispara e-mail por si só. Permanecem os e-mails Wiki
-  existentes: resultado privado à autoria e aviso de revisão aos endereços
-  editoriais configurados. As preferências de e-mail existentes continuam
-  propriedade de seus canais.
+- A gravação do aviso não envia SMTP diretamente. Após a migração, e-mail direto
+  ou resumo usa somente ACULTA Mailer e a preferência compartilhada. O aviso no
+  site continua mesmo sem e-mail.
 
 ## Ciclo de vida e semântica de entrega
 
@@ -99,6 +100,6 @@ isolado confirmou que rollback também remove o item (1/8). Uma
 exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
 limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
 exceção e conserva o item. Assim, o fluxo ainda não entrega avisos de site: o
-contrato genérico de registro e o consumer Messenger precisam ser implementados
+consumer Messenger e o armazenamento apropriado precisam ser implementados
 antes de habilitar processamento funcional. Os notifiers de e-mail atuais
-continuam independentes.
+continuam legados temporariamente, até a migração testada.

@@ -6,6 +6,8 @@ namespace Drupal\aculta_lms_messenger\EventSubscriber;
 
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -30,6 +32,7 @@ final class LearningNoticeEventSubscriber implements EventSubscriberInterface {
 
   public function __construct(
     private readonly LearningNoticeManagerInterface $notices,
+    private readonly AvisoPreferenciasInterface $preferences,
     private readonly LoggerInterface $logger,
   ) {}
 
@@ -55,17 +58,19 @@ final class LearningNoticeEventSubscriber implements EventSubscriberInterface {
     if (!is_string($type) || !isset(self::NOTICE_TYPES[$type])
       || $event->eventType() !== 'lms.' . $type
       || $event->sourceEntityType() !== self::NOTICE_TYPES[$type]
-      || !in_array($mailPolicy, ['transactional', 'site_digest'], TRUE)) {
+      || $mailPolicy !== 'user_preference') {
       return;
     }
 
     try {
+      $mode = $this->preferences->emailMode($event->recipientUid(), 'aprendizagem');
       $this->notices->record(
         $event->sourceEntityUuid(),
         $type,
         $event->recipientUid(),
-        $mailPolicy === 'transactional',
+        $mode === AvisoPreferencias::EMAIL_IMMEDIATE,
         $event->sourceRevisionOrVersion() ?? '1',
+        $mode === AvisoPreferencias::EMAIL_DIGEST,
       );
     }
     catch (\Throwable $exception) {

@@ -10,11 +10,15 @@ pendentes, está em
 - Contrato Wiki→Messenger v1 documentado em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois
   eventos versionados por revisão (verbete enviado à fila e resultado de
-  proposta), destinatários por acesso atual, payload mínimo, e-mails atuais
-  preservados e fila persistente com retry. Os dois value objects versionados
+  proposta), destinatários por acesso atual, payload mínimo e fila persistente
+  com retry. O destino é o canal comum: aviso no site obrigatório e e-mail
+  opcional direto ou por resumo/digest, conforme preferência e política do
+  Mailer. Os dois value objects versionados
   validam UUID/revisão, allowlist e payload (Unit 4/5). Dev.113 adiciona
-  producers nas transições e QueueWorker com retry por lease; consumer e API
-  pública Messenger continuam pendentes.
+  producers nas transições e QueueWorker com retry por lease; consumer Messenger
+  continua pendente. Os notifiers de e-mail legados ainda estão ativos e serão
+  removidos quando a migração compartilhada passar seus testes de paridade, sem
+  envio duplicado.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer

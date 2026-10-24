@@ -67,6 +67,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
    * @var string[]
    */
   private const DIGEST_EVENTS = [
+    'enrollment',
+    'certificate',
     'completion',
     'evaluation',
     'submission',
@@ -91,7 +93,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Creates one durable notice per source and recipient; enqueue email once.
    */
-  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface {
+  public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1', bool $includeInDigest = TRUE): ?MessageInterface {
     if (!in_array($type, [
       'enrollment',
       'certificate',
@@ -130,7 +132,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         self::SOURCE_FIELD => $sourceUuid,
         self::EVENT_VERSION_FIELD => $eventVersion,
         self::READ_FIELD => 0,
-        self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) ? 0 : 1,
+        self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) && $includeInDigest ? 0 : 1,
         self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
@@ -355,7 +357,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'account',
       new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
       implode(':', [$eventType, $sourceUuid, $version, $uid]),
-      ['notice_type' => $type, 'mail_policy' => 'site_digest'],
+      ['notice_type' => $type, 'mail_policy' => 'user_preference'],
     ));
   }
 

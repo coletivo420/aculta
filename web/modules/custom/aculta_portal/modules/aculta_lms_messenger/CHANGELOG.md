@@ -1,13 +1,21 @@
-## 0.1.0-dev.18 — encaminhar e-mail LMS pelo ACULTA Mailer — 2026-10-24
+## 0.1.0-dev.19 — oferecer canais de e-mail escolhidos pela pessoa — 2026-10-24
 
-- Worker de avisos transacionais substitui `message_notify.sender` pela API
-  `AcultaMailerInterface`; o adapter registra um tipo próprio com somente
-  resumo e URL como variáveis escalares, e usa o UUID estável do Message para
-  correlação. Revalidação de acesso, lock e retentativas continuam antes/depois
-  do envio. Não houve envio real.
-- Testes de worker comprovam revalidação e construção da mensagem via mock do
-  Mailer; teste do tipo confirma o contrato dos templates. Unit LMS: 24 testes /
-  137 assertions PASS. PHPCS Drupal/DrupalPractice PASS.
+- Avisos LMS permanecem obrigatórios no site. A preferência da pessoa escolhe
+  entre sem e-mail, resumo diário e envio direto; resumo exige também o opt-in
+  geral do Messenger. Envio direto revalida a preferência no worker e usa
+  `AcultaMailerInterface`; políticas administrativas do Mailer podem suspender
+  cada tipo. Alterar para digest/desligado cancela uma entrega direta pendente,
+  sem remover o aviso do site.
+- Unit LMS: 27 testes / 165 assertions PASS; cobre escolha de canal,
+  revalidação da preferência no worker e cancelamento de item pendente.
+- PHPCS Drupal/DrupalPractice PASS. Tentativa Kernel: 2 testes não executados,
+  pois `SIMPLETEST_DB` não está definido. Nenhum envio real ou Runtime executado.
+
+## 0.1.0-dev.18 — centralizar a entrega direta pelo ACULTA Mailer — 2026-10-24
+
+- Substituiu `message_notify.sender` por `AcultaMailerInterface`, com resumo e
+  URL como variáveis escalares. O dev.19 acrescenta escolha de canal, sem envio
+  real ou homologação Runtime.
 
 ## 0.1.0-dev.17 — centralizar todos os produtores de avisos LMS — 2026-10-24
 

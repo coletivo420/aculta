@@ -39,11 +39,11 @@ Fórum conserva `seguir_topico`, avisos atuais/agregação por usuário-tipo-tó
 
 ## M4 — LMS (0.2.0)
 
-Matrícula, certificado, conclusão e avaliação já publicam pelo envelope compartilhado nesta execução; o consumer mantém Message, fila e digest existentes. Evoluir `aculta_lms_messenger` como adapter de feedback, submissão, liberação e prazos. Revalidar permissão na geração, entrega e abertura; manter cursos, atividades, Groups e matrículas sob ownership LMS. Sem chat de turma ou caixa educacional paralela. Migrar os produtores que ainda chamam o manager diretamente e testar storage, idempotência, digest/transacional e revogação.
+Matrícula, certificado, conclusão, avaliação, feedback, submissão, liberação e prazos publicam pelo envelope compartilhado; o consumer mantém Message e revalida acesso. Canal de site obrigatório; e-mail selecionável por usuário entre off/direto/resumo e sujeito às políticas administrativas do Mailer. Concluir testes de armazenamento, idempotência, cada canal, revogação e remoção dos caminhos de entrega legados. Manter cursos, atividades, Groups e matrículas sob ownership LMS; sem chat de turma ou caixa paralela. A integração é a primeira da sequência LMS → Wiki → Fórum → Loja.
 
 ## M5 — Wiki, Revista e demais (0.3.0)
 
-Inventariar primeiro entidades e workflows existentes. Adicionar somente produtores com destinatário e autorização determináveis, por exemplo revisão/publicação editorial ou atualização seguida. Não inventar workflow. Casos sem decisão de produto ficam documentados com bloqueio específico, sem interromper trabalho independente.
+Próxima integração depois do LMS: inventariar entidades e workflows reais da Wiki; ligar apenas eventos com destinatário e autorização determináveis ao contrato Messenger. Site obrigatório e e-mail off/direto/resumo, sujeito a preferências do usuário e restrições administrativas do Mailer. Desligar entrega legada correspondente quando migrada e comprovar ausência de duplicação. Depois consolidar o Fórum, preservando F-D21 e seu ledger; Loja e Revista seguem o mesmo contrato em incrementos posteriores.
 
 ## M6 — Experiência e administração (0.3.0)
 
@@ -68,5 +68,7 @@ Validar concorrência/idempotência, locks/retry, filas, retenção, paginação
 - M0: parcial; contratos e inventário documental iniciados; matriz completa pendente.
 - M1: parcial; correção de amizade em respostas e remoção da retenção course implementadas; gates a executar.
 - M2: parcial; envelope/publisher e adapters Fórum/User/LMS implementados nos eventos descritos; Fórum tem Kernel round-trip dos três eventos, comparação do agregado e resumo combinado. Amizade ainda carece Kernel integrado, além dos eventos LMS restantes e da homologação Runtime.
-- M3–M7: planejadas nesta referência; conclusão depende de auditoria e implementação/testes registrados, fase a fase.
+- M3 (LMS): parcial; todos os produtores conhecidos publicam eventos pelo contrato compartilhado e preservam Message; seleção off/resumo/direto implementada e coberta por Unit 27/165; PHPCS passa. Kernel desta sessão não executou por falta de `SIMPLETEST_DB`; Runtime não homologado. Remoção dos fluxos legados e gate Kernel ainda pendentes.
+- M4 (Wiki): contrato v1 e fila de eventos implementados no módulo proprietário; sem consumer Messenger funcional. Migração dos e-mails legados para canais comuns pendente; esta é a próxima frente.
+- M3 (Fórum/User), Loja e M6–M7: conforme gates e sequência descrita acima; não concluídas por atualização documental.
 - Runtime: não homologado nesta execução.

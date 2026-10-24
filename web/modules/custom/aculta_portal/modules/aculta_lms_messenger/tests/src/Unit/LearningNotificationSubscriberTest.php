@@ -32,7 +32,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   /**
    * Confirms that a persisted enrollment becomes a Messenger notice.
    */
-  public function testEnrollmentCreatesMessengerNoticeAndTransactionalEmail(): void {
+  public function testEnrollmentCreatesRequiredSiteNoticeAndOptionalDigest(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
@@ -41,7 +41,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
         $notice->eventType() === 'lms.enrollment'
         && $notice->sourceEntityUuid() === 'membership-uuid'
         && $notice->recipientUid() === 27
-        && $notice->metadata()['mail_policy'] === 'transactional'
+        && $notice->metadata()['mail_policy'] === 'user_preference'
       ));
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
@@ -51,7 +51,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   /**
    * Confirms that a certificate issue becomes a Messenger notice.
    */
-  public function testCertificateCreatesMessengerNoticeAndTransactionalEmail(): void {
+  public function testCertificateCreatesRequiredSiteNoticeAndOptionalDigest(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
@@ -60,7 +60,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
         $notice->eventType() === 'lms.certificate'
         && $notice->sourceEntityUuid() === 'certificate-uuid'
         && $notice->recipientUid() === 27
-        && $notice->metadata()['mail_policy'] === 'transactional'
+        && $notice->metadata()['mail_policy'] === 'user_preference'
       ));
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
@@ -79,7 +79,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
         $notice->eventType() === 'lms.completion'
         && $notice->sourceEntityUuid() === 'status-uuid'
         && $notice->recipientUid() === 27
-        && $notice->metadata()['mail_policy'] === 'site_digest'
+        && $notice->metadata()['mail_policy'] === 'user_preference'
       ));
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());
@@ -102,7 +102,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
         $notice->eventType() === 'lms.evaluation'
         && $notice->sourceEntityUuid() === 'answer-uuid'
         && $notice->sourceRevisionOrVersion() === str_repeat('a', 32)
-        && $notice->metadata()['mail_policy'] === 'site_digest'
+        && $notice->metadata()['mail_policy'] === 'user_preference'
       ));
 
     $subscriber = new LearningNotificationSubscriber($manager, $publisher, new NullLogger());

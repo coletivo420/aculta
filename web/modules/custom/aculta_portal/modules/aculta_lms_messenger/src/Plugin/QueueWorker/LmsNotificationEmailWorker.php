@@ -14,6 +14,8 @@ use Drupal\message\MessageInterface;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,6 +41,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LearningNoticeManagerInterface $notices,
+    private readonly AvisoPreferenciasInterface $preferences,
     private readonly AcultaMailerInterface $mailer,
     private readonly LockBackendInterface $lock,
   ) {
@@ -55,6 +58,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('aculta_lms_messenger.notice_manager'),
+      $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_mailer.mailer'),
       $container->get('lock.persistent'),
     );
@@ -100,6 +104,10 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
         ->save();
       return;
     }
+    if ($this->preferences->emailMode((int) $recipient->id(), 'aprendizagem') !== AvisoPreferencias::EMAIL_IMMEDIATE) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
     $notice = $this->notices->resolve($message, $recipient);
     if ($notice === NULL) {
       // A removed membership suppresses a queued enrollment email. Certificate
@@ -124,7 +132,12 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       ],
       (string) $message->uuid(),
     );
-    if (!$this->mailer->send($mail)) {
+    $result = $this->mailer->deliver($mail);
+    if ($result->cancelled) {
+      $message->set(self::DELIVERY_FIELD, 'cancelled')->save();
+      return;
+    }
+    if (!$result->sent) {
       $message->set(self::DELIVERY_FIELD, 'failed')->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');

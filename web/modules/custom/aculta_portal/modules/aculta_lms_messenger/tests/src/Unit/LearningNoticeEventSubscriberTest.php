@@ -7,6 +7,8 @@ namespace Drupal\Tests\aculta_lms_messenger\Unit;
 use Drupal\aculta_lms_messenger\EventSubscriber\LearningNoticeEventSubscriber;
 use Drupal\aculta_lms_messenger\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -26,13 +28,55 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects(self::once())
       ->method('record')
-      ->with('certificate-uuid', 'certificate', 27, TRUE, 'v1');
-    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+      ->with('certificate-uuid', 'certificate', 27, FALSE, 'v1', TRUE);
+    $subscriber = new LearningNoticeEventSubscriber($manager, $this->preferences(), new NullLogger());
 
     $subscriber->consume($this->event(
       'lms.certificate',
       'aculta_course_certificate',
-      ['notice_type' => 'certificate', 'mail_policy' => 'transactional'],
+      ['notice_type' => 'certificate', 'mail_policy' => 'user_preference'],
+    ));
+  }
+
+  /**
+   * Immediate preference queues email without adding the notice to the digest.
+   */
+  public function testImmediatePreferenceSelectsDirectEmail(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects(self::once())
+      ->method('record')
+      ->with('certificate-uuid', 'certificate', 27, TRUE, 'v1', FALSE);
+    $subscriber = new LearningNoticeEventSubscriber(
+      $manager,
+      $this->preferences(AvisoPreferencias::EMAIL_IMMEDIATE),
+      new NullLogger(),
+    );
+
+    $subscriber->consume($this->event(
+      'lms.certificate',
+      'aculta_course_certificate',
+      ['notice_type' => 'certificate', 'mail_policy' => 'user_preference'],
+    ));
+  }
+
+  /**
+   * Email opt-out preserves the notice but selects neither email channel.
+   */
+  public function testEmailOptOutKeepsOnlyTheRequiredSiteNotice(): void {
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects(self::once())
+      ->method('record')
+      ->with('certificate-uuid', 'certificate', 27, FALSE, 'v1', FALSE);
+    $subscriber = new LearningNoticeEventSubscriber(
+      $manager,
+      $this->preferences(AvisoPreferencias::EMAIL_OFF),
+      new NullLogger(),
+    );
+
+    $subscriber->consume($this->event(
+      'lms.certificate',
+      'aculta_course_certificate',
+      ['notice_type' => 'certificate', 'mail_policy' => 'user_preference'],
     ));
   }
 
@@ -52,15 +96,16 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects(self::exactly(count($routes)))
       ->method('record')
-      ->willReturnCallback(static function (string $uuid, string $type, int $uid, bool $email, string $version) use (&$routes): void {
+      ->willReturnCallback(static function (string $uuid, string $type, int $uid, bool $email, string $version, bool $digest) use (&$routes): void {
         $expected = array_shift($routes);
         self::assertSame('certificate-uuid', $uuid);
         self::assertSame($expected[0], $type);
         self::assertSame(27, $uid);
         self::assertFalse($email);
         self::assertSame('v1', $version);
+        self::assertTrue($digest);
       });
-    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNoticeEventSubscriber($manager, $this->preferences(), new NullLogger());
 
     foreach ([
       ['submission', 'lms_answer'],
@@ -74,7 +119,7 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
       $subscriber->consume($this->event(
         'lms.' . $type,
         $entityType,
-        ['notice_type' => $type, 'mail_policy' => 'site_digest'],
+        ['notice_type' => $type, 'mail_policy' => 'user_preference'],
       ));
     }
   }
@@ -85,7 +130,7 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
   public function testOtherModulesCannotUseTheLmsStorageAdapter(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects(self::never())->method('record');
-    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNoticeEventSubscriber($manager, $this->preferences(), new NullLogger());
 
     $subscriber->consume($this->event(
       'forum.reply',
@@ -101,13 +146,22 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
   public function testMismatchedNoticeTypeIsIgnored(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects(self::never())->method('record');
-    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+    $subscriber = new LearningNoticeEventSubscriber($manager, $this->preferences(), new NullLogger());
 
     $subscriber->consume($this->event(
       'lms.enrollment',
       'aculta_course_certificate',
       ['notice_type' => 'certificate', 'mail_policy' => 'transactional'],
     ));
+  }
+
+  /**
+   * Returns the preference mock for the selected channel mode.
+   */
+  private function preferences(string $mode = AvisoPreferencias::EMAIL_DIGEST): AvisoPreferenciasInterface {
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn($mode);
+    return $preferences;
   }
 
   /**

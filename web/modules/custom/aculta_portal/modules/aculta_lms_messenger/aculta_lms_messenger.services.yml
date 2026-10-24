@@ -28,6 +28,6 @@ services:
 
   aculta_lms_messenger.notice_event_subscriber:
     class: Drupal\aculta_lms_messenger\EventSubscriber\LearningNoticeEventSubscriber
-    arguments: ['@aculta_lms_messenger.notice_manager', '@logger.channel.aculta_lms_messenger']
+    arguments: ['@aculta_lms_messenger.notice_manager', '@aculta_messenger.aviso_preferencias', '@logger.channel.aculta_lms_messenger']
     tags:
       - { name: event_subscriber }

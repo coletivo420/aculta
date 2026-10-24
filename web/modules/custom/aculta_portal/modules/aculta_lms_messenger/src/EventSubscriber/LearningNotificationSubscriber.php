@@ -46,17 +46,17 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Handles a persisted enrollment and its transactional email.
+   * Publishes the site and optional daily-digest enrollment notice.
    */
   public function courseEnrollment(CourseEnrollmentEvent $event): void {
-    $this->publish('enrollment', 'group_relationship', $event->membershipUuid, (int) $event->accountId, TRUE);
+    $this->publish('enrollment', 'group_relationship', $event->membershipUuid, (int) $event->accountId);
   }
 
   /**
-   * Handles a persisted certificate issue and its transactional email.
+   * Publishes the site and optional daily-digest certificate notice.
    */
   public function certificateIssued(CertificateIssuedEvent $event): void {
-    $this->publish('certificate', 'aculta_course_certificate', $event->certificateUuid, (int) $event->accountId, TRUE);
+    $this->publish('certificate', 'aculta_course_certificate', $event->certificateUuid, (int) $event->accountId);
   }
 
   /**
@@ -68,7 +68,6 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
       'lms_course_status',
       $event->sourceStatusUuid,
       (int) $event->accountId,
-      FALSE,
       '1',
       $event->completedAt,
     );
@@ -83,7 +82,6 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
         'lms_answer',
         $event->answerUuid,
         (int) $event->accountId,
-        FALSE,
         $event->publicationVersion,
       );
     }
@@ -150,13 +148,11 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     string $sourceEntityType,
     string $sourceUuid,
     int $uid,
-    bool $sendEmail,
     string $version = '1',
     ?\DateTimeImmutable $occurredAt = NULL,
   ): void {
     try {
       $eventType = 'lms.' . $noticeType;
-      $mailPolicy = $sendEmail ? 'transactional' : 'site_digest';
       $this->publisher->publish(new MessengerNoticeEvent(
         $eventType,
         'aculta_lms',
@@ -167,7 +163,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
         'account',
         $occurredAt ?? new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
         implode(':', [$eventType, $sourceUuid, $version, $uid]),
-        ['notice_type' => $noticeType, 'mail_policy' => $mailPolicy],
+        ['notice_type' => $noticeType, 'mail_policy' => 'user_preference'],
       ));
     }
     catch (\Throwable $exception) {

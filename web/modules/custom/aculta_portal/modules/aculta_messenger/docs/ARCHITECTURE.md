@@ -20,6 +20,16 @@ Seguir conteúdo expressa somente a intenção de receber avisos no site e, conf
 | Wiki, Revista, Commerce e demais módulos | Conteúdo e workflows próprios; publicação de eventos por contratos comuns quando houver caso real. |
 | `aculta420` | SDC, Twig, CSS, comportamento visual, responsividade e acessibilidade; sem autorização, destinatários ou persistência. |
 
+## Política comum de canais
+
+Fórum, LMS, Loja e Wiki seguem o mesmo contrato: o aviso na central do site é
+obrigatório; a pessoa pode escolher e-mail desativado, entrega direta ou resumo
+/ digest, e administradores podem restringir tipos e canais pela política do
+ACULTA Mailer. Opt-out de e-mail nunca remove o aviso do site. Preferências
+aplicam-se por categoria/evento, e a entrega revalida política e acesso no
+momento do envio. A sequência de migração é LMS → Wiki → Fórum → Loja, sem
+duplicar o transporte nem manter fluxos de e-mail legados após migração.
+
 ## Fontes de verdade e armazenamento
 
 | Dado | Fonte existente | Regra |

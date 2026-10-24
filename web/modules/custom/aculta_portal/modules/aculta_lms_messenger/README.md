@@ -2,22 +2,24 @@
 
 Adapter opcional entre `aculta_lms` e o sistema de avisos global do
 `aculta_messenger`. Não cria caixa, entidade ou storage paralelo: persiste os
-avisos pessoais em Message, acrescenta-os pela extensão pública do Messenger e
-usa a API `AcultaMailerInterface` para e-mails transacionais.
+avisos pessoais em Message e acrescenta-os à central pelo contrato público do
+Messenger. O ACULTA Mailer entrega e-mail direto ou agregado em resumo conforme
+a preferência da pessoa e a política administrativa.
 
 ## Estado
 
-Versão 0.1.0-dev.18. Todos os produtores LMS — matrícula, certificado,
+Versão 0.1.0-dev.19. Todos os produtores LMS — matrícula, certificado,
 conclusão, avaliação, submissão, liberação de curso/aula/atividade, feedback e
 prazo — publicam `MessengerNoticeEvent`. O adapter educacional continua
 responsável por resolver destinatários conforme matrícula, publicação,
 permissões e contexto; o consumer encaminha os eventos ao
 `LearningNoticeManager`, que mantém a persistência Message, deduplicação, fila,
-digest e revalidação no acesso. Os e-mails transacionais usam a API
-`AcultaMailerInterface` e tipo de template registrado pelo adapter; o worker
-mantém o lock, revalida o acesso e repete falhas sem chamar `message_notify`
-diretamente. Não existe caminho direto de gravação paralelo para os produtores
-migrados nem storage novo.
+digest e revalidação no acesso. Os avisos do site são obrigatórios. A pessoa
+escolhe sem e-mail, resumo diário (opt-in geral do Messenger) ou envio direto;
+o envio direto revalida a preferência antes de entregar pela API do ACULTA
+Mailer, que também aplica as políticas administrativas do tipo. Não existe
+caminho direto de gravação paralelo para os produtores migrados nem storage
+novo.
 
 Matrícula e certificado têm e-mail transacional mínimo; conclusão, avaliação e
 resposta pendente entram no resumo diário opt-in. Um link revalida acesso e
@@ -37,8 +39,9 @@ gera erro 500. A suíte Unit LMS/Messenger passou com 86 testes / 460 assertions
 (8 depreciações PHPUnit); Kernel MariaDB: 23 / 730 assertions PASS (95
 depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
-Unit LMS/Messenger: 24 testes / 137 assertions PASS; Kernel SQLite da
-persistência Message e do round-trip/replay do evento: 2 testes / 18 assertions
+Unit LMS atual: 27 testes / 165 assertions PASS. Kernel SQLite da persistência
+Message e do round-trip/replay do evento: execução não disponível nesta sessão
+(`SIMPLETEST_DB` ausente); a execução anterior foi 2 testes / 18 assertions
 PASS, com duas depreciações upstream de Message. PHPCS Drupal/DrupalPractice
 PASS. O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
 persistência e deduplicação em Message real. Smoke com turma temporária no
@@ -59,8 +62,12 @@ o aceite vigente no fluxo ACULTA.
 
 ## Contratos
 
-- Matrícula/certificado usam e-mail transacional sem confirmação de endereço,
-  conforme decisão do produto.
+- O aviso no site é obrigatório. Para e-mail de aprendizagem, a pessoa seleciona
+  sem e-mail, resumo diário ou envio direto; o Mailer pode restringir tipos.
+  Resumo depende também do opt-in geral de digest do Messenger. A fila direta
+  revalida preferência e política do Mailer no momento do envio.
+- Matrícula/certificado usam e-mail sem confirmação de endereço, conforme
+  decisão do produto, quando o canal direto está selecionado.
 - Avisos no site são sempre mostrados; o adapter usa os hooks
   `aculta_messenger_personal_notices` e
   `aculta_messenger_personal_notice_count` do Messenger.
