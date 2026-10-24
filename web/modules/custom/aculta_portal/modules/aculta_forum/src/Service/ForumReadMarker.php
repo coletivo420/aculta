@@ -94,7 +94,10 @@ final class ForumReadMarker {
         $context['results']['marked'] = (int) ($context['results']['marked'] ?? 0) + 1;
       }
       $context['sandbox']['last_id'] = $lastId;
-      $context['finished'] = min(0.99, $lastId / max($total, $lastId + 1));
+      // Progress follows the number of topics actually marked, not the sparse
+      // node IDs, because IDs advance far faster than the eligible count.
+      $marked = (int) ($context['results']['marked'] ?? 0);
+      $context['finished'] = min(0.99, $total > 0 ? $marked / $total : 0.99);
       $context['message'] = $this->stringTranslation->translate('Marcando discussões como lidas (@count processadas).', [
         '@count' => $context['results']['marked'],
       ]);

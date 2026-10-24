@@ -46,9 +46,19 @@ final class ForumHistoricModerationQueueHooks {
       ? $query->getTableInfo($relationshipAlias)
       : NULL;
     $hostAlias = $hostTable['alias'] ?? NULL;
+    // The Comment base alias is normally comment_field_data, but a View
+    // override could alias it. Validate it too instead of hardcoding an alias
+    // that would turn the guard into a PDOException.
+    $commentTable = is_string($relationshipAlias)
+      ? $query->getTableInfo('comment_field_data')
+      : NULL;
+    $commentAlias = $commentTable['alias'] ?? NULL;
     if (($hostTable['table'] ?? NULL) !== 'node_field_data'
       || !is_string($hostAlias)
       || !preg_match('/^[A-Za-z0-9_]+$/', $hostAlias)
+      || ($commentTable['table'] ?? NULL) !== 'comment_field_data'
+      || !is_string($commentAlias)
+      || !preg_match('/^[A-Za-z0-9_]+$/', $commentAlias)
       || !$this->database->schema()->tableExists('node__field_autor_legado')
       || !$this->database->schema()->tableExists('comment__field_autor_legado')) {
       // A changed View must fail closed rather than expose archive comments.
@@ -57,7 +67,7 @@ final class ForumHistoricModerationQueueHooks {
     }
 
     $query->addWhereExpression(0, 'NOT EXISTS (SELECT 1 FROM {node__field_autor_legado} historical_topic WHERE historical_topic.entity_id = ' . $hostAlias . '.nid AND historical_topic.deleted = 0 AND historical_topic.field_autor_legado_target_id IS NOT NULL)');
-    $query->addWhereExpression(0, 'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment WHERE historical_comment.entity_id = comment_field_data.cid AND historical_comment.deleted = 0 AND historical_comment.field_autor_legado_target_id IS NOT NULL)');
+    $query->addWhereExpression(0, 'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment WHERE historical_comment.entity_id = ' . $commentAlias . '.cid AND historical_comment.deleted = 0 AND historical_comment.field_autor_legado_target_id IS NOT NULL)');
   }
 
 }

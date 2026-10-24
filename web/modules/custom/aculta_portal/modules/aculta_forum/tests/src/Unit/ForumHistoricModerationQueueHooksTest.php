@@ -25,9 +25,13 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     foreach (['page_pending', 'page_rejected'] as $display) {
       $view = $this->view('aculta_forum_admin_comments', $display);
       $query = $this->createMock(Sql::class);
-      $query->method('getTableInfo')
-        ->with('node_field_data_comment_field_data')
-        ->willReturn(['alias' => 'node_host', 'table' => 'node_field_data']);
+      $query->method('getTableInfo')->willReturnCallback(
+        static fn (string $alias): ?array => match ($alias) {
+          'node_field_data_comment_field_data' => ['alias' => 'node_host', 'table' => 'node_field_data'],
+          'comment_field_data' => ['alias' => 'comment_field_data', 'table' => 'comment_field_data'],
+          default => NULL,
+        },
+      );
       $conditions = [];
       $query->expects(self::exactly(2))
         ->method('addWhereExpression')
@@ -86,9 +90,13 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
   public function testUnexpectedHostTableFailsClosed(): void {
     $view = $this->view('aculta_forum_admin_comments', 'page_pending');
     $query = $this->createMock(Sql::class);
-    $query->method('getTableInfo')
-      ->with('node_field_data_comment_field_data')
-      ->willReturn(['alias' => 'unexpected_host', 'table' => 'comment_field_data']);
+    $query->method('getTableInfo')->willReturnCallback(
+      static fn (string $alias): ?array => match ($alias) {
+        'node_field_data_comment_field_data' => ['alias' => 'unexpected_host', 'table' => 'comment_field_data'],
+        'comment_field_data' => ['alias' => 'comment_field_data', 'table' => 'comment_field_data'],
+        default => NULL,
+      },
+    );
     $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
 
     $this->hook(FALSE)->viewsQueryAlter($view, $query);
@@ -100,9 +108,13 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
   public function testMissingAuthorFieldTablesFailClosed(): void {
     $view = $this->view('aculta_forum_admin_comments', 'page_rejected');
     $query = $this->createMock(Sql::class);
-    $query->method('getTableInfo')
-      ->with('node_field_data_comment_field_data')
-      ->willReturn(['alias' => 'node_host', 'table' => 'node_field_data']);
+    $query->method('getTableInfo')->willReturnCallback(
+      static fn (string $alias): ?array => match ($alias) {
+        'node_field_data_comment_field_data' => ['alias' => 'node_host', 'table' => 'node_field_data'],
+        'comment_field_data' => ['alias' => 'comment_field_data', 'table' => 'comment_field_data'],
+        default => NULL,
+      },
+    );
     $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
 
     $this->hook(FALSE)->viewsQueryAlter($view, $query);

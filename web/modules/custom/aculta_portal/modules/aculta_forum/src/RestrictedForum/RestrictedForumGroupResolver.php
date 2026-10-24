@@ -27,10 +27,18 @@ use Psr\Log\LoggerInterface;
 final class RestrictedForumGroupResolver implements RestrictedForumGroupResolverInterface {
 
   /**
+   * Group content plugin for Forum topics. */
+  public const TOPIC_PLUGIN = 'group_node:aculta_forum_topic';
+
+  /**
+   * Group content plugin for Forum category terms. */
+  public const CATEGORY_PLUGIN = 'group_taxonomy_term:aculta_forum_categories';
+
+  /**
    * Plugins de conteúdo de Group aceitos para o Fórum. */
   public const CONTENT_PLUGINS = [
-    'group_node:aculta_forum_topic',
-    'group_taxonomy_term:aculta_forum_categories',
+    self::TOPIC_PLUGIN,
+    self::CATEGORY_PLUGIN,
   ];
 
   /**
@@ -71,22 +79,30 @@ final class RestrictedForumGroupResolver implements RestrictedForumGroupResolver
       return [];
     }
 
-    $entityIds = [];
+    $targets = [];
     if ($topic->id() !== NULL) {
-      $entityIds[] = (int) $topic->id();
+      $targets[self::TOPIC_PLUGIN] = [(int) $topic->id()];
     }
-    foreach ($this->categoryIds($topic) as $termId) {
-      $entityIds[] = $termId;
+    $categoryIds = $this->categoryIds($topic);
+    if ($categoryIds !== []) {
+      $targets[self::CATEGORY_PLUGIN] = $categoryIds;
     }
-    if ($entityIds === []) {
+    if ($targets === []) {
       return [];
     }
 
     $storage = $this->entityTypeManager->getStorage('group_relationship');
-    $relationshipIds = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('plugin_id', self::CONTENT_PLUGINS, 'IN')
-      ->condition('entity_id', $entityIds, 'IN')
-      ->execute();
+    $relationshipIds = [];
+    // A node ID and a term ID with the same number are different Group
+    // content. Query each plugin with its own IDs so a public topic is not
+    // restricted by an unrelated category that shares its numeric ID.
+    foreach ($targets as $plugin => $ids) {
+      $relationshipIds = array_merge($relationshipIds, $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('plugin_id', $plugin)
+        ->condition('entity_id', $ids, 'IN')
+        ->execute());
+    }
     if ($relationshipIds === []) {
       return [];
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -58,6 +59,25 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     self::assertTrue($this->hook()
       ->flagActionAccess('flag', $this->flag('sinalizar_topico'), $account, $this->node('aculta_forum_topic', FALSE))
       ->isNeutral());
+  }
+
+  /**
+   * Unpublished Forum content cannot be reported with a direct action.
+   */
+  public function testUnpublishedTargetsAreDenied(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
+    $hook = $this->hook();
+
+    $unpublishedTopic = $this->node('aculta_forum_topic', FALSE, FALSE);
+    self::assertTrue($hook
+      ->flagActionAccess('flag', $this->flag('sinalizar_topico'), $account, $unpublishedTopic)
+      ->isForbidden());
+
+    $comment = $this->comment($unpublishedTopic);
+    self::assertTrue($hook
+      ->flagActionAccess('flag', $this->flag('sinalizar_comentario'), $account, $comment)
+      ->isForbidden());
   }
 
   /**
@@ -215,13 +235,29 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
   /**
    * Creates a Node mock with the requested historical marker state.
    */
-  private function node(string $bundle, bool $historical): NodeInterface {
+  private function node(string $bundle, bool $historical, bool $published = TRUE): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);
+    $node->method('isPublished')->willReturn($published);
+    $node->method('access')->willReturn(AccessResult::allowed());
     $node->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
     $node->method('get')->with('field_autor_legado')->willReturn($this->marker($historical));
     $this->cacheable($node);
     return $node;
+  }
+
+  /**
+   * Creates a Comment mock with a configurable host and cacheability.
+   */
+  private function comment(NodeInterface $host, bool $historical = FALSE): CommentInterface {
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('bundle')->willReturn('aculta_discussion_post');
+    $comment->method('access')->willReturn(AccessResult::allowed());
+    $comment->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
+    $comment->method('get')->with('field_autor_legado')->willReturn($this->marker($historical));
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $this->cacheable($comment);
+    return $comment;
   }
 
   /**

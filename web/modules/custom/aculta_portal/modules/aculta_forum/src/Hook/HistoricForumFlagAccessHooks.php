@@ -57,24 +57,38 @@ final class HistoricForumFlagAccessHooks {
         : AccessResult::neutral();
     }
 
-    $postAccess = NULL;
-    $applies = match ($flag->id()) {
+    // Unrelated content stays with its own policy; once the target belongs to
+    // the Forum, an unpublished or historical state vetoes the action instead
+    // of delegating to a broad flag permission.
+    $isForumKind = match ($flag->id()) {
       'sinalizar_topico' => $flaggable instanceof NodeInterface && $flaggable->bundle() === 'aculta_forum_topic',
-      'sinalizar_comentario' => $this->isPublicForumComment($flaggable),
-      self::POST_FLAG => ($postAccess = $this->forumPostAccess($flaggable, $account))->isAllowed(),
+      'sinalizar_comentario' => $this->isForumComment($flaggable),
+      default => TRUE,
     };
-    if (!$applies && $flag->id() !== self::POST_FLAG) {
+    if (!$isForumKind) {
       return AccessResult::neutral();
     }
 
-    if (!$applies) {
+    $postAccess = NULL;
+    $public = match ($flag->id()) {
+      'sinalizar_topico' => $flaggable instanceof NodeInterface && $flaggable->isPublished(),
+      'sinalizar_comentario' => $this->isPublicForumComment($flaggable),
+      default => ($postAccess = $this->forumPostAccess($flaggable, $account))->isAllowed(),
+    };
+
+    if (!$public) {
       $result = AccessResult::forbidden('Denúncia disponível somente para publicação pública deste Fórum.');
     }
     elseif ($this->isHistoricalTarget($flaggable, $flag->id())) {
       $result = AccessResult::forbidden('Conteúdo histórico do Growroom não entra no fluxo de denúncias.');
     }
     else {
-      $result = AccessResult::allowedIf($account->hasPermission('report aculta forum content'));
+      // The permission alone must not expose unpublished or out-of-purpose
+      // content through a direct Flag action.
+      $viewAccess = $flaggable->access('view', $account, TRUE);
+      $result = AccessResult::allowedIf($account->hasPermission('report aculta forum content'))
+        ->andIf($viewAccess);
+      $result->addCacheableDependency($viewAccess);
     }
 
     $result->addCacheableDependency($flaggable)
@@ -174,7 +188,9 @@ final class HistoricForumFlagAccessHooks {
    */
   private function isPublicForumTarget(EntityInterface $entity, string $flagId): bool {
     return match ($flagId) {
-      'sinalizar_topico' => $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic',
+      'sinalizar_topico' => $entity instanceof NodeInterface
+        && $entity->bundle() === 'aculta_forum_topic'
+        && $entity->isPublished(),
       'sinalizar_comentario' => $this->isPublicForumComment($entity),
       self::POST_FLAG => $this->isPublicForumPost($entity),
       default => FALSE,
@@ -182,14 +198,25 @@ final class HistoricForumFlagAccessHooks {
   }
 
   /**
-   * Checks that a shared Comment is hosted by a public Forum topic.
+   * Checks that a Comment belongs to the public Forum discussion bundle.
    */
-  private function isPublicForumComment(EntityInterface $entity): bool {
+  private function isForumComment(EntityInterface $entity): bool {
     if (!$entity instanceof CommentInterface || $entity->bundle() !== 'aculta_discussion_post') {
       return FALSE;
     }
     $host = $entity->getCommentedEntity();
     return $host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic';
+  }
+
+  /**
+   * Checks that a shared Comment is hosted by a published Forum topic.
+   */
+  private function isPublicForumComment(EntityInterface $entity): bool {
+    if (!$this->isForumComment($entity)) {
+      return FALSE;
+    }
+    $host = $entity->getCommentedEntity();
+    return $host instanceof NodeInterface && $host->isPublished();
   }
 
   /**
