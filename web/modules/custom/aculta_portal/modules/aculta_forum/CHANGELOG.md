@@ -1,3 +1,13 @@
+## `0.1.0-dev.277` — comprovar rollback da migração de Comments — 2026-10-24
+
+- Kernel importa raiz e resposta com o destino real e executa o rollback pelo
+  `MigrateExecutable`: posts e mapa de destino são removidos, Comments legados
+  permanecem intactos. Suíte focal: 3 testes / 76 assertions.
+- Unit Forum: 174 testes / 1.008 assertions; PHPCS Drupal/DrupalPractice:
+  PASS. Cinco depreciações são originadas em Core/Domain contrib.
+- `--simulate` do Drush não executa a migration; dry-run que valide o pipeline
+  continua pendente. Nenhum Runtime ou dado persistente foi usado.
+
 ## `0.1.0-dev.276` — validar vínculo pai/filho no mapa da migração — 2026-10-24
 
 - Kernel executa a migration de relacionamentos com `migration_lookup` sobre
@@ -5,7 +15,8 @@
   O fixture compara process pipeline, destino e dependências com o YAML de
   produção para evitar drift. Kernel focal: 2 testes / 53 assertions.
 - Cinco depreciações reportadas por Core/Domain contrib; PHPCS Drupal e
-  DrupalPractice: PASS. Dry-run, rollback e homologação Runtime seguem pendentes.
+  DrupalPractice: PASS. Naquele incremento, rollback e homologação Runtime
+  seguiam pendentes.
 
 ## `0.1.0-dev.275` — provar o lote da migração com mapa persistente — 2026-10-24
 

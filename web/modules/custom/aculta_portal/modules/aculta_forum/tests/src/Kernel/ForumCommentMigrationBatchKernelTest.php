@@ -216,6 +216,25 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
   }
 
   /**
+   * Rollback deletes imported ForumPosts but preserves legacy source Comments.
+   */
+  public function testMigrationRollbackPreservesCommentSources(): void {
+    $root = $this->comment('Raiz');
+    $reply = $this->comment('Resposta', $root);
+    $migration = $this->migration();
+    $message = new CollectingMigrateMessage();
+    $executable = new MigrateExecutable($migration, $message);
+
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $executable->import(), implode("\n", $message->messages));
+    self::assertSame(2, $this->postCount());
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $executable->rollback(), implode("\n", $message->messages));
+    self::assertSame(0, $this->postCount());
+    self::assertSame(2, count($this->container->get('entity_type.manager')
+      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
+    self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
+  }
+
+  /**
    * Builds the production migration with a persistent SQL id map.
    */
   private function migration(): Migration {
