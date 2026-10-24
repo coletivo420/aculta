@@ -1,3 +1,21 @@
+## `0.1.0-dev.317` — homologar aviso de resposta no Runtime local — 2026-10-24
+
+- Runtime local (`127.0.0.1`): resposta publicada por uid 15 em tópico seguido
+  pelo uid 1 produziu exatamente um `aculta_aviso` (`forum_resposta`,
+  `contador_site=1`, `contador_email=1`, `ultimo_comentario` = CID). O item de
+  e-mail foi apenas enfileirado (nenhum cron executado) e removido na limpeza;
+  não houve envio. Ao final: zero Comments sintéticos, zero flaggings novos e
+  avisos no baseline.
+- Para o Runtime ficar apto, foi preciso aplicar updates pendentes do Messenger.
+  Corrigidos no caminho: updates 10001/10006 aceitam `allowed_values` em mapa
+  ou lista e só gravam quando falta a opção; o campo
+  `field_aculta_messenger_enqueue_attempts` (39 caracteres) foi renomeado para
+  `field_aculta_enqueue_attempts` (29), pois a Field API rejeita nomes acima de
+  32. Divergência local de tipo do campo de amizade foi recriada com os dois
+  valores existentes preservados.
+- Recorte: ambiente local, não servidor de testes; digest/entrega de e-mail e
+  concorrência entre processos continuam fora do escopo autorizado.
+
 ## `0.1.0-dev.316` — History preservado na migração de Comments — 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` passa a criar um recibo de leitura

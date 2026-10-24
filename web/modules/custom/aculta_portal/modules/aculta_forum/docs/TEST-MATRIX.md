@@ -37,6 +37,17 @@
   obrigatória, cancelar no painel e erro sem consentimento.
 - Unit 181/1.019; Kernel do Fórum 147/2.807; PHPCS limpo.
 
+## Aviso de resposta — Runtime local, 2026-10-24
+
+- Resposta de uid 15 em tópico seguido pelo uid 1: um `aculta_aviso`
+  `forum_resposta` com `contador_site=1`, `contador_email=1` e
+  `ultimo_comentario` correto; item de e-mail só enfileirado e removido sem
+  cron, sem envio.
+- Limpeza verificada: zero Comments sintéticos, zero flaggings novos e avisos no
+  baseline. Updates pendentes do Messenger aplicados; três defeitos de update
+  corrigidos (formato de `allowed_values` e nome de campo com 39 caracteres).
+- Ambiente local simulado; digest/e-mail e concorrência seguem não executados.
+
 ## Migração — History preservado, 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` (5 testes / 165 asserções, MariaDB):

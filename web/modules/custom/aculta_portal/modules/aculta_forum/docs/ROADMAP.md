@@ -136,11 +136,12 @@ todas as classes de `src/` e todos os imports de produção.
 
 **Fechamento por fase (dev.313, 2026-10-24):**
 
-- **F-M1/F-M2 — provado em código:** ledger, idempotência, round-trip dos três
-  eventos, supressão do autor, revogação e digest estão em Kernel/Unit do
-  Fórum e do Messenger. A homologação Runtime do envelope/digest pertence à
-  frente Messenger, que segue ativa em paralelo; testes de e-mail permanecem
-  excluídos por autorização.
+- **F-M1/F-M2 — provado em código e no Runtime local:** ledger, idempotência,
+  round-trip dos três eventos, supressão do autor, revogação e digest estão em
+  Kernel/Unit; a resposta publicada em tópico seguido gerou um único
+  `aculta_aviso` no Runtime local, com item de e-mail apenas enfileirado e
+  removido sem cron. A entrega de e-mail e a concorrência entre processos
+  permanecem fora do escopo autorizado.
 - **F-M4 — provado em Kernel:** contagens, listagem, busca, anexos/galeria,
   moderação, submissão, edição, histórico, comparação e fila revalidam purpose,
   grants e status; F-GROUP continua desligado por padrão.
