@@ -1,3 +1,12 @@
+## 0.1.1-dev.120 — comprovar retry do digest combinado entre adapters — 2026-10-24
+
+- Teste integrado combina linhas LMS e Wiki num único resumo. Uma falha
+  temporária preserva as duas pendências; no retry bem-sucedido, somente então
+  cada provider confirma seu próprio `delivery_id`.
+- Integrações Messenger: 47 testes / 471 assertions PASS, com duas deprecações
+  de descoberta de entidades Message no Core/contrib e quatro notices PHPUnit.
+  PHPCS Drupal/DrupalPractice do teste PASS. Não usa SMTP nem processos separados.
+
 ## 0.1.1-dev.119 — permitir alterar leitura na central — 2026-10-24
 
 - A central de Avisos oferece ações para marcar como lido/não lido mensagens de

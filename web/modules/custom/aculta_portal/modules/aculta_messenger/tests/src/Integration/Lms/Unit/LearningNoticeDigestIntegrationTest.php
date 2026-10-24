@@ -101,6 +101,36 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Combines adapters and retries without early acknowledgements.
+   */
+  public function testCombinedAdaptersRetryWithoutAcknowledgingAnyRowsEarly(): void {
+    $lmsProvider = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade disponível');
+    $wikiProvider = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $capturedRows = [];
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$capturedRows): SendResult {
+        $capturedRows[] = $message->context['resumo'];
+        return count($capturedRows) === 1
+          ? SendResult::failed(DeliveryError::Temporary, 450)
+          : SendResult::sent();
+      });
+    $summary = $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $lmsProvider->marked);
+    $this->assertSame([], $wikiProvider->marked);
+    $this->assertSame(1, $summary->enviarResumos());
+    $rows = array_map('trim', explode("\n", $capturedRows[1]));
+    $this->assertSame(['Atividade disponível', 'wiki em "Revisão publicada": 1'], $rows);
+    $this->assertSame([], $lmsProvider->discarded);
+    $this->assertSame([], $wikiProvider->discarded);
+    $this->assertSame([[501]], $lmsProvider->markedDeliveryIds);
+    $this->assertSame([[802]], $wikiProvider->markedDeliveryIds);
+  }
+
+  /**
    * A provider row without a stable delivery ID is not sent repeatedly.
    */
   public function testRowsWithoutDeliveryIdsAreNotSent(): void {
@@ -131,7 +161,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(TestLearningDigestProvider $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL): AvisosResumo {
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -186,7 +216,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       ),
       $this->createConfiguredMock(UuidInterface::class, ['generate' => '00000000-0000-4000-8000-000000000001']),
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
-      [$provider],
+      is_array($provider) ? $provider : [$provider],
     );
   }
 
@@ -225,10 +255,19 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    *   Accounts with pending digest rows.
    * @param bool $includeDeliveryId
    *   Whether to return the required stable delivery ID.
+   * @param string $type
+   *   Notice category for this provider.
+   * @param int $deliveryId
+   *   Stable ID for the returned digest row.
+   * @param string $title
+   *   Plain text summary for the returned row.
    */
   public function __construct(
     private readonly array $recipients,
     private readonly bool $includeDeliveryId = TRUE,
+    private readonly string $type = 'aprendizagem',
+    private readonly int $deliveryId = 501,
+    private readonly string $title = 'Atividade no curso',
   ) {}
 
   /**
@@ -242,9 +281,9 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    * {@inheritdoc}
    */
   public function digestRowsFor(int $uid): array {
-    $row = ['tipo' => 'aprendizagem', 'titulo' => 'Atividade no curso', 'quantidade' => 1];
+    $row = ['tipo' => $this->type, 'titulo' => $this->title, 'quantidade' => 1];
     if ($this->includeDeliveryId) {
-      $row['delivery_id'] = 501;
+      $row['delivery_id'] = $this->deliveryId;
     }
     return [$row];
   }
