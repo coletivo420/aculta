@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\aculta_portal\Email\EmailConfirmationRequester;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -36,6 +37,7 @@ final class PortalFormCallbacks {
     private readonly EmailConfirmationRequester $confirmationRequester,
     private readonly \Drupal\aculta_portal\Account\AcultaUserAgreementRegistration $userAgreementRegistration,
     private readonly \Drupal\aculta_portal\Account\RegistrationMailPolicy $registrationMail,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /** Mensagem única do cadastro, igual com e-mail novo ou já cadastrado (DT-P06). */
@@ -224,9 +226,17 @@ final class PortalFormCallbacks {
     $formState->setRedirect('aculta_portal.dashboard');
   }
 
-  /** Returns an Address submission to the nested Portal route. */
+  /**
+   * Returns an Address submission to its original editing context.
+   *
+   * The saved Commerce Profile is identical in Portal and Studio; only the
+   * post-submit destination differs. The existing Portal flow is unchanged.
+   */
   public function addressRedirect(array &$form, FormStateInterface $formState): void {
-    $formState->setRedirect('aculta_portal.my_data_address');
+    $route = $this->routeMatch?->getRouteName() === 'aculta_studio.account_address'
+      ? 'aculta_studio.account_address'
+      : 'aculta_portal.my_data_address';
+    $formState->setRedirect($route);
   }
 
   /** Synchronizes Commerce address names with the participant profile. */
