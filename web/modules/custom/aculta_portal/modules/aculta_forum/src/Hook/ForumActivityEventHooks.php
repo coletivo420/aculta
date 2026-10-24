@@ -15,10 +15,11 @@ use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Emite ForumActivityEvent para criação de tópico, comentário ou post no Fórum.
+ * Emite ForumActivityEvent na primeira publicação de conteúdo do Fórum.
  *
- * Só criação: edição, movimentação e exclusão não emitem evento. Comentários
- * de outros contextos (publicações, LMS, Wiki) são ignorados.
+ * Só a primeira publicação conta: edição posterior, movimentação, rascunho,
+ * revisão não padrão e conteúdo sincronizado não emitem evento. Comentários de
+ * outros contextos (publicações, LMS, Wiki) são ignorados.
  */
 final class ForumActivityEventHooks {
 
@@ -30,13 +31,87 @@ final class ForumActivityEventHooks {
   ) {}
 
   /**
-   * Tópico novo do Fórum.
+   * Tópico novo do Fórum já publicado.
    */
   #[Hook('node_insert')]
   public function topicCreated(NodeInterface $node): void {
-    if ($node->bundle() !== self::TOPIC_BUNDLE || $this->isSynchronizing($node)) {
+    if (!$this->isPublishedForumTopic($node)) {
       return;
     }
+    $this->dispatchTopic($node);
+  }
+
+  /**
+   * Tópico pendente que é publicado pela primeira vez.
+   */
+  #[Hook('node_update')]
+  public function topicPublished(NodeInterface $node): void {
+    if (!$this->isPublishedForumTopic($node)) {
+      return;
+    }
+    $original = $node->getOriginal();
+    if ($original instanceof NodeInterface && !$original->isPublished()) {
+      $this->dispatchTopic($node);
+    }
+  }
+
+  /**
+   * Comentário novo já publicado num tópico do Fórum.
+   */
+  #[Hook('comment_insert')]
+  public function commentCreated(CommentInterface $comment): void {
+    if (!$this->isPublishedForumComment($comment)) {
+      return;
+    }
+    $this->dispatchComment($comment);
+  }
+
+  /**
+   * Comentário pendente ou rejeitado que é publicado pela primeira vez.
+   */
+  #[Hook('comment_update')]
+  public function commentPublished(CommentInterface $comment): void {
+    if (!$this->isPublishedForumComment($comment)) {
+      return;
+    }
+    $original = $comment->getOriginal();
+    if ($original !== NULL && !$original->isPublished()) {
+      $this->dispatchComment($comment);
+    }
+  }
+
+  /**
+   * Post revisionável novo já publicado na revisão padrão.
+   *
+   * Conteúdo sincronizado/importado não representa atividade nova de membro e
+   * não deve alimentar as métricas públicas de criação.
+   */
+  #[Hook('entity_insert')]
+  public function entityInsert(EntityInterface $entity): void {
+    if (!$this->isPublishedForumPost($entity)) {
+      return;
+    }
+    $this->dispatchPost($entity);
+  }
+
+  /**
+   * Post pendente que é publicado pela primeira vez na revisão padrão.
+   */
+  #[Hook('entity_update')]
+  public function entityPublished(EntityInterface $entity): void {
+    if (!$this->isPublishedForumPost($entity)) {
+      return;
+    }
+    $original = $entity->getOriginal();
+    if ($original instanceof ForumPost && !$original->isPublished()) {
+      $this->dispatchPost($entity);
+    }
+  }
+
+  /**
+   * Dispatches topic creation activity once.
+   */
+  private function dispatchTopic(NodeInterface $node): void {
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $node->id(), $this->time->getRequestTime()),
       ForumActivityEvent::TOPIC_CREATED,
@@ -44,17 +119,9 @@ final class ForumActivityEventHooks {
   }
 
   /**
-   * Comentário novo num tópico do Fórum.
+   * Dispatches comment creation activity once.
    */
-  #[Hook('comment_insert')]
-  public function commentCreated(CommentInterface $comment): void {
-    if ($this->isSynchronizing($comment)) {
-      return;
-    }
-    $entity = $comment->getCommentedEntity();
-    if (!$entity instanceof NodeInterface || $entity->bundle() !== self::TOPIC_BUNDLE) {
-      return;
-    }
+  private function dispatchComment(CommentInterface $comment): void {
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $comment->id(), $this->time->getRequestTime()),
       ForumActivityEvent::COMMENT_CREATED,
@@ -62,21 +129,43 @@ final class ForumActivityEventHooks {
   }
 
   /**
-   * Post revisionável criado no Fórum.
-   *
-   * Conteúdo sincronizado/importado não representa atividade nova de membro e
-   * não deve alimentar as métricas públicas de criação.
+   * Dispatches post creation activity once.
    */
-  #[Hook('entity_insert')]
-  public function entityInsert(EntityInterface $entity): void {
-    if (!$entity instanceof ForumPost || $this->isSynchronizing($entity)) {
-      return;
-    }
-
+  private function dispatchPost(ForumPost $post): void {
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $entity->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent((int) $post->id(), $this->time->getRequestTime()),
       ForumActivityEvent::POST_CREATED,
     );
+  }
+
+  /**
+   * Checks a published Forum topic that is not being synchronized.
+   */
+  private function isPublishedForumTopic(NodeInterface $node): bool {
+    return $node->bundle() === self::TOPIC_BUNDLE
+      && $node->isPublished()
+      && !$this->isSynchronizing($node);
+  }
+
+  /**
+   * Checks a published Comment on a Forum topic that is not synchronized.
+   */
+  private function isPublishedForumComment(CommentInterface $comment): bool {
+    if (!$comment->isPublished() || $this->isSynchronizing($comment)) {
+      return FALSE;
+    }
+    $entity = $comment->getCommentedEntity();
+    return $entity instanceof NodeInterface && $entity->bundle() === self::TOPIC_BUNDLE;
+  }
+
+  /**
+   * Checks a published default ForumPost revision that is not synchronized.
+   */
+  private function isPublishedForumPost(EntityInterface $entity): bool {
+    return $entity instanceof ForumPost
+      && $entity->isPublished()
+      && $entity->isDefaultRevision()
+      && !$this->isSynchronizing($entity);
   }
 
   /**

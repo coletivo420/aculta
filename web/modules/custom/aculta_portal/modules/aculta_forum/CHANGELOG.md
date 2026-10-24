@@ -1,3 +1,13 @@
+## `0.1.0-dev.285` — contar atividade só na primeira publicação — 2026-10-24
+
+- `ForumActivityEventHooks` deixa de emitir atividade na inserção de tópico,
+  Comment ou ForumPost pendente/não publicado. A primeira publicação dispara
+  uma única vez (incluindo aprovação posterior); edição publicada, revisão não
+  padrão e conteúdo sincronizado não disparam.
+- Testes: Unit de atividade 10/18; Kernel do post 3/42; Unit do Fórum 180/1.018;
+  Kernel do Fórum 110/2.233; PHPCS limpo.
+- Nenhuma alteração de storage, configuração ou Runtime.
+
 ## `0.1.0-dev.284` — registrar os gates estáticos do módulo — 2026-10-24
 
 - Snapshot sem mudança de comportamento: Unit do Fórum 174/1.008; Unit de

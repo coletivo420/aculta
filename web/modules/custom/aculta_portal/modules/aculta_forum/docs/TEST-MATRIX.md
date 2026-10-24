@@ -1,3 +1,13 @@
+## Atividade pública só na primeira publicação, 2026-10-24
+
+- Unit `ForumActivityEventHooksTest` (10 testes / 18 asserções): tópico e
+  Comment pendentes não emitem; a aprovação emite uma vez; edição publicada
+  não repete; outros bundles não entram.
+- Kernel `ForumPostActivityEventKernelTest` (3 testes / 42 asserções, MariaDB):
+  post pendente só conta na aprovação; inserção publicada conta uma vez;
+  revisão não padrão e conteúdo sincronizado não contam.
+- Suítes: Unit do Fórum 180/1.018; Kernel 110/2.233; PHPCS limpo.
+
 ## Snapshot de gates estáticos do módulo, 2026-10-24
 
 - Unit do Fórum 174/1.008; Unit de fóruns restritos 61/172; Kernel 107/2.191.

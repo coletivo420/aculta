@@ -27,6 +27,7 @@ final class ForumActivityEventHooksTest extends TestCase {
   public function testTopicInsertDispatchesTopicCreated(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('aculta_forum_topic');
+    $node->method('isPublished')->willReturn(TRUE);
     $node->method('id')->willReturn(42);
 
     $dispatcher = $this->dispatcherExpecting(ForumActivityEvent::TOPIC_CREATED, 42);
@@ -53,6 +54,7 @@ final class ForumActivityEventHooksTest extends TestCase {
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('getCommentedEntity')->willReturn($topic);
+    $comment->method('isPublished')->willReturn(TRUE);
     $comment->method('id')->willReturn(7);
 
     $dispatcher = $this->dispatcherExpecting(ForumActivityEvent::COMMENT_CREATED, 7);
@@ -71,6 +73,102 @@ final class ForumActivityEventHooksTest extends TestCase {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->never())->method('dispatch');
     (new ForumActivityEventHooks($dispatcher, $this->time()))->commentCreated($comment);
+  }
+
+  /**
+   * Tópico não publicado não gera atividade pública.
+   */
+  public function testUnpublishedTopicDoesNotDispatch(): void {
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('aculta_forum_topic');
+    $node->method('isPublished')->willReturn(FALSE);
+
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->topicCreated($node);
+  }
+
+  /**
+   * Tópico pendente publicado depois conta uma única vez.
+   */
+  public function testPendingTopicCountsOnFirstPublication(): void {
+    $original = $this->createMock(NodeInterface::class);
+    $original->method('isPublished')->willReturn(FALSE);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('aculta_forum_topic');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('id')->willReturn(43);
+    $node->method('getOriginal')->willReturn($original);
+
+    $dispatcher = $this->dispatcherExpecting(ForumActivityEvent::TOPIC_CREATED, 43);
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->topicPublished($node);
+  }
+
+  /**
+   * Editar tópico já publicado não repete a atividade.
+   */
+  public function testPublishedTopicEditDoesNotDispatch(): void {
+    $original = $this->createMock(NodeInterface::class);
+    $original->method('isPublished')->willReturn(TRUE);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('aculta_forum_topic');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('getOriginal')->willReturn($original);
+
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->topicPublished($node);
+  }
+
+  /**
+   * Comentário pendente não gera atividade até ser publicado.
+   */
+  public function testPendingCommentDoesNotDispatch(): void {
+    $topic = $this->createMock(NodeInterface::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('isPublished')->willReturn(FALSE);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->commentCreated($comment);
+  }
+
+  /**
+   * Comentário pendente aprovado conta uma vez.
+   */
+  public function testPendingCommentCountsOnApproval(): void {
+    $topic = $this->createMock(NodeInterface::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $original = $this->createMock(CommentInterface::class);
+    $original->method('isPublished')->willReturn(FALSE);
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+    $comment->method('getOriginal')->willReturn($original);
+    $comment->method('id')->willReturn(8);
+
+    $dispatcher = $this->dispatcherExpecting(ForumActivityEvent::COMMENT_CREATED, 8);
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->commentPublished($comment);
+  }
+
+  /**
+   * Editar comentário já publicado não repete a atividade.
+   */
+  public function testPublishedCommentEditDoesNotDispatch(): void {
+    $topic = $this->createMock(NodeInterface::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $original = $this->createMock(CommentInterface::class);
+    $original->method('isPublished')->willReturn(TRUE);
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+    $comment->method('getOriginal')->willReturn($original);
+
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects($this->never())->method('dispatch');
+    (new ForumActivityEventHooks($dispatcher, $this->time()))->commentPublished($comment);
   }
 
   /**
