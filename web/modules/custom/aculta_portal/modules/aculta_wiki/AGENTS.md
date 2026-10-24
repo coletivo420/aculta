@@ -30,6 +30,9 @@
 
 # Wiki — instruções locais
 
+- Dev.98: `WikiControllerTest` cobre limite/Entity Access/links da prévia
+  (10/59); busca completa ainda sem teste do limite. Runtime intocado.
+
 - Gate Runtime WE SATIVA (2026-10-24): Firefox 0/2; rota ausente da tabela
   `router` com módulos ativos. Kernel isolado passou 1/54. Sem rebuild/cache/
   import; ativação operacional exige autorização.

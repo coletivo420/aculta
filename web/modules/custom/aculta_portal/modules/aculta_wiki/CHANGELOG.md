@@ -1325,3 +1325,10 @@
   (1/54). Nenhum rebuild, cache clear, import de configuração ou gravação de
   conteúdo foi executado. É necessário autorizar o gate operacional de rotas.
 
+## 0.1.0-dev.98 — verificar truncamento e acesso na prévia
+
+- Unit cobre o corte em `MAX_CHARS`, filtro de Node negado, URL canônica e link
+  para a busca completa com query limitada. `WikiControllerTest`: 10/59.
+- A busca completa ainda precisa de teste próprio do limite; contagem renderizada
+  da prévia segue pendente. Nenhuma alteração em Runtime ou comportamento de UI.
+

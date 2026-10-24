@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_wiki\Unit;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\aculta_wiki\Controller\WikiController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -21,8 +22,10 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -107,7 +110,7 @@ final class WikiControllerTest extends UnitTestCase {
   /**
    * Builds the controller with a stub translator and the given Domain.
    */
-  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL): WikiController {
+  private function controller(?DomainInterface $domain, ?EntityStorageInterface $nodeStorage = NULL, ?EntityAccessControlHandlerInterface $nodeAccess = NULL, ?AccountInterface $account = NULL, ?Connection $database = NULL): WikiController {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translateString')
       ->willReturnCallback(static fn ($markup) => $markup->getUntranslatedString());
@@ -124,7 +127,7 @@ final class WikiControllerTest extends UnitTestCase {
       $this->entityManager($domain, $nodeStorage, $nodeAccess),
       $this->createMock(ViewExecutableFactory::class),
       $this->domainPurpose($domain),
-      $this->createMock(Connection::class),
+      $database ?? $this->createMock(Connection::class),
       $this->createMock(DateFormatterInterface::class),
       $account ?? $this->createMock(AccountInterface::class),
       $renderer,
@@ -270,6 +273,49 @@ final class WikiControllerTest extends UnitTestCase {
     self::assertSame('<p>prévia</p>', $response->getContent());
     self::assertArrayHasKey('hint', $this->lastPreviewedBuild);
     self::assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
+  }
+
+  /**
+   * Preview caps the search, excludes denied Nodes, and links to full search.
+   */
+  public function testPreviewReturnsOnlyAuthorizedResultsAndTruncatesTerm(): void {
+    $term = str_repeat('x', SearchPageController::MAX_CHARS + 20);
+    $cappedTerm = mb_substr($term, 0, SearchPageController::MAX_CHARS);
+    $account = $this->createMock(AccountInterface::class);
+    $authorized = $this->createMock(NodeInterface::class);
+    $authorized->method('access')->with('view')->willReturn(TRUE);
+    $authorized->method('label')->willReturn('Verbete autorizado');
+    $authorized->method('toUrl')->with('canonical')->willReturn(Url::fromRoute('entity.node.canonical', ['node' => '77']));
+    $denied = $this->createMock(NodeInterface::class);
+    $denied->method('access')->with('view')->willReturn(FALSE);
+
+    $conditionGroup = $this->createMock(ConditionInterface::class);
+    $conditionGroup->method('condition')->willReturnSelf();
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(TRUE)->willReturnSelf();
+    $query->method('addMetaData')->with('account', $account)->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->with(0, 8)->willReturnSelf();
+    $query->method('sort')->with('title')->willReturnSelf();
+    $query->method('orConditionGroup')->willReturn($conditionGroup);
+    $query->method('execute')->willReturn([77, 78]);
+    $nodeStorage = $this->createMock(EntityStorageInterface::class);
+    $nodeStorage->method('getQuery')->willReturn($query);
+    $nodeStorage->method('loadMultiple')->with([77, 78])->willReturn([77 => $authorized, 78 => $denied]);
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('escapeLike')->with($cappedTerm)->willReturn($cappedTerm);
+
+    $response = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
+      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => $term]));
+
+    self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
+    self::assertSame(0, $this->lastPreviewedBuild['#cache']['max-age']);
+    self::assertCount(1, $this->lastPreviewedBuild['list']['#items']);
+    self::assertSame('Verbete autorizado', $this->lastPreviewedBuild['list']['#items'][0]['#title']);
+    self::assertSame('entity.node.canonical', $this->lastPreviewedBuild['list']['#items'][0]['#url']->getRouteName());
+    $fullSearchUrl = $this->lastPreviewedBuild['full']['link']['#url'];
+    self::assertSame('aculta_portal.wiki_search', $fullSearchUrl->getRouteName());
+    self::assertSame(['q' => $cappedTerm], $fullSearchUrl->getOption('query'));
   }
 
   /**

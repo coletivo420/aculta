@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.98`: Unit da prévia cobre limite de 100 caracteres, filtro
+  por Entity Access e links canônicos e de busca completa (10 testes/59
+  asserções). O limite da busca completa e renderização da contagem permanecem
+  pendentes; Runtime intocado.
+
 - Gate Runtime WE SATIVA (2026-10-24): Firefox visível encontrou 404 porque
   `aculta_studio.we_sativa` não consta na tabela de rotas, embora Wiki/Studio
   estejam ativos. Kernel isolado passou 1/54. Rebuild/cache/import não foram

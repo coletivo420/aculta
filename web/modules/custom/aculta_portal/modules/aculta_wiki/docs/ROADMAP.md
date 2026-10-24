@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.97**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.98**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.98 — limite e acesso dos resultados da prévia
+
+`WikiControllerTest` verifica que `preview()` limita a consulta a 100 caracteres,
+executa Entity Query com `accessCheck(TRUE)`, exclui um Node negado no recheck de
+Entity Access e entrega links canônicos e de busca completa com o termo já
+limitado. O foco Unit passou: 10 testes / 59 asserções. A rota completa de busca
+ainda não tem uma regressão própria para truncamento; a contagem textual da
+prévia também segue pendente. Runtime intocado.
 
 ### Gate operacional WE SATIVA — 2026-10-24
 
