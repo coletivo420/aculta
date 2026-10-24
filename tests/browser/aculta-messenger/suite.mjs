@@ -3,7 +3,8 @@
 import { Browser, check, drush, results, setup, sleep, OUT, BASE } from './suite-lib.mjs';
 import { writeFileSync } from 'node:fs';
 
-const A = 'teste.comum';
+// teste.comum is an editor in the shared runtime; use the ordinary test account to exercise member privacy rules.
+const A = 'teste.c';
 const B = 'teste.b';
 const C = 'teste.c';
 const MSG = 'Olá teste.b, mensagem do teste de navegador.';
@@ -20,7 +21,7 @@ if (baseUrl.protocol !== 'https:' || (baseUrl.hostname !== 'aculta.toca.net.br' 
 const setupOut = setup();
 const groupId = /group thread (\d+)/.exec(setupOut)?.[1];
 const uidB = Number(/"teste\.b":(\d+)/.exec(setupOut)?.[1]);
-const uidA = Number(/"teste\.comum":(\d+)/.exec(setupOut)?.[1]);
+const uidA = Number(/"teste\.c":(\d+)/.exec(setupOut)?.[1]);
 check('setup: the group thread exists', Boolean(groupId), setupOut.trim());
 
 // Deterministic one-to-one start: no leftover privacy, friendship, block or flood counters between A and B.
@@ -76,13 +77,13 @@ check('A: sending the first message opens the conversation with it', await b.wai
 check('A: no JavaScript errors so far', (await b.errors()).length === 0, JSON.stringify(await b.errors()));
 await b.shot('A-sent');
 
-// ---------- Phase 2: conversation toolbar and "Opções" menu, as A ----------
+// ---------- Phase 2: thread history and member actions, as A ----------
 const tbv = JSON.parse(await b.exec(`const t = ${b.C}.querySelector('.aculta-messenger-conversation-toolbar'); const back = t.querySelector('.aculta-messenger-back-link').getBoundingClientRect(); const opt = t.querySelector('.aculta-messenger-options__summary').getBoundingClientRect(); const box = t.querySelector('.aculta-messenger-options').getBoundingClientRect(); return JSON.stringify({ backLeft: back.left < opt.left, sameTop: Math.abs(back.top - box.top) < 4 });`));
 check('A: "← Todas as conversas" is on the left of "Opções"', tbv.backLeft);
 check('A: "← Todas as conversas" and "Opções" are on the same row', tbv.sameTop);
 await b.openOptions();
 const items1 = await b.panelItems();
-check('A: menu order with no relation: Adicionar amigo, Limpar histórico, Bloquear', JSON.stringify(items1) === JSON.stringify(['button:Adicionar amigo', 'button:Limpar histórico', 'button:Bloquear']), JSON.stringify(items1));
+check('A: thread menu contains only "Limpar histórico"', JSON.stringify(items1) === JSON.stringify(['button:Limpar histórico']), JSON.stringify(items1));
 await b.shot('A-options');
 await b.clickByText('input[type=submit]', 'Limpar histórico');
 check('A: "Limpar histórico" asks for confirmation in the menu, nothing cleared yet', await b.waitFor(`${b.C}.innerText.includes('Limpar o histórico desta conversa só para você?')`, 'confirm text'));
@@ -90,12 +91,12 @@ check('A: the confirmation button is shown', (await b.panelItems()).includes('bu
 check('A: the conversation is still there before confirming', await b.waitText(MSG, 3000));
 
 // Send a friendship request (A -> B).
-await b.openOptions();
+await b.openOptions('teste.b');
 await b.clickByText('input[type=submit]', 'Adicionar amigo');
-check('A: "Adicionar amigo" changes the menu to "Cancelar pedido de amizade"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Cancelar pedido de amizade')`, 'cancel btn'));
-await b.openOptions();
+check('A: "Adicionar amigo" changes the member menu to "Cancelar pedido de amizade"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Cancelar pedido de amizade')`, 'cancel btn'));
+await b.openOptions('teste.b');
 const items2 = await b.panelItems();
-check('A: pending request menu: Cancelar pedido de amizade, Limpar histórico, Bloquear', JSON.stringify(items2) === JSON.stringify(['button:Cancelar pedido de amizade', 'button:Limpar histórico', 'button:Bloquear']), JSON.stringify(items2));
+check('A: pending request member menu: Cancelar pedido de amizade, Bloquear', JSON.stringify(items2) === JSON.stringify(['button:Cancelar pedido de amizade', 'button:Bloquear']), JSON.stringify(items2));
 await b.shot('A-pending');
 await b.exec(`${b.C}.querySelector('.aculta-messenger-options__summary').click(); return 1;`);
 await b.clickByText('a', '← Todas as conversas');
@@ -109,12 +110,12 @@ await b.exec(`${b.C}.querySelector('.aculta-messenger-conversation__actions .acu
 await b.open(B);
 await b.openDrawer();
 check('B: the conversation from A is in B\'s list', await b.openConversation(A));
-await b.openOptions();
+await b.openOptions(A);
 const itemsB = await b.panelItems();
-check('B: recipient menu: Aceitar, Rejeitar, Limpar histórico, Bloquear', JSON.stringify(itemsB) === JSON.stringify(['button:Aceitar pedido de amizade', 'button:Rejeitar pedido de amizade', 'button:Limpar histórico', 'button:Bloquear']), JSON.stringify(itemsB));
+check('B: recipient member menu: Aceitar, Rejeitar, Bloquear', JSON.stringify(itemsB) === JSON.stringify(['button:Aceitar pedido de amizade', 'button:Rejeitar pedido de amizade', 'button:Bloquear']), JSON.stringify(itemsB));
 await b.shot('B-recipient-options');
 await b.clickByText('input[type=submit]', 'Aceitar pedido de amizade');
-check('B: accepting changes the menu to "Desfazer amizade"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'undo btn'));
+check('B: accepting changes the member menu to "Desfazer amizade"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'undo btn'));
 check('B: the reply box is back after accepting', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'reply'));
 await b.shot('B-accepted');
 
@@ -122,17 +123,17 @@ await b.shot('B-accepted');
 await b.open(A);
 await b.openDrawer();
 await b.openConversation(B);
-await b.openOptions();
-check('A: after acceptance the menu shows "Desfazer amizade"', (await b.panelItems()).includes('button:Desfazer amizade'));
+await b.openOptions('teste.b');
+check('A: after acceptance the member menu shows "Desfazer amizade"', (await b.panelItems()).includes('button:Desfazer amizade'));
 drush(`\\Drupal::service("user.data")->set("aculta_messenger", ${uidB}, "message_privacy", "friends"); echo "ok";`);
 await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="remove"]').click(); return 1;`);
-check('A: "Desfazer amizade" asks first in a dialog', await b.waitFor(`${b.C}.querySelector('dialog[data-aculta-dialog="remove"][open]')`, 'remove dialog'));
-await b.exec(`${b.C}.querySelector('dialog[data-aculta-dialog="remove"] [data-aculta-dialog-close]').click(); return 1;`);
-check('A: "Cancelar" in the dialog keeps the friendship', await b.waitFor(`!${b.C}.querySelector('dialog[data-aculta-dialog="remove"][open]') && [...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'still friends'));
+check('A: "Desfazer amizade" asks first in a dialog', await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"]')?.getClientRects().length`, 'remove dialog'));
+await b.exec(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"] [data-aculta-dialog-close]').click(); return 1;`);
+check('A: "Cancelar" in the dialog keeps the friendship', await b.waitFor(`!${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"]')?.getClientRects().length && [...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'still friends'));
 await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="remove"]').click(); return 1;`);
-await b.waitFor(`${b.C}.querySelector('dialog[data-aculta-dialog="remove"][open]')`, 'remove dialog 2');
-await b.exec(`${b.C}.querySelector('dialog[data-aculta-dialog="remove"] input[name=remove]').click(); return 1;`);
-check('A: "Sim" removes the friendship: the menu shows "Adicionar amigo"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Adicionar amigo')`, 'add btn'));
+await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"]')?.getClientRects().length`, 'remove dialog 2');
+await b.exec(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="remove"] input[name=remove]').click(); return 1;`);
+check('A: "Sim" removes the friendship: the member menu shows "Adicionar amigo"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Adicionar amigo')`, 'add btn'));
 // B now only receives messages from friends (set through user.data, as the Configurações form does), before A removes the friendship.
 check('A: not a friend of a friends-only member: the notice replaces the reply box', await b.waitFor(`${b.C}.querySelector('.aculta-messenger-notice')`, 'notice'));
 const n1 = await b.notice();
@@ -150,14 +151,14 @@ await b.shot('A-pending-notice');
 await b.open(B);
 await b.openDrawer();
 await b.openConversation(A);
-await b.openOptions();
+await b.openOptions(A);
 await b.clickByText('input[type=submit]', 'Aceitar pedido de amizade');
-check('B: accepting the request from A (second time)', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'undo btn 2'));
-await b.openOptions();
+check('B: accepting the request from A (second time)', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desfazer amizade')`, 'undo btn 2'));
+await b.openOptions(A);
 await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="ban"]').click(); return 1;`);
-check('B: "Bloquear" asks first: "Você quer mesmo bloquear …?"', await b.waitFor(`${b.C}.querySelector('dialog[data-aculta-dialog="ban"][open]') && ${b.C}.querySelector('dialog[data-aculta-dialog="ban"]').innerText.includes('Você quer mesmo bloquear')`, 'ban dialog'));
-await b.exec(`${b.C}.querySelector('dialog[data-aculta-dialog="ban"] input[name=ban]').click(); return 1;`);
-check('B: after blocking A the menu shows "Desbloquear"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desbloquear')`, 'unblock btn'));
+check('B: "Bloquear" asks first: "Você quer mesmo bloquear …?"', await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.innerText.includes('Você quer mesmo bloquear')`, 'ban dialog'));
+await b.exec(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"] input[name=ban]').click(); return 1;`);
+check('B: after blocking A the member menu shows "Desbloquear"', await b.waitFor(`[...${b.C}.querySelectorAll('.aculta-messenger-options[open] .aculta-messenger-options__panel input[type=submit]')].some((x) => x.value === 'Desbloquear')`, 'unblock btn'));
 check('B: blocker sees the blocker notice with its unblock link', await b.waitFor(`${b.C}.querySelector('.aculta-messenger-notice') && ${b.C}.querySelector('.aculta-messenger-notice').innerText.includes('Você bloqueou essa pessoa')`, 'blocker notice'));
 check('B: blocker sees no reply box', !(await b.hasReplyBox()));
 await b.shot('B-blocker-notice');
@@ -174,7 +175,7 @@ check('A: the previous messages are still visible when blocked', (await b.text()
 await b.open(B);
 await b.openDrawer();
 await b.openConversation(A);
-await b.openOptions();
+await b.openOptions(A);
 await b.clickByText('input[type=submit]', 'Desbloquear');
 check('B: unblocking returns the reply box', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'reply back'));
 
@@ -184,10 +185,10 @@ await b.openConversation(B);
 check('A: after the unblock the reply box is back for A', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'A reply back'));
 
 // ---------- Phase 7: A blocks through its dialog and unblocks with the notice link ----------
-await b.openOptions();
+await b.openOptions('teste.b');
 await b.exec(`${b.C}.querySelector('[data-aculta-dialog-open="ban"]').click(); return 1;`);
-await b.waitFor(`${b.C}.querySelector('dialog[data-aculta-dialog="ban"][open]')`, 'A ban dialog');
-await b.exec(`${b.C}.querySelector('dialog[data-aculta-dialog="ban"] input[name=ban]').click(); return 1;`);
+await b.waitFor(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"]')?.getClientRects().length`, 'A ban dialog');
+await b.exec(`${b.C}.querySelector('.ui-dialog [data-aculta-dialog="ban"] input[name=ban]').click(); return 1;`);
 check('A: blocking shows the blocker notice', await b.waitFor(`${b.C}.querySelector('.aculta-messenger-notice') && ${b.C}.querySelector('.aculta-messenger-notice').innerText.includes('Você bloqueou essa pessoa')`, 'A blocker notice'));
 await b.exec(`${b.C}.querySelector('.aculta-messenger-notice__action').click(); return 1;`);
 check('A: the notice link unblocks and the reply box returns', await b.waitFor(`${b.C}.querySelector('textarea[name="message[0][value]"]')`, 'reply after notice unblock'));
@@ -208,9 +209,9 @@ const mob = JSON.parse(await b.exec(`const C = ${b.C}; const t = C.querySelector
 check('mobile: "← Todas as conversas" and the hamburger share the row', mob.sameTop);
 check('mobile: the "Opções" label is hidden, only the icon shows', mob.labelHidden);
 check('mobile: no horizontal page overflow', mob.noOverflow);
-await b.openOptions();
+await b.openOptions('teste.b');
 const itemsM = await b.panelItems();
-check('mobile: the menu opens with its items', itemsM.length >= 2, JSON.stringify(itemsM));
+check('mobile: the member menu opens with relationship actions', itemsM.length >= 2, JSON.stringify(itemsM));
 await b.shot('mobile-A-options');
 await b.close();
 

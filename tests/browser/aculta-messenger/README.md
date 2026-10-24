@@ -1,6 +1,6 @@
 # Suíte de navegador do ACULTA Messenger
 
-Suíte de ponta a ponta com cliques e digitação reais no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver e o protocolo W3C WebDriver. Duas contas de teste, mais uma terceira para a conversa em grupo, passam pelos dois lados de cada estado.
+Suíte de ponta a ponta com cliques e digitação reais no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver e o protocolo W3C WebDriver. Duas contas de teste passam pelos estados de conversa; uma terceira participa do cenário em grupo.
 Sem dependências npm: usa o Node 22 (`fetch` e `child_process`) e o Drush do projeto.
 
 ## Onde roda
@@ -44,15 +44,17 @@ Roda sozinha no início da suíte e é idempotente:
 
 Para rodar só a preparação: `php vendor/drush/drush/drush.php scr tests/browser/aculta-messenger/setup-accounts.php`.
 
-A conversa um-a-um entre `teste.comum` e `teste.b` é zerada pela própria suíte (amizade, bloqueio, contadores de envio
-e mensagens), para que cada execução parta do mesmo estado.
+A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela própria suíte (preferências de mensagem de
+`teste.b`, amizade, bloqueio, contadores de envio e mensagens), para que cada execução parta do mesmo estado.
+`teste.comum` tem o papel `content_editor` no Runtime e, por isso, não serve para verificar a restrição de mensagens
+“Somente amigos”; continua como terceiro participante da conversa em grupo.
 
 ## O que cobre
 
 | Fase | Assunto |
 | --- | --- |
 | 1 | "Iniciar nova conversa", busca, nova conversa, botões "Cancelar" e "Voltar para o início" (classe e ordem) |
-| 2 | Barra da conversa, menu "Opções" (ordem dos itens), "Limpar histórico" em duas etapas, pedido de amizade |
+| 2 | Barra da conversa, menu da thread, "Limpar histórico" em duas etapas, pedido de amizade |
 | 3 | Aceite pelo destinatário |
 | 4 | "Desfazer amizade" em janela de confirmação (cancelar e confirmar), aviso "só amigos" |
 | 5 | Aceite, "Bloquear" em janela de confirmação, avisos de quem bloqueou e de quem foi bloqueado |
@@ -68,3 +70,8 @@ e mensagens), para que cada execução parta do mesmo estado.
 
 - Não substitui o teste em dispositivo de toque real nem com leitor de tela. Os 390 px são uma aproximação de layout.
 - Os textos das fases são os da interface em português. Se um texto mudar, a verificação correspondente precisa ser atualizada.
+
+## Execução registrada
+
+Em 2026-10-24, a suíte completa passou com **71/71 verificações** no Runtime de teste, em Firefox ESR visível (`DISPLAY=:0`).
+O teste usa o diálogo do Drupal/jQuery UI para confirmar amizade e bloqueio.

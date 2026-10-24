@@ -39,7 +39,7 @@ async function wd(method, path, body) {
 
 // One-time login link for an account of the test runtime (the Drush user login command, no password is stored).
 export function oneTimeLogin(name) {
-  return execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', `--name=${name}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT }).toString().trim().split('\n').pop();
+  return execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${name}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT, timeout: 30_000 }).toString().trim().split('\n').pop();
 }
 
 // Runs PHP on the test runtime (Drush php:eval). The code is written by the suite, never taken from a page.
@@ -52,7 +52,7 @@ export function setup() {
 }
 
 export class Browser {
-  constructor() { this.sid = null; this.width = 1280; this.height = 800; }
+  constructor() { this.sid = null; this.width = 1280; this.height = 800; this.openOptionsLabel = null; }
 
   async open(name, { width = 1280, height = 800 } = {}) {
     await this.close();
@@ -65,6 +65,11 @@ export class Browser {
     await sleep(2000);
     await wd('POST', this.p('/url'), { url: BASE + '/' });
     await sleep(1800);
+    const loginState = await this.exec(`const u = new URL(location.href); return JSON.stringify({ host: u.host, path: u.pathname, messengerTrigger: !!document.querySelector('.aculta-messenger-trigger'), loginForm: !!document.querySelector('form.user-login-form'), testAccountVisible: document.body.innerText.includes(${JSON.stringify(name)}) });`);
+    console.log(`Browser session ${name}: ${loginState}`);
+    if (!await this.waitFor(`document.querySelector('.aculta-messenger-trigger')`, `Messenger access for ${name}`, 10000)) {
+      throw new Error(`A conta de teste ${name} não iniciou sessão com acesso ao Messenger.`);
+    }
     await this.exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.addEventListener('unhandledrejection', (e) => window.__errs.push('REJ ' + String(e.reason))); window.__f = []; const __of = window.fetch; window.fetch = (...a) => __of(...a).then((r) => { window.__f.push(String(a[1] && a[1].method || 'GET') + ' ' + r.status + ' ' + String(a[0]).slice(-40) + ' keys=' + (a[1] && a[1].body && a[1].body.keys ? [...a[1].body.keys()].join(',') : '-')); return r; }); return 1;`);
     return this;
   }
@@ -126,13 +131,21 @@ export class Browser {
 
   // The items of the open menu, as "button:Label" or "link:Label".
   async panelItems() {
-    return this.exec(`return JSON.stringify([...${this.C}.querySelectorAll('.aculta-messenger-options__panel a, .aculta-messenger-options__panel input[type=submit]:not([data-aculta-dialog-close])')].filter((e) => e.offsetParent !== null || e.closest('dialog') === null).map(e => (e.tagName === 'A' ? 'link:' : 'button:') + (e.value || e.textContent.trim())));`).then(JSON.parse);
+    const menu = this.openOptionsLabel === null
+      ? `${this.C}.querySelector('.aculta-messenger-options[open]')`
+      : `[...${this.C}.querySelectorAll('.aculta-messenger-options[open]')].find((item) => item.querySelector('.aculta-messenger-options__summary')?.textContent.trim() === ${JSON.stringify(this.openOptionsLabel)})`;
+    return this.exec(`const menu = ${menu}; return JSON.stringify([...(menu?.querySelectorAll('.aculta-messenger-options__panel a, .aculta-messenger-options__panel input[type=submit]:not([data-aculta-dialog-close])') || [])].filter((e) => e.getClientRects().length > 0).map(e => (e.tagName === 'A' ? 'link:' : 'button:') + (e.value || e.textContent.trim())));`).then(JSON.parse);
   }
 
   // Opens the "Opções" menu, unless it is already open (a result keeps it open).
-  async openOptions() {
-    await this.exec(`const d = ${this.C}.querySelector('.aculta-messenger-options details'); if (d && !d.open) { ${this.C}.querySelector('.aculta-messenger-options__summary').click(); } return 1;`);
-    return this.waitFor(`${this.C}.querySelector('.aculta-messenger-options details[open]')`, 'options open');
+  async openOptions(memberName = null) {
+    this.openOptionsLabel = memberName;
+    const find = memberName === null
+      ? `${this.C}.querySelector('.aculta-messenger-options')`
+      : `[...${this.C}.querySelectorAll('.aculta-messenger-options')].find((item) => item.querySelector('.aculta-messenger-options__summary')?.textContent.trim() === ${JSON.stringify(memberName)})`;
+    await this.exec(`const d = ${find}; if (d && !d.open) { d.querySelector('.aculta-messenger-options__summary').click(); } return 1;`);
+    const ready = memberName === null ? `!!(d && d.open)` : `!!(d && d.open && d.querySelector('.aculta-messenger-options__panel form[data-aculta-drawer-action]'))`;
+    return this.waitFor(`(() => { const d = ${find}; return ${ready}; })()`, memberName === null ? 'options open' : `options open for ${memberName}`);
   }
 
   async notice() {
