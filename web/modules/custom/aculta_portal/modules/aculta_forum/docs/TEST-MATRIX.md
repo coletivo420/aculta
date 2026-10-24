@@ -1,3 +1,12 @@
+## Seleção de revisões — correção de carregamento e validação, 2026-10-24
+
+- Defeito real: propriedade `readonly $routeMatch` colidia com `FormBase` e a
+  classe não carregava em PHP 8.4; renomeada para `$forumRouteMatch`.
+- `ForumPostRevisionSelectionFormKernelTest` (4 testes / 61 asserções, MariaDB):
+  padrões, envio ordenado, recusa de valor não numérico, revisões iguais, revisão
+  de outra publicação e post ausente na rota.
+- Suíte Kernel do Fórum 143/2.703; PHPCS limpo.
+
 ## Revisão visual local — ACULTA420 e Olivero, 2026-10-24
 
 - `tests/browser/aculta-forum/categorias-visual.py`: `/categorias` no Growroom

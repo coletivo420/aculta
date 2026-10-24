@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ForumPostRevisionSelectionForm extends FormBase {
 
   public function __construct(
-    private readonly RouteMatchInterface $routeMatch,
+    private readonly RouteMatchInterface $forumRouteMatch,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
@@ -101,7 +101,7 @@ final class ForumPostRevisionSelectionForm extends FormBase {
       return;
     }
 
-    $post = $this->routeMatch->getParameter('aculta_forum_post');
+    $post = $this->forumRouteMatch->getParameter('aculta_forum_post');
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
     if (!$post instanceof ForumPost || !$storage instanceof RevisionableStorageInterface) {
       $form_state->setErrorByName('newer_revision', $this->t('Não foi possível identificar a publicação.'));
@@ -120,7 +120,7 @@ final class ForumPostRevisionSelectionForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $post = $this->routeMatch->getParameter('aculta_forum_post');
+    $post = $this->forumRouteMatch->getParameter('aculta_forum_post');
     if (!$post instanceof ForumPost) {
       $form_state->setErrorByName('newer_revision', $this->t('Não foi possível identificar a publicação.'));
       return;

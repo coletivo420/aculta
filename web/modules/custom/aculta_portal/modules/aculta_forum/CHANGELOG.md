@@ -1,3 +1,16 @@
+## `0.1.0-dev.307` — corrigir formulário de seleção de revisões — 2026-10-24
+
+- Corrigido defeito real: `ForumPostRevisionSelectionForm` promovia
+  `RouteMatchInterface $routeMatch` como propriedade `readonly`, colidindo com a
+  propriedade não-readonly de `FormBase`; em PHP 8.4 a classe não carregava
+  (fatal), o que quebraria a comparação a partir da segunda página do histórico.
+  A propriedade passou a se chamar `$forumRouteMatch`.
+- Novo Kernel `ForumPostRevisionSelectionFormKernelTest`: padrões da página,
+  envio ordena as revisões da mais antiga para a mais recente, recusa valor não
+  numérico, revisões iguais, revisão de outra publicação e ausência do post na
+  rota; opções vazias devolvem formulário vazio.
+- Testes: seleção 4/61; suíte Kernel do Fórum 143/2.703; PHPCS limpo.
+
 ## `0.1.0-dev.306` — revisão visual local dos temas no Fórum — 2026-10-24
 
 - `/categorias` no Growroom local simulado (`growroom420.aculta.toca.net.br`
