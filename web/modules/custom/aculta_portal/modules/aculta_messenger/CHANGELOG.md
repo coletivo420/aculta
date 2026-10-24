@@ -1,3 +1,9 @@
+## 0.1.1-dev.143 — testar lock do digest entre processos — 2026-10-24
+
+O Kernel MariaDB agora inicia processos PHP independentes contra o mesmo prefixo isolado e comprova o lock persistente do resumo: enquanto um processo mantém o lock, outro não consegue adquiri-lo; após a liberação, um terceiro processo consegue. A verificação usa apenas o banco dedicado de testes e não executa envio nem toca no Runtime.
+
+Validação: `ForumNoticeIdempotencyKernelTest` 32 testes / 723 assertions PASS, incluindo o cenário multiprocesso; PHPCS Drupal/DrupalPractice e PHP lint dos dois arquivos novos/alterados PASS. O teste não simula dois digests completos disputando o transporte, lease expirada, SMTP real ou execução de cron.
+
 ## 0.1.1-dev.138 — distinguir gerações do digest do Fórum — 2026-10-24
 
 A correlação do resumo do Fórum agora inclui a geração monotônica do tópico, calculada em uma consulta agrupada ao ledger de eventos já existente. Um evento novo no mesmo tópico e tipo recebe outra correlação mesmo quando a contagem pendente volta a 1; replay do mesmo evento continua usando a geração anterior. Não há tabela nova nem update de schema.

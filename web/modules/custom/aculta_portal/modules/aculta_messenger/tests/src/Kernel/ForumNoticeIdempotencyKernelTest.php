@@ -423,6 +423,190 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * The persistent digest lock excludes independent PHP processes on MariaDB.
+   */
+  public function testPersistentDigestLockSerializesIndependentProcesses(): void {
+    if ($this->container->get('database')->driver() !== 'mysql') {
+      $this->markTestSkipped('Digest lock process contention requires MariaDB.');
+    }
+
+    $database = $this->container->get('database');
+    $lockName = 'aculta_messenger.avisos_resumo.process_test.' . bin2hex(random_bytes(8));
+    $configPath = tempnam(sys_get_temp_dir(), 'aculta-digest-lock-db-');
+    if ($configPath === FALSE) {
+      throw new \RuntimeException('Could not allocate temporary digest lock configuration.');
+    }
+    $heldPath = $configPath . '.held';
+    $releasePath = $configPath . '.release';
+    chmod($configPath, 0600);
+    $configuration = json_encode(['connection' => $database->getConnectionOptions()], JSON_THROW_ON_ERROR);
+    if (file_put_contents($configPath, $configuration, LOCK_EX) !== strlen($configuration)) {
+      @unlink($configPath);
+      throw new \RuntimeException('Could not write temporary digest lock configuration.');
+    }
+
+    $holder = NULL;
+    $pipes = [];
+    try {
+      $holder = $this->startDigestLockProcess($configPath, $lockName, 'hold', $heldPath, $releasePath, $pipes);
+      $deadline = microtime(TRUE) + 15;
+      while (!is_file($heldPath)) {
+        $status = proc_get_status($holder);
+        if (!$status['running']) {
+          self::fail('Digest lock holder exited before acquiring its lock.');
+        }
+        if (microtime(TRUE) >= $deadline) {
+          self::fail('Timed out waiting for the independent digest lock holder.');
+        }
+        usleep(10_000);
+      }
+
+      self::assertFalse(
+        $this->runDigestLockProcess($configPath, $lockName, 'try', $heldPath, $releasePath),
+        'An independent process cannot acquire the recipient lock while the digest worker holds it.',
+      );
+      self::assertNotFalse(file_put_contents($releasePath, 'release', LOCK_EX));
+      [$stdout, $stderr, $exitCode] = $this->collectDigestLockProcess($holder, $pipes);
+      $holder = NULL;
+      self::assertSame(0, $exitCode, 'Digest lock holder failed: ' . trim((string) $stderr));
+      self::assertSame(['acquired' => TRUE, 'released' => TRUE], json_decode(trim((string) $stdout), TRUE, 512, JSON_THROW_ON_ERROR));
+
+      self::assertTrue(
+        $this->runDigestLockProcess($configPath, $lockName, 'try', $heldPath, $releasePath),
+        'A later independent process can acquire the recipient lock after release.',
+      );
+    }
+    finally {
+      if ($holder !== NULL && is_resource($holder)) {
+        @file_put_contents($releasePath, 'release', LOCK_EX);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_terminate($holder);
+        proc_close($holder);
+      }
+      @unlink($configPath);
+      @unlink($heldPath);
+      @unlink($releasePath);
+    }
+  }
+
+  /**
+   * Starts a digest lock probe in a separate PHP process.
+   *
+   * @param string $configurationPath
+   *   Private file containing the isolated Kernel database connection options.
+   * @param string $lockName
+   *   The recipient lock name.
+   * @param string $action
+   *   Either "hold" or "try".
+   * @param string $heldPath
+   *   File created by a holder after successful acquisition.
+   * @param string $releasePath
+   *   File that asks a holder to release its lock.
+   * @param array<int, resource> $pipes
+   *   Process pipes, returned by reference.
+   *
+   * @return resource
+   *   The independent worker process.
+   */
+  private function startDigestLockProcess(string $configurationPath, string $lockName, string $action, string $heldPath, string $releasePath, array &$pipes) {
+    $worker = dirname(__DIR__, 2) . '/fixtures/digest-lock-process-worker.php';
+    $autoload = DRUPAL_ROOT . '/../vendor/autoload.php';
+    $process = proc_open([
+      PHP_BINARY,
+      $worker,
+      $autoload,
+      $configurationPath,
+      $action,
+      $lockName,
+      $heldPath,
+      $releasePath,
+    ], [
+      0 => ['pipe', 'r'],
+      1 => ['pipe', 'w'],
+      2 => ['pipe', 'w'],
+    ], $pipes, DRUPAL_ROOT);
+    if (!is_resource($process)) {
+      throw new \RuntimeException('Could not start an independent digest lock worker.');
+    }
+    fclose($pipes[0]);
+    stream_set_blocking($pipes[1], FALSE);
+    stream_set_blocking($pipes[2], FALSE);
+    return $process;
+  }
+
+  /**
+   * Runs a one-shot digest lock probe in an independent PHP process.
+   */
+  private function runDigestLockProcess(string $configurationPath, string $lockName, string $action, string $heldPath, string $releasePath): bool {
+    $pipes = [];
+    $process = $this->startDigestLockProcess($configurationPath, $lockName, $action, $heldPath, $releasePath, $pipes);
+    try {
+      [$stdout, $stderr, $exitCode] = $this->collectDigestLockProcess($process, $pipes);
+      self::assertSame(0, $exitCode, 'Digest lock probe failed: ' . trim($stderr));
+      $result = json_decode(trim($stdout), TRUE, 512, JSON_THROW_ON_ERROR);
+      self::assertIsArray($result);
+      return $result['acquired'] === TRUE;
+    }
+    finally {
+      foreach ($pipes as $pipe) {
+        if (is_resource($pipe)) {
+          fclose($pipe);
+        }
+      }
+      if (is_resource($process)) {
+        proc_terminate($process);
+        proc_close($process);
+      }
+    }
+  }
+
+  /**
+   * Collects output and exit status from an independent process.
+   *
+   * @param resource $process
+   *   The process resource.
+   * @param array<int, resource> $pipes
+   *   Process pipes, closed by this method.
+   *
+   * @return array{string, string, int}
+   *   Standard output, standard error, and exit code.
+   */
+  private function collectDigestLockProcess($process, array &$pipes): array {
+    $stdout = '';
+    $stderr = '';
+    $exitCode = NULL;
+    $deadline = microtime(TRUE) + 15;
+    do {
+      $stdout .= (string) stream_get_contents($pipes[1]);
+      $stderr .= (string) stream_get_contents($pipes[2]);
+      $status = proc_get_status($process);
+      if (!$status['running']) {
+        $exitCode = $status['exitcode'];
+        break;
+      }
+      if (microtime(TRUE) >= $deadline) {
+        throw new \RuntimeException('Timed out waiting for an independent digest lock process.');
+      }
+      usleep(10_000);
+    } while (TRUE);
+
+    $stdout .= (string) stream_get_contents($pipes[1]);
+    $stderr .= (string) stream_get_contents($pipes[2]);
+    foreach ($pipes as $pipe) {
+      if (is_resource($pipe)) {
+        fclose($pipe);
+      }
+    }
+    $pipes = [];
+    $closeCode = proc_close($process);
+    return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
+  }
+
+  /**
    * A new Forum digest batch cannot reuse a previously accepted correlation.
    */
   public function testNewForumDigestGenerationGetsNewCorrelationAfterAcknowledgement(): void {
