@@ -122,7 +122,8 @@ Runtime intocado.
 | Lookup contextual do User | Unit | Não combina contextos; provider ausente/duplicado/falho resulta indisponível e exige revisão | aprovado (3/19) |
 | Adapter Wiki descoberto | Kernel MariaDB | Provider `wiki_entry` real; ignora rascunho, outra autoria, outro Domain e Domain inativo; revisão pendente não-default preserva a publicação padrão | aprovado (dev.87; 1/45) |
 | Cache e Domain | Kernel MariaDB | Evidência tem tag de listagem; cache por usuário atual, `max-age: 0` para UID diferente; Domain anterior é restaurado | aprovado (dev.87) |
-| Integração a permissões/transições | Kernel MariaDB | Primeiro envio sem evidência segue em `review`; lookup confiável permanece `requiresReview`, sem transição `review_to_published` para autoria | parcial (focal 1/93); comportamento após publicação e eventual efeito adicional aguardam decisão editorial |
+| Domain canônico na criação | Kernel MariaDB | Campo vazio recebe Wiki; origem explícita é preservada | aprovado (focal 1/111; classe completa no mesmo código 27/1.452; 291 depreciações Core/contrib e 28 PHPUnit) |
+| Integração a permissões/transições | Kernel MariaDB | Primeiro verbete recebe Domain Wiki; editor publica pela transição oficial; lookup reconhece publicação e a autoria ainda envia o seguinte a `review`, sem `review_to_published` | aprovado (focal 1/111; classe 27/1.452) |
 
 ## Aplicação editorial de propostas (dev.29)
 

@@ -1711,6 +1711,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertNotEmpty($savedEntity->id());
     $savedNode = Node::load($savedEntity->id());
     self::assertInstanceOf(Node::class, $savedNode);
+    self::assertSame('wiki420_aculta_org', $savedNode->get('field_domain_source')->target_id);
+    $explicitDomainNode = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Domain explícito preservado',
+      'field_domain_source' => ['target_id' => 'aculta_org'],
+    ]);
+    $explicitDomainNode->save();
+    self::assertSame('aculta_org', $explicitDomainNode->get('field_domain_source')->target_id);
     self::assertSame('Verbete salvo como rascunho', $savedNode->label());
     self::assertSame((string) $author->id(), (string) $savedNode->getOwnerId());
     self::assertSame('draft', $savedNode->get('moderation_state')->value);
@@ -1796,6 +1804,81 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertGreaterThan($draftRevisionId, (int) $reviewRevision->getRevisionId());
     self::assertSame('review', $reviewRevision->get('moderation_state')->value);
     self::assertFalse($reviewRevision->isPublished());
+
+    Role::create([
+      'id' => 'wiki_first_publication_editor_test',
+      'label' => 'Wiki first publication editor test',
+      'permissions' => [
+        'edit any wiki_entry content',
+        'view any unpublished content',
+        'view wiki_entry revisions',
+        'use wiki_editorial transition review_to_published',
+        'use text format wiki',
+      ],
+    ])->save();
+    $editor = User::create([
+      'uid' => 45,
+      'name' => 'wiki-first-publication-editor',
+      'mail' => 'wiki-first-publication-editor@example.invalid',
+      'status' => TRUE,
+      'roles' => ['wiki_first_publication_editor_test'],
+    ]);
+    $editor->save();
+    $this->container->get('current_user')->setAccount($editor);
+    $pendingNode = Node::load((int) $savedReviewNode->id());
+    $publishFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');
+    $publishFormObject->setEntity($pendingNode);
+    $publishFormState = new FormState();
+    $publishFormState->setFormObject($publishFormObject);
+    $publishForm = $formBuilder->buildForm($publishFormObject, $publishFormState);
+    $publishModerationWidget = $publishForm['moderation_state']['widget'][0]['state'];
+    self::assertArrayHasKey('published', $publishModerationWidget['#options']);
+    $publishFormState->setValue($publishForm['title']['widget'][0]['value']['#parents'], 'Verbete publicado por editor');
+    $publishFormState->setValue($publishForm['body']['widget'][0]['value']['#parents'], 'Texto revisado pelo editor.');
+    $publishFormState->setValue($publishForm['body']['widget'][0]['format']['format']['#parents'], 'wiki');
+    $publishFormState->setValue($publishModerationWidget['#parents'], 'published');
+    $publishFormState->setTriggeringElement($publishForm['actions']['submit']);
+    $formBuilder->submitForm($publishFormObject, $publishFormState);
+    self::assertSame([], $publishFormState->getErrors());
+    $publishedByEditor = Node::load((int) $savedReviewNode->id());
+    self::assertSame('published', $publishedByEditor->get('moderation_state')->value);
+    self::assertTrue($publishedByEditor->isPublished());
+
+    $this->container->get('current_user')->setAccount($author);
+    $afterFirstPublication = $this->container->get('aculta_user.published_participation_lookup')
+      ->lookup((int) $author->id(), 'wiki_entry');
+    self::assertTrue($afterFirstPublication->isReliable());
+    self::assertTrue($afterFirstPublication->hasPublishedContribution());
+    self::assertFalse($afterFirstPublication->requiresReview());
+    $stillPending = Node::load((int) $reviewRevision->id());
+    $authorTransitions = $this->container->get('content_moderation.state_transition_validation')
+      ->getValidTransitions($stillPending, $author);
+    self::assertArrayNotHasKey('review_to_published', $authorTransitions);
+
+    $subsequentEntry = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
+    $subsequentFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
+    $subsequentFormObject->setEntity($subsequentEntry);
+    $subsequentFormState = new FormState();
+    $subsequentFormState->setFormObject($subsequentFormObject);
+    $subsequentForm = $formBuilder->buildForm($subsequentFormObject, $subsequentFormState);
+    $subsequentModerationWidget = $subsequentForm['moderation_state']['widget'][0]['state'];
+    self::assertArrayHasKey('review', $subsequentModerationWidget['#options']);
+    self::assertArrayNotHasKey('published', $subsequentModerationWidget['#options']);
+    $subsequentTransitions = $this->container->get('content_moderation.state_transition_validation')
+      ->getValidTransitions($subsequentEntry, $author);
+    self::assertArrayHasKey('draft_to_review', $subsequentTransitions);
+    self::assertArrayNotHasKey('review_to_published', $subsequentTransitions);
+    $subsequentFormState->setValue($subsequentForm['title']['widget'][0]['value']['#parents'], 'Segundo verbete segue para revisão');
+    $subsequentFormState->setValue($subsequentForm['body']['widget'][0]['value']['#parents'], 'Texto para revisão editorial.');
+    $subsequentFormState->setValue($subsequentForm['body']['widget'][0]['format']['format']['#parents'], 'wiki');
+    $subsequentFormState->setValue($subsequentModerationWidget['#parents'], 'draft');
+    $subsequentFormState->setTriggeringElement($subsequentForm['actions']['submit_review']);
+    $formBuilder->submitForm($subsequentFormObject, $subsequentFormState);
+    self::assertSame([], $subsequentFormState->getErrors());
+    $subsequentSavedNode = Node::load((int) $subsequentFormObject->getEntity()->id());
+    self::assertSame('wiki420_aculta_org', $subsequentSavedNode->get('field_domain_source')->target_id);
+    self::assertSame('review', $subsequentSavedNode->get('moderation_state')->value);
+    self::assertFalse($subsequentSavedNode->isPublished());
   }
 
   /**

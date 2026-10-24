@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.101**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.102**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.102 — Domain e participação no fluxo nativo
+
+O novo `WikiEntryDomainHooks` preenche `field_domain_source` com o Domain Wiki
+canônico em verbetes sem origem explícita, permitindo que busca, Index e lookup
+de participação reconheçam autoria criada no formulário nativo. O Kernel
+confirma origem Wiki na criação, primeira submissão em `review`, publicação
+somente pelo editor, lookup atualizado após publicação e submissão subsequente
+continuando em `review`. Focal MariaDB: 1/111; classe completa: 27/1.452, com
+291 depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
 
 ### Incremento dev.101 — primeira submissão não eleva acesso
 

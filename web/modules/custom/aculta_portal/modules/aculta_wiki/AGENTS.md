@@ -30,6 +30,11 @@
 
 # Wiki — instruções locais
 
+- Dev.102: hook de presave preenche Domain Wiki ausente; Kernel cobre a primeira
+  publicação por editor e revisão obrigatória após evidência positiva (focal
+  1/111; classe 27/1.452; 291 depreciações Core/contrib, 28 PHPUnit). Runtime
+  intocado.
+
 - Dev.101: Kernel confirma que lookup sem publicação anterior exige revisão e
   não concede `review_to_published` à autoria (1/93; 203 depreciações upstream,
   2 PHPUnit). Política após publicação anterior aguarda decisão.

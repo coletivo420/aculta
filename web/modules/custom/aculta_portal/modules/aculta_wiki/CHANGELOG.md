@@ -1351,3 +1351,12 @@
   203 depreciações Core/contrib e 2 PHPUnit. Nenhuma permissão ou transição foi
   alterada; política posterior à primeira publicação aguarda decisão.
 
+## 0.1.0-dev.102 — preencher o Domain Wiki no formulário nativo
+
+- `WikiEntryDomainHooks` atribui o Domain canônico quando um `wiki_entry` é
+  salvo sem `field_domain_source`; valor explícito permanece preservado.
+- Kernel comprova criação no Domain, revisão inicial, publicação oficial por
+  editor, lookup de participação e revisão obrigatória no verbete seguinte
+  (focal 1/111; classe 27/1.452, 291 depreciações Core/contrib e 28 PHPUnit).
+  Runtime intocado.
+
