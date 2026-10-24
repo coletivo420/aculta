@@ -125,7 +125,7 @@ services:
     arguments: ['@user.data', '@config.factory']
   aculta_messenger.avisos_privacy_form:
     class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
-    arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']
+    arguments: ['@current_user', '@aculta_messenger.aviso_preferencias', '@flag', '@aculta_portal.domain_purpose', '@messenger']
   aculta_messenger.avisos_resumo:
     class: Drupal\aculta_messenger\Aviso\AvisosResumo
     arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@settings', '@database', '@lock.persistent', !tagged_iterator aculta_messenger.aviso_digest_provider, '@logger.channel.aculta_messenger']

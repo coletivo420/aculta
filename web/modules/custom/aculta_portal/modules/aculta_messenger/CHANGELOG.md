@@ -1,3 +1,12 @@
+## 0.1.1-dev.154 — gerenciar tópicos seguidos nas preferências — 2026-10-24
+
+A página de privacidade lista os tópicos seguidos pela pessoa usando a Flag `seguir_topico` e permite parar de seguir
+itens selecionados. Títulos e links só aparecem quando a pessoa ainda pode ver o tópico; itens indisponíveis aparecem
+com rótulo genérico e continuam removíveis. O submit dedicado usa a API Flag, revalida proprietário/tipo/ID e não
+invoca os handlers do formulário de perfil nem altera o acesso ao conteúdo.
+
+Validação: `AvisosPrivacyFormTest` **5/49 PASS**; PHP lint, PHPCS Drupal/DrupalPractice, gate Drupal 11+ (1.155 checks), índice e `git diff --check` PASS. Validação via Symfony YAML não se aplica ao services.yml com `!tagged_iterator`; o container foi coberto pelo gate Drupal. Runtime visual não executado nesta microfase.
+
 ## 0.1.1-dev.153 — bloquear digests concorrentes durante transporte — 2026-10-24
 
 Teste de integração reentra em um segundo `AvisosResumo::enviarResumos()` enquanto o primeiro está no transporte. O
