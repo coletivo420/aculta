@@ -1993,3 +1993,12 @@ O contador do header agora carrega estados pessoais de dispensa em lote, após f
 
 Validação: `MessengerCountsTest` 3/27 PASS; combinado com `PersistentNoticeAccessTest` 8/38 PASS; Unit Messenger 155/968 e `AcultaMessengerServiceProviderTest` 4/14 PASS; PHPCS dos arquivos novos/serviço, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. O PHPCS de `MessagesController` mantém baseline anterior; Runtime/navegador não executados.
 
+## 0.1.1-dev.193 — carregar pedidos da Loja em lote no contador
+
+O contador de avisos não lidos reúne UUIDs distintos das mensagens elegíveis e carrega os pedidos da Loja em uma única
+consulta. Revalida tipo, cliente, acesso atual e URL de cada pedido, preservando a contagem por aviso e evitando uma
+consulta de origem por mensagem.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **224/1.670 PASS**; PHPCS Drupal/DrupalPractice
+PASS. Runtime não executado.
+

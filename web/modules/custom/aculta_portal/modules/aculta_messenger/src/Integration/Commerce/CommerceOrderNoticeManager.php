@@ -143,15 +143,11 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   /**
    * {@inheritdoc} */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array {
-    if (!$account->isAuthenticated() || (int) $message->getOwnerId() !== (int) $account->id()
-      || $message->bundle() !== self::TEMPLATE) {
+    $uuid = $this->orderUuidFromNotice($message, $account);
+    if ($uuid === NULL) {
       return NULL;
     }
-    $type = (string) $message->get(self::EVENT_FIELD)->value;
-    $uuid = (string) $message->get(self::SOURCE_FIELD)->value;
-    return $type === 'order_placed'
-      ? $this->resolveOrder($uuid, $account)
-      : NULL;
+    return $this->resolveOrder($uuid, $account);
   }
 
   /**
@@ -205,11 +201,44 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
     }
-    $ids = $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+    $messageStorage = $this->entityTypeManager->getStorage('message');
+    $ids = $messageStorage->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)->condition('uid', $uid)->condition(self::READ_FIELD, 0)->execute();
+    $messages = array_filter(
+      $messageStorage->loadMultiple($ids),
+      static fn(mixed $message): bool => $message instanceof MessageInterface,
+    );
+    $uuids = [];
+    foreach ($messages as $message) {
+      $uuid = $this->orderUuidFromNotice($message, $account);
+      if ($uuid !== NULL) {
+        $uuids[$uuid] = TRUE;
+      }
+    }
+    if ($uuids === []) {
+      return 0;
+    }
+
+    // Resolve source orders in one entity query rather than one UUID lookup
+    // per unread Message. Access and ownership are still revalidated below.
+    $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties([
+      'uuid' => array_keys($uuids),
+    ]);
+    $ordersByUuid = [];
+    foreach ($orders as $order) {
+      if ($order instanceof OrderInterface) {
+        $ordersByUuid[$order->uuid()] = $order;
+      }
+    }
+    $accessible = [];
+    foreach ($ordersByUuid as $uuid => $order) {
+      $accessible[$uuid] = $this->resolveOrderEntity($order, $account) !== NULL;
+    }
+
     $count = 0;
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if ($message instanceof MessageInterface && $this->resolve($message, $account) !== NULL) {
+    foreach ($messages as $message) {
+      $uuid = $this->orderUuidFromNotice($message, $account);
+      if ($uuid !== NULL && ($accessible[$uuid] ?? FALSE)) {
         $count++;
       }
     }
@@ -316,8 +345,27 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
   private function resolveOrder(string $uuid, AccountInterface $account): ?array {
     $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties(['uuid' => $uuid]);
     $order = reset($orders);
-    if (!$order instanceof OrderInterface
-      || $order->bundle() !== $this->checkoutSettings->shopOrderType()
+    return $order instanceof OrderInterface ? $this->resolveOrderEntity($order, $account) : NULL;
+  }
+
+  /**
+   * Validates the Message envelope and returns its Commerce order UUID.
+   */
+  private function orderUuidFromNotice(MessageInterface $message, AccountInterface $account): ?string {
+    if (!$account->isAuthenticated() || (int) $message->getOwnerId() !== (int) $account->id()
+      || $message->bundle() !== self::TEMPLATE
+      || (string) $message->get(self::EVENT_FIELD)->value !== 'order_placed') {
+      return NULL;
+    }
+    $uuid = (string) $message->get(self::SOURCE_FIELD)->value;
+    return $uuid !== '' ? $uuid : NULL;
+  }
+
+  /**
+   * Revalidates current ownership, order type, access and target URL.
+   */
+  private function resolveOrderEntity(OrderInterface $order, AccountInterface $account): ?array {
+    if ($order->bundle() !== $this->checkoutSettings->shopOrderType()
       || (int) $order->getCustomerId() !== (int) $account->id()
       || !$order->access('view', $account, TRUE)->isAllowed()) {
       return NULL;

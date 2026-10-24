@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Integration\Commerce\Unit;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -17,14 +18,18 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\message\MessageInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\domain\DomainInterface;
 use Drupal\user\UserInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests persistent Commerce notice creation and email preference routing. */
@@ -125,6 +130,68 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
   }
 
   /**
+   * Unread count batch-loads source orders and revalidates each unique order.
+   */
+  public function testUnreadCountBatchLoadsOrdersAndRevalidatesAccess(): void {
+    $container = new ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+    $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('27');
+    $account->method('isActive')->willReturn(TRUE);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(27)->willReturn($account);
+
+    $messageA = $this->noticeMessage(27, 'order-a');
+    $messageB = $this->noticeMessage(27, 'order-b');
+    $messageAReplay = $this->noticeMessage(27, 'order-a');
+    $messageWrongEvent = $this->noticeMessage(27, 'order-c', 'other');
+    $messageQuery = $this->createMock(QueryInterface::class);
+    $messageQuery->method('accessCheck')->willReturnSelf();
+    $messageQuery->method('condition')->willReturnSelf();
+    $messageQuery->method('execute')->willReturn([101, 102, 103, 104]);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($messageQuery);
+    $messageStorage->method('loadMultiple')->with([101, 102, 103, 104])->willReturn([
+      101 => $messageA,
+      102 => $messageB,
+      103 => $messageAReplay,
+      104 => $messageWrongEvent,
+    ]);
+
+    $allowedOrder = $this->order('order-a', 201, 27, TRUE);
+    $inaccessibleOrder = $this->order('order-b', 202, 27, FALSE);
+    $orderStorage = $this->createMock(EntityStorageInterface::class);
+    $orderStorage->expects(self::once())
+      ->method('loadByProperties')
+      ->with(['uuid' => ['order-a', 'order-b']])
+      ->willReturn([$allowedOrder, $inaccessibleOrder]);
+
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('isHttps')->willReturn(TRUE);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('loja_aculta_org')->willReturn($domain);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
+      'user' => $userStorage,
+      'message' => $messageStorage,
+      'commerce_order' => $orderStorage,
+      'domain' => $domainStorage,
+      default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
+    });
+
+    $manager = $this->manager($entities, $this->createMock(AvisoPreferenciasInterface::class), $this->createMock(QueueFactory::class));
+
+    try {
+      self::assertSame(2, $manager->unreadCount(27));
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
+  }
+
+  /**
    * Creates the manager using only mocked I/O dependencies. */
   private function manager(
     EntityTypeManagerInterface $entities,
@@ -192,6 +259,41 @@ final class CommerceOrderNoticeManagerTest extends UnitTestCase {
       'store:test:placed:27',
       ['notice_type' => 'order_placed', 'mail_policy' => 'user_preference'],
     );
+  }
+
+  /**
+   * Creates a persisted-looking Commerce notice for count resolution.
+   */
+  private function noticeMessage(int $uid, string $orderUuid, string $eventType = 'order_placed'): MessageInterface {
+    $fields = [];
+    foreach ([
+      'field_aculta_commerce_event_type' => $eventType,
+      'field_aculta_commerce_uuid' => $orderUuid,
+    ] as $fieldName => $value) {
+      $field = $this->createMock(FieldItemListInterface::class);
+      $field->method('__get')->with('value')->willReturn($value);
+      $fields[$fieldName] = $field;
+    }
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn(CommerceOrderNoticeManager::TEMPLATE);
+    $message->method('getOwnerId')->willReturn($uid);
+    $message->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => $fields[$field]);
+    return $message;
+  }
+
+  /**
+   * Creates a Commerce order fixture with explicit owner and access.
+   */
+  private function order(string $uuid, int $id, int $customerId, bool $viewable): OrderInterface {
+    $access = $this->createMock(AccessResultInterface::class);
+    $access->method('isAllowed')->willReturn($viewable);
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('uuid')->willReturn($uuid);
+    $order->method('id')->willReturn((string) $id);
+    $order->method('bundle')->willReturn('default');
+    $order->method('getCustomerId')->willReturn($customerId);
+    $order->method('access')->with('view', self::anything(), TRUE)->willReturn($access);
+    return $order;
   }
 
   /**
