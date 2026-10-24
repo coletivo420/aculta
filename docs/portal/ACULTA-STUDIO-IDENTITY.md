@@ -2,6 +2,25 @@
 
 **Estado:** contrato vigente da refatoração iniciada em 2026-10-24. Este arquivo é a fonte de verdade para nomes, IDs e URLs das experiências.
 
+## Identidade vigente de rotas — P1-C, dev.10 (2026-10-24)
+
+A decisão definitiva para a entrada editorial é **`/studio/marley`
+(totalmente minúscula)**. A implementação no Git tem:
+
+- **`/studio`** — hub geral das experiências autorizadas, em `account`;
+- **`/studio/marley`** — Marley, preservando o route ID
+  `aculta_studio.home`, controller, abas e subrotas minúsculas;
+- **`/studio/Marley`** — alias 302 temporário, apenas GET/HEAD, para o
+  caminho canônico `/studio/marley`;
+- **`/studio/inicio`** — alias 302 GET/HEAD para o hub em `/studio`;
+- **`/studio/pessoal`** — entrada mínima pessoal; sem migração dos formulários.
+
+A navegação unificada contextual definitiva e o editor Meu Perfil continuam
+planejados. As descrições das dev.7–9 abaixo são históricas e não definem
+a rota canônica atual. **Implementado no Git, ainda sem homologação PHPUnit/
+Runtime/Firefox ESR/X11 para esta fase.** O perfil público
+`/u/{apelido}` e a raiz `/` do Domain ACCOUNT permanecem intactos.
+
 ## Evolução planejada — Hub geral e Meu Espaço (P0, 2026-10-24)
 
 **Decisão de produto para implementação futura, ainda não aplicada às rotas:** o
