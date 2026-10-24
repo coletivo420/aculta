@@ -24,6 +24,15 @@ Kernel integrados passaram (205 asserções; 200 depreciações Core/contrib e 3
 PHPUnit). A rota/container do Runtime e a validação visual Firefox ESR/X11,
 320px e Olivero seguem pendentes.
 
+### Revalidação WIKI-R1 — HEAD `03b840a7f` (2026-10-24)
+
+Dois providers Unit e quatro Kernels de acesso/integração/rebuild passaram em
+MariaDB isolada (20 testes / 425 asserções; 240 depreciações Core/contrib e 3
+PHPUnit). O provider v4 e seu fingerprint cobrem metadados allowlisted e as
+três relações outgoing. O acesso ao destino é revalidado na consulta; revisão
+pendente não substitui a projeção pública. Rebuild validado somente na geração
+isolada do Kernel, sem ação no Runtime.
+
 ### Incremento dev.108 — avisar aceite da proposta
 
 O resultado privado enviado à autoria confirmada agora cobre também `accepted`,

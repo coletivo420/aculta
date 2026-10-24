@@ -39,6 +39,10 @@
 
 # Wiki — instruções locais
 
+# WIKI-R1 revalidada no HEAD 03b840a7f: 20 testes / 425 asserções (MariaDB
+# isolada), incluindo projeção v4, relações, acesso real e rebuild isolado.
+# Runtime/rebuild instalado não executados.
+
 # Dev.109: `/studio/we-sativa/inicio` é entrypoint `account` servido pelo Studio;
 # `WikiContributorWorkspace` mantém dados, acesso, cache e links autorizados.
 # Dois Kernels integrados passaram (2/205). Runtime e visual pendentes.

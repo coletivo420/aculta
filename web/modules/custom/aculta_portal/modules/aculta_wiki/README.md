@@ -7,6 +7,13 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação WIKI-R1 no HEAD `03b840a7f` (2026-10-24): providers Unit e
+  Kernels de descoberta/projeção, autorização/relações e rebuild completo Wiki
+  passaram em 20 testes / 425 asserções com MariaDB isolada. Projeção v4,
+  relações `related_entry`, `wiki_category`, `wiki_image` e fingerprint
+  confirmados; 240 depreciações Core/contrib e 3 PHPUnit. Sem rebuild ou alteração
+  no Runtime.
+
 - `0.1.0-dev.109`: a entrada WE SATIVA agora tem `/studio/we-sativa/inicio`
   no purpose `account`, com criação, retomada de rascunho autorizado e guia
   editorial. O serviço Wiki mantém dados, Entity Access e cache; o workspace

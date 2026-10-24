@@ -1471,3 +1471,12 @@
   revalidado. Kernels focais passaram em 2 testes / 205 asserções; o bootstrap
   reportou 200 depreciações Core/contrib e 3 PHPUnit. Runtime e browser pendentes.
 
+## Revalidação WIKI-R1 — HEAD `03b840a7f` (2026-10-24)
+
+- Providers Unit e Kernels de descoberta/projeção, autorização/relações e
+  rebuild completo Wiki passaram em MariaDB isolada: 20 testes / 425 asserções.
+  Confirmados provider v4, relações `related_entry`, `wiki_category` e
+  `wiki_image`, acesso a origem/destinos, Domain/purpose, revisão pendente,
+  fingerprint e geração isolada. PHPUnit reportou 240 depreciações Core/contrib
+  e 3 PHPUnit. Nenhum rebuild ou alteração de Runtime executado.
+
