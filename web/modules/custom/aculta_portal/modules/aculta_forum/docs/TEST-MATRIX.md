@@ -1,3 +1,12 @@
+## Anexo e mover comentário — pré-visualização autenticada, 2026-10-24
+
+- `synthetic-preview-and-move.py` (Firefox ESR/X11, local): 4/4 — imagem
+  sintética renderizada com `alt` no tópico despublicado e formulário de mover
+  comentário com destinos/confirmação/submit. Cria e apaga todo o conteúdo
+  sintético e restaura `comment_move_enabled`; estado final verificado com zero
+  entidades e setting=0.
+- Sem submissão de formulário e sem e-mail; uid 1 no dump local.
+
 ## Painel autenticado — leitura somente no navegador, 2026-10-24
 
 - `tests/browser/aculta-forum/authenticated-readonly.py` (Firefox ESR/X11,

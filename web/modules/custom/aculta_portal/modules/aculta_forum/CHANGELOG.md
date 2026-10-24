@@ -1,3 +1,17 @@
+## `0.1.0-dev.315` — pré-visualização de anexo e mover comentário na UI — 2026-10-24
+
+- Novo teste de navegador `tests/browser/aculta-forum/synthetic-preview-and-move.py`
+  (Firefox ESR/X11, local): cria imagem/Media/tópico/Comment sintéticos e
+  despublicados, abre a pré-visualização autenticada com a imagem e o `alt`
+  corretos, e o formulário de mover comentário com destinos, confirmação e
+  submit. Resultado 4/4, sem erro visível do Fórum.
+- O script apaga as quatro entidades e o arquivo no `finally` e restaura
+  `comment_move_enabled`; a verificação posterior registra setting=0 e zero
+  nós/media/comments/arquivos sintéticos. Nenhum formulário foi submetido e
+  nenhum e-mail foi disparado.
+- Recorte: uid 1 no dump local; autorização de não-superusuário segue nos
+  Kernels access-aware.
+
 ## `0.1.0-dev.314` — fechar o mapa das fases do Fórum — 2026-10-24
 
 - O roadmap passa a registrar o fechamento por fase com a evidência real

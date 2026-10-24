@@ -211,3 +211,28 @@ SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-autenticado' \
   segurança, que não é do Fórum.
 - Limitação: GET-only; submissão real do formulário de mover tópico continua
   coberta por Kernel/serviço, não pela UI.
+
+## Anexo sintético e mover comentário — pré-visualização autenticada
+
+`synthetic-preview-and-move.py` cobre os dois fluxos que não existiam no dump
+local sem criar conteúdo permanente. Ele **cria e apaga**, no ambiente local,
+uma imagem PNG sintética, uma Media `forum_attachment` despublicada, um tópico
+despublicado com o embed e um Comment despublicado; abre a pré-visualização
+autenticada e o formulário de mover comentário; e restaura
+`comment_move_enabled` ao valor original no `finally`, apagando as entidades e
+o arquivo.
+
+```bash
+DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-sintetico' \
+  python3 -I tests/browser/aculta-forum/synthetic-preview-and-move.py
+```
+
+- Ambiente: **local** (`127.0.0.1` com os hosts no perfil do Firefox).
+- Muta somente o Runtime local e limpa tudo ao final; nenhum formulário é
+  submetido, nenhum e-mail é disparado e o servidor de testes não é tocado.
+- Cobre: imagem renderizada com `alt` no tópico sintético, sem erro visível do
+  Fórum; formulário de mover comentário com destinos, confirmação e submit.
+- Mensagens globais de conta/atualizações são ignoradas por não pertencerem ao
+  Fórum.
+- uid 1 no dump local; as regras de autorização de não-superusuário seguem nos
+  Kernels access-aware.

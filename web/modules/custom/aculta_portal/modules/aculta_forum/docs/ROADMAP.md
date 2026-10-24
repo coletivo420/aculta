@@ -151,9 +151,10 @@ todas as classes de `src/` e todos os imports de produção.
 - **F-M6 — provado localmente:** controladores e formulários em Kernel,
   anexo do editor cria Media despublicada, mover tópico tem rota canônica e
   formulário, `/categorias` passou 9/9 em ACULTA420 e 9/9 em Olivero, índice
-  sem erro nos dois temas e painel autenticado 12/12 em Firefox ESR/X11
-  (GET-only). Faltam pré-visualização renderizada de anexo autenticada,
-  mover comentário pela UI (o dump local não tem Comments) e aparelho físico.
+  sem erro nos dois temas, painel autenticado 12/12 em Firefox ESR/X11
+  (GET-only), pré-visualização autenticada de anexo com Media sintética e
+  formulário de mover comentário com Comment sintético (4/4, conteúdo apagado
+  ao final). Falta apenas aparelho físico.
 - **F-M7 — gates proporcionais executados:** Unit 181/1.019, Kernel
   149/2.841, PHPCS do módulo limpo, carregamento de todas as classes em PHP
   8.4, imports de produção resolvidos, gate de aliases e documentação de UI sem
