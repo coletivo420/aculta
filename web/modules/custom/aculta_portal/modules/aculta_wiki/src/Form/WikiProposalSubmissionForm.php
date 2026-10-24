@@ -67,6 +67,10 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#options' => WikiProposal::INTENTS,
       '#required' => TRUE,
     ];
+    $requestedIntent = $this->getRequest()?->query->all()['intent'] ?? NULL;
+    if (is_string($requestedIntent) && isset(WikiProposal::INTENTS[$requestedIntent])) {
+      $form['intent']['#default_value'] = $requestedIntent;
+    }
     $form['proposed_text'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Resumo da contribuição'),

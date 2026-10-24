@@ -7,6 +7,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
+| Seletor contextual de contribuição | Kernel MariaDB | CTA usa rota Wiki; participantes confirmados veem quatro intenções allowlisted, edição direta vê somente formulário Core, pessoa não confirmada é bloqueada | aprovado (dev.89; 3 testes / 311 asserções) |
 | Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
 | Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; outra autoria e candidato do mesmo UID sem `view` não aparecem; cursores e links no Domain `account` | aprovado (dev.83; focais 1/42 e 1/45; classe 24/1.142) |
 | Filtros dos verbetes | Kernel MariaDB | `draft`, `review`, `published` e todos; estados inválidos voltam a Todos; links preservam Domain/cursor de proposta e resetam cursor de verbete; 20+3 paginam sem duplicação/perda | aprovado (dev.88; focal 1/141; três Kernels workspace 3/235) |

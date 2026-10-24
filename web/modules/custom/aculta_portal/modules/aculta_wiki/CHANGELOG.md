@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.89 — seletor contextual de contribuição WE SATIVA
+
+- O CTA em verbetes publicados abre uma página contextual com edição nativa
+  para quem tem `update` Entity Access, ou quatro intenções existentes de
+  proposta para participantes confirmados sem edição direta.
+- A rota revalida bundle, revisão padrão, publicação, Domain Wiki e acesso de
+  leitura; a submissão continua no Form API e serviço de proposta já existentes.
+- Kernel focal passou com 3 testes / 311 asserções; PHPCS Drupal/DrupalPractice,
+  lint PHP e `git diff --check` passaram. Runtime e validação visual não foram
+  executados.
+
 ## 0.1.0-dev.88 — filtros de estado no Meu Trabalho WE SATIVA
 
 - Adiciona navegação GET para `Em andamento` (rascunho), `Em revisão`,

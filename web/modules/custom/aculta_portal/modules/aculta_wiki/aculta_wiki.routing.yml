@@ -27,6 +27,20 @@ aculta_portal.wiki_search_preview:
   options:
     _aculta_domain_purpose: wiki
 
+aculta_wiki.contribution_intent:
+  path: '/wiki/verbetes/{node}/contribuir/como'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiContributionIntentController::page'
+    _title: 'Como você quer contribuir?'
+  requirements:
+    _permission: access content
+    _entity_access: 'node.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      node:
+        type: entity:node
+
 aculta_wiki.proposal_submit:
   path: '/wiki/verbetes/{node}/contribuir'
   defaults:

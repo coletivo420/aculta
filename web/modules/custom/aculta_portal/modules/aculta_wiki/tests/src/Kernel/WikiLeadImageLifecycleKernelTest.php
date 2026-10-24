@@ -53,6 +53,7 @@ use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm;
 use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
 use Drupal\aculta_wiki\Controller\WikiProposalStatusController;
+use Drupal\aculta_wiki\Controller\WikiContributionIntentController;
 use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
@@ -824,6 +825,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => 1], new AnonymousUserSession()));
+    $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
+    self::assertSame('/wiki/verbetes/{node}/contribuir/como', $intentRoute->getPath());
+    self::assertSame('wiki', $intentRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('node.view', $intentRoute->getRequirement('_entity_access'));
     $withdrawRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_withdraw');
     self::assertSame('/wiki/propostas/{proposal}/retirar', $withdrawRoute->getPath());
     self::assertSame('proposal.view', $withdrawRoute->getRequirement('_entity_access'));
@@ -848,9 +853,17 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $contributor = new UserSession(['uid' => 7, 'roles' => ['authenticated', 'wiki_form_contributor_test']]);
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $contributor->id());
     $this->container->get('current_user')->setAccount($contributor);
-    $proposalForm = WikiProposalSubmissionForm::create($this->container);
-    $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);
+    $requestStack = $this->container->get('request_stack');
+    $requestStack->push(Request::create('/wiki/verbetes/1/contribuir', 'GET', ['intent' => 'reference']));
+    try {
+      $proposalForm = WikiProposalSubmissionForm::create($this->container);
+      $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);
+    }
+    finally {
+      $requestStack->pop();
+    }
     self::assertSame('aculta_wiki_proposal_submission', $proposalForm->getFormId());
+    self::assertSame('reference', $proposalBuild['intent']['#default_value']);
     self::assertArrayHasKey('proposed_text', $proposalBuild);
     self::assertArrayHasKey('rationale', $proposalBuild);
     self::assertArrayHasKey('source_uris', $proposalBuild);
@@ -1150,6 +1163,22 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(['node_type' => 'wiki_entry'], $createLink['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $createLink['#url']->getOption('domain')->id());
     self::assertSame('aculta420:content-grid', $build['entries']['#slots']['body']['items']['#component']);
+    $intentPage = WikiContributionIntentController::create($this->container)->page($own);
+    $ownIntentCards = $intentPage['choices']['#slots']['body']['#slots']['items'];
+    self::assertCount(1, $ownIntentCards, 'An editable own entry offers only the native full-edit action.');
+    self::assertSame('entity.node.edit_form', $ownIntentCards[0]['#slots']['footer']['#url']->getRouteName());
+    self::assertSame((string) $own->id(), (string) $ownIntentCards[0]['#slots']['footer']['#url']->getRouteParameters()['node']);
+    $contributionLinkBuild = [];
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use (&$contributionLinkBuild, $own): void {
+      $this->container->get(WikiProposalLinkHooks::class)->entityView(
+        $contributionLinkBuild,
+        $own,
+        $this->createMock(EntityViewDisplayInterface::class),
+        'full',
+      );
+    });
+    self::assertSame('Contribuir', (string) $contributionLinkBuild['wiki_proposal_link']['link']['#title']);
+    self::assertSame('aculta_wiki.contribution_intent', $contributionLinkBuild['wiki_proposal_link']['link']['#url']->getRouteName());
   }
 
   /**
@@ -2143,12 +2172,32 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalBuild = [];
     $linkHooks->entityView($proposalBuild, $target, $display, 'full');
     self::assertArrayHasKey('wiki_proposal_link', $proposalBuild);
+    self::assertSame('aculta_wiki.contribution_intent', $proposalBuild['wiki_proposal_link']['link']['#url']->getRouteName());
     self::assertContains('user.permissions', $proposalBuild['#cache']['contexts']);
+    $intentPage = WikiContributionIntentController::create($this->container)->page($target);
+    self::assertSame('Como você quer contribuir?', $intentPage['header']['#props']['title']);
+    $intentCards = $intentPage['choices']['#slots']['body']['#slots']['items'];
+    self::assertCount(4, $intentCards);
+    $intentIds = [];
+    foreach ($intentCards as $card) {
+      self::assertSame('aculta420:card', $card['#component']);
+      $url = $card['#slots']['footer']['#url'];
+      self::assertSame('aculta_wiki.proposal_submit', $url->getRouteName());
+      $intentIds[] = $url->getOption('query')['intent'];
+    }
+    self::assertEqualsCanonicalizing(array_keys(WikiProposal::INTENTS), $intentIds);
 
     $unconfirmedBuild = [];
     $this->container->get('current_user')->setAccount($unconfirmed);
     $linkHooks->entityView($unconfirmedBuild, $target, $display, 'full');
     self::assertArrayNotHasKey('wiki_proposal_link', $unconfirmedBuild);
+    try {
+      WikiContributionIntentController::create($this->container)->page($target);
+      self::fail('An unconfirmed account must not receive the intention selector.');
+    }
+    catch (AccessDeniedHttpException) {
+      self::assertTrue(TRUE);
+    }
 
     $this->container->get('current_user')->setAccount($submitter);
 

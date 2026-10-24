@@ -13,11 +13,10 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
- * Adds the contextual proposal link to eligible public Wiki entries.
+ * Adds a contextual contribution link when a real Wiki action is available.
  */
 final class WikiProposalLinkHooks {
 
@@ -28,7 +27,7 @@ final class WikiProposalLinkHooks {
   ) {}
 
   /**
-   * Adds a contribution action only when direct editing is unavailable.
+   * Adds one authorized contribution entrypoint for editable public entries.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {
@@ -43,24 +42,33 @@ final class WikiProposalLinkHooks {
       ->addCacheContexts(['domain']);
     $view = $entity->access('view', $this->currentUser, TRUE);
     $updateResult = $entity->access('update', $this->currentUser, TRUE);
-    $update = AccessResult::allowedIf(!$updateResult->isAllowed())
+    // A forbidden update result must not override an independently allowed
+    // proposal permission. Preserve both results for correct cacheability.
+    $eligible = AccessResult::allowedIf($permission->isAllowed() || $updateResult->isAllowed())
+      ->addCacheableDependency($permission)
       ->addCacheableDependency($updateResult);
     $published = AccessResult::allowedIf($entity->isPublished())
       ->addCacheableDependency($entity);
-    $access = $permission->andIf($confirmed)->andIf($domain)->andIf($view)->andIf($update)->andIf($published);
+    $access = $eligible->andIf($confirmed)->andIf($domain)->andIf($view)->andIf($published);
 
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user.permissions', 'domain'])
       ->addCacheableDependency($entity)
       ->addCacheableDependency($permission)
+      ->addCacheableDependency($eligible)
       ->addCacheableDependency($confirmed)
       ->addCacheableDependency($domain)
       ->addCacheableDependency($view)
-      ->addCacheableDependency($update)
+      ->addCacheableDependency($updateResult)
       ->addCacheableDependency($published);
     $cacheability->applyTo($build);
 
     if (!$access->isAllowed()) {
+      return;
+    }
+
+    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.contribution_intent', ['node' => $entity->id()]);
+    if ($url === NULL) {
       return;
     }
 
@@ -69,8 +77,8 @@ final class WikiProposalLinkHooks {
       '#attributes' => ['class' => ['wiki-proposal-link']],
       'link' => [
         '#type' => 'link',
-        '#title' => new TranslatableMarkup('Sugerir uma alteração'),
-        '#url' => Url::fromRoute('aculta_wiki.proposal_submit', ['node' => $entity->id()]),
+        '#title' => new TranslatableMarkup('Contribuir'),
+        '#url' => $url,
         '#access' => $access,
         '#attributes' => ['class' => ['button', 'button--secondary']],
       ],

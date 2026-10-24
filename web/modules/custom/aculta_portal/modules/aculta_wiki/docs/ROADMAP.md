@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.88**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.89**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.89 — seletor contextual WE SATIVA
+
+O CTA dos verbetes públicos aponta para um seletor com destinos funcionais:
+edição Core apenas quando Entity Access autoriza `update`, e as quatro
+intenções allowlisted de proposta para participantes confirmados sem edição.
+A rota revalida entidade, revisão padrão, publicação, Domain Wiki e `view`; os
+links de proposta mantêm o formulário e backend existentes. Kernel focal
+passou com 3 testes / 311 asserções, PHPCS/lint passaram. Runtime e navegador
+não foram executados; a integração visual permanece pendente.
 
 ### Incremento dev.88 — filtros de estado no Meu Trabalho WE SATIVA
 

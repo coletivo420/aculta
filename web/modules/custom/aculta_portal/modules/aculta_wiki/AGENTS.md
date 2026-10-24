@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.89: CTA público leva ao seletor contextual WE SATIVA; edição direta é
+  mostrada somente com update access e participantes confirmados recebem as
+  quatro intenções de proposta existentes. Kernel focal 3/311, PHPCS/lint
+  passaram; Runtime e smoke visual intocados.
+
 - Dev.88: Meu Trabalho filtra verbetes por `draft`, `review`, `published` ou
   todos; estado lido da entidade, busca limitada/cursor estável, links no
   Domain `account`, cursor de propostas separado. Kernel focal 1/141 e

@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.89`: CTA contextual abre seletor WE SATIVA para verbetes públicos.
+  Pessoas autorizadas a editar recebem somente a edição nativa; demais pessoas
+  confirmadas recebem quatro intenções allowlisted que levam ao formulário de
+  proposta existente. Kernel focal 3/311; PHPCS e lint passaram. Runtime e
+  homologação visual intocados.
+
 - `0.1.0-dev.88`: Meu Trabalho WE SATIVA agora filtra verbetes por rascunho,
   revisão, publicado ou todos. O workflow é lido da entidade; consulta e
   paginação são limitadas, Domain `account` e cache GET preservados, e a
