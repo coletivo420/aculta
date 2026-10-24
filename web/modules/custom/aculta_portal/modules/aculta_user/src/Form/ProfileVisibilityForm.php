@@ -95,7 +95,7 @@ final class ProfileVisibilityForm extends FormBase {
     $profile->save();
     $this->messenger()->addStatus($this->t('Privacidade salva.'));
     $form_state->setRedirect($this->isStudioEditor()
-      ? 'aculta_studio.personal_profile'
+      ? 'aculta_studio.profile'
       : 'aculta_user.configuracoes_privacidade');
   }
 
@@ -103,7 +103,7 @@ final class ProfileVisibilityForm extends FormBase {
    * Checks whether the canonical Studio view owns the current form context.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_privacy';
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_privacy';
   }
 
   /**
