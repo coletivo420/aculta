@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Plugin\views\field\PublicForumReplyCount;
 use Drupal\aculta_forum\Service\ForumPublicPostStatistics;
+use Drupal\comment\CommentInterface;
+use Drupal\comment\CommentingStatus;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\User;
+use Drupal\views\ResultRow;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -19,6 +25,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_forum')]
 #[RunTestsInSeparateProcesses]
 final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
+
+  use CommentTestTrait;
 
   /**
    * {@inheritdoc}
@@ -32,6 +40,7 @@ final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
     'filter',
     'text',
     'node',
+    'comment',
     'aculta_forum_post_test',
   ];
 
@@ -54,9 +63,13 @@ final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node']);
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
 
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Tópico'])->save();
+    $this->addDefaultCommentField('node', 'aculta_forum_topic', 'field_aculta_discussion', CommentingStatus::Open, 'aculta_discussion_post');
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->author = User::create(['name' => 'autora', 'status' => 1]);
     $this->author->save();
     $this->statistics = new ForumPublicPostStatistics($this->container->get('database'));
@@ -112,6 +125,32 @@ final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
   }
 
   /**
+   * The reply count field adds published posts to the Comment count.
+   */
+  public function testReplyCountFieldCombinesCommentsAndPosts(): void {
+    $topic = $this->topic('Contagem');
+    $this->comment($topic, 'Comentário A');
+    $this->comment($topic, 'Comentário B');
+    $this->post($topic, 1700000000);
+    $this->post($topic, 1700000300);
+    $this->post($topic, 1700000600, published: FALSE);
+
+    $plugin = new PublicForumReplyCount(
+      [],
+      'aculta_forum_reply_count',
+      [],
+      $this->statistics,
+    );
+    $plugin->aliases['nid'] = 'nid';
+    $plugin->aliases['comment_count'] = 'comment_count';
+    $plugin->field_alias = 'reply_total';
+    $values = [new ResultRow(['nid' => (int) $topic->id(), 'comment_count' => 2])];
+    $plugin->preRender($values);
+
+    self::assertSame(4, $values[0]->reply_total);
+  }
+
+  /**
    * Creates a Forum topic.
    */
   private function topic(string $title): Node {
@@ -123,6 +162,24 @@ final class ForumPublicPostStatisticsKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     return $topic;
+  }
+
+  /**
+   * Creates a published Comment in the topic.
+   */
+  private function comment(Node $topic, string $subject): CommentInterface {
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $this->author->id(),
+      'subject' => $subject,
+      'comment_body' => ['value' => 'Corpo', 'format' => 'plain_text'],
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    return $comment;
   }
 
   /**

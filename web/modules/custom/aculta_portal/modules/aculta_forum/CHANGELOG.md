@@ -1,3 +1,11 @@
+## `0.1.0-dev.272` — provar a contagem combinada da listagem — 2026-10-23
+
+- Kernel exercita `PublicForumReplyCount` sobre o agregado real: dois Comments
+  mais dois ForumPosts publicados resultam em quatro, ignorando o post não
+  publicado.
+- Testes: agregado 4/64; suíte Kernel do Fórum 93/1.939; PHPCS limpo. A
+  apresentação na View/tema e o Runtime seguem pendentes.
+
 ## `0.1.0-dev.271` — provar a agregação de posts da listagem pública — 2026-10-23
 
 - Kernel exercita `ForumPublicPostStatistics`: conta só posts publicados,
