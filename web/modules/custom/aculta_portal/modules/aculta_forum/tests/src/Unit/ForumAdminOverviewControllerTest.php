@@ -11,7 +11,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
-use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -21,7 +20,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Tests the central Forum administration overview and redirects.
+ * Tests the central Forum administration overview without route aliases.
  */
 #[Group('aculta_forum')]
 final class ForumAdminOverviewControllerTest extends UnitTestCase {
@@ -64,18 +63,6 @@ final class ForumAdminOverviewControllerTest extends UnitTestCase {
     self::assertContains('node_list:aculta_forum_topic', $build['#cache']['tags']);
     self::assertContains('taxonomy_term_list:aculta_forum_categories', $build['#cache']['tags']);
 
-  }
-
-  /**
-   * Administrative tool paths return locally to the central panel.
-   */
-  public function testLegacyAdminPathsRedirectToCentralPanel(): void {
-    [$controller] = $this->controller();
-    $response = $controller->redirectToOverview();
-
-    self::assertInstanceOf(LocalRedirectResponse::class, $response);
-    self::assertSame('/painel-administrativo/forum', $response->getTargetUrl());
-    self::assertSame(302, $response->getStatusCode());
   }
 
   /**
