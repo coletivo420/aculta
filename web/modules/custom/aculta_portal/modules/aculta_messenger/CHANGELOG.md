@@ -4,7 +4,7 @@ O núcleo detecta adapters de digest sem identidade ou com identidade estável d
 participar do lote nem da recuperação, evitando que a confirmação de um snapshot use o provider errado; fontes com
 identidade única continuam entregando normalmente. O contrato da identidade agora exige unicidade no site.
 
-Validação: `LearningNoticeDigestIntegrationTest` **20/20 testes, 153 assertions PASS**; PHPCS Drupal/DrupalPractice,
+Validação: `LearningNoticeDigestIntegrationTest` **21/21 testes, 162 assertions PASS**; PHPCS Drupal/DrupalPractice,
 PHP lint, `git diff --check` e índice de status PASS. Nenhuma mudança de storage. Runtime e transporte externo não
 executados.
 

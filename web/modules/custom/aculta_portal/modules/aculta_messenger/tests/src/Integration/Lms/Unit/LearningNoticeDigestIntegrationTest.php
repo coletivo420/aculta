@@ -383,6 +383,48 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * An accepted snapshot with a duplicate stable ID remains unacknowledged.
+   */
+  public function testAcceptedSnapshotWaitsForDuplicateIdentityToBeResolved(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [[
+        'provider_id' => 'shared',
+        'delivery_ids' => [802],
+      ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $first = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'shared');
+    $second = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão Wiki', 'shared');
+    $summary = $this->createSummary([$first, $second], $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $first->markedDeliveryIds);
+    $this->assertSame([], $second->markedDeliveryIds);
+  }
+
+  /**
    * A different batch receives a different correlation.
    */
   public function testDistinctDigestBatchGetsDistinctCorrelation(): void {
