@@ -270,6 +270,27 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Provider registration order does not change the same batch identity.
+   */
+  public function testProviderOrderDoesNotChangeDigestCorrelation(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $lmsProvider = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501);
+    $wikiProvider = new TestWikiLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão da Wiki');
+
+    self::assertSame(1, $this->createSummary([$lmsProvider, $wikiProvider], $mailer, TRUE)->enviarResumos());
+    self::assertSame(1, $this->createSummary([$wikiProvider, $lmsProvider], $mailer, TRUE)->enviarResumos());
+
+    self::assertSame($correlations[0], $correlations[1], 'The sorted delivery manifest keeps correlation stable when optional adapters are registered in another order.');
+  }
+
+  /**
    * Provider refactors retain the correlation of an otherwise identical batch.
    */
   public function testDigestCorrelationUsesStableProviderIdInsteadOfPhpClass(): void {
@@ -601,6 +622,20 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
  * Simulates a class refactor while preserving the LMS digest provider identity.
  */
 final class RefactoredTestLearningDigestProvider extends TestLearningDigestProvider {}
+
+/**
+ * Wiki test provider with an identity distinct from the LMS provider.
+ */
+final class TestWikiLearningDigestProvider extends TestLearningDigestProvider {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+}
 
 /**
  * Existing third-party style provider that has not adopted stable identities.

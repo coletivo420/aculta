@@ -1,3 +1,11 @@
+## 0.1.1-dev.182 — estabilizar a correlação do digest entre adapters
+
+Teste de regressão confirma que o mesmo lote de avisos produz a mesma correlação idempotente quando a ordem de
+registro dos providers opcionais muda. Isso protege a deduplicação contra alterações de composição do container.
+
+Validação: `LearningNoticeDigestIntegrationTest` **16/124 PASS**. Nenhum Runtime ou transporte de e-mail real foi
+executado.
+
 ## 0.1.1-dev.181 — inventariar a integração editorial da Revista
 
 O roadmap M5/MAG 0.5-H agora registra os pontos reais do Magazine (`revista`, workflow, `uid`, `co_authors`) e a
