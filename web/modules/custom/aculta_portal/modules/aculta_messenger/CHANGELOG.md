@@ -1,3 +1,9 @@
+## 0.1.1-dev.168 — exercitar verificação de CSRF do Core
+
+O teste das quatro rotas POST agora também exercita `CsrfAccessCheck` do Drupal: token ausente e inválido são negados; token válido para o caminho com parâmetro de thread é permitido e não cacheável. Isso complementa a validação declarativa do YAML. Request HTTP/Runtime ainda pendentes.
+
+Validação: `PostRouteCsrfRequirementTest` 2/10 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS.
+
 ## 0.1.1-dev.162 — carregar estados de Site Alerts em lote — 2026-10-24
 
 A central filtra os Site Alerts por acesso antes de consultar Flags pessoais. Leitura e dispensa agora vêm de uma única
