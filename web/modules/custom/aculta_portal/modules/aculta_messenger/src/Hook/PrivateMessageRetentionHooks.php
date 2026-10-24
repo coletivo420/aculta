@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -19,6 +20,8 @@ final class PrivateMessageRetentionHooks {
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'database')]
+    private readonly Connection $database,
     #[Autowire(service: 'datetime.time')]
     private readonly TimeInterface $time,
     #[Autowire(service: 'logger.factory')]
@@ -51,19 +54,26 @@ final class PrivateMessageRetentionHooks {
 
     $deleted = 0;
     foreach ($storage->loadMultiple($ids) as $thread) {
-      if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->getUpdatedTime() > $cutoff) {
+      if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->get('updated')->value > $cutoff) {
         continue;
       }
+      $transaction = $this->database->startTransaction();
       try {
-        // Remove notice records in the same pass as the thread lifecycle so
-        // members do not see notices for deleted conversations.
-        $this->deleteNotificationsFor($thread);
-        // The contrib entity's preDelete lifecycle deletes its referenced
-        // private messages and participant history using its supported API.
+        // Capture source IDs first. The contrib thread lifecycle removes its
+        // messages, so notification records must be deleted only after that
+        // succeeds. The transaction restores both sides if either deletion
+        // fails.
+        $messageIds = array_values(array_map(
+          static fn($message): int => (int) $message->id(),
+          $thread->getMessages(TRUE),
+        ));
         $thread->delete();
+        $this->deleteNotificationsFor($messageIds);
+        $transaction->commitOrRelease();
         $deleted++;
       }
       catch (\Throwable $exception) {
+        $transaction->rollBack();
         $this->loggerFactory->get('aculta_messenger')->error('A private conversation could not be removed by the six-month retention task: @type.', [
           '@type' => $exception::class,
         ]);
@@ -77,11 +87,7 @@ final class PrivateMessageRetentionHooks {
 
   /**
    * Deletes the Messenger notification records that reference this thread's private messages. */
-  private function deleteNotificationsFor(PrivateMessageThreadInterface $thread): void {
-    $messageIds = array_values(array_map(
-      static fn($message) => $message->id(),
-      $thread->getMessages(TRUE),
-    ));
+  private function deleteNotificationsFor(array $messageIds): void {
     if ($messageIds === []) {
       return;
     }

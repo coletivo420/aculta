@@ -1,3 +1,14 @@
+## 0.1.1-dev.132 — tornar retenção de conversas recuperável — 2026-10-24
+
+A exclusão de uma conversa inativa e dos avisos Message que apontam para suas mensagens agora ocorre em uma transação
+na conexão padrão do Drupal. O worker captura os IDs antes do ciclo de exclusão do Private Message, remove primeiro a
+thread e só então apaga os avisos relacionados; falhas revertem a transação e deixam os avisos intactos. O acesso ao
+campo `updated` usa a API de entidade, sem depender de método não declarado pela interface da thread. Nenhuma limpeza
+foi executada em dados reais.
+
+Validação: Unit Messenger 125/708 PASS, incluindo ordem de exclusão e rollback; PHPCS Drupal/DrupalPractice e PHP lint
+nos arquivos alterados PASS. Não houve execução de cron, Kernel de banco real nem homologação Runtime.
+
 ## 0.1.1-dev.131 — validar elegibilidade de destinatários de conversa — 2026-10-24
 
 A busca da gaveta e o envio de primeira mensagem agora usam a mesma política: o destinatário precisa estar ativo e ter
