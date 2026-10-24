@@ -231,15 +231,20 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         }
         continue;
       }
-      $rows[] = ['tipo' => 'wiki', 'titulo' => $notice['email_summary'], 'quantidade' => 1];
+      $rows[] = [
+        'tipo' => 'wiki',
+        'titulo' => $notice['email_summary'],
+        'quantidade' => 1,
+        'delivery_id' => (int) $message->id(),
+      ];
     }
     return $rows;
   }
 
   /**
    * {@inheritdoc} */
-  public function markDigestSent(int $uid): void {
-    $this->setDigestSent($uid);
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
   }
 
   /**
@@ -250,9 +255,10 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
 
   /**
    * Marks all pending Wiki digest rows for a user complete. */
-  private function setDigestSent(int $uid): void {
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($this->pendingIds($uid)) as $message) {
-      if ($message instanceof MessageInterface) {
+  private function setDigestSent(int $uid, ?array $deliveryIds = NULL): void {
+    $ids = $deliveryIds ?? $this->pendingIds($uid);
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if ($message instanceof MessageInterface && (int) $message->getOwnerId() === $uid && $message->bundle() === self::TEMPLATE) {
         $message->set(self::DIGEST_FIELD, 1)->save();
       }
     }

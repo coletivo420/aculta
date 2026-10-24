@@ -535,6 +535,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         'tipo' => self::DIGEST_TYPE,
         'titulo' => (string) $notice['digest_summary'],
         'quantidade' => 1,
+        'delivery_id' => (int) $message->id(),
       ];
     }
     return $rows;
@@ -543,8 +544,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * {@inheritdoc}
    */
-  public function markDigestSent(int $uid): void {
-    $this->setDigestSent($uid);
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
   }
 
   /**
@@ -557,16 +558,21 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Marks pending course completion summaries as sent or discarded.
    */
-  private function setDigestSent(int $uid): void {
-    $ids = $this->entityTypeManager->getStorage('message')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)
-      ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, self::DIGEST_EVENTS, 'IN')
-      ->condition(self::DIGEST_FIELD, 0)
-      ->execute();
+  private function setDigestSent(int $uid, ?array $deliveryIds = NULL): void {
+    if ($deliveryIds === NULL) {
+      $ids = $this->entityTypeManager->getStorage('message')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('template', self::TEMPLATE)
+        ->condition('uid', $uid)
+        ->condition(self::EVENT_FIELD, self::DIGEST_EVENTS, 'IN')
+        ->condition(self::DIGEST_FIELD, 0)
+        ->execute();
+    }
+    else {
+      $ids = $deliveryIds;
+    }
     foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if ($message instanceof MessageInterface) {
+      if ($message instanceof MessageInterface && (int) $message->getOwnerId() === $uid && $message->bundle() === self::TEMPLATE) {
         $message->set(self::DIGEST_FIELD, 1)->save();
       }
     }

@@ -1,3 +1,17 @@
+## 0.1.1-dev.111 — confirmar apenas os itens incluídos no digest — 2026-10-24
+
+- O contrato dos digest providers inclui IDs dos Messages efetivamente incluídos
+  no resumo; após sucesso, cada adapter confirma somente esses IDs e valida
+  proprietário/tipo. Mensagens que chegam durante o transporte permanecem para
+  o próximo digest. Fórum recarrega os agregados dentro do lock por destinatário
+  e desconta o lote entregue sob o mesmo lock de escrita do agregado, evitando
+  perder incrementos concorrentes. Opt-out e revogação limpam somente a
+  pendência de e-mail, preservando os avisos do site.
+- Unit Messenger + adapters: 140 testes / 856 assertions PASS. Kernels
+  Messenger/adapters em MariaDB isolado: 34 testes / 681 assertions PASS,
+  incluindo evento Fórum recebido durante a entrega; 2 deprecações de descoberta
+  de entidades Message no Core/contrib. Runtime e transporte real não testados.
+
 ## 0.1.1-dev.110 — filtros de origem e leitura na central — 2026-10-24
 
 - A aba Avisos oferece filtros GET de origem e estado de leitura sobre a lista

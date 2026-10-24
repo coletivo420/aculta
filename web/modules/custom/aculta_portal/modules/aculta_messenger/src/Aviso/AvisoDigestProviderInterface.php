@@ -16,13 +16,24 @@ interface AvisoDigestProviderInterface {
 
   /**
    * Returns summary rows for one recipient, revalidating current access.
+   *
+   * Each returned row includes its provider-owned `delivery_id`, which is used
+   * to acknowledge only the entries included in the successfully sent email.
+   *
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int}>
+   *   Digest rows with their provider-owned delivery IDs.
    */
   public function digestRowsFor(int $uid): array;
 
   /**
-   * Marks the recipient's included digest entries as delivered.
+   * Marks only the included digest entries as delivered.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int[] $deliveryIds
+   *   IDs returned by digestRowsFor() for this recipient.
    */
-  public function markDigestSent(int $uid): void;
+  public function markDigestSent(int $uid, array $deliveryIds): void;
 
   /**
    * Discards pending email entries when the recipient has opted out.

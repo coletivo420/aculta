@@ -509,6 +509,42 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
   }
 
   /**
+   * Clears only the email-pending counter for one Forum aggregate.
+   */
+  public function clearPendingEmailCount(int $uid, int $nid, string $type): void {
+    $this->updatePendingEmailCount($uid, $nid, $type, 0, FALSE);
+  }
+
+  /**
+   * Acknowledges the number of events represented by a delivered digest row.
+   */
+  public function acknowledgeEmailCount(int $uid, int $nid, string $type, int $sentCount): void {
+    if ($sentCount > 0) {
+      $this->updatePendingEmailCount($uid, $nid, $type, $sentCount, TRUE);
+    }
+  }
+
+  /**
+   * Updates an email counter under the same lock used by Forum event writers.
+   */
+  private function updatePendingEmailCount(int $uid, int $nid, string $type, int $amount, bool $subtract): void {
+    $this->withNoticeLock($uid, $nid, $type, function () use ($uid, $nid, $type, $amount, $subtract): bool {
+      $storage = $this->entityTypeManager->getStorage('aculta_aviso');
+      $avisos = $storage->loadByProperties(['uid' => $uid, 'assunto_nid' => $nid, 'tipo' => $type]);
+      $aviso = reset($avisos);
+      if (!$aviso instanceof Aviso) {
+        return FALSE;
+      }
+      $current = (int) $aviso->get('contador_email')->value;
+      $next = $subtract ? max(0, $current - $amount) : 0;
+      if ($next !== $current) {
+        $aviso->set('contador_email', $next)->save();
+      }
+      return TRUE;
+    });
+  }
+
+  /**
    * Loads a notice or creates one for a person, topic, and type.
    *
    * @param int $uid

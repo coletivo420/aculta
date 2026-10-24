@@ -1,6 +1,6 @@
 # Avisos e mensagens no ACULTA Messenger
 
-Status: documento de referência, atualizado em 2026-10-19. Descreve o que o módulo faz hoje e o que está pendente.
+Status: documento de referência, atualizado em 2026-10-24. Descreve o que o módulo faz hoje e o que está pendente.
 Decisões de origem: F-D21 (política em `docs/portal/AVISOS-E-NOTIFICACOES.md`, no repositório).
 
 ## 1. Dois sistemas, dois destinos
@@ -143,7 +143,7 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - **Resumo diário por e-mail**: desligado por padrão. Quando ligado, entram respostas/atualizações do Fórum conforme
   os controles abaixo e itens de módulos integradores que fornecem linhas pelo `AvisoDigestProviderInterface`.
   Preferências em `user.data` (`aculta_messenger`).
-- Desligar o resumo zera os contadores de e-mail pendentes, para não acumular um resumo antigo.
+- Desligar o resumo zera as pendências de e-mail sob o lock do agregado; os avisos no site não são alterados.
 
 ## 7. Resumo diário por e-mail
 
@@ -151,7 +151,9 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 - Envia para contas **ativas, com e-mail e e-mail confirmado** (`EmailConfirmationPolicy`), com o resumo ligado.
 - Um e-mail por conta a cada 20 horas, no máximo, quando houver item de qualquer provider ativo.
 - Linhas do Fórum são agrupadas por tópico; providers podem acrescentar avisos revalidados. Pendências são confirmadas
-  **somente após envio com sucesso**.
+  **somente após envio com sucesso**. O resumo captura a quantidade/IDs incluídos e confirma apenas esse lote; eventos
+  chegados durante o transporte ficam pendentes para o próximo digest. O contador de e-mail do Fórum é descontado sob o
+  mesmo lock usado pelos produtores, sem sobrescrever incrementos concorrentes.
 - `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
 
 ## 8. Funções do módulo, resumo dos novos componentes
@@ -161,7 +163,7 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
   `notificarAtualizacao`, `marcarLido`, `naoLidosTotal`.
 - `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
 - `src/Aviso/AvisosResumo.php`: envio do resumo diário combinado. Providers tagged `aculta_messenger.aviso_digest_provider`
-  fornecem linhas e só confirmam entrega depois de envio bem-sucedido.
+  fornecem linhas com IDs de entrega e confirmam somente os itens incluídos após envio bem-sucedido.
 - `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
 - `src/Aviso/ForumNoticeEventProducer.php` e `src/EventSubscriber/ForumNoticeEventSubscriber.php`:
   adapter de publicação/consumo via `MessengerNoticeEvent`, preservando `aculta_aviso`

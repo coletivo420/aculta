@@ -282,6 +282,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         'tipo' => 'doacao',
         'titulo' => $notice['email_summary'],
         'quantidade' => 1,
+        'delivery_id' => (int) $message->id(),
       ];
     }
     return $rows;
@@ -289,8 +290,8 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
 
   /**
    * {@inheritdoc} */
-  public function markDigestSent(int $uid): void {
-    $this->setDigestDone($uid);
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->setDigestDone($uid, $deliveryIds);
   }
 
   /**
@@ -376,9 +377,14 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
 
   /**
    * Marks all pending digest messages complete for one recipient. */
-  private function setDigestDone(int $uid): void {
-    foreach ($this->pendingMessages($uid) as $message) {
-      $message->set(self::DIGEST_FIELD, 1)->save();
+  private function setDigestDone(int $uid, ?array $deliveryIds = NULL): void {
+    $messages = $deliveryIds === NULL
+      ? $this->pendingMessages($uid)
+      : array_values($this->messageStorage()->loadMultiple($deliveryIds));
+    foreach ($messages as $message) {
+      if ($message instanceof MessageInterface && (int) $message->getOwnerId() === $uid && $message->bundle() === self::TEMPLATE) {
+        $message->set(self::DIGEST_FIELD, 1)->save();
+      }
     }
   }
 

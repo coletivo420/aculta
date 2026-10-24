@@ -70,7 +70,7 @@ final class AvisosResumo {
     $ids = $storage->getQuery()->accessCheck(FALSE)->condition('contador_email', 0, '>')->execute();
     $porUsuario = [];
     foreach ($storage->loadMultiple($ids) as $aviso) {
-      $porUsuario[(int) $aviso->get('uid')->target_id][] = $aviso;
+      $porUsuario[(int) $aviso->get('uid')->target_id] = TRUE;
     }
     $providers = $this->digestProviders;
     foreach ($providers as $provider) {
@@ -82,21 +82,8 @@ final class AvisosResumo {
       }
     }
     $enviados = 0;
-    foreach ($porUsuario as $uid => $avisos) {
-      if (!$this->preferencias->resumoEmailLigado($uid)) {
-        // Opt-out: limpa pendências para não acumular avisos antigos.
-        foreach ($avisos as $aviso) {
-          $aviso->set('contador_email', 0);
-          $aviso->save();
-        }
-        foreach ($providers as $provider) {
-          if ($provider instanceof AvisoDigestProviderInterface) {
-            $provider->discardDigest((int) $uid);
-          }
-        }
-        continue;
-      }
-      if ($this->enviarPara($uid, $avisos)) {
+    foreach ($porUsuario as $uid => $_) {
+      if ($this->enviarPara((int) $uid)) {
         $enviados++;
       }
     }
@@ -108,16 +95,14 @@ final class AvisosResumo {
    *
    * @param int $uid
    *   Identificador da pessoa destinatária.
-   * @param \Drupal\aculta_messenger\Entity\Aviso[] $avisos
-   *   Avisos do Fórum pendentes.
    */
-  private function enviarPara(int $uid, array $avisos): bool {
+  private function enviarPara(int $uid): bool {
     $lockName = 'aculta_messenger.avisos_resumo.' . $uid;
     if (!$this->lock->acquire($lockName, 120.0)) {
       return FALSE;
     }
     try {
-      return $this->enviarParaComLock($uid, $avisos);
+      return $this->enviarParaComLock($uid);
     }
     finally {
       $this->lock->release($lockName);
@@ -129,41 +114,64 @@ final class AvisosResumo {
    *
    * @param int $uid
    *   Recipient account ID.
-   * @param \Drupal\aculta_messenger\Entity\Aviso[] $avisos
-   *   Pending Forum notice aggregates.
    */
-  private function enviarParaComLock(int $uid, array $avisos): bool {
+  private function enviarParaComLock(int $uid): bool {
     $conta = $this->entityTypeManager->getStorage('user')->load($uid);
-    if ($conta === NULL || !$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
+    if ($conta === NULL) {
+      return FALSE;
+    }
+    if (!$this->preferencias->resumoEmailLigado($uid)) {
+      foreach ($this->forumAvisosPendentes($uid) as $aviso) {
+        $this->avisos->clearPendingEmailCount(
+          $uid,
+          (int) $aviso->get('assunto_nid')->value,
+          (string) $aviso->get('tipo')->value,
+        );
+      }
+      foreach ($this->digestProviders as $provider) {
+        if ($provider instanceof AvisoDigestProviderInterface) {
+          $provider->discardDigest($uid);
+        }
+      }
+      return FALSE;
+    }
+    if (!$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
       return FALSE;
     }
     $agora = $this->time->getRequestTime();
     if (!self::podeEnviar($agora, (int) $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'))) {
       return FALSE;
     }
+    // Re-read under the recipient lock so concurrent event aggregation cannot
+    // be reset after its count was missed by this digest.
+    $avisos = $this->forumAvisosPendentes($uid);
     $linhas = [];
     $daFila = [];
     foreach ($avisos as $aviso) {
       $nid = (int) $aviso->get('assunto_nid')->value;
       if (!$this->avisos->canRecipientViewTopic($uid, $nid)) {
         // Acesso revogado: não reter este item para um resumo futuro.
-        $aviso->set('contador_email', 0);
-        $aviso->save();
+        $this->avisos->clearPendingEmailCount($uid, $nid, (string) $aviso->get('tipo')->value);
         continue;
       }
       if (!$this->preferencias->tipoNoResumo($uid, (string) $aviso->get('tipo')->value)) {
         // A switch to direct/off must not leave these counts to reappear in a
         // later digest after the user changes their preference again.
         if ((int) $aviso->get('contador_email')->value > 0) {
-          $aviso->set('contador_email', 0)->save();
+          $this->avisos->clearPendingEmailCount($uid, $nid, (string) $aviso->get('tipo')->value);
         }
         continue;
       }
-      $daFila[] = $aviso;
+      $quantidade = (int) $aviso->get('contador_email')->value;
+      $daFila[] = [
+        'nid' => $nid,
+        'tipo' => (string) $aviso->get('tipo')->value,
+        'quantidade' => $quantidade,
+      ];
       $linhas[] = [
         'tipo' => (string) $aviso->get('tipo')->value,
         'titulo' => (string) $aviso->get('titulo')->value,
-        'quantidade' => (int) $aviso->get('contador_email')->value,
+        'quantidade' => $quantidade,
       ];
     }
     $providersWithRows = [];
@@ -188,7 +196,13 @@ final class AvisosResumo {
         continue;
       }
       array_push($linhas, ...$eligibleRows);
-      $providersWithRows[] = $provider;
+      $providersWithRows[] = [
+        'provider' => $provider,
+        'delivery_ids' => array_values(array_unique(array_map(
+          static fn(array $row): int => (int) ($row['delivery_id'] ?? 0),
+          $eligibleRows,
+        ))),
+      ];
     }
     if ($linhas === []) {
       return FALSE;
@@ -202,24 +216,40 @@ final class AvisosResumo {
         // A política administrativa suspendeu este tipo de e-mail. Descarte
         // somente a entrega por e-mail; os avisos obrigatórios no site ficam.
         foreach ($daFila as $aviso) {
-          $aviso->set('contador_email', 0);
-          $aviso->save();
+          $this->avisos->clearPendingEmailCount($uid, $aviso['nid'], $aviso['tipo']);
         }
-        foreach ($providersWithRows as $provider) {
-          $provider->discardDigest($uid);
+        foreach ($providersWithRows as $providerRows) {
+          $providerRows['provider']->discardDigest($uid);
         }
       }
       return FALSE;
     }
     foreach ($daFila as $aviso) {
-      $aviso->set('contador_email', 0);
-      $aviso->save();
+      $this->avisos->acknowledgeEmailCount($uid, $aviso['nid'], $aviso['tipo'], $aviso['quantidade']);
     }
-    foreach ($providersWithRows as $provider) {
-      $provider->markDigestSent($uid);
+    foreach ($providersWithRows as $providerRows) {
+      $deliveryIds = array_values(array_filter($providerRows['delivery_ids'], static fn(int $id): bool => $id > 0));
+      if ($deliveryIds !== []) {
+        $providerRows['provider']->markDigestSent($uid, $deliveryIds);
+      }
     }
     $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
     return TRUE;
+  }
+
+  /**
+   * Loads the current pending Forum aggregates for one recipient.
+   *
+   * @return \Drupal\aculta_messenger\Entity\Aviso[]
+   *   Current email-pending Forum notice aggregates.
+   */
+  private function forumAvisosPendentes(int $uid): array {
+    $storage = $this->entityTypeManager->getStorage('aculta_aviso');
+    $ids = $storage->getQuery()->accessCheck(FALSE)
+      ->condition('uid', $uid)
+      ->condition('contador_email', 0, '>')
+      ->execute();
+    return array_values($storage->loadMultiple($ids));
   }
 
 }

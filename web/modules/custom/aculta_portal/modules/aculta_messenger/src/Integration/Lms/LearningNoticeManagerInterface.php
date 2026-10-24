@@ -73,15 +73,20 @@ interface LearningNoticeManagerInterface {
   /**
    * Returns validated daily digest rows.
    *
-   * @return array<int, array{tipo: string, titulo: string, quantidade: int}>
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int}>
    *   Rows ready for the shared email.
    */
   public function digestRowsFor(int $uid): array;
 
   /**
-   * Marks this recipient's pending digest entries as delivered.
+   * Marks only included digest entries as delivered.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int[] $deliveryIds
+   *   Message IDs returned by digestRowsFor() for this recipient.
    */
-  public function markDigestSent(int $uid): void;
+  public function markDigestSent(int $uid, array $deliveryIds): void;
 
   /**
    * Discards pending email entries after opt-out.

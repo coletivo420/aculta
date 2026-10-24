@@ -53,6 +53,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 
     $this->assertSame(1, $summary->enviarResumos());
     $this->assertSame([27], $provider->marked);
+    $this->assertSame([[501]], $provider->markedDeliveryIds, 'Only entries included in the delivered email are acknowledged.');
     $this->assertSame([], $provider->discarded);
   }
 
@@ -163,6 +164,13 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
   public array $marked = [];
 
   /**
+   * Message IDs acknowledged after successful delivery.
+   *
+   * @var int[][]
+   */
+  public array $markedDeliveryIds = [];
+
+  /**
    * Recipients whose entries were discarded after opting out.
    *
    * @var int[]
@@ -190,14 +198,15 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    * {@inheritdoc}
    */
   public function digestRowsFor(int $uid): array {
-    return [['tipo' => 'aprendizagem', 'titulo' => 'Atividade no curso', 'quantidade' => 1]];
+    return [['tipo' => 'aprendizagem', 'titulo' => 'Atividade no curso', 'quantidade' => 1, 'delivery_id' => 501]];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function markDigestSent(int $uid): void {
+  public function markDigestSent(int $uid, array $deliveryIds): void {
     $this->marked[] = $uid;
+    $this->markedDeliveryIds[] = $deliveryIds;
   }
 
   /**

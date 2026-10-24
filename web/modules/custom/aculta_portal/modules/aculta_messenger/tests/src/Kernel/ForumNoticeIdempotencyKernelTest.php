@@ -330,6 +330,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $topic = $this->createTopic('Resumo compartilhado');
     $directComment = $this->createPersistedComment($topic, (int) $author->id());
     $eventComment = $this->createPersistedComment($topic, (int) $author->id());
+    $lateComment = $this->createPersistedComment($topic, (int) $author->id());
     $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
     $avisos = $this->createAvisoService([$uid], $policy);
     self::assertSame(1, $avisos->registrarResposta($directComment));
@@ -337,15 +338,23 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $producer->publishComment($eventComment));
 
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::once())
+    $deliveries = 0;
+    $mailer->expects(self::exactly(2))
       ->method('deliver')
-      ->with(self::callback(static fn(MailMessage $message): bool =>
-        $message->type === AvisosResumo::CHAVE_MAIL
-        && $message->to === 'seguidor@example.test'
-        && $message->langcode === 'pt-br'
-        && $message->context['resumo'] === 'Respostas novas em "Resumo compartilhado": 2'
-      ))
-      ->willReturn(SendResult::sent());
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, $avisos, $lateComment): SendResult {
+        $deliveries++;
+        self::assertSame(AvisosResumo::CHAVE_MAIL, $message->type);
+        self::assertSame('seguidor@example.test', $message->to);
+        self::assertSame('pt-br', $message->langcode);
+        self::assertSame(
+          'Respostas novas em "Resumo compartilhado": ' . ($deliveries === 1 ? '2' : '1'),
+          $message->context['resumo'],
+        );
+        if ($deliveries === 1) {
+          self::assertSame(1, $avisos->registrarResposta($lateComment), 'A new event arrives while the first digest is being sent.');
+        }
+        return SendResult::sent();
+      });
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
       $this->container->get('entity_type.manager'),
@@ -364,11 +373,14 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
 
     self::assertSame(1, $summary->enviarResumos());
-    self::assertSame(0, $summary->enviarResumos(), 'Delivered rows are not sent a second time.');
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
+    $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
+    self::assertSame(1, $summary->enviarResumos());
+    $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
-    self::assertSame((string) $eventComment->id(), $notices[0]->get('ultimo_comentario')->value);
+    self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 
   /**
