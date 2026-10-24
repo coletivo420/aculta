@@ -1,3 +1,13 @@
+## 0.1.1-dev.133 — distinguir novos lotes de digest — 2026-10-24
+
+A caracterização do resumo agora confirma que a mesma remessa pendente mantém sua correlação no retry após falha de
+confirmação, enquanto um novo lote com `delivery_id` diferente recebe outra correlação. Isso permite ao ACULTA Mailer
+suprimir somente a entrega já aceita, sem confundir eventos posteriores com o mesmo resumo.
+
+Validação: `LearningNoticeDigestIntegrationTest` 9/74 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+MariaDB do digest/Forum mantém cobertura anterior de lock entre instâncias, confirmação transacional e retry; não houve
+prova com processos independentes nem envio por transporte real nesta microfase.
+
 ## 0.1.1-dev.132 — tornar retenção de conversas recuperável — 2026-10-24
 
 A exclusão de uma conversa inativa e dos avisos Message que apontam para suas mensagens agora ocorre em uma transação

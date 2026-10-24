@@ -167,6 +167,26 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A different batch receives a different correlation.
+   */
+  public function testDistinctDigestBatchGetsDistinctCorrelation(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $first = $this->createSummary(new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501), $mailer, TRUE);
+    $second = $this->createSummary(new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 502), $mailer, TRUE);
+
+    $this->assertSame(1, $first->enviarResumos());
+    $this->assertSame(1, $second->enviarResumos());
+    $this->assertNotSame($correlations[0], $correlations[1], 'A new delivery ID must not be suppressed as an already accepted digest.');
+  }
+
+  /**
    * A definitive failure discards only the e-mail copy of a digest entry.
    */
   public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {
