@@ -1,3 +1,12 @@
+## `0.1.0-dev.301` — provar o histórico de revisões da publicação — 2026-10-24
+
+- Novo Kernel `ForumPostRevisionHistoryControllerKernelTest`: a tabela lista a
+  revisão mais recente primeiro, distingue a atual da histórica, mostra estado
+  e assunto de cada revisão, liga a revisão mais nova à comparação com a
+  anterior e não oferece operação na revisão mais antiga; sem revisão anterior
+  à página não há formulário de seleção.
+- Testes: histórico 1/30; suíte Kernel do Fórum 135/2.603; PHPCS limpo.
+
 ## `0.1.0-dev.300` — provar o formulário de moderação por revisão — 2026-10-24
 
 - Novo Kernel `ForumPostModerationFormControllerKernelTest`: o identificador de

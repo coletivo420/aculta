@@ -1,3 +1,12 @@
+## Histórico de revisões — ordem e operações, 2026-10-24
+
+- `ForumPostRevisionHistoryControllerKernelTest` (1 teste / 30 asserções,
+  MariaDB): revisões listadas da mais nova para a mais antiga, com estado,
+  assunto, revisão atual versus histórica; a mais nova liga a comparação com a
+  anterior e a mais antiga não oferece operação; sem revisão anterior à página
+  não há formulário de seleção.
+- Suíte Kernel do Fórum 135/2.603; PHPCS limpo.
+
 ## Formulário de moderação — revisão exata, 2026-10-24
 
 - `ForumPostModerationFormControllerKernelTest` (2 testes / 28 asserções,
