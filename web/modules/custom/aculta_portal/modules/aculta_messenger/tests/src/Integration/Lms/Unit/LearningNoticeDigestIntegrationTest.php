@@ -91,7 +91,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         return SendResult::sent();
       });
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 120.0)->willReturn(TRUE);
+    $lock->expects($this->exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
     $lock->expects($this->exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
 

@@ -42,6 +42,11 @@ final class AvisosResumo {
 
   public const CHAVE_MAIL = 'avisos_resumo';
 
+  /**
+   * Lease covering the configured transport timeout and acknowledgement work.
+   */
+  private const LOCK_LEASE_SECONDS = 180.0;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AvisoPreferencias $preferencias,
@@ -123,7 +128,7 @@ final class AvisosResumo {
    */
   private function enviarPara(int $uid): bool {
     $lockName = 'aculta_messenger.avisos_resumo.' . $uid;
-    if (!$this->lock->acquire($lockName, 120.0)) {
+    if (!$this->lock->acquire($lockName, self::LOCK_LEASE_SECONDS)) {
       return FALSE;
     }
     try {

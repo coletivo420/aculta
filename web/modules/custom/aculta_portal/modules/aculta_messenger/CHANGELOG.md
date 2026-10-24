@@ -1,3 +1,13 @@
+## 0.1.1-dev.134 — alinhar lease do digest ao transporte — 2026-10-24
+
+O lock persistente por destinatário do digest agora usa lease de 180 segundos, alinhada aos workers de e-mail direto e
+superior ao timeout de socket local conhecido de 60 segundos. Isso reduz a possibilidade de uma segunda execução
+reivindicar o mesmo destinatário enquanto o transporte e a confirmação do lote ainda estão em andamento. Configurações
+de transporte com duração superior a 180 segundos ainda exigem harmonização; lease não substitui teste com processos
+concorrentes.
+
+Validação: Unit Messenger 125/708 e `LearningNoticeDigestIntegrationTest` 9/74 PASS; PHPCS Drupal/DrupalPractice, PHP lint e gate Drupal 11+ PASS. Kernel multiprocesso e Runtime pendentes.
+
 ## 0.1.1-dev.133 — distinguir novos lotes de digest — 2026-10-24
 
 A caracterização do resumo agora confirma que a mesma remessa pendente mantém sua correlação no retry após falha de
