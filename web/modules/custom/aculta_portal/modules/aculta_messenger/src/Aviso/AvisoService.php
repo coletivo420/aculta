@@ -27,7 +27,7 @@ use Drupal\user\UserInterface;
  * the last counted comment is stored on the notice. Authors do not receive
  * notices for their own replies. Notices do not appear in the message inbox.
  */
-final class AvisoService implements ForumNoticeTransferInterface {
+final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeRegistrarInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -85,11 +85,13 @@ final class AvisoService implements ForumNoticeTransferInterface {
    *   Published topic being updated.
    * @param int $revisionId
    *   Revision ID that triggered the notice.
+   * @param int|null $recipientUid
+   *   Optional recipient being revalidated by a shared event consumer.
    *
    * @return int
    *   Number of notices updated.
    */
-  public function notificarAtualizacao(NodeInterface $topico, int $revisionId): int {
+  public function notificarAtualizacao(NodeInterface $topico, int $revisionId, ?int $recipientUid = NULL): int {
     if (!$this->accessPolicy->supportsTopic($topico) || !$topico->isPublished()) {
       return 0;
     }
@@ -98,9 +100,11 @@ final class AvisoService implements ForumNoticeTransferInterface {
       return 0;
     }
     $atualizados = 0;
+    $authorUid = method_exists($topico, 'getRevisionUserId') ? (int) $topico->getRevisionUserId() : 0;
     foreach ($this->flagService->getEntityFlaggings($flag, $topico) as $flagging) {
       $uid = (int) $flagging->getOwnerId();
-      if ($uid <= 0 || !$this->accessPolicy->canViewTopic($topico, $uid)) {
+      if ($uid <= 0 || ($recipientUid !== NULL && $uid !== $recipientUid)
+        || $uid === $authorUid || !$this->accessPolicy->canViewTopic($topico, $uid)) {
         continue;
       }
       if ($this->recordNoticeEvent(
@@ -215,11 +219,13 @@ final class AvisoService implements ForumNoticeTransferInterface {
    *
    * @param \Drupal\comment\CommentInterface $comment
    *   Published Forum comment.
+   * @param int|null $recipientUid
+   *   Optional recipient being revalidated by a shared event consumer.
    *
    * @return int
    *   Number of notices updated.
    */
-  public function registrarResposta(CommentInterface $comment): int {
+  public function registrarResposta(CommentInterface $comment, ?int $recipientUid = NULL): int {
     if (!$comment->isPublished() || $comment->bundle() !== 'aculta_discussion_post') {
       return 0;
     }
@@ -238,7 +244,8 @@ final class AvisoService implements ForumNoticeTransferInterface {
     $atualizados = 0;
     foreach ($this->flagService->getEntityFlaggings($flag, $topico) as $flagging) {
       $uid = (int) $flagging->getOwnerId();
-      if ($uid <= 0 || $uid === (int) $comment->getOwnerId() || !$this->accessPolicy->canViewComment($comment, $uid)) {
+      if ($uid <= 0 || ($recipientUid !== NULL && $uid !== $recipientUid)
+        || $uid === (int) $comment->getOwnerId() || !$this->accessPolicy->canViewComment($comment, $uid)) {
         continue;
       }
       if ($this->recordNoticeEvent(
@@ -258,7 +265,7 @@ final class AvisoService implements ForumNoticeTransferInterface {
   /**
    * Registers a newly published revisionable post on followed Forum topics.
    */
-  public function registrarPost(ForumPost $post): int {
+  public function registrarPost(ForumPost $post, ?int $recipientUid = NULL): int {
     if (!$post->isPublished() || !$post->isDefaultRevision()
       || ($post instanceof SynchronizableInterface && $post->isSyncing())
       || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
@@ -279,7 +286,8 @@ final class AvisoService implements ForumNoticeTransferInterface {
     $atualizados = 0;
     foreach ($this->flagService->getEntityFlaggings($flag, $topic) as $flagging) {
       $uid = (int) $flagging->getOwnerId();
-      if ($uid <= 0 || $uid === (int) $post->getOwnerId()
+      if ($uid <= 0 || ($recipientUid !== NULL && $uid !== $recipientUid)
+        || $uid === (int) $post->getOwnerId()
         || !$this->accessPolicy->canViewPost($post, $uid)) {
         continue;
       }

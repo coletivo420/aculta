@@ -6,14 +6,16 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\EventSubscriber\ForumNoticeEventSubscriber;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\aculta_messenger\Hook\ForumAvisoHooks;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\flag\FlagInterface;
@@ -26,6 +28,7 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Fixes the no-duplicate notice behavior of the existing Forum events.
@@ -86,7 +89,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     ]);
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
 
-    (new ForumAvisoHooks($avisos))->postInsert($post);
+    $avisos->registrarPost($post);
 
     foreach ([$first, $second] as $follower) {
       $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
@@ -105,6 +108,51 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       0,
       $this->loadNotices((int) $author->id(), (int) $topic->id()),
     );
+  }
+
+  /**
+   * The public event contract persists one idempotent ForumPost notice.
+   */
+  public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    $flag = $this->createMock(FlagInterface::class);
+    $flagging = $this->createMock(FlaggingInterface::class);
+    $flagging->method('getOwnerId')->willReturn((int) $follower->id());
+    $flags = $this->createMock(FlagServiceInterface::class);
+    $flags->method('getFlagById')->with('seguir_topico')->willReturn($flag);
+    $flags->method('getEntityFlaggings')->willReturn([$flagging]);
+
+    $access = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $access->method('supportsTopic')->willReturn(TRUE);
+    $access->method('canViewPost')->willReturn(TRUE);
+    $access->method('canViewTopic')->willReturn(TRUE);
+
+    $avisos = new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $flags,
+      $access,
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $dispatcher = new EventDispatcher();
+    $dispatcher->addSubscriber(new ForumNoticeEventSubscriber(
+      $this->container->get('entity_type.manager'),
+      $avisos,
+    ));
+    $producer = new ForumNoticeEventProducer($flags, $access, new MessengerNoticePublisher($dispatcher));
+
+    self::assertSame(1, $producer->publishPost($post));
+    self::assertSame(1, $producer->publishPost($post), 'Replaying the producer event is harmless.');
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame((int) $post->getRevisionId(), (int) $notices[0]->get('ultimo_post')->value);
   }
 
   /**
@@ -136,13 +184,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $topic = $this->createTopic();
     $avisos = $this->createAvisoService([(int) $follower->id()]);
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
-    $hooks = new ForumAvisoHooks($avisos);
-
-    $hooks->postInsert($post);
-    $hooks->postInsert($post);
+    $avisos->registrarPost($post);
+    $avisos->registrarPost($post);
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
-    $hooks->postInsert($storage->load($post->id()));
+    $avisos->registrarPost($storage->load($post->id()));
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
@@ -158,11 +204,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $follower = $this->createUser('seguidora');
     $topic = $this->createTopic();
     $avisos = $this->createAvisoService([(int) $follower->id()]);
-    $hooks = new ForumAvisoHooks($avisos);
-
     $pending = $this->createPost($topic, (int) $author->id(), FALSE);
-    $hooks->postInsert($pending);
-    $hooks->postUpdate($pending);
+    self::assertSame(0, $avisos->registrarPost($pending));
 
     $published = $this->createPost($topic, (int) $author->id(), TRUE);
     $published->setNewRevision(TRUE);
@@ -184,7 +227,6 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $follower = $this->createUser('seguidora');
     $topic = $this->createTopic();
     $avisos = $this->createAvisoService([(int) $follower->id()]);
-    $hooks = new ForumAvisoHooks($avisos);
     $post = $this->createPost($topic, (int) $author->id(), FALSE);
 
     $storage = $this->container->get('entity_type.manager')
@@ -198,8 +240,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $post->setOriginal($before);
     self::assertGreaterThan($previousRevision, (int) $post->getRevisionId());
 
-    $hooks->postUpdate($post);
-    $hooks->postUpdate($post);
+    self::assertSame(1, $avisos->registrarPost($post));
+    self::assertSame(0, $avisos->registrarPost($post));
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
@@ -218,13 +260,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $follower = $this->createUser('seguidora');
     $topic = $this->createTopic();
     $avisos = $this->createAvisoService([(int) $follower->id()]);
-    $hooks = new ForumAvisoHooks($avisos);
-
     // This post is created first but remains pending until after the second
     // post has already been published and counted.
     $delayed = $this->createPost($topic, (int) $author->id(), FALSE);
     $newer = $this->createPost($topic, (int) $author->id(), TRUE);
-    $hooks->postInsert($newer);
+    $avisos->registrarPost($newer);
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
@@ -235,8 +275,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $delayed->save();
     $delayed->setOriginal($beforeApproval);
 
-    $hooks->postUpdate($delayed);
-    $hooks->postUpdate($delayed);
+    self::assertSame(1, $avisos->registrarPost($delayed));
+    self::assertSame(0, $avisos->registrarPost($delayed));
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
@@ -473,11 +513,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $follower = $this->createUser('seguidora');
     $topic = $this->createTopic();
     $avisos = $this->createAvisoService([(int) $follower->id()]);
-    $hooks = new ForumAvisoHooks($avisos);
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
     $post->set('first_published', time());
     $post->save();
-    $hooks->postInsert($post);
+    $avisos->registrarPost($post);
     $firstRevision = (int) $post->getRevisionId();
 
     $storage = $this->container->get('entity_type.manager')
@@ -487,8 +526,6 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $post->set('body', ['value' => 'Texto corrigido', 'format' => 'plain_text']);
     $post->save();
     $post->setOriginal($before);
-
-    $hooks->postUpdate($post);
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
@@ -509,7 +546,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
 
-    (new ForumAvisoHooks($avisos))->postInsert($post);
+    $avisos->registrarPost($post);
 
     self::assertCount(
       0,
@@ -555,6 +592,33 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       ),
     );
     self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+  }
+
+  /**
+   * A topic revision author does not receive an update notice for their action.
+   */
+  public function testTopicRevisionAuthorDoesNotReceiveOwnNotice(): void {
+    $author = $this->createUser('autora_atualizacao');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $topic->setRevisionUserId((int) $author->id());
+    $topic->save();
+    $avisos = $this->createAvisoService([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ]);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, (int) $topic->getRevisionId()));
+    self::assertCount(0, $this->loadNotices(
+      (int) $author->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
+    self::assertCount(1, $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
   }
 
   /**

@@ -91,8 +91,10 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `Hook/NoticeAdminHooks`, `EventSubscriber/NoticeAdminRouteSubscriber`: administração dos comunicados.
 - `Entity/Aviso`, `Entity/AvisoAccessControlHandler`: entidade do aviso por pessoa.
 - `Aviso/AvisoService`: regra de contagem, deduplicação e leitura dos avisos por pessoa.
-- `Hook/ForumAvisoHooks`: `comment_insert`/`comment_update` e `aculta_forum_post_insert`/`aculta_forum_post_update`
-  chamam o serviço ao publicar respostas.
+- `Hook/ForumAvisoHooks` envia Comments publicados/aprovados e primeira
+  publicação de ForumPost a `ForumNoticeEventProducer`; o evento passa pelo
+  publisher compartilhado e `ForumNoticeEventSubscriber` resolve a origem,
+  revalida destinatário/acesso e chama o agregador existente.
 - `EventSubscriber/ForumAvisoReadSubscriber`: leitura do tópico zera o contador do site.
 
 **Assinaturas e eventos**
@@ -142,15 +144,20 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
 ## 8. Funções do módulo, resumo dos novos componentes
 
 - `src/Entity/Aviso.php`: entidade `aculta_aviso`. `AvisoAccessControlHandler`: a pessoa vê só os próprios avisos.
-- `src/Aviso/AvisoService.php`: regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
+- `src/Aviso/AvisoService.php`: revalidação e regras de contagem (`isNewComment`, `isNewRevision`), `registrarResposta`,
   `notificarAtualizacao`, `marcarLido`, `naoLidosTotal`.
 - `src/Aviso/AvisoPreferencias.php`: preferências individuais de e-mail.
 - `src/Aviso/AvisosResumo.php`: envio do resumo diário combinado. Providers tagged `aculta_messenger.aviso_digest_provider`
   fornecem linhas e só confirmam entrega depois de envio bem-sucedido.
 - `src/Form/AvisosPrivacyForm.php` + `src/Hook/AvisosPrivacyHooks.php`: bloco "Avisos" na privacidade da conta.
-- `src/Hook/ForumAvisoHooks.php`: `comment_insert` e `comment_update` (aprovação de comentário).
+- `src/Aviso/ForumNoticeEventProducer.php` e `src/EventSubscriber/ForumNoticeEventSubscriber.php`:
+  adapter de publicação/consumo via `MessengerNoticeEvent`, preservando `aculta_aviso`
+  e o ledger idempotente.
+- `src/Hook/ForumAvisoHooks.php`: converte `comment_insert`/aprovação e eventos
+  de ForumPost ao producer.
 - `src/EventSubscriber/ForumAvisoReadSubscriber.php`: leitura do tópico.
-- `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico seguido vira aviso.
+- `src/Plugin/QueueWorker/MessageSubscribeEventWorker.php`: atualização de tópico
+  seguido é publicada no contrato compartilhado e consumida como aviso.
 - `src/Hook/MessengerBarHooks.php`: soma os avisos por pessoa ao ícone de avisos.
 
 ## 8.1 Central "Avisos/Mensagens" em Minha conta

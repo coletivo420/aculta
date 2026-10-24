@@ -23,13 +23,13 @@ A matriz é caracterização inicial baseada em código e evidências documentai
 
 ## M1 — Estabilização 0.1.1 RC
 
-**Nesta revisão (dev.84):** Comments, revisões de `ForumPost` e atualizações de tópico usam ledger transacional por evento; processamento fora de ordem não perde avisos e lock serializa incrementos do mesmo agregado. Kernel comprova a migração do ledger dev.80 em lotes de 500, o caminho de espera/retry de lock via mock e a revogação do seguidor antes de entregar; post-update ainda não foi executado no Runtime e concorrência entre processos segue não simulada. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
+**Nesta revisão (dev.85):** Comments, revisões de `ForumPost` e atualizações de tópico são publicados pelo envelope compartilhado e consumidos pelo agregador existente. O consumer resolve a origem por UUID/revisão, valida a chave canônica e reusa as revalidações de assinatura/acesso e o ledger transacional; o fluxo não cria storage nem mensagem paralela. Kernel MariaDB do pipeline: 18 testes / 353 assertions; Unit Messenger: 70 / 334; PHPCS e lint passam. A migração de storage não foi aplicada no Runtime e concorrência entre processos segue não simulada. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
 **Pendente:** cenários de amizade, bloqueio bilateral, autorização/IDOR, usuários inativos, grupos voluntários (incluindo fallback/teclado), retenção paginada e recuperação de falhas, transporte de teste e revisão visual autenticada. Não rodar limpeza em dados reais.
 **Aceite:** gates estáticos e automatizados pertinentes aprovados; smoke visual/Runtime identificado separadamente antes de RC conforme ciclo.
 
 ## M2 — API central de eventos (0.2.0)
 
-Implementado nesta execução: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publicam envelope pequeno via EventDispatcher Drupal, com metadata validada e sem persistência própria. O adapter LMS já consome quatro tipos e encaminha ao Message existente pelo manager idempotente; a cobertura restante inclui revalidação, consumidores de outros módulos, integração gradual do Fórum/User/LMS e canais da central/e-mail. Interfaces pequenas, DI, payload mínimo, retry observável e sem novo subsistema de storage. Migrar gradualmente com testes comparativos, sem disparo duplo.
+Implementado: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publicam envelope pequeno via EventDispatcher Drupal, com metadata validada e sem persistência própria. Fórum adapta Comments, primeira publicação de `ForumPost` e revisão de tópico; o consumer mantém `aculta_aviso`, revalida assinatura/acesso e usa o ledger existente. O adapter LMS já consome quatro tipos e encaminha ao Message existente pelo manager idempotente. A cobertura restante inclui integração de amizade, eventos LMS restantes, testes comparativos em Runtime e canais da central/e-mail. Manter interfaces pequenas, DI, payload mínimo e sem novo subsistema de storage.
 
 **Aceite:** testes de contrato/idempotência/ACL; eventos repetidos não duplicam; opt-out não remove aviso do site; adapters opcionais ausentes não causam erro.
 
@@ -67,6 +67,6 @@ Validar concorrência/idempotência, locks/retry, filas, retenção, paginação
 
 - M0: parcial; contratos e inventário documental iniciados; matriz completa pendente.
 - M1: parcial; correção de amizade em respostas e remoção da retenção course implementadas; gates a executar.
-- M2: parcial; envelope/publisher e Unit implementados, consumidores e migração dos produtores pendentes.
+- M2: parcial; envelope/publisher e adapters Fórum/LMS implementados nos eventos descritos, com Kernel do ciclo ForumPost; amizade, eventos LMS restantes e integração comparativa ampla pendentes.
 - M3–M7: planejadas nesta referência; conclusão depende de auditoria e implementação/testes registrados, fase a fase.
 - Runtime: não homologado nesta execução.

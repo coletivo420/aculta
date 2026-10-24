@@ -18,14 +18,16 @@ reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 **Base inspecionada:** `aculta_forum 0.1.0-dev.279`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
-administrativas já possuem implementações e testes. As fases técnicas
+administrativas já possuem implementações e testes. `aculta_messenger 0.1.1-dev.85` agora publica pelo contrato compartilhado os avisos de Comment, primeira publicação de ForumPost e revisão de tópico; o consumer preserva o ledger/`aculta_aviso` e revalida acesso. A prova Kernel integrada cobre ForumPost; Comments e revisão de tópico têm cobertura de serviço/adapter Unit, ainda sem round-trip Kernel e Runtime. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.84` mantém os avisos existentes e já oferece
-o envelope `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`; o LMS
-consome quatro tipos pelo publisher, enquanto o adapter do Fórum ainda não foi
-implementado. A API é uma base disponível, não prova de integração completa.
-Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
+ativação produtiva. `aculta_messenger 0.1.1-dev.85` mantém os avisos existentes
+e publica Comments, primeira publicação de ForumPost e revisões de tópico por
+`MessengerNoticeEvent`/`MessengerNoticePublisherInterface`; o LMS consome quatro
+tipos. A prova do ciclo Fórum pelo publisher é Kernel apenas para ForumPost,
+com Comment e tópico em Unit; comparação completa e Runtime continuam
+pendentes. Verificar a versão do HEAD e o estado do Runtime antes de cada
+intervenção.
 
 ### Diretrizes de produto e limites
 
@@ -61,7 +63,7 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 | --- | --- | --- | --- |
 | **F-M0 — baseline e alinhamento** | P0 | Catalogar hooks/eventos Fórum → Messenger, `seguir_topico`, `aculta_aviso`, os tipos de publicação Comment/ForumPost, telas e preferências; corrigir documentação normativa e registrar F-D41. | Matriz produtor → publicação → seguidores → aviso → digest; documentação sem proposta vigente de chat automático; distinguir evidência histórica de Runtime atual. |
 | **F-M1 — caracterização e segurança** | P0 | Fixar em Unit/Kernel a primeira publicação, aprovação tardia, republicação, autoria própria, seguidores removidos, revisões fora de ordem, movimento de subárvore e eventos concorrentes. | Um aviso por destinatário e evento elegível, marcadores `ultimo_comentario`/`ultimo_post` independentes, nenhuma divulgação antes de publicar. Reutilizar XK-C2, não repetir testes desnecessariamente. |
-| **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar produtores do Fórum ao publisher público mínimo já disponível no Messenger; preservar `aculta_aviso` e a F-D21 até prova de migração. | Equivalência lado a lado com o fluxo atual, zero duplo disparo/armazenamento, deduplicação e manutenção do digest. Nenhuma dependência cíclica entre submódulos. |
+| **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar Comments publicados/aprovados, primeira publicação de ForumPost e revisões de tópico ao publisher; preservar `aculta_aviso`, ledger, digest e F-D21. | Um evento por destinatário elegível, replay idempotente, acesso/assinatura revalidados e zero fluxo paralelo. Provar round-trip Kernel para os três tipos e comparação com o comportamento anterior; nenhuma dependência cíclica. |
 | **F-M3 — acompanhamento/UX** | P1 | Homologar seguir/deixar de seguir, contador no sino e página Avisos, leitura pelo tópico, URLs canônicas, estados vazio/carregando, digest opt-in e ação opcional de iniciar conversa **com um membro**, não com o tópico. | Navegador autenticado, duas contas e mobile/teclado; nenhuma thread criada por seguir/comentar; e-mail apenas pelo Mailer sob transporte controlado. |
 | **F-M4 — contextos protegidos** | P1 | Garantir acesso por purpose/Domain, status de publicação, Group, matrícula e situação associativa em conteúdo, Search API, links, previews, avisos e digest; manter a frente F-GROUP desligada por padrão. | Revogação efetiva sem vazamento em contagens, páginas, anexos, resultados e avisos; matriz anônimo/comum/ativo/suspenso/sem membership, com cache/grants. |
 | **F-M5 — migração e interoperabilidade** | P1 | Completar equivalência de Comments legados → ForumPosts revisionáveis: source/destination Migrate, árvores, CID → IDs/revisões, History, flags, denúncias, anexos, permalinks, índices e marcadores de avisos. | Dry-run com mapas auditáveis, backup/rollback, testes Kernel/MariaDB, prova de não duplicar/perder avisos e homologação controlada; nenhuma migração sem autorização operacional. |
@@ -89,17 +91,23 @@ e o writer espera/retenta após lock ocupado (via mock, sem concorrência entre
 processos), revogação de assinatura antes da entrega, que não produz aviso nem
 chave de ledger. Homologação Runtime segue pendente; F-M1 permanece parcial.
 
+**Evidência recente de F-M2 (parcial):** o producer e consumer do Fórum usam
+`MessengerNoticeEvent` para Comment, ForumPost e revisão de tópico. O consumer
+resolve UUID/revisão, exige chave idempotente canônica e encaminha ao agregador
+existente, que revalida seguir/acesso. Kernel MariaDB prova round-trip e replay
+de ForumPost; Comments e revisão de tópico têm cobertura Unit de contrato e
+roteamento. Kernel completo dos três tipos, comparação em Runtime e validação
+do digest permanecem pendentes.
+
 ### Sequência recomendada e paralelismo
 
 - **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
   Search API/Domain, anexos, concorrência da limpeza, migração e contagens
   já identificadas na linha atual do Fórum.
-- **Antes de adaptar código para eventos:** revisar o contrato M2 disponível e
-  caracterizar hooks e storage atuais. Até provar equivalência, manter
-  `aculta_aviso` em funcionamento; o Fórum não implementa persistência ou
-  entrega do Messenger dentro de si.
-- **Sequência:** F-M2 pode iniciar com o publisher atual; sua conclusão exige
-  consumidor, persistência compatível e entrega comparativa. Depois, F-M3 e F-M4
+- **Antes de completar F-M2:** acrescentar round-trip Kernel para Comment e
+  tópico e comparar entregas/digest com os fluxos anteriores. `aculta_aviso`
+  permanece como storage; o Fórum não implementa persistência ou entrega própria.
+- **Sequência:** concluir essas provas de F-M2; depois, F-M3 e F-M4
   (ou F-M4 antecipada se algum bloqueador de acesso for encontrado).
 - **Migração de legado e RC:** F-M5 e F-M6 com evidência de impacto/rollback;
   F-M7 somente após gates proporcionais e correções.

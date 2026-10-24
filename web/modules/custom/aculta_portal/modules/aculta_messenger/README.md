@@ -32,11 +32,13 @@ contratos independentes.
 
 ## ACULTA Messenger 0.1.1
 
-A versão `0.1.1-dev.84` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão `0.1.1-dev.85` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
-agregado. A prévia de busca de membros mantém as sugestões como links normais
-alcançáveis por Tab.
+agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
+de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
+`aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
+de membros mantém as sugestões como links normais alcançáveis por Tab.
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
 privacidade para novas conversas. Consulte [INTEGRATIONS.md](docs/INTEGRATIONS.md)

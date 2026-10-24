@@ -6,7 +6,7 @@ namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
@@ -15,7 +15,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class ForumAvisoHooks {
 
   public function __construct(
-    private readonly AvisoService $avisos,
+    private readonly ForumNoticeEventProducerInterface $events,
   ) {}
 
   /**
@@ -23,7 +23,7 @@ final class ForumAvisoHooks {
    */
   #[Hook('comment_insert')]
   public function commentInsert(CommentInterface $comment): void {
-    $this->avisos->registrarResposta($comment);
+    $this->events->publishComment($comment);
   }
 
   /**
@@ -39,7 +39,7 @@ final class ForumAvisoHooks {
     $original = $comment->getOriginal();
     if ($comment->isPublished() && $original !== NULL
       && !$original->isPublished()) {
-      $this->avisos->registrarResposta($comment);
+      $this->events->publishComment($comment);
     }
   }
 
@@ -48,7 +48,7 @@ final class ForumAvisoHooks {
    */
   #[Hook('aculta_forum_post_insert')]
   public function postInsert(ForumPost $post): void {
-    $this->avisos->registrarPost($post);
+    $this->events->publishPost($post);
   }
 
   /**
@@ -64,7 +64,7 @@ final class ForumAvisoHooks {
       && $original->get('first_published')->isEmpty()
       && $post->hasField('first_published')
       && !$post->get('first_published')->isEmpty()) {
-      $this->avisos->registrarPost($post);
+      $this->events->publishPost($post);
     }
   }
 

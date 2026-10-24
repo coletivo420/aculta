@@ -1,3 +1,17 @@
+## 0.1.1-dev.85 — adaptar eventos do Fórum ao publisher Messenger — 2026-10-24
+
+- `ForumAvisoHooks` e o worker de revisões de tópico agora publicam eventos
+  mínimos por destinatário via `MessengerNoticePublisherInterface`. O consumer
+  confere origem, propósito e chave canônica, resolve Comment por UUID ou a
+  revisão publicada de Node/ForumPost e encaminha ao agregador `aculta_aviso`.
+- O agregador revalida assinatura e acesso no consumo e registra no ledger
+  transacional existente; não há storage paralelo nem segundo disparo. Autores
+  não recebem aviso da própria revisão de tópico.
+- Kernel MariaDB do ledger/event pipeline: 18 testes / 353 assertions,
+  incluindo publicação e replay de ForumPost pelo EventDispatcher; Unit
+  Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. PHPCS Drupal/DrupalPractice,
+  PHP lint e YAML dos serviços: PASS. Runtime não homologado.
+
 ## 0.1.1-dev.84 — respeitar unfollow antes da entrega — 2026-10-24
 
 - Kernel cobre evento entregue após remoção do acompanhamento: sem aviso e sem

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
-use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -18,10 +18,14 @@ use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Atualização de tópico seguido: vira aviso por pessoa, não mensagem (ACULTA Fórum, F5.2, F-D21).
+ * Atualização de tópico seguido: vira aviso por pessoa, não mensagem.
  *
- * Eventos chegam da fila de publicação. Revisão já contada não conta de novo (dedupe no próprio aviso).
- * Tópico sem alias espera a geração do alias, pois o aviso leva ao link público do tópico.
+ * ACULTA Fórum, F5.2, F-D21.
+ *
+ * Eventos chegam da fila de publicação. Revisão já contada não conta de novo
+ * (dedupe no ledger do aviso).
+ * Tópico sem alias espera a geração do alias, pois o aviso leva ao link
+ * público do tópico.
  */
 #[QueueWorker(
   id: 'aculta_messenger_message_subscribe_event',
@@ -35,7 +39,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     string $plugin_id,
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AvisoService $avisos,
+    private readonly ForumNoticeEventProducer $events,
     private readonly AliasManagerInterface $aliasManager,
     private readonly LockBackendInterface $lock,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
@@ -43,19 +47,25 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('aculta_messenger.aviso_service'),
+      $container->get('aculta_messenger.forum_notice_event_producer'),
       $container->get('path_alias.manager'),
       $container->get('lock.persistent'),
       $container->get('logger.factory'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function processItem($data): void {
     if (!is_array($data) || !isset($data['node_id'], $data['revision_id'])
       || !is_numeric($data['node_id']) || !is_numeric($data['revision_id'])) {
@@ -74,12 +84,19 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
 
     $internalPath = '/node/' . $node->id();
     if ($this->aliasManager->getAliasByPath($internalPath, $node->language()->getId()) === $internalPath) {
-      // Sem alias português o aviso não tem link público. Espera o pathauto por uma semana, depois descarta com erro.
+      // Sem alias o aviso não tem link público. Espera o pathauto por uma
+      // semana; depois descarta com erro.
       if ((int) $node->getCreatedTime() < time() - 7 * 86400) {
-        $this->loggerFactory->get('aculta_messenger')->error('Forum topic @id still has no public alias after a week; the update notice was dropped.', ['@id' => $node->id()]);
+        $this->loggerFactory->get('aculta_messenger')->error(
+          'Forum topic @id still has no public alias after a week; the update notice was dropped.',
+          ['@id' => $node->id()],
+        );
         return;
       }
-      $this->loggerFactory->get('aculta_messenger')->warning('Forum topic @id has no public alias yet; the update notice was requeued.', ['@id' => $node->id()]);
+      $this->loggerFactory->get('aculta_messenger')->warning(
+        'Forum topic @id has no public alias yet; the update notice was requeued.',
+        ['@id' => $node->id()],
+      );
       throw new RequeueException();
     }
 
@@ -89,7 +106,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       throw new \RuntimeException('Forum topic update notice is already being processed.');
     }
     try {
-      $this->avisos->notificarAtualizacao($node, $revisionId);
+      $this->events->publishTopicUpdate($node, $revisionId);
     }
     finally {
       $this->lock->release($lockId);

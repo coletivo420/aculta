@@ -63,9 +63,10 @@ já entregues nem presumir que a futura API de eventos esteja disponível.
   os bloqueios e a política de privacidade.
 - **Transporte:** `aculta_mailer`; o Fórum não envia SMTP, não administra
   inbox e não implementa worker próprio de avisos.
-- **Migração:** manter `aculta_aviso`, watermarks separados para Comment e
-  ForumPost, e os hooks existentes enquanto a API transversal ADR-XK-02
-  não for implementada, caracterizada e migrada sem duplicação.
+- **Migração:** manter `aculta_aviso` e watermarks separados para Comment e
+  ForumPost. Comments, primeira publicação de ForumPost e revisão de tópico já
+  usam o publisher ADR-XK-02; completar round-trip Kernel dos três eventos e
+  comparação de digest sem disparo duplo.
 
 As principais pendências do Fórum continuam sendo provas de migração de
 Comments para ForumPosts, anexos/limpeza, Search API/grants e contagens

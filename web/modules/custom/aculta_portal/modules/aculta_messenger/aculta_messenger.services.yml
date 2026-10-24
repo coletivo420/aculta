@@ -8,6 +8,8 @@ services:
   Drupal\aculta_user\Social\FriendshipManagerInterface: '@aculta_user.friendship_manager'
   Drupal\aculta_messenger\Service\UnreadThreadCounter: '@aculta_messenger.unread_thread_counter'
   Drupal\aculta_messenger\Aviso\AvisoService: '@aculta_messenger.aviso_service'
+  Drupal\aculta_messenger\Aviso\ForumNoticeRegistrarInterface: '@aculta_messenger.aviso_service'
+  Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface: '@aculta_messenger.forum_notice_event_producer'
   Drupal\aculta_messenger\Aviso\AvisoPreferencias: '@aculta_messenger.aviso_preferencias'
   Drupal\aculta_messenger\Form\AvisosPrivacyForm: '@aculta_messenger.avisos_privacy_form'
   Drupal\aculta_messenger\Aviso\AvisosResumo: '@aculta_messenger.avisos_resumo'
@@ -72,6 +74,14 @@ services:
   aculta_messenger.aviso_service:
     class: Drupal\aculta_messenger\Aviso\AvisoService
     arguments: ['@entity_type.manager', '@flag', '@aculta_messenger.forum_notice_access_policy', '@database', '@datetime.time', '@lock', '@module_handler']
+  aculta_messenger.forum_notice_event_producer:
+    class: Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer
+    arguments: ['@flag', '@aculta_messenger.forum_notice_access_policy', '@aculta_messenger.notice_event_publisher']
+  aculta_messenger.forum_notice_event_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\ForumNoticeEventSubscriber
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_service']
+    tags:
+      - { name: event_subscriber }
   aculta_messenger.forum_notice_access_policy:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

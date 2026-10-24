@@ -6,7 +6,7 @@ Mensagens privadas (conversas), avisos (Fórum, alertas do site, persistentes), 
 0.1.1-dev.56: eram ligados à listagem do Forum contribuído. A listagem ACULTA
 usa Views Core e consome os próprios dados neutros.
 
-Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
+Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a primeira frase do próprio docblock; a regra e o motivo completos ficam no código. Quando uma classe mudar, atualize esta tabela na mesma entrega.
 
 ## Hooks (`#[Hook]`)
 
@@ -58,7 +58,10 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | --- | --- | --- |
 | `AvisoPreferencias` | `src/Aviso/AvisoPreferencias.php` | Controles individuais de avisos (ACULTA Messenger, F5.2). |
 | `AvisoRetencao` | `src/Aviso/AvisoRetencao.php` | Retenção dos avisos por pessoa do Fórum (ACULTA Messenger): seis meses desde a criação. |
-| `AvisoService` | `src/Aviso/AvisoService.php` | Avisos de resposta em tópico seguido (ACULTA Fórum, F5.2, F-D21). |
+| `AvisoService` | `src/Aviso/AvisoService.php` | Revalida e agrega avisos de seguidores no `aculta_aviso` e no ledger existente (ACULTA Fórum, F5.2, F-D21). |
+| `ForumNoticeEventProducer` | `src/Aviso/ForumNoticeEventProducer.php` | Publica eventos de Comment, ForumPost e revisão de tópico no contrato compartilhado. |
+| `ForumNoticeEventProducerInterface` | `src/Aviso/ForumNoticeEventProducerInterface.php` | Contrato testável para produzir eventos de atividade do Fórum. |
+| `ForumNoticeRegistrarInterface` | `src/Aviso/ForumNoticeRegistrarInterface.php` | Contrato de persistência/revalidação pelo agregador existente. |
 | `AvisosResumo` | `src/Aviso/AvisosResumo.php` | Resumo diário dos avisos por e-mail (ACULTA Messenger, F5.2, política de 2026-10-16). |
 | `AvisoDigestProviderInterface` | `src/Aviso/AvisoDigestProviderInterface.php` | Extensão para adicionar avisos atuais ao mesmo resumo diário combinado. |
 
@@ -85,6 +88,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
 | `ForumAvisoReadSubscriber` | `src/EventSubscriber/ForumAvisoReadSubscriber.php` | Ler o tópico zera o contador do aviso do site (ACULTA Fórum, F5.2). |
+| `ForumNoticeEventSubscriber` | `src/EventSubscriber/ForumNoticeEventSubscriber.php` | Revalida evento compartilhado por UUID/revisão e encaminha ao agregador do Fórum. |
 | `NativePrivateMessagePagesSubscriber` | `src/EventSubscriber/NativePrivateMessagePagesSubscriber.php` | Removes the native Private Message pages from the member experience. |
 | `NoticeAdminRouteSubscriber` | `src/EventSubscriber/NoticeAdminRouteSubscriber.php` | Assigns Portuguese admin paths to the native Site Alert management routes. */ |
 | `PrivateMessageAccountRouteSubscriber` | `src/EventSubscriber/PrivateMessageAccountRouteSubscriber.php` | Assigns native Private Message routes to the single account purpose. */ |
@@ -110,7 +114,7 @@ Gerado a partir do código em 2026-10-17 (`src/`). Cada classe aparece com a pri
 | `AvisoRetencaoHooks` | `src/Hook/AvisoRetencaoHooks.php` | Exclui automaticamente os avisos do Fórum com mais de seis meses (ACULTA Messenger, regra de retenção). |
 | `AvisosPrivacyHooks` | `src/Hook/AvisosPrivacyHooks.php` | Acrescenta o bloco "Avisos" à página de privacidade da conta (ACULTA Messenger, F5.2). |
 | `AvisosResumoHooks` | `src/Hook/AvisosResumoHooks.php` | Cron e mensagem do resumo diário de avisos (ACULTA Messenger, F5.2). |
-| `ForumAvisoHooks` | `src/Hook/ForumAvisoHooks.php` | Respostas em tópico seguido geram aviso no site (ACULTA Fórum, F5.2). |
+| `ForumAvisoHooks` | `src/Hook/ForumAvisoHooks.php` | Publica eventos compartilhados para respostas e primeira publicação de ForumPost (ACULTA Fórum, F-D21). |
 | `LifecycleHooks` | `src/Hook/LifecycleHooks.php` | Protects Messenger-owned notification records during module removal. */ |
 | `MessageSubscribeEventHooks` | `src/Hook/MessageSubscribeEventHooks.php` | Queues publication events for the forum's existing follow flag. */ |
 | `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Adapts Message Subscribe to the existing Portuguese forum follow flag. */ |
