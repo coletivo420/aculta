@@ -12,6 +12,57 @@ aculta_studio.account:
     _aculta_domain_purpose: account
 
 # Only the community profile is edited here; private account data is separate.
+# S-R3-A: Portal-owned private sections inside the Studio shell.
+# The complete basics form still includes public nickname in the legacy UI,
+# so it stays in Portal until the field is properly separated in S-R4.
+aculta_studio.account_address:
+  path: /studio/conta/endereco
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:address'
+    _title: 'Endereço'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_security:
+  path: /studio/conta/seguranca
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:security'
+    _title: 'E-mail e segurança'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_password:
+  path: /studio/conta/seguranca/senha
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:password'
+    _title: 'Senha'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_connections:
+  path: /studio/conta/conexoes
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:connections'
+    _title: 'Contas conectadas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
 aculta_studio.profile:
   path: /studio/perfil
   defaults:
