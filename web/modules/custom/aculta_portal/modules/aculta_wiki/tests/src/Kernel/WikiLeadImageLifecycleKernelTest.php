@@ -318,6 +318,71 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * A pending non-default revision cannot expose its replacement lead image.
+   */
+  public function testPendingRevisionKeepsPublishedLeadImageAndHidesReplacement(): void {
+    $owner = $this->createOwner();
+    $publishedFile = $this->createTemporaryPrivateImage((int) $owner->id());
+    $publishedFile->setPermanent();
+    $publishedFile->save();
+    $publishedMedia = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem da revisão pública',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      'field_media_image' => [
+        'target_id' => $publishedFile->id(),
+        'alt' => 'Imagem pública',
+      ],
+    ]);
+    $publishedMedia->save();
+
+    $pendingFile = $this->createTemporaryPrivateImage((int) $owner->id());
+    $pendingFile->setPermanent();
+    $pendingFile->save();
+    $pendingMedia = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem da revisão pendente',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      'field_media_image' => [
+        'target_id' => $pendingFile->id(),
+        'alt' => 'Imagem pendente',
+      ],
+    ]);
+    $pendingMedia->save();
+
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete publicado com imagem',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $publishedMedia->id()],
+    ]);
+    $node->save();
+    $node->setNewRevision(TRUE);
+    $node->isDefaultRevision(FALSE);
+    $node->setUnpublished();
+    $node->set(WikiLeadImageUploader::FIELD, ['target_id' => $pendingMedia->id()]);
+    $node->save();
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $defaultRevision = $nodeStorage->load((int) $node->id());
+    self::assertInstanceOf(NodeInterface::class, $defaultRevision);
+    self::assertTrue($defaultRevision->isPublished());
+    self::assertSame((int) $publishedMedia->id(), (int) $defaultRevision->get(WikiLeadImageUploader::FIELD)->target_id);
+
+    $mediaStorage = $this->container->get('entity_type.manager')->getStorage('media');
+    $mediaStorage->resetCache([(int) $publishedMedia->id(), (int) $pendingMedia->id()]);
+    self::assertTrue($mediaStorage->load($publishedMedia->id())->isPublished());
+    self::assertTrue($mediaStorage->load($publishedMedia->id())->access('view', new AnonymousUserSession()));
+    self::assertFalse($mediaStorage->load($pendingMedia->id())->isPublished());
+    self::assertFalse($mediaStorage->load($pendingMedia->id())->access('view', new AnonymousUserSession()));
+    self::assertTrue($publishedFile->access('download', new AnonymousUserSession()));
+    self::assertFalse($pendingFile->access('download', new AnonymousUserSession()));
+  }
+
+  /**
    * Deleting the final published host makes its lead Media private.
    */
   public function testDeletingLastPublishedLeadImageReferenceUnpublishesMedia(): void {

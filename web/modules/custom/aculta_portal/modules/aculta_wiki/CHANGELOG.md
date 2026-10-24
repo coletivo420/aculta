@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.79 — visibilidade em revisão não padrão
+
+- Kernel MariaDB cobre um verbete publicado cuja nova revisão ainda não padrão
+  troca a imagem: a imagem da revisão pública permanece visível e a substituta
+  fica despublicada, incluindo o download privado.
+- `WikiLeadImageLifecycleKernelTest`: 24 testes / 1.129 assertions, 291
+  depreciações Core/contrib e 25 PHPUnit. PHP lint e PHPCS passaram. Runtime
+  não foi alterado.
+
 ## 0.1.0-dev.78 — sincronizar fixtures Unit do formulário de imagem
 
 - As fixtures de `WikiEntryImageHooksTest` agora fornecem as dependências

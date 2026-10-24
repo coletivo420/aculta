@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.78**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.79**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.79 — imagem em revisão pendente
+
+Kernel MariaDB agora comprova que salvar revisão não padrão com imagem
+substituta não muda a projeção pública da revisão padrão: imagem e arquivo
+anteriores permanecem acessíveis, enquanto a substituta permanece não publicada
+e sem download anônimo. A classe completa passou (24/1.129; 291 depreciações
+Core/contrib e 25 PHPUnit); lint e PHPCS passaram. Runtime intocado.
 
 ### Incremento dev.78 — fixtures Unit do hook de imagem
 

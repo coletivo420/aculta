@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.79`: Kernel prova que uma revisão pendente mantém a imagem da
+  revisão pública visível e deixa a imagem substituta privada (classe completa
+  24/1.129). Runtime intocado.
+
 - `0.1.0-dev.78`: fixtures Unit do hook de imagem acompanham a assinatura atual
   e constroem um formulário `wiki_entry`; Wiki Unit passou (66/344, 3
   depreciações PHPUnit). Runtime intocado.
@@ -14,7 +18,7 @@ pendentes, está em
 - `0.1.0-dev.77`: formulários Core de `wiki_entry` oferecem retorno cacheável ao
   Meu Trabalho WE SATIVA quando o provider Studio e o acesso Wiki estão ativos.
   O link usa o purpose `account`; ausência da rota omite a ação. Kernel completo
-  passou (23/1.039); PHP lint e PHPCS passaram. Runtime intocado.
+  passou na dev.77 (23/1.039); PHP lint e PHPCS passaram. Runtime intocado.
 
 - Revalidação Content Index no HEAD após dev.77: Unit dos providers Wiki/categoria
   9/40; quatro Kernels combinados (provider, acesso/relações, discovery owner e

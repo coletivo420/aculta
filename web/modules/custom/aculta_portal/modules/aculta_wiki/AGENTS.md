@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.79: Kernel comprova visibilidade alinhada à revisão pública quando uma
+  revisão pendente troca a imagem. Classe MariaDB 24/1.129; Runtime intocado.
+
 - Dev.78: fixtures Unit de `WikiEntryImageHooks` sincronizadas com o construtor
   e contexto de formulário atuais; Wiki Unit 66/344, 3 depreciações PHPUnit.
   Runtime intocado.
@@ -19,7 +22,7 @@
 - Dev.77: formulário `wiki_entry` oferece retorno para o workspace somente com
   rota Studio disponível e `WikiContributorWorkspace::access()` permitido;
   URL usa purpose `account` e cache contexts/tags do AccessResult. Kernel classe
-  23/1.039; Runtime intocado.
+  23/1.039 na dev.77; Runtime intocado.
 
 - Dev.76: envio de imagem usa a forma nativa `managed_file` (`fids`). Kernel
   submete formulário Node real e confirma Media despublicada em `draft`; classe
