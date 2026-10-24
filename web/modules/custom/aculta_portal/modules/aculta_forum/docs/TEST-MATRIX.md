@@ -1,3 +1,10 @@
+## Thread revisionável no tópico público, 2026-10-24
+
+- `ForumPostThreadHooksKernelTest` (2 testes / 26 asserções, MariaDB): o modo
+  `full` no purpose `forum` recebe `aculta_forum_revisionable_posts` com a
+  thread; `teaser` e o purpose `main` não recebem.
+- Suíte Kernel do Fórum 121/2.375; PHPCS limpo.
+
 ## Resultado de busca — link ancorado no tópico, 2026-10-24
 
 - `ForumPostSearchTopicLinkFormatterKernelTest` (2 testes / 28 asserções,

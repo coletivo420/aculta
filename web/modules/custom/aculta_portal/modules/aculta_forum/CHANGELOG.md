@@ -1,3 +1,10 @@
+## `0.1.0-dev.294` — provar a injecção da thread no tópico público — 2026-10-24
+
+- Novo Kernel `ForumPostThreadHooksKernelTest`: a visualização `full` dentro do
+  purpose `forum` recebe `aculta_forum_revisionable_posts` com a thread
+  construída; outros modos de exibição e outros purposes não recebem.
+- Testes: thread 2/26; suíte Kernel do Fórum 121/2.375; PHPCS limpo.
+
 ## `0.1.0-dev.293` — provar o link do resultado de busca para a resposta — 2026-10-24
 
 - Novo Kernel `ForumPostSearchTopicLinkFormatterKernelTest`: post publicado no
