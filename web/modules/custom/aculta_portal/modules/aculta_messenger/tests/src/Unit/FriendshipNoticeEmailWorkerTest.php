@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Plugin\QueueWorker\FriendshipNoticeEmailWorker;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -40,6 +41,27 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $worker = $this->worker($entityTypeManager, $notifier);
 
     $worker->processItem(['message_id' => 'not-an-integer']);
+  }
+
+  /**
+   * A concurrent duplicate retries later without loading stale state.
+   */
+  public function testConcurrentDuplicateDoesNotLoadOrSend(): void {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects(self::never())->method('getStorage');
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_messenger:friendship_notice_email:8', 60.0)
+      ->willReturn(FALSE);
+    $lock->expects(self::never())->method('release');
+    $worker = $this->worker($entityTypeManager, $notifier, $lock);
+
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('Friendship notice email is already being processed.');
+    $worker->processItem(['message_id' => 8]);
   }
 
   /**
@@ -144,7 +166,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Builds the queue worker with the configured domain resolver. */
-  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier): FriendshipNoticeEmailWorker {
+  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL): FriendshipNoticeEmailWorker {
     $domainPurpose = new DomainPurposeManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
@@ -158,6 +180,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
       $entityTypeManager,
       $notifier,
       $domainPurpose,
+      $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
     );
   }
 

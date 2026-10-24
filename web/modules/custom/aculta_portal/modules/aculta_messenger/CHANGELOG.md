@@ -1,3 +1,12 @@
+## 0.1.1-dev.106 — serializar e-mail de amizade no worker da fila — 2026-10-24
+
+- `FriendshipNoticeEmailWorker` agora adquire lock por aviso antes de carregar o
+  Message. Replays concorrentes leem estado e tentativas atuais, impedindo dois
+  e-mails para o mesmo evento; falhas mantêm o limite de três tentativas.
+- Unit do worker: 5 testes / 61 assertions; Unit Messenger + adapters:
+  130 testes / 813 assertions PASS. PHPCS Drupal/DrupalPractice, PHP lint e
+  `git diff --check` PASS. Runtime e fila operacional não homologados.
+
 ## 0.1.1-dev.105 — encerrar digest suspenso pela política administrativa — 2026-10-24
 
 - `AvisosResumo` agora usa o resultado tipado do ACULTA Mailer. Quando a política
