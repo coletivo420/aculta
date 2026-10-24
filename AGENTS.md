@@ -10,6 +10,23 @@ Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web
 - Não exponha segredos ou dados pessoais. Respeite acesso, cacheability, DI, APIs Drupal 11+ e código instalado.
 - Faça commits focados; execute gates pertinentes e relate somente testes efetivamente realizados. Respeite versionamento/status dos componentes.
 
+## Política global de URLs durante o desenvolvimento
+
+- **Não crie nem mantenha aliases ou redirects temporários de compatibilidade**
+  para rotas renomeadas. O projeto ainda está em desenvolvimento: atualize
+  todos os consumidores para os IDs/paths canônicos e elimine os caminhos
+  anteriores do roteamento. A URL aposentada deve retornar 404, não 301/302.
+- Aplique esta regra a **todos os módulos ACULTA**, inclusive Studio, Marley,
+  LMS, Fórum, User, Portal e submódulos. Atualize também testes e mapa de rotas.
+  Gate: `php scripts/validate-no-temporary-route-aliases.php`.
+- **Não confundir aliases transitórios com redirects funcionais:** login,
+  logout, OAuth, checkout, confirmação, troca legítima de purpose, links
+  curtos e QR codes preservam seus fluxos de segurança. Nenhum redirect
+  funcional pode ser removido sem auditoria dos consumidores e callbacks.
+- Rotas técnicas de front de Domain permanecem **internas** e bloqueadas para
+  acesso direto; não as reative como aliases. Preserve segurança e dados
+  mesmo que uma URL histórica seja descartada.
+
 ## Testes de navegador
 - Use **Firefox ESR visível na sessão X11 local** (`DISPLAY=:0`), controlado pelo geckodriver via WebDriver. Referência: Firefox ESR 153.4 e geckodriver 0.37.1.
 - **Não use Chromium headless nem Firefox headless** para validar páginas. O motivo e o histórico estão em `docs/operations/NAVEGADOR-TESTES.md`.
