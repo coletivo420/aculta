@@ -1,5 +1,25 @@
 # ACULTA Studio (`aculta_studio`)
 
+## Contrato vigente — Conta e Perfil separados (dev.13)
+
+A arquitetura foi corrigida: **Minha Conta Studio** fica em
+`/studio/conta` e **Meu Perfil Studio** fica em `/studio/perfil`,
+como experiências independentes no hub `/studio`. `/studio/pessoal/*`
+não existe mais e **não tem alias de compatibilidade**.
+
+Minha Conta **legada é permanente** na raiz `/` do Domain ACCOUNT,
+com shell, menus, dados e formulários intactos, para comparação
+antes e depois do aceite. O caminho técnico direto `/minha-conta`
+continua 404; não o habilitar. Conta Studio reutiliza links/forms
+do Portal e Perfil Studio apenas funções do ACULTA User; o apelido
+ainda exige editor isolado futuro. Nenhum PHP/Unit/Kernel/Runtime ou
+Firefox foi executado nesta edição pelo GitHub.
+
+Contrato principal:
+[Conta e Perfil separados](../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+**As seções dev.8–12 abaixo são registros históricos e estão superadas.**
+
+
 ## STUDIO-P2-A — edição inicial de Meu Perfil (dev.12)
 
 **Novo endereço `/studio/pessoal/perfil`**: página privada que compõe as
