@@ -1,3 +1,15 @@
+## 0.1.1-dev.116 — uniformizar lease dos workers de e-mail direto — 2026-10-24
+
+- Os workers diretos de Fórum, amizade, mensagens privadas, LMS, Wiki, Loja e
+  Doações usam lease compartilhada de 180 s, acima do timeout de socket PHP
+  local (60 s) e com margem para persistir o resultado antes de outro worker
+  poder enviar a mesma mensagem. O valor evita que locks curtos de 30/60 s
+  expirem enquanto o transporte ainda está bloqueado.
+- Unit Messenger + integrações: 142 testes / 876 assertions PASS; PHP lint e
+  `git diff --check` PASS. PHPCS apontou violações preexistentes de comentários
+  na classe de mensagens privadas, sem relação com as linhas alteradas. Sem
+  transporte real, workers concorrentes de SO ou Runtime.
+
 ## 0.1.1-dev.115 — testar retry e liberação do lock após exceção — 2026-10-24
 
 - O teste integrado provoca uma exceção no primeiro envio, verifica liberação

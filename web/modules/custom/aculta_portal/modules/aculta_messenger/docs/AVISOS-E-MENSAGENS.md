@@ -92,7 +92,7 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 - `Service/ConversationPolicy`, `ConversationMessagingState`: quem pode abrir conversa (privacidade e amizade).
 - `Service/UnreadThreadCounter`: contagem de conversas não lidas.
 - `Hook/PrivateMessage*Hooks`: formulários, respostas, retenção e apresentação das mensagens.
-- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega, por e-mail, de mensagens privadas.
+- `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega, por e-mail, de mensagens privadas. Assim como os demais workers de e-mail direto, usa lease compartilhada de 180 s para cobrir o timeout de socket conhecido e a persistência do resultado.
 - `Mapper/MessengerPrivateMessageMapper`: mapeamento de dados para o tema.
 
 **Avisos (comunicados, alertas e avisos por pessoa)**

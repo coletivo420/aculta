@@ -12,6 +12,7 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\message\MessageInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
@@ -76,7 +77,7 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       return;
     }
     $lockId = 'aculta_lms_messenger:message:' . $messageId;
-    if (!$this->lock->acquire($lockId, 60.0)) {
+    if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('LMS notification is already being processed.');
     }
     try {

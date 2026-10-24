@@ -13,6 +13,7 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutboxInterface;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
@@ -83,7 +84,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       return;
     }
     $lockId = 'aculta_messenger:forum_direct_email:' . $id;
-    if (!$this->lock->acquire($lockId, 60.0)) {
+    if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Forum direct notice email is already being processed.');
     }
     try {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -70,7 +71,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       return;
     }
     $lockId = 'aculta_messenger:friendship_notice_email:' . $messageId;
-    if (!$this->lock->acquire($lockId, 60.0)) {
+    if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Friendship notice email is already being processed.');
     }
     try {

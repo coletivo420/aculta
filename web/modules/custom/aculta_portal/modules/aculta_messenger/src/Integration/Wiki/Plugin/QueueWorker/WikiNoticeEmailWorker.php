@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -67,7 +68,7 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       return;
     }
     $key = 'aculta_wiki_email:' . $id;
-    if (!$this->lock->acquire($key, 30)) {
+    if (!$this->lock->acquire($key, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Wiki notice email is currently being processed.');
     }
     try {

@@ -54,7 +54,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects(self::once())
       ->method('acquire')
-      ->with('aculta_messenger:friendship_notice_email:8', 60.0)
+      ->with('aculta_messenger:friendship_notice_email:8', 180.0)
       ->willReturn(FALSE);
     $lock->expects(self::never())->method('release');
     $worker = $this->worker($entityTypeManager, $notifier, $lock);

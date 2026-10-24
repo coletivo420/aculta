@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -70,7 +71,7 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
       return;
     }
     $lockId = 'aculta_messenger:donation_email:' . $id;
-    if (!$this->lock->acquire($lockId, 60.0)) {
+    if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Donation notice email is already being processed.');
     }
     try {

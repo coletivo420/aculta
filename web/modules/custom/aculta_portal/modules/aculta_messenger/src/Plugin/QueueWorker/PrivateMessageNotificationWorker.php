@@ -16,6 +16,7 @@ use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -100,7 +101,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       }
 
       $lockId = 'aculta_messenger:private_message:' . $messageId . ':' . $recipientId;
-      if (!$this->lock->acquire($lockId, 60.0)) {
+      if (!$this->lock->acquire($lockId, MessengerEmailLock::TIMEOUT)) {
         throw new \RuntimeException('Private message notification is already being processed.');
       }
 

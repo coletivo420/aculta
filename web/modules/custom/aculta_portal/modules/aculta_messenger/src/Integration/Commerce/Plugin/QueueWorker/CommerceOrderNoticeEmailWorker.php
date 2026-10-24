@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Commerce\Mail\CommerceOrderNoticeMailType;
+use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -67,7 +68,7 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       return;
     }
     $key = 'aculta_commerce_email:' . $id;
-    if (!$this->lock->acquire($key, 30)) {
+    if (!$this->lock->acquire($key, MessengerEmailLock::TIMEOUT)) {
       throw new \RuntimeException('Commerce order notice email is currently being processed.');
     }
     try {
