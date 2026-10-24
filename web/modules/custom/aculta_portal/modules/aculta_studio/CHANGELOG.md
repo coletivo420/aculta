@@ -1,3 +1,26 @@
+## 0.1.0-dev.10 — STUDIO-P1-C: Hub canônico e Marley minúsculo (2026-10-24)
+
+- **Decisão vigente:** `/studio` passa a apresentar o hub global para contas
+  autenticadas autorizadas; **`/studio/marley` é a entrada inicial canônica
+  do Marley**, preservando o route ID `aculta_studio.home`, controller, abas,
+  seções e subrotas minúsculas.
+- `/studio/Marley` (capitalização rejeitada como URL canônica) passa a alias
+  temporário com redirecionamento HTTP 302 somente GET/HEAD para
+  `/studio/marley`. `/studio/inicio`, a prévia da dev.9, redireciona
+  apenas GET/HEAD para `/studio`.
+- O antigo route ID `aculta_studio.legacy_home` permanece para consumidores,
+  agora atendendo o controller do hub. Links internos editoriais gerados pelo
+  route ID `aculta_studio.home` apontam para a URL minúscula. O catálogo
+  continua filtrando experiências por autorização e disponibilidade.
+- Atualizados os testes Unit de rotas e hub para a URL canônica minúscula,
+  o alias maiúsculo e a nova apresentação do hub. Não modificar
+  `/studio/pessoal`, `/studio/ganjalab`, `/studio/we-sativa`,
+  home `/` da Conta ou perfil público `/u/{apelido}`.
+- **Limitação:** execução de PHPUnit, Kernel/Functional, verificação de
+  subscribers de Domain, testes HTTP autenticados, Runtime/Drush e
+  Firefox ESR/X11 **pendentes**. A mudança está no código Git, não
+  homologada; nenhum deploy, migração ou merge foi feito.
+
 ## 0.1.0-dev.9 — STUDIO-P1-B: ponte Marley e prévia do hub (2026-10-24)
 
 - `MarleyExperienceProvider` registra Marley no `StudioExperienceManager`,
