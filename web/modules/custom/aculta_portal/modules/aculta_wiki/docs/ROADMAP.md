@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.111**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.112**. No Runtime de teste,
 `aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
 desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
 WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.

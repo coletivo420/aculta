@@ -1,3 +1,12 @@
+## 0.1.0-dev.112 — fixar os tipos públicos dos eventos editoriais
+
+- Adiciona os eventos imutáveis `WikiEntryReviewRequestedEvent` e
+  `WikiProposalOutcomeRecordedEvent`, cada um com `NAME`, schema de fila v1,
+  UUID e revisão validados; resultado da proposta restrito a `needs_changes`,
+  `declined` e `accepted`. O envelope não carrega conteúdo editorial.
+- Unit passou 4 testes / 5 asserções. Ainda não há producer, QueueWorker nem
+  integração Messenger; os value objects fecham somente a interface do evento.
+
 ## Contrato Wiki → Messenger v1 — avisos editoriais
 
 - Escopo decidido: aviso de revisão de verbete para contas `content_editor`

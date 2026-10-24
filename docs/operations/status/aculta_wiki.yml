@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.111 — Runtime WE SATIVA homologada: updb 10001, quatro tabelas, Kernel 1/30 e Firefox ESR/X11 19/19. Contrato Wiki→Messenger v1 especificado: dois eventos, fila persistente/retry, e-mails mantidos; producer/API consumer pendentes."
-next_phase: 'Implementar os eventos enfileirados na Wiki e handoff da API de registro ao owner Messenger; depois validar Olivero e WCAG 2.2 AA ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.112 — Runtime WE SATIVA homologada: updb 10001, quatro tabelas, Kernel 1/30 e Firefox ESR/X11 19/19. Contrato Messenger v1 inclui dois eventos; value objects Unit 4/5. Fila, producers e consumer pendentes."
+next_phase: 'Implementar enqueue/QueueWorker pós-commit e consumer idempotente com API pública Messenger; depois validar Olivero e WCAG 2.2 AA ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

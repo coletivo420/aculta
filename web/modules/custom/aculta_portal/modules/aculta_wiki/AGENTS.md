@@ -44,6 +44,10 @@
 # retry. E-mails atuais permanecem. API de escrita do Messenger e producers Wiki
 # aguardam revisão/implementação; ver docs/MESSENGER-EVENT-CONTRACT.md.
 
+# Dev.112: os dois value objects de evento implementam NAME, schema_version=1,
+# validação de UUID/revisão e allowlist; Unit 4/5. Ainda não enfileiram nem são
+# emitidos; não declarar aviso Messenger funcional.
+
 # Dev.111: update_10001 instala o schema completo de aculta_wiki_proposal quando
 # ausente e instala proposed_fields apenas se necessário. Kernel simulado passou
 # 1/30. Runtime de teste aplicou update 10001 e drush cr; Firefox ESR/X11 passou

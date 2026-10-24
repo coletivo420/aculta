@@ -28,8 +28,9 @@ O ID da revisão é a versão do fato e a base de deduplicação; uma nova revis
 submetida ou uma nova decisão gera outro aviso. O listener deve ser idempotente
 para a combinação evento + UUID da origem + revisão + destinatário.
 
-O envelope de fila tem `schema_version=1`, nome do evento e somente os campos
-da tabela. A revisão é positiva; o estado de proposta aceita apenas
+O envelope de fila tem `schema_version=1`, `event`, `source_uuid` e
+`source_revision_id`; para resultado de proposta, inclui também `recipient_uid`
+e `outcome`. A revisão é positiva; o estado de proposta aceita apenas
 `needs_changes`, `declined` ou `accepted`. O ID de deduplicação para cada
 destinatário é `event name + source UUID + revision ID + recipient UID`.
 
@@ -86,9 +87,11 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
 
 ## Estado de implementação
 
-O owner Wiki mantém atualmente os notifiers de e-mail, mas ainda não emite estes
-eventos. O Messenger fornece hooks de apresentação/contagem e sua integração
-LMS, mas ainda não há API pública genérica de registro para esta integração.
-Depois da revisão do owner Messenger: implementar os eventos produtores e o
-QueueWorker na Wiki, fechar o contrato de escrita/idempotência do adapter e
-ligar os avisos pessoais sem retirar os e-mails atuais.
+Os value objects dos dois eventos estão implementados em `src/Event/`, com
+payload v1 validado por Unit (4 testes / 5 asserções). O owner Wiki mantém os
+notifiers de e-mail, mas ainda não enfileira nem emite estes eventos. O
+Messenger fornece hooks de apresentação/contagem e sua integração LMS, mas
+ainda não há API pública genérica de registro para esta integração. Próximos
+passos: revisão do owner Messenger, implementar enqueue pós-save e QueueWorker
+retry na Wiki, fechar o contrato de escrita/idempotência do adapter e ligar os
+avisos pessoais sem retirar os e-mails atuais.

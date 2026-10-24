@@ -11,9 +11,14 @@ pendentes, está em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois
   eventos versionados por revisão (verbete enviado à fila e resultado de
   proposta), destinatários por acesso atual, payload mínimo, e-mails atuais
-  preservados e fila persistente com retry. Escopo decidido; API pública de
-  escrita do Messenger ainda depende de revisão do owner e produtores Wiki não
-  estão implementados.
+  preservados e fila persistente com retry. Os dois value objects versionados
+  validam UUID/revisão, allowlist e payload (Unit 4/5); fila, emissão, consumer e
+  API pública Messenger continuam pendentes.
+
+- `0.1.0-dev.112`: adiciona `WikiEntryReviewRequestedEvent` e
+  `WikiProposalOutcomeRecordedEvent` com envelope Queue v1 e allowlist de
+  estados. Unit passou 4 testes / 5 asserções; producers, QueueWorker e consumer
+  Messenger ainda não estão ligados.
 
 - `0.1.0-dev.111`: `aculta_wiki_update_10001()` instala a definição da entidade
   `aculta_wiki_proposal` quando o módulo já estava habilitado antes dela existir,
