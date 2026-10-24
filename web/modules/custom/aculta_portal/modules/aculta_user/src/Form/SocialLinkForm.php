@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,6 +25,7 @@ final class SocialLinkForm extends FormBase {
     private readonly AccountProxyInterface $currentUserService,
     private readonly SocialNetworks $networks,
     private readonly CsrfTokenGenerator $csrfToken,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /**
@@ -35,6 +37,7 @@ final class SocialLinkForm extends FormBase {
       $container->get('current_user'),
       $container->get('aculta_user.social_networks'),
       $container->get('csrf_token'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -56,15 +59,22 @@ final class SocialLinkForm extends FormBase {
     $profile = $this->profile();
     $current = $this->networks->linksOf($profile)[$rede] ?? '';
 
-    $form['#action'] = Url::fromRoute('aculta_user.redes_form', ['rede' => $rede])->toString();
-    // Marca o formulário para o JS de envio por JSON (o Portal não adiciona AJAX do Core a ele).
-    $form['#aculta_json_save'] = TRUE;
-    $form['#attributes']['data-aculta-json-form'] = 'social';
-    $form['#attributes']['data-portal-ui'] = 'social-link-dialog';
-    $form['#attached']['library'][] = 'aculta_user/account-bio-form';
-    $form['#attached']['drupalSettings']['acultaUser']['jsonForms']['social'] = [
-      'url' => Url::fromRoute('aculta_user.redes_save', [], ['query' => ['token' => $this->csrfToken->get('redes/salvar')]])->toString(),
-    ];
+    $studio = $this->isStudioEditor();
+    $form['#action'] = Url::fromRoute(
+      $studio ? 'aculta_studio.personal_social' : 'aculta_user.redes_form',
+      ['rede' => $rede],
+    )->toString();
+    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-social-form' : 'social-link-dialog';
+    // Minha Conta keeps its modal/JSON workflow. The Studio full-page form
+    // uses native Form API for validation, CSRF, and a no-JavaScript fallback.
+    if (!$studio) {
+      $form['#aculta_json_save'] = TRUE;
+      $form['#attributes']['data-aculta-json-form'] = 'social';
+      $form['#attached']['library'][] = 'aculta_user/account-bio-form';
+      $form['#attached']['drupalSettings']['acultaUser']['jsonForms']['social'] = [
+        'url' => Url::fromRoute('aculta_user.redes_save', [], ['query' => ['token' => $this->csrfToken->get('redes/salvar')]])->toString(),
+      ];
+    }
     $form['rede'] = ['#type' => 'hidden', '#value' => $rede];
     $form['link'] = [
       '#type' => 'url',
@@ -74,12 +84,14 @@ final class SocialLinkForm extends FormBase {
       '#maxlength' => 255,
     ];
     $form['actions'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-bio-actions']];
-    $form['actions']['clear'] = [
-      '#type' => 'button',
-      '#value' => $this->t('Limpar'),
-      '#attributes' => ['data-aculta-clear' => '', 'data-portal-ui' => 'button-secondary'],
-      '#weight' => -1,
-    ];
+    if (!$studio) {
+      $form['actions']['clear'] = [
+        '#type' => 'button',
+        '#value' => $this->t('Limpar'),
+        '#attributes' => ['data-aculta-clear' => '', 'data-portal-ui' => 'button-secondary'],
+        '#weight' => -1,
+      ];
+    }
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar')];
     return $form;
   }
@@ -99,7 +111,16 @@ final class SocialLinkForm extends FormBase {
     $profile = $this->profile();
     $this->networks->setLink($profile, $rede, $uri);
     $profile->save();
-    $form_state->setRedirect('aculta_portal.dashboard');
+    $form_state->setRedirect($this->isStudioEditor()
+      ? 'aculta_studio.personal_profile'
+      : 'aculta_portal.dashboard');
+  }
+
+  /**
+   * Returns whether this same owner form serves a full-page Studio screen.
+   */
+  private function isStudioEditor(): bool {
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_social';
   }
 
   /**
