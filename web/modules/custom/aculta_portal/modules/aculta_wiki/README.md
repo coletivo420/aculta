@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.93`: criação guiada pelo formulário Core; “Salvar rascunho” e
+  “Enviar para revisão” são ações separadas, respeitando a transição oficial.
+  Teste Kernel MariaDB focal 1/77, incluindo tentativa de publicação pelo campo
+  `status`; o rascunho permaneceu privado. Runtime e visual intocados.
+
 - `0.1.0-dev.92`: proposta contextual agora tem etapas `Escrever` e `Revisar e
   enviar`, mantém os valores server-side ao voltar e mostra os valores propostos
   antes do envio. Se o verbete mudar, não envia contra uma base silenciosamente

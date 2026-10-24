@@ -15,6 +15,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Acesso e cache | Kernel | Conta confirmada com criação pode entrar; conta alheia sem itens não pode; cache varia por usuário/domínio | aprovado; 286 depreciações Drupal/contrib e 16 PHPUnit na classe |
 | Rota de criação contextual | Kernel | `node.add` autoriza a conta confirmada; o link Studio conserva parâmetros e Domain Wiki quando iniciado em `main` | aprovado (dev.40; 1 teste / 41 asserções) |
 | Construção do formulário Node | Kernel | Form API Core, conta confirmada, estado `draft` selecionado, transição `draft_to_review` e sem opção de publicar | aprovado (dev.42) |
+| Criação guiada e ações distintas | Kernel MariaDB | Campos ordenados e instruídos; salvar rascunho mantém `draft`; enviar usa transição para `review`; `status=1` não publica o rascunho | aprovado (dev.93; focal 1/77; 203 depreciações Core/contrib, 2 PHPUnit) |
 | Edição própria e Domain | Kernel | Workspace só mostra edição após `update` Entity Access no purpose Wiki; link usa rota Core e Domain Wiki | aprovado (dev.44; incluso nos 2 focais) |
 | Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
 | Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |

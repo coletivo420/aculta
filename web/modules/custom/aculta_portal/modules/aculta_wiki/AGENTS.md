@@ -1,3 +1,7 @@
+- Dev.93: formulário Core organiza a criação, explica título/síntese/texto e
+  separa salvar rascunho de enviar para revisão via transição oficial. Kernel
+  MariaDB 1/77; tentativa de forçar publicação negada. Runtime/visual intocados.
+
 # Wiki — instruções locais
 
 - Dev.92: proposta contextual em duas etapas Form API; Back preserva valores;

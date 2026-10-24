@@ -8,6 +8,7 @@ use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
+use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
@@ -78,24 +79,30 @@ final class WikiEntryImageHooks {
       $form['actions']['submit']['#submit'] = $submitHandlers;
     }
 
+    $this->prepareAuthoringForm($form, $node);
+
     $field = WikiLeadImageUploader::FIELD;
     if (!isset($form[$field])) {
+      $this->addReviewAction($form, $node);
       return;
     }
     $access = $form[$field]['#access'] ?? TRUE;
     if ($access === FALSE || ($access instanceof AccessResultInterface && !$access->isAllowed())) {
+      $this->addReviewAction($form, $node);
       return;
     }
 
     // Without an enabled image extension the policy has nothing to offer; the
     // core autocomplete stays visible instead of locking the field.
     if ($this->uploadPolicy->imageExtensions(WikiLeadImageUploader::CONSUMER) === '') {
+      $this->addReviewAction($form, $node);
       return;
     }
 
     $submitHandlers = $form['actions']['submit']['#submit'] ?? [];
     if (!in_array('::save', $submitHandlers, TRUE)
       && !in_array('aculta_wiki.wiki_lead_image_uploader:saveNode', $submitHandlers, TRUE)) {
+      $this->addReviewAction($form, $node);
       return;
     }
 
@@ -170,6 +177,68 @@ final class WikiEntryImageHooks {
       }
       $form['actions']['submit']['#submit'] = $submitHandlers;
     }
+    $this->addReviewAction($form, $node);
+  }
+
+  /**
+   * Orders core fields and adds concise guidance for a new Wiki entry.
+   */
+  private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
+    $weights = [
+      'title' => 0,
+      'field_wiki_summary' => 1,
+      'body' => 2,
+      'field_wiki_references' => 3,
+      'field_wiki_categories' => 4,
+      'field_wiki_related' => 5,
+      'moderation_state' => 7,
+    ];
+    foreach ($weights as $fieldName => $weight) {
+      if (isset($form[$fieldName])) {
+        $form[$fieldName]['#weight'] = $weight;
+      }
+    }
+    if (!$node->isNew()) {
+      return;
+    }
+    if (isset($form['title'])) {
+      $form['title']['#description'] = $this->t('Use um título simples e específico para o verbete.');
+    }
+    if (isset($form['field_wiki_summary'])) {
+      $form['field_wiki_summary']['#description'] = $this->t('Resuma o tema em poucas frases. Essa síntese ajuda a pessoa leitora a decidir se abre o verbete.');
+    }
+    if (isset($form['body'])) {
+      $form['body']['#description'] = $this->t('Explique o tema com linguagem clara. Inclua fontes verificáveis no campo Referências.');
+    }
+  }
+
+  /**
+   * Adds a separate review action only when Core exposes that transition.
+   */
+  private function addReviewAction(array &$form, NodeInterface $node): void {
+    if (!isset($form['actions']['submit'])) {
+      return;
+    }
+    $widget = $form['moderation_state']['widget'][0]['state'] ?? NULL;
+    $options = is_array($widget) ? ($widget['#options'] ?? []) : [];
+    if ($node->isNew() && is_array($options) && isset($options['draft'])) {
+      $form['actions']['submit']['#value'] = $this->t('Salvar rascunho');
+    }
+    if (!is_array($options) || !isset($options['review'])) {
+      return;
+    }
+    $review = $form['actions']['submit'];
+    $review['#value'] = $this->t('Enviar para revisão');
+    $submitHandlers = $review['#submit'] ?? [];
+    $entitySubmitHandler = array_search('::submitForm', $submitHandlers, TRUE);
+    if ($entitySubmitHandler === FALSE) {
+      array_unshift($submitHandlers, WikiEntryFormActions::class . '::submitForReview');
+    }
+    else {
+      array_splice($submitHandlers, $entitySubmitHandler + 1, 0, [WikiEntryFormActions::class . '::submitForReview']);
+    }
+    $review['#submit'] = $submitHandlers;
+    $form['actions']['submit_review'] = $review;
   }
 
   /**

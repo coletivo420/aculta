@@ -1639,6 +1639,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);
     self::assertArrayHasKey('submit', $form['actions']);
+    self::assertSame('Salvar rascunho', (string) $form['actions']['submit']['#value']);
+    self::assertSame('Enviar para revisão', (string) $form['actions']['submit_review']['#value']);
+    self::assertNotEmpty($form['actions']['submit_review']['#submit'], var_export($form['actions']['submit_review']['#submit'], TRUE));
+    self::assertSame('Explique o tema com linguagem clara. Inclua fontes verificáveis no campo Referências.', (string) $form['body']['#description']);
     self::assertArrayHasKey('moderation_state', $form);
     $moderationWidget = $form['moderation_state']['widget'][0]['state'];
     self::assertArrayHasKey('draft', $moderationWidget['#options']);
@@ -1656,6 +1660,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
     $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
     $formState->setValue($moderationWidget['#parents'], 'draft');
+    $statusParents = $form['status']['widget'][0]['value']['#parents'] ?? $form['status']['#parents'] ?? ['status'];
+    $formState->setValue($statusParents, 1);
     $formState->setTriggeringElement($form['actions']['submit']);
     $formBuilder->submitForm($formObject, $formState);
 
@@ -1669,6 +1675,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame((string) $author->id(), (string) $savedNode->getOwnerId());
     self::assertSame('draft', $savedNode->get('moderation_state')->value);
     self::assertFalse($savedNode->isPublished());
+
+    $reviewNode = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
+    $reviewFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
+    $reviewFormObject->setEntity($reviewNode);
+    $reviewFormState = new FormState();
+    $reviewFormState->setFormObject($reviewFormObject);
+    $reviewForm = $formBuilder->buildForm($reviewFormObject, $reviewFormState);
+    $reviewFormState->setValue($reviewForm['title']['widget'][0]['value']['#parents'], 'Verbete enviado para revisão');
+    $reviewFormState->setValue($reviewForm['body']['widget'][0]['value']['#parents'], 'Texto com fontes para avaliação.');
+    $reviewFormState->setValue($reviewForm['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $reviewFormState->setValue($reviewForm['moderation_state']['widget'][0]['state']['#parents'], 'draft');
+    $reviewFormState->setTriggeringElement($reviewForm['actions']['submit_review']);
+    $formBuilder->submitForm($reviewFormObject, $reviewFormState);
+    self::assertSame([], $reviewFormState->getErrors());
+    $savedReviewNode = Node::load($reviewFormObject->getEntity()->id());
+    self::assertSame('review', $savedReviewNode->get('moderation_state')->value);
+    self::assertFalse($savedReviewNode->isPublished());
 
     $draftRevisionId = (int) $savedNode->getRevisionId();
     $editFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');

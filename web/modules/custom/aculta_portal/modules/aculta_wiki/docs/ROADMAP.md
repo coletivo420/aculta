@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.92**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.93**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.93 — criação guiada de verbetes
+
+O formulário Node nativo organiza os campos editoriais e apresenta instruções
+para título, síntese e texto. A ação principal salva rascunho e a ação separada
+envia para `review` apenas quando a transição oficial está exposta. O Kernel
+MariaDB focal passou (1/77), inclusive ao tentar enviar `status=1` com o rascunho;
+a entidade continuou não publicada. Runtime e Firefox não foram executados.
 
 ### Incremento dev.92 — proposta contextual progressiva
 

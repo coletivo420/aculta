@@ -2,7 +2,7 @@ name: ACULTA Wiki
 type: module
 description: 'Wiki420 colaborativa: verbetes versionados, moderação do Core, busca própria e apresentação no domínio wiki420.'
 package: 'ACULTA Portal'
-version: '0.1.0-dev.92'
+version: '0.1.0-dev.93'
 core_version_requirement: ^11.3
 dependencies:
   - aculta_portal:aculta_portal

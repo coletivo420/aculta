@@ -1,3 +1,14 @@
+## 0.1.0-dev.93 — criação guiada e envio explícito para revisão
+
+- O formulário nativo organiza título, síntese, texto, referências, categorias
+  e relações, com instruções curtas nos campos iniciais. A ação primária fica
+  identificada como “Salvar rascunho”; uma segunda ação envia para `review`
+  somente quando a transição está disponível no widget oficial do workflow.
+- O submit dedicado define `review` antes do salvamento Core. Kernel MariaDB
+  focal passou com 1 teste / 77 asserções, incluindo tentativa de forçar
+  `status=1` no rascunho, que permaneceu não publicado. Foram reportadas 203
+  depreciações Core/contrib e 2 PHPUnit. Runtime e validação visual intocados.
+
 # Changelog — ACULTA Wiki
 
 ## 0.1.0-dev.92 — proposta contextual em duas etapas
