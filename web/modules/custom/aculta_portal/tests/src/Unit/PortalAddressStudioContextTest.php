@@ -26,8 +26,9 @@ final class PortalAddressStudioContextTest extends UnitTestCase {
     $state->expects(self::once())->method('setRedirect')
       ->with('aculta_portal.my_data_address');
 
+    $form = [];
     $this->callbacks('aculta_portal.my_data_address')
-      ->addressRedirect($this->emptyForm(), $state);
+      ->addressRedirect($form, $state);
   }
 
   /**
@@ -38,8 +39,9 @@ final class PortalAddressStudioContextTest extends UnitTestCase {
     $state->expects(self::once())->method('setRedirect')
       ->with('aculta_studio.account_address');
 
+    $form = [];
     $this->callbacks('aculta_studio.account_address')
-      ->addressRedirect($this->emptyForm(), $state);
+      ->addressRedirect($form, $state);
   }
 
   /**
@@ -50,8 +52,9 @@ final class PortalAddressStudioContextTest extends UnitTestCase {
     $state->expects(self::once())->method('setRedirect')
       ->with('aculta_portal.my_data_address');
 
+    $form = [];
     $this->callbacks('aculta_studio.profile')
-      ->addressRedirect($this->emptyForm(), $state);
+      ->addressRedirect($form, $state);
   }
 
   /**
@@ -65,16 +68,6 @@ final class PortalAddressStudioContextTest extends UnitTestCase {
     $callbacks = $reflection->newInstanceWithoutConstructor();
     $reflection->getProperty('routeMatch')->setValue($callbacks, $match);
     return $callbacks;
-  }
-
-  /**
-   * Supplies a mutable Form API render array to the owner callback.
-   *
-   * @return array<string, mixed>
-   *   Empty form; this callback only sets the return destination.
-   */
-  private function emptyForm(): array {
-    return [];
   }
 
 }
