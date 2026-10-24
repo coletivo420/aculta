@@ -145,7 +145,9 @@ final class WikiProposalDecisionForm extends FormBase {
             'replace' => $this->t('Substituir a lista atual'),
             'append' => $this->t('Acrescentar itens à lista atual'),
           ],
-          '#default_value' => 'replace',
+          '#empty_option' => $this->t('- Escolha como aplicar -'),
+          '#empty_value' => '',
+          '#default_value' => '',
           '#states' => [
             'visible' => [
               ':input[name="decision"]' => ['value' => 'accepted'],
@@ -231,6 +233,15 @@ final class WikiProposalDecisionForm extends FormBase {
       $available = (array) $form_state->get('wiki_proposal_fields');
       if ($approved === [] || array_diff($approved, $available) !== []) {
         $form_state->setErrorByName('approved_fields', $this->t('Selecione ao menos um campo proposto para aplicar.'));
+      }
+      $listModes = (array) $form_state->getValue('list_modes');
+      foreach (['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'] as $fieldName) {
+        if (in_array($fieldName, $approved, TRUE)
+          && !in_array($listModes[$fieldName] ?? NULL, ['replace', 'append'], TRUE)) {
+          $form_state->setErrorByName('list_modes[' . $fieldName . ']', $this->t('Escolha substituir ou acrescentar @field.', [
+            '@field' => WikiProposal::EDITORIAL_FIELDS[$fieldName],
+          ]));
+        }
       }
     }
   }

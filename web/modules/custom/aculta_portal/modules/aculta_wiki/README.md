@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.91`: moderação exige uma escolha explícita por lista aprovada
+  (substituir ou acrescentar); não presume `replace`. Form API e serviço
+  rejeitam ausência de escolha. Kernel focal 1/183; Runtime intocado.
+
 - `0.1.0-dev.90`: regressão Kernel caracteriza “Alterações recentes” para duas
   contas de mesmo papel com grants diferentes; cada uma vê apenas seu verbete,
   e o fragmento declara `user.node_grants:view`. Focal 1/43; Runtime intocado.

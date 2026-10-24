@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.91 — decisão explícita para listas editoriais
+
+- O formulário de moderação não preseleciona mais `replace` em referências,
+  categorias ou relações. Ao aceitar um desses campos, a pessoa editora precisa
+  escolher substituir ou acrescentar; a validação do serviço permanece como
+  proteção de backend.
+- Kernel focal MariaDB passou com 1 teste / 183 asserções; 202 depreciações
+  upstream e 2 PHPUnit. Runtime intocado.
+
 ## 0.1.0-dev.90 — caracterizar grants em Alterações recentes
 
 - O Kernel de acesso agora verifica que duas contas com o mesmo papel e grants

@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.91: campos de lista aprovados exigem escolha explícita `replace` ou
+  `append` no Form API e no serviço. Kernel focal 1/183; Runtime intocado.
+
 - Dev.90: Kernel cobre isolamento de “Alterações recentes” por grants entre
   contas de mesmo papel e cache `user.node_grants:view` (1/43); Runtime intocado.
 

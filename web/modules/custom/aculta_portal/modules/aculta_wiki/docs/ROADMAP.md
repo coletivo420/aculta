@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.90**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.91**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.91 — escolha obrigatória na aplicação de listas
+
+Na decisão de proposta, referências, categorias e relações não vêm mais com
+`replace` preselecionado. Para cada lista que selecionar para aplicação, a
+edição deve escolher explicitamente substituir ou acrescentar. A validação
+Form API confirma a escolha e o serviço continua rejeitando modo ausente ou
+inválido. Kernel focal MariaDB passou (1/183); Runtime intocado.
 
 ### Incremento dev.90 — grants em Alterações recentes
 

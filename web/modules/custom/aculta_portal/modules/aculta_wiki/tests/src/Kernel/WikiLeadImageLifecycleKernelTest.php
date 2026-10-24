@@ -2531,6 +2531,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(['list_modes', 'field_wiki_references'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#parents']);
     self::assertSame(['list_modes', 'field_wiki_categories'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_categories']['#parents']);
     self::assertSame(['list_modes', 'field_wiki_related'], $decisionBuild['editorial_decision']['list_modes']['field_wiki_related']['#parents']);
+    self::assertSame('', $decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#default_value']);
+    self::assertNotEmpty($decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#empty_option']);
     $decisionState->setValue($decisionBuild['expected_revision_id']['#parents'], (int) $acceptedCandidate->getRevisionId());
     $decisionState->setValue($decisionBuild['editorial_decision']['decision']['#parents'], 'accepted');
     $decisionState->setValue($decisionBuild['editorial_decision']['decision_note']['#parents'], 'Título conferido e publicado.');
@@ -2541,6 +2543,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_wiki_related' => 'field_wiki_related',
       'field_wiki_image' => 'field_wiki_image',
     ]);
+    $missingModeState = new FormState();
+    $missingModeState->set('wiki_proposal_fields', array_keys($acceptedCandidate->getProposedFields()));
+    $missingModeState->setValue('decision', 'accepted');
+    $missingModeState->setValue('decision_note', 'Decisão sem modo de lista.');
+    $missingModeState->setValue('approved_fields', ['field_wiki_categories' => 'field_wiki_categories']);
+    $decisionFormObject->validateForm($decisionBuild, $missingModeState);
+    self::assertArrayHasKey('list_modes[field_wiki_categories]', $missingModeState->getErrors());
+    $missingModeState->clearErrors();
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_references']['#parents'], 'append');
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_categories']['#parents'], 'append');
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_related']['#parents'], 'replace');
