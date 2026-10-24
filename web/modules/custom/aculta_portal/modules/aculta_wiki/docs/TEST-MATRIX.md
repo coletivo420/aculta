@@ -109,6 +109,11 @@ Revalidado no HEAD `8896527e7`: três Kernels MariaDB, 141 asserções; 283
 depreciações Core/contrib, 4 PHPUnit e uma depreciação PHP do Webform contrib.
 Runtime intocado.
 
+No HEAD `8d0bf703f` (2026-10-24), os testes Kernel de discovery das rotas/View,
+CTA por `createAccess()` e busca isolada por `user.node_grants:view` passaram
+(3 testes / 167 asserções; 300 depreciações Core/contrib, 4 PHPUnit e uma PHP
+do Webform contrib). Runtime não alterado nem homologado.
+
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | revalidado no HEAD: parte do focal 3/141 (MariaDB) |

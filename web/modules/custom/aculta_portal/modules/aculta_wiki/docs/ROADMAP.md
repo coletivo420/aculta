@@ -14,6 +14,13 @@ integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação R2 — rotas e acesso no HEAD `8d0bf703f` (2026-10-24)
+
+Os focais de discovery/View, CTA com `createAccess()` real e isolamento da
+busca entre contas com grants distintos passaram em 3 testes / 167 asserções.
+Foram reportadas 300 depreciações Core/contrib, 4 PHPUnit e uma depreciação PHP
+do Webform contrib. Runtime intocado; smoke HTTP Runtime permanece separado.
+
 ### Revalidação WIKI-R1 — HEAD `fc162b184` (2026-10-24)
 
 `ContentIndexWikiAccessKernelTest`, `ContentIndexOwnerIntegrationKernelTest` e

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação R2 rotas/acesso no HEAD `8d0bf703f` (2026-10-24): Kernels de
+  discovery/View, CTA via `createAccess()` e isolamento da busca por grants
+  passaram em 3 testes / 167 asserções. 300 depreciações Core/contrib, 4 PHPUnit
+  e uma PHP/Webform; Runtime não alterado nem homologado.
+
 - Revalidação WIKI-R1 no HEAD `fc162b184` (2026-10-24): Kernels de acesso Wiki,
   bootstrap owner e rebuild Wiki-owned passaram em 10 testes / 368 asserções
   (MariaDB isolada). Projeção v4, relações e fingerprint inalterados; PHPUnit

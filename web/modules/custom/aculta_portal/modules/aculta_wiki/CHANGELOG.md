@@ -1,3 +1,10 @@
+## Revalidação R2 — rotas e acesso no HEAD `8d0bf703f` (2026-10-24)
+
+- Três Kernels cobriram discovery das rotas/View, CTA por `createAccess()` e
+  resultados da busca para contas com grants diferentes: 3 testes / 167
+  asserções. PHPUnit reportou 300 depreciações Core/contrib, 4 PHPUnit e uma
+  PHP do Webform contrib. Runtime intocado e não homologado.
+
 ## Revalidação WIKI-R1 — HEAD `fc162b184` (2026-10-24)
 
 - Kernels MariaDB de acesso Wiki, bootstrap owner e rebuild Wiki-owned passaram
