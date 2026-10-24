@@ -3,7 +3,9 @@
 `0.1.0-dev.6` adiciona a rota `/studio/we-sativa/inicio` como entrada da
 experiência WE SATIVA. O Studio encaminha ao provider proprietário da Wiki;
 acesso, dados e cache continuam em `aculta_wiki`. Dois Kernels integrados
-passaram (2 testes / 205 asserções). Runtime e browser visual seguem pendentes.
+passaram (2 testes / 205 asserções), e Unit cobre a delegação/autorização do
+controller (3/3 focais; suíte Studio 20 testes / 61 asserções). Runtime e browser
+visual seguem pendentes.
 
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.

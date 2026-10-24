@@ -26,6 +26,15 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 
 ## ACULTA Studio (regra permanente)
 
+### WE SATIVA start page (dev.6)
+
+The `/studio/we-sativa/inicio` controller delegates to the Wiki owner. Unit
+coverage verifies a provider with the optional start-page contract, a provider
+without it, and owner-denied access (3/3 focal; Studio Unit suite 20/61). Kernel
+Wiki integration verifies the route and owner-rendered data (2/205). Runtime and
+Firefox/X11 remain pending because the active Runtime container lacks the
+workspace service and WE SATIVA routes.
+
 - O Studio (`aculta_studio`, `/studio` no domínio conta) é a ferramenta transversal de trabalho por abas. Agrega
   ações dos donos e não é dono de conteúdo, permissões, discussões, galerias nem tabelas próprias equivalentes.
 - Cada aba é um plugin `#[StudioTab]` com três contratos: `isAvailable()` (o dono está habilitado), `access()` (a
