@@ -22,6 +22,53 @@ aculta_studio.personal_profile:
   options:
     _aculta_domain_purpose: account
 
+# P2-B: dedicated Studio editing screens using owner Form API.
+# These are distinct experiences, not redirects or compatibility aliases.
+aculta_studio.personal_data:
+  path: /studio/pessoal/perfil/dados
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::myData'
+    _title: 'Apelido e dados básicos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.personal_privacy:
+  path: /studio/pessoal/perfil/privacidade
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
+    _title: 'Privacidade do perfil'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.personal_bio:
+  path: /studio/pessoal/perfil/bio
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _title: 'Editar biografia'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.personal_social:
+  path: /studio/pessoal/perfil/redes/{rede}
+  defaults:
+    _form: '\Drupal\aculta_user\Form\SocialLinkForm'
+    _title: 'Editar rede social'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    rede: 'instagram|facebook|reddit'
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.we_sativa:
   path: /studio/we-sativa
   defaults:
