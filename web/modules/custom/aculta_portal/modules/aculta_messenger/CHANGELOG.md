@@ -1,3 +1,10 @@
+## 0.1.1-dev.184 — caracterizar workers de adapters opcionais
+
+Teste de contrato verifica que o hook de filas remove os workers de LMS, Wiki, Loja e Doações quando seus módulos estão
+desabilitados e preserva os workers de integrações ativas e filas não relacionadas.
+
+Validação: `OptionalQueueWorkerDefinitionsTest` **1/1 PASS**. Não executa cron nem altera filas persistidas.
+
 ## 0.1.1-dev.183 — exigir categoria válida no digest
 
 O agregador rejeita linhas de providers sem categoria obrigatória antes de aplicar preferências por tipo. Um provider
