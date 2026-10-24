@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,6 +28,7 @@ final class ProfileVisibilityForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountProxyInterface $currentUserService,
     private readonly SettingsTabs $settingsTabs,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /**
@@ -37,6 +39,7 @@ final class ProfileVisibilityForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_portal.settings_tabs'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -54,7 +57,10 @@ final class ProfileVisibilityForm extends FormBase {
     $profile = $this->loadOrCreateProfile();
     $obrigatorio = $this->isObrigatorioPublico();
 
-    $form['tabs'] = $this->settingsTabs->build('privacy');
+    // The Studio owns contextual navigation; Minha Conta retains its tabs.
+    if (!$this->isStudioEditor()) {
+      $form['tabs'] = $this->settingsTabs->build('privacy');
+    }
     $form['intro'] = ['#markup' => '<p>' . $this->t('Escolha o que aparece no seu perfil público. Quando o perfil está privado, aparecem somente a foto e o apelido.') . '</p>'];
 
     // Autores e editores têm perfil público obrigatório: o controle fica bloqueado, com o motivo.
@@ -88,7 +94,16 @@ final class ProfileVisibilityForm extends FormBase {
     $profile->set('field_exibir_email', (bool) $form_state->getValue('exibir_email'));
     $profile->save();
     $this->messenger()->addStatus($this->t('Privacidade salva.'));
-    $form_state->setRedirect('aculta_user.configuracoes_privacidade');
+    $form_state->setRedirect($this->isStudioEditor()
+      ? 'aculta_studio.personal_profile'
+      : 'aculta_user.configuracoes_privacidade');
+  }
+
+  /**
+   * Checks whether the canonical Studio view owns the current form context.
+   */
+  private function isStudioEditor(): bool {
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_privacy';
   }
 
   /**
