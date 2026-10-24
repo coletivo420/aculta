@@ -42,6 +42,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
+use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -836,6 +837,8 @@ final class MessagesController extends ControllerBase {
     if ($includeReadActions && $this->account->isAuthenticated()) {
       $items = $this->noticeReadActionBuilder->attach($items, $this->account);
     }
+
+    $items = NoticeRelatedGrouper::group($items);
 
     if ($items === []) {
       $emptyMessage = $hasFilters

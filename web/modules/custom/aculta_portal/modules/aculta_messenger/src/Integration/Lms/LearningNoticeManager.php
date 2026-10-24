@@ -34,6 +34,7 @@ use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -457,6 +458,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
           'data-aculta-notice-origin' => 'aprendizagem',
           'data-aculta-notice-read' => (bool) $message->get(self::READ_FIELD)->value ? 'read' : 'unread',
           'data-aculta-notice-message-id' => (string) $message->id(),
+          ...NoticeRelatedGrouper::sourceAttribute('aprendizagem', (string) $message->get(self::SOURCE_FIELD)->value),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.lms_notice_open', [
           'message' => $message->id(),

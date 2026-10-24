@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -190,6 +191,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
           'data-aculta-notice-origin' => 'loja',
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
+          ...NoticeRelatedGrouper::sourceAttribute('loja', (string) $message->get(self::SOURCE_FIELD)->value),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.commerce_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];

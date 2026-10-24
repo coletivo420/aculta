@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -187,6 +188,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           'data-aculta-notice-origin' => 'wiki',
           'data-aculta-notice-read' => $unread ? 'unread' : 'read',
           'data-aculta-notice-message-id' => (string) $message->id(),
+          ...NoticeRelatedGrouper::sourceAttribute('wiki', (string) $message->get(self::SOURCE_FIELD)->value),
         ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.wiki_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];

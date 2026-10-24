@@ -1771,3 +1771,9 @@ Validação: `ForumNoticeIdempotencyKernelTest` **34/773 PASS**; Unit/Integratio
 lint PASS. O teste injeta uma lease expirada enquanto o transporte está ativo, confirma que o novo worker não envia um
 segundo manifesto e verifica recuperação posterior sem nova entrega.
 
+## 0.1.1-dev.166 — agrupar avisos relacionados na central — 2026-10-24
+
+A lista agrupa avisos Message de LMS, Wiki, Loja e Doações quando compartilham a mesma origem e UUID do conteúdo. O grupo preserva a ordem e mantém links, estado de leitura e formulários de leitura individuais. A chave é um hash transitório de render e é removida antes da saída. Fórum permanece com sua agregação nativa por tópico; armazenamento e deduplicação não mudam.
+
+Validação: `NoticeRelatedGrouperTest` 2/13 PASS; PHPCS Drupal/DrupalPractice dos arquivos novos e adapters tocados PASS; lint PHP focal PASS; smoke visual pendente.
+
