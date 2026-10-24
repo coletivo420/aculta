@@ -1,3 +1,25 @@
+## 0.1.0-dev.13 — separação definitiva Conta/Perfil no Studio (2026-10-24)
+
+- `/studio/conta` e `/studio/perfil` passam a ser **experiências independentes**
+  (`conta` e `perfil`), com providers, controllers, ACL e entradas separadas
+  no hub. `/studio/pessoal/*` foi removido sem aliases.
+- Conta Studio tem navegação inicial para os formulários existentes do Portal;
+  nenhum formulário ou entidade foi copiado. Perfil Studio mantém apenas bio,
+  redes, foto e privacidade, preservando `/u/{apelido}` em MAIN.
+  Apelido ainda requer formulário público isolado; **não** renderizar
+  o formulário cadastral completo na experiência Perfil.
+- Formulários do ACULTA User foram reaproveitados em rotas de Perfil com
+  Form API completo, sem JS obrigatório; editores e handlers da Minha Conta
+  original permanecem inalterados no próprio contexto.
+- **Minha Conta original deve existir permanentemente em `/` no purpose
+  ACCOUNT** para comparação, incluindo shell, menus e dados.
+  `/minha-conta` direto permanece rota técnica bloqueada em 404.
+- `StudioProfileAccess` verifica módulo User instalado e autorização.
+  Testes Unit e de rotas atualizados; PHP/Unit/Kernel/Functional/Runtime/
+  Firefox **não executados** neste incremento.
+- Contrato: `docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md`.
+  Logs dev.8–12 abaixo registram apenas o histórico da arquitetura superada.
+
 ## 0.1.0-dev.12 — STUDIO-P2-A: editor de Meu Perfil por serviços User (2026-10-24)
 
 - Nova rota privada e canônica `/studio/pessoal/perfil` (purpose `account`,
