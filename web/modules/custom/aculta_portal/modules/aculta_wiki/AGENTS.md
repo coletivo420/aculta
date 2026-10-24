@@ -30,6 +30,10 @@
 
 # Wiki — instruções locais
 
+- Dev.101: Kernel confirma que lookup sem publicação anterior exige revisão e
+  não concede `review_to_published` à autoria (1/93; 203 depreciações upstream,
+  2 PHPUnit). Política após publicação anterior aguarda decisão.
+
 - Dev.100: suíte Unit Wiki 71/400; expectativa de formulário sem imagem agora
   preserva orientação de título e confirma ausência dos controles de imagem.
 

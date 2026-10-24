@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.101`: Kernel integra lookup de participação e formulário nativo;
+  primeira submissão segue em `review` e não habilita publicação pela autoria
+  (1/93). Sem mudança de permissões ou transições.
+
 - `0.1.0-dev.100`: suíte Unit completa aprovada (71/400). A regressão do
   formulário sem campo de imagem agora preserva a orientação autoral sem criar
   controles de imagem (3 depreciações PHPUnit; Runtime intocado).

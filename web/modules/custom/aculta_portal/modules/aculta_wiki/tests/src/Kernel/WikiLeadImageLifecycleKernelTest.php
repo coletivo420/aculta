@@ -1629,6 +1629,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
 
     self::assertTrue($this->container->get('aculta_portal.email_confirmation_policy')->isConfirmed($author));
+    $participation = $this->container->get('aculta_user.published_participation_lookup')
+      ->lookup((int) $author->id(), 'wiki_entry');
+    self::assertTrue($participation->isReliable());
+    self::assertFalse($participation->hasPublishedContribution());
+    self::assertTrue($participation->requiresReview());
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
       'node.add',
       ['node_type' => 'wiki_entry'],
@@ -1670,6 +1675,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->getValidTransitions($node, $author);
     self::assertArrayHasKey('create_new_draft', $validTransitions);
     self::assertArrayHasKey('draft_to_review', $validTransitions);
+    self::assertArrayNotHasKey('review_to_published', $validTransitions);
     self::assertFalse($author->hasPermission('use wiki_editorial transition review_to_published'));
 
     $callback = $this->container->get('callable_resolver')->getCallableFromDefinition(
@@ -1726,6 +1732,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $savedReviewNode = Node::load($reviewFormObject->getEntity()->id());
     self::assertSame('review', $savedReviewNode->get('moderation_state')->value);
     self::assertFalse($savedReviewNode->isPublished());
+    $afterReviewSubmission = $this->container->get('aculta_user.published_participation_lookup')
+      ->lookup((int) $author->id(), 'wiki_entry');
+    self::assertTrue($afterReviewSubmission->isReliable());
+    self::assertFalse($afterReviewSubmission->hasPublishedContribution());
+    self::assertTrue($afterReviewSubmission->requiresReview());
 
     $draftRevisionId = (int) $savedNode->getRevisionId();
     $editFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'edit');

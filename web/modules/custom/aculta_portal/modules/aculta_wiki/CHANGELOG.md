@@ -1344,3 +1344,10 @@
 - Suíte Unit completa: 71 testes / 400 asserções; 3 depreciações PHPUnit.
   Runtime intocado.
 
+## 0.1.0-dev.101 — caracterizar a primeira submissão Wiki
+
+- Kernel confirma lookup confiável sem contribuição publicada, submissão para
+  `review` e ausência de `review_to_published` para autoria. Focal: 1/93;
+  203 depreciações Core/contrib e 2 PHPUnit. Nenhuma permissão ou transição foi
+  alterada; política posterior à primeira publicação aguarda decisão.
+
