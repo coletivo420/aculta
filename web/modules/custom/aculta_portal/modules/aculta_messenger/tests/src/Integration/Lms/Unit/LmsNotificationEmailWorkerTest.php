@@ -79,22 +79,51 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * A duplicate queue item re-reads terminal state after acquiring its lock.
+   */
+  public function testSentMessageIsSkippedAfterLock(): void {
+    $message = $this->message('sent', 1);
+    $locked = FALSE;
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->willReturnCallback(static function () use (&$locked): bool {
+      $locked = TRUE;
+      return TRUE;
+    });
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->expects(self::once())->method('load')->with(101)->willReturnCallback(static function () use (&$locked, $message): MessageInterface {
+      self::assertTrue($locked, 'Message state must be read only after the worker has acquired its lock.');
+      return $message;
+    });
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($messageStorage);
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer, $lock)->processItem(['message_id' => 101]);
+  }
+
+  /**
    * Creates a queued notice message mock.
    *
    * @param string $delivery
    *   Current delivery state.
+   * @param int $attempts
+   *   Persisted delivery attempts.
    *
    * @return \Drupal\message\MessageInterface
    *   The configured message mock.
    */
-  private function message(string $delivery): MessageInterface {
+  private function message(string $delivery, int $attempts = 0): MessageInterface {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn('aculta_msg_lms_notice');
     $message->method('getOwnerId')->willReturn(27);
     $message->method('uuid')->willReturn('01234567-89ab-4cde-8fab-0123456789ab');
     $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field(match ($field) {
       'field_aculta_msg_delivery' => $delivery,
-      'field_aculta_messenger_attempts' => 0,
+      'field_aculta_messenger_attempts' => $attempts,
       default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
     }));
     $message->method('set')->willReturnSelf();

@@ -62,19 +62,22 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
   /**
    * Processes a single direct email queue item. */
   public function processItem($data): void {
-    if (!is_array($data) || !is_numeric($data['message_id'] ?? NULL)) {
+    $id = is_array($data) ? filter_var($data['message_id'] ?? NULL, FILTER_VALIDATE_INT) : FALSE;
+    if ($id === FALSE || $id < 1) {
       return;
     }
-    $message = $this->entityTypeManager->getStorage('message')->load((int) $data['message_id']);
-    if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_wiki_notice'
-      || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)) {
-      return;
-    }
-    $key = 'aculta_wiki_email:' . $message->id();
+    $key = 'aculta_wiki_email:' . $id;
     if (!$this->lock->acquire($key, 30)) {
       throw new \RuntimeException('Wiki notice email is currently being processed.');
     }
     try {
+      // Reload after acquiring the lock to avoid delivering a stale duplicate.
+      $message = $this->entityTypeManager->getStorage('message')->load($id);
+      if (!$message instanceof MessageInterface || $message->bundle() !== 'aculta_msg_wiki_notice'
+        || !in_array($message->get('field_aculta_msg_delivery')->value, ['pending', 'failed'], TRUE)
+        || (int) $message->get('field_aculta_messenger_attempts')->value >= self::MAX_ATTEMPTS) {
+        return;
+      }
       $this->send($message);
     }
     finally {
@@ -100,19 +103,30 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       $this->finish($message, 'cancelled');
       return;
     }
-    $result = $this->mailer->deliver(new MailMessage(
-      WikiNoticeMailType::ID,
-      (string) $user->getEmail(),
-      'pt-br',
-      ['summary' => (string) $notice['email_summary'], 'url' => $notice['url']->toString()],
-      (string) $message->uuid(),
-    ));
+    $attempts = (int) $message->get('field_aculta_messenger_attempts')->value + 1;
+    $message->set('field_aculta_messenger_attempts', $attempts)
+      ->set('field_aculta_msg_delivery', 'pending')->save();
+    try {
+      $result = $this->mailer->deliver(new MailMessage(
+        WikiNoticeMailType::ID,
+        (string) $user->getEmail(),
+        'pt-br',
+        ['summary' => (string) $notice['email_summary'], 'url' => $notice['url']->toString()],
+        (string) $message->uuid(),
+      ));
+    }
+    catch (\Throwable) {
+      $this->finish($message, 'failed');
+      if ($attempts < self::MAX_ATTEMPTS) {
+        throw new \RuntimeException('Wiki notice email delivery failed.');
+      }
+      return;
+    }
     if ($result->cancelled || $result->sent) {
       $this->finish($message, $result->sent ? 'sent' : 'cancelled');
       return;
     }
-    $attempts = (int) $message->get('field_aculta_messenger_attempts')->value + 1;
-    $message->set('field_aculta_messenger_attempts', $attempts)->set('field_aculta_msg_delivery', 'failed')->save();
+    $this->finish($message, 'failed');
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Wiki notice email delivery failed.');
     }

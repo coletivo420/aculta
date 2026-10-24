@@ -1,3 +1,14 @@
+## 0.1.1-dev.102 — limitar retries e impedir replay de e-mail direto — 2026-10-24
+
+- Workers LMS, Wiki e Loja agora adquirem o lock antes de carregar o Message;
+  itens duplicados leem o estado persistido atualizado. Estado `sent` e limite
+  de tentativas esgotado encerram o processamento sem novo envio.
+- Loja e Wiki passam a contabilizar exceções do Mailer antes de reencaminhar
+  falhas transitórias; após o limite, o aviso do site permanece e o e-mail fica
+  `failed`. Unit Messenger + integrações: 123 testes / 714 assertions PASS.
+  PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime,
+  SMTP real e concorrência em processos separados não foram testados.
+
 ## 0.1.1-dev.101 — serializar o resumo combinado por destinatário — 2026-10-24
 
 - `AvisosResumo` adquire um lock persistente individual antes de verificar a
