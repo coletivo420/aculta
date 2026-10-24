@@ -1,5 +1,32 @@
 # ACULTA Studio — Roadmap multi-experiência
 
+## S-R2 concluído no código: experiências independentes (dev.13)
+
+- **Feito:** providers independentes `conta` e `perfil`, rotas
+  `/studio/conta`, `/studio/perfil`, rotas do User em
+  `/studio/perfil/{bio,privacidade,redes/{rede}}`, controle de acesso,
+  testes Unit e roteamento atualizados. A experiência `pessoal` e suas
+  rotas desapareceram, **sem alias temporário**.
+- **Preservação obrigatória:** Minha Conta legada continua em `/`
+  (Domain ACCOUNT), com `/minha-conta` técnico direto respondendo 404.
+  **Não há fase futura de desativação do legado**, mesmo após aceite
+  da nova interface.
+- **S-R3 próxima:** extrair a composição das seções Conta do Portal sem
+  invadir Meu Perfil e sem aninhar dois shells. Hoje os links iniciais
+  ainda abrem os formulários do Portal no contexto original.
+- **S-R4:** editor isolado de apelido, aperfeiçoamento do Perfil e
+  testes de upload e Form API no-JS.
+- **S-R5:** comparação e aceite visual/funcional entre Conta legada
+  e Studio, preservando a antiga.
+- **Testes pendentes:** Unit, Kernel, Functional, cache/access, Drush,
+  mobile/Firefox ESR-X11 e validação de rotas no Runtime.
+
+**Documento prioritário:**
+[Conta e Perfil separados](../../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+As fases antigas P0–P7 abaixo são históricas; qualquer menção a
+remoção final do shell antigo é revogada.
+
+
 ## Incremento STUDIO-P2-A — editor privado parcial (dev.12, 2026-10-24)
 
 **Implementado no código:** `/studio/pessoal/perfil` com leitura
