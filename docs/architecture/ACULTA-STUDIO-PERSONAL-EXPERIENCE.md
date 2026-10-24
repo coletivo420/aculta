@@ -1,11 +1,11 @@
 # ACULTA Studio — Hub e Meu Espaço
 
-**Planejamento arquitetural, 2026-10-24; não implementado.** Esta fase alinha apenas documentação. Não modifica código, rotas, dados nem Runtime.
+**Arquitetura-alvo, 2026-10-24.** A fase documental P0 foi concluída; a P1-A já possui implementação inicial em código (`0.1.0-dev.8`), ainda **sem homologação PHPUnit/Runtime**. As demais fases são planejamento; nenhum dado, formulário ou shell antigo foi migrado.
 
 ## Direção e limites
 
 - `/studio` será futuramente o hub geral autenticado; hoje continua sendo entrada de compatibilidade do Marley.
-- `Meu Espaço`, provider planejado `pessoal`, será acessível a membros autorizados em `/studio/pessoal`.
+- `Meu Espaço`, provider `pessoal`, tem entrada mínima implementada em `/studio/pessoal` (purpose `account`, autenticação e permissão do Portal); não é ainda o hub unificado nem um editor de perfil.
 - Navegação única: seletor de experiências e seções contextuais, sem aninhar shells de Conta e Studio.
 - Editor de perfil dentro de Meu Espaço; perfil público independente em `/u/{apelido}`, no purpose `main`, sob `PublicProfilePolicy`.
 - Marley, Ganjalab e WE SATIVA conservam seus nomes, acessos, URLs e módulos donos.
@@ -24,6 +24,21 @@
 | `aculta420` | Layout, SDC/UI Suite, responsividade e acessibilidade | Renderizar contratos neutros, sem lógica de domínio |
 
 **Fonte única de verdade:** o Studio não possui CPF, endereço, senha, avatar, perfil ou mensagens. Sempre respeitar acesso, cache por usuário, propósito e entidades de origem.
+
+## Incremento P1-A — implementação parcial verificada no Git (2026-10-24)
+
+O código agora inclui `PersonalExperienceProvider`, `PersonalController`,
+registro no `aculta_studio.experience_manager` e a rota explícita
+`aculta_studio.personal` (`/studio/pessoal`, purpose `account`). A entrada
+exibe apenas links para rotas existentes da Conta e aplica autorização dupla:
+router e `StudioExperienceManager::access()`. Foram adicionados testes Unit
+do provider, controller e isolamento de rota. **Os testes ainda não foram
+executados em Drupal instalado; nenhuma homologação Runtime é reivindicada.**
+
+`/studio` continua controlado pelo legado Marley; `/` do account,
+`/minha-conta` técnico bloqueado, `/u/{apelido}` público, o shell
+`AccountShellBuilder` e todos os formulários originais seguem como antes.
+P1-B (ponte de Marley e hub) e P2–P7 permanecem para entrega futura.
 
 ## Arquitetura existente e evolução
 
