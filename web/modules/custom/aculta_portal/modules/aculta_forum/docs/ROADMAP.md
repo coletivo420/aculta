@@ -7,6 +7,126 @@ aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
 
+## Plano vigente de evolução — Fórum + Messenger (F-D41, 2026-10-24)
+
+**Este é o ponto de entrada normativo para trabalho novo.** As seções
+numeradas por `0.1.0-dev.*` e as tabelas extensas abaixo preservam
+histórico técnico, evidências de execução e backlog de outras frentes; não
+devem ser interpretadas como autorização para implementar chats contextuais,
+reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
+
+**Base inspecionada:** `aculta_forum 0.1.0-dev.273`, com Growroom420
+executável, `aculta_forum_post` revisionável e Comment legado/contextual em
+coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
+administrativas já possuem implementações e testes. As fases técnicas
+**F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
+mas a funcionalidade permanece **desligada por padrão** e sem autorização de
+ativação produtiva. `aculta_messenger 0.1.1-dev.77` mantém o sistema de avisos
+existente; seu novo contrato transversal de eventos ainda é **proposta**.
+Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
+
+### Diretrizes de produto e limites
+
+1. **Growroom420:** tópicos independentes, respostas públicas revisionáveis,
+   moderação, categorias, busca, histórico de leitura, seguir/salvar e anexos
+   sob regras próprias do Fórum.
+2. **Discussões contextuais:** Revista, LMS e Wiki usam Comment/Context API
+   nas entidades hospedeiras. Discussões LMS revalidam Group/matrícula e
+   Entity Access; não aparecem no índice público do Growroom. Discussão
+   contextual **não é chat**.
+3. **Avisos de acompanhamento:** `seguir_topico` define seguidores elegíveis;
+   o Messenger mantém `aculta_aviso` agrupado por conta/tipo/tópico, informa
+   respostas/atualizações e coordena digest diário **opt-in** via
+   `aculta_mailer`. Não enviar avisos de posts pendentes, rejeitados ou de
+   conteúdo ao qual o destinatário perdeu acesso.
+4. **Mensagens privadas:** um membro pode iniciar conversa com outro por meio
+   do serviço geral Private Message/`aculta_messenger`, desde que elegível.
+   **É proibido** criar automaticamente threads, grupos ou chat por tópico,
+   verbete, publicação, matrícula ou assinatura.
+5. **Ownership e canais:** o Fórum produz fatos/eventos mínimos e mantém o
+   conteúdo, a moderação e a Flag; o Messenger define agregação, estado de
+   aviso, idempotência e preferências/canais; o Mailer entrega e-mail; o tema
+   ACULTA420 apresenta componentes. Não criar inbox, SMTP ou storage
+   concorrente no Fórum.
+6. **Migração:** Comment legado do Growroom e ForumPost revisionável convivem
+   até que a equivalência, mapas Migrate, backlinks, marcadores Messenger,
+   anexos, History, flags e acesso sejam provados; nenhuma conversão/apagamento
+   de dados ocorre por simples avanço de fase.
+
+### Roadmap prospectivo e critérios de aceite
+
+| Fase | Prioridade | Trabalho executável | Critério para encerrar |
+| --- | --- | --- | --- |
+| **F-M0 — baseline e alinhamento** | P0 | Catalogar hooks/eventos Fórum → Messenger, `seguir_topico`, `aculta_aviso`, os tipos de publicação Comment/ForumPost, telas e preferências; corrigir documentação normativa e registrar F-D41. | Matriz produtor → publicação → seguidores → aviso → digest; documentação sem proposta vigente de chat automático; distinguir evidência histórica de Runtime atual. |
+| **F-M1 — caracterização e segurança** | P0 | Fixar em Unit/Kernel a primeira publicação, aprovação tardia, republicação, autoria própria, seguidores removidos, revisões fora de ordem, movimento de subárvore e eventos concorrentes. | Um aviso por destinatário e evento elegível, marcadores `ultimo_comentario`/`ultimo_post` independentes, nenhuma divulgação antes de publicar. Reutilizar XK-C2, não repetir testes desnecessariamente. |
+| **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar produtores do Fórum às interfaces públicas quando **efetivamente existirem** no Messenger; preservar `aculta_aviso` e a F-D21 até prova de migração. | Equivalência lado a lado com o fluxo atual, zero duplo disparo/armazenamento, deduplicação e manutenção do digest. Nenhuma dependência cíclica entre submódulos. |
+| **F-M3 — acompanhamento/UX** | P1 | Homologar seguir/deixar de seguir, contador no sino e página Avisos, leitura pelo tópico, URLs canônicas, estados vazio/carregando, digest opt-in e ação opcional de iniciar conversa **com um membro**, não com o tópico. | Navegador autenticado, duas contas e mobile/teclado; nenhuma thread criada por seguir/comentar; e-mail apenas pelo Mailer sob transporte controlado. |
+| **F-M4 — contextos protegidos** | P1 | Garantir acesso por purpose/Domain, status de publicação, Group, matrícula e situação associativa em conteúdo, Search API, links, previews, avisos e digest; manter a frente F-GROUP desligada por padrão. | Revogação efetiva sem vazamento em contagens, páginas, anexos, resultados e avisos; matriz anônimo/comum/ativo/suspenso/sem membership, com cache/grants. |
+| **F-M5 — migração e interoperabilidade** | P1 | Completar equivalência de Comments legados → ForumPosts revisionáveis: source/destination Migrate, árvores, CID → IDs/revisões, History, flags, denúncias, anexos, permalinks, índices e marcadores de avisos. | Dry-run com mapas auditáveis, backup/rollback, testes Kernel/MariaDB, prova de não duplicar/perder avisos e homologação controlada; nenhuma migração sem autorização operacional. |
+| **F-M6 — experiência e administração** | P2 | Consolidar moderação/revisão, fila administrativa, mover comentários com impactos em seguidores, notificações e anexos; completar busca e indexação access-aware, previews e responsividade. | Testes de acesso, edição, workflow, filas e ferramentas; Firefox ESR/X11 versionado, tema ACULTA420 e Olivero; sem regressão de conteúdos contextuais. |
+| **F-M7 — gates, RC e Alpha** | P1 após os bloqueadores | Corrigir regressões, validar configurações, atualização de schema, cache, filas, versionamento, checklist operacional e documentação do release. | Gates Unit/Kernel/Functional e revisão visual aplicável antes de RC; Alpha após deploy autorizado no servidor de teste, nunca inferido de evidências anteriores; produção só após aprovação separada. |
+
+### Sequência recomendada e paralelismo
+
+- **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
+  Search API/Domain, anexos, concorrência da limpeza, migração e contagens
+  já identificadas na linha atual do Fórum.
+- **Antes de adaptar código para eventos:** aguardar o contrato público real
+  do Messenger M2. Até lá, manter os hooks e storage atuais em funcionamento.
+  O Fórum não deve implementar o Messenger dentro de si.
+- **Após a API estabilizar:** F-M2 e F-M3, seguidos de F-M4 (ou F-M4
+  antecipada se algum bloqueador de acesso for encontrado).
+- **Migração de legado e RC:** F-M5 e F-M6 com evidência de impacto/rollback;
+  F-M7 somente após gates proporcionais e correções.
+- **Sem escopo:** chat por tópico, chat automático de curso/turma, chat de
+  verbete, membership de thread derivada da Flag, transporte SMTP próprio,
+  espelhamento universal de `aculta_aviso`, migrar dados reais automaticamente.
+
+### Contrato de evento do Fórum (candidato, não implementado)
+
+Os produtores informam evento tipado e dados mínimos: origem `aculta_forum`,
+entidade e UUID, versão/revisão publicada, tipo
+(`forum.reply_published` ou `forum.topic_updated`, nomes apenas propostos),
+purpose, momento e chave idempotente. O adapter/Messenger resolve os
+destinatários pela Flag existente e consulta acesso atual no contexto
+correto. **Nunca inserir título privado, texto de resposta, PII ou corpo
+de e-mail no envelope.** O destino de cada aviso mantém a rota canônica
+e depende de acesso atual. `aculta_aviso` segue fonte de verdade enquanto
+uma mudança explícita não for aprovada e testada.
+
+### Dívidas e dependências já confirmadas
+
+- ForumPost revisionável demanda prova de equivalência da migração de
+  Comments, inclusive a transferência de agregados ao mover comentários.
+- F-GROUP 0.1–0.7 tem provas técnicas documentadas, mas requer decisão
+  operacional para ativação e testes de acesso relacionados a notificações.
+- O indexador de Fórum/Media, contagens, fila Game, download/previews e
+  Search API possuem pendências específicas de Runtime/MariaDB registradas
+  abaixo; não invalidar evidências existentes nem marcar como concluído
+  sem nova execução.
+- O Messenger possui integração atual com `aculta_aviso` e Kernel de
+  idempotência XK-C2; a API compartilhada futura ainda não pode ser
+  presumida disponível.
+- A homologação de e-mail deve respeitar a política F-D21 (digest opt-in);
+  nenhuma notificação imediata nova é autorizada apenas por este plano.
+
+**Referências normativas:** [decisão F-D41](DECISOES.md),
+[arquitetura](ARQUITETURA.md), [ownership](OWNERSHIP.md),
+[avisos transversais](../../../../../../../docs/portal/AVISOS-E-NOTIFICACOES.md),
+[ADR-XK-02](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md).
+O estado operacional de cada incremento continua no Git, CHANGELOG e
+`docs/operations/status/aculta_forum.yml`.
+
+---
+
+## Inventário histórico, backlogs e evidências das subfases existentes
+
+O conteúdo a seguir documenta as diversas frentes do Fórum até a linha
+`0.1.0-dev.273`. **Não substitui o roadmap prospectivo F-M0–F-M7 acima**;
+é fonte de evidência, decisões ainda compatíveis e tarefas residuais.
+Quando a redação antiga se referir a chats ou novos canais de notificação
+por contexto, aplicar F-D41. A discussão Comment contextual continua válida.
+
 ### Integração ACULTA Content Index — estado 2026-10-23, atualizado após IDX 0.1.0-dev.85
 
 O provider de tópicos/respostas e o provider de Media `forum_attachment` estão
@@ -1060,10 +1180,12 @@ O que falta para notificações privadas:
 - Não há prova de que uma notificação de curso/turma nunca chegue a quem
   perdeu membership ou acesso ao tópico depois da assinatura.
 
-Escopo mínimo aceito para notificações (não implementar agora):
+Escopo mínimo aceito para notificações (histórico de 2026-10-22; implementar apenas após contrato do Messenger M2 e revalidação com F-D41):
 
-- Reutilizar Flag/`message_subscribe` e o worker de notificação privada de
-  `aculta_messenger`; nada de fila, armazenamento ou transporte paralelo.
+- Reutilizar as assinaturas/Flags autorizadas e o contrato de avisos do
+  `aculta_messenger` (não a caixa de conversas de Private Message); nada de fila,
+  armazenamento ou transporte paralelo no Fórum. Usar o adapter LMS competente
+  para regras pedagógicas e e-mail, evitando duplicar o produtor.
 - Avisar somente a primeira resposta publicada de um tópico que a pessoa segue
   e ainda pode ler; nunca avisar Comments pendentes, rejeitados ou a fila de
   moderação.
