@@ -22,7 +22,6 @@ Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por 
 | `conta.aculta.toca.net.br` | 302 para `/entrar` (anônimo) ou hub do ACULTA Studio (logado) | `/studio` direto: 404 | Caminho interno do hub: `/studio`. A Minha Conta original fica em `/conta-legada`, que não é a raiz |
 
 ## Redirecionamentos 301 permitidos (legado)
-- `/minha-conta` e subcaminhos → conta, sem prefixo (`DomainPurposeRequestSubscriber`).
 - Caminhos antigos do checkout `/checkout/{pedido}/{etapa}` → `/finalizar-compra/...` (`DomainPurposeRequestSubscriber`).
 - `/pagamentos` → `/pedidos` (`DomainRouteSubscriber`).
 

@@ -104,14 +104,14 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * The legacy Portal account front remains the original, unchanged entry.
+   * The original Minha Conta stays available at /conta-legada; the ACCOUNT root serves the Studio hub.
    */
   public function testLegacyAccountRouteStillExistsButIsNotExposedAsAlias(): void {
     $root = dirname(__DIR__, 3);
     $portal = Yaml::decode(file_get_contents($root . '/../../aculta_portal.routing.yml'));
-    self::assertSame('/minha-conta', $portal['aculta_portal.dashboard']['path']);
-    // The request subscriber blocks direct requests, while Domain ACCOUNT
-    // serves the original dashboard at its front (/).
+    self::assertSame('/conta-legada', $portal['aculta_portal.dashboard']['path']);
+    // The technical /minha-conta path is blocked before routing, and the
+    // Studio hub is the ACCOUNT root.
     $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainPurposeRequestSubscriber.php');
     self::assertStringContainsString("\$accountPath === '/minha-conta'", $subscriber);
     self::assertStringContainsString('Response::HTTP_NOT_FOUND', $subscriber);

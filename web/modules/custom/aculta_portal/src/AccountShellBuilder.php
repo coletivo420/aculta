@@ -39,11 +39,11 @@ final class AccountShellBuilder {
   ) {}
 
   /**
-   * Link de uma seção. A visão geral é a raiz do Domain ACCOUNT (`/`); o caminho técnico nunca aparece no menu.
+   * Link de uma seção. A visão geral original fica em /conta-legada (rota oficial); a raiz da Conta é o hub do Studio.
    */
   private function sectionUrl(string $route, string $sectionRoute): string {
     if ($sectionRoute === 'aculta_portal.dashboard') {
-      return ($this->domainPurposeManager->pathUrl('account', '/') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
+      return ($this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
     }
     return Url::fromRoute($route)->toString();
   }

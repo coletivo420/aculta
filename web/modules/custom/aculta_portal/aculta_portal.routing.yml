@@ -12,7 +12,7 @@ aculta_portal.aculta_user_agreement.accept:
     no_cache: true
 
 aculta_portal.dashboard:
-  path: /minha-conta
+  path: /conta-legada
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
     _title: Visão geral

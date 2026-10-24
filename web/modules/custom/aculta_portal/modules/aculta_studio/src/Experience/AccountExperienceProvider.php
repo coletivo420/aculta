@@ -94,9 +94,8 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Abrir Minha Conta original'),
-            // The ACCOUNT front renders the legacy dashboard. Direct access
-            // to the technical /minha-conta route must remain blocked.
-            '#url' => Url::fromRoute('<front>'),
+            // A Minha Conta original é preservada em /conta-legada (rota oficial), e não é a raiz.
+            '#url' => Url::fromRoute('aculta_portal.dashboard'),
           ],
         ],
       ],

@@ -33,7 +33,7 @@ $read = static function (string $file) use ($root): string {
   return $contents;
 };
 
-// 1. Routing: the internal path belongs only to the overview route.
+// 1. Routing: the retired technical path /minha-conta is no longer a route; the original overview lives at /conta-legada.
 $routing = $read('web/modules/custom/aculta_portal/aculta_portal.routing.yml');
 $checks++;
 preg_match_all('#^(?<name>[A-Za-z0-9_.]+):\s*\n\s+path:\s*(?<path>\S+)#m', $routing, $matches, PREG_SET_ORDER);
@@ -43,8 +43,12 @@ foreach ($matches as $match) {
     $usingInternal[] = $match['name'];
   }
 }
-if ($usingInternal !== ['aculta_portal.dashboard']) {
-  $failures[] = 'routing: the internal path ' . $internalPath . ' must belong only to aculta_portal.dashboard; found: ' . implode(', ', $usingInternal);
+if ($usingInternal !== []) {
+  $failures[] = 'routing: the retired path ' . $internalPath . ' must not be a route; found: ' . implode(', ', $usingInternal);
+}
+$checks++;
+if (!preg_match('#aculta_portal\.dashboard:\s*\n\s+path:\s*/conta-legada\s*\n#', $routing)) {
+  $failures[] = 'routing: aculta_portal.dashboard (Minha Conta original) must use /conta-legada';
 }
 
 // 2. Email confirmation resend is a public route: Portuguese slug, not the internal path.
@@ -53,16 +57,17 @@ if (!preg_match('#aculta_portal\.email_resend:\s*\n\s+path:\s*/confirmar-email/r
   $failures[] = 'routing: aculta_portal.email_resend must use /confirmar-email/reenviar';
 }
 
-// 3. The request guard of the overview route must stay in place.
+// 3. The guards of the retired technical path and of the ACCOUNT root must stay in place.
 $checks++;
 $subscriber = $read('web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
-// The guard must run before Core matches the route: the overview requires a permission, so a
-// request to the internal path would otherwise be denied (403) instead of hidden (404).
-if (!str_contains($subscriber, "\$matched['_route'] === 'aculta_portal.dashboard' && \$event->getRequest()->getPathInfo() !== '/'")) {
-  $failures[] = 'subscriber: onRequestBeforeRouter must return 404 for aculta_portal.dashboard outside the root (before the 403 of the permission check)';
+// /minha-conta is not a route any more, but the explicit 404 keeps it fail-closed (no compatibility redirect).
+if (!str_contains($subscriber, "\$accountPath === '/minha-conta'") || !str_contains($subscriber, 'Response::HTTP_NOT_FOUND')) {
+  $failures[] = 'subscriber: /minha-conta must answer 404 without redirect';
 }
-if (!str_contains($subscriber, "\$request->getPathInfo() !== '/'") || !str_contains($subscriber, "'aculta_portal.dashboard'")) {
-  $failures[] = 'subscriber: onRequest must also return 404 for aculta_portal.dashboard outside the root';
+// The ACCOUNT root serves the Studio hub. The internal /studio path is 404 for direct requests, and the hub
+// guard runs before Core's access check, so anonymous visitors go to the login instead of a 403.
+if (!str_contains($subscriber, "\$matched['_route'] === 'aculta_studio.hub'") || !str_contains($subscriber, "getCurrentPurpose() === 'account'")) {
+  $failures[] = 'subscriber: onRequestBeforeRouter must guard aculta_studio.hub on the ACCOUNT root (404 outside /, login when anonymous)';
 }
 
 // 4. No literal link to the internal path in code, templates, assets or exported configuration.
@@ -76,8 +81,8 @@ $scanDirs = [
   'config/sync',
 ];
 $allowedConfig = [
-  // The ACCOUNT Domain front page resolves the overview internally; it is not a link.
-  'config/sync/domain/conta_aculta_org/system.site.yml' => '#^\s*front: /minha-conta\s*$#',
+  // The ACCOUNT Domain front page resolves the Studio hub internally; it is not a link to /minha-conta.
+  'config/sync/domain/conta_aculta_org/system.site.yml' => '#^\s*front: /studio\s*$#',
 ];
 foreach ($scanDirs as $dir) {
   // Diretórios que não existem nesta árvore não têm o que varrer (ex.: css/ do módulo).
@@ -90,7 +95,8 @@ foreach ($scanDirs as $dir) {
       continue;
     }
     $relative = substr($file->getPathname(), strlen($root) + 1);
-    if ($relative === 'scripts/validate-aculta-portal-conta-root.php') {
+    // Validators quote the retired path as data in their own rules; they are not links.
+    if (str_starts_with($relative, 'scripts/validate-')) {
       continue;
     }
     $checks++;
@@ -134,4 +140,4 @@ if ($failures !== []) {
   exit(1);
 }
 
-echo sprintf("CONTA ROOT: PASS (%d checks; the overview is served only at the ACCOUNT root)\n", $checks);
+echo sprintf("CONTA ROOT: PASS (%d checks; the ACCOUNT root serves the Studio hub, the original Minha Conta is /conta-legada)\n", $checks);

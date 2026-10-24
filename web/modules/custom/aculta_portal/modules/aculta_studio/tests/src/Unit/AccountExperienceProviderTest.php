@@ -78,7 +78,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
       'aculta_studio.account_connections',
       'aculta_portal.support_my',
       'aculta_portal.account_settings',
-      '<front>',
+      'aculta_portal.dashboard',
     ], $routes);
     self::assertContains('user', $build['#cache']['contexts']);
   }

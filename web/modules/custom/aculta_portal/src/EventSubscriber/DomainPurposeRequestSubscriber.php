@@ -172,13 +172,6 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       return;
     }
-    // The overview route requires a permission, so Core denies it (403) during
-    // matching, before onRequest runs. Its internal path must fail closed as 404
-    // first, the same way the support route is handled.
-    if ($matched['_route'] === 'aculta_portal.dashboard' && $event->getRequest()->getPathInfo() !== '/') {
-      $event->setResponse($this->notFoundResponse());
-      return;
-    }
     // Visitante não logado na raiz da Conta vai ao login do próprio host de conta (302: o estado de login muda).
     // Feito antes do roteamento com acesso, que negaria a rota (403) antes de chegar a onRequest.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
@@ -244,11 +237,6 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $request->getPathInfo(),
       (bool) $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE),
     )) {
-      throw new NotFoundHttpException();
-    }
-    // The account overview is served only at the ACCOUNT root. Its internal
-    // route path is never a public URL, so direct requests to it fail closed.
-    if ($routeName === 'aculta_portal.dashboard' && $request->getPathInfo() !== '/') {
       throw new NotFoundHttpException();
     }
     if (in_array($routeName, ['user.login', 'social_auth.network.redirect'], TRUE)
