@@ -6,6 +6,29 @@ Este documento fixa a direção do shell público. A 0.1.0 preserva a arquitetur
 e o shell existente; 0.2-A prepara tokens; as etapas 0.2-B a 0.2-F entregam o
 contrato e a validação visual progressivamente.
 
+## Nova frente visual planejada — ACULTA Studio / Meu Espaço (2026-10-24)
+
+O Studio evoluirá para hub pessoal em `/studio` com experiência
+`/studio/pessoal` e **navegação única**: nível global de experiências,
+seções contextuais e tela de tarefa. É **alvo futuro**, não mudança
+concluída do tema, das rotas ou do Runtime.
+
+**Regra visual:** preservar Institution Bar + Domain Header; abaixo deles,
+uma só moldura de Studio. O `AccountShellBuilder`/`aculta_portal_shell`
+não deve ser renderizado dentro do shell Studio. O tema conserva
+responsabilidade por SDC/UI Suite, Bootstrap Icons, reflow, foco, estados,
+modo claro/escuro e apresentação de render arrays neutros. ACL, Profile,
+Form API, rotas, autorização e Domain permanecem com os módulos funcionais.
+
+Mobile terá acesso a todas as experiências e subáreas, sem duplicação
+de navegação ou dependência exclusiva de JavaScript. Fallback full-page,
+`aria-live`, histórico, formulários seguros e ausência de overflow
+precisam de teste antes do corte da navegação anterior.
+
+[Contrato e roadmap STUDIO-P0–P7](../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+A política de shell público já implementada, descrita abaixo, permanece
+vigente e não deve ser reescrita pela nova frente.
+
 ## Hierarquia
 
 ```text
