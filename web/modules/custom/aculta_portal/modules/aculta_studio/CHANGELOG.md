@@ -1,3 +1,26 @@
+## 0.1.0-dev.14 — S-R3-A: sections de Conta integradas sem substituir o legado (2026-10-24)
+
+- `/studio/conta/endereco`, `/studio/conta/seguranca`,
+  `/studio/conta/seguranca/senha` e `/studio/conta/conexoes`
+  usam `StudioAccountSectionController` para compor os render arrays e
+  Form API originais de `PortalController` no contexto Studio.
+- Navegação simples e acessível com URLs próprias do Studio; somente as
+  tabs legadas são omitidas do conteúdo composto, sem alterar owners,
+  handlers ou cache dos formulários.
+- **Dados cadastrais permanecem no Portal original** `/dados` enquanto
+  `field_nickname` não estiver isolado: incorporar aquele formulário
+  agora misturaria Conta e Perfil. Nenhum campo novo foi criado.
+- Minha Conta legada segue na raiz `/` do Domain ACCOUNT, com
+  `/minha-conta` técnico 404; seus menus, shell e formulários não foram
+  removidos nem serão retirados após o aceite.
+- Testes Unit escritos para acesso, dispatch por método, links e
+  preservação do formulário; testes de rota e endereços atualizados.
+  **Execução PHPUnit/Kernel/Runtime/Firefox ainda pendente**. Fluxos
+  reais de upload, e-mail, OAuth e endereço ainda precisam homologação.
+- S-R3-B: dados privados sem apelido, documentos opcionais, preferências,
+  pedidos/apoio e comparação de formulário com o legado.
+  Contrato: `docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md`.
+
 ## 0.1.0-dev.13 — separação definitiva Conta/Perfil no Studio (2026-10-24)
 
 - `/studio/conta` e `/studio/perfil` passam a ser **experiências independentes**
