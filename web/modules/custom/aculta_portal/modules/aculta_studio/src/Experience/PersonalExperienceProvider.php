@@ -82,6 +82,11 @@ final class PersonalExperienceProvider implements StudioExperienceProviderInterf
           ],
           [
             '#type' => 'link',
+            '#title' => new TranslatableMarkup('Meu Perfil'),
+            '#url' => Url::fromRoute('aculta_studio.personal_profile'),
+          ],
+          [
+            '#type' => 'link',
             '#title' => new TranslatableMarkup('Meus dados'),
             '#url' => Url::fromRoute('aculta_portal.my_data'),
           ],
