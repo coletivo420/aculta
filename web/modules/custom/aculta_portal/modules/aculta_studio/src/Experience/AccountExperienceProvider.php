@@ -58,23 +58,28 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         '#items' => [
           [
             '#type' => 'link',
-            '#title' => new TranslatableMarkup('Informações cadastrais'),
+            '#title' => new TranslatableMarkup('Informações cadastrais (formulário original)'),
             '#url' => Url::fromRoute('aculta_portal.my_data'),
           ],
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Endereço'),
-            '#url' => Url::fromRoute('aculta_portal.my_data_address'),
+            '#url' => Url::fromRoute('aculta_studio.account_address'),
           ],
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('E-mail e segurança'),
-            '#url' => Url::fromRoute('aculta_portal.security'),
+            '#url' => Url::fromRoute('aculta_studio.account_security'),
+          ],
+          [
+            '#type' => 'link',
+            '#title' => new TranslatableMarkup('Senha'),
+            '#url' => Url::fromRoute('aculta_studio.account_password'),
           ],
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Contas conectadas'),
-            '#url' => Url::fromRoute('aculta_portal.connections'),
+            '#url' => Url::fromRoute('aculta_studio.account_connections'),
           ],
           [
             '#type' => 'link',
