@@ -4,9 +4,10 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.110**. O Runtime de teste está em
-homologação WE SATIVA após autorização explícita para `drush cr`; a verificação
-de rotas/serviços instalada ainda será registrada abaixo. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.111**. No Runtime de teste,
+`drush cr` revelou as rotas e serviços após autorização. O smoke autenticado
+expôs ausência das tabelas de `aculta_wiki_proposal`; o update de schema foi
+corrigido no código e sua aplicação foi autorizada. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -16,6 +17,15 @@ integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Incremento dev.111 — instalar schema Wiki ausente
+
+O update 10001 agora instala a definição e o schema SQL da entidade privada de
+propostas caso a Wiki já estivesse ativa antes da entidade ser adicionada; em
+instalações completas preserva a instalação do campo `proposed_fields`. Kernel
+isolado simulou a ausência das quatro tabelas, executou o hook real e passou em
+1 teste / 30 asserções. `drush updb` foi autorizado no Runtime de teste e será
+validado após o commit; nenhuma configuração ou conteúdo será importado.
+
 ### Incremento dev.110 — CTA para o início WE SATIVA
 
 A home Wiki encaminha para `/studio/we-sativa/inicio` no Domain `account`
@@ -23,8 +33,9 @@ somente quando `createAccess()` e o acesso real à rota permitem; contas com
 criação permitida, mas sem a experiência acessível, recebem o formulário Core.
 Kernel MariaDB da classe de imagem: 27 testes / 1.504 asserções, com 304
 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform. `drush cr` do Runtime de
-teste está autorizado; smoke de rotas e revisão Firefox ESR/X11 ainda não foram
-executados.
+teste expôs as rotas, mas o acesso autenticado encontrou o schema de propostas
+ausente. A correção do update 10001 e a aplicação de `drush updb` foram
+autorizadas; revisão Firefox ESR/X11 aguarda essa etapa.
 
 ### Incremento dev.109 — início WE SATIVA
 

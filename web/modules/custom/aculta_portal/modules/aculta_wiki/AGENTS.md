@@ -39,6 +39,11 @@
 
 # Wiki — instruções locais
 
+# Dev.111: update_10001 instala o schema completo de aculta_wiki_proposal quando
+# ausente e instala proposed_fields apenas se necessário. Kernel simulado passou
+# 1/30. Runtime: drush cr aplicado; update de schema autorizado, aguardando
+# código comitado e validação do updb.
+
 # Dev.110: home Wiki aponta para `/studio/we-sativa/inicio` somente com
 # createAccess e acesso real no Domain account; fallback nativo permanece.
 # Classe Kernel MariaDB passou 27/1.504; Runtime aguardando verificação após

@@ -1068,6 +1068,34 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * The pending schema update installs proposal storage on an older site.
+   */
+  public function testPendingUpdateInstallsMissingProposalEntityStorage(): void {
+    $entityDefinitionManager = $this->container->get('entity.definition_update_manager');
+    $definition = $entityDefinitionManager->getEntityType('aculta_wiki_proposal');
+    self::assertNotNull($definition);
+
+    // Model an already-enabled module whose new content entity was never
+    // installed in the site's entity schema.
+    $entityDefinitionManager->uninstallEntityType($definition);
+    self::assertFalse($this->container->get('database')->schema()->tableExists('aculta_wiki_proposal'));
+
+    $this->container->get('module_handler')->loadInclude('aculta_wiki', 'install');
+    aculta_wiki_update_10001();
+
+    $schema = $this->container->get('database')->schema();
+    foreach ([
+      'aculta_wiki_proposal',
+      'aculta_wiki_proposal_field_data',
+      'aculta_wiki_proposal_revision',
+      'aculta_wiki_proposal_field_revision',
+    ] as $table) {
+      self::assertTrue($schema->tableExists($table), $table);
+    }
+    self::assertNotNull($entityDefinitionManager->getFieldStorageDefinition('proposed_fields', 'aculta_wiki_proposal'));
+  }
+
+  /**
    * Published participation evidence is scoped to the author's public Wiki.
    */
   public function testPublishedWikiParticipationUsesOnlyPublishedWikiEntries(): void {

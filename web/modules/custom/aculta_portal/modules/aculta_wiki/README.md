@@ -7,6 +7,13 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.111`: `aculta_wiki_update_10001()` instala a definição da entidade
+  `aculta_wiki_proposal` quando o módulo já estava habilitado antes dela existir,
+  e só instala `proposed_fields` quando ainda ausente. Kernel isolado simulando
+  a instalação atrasada passou (1 teste / 30 asserções). Runtime de teste tem as
+  rotas após `drush cr`, mas o acesso autenticado estava bloqueado pela ausência
+  do schema; `drush updb` foi autorizado e aguarda o commit desta correção.
+
 - `0.1.0-dev.110`: o CTA de colaboração da home Wiki leva ao início WE SATIVA
   no Domain `account` quando a conta tem `createAccess()` e acesso real à rota;
   sem essa rota/acesso, usa o formulário nativo de criação. O Kernel focal

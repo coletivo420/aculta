@@ -11,11 +11,26 @@ declare(strict_types=1);
  * Installs structured field values on existing Wiki proposal entities.
  */
 function aculta_wiki_update_10001(): void {
+  $entity_type_id = 'aculta_wiki_proposal';
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  // The entity type may have been added after aculta_wiki was already enabled.
+  // Install its complete SQL schema before installing the field added later.
+  if ($definition_manager->getEntityType($entity_type_id) === NULL) {
+    $definition_manager->installEntityType($entity_type_manager->getDefinition($entity_type_id));
+  }
+
+  // Fresh installs already include this base field in the installed definition.
+  if ($definition_manager->getFieldStorageDefinition('proposed_fields', $entity_type_id) !== NULL) {
+    return;
+  }
+
   $definitions = \Drupal::service('entity_field.manager')
-    ->getBaseFieldDefinitions('aculta_wiki_proposal');
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
+    ->getBaseFieldDefinitions($entity_type_id);
+  $definition_manager->installFieldStorageDefinition(
     'proposed_fields',
-    'aculta_wiki_proposal',
+    $entity_type_id,
     'aculta_wiki',
     $definitions['proposed_fields'],
   );

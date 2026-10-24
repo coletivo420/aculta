@@ -1,3 +1,30 @@
+## 0.1.0-dev.111 — instalar schema de propostas em Wiki já ativa
+
+- O update `aculta_wiki_update_10001()` cobre instalações em que a Wiki já
+  estava ativa quando `aculta_wiki_proposal` foi introduzida: registra a
+  definição da entidade e suas tabelas antes do campo estruturado, sem repetir
+  uma instalação já concluída.
+- Kernel MariaDB isolado removeu o registro/tabelas da entidade de proposta,
+  executou o update real e confirmou as quatro tabelas e `proposed_fields`
+  (1 teste / 30 asserções; 198 depreciações upstream e 2 PHPUnit).
+- O Runtime tinha as rotas após `drush cr`, mas a autorização da WE SATIVA
+  consultava tabelas ausentes. A aplicação do update foi autorizada e será
+  revalidada após este commit; sem importação de configuração.
+
+## 0.1.0-dev.110 — ligar a home Wiki ao início WE SATIVA
+
+- A home Wiki direciona contas que podem criar `wiki_entry` e acessar a
+  experiência no Domain `account` para `/studio/we-sativa/inicio`; as demais
+  contas autorizadas para criação mantêm fallback ao formulário nativo. Acesso
+  de criação continua condicionado ao `createAccess()` real.
+- O Kernel da home verifica destino, Domain, cache de permissão e restauração do
+  purpose. A classe `WikiLeadImageLifecycleKernelTest` passou em MariaDB
+  isolada: 27 testes / 1.504 asserções; 304 depreciações Core/contrib e 28
+  PHPUnit, além de 3 depreciações PHP do Webform contrib.
+- `drush cr` foi executado no Runtime de teste após autorização e revelou as
+  rotas. A homologação autenticada encontrou as tabelas de proposta ausentes;
+  update de schema aguarda a etapa seguinte, sem importação de configuração.
+
 ## 0.1.0-dev.108 — notificar aceite de proposta
 
 - A autoria confirmada agora recebe o mesmo e-mail privado de resultado quando
@@ -1490,17 +1517,3 @@
   retry após rebuild, compartilhamento/referências históricas e limpeza em lotes.
   Foram reportadas 304 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
   de código, Runtime ou filesystem instalado.
-
-## 0.1.0-dev.110 — ligar a home Wiki ao início WE SATIVA
-
-- A home Wiki direciona contas que podem criar `wiki_entry` e acessar a
-  experiência no Domain `account` para `/studio/we-sativa/inicio`; as demais
-  contas autorizadas para criação mantêm fallback ao formulário nativo. Acesso
-  de criação continua condicionado ao `createAccess()` real.
-- O Kernel da home verifica destino, Domain, cache de permissão e restauração do
-  purpose. A classe `WikiLeadImageLifecycleKernelTest` passou em MariaDB
-  isolada: 27 testes / 1.504 asserções; 304 depreciações Core/contrib e 28
-  PHPUnit, além de 3 depreciações PHP do Webform contrib.
-- Rebuild de cache do Runtime de teste autorizado pelo responsável está
-  pendente nesta entrega; não houve importação de configuração.
-

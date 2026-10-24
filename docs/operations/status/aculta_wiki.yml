@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.110 — CTA da home Wiki para início WE SATIVA protegido por createAccess e route access; Kernel MariaDB 27/1.504. Runtime autorizado aguardando drush cr e smoke."
-next_phase: 'Homologar WE SATIVA no Runtime de teste e Firefox ESR/X11, 320px/Olivero; depois formalizar contrato de evento de avisos com owner Messenger ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.111 — update 10001 instala schema da entidade de propostas em Wiki previamente ativa; Kernel focal 1/30. Runtime tem rotas após drush cr; updb autorizado aguardando commit e smoke."
+next_phase: 'Aplicar o update de schema autorizado e homologar WE SATIVA no Runtime/Firefox ESR/X11, 320px e Olivero; depois formalizar contrato de evento com owner Messenger ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

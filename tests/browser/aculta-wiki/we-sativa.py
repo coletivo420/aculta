@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only visual smoke for WE SATIVA and its native Wiki authoring link."""
+"""Read-only visual smoke for the Wiki home CTA and WE SATIVA."""
 
 import base64
 import json
@@ -17,10 +17,12 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/studio/we-sativa"
+    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/studio/we-sativa/inicio"
 )
+HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
-USER = os.environ.get("WIKI_STUDIO_USER", "teste.comum")
+USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
+USER = os.environ.get("WIKI_STUDIO_USER", "")
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-we-sativa"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
@@ -40,11 +42,11 @@ def one_time_login():
     # Drush's interactive launcher blocks when X11 is inherited. Generate the
     # one-time URL in the CLI subprocess; Firefox itself still uses DISPLAY=:0.
     drush_env.pop("DISPLAY", None)
+    login_args = ["php", "vendor/drush/drush/drush.php", "uli"]
+    login_args.append(f"--uid={USER_UID}" if USER_UID else f"--name={USER}")
+    login_args.append(f"--uri={LOGIN_URI}")
     result = subprocess.run(
-        [
-            "php", "vendor/drush/drush/drush.php", "uli",
-            f"--name={USER}", f"--uri={LOGIN_URI}",
-        ],
+        login_args,
         cwd=PROJECT,
         check=True,
         capture_output=True,
@@ -100,11 +102,29 @@ def wait_for(script, timeout=25):
 try:
     driver.get(login_url)
     time.sleep(1.5)
-    driver.get(PAGE)
-    page_loaded = wait_for(
-        "[...document.querySelectorAll('h1')].some((el) => el.innerText.includes('WE SATIVA'))"
+    driver.get(HOME)
+    cta_loaded = wait_for(
+        "[...document.querySelectorAll('a')].some((el) => "
+        "el.innerText.includes('Comece pela WE SATIVA'))"
     )
-    check("workspace WE SATIVA abre autenticado", page_loaded)
+    check("home Wiki oferece o início WE SATIVA", cta_loaded)
+    if cta_loaded:
+        cta = driver.js("""(() => {
+          const a = [...document.querySelectorAll('a')].find((el) =>
+            el.innerText.includes('Comece pela WE SATIVA'));
+          return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
+        })();""")
+        check("CTA da Wiki resolve para o início no host de conta",
+              cta["path"].endswith("/studio/we-sativa/inicio")
+              and cta["host"] == urlparse(PAGE).netloc, cta["path"])
+        driver.get(cta["href"])
+    else:
+        driver.get(PAGE)
+    page_loaded = wait_for(
+        "[...document.querySelectorAll('h1')].some((el) => "
+        "el.innerText.includes('Seu espaço de contribuição'))"
+    )
+    check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
         diagnostic = driver.js("""return {
           path: location.pathname,
@@ -124,24 +144,25 @@ try:
           const text = main?.innerText || '';
           const links = [...(main?.querySelectorAll('a') || [])];
           const create = links.find((a) => a.textContent.trim() === 'Criar verbete');
+          const work = links.find((a) => a.textContent.trim() === 'Ver meu trabalho');
           const heading = [...(main?.querySelectorAll('h1') || [])]
-            .find((el) => el.innerText.includes('WE SATIVA'));
+            .find((el) => el.innerText.includes('Seu espaço de contribuição'));
           return {
             hasMain: !!main,
             heading: !!heading,
-            workspaceClass: !!main?.querySelector('.we-sativa__workspace'),
-            hasEntries: text.includes('Meus verbetes'),
-            hasProposals: text.includes('Minhas propostas'),
+            startMarker: !!main?.querySelector('[data-portal-ui="we-sativa-start"]'),
+            hasGuide: text.includes('Contribua com cuidado'),
+            workHref: work?.href || '',
             createHref: create?.href || '',
             unnamedLinks: links.filter((a) => !(a.innerText || '').trim()
               && !(a.getAttribute('aria-label') || '').trim()
               && !(a.getAttribute('title') || '').trim()).length,
           };
         })();""")
-        check("página contextual tem main e h1 WE SATIVA", metrics["hasMain"] and metrics["heading"])
-        check("área do workspace recebe token visual do tema", metrics["workspaceClass"])
-        check("seções Meus verbetes e Minhas propostas presentes",
-              metrics["hasEntries"] and metrics["hasProposals"])
+        check("início contextual tem main e h1", metrics["hasMain"] and metrics["heading"])
+        check("início recebe o marcador de UI esperado", metrics["startMarker"])
+        check("guia editorial e link Meu Trabalho presentes",
+              metrics["hasGuide"] and bool(metrics["workHref"]))
         create_href = metrics["createHref"]
         check("ação Criar verbete aponta para a rota nativa", "/node/add/wiki_entry" in create_href,
               urlparse(create_href).path if create_href else "ausente")
@@ -166,6 +187,14 @@ try:
             check(f"{name}: criar verbete permanece visível", measure["createVisible"])
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"{name}.png").write_bytes(base64.b64decode(screenshot))
+
+        if metrics["workHref"]:
+            driver.get(metrics["workHref"])
+            workspace_loaded = wait_for(
+                "[...document.querySelectorAll('h1')].some((el) => "
+                "el.innerText.includes('WE SATIVA'))"
+            )
+            check("link Meu Trabalho abre o workspace autenticado", workspace_loaded)
 
         if create_href:
             driver.get(create_href)
