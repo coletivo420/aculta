@@ -1,8 +1,19 @@
+## `0.1.0-dev.289` — fixar os Kernels de acesso em pt-br — 2026-10-24
+
+- Kernels de busca, listagem e contador de categorias agora declaram `pt-br`
+  como idioma padrão; node grants e IDs Search API usam o mesmo idioma. O
+  Kernel do mover confirma que Comment mantém `pt-br` após a operação, sem
+  provisionar traduções adicionais.
+- Search API: 2/27 (SQLite; 2 depreciações upstream Search API); listagem:
+  2/26 SQLite; contador: 4/73 SQLite; mover: 19/388 SQLite (19 depreciações
+  Drupal/contrib). PHPCS Drupal/DrupalPractice nos quatro arquivos: PASS.
+- Nenhuma alteração de conteúdo/Runtime. Este snapshot SQLite não substitui
+  os gates MariaDB e Runtime do Fórum.
+
 ## 0.1.0-dev.288 — remoção de aliases temporários em desenvolvimento (2026-10-24)
 
 - Removidas oito rotas antigas de redirecionamento administrativo para /painel-administrativo/forum. Os destinos administrativos canônicos e formulários efetivos permanecem. Testes/rotas devem usar as URLs canônicas; sem migração de dados nem homologação Runtime neste incremento.
 - Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
-
 ## `0.1.0-dev.287` — provar o filtro de não lidas e alinhar rotas — 2026-10-24
 
 - Novo Unit `ForumUnreadContentFilterTest`: anônimo recebe `1 = 0`; membro

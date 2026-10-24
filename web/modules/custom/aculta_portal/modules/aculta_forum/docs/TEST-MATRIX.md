@@ -1,3 +1,17 @@
+## Kernels monolíngues em pt-br, 2026-10-24
+
+- `PublicForumSearchAccessKernelTest`, `PublicForumListingAccessKernelTest` e
+  `ForumCategoryCounterAccessKernelTest` definem o idioma padrão Drupal como
+  `pt-br`; registros `node_access` usam o mesmo langcode. O item indexado do
+  Search API termina em `:pt-br`.
+- `ForumCommentMoverKernelTest` usa `pt-br` como padrão e verifica preservação
+  do idioma e corpo do Comment ao mover. Foi removido o cenário que provisionava
+  uma tradução `fr`; nenhum teste normal de Kernel instala outro idioma.
+- Execução local com SQLite: busca 2/27 (2 depreciações Search API); listagem
+  2/26; contador 4/73; mover 19/388 (19 depreciações Drupal/contrib). PHPCS
+  Drupal/DrupalPractice nos quatro arquivos: PASS. Não é homologação MariaDB ou
+  Runtime.
+
 ## Filtro de não lidas — comportamento fail-closed, 2026-10-24
 
 - `ForumUnreadContentFilterTest` (2 testes / 8 asserções): anônimo recebe

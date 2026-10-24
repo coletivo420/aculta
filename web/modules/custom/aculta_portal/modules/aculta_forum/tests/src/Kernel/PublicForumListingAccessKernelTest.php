@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum_counter_test\Hook\CounterGrantsTestHooks;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Language\Language;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
@@ -62,6 +64,12 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->get('language.default')->set(new Language([
+      'id' => 'pt-br',
+      'name' => 'Português (Brasil)',
+      'direction' => LanguageInterface::DIRECTION_LTR,
+      'weight' => 0,
+    ]));
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installSchema('node', ['node_access']);
@@ -129,7 +137,7 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
     $database->delete('node_access')->condition('nid', $topic->id())->execute();
     $database->insert('node_access')->fields([
       'nid' => $topic->id(),
-      'langcode' => 'en',
+      'langcode' => 'pt-br',
       'fallback' => 1,
       'realm' => $restricted ? CounterGrantsTestHooks::REALM : 'all',
       'gid' => $restricted ? 1 : 0,
