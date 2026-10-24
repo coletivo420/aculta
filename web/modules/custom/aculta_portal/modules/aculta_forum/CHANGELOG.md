@@ -1,3 +1,9 @@
+## `0.1.0-dev.290` — remover rota de movimentação que só redirecionava — 2026-10-24
+
+- A rota antiga `aculta_forum.topic_move` (`/painel-administrativo/forum/{node}/mover-categoria`) apontava apenas para o painel e não executava movimentação. Foi removida; o serviço `ForumTopicMover` e os formulários funcionais de moderação permanecem.
+- `ForumAdminOverviewController::redirectToOverview()` e seu teste de redirect foram removidos. Política global sem aliases: `scripts/validate-no-temporary-route-aliases.php`.
+- Testes Drupal/Runtime deste incremento não executados nesta edição por GitHub; a suíte do agente paralelo documentada abaixo mantém suas evidências históricas.
+
 ## `0.1.0-dev.289` — fixar os Kernels de acesso em pt-br — 2026-10-24
 
 - Kernels de busca, listagem e contador de categorias agora declaram `pt-br`
