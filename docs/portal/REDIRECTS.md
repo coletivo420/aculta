@@ -1,5 +1,33 @@
 # Redirecionamentos e raízes dos subdomínios
 
+## Política atual de desenvolvimento — sem aliases temporários (2026-10-24)
+
+**Regra global:** uma URL renomeada em módulos ACULTA não mantém rota
+temporária nem redirect de compatibilidade. Atualizar consumidores para
+os nomes/paths canônicos; caminhos aposentados devem responder 404.
+Validar via `php scripts/validate-no-temporary-route-aliases.php`.
+
+**Removidos em código nesta frente:** aliases antigos de Studio/Marley,
+LMS/Ganjalab, Fórum administrativo e troca de e-mail do User;
+`/minha-conta/*` passa a 404 (continua como path técnico interno do
+front da Conta); os endpoints Commerce de address-book e `/pagamentos`
+não são mais publicados. As interfaces válidas são `/studio`,
+`/studio/marley`, `/studio/pessoal`, `/studio/ganjalab`,
+`/dados/endereco`, `/pedidos` e as rotas de segurança existentes.
+**Resta executar os testes do Runtime**. Tabelas históricas abaixo são
+registros do estado anterior e **não descrevem os aliases atualmente
+implementados**.
+
+**Fora desta proibição:** autenticação, logout, recuperação de conta,
+callbacks OAuth, purpose correto para carrinho/checkout, confirmação de
+e-mail, serviços de links curtos/QR e redirects de fluxo funcional que
+dependem do método HTTP ou do estado de sessão. O redirect de path antigo
+de checkout e o Core `user.page` exigem auditoria específica antes de
+alteração, para preservar pagamentos e navegação do Core. Não criar
+exceções de compatibilidade para novas rotas de projeto.
+
+
+
 Referência única do comportamento de raiz (`/`), de redirecionamento e de 404 em cada host do Portal.
 Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualquer regra.
 
