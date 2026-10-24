@@ -1,3 +1,11 @@
+## Resultado de busca — link ancorado no tópico, 2026-10-24
+
+- `ForumPostSearchTopicLinkFormatterKernelTest` (2 testes / 28 asserções,
+  MariaDB): post publicado no purpose `forum` gera link com página e âncora
+  `forum-post-{id}`; post despublicado renderiza `#access` falso; fora do
+  purpose o elemento é omitido.
+- Suíte Kernel do Fórum 119/2.349; PHPCS limpo.
+
 ## Formulário público de publicação — acesso, 2026-10-24
 
 - `ForumPostSubmissionAccessKernelTest` (4 testes / 55 asserções, MariaDB):

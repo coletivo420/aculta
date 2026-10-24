@@ -1,3 +1,11 @@
+## `0.1.0-dev.293` — provar o link do resultado de busca para a resposta — 2026-10-24
+
+- Novo Kernel `ForumPostSearchTopicLinkFormatterKernelTest`: post publicado no
+  purpose `forum` gera link para o tópico com página e âncora
+  `forum-post-{id}`; post despublicado renderiza `#access` falso; fora do
+  purpose o elemento é omitido.
+- Testes: formatter 2/28; suíte Kernel do Fórum 119/2.349; PHPCS limpo.
+
 ## `0.1.0-dev.292` — provar o acesso ao formulário público de publicação — 2026-10-24
 
 - Novo Kernel `ForumPostSubmissionAccessKernelTest`: anônimo, tópico ausente,
