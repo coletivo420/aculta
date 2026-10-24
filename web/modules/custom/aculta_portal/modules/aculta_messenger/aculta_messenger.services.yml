@@ -101,9 +101,6 @@ services:
   Drupal\aculta_messenger\Hook\ForumNoticeEmailHooks:
     class: Drupal\aculta_messenger\Hook\ForumNoticeEmailHooks
     arguments: ['@aculta_messenger.forum_notice_email_outbox']
-  Drupal\aculta_messenger\Hook\FriendshipNoticeRecoveryHooks:
-    class: Drupal\aculta_messenger\Hook\FriendshipNoticeRecoveryHooks
-    arguments: ['@aculta_messenger.friendship_notice_queue']
   aculta_messenger.friendship_notice_queue:
     class: Drupal\aculta_messenger\Friendship\FriendshipNoticeQueue
     arguments: ['@entity_type.manager', '@queue', '@lock.persistent', '@datetime.time', '@logger.channel.aculta_messenger']
