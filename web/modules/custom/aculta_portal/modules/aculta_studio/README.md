@@ -1,5 +1,21 @@
 # ACULTA Studio (`aculta_studio`)
 
+## STUDIO-P2-A — edição inicial de Meu Perfil (dev.12)
+
+**Novo endereço `/studio/pessoal/perfil`**: página privada que compõe as
+caixas oficiais de bio e redes do ACULTA User, links para seus modais de
+edição, foto/avatar no editor de upload e recorte existente, e link ao
+perfil público somente quando o serviço `aculta_user.public_profile_link`
+aprova. Apelido/dados e privacidade continuam temporariamente nos
+formulários originais; os handlers, dados, permissões e `/u/{apelido}`
+permanecem sob seus donos.
+
+`/studio/pessoal` já oferece link ao editor. Dependências User opcionais
+não quebram a página sem o módulo; exige login, purpose account e permissão.
+**Não foram criados aliases nem movidos dados ou shells**. PHPUnit,
+Kernel/Functional, Runtime/Drush e Firefox ESR/X11 seguem pendentes, e
+o fallback sem JavaScript dos modais bio/redes precisa evoluir na P2-B.
+
 ## Estado vigente — dev.11 (sem aliases temporários)
 
 A única entrada global é **`/studio`** (route ID `aculta_studio.hub`).
