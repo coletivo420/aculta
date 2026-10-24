@@ -25,6 +25,7 @@ use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Runs the Comment-to-ForumPost migration with a persistent Migrate map.
@@ -171,6 +172,50 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
   }
 
   /**
+   * The parent migration resolves both Comment IDs through the persistent map.
+   */
+  public function testParentMigrationResolvesCommentMap(): void {
+    $production = Yaml::parseFile(dirname(__DIR__, 3) . '/migrations/aculta_forum_comment_parents.yml');
+    $fixture = Yaml::parseFile(dirname(__DIR__, 2) . '/modules/aculta_forum_post_test/migrations/aculta_forum_comment_parents.yml');
+    self::assertSame($production['process'], $fixture['process']);
+    self::assertSame($production['destination']['plugin'], $fixture['destination']['plugin']);
+    self::assertSame($production['destination']['overwrite_properties'], $fixture['destination']['overwrite_properties']);
+    self::assertSame($production['migration_dependencies'], $fixture['migration_dependencies']);
+
+    $root = $this->comment('Raiz');
+    $reply = $this->comment('Resposta', $root);
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
+
+    $migration = $this->container->get('plugin.manager.migration')
+      ->createInstance('aculta_forum_comment_parents');
+    $migration->set('source', [
+      'plugin' => 'embedded_data',
+      'data_rows' => [
+        ['cid' => (int) $root->id(), 'parent_cid' => 0],
+        ['cid' => (int) $reply->id(), 'parent_cid' => (int) $root->id()],
+      ],
+      'ids' => ['cid' => ['type' => 'integer']],
+    ]);
+    $message = new CollectingMigrateMessage();
+    $result = (new MigrateExecutable($migration, $message))->import();
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $result, implode("\n", $message->messages));
+
+    $map = $this->migration()->getIdMap();
+    $root_destination_ids = $map->lookupDestinationIds(['cid' => (int) $root->id()]);
+    $reply_destination_ids = $map->lookupDestinationIds(['cid' => (int) $reply->id()]);
+    $root_post_id = (int) $root_destination_ids[0][0];
+    $reply_post_id = (int) $reply_destination_ids[0][0];
+    $posts = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
+    $root_post = $posts->load($root_post_id);
+    $reply_post = $posts->load($reply_post_id);
+
+    self::assertNotNull($root_post);
+    self::assertNotNull($reply_post);
+    self::assertSame($root_post_id, (int) $reply_post->get('parent')->target_id);
+    self::assertSame(2, $this->postCount());
+  }
+
+  /**
    * Builds the production migration with a persistent SQL id map.
    */
   private function migration(): Migration {
@@ -193,7 +238,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
           'legacy_author/target_id' => 'legacy_author_id',
         ],
       ],
-      'test_forum_comment_posts',
+      'aculta_forum_comment_posts',
       [],
       $this->container->get('plugin.manager.migration'),
       $this->container->get('plugin.manager.migrate.source'),

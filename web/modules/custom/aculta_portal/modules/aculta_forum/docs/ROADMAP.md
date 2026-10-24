@@ -15,7 +15,7 @@ histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,
 reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 
-**Base inspecionada:** `aculta_forum 0.1.0-dev.275`, com Growroom420
+**Base inspecionada:** `aculta_forum 0.1.0-dev.276`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. As fases técnicas
@@ -71,8 +71,10 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 **Evidência recente de F-M5 (parcial):** `ForumCommentMigrationBatchKernelTest`
 executa o lote real com map SQL persistente, reexecução idempotente e
 continuidade para novas Comments; a correção de `getEntityTypeId()` no destino
-evitou falha do map. Pai/filho via `migration_lookup`, dry-run/rollback e
-equivalência seguem pendentes.
+evitou falha do map. Um segundo cenário executa a migration de relacionamento
+com `migration_lookup` e confirma o parent do ForumPost; o fixture compara
+pipeline, destino e dependências com a configuração real. Dry-run/rollback,
+equivalência e homologação Runtime seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
 passou em MariaDB Simpletest, 16 testes / 310 assertions. Ledger por evento

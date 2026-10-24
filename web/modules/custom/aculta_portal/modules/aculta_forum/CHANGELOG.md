@@ -1,3 +1,12 @@
+## `0.1.0-dev.276` — validar vínculo pai/filho no mapa da migração — 2026-10-24
+
+- Kernel executa a migration de relacionamentos com `migration_lookup` sobre
+  o map SQL persistente e comprova que a resposta aponta ao ForumPost da raiz.
+  O fixture compara process pipeline, destino e dependências com o YAML de
+  produção para evitar drift. Kernel focal: 2 testes / 53 assertions.
+- Cinco depreciações reportadas por Core/Domain contrib; PHPCS Drupal e
+  DrupalPractice: PASS. Dry-run, rollback e homologação Runtime seguem pendentes.
+
 ## `0.1.0-dev.275` — provar o lote da migração com mapa persistente — 2026-10-24
 
 - Kernel executa `aculta_forum_comment_posts` pelo `MigrateExecutable` com o
@@ -7,8 +16,8 @@
 - Corrigido defeito real do destino: como o plugin ID não é `entity:*`, o trait
   do Migrate não inferia o entity type e o map falhava em `getIds()`. O destino
   passa a declarar `aculta_forum_post` explicitamente.
-- Testes: lote 1/26; suíte Kernel do Fórum 101/2.060; PHPCS limpo. A resolução
-  pai/filho com `migration_lookup`, dry-run e rollback seguem pendentes.
+- Testes: lote 1/26; suíte Kernel do Fórum 101/2.060; PHPCS limpo. Naquele
+  incremento, a resolução pai/filho, dry-run e rollback seguiam pendentes.
 
 ## `0.1.0-dev.274` — provar o link de não lidas — 2026-10-23
 

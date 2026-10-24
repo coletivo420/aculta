@@ -1,0 +1,13 @@
+id: aculta_forum_comment_posts
+label: 'Test map for ACULTA Forum Comment posts'
+source:
+  plugin: embedded_data
+  data_rows: []
+  ids:
+    cid:
+      type: integer
+process:
+  id: cid
+destination:
+  plugin: 'entity:aculta_forum_post'
+  default_bundle: aculta_forum_post
