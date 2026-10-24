@@ -515,9 +515,15 @@ final class PortalHooks {
     }
 
     $path = $this->currentPath->getPath();
+    // Portal and Studio edit the same canonical Commerce customer address.
+    // Recognize both route IDs; legacy form scope and behavior stay unchanged.
+    $isAddressRoute = in_array($this->routeMatch->getRouteName(), [
+      'aculta_portal.my_data_address',
+      'aculta_studio.account_address',
+    ], TRUE);
     // /dados/endereco é tratado pelo bloco de endereço logo abaixo (país padrão, número e S/N). Este bloco de papel
     // retorna antes e não pode engolir essa página: o tipo authenticated também é tipo de papel.
-    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && $path !== '/dados/endereco') {
+    if ($entity->getEntityTypeId() === 'profile' && PerfilDoPapel::ehTipoDePapel($entity) && !$isAddressRoute) {
       if ($path === '/dados') {
         // Keep this tab limited to personal basics, even if older active
         // Profile display configuration still contains address components.
