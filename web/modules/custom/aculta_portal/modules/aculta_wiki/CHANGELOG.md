@@ -1303,3 +1303,10 @@
 - Validação desta versão: `validate-own-module-packages` PASS (45 checagens) e
   `validate-public-slugs` PASS (380 rotas; 17 violações contribuídas na linha de
   base DT-P20).
+## 0.1.0-dev.96 — tratar parâmetros de busca malformados
+
+- Unit cobre `q[]` na busca completa e na prévia: o parâmetro não causa erro,
+  não alcança a consulta de resultados e a prévia mantém `no-store, private`.
+- `WikiControllerTest`: 9 testes / 40 asserções. `WikiSearchFormBuilderTest`:
+  4 / 18. Runtime, configuração instalada e interface visual não foram alterados.
+

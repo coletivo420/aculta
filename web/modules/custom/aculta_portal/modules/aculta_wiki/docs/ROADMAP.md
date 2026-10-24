@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.95**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.96**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.96 — entrada malformada na busca
+
+Unit agora garante que `q[]` não escapa como erro PHP nem chega à consulta: a
+busca completa retorna sua estrutura vazia e a prévia usa o caminho privado
+abaixo do mínimo. Os testes `WikiControllerTest` (9/40) e
+`WikiSearchFormBuilderTest` (4/18) passaram. O formulário continua apontando
+para os nomes canônicos. Limite máximo na busca completa, resultados da prévia,
+resposta inicial por purpose e validação visual continuam pendentes. Runtime
+intocado.
 
 ### Incremento dev.95 — CKEditor 5 no formulário de autoria
 

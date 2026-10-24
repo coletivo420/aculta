@@ -1,3 +1,6 @@
+- Dev.96: Unit cobre `q[]` malformado na busca completa/prévia e verifica
+  rotas do formulário; focais 9/40 e 4/18. Runtime e visual intocados.
+
 - Dev.95: Kernel submete Node Form com configuração exportada `wiki`; a conta
   confirmada recebe CKEditor 5 e upload direto permanece desativado. focais 2/120; classe Kernel completa 27/1.425 (291 depreciações Core/contrib,
   28 PHPUnit); PHPCS/lint e gate Drupal 11 passaram. Runtime/Firefox intocados.

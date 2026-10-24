@@ -214,10 +214,10 @@ depois da importação de configuração no servidor de testes.
 
 | Componente | Tipo | Cenários | Estado |
 | --- | --- | --- | --- |
-| `WikiController::home` | Unit / Kernel | Página inicial responde 200 no purpose `wiki`; sem blocos quando o purpose é outro | planejado |
-| `WikiController::search` | Unit | Busca vazia e busca com menos de `MIN_CHARS`; limite de `MAX_CHARS` | planejado |
-| `WikiController::preview` | Unit | Prévia abaixo do mínimo não consulta o banco; resposta com contagem e links | planejado |
-| `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | planejado |
+| `WikiController::home` | Unit / Kernel | Página inicial responde 200 no purpose `wiki`; sem blocos quando o purpose é outro | parcial: Unit cobre CTA por `createAccess()`; resposta por purpose ainda pendente |
+| `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado e acesso/cache de grants | aprovado (Unit 9 testes / 40 asserções; limite `MAX_CHARS` continua sem teste explícito) |
+| `WikiController::preview` | Unit | Entrada abaixo do mínimo ou `q[]` malformado não consulta resultados e usa resposta privada | aprovado (Unit 9 testes / 40 asserções; resultados/contagem ainda pendentes) |
+| `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | aprovado (4 testes / 18 asserções) |
 | Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
 
 ## Fase 4 — métricas de publicação

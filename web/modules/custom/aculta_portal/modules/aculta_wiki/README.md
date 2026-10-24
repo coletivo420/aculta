@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.96`: busca e prévia tratam `q[]` como entrada inválida sem lançar
+  erro ou consultar resultados; a prévia permanece `no-store, private`.
+  `WikiControllerTest` passou (9/40) e `WikiSearchFormBuilderTest` (4/18).
+  Runtime e interface visual intocados.
+
 - `0.1.0-dev.95`: Kernel usa as configurações exportadas de `wiki`/CKEditor 5 e confirma disponibilidade do formato para `email_confirmed` no Node Form nativo; upload direto segue desativado. Focais 2/120; classe Kernel completa 27/1.425 (291 depreciações Core/contrib, 28 PHPUnit). PHPCS/lint e gate Drupal 11 passaram. Runtime/Firefox intocados.
 
 - `0.1.0-dev.94`: a criação oferece busca não bloqueante de até seis títulos publicados e visíveis no Domain Wiki; Entity Access é revalidado. Kernel MariaDB focal 1/34 (2/116 com submit do formulário nativo); PHPCS/lint e gate Drupal 11 passaram. O gate Portal–tema reporta 12 ocorrências existentes fora da nova classe. Runtime e visual intocados.

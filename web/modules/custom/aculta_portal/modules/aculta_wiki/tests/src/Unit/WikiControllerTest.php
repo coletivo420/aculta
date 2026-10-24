@@ -159,6 +159,17 @@ final class WikiControllerTest extends UnitTestCase {
   }
 
   /**
+   * Array query parameters are malformed input and behave like an empty term.
+   */
+  public function testMalformedSearchTermReturnsSearchShell(): void {
+    $build = $this->controller(NULL)->search(Request::create('/wiki/busca', 'GET', ['q' => ['unexpected']]));
+
+    self::assertSame('wiki-search-results', $build['#attributes']['data-portal-ui']);
+    self::assertArrayNotHasKey('empty', $build);
+    self::assertArrayNotHasKey('results', $build);
+  }
+
+  /**
    * Search cache varies by node grants because the query applies node access.
    */
   public function testSearchCacheVariesByNodeGrants(): void {
@@ -246,6 +257,19 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertSame('<p>prévia</p>', $response->getContent());
     $this->assertArrayHasKey('hint', $this->lastPreviewedBuild);
     $this->assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
+  }
+
+  /**
+   * Array query parameters cannot reach the database through preview.
+   */
+  public function testPreviewTreatsMalformedTermAsShortInput(): void {
+    $response = $this->controller($this->domain())
+      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => ['unexpected']]));
+
+    self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
+    self::assertSame('<p>prévia</p>', $response->getContent());
+    self::assertArrayHasKey('hint', $this->lastPreviewedBuild);
+    self::assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
   }
 
   /**
