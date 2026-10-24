@@ -1,18 +1,19 @@
-# Studio owns /studio. Marley owns /studio/marley and its editorial levels.
-aculta_studio.personal:
-  path: /studio/pessoal
+# Separate Studio experiences. The legacy Portal dashboard stays at the
+# ACCOUNT front (/); direct /minha-conta remains a protected technical path.
+aculta_studio.account:
+  path: /studio/conta
   defaults:
-    _controller: 'aculta_studio.personal_controller:page'
-    _title: 'Meu Espaço'
+    _controller: 'aculta_studio.account_controller:page'
+    _title: 'Minha Conta'
   requirements:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
     _aculta_domain_purpose: account
 
-# P2-A: profile editor entry is private, not the public /u/{apelido}.
-aculta_studio.personal_profile:
-  path: /studio/pessoal/perfil
+# Only the community profile is edited here; private account data is separate.
+aculta_studio.profile:
+  path: /studio/perfil
   defaults:
     _controller: 'aculta_studio.personal_profile_controller:page'
     _title: 'Meu Perfil'
@@ -22,21 +23,8 @@ aculta_studio.personal_profile:
   options:
     _aculta_domain_purpose: account
 
-# P2-B: dedicated Studio editing screens using owner Form API.
-# These are distinct experiences, not redirects or compatibility aliases.
-aculta_studio.personal_data:
-  path: /studio/pessoal/perfil/dados
-  defaults:
-    _controller: '\Drupal\aculta_portal\Controller\PortalController::myData'
-    _title: 'Apelido e dados básicos'
-  requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.personal_privacy:
-  path: /studio/pessoal/perfil/privacidade
+aculta_studio.profile_privacy:
+  path: /studio/perfil/privacidade
   defaults:
     _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
     _title: 'Privacidade do perfil'
@@ -46,8 +34,8 @@ aculta_studio.personal_privacy:
   options:
     _aculta_domain_purpose: account
 
-aculta_studio.personal_bio:
-  path: /studio/pessoal/perfil/bio
+aculta_studio.profile_bio:
+  path: /studio/perfil/bio
   defaults:
     _form: '\Drupal\aculta_user\Form\AccountBioForm'
     _title: 'Editar biografia'
@@ -57,8 +45,8 @@ aculta_studio.personal_bio:
   options:
     _aculta_domain_purpose: account
 
-aculta_studio.personal_social:
-  path: /studio/pessoal/perfil/redes/{rede}
+aculta_studio.profile_social:
+  path: /studio/perfil/redes/{rede}
   defaults:
     _form: '\Drupal\aculta_user\Form\SocialLinkForm'
     _title: 'Editar rede social'
