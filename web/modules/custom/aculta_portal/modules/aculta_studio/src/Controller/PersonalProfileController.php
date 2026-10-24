@@ -58,7 +58,7 @@ final class PersonalProfileController {
     $actions = [
       [
         '#type' => 'link',
-        '#title' => new TranslatableMarkup('Alterar apelido e dados básicos'),
+        '#title' => new TranslatableMarkup('Editar apelido no formulário existente'),
         '#url' => Url::fromRoute('aculta_portal.my_data'),
       ],
     ];
@@ -85,8 +85,22 @@ final class PersonalProfileController {
       $actions[] = [
         '#type' => 'link',
         '#title' => new TranslatableMarkup('Configurar privacidade'),
-        '#url' => Url::fromRoute('aculta_user.configuracoes_privacidade'),
+        '#url' => Url::fromRoute('aculta_studio.profile_privacy'),
       ];
+    }
+    if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => new TranslatableMarkup('Editar biografia'),
+        '#url' => Url::fromRoute('aculta_studio.profile_bio'),
+      ];
+      foreach (['instagram' => 'Instagram', 'facebook' => 'Facebook', 'reddit' => 'Reddit'] as $key => $label) {
+        $actions[] = [
+          '#type' => 'link',
+          '#title' => new TranslatableMarkup('Editar @network', ['@network' => $label]),
+          '#url' => Url::fromRoute('aculta_studio.profile_social', ['rede' => $key]),
+        ];
+      }
     }
     if ($publicUrl !== NULL) {
       $actions[] = [
@@ -99,9 +113,9 @@ final class PersonalProfileController {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-personal-profile'],
+      '#attributes' => ['data-portal-ui' => 'studio-profile-editor'],
       'intro' => [
-        '#plain_text' => new TranslatableMarkup('Edite seu perfil com os mesmos controles e permissões da sua conta. A página pública é independente deste editor.'),
+        '#plain_text' => new TranslatableMarkup('Administre somente sua identidade na comunidade: foto, biografia, redes e visibilidade. Informações cadastrais e segurança pertencem a Minha Conta.'),
       ],
       'identity' => [
         '#type' => 'container',
@@ -124,7 +138,14 @@ final class PersonalProfileController {
     // same components used by Minha Conta are reused verbatim.
     if ($this->bioCard !== NULL && $this->socialCard !== NULL) {
       $build['bio'] = $this->bioCard->build($user);
+      // The Studio uses dedicated, accessible Form API routes. Original
+      // modal edit controls are retained exclusively in Minha Conta legacy.
+      unset($build['bio']['edit']);
       $build['social'] = $this->socialCard->build($user);
+      foreach ($build['social']['list']['items'] as &$item) {
+        unset($item['edit']);
+      }
+      unset($item);
     }
     $cache->applyTo($build);
     return $build;
