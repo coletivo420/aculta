@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.78`: fixtures Unit do hook de imagem acompanham a assinatura atual
+  e constroem um formulário `wiki_entry`; Wiki Unit passou (66/344, 3
+  depreciações PHPUnit). Runtime intocado.
+
 - `0.1.0-dev.77`: formulários Core de `wiki_entry` oferecem retorno cacheável ao
   Meu Trabalho WE SATIVA quando o provider Studio e o acesso Wiki estão ativos.
   O link usa o purpose `account`; ausência da rota omite a ação. Kernel completo

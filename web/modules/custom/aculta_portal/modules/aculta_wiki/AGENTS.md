@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.78: fixtures Unit de `WikiEntryImageHooks` sincronizadas com o construtor
+  e contexto de formulário atuais; Wiki Unit 66/344, 3 depreciações PHPUnit.
+  Runtime intocado.
+
 - Revalidação R1 no HEAD após dev.77: Unit 9/40 e quatro Kernels MariaDB
   (provider, acesso/relações, bootstrap owner e geração Wiki-owned) 11/385;
   243 depreciações Core/contrib/PHPUnit. Projeção v4/fingerprint sem alteração;

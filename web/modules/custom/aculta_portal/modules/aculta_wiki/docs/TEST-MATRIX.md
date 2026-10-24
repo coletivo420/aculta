@@ -49,7 +49,7 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 
 | Suíte | Tipo | Cobertura | Estado |
 | --- | --- | --- | --- |
-| Wiki Unit | PHPUnit | Providers de verbete/categoria e serviços Wiki | aprovado (66 testes / 341 asserções; 3 depreciações PHPUnit) |
+| Wiki Unit | PHPUnit | Providers de verbete/categoria, hook de formulário de imagem e serviços Wiki | aprovado (dev.78; 66 testes / 344 asserções; 3 depreciações PHPUnit) |
 | ContentIndexWikiProviderKernelTest | Kernel MariaDB | Provider e integração do Index | aprovado |
 | ContentIndexWikiAccessKernelTest | Kernel MariaDB | Domain, grants, revisões e relações | aprovado |
 | ContentIndexOwnerIntegrationKernelTest | Kernel MariaDB | Bootstrap real e descoberta de provider owner | aprovado |

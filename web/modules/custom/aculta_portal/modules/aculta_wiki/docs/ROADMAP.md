@@ -4,13 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.77**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.78**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.78 — fixtures Unit do hook de imagem
+
+As fixtures de `WikiEntryImageHooksTest` agora refletem as quatro dependências
+do hook e passam a fornecer um formulário associado a `wiki_entry`, necessário
+para executar a alteração real. A suíte Unit completa passou: 66 testes / 344
+asserções, 3 depreciações PHPUnit. Nenhum comportamento Runtime foi alterado.
 
 ### Incremento dev.77 — retorno do formulário à experiência WE SATIVA
 

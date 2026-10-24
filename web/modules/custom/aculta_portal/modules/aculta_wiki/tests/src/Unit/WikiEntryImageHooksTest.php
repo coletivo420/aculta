@@ -6,9 +6,11 @@ namespace Drupal\Tests\aculta_wiki\Unit;
 
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_wiki\Hook\WikiEntryImageHooks;
+use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -20,13 +22,17 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Covers the "Imagem de destaque" tab added to the verbete form.
@@ -147,11 +153,31 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
    */
   private function hooks(string $extensions, int $megabytes): WikiEntryImageHooks {
     $policy = $this->policy($extensions, $megabytes);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $requestStack = new RequestStack();
+    $domainPurposes = new DomainPurposeManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      $requestStack,
+    );
+    $routeProvider = $this->createMock(RouteProviderInterface::class);
+    $routeProvider->method('getRouteByName')
+      ->willThrowException(new RouteNotFoundException());
     return new WikiEntryImageHooks(
       $this->getStringTranslationStub(),
       $policy,
       new UserUploadDialogBuilder($policy, $this->getStringTranslationStub()),
       $this->uploader($policy),
+      new WikiContributorWorkspace(
+        $entityTypeManager,
+        $domainPurposes,
+        $this->getStringTranslationStub(),
+        $requestStack,
+      ),
+      $domainPurposes,
+      $this->createMock(AccountProxyInterface::class),
+      $routeProvider,
     );
   }
 
@@ -209,11 +235,12 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
    */
   private function formState(?NodeInterface $node = NULL): FormStateInterface {
     $form_state = $this->createMock(FormStateInterface::class);
-    if ($node !== NULL) {
-      $form_object = $this->createMock(ContentEntityFormInterface::class);
-      $form_object->method('getEntity')->willReturn($node);
-      $form_state->method('getFormObject')->willReturn($form_object);
-    }
+    $node ??= $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+    $node->method('isNew')->willReturn(TRUE);
+    $form_object = $this->createMock(ContentEntityFormInterface::class);
+    $form_object->method('getEntity')->willReturn($node);
+    $form_state->method('getFormObject')->willReturn($form_object);
     return $form_state;
   }
 
@@ -234,6 +261,8 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     $item->method('get')->with('entity')->willReturn($reference);
 
     $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('wiki_entry');
+    $node->method('isNew')->willReturn(TRUE);
     $node->method('hasField')->with('field_wiki_image')->willReturn(TRUE);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('isEmpty')->willReturn(FALSE);

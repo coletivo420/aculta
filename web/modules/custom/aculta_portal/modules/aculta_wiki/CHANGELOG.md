@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.78 — sincronizar fixtures Unit do formulário de imagem
+
+- As fixtures de `WikiEntryImageHooksTest` agora fornecem as dependências
+  adicionadas ao hook e usam uma entidade `wiki_entry` na alteração do
+  formulário.
+- Wiki Unit passou: 66 testes / 344 assertions, 3 depreciações PHPUnit.
+  Runtime não foi alterado.
+
 ## 0.1.0-dev.77 — retorno do formulário ao Meu Trabalho
 
 - Os formulários Core de `wiki_entry` exibem link de retorno ao Meu Trabalho
