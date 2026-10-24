@@ -18,6 +18,7 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
@@ -62,9 +63,13 @@ final class WikiProposalSubmission {
    *   Optional form submission token.
    * @param array<string, mixed> $proposedFields
    *   Optional structured values for allowlisted Wiki editorial fields.
+   * @param int|null $expectedTargetRevisionId
+   *   Optional default revision captured when the contribution form opened.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    *   When the actor, target, or current Wiki purpose is not authorized.
+   * @throws \Symfony\Component\HttpKernel\Exception\ConflictHttpException
+   *   When the target changed after the contributor opened the form.
    * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
    *   When submitted fields do not meet the proposal contract.
    */
@@ -76,6 +81,7 @@ final class WikiProposalSubmission {
     array $sourceUris = [],
     ?string $idempotencyToken = NULL,
     array $proposedFields = [],
+    ?int $expectedTargetRevisionId = NULL,
   ): WikiProposal {
     $this->assertCanSubmit();
 
@@ -84,6 +90,9 @@ final class WikiProposalSubmission {
     $target = $this->entityTypeManager->getStorage('node')->loadUnchanged($target->id());
     if (!$target instanceof NodeInterface) {
       throw new AccessDeniedHttpException();
+    }
+    if ($expectedTargetRevisionId !== NULL && (int) $target->getRevisionId() !== $expectedTargetRevisionId) {
+      throw new ConflictHttpException('O verbete mudou enquanto você preparava a proposta. Reabra a contribuição para revisar a versão atual.');
     }
 
     $wikiDomain = $this->domainPurposes->getDomain('wiki');

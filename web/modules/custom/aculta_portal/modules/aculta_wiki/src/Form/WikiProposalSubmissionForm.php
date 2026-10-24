@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -49,7 +50,15 @@ final class WikiProposalSubmissionForm extends FormBase {
     if (!$node instanceof NodeInterface) {
       throw new \InvalidArgumentException('A Wiki entry is required to submit a proposal.');
     }
+    $node = $this->entityTypeManager->getStorage('node')->loadUnchanged($node->id());
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry' || !$node->isDefaultRevision() || !$node->isPublished() || !$node->access('view') || $node->access('update')) {
+      throw new AccessDeniedHttpException();
+    }
     $form_state->set('wiki_proposal_target_id', (int) $node->id());
+    if (!$form_state->has('wiki_proposal_expected_revision')) {
+      $form_state->set('wiki_proposal_expected_revision', (int) $node->getRevisionId());
+    }
+    $step = $form_state->get('wiki_proposal_step') ?? 'edit';
     $submissionToken = $form_state->get('wiki_proposal_submission_token');
     if (!is_string($submissionToken)) {
       $submissionToken = bin2hex(random_bytes(32));
@@ -61,6 +70,18 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#title' => $this->t('Proposta para: @title', ['@title' => $node->label()]),
       '#markup' => $this->t('Sua sugestão será enviada à equipe editorial. Ela não altera o verbete automaticamente.'),
     ];
+    if ($form_state->get('wiki_proposal_base_changed')) {
+      $form['base_changed'] = [
+        '#type' => 'container',
+        '#attributes' => ['role' => 'alert'],
+        'message' => ['#plain_text' => $this->t('O verbete recebeu uma nova versão enquanto você preparava a proposta. Revise seu conteúdo antes de continuar.')],
+      ];
+      $form['confirm_current_base'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Revisei a proposta considerando a versão atual do verbete.'),
+        '#required' => TRUE,
+      ];
+    }
     $form['intent'] = [
       '#type' => 'select',
       '#title' => $this->t('Tipo de contribuição'),
@@ -169,10 +190,33 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#type' => 'hidden',
       '#value' => $submissionToken,
     ];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Enviar proposta'),
+    $editableElements = [
+      'intent', 'proposed_text', 'proposed_fields_selected', 'field_values',
+      'rationale', 'source_uris', 'submission_token',
     ];
+    if ($step === 'review') {
+      foreach ($editableElements as $element) {
+        $form[$element]['#access'] = FALSE;
+      }
+      $form['review'] = $this->buildReview($form_state);
+      $form['actions']['back'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Voltar e ajustar'),
+        '#submit' => ['::backToEdit'],
+        '#limit_validation_errors' => [],
+      ];
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Enviar para revisão'),
+      ];
+    }
+    else {
+      $form['actions']['continue'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Revisar e enviar'),
+        '#submit' => ['::continueToReview'],
+      ];
+    }
     return $form;
   }
 
@@ -181,6 +225,12 @@ final class WikiProposalSubmissionForm extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
+    if ($form_state->get('wiki_proposal_step') === 'review') {
+      return;
+    }
+    if ($form_state->get('wiki_proposal_base_changed') && !$form_state->getValue('confirm_current_base')) {
+      $form_state->setErrorByName('confirm_current_base', $this->t('Confirme que revisou a proposta para a versão atual do verbete.'));
+    }
     $text = trim((string) $form_state->getValue('proposed_text'));
     $rationale = trim((string) $form_state->getValue('rationale'));
     if ($text === '' || mb_strlen($text) > 20000) {
@@ -215,16 +265,26 @@ final class WikiProposalSubmissionForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
     try {
-      $proposedFields = $this->getProposedFields($form_state);
+      $values = $form_state->get('wiki_proposal_review_values');
+      if (!is_array($values)) {
+        $values = $form_state->getValues();
+      }
+      $proposedFields = $this->extractProposedFields($values);
       $proposal = $this->submission->submit(
         $node,
-        (string) $form_state->getValue('intent'),
-        (string) $form_state->getValue('proposed_text'),
-        (string) $form_state->getValue('rationale'),
-        $this->getSourceUris((string) $form_state->getValue('source_uris')),
-        (string) $form_state->getValue('submission_token'),
+        (string) ($values['intent'] ?? ''),
+        (string) ($values['proposed_text'] ?? ''),
+        (string) ($values['rationale'] ?? ''),
+        $this->getSourceUris((string) ($values['source_uris'] ?? '')),
+        (string) ($values['submission_token'] ?? $form_state->get('wiki_proposal_submission_token')),
         $proposedFields,
+        (int) $form_state->get('wiki_proposal_expected_revision'),
       );
+    }
+    catch (ConflictHttpException $exception) {
+      $form_state->set('wiki_proposal_conflict', TRUE);
+      $form_state->setErrorByName('', $exception->getMessage());
+      return;
     }
     catch (UnprocessableEntityHttpException $exception) {
       // Backend revalidation may reject any selected editorial field. Keep
@@ -249,14 +309,17 @@ final class WikiProposalSubmissionForm extends FormBase {
   }
 
   /**
-   * Extracts only the fields explicitly selected by the contributor.
+   * Returns selected fields from a specific Form API value set.
+   *
+   * @param array<string, mixed> $submittedValues
+   *   Current or server-stored form values.
    *
    * @return array<string, mixed>
    *   Structured allowlisted field values.
    */
-  private function getProposedFields(FormStateInterface $form_state): array {
-    $selected = array_filter((array) $form_state->getValue('proposed_fields_selected'));
-    $values = (array) $form_state->getValue('field_values');
+  private function extractProposedFields(array $submittedValues): array {
+    $selected = array_filter((array) ($submittedValues['proposed_fields_selected'] ?? []));
+    $values = (array) ($submittedValues['field_values'] ?? []);
     $fields = [];
     foreach ($selected as $fieldName => $selectedValue) {
       if ($selectedValue === 0 || $selectedValue === '0' || $selectedValue === '') {
@@ -300,6 +363,105 @@ final class WikiProposalSubmissionForm extends FormBase {
       }
     }
     return $fields;
+  }
+
+  /**
+   * Saves validated values in Form API storage and advances to review.
+   */
+  public function continueToReview(array &$form, FormStateInterface $form_state): void {
+    $form_state->set('wiki_proposal_review_values', $form_state->getValues());
+    $form_state->set('wiki_proposal_step', 'review');
+    $form_state->set('wiki_proposal_base_changed', FALSE);
+    $form_state->setRebuild();
+  }
+
+  /**
+   * Restores server-stored values and returns to the editable step.
+   */
+  public function backToEdit(array &$form, FormStateInterface $form_state): void {
+    $values = $form_state->get('wiki_proposal_review_values');
+    if (is_array($values)) {
+      $form_state->setValues($values);
+    }
+    if ($form_state->get('wiki_proposal_conflict')) {
+      $targetId = (int) $form_state->get('wiki_proposal_target_id');
+      $current = $this->entityTypeManager->getStorage('node')->loadUnchanged($targetId);
+      if (!$current instanceof NodeInterface || !$current->isDefaultRevision() || !$current->isPublished() || !$current->access('view') || $current->access('update')) {
+        throw new AccessDeniedHttpException();
+      }
+      $form_state->set('wiki_proposal_expected_revision', (int) $current->getRevisionId());
+      $form_state->set('wiki_proposal_base_changed', TRUE);
+      $form_state->set('wiki_proposal_conflict', FALSE);
+    }
+    $form_state->set('wiki_proposal_step', 'edit');
+    $form_state->setRebuild();
+  }
+
+  /**
+   * Builds a plain-text review summary from values held in Form API storage.
+   */
+  private function buildReview(FormStateInterface $form_state): array {
+    $values = $form_state->get('wiki_proposal_review_values');
+    $values = is_array($values) ? $values : [];
+    $fields = $this->extractProposedFields($values);
+    $fieldSummaries = [];
+    foreach ($fields as $fieldName => $value) {
+      $fieldSummaries[] = (string) WikiProposal::EDITORIAL_FIELDS[$fieldName] . ': ' . $this->formatProposedValue($fieldName, $value);
+    }
+    $sourceUris = $this->getSourceUris((string) ($values['source_uris'] ?? ''));
+    $items = [
+      '#type' => 'component',
+      '#component' => 'aculta420:content-section',
+      '#props' => ['title' => (string) $this->t('Revise antes de enviar')],
+      '#slots' => [
+        'body' => [
+          'intent' => ['#plain_text' => $this->t('Tipo: @intent', ['@intent' => WikiProposal::INTENTS[$values['intent'] ?? ''] ?? ''])],
+          'summary' => ['#plain_text' => (string) ($values['proposed_text'] ?? '')],
+          'fields' => ['#plain_text' => $this->t('Valores propostos: @fields', ['@fields' => implode("\n", $fieldSummaries)])],
+          'rationale' => ['#plain_text' => $this->t('Justificativa: @rationale', ['@rationale' => (string) ($values['rationale'] ?? '')])],
+          'sources' => ['#plain_text' => $sourceUris === [] ? $this->t('Nenhuma fonte adicionada.') : implode("\n", $sourceUris)],
+          'notice' => ['#plain_text' => $this->t('A proposta será analisada pela equipe editorial e não será publicada automaticamente.')],
+        ],
+      ],
+    ];
+    if ($form_state->get('wiki_proposal_conflict')) {
+      $items['#slots']['body']['conflict'] = [
+        '#plain_text' => $this->t('O verbete mudou. Volte para revisar sua proposta antes de enviá-la novamente.'),
+      ];
+    }
+    return $items;
+  }
+
+  /**
+   * Formats allowlisted proposal values as escaped, readable review text.
+   */
+  private function formatProposedValue(string $fieldName, mixed $value): string {
+    if (in_array($fieldName, ['field_wiki_summary', 'body'], TRUE)) {
+      return trim(strip_tags((string) ($value['value'] ?? '')));
+    }
+    if ($fieldName === 'field_wiki_references') {
+      return implode("\n", array_map(
+        static fn (array $item): string => trim(($item['title'] ?? '') . ' | ' . ($item['uri'] ?? ''), ' |'),
+        (array) $value,
+      ));
+    }
+    if (in_array($fieldName, ['field_wiki_categories', 'field_wiki_related', 'field_wiki_image'], TRUE)) {
+      $type = match ($fieldName) {
+        'field_wiki_categories' => 'taxonomy_term',
+        'field_wiki_related' => 'node',
+        default => 'media',
+      };
+      $ids = $fieldName === 'field_wiki_image' ? [$value] : (array) $value;
+      $labels = [];
+      foreach ($ids as $id) {
+        $entity = is_numeric($id) ? $this->entityTypeManager->getStorage($type)->load((int) $id) : NULL;
+        $labels[] = $entity !== NULL && $entity->access('view')
+          ? (string) $entity->label()
+          : (string) $this->t('[indisponível]');
+      }
+      return implode(', ', $labels);
+    }
+    return (string) $value;
   }
 
   /**

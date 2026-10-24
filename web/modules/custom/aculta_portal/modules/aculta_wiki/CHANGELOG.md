@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.92 — proposta contextual em duas etapas
+
+- O formulário de proposta separa escrita e revisão/envio, preserva os valores
+  no estado server-side do Form API ao voltar e exibe os campos selecionados
+  antes do POST final. A submissão continua passando pelo serviço existente.
+- A revisão-base é capturada ao abrir o formulário. Mudança concorrente gera
+  conflito sem persistir proposta; ao voltar, a autoria precisa confirmar que
+  revisou o conteúdo para a nova versão. Kernel MariaDB focal passou com 1 teste
+  / 202 asserções; Runtime e validação visual intocados.
+
 ## 0.1.0-dev.91 — decisão explícita para listas editoriais
 
 - O formulário de moderação não preseleciona mais `replace` em referências,

@@ -881,11 +881,16 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $actualFormState->setValue($processedProposalForm['rationale']['#parents'], 'A fonte comunitária confirma esta forma.');
     $actualFormState->setValue($processedProposalForm['source_uris']['#parents'], '');
     $actualFormState->setValue($processedProposalForm['submission_token']['#parents'], $processedProposalForm['submission_token']['#value']);
-    $actualFormState->setTriggeringElement($processedProposalForm['actions']['submit']);
+    $actualFormState->setTriggeringElement($processedProposalForm['actions']['continue']);
     $actualProposalFormObject->validateForm($processedProposalForm, $actualFormState);
     self::assertSame([], $actualFormState->getErrors());
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($actualFormState, $actualProposalFormObject, &$processedProposalForm): void {
-      $actualProposalFormObject->submitForm($processedProposalForm, $actualFormState);
+    $actualProposalFormObject->continueToReview($processedProposalForm, $actualFormState);
+    $processedReviewForm = $actualProposalFormObject->buildForm([], $actualFormState, $proposalTarget);
+    $actualFormState->setRebuild(FALSE);
+    $actualFormState->setTriggeringElement($processedReviewForm['actions']['submit']);
+    $actualProposalFormObject->validateForm($processedReviewForm, $actualFormState);
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($actualFormState, $actualProposalFormObject, &$processedReviewForm): void {
+      $actualProposalFormObject->submitForm($processedReviewForm, $actualFormState);
     });
     self::assertSame('aculta_wiki.proposal_status', $actualFormState->getRedirect()->getRouteName());
     $actualProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
@@ -2179,6 +2184,59 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $submitter->id());
     $this->container->get('current_user')->setAccount($submitter);
 
+    $staleTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete alterado durante a proposta',
+      'uid' => 3,
+      'status' => TRUE,
+      'moderation_state' => 'published',
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_test_grant_uid' => 2,
+      'body' => ['value' => 'Versão inicial.', 'format' => 'plain_text'],
+    ]);
+    $staleTarget->save();
+    $expectedTargetRevisionId = (int) $staleTarget->getRevisionId();
+    $staleFormState = new FormState();
+    $staleForm = WikiProposalSubmissionForm::create($this->container);
+    $staleBuild = $staleForm->buildForm([], $staleFormState, $staleTarget);
+    $staleFormState->setValues([
+      'intent' => 'correction',
+      'proposed_text' => 'Sugestão escrita para outra versão.',
+      'proposed_fields_selected' => ['title' => 'title'],
+      'field_values' => ['title' => 'Título proposto para a versão anterior'],
+      'rationale' => 'A versão-base mudou durante o preenchimento.',
+      'source_uris' => '',
+      'submission_token' => $staleFormState->get('wiki_proposal_submission_token'),
+    ]);
+    $staleForm->validateForm($staleBuild, $staleFormState);
+    self::assertFalse($staleFormState->hasAnyErrors());
+    $staleForm->continueToReview($staleBuild, $staleFormState);
+    $staleReview = $staleForm->buildForm([], $staleFormState, $staleTarget);
+    $staleFormState->setRebuild(FALSE);
+    $staleTarget->setNewRevision(TRUE);
+    $staleTarget->setTitle('Versão concorrente publicada');
+    $staleTarget->save();
+    $proposalCountBeforeStaleSubmit = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute();
+    self::assertSame($expectedTargetRevisionId, (int) $staleFormState->get('wiki_proposal_expected_revision'));
+    $staleForm->submitForm($staleReview, $staleFormState);
+    self::assertTrue($staleFormState->get('wiki_proposal_conflict'));
+    self::assertSame($proposalCountBeforeStaleSubmit, (int) $this->container->get('entity_type.manager')
+      ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+    $conflictBuild = $staleForm->buildForm([], $staleFormState, $staleTarget);
+    self::assertArrayHasKey('conflict', $conflictBuild['review']['#slots']['body']);
+    $staleFormState->clearErrors();
+    $staleForm->backToEdit($staleReview, $staleFormState);
+    $rebasedForm = $staleForm->buildForm([], $staleFormState, $staleTarget);
+    self::assertArrayHasKey('base_changed', $rebasedForm);
+    self::assertSame((int) $staleTarget->getRevisionId(), (int) $staleFormState->get('wiki_proposal_expected_revision'));
+    $staleForm->validateForm($rebasedForm, $staleFormState);
+    self::assertArrayHasKey('confirm_current_base', $staleFormState->getErrors());
+    $staleFormState->clearErrors();
+    $staleFormState->setValue('confirm_current_base', 1);
+    $staleForm->validateForm($rebasedForm, $staleFormState);
+    self::assertFalse($staleFormState->hasAnyErrors());
+
     $display = $this->createMock(EntityViewDisplayInterface::class);
     $linkHooks = $this->container->get(WikiProposalLinkHooks::class);
     self::assertInstanceOf(WikiProposalLinkHooks::class, $linkHooks);
@@ -2831,7 +2889,29 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $build = [];
     $proposalForm->validateForm($build, $formState);
     self::assertFalse($formState->hasAnyErrors());
-    $proposalForm->submitForm($build, $formState);
+    $proposalForm->continueToReview($build, $formState);
+    self::assertSame('review', $formState->get('wiki_proposal_step'));
+    $reviewBuild = $proposalForm->buildForm([], $formState, $target);
+    self::assertSame('aculta420:content-section', $reviewBuild['review']['#component']);
+    self::assertStringContainsString('Novo título sugerido', (string) $reviewBuild['review']['#slots']['body']['fields']['#plain_text']);
+    self::assertArrayNotHasKey('intent', $reviewBuild['actions']);
+    $formState->setRebuild(FALSE);
+    $proposalForm->backToEdit($reviewBuild, $formState);
+    self::assertSame('edit', $formState->get('wiki_proposal_step'));
+    self::assertSame('Texto sugerido pelo Form API', $formState->getValue('proposed_text'));
+    $editBuild = $proposalForm->buildForm([], $formState, $target);
+    $formState->setRebuild(FALSE);
+    $proposalForm->validateForm($editBuild, $formState);
+    self::assertFalse($formState->hasAnyErrors());
+    $proposalForm->continueToReview($editBuild, $formState);
+    $reviewBuild = $proposalForm->buildForm([], $formState, $target);
+    $formState->setRebuild(FALSE);
+    $proposalForm->validateForm($reviewBuild, $formState);
+    self::assertFalse($formState->hasAnyErrors());
+    $currentTarget = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($target->id());
+    self::assertSame((int) $currentTarget->getRevisionId(), (int) $formState->get('wiki_proposal_expected_revision'));
+    $proposalForm->submitForm($reviewBuild, $formState);
+    self::assertSame([], $formState->getErrors());
     self::assertSame('aculta_wiki.proposal_status', $formState->getRedirect()->getRouteName());
     $redirectProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
       ->load($formState->getRedirect()->getRouteParameters()['proposal']);

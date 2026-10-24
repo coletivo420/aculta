@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.92: proposta contextual em duas etapas Form API; Back preserva valores;
+  revisão-base detecta conflito e exige confirmação após rebase explícito.
+  Kernel focal 1/202; Runtime e visual intocados.
+
 - Dev.91: campos de lista aprovados exigem escolha explícita `replace` ou
   `append` no Form API e no serviço. Kernel focal 1/183; Runtime intocado.
 

@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.92`: proposta contextual agora tem etapas `Escrever` e `Revisar e
+  enviar`, mantém os valores server-side ao voltar e mostra os valores propostos
+  antes do envio. Se o verbete mudar, não envia contra uma base silenciosamente
+  atualizada; exige revisão e confirmação explícita. Kernel focal 1/202; Runtime
+  e validação visual intocados.
+
 - `0.1.0-dev.91`: moderação exige uma escolha explícita por lista aprovada
   (substituir ou acrescentar); não presume `replace`. Form API e serviço
   rejeitam ausência de escolha. Kernel focal 1/183; Runtime intocado.

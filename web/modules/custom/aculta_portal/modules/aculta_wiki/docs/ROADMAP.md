@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.91**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.92**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.92 — proposta contextual progressiva
+
+O envio por verbete alheio tem duas etapas: escrever e revisar/enviar. Os valores
+permanecem no Form API server-side ao voltar; a etapa de revisão apresenta o
+resumo e os campos estruturados antes do envio. O módulo captura a revisão-base
+no início e o serviço rejeita uma alteração concorrente. Ao voltar após conflito,
+a autoria precisa confirmar revisão contra a versão atual. Kernel MariaDB focal
+passou (1/202); Runtime e navegador não executados.
 
 ### Incremento dev.91 — escolha obrigatória na aplicação de listas
 
