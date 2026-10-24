@@ -41,6 +41,7 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
@@ -77,6 +78,7 @@ final class MessagesController extends ControllerBase {
     private readonly EmailPendingAviso $emailPendingAviso,
     private readonly NoticeListFilter $noticeListFilter,
     private readonly NoticeReadActionBuilder $noticeReadActionBuilder,
+    private readonly NoticeFlagStateLoader $noticeFlagStateLoader,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -102,6 +104,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.email_pending_aviso'),
       $container->get('aculta_messenger.notice_list_filter'),
       $container->get('aculta_messenger.notice_read_action_builder'),
+      $container->get('aculta_messenger.notice_flag_state_loader'),
       $container->get('module_handler'),
     );
   }
@@ -722,6 +725,21 @@ final class MessagesController extends ControllerBase {
     }
     $items = [];
 
+    $activeAlerts = $this->siteAlerts->getActiveAlerts();
+    $visibleAlerts = [];
+    foreach ($activeAlerts as $alert) {
+      $access = $alert->access('view', $this->account, TRUE);
+      $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
+      if ($access->isAllowed()) {
+        $visibleAlerts[] = $alert;
+      }
+    }
+    $alertFlagStates = [];
+    if ($this->account->isAuthenticated() && $visibleAlerts !== []) {
+      $alertFlagStates = $this->noticeFlagStateLoader->loadForAccount($visibleAlerts, $this->account);
+      $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+    }
+
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
     foreach ($this->buildPersistentNoticeItems(50, $cacheability, $filters) as $item) {
       $items[] = $item;
@@ -770,13 +788,9 @@ final class MessagesController extends ControllerBase {
     // Same criteria as the header bar, from the shared service.
     $activeAlertCount = $this->counts->visibleActiveAlertCount($this->account, $cacheability);
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
-    foreach ($this->siteAlerts->getActiveAlerts() as $alert) {
-      $access = $alert->access('view', $this->account, TRUE);
-      $cacheability->addCacheableDependency($alert)->addCacheableDependency($access);
-      if (!$access->isAllowed()) {
-        continue;
-      }
-      if ($this->account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && $this->flagService->getFlagging($dismissalFlag, $alert, $this->account) !== NULL) {
+    foreach ($visibleAlerts as $alert) {
+      $alertFlags = $alertFlagStates[$alert->id()] ?? [];
+      if ($this->account->isAuthenticated() && $dismissalFlag instanceof FlagInterface && isset($alertFlags[$dismissalFlag->id()])) {
         continue;
       }
       // Match the public render contract of SiteAlertBlock; formatted text and
@@ -786,7 +800,7 @@ final class MessagesController extends ControllerBase {
       $rotulo = NULL;
       if ($this->account->isAuthenticated()) {
         $leituraFlag = $this->flagService->getFlagById('aculta_site_alert_read');
-        $lido = $leituraFlag instanceof FlagInterface && $this->flagService->getFlagging($leituraFlag, $alert, $this->account) !== NULL;
+        $lido = $leituraFlag instanceof FlagInterface && isset($alertFlags[$leituraFlag->id()]);
         $rotulo = $this->readLabel(!$lido);
       }
       $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(

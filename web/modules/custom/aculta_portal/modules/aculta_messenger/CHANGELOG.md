@@ -1,3 +1,14 @@
+## 0.1.1-dev.162 — carregar estados de Site Alerts em lote — 2026-10-24
+
+A central filtra os Site Alerts por acesso antes de consultar Flags pessoais. Leitura e dispensa agora vêm de uma única
+chamada `loadIsFlaggedMultiple()` para todas as entidades visíveis, em vez de duas consultas por alerta. A lista de
+cache tags de Flagging permanece ligada à resposta; visitantes anônimos não consultam estado pessoal.
+
+Validação: `NoticeFlagStateLoaderTest` **3/10 PASS**; `AcultaMessengerServiceProviderTest` + loader **7/24 PASS**; suíte Unit Messenger **147/914 PASS**.
+PHPCS dos arquivos novos PASS; `MessagesController` passou de 96 para 95 erros PHPCS preexistentes, com avisos
+inalterados (65). PHP lint, gate Drupal 11+ (1.155 checks), índice de status e `git diff --check` PASS. Runtime visual
+não executado nesta microfase.
+
 ## 0.1.1-dev.161 — caracterizar Flood e lock de mensagens no Kernel — 2026-10-24
 
 O novo Kernel usa o Flood de banco do Drupal, contas reais e backends persistentes independentes. Confirma o limite

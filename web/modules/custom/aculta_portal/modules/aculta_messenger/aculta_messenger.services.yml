@@ -34,6 +34,9 @@ services:
       - '@module_handler'
   aculta_messenger.notice_list_filter:
     class: Drupal\aculta_messenger\Service\NoticeListFilter
+  aculta_messenger.notice_flag_state_loader:
+    class: Drupal\aculta_messenger\Service\NoticeFlagStateLoader
+    arguments: ['@entity_type.manager']
   aculta_messenger.notice_read_state:
     class: Drupal\aculta_messenger\Service\NoticeReadStateManager
     arguments: ['@entity_type.manager', []]
