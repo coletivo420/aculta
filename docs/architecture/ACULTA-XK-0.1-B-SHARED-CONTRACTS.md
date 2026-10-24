@@ -37,7 +37,7 @@ integração decisória do primeiro verbete e critérios/configuração de isen�
 - Separar **geração de evento** de entrega e de visualização. O Messenger escolhe canal conforme preferências válidas e tipo de aviso; o producer não faz SMTP.
 - Revalidar Entity Access, role, Group e propósito **na entrega e ao abrir o aviso**. Opt-out de email não apaga avisos necessários no site.
 - Idempotência por consumidor/evento, retry com erro explícito, sem duplicar aviso na republicação de uma revisão já tratada.
-- Eventos candidatos: Wiki `review_submitted`, `changes_requested`, `revision_published`; Fórum já publica Comment, primeira publicação de ForumPost e revisão de tópico pelo adapter `aculta_messenger`; LMS usa `aculta_lms_messenger`; associado apenas se há consumidor real.
+- Eventos candidatos: Wiki `review_submitted`, `changes_requested`, `revision_published`; Fórum já publica Comment, primeira publicação de ForumPost e revisão de tópico; LMS e Loja também publicam eventos reais. Todos os consumers/adapters, persistência, canais, filas e abertura segura residem no núcleo `aculta_messenger`; os módulos de domínio mantêm publishers e seleção de destinatários. Os submódulos antigos `*_messenger` foram esvaziados após migração e não são caminho de execução.
 - Preservar contrato atualmente em produção/dev; migração gradual com comparação lado a lado, sem duplo disparo.
 - Nenhum evento de conteúdo cria conversa/thread ou altera seus participantes. Chats automáticos ou exclusivos por tópico, curso, verbete ou publicação estão descartados; `ConversationContext`, `ConversationMembership` e `ParticipationLedger` não serão criados para esse fim.
 

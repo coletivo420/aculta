@@ -4,6 +4,18 @@ Submódulo opcional de integração educacional do Portal. Drupal LMS e Group s�
 as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
 progresso, certificado, mensagem ou amizade paralelos.
 
+## Integração de avisos — contrato vigente
+
+O `aculta_lms` é dono dos eventos, cursos, matrículas e da elegibilidade dos
+destinatários. Consumidores, avisos no site, persistência, central, deduplicação,
+preferências e a orquestração de e-mail são centralizados no `aculta_messenger`.
+O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto
+ou digest/resumo, sempre sujeito às políticas administrativas. Transporte,
+templates e logs de entrega permanecem no `aculta_mailer`. O adapter executável
+foi migrado para o núcleo; o antigo `aculta_lms_messenger` não mantém fluxo
+legado ativo. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+
 ## Administração organizada por curso
 
 O curso é o primeiro nível da administração. A sequência de aulas pertence ao
@@ -471,3 +483,4 @@ Runtime/Homelab não faz parte do teste.
 ## Registro histórico: identidade estudantil anterior (G420-A)
 
 [Contrato e inventário histórico da migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). A identidade e os caminhos descritos nas seções anteriores refletem o estado daquela fase. O nome vigente é **ACULTA Studio Ganjalab**, ID `ganjalab`, com rota canônica `/studio/ganjalab`; aliases legados GET/HEAD redirecionam temporariamente para ela. O controller de experiência é `aculta_studio.ganjalab_controller`. LMS continua dono de dados, progresso, matrículas, certificados, autorização e cache.
+

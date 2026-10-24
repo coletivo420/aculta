@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.114 — Submódulo aculta_wiki_messenger consome eventos Wiki, persiste em Message com deduplicação, integra central/contagem, resumo e email direto. Unit adapter 3/20, WikiReviewHooks 10/56 e PHPCS PASS; Kernel/Runtime não executados. Notifiers legados são suprimidos quando o adapter está habilitado."
+version_note: "0.1.0-dev.115 — publisher de domínio no aculta_wiki; consumer, Message, central e canais centralizados no aculta_messenger. Unit integrada 126/657 e Kernel LMS/Wiki/Loja 6/64 PASS; Runtime smoke sem Alpha. Fluxos de entrega legados removidos."
 next_phase: 'Kernel integrado de persistência/acesso e homologação do QueueWorker no Runtime isolado; depois Loja e consolidação do Fórum ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

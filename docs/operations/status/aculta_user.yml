@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.4.0-dev.71 — aliases de e-mail antigos removidos; mantém formulários originais, perfil público e política de privacidade. Testes Runtime pendentes."
+version_note: "0.4.0-dev.73 — renomeadas propriedades de route match nos formulários para evitar colisão readonly com FormBase; cache rebuild de Runtime completou e smoke HTTP passou."
 next_phase: Revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.

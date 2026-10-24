@@ -33,7 +33,7 @@ final class AccountBioForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountProxyInterface $currentUserService,
     private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -125,7 +125,7 @@ final class AccountBioForm extends FormBase {
    * Returns whether this same owner form is serving the Studio editor.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_bio';
+    return $this->currentRouteMatch?->getRouteName() === 'aculta_studio.profile_bio';
   }
 
   /**

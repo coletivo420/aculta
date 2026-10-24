@@ -1,3 +1,24 @@
+## 0.1.1-dev.97 — centralizar consumidores de avisos — 2026-10-24
+
+- Consumidores, managers, hooks, rotas de abertura, workers de e-mail e
+  configurações Message para LMS, Wiki e Loja foram movidos para
+  `aculta_messenger`. Os publishers e a seleção de destinatários permanecem
+  nos módulos que possuem os respectivos conteúdos e workflows.
+- O núcleo registra adapters apenas quando encontra serviços dos módulos
+  produtores. O update aditivo `10003` instala defaults centralizados sem
+  sobrescrever configuração existente. Não foi executado no Runtime.
+- Os antigos submódulos `*_messenger` tiveram serviços, rotas, classes, testes e
+  configurações removidos após a migração. Permanecem manifests ocultos sem
+  execução para preservar a identidade das extensões já habilitadas; não há
+  uninstall/alteração de dados no Runtime.
+- Unit integrada: 126 testes / 657 assertions PASS, incluindo provider e rotas
+  de adapters opcionais. Kernels MariaDB de LMS, Wiki e Loja: 6 testes / 64 assertions
+  PASS. PHPCS Drupal/DrupalPractice nos arquivos migrados PASS; PHP lint e
+  `git diff --check` PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
+- Decisão normativa: Messenger centraliza mensagens, avisos e orquestração de
+  e-mail; Mailer permanece dono do transporte e infraestrutura de envio.
+
 ## 0.1.1-dev.96 — entrega direta configurável para avisos do Fórum — 2026-10-24
 
 - A preferência de cada categoria do Fórum agora seleciona sem e-mail, resumo
@@ -15,9 +36,9 @@
   implementação dev.1; Kernel e Runtime da Loja permanecem pendentes.
 - Unit Messenger: 86 testes / 412 assertions PASS; PHPCS Drupal/DrupalPractice
   passou após correções; lint dos arquivos PHP do outbox/worker passou. Kernel
-  específico da alteração, gates de configuração e Runtime ainda pendentes; a
-  homologação MariaDB do ledger anteriormente aprovada não cobre as colunas
-  novas de e-mail.
+  MariaDB do ledger: 23 testes / 515 assertions, mais o teste do update `10002`
+  em 1 teste / 18 assertions; ambos PASS. Gates de configuração e Runtime seguem
+  pendentes.
 
 ## 0.1.1-dev.95 — revalidar preferências de categoria no digest — 2026-10-24
 
@@ -26,7 +47,8 @@
   categoria são descartadas sem remover o aviso obrigatório do site.
 - Unit: `AvisosResumoProviderPreferenceTest` verifica opt-out depois da
   enfileiração; Loja revalida também a categoria antes de expor linhas.
-- Unit Messenger: 82 testes / 386 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint no serviço/teste PASS. Kernel não executado (SIMPLETEST_DB ausente); Runtime não homologado.
+- Unit Messenger: 82 testes / 386 assertions PASS; PHPCS Drupal/DrupalPractice e PHP lint no serviço/teste PASS. Kernel não executado (SIMPLETEST_DB ausente); Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
 
 ## 0.1.1-dev.93 — usar relógio Drupal na fila de avisos do Fórum — 2026-10-24
 
@@ -55,7 +77,8 @@
 - Kernel MariaDB do ledger/event pipeline: 18 testes / 353 assertions,
   incluindo publicação e replay de ForumPost pelo EventDispatcher; Unit
   Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. PHPCS Drupal/DrupalPractice,
-  PHP lint e YAML dos serviços: PASS. Runtime não homologado.
+  PHP lint e YAML dos serviços: PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
 
 ## 0.1.1-dev.84 — respeitar unfollow antes da entrega — 2026-10-24
 
@@ -1043,7 +1066,8 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
   entidade convertida e o ID numérico legado, delegando a revalidação de acesso
   ao `AvisoService` por um contrato mínimo de leitura.
 - Unit Messenger: 75 testes / 352 assertions; PHPCS Drupal/DrupalPractice e
-  PHP lint nos arquivos alterados: PASS. Runtime não homologado.
+  PHP lint nos arquivos alterados: PASS. Runtime recebeu rebuild de cache e smoke HTTP após correção; não homologado
+  como Alpha.
 
 ## 0.1.1-dev.91 — aplicar F-D21 no alter de destinatários — 2026-10-24
 

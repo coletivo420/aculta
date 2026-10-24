@@ -13,27 +13,30 @@ formulário/retorno e reflow 320/390/1280. Olivero e WCAG 2.2 AA completa seguem
 pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
 diretamente.
 
-## Próximas fases Wiki ↔ Messenger — avisos editoriais
+## Integração vigente Wiki ↔ Messenger — avisos editoriais
 
-Estas fases complementam o roadmap editorial. `aculta_messenger 0.1.1-dev.90`
-já oferece um envelope/event publisher compartilhado, mas esse publisher apenas
-despacha fatos: não persiste avisos genéricos. Antes da integração funcional, o
-Messenger precisa expor o contrato compartilhado de registro/idempotência e a
-Wiki precisa de um adapter consumidor que revalide destinatário e acesso. Não
-criar inbox ou armazenamento paralelo. Seguir conteúdo significa receber avisos
-conforme acesso e preferências; nunca cria conversa ou grupo.
+O núcleo `aculta_messenger` é dono do consumer, persistência Message, central,
+contagem, preferências, deduplicação, abertura segura, filas, workers e e-mail.
+`aculta_wiki` é dono dos workflows, da seleção de destinatários e dos
+publishers de eventos editoriais. Os antigos serviços consumidores e
+notificadores de entrega do submódulo foram removidos após a migração; o shell
+hidden remanescente não executa código.
 
-| Fase | Trabalho | Critério de aceite |
+| Fase | Estado | Evidência / critério restante |
 | --- | --- | --- |
-| **W-MSG1 — contrato de registro compartilhado** | Fechar com o owner do Messenger uma API pública para registrar avisos por destinatário, usando o publisher/envelope existente para transportar fatos; não gravar diretamente na entidade `aculta_aviso` nem reutilizar a API específica do adapter Forum/LMS. | Contrato versionado define deduplicação, preferência de canal, leitura/contagem, revalidação de acesso, falhas retentáveis e armazenamento existente; compatibilidade testada sem nova entidade/inbox. |
-| **W-MSG2 — adapter consumidor e autorização** | Adaptar os eventos Wiki enfileirados ao contrato compartilhado; resolver autoria da proposta e editores elegíveis para revisão; revalidar status, revisão publicada, permissões, Domain/purpose e acesso na geração e abertura do aviso. | Autores/editores inelegíveis não recebem aviso; rascunhos e revisões inacessíveis não vazam em links, contagens ou e-mail; replay idempotente preserva fila em falha. |
-| **W-MSG3 — entrega sem duplicação** | Usar a persistência e API de central suportadas pelo Messenger/Drupal existentes, mantendo os e-mails transacionais atuais via Mailer conforme política. Não criar entidade de aviso, inbox ou transporte SMTP Wiki. | Reprocessamento não duplica; opt-out de e-mail não elimina aviso no site; transporte de teste comprova preferências aplicáveis. |
-| **W-MSG4 — caracterização e homologação** | Cobrir Kernel/integração de fila e consumer; testar aprovação, ajustes solicitados, revisão pública, revogação de acesso, retry, histórico e adapter opcional desabilitado. | Testes reproduzíveis aprovados; Runtime/browser só registrados após execução autorizada e com evidência separada. |
+| **W-MSG1 — contrato compartilhado** | Implementado | Publisher Wiki envia envelope pelo contrato Messenger. |
+| **W-MSG2 — consumer e autorização** | Consumer central implementado; validação completa parcial | Consumer e manager Messenger revalidam origem/revisão, editor/autoria e acesso ao gerar/abrir/enviar. Kernel de entidades reais e revogação entre fila/abertura ainda pendentes. |
+| **W-MSG3 — persistência e canais** | Implementado no núcleo | Message existente, deduplicação, central/contador, digest e envio direto pelo Mailer. Site obrigatório; canais de e-mail seguem preferência e política administrativa. Não há fluxo legado paralelo para destinatários elegíveis. |
+| **W-MSG4 — caracterização e Runtime** | Parcial | Unit integrada e Kernel MariaDB central passam; falta concorrência, retry/falha, cobertura de workflows completos e homologação Runtime. |
 
-**Fora do escopo:** chat automático por verbete, membership de thread derivada de
-revisão/seguimento, mensagens privadas para grupos de editores e storage de
-notificações próprio da Wiki. A Wiki continua dona do workflow e o Messenger da
-agregação/entrega compartilhada.
+A Wiki mantém workflow e conteúdo; `aculta_messenger` coordena avisos e canais;
+`aculta_mailer` transporta e-mails. Nenhum teste desta fase enviou e-mail real ou
+alterou Runtime. Chats por verbete, membership derivada de revisão/seguimento,
+mensagens privadas de grupo e storage próprio não fazem parte do produto.
+
+> Os incrementos dev.113 e dev.114 abaixo registram a história da implementação.
+> Suas declarações antigas de consumer ausente foram substituídas pelo estado
+> acima e não são o contrato vigente.
 
 ## Incremento dev.113 — fila de eventos Wiki→Messenger
 

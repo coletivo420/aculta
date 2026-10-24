@@ -58,3 +58,10 @@ function aculta_messenger_update_10002(): void {
     $schema->addIndex($table, 'email_status', ['email_status', 'email_updated'], $definition);
   }
 }
+
+/**
+ * Installs defaults for the centralized LMS, Wiki, and Commerce adapters.
+ */
+function aculta_messenger_update_10003(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

@@ -142,3 +142,30 @@ services:
   logger.channel.aculta_messenger:
     parent: logger.channel_base
     arguments: ['aculta_messenger']
+
+  aculta_messenger.optional_notice_route_subscriber:
+    class: Drupal\aculta_messenger\EventSubscriber\OptionalNoticeRouteSubscriber
+    arguments: ['@module_handler']
+    tags:
+      - { name: event_subscriber }
+
+  # Route references remain resolvable when an optional source module is off;
+  # ServiceProvider replaces these fail-closed handlers when it is enabled.
+  aculta_messenger.lms_notice_access:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.lms_notice_open_controller:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.wiki_notice_access:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.wiki_notice_open_controller:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.commerce_notice_access:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.commerce_notice_open_controller:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true

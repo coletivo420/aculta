@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the ACULTA Messenger module.
+ */
+
+/**
+ * Implements hook_queue_info_alter().
+ *
+ * Do not instantiate scheduled workers for disabled optional integrations.
+ */
+function aculta_messenger_queue_info_alter(array &$definitions): void {
+  $module_handler = \Drupal::moduleHandler();
+  $optional_workers = [
+    'aculta_lms' => [
+      'aculta_lms_messenger_email',
+      'aculta_lms_deadline_reminders',
+    ],
+    'aculta_wiki' => ['aculta_wiki_messenger_email'],
+    'aculta_commerce' => ['aculta_commerce_messenger_email'],
+  ];
+  foreach ($optional_workers as $module => $worker_ids) {
+    if (!$module_handler->moduleExists($module)) {
+      foreach ($worker_ids as $worker_id) {
+        unset($definitions[$worker_id]);
+      }
+    }
+  }
+}

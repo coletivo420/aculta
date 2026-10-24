@@ -1,3 +1,10 @@
+## 0.1.0-dev.4 — publicar evento de pedido no Messenger (2026-10-24)
+
+- `aculta_commerce` publica `store.order_placed`; o consumer e a entrega
+  centralizados residem em `aculta_messenger`. O recibo nativo permanece para
+  convidados e fallback.
+- Unit e Kernel MariaDB integrados passaram; Runtime não homologado.
+
 # Changelog — aculta_commerce
 
 ## 0.1.0-dev.3 — alinhar fixture após conciliação do branch (2026-10-23)

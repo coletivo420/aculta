@@ -1,3 +1,3 @@
-# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+# Casca de compatibilidade oculta; não contém fluxo executável.
 state: Dev
-next_phase: 'Dev.19: site obrigatório; e-mail selecionável por pessoa (off/resumo diário/direto), com digest geral opt-in e política administrativa Mailer. Unit 27/165 e PHPCS PASS; Kernel não executado (SIMPLETEST_DB ausente). Sem e-mail real ou Runtime ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'
+next_phase: "Extensão hidden sem serviços, rotas ou código; fluxo migrado para aculta_messenger e publisher mantido em aculta_lms. Remoção da extensão habilitada exige operação de uninstall autorizada. Nenhuma entrega legada ativa. Ver README do módulo."

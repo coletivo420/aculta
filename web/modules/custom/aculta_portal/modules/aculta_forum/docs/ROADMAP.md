@@ -27,6 +27,13 @@ entre publicação e consumo e agregação do resumo diário com Mailer mockado.
 Unit Messenger cobre também a leitura de tópico com parâmetro `NodeInterface`
 upcast pelo Router. Runtime permanece pendente.
 
+**Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
+seleção de destinatários. Todos os consumers/adapters, agregação, persistência
+compartilhada, preferências, filas, workers e coordenação dos modos de e-mail
+pertencem ao `aculta_messenger`; `aculta_mailer` mantém transporte e templates.
+A migração para o consumer central não reativa Message Subscribe nem mantém
+fluxos duplicados de entrega.
+
 As fases técnicas **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas
 como concluídas, mas a funcionalidade permanece **desligada por padrão** e sem
 autorização de ativação produtiva. O LMS consome quatro tipos pelo envelope

@@ -25,7 +25,7 @@ final class SocialLinkForm extends FormBase {
     private readonly AccountProxyInterface $currentUserService,
     private readonly SocialNetworks $networks,
     private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -120,7 +120,7 @@ final class SocialLinkForm extends FormBase {
    * Returns whether this same owner form serves a full-page Studio screen.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_social';
+    return $this->currentRouteMatch?->getRouteName() === 'aculta_studio.profile_social';
   }
 
   /**

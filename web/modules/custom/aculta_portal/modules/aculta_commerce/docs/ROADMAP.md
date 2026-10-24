@@ -2,6 +2,20 @@
 
 Data de início: 2026-10-22. Branch: `docs/aculta-forum-0.1.0-dev.1`. Execução por commits isolados na PR já aberta.
 
+## Integração Loja → ACULTA Messenger
+
+O publisher de `store.order_placed` e a seleção do cliente continuam no
+`aculta_commerce`. Consumer, persistência Message, central/contador, rotas de
+abertura, preferências, digest, entrega direta, filas e workers pertencem ao
+`aculta_messenger`. O aviso no site é obrigatório; e-mail pode ser desligado,
+direto ou digest conforme preferência e política administrativa. O recibo
+nativo permanece para convidados e como fallback quando o evento não for
+aceito. O submódulo antigo não conserva código executável nem entrega paralela.
+
+Unit integrada: 36 testes / 228 assertions; Kernels LMS/Wiki/Loja: 6 testes /
+64 assertions PASS nesta revisão. Runtime e testes concorrentes continuam
+pendentes; nenhum e-mail real foi enviado.
+
 ## Melhor Envio — dependência de CEP (ME-CEP 0.1)
 
 - Auditoria em `docs/portal/CEP-SHARED-LOOKUP-0.1.md`. Serviço `aculta_portal_cep.lookup` e adaptador `aculta_commerce_melhorenvio` concluídos (Unit). Kernel pendente (DT-CEP-01).
@@ -171,19 +185,13 @@ Validação da conciliação (dev.3): a fixture do leitor foi atualizada para re
 
 Gate módulo/tema após conciliação: removida a classe visual própria dos links Green Stash em favor de `data-portal-ui`. Permanecem cinco violações anteriores à integração em Studio, LMS e Wiki; o gate global não está aprovado. Gate estático de endereço PASS; nenhuma revisão visual foi executada nesta fase.
 
-## Integração de avisos com ACULTA Messenger (2026-10-24)
+## Registro histórico superado — integração Loja/Messenger (2026-10-24)
 
-`modules/aculta_commerce_messenger` é o consumer proprietário dos avisos da
-Loja. Apenas o tipo de pedido configurado em `CheckoutSettings::shopOrderType()`
-é publicado como `store.order_placed`; pedidos LMS/doação e fluxos não
-relacionados ficam fora. O aviso no site é obrigatório para clientes registrados
-ativos. E-mail usa a categoria `loja`, com modos off/direto/resumo diário e
-política administrativa via ACULTA Mailer. A transição substitui o recibo
-Commerce duplicado quando o evento foi aceito; pedidos de convidados preservam
-o recibo nativo, e falha de publicação mantém fallback nativo.
-
-Dev.1 implementa publisher/consumer, deduplicação pelo evento/Message existente,
-central, contador, abertura com revalidação de acesso e canais de e-mail. Unit e
-validação de container/Kernel, replay concorrente, Runtime, acessibilidade e
-compatibilidade de upgrade ainda são gates pendentes. Não executar migração nem
-ativar o adapter em Runtime nesta etapa.
+Esta seção descreve a etapa anterior, quando o consumer vivia em
+`aculta_commerce_messenger`. Após migração, esse fluxo foi removido:
+`aculta_commerce` publica `store.order_placed`; consumers, Message, central,
+contador, abertura segura e canais pertencem ao `aculta_messenger`. Avisos no
+site são obrigatórios e e-mail usa off/direto/digest pela preferência e política
+administrativa. O Mailer mantém o transporte. O recibo Commerce continua para
+convidados e fallback. Unit integrada 36/228 e Kernels MariaDB 6/64 passaram;
+Runtime e concorrência continuam pendentes. Nenhum fluxo legado ativo permanece.

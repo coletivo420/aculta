@@ -1,5 +1,16 @@
 # ACULTA Wiki — Wiki420 como submódulo
 
+## Avisos da Wiki
+
+O `aculta_wiki` publica eventos editoriais e seleciona destinatários de acordo
+com seu workflow. Consumers, persistência Message, central, contagem,
+preferências, deduplicação, abertura, filas e entrega de e-mail pertencem ao
+`aculta_messenger`; transporte/templates permanecem no `aculta_mailer`. Avisos
+no site são obrigatórios; e-mail segue modo off/direto/digest escolhido pelo
+membro e política administrativa. O submódulo antigo não mantém código ou
+entrega legada ativa. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+
 Submódulo de `aculta_portal` que reunirá o controlador, os formulários e as
 rotas próprias da Wiki420. O plano completo, com fases, riscos e decisões
 pendentes, está em
@@ -15,12 +26,11 @@ pendentes, está em
   opcional direto ou por resumo/digest, conforme preferência e política do
   Mailer. Os dois value objects versionados
   validam UUID/revisão, allowlist e payload (Unit 4/5). Dev.113 adiciona
-  producers nas transições e QueueWorker com retry por lease. O submódulo
-  `aculta_wiki_messenger` agora consome os eventos, grava avisos no Message
-  existente e oferece email direto ou resumo segundo preferência e Mailer.
-  Unit 3/20 valida roteamento e persistência com email opcional. Kernel e Runtime
-  não foram executados. O adapter suprime os notifiers legados quando habilitado;
-  estes seguem como fallback em instalações que ainda não habilitaram o adapter.
+  publishers nas transições. O consumer, Message, central, preferências e
+  entrega foram migrados ao `aculta_messenger`; o submódulo antigo não tem
+  implementação executável. Unit/Kernel centrais atuais constam no roadmap.
+  O fallback editorial legado para usuários elegíveis foi removido após a
+  migração; o recibo Commerce mantém a exceção documentada para convidados.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer

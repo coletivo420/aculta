@@ -4,6 +4,17 @@ Submódulo de integração comercial da **loja**, em estado Dev. O provider de c
 
 Na conciliação dev.3, Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. O gate de endereço passou; o gate global módulo/tema mantém cinco violações anteriores em Studio, LMS e Wiki, sem violações restantes em Commerce. Nenhum fluxo de pagamento ou serviço externo foi executado nesta validação.
 
+## Integração de avisos da Loja — contrato vigente
+
+`aculta_commerce` publica eventos de pedidos e seleciona destinatários segundo
+as regras da Loja. Consumers, avisos no site, armazenamento Message, central,
+deduplicação, preferências, digest, e-mail direto e workers são centralizados
+no `aculta_messenger`. O site é obrigatório; e-mail pode ser desligado, direto
+ou digest/resumo pelo membro e pelas políticas administrativas. O `aculta_mailer`
+mantém transporte e templates. O recibo Commerce permanece para convidados e
+fallback; não há consumer ou entrega legado no submódulo. Consulte
+[`docs/ROADMAP.md`](docs/ROADMAP.md).
+
 ## Fronteiras imutáveis
 
 - **Loja:** Drupal Commerce é proprietário das entidades de produto, variação, pedido, carrinho, pagamento e demais transações da loja; `aculta_commerce` coordena serviços específicos da loja.
@@ -69,3 +80,4 @@ Novo formulário Studio em `/estudio/loja/produtos/novo`: cria rascunho de produ
 
 ## Loja unica
 O Green Stash utiliza somente a loja comercial existente. Novo produto solicita apenas nome e associa automaticamente a unica Commerce store, apos verificar permissao. LMS e Doacoes nao sao novas lojas nem opcoes do formulario. Nenhum ID de loja fixo; configuracoes ambiguas falham fechadas.
+

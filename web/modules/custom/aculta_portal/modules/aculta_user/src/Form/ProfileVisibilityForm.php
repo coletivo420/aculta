@@ -28,7 +28,7 @@ final class ProfileVisibilityForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly AccountProxyInterface $currentUserService,
     private readonly SettingsTabs $settingsTabs,
-    private readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -103,7 +103,7 @@ final class ProfileVisibilityForm extends FormBase {
    * Checks whether the canonical Studio view owns the current form context.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_privacy';
+    return $this->currentRouteMatch?->getRouteName() === 'aculta_studio.profile_privacy';
   }
 
   /**

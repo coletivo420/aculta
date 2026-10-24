@@ -4,7 +4,7 @@
 
 ## Decisão e limites
 
-`aculta_messenger` é a infraestrutura unificada para avisos do site, notificações, assinaturas e conversas privadas voluntárias entre membros. Mensagens humanas continuam nas entidades e APIs do `private_message`; eventos persistentes usam Message/Message Notify, Flags e `aculta_aviso` nos casos em que esses storages já são a fonte apropriada. Site Alert mantém alertas temporários. Não há migração geral para nova entidade de notificação.
+`aculta_messenger` é o ponto central de mensagens privadas, avisos no site e coordenação de e-mail: mantém consumidores/adapters, agregação, deduplicação, preferências, políticas de entrega, filas e apresentação segura. Os módulos proprietários publicam eventos e escolhem destinatários conforme suas regras. O `aculta_mailer` continua responsável pelo transporte SMTP/Mail, templates, remetente, cabeçalhos/rodapés, logs e métricas; o Messenger não duplica essa infraestrutura. Mensagens humanas continuam nas entidades e APIs do `private_message`; eventos persistentes usam Message/Message Notify, Flags e `aculta_aviso` nos casos em que esses storages já são a fonte apropriada. Site Alert mantém alertas temporários. Não há migração geral para nova entidade de notificação.
 
 Seguir conteúdo expressa somente a intenção de receber avisos no site e, conforme políticas/preferências, por e-mail. Não cria conversa, não inclui seguidores em threads e não amplia acesso ao conteúdo. Fórum, Wiki, Revista, cursos e outros conteúdos não possuem chats exclusivos nem automáticos. Uma ação “Iniciar conversa” deve abrir o fluxo normal de mensagens privadas e aplicar todas as políticas compartilhadas.
 
@@ -12,12 +12,12 @@ Seguir conteúdo expressa somente a intenção de receber avisos no site e, conf
 
 | Componente | Responsabilidade |
 | --- | --- |
-| `aculta_messenger` | Contratos públicos, políticas compartilhadas de comunicação, agregação/deduplicação e integração aos mecanismos existentes. |
+| `aculta_messenger` | Núcleo central de mensagens privadas, avisos, consumers/adapters LMS/Wiki/Fórum/Loja, agregação, deduplicação, preferências e orquestração dos canais. |
 | `aculta_user` | Identidade, contas, amizades, preferências de identidade e elegibilidade dos relacionamentos. |
 | `aculta_mailer` | Transporte, templates, cabeçalhos/rodapés, remetente, logs e métricas de e-mail. |
-| `aculta_forum` | Conteúdo, moderação, assinaturas/eventos editoriais e elegibilidade dos destinatários do Fórum. |
-| `aculta_lms_messenger` | Adapter dos eventos LMS, revalidação de permissões LMS e encaminhamento ao Messenger. |
-| Wiki, Revista, Commerce e demais módulos | Conteúdo e workflows próprios; publicação de eventos por contratos comuns quando houver caso real. |
+| `aculta_forum`, `aculta_lms`, `aculta_wiki`, `aculta_commerce` | Conteúdo e workflows; publishers e seleção de destinatários segundo regras proprietárias. Não implementam consumers, armazenamento de avisos, filas de entrega ou transporte de e-mail. |
+| `aculta_messenger` (integrações) | Persistência nos storages existentes, central, contagem, workers, abertura segura e regras uniformes de canal. Integrações opcionais só são registradas quando seu produtor está ativo. |
+| Revista e demais módulos | Conteúdo e workflows próprios; publicam pelo contrato compartilhado quando houver caso real. |
 | `aculta420` | SDC, Twig, CSS, comportamento visual, responsividade e acessibilidade; sem autorização, destinatários ou persistência. |
 
 ## Política comum de canais
@@ -52,11 +52,11 @@ Rotas de membro pertencem ao purpose `account`; administração usa `main`. URLs
 
 ## Estado existente, objetivo e conclusão
 
-**Existente (inventário estático):** Private Message, Message/Message Notify, Flags, Site Alert, `aculta_aviso`, preferências e workers atuais; Fórum e LMS usam o publisher nos eventos registrados, enquanto amizade ainda mantém seu fluxo existente. As evidências por fluxo estão em [MESSENGER.md](../../../../../../docs/portal/MESSENGER.md), [INTEGRATIONS.md](INTEGRATIONS.md), caracterizações locais e changelogs.
+**Existente (inventário estático):** Private Message, Message/Message Notify, Flags, Site Alert, `aculta_aviso`, preferências e workers atuais. Fórum, LMS, Wiki e Loja publicam eventos nos fluxos registrados; consumidores, workers, persistência/configuração Message e abertura segura pertencem ao núcleo Messenger. Os antigos submódulos `*_messenger` não contêm mais código executável; manifests ocultos remanescentes servem apenas como identidade de compatibilidade até desinstalação operacional autorizada, sem manter fluxos legados.
 
 **Objetivo:** API mínima comum e migração progressiva de produtores reais, mantendo storage e comportamento válidos; experiência integrada de avisos e conversas com permissões e preferências consistentes.
 
-**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador agora restringe “só amigos” somente à criação de conversa; adapter do Fórum usa o publisher para Comment, ForumPost e revisão de tópico, conservando o ledger e `aculta_aviso`. O publisher/event envelope não cria storage. Integração de amizade, outros eventos LMS e módulos editoriais continuam parciais. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
+**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador restringe “só amigos” apenas à criação de conversa; adapters LMS, Wiki e Loja consolidados no núcleo Messenger e publishers mantidos nos módulos proprietários. O publisher/event envelope não cria storage. Migração aditiva de configuração instalada é provida por update; nenhuma operação foi aplicada no Runtime. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
 
 ## Histórico
 

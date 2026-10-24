@@ -1,3 +1,10 @@
+## 0.1.0-dev.115 — publicar eventos editoriais no Messenger (2026-10-24)
+
+- O publisher Wiki reside no módulo proprietário; o consumer, Message, central,
+  canais e workers estão centralizados no `aculta_messenger`. O fluxo legado de
+  entrega do submódulo foi removido após migração.
+- Unit e Kernel MariaDB integrados passaram; Runtime não homologado.
+
 ## 0.1.0-dev.113 — enfileirar eventos editoriais com retry
 
 - `WikiReviewHooks` enfileira revisões padrão que entram em `review`, incluindo

@@ -3,9 +3,10 @@ type: module
 description: 'Integração comercial da loja ACULTA; preserva os fluxos independentes de LMS e doações e o gateway Mercado Pago compartilhado.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.3'
+version: '0.1.0-dev.4'
 dependencies:
   - aculta_portal:aculta_portal
+  - aculta_portal:aculta_messenger
   - commerce:commerce
   - commerce:commerce_product
   - commerce:commerce_order

@@ -109,3 +109,10 @@ services:
   Drupal\aculta_wiki\Hook\WikiProposalLinkHooks:
     class: Drupal\aculta_wiki\Hook\WikiProposalLinkHooks
     arguments: ['@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']
+
+
+  aculta_wiki.notice_event_publisher:
+    class: Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_messenger']
+    tags:
+      - { name: event_subscriber }

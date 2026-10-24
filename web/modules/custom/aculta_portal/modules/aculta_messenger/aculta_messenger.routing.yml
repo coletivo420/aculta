@@ -295,3 +295,45 @@ aculta_messenger.avisos_raiz:
     _permission: 'access aculta portal'
   options:
     _aculta_domain_purpose: 'account'
+
+aculta_messenger.lms_notice_open:
+  path: '/avisos/educacionais/{message}/abrir'
+  defaults:
+    _controller: 'aculta_messenger.lms_notice_open_controller:open'
+    _title: 'Aviso de curso'
+  requirements:
+    _custom_access: 'aculta_messenger.lms_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.wiki_notice_open:
+  path: '/avisos/wiki/{message}/abrir'
+  defaults:
+    _controller: 'aculta_messenger.wiki_notice_open_controller:open'
+    _title: 'Aviso da Wiki'
+  requirements:
+    _custom_access: 'aculta_messenger.wiki_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message
+
+aculta_messenger.commerce_notice_open:
+  path: '/avisos/loja/{message}/abrir'
+  defaults:
+    _controller: 'aculta_messenger.commerce_notice_open_controller:open'
+    _title: 'Aviso da Loja'
+  requirements:
+    _custom_access: 'aculta_messenger.commerce_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message

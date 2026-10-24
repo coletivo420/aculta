@@ -1,14 +1,10 @@
-name: ACULTA LMS Messenger
+name: 'ACULTA LMS Messenger'
 type: module
-description: 'Publica avisos LMS na central do aculta_messenger e envia e-mails transacionais mínimos.'
-package: ACULTA Portal
-version: '0.1.0-dev.20'
+description: 'Integração migrada para aculta_messenger; produtor pertence a aculta_lms. Módulo de compatibilidade sem serviços, até desinstalação autorizada.'
+package: 'ACULTA Portal'
+version: '0.1.0-dev.2'
 core_version_requirement: ^11.3
+hidden: true
 dependencies:
   - aculta_portal:aculta_lms
   - aculta_portal:aculta_messenger
-  - aculta_portal:aculta_mailer
-  - drupal:message
-  - message_notify:message_notify
-  - drupal:options
-  - drupal:group

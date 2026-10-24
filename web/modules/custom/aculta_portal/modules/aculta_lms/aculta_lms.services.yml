@@ -87,3 +87,10 @@ services:
     arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']
     tags:
       - { name: aculta_portal.checkout_provider }
+
+
+  aculta_lms.notice_event_publisher:
+    class: Drupal\aculta_lms\EventSubscriber\LearningNotificationSubscriber
+    arguments: ['@aculta_messenger.lms_notice_manager', '@aculta_messenger.notice_event_publisher', '@logger.channel.aculta_messenger']
+    tags:
+      - { name: event_subscriber }

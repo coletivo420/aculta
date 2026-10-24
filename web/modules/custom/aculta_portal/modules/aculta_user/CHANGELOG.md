@@ -1,3 +1,11 @@
+## 0.4.0-dev.73 — corrigir conflito de propriedade em FormBase (2026-10-24)
+
+- Os formulários de perfil usam `currentRouteMatch` em vez de redeclarar a
+  propriedade herdada `$routeMatch` como `readonly`. O PHP 8.4 encerrava o
+  bootstrap durante o rebuild do container, bloqueando a recuperação do site.
+- PHP lint PASS. O rebuild do Runtime e o smoke HTTP foram executados após a
+  correção; sem alterações de dados ou configuração persistida.
+
 ## 0.4.0-dev.72 — mesmo Form API em Perfil Studio independente (2026-10-24)
 
 - `AccountBioForm`, `SocialLinkForm` e `ProfileVisibilityForm` detectam

@@ -4,7 +4,10 @@ Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, a
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
 experiência e aplica os contratos de acesso e Domain do Portal. A decisão
 normativa está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); notificações
-por conteúdo nunca criam conversas nem alteram participantes.
+por conteúdo nunca criam conversas nem alteram participantes. O núcleo
+`aculta_messenger` também hospeda todos os consumidores e adapters de avisos
+para LMS, Wiki, Fórum e Loja; módulos de domínio publicam eventos e selecionam
+destinatários conforme suas regras.
 
 Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
 deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
@@ -30,19 +33,26 @@ pelas políticas User/Messenger.
 O roadmap próprio Messenger M0–M7 mantém prioridade, versões e
 contratos independentes.
 
-## Adaptadores de aviso
+## Centralização de mensagens, avisos e e-mail
 
-Fórum, LMS, Wiki e Loja encaminham avisos à infraestrutura compartilhada. O
-aviso no site é obrigatório; por categoria, a pessoa pode escolher e-mail
-desligado, direto ou resumo diário, sujeito às políticas administrativas do
-ACULTA Mailer. O resumo também respeita o controle geral de digest. Os adapters
-mantêm fontes de verdade e autorizações nos módulos produtores e revalidam
-acesso antes da entrega. Loja usa `aculta_commerce_messenger`; seu consumidor de
-`store.order_placed` preserva o recibo nativo como fallback e para convidados.
+Fórum, LMS, Wiki e Loja usam um único núcleo de comunicação.
+`aculta_messenger` é dono das conversas privadas compartilhadas, consumers e
+adapters, persistência dos avisos nos storages existentes, agregação/contagem,
+preferências, deduplicação, abertura segura, filas/workers e orquestração de
+e-mail direto ou digest. O aviso no site é obrigatório; o membro pode escolher
+e-mail desligado, direto ou resumo/digest, sempre sujeito às políticas
+administrativas.
+
+Os módulos de domínio mantêm conteúdos, workflows e publishers de eventos. O
+Messenger aplica o contrato compartilhado e revalida acesso.
+`aculta_mailer` mantém transporte, templates, remetente, cabeçalhos/rodapés,
+logs e métricas de envio. Não se mantém entrega paralela nos antigos
+submódulos `*_messenger`; seu código executável foi removido após a migração.
+O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.96` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.97` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -78,9 +88,9 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - Message mantém eventos persistentes configurados como tipos de mensagem.
 - Message Notify entrega mensagens por notificadores existentes e pela
   infraestrutura de e-mail do Drupal.
-- O adapter opcional `aculta_lms_messenger` adiciona avisos de matrícula,
-  certificado e conclusão à lista/contador global; conclusão entra no resumo
-  diário compartilhado por provider tagged. Não cria central ou storage próprio.
+- O adapter LMS central adiciona avisos educacionais à lista/contador global;
+  digest e e-mail direto usam preferências comuns. O produtor no `aculta_lms`
+  não implementa persistência ou entrega.
 - O resumo diário cria `MailMessage` em `pt-br`, o único idioma da plataforma.
   Preferências de idioma por conta não alteram o idioma de entrega.
 - Flag `seguir_topico` mantém as assinaturas; assinar nunca concede acesso. O alter de destinatários aplica F-D21 a tópicos do ACULTA Fórum e Comments hospedados neles, sem afetar outros contextos; avisos seguem pelo fluxo compartilhado (`docs/AVISOS-E-MENSAGENS.md`).

@@ -1,3 +1,12 @@
+## 0.1.0-dev.88 — publicar avisos pelo kernel Messenger (2026-10-24)
+
+- O producer de eventos LMS foi movido para o módulo dono dos cursos e
+  workflows; consumer, persistência, preferências e entrega permanecem no
+  `aculta_messenger`.
+- O aviso no site é obrigatório; e-mail segue off/direto/digest por preferência
+  e política. Unit integrada e Kernel LMS executados constam no changelog do
+  Messenger. Runtime não homologado.
+
 ## 0.1.0-dev.87 — remoção de aliases temporários em desenvolvimento (2026-10-24)
 
 - Removidos aliases temporários /minha-aprendizagem, /ganjalab420 e /studio/ganjalab420. Única entrada estudantil canônica: /studio/ganjalab. Nenhuma alteração de matrícula, curso ou certificado. Gate PHPUnit/Runtime pendente.

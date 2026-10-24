@@ -5,7 +5,7 @@ Auditoria de fronteiras: [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
 Guia do tema: [`web/themes/custom/aculta420/docs/messenger.md`](../../web/themes/custom/aculta420/docs/messenger.md).
 Documentos anteriores do submódulo (em parte desatualizados, ver auditoria A8): `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/`.
 
-A decisão normativa atual é [`aculta_messenger/docs/ARCHITECTURE.md`](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ARCHITECTURE.md): seguir conteúdo gera avisos conforme acesso e preferências, nunca conversas ou participação em threads. Tipos de conversa contextuais anteriores foram substituídos e preservados no [registro histórico](MESSENGER-CONVERSATION-KINDS-HISTORICAL.md).
+A decisão normativa atual é [`aculta_messenger/docs/ARCHITECTURE.md`](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ARCHITECTURE.md): `aculta_messenger` centraliza mensagens privadas, avisos e a orquestração de e-mail; Mailer mantém transporte/templates/logs, enquanto os módulos de domínio publicam eventos e escolhem destinatários. Seguir conteúdo gera avisos conforme acesso e preferências, nunca conversas ou participação em threads. Tipos de conversa contextuais anteriores foram substituídos e preservados no [registro histórico](MESSENGER-CONVERSATION-KINDS-HISTORICAL.md).
 
 ## 1. Visão geral
 
@@ -25,7 +25,7 @@ Princípios:
 | --- | --- | --- |
 | Core/contrib | `private_message`, `message*`, `flag`, `site_alert` | Threads, mensagens, bloqueio (`private_message.ban_manager`), notificações, avisos, leitura. |
 | `aculta_user` | `web/modules/custom/aculta_portal/modules/aculta_user/` | `FriendshipManager`, `aculta_friendship`, página `/u/`, hook `aculta_user_public_profile_actions`. |
-| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos. |
+| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos e todos os consumers/adapters de LMS, Wiki, Fórum e Loja. |
 | `aculta420` | `web/themes/custom/aculta420/` | SDC `messenger-*`, `messenger-drawers.js`, `counters.js`, tokens `data-portal-ui`, CSS do painel. |
 
 Dependências declaradas do submódulo: `aculta_portal:aculta_portal`, `aculta_portal:aculta_user`, `private_message`, `message`, `message_notify`, `message_subscribe`.

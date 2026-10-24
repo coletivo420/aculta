@@ -3,6 +3,34 @@
 Roadmap central do LMS: `docs/modules/ACULTA-LMS-ROADMAP.md`. Este arquivo registra só a parte que
 alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
 
+## Integração de avisos com o Messenger — decisão vigente (2026-10-24)
+
+`aculta_lms` permanece dono de cursos, matrículas, avaliações, certificados,
+atividades, elegibilidade e publicação dos eventos educacionais. O núcleo
+`aculta_messenger` centraliza consumidores, persistência de avisos, central e
+contadores, deduplicação, validação ao abrir, filas/workers e orquestração de
+e-mail. O site sempre recebe os avisos elegíveis; cada membro pode optar por
+e-mail desligado, direto ou digest/resumo, sujeito às políticas administrativas
+do ACULTA Mailer. `aculta_mailer` continua dono do transporte e dos templates.
+
+O adapter LMS foi migrado para `aculta_messenger/Integration/Lms`; publishers
+de eventos e geração de lembretes que dependem do domínio continuam neste
+módulo. Os antigos consumidores, rotas, workers e configurações do
+`aculta_lms_messenger` foram removidos após a migração. O shell de extensão
+oculto remanescente não executa fluxos; sua desinstalação requer operação
+autorizada e não foi feita nesta alteração.
+
+| Marco | Estado | Evidência / pendências |
+| --- | --- | --- |
+| Publicação pelo contrato compartilhado | Implementado nos eventos existentes | Publisher no `aculta_lms`; consumer e manager no Messenger. |
+| Persistência e idempotência | Kernel PASS | `LearningNoticePersistenceKernelTest`: 2 testes / 18 assertions. |
+| Preferências de entrega | Unit PASS | Site obrigatório; off/resumo/direto conforme preferência e política; coberto na suíte integrada. |
+| Segurança e abertura | Parcial | Revalidação permanece no consumer/manager central; faltam cenários completos de revogação com entidades do Runtime. |
+| Runtime/Alpha | Pendente | Não homologado nesta revisão; nenhuma operação Runtime executada. |
+
+Ordem combinada de integração dos produtores: **LMS → Wiki → Fórum → Loja**.
+Não criar chat automático de curso/turma nem caixa educacional paralela.
+
 ## Instantâneo por turma (2026-10-21)
 
 - Feito (0.1.0-dev.78): `ClassStatusSnapshotEvent` no cron, série diária por turma e situação, sem dado individual.
@@ -27,13 +55,13 @@ alimenta o `aculta_statistics` (ADR-0004), para não regredir no submódulo.
 
 ## Auditoria transversal XK 0.1 — 2026-10-22
 
-XK-01/04/05/07/08/12: manter Group de turmas/cursos independente do Group de associados do Fórum; avisos saem por aculta_lms_messenger → Messenger; não criar mensageria LMS paralela. Fórum contextual usa adapter Forum LMS e grants de Group do curso. Viewer/estatísticas usam kernels próprios.
+XK-01/04/05/07/08/12: manter Group de turmas/cursos independente do Group de associados do Fórum; avisos usam o publisher LMS e consumer no núcleo `aculta_messenger`; a menção antiga ao submódulo consumidor está substituída. Fórum contextual usa adapter Forum LMS e grants de Group do curso. Viewer/estatísticas usam kernels próprios.
 
 Plano de dependências e gates: [ACULTA-XK 0.1](../../../../../../../docs/architecture/ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md). **Planejado; sem alterações funcionais ou validação Runtime.**
 
 ## ACULTA-XK 0.1-B — contrato arquitetural (2026-10-22)
 
-XK 0.1-B: preservar membership e grants Group de cursos/turmas; não herdar elegibilidade de associado do Fórum. Eventos LMS seguem o adaptador aculta_lms_messenger, sob idempotência e revalidação na entrega. Teste regressão Group depois de qualquer refatoração User/Forum.
+XK 0.1-B: preservar membership e grants Group de cursos/turmas; não herdar elegibilidade de associado do Fórum. Eventos LMS são publicados pelo domínio e consumidos pelo adapter central `aculta_messenger`, sob idempotência e revalidação na entrega. Teste regressão Group depois de qualquer refatoração User/Forum.
 
 Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md). **Somente planejamento, sem alteração funcional ou testes Runtime.**
 
