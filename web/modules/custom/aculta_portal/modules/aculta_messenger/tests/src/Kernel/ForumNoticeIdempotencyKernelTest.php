@@ -17,12 +17,16 @@ use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\comment\CommentInterface;
+use Drupal\comment\CommentingStatus;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -42,6 +46,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 #[RunTestsInSeparateProcesses]
 final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
+  use CommentTestTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -52,6 +58,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     'filter',
     'text',
     'node',
+    'comment',
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
   ];
@@ -61,9 +68,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node']);
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
     $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('aculta_aviso');
     $this->installSchema('aculta_messenger_aviso_test', [
@@ -71,6 +79,20 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       ForumNoticeEventSchema::TABLE,
     ]);
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
+    NodeType::create([
+      'type' => 'aculta_forum_topic',
+      'name' => 'ACULTA Forum topic',
+      'new_revision' => TRUE,
+    ])->save();
+    $this->addDefaultCommentField(
+      'node',
+      'aculta_forum_topic',
+      'field_aculta_discussion',
+      CommentingStatus::Open,
+      'aculta_discussion_post',
+    );
   }
 
   /**
@@ -153,6 +175,71 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
     self::assertSame((int) $post->getRevisionId(), (int) $notices[0]->get('ultimo_post')->value);
+  }
+
+  /**
+   * A published Comment is delivered through the shared event contract once.
+   */
+  public function testCommentEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autora_comentario');
+    $follower = $this->createUser('seguidora_comentario');
+    $topic = $this->createTopic();
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author->id(),
+      'subject' => 'Resposta publicada',
+      'comment_body' => ['value' => 'Texto público', 'format' => 'plain_text'],
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $this->createAccessPolicy(canViewComment: TRUE));
+
+    self::assertSame(1, $producer->publishComment($comment));
+    self::assertSame(1, $producer->publishComment($comment), 'Replaying the Comment event is harmless.');
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame((int) $comment->id(), (int) $notices[0]->get('ultimo_comentario')->value);
+    self::assertCount(0, $this->loadNotices((int) $author->id(), (int) $topic->id()));
+  }
+
+  /**
+   * A topic revision round-trips once and suppresses the revision author.
+   */
+  public function testTopicRevisionEventRoundTripUsesTheSharedNoticeAggregate(): void {
+    $author = $this->createUser('autor_topico');
+    $follower = $this->createUser('seguidora_topico');
+    $topic = $this->createTopic();
+    $topic->setRevisionUserId((int) $author->id());
+    $topic->setNewRevision(TRUE);
+    $topic->save();
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $this->createAccessPolicy(canViewTopic: TRUE));
+
+    self::assertSame(1, $producer->publishTopicUpdate($topic, (int) $topic->getRevisionId()));
+    self::assertSame(1, $producer->publishTopicUpdate($topic, (int) $topic->getRevisionId()));
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(1, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame((int) $topic->getRevisionId(), (int) $updates[0]->get('ultimo_evento')->value);
+    self::assertCount(0, $this->loadNotices(
+      (int) $author->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    ));
   }
 
   /**
@@ -734,6 +821,54 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     ?ForumNoticeAccessPolicyInterface $policy = NULL,
     ?LockBackendInterface $lock = NULL,
   ): AvisoService {
+    return new AvisoService(
+      $this->container->get('entity_type.manager'),
+      $this->createFlagService($followers),
+      $policy ?? $this->createAccessPolicy(),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $lock ?? $this->container->get('lock'),
+    );
+  }
+
+  /**
+   * Builds an actual producer-to-consumer event pipeline over test storage.
+   *
+   * @param int[] $followers
+   *   Account IDs returned by the topic's follow query.
+   * @param \Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface $policy
+   *   Access policy used by the producer and registrar.
+   */
+  private function createEventProducer(
+    array $followers,
+    ForumNoticeAccessPolicyInterface $policy,
+  ): ForumNoticeEventProducer {
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $flags = $this->createFlagService($followers);
+    $avisos = new AvisoService(
+      $entityTypeManager,
+      $flags,
+      $policy,
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $dispatcher = new EventDispatcher();
+    $dispatcher->addSubscriber(new ForumNoticeEventSubscriber($entityTypeManager, $avisos));
+    return new ForumNoticeEventProducer(
+      $flags,
+      $policy,
+      new MessengerNoticePublisher($dispatcher),
+    );
+  }
+
+  /**
+   * Builds FlagService results for the given follower accounts.
+   *
+   * @param int[] $followers
+   *   Account IDs returned by the topic's follow query.
+   */
+  private function createFlagService(array $followers): FlagServiceInterface {
     $flaggings = [];
     foreach ($followers as $uid) {
       $flagging = $this->createMock(FlaggingInterface::class);
@@ -744,15 +879,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $flags = $this->createMock(FlagServiceInterface::class);
     $flags->method('getFlagById')->with('seguir_topico')->willReturn($flag);
     $flags->method('getEntityFlaggings')->willReturn($flaggings);
-
-    return new AvisoService(
-      $this->container->get('entity_type.manager'),
-      $flags,
-      $policy ?? $this->createAccessPolicy(),
-      $this->container->get('database'),
-      $this->container->get('datetime.time'),
-      $lock ?? $this->container->get('lock'),
-    );
+    return $flags;
   }
 
   /**

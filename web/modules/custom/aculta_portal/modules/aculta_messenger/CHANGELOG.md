@@ -955,3 +955,11 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Runtime e smoke autenticado do drawer permanecem pendentes; nenhum dado ou
   mensagem foi criado.
 
+## 0.1.1-dev.86 — cobrir o round-trip dos eventos de Fórum — 2026-10-24
+
+- Kernel passa a exercer Comment e revisão de tópico pelo publisher e consumer
+  compartilhados, validando replay idempotente, agregação em `aculta_aviso` e
+  exclusão do autor. A cobertura do pipeline passa a 20 testes / 458 assertions.
+- Unit Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. Runtime continua sem
+  homologação.
+
