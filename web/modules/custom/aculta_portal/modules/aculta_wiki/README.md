@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação WIKI-R1 no HEAD `fc162b184` (2026-10-24): Kernels de acesso Wiki,
+  bootstrap owner e rebuild Wiki-owned passaram em 10 testes / 368 asserções
+  (MariaDB isolada). Projeção v4, relações e fingerprint inalterados; PHPUnit
+  reportou 243 depreciações upstream. Runtime e geração instalada intocados.
+
 - `0.1.0-dev.107`: Kernel instala o ACULTA420 e renderiza a home Wiki sob o
   tema público; os SDCs `context-tabs` e `wiki-home` aparecem no HTML (focal
   1/96). A classe Kernel completa passou em 27/1.483, com 304 depreciações

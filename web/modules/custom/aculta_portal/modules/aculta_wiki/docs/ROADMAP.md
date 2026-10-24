@@ -14,6 +14,17 @@ integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação WIKI-R1 — HEAD `fc162b184` (2026-10-24)
+
+`ContentIndexWikiAccessKernelTest`, `ContentIndexOwnerIntegrationKernelTest` e
+`WikiContentIndexRebuildKernelTest` passaram em MariaDB isolada: 10 testes / 368
+asserções. A descoberta real mantém um único owner para `node:wiki_entry`;
+consulta autorizada cobre fonte/destinos, grants, Domain e relações
+`related_entry`, `wiki_category` e `wiki_image`. A geração Wiki-owned conclui
+backfill/validação/ativação isolada. Provider v4 e fingerprint não mudaram.
+PHPUnit reportou 243 depreciações upstream. Nenhuma ação no Runtime ou geração
+instalada.
+
 ### Incremento dev.107 — render da home pelo tema público
 
 O Kernel instala `aculta420`, processa as Views reais e renderiza o build da

@@ -1,3 +1,11 @@
+## Revalidação WIKI-R1 — HEAD `fc162b184` (2026-10-24)
+
+- Kernels MariaDB de acesso Wiki, bootstrap owner e rebuild Wiki-owned passaram
+  em 10 testes / 368 asserções. O contrato do provider v4, relações
+  `related_entry`, `wiki_category` e `wiki_image`, fingerprint e Runtime não
+  mudaram. PHPUnit reportou 243 depreciações upstream; Runtime/rebuild instalado
+  não foram executados.
+
 ## 0.1.0-dev.107 — renderizar a home com ACULTA420 no Kernel
 
 - O Kernel instala o tema público, valida o schema de `aculta420.settings` e

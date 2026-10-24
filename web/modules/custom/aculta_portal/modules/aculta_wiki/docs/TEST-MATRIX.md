@@ -380,6 +380,13 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 
 ## Integração ACULTA Content Index — IDX 0.1
 
+Revalidação no HEAD `fc162b184` (2026-10-24): `ContentIndexWikiAccessKernelTest`,
+`ContentIndexOwnerIntegrationKernelTest` e `WikiContentIndexRebuildKernelTest`
+passaram em MariaDB isolada (10 testes / 368 asserções; 243 depreciações
+upstream). O conjunto comprova discovery dos módulos reais, grants/Domain,
+revisão padrão, atualização/exclusão, relações e ciclo de geração. Provider v4
+e fingerprint inalterados; Runtime e geração instalada intocados.
+
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Provider Wiki | Unit/Kernel | Metadados allowlisted, revisão padrão, rejeição de bundles não suportados, purpose `wiki` e ausência de `owner_uid` | aprovado (dev.50; provider v4) |
