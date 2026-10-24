@@ -209,11 +209,36 @@ final class NewConversationForm extends FormBase {
   private function recipientIds(FormStateInterface $formState): array {
     $single = $formState->get('recipient');
     if ($single !== NULL) {
-      return [(int) $single];
+      return self::normalizeRecipientIds([$single]);
     }
     $posted = $formState->getUserInput()['members'] ?? [];
-    $ids = is_array($posted) ? array_map('intval', array_filter($posted, 'is_scalar')) : [];
-    return array_values(array_unique($ids));
+    return self::normalizeRecipientIds($posted);
+  }
+
+  /**
+   * Normalizes untrusted recipient input to unique positive account IDs.
+   *
+   * @param mixed $posted
+   *   Candidate IDs submitted by the browser.
+   *
+   * @return int[]
+   *   Canonical, unique positive account IDs, in their original order.
+   */
+  public static function normalizeRecipientIds(mixed $posted): array {
+    if (!is_array($posted)) {
+      return [];
+    }
+    $ids = [];
+    foreach ($posted as $value) {
+      if (!is_int($value) && !is_string($value)) {
+        continue;
+      }
+      $uid = filter_var($value, FILTER_VALIDATE_INT);
+      if ($uid !== FALSE && $uid > 0) {
+        $ids[$uid] = $uid;
+      }
+    }
+    return array_values($ids);
   }
 
   /**
