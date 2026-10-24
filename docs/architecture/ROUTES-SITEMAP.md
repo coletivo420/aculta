@@ -6,9 +6,10 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
 
 ## Decisão vigente: Conta e Perfil separados, legado mantido
 
-Minha Conta legada permanece na raiz `/` do Domain ACCOUNT, com
-`aculta_portal.dashboard` como route ID técnico. Acesso direto
-`/minha-conta` continua 404. O legado será conservado durante e
+Minha Conta legada fica em `/conta-legada` no Domain ACCOUNT, com
+`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é o
+hub do ACULTA Studio (`aculta_studio.hub`, caminho interno `/studio`).
+O caminho `/minha-conta` não é rota e responde 404. O legado será conservado durante e
 **após** a comparação com `/studio/conta`. As duas experiências
 `/studio/conta` e `/studio/perfil` não possuem um agrupamento
 `/studio/pessoal` nem aliases. [Contrato](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
@@ -432,7 +433,9 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/discussoes` | `forum.aculta` | Rota de Page display da View que serve a raiz do Growroom420 | Declarada e presente no Runtime de teste; caminho interno, acesso direto responde `404`, sem 301. |
 | `/forum` | `forum.aculta` | Antigo índice do Drupal Forum contribuído | Pode continuar declarado enquanto contrib instalado; caminho bloqueado, HTTP 404 validado no Runtime de teste. |
 | `/redes-sociais` | `links.aculta` | Caminho interno da página de links | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
-| `/minha-conta` | `conta.aculta` | Rota interna de visão geral da conta | A página pública é `/`; acesso direto responde `404`. |
+| `/minha-conta` | `conta.aculta` | Caminho retirado (antiga rota interna da visão geral) | Não é mais rota; acesso direto responde `404`, sem redirect. |
+| `/conta-legada` | `conta.aculta` | Minha Conta original (`aculta_portal.dashboard`) | Rota pública preservada; anônimo vai ao login, logado acessa a visão geral. |
+| `/studio` | `conta.aculta` | Caminho interno do hub do Studio (`aculta_studio.hub`) | A raiz `/` serve o hub; acesso direto responde `404`, sem redirect. |
 | `/conta-interna` | `conta.aculta` | Antigo caminho interno do painel da conta | Removido; visitante recebe `404`; comportamento para usuário autenticado segue política documentada. |
 | `/cart` | `main.aculta` | Antigo alias inglês do carrinho | Removido; `404`, sem redirect de slug. |
 | `/donate` | `main.aculta` | Antigo caminho inglês do formulário de doação | Removido; `404`, sem redirect de slug. |
