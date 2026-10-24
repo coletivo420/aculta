@@ -86,7 +86,7 @@ os Comments de origem. O modo
 completa e homologação Runtime seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 21 testes / 462 assertions, sem depreciações.
+passou em MariaDB Simpletest, 23 testes / 515 assertions, sem depreciações.
 Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
 provam ordem inversa, replays, migração de chaves legadas e retenção de seis
@@ -106,7 +106,7 @@ e compatibilidade do agregado: o registro direto seguido do evento compartilha
 uma linha, incrementa contadores e atualiza o último Comment. O teste do resumo
 diário confirma uma linha/quantidade 2 no ACULTA Mailer e que replay não envia
 segundo e-mail (transporte mockado; idioma único `pt-br`). Suíte: 23 testes /
-515 assertions; Unit Messenger: 72 / 345; PHPCS e lint pertinentes: PASS. Runtime
+515 assertions; Unit Messenger: 75 / 352; PHPCS e lint pertinentes: PASS. Runtime
 e configuração real de Mailer continuam pendentes.
 
 ### Sequência recomendada e paralelismo
