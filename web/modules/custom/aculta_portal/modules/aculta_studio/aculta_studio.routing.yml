@@ -18,8 +18,7 @@ aculta_studio.profile:
     _controller: 'aculta_studio.profile_controller:page'
     _title: 'Meu Perfil'
   requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
+    _custom_access: 'aculta_studio.profile_access:access'
   options:
     _aculta_domain_purpose: account
 
@@ -29,8 +28,7 @@ aculta_studio.profile_privacy:
     _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
     _title: 'Privacidade do perfil'
   requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
+    _custom_access: 'aculta_studio.profile_access:access'
   options:
     _aculta_domain_purpose: account
 
@@ -40,8 +38,7 @@ aculta_studio.profile_bio:
     _form: '\Drupal\aculta_user\Form\AccountBioForm'
     _title: 'Editar biografia'
   requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
+    _custom_access: 'aculta_studio.profile_access:access'
   options:
     _aculta_domain_purpose: account
 
@@ -51,8 +48,7 @@ aculta_studio.profile_social:
     _form: '\Drupal\aculta_user\Form\SocialLinkForm'
     _title: 'Editar rede social'
   requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
+    _custom_access: 'aculta_studio.profile_access:access'
     rede: 'instagram|facebook|reddit'
   options:
     _aculta_domain_purpose: account
