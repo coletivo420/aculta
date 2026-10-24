@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.11 — rotas temporárias Studio retiradas; hub /studio, Marley /studio/marley, pessoal /studio/pessoal; sem aliases legados. Testes Unit/Kernel/Runtime/Firefox deste incremento ainda pendentes."
-next_phase: 'Validar roteamento Studio/LMS e gate php scripts/validate-no-temporary-route-aliases.php; executar testes Unit/Kernel/Functional, cache de rotas, smoke autenticado e Firefox ESR/X11 antes de P2.'
+version_note: "0.1.0-dev.12 — P2-A: /studio/pessoal/perfil implementado por composição dos serviços User (bio, redes, foto, public link), sem storage nem aliases. Unit escritos, não executados; Kernel/Runtime/Firefox pendentes."
+next_phase: 'P2-A: executar Unit/Kernel/Functional, gate sem aliases, Domain/account, privacidade (perfil privado, pública obrigatória, links canônicos), foto/recorte, bio/redes via AJAX, mobile Firefox X11; P2-B: integrar formulários apelido/privacidade e fallback sem JS sem duplicar owners. Homologação Runtime ainda pendente.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.
