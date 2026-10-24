@@ -1,5 +1,23 @@
 # ACULTA Studio — plataforma transversal de interfaces próprias
 
+## Contrato atual de identidade — substitui a antiga experiência pessoal
+
+O Studio mantém **Minha Conta** (`/studio/conta`) e **Meu Perfil**
+(`/studio/perfil`) como providers independentes; não há experiência
+`pessoal` ou aliases. Conta incorpora serviços de cadastro, segurança
+e pedidos do Portal. Perfil administra exclusivamente identidade
+comunitária por componentes do User e não incorpora dados cadastrais.
+
+**Minha Conta legada em `/` no Domain ACCOUNT permanece para sempre,
+inclusive depois do aceite visual/funcional.** O caminho técnico
+direto `/minha-conta` continua 404. Nunca remover `AccountShellBuilder`,
+a navegação original ou seus formulários como parte da migração.
+Esta regra substitui toda indicação antiga de limpeza final do legado.
+
+[Contrato normativo](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Dev.13 implementada no código Git, ainda sem homologação Drupal/Runtime.
+
+
 **Contrato vigente da refatoração de identidade · 2026-10-24.** A lista abaixo substitui as identidades e URLs antigas descritas em seções históricas deste documento.
 
 | Experiência | Nome público | ID |
