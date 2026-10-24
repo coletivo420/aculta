@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'Homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-version_note: "0.4.1-dev.24 — /minha-conta/* direto agora 404; rotas antigas Commerce de endereço e /pagamentos removidas; fluxos funcionais de checkout/autenticação preservados. Testes Runtime pendentes."
+version_note: "0.4.1-dev.25 — PortalHooks mantém endereço número/S-N, CEP e Profile Commerce nas rotas legada /dados/endereco e Studio /studio/conta/endereco; retorno de submit contextual, gate ampliado. PHPUnit/Kernel/Runtime pendentes; legado em / intacto."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
