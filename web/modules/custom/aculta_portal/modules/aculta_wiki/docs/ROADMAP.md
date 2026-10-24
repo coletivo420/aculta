@@ -17,7 +17,7 @@ O plano aprovado e o inventário de referências ficam em
 O formulário de criação pode consultar títulos semelhantes por uma ação própria.
 A consulta retorna no máximo seis verbetes publicados do Domain Wiki sujeitos
 a Entity Access; links são revalidados antes de exibir. A sugestão não bloqueia
-nem salva a criação. Kernels MariaDB focais passaram (busca 1/34; busca + Form API nativo 2/113;
+nem salva a criação. Kernels MariaDB focais passaram (busca 1/34; busca + submit Form API nativo 2/116;
 203 depreciações upstream e 3 PHPUnit); PHPCS/lint e gate Drupal 11 passaram. O validador
 Portal–tema apontou 12 ocorrências em código/testes Wiki/Portal já existentes; a
 nova classe não referencia tema. Runtime e Firefox não executados.

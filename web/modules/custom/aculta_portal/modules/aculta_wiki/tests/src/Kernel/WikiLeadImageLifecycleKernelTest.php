@@ -1663,6 +1663,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     );
     self::assertIsCallable($callback, 'The native form resolves the optional check through the autowired Hook service.');
 
+    $checkNode = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
+    $checkFormObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
+    $checkFormObject->setEntity($checkNode);
+    $checkFormState = new FormState();
+    $checkFormState->setFormObject($checkFormObject);
+    $checkForm = $formBuilder->buildForm($checkFormObject, $checkFormState);
+    $checkFormState->setValue($checkForm['title']['widget'][0]['value']['#parents'], 'Cannabis medicinal');
+    $checkFormState->setTriggeringElement($checkForm['actions']['check_similar_titles']);
+    $formBuilder->submitForm($checkFormObject, $checkFormState);
+    self::assertSame([], $checkFormState->getErrors());
+    self::assertNull($checkNode->id(), 'The title suggestion action does not save the new Node.');
+    self::assertSame('Cannabis medicinal', $checkFormState->get('aculta_wiki.title_suggestions')['term']);
+
     $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Verbete salvo como rascunho');
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
     $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');

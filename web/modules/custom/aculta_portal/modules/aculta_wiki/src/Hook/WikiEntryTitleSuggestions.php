@@ -178,11 +178,17 @@ final class WikiEntryTitleSuggestions {
    * Reads the title from Core's scalar widget or a structured field value.
    */
   private function submittedTitle(FormStateInterface $form_state, array $form): string {
-    $value = $form['title']['widget'][0]['value']['#value']
-      ?? $form['title']['#value']
-      ?? $form_state->getValue(['title'], '');
+    $value = $form_state->getValue(['title', 0, 'value']);
+    if (!is_scalar($value) || trim((string) $value) === '') {
+      $value = $form_state->getValue(['title'], NULL);
+    }
     if (is_array($value)) {
       $value = $value[0]['value'] ?? $value['value'] ?? '';
+    }
+    if (!is_scalar($value) || trim((string) $value) === '') {
+      $value = $form['title']['widget'][0]['value']['#value']
+        ?? $form['title']['#value']
+        ?? '';
     }
     return is_scalar($value) ? trim((string) $value) : '';
   }
