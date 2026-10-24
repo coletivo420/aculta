@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Dispatches optional domain adapters into the shared notice list and count.
@@ -26,9 +27,12 @@ final class PersonalNoticeAdapterHooks {
    *
    * @param array<string, object>|\Psr\Container\ContainerInterface $adapters
    *   Optional adapter managers registered by the Messenger service provider.
+   * @param \Psr\Log\LoggerInterface|null $logger
+   *   Logger for adapter failures, without user or notice data.
    */
   public function __construct(
     private readonly array|ContainerInterface $adapters,
+    private readonly ?LoggerInterface $logger = NULL,
   ) {}
 
   /**
@@ -39,7 +43,18 @@ final class PersonalNoticeAdapterHooks {
     foreach (self::ADAPTERS as $id) {
       $adapter = $this->adapter($id);
       if ($adapter instanceof PersonalNoticeAdapterInterface) {
-        $adapter->addPersonalNotices($items, $account, $filters);
+        // Keep partial output from a failing optional adapter out of the shared
+        // list while allowing independent origins to continue contributing.
+        $contribution = [];
+        try {
+          $adapter->addPersonalNotices($contribution, $account, $filters);
+          if ($contribution !== []) {
+            array_push($items, ...$contribution);
+          }
+        }
+        catch (\Throwable $exception) {
+          $this->logAdapterFailure($adapter, $exception, 'list');
+        }
       }
     }
   }
@@ -52,7 +67,12 @@ final class PersonalNoticeAdapterHooks {
     foreach (self::ADAPTERS as $id) {
       $adapter = $this->adapter($id);
       if ($adapter instanceof PersonalNoticeAdapterInterface) {
-        $count += $adapter->unreadCount($uid);
+        try {
+          $count += $adapter->unreadCount($uid);
+        }
+        catch (\Throwable $exception) {
+          $this->logAdapterFailure($adapter, $exception, 'count');
+        }
       }
     }
   }
@@ -65,6 +85,17 @@ final class PersonalNoticeAdapterHooks {
       return $this->adapters->has($id) ? $this->adapters->get($id) : NULL;
     }
     return $this->adapters[$id] ?? NULL;
+  }
+
+  /**
+   * Logs an optional adapter failure without recording user data or content.
+   */
+  private function logAdapterFailure(PersonalNoticeAdapterInterface $adapter, \Throwable $exception, string $operation): void {
+    $this->logger?->error('Optional personal notice adapter failed during @operation with @exception.', [
+      '@adapter' => get_class($adapter),
+      '@operation' => $operation,
+      '@exception' => get_class($exception),
+    ]);
   }
 
 }

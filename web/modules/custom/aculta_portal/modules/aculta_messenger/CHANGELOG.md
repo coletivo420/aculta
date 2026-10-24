@@ -1,3 +1,12 @@
+## 0.1.1-dev.189 — isolar falhas dos adapters na central
+
+Uma exceção durante a montagem de avisos descarta a contribuição parcial do adapter que falhou e não interrompe outras
+origens. Falhas de contagem também são isoladas. O log registra somente classe do adapter, operação e classe da exceção,
+sem UID ou conteúdo. Resultado vazio é tratado como válido.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **221/1.619 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
 ## 0.1.1-dev.188 — endurecer remoção de inscrições do Fórum
 
 O teste de submit da privacidade agora tenta remover Flag de outro dono, outro tipo de Flag, alvo não-Node e Node fora

@@ -91,7 +91,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     // locator contains only adapters actually registered in this site.
     $container->setDefinition(PersonalNoticeAdapterHooks::class, new Definition(
       PersonalNoticeAdapterHooks::class,
-      [new ServiceLocatorArgument($optionalAdapters)],
+      [
+        new ServiceLocatorArgument($optionalAdapters),
+        new Reference('logger.channel.aculta_messenger'),
+      ],
     ));
   }
 
