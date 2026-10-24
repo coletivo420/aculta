@@ -26,6 +26,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\message\Entity\MessageTemplate;
+use Drupal\message\Entity\Message;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -166,6 +167,73 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Unread count batch-loads orders and each distinct approved payment.
+   */
+  public function testUnreadCountBatchLoadsDonationSourcesAndRevalidatesThem(): void {
+    $user = User::create([
+      'name' => 'donation_unread_recipient',
+      'mail' => 'donation-unread@example.invalid',
+      'status' => 1,
+    ]);
+    $user->save();
+    $uid = (int) $user->id();
+    foreach ([
+      ['donation.order_placed', 'order-1', 'order-1'],
+      ['donation.payment_approved', 'payment-1', 'order-1'],
+      ['donation.payment_approved', 'payment-2', 'order-1'],
+    ] as [$type, $sourceUuid, $orderUuid]) {
+      Message::create([
+        'template' => DonationNoticeManager::TEMPLATE,
+        'uid' => $uid,
+        'field_aculta_don_event' => $type,
+        'field_aculta_don_src_uuid' => $sourceUuid,
+        'field_aculta_don_ord_uuid' => $orderUuid,
+        'field_aculta_don_read' => 0,
+        'field_aculta_don_digest' => 1,
+        'field_aculta_msg_delivery' => 'sent',
+        'field_aculta_messenger_attempts' => 0,
+      ])->save();
+    }
+
+    $item = $this->createMock(OrderItemInterface::class);
+    $item->method('bundle')->willReturn('donation');
+    $order = $this->createMock(OrderInterface::class);
+    $order->method('id')->willReturn('100');
+    $order->method('uuid')->willReturn('order-1');
+    $order->method('bundle')->willReturn('doacao');
+    $order->method('getCustomerId')->willReturn($uid);
+    $order->method('getItems')->willReturn([$item]);
+    $order->method('access')->willReturn(AccessResult::allowed());
+    $orderStorage = $this->createMock(EntityStorageInterface::class);
+    $orderStorage->expects(self::once())
+      ->method('loadByProperties')
+      ->with(['uuid' => ['order-1']])
+      ->willReturn([$order]);
+
+    $payments = [];
+    foreach (['payment-1', 'payment-2'] as $uuid) {
+      $state = $this->createMock(StateItemInterface::class);
+      $state->method('getId')->willReturn('completed');
+      $payment = $this->createMock(PaymentInterface::class);
+      $payment->method('uuid')->willReturn($uuid);
+      $payment->method('getOrderId')->willReturn(100);
+      $payment->method('getState')->willReturn($state);
+      $payment->method('getRemoteState')->willReturn('approved');
+      $payments[] = $payment;
+    }
+    $paymentStorage = $this->createMock(EntityStorageInterface::class);
+    $paymentStorage->expects(self::once())
+      ->method('loadByProperties')
+      ->with(['uuid' => ['payment-1', 'payment-2']])
+      ->willReturn($payments);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+
+    $manager = $this->manager($preferences, $user, TRUE, $orderStorage, $paymentStorage);
+
+    self::assertSame(3, $manager->unreadCount($uid));
+  }
+
+  /**
    * An inaccessible source cannot create a persistent site or email notice. */
   public function testInaccessibleOrderIsRejectedBeforePersistence(): void {
     $user = User::create([
@@ -247,7 +315,13 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
 
   /**
    * Builds the production manager with isolated external services. */
-  private function manager(AvisoPreferenciasInterface $preferences, User $user, bool $orderAccessible = TRUE): DonationNoticeManager {
+  private function manager(
+    AvisoPreferenciasInterface $preferences,
+    User $user,
+    bool $orderAccessible = TRUE,
+    ?EntityStorageInterface $orderStorageOverride = NULL,
+    ?EntityStorageInterface $paymentStorageOverride = NULL,
+  ): DonationNoticeManager {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     $orderItem = $this->createMock(OrderItemInterface::class);
@@ -261,6 +335,9 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
     $order->method('access')->willReturn($orderAccessible ? AccessResult::allowed() : AccessResult::forbidden());
     $orderStorage = $this->createMock(EntityStorageInterface::class);
     $orderStorage->method('loadByProperties')->willReturn([$order]);
+    if ($orderStorageOverride instanceof EntityStorageInterface) {
+      $orderStorage = $orderStorageOverride;
+    }
     $paymentStorage = $this->createMock(EntityStorageInterface::class);
     $paymentStorage->method('loadByProperties')->willReturnCallback(function (array $properties) use ($order): array {
       $state = $this->createMock(StateItemInterface::class);
@@ -272,6 +349,9 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
       $payment->method('uuid')->willReturn($properties['uuid']);
       return [$payment];
     });
+    if ($paymentStorageOverride instanceof EntityStorageInterface) {
+      $paymentStorage = $paymentStorageOverride;
+    }
     $realEntityManager = $this->container->get('entity_type.manager');
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);

@@ -1,3 +1,11 @@
+## 0.1.1-dev.194 — carregar fontes de Doação em lote no contador
+
+O contador de avisos não lidos agrupa os pedidos e pagamentos aprovados referenciados pelas mensagens pendentes. Revalida
+uma vez cada pedido quanto ao tipo, titular e acesso atual, e confirma cada pagamento por estado e vínculo com o pedido.
+
+Validação: `DonationNoticePersistenceKernelTest` **5/80 PASS** no MariaDB dedicado (2 deprecações de discovery Core/contrib e 1 notice PHPUnit preexistentes); Unit Messenger + Integration Unit
+LMS/Wiki/Loja/Doações **224/1.670 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Runtime não executado.
+
 ## Revalidação de idempotência do digest — 2026-10-24
 
 `ForumNoticeIdempotencyKernelTest` **34/773 PASS** no MariaDB dedicado;

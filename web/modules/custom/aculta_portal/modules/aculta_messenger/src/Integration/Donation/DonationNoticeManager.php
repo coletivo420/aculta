@@ -148,30 +148,134 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   /**
    * {@inheritdoc} */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array {
-    if (!$account->isAuthenticated()
-      || (int) $message->getOwnerId() !== (int) $account->id()
-      || $message->bundle() !== self::TEMPLATE) {
+    $envelope = $this->noticeEnvelope($message, $account);
+    if ($envelope === NULL) {
       return NULL;
     }
     $recipient = $this->entityTypeManager->getStorage('user')->load((int) $account->id());
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return NULL;
     }
-    $type = (string) $message->get(self::EVENT_FIELD)->value;
-    if (!in_array($type, ['donation.order_placed', 'donation.payment_approved'], TRUE)) {
-      return NULL;
-    }
     $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties([
-      'uuid' => (string) $message->get(self::ORDER_FIELD)->value,
+      'uuid' => $envelope['order_uuid'],
     ]);
     $order = reset($orders);
-    if (!$order instanceof OrderInterface || !$this->isDonationOrder($order)
-      || (int) $order->getCustomerId() !== (int) $account->id()
-      || !$order->access('view', $account, TRUE)->isAllowed()) {
+    if (!$order instanceof OrderInterface || ($resolvedOrder = $this->donationOrderUrl($order, $account)) === NULL) {
       return NULL;
     }
 
-    if ($type === 'donation.payment_approved' && !$this->resolveApprovedPayment($message, $order)) {
+    if ($envelope['type'] === 'donation.payment_approved' && !$this->resolveApprovedPayment($message, $order)) {
+      return NULL;
+    }
+    return $this->buildNotice($envelope['type'], $resolvedOrder['url']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function unreadCount(int $uid): int {
+    $account = $this->entityTypeManager->getStorage('user')->load($uid);
+    if (!$account instanceof UserInterface || !$account->isActive()) {
+      return 0;
+    }
+    $messageStorage = $this->messageStorage();
+    $ids = $messageStorage->getQuery()->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)
+      ->condition('uid', $uid)
+      ->condition(self::READ_FIELD, 0)
+      ->execute();
+    $envelopes = [];
+    $orderUuids = [];
+    $paymentUuids = [];
+    foreach ($messageStorage->loadMultiple($ids) as $message) {
+      if (!$message instanceof MessageInterface || ($envelope = $this->noticeEnvelope($message, $account)) === NULL) {
+        continue;
+      }
+      $envelopes[] = $envelope;
+      $orderUuids[$envelope['order_uuid']] = TRUE;
+      if ($envelope['type'] === 'donation.payment_approved') {
+        $paymentUuids[$envelope['source_uuid']] = TRUE;
+      }
+    }
+    if ($envelopes === []) {
+      return 0;
+    }
+
+    // Batch the two source lookups. Each unique order is then revalidated
+    // once for Donation type, customer ownership, current access, and URL.
+    $orders = $this->entityTypeManager->getStorage('commerce_order')->loadByProperties([
+      'uuid' => array_keys($orderUuids),
+    ]);
+    $ordersByUuid = [];
+    foreach ($orders as $order) {
+      if ($order instanceof OrderInterface) {
+        $url = $this->donationOrderUrl($order, $account);
+        if ($url !== NULL) {
+          $ordersByUuid[$order->uuid()] = $url;
+        }
+      }
+    }
+
+    $paymentsByUuid = [];
+    if ($paymentUuids !== []) {
+      $payments = $this->entityTypeManager->getStorage('commerce_payment')->loadByProperties([
+        'uuid' => array_keys($paymentUuids),
+      ]);
+      foreach ($payments as $payment) {
+        if ($payment instanceof PaymentInterface) {
+          $paymentsByUuid[$payment->uuid()] = $payment;
+        }
+      }
+    }
+
+    $count = 0;
+    foreach ($envelopes as $envelope) {
+      $order = $ordersByUuid[$envelope['order_uuid']]['order'] ?? NULL;
+      if (!$order instanceof OrderInterface) {
+        continue;
+      }
+      if ($envelope['type'] === 'donation.payment_approved'
+        && !$this->isApprovedPaymentEntity($paymentsByUuid[$envelope['source_uuid']] ?? NULL, $order)) {
+        continue;
+      }
+      $count++;
+    }
+    return $count;
+  }
+
+  /**
+   * Extracts the authenticated Message envelope needed for source resolution.
+   *
+   * @return array{type: string, source_uuid: string, order_uuid: string}|null
+   *   Minimal source identifiers, or NULL for an invalid Message.
+   */
+  private function noticeEnvelope(MessageInterface $message, AccountInterface $account): ?array {
+    if (!$account->isAuthenticated()
+      || (int) $message->getOwnerId() !== (int) $account->id()
+      || $message->bundle() !== self::TEMPLATE) {
+      return NULL;
+    }
+    $type = (string) $message->get(self::EVENT_FIELD)->value;
+    $sourceUuid = (string) $message->get(self::SOURCE_FIELD)->value;
+    $orderUuid = (string) $message->get(self::ORDER_FIELD)->value;
+    if (!in_array($type, ['donation.order_placed', 'donation.payment_approved'], TRUE)
+      || $orderUuid === ''
+      || ($type === 'donation.payment_approved' && $sourceUuid === '')) {
+      return NULL;
+    }
+    return ['type' => $type, 'source_uuid' => $sourceUuid, 'order_uuid' => $orderUuid];
+  }
+
+  /**
+   * Revalidates Donation order ownership and view access and resolves its URL.
+   *
+   * @return array{order: \Drupal\commerce_order\Entity\OrderInterface, url: \Drupal\Core\Url}|null
+   *   The validated source and its current destination.
+   */
+  private function donationOrderUrl(OrderInterface $order, AccountInterface $account): ?array {
+    if (!$this->isDonationOrder($order)
+      || (int) $order->getCustomerId() !== (int) $account->id()
+      || !$order->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
     $url = $this->domainPurposes->routeUrl('shop', 'entity.commerce_order.user_view', [
@@ -180,6 +284,13 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
     if ($url === NULL) {
       return NULL;
     }
+    return ['order' => $order, 'url' => $url];
+  }
+
+  /**
+   * Builds the user-facing copy for an already validated Donation order.
+   */
+  private function buildNotice(string $type, Url $url): array {
     $payment = $type === 'donation.payment_approved';
     $summary = $payment
       ? $this->t('O pagamento da sua doação foi aprovado.')
@@ -235,27 +346,6 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.donation_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
-  }
-
-  /**
-   * {@inheritdoc} */
-  public function unreadCount(int $uid): int {
-    $account = $this->entityTypeManager->getStorage('user')->load($uid);
-    if (!$account instanceof UserInterface || !$account->isActive()) {
-      return 0;
-    }
-    $ids = $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)
-      ->condition('uid', $uid)
-      ->condition(self::READ_FIELD, 0)
-      ->execute();
-    $count = 0;
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if ($message instanceof MessageInterface && $this->resolve($message, $account) !== NULL) {
-        $count++;
-      }
-    }
-    return $count;
   }
 
   /**
@@ -354,6 +444,13 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
   private function isApprovedPayment(string $uuid, OrderInterface $order): bool {
     $payments = $this->entityTypeManager->getStorage('commerce_payment')->loadByProperties(['uuid' => $uuid]);
     $payment = reset($payments);
+    return $this->isApprovedPaymentEntity($payment, $order);
+  }
+
+  /**
+   * Confirms an already loaded payment is approved for the supplied order.
+   */
+  private function isApprovedPaymentEntity(mixed $payment, OrderInterface $order): bool {
     return $payment instanceof PaymentInterface
       && (int) $payment->getOrderId() === (int) $order->id()
       && $payment->getState()->getId() === 'completed'
