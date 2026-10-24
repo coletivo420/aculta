@@ -3,6 +3,18 @@
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
+## Situação STUDIO-P2-A (2026-10-24) — uso dos serviços User pelo Studio
+
+A rota privada `/studio/pessoal/perfil`, implementada em
+`aculta_studio` dev.12, compõe `AccountBioCard` e
+`SocialLinksCard` existentes, o editor modal de foto e o contrato
+`aculta_user.public_profile_link`. **Os handlers de gravação,
+`PublicProfilePolicy`, entidades User/Profile, apelido e visibilidade
+continuam integralmente do User e Portal.** Sem atualização de versão
+do User nesta fase (nenhum código User modificado). O fallback no-JS
+dos modais e a integração direta da privacidade/apelido ainda estão
+pendentes de P2-B; P2-A não foi homologada em Runtime.
+
 ## Interface de perfil no Studio — contrato documental STUDIO-P0
 
 A experiência **Meu Espaço** será futuramente a interface de edição do
