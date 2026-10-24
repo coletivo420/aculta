@@ -1,5 +1,25 @@
 # ACULTA Studio — contrato de identidade e rotas
 
+## Contrato prioritário — Studio dev.17 e Portal dev.29
+
+- **`/` no ACCOUNT** é o hub público do ACULTA Studio,
+  `aculta_studio.hub`; `/studio` é seu caminho técnico interno,
+  respondendo 404 a acesso HTTP direto.
+- **`/conta-legada`** é a Minha Conta original **permanente**,
+  `aculta_portal.dashboard`, incluindo shell e Form API atuais.
+- **`/studio/conta`** gerencia dados privados; nova seção
+  `/studio/conta/documentos` delega ao mesmo Portal/owner opcional
+  de CPF/CNPJ e oculta links indisponíveis.
+- **`/studio/perfil`** gerencia somente identidade pública;
+  `/u/{apelido}` continua o perfil público em MAIN.
+- `/minha-conta` e `/studio/pessoal` seguem indisponíveis,
+  **sem aliases temporários**.
+
+O código deste incremento está no Git, com testes novos escritos,
+mas sem execução Runtime/Firefox comprovada para a dev.17.
+Os parágrafos de dev.7–16 abaixo descrevem decisões históricas;
+aplicar sempre este contrato vigente.
+
 ## Identidades atuais — Conta/Perfil separados (dev.13)
 
 - `/studio` — hub;
