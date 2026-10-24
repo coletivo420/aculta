@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.57`: erros de revalidação backend no formulário de proposta são
+  apresentados como erro do formulário, sem marcar incorretamente o resumo.
+  Kernel focal: 1 teste / 150 asserções; PHPCS/PHP lint passaram.
+
 - `0.1.0-dev.56`: status privado de proposta usa SDCs `context-header` e
   `content-section`; a ação de retirada fica no cabeçalho apenas para autoria
   e estados elegíveis. Focal Kernel: 1 teste / 148 asserções; PHPCS/PHP lint

@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.57 — apresentar erros de revalidação no formulário
+
+- Rejeições de valores editoriais detectadas no backend aparecem como erro
+  geral da submissão, em vez de serem associadas incorretamente ao resumo da
+  proposta. Validações Form API e revalidações do serviço permanecem ativas.
+- Kernel focal prova rejeição de Media inexistente sem persistir uma proposta:
+  1 teste / 150 asserções. PHPCS e PHP lint passaram.
+
 ## 0.1.0-dev.56 — compor status de proposta com SDC
 
 - A página privada de status da proposta usa `context-header` e `content-section`

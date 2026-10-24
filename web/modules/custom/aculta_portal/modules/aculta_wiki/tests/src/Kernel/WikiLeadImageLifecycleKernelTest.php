@@ -2037,6 +2037,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $firstFormSubmissionId = (int) $redirectProposal->id();
     $proposalForm->submitForm($build, $formState);
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
+
     self::assertSame(30, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
@@ -2101,6 +2102,24 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     catch (AccessDeniedHttpException) {
       self::assertTrue(TRUE);
     }
+
+    $this->container->get('current_user')->setAccount($submitter);
+    $invalidFormState = new FormState();
+    $proposalForm->buildForm([], $invalidFormState, $target);
+    $invalidFormState->setValues([
+      'intent' => 'correction',
+      'proposed_text' => 'Propor uma imagem indisponível.',
+      'proposed_fields_selected' => ['field_wiki_image' => 'field_wiki_image'],
+      'field_values' => ['image' => 999999],
+      'rationale' => 'A imagem não está disponível no acervo.',
+      'source_uris' => '',
+      'submission_token' => $invalidFormState->get('wiki_proposal_submission_token'),
+    ]);
+    $invalidForm = [];
+    $proposalForm->submitForm($invalidForm, $invalidFormState);
+    self::assertArrayHasKey('', $invalidFormState->getErrors());
+    self::assertArrayNotHasKey('proposed_text', $invalidFormState->getErrors());
+
     $this->container->get('current_user')->setAccount($other);
     $this->expectException(AccessDeniedHttpException::class);
     $submission->submit($target, 'correction', 'Correção', 'Motivo');

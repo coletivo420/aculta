@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.57: exceções de validação backend da proposta não são exibidas sob o
+  campo de resumo incorreto; Kernel focal cobre imagem inexistente e ausência
+  de persistência (1/150). PHPCS e PHP lint passaram.
+
 - Dev.56: status da proposta usa SDCs existentes (`context-header`,
   `content-section`); retirada continua limitada à autoria e estados
   submetido/devolvido e passa pelo Form API. Kernel focal 1/148; PHPCS e lint

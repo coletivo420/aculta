@@ -4,13 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.56**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.57**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.57 — erro de validação no formulário de proposta
+
+Falhas detectadas pelo serviço durante a revalidação do conteúdo submetido são
+apresentadas no formulário como um todo, sem associá-las falsamente ao resumo.
+Kernel cobre tentativa com Media inexistente e confirma que a proposta não é
+persistida (focal: 1 teste / 150 asserções). PHPCS e PHP lint passaram.
 
 ### Incremento dev.56 — status de proposta na WE SATIVA
 

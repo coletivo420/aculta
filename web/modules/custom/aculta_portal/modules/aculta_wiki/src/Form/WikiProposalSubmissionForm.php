@@ -220,7 +220,10 @@ final class WikiProposalSubmissionForm extends FormBase {
       );
     }
     catch (UnprocessableEntityHttpException $exception) {
-      $form_state->setErrorByName('proposed_text', $exception->getMessage());
+      // Backend revalidation may reject any selected editorial field. Keep
+      // that message at form level instead of incorrectly marking the summary
+      // textarea as invalid.
+      $form_state->setErrorByName('', $exception->getMessage());
       return;
     }
 
