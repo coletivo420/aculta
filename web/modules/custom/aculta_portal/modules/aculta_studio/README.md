@@ -1,5 +1,28 @@
 # ACULTA Studio (`aculta_studio`)
 
+
+## Situação vigente — S-R3-B1, Studio dev.17
+
+A raiz **`/` do Domain ACCOUNT serve o hub ACULTA Studio**,
+`/studio` é caminho técnico interno não público, e
+**`/conta-legada` é a Minha Conta original permanente**.
+
+Nova página privada **`/studio/conta/documentos`**. Ela reutiliza
+`PortalController::otherData()` e `AccountOtherDataForm`, que já
+atendem `/dados/outros-dados` na interface legada. O serviço opcional
+`aculta_id_cpf.account_document` continua responsável por validar,
+cifrar, mascarar e armazenar uma única vez CPF/CNPJ. Link de Documentos
+é apresentado apenas quando o owner está disponível.
+Salvamento sem destino de checkout retorna à interface de origem.
+
+Minha Conta Studio e Meu Perfil Studio continuam separados.
+Cadastro privado ainda depende do formulário original `/dados`, pois
+o campo de apelido precisa ser extraído cuidadosamente. **A Conta
+legada não será removida.** Testes novos dev.17 ainda aguardam execução
+PHPUnit, Kernel, Functional e homologação Firefox/Runtime.
+As notas de versões anteriores abaixo são históricas.
+
+
 ## S-R3-A — Minha Conta Studio sem substituir o legado (dev.14)
 
 A experiência `/studio/conta` tem seções privadas reais em
