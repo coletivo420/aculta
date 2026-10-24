@@ -1,3 +1,9 @@
+## 0.1.0-dev.15 — hub do Studio na raiz da Conta; link para a Minha Conta original em /conta-legada (2026-10-24)
+
+- A raiz `/` do Domain ACCOUNT é o hub do Studio (`aculta_studio.hub`).
+- O link "Abrir Minha Conta original" usa a rota `aculta_portal.dashboard` (`/conta-legada`), não `<front>`.
+- Testes Unit `AccountExperienceProviderTest` e `StudioIdentityRoutingTest` atualizados ao novo contrato.
+
 ## 0.1.0-dev.14 — S-R3-A: sections de Conta integradas sem substituir o legado (2026-10-24)
 
 - `/studio/conta/endereco`, `/studio/conta/seguranca`,

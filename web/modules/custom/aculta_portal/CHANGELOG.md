@@ -1,3 +1,13 @@
+## 0.4.1-dev.26 — raiz da Conta serve o hub do Studio; Minha Conta original em /conta-legada (2026-10-24)
+
+- `PurposeFrontPathProcessor::FRONT_PATHS` ganha `account => /studio`. A raiz `/` do Domain ACCOUNT serve
+  o hub do Studio (`aculta_studio.hub`) por reescrita interna, sem redirect. `/studio` direto responde 404.
+- `aculta_portal.dashboard` (Minha Conta original) passa a `/conta-legada`. Controller, shell, formulários e
+  controles de acesso não mudaram. `/minha-conta` responde 404 sem redirect.
+- Visitante anônimo na raiz da Conta vai ao login do host de conta (302).
+- Gate `scripts/validate-aculta-portal-conta-root.php` atualizado para o novo contrato. Gate de endereço
+  (`PortalHooks`, país/Número/S-N) continua com FAIL pré-existente, fora deste commit.
+
 ## 0.4.1-dev.25 — mesmos formulários de endereço em Conta Studio e legado (2026-10-24)
 
 - `PortalHooks` agora reconhece o ID de rota
