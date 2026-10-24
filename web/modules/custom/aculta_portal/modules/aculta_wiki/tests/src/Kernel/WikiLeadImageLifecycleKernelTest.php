@@ -2894,7 +2894,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $reviewBuild = $proposalForm->buildForm([], $formState, $target);
     self::assertSame('aculta420:content-section', $reviewBuild['review']['#component']);
     self::assertStringContainsString('Novo título sugerido', (string) $reviewBuild['review']['#slots']['body']['fields']['#plain_text']);
-    self::assertArrayNotHasKey('intent', $reviewBuild['actions']);
+    self::assertFalse($reviewBuild['intent']['#access']);
     $formState->setRebuild(FALSE);
     $proposalForm->backToEdit($reviewBuild, $formState);
     self::assertSame('edit', $formState->get('wiki_proposal_step'));
