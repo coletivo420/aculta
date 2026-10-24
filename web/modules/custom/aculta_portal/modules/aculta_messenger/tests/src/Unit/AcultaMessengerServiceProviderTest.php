@@ -19,6 +19,7 @@ use Drupal\Core\Hook\HookCollectorPass;
 use Drupal\Core\Utility\CallableResolver;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Tests optional domain integrations in the Messenger service container.
@@ -42,6 +43,9 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     $argument = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(0);
     self::assertInstanceOf(ServiceLocatorArgument::class, $argument);
     self::assertSame([], array_keys($argument->getValues()));
+    $logger = $container->getDefinition(PersonalNoticeAdapterHooks::class)->getArgument(1);
+    self::assertInstanceOf(Reference::class, $logger);
+    self::assertSame('logger.channel.aculta_messenger', (string) $logger);
   }
 
   /**

@@ -1,3 +1,11 @@
+## 0.1.1-dev.191 — caracterizar o logger do dispatcher opcional
+
+O contrato do ServiceProvider agora prova que o dispatcher é registrado mesmo sem adapters e recebe locator vazio junto
+ao canal `logger.channel.aculta_messenger` esperado pela isolação de falhas.
+
+Validação: `AcultaMessengerServiceProviderTest` **6/36 PASS**; Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações
+**222/1.636 PASS**; PHPCS, PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.190 — isolar inicialização lazy de adapters
 
 O isolamento também cobre falhas ao resolver/construir um adapter no service locator, antes da chamada de listagem ou
