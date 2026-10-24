@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.177` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.178` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -94,9 +94,10 @@ As ações por membro também são testadas contra parâmetros adulterados: o
 controller oculta as opções e ações de relação quando o alvo é o próprio
 usuário ou não pertence à thread (`MessagesControllerMemberAccessTest`).
 
-O Kernel Wiki também cobre digest com revisão real: a revisão elegível entra e
-é confirmada pelo `delivery_id`; se for publicada antes da entrega, a linha não
-é enviada e a pendência é descartada. O Kernel cobre esse fluxo em banco
+O Kernel Wiki também cobre digest com revisão real: replay do mesmo evento
+reutiliza o Message persistido sem duplicar a entrega, a revisão elegível entra
+e é confirmada pelo `delivery_id`; se for publicada antes da entrega, a linha
+não é enviada e a pendência é descartada. O Kernel cobre esse fluxo em banco
 isolado, sem execução de cron, SMTP ou Runtime.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo

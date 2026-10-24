@@ -235,6 +235,8 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);
+    $replayedMessage = $manager->record($this->reviewEvent($uid, $entry));
+    self::assertSame($message->id(), $replayedMessage?->id(), 'Replaying the same source revision reuses the persisted notice.');
 
     $rows = $manager->digestRowsFor($uid);
 

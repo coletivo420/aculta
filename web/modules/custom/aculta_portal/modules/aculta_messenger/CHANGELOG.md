@@ -1,3 +1,12 @@
+## 0.1.1-dev.178 — deduplicar replay no digest Wiki
+
+O Kernel Wiki agora reenvia o mesmo `MessengerNoticeEvent` de revisão antes da leitura do digest e prova que a API
+reutiliza o Message persistido. A linha aparece uma vez e mantém seu `delivery_id`, completando a cobertura de replay,
+acknowledgement e revogação do e-mail quando a revisão é publicada antes da entrega.
+
+Validação: `WikiNoticePersistenceKernelTest` **6/106 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. Permanecem
+2 deprecações de annotations Core/contrib e 3 notices PHPUnit; cron, SMTP e Runtime não foram executados.
+
 ## 0.1.1-dev.177 — validar digest e revogação na Wiki
 
 O Kernel da integração Wiki agora prova o caminho de e-mail em modo digest com Node e Message reais: revisão em estado
