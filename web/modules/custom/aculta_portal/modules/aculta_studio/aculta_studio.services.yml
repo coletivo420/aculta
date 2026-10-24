@@ -29,6 +29,14 @@ services:
   aculta_studio.personal_controller:
     class: Drupal\aculta_studio\Controller\PersonalController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_studio.personal_profile_controller:
+    class: Drupal\aculta_studio\Controller\PersonalProfileController
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@?aculta_user.public_profile_link'
+      - '@?aculta_user.account_bio_card'
+      - '@?aculta_user.social_links_card'
   aculta_studio.experience.ganjalab:
     class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
     arguments: ['@?aculta_studio.learner_dashboard_composer']
