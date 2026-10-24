@@ -1,5 +1,17 @@
 # Documentação do Portal
 
+## Studio separado por Conta e Perfil — contrato atual
+
+- [Conta e Perfil independentes e legado permanente](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md)
+- `/studio/conta`: dados de conta privada; `/studio/perfil`:
+  identidade comunitária. O antigo `/studio/pessoal` foi eliminado
+  sem alias.
+- **Minha Conta original permanece em `/` do domínio ACCOUNT**, inclusive
+  depois de avaliar e aprovar o Studio. O caminho técnico
+  `/minha-conta` continua 404. Os documentos de migração P0–P7
+  anteriores são apenas históricos.
+
+
 Índice do `aculta_portal`. Só documentos normativos e de referência vigentes.
 
 ## ACULTA Studio — Hub e Meu Espaço (planejamento P0, 2026-10-24)
