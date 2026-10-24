@@ -1,5 +1,20 @@
 # ACULTA Studio — Roadmap multi-experiência
 
+## Incremento dev.11 — remover compatibilidade temporária (2026-10-24)
+
+A home canônica `/studio` conserva somente o route ID
+`aculta_studio.hub`; `/studio/marley` permanece o início editorial
+e as áreas/subáreas reais estão em `/studio/marley/{aba}/...`.
+Foram eliminadas as rotas de prévia, capitalização, árvore editorial antiga
+e os redirects legados, inclusive os aliases estudantis do LMS.
+O contrato de acesso do Studio, MarleyTabManager, providers, Conta e perfil
+público não mudou. P2 (editor de perfil) continua o próximo trabalho
+funcional, condicionado à homologação de rotas, Unit/Kernel e Runtime.
+`scripts/validate-no-temporary-route-aliases.php` evita reintrodução
+de aliases. As fases dev.7–10 descritas abaixo são históricas.
+
+
+
 **Versão STUDIO 0.1 · 2026-10-22**. GanjaLab e o entrypoint inicial WE SATIVA existem em `aculta_studio`; detalhes de cobertura e pendências abaixo distinguem o que está implementado do que segue em planejamento.
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
