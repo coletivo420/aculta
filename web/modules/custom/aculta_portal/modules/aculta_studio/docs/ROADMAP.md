@@ -25,9 +25,10 @@ Meu Trabalho com SDCs. Criação, edição, contribuição e status usam as rota
 serviços e Form API da Wiki; Studio não duplica armazenamento nem ACL.
 
 O Kernel Wiki/Studio combinado foi ampliado desde a entrada inicial; no HEAD
-Wiki dev.76, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
-1.036 assertions) e inclui regressões de rota, propósito, autoria, paginação e
-acesso. A interface visual da experiência WE SATIVA ainda não foi homologada em
+Wiki dev.77, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
+1.039 assertions) e inclui regressões de rota, propósito, autoria, paginação e
+acesso. Os formulários Wiki têm retorno cacheável ao workspace quando o
+provider/acesso estão disponíveis. A interface visual da experiência WE SATIVA ainda não foi homologada em
 Firefox ESR/X11, 320 px, Olivero ou Runtime; a suíte atual do browser Studio
 exercita principalmente GanjaLab.
 

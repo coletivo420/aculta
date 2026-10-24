@@ -9,8 +9,10 @@ O entrypoint inicial `/studio/we-sativa` está implementado no propósito
 consulta verbetes e propostas próprias com cursores independentes, revalida
 Entity Access e encaminha criar/editar/contribuir/acompanhar para rotas e Form
 API da Wiki. A experiência não expõe a fila de moderação. Kernel Wiki/Studio
-completo revalidado em MariaDB no dev.76: 23 testes / 1.036 assertions na
-classe de ciclo da Wiki, incluindo rota, autoria, paginação e acesso. Browser
+completo revalidado em MariaDB no dev.77: 23 testes / 1.039 assertions na
+classe de ciclo da Wiki, incluindo rota, autoria, paginação e acesso. Os forms
+Core da Wiki oferecem retorno cacheável ao workspace se a rota e o acesso
+forem autorizados. Browser
 Firefox ESR/X11, 320 px, Olivero, fallback visual e Runtime permanecem
 pendentes; a suíte visual Studio atual não cobre ainda o workspace WE SATIVA.
 

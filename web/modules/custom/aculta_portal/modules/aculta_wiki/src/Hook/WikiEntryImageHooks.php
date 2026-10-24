@@ -6,16 +6,22 @@ namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Customizes native Wiki Node forms for the lead image and safe revision saves.
@@ -33,6 +39,10 @@ final class WikiEntryImageHooks {
     private readonly UserUploadPolicy $uploadPolicy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly WikiLeadImageUploader $uploader,
+    private readonly WikiContributorWorkspace $workspace,
+    private readonly DomainPurposeManager $domainPurposes,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly RouteProviderInterface $routeProvider,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -48,6 +58,8 @@ final class WikiEntryImageHooks {
     if (!$node instanceof NodeInterface || $node->bundle() !== 'wiki_entry') {
       return;
     }
+
+    $this->addWorkspaceReturnLink($form);
 
     if (!$node->isNew()) {
       $form[WikiLeadImageUploader::EXPECTED_REVISION] = [
@@ -228,6 +240,35 @@ final class WikiEntryImageHooks {
     }
     $targetId = $node->get(WikiLeadImageUploader::FIELD)->target_id;
     return $targetId === NULL || $targetId === '' ? NULL : (int) $targetId;
+  }
+
+  /**
+   * Adds a return link when the optional Studio destination is available.
+   */
+  private function addWorkspaceReturnLink(array &$form): void {
+    try {
+      $this->routeProvider->getRouteByName('aculta_studio.we_sativa');
+    }
+    catch (RouteNotFoundException) {
+      return;
+    }
+
+    $access = $this->workspace->access($this->currentUser);
+    $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    if ($url === NULL) {
+      return;
+    }
+
+    $form['wiki_workspace_return'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Voltar para Meu Trabalho WE SATIVA'),
+      '#url' => $url,
+      '#weight' => -100,
+      '#access' => $access,
+      '#attributes' => ['data-portal-ui' => 'wiki-workspace-return'],
+    ];
+    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $access->getCacheContexts());
+    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $access->getCacheTags());
   }
 
 }

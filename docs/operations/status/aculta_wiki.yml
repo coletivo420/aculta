@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.76 (Form API Node submete managed_file real; draft mantém Media privada; Kernel ciclo da imagem 23/1.036; lint/PHPCS aprovados. Runtime não homologado)"
-next_phase: 'Content Index: conferir o estado atual e homologar ativação/rebuild v4 no Runtime de teste com reversão preparada. WE SATIVA: homologar edição em Firefox ESR/X11 e sessões concorrentes separadas ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.77 (formulário Wiki retorna ao Meu Trabalho quando provider/acesso estão disponíveis; purpose account e cache AccessResult; Kernel ciclo Wiki 23/1.039; Runtime intocado)"
+next_phase: 'Content Index: conferir o estado atual e homologar ativação/rebuild v4 no Runtime de teste com reversão preparada. WE SATIVA: Firefox ESR/X11, autoria a 320px, Olivero e sessões concorrentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

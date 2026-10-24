@@ -57,13 +57,14 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Falha no Node save | Kernel | Media removida e File volta a temporário | aprovado previamente |
 | Remoção com revisão antiga | Kernel | Media/File permanecem enquanto revisão ainda referencia a imagem | aprovado previamente |
 | Upload no formulário Node real | Kernel MariaDB | Form API processa `managed_file`, salva `draft` com alt e mantém Media/File sem acesso público | aprovado (dev.76; focal 1/41; classe 23/1.036) |
+| Retorno do formulário para WE SATIVA | Kernel MariaDB | Link somente com rota e acesso workspace; URL no Domain `account`, cacheable | aprovado (dev.77; focal 1/70; classe 23/1.039) |
 | Limpeza de órfã após exclusão da última origem | Kernel | Retém referências em revisão histórica; remove Media/File sem referências globais | aprovado (dev.51; 1 teste / 46 asserções) |
 | Retenção de uma hora | Kernel | Aguarda o grace period antes de considerar arquivo | aprovado (dev.53; incluído em 4 testes / 169 asserções) |
 | Limite de 25 e cursor rotativo | Kernel | Avança além dos primeiros 25 candidatos, inclusive se eles permanecerem em uso | aprovado (dev.53; teste alcança e remove o 26º arquivo liberado) |
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 23 testes / 1.036
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 23 testes / 1.039
 asserções, 291 depreciações Core/contrib e 24 PHPUnit; aprovada em dev.76.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)

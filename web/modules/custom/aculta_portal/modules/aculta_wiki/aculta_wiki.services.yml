@@ -65,6 +65,10 @@ services:
       - '@aculta_portal.user_upload_policy'
       - '@aculta_portal.user_upload_dialog_builder'
       - '@aculta_wiki.wiki_lead_image_uploader'
+      - '@aculta_wiki.contributor_workspace'
+      - '@aculta_portal.domain_purpose'
+      - '@current_user'
+      - '@router.route_provider'
   Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess:
     class: Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess
     arguments: ['@file.repository', '@entity_type.manager']

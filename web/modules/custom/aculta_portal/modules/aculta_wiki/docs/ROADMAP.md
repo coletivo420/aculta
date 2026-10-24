@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.76**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.77**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.77 — retorno do formulário à experiência WE SATIVA
+
+Os formulários Core de criação/edição Wiki agora incluem retorno a `/studio/we-sativa`
+quando a rota opcional existe e `WikiContributorWorkspace::access()` permite a
+experiência. A URL é gerada no propósito `account`; contexts e tags do resultado
+de acesso são aplicados ao formulário. Sem Studio ou sem Domain account, a Wiki
+mantém o formulário e omite o link. Kernel focal de autoria: 1/70; a classe
+MariaDB passou em 23/1.039 (291 depreciações Core/contrib e 24 PHPUnit). Runtime
+permanece intocado.
 
 ### Incremento dev.76 — envio real da imagem no Form API
 

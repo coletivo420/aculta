@@ -106,7 +106,9 @@ Meu Trabalho usa cursores independentes para verbetes e propostas, revalida
 Entity Access e apresenta cartões SDC; criação usa `createAccess('wiki_entry')`
 e edição segue a rota/formulário nativo do Node. Submissão e resultados de
 propostas usam Form API/serviços da Wiki; Studio não mostra a fila moderadora.
-O Kernel Wiki/Studio completo passou em MariaDB (dev.76: 23 testes / 1.036
+Os formulários Wiki agora oferecem retorno cacheável ao Meu Trabalho quando o
+provider e o acesso da conta estão ativos.
+O Kernel Wiki/Studio completo passou em MariaDB (Wiki dev.77: 23 testes / 1.039
 asserções na classe de ciclo da Wiki), cobrindo rota, propósito, autoria,
 paginação e acesso. Firefox/X11, 320 px, Olivero e Runtime continuam pendentes.
 

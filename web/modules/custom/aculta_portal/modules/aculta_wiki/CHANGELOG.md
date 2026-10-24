@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.77 — retorno do formulário ao Meu Trabalho
+
+- Os formulários Core de `wiki_entry` exibem link de retorno ao Meu Trabalho
+  somente quando a rota opcional do Studio existe e o serviço proprietário da
+  Wiki autoriza a experiência para a conta atual. O destino usa o Domain do
+  purpose `account`; a renderização herda cache contexts/tags do `AccessResult`.
+- A Wiki segue funcionando sem `aculta_studio`; ausência de rota ou Domain
+  omite o link. Kernel valida rota, Domain, acesso e formulário real.
+- `WikiLeadImageLifecycleKernelTest`: 23 testes / 1.039 assertions em MariaDB;
+  291 depreciações Core/contrib e 24 PHPUnit. PHP lint e PHPCS passam. Runtime
+  não foi alterado.
+
 ## 0.1.0-dev.76 — submissão real da imagem pelo Form API
 
 - A regressão Kernel agora constrói e submete o formulário nativo de Node da

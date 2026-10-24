@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.77: formulário `wiki_entry` oferece retorno para o workspace somente com
+  rota Studio disponível e `WikiContributorWorkspace::access()` permitido;
+  URL usa purpose `account` e cache contexts/tags do AccessResult. Kernel classe
+  23/1.039; Runtime intocado.
+
 - Dev.76: envio de imagem usa a forma nativa `managed_file` (`fids`). Kernel
   submete formulário Node real e confirma Media despublicada em `draft`; classe
   MariaDB completa 23/1.036, 291 depreciações Core/contrib e 24 PHPUnit. Runtime

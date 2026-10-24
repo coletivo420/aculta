@@ -1168,6 +1168,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $author = $authorEntity;
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
     $this->container->get('current_user')->setAccount($author);
+    Domain::create([
+      'id' => 'conta_aculta_org',
+      'hostname' => 'account.example.invalid',
+      'name' => 'Account',
+      'scheme' => 'https',
+      'weight' => 0,
+      'status' => TRUE,
+    ])->save();
     $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
 
     self::assertTrue($this->container->get('aculta_portal.email_confirmation_policy')->isConfirmed($author));
@@ -1184,6 +1192,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $formState->setFormObject($formObject);
     $formBuilder = $this->container->get('form_builder');
     $form = $formBuilder->buildForm($formObject, $formState);
+    self::assertSame('link', $form['wiki_workspace_return']['#type']);
+    self::assertSame('aculta_studio.we_sativa', $form['wiki_workspace_return']['#url']->getRouteName());
+    self::assertSame('conta_aculta_org', $form['wiki_workspace_return']['#url']->getOption('domain')->id());
     self::assertArrayHasKey('title', $form);
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);

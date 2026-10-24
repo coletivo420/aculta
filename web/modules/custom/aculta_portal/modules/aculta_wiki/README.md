@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.77`: formulários Core de `wiki_entry` oferecem retorno cacheável ao
+  Meu Trabalho WE SATIVA quando o provider Studio e o acesso Wiki estão ativos.
+  O link usa o purpose `account`; ausência da rota omite a ação. Kernel completo
+  passou (23/1.039); PHP lint e PHPCS passaram. Runtime intocado.
+
 - `0.1.0-dev.76`: envio de imagem pelo formulário Node/Form API real passou em
   Kernel MariaDB. Upload `managed_file` resulta em Media privada para Node
   `draft`; classe de ciclo da imagem: 23/1.036, PHP lint e PHPCS aprovados.
