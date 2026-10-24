@@ -1,3 +1,12 @@
+## `0.1.0-dev.305` — documentar tokens do Fórum no contrato do tema — 2026-10-24
+
+- `docs/portal/TOKENS-E-ATRIBUTOS.md` passa a registrar o token
+  `forum-category-count` (contador de tópicos por categoria) e o atributo
+  `data-aculta-forum-post-timestamp`, usados pelo Fórum e mapeados no
+  ACULTA420; o gate `validate-portal-ui-docs` deixa de reprovar esses dois.
+- Gate: `validate-portal-ui-docs` sem ocorrências do Fórum; demais falhas
+  pertencem a LMS/Statistics/Studio (outras frentes).
+
 ## `0.1.0-dev.304` — corrigir teste da configuração de tópicos — 2026-10-24
 
 - O Unit `ForumTopicDisplayConfigTest` ainda exigia a rota placeholder

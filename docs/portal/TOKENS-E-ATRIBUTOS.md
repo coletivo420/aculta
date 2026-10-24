@@ -71,6 +71,7 @@
 | `data-aculta-drawer-count` | exato | sim | 2 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
+| `data-aculta-forum-post-timestamp` | exato | sim | 3 |
 | `data-aculta-group-max` | exato | sim | 1 |
 | `data-aculta-imagem` | exato | não | 1 |
 | `data-aculta-imagem-alinhamento` | exato | não | 1 |
@@ -442,6 +443,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `mercado-pago-credentials-test` | `mercado-pago-credentials`, `mercado-pago-credentials-test` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-stage` | `mercado-pago-credentials`, `mercado-pago-credentials-stage` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
 | `mercado-pago-credentials-prod` | `mercado-pago-credentials`, `mercado-pago-credentials-prod` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/Plugin/Commerce/PaymentGateway/CheckoutPro.php` |
+| `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
 
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 
