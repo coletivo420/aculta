@@ -74,6 +74,15 @@
   asserções, 291 depreciações Core/contrib e 28 PHPUnit. PHPCS/lint passaram;
   Runtime intocado.
 
+### Revalidação WE SATIVA no Runtime de teste — 2026-10-24
+
+- Os Kernels MariaDB do workspace passaram em 3 testes / 240 asserções (200
+  depreciações upstream).
+- Firefox ESR visível autenticou e confirmou 404 em `/studio/we-sativa` (0/2).
+  Drush read-only confirmou Wiki/Studio ativos, Index desativado e ausência da
+  rota e do serviço de workspace no container; o DB ativo identificado foi
+  `aculta_runtime`. Rebuild permanece aguardando autorização.
+
 ## 0.1.0-dev.103 — fixar purpose da rota de envio de proposta
 
 - `aculta_wiki.proposal_submit` declara `_aculta_domain_purpose: wiki`, então

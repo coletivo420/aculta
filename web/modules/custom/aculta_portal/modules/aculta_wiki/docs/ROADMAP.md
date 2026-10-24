@@ -5,10 +5,12 @@ Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
 Linha do projeto `aculta_wiki`: **0.1.0-dev.104**. Em preflight read-only de
-2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
-teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
-intencionalmente por ser o caminho interno da raiz. Runtime segue sem
-homologação integral.
+2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
+desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
+respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
+conta, o smoke autenticado encontrou `/studio/we-sativa` ausente: o serviço e a
+rota também não existem no container ativo. Runtime segue sem homologação
+integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -91,13 +93,14 @@ prévia também segue pendente. Runtime intocado.
 ### Gate operacional WE SATIVA — 2026-10-24
 
 Firefox ESR visível no host de teste autenticou e recebeu 404 em
-`/studio/we-sativa` (0/2 checks). Drush somente leitura confirmou Drupal
-11.4.10, `aculta_runtime`, `aculta_studio`/`aculta_wiki` ativos e ausência de
-`aculta_studio.we_sativa` na tabela `router`; as rotas GanjaLab antigas estão
-presentes. Em contraste, o Kernel isolado do workspace passou (1/54), provando
-discovery/DI no bootstrap de teste. Não executei rebuild de rotas, cache,
-importação de configuração ou alteração de conteúdo; homologação visual fica
-pendente de autorização operacional.
+`/studio/we-sativa` (0/2 checks). Drush somente leitura confirmou host `toca`,
+checkout `/home/aculta`, branch compartilhada, Drupal 11.4.10, URI de conta e
+DB `aculta_runtime`; `aculta_wiki`/`aculta_studio` estão ativos e `aculta_index`
+desativado. Rota `aculta_studio.we_sativa` e serviço
+`aculta_wiki.contributor_workspace` faltam no container ativo. Os três Kernels
+MariaDB do workspace passaram (3/240; 200 depreciações upstream), confirmando
+o bootstrap isolado. Rebuild de rotas/container, cache, importação e alterações
+de conteúdo não foram executados; aguardam autorização operacional.
 
 ### Incremento dev.97 — link de decisão da fila no GanjaLab
 

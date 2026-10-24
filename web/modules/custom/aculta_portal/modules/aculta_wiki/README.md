@@ -11,9 +11,9 @@ pendentes, está em
   editorial do GanjaLab; autoria própria permanece na WE SATIVA. A `WikiTab`
   exige permissão editorial, revisão ou moderação de propostas, e só expõe a
   seção de verbetes compartilhados a `edit any wiki_entry content`. Unit Studio
-  passou em 7 testes / 27 asserções; a suíte visual iniciou, mas Drush `uli`
-  não retornou URL de login após cerca de dois minutos. Runtime e visual seguem
-  pendentes.
+  passou em 7 testes / 27 asserções. O smoke WE SATIVA no Firefox visível gerou
+  login e confirmou 404 em `/studio/we-sativa` (0/2); Runtime e visual seguem
+  pendentes até registrar a rota no container.
 
 - `0.1.0-dev.104`: Kernel exercita o `WikiProposalDecision` real enquanto outro
   processo mantém lock MariaDB na linha do Node. A decisão aguarda a liberação,
@@ -55,8 +55,12 @@ pendentes, está em
 
 - Gate Runtime WE SATIVA (2026-10-24): Firefox visível encontrou 404 porque
   `aculta_studio.we_sativa` não consta na tabela de rotas, embora Wiki/Studio
-  estejam ativos. Kernel isolado passou 1/54. Rebuild/cache/import não foram
-  executados; homologação aguarda autorização operacional.
+  estejam ativos. Revalidação read-only no host `toca`, branch compartilhada e
+  URI de conta confirmou Drupal 11.4.10, DB `aculta_runtime`, Index desativado,
+  rota e `aculta_wiki.contributor_workspace` ausentes do container. O smoke
+  Firefox encerrou em 0/2. Os três Kernels do workspace passaram no SimpleTest
+  (3/240; 200 depreciações upstream). Rebuild/cache/import não foram executados;
+  aguarda autorização operacional.
 
 - `0.1.0-dev.97`: Kernel verifica o link da fila de propostas no GanjaLab, a
   rota de decisão, o ID correspondente e o acesso do moderador (1/205).
