@@ -123,11 +123,6 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     // Endereços, pagamentos e pedido: o ID do usuário sai da URL; AccountRouteSubscriber põe o usuário da sessão
     // no parâmetro antes das verificações de acesso do Commerce. Rotas antigas /user/{uid}/... deixam de existir.
     $account_paths = [
-      'commerce_order.address_book.overview' => ['/enderecos', []],
-      'commerce_order.address_book.add_form' => ['/enderecos/novo/{profile_type}', []],
-      'commerce_order.address_book.edit_form' => ['/enderecos/{profile}/editar', []],
-      'commerce_order.address_book.delete_form' => ['/enderecos/{profile}/excluir', []],
-      'commerce_order.address_book.set_default' => ['/enderecos/{profile}/padrao', []],
       'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
     ];
     foreach ($account_paths as $name => [$path, $unused]) {
@@ -138,21 +133,17 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
     }
     // Meios de pagamento não são guardados nem exibidos pelo portal: o pagamento é do Mercado Pago. As rotas de
-    // cadastro, edição, exclusão e padrão são removidas (404). A lista antiga /pagamentos redireciona para /pedidos.
+    // cadastro, edição, exclusão, padrão e listagem são removidas (404).
     foreach (['entity.commerce_payment_method.add_form', 'entity.commerce_payment_method.edit_form', 'entity.commerce_payment_method.delete_form', 'entity.commerce_payment_method.set_default'] as $name) {
       $collection->remove($name);
     }
     // Verificações que dependiam do usuário da URL passam a usar a sessão (login) e a verificação da entidade
     // (dono do pedido ou do perfil). Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
-    // Endereços do Commerce: a tela própria foi substituída por Meus Dados (CEP). Os caminhos antigos
-    // redirecionam para lá (ver PortalController::addressRedirect e docs/portal/REDIRECTS.md).
+    // Commerce address-book routes are obsolete: the canonical address
+    // editor is aculta_portal.my_data_address (/dados/endereco). Do not
+    // redirect old pages in a development-only route contract.
     foreach (['commerce_order.address_book.overview', 'commerce_order.address_book.add_form', 'commerce_order.address_book.edit_form', 'commerce_order.address_book.delete_form', 'commerce_order.address_book.set_default'] as $name) {
-      if ($route = $collection->get($name)) {
-        $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::addressRedirect', '_title' => 'Meus dados']);
-        $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
-        $route->setOption('parameters', []);
-        $route->setOption('_aculta_domain_purpose', 'account');
-      }
+      $collection->remove($name);
     }
     // Pedidos e pagamentos são as listas do Commerce, agora no painel da conta (sem ID na URL).
     // O controller da página é o do Portal; o acesso exige login e a lista usa o usuário da sessão.
@@ -168,14 +159,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_aculta_domain_purpose', 'account');
       }
     }
-    // /pagamentos: 301 para /pedidos (sem 404 para links antigos). Acesso livre para o redirecionamento acontecer.
-    if ($route = $collection->get('entity.commerce_payment_method.collection')) {
-      $route->setPath('/pagamentos');
-      $route->setDefaults(['_controller' => '\\Drupal\\aculta_portal\\Controller\\PaymentMethodsRedirectController::redirectToOrders']);
-      $route->setRequirements(['_access' => 'TRUE']);
-      $route->setOption('parameters', []);
-      $route->setOption('_aculta_domain_purpose', 'account');
-    }
+    // There is no separate payment-methods screen: remove its old list
+    // route, instead of publishing a temporary /pagamentos alias.
+    $collection->remove('entity.commerce_payment_method.collection');
     foreach (['aculta_portal.dashboard', 'aculta_portal.my_data', 'aculta_portal.my_data_address', 'aculta_portal.my_data_other', 'aculta_portal.connections', 'aculta_portal.security', 'aculta_portal.security_password', 'aculta_portal.support_my', 'aculta_portal.support_subscription_action', 'aculta_portal.account_courses', 'aculta_portal.account_settings'] as $name) {
       if ($route = $collection->get($name)) {
         $route->setOption('_aculta_domain_purpose', 'account');
