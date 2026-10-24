@@ -224,23 +224,33 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   }
 
   /**
-   * Submission revalidates ownership and flag type before removing a follow.
+   * Submission revalidates ownership, flag and target before removing a follow.
    */
   public function testSubmitRevalidatesSelectedFlaggingOwnership(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('id')->willReturn(27);
     $topic = $this->topic(501, 'Tópico público', TRUE);
+    $wrongBundleTopic = $this->topic(502, 'Outro conteúdo', TRUE, 'article');
     $ownFollowing = $this->flagging(701, 27, 'seguir_topico', $topic);
     $otherUserFollowing = $this->flagging(702, 84, 'seguir_topico', $topic);
+    $otherFlag = $this->flagging(703, 27, 'salvar_topico', $topic);
+    $nonNodeTarget = $this->flagging(704, 27, 'seguir_topico', $topic, 'comment');
+    $wrongBundleFollowing = $this->flagging(705, 27, 'seguir_topico', $wrongBundleTopic);
     $flag = $this->createMock(FlagInterface::class);
     $flagService = $this->createMock(FlagServiceInterface::class);
     $flagService->expects(self::once())->method('getFlagById')->with('seguir_topico')->willReturn($flag);
     $flagService->expects(self::once())->method('getAllFlaggingByUser')->with($account)->willReturn([
       $ownFollowing,
       $otherUserFollowing,
+      $otherFlag,
+      $nonNodeTarget,
+      $wrongBundleFollowing,
     ]);
     $nodeStorage = $this->createMock(EntityStorageInterface::class);
-    $nodeStorage->expects(self::once())->method('loadMultiple')->with(['501'])->willReturn([501 => $topic]);
+    $nodeStorage->expects(self::once())->method('loadMultiple')->with(['501', '502'])->willReturn([
+      501 => $topic,
+      502 => $wrongBundleTopic,
+    ]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('node')->willReturn($nodeStorage);
     $flagService->expects(self::once())->method('unflag')->with($flag, $topic, $account);
@@ -257,6 +267,9 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $formState->setValue(['assinaturas', 'topics'], [
       '701' => ['remove' => 1],
       '702' => ['remove' => 1],
+      '703' => ['remove' => 1],
+      '704' => ['remove' => 1],
+      '705' => ['remove' => 1],
     ]);
     $form = [];
 
@@ -286,12 +299,12 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   /**
    * Builds a topic fixture with explicit access.
    */
-  private function topic(int $id, string $title, bool $viewable): NodeInterface {
+  private function topic(int $id, string $title, bool $viewable, string $bundle = 'aculta_forum_topic'): NodeInterface {
     $access = $this->createMock(AccessResultInterface::class);
     $access->method('isAllowed')->willReturn($viewable);
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('id')->willReturn((string) $id);
-    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $topic->method('bundle')->willReturn($bundle);
     $topic->method('getTitle')->willReturn($title);
     $topic->method('access')->willReturn($access);
     return $topic;
@@ -300,12 +313,12 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   /**
    * Builds a personal Flag record for the given owner and entity.
    */
-  private function flagging(int $id, int $uid, string $flagId, NodeInterface $topic): FlaggingInterface {
+  private function flagging(int $id, int $uid, string $flagId, NodeInterface $topic, string $targetType = 'node'): FlaggingInterface {
     $flagging = $this->createMock(FlaggingInterface::class);
     $flagging->method('id')->willReturn((string) $id);
     $flagging->method('getOwnerId')->willReturn($uid);
     $flagging->method('getFlagId')->willReturn($flagId);
-    $flagging->method('getFlaggableType')->willReturn('node');
+    $flagging->method('getFlaggableType')->willReturn($targetType);
     $flagging->method('getFlaggableId')->willReturn($topic->id());
     $flagging->method('getFlaggable')->willReturn($topic);
     return $flagging;

@@ -1,3 +1,11 @@
+## 0.1.1-dev.188 — endurecer remoção de inscrições do Fórum
+
+O teste de submit da privacidade agora tenta remover Flag de outro dono, outro tipo de Flag, alvo não-Node e Node fora
+do bundle `aculta_forum_topic`. Só a Flag própria `seguir_topico` de tópico do Fórum pode ser removida.
+
+Validação: `AvisosPrivacyFormTest` **6/61 PASS**; Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **219/1.597
+PASS**; PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Sem Runtime/browser nesta validação.
+
 ## 0.1.1-dev.187 — validar dispatch real dos hooks da central
 
 O teste de contrato agora passa pelo HookCollector, instala o mapa produzido no `ModuleHandler` e executa os hooks via
