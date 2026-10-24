@@ -12,6 +12,15 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação no HEAD `d3bfd3715` — Content Index e ciclo de imagem
+
+Sem alteração de código: providers Unit Wiki/categoria passaram (9/40), e os
+quatro Kernels MariaDB de R1 passaram (11/385), mantendo projeção v4 e
+fingerprint. `WikiLeadImageLifecycleKernelTest` passou com 25 testes / 1.187
+asserções; foram reportadas 291 depreciações Core/contrib e 26 PHPUnit. O aviso
+de diretório BrowserTest não gravável não impediu os Kernels. Nenhum rebuild,
+configuração ou alteração Runtime foi executado.
+
 ### Incremento dev.87 — evidência de publicação por contexto
 
 O adapter Wiki agora implementa o contrato do `aculta_user` e consulta apenas

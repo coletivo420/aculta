@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Revalidação no HEAD `d3bfd3715`: Content Index Unit 9/40 e quatro Kernels
+  MariaDB 11/385; projeção v4 inalterada. Ciclo de imagem Kernel 25/1.187;
+  291 depreciações Core/contrib e 26 PHPUnit. Runtime intocado.
+
 - Dev.87: adapter Wiki para `PublishedParticipationLookupInterface` consulta
   somente revisão padrão publicada no Domain Wiki; teste cobre provider, revisão
   pendente, autoria, Domain e cache (1/45). User Unit 123/439; Fórum Kernel

@@ -78,8 +78,9 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 24 testes / 1.142
-asserções, 291 depreciações Core/contrib e 25 PHPUnit; revalidada em dev.85.
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 25 testes / 1.187
+asserções, 291 depreciações Core/contrib e 26 PHPUnit; revalidada no HEAD
+`d3bfd3715`. O aviso de diretório BrowserTest não gravável não impediu a suíte.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 

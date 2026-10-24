@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## Revalidação no HEAD `d3bfd3715` — sem alteração de versão ou código
+
+- Content Index: providers Unit Wiki/categoria 9 testes / 40 assertions;
+  quatro Kernels MariaDB de provider, acesso/relações, bootstrap e rebuild
+  11/385. Projeção v4 e fingerprint mantidos; Runtime intocado.
+- Ciclo de imagem: Kernel MariaDB 25 testes / 1.187 assertions. Cobertura atual
+  inclui rollback de upload, revisão pendente, visibilidade, referências
+  históricas, retenção e limpeza limitada. PHPUnit reportou 291 depreciações
+  Core/contrib e 26 PHPUnit; não houve falha.
+- O aviso de saída BrowserTest não gravável apareceu no início das execuções;
+  não impediu os testes Kernel.
+
 ## 0.1.0-dev.87 — provider de primeira publicação por contexto
 
 - `WikiPublishedParticipationLookup` implementa o contrato do `aculta_user`

@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação no HEAD `d3bfd3715` (sem alteração de código): providers Wiki/
+  categoria Content Index passaram em 9/40; quatro Kernels MariaDB de R1 em
+  11/385. O ciclo completo da imagem passou em 25/1.187. A projeção permanece
+  v4; Runtime e reconstrução instalada não foram tocados.
+
 - `0.1.0-dev.87`: adapter da evidência de publicação Wiki implementado por
   contrato tagged do `aculta_user`. Só revisão padrão publicada do autor no
   Domain Wiki ativo conta; consulta cross-account é sem cache. Kernel focal 1/45 e
