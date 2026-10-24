@@ -77,9 +77,19 @@ final class AvisosResumo {
     iterable $digestProviders = [],
     private readonly ?LoggerInterface $logger = NULL,
   ) {
-    $this->digestProviders = is_array($digestProviders)
+    $providers = is_array($digestProviders)
       ? array_values($digestProviders)
       : iterator_to_array($digestProviders);
+    // Service discovery order is not a delivery contract. Keep the same
+    // digest content and manifest when adapters are registered in a different
+    // order after a deployment or cache rebuild.
+    usort($providers, function (mixed $a, mixed $b): int {
+      if (!$a instanceof AvisoDigestProviderInterface || !$b instanceof AvisoDigestProviderInterface) {
+        return strcmp(get_debug_type($a), get_debug_type($b));
+      }
+      return [$this->digestProviderId($a), get_class($a)] <=> [$this->digestProviderId($b), get_class($b)];
+    });
+    $this->digestProviders = $providers;
   }
 
   /**
@@ -267,6 +277,18 @@ final class AvisosResumo {
       if ($providerRows === []) {
         continue;
       }
+      // Providers can join persisted rows through multiple relations. Sort
+      // before de-duplicating so malformed duplicate IDs cannot make the body
+      // depend on database row order while sharing the same correlation ID.
+      usort($providerRows, static function (mixed $a, mixed $b): int {
+        $key = static fn(mixed $row): array => is_array($row) ? [
+          is_int($row['delivery_id'] ?? NULL) ? $row['delivery_id'] : PHP_INT_MAX,
+          is_string($row['tipo'] ?? NULL) ? $row['tipo'] : '',
+          is_string($row['titulo'] ?? NULL) ? $row['titulo'] : '',
+          is_int($row['quantidade'] ?? NULL) ? $row['quantidade'] : 0,
+        ] : [PHP_INT_MAX, '', '', 0];
+        return $key($a) <=> $key($b);
+      });
       $eligibleRowsByDeliveryId = [];
       foreach ($providerRows as $row) {
         if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {

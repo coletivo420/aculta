@@ -83,6 +83,76 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Adapter registration order does not change a digest retry's content.
+   */
+  public function testDigestContentIsStableWhenProviderOrderChanges(): void {
+    $provider = static function (string $id, array $rows): AvisoDigestProviderIdentityInterface {
+      return new class($id, $rows) implements AvisoDigestProviderIdentityInterface {
+
+        public function __construct(
+          private readonly string $id,
+          private readonly array $rows,
+        ) {}
+
+        /** {@inheritdoc} */
+        public function digestProviderId(): string {
+          return $this->id;
+        }
+
+        /** {@inheritdoc} */
+        public function pendingRecipientIds(): array {
+          return [27];
+        }
+
+        /** {@inheritdoc} */
+        public function digestRowsFor(int $uid): array {
+          return $this->rows;
+        }
+
+        /** {@inheritdoc} */
+        public function markDigestSent(int $uid, array $deliveryIds): void {}
+
+        /** {@inheritdoc} */
+        public function discardDigest(int $uid): void {}
+
+      };
+    };
+    $deliveries = [];
+    foreach ([FALSE, TRUE] as $reverseRows) {
+      $lmsRows = [
+        ['tipo' => 'aprendizagem', 'titulo' => 'Atividade disponível', 'quantidade' => 1, 'delivery_id' => 501],
+        ['tipo' => 'aprendizagem', 'titulo' => 'Z atividade duplicada', 'quantidade' => 1, 'delivery_id' => 501],
+      ];
+      if ($reverseRows) {
+        $lmsRows = array_reverse($lmsRows);
+      }
+      $lms = $provider('lms', $lmsRows);
+      $wiki = $provider('wiki', [[
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 802,
+      ],
+      ]);
+      $providers = $reverseRows ? [$lms, $wiki] : [$wiki, $lms];
+      $mailer = $this->createMock(AcultaMailerInterface::class);
+      $mailer->expects($this->once())->method('deliver')->willReturnCallback(
+        static function (MailMessage $message) use (&$deliveries): SendResult {
+          $deliveries[] = [$message->correlationId, $message->context['resumo']];
+          return SendResult::sent();
+        },
+      );
+      $this->assertSame(1, $this->createSummary($providers, $mailer, TRUE)->enviarResumos());
+    }
+
+    $this->assertSame($deliveries[0], $deliveries[1], 'A service discovery reorder must preserve both digest body and idempotency correlation.');
+    $this->assertSame(
+      ['Atividade disponível', 'wiki em "Revisão publicada": 1'],
+      array_map('trim', explode("\n", $deliveries[0][1])),
+    );
+  }
+
+  /**
    * A failed email must leave LMS digest rows available for a later run.
    */
   public function testFailedDigestDeliveryKeepsLmsRowsPending(): void {

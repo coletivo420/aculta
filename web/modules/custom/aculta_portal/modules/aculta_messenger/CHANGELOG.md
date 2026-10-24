@@ -1,3 +1,13 @@
+## 0.1.1-dev.203 — estabilizar conteúdo do digest entre adapters
+
+O Messenger ordena adapters por identidade estável e as linhas retornadas por cada fonte antes de montar o e-mail. Uma
+mudança na ordem de descoberta dos serviços ou das linhas duplicadas de um provider deixa de alterar o corpo mantendo a
+mesma correlação idempotente. O adapter continua proprietário dos IDs confirmados, sem novo armazenamento.
+
+Validação: `LearningNoticeDigestIntegrationTest` **18/18 testes, 137 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS. A suíte emitiu aviso de diretório `sites/simpletest/browser_output` não gravável;
+os testes Unit concluíram normalmente. Runtime e transporte externo não executados.
+
 ## 0.1.1-dev.197 — integrar o digest ao Mailer real em Kernel
 
 Um Kernel de integração agora executa `AvisosResumo` e ACULTA Mailer reais no mesmo banco de teste: grava o envio
