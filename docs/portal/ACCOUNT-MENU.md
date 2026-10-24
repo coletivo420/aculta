@@ -1,5 +1,20 @@
 # Menu da Minha conta
 
+## S-R3-A — comparação do mesmo formulário em duas interfaces
+
+O Portal original continua em `/` com a navegação e JavaScript
+intocados. A experiência Studio independente `/studio/conta` oferece
+edição de endereço, e-mail/segurança, senha e conexões em suas rotas,
+chamando os **mesmos métodos e Form API** do Portal.
+`PortalHooks` aplica a política única de Número/S-N e país BR tanto
+em `/dados/endereco` quanto em `/studio/conta/endereco`.
+O redirect pós-gravação volta à origem correspondente.
+
+A edição de dados cadastrais continua em `/dados` até o formulário
+do apelido público ser isolado. Nenhum comportamento atual do legado
+foi retirado. PHPUnit/Runtime ainda pendentes.
+[Contrato](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+
 ## Garantia de preservação — Minha Conta legada (decisão 2026-10-24)
 
 **Esta interface não será retirada ao final da migração.**
