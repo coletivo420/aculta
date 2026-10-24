@@ -1,3 +1,10 @@
+## 0.1.1-dev.84 — respeitar unfollow antes da entrega — 2026-10-24
+
+- Kernel cobre evento entregue após remoção do acompanhamento: sem aviso e sem
+  chave no ledger para o antigo seguidor. Confirma a resolução atual de
+  destinatários no processamento. MariaDB: 16 testes / 310 assertions.
+- PHPCS Drupal/DrupalPractice, PHP lint e Unit Messenger: PASS. Sem Runtime.
+
 ## 0.1.1-dev.83 — caracterizar espera e retry do lock — 2026-10-24
 
 - O Kernel simula lock ocupado no agregado: aquisição falha, o writer espera,

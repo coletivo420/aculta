@@ -1,6 +1,6 @@
 # MESSENGER-PART 0.1-C2 — caracterização da idempotência dos avisos do Fórum
 
-**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-ups dev.80–dev.83.
+**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-ups dev.80–dev.84.
 A execução dos post-updates no Runtime permanece pendente.
 **Base:** [ADR-XK-02](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md)
 e [roadmap do submódulo](ROADMAP.md).
@@ -77,11 +77,12 @@ o autor do post, quem perdeu acesso ao post (`canViewPost()`) ou ao tópico
 ## Teste entregue
 
 `tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, MariaDB
-Simpletest dedicada, 15 testes / 294 assertions.
+Simpletest dedicada, 16 testes / 310 assertions.
 
 | Teste | Célula |
 | --- | --- |
 | `testFirstPublicationRegistersOneNoticePerFollower` | 1 aviso por follower; autor e uid 0 fora; contadores e marcador |
+| `testFollowerWhoUnfollowsBeforeDeliveryGetsNoNotice` | resolve novamente os seguidores na entrega; ex-seguidor não recebe aviso nem gera chave de idempotência |
 | `testRepeatedDeliveryOfTheSameEventIsIgnored` | entrega repetida, inclusive entidade recarregada |
 | `testPendingAndNonDefaultRevisionsRegisterNothing` | post pendente, update sem original e revisão não-default |
 | `testFirstPublicationUpdateCountsOnce` | transição de primeira publicação contada uma vez |
@@ -119,8 +120,8 @@ Simpletest dedicada, 15 testes / 294 assertions.
 - Lock persistente do worker de tópicos (`aculta_messenger:forum_topic_updated:*`)
   não é exercitado; o teste cobre a segunda barreira, no serviço.
 - Os follow-ups dev.80–dev.81 adicionam/migram o ledger e instalam locks; o
-  dev.82 cobre a fronteira do lote da migração e o dev.83 cobre o retry do lock
-  por mock. Ainda não há concorrência entre processos. Os
+  dev.82 cobre a fronteira do lote, dev.83 o retry do lock e dev.84 o unfollow
+  antes da entrega. Ainda não há concorrência entre processos. Os
   post-updates ainda não foram executados no Runtime. Concorrência entre
   processos não foi simulada no Kernel.
 - Wiki, LMS e Revista não têm produtor nesta fase e não foram tocados.

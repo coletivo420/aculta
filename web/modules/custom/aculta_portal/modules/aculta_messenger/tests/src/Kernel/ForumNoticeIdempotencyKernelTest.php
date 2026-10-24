@@ -108,6 +108,26 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * A member who unfollows before delivery is no longer eligible.
+   */
+  public function testFollowerWhoUnfollowsBeforeDeliveryGetsNoNotice(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('ex_seguidora');
+    $topic = $this->createTopic();
+    // The event is delivered after the flagging has been removed.
+    $avisos = $this->createAvisoService([]);
+    $post = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertSame(0, $avisos->registrarPost($post));
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
+    self::assertSame(0, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
    * Repeating the same insert event never increases the stored counter.
    */
   public function testRepeatedDeliveryOfTheSameEventIsIgnored(): void {
