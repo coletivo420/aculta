@@ -13,6 +13,25 @@ formulário/retorno e reflow 320/390/1280. Olivero e WCAG 2.2 AA completa seguem
 pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
 diretamente.
 
+## Próximas fases Wiki ↔ Messenger — avisos editoriais
+
+Estas fases complementam o roadmap editorial, dependem do contrato mínimo
+publicado em `aculta_messenger 0.1.1-dev.79` e não autorizam criar uma inbox ou
+armazenamento paralelo. Seguir conteúdo significa receber avisos conforme
+acesso e preferências; nunca cria conversa ou grupo.
+
+| Fase | Trabalho | Critério de aceite |
+| --- | --- | --- |
+| **W-MSG1 — fechar contrato e consumidores** | Revisar `MESSENGER-EVENT-CONTRACT.md` contra `MessengerNoticeEvent` e registrar um consumer Wiki idempotente, preservando a fila durável e o retry atual. | Envelope allowlisted, chave estável por evento/revisão/destinatário, falha retentável e nenhum evento descartado sem confirmação. |
+| **W-MSG2 — destinatário e autorização** | Resolver autoria da proposta e editores elegíveis para revisão; revalidar status, revisão publicada, permissões, Domain/purpose e acesso na geração e abertura do aviso. | Autores/editores inelegíveis não recebem aviso; rascunhos e revisões inacessíveis não vazam em links, contagens ou e-mail. |
+| **W-MSG3 — entrega sem duplicação** | Usar a persistência e API de central suportadas pelo Messenger/Drupal existentes, mantendo os e-mails transacionais atuais via Mailer conforme política. Não criar entidade de aviso, inbox ou transporte SMTP Wiki. | Reprocessamento não duplica; opt-out de e-mail não elimina aviso no site; transporte de teste comprova preferências e digest aplicáveis. Bloquear adapter se não houver API de gravação compatível, documentando a dependência concreta. |
+| **W-MSG4 — caracterização e homologação** | Cobrir Kernel/integração de fila e consumer; testar aprovação, ajustes solicitados, revisão pública, revogação de acesso, retry, histórico e adapter opcional desabilitado. | Testes reproduzíveis aprovados; Runtime/browser só registrados após execução autorizada e com evidência separada. |
+
+**Fora do escopo:** chat automático por verbete, membership de thread derivada de
+revisão/seguimento, mensagens privadas para grupos de editores e storage de
+notificações próprio da Wiki. A Wiki continua dona do workflow e o Messenger da
+agregação/entrega compartilhada.
+
 ## Incremento dev.113 — fila de eventos Wiki→Messenger
 
 `WikiReviewHooks` enfileira a revisão padrão quando um verbete entra em
@@ -25,8 +44,10 @@ do consumer ou sua ausência deixa o item para nova tentativa depois do lease de
 60 segundos, sem limite de tentativas e sem retry imediato. Os e-mails atuais
 permanecem independentes. Unit passou 18/73 e o Kernel da fila 1/8. A tentativa
 de Kernel abrangente da decisão parou após 94 asserções porque o Studio paralelo
-não registrou `aculta_studio.tab_manager`. Ainda falta o consumer/API idempotente
-do Messenger; sem ele o worker conserva a fila e nenhum aviso de site é entregue.
+não registrou `aculta_studio.tab_manager`. O publisher público mínimo do Messenger já existe em
+`aculta_messenger 0.1.1-dev.79`, mas o consumer Wiki e a persistência de aviso
+ainda não estão integrados; sem consumer registrado, o worker conserva a fila
+e nenhum aviso de site é entregue.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -48,9 +69,10 @@ O payload carrega UUID/revisão e os dados mínimos de destinatário/estado; a
 identificação e o acesso são revalidados pelo consumer. A decisão do responsável
 é manter e-mails transacionais e adicionar avisos pessoais no site, com fila
 persistente/retry e deduplicação. A especificação está em
-[`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor/QueueWorker
-Wiki e a API de registro pública do Messenger ainda não foram implementados;
-antes do adapter, o owner Messenger precisa revisar o contrato de escrita.
+[`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor e QueueWorker Wiki foram implementados em dev.113; o publisher
+público do Messenger está disponível, mas falta o consumer que mapeie o contrato
+a uma persistência já suportada e revalide acesso. A revisão de integração deve
+confirmar a idempotência e a elegibilidade do destinatário antes de ativar entrega.
 
 ### Incremento dev.110 — CTA para o início WE SATIVA
 

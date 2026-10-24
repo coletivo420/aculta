@@ -21,8 +21,10 @@ coexistência; Search API, categorias, moderação, anexos/galerias e ferramenta
 administrativas já possuem implementações e testes. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.77` mantém o sistema de avisos
-existente; seu novo contrato transversal de eventos ainda é **proposta**.
+ativação produtiva. `aculta_messenger 0.1.1-dev.79` mantém os avisos existentes e já oferece
+o envelope `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`; o LMS
+consome quatro tipos pelo publisher, enquanto o adapter do Fórum ainda não foi
+implementado. A API é uma base disponível, não prova de integração completa.
 Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 
 ### Diretrizes de produto e limites
@@ -59,7 +61,7 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 | --- | --- | --- | --- |
 | **F-M0 — baseline e alinhamento** | P0 | Catalogar hooks/eventos Fórum → Messenger, `seguir_topico`, `aculta_aviso`, os tipos de publicação Comment/ForumPost, telas e preferências; corrigir documentação normativa e registrar F-D41. | Matriz produtor → publicação → seguidores → aviso → digest; documentação sem proposta vigente de chat automático; distinguir evidência histórica de Runtime atual. |
 | **F-M1 — caracterização e segurança** | P0 | Fixar em Unit/Kernel a primeira publicação, aprovação tardia, republicação, autoria própria, seguidores removidos, revisões fora de ordem, movimento de subárvore e eventos concorrentes. | Um aviso por destinatário e evento elegível, marcadores `ultimo_comentario`/`ultimo_post` independentes, nenhuma divulgação antes de publicar. Reutilizar XK-C2, não repetir testes desnecessariamente. |
-| **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar produtores do Fórum às interfaces públicas quando **efetivamente existirem** no Messenger; preservar `aculta_aviso` e a F-D21 até prova de migração. | Equivalência lado a lado com o fluxo atual, zero duplo disparo/armazenamento, deduplicação e manutenção do digest. Nenhuma dependência cíclica entre submódulos. |
+| **F-M2 — interface de eventos compartilhada** | P1; depende do Messenger M2 | Adaptar produtores do Fórum ao publisher público mínimo já disponível no Messenger; preservar `aculta_aviso` e a F-D21 até prova de migração. | Equivalência lado a lado com o fluxo atual, zero duplo disparo/armazenamento, deduplicação e manutenção do digest. Nenhuma dependência cíclica entre submódulos. |
 | **F-M3 — acompanhamento/UX** | P1 | Homologar seguir/deixar de seguir, contador no sino e página Avisos, leitura pelo tópico, URLs canônicas, estados vazio/carregando, digest opt-in e ação opcional de iniciar conversa **com um membro**, não com o tópico. | Navegador autenticado, duas contas e mobile/teclado; nenhuma thread criada por seguir/comentar; e-mail apenas pelo Mailer sob transporte controlado. |
 | **F-M4 — contextos protegidos** | P1 | Garantir acesso por purpose/Domain, status de publicação, Group, matrícula e situação associativa em conteúdo, Search API, links, previews, avisos e digest; manter a frente F-GROUP desligada por padrão. | Revogação efetiva sem vazamento em contagens, páginas, anexos, resultados e avisos; matriz anônimo/comum/ativo/suspenso/sem membership, com cache/grants. |
 | **F-M5 — migração e interoperabilidade** | P1 | Completar equivalência de Comments legados → ForumPosts revisionáveis: source/destination Migrate, árvores, CID → IDs/revisões, History, flags, denúncias, anexos, permalinks, índices e marcadores de avisos. | Dry-run com mapas auditáveis, backup/rollback, testes Kernel/MariaDB, prova de não duplicar/perder avisos e homologação controlada; nenhuma migração sem autorização operacional. |
@@ -71,18 +73,20 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 - **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
   Search API/Domain, anexos, concorrência da limpeza, migração e contagens
   já identificadas na linha atual do Fórum.
-- **Antes de adaptar código para eventos:** aguardar o contrato público real
-  do Messenger M2. Até lá, manter os hooks e storage atuais em funcionamento.
-  O Fórum não deve implementar o Messenger dentro de si.
-- **Após a API estabilizar:** F-M2 e F-M3, seguidos de F-M4 (ou F-M4
-  antecipada se algum bloqueador de acesso for encontrado).
+- **Antes de adaptar código para eventos:** revisar o contrato M2 disponível e
+  caracterizar hooks e storage atuais. Até provar equivalência, manter
+  `aculta_aviso` em funcionamento; o Fórum não implementa persistência ou
+  entrega do Messenger dentro de si.
+- **Sequência:** F-M2 pode iniciar com o publisher atual; sua conclusão exige
+  consumidor, persistência compatível e entrega comparativa. Depois, F-M3 e F-M4
+  (ou F-M4 antecipada se algum bloqueador de acesso for encontrado).
 - **Migração de legado e RC:** F-M5 e F-M6 com evidência de impacto/rollback;
   F-M7 somente após gates proporcionais e correções.
 - **Sem escopo:** chat por tópico, chat automático de curso/turma, chat de
   verbete, membership de thread derivada da Flag, transporte SMTP próprio,
   espelhamento universal de `aculta_aviso`, migrar dados reais automaticamente.
 
-### Contrato de evento do Fórum (candidato, não implementado)
+### Contrato de evento do Fórum (adapter ainda não implementado)
 
 Os produtores informam evento tipado e dados mínimos: origem `aculta_forum`,
 entidade e UUID, versão/revisão publicada, tipo
@@ -104,9 +108,9 @@ uma mudança explícita não for aprovada e testada.
   Search API possuem pendências específicas de Runtime/MariaDB registradas
   abaixo; não invalidar evidências existentes nem marcar como concluído
   sem nova execução.
-- O Messenger possui integração atual com `aculta_aviso` e Kernel de
-  idempotência XK-C2; a API compartilhada futura ainda não pode ser
-  presumida disponível.
+- O Messenger possui integração atual com `aculta_aviso`, Kernel de
+  idempotência XK-C2 e publisher público mínimo; o consumidor do Fórum, a
+  equivalência de persistência e a entrega comparativa continuam pendentes.
 - A homologação de e-mail deve respeitar a política F-D21 (digest opt-in);
   nenhuma notificação imediata nova é autorizada apenas por este plano.
 
