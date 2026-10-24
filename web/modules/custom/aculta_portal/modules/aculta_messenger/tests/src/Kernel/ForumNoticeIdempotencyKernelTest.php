@@ -423,6 +423,91 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * An expired digest lease cannot let the stale worker consume newer events.
+   */
+  public function testExpiredDigestLeaseCannotAcknowledgeAsStaleWorker(): void {
+    $author = $this->createUser('autor_digest_lease_expirada');
+    $follower = $this->createUser('seguidor_digest_lease_expirada');
+    $follower->setEmail('digest-lease@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $topic = $this->createTopic('Digest com lease expirada');
+    $firstComment = $this->createPersistedComment($topic, (int) $author->id());
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    $thirdComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($firstComment));
+
+    $database = $this->container->get('database');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $deliveries = 0;
+    $concurrentSummary = NULL;
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$concurrentSummary, $database, $avisos, $secondComment, $thirdComment, $uid): SendResult {
+        $deliveries++;
+        self::assertSame('digest-lease@example.test', $message->to);
+        if ($deliveries === 1) {
+          self::assertSame('Respostas novas em "Digest com lease expirada": 1', $message->context['resumo']);
+          self::assertSame(1, $avisos->registrarResposta($secondComment));
+          $database->update('semaphore')
+            ->fields(['expire' => microtime(TRUE) - 1])
+            ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
+            ->execute();
+          self::assertSame(1, $concurrentSummary->enviarResumos(), 'A new lock owner can process the recipient after the original lease expires.');
+        }
+        else {
+          self::assertSame('Respostas novas em "Digest com lease expirada": 2', $message->context['resumo']);
+          self::assertSame(1, $avisos->registrarResposta($thirdComment), 'A third event arrives after the replacement worker captured its batch.');
+        }
+        return SendResult::sent();
+      });
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+    );
+    $concurrentSummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      new PersistentDatabaseLockBackend($database),
+    );
+
+    self::assertSame(0, $summary->enviarResumos(), 'The stale worker leaves acknowledgement to the replacement lock owner.');
+    self::assertSame(2, $deliveries);
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'Only the third event, absent from both captured batches, remains pending.');
+    self::assertSame((string) $thirdComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
    * The persistent digest lock excludes independent PHP processes on MariaDB.
    */
   public function testPersistentDigestLockSerializesIndependentProcesses(): void {

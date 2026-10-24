@@ -1699,6 +1699,16 @@ Validação: `FriendshipNoticePipelineKernelTest` **1/14 PASS** em MariaDB dedic
 lint PASS. PHPUnit reportou duas deprecações do Core/contrib para plugins Message baseados em annotations. Runtime,
 SMTP e transporte real não foram usados.
 
+## 0.1.1-dev.160 — provar lease expirada sem perda de eventos — 2026-10-24
+
+O Kernel MariaDB simula a expiração da lease dentro do transporte, permite que outro backend processe o digest e cria
+um evento após a captura do segundo lote. O worker antigo falha ao renovar a posse e não confirma o próprio contador;
+o terceiro evento permanece pendente. O teste confirma a proteção com persistência real e lock compartilhado no banco.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **34/776 PASS**, `FriendshipNoticePipelineKernelTest` **1/14 PASS** e
+Unit/Integration de digest **18/195 PASS**; PHPCS e PHP lint PASS. O teste usa dois backends no mesmo processo; dois
+boots Drupal concorrentes e transporte SMTP permanecem pendentes.
+
 ## 0.1.1-dev.159 — renovar lock antes de confirmar digest — 2026-10-24
 
 Após o transporte, o worker renova a lease do destinatário antes de confirmar ou descartar linhas. Se outro processo
