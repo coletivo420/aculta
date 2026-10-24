@@ -22,7 +22,7 @@ interface DonationNoticeManagerInterface {
 
   /**
    * Adds authorized Donation notices to the shared personal notices list. */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void;
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
 
   /**
    * Counts unread notices that remain accessible to this recipient. */

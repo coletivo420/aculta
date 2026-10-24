@@ -9,6 +9,7 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -185,14 +186,16 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
 
   /**
    * {@inheritdoc} */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void {
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
     if (!$account->isAuthenticated()) {
       return;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $ids = $storage->getQuery()->accessCheck(FALSE)
+    $query = $storage->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
-      ->condition('uid', (int) $account->id())
+      ->condition('uid', (int) $account->id());
+    NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
+    $ids = $query
       ->sort('created', 'DESC')
       ->range(0, 20)
       ->execute();

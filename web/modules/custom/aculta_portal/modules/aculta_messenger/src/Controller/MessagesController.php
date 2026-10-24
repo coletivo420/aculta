@@ -25,6 +25,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Template\Attribute;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
+use Drupal\flag\Entity\Storage\FlaggingStorageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Render\RendererInterface;
@@ -715,7 +716,7 @@ final class MessagesController extends ControllerBase {
     $items = [];
 
     // Persistent notices always lead the list, ahead of the dismissable site alerts.
-    foreach ($this->buildPersistentNoticeItems(50, $cacheability) as $item) {
+    foreach ($this->buildPersistentNoticeItems(50, $cacheability, $filters) as $item) {
       $items[] = $item;
     }
 
@@ -741,7 +742,7 @@ final class MessagesController extends ControllerBase {
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
     if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
-      $pessoais = $this->avisos->listarDaPessoa((int) $this->account->id(), 5);
+      $pessoais = $this->avisos->listarDaPessoa((int) $this->account->id(), 5, $filters['leitura']);
       foreach ($pessoais as $aviso) {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;
@@ -793,7 +794,7 @@ final class MessagesController extends ControllerBase {
       ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL);
     }
 
-    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account);
+    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $filters);
 
     if ($hasFilters) {
       $items = $this->noticeListFilter->apply($items, $filters);
@@ -847,44 +848,69 @@ final class MessagesController extends ControllerBase {
   }
 
   /** Builds authorized notice render arrays and native per-member Flag actions. */
-  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability): array {
-    $ids = $this->entityTypes->getStorage('node')->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'aculta_notice')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, $limit)
-      ->execute();
-    $nodes = $this->entityTypes->getStorage('node')->loadMultiple($ids);
+  private function buildPersistentNoticeItems(int $limit, CacheableMetadata $cacheability, array $filters = []): array {
+    if (!in_array($filters['origem'] ?? '', ['', 'comunicado'], TRUE)) {
+      return [];
+    }
     $flag = $this->flagService->getFlagById('aculta_notice_read');
     $items = [];
-    foreach ($nodes as $node) {
-      if (!$node instanceof NodeInterface) {
-        continue;
+    $offset = 0;
+    $batchSize = max(20, $limit);
+    $nodeStorage = $this->entityTypes->getStorage('node');
+    do {
+      $ids = $nodeStorage->getQuery()
+        ->accessCheck(TRUE)
+        ->condition('type', 'aculta_notice')
+        ->condition('status', 1)
+        ->sort('created', 'DESC')
+        ->range($offset, $batchSize)
+        ->execute();
+      if ($ids === []) {
+        break;
       }
-      $access = $node->access('view', $this->account, TRUE);
-      $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
-      if (!$access->isAllowed()) {
-        continue;
+      $offset += count($ids);
+      $nodes = $nodeStorage->loadMultiple($ids);
+      $readFlaggings = [];
+      if ($flag instanceof FlagInterface && $this->account->isAuthenticated() && $nodes !== []) {
+        $flaggingStorage = $this->entityTypes->getStorage('flagging');
+        if ($flaggingStorage instanceof FlaggingStorageInterface) {
+          $readFlaggings = $flaggingStorage->loadIsFlaggedMultiple($nodes, $this->account);
+          $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+        }
       }
-      $read = FALSE;
-      if ($flag instanceof FlagInterface) {
-        $flagging = $this->flagService->getFlagging($flag, $node, $this->account);
-        $read = $flagging !== NULL;
-        $cacheability->addCacheTags($this->entityTypes->getDefinition('flagging')->getListCacheTags());
+      foreach ($nodes as $node) {
+        if (!$node instanceof NodeInterface) {
+          continue;
+        }
+        $access = $node->access('view', $this->account, TRUE);
+        $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        $read = FALSE;
+        if ($flag instanceof FlagInterface && $this->account->isAuthenticated()) {
+          $read = isset($readFlaggings[$node->id()][$flag->id()]);
+        }
+        $readFilter = $filters['leitura'] ?? '';
+        if (($readFilter === 'read' && !$read) || ($readFilter === 'unread' && $read)) {
+          continue;
+        }
+        // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
+        // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
+          (string) $node->label(),
+          $this->excerpt($this->noticeText($node)),
+          Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
+          [],
+          $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
+          TRUE,
+          NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
+        ), 'comunicado', !$read);
+        if (count($items) >= $limit) {
+          break 2;
+        }
       }
-      // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
-      // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
-      $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
-        (string) $node->label(),
-        $this->excerpt($this->noticeText($node)),
-        Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
-        [],
-        $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
-        TRUE,
-        NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
-      ), 'comunicado', !$read);
-    }
+    } while (count($ids) === $batchSize);
     return $items;
   }
 

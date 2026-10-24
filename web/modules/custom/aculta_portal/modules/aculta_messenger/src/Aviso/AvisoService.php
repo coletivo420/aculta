@@ -127,10 +127,14 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    * @return \Drupal\aculta_messenger\Entity\Aviso[]
    *   Accessible notices for the account.
    */
-  public function listarDaPessoa(int $uid, int $limite = 100): array {
-    $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
+  public function listarDaPessoa(int $uid, int $limite = 100, ?string $readState = NULL): array {
+    $query = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
-      ->condition('uid', $uid)
+      ->condition('uid', $uid);
+    if (in_array($readState, ['read', 'unread'], TRUE)) {
+      $query->condition('contador_site', 0, $readState === 'read' ? '=' : '>');
+    }
+    $ids = $query
       ->sort('contador_site', 'DESC')
       ->sort('changed', 'DESC')
       ->range(0, $limite)
@@ -522,6 +526,46 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     if ($sentCount > 0) {
       $this->updatePendingEmailCount($uid, $nid, $type, $sentCount, TRUE);
     }
+  }
+
+  /**
+   * Returns a stable generation for Forum notice rows in a pending digest.
+   *
+   * The event ledger's auto-increment ID advances for every newly accepted
+   * event, including approvals delivered out of Comment ID order. Unlike the
+   * pending counter, it does not return to an earlier value after a digest is
+   * acknowledged, so a later batch with the same count receives a new Mailer
+   * correlation.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param int[] $nids
+   *   Forum topic IDs represented in the digest.
+   *
+   * @return int[]
+   *   Latest ledger row ID keyed by topic ID.
+   */
+  public function digestBatchGenerations(int $uid, array $nids): array {
+    $nids = array_values(array_unique(array_filter(array_map('intval', $nids), static fn(int $nid): bool => $nid > 0)));
+    if ($uid <= 0 || $nids === []) {
+      return [];
+    }
+
+    $query = $this->database?->select(ForumNoticeEventSchema::TABLE, 'event');
+    if ($query === NULL) {
+      throw new \LogicException('Forum digest generations require the event ledger database connection.');
+    }
+    $query->addField('event', 'nid');
+    $query->addExpression('MAX(event.id)', 'generation');
+    $query->condition('event.uid', $uid);
+    $query->condition('event.nid', $nids, 'IN');
+    $query->groupBy('event.nid');
+
+    $generations = [];
+    foreach ($query->execute() as $row) {
+      $generations[(int) $row->nid] = (int) $row->generation;
+    }
+    return $generations;
   }
 
   /**

@@ -15,6 +15,7 @@ use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Mail\AvisosResumoMailType;
+use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Psr\Log\LoggerInterface;
 
@@ -175,6 +176,10 @@ final class AvisosResumo {
     // Re-read under the recipient lock so concurrent event aggregation cannot
     // be reset after its count was missed by this digest.
     $avisos = $this->forumAvisosPendentes($uid);
+    $forumGenerations = $this->avisos->digestBatchGenerations($uid, array_map(
+      static fn(Aviso $aviso): int => (int) $aviso->get('assunto_nid')->value,
+      $avisos,
+    ));
     $linhas = [];
     $daFila = [];
     foreach ($avisos as $aviso) {
@@ -197,6 +202,7 @@ final class AvisosResumo {
         'nid' => $nid,
         'tipo' => (string) $aviso->get('tipo')->value,
         'quantidade' => $quantidade,
+        'geracao' => $forumGenerations[$nid] ?? 0,
       ];
       $linhas[] = [
         'tipo' => (string) $aviso->get('tipo')->value,
@@ -264,6 +270,7 @@ final class AvisosResumo {
         'nid' => $aviso['nid'],
         'tipo' => $aviso['tipo'],
         'quantidade' => $aviso['quantidade'],
+        'geracao' => $aviso['geracao'],
       ];
     }
     foreach ($providersWithRows as $providerRows) {

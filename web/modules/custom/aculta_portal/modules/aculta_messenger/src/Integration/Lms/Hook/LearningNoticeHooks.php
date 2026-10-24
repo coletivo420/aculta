@@ -20,8 +20,8 @@ final class LearningNoticeHooks {
   /**
  * Adds notices to both Messenger drawer and account avisos through its existing alter. */
   #[Hook('aculta_messenger_personal_notices_alter')]
-  public function personalNoticesAlter(array &$items, AccountInterface $account): void {
-    $this->notices->addPersonalNotices($items, $account);
+  public function personalNoticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
+    $this->notices->addPersonalNotices($items, $account, $filters);
   }
 
   /**

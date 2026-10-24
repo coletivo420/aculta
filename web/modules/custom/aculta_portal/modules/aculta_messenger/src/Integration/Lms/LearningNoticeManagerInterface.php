@@ -50,7 +50,7 @@ interface LearningNoticeManagerInterface {
   /**
    * Adds current personal notices to the Messenger list.
    */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void;
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
 
   /**
    * Counts the recipient's currently accessible unread notices.

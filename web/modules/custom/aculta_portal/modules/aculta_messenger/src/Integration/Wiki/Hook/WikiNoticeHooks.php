@@ -19,8 +19,8 @@ final class WikiNoticeHooks {
   /**
  * Adds personal Wiki records to the existing notices list. */
   #[Hook('aculta_messenger_personal_notices_alter')]
-  public function noticesAlter(array &$items, AccountInterface $account): void {
-    $this->notices->addPersonalNotices($items, $account);
+  public function noticesAlter(array &$items, AccountInterface $account, array $filters = []): void {
+    $this->notices->addPersonalNotices($items, $account, $filters);
   }
 
   /**

@@ -168,6 +168,29 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Forum read-state filters run before the per-account result limit.
+   */
+  public function testForumReadFilterSelectsMatchingAggregates(): void {
+    $author = $this->createUser('autor_filtro_leitura');
+    $follower = $this->createUser('seguidor_filtro_leitura');
+    $uid = (int) $follower->id();
+    $readTopic = $this->createTopic('Tópico lido');
+    $unreadTopic = $this->createTopic('Tópico não lido');
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($readTopic, (int) $author->id())));
+    self::assertSame(1, $service->registrarResposta($this->createPersistedComment($unreadTopic, (int) $author->id())));
+
+    $service->marcarLido($uid, (int) $readTopic->id());
+
+    $read = $service->listarDaPessoa($uid, 1, 'read');
+    $unread = $service->listarDaPessoa($uid, 1, 'unread');
+    self::assertCount(1, $read);
+    self::assertSame((int) $readTopic->id(), (int) $read[0]->get('assunto_nid')->value);
+    self::assertCount(1, $unread);
+    self::assertSame((int) $unreadTopic->id(), (int) $unread[0]->get('assunto_nid')->value);
+  }
+
+  /**
    * The public event contract persists one idempotent ForumPost notice.
    */
   public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {
@@ -396,6 +419,63 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertCount(1, $notices);
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
     self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * A new Forum digest batch cannot reuse a previously accepted correlation.
+   */
+  public function testNewForumDigestGenerationGetsNewCorrelationAfterAcknowledgement(): void {
+    $author = $this->createUser('autor_digest_novo_lote');
+    $follower = $this->createUser('seguidor_digest_novo_lote');
+    $follower->setEmail('digest-generation@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $topic = $this->createTopic('Gerações do digest');
+    $avisos = $this->createAvisoService(
+      [$uid],
+      $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE),
+    );
+    $firstComment = $this->createPersistedComment($topic, (int) $author->id());
+    $secondComment = $this->createPersistedComment($topic, (int) $author->id());
+    self::assertSame(1, $avisos->registrarResposta($firstComment));
+
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $this->container->get('database'),
+      $this->container->get('lock.persistent'),
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+    $userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', 0);
+    self::assertSame(1, $avisos->registrarResposta($secondComment));
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertNotSame($correlations[0], $correlations[1], 'A later event with the same pending quantity is a distinct logical digest.');
   }
 
   /**

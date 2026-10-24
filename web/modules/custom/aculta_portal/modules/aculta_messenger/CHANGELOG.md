@@ -1,3 +1,15 @@
+## 0.1.1-dev.138 — distinguir gerações do digest do Fórum — 2026-10-24
+
+A correlação do resumo do Fórum agora inclui a geração monotônica do tópico, calculada em uma consulta agrupada ao ledger de eventos já existente. Um evento novo no mesmo tópico e tipo recebe outra correlação mesmo quando a contagem pendente volta a 1; replay do mesmo evento continua usando a geração anterior. Não há tabela nova nem update de schema.
+
+Validação: Kernel MariaDB `ForumNoticeIdempotency` 30/677 PASS, incluindo dois envios de mesma contagem com correlações distintas. Unit Messenger 133/791 e Integration Messenger 62/622 PASS; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos desta microfase PASS. Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit. Gate Drupal 11+, índice de status e `git diff --check` serão executados após consolidar as alterações documentais. Sem Runtime, transporte externo ou stress de processos independentes.
+
+## 0.1.1-dev.137 — filtrar leitura antes do limite da central — 2026-10-24
+
+A central agora encaminha os filtros normalizados aos adapters e aplica o estado lido/não lido na consulta antes do limite para Fórum, LMS, Wiki, Loja e Doações. Comunicados persistentes percorrem lotes access-aware até preencher a página de 50 itens correspondentes; alertas do Site Alert continuam usando seu estado nativo. A ordem atual da central foi preservada enquanto a preferência de ordenação permanece em aberto.
+
+Validação: Unit Messenger 133/791, Kernel MariaDB ForumNoticeIdempotency 29/655 e Integration Messenger 62/622 PASS. PHPCS Drupal/DrupalPractice dos arquivos novos/alterados, lint e gate Drupal 11+ (1155 checks) PASS; MessagesController tem baseline preexistente de 98 erros/65 avisos e ficou em 97/65 após a alteração. Integration reporta 2 depreciações Core/contrib e 7 notices PHPUnit. Sem Runtime/navegador.
+
 ## 0.1.1-dev.136 — recuperar enqueue de avisos de amizade — 2026-10-24
 
 Avisos de amizade agora possuem bundle aculta_msg_friendship e campos declarados na configuração de instalação; o update aditivo 10007 instala somente configurações ausentes. A fila registra tentativas de enqueue separadas das tentativas de e-mail, marca recusas como failed e o cron recupera registros pendentes/failed há pelo menos dez minutos, com lote de 50 e teto de cinco tentativas. Lock por Message evita enqueue simultâneo. O replay idempotente continua reutilizando o mesmo aviso.

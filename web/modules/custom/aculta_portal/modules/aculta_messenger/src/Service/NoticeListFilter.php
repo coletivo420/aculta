@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Service;
 
+use Drupal\Core\Entity\Query\QueryInterface;
+
 /**
  * Filters the shared notice render list by source and read state.
  */
@@ -23,6 +25,18 @@ final class NoticeListFilter {
       'origem' => is_string($origin) && in_array($origin, self::ORIGINS, TRUE) ? $origin : '',
       'leitura' => is_string($read) && in_array($read, self::READ_STATES, TRUE) ? $read : '',
     ];
+  }
+
+  /**
+   * Applies a valid read-state filter before a source query is limited.
+   */
+  public static function applyReadCondition(QueryInterface $query, string $field, array $filters): QueryInterface {
+    $readState = $filters['leitura'] ?? '';
+    if (!in_array($readState, self::READ_STATES, TRUE)) {
+      return $query;
+    }
+
+    return $query->condition($field, $readState === 'read' ? 1 : 0);
   }
 
   /**

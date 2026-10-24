@@ -22,7 +22,7 @@ interface WikiNoticeManagerInterface {
 
   /**
    * Adds accessible Wiki notices to the shared Messenger list. */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void;
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
 
   /**
    * Counts only unread notices whose source remains accessible. */

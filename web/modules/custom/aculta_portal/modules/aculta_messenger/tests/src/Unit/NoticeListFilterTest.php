@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\NoticeListFilter;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -56,6 +57,23 @@ final class NoticeListFilterTest extends UnitTestCase {
       'leitura' => 'unread-now',
     ]));
     self::assertSame($items, $filter->apply($items, ['origem' => 'forged']));
+  }
+
+  /**
+   * Read-state constraints are applied to source queries before their limit.
+   */
+  public function testReadStateIsAppliedAtQueryLevel(): void {
+    $unreadQuery = $this->createMock(QueryInterface::class);
+    $unreadQuery->expects(self::once())->method('condition')->with('field_notice_read', 0)->willReturnSelf();
+    self::assertSame($unreadQuery, NoticeListFilter::applyReadCondition($unreadQuery, 'field_notice_read', ['leitura' => 'unread']));
+
+    $readQuery = $this->createMock(QueryInterface::class);
+    $readQuery->expects(self::once())->method('condition')->with('field_notice_read', 1)->willReturnSelf();
+    self::assertSame($readQuery, NoticeListFilter::applyReadCondition($readQuery, 'field_notice_read', ['leitura' => 'read']));
+
+    $unchangedQuery = $this->createMock(QueryInterface::class);
+    $unchangedQuery->expects(self::never())->method('condition');
+    self::assertSame($unchangedQuery, NoticeListFilter::applyReadCondition($unchangedQuery, 'field_notice_read', ['leitura' => 'invalid']));
   }
 
   /**

@@ -7,6 +7,7 @@ namespace Drupal\aculta_messenger\Integration\Wiki;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -144,13 +145,15 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
 
   /**
    * {@inheritdoc} */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void {
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
     if (!$account->isAuthenticated()) {
       return;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $ids = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id())
+    $query = $storage->getQuery()->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id());
+    NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
+    $ids = $query
       ->sort('created', 'DESC')->range(0, 10)->execute();
     foreach ($storage->loadMultiple($ids) as $message) {
       if (!$message instanceof MessageInterface || ($notice = $this->resolve($message, $account)) === NULL) {

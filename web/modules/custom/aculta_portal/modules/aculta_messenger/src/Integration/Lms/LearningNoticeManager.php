@@ -33,6 +33,7 @@ use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
@@ -396,15 +397,17 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Builds accessible, current notices for the Messenger avisos list.
    */
-  public function addPersonalNotices(array &$items, AccountInterface $account): void {
+  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void {
     if (!$account->isAuthenticated()) {
       return;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $ids = $storage->getQuery()
+    $query = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
-      ->condition('uid', (int) $account->id())
+      ->condition('uid', (int) $account->id());
+    NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
+    $ids = $query
       ->sort('created', 'DESC')
       ->range(0, 10)
       ->execute();
