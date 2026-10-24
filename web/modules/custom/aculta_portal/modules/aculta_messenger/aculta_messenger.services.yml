@@ -119,7 +119,7 @@ services:
     arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']
   aculta_messenger.avisos_resumo:
     class: Drupal\aculta_messenger\Aviso\AvisosResumo
-    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@uuid', '@lock.persistent', !tagged_iterator aculta_messenger.aviso_digest_provider]
+    arguments: ['@entity_type.manager', '@aculta_messenger.aviso_preferencias', '@aculta_mailer.mailer', '@aculta_portal.email_confirmation_policy', '@user.data', '@datetime.time', '@aculta_messenger.aviso_service', '@uuid', '@lock.persistent', !tagged_iterator aculta_messenger.aviso_digest_provider, '@logger.channel.aculta_messenger']
 
   aculta_messenger.avisos_resumo_mail_type:
     class: Drupal\aculta_messenger\Mail\AvisosResumoMailType

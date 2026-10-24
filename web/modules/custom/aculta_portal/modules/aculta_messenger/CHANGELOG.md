@@ -1,3 +1,13 @@
+## 0.1.1-dev.112 — manter o digest recuperável após exceção do Mailer — 2026-10-24
+
+- Exceções lançadas pelo transporte não interrompem o restante do cron nem
+  confirmam pendências; o lock por destinatário é liberado e as linhas ficam
+  prontas para retry. O log registra somente a classe da exceção, sem endereço,
+  conteúdo do aviso ou mensagem do transporte.
+- Unit Messenger + adapters: 141 testes / 862 assertions PASS; PHP lint,
+  PHPCS Drupal/DrupalPractice, YAML de serviços e `git diff --check` PASS.
+  Nenhum envio SMTP real ou Runtime.
+
 ## 0.1.1-dev.111 — confirmar apenas os itens incluídos no digest — 2026-10-24
 
 - O contrato dos digest providers inclui IDs dos Messages efetivamente incluídos

@@ -13,6 +13,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_messenger\Mail\AvisosResumoMailType;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Psr\Log\LoggerInterface;
 
 /**
  * Resumo diário de avisos por e-mail (ACULTA Messenger, F5.2).
@@ -49,6 +50,7 @@ final class AvisosResumo {
     private readonly UuidInterface $uuid,
     private readonly LockBackendInterface $lock,
     iterable $digestProviders = [],
+    private readonly ?LoggerInterface $logger = NULL,
   ) {
     $this->digestProviders = is_array($digestProviders)
       ? array_values($digestProviders)
@@ -210,7 +212,17 @@ final class AvisosResumo {
     $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), self::LANGCODE, [
       'resumo' => AvisosResumoMailType::formatLinhas($linhas),
     ], $this->uuid->generate());
-    $resultado = $this->mailer->deliver($mensagem);
+    try {
+      $resultado = $this->mailer->deliver($mensagem);
+    }
+    catch (\Throwable $exception) {
+      // Keep all entries pending for cron retry; avoid logging addresses,
+      // notice content, or the transport exception message.
+      $this->logger?->error('Daily notice digest delivery raised @exception; pending rows remain available for retry.', [
+        '@exception' => get_class($exception),
+      ]);
+      return FALSE;
+    }
     if (!$resultado->sent) {
       if ($resultado->cancelled) {
         // A política administrativa suspendeu este tipo de e-mail. Descarte

@@ -154,6 +154,8 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
   **somente após envio com sucesso**. O resumo captura a quantidade/IDs incluídos e confirma apenas esse lote; eventos
   chegados durante o transporte ficam pendentes para o próximo digest. O contador de e-mail do Fórum é descontado sob o
   mesmo lock usado pelos produtores, sem sobrescrever incrementos concorrentes.
+- Exceção de transporte mantém o lote pendente para retry e não interrompe os outros destinatários do cron. O log não
+  inclui destinatário, conteúdo do aviso nem texto da exceção.
 - `AcultaMailerInterface` envia o modelo `avisos_resumo`; não usa `hook_mail`.
 
 ## 8. Funções do módulo, resumo dos novos componentes

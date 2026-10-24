@@ -74,6 +74,23 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A thrown transport exception keeps digest rows retryable.
+   */
+  public function testTransportExceptionKeepsLmsRowsPending(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willThrowException(new \RuntimeException('Synthetic transport failure.'));
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([], $provider->markedDeliveryIds);
+    $this->assertSame([], $provider->discarded);
+  }
+
+  /**
    * Opt-out discards email rows without attempting to send a digest.
    */
   public function testOptOutDiscardsLmsRowsWithoutSending(): void {
