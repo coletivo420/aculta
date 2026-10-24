@@ -1,3 +1,13 @@
+## Busca pública sob grants, 2026-10-24
+
+- `PublicForumSearchAccessKernelTest` (2 testes / 27 asserções, MariaDB alvo
+  do `search_api_db`): indexados um tópico público e um restrito; o anônimo
+  recebe total 1 sem o restrito e o membro total 2 com o item restrito. O
+  processor `content_access` filtra antes da contagem/paginação.
+- Usa `search_api_db` com conexão `default:default`; nenhum servidor real é
+  tocado.
+- Suíte Kernel do Fórum 112/2.260; PHPCS limpo.
+
 ## Atividade pública só na primeira publicação, 2026-10-24
 
 - Unit `ForumActivityEventHooksTest` (10 testes / 18 asserções): tópico e

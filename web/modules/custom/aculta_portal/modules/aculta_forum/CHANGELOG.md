@@ -1,3 +1,11 @@
+## `0.1.0-dev.286` — provar grants na busca pública — 2026-10-24
+
+- Kernel indexa tópicos no `search_api_db` com o processor `content_access` e
+  consulta com a conta: o anônimo recebe total 1, sem o tópico restrito; o
+  membro recebe total 2 e o item restrito. O filtro de node grants acontece
+  antes da contagem/paginação.
+- Testes: busca 2/27; suíte Kernel do Fórum 112/2.260; PHPCS limpo.
+
 ## `0.1.0-dev.285` — contar atividade só na primeira publicação — 2026-10-24
 
 - `ForumActivityEventHooks` deixa de emitir atividade na inserção de tópico,
