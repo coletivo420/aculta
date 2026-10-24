@@ -4,14 +4,33 @@
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
+## Incremento STUDIO-P1-B — código dev.9, validação pendente
+
+- **Implementado em Git:** provider de metadados Marley com acesso vinculado
+  às áreas visíveis do `MarleyPresenter`; enumeração ordenada de providers;
+  registro de Marley; controller e rota de **prévia** `/studio/inicio` com
+  filtro por disponibilidade, autorização e existência de rota.
+- **Preservado:** `/studio` ainda é a entrada histórica do Marley;
+  `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa`,
+  `/studio/pessoal`, home `/` da Conta e `/u/{apelido}` permanecem
+  com seus donos. Não houve alteração de formulários ou shell.
+- **Gates pendentes:** executar PHPUnit Unit, Kernel/Functional de registry,
+  container e rotas, e smoke Firefox ESR/X11 autenticado em ambiente de teste
+  com permissionamento de usuário comum/editor, módulos opcionais habilitados
+  e ausentes. O cache da ponte Marley é intencionalmente `max-age: 0`.
+- **Próximo incremento:** implantação controlada do hub canônico em
+  `/studio` após revisar os consumidores e a compatibilidade de `legacy_home`;
+  depois P2/P3 para formulários proprietários. Não avançar estados Dev→RC
+  sem evidências de testes e Runtime.
+
 ## STUDIO-P0–P7 — migração futura de Minha Conta e Meu Perfil (decisão 2026-10-24)
 
-**P0 documental concluída; P1-A parcialmente implementada em código na dev.8.**
+**P0 documental concluída; P1-A e P1-B implementadas em código até a dev.9, sem homologação Runtime.**
 Foi registrada a experiência `pessoal` e sua rota `/studio/pessoal`, com
 controller autorizado, links para a Conta e testes Unit adicionados. **Nenhum
 teste PHPUnit/Kernel/Runtime foi executado nesta edição pelo GitHub**;
-P1-A requer gates antes de ser considerada homologada. O hub `/studio`,
-ponte Marley, editor pessoal e navegação unificada seguem pendentes.
+P1-A requer gates antes de ser considerada homologada. O hub canônico `/studio`, editor pessoal e navegação unificada seguem pendentes;
+a ponte Marley e a prévia `/studio/inicio` já existem em código.
 A arquitetura de referência está em
 [Hub e Meu Espaço](../../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
 Os incrementos editoriais/LMS/Wiki registrados abaixo não são revogados nem
