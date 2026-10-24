@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.64`: Kernel integra a reescrita da raiz pública Wiki com o caminho
+  interno `/wiki` e sua política 404 (1/65; 199 depreciações Core/contrib e 2
+  PHPUnit). PHP lint e PHPCS passaram; código do Portal não mudou.
+
 - `0.1.0-dev.63`: ciclo de vida da imagem revalidado no Kernel completo em
   MariaDB isolada (21/941; 291 depreciações Core/contrib e 22 PHPUnit).
   Privacidade acompanha a publicação do verbete e compartilhamento; regressões

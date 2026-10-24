@@ -22,6 +22,8 @@ use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_portal\Domain\FrontPathPolicy;
+use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
@@ -713,6 +715,21 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame('access content', $route->getRequirement('_permission'));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
+
+    // The public Wiki host serves its root through the internal /wiki route;
+    // direct requests to that internal path remain hidden by the shared policy.
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $frontProcessor = $this->container->get('aculta_portal.purpose_front_path_processor');
+    $rootRequest = Request::create('/');
+    self::assertSame('/wiki', $frontProcessor->processInbound('/', $rootRequest));
+    $servedAsRoot = $rootRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
+    self::assertTrue($servedAsRoot);
+    self::assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', $servedAsRoot));
+
+    $directRequest = Request::create('/wiki');
+    self::assertSame('/wiki', $frontProcessor->processInbound('/wiki', $directRequest));
+    self::assertFalse($directRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE));
+    self::assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
 
     $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
     self::assertSame('/wiki/verbetes/{node}/contribuir', $proposalRoute->getPath());

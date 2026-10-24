@@ -58,6 +58,7 @@ asserções, 291 depreciações Core/contrib e 22 PHPUnit; revalidada em dev.63.
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | aprovado (dev.30; revalidado dev.62) |
+| Raiz pública e caminho interno | Kernel | Purpose processor converte `/` em `/wiki`; `/wiki` direto continua sujeito ao 404 da FrontPathPolicy | aprovado (dev.64; 1 teste / 65 asserções) |
 | Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
 | Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado (dev.62; Kernel combinado 3 testes / 127 asserções) |
 | Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado (dev.62) |

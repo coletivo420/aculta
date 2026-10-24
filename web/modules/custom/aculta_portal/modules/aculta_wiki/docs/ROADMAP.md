@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.63**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.64**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.64 — caminho público da Wiki em Kernel
+
+O teste de discovery das rotas agora exercita o `PurposeFrontPathProcessor`
+real: no Domain Wiki, `/` reescreve para `/wiki` e marca a requisição como
+servida pela raiz; uma requisição direta `/wiki` não recebe o marcador e a
+`FrontPathPolicy` a bloqueia. Focal MariaDB: 1 teste / 65 asserções, com 199
+depreciações Core/contrib e 2 PHPUnit. Lint e PHPCS passaram. Nenhum código do
+Portal ou Runtime mudou.
 
 ### Incremento dev.63 — regressão do ciclo de imagem
 

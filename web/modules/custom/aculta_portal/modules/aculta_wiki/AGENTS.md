@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.64: Kernel caracteriza raiz pública `/` → `/wiki` com o processador de
+  domínio real e mantém bloqueio do caminho interno direto (1/65; 199
+  depreciações Core/contrib, 2 PHPUnit). Lint e PHPCS passam; Portal/Runtime
+  sem mudanças.
+
 - Dev.63: Kernel completo do ciclo de imagem passou em MariaDB (21/941; 291
   depreciações Core/contrib e 22 PHPUnit); publicação da Media/download segue
   estado e referências públicas do Node. Rollback, histórico e cleanup passam;

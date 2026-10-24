@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.64 — testar raiz pública e caminho interno em Kernel
+
+- O Kernel de rotas agora inicializa o `PurposeFrontPathProcessor` real: a raiz
+  Wiki `/` reescreve para `/wiki` com o marcador de raiz servida; `/wiki` direto
+  não recebe o marcador e a `FrontPathPolicy` mantém o 404 interno.
+- Focal MariaDB: 1 teste / 65 asserções, com 199 depreciações Core/contrib e 2
+  PHPUnit. PHP lint e PHPCS Drupal/DrupalPractice passaram.
+- Cobertura restrita ao submódulo Wiki; nenhuma alteração no Portal ou Runtime.
+
 ## 0.1.0-dev.63 — revalidar ciclo de vida da imagem
 
 - A classe Kernel completa de imagens passou no MariaDB isolado: 21 testes /
