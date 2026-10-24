@@ -79,7 +79,7 @@ final class StudioAccountSectionController {
     }
 
     $portal = $this->resolver->getInstanceFromDefinition(PortalController::class);
-    // The five methods are existing, explicit owner entry points. Do not
+    // The four methods are existing, explicit owner entry points. Do not
     // dynamically route user input to an arbitrary Portal method.
     $content = $portal->{$method}();
     // Their legacy inner tabs point at original account routes. Remove only
