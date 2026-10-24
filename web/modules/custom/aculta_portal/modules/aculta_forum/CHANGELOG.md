@@ -1,3 +1,12 @@
+## `0.1.0-dev.287` — provar o filtro de não lidas e alinhar rotas — 2026-10-24
+
+- Novo Unit `ForumUnreadContentFilterTest`: anônimo recebe `1 = 0`; membro
+  recebe as condições de History, tópico, Comments e ForumPosts com os limites
+  do History. Garante o comportamento fail-closed antes da consulta real.
+- O teste de configuração administrativa deixa de exigir os aliases legados
+  removidos na limpeza de rotas e passa a afirmar sua ausência.
+- Testes: Unit do Fórum 182/1.019; PHPCS limpo.
+
 ## `0.1.0-dev.286` — provar grants na busca pública — 2026-10-24
 
 - Kernel indexa tópicos no `search_api_db` com o processor `content_access` e

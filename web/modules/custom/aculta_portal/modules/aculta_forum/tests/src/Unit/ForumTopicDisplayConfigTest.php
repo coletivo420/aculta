@@ -93,22 +93,21 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.topic_move']['defaults']['_controller']);
     self::assertSame('\Drupal\aculta_forum\Form\ForumCommentMoveForm', $routes['aculta_forum.comment_move']['defaults']['_form']);
     self::assertSame('entity:comment', $routes['aculta_forum.comment_move']['options']['parameters']['comment']['type']);
-    self::assertSame('/painel-administrativo/forum/comentario/{comment}/mover', $routes['aculta_forum.comment_move_legacy_redirect']['path']);
-    self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.comment_move_legacy_redirect']['defaults']['_controller']);
     self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.topic_move']['methods']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.comment_move_legacy_redirect']['methods']);
-    self::assertSame('/painel-administrativo/conteudo/forum', $routes['aculta_forum.legacy_admin_redirect']['path']);
-    self::assertSame('/painel-administrativo/conteudo/forum/{node}/mover-categoria', $routes['aculta_forum.legacy_admin_topic_move_redirect']['path']);
-    self::assertSame('\\d+', $routes['aculta_forum.legacy_admin_topic_move_redirect']['requirements']['node']);
-    self::assertSame('/painel-administrativo/conteudo/forum/comentario/{comment}/mover', $routes['aculta_forum.legacy_admin_comment_move_redirect']['path']);
-    self::assertSame('\\d+', $routes['aculta_forum.legacy_admin_comment_move_redirect']['requirements']['comment']);
-    self::assertSame('/painel-administrativo/conteudo/forum/comentarios', $routes['aculta_forum.legacy_admin_comments_redirect']['path']);
-    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/publicados', $routes['aculta_forum.legacy_admin_comments_published_redirect']['path']);
-    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/rejeitados', $routes['aculta_forum.legacy_admin_comments_rejected_redirect']['path']);
-    self::assertSame('/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao', $routes['aculta_forum.legacy_admin_comments_pending_redirect']['path']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.legacy_admin_redirect']['methods']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.legacy_admin_topic_move_redirect']['methods']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.legacy_admin_comment_move_redirect']['methods']);
+    // Temporary legacy aliases were removed by the route cleanup; only the
+    // canonical administrative paths remain.
+    foreach ([
+      'aculta_forum.comment_move_legacy_redirect',
+      'aculta_forum.legacy_admin_redirect',
+      'aculta_forum.legacy_admin_topic_move_redirect',
+      'aculta_forum.legacy_admin_comment_move_redirect',
+      'aculta_forum.legacy_admin_comments_redirect',
+      'aculta_forum.legacy_admin_comments_published_redirect',
+      'aculta_forum.legacy_admin_comments_rejected_redirect',
+      'aculta_forum.legacy_admin_comments_pending_redirect',
+    ] as $alias) {
+      self::assertArrayNotHasKey($alias, $routes);
+    }
 
     $content = Yaml::parseFile($repository_path . '/config/sync/views.view.content.yml');
     $filters = $content['display']['default']['display_options']['filters'];

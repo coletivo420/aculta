@@ -1,3 +1,12 @@
+## Filtro de não lidas — comportamento fail-closed, 2026-10-24
+
+- `ForumUnreadContentFilterTest` (2 testes / 8 asserções): anônimo recebe
+  `1 = 0`; membro recebe as condições de History, tópico, Comment e ForumPost
+  com os limites de leitura.
+- `ForumTopicDisplayConfigTest` passa a afirmar a ausência dos aliases legados
+  removidos na limpeza de rotas.
+- Suíte Unit do Fórum 182/1.019; PHPCS limpo.
+
 ## Busca pública sob grants, 2026-10-24
 
 - `PublicForumSearchAccessKernelTest` (2 testes / 27 asserções, MariaDB alvo
