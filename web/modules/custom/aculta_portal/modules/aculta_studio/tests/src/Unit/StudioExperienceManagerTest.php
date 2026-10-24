@@ -30,6 +30,23 @@ final class StudioExperienceManagerTest extends UnitTestCase {
     self::assertFalse($manager->access('ganjalab', 'wiki', $account)->isAllowed());
   }
 
+  /**
+   * Discovery preserves registration order and does not grant extra access.
+   */
+  public function testProviderInventoryKeepsOrderAndDeniesOtherPurpose(): void {
+    $manager = new StudioExperienceManager();
+    $pessoal = new \Drupal\aculta_studio\Experience\PersonalExperienceProvider();
+    $ganjalab = new GanjalabExperienceProvider(NULL);
+    $manager->addProvider($pessoal);
+    $manager->addProvider($ganjalab);
+
+    self::assertSame(['pessoal', 'ganjalab'], array_keys($manager->all()));
+    self::assertSame($pessoal, $manager->all()['pessoal']);
+    $account = $this->createMock(AccountInterface::class);
+    self::assertFalse($manager->access('pessoal', 'forum', $account)->isAllowed());
+    self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
+  }
+
   public function testDuplicateProviderRejected(): void {
     $manager = new StudioExperienceManager();
     $provider = new GanjalabExperienceProvider(NULL);
