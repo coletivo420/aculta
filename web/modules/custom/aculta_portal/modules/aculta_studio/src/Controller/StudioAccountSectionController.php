@@ -38,6 +38,18 @@ final class StudioAccountSectionController {
   }
 
   /**
+   * Portal-owned CPF/CNPJ registration, never part of the public profile.
+   *
+   * Returns 404 when the optional account-document owner is not installed.
+   *
+   * @return array<string, mixed>
+   *   The original document form composed with Studio navigation.
+   */
+  public function documents(): array {
+    return $this->build('otherData', 'documentos');
+  }
+
+  /**
    * Owner's existing e-mail confirmation and change controls.
    *
    * @return array<string, mixed>
@@ -79,7 +91,7 @@ final class StudioAccountSectionController {
     }
 
     $portal = $this->resolver->getInstanceFromDefinition(PortalController::class);
-    // The four methods are existing, explicit owner entry points. Do not
+    // These five methods are explicit owner entry points. Do not
     // dynamically route user input to an arbitrary Portal method.
     $content = $portal->{$method}();
     // Their legacy inner tabs point at original account routes. Remove only
@@ -111,6 +123,7 @@ final class StudioAccountSectionController {
     $destinations = [
       'dados' => ['Dados cadastrais (Conta original)', 'aculta_portal.my_data'],
       'endereco' => ['Endereço', 'aculta_studio.account_address'],
+      'documentos' => ['Documentos', 'aculta_studio.account_documents'],
       'seguranca' => ['E-mail e segurança', 'aculta_studio.account_security'],
       'senha' => ['Senha', 'aculta_studio.account_password'],
       'conexoes' => ['Contas conectadas', 'aculta_studio.account_connections'],
