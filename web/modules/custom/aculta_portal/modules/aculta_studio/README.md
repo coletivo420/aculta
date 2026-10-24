@@ -6,7 +6,7 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
 - `0.1.0-dev.4`: a aba Wiki só está disponível quando `aculta_wiki` está
   habilitado e o bundle `wiki_entry` existe; isso evita uma aba órfã se a
   configuração de bundle permanecer após desativar seu módulo proprietário.
-  Unit: 3 testes / 10 assertions.
+  Focal: 3 testes / 10 assertions; toda Unit Studio: 13 testes / 41 assertions.
 
 - Rota canônica: `/ganjalab` no domínio de conta (`conta.aculta.*/ganjalab`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.

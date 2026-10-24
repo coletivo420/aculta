@@ -10,7 +10,7 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 bundle `wiki_entry`. A configuração do tipo de conteúdo pode permanecer após
 desativar o módulo; nesse caso, Studio não apresenta uma aba sem serviços do
 owner. Unit cobre o módulo desligado com bundle retido, o par habilitado e o
-bundle ausente (3 testes / 10 assertions). Runtime intocado.
+bundle ausente (focal 3/10; suíte Studio Unit completa 13/41). Runtime intocado.
 
 ## Prioridades
 

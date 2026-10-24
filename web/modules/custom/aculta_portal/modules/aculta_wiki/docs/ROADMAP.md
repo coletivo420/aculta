@@ -13,7 +13,8 @@ O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
 Integração GanjaLab/Studio dev.4: a aba Wiki agora exige o módulo owner ativo
-além do bundle `wiki_entry` existir; Unit do Studio passou 3/10. A alteração
+além do bundle `wiki_entry` existir; Unit focal do Studio passou 3/10 e a suíte
+Unit completa 13/41. A alteração
 evita UI órfã quando a configuração do bundle permanece após desativar a Wiki.
 
 ### Incremento dev.83 — Entity Access da proposta no workspace

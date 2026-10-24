@@ -318,7 +318,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Fila de propostas no Studio | Kernel | Usa queue Wiki autorizada, pagina e gera links para o Form API proprietário | aprovado |
 | Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
 | Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
-| Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; 3 testes / 10 asserções) |
+| Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; focal 3/10; suíte Unit 13/41) |
 | Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first em ACULTA420 e Olivero, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
 
 ## Controller — cache e acesso (dev.11)

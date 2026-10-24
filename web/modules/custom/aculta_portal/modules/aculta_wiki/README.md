@@ -8,7 +8,7 @@ pendentes, está em
 ## Estado atual
 
 - Integração Studio dev.4: a `WikiTab` exige `aculta_wiki` habilitado além do
-  bundle `wiki_entry`; Unit Studio 3/10 cobre bundle retido com owner desligado.
+  bundle `wiki_entry`; Unit Studio focal 3/10 e suíte completa 13/41 passam.
 
 - `0.1.0-dev.83`: WE SATIVA revalida `view` Entity Access de proposta própria;
   pessoa com `submit wiki proposals`, mas sem `view own wiki proposals`, vê
