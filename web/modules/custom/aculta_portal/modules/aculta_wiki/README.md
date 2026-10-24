@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- A matriz WE SATIVA foi reconciliada com Kernel já existente: verbetes e
+  propostas próprias paginam 20+1, com cursores e links no Domain `account`
+  (focal 1/40). O teste não caracteriza candidatos de terceiros.
+
 - `0.1.0-dev.81`: aceite editorial no Form API inclui imagem publicada
   selecionada pelo editor; revisão publicada recebe a referência validada
   (Kernel focal 1/167; classe 24/1.137). Runtime intocado.

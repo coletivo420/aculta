@@ -20,6 +20,10 @@ Access da mídia é revalidado pelo serviço de decisão. A classe passou (24/1.
 291 depreciações Core/contrib e 25 PHPUnit) e PHPCS passou. A proposta usa Media
 existente e publicada; Runtime intocado.
 
+Revisão da matriz WE SATIVA: `testWeSativaWorkspacePaginatesOwnerEntriesAndProposals`
+cobre 21 propostas próprias, paginação independente 20+1 e links no Domain
+`account` (Kernel MariaDB focal 1/40). Esse cenário não cobre itens de terceiros.
+
 ### Incremento dev.80 — lock de proposta entre processos
 
 Kernel MariaDB executa worker PHP separado para adquirir a chave de idempotência

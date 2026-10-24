@@ -7,6 +7,9 @@
   workflow. O serviço revalida o acesso da mídia durante a decisão.
 - `WikiLeadImageLifecycleKernelTest`: 24 testes / 1.137 assertions, 291
   depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+- A matriz WE SATIVA foi corrigida com o Kernel existente de paginação de
+  propostas próprias (20+1; focal 1/40); esse cenário não cobre propostas de
+  terceiros.
 
 ## 0.1.0-dev.80 — lock de idempotência entre processos
 

@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- WE SATIVA: Kernel existente pagina 21 propostas próprias em 20+1, junto de
+  21 verbetes; focal 1/40. Isolamento contra propostas de terceiros não foi
+  caracterizado por esse teste.
+
 - Dev.81: aceite editorial por Form API aplica imagem publicada selecionada
   quando a revisão do verbete é publicada. Kernel 24/1.137; Runtime intocado.
 
