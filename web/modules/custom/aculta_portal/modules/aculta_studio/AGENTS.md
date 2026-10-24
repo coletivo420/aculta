@@ -1,5 +1,21 @@
 # Regras específicas — consulta sob demanda
 
+## Contrato de rota vigente após migração da raiz
+
+A raiz pública `/` no purpose ACCOUNT apresenta
+`aculta_studio.hub` (caminho técnico `/studio`, 404 direto).
+A Minha Conta original está em **`/conta-legada` de forma
+permanente**. Nunca restabelecer o legado na raiz, criar alias
+temporário nem retirar o shell do Portal.
+
+Experiências próprias: `/studio/conta` e `/studio/perfil`,
+com Portal dono de cadastro/endereço/documentos/segurança e User
+dono de identidade pública. `/studio/conta/documentos` só exibe
+link se `aculta_id_cpf.account_document` estiver disponível.
+Não duplicar CPF/CNPJ, nem incluir esse dado em Meu Perfil.
+Comparar comportamento das duas interfaces antes de qualquer aceite.
+
+
 ## Decisão atual: experiências Conta/Perfil independentes
 
 Não reintroduzir a experiência `pessoal`. Usar somente
