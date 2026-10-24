@@ -6,7 +6,10 @@ Decisões de origem: F-D21 (política em `docs/portal/AVISOS-E-NOTIFICACOES.md`,
 ## 1. Dois sistemas, dois destinos
 
 Este módulo contém dois sistemas que **não se misturam**. Nenhuma notificação de aviso usa a caixa de mensagens, e
-nenhuma conversa usa o aviso.
+nenhuma conversa usa o aviso. Seguir tópico ou outro conteúdo significa receber
+avisos conforme acesso e preferências; isso não cria conversa nem adiciona
+participantes a threads. Consulte [ARCHITECTURE.md](ARCHITECTURE.md) para o
+contrato normativo.
 
 | | Mensagens | Avisos |
 |---|---|---|

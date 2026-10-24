@@ -32,13 +32,14 @@ integração decisória do primeiro verbete e critérios/configuração de isen�
 
 **Decisão:** mensagens humanas continuam no Private Message integrado ao `aculta_messenger`; avisos persistentes e pessoais usam infraestrutura existente (Message/Message Notify/Flag, `aculta_aviso` quando compatível). `aculta_user` controla identidade, amizades e preferências de conta; `aculta_mailer` controla transporte de e-mail. Adapters publicam eventos de produto sem criar inbox, notificadores ou tabelas paralelas.
 
-**Envelope de evento candidato (não classe criada):**
+**Envelope de evento candidato:**
 `event_type`, `source_module`, `source_entity_type`, `source_entity_uuid`, `source_revision_or_version`, `recipient_uid`, `purpose`, `occurred_at`, `idempotency_key`, dados mínimos. Proibido transportar conteúdo privado, notas, respostas de prova ou emails sensíveis no payload.
 - Separar **geração de evento** de entrega e de visualização. O Messenger escolhe canal conforme preferências válidas e tipo de aviso; o producer não faz SMTP.
 - Revalidar Entity Access, role, Group e propósito **na entrega e ao abrir o aviso**. Opt-out de email não apaga avisos necessários no site.
 - Idempotência por consumidor/evento, retry com erro explícito, sem duplicar aviso na republicação de uma revisão já tratada.
 - Eventos candidatos: Wiki `review_submitted`, `changes_requested`, `revision_published`; Fórum novo post/revisão moderados; LMS somente pelo adapter `aculta_lms_messenger`; associado apenas se há consumidor real.
 - Preservar contrato atualmente em produção/dev; migração gradual com comparação lado a lado, sem duplo disparo.
+- Nenhum evento de conteúdo cria conversa/thread ou altera seus participantes. Chats automáticos ou exclusivos por tópico, curso, verbete ou publicação estão descartados; `ConversationContext`, `ConversationMembership` e `ParticipationLedger` não serão criados para esse fim.
 
 **Critério de saída:** inventário de todos os produtores e templates Message, matriz de consentimentos/canais, Unit de deduplicação e Kernel de ACL; entrega SMTP real somente no ambiente de teste controlado.
 

@@ -5,6 +5,8 @@ Auditoria de fronteiras: [`MESSENGER-AUDIT.md`](MESSENGER-AUDIT.md).
 Guia do tema: [`web/themes/custom/aculta420/docs/messenger.md`](../../web/themes/custom/aculta420/docs/messenger.md).
 Documentos anteriores do submódulo (em parte desatualizados, ver auditoria A8): `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/`.
 
+A decisão normativa atual é [`aculta_messenger/docs/ARCHITECTURE.md`](../../web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ARCHITECTURE.md): seguir conteúdo gera avisos conforme acesso e preferências, nunca conversas ou participação em threads. Tipos de conversa contextuais anteriores foram substituídos e preservados no [registro histórico](MESSENGER-CONVERSATION-KINDS-HISTORICAL.md).
+
 ## 1. Visão geral
 
 O Messenger é a caixa de mensagens privadas do site, aberta pela barra multidomínio como uma **gaveta** (offcanvas).

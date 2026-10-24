@@ -1,9 +1,10 @@
 # ACULTA Messenger
 
-Módulo de integração do ACULTA Portal para conversas privadas, eventos de
-mensagem, assinaturas e avisos institucionais. A fonte de verdade de cada
+Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
 capacidade permanece no módulo Drupal que a fornece; este submódulo compõe a
-experiência e aplica os contratos de acesso e Domain do Portal.
+experiência e aplica os contratos de acesso e Domain do Portal. A decisão
+normativa está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); notificações
+por conteúdo nunca criam conversas nem alteram participantes.
 
 Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, URL da conta,
 deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
