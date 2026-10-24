@@ -6,9 +6,14 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\AvisoRetencao;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_messenger\Hook\ForumAvisoHooks;
+use Drupal\comment\CommentInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
@@ -56,6 +61,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('aculta_aviso');
+    $this->installSchema('aculta_messenger_aviso_test', ['aculta_messenger_forum_comment_notice']);
     $this->installSchema('node', ['node_access']);
   }
 
@@ -222,6 +228,100 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Counts both replies when legacy comment approvals arrive out of order.
+   */
+  public function testOutOfOrderCommentApprovalCountsBothReplies(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id(), (int) $author->id()],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+
+    // The second comment is approved first; the first comment is approved
+    // after it. Both approvals are distinct publish events and should count.
+    self::assertSame(1, $avisos->registrarResposta(
+      $this->createPublishedComment($topic, (int) $author->id(), 20),
+    ));
+    $delayed = $this->createPublishedComment($topic, (int) $author->id(), 10);
+    self::assertSame(1, $avisos->registrarResposta($delayed));
+    self::assertSame(0, $avisos->registrarResposta($delayed));
+
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(20, (int) $notices[0]->get('ultimo_comentario')->value);
+    self::assertSame(2, (int) $this->container->get('database')
+      ->select(ForumCommentNoticeSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+    self::assertCount(
+      0,
+      $this->loadNotices((int) $author->id(), (int) $topic->id()),
+    );
+  }
+
+  /**
+   * The event ledger follows the six-month notice retention policy.
+   */
+  public function testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch(): void {
+    $now = 1_800_000_000;
+    $limit = AvisoRetencao::limite($now);
+    $database = $this->container->get('database');
+    foreach ([['cid' => 30, 'created' => $limit], ['cid' => 31, 'created' => $limit + 1]] as $event) {
+      $database->insert(ForumCommentNoticeSchema::TABLE)
+        ->fields([
+          'uid' => 7,
+          'cid' => $event['cid'],
+          'nid' => 99,
+          'created' => $event['created'],
+        ])
+        ->execute();
+    }
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getRequestTime')->willReturn($now);
+
+    (new AvisoRetencaoHooks(
+      $this->container->get('entity_type.manager'),
+      $time,
+      $database,
+    ))->expirarAvisos();
+
+    $ids = $database->select(ForumCommentNoticeSchema::TABLE, 'event')
+      ->fields('event', ['cid'])
+      ->orderBy('cid')
+      ->execute()
+      ->fetchCol();
+    self::assertSame([31], array_map('intval', $ids));
+  }
+
+  /**
+   * The schema post-update creates the ledger once and tolerates re-entry.
+   */
+  public function testPostUpdateCreatesCommentLedgerIdempotently(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.post_update.php';
+
+    $schema = $this->container->get('database')->schema();
+    $table = ForumCommentNoticeSchema::TABLE;
+    $schema->dropTable($table);
+    $sandbox = [];
+
+    self::assertSame(
+      'Added the Forum Comment notice idempotency ledger.',
+      aculta_messenger_post_update_forum_comment_notice_ledger($sandbox),
+    );
+    self::assertTrue($schema->tableExists($table));
+    self::assertSame(
+      'The Forum Comment notice idempotency ledger already exists.',
+      aculta_messenger_post_update_forum_comment_notice_ledger($sandbox),
+    );
+  }
+
+  /**
    * Editing an already published post does not add another notice.
    */
   public function testEditOfPublishedPostDoesNotRegisterNotice(): void {
@@ -336,6 +436,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $noFlag,
       $this->createAccessPolicy(),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
     );
     self::assertSame(0, $withoutFlag->notificarAtualizacao($published, 5));
 
@@ -393,6 +495,23 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Builds a published legacy comment for notification characterization.
+   */
+  private function createPublishedComment(
+    NodeInterface $topic,
+    int $author,
+    int $comment_id,
+  ): CommentInterface {
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('id')->willReturn((string) $comment_id);
+    $comment->method('getOwnerId')->willReturn($author);
+    $comment->method('bundle')->willReturn('aculta_discussion_post');
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+    return $comment;
+  }
+
+  /**
    * Builds the service with the given follower accounts.
    *
    * @param int[] $followers
@@ -419,6 +538,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $flags,
       $policy ?? $this->createAccessPolicy(),
+      $this->container->get('database'),
+      $this->container->get('datetime.time'),
     );
   }
 
@@ -429,11 +550,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     bool $supportsTopic = TRUE,
     bool $canViewTopic = TRUE,
     bool $canViewPost = TRUE,
+    bool $canViewComment = FALSE,
   ): ForumNoticeAccessPolicyInterface {
     $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
     $policy->method('supportsTopic')->willReturn($supportsTopic);
     $policy->method('canViewTopic')->willReturn($canViewTopic);
     $policy->method('canViewPost')->willReturn($canViewPost);
+    $policy->method('canViewComment')->willReturn($canViewComment);
     return $policy;
   }
 

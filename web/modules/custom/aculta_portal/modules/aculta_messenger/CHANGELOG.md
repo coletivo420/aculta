@@ -1,3 +1,17 @@
+## 0.1.1-dev.80 — deduplicar aprovação tardia de Comments — 2026-10-24
+
+- O marcador de CID agregado não identificava eventos individuais: uma aprovação
+  tardia com CID menor que outro Comment já publicado era descartada. Criada a
+  tabela mínima `aculta_messenger_forum_comment_notice`, com unicidade por
+  destinatário/Comment, transação junto do incremento e watermark mantido como
+  maior CID histórico. Sem migração de conteúdo.
+- Install schema cobre instalações novas; post-update idempotente instala a
+  tabela em existentes. Cron remove chaves vencidas em lote após seis meses,
+  alinhado à retenção dos avisos. Post-update não foi executado no Runtime.
+- Kernel MariaDB Simpletest: 12 testes / 220 assertions, incluindo CID fora de
+  ordem, replay, watermark e expiração. Unit Messenger: 64 / 297. PHPCS Drupal
+  e DrupalPractice nos arquivos PHP alterados: PASS.
+
 ## 0.1.1-dev.79 — publicar envelope mínimo de eventos — 2026-10-24
 
 - Adicionados `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`,
@@ -8,9 +22,6 @@
 - M2 permanece parcial: adapters e consumidores ainda não migraram para o
   publisher. Unit do contrato: 4 testes / 16 assertions PASS; Unit Messenger
   completo: 64 / 297; LMS Messenger: 21 / 83.
-- Caracterização dos avisos do Fórum ampliada: aprovação tardia de um post
-  após publicação de outro conta uma vez e resiste ao replay; Kernel dedicado
-  passou em 9 testes / 168 assertions (MariaDB Simpletest).
 
 ## 0.1.1-dev.78 — alinhar privacidade e conversas voluntárias — 2026-10-24
 

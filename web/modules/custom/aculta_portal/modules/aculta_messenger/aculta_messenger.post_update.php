@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @file
  * Post-update functions for ACULTA Messenger.
  */
 
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 
 /**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
@@ -45,7 +47,7 @@ function aculta_messenger_post_update_site_alert_dismissal_flag(array &$sandbox)
 }
 
 /**
- * Adds the per-member read Flag for temporary Site Alerts (rótulo Lido / Não lido).
+ * Adds the per-member read Flag for temporary Site Alerts.
  */
 function aculta_messenger_post_update_site_alert_read_flag(array &$sandbox): string {
   $storage = \Drupal::entityTypeManager()->getStorage('flag');
@@ -101,4 +103,19 @@ function aculta_messenger_post_update_forum_post_watermark(array &$sandbox): str
   );
 
   return 'Added the revisionable Forum post notice watermark.';
+}
+
+/**
+ * Adds the idempotency ledger for legacy Forum Comment notices.
+ */
+function aculta_messenger_post_update_forum_comment_notice_ledger(array &$sandbox): string {
+  $table = ForumCommentNoticeSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists($table)) {
+    return 'The Forum Comment notice idempotency ledger already exists.';
+  }
+
+  $schema->createTable($table, ForumCommentNoticeSchema::definition());
+
+  return 'Added the Forum Comment notice idempotency ledger.';
 }

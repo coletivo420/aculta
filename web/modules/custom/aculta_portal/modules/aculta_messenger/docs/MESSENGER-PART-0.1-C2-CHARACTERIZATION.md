@@ -1,22 +1,23 @@
 # MESSENGER-PART 0.1-C2 — caracterização da idempotência dos avisos do Fórum
 
-**Data:** 2026-10-22 · **Estado:** caracterização concluída; nenhuma mudança funcional,
-de DI, de schema ou de Runtime.
+**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-up dev.80.
+A execução do post-update no Runtime permanece pendente.
 **Base:** [ADR-XK-02](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md)
 e [roadmap do submódulo](ROADMAP.md).
 
 O contrato XK-C2 pede adaptar um evento existente sem duplicar aviso, com testes.
-A auditoria mostrou que os produtores atuais já deduplicam por marcador monotônico
-no próprio aviso persistente. Alterar o produtor seria uma mudança de
-comportamento sem defeito comprovado, proibida nesta fase. A entrega, portanto,
-fixa por testes de persistência o contrato que já existe:
+A caracterização inicial provou a idempotência de ForumPost e atualização de
+tópico. O follow-up de 2026-10-24 testou Comments legados e identificou que um
+CID antigo aprovado após um novo era perdido pelo watermark; a correção usa uma
+chave de evento única por destinatário/Comment, sem substituir `aculta_aviso`.
 
 - o evento de **primeira publicação** de um `aculta_forum_post` revisionável,
   inclusive quando posts são aprovados fora da ordem de criação;
 - o evento de **tópico atualizado**, que compartilha o mesmo aviso agregado.
 
-Comentários legados mantêm o caminho próprio (`ForumAvisoHooksTest`, Unit) e não
-foram reimplementados aqui.
+O hook de aprovação tardia de Comments é caracterizado por Unit (`ForumAvisoHooksTest`);
+o registro, a ordem inversa e a deduplicação do serviço usam Comments simulados
+contra a persistência real do ledger no Kernel.
 
 ## Contratos caracterizados
 
@@ -46,13 +47,14 @@ também não gera, porque `first_published` é imutável.
 | --- | --- | --- |
 | `forum_resposta` (posts) | `ultimo_post` = ID da revisão publicada | `revisao > ultimo_post` |
 | `forum_atualizacao` (tópicos) | `ultimo_evento` = ID da revisão do tópico | `revisao > ultimo_evento` |
-| `forum_resposta` (comentários) | `ultimo_comentario` | `comentario > ultimo_comentario` |
+| `forum_resposta` (comentários) | chave única `(uid, cid)` no ledger; `ultimo_comentario` continua sendo o maior CID observado | Inserção única em transação junto do aviso |
 
 Um aviso por par `(uid, assunto_nid, tipo)`; a consulta usa `accessCheck(FALSE)`
-porque o destinatário é revalidado pela política antes de contar. Os contadores
-`sitio`/`email` só avançam quando o marcador avança. Reenvio do mesmo evento
-devolve `0` e não altera o registro. Avisos de resposta e de atualização do
-mesmo tópico são registros distintos e não somam entre si.
+porque o destinatário é revalidado pela política antes de contar. Para Comments,
+o ledger com chave única `(uid, cid)` permite aprovações fora de ordem e bloqueia
+replays; inserção e incremento do agregado compartilham transação. Para posts e
+atualizações, os watermarks de revisão continuam deduplicando. Avisos de resposta
+e de atualização do mesmo tópico são registros distintos.
 
 ### Destinatários
 
@@ -74,7 +76,7 @@ o autor do post, quem perdeu acesso ao post (`canViewPost()`) ou ao tópico
 ## Teste entregue
 
 `tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, MariaDB
-Simpletest dedicada, 9 testes / 168 assertions.
+Simpletest dedicada, 12 testes / 220 assertions.
 
 | Teste | Célula |
 | --- | --- |
@@ -83,6 +85,9 @@ Simpletest dedicada, 9 testes / 168 assertions.
 | `testPendingAndNonDefaultRevisionsRegisterNothing` | post pendente, update sem original e revisão não-default |
 | `testFirstPublicationUpdateCountsOnce` | transição de primeira publicação contada uma vez |
 | `testOutOfOrderPostApprovalCountsEachPublicationOnce` | post aprovado depois de outro já publicado soma uma vez; replay não duplica |
+| `testOutOfOrderCommentApprovalCountsBothReplies` | CID menor aprovado depois conta; replay não duplica, autor excluído e watermark fica no maior CID |
+| `testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch` | ledger vencido é removido; chave ainda dentro da retenção permanece |
+| `testPostUpdateCreatesCommentLedgerIdempotently` | update cria schema ausente e aceita reexecução sem alterar tabela existente |
 | `testEditOfPublishedPostDoesNotRegisterANotice` | edição revisionada de post publicado não soma |
 | `testRecipientWithoutPostAccessIsSkipped` | política de acesso negando o post |
 | `testTopicUpdateNoticesAreDeduplicated` | mesma revisão uma vez, revisão seguinte soma, tipos isolados |
@@ -92,8 +97,9 @@ Simpletest dedicada, 9 testes / 168 assertions.
 
 - `aculta_forum_post_test` (já existente) registra `ForumPost` por Reflection.
 - `tests/modules/aculta_messenger_aviso_test` registra a entidade de produção
-  `Aviso` pelo atributo `ContentEntityType`, com provider do fixture. É o único
-  código de fixture novo; não entra em produção.
+  `Aviso` pelo atributo `ContentEntityType` e instala a tabela do ledger para
+  Kernel isolado; o schema de fixture espelha o hook de instalação e não entra
+  em produção.
 - `content_moderation` não é habilitado: `isPublished()` lê o campo `status`, e
   o teste controla `first_published` e `setNewRevision()` diretamente. O Kernel
   executa no MariaDB Simpletest dedicado, nunca em SQLite ou no Runtime.
@@ -108,7 +114,8 @@ Simpletest dedicada, 9 testes / 168 assertions.
 - Validação Runtime e revisão visual: continuam pendentes.
 - Lock persistente do worker de tópicos (`aculta_messenger:forum_topic_updated:*`)
   não é exercitado; o teste cobre a segunda barreira, no serviço.
-- Nenhum aviso, tipo, campo, tabela ou hook novo foi criado.
+- O follow-up dev.80 adiciona uma tabela de idempotência e post-update; o
+  Runtime ainda não recebeu esse schema.
 - Wiki, LMS e Revista não têm produtor nesta fase e não foram tocados.
 - `PublishedParticipationLookupInterface` continua não implementada e não é
   citada como API existente.

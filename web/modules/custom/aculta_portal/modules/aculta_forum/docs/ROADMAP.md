@@ -21,7 +21,7 @@ coexistência; Search API, categorias, moderação, anexos/galerias e ferramenta
 administrativas já possuem implementações e testes. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.79` mantém os avisos existentes e já oferece
+ativação produtiva. `aculta_messenger 0.1.1-dev.80` mantém os avisos existentes e já oferece
 o envelope `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`; o LMS
 consome quatro tipos pelo publisher, enquanto o adapter do Fórum ainda não foi
 implementado. A API é uma base disponível, não prova de integração completa.
@@ -69,11 +69,11 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 | **F-M7 — gates, RC e Alpha** | P1 após os bloqueadores | Corrigir regressões, validar configurações, atualização de schema, cache, filas, versionamento, checklist operacional e documentação do release. | Gates Unit/Kernel/Functional e revisão visual aplicável antes de RC; Alpha após deploy autorizado no servidor de teste, nunca inferido de evidências anteriores; produção só após aprovação separada. |
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 9 testes / 168 assertions. O novo cenário prova
-que aprovação tardia de `ForumPost` após uma publicação posterior é contada
-uma única vez, sem quebrar os contadores nem a deduplicação por replay. Isso
-não encerra F-M1: comentários legados, concorrência e homologação Runtime seguem
-pendentes.
+passou em MariaDB Simpletest, 12 testes / 220 assertions. Os cenários provam
+que aprovação tardia fora de ordem de `ForumPost` e de Comments conta cada
+publicação uma vez, replay não duplica e o ledger de Comments respeita a retenção
+de seis meses. A concorrência ainda não foi simulada e a homologação Runtime
+segue pendente; F-M1 permanece parcial.
 
 ### Sequência recomendada e paralelismo
 

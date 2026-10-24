@@ -9,8 +9,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Entity\Aviso;
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
@@ -28,6 +32,8 @@ final class AvisoService implements ForumNoticeTransferInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
     private readonly ForumNoticeAccessPolicyInterface $accessPolicy,
+    private readonly ?Connection $database = NULL,
+    private readonly ?TimeInterface $time = NULL,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
@@ -222,21 +228,55 @@ final class AvisoService implements ForumNoticeTransferInterface {
     if ($flag === NULL) {
       return 0;
     }
+    $commentId = (int) $comment->id();
+    if ($commentId <= 0) {
+      return 0;
+    }
     $atualizados = 0;
     foreach ($this->flagService->getEntityFlaggings($flag, $topico) as $flagging) {
       $uid = (int) $flagging->getOwnerId();
       if ($uid <= 0 || $uid === (int) $comment->getOwnerId() || !$this->accessPolicy->canViewComment($comment, $uid)) {
         continue;
       }
-      $aviso = $this->avisoDe($uid, (int) $topico->id(), (string) $topico->label(), Aviso::TIPO_RESPOSTA);
-      if (!self::isNewComment((int) $comment->id(), (int) $aviso->get('ultimo_comentario')->value)) {
+      if (!$this->database instanceof Connection || !$this->time instanceof TimeInterface) {
+        throw new \LogicException('Forum Comment notice registration requires the database and time services.');
+      }
+
+      // A Comment ID is assigned at creation, but moderation may publish
+      // pending Comments out of order. Persist the event identity separately
+      // so an older approved Comment is counted without accepting replays.
+      $transaction = $this->database->startTransaction();
+      try {
+        $this->database->insert(ForumCommentNoticeSchema::TABLE)
+          ->fields([
+            'uid' => $uid,
+            'cid' => $commentId,
+            'nid' => (int) $topico->id(),
+            'created' => $this->time->getRequestTime(),
+          ])
+          ->execute();
+      }
+      catch (IntegrityConstraintViolationException) {
+        $transaction->rollBack();
         continue;
       }
-      $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
-      $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
-      $aviso->set('ultimo_comentario', (int) $comment->id());
-      $aviso->save();
-      $atualizados++;
+
+      try {
+        $aviso = $this->avisoDe($uid, (int) $topico->id(), (string) $topico->label(), Aviso::TIPO_RESPOSTA);
+        $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
+        $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
+        $aviso->set('ultimo_comentario', max(
+          $commentId,
+          (int) $aviso->get('ultimo_comentario')->value,
+        ));
+        $aviso->save();
+        $atualizados++;
+        unset($transaction);
+      }
+      catch (\Throwable $exception) {
+        $transaction->rollBack();
+        throw $exception;
+      }
     }
     return $atualizados;
   }
