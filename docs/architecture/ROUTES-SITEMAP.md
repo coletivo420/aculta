@@ -20,8 +20,9 @@ Runtime ainda não homologado.
 Durante o desenvolvimento não há aliases temporários de rota. Os caminhos
 retirados de Studio, Ganjalab, Fórum administrativo, User e páginas antigas
 de Conta/Commerce respondem 404, sem redirects para versões antigas.
-Usar `/studio`, `/studio/marley`, `/studio/ganjalab`,
-`/studio/pessoal`, `/dados/endereco` e `/pedidos`.
+Usar `/` no ACCOUNT para abrir o hub, `/conta-legada` para a Conta
+original, `/studio/conta` e `/studio/perfil` para as experiências,
+`/studio/marley`, `/studio/ganjalab`, `/dados/endereco` e `/pedidos`.
 O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
 contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
 não rotas temporárias de compatibilidade.** Redirecionamentos funcionais de
@@ -70,7 +71,8 @@ desabilitados. Nunca use um caminho de teste como evidência de produção.
 | Identificador | Caminho | Título / objeto da página inicial | Estado |
 | --- | --- | --- | --- |
 | `main.aculta` | `/` | Início institucional da ACULTA | Ativo. Administração, carrinho, checkout e pagamentos pertencem a este purpose. |
-| `conta.aculta` | `/` | Visão geral da conta da pessoa autenticada | Ativo para membro; visitante anônimo recebe `302` para `/entrar`. |
+| `conta.aculta` | `/` | **Hub ACULTA Studio** | Root resolvido internamente para `aculta_studio.hub`, visitante vai ao login. |
+| `conta.aculta` | `/conta-legada` | **Minha Conta original permanente** | `aculta_portal.dashboard`, shell, menus e forms originais para comparação, sem prazo de retirada. |
 | `apoio.aculta` | `/` | Formulário público para escolher valor de apoio | Ativo; caminho interno `/apoio` responde `404` diretamente. |
 | `revista.aculta` | `/` | Início editorial da Revista420 | Ativo; publicações dependem de nós publicados. |
 | `wiki.aculta` | `/` | Início da Wiki420 | Ativo; edição/criação depende de autenticação e permissões. |
@@ -281,9 +283,10 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
-| `conta.aculta` | `/studio` | Hub geral ACULTA Studio | Route ID `aculta_studio.hub`, purpose `account`. Providers independentes Conta/Perfil/Marley/Ganjalab/WE SATIVA com acesso. |
+| `conta.aculta` | `/studio` | Caminho técnico do hub | Rota interna `aculta_studio.hub`; acesso HTTP direto 404, use `/`. |
 | `conta.aculta` | `/studio/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição inicial de serviços cadastrais privados. Não retira a Conta legada. |
 | `conta.aculta` | `/studio/conta/endereco` | Endereço privado no Studio | `aculta_studio.account_address`; chama `PortalController::address()` e mantém o mesmo Profile Commerce, CEP, Número/S-N e retorno contextual; legado `/dados/endereco` preservado. |
+| `conta.aculta` | `/studio/conta/documentos` | Documentos privados CPF/CNPJ | `aculta_studio.account_documents`; mesmo form Portal, owner opcional `aculta_id_cpf`, link condicionado à disponibilidade e retorno contextual. |
 | `conta.aculta` | `/studio/conta/seguranca` | E-mail e segurança | `aculta_studio.account_security`; usa `PortalController::security()`, com confirmação de e-mail original. |
 | `conta.aculta` | `/studio/conta/seguranca/senha` | Gerenciamento de senha | `aculta_studio.account_password`; usa `PortalController::securityPassword()` e fluxo de primeira senha OAuth existente. |
 | `conta.aculta` | `/studio/conta/conexoes` | Conexões de autenticação | `aculta_studio.account_connections`; usa `PortalController::connections()`. |
