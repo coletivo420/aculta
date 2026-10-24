@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
@@ -36,10 +37,13 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       ->with('aculta_messenger.private_message_send', 10, 3600, 'uid:42')
       ->willReturn(TRUE);
     $flood->expects($this->never())->method('register');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->with('aculta_messenger.private_message_flood.42', 180.0)->willReturn(TRUE);
+    $lock->expects(self::never())->method('release');
 
     $formState = $this->formState(FALSE);
 
-    $validator = $this->validator($flood, 42);
+    $validator = $this->validator($flood, 42, $lock);
     $form = [];
     $validator->validateRateLimit($form, $formState);
   }
@@ -49,12 +53,17 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   public function testPersistedSubmissionRegistersFloodLimit(): void {
     $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willReturn(TRUE);
     $flood->expects(self::once())
       ->method('register')
       ->with('aculta_messenger.private_message_send', 3600, 'uid:42');
-    $validator = $this->validator($flood, 42);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->with('aculta_messenger.private_message_flood.42', 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.private_message_flood.42');
+    $validator = $this->validator($flood, 42, $lock);
     $form = [];
 
+    $validator->validateRateLimit($form, $this->formState(FALSE));
     $validator->registerRateLimit($form, new FormState());
   }
 
@@ -79,13 +88,54 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())->method('isAllowed')->willReturn(FALSE);
     $flood->expects($this->never())->method('register');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.private_message_flood.42');
 
     $formState = $this->formState(FALSE);
 
-    $validator = $this->validator($flood, 42);
+    $validator = $this->validator($flood, 42, $lock);
     $form = [];
     $validator->validateRateLimit($form, $formState);
     $this->assertSame('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.', $formState->getErrors()['message']);
+  }
+
+  /**
+   * A concurrent submission cannot pass the flood check while it is locked.
+   */
+  public function testConcurrentSubmissionIsRejectedBeforeFloodCheck(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::never())->method('isAllowed');
+    $flood->expects(self::never())->method('register');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_messenger.private_message_flood.42', 180.0)
+      ->willReturn(FALSE);
+    $lock->expects(self::never())->method('release');
+    $validator = $this->validator($flood, 42, $lock);
+    $form = [];
+    $formState = $this->formState(FALSE);
+
+    $validator->validateRateLimit($form, $formState);
+
+    self::assertArrayHasKey('message', $formState->getErrors());
+  }
+
+  /**
+   * Flood backend errors release the in-flight lock for later requests.
+   */
+  public function testFloodBackendExceptionReleasesLock(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())->method('isAllowed')->willThrowException(new \RuntimeException('Backend unavailable.'));
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())->method('acquire')->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.private_message_flood.42');
+    $validator = $this->validator($flood, 42, $lock);
+    $form = [];
+
+    $this->expectException(\RuntimeException::class);
+    $validator->validateRateLimit($form, $this->formState(FALSE));
   }
 
   /**
@@ -128,6 +178,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
@@ -160,6 +211,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $friendships,
       $userData,
+      $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
@@ -191,6 +243,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $friendships,
       $userData,
+      $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
@@ -223,6 +276,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
         $this->createMock(PrivateMessageBanManagerInterface::class),
         $friendships,
         $userData,
+        $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       );
       $form = [];
@@ -258,6 +312,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $friendships,
       $userData,
+      $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
@@ -285,6 +340,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $banManager,
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
     $form = [];
@@ -294,7 +350,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
   /**
    * Provides the validator behavior.
    */
-  private function validator(FloodInterface $flood, int $uid): PrivateMessageFormValidator {
+  private function validator(FloodInterface $flood, int $uid, ?LockBackendInterface $lock = NULL): PrivateMessageFormValidator {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn($uid);
     return new PrivateMessageFormValidator(
@@ -304,6 +360,7 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
       $this->createMock(PrivateMessageBanManagerInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
       $this->createMock(UserDataInterface::class),
+      $lock ?? $this->createMock(LockBackendInterface::class),
       new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
     );
   }

@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
@@ -86,6 +87,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
         $this->createMock(PrivateMessageBanManagerInterface::class),
         $this->createMock(FriendshipManagerInterface::class),
         $this->createMock(UserDataInterface::class),
+        $this->createMock(LockBackendInterface::class),
         new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
       ),
       $entityTypes,

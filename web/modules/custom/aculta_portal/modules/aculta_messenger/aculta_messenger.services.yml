@@ -55,6 +55,7 @@ services:
       - '@private_message.ban_manager'
       - '@aculta_user.friendship_manager'
       - '@user.data'
+      - '@lock.persistent'
       - '@aculta_messenger.conversation_policy'
     public: true
   aculta_messenger.private_message_account_route_subscriber:

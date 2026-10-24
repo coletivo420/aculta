@@ -1,3 +1,14 @@
+## 0.1.1-dev.156 — serializar o rate limit de mensagens privadas — 2026-10-24
+
+O formulário nativo mantém um lock persistente por remetente do início da checagem Flood até a persistência da mensagem.
+Isso impede que envios concorrentes observem o mesmo contador antes de cada registro. Bloqueio de lock retorna a mensagem
+genérica de limite; rejeição Flood e falha do backend liberam o lock, assim como o submit após persistência. O contador só
+é registrado no submit já existente. Sem tabela nova ou alteração na política configurada.
+
+Validação: `PrivateMessageFormValidatorTest`, `NewConversationRecipientIdsTest` e `PrivateMessageFormHooksTest`
+**17/72 PASS**, cobrindo contenção, liberação em Flood negado/exceção e registro após persistência; PHPCS Drupal/
+DrupalPractice e PHP lint PASS. Runtime e transporte real não usados.
+
 ## 0.1.1-dev.155 — recuperar digests aceitos mesmo sem adapter ativo — 2026-10-24
 
 O cron inclui na descoberta de destinatários os snapshots de digest já aceitos pelo Mailer. Assim, a recuperação verifica a

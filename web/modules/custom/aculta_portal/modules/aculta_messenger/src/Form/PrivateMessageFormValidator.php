@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Form;
 
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserDataInterface;
@@ -23,6 +24,13 @@ final class PrivateMessageFormValidator {
 
   private const WINDOW = 3600;
 
+  private const RATE_LIMIT_LOCK_LEASE_SECONDS = 180.0;
+
+  /**
+   * Lock held from flood validation until the native submit persists the send.
+   */
+  private ?string $rateLimitLockName = NULL;
+
   public function __construct(
     private readonly FloodInterface $flood,
     private readonly AccountProxyInterface $currentUser,
@@ -30,6 +38,7 @@ final class PrivateMessageFormValidator {
     private readonly PrivateMessageBanManagerInterface $banManager,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly UserDataInterface $userData,
+    private readonly LockBackendInterface $lock,
     private readonly ConversationPolicy $policy,
   ) {}
 
@@ -121,7 +130,23 @@ final class PrivateMessageFormValidator {
     }
 
     $identifier = 'uid:' . $this->currentUser->id();
-    if (!$this->flood->isAllowed(self::EVENT, $this->policy->sendLimitPerHour(), self::WINDOW, $identifier)) {
+    $lockName = 'aculta_messenger.private_message_flood.' . $this->currentUser->id();
+    if ($this->rateLimitLockName === NULL) {
+      if (!$this->lock->acquire($lockName, self::RATE_LIMIT_LOCK_LEASE_SECONDS)) {
+        $formState->setErrorByName('message', $this->translation->translate('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.'));
+        return;
+      }
+      $this->rateLimitLockName = $lockName;
+    }
+    try {
+      $allowed = $this->flood->isAllowed(self::EVENT, $this->policy->sendLimitPerHour(), self::WINDOW, $identifier);
+    }
+    catch (\Throwable $exception) {
+      $this->releaseRateLimitLock();
+      throw $exception;
+    }
+    if (!$allowed) {
+      $this->releaseRateLimitLock();
       $formState->setErrorByName('message', $this->translation->translate('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.'));
       return;
     }
@@ -133,7 +158,22 @@ final class PrivateMessageFormValidator {
    */
   public function registerRateLimit(array &$form, FormStateInterface $formState): void {
     $identifier = 'uid:' . $this->currentUser->id();
-    $this->flood->register(self::EVENT, self::WINDOW, $identifier);
+    try {
+      $this->flood->register(self::EVENT, self::WINDOW, $identifier);
+    }
+    finally {
+      $this->releaseRateLimitLock();
+    }
+  }
+
+  /**
+   * Releases this request's flood lock, if validation acquired it.
+   */
+  private function releaseRateLimitLock(): void {
+    if ($this->rateLimitLockName !== NULL) {
+      $this->lock->release($this->rateLimitLockName);
+      $this->rateLimitLockName = NULL;
+    }
   }
 
 }
