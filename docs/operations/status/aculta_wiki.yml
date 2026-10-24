@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.112 — Runtime WE SATIVA homologada: updb 10001, quatro tabelas, Kernel 1/30 e Firefox ESR/X11 19/19. Contrato Messenger v1 inclui dois eventos; value objects Unit 4/5. Fila, producers e consumer pendentes."
-next_phase: 'Implementar enqueue/QueueWorker pós-commit e consumer idempotente com API pública Messenger; depois validar Olivero e WCAG 2.2 AA ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.113 — Eventos de revisão/decisão na Queue API confiável; QueueWorker retém falhas após lease. Unit 18/73 e Kernel MariaDB 1/8 confirmaram fila transacional; update 10002 provisiona tabela antes das transações. Consumer Messenger/idempotência pendentes; Kernel abrangente de decisão encontrou serviço ausente no Studio paralelo."
+next_phase: 'Implementar consumer/API de aviso pessoal idempotente no aculta_messenger e retomar Kernel decisório após estabilização do Studio; depois Olivero e WCAG 2.2 AA ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

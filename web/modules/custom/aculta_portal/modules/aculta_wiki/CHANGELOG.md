@@ -1,3 +1,21 @@
+## 0.1.0-dev.113 — enfileirar eventos editoriais com retry
+
+- `WikiReviewHooks` enfileira revisões padrão que entram em `review`, incluindo
+  criação já em revisão; ignora sincronizações e não repete evento em saves
+  dentro do mesmo estado. O e-mail editorial continua independente.
+- `WikiProposalDecision` grava o evento versionado após salvar a revisão da
+  decisão, dentro da transação que aplica/publica os campos aprovados; o e-mail
+  à autoria continua independente.
+- QueueWorker despacha os eventos por nome estável, usa Queue API confiável e
+  mantém itens após falhas/no consumer até expirar o lease. Consumidor
+  Messenger e idempotência da gravação do aviso ainda estão pendentes. Install
+  e update `10002` preparam a tabela Core `queue` fora de transações editoriais,
+  evitando o DDL de criação sob demanda e commit implícito MariaDB.
+- Unit passou 18 testes / 73 asserções. Kernel MariaDB isolado comprovou
+  rollback/persistência (1/8; 11 depreciações Core/contrib). Kernel abrangente
+  de proposta parou após 94 asserções porque o Studio paralelo não fornece
+  `aculta_studio.tab_manager` no worktree atual; esse bootstrap segue pendente.
+
 ## 0.1.0-dev.112 — fixar os tipos públicos dos eventos editoriais
 
 - Adiciona os eventos imutáveis `WikiEntryReviewRequestedEvent` e

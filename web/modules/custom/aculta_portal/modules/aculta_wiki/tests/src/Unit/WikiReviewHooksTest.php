@@ -7,11 +7,15 @@ namespace Drupal\Tests\aculta_wiki\Unit;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_wiki\Hook\WikiReviewHooks;
 use Drupal\aculta_wiki\Notifier\WikiReviewNotifier;
+use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\node\NodeInterface;
@@ -33,12 +37,39 @@ final class WikiReviewHooksTest extends UnitTestCase {
   private object $queue;
 
   /**
+   * Event payloads added to the reliable queue fixture.
+   *
+   * @var list<array<string, mixed>>
+   */
+  private array $events = [];
+
+  /**
    * Passar de "Rascunho" para "Em revisão" avisa.
    */
   public function testDraftToReviewNotifies(): void {
     $this->hooks()->entityUpdate($this->node('wiki_entry', 'review', $this->node('wiki_entry', 'draft')));
 
     $this->assertCount(1, $this->queue->items);
+    $this->assertCount(1, $this->events);
+    $this->assertSame(10, $this->events[0]['source_revision_id']);
+  }
+
+  /**
+   * A verbete inserted directly into review also produces an event. */
+  public function testInsertInReviewQueuesEvent(): void {
+    $this->hooks()->entityInsert($this->node('wiki_entry', 'review'));
+
+    $this->assertCount(1, $this->events);
+    $this->assertCount(1, $this->queue->items);
+  }
+
+  /**
+   * Non-default revisions do not open an editorial queue item. */
+  public function testNonDefaultReviewRevisionDoesNotQueue(): void {
+    $this->hooks()->entityUpdate($this->node('wiki_entry', 'review', $this->node('wiki_entry', 'draft'), FALSE));
+
+    $this->assertSame([], $this->events);
+    $this->assertSame([], $this->queue->items);
   }
 
   /**
@@ -48,6 +79,7 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->node('wiki_entry', 'review', $this->node('wiki_entry', 'review')));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertSame([], $this->events);
   }
 
   /**
@@ -57,6 +89,7 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->node('wiki_entry', 'review', $this->node('wiki_entry', 'published')));
 
     $this->assertCount(1, $this->queue->items);
+    $this->assertCount(1, $this->events);
   }
 
   /**
@@ -66,6 +99,7 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->node('wiki_entry', 'published', $this->node('wiki_entry', 'draft')));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertSame([], $this->events);
   }
 
   /**
@@ -75,6 +109,7 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->node('page', 'review', $this->node('page', 'draft')));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertSame([], $this->events);
   }
 
   /**
@@ -84,6 +119,7 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->createMock(EntityInterface::class));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertSame([], $this->events);
   }
 
   /**
@@ -93,15 +129,17 @@ final class WikiReviewHooksTest extends UnitTestCase {
     $this->hooks()->entityUpdate($this->node('wiki_entry', NULL));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertSame([], $this->events);
   }
 
   /**
-   * Com a configuração desligada, a transição não enfileira nada.
+   * Desativar o e-mail editorial não desativa o evento do site.
    */
   public function testDisabledConfigDoesNotNotify(): void {
     $this->hooks(FALSE)->entityUpdate($this->node('wiki_entry', 'review', $this->node('wiki_entry', 'draft')));
 
     $this->assertSame([], $this->queue->items);
+    $this->assertCount(1, $this->events);
   }
 
   /**
@@ -131,13 +169,20 @@ final class WikiReviewHooksTest extends UnitTestCase {
       $this->uuid(),
       $this->queue,
     );
-    return new WikiReviewHooks($notifier);
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->method('createItem')->willReturnCallback(function (array $payload): int {
+      $this->events[] = $payload;
+      return count($this->events);
+    });
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->with('aculta_wiki_editorial_events', TRUE)->willReturn($queue);
+    return new WikiReviewHooks($notifier, new WikiEditorialEventQueue($queueFactory, $this->createMock(Connection::class)));
   }
 
   /**
    * Nó com tipo, estado editorial e original.
    */
-  private function node(string $bundle, ?string $state, ?NodeInterface $original = NULL): NodeInterface {
+  private function node(string $bundle, ?string $state, ?NodeInterface $original = NULL, bool $defaultRevision = TRUE): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);
     $node->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'moderation_state' && $state !== NULL);
@@ -148,6 +193,9 @@ final class WikiReviewHooksTest extends UnitTestCase {
       $node->method('get')->with('moderation_state')->willReturn($list);
     }
     $node->method('getOriginal')->willReturn($original);
+    $node->method('isDefaultRevision')->willReturn($defaultRevision);
+    $node->method('getRevisionId')->willReturn(10);
+    $node->method('uuid')->willReturn(self::UUID);
     $node->method('label')->willReturn('Cannabis medicinal');
     $node->method('id')->willReturn(42);
     return $node;

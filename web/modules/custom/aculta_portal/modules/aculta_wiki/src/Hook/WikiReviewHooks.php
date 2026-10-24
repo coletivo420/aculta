@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_wiki\Notifier\WikiReviewNotifier;
+use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
+use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
 
@@ -25,7 +28,21 @@ final class WikiReviewHooks {
 
   public function __construct(
     private readonly WikiReviewNotifier $notifier,
+    private readonly WikiEditorialEventQueue $events,
   ) {}
+
+  /**
+ * Captures a directly created entry that is already in review. */
+  #[Hook('entity_insert')]
+  public function entityInsert(EntityInterface $entity): void {
+    if (!$entity instanceof NodeInterface || $entity->bundle() !== 'wiki_entry'
+      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())
+      || !$entity->isDefaultRevision()
+      || $this->moderationState($entity) !== self::STATE_REVIEW) {
+      return;
+    }
+    $this->enqueue($entity);
+  }
 
   /**
    * Compara o estado editorial antes e depois da atualização do verbete.
@@ -35,6 +52,12 @@ final class WikiReviewHooks {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'wiki_entry') {
       return;
     }
+    if ($entity instanceof SynchronizableInterface && $entity->isSyncing()) {
+      return;
+    }
+    if (!$entity->isDefaultRevision()) {
+      return;
+    }
     if ($this->moderationState($entity) !== self::STATE_REVIEW) {
       return;
     }
@@ -42,6 +65,17 @@ final class WikiReviewHooks {
     if ($original instanceof NodeInterface && $this->moderationState($original) === self::STATE_REVIEW) {
       return;
     }
+    $this->enqueue($entity);
+  }
+
+  /**
+   * Queues the current persisted revision and preserves the existing email. */
+  private function enqueue(NodeInterface $entity): void {
+    $revisionId = $entity->getRevisionId();
+    if ($revisionId === NULL || (int) $revisionId < 1 || !$entity->uuid()) {
+      return;
+    }
+    $this->events->enqueue(new WikiEntryReviewRequestedEvent($entity->uuid(), (int) $revisionId));
     $this->notifier->notifyReview($entity);
   }
 

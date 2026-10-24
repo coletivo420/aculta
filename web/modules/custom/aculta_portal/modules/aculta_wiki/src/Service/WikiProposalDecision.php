@@ -12,6 +12,7 @@ use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\node\NodeInterface;
 use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -34,6 +35,7 @@ final class WikiProposalDecision {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
     private readonly Connection $database,
+    private readonly WikiEditorialEventQueue $editorialEvents,
     private readonly WikiProposalOutcomeNotifier $notifier,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly StateTransitionValidationInterface $transitionValidation,
@@ -126,6 +128,15 @@ final class WikiProposalDecision {
         default => 'Proposta recusada',
       });
       $current->save();
+      $ownerId = (int) $current->getOwnerId();
+      if ($ownerId > 0 && $current->uuid() && $current->getRevisionId()) {
+        $this->editorialEvents->enqueue(new WikiProposalOutcomeRecordedEvent(
+          $current->uuid(),
+          (int) $current->getRevisionId(),
+          $ownerId,
+          $decision,
+        ));
+      }
       $this->notifier->notify($current);
       unset($transaction);
 

@@ -43,7 +43,11 @@ services:
 
   aculta_wiki.proposal_decision:
     class: Drupal\aculta_wiki\Service\WikiProposalDecision
-    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.proposal_outcome_notifier', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation', '@content_moderation.moderation_information']
+    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.editorial_event_queue', '@aculta_wiki.proposal_outcome_notifier', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation', '@content_moderation.moderation_information']
+
+  aculta_wiki.editorial_event_queue:
+    class: Drupal\aculta_wiki\Service\WikiEditorialEventQueue
+    arguments: ['@queue', '@database']
 
   aculta_wiki.proposal_withdrawal:
     class: Drupal\aculta_wiki\Service\WikiProposalWithdrawal
@@ -100,6 +104,7 @@ services:
     class: Drupal\aculta_wiki\Hook\WikiReviewHooks
     arguments:
       - '@Drupal\aculta_wiki\Notifier\WikiReviewNotifier'
+      - '@aculta_wiki.editorial_event_queue'
   Drupal\aculta_wiki\Hook\WikiProposalLinkHooks:
     class: Drupal\aculta_wiki\Hook\WikiProposalLinkHooks
     arguments: ['@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']

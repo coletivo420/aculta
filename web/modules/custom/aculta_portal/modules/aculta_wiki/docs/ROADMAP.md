@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.112**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.113**. No Runtime de teste,
 `aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
 desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
 WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.
@@ -12,6 +12,21 @@ Firefox ESR/X11 autenticado passou 19/19, cobrindo home/CTA, início, workspace,
 formulário/retorno e reflow 320/390/1280. Olivero e WCAG 2.2 AA completa seguem
 pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
 diretamente.
+
+## Incremento dev.113 — fila de eventos Wiki→Messenger
+
+`WikiReviewHooks` enfileira a revisão padrão quando um verbete entra em
+`review`; `WikiProposalDecision` enfileira o resultado somente depois de salvar
+a revisão da decisão e aplicar/publicar campos aprovados. O QueueWorker usa a
+Queue API confiável e despacha o evento imutável por seu nome estável. Install e
+update 10002 preparam a tabela Core `queue` antes de abrir transações Wiki para
+evitar DDL/commit implícito. A exceção
+do consumer ou sua ausência deixa o item para nova tentativa depois do lease de
+60 segundos, sem limite de tentativas e sem retry imediato. Os e-mails atuais
+permanecem independentes. Unit passou 18/73 e o Kernel da fila 1/8. A tentativa
+de Kernel abrangente da decisão parou após 94 asserções porque o Studio paralelo
+não registrou `aculta_studio.tab_manager`. Ainda falta o consumer/API idempotente
+do Messenger; sem ele o worker conserva a fila e nenhum aviso de site é entregue.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -1277,15 +1292,15 @@ As políticas compartilhadas de participação no `aculta_user` estão fixadas p
 
 ## WES-UX V-0.4-D — moderação visual no GanjaLab (2026-10-22)
 
-[Contrato V09–V12 e janela GanjaLab](../../../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): `aculta_wiki` é fonte dos workflows, revisões, access e fila; `aculta_studio` oferece aba Wiki/Moderação e janela de análise, enquanto WE SATIVA mostra confirmação, ajustes recebidos, ajuda, fontes e mídia ao colaborador. Fases D-A contratos/StudioTab → D-B stories SDC → D-C fila e URLs → D-D transições → D-E Messenger e feedback → D-R homologação. Proibido duplicar painel de moderação no WE SATIVA. Mobile-first, shell multidomínio, SDC/UI Suite.
+[Contrato V09–V12 e janela GanjaLab](../../../../../../../docs/portal/MARLEY-WIKI-MODERATION.md): `aculta_wiki` é fonte dos workflows, revisões, access e fila; `aculta_studio` oferece aba Wiki/Moderação e janela de análise, enquanto WE SATIVA mostra confirmação, ajustes recebidos, ajuda, fontes e mídia ao colaborador. Fases D-A contratos/StudioTab → D-B stories SDC → D-C fila e URLs → D-D transições → D-E Messenger e feedback → D-R homologação. Proibido duplicar painel de moderação no WE SATIVA. Mobile-first, shell multidomínio, SDC/UI Suite.
 
 ## V-0.4-R / GanjaLab D-A — auditoria do código existente
 
-[Inventário e contrato da janela Wiki](../../../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
+[Inventário e contrato da janela Wiki](../../../../../../../docs/portal/MARLEY-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
 
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 
-[Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../../../docs/portal/GANJALAB-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
+[Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../../../docs/portal/MARLEY-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
 
 ## D-A.2-T — progresso e próximos gates
 

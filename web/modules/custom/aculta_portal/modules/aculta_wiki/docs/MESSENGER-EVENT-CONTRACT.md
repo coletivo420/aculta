@@ -61,6 +61,10 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
   envelope. O worker só consegue reclamar o item depois do commit; em particular
   o resultado da proposta não pode ser publicado enquanto
   `WikiProposalDecision` ainda puder reverter a publicação do verbete.
+- Provisionar a tabela compartilhada Core `queue` no install/update da Wiki,
+  antes de qualquer transação editorial. O backend DatabaseQueue cria a tabela
+  sob demanda na primeira inserção; DDL MariaDB dentro da decisão pode confirmar
+  implicitamente operações que deveriam sofrer rollback.
 - Usar fila persistente do Drupal e QueueWorker em cron. Uma exceção do listener
   deixa o item disponível novamente depois do lease; não liberar para retry
   imediato em loop. A fila pode entregar mais de uma vez, portanto o consumidor
@@ -88,10 +92,13 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
 ## Estado de implementação
 
 Os value objects dos dois eventos estão implementados em `src/Event/`, com
-payload v1 validado por Unit (4 testes / 5 asserções). O owner Wiki mantém os
-notifiers de e-mail, mas ainda não enfileira nem emite estes eventos. O
-Messenger fornece hooks de apresentação/contagem e sua integração LMS, mas
-ainda não há API pública genérica de registro para esta integração. Próximos
-passos: revisão do owner Messenger, implementar enqueue pós-save e QueueWorker
-retry na Wiki, fechar o contrato de escrita/idempotência do adapter e ligar os
-avisos pessoais sem retirar os e-mails atuais.
+payload v1 validado por Unit (4 testes / 5 asserções). Dev.113 adiciona enqueue
+nas transições de revisão/decisão e QueueWorker com Queue API confiável. O
+install/update 10002 prepara a tabela Queue antes das transações; Kernel MariaDB
+isolado confirmou que rollback também remove o item (1/7). Uma
+exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
+limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
+exceção e conserva o item. Assim, o fluxo ainda não entrega avisos de site: o
+consumer Messenger e sua API pública de gravação/idempotência precisam ser
+implementados antes de habilitar processamento funcional. Os notifiers de
+e-mail atuais continuam independentes.

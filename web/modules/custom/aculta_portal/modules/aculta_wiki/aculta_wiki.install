@@ -8,6 +8,16 @@
 declare(strict_types=1);
 
 /**
+ * Implements hook_install().
+ *
+ * Provision Core's queue table before a Wiki entity save can trigger
+ * DatabaseQueue's lazy table-creation DDL inside an editorial transaction.
+ */
+function aculta_wiki_install(): void {
+  \Drupal::service('aculta_wiki.editorial_event_queue')->prepareStorage();
+}
+
+/**
  * Installs structured field values on existing Wiki proposal entities.
  */
 function aculta_wiki_update_10001(): void {
@@ -34,4 +44,12 @@ function aculta_wiki_update_10001(): void {
     'aculta_wiki',
     $definitions['proposed_fields'],
   );
+}
+
+/**
+ * Provisions Queue API storage before Wiki editorial transactions use it.
+ */
+function aculta_wiki_update_10002(): string {
+  \Drupal::service('aculta_wiki.editorial_event_queue')->prepareStorage();
+  return 'Initialized reliable Queue API storage for ACULTA Wiki editorial events.';
 }

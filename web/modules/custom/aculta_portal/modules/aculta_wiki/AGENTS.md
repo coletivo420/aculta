@@ -48,6 +48,12 @@
 # validação de UUID/revisão e allowlist; Unit 4/5. Ainda não enfileiram nem são
 # emitidos; não declarar aviso Messenger funcional.
 
+# Dev.113: hooks de transição e decisão persistem envelopes na Queue API confiável;
+# QueueWorker despacha eventos e deixa falhas/no consumer para retry após lease.
+# Install/update 10002 preparam a tabela antes das transações para evitar DDL;
+# Kernel confirmou rollback da fila. Sem subscriber Messenger ainda não há aviso
+# de site funcional; e-mails ficam.
+
 # Dev.111: update_10001 instala o schema completo de aculta_wiki_proposal quando
 # ausente e instala proposed_fields apenas se necessário. Kernel simulado passou
 # 1/30. Runtime de teste aplicou update 10001 e drush cr; Firefox ESR/X11 passou
