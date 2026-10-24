@@ -1,3 +1,7 @@
+- Dev.97: Kernel valida URL e acesso do link de decisão das propostas na fila
+  do Studio (1/205; 202 depreciações Core/contrib, 2 PHPUnit). Runtime/visual
+  intocados.
+
 - Dev.96: Unit cobre `q[]` malformado na busca completa/prévia e verifica
   rotas do formulário; focais 9/40 e 4/18. Runtime e visual intocados.
 

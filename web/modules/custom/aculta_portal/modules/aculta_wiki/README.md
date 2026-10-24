@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.97`: Kernel verifica o link da fila de propostas no GanjaLab, a
+  rota de decisão, o ID correspondente e o acesso do moderador (1/205).
+  Runtime e interface visual intocados.
+
 - `0.1.0-dev.96`: busca e prévia tratam `q[]` como entrada inválida sem lançar
   erro ou consultar resultados; a prévia permanece `no-store, private`.
   `WikiControllerTest` passou (9/40) e `WikiSearchFormBuilderTest` (4/18).

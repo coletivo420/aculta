@@ -293,10 +293,11 @@ exponha propostas nesta entrega.
 | Escopo de domínio | Kernel | Consulta dentro do purpose `wiki` e restaura `main` | aprovado |
 | Cache | Kernel | Metadados incluem conta, permissões, grants, domínio e cursor | aprovado |
 | Paginação da fila de revisões com candidatos inacessíveis | Kernel MariaDB | Ignora 26 candidatos negados, retorna 26 revisões autorizadas em páginas 25+1 e conserva somente a revisão atual | aprovado no HEAD (1 teste / 101 asserções; 198 depreciações Core/contrib, 2 PHPUnit) |
-| Resultado/URL da fila no Studio | Kernel/Functional | Operações só por Form API com acesso editorial | planejado |
+| Resultado/URL da fila no Studio | Kernel | Lista propostas autorizadas e gera link para a rota de decisão com acesso permitido | aprovado (focal Kernel MariaDB; 3 novas asserções de rota/alvo/acesso) |
 
-Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
-284 depreciações Drupal/contrib e 9 do PHPUnit. Não há rota nem UI da fila.
+Kernel MariaDB da classe completa: ver registro de execução atual no Roadmap.
+Decisões e aplicação são feitas pelo Form API proprietário da Wiki; a UI é
+apresentada na aba Wiki do GanjaLab.
 
 ## Envio contextual de proposta — Kernel real (dev.16)
 

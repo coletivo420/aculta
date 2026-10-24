@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.96**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.97**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.97 — link de decisão da fila no GanjaLab
+
+O Kernel de envio/proposta também constrói a lista autorizada no Studio e agora
+confirma que o link gerado aponta para `aculta_wiki.proposal_decide`, contém o
+ID da proposta correspondente e passa pelo acesso de rota do moderador. Focal
+MariaDB passou: 1 teste / 205 asserções; 202 depreciações Core/contrib e 2
+depreciações PHPUnit. Runtime e interface visual não foram alterados.
 
 ### Incremento dev.96 — entrada malformada na busca
 

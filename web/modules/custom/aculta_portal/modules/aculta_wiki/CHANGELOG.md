@@ -1310,3 +1310,10 @@
 - `WikiControllerTest`: 9 testes / 40 asserções. `WikiSearchFormBuilderTest`:
   4 / 18. Runtime, configuração instalada e interface visual não foram alterados.
 
+## 0.1.0-dev.97 — validar destino da fila editorial no GanjaLab
+
+- O Kernel confirma que a fila do Studio gera o link de cada proposta para a
+  rota de decisão da Wiki, com o ID correto e acesso permitido ao moderador.
+- Focal MariaDB: 1 teste / 205 asserções; 202 depreciações Core/contrib e 2 do
+  PHPUnit. Nenhuma alteração no Runtime ou interface instalada.
+

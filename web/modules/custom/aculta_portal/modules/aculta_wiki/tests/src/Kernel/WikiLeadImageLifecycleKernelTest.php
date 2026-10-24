@@ -2568,6 +2568,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->build(['entity' => 'wiki_proposal_queue'], $reviewer);
     self::assertCount(25, $studioProposalListing['table']['#rows']);
     self::assertContains('user.permissions', $studioProposalListing['#cache']['contexts']);
+    $firstProposalId = (int) $firstPage->getItems()[0]->id();
+    $decisionLink = $studioProposalListing['table']['#rows'][0]['proposal']['data']['#url'];
+    self::assertSame('aculta_wiki.proposal_decide', $decisionLink->getRouteName());
+    self::assertSame(['proposal' => (string) $firstProposalId], $decisionLink->getRouteParameters());
+    self::assertTrue($decisionLink->access($reviewer));
 
     $proposalToDecide = $firstPage->getItems()[0];
     $oldProposalRevisionId = (int) $proposalToDecide->getRevisionId();
