@@ -764,6 +764,56 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Accepted digests remain discoverable while their optional adapter is off.
+   */
+  public function testAcceptedDigestSnapshotRetriesWithoutEnabledProvider(): void {
+    $account = $this->createUser('digest_adapter_desativado');
+    $account->setEmail('digest-disabled-adapter@example.test');
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    (new AvisoPreferencias($userData))->salvar($uid, TRUE, TRUE, TRUE);
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => $this->container->get('datetime.time')->getRequestTime(),
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'provider_id' => 'wiki',
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData->set('aculta_messenger', $uid, 'avisos_resumo_em_andamento', $snapshot);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $mailer->expects(self::once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'digest-disabled-adapter@example.test')
+      ->willReturn(TRUE);
+    $avisos = $this->createAvisoService([]);
+    $database = $this->container->get('database');
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      new AvisoPreferencias($userData),
+      $mailer,
+      new EmailConfirmationPolicy($userData, $this->container->get('entity_type.manager'), $this->container->get('module_handler')),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [],
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame($snapshot, $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
+  }
+
+  /**
    * A permanent email failure closes email delivery but preserves site notice.
    */
   public function testPermanentDigestFailureKeepsTheRequiredSiteNotice(): void {

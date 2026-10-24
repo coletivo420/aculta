@@ -84,6 +84,17 @@ final class AvisosResumo {
     foreach ($storage->loadMultiple($ids) as $aviso) {
       $porUsuario[(int) $aviso->get('uid')->target_id] = TRUE;
     }
+    // An accepted email may still need acknowledgement even when its
+    // optional provider was disabled after transport acceptance. Include
+    // those recipients so recovery can wait safely for the provider to return.
+    $snapshots = $this->userData->get('aculta_messenger', NULL, 'avisos_resumo_em_andamento');
+    if (is_array($snapshots)) {
+      foreach ($snapshots as $uid => $snapshot) {
+        if (is_numeric($uid) && (int) $uid > 0 && is_array($snapshot)) {
+          $porUsuario[(int) $uid] ??= [];
+        }
+      }
+    }
     $providers = $this->digestProviders;
     foreach ($providers as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {

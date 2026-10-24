@@ -62,7 +62,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
 
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+    $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
       'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_OFF,
       'avisos_resumo_ultimo' => 0,
@@ -136,7 +136,10 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
 
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static function (string $module, int $uid, string $key): mixed {
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key): mixed {
+      if ($uid === NULL) {
+        return [];
+      }
       if ($module === 'aculta_portal' && $key === 'email_confirmed') {
         return TRUE;
       }
@@ -232,7 +235,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
 
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+    $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
       'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_resumo_ultimo' => 0,
@@ -308,7 +311,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
 
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+    $userData->method('get')->willReturnCallback(static fn(string $module, ?int $uid, ?string $key): mixed => match ($key) {
       'avisos_resumo_email' => TRUE,
       'avisos_email_mode_loja' => AvisoPreferencias::EMAIL_DIGEST,
       'avisos_resumo_ultimo' => 0,

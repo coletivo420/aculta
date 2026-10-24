@@ -1,3 +1,14 @@
+## 0.1.1-dev.155 — recuperar digests aceitos mesmo sem adapter ativo — 2026-10-24
+
+O cron inclui na descoberta de destinatários os snapshots de digest já aceitos pelo Mailer. Assim, a recuperação verifica a
+correlação mesmo quando não há aviso pendente de outra origem. Se o adapter opcional do manifesto estiver desativado, o
+snapshot é preservado e nenhuma segunda entrega nem confirmação de linhas alheias ocorre; quando o adapter voltar, o
+manifesto pode ser confirmado sem reenviar o e-mail. A consulta usa `user.data` pelo nome exato da chave, sem novo storage.
+
+Validação: Integration Unit de digest 13/100; suíte Messenger Unit + Integration Unit 195/1.353; Kernel MariaDB
+`ForumNoticeIdempotencyKernelTest` **33/745 PASS**, incluindo `user.data` real e adapter indisponível; PHPCS
+Drupal/DrupalPractice, PHP lint, gate Drupal 11+ (1.155 checks), índice e `git diff --check` PASS. Runtime/SMTP não usados.
+
 ## 0.1.1-dev.154 — gerenciar tópicos seguidos nas preferências — 2026-10-24
 
 A página de privacidade lista os tópicos seguidos pela pessoa usando a Flag `seguir_topico` e permite parar de seguir

@@ -182,6 +182,48 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * An accepted batch waits for its optional provider to return before ack.
+   */
+  public function testAcceptedDigestWithUnavailableProviderKeepsRecoverySnapshot(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'provider_id' => 'wiki',
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    // A different active source can still trigger recovery for this account.
+    $activeProvider = new TestLearningDigestProvider([27]);
+    $summary = $this->createSummary($activeProvider, $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(1, $summary->enviarResumos(), 'A previously accepted email is handled without another transport attempt.');
+    $this->assertSame([], $activeProvider->marked, 'No unrelated provider rows are acknowledged as part of the unavailable adapter batch.');
+  }
+
+  /**
    * A different batch receives a different correlation.
    */
   public function testDistinctDigestBatchGetsDistinctCorrelation(): void {
@@ -316,7 +358,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   /**
    * Builds the real Messenger digest service with an LMS provider.
    */
-  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL): AvisosResumo {
+  private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -335,24 +377,29 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => $type === 'user' ? $userStorage : $noticeStorage);
 
     $data = [];
-    $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static function (string $module, int $uid, string $key) use ($optIn, &$data): mixed {
-      if (array_key_exists($key, $data[$module][$uid] ?? [])) {
-        return $data[$module][$uid][$key];
-      }
-      return match ($key) {
-        'avisos_resumo_email' => $optIn,
-        'email_confirmed' => TRUE,
-        'avisos_resumo_ultimo' => 0,
-        default => NULL,
-      };
-    });
-    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$data): void {
-      $data[$module][$uid][$key] = $value;
-    });
-    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$data): void {
-      unset($data[$module][$uid][$key]);
-    });
+    $userData = $userDataOverride ?? $this->createMock(UserDataInterface::class);
+    if ($userDataOverride === NULL) {
+      $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($optIn, &$data): mixed {
+        if ($uid === NULL) {
+          return [];
+        }
+        if (array_key_exists($key, $data[$module][$uid] ?? [])) {
+          return $data[$module][$uid][$key];
+        }
+        return match ($key) {
+          'avisos_resumo_email' => $optIn,
+          'email_confirmed' => TRUE,
+          'avisos_resumo_ultimo' => 0,
+          default => NULL,
+        };
+      });
+      $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$data): void {
+        $data[$module][$uid][$key] = $value;
+      });
+      $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$data): void {
+        unset($data[$module][$uid][$key]);
+      });
+    }
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
       $entityTypeManager,
