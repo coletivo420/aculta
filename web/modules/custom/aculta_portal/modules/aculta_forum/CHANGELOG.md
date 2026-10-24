@@ -1,3 +1,9 @@
+## `0.1.0-dev.283` — provar o gate de purpose da galeria — 2026-10-24
+
+- Kernel confirma que a galeria do Fórum é negada fora do purpose `forum` e
+  que, dentro dele, a galeria não publicada volta à política do dono.
+- Testes: anexos 13/373; suíte Kernel do Fórum 107/2.191; PHPCS limpo.
+
 ## `0.1.0-dev.282` — provar o gate de purpose do anexo — 2026-10-24
 
 - Kernel confirma que o anexo do Fórum é negado fora do purpose `forum` e que,

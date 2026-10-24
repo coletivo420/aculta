@@ -399,6 +399,27 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
       fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
     );
     self::assertFalse($inside?->isForbidden(), 'No purpose Fórum a mídia não publicada volta à política do dono.');
+
+    $gallery = $this->container->get('entity_type.manager')->getStorage('media_gallery')->create([
+      'title' => 'Galeria de purpose',
+      'uid' => $this->author->id(),
+      'status' => FALSE,
+      'field_gallery_purpose' => 'forum',
+      'images' => [['target_id' => $media->id()]],
+    ]);
+    $gallery->save();
+
+    $gallery_outside = $this->purpose->runInPurpose(
+      'main',
+      fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
+    );
+    self::assertTrue($gallery_outside?->isForbidden(), 'Fora do purpose Fórum a galeria é negada.');
+
+    $gallery_inside = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->entityAccess($gallery, 'view', new AnonymousUserSession()),
+    );
+    self::assertFalse($gallery_inside?->isForbidden(), 'No purpose Fórum a galeria não publicada volta à política do dono.');
   }
 
   /**
