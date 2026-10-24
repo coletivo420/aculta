@@ -97,9 +97,10 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 27 testes / 1.425
-asserções, 291 depreciações Core/contrib e 28 PHPUnit; reexecutada no ciclo
-dev.95. O aviso de diretório BrowserTest não gravável não impediu a suíte.
+Classe `WikiLeadImageLifecycleKernelTest` completa: revalidada no HEAD
+`5364d041b`, MariaDB, 27 testes / 1.453 asserções; 291 depreciações
+Core/contrib e 28 PHPUnit. O aviso de diretório BrowserTest não gravável não
+impediu a suíte.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 
@@ -127,8 +128,8 @@ Runtime intocado.
 | Lookup contextual do User | Unit | Não combina contextos; provider ausente/duplicado/falho resulta indisponível e exige revisão | aprovado (3/19) |
 | Adapter Wiki descoberto | Kernel MariaDB | Provider `wiki_entry` real; ignora rascunho, outra autoria, outro Domain e Domain inativo; revisão pendente não-default preserva a publicação padrão | aprovado (dev.87; 1/45) |
 | Cache e Domain | Kernel MariaDB | Evidência tem tag de listagem; cache por usuário atual, `max-age: 0` para UID diferente; Domain anterior é restaurado | aprovado (dev.87) |
-| Domain canônico na criação | Kernel MariaDB | Campo vazio recebe Wiki; origem explícita é preservada | aprovado (focal 1/111; classe completa no mesmo código 27/1.452; 291 depreciações Core/contrib e 28 PHPUnit) |
-| Integração a permissões/transições | Kernel MariaDB | Primeiro verbete recebe Domain Wiki; editor publica pela transição oficial; lookup reconhece publicação e a autoria ainda envia o seguinte a `review`, sem `review_to_published` | aprovado (focal 1/111; classe 27/1.452) |
+| Domain canônico na criação | Kernel MariaDB | Campo vazio recebe Wiki; origem explícita é preservada | aprovado (focal 1/111; classe revalidada 27/1.453; 291 depreciações Core/contrib e 28 PHPUnit) |
+| Integração a permissões/transições | Kernel MariaDB | Primeiro verbete recebe Domain Wiki; editor publica pela transição oficial; lookup reconhece publicação e a autoria ainda envia o seguinte a `review`, sem `review_to_published` | aprovado (focal 1/111; classe 27/1.453) |
 
 ## Aplicação editorial de propostas (dev.29)
 

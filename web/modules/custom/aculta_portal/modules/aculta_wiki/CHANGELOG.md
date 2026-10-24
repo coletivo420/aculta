@@ -1365,6 +1365,13 @@
   salvo sem `field_domain_source`; valor explícito permanece preservado.
 - Kernel comprova criação no Domain, revisão inicial, publicação oficial por
   editor, lookup de participação e revisão obrigatória no verbete seguinte
-  (focal 1/111; classe 27/1.452, 291 depreciações Core/contrib e 28 PHPUnit).
+  (focal 1/111; classe 27/1.453, 291 depreciações Core/contrib e 28 PHPUnit).
   Runtime intocado.
+
+## Revalidação R2 — imagem após dev.102, HEAD `5364d041b`
+
+- `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27 testes /
+  1.453 asserções; 291 depreciações Core/contrib e 28 PHPUnit. A alteração de
+  presave Domain não interferiu no upload privado, alinhamento da publicação,
+  retenção por revisões nem rollback. Runtime intocado.
 

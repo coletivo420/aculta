@@ -27,8 +27,15 @@ canônico em verbetes sem origem explícita, permitindo que busca, Index e looku
 de participação reconheçam autoria criada no formulário nativo. O Kernel
 confirma origem Wiki na criação, primeira submissão em `review`, publicação
 somente pelo editor, lookup atualizado após publicação e submissão subsequente
-continuando em `review`. Focal MariaDB: 1/111; classe completa: 27/1.452, com
-291 depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
+continuando em `review`. Focal MariaDB: 1/111; classe completa revalidada em
+27/1.453, com 291 depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
+
+### Revalidação R2 — imagem no HEAD `5364d041b`
+
+Após o hook que preenche o Domain Wiki, a classe `WikiLeadImageLifecycleKernelTest`
+passou completa em MariaDB (27 testes / 1.453 asserções; 291 depreciações
+Core/contrib e 28 PHPUnit). A visibilidade segue alinhada à publicação do
+verbete, com rollback e retenção por revisões aprovados. Runtime intocado.
 
 ### Incremento dev.101 — primeira submissão não eleva acesso
 

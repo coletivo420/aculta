@@ -10,8 +10,13 @@ pendentes, está em
 - `0.1.0-dev.102`: verbetes criados sem origem explícita recebem o Domain Wiki
   canônico. Kernel prova lookup de publicação depois da decisão do editor e
   mantém submissões posteriores em `review` sem conceder publicação à autoria
-  (focal 1/111; classe Kernel 27/1.452, 291 depreciações Core/contrib e 28
+  (focal 1/111; classe Kernel revalidada em 27/1.453, 291 depreciações Core/contrib e 28
   PHPUnit). Runtime intocado.
+
+- R2 revalidada após dev.102 no HEAD `5364d041b`: o ciclo completo de imagem
+  passou em 27 testes / 1.453 asserções; 291 depreciações Core/contrib e 28
+  PHPUnit. Upload privado, visibilidade alinhada à publicação do verbete,
+  retenção por revisões e rollback continuam cobertos; Runtime intocado.
 
 - `0.1.0-dev.101`: Kernel integra lookup de participação e formulário nativo;
   primeira submissão segue em `review` e não habilita publicação pela autoria
