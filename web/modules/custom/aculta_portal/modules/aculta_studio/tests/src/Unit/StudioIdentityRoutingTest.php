@@ -33,6 +33,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/ganjalab' => 'aculta_lms.student_dashboard',
       '/studio/we-sativa' => 'aculta_studio.we_sativa',
       '/studio/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
+      '/studio/pessoal' => 'aculta_studio.personal',
     ];
 
     foreach ($expected as $path => $owner) {
@@ -40,6 +41,27 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertCount(1, $matches, sprintf('Canonical path %s must have a single route.', $path));
       self::assertArrayHasKey($owner, $routes);
     }
+  }
+
+  /**
+   * Personal entry is account-only and does not replace the legacy Marley home.
+   */
+  public function testPersonalRouteIsExplicitProtectedAndDoesNotChangeStudioHome(): void {
+    $module = dirname(__DIR__, 3);
+    $routes = Yaml::decode(file_get_contents($module . '/aculta_studio.routing.yml'));
+
+    $personal = $routes['aculta_studio.personal'];
+    self::assertSame('/studio/pessoal', $personal['path']);
+    self::assertSame('account', $personal['options']['_aculta_domain_purpose']);
+    self::assertSame('access aculta portal', $personal['requirements']['_permission']);
+    self::assertSame('TRUE', $personal['requirements']['_user_is_logged_in']);
+    self::assertSame('/studio', $routes['aculta_studio.legacy_home']['path']);
+    self::assertSame('aculta_studio.marley_controller:legacyPage',
+      $routes['aculta_studio.legacy_home']['defaults']['_controller']);
+
+    $order = array_keys($routes);
+    self::assertTrue(array_search('aculta_studio.personal', $order, TRUE)
+      < array_search('aculta_studio.legacy_area', $order, TRUE));
   }
 
   /**
