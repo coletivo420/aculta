@@ -2,6 +2,20 @@
 
 ACULTA Studio é a plataforma transversal de interfaces próprias na conta. O machine name do submódulo permanece `aculta_studio`.
 
+## STUDIO-P1-B — Marley no registry e prévia do hub (dev.9)
+
+O catálogo agora registra também `MarleyExperienceProvider`, que usa as
+áreas autorizadas pelo `MarleyPresenter` e **não** substitui
+`MarleyTabManager`. `StudioExperienceManager::all()` fornece a enumeração
+ordenada, e a prévia `/studio/inicio` (purpose `account`, GET/HEAD) mostra
+links das experiências disponíveis **com autorização** e rotas existentes.
+
+**`/studio` ainda é a entrada de compatibilidade do Marley**, e a home
+`/` do Domain ACCOUNT continua Minha Conta. Esta prévia não cria menu
+unificado definitivo nem migra dados, formulários ou o shell atual. Testes
+Unit foram adicionados, mas ainda não executados no Runtime nesta entrega.
+Ver [ROADMAP](docs/ROADMAP.md), P1-B.
+
 ## STUDIO-P1-A — Meu Espaço: entrada mínima implementada (dev.8)
 
 Proposta de 2026-10-24: evoluir `/studio` para hub geral, criar a experiência
@@ -23,6 +37,7 @@ Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
 
 ## Experiências
 
+- **Prévia do hub geral**: `/studio/inicio` com descoberta e links autorizados; `/studio` ainda pertence ao legado Marley.
 - **ACULTA Studio Marley (`marley`)**: espaço editorial de criação, edição e moderação. Usa contratos exclusivos `MarleyTab`, `MarleyTabInterface`, `MarleyTabBase`, `MarleyTabManager`, `MarleyPresenter`, `MarleyListingBuilder` e `MarleyController`. Os IDs funcionais das áreas Revista, Wiki, Cursos, Fórum e Galerias não mudam.
 - **ACULTA Studio Ganjalab (`ganjalab`)**: entrada estudantil composta pelo `GanjalabExperienceProvider` e `GanjalabController`. `StudioExperienceManager` permanece registro compartilhado. `LearnerDashboardComposer`, `LearningDashboardManager` e `aculta_lms.student_dashboard` mantêm seus contratos neutros.
 - **Meu Espaço (`pessoal`)**: entrypoint inicial no purpose `account`, com
