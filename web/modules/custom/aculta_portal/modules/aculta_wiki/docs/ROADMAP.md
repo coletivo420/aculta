@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.106**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.107**. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -13,6 +13,15 @@ rota também não existem no container ativo. Runtime segue sem homologação
 integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.107 — render da home pelo tema público
+
+O Kernel instala `aculta420`, processa as Views reais e renderiza o build da
+home; o HTML contém os SDCs `aculta-context-tabs` e `aculta-wiki-home` (1/96).
+Na classe Kernel completa, 27 testes / 1.483 asserções passaram, com 304
+depreciações Core/contrib e 28 PHPUnit.
+O schema do tema agora cobre seus nove defaults `b5_*`. A resposta HTTP 200 e
+homologação Runtime permanecem pendentes; não houve mudança no Runtime.
 
 ### Revalidação R2 — ciclo de vida da imagem no HEAD `b5995d171`
 

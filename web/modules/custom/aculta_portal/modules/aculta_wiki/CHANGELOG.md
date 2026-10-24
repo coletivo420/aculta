@@ -1,3 +1,12 @@
+## 0.1.0-dev.107 — renderizar a home com ACULTA420 no Kernel
+
+- O Kernel instala o tema público, valida o schema de `aculta420.settings` e
+  renderiza a home da Wiki com os SDCs `context-tabs` e `wiki-home` no HTML.
+  O focal passou em 1 teste / 96 asserções; foram reportadas 300 depreciações
+  Core/contrib/PHPUnit. A classe Kernel completa passou em 27 testes / 1.483
+  asserções, com 304 depreciações Core/contrib e 28 PHPUnit. HTTP 200 no
+  Runtime e revisão visual continuam pendentes.
+
 ## Revalidação R2 — ciclo de vida da imagem no HEAD `b5995d171`
 
 - `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27 testes /

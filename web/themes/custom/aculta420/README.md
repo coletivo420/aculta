@@ -14,6 +14,11 @@ O Portal prepara URLs, dados, acesso e cache. O ACULTA420 escolhe a apresentaç�
 com Twig, Bootstrap e Single Directory Components (SDC) do Drupal Core. SDCs
 recebem props e slots de apresentação e não resolvem regras de domínio.
 
+Schema `aculta420.settings` inclui as opções Bootstrap `b5_*` preservadas nos
+defaults do tema. A instalação do ACULTA420 e a renderização dos SDCs da home
+Wiki foram verificadas em Kernel MariaDB; HTTP/Runtime e revisão visual seguem
+pendentes.
+
 ## Documentação
 
 - [Índice da documentação do tema](docs/README.md)

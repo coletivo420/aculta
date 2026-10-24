@@ -965,6 +965,22 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('recent', $homeBuild);
     self::assertArrayHasKey('changes', $homeBuild);
 
+    // Render the Wiki home with the production theme in this isolated
+    // Kernel. Installing the theme also validates its exported settings schema.
+    $this->installEntitySchema('taxonomy_term');
+    $this->installConfig(['taxonomy']);
+    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('config.factory')->getEditable('system.theme')
+      ->set('default', 'aculta420')
+      ->save();
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
+    $this->container->get(DomainNegotiatorInterface::class)
+      ->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get('theme.manager')->resetActiveTheme();
+    $homeHtml = $this->container->get('renderer')->renderRoot($homeBuild);
+    self::assertStringContainsString('aculta-context-tabs', (string) $homeHtml);
+    self::assertStringContainsString('aculta-wiki-home', (string) $homeHtml);
+
     Role::load('anonymous')->revokePermission('access content')->save();
     self::assertFalse($accessManager->checkNamedRoute(
       'aculta_portal.wiki_home',

@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.1-dev.7 | Schema de settings e renderização SDC da home Wiki no Kernel | Kernel Wiki 1/96; Runtime e browser pendentes | `aculta420.settings` reconhece as nove opções `b5_*` dos defaults; instalação e render pelo tema passam |
 | 0.6.1-dev.6 | Tokens visuais do workspace WE SATIVA e retorno aos trabalhos | PHPUnit Unit de PortalUiHooks; browser WE SATIVA pendente | Layout usa `d-grid/gap-4`, ação de criação `btn-primary`, retorno `btn-outline-primary`; não cria SDC paralelo |
 | 0.6.1-dev.5 | Corrigida largura do submit da busca no cabeçalho Wiki | Firefox ESR/X11, CSS candidato direto, 46/46; sem overflow em 320/390/1280 px | Largura intrínseca evita que `.form-control` ultrapasse o formulário flex; agregado Runtime e Olivero pendentes |
 | 0.6.1-dev.4 | Removidos overrides de Article e Blog aposentados | Changelog registra alteração compatível no tema | `revista` permanece com override próprio |

@@ -130,6 +130,7 @@ Marcações já feitas, por linha:
 
 | Versão | Marcação no código | Observação |
 | --- | --- | --- |
+| 0.6.1-dev.7 | Schema das configurações do tema e render da home Wiki em Kernel | marcada no código; HTTP/Runtime pendente |
 | 0.1.0 | Foundation | concluída |
 | 0.2.0 | fechamento da linha 0.2 | concluída |
 | 0.3.0 | fechamento da linha 0.3 | concluída |

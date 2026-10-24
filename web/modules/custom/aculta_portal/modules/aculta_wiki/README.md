@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.107`: Kernel instala o ACULTA420 e renderiza a home Wiki sob o
+  tema público; os SDCs `context-tabs` e `wiki-home` aparecem no HTML (focal
+  1/96). A classe Kernel completa passou em 27/1.483, com 304 depreciações
+  Core/contrib e 28 PHPUnit. HTTP 200 e Runtime seguem pendentes.
+
 - Revalidação R2 do ciclo de imagem no HEAD `b5995d171` (2026-10-24): classe
   Kernel MariaDB completa aprovada, 27 testes / 1.475 asserções; 291
   depreciações Core/contrib e 28 PHPUnit. Upload, visibilidade, revisão

@@ -1,3 +1,13 @@
+## 0.6.1-dev.7 — schema das configurações do tema e render da home Wiki — 2026-10-24
+
+Classificação: PATCH de compatibilidade do tema.
+
+- `aculta420.settings` tipa as nove opções `b5_*` já fornecidas nos defaults do
+  tema. A instalação do ACULTA420 falhava no Kernel porque essas chaves não
+  tinham schema; não houve alteração de valores ou do contrato de apresentação.
+- Kernel da Wiki instala o tema e renderiza a home com os SDCs `context-tabs` e
+  `wiki-home` (focal 1/96). HTTP/Runtime e revisão visual continuam pendentes.
+
 ## 0.6.1-dev.6 — apresentar ações do workspace WE SATIVA
 
 Classificação: PATCH de integração visual.
