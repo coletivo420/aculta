@@ -56,14 +56,6 @@ final class PrivateMessageFormValidator {
         $formState->setErrorByName('members', $this->translation->translate('Não foi possível enviar a mensagem para esse destinatário.'));
         return;
       }
-      // "Só amigos" also stops sending in conversations that already exist; staff keep sending, as before.
-      if ($memberId !== (int) $this->currentUser->id()
-        && !$this->currentUser->hasRole('administrator') && !$this->currentUser->hasRole('content_editor')
-        && $this->userData->get('aculta_messenger', $memberId, 'message_privacy') === 'friends'
-        && !$this->friendshipManager->areFriendsWith($memberId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Essa pessoa só recebe mensagens de amigos.'));
-        return;
-      }
     }
   }
 

@@ -21,8 +21,6 @@ final class ConversationPolicy {
 
   public const KIND_DIRECT = 'direct';
   public const KIND_GROUP = 'group';
-  public const KIND_FORUM = 'forum';
-  public const KIND_COURSE = 'course';
 
   /** Defaults, used when the configuration has no value (config/install/aculta_messenger.settings.yml). */
   public const DEFAULT_GROUP_MAX_MEMBERS = 10;
@@ -60,13 +58,9 @@ final class ConversationPolicy {
   }
 
   /**
-   * Months of inactivity before a conversation is removed (between 1 and 36), or NULL when the kind is kept: the LMS
-   * course chat is persistent.
+   * Months of inactivity before a direct or voluntary group conversation is removed.
    */
-  public function retentionMonths(string $kind = self::KIND_DIRECT): ?int {
-    if ($kind === self::KIND_COURSE) {
-      return NULL;
-    }
+  public function retentionMonths(): int {
     return $this->clamp((int) $this->get('retention_months', self::DEFAULT_RETENTION_MONTHS), 1, 36);
   }
 

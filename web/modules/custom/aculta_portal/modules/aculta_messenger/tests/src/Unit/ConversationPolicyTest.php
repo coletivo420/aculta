@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * The chat rules: kinds, the administrator's limits, and the defaults when no value is saved.
+ * The private conversation rules, administrator limits, and defaults when no value is saved.
  */
 #[CoversClass(ConversationPolicy::class)]
 #[Group('aculta_messenger')]
@@ -61,10 +61,9 @@ final class ConversationPolicyTest extends UnitTestCase {
     $this->assertSame(1, $policy->maxRecipients(ConversationPolicy::KIND_GROUP, $account));
   }
 
-  public function testCourseChatIsPersistent(): void {
+  public function testRetentionPolicyAppliesToPrivateConversations(): void {
     $policy = $this->policy();
-    $this->assertNull($policy->retentionMonths(ConversationPolicy::KIND_COURSE));
-    $this->assertSame(6, $policy->retentionMonths(ConversationPolicy::KIND_DIRECT));
+    $this->assertSame(6, $policy->retentionMonths());
   }
 
   public function testValuesOutsideTheLimitsAreClamped(): void {

@@ -1,3 +1,20 @@
+## 0.1.1-dev.78 — alinhar privacidade e conversas voluntárias — 2026-10-24
+
+- A preferência “somente amigos” volta a restringir apenas a criação de novas
+  conversas; respostas em threads existentes continuam sujeitas aos bloqueios
+  bilaterais e ao acesso nativo do Private Message.
+- Removida a regra de retenção especial `course`, que representava o antigo chat
+  automático de turma. Conversas diretas e grupos voluntários seguem a política
+  configurada sem migração de dados.
+- Documentação normativa substitui chats contextuais e componentes de
+  participação por avisos no site/e-mail; preserva os textos superados como
+  histórico onde aplicável.
+- PHPUnit Unit Messenger: 60 testes / 282 assertions PASS; LMS Messenger: 18 /
+  88 PASS. Testes Kernel não iniciaram por ausência de `SIMPLETEST_DB`; PHPCS
+  nos arquivos tocados não passou; há achados de estilo/PHPDoc e a auditoria
+  completa desses arquivos continua pendente. Runtime
+  não homologado.
+
 ## 0.1.1-dev.77 — busca de membros com região viva nomeada
 
 - Prévia de membros agora é uma região `aria-live` com rótulo; seus resultados

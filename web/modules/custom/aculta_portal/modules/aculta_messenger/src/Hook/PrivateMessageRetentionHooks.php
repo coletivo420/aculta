@@ -54,10 +54,6 @@ final class PrivateMessageRetentionHooks {
       if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->getUpdatedTime() > $cutoff) {
         continue;
       }
-      // A kind without retention (the LMS course chat) is never removed by inactivity.
-      if ($this->policy->retentionMonths($this->policy->kindOf($thread)) === NULL) {
-        continue;
-      }
       try {
         // Notification records point at the private messages that the thread's lifecycle deletes.
         // Remove them in the same pass so no member still sees a notice for a conversation that is gone.

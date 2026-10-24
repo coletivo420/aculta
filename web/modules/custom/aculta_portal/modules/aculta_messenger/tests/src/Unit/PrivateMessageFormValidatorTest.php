@@ -108,6 +108,71 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $this->assertSame('Não foi possível enviar a mensagem para esse destinatário.', $formState->getErrors()['members']);
   }
 
+  /**
+   * The preference does not disable replies in existing threads.
+   */
+  public function testFriendOnlyPreferenceDoesNotBlockRepliesToExistingThread(): void {
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('getMembersId')->willReturn([42, 84]);
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->method('isBanned')->willReturn(FALSE);
+    $banManager->method('isCurrentUserBannedByUser')->willReturn(FALSE);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects($this->never())->method('areFriendsWith');
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects($this->never())->method('get');
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+
+    $formState = $this->formState(FALSE);
+    $formState->set('thread', $thread);
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->translation('blocked'),
+      $banManager,
+      $friendships,
+      $userData,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $form = [];
+
+    $validator->validateBlockedRecipients($form, $formState);
+
+    $this->assertSame([], $formState->getErrors());
+  }
+
+  /**
+   * The preference still applies when creating a thread.
+   */
+  public function testFriendOnlyPreferenceStillRestrictsNewThreads(): void {
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('getMembersId')->willReturn([42, 84]);
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $currentUser->method('hasRole')->willReturn(FALSE);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects($this->once())->method('areFriendsWith')->with(84)->willReturn(FALSE);
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->with('aculta_messenger', 84, 'message_privacy')->willReturn('friends');
+    $formState = $this->formState(FALSE);
+    $formState->set('pmt_entity', $thread);
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->translation('Não foi possível iniciar uma conversa com este destinatário.'),
+      $this->createMock(PrivateMessageBanManagerInterface::class),
+      $friendships,
+      $userData,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $form = [];
+
+    $validator->validateNewConversationPrivacy($form, $formState);
+
+    $this->assertSame('Não foi possível iniciar uma conversa com este destinatário.', $formState->getErrors()['members']);
+  }
+
   public function testExistingValidationErrorSkipsRecipientLookup(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->expects($this->never())->method('getMembersId');
