@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Commerce;
 
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -26,7 +26,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores and resolves Commerce order notices in Message, without a parallel inbox. */
-final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInterface, AvisoDigestProviderInterface {
+final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
 
   /**
    * {@inheritdoc}

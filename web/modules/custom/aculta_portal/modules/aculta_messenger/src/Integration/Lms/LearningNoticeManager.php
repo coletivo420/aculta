@@ -31,7 +31,7 @@ use Drupal\user\UserInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
-use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
@@ -42,7 +42,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Persists and presents LMS notices using Messenger's Message entities.
  */
-final class LearningNoticeManager implements LearningNoticeManagerInterface, AvisoDigestProviderInterface {
+final class LearningNoticeManager implements LearningNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
 
   use StringTranslationTrait;
 

@@ -9,7 +9,7 @@ use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
-use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEmailOutbox;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
@@ -1706,7 +1706,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 /**
  * Digest provider that fails after updating its source once.
  */
-final class FailOnceDigestAckProvider implements AvisoDigestProviderInterface {
+final class FailOnceDigestAckProvider implements AvisoDigestProviderIdentityInterface {
 
   /**
    * {@inheritdoc}
@@ -1773,7 +1773,7 @@ final class FailOnceDigestAckProvider implements AvisoDigestProviderInterface {
 /**
  * Replacement implementation used to prove recovery across a PHP class rename.
  */
-final class RecoveredDigestAckProvider implements AvisoDigestProviderInterface {
+final class RecoveredDigestAckProvider implements AvisoDigestProviderIdentityInterface {
 
   public function __construct(
     private readonly int $uid,

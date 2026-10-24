@@ -255,7 +255,7 @@ final class AvisosResumo {
       array_push($linhas, ...$eligibleRows);
       $providersWithRows[] = [
         'provider' => $provider,
-        'provider_id' => $provider->digestProviderId(),
+        'provider_id' => $this->digestProviderId($provider),
         'manifest_rows' => array_map(static fn(array $row): array => [
           'tipo' => (string) ($row['tipo'] ?? ''),
           'delivery_id' => (int) $row['delivery_id'],
@@ -390,7 +390,7 @@ final class AvisosResumo {
     $providers = [];
     foreach ($this->digestProviders as $provider) {
       if ($provider instanceof AvisoDigestProviderInterface) {
-        $providers[$provider->digestProviderId()] = $provider;
+        $providers[$this->digestProviderId($provider)] = $provider;
         // Compatibility for accepted snapshots written before stable provider
         // IDs were added. New snapshots never persist PHP class names.
         $providers[get_class($provider)] ??= $provider;
@@ -457,6 +457,15 @@ final class AvisosResumo {
       ->condition('contador_email', 0, '>')
       ->execute();
     return array_values($storage->loadMultiple($ids));
+  }
+
+  /**
+   * Gets an adapter's stable ID or the legacy class-based identity.
+   */
+  private function digestProviderId(AvisoDigestProviderInterface $provider): string {
+    return $provider instanceof AvisoDigestProviderIdentityInterface
+      ? $provider->digestProviderId()
+      : get_class($provider);
   }
 
 }

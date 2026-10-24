@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Donation;
 
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -27,7 +27,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores Donation notices in the shared Message entity and digest pipeline. */
-final class DonationNoticeManager implements DonationNoticeManagerInterface, AvisoDigestProviderInterface {
+final class DonationNoticeManager implements DonationNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
 
   /**
    * {@inheritdoc}

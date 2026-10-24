@@ -10,14 +10,6 @@ namespace Drupal\aculta_messenger\Aviso;
 interface AvisoDigestProviderInterface {
 
   /**
-   * Returns the stable identifier used in persisted digest manifests.
-   *
-   * This identifier must survive PHP class and service refactors. Use a
-   * lowercase module/source key such as `lms` or `wiki`.
-   */
-  public function digestProviderId(): string;
-
-  /**
    * Returns user IDs with pending digest entries.
    */
   public function pendingRecipientIds(): array;

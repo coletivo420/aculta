@@ -21,6 +21,7 @@ use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
@@ -221,6 +222,17 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Existing providers keep working without the optional identity contract.
+   */
+  public function testLegacyDigestProviderWithoutIdentityStillDelivers(): void {
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())->method('deliver')->willReturn(SendResult::sent());
+    $summary = $this->createSummary(new LegacyTestLearningDigestProvider([27]), $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+  }
+
+  /**
    * A definitive failure discards only the e-mail copy of a digest entry.
    */
   public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {
@@ -351,7 +363,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 /**
  * Minimal digest provider standing in for the LMS Message-backed provider.
  */
-class TestLearningDigestProvider implements AvisoDigestProviderInterface {
+class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface {
 
   /**
    * {@inheritdoc}
@@ -458,6 +470,50 @@ class TestLearningDigestProvider implements AvisoDigestProviderInterface {
  * Simulates a class refactor while preserving the LMS digest provider identity.
  */
 final class RefactoredTestLearningDigestProvider extends TestLearningDigestProvider {}
+
+/**
+ * Existing third-party style provider that has not adopted stable identities.
+ */
+final class LegacyTestLearningDigestProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * Provider used to delegate the existing digest contract methods.
+   */
+  private readonly TestLearningDigestProvider $provider;
+
+  public function __construct(array $recipients) {
+    $this->provider = new TestLearningDigestProvider($recipients);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return $this->provider->pendingRecipientIds();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    return $this->provider->digestRowsFor($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->provider->markDigestSent($uid, $deliveryIds);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {
+    $this->provider->discardDigest($uid);
+  }
+
+}
 
 /**
  * Transaction double that records explicit commit and rollback calls.

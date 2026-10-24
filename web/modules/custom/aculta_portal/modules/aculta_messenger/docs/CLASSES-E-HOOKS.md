@@ -64,6 +64,7 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 | `ForumNoticeRegistrarInterface` | `src/Aviso/ForumNoticeRegistrarInterface.php` | Contrato de persistência/revalidação pelo agregador existente. |
 | `AvisosResumo` | `src/Aviso/AvisosResumo.php` | Resumo diário dos avisos por e-mail (ACULTA Messenger, F5.2, política de 2026-10-16). |
 | `AvisoDigestProviderInterface` | `src/Aviso/AvisoDigestProviderInterface.php` | Extensão para adicionar avisos atuais ao mesmo resumo diário combinado. |
+| `AvisoDigestProviderIdentityInterface` | `src/Aviso/AvisoDigestProviderIdentityInterface.php` | Extensão opcional com identidade estável para correlação e recuperação do digest. |
 
 ### `Controller`
 

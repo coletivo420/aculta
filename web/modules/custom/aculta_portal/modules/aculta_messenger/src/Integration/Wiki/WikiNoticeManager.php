@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Integration\Wiki;
 
-use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Stores and resolves Wiki notices in Message, without a parallel inbox. */
-final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigestProviderInterface {
+final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigestProviderIdentityInterface {
 
   /**
    * {@inheritdoc}

@@ -1,3 +1,11 @@
+## 0.1.1-dev.152 — identidade do digest como extensão compatível — 2026-10-24
+
+A identidade estável passou para `AvisoDigestProviderIdentityInterface`, subinterface opcional. Providers existentes que
+implementam somente `AvisoDigestProviderInterface` continuam válidos e usam fallback por classe; os quatro adapters
+ACULTA declaram IDs estáveis. O teste cobre entrega por provider legado sem a nova extensão.
+
+Validação: suíte focal Unit/Kernel MariaDB **47 testes / 889 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint, YAML, `git diff --check` e índice de status PASS. Runtime/SMTP não usados.
+
 ## 0.1.1-dev.151 — provar recuperação após refactor do adapter — 2026-10-24
 
 O Kernel agora simula uma implantação entre o aceite do e-mail e a confirmação: a segunda execução usa outra classe
