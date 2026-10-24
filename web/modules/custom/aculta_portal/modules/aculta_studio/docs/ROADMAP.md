@@ -6,7 +6,12 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 
 ## STUDIO-P0–P7 — migração futura de Minha Conta e Meu Perfil (decisão 2026-10-24)
 
-**Novo planejamento transversal, sem implementação neste incremento.**
+**P0 documental concluída; P1-A parcialmente implementada em código na dev.8.**
+Foi registrada a experiência `pessoal` e sua rota `/studio/pessoal`, com
+controller autorizado, links para a Conta e testes Unit adicionados. **Nenhum
+teste PHPUnit/Kernel/Runtime foi executado nesta edição pelo GitHub**;
+P1-A requer gates antes de ser considerada homologada. O hub `/studio`,
+ponte Marley, editor pessoal e navegação unificada seguem pendentes.
 A arquitetura de referência está em
 [Hub e Meu Espaço](../../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
 Os incrementos editoriais/LMS/Wiki registrados abaixo não são revogados nem
