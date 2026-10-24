@@ -4,13 +4,25 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.60**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.61**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.61 — regressão R1 no HEAD atual
+
+Após as mudanças da WE SATIVA/GanjaLab, a suíte Unit Wiki passou (66 testes /
+341 asserções; 3 depreciações PHPUnit). Os Kernels
+`ContentIndexWikiProviderKernelTest`, `ContentIndexWikiAccessKernelTest` e
+`ContentIndexOwnerIntegrationKernelTest` passaram no MariaDB dedicado (10 /
+343; 243 depreciações Core/contrib/PHPUnit), confirmando discovery e consulta
+real das relações com acesso revalidado. Provider v4 e fingerprint não mudaram.
+O Index segue desativado no Runtime de teste; não houve ativação nem rebuild.
+Próximo gate R1/R2: planejar homologação segura da integração e então retomar
+rotas/acesso em Kernel conforme a prioridade indicada.
 
 ### Incremento dev.60 — decisão editorial no GanjaLab
 

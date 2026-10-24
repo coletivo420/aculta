@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.61`: R1 revalidada após as mudanças de interface: Unit Wiki 66/341;
+  três Kernels Index/Wiki em MariaDB isolada 10/343 (243 depreciações de
+  Core/contrib/PHPUnit). Provider v4 e fingerprint permanecem inalterados;
+  Runtime, ativação e rebuild continuam pendentes.
+
 - `0.1.0-dev.60`: formulário de moderação no GanjaLab compõe cabeçalho,
   links de contexto e contribuição usando SDCs; decisões e campos permanecem
   em Form API. Kernel focal: 1/156; classe completa: 21/941, 291 depreciações.

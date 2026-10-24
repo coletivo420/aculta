@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.61: regressão R1 após mudanças de interface: Unit 66/341 (3 PHPUnit
+  depreciações); Kernels provider/acesso/owner real 10/343 em MariaDB isolada
+  (243 depreciações Core/contrib/PHPUnit). Projeção v4 sem mudança; Runtime e
+  rebuild não executados.
+
 - Dev.60: formulário de moderação GanjaLab compõe contexto da proposta por
   `context-header`/`content-section`; decisão permanece Form API. Kernel focal
   1/156; classe completa 21/941, 291 depreciações Core/contrib/PHPUnit. PHPCS,

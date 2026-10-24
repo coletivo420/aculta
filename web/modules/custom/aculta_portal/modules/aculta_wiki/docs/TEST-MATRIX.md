@@ -25,6 +25,17 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Composição da revisão no GanjaLab | Kernel | SDCs apresentam contexto/contribuição e links autorizados; controles seguem no Form API | aprovado (dev.60; focal: 1/156; classe: 21/941, 291 depreciações) |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
+## Regressão Content Index — dev.61
+
+| Suíte | Tipo | Cobertura | Estado |
+| --- | --- | --- | --- |
+| Wiki Unit | PHPUnit | Providers de verbete/categoria e serviços Wiki | aprovado (66 testes / 341 asserções; 3 depreciações PHPUnit) |
+| ContentIndexWikiProviderKernelTest | Kernel MariaDB | Provider e integração do Index | aprovado |
+| ContentIndexWikiAccessKernelTest | Kernel MariaDB | Domain, grants, revisões e relações | aprovado |
+| ContentIndexOwnerIntegrationKernelTest | Kernel MariaDB | Bootstrap real e descoberta de provider owner | aprovado |
+| Três Kernels combinados | Kernel MariaDB | Regressão R1 no HEAD dev.61 | aprovado (10 testes / 343 asserções; 243 depreciações Core/contrib/PHPUnit) |
+| Ativação/rebuild e inventário completo do Index | Runtime | Integração instalada | pendente; sem operação Runtime nesta entrega |
+
 ## R2 — ciclo de vida da imagem (dev.53)
 
 | Cenário | Tipo | Resultado esperado | Estado |

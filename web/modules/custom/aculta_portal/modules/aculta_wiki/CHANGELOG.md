@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.61 — revalidar integração Wiki com Content Index
+
+- No HEAD após as mudanças de interface WE SATIVA/GanjaLab, a suíte Unit Wiki
+  passou: 66 testes / 341 asserções, com 3 depreciações do PHPUnit.
+- Os três Kernels de provider, acesso Wiki e bootstrap owner real passaram em
+  MariaDB isolada: 10 testes / 343 asserções, com 243 depreciações de Core,
+  contrib e PHPUnit. Providers reais foram descobertos e relações autorizadas
+  foram consultadas; projeção v4 inalterada.
+- Nenhum arquivo de `aculta_index` foi alterado. Não houve rebuild, ativação ou
+  operação no Runtime; a geração do Index segue sem homologação integral.
+
 ## 0.1.0-dev.60 — compor revisão de propostas no GanjaLab com SDC
 
 - A tela de decisão usa `context-header` e `content-section` existentes para
