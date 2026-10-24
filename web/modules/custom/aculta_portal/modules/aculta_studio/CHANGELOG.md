@@ -1,3 +1,20 @@
+## 0.1.0-dev.8 — STUDIO-P1-A: entrada pessoal inicial — 2026-10-24
+
+- Provider `PersonalExperienceProvider` (`pessoal`) registrado no
+  `StudioExperienceManager`, com purpose `account`, autenticação e
+  permissão `access aculta portal` revalidadas pelo controller.
+- Nova rota explícita `/studio/pessoal` oferece entrada mínima e links
+  para os formulários **existentes** da Conta. `/studio` continua sendo a
+  entrada de compatibilidade do Marley; `/` da Conta e `/u/{apelido}`
+  permanecem inalterados. Nenhum dado, formulário ou shell foi migrado.
+- Testes Unit adicionados para provider, controller e proteção/precedência
+  da rota; execução PHPUnit/Kernel/Runtime e teste visual ainda pendentes
+  neste incremento via GitHub. Inspeção de código e metadados da branch
+  não substituem esses gates.
+- Próxima P1-B: registro/ponte de Marley no catálogo de experiências e
+  preparação do hub, após confirmar acesso/cache e executar os testes;
+  não alterar a rota `/studio` sem inventário e testes.
+
 ## 0.1.0-dev.6 — início da WE SATIVA
 
 - Rota `/studio/we-sativa/inicio` no purpose `account`, com provider de página
