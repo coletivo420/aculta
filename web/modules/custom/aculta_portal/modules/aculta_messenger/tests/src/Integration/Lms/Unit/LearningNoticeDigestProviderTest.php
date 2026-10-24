@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -83,6 +84,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
       $this->createMock(QueueFactory::class),
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->createMock(LockBackendInterface::class),
     );
 
     self::assertSame([], $manager->digestRowsFor(27));
@@ -144,6 +146,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
       $this->createMock(QueueFactory::class),
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->createMock(LockBackendInterface::class),
     );
 
     self::assertSame([], $manager->digestRowsFor(27));

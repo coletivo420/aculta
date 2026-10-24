@@ -1,3 +1,14 @@
+## 0.1.1-dev.107 — serializar persistência dos avisos LMS — 2026-10-24
+
+- `LearningNoticeManager::record()` adquire lock pela tupla destinatário, tipo,
+  origem e versão antes da consulta/criação e do enqueue. Replays de itens
+  pendentes não enfileiram e-mails novamente; falha de enqueue pode ser
+  reprocessada sem criar outro Message.
+- Unit do lock: 1 teste / 8 assertions; Unit Messenger + adapters: 131 / 821
+  PASS. Kernel LMS: 2 / 22 PASS, incluindo enqueue único após replay, com duas
+  deprecações de descoberta de entidades `message` do Core/contrib. PHPCS,
+  PHP lint e `git diff --check` PASS. Runtime e fila operacional não homologados.
+
 ## 0.1.1-dev.106 — serializar e-mail de amizade no worker da fila — 2026-10-24
 
 - `FriendshipNoticeEmailWorker` agora adquire lock por aviso antes de carregar o

@@ -8,6 +8,7 @@ use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -88,6 +89,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     private readonly QueueFactory $queueFactory,
     private readonly LoggerInterface $logger,
     private readonly MessengerNoticePublisherInterface $noticePublisher,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
@@ -113,40 +115,70 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return NULL;
     }
-    $storage = $this->entityTypeManager->getStorage('message');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)
-      ->condition('uid', $uid)
-      ->condition(self::EVENT_FIELD, $type)
-      ->condition(self::SOURCE_FIELD, $sourceUuid)
-      ->condition(self::EVENT_VERSION_FIELD, $eventVersion)
-      ->range(0, 1)
-      ->execute();
-    $message = $ids === [] ? NULL : $storage->load(reset($ids));
-    if (!$message instanceof MessageInterface) {
-      $message = $storage->create([
-        'template' => self::TEMPLATE,
-        'uid' => $uid,
-        self::EVENT_FIELD => $type,
-        self::SOURCE_FIELD => $sourceUuid,
-        self::EVENT_VERSION_FIELD => $eventVersion,
-        self::READ_FIELD => 0,
-        self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) && $includeInDigest ? 0 : 1,
-        self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
-        self::ATTEMPTS_FIELD => 0,
-      ]);
-      $message->save();
+    $lockId = 'aculta_messenger:lms_notice:' . hash('sha256', implode("\0", [
+      (string) $uid,
+      $type,
+      $sourceUuid,
+      $eventVersion,
+    ]));
+    if (!$this->lock->acquire($lockId, 30.0)) {
+      throw new \RuntimeException('LMS notice is currently being recorded.');
     }
-    if ($sendEmail && $message->get(self::DELIVERY_FIELD)->value !== 'sent') {
-      $itemId = $this->queueFactory->get('aculta_lms_messenger_email')->createItem([
-        'message_id' => (int) $message->id(),
-      ]);
-      if ($itemId === FALSE) {
-        $this->logger->error('Could not queue LMS notification message @id.', ['@id' => $message->id()]);
+    try {
+      $storage = $this->entityTypeManager->getStorage('message');
+      $ids = $storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('template', self::TEMPLATE)
+        ->condition('uid', $uid)
+        ->condition(self::EVENT_FIELD, $type)
+        ->condition(self::SOURCE_FIELD, $sourceUuid)
+        ->condition(self::EVENT_VERSION_FIELD, $eventVersion)
+        ->range(0, 1)
+        ->execute();
+      $message = $ids === [] ? NULL : $storage->load(reset($ids));
+      $enqueueEmail = FALSE;
+      if (!$message instanceof MessageInterface) {
+        $message = $storage->create([
+          'template' => self::TEMPLATE,
+          'uid' => $uid,
+          self::EVENT_FIELD => $type,
+          self::SOURCE_FIELD => $sourceUuid,
+          self::EVENT_VERSION_FIELD => $eventVersion,
+          self::READ_FIELD => 0,
+          self::DIGEST_FIELD => in_array($type, self::DIGEST_EVENTS, TRUE) && $includeInDigest ? 0 : 1,
+          self::DELIVERY_FIELD => $sendEmail ? 'pending' : 'sent',
+          self::ATTEMPTS_FIELD => 0,
+        ]);
+        $message->save();
+        $enqueueEmail = $sendEmail;
       }
+      elseif ($sendEmail
+        && $message->get(self::DELIVERY_FIELD)->value === 'failed'
+        && (int) $message->get(self::ATTEMPTS_FIELD)->value === 0) {
+        // An enqueue failure before any worker attempt may be replayed safely.
+        $message->set(self::DELIVERY_FIELD, 'pending')->save();
+        $enqueueEmail = TRUE;
+      }
+      if ($enqueueEmail) {
+        try {
+          $itemId = $this->queueFactory->get('aculta_lms_messenger_email')->createItem([
+            'message_id' => (int) $message->id(),
+          ]);
+          if ($itemId === FALSE) {
+            throw new \RuntimeException('Queue API refused an LMS notice email item.');
+          }
+        }
+        catch (\Throwable $exception) {
+          $message->set(self::DELIVERY_FIELD, 'failed')->save();
+          $this->logger->error('Could not queue LMS notification message @id.', ['@id' => $message->id()]);
+          throw $exception;
+        }
+      }
+      return $message;
     }
-    return $message;
+    finally {
+      $this->lock->release($lockId);
+    }
   }
 
   /**

@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\TypedData\DataDefinition;
@@ -58,6 +59,7 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
       $this->createMock(QueueFactory::class),
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->createMock(LockBackendInterface::class),
     );
 
     $manager->publishSubmissionNoticesForEducators('stale-answer-uuid', 'version-one');

@@ -88,6 +88,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('queue'),
         new Reference('logger.channel.aculta_messenger'),
         new Reference('aculta_messenger.notice_event_publisher'),
+        new Reference('lock.persistent'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');
     $container->setAlias(LearningNoticeManagerInterface::class, 'aculta_messenger.lms_notice_manager');

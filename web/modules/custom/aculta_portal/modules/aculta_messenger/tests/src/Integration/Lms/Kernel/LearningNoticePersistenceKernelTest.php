@@ -8,6 +8,7 @@ use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
@@ -87,6 +88,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(QueueFactory::class),
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->container->get('lock.persistent'),
     );
 
     $first = $manager->record('source-uuid', 'deadline', (int) $learner->id(), FALSE, 'version-one');
@@ -113,17 +115,28 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       'status' => 1,
     ]);
     $learner->save();
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::once())
+      ->method('createItem')
+      ->with(self::callback(static fn(array $item): bool => (int) ($item['message_id'] ?? 0) > 0))
+      ->willReturn(1);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::once())
+      ->method('get')
+      ->with('aculta_lms_messenger_email')
+      ->willReturn($queue);
     $manager = new LearningNoticeManager(
       $this->container->get('entity_type.manager'),
       (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
-      $this->createMock(QueueFactory::class),
+      $queueFactory,
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->container->get('lock.persistent'),
     );
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
-    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
     $subscriber = new LearningNoticeEventSubscriber($manager, $preferences, new NullLogger());
     $event = new MessengerNoticeEvent(
       'lms.deadline', 'aculta_lms', 'group_relationship', 'deadline-uuid', 'v1',
