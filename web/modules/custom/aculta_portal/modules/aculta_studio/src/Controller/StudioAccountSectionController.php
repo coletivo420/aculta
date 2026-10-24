@@ -14,8 +14,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Displays Portal-owned account sections without introducing a second shell.
  *
- * Data/profile forms, address normalization, security and OAuth first-password
+ * Address normalization, security and OAuth first-password
  * handling are delegated to the unchanged original Portal controller.
+ * The mixed basics form remains on the legacy account until nickname is
+ * separated from private fields; this composer does not render it.
  * Studio owns only the route and the contextual navigation presentation.
  */
 final class StudioAccountSectionController {
@@ -24,16 +26,6 @@ final class StudioAccountSectionController {
     private readonly ClassResolverInterface $resolver,
     private readonly AccountInterface $account,
   ) {}
-
-  /**
-   * Owner's existing personal-data Form API, composed inside Studio.
-   *
-   * @return array<string, mixed>
-   *   The existing form with Studio-owned contextual navigation.
-   */
-  public function data(): array {
-    return $this->build('myData', 'dados');
-  }
 
   /**
    * Owner's existing canonical Commerce address Form API.
@@ -117,7 +109,7 @@ final class StudioAccountSectionController {
    */
   private function navigation(string $section): array {
     $destinations = [
-      'dados' => ['Informações cadastrais', 'aculta_studio.account_data'],
+      'dados' => ['Dados cadastrais (Conta original)', 'aculta_portal.my_data'],
       'endereco' => ['Endereço', 'aculta_studio.account_address'],
       'seguranca' => ['E-mail e segurança', 'aculta_studio.account_security'],
       'senha' => ['Senha', 'aculta_studio.account_password'],
