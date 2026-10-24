@@ -1,3 +1,13 @@
+## 0.1.1-dev.204 — rejeitar identidades duplicadas de digest
+
+O núcleo detecta adapters de digest sem identidade ou com identidade estável duplicada. Essas fontes ficam pendentes sem
+participar do lote nem da recuperação, evitando que a confirmação de um snapshot use o provider errado; fontes com
+identidade única continuam entregando normalmente. O contrato da identidade agora exige unicidade no site.
+
+Validação: `LearningNoticeDigestIntegrationTest` **20/20 testes, 153 assertions PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint, `git diff --check` e índice de status PASS. Nenhuma mudança de storage. Runtime e transporte externo não
+executados.
+
 ## 0.1.1-dev.203 — estabilizar conteúdo do digest entre adapters
 
 O Messenger ordena adapters por identidade estável e as linhas retornadas por cada fonte antes de montar o e-mail. Uma

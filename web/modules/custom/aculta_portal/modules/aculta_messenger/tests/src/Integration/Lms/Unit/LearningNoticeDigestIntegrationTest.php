@@ -153,6 +153,26 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Providers with colliding identities cannot acknowledge each other's rows.
+   */
+  public function testDuplicateProviderIdentityIsExcludedWithoutBlockingOthers(): void {
+    $firstDuplicate = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'shared');
+    $secondDuplicate = new TestLearningDigestProvider([27], TRUE, 'loja', 601, 'Pedido Loja', 'shared');
+    $independent = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada', 'wiki');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->with($this->callback(static fn(MailMessage $message): bool => $message->context['resumo'] === 'wiki em "Revisão publicada": 1'))
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary([$firstDuplicate, $secondDuplicate, $independent], $mailer, TRUE);
+
+    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame([], $firstDuplicate->markedDeliveryIds);
+    $this->assertSame([], $secondDuplicate->markedDeliveryIds);
+    $this->assertSame([[802]], $independent->markedDeliveryIds);
+  }
+
+  /**
    * A failed email must leave LMS digest rows available for a later run.
    */
   public function testFailedDigestDeliveryKeepsLmsRowsPending(): void {
@@ -202,7 +222,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
    */
   public function testCombinedAdaptersRetryWithoutAcknowledgingAnyRowsEarly(): void {
     $lmsProvider = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade disponível');
-    $wikiProvider = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada');
+    $wikiProvider = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão publicada', 'wiki');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $capturedRows = [];
     $correlations = [];
@@ -317,6 +337,49 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 
     $this->assertSame(0, $summary->enviarResumos(), 'A previously accepted email is reconciled without another transport attempt or a new-send count.');
     $this->assertSame([], $activeProvider->marked, 'No unrelated provider rows are acknowledged as part of the unavailable adapter batch.');
+  }
+
+  /**
+   * Legacy snapshots stay pending if a class maps to multiple adapters.
+   */
+  public function testLegacySnapshotDoesNotGuessBetweenProvidersOfTheSameClass(): void {
+    $snapshot = [
+      'correlation_id' => '9b8c8bd0-a53f-5c01-a5a9-dd7b1038f510',
+      'created' => 1_800_000_000,
+      'provider_lookup_failed' => FALSE,
+      'forum' => [],
+      'providers' => [
+        [
+          'class' => TestLearningDigestProvider::class,
+          'delivery_ids' => [802],
+        ],
+      ],
+    ];
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
+      if ($uid === NULL && $key === 'avisos_resumo_em_andamento') {
+        return [27 => $snapshot];
+      }
+      return match ($key) {
+        'avisos_resumo_em_andamento' => $snapshot,
+        'avisos_resumo_email', 'email_confirmed' => TRUE,
+        default => NULL,
+      };
+    });
+    $userData->expects($this->never())->method('delete');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $mailer->expects($this->once())
+      ->method('wasAcceptedCorrelation')
+      ->with($snapshot['correlation_id'], AvisosResumo::CHAVE_MAIL, 'student@example.test')
+      ->willReturn(TRUE);
+    $first = new TestLearningDigestProvider([27], TRUE, 'aprendizagem', 501, 'Atividade LMS', 'lms');
+    $second = new TestLearningDigestProvider([27], TRUE, 'wiki', 802, 'Revisão Wiki', 'wiki');
+    $summary = $this->createSummary([$first, $second], $mailer, TRUE, NULL, NULL, $userData);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $first->markedDeliveryIds);
+    $this->assertSame([], $second->markedDeliveryIds);
   }
 
   /**
@@ -605,7 +668,7 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
    * {@inheritdoc}
    */
   public function digestProviderId(): string {
-    return 'lms';
+    return $this->providerId;
   }
 
   /**
@@ -654,6 +717,8 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
    *   Stable ID for the returned digest row.
    * @param string $title
    *   Plain text summary for the returned row.
+   * @param string $providerId
+   *   Stable source identity used in persisted recovery snapshots.
    */
   public function __construct(
     private readonly array $recipients,
@@ -661,6 +726,7 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
     private readonly string $type = 'aprendizagem',
     private readonly int $deliveryId = 501,
     private readonly string $title = 'Atividade no curso',
+    private readonly string $providerId = 'lms',
   ) {}
 
   /**

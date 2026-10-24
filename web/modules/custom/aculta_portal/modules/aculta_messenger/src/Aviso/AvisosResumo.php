@@ -37,6 +37,15 @@ final class AvisosResumo {
   private readonly array $digestProviders;
 
   /**
+   * Providers with unique persistent identities.
+   *
+   * Calculated once per service instance.
+   *
+   * @var \Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface[]|null
+   */
+  private ?array $unambiguousDigestProviders = NULL;
+
+  /**
    * Intervalo mínimo entre dois resumos da mesma conta.
    */
   public const INTERVALO_SEGUNDOS = 20 * 3600;
@@ -257,7 +266,7 @@ final class AvisosResumo {
     }
     $providersWithRows = [];
     $providerLookupFailed = FALSE;
-    foreach ($this->digestProviders as $provider) {
+    foreach ($this->uniqueDigestProviders() as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
       }
@@ -476,12 +485,19 @@ final class AvisosResumo {
     }
 
     $providers = [];
-    foreach ($this->digestProviders as $provider) {
-      if ($provider instanceof AvisoDigestProviderInterface) {
-        $providers[$this->digestProviderId($provider)] = $provider;
-        // Compatibility for accepted snapshots written before stable provider
-        // IDs were added. New snapshots never persist PHP class names.
-        $providers[get_class($provider)] ??= $provider;
+    $uniqueProviders = $this->uniqueDigestProviders();
+    $classCounts = array_count_values(array_map(
+      static fn(AvisoDigestProviderInterface $provider): string => get_class($provider),
+      $uniqueProviders,
+    ));
+    foreach ($uniqueProviders as $provider) {
+      $providers[$this->digestProviderId($provider)] = $provider;
+      // Compatibility for accepted snapshots written before stable provider
+      // IDs were added. A PHP class alias is safe only when it resolves to one
+      // configured provider; otherwise leave recovery pending.
+      $class = get_class($provider);
+      if (($classCounts[$class] ?? 0) === 1) {
+        $providers[$class] = $provider;
       }
     }
     foreach (($snapshot['providers'] ?? []) as $providerSnapshot) {
@@ -554,6 +570,49 @@ final class AvisosResumo {
     return $provider instanceof AvisoDigestProviderIdentityInterface
       ? $provider->digestProviderId()
       : get_class($provider);
+  }
+
+  /**
+   * Returns providers whose persisted acknowledgement identity is unambiguous.
+   *
+   * Accepted snapshots store provider IDs and delivery IDs, not PHP service
+   * IDs. If two configured providers claim the same identity, acknowledgement
+   * could be applied to the wrong source. Keep those rows pending and let
+   * independent providers continue.
+   *
+   * @return \Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface[]
+   *   Providers with unique identities.
+   */
+  private function uniqueDigestProviders(): array {
+    if ($this->unambiguousDigestProviders !== NULL) {
+      return $this->unambiguousDigestProviders;
+    }
+
+    $counts = [];
+    foreach ($this->digestProviders as $provider) {
+      if ($provider instanceof AvisoDigestProviderInterface) {
+        $id = $this->digestProviderId($provider);
+        $counts[$id] = ($counts[$id] ?? 0) + 1;
+      }
+    }
+
+    $providers = [];
+    $logged = [];
+    foreach ($this->digestProviders as $provider) {
+      if (!$provider instanceof AvisoDigestProviderInterface) {
+        continue;
+      }
+      $id = $this->digestProviderId($provider);
+      if ($id === '' || ($counts[$id] ?? 0) !== 1) {
+        if (!isset($logged[$id])) {
+          $this->logger?->error('Daily notice digest skipped providers with a missing or duplicate identity.');
+          $logged[$id] = TRUE;
+        }
+        continue;
+      }
+      $providers[] = $provider;
+    }
+    return $this->unambiguousDigestProviders = $providers;
   }
 
 }
