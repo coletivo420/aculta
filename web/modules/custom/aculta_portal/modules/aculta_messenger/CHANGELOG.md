@@ -5,8 +5,9 @@
   local (60 s) e com margem para persistir o resultado antes de outro worker
   poder enviar a mesma mensagem. O valor evita que locks curtos de 30/60 s
   expirem enquanto o transporte ainda está bloqueado.
-- Unit Messenger + integrações: 142 testes / 876 assertions PASS; PHP lint e
-  `git diff --check` PASS. PHPCS apontou violações preexistentes de comentários
+- Unit Messenger + integrações: 142 testes / 876 assertions PASS; Kernel
+  regressivo dos adapters: 34 testes / 677 assertions PASS (2 deprecações do
+  Core/contrib e 4 notices). PHP lint e `git diff --check` PASS. PHPCS apontou violações preexistentes de comentários
   na classe de mensagens privadas, sem relação com as linhas alteradas. Sem
   transporte real, workers concorrentes de SO ou Runtime.
 
