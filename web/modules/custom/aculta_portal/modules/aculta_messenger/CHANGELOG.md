@@ -1,3 +1,11 @@
+## 0.1.1-dev.117 — caracterizar exceções de privacidade para equipe — 2026-10-24
+
+- Testes Unit garantem que administradores e editores podem iniciar conversas
+  com membros que restringiram novas conversas a amizades e que a exceção não
+  permite contornar um bloqueio bilateral. Unit Messenger + integrações: 144
+  testes / 888 assertions PASS; PHPCS Drupal/DrupalPractice, PHP lint e
+  `git diff --check` PASS. Sem Kernel/Runtime de formulário.
+
 ## 0.1.1-dev.116 — uniformizar lease dos workers de e-mail direto — 2026-10-24
 
 - Os workers diretos de Fórum, amizade, mensagens privadas, LMS, Wiki, Loja e

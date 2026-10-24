@@ -22,7 +22,7 @@ Esta é a matriz técnica produtor → evento → destinatário → fonte → st
 
 Concluir privacidade de conversas individuais/grupo, bloqueios, acesso/IDOR, CSRF, Flood, cache privado, retenção paginada e recuperável, mensagens de amizade/privadas sob transporte controlado e UI acessível. Conversas são voluntárias; seguir ou interagir com conteúdo nunca cria thread. Nenhuma limpeza real será executada.
 
-**Estado:** “somente amigos” restringe novas conversas; respostas em threads existentes continuam válidas. Regra artificial `course` removida. Demais gates permanecem parciais.
+**Estado:** “somente amigos” restringe novas conversas; respostas em threads existentes continuam válidas. Regra artificial `course` removida. Unit cobre as exceções de administrador/editor e confirma que elas não ignoram bloqueios bilaterais. Integração real do formulário, acesso/IDOR, CSRF, retenção e validação Runtime permanecem parciais.
 
 ## M2 — API central de eventos (0.2.0)
 

@@ -189,6 +189,74 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
   }
 
   /**
+   * Staff roles may start conversations despite a member's preference.
+   */
+  public function testAdministratorAndEditorCanStartFriendOnlyConversations(): void {
+    foreach (['administrator', 'content_editor'] as $staffRole) {
+      $thread = $this->createMock(PrivateMessageThreadInterface::class);
+      $thread->method('getMembersId')->willReturn([42, 84]);
+      $currentUser = $this->createMock(AccountProxyInterface::class);
+      $currentUser->method('id')->willReturn(42);
+      $currentUser->method('hasRole')->willReturnCallback(static fn(string $role): bool => $role === $staffRole);
+      $friendships = $this->createMock(FriendshipManagerInterface::class);
+      $friendships->expects($this->never())->method('areFriendsWith');
+      $userData = $this->createMock(UserDataInterface::class);
+      $userData->expects($this->never())->method('get');
+      $formState = $this->formState(FALSE);
+      $formState->set('pmt_entity', $thread);
+      $validator = new PrivateMessageFormValidator(
+        $this->createMock(FloodInterface::class),
+        $currentUser,
+        $this->translation('Não foi possível iniciar uma conversa com este destinatário.'),
+        $this->createMock(PrivateMessageBanManagerInterface::class),
+        $friendships,
+        $userData,
+        new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+      );
+      $form = [];
+
+      $validator->validateNewConversationPrivacy($form, $formState);
+
+      self::assertSame([], $formState->getErrors(), $staffRole . ' may initiate the conversation.');
+    }
+  }
+
+  /**
+   * Staff exceptions do not bypass the recipient's bilateral block.
+   */
+  public function testStaffCannotStartConversationWithMemberWhoBlockedThem(): void {
+    $thread = $this->createMock(PrivateMessageThreadInterface::class);
+    $thread->method('getMembersId')->willReturn([42, 84]);
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('id')->willReturn(42);
+    $currentUser->method('hasRole')->willReturn(TRUE);
+    $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
+    $banManager->expects(self::once())->method('isBanned')->with(84)->willReturn(FALSE);
+    $banManager->expects(self::once())->method('isCurrentUserBannedByUser')->with(84)->willReturn(TRUE);
+    $friendships = $this->createMock(FriendshipManagerInterface::class);
+    $friendships->expects(self::never())->method('areFriendsWith');
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::never())->method('get');
+    $formState = $this->formState(FALSE);
+    $formState->set('pmt_entity', $thread);
+    $validator = new PrivateMessageFormValidator(
+      $this->createMock(FloodInterface::class),
+      $currentUser,
+      $this->translation('Não foi possível enviar a mensagem para esse destinatário.'),
+      $banManager,
+      $friendships,
+      $userData,
+      new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => []])),
+    );
+    $form = [];
+
+    $validator->validateBlockedRecipients($form, $formState);
+    $validator->validateNewConversationPrivacy($form, $formState);
+
+    self::assertSame('Não foi possível enviar a mensagem para esse destinatário.', $formState->getErrors()['members']);
+  }
+
+  /**
    * Tests the existing validation error skips recipient lookup behavior.
    */
   public function testExistingValidationErrorSkipsRecipientLookup(): void {
