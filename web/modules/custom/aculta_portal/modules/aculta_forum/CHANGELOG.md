@@ -1,3 +1,17 @@
+## `0.1.0-dev.308` — corrigir acesso ao diálogo de anexos — 2026-10-24
+
+- Corrigido defeito real: `ForumAttachmentUploadAccess` importava
+  `Drupal\user\AccountInterface` (inexistente); qualquer chamada de acesso ao
+  diálogo de anexo do editor falhava com `TypeError`. O tipo correto é
+  `Drupal\Core\Session\AccountInterface`.
+- Novo Kernel `ForumAttachmentUploadAccessKernelTest`: membro autenticado com o
+  formato `forum` no purpose `forum` é liberado, com contextos `domain` e
+  `user.roles:authenticated`; anônimo, outro formato e purpose `main` não são
+  liberados.
+- Smoke de carregamento: todas as classes de `src/` do Fórum carregam em PHP
+  8.4 e todos os imports de produção resolvem.
+- Testes: acesso a anexo 2/14; suíte Kernel do Fórum 145/2.717; PHPCS limpo.
+
 ## `0.1.0-dev.307` — corrigir formulário de seleção de revisões — 2026-10-24
 
 - Corrigido defeito real: `ForumPostRevisionSelectionForm` promovia

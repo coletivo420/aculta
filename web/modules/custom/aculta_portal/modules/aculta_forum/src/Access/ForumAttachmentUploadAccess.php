@@ -8,7 +8,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\filter\FilterFormatInterface;
-use Drupal\user\AccountInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Limits the attachment editor dialog to the active public Forum purpose.

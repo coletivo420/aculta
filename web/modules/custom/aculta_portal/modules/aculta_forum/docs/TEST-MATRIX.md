@@ -1,3 +1,14 @@
+## Anexo no editor — acesso e correção de tipo, 2026-10-24
+
+- Defeito real: import de `Drupal\user\AccountInterface` (inexistente)
+  fazia o acesso ao diálogo falhar com `TypeError`; corrigido para
+  `Drupal\Core\Session\AccountInterface`.
+- `ForumAttachmentUploadAccessKernelTest` (2 testes / 14 asserções, MariaDB):
+  membro com formato `forum` no purpose `forum` liberado; anônimo, outro
+  formato e `main` não liberados; contextos de domínio e autenticação presentes.
+- Smoke de carregamento de todas as classes de `src/` em PHP 8.4: OK.
+- Suíte Kernel do Fórum 145/2.717; PHPCS limpo.
+
 ## Seleção de revisões — correção de carregamento e validação, 2026-10-24
 
 - Defeito real: propriedade `readonly $routeMatch` colidia com `FormBase` e a
