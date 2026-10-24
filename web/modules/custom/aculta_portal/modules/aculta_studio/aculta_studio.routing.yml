@@ -1,18 +1,4 @@
-# Marley ocupa as rotas editoriais; os IDs de área funcionais permanecem estáveis.
-# P1-A: personal entry preserved; /studio now belongs to the global hub.
-# P1-C: /studio is the global hub; /studio/inicio remains a safe redirect.
-aculta_studio.hub_preview:
-  path: /studio/inicio
-  defaults:
-    _controller: 'aculta_studio.hub_preview_controller:previewRedirect'
-    _title: 'ACULTA Studio'
-  requirements:
-    _permission: 'access aculta portal'
-    _user_is_logged_in: 'TRUE'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
+# Studio owns /studio. Marley owns /studio/marley and its editorial levels.
 aculta_studio.personal:
   path: /studio/pessoal
   defaults:
@@ -98,20 +84,7 @@ aculta_studio.tab:
 
 # Historical capitalized entry is a temporary safe-method alias.
 # Canonical Marley entry remains lower-case /studio/marley.
-aculta_studio.legacy_marley_capitalized:
-  path: /studio/Marley
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-# Historical route ID remains stable for internal callers but now renders
-# the canonical Studio hub. It does not redirect POST or edit forms.
-aculta_studio.legacy_home:
+aculta_studio.hub:
   path: /studio
   defaults:
     _controller: 'aculta_studio.hub_preview_controller:page'
@@ -119,116 +92,8 @@ aculta_studio.legacy_home:
   requirements:
     _permission: access aculta portal
     _user_is_logged_in: 'TRUE'
-  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 # Os padrões genéricos continuam válidos para áreas antigas; o controller
 # reconhece /studio/ganjalab/{...} como a antiga árvore editorial e redireciona.
-aculta_studio.legacy_area:
-  path: /studio/{aba}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyPage'
-    _title: 'ACULTA Studio Marley'
-    secao: ''
-    sub: ''
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.legacy_section:
-  path: /studio/{aba}/{secao}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyPage'
-    _title: 'ACULTA Studio Marley'
-    sub: ''
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-    secao: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.legacy_tab:
-  path: /studio/{aba}/{secao}/{sub}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyPage'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-    secao: '[a-z0-9-]+'
-    sub: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-# Prefixo fixo e quatro níveis identificam sem ambiguidade a antiga árvore editorial profunda.
-aculta_studio.legacy_editorial_deep:
-  path: /studio/ganjalab/{aba}/{secao}/{sub}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-    secao: '[a-z0-9-]+'
-    sub: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-# /ganjalab não colide com a nova rota estudantil /studio/ganjalab.
-aculta_studio.old_ganjalab_home:
-  path: /ganjalab
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.old_ganjalab_area:
-  path: /ganjalab/{aba}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.old_ganjalab_section:
-  path: /ganjalab/{aba}/{secao}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-    secao: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
-
-aculta_studio.old_ganjalab_tab:
-  path: /ganjalab/{aba}/{secao}/{sub}
-  defaults:
-    _controller: 'aculta_studio.marley_controller:legacyEditorial'
-    _title: 'ACULTA Studio Marley'
-  requirements:
-    _permission: access aculta portal
-    aba: '[a-z0-9-]+'
-    secao: '[a-z0-9-]+'
-    sub: '[a-z0-9-]+'
-  methods: [GET, HEAD]
-  options:
-    _aculta_domain_purpose: account
