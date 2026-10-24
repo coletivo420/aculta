@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.48 — validar ciclo incremental real do Content Index
+
+- O Kernel de integração real executa backfill da Wiki, confirma que o
+  fingerprint da geração corresponde ao registry de providers, atualiza a
+  projeção/hash após editar o verbete e remove a projeção após excluir o Node.
+- Focal: 1 teste / 34 asserções; 200 depreciações upstream. Projeção v3 e
+  relações existentes não mudaram; nenhum rebuild ou alteração de Runtime.
+
 ## 0.1.0-dev.47 — paginar Meu Trabalho na WE SATIVA
 
 - Verbetes e propostas próprios têm cursores keyset independentes por

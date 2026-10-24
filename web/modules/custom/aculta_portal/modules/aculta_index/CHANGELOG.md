@@ -1,5 +1,13 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.171 — cobrir ciclo Wiki no provider owner real
+
+- `ContentIndexWikiAccessKernelTest` agora comprova no mesmo bootstrap real o
+  backfill, fingerprint capturado pela geração, update de rótulo/hash e delete
+  incremental da projeção Wiki.
+- Classe completa MariaDB: 7 testes / 231 asserções; 201 depreciações upstream.
+  O teste não altera Runtime nem executa rebuild sobre catálogo instalado.
+
 ## 0.1.0-dev.170 — provar revisão padrão e ausência de Domain na Wiki
 
 - A consulta real comprova que revisão pendente não padrão não substitui a

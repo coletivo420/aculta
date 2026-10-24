@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.48`: Kernel owner real cobre backfill, fingerprint da geração,
+  atualização incremental do rótulo/hash e remoção após delete. Focal:
+  1 teste / 34 asserções; projeção v3 mantida.
+
 - `0.1.0-dev.47`: Meu Trabalho pagina verbetes e propostas separadamente com
   cursores keyset, acesso revalidado e links GET no domínio da conta. Cache
   varia pelas duas chaves. Kernel: 2 testes / 84 asserções.

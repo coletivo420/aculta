@@ -64,6 +64,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('profile');
     $this->installEntitySchema('path_alias');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('comment');
     $this->installEntitySchema('domain');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('file');
@@ -88,6 +89,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
@@ -170,6 +172,65 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertSame($publishedRevisionId, (int) $defaultRevision->getRevisionId());
     self::assertTrue($defaultRevision->isPublished());
     self::assertNotNull($this->container->get('aculta_index.provider_registry')->get('wiki')->project($defaultRevision));
+  }
+
+  /**
+   * Real Wiki insert, update, and delete events keep the projection current.
+   */
+  public function testWikiIncrementalUpdateDeleteAndProviderFingerprint(): void {
+    $this->createTestUser('wiki-incremental-bootstrap');
+    $owner = $this->createTestUser('wiki-incremental-owner');
+    $entry = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Wiki before incremental update',
+      'status' => TRUE,
+      'uid' => $owner->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $entry->save();
+
+    $rebuilder = $this->container->get('aculta_index.rebuilder');
+    $generationId = $rebuilder->start();
+    $providerRegistry = $this->container->get('aculta_index.provider_registry');
+    self::assertSame(
+      $providerRegistry->fingerprint(),
+      $this->container->get('aculta_index.generation_manager')->getProviderFingerprint($generationId),
+    );
+    $complete = FALSE;
+    for ($batch = 0; $batch < 10 && !$complete; $batch++) {
+      $complete = $rebuilder->processNextBatch($generationId, 20)['complete'];
+    }
+    self::assertTrue($complete, 'The real Wiki provider backfill should complete.');
+    $this->processWikiWork();
+    $rebuilder->validate($generationId);
+    $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $database = $this->container->get('database');
+    $getEntry = static function () use ($database, $generationId, $entry): array|false {
+      return $database->select('aculta_index_entry', 'entry')
+        ->fields('entry', ['label', 'provider_version', 'projection_hash'])
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'wiki')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $entry->id())
+        ->condition('langcode', $entry->language()->getId())
+        ->execute()
+        ->fetchAssoc();
+    };
+    $initial = $getEntry();
+    self::assertIsArray($initial, 'The initial Wiki projection is present.');
+    self::assertSame(3, (int) $initial['provider_version']);
+
+    $entry->setTitle('Wiki after incremental update')->save();
+    $this->processWikiWork();
+    $updated = $getEntry();
+    self::assertIsArray($updated, 'The updated Wiki projection remains present.');
+    self::assertSame('Wiki after incremental update', $updated['label']);
+    self::assertNotSame($initial['projection_hash'], $updated['projection_hash']);
+
+    $entry->delete();
+    $this->processWikiWork();
+    self::assertFalse($getEntry(), 'Deleting the Wiki entry removes its projection from the active generation.');
   }
 
   /**

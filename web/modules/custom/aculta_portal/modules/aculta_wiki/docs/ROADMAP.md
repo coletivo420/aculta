@@ -4,13 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.47**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.48**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.48 — ciclo incremental real do Content Index
+
+No Kernel com bootstrap real Wiki + Image + Portal + Index, backfill confirma
+fingerprint do registry; edição atualiza projeção e hash; exclusão remove a
+projeção ativa. Focal: 1 teste / 34 asserções e 200 depreciações upstream.
+Projeção v3 mantida; não houve rebuild ou alteração no Runtime.
 
 ### Incremento dev.47 — cursor e paginação da WE SATIVA
 

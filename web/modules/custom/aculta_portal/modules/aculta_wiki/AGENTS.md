@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.48: Kernel combinado no teste owner real valida backfill Wiki, fingerprint
+  de providers da geração, update incremental (rótulo/hash) e delete da projeção
+  ativa. Classe completa deve ser reexecutada antes de declarar R1 encerrada.
+  Sem rebuild no Runtime; projeção permanece v3.
+
 - Dev.47: Meu Trabalho tem paginação keyset separada para verbetes e propostas,
   links GET no Domain da conta e cache variado pelos dois cursores. A consulta
   limita candidatos por UID e revalida `view`/`update` antes de renderizar.

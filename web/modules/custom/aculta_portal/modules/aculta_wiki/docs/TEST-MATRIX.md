@@ -293,6 +293,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Revisão pendente não padrão | Kernel | Provider não projeta revisão pendente; revisão padrão publicada continua disponível | aprovado (dev.46) |
 | Domain Wiki ausente | Kernel | Access filter falha fechado sem recorrer ao Domain ativo | aprovado (dev.46) |
 | Regressão direcionada de providers e acesso Wiki | Kernel | Bootstrap owner, discovery real, providers Wiki e consulta de relações | aprovado (dev.46; 6 testes / 185 asserções; 201 depreciações upstream) |
+| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe a projeção; hash e rótulo acompanham edição; exclusão remove registro ativo | aprovado (dev.48; focal: 1 teste / 34 asserções; 200 depreciações upstream) |
 
 
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
