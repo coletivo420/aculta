@@ -43,6 +43,14 @@
   e 3 do PHPUnit. Runtime não foi ativado e nenhuma geração instalada foi
   reconstruída.
 
+## Revalidação R1 no HEAD `847e45231` — sem alteração do contrato
+
+- Quatro Kernels MariaDB passaram: provider harness, acesso/relações, bootstrap
+  owner real e rebuild Wiki-owned (11 testes / 385 asserções). Projeção v4,
+  relações `related_entry`, `wiki_category`, `wiki_image` e fingerprint
+  inalterados. 243 depreciações Core/contrib/PHPUnit; Runtime e geração
+  instalada intocados.
+
 ## 0.1.0-dev.93 — criação guiada e envio explícito para revisão
 
 - O formulário nativo organiza título, síntese, texto, referências, categorias

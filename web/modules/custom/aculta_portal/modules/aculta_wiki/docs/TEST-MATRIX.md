@@ -41,6 +41,11 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 ## Regressão Content Index — dev.61
 
+Revalidação no HEAD `847e45231`: quatro Kernels MariaDB aprovados (11 testes /
+385 asserções), incluindo descoberta do owner real, acesso/relações e rebuild
+Wiki-owned isolado. Projeção v4 e fingerprint inalterados; 243 depreciações
+Core/contrib/PHPUnit. Nenhuma geração ou configuração Runtime alterada.
+
 Revalidação WIKI-R1 no HEAD `b8e486673`: dois providers Unit e quatro Kernels
 Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4/fingerprint
 inalterados. 243 depreciações upstream e 3 PHPUnit; Runtime/rebuild instalado

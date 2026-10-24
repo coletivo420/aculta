@@ -12,6 +12,14 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação R1 — HEAD `847e45231`
+
+Os quatro Kernels MariaDB do contrato Wiki/Index passaram (11 testes / 385
+asserções), incluindo a closure real de providers e acesso, consulta das três
+relações e rebuild Wiki-owned em banco isolado. Projeção v4 e fingerprint
+permanecem estáveis. Foram reportadas 243 depreciações de Core/contrib/PHPUnit;
+Runtime e geração instalada não foram tocados.
+
 ### Incremento dev.102 — Domain e participação no fluxo nativo
 
 O novo `WikiEntryDomainHooks` preenche `field_domain_source` com o Domain Wiki
