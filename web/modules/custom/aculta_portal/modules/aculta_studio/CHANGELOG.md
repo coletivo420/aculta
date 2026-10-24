@@ -1,3 +1,32 @@
+## 0.1.0-dev.12 — STUDIO-P2-A: editor de Meu Perfil por serviços User (2026-10-24)
+
+- Nova rota privada e canônica `/studio/pessoal/perfil` (purpose `account`,
+  login e `access aculta portal`), ligada em Meu Espaço.
+- `PersonalProfileController` carrega **somente o User da sessão** e reutiliza
+  `aculta_user.account_bio_card` e `aculta_user.social_links_card` — os
+  botões desses cards abrem os formulários originais por AJAX modal, com
+  gravação User e recarga da página corrente. Editor de foto usa a rota
+  existente `aculta_user.foto` e biblioteca de recorte original.
+- "Ver perfil público" usa **`aculta_user.public_profile_link`**, que consulta
+  os campos de perfil, regras de visibilidade, apelido canônico e purpose
+  `main`; nunca criar link público por inferência de apelido privado.
+  O controller não exibe dados/documentos privados em área pública e
+  mantém cache personalizado/max-age 0.
+- O editor de apelido continua apontando a `aculta_portal.my_data`; os
+  controles completos de privacidade apontam ao formulário de
+  `aculta_user.configuracoes_privacidade`. P2-B deverá integrar esses
+  formulários ao Studio sem duplicar Form API, tabs ou shell.
+- Se os serviços opcionais do User não estiverem disponíveis, a tela
+  apresenta os links básicos sem dar acesso indevido e sem exigir services
+  inexistentes. **Sem alias temporário**, nenhum storage/schema alterado.
+- Testes Unit adicionados para negação de visitante/permissão, conta ausente,
+  render básico privado e link público autorizado; atualizados tests de rota
+  e link de Meu Espaço. Testes **não executados** nesta edição por GitHub:
+  PHPUnit, Kernel/Functional, Drush, Firefox ESR/X11, AJAX/fallback sem JS.
+  O acesso direto sem JS aos modais bio/redes ainda precisa de solução
+  progressiva na fase P2-B, pois os formulários originais restringem GET
+  a requisições de modal.
+
 ## 0.1.0-dev.11 — remoção de aliases temporários em desenvolvimento (2026-10-24)
 
 - Remoção dos aliases de desenvolvimento do Studio. /studio é o hub e /studio/marley é o único início editorial; excluídas as antigas rotas /studio/inicio, /studio/Marley, /ganjalab e demais árvores antigas. Controllers de redirecionamento não usados removidos. Teste de rotas atualizado e gate transversal criado. Sem homologação Drupal/Runtime.
