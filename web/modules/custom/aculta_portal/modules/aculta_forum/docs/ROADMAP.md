@@ -152,7 +152,10 @@ verdade enquanto uma mudança explícita não for aprovada e testada.
 ### Dívidas e dependências já confirmadas
 
 - ForumPost revisionável demanda prova de equivalência da migração de
-  Comments, inclusive a transferência de agregados ao mover comentários.
+  Comments e subárvores. O Kernel do Messenger agora prova, de forma focal,
+  a transferência persistente do agregado pelo evento `ForumCommentSubtreeMovedEvent`,
+  a mesclagem de destino e a deduplicação do Comment movido (1/27); ainda não
+  cobre o fluxo completo do `ForumCommentMover`, subárvore mista nem outbox de e-mail.
 - F-GROUP 0.1–0.7 tem provas técnicas documentadas, mas requer decisão
   operacional para ativação e testes de acesso relacionados a notificações.
 - O indexador de Fórum/Media, contagens, fila Game, download/previews e

@@ -1,3 +1,12 @@
+## 0.1.1-dev.98 — provar transferência persistente de avisos do Fórum — 2026-10-24
+
+- `ForumNoticeIdempotencyKernelTest` agora altera um Comment persistido para o
+  tópico de destino, dispara `ForumCommentSubtreeMovedEvent` pelo subscriber
+  compartilhado e comprova mesclagem do agregado, watermark e dedupe no ledger.
+- Kernel MariaDB: suíte do ledger 25 testes / 560 assertions PASS; cenário
+  focal 1/27; PHPCS Drupal/DrupalPractice PASS. A prova não substitui integração
+  do mover completo nem valida outbox/e-mail.
+
 ## 0.1.1-dev.97 — centralizar consumidores de avisos — 2026-10-24
 
 - Consumidores, managers, hooks, rotas de abertura, workers de e-mail e

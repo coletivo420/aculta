@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
@@ -15,6 +16,7 @@ use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\EventSubscriber\ForumNoticeEventSubscriber;
+use Drupal\aculta_messenger\EventSubscriber\ForumCommentMoveSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
@@ -567,6 +569,51 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       0,
       $this->loadNotices((int) $author->id(), (int) $topic->id()),
     );
+  }
+
+  /**
+   * Moving a published reply transfers its aggregate without losing dedupe.
+   */
+  public function testMovedCommentTransfersPersistentAggregateAndKeepsLedger(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $source = $this->createTopic('Tópico de origem');
+    $destination = $this->createTopic('Tópico de destino');
+    $avisos = $this->createAvisoService(
+      [(int) $follower->id()],
+      $this->createAccessPolicy(canViewComment: TRUE),
+    );
+    $movedComment = $this->createPersistedComment($source, (int) $author->id());
+    $destinationComment = $this->createPersistedComment($destination, (int) $author->id());
+
+    self::assertSame(1, $avisos->registrarResposta($movedComment));
+    self::assertSame(1, $avisos->registrarResposta($destinationComment));
+
+    $movedComment->set('entity_id', $destination->id());
+    $movedComment->save();
+    (new ForumCommentMoveSubscriber($avisos))->transferNotices(
+      new ForumCommentSubtreeMovedEvent(
+        (int) $source->id(),
+        (int) $destination->id(),
+        TRUE,
+      ),
+    );
+
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $source->id()));
+    $destinationNotices = $this->loadNotices((int) $follower->id(), (int) $destination->id());
+    self::assertCount(1, $destinationNotices);
+    self::assertSame(2, (int) $destinationNotices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $destinationNotices[0]->get('contador_email')->value);
+    self::assertSame((int) $destinationComment->id(), (int) $destinationNotices[0]->get('ultimo_comentario')->value);
+    self::assertSame('Tópico de destino', $destinationNotices[0]->get('titulo')->value);
+
+    // The source event key remains the dedupe authority after the Comment move.
+    self::assertSame(0, $avisos->registrarResposta($movedComment));
+    self::assertSame(2, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->countQuery()
+      ->execute()
+      ->fetchField());
   }
 
   /**
