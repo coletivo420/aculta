@@ -28,6 +28,12 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 ## Regressão Content Index — dev.61
 
+Revalidação no HEAD dev.68: Wiki Unit dos providers, 9 testes / 40 asserções
+(3 depreciações PHPUnit); Kernel provider 1/17; Kernel acesso/relações 7/238
+(201 depreciações); Kernel owner/bootstrap 2/88 (243 depreciações). Os três
+Kernels passaram em MariaDB dedicada. O bootstrap valida geração semeada com
+identidades relevantes, não rebuild integral do inventário nem Runtime.
+
 | Suíte | Tipo | Cobertura | Estado |
 | --- | --- | --- | --- |
 | Wiki Unit | PHPUnit | Providers de verbete/categoria e serviços Wiki | aprovado (66 testes / 341 asserções; 3 depreciações PHPUnit) |

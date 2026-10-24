@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.68: R1 revalidada: Unit dos providers 9/40; Kernels Index provider 1/17,
+  acesso 7/238 e owner/bootstrap 2/88, aprovados em MariaDB dedicada. O rebuild
+  integral do inventário e a ativação Runtime seguem pendentes.
+
 - Dev.67: Firefox ESR/X11, 46/46 em home/listagem/busca a 1280/390/320 px;
   submit do cabeçalho corrigido no `aculta420` 0.6.1-dev.5. CSS atual entrou
   por GET browser-only; agregado Runtime, Olivero e WCAG integral pendentes.

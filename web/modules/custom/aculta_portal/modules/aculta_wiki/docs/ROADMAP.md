@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.67**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.68**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.68 — revalidar Content Index R1
+
+No HEAD atual passaram Unit Wiki dos providers (9 testes / 40 asserções, 3
+depreciações PHPUnit) e os Kernels reais do Index: provider (1/17), acesso e
+relações (7/238, 201 depreciações) e owner/bootstrap (2/88, 243 depreciações),
+em MariaDB dedicada. O provider v4 e o fingerprint não mudaram. O Kernel owner
+semeia apenas as identidades relevantes; não comprova rebuild integral do
+inventário. Index permanece desativado no Runtime de teste; nenhum rebuild ou
+operação persistente foi executado nele.
 
 ### Incremento dev.67 — reflow visual da Wiki
 

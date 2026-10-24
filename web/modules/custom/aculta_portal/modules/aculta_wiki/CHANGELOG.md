@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.68 — revalidar integração Content Index
+
+- Reexecutados os dois testes Unit dos providers Wiki/categoria: 9 testes / 40
+  asserções, 3 depreciações PHPUnit.
+- Reexecutados os Kernels reais do Index: provider (1/17), acesso e relações
+  (7/238; 201 depreciações) e owner/bootstrap (2/88; 243 depreciações), todos
+  aprovados em MariaDB dedicada.
+- Sem mudança no contrato v4 e sem rebuild integral do inventário ou alteração
+  no Runtime. A geração owner de teste usa somente identidades semeadas.
+
 ## 0.1.0-dev.67 — validar reflow da busca e páginas públicas
 
 - Criada suíte visual reutilizável Firefox ESR (`tests/browser/aculta-wiki/`).

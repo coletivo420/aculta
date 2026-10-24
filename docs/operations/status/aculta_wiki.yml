@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.67 (Firefox ESR/X11 verificou home, listagem e busca em 1280/390/320 px; 46/46 verificações passaram após correção do overflow de busca em aculta420 0.6.1-dev.5. CSS do Runtime ainda não foi agregado; Olivero e WCAG pendentes)"
+version_note: "0.1.0-dev.68 (R1 revalidada: Unit providers Wiki/categoria 9/40; Kernels Index provider 1/17, acesso 7/238 e owner/bootstrap 2/88 aprovados em MariaDB dedicada. Rebuild integral do inventário e Runtime pendentes)"
 next_phase: 'Retomar integração Content Index: reconstrução v4 isolada pendente antes de ativação; depois concluir edição WE SATIVA com revisão concorrente. Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

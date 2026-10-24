@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.68`: R1 revalidada no HEAD após os incrementos recentes. Unit Wiki:
+  9/40 (3 depreciações PHPUnit); Kernels reais Index provider 1/17, acesso
+  7/238 (201 depreciações) e owner/bootstrap 2/88 (243 depreciações), aprovados
+  em MariaDB dedicada. Provider v4 inalterado; rebuild integral e Runtime
+  continuam pendentes.
+
 - `0.1.0-dev.67`: Firefox ESR/X11 visualizou home, listagem e busca em 1280,
   390 e 320 px; 46/46 verificações passaram com o CSS atual da Wiki carregado
   por GET no browser. Identificado e corrigido overflow do submit em
