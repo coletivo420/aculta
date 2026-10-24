@@ -82,8 +82,7 @@ aculta_studio.tab:
   options:
     _aculta_domain_purpose: account
 
-# Historical capitalized entry is a temporary safe-method alias.
-# Canonical Marley entry remains lower-case /studio/marley.
+# Hub general; no compatibility paths or redirects are registered.
 aculta_studio.hub:
   path: /studio
   defaults:
@@ -95,5 +94,3 @@ aculta_studio.hub:
   options:
     _aculta_domain_purpose: account
 
-# Os padrões genéricos continuam válidos para áreas antigas; o controller
-# reconhece /studio/ganjalab/{...} como a antiga árvore editorial e redireciona.
