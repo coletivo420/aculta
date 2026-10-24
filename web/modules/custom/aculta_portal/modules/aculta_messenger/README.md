@@ -65,14 +65,14 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.197` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.198` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
 de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
 `aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
 de membros mantém as sugestões como links normais alcançáveis por Tab.
-O resumo diário mantém lock persistente por destinatário; o Kernel MariaDB
+O resumo diário mantém lock persistente por destinatário; Dev.198 comprova dois boots Drupal independentes concorrendo sobre o mesmo MariaDB: um único transporte é aceito, o worker concorrente não adquire a lease e o primeiro confirma apenas seu lote; o Kernel MariaDB
 confirma contenção e liberação por processos PHP independentes. Recuperar um
 envio já aceito não aumenta a contagem de novos e-mails do cron. Dois workers
 Drupal completos com transporte concorrente e SMTP real continuam pendentes.

@@ -131,10 +131,177 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
   }
 
   /**
+   * Proves two independent Drupal boots serialize a digest for one recipient.
+   */
+  public function testIndependentDrupalWorkersDoNotSendConcurrentDigests(): void {
+    if (!function_exists('proc_open')) {
+      self::markTestSkipped('proc_open is required for the independent Drupal worker test.');
+    }
+
+    $account = User::create([
+      'name' => 'digest_worker_competition',
+      'mail' => 'digest-workers@example.test',
+      'status' => 1,
+      'langcode' => 'pt-br',
+      'preferred_langcode' => 'pt-br',
+    ]);
+    $account->save();
+    $uid = (int) $account->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+
+    // KernelTestBase overrides the default backend globally; replace that
+    // test-only override so this case can hold the real Mailer transport.
+    $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_blocking_test';
+    $database = $this->container->get('database');
+    $provider = new StableKernelDigestProvider($uid);
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    $access = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $access->method('supportsTopic')->willReturn(FALSE);
+    $avisos = new AvisoService(
+      $entityTypeManager,
+      $this->createMock(FlagServiceInterface::class),
+      $access,
+      $database,
+      $this->container->get('datetime.time'),
+      $this->container->get('lock'),
+    );
+    $summary = new AvisosResumo(
+      $entityTypeManager,
+      $preferences,
+      $this->container->get('aculta_mailer.mailer'),
+      new EmailConfirmationPolicy(
+        $userData,
+        $entityTypeManager,
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+
+    $projectRoot = dirname(DRUPAL_ROOT);
+    $barrierDirectory = sys_get_temp_dir() . '/aculta-digest-worker-' . bin2hex(random_bytes(8));
+    if (!mkdir($barrierDirectory, 0700) && !is_dir($barrierDirectory)) {
+      throw new \RuntimeException('Could not create the digest worker barrier directory.');
+    }
+    $originalBarrier = getenv('ACULTA_DIGEST_BARRIER_DIR');
+    putenv('ACULTA_DIGEST_BARRIER_DIR=' . $barrierDirectory);
+    putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
+    putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
+
+    $pipes = [];
+    $process = NULL;
+    try {
+      $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestCompetingWorkerKernelTest.php';
+      $process = proc_open([
+        PHP_BINARY,
+        $projectRoot . '/vendor/bin/phpunit',
+        '-c',
+        $projectRoot . '/web/core/phpunit.xml.dist',
+        $projectRoot . '/' . $workerFixture,
+      ], [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+      ], $pipes, $projectRoot);
+      self::assertIsResource($process);
+      fclose($pipes[0]);
+      stream_set_blocking($pipes[1], FALSE);
+      stream_set_blocking($pipes[2], FALSE);
+
+      $sentCount = $summary->enviarResumos();
+      [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+      $process = NULL;
+      self::assertSame(0, $exitCode, 'The competing Drupal worker failed: ' . trim($stderr . "\n" . $stdout));
+      self::assertSame(1, $sentCount, 'The first worker did not complete delivery.');
+      self::assertSame('locked', trim((string) file_get_contents($barrierDirectory . '/competitor-done')));
+      self::assertSame([[502]], $provider->acknowledged);
+      self::assertCount(1, $this->collectedMails());
+      self::assertCount(1, $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')
+        ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    }
+    finally {
+      if (is_resource($process)) {
+        if (!is_file($barrierDirectory . '/competitor-done')) {
+          file_put_contents($barrierDirectory . '/competitor-done', 'abort', LOCK_EX);
+        }
+        proc_terminate($process);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_close($process);
+      }
+      if ($originalBarrier === FALSE) {
+        putenv('ACULTA_DIGEST_BARRIER_DIR');
+      }
+      else {
+        putenv('ACULTA_DIGEST_BARRIER_DIR=' . $originalBarrier);
+      }
+      putenv('ACULTA_DIGEST_RECIPIENT_UID');
+      putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
+      foreach (['transport-started', 'competitor-done'] as $filename) {
+        @unlink($barrierDirectory . '/' . $filename);
+      }
+      @rmdir($barrierDirectory);
+    }
+  }
+
+  /**
    * Returns messages captured by Drupal's test mail collector.
    */
   private function collectedMails(): array {
     return $this->container->get('state')->get('system.test_mail_collector', []);
+  }
+
+  /**
+   * Collects process output until the independent worker exits.
+   *
+   * @param resource $process
+   *   The child process resource.
+   * @param array<int, resource> $pipes
+   *   Process pipes, closed by this method.
+   *
+   * @return array{string, string, int}
+   *   Standard output, standard error, and exit code.
+   */
+  private function collectWorkerProcess($process, array &$pipes): array {
+    $stdout = '';
+    $stderr = '';
+    $exitCode = NULL;
+    $deadline = microtime(TRUE) + 45;
+    do {
+      $stdout .= (string) stream_get_contents($pipes[1]);
+      $stderr .= (string) stream_get_contents($pipes[2]);
+      $status = proc_get_status($process);
+      if (!$status['running']) {
+        $exitCode = $status['exitcode'];
+        break;
+      }
+      if (microtime(TRUE) >= $deadline) {
+        throw new \RuntimeException('Timed out waiting for the competing Drupal worker to exit.');
+      }
+      usleep(10_000);
+    } while (TRUE);
+
+    $stdout .= (string) stream_get_contents($pipes[1]);
+    $stderr .= (string) stream_get_contents($pipes[2]);
+    foreach ($pipes as $pipe) {
+      if (is_resource($pipe)) {
+        fclose($pipe);
+      }
+    }
+    $pipes = [];
+    $closeCode = proc_close($process);
+    return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
   }
 
 }
@@ -205,6 +372,57 @@ final class FailOnceMailerDigestProvider implements AvisoDigestProviderInterface
       $this->failed = TRUE;
       throw new \RuntimeException('Synthetic digest acknowledgement failure.');
     }
+    $this->acknowledged[] = $deliveryIds;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {}
+
+}
+
+/**
+ * Stable provider for the concurrent two-worker test.
+ */
+final class StableKernelDigestProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * Acknowledged delivery ID batches.
+   *
+   * @var array<int, int[]>
+   */
+  public array $acknowledged = [];
+
+  public function __construct(
+    private readonly int $uid,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return [$this->uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    return $uid === $this->uid ? [
+      [
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão concorrente',
+        'quantidade' => 1,
+        'delivery_id' => 502,
+      ],
+    ] : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
     $this->acknowledged[] = $deliveryIds;
   }
 
