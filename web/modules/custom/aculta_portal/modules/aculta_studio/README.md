@@ -1,5 +1,21 @@
 # ACULTA Studio (`aculta_studio`)
 
+## S-R3-A — Minha Conta Studio sem substituir o legado (dev.14)
+
+A experiência `/studio/conta` tem seções privadas reais em
+`/studio/conta/endereco`, `/studio/conta/seguranca`,
+`/studio/conta/seguranca/senha` e `/studio/conta/conexoes`.
+Essas telas chamam os **métodos atuais do `PortalController`**, preservando
+validação, Form API, OAuth e o endereço Commerce. Somente a navegação
+da interface Studio é própria; o shell da Conta original não é aninhado.
+
+O cadastro privado `/dados` permanece na Conta original até que
+`field_nickname` seja extraído do formulário misto. Apoio, pedidos
+e preferências ainda usam suas rotas originais neste incremento.
+**A Conta legada em `/` é permanente, não uma rota a retirar.**
+`/minha-conta` direto continua 404. Testes Unit escritos e
+gates de endereço ampliados; validação Runtime/Firefox pendente.
+
 ## Contrato vigente — Conta e Perfil separados (dev.13)
 
 A arquitetura foi corrigida: **Minha Conta Studio** fica em
