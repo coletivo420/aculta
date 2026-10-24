@@ -1,3 +1,8 @@
+## 0.1.0-dev.288 — remoção de aliases temporários em desenvolvimento (2026-10-24)
+
+- Removidas oito rotas antigas de redirecionamento administrativo para /painel-administrativo/forum. Os destinos administrativos canônicos e formulários efetivos permanecem. Testes/rotas devem usar as URLs canônicas; sem migração de dados nem homologação Runtime neste incremento.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
 ## `0.1.0-dev.287` — provar o filtro de não lidas e alinhar rotas — 2026-10-24
 
 - Novo Unit `ForumUnreadContentFilterTest`: anônimo recebe `1 = 0`; membro
