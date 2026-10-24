@@ -1,3 +1,12 @@
+## Agregação de ForumPosts na listagem — serviço, 2026-10-23
+
+- `ForumPublicPostStatisticsKernelTest` (3 testes / 44 asserções, MariaDB):
+  só posts publicados entram na contagem; a última atividade é o maior
+  `changed`; empate resolve o maior ID; tópico sem post retorna zero e tópicos
+  não pedidos ficam fora do resultado.
+- A apresentação na View/tema e o Runtime continuam pendentes.
+- Suíte Kernel do Fórum 92/1.919; PHPCS limpo.
+
 ## Denúncia importada no ForumPost — contexto, 2026-10-23
 
 - `ForumFlaggingMigrationContextKernelTest` (7 testes / 131 asserções, MariaDB):

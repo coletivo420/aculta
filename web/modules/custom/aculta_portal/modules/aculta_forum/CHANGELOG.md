@@ -1,3 +1,12 @@
+## `0.1.0-dev.271` — provar a agregação de posts da listagem pública — 2026-10-23
+
+- Kernel exercita `ForumPublicPostStatistics`: conta só posts publicados,
+  devolve a atividade mais recente, resolve o último post em caso de empate de
+  timestamp e devolve zero para tópico sem post. Tópicos não pedidos não entram
+  no resultado.
+- Testes: agregado 3/44; suíte Kernel do Fórum 92/1.919; PHPCS limpo. A
+  apresentação na listagem e a validação no Runtime seguem pendentes.
+
 ## `0.1.0-dev.270` — fechar os guardas da denúncia migrada — 2026-10-23
 
 - Kernel cobre escopo global, timestamp zero, origem com outra Flag, denúncia
