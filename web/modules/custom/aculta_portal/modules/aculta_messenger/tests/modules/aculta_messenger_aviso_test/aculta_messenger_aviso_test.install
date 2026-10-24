@@ -6,6 +6,7 @@
  */
 
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 
 /**
  * Implements hook_schema().
@@ -13,5 +14,6 @@ use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 function aculta_messenger_aviso_test_schema(): array {
   return [
     ForumCommentNoticeSchema::TABLE => ForumCommentNoticeSchema::definition(),
+    ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
   ];
 }

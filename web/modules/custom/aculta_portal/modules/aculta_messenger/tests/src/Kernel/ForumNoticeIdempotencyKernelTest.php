@@ -9,6 +9,7 @@ use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\Component\Datetime\TimeInterface;
@@ -61,7 +62,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('aculta_aviso');
-    $this->installSchema('aculta_messenger_aviso_test', ['aculta_messenger_forum_comment_notice']);
+    $this->installSchema('aculta_messenger_aviso_test', [
+      ForumCommentNoticeSchema::TABLE,
+      ForumNoticeEventSchema::TABLE,
+    ]);
     $this->installSchema('node', ['node_access']);
   }
 
@@ -254,7 +258,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
     self::assertSame(20, (int) $notices[0]->get('ultimo_comentario')->value);
     self::assertSame(2, (int) $this->container->get('database')
-      ->select(ForumCommentNoticeSchema::TABLE)
+      ->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
       ->execute()
       ->fetchField());
@@ -265,17 +269,51 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Out-of-order post and topic revisions remain countable.
+   */
+  public function testOutOfOrderPostAndTopicRevisionsAreCountedOnce(): void {
+    $author = $this->createUser('autor');
+    $follower = $this->createUser('seguidora');
+    $topic = $this->createTopic();
+    $avisos = $this->createAvisoService([(int) $follower->id()]);
+    $first = $this->createPost($topic, (int) $author->id(), TRUE);
+    $second = $this->createPost($topic, (int) $author->id(), TRUE);
+
+    self::assertLessThan((int) $second->getRevisionId(), (int) $first->getRevisionId());
+    self::assertSame(1, $avisos->registrarPost($second));
+    self::assertSame(1, $avisos->registrarPost($first));
+    self::assertSame(0, $avisos->registrarPost($first));
+    $response = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $response);
+    self::assertSame(2, (int) $response[0]->get('contador_site')->value);
+    self::assertSame((int) $second->getRevisionId(), (int) $response[0]->get('ultimo_post')->value);
+
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 20));
+    self::assertSame(1, $avisos->notificarAtualizacao($topic, 10));
+    self::assertSame(0, $avisos->notificarAtualizacao($topic, 10));
+    $updates = $this->loadNotices(
+      (int) $follower->id(),
+      (int) $topic->id(),
+      Aviso::TIPO_ATUALIZACAO,
+    );
+    self::assertCount(1, $updates);
+    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame(20, (int) $updates[0]->get('ultimo_evento')->value);
+  }
+
+  /**
    * The event ledger follows the six-month notice retention policy.
    */
   public function testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch(): void {
     $now = 1_800_000_000;
     $limit = AvisoRetencao::limite($now);
     $database = $this->container->get('database');
-    foreach ([['cid' => 30, 'created' => $limit], ['cid' => 31, 'created' => $limit + 1]] as $event) {
-      $database->insert(ForumCommentNoticeSchema::TABLE)
+    foreach ([['event_id' => 30, 'created' => $limit], ['event_id' => 31, 'created' => $limit + 1]] as $event) {
+      $database->insert(ForumNoticeEventSchema::TABLE)
         ->fields([
           'uid' => 7,
-          'cid' => $event['cid'],
+          'event_type' => 'comment',
+          'event_id' => $event['event_id'],
           'nid' => 99,
           'created' => $event['created'],
         ])
@@ -290,9 +328,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $database,
     ))->expirarAvisos();
 
-    $ids = $database->select(ForumCommentNoticeSchema::TABLE, 'event')
-      ->fields('event', ['cid'])
-      ->orderBy('cid')
+    $ids = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['event_id'])
+      ->orderBy('event_id')
       ->execute()
       ->fetchCol();
     self::assertSame([31], array_map('intval', $ids));
@@ -319,6 +357,39 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       'The Forum Comment notice idempotency ledger already exists.',
       aculta_messenger_post_update_forum_comment_notice_ledger($sandbox),
     );
+  }
+
+  /**
+   * The unified event ledger preserves keys from the prior Comment-only table.
+   */
+  public function testPostUpdateMigratesLegacyCommentKeys(): void {
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.post_update.php';
+
+    $database = $this->container->get('database');
+    $schema = $database->schema();
+    $schema->dropTable(ForumNoticeEventSchema::TABLE);
+    $database->insert(ForumCommentNoticeSchema::TABLE)
+      ->fields(['uid' => 7, 'cid' => 40, 'nid' => 99, 'created' => 1_800_000_000])
+      ->execute();
+    $sandbox = [];
+    do {
+      aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
+    } while (($sandbox['#finished'] ?? 0) < 1);
+
+    self::assertTrue($schema->tableExists(ForumNoticeEventSchema::TABLE));
+    self::assertFalse($schema->tableExists(ForumCommentNoticeSchema::TABLE));
+    $event = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->fields('event', ['uid', 'event_type', 'event_id', 'nid', 'created'])
+      ->execute()
+      ->fetchAssoc();
+    self::assertSame([
+      'uid' => '7',
+      'event_type' => 'comment',
+      'event_id' => '40',
+      'nid' => '99',
+      'created' => '1800000000',
+    ], $event);
   }
 
   /**
@@ -540,6 +611,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $policy ?? $this->createAccessPolicy(),
       $this->container->get('database'),
       $this->container->get('datetime.time'),
+      $this->container->get('lock'),
     );
   }
 

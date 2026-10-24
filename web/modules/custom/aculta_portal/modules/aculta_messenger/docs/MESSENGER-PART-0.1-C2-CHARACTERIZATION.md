@@ -1,7 +1,7 @@
 # MESSENGER-PART 0.1-C2 — caracterização da idempotência dos avisos do Fórum
 
-**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-up dev.80.
-A execução do post-update no Runtime permanece pendente.
+**Data:** 2026-10-22 · **Estado:** caracterização inicial e follow-ups dev.80–dev.81.
+A execução dos post-updates no Runtime permanece pendente.
 **Base:** [ADR-XK-02](../../../../../../../docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md)
 e [roadmap do submódulo](ROADMAP.md).
 
@@ -45,16 +45,17 @@ também não gera, porque `first_published` é imutável.
 
 | Tipo de aviso | Marcador | Comparação |
 | --- | --- | --- |
-| `forum_resposta` (posts) | `ultimo_post` = ID da revisão publicada | `revisao > ultimo_post` |
-| `forum_atualizacao` (tópicos) | `ultimo_evento` = ID da revisão do tópico | `revisao > ultimo_evento` |
-| `forum_resposta` (comentários) | chave única `(uid, cid)` no ledger; `ultimo_comentario` continua sendo o maior CID observado | Inserção única em transação junto do aviso |
+| `forum_resposta` (posts) | `forum_post_revision` + ID da revisão publicada | Chave única do evento no ledger; `ultimo_post` é watermark informativo |
+| `forum_atualizacao` (tópicos) | `topic_revision` + ID da revisão publicada | Chave única do evento no ledger; `ultimo_evento` é watermark informativo |
+| `forum_resposta` (Comments) | `comment` + CID | Chave única do evento no ledger; `ultimo_comentario` é watermark informativo |
 
 Um aviso por par `(uid, assunto_nid, tipo)`; a consulta usa `accessCheck(FALSE)`
-porque o destinatário é revalidado pela política antes de contar. Para Comments,
-o ledger com chave única `(uid, cid)` permite aprovações fora de ordem e bloqueia
-replays; inserção e incremento do agregado compartilham transação. Para posts e
-atualizações, os watermarks de revisão continuam deduplicando. Avisos de resposta
-e de atualização do mesmo tópico são registros distintos.
+porque o destinatário é revalidado pela política antes de contar. O ledger
+unificado com chave única `(uid, event_type, event_id)` permite
+aprovações/publicações fora de ordem e bloqueia replays nos três produtores. A
+inserção e o incremento compartilham transação; lock por agregado serializa os
+incrementos. Avisos de resposta e atualização do mesmo tópico continuam
+registros distintos.
 
 ### Destinatários
 
@@ -76,7 +77,7 @@ o autor do post, quem perdeu acesso ao post (`canViewPost()`) ou ao tópico
 ## Teste entregue
 
 `tests/src/Kernel/ForumNoticeIdempotencyKernelTest.php` — Kernel, MariaDB
-Simpletest dedicada, 12 testes / 220 assertions.
+Simpletest dedicada, 14 testes / 266 assertions.
 
 | Teste | Célula |
 | --- | --- |
@@ -86,8 +87,10 @@ Simpletest dedicada, 12 testes / 220 assertions.
 | `testFirstPublicationUpdateCountsOnce` | transição de primeira publicação contada uma vez |
 | `testOutOfOrderPostApprovalCountsEachPublicationOnce` | post aprovado depois de outro já publicado soma uma vez; replay não duplica |
 | `testOutOfOrderCommentApprovalCountsBothReplies` | CID menor aprovado depois conta; replay não duplica, autor excluído e watermark fica no maior CID |
+| `testOutOfOrderPostAndTopicRevisionsAreCountedOnce` | revisões de ForumPost e tópico fora de ordem contam uma vez; replay é ignorado |
 | `testExpiredCommentNoticeKeysArePrunedInBoundedCronBatch` | ledger vencido é removido; chave ainda dentro da retenção permanece |
-| `testPostUpdateCreatesCommentLedgerIdempotently` | update cria schema ausente e aceita reexecução sem alterar tabela existente |
+| `testPostUpdateCreatesCommentLedgerIdempotently` | update legado cria schema ausente e aceita reexecução |
+| `testPostUpdateMigratesLegacyCommentKeys` | migra chaves dev.80 para o ledger unificado e remove tabela antiga após cópia |
 | `testEditOfPublishedPostDoesNotRegisterANotice` | edição revisionada de post publicado não soma |
 | `testRecipientWithoutPostAccessIsSkipped` | política de acesso negando o post |
 | `testTopicUpdateNoticesAreDeduplicated` | mesma revisão uma vez, revisão seguinte soma, tipos isolados |
@@ -114,8 +117,9 @@ Simpletest dedicada, 12 testes / 220 assertions.
 - Validação Runtime e revisão visual: continuam pendentes.
 - Lock persistente do worker de tópicos (`aculta_messenger:forum_topic_updated:*`)
   não é exercitado; o teste cobre a segunda barreira, no serviço.
-- O follow-up dev.80 adiciona uma tabela de idempotência e post-update; o
-  Runtime ainda não recebeu esse schema.
+- Os follow-ups dev.80–dev.81 adicionam/migram o ledger e instalam locks; os
+  post-updates ainda não foram executados no Runtime. Concorrência entre
+  processos não foi simulada no Kernel.
 - Wiki, LMS e Revista não têm produtor nesta fase e não foram tocados.
 - `PublishedParticipationLookupInterface` continua não implementada e não é
   citada como API existente.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
-use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -52,7 +52,7 @@ final class AvisoRetencaoHooks {
     }
 
     $schema = $this->database->schema();
-    $table = ForumCommentNoticeSchema::TABLE;
+    $table = ForumNoticeEventSchema::TABLE;
     if (!$schema->tableExists($table)) {
       return;
     }

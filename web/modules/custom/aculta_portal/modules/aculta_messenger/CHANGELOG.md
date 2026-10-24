@@ -1,3 +1,16 @@
+## 0.1.1-dev.81 — serializar e deduplicar todos os avisos do Fórum — 2026-10-24
+
+- O ledger passou a registrar Comment, revisão de `ForumPost` e revisão de
+  tópico com chave única por destinatário/tipo/ID. Eventos em ordem inversa não
+  são descartados; watermarks continuam como máximos históricos.
+- Lock por destinatário/tópico/tipo serializa updates do agregado compartilhado;
+  inserção do evento e incremento do aviso são transacionais. Cron remove chaves
+  após seis meses em lote.
+- Post-update migra em lotes as chaves Comment do dev.80 ao ledger unificado e
+  só remove a tabela antiga após concluir a cópia. Kernel MariaDB: 14 testes /
+  266 assertions, incluindo migração e ordem inversa de revisão de tópico/post.
+  Unit Messenger: 64 / 297; PHPCS Drupal/DrupalPractice: PASS. Sem Runtime.
+
 ## 0.1.1-dev.80 — deduplicar aprovação tardia de Comments — 2026-10-24
 
 - O marcador de CID agregado não identificava eventos individuais: uma aprovação

@@ -36,7 +36,7 @@ Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou 
 | `titulo` | Título do tópico na época do aviso |
 | `contador_site` | Respostas novas não lidas. Zera quando a pessoa lê o tópico |
 | `contador_email` | Respostas ainda não enviadas no resumo por e-mail. Zera pelo resumo |
-| `ultimo_comentario` | Maior CID já contado; preserva o marcador histórico e auxilia transferência do agregado. A deduplicação individual usa a chave persistente (destinatário, CID) em `aculta_messenger_forum_comment_notice` |
+| `ultimo_comentario` | Maior CID já contado; preserva o marcador histórico e auxilia transferência do agregado. A idempotência usa o ledger `aculta_messenger_forum_notice_event`, com chave por destinatário/tipo/ID de evento |
 | `ultimo_post` | Último ID de revisão de `ForumPost` contado. Watermark separado evita colisão com CIDs de Comments e acompanha a ordem de publicação, mesmo quando a moderação aprova posts fora da ordem de criação |
 | `ultimo_evento` | Última revisão contada (tipo atualização). Garante que cada revisão conta uma vez |
 
@@ -45,7 +45,7 @@ Regras (implementadas em `Aviso\AvisoService`):
 - Quem segue o tópico (flag `seguir_topico`) recebe o aviso. A autoria da própria resposta não recebe aviso dela.
 - Só Comment ou `ForumPost` **publicado** conta. Comment pendente conta na aprovação; post pendente conta quando o workflow o publica pela primeira vez.
 - Uma revisão posterior de um post já publicado não cria outro aviso de resposta.
-- Cada Comment publicado é contado uma única vez por destinatário pela chave única `(uid, cid)`; aprovações fora da ordem de criação continuam contáveis. `ultimo_comentario` permanece o maior CID observado e não é a chave de idempotência.
+- Cada evento de Comment, revisão de `ForumPost` ou tópico publicado é contado uma vez pela chave única `(uid, tipo, id_evento)`. A ordem de processamento não descarta eventos antigos. `ultimo_comentario`, `ultimo_post` e `ultimo_evento` permanecem máximos históricos, não chaves de idempotência. Lock por destinatário/tópico/tipo serializa os incrementos do agregado.
 - Uma primeira publicação de post revisionável nunca conta duas vezes: o ID
   da revisão publicada é comparado somente com `ultimo_post`. Edições,
   sincronizações e republicações de post já publicado anteriormente não geram

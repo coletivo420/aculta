@@ -12,9 +12,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Entity\Aviso;
-use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
@@ -34,6 +35,7 @@ final class AvisoService implements ForumNoticeTransferInterface {
     private readonly ForumNoticeAccessPolicyInterface $accessPolicy,
     private readonly ?Connection $database = NULL,
     private readonly ?TimeInterface $time = NULL,
+    private readonly ?LockBackendInterface $lock = NULL,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
@@ -101,15 +103,16 @@ final class AvisoService implements ForumNoticeTransferInterface {
       if ($uid <= 0 || !$this->accessPolicy->canViewTopic($topico, $uid)) {
         continue;
       }
-      $aviso = $this->avisoDe($uid, (int) $topico->id(), (string) $topico->label(), Aviso::TIPO_ATUALIZACAO);
-      if (!self::isNewRevision($revisionId, (int) $aviso->get('ultimo_evento')->value)) {
-        continue;
+      if ($this->recordNoticeEvent(
+        $uid,
+        $topico,
+        Aviso::TIPO_ATUALIZACAO,
+        'topic_revision',
+        $revisionId,
+        'ultimo_evento',
+      )) {
+        $atualizados++;
       }
-      $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
-      $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
-      $aviso->set('ultimo_evento', $revisionId);
-      $aviso->save();
-      $atualizados++;
     }
     return $atualizados;
   }
@@ -238,44 +241,15 @@ final class AvisoService implements ForumNoticeTransferInterface {
       if ($uid <= 0 || $uid === (int) $comment->getOwnerId() || !$this->accessPolicy->canViewComment($comment, $uid)) {
         continue;
       }
-      if (!$this->database instanceof Connection || !$this->time instanceof TimeInterface) {
-        throw new \LogicException('Forum Comment notice registration requires the database and time services.');
-      }
-
-      // A Comment ID is assigned at creation, but moderation may publish
-      // pending Comments out of order. Persist the event identity separately
-      // so an older approved Comment is counted without accepting replays.
-      $transaction = $this->database->startTransaction();
-      try {
-        $this->database->insert(ForumCommentNoticeSchema::TABLE)
-          ->fields([
-            'uid' => $uid,
-            'cid' => $commentId,
-            'nid' => (int) $topico->id(),
-            'created' => $this->time->getRequestTime(),
-          ])
-          ->execute();
-      }
-      catch (IntegrityConstraintViolationException) {
-        $transaction->rollBack();
-        continue;
-      }
-
-      try {
-        $aviso = $this->avisoDe($uid, (int) $topico->id(), (string) $topico->label(), Aviso::TIPO_RESPOSTA);
-        $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
-        $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
-        $aviso->set('ultimo_comentario', max(
-          $commentId,
-          (int) $aviso->get('ultimo_comentario')->value,
-        ));
-        $aviso->save();
+      if ($this->recordNoticeEvent(
+        $uid,
+        $topico,
+        Aviso::TIPO_RESPOSTA,
+        'comment',
+        $commentId,
+        'ultimo_comentario',
+      )) {
         $atualizados++;
-        unset($transaction);
-      }
-      catch (\Throwable $exception) {
-        $transaction->rollBack();
-        throw $exception;
       }
     }
     return $atualizados;
@@ -309,19 +283,16 @@ final class AvisoService implements ForumNoticeTransferInterface {
         || !$this->accessPolicy->canViewPost($post, $uid)) {
         continue;
       }
-      $aviso = $this->avisoDe($uid, (int) $topic->id(), (string) $topic->label(), Aviso::TIPO_RESPOSTA);
-      // Moderation order can differ from entity creation order: an older
-      // pending post may be published after a newer post. Revision IDs follow
-      // the publication saves and keep that first-publication event countable.
-      $ultimoPost = (int) $aviso->get('ultimo_post')->value;
-      if (!self::isNewPost($revisionId, $ultimoPost)) {
-        continue;
+      if ($this->recordNoticeEvent(
+        $uid,
+        $topic,
+        Aviso::TIPO_RESPOSTA,
+        'forum_post_revision',
+        $revisionId,
+        'ultimo_post',
+      )) {
+        $atualizados++;
       }
-      $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
-      $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
-      $aviso->set('ultimo_post', $revisionId);
-      $aviso->save();
-      $atualizados++;
     }
     return $atualizados;
   }
@@ -428,6 +399,105 @@ final class AvisoService implements ForumNoticeTransferInterface {
    */
   public function canRecipientViewTopic(int $uid, int $nid): bool {
     return $this->accessPolicy->canViewTopic($this->loadTopic($nid), $uid);
+  }
+
+  /**
+   * Records one Forum event and increments its aggregate notice atomically.
+   */
+  private function recordNoticeEvent(
+    int $uid,
+    NodeInterface $topic,
+    string $noticeType,
+    string $eventType,
+    int $eventId,
+    string $watermarkField,
+  ): bool {
+    if ($eventId <= 0) {
+      return FALSE;
+    }
+    if (!$this->database instanceof Connection || !$this->time instanceof TimeInterface) {
+      throw new \LogicException('Forum notice registration requires the database and time services.');
+    }
+    if (!in_array($watermarkField, ['ultimo_comentario', 'ultimo_post', 'ultimo_evento'], TRUE)) {
+      throw new \LogicException('Forum notice registration received an unsupported watermark field.');
+    }
+
+    $nid = (int) $topic->id();
+    return $this->withNoticeLock($uid, $nid, $noticeType, function () use (
+      $uid,
+      $nid,
+      $topic,
+      $noticeType,
+      $eventType,
+      $eventId,
+      $watermarkField,
+    ): bool {
+      $transaction = $this->database->startTransaction();
+      try {
+        $this->database->insert(ForumNoticeEventSchema::TABLE)
+          ->fields([
+            'uid' => $uid,
+            'event_type' => $eventType,
+            'event_id' => $eventId,
+            'nid' => $nid,
+            'created' => $this->time->getRequestTime(),
+          ])
+          ->execute();
+      }
+      catch (IntegrityConstraintViolationException) {
+        $transaction->rollBack();
+        return FALSE;
+      }
+
+      try {
+        $aviso = $this->avisoDe($uid, $nid, (string) $topic->label(), $noticeType);
+        $aviso->set('contador_site', (int) $aviso->get('contador_site')->value + 1);
+        $aviso->set('contador_email', (int) $aviso->get('contador_email')->value + 1);
+        $aviso->set($watermarkField, max(
+          $eventId,
+          (int) $aviso->get($watermarkField)->value,
+        ));
+        $aviso->save();
+        unset($transaction);
+        return TRUE;
+      }
+      catch (\Throwable $exception) {
+        $transaction->rollBack();
+        throw $exception;
+      }
+    });
+  }
+
+  /**
+   * Serializes updates to one recipient's aggregate notice.
+   *
+   * @param int $uid
+   *   The recipient's user ID.
+   * @param int $nid
+   *   The Forum topic node ID.
+   * @param string $type
+   *   The notice type.
+   * @param callable(): bool $update
+   *   The operation to run while holding the aggregate lock.
+   */
+  private function withNoticeLock(int $uid, int $nid, string $type, callable $update): bool {
+    if (!$this->lock instanceof LockBackendInterface) {
+      throw new \LogicException('Forum notice updates require the lock backend service.');
+    }
+    $name = sprintf('aculta_messenger:notice:%d:%d:%s', $uid, $nid, $type);
+    if (!$this->lock->acquire($name, 60.0)) {
+      $this->lock->wait($name, 60);
+      if (!$this->lock->acquire($name, 60.0)) {
+        throw new \RuntimeException('Unable to acquire the Forum notice aggregate lock.');
+      }
+    }
+
+    try {
+      return $update();
+    }
+    finally {
+      $this->lock->release($name);
+    }
   }
 
   /**

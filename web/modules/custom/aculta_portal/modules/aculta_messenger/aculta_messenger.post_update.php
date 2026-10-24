@@ -7,6 +7,8 @@
 
 use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+use Drupal\Core\Database\IntegrityConstraintViolationException;
 
 /**
  * Adds the per-member dismissal Flag for temporary Site Alerts.
@@ -118,4 +120,71 @@ function aculta_messenger_post_update_forum_comment_notice_ledger(array &$sandbo
   $schema->createTable($table, ForumCommentNoticeSchema::definition());
 
   return 'Added the Forum Comment notice idempotency ledger.';
+}
+
+/**
+ * Migrates the Comment-only event ledger to the unified Forum event ledger.
+ */
+function aculta_messenger_post_update_forum_notice_event_ledger(array &$sandbox): string {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $new_table = ForumNoticeEventSchema::TABLE;
+  $legacy_table = ForumCommentNoticeSchema::TABLE;
+
+  if (!$schema->tableExists($new_table)) {
+    $schema->createTable($new_table, ForumNoticeEventSchema::definition());
+  }
+  if (!$schema->tableExists($legacy_table)) {
+    $sandbox['#finished'] = 1;
+    return 'The legacy Comment event ledger is absent; the unified ledger is ready.';
+  }
+
+  if (!isset($sandbox['max_id'])) {
+    $sandbox['max_id'] = (int) $database->select($legacy_table, 'event')
+      ->fields('event', ['id'])
+      ->orderBy('id', 'DESC')
+      ->range(0, 1)
+      ->execute()
+      ->fetchField();
+    $sandbox['last_id'] = 0;
+    if ($sandbox['max_id'] === 0) {
+      $schema->dropTable($legacy_table);
+      $sandbox['#finished'] = 1;
+      return 'Removed the empty legacy Comment event ledger.';
+    }
+  }
+
+  $events = $database->select($legacy_table, 'event')
+    ->fields('event', ['id', 'uid', 'cid', 'nid', 'created'])
+    ->condition('id', $sandbox['last_id'], '>')
+    ->orderBy('id', 'ASC')
+    ->range(0, 500)
+    ->execute();
+  $count = 0;
+  foreach ($events as $event) {
+    try {
+      $database->insert($new_table)
+        ->fields([
+          'uid' => (int) $event->uid,
+          'event_type' => 'comment',
+          'event_id' => (int) $event->cid,
+          'nid' => (int) $event->nid,
+          'created' => (int) $event->created,
+        ])
+        ->execute();
+    }
+    catch (IntegrityConstraintViolationException) {
+      // A repeated post-update batch is safe: event keys are unique.
+    }
+    $sandbox['last_id'] = (int) $event->id;
+    $count++;
+  }
+
+  $sandbox['#finished'] = min(1, $sandbox['last_id'] / $sandbox['max_id']);
+  if ($sandbox['last_id'] >= $sandbox['max_id']) {
+    $schema->dropTable($legacy_table);
+    $sandbox['#finished'] = 1;
+  }
+
+  return sprintf('Migrated %d legacy Forum Comment event keys.', $count);
 }

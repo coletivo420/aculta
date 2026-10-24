@@ -12,10 +12,11 @@ smoke autenticado e revisão visual permanecem pendentes.
 
 ## ACULTA Messenger 0.1.1
 
-A versão `0.1.1-dev.80` inclui o envelope mínimo `MessengerNoticeEvent` e
-`MessengerNoticePublisherInterface` para adapters, além da chave de idempotência
-por destinatário/Comment necessária para aprovações tardias. A prévia de busca
-de membros mantém as sugestões como links normais alcançáveis por Tab.
+A versão `0.1.1-dev.81` inclui o envelope mínimo `MessengerNoticeEvent` e
+`MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
+eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
+agregado. A prévia de busca de membros mantém as sugestões como links normais
+alcançáveis por Tab.
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
 privacidade para novas conversas. Consulte [INTEGRATIONS.md](docs/INTEGRATIONS.md)

@@ -8,7 +8,7 @@ A arquitetura normativa é [ARCHITECTURE.md](ARCHITECTURE.md). O roadmap anterio
 
 | Produtor | Evento / destinatário | Fonte e armazenamento | Canal / preferência / deduplicação | Autorização e evidência |
 | --- | --- | --- | --- | --- |
-| Fórum | Comentário ou primeira publicação de `ForumPost`; seguidores de `seguir_topico`, exceto autor | Fórum + Flag; `aculta_aviso` agregado por usuário/tipo/tópico; ledger `(uid, cid)` idempotente para Comments | Central e resumo diário; watermarks de revisão e chave por evento | Publicação, assinatura e acesso ao tópico; Kernel XK-C2 caracteriza ordem tardia, replay e retenção. |
+| Fórum | Comentário ou primeira publicação de `ForumPost`; seguidores de `seguir_topico`, exceto autor | Fórum + Flag; `aculta_aviso` agregado por usuário/tipo/tópico; ledger idempotente por destinatário/tipo/ID de evento | Central e resumo diário; watermarks de revisão e chave por evento | Publicação, assinatura e acesso ao tópico; Kernel XK-C2 caracteriza ordem tardia, replay e retenção. |
 | Fórum | Atualização do tópico; destinatários segundo fluxo existente | Node/revisão + Message Subscribe queue e/ou `aculta_aviso`, conforme tipo de evento | F-D21 desliga entrega duplicada de publicação; deduplicação por revisão | Worker revalida tópico publicado e URL/purpose; Unit existente, Runtime pendente conforme changelog. |
 | User | Pedido/aceite de amizade; membro alvo da transição | `aculta_friendship` é fonte do workflow; Message para aviso | Message Notify em fila; política de e-mail/preferência existente; chave de transição | `FriendshipManager` valida transição/conta; Unit do subscriber e worker. |
 | Private Message | Nova mensagem privada; participantes elegíveis exceto remetente | Private Message + Message; fila carrega ID da mensagem | E-mail mínimo via Message Notify, conforme preferência; chave por mensagem/destinatário | Revalida thread, bloqueio, destinatário e acesso no worker; Unit existente. |
@@ -23,7 +23,7 @@ A matriz é caracterização inicial baseada em código e evidências documentai
 
 ## M1 — Estabilização 0.1.1 RC
 
-**Nesta revisão (dev.80):** Comments do Fórum aprovados fora da ordem de criação agora incrementam o agregado sem perder avisos; replay é deduplicado pelo ledger transacional `(uid, cid)`, com limpeza por lote após seis meses. Post-update aditivo cobre instalações existentes, mas ainda não foi executado no Runtime. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
+**Nesta revisão (dev.81):** Comments, revisões de `ForumPost` e atualizações de tópico usam ledger transacional por evento; processamento fora de ordem não perde avisos e lock serializa incrementos do mesmo agregado. A migração do ledger dev.80 é paginada; post-update ainda não foi executado no Runtime. Também removida a restrição de amizade para respostas em thread existente; bloqueios continuam. O conceito artificial de retenção `course` foi removido.
 **Pendente:** cenários de amizade, bloqueio bilateral, autorização/IDOR, usuários inativos, grupos voluntários (incluindo fallback/teclado), retenção paginada e recuperação de falhas, transporte de teste e revisão visual autenticada. Não rodar limpeza em dados reais.
 **Aceite:** gates estáticos e automatizados pertinentes aprovados; smoke visual/Runtime identificado separadamente antes de RC conforme ciclo.
 

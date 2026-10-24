@@ -71,7 +71,7 @@ services:
       - '@user.data'
   aculta_messenger.aviso_service:
     class: Drupal\aculta_messenger\Aviso\AvisoService
-    arguments: ['@entity_type.manager', '@flag', '@aculta_messenger.forum_notice_access_policy', '@database', '@datetime.time', '@module_handler']
+    arguments: ['@entity_type.manager', '@flag', '@aculta_messenger.forum_notice_access_policy', '@database', '@datetime.time', '@lock', '@module_handler']
   aculta_messenger.forum_notice_access_policy:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
