@@ -257,8 +257,12 @@ final class AvisosResumo {
         if (!is_array($row) || !is_int($row['delivery_id'] ?? NULL) || $row['delivery_id'] < 1) {
           continue;
         }
-        if (($row['tipo'] ?? NULL) !== NULL
-          && $this->preferencias->emailMode($uid, (string) $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
+        // Category is required by the provider contract. A malformed row must
+        // never bypass the account's category-level email policy.
+        if (!is_string($row['tipo'] ?? NULL) || trim($row['tipo']) === '') {
+          continue;
+        }
+        if ($this->preferencias->emailMode($uid, $row['tipo']) !== AvisoPreferencias::EMAIL_DIGEST) {
           continue;
         }
         // Provider implementations are extensible and may join through more

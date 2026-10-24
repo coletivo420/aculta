@@ -410,6 +410,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A row without its required category cannot bypass email preferences.
+   */
+  public function testRowsWithoutCategoryAreNotSent(): void {
+    $provider = new MalformedTestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame([], $provider->markedDeliveryIds);
+    self::assertSame([27], $provider->discarded, 'Malformed rows are discarded without sending email outside category policy.');
+  }
+
+  /**
    * Opt-out discards email rows without attempting to send a digest.
    */
   public function testOptOutDiscardsLmsRowsWithoutSending(): void {
@@ -633,6 +647,25 @@ final class TestWikiLearningDigestProvider extends TestLearningDigestProvider {
    */
   public function digestProviderId(): string {
     return 'wiki';
+  }
+
+}
+
+/**
+ * Simulates a provider violating the required category field contract.
+ */
+final class MalformedTestLearningDigestProvider extends TestLearningDigestProvider {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    return [[
+      'titulo' => 'Aviso sem categoria',
+      'quantidade' => 1,
+      'delivery_id' => 901,
+    ],
+    ];
   }
 
 }

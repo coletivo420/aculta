@@ -1,3 +1,12 @@
+## 0.1.1-dev.183 — exigir categoria válida no digest
+
+O agregador rejeita linhas de providers sem categoria obrigatória antes de aplicar preferências por tipo. Um provider
+malformado não pode contornar o modo de e-mail escolhido para a categoria; sua linha inválida é descartada do canal de
+e-mail sem remover o aviso do site.
+
+Validação: suíte Unit do Messenger + Integration Unit LMS **194/1.358 PASS**; PHPCS Drupal/DrupalPractice e PHP lint
+PASS. Nenhum Runtime ou transporte de e-mail real foi executado.
+
 ## 0.1.1-dev.182 — estabilizar a correlação do digest entre adapters
 
 Teste de regressão confirma que o mesmo lote de avisos produz a mesma correlação idempotente quando a ordem de
