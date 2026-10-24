@@ -132,6 +132,9 @@ final class PortalUiHooks {
     'wiki-search' => ['aculta-wiki-search'],
     'wiki-search-results' => ['aculta-wiki-search-results'],
     'wiki-recent-change' => ['aculta-wiki-recent-change'],
+    'we-sativa-workspace' => ['d-grid', 'gap-4', 'we-sativa__workspace'],
+    'we-sativa-create' => ['btn', 'btn-primary'],
+    'wiki-workspace-return' => ['btn', 'btn-outline-primary', 'mb-3'],
     'courses-home' => ['courses-home'],
     'courses-home-intro' => ['courses-home__intro'],
     'courses-home-collaboration' => ['courses-home__collaboration'],
@@ -399,6 +402,7 @@ final class PortalUiHooks {
   }
 
   #[Hook('preprocess_container')]
+  #[Hook('preprocess_link')]
   #[Hook('preprocess_html_tag')]
   #[Hook('preprocess_item_list')]
   #[Hook('preprocess_fieldset')]

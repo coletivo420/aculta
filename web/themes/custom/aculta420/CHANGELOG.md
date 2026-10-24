@@ -1,3 +1,13 @@
+## 0.6.1-dev.6 — apresentar ações do workspace WE SATIVA
+
+Classificação: PATCH de integração visual.
+
+- `PortalUiHooks` mapeia `we-sativa-workspace`, `we-sativa-create` e
+  `wiki-workspace-return` para utilitários Bootstrap; links agora recebem a
+  tradução de token no preprocess do tema.
+- Teste Unit cobre classes responsivas do workspace e ações. Firefox ESR/X11
+  ainda não foi executado para WE SATIVA; Runtime e tela em 320 px pendentes.
+
 ## 0.6.1-dev.5 — ajustar busca da Wiki para não causar overflow
 
 Classificação: PATCH visual responsivo.

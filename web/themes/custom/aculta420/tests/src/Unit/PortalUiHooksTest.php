@@ -64,6 +64,35 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * WE SATIVA workspace and navigation actions receive responsive Bootstrap classes.
+   */
+  public function testMapsWeSativaWorkspaceAndLinkTokens(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
+      ],
+      'options' => [
+        'attributes' => new Attribute(['data-portal-ui' => 'we-sativa-create wiki-workspace-return']),
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $containerAttributes = $variables['element']['#attributes'];
+    $this->assertContains('d-grid', $containerAttributes['class']);
+    $this->assertContains('gap-4', $containerAttributes['class']);
+    $this->assertContains('we-sativa__workspace', $containerAttributes['class']);
+    $this->assertArrayNotHasKey('data-portal-ui', $containerAttributes);
+    $linkAttributes = $variables['options']['attributes'];
+    $this->assertInstanceOf(Attribute::class, $linkAttributes);
+    $this->assertTrue($linkAttributes->hasClass('btn'));
+    $this->assertTrue($linkAttributes->hasClass('btn-primary'));
+    $this->assertTrue($linkAttributes->hasClass('btn-outline-primary'));
+    $this->assertTrue($linkAttributes->hasClass('mb-3'));
+    $this->assertFalse($linkAttributes->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Token desconhecido não gera classe e ainda assim é removido.
    */
   public function testUnknownTokenGeneratesNoClassAndIsRemoved(): void {

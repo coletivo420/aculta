@@ -4,6 +4,7 @@
 
 | Versão | Estado | Marcação | Conteúdo |
 | --- | --- | --- | --- |
+| 0.6.1-dev.6 | Tokens visuais do workspace WE SATIVA e retorno aos trabalhos | PHPUnit Unit de PortalUiHooks; browser WE SATIVA pendente | Layout usa `d-grid/gap-4`, ação de criação `btn-primary`, retorno `btn-outline-primary`; não cria SDC paralelo |
 | 0.6.1-dev.5 | Corrigida largura do submit da busca no cabeçalho Wiki | Firefox ESR/X11, CSS candidato direto, 46/46; sem overflow em 320/390/1280 px | Largura intrínseca evita que `.form-control` ultrapasse o formulário flex; agregado Runtime e Olivero pendentes |
 | 0.6.1-dev.4 | Removidos overrides de Article e Blog aposentados | Changelog registra alteração compatível no tema | `revista` permanece com override próprio |
 | 0.6.1-dev.3 | Banner de consentimento no fluxo normal para não cobrir conteúdo | Firefox ESR/X11: 15/15; capturas 390/768/1024 px em claro/escuro; sem overflow; foco do link de salto verificado | Sai da posição fixa e permanece após o rodapé; cartões sem sobreposição nas capturas inspecionadas |

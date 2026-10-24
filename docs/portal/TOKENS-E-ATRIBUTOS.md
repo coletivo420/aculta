@@ -216,6 +216,9 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `wiki-search` | `aculta-wiki-search` | (montado dinamicamente ou só no tema) |
 | `wiki-search-results` | `aculta-wiki-search-results` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
 | `wiki-recent-change` | `aculta-wiki-recent-change` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
+| `we-sativa-workspace` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `we-sativa-create` | `btn btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `wiki-workspace-return` | `btn btn-outline-primary mb-3` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php` |
 | `courses-home` | `courses-home` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-intro` | `courses-home__intro` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-collaboration` | `courses-home__collaboration` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
