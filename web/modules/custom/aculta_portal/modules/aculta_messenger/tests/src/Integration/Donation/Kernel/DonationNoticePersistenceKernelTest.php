@@ -10,10 +10,13 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -21,6 +24,7 @@ use Drupal\Core\Queue\QueueFactory;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\user\Entity\User;
@@ -144,6 +148,40 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Read state persists on the existing Message and remains owner-protected.
+   */
+  public function testReadStatePersistsAndRejectsAnotherAccount(): void {
+    $user = User::create([
+      'name' => 'donation_read_recipient',
+      'mail' => 'donation-read@example.invalid',
+      'status' => 1,
+    ]);
+    $user->save();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $manager = $this->manager($preferences, $user);
+    (new DonationNoticeEventConsumer($manager))->consume(
+      $this->event((int) $user->id(), 'donation.order_placed', 'commerce_order', 'order-1'),
+    );
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('message');
+    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    self::assertTrue($manager->setRead($message, $user, TRUE));
+    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+
+    $other = User::create([
+      'name' => 'other_donation_reader',
+      'mail' => 'other-reader@example.invalid',
+      'status' => 1,
+    ]);
+    $other->save();
+    self::assertFalse($manager->setRead($message, $other, FALSE));
+    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+    self::assertTrue($manager->setRead($message, $user, FALSE));
+    self::assertSame(0, (int) $storage->load($message->id())->get('field_aculta_don_read')->value);
+  }
+
+  /**
    * Builds one canonical Donation envelope. */
   private function event(int $uid, string $type, string $entityType, string $uuid): MessengerNoticeEvent {
     return new MessengerNoticeEvent(
@@ -192,17 +230,27 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
       return [$payment];
     });
     $realEntityManager = $this->container->get('entity_type.manager');
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('isHttps')->willReturn(TRUE);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('loja_aculta_org')->willReturn($domain);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => match ($type) {
       'user' => $realEntityManager->getStorage('user'),
       'message' => $realEntityManager->getStorage('message'),
+      'domain' => $domainStorage,
       'commerce_order' => $orderStorage,
       'commerce_payment' => $paymentStorage,
       default => throw new \UnexpectedValueException('Unexpected entity storage: ' . $type),
     });
     return new DonationNoticeManager(
       $entityTypeManager,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      new DomainPurposeManager(
+        $entityTypeManager,
+        $this->createMock(DomainNegotiatorInterface::class),
+        $this->createMock(ConfigFactoryInterface::class),
+        new RequestStack(),
+      ),
       $preferences,
       $this->createMock(QueueFactory::class),
       $lock,

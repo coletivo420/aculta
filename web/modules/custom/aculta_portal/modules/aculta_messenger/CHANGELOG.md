@@ -1,3 +1,13 @@
+## 0.1.1-dev.125 — comprovar persistência de leitura de avisos de Doações — 2026-10-24
+
+Kernel MariaDB cobre `DonationNoticeManager::setRead()` com a entidade Message persistida: marca e desmarca o campo
+nativo de leitura, revalida pedido e destinatário, e rejeita outra conta sem alterar o registro. A fixture agora usa
+`DomainPurposeManager` com dependências reais/mockadas, sem reflection em objeto parcialmente inicializado.
+
+Validação: teste Kernel Doações 3/35 (inclui 1/13 para leitura), Integration Messenger 57/569,
+PHPCS Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Duas deprecações de annotations Message e um notice
+Integration reporta duas deprecações do Core/contrib e cinco notices PHPUnit. Runtime visual e demais adapters continuam pendentes.
+
 ## 0.1.1-dev.124 — isolar falhas de providers e destinatários no digest — 2026-10-24
 
 Uma falha na descoberta de destinatários ou na montagem do digest de um adapter não interrompe o cron
