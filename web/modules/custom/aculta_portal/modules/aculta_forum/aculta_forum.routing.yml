@@ -6,64 +6,6 @@ aculta_forum.admin:
   requirements:
     _permission: 'access content overview'
 
-aculta_forum.legacy_admin_redirect:
-  path: '/painel-administrativo/conteudo/forum'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_topic_move_redirect:
-  path: '/painel-administrativo/conteudo/forum/{node}/mover-categoria'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-    node: '\d+'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_comment_move_redirect:
-  path: '/painel-administrativo/conteudo/forum/comentario/{comment}/mover'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-    comment: '\d+'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_comments_redirect:
-  path: '/painel-administrativo/conteudo/forum/comentarios'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_comments_published_redirect:
-  path: '/painel-administrativo/conteudo/forum/comentarios/publicados'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_comments_rejected_redirect:
-  path: '/painel-administrativo/conteudo/forum/comentarios/rejeitados'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.legacy_admin_comments_pending_redirect:
-  path: '/painel-administrativo/conteudo/forum/comentarios/aguardando-moderacao'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-  methods: [GET, HEAD, POST]
-
 aculta_forum.topic_add:
   path: '/criar-topico'
   defaults:
@@ -111,15 +53,6 @@ aculta_forum.comment_move:
     parameters:
       comment:
         type: 'entity:comment'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.comment_move_legacy_redirect:
-  path: '/painel-administrativo/forum/comentario/{comment}/mover'
-  defaults:
-    _controller: '\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview'
-  requirements:
-    _permission: 'access content overview'
-    comment: '\d+'
   methods: [GET, HEAD, POST]
 
 aculta_forum.settings:
