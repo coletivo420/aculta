@@ -2,6 +2,13 @@
 
 Índice do `aculta_portal`. Só documentos normativos e de referência vigentes.
 
+## ACULTA Studio — Hub e Meu Espaço (planejamento P0, 2026-10-24)
+
+- [Hub geral e migração de Minha Conta e Meu Perfil](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md) — **contrato-alvo**, fases P0–P7, ownership, navegação, rotas futuras e anti-regressão; não implementado.
+- [Identidade atual do Studio](ACULTA-STUDIO-IDENTITY.md) — Marley, Ganjalab e WE SATIVA e seus caminhos já existentes, com distinção explícita do futuro hub.
+- [Menu atual da Minha Conta](ACCOUNT-MENU.md) — comportamento existente mantido durante a transição, inclusive raiz do domínio de conta e proteção de `/minha-conta`.
+- [Plataforma e experiências](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md) — contratos arquiteturais do Studio e a nova frente P0.
+
 ## Normas
 
 - [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
@@ -25,7 +32,7 @@
 - [ACULTA Associado ID](../modules/ACULTA-ASSOCIADO-ID.md) — escopo de dados dos associados, compatibilidade e migração controlada.
 - [ACULTA Gallery — arquitetura](../../web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md) — decisões e contratos de galerias incorporadas.
 - [ACULTA Messenger: documentação do projeto](MESSENGER.md) — módulo, submódulo, rotas, hooks, classes e contratos com o tema.
-- [Tipos de conversa do Messenger: grupos, fórum, LMS, retenção e integrações](MESSENGER-CONVERSATION-KINDS.md) — base preparada, decisões pendentes e fases.
+- [Tipos de conversa do Messenger: política vigente](MESSENGER-CONVERSATION-KINDS.md) — somente conversas privadas voluntárias; propostas históricas de chat automático por conteúdo estão substituídas.
 - [Auditoria do Messenger](MESSENGER-AUDIT.md) — separação entre módulo, submódulo e tema, com os achados.
 - [ACULTA Messenger](../../web/modules/custom/aculta_portal/modules/aculta_messenger/README.md) — entrada local do submódulo.
 - [PDF global](PDF-VIEWER-INTEGRATION.md) — contrato compartilhado de Media, viewer, acesso a arquivos e previews.
