@@ -351,7 +351,29 @@ final class WikiLeadImageUploader {
    * Returns the submitted file IDs of the managed file element.
    */
   private function uploadedFids(FormStateInterface $form_state): array {
-    return array_values(array_filter(array_map('intval', (array) $form_state->getValue([self::TAB, self::FILE]))));
+    $value = $form_state->getValue([self::TAB, self::FILE], []);
+    if (!is_array($value)) {
+      return [];
+    }
+
+    // Form API's managed_file element stores processed IDs under "fids";
+    // direct service callers and some test states provide the ID list itself.
+    $fids = $value['fids'] ?? $value;
+    if (is_string($fids)) {
+      $fids = preg_split('/\s+/', trim($fids), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    }
+    if (!is_array($fids)) {
+      return [];
+    }
+
+    $validFids = [];
+    foreach ($fids as $fid) {
+      $fid = is_int($fid) ? $fid : (is_string($fid) ? filter_var($fid, FILTER_VALIDATE_INT) : FALSE);
+      if (is_int($fid) && $fid > 0) {
+        $validFids[$fid] = $fid;
+      }
+    }
+    return array_values($validFids);
   }
 
   /**

@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.70 (WE SATIVA protege edição concorrente com revisão-base e lock FOR UPDATE; Kernel focal 1/37, fluxo draft→review 1/67; Unit uploader 12/79; Kernel mídia 22/995. Runtime não homologado)"
-next_phase: 'Content Index: gate read-only do inventário e procedimento de reconstrução v4 do Runtime antes de ativação. WE SATIVA: homologar edição em Firefox ESR/X11 e em sessões concorrentes separadas. Limpeza global segura de arquivos também segue pendente ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.76 (Form API Node submete managed_file real; draft mantém Media privada; Kernel ciclo da imagem 23/1.036; lint/PHPCS aprovados. Runtime não homologado)"
+next_phase: 'Content Index: conferir o estado atual e homologar ativação/rebuild v4 no Runtime de teste com reversão preparada. WE SATIVA: homologar edição em Firefox ESR/X11 e sessões concorrentes separadas ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

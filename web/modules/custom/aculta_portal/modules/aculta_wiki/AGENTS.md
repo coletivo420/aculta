@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.76: envio de imagem usa a forma nativa `managed_file` (`fids`). Kernel
+  submete formulário Node real e confirma Media despublicada em `draft`; classe
+  MariaDB completa 23/1.036, 291 depreciações Core/contrib e 24 PHPUnit. Runtime
+  intocado.
+
 - Dev.75: R1 revalidada no HEAD: Unit dos providers 9/40; três Kernels MariaDB
   10/343, 240 depreciações Core/contrib/PHPUnit. Provider v4 inalterado; Runtime
   não foi ativado nem reconstruído.

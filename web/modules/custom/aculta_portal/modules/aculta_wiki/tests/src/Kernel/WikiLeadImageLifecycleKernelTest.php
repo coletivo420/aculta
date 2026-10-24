@@ -1280,6 +1280,98 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * A real Node Form API submission stores the lead image privately on draft.
+   */
+  public function testNativeNodeFormSubmitsLeadImageWithoutPublishingDraftMedia(): void {
+    $this->installEntitySchema('content_moderation_state');
+    $this->installConfig(['workflows', 'content_moderation']);
+    $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
+    Workflow::create(Yaml::parseFile($workflowFile))->save();
+    ProfileType::create(['id' => 'email_confirmed', 'label' => 'Confirmed account profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'email_confirmed',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'wiki_entry',
+      'mode' => 'default',
+      'status' => TRUE,
+    ])
+      ->setComponent('body', ['type' => 'text_textarea_with_summary'])
+      ->setComponent('moderation_state', ['type' => 'moderation_state_default'])
+      ->setComponent(WikiLeadImageUploader::FIELD, ['type' => 'entity_reference_autocomplete'])
+      ->save();
+
+    Role::create([
+      'id' => 'email_confirmed',
+      'label' => 'Confirmed Wiki image author test',
+      'permissions' => [
+        'access content',
+        'create wiki_entry content',
+        'edit own wiki_entry content',
+        'view own unpublished content',
+        'use wiki_editorial transition create_new_draft',
+        'use wiki_editorial transition draft_to_review',
+      ],
+    ])->save();
+    $author = User::create([
+      'name' => 'wiki-image-form-author',
+      'mail' => 'wiki-image-form-author@example.invalid',
+      'status' => TRUE,
+      'roles' => ['email_confirmed'],
+    ]);
+    $author->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+    $this->container->get('current_user')->setAccount($author);
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+
+    $file = $this->createTemporaryPrivateImage((int) $author->id());
+    $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
+    $formObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
+    $formObject->setEntity($node);
+    $formState = new FormState();
+    $formState->setFormObject($formObject);
+    $formBuilder = $this->container->get('form_builder');
+    $form = $formBuilder->buildForm($formObject, $formState);
+
+    self::assertArrayHasKey(WikiLeadImageUploader::TAB, $form);
+    self::assertSame('managed_file', $form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#type']);
+    $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Rascunho com imagem real');
+    $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
+    $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $formState->setValue($form['moderation_state']['widget'][0]['state']['#parents'], 'draft');
+    $formState->setValue($form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#parents'], ['fids' => (string) $file->id()]);
+    $formState->setValue($form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::ALT]['#parents'], 'Pessoa caminhando por uma trilha');
+    $formState->setTriggeringElement($form['actions']['submit']);
+    $formBuilder->submitForm($formObject, $formState);
+
+    self::assertSame([], $formState->getErrors());
+    $savedNode = Node::load((int) $formObject->getEntity()->id());
+    self::assertInstanceOf(Node::class, $savedNode);
+    self::assertSame('draft', $savedNode->get('moderation_state')->value);
+    self::assertFalse($savedNode->isPublished());
+    $media = $savedNode->get(WikiLeadImageUploader::FIELD)->entity;
+    self::assertInstanceOf(Media::class, $media);
+    self::assertFalse($media->isPublished());
+    self::assertSame('Pessoa caminhando por uma trilha', $media->get('field_media_image')->alt);
+    self::assertFalse($media->access('view', new AnonymousUserSession()));
+    self::assertStringStartsWith('private://wiki/imagens/', $file->getFileUri());
+    self::assertFalse($file->access('download', new AnonymousUserSession()));
+    $fileStorage = $this->container->get('entity_type.manager')->getStorage('file');
+    $fileStorage->resetCache([(int) $file->id()]);
+    self::assertFalse($fileStorage->load($file->id())->isTemporary());
+  }
+
+  /**
    * A stale WE SATIVA edit cannot overwrite a newer default revision.
    */
   public function testConcurrentWikiEditFormRejectsStaleRevision(): void {

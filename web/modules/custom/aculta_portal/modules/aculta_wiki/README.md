@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.76`: envio de imagem pelo formulário Node/Form API real passou em
+  Kernel MariaDB. Upload `managed_file` resulta em Media privada para Node
+  `draft`; classe de ciclo da imagem: 23/1.036, PHP lint e PHPCS aprovados.
+  Runtime permanece intocado.
+
 - `0.1.0-dev.75`: R1 revalidada no HEAD. Unit dos providers Wiki/categoria:
   9/40; três Kernels MariaDB combinados (provider, acesso/relações e owner
   real): 10/343. O bootstrap real descobre Wiki + Image e revalida Entity

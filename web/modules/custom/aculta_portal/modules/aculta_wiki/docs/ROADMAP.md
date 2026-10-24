@@ -4,13 +4,24 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.75**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.76**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.76 — envio real da imagem no Form API
+
+O Kernel agora submete um verbete de autoria confirmada pelo formulário nativo
+do Node com `managed_file`, alt text e estado `draft`. A Media salva permanece
+despublicada e o arquivo `private://` não permite download anônimo. O fluxo
+revelou que o uploader lia apenas a lista simplificada de FIDs; agora também
+normaliza a estrutura processada nativa `fids` sem mudar o contrato dos callers
+diretos. A classe Kernel completa passou (23 testes / 1.036 assertions; 291
+depreciações Core/contrib e 24 PHPUnit), assim como lint e PHPCS. Não houve
+alteração do Runtime.
 
 ### Incremento dev.75 — revalidar WIKI-R1 no HEAD
 

@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.76 — submissão real da imagem pelo Form API
+
+- A regressão Kernel agora constrói e submete o formulário nativo de Node da
+  Wiki com `managed_file`, descrição alt e estado `draft`. Comprova Media
+  despublicada, arquivo privado/permanente e ausência de download anônimo.
+- A leitura do uploader aceita o formato processado de `managed_file` (`fids`)
+  e continua aceitando listas de IDs usadas pelos consumidores diretos.
+- `WikiLeadImageLifecycleKernelTest` passou em MariaDB: 23 testes / 1.036
+  assertions; 291 depreciações Core/contrib e 24 PHPUnit. PHP lint e PHPCS
+  passaram. Runtime não foi alterado.
+
 ## 0.1.0-dev.75 — revalidar integração Content Index
 
 - No HEAD após dev.74, os Unit dos providers Wiki/categoria passaram (9 testes /
