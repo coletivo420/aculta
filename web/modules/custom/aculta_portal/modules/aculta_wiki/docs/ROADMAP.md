@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.82**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.83**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.83 — Entity Access da proposta no workspace
+
+Além de filtrar candidatos por UID, o Kernel cobre revalidação de acesso por
+proposta: conta que pode abrir WE SATIVA via `submit wiki proposals`, mas não
+tem `view own wiki proposals`, possui uma proposta candidata e recebe estado
+vazio sem links ou card. Focal 1/45; classe Kernel completa 24/1.142, com 291
+depreciações Core/contrib e 25 PHPUnit. PHPCS passou; Runtime intocado.
 
 ### Incremento dev.82 — isolamento de propostas no WE SATIVA
 

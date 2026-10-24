@@ -1209,6 +1209,42 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ['url.query_args:wiki_node_cursor', 'url.query_args:wiki_proposal_cursor'],
       $secondPage['#cache']['contexts'],
     )));
+
+    Role::create([
+      'id' => 'wiki_workspace_proposal_no_view_test',
+      'label' => 'Wiki proposal submitter without own-view permission test',
+      'permissions' => ['access content', 'submit wiki proposals'],
+    ])->save();
+    $restrictedAuthor = User::create([
+      'uid' => 19,
+      'name' => 'wiki-workspace-author-without-proposal-view',
+      'mail' => 'wiki-workspace-author-without-proposal-view@example.invalid',
+      'status' => TRUE,
+      'roles' => ['wiki_workspace_proposal_no_view_test'],
+    ]);
+    $restrictedAuthor->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $restrictedAuthor->id());
+    $restrictedProposal = WikiProposal::create([
+      'uid' => $restrictedAuthor->id(),
+      'subject' => 'Proposta sem view own no workspace',
+      'target' => ['target_id' => $node->id()],
+      'target_revision_id' => $node->getRevisionId(),
+      'intent' => 'correction',
+      'proposed_text' => 'O candidato existe, mas Entity Access não autoriza leitura.',
+      'rationale' => 'Verificar revalidação de acesso.',
+      'state' => 'submitted',
+    ]);
+    $restrictedProposal->save();
+    self::assertFalse($restrictedAuthor->hasPermission('view own wiki proposals'));
+    self::assertTrue($workspace->access($restrictedAuthor)->isAllowed());
+    $requestStack->push(Request::create('/studio/we-sativa'));
+    try {
+      $restrictedPage = $workspace->build($restrictedAuthor);
+    }
+    finally {
+      $requestStack->pop();
+    }
+    self::assertSame('aculta420:empty-state', $restrictedPage['proposals']['#slots']['body']['items']['#component']);
   }
 
   /**

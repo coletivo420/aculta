@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.83 — revalidar acesso das propostas no workspace
+
+- Kernel inclui proposta candidata do mesmo UID e conta com `submit wiki
+  proposals`, mas sem `view own wiki proposals`. O acesso ao workspace é
+  permitido, enquanto a entidade é negada por Entity Access e não gera card.
+- Focal 1/45; classe `WikiLeadImageLifecycleKernelTest` 24/1.142, 291
+  depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+
 ## 0.1.0-dev.82 — isolamento das propostas no WE SATIVA
 
 - A fixture de paginação inclui proposta de outra autoria; o workspace mantém

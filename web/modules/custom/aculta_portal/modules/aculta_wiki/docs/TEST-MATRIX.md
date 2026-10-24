@@ -8,7 +8,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
-| Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; proposta de outra autoria não aparece; cursores e links no Domain `account` | aprovado (dev.82; focal 1/42; não cobre candidatos do mesmo UID negados por Entity Access) |
+| Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; outra autoria e candidato do mesmo UID sem `view` não aparecem; cursores e links no Domain `account` | aprovado (dev.83; focais 1/42 e 1/45; classe 24/1.142) |
 | Acesso e cache | Kernel | Conta confirmada com criação pode entrar; conta alheia sem itens não pode; cache varia por usuário/domínio | aprovado; 286 depreciações Drupal/contrib e 16 PHPUnit na classe |
 | Rota de criação contextual | Kernel | `node.add` autoriza a conta confirmada; o link Studio conserva parâmetros e Domain Wiki quando iniciado em `main` | aprovado (dev.40; 1 teste / 41 asserções) |
 | Construção do formulário Node | Kernel | Form API Core, conta confirmada, estado `draft` selecionado, transição `draft_to_review` e sem opção de publicar | aprovado (dev.42) |

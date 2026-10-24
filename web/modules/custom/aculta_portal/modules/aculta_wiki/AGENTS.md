@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.83: workspace não renderiza proposta do mesmo UID quando Entity Access
+  nega `view`; o workspace continua autorizado por `submit wiki proposals`.
+  Focal 1/45, classe Kernel 24/1.142; Runtime intocado.
+
 - Dev.82: WE SATIVA exclui propostas de outra autoria na fixture de paginação;
   focal 1/42, classe Kernel 24/1.139. Runtime intocado.
 

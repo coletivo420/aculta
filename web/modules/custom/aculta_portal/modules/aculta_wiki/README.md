@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.83`: WE SATIVA revalida `view` Entity Access de proposta própria;
+  pessoa com `submit wiki proposals`, mas sem `view own wiki proposals`, vê
+  workspace vazio (focal 1/45; classe Kernel 24/1.142). Runtime intocado.
+
 - `0.1.0-dev.82`: Kernel WE SATIVA inclui propostas de outra autoria e confirma
   que não aparecem no workspace de quem não é dono; paginação própria continua
   20+1 (focal 1/42; classe 24/1.139). Runtime intocado.
