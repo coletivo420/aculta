@@ -64,6 +64,14 @@
 
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.106 — compor a home Wiki em Kernel
+
+- Kernel invoca `WikiController::home()` sob purpose Wiki e verifica seu render
+  array, incluindo categorias, verbetes recentes e alterações recentes. Focal
+  combinado: 1 teste / 88 asserções; 199 depreciações Core/contrib e 2 PHPUnit.
+- O HTTP 200 renderizado permanece pendente: este bootstrap não ativa ACULTA420,
+  necessário aos SDCs usados pelo tema. Nenhuma alteração no Runtime.
+
 ## 0.1.0-dev.105 — caracterizar acesso da home por Domain
 
 - Kernel exercita `DomainPurposeRequestSubscriber` com a rota real da home:

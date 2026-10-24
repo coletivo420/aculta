@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.105**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.106**. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -13,6 +13,14 @@ rota também não existem no container ativo. Runtime segue sem homologação
 integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.106 — composição da home Wiki
+
+Kernel invoca `WikiController::home()` sob purpose Wiki e verifica o render
+array com navegação, categorias, verbetes e alterações recentes. O focal
+combinado passou em 1 teste / 88 asserções, com 199 depreciações Core/contrib e
+2 PHPUnit. HTTP 200 renderizado segue pendente: o bootstrap não ativa ACULTA420,
+e sua instalação falha na validação de schema Bootstrap. Runtime intocado.
 
 ### Incremento dev.105 — purpose da home Wiki
 

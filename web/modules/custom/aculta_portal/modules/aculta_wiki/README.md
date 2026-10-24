@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.106`: Kernel compõe `WikiController::home()` sob purpose Wiki e
+  verifica categorias, verbetes recentes e alterações recentes (focal combinado
+  1/88). HTTP 200 renderizado segue pendente porque o bootstrap não ativa o tema
+  ACULTA420.
+
 - `0.1.0-dev.105`: Kernel caracteriza a home Wiki através do subscriber real:
   o Domain Wiki aceita o caminho `/wiki` servido pela raiz, e o Domain principal
   responde 404 (1 teste / 84 asserções; 199 depreciações upstream e 2 PHPUnit).

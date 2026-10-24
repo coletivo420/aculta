@@ -223,6 +223,7 @@ depois da importação de configuração no servidor de testes.
 
 | Componente | Tipo | Cenários | Estado |
 | --- | --- | --- | --- |
+| `WikiController::home` | Kernel MariaDB | Sob purpose Wiki, compõe navegação, categorias, verbetes recentes e alterações recentes | parcial (dev.106; focal combinado 1/88; HTTP 200 renderizado requer ACULTA420 ativo no bootstrap) |
 | Purpose da rota home Wiki | Kernel MariaDB | Subscriber aceita o caminho interno `/wiki` quando servido pela raiz Wiki e devolve 404 no Domain principal | aprovado (dev.105; 1 teste / 84 asserções; 199 depreciações upstream, 2 PHPUnit) |
 | `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado, truncamento em `MAX_CHARS` e acesso/cache de grants | aprovado (`WikiControllerTest` 11 testes / 70 asserções) |
 | `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 11/70; contagem textual renderizada segue sem teste) |

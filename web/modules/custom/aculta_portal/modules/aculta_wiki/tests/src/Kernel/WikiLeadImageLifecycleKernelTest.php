@@ -951,6 +951,20 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertInstanceOf(WikiProposal::class, $actualProposal);
     self::assertSame(['value' => 'Título revisado pelo Form API'], $actualProposal->getProposedFields()['title']);
 
+    // Exercise the full HTTP route and render path for the public Wiki home.
+    foreach (['wiki_categories', 'wiki_entries'] as $viewId) {
+      $viewFile = dirname(DRUPAL_ROOT) . '/config/sync/views.view.' . $viewId . '.yml';
+      View::create(Yaml::parseFile($viewFile))->save();
+    }
+    $homeBuild = $this->container->get('aculta_portal.domain_purpose')->runInPurpose(
+      'wiki',
+      fn (): array => WikiController::create($this->container)->home(),
+    );
+    self::assertSame('wiki-home', $homeBuild['#attributes']['data-portal-ui']);
+    self::assertArrayHasKey('categories', $homeBuild);
+    self::assertArrayHasKey('recent', $homeBuild);
+    self::assertArrayHasKey('changes', $homeBuild);
+
     Role::load('anonymous')->revokePermission('access content')->save();
     self::assertFalse($accessManager->checkNamedRoute(
       'aculta_portal.wiki_home',
@@ -958,8 +972,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       new AnonymousUserSession(),
     ));
 
-    $viewFile = dirname(DRUPAL_ROOT) . '/config/sync/views.view.wiki_entries.yml';
-    View::create(Yaml::parseFile($viewFile))->save();
     $this->container->get('router.builder')->rebuild();
     $listingRoute = $routeProvider->getRouteByName('view.wiki_entries.page_1');
     self::assertSame('/wiki/verbetes', $listingRoute->getPath());

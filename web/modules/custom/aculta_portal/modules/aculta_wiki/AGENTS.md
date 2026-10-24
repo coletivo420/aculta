@@ -1,3 +1,8 @@
+- Dev.106: Kernel invoca `WikiController::home()` sob purpose `wiki` e verifica
+  o render array com categorias, verbetes recentes e alterações recentes
+  (focal combinado 1/88). HTTP renderizado não foi comprovado: ACULTA420 e seu
+  schema não fazem parte desse bootstrap.
+
 - Dev.105: Kernel cobre o purpose da home Wiki com o subscriber real: raiz Wiki
   aceita `/wiki` como caminho interno e Domain principal recebe 404 (1/84;
   199 depreciações upstream e 2 PHPUnit). Runtime intocado.
