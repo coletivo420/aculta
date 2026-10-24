@@ -1,3 +1,8 @@
+## 0.1.0-dev.87 — remoção de aliases temporários em desenvolvimento (2026-10-24)
+
+- Removidos aliases temporários /minha-aprendizagem, /ganjalab420 e /studio/ganjalab420. Única entrada estudantil canônica: /studio/ganjalab. Nenhuma alteração de matrícula, curso ou certificado. Gate PHPUnit/Runtime pendente.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
 # Changelog — aculta_lms
 
 ## 0.1.0-dev.86 — tipo de pedido de curso lido da configuração do Portal (P-CART E) — 2026-10-22
