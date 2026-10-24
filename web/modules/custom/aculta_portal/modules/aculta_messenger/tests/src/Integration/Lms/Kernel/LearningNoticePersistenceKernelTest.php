@@ -154,6 +154,40 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * A different account cannot change the persisted LMS read state.
+   */
+  public function testReadStateRejectsAnotherAccountWithoutMutation(): void {
+    $learner = User::create([
+      'name' => 'lms_read_owner',
+      'mail' => 'lms-read-owner@example.invalid',
+      'status' => 1,
+    ]);
+    $learner->save();
+    $other = User::create([
+      'name' => 'lms_read_other',
+      'mail' => 'lms-read-other@example.invalid',
+      'status' => 1,
+    ]);
+    $other->save();
+    $manager = new LearningNoticeManager(
+      $this->container->get('entity_type.manager'),
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DateFormatterInterface::class),
+      $this->createMock(QueueFactory::class),
+      new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
+      $this->container->get('lock.persistent'),
+    );
+    $message = $manager->record('deadline-source', 'deadline', (int) $learner->id(), FALSE, 'version-one');
+    self::assertNotNull($message);
+
+    self::assertFalse($manager->setRead($message, $other, TRUE));
+    $persisted = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertSame(0, (int) $persisted->get('field_aculta_lms_read')->value);
+  }
+
+  /**
    * Creates a minimal message field for the kernel fixture.
    *
    * @param string $name

@@ -1,3 +1,12 @@
+## 0.1.1-dev.127 — provar isolamento de titularidade na leitura LMS/Wiki — 2026-10-24
+
+Kernels MariaDB persistem avisos LMS e Wiki em `Message` e confirmam que outra conta não consegue alterar seus campos
+nativos de leitura. A negativa ocorre antes de resolver a fonte de conteúdo, exercitando a proteção de titularidade;
+os fluxos positivos de leitura com fonte/permissões reais seguem pendentes para esses dois adapters.
+
+Validação: LMS Kernel 3/30; Wiki Kernel 3/31; Integration Messenger 60/602 PASS. PHPCS Drupal/DrupalPractice e
+PHP lint PASS. A suíte Integration reporta 2 deprecações de annotations Core/contrib e 7 notices PHPUnit.
+
 ## 0.1.1-dev.126 — comprovar persistência de leitura dos avisos da Loja — 2026-10-24
 
 Kernel MariaDB cobre `CommerceOrderNoticeManager::setRead()` com Message persistido: marca e desmarca o campo nativo,

@@ -109,6 +109,29 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * A different account cannot change the persisted Wiki read state.
+   */
+  public function testReadStateRejectsAnotherAccountWithoutMutation(): void {
+    $owner = $this->createUser();
+    $other = User::create([
+      'name' => 'wiki_read_other',
+      'mail' => 'wiki-read-other@example.invalid',
+      'status' => 1,
+    ]);
+    $other->save();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $manager = $this->manager($preferences);
+    (new WikiNoticeEventSubscriber($manager))->consume($this->event((int) $owner->id()));
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('message');
+    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    self::assertSame(0, (int) $message->get('field_aculta_wiki_read')->value);
+    self::assertFalse($manager->setRead($message, $other, TRUE));
+    self::assertSame(0, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+  }
+
+  /**
    * Creates an active account for the notice recipient.
    */
   private function createUser(): User {
