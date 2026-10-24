@@ -1,4 +1,4 @@
-# GanjaLab (`aculta_studio`)
+# ACULTA Studio (`aculta_studio`)
 
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.
@@ -101,13 +101,14 @@ ACULTA Studio is the **existing Drupal submodule**, not just the GanjaLab name. 
 ## WE SATIVA — primeira entrada implementada (Studio dev.3 / Wiki dev.39)
 
 `/studio/we-sativa` resolve no purpose `account` e delega a consulta para o
-serviço `aculta_wiki.contributor_workspace`. A tela inicial consulta até 20
-verbetes e propostas com UID da conta e revalida Entity Access. Criação só aparece com
-`createAccess('wiki_entry')`; nenhuma fila/moderação é exposta. Kernel real da
-Wiki passou (focal: 1 teste / 37 asserções; classe Kernel: 15 / 612,
-286 depreciações Drupal/contrib e 16 PHPUnit), cobrindo rota, propósito,
-isolamento por autoria e acesso. Formulários de
-autoria, paginação e homologação visual/mobile permanecem pendentes.
+serviço `aculta_wiki.contributor_workspace`, dono de grants, consultas e URLs.
+Meu Trabalho usa cursores independentes para verbetes e propostas, revalida
+Entity Access e apresenta cartões SDC; criação usa `createAccess('wiki_entry')`
+e edição segue a rota/formulário nativo do Node. Submissão e resultados de
+propostas usam Form API/serviços da Wiki; Studio não mostra a fila moderadora.
+O Kernel Wiki/Studio completo passou em MariaDB (dev.76: 23 testes / 1.036
+asserções na classe de ciclo da Wiki), cobrindo rota, propósito, autoria,
+paginação e acesso. Firefox/X11, 320 px, Olivero e Runtime continuam pendentes.
 
 ## Atualização STUDIO 0.1-B / D-A.2-T2
 

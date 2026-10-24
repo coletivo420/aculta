@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.3 — provider e entrypoint WE SATIVA adicionados em `/studio/we-sativa`, delegando listagem própria ao serviço da Wiki. Kernel Wiki focal: 1/37; classe: 15/612; formulários e homologação visual pendentes."
-next_phase: 'WE SATIVA precisa de cursor/paginação e fluxos Form API; GanjaLab Wiki continua com filas sem homologação visual/Runtime. Preflight read-only de 2026-10-23 encontrou Wiki ativa e Index desativado. Firefox ESR/X11, mobile, WCAG e Runtime seguem pendentes.'
+version_note: "0.1.0-dev.3 — WE SATIVA usa `/studio/we-sativa` e `aculta_wiki.contributor_workspace`, com paginação por cursor, SDCs, rotas e Form API propriedade da Wiki. Kernel Wiki/Studio revalidado em dev.76; homologação Firefox/mobile/Olivero pendente."
+next_phase: 'Adicionar smoke Firefox ESR/X11 da experiência WE SATIVA e homologar autoria a 320 px, fallback sem JS, shell de domínio e Olivero; Runtime exige autorização para mudanças persistentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
 # G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T

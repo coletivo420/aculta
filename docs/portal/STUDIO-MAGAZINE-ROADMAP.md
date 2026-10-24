@@ -2,13 +2,17 @@
 
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
-### WE SATIVA no ACULTA Studio (Studio dev.3 / Wiki dev.39)
+### WE SATIVA no ACULTA Studio (provider inicial / Wiki dev.76)
 
 O entrypoint inicial `/studio/we-sativa` está implementado no propósito
-`account`. O provider Studio delega a consulta ao serviço Wiki; a tela lista
-trabalho próprio e encaminha ações para rotas Wiki autorizadas. Kernel Wiki
-passou: focal 1/37; classe 15/612 em MariaDB. Form API, paginação, integração
-visual/mobile e homologação Runtime continuam pendentes.
+`account`. O provider Studio delega ao `aculta_wiki.contributor_workspace`, que
+consulta verbetes e propostas próprias com cursores independentes, revalida
+Entity Access e encaminha criar/editar/contribuir/acompanhar para rotas e Form
+API da Wiki. A experiência não expõe a fila de moderação. Kernel Wiki/Studio
+completo revalidado em MariaDB no dev.76: 23 testes / 1.036 assertions na
+classe de ciclo da Wiki, incluindo rota, autoria, paginação e acesso. Browser
+Firefox ESR/X11, 320 px, Olivero, fallback visual e Runtime permanecem
+pendentes; a suíte visual Studio atual não cobre ainda o workspace WE SATIVA.
 
 ### Integração editorial Wiki no GanjaLab (Studio dev.2 / Wiki dev.19)
 

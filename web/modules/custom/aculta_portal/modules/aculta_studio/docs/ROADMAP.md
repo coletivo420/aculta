@@ -1,6 +1,6 @@
 # ACULTA Studio — Roadmap multi-experiência
 
-**Versão STUDIO 0.1 · 2026-10-22**. Documento normativo; GanjaLab já é implementação real em `aculta_studio`; WE SATIVA e contratos de experiências adicionais permanecem planejamento onde ainda não houver provider/rota.
+**Versão STUDIO 0.1 · 2026-10-22**. GanjaLab e o entrypoint inicial WE SATIVA existem em `aculta_studio`; detalhes de cobertura e pendências abaixo distinguem o que está implementado do que segue em planejamento.
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
@@ -19,12 +19,17 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 ### WE SATIVA 0.1-D0 — entrypoint e Meu trabalho (Studio dev.3 / Wiki dev.39)
 
 Implementado `/studio/we-sativa` no purpose `account`, com provider Studio que
-delega os dados ao `aculta_wiki.contributor_workspace`. A tela lista itens
-próprios via UID e revalida Entity Access em cada item; criação e links Wiki
-seguem sob controle do serviço proprietário. Kernel Wiki passou (focal: 1 teste
-/ 37 asserções; classe: 15 / 612, 286 depreciações Drupal/contrib e 16 PHPUnit), cobrindo rota, purpose,
-duas autorias e contexto de cache. Esta entrega é o primeiro bloco, não a experiência editorial completa:
-falta paginação, Form API de autoria, integração SDC/mobile/Olivero e browser.
+delega ao `aculta_wiki.contributor_workspace`. O serviço Wiki consulta verbetes
+e propostas próprios por cursor independente, revalida Entity Access e compõe
+Meu Trabalho com SDCs. Criação, edição, contribuição e status usam as rotas,
+serviços e Form API da Wiki; Studio não duplica armazenamento nem ACL.
+
+O Kernel Wiki/Studio combinado foi ampliado desde a entrada inicial; no HEAD
+Wiki dev.76, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
+1.036 assertions) e inclui regressões de rota, propósito, autoria, paginação e
+acesso. A interface visual da experiência WE SATIVA ainda não foi homologada em
+Firefox ESR/X11, 320 px, Olivero ou Runtime; a suíte atual do browser Studio
+exercita principalmente GanjaLab.
 
 ## Regras para agentes
 
@@ -75,7 +80,7 @@ Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManage
 | ACULTA420 | SDC card/grid/header/empty e stories estáticas | verificar render real, contratos de slots, tokens, 320–1440px, dark/light e gates UI Suite | tema é dono do visual; Studio não cria CSS concorrente |
 | GanjaLab editorial | StudioTab/Presenter/Controller/AJAX, plugins Revista/Wiki/Forum/Cursos/Galerias | hardening de consultas, ações reais, jornadas próprias, editor e fila | prioridade imediata |
 | Wiki moderação | proposta e WikiTab existentes | provider autorizado/paginado, grants por revisão, Kernel, Content Moderation | bloqueado para produção |
-| WE SATIVA | contrato UX documentado | provider e entrada própria sob /studio/we-sativa ainda ausentes | backlog; não misturar com moderação GanjaLab |
+| WE SATIVA | provider e `/studio/we-sativa`; workspace Wiki com paginação, SDCs, Entity Access e links para fluxos Form API do dono | validação visual/browser de autoria a 320 px, Olivero, fallback sem JS e Runtime | avançar visualização sem criar storage ou ACL no Studio |
 
 ### Frente prioritária: GANJALAB E-0.1 — Editor Studio
 

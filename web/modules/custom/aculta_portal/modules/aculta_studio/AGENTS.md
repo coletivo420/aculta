@@ -1,12 +1,14 @@
 # Regras específicas — consulta sob demanda
 
-## WE SATIVA — implementação inicial (Studio dev.3 / Wiki dev.39)
+## WE SATIVA — entrypoint e workspace existentes (Studio dev.3 / Wiki dev.76)
 
 `/studio/we-sativa` pertence ao purpose `account` e usa o provider Studio;
-`aculta_wiki.contributor_workspace` é dono dos dados, grants e links Wiki.
-Kernel combinado Wiki/Studio passou: focal 1/37 e classe Wiki 15/612 em
-MariaDB isolada. O próximo bloco é paginação e fluxos Form API; browser visual,
-Runtime e experiência mobile ainda não foram homologados.
+`aculta_wiki.contributor_workspace` é dono dos dados, grants, paginação e links
+Wiki. Meu Trabalho separa cursores para verbetes/propostas, usa SDCs e revalida
+Entity Access. Criar/editar/contribuir/acompanhar continuam em rotas e Form API
+do módulo Wiki. A classe Kernel integrada passou em dev.76 (23/1.036 para o
+ciclo Wiki, incluindo o workspace); Firefox/X11, 320 px, Olivero e Runtime
+seguem sem homologação.
 
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 
