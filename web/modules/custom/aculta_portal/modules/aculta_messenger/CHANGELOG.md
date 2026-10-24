@@ -1,3 +1,15 @@
+## 0.1.1-dev.124 — isolar falhas de providers e destinatários no digest — 2026-10-24
+
+Uma falha na descoberta de destinatários ou na montagem do digest de um adapter não interrompe o cron
+para os demais providers e contas. O Messenger registra somente o tipo da exceção e do provider, sem destinatário,
+conteúdo ou mensagem da exceção. As pendências da origem com falha permanecem recuperáveis. Se o Mailer aceitar o
+e-mail e a confirmação posterior do provider falhar, permanece a janela inevitável de retry duplicado; isso requer
+idempotência/consulta de entrega compartilhada pelo Mailer para ser eliminada.
+
+Validação: `AvisosResumoProviderPreferenceTest` — 3 testes / 41 assertions PASS; suíte Unit Messenger 118/648;
+PHPCS Drupal/DrupalPractice e
+`git diff --check` PASS. Ainda não exercitados Mailer real, múltiplos processos ou Runtime.
+
 ## 0.1.1-dev.123 — tornar falha permanente terminal também em replay — 2026-10-24
 
 - Workers diretos LMS, Wiki, Loja e Doações persistem `failed_permanent`; os

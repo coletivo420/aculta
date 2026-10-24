@@ -80,14 +80,33 @@ final class AvisosResumo {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
       }
-      foreach ($provider->pendingRecipientIds() as $uid) {
-        $porUsuario[(int) $uid] ??= [];
+      try {
+        foreach ($provider->pendingRecipientIds() as $uid) {
+          $porUsuario[(int) $uid] ??= [];
+        }
+      }
+      catch (\Throwable $exception) {
+        // A provider outage must not prevent Forum or other adapters from
+        // delivering their independent pending digests during this cron run.
+        $this->logger?->error('Daily notice digest recipient lookup failed for provider @provider with @exception.', [
+          '@provider' => get_class($provider),
+          '@exception' => get_class($exception),
+        ]);
       }
     }
     $enviados = 0;
     foreach ($porUsuario as $uid => $_) {
-      if ($this->enviarPara((int) $uid)) {
-        $enviados++;
+      try {
+        if ($this->enviarPara((int) $uid)) {
+          $enviados++;
+        }
+      }
+      catch (\Throwable $exception) {
+        // A corrupt provider row or persistence failure for one recipient
+        // must not prevent unrelated recipients from receiving their digest.
+        $this->logger?->error('Daily notice digest processing failed for one recipient with @exception.', [
+          '@exception' => get_class($exception),
+        ]);
       }
     }
     return $enviados;
@@ -182,7 +201,18 @@ final class AvisosResumo {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
       }
-      $providerRows = $provider->digestRowsFor($uid);
+      try {
+        $providerRows = $provider->digestRowsFor($uid);
+      }
+      catch (\Throwable $exception) {
+        // Providers whose pending-row query fails stay retryable and do not
+        // block independent sources for this recipient.
+        $this->logger?->error('Daily notice digest row lookup failed for provider @provider with @exception.', [
+          '@provider' => get_class($provider),
+          '@exception' => get_class($exception),
+        ]);
+        continue;
+      }
       if ($providerRows === []) {
         continue;
       }
