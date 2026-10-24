@@ -1,3 +1,13 @@
+## 0.1.1-dev.186 — registrar hooks de adapters na central
+
+O Drupal só descobre hooks PHP em `src/Hook`; os quatro hooks antes armazenados em `src/Integration/*/Hook` não eram
+chamados. Um dispatcher central descoberto pelo HookCollector agrega avisos pessoais e contadores dos adapters LMS,
+Wiki, Loja e Doações quando presentes. O contrato compartilhado agora é `PersonalNoticeAdapterInterface`; os adapters
+continuam opcionais e não adicionam armazenamento.
+
+Validação: Unit Messenger + Integration Unit LMS **197/1.380 PASS**, incluindo execução do HookCollector real e
+adapters múltiplos; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Runtime ou navegador nesta validação.
+
 ## 0.1.1-dev.185 — preservar o aviso Wiki após opt-out de e-mail
 
 Kernel MariaDB usa Queue API, Message e conta reais para confirmar que o modo de e-mail `off` cancela somente a entrega

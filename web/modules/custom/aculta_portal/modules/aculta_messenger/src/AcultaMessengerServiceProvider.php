@@ -9,29 +9,26 @@ use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManager;
 use Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Commerce\Controller\CommerceOrderNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Commerce\EventSubscriber\CommerceOrderNoticeConsumer;
-use Drupal\aculta_messenger\Integration\Commerce\Hook\CommerceOrderNoticeHooks;
 use Drupal\aculta_messenger\Integration\Commerce\Mail\CommerceOrderNoticeMailType;
 use Drupal\aculta_messenger\Integration\Donation\AccessDonationNotice;
 use Drupal\aculta_messenger\Integration\Donation\Controller\DonationNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
-use Drupal\aculta_messenger\Integration\Donation\Hook\DonationNoticeHooks;
 use Drupal\aculta_messenger\Integration\Donation\Mail\DonationNoticeMailType;
 use Drupal\aculta_messenger\Integration\Lms\Access\LearningNoticeAccessCheck;
 use Drupal\aculta_messenger\Integration\Lms\Controller\LearningNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventSubscriber;
-use Drupal\aculta_messenger\Integration\Lms\Hook\LearningNoticeHooks;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Lms\Mail\LmsTransactionalNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\AccessWikiNotice;
 use Drupal\aculta_messenger\Integration\Wiki\Controller\WikiNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
-use Drupal\aculta_messenger\Integration\Wiki\Hook\WikiNoticeHooks;
 use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
+use Drupal\aculta_messenger\Hook\PersonalNoticeAdapterHooks;
 use Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
@@ -75,7 +72,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       $this->registerDonationAdapter($container);
     }
 
-    $readStateAdapters = [];
+    $optionalAdapters = [];
     foreach ([
       'lms' => 'aculta_messenger.lms_notice_manager',
       'wiki' => 'aculta_messenger.wiki_notice_manager',
@@ -83,13 +80,19 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       'donation' => 'aculta_messenger.donation_notice_manager',
     ] as $adapter => $service) {
       if ($container->hasDefinition($service)) {
-        $readStateAdapters[$adapter] = new Reference($service);
+        $optionalAdapters[$adapter] = new Reference($service);
       }
     }
     if ($container->hasDefinition('aculta_messenger.notice_read_state')) {
       $container->getDefinition('aculta_messenger.notice_read_state')
-        ->setArgument(1, new ServiceLocatorArgument($readStateAdapters));
+        ->setArgument(1, new ServiceLocatorArgument($optionalAdapters));
     }
+    // This hook is discovered from src/Hook by Drupal's HookCollector. Its
+    // locator contains only adapters actually registered in this site.
+    $container->setDefinition(PersonalNoticeAdapterHooks::class, new Definition(
+      PersonalNoticeAdapterHooks::class,
+      [new ServiceLocatorArgument($optionalAdapters)],
+    ));
   }
 
   /**
@@ -118,10 +121,6 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('logger.channel.aculta_messenger'),
       ],
     ))->addTag('event_subscriber');
-    $container->setDefinition(LearningNoticeHooks::class, new Definition(
-      LearningNoticeHooks::class,
-      [new Reference('aculta_messenger.lms_notice_manager')],
-    ));
     $container->setDefinition('aculta_messenger.lms_notice_access', new Definition(
       LearningNoticeAccessCheck::class,
       [new Reference('aculta_messenger.lms_notice_manager'), new Reference('current_user')],
@@ -155,10 +154,6 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       WikiNoticeEventSubscriber::class,
       [new Reference('aculta_messenger.wiki_notice_manager')],
     ))->addTag('event_subscriber');
-    $container->setDefinition(WikiNoticeHooks::class, new Definition(
-      WikiNoticeHooks::class,
-      [new Reference('aculta_messenger.wiki_notice_manager')],
-    ));
     $container->setDefinition('aculta_messenger.wiki_notice_access', new Definition(
       AccessWikiNotice::class,
       [new Reference('aculta_messenger.wiki_notice_manager'), new Reference('current_user')],
@@ -193,10 +188,6 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       CommerceOrderNoticeConsumer::class,
       [new Reference('aculta_messenger.commerce_notice_manager')],
     ))->addTag('event_subscriber');
-    $container->setDefinition(CommerceOrderNoticeHooks::class, new Definition(
-      CommerceOrderNoticeHooks::class,
-      [new Reference('aculta_messenger.commerce_notice_manager')],
-    ));
     $container->setDefinition('aculta_messenger.commerce_notice_access', new Definition(
       AccessCommerceOrderNotice::class,
       [new Reference('aculta_messenger.commerce_notice_manager'), new Reference('current_user')],
@@ -230,10 +221,6 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       DonationNoticeEventConsumer::class,
       [new Reference('aculta_messenger.donation_notice_manager')],
     ))->addTag('event_subscriber');
-    $container->setDefinition(DonationNoticeHooks::class, new Definition(
-      DonationNoticeHooks::class,
-      [new Reference('aculta_messenger.donation_notice_manager')],
-    ));
     $container->setDefinition('aculta_messenger.donation_notice_access', new Definition(
       AccessDonationNotice::class,
       [new Reference('aculta_messenger.donation_notice_manager'), new Reference('current_user')],

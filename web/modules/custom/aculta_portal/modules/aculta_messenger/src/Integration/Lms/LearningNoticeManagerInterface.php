@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Lms;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 use Drupal\message\MessageInterface;
 
 /**
  * Contract for LMS avisos backed by ACULTA Messenger.
  */
-interface LearningNoticeManagerInterface {
+interface LearningNoticeManagerInterface extends PersonalNoticeAdapterInterface {
 
   /**
    * Records a notice once per source and recipient.
@@ -46,16 +47,6 @@ interface LearningNoticeManagerInterface {
    * Resolves the current target only when access is still valid.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
-
-  /**
-   * Adds current personal notices to the Messenger list.
-   */
-  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
-
-  /**
-   * Counts the recipient's currently accessible unread notices.
-   */
-  public function unreadCount(int $uid): int;
 
   /**
    * Marks the owned message as read.

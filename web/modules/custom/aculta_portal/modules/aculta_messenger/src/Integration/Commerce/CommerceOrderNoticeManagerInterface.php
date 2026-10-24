@@ -7,10 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Commerce;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 
 /**
  * Shared interface for private Commerce order notices. */
-interface CommerceOrderNoticeManagerInterface {
+interface CommerceOrderNoticeManagerInterface extends PersonalNoticeAdapterInterface {
 
   /**
    * Persists an eligible event for the order's active customer. */
@@ -19,14 +20,6 @@ interface CommerceOrderNoticeManagerInterface {
   /**
    * Resolves the order and current access for an account. */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
-
-  /**
-   * Adds authorized Commerce notices to Messenger's personal list. */
-  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
-
-  /**
-   * Counts unread notices that remain accessible to the customer. */
-  public function unreadCount(int $uid): int;
 
   /**
    * Sets the read state after revalidating ownership and order access.

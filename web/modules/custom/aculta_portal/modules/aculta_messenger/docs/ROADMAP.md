@@ -1,5 +1,9 @@
 # Roadmap — ACULTA Messenger
 
+## Evolução recente
+
+- Dev.186: os hooks PHP da central para agregação/contagem de avisos agora residem em `src/Hook`, onde Drupal 11 os descobre. `PersonalNoticeAdapterHooks` encaminha aos adapters opcionais LMS, Wiki, Loja e Doações pelo contrato `PersonalNoticeAdapterInterface`. Unit Messenger + Integration Unit LMS **197/1.380 PASS**; PHPCS/PHP lint PASS. Próxima frente priorizada: reforçar idempotência do digest; Runtime permanece pendente.
+
 Ciclo: [Dev → RC → Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Marcos mantidos: 0.1.1 RC, 0.2.0 API e integrações LMS/User/Fórum, 0.3.0 demais módulos/experiência e 1.0.0 estabilidade. Sem nova PR, merge ou deploy. Runtime/Alpha só são declarados com evidência. Histórico detalhado em [ROADMAP-HISTORY.md](ROADMAP-HISTORY.md).
 
 A decisão normativa está em [ARCHITECTURE.md](ARCHITECTURE.md): Messenger centraliza mensagens privadas, avisos e orquestração de e-mail; Mailer mantém transporte e infraestrutura; módulos de domínio publicam eventos e preservam seus workflows. Chats contextuais foram substituídos e permanecem apenas no histórico.

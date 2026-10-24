@@ -7,10 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Donation;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 
 /**
  * Persists, resolves and delivers personal Donation notices. */
-interface DonationNoticeManagerInterface {
+interface DonationNoticeManagerInterface extends PersonalNoticeAdapterInterface {
 
   /**
    * Records one order-created or payment-approved event idempotently. */
@@ -19,14 +20,6 @@ interface DonationNoticeManagerInterface {
   /**
    * Resolves an owned Donation notice against its current source access. */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
-
-  /**
-   * Adds authorized Donation notices to the shared personal notices list. */
-  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
-
-  /**
-   * Counts unread notices that remain accessible to this recipient. */
-  public function unreadCount(int $uid): int;
 
   /**
    * Marks an authorized, currently accessible notice as read. */

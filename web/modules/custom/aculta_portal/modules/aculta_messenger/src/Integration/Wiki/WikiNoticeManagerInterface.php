@@ -7,10 +7,11 @@ namespace Drupal\aculta_messenger\Integration\Wiki;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
+use Drupal\aculta_messenger\Aviso\PersonalNoticeAdapterInterface;
 
 /**
  * Public adapter contract for Wiki notices in the Messenger. */
-interface WikiNoticeManagerInterface {
+interface WikiNoticeManagerInterface extends PersonalNoticeAdapterInterface {
 
   /**
    * Persists an eligible Wiki event for its recipient. */
@@ -19,14 +20,6 @@ interface WikiNoticeManagerInterface {
   /**
    * Resolves a current, accessible source and its safe presentation. */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
-
-  /**
-   * Adds accessible Wiki notices to the shared Messenger list. */
-  public function addPersonalNotices(array &$items, AccountInterface $account, array $filters = []): void;
-
-  /**
-   * Counts only unread notices whose source remains accessible. */
-  public function unreadCount(int $uid): int;
 
   /**
    * Sets the read state after revalidating ownership and source access.
