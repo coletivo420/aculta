@@ -1,3 +1,8 @@
+## 0.1.0-dev.11 — remoção de aliases temporários em desenvolvimento (2026-10-24)
+
+- Remoção dos aliases de desenvolvimento do Studio. /studio é o hub e /studio/marley é o único início editorial; excluídas as antigas rotas /studio/inicio, /studio/Marley, /ganjalab e demais árvores antigas. Controllers de redirecionamento não usados removidos. Teste de rotas atualizado e gate transversal criado. Sem homologação Drupal/Runtime.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
 ## 0.1.0-dev.10 — STUDIO-P1-C: Hub canônico e Marley minúsculo (2026-10-24)
 
 - **Decisão vigente:** `/studio` passa a apresentar o hub global para contas
