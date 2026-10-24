@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.90 — caracterizar grants em Alterações recentes
+
+- O Kernel de acesso agora verifica que duas contas com o mesmo papel e grants
+  distintos recebem apenas seus próprios verbetes na lista de alterações
+  recentes; confirma também o cache context `user.node_grants:view`.
+- Focal MariaDB: 1 teste / 43 asserções; 283 depreciações upstream e 2 PHPUnit.
+  Nenhuma alteração do Runtime.
+
 ## Revalidação WIKI-R1 no HEAD `5504aced2` — sem alteração de código
 
 - Os dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes

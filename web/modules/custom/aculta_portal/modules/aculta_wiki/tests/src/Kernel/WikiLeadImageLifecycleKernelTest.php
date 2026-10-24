@@ -2019,10 +2019,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertFalse($secondAccess->isAllowed(), 'The other author’s Wiki entry must be denied.');
     $firstSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
     self::assertSame([$firstNode], array_map('intval', array_keys($firstSearch['results'])));
+    $firstHome = $controller->home();
+    $firstRecentIds = array_map(
+      static fn (array $row): int => (int) $row['title']['#url']->getRouteParameters()['node'],
+      $firstHome['changes']['#items'],
+    );
+    self::assertSame([$firstNode], $firstRecentIds);
+    self::assertContains('user.node_grants:view', $firstHome['changes']['#cache']['contexts']);
 
     $currentUser->setAccount($secondReader);
     $secondSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
     self::assertSame([$secondNode], array_map('intval', array_keys($secondSearch['results'])));
+    $secondHome = $controller->home();
+    $secondRecentIds = array_map(
+      static fn (array $row): int => (int) $row['title']['#url']->getRouteParameters()['node'],
+      $secondHome['changes']['#items'],
+    );
+    self::assertSame([$secondNode], $secondRecentIds);
 
     $currentUser->setAccount($firstReader);
     $emptyBuild = $controller->search(Request::create('/wiki/busca'));

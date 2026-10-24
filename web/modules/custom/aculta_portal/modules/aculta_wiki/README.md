@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.90`: regressão Kernel caracteriza “Alterações recentes” para duas
+  contas de mesmo papel com grants diferentes; cada uma vê apenas seu verbete,
+  e o fragmento declara `user.node_grants:view`. Focal 1/43; Runtime intocado.
+
 - Revalidação WIKI-R1 no HEAD `5504aced2`: providers Wiki/categoria e Kernels
   Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4 e
   fingerprint mantidos. Foram reportadas 243 depreciações upstream e 3 do

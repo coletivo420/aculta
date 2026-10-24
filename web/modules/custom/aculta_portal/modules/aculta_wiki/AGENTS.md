@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Dev.90: Kernel cobre isolamento de “Alterações recentes” por grants entre
+  contas de mesmo papel e cache `user.node_grants:view` (1/43); Runtime intocado.
+
 - WIKI-R1 revalidada no HEAD `5504aced2`: providers Wiki/categoria e Kernels
   Wiki-owned/Index 20/425; projeção v4/fingerprint inalterados, 243 depreciações
   upstream + 3 PHPUnit. Runtime e rebuild instalado intocados.

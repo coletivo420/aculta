@@ -4,13 +4,20 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.89**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.90**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.90 — grants em Alterações recentes
+
+O Kernel de busca agora caracteriza também a lista de alterações recentes:
+contas de mesmo papel com grants distintos veem apenas seus verbetes, e o
+fragmento tem cache context `user.node_grants:view`. Focal MariaDB passou com
+1 teste / 43 asserções (283 depreciações upstream, 2 PHPUnit); Runtime intocado.
 
 ### Revalidação WIKI-R1 no HEAD `5504aced2`
 
