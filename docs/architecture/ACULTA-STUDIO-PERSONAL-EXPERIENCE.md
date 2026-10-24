@@ -40,6 +40,22 @@ executados em Drupal instalado; nenhuma homologação Runtime é reivindicada.**
 `AccountShellBuilder` e todos os formulários originais seguem como antes.
 P1-B (ponte de Marley e hub) e P2–P7 permanecem para entrega futura.
 
+## Incremento P1-B — ponte editorial e prévia protegida (2026-10-24)
+
+Em `0.1.0-dev.9`, o código registra `MarleyExperienceProvider` no
+`StudioExperienceManager`, reutilizando o `MarleyPresenter` para filtrar
+áreas realmente disponíveis e autorizadas. `all()` expõe apenas o
+inventário de providers, não uma autorização. A nova rota
+**`/studio/inicio`** permite examinar o hub futuro sem substituir
+`/studio`; a página exibe links para experiências autorizadas com rota
+instalada e usa cache dinâmico `max-age: 0` nesta etapa.
+
+Unit tests foram **criados**, mas PHPUnit, Kernel, Runtime e browser
+ainda precisam ser executados e homologados. O controller original do
+Marley, `/studio` legado, a Conta em `/`, `/u/{apelido}` e os
+formulários continuam inalterados. Não confundir a prévia com a migração
+completa do menu global ou a ativação do hub canônico.
+
 ## Arquitetura existente e evolução
 
 Existem `StudioExperienceManager`, `StudioExperienceProviderInterface` e providers Ganjalab e WE SATIVA. Marley tem `MarleyTabManager` próprio, que não deve ser substituído. O futuro hub poderá cadastrar uma ponte de metadados para Marley e um provider `pessoal`, além de extensão opcional para navegação contextual. Uma experiência disponível não concede acesso a itens de conteúdo.
