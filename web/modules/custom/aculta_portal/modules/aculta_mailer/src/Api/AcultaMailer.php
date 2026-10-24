@@ -29,6 +29,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 
 /**
  * Implementação de AcultaMailerInterface sobre o plugin.manager.mail do Core.
@@ -37,6 +38,11 @@ use Drupal\Core\Mail\MailManagerInterface;
  * pelo cabeçalho `X-Transport`, lido pelo MultiTransport do mailer_transport; sem transporte, vale o padrão configurado.
  */
 final class AcultaMailer implements AcultaMailerInterface {
+
+  /**
+   * Lease covering one in-flight idempotent delivery.
+   */
+  private const IDEMPOTENCY_LOCK_LEASE = 180.0;
 
   public const MODULE = 'aculta_mailer';
 
@@ -62,6 +68,7 @@ final class AcultaMailer implements AcultaMailerInterface {
     private readonly ProviderMessageRegistry $providerMessages,
     private readonly MailPayloadRegistry $payloads,
     private readonly MailPayloadCipher $cipher,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
@@ -75,6 +82,33 @@ final class AcultaMailer implements AcultaMailerInterface {
    * {@inheritdoc}
    */
   public function deliver(MailMessage $message, ?string $transport = NULL): SendResult {
+    if (!$message->hasIdempotentCorrelation()) {
+      return $this->deliverUnlocked($message, $transport);
+    }
+
+    // The digest caller lock serializes one account. This Mailer-level lock
+    // also protects other idempotent callers and separate workers that race
+    // on the same correlation. The second caller fails retryably rather than
+    // sending while the first transport is still in flight.
+    $lockName = 'aculta_mailer.delivery.' . hash('sha256', $message->correlationId);
+    if (!$this->lock->acquire($lockName, self::IDEMPOTENCY_LOCK_LEASE)) {
+      if ($this->log->wasAccepted($message)) {
+        return SendResult::sent();
+      }
+      return SendResult::failed(DeliveryError::Temporary, NULL);
+    }
+    try {
+      return $this->deliverUnlocked($message, $transport);
+    }
+    finally {
+      $this->lock->release($lockName);
+    }
+  }
+
+  /**
+   * Performs delivery after the idempotency lock, when one is required.
+   */
+  private function deliverUnlocked(MailMessage $message, ?string $transport = NULL): SendResult {
     // Decisão do responsável (2026-10-20): sem hash_salt nada é enviado, porque o HMAC do destinatário não seria seguro.
     if (!$this->log->recipientKeyAvailable()) {
       $this->logger->error('Envio recusado: hash_salt ausente no settings.php (correlação @id).', ['@id' => $message->correlationId]);

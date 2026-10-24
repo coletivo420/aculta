@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\Core\Lock\PersistentDatabaseLockBackend;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\KernelTests\KernelTestBase;
@@ -75,6 +77,33 @@ final class AcultaMailerKernelTest extends KernelTestBase {
 
     $mails = $this->container->get('state')->get('system.test_mail_collector', []);
     $this->assertCount(1, $mails);
+  }
+
+  /**
+   * A concurrent idempotent delivery fails retryably while its lock is held.
+   */
+  public function testConcurrentIdempotentDeliveryDoesNotReachTransport(): void {
+    $correlationId = MessageIdFactory::correlationIdFor('kernel-lock-contention-test');
+    $message = new MailMessage(
+      'aculta_mailer_test_message',
+      'destino@example.invalid',
+      'pt-br',
+      ['name' => 'Maria'],
+      $correlationId,
+    );
+    $lockName = 'aculta_mailer.delivery.' . hash('sha256', $correlationId);
+    $otherRequestLock = new PersistentDatabaseLockBackend($this->container->get('database'));
+    $this->assertTrue($otherRequestLock->acquire($lockName, 180.0));
+    try {
+      $result = $this->container->get('aculta_mailer.mailer')->deliver($message);
+
+      $this->assertFalse($result->sent);
+      $this->assertSame(DeliveryError::Temporary, $result->error);
+      $this->assertEmpty($this->container->get('state')->get('system.test_mail_collector', []));
+    }
+    finally {
+      $otherRequestLock->release($lockName);
+    }
   }
 
   /**

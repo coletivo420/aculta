@@ -5,6 +5,10 @@
 Status atualizado em 2026-10-20. Cada fase vira commit(s) atômico(s) na branch autorizada; PR só quando solicitada.
 Fases com `DEFERRED` dependem de Runtime de teste autorizado e não podem ser declaradas validadas sem evidência.
 
+Para correlações idempotentes, o serviço de entrega usa lock persistente por UUID antes da consulta ao log e do
+transporte. Contenção retorna falha temporária para retry. A proteção de repetição após aceite continua condicionada ao
+registro Mailer, e a janela após aceite externo antes da gravação local não pode ser fechada pelo lock Drupal.
+
 | Fase | Entrega | Estado |
 |---|---|---|
 | F0 | Auditoria ([AUDIT](AUDIT.md)), pesquisa ([UPSTREAM](UPSTREAM.md)), arquitetura ([ARCHITECTURE](ARCHITECTURE.md)) | Concluída nesta PR |

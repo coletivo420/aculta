@@ -1519,3 +1519,14 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
   update não executado (SIMPLETEST_DB ausente). PHPCS/lint/YAML são registrados
   no incremento que consome esse estado.
 
+## 0.1.1-dev.139 — reforçar idempotência concorrente do digest — 2026-10-24
+
+O ACULTA Mailer serializa entregas com correlação UUID v5 sob lock persistente compartilhado. Uma segunda execução
+concorrente retorna falha temporária sem chamar o transporte; um retry após aceite registrado volta a ser suprimido.
+O digest continua usando seu lock por destinatário e confirmação transacional dos avisos. A janela abrupta entre aceite
+externo e persistência local permanece limitada pelo contrato do SMTP/provedor.
+
+Validação: `AcultaMailerKernelTest` 4/20 PASS, incluindo lock ocupado por backend persistente separado; digest
+`ForumNoticeIdempotency` permanece coberto por Kernel MariaDB e retry com correlação estável. Sem Runtime, SMTP real ou
+processos independentes.
+

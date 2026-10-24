@@ -546,3 +546,14 @@ Não há garantia transacional com SMTP/provedor; a proteção exige log ativo e
 - F2 (parcial): `TransportFailover` (padrão Hostinger, fallback SMTP2GO, só para erro temporário) e `SmtpReplyClassifier` (4xx temporário, 5xx permanente).
 - F6 (parcial): `DeliveryPlanner` combina retry e failover em `DeliveryDecision`. Sem worker de fila nesta versão.
 - Contexto de `MailMessage`: passa a aceitar listas e linhas de escalares com até dois níveis; objetos e entidades continuam recusados (`docs/ARCHITECTURE.md` §4).
+## 0.1.0-dev.71 — serializar entregas idempotentes concorrentes — 2026-10-24
+
+O Mailer usa lock persistente por UUID de correlação idempotente antes de consultar o registro de aceite e iniciar o
+transporte. Chamadas concorrentes para a mesma entrega retornam falha temporária quando o lock está ocupado, sem
+duplicar o envio; retries consultam o registro depois de adquirir o lock. Mensagens sem correlação idempotente preservam
+seu fluxo. O lock usa lease de 180 segundos, alinhada ao timeout de transporte conhecido. A janela entre aceite externo
+e gravação local permanece inerente ao SMTP/provedor e não é eliminada por lock Drupal.
+
+Validação: `AcultaMailerKernelTest` 4 testes / 20 assertions PASS, incluindo contenção em backend persistente separado;
+PHP lint PASS. Sem concorrência multiprocesso real, transporte externo ou Runtime.
+

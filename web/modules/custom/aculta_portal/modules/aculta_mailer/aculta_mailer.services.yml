@@ -5,7 +5,7 @@ services:
 
   aculta_mailer.mailer:
     class: Drupal\aculta_mailer\Api\AcultaMailer
-    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@aculta_mailer.provider_messages', '@aculta_mailer.payloads', '@Drupal\aculta_mailer\Log\MailPayloadCipher']
+    arguments: ['@plugin.manager.mail', '@Drupal\aculta_mailer\Type\MailTypeRegistry', '@logger.channel.aculta_mailer', '@aculta_mailer.log_recorder', '@aculta_mailer.smtp_failures', '@aculta_mailer.smtp_classifier', '@Drupal\aculta_mailer\Policy\MailPolicyResolver', '@Drupal\aculta_mailer\Policy\TransportQuota', '@aculta_mailer.transport_failover', '@config.factory', '@Drupal\aculta_mailer\Alert\MailAlerts', '@Drupal\aculta_mailer\Policy\QuotaSignal', '@Drupal\aculta_mailer\Delivery\MailSuppression', '@aculta_mailer.provider_messages', '@aculta_mailer.payloads', '@Drupal\aculta_mailer\Log\MailPayloadCipher', '@lock.persistent']
 
   logger.channel.aculta_mailer:
     parent: logger.channel_base

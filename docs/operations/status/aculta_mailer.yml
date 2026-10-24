@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'Dev: confirmador de e-mail incorporado (aculta_mail_confirmer); validar o fluxo no navegador antes de RC1; F12 e produção fora deste candidato ([roadmap](web/modules/custom/aculta_portal/modules/aculta_mailer/docs/ROADMAP.md))'
+next_phase: 'Dev: confirmador de e-mail incorporado (aculta_mail_confirmer); validar o fluxo no navegador antes de RC1; F12 e produção fora deste candidato ([roadmap](web/modules/custom/aculta_portal/modules/aculta_mailer/docs/ROADMAP.md)). Dev.71 serializa chamadas concorrentes com UUID idempotente; Kernel 4/20 PASS; Runtime, processo independente e transporte externo pendentes.'
