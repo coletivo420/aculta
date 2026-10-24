@@ -197,6 +197,7 @@ final class AvisosResumo {
       ];
     }
     $providersWithRows = [];
+    $providerLookupFailed = FALSE;
     foreach ($this->digestProviders as $provider) {
       if (!$provider instanceof AvisoDigestProviderInterface) {
         continue;
@@ -207,6 +208,7 @@ final class AvisosResumo {
       catch (\Throwable $exception) {
         // Providers whose pending-row query fails stay retryable and do not
         // block independent sources for this recipient.
+        $providerLookupFailed = TRUE;
         $this->logger?->error('Daily notice digest row lookup failed for provider @provider with @exception.', [
           '@provider' => get_class($provider),
           '@exception' => get_class($exception),
@@ -278,7 +280,11 @@ final class AvisosResumo {
         $providerRows['provider']->markDigestSent($uid, $deliveryIds);
       }
     }
-    $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
+    // Do not postpone a failed source for 20 hours just because another source
+    // delivered successfully in this combined digest.
+    if (!$providerLookupFailed) {
+      $this->userData->set('aculta_messenger', $uid, 'avisos_resumo_ultimo', $agora);
+    }
     return TRUE;
   }
 

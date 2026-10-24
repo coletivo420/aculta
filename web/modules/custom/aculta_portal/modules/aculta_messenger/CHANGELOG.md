@@ -1,3 +1,14 @@
+## 0.1.1-dev.128 — robustecer destinatários de grupo e retry do digest — 2026-10-24
+
+Quando um provider falha ao montar suas linhas, o resumo ainda entrega as demais origens, confirma somente os itens
+entregues e não atualiza o intervalo global da conta. Assim, a origem com falha pode ser tentada no próximo cron,
+sem aguardar 20 horas nem perder os avisos no site. A entrada de destinatários de conversas em grupo também passa por
+validação estrita de inteiros positivos e remoção de duplicatas, sem coerções de valores malformados.
+
+Validação: Unit Messenger 120/660 e Integration Messenger 60/602 PASS; Integration inclui 2 deprecações de
+annotations Core/contrib e 7 notices PHPUnit. PHPCS Drupal/DrupalPractice do teste novo, PHP lint, índice de status e
+`git diff --check` PASS. PHPCS do formulário completo ainda aponta violações preexistentes fora do trecho alterado.
+
 ## 0.1.1-dev.127 — provar isolamento de titularidade na leitura LMS/Wiki — 2026-10-24
 
 Kernels MariaDB persistem avisos LMS e Wiki em `Message` e confirmam que outra conta não consegue alterar seus campos

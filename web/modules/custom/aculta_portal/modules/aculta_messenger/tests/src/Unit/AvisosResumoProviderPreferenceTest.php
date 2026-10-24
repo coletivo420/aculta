@@ -155,11 +155,20 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       return [['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 528]];
     });
     $provider->expects(self::once())->method('markDigestSent')->with(28, [528]);
+    $healthyProvider = $this->createMock(AvisoDigestProviderInterface::class);
+    $healthyProvider->method('pendingRecipientIds')->willReturn([27]);
+    $healthyProvider->method('digestRowsFor')->willReturnCallback(static fn(int $uid): array => $uid === 27 ? [
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 527],
+    ] : []);
+    $healthyProvider->expects(self::once())->method('markDigestSent')->with(27, [527]);
     $failedLookupProvider = $this->createMock(AvisoDigestProviderInterface::class);
     $failedLookupProvider->expects(self::once())->method('pendingRecipientIds')->willThrowException(new \RuntimeException('Lookup fixture failure'));
     $failedLookupProvider->method('digestRowsFor')->willReturn([]);
     $mailer = $this->createMock(AcultaMailerInterface::class);
-    $mailer->expects(self::once())->method('deliver')->with(self::isInstanceOf(MailMessage::class))->willReturn(SendResult::sent());
+    $mailer->expects(self::exactly(2))->method('deliver')->with(self::isInstanceOf(MailMessage::class))->willReturn(SendResult::sent());
+    $userData->expects(self::once())
+      ->method('set')
+      ->with('aculta_messenger', 28, 'avisos_resumo_ultimo', 1_792_800_000);
 
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
@@ -179,11 +188,11 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
       $uuid,
       $lock,
-      [$failedLookupProvider, $provider],
+      [$failedLookupProvider, $provider, $healthyProvider],
       $logger,
     );
 
-    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame(2, $summary->enviarResumos());
   }
 
   /**
