@@ -126,24 +126,11 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // Caminho antigo da área da conta (/minha-conta e subpáginas): 301 para a conta, sem o prefixo
-    // (/minha-conta -> /, /minha-conta/pedidos -> /pedidos). O caminho interno da visão geral não é público.
+    // The technical account prefix is not a public alias in development.
+    // The account home is the root of its purpose and all /minha-conta/*
+    // paths fail closed instead of redirecting.
     $accountPath = $event->getRequest()->getPathInfo();
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
-      $target = $accountPath === '/minha-conta' ? '/' : substr($accountPath, strlen('/minha-conta'));
-      if (in_array($event->getRequest()->getMethod(), ['GET', 'HEAD'], TRUE)) {
-        $url = $this->domainPurposeManager->pathUrl('account', $target);
-        if ($url !== NULL) {
-          $query = $event->getRequest()->getQueryString();
-          if ($query) {
-            $url->setOption('query', $event->getRequest()->query->all());
-          }
-          $event->setResponse(new TrustedRedirectResponse($url->toString(), Response::HTTP_MOVED_PERMANENTLY, [
-            'Cache-Control' => 'public, max-age=3600',
-          ]));
-          return;
-        }
-      }
       $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
       return;
     }
