@@ -1,5 +1,19 @@
 # ACULTA Studio — contrato de identidade e rotas
 
+## Contrato atual sem aliases (2026-10-24, dev.11)
+
+Somente URLs canônicas: `/studio` (hub, route ID `aculta_studio.hub`),
+`/studio/marley` (entrada editorial),
+`/studio/pessoal` (Minha Conta inicial),
+`/studio/ganjalab` (aprendizagem) e
+`/studio/we-sativa` (Wiki). Não há redirect para
+`/studio/inicio`, `/studio/Marley`, `/ganjalab` ou
+`/minha-aprendizagem`: os caminhos transitórios foram retirados em
+desenvolvimento. **O texto de dev.7–10 abaixo é histórico e foi superado
+pela limpeza global de aliases.** A execução no Runtime ainda é pendente.
+
+
+
 **Estado:** contrato vigente da refatoração iniciada em 2026-10-24. Este arquivo é a fonte de verdade para nomes, IDs e URLs das experiências.
 
 ## Identidade vigente de rotas — P1-C, dev.10 (2026-10-24)
