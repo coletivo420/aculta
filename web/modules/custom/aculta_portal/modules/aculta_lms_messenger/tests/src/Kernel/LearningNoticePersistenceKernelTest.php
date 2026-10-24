@@ -14,6 +14,8 @@ use Drupal\user\Entity\User;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_lms_messenger\EventSubscriber\LearningNoticeEventSubscriber;
@@ -120,12 +122,14 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       new NullLogger(),
       $this->createMock(MessengerNoticePublisherInterface::class),
     );
-    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $subscriber = new LearningNoticeEventSubscriber($manager, $preferences, new NullLogger());
     $event = new MessengerNoticeEvent(
       'lms.deadline', 'aculta_lms', 'group_relationship', 'deadline-uuid', 'v1',
       (int) $learner->id(), 'account', new \DateTimeImmutable('2026-10-24T12:00:00+00:00'),
       'lms.deadline:deadline-uuid:v1:' . $learner->id(),
-      ['notice_type' => 'deadline', 'mail_policy' => 'site_digest'],
+      ['notice_type' => 'deadline', 'mail_policy' => 'user_preference'],
     );
 
     $subscriber->consume($event);

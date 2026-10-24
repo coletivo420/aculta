@@ -1,3 +1,11 @@
+## 0.1.0-dev.20 — atualizar fixture do consumer no Kernel — 2026-10-24
+
+- O Kernel do consumer agora injeta a preferência de entrega exigida pelo
+  subscriber LMS, alinhando o fixture ao contrato de canais dev.19.
+- MariaDB Simpletest: `LearningNoticePersistenceKernelTest` passa em 2 testes /
+  18 assertions; emite 2 depreciações de discovery de entidades Message do
+  Core/contrib. Runtime e envio real não executados.
+
 ## 0.1.0-dev.19 — oferecer canais de e-mail escolhidos pela pessoa — 2026-10-24
 
 - Avisos LMS permanecem obrigatórios no site. A preferência da pessoa escolhe
