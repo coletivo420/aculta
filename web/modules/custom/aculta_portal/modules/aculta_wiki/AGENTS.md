@@ -233,14 +233,15 @@
 Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`,
 `docs/ROADMAP.md` e `docs/TEST-MATRIX.md`, somente nas seções pertinentes.
 
-- O preflight read-only de 2026-10-23 no host `toca`, URI
+- O preflight read-only revalidado em 2026-10-24 no host `toca`, URI
   `https://wiki420.aculta.toca.net.br`, branch
   `docs/aculta-forum-0.1.0-dev.1` confirmou `aculta_wiki` ativo e
   `aculta_index` desativado no Runtime de teste. `/` retornou 200; `/wiki`
   retornou 404 por ser o caminho interno da raiz Wiki, conforme
   `FrontPathPolicy`/`PurposeFrontPathProcessor`; `/wiki/verbetes`, `/wiki/busca`
-  e `/wiki/busca/previa` retornaram 200. Não houve alteração de configuração,
-  cache ou banco. Runtime não está homologado integralmente. Não instalar
+  e `/wiki/busca/previa` retornaram 200. Drush confirmou bootstrap Drupal
+  11.4.10, URI e banco `aculta_runtime`. Nenhuma configuração, cache ou dado foi
+  alterado. Runtime não está homologado integralmente. Não instalar
   configuração nem executar outras operações persistentes sem autorização
   aplicável. O Portal não define mais as rotas da Wiki.
 - Testes unitários: `vendor/bin/phpunit -c web/core/phpunit.xml.dist

@@ -78,15 +78,15 @@ asserções, 291 depreciações Core/contrib e 24 PHPUnit; aprovada em dev.76.
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | aprovado (dev.30; revalidado dev.62) |
+| Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
 | Raiz pública e caminho interno | Kernel | Purpose processor converte `/` em `/wiki`; `/wiki` direto continua sujeito ao 404 da FrontPathPolicy | aprovado (dev.64; 1 teste / 65 asserções) |
 | Rotas Wiki em domínio incorreto | Kernel | Subscriber de domínio retorna 404 no host principal para rotas com purpose `wiki` | aprovado (dev.65; focal 1/73) |
 | Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
-| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | aprovado (dev.62; Kernel combinado 3 testes / 127 asserções) |
+| Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
 | Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado (dev.62) |
-| CTA de criação | Kernel | Permissão cacheável acompanha Entity API `createAccess()` | aprovado (dev.62) |
-| Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | aprovado em preflight read-only (2026-10-23) |
-| Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | aprovado em preflight read-only (2026-10-23) |
+| CTA de criação | Kernel | Permissão cacheável acompanha Entity API `createAccess()` | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
+| Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | read-only 2026-10-24; Drupal 11.4.10 / banco `aculta_runtime` |
+| Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | read-only 2026-10-24; nenhum estado alterado |
 | Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |
 
 ## Aplicação editorial de propostas (dev.29)

@@ -18,6 +18,11 @@ pendentes, está em
   Core/contrib/PHPUnit. Provider v4 e fingerprint permanecem iguais; nenhum
   rebuild ou ativação no Runtime foi executado.
 
+- Preflight read-only 2026-10-24: no host `toca`, Drush confirmou Drupal 11.4.10,
+  URI `wiki420.aculta.toca.net.br` e banco `aculta_runtime`; `aculta_wiki` está
+  ativo e `aculta_index` desativado. HTTP: `/` 200, `/wiki` 404, listagem/busca/
+  prévia 200. Nenhuma configuração, cache ou dado foi alterado.
+
 - `0.1.0-dev.76`: envio de imagem pelo formulário Node/Form API real passou em
   Kernel MariaDB. Upload `managed_file` resulta em Media privada para Node
   `draft`; classe de ciclo da imagem: 23/1.036, PHP lint e PHPCS aprovados.

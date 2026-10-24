@@ -15,6 +15,10 @@
   (provider, acesso/relações, discovery owner e rebuild de geração) 11/385 em
   MariaDB isolada, com 243 depreciações Core/contrib/PHPUnit. Provider v4 e
   fingerprint não mudaram; ativação/rebuild no Runtime continuam pendentes.
+- Revalidação R2 no HEAD: Kernel focal de rotas, CTA e grants 3/141, aprovado.
+  Preflight read-only em `toca` confirmou Drupal 11.4.10, Wiki ativa, Index
+  desativado, `/` 200, `/wiki` 404 e listagem/busca/prévia 200; sem alteração
+  persistente no Runtime.
 
 ## 0.1.0-dev.76 — submissão real da imagem pelo Form API
 

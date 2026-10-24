@@ -5,7 +5,7 @@ Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
 Linha do projeto `aculta_wiki`: **0.1.0-dev.77**. Em preflight read-only de
-2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
+2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
@@ -29,6 +29,12 @@ depreciações Core/contrib/PHPUnit. O bootstrap descobriu a projeção v4 e os
 destinos `taxonomy_term:wiki_category` e `media:image`; o rebuild ocorreu apenas
 no banco isolado de teste. Fingerprint e contrato não mudaram. Nenhuma ativação
 ou reconstrução no Runtime foi executada.
+
+Revalidação R2 no HEAD: os Kernels de rotas, CTA e grants passaram em MariaDB
+(3 testes / 141 assertions; 283 depreciações Core/contrib e 4 PHPUnit). No host
+`toca`, Drush confirmou Drupal 11.4.10, URI Wiki e banco `aculta_runtime`; Wiki
+ativa e Index desativado. GET read-only retornou `/` 200, `/wiki` 404 e
+listagem/busca/prévia 200. Nenhuma configuração, cache ou conteúdo foi alterado.
 
 ### Incremento dev.76 — envio real da imagem no Form API
 
