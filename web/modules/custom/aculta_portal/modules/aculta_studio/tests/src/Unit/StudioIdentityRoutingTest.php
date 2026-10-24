@@ -23,8 +23,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $routes = $this->routes();
     $expected = [
       '/studio' => 'aculta_studio.hub',
-      '/studio/pessoal' => 'aculta_studio.personal',
-      '/studio/pessoal/perfil' => 'aculta_studio.personal_profile',
+      '/studio/conta' => 'aculta_studio.account',
+      '/studio/perfil' => 'aculta_studio.profile',
+      '/studio/perfil/privacidade' => 'aculta_studio.profile_privacy',
+      '/studio/perfil/bio' => 'aculta_studio.profile_bio',
+      '/studio/perfil/redes/{rede}' => 'aculta_studio.profile_social',
       '/studio/marley' => 'aculta_studio.home',
       '/studio/marley/{aba}' => 'aculta_studio.area',
       '/studio/marley/{aba}/{secao}' => 'aculta_studio.section',
@@ -44,9 +47,9 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   /**
    * Studio hub and personal area are restricted to the account purpose.
    */
-  public function testHubAndPersonalAccess(): void {
+  public function testHubAccountAndProfileAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.personal', 'aculta_studio.personal_profile'] as $id) {
+    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.profile', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
@@ -67,6 +70,12 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertDoesNotMatchRegularExpression('/(?:legacy|old_)/i', $id);
     }
     $obsolete = [
+      '/studio/pessoal',
+      '/studio/pessoal/perfil',
+      '/studio/pessoal/perfil/dados',
+      '/studio/pessoal/perfil/privacidade',
+      '/studio/pessoal/perfil/bio',
+      '/studio/pessoal/perfil/redes/{rede}',
       '/studio/Marley',
       '/studio/inicio',
       '/ganjalab',
@@ -79,6 +88,20 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       $matches = array_filter($routes, static fn (array $route): bool => ($route['path'] ?? NULL) === $path);
       self::assertCount(0, $matches, sprintf('%s must not resolve as an alias.', $path));
     }
+  }
+
+  /**
+   * The legacy Portal account front remains the original, unchanged entry.
+   */
+  public function testLegacyAccountRouteStillExistsButIsNotExposedAsAlias(): void {
+    $root = dirname(__DIR__, 3);
+    $portal = Yaml::decode(file_get_contents($root . '/../../aculta_portal.routing.yml'));
+    self::assertSame('/minha-conta', $portal['aculta_portal.dashboard']['path']);
+    // The request subscriber blocks direct requests, while Domain ACCOUNT
+    // serves the original dashboard at its front (/).
+    $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+    self::assertStringContainsString("\$accountPath === '/minha-conta'", $subscriber);
+    self::assertStringContainsString('Response::HTTP_NOT_FOUND', $subscriber);
   }
 
   /**
