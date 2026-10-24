@@ -2,6 +2,23 @@
 
 ACULTA Studio é a plataforma transversal de interfaces próprias na conta. O machine name do submódulo permanece `aculta_studio`.
 
+## Próxima evolução — Meu Espaço e Hub (STUDIO-P0, documentação)
+
+Proposta de 2026-10-24: evoluir `/studio` para hub geral, criar a experiência
+autenticada **Meu Espaço** (`pessoal`), oferecer navegação global unificada
+com seções contextuais, e migrar a **edição** de Minha Conta/Meu Perfil para
+a interface do Studio. `/u/{apelido}` permanece página pública em `main`.
+
+**Nenhum desses caminhos ou providers novos foi implementado nesta fase.**
+`/studio` ainda é rota legada do Marley; a conta mantém seu shell e a home
+na raiz `/` do purpose `account`. O Studio não se torna dono de Profile,
+dados pessoais, formulários, autenticação, inbox, e-mails ou regras de acesso.
+Reutilizar `StudioExperienceManager`, preparar ponte de metadados para Marley
+sem alterar `MarleyTabManager`, e impedir shells aninhados.
+
+Contrato canônico: [Hub e Meu Espaço](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
+
 ## Experiências
 
 - **ACULTA Studio Marley (`marley`)**: espaço editorial de criação, edição e moderação. Usa contratos exclusivos `MarleyTab`, `MarleyTabInterface`, `MarleyTabBase`, `MarleyTabManager`, `MarleyPresenter`, `MarleyListingBuilder` e `MarleyController`. Os IDs funcionais das áreas Revista, Wiki, Cursos, Fórum e Galerias não mudam.
