@@ -200,6 +200,29 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
   }
 
   /**
+   * The parents migration overwrites the parent relationship on update.
+   */
+  public function testParentRelationshipIsStoredOnUpdate(): void {
+    [$author, $topic] = $this->prepareForumFixture();
+    $root_ids = $this->destination->import(
+      $this->destinationRow($author, $topic, [], $this->bilingualTranslations('Root')),
+    );
+    $root_id = (int) reset($root_ids);
+    $reply_ids = $this->destination->import(
+      $this->destinationRow($author, $topic, [], $this->bilingualTranslations('Reply')),
+    );
+    $reply_id = (int) reset($reply_ids);
+    self::assertTrue($this->loadPost($reply_id)->get('parent')->isEmpty());
+
+    $parent_update = $this->destinationRow($author, $topic, ['cid' => 999], $this->bilingualTranslations('Reply'));
+    $parent_update->setDestinationProperty('parent', ['target_id' => $root_id]);
+    $this->destination->import($parent_update, [$reply_id]);
+
+    self::assertSame($root_id, (int) $this->loadPost($reply_id)->get('parent')->target_id);
+    self::assertSame('Root', $this->loadPost($root_id)->get('subject')->value);
+  }
+
+  /**
    * A row without account or valid historical author fails closed.
    */
   public function testRowWithoutAuthorIsRejected(): void {

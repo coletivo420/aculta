@@ -1,3 +1,12 @@
+## `0.1.0-dev.267` — provar a relação pai/filho da migração — 2026-10-23
+
+- Kernel importa raiz e resposta, atualiza a resposta com o ID de destino da
+  raiz e confirma que o campo `parent` aponta para o post raiz sem alterar o
+  conteúdo da raiz.
+- O caminho usa a atualização por `old_destination_id_values`, como a migration
+  de parents; o `migration_lookup` e o map de migração ainda não são exercitados.
+- Testes: destino 9/216; suíte Kernel do Fórum 81/1.723; PHPCS limpo.
+
 ## `0.1.0-dev.266` — provar a paginação por keyset da fonte — 2026-10-23
 
 - Kernel cria cinco Comments e lê a fonte com lote de dois: todos aparecem uma

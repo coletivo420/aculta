@@ -212,9 +212,10 @@ agrupadas, rejeição e autoria histórica, e paginação por keyset entre lotes
 (dev.266). A dev.263 prova as recusas do destino
 antes de criar o post (autoria, tradução padrão, rejeição/publicação, corpo,
 formato e embeds), a criação de um post publicado com traduções (dev.264) e a
-atualização idempotente com recusa de troca de idioma padrão (dev.265). A
-execução da migration, o lote com map de migração e a comparação de equivalência
-continuam pendentes e exigem autorização.
+atualização idempotente com recusa de troca de idioma padrão (dev.265) e a
+gravação da relação pai/filho (dev.267). A execução da migration, o lote com map
+de migração e a comparação de equivalência continuam pendentes e exigem
+autorização.
 
 ### Moderação revisionável de posts — decisão de 2026-10-21
 
