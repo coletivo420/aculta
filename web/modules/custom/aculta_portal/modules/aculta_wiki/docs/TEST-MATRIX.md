@@ -345,7 +345,7 @@ Resultado da suíte Kernel da classe: 8 testes / 290 assertions, sem warnings;
 | Nota vazia | Kernel | Serviço rejeita antes de persistir | aprovado |
 | Nota maior que 5.000 caracteres | Kernel | Form/service rejeita antes de persistir | aprovado (dev.66) |
 | Aceite e aplicação na revisão do verbete | Kernel | Só publica por workflow após aplicação editorial e conferência do VID-base | aprovado (dev.66; subconjunto aprovado pelo editor) |
-| Concorrência real entre duas sessões MariaDB | Kernel | Lock serializa; segunda ação obsoleta recebe conflito | planejado; lock implementado, concorrência multiprocesso não executada |
+| Serialização da decisão com lock de outra conexão | Kernel MariaDB | Processo auxiliar segura `FOR UPDATE` no Node; serviço aguarda, aplica a revisão e o caso de VID obsoleto conflita sem escrita parcial | aprovado (dev.104; focal 1/216; classe 27/1.468; 291 depreciações Core/contrib, 28 PHPUnit) |
 
 O formulário de decisão não tem rota nem integração no Studio; seu consumo fica
 sob o contexto editorial do GanjaLab e acesso do backend Wiki.

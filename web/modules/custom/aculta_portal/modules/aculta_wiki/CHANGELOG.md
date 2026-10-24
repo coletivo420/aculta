@@ -64,6 +64,16 @@
 
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.104 — validar serialização da decisão editorial
+
+- Kernel MariaDB usa um processo PHP e conexão independentes para manter o lock
+  da linha do Node enquanto o serviço `WikiProposalDecision` executa. A decisão
+  aguarda o lock e aplica sua revisão; o mesmo cenário confirma conflito de
+  revisão-base obsoleta sem escrita parcial.
+- Focal: 1 teste / 216 asserções; classe completa: 27 testes / 1.468
+  asserções, 291 depreciações Core/contrib e 28 PHPUnit. PHPCS/lint passaram;
+  Runtime intocado.
+
 ## 0.1.0-dev.103 — fixar purpose da rota de envio de proposta
 
 - `aculta_wiki.proposal_submit` declara `_aculta_domain_purpose: wiki`, então

@@ -3025,6 +3025,37 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame($concurrentRevisionId, (int) $freshTarget->getRevisionId());
       self::assertSame('Título de edição concorrente', $freshTarget->label());
     }
+
+    // A second database connection holds the target row while the real
+    // decision service starts. The service must wait for that lock before it
+    // revalidates the base revision and applies the proposal.
+    $freshTarget = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    self::assertInstanceOf(Node::class, $freshTarget);
+    $this->container->get('current_user')->setAccount($submitter);
+    $lockedProposal = $submission->submit(
+      $freshTarget,
+      'correction',
+      'Atualização com lock de linha',
+      'A decisão deve aguardar a sessão concorrente terminar.',
+      [],
+      str_repeat('e', 64),
+      ['title' => 'Título aplicado após o lock'],
+    );
+    $this->container->get('current_user')->setAccount($acceptor);
+    $beforeLockedDecisionRevisionId = (int) $freshTarget->getRevisionId();
+    $decisionStarted = microtime(TRUE);
+    $acceptedAfterLock = $this->decideAfterTargetRowLock(
+      $freshTarget,
+      $lockedProposal,
+      $decisionService,
+    );
+    self::assertGreaterThanOrEqual(1.0, microtime(TRUE) - $decisionStarted);
+    $afterLockedDecision = $this->container->get('entity_type.manager')->getStorage('node')
+      ->loadUnchanged((int) $target->id());
+    self::assertSame('accepted', $acceptedAfterLock->get('state')->value);
+    self::assertSame('Título aplicado após o lock', $afterLockedDecision->label());
+    self::assertGreaterThan($beforeLockedDecisionRevisionId, (int) $afterLockedDecision->getRevisionId());
     $this->container->get('current_user')->setAccount($reviewer);
 
     $historyProposal = $decidedProposal;
@@ -3154,7 +3185,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalForm->submitForm($build, $formState);
     self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
 
-    self::assertSame(30, (int) $this->container->get('entity_type.manager')
+    // Includes the proposal accepted through the independent row-lock test.
+    self::assertSame(31, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $this->container->get('current_user')->setAccount($submitter);
@@ -3361,6 +3393,87 @@ PHP;
       $exitCode = proc_close($process);
     }
     self::assertSame(0, $exitCode);
+  }
+
+  /**
+   * Decides a proposal after an independent process releases the target lock.
+   *
+   * @param \Drupal\node\NodeInterface $target
+   *   Published Wiki target whose row is locked by the worker.
+   * @param \Drupal\aculta_wiki\Entity\WikiProposal $proposal
+   *   Proposal against the current target revision.
+   * @param \Drupal\aculta_wiki\Service\WikiProposalDecision $decisionService
+   *   Production decision service.
+   *
+   * @return \Drupal\aculta_wiki\Entity\WikiProposal
+   *   The persisted accepted proposal revision.
+   */
+  private function decideAfterTargetRowLock(
+    NodeInterface $target,
+    WikiProposal $proposal,
+    WikiProposalDecision $decisionService,
+  ): WikiProposal {
+    if (!function_exists('proc_open')) {
+      self::markTestSkipped('proc_open is required for the row-lock regression.');
+    }
+
+    $workerCode = <<<'PHP'
+require 'web/autoload.php';
+$loader = require 'vendor/autoload.php';
+$loader->addPsr4('Drupal\\mysql\\', 'web/core/modules/mysql/src');
+$options = unserialize(base64_decode(trim(fgets(STDIN))), ['allowed_classes' => FALSE]);
+$nodeId = (int) trim(fgets(STDIN));
+\Drupal\Core\Database\Database::addConnectionInfo('wiki_decision_row_lock', 'default', $options);
+$connection = \Drupal\Core\Database\Database::getConnection('default', 'wiki_decision_row_lock');
+$transaction = $connection->startTransaction();
+$connection->select('node', 'node')->fields('node', ['nid'])->condition('nid', $nodeId)->forUpdate()->execute()->fetchField();
+fwrite(STDOUT, "locked\n");
+fflush(STDOUT);
+usleep(1500000);
+$transaction->commitOrRelease();
+fwrite(STDOUT, "released\n");
+PHP;
+    $pipes = [];
+    $process = proc_open(
+      [PHP_BINARY, '-r', $workerCode],
+      [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+      $pipes,
+      dirname(DRUPAL_ROOT),
+    );
+    self::assertIsResource($process);
+    stream_set_timeout($pipes[1], 15);
+    stream_set_timeout($pipes[2], 15);
+    $exitCode = NULL;
+    $accepted = NULL;
+    try {
+      $database = $this->container->get('database');
+      fwrite($pipes[0], base64_encode(serialize($database->getConnectionOptions())) . "\n" . $target->id() . "\n");
+      fflush($pipes[0]);
+      self::assertSame("locked\n", fgets($pipes[1]));
+      $accepted = $decisionService->decide(
+        $proposal,
+        (int) $proposal->getRevisionId(),
+        'accepted',
+        'Campos aplicados após serialização pelo lock.',
+        ['title'],
+      );
+      self::assertSame("released\n", fgets($pipes[1]));
+    }
+    finally {
+      if (is_resource($pipes[0])) {
+        fclose($pipes[0]);
+      }
+      if (is_resource($pipes[1])) {
+        fclose($pipes[1]);
+      }
+      if (is_resource($pipes[2])) {
+        fclose($pipes[2]);
+      }
+      $exitCode = proc_close($process);
+    }
+    self::assertSame(0, $exitCode);
+    self::assertInstanceOf(WikiProposal::class, $accepted);
+    return $accepted;
   }
 
   /**

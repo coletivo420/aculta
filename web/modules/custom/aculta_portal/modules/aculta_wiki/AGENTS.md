@@ -30,6 +30,12 @@
 
 # Wiki — instruções locais
 
+- Dev.104: decisão editorial espera lock MariaDB do Node mantido por processo
+  com conexão independente; depois aplica a nova revisão. Focal 1/216; classe
+  completa 27/1.468, incluindo conflito de base obsoleta sem escrita parcial;
+  291 depreciações Core/contrib e 28 PHPUnit. PHPCS/lint passam; Runtime
+  intocado.
+
 - Dev.103: rota de envio de proposta declara purpose Wiki; Kernel revalida
   rejeição no Domain principal junto ao acesso de rota (1/81; 199 depreciações
   Core/contrib e 2 PHPUnit). Submissão privada e fila passaram em focais 2/306

@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.104`: Kernel exercita o `WikiProposalDecision` real enquanto outro
+  processo mantém lock MariaDB na linha do Node. A decisão aguarda a liberação,
+  aplica a revisão e o teste mantém o conflito de VID obsoleto sem gravação
+  parcial (focal 1/216; classe completa 27/1.468; 291 depreciações Core/contrib
+  e 28 PHPUnit). PHPCS/lint passam; Runtime intocado.
+
 - `0.1.0-dev.103`: endpoint de proposta agora declara purpose Wiki; Kernel
   comprova que acesso no Domain principal é rejeitado (focal 1/81; 199
   depreciações Core/contrib e 2 PHPUnit). Submissão privada e fila editorial

@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.103**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.104**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.104 — concorrência da decisão editorial
+
+O Kernel MariaDB inicia um processo auxiliar com conexão independente, mantém
+lock `FOR UPDATE` no Node e executa a decisão pelo serviço de produção. O
+serviço aguarda o lock e só então aplica a revisão; a regressão de base obsoleta
+confirma conflito sem persistência parcial. Focal 1/216; classe completa
+27/1.468, 291 depreciações Core/contrib e 28 PHPUnit. PHPCS/lint passaram;
+Runtime intocado.
 
 ### Incremento dev.103 — purpose do envio de propostas
 
