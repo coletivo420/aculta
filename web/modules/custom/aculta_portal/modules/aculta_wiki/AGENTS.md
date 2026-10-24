@@ -1,5 +1,12 @@
 # Wiki — instruções locais
 
+- Dev.51: o hook de cron chama `aculta_wiki.lead_image_cleanup`, que considera
+  até 25 Files permanentes com mais de uma hora em `private://wiki/imagens/`.
+  Reutiliza `UnusedMediaCleaner` e `UnusedFileCleaner` do Portal, que verificam
+  referências globais em entidades/revisões e falham fechados. A cobertura
+  Kernel retém imagem referenciada por revisão histórica e remove Media/File
+  após a última referência desaparecer (1/46). Sem Runtime.
+
 - Dev.50: provider de Node omite `owner_uid`, não projetando o UID autoral
   interno do Index. `getProjectionVersion()` passou a 4 e altera o fingerprint;
   uma nova geração deve ser reconstruída antes de servir a projeção. Sem rebuild

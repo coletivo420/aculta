@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.51`: cron remove imagens de destaque órfãs após uma hora, em lotes
+  de até 25 arquivos, usando os verificadores compartilhados do Portal para
+  referências globais e históricas. Kernel MariaDB focal: 1 teste / 46
+  asserções; sem limpeza ou alteração no Runtime.
+
 - `0.1.0-dev.50`: o provider Wiki v4 não persiste `owner_uid`; a ausência foi
   verificada no provider unitário e na entrada real do Index. O fingerprint muda
   e exige uma geração nova antes da ativação. O gate genérico de backfill e

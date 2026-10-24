@@ -1,4 +1,17 @@
 services:
+  aculta_wiki.lead_image_cleanup:
+    class: Drupal\aculta_wiki\Cleanup\WikiLeadImageCleanup
+    arguments:
+      - '@entity_type.manager'
+      - '@datetime.time'
+      - '@aculta_portal.unused_media_cleaner'
+      - '@aculta_portal.unused_file_cleaner'
+      - '@logger.channel.aculta_wiki'
+
+  logger.channel.aculta_wiki:
+    parent: logger.channel_base
+    arguments: ['aculta_wiki']
+
   aculta_wiki.contributor_workspace:
     class: Drupal\aculta_wiki\Service\WikiContributorWorkspace
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation', '@request_stack']

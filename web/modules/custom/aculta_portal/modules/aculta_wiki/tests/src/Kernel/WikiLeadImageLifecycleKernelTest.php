@@ -21,6 +21,7 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
@@ -343,6 +344,61 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $mediaStorage = $this->container->get('entity_type.manager')->getStorage('media');
     $mediaStorage->resetCache([(int) $media->id()]);
     self::assertFalse($mediaStorage->load($media->id())->isPublished());
+  }
+
+  /**
+   * Retains old-revision images, then removes the orphan Media and File.
+   */
+  public function testLeadImageCleanupWaitsForHistoricalRevisionReferences(): void {
+    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $owner = $this->createOwner();
+    $old = $this->container->get('datetime.time')->getRequestTime() - 7200;
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $file->setPermanent();
+    $file->set('created', $old);
+    $file->set('changed', $old);
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem histórica da Wiki',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      'created' => $old,
+      'field_media_image' => ['target_id' => $file->id(), 'alt' => 'Imagem histórica'],
+    ]);
+    $media->save();
+    $node = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete com imagem histórica',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      WikiLeadImageUploader::FIELD => ['target_id' => $media->id()],
+    ]);
+    $node->save();
+    $oldRevisionId = (int) $node->getRevisionId();
+
+    $node->setNewRevision(TRUE);
+    $node->set(WikiLeadImageUploader::FIELD, []);
+    $node->save();
+
+    $cleanup = $this->container->get('aculta_wiki.lead_image_cleanup');
+    self::assertSame(['processed' => 1, 'media_deleted' => 0, 'files_deleted' => 0], $cleanup->cleanup());
+    $revision = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($oldRevisionId);
+    self::assertSame((string) $media->id(), (string) $revision->get(WikiLeadImageUploader::FIELD)->target_id);
+    self::assertInstanceOf(Media::class, Media::load($media->id()));
+    self::assertInstanceOf(File::class, File::load($file->id()));
+
+    $node->delete();
+    self::assertSame(
+      FileReferenceStatus::Clear,
+      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+    );
+    self::assertSame(['processed' => 1, 'media_deleted' => 1, 'files_deleted' => 1], $cleanup->cleanup());
+    self::assertNull(Media::load($media->id()));
+    self::assertNull(File::load($file->id()));
   }
 
   /**

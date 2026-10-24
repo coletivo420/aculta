@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.51 — limpeza segura de imagens órfãs
+
+- O cron da Wiki examina até 25 arquivos permanentes antigos em
+  `private://wiki/imagens/`, após retenção mínima de uma hora.
+- Media e File são removidos somente pelos cleanups compartilhados do Portal,
+  que revalidam referências globais em entidades e revisões. Falhas de inspeção
+  mantêm o item; imagens ainda referenciadas por revisões antigas são retidas.
+- Kernel MariaDB focal: 1 teste / 46 asserções. Confirmado: retenção durante
+  referência histórica e remoção após excluir a última origem. 199 deprecações
+  upstream/contrib; sem alteração no Runtime.
+
 ## 0.1.0-dev.50 — remover UID autoral da projeção do Index
 
 - `WikiContentIndexProvider` não grava mais `owner_uid`; o ID de quem criou o

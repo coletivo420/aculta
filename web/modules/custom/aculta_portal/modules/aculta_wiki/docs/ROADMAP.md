@@ -4,13 +4,24 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.50**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.51**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.51 — limpeza segura de imagem órfã
+
+O hook de cron da Wiki processa no máximo 25 Files permanentes antigos sob
+`private://wiki/imagens/`, após retenção de uma hora. Chama os serviços
+compartilhados do Portal para excluir Media e File somente após inspeção global
+de referências; falhas e referências de revisões antigas retêm os dados. Kernel
+MariaDB focal: 1 teste / 46 asserções, incluindo a remoção após exclusão da
+última origem. Sem alteração do Runtime. Próximo gate: ampliar cenários de
+limpeza (múltiplas referências, falha de inspeção e limite de lote) e executar a
+classe Kernel completa.
 
 ### Incremento dev.50 — excluir UID autoral do provider Wiki
 
