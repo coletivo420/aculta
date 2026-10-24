@@ -1,4 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.4.0-dev.69 (feeds e autoria usam o bundle Revista canônico)"
+version_note: "0.4.0-dev.71 — aliases de e-mail antigos removidos; mantém formulários originais, perfil público e política de privacidade. Testes Runtime pendentes."
 next_phase: Revisão autenticada, privacidade/termos e gates antes de RC; validar Runtime em Alpha ([documentação](web/modules/custom/aculta_portal/modules/aculta_user/README.md))
+
+# 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
+# Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
+# Gate: scripts/validate-no-temporary-route-aliases.php.
