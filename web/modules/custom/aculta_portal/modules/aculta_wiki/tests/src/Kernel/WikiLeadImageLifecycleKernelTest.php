@@ -1640,6 +1640,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);
     self::assertArrayHasKey('submit', $form['actions']);
+    self::assertArrayHasKey('check_similar_titles', $form['actions']);
     self::assertSame('Salvar rascunho', (string) $form['actions']['submit']['#value']);
     self::assertSame('Enviar para revisão', (string) $form['actions']['submit_review']['#value']);
     self::assertNotEmpty($form['actions']['submit_review']['#submit'], var_export($form['actions']['submit_review']['#submit'], TRUE));
@@ -1656,6 +1657,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('create_new_draft', $validTransitions);
     self::assertArrayHasKey('draft_to_review', $validTransitions);
     self::assertFalse($author->hasPermission('use wiki_editorial transition review_to_published'));
+
+    $callback = $this->container->get('callable_resolver')->getCallableFromDefinition(
+      $form['actions']['check_similar_titles']['#submit'][0],
+    );
+    self::assertIsCallable($callback, 'The native form resolves the optional check through the autowired Hook service.');
 
     $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Verbete salvo como rascunho');
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
@@ -2109,15 +2115,17 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     });
     $formState = new FormState();
     $formState->setFormObject($formObject);
-    $formState->setValues(['title' => [0 => ['value' => 'Cannabis medicinal']]]);
     $form = [
-      'title' => ['#type' => 'container', '#parents' => ['title']],
+      'title' => ['#type' => 'container', '#parents' => ['title'], '#value' => 'Cannabis medicinal'],
       'actions' => ['submit' => ['#type' => 'submit']],
     ];
     $suggestions = $this->container->get(WikiEntryTitleSuggestions::class);
     $suggestions->formAlter($form, $formState);
     self::assertArrayHasKey('check_similar_titles', $form['actions']);
-    $suggestions->checkSimilarTitles($form, $formState);
+    $callback = $this->container->get('callable_resolver')->getCallableFromDefinition(
+      $form['actions']['check_similar_titles']['#submit'][0],
+    );
+    $callback($form, $formState);
     self::assertTrue($formState->isRebuilding());
     self::assertSame([], $formState->getErrors());
 

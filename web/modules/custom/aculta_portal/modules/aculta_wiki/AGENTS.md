@@ -1,6 +1,6 @@
 - Dev.94: criação tem verificação opcional de títulos públicos semelhantes,
   limitada e filtrada por Domain/Entity Access; nenhum Node é salvo pela ação.
-  Kernel MariaDB 1/34; PHPCS/lint e gate Drupal 11 passaram. Gate Portal–tema aponta 12 ocorrências existentes; Runtime intocado.
+  Kernel MariaDB focal 1/34 (2/113 combinado); PHPCS/lint e gate Drupal 11 passaram. Gate Portal–tema aponta 12 ocorrências existentes; Runtime intocado.
 
 - R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB 3/148
   cobrem discovery, CTA via `createAccess()` e isolamento por grants/cache;

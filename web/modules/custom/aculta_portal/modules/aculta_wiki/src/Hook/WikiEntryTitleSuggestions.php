@@ -52,11 +52,14 @@ final class WikiEntryTitleSuggestions {
     }
 
     if (isset($form['title'], $form['actions']['submit'])) {
+      $titleParents = $form['title']['widget'][0]['value']['#parents']
+        ?? $form['title']['#parents']
+        ?? ['title'];
       $form['actions']['check_similar_titles'] = [
         '#type' => 'submit',
         '#value' => $this->t('Verificar títulos parecidos'),
         '#submit' => [self::class . ':checkSimilarTitles'],
-        '#limit_validation_errors' => [$form['title']['#parents'] ?? ['title']],
+        '#limit_validation_errors' => [$titleParents],
         '#weight' => -10,
       ];
     }
@@ -66,8 +69,8 @@ final class WikiEntryTitleSuggestions {
       return;
     }
 
-    $submittedTitle = trim((string) $form_state->getValue(['title', 0, 'value'], ''));
-    if ($submittedTitle === '' || mb_strtolower($submittedTitle) !== mb_strtolower((string) $results['term'])) {
+    $submittedTitle = $this->submittedTitle($form_state, $form);
+    if (mb_strtolower($submittedTitle) !== mb_strtolower((string) $results['term'])) {
       return;
     }
 
@@ -85,7 +88,14 @@ final class WikiEntryTitleSuggestions {
     ];
 
     $items = $this->loadVisibleSuggestions($results['ids']);
-    if ($items === []) {
+    if (isset($results['notice'])) {
+      $form['similar_titles']['empty'] = [
+        '#plain_text' => $results['notice'] === 'too_long'
+          ? $this->t('O título precisa ter até 255 caracteres para verificar títulos parecidos.')
+          : $this->t('Digite pelo menos três caracteres para verificar títulos parecidos.'),
+      ];
+    }
+    elseif ($items === []) {
       $form['similar_titles']['empty'] = ['#plain_text' => $this->t('Nenhum verbete publicado com título parecido foi encontrado. Você pode continuar a criação.')];
     }
     else {
@@ -101,9 +111,14 @@ final class WikiEntryTitleSuggestions {
    * Stores visible title matches and rebuilds without saving the Node.
    */
   public function checkSimilarTitles(array &$form, FormStateInterface $form_state): void {
-    $title = trim((string) $form_state->getValue(['title', 0, 'value'], ''));
+    $title = $this->submittedTitle($form_state, $form);
     if (mb_strlen($title) < 3 || mb_strlen($title) > 255) {
-      $form_state->setErrorByName('title', $this->t('Digite pelo menos três caracteres para verificar títulos parecidos.'));
+      $form_state->set(self::STORAGE_KEY, [
+        'term' => $title,
+        'ids' => [],
+        'notice' => mb_strlen($title) > 255 ? 'too_long' : 'too_short',
+      ]);
+      $form_state->setRebuild();
       return;
     }
 
@@ -157,6 +172,19 @@ final class WikiEntryTitleSuggestions {
       }
       return $items;
     }) ?? [];
+  }
+
+  /**
+   * Reads the title from Core's scalar widget or a structured field value.
+   */
+  private function submittedTitle(FormStateInterface $form_state, array $form): string {
+    $value = $form['title']['widget'][0]['value']['#value']
+      ?? $form['title']['#value']
+      ?? $form_state->getValue(['title'], '');
+    if (is_array($value)) {
+      $value = $value[0]['value'] ?? $value['value'] ?? '';
+    }
+    return is_scalar($value) ? trim((string) $value) : '';
   }
 
 }
