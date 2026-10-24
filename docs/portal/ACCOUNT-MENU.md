@@ -1,5 +1,23 @@
 # Menu da Minha conta
 
+## Garantia de preservação — Minha Conta legada (decisão 2026-10-24)
+
+**Esta interface não será retirada ao final da migração.**
+A rota de entrada legada é a raiz **`/` do Domain ACCOUNT**, com
+`aculta_portal.dashboard` internamente. O caminho técnico direto
+`/minha-conta` **continua 404**, sem modificação de subscriber.
+Manter shell, menu desktop/mobile, `account-navigation.js`,
+formulários, segurança, dados e integração existentes.
+
+A nova **Minha Conta Studio** é `/studio/conta`; **Meu Perfil Studio**
+é `/studio/perfil`, separado da Conta. As páginas antigas continuam
+funcionais para comparação, inclusive depois de aprovar o Studio.
+Regras e fases:
+[Conta e Perfil separados](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Qualquer indicação antiga abaixo de remoção do shell/menu legado
+foi revogada.
+
+
 Data da revisão: 2026-10-14. Versões: `0.2.0-dev.26` a `0.2.0-dev.39`; extensão de seções no Portal `0.4.0-dev.15`.
 
 A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/minha-conta` não é público e responde 404; nenhum link o usa (`docs/integrations/AUTHENTICATION.md`).
