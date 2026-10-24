@@ -1480,3 +1480,12 @@
   fingerprint e geração isolada. PHPUnit reportou 240 depreciações Core/contrib
   e 3 PHPUnit. Nenhum rebuild ou alteração de Runtime executado.
 
+## Revalidação R2 — ciclo de imagem no HEAD `82e5492ca` (2026-10-24)
+
+- `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27 testes /
+  1.497 asserções. Cobertura inclui Media/File privados para rascunhos e
+  revisões pendentes, publicação conforme estado do verbete, rollback de falha,
+  retry após rebuild, compartilhamento/referências históricas e limpeza em lotes.
+  Foram reportadas 304 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
+  de código, Runtime ou filesystem instalado.
+

@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- Revalidação do ciclo R2 no HEAD `82e5492ca` (2026-10-24): classe Kernel
+  completa passou em MariaDB isolada, 27 testes / 1.497 asserções. Cobriu
+  publicação/privacidade sincronizada com o verbete, revisão pendente, rollback,
+  retry, referências históricas e limpeza segura; 304 depreciações Core/contrib
+  e 28 PHPUnit. Runtime e filesystem instalado não foram alterados.
+
 - Revalidação WIKI-R1 no HEAD `03b840a7f` (2026-10-24): providers Unit e
   Kernels de descoberta/projeção, autorização/relações e rebuild completo Wiki
   passaram em 20 testes / 425 asserções com MariaDB isolada. Projeção v4,

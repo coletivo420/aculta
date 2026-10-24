@@ -91,6 +91,10 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 
 ## R2 — ciclo de vida da imagem (dev.63; cobertura incremental até dev.53)
 
+Revalidação no HEAD `82e5492ca` (2026-10-24): classe Kernel completa aprovada
+em MariaDB, 27 testes / 1.497 asserções. 304 depreciações Core/contrib e 28
+PHPUnit; Runtime e filesystem instalado intocados.
+
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Media/File acompanham publicação | Kernel | Imagem de rascunho fica privada; publicação torna Media e download acessíveis | aprovado previamente |

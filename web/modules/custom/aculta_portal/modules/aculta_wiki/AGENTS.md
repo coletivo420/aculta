@@ -39,6 +39,9 @@
 
 # Wiki — instruções locais
 
+# R2 imagem revalidada no HEAD 82e5492ca: Kernel MariaDB completo passou em
+# 27 testes / 1.497 asserções. Runtime/filesystem instalado intocados.
+
 # WIKI-R1 revalidada no HEAD 03b840a7f: 20 testes / 425 asserções (MariaDB
 # isolada), incluindo projeção v4, relações, acesso real e rebuild isolado.
 # Runtime/rebuild instalado não executados.

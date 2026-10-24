@@ -33,6 +33,15 @@ três relações outgoing. O acesso ao destino é revalidado na consulta; revis�
 pendente não substitui a projeção pública. Rebuild validado somente na geração
 isolada do Kernel, sem ação no Runtime.
 
+### Revalidação R2 — ciclo de imagem no HEAD `82e5492ca` (2026-10-24)
+
+A classe `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27
+testes / 1.497 asserções (304 depreciações Core/contrib; 28 PHPUnit).
+Confirmados a sincronização de publicação com o estado público do verbete,
+proteção de revisão pendente, rollback, retry, retenção histórica e limpeza
+segura. Foi uma revalidação em ambiente isolado, sem alteração no Runtime ou
+filesystem instalado.
+
 ### Incremento dev.108 — avisar aceite da proposta
 
 O resultado privado enviado à autoria confirmada agora cobre também `accepted`,
