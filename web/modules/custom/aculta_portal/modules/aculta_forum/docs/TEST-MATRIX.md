@@ -1,3 +1,13 @@
+## Painel autenticado — leitura somente no navegador, 2026-10-24
+
+- `tests/browser/aculta-forum/authenticated-readonly.py` (Firefox ESR/X11,
+  local simulado): 12/12 verificações — login, painel com as quatro entradas,
+  fila de revisões, mover tópico com opções/confirmação, configurações e
+  reflow 1024/390. GET-only; sem erro visível do Fórum.
+- uid 1 por limitação do dump local (único com mover tópico e configurações);
+  regras de acesso de não-superusuário seguem provadas em Kernel.
+- Kernel do Fórum 149/2.841; Unit 181/1.019; PHPCS limpo.
+
 ## Anexo no editor — criação de Media e recusas, 2026-10-24
 
 - `ForumAttachmentUploadDialogFormKernelTest` (2 testes / 34 asserções,

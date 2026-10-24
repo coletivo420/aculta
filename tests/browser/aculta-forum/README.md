@@ -180,3 +180,34 @@ O script confirma que o HTML carrega assets só do tema informado. Com
 `SUITE_THEME=aculta420`, ele mede a grade do tema, o contador de cada cartão e
 o reflow; a inspeção de todas as combinações de cor continua na suíte
 `forum-index-visual.mjs`.
+
+## Painel autenticado — leitura somente (ambiente local)
+
+`authenticated-readonly.py` autentica com um link único gerado por `drush uli`
+no host de conta e navega **somente por GET** pelo painel do Fórum, pela fila de
+publicações revisionáveis, pelo formulário de mover tópico e pelas
+configurações. Não envia formulário, não move conteúdo e não altera
+configuração.
+
+```bash
+DISPLAY=:0 SUITE_UID=1 \
+SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-autenticado' \
+  python3 -I tests/browser/aculta-forum/authenticated-readonly.py
+```
+
+- Ambiente: **local**, com `aculta.toca.net.br`, `conta.aculta.toca.net.br` e
+  `growroom420.aculta.toca.net.br` resolvidos para `127.0.0.1` no perfil do
+  Firefox.
+- `SUITE_TOPIC_NID` seleciona um tópico público elegível; quando vazio, o
+  primeiro tópico publicado é descoberto por `drush`. O padrão é seguro para
+  leitura.
+- `SUITE_UID` padrão `1` porque, no dump local atual, só o uid 1 tem
+  simultaneamente `move aculta forum topics` e as permissões das configurações.
+  Isso não prova autorização de não-superusuário: essas regras estão nos Kernels
+  access-aware. O link único nunca é impresso nem gravado.
+- Cobre: login, painel (Conteúdo/Comentários/Revisões/Configurações), fila de
+  moderação, formulário de mover tópico com opções e confirmação, configurações
+  e reflow em 1024 e 390 CSS px. Ignora o aviso global de atualizações de
+  segurança, que não é do Fórum.
+- Limitação: GET-only; submissão real do formulário de mover tópico continua
+  coberta por Kernel/serviço, não pela UI.

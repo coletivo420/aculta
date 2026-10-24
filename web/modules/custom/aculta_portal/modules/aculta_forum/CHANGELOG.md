@@ -1,3 +1,17 @@
+## `0.1.0-dev.313` — revisão autenticada somente leitura do painel — 2026-10-24
+
+- Novo teste de navegador `tests/browser/aculta-forum/authenticated-readonly.py`
+  (Firefox ESR/X11, ambiente local simulado): login por link único, painel com
+  Conteúdo/Comentários/Revisões/Configurações, fila de publicações, formulário
+  de mover tópico com 12 categorias e confirmação obrigatória, configurações e
+  reflow em 1024 e 390 CSS px. Resultado 12/12, sem erro visível do Fórum.
+- GET-only: nenhum formulário foi enviado, nenhum tópico movido e nenhuma
+  configuração alterada. O aviso global de atualizações de segurança foi
+  ignorado por não pertencer ao Fórum.
+- Recorte: uid 1 no dump local (único com mover tópico e configurações);
+  autorização de não-superusuário já está nos Kernels access-aware.
+- Testes: Kernel do Fórum 149/2.841; Unit 181/1.019; PHPCS limpo.
+
 ## `0.1.0-dev.312` — provar o envio de anexo para o editor — 2026-10-24
 
 - Novo Kernel `ForumAttachmentUploadDialogFormKernelTest`: um PDF válido cria
