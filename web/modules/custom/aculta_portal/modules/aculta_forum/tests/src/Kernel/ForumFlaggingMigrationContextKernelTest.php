@@ -258,13 +258,90 @@ final class ForumFlaggingMigrationContextKernelTest extends KernelTestBase {
   }
 
   /**
+   * Global scope, missing timestamp and unmapped posts are refused.
+   */
+  public function testInvalidScopeTimestampAndMappingAreRejected(): void {
+    $this->assertRejected($this->destinationFlagging(['global' => 1]), 'tipo, dono, escopo ou timestamp');
+    $this->assertRejected($this->destinationFlagging(['created' => 0]), 'tipo, dono, escopo ou timestamp');
+
+    $lookup = $this->createMock(MigrateLookupInterface::class);
+    $lookup->method('lookup')->willReturn([]);
+    try {
+      (new ForumFlaggingMigrationContext(
+        $this->container->get('entity_type.manager'),
+        new DomainPurposeManager(
+          $this->container->get('entity_type.manager'),
+          $this->container->get('domain.negotiator'),
+          $this->container->get('config.factory'),
+          new RequestStack(),
+        ),
+        $lookup,
+      ))->saveImportedFlagging(
+        $this->destinationFlagging(),
+        (int) $this->sourceFlagging->id(),
+        (int) $this->comment->id(),
+        fn (): array => [],
+      );
+      self::fail('Denúncia sem post mapeado foi aceita.');
+    }
+    catch (MigrateException $exception) {
+      self::assertStringContainsString('mesmo tópico público', $exception->getMessage());
+    }
+  }
+
+  /**
+   * A source report with another flag or anonymous without session is refused.
+   */
+  public function testInvalidSourceFlaggingIsRejected(): void {
+    Flag::create([
+      'id' => 'outra_flag',
+      'label' => 'Outra',
+      'entity_type' => 'comment',
+      'bundles' => ['aculta_discussion_post'],
+      'flag_type' => 'entity:comment',
+      'flag_short' => 'Marcar',
+      'unflag_short' => 'Remover',
+      'flag_long' => '',
+      'unflag_long' => '',
+    ])->save();
+    $other = Flagging::create([
+      'flag_id' => 'outra_flag',
+      'entity_type' => 'comment',
+      'entity_id' => $this->comment->id(),
+      'uid' => $this->author->id(),
+      'session_id' => 'session-xyz',
+      'global' => 0,
+      'created' => 1700000000,
+    ]);
+    $other->save();
+    $this->assertRejected($this->destinationFlagging(), 'não pertence a um Comment migrável', $other);
+
+    $anonymous = Flagging::create([
+      'flag_id' => 'sinalizar_comentario',
+      'entity_type' => 'comment',
+      'entity_id' => $this->comment->id(),
+      'uid' => 0,
+      'session_id' => '',
+      'global' => 0,
+      'created' => 1700000000,
+    ]);
+    $anonymous->save();
+    $this->assertRejected(
+      $this->destinationFlagging(['uid' => 0, 'session_id' => '']),
+      'sessão identificável',
+      $anonymous,
+    );
+  }
+
+  /**
    * Asserts the context refuses a destination flagging.
    */
-  private function assertRejected(Flagging $flagging, string $fragment): void {
+  private function assertRejected(Flagging $flagging, string $fragment, ?Flagging $source = NULL): void {
+    $source ??= $this->sourceFlagging;
     try {
       $this->context()->saveImportedFlagging(
         $flagging,
-        (int) $this->sourceFlagging->id(),
+        (int) $source->id(),
         (int) $this->comment->id(),
         fn (): array => [(int) $flagging->id()],
       );

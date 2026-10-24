@@ -1,3 +1,11 @@
+## `0.1.0-dev.270` — fechar os guardas da denúncia migrada — 2026-10-23
+
+- Kernel cobre escopo global, timestamp zero, origem com outra Flag, denúncia
+  anônima sem sessão e linha cujo Comment não tem post mapeado; todos são
+  recusados antes do salvamento.
+- Testes: contexto 7/131; suíte Kernel do Fórum 89/1.875; PHPCS limpo. Nenhuma
+  migration foi executada.
+
 ## `0.1.0-dev.269` — provar a denúncia importada no post — 2026-10-23
 
 - Kernel exercita `ForumFlaggingMigrationContext`: a denúncia de destino com a
