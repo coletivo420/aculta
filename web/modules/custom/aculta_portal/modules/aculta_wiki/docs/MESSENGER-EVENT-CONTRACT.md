@@ -95,7 +95,7 @@ Os value objects dos dois eventos estão implementados em `src/Event/`, com
 payload v1 validado por Unit (4 testes / 5 asserções). Dev.113 adiciona enqueue
 nas transições de revisão/decisão e QueueWorker com Queue API confiável. O
 install/update 10002 prepara a tabela Queue antes das transações; Kernel MariaDB
-isolado confirmou que rollback também remove o item (1/7). Uma
+isolado confirmou que rollback também remove o item (1/8). Uma
 exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
 limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
 exceção e conserva o item. Assim, o fluxo ainda não entrega avisos de site: o
