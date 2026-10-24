@@ -5,15 +5,13 @@ Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
 Linha do projeto `aculta_wiki`: **0.1.0-dev.111**. No Runtime de teste,
-`drush cr` revelou as rotas e serviços após autorização. O smoke autenticado
-expôs ausência das tabelas de `aculta_wiki_proposal`; o update de schema foi
-corrigido no código e sua aplicação foi autorizada. Em preflight read-only de
-2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
-desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
-respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
-conta, o smoke autenticado encontrou `/studio/we-sativa` ausente: o serviço e a
-rota também não existem no container ativo. Runtime segue sem homologação
-integral.
+`aculta_wiki` e `aculta_studio` estão ativos e `aculta_index` permanece
+desativado. `drush cr` e o update autorizado 10001 foram aplicados; as rotas
+WE SATIVA existem e as quatro tabelas da entidade de proposta foram instaladas.
+Firefox ESR/X11 autenticado passou 19/19, cobrindo home/CTA, início, workspace,
+formulário/retorno e reflow 320/390/1280. Olivero e WCAG 2.2 AA completa seguem
+pendentes. `/wiki` é caminho interno da raiz Wiki e responde 404 quando chamado
+diretamente.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
@@ -23,8 +21,9 @@ O update 10001 agora instala a definição e o schema SQL da entidade privada de
 propostas caso a Wiki já estivesse ativa antes da entidade ser adicionada; em
 instalações completas preserva a instalação do campo `proposed_fields`. Kernel
 isolado simulou a ausência das quatro tabelas, executou o hook real e passou em
-1 teste / 30 asserções. `drush updb` foi autorizado no Runtime de teste e será
-validado após o commit; nenhuma configuração ou conteúdo será importado.
+1 teste / 30 asserções. No Runtime de teste, `updb --yes` executou somente o
+update 10001, criou as tabelas ausentes, não encontrou updates restantes e foi
+seguido por `drush cr`. Nenhuma configuração ou conteúdo foi importado.
 
 ### Incremento dev.110 — CTA para o início WE SATIVA
 

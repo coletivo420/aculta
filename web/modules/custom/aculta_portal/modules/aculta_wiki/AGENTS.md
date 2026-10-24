@@ -41,13 +41,13 @@
 
 # Dev.111: update_10001 instala o schema completo de aculta_wiki_proposal quando
 # ausente e instala proposed_fields apenas se necessário. Kernel simulado passou
-# 1/30. Runtime: drush cr aplicado; update de schema autorizado, aguardando
-# código comitado e validação do updb.
+# 1/30. Runtime de teste aplicou update 10001 e drush cr; Firefox ESR/X11 passou
+# smoke WE SATIVA 19/19 (home, início, workspace, formulário e reflow 320–1280).
 
 # Dev.110: home Wiki aponta para `/studio/we-sativa/inicio` somente com
 # createAccess e acesso real no Domain account; fallback nativo permanece.
-# Classe Kernel MariaDB passou 27/1.504; Runtime aguardando verificação após
-# drush cr autorizado; sem importação de configuração.
+# Classe Kernel MariaDB passou 27/1.504; CTA e rotas verificados no Runtime no
+# Firefox ESR/X11 após rebuild de cache.
 
 # R2 imagem revalidada no HEAD 9da043aeb: Kernel MariaDB completo passou em
 # 27 testes / 1.500 asserções. Runtime/filesystem instalado intocados.

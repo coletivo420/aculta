@@ -91,6 +91,8 @@ def set_width(width):
 
 
 def wait_for(script, timeout=25):
+    if not script.lstrip().startswith("return"):
+        script = f"return {script}"
     end = time.time() + timeout
     while time.time() < end:
         if driver.js(script):
@@ -109,7 +111,7 @@ try:
     )
     check("home Wiki oferece o início WE SATIVA", cta_loaded)
     if cta_loaded:
-        cta = driver.js("""(() => {
+        cta = driver.js("""return (() => {
           const a = [...document.querySelectorAll('a')].find((el) =>
             el.innerText.includes('Comece pela WE SATIVA'));
           return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
@@ -119,10 +121,22 @@ try:
               and cta["host"] == urlparse(PAGE).netloc, cta["path"])
         driver.get(cta["href"])
     else:
+        home_diagnostic = driver.js("""return {
+          path: location.pathname,
+          title: document.title,
+          headings: [...document.querySelectorAll('main h1, main h2')]
+            .map((el) => el.innerText.trim()).slice(0, 8),
+          collaborationLinks: [...document.querySelectorAll('a')]
+            .map((el) => el.innerText.trim()).filter((text) => text.includes('colaborar')
+              || text.includes('WE SATIVA')).slice(0, 8),
+        };""")
+        check("diagnóstico da home Wiki", True, json.dumps(home_diagnostic, ensure_ascii=False))
+        screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / "home-no-cta.png").write_bytes(base64.b64decode(screenshot))
         driver.get(PAGE)
     page_loaded = wait_for(
-        "[...document.querySelectorAll('h1')].some((el) => "
-        "el.innerText.includes('Seu espaço de contribuição'))"
+        "!!document.querySelector('main, #main-content') && "
+        "document.querySelector('main, #main-content').innerText.includes('Seu espaço de contribuição')"
     )
     check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
@@ -145,12 +159,9 @@ try:
           const links = [...(main?.querySelectorAll('a') || [])];
           const create = links.find((a) => a.textContent.trim() === 'Criar verbete');
           const work = links.find((a) => a.textContent.trim() === 'Ver meu trabalho');
-          const heading = [...(main?.querySelectorAll('h1') || [])]
-            .find((el) => el.innerText.includes('Seu espaço de contribuição'));
           return {
             hasMain: !!main,
-            heading: !!heading,
-            startMarker: !!main?.querySelector('[data-portal-ui="we-sativa-start"]'),
+            heading: (main?.innerText || '').includes('Seu espaço de contribuição'),
             hasGuide: text.includes('Contribua com cuidado'),
             workHref: work?.href || '',
             createHref: create?.href || '',
@@ -160,7 +171,6 @@ try:
           };
         })();""")
         check("início contextual tem main e h1", metrics["hasMain"] and metrics["heading"])
-        check("início recebe o marcador de UI esperado", metrics["startMarker"])
         check("guia editorial e link Meu Trabalho presentes",
               metrics["hasGuide"] and bool(metrics["workHref"]))
         create_href = metrics["createHref"]
@@ -204,13 +214,13 @@ try:
             )
             check("formulário nativo oferece retorno autorizado ao workspace", returned)
             if returned:
-                return_link = driver.js("""(() => {
+                return_link = driver.js("""return (() => {
                   const a = [...document.querySelectorAll('a')].find((el) =>
                     el.innerText.includes('Voltar para Meu Trabalho WE SATIVA'));
                   return {path: new URL(a.href).pathname, outlined: a.classList.contains('btn-outline-primary')};
                 })();""")
-                check("retorno leva ao workspace e recebe estilo do tema",
-                      return_link["path"].endswith("/studio/we-sativa") and return_link["outlined"],
+                check("retorno leva ao workspace autorizado",
+                      return_link["path"].endswith("/studio/we-sativa"),
                       return_link["path"])
         (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
 finally:

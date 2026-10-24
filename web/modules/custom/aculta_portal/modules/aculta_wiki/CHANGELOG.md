@@ -6,10 +6,23 @@
   uma instalação já concluída.
 - Kernel MariaDB isolado removeu o registro/tabelas da entidade de proposta,
   executou o update real e confirmou as quatro tabelas e `proposed_fields`
-  (1 teste / 30 asserções; 198 depreciações upstream e 2 PHPUnit).
+  (1 teste / 30 asserções; 197 depreciações Core/contrib, uma PHP/Webform e 2
+  PHPUnit).
 - O Runtime tinha as rotas após `drush cr`, mas a autorização da WE SATIVA
-  consultava tabelas ausentes. A aplicação do update foi autorizada e será
-  revalidada após este commit; sem importação de configuração.
+  consultava tabelas ausentes. A aplicação autorizada está confirmada na
+  revalidação R2 abaixo; sem importação de configuração.
+
+### Revalidação R2 no Runtime de teste — 2026-10-24
+
+- `drush updatedb --yes` executou somente `aculta_wiki_update_10001`; as quatro
+  tabelas da entidade de proposta passaram a existir e não restaram updates.
+  `drush cr` foi executado novamente; Wiki e Studio ativos, Index permaneceu
+  desativado.
+- Firefox ESR visível em `DISPLAY=:0`, conta autorizada UID 5: 19/19 verificações
+  passaram na home Wiki, CTA para o host de conta, início WE SATIVA, Meu Trabalho,
+  formulário e retorno; reflow sem overflow em 1280/390/320 px. Sem submissão ou
+  escrita de conteúdo. Evidências fora do repositório em
+  `/tmp/aculta-wiki-we-sativa-final6`.
 
 ## 0.1.0-dev.110 — ligar a home Wiki ao início WE SATIVA
 

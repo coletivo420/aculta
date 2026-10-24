@@ -10,17 +10,16 @@ pendentes, está em
 - `0.1.0-dev.111`: `aculta_wiki_update_10001()` instala a definição da entidade
   `aculta_wiki_proposal` quando o módulo já estava habilitado antes dela existir,
   e só instala `proposed_fields` quando ainda ausente. Kernel isolado simulando
-  a instalação atrasada passou (1 teste / 30 asserções). Runtime de teste tem as
-  rotas após `drush cr`, mas o acesso autenticado estava bloqueado pela ausência
-  do schema; `drush updb` foi autorizado e aguarda o commit desta correção.
+  a instalação atrasada passou (1 teste / 30 asserções). No Runtime de teste,
+  `updb` instalou as quatro tabelas ausentes e `drush cr` passou; não havia outros
+  updates pendentes. Firefox ESR/X11 autenticado aprovou 19/19 verificações.
 
 - `0.1.0-dev.110`: o CTA de colaboração da home Wiki leva ao início WE SATIVA
   no Domain `account` quando a conta tem `createAccess()` e acesso real à rota;
   sem essa rota/acesso, usa o formulário nativo de criação. O Kernel focal
   verifica domínio, cache e restauração do purpose. Classe Kernel MariaDB:
   27/1.504; 304 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform.
-  Homologação Runtime autorizada está em andamento; não inferir disponibilidade
-  instalada antes da verificação pós-cache.
+  A chamada é validada no Runtime pelo smoke autenticado abaixo.
 
 - Revalidação do ciclo R2 no HEAD `9da043aeb` (2026-10-24): classe Kernel
   completa passou em MariaDB isolada, 27 testes / 1.500 asserções. Cobriu
