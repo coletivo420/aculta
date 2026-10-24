@@ -292,17 +292,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $mediaStorage->resetCache([(int) $media->id()]);
     self::assertTrue($mediaStorage->load($media->id())->isPublished());
     self::assertTrue($file->access('download', new AnonymousUserSession()));
+    $downloadResults = $this->container->get('module_handler')->invokeAll('file_download', [$file->getFileUri()]);
+    self::assertNotContains(-1, $downloadResults, 'The active published Wiki reference permits the private download.');
 
     $node->setUnpublished();
     $node->save();
     $mediaStorage->resetCache([(int) $media->id()]);
     self::assertTrue($mediaStorage->load($media->id())->isPublished(), 'A second published Wiki entry still uses the Media.');
+    $downloadResults = $this->container->get('module_handler')->invokeAll('file_download', [$file->getFileUri()]);
+    self::assertNotContains(-1, $downloadResults, 'The other published Wiki reference keeps the image downloadable.');
 
     $sharedNode->setUnpublished();
     $sharedNode->save();
     $mediaStorage->resetCache([(int) $media->id()]);
     self::assertFalse($mediaStorage->load($media->id())->isPublished());
     self::assertTrue($file->access('download', new AnonymousUserSession()), 'Core still authorizes a file referenced by a published historical revision.');
+    $downloadResults = $this->container->get('module_handler')->invokeAll('file_download', [$file->getFileUri()]);
+    self::assertContains(-1, $downloadResults, 'The Wiki download hook denies a historical-only reference.');
   }
 
   /**
@@ -489,6 +495,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $removalState = new FormState();
     $removalState->setValues([WikiLeadImageUploader::TAB => [WikiLeadImageUploader::REMOVE => TRUE]]);
     $uploader->applyUpload($form, $removalState);
+    $node = Node::load((int) $node->id());
+    self::assertInstanceOf(Node::class, $node);
     $node->setNewRevision(TRUE);
     $node->set(WikiLeadImageUploader::FIELD, $removalState->getValue([WikiLeadImageUploader::FIELD]));
     $node->save();
@@ -501,8 +509,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $media = Media::load($mediaId);
     self::assertInstanceOf(Media::class, $media);
-    self::assertTrue($media->isPublished());
-    self::assertTrue($file->access('download', new AnonymousUserSession()));
+    self::assertFalse($media->isPublished());
+    self::assertFalse($file->access('download', new AnonymousUserSession()));
+    $downloadResults = $this->container->get('module_handler')->invokeAll('file_download', [$file->getFileUri()]);
+    self::assertContains(-1, $downloadResults, 'A historical revision keeps the file but not public download access.');
     self::assertFileExists($file->getFileUri());
   }
 

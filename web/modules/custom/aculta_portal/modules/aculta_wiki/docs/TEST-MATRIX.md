@@ -17,7 +17,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Paginação | Kernel | Cursor por tipo com ordem estável e acesso revalidado | planejado; tela inicial limita 20 por tipo |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
-## R2 — ciclo de vida da imagem (dev.33)
+## R2 — ciclo de vida da imagem (dev.43)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -117,14 +117,13 @@ depois da importação de configuração no servidor de testes.
 | Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
 | Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |
 | Visibilidade da Media e do arquivo segue estado do verbete | Kernel | rascunho permanece privado; verbete publicado permite acesso | aprovado (2 casos de dados MariaDB) |
-| Media existente em mudança posterior de publicação | Kernel | atualização sincroniza status; outro Node publicado mantém a Media pública até retirar sua última referência | aprovado (dev.37; focal: 1 / 29; classe: 13 / 548) |
+| Media existente em mudança posterior de publicação | Kernel | status e download seguem referências atuais publicadas; referências compartilhadas mantêm acesso | aprovado (dev.43; focal e regressões no subconjunto: 8 testes / 237 asserções) |
 | Exclusão do último Node que publica a Media | Kernel | hook de exclusão despublica a Media após apagar o último Node atual que a referencia | aprovado (dev.37; focal: 1 / 27; classe: 13 / 548) |
 | Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
-| Remoção em nova revisão com referência antiga | Kernel | revisão antiga mantém a Media; arquivo continua presente e acessível | aprovado (1 teste / 24 assertions em MariaDB) |
+| Remoção em nova revisão com referência antiga | Kernel | revisão antiga preserva Media/File no armazenamento, mas download é negado sem referência publicada atual | aprovado (dev.43; incluído nos 8 testes focais) |
 | Reuso da Media em outro conteúdo e limpeza global de referências | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | pendente; depende do contrato transversal do Portal |
-| Falha de validação antes de submit | Kernel | sem Media órfã nem File permanente | pendente |
 | Validador de upload inválido | Kernel | `alt` vazio produz erro; nenhuma Media é criada e o File permanece temporário | aprovado (dev.38; focal 1 / 27; classe 14 / 575) |
-| Arquivo privado após despublicar com revisão publicada anterior | Kernel | decidir se download segue a autorização Core da revisão histórica ou o estado atual; Core atualmente permite download | pendente de decisão |
+| Arquivo privado após despublicar com revisão publicada anterior | Kernel | Core pode autorizar pela revisão antiga; hook da Wiki nega e o endpoint bloqueia o download | aprovado (dev.43; invocado por ModuleHandler no Kernel) |
 
 ## Fase 2 — componentes movidos
 

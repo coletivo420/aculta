@@ -1,5 +1,19 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.43 — sincronizar download de imagem com verbetes publicados
+
+- Hook `file_download` nega arquivos `private://wiki/imagens` sem referência
+  atual a um `wiki_entry` publicado. Uma revisão histórica pode continuar a
+  preservar o File no disco sem manter o download público. Referências atuais
+  compartilhadas continuam válidas enquanto houver verbete publicado.
+- Ao trocar ou remover a imagem, a Media anterior é reconciliada com os Nodes
+  publicados que ainda a referenciam. O formulário preserva File/Media usados
+  por revisões antigas; limpeza física continua fora deste fluxo.
+- Kernel MariaDB: subconjunto dos sete cenários de imagem, com data provider,
+  passou em 8 testes / 237 asserções; 203 depreciações Drupal/Core/contrib e 9
+  do PHPUnit. PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check`
+  aprovados. Runtime não foi alterado.
+
 ## 0.1.0-dev.42 — salvar rascunho e enviar revisão pelo Form API nativo
 
 - O workflow `wiki_editorial` agora permite a transição `create_new_draft` a
@@ -70,7 +84,8 @@
   Core/contrib e 14 PHPUnit.
 - Teste confirma que Core ainda permite baixar o arquivo quando uma revisão
   publicada anterior o referencia, embora a Media atual esteja privada. A
-  decisão de produto sobre esse acesso histórico continua pendente.
+  decisão de produto sobre esse acesso histórico foi resolvida em dev.43 com
+  negação do hook `file_download` quando não há referência pública atual.
 
 ## 0.1.0-dev.36 — caracterizar confirmação real de autoria
 

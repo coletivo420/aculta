@@ -51,6 +51,9 @@ services:
       - '@aculta_portal.user_upload_policy'
       - '@aculta_portal.user_upload_dialog_builder'
       - '@aculta_wiki.wiki_lead_image_uploader'
+  Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess:
+    class: Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess
+    arguments: ['@file.repository', '@entity_type.manager']
   Drupal\aculta_wiki\Type\WikiReviewMailType:
     class: Drupal\aculta_wiki\Type\WikiReviewMailType
     arguments: ['@string_translation']

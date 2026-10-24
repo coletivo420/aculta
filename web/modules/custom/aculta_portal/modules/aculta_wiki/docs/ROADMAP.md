@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.42**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.43**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.43 — download da imagem conforme publicação atual
+
+O hook de download privado nega imagens sem referência de destaque em um
+verbete publicado na revisão padrão. A atualização que troca/remove a imagem
+reconcilia a Media anterior, preservando referências compartilhadas atuais.
+Revisões antigas continuam mantendo o arquivo no armazenamento, mas não
+autorizam download público. O subconjunto Kernel de imagem passou em 8 testes /
+237 asserções. Não houve limpeza física nem alteração do Runtime.
 
 ### Incremento dev.42 — persistir rascunho e enviar revisão
 
@@ -256,15 +265,15 @@ requisito `access content`. O teste de busca usa o controller real, com grants
 por conta em contas da mesma função, e confirma o contexto de cache para busca
 vazia/negativa. HTTP 200 e ativação continuam gates de Runtime separados.
 
-### Ciclo de vida da imagem de destaque — dev.12
+### Ciclo de vida da imagem de destaque — dev.43
 
 O arquivo de destaque fica em armazenamento privado. O upload prepara Media e
-File dentro de transação até o salvamento do Node; a Media acompanha o estado
-publicado da revisão submetida. Rebuild ou falha do salvamento reverte o lote.
-O teste Kernel cobre rascunho, publicação e rollback de falha. Uma revisão nova
-sem imagem preserva o arquivo quando a revisão antiga ainda referencia a Media.
-Reuso entre entidades e limpeza global de referências continuam no contrato
-transversal do Portal; a ativação da Wiki no Runtime permanece separada.
+File dentro de transação até o salvamento do Node; a Media acompanha as
+referências atuais de Nodes publicados. Rebuild ou falha do salvamento reverte
+o lote. O hook de download bloqueia referências apenas históricas, mas preserva
+o arquivo no disco. Reuso em verbete publicado continua permitindo o acesso.
+Limpeza global de referências segue no contrato transversal do Portal; a
+ativação da Wiki no Runtime permanece separada.
 
 ### Persistência de propostas para verbetes de terceiros — dev.14
 

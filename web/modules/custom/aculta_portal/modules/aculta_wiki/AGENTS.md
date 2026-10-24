@@ -1,5 +1,11 @@
 # Wiki — instruções locais
 
+- Dev.43: download de imagem privada é permitido só se algum verbete publicado
+  atualmente a referenciar. Troca/remoção da imagem também reconcilia a Media
+  anterior; revisões antigas preservam o arquivo, mas não reabrem o download
+  quando não houver referência pública atual. Kernel MariaDB focal: 8 testes /
+  237 assertions; PHPCS e PHP lint passam. Não remover arquivo histórico aqui.
+
 - Dev.42: `create_new_draft` aceita origem `draft` para o formulário Core
   selecionar o estado inicial; Kernel persiste um Node privado em `draft` e
   depois uma nova revisão em `review` por `draft_to_review` (1 teste / 54
@@ -30,9 +36,8 @@
 - Dev.37 R2: `WikiEntryImageHooks` sincroniza Media de destaque após insert,
   update e delete de Nodes; mantenha-a publicada enquanto outro Node publicado
   referir a mesma entidade. Teste MariaDB cobre duas referências, última
-  retirada e exclusão do último Node.
-  Core ainda permite acesso ao arquivo por revisão histórica publicada mesmo
-  com Media privada; a política desse caso segue pendente.
+  retirada e exclusão do último Node. Dev.43 também nega download quando só
+  restarem referências em revisões históricas.
 - Dev.36 WES-C01-B1 parcial: teste Kernel usa `aculta_mail_confirmer` no realm
   `aculta_registration`, valida o hook real de confirmação do Portal, papel
   `email_confirmed` e `createAccess('wiki_entry')`. Renovar o cache do handler

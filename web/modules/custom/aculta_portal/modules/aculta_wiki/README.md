@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.43`: acesso ao download das imagens privadas acompanha referências
+  atuais de verbetes publicados. Revisões antigas preservam os arquivos sem
+  deixá-los disponíveis após a remoção/despublicação; outro verbete publicado
+  que compartilhe a Media mantém o download permitido. Kernel nos cenários de
+  imagem: 8 testes / 237 asserções; Runtime não alterado.
+
 - `0.1.0-dev.42`: o workflow mantém a gravação inicial no estado `draft` como
   escolha explícita do formulário Core. Kernel submete o Node como rascunho e
   depois cria revisão `review` por `draft_to_review`; publicação segue
@@ -39,8 +45,8 @@ pendentes, está em
   Media de destaque com os Nodes publicados que a referenciam. Kernel cobre
   publicação, despublicação, exclusão do último Node e reuso (2 focais / 56;
   classe Kernel: 13 testes / 548 asserções em MariaDB isolada). Mesmo com Media
-  privada, Core permite acesso ao arquivo por revisão histórica publicada; a
-  política desse caso segue pendente.
+  privada, Core permitia acesso ao arquivo por revisão histórica publicada;
+  esse acesso foi fechado pelo hook `file_download` em dev.43.
 - `0.1.0-dev.36`: Kernel usa o Mail Confirmer real (`aculta_registration`),
   confirma a conta e verifica o papel `email_confirmed` e a permissão efetiva
   de criar `wiki_entry` via Entity Access. Focal: 1 teste / 33 asserções;

@@ -150,6 +150,15 @@ final class WikiEntryImageHooks {
   public function entityUpdate(EntityInterface $entity): void {
     if ($entity instanceof NodeInterface) {
       $this->uploader->syncPublishedMedia($entity);
+      $original = $entity->getOriginal();
+      if ($original instanceof NodeInterface
+        && $original->bundle() === 'wiki_entry'
+        && $this->leadImageId($original) !== NULL
+        && $this->leadImageId($original) !== $this->leadImageId($entity)) {
+        // Reconcile the image removed from the current revision. Older
+        // revisions still reference it, but they no longer make it public.
+        $this->uploader->syncPublishedMedia($original, TRUE);
+      }
     }
   }
 
@@ -180,6 +189,18 @@ final class WikiEntryImageHooks {
       $alt = (string) ($media->get('field_media_image')->first()?->get('alt')->getValue() ?? '');
     }
     return ['name' => (string) $media->label(), 'alt' => $alt];
+  }
+
+  /**
+   * Returns the current field's Media ID, if available.
+   */
+  private function leadImageId(NodeInterface $node): ?int {
+    if (!$node->hasField(WikiLeadImageUploader::FIELD)
+      || $node->get(WikiLeadImageUploader::FIELD)->isEmpty()) {
+      return NULL;
+    }
+    $targetId = $node->get(WikiLeadImageUploader::FIELD)->target_id;
+    return $targetId === NULL || $targetId === '' ? NULL : (int) $targetId;
   }
 
 }
