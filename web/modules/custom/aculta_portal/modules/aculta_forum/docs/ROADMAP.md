@@ -95,7 +95,7 @@ os Comments de origem. O modo
 completa e homologação Runtime seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 23 testes / 515 assertions, sem depreciações.
+passou nesta execução em MariaDB Simpletest, 24 testes / 533 assertions.
 Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
 provam ordem inversa, replays, migração de chaves legadas e retenção de seis
@@ -114,13 +114,14 @@ dos três tipos, supressão de aviso ao autor, rejeição após revogação de a
 e compatibilidade do agregado: o registro direto seguido do evento compartilha
 uma linha, incrementa contadores e atualiza o último Comment. O teste do resumo
 diário confirma uma linha/quantidade 2 no ACULTA Mailer e que replay não envia
-segundo e-mail (transporte mockado; idioma único `pt-br`). Suíte: 23 testes /
-515 assertions; Unit Messenger: 79 / 356; PHPCS e lint pertinentes: PASS. Runtime
-e configuração real de Mailer continuam pendentes.
+segundo e-mail (transporte mockado; idioma único `pt-br`). A execução atual do
+Kernel focado no ledger passou com 24 testes / 533 assertions. Essa prova não
+substitui a homologação Runtime nem valida a configuração real do Mailer; F-M2
+continua parcial.
 
 ### Sequência recomendada e paralelismo
 
-- **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
+- **Imediato:** manter F-M1 parcial até a validação operacional autorizada; em paralelo, continuar provas restantes de
   Search API/Domain, anexos, concorrência da limpeza, migração e contagens
   já identificadas na linha atual do Fórum.
 - **F-M2:** round-trip dos três eventos, comparação com o registro direto,
@@ -158,9 +159,12 @@ verdade enquanto uma mudança explícita não for aprovada e testada.
   Search API possuem pendências específicas de Runtime/MariaDB registradas
   abaixo; não invalidar evidências existentes nem marcar como concluído
   sem nova execução.
-- O Messenger possui integração atual com `aculta_aviso`, Kernel de
-  idempotência XK-C2 e publisher público mínimo; o consumidor do Fórum, a
-  equivalência de persistência e a entrega comparativa continuam pendentes.
+- O consumer de eventos do Fórum já pertence ao `aculta_messenger` e usa o
+  agregador/ledger `aculta_aviso` existente. A suíte de idempotência em MariaDB
+  passou nesta execução (24/533), incluindo eventos fora de ordem, replay e
+  migração das chaves legadas. Permanecem pendentes a homologação Runtime da
+  entrega e a configuração real do Mailer; o Fórum não mantém consumer nem
+  storage de entrega paralelo.
 - A entrega de e-mail deve respeitar F-D42: modos individuais off/direto/resumo,
   controle geral de digest e limites administrativos do Mailer. Notificação no site
   é obrigatória; nenhuma entrega de e-mail ignora autorização atual ou política administrativa.
