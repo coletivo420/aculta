@@ -158,11 +158,12 @@ invalidação de cache do salvamento real.
 | Tópico LMS novo ou salvo sem UUID | isenção neutra sem consultar o provider; janela do autor prevalece |
 | Isenção que lança exceção | ignorada; janela do autor prevalece (fail closed) |
 
-## `PublishedParticipationLookupInterface` — documentado, não implementado
+## `PublishedParticipationLookupInterface` — estado em 2026-10-22 (C1)
 
-O ADR-XK-01 prevê um provider de evidência publicada por contexto. **Nesta fase
-ele não existe como interface nem como serviço.** A documentação registra apenas
-os requisitos que uma implementação futura deve respeitar:
+O ADR-XK-01 previa um provider de evidência publicada por contexto. **Na
+caracterização C1, em 2026-10-22, ele não existia como interface nem como
+serviço.** A documentação registrava os requisitos que a implementação deveria
+respeitar:
 
 - recebe id de conta e contexto tipado (`public_discussion`, `wiki_entry`, …);
 - devolve prova booleana ou estado agregado, sem textos nem detalhes de entidade;
@@ -170,9 +171,33 @@ os requisitos que uma implementação futura deve respeitar:
 - declara cacheability e falha conservadora;
 - não concede permissão Drupal nem transição editorial.
 
-Enquanto a interface não existir, consumidores continuam usando
-`ParticipationRules` e seus métodos atuais. Nenhuma classe deste marco deve ser
-citada como API publicada.
+Naquela fase, consumidores continuavam usando `ParticipationRules` e seus
+métodos atuais. A implementação posterior consta na seção seguinte.
+
+## Implementação USER-PART 0.1-C — atualização 2026-10-24
+
+O contrato agora está implementado no `aculta_user`:
+
+- `PublishedParticipationLookupInterface` é implementada por providers
+  específicos de contexto; `PublishedParticipationLookup` aceita somente um
+  provider para cada contexto e nunca soma ForumPost, Comment LMS e Wiki.
+- `PublishedParticipationEvidence` carrega somente o booleano agregado,
+  confiabilidade e cache metadata. Provider ausente, duplicado ou com erro
+  retorna indisponível com `max-age: 0`, que exige revisão.
+- `aculta_wiki` fornece `WikiPublishedParticipationLookup`, que consulta apenas
+  verbetes `wiki_entry` publicados no Domain canônico ativo e do UID solicitado. A
+  revisão padrão continua sendo evidência enquanto revisão pendente não padrão
+  existe. Cache usa `user` apenas para a conta atual; consulta de outro UID tem
+  `max-age: 0`.
+- O Domain anterior é restaurado e erro/Domain ausente falha fechado. Nenhum
+  conteúdo, ID de entidade ou dado pessoal passa no resultado.
+- O Fórum continua usando seus métodos e hooks existentes. A nova API ainda
+  não foi conectada a novas permissões ou transições; a publicação continua
+  dependente do workflow e de `content_editor`.
+
+Evidências: User Unit 123 testes / 439 assertions; Kernel de caracterização
+9/129; Wiki provider Kernel 1/45; Fórum Kernel 1/39. PHPCS passou. Runtime
+intocado.
 
 ## Pendências desta caracterização
 

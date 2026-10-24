@@ -1,6 +1,6 @@
 # ACULTA — Política de participação e moderação compartilhada no aculta_user
 
-**Decisão revisada e vigente · 2026-10-22 · Estado:** especificação, sem refatoração PHP nem alteração de permissões/Runtime.
+**Decisão revisada · 2026-10-22 · Implementação:** USER-PART 0.1-C parcial em 2026-10-24; sem alteração de permissões ou Runtime.
 
 > **Esta decisão substitui a proposta anterior de mover as regras de primeira participação para o núcleo aculta_portal.** O dono definitivo da política conjunta Fórum + Wiki + demais contextos de contribuição é o **subkernel aculta_user**. Centralização é por responsabilidade, não por posição na árvore de módulos.
 
@@ -45,10 +45,11 @@ O mecanismo de sugestões de alteração em verbetes de terceiros é uma respons
 | --- | --- | --- |
 | USER-PART 0.1-A | mapear `ParticipationRules`, chamadas, DI e testes Fórum; requisitos da Wiki | inventário dos consumidores |
 | 0.1-B | ADR e contrato de extensão dentro de `aculta_user`; política e lookup por domínio | review de segurança e ownership |
-| XK 0.1-C1 | caracterizar políticas e hooks compartilhados antes de refatorar; `PublishedParticipationLookupInterface` só documentada | Unit + Kernel verdes, sem mudança funcional ([evidência](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md)) |
-| 0.1-C | implementar consultas e testes de primeira publicação Wiki, preservando Fórum | unit + Kernel + regressão |
+| XK 0.1-C1 | caracterizar políticas e hooks compartilhados antes de refatorar | concluído; evidência histórica em [USER-PART C1](../../web/modules/custom/aculta_portal/modules/aculta_user/docs/USER-PART-0.1-C1-CHARACTERIZATION.md) |
+| 0.1-C — etapa 1 | lookup de evidência publicada por contexto e adapter Wiki | implementado e testado (User Unit 123/439, Wiki Kernel 1/45, Fórum Kernel 1/39) |
+| 0.1-C — etapa 2 | ligar decisão de primeira publicação ao fluxo Wiki, preservando Fórum | pendente; nenhuma permissão ou transição foi alterada |
 | 0.1-D | integrar adapter/acesso Wiki, fila e Content Moderation | nenhuma publicação antecipada; grants/cache |
 | 0.1-E | compartilhar outros recursos de participação com contexto real | contratos testados |
 | 0.1-R | homelab, testes de concorrência, roles, Domain e revisão | Runtime comprovado |
 
-**Sem mudanças funcionais agora.** Autosave Form permanece futuro. Institution Bar + Domain Header preservados; toda UI compartilha apenas SDC/UI Suite.
+Autosave Form permanece futuro. Institution Bar + Domain Header preservados; toda UI compartilha apenas SDC/UI Suite.

@@ -1,20 +1,32 @@
 # ACULTA-XK 0.1-B — Contratos compartilhados, ownership e ADRs
 
-**Data:** 2026-10-22 · **Estado:** fundação arquitetural documentada e caracterização XK-C1 concluída; sem alteração funcional, dependência Composer ou Runtime.
+**Data:** decisão 2026-10-22 · **Estado:** caracterização XK-C1 concluída; implementação USER-PART 0.1-C iniciada em 2026-10-24, sem dependência Composer ou alteração Runtime.
 **Base:** [Auditoria XK 0.1-A](ACULTA-CROSS-MODULE-CENTRALIZATION-AUDIT-2026-10.md).
 
 ## ADR-XK-01 — Participação compartilhada pertence ao aculta_user
 
 **Decisão:** `aculta_user` hospeda política e interfaces neutras de primeira participação; `aculta_forum`, `aculta_forum_lms` e `aculta_wiki` fornecem adapters das suas entidades, sem importar classes entre si.
 
-**Contratos candidatos, não APIs implementadas:**
-- Um provider de **evidência publicada por contexto** recebe account id + contexto tipado e devolve somente prova booleana ou estado agregado; não devolve textos privados. Nenhuma soma indistinta entre ForumPost, Comment LMS e verbetes Wiki.
-- Um avaliador de política em User recebe contexto (`public_discussion`, `wiki_entry` ou outro registrado), conta e prova do provider, decidindo se **a primeira contribuição exige revisão**, sem jamais conceder permissão Drupal ou transição editorial.
-- Retorno deve declarar cacheability e falha conservadora. Uma falha de consulta não deve liberar publicação.
-- Manter assinaturas e DI públicos de `ParticipationRules`; primeiro criar testes de caracterização, depois adapter Wiki; LMS conserva exceção Group e regra própria.
-- Em Wiki, o primeiro verbete de usuário `email_confirmed` exige revisão, e **todos** os verbetes/revisões seguem publicação controlada por `content_editor`. Não introduzir `review_to_published` no papel comum.
+**Implementação USER-PART 0.1-C (parcial, 2026-10-24):**
+- `aculta_user` define `PublishedParticipationLookupInterface`,
+  `PublishedParticipationEvidence` e `PublishedParticipationLookup`. A consulta
+  recebe UID e contexto, seleciona exatamente um provider e devolve evidência
+  agregada/cacheável; provider ausente, duplicado ou falho exige revisão.
+- `aculta_wiki` fornece o adapter `wiki_entry`: consulta a revisão padrão
+  publicada do autor no Domain Wiki e não expõe metadados do verbete. A consulta
+  de outro UID usa `max-age: 0`; o Domain anterior é restaurado.
+- Métodos, DI e hooks existentes do Fórum permanecem intactos; nenhum provider
+  de discussão foi migrado. A nova evidência ainda não está ligada a permissões
+  Drupal ou a transições editoriais.
+- Em Wiki, todos os verbetes/revisões continuam sujeitos à publicação por
+  `content_editor`; o papel comum não recebe `review_to_published`.
+- Testes: User Unit 123/439, User characterization Kernel 9/129, Wiki Kernel
+  1/45, Fórum Kernel 1/39. Runtime intocado.
 
-**Critério de saída:** Fórum inalterado em testes, Wiki com testes para zero/um publicado, rascunho pendente, revisão não-default, confirmação revogada, domínio incorreto e duas contribuições simultâneas.
+**Continua pendente:** avaliador de política compartilhado para contexts,
+integração decisória do primeiro verbete e critérios/configuração de isenção.
+
+**Critério de saída restante:** Fórum inalterado em testes; Wiki com confirmação revogada, domínio incorreto e duas contribuições simultâneas; integração decisória sem bypass do workflow.
 
 ## ADR-XK-02 — aculta_messenger é o concentrador de avisos e mensagens
 

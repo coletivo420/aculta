@@ -3,6 +3,14 @@
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
+## Estado atual
+
+- `0.4.0-dev.70`: o contrato `PublishedParticipationLookupInterface` agora
+  despacha evidência agregada por contexto e falha conservadoramente quando o
+  provider falta, duplica ou falha. O adapter `wiki_entry` é owner da Wiki;
+  os consumidores existentes do Fórum não migraram. User Unit 123/439,
+  caracterização Kernel 9/129 e Fórum Kernel 1/39 passaram.
+
 ## Documentação
 
 - Aceites legais e consentimentos opcionais são mantidos no ledger `aculta_user_agreement`, com classes, arquivos, hooks, serviços, rotas e métodos prefixados por `aculta_user_agreement`. O contrib Agreement foi desinstalado; dados legados disponíveis são marcados como estado final sem histórico anterior. Ver entrada corrente no [CHANGELOG](CHANGELOG.md) e tratamento no [inventário LGPD](../../../../../../docs/compliance/LGPD-INVENTARIO.md). O ledger é append-only na aplicação e HMAC torna alterações detectáveis; não oferece imutabilidade contra acesso direto ao banco e à chave privada. Registros duram enquanto a conta existir e são removidos na exclusão da conta; o update 10010 também eliminou registros legados de contas já inexistentes.

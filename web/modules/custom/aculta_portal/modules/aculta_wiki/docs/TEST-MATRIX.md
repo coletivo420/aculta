@@ -100,6 +100,15 @@ Runtime intocado.
 | Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | read-only 2026-10-24; nenhum estado alterado |
 | Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |
 
+## R3 — evidência da primeira publicação
+
+| Cenário | Tipo | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| Lookup contextual do User | Unit | Não combina contextos; provider ausente/duplicado/falho resulta indisponível e exige revisão | aprovado (3/19) |
+| Adapter Wiki descoberto | Kernel MariaDB | Provider `wiki_entry` real; ignora rascunho, outra autoria, outro Domain e Domain inativo; revisão pendente não-default preserva a publicação padrão | aprovado (dev.87; 1/45) |
+| Cache e Domain | Kernel MariaDB | Evidência tem tag de listagem; cache por usuário atual, `max-age: 0` para UID diferente; Domain anterior é restaurado | aprovado (dev.87) |
+| Integração a permissões/transições | Kernel | Nenhuma publicação pode contornar o workflow nem conceder transição pelo primeiro aceite | pendente; etapa 2 USER-PART 0.1-C |
+
 ## Aplicação editorial de propostas (dev.29)
 
 | Cenário | Tipo | Resultado esperado | Estado |

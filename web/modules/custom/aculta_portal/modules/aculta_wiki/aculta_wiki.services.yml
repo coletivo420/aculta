@@ -1,4 +1,10 @@
 services:
+  aculta_wiki.published_participation_lookup:
+    class: Drupal\aculta_wiki\Participation\WikiPublishedParticipationLookup
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user']
+    tags:
+      - { name: aculta_user.published_participation_lookup }
+
   aculta_wiki.lead_image_cleanup:
     class: Drupal\aculta_wiki\Cleanup\WikiLeadImageCleanup
     arguments:

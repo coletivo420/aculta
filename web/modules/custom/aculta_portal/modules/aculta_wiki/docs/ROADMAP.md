@@ -4,13 +4,24 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.86**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.87**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.87 — evidência de publicação por contexto
+
+O adapter Wiki agora implementa o contrato do `aculta_user` e consulta apenas
+`wiki_entry` publicada pelo autor no Domain Wiki ativo. A revisão padrão permanece
+como evidência quando há revisão pendente não padrão; outros Domains, UID e
+rascunhos não contam. Cache é por usuário quando o UID consultado é a conta
+atual; consulta cross-account usa `max-age: 0`. Kernel focal 1/45, User Unit
+123/439, User characterization Kernel 9/129 e Fórum Kernel 1/39 passaram.
+Kernel: 200 depreciações e 2 PHPUnit. PHPCS passou; Runtime intocado. A evidência ainda não foi ligada a permissões
+ou transições.
 
 ### Incremento dev.86 — revalidar R2 de rotas e acesso
 

@@ -1,5 +1,10 @@
 # Regras específicas — consulta sob demanda
 
+- Dev.70: lookup de evidência publicada por contexto implementado em
+  `src/Participation`; adapter Wiki é tagged e isolado. Testes User Unit 123/439,
+  Kernel de caracterização 9/129, Fórum Kernel 1/39; Runtime intocado. A API
+  ainda não altera transições ou permissões.
+
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 
 ## Separação de Pessoas e Configurações > Pessoas (decisão do responsável, 2026-10-17)

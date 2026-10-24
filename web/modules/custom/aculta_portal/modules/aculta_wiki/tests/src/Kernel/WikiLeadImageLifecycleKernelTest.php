@@ -931,6 +931,109 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Published participation evidence is scoped to the author's public Wiki.
+   */
+  public function testPublishedWikiParticipationUsesOnlyPublishedWikiEntries(): void {
+    $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $lookup = $this->container->get('aculta_user.published_participation_lookup');
+    self::assertNotNull($this->container->get('aculta_portal.domain_purpose')->getDomain('wiki'));
+
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    $newAuthor = User::create(['name' => 'published-wiki-author', 'status' => TRUE]);
+    $newAuthor->save();
+    $otherAuthor = User::create(['name' => 'other-published-wiki-author', 'status' => TRUE]);
+    $otherAuthor->save();
+    $newAuthorId = (int) $newAuthor->id();
+    $otherAuthorId = (int) $otherAuthor->id();
+    $this->container->get('current_user')->setAccount($newAuthor);
+    self::assertGreaterThan(0, $newAuthorId);
+    $firstEvidence = $lookup->lookup($newAuthorId, 'wiki_entry');
+    self::assertTrue($firstEvidence->isReliable());
+    self::assertFalse($firstEvidence->hasPublishedContribution());
+    self::assertTrue($firstEvidence->requiresReview());
+    self::assertContains('user', $firstEvidence->getCacheContexts());
+    self::assertContains('node_list:wiki_entry', $firstEvidence->getCacheTags());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->container->get('current_user')->setAccount($otherAuthor);
+    $otherAccountEvidence = $lookup->lookup($newAuthorId, 'wiki_entry');
+    self::assertSame(0, $otherAccountEvidence->getCacheMaxAge(), 'Evidence queried for another account is not reusable in the current-user cache context.');
+    $this->container->get('current_user')->setAccount($newAuthor);
+    $wikiDomain = Domain::load('wiki420_aculta_org');
+    $wikiDomain->setStatus(FALSE)->save();
+    $inactiveDomainEvidence = $lookup->lookup($newAuthorId, 'wiki_entry');
+    self::assertFalse($inactiveDomainEvidence->isReliable(), 'An inactive Wiki Domain cannot provide publication evidence.');
+    $wikiDomain->setStatus(TRUE)->save();
+
+    Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Rascunho não conta como publicação',
+      'uid' => $newAuthorId,
+      'status' => FALSE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ])->save();
+    self::assertFalse($lookup->lookup($newAuthorId, 'wiki_entry')->hasPublishedContribution());
+
+    Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Publicação em outro Domain não conta',
+      'uid' => $newAuthorId,
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'aculta_org'],
+    ])->save();
+    self::assertFalse($lookup->lookup($newAuthorId, 'wiki_entry')->hasPublishedContribution());
+
+    Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Publicação de outra autoria não conta',
+      'uid' => $otherAuthorId,
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ])->save();
+    self::assertFalse($lookup->lookup($newAuthorId, 'wiki_entry')->hasPublishedContribution());
+
+    $published = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Primeiro verbete publicado',
+      'uid' => $newAuthorId,
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $published->save();
+    $publishedStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $publishedDefault = $publishedStorage->load((int) $published->id());
+    self::assertSame($newAuthorId, (int) $publishedDefault->getOwnerId());
+    self::assertSame('wiki420_aculta_org', (string) $publishedDefault->get('field_domain_source')->target_id);
+    self::assertTrue($publishedDefault->isPublished());
+    self::assertTrue($lookup->lookup($newAuthorId, 'wiki_entry')->hasPublishedContribution(), 'A default published Wiki revision is evidence.');
+    $published->setNewRevision(TRUE);
+    $published->isDefaultRevision(FALSE);
+    $published->setUnpublished();
+    $published->save();
+
+    $defaultRevision = $this->container->get('entity_type.manager')->getStorage('node')->load((int) $published->id());
+    self::assertTrue($defaultRevision->isPublished(), 'The pending revision leaves the published default revision intact.');
+
+    $publishedEvidence = $lookup->lookup($newAuthorId, 'wiki_entry');
+    self::assertTrue($publishedEvidence->isReliable());
+    self::assertTrue($publishedEvidence->hasPublishedContribution(), 'The existing published default revision remains evidence while a pending revision is non-default.');
+    self::assertFalse($publishedEvidence->requiresReview());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+  }
+
+  /**
    * WE SATIVA keeps its entrypoint in Studio and lists only the author's Nodes.
    */
   public function testWeSativaWorkspaceUsesWikiOwnedAccessAndPurpose(): void {

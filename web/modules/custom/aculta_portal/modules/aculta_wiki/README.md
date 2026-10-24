@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.87`: adapter da evidência de publicação Wiki implementado por
+  contrato tagged do `aculta_user`. Só revisão padrão publicada do autor no
+  Domain Wiki ativo conta; consulta cross-account é sem cache. Kernel focal 1/45 e
+  User Unit 123/439; regras de publicação e Runtime não mudaram.
+
 - `0.1.0-dev.86`: Kernel R2 de rotas/acesso revalidado no HEAD `8896527e7`;
   descoberta/uniquidade, purpose, raiz pública, acesso de criação e busca por
   grants passaram em 3 testes / 141 asserções. Runtime intocado.

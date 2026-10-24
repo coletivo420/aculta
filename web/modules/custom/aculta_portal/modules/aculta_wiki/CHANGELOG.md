@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.87 — provider de primeira publicação por contexto
+
+- `WikiPublishedParticipationLookup` implementa o contrato do `aculta_user`
+  para contexto `wiki_entry`, filtrando UID, bundle, Domain canônico e estado
+  ativo/publicado da revisão padrão. Não retorna Node nem dados do verbete.
+- Kernel MariaDB verifica primeira participação, rascunho, outra autoria,
+  outro/inativo Domain, revisão pendente não padrão, tag discovery, cache de
+  usuário e restauração do Domain (1 teste / 45 assertions; 200 depreciações e
+  2 PHPUnit). User Unit 123/439,
+  caracterização Kernel 9/129 e Fórum Kernel 1/39 passaram; PHPCS passou.
+- A evidência ainda não altera acesso, transições ou grants. Runtime intocado.
+
 ## 0.1.0-dev.86 — revalidar rotas e acesso
 
 - Kernel atual reexecuta descoberta e unicidade das rotas Wiki, propósito por

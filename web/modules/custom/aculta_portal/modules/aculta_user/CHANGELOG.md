@@ -1,3 +1,14 @@
+## 0.4.0-dev.70 — evidência publicada por contexto
+
+- Implementados `PublishedParticipationLookupInterface`, o valor agregado
+  `PublishedParticipationEvidence` e o dispatcher `PublishedParticipationLookup`.
+- O dispatcher não combina contextos; ausência/duplicidade de provider e
+  exceção retornam evidência indisponível, `max-age: 0` e indicação para exigir
+  revisão. O resultado não contém entidade, texto ou identidade do conteúdo.
+- Wiki fornece o provider de `wiki_entry`. As APIs e o comportamento atuais do
+  Fórum permanecem sem migração. Testes: User Unit 123/439; caracterização
+  Kernel 9/129; Fórum Kernel 1/39.
+
 ## 0.4.0-dev.69 — referências ao bundle Revista canônico
 
 - Feed pessoal de publicações e variante de autoria passam a usar `revista`; removida a consulta quebrada ao bundle aposentado `article`.

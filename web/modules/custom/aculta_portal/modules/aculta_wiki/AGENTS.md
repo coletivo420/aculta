@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.87: adapter Wiki para `PublishedParticipationLookupInterface` consulta
+  somente revisão padrão publicada no Domain Wiki; teste cobre provider, revisão
+  pendente, autoria, Domain e cache (1/45). User Unit 123/439; Fórum Kernel
+  1/39. PHPCS passou; ainda sem alteração de permissões/transições ou Runtime.
+
 - Dev.86: R2 de rotas/acesso revalidada no HEAD `8896527e7`; Kernels 3/141
   cobrem discovery, Domain/purpose, raiz, CTA por `createAccess()` e cache/grants.
   Runtime intocado.
