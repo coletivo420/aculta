@@ -14,9 +14,16 @@ services:
   aculta_studio.experience_manager:
     class: Drupal\aculta_studio\Experience\StudioExperienceManager
     calls:
+      - [addProvider, ['@aculta_studio.experience.pessoal']]
+      - [addProvider, ['@aculta_studio.experience.marley']]
       - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
-      - [addProvider, ['@aculta_studio.experience.pessoal']]
+  aculta_studio.experience.marley:
+    class: Drupal\aculta_studio\Experience\MarleyExperienceProvider
+    arguments: ['@aculta_studio.marley_presenter', '@current_user']
+  aculta_studio.hub_preview_controller:
+    class: Drupal\aculta_studio\Controller\StudioHubPreviewController
+    arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
   aculta_studio.experience.pessoal:
     class: Drupal\aculta_studio\Experience\PersonalExperienceProvider
   aculta_studio.personal_controller:
