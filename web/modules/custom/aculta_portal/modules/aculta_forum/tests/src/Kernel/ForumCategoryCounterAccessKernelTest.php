@@ -65,6 +65,11 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
   private AccountInterface $member;
 
   /**
+   * Topic that carries the restricted grant.
+   */
+  private Node $restrictedTopic;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -115,12 +120,14 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
     ]);
     $this->restrictedCategory->save();
 
+    // Keep the member out of uid 1, which bypasses node access checks.
+    User::create(['name' => 'autor-base', 'status' => 1])->save();
     $member = User::create(['name' => 'membro', 'status' => 1]);
     $member->save();
     $this->member = $member;
 
     $this->createTopic('Tópico público', (int) $this->publicCategory->id());
-    $this->createTopic('Tópico restrito', (int) $this->restrictedCategory->id(), TRUE);
+    $this->restrictedTopic = $this->createTopic('Tópico restrito', (int) $this->restrictedCategory->id(), TRUE);
     $this->counterView();
   }
 
@@ -129,11 +136,39 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
    */
   public function testCategoryCounterRespectsNodeGrants(): void {
     $this->container->get('state')->set(CounterGrantsTestHooks::ADD_TAG_STATE, TRUE);
+    self::assertGreaterThan(1, (int) $this->member->id());
     $anonymous = $this->counts(new AnonymousUserSession());
     self::assertSame(['Pública' => 1], $anonymous);
 
     $member = $this->counts($this->member);
     self::assertSame(['Pública' => 1, 'Restrita' => 1], $member);
+  }
+
+  /**
+   * Revoking the grant changes the member count on the next execution.
+   */
+  public function testRevokedGrantImmediatelyHidesRestrictedCount(): void {
+    $this->container->get('state')->set(CounterGrantsTestHooks::ADD_TAG_STATE, TRUE);
+    self::assertSame(['Pública' => 1, 'Restrita' => 1], $this->directCounts());
+
+    // Removing the topic grant is what a membership revocation does.
+    $database = $this->container->get('database');
+    $database->delete('node_access')
+      ->condition('nid', $this->restrictedTopic->id())
+      ->execute();
+    self::assertSame(['Pública' => 1], $this->directCounts());
+
+    $database->insert('node_access')->fields([
+      'nid' => $this->restrictedTopic->id(),
+      'langcode' => 'en',
+      'fallback' => 1,
+      'realm' => CounterGrantsTestHooks::REALM,
+      'gid' => 1,
+      'grant_view' => 1,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+    ])->execute();
+    self::assertSame(['Pública' => 1, 'Restrita' => 1], $this->directCounts());
   }
 
   /**
@@ -278,6 +313,35 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
         ],
       ],
     ])->save();
+  }
+
+  /**
+   * Runs the production counter query as the fixture member.
+   *
+   * @return array<string, int>
+   *   Count of visible topics per category name.
+   */
+  private function directCounts(): array {
+    $this->container->get('current_user')->setAccount($this->member);
+    $field = new ForumCategoryTopicCount(
+      [],
+      'aculta_forum_category_topic_count',
+      [],
+      $this->container->get('database'),
+    );
+    $method = new \ReflectionMethod($field, 'countByTerm');
+    $method->setAccessible(TRUE);
+    $raw = $method->invoke($field, [(int) $this->publicCategory->id(), (int) $this->restrictedCategory->id()]);
+    $names = [
+      (int) $this->publicCategory->id() => 'Pública',
+      (int) $this->restrictedCategory->id() => 'Restrita',
+    ];
+    $counts = [];
+    foreach ($raw as $tid => $count) {
+      $counts[$names[$tid]] = $count;
+    }
+    ksort($counts);
+    return array_filter($counts);
   }
 
   /**

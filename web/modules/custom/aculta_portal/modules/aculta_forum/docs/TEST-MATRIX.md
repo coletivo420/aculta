@@ -90,7 +90,7 @@
 
 ## Contador de tópicos access-aware — implementação, 2026-10-23
 
-- `ForumCategoryCounterAccessKernelTest` (3 testes / 54 asserções, MariaDB):
+- `ForumCategoryCounterAccessKernelTest` (4 testes / 73 asserções, MariaDB):
   a View agregada sem tag conta o restrito; com `node_access`, o anônimo vê só
   a pública e o membro vê as duas; o campo renderiza "1 tópico", "Nenhum
   tópico" e "@count tópicos" conforme o plural do português.
@@ -100,7 +100,10 @@
 - Runtime local: 12 cartões com "Nenhum tópico" (banco sem tópicos);
   `categorias-visual.py` 9/9 com ACULTA420 e 9/9 com Olivero, sem erros nem
   overflow. Tópicos restritos reais no Runtime continuam pendentes.
-- Suíte Kernel do Fórum 59/1.336; Unit 174/1.008; PHPCS limpo.
+- Remover o grant do tópico restrito faz a consulta de produção do contador
+  deixar de contar a categoria na execução seguinte; reinserir o grant a
+  devolve. O fixture corrige o nome da permissão e o membro não é uid 1.
+- Suíte Kernel do Fórum 102/2.079; PHPCS limpo.
 
 ## Contadores access-aware nas categorias — prova, 2026-10-23
 

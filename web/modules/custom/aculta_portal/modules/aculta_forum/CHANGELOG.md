@@ -1,3 +1,13 @@
+## `0.1.0-dev.278` — provar revogação de grant na contagem — 2026-10-24
+
+- Kernel remove o grant do tópico restrito e confirma que a consulta de
+  produção do contador deixa de contar a categoria na execução seguinte;
+  reinserir o grant devolve a contagem.
+- O fixture de contagem corrige o nome da permissão (`view restricted forum
+  counter topics`) para que a role autenticada a receba; o membro do teste
+  deixou de ser uid 1, que ignora node access.
+- Testes: contador 4/73; suíte Kernel do Fórum 102/2.079; PHPCS limpo.
+
 ## `0.1.0-dev.277` — comprovar rollback da migração de Comments — 2026-10-24
 
 - Kernel importa raiz e resposta com o destino real e executa o rollback pelo
