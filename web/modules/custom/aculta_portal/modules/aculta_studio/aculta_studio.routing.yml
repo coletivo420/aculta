@@ -27,6 +27,20 @@ aculta_studio.account_address:
     _aculta_domain_purpose: account
     no_cache: true
 
+# S-R3-B1: CPF/CNPJ remains owned by Portal + optional aculta_id_cpf.
+# No second storage or profile-public exposure.
+aculta_studio.account_documents:
+  path: /studio/conta/documentos
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:documents'
+    _title: 'Documentos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
 aculta_studio.account_security:
   path: /studio/conta/seguranca
   defaults:
