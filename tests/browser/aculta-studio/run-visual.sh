@@ -20,6 +20,13 @@ case "$STUDIO_PAGE $STUDIO_LOGIN_URI" in
 esac
 
 cd "$project_root"
+studio_runtime="$(php vendor/drush/drush/drush.php php:eval '$e = \Drupal::service("extension.list.module")->getExtensionInfo("aculta_studio"); $r = \Drupal::service("router.route_provider")->getRouteByName("aculta_studio.home"); echo ($e["version"] ?? "unknown") . "|" . ($r ? $r->getPath() : "absent");' "--uri=$STUDIO_LOGIN_URI")"
+studio_version="${studio_runtime%%|*}"
+studio_home="${studio_runtime#*|}"
+if [[ "$studio_home" != "/studio/marley" ]]; then
+  echo "Runtime incompatível: aculta_studio=$studio_version; rota aculta_studio.home=$studio_home. Esperado: /studio/marley. Atualize o Runtime de teste para a branch antes da revisão visual." >&2
+  exit 3
+fi
 export STUDIO_COLOR_MODE_STATE="$(php vendor/drush/drush/drush.php php:eval 'echo json_encode(\Drupal::service("aculta_portal.color_mode_preference")->forUser((int) getenv("STUDIO_USER_ID")));' "--uri=$STUDIO_LOGIN_URI")"
 restore_color_mode() {
   local exit_code=$?

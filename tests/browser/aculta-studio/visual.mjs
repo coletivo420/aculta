@@ -53,7 +53,13 @@ try {
   await wd('POST', p('/url'), { url: oneTimeLogin() });
   await sleep(2500);
   await wd('POST', p('/url'), { url: PAGE });
-  check('página do Estúdio carrega logada', await waitFor(`document.querySelector('[data-aculta-studio="tabs"]')`, 'abas'));
+  const pageReady = await waitFor(`document.querySelector('[data-aculta-studio="tabs"]')`, 'abas');
+  check('página do Estúdio carrega logada', pageReady);
+  if (!pageReady) {
+    await shot('00-page-error');
+    const pageState = await exec(`return JSON.stringify({ url: location.href, title: document.title, message: document.body.innerText.slice(0, 240) });`);
+    throw new Error(`Página sem navegação do Studio: ${pageState}`);
+  }
   await exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.__marker = 'sem-recarga';`);
   await sleep(1000);
 
