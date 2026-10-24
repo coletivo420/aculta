@@ -98,19 +98,22 @@ de ledger. Homologação Runtime segue pendente; F-M1 permanece parcial.
 resolve UUID/revisão, exige chave idempotente canônica e encaminha ao agregador
 existente, que revalida seguir/acesso. Kernel MariaDB prova round-trip e replay
 dos três tipos, supressão de aviso ao autor, rejeição após revogação de acesso
-e compatibilidade do agregado: o registro direto existente seguido do evento
-compartilha uma linha, incrementa os contadores uma vez e atualiza o último
-Comment. Suíte: 22 testes / 489 assertions; Unit Messenger: 72 / 345; PHPCS e
-lint pertinentes: PASS. Comparação do digest e Runtime permanecem pendentes.
+e compatibilidade do agregado: o registro direto seguido do evento compartilha
+uma linha, incrementa contadores e atualiza o último Comment. O teste do resumo
+diário confirma uma linha/quantidade 2 no ACULTA Mailer e que replay não envia
+segundo e-mail (transporte mockado; idioma único `pt-br`). Suíte: 23 testes /
+515 assertions; Unit Messenger: 72 / 345; PHPCS e lint pertinentes: PASS. Runtime
+e configuração real de Mailer continuam pendentes.
 
 ### Sequência recomendada e paralelismo
 
 - **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
   Search API/Domain, anexos, concorrência da limpeza, migração e contagens
   já identificadas na linha atual do Fórum.
-- **Antes de completar F-M2:** provar o digest sem disparo duplicado e conferir
-  sua saída contra o agregado comparado em Kernel. `aculta_aviso`
-  permanece como storage; o Fórum não implementa persistência ou entrega própria.
+- **F-M2:** round-trip dos três eventos, comparação com o registro direto,
+  agregado e digest estão provados em Kernel. Resta homologar a configuração de
+  entrega no Runtime. `aculta_aviso` permanece como storage; o Fórum não
+  implementa persistência ou entrega própria.
 - **Sequência:** concluir essas provas de F-M2; depois, F-M3 e F-M4
   (ou F-M4 antecipada se algum bloqueador de acesso for encontrado).
 - **Migração de legado e RC:** F-M5 e F-M6 com evidência de impacto/rollback;

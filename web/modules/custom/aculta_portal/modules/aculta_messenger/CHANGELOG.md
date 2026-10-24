@@ -983,3 +983,11 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
   a linha; Unit Messenger: 72 / 345.
 - PHPCS Drupal/DrupalPractice, PHP lint e YAML dos serviços: PASS. Sem Runtime.
 
+## 0.1.1-dev.89 — provar o resumo combinado do Fórum — 2026-10-24
+
+- Kernel mistura registro direto e evento compartilhado no mesmo agregado e
+  verifica uma linha de resumo com quantidade 2. O ACULTA Mailer é mockado; o
+  reprocessamento não envia outro e-mail.
+- O fixture usa só o idioma padrão `pt-br`. Kernel MariaDB: 23 testes / 515
+  assertions, sem depreciações.
+

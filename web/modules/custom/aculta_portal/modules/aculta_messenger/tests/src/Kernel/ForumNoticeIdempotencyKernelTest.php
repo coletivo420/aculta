@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_messenger\Aviso\AvisoService;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
 use Drupal\aculta_messenger\Aviso\AvisoRetencao;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
@@ -15,11 +17,16 @@ use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\EventSubscriber\ForumNoticeEventSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Language\Language;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
@@ -67,6 +74,12 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->get('language.default')->set(new Language([
+      'id' => 'pt-br',
+      'name' => 'Português (Brasil)',
+      'direction' => LanguageInterface::DIRECTION_LTR,
+      'weight' => 0,
+    ]));
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
@@ -76,6 +89,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       ForumCommentNoticeSchema::TABLE,
       ForumNoticeEventSchema::TABLE,
     ]);
+    $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
@@ -289,6 +303,64 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(2, (int) $eventNotices[0]->get('contador_email')->value);
     self::assertSame('Tópico equivalente', $eventNotices[0]->get('titulo')->value);
     self::assertSame((string) $eventComment->id(), $eventNotices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * A combined Forum digest sends one aggregate row through the ACULTA Mailer.
+   */
+  public function testDirectAndSharedEventsProduceOneCombinedDigestRow(): void {
+    $author = $this->createUser('autor_digest');
+    $follower = $this->createUser('seguidor_digest');
+    $follower->setEmail('seguidor@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $topic = $this->createTopic('Resumo compartilhado');
+    $directComment = $this->createPersistedComment($topic, (int) $author->id());
+    $eventComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($directComment));
+    $producer = $this->createEventProducer([$uid], $policy);
+    self::assertSame(1, $producer->publishComment($eventComment));
+
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('send')
+      ->with(self::callback(static fn(MailMessage $message): bool =>
+        $message->type === AvisosResumo::CHAVE_MAIL
+        && $message->to === 'seguidor@example.test'
+        && $message->langcode === 'pt-br'
+        && $message->context['resumo'] === 'Respostas novas em "Resumo compartilhado": 2'
+      ))
+      ->willReturn(TRUE);
+    $emailPolicy = new EmailConfirmationPolicy(
+      $userData,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('module_handler'),
+    );
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      $emailPolicy,
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('uuid'),
+    );
+
+    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame(0, $summary->enviarResumos(), 'Delivered rows are not sent a second time.');
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame((string) $eventComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 
   /**
