@@ -170,6 +170,65 @@ final class WikiNoticeEmailQueueKernelTest extends KernelTestBase {
   }
 
   /**
+   * Email opt-out cancels delivery while preserving the site notice.
+   */
+  public function testOptOutCancelsOnlyTheEmailChannel(): void {
+    $user = User::create([
+      'name' => 'wiki_optout_recipient',
+      'mail' => 'wiki-optout@example.invalid',
+      'status' => 1,
+    ]);
+    $user->save();
+    $message = Message::create([
+      'template' => WikiNoticeManager::TEMPLATE,
+      'uid' => $user->id(),
+      'field_aculta_wiki_event_type' => 'proposal_outcome',
+      'field_aculta_wiki_source_uuid' => 'proposal-optout-uuid',
+      'field_aculta_wiki_event_version' => 'revision-1',
+      'field_aculta_wiki_read' => 0,
+      'field_aculta_wiki_digest_sent' => 1,
+      'field_aculta_msg_delivery' => 'pending',
+      'field_aculta_messenger_attempts' => 0,
+    ]);
+    $message->save();
+
+    $notices = $this->createMock(WikiNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->expects(self::once())->method('emailMode')
+      ->with((int) $user->id(), 'wiki')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lockId = 'aculta_wiki_email:' . $message->id();
+    $lock->expects(self::once())->method('acquire')->with($lockId, 180.0)->willReturn(TRUE);
+    $lock->expects(self::once())->method('release')->with($lockId);
+    $worker = new WikiNoticeEmailWorker(
+      [],
+      'aculta_wiki_messenger_email',
+      ['cron' => ['time' => 60]],
+      $this->container->get('entity_type.manager'),
+      $notices,
+      $preferences,
+      $mailer,
+      $lock,
+    );
+
+    $queue = $this->container->get('queue')->get('aculta_wiki_messenger_email');
+    $queue->createItem(['message_id' => (int) $message->id()]);
+    $item = $queue->claimItem(60);
+    self::assertNotFalse($item);
+    $worker->processItem($item->data);
+    $queue->deleteItem($item);
+
+    $persisted = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertInstanceOf(Message::class, $persisted, 'The required in-site notice remains persisted.');
+    self::assertSame('cancelled', $persisted->get('field_aculta_msg_delivery')->value);
+    self::assertSame(0, (int) $persisted->get('field_aculta_wiki_read')->value, 'Cancelling email does not mark the site notice read.');
+    self::assertSame(0, $queue->numberOfItems());
+  }
+
+  /**
    * Installs a field on the Wiki notice template.
    */
   private function installField(string $name, string $type, array $settings = []): void {

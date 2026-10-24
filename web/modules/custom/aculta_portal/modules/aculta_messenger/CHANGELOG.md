@@ -1,3 +1,11 @@
+## 0.1.1-dev.185 — preservar o aviso Wiki após opt-out de e-mail
+
+Kernel MariaDB usa Queue API, Message e conta reais para confirmar que o modo de e-mail `off` cancela somente a entrega
+direta, não chama Mailer e preserva o aviso obrigatório no site sem marcá-lo como lido.
+
+Validação: `WikiNoticeEmailQueueKernelTest` **2/54 PASS** no MariaDB dedicado; duas deprecações de annotations do Core
+para `message` e `message_template`. PHPCS/PHP lint PASS. Runtime e SMTP não executados.
+
 ## 0.1.1-dev.184 — caracterizar workers de adapters opcionais
 
 Teste de contrato verifica que o hook de filas remove os workers de LMS, Wiki, Loja e Doações quando seus módulos estão
