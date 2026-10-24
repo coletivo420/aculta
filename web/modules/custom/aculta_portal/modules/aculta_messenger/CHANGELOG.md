@@ -1,3 +1,11 @@
+## 0.1.1-dev.144 — digest exige idempotência persistida — 2026-10-24
+
+O ACULTA Mailer agora mantém envios com correlação idempotente em estado temporário enquanto o log de aceite estiver
+desativado. Isso preserva os itens de digest para retry e evita tratar um envio não deduplicável como sucesso.
+
+Validação: Kernel do Mailer 5 testes/24 asserções PASS. Kernel do Messenger e Integration digest não foram executados
+neste incremento; Runtime e transporte externo não testados.
+
 ## 0.1.1-dev.143 — testar lock do digest entre processos — 2026-10-24
 
 O Kernel MariaDB agora inicia processos PHP independentes contra o mesmo prefixo isolado e comprova o lock persistente do resumo: enquanto um processo mantém o lock, outro não consegue adquiri-lo; após a liberação, um terceiro processo consegue. A verificação usa apenas o banco dedicado de testes e não executa envio nem toca no Runtime.

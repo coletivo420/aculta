@@ -80,6 +80,26 @@ final class AcultaMailerKernelTest extends KernelTestBase {
   }
 
   /**
+   * An idempotent delivery stays retryable while acceptance logging is off.
+   */
+  public function testIdempotentDeliveryRequiresAcceptanceLogging(): void {
+    $this->config('aculta_mailer.log')->set('enabled', FALSE)->save();
+    $message = new MailMessage(
+      'aculta_mailer_test_message',
+      'destino@example.invalid',
+      'pt-br',
+      ['name' => 'Maria'],
+      MessageIdFactory::correlationIdFor('kernel-idempotency-logging-disabled'),
+    );
+
+    $result = $this->mailer()->deliver($message);
+
+    $this->assertFalse($result->sent);
+    $this->assertSame(DeliveryError::Temporary, $result->error);
+    $this->assertEmpty($this->container->get('state')->get('system.test_mail_collector', []));
+  }
+
+  /**
    * A concurrent idempotent delivery fails retryably while its lock is held.
    */
   public function testConcurrentIdempotentDeliveryDoesNotReachTransport(): void {

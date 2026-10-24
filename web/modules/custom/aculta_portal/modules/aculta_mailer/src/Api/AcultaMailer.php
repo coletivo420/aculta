@@ -86,6 +86,13 @@ final class AcultaMailer implements AcultaMailerInterface {
       return $this->deliverUnlocked($message, $transport);
     }
 
+    // Without the persistent acceptance record, a retry after an external
+    // transport accepted the message could send it twice. Keep the request
+    // retryable until idempotency logging is enabled again.
+    if (!$this->log->idempotencyAvailable()) {
+      return SendResult::failed(DeliveryError::Temporary, NULL);
+    }
+
     // The digest caller lock serializes one account. This Mailer-level lock
     // also protects other idempotent callers and separate workers that race
     // on the same correlation. The second caller fails retryably rather than

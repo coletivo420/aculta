@@ -1,3 +1,13 @@
+## 0.1.0-dev.72 — retry idempotente exige log de aceite — 2026-10-24
+
+Envios com correlação idempotente agora falham de forma temporária quando o registro de e-mail está desativado.
+Sem o log persistido, o Mailer não poderia reconhecer um aceite anterior após falha no acknowledgement do digest;
+permitir novo transporte nesse estado poderia duplicar mensagens. O cron mantém a pendência e pode tentar novamente
+quando o log for habilitado. Mensagens sem correlação idempotente mantêm o comportamento anterior.
+
+Validação: `AcultaMailerKernelTest` 5 testes/24 asserções PASS. O aceite externo seguido de falha antes da gravação
+local continua fora da garantia transacional.
+
 ## 0.1.0-dev.70 — correlação estável e supressão de reenvio aceito — 2026-10-24
 
 `MessageIdFactory::correlationIdFor()` gera UUID v5 para a mesma chave lógica; `MailMessage` aceita UUID v4 e v5.

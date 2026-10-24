@@ -107,6 +107,13 @@ final class MailLogRecorder {
   }
 
   /**
+   * Indicates whether accepted idempotent sends can be recognized on retry.
+   */
+  public function idempotencyAvailable(): bool {
+    return $this->logSettings->enabled();
+  }
+
+  /**
    * Cancela o conteúdo guardado para reenvio das mensagens anteriores do mesmo destinatário e tipo.
    *
    * Usado quando o usuário pede um novo link de uso único: o link antigo não é reaproveitado. Exceção: a retentativa
