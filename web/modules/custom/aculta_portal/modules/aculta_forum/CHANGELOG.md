@@ -1,3 +1,14 @@
+## `0.1.0-dev.310` — equivalência de árvore aninhada na migração — 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` ganha o cenário de três níveis
+  (raiz, filha, neta): assunto, corpo, autoria, `thread_position` = CID,
+  `created`, `changed`, publicação, `moderation_state` e `first_published`
+  (campo legado `field_aculta_published_at`) são preservados; o mapa aponta um
+  post distinto por Comment; a migração de pais liga raiz ← filha ← neta; o
+  replay mantém os mesmos IDs e três posts.
+- Dados sintéticos em MariaDB; nenhuma migração sobre dados reais foi executada.
+- Testes: migração 4/144; suíte Kernel do Fórum 146/2.779; PHPCS limpo.
+
 ## `0.1.0-dev.309` — consolidar estado do roadmap do Fórum — 2026-10-24
 
 - O roadmap registra as provas de F-M6 (controladores, moderação, histórico,

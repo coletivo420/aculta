@@ -132,6 +132,17 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->addDefaultCommentField('node', 'aculta_forum_topic', 'field_aculta_discussion', CommentingStatus::Open, 'aculta_discussion_post');
+    FieldStorageConfig::create([
+      'entity_type' => 'comment',
+      'field_name' => 'field_aculta_published_at',
+      'type' => 'timestamp',
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'comment',
+      'bundle' => 'aculta_discussion_post',
+      'field_name' => 'field_aculta_published_at',
+      'label' => 'Publicado em',
+    ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
     $this->author = User::create(['name' => 'autora', 'status' => 1]);
@@ -223,6 +234,91 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
     self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $reply->id()]));
     self::assertSame([], $post_migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
+  }
+
+  /**
+   * A nested reply tree keeps content, order and parent links after migration.
+   */
+  public function testNestedTreeEquivalence(): void {
+    $root = $this->comment('Raiz');
+    $child = $this->comment('Filha', $root);
+    $grandchild = $this->comment('Neta', $child);
+    $comments = [
+      (int) $root->id() => $root,
+      (int) $child->id() => $child,
+      (int) $grandchild->id() => $grandchild,
+    ];
+
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration(), implode("\n", $this->migrationMessages));
+    $map = $this->migration()->getIdMap();
+    $post_ids = [];
+    foreach ($comments as $cid => $comment) {
+      $destination = $map->lookupDestinationIds(['cid' => $cid]);
+      self::assertNotEmpty($destination, 'Comment ' . $cid . ' precisa de destino.');
+      $post_ids[$cid] = (int) $destination[0][0];
+    }
+    self::assertCount(3, array_unique($post_ids));
+
+    $parent_migration = $this->container->get('plugin.manager.migration')
+      ->createInstance('aculta_forum_comment_parents');
+    $parent_migration->set('source', [
+      'plugin' => 'embedded_data',
+      'data_rows' => [
+        ['cid' => (int) $root->id(), 'parent_cid' => 0],
+        ['cid' => (int) $child->id(), 'parent_cid' => (int) $root->id()],
+        ['cid' => (int) $grandchild->id(), 'parent_cid' => (int) $child->id()],
+      ],
+      'ids' => ['cid' => ['type' => 'integer']],
+    ]);
+    $message = new CollectingMigrateMessage();
+    self::assertSame(
+      MigrationInterface::RESULT_COMPLETED,
+      (new MigrateExecutable($parent_migration, $message))->import(),
+      implode("\n", $message->messages),
+    );
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
+    $posts = [];
+    foreach ($post_ids as $cid => $post_id) {
+      $post = $storage->load($post_id);
+      self::assertNotNull($post);
+      $posts[$cid] = $post;
+      $comment = $comments[$cid];
+      self::assertSame((string) $comment->getSubject(), (string) $post->get('subject')->value);
+      self::assertSame((string) $comment->get('comment_body')->value, (string) $post->get('body')->value);
+      self::assertSame((int) $comment->getOwnerId(), (int) $post->getOwnerId());
+      self::assertSame((int) $comment->id(), (int) $post->get('thread_position')->value);
+      self::assertSame((int) $comment->getCreatedTime(), (int) $post->get('created')->value);
+      self::assertSame((int) $comment->getChangedTime(), (int) $post->get('changed')->value);
+      self::assertSame((int) $comment->isPublished(), (int) $post->isPublished());
+      self::assertSame('published', $post->get('moderation_state')->value);
+      self::assertSame(1700000000, (int) $post->get('first_published')->value);
+    }
+
+    self::assertEmpty($posts[(int) $root->id()]->get('parent')->target_id, 'A raiz não recebe pai: ' . var_export($posts[(int) $root->id()]->get('parent')->getValue(), TRUE) . ' ids=' . var_export($post_ids, TRUE));
+    self::assertSame(
+      $post_ids[(int) $root->id()],
+      (int) $posts[(int) $child->id()]->get('parent')->target_id,
+    );
+    self::assertSame(
+      $post_ids[(int) $child->id()],
+      (int) $posts[(int) $grandchild->id()]->get('parent')->target_id,
+    );
+
+    // Replaying both migrations keeps the same destination posts.
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
+    self::assertSame(
+      MigrationInterface::RESULT_COMPLETED,
+      (new MigrateExecutable($parent_migration, $message))->import(),
+      implode("\n", $message->messages),
+    );
+    self::assertSame(3, $this->postCount());
+    foreach ($comments as $cid => $comment) {
+      self::assertSame(
+        $post_ids[$cid],
+        (int) $this->migration()->getIdMap()->lookupDestinationIds(['cid' => $cid])[0][0],
+      );
+    }
   }
 
   /**
@@ -341,6 +437,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       'uid' => $this->author->id(),
       'subject' => $subject,
       'comment_body' => ['value' => 'Corpo de ' . $subject, 'format' => 'forum'],
+      'field_aculta_published_at' => 1700000000,
       'status' => CommentInterface::PUBLISHED,
     ];
     if ($parent instanceof CommentInterface) {

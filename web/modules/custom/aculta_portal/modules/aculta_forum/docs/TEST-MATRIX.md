@@ -1,3 +1,11 @@
+## Migração de Comments — equivalência de árvore aninhada, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (4 testes / 144 asserções, MariaDB):
+  raiz, filha e neta preservam assunto, corpo, autoria, posição (`cid`), datas,
+  publicação, estado de moderação e `first_published`; mapa com um post por
+  Comment; pais ligados em cadeia; replay idempotente. Dados sintéticos.
+- Suíte Kernel do Fórum 146/2.779; PHPCS limpo.
+
 ## Anexo no editor — acesso e correção de tipo, 2026-10-24
 
 - Defeito real: import de `Drupal\user\AccountInterface` (inexistente)
