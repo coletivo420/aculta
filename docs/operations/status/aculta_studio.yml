@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.9 — P1-A e P1-B em código: entrada /studio/pessoal, bridge Marley, registry all(), prévia /studio/inicio com controle de acesso. Unit/Kernel/Runtime/Firefox não executados para dev.9; evidência dev.7 preservada no CHANGELOG."
-next_phase: 'Executar PHPUnit, Kernel/Functional e smoke autenticado de /studio/inicio em account (membro comum, editor, sem Wiki/LMS); avaliar o corte futuro de /studio somente após auditoria de compatibilidade e aprovação. P2/P3 continuam pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
+version_note: "0.1.0-dev.10 — P1-C em código: hub canônico /studio, Marley inicial /studio/marley (minúsculo), aliases 302 GET/HEAD para /studio/Marley e /studio/inicio. Testes Unit atualizados, não executados; Kernel/Runtime/Firefox pendentes."
+next_phase: 'Homologar rotas e permissões do hub /studio e Marley /studio/marley no Runtime account, aliases GET/HEAD, unit/Kernel/Functional, Firefox ESR/X11, usuário comum/editor e owners opcionais. Após P1-C homologada, iniciar P2 editor pessoal sem mover dados nem quebrar Minha Conta ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.
