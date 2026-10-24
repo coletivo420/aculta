@@ -5,17 +5,31 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\message\MessageInterface;
+use Drupal\node\NodeInterface;
 
-/** Adapts Message Subscribe to the existing Portuguese forum follow flag. */
+/**
+ * Enforces the Forum's notice-only subscriber policy.
+ */
 final class MessageSubscribeHooks {
 
   /**
-   * Forum subscriptions remain notices, never Message Subscribe messages (F-D21).
+   * Prevents Message Subscribe delivery for Forum topics (F-D21).
+   *
+   * The contrib subscriber hook combines recipients from all implementations;
+   * returning an empty array from that hook does not suppress its Flag
+   * recipients. The alter hook is required to enforce the Forum policy.
+   *
+   * @param array $uids
+   *   Message Subscribe delivery candidates, keyed by recipient UID.
+   * @param array $values
+   *   Context from Message Subscribe, including the target entity.
    */
-  #[Hook('message_subscribe_get_subscribers')]
-  public function getSubscribers(MessageInterface $message, array $subscribeOptions = [], array $context = []): array {
-    return [];
+  #[Hook('message_subscribe_get_subscribers_alter')]
+  public function suppressForumDelivery(array &$uids, array $values): void {
+    $entity = $values['entity'] ?? NULL;
+    if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
+      $uids = [];
+    }
   }
 
 }

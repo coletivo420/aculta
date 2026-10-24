@@ -70,7 +70,7 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - O resumo diário cria `MailMessage` no idioma preferido da conta, que segue o
   contrato de idioma do Mailer; não usar `LanguageInterface::LANGCODE_DEFAULT`
   (`und`) nesse transporte.
-- Message Subscribe e Flag mantêm assinaturas; assinar nunca concede acesso. Para tópicos de fórum, a entrega por mensagem foi desligada (F-D21); ver `docs/AVISOS-E-MENSAGENS.md`.
+- Flag `seguir_topico` mantém as assinaturas; assinar nunca concede acesso. O alter de destinatários aplica F-D21 e remove entrega Message Subscribe somente para tópicos do ACULTA Fórum; avisos seguem pelo fluxo compartilhado (`docs/AVISOS-E-MENSAGENS.md`).
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
   Drupal existentes, moderados pelo workflow editorial e com validade opcional.

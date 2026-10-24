@@ -99,9 +99,10 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 **Assinaturas e eventos**
 
-- `Hook/MessageSubscribeHooks`: retorna vazio para mensagens de assinatura do Fórum (F-D21); assinaturas do Fórum são avisos no site.
+- `Hook/MessageSubscribeHooks`: aplica `message_subscribe_get_subscribers_alter` para remover destinatários de Message Subscribe quando o conteúdo-alvo é tópico do ACULTA Fórum (F-D21); outros contextos mantêm os candidatos contrib. O hook aditivo `get_subscribers` não cancelava os destinatários do contrib.
 - `Hook/MessageSubscribeEventHooks`, `Plugin/QueueWorker/MessageSubscribeEventWorker`: fila do evento de publicação
-  de tópico. Ainda existe; sua entrega por mensagem foi desligada.
+  de tópico. A fila conserva o nome histórico, mas encaminha atualizações pelo
+  evento compartilhado e não chama a entrega de Message Subscribe.
 
 **Integração com o Portal e o tema**
 

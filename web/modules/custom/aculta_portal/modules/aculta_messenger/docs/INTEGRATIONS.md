@@ -199,24 +199,30 @@ badges e os rótulos acessíveis junto com o conteúdo. Não há polling, novo
 framework de AJAX nem caixa postal paralela. As respostas usam `no-store`; a
 instalação real e o comportamento visual ainda exigem validação no Homelab.
 
-### Assinaturas de tópicos do fórum (dev.5)
+### Assinaturas de tópicos do Fórum — fluxo vigente (F-D21)
 
-O caso implementado é a primeira publicação de Node `forum`, inclusive a
-transição de não publicado para publicado. O Messenger reutiliza a flag
-existente `seguir_topico` via `FlagServiceInterface`; não altera prefixo global
-do Message Subscribe e não instala `message_subscribe_ui`. O hook OOP de seleção
-retorna `DeliveryCandidate` para flaggings desse tópico. Message Subscribe volta
-a filtrar contas ativas e `Node::access('view')` no dispatch. A assinatura não
-concede acesso.
+O fluxo legado descrito em dev.5 foi substituído. Hoje `seguir_topico` define
+quem acompanha o tópico; publicação de Comment/ForumPost e revisão de tópico
+gera `MessengerNoticeEvent`, consumido pelo Messenger e agregado em
+`aculta_aviso` com idempotência no ledger existente. A leitura pelo tópico
+atualiza o contador do site; o resumo diário opt-in passa pelo ACULTA Mailer.
+Publicar ou seguir conteúdo não cria conversa nem entrega uma Message aos
+seguidores.
 
-O evento usa a Queue API do Core. O worker confirma publicação atual, exige
-alias público, resolve URL no purpose `forum` por `DomainPurposeManager` e chama
-`message_subscribe.subscribers` com access habilitado e dispatch síncrono. O
-notifier configurado usa o mailer instalado via Drupal Mail (Symfony
-Mailer/camada de envio E-Mails ACULTA); o Messenger não configura SMTP/transporte. O Message de
-evento registra Node/revisão, estado e tentativas; lock e chave Node/revisão
-deduplicam chamadas repetidas. `sendMessage()` não retorna resultado individual
-da entrega, então falhas parciais e retry precisam de homologação controlada.
+A fila Core `aculta_messenger_message_subscribe_event` continua com o nome
+histórico, mas transporta apenas IDs de Node/revisão para o worker de atualização
+de tópico. Esse worker revalida publicação, revisão e alias e publica o evento
+compartilhado. Não chama `message_subscribe.subscribers`/`sendMessage()` e não
+usa o notifier de Message Subscribe. A varredura do código customizado não
+encontrou outro chamador dessas APIs. Flag permanece como fonte da assinatura;
+ela não concede acesso. As APIs e configurações contrib continuam disponíveis
+para outros usos, sem caminho paralelo de entrega do Fórum.
+
+O histórico de seleção de `DeliveryCandidate`, `DomainPurposeManager` e entrega
+síncrona pelo Message Subscribe pertence ao fluxo anterior; não deve guiar novas
+alterações. Testes Kernel do pipeline compartilhado cobrem os três tipos de
+evento e o digest mockado; entrega e configuração do Runtime ainda não foram
+homologadas.
 
 Group 3.3.5 está instalado, mas `gnode` não está habilitado. Não há integração
 ativa de atividades Group a reutilizar nesta fase.

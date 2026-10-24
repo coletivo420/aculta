@@ -1000,3 +1000,15 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Unit Messenger: 75 testes / 352 assertions; PHPCS Drupal/DrupalPractice e
   PHP lint nos arquivos alterados: PASS. Runtime não homologado.
 
+## 0.1.1-dev.91 — aplicar F-D21 no alter de destinatários — 2026-10-24
+
+- O hook aditivo `message_subscribe_get_subscribers` não removia os destinatários
+  padrão do contrib; retornar `[]` apenas não acrescentava outros candidatos.
+  Substituído por `message_subscribe_get_subscribers_alter`, que remove a entrega
+  Message Subscribe somente quando o conteúdo-alvo é tópico ACULTA. Outros
+  contextos preservam os candidatos existentes; os avisos do Fórum seguem pelo
+  envelope compartilhado e `aculta_aviso`.
+- Unit Messenger: 78 testes / 355 assertions, sem depreciações; PHPCS
+  Drupal/DrupalPractice e PHP lint: PASS. Kernel e Runtime não executados nesta
+  revisão.
+

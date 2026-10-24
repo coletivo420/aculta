@@ -33,7 +33,7 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 | `form_alter` | `PrivateMessageFormHooks::formAlter` | `src/Hook/PrivateMessageFormHooks.php` |
 | `mail` | `AvisosResumoHooks::mail` | `src/Hook/AvisosResumoHooks.php` |
 | `menu_links_discovered_alter` | `NoticeAdminHooks::moveSiteAlertMenuLink` | `src/Hook/NoticeAdminHooks.php` |
-| `message_subscribe_get_subscribers` | `MessageSubscribeHooks::getSubscribers` | `src/Hook/MessageSubscribeHooks.php` |
+| `message_subscribe_get_subscribers_alter` | `MessageSubscribeHooks::suppressForumDelivery` | `src/Hook/MessageSubscribeHooks.php` |
 | `module_preinstall` | `LifecycleHooks::preventPrivateBodyNotifierConflict` | `src/Hook/LifecycleHooks.php` |
 | `module_preuninstall` | `LifecycleHooks::protectNotificationData` | `src/Hook/LifecycleHooks.php` |
 | `node_access` | `MessengerBarHooks::nodeAccess` | `src/Hook/MessengerBarHooks.php` |
@@ -117,7 +117,7 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 | `ForumAvisoHooks` | `src/Hook/ForumAvisoHooks.php` | Publica eventos compartilhados para respostas e primeira publicação de ForumPost (ACULTA Fórum, F-D21). |
 | `LifecycleHooks` | `src/Hook/LifecycleHooks.php` | Protects Messenger-owned notification records during module removal. */ |
 | `MessageSubscribeEventHooks` | `src/Hook/MessageSubscribeEventHooks.php` | Queues publication events for the forum's existing follow flag. */ |
-| `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Adapts Message Subscribe to the existing Portuguese forum follow flag. */ |
+| `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Enforces F-D21 by suppressing Message Subscribe recipients only for ACULTA Forum topics. */ |
 | `MessengerBarHooks` | `src/Hook/MessengerBarHooks.php` | Supplies the neutral, per-member Messenger action to the global shell. */ |
 | `NoticeAdminHooks` | `src/Hook/NoticeAdminHooks.php` | Consolidates administrative notice entry points under ACULTA Avisos. |
 | `PrivacyFormHooks` | `src/Hook/PrivacyFormHooks.php` | Adds the Messenger's messaging privacy to Minha conta > Configurações > Privacidade. |

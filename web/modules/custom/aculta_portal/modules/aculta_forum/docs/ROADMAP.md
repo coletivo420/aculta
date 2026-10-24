@@ -19,7 +19,7 @@ reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. `aculta_messenger
-0.1.1-dev.90` publica pelo contrato compartilhado os avisos de Comment,
+0.1.1-dev.91` publica pelo contrato compartilhado os avisos de Comment,
 primeira publicação de ForumPost e revisão de tópico; o consumer preserva o
 ledger/`aculta_aviso` e revalida acesso. Kernel MariaDB previamente executado
 cobre round-trip/replay dos três eventos, autoria própria, revogação de acesso
@@ -106,7 +106,7 @@ e compatibilidade do agregado: o registro direto seguido do evento compartilha
 uma linha, incrementa contadores e atualiza o último Comment. O teste do resumo
 diário confirma uma linha/quantidade 2 no ACULTA Mailer e que replay não envia
 segundo e-mail (transporte mockado; idioma único `pt-br`). Suíte: 23 testes /
-515 assertions; Unit Messenger: 75 / 352; PHPCS e lint pertinentes: PASS. Runtime
+515 assertions; Unit Messenger: 78 / 355; PHPCS e lint pertinentes: PASS. Runtime
 e configuração real de Mailer continuam pendentes.
 
 ### Sequência recomendada e paralelismo
