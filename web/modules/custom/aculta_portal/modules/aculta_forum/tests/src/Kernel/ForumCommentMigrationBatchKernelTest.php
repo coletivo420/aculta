@@ -213,6 +213,16 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     self::assertNotNull($reply_post);
     self::assertSame($root_post_id, (int) $reply_post->get('parent')->target_id);
     self::assertSame(2, $this->postCount());
+
+    // Reverse dependency order: remove parent updates before deleting posts.
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, (new MigrateExecutable($migration, $message))->rollback());
+    $post_migration = $this->migration();
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, (new MigrateExecutable($post_migration, $message))->rollback());
+    self::assertSame(0, $this->postCount());
+    self::assertSame(2, count($this->container->get('entity_type.manager')
+      ->getStorage('comment')->loadMultiple([(int) $root->id(), (int) $reply->id()])));
+    self::assertSame([], $migration->getIdMap()->lookupDestinationIds(['cid' => (int) $reply->id()]));
+    self::assertSame([], $post_migration->getIdMap()->lookupDestinationIds(['cid' => (int) $root->id()]));
   }
 
   /**

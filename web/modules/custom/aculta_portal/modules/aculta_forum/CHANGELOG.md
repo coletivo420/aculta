@@ -1,3 +1,12 @@
+## `0.1.0-dev.279` — reverter migrations dependentes na ordem correta — 2026-10-24
+
+- O Kernel importa o relacionamento pai/filho pelo map real, depois reverte a
+  migration de relações antes da migration de posts. Ambos os maps são limpos,
+  todos os ForumPosts somem e as Comments de origem permanecem. Focal: 3 testes /
+  82 assertions; cinco depreciações Core/Domain contrib.
+- `ForumCommentMigrationBatchKernelTest` preserva também a prova standalone do
+  rollback do destino. PHPCS Drupal/DrupalPractice permanece PASS.
+
 ## `0.1.0-dev.278` — provar revogação de grant na contagem — 2026-10-24
 
 - Kernel remove o grant do tópico restrito e confirma que a consulta de

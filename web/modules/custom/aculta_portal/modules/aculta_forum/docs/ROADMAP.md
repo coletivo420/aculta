@@ -15,7 +15,7 @@ histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,
 reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 
-**Base inspecionada:** `aculta_forum 0.1.0-dev.278`, com Growroom420
+**Base inspecionada:** `aculta_forum 0.1.0-dev.279`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
 administrativas já possuem implementações e testes. As fases técnicas
@@ -73,8 +73,9 @@ executa o lote real com map SQL persistente, reexecução idempotente e
 continuidade para novas Comments; a correção de `getEntityTypeId()` no destino
 evitou falha do map. Um segundo cenário executa a migration de relacionamento
 com `migration_lookup` e confirma o parent do ForumPost; o fixture compara
-pipeline, destino e dependências com a configuração real. O rollback pelo
-`MigrateExecutable` remove posts/mapa e preserva os Comments de origem. O modo
+pipeline, destino e dependências com a configuração real. O rollback em ordem
+inversa limpa primeiro o map de relações e depois remove posts/mapa, preservando
+os Comments de origem. O modo
 `--simulate` do Drush não executa a migration e não prova o pipeline; equivalência
 completa e homologação Runtime seguem pendentes.
 
