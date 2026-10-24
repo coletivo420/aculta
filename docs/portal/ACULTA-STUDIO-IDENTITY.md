@@ -1,5 +1,23 @@
 # ACULTA Studio — contrato de identidade e rotas
 
+## Identidades atuais — Conta/Perfil separados (dev.13)
+
+- `/studio` — hub;
+- `/studio/conta` — **Minha Conta Studio**, dados privados;
+- `/studio/perfil` — **Meu Perfil Studio**, identidade pública editável;
+- `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa` —
+  experiências distintas;
+- `/` no Domain ACCOUNT — **Minha Conta legada permanente**, com shell
+  e formulários preservados para comparação;
+- `/minha-conta` — caminho técnico não acessível diretamente (404);
+- `/u/{apelido}` no purpose MAIN — perfil público independente.
+
+Não existe `/studio/pessoal` nem alias temporário. A fase dev.13
+ainda não foi homologada em Runtime. Esta seção substitui as decisões
+de dev.7–12 e qualquer intenção de retirar a Conta legada.
+[Contrato oficial](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+
+
 ## Acréscimo P2-A (dev.12): Meu Perfil privado
 
 `/studio/pessoal/perfil` foi criado como interface privada de edição
