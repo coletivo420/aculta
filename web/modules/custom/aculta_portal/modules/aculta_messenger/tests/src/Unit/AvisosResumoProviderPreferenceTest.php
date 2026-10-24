@@ -262,7 +262,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::once())->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
     $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = new AvisosResumo(
       $entities,
@@ -338,7 +338,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_792_800_000);
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects(self::once())->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects(self::exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
     $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = new AvisosResumo(
       $entities,

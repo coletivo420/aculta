@@ -92,7 +92,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         return SendResult::sent();
       });
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
+    $lock->expects($this->exactly(3))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 180.0)->willReturn(TRUE);
     $lock->expects($this->exactly(2))->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
 
@@ -279,22 +279,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
    */
   public function testConcurrentDigestRunDuringTransportDoesNotDuplicateDelivery(): void {
     $provider = new TestLearningDigestProvider([27]);
-    $lockHeld = FALSE;
+    $acquireAttempts = 0;
     $lock = $this->createMock(LockBackendInterface::class);
-    $lock->expects($this->exactly(2))
+    $lock->expects($this->exactly(3))
       ->method('acquire')
-      ->willReturnCallback(static function () use (&$lockHeld): bool {
-        if ($lockHeld) {
-          return FALSE;
-        }
-        $lockHeld = TRUE;
-        return TRUE;
+      ->willReturnCallback(static function () use (&$acquireAttempts): bool {
+        return match (++$acquireAttempts) {
+          1 => TRUE,
+          2 => FALSE,
+          3 => TRUE,
+        };
       });
     $lock->expects($this->once())
       ->method('release')
-      ->willReturnCallback(static function () use (&$lockHeld): void {
-        $lockHeld = FALSE;
-      });
+      ->with('aculta_messenger.avisos_resumo.27');
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $competingSummary = $this->createSummary($provider, $mailer, TRUE, $lock);
     $competingResult = NULL;
@@ -309,6 +307,29 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $this->assertSame(1, $summary->enviarResumos());
     $this->assertSame(0, $competingResult, 'A competing run skips the locked recipient while the first transport is active.');
     $this->assertSame([[501]], $provider->markedDeliveryIds);
+  }
+
+  /**
+   * Does not acknowledge an accepted digest after losing its renewed lock.
+   */
+  public function testLostDigestLockDefersAcknowledgement(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects($this->exactly(2))
+      ->method('acquire')
+      ->with('aculta_messenger.avisos_resumo.27', 180.0)
+      ->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $lock->expects($this->once())
+      ->method('release')
+      ->with('aculta_messenger.avisos_resumo.27');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::sent());
+    $summary = $this->createSummary($provider, $mailer, TRUE, $lock);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->markedDeliveryIds, 'A stale lock owner cannot acknowledge records handled by another digest worker.');
   }
 
   /**

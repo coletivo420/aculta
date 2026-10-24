@@ -1699,3 +1699,15 @@ Validação: `FriendshipNoticePipelineKernelTest` **1/14 PASS** em MariaDB dedic
 lint PASS. PHPUnit reportou duas deprecações do Core/contrib para plugins Message baseados em annotations. Runtime,
 SMTP e transporte real não foram usados.
 
+## 0.1.1-dev.159 — renovar lock antes de confirmar digest — 2026-10-24
+
+Após o transporte, o worker renova a lease do destinatário antes de confirmar ou descartar linhas. Se outro processo
+assumiu o lock expirado, o worker antigo não altera os avisos nem o snapshot; a confirmação é deixada para a execução
+que detém o lock. Isso protege o contador do Fórum e os acknowledgements dos adapters contra uma confirmação concorrente
+por um worker obsoleto.
+
+Validação: `AvisosResumoProviderPreferenceTest` + `LearningNoticeDigestIntegrationTest` **18/195 PASS**, incluindo
+concorrência durante transporte e perda do lock renovado; Kernels MariaDB de idempotência e amizade **34/759 PASS**, incluindo contenção do lock entre processos.
+PHPCS Drupal/DrupalPractice PASS. Duas deprecações de plugins Message via annotations foram reportadas pelo Kernel de
+amizade. Sem Runtime ou SMTP.
+

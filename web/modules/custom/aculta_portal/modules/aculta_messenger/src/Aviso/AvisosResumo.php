@@ -144,7 +144,7 @@ final class AvisosResumo {
       return FALSE;
     }
     try {
-      return $this->enviarParaComLock($uid);
+      return $this->enviarParaComLock($uid, $lockName);
     }
     finally {
       $this->lock->release($lockName);
@@ -156,8 +156,10 @@ final class AvisosResumo {
    *
    * @param int $uid
    *   Recipient account ID.
+   * @param string $lockName
+   *   Recipient lock name held for this processing attempt.
    */
-  private function enviarParaComLock(int $uid): bool {
+  private function enviarParaComLock(int $uid, string $lockName): bool {
     $conta = $this->entityTypeManager->getStorage('user')->load($uid);
     if ($conta === NULL) {
       return FALSE;
@@ -335,6 +337,14 @@ final class AvisosResumo {
       $this->logger?->error('Daily notice digest delivery raised @exception; pending rows remain available for retry.', [
         '@exception' => get_class($exception),
       ]);
+      return FALSE;
+    }
+    // A lock lease can expire during a stalled transport. Drupal's lock API
+    // renews a lock held by this backend and returns FALSE if another worker
+    // has taken it. A stale worker must not acknowledge or discard rows after
+    // losing ownership, even when its own transport returned successfully.
+    if (!$this->lock->acquire($lockName, self::LOCK_LEASE_SECONDS)) {
+      $this->logger?->warning('Daily notice digest lost its recipient lock during delivery; acknowledgement is deferred.');
       return FALSE;
     }
     if (!$resultado->sent) {
