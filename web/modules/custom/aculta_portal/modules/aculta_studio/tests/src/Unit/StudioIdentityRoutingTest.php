@@ -27,7 +27,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $routes += Yaml::decode(file_get_contents($module . '/../aculta_lms/aculta_lms.routing.yml'));
     $expected = [
       '/studio' => 'aculta_studio.legacy_home',
-      '/studio/Marley' => 'aculta_studio.home',
+      '/studio/marley' => 'aculta_studio.home',
       '/studio/marley/{aba}' => 'aculta_studio.area',
       '/studio/marley/{aba}/{secao}' => 'aculta_studio.section',
       '/studio/marley/{aba}/{secao}/{sub}' => 'aculta_studio.tab',
@@ -88,17 +88,17 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * Canonical Marley entry is case-specific, keeping the existing route ID.
+   * Canonical Marley entry is lower-case, keeping the existing route ID.
    */
-  public function testMarleyCapitalizedEntryAndSafeLowercaseAlias(): void {
+  public function testMarleyLowercaseEntryAndSafeCapitalizedAlias(): void {
     $module = dirname(__DIR__, 3);
     $routes = Yaml::decode(file_get_contents($module . '/aculta_studio.routing.yml'));
 
-    self::assertSame('/studio/Marley', $routes['aculta_studio.home']['path']);
+    self::assertSame('/studio/marley', $routes['aculta_studio.home']['path']);
     self::assertSame('aculta_studio.marley_controller:page',
       $routes['aculta_studio.home']['defaults']['_controller']);
-    $alias = $routes['aculta_studio.legacy_marley_lowercase'];
-    self::assertSame('/studio/marley', $alias['path']);
+    $alias = $routes['aculta_studio.legacy_marley_capitalized'];
+    self::assertSame('/studio/Marley', $alias['path']);
     self::assertSame(['GET', 'HEAD'], $alias['methods']);
     self::assertSame('account', $alias['options']['_aculta_domain_purpose']);
     self::assertSame('aculta_studio.marley_controller:legacyEditorial',
@@ -107,7 +107,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('TRUE', $routes['aculta_studio.legacy_home']['requirements']['_user_is_logged_in']);
 
     $order = array_keys($routes);
-    self::assertTrue(array_search('aculta_studio.legacy_marley_lowercase', $order, TRUE)
+    self::assertTrue(array_search('aculta_studio.legacy_marley_capitalized', $order, TRUE)
       < array_search('aculta_studio.legacy_area', $order, TRUE));
   }
 
@@ -119,7 +119,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $routes = Yaml::decode(file_get_contents($module . '/aculta_studio.routing.yml'));
     $routes += Yaml::decode(file_get_contents($module . '/../aculta_lms/aculta_lms.routing.yml'));
     $legacy_ids = [
-      'aculta_studio.legacy_marley_lowercase',
+      'aculta_studio.legacy_marley_capitalized',
       'aculta_studio.hub_preview',
       'aculta_studio.legacy_editorial_deep',
       'aculta_studio.old_ganjalab_home',
