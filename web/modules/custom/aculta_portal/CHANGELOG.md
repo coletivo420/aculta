@@ -1,3 +1,8 @@
+## 0.4.1-dev.24 — política global sem aliases temporários (2026-10-24)
+
+- Removidos redirects de /minha-conta/* (agora 404), URLs antigas de address-book Commerce e listagem /pagamentos, bem como handlers órfãos. As rotas canônicas /, /dados/endereco e /pedidos permanecem; fluxos funcionais de autenticação, checkout e pagamento não foram alterados. Testes Runtime pendentes.
+- Regra transversal: `AGENTS.md` e `scripts/validate-no-temporary-route-aliases.php`.
+
 ## 0.4.1-dev.23 — prévias de busca como regiões de navegação
 
 - O comportamento compartilhado mantém o input search nativo e apresenta as
