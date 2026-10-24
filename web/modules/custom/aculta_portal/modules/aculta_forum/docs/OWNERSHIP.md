@@ -13,7 +13,7 @@
 | Avatar/foto | User picture + `aculta_user` + `aculta_image` | render autorizado por finalidade `avatar` | processar/excluir arquivo fora de `aculta_image` |
 | Autoria histórica | entidade `aculta_legado_autor` + `aculta_user` | `LegacyAuthorManager`, campo existente, memorial coletivo | conta User, perfil, login ou cartão independente |
 | Favorito/seguir/denúncia | Flag | seguir/salvar usam flags existentes; denúncias usam `sinalizar_comentario` para Comment e `sinalizar_post_forum` para posts revisionáveis, com permissão contextual, `HistoricForumFlagAccessHooks` e fila `aculta_user` do Growroom | armazenamento paralelo de ações; pôr acervo histórico ou outro contexto na fila pública; transferir flaggings sem preservar dono/timestamp |
-| Notificação | `aculta_messenger` e seu contrato de avisos | evento/referência e chamada ao serviço dono | fila/tabela/email próprios no Forum |
+| Avisos de seguidores do Fórum | Flag `seguir_topico` para assinatura; `aculta_messenger` / `aculta_aviso` para agregação e leitura; `aculta_mailer` para transporte | Evento de resposta/revisão aprovada, referências mínimas, marcadores independentes Comment/ForumPost e revalidação de acesso no aviso/digest; futura API ADR-XK-02 somente após implementação real | Gerar chat/thread ao seguir, inbox privada paralela, avisos duplicados, fila/SMTP/storage próprios no Fórum |
 | Conquistas | `aculta_game` avalia Comment ACULTA vigente e primeira publicação de ForumPost público; concessões e catálogo têm fonte única no `aculta_user` | trigger existente `forum_comment`, com migração/sync e autoria histórica excluídos | Forum contrib/legado, storage, contagem, XP, ranking ou concessão próprios no Forum |
 | Cursos, atividades, matrícula | LMS + Group | adapter opcional `aculta_forum_lms` | autorização por role global ou cópia da matrícula |
 | Galeria e anexos | Gallery/Media/File/PDF viewer + `aculta_image` para imagens | referências com access revalidado | cópia/download público que contorne os donos |
@@ -29,6 +29,19 @@ apenas contexto/ação; não define estrutura ou consulta perfil. ACULTA420 sele
 o SDC, layout lateral/empilhado, light/dark e acessibilidade. Ver
 `aculta_user/docs/AUTHOR-CARDS.md` e
 `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
+
+## Conversas privadas e discussões contextuais
+
+- Posts públicos do Growroom e Comments nos contextos Revista/LMS/Wiki são
+  **discussões**, sujeitos à moderação e ao acesso da entidade de origem.
+- O Fórum pode oferecer uma ação explícita **Iniciar conversa** entre membros,
+  resolvida pelo serviço público do `aculta_messenger`, com permissão,
+  preferências de contato, bloqueio e autorização da conta.
+- Seguir tópico, responder, moderar ou matricular-se não cria nem associa
+  participantes a threads de Private Message; não existe chat automático por
+  tópico, turma ou verbete. Decisão F-D41.
+- A interface de integração deve ser opcional e não criar dependência circular
+  entre `aculta_forum` e `aculta_messenger`.
 
 ## Eventos e confiança
 
