@@ -32,7 +32,9 @@
 
 - Dev.103: rota de envio de proposta declara purpose Wiki; Kernel revalida
   rejeição no Domain principal junto ao acesso de rota (1/81; 199 depreciações
-  Core/contrib e 2 PHPUnit). PHPCS, lint e YAML passam; Runtime intocado.
+  Core/contrib e 2 PHPUnit). Submissão privada e fila passaram em focais 2/306
+  (202 depreciações upstream, 3 PHPUnit). PHPCS, lint e YAML passam; Runtime
+  intocado.
 
 - Dev.102: hook de presave preenche Domain Wiki ausente; Kernel cobre a primeira
   publicação por editor e revisão obrigatória após evidência positiva (focal

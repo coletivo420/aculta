@@ -357,7 +357,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
 | Moderador de propostas no Studio | Kernel | Só seção Moderação/Propostas; sem listagem genérica de verbetes/revisões | aprovado |
-| Fila de propostas no Studio | Kernel | Usa queue Wiki autorizada, pagina e gera links para o Form API proprietário | aprovado |
+| Fila de propostas no Studio | Kernel | Usa queue Wiki autorizada, pagina e gera links para o Form API proprietário | aprovado; revalidado dev.103 (focal combinado 2/306 com submissão privada) |
 | Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
 | Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
 | Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; focal 3/10; suíte Unit 13/41) |

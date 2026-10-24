@@ -18,7 +18,8 @@ A rota `aculta_wiki.proposal_submit` agora declara `wiki`, fazendo a política
 compartilhada do Portal aplicar o isolamento de host também ao endpoint direto.
 Kernel confirma o purpose e resposta 404 no Domain `main` (1/81; 199
 depreciações Core/contrib e 2 PHPUnit). PHPCS, lint e YAML passaram; Runtime
-intocado.
+intocado. Os Kernels de submissão privada e fila editorial passaram na mesma
+branch (2/306; 202 depreciações upstream e 3 PHPUnit).
 
 ### Revalidação R1 — HEAD `847e45231`
 

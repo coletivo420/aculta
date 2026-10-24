@@ -70,7 +70,9 @@
   o subscriber do Portal rejeita acesso ao endpoint no Domain principal.
 - Kernel MariaDB confirma metadados e 404 no host principal (focal: 1 teste /
   81 asserções; 199 depreciações Core/contrib e 2 PHPUnit). PHPCS, lint PHP e
-  parse YAML passaram. Runtime intocado.
+  parse YAML passaram. Os Kernels focais de submissão privada e fila editorial
+  também passaram (2 testes / 306 asserções; 202 depreciações upstream e 3
+  PHPUnit). Runtime intocado.
 
 ## 0.1.0-dev.92 — proposta contextual em duas etapas
 
