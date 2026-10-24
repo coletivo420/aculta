@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_friendship_event
+    - message.template.aculta_msg_friendship
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_friendship_event
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Evento de amizade'
+description: 'Transição de amizade que originou o aviso.'
+required: true
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings: {}
+field_type: list_string

@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_enqueue_attempts
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_messenger_enqueue_attempts
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Tentativas de enfileiramento'
+description: 'Contagem limitada de inserções na fila antes do processamento.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings: {}
+field_type: integer

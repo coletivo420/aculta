@@ -108,3 +108,10 @@ function aculta_messenger_update_10006(): void {
   ];
   $field_storage->setSetting('allowed_values', $allowed_values)->save();
 }
+
+/**
+ * Installs the complete friendship Message bundle and enqueue recovery field.
+ */
+function aculta_messenger_update_10007(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_source_fr
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_messenger_source_fr
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Transição de amizade de origem'
+description: 'Chave técnica para deduplicar avisos da mesma transição.'
+required: true
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings: {}
+field_type: string

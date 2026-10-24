@@ -9,9 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Queue\QueueInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\aculta_user\Event\FriendshipChangedEvent;
@@ -19,8 +18,6 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
-use Psr\Log\NullLogger;
-use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -84,10 +81,10 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $messageStorage->expects(self::once())->method('load')->with(83)->willReturn($existingMessage);
 
     $entityTypeManager = $this->entityTypeManager($userStorage, $messageStorage);
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::never())->method('get');
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::never())->method('enqueue');
 
-    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock(), new NullLogger());
+    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $this->lock(), $queue);
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -110,71 +107,18 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       ['field_aculta_msg_delivery', $this->fieldValue('failed')],
       ['field_aculta_messenger_attempts', $this->fieldValue(0)],
     ]);
-    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'pending')->willReturnSelf();
-    $message->expects(self::once())->method('save');
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('getQuery')->willReturn($query);
     $storage->expects(self::never())->method('create');
     $storage->expects(self::once())->method('load')->with(83)->willReturn($message);
-    $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(501);
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
-    $subscriber = new FriendshipNoticeSubscriber(
-      $this->entityTypeManager(
-        $userStorage,
-        $storage,
-        $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
-      ),
-      $queueFactory,
-      $this->lock(),
-      new NullLogger(),
-    );
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::once())->method('enqueue')->with($message);
+    $subscriber = new FriendshipNoticeSubscriber($this->entityTypeManager(
+      $userStorage,
+      $storage,
+      $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
+    ), $this->lock(), $queue);
 
-    $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
-  }
-
-  /**
-   * Queue refusal is logged and the persisted notice is left replayable.
-   */
-  public function testQueueRefusalMarksNoticeFailedAndThrows(): void {
-    $recipient = $this->createMock(UserInterface::class);
-    $recipient->method('isActive')->willReturn(TRUE);
-    $userStorage = $this->createMock(EntityStorageInterface::class);
-    $userStorage->method('load')->with(20)->willReturn($recipient);
-    $query = $this->createMock(QueryInterface::class);
-    $query->method('accessCheck')->willReturnSelf();
-    $query->method('condition')->willReturnSelf();
-    $query->method('range')->willReturnSelf();
-    $query->method('execute')->willReturn([]);
-    $message = $this->createMock(MessageInterface::class);
-    $message->method('id')->willReturn('83');
-    $message->expects(self::exactly(2))->method('save');
-    $message->expects(self::once())->method('set')->with('field_aculta_msg_delivery', 'failed')->willReturnSelf();
-    $storage = $this->createMock(EntityStorageInterface::class);
-    $storage->method('getQuery')->willReturn($query);
-    $storage->expects(self::once())->method('create')->willReturn($message);
-    $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83])->willReturn(FALSE);
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
-    $logger = $this->createMock(LoggerInterface::class);
-    $logger->expects(self::once())->method('error')->with(
-      'Could not queue friendship notice email for Message @id.',
-      ['@id' => '83'],
-    );
-    $subscriber = new FriendshipNoticeSubscriber(
-      $this->entityTypeManager(
-        $userStorage,
-        $storage,
-        $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
-      ),
-      $queueFactory,
-      $this->lock(),
-      $logger,
-    );
-
-    $this->expectException(\RuntimeException::class);
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -199,17 +143,16 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $lock->expects(self::exactly(2))->method('acquire')->with($lockId, 30.0)->willReturnOnConsecutiveCalls(FALSE, TRUE);
     $lock->expects(self::once())->method('wait')->with($lockId, 30);
     $lock->expects(self::once())->method('release')->with($lockId);
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::never())->method('get');
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::never())->method('enqueue');
     $subscriber = new FriendshipNoticeSubscriber(
       $this->entityTypeManager(
         $userStorage,
         $messageStorage,
         $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
       ),
-      $queueFactory,
       $lock,
-      new NullLogger(),
+      $queue,
     );
 
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
@@ -233,10 +176,10 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $messageStorage,
       $this->friendshipStorage($friendship),
     );
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::never())->method('get');
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::never())->method('enqueue');
 
-    (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock(), new NullLogger()))
+    (new FriendshipNoticeSubscriber($entityTypeManager, $this->lock(), $queue))
       ->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -267,12 +210,11 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       FriendshipNoticeSubscriber::EVENT_FIELD => $transition,
       'field_aculta_msg_delivery' => 'pending',
       'field_aculta_messenger_attempts' => 0,
+      'field_aculta_messenger_enqueue_attempts' => 0,
     ])->willReturn($message);
 
-    $queue = $this->createMock(QueueInterface::class);
-    $queue->expects(self::once())->method('createItem')->with(['message_id' => 83]);
-    $queueFactory = $this->createMock(QueueFactory::class);
-    $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
+    $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
+    $queue->expects(self::once())->method('enqueue')->with($message);
 
     $status = $transition === FriendshipChangedEvent::REQUESTED
       ? FriendshipStatus::Pending->value
@@ -281,7 +223,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $userStorage,
       $messageStorage,
       $this->friendshipStorage($this->friendship($status)),
-    ), $queueFactory, $this->lock(), new NullLogger());
+    ), $this->lock(), $queue);
     $subscriber->consume($this->event($transition, $requesterId, $recipientId));
   }
 

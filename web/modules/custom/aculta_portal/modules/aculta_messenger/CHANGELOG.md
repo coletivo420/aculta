@@ -1,3 +1,9 @@
+## 0.1.1-dev.136 — recuperar enqueue de avisos de amizade — 2026-10-24
+
+Avisos de amizade agora possuem bundle aculta_msg_friendship e campos declarados na configuração de instalação; o update aditivo 10007 instala somente configurações ausentes. A fila registra tentativas de enqueue separadas das tentativas de e-mail, marca recusas como failed e o cron recupera registros pendentes/failed há pelo menos dez minutos, com lote de 50 e teto de cinco tentativas. Lock por Message evita enqueue simultâneo. O replay idempotente continua reutilizando o mesmo aviso.
+
+Validação: FriendshipNoticeSubscriberTest 6 testes / 59 assertions, FriendshipNoticeQueueTest 3/50 e FriendshipBundleUpdateTest 1/3 PASS. Update ainda não aplicado no Runtime; falha após a quinta recusa fica visível como failed sem retry automático adicional. Suíte Unit Messenger 130/767, Kernel MariaDB ForumNoticeIdempotency 28/633, PHPCS dos arquivos alterados, PHP lint, parse de YAML, gate Drupal 11+ (1155 checks), PROJECT-STATUS-INDEX e git diff --check PASS. Runtime/update não executados.
+
 ## 0.1.1-dev.135 — recuperar fila recusada de amizade — 2026-10-24
 
 O consumer de amizade agora verifica a resposta da Queue API. Se a fila recusar o item ou lançar erro, a mensagem
