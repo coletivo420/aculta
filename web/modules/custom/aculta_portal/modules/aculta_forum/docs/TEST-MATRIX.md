@@ -1,3 +1,11 @@
+## Formulário de moderação — revisão exata, 2026-10-24
+
+- `ForumPostModerationFormControllerKernelTest` (2 testes / 28 asserções,
+  MariaDB): o identificador de revisão da rota chega ao form builder mesmo
+  quando não é a revisão padrão; revisão inexistente resulta em não encontrado
+  sem construir o formulário.
+- Suíte Kernel do Fórum 134/2.573; PHPCS limpo.
+
 ## Formulário público de edição — autoria e purpose, 2026-10-24
 
 - `ForumPostEditControllerKernelTest` (2 testes / 32 asserções, MariaDB): a

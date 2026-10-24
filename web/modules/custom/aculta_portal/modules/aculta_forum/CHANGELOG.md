@@ -1,3 +1,10 @@
+## `0.1.0-dev.300` — provar o formulário de moderação por revisão — 2026-10-24
+
+- Novo Kernel `ForumPostModerationFormControllerKernelTest`: o identificador de
+  revisão solicitado chega ao form builder, inclusive quando não é a revisão
+  padrão; revisão inexistente resulta em não encontrado sem construir formulário.
+- Testes: moderação por revisão 2/28; suíte Kernel do Fórum 134/2.573; PHPCS limpo.
+
 ## `0.1.0-dev.299` — provar o formulário público de edição — 2026-10-24
 
 - Novo Kernel `ForumPostEditControllerKernelTest`: a autora abre o modo
