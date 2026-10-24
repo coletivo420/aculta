@@ -16,6 +16,12 @@ services:
     calls:
       - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
+      - [addProvider, ['@aculta_studio.experience.pessoal']]
+  aculta_studio.experience.pessoal:
+    class: Drupal\aculta_studio\Experience\PersonalExperienceProvider
+  aculta_studio.personal_controller:
+    class: Drupal\aculta_studio\Controller\PersonalController
+    arguments: ['@aculta_studio.experience_manager', '@current_user']
   aculta_studio.experience.ganjalab:
     class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
     arguments: ['@?aculta_studio.learner_dashboard_composer']
