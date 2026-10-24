@@ -9,7 +9,8 @@ Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architec
 Adicionada a rota `/studio/we-sativa/inicio`, purpose `account`, com um provider
 de página inicial opcional. O provider encaminha o render ao serviço Wiki,
 responsável por dados, autorização e cache. O Kernel integrado validou a rota e
-os links condicionados a acesso (2 testes / 205 asserções junto ao owner Wiki).
+os links condicionados a acesso e HTML renderizado no ACULTA420 (2 testes / 208
+asserções junto ao owner Wiki).
 Teste Unit do controller inclui retorno owner, rota sem o contrato de início e
 acesso negado (3/3); a suíte Studio completa passou em 20 testes / 61 asserções.
 Runtime e Firefox ESR/X11, incluindo 320px e Olivero, permanecem pendentes.

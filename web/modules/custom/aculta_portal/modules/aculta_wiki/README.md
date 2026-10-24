@@ -7,8 +7,8 @@ pendentes, está em
 
 ## Estado atual
 
-- Revalidação do ciclo R2 no HEAD `82e5492ca` (2026-10-24): classe Kernel
-  completa passou em MariaDB isolada, 27 testes / 1.497 asserções. Cobriu
+- Revalidação do ciclo R2 no HEAD `9da043aeb` (2026-10-24): classe Kernel
+  completa passou em MariaDB isolada, 27 testes / 1.500 asserções. Cobriu
   publicação/privacidade sincronizada com o verbete, revisão pendente, rollback,
   retry, referências históricas e limpeza segura; 304 depreciações Core/contrib
   e 28 PHPUnit. Runtime e filesystem instalado não foram alterados.
@@ -23,7 +23,7 @@ pendentes, está em
 - `0.1.0-dev.109`: a entrada WE SATIVA agora tem `/studio/we-sativa/inicio`
   no purpose `account`, com criação, retomada de rascunho autorizado e guia
   editorial. O serviço Wiki mantém dados, Entity Access e cache; o workspace
-  liga de volta ao início. Kernels focais passaram em 2 testes / 205
+  liga de volta ao início. Kernels focais passaram em 2 testes / 208
   asserções; Runtime/visual permanecem pendentes.
 
 - `0.1.0-dev.108`: autoria confirmada recebe aviso privado quando sua proposta

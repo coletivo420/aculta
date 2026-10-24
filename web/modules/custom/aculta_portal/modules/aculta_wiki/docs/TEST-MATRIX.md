@@ -9,7 +9,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | --- | --- | --- | --- |
 | Seletor contextual de contribuição | Kernel MariaDB | CTA usa rota Wiki; participantes confirmados veem quatro intenções allowlisted, edição direta vê somente formulário Core, pessoa não confirmada é bloqueada | aprovado (dev.89; 3 testes / 311 asserções) |
 | Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
-| Início `/studio/we-sativa/inicio` | Kernel + Unit Studio | Purpose `account`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace; controller delega ao owner e nega acesso rejeitado | Kernel aprovado (dev.109; 2/205, 200 depreciações Core/contrib e 3 PHPUnit); controller Unit 3/3, suíte Studio 20/61 |
+| Início `/studio/we-sativa/inicio` | Kernel + Unit Studio | Purpose `account`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace e render ACULTA420; controller delega ao owner e nega acesso rejeitado | Kernel aprovado (dev.109; 2/208, 300 depreciações Core/contrib, uma PHP/Webform contrib e 3 PHPUnit); controller Unit 3/3, suíte Studio 20/61 |
 | Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; outra autoria e candidato do mesmo UID sem `view` não aparecem; cursores e links no Domain `account` | aprovado (dev.83; focais 1/42 e 1/45; classe 24/1.142) |
 | Filtros dos verbetes | Kernel MariaDB | `draft`, `review`, `published` e todos; estados inválidos voltam a Todos; links preservam Domain/cursor de proposta e resetam cursor de verbete; 20+3 paginam sem duplicação/perda | aprovado (dev.88; focal 1/141; três Kernels workspace 3/235) |
 | Busca e alterações recentes por grants | Kernel MariaDB | Duas contas de mesmo papel recebem apenas verbetes autorizados na busca e lista recente; cache context de grants presente, inclusive vazio/negativo/malformado | aprovado (dev.90; focal 1/43; 283 depreciações upstream, 2 PHPUnit) |
@@ -91,8 +91,8 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 
 ## R2 — ciclo de vida da imagem (dev.63; cobertura incremental até dev.53)
 
-Revalidação no HEAD `82e5492ca` (2026-10-24): classe Kernel completa aprovada
-em MariaDB, 27 testes / 1.497 asserções. 304 depreciações Core/contrib e 28
+Revalidação no HEAD `9da043aeb` (2026-10-24): classe Kernel completa aprovada
+em MariaDB, 27 testes / 1.500 asserções. 304 depreciações Core/contrib e 28
 PHPUnit; Runtime e filesystem instalado intocados.
 
 | Cenário | Tipo | Resultado esperado | Estado |

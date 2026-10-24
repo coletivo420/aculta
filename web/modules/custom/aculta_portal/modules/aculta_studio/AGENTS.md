@@ -31,7 +31,8 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 The `/studio/we-sativa/inicio` controller delegates to the Wiki owner. Unit
 coverage verifies a provider with the optional start-page contract, a provider
 without it, and owner-denied access (3/3 focal; Studio Unit suite 20/61). Kernel
-Wiki integration verifies the route and owner-rendered data (2/205). Runtime and
+Wiki integration verifies the route, access-conditioned links and rendered
+ACULTA420 HTML (2/208). Runtime and
 Firefox/X11 remain pending because the active Runtime container lacks the
 workspace service and WE SATIVA routes.
 

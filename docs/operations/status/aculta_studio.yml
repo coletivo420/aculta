@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.6 — `/studio/we-sativa/inicio` delega dados/acesso à Wiki; Kernel 2/205 e Unit Studio 20/61 (controller focal 3/3). Runtime/visual pendentes."
+version_note: "0.1.0-dev.6 — `/studio/we-sativa/inicio` delega dados/acesso à Wiki; Kernel/ACULTA420 2/208 e Unit Studio 20/61 (controller focal 3/3). Runtime/visual pendentes."
 next_phase: 'Homologar autoria WE SATIVA a 320 px, fallback sem JS, shell de domínio e Olivero em Runtime autorizado ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.

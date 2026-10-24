@@ -39,8 +39,8 @@
 
 # Wiki — instruções locais
 
-# R2 imagem revalidada no HEAD 82e5492ca: Kernel MariaDB completo passou em
-# 27 testes / 1.497 asserções. Runtime/filesystem instalado intocados.
+# R2 imagem revalidada no HEAD 9da043aeb: Kernel MariaDB completo passou em
+# 27 testes / 1.500 asserções. Runtime/filesystem instalado intocados.
 
 # WIKI-R1 revalidada no HEAD 03b840a7f: 20 testes / 425 asserções (MariaDB
 # isolada), incluindo projeção v4, relações, acesso real e rebuild isolado.
@@ -48,7 +48,8 @@
 
 # Dev.109: `/studio/we-sativa/inicio` é entrypoint `account` servido pelo Studio;
 # `WikiContributorWorkspace` mantém dados, acesso, cache e links autorizados.
-# Dois Kernels integrados passaram (2/205). Runtime e visual pendentes.
+# Dois Kernels integrados passaram (2/208), com render ACULTA420. Runtime e
+# visual pendentes.
 
 - Dev.104: decisão editorial espera lock MariaDB do Node mantido por processo
   com conexão independente; depois aplica a nova revisão. Focal 1/216; classe

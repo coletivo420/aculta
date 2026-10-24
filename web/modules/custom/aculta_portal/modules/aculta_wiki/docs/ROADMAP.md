@@ -20,9 +20,10 @@ O Studio expõe `/studio/we-sativa/inicio` sob purpose `account`. A Wiki continu
 dona de dados e acesso: a página mostra criação mediante Entity Access e rota,
 retomada de um rascunho próprio atualizável, Meu Trabalho quando acessível e
 orientação editorial. O workspace inclui retorno à página inicial. Dois testes
-Kernel integrados passaram (205 asserções; 200 depreciações Core/contrib e 3
-PHPUnit). A rota/container do Runtime e a validação visual Firefox ESR/X11,
-320px e Olivero seguem pendentes.
+Kernel integrados passaram (208 asserções; 300 depreciações Core/contrib, uma
+PHP/Webform contrib e 3 PHPUnit). A rota/container do Runtime e a validação visual Firefox ESR/X11,
+320px e Olivero seguem pendentes. A página também foi renderizada no Kernel com
+ACULTA420, incluindo CTA e guia.
 
 ### Revalidação WIKI-R1 — HEAD `03b840a7f` (2026-10-24)
 
@@ -33,10 +34,10 @@ três relações outgoing. O acesso ao destino é revalidado na consulta; revis�
 pendente não substitui a projeção pública. Rebuild validado somente na geração
 isolada do Kernel, sem ação no Runtime.
 
-### Revalidação R2 — ciclo de imagem no HEAD `82e5492ca` (2026-10-24)
+### Revalidação R2 — ciclo de imagem no HEAD `9da043aeb` (2026-10-24)
 
 A classe `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27
-testes / 1.497 asserções (304 depreciações Core/contrib; 28 PHPUnit).
+testes / 1.500 asserções (304 depreciações Core/contrib; 28 PHPUnit).
 Confirmados a sincronização de publicação com o estado público do verbete,
 proteção de revisão pendente, rollback, retry, retenção histórica e limpeza
 segura. Foi uma revalidação em ambiente isolado, sem alteração no Runtime ou

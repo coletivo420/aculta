@@ -7,7 +7,7 @@
 A tela inicial V03 está implementada em `/studio/we-sativa/inicio` (Studio dev.6
 / Wiki dev.109). Ela apresenta criação e retomada de rascunho somente após
 revalidação de acesso pelo owner Wiki, e liga ao Meu Trabalho quando acessível.
-Kernel integrado: 2 testes / 205 asserções; Unit do controller 3/3, suíte
+Kernel integrado: 2 testes / 208 asserções com ACULTA420; Unit do controller 3/3, suíte
 Studio 20/61. Runtime e homologação visual seguem pendentes.
 
 O entrypoint inicial `/studio/we-sativa` está implementado no propósito

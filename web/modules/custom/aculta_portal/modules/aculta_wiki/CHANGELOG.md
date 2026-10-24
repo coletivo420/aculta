@@ -1468,8 +1468,10 @@
   oferece criação apenas com `createAccess()` e acesso da rota, retomada do
   primeiro rascunho próprio editável e autorizado, link para Meu Trabalho e
   orientação editorial. O workspace oferece retorno ao início com acesso
-  revalidado. Kernels focais passaram em 2 testes / 205 asserções; o bootstrap
-  reportou 200 depreciações Core/contrib e 3 PHPUnit. Runtime e browser pendentes.
+  revalidado. Kernels focais passaram em 2 testes / 208 asserções, incluindo
+  render do início pelo ACULTA420; a classe completa passou em 27/1.500 no HEAD
+  `9da043aeb`. Os focais reportaram 300 depreciações Core/contrib, uma PHP de
+  Webform contrib e 3 PHPUnit. Runtime e browser pendentes.
 
 ## Revalidação WIKI-R1 — HEAD `03b840a7f` (2026-10-24)
 
@@ -1480,10 +1482,10 @@
   fingerprint e geração isolada. PHPUnit reportou 240 depreciações Core/contrib
   e 3 PHPUnit. Nenhum rebuild ou alteração de Runtime executado.
 
-## Revalidação R2 — ciclo de imagem no HEAD `82e5492ca` (2026-10-24)
+## Revalidação R2 — ciclo de imagem no HEAD `9da043aeb` (2026-10-24)
 
 - `WikiLeadImageLifecycleKernelTest` passou completa em MariaDB: 27 testes /
-  1.497 asserções. Cobertura inclui Media/File privados para rascunhos e
+  1.500 asserções. Cobertura inclui Media/File privados para rascunhos e
   revisões pendentes, publicação conforme estado do verbete, rollback de falha,
   retry após rebuild, compartilhamento/referências históricas e limpeza em lotes.
   Foram reportadas 304 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
