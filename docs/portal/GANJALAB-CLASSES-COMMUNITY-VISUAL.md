@@ -1,9 +1,9 @@
-# GanjaLab420 — Minhas Turmas e Comunidade
+# ACULTA Studio Ganjalab — Minhas Turmas e Comunidade
 **Versão:** G420-UX 0.6.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento visual, sem implementação.
-**Referências:** [Minha Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) · [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
+**Referências:** [Minha Jornada](GANJALAB-LEARNING-JOURNEY-VISUAL.md) · [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Visão
-A turma é o ambiente comunitário **contextual do curso**; não é um segundo fórum público, rede social paralela ou nova entidade de membership. O estudante acompanha avisos, atividades coletivas, conversas e participantes que a política de visibilidade permitir. O docente edita e modera por GanjaLab; o estudante participa via GanjaLab420. Dados e acesso provêm de Drupal LMS/Group, `aculta_forum_lms`, `aculta_messenger` e `aculta_user`. **O módulo interno continua `aculta_lms`.**
+A turma é o ambiente comunitário **contextual do curso**; não é um segundo fórum público, rede social paralela ou nova entidade de membership. O estudante acompanha avisos, atividades coletivas, conversas e participantes que a política de visibilidade permitir. O docente edita e modera por ACULTA Studio Marley; o estudante participa via ACULTA Studio Ganjalab. Dados e acesso provêm de Drupal LMS/Group, `aculta_forum_lms`, `aculta_messenger` e `aculta_user`. **O módulo interno continua `aculta_lms`.**
 
 ## Destinos
 1. **Minhas Turmas:** turmas em que a pessoa possui membership vigente e acesso de estudante; cartão com nome do curso, turma, próxima ação e avisos somente se os providers oferecerem.
@@ -15,7 +15,7 @@ A turma é o ambiente comunitário **contextual do curso**; não é um segundo f
 
 ## Navegação mobile
 ```text
-GanjaLab420 / Minha aprendizagem / Minhas turmas
+ACULTA Studio Ganjalab / Minha aprendizagem / Minhas turmas
 [Curso: Redução de danos] [Turma Outubro]
 [Entrar na turma →]
 
@@ -40,7 +40,7 @@ ATIVIDADES
 - A lista **Minhas Turmas** é filtrada pela membership do usuário atual e seu acesso efetivo, não por simples permissão `access content`.
 - Turma A e B de um curso não compartilham mural, arquivos privados, avaliações ou participantes por padrão.
 - Lista de colegas e perfis exigem política de visibilidade; não expor e-mail, nome legal, status sensível, notas ou matrícula privada.
-- Moderadores/docentes acessam área de trabalho **GanjaLab** conforme sua função; isso não amplia o acesso da visão pessoal GanjaLab420.
+- Moderadores/docentes acessam área de trabalho **ACULTA Studio Marley** conforme sua função; isso não amplia o acesso da visão pessoal ACULTA Studio Ganjalab.
 - Dados de tópicos/avisos/notificações respeitam entidade, Group, cache contexts/tags e Domain purpose.
 - Mensagem privada, quando oferecida, usa `aculta_messenger`; Fórum contextual não substitui inbox.
 
@@ -63,7 +63,7 @@ O estudante encontra prazos e discussões no contexto do curso/turma. Discussão
 
 ## Refinamento de wireframes 0.6-B — Minhas Turmas e Comunidade
 
-**Minhas turmas (mobile):** cabeçalho GanjaLab420, título e cartões de turmas realmente acessíveis com curso de origem, identificação da turma e CTA “Entrar na turma”. Avisos recentes ou próximos prazos apenas se provider canônico devolver dados reais. Sem contagem fictícia de membros online.
+**Minhas turmas (mobile):** cabeçalho ACULTA Studio Ganjalab, título e cartões de turmas realmente acessíveis com curso de origem, identificação da turma e CTA “Entrar na turma”. Avisos recentes ou próximos prazos apenas se provider canônico devolver dados reais. Sem contagem fictícia de membros online.
 
 **Dentro da turma:** contexto persistente de curso/turma e navegação por quatro regiões condicionais **Mural / Discussões / Atividades / Participantes**. No mobile, abas acessíveis com rolagem controlada ou menu compacto; no desktop, área central de conteúdo e painel contextual de prazos quando disponível. Mudança de abas não mistura turmas no histórico AJAX, e deve funcionar sem JS.
 
@@ -74,4 +74,4 @@ O estudante encontra prazos e discussões no contexto do curso/turma. Discussão
 
 **Estados vazios e restrições:** turma sem discussões, não autorizada a mostrar participantes, grupo encerrado, membership revogada, mural sem avisos e carregamento AJAX falho devem oferecer mensagens claras e navegação segura. Uma pessoa matriculada em dois grupos não deve ver mural, anexos, prazos exclusivos ou identidades da outra turma por cache. Geometria igual em light/dark, WCAG 2.2 AA, 320–1440px. Wireframes exemplificativos não representam funcionalidades prontas.
 
-**Próxima experiência:** [Conquistas, Certificados e Histórico](GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md).
+**Próxima experiência:** [Conquistas, Certificados e Histórico](GANJALAB-ACHIEVEMENTS-CERTIFICATES-VISUAL.md).

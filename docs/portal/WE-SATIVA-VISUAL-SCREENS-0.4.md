@@ -64,7 +64,7 @@ Mobile 320/360/390px: uma coluna, campos ≥16px, alvos de toque preferencialmen
 
 ## Correção de ownership V-0.4-D — fila e moderação no GanjaLab
 
-**Decisão superior às descrições antigas V09:** a [janela de moderação Wiki](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md) pertence ao **GanjaLab (`aculta_studio`)**, não ao WE SATIVA. V09 designa agora a experiência GanjaLab, e V10–V12 são devolutivas, ajuda e recursos do colaborador no WE SATIVA. O subkernel Wiki mantém workflow, fila lógica, acesso e dados; o Studio só apresenta e delega. Nenhum painel ou transição de content_editor deve ser criado dentro do WE SATIVA. Plano V-0.4-D-A–R antes de Runtime.
+**Decisão superior às descrições antigas V09:** a [janela de moderação Wiki](MARLEY-WIKI-MODERATION.md) pertence ao **GanjaLab (`aculta_studio`)**, não ao WE SATIVA. V09 designa agora a experiência GanjaLab, e V10–V12 são devolutivas, ajuda e recursos do colaborador no WE SATIVA. O subkernel Wiki mantém workflow, fila lógica, acesso e dados; o Studio só apresenta e delega. Nenhum painel ou transição de content_editor deve ser criado dentro do WE SATIVA. Plano V-0.4-D-A–R antes de Runtime.
 
 ## Decisão normativa: ACULTA Studio (2026-10-22)
 

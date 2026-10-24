@@ -1,11 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.6 — `/studio/we-sativa/inicio` delega dados/acesso à Wiki; Kernel/ACULTA420 2/208 e Unit Studio 20/61 (controller focal 3/3). Runtime/visual pendentes."
-next_phase: 'Homologar autoria WE SATIVA a 320 px, fallback sem JS, shell de domínio e Olivero em Runtime autorizado ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
+version_note: "0.1.0-dev.7 — refatoração local de identidade Marley/Ganjalab, contratos específicos de navegação Marley, rotas canônicas/aliases 302 e documentação. Unit Studio 22/83 e Unit LMS 1/7 passaram; Kernel aguarda conexão ao banco de testes; Runtime/visual pendentes."
+next_phase: 'Concluir gates Unit/Kernel/Functional, rota e cache, depois homologar Marley, Ganjalab e WE SATIVA em Firefox ESR/X11 e Olivero conforme autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
 # G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T
 # depende de fixtures LMS, contratos UI Suite, browser, cache e Domain.
-# Próxima frente ativa: GANJALAB E-0.1 — inventário/editor, seguida de
-# Meu trabalho seguro, jornada Form API, shell SDC e gates Kernel/Functional.
+# A identidade vigente é ACULTA Studio Marley (marley) e ACULTA Studio
+# Ganjalab (ganjalab); ver contrato em docs/portal/ACULTA-STUDIO-IDENTITY.md.
 # Ver web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md.

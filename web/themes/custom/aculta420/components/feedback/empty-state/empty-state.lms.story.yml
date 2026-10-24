@@ -1,4 +1,4 @@
-name: GanjaLab420 sem cursos
+name: ACULTA Studio Ganjalab sem cursos
 description: 'Fixture estática de estado vazio neutro.'
 component: aculta420:empty-state
 props:

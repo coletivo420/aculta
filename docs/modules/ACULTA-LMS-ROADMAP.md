@@ -641,38 +641,38 @@ A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** pr
 
 ## Experiências de criador e estudante
 
-**GanjaLab**: criação e edição de cursos via módulo técnico `aculta_studio` e Course Builder planejado. **GanjaLab420**: experiência do estudante, conforme [documentação inicial](../portal/GANJALAB420-LEARNING-UX.md). Ambas compartilham LMS/Group sem novos bancos, matrículas ou notas. A linha visual G420-UX 0.1–0.8 não substitui fases F0–F17, nem altera seus estados e gates. Ver [identidade pública](../portal/GANJALAB-BRANDING.md).
+**ACULTA Studio Marley**: criação e edição editorial via `aculta_studio`. **ACULTA Studio Ganjalab**: experiência do estudante, conforme [documentação de aprendizagem](../portal/GANJALAB-LEARNING-UX.md). Ambas usam LMS/Group sem novos bancos, matrículas ou notas. Os artefatos visuais anteriores permanecem referências históricas; ver [identidade pública vigente](../portal/ACULTA-STUDIO-IDENTITY.md).
 
-## Ajuste de rota pública GanjaLab420
+## Ajuste de rota estudantil — ACULTA Studio Ganjalab
 
-A rota canônica do dashboard de estudante `aculta_lms.student_dashboard` agora usa `/ganjalab420` no purpose account; `/minha-aprendizagem` permanece alias de compatibilidade sem redirect nesta fase. Nenhuma mudança de storage, matrícula, LMS ou permissões; realizar `drush cr` e regressões HTTP após deploy, incluindo acessos autenticado/anônimo e Domain purpose. Documento de marca: [GANJALAB-BRANDING.md](../portal/GANJALAB-BRANDING.md).
+A rota canônica do dashboard estudante `aculta_lms.student_dashboard` agora é `/studio/ganjalab`, no purpose account. `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` são aliases 302 limitados a GET/HEAD. Nenhuma mudança de storage, matrícula, LMS ou permissões foi feita. Validar roteamento, autorização e Domain purpose antes de operação em Runtime. Documento vigente: [ACULTA-STUDIO-IDENTITY.md](../portal/ACULTA-STUDIO-IDENTITY.md).
 
 ## Interfaces GanjaLab420 — especificações visuais de 2026-10-22
 
-- [Dashboard do estudante](../portal/GANJALAB420-DASHBOARD-VISUAL.md) — G420-UX 0.2, cursos matriculados, atividade pendente e retomada de estudos.
-- [Sala de Aprendizagem](../portal/GANJALAB420-LEARNING-ROOM-VISUAL.md) — G420-UX 0.4, leitor mobile-first, índice, material, atividade e fórum contextual.
+- [Dashboard do estudante](../portal/GANJALAB-DASHBOARD-VISUAL.md) — G420-UX 0.2, cursos matriculados, atividade pendente e retomada de estudos.
+- [Sala de Aprendizagem](../portal/GANJALAB-LEARNING-ROOM-VISUAL.md) — G420-UX 0.4, leitor mobile-first, índice, material, atividade e fórum contextual.
 - **Manter o módulo técnico `aculta_lms`** e seus submódulos. Planos de renomeação técnica para Escola ou GanjaLab LMS estão cancelados. Este acréscimo visual não modifica nem certifica a implementação F0–F17.
 
 ## Referência H5P — GanjaLab420 Sala de Aprendizagem
 
-[Contrato de modelos de leitura, vídeo e H5P](../portal/GANJALAB420-LESSON-MODELS-VISUAL.md). H5P é variante própria de Sala, não simples embed. A apresentação mobile, o acesso Group, tentativas, notas, arquivos privados, CSP e alternativas acessíveis integram os gates F10/F15/F16 antes de RC. Preservar nomes técnicos `aculta_lms` e `aculta_lms_h5p`.
+[Contrato de modelos de leitura, vídeo e H5P](../portal/GANJALAB-LESSON-MODELS-VISUAL.md). H5P é variante própria de Sala, não simples embed. A apresentação mobile, o acesso Group, tentativas, notas, arquivos privados, CSP e alternativas acessíveis integram os gates F10/F15/F16 antes de RC. Preservar nomes técnicos `aculta_lms` e `aculta_lms_h5p`.
 
 ## UX de materiais — GanjaLab420 0.4.4
 
-[Leitor PDF e biblioteca de materiais](../portal/GANJALAB420-MATERIALS-PDF-VISUAL.md), usando o `aculta_pdf_viewer` e os kernels de imagem/galeria, com controle de acesso Group, fallback e testes de arquivo privado. Plano visual, sem mudar estados das fases funcionais nem renomear `aculta_lms`.
+[Leitor PDF e biblioteca de materiais](../portal/GANJALAB-MATERIALS-PDF-VISUAL.md), usando o `aculta_pdf_viewer` e os kernels de imagem/galeria, com controle de acesso Group, fallback e testes de arquivo privado. Plano visual, sem mudar estados das fases funcionais nem renomear `aculta_lms`.
 
 ## UX de acompanhamento de aprendizagem — G420-UX 0.5
 
-[Minha Jornada de Aprendizagem](../portal/GANJALAB420-LEARNING-JOURNEY-VISUAL.md) organiza progresso, status, próximas atividades e certificados em telas mobile-first usando fontes nativas LMS/Group e evitando dashboards duplicados. Planejamento visual apenas; preservar o nome técnico `aculta_lms` e os gates existentes.
+[Minha Jornada de Aprendizagem](../portal/GANJALAB-LEARNING-JOURNEY-VISUAL.md) organiza progresso, status, próximas atividades e certificados em telas mobile-first usando fontes nativas LMS/Group e evitando dashboards duplicados. Planejamento visual apenas; preservar o nome técnico `aculta_lms` e os gates existentes.
 
 ## GanjaLab420 — turmas e comunidade (UX 0.6)
 
-[Minhas Turmas e Comunidade](../portal/GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) especifica navegação pessoal, mural, discussões e participantes com acesso Group/Fórum contextual, reutilizando Messenger e User. Sem novo feed, membership, fórum ou entidade. Esta etapa é planejamento visual e não altera o status funcional do LMS.
+[Minhas Turmas e Comunidade](../portal/GANJALAB-CLASSES-COMMUNITY-VISUAL.md) especifica navegação pessoal, mural, discussões e participantes com acesso Group/Fórum contextual, reutilizando Messenger e User. Sem novo feed, membership, fórum ou entidade. Esta etapa é planejamento visual e não altera o status funcional do LMS.
 
 ## GanjaLab420 — certificados e histórico (UX 0.7)
 
-[Conquistas, Certificados e Histórico](../portal/GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) detalha interface de aluno para certificados oficiais, verificação pública, QR/PDF, histórico e eventuais conquistas reais. Não criar certificado, badge nem score paralelo; manter F0–F17 e `aculta_lms` sem alterações funcionais.
+[Conquistas, Certificados e Histórico](../portal/GANJALAB-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) detalha interface de aluno para certificados oficiais, verificação pública, QR/PDF, histórico e eventuais conquistas reais. Não criar certificado, badge nem score paralelo; manter F0–F17 e `aculta_lms` sem alterações funcionais.
 
 ## GanjaLab420 — Consolidação e Homologação Visual (UX 0.8)
 
-[Contrato visual transversal e gates](../portal/GANJALAB420-VISUAL-QUALITY-GATES.md) consolida interfaces de estudante, tokens ACULTA420, acessibilidade, mobile, H5P, PDF, privacidade A/B e testes no Runtime. É planejamento/documentação, sem alterar estados das fases F0–F17 ou o nome `aculta_lms`.
+[Contrato visual transversal e gates](../portal/GANJALAB-VISUAL-QUALITY-GATES.md) consolida interfaces de estudante, tokens ACULTA420, acessibilidade, mobile, H5P, PDF, privacidade A/B e testes no Runtime. É planejamento/documentação, sem alterar estados das fases F0–F17 ou o nome `aculta_lms`.

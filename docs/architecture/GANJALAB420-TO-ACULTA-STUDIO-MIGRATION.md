@@ -1,5 +1,13 @@
 # GanjaLab420 → ACULTA Studio — migração arquitetural
 
+> **Registro histórico.** Este documento preserva os nomes e caminhos vigentes
+> quando a migração LMS para o Studio foi implementada. Desde 2026-10-24, a
+> experiência editorial se chama ACULTA Studio Marley (`marley`) e a
+> experiência estudantil ACULTA Studio Ganjalab (`ganjalab`). A rota estudante
+> atual é `/studio/ganjalab`; `/studio/ganjalab` deixou de ser entrada editorial.
+> Para decisões e compatibilidade atuais, consulte
+> [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
+
 **2026-10-22 · Fase STUDIO 0.1-C-G420-A · Status:** primeira migração de entrypoint implementada, validação Runtime pendente.
 
 ## Inventário real (anterior à migração)

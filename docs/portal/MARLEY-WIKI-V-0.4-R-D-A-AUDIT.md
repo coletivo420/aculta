@@ -1,7 +1,7 @@
-# GanjaLab / Wiki420 — V-0.4-R, fase D-A: auditoria e contrato de integração
+# ACULTA Studio Marley / Wiki420 — V-0.4-R, fase D-A: auditoria e contrato de integração
 
 **Data:** 2026-10-22 · **Estado:** auditoria estática fundamentada nos arquivos da PR #297; nenhuma rota, permissão, tela de moderação ou teste Runtime implantados.
-**Fonte de design:** [V-0.4-D](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md).
+**Fonte de design:** [V-0.4-D](MARLEY-WIKI-MODERATION.md).
 
 **Atualização de implementação (Studio dev.5):** autoria com `create
 wiki_entry content` não abre mais a área editorial. `WikiTab::access()` admite
@@ -12,21 +12,21 @@ alteração não homologa Runtime ou visual.
 
 ## Descoberta central: NÃO criar outra aba Wiki
 
-A classe **`web/modules/custom/aculta_portal/modules/aculta_studio/src/Plugin/StudioTab/WikiTab.php` já existe** e registra a área `wiki`, peso 25, com seções:
+A classe **`web/modules/custom/aculta_portal/modules/aculta_studio/src/Plugin/MarleyTab/WikiTab.php` já existe** e registra a área `wiki`, peso 25, com seções:
 - `verbetes`: tabs `todos`, `rascunhos`, `em-revisao`, `publicados` com listing de Node `wiki_entry`/workflow `wiki_editorial`;
 - `revisoes`: `todas` com listing de revisão `wiki_entry`.
 
 A aba hoje é exposta quando existe bundle `wiki_entry` e a conta tem `edit any wiki_entry content` **OU** `create wiki_entry content`. Isso é apropriado para capacidade editorial genérica, **mas não autoriza por si só moderação**, pois `email_confirmed` pode criar verbetes sem publicar.
 
-**Decisão D-A:** manter a área Wiki e adicionar uma seção `moderacao` acessível somente mediante autorização real de revisão/publicação do backend Wiki; preservar Verbetes/Revisões para usuários que já as possam ver, respeitando granularidade. Não criar novo plugin StudioTab, rota `/wiki/moderacao` pública ou UI dentro de WE SATIVA.
+**Decisão D-A:** manter a área Wiki e adicionar uma seção `moderacao` acessível somente mediante autorização real de revisão/publicação do backend Wiki; preservar Verbetes/Revisões para usuários que já as possam ver, respeitando granularidade. Não criar novo plugin MarleyTab, rota `/wiki/moderacao` pública ou UI dentro de WE SATIVA.
 
 ## Contratos Studio observados
 
 | Arquivo | Comportamento real | Implicação |
 | --- | --- | --- |
 | `WikiTab.php` | Plugin existente, `isAvailable` verifica tipo de Node, `access()` combina `edit any` e `create`, `sections()` declara listings | filtrar/modular **seção de moderação separadamente**, não aplicar acesso da aba a todas seções |
-| `StudioPresenter.php` | esconde aba sem seção visível; seção se mantém com listing ou action autorizada | novo listing requer provider de query/access; adicionar item por si só não prova autorização |
-| `StudioController.php` | resolve links de área/seção/aba, retorna 404 para área fora do alcance e constrói root com cache contexts | revisar propagação de cache dos serviços de revisão e evitar listagem visível por `create` genérico |
+| `MarleyPresenter.php` | esconde aba sem seção visível; seção se mantém com listing ou action autorizada | novo listing requer provider de query/access; adicionar item por si só não prova autorização |
+| `MarleyController.php` | resolve links de área/seção/aba, retorna 404 para área fora do alcance e constrói root com cache contexts | revisar propagação de cache dos serviços de revisão e evitar listagem visível por `create` genérico |
 | `aculta_studio.routing.yml` | `/ganjalab`, `/{aba}`, `/{aba}/{secao}`, `/{aba}/{secao}/{sub}`, purpose `account`; aliases /studio | proposta `/ganjalab/wiki/moderacao/aguardando` é **destino planejado**, não rota nova; usa estrutura existente após implementação |
 | `js/studio-navigation.js` | AJAX drupal_ajax, pushState, popstate, aria-live, foco no heading, fallback à URL normal | manter enhancement progressivo; janela/modal não pode quebrar back/forward, teclado, erro e fallback |
 | `aculta_wiki.routing.yml` | home, busca, prévia e settings administrativo; **não há operação canônica de revisão Wiki específica** | antes da janela funcional, criar contrato/rotas Wiki autorizadas para conteúdo e POST, sem publicar um endpoint inseguro |
@@ -35,14 +35,14 @@ A aba hoje é exposta quando existe bundle `wiki_entry` e a conta tem `edit any 
 ## Contrato de ownership e camadas
 
 - **aculta_wiki**: define service/provider da fila, revision-base, acesso por entidade/revisão, transições oficiais, validação de concorrência, formulário CSRF, cache/invalidação e persistência de devolutiva (somente quando houver campo/contrato).
-- **aculta_studio**: usa a área Wiki e adiciona seção/aba de Moderação; mostra filtros e abre página/painel GanjaLab, sem recriar armazenamento, publicar diretamente ou substituir workflow.
+- **aculta_studio**: usa a área Wiki e adiciona seção/aba de Moderação; mostra filtros e abre página/painel ACULTA Studio Marley, sem recriar armazenamento, publicar diretamente ou substituir workflow.
 - **aculta_user**: política de primeiro verbete e email_confirmed; não guardar fila.
 - **aculta_messenger**: eventuais avisos de recebido/devolvido/publicado, via adapter idempotente, não caixa adicional.
 - **aculta420**: composição estritamente Core SDC/UI Patterns/UI Styles; shell multidomínio preservado.
 
 ## Especificação concreta da seção de moderação
 
-**Navegação conceitual**: GanjaLab → Wiki → Moderação → Aguardando. Não criar tab `moderacao` para qualquer `create wiki_entry content`; exigir capacidade editorial **real de transição** e acesso à fila do backend.
+**Navegação conceitual**: ACULTA Studio Marley → Wiki → Moderação → Aguardando. Não criar tab `moderacao` para qualquer `create wiki_entry content`; exigir capacidade editorial **real de transição** e acesso à fila do backend.
 
 **Fila:** somente estados `review` e propostas que já tenham provider seguro; campos título, tipo de envio, autor conforme privacidade, data oficial, revisão e ação `Analisar` autorizada. `Primeiro verbete` é rótulo calculado pela política User; não um estado novo. Paginação e filtros de consulta com acesso e cache, sem exportar rascunho de terceiros.
 
@@ -52,20 +52,20 @@ A aba hoje é exposta quando existe bundle `wiki_entry` e a conta tem `edit any 
 
 ## Gaps bloqueadores de implementação
 
-1. Distinguir **capacidade de criar conteúdo** de **capacidade de moderar** ao montar `WikiTab.sections()`; auditar `StudioListingBuilder` para alcance de revisions; nenhuma fila administrativa deve aparecer a contribuinte somente email_confirmed.
+1. Distinguir **capacidade de criar conteúdo** de **capacidade de moderar** ao montar `WikiTab.sections()`; auditar `MarleyListingBuilder` para alcance de revisions; nenhuma fila administrativa deve aparecer a contribuinte somente email_confirmed.
 2. Mapear e/ou oferecer service de lista autorizada em `aculta_wiki` com `AccessResultInterface` e cache metadata. Não usar apenas `listing` do Studio como gate de segurança.
 3. Definir rota/contrato de ação para revision específica e POST seguro no domínio de conta, encaminhando ao módulo Wiki sem bypass, sem revelar conteúdo por query.
 4. Mapear campos de justificativa e histórico disponíveis antes de prometer notas de devolução persistidas.
 5. Definir como propostas para verbetes de terceiros serão armazenadas/moderadas. Não tratar `edit own` como `edit any`.
 6. Garantir que a instalação/habilitação real de `aculta_wiki` e do Studio estejam em conformidade com as configs antes de habilitar links.
-7. Revisar acesso por Domain/purpose account (GanjaLab) versus wiki (conteúdo), cache contexts user/roles/permissions e invalidação por revisão.
+7. Revisar acesso por Domain/purpose account (ACULTA Studio Marley) versus wiki (conteúdo), cache contexts user/roles/permissions e invalidação por revisão.
 
 ## Plano de execução granular
 
 | Marco | Atividade | Critério de saída |
 | --- | --- | --- |
-| **D-A.1** | inventário WikiTab/StudioPresenter/controller/rotas/JS e ownership | **DOCUMENTADO nesta fase** |
-| **D-A.2** | examinar StudioListingBuilder e caches/grants com testes de caracterização | pendente |
+| **D-A.1** | inventário WikiTab/MarleyPresenter/controller/rotas/JS e ownership | **DOCUMENTADO nesta fase** |
+| **D-A.2** | examinar MarleyListingBuilder e caches/grants com testes de caracterização | pendente |
 | **D-B** | stories visual SDC de fila/janela em 320–1440px, sem criar backend fictício | pendente |
 | **D-C** | integrar seção Wiki/Moderação à aba existente quando provider de acesso estiver pronto | pendente |
 | **D-D** | formulário de transições/revisões delegadas ao aculta_wiki e prevenção de corrida | pendente |

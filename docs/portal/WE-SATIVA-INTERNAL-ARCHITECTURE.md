@@ -141,7 +141,7 @@ Todas as contas com **e-mail confirmado** poderão contribuir pelo WE SATIVA, ob
 
 ## Retificação de experiência editorial (V-0.4-D)
 
-A seção de revisão editorial e sua fila são **áreas do GanjaLab**, por meio de StudioTab e services do `aculta_wiki`, não da navegação WE SATIVA. O WE SATIVA tem somente `Meu trabalho` (contribuições próprias, respostas editoriais e status), além de criação/edição autorizada. [Janela de moderação planejada no GanjaLab](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md). Esta decisão prevalece sobre tabelas anteriores que associavam Revisão à UI do colaborador.
+A seção de revisão editorial e sua fila são **áreas do GanjaLab**, por meio de StudioTab e services do `aculta_wiki`, não da navegação WE SATIVA. O WE SATIVA tem somente `Meu trabalho` (contribuições próprias, respostas editoriais e status), além de criação/edição autorizada. [Janela de moderação planejada no GanjaLab](MARLEY-WIKI-MODERATION.md). Esta decisão prevalece sobre tabelas anteriores que associavam Revisão à UI do colaborador.
 
 ## Decisão normativa: ACULTA Studio (2026-10-22)
 

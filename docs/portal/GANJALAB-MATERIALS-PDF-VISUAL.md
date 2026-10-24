@@ -1,6 +1,6 @@
-# GanjaLab420 — Leitor PDF e Biblioteca de Materiais
+# ACULTA Studio Ganjalab — Leitor PDF e Biblioteca de Materiais
 **Versão visual:** G420-UX 0.4.4-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
-**Referências:** [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md) · [Modelos de aula](GANJALAB420-LESSON-MODELS-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md) · [Contratos PDF](PDF-VIEWER-INTEGRATION.md).
+**Referências:** [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Modelos de aula](GANJALAB-LESSON-MODELS-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md) · [Contratos PDF](PDF-VIEWER-INTEGRATION.md).
 
 ## Missão visual
 Permitir que estudantes **leiam e consultem recursos de aula ou curso no celular**, retomem a aula e encontrem materiais sem navegar por gerenciadores de arquivos. Manter `aculta_lms` e os kernels atuais; PDF é servido por `aculta_pdf_viewer`, documentos por Media/File (inclusive Group/private), imagens por `aculta_image`, Gallery como subkernel compartilhado. Nenhuma biblioteca de arquivos ou upload paralelo.
@@ -131,7 +131,7 @@ Não renderizar controles de PDF fictícios pelo Studio: o visualizador real ger
 
 **Wireframe compacto:**
 ```text
-GanjaLab420 / Curso / Biblioteca
+ACULTA Studio Ganjalab / Curso / Biblioteca
 [Por aula] [Por tipo]
 POR AULA: Fundamentos → Aula 1 → Guia.pdf · Infográfico
 POR TIPO: [Todos] [PDF] [Vídeo] [Galeria] [H5P]
@@ -140,6 +140,6 @@ POR TIPO: [Todos] [PDF] [Vídeo] [Galeria] [H5P]
 
 Uma Media referenciada em diversas aulas continua **uma Media/File**, com associações curriculares independentes e visíveis. A biblioteca pode agregá-la em uma entrada e indicar aulas de origem; não prometer remoção global ao desvincular uma aula. Se o provider não oferecer relações contextuais suficientes, registrar lacuna técnica em 0.4.4-A antes de criar novos campos. **H5P deve abrir o player/atividade autorizada, nunca ser tratado como download de documento.**
 
-O Course Builder do GanjaLab poderá futuramente oferecer **Adicionar material existente** consumindo os mesmos serviços, com permissão de editor e validação de Group. Reusar um recurso não altera automaticamente sua publicação ou visibilidade. Retornar do leitor PDF ou outro recurso à aula de origem, restaurando contexto, foco e histórico; cuidar de formulários não enviados.
+O Course Builder do ACULTA Studio Marley poderá futuramente oferecer **Adicionar material existente** consumindo os mesmos serviços, com permissão de editor e validação de Group. Reusar um recurso não altera automaticamente sua publicação ou visibilidade. Retornar do leitor PDF ou outro recurso à aula de origem, restaurando contexto, foco e histórico; cuidar de formulários não enviados.
 
 **Aceite:** busca/filtros com autorização antes de contagem/paginação; deduplicação de File/Media; isolamento de materiais exclusivos por turma; preservação de cache contexts/tags por usuário/Group; leitor PDF único; mobile 320px, teclado e sem JS. Este refinamento permanece **somente documental**.

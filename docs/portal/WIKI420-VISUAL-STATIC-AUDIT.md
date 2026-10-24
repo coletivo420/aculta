@@ -12,7 +12,7 @@
 | `components/patterns/wiki-entry/wiki-entry.css` | layout de leitura 78rem, coluna lateral, tipografia/links/foco por tokens | evoluir a partir do CSS presente; medir 320/390/768px, zoom/reflow, light/dark e TOC antes de refatorar |
 | `css/components/wiki.css` | personaliza Domain Header para a Wiki, pesquisa, preview, listas e home com tokens | melhorar visual do header existente, sem substituí-lo; preservar Institution Bar |
 | `docs/portal/WIKI.md` | descreve preview sob 3 caracteres/debounce, no-JS GET, ACL, sem autoria pública; discussão futura | manter fonte de verdade; não publicar autoria ou simular discussão ativa |
-| `docs/portal/GANJALAB420-DASHBOARD-VISUAL.md` e `GANJALAB420-VISUAL-QUALITY-GATES.md` | percurso mobile-first, componentes neutros, estados verificáveis e gates por experiência | transportar método de especificação/gates, não o layout pedagógico |
+| `docs/portal/GANJALAB-DASHBOARD-VISUAL.md` e `GANJALAB-VISUAL-QUALITY-GATES.md` | percurso mobile-first, componentes neutros, estados verificáveis e gates por experiência | transportar método de especificação/gates, não o layout pedagógico |
 
 ## Lacunas antes da implementação
 

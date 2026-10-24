@@ -1,13 +1,13 @@
-# GanjaLab420 — Modelos de aula: leitura, vídeo e H5P
+# ACULTA Studio Ganjalab — Modelos de aula: leitura, vídeo e H5P
 **Versão:** G420-UX 0.4.1-dev.1 · **Data:** 2026-10-22 · **Estado:** contrato visual; sem implementação.
-**Ver:** [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
+**Ver:** [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Decisão de família de modelos
 
 Cinco variantes convivem sob o **mesmo shell de Sala de Aprendizagem**: **leitura editorial**, **vídeo/multimídia**, **atividade de avaliação**, **documentos/PDF** e **H5P interativo**. H5P é um modelo próprio de experiência visual, mas **não presumir novo bundle ou storage**; o conteúdo segue pertencendo à integração existente `aculta_lms_h5p`/Drupal LMS. O shell é ACULTA420; dados, ações e permissões continuam nos donos.
 
 ## Modelo 1 — aula de leitura (mobile-first)
-Aula de texto deve parecer uma boa matéria editorial, sem controles administrativos. Hierarquia: voltar ao curso; módulo e posição real; título; duração **somente se houver metadado real**; corpo renderizado pelo Drupal (CKEditor 5 apenas na autoria GanjaLab); elementos media responsivos; recursos complementares; discussão contextual; ação de conclusão **se suportada** e navegação anterior/próxima **permitida**.
+Aula de texto deve parecer uma boa matéria editorial, sem controles administrativos. Hierarquia: voltar ao curso; módulo e posição real; título; duração **somente se houver metadado real**; corpo renderizado pelo Drupal (CKEditor 5 apenas na autoria ACULTA Studio Marley); elementos media responsivos; recursos complementares; discussão contextual; ação de conclusão **se suportada** e navegação anterior/próxima **permitida**.
 
 ```text
 ‹ Meu curso                   [Conteúdo do curso ▾]
@@ -78,7 +78,7 @@ Testar 320/360/390/768/1024/1440px, reflow/zoom, teclado/touch, leitor de tela, 
 ## Refinamento de wireframes — leitura, vídeo e H5P (2026-10-22)
 
 ### Leitura: composição detalhada
-**Mobile:** topo compacto “Meu curso”/índice, trilha Módulo/Aula, título editorial de duas ou mais linhas, imagem de abertura opcional, corpo de texto em coluna única, citações e referências, bloco de materiais autorizado e anterior/próxima. Não permitir que cabeçalho sticky ou toolbar encubra a leitura. **Desktop:** índice à esquerda, conteúdo de largura tipográfica controlada, mídias responsivas dentro do reader e materiais contextuais. CKEditor 5 é editor de autoria no GanjaLab, nunca aparece como editor para o estudante.
+**Mobile:** topo compacto “Meu curso”/índice, trilha Módulo/Aula, título editorial de duas ou mais linhas, imagem de abertura opcional, corpo de texto em coluna única, citações e referências, bloco de materiais autorizado e anterior/próxima. Não permitir que cabeçalho sticky ou toolbar encubra a leitura. **Desktop:** índice à esquerda, conteúdo de largura tipográfica controlada, mídias responsivas dentro do reader e materiais contextuais. CKEditor 5 é editor de autoria no ACULTA Studio Marley, nunca aparece como editor para o estudante.
 
 ### Vídeo: composição detalhada
 Player central responsivo (16:9 somente quando combinar com a mídia), sem autoplay, seguido de resumo, transcrição/legendas se fornecidas, materiais complementares, discussão contextual e navegação. Oferecer acesso a material textual sem obrigar reprodução e não derivar conclusão apenas de iniciar ou concluir playback. Mídias privadas devem preservar autorização e política do provider.

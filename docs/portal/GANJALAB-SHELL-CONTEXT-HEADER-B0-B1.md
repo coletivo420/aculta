@@ -1,14 +1,14 @@
-# ACULTA420 / GanjaLab420 — 0.8-B0/B1: Auditoria do shell e cabeçalho contextual
+# ACULTA420 / ACULTA Studio Ganjalab — 0.8-B0/B1: Auditoria do shell e cabeçalho contextual
 
 **Data:** 2026-10-22 · **Estado:** planejamento, sem implementação.
-**Base:** [shell multidomínio](../../web/themes/custom/aculta420/docs/shell.md) · [fase 0.8-B](GANJALAB420-SHARED-UI-PLAN.md).
+**Base:** [shell multidomínio](../../web/themes/custom/aculta420/docs/shell.md) · [fase 0.8-B](GANJALAB-SHARED-UI-PLAN.md).
 
 ## Decisão obrigatória
-A **Institution Bar + Domain Header** existente é obrigatória no portal inteiro. A fase B0/B1 **não a redesenha, não a substitui, não cria outra global**. O padrão `context-header` é uma região interna da página, abaixo do shell persistente, e será compartilhado com GanjaLab420, Revista, Wiki, Fórum, GanjaLab e Minha Conta. Modernizações do shell global podem ser propostas em mudanças separadas e compatíveis com o contrato atual.
+A **Institution Bar + Domain Header** existente é obrigatória no portal inteiro. A fase B0/B1 **não a redesenha, não a substitui, não cria outra global**. O padrão `context-header` é uma região interna da página, abaixo do shell persistente, e será compartilhado com ACULTA Studio Ganjalab, Revista, Wiki, Fórum, ACULTA Studio Marley e Minha Conta. Modernizações do shell global podem ser propostas em mudanças separadas e compatíveis com o contrato atual.
 
 ## B0 — Inventário de consumidores reais (primeiro)
 1. Enumerar regiões Twig, preprocess, builders e SDC do cabeçalho global, navegação de purpose e breadcrumb de cada rota; verificar precedência Portal → DomainPurposeManager → ACULTA420.
-2. Amostrar ao menos: dashboard GanjaLab420, Sala, GanjaLab, Revista, Wiki, Fórum, Minha Conta e Loja; verificar purpose e acesso reais. Não pressupor rota/instalação pronta.
+2. Amostrar ao menos: dashboard ACULTA Studio Ganjalab, Sala, ACULTA Studio Marley, Revista, Wiki, Fórum, Minha Conta e Loja; verificar purpose e acesso reais. Não pressupor rota/instalação pronta.
 3. Registrar em matriz: rota/purpose; header global efetivamente renderizado; título/subtítulo/breadcrumb internos; slots; owner; CSS e JS; dados/autorização/cache; padrão responsivo; dark/light.
 4. Inspecionar se Core breadcrumb, page title, Bootstrap/nav, `patterns/content-section` ou outro componente existente já cobre `context-header`; só abrir proposta de novo SDC após prova de lacuna.
 5. Conferir duplicação de H1, cabeçalhos sticky sobrepostos, overflow 320px, foco, estado de menus móveis e conteúdo por AJAX; localizar pontos de melhoria visual do shell **sem mudar sua identidade**.
@@ -32,7 +32,7 @@ O header interno recebe `breadcrumb`, `title`, `subtitle`, `back_link`, `actions
 ## Critérios para eventual SDC novo
 - Primeiro verificar se `content-section`/breadcrumb e renderização de título nativas bastam.
 - Se faltar contrato, criar SDC genérico `aculta420:context-header` com props tipadas, slots renderizáveis e CSS tokenizado.
-- Adotar pelo menos dois consumidores **reais**: um GanjaLab420 e outro Wiki/Revista/Fórum/Conta; não bastam usos hipotéticos.
+- Adotar pelo menos dois consumidores **reais**: um ACULTA Studio Ganjalab e outro Wiki/Revista/Fórum/Conta; não bastam usos hipotéticos.
 - Criar story UI Patterns, documentação de props e estados, testes 320/390/768/1280px, light/dark, teclado, zoom, no-JS, regressão do cabeçalho multidomínio.
 - Cada entrega funcional em commit separado, preservando alterações concorrentes da PR.
 

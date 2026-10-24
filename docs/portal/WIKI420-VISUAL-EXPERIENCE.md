@@ -1,7 +1,7 @@
 # Wiki420 — Experiência visual enciclopédica (plano)
 
 **Versão UX:** W420-UX 0.1.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, sem implementação nem aprovação Runtime.
-**Referências:** [GanjaLab — consolidação visual](GANJALAB420-VISUAL-QUALITY-GATES.md) · [Wiki atual](WIKI.md) · [roadmap transversal do tema](../../web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md).
+**Referências:** [GanjaLab — consolidação visual](GANJALAB-VISUAL-QUALITY-GATES.md) · [Wiki atual](WIKI.md) · [roadmap transversal do tema](../../web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md).
 
 ## Visão de produto
 Uma enciclopédia colaborativa, legível e consultável, inspirada na densidade informativa e nos padrões de navegação da Wikipédia, mas visualmente pertencente ao **ACULTA420**. Mobile-first, texto como protagonista, informação verificável, baixa distração, acesso a categorias, busca, referências, histórico e discussão quando essas funções existirem de fato. Não confundir enciclopédia pública com **Studio** de edição (área de autoria do subkernel) nem com Fórum público.

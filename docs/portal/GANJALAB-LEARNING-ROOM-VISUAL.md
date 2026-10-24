@@ -1,12 +1,12 @@
-# GanjaLab420 — Sala de Aprendizagem (Learning Room)
+# ACULTA Studio Ganjalab — Sala de Aprendizagem (Learning Room)
 **Versão visual:** G420-UX 0.4.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
-**Relacionados:** [Jornada GanjaLab420](GANJALAB420-LEARNING-UX.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md) · [Integração LMS](LMS-INTEGRATION-CONTRACTS.md) · [Identidade](GANJALAB-BRANDING.md).
+**Relacionados:** [Jornada ACULTA Studio Ganjalab](GANJALAB-LEARNING-UX.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md) · [Integração LMS](LMS-INTEGRATION-CONTRACTS.md) · [Identidade](ACULTA-STUDIO-IDENTITY.md).
 
 ## Propósito
-Criar um espaço mobile-first para estudar, ler, assistir, fazer atividades, consultar materiais e participar de conversas contextuais. Prioridade: **continuar de onde parou** e **completar a tarefa atual**, sem aparência de administração. O nome técnico **`aculta_lms` fica preservado**; Drupal LMS, Group e seus providers são fontes canônicas de matrículas, progresso, atividades, prazos, notas e autorizações. A experiência pública é GanjaLab420; ACULTA420 detém o visual. Não implementar outro LMS, módulo, gradebook ou storage.
+Criar um espaço mobile-first para estudar, ler, assistir, fazer atividades, consultar materiais e participar de conversas contextuais. Prioridade: **continuar de onde parou** e **completar a tarefa atual**, sem aparência de administração. O nome técnico **`aculta_lms` fica preservado**; Drupal LMS, Group e seus providers são fontes canônicas de matrículas, progresso, atividades, prazos, notas e autorizações. A experiência pública é ACULTA Studio Ganjalab; ACULTA420 detém o visual. Não implementar outro LMS, módulo, gradebook ou storage.
 
 ## Modelo de navegação
-Dashboard `/ganjalab420` → Meu curso autorizado → Sala (atividade/aula permitida) → anterior/próxima **permitida** → retorno ao curso. URLs reais e acessíveis sem JS vêm das rotas/providers nativos; não inventar neste planejamento novos paths para aula.
+Dashboard `/studio/ganjalab` → Meu curso autorizado → Sala (atividade/aula permitida) → anterior/próxima **permitida** → retorno ao curso. URLs reais e acessíveis sem JS vêm das rotas/providers nativos; não inventar neste planejamento novos paths para aula.
 
 - **Mobile 320–767px:** cabeçalho curto com voltar ao curso, título truncado de forma acessível; progresso real contextual; botão “Conteúdo do curso” revela índice (accordion/offcanvas acessível); aula em **uma coluna**; guias contextuais “Aula”, “Materiais” e “Discussão” quando há conteúdo; rodapé com anterior/próxima, sem botão falso de conclusão.
 - **Tablet 768–1023px:** índice recolhível, reader amplo, ações ao alcance.
@@ -16,7 +16,7 @@ Dashboard `/ganjalab420` → Meu curso autorizado → Sala (atividade/aula permi
 ### Wireframe mobile
 ```text
 ‹ Meu curso                      [Mais ⋯]
-GanjaLab420 / Curso: Redução de danos
+ACULTA Studio Ganjalab / Curso: Redução de danos
 Progresso real do curso (quando disponível)
 [Conteúdo do curso ▾]
 Módulo 1 · Aula 2 de 8
@@ -28,7 +28,7 @@ História e contexto
 
 ### Wireframe desktop
 ```text
-GanjaLab420 / Meus cursos / Curso
+ACULTA Studio Ganjalab / Meus cursos / Curso
 ┌────────────────────────────┬───────────────────────────────────┐
 │ Índice curricular          │ Módulo 1 · Aula 2                │
 │ ▾ Módulo 1                 │ Título: História e contexto      │
@@ -88,12 +88,12 @@ Componentes *candidatos* no ACULTA420: `learning-room-shell`, `learning-course-o
 
 ## Cinco modelos de conteúdo — evolução 0.4.1
 
-O contrato de [modelos de aula (leitura, vídeo e H5P)](GANJALAB420-LESSON-MODELS-VISUAL.md) define cinco variantes do mesmo shell: **leitura, vídeo, atividade, documento/PDF e H5P interativo**. H5P tem exigências próprias de escala no mobile, teclado, tentativas, CSP, arquivos privados, fallback e homologação; não pode ser confundido com um embed de vídeo. O módulo interno continua `aculta_lms`, a integração H5P continua `aculta_lms_h5p`.
+O contrato de [modelos de aula (leitura, vídeo e H5P)](GANJALAB-LESSON-MODELS-VISUAL.md) define cinco variantes do mesmo shell: **leitura, vídeo, atividade, documento/PDF e H5P interativo**. H5P tem exigências próprias de escala no mobile, teclado, tentativas, CSP, arquivos privados, fallback e homologação; não pode ser confundido com um embed de vídeo. O módulo interno continua `aculta_lms`, a integração H5P continua `aculta_lms_h5p`.
 
 ## Planejamento de atividades e avaliações — G420-UX 0.4.3
 
-[Atividades e Avaliações](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md) apresenta questionários, envios de documentos, H5P avaliativo, feedback e estados reais do LMS, preservando Form API, notas, tentativas e Group. A experiência permanece dentro do shell compartilhado da Sala.
+[Atividades e Avaliações](GANJALAB-ACTIVITIES-ASSESSMENTS-VISUAL.md) apresenta questionários, envios de documentos, H5P avaliativo, feedback e estados reais do LMS, preservando Form API, notas, tentativas e Group. A experiência permanece dentro do shell compartilhado da Sala.
 
 ## Materiais e PDF — fase G420-UX 0.4.4
 
-A [especificação de leitor PDF e biblioteca de materiais](GANJALAB420-MATERIALS-PDF-VISUAL.md) detalha recursos contextuais da aula, acervo do curso e leitor responsivo usando `aculta_pdf_viewer`/Media/Group sem armazenamento paralelo. Planejamento apenas.
+A [especificação de leitor PDF e biblioteca de materiais](GANJALAB-MATERIALS-PDF-VISUAL.md) detalha recursos contextuais da aula, acervo do curso e leitor responsivo usando `aculta_pdf_viewer`/Media/Group sem armazenamento paralelo. Planejamento apenas.

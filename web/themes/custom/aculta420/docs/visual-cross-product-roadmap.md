@@ -6,7 +6,7 @@
 **Preservar Institution Bar + Domain Header multidomínio existentes em TODAS as áreas.** A evolução visual pode aperfeiçoar responsividade, contraste, espaçamento, navegação mobile e light/dark, mas não substitui, oculta ou duplica o shell. O futuro Context Header é **subcabeçalho de página** e não um cabeçalho global. Domain/purpose, URLs, dados, ACL e cache ficam no Portal/providers; tema somente apresenta.
 
 ## Transferência formal de escopo
-O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../../docs/portal/GANJALAB420-VISUAL-QUALITY-GATES.md), mas **componentes, tokens, CSS, histórias e padrões visuais compartilhados são backlog do TEMA**. A integração funcional por módulo permanece em suas documentações próprias. O tema não cria progressão LMS, certificados, envio de respostas, operações H5P, notas ou PDF.js paralelo.
+O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../../docs/portal/GANJALAB-VISUAL-QUALITY-GATES.md), mas **componentes, tokens, CSS, histórias e padrões visuais compartilhados são backlog do TEMA**. A integração funcional por módulo permanece em suas documentações próprias. O tema não cria progressão LMS, certificados, envio de respostas, operações H5P, notas ou PDF.js paralelo.
 
 ## Inventário / escolhas atuais
 - Confirmado na árvore do tema: `patterns/card` com slots e variantes; `content/course_card`; `patterns/rail`, `content-grid`, `content-section`, `figure`, `quote`; `content/author-card`; componentes Messenger, avisos, QR e Fórum.
@@ -50,9 +50,9 @@ O planejamento inicial nasceu na UX do estudante [GanjaLab420 0.8](../../../../.
 ## Links
 - [Shell multidomínio](shell.md)
 - [Arquitetura](architecture.md) · [Componentes](components.md) · [Catálogo de SDCs](component-catalog.md)
-- [Auditoria cruzada](../../../../../docs/portal/GANJALAB420-CROSS-VISUAL-AUDIT.md)
-- [Cabeçalho e navegação 0.8-B](../../../../../docs/portal/GANJALAB420-SHARED-UI-PLAN.md)
-- [Inventário B0/B1](../../../../../docs/portal/GANJALAB420-SHELL-CONTEXT-HEADER-B0-B1.md)
+- [Auditoria cruzada](../../../../../docs/portal/GANJALAB-CROSS-VISUAL-AUDIT.md)
+- [Cabeçalho e navegação 0.8-B](../../../../../docs/portal/GANJALAB-SHARED-UI-PLAN.md)
+- [Inventário B0/B1](../../../../../docs/portal/GANJALAB-SHELL-CONTEXT-HEADER-B0-B1.md)
 
 ## Decisão de implementação visual — ferramentas UI Suite (2026-10-22)
 
@@ -229,15 +229,15 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../docs/architecture/ACULTA-X
 
 ## V-0.4-D — divisão visual WE SATIVA x GanjaLab
 
-[Janela de moderação Wiki no GanjaLab](../../../../../docs/portal/WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md): visualização de fila, comparação e aprovação fica em Studio. WE SATIVA mantém escrita e acompanhamento, sem botões de publicação para colaborador. SDC/UI Suite rege ambas as superfícies, com mobile full-screen na revisão e desktop comparativo, nenhum cabeçalho global duplicado. Contratos entre Studio/Wiki definidos antes de componentizar.
+[Janela de moderação Wiki no GanjaLab](../../../../../docs/portal/MARLEY-WIKI-MODERATION.md): visualização de fila, comparação e aprovação fica em Studio. WE SATIVA mantém escrita e acompanhamento, sem botões de publicação para colaborador. SDC/UI Suite rege ambas as superfícies, com mobile full-screen na revisão e desktop comparativo, nenhum cabeçalho global duplicado. Contratos entre Studio/Wiki definidos antes de componentizar.
 
 ## V-0.4-R / GanjaLab D-A — auditoria do código existente
 
-[Inventário e contrato da janela Wiki](../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
+[Inventário e contrato da janela Wiki](../../../../../docs/portal/MARLEY-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
 
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 
-[Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../docs/portal/GANJALAB-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
+[Auditoria de StudioListingBuilder e especificação dos componentes](../../../../../docs/portal/MARLEY-WIKI-D-A2-D-B-AUDIT-VISUAL-CONTRACT.md). Achados prioritários: cache de listagens por usuário/grants, consulta auxiliar de moderation_state com accessCheck(FALSE), necessidade de autorização explícita por revisão, acesso separado para aba Moderação e paginação. **Bloquear integração da fila até testes de caracterização e provider Wiki seguro**. D-B prevê cards mobile 320px, comparador empilhado no celular e paralelo no desktop, SDC/UI Suite, shell multidomínio e fallback HTTP. Não declarar Runtime PASS.
 
 ## D-A.2-T — progresso e próximos gates
 

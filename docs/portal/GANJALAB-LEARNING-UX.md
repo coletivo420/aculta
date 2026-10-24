@@ -1,11 +1,11 @@
-# GanjaLab420 — experiência do estudante e participante
+# ACULTA Studio Ganjalab — experiência do estudante e participante
 
 **Versão:** 0.1.0-dev.1 · **Estado:** documentação inicial de produto/UX; não é um novo módulo nem uma implementação funcional. **Data:** 2026-10-22.
 
 ## Identidade e divisão de responsabilidades
 
-- **GanjaLab**: experiência pública de criação, edição, autoria, educação e moderação, executada tecnicamente pelo submódulo `aculta_studio` e pelos providers funcionais; acesso por permissões atuais.
-- **GanjaLab420**: experiência de **usuário/estudante** para consumir cursos, acompanhar atividades, turmas, materiais, evolução e certificados. É uma identidade da experiência existente no portal/conta e LMS, **não** um segundo LMS, sistema de login, módulo, domínio, banco de dados ou conjunto de roles.
+- **ACULTA Studio Marley**: experiência pública de criação, edição, autoria, educação e moderação, executada tecnicamente pelo submódulo `aculta_studio` e pelos providers funcionais; acesso por permissões atuais.
+- **ACULTA Studio Ganjalab**: experiência de **usuário/estudante** para consumir cursos, acompanhar atividades, turmas, materiais, evolução e certificados. É uma identidade da experiência existente no portal/conta e LMS, **não** um segundo LMS, sistema de login, módulo, domínio, banco de dados ou conjunto de roles.
 - Uma pessoa pode utilizar ambos com a mesma conta: estudante em um curso e docente/criadora noutro. A escolha da interface é dada pela tarefa e acesso real, jamais por uma separação rígida de pessoas/roles.
 - **ACULTA420** continua dono de toda a apresentação/tokens/SDC, independente da identidade pública. Curso/turma/participação são responsabilidade de Group e Drupal LMS; `aculta_lms` integra; `aculta_user`, `aculta_messenger`, `aculta_pdf_viewer`, `aculta_image`, `aculta_forum`, `aculta_gallery` e `aculta_game` são serviços compartilhados nas suas fronteiras atuais.
 
@@ -15,7 +15,7 @@
 
 ## Mapa inicial das telas
 
-| Superfície GanjaLab420 | Objetivo | Fonte/limite |
+| Superfície ACULTA Studio Ganjalab | Objetivo | Fonte/limite |
 | --- | --- | --- |
 | Minha aprendizagem | cursos em que a pessoa tem matrícula/acesso educacional; “Continuar aprendendo” | LMS/Group membership e access |
 | Meu curso | capa, descrição, programa, próxima aula e progresso **real** | LMS/Group, sem escore paralelo |
@@ -32,10 +32,10 @@ O catálogo público de cursos permanece um fluxo separado de descoberta, enquan
 
 ## Dashboard mobile first
 
-Ordem de informação: (1) identidade contextual **GanjaLab420 / Minha aprendizagem**; (2) cartão “Continuar aprendendo” quando o LMS fornecer último item permitido; (3) pendências de ação e prazo do usuário (somente dados reais); (4) Meus cursos em cartões; (5) minhas turmas/avisos; (6) certificados e histórico quando suportados.
+Ordem de informação: (1) identidade contextual **ACULTA Studio Ganjalab / Minha aprendizagem**; (2) cartão “Continuar aprendendo” quando o LMS fornecer último item permitido; (3) pendências de ação e prazo do usuário (somente dados reais); (4) Meus cursos em cartões; (5) minhas turmas/avisos; (6) certificados e histórico quando suportados.
 
 ```text
-ACULTA  /  GanjaLab420                        [Conta]
+ACULTA  /  ACULTA Studio Ganjalab                        [Conta]
 Minha aprendizagem
 Continue de onde parou
 ┌─────────────────────────────────────────────┐
@@ -63,11 +63,11 @@ Cabeçalho leve com breadcrumb “Minha aprendizagem / Curso / Aula”, título 
 - Perda de acesso à turma revoga acesso aos arquivos e discussões conforme Group/Media; revalidar em cada requisição.
 - `user`, memberships, domain purpose, Group, route e cache tags específicos devem impedir vazamento cruzado. Nenhum analytics, certificados, armazenamento de mensagens ou perfil duplicado.
 
-## Conexões com GanjaLab
+## Conexões com ACULTA Studio Marley
 
 Um mesmo curso pode aparecer de modo diferente:
-- **GanjaLab / Course Builder:** “Editar curso”, currículo, turmas e avaliações autorizadas para criadores.
-- **GanjaLab420:** “Continuar aula”, materiais, atividades e resultados próprios para estudantes.
+- **ACULTA Studio Marley / Course Builder:** “Editar curso”, currículo, turmas e avaliações autorizadas para criadores.
+- **ACULTA Studio Ganjalab:** “Continuar aula”, materiais, atividades e resultados próprios para estudantes.
 A alternância, quando permitida, deve ser explícita e não trocar o contexto de estudante por gestão silenciosamente; links dirigem a rotas reais do dono. Ambos compartilham conteúdo e conta, jamais tabelas de cópia.
 
 ## Componentes visuais propostos
@@ -93,46 +93,46 @@ Modos claro/escuro compartilham estrutura; tokens do ACULTA420 determinam superf
 
 ## Regra de transição de marca
 
-Nome público da experiência: **GanjaLab420**. Nesta fase manter URLs, machine names, serviços, storage, rotas, menu links e nomenclatura interna existentes, sem criar `ganjalab420` como módulo. Antes de aplicar rótulos ao Runtime, inventariar blocos e menus consumidores para não promover mudança generalizada de conta. Referência à interface de criação: [GanjaLab](GANJALAB-BRANDING.md).
+Nome público vigente: **ACULTA Studio Ganjalab**, ID `ganjalab`. A rota canônica é `/studio/ganjalab`; os aliases seguros estão no [contrato de identidade](ACULTA-STUDIO-IDENTITY.md). Referência à experiência editorial: ACULTA Studio Marley. O módulo `aculta_studio` continua sendo a plataforma compartilhada.
 
 ## Rota inicial da experiência
 
-O dashboard de estudante canônico passa a `/ganjalab420` no domínio de conta, usando o mesmo controller e route name de `/minha-aprendizagem`; este último permanece alias temporário. Nenhuma outra rota de sala, avaliação, matrícula ou certificado foi renomeada nesta fase. Ver [contrato de marca](GANJALAB-BRANDING.md).
+O dashboard canônico é `/studio/ganjalab`, usando `aculta_lms.student_dashboard`; `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` são aliases GET/HEAD temporários. Nenhuma rota de sala, avaliação, matrícula ou certificado do LMS foi renomeada. Ver [contrato de identidade](ACULTA-STUDIO-IDENTITY.md).
 
 ## Design visual detalhado — 2026-10-22
 
-- [Dashboard, cursos, atividades e conquistas](GANJALAB420-DASHBOARD-VISUAL.md): G420-UX 0.2.0-dev.1; mobile first, continuidade de estudos e progresso real.
-- [Sala de Aprendizagem](GANJALAB420-LEARNING-ROOM-VISUAL.md): planejamento G420-UX 0.4.0-dev.1; índice curricular, leitor multimídia, atividades, PDF, H5P, Fórum contextual e critérios de acesso.
+- [Dashboard, cursos, atividades e conquistas](GANJALAB-DASHBOARD-VISUAL.md): G420-UX 0.2.0-dev.1; mobile first, continuidade de estudos e progresso real.
+- [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md): planejamento G420-UX 0.4.0-dev.1; índice curricular, leitor multimídia, atividades, PDF, H5P, Fórum contextual e critérios de acesso.
 - **Decisão técnica definitiva neste planejamento:** preservar o nome interno `aculta_lms`; descartar propostas de renomear para `aculta_escola` ou `aculta_ganjalab_lms`. Essas entregas são somente documentação.
 
 ## Cinco formatos de sala
 
-Incluir explicitamente o **H5P como quinto modelo visual**, além de leitura, vídeo, atividades e PDF. Ver [Modelos de aula do GanjaLab420](GANJALAB420-LESSON-MODELS-VISUAL.md). A implementação permanece condicional aos gates de integração, segurança e acessibilidade do H5P. Nenhuma renomeação técnica de LMS está autorizada.
+Incluir explicitamente o **H5P como quinto modelo visual**, além de leitura, vídeo, atividades e PDF. Ver [Modelos de aula do ACULTA Studio Ganjalab](GANJALAB-LESSON-MODELS-VISUAL.md). A implementação permanece condicional aos gates de integração, segurança e acessibilidade do H5P. Nenhuma renomeação técnica de LMS está autorizada.
 
 ## Atividades e avaliações — especificação dedicada
 
-Consultar [G420-UX 0.4.3](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md): questionários, entregas, H5P, feedback, tentativas e acessibilidade. Contrato visual apenas; `aculta_lms` permanece o módulo técnico.
+Consultar [G420-UX 0.4.3](GANJALAB-ACTIVITIES-ASSESSMENTS-VISUAL.md): questionários, entregas, H5P, feedback, tentativas e acessibilidade. Contrato visual apenas; `aculta_lms` permanece o módulo técnico.
 
 ## Biblioteca de materiais e leitor PDF
 
-[Planejamento G420-UX 0.4.4](GANJALAB420-MATERIALS-PDF-VISUAL.md): materiais da aula, biblioteca por curso, reader PDF mobile-first, imagens, Gallery, vídeo e H5P como recurso integrado. Preservar `aculta_lms` e providers existentes.
+[Planejamento G420-UX 0.4.4](GANJALAB-MATERIALS-PDF-VISUAL.md): materiais da aula, biblioteca por curso, reader PDF mobile-first, imagens, Gallery, vídeo e H5P como recurso integrado. Preservar `aculta_lms` e providers existentes.
 
 ## Minha Jornada de Aprendizagem — planejamento visual 0.5
 
-[Minha Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) define percurso de aulas, progresso e pendências reais, feedback, turmas e certificados, sem métricas ou dados paralelos. Os contratos da Biblioteca contextual permanecem em [Materiais e PDF](GANJALAB420-MATERIALS-PDF-VISUAL.md).
+[Minha Jornada](GANJALAB-LEARNING-JOURNEY-VISUAL.md) define percurso de aulas, progresso e pendências reais, feedback, turmas e certificados, sem métricas ou dados paralelos. Os contratos da Biblioteca contextual permanecem em [Materiais e PDF](GANJALAB-MATERIALS-PDF-VISUAL.md).
 
 ## Minhas Turmas e Comunidade — G420-UX 0.6
 
-[Planejamento visual de turmas e comunidade](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md): mural de avisos, discussões contextuais, prazos, participantes autorizados, Group e integração com Fórum/Messenger/User. Planejamento somente; `aculta_lms` permanece inalterado.
+[Planejamento visual de turmas e comunidade](GANJALAB-CLASSES-COMMUNITY-VISUAL.md): mural de avisos, discussões contextuais, prazos, participantes autorizados, Group e integração com Fórum/Messenger/User. Planejamento somente; `aculta_lms` permanece inalterado.
 
 ## Conquistas, certificados e histórico — UX 0.7
 
-[Contrato visual de Conquistas, Certificados e Histórico](GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md): emissão e validação oficiais de certificados, PDF/QR, histórico pessoal e conquistas opcionais, sem métricas paralelas. `aculta_lms` permanece o módulo técnico. Planejamento apenas.
+[Contrato visual de Conquistas, Certificados e Histórico](GANJALAB-ACHIEVEMENTS-CERTIFICATES-VISUAL.md): emissão e validação oficiais de certificados, PDF/QR, histórico pessoal e conquistas opcionais, sem métricas paralelas. `aculta_lms` permanece o módulo técnico. Planejamento apenas.
 
 ## Consolidação visual e homologação — G420-UX 0.8
 
-[Contrato transversal, sistema visual e gates](GANJALAB420-VISUAL-QUALITY-GATES.md) integra Dashboard, Sala/H5P, Atividades, Biblioteca/PDF, Jornada, Turmas e Conquistas. A versão 0.8 consolida documentação e critérios de aceite, não declara interfaces implementadas. `aculta_lms` continua como módulo técnico.
+[Contrato transversal, sistema visual e gates](GANJALAB-VISUAL-QUALITY-GATES.md) integra Dashboard, Sala/H5P, Atividades, Biblioteca/PDF, Jornada, Turmas e Conquistas. A versão 0.8 consolida documentação e critérios de aceite, não declara interfaces implementadas. `aculta_lms` continua como módulo técnico.
 
-## GanjaLab420 — migração para ACULTA Studio (G420-A)
+## ACULTA Studio Ganjalab — migração para ACULTA Studio (G420-A)
 
-[Contrato e inventário de migração](../architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). GanjaLab420 é **a experiência LMS do estudante** dentro de ACULTA Studio. Os entrypoints de `/ganjalab420` e `/minha-aprendizagem` foram transferidos para `aculta_studio.ganjalab420_controller`, que delega ao controlador LMS; o LMS preserva dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com GanjaLab editorial nem com WE SATIVA. A extração da composição visual para Studio será a G420-C; não declarar concluída. Antes do deploy habilitar Studio se necessário e executar testes Function/Kernel e smoke de rotas. 
+**Registro histórico da fase G420-A:** [contrato e inventário de migração](../architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md) descreve a implantação com nomes anteriores. O código vigente usa `GanjalabExperienceProvider`, `GanjalabController` e `aculta_studio.ganjalab_controller`; a rota canônica é `/studio/ganjalab`. O LMS permanece dono de dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com ACULTA Studio Marley nem WE SATIVA.

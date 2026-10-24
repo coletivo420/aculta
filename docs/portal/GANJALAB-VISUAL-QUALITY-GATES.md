@@ -1,22 +1,22 @@
-# GanjaLab420 — Consolidação Visual e Gates de Homologação
+# ACULTA Studio Ganjalab — Consolidação Visual e Gates de Homologação
 **Versão:** G420-UX 0.8.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento de consolidação; nenhuma implementação funcional declarada.
 
 ## Objetivo
-Unificar visualmente as experiências de estudante do **GanjaLab420** sob o Design System **ACULTA420**, sem tocar na identidade técnica `aculta_lms`, nem replicar dados de LMS, Group, PDFs, imagens, mensagens ou Fórum. Os contratos anteriores permanecem fontes de verdade por tela.
+Unificar visualmente as experiências de estudante do **ACULTA Studio Ganjalab** sob o Design System **ACULTA420**, sem tocar na identidade técnica `aculta_lms`, nem replicar dados de LMS, Group, PDFs, imagens, mensagens ou Fórum. Os contratos anteriores permanecem fontes de verdade por tela.
 
 ## Contratos de experiência
 | Experiência | Documento | Fonte e gate |
 | --- | --- | --- |
-| Dashboard / Meus Cursos | [Dashboard](GANJALAB420-DASHBOARD-VISUAL.md) | matrícula e próximo passo reais, ACL/cache por pessoa |
-| Sala / Leitura / Vídeo / H5P | [Sala](GANJALAB420-LEARNING-ROOM-VISUAL.md) e [Modelos](GANJALAB420-LESSON-MODELS-VISUAL.md) | conteúdo acessível, sem avanço/conclusão fictícios |
-| Atividades e avaliações | [Atividades](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md) | Form API, tentativas, resposta/nota reais |
-| Materiais e PDF | [Biblioteca](GANJALAB420-MATERIALS-PDF-VISUAL.md) | Media/File/Group, PDF Viewer sem duplicação |
-| Minha Jornada | [Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) | progresso oficial, próximos passos |
-| Turmas e Comunidade | [Turmas](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) | Group + Fórum contextual + Messenger + User |
-| Certificados e histórico | [Conquistas](GANJALAB420-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) | emissão/verificação/QR e histórico autorizados |
+| Dashboard / Meus Cursos | [Dashboard](GANJALAB-DASHBOARD-VISUAL.md) | matrícula e próximo passo reais, ACL/cache por pessoa |
+| Sala / Leitura / Vídeo / H5P | [Sala](GANJALAB-LEARNING-ROOM-VISUAL.md) e [Modelos](GANJALAB-LESSON-MODELS-VISUAL.md) | conteúdo acessível, sem avanço/conclusão fictícios |
+| Atividades e avaliações | [Atividades](GANJALAB-ACTIVITIES-ASSESSMENTS-VISUAL.md) | Form API, tentativas, resposta/nota reais |
+| Materiais e PDF | [Biblioteca](GANJALAB-MATERIALS-PDF-VISUAL.md) | Media/File/Group, PDF Viewer sem duplicação |
+| Minha Jornada | [Jornada](GANJALAB-LEARNING-JOURNEY-VISUAL.md) | progresso oficial, próximos passos |
+| Turmas e Comunidade | [Turmas](GANJALAB-CLASSES-COMMUNITY-VISUAL.md) | Group + Fórum contextual + Messenger + User |
+| Certificados e histórico | [Conquistas](GANJALAB-ACHIEVEMENTS-CERTIFICATES-VISUAL.md) | emissão/verificação/QR e histórico autorizados |
 
 ## Sistema visual transversal
-- **Shell:** contexto de conta/GanjaLab420; breadcrumb curto, identidade do curso/turma e retorno consistente. Respeitar shell existente do ACULTA420; evitar barras de navegação duplicadas.
+- **Shell:** contexto de conta/ACULTA Studio Ganjalab; breadcrumb curto, identidade do curso/turma e retorno consistente. Respeitar shell existente do ACULTA420; evitar barras de navegação duplicadas.
 - **Navegação principal candidata:** Início, Meus Cursos, Atividades e Conquistas; Turmas e Materiais disponíveis no curso e em contexto, sem obrigar nova barra fixa. Somente montar itens autorizados e reais.
 - **Ação primária:** uma por vista (“Continuar”, “Enviar”, “Voltar à aula”, “Abrir documento”), nunca fake submit ou ações sem backend. Navegar ≠ concluir e enviado ≠ avaliado.
 - **Tipografia:** títulos curtos, reader de parágrafos com largura confortável, legendas transcritivas, texto de estado legível; tipografia e spacing por tokens existentes.
@@ -40,7 +40,7 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 ## Matriz obrigatória de segurança/integração
 1. Estudante A vs B: nenhum vazamento de atividade, tentativa, nota, matrícula, histórico, certificado ou materiais privados.
 2. Turma Group A vs B: sem mural, participantes, documentos ou prazo de turma cruzados.
-3. Autenticado vs anônimo; docente no GanjaLab vs estudante no GanjaLab420; propósito de domínio `account`.
+3. Autenticado vs anônimo; docente no ACULTA Studio Marley vs estudante no ACULTA Studio Ganjalab; propósito de domínio `account`.
 4. Sessão revogada, matrícula encerrada, pré-requisito indisponível, tentativa finalizada e recurso removido.
 5. Cache contexts/tags em todas as listagens, blocos e contadores de usuário/Group; acesso antes de contagem/paginação.
 6. AJAX e fallback HTTP: URL/back/forward, foco, CSRF, state de submissão e mensagens de erro.
@@ -65,16 +65,16 @@ Testar 320, 360, 390, 768, 1024, 1280, 1440px; zoom 200/400%, toque/teclado/scre
 
 ## Resultado preliminar 0.8-A — auditoria cruzada de reutilização
 
-[AUDITORIA CRUZADA: GanjaLab420 × ACULTA420](GANJALAB420-CROSS-VISUAL-AUDIT.md) registra os SDCs existentes, lacunas transversais, matriz de consumidores e regra **reutilizar → estender → criar padrão compartilhado**. Evidência estática concluída; Runtime/stories/browser e gate de homologação ainda pendentes. Novos padrões devem beneficiar outras áreas (Revista, Wiki, Fórum, Galeria, Conta e GanjaLab) antes de serem especializações LMS.
+[AUDITORIA CRUZADA: ACULTA Studio Ganjalab × ACULTA420](GANJALAB-CROSS-VISUAL-AUDIT.md) registra os SDCs existentes, lacunas transversais, matriz de consumidores e regra **reutilizar → estender → criar padrão compartilhado**. Evidência estática concluída; Runtime/stories/browser e gate de homologação ainda pendentes. Novos padrões devem beneficiar outras áreas (Revista, Wiki, Fórum, Galeria, Conta e ACULTA Studio Marley) antes de serem especializações LMS.
 
 ## Planejamento da etapa 0.8-B
 
-[Componentes transversais e navegação](GANJALAB420-SHARED-UI-PLAN.md) especifica os contratos de Context Header, Context Tabs, feedback e layout, com consumidores reutilizáveis em GanjaLab420, GanjaLab, Revista, Wiki, Fórum e Conta. Este avanço permanece documental, sem gate Runtime aprovado.
+[Componentes transversais e navegação](GANJALAB-SHARED-UI-PLAN.md) especifica os contratos de Context Header, Context Tabs, feedback e layout, com consumidores reutilizáveis em ACULTA Studio Ganjalab, ACULTA Studio Marley, Revista, Wiki, Fórum e Conta. Este avanço permanece documental, sem gate Runtime aprovado.
 
 ## Gate obrigatório — shell multidomínio global
 
-Em todas as telas do GanjaLab420 e nos demais purposes, manter **Institution Bar e Domain Header existentes**. Os headers contextuais são internos ao conteúdo. Testar mobile, desktop, light/dark, autenticação, AJAX, navegação sem JS e retorno entre domínios; bloquear entrega com cabeçalho oculto, duplicado ou substituído. Melhorias estéticas são permitidas, reestruturação do shell não. Ver [contrato do shell ACULTA420](../../web/themes/custom/aculta420/docs/shell.md).
+Em todas as telas do ACULTA Studio Ganjalab e nos demais purposes, manter **Institution Bar e Domain Header existentes**. Os headers contextuais são internos ao conteúdo. Testar mobile, desktop, light/dark, autenticação, AJAX, navegação sem JS e retorno entre domínios; bloquear entrega com cabeçalho oculto, duplicado ou substituído. Melhorias estéticas são permitidas, reestruturação do shell não. Ver [contrato do shell ACULTA420](../../web/themes/custom/aculta420/docs/shell.md).
 
 ## Separação de ownership — planejamento do tema
 
-Componentes novos/variantes compartilhadas e evolução do shell pertencem ao [roadmap visual ACULTA420](../../web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md). Este documento permanece contrato de experiência, dados, permissão e homologação do GanjaLab420. Nenhum componente do tema foi implementado nesta etapa.
+Componentes novos/variantes compartilhadas e evolução do shell pertencem ao [roadmap visual ACULTA420](../../web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md). Este documento permanece contrato de experiência, dados, permissão e homologação do ACULTA Studio Ganjalab. Nenhum componente do tema foi implementado nesta etapa.

@@ -1,15 +1,15 @@
-# GanjaLab420 — Atividades e Avaliações
+# ACULTA Studio Ganjalab — Atividades e Avaliações
 **Versão visual:** G420-UX 0.4.3-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento; nenhuma interface implementada.
-**Referências:** [Sala](GANJALAB420-LEARNING-ROOM-VISUAL.md) · [Modelos de aula](GANJALAB420-LESSON-MODELS-VISUAL.md) · [LMS](../modules/ACULTA-LMS-ROADMAP.md).
+**Referências:** [Sala](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Modelos de aula](GANJALAB-LESSON-MODELS-VISUAL.md) · [LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Objetivo
 O estudante deve compreender **o que fazer, até quando, se enviou e qual é o retorno**. O centro da experiência é a tarefa, não o gradebook. Usar dados, tentativas, notas e Form API do Drupal LMS; `aculta_lms` permanece o nome técnico. Group mantém contexto e prazo por turma; H5P usa `aculta_lms_h5p`; arquivos via Media/privado e viewer compartilhado; feedback/avisos via contratos existentes.
 
 ## Organização e entrada
-- No dashboard GanjaLab420, seção “Próximas atividades” mostra **somente pendências próprias e autorizadas** com data/fuso da conta, nunca contadores fictícios.
+- No dashboard ACULTA Studio Ganjalab, seção “Próximas atividades” mostra **somente pendências próprias e autorizadas** com data/fuso da conta, nunca contadores fictícios.
 - Em “Atividades”, filtros **Pendentes / Entregues / Avaliadas / Todas** conforme estados realmente disponíveis; separar datas próximas e contexto do curso.
 - Dentro da Sala, abrir atividade contextual e retornar à mesma aula/posição. O índice curricular apresenta estado textual além de ícone; não expor atividade bloqueada.
-- Na experiência do educador, correções pertencem ao GanjaLab, não ao painel de estudante.
+- Na experiência do educador, correções pertencem ao ACULTA Studio Marley, não ao painel de estudante.
 
 ## Modelo A — avaliação objetiva
 **Mobile:** cabeçalho curso/módulo, título e instrução, prazo/tentativas quando existentes, uma questão ou grupo pequeno por seção, escolhas com alvos de toque, navegação entre questões acessível, revisão final e **Enviar respostas**. Evitar um wizard próprio quando Form API/atividade nativa controla fluxo; adaptar apenas apresentação. Após submeter, mostrar recibo confirmado pelo servidor e resultado apenas quando o provider liberar. Erro de rede nunca equivale a entrega.

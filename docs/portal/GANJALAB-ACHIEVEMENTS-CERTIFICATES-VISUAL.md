@@ -1,6 +1,6 @@
-# GanjaLab420 — Conquistas, Certificados e Histórico
+# ACULTA Studio Ganjalab — Conquistas, Certificados e Histórico
 **Versão visual:** G420-UX 0.7.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
-**Relacionados:** [Jornada](GANJALAB420-LEARNING-JOURNEY-VISUAL.md) · [Turmas](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
+**Relacionados:** [Jornada](GANJALAB-LEARNING-JOURNEY-VISUAL.md) · [Turmas](GANJALAB-CLASSES-COMMUNITY-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Objetivo
 Celebrar a conclusão sem falsificar conquistas. Exibir **certificados realmente emitidos**, forma verificável de apresentá-los e histórico educacional autorizado. **Não implementar gradebook, pontuação, badge ou certificado paralelo**. Drupal LMS/`aculta_lms` são fontes de cursos e registros; certificados usam emissão, verificação, PDF e QR existentes (`aculta_qrcode` e `aculta_pdf_viewer` conforme contratos atuais); `aculta_game` fornece conquistas opcionais somente se houver provider pronto. O módulo técnico **continua `aculta_lms`**.
@@ -14,7 +14,7 @@ Celebrar a conclusão sem falsificar conquistas. Exibir **certificados realmente
 
 ## Wireframe mobile
 ```text
-‹ GanjaLab420
+‹ ACULTA Studio Ganjalab
 Conquistas e histórico
 [Certificados emitidos] [Meu histórico]
 Seu percurso merece reconhecimento.
@@ -41,7 +41,7 @@ Coluna principal com cartões oficiais de certificados e histórico; painel auxi
 | Certificado revogado | Verificação aponta status de revogação; não apresentar como válido |
 | Conquista opcional | Prova de integração real com `aculta_game` |
 
-Progresso e emissão não devem ser calculados ou persistidos no tema. Emissão/revogação fica no fluxo autorizado de educadores GanjaLab, não na interface pessoal do estudante.
+Progresso e emissão não devem ser calculados ou persistidos no tema. Emissão/revogação fica no fluxo autorizado de educadores ACULTA Studio Marley, não na interface pessoal do estudante.
 
 ## Compartilhamento e verificação
 Oferecer botão “Verificar autenticidade” usando **a rota pública de verificação já existente**; compartilhar somente URL de verificação aprovada, sem expor tokens privados de arquivo, links temporários ou informação além do contrato público. QR reutiliza kernel e fluxo de verificação, não um QR com dados pessoais brutos. PDF deve manter acesso e fallback de leitura. Diferenciar comprovante válido, revogado e não encontrado sem divulgar registros adicionais.
@@ -65,7 +65,7 @@ Este documento não modifica código, rotas, entidades ou nomes técnicos e não
 
 ## Refinamento de protótipos — Conquistas e Certificados (2026-10-22)
 
-**Tela principal mobile:** cabeçalho compacto GanjaLab420, mensagem de reconhecimento sem ranking, lista de certificados **emitidos** e histórico pessoal de cursos; destaque ao certificado somente quando existir entidade oficial. Estado vazio não gera modelo fictício na experiência real.
+**Tela principal mobile:** cabeçalho compacto ACULTA Studio Ganjalab, mensagem de reconhecimento sem ranking, lista de certificados **emitidos** e histórico pessoal de cursos; destaque ao certificado somente quando existir entidade oficial. Estado vazio não gera modelo fictício na experiência real.
 
 **Detalhe oficial:** prévia do certificado via documento existente, identificação de curso, emissão e validade conforme fonte autorizada, ações **Ver PDF** e **Verificar autenticidade** usando as rotas oficiais. O QR é produzido pelo kernel `aculta_qrcode`/integração de certificado existente, sem codificar dados pessoais brutos em um componente novo. O preview ilustrativo do planejamento não é certificado válido nem template novo.
 
@@ -73,4 +73,4 @@ Este documento não modifica código, rotas, entidades ou nomes técnicos e não
 
 **Histórico:** diferenciar aulas concluídas, atividades enviadas/avaliadas, conclusão de curso e emissão do certificado. Progresso do LMS não pode ser confundido com emissão. Layout responsivo 320–1440px com mesma hierarquia em light/dark; texto legível e foco/teclado funcionais.
 
-**Próxima fase:** [Consolidação e Homologação Visual 0.8](GANJALAB420-VISUAL-QUALITY-GATES.md). Este refinamento é somente documental.
+**Próxima fase:** [Consolidação e Homologação Visual 0.8](GANJALAB-VISUAL-QUALITY-GATES.md). Este refinamento é somente documental.

@@ -1,9 +1,9 @@
-# GanjaLab420 — Minha Jornada de Aprendizagem
+# ACULTA Studio Ganjalab — Minha Jornada de Aprendizagem
 **Trilha visual:** G420-UX 0.5.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
-**Ver:** [GanjaLab420](GANJALAB420-LEARNING-UX.md) · [Sala](GANJALAB420-LEARNING-ROOM-VISUAL.md) · [Atividades](GANJALAB420-ACTIVITIES-ASSESSMENTS-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
+**Ver:** [ACULTA Studio Ganjalab](GANJALAB-LEARNING-UX.md) · [Sala](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Atividades](GANJALAB-ACTIVITIES-ASSESSMENTS-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Objetivo
-Responder ao estudante: **Onde estou? O que falta? O que já concluí?**. Preferir indicadores verificáveis, próximos passos e feedback motivador sem ranking entre estudantes. Progresso, aulas, tentativas, matrículas, notas, prazos e certificados vêm do **Drupal LMS/Group e integrações existentes**, nunca de contadores derivados apenas do frontend. O nome técnico segue `aculta_lms`; a interface chama-se GanjaLab420.
+Responder ao estudante: **Onde estou? O que falta? O que já concluí?**. Preferir indicadores verificáveis, próximos passos e feedback motivador sem ranking entre estudantes. Progresso, aulas, tentativas, matrículas, notas, prazos e certificados vêm do **Drupal LMS/Group e integrações existentes**, nunca de contadores derivados apenas do frontend. O nome técnico segue `aculta_lms`; a interface chama-se ACULTA Studio Ganjalab.
 
 ## Estrutura de telas
 1. **Minha Jornada** na área de aprendizagem: resumo pessoal, “Continuar”, próximos passos e meus cursos.
@@ -14,7 +14,7 @@ Responder ao estudante: **Onde estou? O que falta? O que já concluí?**. Prefer
 
 ## Wireframe mobile — Jornada do curso
 ```text
-‹ Meus cursos                 GanjaLab420
+‹ Meus cursos                 ACULTA Studio Ganjalab
 Minha jornada · Redução de danos
 [Continuar aula →]  (se disponível)
 Progresso do curso: percentual real OU apenas estados textuais
@@ -60,7 +60,7 @@ Este documento **não instala código, não altera rotas e não declara progress
 
 ## Refinamento de wireframes — Jornada e Conquistas (2026-10-22)
 
-**Tela principal mobile:** cabeçalho compacto GanjaLab420/curso; “Minha jornada”; cartão de continuar com progresso **somente oficial**; percurso em módulos e aulas com ícone + texto de estado (concluído, atual, pendente, bloqueado quando identificável); acesso a atividade pendente e conquistas reais. Desktop mantém percurso principal e painel discreto de próximas ações. Progresso visual não pode mascarar etapas dependentes de avaliação.
+**Tela principal mobile:** cabeçalho compacto ACULTA Studio Ganjalab/curso; “Minha jornada”; cartão de continuar com progresso **somente oficial**; percurso em módulos e aulas com ícone + texto de estado (concluído, atual, pendente, bloqueado quando identificável); acesso a atividade pendente e conquistas reais. Desktop mantém percurso principal e painel discreto de próximas ações. Progresso visual não pode mascarar etapas dependentes de avaliação.
 
 **Exemplo textual:**
 ```text
@@ -77,4 +77,4 @@ Minha jornada · Redução de danos
 
 **Navegação complementar:** três visões ou filtros “Percurso / Atividades / Conquistas”, sem produzir status paralelos nem replicar dados em JS. “Aguardando correção” não equivale a “concluído”. Certificados só podem mostrar PDF/QR a partir do registro oficial emitido. As imagens e percentuais dos protótipos são demonstrativos; nunca persistir esses dados como informação acadêmica.
 
-**Próximo planejamento:** [Minhas Turmas e Comunidade](GANJALAB420-CLASSES-COMMUNITY-VISUAL.md), conectando jornada pessoal ao contexto Group/Fórum/Messenger, sem misturar turmas ou dados de colegas. 
+**Próximo planejamento:** [Minhas Turmas e Comunidade](GANJALAB-CLASSES-COMMUNITY-VISUAL.md), conectando jornada pessoal ao contexto Group/Fórum/Messenger, sem misturar turmas ou dados de colegas.

@@ -1,6 +1,17 @@
 # ACULTA Studio — plataforma transversal de interfaces próprias
 
-**Decisão normativa · 2026-10-22 · Versão STUDIO-ARCH 0.1 · Estado:** arquitetura/documentação; não implica rotas ou UI implementadas.
+**Contrato vigente da refatoração de identidade · 2026-10-24.** A lista abaixo substitui as identidades e URLs antigas descritas em seções históricas deste documento.
+
+| Experiência | Nome público | ID |
+| --- | --- | --- |
+| Plataforma | ACULTA Studio | `aculta_studio` |
+| Editorial | ACULTA Studio Marley | `marley` |
+| Aprendizagem | ACULTA Studio Ganjalab | `ganjalab` |
+| Contribuição Wiki | WE SATIVA | `we_sativa` |
+
+Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/studio/ganjalab`; WE SATIVA em `/studio/we-sativa` e `/studio/we-sativa/inicio`. Todas ficam no purpose `account`, resolvido pelo Portal. `/studio/ganjalab` pertence exclusivamente ao dashboard estudantil, portanto a antiga entrada editorial não pode ser preservada nesse endereço. Aliases e histórico estão em [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
+
+**Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio e WE SATIVA permanecem conforme o contrato vigente.
 
 ## Correção de nomenclatura e ownership
 

@@ -1,8 +1,8 @@
-# GanjaLab Wiki — D-A.2 auditoria de listagem + D-B design da moderação
+# ACULTA Studio Marley Wiki — D-A.2 auditoria de listagem + D-B design da moderação
 
-**Fase:** V-0.4-R / GanjaLab D-A.2 e D-B · **Data:** 2026-10-22 · **Situação:** auditoria estática e contrato visual concluídos; correções de código e testes Runtime pendentes.
+**Fase:** V-0.4-R / ACULTA Studio Marley D-A.2 e D-B · **Data:** 2026-10-22 · **Situação:** auditoria estática e contrato visual concluídos; correções de código e testes Runtime pendentes.
 
-## D-A.2 — achados verificáveis em StudioListingBuilder
+## D-A.2 — achados verificáveis em MarleyListingBuilder
 
 | ID | Evidência do código | Risco | Ação obrigatória |
 | --- | --- | --- | --- |
@@ -13,8 +13,8 @@
 | SEC-05 | cabeçalho de tabela em build() é inicializado duas vezes e render array table tem formatação irregular | duplicação/manutenção | limpar duplicação em fase posterior com testes, sem alterar comportamento de outras áreas do Studio nesta fase |
 | SEC-06 | listing de Comment usa accessCheck(TRUE), depois getCommentedEntity() e cria URL do host sem teste explícito de view | possível link de host inacessível, dependendo de grants | verificação contextual de acesso a entidade host e URL antes de link; caracterização Fórum/LMS |
 | SEC-07 | listing de Groups consulta group_relationship com accessCheck(FALSE), depois usa IDs do Group | associação privada/contexto LMS pode ser exposta se não revalidada | revisar autorização da relação e revalidar Group + membership no provider LMS |
-| SEC-08 | StudioController root tem cache contexts user.permissions e url.path; seção é selecionada com StudioPresenter e os filtros de access() de WikiTab incluem create wiki_entry | seção futura de moderação pode ser visível ao criador não moderador | gating de seção e cada item por capacidade de moderação real + user/domain cache contexts, sem depender apenas do StudioTab.access |
-| SEC-09 | StudioController usa SDC context-tabs para áreas/subtabs; JS tem AJAX com fallback e foco | base de UI consistente já existente | manter, não criar tabs/nav paralelas; testar back/forward, foco e erro |
+| SEC-08 | MarleyController root tem cache contexts user.permissions e url.path; seção é selecionada com MarleyPresenter e os filtros de access() de WikiTab incluem create wiki_entry | seção futura de moderação pode ser visível ao criador não moderador | gating de seção e cada item por capacidade de moderação real + user/domain cache contexts, sem depender apenas do MarleyTab.access |
+| SEC-09 | MarleyController usa SDC context-tabs para áreas/subtabs; JS tem AJAX com fallback e foco | base de UI consistente já existente | manter, não criar tabs/nav paralelas; testar back/forward, foco e erro |
 
 **Classificação:** esses são **riscos e lacunas deduzidos do código**, não demonstração de vazamento no Runtime. Não afirmar violação explorável antes dos testes; bloquear uso dessa listagem genérica como fila de moderação Wiki até correção.
 
@@ -25,7 +25,7 @@ propostas continua regido pelos gates próprios e pela Entity Access da Wiki.
 
 ### Direção de refatoração segura
 
-- **D-A.2.1:** escrever testes de caracterização para StudioListingBuilder em roles distintas e grants por entidade/revisão; não alterar código antes de entender consumidores.
+- **D-A.2.1:** escrever testes de caracterização para MarleyListingBuilder em roles distintas e grants por entidade/revisão; não alterar código antes de entender consumidores.
 - **D-A.2.2:** provider de revisão/filas Wiki em aculta_wiki, retornando itens e metadados cacheáveis autorizados, com query restrita a bundle/wiki_editorial e revisão-base.
 - **D-A.2.3:** integrar provider via interface do Studio, mantendo WikiTab existente e seção de moderação separada; garantir que listagem não seja tratada como concessão de acesso.
 - **D-A.2.4:** corrigir cache metadata da listagem transversal onde houver dados por usuário, após testes de regressão de Revista, Fórum e LMS.
@@ -33,12 +33,12 @@ propostas continua regido pelos gates próprios e pela Entity Access da Wiki.
 
 ## D-B — arquitetura visual da fila e da janela
 
-**Objetivo de produto:** experiência própria do editor/moderador no GanjaLab, distinta do WE SATIVA (autor/colaborador). Reutilizar Core SDC/UI Suite, não widgets legados. GanjaLab mantém Institution Bar + Domain Header de conta e seu shell de navegação.
+**Objetivo de produto:** experiência própria do editor/moderador no ACULTA Studio Marley, distinta do WE SATIVA (autor/colaborador). Reutilizar Core SDC/UI Suite, não widgets legados. ACULTA Studio Marley mantém Institution Bar + Domain Header de conta e seu shell de navegação.
 
 ### B01 — aba Wiki > Moderação > Aguardando
 
 **Mobile 320–390px:**
-1. Cabeçalho global já existente; breadcrumbs GanjaLab › Wiki › Moderação; título único de página.
+1. Cabeçalho global já existente; breadcrumbs ACULTA Studio Marley › Wiki › Moderação; título único de página.
 2. Filtros compactos por links/GET: Aguardando, Todos autorizados, Histórico (somente quando provider disponível), seleção de tipo: primeiro verbete / revisão / proposta.
 3. Cards em uma coluna: título autorizado, tipo, status real, instante de envio, ação contextual `Analisar`. Autor apenas se permitido.
 4. Rodapé de paginação, estados vazio, falha e sem permissão; nenhum contador ou item de preenchimento falso.
@@ -95,7 +95,7 @@ propostas continua regido pelos gates próprios e pela Entity Access da Wiki.
 
 ## D-A.2-T — primeira correção de código (2026-10-22)
 
-**Commits:** `0a004cc` (StudioListingBuilder) e `7709f12` (Unit). A listagem de Nodes, Comments, Groups e Revisions agora acrescenta cache context `user` junto a `user.permissions`, isolando resultados por conta; isso não dispensa tags/grants adicionais. A listagem de revisões verifica `view` e `view revision` na revisão antes de montar link ou metadados. Cabeçalho duplicado foi removido.
+**Commits:** `0a004cc` (MarleyListingBuilder) e `7709f12` (Unit). A listagem de Nodes, Comments, Groups e Revisions agora acrescenta cache context `user` junto a `user.permissions`, isolando resultados por conta; isso não dispensa tags/grants adicionais. A listagem de revisões verifica `view` e `view revision` na revisão antes de montar link ou metadados. Cabeçalho duplicado foi removido.
 
 **Testes incluídos mas NÃO executados no runtime:** `StudioListingRevisionAccessTest` caracteriza (1) Node visível e revisão negada, (2) ambas operações concedidas, (3) Node negado e short-circuit. Não alegar testes PASS nem afirmar que a operação `view revision` cobrirá todos os handlers sem Kernel. Próximo agente deve executar PHPUnit/Drupal Kernel e confirmar semântica dos handlers.
 

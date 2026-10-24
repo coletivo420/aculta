@@ -1,7 +1,7 @@
-# V-0.4-D — WE SATIVA colaborador e moderação Wiki no GanjaLab
+# V-0.4-D — WE SATIVA colaborador e moderação Wiki no ACULTA Studio Marley
 
 **Data:** 2026-10-22 · **Versão:** WES-UX 0.4-D / GANJALAB-WIKI-MOD 0.1 · **Estado:** especificação visual, sem implementação.
-**Decisão nova:** **WE SATIVA não hospeda fila nem janela de decisão editorial.** Todas as tarefas de revisor/moderador acontecem em **GanjaLab**, que consome as ações autorizadas do `aculta_wiki`. WE SATIVA permanece experiência do colaborador, inclusive autor de verbete, com status e devolutivas, mas sem painel de moderação.
+**Decisão nova:** **WE SATIVA não hospeda fila nem janela de decisão editorial.** Todas as tarefas de revisor/moderador acontecem em **ACULTA Studio Marley**, que consome as ações autorizadas do `aculta_wiki`. WE SATIVA permanece experiência do colaborador, inclusive autor de verbete, com status e devolutivas, mas sem painel de moderação.
 
 ## Fronteira de três camadas
 
@@ -9,22 +9,22 @@
 | --- | --- | --- |
 | `aculta_wiki` | Nodes `wiki_entry`, workflow Content Moderation, revisões, access, fila/provider, proposta moderável de terceiros (futura), decisões servidor | segundo sistema de moderação visual |
 | `aculta_user` | email_confirmed, política de primeira participação, conta, autor, preferências de identidade | workflow Wiki, storage de propostas |
-| `aculta_studio` (GanjaLab) | **experiência de trabalho** do editor: aba Wiki, submenu Moderação, fila, janela, filtros, ações que delegam ao Wiki | estado autoritativo de publicação, grants alternativos ou inbox |
+| `aculta_studio` (ACULTA Studio Marley) | **experiência de trabalho** do editor: aba Wiki, submenu Moderação, fila, janela, filtros, ações que delegam ao Wiki | estado autoritativo de publicação, grants alternativos ou inbox |
 | `aculta_messenger` | avisos por mudança de estado e retorno ao colaborador, após adaptação aprovada | workflow editorial |
 | `aculta420` | Core SDC/UI Suite, tokens, layouts responsivos | ACL e moderação |
 | WE SATIVA | criação, sugestão, prévia, envio, **Meu trabalho**, respostas e ajuste do colaborador | ações de publicar/rejeitar e fila de outros colaboradores |
 
-**GanjaLab é transversal** e continua usando os plugins `StudioTab` existentes, com navegação por áreas → seções → abas, AJAX progressivo e links HTTP. Não duplicar o shell Institution Bar + Domain Header. A aba Wiki só existe se o provider estiver habilitado e o usuário tiver access verdadeiro. Não implantar uma UI própria no site público da Wiki para revisão.
+**ACULTA Studio Marley é transversal** e continua usando os plugins `MarleyTab` existentes, com navegação por áreas → seções → abas, AJAX progressivo e links HTTP. Não duplicar o shell Institution Bar + Domain Header. A aba Wiki só existe se o provider estiver habilitado e o usuário tiver access verdadeiro. Não implantar uma UI própria no site público da Wiki para revisão.
 
-## V09 — Janela de moderação Wiki no GanjaLab
+## V09 — Janela de moderação Wiki no ACULTA Studio Marley
 
 ### Localização lógica (não rota habilitada)
-Área `Wiki` → seção `Moderação` → abas `Aguardando`, `Em análise`, `Devolvidos`, `Histórico` **somente** com providers e estados persistidos reais; rótulos de filtro que não correspondam a estados existentes são filtros de consulta, não novos estados Content Moderation. Se a aba Wiki já existir, estender a seção, sem registro duplicado de StudioTab.
+Área `Wiki` → seção `Moderação` → abas `Aguardando`, `Em análise`, `Devolvidos`, `Histórico` **somente** com providers e estados persistidos reais; rótulos de filtro que não correspondam a estados existentes são filtros de consulta, não novos estados Content Moderation. Se a aba Wiki já existir, estender a seção, sem registro duplicado de MarleyTab.
 
 ### Painel principal
-- Faixa de contexto: `GanjaLab / Wiki / Moderação`, total real de pendentes visíveis, filtros por tipo (primeiro verbete, revisão, proposta), data e busca autorizada; sem métricas inventadas.
+- Faixa de contexto: `ACULTA Studio Marley / Wiki / Moderação`, total real de pendentes visíveis, filtros por tipo (primeiro verbete, revisão, proposta), data e busca autorizada; sem métricas inventadas.
 - Lista de revisão: cartão/linha com título, autor respeitando privacidade, tipo, origem/revisão-base, estado real, momento do envio e ação `Analisar`. Paginação, ordenação estável e filtros HTTP. Nenhuma inclusão de rascunhos de outros usuários sem acesso.
-- **Janela de moderação** abre item no GanjaLab (modal responsivo no desktop somente quando a11y/foco funcionarem; no mobile, **página/painel full-screen** com URL canônica e fallback sem JS).
+- **Janela de moderação** abre item no ACULTA Studio Marley (modal responsivo no desktop somente quando a11y/foco funcionarem; no mobile, **página/painel full-screen** com URL canônica e fallback sem JS).
 - Topo da janela: título e status, breadcrumb/retorno à fila, badge de tipo `Primeiro verbete` ou `Alteração proposta`, aviso de revisão concorrente, autores e timestamps seguros.
 - Corpo: duas vistas `Conteúdo atual` / `Proposta` ou comparação lado a lado desktop e empilhada mobile; mudanças destacadas por rótulo e sem depender só de cor. Para verbete novo, mostrar `Primeiro envio`, sem original inventado. Seções de fontes, imagem/alt/licença, categorias e observações.
 - Lateral contextual desktop opcional: checklist editorial (neutralidade, fontes verificáveis, direitos de imagem, duplicatas, acessibilidade), histórico oficial e contexto de publicações anteriores. Não construir tabela paralela de histórico.
@@ -45,11 +45,11 @@ Avisos de recebido/devolvido/publicado devem ser integrados ao `aculta_messenger
 
 ## V11 — Ajuda contextual
 
-Entrada não bloqueante por seção: fonte confiável, linguagem neutra, direitos de imagem, privacidade, diferença entre salvar/enviar/publicar e o que acontece na revisão. Varia entre colaborador (WE SATIVA) e moderador (GanjaLab) sem criar duas fontes de verdade; conteúdo de ajuda tem ownership Wiki e apresentação SDC.
+Entrada não bloqueante por seção: fonte confiável, linguagem neutra, direitos de imagem, privacidade, diferença entre salvar/enviar/publicar e o que acontece na revisão. Varia entre colaborador (WE SATIVA) e moderador (ACULTA Studio Marley) sem criar duas fontes de verdade; conteúdo de ajuda tem ownership Wiki e apresentação SDC.
 
 ## V12 — Fontes, imagens e documentos
 
-Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamento e viewer central de documentos/PDF. Exibir URL/título da fonte, licença/crédito, alt e status de validação. O moderador confere fonte e mídia na janela GanjaLab; o colaborador ajusta no WE SATIVA. Não implementar novo upload direto no CKEditor: `editor.editor.wiki.yml` tem `image_upload.status: false`.
+Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamento e viewer central de documentos/PDF. Exibir URL/título da fonte, licença/crédito, alt e status de validação. O moderador confere fonte e mídia na janela ACULTA Studio Marley; o colaborador ajusta no WE SATIVA. Não implementar novo upload direto no CKEditor: `editor.editor.wiki.yml` tem `image_upload.status: false`.
 
 ## Stories / gates
 
@@ -70,7 +70,7 @@ Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamen
 
 ## Roadmap em peças
 
-1. **D-A:** contratos de ownership Studio ↔ Wiki, inventariar StudioTab existente, fluxos de confirmação e campos reais de devolutiva.
+1. **D-A:** contratos de ownership Studio ↔ Wiki, inventariar MarleyTab existente, fluxos de confirmação e campos reais de devolutiva.
 2. **D-B:** stories SDC/UI Suite da fila e janela, layout mobile/desktop e teste de a11y sem publicar ação fictícia.
 3. **D-C:** provider de fila Wiki + navegação Studio por rota real, access e cache.
 4. **D-D:** formulário de revisão/devolução/publicação delegado ao Wiki, idempotência e concorrência.
@@ -79,12 +79,12 @@ Usar `field_wiki_references` e Media autorizada, `aculta_image` para processamen
 
 **Invariantes:** primeiro verbete de email_confirmed moderado; novas alterações/sugestões continuam revisadas, publicadas apenas por content_editor. Autosave Form permanece futuro. Nenhuma implementação decorre automaticamente deste documento.
 
-## V-0.4-R / GanjaLab D-A — auditoria do código existente
+## V-0.4-R / ACULTA Studio Marley D-A — auditoria do código existente
 
-[Inventário e contrato da janela Wiki](GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
+[Inventário e contrato da janela Wiki](MARLEY-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. MarleyPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
 
 ## Decisão normativa: ACULTA Studio (2026-10-22)
 
-Revised architecture: both WE SATIVA (contributor) and GanjaLab (moderator) are ACULTA Studio experiences. Existing Studio WikiTab is for the GanjaLab presentation only; do not create a second WikiTab or move Wiki workflow/storage to Studio. Separate purpose/wiki from purpose/account.
+Revised architecture: both WE SATIVA (contributor) and ACULTA Studio Marley (moderator) are ACULTA Studio experiences. Existing Studio WikiTab is for the ACULTA Studio Marley presentation only; do not create a second WikiTab or move Wiki workflow/storage to Studio. Separate purpose/wiki from purpose/account.
 
-[Contrato e roadmap transversal](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a GanjaLab. **Não declarar consumidores planejados como rotas implementadas.**
+[Contrato e roadmap transversal](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md). Esta decisão prevalece sobre terminologia anterior que equiparava o submódulo exclusivamente a ACULTA Studio Marley. **Não declarar consumidores planejados como rotas implementadas.**
