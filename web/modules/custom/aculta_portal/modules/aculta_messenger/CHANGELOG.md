@@ -1,3 +1,14 @@
+## 0.1.1-dev.173 — caracterizar retenção em storage real
+
+Adicionado Kernel MariaDB para a retenção de conversas com entidades reais de Private Message e Message. O ciclo do
+Private Message remove thread e mensagens; o Messenger remove os avisos que apontam para mensagens excluídas, mantendo
+threads, mensagens e avisos recentes. Os timestamps antigos são configurados apenas no banco isolado de teste porque
+o campo `changed` do contrib atualiza `updated` ao salvar a thread. Nenhuma limpeza foi executada em dados reais.
+
+Validação: `PrivateMessageRetentionKernelTest` **1/16 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O Kernel
+emite 10 deprecações conhecidas de annotations/validators do Core/contrib. Rollback em banco real e Runtime seguem
+pendentes.
+
 ## 0.1.1-dev.172 — evitar starvation na retenção de conversas
 
 A retenção paginada agora guarda um cursor de ID em State API. A ordenação ascendente avança além de threads que falham e reinicia quando chega ao fim, permitindo que lotes seguintes prossigam e que falhas sejam tentadas novamente no próximo ciclo. Cada thread e seus avisos Message continuam protegidos pela transação existente; nenhuma limpeza foi executada em dados reais.
