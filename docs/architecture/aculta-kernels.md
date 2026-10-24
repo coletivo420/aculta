@@ -2,6 +2,10 @@
 
 Decisão arquitetural normativa. Esta classificação **não** corresponde a um novo tipo de módulo Drupal, não altera a instalação e não cria dependências obrigatórias entre todos os módulos.
 
+## Idioma da plataforma
+
+A plataforma ACULTA é monolíngue em português do Brasil (`pt_BR`; código Drupal `pt-br`). O idioma padrão do conteúdo, fixtures de Kernel, eventos e e-mails é `pt-br`. Não implementar negociação de idioma, conteúdo traduzível, fallbacks multilíngues ou abstrações de idioma em novos componentes sem uma decisão explícita de produto. Testes podem usar valores de outros idiomas apenas para comprovar rejeição de dados incompatíveis ou preservar comportamento legado; isso não constitui suporte multilíngue.
+
 ## Camadas e fontes de verdade
 
 1. **Drupal Core e contrib** são as fontes de verdade para Node, Comment, User, Profile, Media, File, Group, Views, Workflows, Message e demais entidades/infraestruturas. Não duplicar storage.

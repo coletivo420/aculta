@@ -35,6 +35,7 @@ intervenção.
 
 ### Diretrizes de produto e limites
 
+0. **Idioma:** a plataforma é monolíngue em português do Brasil (`pt_BR`, código Drupal `pt-br`). Testes Kernel e fixtures normais usam `pt-br`; não adicionar suporte, negociação ou abstrações multilíngues. Casos com outro idioma só permanecem quando caracterizam rejeição ou dados legados. A antiga fase `0.1.0-dev.169` abaixo é evidência histórica de uma proposta de destino multilíngue, substituída por esta regra.
 1. **Growroom420:** tópicos independentes, respostas públicas revisionáveis,
    moderação, categorias, busca, histórico de leitura, seguir/salvar e anexos
    sob regras próprias do Fórum.
