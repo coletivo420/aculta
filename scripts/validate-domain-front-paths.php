@@ -24,9 +24,10 @@ $textoAssinante = is_file($assinante) ? file_get_contents($assinante) : '';
 $check(str_contains($textoAssinante, 'FrontPathPolicy::bloqueiaCaminhoInterno'), 'assinante usa FrontPathPolicy');
 $check(str_contains($textoAssinante, 'throw new NotFoundHttpException()'), 'assinante responde 404 para caminho interno');
 
-// Redirecionamentos 301 permitidos no assinante: conta (/minha-conta) e checkout legado. Qualquer outro é regressão.
+// Somente o retorno/URL antiga de checkout conserva 301 enquanto a
+// integração com pagamentos não for auditada. /minha-conta responde 404.
 $quantos301 = substr_count($textoAssinante, 'HTTP_MOVED_PERMANENTLY');
-$check($quantos301 === 2, "assinante tem exatamente 2 usos de 301 (legado de conta e checkout); encontrado: $quantos301");
+$check($quantos301 === 1, "assinante tem somente o 301 de checkout funcional pendente de auditoria; encontrado: $quantos301");
 
 // Mapa de caminhos internos: documento e código devem listar os mesmos caminhos.
 $textoProcessador = is_file($processador) ? file_get_contents($processador) : '';
