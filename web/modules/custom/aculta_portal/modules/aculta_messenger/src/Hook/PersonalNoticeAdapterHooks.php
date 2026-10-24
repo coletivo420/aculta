@@ -80,7 +80,11 @@ final class PersonalNoticeAdapterHooks {
       }
       if ($adapter instanceof PersonalNoticeAdapterInterface) {
         try {
-          $count += $adapter->unreadCount($uid);
+          $adapterCount = $adapter->unreadCount($uid);
+          if ($adapterCount < 0) {
+            throw new \UnexpectedValueException('An adapter returned a negative unread notice count.');
+          }
+          $count += $adapterCount;
         }
         catch (\Throwable $exception) {
           $this->logAdapterFailure($adapter, $exception, 'count');

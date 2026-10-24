@@ -171,4 +171,29 @@ final class PersonalNoticeAdapterHooksTest extends UnitTestCase {
     self::assertSame(3, $count);
   }
 
+  /**
+   * Negative adapter counts are rejected without reducing the central count.
+   */
+  public function testNegativeAdapterCountIsIgnored(): void {
+    $adapter = $this->createMock(PersonalNoticeAdapterInterface::class);
+    $adapter->expects(self::once())->method('unreadCount')->with(42)->willReturn(-3);
+    $logger = $this->createMock(LoggerInterface::class);
+    $logger->expects(self::once())
+      ->method('error')
+      ->with(
+        'Optional personal notice adapter failed during @operation with @exception.',
+        self::callback(static function (array $context): bool {
+          self::assertSame('count', $context['@operation']);
+          self::assertSame(\UnexpectedValueException::class, $context['@exception']);
+          return TRUE;
+        }),
+      );
+    $hooks = new PersonalNoticeAdapterHooks(['lms' => $adapter], $logger);
+    $count = 5;
+
+    $hooks->unreadCountAlter($count, 42);
+
+    self::assertSame(5, $count);
+  }
+
 }

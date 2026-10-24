@@ -1,3 +1,11 @@
+## 0.1.1-dev.192 — rejeitar contagem negativa de adapter
+
+O dispatcher considera contagem negativa uma falha do provider e não permite que ela diminua o total agregado. O erro é
+isolado à origem e registrado sem dados do usuário.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **223/1.644 PASS**; PHPCS Drupal/DrupalPractice,
+PHP lint e `git diff --check` PASS.
+
 ## 0.1.1-dev.191 — caracterizar o logger do dispatcher opcional
 
 O contrato do ServiceProvider agora prova que o dispatcher é registrado mesmo sem adapters e recebe locator vazio junto
