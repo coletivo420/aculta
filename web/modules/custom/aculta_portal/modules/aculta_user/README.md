@@ -22,7 +22,7 @@ perfil, sem mudar a propriedade dos dados e das autorizações:
 `aculta_user` mantém `PublicProfilePolicy`, o perfil público
 `/u/{apelido}` em `main`, apelido, biografia, redes, foto/avatar,
 amizades e controles de visibilidade; User/Profile continuam as entidades
-fontes. Nenhuma tela `/studio/pessoal/perfil` existe ainda.
+fontes. A rota `/studio/pessoal/perfil` existe na P2-A como composição parcial; a migração completa dos formulários ainda não ocorreu.
 
 O Studio deverá compor os formulários **existentes** — inclusive
 `UserPictureForm`, `AvatarCropForm`, `ProfileVisibilityForm`,
@@ -33,7 +33,7 @@ Não expor endereço, documentos, e-mail privado nem informações de membros
 na Author Card. Atividades pessoais continuam autorizadas pelo User e
 entidades hospedeiras; não duplicar armazenamento no Studio.
 
-**P0 = documentação apenas**. Nenhum arquivo funcional User ou fluxo
+**P0 foi documentação apenas; P2-A acrescentou uma interface de composição no Studio.** Nenhum arquivo funcional User ou fluxo
 de foto foi migrado. Referências:
 [plano STUDIO-P0–P7](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md),
 [privacidade dos cartões](docs/PRIVACY-AND-ACCESS.md) e
