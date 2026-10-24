@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.94**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.95**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.95 — CKEditor 5 no formulário de autoria
+
+O Kernel agora carrega `filter.format.wiki` e `editor.editor.wiki` do sync e
+submete o formulário Node nativo com conta confirmada. O seletor oferece `wiki`,
+a entidade Editor aponta para CKEditor 5 e `image_upload.status` segue falso.
+Criação e envio à revisão usam o formato permitido. Focal combinado: 2/120;
+203 depreciações upstream e 3 PHPUnit nos focais; classe Kernel completa passou
+27/1.425 (291 depreciações Core/contrib e 28 PHPUnit). PHPCS/lint e gate Drupal
+11 passaram. Runtime e Firefox não foram executados.
 
 ### Incremento dev.94 — verificação não bloqueante de títulos
 

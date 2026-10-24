@@ -17,7 +17,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Regressão R2 de rotas e acesso | Kernel MariaDB | Rotas/View, CTA por `createAccess()` e busca/alterações recentes sob grants/cache | revalidado no HEAD `c610030dd` (3 testes / 148 asserções; Runtime intocado) |
 | Construção do formulário Node | Kernel | Form API Core, conta confirmada, estado `draft` selecionado, transição `draft_to_review` e sem opção de publicar | aprovado (dev.42) |
 | Criação guiada e ações distintas | Kernel MariaDB | Campos ordenados e instruídos; salvar rascunho mantém `draft`; enviar usa transição para `review`; `status=1` não publica o rascunho | aprovado (dev.93; focal 1/77; 203 depreciações Core/contrib, 2 PHPUnit) |
-| Títulos semelhantes opcionais | Kernel MariaDB | Sugestões limitadas a títulos publicados, visíveis por grants e do Domain Wiki; ação não salva e não bloqueia a criação | aprovado (dev.94; busca 1/34; busca + submit Form API nativo 2/116; 203 depreciações upstream, 3 PHPUnit) |
+| Formato editorial na autoria | Kernel MariaDB | Conta `email_confirmed` recebe formato `wiki` com CKEditor 5; upload direto desativado; submits guardam conteúdo no formato autorizado | aprovado (dev.95; incluído no Kernel combinado 2/120; 203 depreciações upstream, 3 PHPUnit) |
+| Títulos semelhantes opcionais | Kernel MariaDB | Sugestões limitadas a títulos publicados, visíveis por grants e do Domain Wiki; ação não salva e não bloqueia a criação | aprovado (dev.94; busca 1/34; busca + submit Form API nativo 2/120; classe completa 27/1.425; 291 depreciações Core/contrib, 28 PHPUnit) |
 | Edição própria e Domain | Kernel | Workspace só mostra edição após `update` Entity Access no purpose Wiki; link usa rota Core e Domain Wiki | aprovado (dev.44; incluso nos 2 focais) |
 | Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
 | Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |
@@ -91,9 +92,9 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 25 testes / 1.187
-asserções, 291 depreciações Core/contrib e 26 PHPUnit; revalidada no HEAD
-`d3bfd3715`. O aviso de diretório BrowserTest não gravável não impediu a suíte.
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 27 testes / 1.425
+asserções, 291 depreciações Core/contrib e 28 PHPUnit; reexecutada no ciclo
+dev.95. O aviso de diretório BrowserTest não gravável não impediu a suíte.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 

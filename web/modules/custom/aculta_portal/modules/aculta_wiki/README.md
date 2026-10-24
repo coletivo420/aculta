@@ -7,11 +7,13 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.95`: Kernel usa as configurações exportadas de `wiki`/CKEditor 5 e confirma disponibilidade do formato para `email_confirmed` no Node Form nativo; upload direto segue desativado. Focais 2/120; classe Kernel completa 27/1.425 (291 depreciações Core/contrib, 28 PHPUnit). PHPCS/lint e gate Drupal 11 passaram. Runtime/Firefox intocados.
+
 - `0.1.0-dev.94`: a criação oferece busca não bloqueante de até seis títulos publicados e visíveis no Domain Wiki; Entity Access é revalidado. Kernel MariaDB focal 1/34 (2/116 com submit do formulário nativo); PHPCS/lint e gate Drupal 11 passaram. O gate Portal–tema reporta 12 ocorrências existentes fora da nova classe. Runtime e visual intocados.
 
 - R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB passaram (3/148), incluindo rotas, CTA por `createAccess()` e cache/grants da busca. Runtime não foi alterado nem homologado.
 
-- Revalidação R2 no HEAD `369db1537`: Kernel MariaDB completo do ciclo de imagem passou em 26 testes / 1.382 asserções; 291 depreciações Core/contrib e 27 PHPUnit. Nenhuma mudança no Runtime ou filesystem instalado.
+- Revalidação R2 no HEAD `369db1537`: Kernel completo revalidado no HEAD `c767e8fac` passou em 27 testes / 1.425 asserções; 291 depreciações Core/contrib e 28 PHPUnit. Nenhuma mudança no Runtime ou filesystem instalado.
 
 - R1 revalidada no HEAD `b8e486673`: dois providers Unit e quatro Kernels Wiki-owned/Index passaram em 20 testes / 425 asserções; projeção v4 e fingerprint inalterados. PHPUnit reportou 243 depreciações upstream e 3 PHPUnit. Runtime e rebuild instalado intocados.
 

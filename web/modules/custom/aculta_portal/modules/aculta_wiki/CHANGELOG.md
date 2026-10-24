@@ -1,3 +1,13 @@
+## 0.1.0-dev.95 — confirmar CKEditor 5 no formulário de autoria
+
+- O Kernel carrega `filter.format.wiki` e `editor.editor.wiki` exportados e
+  submete o formulário Node nativo como conta `email_confirmed`: o formato `wiki`
+  está disponível, usa CKEditor 5 e mantém upload direto desativado. Os submits
+  de criação/edição usam o formato permitido real. Kernel MariaDB combinado:
+  Focais: 2 testes / 120 asserções; classe Kernel completa: 27 / 1.425,
+  291 depreciações Core/contrib e 28 PHPUnit. PHPCS/lint e gate Drupal 11
+  passam; Runtime e Firefox não foram executados.
+
 ## 0.1.0-dev.94 — verificação opcional de títulos parecidos
 
 - A criação nativa oferece a ação Form API “Verificar títulos parecidos”. Ela

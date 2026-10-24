@@ -21,6 +21,7 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\editor\Entity\Editor;
 use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
@@ -28,6 +29,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\file\Entity\File;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
@@ -98,6 +100,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_user',
       'aculta_wiki',
       'aculta_wiki_access_test',
+      'ckeditor5',
+      'freelinking',
     ]);
     parent::bootKernel();
   }
@@ -125,7 +129,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     );
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('node', ['node_access']);
-    $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain', 'filter']);
+    $this->installConfig(['system', 'user', 'file', 'media', 'node', 'domain', 'filter', 'editor', 'ckeditor5']);
 
     foreach (['aculta_org' => 'main', 'wiki420_aculta_org' => 'wiki'] as $id => $purpose) {
       Domain::create([
@@ -1569,6 +1573,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])->save();
     $workflowFile = dirname(DRUPAL_ROOT) . '/config/sync/workflows.workflow.wiki_editorial.yml';
     Workflow::create(Yaml::parseFile($workflowFile))->save();
+    $wikiFormatFile = dirname(DRUPAL_ROOT) . '/config/sync/filter.format.wiki.yml';
+    FilterFormat::create(Yaml::parseFile($wikiFormatFile))->save();
+    $wikiEditorFile = dirname(DRUPAL_ROOT) . '/config/sync/editor.editor.wiki.yml';
+    Editor::create(Yaml::parseFile($wikiEditorFile))->save();
     EntityFormDisplay::create([
       'targetEntityType' => 'node',
       'bundle' => 'wiki_entry',
@@ -1589,6 +1597,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'view own unpublished content',
         'use wiki_editorial transition create_new_draft',
         'use wiki_editorial transition draft_to_review',
+        'use text format wiki',
       ],
     ])->save();
     $avatar = File::create([
@@ -1645,6 +1654,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('Enviar para revisão', (string) $form['actions']['submit_review']['#value']);
     self::assertNotEmpty($form['actions']['submit_review']['#submit'], var_export($form['actions']['submit_review']['#submit'], TRUE));
     self::assertSame('Explique o tema com linguagem clara. Inclua fontes verificáveis no campo Referências.', (string) $form['body']['#description']);
+    self::assertArrayHasKey('wiki', $form['body']['widget'][0]['format']['format']['#options']);
+    $wikiEditor = Editor::load('wiki');
+    self::assertInstanceOf(Editor::class, $wikiEditor);
+    self::assertSame('ckeditor5', $wikiEditor->getEditor());
+    self::assertFalse($wikiEditor->getImageUploadSettings()['status']);
     self::assertArrayHasKey('moderation_state', $form);
     $moderationWidget = $form['moderation_state']['widget'][0]['state'];
     self::assertArrayHasKey('draft', $moderationWidget['#options']);
@@ -1678,7 +1692,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Verbete salvo como rascunho');
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
-    $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $formState->setValue($form['body']['widget'][0]['format']['format']['#parents'], 'wiki');
     $formState->setValue($moderationWidget['#parents'], 'draft');
     $statusParents = $form['status']['widget'][0]['value']['#parents'] ?? $form['status']['#parents'] ?? ['status'];
     $formState->setValue($statusParents, 1);
@@ -1704,7 +1718,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $reviewForm = $formBuilder->buildForm($reviewFormObject, $reviewFormState);
     $reviewFormState->setValue($reviewForm['title']['widget'][0]['value']['#parents'], 'Verbete enviado para revisão');
     $reviewFormState->setValue($reviewForm['body']['widget'][0]['value']['#parents'], 'Texto com fontes para avaliação.');
-    $reviewFormState->setValue($reviewForm['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $reviewFormState->setValue($reviewForm['body']['widget'][0]['format']['format']['#parents'], 'wiki');
     $reviewFormState->setValue($reviewForm['moderation_state']['widget'][0]['state']['#parents'], 'draft');
     $reviewFormState->setTriggeringElement($reviewForm['actions']['submit_review']);
     $formBuilder->submitForm($reviewFormObject, $reviewFormState);
@@ -1761,7 +1775,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $editFormState->setValue($editForm['title']['widget'][0]['value']['#parents'], 'Verbete enviado para revisão');
     $editFormState->setValue($editForm['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
-    $editFormState->setValue($editForm['body']['widget'][0]['format']['#parents'], 'plain_text');
+    $editFormState->setValue($editForm['body']['widget'][0]['format']['format']['#parents'], 'wiki');
     $editFormState->setValue($editModerationWidget['#parents'], 'review');
     $editFormState->setTriggeringElement($editForm['actions']['submit']);
     $formBuilder->submitForm($editFormObject, $editFormState);

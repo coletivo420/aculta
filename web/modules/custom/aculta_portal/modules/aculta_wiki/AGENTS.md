@@ -1,3 +1,7 @@
+- Dev.95: Kernel submete Node Form com configuração exportada `wiki`; a conta
+  confirmada recebe CKEditor 5 e upload direto permanece desativado. focais 2/120; classe Kernel completa 27/1.425 (291 depreciações Core/contrib,
+  28 PHPUnit); PHPCS/lint e gate Drupal 11 passaram. Runtime/Firefox intocados.
+
 - Dev.94: criação tem verificação opcional de títulos públicos semelhantes,
   limitada e filtrada por Domain/Entity Access; nenhum Node é salvo pela ação.
   Kernel MariaDB focal 1/34 (2/116 combinado com submit nativo); PHPCS/lint e gate Drupal 11 passaram. Gate Portal–tema aponta 12 ocorrências existentes; Runtime intocado.
