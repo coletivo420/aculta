@@ -10,12 +10,15 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Applies the six-month inactivity retention policy to private conversations. */
 final class PrivateMessageRetentionHooks {
+
+  private const CURSOR_KEY = 'aculta_messenger.private_message_retention_cursor';
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -28,6 +31,8 @@ final class PrivateMessageRetentionHooks {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     #[Autowire(service: 'aculta_messenger.conversation_policy')]
     private readonly ConversationPolicy $policy,
+    #[Autowire(service: 'state')]
+    private readonly StateInterface $state,
   ) {}
 
   /**
@@ -41,14 +46,17 @@ final class PrivateMessageRetentionHooks {
     $cutoff = (new \DateTimeImmutable('@' . $this->time->getRequestTime()))
       ->modify('-' . $this->policy->retentionMonths() . ' months')
       ->getTimestamp();
+    $cursor = max(0, (int) $this->state->get(self::CURSOR_KEY, 0));
     $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('updated', $cutoff, '<=')
-      ->sort('updated', 'ASC')
+      ->condition('id', $cursor, '>')
+      ->sort('id', 'ASC')
       ->range(0, $this->policy->cleanupBatch())
       ->execute();
     if ($ids === []) {
+      $this->state->delete(self::CURSOR_KEY);
       return;
     }
 
@@ -82,6 +90,16 @@ final class PrivateMessageRetentionHooks {
 
     if ($deleted > 0) {
       $this->loggerFactory->get('aculta_messenger')->notice('Removed @count private conversations after six months without activity.', ['@count' => $deleted]);
+    }
+
+    // Advance past failed entities as well, so the same oldest page cannot
+    // starve later conversations. A short page means the scan reached its end;
+    // failed rows are retried from the start during the next cron pass.
+    if (count($ids) < $this->policy->cleanupBatch()) {
+      $this->state->delete(self::CURSOR_KEY);
+    }
+    else {
+      $this->state->set(self::CURSOR_KEY, max(array_map('intval', $ids)));
     }
   }
 

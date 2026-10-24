@@ -1,3 +1,9 @@
+## 0.1.1-dev.172 — evitar starvation na retenção de conversas
+
+A retenção paginada agora guarda um cursor de ID em State API. A ordenação ascendente avança além de threads que falham e reinicia quando chega ao fim, permitindo que lotes seguintes prossigam e que falhas sejam tentadas novamente no próximo ciclo. Cada thread e seus avisos Message continuam protegidos pela transação existente; nenhuma limpeza foi executada em dados reais.
+
+Validação: `PrivateMessageRetentionHooksTest` 3/70 e Unit Messenger 156/1.036 PASS; PHPCS Drupal/DrupalPractice, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. Kernel com storage real/Runtime ainda não executados.
+
 ## 0.1.1-dev.171 — validar CSRF Core nos quatro caminhos POST
 
 A cobertura de `CsrfAccessCheck` agora constrói as rotas pelos quatro registros POST do YAML real, substitui seus parâmetros e verifica token ausente, inválido e válido para cada caminho. Mantém explícito que a execução HTTP completa ainda não foi exercitada.
