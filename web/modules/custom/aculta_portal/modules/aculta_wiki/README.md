@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.84`: revalidação WIKI-R1 no HEAD `bea9cc4c3`: providers Unit
+  9/40; quatro Kernels MariaDB 11/385. Projeção v4, relações e fingerprint
+  seguem estáveis. Foram emitidas 243 depreciações Core/contrib/PHPUnit; Runtime
+  e reconstrução instalada não foram tocados.
+
 - Integração Studio dev.4: a `WikiTab` exige `aculta_wiki` habilitado além do
   bundle `wiki_entry`; Unit Studio focal 3/10 e suíte completa 13/41 passam.
 

@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.83**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.84**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.84 — revalidar WIKI-R1 no HEAD atual
+
+No HEAD `bea9cc4c3`, os Unit dos providers Wiki/categoria passaram (9/40) e
+quatro Kernels MariaDB passaram: provider, acesso/relações, bootstrap owner e
+rebuild Wiki-owned (11/385; 243 depreciações Core/contrib/PHPUnit). A projeção
+v4 e fingerprint não mudaram. A geração foi reconstruída apenas no banco
+isolado de teste; Runtime, ativação de `aculta_index` e rebuild instalado não
+foram executados.
 
 Integração GanjaLab/Studio dev.4: a aba Wiki agora exige o módulo owner ativo
 além do bundle `wiki_entry` existir; Unit focal do Studio passou 3/10 e a suíte

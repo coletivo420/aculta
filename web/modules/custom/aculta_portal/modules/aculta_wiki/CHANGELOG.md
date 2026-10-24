@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.84 — revalidar Content Index no HEAD atual
+
+- Reexecutados providers Wiki/categoria (Unit: 9 testes / 40 assertions) e
+  quatro Kernels de provider, acesso/relações, bootstrap owner e rebuild
+  Wiki-owned (MariaDB dedicada: 11 testes / 385 assertions).
+- Projeção Wiki v4, relações `related_entry`, `wiki_category` e `wiki_image`,
+  fingerprint e comportamento não mudaram. PHPUnit reportou 243 depreciações
+  Core/contrib/PHPUnit; Unit reportou 3 depreciações PHPUnit.
+- Nenhum rebuild ou alteração do Runtime. A ativação efetiva de `aculta_index`
+  continua pendente de homologação autorizada.
+
 ## 0.1.0-dev.83 — revalidar acesso das propostas no workspace
 
 - Kernel inclui proposta candidata do mesmo UID e conta com `submit wiki

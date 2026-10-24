@@ -32,6 +32,11 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 ## Regressão Content Index — dev.61
 
+Revalidação no HEAD `bea9cc4c3` (dev.84): providers Wiki/categoria Unit 9/40;
+quatro Kernels MariaDB 11/385, incluindo bootstrap owner real e rebuild
+Wiki-owned. Foram reportadas 243 depreciações Core/contrib/PHPUnit. A projeção
+v4/fingerprint continuam iguais; Runtime não foi tocado.
+
 Revalidada no HEAD após dev.77: Unit dos providers Wiki/categoria 9/40; os
 quatro Kernels abaixo, incluindo `WikiContentIndexRebuildKernelTest`, passaram
 em MariaDB isolada (11 testes / 385 asserções; 243 depreciações Core/contrib e

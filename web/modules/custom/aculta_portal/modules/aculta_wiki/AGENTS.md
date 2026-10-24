@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.84: WIKI-R1 revalidada no HEAD `bea9cc4c3`; providers Unit 9/40 e quatro
+  Kernels MariaDB 11/385. Projeção v4/fingerprint sem mudança; 243
+  depreciações Core/contrib/PHPUnit. Runtime e rebuild instalado intocados.
+
 - Studio dev.4: `WikiTab` só está disponível com `aculta_wiki` habilitado e
   `wiki_entry` existente; Unit Studio focal 3/10, suíte completa 13/41.
 
