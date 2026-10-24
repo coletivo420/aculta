@@ -13,6 +13,28 @@ Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/
 
 **Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio e WE SATIVA permanecem conforme o contrato vigente.
 
+## Nova frente documental — Hub e Meu Espaço (STUDIO-P0, 2026-10-24)
+
+A expansão da plataforma para **todos os membros** foi definida como alvo de
+produto: `/studio` será o hub, `/studio/pessoal` será Meu Espaço, com menu
+unificado de experiências e seções contextuais. Minha Conta e Meu Perfil
+serão incorporados **somente na apresentação**, preservando Portal, User,
+Messenger e outros owners. O perfil público `/u/{apelido}` permanece no
+purpose `main`.
+
+**Esta direção é planejamento, não estado do código nem autorização de corte
+das rotas atuais.** O `StudioExperienceManager` e os providers Ganjalab/
+WE SATIVA existem, mas o provider pessoal e a ponte Marley para o registry
+ainda são candidatos; `/studio` hoje funciona como entrada legada Marley.
+Preservar `/` de account e `/minha-conta` técnico bloqueado. Não sobrepor o
+`AccountShellBuilder` e o shell próprio do Studio numa mesma rota.
+
+O documento normativo específico, com matriz de ownership, mapa de rotas,
+compatibilidade e fases P0–P7, é
+[ACULTA-STUDIO-PERSONAL-EXPERIENCE.md](ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+Históricos e ADRs abaixo continuam relevantes onde não incompatíveis com
+essa direção; referências antigas de identidade não representam Runtime atual.
+
 ## Correção de nomenclatura e ownership
 
 **`aculta_studio` é o submódulo Drupal já existente**, localizado em `web/modules/custom/aculta_portal/modules/aculta_studio/`; possui `aculta_studio.info.yml`, services, plugin `StudioTab`, rotas e frontend progressivo. **Não criar novo submódulo** nem tratar GanjaLab como sinônimo técnico do módulo.
