@@ -1,3 +1,14 @@
+## `0.1.0-dev.284` — registrar os gates estáticos do módulo — 2026-10-24
+
+- Snapshot sem mudança de comportamento: Unit do Fórum 174/1.008; Unit de
+  fóruns restritos 61/172; Kernel 107/2.191; PHPCS do módulo inteiro limpo,
+  após comentários de documentação nos hooks de membership/relationship.
+- Validadores do tema: SDC schemas PASS (588 verificações) e design foundations
+  PASS. O gate de fronteira módulo×tema não acusa mais `aculta_forum`; as
+  falhas restantes são dívidas preexistentes de `aculta_wiki`/`aculta_studio`.
+- Status index PASS. Gates de Runtime (servidor de testes, e-mail, navegador
+  autenticado) e a homologação F-M7 continuam pendentes.
+
 ## `0.1.0-dev.283` — provar o gate de purpose da galeria — 2026-10-24
 
 - Kernel confirma que a galeria do Fórum é negada fora do purpose `forum` e

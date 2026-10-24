@@ -55,6 +55,9 @@ final class RestrictedForumRelationshipHooks {
     $this->rebuild($relationship);
   }
 
+  /**
+   * Reconstrói os grants do tópico afetado pela relação do Group.
+   */
   private function rebuild(GroupRelationshipInterface $relationship): void {
     $pluginId = $relationship->getPluginId();
     $entityId = (int) $relationship->getEntityId();

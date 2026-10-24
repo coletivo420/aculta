@@ -55,6 +55,9 @@ final class RestrictedForumMembershipHooks {
     $this->sync($marca);
   }
 
+  /**
+   * Sincroniza a conta dona da situação associativa alterada.
+   */
   private function sync(EntityInterface $marca): void {
     if (!$marca instanceof FieldableEntityInterface || $marca->getEntityTypeId() !== 'aculta_associado' || !$marca->hasField('uid')) {
       return;

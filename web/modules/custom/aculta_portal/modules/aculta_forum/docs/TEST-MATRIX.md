@@ -1,3 +1,15 @@
+## Snapshot de gates estáticos do módulo, 2026-10-24
+
+- Unit do Fórum 174/1.008; Unit de fóruns restritos 61/172; Kernel 107/2.191.
+- PHPCS Drupal/DrupalPractice do módulo inteiro limpo (corrigidos dois
+  comentários de método em `RestrictedForumMembershipHooks` e
+  `RestrictedForumRelationshipHooks`).
+- SDC schemas PASS (41 componentes, 588 verificações); design foundations PASS.
+- Fronteira módulo×tema: nenhuma falha de `aculta_forum`; restam dívidas
+  preexistentes em `aculta_wiki`/`aculta_studio`.
+- Status index PASS. Runtime, e-mail e navegador autenticado continuam como
+  gates separados.
+
 ## Listagem pública sob grants antes da paginação, 2026-10-24
 
 - `PublicForumListingAccessKernelTest` (2 testes / 26 asserções, MariaDB):
