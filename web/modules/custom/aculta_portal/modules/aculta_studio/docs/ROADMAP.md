@@ -4,6 +4,32 @@
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
+## STUDIO-P0–P7 — migração futura de Minha Conta e Meu Perfil (decisão 2026-10-24)
+
+**Novo planejamento transversal, sem implementação neste incremento.**
+A arquitetura de referência está em
+[Hub e Meu Espaço](../../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+Os incrementos editoriais/LMS/Wiki registrados abaixo não são revogados nem
+renomeados; continuam com seus gates próprios e status histórico.
+
+| Fase | Ordem | Entrega prevista | Aceite mínimo |
+| --- | --- | --- | --- |
+| **P0** | Agora; docs | Contrato, identidade, ownership, rotas atuais/alvo, menu e dependências Studio/Portal/User/Messenger/tema. | Documentação alinhada; nenhum código/Runtime modificado. |
+| **P1** | Depois de P0 | Hub `/studio`, provider `pessoal`, ponte de metadados Marley para registry; experiências autorizadas. | Sem colisão com Marley/Ganjalab, cache/access, fallback full-page. |
+| **P2** | Após P1 | Editor privado de Meu Perfil usando formulários User; perfil público fica `/u/{apelido}` em `main`. | Foto, avatar, bio, redes, visibilidade, duas contas e cache. |
+| **P3** | Após P1 | Minha Conta: dados, endereço/CEP/S-N, documentos opcionais, segurança, OAuth e confirmação. | Form API/POST/CSRF e checkout intactos; segurança testada. |
+| **P4** | Após P1 | Avisos e mensagens como atalhos, atividades, apoio, pedidos e preferências. | Ownership correto, sem storage, SMTP ou inbox duplicados. |
+| **P5** | Após P2–P4 | Um shell, menu unificado/contextual, links canônicos e aliases GET/HEAD seguros. | Sem `AccountShellBuilder` aninhado, URLs e forms legados íntegros. |
+| **P6** | Após P5 | Unit, Kernel, Functional, Runtime e Firefox ESR/X11 autorizado; mobile/teclado/no-JS. | Gates proporcionais, privacidade, Domain, WCAG e temas. |
+| **P7** | Depois do aceite P6 | Retirar só a apresentação antiga duplicada; conservar entidades/APIs e rollback. | Aprovação operacional, equivalência e nenhuma perda de dados. |
+
+**Bloqueadores já identificados:** `aculta_studio.legacy_home` usa `/studio`
+para Marley; `AccountShellBuilder` e `account-navigation.js` produzem o
+shell da Conta; a raiz `/` do purpose `account` continua a home da conta;
+`/minha-conta` é bloqueado; formulários de endereço, foto e segurança
+têm políticas e handlers próprios. **A definição futura de navegação não
+autoriza redirects ou alterações de HTTP/POST nesta fase.**
+
 ### Incremento Studio dev.6 — início WE SATIVA
 
 Adicionada a rota `/studio/we-sativa/inicio`, purpose `account`, com um provider
