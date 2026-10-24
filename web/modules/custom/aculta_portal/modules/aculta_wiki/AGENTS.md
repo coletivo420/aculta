@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.58: `field_values` usa `#tree` para que os values processados sejam lidos
+  pelo serviço de submissão; Kernel FormBuilder cobre validação e persistência
+  do campo título (1/59); classe completa 21/935, com 291 depreciações
+  Core/contrib/PHPUnit. Runtime inalterado.
+
 - Dev.57: exceções de validação backend da proposta não são exibidas sob o
   campo de resumo incorreto; Kernel focal cobre imagem inexistente e ausência
   de persistência (1/150). PHPCS e PHP lint passaram.

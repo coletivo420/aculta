@@ -3,7 +3,7 @@
 Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 `planejado` continuam pendentes; a seção da Fase 5 registra o que já roda.
 
-## WE SATIVA no ACULTA Studio (dev.57)
+## WE SATIVA no ACULTA Studio (dev.58)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -20,6 +20,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Composição SDC do Meu Trabalho | Kernel | Cabeçalho, seções, cards, grade, estado vazio e ações autorizadas usam componentes existentes | aprovado (dev.54; focal combinado: 2 testes / 89 asserções) |
 | Status privado da proposta | Kernel | SDCs existentes exibem estado, conteúdo, retorno e histórico; retirada apenas para autoria em estado elegível | aprovado (dev.56; focal: 1 teste / 148 asserções) |
 | Erro de revalidação da proposta | Kernel | Valores rejeitados pelo serviço geram erro geral do formulário e não persistem proposta | aprovado (dev.57; incluso no focal: 1 teste / 150 asserções) |
+| Submit da proposta pelo Form API | Kernel | `FormBuilder` mantém `field_values` estruturado e o campo selecionado é persistido na entidade privada | aprovado (dev.58; focal: 1/59; classe: 21/935, 291 depreciações) |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
 ## R2 — ciclo de vida da imagem (dev.53)

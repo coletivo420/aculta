@@ -749,6 +749,31 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('proposed_text', $proposalBuild);
     self::assertArrayHasKey('rationale', $proposalBuild);
     self::assertArrayHasKey('source_uris', $proposalBuild);
+    $formBuilder = $this->container->get('form_builder');
+    $actualFormState = new FormState();
+    $actualFormState->addBuildInfo('args', [$proposalTarget]);
+    $actualProposalFormObject = WikiProposalSubmissionForm::create($this->container);
+    $processedProposalForm = $formBuilder->buildForm($actualProposalFormObject, $actualFormState);
+    self::assertSame(['field_values', 'title'], $processedProposalForm['field_values']['title']['#parents']);
+    self::assertSame(['field_values', 'image'], $processedProposalForm['field_values']['image']['#parents']);
+    $actualFormState->setValue($processedProposalForm['intent']['#parents'], 'correction');
+    $actualFormState->setValue($processedProposalForm['proposed_text']['#parents'], 'Atualizar o título com a forma conhecida.');
+    $actualFormState->setValue($processedProposalForm['proposed_fields_selected']['#parents'], ['title' => 'title']);
+    $actualFormState->setValue($processedProposalForm['field_values']['title']['#parents'], 'Título revisado pelo Form API');
+    $actualFormState->setValue($processedProposalForm['rationale']['#parents'], 'A fonte comunitária confirma esta forma.');
+    $actualFormState->setValue($processedProposalForm['source_uris']['#parents'], '');
+    $actualFormState->setValue($processedProposalForm['submission_token']['#parents'], $processedProposalForm['submission_token']['#value']);
+    $actualFormState->setTriggeringElement($processedProposalForm['actions']['submit']);
+    $actualProposalFormObject->validateForm($processedProposalForm, $actualFormState);
+    self::assertSame([], $actualFormState->getErrors());
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($actualFormState, $actualProposalFormObject, &$processedProposalForm): void {
+      $actualProposalFormObject->submitForm($processedProposalForm, $actualFormState);
+    });
+    self::assertSame('aculta_wiki.proposal_status', $actualFormState->getRedirect()->getRouteName());
+    $actualProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+      ->load($actualFormState->getRedirect()->getRouteParameters()['proposal']);
+    self::assertInstanceOf(WikiProposal::class, $actualProposal);
+    self::assertSame(['value' => 'Título revisado pelo Form API'], $actualProposal->getProposedFields()['title']);
 
     Role::load('anonymous')->revokePermission('access content')->save();
     self::assertFalse($accessManager->checkNamedRoute(

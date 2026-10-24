@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.58 — preservar valores editoriais no Form API
+
+- `field_values` agora declara `#tree`, alinhando a estrutura processada pelo
+  Form API ao contrato que o submit usa para extrair os campos escolhidos.
+- Kernel constrói o formulário via `FormBuilder`, verifica `#parents`, executa
+  validação/submit e confirma a persistência do título selecionado (1 teste /
+  59 asserções). A classe Kernel completa passou: 21 testes / 935 asserções,
+  com 291 depreciações Core/contrib/PHPUnit. Runtime não alterado.
+
 ## 0.1.0-dev.57 — apresentar erros de revalidação no formulário
 
 - Rejeições de valores editoriais detectadas no backend aparecem como erro

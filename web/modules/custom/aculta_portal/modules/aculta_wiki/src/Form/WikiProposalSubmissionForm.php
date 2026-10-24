@@ -89,7 +89,10 @@ final class WikiProposalSubmissionForm extends FormBase {
       ],
       '#required' => TRUE,
     ];
-    $form['field_values'] = ['#type' => 'container'];
+    $form['field_values'] = [
+      '#type' => 'container',
+      '#tree' => TRUE,
+    ];
     $form['field_values']['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Novo título'),

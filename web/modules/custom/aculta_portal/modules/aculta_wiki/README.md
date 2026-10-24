@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.58`: `field_values` preserva a árvore no Form API. Kernel usa
+  `FormBuilder` para processar o formulário, valida os valores e persiste o
+  título selecionado na proposta (focal: 1 teste / 59 asserções; classe: 21 /
+  935, com 291 depreciações Core/contrib/PHPUnit).
+
 - `0.1.0-dev.57`: erros de revalidação backend no formulário de proposta são
   apresentados como erro do formulário, sem marcar incorretamente o resumo.
   Kernel focal: 1 teste / 150 asserções; PHPCS/PHP lint passaram.

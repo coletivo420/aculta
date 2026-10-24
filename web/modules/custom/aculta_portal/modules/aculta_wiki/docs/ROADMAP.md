@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.57**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.58**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.58 — persistência dos campos da proposta pelo Form API
+
+O container `field_values` precisava preservar a árvore dos valores. Sem
+`#tree`, os campos processados não coincidiam com a estrutura lida por
+`getProposedFields()`. A correção foi validada construindo o formulário com o
+`FormBuilder`, executando validação e submit e conferindo o título salvo na
+proposta (focal Kernel: 1 teste / 59 asserções). Runtime não alterado.
+Classe Kernel completa: 21 testes / 935 asserções, com 291 depreciações
+Core/contrib/PHPUnit.
 
 ### Incremento dev.57 — erro de validação no formulário de proposta
 
