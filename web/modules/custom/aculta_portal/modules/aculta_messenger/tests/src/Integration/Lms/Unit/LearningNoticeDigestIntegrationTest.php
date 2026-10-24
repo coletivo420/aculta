@@ -163,6 +163,12 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database);
 
     $this->assertSame(0, $summary->enviarResumos(), 'The accepted e-mail is not acknowledged when provider persistence fails.');
+    $provider->additionalRows[] = [
+      'tipo' => 'aprendizagem',
+      'titulo' => 'Aviso posterior',
+      'quantidade' => 1,
+      'delivery_id' => 502,
+    ];
     $this->assertSame(1, $summary->enviarResumos());
     $this->assertTrue($failedTransaction->rolledBack);
     $this->assertFalse($failedTransaction->committed);
@@ -170,7 +176,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $this->assertFalse($successfulTransaction->rolledBack);
     $this->assertCount(1, $correlations, 'A Mailer-accepted batch is reconciled without a second delivery attempt.');
     $this->assertSame([27], $provider->marked);
-    $this->assertSame([[501]], $provider->markedDeliveryIds);
+    $this->assertSame([[501]], $provider->markedDeliveryIds, 'A later digest row is not acknowledged as part of the already accepted batch.');
   }
 
   /**
@@ -332,6 +338,13 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
   public int $failAcknowledgeAttempts = 0;
 
   /**
+   * Digest rows that arrive after the currently accepted batch was assembled.
+   *
+   * @var array<array{tipo: string, titulo: string, quantidade: int, delivery_id: int}>
+   */
+  public array $additionalRows = [];
+
+  /**
    * Recipients whose entries were acknowledged after successful delivery.
    *
    * @var int[]
@@ -389,7 +402,7 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
     if ($this->includeDeliveryId) {
       $row['delivery_id'] = $this->deliveryId;
     }
-    return [$row];
+    return [$row, ...$this->additionalRows];
   }
 
   /**
