@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\aculta_mailer\Message\MailStatus;
+use Drupal\aculta_messenger_aviso_test\Kernel\DigestRecoveryProvider;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicyInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\Core\Database\Connection;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -38,6 +39,14 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     'aculta_messenger_aviso_test',
     'aculta_mailer',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function bootEnvironment(): void {
+    parent::bootEnvironment();
+    new Settings(['hash_salt' => 'aculta-messenger-shared-digest-kernel-test']);
+  }
 
   /**
    * {@inheritdoc}
@@ -76,7 +85,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $preferences->salvar($uid, TRUE, TRUE, TRUE);
 
     $database = $this->container->get('database');
-    $provider = new FailOnceMailerDigestProvider($uid, $database);
+    $provider = new DigestRecoveryProvider($uid, $database, failFirstAcknowledgement: TRUE);
     $noticeAccess = $this->createMock(ForumNoticeAccessPolicyInterface::class);
     $noticeAccess->method('supportsTopic')->willReturn(FALSE);
     $flags = $this->createMock(FlagServiceInterface::class);
@@ -118,35 +127,71 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     self::assertSame('Resumo diário de avisos', $mails[0]['subject']);
     self::assertStringContainsString('Revisão publicada', (string) $mails[0]['body']);
 
-    // Rebuild the worker service so recovery must use the persisted snapshot
-    // and Mail Log, rather than state retained by the first service instance.
-    $restartedSummary = new AvisosResumo(
-      $this->container->get('entity_type.manager'),
-      $preferences,
-      $mailer,
-      new EmailConfirmationPolicy(
-        $userData,
-        $this->container->get('entity_type.manager'),
-        $this->container->get('module_handler'),
-      ),
-      $userData,
-      $this->container->get('datetime.time'),
-      $avisos,
-      $this->container->get('settings'),
-      $database,
-      $this->container->get('lock.persistent'),
-      [$provider],
-    );
-    self::assertSame(0, $restartedSummary->enviarResumos(), 'A restarted worker reconciles the accepted manifest without another transport call.');
-    self::assertSame([[501]], $provider->acknowledged);
-    self::assertCount(1, $this->collectedMails());
-    self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
-    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
-    self::assertSame(1, (int) $database->select('aculta_messenger_mailer_digest_test', 'digest')
+    self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
+      ->fields('digest', ['acknowledged'])
+      ->condition('id', 1)
+      ->execute()
+      ->fetchField(), 'The failed acknowledgement transaction rolls back provider state.');
+
+    $projectRoot = dirname(DRUPAL_ROOT);
+    $originalUid = getenv('ACULTA_DIGEST_RECIPIENT_UID');
+    $originalPrefix = getenv('ACULTA_DIGEST_SHARED_TEST_PREFIX');
+    putenv('ACULTA_DIGEST_RECIPIENT_UID=' . $uid);
+    putenv('ACULTA_DIGEST_SHARED_TEST_PREFIX=' . $database->getPrefix());
+    $pipes = [];
+    $process = NULL;
+    try {
+      $workerFixture = 'web/modules/custom/aculta_portal/modules/aculta_messenger/tests/fixtures/DigestRecoveryWorkerKernelTest.php';
+      $process = proc_open([
+        PHP_BINARY,
+        $projectRoot . '/vendor/bin/phpunit',
+        '-c',
+        $projectRoot . '/web/core/phpunit.xml.dist',
+        $projectRoot . '/' . $workerFixture,
+      ], [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+      ], $pipes, $projectRoot);
+      self::assertIsResource($process);
+      fclose($pipes[0]);
+      stream_set_blocking($pipes[1], FALSE);
+      stream_set_blocking($pipes[2], FALSE);
+      [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+      $process = NULL;
+      self::assertSame(0, $exitCode, 'The restarted Drupal digest worker failed: ' . trim($stderr . "\n" . $stdout));
+    }
+    finally {
+      if (is_resource($process)) {
+        proc_terminate($process);
+        foreach ($pipes as $pipe) {
+          if (is_resource($pipe)) {
+            fclose($pipe);
+          }
+        }
+        proc_close($process);
+      }
+      foreach ([
+        'ACULTA_DIGEST_RECIPIENT_UID' => $originalUid,
+        'ACULTA_DIGEST_SHARED_TEST_PREFIX' => $originalPrefix,
+      ] as $name => $value) {
+        if ($value === FALSE) {
+          putenv($name);
+        }
+        else {
+          putenv($name . '=' . $value);
+        }
+      }
+    }
+
+    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
       ->fields('digest', ['acknowledged'])
       ->condition('id', 1)
       ->execute()
       ->fetchField());
+    self::assertCount(1, $this->collectedMails());
+    self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
+    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 
   /**
@@ -322,82 +367,6 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $closeCode = proc_close($process);
     return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
   }
-
-}
-
-/**
- * Digest provider that fails its first acknowledgement after Mailer acceptance.
- */
-final class FailOnceMailerDigestProvider implements AvisoDigestProviderInterface {
-
-  /**
-   * Successfully acknowledged batches.
-   *
-   * @var array<int, int[]>
-   */
-  public array $acknowledged = [];
-
-  /**
-   * Whether the synthetic acknowledgement failure already occurred.
-   */
-  private bool $failed = FALSE;
-
-  public function __construct(
-    private readonly int $uid,
-    private readonly Connection $database,
-  ) {
-    $this->database->schema()->createTable('aculta_messenger_mailer_digest_test', [
-      'fields' => [
-        'id' => ['type' => 'int', 'not null' => TRUE],
-        'acknowledged' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
-      ],
-      'primary key' => ['id'],
-    ]);
-    $this->database->insert('aculta_messenger_mailer_digest_test')
-      ->fields(['id' => 1, 'acknowledged' => 0])
-      ->execute();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function pendingRecipientIds(): array {
-    return [$this->uid];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function digestRowsFor(int $uid): array {
-    return $uid === $this->uid ? [
-      [
-        'tipo' => 'wiki',
-        'titulo' => 'Revisão publicada',
-        'quantidade' => 1,
-        'delivery_id' => 501,
-      ],
-    ] : [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function markDigestSent(int $uid, array $deliveryIds): void {
-    $this->database->update('aculta_messenger_mailer_digest_test')
-      ->fields(['acknowledged' => 1])
-      ->condition('id', 1)
-      ->execute();
-    if (!$this->failed) {
-      $this->failed = TRUE;
-      throw new \RuntimeException('Synthetic digest acknowledgement failure.');
-    }
-    $this->acknowledged[] = $deliveryIds;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function discardDigest(int $uid): void {}
 
 }
 
