@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
+use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Controller\PortalController;
 use Drupal\aculta_studio\Controller\StudioAccountSectionController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
@@ -106,7 +107,9 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       $resolver->expects(self::once())->method('getInstanceFromDefinition')
         ->with(PortalController::class)->willReturn($owner);
 
-      $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->{$studioMethod}();
+      $document = $this->createMock(AccountDocumentInterface::class);
+      $document->method('isAvailable')->willReturn(TRUE);
+      $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), $document))->{$studioMethod}();
 
       self::assertSame([$ownerMethod], $owner->called);
       self::assertSame('studio-account-section', $page['#attributes']['data-portal-ui']);
@@ -130,6 +133,24 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       self::assertSame(0, $page['#cache']['max-age']);
       self::assertContains('user', $page['#cache']['contexts']);
     }
+  }
+
+  /**
+   * If CPF/CNPJ is unavailable, all other account sections remain usable.
+   */
+  public function testOptionalDocumentsAreAbsentFromContextualMenu(): void {
+    $owner = new class {
+      public function address(): array {
+        return ['content' => ['form' => ['#type' => 'form']]];
+      }
+    };
+    $resolver = $this->createMock(ClassResolverInterface::class);
+    $resolver->method('getInstanceFromDefinition')->willReturn($owner);
+    $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->address();
+    $routes = array_map(static fn (array $link): string => $link['#url']->getRouteName(),
+      $page['navigation']['#items']);
+    self::assertCount(5, $routes);
+    self::assertNotContains('aculta_studio.account_documents', $routes);
   }
 
   /**
