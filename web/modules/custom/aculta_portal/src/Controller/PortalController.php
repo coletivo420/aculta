@@ -174,15 +174,6 @@ final class PortalController extends ControllerBase {
     throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
   }
 
-  /**
-   * Lista e cadastro de endereços do Commerce foram substituídos pelo formulário de Meus Dados (CEP).
-   * Todos os caminhos antigos redirecionam para lá (302). Ver docs/portal/REDIRECTS.md.
-   */
-  public function addressRedirect(): TrustedRedirectResponse {
-    $target = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.my_data_address');
-    return new TrustedRedirectResponse($target?->toString() ?? Url::fromRoute('aculta_portal.my_data')->toString(), 302);
-  }
-
   /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
   /** Situação do pedido em português (os rótulos do workflow vêm em inglês). */
   private function orderStateLabel($order): string {
