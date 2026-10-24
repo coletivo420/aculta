@@ -28,4 +28,3 @@ aculta_forum.admin_settings:
   route_name: aculta_forum.settings
   parent: aculta_forum.admin
   weight: 3
-

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Test fixture that fails a Comment save to exercise move rollback.
+ */
+
 declare(strict_types=1);
 
 use Drupal\comment\CommentInterface;

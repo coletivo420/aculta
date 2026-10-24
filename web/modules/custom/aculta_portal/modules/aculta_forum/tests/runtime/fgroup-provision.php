@@ -30,6 +30,9 @@ use Drupal\node\NodeAccessRebuild;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
+// Fixture constants stay local to these drush scripts, not autoloaded classes.
+// phpcs:disable DrupalPractice.Constants.GlobalConstant.GlobalConstant
+
 const FGROUP_TYPE = 'forum_associados';
 const FGROUP_ROLE = 'forum_associados-membro';
 const FGROUP_PREFIX = 'fgroup_teste_';

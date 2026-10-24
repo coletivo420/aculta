@@ -52,7 +52,7 @@ final class ParticipationEditWindowTest extends TestCase {
   }
 
   /**
-   * Without a marker, the creation time bounds the window instead of leaving it open.
+   * Bounds the window by creation time when the marker is absent.
    */
   public function testMissingMarkerUsesCreationTimeAsBound(): void {
     $window = $this->window(10, 1000);
@@ -63,7 +63,7 @@ final class ParticipationEditWindowTest extends TestCase {
   }
 
   /**
-   * An allowed consumer exemption lifts the author window; a denied one does not.
+   * Exemptions lift the window only when they allow access.
    */
   public function testAllowedExemptionLiftsWindow(): void {
     $allowed = new ParticipationEditWindowExemptionStub(AccessResult::allowed());
@@ -122,7 +122,10 @@ final class ParticipationEditWindowTest extends TestCase {
    * Creates a post owner entity with the supplied first-publication time.
    */
   private function post(int $firstPublished): FieldableEntityInterface&EntityOwnerInterface {
-    $post = $this->createMockForIntersectionOfInterfaces([FieldableEntityInterface::class, EntityOwnerInterface::class]);
+    $post = $this->createMockForIntersectionOfInterfaces([
+      FieldableEntityInterface::class,
+      EntityOwnerInterface::class,
+    ]);
     $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
     $post->method('getOwnerId')->willReturn(17);
     $post->method('hasField')->with('first_published')->willReturn(TRUE);
@@ -137,10 +140,18 @@ final class ParticipationEditWindowTest extends TestCase {
    * Creates a post without a first-publication marker, only a creation time.
    */
   private function legacyPost(int $created): FieldableEntityInterface&EntityOwnerInterface {
-    $post = $this->createMockForIntersectionOfInterfaces([FieldableEntityInterface::class, EntityOwnerInterface::class]);
+    $post = $this->createMockForIntersectionOfInterfaces([
+      FieldableEntityInterface::class,
+      EntityOwnerInterface::class,
+    ]);
     $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
     $post->method('getOwnerId')->willReturn(17);
-    $post->method('hasField')->willReturnCallback(static fn(string $field): bool => in_array($field, ['first_published', 'created'], TRUE));
+    $post->method('hasField')->willReturnCallback(
+      static fn(string $field): bool => in_array($field, [
+        'first_published',
+        'created',
+      ], TRUE)
+    );
     $post->method('get')->willReturnCallback(static fn(string $field): ParticipationEditWindowFieldList => $field === 'created'
       ? new ParticipationEditWindowFieldList($created)
       : new ParticipationEditWindowFieldList(0, TRUE));

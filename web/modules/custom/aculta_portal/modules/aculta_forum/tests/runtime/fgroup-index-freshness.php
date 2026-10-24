@@ -14,6 +14,9 @@ declare(strict_types=1);
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\search_api\Entity\Index;
 
+// Fixture constants stay local to these drush scripts, not autoloaded classes.
+// phpcs:disable DrupalPractice.Constants.GlobalConstant.GlobalConstant
+
 const FGROUP_PREFIX = 'fgroup_teste_';
 
 $entity_type_manager = \Drupal::entityTypeManager();

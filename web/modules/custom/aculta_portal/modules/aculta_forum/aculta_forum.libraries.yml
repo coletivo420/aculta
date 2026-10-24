@@ -22,4 +22,3 @@ ckeditor5.attachment:
     - core/drupal.ajax
     - core/drupal.dialog.ajax
     - entity_embed/entity_embed
-

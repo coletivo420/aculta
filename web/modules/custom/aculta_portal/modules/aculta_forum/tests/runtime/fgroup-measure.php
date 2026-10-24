@@ -25,6 +25,9 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 
+// Fixture constants stay local to these drush scripts, not autoloaded classes.
+// phpcs:disable DrupalPractice.Constants.GlobalConstant.GlobalConstant
+
 const FGROUP_TOPIC_TITLE = '[TESTE F-GROUP] Tópico restrito';
 const FGROUP_PUBLIC_TOPIC_TITLE = '[TESTE F-GROUP] Tópico público';
 const FGROUP_PREFIX = 'fgroup_teste_';
