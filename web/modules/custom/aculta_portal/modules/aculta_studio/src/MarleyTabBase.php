@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base class for Studio tabs. Dependencies come from the container.
  */
-abstract class StudioTabBase extends PluginBase implements StudioTabInterface, ContainerFactoryPluginInterface {
+abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
 

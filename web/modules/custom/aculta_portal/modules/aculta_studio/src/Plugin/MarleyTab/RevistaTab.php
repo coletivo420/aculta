@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_studio\Plugin\StudioTab;
+namespace Drupal\aculta_studio\Plugin\MarleyTab;
 
-use Drupal\aculta_studio\Attribute\StudioTab;
-use Drupal\aculta_studio\StudioTabBase;
+use Drupal\aculta_studio\Attribute\MarleyTab;
+use Drupal\aculta_studio\MarleyTabBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -22,12 +22,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Magazine keeps the route contract and the Studio consumes it. Criar keeps
  * the create route.
  */
-#[StudioTab(
+#[MarleyTab(
   id: 'revista',
   label: new TranslatableMarkup('Revista'),
   weight: 10,
 )]
-final class RevistaTab extends StudioTabBase {
+final class RevistaTab extends MarleyTabBase {
 
   /**
    * {@inheritdoc}

@@ -82,7 +82,7 @@ aculta_wiki.proposal_withdraw:
         type: entity:aculta_wiki_proposal
 
 aculta_wiki.proposal_decide:
-  path: '/studio/ganjalab/wiki/propostas/{proposal}/decidir'
+  path: '/studio/marley/wiki/propostas/{proposal}/decidir'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
     _title: 'Avaliar proposta da Wiki'

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_studio\StudioListingBuilder;
+use Drupal\aculta_studio\MarleyListingBuilder;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -14,9 +14,9 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Characterizes access to individual revisions in the Studio listing.
  */
-#[CoversClass(StudioListingBuilder::class)]
+#[CoversClass(MarleyListingBuilder::class)]
 #[Group('aculta_studio')]
-final class StudioListingRevisionAccessTest extends UnitTestCase {
+final class MarleyListingRevisionAccessTest extends UnitTestCase {
 
   public function testVisibleNodeDoesNotAuthorizeUnviewableRevision(): void {
     $account = $this->createMock(AccountInterface::class);
@@ -25,7 +25,7 @@ final class StudioListingRevisionAccessTest extends UnitTestCase {
       ->method('access')
       ->willReturnCallback(static fn (string $operation): bool => $operation === 'view');
 
-    self::assertFalse(StudioListingBuilder::canViewRevision($revision, $account));
+    self::assertFalse(MarleyListingBuilder::canViewRevision($revision, $account));
   }
 
   public function testBothAccessDecisionsMustAllow(): void {
@@ -35,7 +35,7 @@ final class StudioListingRevisionAccessTest extends UnitTestCase {
       ->method('access')
       ->willReturn(TRUE);
 
-    self::assertTrue(StudioListingBuilder::canViewRevision($revision, $account));
+    self::assertTrue(MarleyListingBuilder::canViewRevision($revision, $account));
   }
 
   public function testDeniedNodeShortCircuitsRevisionAccess(): void {
@@ -46,7 +46,7 @@ final class StudioListingRevisionAccessTest extends UnitTestCase {
       ->with('view', $account)
       ->willReturn(FALSE);
 
-    self::assertFalse(StudioListingBuilder::canViewRevision($revision, $account));
+    self::assertFalse(MarleyListingBuilder::canViewRevision($revision, $account));
   }
 
 }

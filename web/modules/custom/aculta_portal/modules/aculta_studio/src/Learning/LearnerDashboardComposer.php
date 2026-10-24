@@ -39,7 +39,7 @@ final class LearnerDashboardComposer {
         '#type' => 'component',
         '#component' => 'aculta420:context-header',
         '#props' => [
-          'eyebrow' => (string) $this->t('GanjaLab420'),
+          'eyebrow' => (string) $this->t('ACULTA Studio Ganjalab'),
           'title' => (string) $this->t('Meus cursos'),
           'subtitle' => (string) $this->t('Acompanhe suas aulas e certificados.'),
         ],

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_studio\Plugin\StudioTab\WikiTab;
+use Drupal\aculta_studio\Plugin\MarleyTab\WikiTab;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -47,7 +47,7 @@ final class WikiTabAvailabilityTest extends UnitTestCase {
   }
 
   /**
-   * Ensures contributor creation access stays in WE SATIVA, not GanjaLab.
+   * Ensures contributor creation access stays in WE SATIVA, not Marley.
    */
   public function testCreateOnlyContributorCannotAccessEditorialTab(): void {
     $account = $this->account(['create wiki_entry content']);

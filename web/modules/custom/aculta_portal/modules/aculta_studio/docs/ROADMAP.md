@@ -129,7 +129,7 @@ Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManage
 
 ## GANJALAB E-A.1 — Entrada simples de publicação (código em 2026-10-22)
 
-`StudioController::welcome()` renderiza na entrada do GanjaLab o SDC `context-header`, cartões `card` e grade `content-grid` com ações filtradas pelos providers `StudioTab`/Presenter e acesso às rotas do dono. Nenhuma entidade ou workflow migrou. Prioridade imediata **E-A.2 testes reais de ações/domain/visual** e **E-B Meu trabalho seguro**, antes de implementar editores inline ou moderação. Auditoria: [GANJALAB-E-A-EDITOR-AUDIT.md](GANJALAB-E-A-EDITOR-AUDIT.md). Sem PASS de Runtime, mobile ou PHP lint nesta sessão.
+`StudioController::welcome()` renderiza na entrada do GanjaLab o SDC `context-header`, cartões `card` e grade `content-grid` com ações filtradas pelos providers `StudioTab`/Presenter e acesso às rotas do dono. Nenhuma entidade ou workflow migrou. Prioridade imediata **E-A.2 testes reais de ações/domain/visual** e **E-B Meu trabalho seguro**, antes de implementar editores inline ou moderação. Auditoria: [MARLEY-E-A-EDITOR-AUDIT.md](MARLEY-E-A-EDITOR-AUDIT.md). Sem PASS de Runtime, mobile ou PHP lint nesta sessão.
 
 ## GANJALAB E-B.1 — Meu trabalho (2026-10-22)
 
@@ -154,3 +154,11 @@ A varredura integral de IDs do autor por request foi substituída por **paginaç
 **Escalabilidade e precisão:** custo por requisição limitado a até 1000 candidatos, sem `count(*)` condicionado por permissões de revisão e sem ler toda a coleção pessoal; porém estados muito raros podem demandar vários cliques de continuidade, inclusive páginas sem registros. O cursor é uma posição textual e **não é uma garantia de snapshot**: concorrência e alteração de `changed` podem mover itens entre páginas. Não há contagem total nem paginação numerada exata. O código ainda precisa de Kernel/Functional e benchmarks com milhares de nós/revisões. Para exigência futura de contagem precisa/ordenação estável sob edição concorrente, especificar índice derivado revision-aware com invalidação e grants corretos — nunca índice público de metadados de revisões privadas.
 
 **Status:** implementação com limite de custo, sem homologação Runtime; não declarar “otimização definitiva” no sentido de contagem exata ou isolamento transacional. Próximo gate E-B.2-T: simular muitos candidatos sem resultado, acesso negado e última revisão privada, mudanças concorrentes, URLs inválidas e DOM no purpose account, mais testes de performance e verificação de DBCache.
+# Identidade vigente — 2026-10-24
+
+ACULTA Studio Marley (`marley`) é a experiência editorial e ACULTA Studio
+Ganjalab (`ganjalab`) é a experiência de aprendizagem. `aculta_studio` continua
+sendo a plataforma compartilhada. As seções abaixo de G420/GanjaLab preservam
+o histórico das fases anteriores; nomes e caminhos atuais estão no
+[contrato de identidade](../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md).
+

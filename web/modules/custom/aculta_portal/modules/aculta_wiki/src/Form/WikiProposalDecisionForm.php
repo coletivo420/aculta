@@ -67,7 +67,7 @@ final class WikiProposalDecisionForm extends FormBase {
       '#type' => 'component',
       '#component' => 'aculta420:context-header',
       '#props' => [
-        'eyebrow' => (string) $this->t('GanjaLab · Moderação Wiki'),
+        'eyebrow' => (string) $this->t('ACULTA Studio Marley · Moderação Wiki'),
         'title' => (string) $this->t('Proposta: @title', ['@title' => $proposal->label()]),
         'subtitle' => (string) $this->t('Revise a contribuição e registre uma decisão editorial.'),
       ],

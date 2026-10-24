@@ -906,7 +906,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('/wiki/propostas/{proposal}/retirar', $withdrawRoute->getPath());
     self::assertSame('proposal.view', $withdrawRoute->getRequirement('_entity_access'));
     $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
-    self::assertSame('/studio/ganjalab/wiki/propostas/{proposal}/decidir', $decisionRoute->getPath());
+    self::assertSame('/studio/marley/wiki/propostas/{proposal}/decidir', $decisionRoute->getPath());
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
     self::assertSame('proposal.update', $decisionRoute->getRequirement('_entity_access'));
 

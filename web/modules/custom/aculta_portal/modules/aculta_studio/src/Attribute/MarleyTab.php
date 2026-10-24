@@ -11,7 +11,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Declares an ACULTA Studio tab provider.
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
-final class StudioTab extends Plugin {
+final class MarleyTab extends Plugin {
 
   public function __construct(
     string $id,

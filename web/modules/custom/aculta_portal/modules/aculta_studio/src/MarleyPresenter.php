@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
  * section). An action is shown only when the owner's route grants it. An empty level is removed, so an area
  * appears only when it has at least one allowed action in one of its sections and tabs.
  */
-final class StudioPresenter {
+final class MarleyPresenter {
 
   public function __construct(
     private readonly PluginManagerInterface $tabs,
@@ -23,13 +23,13 @@ final class StudioPresenter {
   /**
    * Visible areas keyed by plugin id, in weight order.
    *
-   * @return array<string, \Drupal\aculta_studio\StudioTabInterface>
+   * @return array<string, \Drupal\aculta_studio\MarleyTabInterface>
    */
   public function visibleTabs(AccountInterface $account): array {
     $visible = [];
     foreach ($this->sortedDefinitions() as $id => $definition) {
       $tab = $this->tabs->createInstance($id);
-      if (!$tab instanceof StudioTabInterface || !$tab->isAvailable()) {
+      if (!$tab instanceof MarleyTabInterface || !$tab->isAvailable()) {
         continue;
       }
       if ($this->sectionsFor($tab, $account) !== []) {
@@ -44,7 +44,7 @@ final class StudioPresenter {
    *
    * @return array<string, array{label: \Stringable|string, weight: int, tabs: array<string, array{label: \Stringable|string, weight: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>}>
    */
-  public function sectionsFor(StudioTabInterface $tab, AccountInterface $account): array {
+  public function sectionsFor(MarleyTabInterface $tab, AccountInterface $account): array {
     if (!$tab->access($account)->isAllowed()) {
       return [];
     }

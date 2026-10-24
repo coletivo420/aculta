@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_studio\Plugin\StudioTab;
+namespace Drupal\aculta_studio\Plugin\MarleyTab;
 
-use Drupal\aculta_studio\Attribute\StudioTab;
-use Drupal\aculta_studio\StudioTabBase;
+use Drupal\aculta_studio\Attribute\MarleyTab;
+use Drupal\aculta_studio\MarleyTabBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,12 +17,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * The area is shown to accounts with the forum posting or moderation permission. Each action still goes to
  * the owner's route in the forum domain, and the owner's access decides whether the action is offered.
  */
-#[StudioTab(
+#[MarleyTab(
   id: 'forum',
   label: new TranslatableMarkup('Fórum'),
   weight: 20,
 )]
-final class ForumTab extends StudioTabBase {
+final class ForumTab extends MarleyTabBase {
 
   /** {@inheritdoc} */
   public function isAvailable(): bool {

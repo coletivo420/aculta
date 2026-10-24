@@ -468,6 +468,6 @@ Runtime/Homelab não faz parte do teste.
 - [Matriz de segurança e arquivos](../../../../../../docs/portal/SECURITY-ACCESS-FILES-MATRIX.md)
 - [Changelog](CHANGELOG.md)
 
-## GanjaLab420 — migração para ACULTA Studio (G420-A)
+## Registro histórico: identidade estudantil anterior (G420-A)
 
-[Contrato e inventário de migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). GanjaLab420 é **a experiência LMS do estudante** dentro de ACULTA Studio. Os entrypoints de `/ganjalab420` e `/minha-aprendizagem` foram transferidos para `aculta_studio.ganjalab420_controller`, que delega ao controlador LMS; o LMS preserva dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com GanjaLab editorial nem com WE SATIVA. A extração da composição visual para Studio será a G420-C; não declarar concluída. Antes do deploy habilitar Studio se necessário e executar testes Function/Kernel e smoke de rotas. 
+[Contrato e inventário histórico da migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). A identidade e os caminhos descritos nas seções anteriores refletem o estado daquela fase. O nome vigente é **ACULTA Studio Ganjalab**, ID `ganjalab`, com rota canônica `/studio/ganjalab`; aliases legados GET/HEAD redirecionam temporariamente para ela. O controller de experiência é `aculta_studio.ganjalab_controller`. LMS continua dono de dados, progresso, matrículas, certificados, autorização e cache.

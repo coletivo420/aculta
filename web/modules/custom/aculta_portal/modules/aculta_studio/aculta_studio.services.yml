@@ -1,29 +1,29 @@
 services:
-  aculta_studio.tab_manager:
-    class: Drupal\aculta_studio\StudioTabManager
+  aculta_studio.marley_tab_manager:
+    class: Drupal\aculta_studio\MarleyTabManager
     parent: default_plugin_manager
-  aculta_studio.presenter:
-    class: Drupal\aculta_studio\StudioPresenter
-    arguments: ['@aculta_studio.tab_manager']
-  aculta_studio.controller:
-    class: Drupal\aculta_studio\Controller\StudioController
-    arguments: ['@aculta_studio.presenter', '@current_user', '@aculta_studio.listing', '@string_translation']
-  aculta_studio.listing:
-    class: Drupal\aculta_studio\StudioListingBuilder
+  aculta_studio.marley_presenter:
+    class: Drupal\aculta_studio\MarleyPresenter
+    arguments: ['@aculta_studio.marley_tab_manager']
+  aculta_studio.marley_controller:
+    class: Drupal\aculta_studio\Controller\MarleyController
+    arguments: ['@aculta_studio.marley_presenter', '@current_user', '@aculta_studio.marley_listing', '@string_translation']
+  aculta_studio.marley_listing:
+    class: Drupal\aculta_studio\MarleyListingBuilder
     arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@request_stack', '@?aculta_wiki.editorial_queue']
   aculta_studio.experience_manager:
     class: Drupal\aculta_studio\Experience\StudioExperienceManager
     calls:
-      - [addProvider, ['@aculta_studio.experience.ganjalab420']]
+      - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
-  aculta_studio.experience.ganjalab420:
-    class: Drupal\aculta_studio\Experience\GanjaLab420ExperienceProvider
+  aculta_studio.experience.ganjalab:
+    class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
     arguments: ['@?aculta_studio.learner_dashboard_composer']
   aculta_studio.experience.we_sativa:
     class: Drupal\aculta_studio\Experience\WeSativaExperienceProvider
     arguments: ['@?aculta_wiki.contributor_workspace', '@current_user']
-  aculta_studio.ganjalab420_controller:
-    class: Drupal\aculta_studio\Controller\GanjaLab420Controller
+  aculta_studio.ganjalab_controller:
+    class: Drupal\aculta_studio\Controller\GanjalabController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
   aculta_studio.we_sativa_controller:
     class: Drupal\aculta_studio\Controller\WeSativaController

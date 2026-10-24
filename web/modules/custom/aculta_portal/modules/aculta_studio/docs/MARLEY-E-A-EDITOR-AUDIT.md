@@ -4,23 +4,23 @@
 
 ## Objetivo de UX
 
-Publicar deve ser fácil: entrar em `conta.aculta.*/studio/ganjalab`, escolher o que criar e continuar o trabalho com o mínimo de navegação. Mobile-first (320px primeiro), texto humano, ações evidentes, sem menus administrativos concorrentes. A barra multidomínio global permanece intacta. A interface pertence ao Studio; o design pertence ao tema ACULTA420 (Core SDC + UI Suite + tokens). Dados, formulários, Content Moderation, grants e operações permanecem nos módulos donos.
+Publicar deve ser fácil: entrar em `conta.aculta.*/studio/marley`, escolher o que criar e continuar o trabalho com o mínimo de navegação. Mobile-first (320px primeiro), texto humano, ações evidentes, sem menus administrativos concorrentes. A barra multidomínio global permanece intacta. A interface pertence ao Studio; o design pertence ao tema ACULTA420 (Core SDC + UI Suite + tokens). Dados, formulários, Content Moderation, grants e operações permanecem nos módulos donos.
 
 ## Inventário de código existente
 
 | Área | Plugin | Criação autorizada existente | Listagem / pendência |
 | --- | --- | --- | --- |
-| Revista | `RevistaTab` | `node.add` para `revista`, purpose magazine | `StudioListingBuilder` lista 50 antes do filtro da última revisão; não é 'Meus itens' |
+| Revista | `RevistaTab` | `node.add` para `revista`, purpose magazine | `MarleyListingBuilder` lista 50 antes do filtro da última revisão; não é 'Meus itens' |
 | Fórum | `ForumTab` | `aculta_forum.topic_add`, purpose forum | links públicos e fila Comment genérica; moderação precisa de provider especializado |
-| Wiki | `WikiTab` | não há seção `criar` exposta hoje | listagens e revisões genéricas; WE SATIVA autor e GanjaLab moderador não são equivalentes |
+| Wiki | `WikiTab` | não há seção `criar` exposta hoje | listagens e revisões genéricas; WE SATIVA autor e ACULTA Studio Marley moderador não são equivalentes |
 | Cursos | `CursosTab` | `entity.group.add_form`, Group `lms_course`, purpose courses | turmas/contexto exigem grants Group e navegação de curso, sem cópia de LMS |
 | Galerias | `GaleriasTab` | `entity.media_gallery.add_form`, purpose main | formulário em outro domínio; conferir acesso e destino real em HTTP |
 
-As ações declaradas pelos plugins passam por `routeAction()` e `StudioPresenter::sectionsFor()`; o Presenter remove ações cuja rota do dono não autoriza. **Não deduzir permissão apenas por plugin ou papel.** Não criar conteúdo nem habilitar moderação por um novo atalho.
+As ações declaradas pelos plugins passam por `routeAction()` e `MarleyPresenter::sectionsFor()`; o Presenter remove ações cuja rota do dono não autoriza. **Não deduzir permissão apenas por plugin ou papel.** Não criar conteúdo nem habilitar moderação por um novo atalho.
 
 ## E-A.1 entregue: entrada publication-first
 
-No `StudioController::page()`, a entrada canônica do GanjaLab (quando sem área explícita) oferece:
+No `MarleyController::page()`, a entrada canônica do ACULTA Studio Marley (quando sem área explícita) oferece:
 - cabeçalho `aculta420:context-header` com convite curto à criação;
 - cartões `aculta420:card` dentro de `aculta420:content-grid`, somente com ações permitidas em seções `criar` realmente existentes;
 - links nativos aos formulários dos módulos donos, propósito/ACL preservados;
@@ -30,7 +30,7 @@ O mesmo layout pode aparecer no alias legado `/ganjalab` ao entrar sem área; is
 
 ## E-A.2 e E-B — próximos incrementos
 
-1. Medir no Runtime quais rotas/forms funcionam (Revista, Fórum, Galeria, Cursos), incluindo o retorno ao GanjaLab e mensagens de erro; não fingir experiência inline se o dono ainda abre o form externo.
+1. Medir no Runtime quais rotas/forms funcionam (Revista, Fórum, Galeria, Cursos), incluindo o retorno ao ACULTA Studio Marley e mensagens de erro; não fingir experiência inline se o dono ainda abre o form externo.
 2. Revisar UX de criação em 320/390/768/1280/1440px, teclado, foco, contraste, 200% zoom, dark/light com idêntica geometria; decidir melhorias no componente SDC do tema, não no PHP do Studio.
 3. Priorizar **Meu trabalho** com filtro real de autor aplicado antes da paginação, AccessResult/cache e revisão visível; separar equipe e moderação com grants específicos. Não usar a listagem `Todos` como substituta de 'Meus'.
 4. Integrar fluxo editorial Revista criar → rascunho → prévia → revisão pelas transições reais e Form API, sem publicar automaticamente.

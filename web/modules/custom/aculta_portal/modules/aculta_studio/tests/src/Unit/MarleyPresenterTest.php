@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_studio\StudioPresenter;
-use Drupal\aculta_studio\StudioTabInterface;
+use Drupal\aculta_studio\MarleyPresenter;
+use Drupal\aculta_studio\MarleyTabInterface;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
@@ -14,11 +14,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * @coversClass \Drupal\aculta_studio\StudioPresenter
+ * @coversClass \Drupal\aculta_studio\MarleyPresenter
  */
-#[CoversClass(StudioPresenter::class)]
+#[CoversClass(MarleyPresenter::class)]
 #[Group('aculta_studio')]
-final class StudioPresenterTest extends UnitTestCase {
+final class MarleyPresenterTest extends UnitTestCase {
 
   public function testShowsOnlyAvailableTabsAllowedToTheAccountInWeightOrder(): void {
     $definitions = [
@@ -35,7 +35,7 @@ final class StudioPresenterTest extends UnitTestCase {
     $manager->method('getDefinitions')->willReturn($definitions);
     $manager->method('createInstance')->willReturnCallback(static fn (string $id) => $tabs[$id]);
 
-    $visible = (new StudioPresenter($manager))->visibleTabs($this->createMock(AccountInterface::class));
+    $visible = (new MarleyPresenter($manager))->visibleTabs($this->createMock(AccountInterface::class));
 
     self::assertSame(['revista'], array_keys($visible));
   }
@@ -53,13 +53,13 @@ final class StudioPresenterTest extends UnitTestCase {
     $manager->method('getDefinitions')->willReturn($definitions);
     $manager->method('createInstance')->willReturnCallback(static fn (string $id) => $tabs[$id]);
 
-    $visible = (new StudioPresenter($manager))->visibleTabs($this->createMock(AccountInterface::class));
+    $visible = (new MarleyPresenter($manager))->visibleTabs($this->createMock(AccountInterface::class));
 
     self::assertSame(['a', 'b'], array_keys($visible));
   }
 
-  private function tab(bool $available, AccessResult $access): StudioTabInterface {
-    $tab = $this->createMock(StudioTabInterface::class);
+  private function tab(bool $available, AccessResult $access): MarleyTabInterface {
+    $tab = $this->createMock(MarleyTabInterface::class);
     $tab->method('isAvailable')->willReturn($available);
     $tab->method('access')->willReturn($access);
     $tab->method('sections')->willReturn(['criar' => ['label' => 'Criar', 'weight' => 0, 'tabs' => ['nova' => ['label' => 'Nova', 'weight' => 0, 'actions' => [['title' => 'Ação', 'url' => NULL, 'access' => TRUE]]]]]]);

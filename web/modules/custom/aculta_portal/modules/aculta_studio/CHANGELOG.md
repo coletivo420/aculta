@@ -6,3 +6,16 @@
   passou em 2 testes / 208 asserções, incluindo render no ACULTA420. Unit do controller cobre delegação,
   provedor sem contrato de início e acesso negado (3/3; suíte Studio 20/61).
   Runtime e validação visual pendentes.
+## 0.1.0-dev.7 — identidades Marley e Ganjalab
+
+- A experiência editorial passa a ACULTA Studio Marley (`marley`) e a
+  experiência de aprendizagem ACULTA Studio Ganjalab (`ganjalab`); o módulo
+  compartilhado `aculta_studio` e a infraestrutura LMS permanecem.
+- Rotas canônicas: `/studio/marley` com seus níveis e `/studio/ganjalab` para
+  estudantes. Entradas anteriores não colidentes recebem 302 somente em
+  GET/HEAD; `/studio/ganjalab` pertence exclusivamente à aprendizagem.
+- Contratos, controllers, services e descoberta de plugins específicos de
+  Marley recebem nomenclatura própria; IDs funcionais das áreas não mudam.
+- Unit Studio passou em 22 testes/83 asserções e Unit LMS em 1/7. Kernel,
+  roteamento Runtime e validação visual ainda aguardam gates.
+

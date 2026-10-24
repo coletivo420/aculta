@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_studio\Plugin\StudioTab;
+namespace Drupal\aculta_studio\Plugin\MarleyTab;
 
-use Drupal\aculta_studio\Attribute\StudioTab;
-use Drupal\aculta_studio\StudioTabBase;
+use Drupal\aculta_studio\Attribute\MarleyTab;
+use Drupal\aculta_studio\MarleyTabBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -14,12 +14,12 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Cursos tab. The owner is aculta_lms; the permission is create lms_course group.
  */
-#[StudioTab(
+#[MarleyTab(
   id: 'cursos',
   label: new TranslatableMarkup('Cursos'),
   weight: 30,
 )]
-final class CursosTab extends StudioTabBase {
+final class CursosTab extends MarleyTabBase {
 
   /** {@inheritdoc} */
   public function isAvailable(): bool {

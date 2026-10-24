@@ -1,4 +1,4 @@
-# Contrato de navegação: cada nível do GanjaLab tem URL própria. A ordem é área, seção e aba.
+# Marley ocupa as rotas editoriais; os IDs de área funcionais permanecem estáveis.
 aculta_studio.we_sativa:
   path: /studio/we-sativa
   defaults:
@@ -20,10 +20,10 @@ aculta_studio.we_sativa_start:
     _aculta_domain_purpose: account
 
 aculta_studio.home:
-  path: /studio/ganjalab
+  path: /studio/marley
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
     aba: ''
     secao: ''
     sub: ''
@@ -33,10 +33,10 @@ aculta_studio.home:
     _aculta_domain_purpose: account
 
 aculta_studio.area:
-  path: /studio/ganjalab/{aba}
+  path: /studio/marley/{aba}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
     secao: ''
     sub: ''
   requirements:
@@ -46,10 +46,10 @@ aculta_studio.area:
     _aculta_domain_purpose: account
 
 aculta_studio.section:
-  path: /studio/ganjalab/{aba}/{secao}
+  path: /studio/marley/{aba}/{secao}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
     sub: ''
   requirements:
     _permission: access aculta portal
@@ -59,10 +59,10 @@ aculta_studio.section:
     _aculta_domain_purpose: account
 
 aculta_studio.tab:
-  path: /studio/ganjalab/{aba}/{secao}/{sub}
+  path: /studio/marley/{aba}/{secao}/{sub}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
@@ -71,14 +71,12 @@ aculta_studio.tab:
   options:
     _aculta_domain_purpose: account
 
-
-# Compatibilidade temporária de URLs antigas; os geradores de URL utilizam os IDs canônicos acima.
-# Não eliminar até revisar links externos, menus, referências e políticas de redirecionamento.
+# /studio permanece como entrada de compatibilidade da plataforma editorial.
 aculta_studio.legacy_home:
   path: /studio
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyPage'
+    _title: 'ACULTA Studio Marley'
     aba: ''
     secao: ''
     sub: ''
@@ -87,88 +85,112 @@ aculta_studio.legacy_home:
   options:
     _aculta_domain_purpose: account
 
+# Os padrões genéricos continuam válidos para áreas antigas; o controller
+# reconhece /studio/ganjalab/{...} como a antiga árvore editorial e redireciona.
 aculta_studio.legacy_area:
   path: /studio/{aba}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyPage'
+    _title: 'ACULTA Studio Marley'
     secao: ''
     sub: ''
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 aculta_studio.legacy_section:
   path: /studio/{aba}/{secao}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyPage'
+    _title: 'ACULTA Studio Marley'
     sub: ''
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 aculta_studio.legacy_tab:
   path: /studio/{aba}/{secao}/{sub}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyPage'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
     sub: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
-# Transitional editorial URLs, retained under purpose account.
+# Prefixo fixo e quatro níveis identificam sem ambiguidade a antiga árvore editorial profunda.
+aculta_studio.legacy_editorial_deep:
+  path: /studio/ganjalab/{aba}/{secao}/{sub}
+  defaults:
+    _controller: 'aculta_studio.marley_controller:legacyEditorial'
+    _title: 'ACULTA Studio Marley'
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+    sub: '[a-z0-9-]+'
+  methods: [GET, HEAD]
+  options:
+    _aculta_domain_purpose: account
+
+# /ganjalab não colide com a nova rota estudantil /studio/ganjalab.
 aculta_studio.old_ganjalab_home:
   path: /ganjalab
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyEditorial'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 aculta_studio.old_ganjalab_area:
   path: /ganjalab/{aba}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyEditorial'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 aculta_studio.old_ganjalab_section:
   path: /ganjalab/{aba}/{secao}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyEditorial'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account
 
 aculta_studio.old_ganjalab_tab:
   path: /ganjalab/{aba}/{secao}/{sub}
   defaults:
-    _controller: 'aculta_studio.controller:page'
-    _title: GanjaLab
+    _controller: 'aculta_studio.marley_controller:legacyEditorial'
+    _title: 'ACULTA Studio Marley'
   requirements:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
     sub: '[a-z0-9-]+'
+  methods: [GET, HEAD]
   options:
     _aculta_domain_purpose: account

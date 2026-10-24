@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * The Studio stores nothing: it reads the owner's nodes with the entity query, accessCheck(TRUE), so each row
  * is still filtered by the node access of the owner. The listing carries the cacheability of the query.
  */
-final class StudioListingBuilder {
+final class MarleyListingBuilder {
 
   use StringTranslationTrait;
 
@@ -198,7 +198,7 @@ final class StudioListingBuilder {
         ? [
           '#type' => 'link',
           '#title' => $this->t('Carregar mais publicações'),
-          '#url' => Url::fromUri('internal:' . ($this->requestStack->getCurrentRequest()?->getPathInfo() ?? '/studio/ganjalab'), [
+          '#url' => Url::fromUri('internal:' . ($this->requestStack->getCurrentRequest()?->getPathInfo() ?? '/studio/marley'), [
             'query' => ['studio_cursor' => $nextCursor],
           ]),
         ]

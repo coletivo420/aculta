@@ -1,4 +1,4 @@
-// Revisão visual e de navegação do ACULTA Studio (/studio no domínio conta), no Firefox pelo geckodriver.
+// Revisão visual e de navegação do ACULTA Studio (/studio/marley no domínio conta), no Firefox pelo geckodriver.
 // Confere: seção "Estúdio" no shell da conta, abas e painel, navegação AJAX (sem recarregar a página),
 // largura de celular emulada pelo BiDi (390 px) e ausência de erros de JavaScript.
 // Ver README.md desta pasta. Somente no servidor de teste, com sessão de conta de teste.
@@ -8,12 +8,12 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
-const PAGE = process.env.STUDIO_PAGE || 'https://conta.aculta.toca.net.br/studio';
+const PAGE = process.env.STUDIO_PAGE || 'https://conta.aculta.toca.net.br/studio/marley';
 const LOGIN_URI = process.env.STUDIO_LOGIN_URI || 'https://conta.aculta.toca.net.br';
 const USER = process.env.STUDIO_USER || 'teste.comum';
-const OUT = process.env.STUDIO_OUT || join(PROJECT, '.suite-out', 'studio');
+const OUT = process.env.SUITE_OUT || '/tmp/aculta-studio-visual';
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
-const HEADLESS = process.env.STUDIO_HEADLESS === '1';
+const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
@@ -28,7 +28,6 @@ async function wd(method, path, body) {
 const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', `--name=${USER}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT }).toString().trim().split('\n').pop();
 
 const moz = { prefs: { 'network.dns.localDomains': [new URL(PAGE).hostname].join(',') } };
-if (HEADLESS) moz.args = ['-headless'];
 const { value: session } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, webSocketUrl: true, 'moz:firefoxOptions': moz } } }).then((v) => ({ value: { sessionId: v.sessionId, webSocketUrl: v.capabilities.webSocketUrl } }));
 const sid = session.sessionId;
 const p = (path) => `/session/${sid}${path}`;
@@ -98,9 +97,16 @@ try {
   const offenders = m.overflow ? await exec(`return [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1 && !e.closest('.offcanvas, [data-aculta-studio="listing-wrap"]')).slice(0, 6).map((e) => e.tagName + '.' + String(e.className).slice(0, 50) + ' ' + Math.round(e.getBoundingClientRect().right));`) : [];
   check('sem rolagem horizontal em 390 px', !m.overflow, offenders.join(' | '));
   await shot('02-celular');
+  for (const width of [320, 768, 1024, 1440]) {
+    await setViewport(width, width < 500 ? 844 : 900);
+    await sleep(300);
+    const responsive = JSON.parse(await exec(`return JSON.stringify({ w: window.innerWidth, overflow: document.documentElement.scrollWidth > window.innerWidth });`));
+    check(`sem rolagem horizontal em ${width}px`, !responsive.overflow, `innerWidth=${responsive.w}`);
+  }
+  await setViewport(1280, 900);
 
   // Teclado: o link de uma seção recebe foco e Enter (tecla real do WebDriver) troca o nível pela URL dele.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas da seção');
   const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"]' });
   const subId = Object.values(subLink)[0];
@@ -108,7 +114,7 @@ try {
   await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
   await sleep(2500);
   const kbPath = await exec(`return window.location.pathname;`);
-  check('Enter no teclado troca a aba pela URL dela', kbPath === '/studio/revista/criar/nova-publicacao' || kbPath.startsWith('/studio/revista/criar/'), kbPath);
+  check('Enter no teclado troca a aba pela URL dela', kbPath === '/studio/marley/revista/criar/nova-publicacao' || kbPath.startsWith('/studio/marley/revista/criar/'), kbPath);
 
   // Contraste WCAG: texto do Studio contra o fundo efetivo, com as cores computadas pelo navegador (claro e escuro).
   const contrastScript = `
@@ -118,7 +124,7 @@ try {
     const items = [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="heading"]')];
     return items.map((el) => { const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return Math.round(ratio * 100) / 100; });
   `;
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'contraste (claro)');
   const contrastLight = JSON.parse(JSON.stringify(await exec(contrastScript)));
   const minLight = Math.min(...contrastLight);
@@ -126,13 +132,13 @@ try {
 
   // Paridade claro/escuro: mesma geometria nos dois modos. A preferência da conta de teste é trocada e restaurada.
   const boxesFor = () => exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="panel"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]; }));`);
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/criar' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (claro)');
   const lightBoxes = JSON.parse(await boxesFor());
   const lightMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
-  const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code], { cwd: PROJECT }).toString().trim();
-  const original = drushRun(`echo json_encode(\\Drupal::service('aculta_portal.color_mode_preference')->forUser(5));`);
-  drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save(5, 'dark'); echo 'ok';`);
+  const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code, `--uri=${LOGIN_URI}`], { cwd: PROJECT, env: { ...process.env, STUDIO_USER_ID: String(USER_ID) } }).toString().trim();
+  const original = drushRun(`echo json_encode(\\Drupal::service('aculta_portal.color_mode_preference')->forUser((int) getenv('STUDIO_USER_ID')));`);
+  drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save((int) getenv('STUDIO_USER_ID'), 'dark'); echo 'ok';`);
   await wd('POST', p('/refresh'), {});
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (escuro)');
   await sleep(800);
@@ -140,25 +146,25 @@ try {
   const contrastDark = JSON.parse(JSON.stringify(await exec(contrastScript)));
   check('contraste mínimo do texto do Studio no modo escuro (WCAG AA, 4,5:1)', Math.min(...contrastDark) >= 4.5, `mínimo ${Math.min(...contrastDark)}:1 em ${contrastDark.length} elemento(s)`);
   const darkMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
-  if (original === 'null' || original === '') { drushRun(`\\Drupal::service('user.data')->delete('aculta_portal', 5, 'color_mode'); echo 'ok';`); } else { drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save(5, json_decode('${original}')); echo 'ok';`); }
+  if (original === 'null' || original === '') { drushRun(`\\Drupal::service('user.data')->delete('aculta_portal', (int) getenv('STUDIO_USER_ID'), 'color_mode'); echo 'ok';`); } else { drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save((int) getenv('STUDIO_USER_ID'), json_decode('${original}')); echo 'ok';`); }
   check('modo escuro aplicado à página', darkMode !== lightMode, `claro=${lightMode} escuro=${darkMode}`);
   check('mesma geometria nos modos claro e escuro', JSON.stringify(lightBoxes) === JSON.stringify(darkBoxes), `${lightBoxes.length} elemento(s) comparado(s)`);
 
   // Galerias: navegação visual da área (acesso concedido ao papel de editor no Runtime de teste).
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/galerias/criar' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/galerias/criar' });
   await waitFor(`document.querySelector('[data-aculta-studio="action"]')`, 'Galerias');
   const gal = await exec(`return [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim());`);
   check('área Galerias com a ação Nova galeria', gal.includes('Nova galeria'), gal.join(' | '));
   await shot('04-galerias');
 
   // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/forum/moderacao/fila' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/forum/moderacao/fila' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
   const queueRows = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] tr')].filter((r) => r.querySelector('td')).length;`);
   check('fila de moderação do Fórum lista comentários aguardando moderação', queueRows >= 1, `${queueRows} linha(s)`);
 
   // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/revista/publicacoes/publicados' });
+  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/publicacoes/publicados' });
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
   const rows = await exec(`return document.querySelectorAll('[data-aculta-studio="listing"] tbody tr').length;`);
   check('listagem da Revista na aba Publicados com linhas', rows >= 1, `${rows} linha(s)`);

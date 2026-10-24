@@ -1,7 +1,7 @@
 /**
- * GanjaLab (aculta_studio): navegação em quatro níveis pelo framework AJAX do Drupal.
+ * ACULTA Studio Marley: navegação editorial em quatro níveis pelo AJAX do Drupal.
  *
- * Cada nível tem URL própria (/ganjalab, /ganjalab/{área}, /ganjalab/{área}/{seção}, /ganjalab/{área}/{seção}/{aba}).
+ * Cada nível tem URL própria (/studio/marley e seus níveis de área, seção e aba).
  * O link é um Drupal.Ajax que recebe a página do Studio em drupal_ajax e substitui a raiz
  * [data-aculta-studio="root"]. A URL muda com pushState; voltar e avançar refazem a troca; o foco vai para
  * o título do nível novo; a região [data-aculta-studio="live"] (aria-live) anuncia carregamento e falhas.
@@ -76,7 +76,7 @@
         historyListening = true;
         window.addEventListener('popstate', () => {
           const current = document.getElementById(ROOT_ID);
-          if (current && (/^\/(?:ganjalab|studio)(?:\/|$)/.test(window.location.pathname))) navigate(current, window.location.href, false);
+          if (current && (/^\/studio(?:\/|$)/.test(window.location.pathname))) navigate(current, window.location.href, false);
         });
       }
       once('aculta-studio-navigation', `#${ROOT_ID}`, context).forEach((root) => {

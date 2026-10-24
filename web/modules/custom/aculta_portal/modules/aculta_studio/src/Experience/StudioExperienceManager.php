@@ -9,7 +9,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Registry of independent Studio experiences (not GanjaLab StudioTabs).
+ * Registry of independent Studio experiences, including Ganjalab and WE SATIVA.
  */
 final class StudioExperienceManager {
 

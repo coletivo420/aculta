@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_studio\Plugin\StudioTab;
+namespace Drupal\aculta_studio\Plugin\MarleyTab;
 
-use Drupal\aculta_studio\Attribute\StudioTab;
-use Drupal\aculta_studio\StudioTabBase;
+use Drupal\aculta_studio\Attribute\MarleyTab;
+use Drupal\aculta_studio\MarleyTabBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -15,15 +15,15 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Wiki tab owned by the Wiki module.
  *
  * The owner provides node type wiki_entry, workflow wiki_editorial, and
- * authorized queue services. GanjaLab presents those services without owning
+ * authorized queue services. Marley presents those services without owning
  * data or access rules.
  */
-#[StudioTab(
+#[MarleyTab(
   id: 'wiki',
   label: new TranslatableMarkup('Wiki'),
   weight: 25,
 )]
-final class WikiTab extends StudioTabBase {
+final class WikiTab extends MarleyTabBase {
 
   /**
    * {@inheritdoc}
@@ -62,7 +62,7 @@ final class WikiTab extends StudioTabBase {
       ];
     }
     $sections = [];
-    // Contributor-owned work belongs in WE SATIVA. GanjaLab lists the shared
+    // Contributor-owned work belongs in WE SATIVA. Marley lists the shared
     // editorial inventory only for accounts authorized to edit any entry.
     if ($account->hasPermission('edit any wiki_entry content')) {
       $sections['verbetes'] = [

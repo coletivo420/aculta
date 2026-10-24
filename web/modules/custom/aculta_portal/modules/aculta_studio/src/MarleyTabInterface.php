@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
  * The Studio never stores content or permissions of its own: a tab only
  * exposes actions of its owner, and each action keeps the owner's access check.
  */
-interface StudioTabInterface extends PluginInspectionInterface {
+interface MarleyTabInterface extends PluginInspectionInterface {
 
   /**
    * Whether the owning module is enabled. Optional owners stay out of the Studio.
