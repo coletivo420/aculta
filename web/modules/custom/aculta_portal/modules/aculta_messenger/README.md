@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.178` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.179` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -99,6 +99,12 @@ reutiliza o Message persistido sem duplicar a entrega, a revisão elegível entr
 e é confirmada pelo `delivery_id`; se for publicada antes da entrega, a linha
 não é enviada e a pendência é descartada. O Kernel cobre esse fluxo em banco
 isolado, sem execução de cron, SMTP ou Runtime.
+
+Os Kernels de Loja e Doações agora verificam também a estabilidade do digest:
+replay de evento não cria outra entrega, leituras repetidas não consomem linhas,
+cada cobrança aprovada continua distinta e o acknowledgement por `delivery_id`
+confirma somente os itens selecionados. O conjunto Loja/Doações passou com
+8/136; foram registrados avisos de depreciação do Core Message/Message Template.
 
 O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
 de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da

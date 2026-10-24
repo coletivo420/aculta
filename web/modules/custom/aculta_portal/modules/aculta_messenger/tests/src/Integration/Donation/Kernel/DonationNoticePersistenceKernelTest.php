@@ -123,6 +123,49 @@ final class DonationNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Digest replay retains stable deliveries and acknowledges selected IDs.
+   */
+  public function testDigestReplayKeepsDistinctDonationDeliveries(): void {
+    $user = User::create([
+      'name' => 'donation_digest_recipient',
+      'mail' => 'donation-digest@example.invalid',
+      'status' => 1,
+    ]);
+    $user->save();
+    $uid = (int) $user->id();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with($uid, 'doacao')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
+    $manager = $this->manager($preferences, $user);
+    $consumer = new DonationNoticeEventConsumer($manager);
+    $events = [
+      $this->event($uid, 'donation.order_placed', 'commerce_order', 'order-1'),
+      $this->event($uid, 'donation.payment_approved', 'commerce_payment', 'payment-1'),
+      $this->event($uid, 'donation.payment_approved', 'commerce_payment', 'payment-2'),
+    ];
+    foreach ($events as $event) {
+      $consumer->consume($event);
+      $consumer->consume($event);
+    }
+
+    $rows = $manager->digestRowsFor($uid);
+    self::assertCount(3, $rows, 'Order creation and each approved charge remain distinct digest deliveries.');
+    self::assertSame(['doacao', 'doacao', 'doacao'], array_column($rows, 'tipo'));
+    $deliveryIds = array_column($rows, 'delivery_id');
+    self::assertCount(3, array_unique($deliveryIds));
+    self::assertSame(
+      $deliveryIds,
+      array_column($manager->digestRowsFor($uid), 'delivery_id'),
+      'Digest lookup is read-only until Mailer acknowledgement.',
+    );
+
+    $manager->markDigestSent($uid, [$deliveryIds[0]]);
+    $remaining = $manager->digestRowsFor($uid);
+    self::assertCount(2, $remaining);
+    self::assertNotContains($deliveryIds[0], array_column($remaining, 'delivery_id'));
+  }
+
+  /**
    * An inaccessible source cannot create a persistent site or email notice. */
   public function testInaccessibleOrderIsRejectedBeforePersistence(): void {
     $user = User::create([

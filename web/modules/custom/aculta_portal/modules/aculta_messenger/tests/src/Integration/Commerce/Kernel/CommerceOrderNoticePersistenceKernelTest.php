@@ -117,6 +117,36 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Digest replay keeps one row and acknowledgement clears only its delivery.
+   */
+  public function testDigestReplayIsIdempotentAndAcknowledgesDeliveryId(): void {
+    $user = $this->createUser('store_digest_recipient');
+    $uid = (int) $user->id();
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with($uid, 'loja')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
+    $preferences->method('resumoEmailLigado')->with($uid)->willReturn(TRUE);
+    $manager = $this->manager($preferences, NULL, $user);
+    $consumer = new CommerceOrderNoticeConsumer($manager);
+    $event = $this->event($uid);
+
+    $consumer->consume($event);
+    $consumer->consume($event);
+    $rows = $manager->digestRowsFor($uid);
+
+    self::assertCount(1, $rows);
+    self::assertSame('loja', $rows[0]['tipo']);
+    self::assertGreaterThan(0, $rows[0]['delivery_id']);
+    self::assertSame(
+      array_column($rows, 'delivery_id'),
+      array_column($manager->digestRowsFor($uid), 'delivery_id'),
+      'Reading a digest does not duplicate or consume a pending row.',
+    );
+
+    $manager->markDigestSent($uid, [$rows[0]['delivery_id']]);
+    self::assertSame([], $manager->digestRowsFor($uid));
+  }
+
+  /**
    * Read state persists only for the current order owner.
    */
   public function testReadStatePersistsAndRejectsAnotherAccount(): void {

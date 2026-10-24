@@ -1,3 +1,13 @@
+## 0.1.1-dev.179 — cobrir idempotência dos digests da Loja e Doação
+
+Os Kernels de Loja e Doação verificam replay do evento, leitura repetida sem consumo e confirmação seletiva por
+`delivery_id`. O cenário de Doação mantém o pedido criado e duas cobranças aprovadas como entregas distintas; confirmar
+uma linha deixa as outras duas disponíveis.
+
+Validação: Kernels Commerce/Donation **8/136 PASS**; testes de resumo combinado Forum/Mailer **58/1.001 PASS**.
+PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Core/contrib emite 2 deprecações de descoberta de
+Message/Message Template e os Kernels Commerce/Donation registram 4 notices PHPUnit. SMTP e Runtime não executados.
+
 ## 0.1.1-dev.178 — deduplicar replay no digest Wiki
 
 O Kernel Wiki agora reenvia o mesmo `MessengerNoticeEvent` de revisão antes da leitura do digest e prova que a API
