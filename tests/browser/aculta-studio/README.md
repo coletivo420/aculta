@@ -6,6 +6,7 @@ navegação por teclado, ausência de rolagem horizontal e de erros de JavaScrip
 
 Somente no servidor de teste, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
+O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interrompe com diagnóstico se o Runtime ainda não expõe `/studio/marley`.
 
 ```sh
 DISPLAY=:0 geckodriver --port 4444 &
