@@ -23,10 +23,6 @@ services:
     class: Drupal\aculta_wiki\Service\WikiContributorWorkspace
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation', '@request_stack']
 
-  Drupal\aculta_wiki\Hook\WikiEntryTitleSuggestions:
-    class: Drupal\aculta_wiki\Hook\WikiEntryTitleSuggestions
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@database', '@current_user', '@string_translation']
-
   aculta_wiki.content_index_provider:
     class: Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider
     tags:

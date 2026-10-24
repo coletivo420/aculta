@@ -55,7 +55,7 @@ final class WikiEntryTitleSuggestions {
       $form['actions']['check_similar_titles'] = [
         '#type' => 'submit',
         '#value' => $this->t('Verificar títulos parecidos'),
-        '#submit' => ['aculta_wiki.wiki_entry_title_suggestions:checkSimilarTitles'],
+        '#submit' => [self::class . ':checkSimilarTitles'],
         '#limit_validation_errors' => [$form['title']['#parents'] ?? ['title']],
         '#weight' => -10,
       ];
