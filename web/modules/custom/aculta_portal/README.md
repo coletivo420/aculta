@@ -5,6 +5,23 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
+## Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)
+
+A proposta STUDIO-P0–P7 reorganiza **navegação e apresentação** de Minha Conta
+e Meu Perfil sob um hub geral `/studio` e experiência `Meu Espaço`. O
+Portal conserva Domain/Purpose, formulários, confirmação de e-mail, segurança,
+endereços e os contratos compartilhados de checkout. User/Profile e os
+demais owners não mudam de fonte de verdade.
+
+**Estado:** somente alinhamento documental; a home `/` de `account`, o
+`AccountShellBuilder`, os formulários e caminhos antigos continuam ativos;
+`/minha-conta` segue técnico e bloqueado. O Studio não deverá aninhar seu
+shell dentro do shell Conta; o corte fica para fases testadas e autorizadas.
+O perfil público `/u/{apelido}` permanece em `main`.
+
+[Contrato e roadmap canônico](../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md)
+e [navegação atual da conta](../../../../docs/portal/ACCOUNT-MENU.md).
+
 ## Busca com prévia
 
 `aculta_portal/search-preview` atualiza uma região viva nomeada com links de
