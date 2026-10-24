@@ -8,6 +8,12 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
   configuração de bundle permanecer após desativar seu módulo proprietário.
   Focal: 3 testes / 10 assertions; toda Unit Studio: 13 testes / 41 assertions.
 
+- `0.1.0-dev.5`: criação de verbetes, por si só, não abre a área editorial
+  Wiki do GanjaLab. Autoria de participantes permanece na WE SATIVA; GanjaLab
+  exige permissão editorial, de revisão ou moderação de propostas. Verbetes
+  compartilhados só aparecem para quem pode editar qualquer verbete. Focal:
+  7 testes / 27 assertions.
+
 - Rota canônica: `/ganjalab` no domínio de conta (`conta.aculta.*/ganjalab`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.
 - Áreas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada área declara se o dono está disponível (`isAvailable()`),
@@ -29,7 +35,7 @@ agrega serviços e ações dos donos das áreas, e não armazena conteúdo, perm
 | Aba | Dono | Permissão | Ações |
 | --- | --- | --- | --- |
 | Revista (`revista`) | `aculta_magazine` | `create revista content` | Nova publicação |
-| Wiki (`wiki`) | `aculta_wiki` | criar/editar verbetes ou `moderate wiki proposals` | Verbetes próprios, revisão autorizada e propostas privadas |
+| Wiki (`wiki`) | `aculta_wiki` | `edit any wiki_entry content`, `view wiki_entry revisions` ou `moderate wiki proposals` | Inventário editorial, revisões autorizadas e propostas privadas; autoria própria na WE SATIVA |
 
 Fórum, Cursos, Projetos, Biblioteca, Métricas e Eventos continuam dependendo das integrações dos respectivos donos.
 A aba Wiki existente consome o serviço de fila proprietário de `aculta_wiki`; o Studio não armazena propostas nem
@@ -83,7 +89,7 @@ A experiência de editores/moderadores da Wiki será integrada ao GanjaLab por a
 
 ## V-0.4-R / GanjaLab D-A — auditoria do código existente
 
-[Inventário e contrato da janela Wiki](../../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. Acrescentar futuramente seção `moderacao` com gate próprio, pois permissão `create wiki_entry content` já abre a área para colaboradores e não equivale a permissão de moderar. StudioPresenter e URL/AJAX existentes serão preservados; `aculta_wiki` é o dono de fila, grants, revisões e POST. Ainda faltam exame dirigido do listing builder, adapter de acesso e testes Runtime. Design com SDC/UI Suite, mobile-first e shell multidomínio preservado.
+[Inventário e contrato da janela Wiki](../../../../../../docs/portal/GANJALAB-WIKI-V-0.4-R-D-A-AUDIT.md). **A área Wiki em `WikiTab` já existe**: não criar outra aba/plugin. `create wiki_entry content` é acesso de autoria na WE SATIVA e não abre o inventário editorial do GanjaLab. Seções de revisão, verbetes compartilhados e propostas mantêm gates próprios; `aculta_wiki` continua dono de fila, grants, revisões e POST. A verificação Kernel de acesso da aba passou em Studio dev.5. Runtime e visual continuam pendentes.
 
 ## GanjaLab Wiki D-A.2 / D-B — listagens seguras e composição visual
 

@@ -22,6 +22,16 @@ Código integrado à `WikiTab` existente: filas autorizadas de revisões e propo
 `aculta_wiki`; decisões e edição seguem seus formulários e controles de acesso. Testes Kernel combinados foram
 executados. Runtime, Firefox ESR/X11, mobile e WCAG continuam pendentes; isso não constitui homologação visual.
 
+### Studio dev.5 — separar autoria Wiki e acesso editorial no GanjaLab
+
+`create wiki_entry content` sozinho não abre a WikiTab editorial nem a listagem
+compartilhada do GanjaLab. A autoria fica na WE SATIVA. `edit any` abre o
+inventário editorial; revisão e moderação de propostas mantêm seções próprias.
+Unit Studio passou 7 testes / 27 asserções. A suíte Firefox ESR visível foi
+iniciada, mas ficou aguardando o Drush `uli` sem produzir URL de login ou
+artefatos; foi encerrada após cerca de dois minutos. Runtime e visual seguem
+pendentes.
+
 Este documento substitui a antiga sequência linear que condicionava a criação do Studio ao fechamento do Magazine. A migração `article`/`blog` → `revista`, já executada no Runtime de teste, permanece documentada em `web/modules/custom/aculta_portal/modules/aculta_magazine/docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` e no CHANGELOG. Não repetir migração, apagar dados ou importar Config Sync global.
 
 ## Produto e fronteiras

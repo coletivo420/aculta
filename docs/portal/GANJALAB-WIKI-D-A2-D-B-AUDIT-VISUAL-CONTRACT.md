@@ -18,6 +18,11 @@
 
 **Classificação:** esses são **riscos e lacunas deduzidos do código**, não demonstração de vazamento no Runtime. Não afirmar violação explorável antes dos testes; bloquear uso dessa listagem genérica como fila de moderação Wiki até correção.
 
+**Atualização Studio dev.5:** `create wiki_entry content` foi removida do gate
+de entrada da WikiTab, e a seção `verbetes` exige `edit any wiki_entry content`.
+SEC-08 deve ser lida como evidência histórica; o acesso específico a revisão e
+propostas continua regido pelos gates próprios e pela Entity Access da Wiki.
+
 ### Direção de refatoração segura
 
 - **D-A.2.1:** escrever testes de caracterização para StudioListingBuilder em roles distintas e grants por entidade/revisão; não alterar código antes de entender consumidores.

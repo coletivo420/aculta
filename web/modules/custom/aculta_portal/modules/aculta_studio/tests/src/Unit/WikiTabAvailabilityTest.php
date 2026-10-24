@@ -10,6 +10,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeTypeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -43,6 +44,69 @@ final class WikiTabAvailabilityTest extends UnitTestCase {
    */
   public function testUnavailableWhenWikiBundleIsMissing(): void {
     self::assertFalse($this->tab(TRUE, FALSE)->isAvailable());
+  }
+
+  /**
+   * Ensures contributor creation access stays in WE SATIVA, not GanjaLab.
+   */
+  public function testCreateOnlyContributorCannotAccessEditorialTab(): void {
+    $account = $this->account(['create wiki_entry content']);
+    $tab = $this->tab(TRUE, TRUE);
+
+    self::assertFalse($tab->access($account)->isAllowed());
+    self::assertSame([], $tab->sections($account));
+  }
+
+  /**
+   * Ensures editor inventory is available only to an any-entry editor.
+   */
+  public function testEditorCanAccessEntryInventory(): void {
+    $account = $this->account(['edit any wiki_entry content']);
+    $sections = $this->tab(TRUE, TRUE)->sections($account);
+
+    self::assertTrue($this->tab(TRUE, TRUE)->access($account)->isAllowed());
+    self::assertArrayHasKey('verbetes', $sections);
+    self::assertArrayNotHasKey('moderacao', $sections);
+  }
+
+  /**
+   * Ensures proposal moderators access only the moderation section.
+   */
+  public function testProposalModeratorCanAccessModerationSection(): void {
+    $account = $this->account(['moderate wiki proposals']);
+    $sections = $this->tab(TRUE, TRUE)->sections($account);
+
+    self::assertTrue($this->tab(TRUE, TRUE)->access($account)->isAllowed());
+    self::assertArrayNotHasKey('verbetes', $sections);
+    self::assertArrayHasKey('moderacao', $sections);
+    self::assertArrayHasKey('propostas', $sections['moderacao']['tabs']);
+  }
+
+  /**
+   * Ensures revision access does not expose the shared entry inventory.
+   */
+  public function testRevisionReviewerCanAccessRevisionSection(): void {
+    $account = $this->account(['view wiki_entry revisions']);
+    $sections = $this->tab(TRUE, TRUE)->sections($account);
+
+    self::assertTrue($this->tab(TRUE, TRUE)->access($account)->isAllowed());
+    self::assertArrayNotHasKey('verbetes', $sections);
+    self::assertArrayHasKey('revisoes', $sections);
+    self::assertArrayNotHasKey('moderacao', $sections);
+  }
+
+  /**
+   * Creates an account mock with an allowlisted set of permissions.
+   *
+   * @param string[] $permissions
+   *   Permissions granted to the account.
+   */
+  private function account(array $permissions): AccountInterface {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->willReturnCallback(
+      static fn (string $permission): bool => in_array($permission, $permissions, TRUE),
+    );
+    return $account;
   }
 
   /**

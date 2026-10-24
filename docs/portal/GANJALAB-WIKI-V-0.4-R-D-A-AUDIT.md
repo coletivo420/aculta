@@ -3,6 +3,13 @@
 **Data:** 2026-10-22 · **Estado:** auditoria estática fundamentada nos arquivos da PR #297; nenhuma rota, permissão, tela de moderação ou teste Runtime implantados.
 **Fonte de design:** [V-0.4-D](WE-SATIVA-V-0.4-D-GANJALAB-MODERATION.md).
 
+**Atualização de implementação (Studio dev.5):** autoria com `create
+wiki_entry content` não abre mais a área editorial. `WikiTab::access()` admite
+edição ampla, consulta de revisões ou moderação de propostas; a listagem
+compartilhada exige `edit any wiki_entry content`. Teste Unit passou 7/27. Os
+achados históricos abaixo descrevem o código auditado em 2026-10-22; esta
+alteração não homologa Runtime ou visual.
+
 ## Descoberta central: NÃO criar outra aba Wiki
 
 A classe **`web/modules/custom/aculta_portal/modules/aculta_studio/src/Plugin/StudioTab/WikiTab.php` já existe** e registra a área `wiki`, peso 25, com seções:

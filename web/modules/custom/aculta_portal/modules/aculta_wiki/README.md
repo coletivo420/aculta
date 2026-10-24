@@ -7,6 +7,14 @@ pendentes, está em
 
 ## Estado atual
 
+- Integração Studio dev.5: `create wiki_entry content` não abre o inventário
+  editorial do GanjaLab; autoria própria permanece na WE SATIVA. A `WikiTab`
+  exige permissão editorial, revisão ou moderação de propostas, e só expõe a
+  seção de verbetes compartilhados a `edit any wiki_entry content`. Unit Studio
+  passou em 7 testes / 27 asserções; a suíte visual iniciou, mas Drush `uli`
+  não retornou URL de login após cerca de dois minutos. Runtime e visual seguem
+  pendentes.
+
 - `0.1.0-dev.104`: Kernel exercita o `WikiProposalDecision` real enquanto outro
   processo mantém lock MariaDB na linha do Node. A decisão aguarda a liberação,
   aplica a revisão e o teste mantém o conflito de VID obsoleto sem gravação

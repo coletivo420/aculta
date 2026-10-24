@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.77 (formulário Wiki retorna ao Meu Trabalho quando provider/acesso estão disponíveis; purpose account e cache AccessResult; Kernel ciclo Wiki 23/1.039; Runtime intocado)"
-next_phase: 'Content Index: conferir o estado atual e homologar ativação/rebuild v4 no Runtime de teste com reversão preparada. WE SATIVA: Firefox ESR/X11, autoria a 320px, Olivero e sessões concorrentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.104 — decisão editorial serializada sob lock MariaDB; R1 revalidada em 20 testes/425 asserções com projeção v4. Studio dev.5 mantém autoria na WE SATIVA e restringe inventário editorial no GanjaLab. Runtime intocado."
+next_phase: 'Ativação e rebuild do Content Index em Runtime de teste após autorização operacional; homologar acesso, rotas e WE SATIVA com Firefox ESR/X11 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

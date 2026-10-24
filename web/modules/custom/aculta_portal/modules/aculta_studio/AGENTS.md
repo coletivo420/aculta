@@ -1,12 +1,15 @@
 # Regras específicas — consulta sob demanda
 
-## WikiTab availability (Studio dev.4)
+## WikiTab availability and access (Studio dev.5)
 
 The tab checks both the owner module `aculta_wiki` and its `wiki_entry` bundle.
 Do not infer owner availability from retained configuration alone. The Unit
 regression covers module disabled with bundle still present, both available,
 and bundle absent.
-The focal test passed 3/10; the full Studio Unit suite passed 13/41.
+`create wiki_entry content` alone is not a GanjaLab permission: contributor
+authorship belongs in WE SATIVA. GanjaLab entry requires `edit any
+wiki_entry content`, `view wiki_entry revisions`, or `moderate wiki proposals`;
+the shared entry inventory requires `edit any`. The focal test passed 7/27.
 
 ## WE SATIVA — entrypoint e workspace existentes (Studio dev.3 / Wiki dev.76)
 

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.3 — WE SATIVA usa `/studio/we-sativa` e `aculta_wiki.contributor_workspace`, com paginação, SDCs, rotas/Form API da Wiki e retorno ao workspace pelos formulários. Kernel revalidado em Wiki dev.77; homologação Firefox/mobile/Olivero pendente."
+version_note: "0.1.0-dev.5 — `create wiki_entry content` mantém autoria na WE SATIVA e não abre o inventário editorial do GanjaLab; a WikiTab exige permissão editorial, de revisão ou moderação. Unit focal 7/27; suíte visual aguardou Drush ULI; Runtime/visual pendentes."
 next_phase: 'Adicionar smoke Firefox ESR/X11 da experiência WE SATIVA e homologar autoria a 320 px, fallback sem JS, shell de domínio e Olivero; Runtime exige autorização para mudanças persistentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)).'
 
 # 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.

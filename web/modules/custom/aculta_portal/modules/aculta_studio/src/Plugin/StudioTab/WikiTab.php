@@ -38,8 +38,8 @@ final class WikiTab extends StudioTabBase {
    */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, 'edit any wiki_entry content')
-      ->orIf(AccessResult::allowedIfHasPermission($account, 'create wiki_entry content'))
-      ->orIf(AccessResult::allowedIfHasPermission($account, 'moderate wiki proposals'));
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'moderate wiki proposals'))
+      ->orIf(AccessResult::allowedIfHasPermission($account, 'view wiki_entry revisions'));
   }
 
   /**
@@ -62,7 +62,9 @@ final class WikiTab extends StudioTabBase {
       ];
     }
     $sections = [];
-    if ($account->hasPermission('create wiki_entry content') || $account->hasPermission('edit any wiki_entry content')) {
+    // Contributor-owned work belongs in WE SATIVA. GanjaLab lists the shared
+    // editorial inventory only for accounts authorized to edit any entry.
+    if ($account->hasPermission('edit any wiki_entry content')) {
       $sections['verbetes'] = [
         'label' => $this->t('Verbetes'),
         'weight' => 0,

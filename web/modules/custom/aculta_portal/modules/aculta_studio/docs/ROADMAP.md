@@ -12,6 +12,16 @@ desativar o módulo; nesse caso, Studio não apresenta uma aba sem serviços do
 owner. Unit cobre o módulo desligado com bundle retido, o par habilitado e o
 bundle ausente (focal 3/10; suíte Studio Unit completa 13/41). Runtime intocado.
 
+### Incremento Studio dev.5 — separar autoria WE SATIVA do GanjaLab editorial
+
+`create wiki_entry content` sozinho não dá acesso à área Wiki do GanjaLab nem
+exibe seu inventário compartilhado. A autoria continua na WE SATIVA. GanjaLab
+abre com permissão de edição ampla, revisão de revisões ou moderação de
+propostas; a seção de verbetes exige `edit any wiki_entry content`. Teste Unit
+focal: 7 testes / 27 asserções. A suíte Firefox ESR visível foi iniciada, mas
+ficou aguardando o Drush `uli` sem produzir URL de login/artefatos; foi encerrada
+após cerca de dois minutos. Runtime e visual seguem sem homologação.
+
 ## Prioridades
 
 | Marco | Trabalho | Gate |
