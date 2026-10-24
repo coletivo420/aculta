@@ -1,3 +1,14 @@
+## 0.4.0-dev.72 — mesmo Form API em Perfil Studio independente (2026-10-24)
+
+- `AccountBioForm`, `SocialLinkForm` e `ProfileVisibilityForm` detectam
+  as rotas `aculta_studio.profile_bio`, `profile_social` e
+  `profile_privacy`, mantendo submit, validações, entidades e políticas
+  proprietárias. As rotas e comportamentos originais de Minha Conta
+  permanecem disponíveis para comparação.
+- Sem novos dados, fields ou aliases; perfil público `/u/{apelido}` intacto.
+  Testes/Runtime não executados nesta edição.
+- Referência: `docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md`.
+
 ## 0.4.0-dev.71 — remoção de aliases temporários em desenvolvimento (2026-10-24)
 
 - Removidos aliases legados de troca de e-mail /seguranca/email e /seguranca/email/{user}; removido controller de redirecionamento órfão. E-mail e segurança continuam no Portal e nas suas rotas legítimas; /u/{apelido} preservado. Testes não executados neste incremento.
