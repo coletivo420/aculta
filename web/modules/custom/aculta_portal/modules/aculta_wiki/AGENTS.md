@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.52: o Kernel owner real do Index prova que destino sem provider ativo não
+  aparece na consulta outgoing e que Media publicada não abre relação originada
+  em verbete `draft`. Classe MariaDB: 7/238, 201 depreciações upstream. Nenhuma
+  mudança no provider Wiki ou no fingerprint; não requer rebuild.
+
 - Dev.51: o hook de cron chama `aculta_wiki.lead_image_cleanup`, que considera
   até 25 Files permanentes com mais de uma hora em `private://wiki/imagens/`.
   Reutiliza `UnusedMediaCleaner` e `UnusedFileCleaner` do Portal, que verificam

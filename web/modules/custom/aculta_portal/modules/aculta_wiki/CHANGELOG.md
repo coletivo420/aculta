@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.52 — validar os limites de acesso das relações do Index
+
+- A integração Kernel real confirma que categoria fora do vocabulário owner da
+  Wiki não aparece como destino outgoing e que Media publicada não revela a
+  relação de um verbete em rascunho.
+- `ContentIndexWikiAccessKernelTest`: 7 testes / 238 asserções; 201
+  depreciações Drupal/Core/contrib. Nenhuma mudança de projeção ou rebuild.
+
 ## 0.1.0-dev.51 — limpeza segura de imagens órfãs
 
 - O cron da Wiki examina até 25 arquivos permanentes antigos em

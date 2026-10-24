@@ -1,5 +1,14 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.174 — fechar relações Wiki sem alvo indexável
+
+- O Kernel real agora testa categoria cujo vocabulário não possui provider:
+  ela não entra na geração e a consulta outgoing a omite. Também testa Media
+  publicada ligada a verbete em rascunho: a consulta nega a origem e não revela
+  a relação. A classe Wiki passou em MariaDB com 7 testes / 238 asserções;
+  201 depreciações Drupal/Core/contrib.
+- Nenhuma alteração de produção no Index e nenhum rebuild Runtime.
+
 ## 0.1.0-dev.173 — atualizar contrato de privacidade do provider Wiki
 
 - A projeção `node:wiki_entry` agora omite `owner_uid`; a alteração é do owner

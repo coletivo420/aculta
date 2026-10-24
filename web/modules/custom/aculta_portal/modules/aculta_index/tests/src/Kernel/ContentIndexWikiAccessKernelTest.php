@@ -491,6 +491,13 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'status' => FALSE,
     ]);
     $privateCategory->save();
+    Vocabulary::create(['vid' => 'other_category', 'name' => 'Other categories'])->save();
+    $unindexedCategory = Term::create([
+      'vid' => 'other_category',
+      'name' => 'Category without an Index provider',
+      'status' => TRUE,
+    ]);
+    $unindexedCategory->save();
     $publicImage = Media::create([
       'bundle' => 'image',
       'name' => 'Public image',
@@ -515,6 +522,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'field_wiki_categories' => [
         ['target_id' => $publicCategory->id()],
         ['target_id' => $privateCategory->id()],
+        ['target_id' => $unindexedCategory->id()],
       ],
       'field_wiki_image' => ['target_id' => $publicImage->id()],
     ]);
@@ -528,6 +536,15 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       'field_wiki_image' => ['target_id' => $privateImage->id()],
     ]);
     $privateImageSource->save();
+    $draftImageSource = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Draft with published image',
+      'status' => FALSE,
+      'uid' => $root->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_image' => ['target_id' => $publicImage->id()],
+    ]);
+    $draftImageSource->save();
 
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
@@ -539,6 +556,15 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $this->processWikiWork();
     $rebuilder->validate($generationId);
     $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+    $unindexedCategoryEntryCount = $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('entity_type', 'taxonomy_term')
+      ->condition('entity_id', (string) $unindexedCategory->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    self::assertSame(0, (int) $unindexedCategoryEntryCount, 'A term without an owner provider is absent from the generation.');
 
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
@@ -572,6 +598,14 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
       $root,
     );
     self::assertCount(0, $deniedImage->entities);
+    $draftImageRelations = $relationQuery->queryOutgoing(
+      'node',
+      (string) $draftImageSource->id(),
+      $draftImageSource->language()->getId(),
+      'wiki_image',
+      $reader,
+    );
+    self::assertCount(0, $draftImageRelations->entities, 'A published Media target does not expose a draft Wiki source.');
     self::assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
   }
 

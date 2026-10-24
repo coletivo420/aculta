@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.52`: Kernel owner Wiki/Index cobre destino sem provider de
+  Taxonomy e Media publicada anexada a origem em rascunho; a consulta outgoing
+  não revela nem inventa destinos (7 testes / 238 asserções; 201 depreciações
+  upstream). Sem mudança de projeção ou rebuild.
+
 - `0.1.0-dev.51`: cron remove imagens de destaque órfãs após uma hora, em lotes
   de até 25 arquivos, usando os verificadores compartilhados do Portal para
   referências globais e históricas. Kernel MariaDB focal: 1 teste / 46

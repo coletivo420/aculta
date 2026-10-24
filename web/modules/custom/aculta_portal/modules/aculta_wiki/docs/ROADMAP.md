@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.51**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.52**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.52 — regressões dos limites de acesso do Index
+
+O Kernel owner real acrescenta dois limites: uma categoria fora do vocabulário
+com provider Wiki fica fora da geração e da resposta outgoing; Media publicada
+ligada a um verbete em `draft` não contorna a autorização da origem. Classe
+Wiki/Index MariaDB: 7 testes / 238 asserções, 201 depreciações upstream.
+Provider/fingerprint não mudaram; nenhum rebuild Runtime. Próximo gate continua
+sendo a homologação controlada do inventário completo quando autorizada.
 
 ### Incremento dev.51 — limpeza segura de imagem órfã
 
