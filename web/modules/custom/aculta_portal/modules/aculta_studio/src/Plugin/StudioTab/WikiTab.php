@@ -29,7 +29,8 @@ final class WikiTab extends StudioTabBase {
    * {@inheritdoc}
    */
   public function isAvailable(): bool {
-    return $this->entityTypeManager->getStorage('node_type')->load('wiki_entry') !== NULL;
+    return $this->moduleHandler->moduleExists('aculta_wiki')
+      && $this->entityTypeManager->getStorage('node_type')->load('wiki_entry') !== NULL;
   }
 
   /**

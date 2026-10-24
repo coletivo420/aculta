@@ -3,6 +3,11 @@
 Espaço de trabalho por abas na conta, para autores, editores, moderadores e educadores. É uma ferramenta transversal:
 agrega serviços e ações dos donos das áreas, e não armazena conteúdo, permissões, discussões nem galerias próprias.
 
+- `0.1.0-dev.4`: a aba Wiki só está disponível quando `aculta_wiki` está
+  habilitado e o bundle `wiki_entry` existe; isso evita uma aba órfã se a
+  configuração de bundle permanecer após desativar seu módulo proprietário.
+  Unit: 3 testes / 10 assertions.
+
 - Rota canônica: `/ganjalab` no domínio de conta (`conta.aculta.*/ganjalab`), com `_aculta_domain_purpose: account` e permissão
   `access aculta portal`. Visitante recebe 403.
 - Áreas: plugins `#[StudioTab]` em `Plugin/StudioTab`. Cada área declara se o dono está disponível (`isAvailable()`),

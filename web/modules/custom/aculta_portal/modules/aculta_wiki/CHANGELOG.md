@@ -7,6 +7,8 @@
   permitido, enquanto a entidade é negada por Entity Access e não gera card.
 - Focal 1/45; classe `WikiLeadImageLifecycleKernelTest` 24/1.142, 291
   depreciações Core/contrib e 25 PHPUnit. PHPCS passou. Runtime intocado.
+- Integração Studio dev.4 fecha disponibilidade da aba Wiki pelo módulo owner
+  além do bundle retido; Unit Studio 3/10.
 
 ## 0.1.0-dev.82 — isolamento das propostas no WE SATIVA
 

@@ -1,5 +1,8 @@
 # Wiki — instruções locais
 
+- Studio dev.4: `WikiTab` só está disponível com `aculta_wiki` habilitado e
+  `wiki_entry` existente; Unit Studio 3/10.
+
 - Dev.83: workspace não renderiza proposta do mesmo UID quando Entity Access
   nega `view`; o workspace continua autorizado por `submit wiki proposals`.
   Focal 1/45, classe Kernel 24/1.142; Runtime intocado.

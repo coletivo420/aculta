@@ -4,6 +4,14 @@
 
 Fonte de verdade: [arquitetura ACULTA Studio](../../../../../../../docs/architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md).
 
+### Incremento Studio dev.4 — disponibilidade da aba Wiki
+
+`WikiTab::isAvailable()` exige o módulo proprietário `aculta_wiki` além do
+bundle `wiki_entry`. A configuração do tipo de conteúdo pode permanecer após
+desativar o módulo; nesse caso, Studio não apresenta uma aba sem serviços do
+owner. Unit cobre o módulo desligado com bundle retido, o par habilitado e o
+bundle ausente (3 testes / 10 assertions). Runtime intocado.
+
 ## Prioridades
 
 | Marco | Trabalho | Gate |

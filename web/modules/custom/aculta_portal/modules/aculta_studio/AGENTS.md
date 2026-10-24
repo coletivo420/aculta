@@ -1,5 +1,12 @@
 # Regras específicas — consulta sob demanda
 
+## WikiTab availability (Studio dev.4)
+
+The tab checks both the owner module `aculta_wiki` and its `wiki_entry` bundle.
+Do not infer owner availability from retained configuration alone. The Unit
+regression covers module disabled with bundle still present, both available,
+and bundle absent.
+
 ## WE SATIVA — entrypoint e workspace existentes (Studio dev.3 / Wiki dev.76)
 
 `/studio/we-sativa` pertence ao purpose `account` e usa o provider Studio;
