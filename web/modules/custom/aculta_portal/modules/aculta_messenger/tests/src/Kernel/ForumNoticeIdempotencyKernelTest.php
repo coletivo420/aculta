@@ -21,6 +21,7 @@ use Drupal\aculta_messenger\EventSubscriber\ForumCommentMoveSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -391,6 +392,55 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertCount(1, $notices);
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
     self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
+  }
+
+  /**
+   * A permanent email failure closes email delivery but preserves site notice.
+   */
+  public function testPermanentDigestFailureKeepsTheRequiredSiteNotice(): void {
+    $author = $this->createUser('autor_falha_digest');
+    $follower = $this->createUser('seguidor_falha_digest');
+    $follower->setEmail('seguidor-falha@example.test');
+    $follower->set('langcode', 'pt-br');
+    $follower->set('preferred_langcode', 'pt-br');
+    $follower->save();
+    $uid = (int) $follower->id();
+    $userData = $this->container->get('user.data');
+    $userData->set('aculta_portal', $uid, 'email_confirmed', TRUE);
+    $preferences = new AvisoPreferencias($userData);
+    $preferences->salvar($uid, TRUE, TRUE, TRUE);
+    $topic = $this->createTopic('Falha permanente do digest');
+    $comment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE);
+    $avisos = $this->createAvisoService([$uid], $policy);
+    self::assertSame(1, $avisos->registrarResposta($comment));
+
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $summary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('uuid'),
+      $this->container->get('lock.persistent'),
+    );
+
+    self::assertSame(0, $summary->enviarResumos());
+    self::assertSame(0, $summary->enviarResumos(), 'A permanent email failure is not retried by a later digest run.');
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    self::assertCount(1, $notices);
+    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
   }
 
   /**

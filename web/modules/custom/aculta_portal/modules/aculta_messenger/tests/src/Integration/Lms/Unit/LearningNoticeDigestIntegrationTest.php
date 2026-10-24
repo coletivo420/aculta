@@ -131,6 +131,22 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A definitive failure discards only the e-mail copy of a digest entry.
+   */
+  public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {
+    $provider = new TestLearningDigestProvider([27]);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->once())
+      ->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Permanent, 550));
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([27], $provider->discarded);
+  }
+
+  /**
    * A provider row without a stable delivery ID is not sent repeatedly.
    */
   public function testRowsWithoutDeliveryIdsAreNotSent(): void {

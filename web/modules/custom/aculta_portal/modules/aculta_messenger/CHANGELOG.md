@@ -1,3 +1,12 @@
+## 0.1.1-dev.121 — encerrar digest após falha permanente — 2026-10-24
+
+- Erro permanente retornado pelo ACULTA Mailer encerra a pendência somente no
+  canal de e-mail, assim como cancelamento por política. Contadores obrigatórios
+  de aviso no site permanecem intactos. Falhas temporárias continuam retryable.
+- Unit 115/606, Kernel MariaDB 27/609 e Integration 48/476 PASS; PHPCS
+  Drupal/DrupalPractice PASS. Integração registra 2 deprecações Core/contrib e
+  4 notices PHPUnit. Sem SMTP real ou teste de processos independentes.
+
 ## 0.1.1-dev.120 — comprovar retry do digest combinado entre adapters — 2026-10-24
 
 - Teste integrado combina linhas LMS e Wiki num único resumo. Uma falha

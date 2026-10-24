@@ -8,6 +8,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\user\UserDataInterface;
@@ -226,9 +227,9 @@ final class AvisosResumo {
       return FALSE;
     }
     if (!$resultado->sent) {
-      if ($resultado->cancelled) {
-        // A política administrativa suspendeu este tipo de e-mail. Descarte
-        // somente a entrega por e-mail; os avisos obrigatórios no site ficam.
+      if ($resultado->cancelled || $resultado->error === DeliveryError::Permanent) {
+        // Suspensão administrativa e erros definitivos encerram apenas o canal
+        // de e-mail; os avisos obrigatórios no site continuam disponíveis.
         foreach ($daFila as $aviso) {
           $this->avisos->clearPendingEmailCount($uid, $aviso['nid'], $aviso['tipo']);
         }
