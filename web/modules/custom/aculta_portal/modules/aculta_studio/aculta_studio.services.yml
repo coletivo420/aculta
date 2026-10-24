@@ -27,6 +27,9 @@ services:
     arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
   aculta_studio.experience.conta:
     class: Drupal\aculta_studio\Experience\AccountExperienceProvider
+  aculta_studio.profile_access:
+    class: Drupal\aculta_studio\Access\StudioProfileAccess
+    arguments: ['@module_handler']
   aculta_studio.experience.perfil:
     class: Drupal\aculta_studio\Experience\ProfileExperienceProvider
     arguments: ['@module_handler']
