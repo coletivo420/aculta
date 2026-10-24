@@ -15,7 +15,7 @@ aculta_studio.account:
 aculta_studio.profile:
   path: /studio/perfil
   defaults:
-    _controller: 'aculta_studio.personal_profile_controller:page'
+    _controller: 'aculta_studio.profile_controller:page'
     _title: 'Meu Perfil'
   requirements:
     _permission: 'access aculta portal'
