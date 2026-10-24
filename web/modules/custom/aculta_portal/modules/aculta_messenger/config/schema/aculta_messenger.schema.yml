@@ -1,6 +1,6 @@
 aculta_messenger.settings:
   type: config_object
-  label: 'ACULTA Messenger: controles do chat'
+  label: 'ACULTA Messenger: controles de comunicação'
   mapping:
     group_creation_enabled:
       type: boolean
@@ -17,3 +17,36 @@ aculta_messenger.settings:
     send_limit_per_hour:
       type: integer
       label: 'Mensagens por hora por conta'
+    email_modes:
+      type: mapping
+      label: 'Modos de e-mail permitidos por categoria'
+      mapping:
+        forum_resposta:
+          type: aculta_messenger.email_modes
+          label: 'Respostas do Fórum'
+        forum_atualizacao:
+          type: aculta_messenger.email_modes
+          label: 'Atualizações do Fórum'
+        aprendizagem:
+          type: aculta_messenger.email_modes
+          label: 'Aprendizagem'
+        wiki:
+          type: aculta_messenger.email_modes
+          label: 'Wiki'
+        loja:
+          type: aculta_messenger.email_modes
+          label: 'Loja'
+        doacao:
+          type: aculta_messenger.email_modes
+          label: 'Doações'
+
+aculta_messenger.email_modes:
+  type: mapping
+  label: 'Modos de entrega permitidos'
+  mapping:
+    digest:
+      type: boolean
+      label: 'Resumo diário'
+    immediate:
+      type: boolean
+      label: 'Envio direto'

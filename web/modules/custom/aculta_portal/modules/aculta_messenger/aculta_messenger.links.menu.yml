@@ -6,7 +6,7 @@ aculta_messenger.admin_notices:
   weight: 8
 aculta_messenger.settings_form:
   title: 'Mensagens'
-  description: 'Limites e limpeza do chat.'
+  description: 'Políticas de conversas e modos de e-mail dos avisos.'
   route_name: aculta_messenger.settings_form
   parent: aculta_portal.admin
   weight: 5

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\aculta_messenger\Entity\Aviso as ForumAviso;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\user\UserDataInterface;
 
 /**
@@ -23,9 +24,38 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
 
   public const MODULO = 'aculta_messenger';
 
+  /**
+   * Shared notice categories whose e-mail modes are controlled by the site. */
+  public const EMAIL_CATEGORIES = [
+    ForumAviso::TIPO_RESPOSTA,
+    ForumAviso::TIPO_ATUALIZACAO,
+    'aprendizagem',
+    'wiki',
+    'loja',
+    'doacao',
+  ];
+
   public function __construct(
     private readonly UserDataInterface $userData,
+    private readonly ?ConfigFactoryInterface $configFactory = NULL,
   ) {}
+
+  /**
+   * Returns modes allowed by administrators; opting out is always available. */
+  public function allowedEmailModes(string $category): array {
+    $configured = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes.' . $category);
+    $allowed = [self::EMAIL_OFF];
+    if (!is_array($configured)) {
+      return [...$allowed, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE];
+    }
+    if (!empty($configured[self::EMAIL_DIGEST])) {
+      $allowed[] = self::EMAIL_DIGEST;
+    }
+    if (!empty($configured[self::EMAIL_IMMEDIATE])) {
+      $allowed[] = self::EMAIL_IMMEDIATE;
+    }
+    return $allowed;
+  }
 
   /**
    * Verifica se o resumo diário por e-mail está ligado para esta conta.
@@ -67,17 +97,17 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    */
   public function emailMode(int $uid, string $category): string {
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
-    if (in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
-      return $mode;
-    }
-    // Preserve existing reply/update choices until the person selects a mode.
-    if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
-      $legacy = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $category);
-      if ($legacy !== NULL && !(bool) $legacy) {
-        return self::EMAIL_OFF;
+    if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
+      $mode = self::EMAIL_DIGEST;
+      // Preserve existing reply/update choices until the person selects a mode.
+      if (in_array($category, [ForumAviso::TIPO_RESPOSTA, ForumAviso::TIPO_ATUALIZACAO], TRUE)) {
+        $legacy = $this->userData->get(self::MODULO, $uid, 'avisos_resumo_' . $category);
+        if ($legacy !== NULL && !(bool) $legacy) {
+          $mode = self::EMAIL_OFF;
+        }
       }
     }
-    return self::EMAIL_DIGEST;
+    return in_array($mode, $this->allowedEmailModes($category), TRUE) ? $mode : self::EMAIL_OFF;
   }
 
   /**
@@ -91,7 +121,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    *   One of the supported email modes.
    */
   public function saveEmailMode(int $uid, string $category, string $mode): void {
-    if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
+    if (!in_array($mode, $this->allowedEmailModes($category), TRUE)) {
       throw new \InvalidArgumentException('Modo de e-mail inválido.');
     }
     $this->userData->set(self::MODULO, $uid, 'avisos_email_mode_' . $category, $mode);

@@ -44,47 +44,43 @@ final class AvisosPrivacyForm {
       'email_respostas' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de respostas em tópicos seguidos'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto.'),
-        '#options' => $this->emailModeOptions(),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. As opções de e-mail disponíveis podem ser limitadas pelo administrador do Messenger.'),
+        '#options' => $this->emailModeOptions(Aviso::TIPO_RESPOSTA),
         '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_RESPOSTA),
       ],
       'email_atualizacoes' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de atualizações de tópicos'),
-        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. Escolha sem e-mail, resumo diário ou envio direto.'),
-        '#options' => $this->emailModeOptions(),
+        '#description' => new TranslatableMarkup('O aviso no site permanece ativo. As opções de e-mail disponíveis podem ser limitadas pelo administrador do Messenger.'),
+        '#options' => $this->emailModeOptions(Aviso::TIPO_ATUALIZACAO),
         '#default_value' => $this->preferencias->emailMode($uid, Aviso::TIPO_ATUALIZACAO),
       ],
       'email_aprendizagem' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de aprendizagem'),
-        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. O resumo também exige o opt-in geral do Messenger; administradores podem limitar tipos no ACULTA Mailer.'),
-        '#options' => [
-          AvisoPreferencias::EMAIL_OFF => new TranslatableMarkup('Sem e-mail'),
-          AvisoPreferencias::EMAIL_DIGEST => new TranslatableMarkup('Resumo diário'),
-          AvisoPreferencias::EMAIL_IMMEDIATE => new TranslatableMarkup('Envio direto'),
-        ],
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. O resumo também exige o opt-in geral do Messenger; as opções disponíveis podem ser limitadas pelo administrador.'),
+        '#options' => $this->emailModeOptions('aprendizagem'),
         '#default_value' => $this->preferencias->emailMode($uid, 'aprendizagem'),
       ],
       'email_wiki' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails da Wiki'),
-        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. O resumo também exige o opt-in geral do Messenger; administradores podem limitar tipos no ACULTA Mailer.'),
-        '#options' => $this->emailModeOptions(),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. O resumo também exige o opt-in geral do Messenger; as opções disponíveis podem ser limitadas pelo administrador.'),
+        '#options' => $this->emailModeOptions('wiki'),
         '#default_value' => $this->preferencias->emailMode($uid, 'wiki'),
       ],
       'email_loja' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails da Loja'),
-        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto; administradores podem limitar cada tipo pelo ACULTA Mailer.'),
-        '#options' => $this->emailModeOptions(),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos; as opções de e-mail disponíveis podem ser limitadas pelo administrador do Messenger.'),
+        '#options' => $this->emailModeOptions('loja'),
         '#default_value' => $this->preferencias->emailMode($uid, 'loja'),
       ],
       'email_doacao' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de doações'),
-        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Você pode receber aviso quando o pedido for criado e quando cada pagamento for aprovado; escolha sem e-mail, resumo diário ou envio direto. O resumo diário também exige o opt-in geral do Messenger; administradores podem limitar a entrega pelo ACULTA Mailer.'),
-        '#options' => $this->emailModeOptions(),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos, inclusive para criação do pedido e aprovação de cada pagamento. O resumo exige opt-in geral do Messenger; as opções disponíveis podem ser limitadas pelo administrador.'),
+        '#options' => $this->emailModeOptions('doacao'),
         '#default_value' => $this->preferencias->emailMode($uid, 'doacao'),
       ],
     ];
@@ -120,12 +116,13 @@ final class AvisosPrivacyForm {
 
   /**
    * Returns the available e-mail modes shared across notice categories. */
-  private function emailModeOptions(): array {
-    return [
+  private function emailModeOptions(string $category): array {
+    $labels = [
       AvisoPreferencias::EMAIL_OFF => new TranslatableMarkup('Sem e-mail'),
       AvisoPreferencias::EMAIL_DIGEST => new TranslatableMarkup('Resumo diário'),
       AvisoPreferencias::EMAIL_IMMEDIATE => new TranslatableMarkup('Envio direto'),
     ];
+    return array_intersect_key($labels, array_flip($this->preferencias->allowedEmailModes($category)));
   }
 
 }

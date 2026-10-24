@@ -160,7 +160,7 @@ aculta_messenger.settings_form:
   path: '/painel-administrativo/aculta/mensagens'
   defaults:
     _form: '\Drupal\aculta_messenger\Form\MessengerSettingsForm'
-    _title: 'Chat: limites e limpeza'
+    _title: 'Configurações do Messenger'
   requirements:
     _permission: 'administer aculta messenger'
   options:

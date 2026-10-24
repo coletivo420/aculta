@@ -111,7 +111,7 @@ services:
       - { name: event_subscriber }
   aculta_messenger.aviso_preferencias:
     class: Drupal\aculta_messenger\Aviso\AvisoPreferencias
-    arguments: ['@user.data']
+    arguments: ['@user.data', '@config.factory']
   aculta_messenger.avisos_privacy_form:
     class: Drupal\aculta_messenger\Form\AvisosPrivacyForm
     arguments: ['@current_user', '@aculta_messenger.aviso_preferencias']

@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Form;
 
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Controles administrativos do chat: grupos, limites de participantes e envios, e o tempo da limpeza.
+ * Administrative communication policies for messages and notice email.
  *
- * Os valores são lidos por Service\ConversationPolicy (um lugar só). Os defaults ficam em
+ * Conversation controls are read by ConversationPolicy. Defaults live in
  * config/install/aculta_messenger.settings.yml.
  */
 final class MessengerSettingsForm extends ConfigFormBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getEditableConfigNames(): array {
     return ['aculta_messenger.settings'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_messenger_settings';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_messenger.settings');
     $form['group_creation_enabled'] = [
@@ -67,18 +77,71 @@ final class MessengerSettingsForm extends ConfigFormBase {
       '#max' => 1000,
       '#required' => TRUE,
     ];
+    $form['email_modes'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Modos de e-mail permitidos por categoria'),
+      '#description' => $this->t('A pessoa sempre pode escolher sem e-mail. Desmarque resumo ou envio direto para remover essa opção em todas as contas; os avisos no site continuam ativos.'),
+      '#open' => FALSE,
+    ];
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $configured = $config->get('email_modes.' . $category);
+      $configured = is_array($configured) ? $configured : [];
+      $defaultModes = [];
+      if (!array_key_exists('digest', $configured) || (bool) $configured['digest']) {
+        $defaultModes[] = AvisoPreferencias::EMAIL_DIGEST;
+      }
+      if (!array_key_exists('immediate', $configured) || (bool) $configured['immediate']) {
+        $defaultModes[] = AvisoPreferencias::EMAIL_IMMEDIATE;
+      }
+      $form['email_modes'][$category] = [
+        '#type' => 'checkboxes',
+        '#title' => $this->emailCategoryTitle($category),
+        '#options' => [
+          AvisoPreferencias::EMAIL_DIGEST => $this->t('Resumo diário'),
+          AvisoPreferencias::EMAIL_IMMEDIATE => $this->t('Envio direto'),
+        ],
+        '#default_value' => $defaultModes,
+      ];
+    }
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $emailModes = [];
+    foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
+      $selected = array_filter((array) $form_state->getValue(['email_modes', $category]));
+      $emailModes[$category] = [
+        'digest' => in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
+        'immediate' => in_array(AvisoPreferencias::EMAIL_IMMEDIATE, $selected, TRUE),
+      ];
+    }
     $this->config('aculta_messenger.settings')
       ->set('group_creation_enabled', (bool) $form_state->getValue('group_creation_enabled'))
       ->set('group_max_members', min(50, max(2, (int) $form_state->getValue('group_max_members'))))
       ->set('retention_months', min(36, max(1, (int) $form_state->getValue('retention_months'))))
       ->set('cleanup_batch', min(500, max(1, (int) $form_state->getValue('cleanup_batch'))))
       ->set('send_limit_per_hour', min(1000, max(1, (int) $form_state->getValue('send_limit_per_hour'))))
+      ->set('email_modes', $emailModes)
       ->save();
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Returns the translated administrative label for one notice category.
+   */
+  private function emailCategoryTitle(string $category): string {
+    return match ($category) {
+      'forum_resposta' => (string) $this->t('Respostas do Fórum'),
+      'forum_atualizacao' => (string) $this->t('Atualizações do Fórum'),
+      'aprendizagem' => (string) $this->t('Aprendizagem'),
+      'wiki' => (string) $this->t('Wiki'),
+      'loja' => (string) $this->t('Loja'),
+      'doacao' => (string) $this->t('Doações'),
+      default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
+    };
   }
 
 }

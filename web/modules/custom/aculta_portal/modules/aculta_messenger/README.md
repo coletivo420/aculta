@@ -43,6 +43,13 @@ e-mail direto ou digest. O aviso no site é obrigatório; o membro pode escolher
 e-mail desligado, direto ou resumo/digest, sempre sujeito às políticas
 administrativas.
 
+Administradores controlam em **Configurações do Messenger** quais modos de
+resumo diário e envio direto ficam disponíveis para cada categoria integrada
+(Fórum, aprendizagem, Wiki, Loja e Doações). A opção sem e-mail não pode ser
+removida; avisos no site continuam obrigatórios. Uma preferência individual
+temporariamente bloqueada pela política administrativa passa a valer novamente
+se o modo voltar a ser permitido.
+
 Os módulos de domínio mantêm conteúdos, workflows e publishers de eventos. O
 Messenger aplica o contrato compartilhado e revalida acesso.
 `aculta_mailer` mantém transporte, templates, remetente, cabeçalhos/rodapés,
@@ -52,7 +59,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.97` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.109` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

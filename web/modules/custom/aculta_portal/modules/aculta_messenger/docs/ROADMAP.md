@@ -44,7 +44,7 @@ Consumers Wiki/Loja/Doações centralizados em Message. Site obrigatório; e-mai
 
 ## M6 — Experiência e administração (0.3.0)
 
-Evoluir central existente com filtros, agrupamentos, leitura, assinaturas, preferências, estados vazios/erro/carregamento e responsividade. Distinguir Avisos de Mensagens. Autorização/consulta/persistência ficam no Messenger; ACULTA420 cuida da apresentação.
+Evoluir central existente com filtros, agrupamentos, leitura, assinaturas, preferências, estados vazios/erro/carregamento e responsividade. Distinguir Avisos de Mensagens. Autorização/consulta/persistência ficam no Messenger; ACULTA420 cuida da apresentação. Implementado parcialmente: administração agora restringe por categoria os modos de resumo diário e envio direto; opt-out individual e avisos no site permanecem obrigatórios. Filtros e agrupamento da central ainda pendentes.
 
 ## M7 — Hardening e lançamento (1.0.0)
 
@@ -66,3 +66,5 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 - Amizades/fila: `FriendshipNoticeEmailWorker` serializa por Message, recarrega o estado após lock e mantém retries limitados. Unit do worker 5/61; Unit Messenger/adapters 130/813 PASS. Fila do Runtime ainda não homologada.
 - LMS/idempotência: `LearningNoticeManager::record()` serializa consulta/criação e enqueue por destinatário, evento, origem e versão. Replays pendentes não enfileiram de novo; falha de enqueue permite recuperação sem duplicar o Message. Unit 1/8; Kernel LMS 2/22 PASS, incluindo enqueue único após replay (duas deprecações de `message` no Core/contrib); Unit Messenger/adapters 131/821 PASS. Runtime/fila não homologados.
 - Amizades/idempotência: `FriendshipNoticeSubscriber` serializa a busca/criação por chave idempotente e espera/reconsulta durante um replay concorrente. O worker também mantém lock de entrega por Message. Unit subscriber 5/53; Unit Messenger/adapters 132/837 PASS. Runtime/fila não homologados.
+- Preferências administrativas: Messenger permite restringir resumo diário e envio direto por categoria; opt-out individual e avisos no site permanecem obrigatórios. Unit policy, formulário administrativo/individual e digest: 12 testes / 102 assertions direcionadas PASS. Não foi aplicado update de configuração nem executado smoke administrativo no Runtime.
+- Suíte Unit Messenger + adapters: 136 testes / 846 assertions PASS. Kernel MariaDB `ForumNoticeIdempotency`: 26 testes / 581 assertions PASS após a alteração de injeção e policy. PHPCS Drupal/DrupalPractice, lint, parse de YAML, `git diff --check` e PROJECT-STATUS-INDEX PASS. Sem alteração de configuração instalada ou Runtime.

@@ -46,4 +46,37 @@ final class AvisoPreferenciasTest extends UnitTestCase {
     self::assertFalse($preferences->tipoNoResumo(27, Aviso::TIPO_RESPOSTA));
   }
 
+  /**
+   * An administrator restriction suppresses a disallowed saved user mode. */
+  public function testAdministrativePolicyRestrictsEffectiveEmailMode(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->method('get')->willReturnCallback(static fn(string $module, int $uid, string $key): mixed => match ($key) {
+      'avisos_email_mode_wiki' => AvisoPreferencias::EMAIL_IMMEDIATE,
+      default => NULL,
+    });
+    $configFactory = $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => ['email_modes' => ['wiki' => ['digest' => TRUE, 'immediate' => FALSE]]],
+    ]);
+    $preferences = new AvisoPreferencias($userData, $configFactory);
+
+    self::assertSame([AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST], $preferences->allowedEmailModes('wiki'));
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'wiki'));
+    $this->expectException(\InvalidArgumentException::class);
+    $preferences->saveEmailMode(27, 'wiki', AvisoPreferencias::EMAIL_IMMEDIATE);
+  }
+
+  /**
+   * A missing admin setting remains compatible with existing opt-in behavior. */
+  public function testMissingAdministrativePolicyAllowsAllModes(): void {
+    $preferences = new AvisoPreferencias(
+      $this->createMock(UserDataInterface::class),
+      $this->getConfigFactoryStub(['aculta_messenger.settings' => []]),
+    );
+
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+      $preferences->allowedEmailModes('doacao'),
+    );
+  }
+
 }

@@ -17,11 +17,17 @@ contrato normativo.
 | Onde aparece | Caixa de conversas (Private Message) | Barra do site, lista de avisos e contadores |
 | Quem envia | Pessoas | O sistema (comunicados, respostas em tópico seguido) |
 | Entidade | `private_message` (nativa) | Comunicados `aculta_notice` (nó); avisos por pessoa `aculta_aviso` (entidade própria) |
-| E-mail | Pelo Message Notify, quando a pessoa ativa | Resumo diário opt-in, somente com e-mail confirmado e contexto ainda acessível |
+| E-mail | Pelo Message Notify, quando a pessoa ativa | Sem e-mail, resumo diário ou envio direto, conforme preferência individual e modos autorizados pelo administrador |
 | Contadores | Não lidas por conversa (nativo) | `contador_site` por tópico; `MessengerCounts` |
 
 Regra: uma resposta em tópico seguido é um **aviso**, não uma mensagem. A publicação de tópico também não gera mais
 mensagem (ver seção 5).
+
+Avisos no site são obrigatórios. A pessoa escolhe sem e-mail, resumo diário ou
+envio direto para cada origem. Em Configurações do Messenger, administradores
+podem restringir os modos disponíveis por categoria; não podem remover a opção
+sem e-mail nem desligar a entrega no site. O ACULTA Mailer continua dono do
+transporte e pode suspender tipos de mensagem conforme sua política.
 
 ## 2. Avisos por pessoa (`aculta_aviso`)
 

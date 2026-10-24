@@ -1,3 +1,15 @@
+## 0.1.1-dev.109 — política administrativa dos modos de e-mail — 2026-10-24
+
+- Configurações do Messenger agora permitem restringir por categoria os modos
+  de resumo diário e envio direto. A opção individual “sem e-mail” permanece
+  disponível e os avisos no site não podem ser desativados. Preferências antigas
+  de modo bloqueado ficam inativas enquanto a política o proíbe e voltam a valer
+  quando o administrador liberar o modo. Unit Messenger + adapters: 136 testes /
+  846 assertions PASS; Kernel ForumNoticeIdempotency: 26 / 581 PASS. Os 12 testes
+  direcionados de preferências/digest somaram 102 assertions. PHPCS Drupal/
+  DrupalPractice, lint PHP, parse de YAML e índice de status PASS. Runtime não
+  alterado; falta smoke administrativo no Runtime.
+
 ## 0.1.1-dev.108 — serializar criação dos avisos de amizade — 2026-10-24
 
 - `FriendshipNoticeSubscriber` usa lock pela chave idempotente antes da busca e

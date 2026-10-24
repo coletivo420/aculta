@@ -54,6 +54,31 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   }
 
   /**
+   * Admin policy removes delivery choices from the member form.
+   */
+  public function testBuildRespectsAdministrativeModePolicy(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $settings = $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => [
+        'email_modes' => ['wiki' => ['digest' => TRUE, 'immediate' => FALSE]],
+      ],
+    ]);
+    $preferences = new AvisoPreferencias($userData, $settings);
+    $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('id')->willReturn(27);
+    $formBuilder = new AvisosPrivacyForm($account, $preferences);
+    $form = [];
+
+    $formBuilder->build($form);
+
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST],
+      array_keys($form['avisos']['email_wiki']['#options']),
+    );
+    self::assertContains(AvisoPreferencias::EMAIL_OFF, array_keys($form['avisos']['email_doacao']['#options']));
+  }
+
+  /**
    * Saves per-origin modes while preserving mandatory site notices.
    */
   public function testSubmitSavesModesForAllIntegratedOrigins(): void {
