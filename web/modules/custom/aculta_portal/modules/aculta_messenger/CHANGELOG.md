@@ -963,3 +963,12 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Unit Messenger: 70 / 334; Unit LMS Messenger: 21 / 83. Runtime continua sem
   homologação.
 
+## 0.1.1-dev.87 — adaptar eventos de amizade ao contrato compartilhado — 2026-10-24
+
+- `aculta_user` mantém a propriedade do workflow; o novo producer converte
+  pedido e aceite em `MessengerNoticeEvent`. O consumer revalida a amizade por
+  UUID, status e destinatário, preserva a chave armazenada no `Message` atual e
+  continua enfileirando o e-mail transacional mínimo.
+- Unit Messenger: 72 testes / 345 assertions; PHPCS Drupal/DrupalPractice:
+  PASS. A prova Kernel do pipeline User e Runtime não foram executados.
+

@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Friendship;
 
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\aculta_user\Event\FriendshipChangedEvent;
+use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Cria o aviso persistente de pedido e de aceite de amizade, deduplicado, e enfileira o e-mail mínimo.
+ * Cria aviso persistente de pedido e aceite de amizade e enfileira e-mail.
  *
- * Pedido avisa quem recebeu; aceite avisa quem pediu. A chave de origem (amizade, evento e instante da transição)
- * impede aviso repetido para a mesma transição. O aviso não contém nome nem conteúdo: só o link para a conta.
+ * Pedido avisa quem recebeu; aceite avisa quem pediu. A chave de origem evita
+ * avisos repetidos. O aviso não contém nome ou conteúdo, somente link da conta.
  */
 final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
 
@@ -25,23 +28,61 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
 
   public const EMAIL_QUEUE = 'aculta_msg_friendship';
 
+  private const REQUESTED_EVENT = 'aculta_user.friendship_requested';
+
+  private const ACCEPTED_EVENT = 'aculta_user.friendship_accepted';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly QueueFactory $queueFactory,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
-    return [FriendshipChangedEvent::NAME => 'onFriendshipChanged'];
+    return [MessengerNoticeEvent::EVENT_NAME => 'consume'];
   }
 
-  public function onFriendshipChanged(FriendshipChangedEvent $event): void {
-    $recipientId = $event->transition === FriendshipChangedEvent::REQUESTED ? $event->recipientId : $event->requesterId;
+  /**
+   * Consumes a friendship notice after revalidating its source and recipient.
+   */
+  public function consume(MessengerNoticeEvent $event): void {
+    if ($event->sourceModule() !== 'aculta_user' || $event->sourceEntityType() !== 'aculta_friendship'
+      || $event->purpose() !== 'account'
+      || !in_array($event->eventType(), [self::REQUESTED_EVENT, self::ACCEPTED_EVENT], TRUE)
+      || $event->sourceRevisionOrVersion() === NULL || !ctype_digit($event->sourceRevisionOrVersion())
+      || !$this->hasCanonicalKey($event)) {
+      return;
+    }
+    $transition = $event->eventType() === self::REQUESTED_EVENT
+      ? FriendshipChangedEvent::REQUESTED
+      : FriendshipChangedEvent::ACCEPTED;
+    if (($event->metadata()['transition'] ?? NULL) !== $transition) {
+      return;
+    }
+    $matches = $this->entityTypeManager->getStorage('aculta_friendship')
+      ->loadByProperties(['uuid' => $event->sourceEntityUuid()]);
+    $friendship = reset($matches);
+    if (!$friendship instanceof AcultaFriendshipInterface
+      || ($transition === FriendshipChangedEvent::REQUESTED
+        && ($friendship->getStatus() !== FriendshipStatus::Pending->value
+          || $event->recipientUid() !== $friendship->getRecipientId()))
+      || ($transition === FriendshipChangedEvent::ACCEPTED
+        && ($friendship->getStatus() !== FriendshipStatus::Accepted->value
+          || $event->recipientUid() !== $friendship->getRequesterId()))) {
+      return;
+    }
+
+    $recipientId = $event->recipientUid();
     $account = $this->entityTypeManager->getStorage('user')->load($recipientId);
     if ($account === NULL || !$account->isActive()) {
       return;
     }
 
-    $source = $event->friendshipId . ':' . $event->transition . ':' . $event->changed;
+    // Keep the persisted legacy source key so replays remain compatible with
+    // notices created before this producer used the shared event envelope.
+    $source = $friendship->id() . ':' . $transition . ':' . $event->sourceRevisionOrVersion();
     $storage = $this->entityTypeManager->getStorage('message');
     $existing = $storage->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)
@@ -57,12 +98,27 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
       'template' => self::TEMPLATE,
       'uid' => $recipientId,
       self::SOURCE_FIELD => $source,
-      self::EVENT_FIELD => $event->transition,
+      self::EVENT_FIELD => $transition,
       'field_aculta_msg_delivery' => 'pending',
       'field_aculta_messenger_attempts' => 0,
     ]);
     $message->save();
     $this->queueFactory->get(self::EMAIL_QUEUE)->createItem(['message_id' => (int) $message->id()]);
+  }
+
+  /**
+   * Validates that the idempotency key binds source, transition and recipient.
+   */
+  private function hasCanonicalKey(MessengerNoticeEvent $event): bool {
+    $transition = $event->metadata()['transition'] ?? NULL;
+    $changed = $event->sourceRevisionOrVersion();
+    if (!in_array($transition, [FriendshipChangedEvent::REQUESTED, FriendshipChangedEvent::ACCEPTED], TRUE)
+      || $changed === NULL) {
+      return FALSE;
+    }
+    return hash_equals(implode(':', [
+      'user', 'friendship', $event->sourceEntityUuid(), $transition, $changed, (string) $event->recipientUid(),
+    ]), $event->idempotencyKey());
   }
 
 }

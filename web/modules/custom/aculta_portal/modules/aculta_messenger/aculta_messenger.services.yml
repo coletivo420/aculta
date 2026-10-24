@@ -115,6 +115,11 @@ services:
     arguments: ['@entity_type.manager', '@queue']
     tags:
       - { name: event_subscriber }
+  aculta_messenger.friendship_notice_event_producer:
+    class: Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer
+    arguments: ['@entity_type.manager', '@aculta_messenger.notice_event_publisher']
+    tags:
+      - { name: event_subscriber }
 
   Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface: '@aculta_messenger.notice_event_publisher'
   aculta_messenger.notice_event_publisher:

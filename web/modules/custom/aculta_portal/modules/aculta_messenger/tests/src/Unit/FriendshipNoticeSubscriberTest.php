@@ -10,7 +10,10 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\aculta_user\Event\FriendshipChangedEvent;
+use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -71,7 +74,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $queueFactory->expects(self::never())->method('get');
 
     $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory);
-    $subscriber->onFriendshipChanged($this->event(FriendshipChangedEvent::REQUESTED));
+    $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
   /**
@@ -86,12 +89,17 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $messageStorage->expects(self::never())->method('getQuery');
     $messageStorage->expects(self::never())->method('create');
 
-    $entityTypeManager = $this->entityTypeManager($userStorage, $messageStorage);
+    $friendship = $this->friendship(FriendshipStatus::Pending->value);
+    $entityTypeManager = $this->entityTypeManager(
+      $userStorage,
+      $messageStorage,
+      $this->friendshipStorage($friendship),
+    );
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
 
     (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory))
-      ->onFriendshipChanged($this->event(FriendshipChangedEvent::REQUESTED));
+      ->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
   /**
@@ -128,27 +136,77 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::once())->method('get')->with(FriendshipNoticeSubscriber::EMAIL_QUEUE)->willReturn($queue);
 
-    $subscriber = new FriendshipNoticeSubscriber($this->entityTypeManager($userStorage, $messageStorage), $queueFactory);
-    $subscriber->onFriendshipChanged($this->event($transition, $requesterId, $recipientId));
+    $status = $transition === FriendshipChangedEvent::REQUESTED
+      ? FriendshipStatus::Pending->value
+      : FriendshipStatus::Accepted->value;
+    $subscriber = new FriendshipNoticeSubscriber($this->entityTypeManager(
+      $userStorage,
+      $messageStorage,
+      $this->friendshipStorage($this->friendship($status)),
+    ), $queueFactory);
+    $subscriber->consume($this->event($transition, $requesterId, $recipientId));
   }
 
   /**
    * Creates the entity manager used by the subscriber.
    */
-  private function entityTypeManager(EntityStorageInterface $userStorage, EntityStorageInterface $messageStorage): EntityTypeManagerInterface {
+  private function entityTypeManager(
+    EntityStorageInterface $userStorage,
+    EntityStorageInterface $messageStorage,
+    ?EntityStorageInterface $friendshipStorage = NULL,
+  ): EntityTypeManagerInterface {
+    $friendshipStorage ??= $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value));
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $manager->method('getStorage')->willReturnMap([
       ['user', $userStorage],
       ['message', $messageStorage],
+      ['aculta_friendship', $friendshipStorage],
     ]);
     return $manager;
   }
 
   /**
+   * Creates the friendship used to revalidate the source event.
+   */
+  private function friendship(string $status): AcultaFriendshipInterface {
+    $friendship = $this->createMock(AcultaFriendshipInterface::class);
+    $friendship->method('uuid')->willReturn('friendship-uuid');
+    $friendship->method('id')->willReturn('44');
+    $friendship->method('getRequesterId')->willReturn(10);
+    $friendship->method('getRecipientId')->willReturn(20);
+    $friendship->method('getStatus')->willReturn($status);
+    return $friendship;
+  }
+
+  /**
+   * Creates UUID lookup storage.
+   */
+  private function friendshipStorage(AcultaFriendshipInterface $friendship): EntityStorageInterface {
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadByProperties')->with(['uuid' => 'friendship-uuid'])->willReturn([$friendship]);
+    return $storage;
+  }
+
+  /**
    * Creates a transition with stable identifiers and timestamp.
    */
-  private function event(string $transition, int $requesterId = 10, int $recipientId = 20): FriendshipChangedEvent {
-    return new FriendshipChangedEvent($transition, '44', $requesterId, $recipientId, 1700000000);
+  private function event(string $transition, int $requesterId = 10, int $recipientId = 20): MessengerNoticeEvent {
+    $uid = $transition === FriendshipChangedEvent::REQUESTED ? $recipientId : $requesterId;
+    $eventType = $transition === FriendshipChangedEvent::REQUESTED
+      ? 'aculta_user.friendship_requested'
+      : 'aculta_user.friendship_accepted';
+    return new MessengerNoticeEvent(
+      $eventType,
+      'aculta_user',
+      'aculta_friendship',
+      'friendship-uuid',
+      '1700000000',
+      $uid,
+      'account',
+      (new \DateTimeImmutable())->setTimestamp(1700000000),
+      implode(':', ['user', 'friendship', 'friendship-uuid', $transition, '1700000000', (string) $uid]),
+      ['transition' => $transition],
+    );
   }
 
 }

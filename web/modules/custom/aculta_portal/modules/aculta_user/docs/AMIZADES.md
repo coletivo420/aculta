@@ -89,6 +89,17 @@ tabela, não cria entidades diretamente e não duplica o estado.
 - Notificações devem ser emitidas pelo Messenger após transição válida e
   deduplicadas; a entidade de amizade continua sendo a fonte do estado.
 
+### Integração de avisos
+
+`FriendshipManager` continua dono do workflow e publica `FriendshipChangedEvent`
+após pedido ou aceite válido. O adapter `FriendshipNoticeEventProducer` do
+`aculta_messenger` traduz essa transição para `MessengerNoticeEvent`; o consumer
+recarrega a amizade por UUID e revalida estado e destinatário antes de criar o
+`Message` persistente e enfileirar o e-mail mínimo. User não depende do
+Messenger, e a integração não cria conversa privada nem storage de aviso
+paralelo. A cobertura atual é Unit; a prova Kernel do pipeline completo segue
+pendente.
+
 ## Fontes
 
 - [Friendship: visão geral e avisos de segurança](https://www.drupal.org/project/friendship)

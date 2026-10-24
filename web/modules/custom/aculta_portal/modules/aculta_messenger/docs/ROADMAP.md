@@ -35,7 +35,7 @@ Implementado: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publi
 
 ## M3 — Fórum e User (0.2.0)
 
-Fórum conserva `seguir_topico`, avisos atuais/agregação por usuário-tipo-tópico, leitura, digest e F-D21; valida Domain, publicação, revisão, acesso, aprovação tardia, republicação e movimentação. Não usar publicação de Message Subscribe em paralelo e nunca iniciar conversas por interação no Fórum. User conserva workflow/entidade de amizade e publica pedido/aceite pelo contrato compartilhado.
+Fórum conserva `seguir_topico`, avisos atuais/agregação por usuário-tipo-tópico, leitura, digest e F-D21; valida Domain, publicação, revisão, acesso, aprovação tardia, republicação e movimentação. Não usar publicação de Message Subscribe em paralelo e nunca iniciar conversas por interação no Fórum. User conserva workflow/entidade de amizade; o adapter do Messenger converte pedido/aceite em `MessengerNoticeEvent` e o consumer revalida estado, origem e destinatário antes de persistir no `Message` já existente. Unit Messenger: 72 testes / 345 assertions; Kernel integrado do caminho User continua pendente.
 
 ## M4 — LMS (0.2.0)
 
@@ -67,6 +67,6 @@ Validar concorrência/idempotência, locks/retry, filas, retenção, paginação
 
 - M0: parcial; contratos e inventário documental iniciados; matriz completa pendente.
 - M1: parcial; correção de amizade em respostas e remoção da retenção course implementadas; gates a executar.
-- M2: parcial; envelope/publisher e adapters Fórum/LMS implementados nos eventos descritos, com Kernel round-trip de ForumPost, Comment e revisão de tópico; amizade, eventos LMS restantes e integração comparativa ampla pendentes.
+- M2: parcial; envelope/publisher e adapters Fórum/User/LMS implementados nos eventos descritos, com Kernel round-trip de ForumPost, Comment e revisão de tópico; amizade possui cobertura Unit producer/consumer, mas Kernel integrado, eventos LMS restantes e integração comparativa ampla pendentes.
 - M3–M7: planejadas nesta referência; conclusão depende de auditoria e implementação/testes registrados, fase a fase.
 - Runtime: não homologado nesta execução.
