@@ -24,7 +24,19 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class ThemeHooks implements TrustedCallbackInterface {
 
-  /** {@inheritdoc} */
+  /**
+   * Attaches notice grouping presentation to the account notice center.
+   */
+  #[Hook('page_attachments')]
+  public function attachMessengerNoticeStyles(array &$attachments): void {
+    if (in_array($this->routeMatch->getRouteName(), ['aculta_messenger.avisos', 'aculta_messenger.avisos_raiz'], TRUE)) {
+      $attachments['#attached']['library'][] = 'aculta420/messenger-notices';
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function trustedCallbacks(): array {
     return ['deferProductSlideImage'];
   }

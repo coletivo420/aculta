@@ -2076,3 +2076,9 @@ Adiciona apresentação responsiva e foco visível para grupos recolhíveis de f
 
 Validação: `PortalUiHooksTest` 8/44 PASS; JavaScript passou em `node --check`; Firefox ESR/X11 no Runtime de teste passou em viewport real 1270 px e 500 px sem overflow horizontal. O Firefox limitou a largura solicitada de 390 px a 500 px.
 
+## 0.6.1-dev.12 — estilo da agrupação de avisos — 2026-10-24
+
+A central de avisos carrega estilo responsivo e foco visível para agrupamentos nativos `<details>`, mantendo cada aviso e ação acessível.
+
+Validação: lint PHP e `git diff --check` executados; PHPCS em `ThemeHooks.php` mantém erros/avisos preexistentes fora da nova função; smoke visual pendente.
+
