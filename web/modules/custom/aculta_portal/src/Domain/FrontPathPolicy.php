@@ -48,4 +48,26 @@ final class FrontPathPolicy {
     return $noDaRaiz !== NULL && $path === $noDaRaiz;
   }
 
+  /** Ação da guarda do hub do Studio na raiz do ACCOUNT: responder 404. */
+  public const ACAO_NAO_ENCONTRADO = 'nao_encontrado';
+
+  /** Ação da guarda do hub do Studio na raiz do ACCOUNT: levar o visitante ao login. */
+  public const ACAO_LOGIN = 'login';
+
+  /**
+   * Decide a guarda do hub do Studio (`aculta_studio.hub`) no Domain ACCOUNT.
+   *
+   * O hub é servido na raiz `/` (reescrita interna para `/studio`). O caminho técnico responde 404, e o visitante
+   * anônimo na raiz vai ao login do host de conta. Fora do purpose ACCOUNT ou de outra rota, não há ação (NULL).
+   */
+  public static function acaoDoHubNaConta(?string $purpose, string $path, string $route, bool $autenticado): ?string {
+    if ($purpose !== 'account' || $route !== 'aculta_studio.hub') {
+      return NULL;
+    }
+    if ($path !== '/') {
+      return self::ACAO_NAO_ENCONTRADO;
+    }
+    return $autenticado ? NULL : self::ACAO_LOGIN;
+  }
+
 }

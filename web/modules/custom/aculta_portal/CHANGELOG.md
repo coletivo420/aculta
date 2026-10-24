@@ -1,3 +1,10 @@
+## 0.4.1-dev.28 — decisão da guarda do hub na raiz da Conta em FrontPathPolicy (2026-10-24)
+
+- A regra do hub do Studio na raiz do ACCOUNT (404 fora de `/`, login para anônimo) sai de
+  `DomainPurposeRequestSubscriber` e passa a `FrontPathPolicy::acaoDoHubNaConta`, função pura e testada
+  (`DomainPurposeRootGuardTest`). O subscriber só traduz a ação em resposta.
+- Gate `validate-aculta-portal-conta-root` atualizado para a nova forma. Mesmo comportamento HTTP.
+
 ## 0.4.1-dev.27 — editor de endereço do Studio recebe país, Número e S/N (2026-10-24)
 
 - `PortalHooks::formAlter` aplicava o bloco de endereço (país padrão, Número/S-N, botão "Salvar endereço",

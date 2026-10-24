@@ -66,8 +66,12 @@ if (!str_contains($subscriber, "\$accountPath === '/minha-conta'") || !str_conta
 }
 // The ACCOUNT root serves the Studio hub. The internal /studio path is 404 for direct requests, and the hub
 // guard runs before Core's access check, so anonymous visitors go to the login instead of a 403.
-if (!str_contains($subscriber, "\$matched['_route'] === 'aculta_studio.hub'") || !str_contains($subscriber, "getCurrentPurpose() === 'account'")) {
-  $failures[] = 'subscriber: onRequestBeforeRouter must guard aculta_studio.hub on the ACCOUNT root (404 outside /, login when anonymous)';
+$policy = $read('web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php');
+if (!str_contains($subscriber, 'FrontPathPolicy::acaoDoHubNaConta(')
+  || !str_contains($policy, "return \$autenticado ? NULL : self::ACAO_LOGIN;")
+  || !str_contains($policy, "self::ACAO_NAO_ENCONTRADO;")
+  || !str_contains($policy, "\$route !== 'aculta_studio.hub'")) {
+  $failures[] = 'guard: the ACCOUNT root hub must be decided by FrontPathPolicy::acaoDoHubNaConta (404 outside /, login when anonymous) and used by the subscriber';
 }
 
 // 4. No literal link to the internal path in code, templates, assets or exported configuration.
