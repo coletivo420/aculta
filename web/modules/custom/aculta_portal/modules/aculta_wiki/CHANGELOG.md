@@ -1,3 +1,9 @@
+## Revalidação R2 — rotas e acesso no HEAD `c610030dd`
+
+- Três Kernels MariaDB passaram com 148 asserções: discovery das rotas e View,
+  CTA condicionado ao `createAccess()` efetivo e busca/alterações recentes
+  isoladas por grants/cache. Sem operação ou homologação de Runtime.
+
 ## Revalidação R2 — ciclo de vida da imagem no HEAD `369db1537`
 
 - A classe Kernel MariaDB `WikiLeadImageLifecycleKernelTest` passou completa:

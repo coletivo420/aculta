@@ -1,3 +1,7 @@
+- R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB 3/148
+  cobrem discovery, CTA via `createAccess()` e isolamento por grants/cache;
+  Runtime intocado.
+
 - R2 imagem revalidada no HEAD `369db1537`: classe Kernel MariaDB completa passou
   26/1.382; Runtime/filesystem/configuração instalada intocados.
 

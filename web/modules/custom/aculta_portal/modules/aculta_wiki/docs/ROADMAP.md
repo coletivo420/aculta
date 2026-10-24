@@ -12,6 +12,12 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Revalidação R2 — rotas e acesso no HEAD `c610030dd`
+
+Três cenários Kernel MariaDB passaram com 148 asserções: rotas públicas e View,
+CTA que usa o `createAccess()` real e isolamento da busca/alterações recentes
+por grants e cache contexts. Runtime não foi alterado nem homologado.
+
 ### Revalidação R2 — ciclo de vida da imagem no HEAD `369db1537`
 
 `WikiLeadImageLifecycleKernelTest` passou completo em MariaDB (26 testes / 1.382
