@@ -24,6 +24,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     $expected = [
       '/studio' => 'aculta_studio.hub',
       '/studio/pessoal' => 'aculta_studio.personal',
+      '/studio/pessoal/perfil' => 'aculta_studio.personal_profile',
       '/studio/marley' => 'aculta_studio.home',
       '/studio/marley/{aba}' => 'aculta_studio.area',
       '/studio/marley/{aba}/{secao}' => 'aculta_studio.section',
@@ -45,7 +46,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
    */
   public function testHubAndPersonalAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.personal'] as $id) {
+    foreach (['aculta_studio.hub', 'aculta_studio.personal', 'aculta_studio.personal_profile'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
