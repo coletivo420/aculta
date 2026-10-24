@@ -31,6 +31,13 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 ## Regressão Content Index — dev.61
 
+Revalidada no HEAD após dev.77: Unit dos providers Wiki/categoria 9/40; os
+quatro Kernels abaixo, incluindo `WikiContentIndexRebuildKernelTest`, passaram
+em MariaDB isolada (11 testes / 385 asserções; 243 depreciações Core/contrib e
+PHPUnit). A geração foi construída/ativada somente no banco do teste. Provider
+v4, fingerprint e contrato não mudaram; Runtime e inventário instalado seguem
+pendentes.
+
 | Geração Wiki-owned | Kernel MariaDB | Bootstrap real Wiki/Image/Portal/Index, discovery, fingerprint v4, inventário semeado, owner_uid omitido, relações deduplicadas, validação e ativação isolada | aprovado (dev.69; 1/42; 201 depreciações Core/contrib); Runtime e configuração exportada completa não cobertos |
 
 Revalidação no HEAD dev.68: Wiki Unit dos providers, 9 testes / 40 asserções

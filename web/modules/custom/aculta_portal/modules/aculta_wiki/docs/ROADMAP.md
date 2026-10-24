@@ -22,6 +22,14 @@ mantém o formulário e omite o link. Kernel focal de autoria: 1/70; a classe
 MariaDB passou em 23/1.039 (291 depreciações Core/contrib e 24 PHPUnit). Runtime
 permanece intocado.
 
+Revalidação WIKI-R1 no mesmo HEAD: Unit dos providers Wiki/categoria 9/40;
+quatro Kernels MariaDB (provider, acesso/relações, bootstrap owner real e
+rebuild de geração Wiki-owned) passaram com 11 testes / 385 assertions e 243
+depreciações Core/contrib/PHPUnit. O bootstrap descobriu a projeção v4 e os
+destinos `taxonomy_term:wiki_category` e `media:image`; o rebuild ocorreu apenas
+no banco isolado de teste. Fingerprint e contrato não mudaram. Nenhuma ativação
+ou reconstrução no Runtime foi executada.
+
 ### Incremento dev.76 — envio real da imagem no Form API
 
 O Kernel agora submete um verbete de autoria confirmada pelo formulário nativo

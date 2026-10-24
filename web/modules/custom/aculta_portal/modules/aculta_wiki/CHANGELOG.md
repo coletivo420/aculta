@@ -11,6 +11,10 @@
 - `WikiLeadImageLifecycleKernelTest`: 23 testes / 1.039 assertions em MariaDB;
   291 depreciações Core/contrib e 24 PHPUnit. PHP lint e PHPCS passam. Runtime
   não foi alterado.
+- Revalidação WIKI-R1 no HEAD: Unit dos providers 9/40; quatro Kernels reais
+  (provider, acesso/relações, discovery owner e rebuild de geração) 11/385 em
+  MariaDB isolada, com 243 depreciações Core/contrib/PHPUnit. Provider v4 e
+  fingerprint não mudaram; ativação/rebuild no Runtime continuam pendentes.
 
 ## 0.1.0-dev.76 — submissão real da imagem pelo Form API
 

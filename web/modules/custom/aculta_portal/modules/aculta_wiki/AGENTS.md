@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Revalidação R1 no HEAD após dev.77: Unit 9/40 e quatro Kernels MariaDB
+  (provider, acesso/relações, bootstrap owner e geração Wiki-owned) 11/385;
+  243 depreciações Core/contrib/PHPUnit. Projeção v4/fingerprint sem alteração;
+  ativação e rebuild do Runtime não executados.
+
 - Dev.77: formulário `wiki_entry` oferece retorno para o workspace somente com
   rota Studio disponível e `WikiContributorWorkspace::access()` permitido;
   URL usa purpose `account` e cache contexts/tags do AccessResult. Kernel classe
