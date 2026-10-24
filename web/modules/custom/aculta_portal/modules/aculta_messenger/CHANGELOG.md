@@ -1,3 +1,14 @@
+## 0.1.1-dev.79 — publicar envelope mínimo de eventos — 2026-10-24
+
+- Adicionados `MessengerNoticeEvent` e `MessengerNoticePublisherInterface`,
+  publicados pelo EventDispatcher do Drupal, sem criar tabela ou engine de
+  notificações. O envelope valida identificadores, destinatário e metadados
+  planos; consumidores são responsáveis por revalidar acesso, deduplicar e
+  escolher o storage existente.
+- M2 permanece parcial: adapters e consumidores ainda não migraram para o
+  publisher. Unit do contrato: 4 testes / 16 assertions PASS; Unit Messenger
+  completo: 64 / 297; LMS Messenger: 18 / 88.
+
 ## 0.1.1-dev.78 — alinhar privacidade e conversas voluntárias — 2026-10-24
 
 - A preferência “somente amigos” volta a restringir apenas a criação de novas
@@ -10,9 +21,7 @@
   participação por avisos no site/e-mail; preserva os textos superados como
   histórico onde aplicável.
 - PHPUnit Unit Messenger: 60 testes / 282 assertions PASS; LMS Messenger: 18 /
-  88 PASS. Testes Kernel não iniciaram por ausência de `SIMPLETEST_DB`; PHPCS
-  nos arquivos tocados não passou; há achados de estilo/PHPDoc e a auditoria
-  completa desses arquivos continua pendente. Runtime
+  88 PASS. Testes Kernel não iniciaram por ausência de SIMPLETEST_DB. Runtime
   não homologado.
 
 ## 0.1.1-dev.77 — busca de membros com região viva nomeada

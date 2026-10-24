@@ -12,10 +12,9 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Applies the six-month inactivity retention policy to private conversations. */
+/**
+ * Applies the six-month inactivity retention policy to private conversations. */
 final class PrivateMessageRetentionHooks {
-
-
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -28,7 +27,8 @@ final class PrivateMessageRetentionHooks {
     private readonly ConversationPolicy $policy,
   ) {}
 
-  /** Deletes dormant threads through Private Message's entity lifecycle. */
+  /**
+ * Deletes dormant threads through Private Message's entity lifecycle. */
   #[Hook('cron')]
   public function expireDormantThreads(): void {
     if (!$this->entityTypeManager->hasDefinition('private_message_thread')) {
@@ -55,8 +55,8 @@ final class PrivateMessageRetentionHooks {
         continue;
       }
       try {
-        // Notification records point at the private messages that the thread's lifecycle deletes.
-        // Remove them in the same pass so no member still sees a notice for a conversation that is gone.
+        // Remove notice records in the same pass as the thread lifecycle so
+        // members do not see notices for deleted conversations.
         $this->deleteNotificationsFor($thread);
         // The contrib entity's preDelete lifecycle deletes its referenced
         // private messages and participant history using its supported API.
@@ -75,7 +75,8 @@ final class PrivateMessageRetentionHooks {
     }
   }
 
-  /** Deletes the Messenger notification records that reference this thread's private messages. */
+  /**
+   * Deletes the Messenger notification records that reference this thread's private messages. */
   private function deleteNotificationsFor(PrivateMessageThreadInterface $thread): void {
     $messageIds = array_values(array_map(
       static fn($message) => $message->id(),

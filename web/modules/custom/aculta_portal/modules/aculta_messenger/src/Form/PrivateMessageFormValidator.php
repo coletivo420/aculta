@@ -14,7 +14,8 @@ use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
 
-/** Applies block and send-frequency rules to the native Private Message form. */
+/**
+ * Applies block and send-frequency rules to the native Private Message form. */
 final class PrivateMessageFormValidator {
 
   private const EVENT = 'aculta_messenger.private_message_send';
@@ -32,7 +33,8 @@ final class PrivateMessageFormValidator {
     private readonly ConversationPolicy $policy,
   ) {}
 
-  /** Rejects recipients who have blocked the current sender. */
+  /**
+   * Rejects recipients who have blocked the current sender. */
   public function validateBlockedRecipients(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
       return;
@@ -45,9 +47,10 @@ final class PrivateMessageFormValidator {
 
     foreach ($thread->getMembersId() as $memberId) {
       $memberId = (int) $memberId;
-      // A block by the sender stops the sending. The conversation stays listed; "Opções" unblocks.
+      // A sender block prevents sending; the conversation remains listed so
+      // the member can unblock through its options.
       if ($memberId !== (int) $this->currentUser->id() && $this->banManager->isBanned($memberId)) {
-        $formState->setErrorByName('members', $this->translation->translate('Você bloqueou este membro. Desbloqueie-o nas opções da conversa para enviar mensagens.'));
+        $formState->setErrorByName('members', $this->translation->translate('Você bloqueou este membro. Desbloqueie-o nas opções da conversa.'));
         return;
       }
       if ($memberId !== (int) $this->currentUser->id()
@@ -59,7 +62,8 @@ final class PrivateMessageFormValidator {
     }
   }
 
-  /** Restricts new threads according to the target member's preference. */
+  /**
+   * Restricts new threads according to the target member's preference. */
   public function validateNewConversationPrivacy(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors() || $formState->get('thread') !== NULL) {
       return;
@@ -89,12 +93,14 @@ final class PrivateMessageFormValidator {
     }
   }
 
-  /** Forces the native long-text field to persist using Drupal's plain format. */
+  /**
+   * Forces the native long-text field to persist using Drupal's plain format. */
   public function enforcePlainTextFormat(array &$form, FormStateInterface $formState): void {
     $formState->setValue(['message', 0, 'format'], 'plain_text');
   }
 
-  /** Hides text-format controls and generic guidelines from the chat composer. */
+  /**
+   * Hides text-format controls and generic guidelines from the chat composer. */
   public function hidePlainTextGuidelines(array $form, FormStateInterface $formState): array {
     if (isset($form['message']['widget'][0]['format'])) {
       $form['message']['widget'][0]['format']['#access'] = FALSE;

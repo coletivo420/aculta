@@ -29,7 +29,7 @@ A matriz é caracterização inicial baseada em código e evidências documentai
 
 ## M2 — API central de eventos (0.2.0)
 
-Implementar o menor contrato público inspirado na ADR-XK-02 e nos produtores existentes. Receber evento; resolver/revalidar destinatário; deduplicar; encaminhar ao storage apropriado já existente; disponibilizar na central; encaminhar e-mail conforme política. Interfaces pequenas, DI, payload mínimo, retry observável e sem novo subsistema de storage. Migrar gradualmente com testes comparativos, sem disparo duplo.
+Implementado nesta execução: `MessengerNoticeEvent` e `MessengerNoticePublisherInterface` publicam envelope pequeno via EventDispatcher Drupal, com metadata validada e sem persistência própria. Ainda pendente: consumidores que revalidam destinatário/access, deduplicam e encaminham ao storage existente; integração incremental dos produtores Fórum, User e LMS; central e e-mail conforme política. Interfaces pequenas, DI, payload mínimo, retry observável e sem novo subsistema de storage. Migrar gradualmente com testes comparativos, sem disparo duplo.
 
 **Aceite:** testes de contrato/idempotência/ACL; eventos repetidos não duplicam; opt-out não remove aviso do site; adapters opcionais ausentes não causam erro.
 
@@ -67,5 +67,6 @@ Validar concorrência/idempotência, locks/retry, filas, retenção, paginação
 
 - M0: parcial; contratos e inventário documental iniciados; matriz completa pendente.
 - M1: parcial; correção de amizade em respostas e remoção da retenção course implementadas; gates a executar.
-- M2–M7: planejadas nesta referência; conclusão depende de auditoria e implementação/testes registrados, fase a fase.
+- M2: parcial; envelope/publisher e Unit implementados, consumidores e migração dos produtores pendentes.
+- M3–M7: planejadas nesta referência; conclusão depende de auditoria e implementação/testes registrados, fase a fase.
 - Runtime: não homologado nesta execução.

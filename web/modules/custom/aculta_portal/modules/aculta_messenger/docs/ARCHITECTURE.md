@@ -34,7 +34,7 @@ Seguir conteúdo expressa somente a intenção de receber avisos no site e, conf
 
 ## Contrato de evento e segurança
 
-A API pública deve aceitar eventos mínimos e idempotentes: tipo, módulo/origem, entidade e UUID, revisão/versão opaca, destinatário ou resolver de elegibilidade, propósito, instante, chave idempotente e metadados estritamente necessários. Nunca incluir corpo de mensagem privada, resposta/nota de avaliação, e-mail ou payload sensível. A forma de persistência será a existente e apropriada ao caso, não definida pelo envelope.
+A API pública `MessengerNoticePublisherInterface` despacha `MessengerNoticeEvent` para consumidores registrados no EventDispatcher do Drupal. O envelope leva tipo, módulo/origem, entidade e UUID, revisão/versão opaca, UID do destinatário, propósito, instante, chave idempotente e metadados flat limitados. A validação rejeita chaves de payload sensível, dados aninhados e campos excessivos. Nunca incluir corpo de mensagem privada, resposta/nota de avaliação, e-mail ou payload sensível. O produtor seleciona destinatários elegíveis; o consumidor revalida access antes de persistir/entregar/abrir e deduplica no storage existente. O envelope não define persistência. Adapters atuais ainda precisam ser migrados gradualmente para este publisher.
 
 O Messenger revalida Entity Access, publicação, Domain/Purpose, membership e bloqueios no momento de entrega e ao abrir conteúdo. Deduplicação/retry não pode gerar segunda notificação. Opt-out de e-mail não remove aviso necessário no site. Falhas são registradas sem dados pessoais. Adapters opcionais ausentes não podem derrubar a central.
 
@@ -46,7 +46,7 @@ Rotas de membro pertencem ao purpose `account`; administração usa `main`. URLs
 
 **Objetivo:** API mínima comum e migração progressiva de produtores reais, mantendo storage e comportamento válidos; experiência integrada de avisos e conversas com permissões e preferências consistentes.
 
-**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador agora restringe “só amigos” somente à criação de conversa. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
+**Concluído nesta revisão:** decisão normativa unificada; contratos de chat contextual removidos do planejamento; validador agora restringe “só amigos” somente à criação de conversa. O publisher/event envelope M2 foi adicionado sem storage; integração de consumidores continua parcial. Testes e demais fases só são considerados concluídos quando executados e registrados no roadmap/changelog. Homologação Runtime exige ambiente e autorização próprios.
 
 ## Histórico
 

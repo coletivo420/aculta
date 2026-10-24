@@ -26,6 +26,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_messenger')]
 final class PrivateMessageFormValidatorTest extends UnitTestCase {
 
+  /**
+   * Tests the rate limit registers only valid submissions behavior.
+   */
   public function testRateLimitRegistersOnlyValidSubmissions(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())
@@ -43,6 +46,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $validator->validateRateLimit($form, $formState);
   }
 
+  /**
+   * Tests the private message format is always forced to plain text behavior.
+   */
   public function testPrivateMessageFormatIsAlwaysForcedToPlainText(): void {
     $formState = new FormState();
     $formState->setValue(['message', 0, 'format'], 'full_html');
@@ -54,6 +60,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $this->assertSame('plain_text', $formState->getValue(['message', 0, 'format']));
   }
 
+  /**
+   * Tests the rate limit rejects without registering another attempt behavior.
+   */
   public function testRateLimitRejectsWithoutRegisteringAnotherAttempt(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())->method('isAllowed')->willReturn(FALSE);
@@ -67,6 +76,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $this->assertSame('Você atingiu o limite temporário de envio de mensagens. Tente novamente mais tarde.', $formState->getErrors()['message']);
   }
 
+  /**
+   * Tests invalid submissions do not consume the flood limit.
+   */
   public function testPreviouslyInvalidSubmissionDoesNotConsumeFloodLimit(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->never())->method('isAllowed');
@@ -79,6 +91,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $validator->validateRateLimit($form, $formState);
   }
 
+  /**
+   * Tests the blocked recipient is rejected with generic error behavior.
+   */
   public function testBlockedRecipientIsRejectedWithGenericError(): void {
     $flood = $this->createMock(FloodInterface::class);
     $currentUser = $this->createMock(AccountProxyInterface::class);
@@ -173,6 +188,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $this->assertSame('Não foi possível iniciar uma conversa com este destinatário.', $formState->getErrors()['members']);
   }
 
+  /**
+   * Tests the existing validation error skips recipient lookup behavior.
+   */
   public function testExistingValidationErrorSkipsRecipientLookup(): void {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->expects($this->never())->method('getMembersId');
@@ -193,6 +211,9 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     $validator->validateBlockedRecipients($form, $formState);
   }
 
+  /**
+   * Provides the validator behavior.
+   */
   private function validator(FloodInterface $flood, int $uid): PrivateMessageFormValidator {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn($uid);
@@ -207,12 +228,18 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Provides the translation behavior.
+   */
   private function translation(string $message): TranslationInterface {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')->willReturn($message);
     return $translation;
   }
 
+  /**
+   * Provides the formState behavior.
+   */
   private function formState(bool $hasErrors): FormStateInterface {
     $property = new \ReflectionProperty(FormState::class, 'anyErrors');
     $property->setAccessible(TRUE);

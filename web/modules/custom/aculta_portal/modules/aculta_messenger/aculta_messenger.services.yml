@@ -105,3 +105,8 @@ services:
     arguments: ['@entity_type.manager', '@queue']
     tags:
       - { name: event_subscriber }
+
+  Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface: '@aculta_messenger.notice_event_publisher'
+  aculta_messenger.notice_event_publisher:
+    class: Drupal\aculta_messenger\Service\MessengerNoticePublisher
+    arguments: ['@event_dispatcher']

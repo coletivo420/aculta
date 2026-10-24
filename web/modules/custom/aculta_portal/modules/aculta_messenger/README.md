@@ -12,7 +12,7 @@ smoke autenticado e revisão visual permanecem pendentes.
 
 ## ACULTA Messenger 0.1.1
 
-A versão `0.1.1-dev.77` nomeia a região viva da prévia de busca de membros e
+A versão `0.1.1-dev.79` nomeia a região viva da prévia de busca de membros e
 mantém cada sugestão como link normal de navegação, alcançável por Tab.
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
