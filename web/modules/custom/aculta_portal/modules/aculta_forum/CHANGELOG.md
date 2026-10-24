@@ -1,3 +1,16 @@
+## `0.1.0-dev.312` — provar o envio de anexo para o editor — 2026-10-24
+
+- Novo Kernel `ForumAttachmentUploadDialogFormKernelTest`: um PDF válido cria
+  exatamente uma Media `forum_attachment` despublicada, com autoria, arquivo
+  vinculado e arquivo promovido a permanente; a resposta AJAX devolve
+  `editorDialogSave` com UUID, tipo `media` e display de embed, seguida do
+  fechamento do diálogo.
+- Recusas provadas: dois arquivos, arquivo inexistente, extensão não permitida
+  e imagem sem descrição; nenhuma Media é criada.
+- Limitações: imagem raster válida e pré-visualização renderizada no navegador
+  não foram exercitadas; o teste cobre documentos e as regras de recusa.
+- Testes: anexo 2/34; suíte Kernel do Fórum 149/2.841; PHPCS limpo.
+
 ## `0.1.0-dev.311` — restaurar o formulário canônico de mover tópico — 2026-10-24
 
 - A operação “Mover de categoria” no tópico apontava para

@@ -1,3 +1,13 @@
+## Anexo no editor — criação de Media e recusas, 2026-10-24
+
+- `ForumAttachmentUploadDialogFormKernelTest` (2 testes / 34 asserções,
+  MariaDB): PDF válido cria uma Media `forum_attachment` despublicada com
+  arquivo permanente; resposta AJAX com UUID, tipo media e display de embed.
+  Dois arquivos, fid inexistente, extensão inválida e imagem sem alt são
+  recusados sem criar Media.
+- Não coberto: imagem raster válida e pré-visualização no navegador.
+- Suíte Kernel do Fórum 149/2.841; PHPCS limpo.
+
 ## Mover tópico — rota canônica e formulário, 2026-10-24
 
 - A rota `aculta_forum.topic_move` foi restaurada apontando ao
