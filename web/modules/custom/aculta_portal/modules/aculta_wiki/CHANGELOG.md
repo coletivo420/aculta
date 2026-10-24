@@ -1,5 +1,13 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.49 — revalidar relações no ciclo incremental real do Index
+
+- A integração owner real comprova que atualizar `field_wiki_related` substitui
+  a relação projetada e que excluir o Node remove sua projeção e relações.
+- Kernel focal: 1 teste / 37 asserções; classe completa Index: 7 testes /
+  234 asserções e 201 depreciações upstream. Provider continua v3; Runtime
+  inalterado.
+
 ## 0.1.0-dev.48 — validar ciclo incremental real do Content Index
 
 - O Kernel de integração real executa backfill da Wiki, confirma que o

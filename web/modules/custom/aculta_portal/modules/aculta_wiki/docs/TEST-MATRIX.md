@@ -293,13 +293,13 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Revisão pendente não padrão | Kernel | Provider não projeta revisão pendente; revisão padrão publicada continua disponível | aprovado (dev.46) |
 | Domain Wiki ausente | Kernel | Access filter falha fechado sem recorrer ao Domain ativo | aprovado (dev.46) |
 | Regressão direcionada de providers e acesso Wiki | Kernel | Bootstrap owner, discovery real, providers Wiki e consulta de relações | aprovado (dev.46; 6 testes / 185 asserções; 201 depreciações upstream) |
-| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe a projeção; hash e rótulo acompanham edição; exclusão remove registro ativo | aprovado (dev.48; focal: 1 teste / 34 asserções; 200 depreciações upstream) |
+| Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe a projeção; edição atualiza hash/rótulo e troca relações; exclusão remove entrada e outgoing | aprovado (dev.49; focal: 1 teste / 37 asserções; classe owner: 7/234; 201 depreciações upstream) |
 
 
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
 
 Os adapters estão em código. O teste owner consulta as três relações pela API real
-com os providers descobertos pelo container. O cenário dev.48 executa um backfill
+com os providers descobertos pelo container. O cenário dev.49 executa um backfill
 e ativa uma geração isolada com dados da fixture; isso não equivale a reconstruir
 ou auditar o inventário completo instalado. No preflight read-only de 2026-10-23,
 `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de teste; não

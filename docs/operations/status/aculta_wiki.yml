@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.48 (Content Index: boot real Wiki/Image/Portal/Index cobre backfill, fingerprint da geração, update/hash e delete incremental. Kernel focal 1/34; 200 depreciações upstream. Projeção v3; sem rebuild em Runtime)"
-next_phase: 'Content Index: ampliar regressões incremental e validar rebuild de geração em ambiente isolado. WE SATIVA: validar telas em Firefox ESR/X11 e concluir formulário de edição com revisão concorrente. Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.49 (Content Index: boot real Wiki/Image/Portal/Index cobre backfill, fingerprint, update/hash, troca de relação e delete que limpa outgoing. Kernel owner 7/234; 201 depreciações upstream. Projeção v3; sem rebuild em Runtime)"
+next_phase: 'Content Index: ampliar regressões incrementais e validar compatibilidade de versão do provider em geração isolada. WE SATIVA: validar telas em Firefox ESR/X11 e concluir formulário de edição com revisão concorrente. Runtime e limpeza global segura de arquivos seguem pendentes ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

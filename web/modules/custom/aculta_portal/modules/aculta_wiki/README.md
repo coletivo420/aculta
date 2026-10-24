@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.49`: o Kernel owner real atualiza o destino `related_entry`, remove
+  a relação anterior e limpa saída ao excluir o verbete. Classe Index:
+  7 testes / 234 asserções; projeção v3 mantida.
+
 - `0.1.0-dev.48`: Kernel owner real cobre backfill, fingerprint da geração,
   atualização incremental do rótulo/hash e remoção após delete. Focal:
   1 teste / 34 asserções; projeção v3 mantida.

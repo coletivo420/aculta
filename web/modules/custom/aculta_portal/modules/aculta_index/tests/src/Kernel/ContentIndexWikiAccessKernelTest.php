@@ -180,12 +180,29 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
   public function testWikiIncrementalUpdateDeleteAndProviderFingerprint(): void {
     $this->createTestUser('wiki-incremental-bootstrap');
     $owner = $this->createTestUser('wiki-incremental-owner');
+    $firstTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'First related target',
+      'status' => TRUE,
+      'uid' => $owner->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $firstTarget->save();
+    $secondTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Second related target',
+      'status' => TRUE,
+      'uid' => $owner->id(),
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+    ]);
+    $secondTarget->save();
     $entry = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Wiki before incremental update',
       'status' => TRUE,
       'uid' => $owner->id(),
       'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'field_wiki_related' => [['target_id' => $firstTarget->id()]],
     ]);
     $entry->save();
 
@@ -217,20 +234,38 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
         ->execute()
         ->fetchAssoc();
     };
+    $getRelatedTargets = static function () use ($database, $generationId, $entry): array {
+      return $database->select('aculta_index_relation', 'relation')
+        ->fields('relation', ['target_entity_id'])
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'wiki')
+        ->condition('source_entity_type', 'node')
+        ->condition('source_entity_id', (string) $entry->id())
+        ->condition('source_langcode', $entry->language()->getId())
+        ->condition('relation_type', 'related_entry')
+        ->orderBy('target_entity_id')
+        ->execute()
+        ->fetchCol();
+    };
     $initial = $getEntry();
     self::assertIsArray($initial, 'The initial Wiki projection is present.');
     self::assertSame(3, (int) $initial['provider_version']);
+    self::assertSame([(string) $firstTarget->id()], $getRelatedTargets());
 
-    $entry->setTitle('Wiki after incremental update')->save();
+    $entry->setTitle('Wiki after incremental update')
+      ->set('field_wiki_related', [['target_id' => $secondTarget->id()]])
+      ->save();
     $this->processWikiWork();
     $updated = $getEntry();
     self::assertIsArray($updated, 'The updated Wiki projection remains present.');
     self::assertSame('Wiki after incremental update', $updated['label']);
     self::assertNotSame($initial['projection_hash'], $updated['projection_hash']);
+    self::assertSame([(string) $secondTarget->id()], $getRelatedTargets());
 
     $entry->delete();
     $this->processWikiWork();
     self::assertFalse($getEntry(), 'Deleting the Wiki entry removes its projection from the active generation.');
+    self::assertSame([], $getRelatedTargets(), 'Deleting the source also removes its outgoing relations.');
   }
 
   /**

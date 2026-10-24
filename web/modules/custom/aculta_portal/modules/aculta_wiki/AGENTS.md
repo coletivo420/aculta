@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.49: ciclo Index real também troca a projeção de `field_wiki_related` e
+  verifica remoção da relação antiga e limpeza após delete da origem. Classe
+  owner completa: 7/234; 201 depreciações upstream. R1 sem alteração no Runtime.
+
 - Dev.48: Kernel combinado no teste owner real valida backfill Wiki, fingerprint
   de providers da geração, update incremental (rótulo/hash) e delete da projeção
   ativa. Classe completa deve ser reexecutada antes de declarar R1 encerrada.

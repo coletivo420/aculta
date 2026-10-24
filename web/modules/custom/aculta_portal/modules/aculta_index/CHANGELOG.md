@@ -1,5 +1,12 @@
 # Changelog — ACULTA Content Index
 
+## 0.1.0-dev.172 — sincronizar relação Wiki em update/delete real
+
+- O cenário owner real agora confirma que alterar `field_wiki_related` troca
+  o destino da projeção e que excluir o Node remove as relações de saída.
+- Classe completa MariaDB: 7 testes / 234 asserções; 201 depreciações upstream.
+  Nenhuma mudança na infraestrutura do Index ou no Runtime.
+
 ## 0.1.0-dev.171 — cobrir ciclo Wiki no provider owner real
 
 - `ContentIndexWikiAccessKernelTest` agora comprova no mesmo bootstrap real o
