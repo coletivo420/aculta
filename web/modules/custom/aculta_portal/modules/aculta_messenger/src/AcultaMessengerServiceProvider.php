@@ -88,14 +88,18 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         ->setArgument(1, new ServiceLocatorArgument($optionalAdapters));
     }
     // This hook is discovered from src/Hook by Drupal's HookCollector. Its
-    // locator contains only adapters actually registered in this site.
+    // locator contains only adapters actually registered in this site. The
+    // definition must stay public: the collector resolves hook objects by
+    // class name through ClassResolver, not through a compile-time reference,
+    // so a private definition with no consumer would be removed and the hook
+    // would be instantiated with no arguments.
     $container->setDefinition(PersonalNoticeAdapterHooks::class, new Definition(
       PersonalNoticeAdapterHooks::class,
       [
         new ServiceLocatorArgument($optionalAdapters),
         new Reference('logger.channel.aculta_messenger'),
       ],
-    ));
+    ))->setPublic(TRUE);
   }
 
   /**
