@@ -27,6 +27,7 @@ services:
     arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
   aculta_studio.experience.conta:
     class: Drupal\aculta_studio\Experience\AccountExperienceProvider
+    arguments: ['@?aculta_id_cpf.account_document']
   aculta_studio.profile_access:
     class: Drupal\aculta_studio\Access\StudioProfileAccess
     arguments: ['@module_handler']
@@ -35,7 +36,7 @@ services:
     arguments: ['@module_handler']
   aculta_studio.account_section_controller:
     class: Drupal\aculta_studio\Controller\StudioAccountSectionController
-    arguments: ['@class_resolver', '@current_user']
+    arguments: ['@class_resolver', '@current_user', '@?aculta_id_cpf.account_document']
   aculta_studio.account_controller:
     class: Drupal\aculta_studio\Controller\AccountController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
