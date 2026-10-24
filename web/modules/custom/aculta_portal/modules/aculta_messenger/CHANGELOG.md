@@ -4,9 +4,10 @@ Os Kernels de Loja e Doação verificam replay do evento, leitura repetida sem c
 `delivery_id`. O cenário de Doação mantém o pedido criado e duas cobranças aprovadas como entregas distintas; confirmar
 uma linha deixa as outras duas disponíveis.
 
-Validação: Kernels Commerce/Donation **8/136 PASS**; testes de resumo combinado Forum/Mailer **58/1.001 PASS**.
-PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Core/contrib emite 2 deprecações de descoberta de
-Message/Message Template e os Kernels Commerce/Donation registram 4 notices PHPUnit. SMTP e Runtime não executados.
+Validação: Kernels Commerce/Donation **8/136 PASS**; Kernels LMS/Wiki/Commerce/Donation **18/289 PASS**; testes de
+resumo combinado Forum/Mailer **58/1.001 PASS**. PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS.
+Core/contrib emite 2 deprecações de descoberta de Message/Message Template; os Kernels dos quatro adapters registram
+7 notices PHPUnit. SMTP e Runtime não executados.
 
 ## 0.1.1-dev.178 — deduplicar replay no digest Wiki
 
