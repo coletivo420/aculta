@@ -2070,3 +2070,9 @@ Classificação: PATCH de apresentação; mantém o diálogo Core e acrescenta t
 - Fixture representativa com o CSS real de `dialog.css` verificada no Firefox/X11 em 390, 768 e 1024 px: modal dentro do viewport, conteúdo com rolagem e rótulo do campo visível. Evidências locais privadas em `~/.local/share/aculta-evidence/user-upload-x11/`.
 - Limite: a fixture não é o formulário renderizado pelo Drupal; inspeção do modal servido no Runtime permanece pendente. Sem mudança de CSS ou versão do tema.
 
+## 0.6.1-dev.11 — controles de filtro na gaveta de avisos — 2026-10-24
+
+Adiciona apresentação responsiva e foco visível para grupos recolhíveis de filtros por origem e leitura. A navegação e o estado dos avisos continuam no módulo.
+
+Validação: `PortalUiHooksTest` 8/44 PASS; JavaScript passou em `node --check`; Firefox ESR/X11 no Runtime de teste passou em viewport real 1270 px e 500 px sem overflow horizontal. O Firefox limitou a largura solicitada de 390 px a 500 px.
+

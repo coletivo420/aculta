@@ -69,6 +69,8 @@
 | `data-aculta-drawer-back` | exato | sim | 4 |
 | `data-aculta-drawer-content` | exato | sim | 2 |
 | `data-aculta-drawer-count` | exato | sim | 2 |
+| `data-aculta-drawer-filter` | exato | sim | 2 |
+| `data-aculta-drawer-filter-url` | exato | sim | 1 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
 | `data-aculta-forum-post-timestamp` | exato | sim | 3 |
@@ -87,6 +89,10 @@
 | `data-aculta-modelo` | exato | sim | 3 |
 | `data-aculta-new-conversation` | exato | sim | 2 |
 | `data-aculta-new-conversation-form` | exato | sim | 2 |
+| `data-aculta-notice-filters` | exato | não | 2 |
+| `data-aculta-notice-message-id` | exato | não | 6 |
+| `data-aculta-notice-origin` | exato | não | 7 |
+| `data-aculta-notice-read` | exato | não | 9 |
 | `data-aculta-number` | exato | sim | 2 |
 | `data-aculta-number-sn` | exato | não | 1 |
 | `data-aculta-open-conversation` | exato | sim | 2 |
@@ -176,6 +182,10 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `status-pending` | `aculta-portal-requirements__status--pending` | (montado dinamicamente ou só no tema) |
 | `requirements-indexing` | `aculta-portal-requirements__indexing` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state` | `aculta-messenger-state` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters` | `aculta-alerts-filters` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `new-conversation-submit` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
@@ -190,6 +200,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
 | `requirements-indexing-table` | `aculta-portal-requirements__indexing-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `secrets-section` | `aculta-portal-secrets-section` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
 | `secret-value` | `aculta-secret-value` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
@@ -321,11 +333,17 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-link-dialog` | `aculta-social-link-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state` | `aculta-messenger-state` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters` | `aculta-alerts-filters` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | (montado pelo tema para link da inbox) |
 | `account-home` | `aculta-account-home` | (montado pelo tema no link Minha conta, a partir do token do módulo) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `notice-unread-status` | `aculta-messenger-read-status`, `aculta-messenger-read-status--unread` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NoticeReadStateForm.php` |
 | `account-photo-trigger` | `portal-account-photo__trigger` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoEditorHooks.php` |
 | `support-form` | `aculta-support` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
 | `security-password-form` | `aculta-security-password-form` | `web/modules/custom/aculta_portal/src/Hook/FormHooks.php` |

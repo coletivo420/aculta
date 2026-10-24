@@ -20,6 +20,8 @@ A preparação cria contas e uma conversa em grupo no banco de teste. As senhas 
 DISPLAY=:0 geckodriver --port 4444 &
 DISPLAY=:0 node tests/browser/aculta-messenger/suite.mjs
 DISPLAY=:0 node tests/browser/aculta-messenger/central-empty-state.mjs
+DISPLAY=:0 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
+DISPLAY=:0 SUITE_WIDTH=390 node tests/browser/aculta-messenger/drawer-notice-filters.mjs
 ```
 
 O script recusa qualquer display diferente de `:0` e só aceita `SUITE_BASE`/`SUITE_LOGIN_URI` nos hosts HTTPS do servidor
@@ -32,6 +34,7 @@ Variáveis opcionais:
 | `SUITE_BASE` | `https://aculta.toca.net.br` | Site de teste |
 | `SUITE_LOGIN_URI` | `https://conta.aculta.toca.net.br` | URI do Drush para o link de login |
 | `SUITE_OUT` | `.suite-out/` (fora do Git) | Capturas e `results.json` |
+| `SUITE_WIDTH` | `1280` | Largura da janela solicitada para `drawer-notice-filters.mjs`; o relatório inclui a largura efetiva (Firefox pode limitá-la) |
 | `GECKODRIVER` | `http://127.0.0.1:4444` | Endereço do geckodriver |
 
 O script termina com código 1 se alguma verificação falhar, e grava `results.json` em `SUITE_OUT`.
@@ -71,6 +74,11 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 `central-empty-state.mjs` é uma verificação focada da aba Avisos no host de Conta. Ela verifica filtros combinados ativos,
 estado vazio dentro da lista da conta (sem confundi-lo com a gaveta do cabeçalho), anúncio `role="status"` e espaçamento
 visual do tema.
+
+`drawer-notice-filters.mjs` verifica a gaveta multidomínio no host do Portal: grupos de origem/leitura, preservação de
+filtros combinados após navegação AJAX e URLs de fallback da Conta. É somente leitura e não cria notificações.
+Na sessão de 2026-10-24, o Firefox ESR limitou a janela solicitada de 390 px a um viewport efetivo de 500 px; o relatório
+e a captura guardam a dimensão real, sem declarar uma validação de 390 px.
 
 ## Limites
 

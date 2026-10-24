@@ -11,6 +11,7 @@ Regra central: **o tema não decide nada do Messenger.** Ele recebe dados pronto
 | Componentes SDC do Messenger | `components/patterns/messenger-*`, `components/content/messenger-*`, `components/feedback/messenger-state`, `components/feedback/unread-badge` |
 | CSS da gaveta, da lista e do menu | `css/components/messenger-drawer.css` (biblioteca `messenger-drawers`) |
 | CSS da bolha de mensagem | `components/content/messenger-item/messenger-item.css` |
+| CSS da gaveta de avisos e filtros | `components/patterns/alerts-trigger/alerts-trigger.css` |
 | CSS dos outros componentes | a pasta de cada componente |
 | JS da gaveta | `js/messenger-drawers.js` (library `messenger-drawers`) |
 | JS dos contadores | `js/counters.js` |
@@ -85,6 +86,10 @@ O módulo marca o elemento com um token semântico. `PortalUiHooks::TOKENS` troc
 | `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | Avatar na linha |
 | `notice-read-status` | `aculta-messenger-read-status` | Aviso persistente já lido |
 | `notice-unread-status` | `aculta-messenger-read-status aculta-messenger-read-status--unread` | Aviso persistente não lido |
+| `messenger-state` | `aculta-messenger-state` | Estado de aviso vazio/carregando/erro |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | Vazio filtrado na central/gaveta |
+| `alerts-filters` | `aculta-alerts-filters` | Contêiner dos filtros na gaveta |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | Cada grupo recolhível de origem ou leitura |
 | `notice-admin-item` / `-intro` / `-list` / `-table` | `admin-item` / `aculta-notice-admin-intro` / `admin-list aculta-notice-admin-list` / `aculta-notice-admin-table` | Administração de avisos |
 | `new-conversation-link` | `btn btn-primary aculta-messenger-new-conversation` | Botão "Iniciar nova conversa" |
 | `new-conversation-links` | `d-flex flex-wrap gap-2 mt-2` | Linha de botões do compositor |
@@ -122,10 +127,14 @@ Se um token "não pinta", confira primeiro o elemento que o módulo montou. O er
 
 Ao abrir a gaveta ou navegar dentro dela, o JS apresenta `feedback/messenger-state` no estado `loading`; erro HTTP/rede apresenta a variante `error` com `role="alert"`. A biblioteca `messenger-drawers` carrega o CSS do SDC, pois fragmentos `fetch` não reaplicam anexos de biblioteca da resposta.
 
+Na gaveta de avisos, os filtros nativos `<details>` usam grupos compactos. O módulo fornece os links de fallback da central da Conta e a URL same-origin do fragmento; o JS intercepta somente o fragmento. Ao filtrar, atualiza o contador de avisos (nunca o de mensagens) e usa textos de loading/erro específicos para avisos.
+
 | Atributo | Papel | Comportamento |
 | --- | --- | --- |
 | `data-aculta-drawer-url` | Gaveta (`messenger-trigger`) | URL carregada ao abrir |
 | `data-aculta-drawer-count` | Gaveta | `messages` ou `alerts`: qual contador atualizar |
+| `data-aculta-drawer-filter` | Link de filtro na gaveta de avisos | Intercepta o link para trocar o fragmento; `href` permanece o fallback da central da Conta |
+| `data-aculta-drawer-filter-url` | Link de filtro na gaveta de avisos | URL same-origin do fragmento AJAX, incluindo filtros normalizados |
 | `data-aculta-drawer-back` | "← Todas as conversas" | Volta à lista dentro da gaveta |
 | `data-aculta-conversation-url` | Links e botões | Carrega a visão na gaveta por `fetch` |
 | `data-aculta-conversation-view` | Conversa | Rola até a última mensagem |
@@ -158,6 +167,7 @@ Pontos de atenção:
 | `components/patterns/messenger-list/messenger-list.css` | Lista | Componente |
 | `components/patterns/messenger-read-status/messenger-read-status.css` | Rótulo de leitura | Componente |
 | `components/patterns/messenger-trigger/messenger-trigger.css` | Gatilho da barra | Componente |
+| `components/patterns/alerts-trigger/alerts-trigger.css` | Gatilho, gaveta e filtros de avisos | Componente |
 
 Regras do projeto para o CSS do Messenger:
 

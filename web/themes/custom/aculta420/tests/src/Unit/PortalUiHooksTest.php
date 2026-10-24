@@ -126,6 +126,28 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Messenger notice filters and the filtered empty state receive theme classes.
+   */
+  public function testMapsMessengerNoticeFilterAndEmptyStateTokens(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'alerts-filters alerts-filters-group messenger-state messenger-state-empty',
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    $this->assertArrayNotHasKey('data-portal-ui', $attributes);
+    $this->assertContains('aculta-alerts-filters', $attributes['class']);
+    $this->assertContains('aculta-alerts-filters__group', $attributes['class']);
+    $this->assertContains('aculta-messenger-state', $attributes['class']);
+    $this->assertContains('aculta-messenger-state--empty', $attributes['class']);
+  }
+
+  /**
    * Atributos ainda em array (antes da conversão do núcleo) viram Attribute com as classes.
    */
   public function testArrayAttributesAreConvertedToAttributeObjects(): void {

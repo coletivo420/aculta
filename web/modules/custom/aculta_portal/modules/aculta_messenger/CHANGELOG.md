@@ -1608,3 +1608,9 @@ A reconciliação do snapshot do digest agora confirma que o Mailer aceitou corr
 
 Validação: Kernel Mailer com destinatário correto/incorreto; Integration LMS confirma o destinatário recebido na recuperação. Demais gates pendentes nesta microfase.
 
+## 0.1.1-dev.149 — filtrar avisos na gaveta multidomínio — 2026-10-24
+
+A gaveta de avisos agora permite filtrar origem e leitura, preservando a combinação selecionada ao carregar o fragmento. Sem JavaScript, os destinos levam à central da Conta no alias do ambiente. A atualização mantém contagem no ícone correto e estados de carregamento/erro específicos de avisos.
+
+Validação: PHP lint, JS syntax, `NoticeListFilterTest` 5/17 PASS, Firefox ESR/X11 no Runtime de teste: gaveta 6/6 em viewport real 1270 px e 6/6 em viewport real 500 px; central-empty-state 4/4 após migrar o estado vazio para tokens. O pedido de 390 px foi limitado pelo Firefox a 500 px. O primeiro smoke encontrou TypeError no rótulo traduzido e HTTP 500; conversão corrigida e o smoke subsequente passou. MessagesController ficou abaixo do baseline PHPCS (95 erros/65 avisos contra 97/65). Os atributos e tokens do Messenger desta fase foram incluídos no contrato visual; `validate-portal-ui-docs.php` passou de 70 para 62 gaps de outras frentes.
+

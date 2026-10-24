@@ -689,7 +689,7 @@ final class MessagesController extends ControllerBase {
   /** Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
-    $resultado = $this->alertsBuild($filters);
+    $resultado = $this->alertsBuild($filters, FALSE, TRUE);
     return $this->buildDrawerResponse($resultado['build'], [
       'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
     ]);
@@ -699,11 +699,17 @@ final class MessagesController extends ControllerBase {
    * Builds the shared notice list for the toolbar drawer and account page.
    *
    * @param array $filters
-   *   Optional origin and read-state filters from the account page.
+   *   Optional origin and read-state filters from the account page or drawer.
+   * @param bool $includeReadActions
+   *   Whether to attach native per-member read-state actions.
+   * @param bool $includeFilters
+   *   Whether to include drawer filter links with working account-page
+   *   fallbacks.
    *
    * @return array{build: array, contador: int}
+   *   Rendered list and current unread notice count.
    */
-  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE): array {
+  public function alertsBuild(array $filters = [], bool $includeReadActions = FALSE, bool $includeFilters = FALSE): array {
     $filters = $this->noticeListFilter->normalize($filters);
     $hasFilters = $filters['origem'] !== '' || $filters['leitura'] !== '';
     $storage = $this->entityTypes->getStorage('site_alert');
@@ -825,7 +831,7 @@ final class MessagesController extends ControllerBase {
         'value' => [
           '#type' => 'container',
           '#attributes' => [
-            'class' => ['aculta-messenger-state', 'aculta-messenger-state--empty'],
+            'data-portal-ui' => 'messenger-state messenger-state-empty',
             'role' => 'status',
           ],
           'message' => ['#plain_text' => (string) $emptyMessage],
@@ -836,6 +842,7 @@ final class MessagesController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'messenger-preview'],
+      'filters' => $includeFilters ? $this->alertsFilterControlsBuild($filters) : [],
       'alerts' => ['#theme' => 'item_list', '#items' => $items],
     ];
     $cacheability->applyTo($build);
@@ -844,6 +851,105 @@ final class MessagesController extends ControllerBase {
       'contador' => $activeAlertCount
         + $this->counts->unreadPersistentNoticeCount($this->account)
         + ($this->account->isAuthenticated() ? $this->avisos->naoLidosTotal((int) $this->account->id()) : 0),
+    ];
+  }
+
+  /**
+   * Builds compact source and read-state controls for the global notice drawer.
+   *
+   * Each link has an account-page href as its no-JavaScript fallback and a
+   * same-origin fragment URL for navigation inside the drawer.
+   */
+  private function alertsFilterControlsBuild(array $filters): array {
+    $fallbackUrl = $this->domainPurposeManager->routeUrl(
+      'account',
+      'aculta_messenger.avisos',
+      ['aba' => 'avisos'],
+    );
+    $origins = [
+      '' => $this->translation->translate('Todas as origens'),
+      'comunicado' => $this->translation->translate('Comunicados'),
+      'forum' => $this->translation->translate('Fórum'),
+      'alerta' => $this->translation->translate('Alertas do site'),
+      'aprendizagem' => $this->translation->translate('Aprendizagem'),
+      'wiki' => $this->translation->translate('Wiki'),
+      'loja' => $this->translation->translate('Loja'),
+      'doacao' => $this->translation->translate('Doações'),
+      'conta' => $this->translation->translate('Conta'),
+    ];
+    $states = [
+      '' => $this->translation->translate('Todos os estados'),
+      'unread' => $this->translation->translate('Não lidos'),
+      'read' => $this->translation->translate('Lidos'),
+    ];
+    return [
+      '#type' => 'container',
+      '#attributes' => [
+        'data-portal-ui' => 'alerts-filters',
+        'data-aculta-notice-filters' => '',
+        'aria-label' => $this->translation->translate('Filtros de avisos'),
+      ],
+      'origins' => $this->alertsFilterDetailsBuild(
+        $origins,
+        'origem',
+        $filters,
+        (string) $this->translation->translate('Origem'),
+        $fallbackUrl,
+      ),
+      'read_state' => $this->alertsFilterDetailsBuild(
+        $states,
+        'leitura',
+        $filters,
+        (string) $this->translation->translate('Leitura'),
+        $fallbackUrl,
+      ),
+    ];
+  }
+
+  /**
+   * Builds one compact details group and its filter links.
+   */
+  private function alertsFilterDetailsBuild(
+    array $options,
+    string $parameter,
+    array $filters,
+    string $label,
+    ?Url $fallbackUrl,
+  ): array {
+    $activeValue = $filters[$parameter] ?? '';
+    $summary = $activeValue !== '' && isset($options[$activeValue])
+      ? $label . ': ' . $options[$activeValue]
+      : $label;
+    $links = [];
+    foreach ($options as $value => $optionLabel) {
+      $query = array_filter($filters, static fn(string $filter): bool => $filter !== '');
+      if ($value === '') {
+        unset($query[$parameter]);
+      }
+      else {
+        $query[$parameter] = $value;
+      }
+      $accountUrl = $fallbackUrl !== NULL ? clone $fallbackUrl : NULL;
+      if ($accountUrl !== NULL) {
+        $accountUrl->setOption('query', $query);
+      }
+      $fragmentUrl = Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]);
+      $link = PortalLinkElement::build((string) $optionLabel, $accountUrl ?? $fragmentUrl, [
+        'data-aculta-drawer-filter' => '',
+        'data-aculta-drawer-filter-url' => $fragmentUrl->toString(),
+      ]);
+      if ($activeValue === $value) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
+    }
+    return [
+      '#type' => 'details',
+      '#title' => $summary,
+      '#open' => FALSE,
+      '#attributes' => ['data-portal-ui' => 'alerts-filters-group'],
+      'links' => ['#theme' => 'item_list', '#items' => $links],
     ];
   }
 

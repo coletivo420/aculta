@@ -80,6 +80,8 @@
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
         let request;
         const content = drawer.querySelector('[data-aculta-drawer-content]');
+        const drawerType = drawer.dataset.acultaDrawerCount || 'messages';
+        const isAlertsDrawer = drawerType === 'alerts';
         const showDrawerState = (state, message) => {
           if (!content) {
             return;
@@ -110,7 +112,7 @@
           const activeRequest = new AbortController();
           request = activeRequest;
           content.setAttribute('aria-busy', 'true');
-          showDrawerState('loading', Drupal.t('Carregando conversa…'));
+          showDrawerState('loading', isAlertsDrawer ? Drupal.t('Carregando avisos…') : Drupal.t('Carregando conversa…'));
           fetch(url, {
             method: 'GET',
             credentials: 'same-origin',
@@ -123,7 +125,8 @@
               if (!response.ok) {
                 throw new Error('Drawer navigation failed.');
               }
-              updateCounter('messages', response.headers.get('X-Aculta-Messages-Count'));
+              const counterHeader = isAlertsDrawer ? 'X-Aculta-Alerts-Count' : 'X-Aculta-Messages-Count';
+              updateCounter(drawerType, response.headers.get(counterHeader));
               return response.text();
             })
             .then((html) => {
@@ -140,7 +143,7 @@
             })
             .catch((error) => {
               if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
-                showDrawerState('error', Drupal.t('Não foi possível carregar esta conversa.'));
+                showDrawerState('error', isAlertsDrawer ? Drupal.t('Não foi possível carregar estes avisos.') : Drupal.t('Não foi possível carregar esta conversa.'));
               }
             })
             .finally(() => {
@@ -196,12 +199,12 @@
             return;
           }
           // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.
-          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back]');
+          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back], a[data-aculta-drawer-filter]');
           if (!link || !drawer.contains(link)) {
             return;
           }
           event.preventDefault();
-          navigate(link.dataset.acultaConversationUrl || link.href);
+          navigate(link.dataset.acultaDrawerFilterUrl || link.dataset.acultaConversationUrl || link.href);
         });
 
         drawer.addEventListener('submit', (event) => {
