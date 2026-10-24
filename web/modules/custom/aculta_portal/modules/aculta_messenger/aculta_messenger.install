@@ -17,6 +17,29 @@ function aculta_messenger_schema(): array {
 }
 
 /**
+ * Adds one delivery option while accepting both allowed_values shapes.
+ *
+ * Field storages installed from list_string config may store a sequence of
+ * value/label pairs, while older exports stored a value => label map. The
+ * update must preserve the existing shape instead of mixing the two.
+ */
+function aculta_messenger_add_delivery_option(array $allowed_values, string $value, string $label): array {
+  if (array_is_list($allowed_values)) {
+    foreach ($allowed_values as $option) {
+      if (($option['value'] ?? NULL) === $value) {
+        return $allowed_values;
+      }
+    }
+    $allowed_values[] = ['value' => $value, 'label' => $label];
+    return $allowed_values;
+  }
+  if (!array_key_exists($value, $allowed_values)) {
+    $allowed_values[$value] = $label;
+  }
+  return $allowed_values;
+}
+
+/**
  * Adds a terminal cancelled state to the shared Message email delivery field.
  */
 function aculta_messenger_update_10001(): void {
@@ -26,17 +49,11 @@ function aculta_messenger_update_10001(): void {
   if (!$field_storage) {
     return;
   }
-  $allowed_values = $field_storage->getSetting('allowed_values') ?? [];
-  foreach ($allowed_values as $option) {
-    if (($option['value'] ?? NULL) === 'cancelled') {
-      return;
-    }
+  $current = $field_storage->getSetting('allowed_values') ?? [];
+  $allowed_values = aculta_messenger_add_delivery_option($current, 'cancelled', 'Cancelado');
+  if ($allowed_values !== $current) {
+    $field_storage->setSetting('allowed_values', $allowed_values)->save();
   }
-  $allowed_values[] = [
-    'value' => 'cancelled',
-    'label' => 'Cancelado',
-  ];
-  $field_storage->setSetting('allowed_values', $allowed_values)->save();
 }
 
 /**
@@ -96,17 +113,11 @@ function aculta_messenger_update_10006(): void {
   if (!$field_storage) {
     return;
   }
-  $allowed_values = $field_storage->getSetting('allowed_values') ?? [];
-  foreach ($allowed_values as $option) {
-    if (($option['value'] ?? NULL) === 'failed_permanent') {
-      return;
-    }
+  $current = $field_storage->getSetting('allowed_values') ?? [];
+  $allowed_values = aculta_messenger_add_delivery_option($current, 'failed_permanent', 'Falha permanente');
+  if ($allowed_values !== $current) {
+    $field_storage->setSetting('allowed_values', $allowed_values)->save();
   }
-  $allowed_values[] = [
-    'value' => 'failed_permanent',
-    'label' => 'Falha permanente',
-  ];
-  $field_storage->setSetting('allowed_values', $allowed_values)->save();
 }
 
 /**

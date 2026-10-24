@@ -50,7 +50,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
 
     $this->queue($storage, $queueFactory, $lock)->enqueue($message);
     self::assertSame([
-      ['field_aculta_messenger_enqueue_attempts', 1],
+      ['field_aculta_enqueue_attempts', 1],
       ['field_aculta_msg_delivery', 'pending'],
     ], $calls);
   }
@@ -62,7 +62,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
     $message = $this->message(0, 'pending');
     $calls = [];
     $expectedCalls = [
-      ['field_aculta_messenger_enqueue_attempts', 1],
+      ['field_aculta_enqueue_attempts', 1],
       ['field_aculta_msg_delivery', 'pending'],
       ['field_aculta_msg_delivery', 'failed'],
     ];
@@ -128,7 +128,7 @@ final class FriendshipNoticeQueueTest extends UnitTestCase {
     $message->method('get')->willReturnMap([
       ['field_aculta_msg_delivery', $this->fieldValue($status)],
       ['field_aculta_messenger_attempts', $this->fieldValue(0)],
-      ['field_aculta_messenger_enqueue_attempts', $this->fieldValue($enqueueAttempts)],
+      ['field_aculta_enqueue_attempts', $this->fieldValue($enqueueAttempts)],
     ]);
     return $message;
   }

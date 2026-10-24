@@ -19,7 +19,7 @@ final class FriendshipNoticeQueue implements FriendshipNoticeQueueInterface {
 
   private const DELIVERY_ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
 
-  private const ENQUEUE_ATTEMPTS_FIELD = 'field_aculta_messenger_enqueue_attempts';
+  private const ENQUEUE_ATTEMPTS_FIELD = 'field_aculta_enqueue_attempts';
 
   private const MAX_ENQUEUE_ATTEMPTS = 5;
 

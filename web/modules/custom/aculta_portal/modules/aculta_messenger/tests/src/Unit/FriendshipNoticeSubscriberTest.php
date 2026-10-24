@@ -230,7 +230,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       FriendshipNoticeSubscriber::EVENT_FIELD => $transition,
       'field_aculta_msg_delivery' => 'pending',
       'field_aculta_messenger_attempts' => 0,
-      'field_aculta_messenger_enqueue_attempts' => 0,
+      'field_aculta_enqueue_attempts' => 0,
     ])->willReturn($message);
 
     $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
