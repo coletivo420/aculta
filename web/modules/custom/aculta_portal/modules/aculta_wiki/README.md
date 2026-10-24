@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.103`: endpoint de proposta agora declara purpose Wiki; Kernel
+  comprova que acesso no Domain principal é rejeitado (focal 1/81; 199
+  depreciações Core/contrib e 2 PHPUnit). PHPCS, lint e YAML passam; Runtime
+  intocado.
+
 - `0.1.0-dev.102`: verbetes criados sem origem explícita recebem o Domain Wiki
   canônico. Kernel prova lookup de publicação depois da decisão do editor e
   mantém submissões posteriores em `review` sem conceder publicação à autoria

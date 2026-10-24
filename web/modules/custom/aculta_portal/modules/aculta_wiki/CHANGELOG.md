@@ -64,6 +64,14 @@
 
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.103 — fixar purpose da rota de envio de proposta
+
+- `aculta_wiki.proposal_submit` declara `_aculta_domain_purpose: wiki`, então
+  o subscriber do Portal rejeita acesso ao endpoint no Domain principal.
+- Kernel MariaDB confirma metadados e 404 no host principal (focal: 1 teste /
+  81 asserções; 199 depreciações Core/contrib e 2 PHPUnit). PHPCS, lint PHP e
+  parse YAML passaram. Runtime intocado.
+
 ## 0.1.0-dev.92 — proposta contextual em duas etapas
 
 - O formulário de proposta separa escrita e revisão/envio, preserva os valores

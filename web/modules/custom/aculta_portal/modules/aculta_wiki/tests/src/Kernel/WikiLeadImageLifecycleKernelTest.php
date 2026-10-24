@@ -829,7 +829,34 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('/wiki/verbetes/{node}/contribuir', $proposalRoute->getPath());
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
-    self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => 1], new AnonymousUserSession()));
+    self::assertSame('wiki', $proposalRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $purposeResolver->requiredPurpose(
+      $proposalRoute,
+      'aculta_wiki.proposal_submit',
+      Request::create('/wiki/verbetes/1/contribuir'),
+    ));
+    $proposalTarget = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Alvo do formulário de contribuição',
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
+      'body' => ['value' => 'Texto público', 'format' => 'plain_text'],
+    ]);
+    $proposalTarget->save();
+    self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => $proposalTarget->id()], new AnonymousUserSession()));
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $wrongProposalRequest = Request::create('https://main.example.invalid/wiki/verbetes/' . $proposalTarget->id() . '/contribuir');
+    $wrongProposalRequest->attributes->set('_route', 'aculta_wiki.proposal_submit');
+    $wrongProposalRequest->attributes->set('_route_object', $proposalRoute);
+    $wrongProposalEvent = new RequestEvent(
+      $this->container->get('kernel'),
+      $wrongProposalRequest,
+      HttpKernelInterface::MAIN_REQUEST,
+    );
+    $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequestBeforeRouter($wrongProposalEvent);
+    self::assertNotNull($wrongProposalEvent->getResponse());
+    self::assertSame(404, $wrongProposalEvent->getResponse()->getStatusCode());
+    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
     $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
     self::assertSame('/wiki/verbetes/{node}/contribuir/como', $intentRoute->getPath());
     self::assertSame('wiki', $intentRoute->getOption('_aculta_domain_purpose'));
@@ -842,14 +869,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
     self::assertSame('proposal.update', $decisionRoute->getRequirement('_entity_access'));
 
-    $proposalTarget = Node::create([
-      'type' => 'wiki_entry',
-      'title' => 'Alvo do formulário de contribuição',
-      'status' => TRUE,
-      'field_domain_source' => ['target_id' => 'wiki420_aculta_org'],
-      'body' => ['value' => 'Texto público', 'format' => 'plain_text'],
-    ]);
-    $proposalTarget->save();
     Role::create([
       'id' => 'wiki_form_contributor_test',
       'label' => 'Wiki Form contributor test',
@@ -859,7 +878,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $contributor->id());
     $this->container->get('current_user')->setAccount($contributor);
     $requestStack = $this->container->get('request_stack');
-    $requestStack->push(Request::create('/wiki/verbetes/1/contribuir', 'GET', ['intent' => 'reference']));
+    $requestStack->push(Request::create('/wiki/verbetes/' . $proposalTarget->id() . '/contribuir', 'GET', ['intent' => 'reference']));
     try {
       $proposalForm = WikiProposalSubmissionForm::create($this->container);
       $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);

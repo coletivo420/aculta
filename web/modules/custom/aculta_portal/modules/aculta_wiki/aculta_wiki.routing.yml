@@ -50,6 +50,7 @@ aculta_wiki.proposal_submit:
     _permission: 'submit wiki proposals'
     _entity_access: 'node.view'
   options:
+    _aculta_domain_purpose: wiki
     parameters:
       node:
         type: entity:node
