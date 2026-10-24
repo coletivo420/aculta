@@ -68,7 +68,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $provider = $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
-      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1],
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
     ]);
     $provider->expects(self::once())->method('discardDigest')->with(27);
     $provider->expects(self::never())->method('markDigestSent');
@@ -138,7 +138,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     $provider = $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([
-      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1],
+      ['tipo' => 'loja', 'titulo' => 'Pedido recebido', 'quantidade' => 1, 'delivery_id' => 501],
     ]);
     $provider->expects(self::once())->method('discardDigest')->with(27);
     $provider->expects(self::never())->method('markDigestSent');

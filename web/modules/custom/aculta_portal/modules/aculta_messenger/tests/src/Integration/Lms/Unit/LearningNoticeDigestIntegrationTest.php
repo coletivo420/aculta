@@ -91,6 +91,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * A provider row without a stable delivery ID is not sent repeatedly.
+   */
+  public function testRowsWithoutDeliveryIdsAreNotSent(): void {
+    $provider = new TestLearningDigestProvider([27], FALSE);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->never())->method('deliver');
+    $summary = $this->createSummary($provider, $mailer, TRUE);
+
+    $this->assertSame(0, $summary->enviarResumos());
+    $this->assertSame([], $provider->marked);
+    $this->assertSame([27], $provider->discarded, 'An invalid provider row is discarded instead of being sent repeatedly.');
+  }
+
+  /**
    * Opt-out discards email rows without attempting to send a digest.
    */
   public function testOptOutDiscardsLmsRowsWithoutSending(): void {
@@ -199,9 +213,12 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    *
    * @param int[] $recipients
    *   Accounts with pending digest rows.
+   * @param bool $includeDeliveryId
+   *   Whether to return the required stable delivery ID.
    */
   public function __construct(
     private readonly array $recipients,
+    private readonly bool $includeDeliveryId = TRUE,
   ) {}
 
   /**
@@ -215,7 +232,11 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
    * {@inheritdoc}
    */
   public function digestRowsFor(int $uid): array {
-    return [['tipo' => 'aprendizagem', 'titulo' => 'Atividade no curso', 'quantidade' => 1, 'delivery_id' => 501]];
+    $row = ['tipo' => 'aprendizagem', 'titulo' => 'Atividade no curso', 'quantidade' => 1];
+    if ($this->includeDeliveryId) {
+      $row['delivery_id'] = 501;
+    }
+    return [$row];
   }
 
   /**

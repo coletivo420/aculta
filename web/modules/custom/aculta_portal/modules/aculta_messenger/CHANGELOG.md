@@ -1,3 +1,12 @@
+## 0.1.1-dev.113 — exigir ID estável nos itens do digest — 2026-10-24
+
+- O Messenger não envia linhas de providers sem `delivery_id` inteiro positivo;
+  descarta a pendência de e-mail inválida para evitar repetição a cada digest.
+  O aviso obrigatório no site continua independente.
+- Unit Messenger + adapters: 142 testes / 867 assertions PASS. PHPCS
+  Drupal/DrupalPractice e `git diff --check` PASS. Kernel não repetido nesta
+  microfase; Runtime e transporte real não testados.
+
 ## 0.1.1-dev.112 — manter o digest recuperável após exceção do Mailer — 2026-10-24
 
 - Exceções lançadas pelo transporte não interrompem o restante do cron nem

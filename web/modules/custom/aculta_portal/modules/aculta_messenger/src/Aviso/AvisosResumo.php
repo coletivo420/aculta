@@ -187,8 +187,10 @@ final class AvisosResumo {
       }
       $eligibleRows = array_values(array_filter(
         $providerRows,
-        fn(array $row): bool => ($row['tipo'] ?? NULL) === NULL
-          || $this->preferencias->emailMode($uid, (string) $row['tipo']) === AvisoPreferencias::EMAIL_DIGEST,
+        fn(array $row): bool => is_int($row['delivery_id'] ?? NULL)
+          && $row['delivery_id'] > 0
+          && (($row['tipo'] ?? NULL) === NULL
+            || $this->preferencias->emailMode($uid, (string) $row['tipo']) === AvisoPreferencias::EMAIL_DIGEST),
       ));
       if ($eligibleRows === []) {
         // Preferences can change after a provider queued a digest row. Clear
