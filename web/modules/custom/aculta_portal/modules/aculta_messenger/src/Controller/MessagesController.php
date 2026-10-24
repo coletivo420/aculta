@@ -787,7 +787,12 @@ final class MessagesController extends ControllerBase {
     }
 
     // Same criteria as the header bar, from the shared service.
-    $activeAlertCount = $this->counts->visibleActiveAlertCount($this->account, $cacheability);
+    $activeAlertCount = $this->counts->visibleActiveAlertCount(
+      $this->account,
+      $cacheability,
+      $visibleAlerts,
+      $alertFlagStates,
+    );
     $dismissalFlag = $this->flagService->getFlagById('aculta_site_alert_dismissed');
     foreach ($visibleAlerts as $alert) {
       $alertFlags = $alertFlagStates[$alert->id()] ?? [];

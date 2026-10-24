@@ -21,6 +21,7 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\aculta_messenger\Hook\MessengerBarHooks;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_messenger\Service\MessengerCounts;
+use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\Tests\UnitTestCase;
@@ -90,7 +91,12 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
       $time,
       $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
-      new MessengerCounts($this->createMock(EntityTypeManagerInterface::class), $this->createMock(FlagServiceInterface::class), $this->createMock(GetAlertsInterface::class)),
+      new MessengerCounts(
+        $this->createMock(EntityTypeManagerInterface::class),
+        $this->createMock(FlagServiceInterface::class),
+        $this->createMock(GetAlertsInterface::class),
+        new NoticeFlagStateLoader($this->createMock(EntityTypeManagerInterface::class)),
+      ),
       new AvisoService(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(FlagServiceInterface::class),

@@ -1795,3 +1795,9 @@ Validação: `LearningNoticeDigestIntegrationTest` 15/118 PASS; suíte LMS Integ
 
 Validação: preferências, formulário e digest focalizados 14/149 PASS; Unit Messenger 152/941 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. O gate exigiu regenerar o índice após a atualização de versão.
 
+## 0.1.1-dev.170 — reutilizar flags e acesso no contador de Site Alerts — 2026-10-24
+
+O contador do header agora carrega estados pessoais de dispensa em lote, após filtrar alertas pelo acesso. A central compartilha com o contador os alertas visíveis e estados de Flag já consultados, sem refazer a busca, autorização e lookup individual para contar. Critérios de visibilidade, cache tags e comportamento anônimo são preservados.
+
+Validação: `MessengerCountsTest` 3/27 PASS; combinado com `PersistentNoticeAccessTest` 8/38 PASS; Unit Messenger 155/968 e `AcultaMessengerServiceProviderTest` 4/14 PASS; PHPCS dos arquivos novos/serviço, PHP lint, índice e gate Drupal 11+ (1.155 checks) PASS. O PHPCS de `MessagesController` mantém baseline anterior; Runtime/navegador não executados.
+
