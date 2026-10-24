@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.53`: limpeza de imagens usa cursor expirável e lotes rotativos de
+  25 itens, evitando que candidatos antigos ainda referenciados bloqueiem os
+  seguintes. Kernel cobre retenção, reuso por Article, inspeção fail-closed e
+  avanço além do primeiro lote (focal: 4/169; classe completa: 21/918, 291
+  depreciações Core/contrib/PHPUnit); Runtime inalterado.
+
 - `0.1.0-dev.52`: Kernel owner Wiki/Index cobre destino sem provider de
   Taxonomy e Media publicada anexada a origem em rascunho; a consulta outgoing
   não revela nem inventa destinos (7 testes / 238 asserções; 201 depreciações

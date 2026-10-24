@@ -1,5 +1,11 @@
 # Wiki — instruções locais
 
+- Dev.53: a limpeza de imagem usa cursor `keyvalue.expirable` (TTL 7 dias) e
+  percorre candidatos por ID em lotes rotativos de 25, evitando starvation por
+  arquivos retidos. Testes Kernel cobrem referência em outro bundle Node, falha
+  da inspeção global, retenção de uma hora e passagem ao próximo lote (focal
+  4/169; classe completa 21/918; 291 depreciações upstream/PHPUnit).
+
 - Dev.52: o Kernel owner real do Index prova que destino sem provider ativo não
   aparece na consulta outgoing e que Media publicada não abre relação originada
   em verbete `draft`. Classe MariaDB: 7/238, 201 depreciações upstream. Nenhuma

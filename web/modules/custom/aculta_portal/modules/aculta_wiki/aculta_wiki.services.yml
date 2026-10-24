@@ -4,6 +4,7 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@datetime.time'
+      - '@keyvalue.expirable'
       - '@aculta_portal.unused_media_cleaner'
       - '@aculta_portal.unused_file_cleaner'
       - '@logger.channel.aculta_wiki'

@@ -370,6 +370,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'field_media_image' => ['target_id' => $file->id(), 'alt' => 'Imagem histórica'],
     ]);
     $media->save();
+    NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_article_shared_image',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'media'],
+    ])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'field_name' => 'field_article_shared_image',
+      'label' => 'Shared article image',
+    ])->save();
     $node = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete com imagem histórica',
@@ -378,6 +391,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       WikiLeadImageUploader::FIELD => ['target_id' => $media->id()],
     ]);
     $node->save();
+    $article = Node::create([
+      'type' => 'article',
+      'title' => 'Outro conteúdo que reutiliza a Media',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      'field_article_shared_image' => ['target_id' => $media->id()],
+    ]);
+    $article->save();
     $oldRevisionId = (int) $node->getRevisionId();
 
     $node->setNewRevision(TRUE);
@@ -393,12 +414,114 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $node->delete();
     self::assertSame(
+      FileReferenceStatus::Referenced,
+      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+    );
+    self::assertSame(['processed' => 1, 'media_deleted' => 0, 'files_deleted' => 0], $cleanup->cleanup());
+    self::assertInstanceOf(Media::class, Media::load($media->id()));
+    self::assertInstanceOf(File::class, File::load($file->id()));
+
+    $article->delete();
+    self::assertSame(
       FileReferenceStatus::Clear,
       $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
     );
     self::assertSame(['processed' => 1, 'media_deleted' => 1, 'files_deleted' => 1], $cleanup->cleanup());
     self::assertNull(Media::load($media->id()));
     self::assertNull(File::load($file->id()));
+  }
+
+  /**
+   * Retains orphan candidates whenever global reference inspection fails.
+   */
+  public function testLeadImageCleanupFailsClosedWhenReferenceStorageIsUnavailable(): void {
+    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $owner = $this->createOwner();
+    $old = $this->container->get('datetime.time')->getRequestTime() - 7200;
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $file->setPermanent();
+    $file->set('created', $old);
+    $file->save();
+    $media = Media::create([
+      'bundle' => 'image',
+      'name' => 'Imagem cuja inspeção falhará',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+      'created' => $old,
+      'field_media_image' => ['target_id' => $file->id(), 'alt' => 'Imagem de teste'],
+    ]);
+    $media->save();
+
+    $revisionFieldTable = 'node_revision__' . WikiLeadImageUploader::FIELD;
+    $schema = $this->container->get('database')->schema();
+    self::assertTrue($schema->tableExists($revisionFieldTable));
+    $schema->dropTable($revisionFieldTable);
+
+    self::assertSame(
+      ['processed' => 1, 'media_deleted' => 0, 'files_deleted' => 0],
+      $this->container->get('aculta_wiki.lead_image_cleanup')->cleanup(),
+    );
+    self::assertInstanceOf(Media::class, Media::load($media->id()));
+    self::assertInstanceOf(File::class, File::load($file->id()));
+  }
+
+  /**
+   * Processes at most 25 old Wiki files during one cleanup pass.
+   */
+  public function testLeadImageCleanupUsesBoundedBatches(): void {
+    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $owner = $this->createOwner();
+    $old = $this->container->get('datetime.time')->getRequestTime() - 7200;
+    $fileUsage = $this->container->get('file.usage');
+    $files = [];
+    for ($index = 0; $index < 26; $index++) {
+      $file = $this->createTemporaryPrivateImage((int) $owner->id());
+      $file->setPermanent();
+      $file->set('created', $old);
+      $file->save();
+      $fileUsage->add($file, 'aculta_wiki_test', 'node', $index + 1);
+      $files[] = $file;
+    }
+
+    self::assertSame(
+      ['processed' => 25, 'media_deleted' => 0, 'files_deleted' => 0],
+      $this->container->get('aculta_wiki.lead_image_cleanup')->cleanup(),
+    );
+    self::assertSame(
+      (int) $files[24]->id(),
+      (int) $this->container->get('keyvalue.expirable')->get('aculta_wiki.lead_image_cleanup')->get('last_fid'),
+    );
+    $fileUsage->delete($files[25], 'aculta_wiki_test', 'node', 26, 1);
+    self::assertSame([], $fileUsage->listUsage($files[25]));
+    self::assertSame(
+      ['processed' => 25, 'media_deleted' => 0, 'files_deleted' => 1],
+      $this->container->get('aculta_wiki.lead_image_cleanup')->cleanup(),
+      'The rotating cursor reaches candidates beyond the first batch.',
+    );
+    self::assertNull(File::load($files[25]->id()));
+    self::assertCount(25, array_filter($files, static fn (File $file): bool => File::load($file->id()) instanceof File));
+  }
+
+  /**
+   * Retains recent permanent files until the one-hour grace period expires.
+   */
+  public function testLeadImageCleanupHonorsRetentionPeriod(): void {
+    $owner = $this->createOwner();
+    $file = $this->createTemporaryPrivateImage((int) $owner->id());
+    $file->setPermanent();
+    $file->save();
+
+    self::assertSame(
+      ['processed' => 0, 'media_deleted' => 0, 'files_deleted' => 0],
+      $this->container->get('aculta_wiki.lead_image_cleanup')->cleanup(),
+    );
+    self::assertInstanceOf(File::class, File::load($file->id()));
   }
 
   /**

@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.52**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.53**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.53 — lotes rotativos para a limpeza de imagens
+
+O cursor persistente usa `keyvalue.expirable` com TTL de sete dias. Cada cron
+inspeciona até 25 Files antigos em ordem de ID, completando o lote ao retornar
+ao início; arquivos em uso ou com inspeção indisponível não impedem o progresso
+pelos demais. Kernel cobre referência externa via Article, erro da inspeção,
+retenção de uma hora e passagem ao 26º candidato (focal: 4 testes / 169
+asserções; classe completa: 21 / 918, com 291 depreciações upstream/PHPUnit).
+Próximo gate: homologar apenas em Runtime controlado/autorizado.
 
 ### Incremento dev.52 — regressões dos limites de acesso do Index
 

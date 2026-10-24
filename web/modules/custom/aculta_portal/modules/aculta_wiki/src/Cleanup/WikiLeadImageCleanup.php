@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Psr\Log\LoggerInterface;
@@ -28,9 +29,15 @@ final class WikiLeadImageCleanup {
    */
   private const LIMIT = 25;
 
+  /**
+   * Lifetime for the rotating cleanup cursor.
+   */
+  private const CURSOR_TTL = 604800;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
+    private readonly KeyValueExpirableFactoryInterface $keyValueFactory,
     private readonly UnusedMediaCleaner $unusedMediaCleaner,
     private readonly UnusedFileCleaner $unusedFileCleaner,
     private readonly LoggerInterface $logger,
@@ -45,16 +52,42 @@ final class WikiLeadImageCleanup {
   public function cleanup(): array {
     $cutoff = $this->time->getRequestTime() - self::RETENTION;
     $fileStorage = $this->entityTypeManager->getStorage('file');
-    $fileIds = $fileStorage->getQuery()
+    $cursorStore = $this->keyValueFactory->get('aculta_wiki.lead_image_cleanup');
+    $lastFid = (int) $cursorStore->get('last_fid', 0);
+    $query = fn () => $fileStorage->getQuery()
       ->accessCheck(FALSE)
       ->condition('uri', 'private://wiki/imagens/%', 'LIKE')
       ->condition('status', FileInterface::STATUS_PERMANENT)
       ->condition('created', $cutoff, '<=')
-      ->sort('created')
-      ->range(0, self::LIMIT)
-      ->execute();
+      ->sort('fid');
+    $fileQuery = $query();
+    if ($lastFid > 0) {
+      $fileQuery->condition('fid', $lastFid, '>');
+    }
+    $fileIds = $fileQuery->range(0, self::LIMIT)->execute();
+    if ($lastFid > 0 && $fileIds === []) {
+      // The cursor reached the end of this candidate set; begin a new cycle.
+      $lastFid = 0;
+      $cursorStore->delete('last_fid');
+      $fileIds = $query()->range(0, self::LIMIT)->execute();
+    }
+    elseif ($lastFid > 0 && count($fileIds) < self::LIMIT) {
+      // Finish the batch by wrapping to candidates before the saved cursor.
+      $remaining = self::LIMIT - count($fileIds);
+      $wrappedIds = $query()
+        ->condition('fid', $lastFid, '<=')
+        ->range(0, $remaining)
+        ->execute();
+      $fileIds = array_merge($fileIds, $wrappedIds);
+    }
 
     $result = ['processed' => count($fileIds), 'media_deleted' => 0, 'files_deleted' => 0];
+    if ($fileIds !== []) {
+      $cursorStore->setWithExpire('last_fid', (int) end($fileIds), self::CURSOR_TTL);
+    }
+    elseif ($lastFid > 0) {
+      $cursorStore->delete('last_fid');
+    }
     $mediaStorage = $this->entityTypeManager->getStorage('media');
     foreach ($fileStorage->loadMultiple($fileIds) as $file) {
       if (!$file instanceof FileInterface || !str_starts_with($file->getFileUri(), 'private://wiki/imagens/')) {

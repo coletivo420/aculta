@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.53 — percorrer limpeza de imagens em lotes rotativos
+
+- A limpeza mantém um cursor expirável por sete dias e percorre os arquivos
+  candidatos por ID em lotes de até 25. Referências antigas ou falhas deixam de
+  bloquear indefinidamente os candidatos seguintes.
+- Kernel confirma reuso da mesma Media por outro bundle Node, retenção quando a
+  inspeção global falha, limite/lote rotativo e carência de uma hora. Os quatro
+  cenários focais passaram (4 testes / 169 asserções); a classe Kernel completa
+  passou com 21 testes / 918 asserções e 291 depreciações upstream/PHPUnit.
+  Runtime não alterado.
+
 ## 0.1.0-dev.52 — validar os limites de acesso das relações do Index
 
 - A integração Kernel real confirma que categoria fora do vocabulário owner da

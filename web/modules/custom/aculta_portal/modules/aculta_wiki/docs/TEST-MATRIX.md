@@ -19,7 +19,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Paginação | Kernel | Cursores independentes para verbetes/propostas, ordem estável, acesso revalidado e cache por URL | aprovado (dev.47; focal combinado: 2 testes / 84 asserções; cursor posicional, links GET) |
 | Layout sem-JS e mobile | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, WCAG 2.2 AA | pendente |
 
-## R2 — ciclo de vida da imagem (dev.51)
+## R2 — ciclo de vida da imagem (dev.53)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -28,9 +28,13 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Falha no Node save | Kernel | Media removida e File volta a temporário | aprovado previamente |
 | Remoção com revisão antiga | Kernel | Media/File permanecem enquanto revisão ainda referencia a imagem | aprovado previamente |
 | Limpeza de órfã após exclusão da última origem | Kernel | Retém referências em revisão histórica; remove Media/File sem referências globais | aprovado (dev.51; 1 teste / 46 asserções) |
-| Retenção e limite por execução | Kernel | Aguarda uma hora e limita candidatos a 25 Files por cron | implementado; cenários específicos pendentes |
-| Reuso por outra entidade e falha de inspeção global | Kernel | Mantém Media/File se qualquer referência existir ou a inspeção falhar | delegado aos cleanups compartilhados do Portal; teste Wiki pendente |
+| Retenção de uma hora | Kernel | Aguarda o grace period antes de considerar arquivo | aprovado (dev.53; incluído em 4 testes / 169 asserções) |
+| Limite de 25 e cursor rotativo | Kernel | Avança além dos primeiros 25 candidatos, inclusive se eles permanecerem em uso | aprovado (dev.53; teste alcança e remove o 26º arquivo liberado) |
+| Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
+
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 21 testes / 918
+asserções, 291 depreciações Core/contrib/PHPUnit; sem falhas.
 
 ## R2 — rotas, domínio e acesso (dev.30)
 
@@ -126,7 +130,7 @@ depois da importação de configuração no servidor de testes.
 | Exclusão do último Node que publica a Media | Kernel | hook de exclusão despublica a Media após apagar o último Node atual que a referencia | aprovado (dev.37; focal: 1 / 27; classe: 13 / 548) |
 | Falha após persistência do Node | Kernel | rollback remove Node e Media e restaura File temporário | aprovado (MariaDB) |
 | Remoção em nova revisão com referência antiga | Kernel | revisão antiga preserva Media/File no armazenamento, mas download é negado sem referência publicada atual | aprovado (dev.43; incluído nos 8 testes focais) |
-| Reuso da Media em outro conteúdo | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | assegurado pelos cleanups compartilhados; caso Wiki específico pendente |
+| Reuso da Media em outro conteúdo | Kernel | preservar arquivo até não haver usos em nenhuma entidade/revisão | aprovado para outro bundle Node (dev.53); outros entity types seguem cobertos pelo inspetor central |
 | Validador de upload inválido | Kernel | `alt` vazio produz erro; nenhuma Media é criada e o File permanece temporário | aprovado (dev.38; focal 1 / 27; classe 14 / 575) |
 | Arquivo privado após despublicar com revisão publicada anterior | Kernel | Core pode autorizar pela revisão antiga; hook da Wiki nega e o endpoint bloqueia o download | aprovado (dev.43; invocado por ModuleHandler no Kernel) |
 
