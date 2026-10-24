@@ -1,3 +1,14 @@
+## 0.1.1-dev.123 — tornar falha permanente terminal também em replay — 2026-10-24
+
+- Workers diretos LMS, Wiki, Loja e Doações persistem `failed_permanent`; os
+  estados temporários `failed` continuam retryáveis. Itens duplicados e eventos
+  repetidos não reabrem falhas permanentes. O valor foi adicionado ao campo
+  `list_string` compartilhado pelo `update_10006`, idempotente, e à configuração
+  de instalação. O Fórum já usa estado terminal próprio no outbox.
+- Unit 117/637, Integration MariaDB 56/556 e Kernel MariaDB 27/609 PASS;
+  PHPCS Drupal/DrupalPractice PASS. A Integration suite reporta 2 deprecações Core/contrib e 4 notices
+  PHPUnit. Não houve Runtime, SMTP real ou stress multiprocesso.
+
 ## 0.1.1-dev.122 — respeitar falhas permanentes nas filas diretas — 2026-10-24
 
 - Workers diretos de Fórum, LMS, Wiki, Loja e Doações encerram como `failed`

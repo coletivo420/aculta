@@ -107,6 +107,22 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Permanent failure state prevents duplicate queue delivery after locking.
+   */
+  public function testPermanentFailureReplayIsSkippedAfterLock(): void {
+    $message = $this->message('failed_permanent', 1);
+    [$entities] = $this->entities($message);
+    $notices = $this->createMock(LearningNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer, $this->lock())
+      ->processItem(['message_id' => 101]);
+  }
+
+  /**
    * A thrown Mailer error is persisted as a bounded retryable failure.
    */
   public function testMailerExceptionConsumesAttemptAndMarksFailed(): void {
@@ -175,7 +191,7 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
     self::assertSame([
       ['field_aculta_messenger_attempts', 1],
       ['field_aculta_msg_delivery', 'pending'],
-      ['field_aculta_msg_delivery', 'failed'],
+      ['field_aculta_msg_delivery', 'failed_permanent'],
     ], $setCalls);
   }
 

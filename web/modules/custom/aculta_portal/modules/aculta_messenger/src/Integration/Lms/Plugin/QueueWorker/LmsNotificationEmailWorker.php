@@ -151,10 +151,11 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
       return;
     }
     if (!$result->sent) {
-      $message->set(self::DELIVERY_FIELD, 'failed')->save();
       if ($result->error === DeliveryError::Permanent) {
+        $message->set(self::DELIVERY_FIELD, 'failed_permanent')->save();
         return;
       }
+      $message->set(self::DELIVERY_FIELD, 'failed')->save();
       if ($attempts < self::MAX_ATTEMPTS) {
         throw new \RuntimeException('LMS transactional notification email delivery failed.');
       }

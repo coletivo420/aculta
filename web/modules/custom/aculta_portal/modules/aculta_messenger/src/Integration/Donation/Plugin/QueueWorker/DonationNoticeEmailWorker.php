@@ -120,7 +120,9 @@ final class DonationNoticeEmailWorker extends QueueWorkerBase implements Contain
         $message->set('field_aculta_msg_delivery', 'sent')->save();
       }
       elseif ($result->cancelled || $result->error === DeliveryError::Permanent || $attempts >= self::MAX_ATTEMPTS) {
-        $message->set('field_aculta_msg_delivery', $result->cancelled ? 'cancelled' : 'failed')->save();
+        $state = $result->cancelled ? 'cancelled'
+          : ($result->error === DeliveryError::Permanent ? 'failed_permanent' : 'failed');
+        $message->set('field_aculta_msg_delivery', $state)->save();
       }
       else {
         $message->set('field_aculta_msg_delivery', 'pending')->save();

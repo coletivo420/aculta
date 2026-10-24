@@ -90,6 +90,22 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
+   * Permanent failure state prevents duplicate queue delivery.
+   */
+  public function testPermanentFailureReplayIsSkipped(): void {
+    $message = $this->message('failed_permanent');
+    [$entities] = $this->entities($message);
+    $notices = $this->createMock(DonationNoticeManagerInterface::class);
+    $notices->expects(self::never())->method('resolve');
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+
+    $this->worker($entities, $notices, $preferences, $mailer)
+      ->processItem(['message_id' => 101]);
+  }
+
+  /**
    * A thrown Mailer error persists an attempt and retries below the limit.
    */
   public function testMailerExceptionConsumesAttemptAndRetries(): void {
@@ -155,7 +171,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
     });
     self::assertSame([
       ['field_aculta_messenger_attempts', 1],
-      ['field_aculta_msg_delivery', 'failed'],
+      ['field_aculta_msg_delivery', 'failed_permanent'],
     ], $setCalls);
   }
 

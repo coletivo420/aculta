@@ -129,10 +129,11 @@ final class CommerceOrderNoticeEmailWorker extends QueueWorkerBase implements Co
       $this->finish($message, $result->sent ? 'sent' : 'cancelled');
       return;
     }
-    $this->finish($message, 'failed');
     if ($result->error === DeliveryError::Permanent) {
+      $this->finish($message, 'failed_permanent');
       return;
     }
+    $this->finish($message, 'failed');
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Commerce order notice email delivery failed.');
     }

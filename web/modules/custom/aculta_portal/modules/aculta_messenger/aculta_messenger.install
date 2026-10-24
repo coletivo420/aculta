@@ -85,3 +85,26 @@ function aculta_messenger_update_10005(): void {
   $definition = ForumNoticeEventSchema::definition();
   $schema->addField($table, 'email_correlation', $definition['fields']['email_correlation']);
 }
+
+/**
+ * Adds a terminal permanent-failure value to the shared Mailer status field.
+ */
+function aculta_messenger_update_10006(): void {
+  $field_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->load('message.field_aculta_msg_delivery');
+  if (!$field_storage) {
+    return;
+  }
+  $allowed_values = $field_storage->getSetting('allowed_values') ?? [];
+  foreach ($allowed_values as $option) {
+    if (($option['value'] ?? NULL) === 'failed_permanent') {
+      return;
+    }
+  }
+  $allowed_values[] = [
+    'value' => 'failed_permanent',
+    'label' => 'Falha permanente',
+  ];
+  $field_storage->setSetting('allowed_values', $allowed_values)->save();
+}

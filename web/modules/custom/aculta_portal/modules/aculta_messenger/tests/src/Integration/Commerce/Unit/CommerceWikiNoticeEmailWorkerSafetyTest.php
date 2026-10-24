@@ -49,6 +49,20 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   }
 
   /**
+   * Permanent Commerce failures stay terminal when a duplicate item replays.
+   */
+  public function testCommercePermanentFailureReplayIsSkippedAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('commerce', 'aculta_msg_commerce_order_notice', 'failed_permanent');
+  }
+
+  /**
+   * Permanent Wiki failures stay terminal when a duplicate item replays.
+   */
+  public function testWikiPermanentFailureReplayIsSkippedAfterLock(): void {
+    $this->assertReplayIsSkippedAfterLock('wiki', 'aculta_msg_wiki_notice', 'failed_permanent');
+  }
+
+  /**
    * Mailer exceptions count toward the bounded Commerce retry limit.
    */
   public function testCommerceMailerExceptionConsumesOneAttempt(): void {
@@ -79,8 +93,8 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   /**
    * Checks a stale duplicate queue item against the persisted state.
    */
-  private function assertReplayIsSkippedAfterLock(string $adapter, string $bundle): void {
-    $message = $this->message($bundle, 'sent', 1);
+  private function assertReplayIsSkippedAfterLock(string $adapter, string $bundle, string $delivery = 'sent'): void {
+    $message = $this->message($bundle, $delivery, 1);
     $locked = FALSE;
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects(self::once())->method('acquire')->willReturnCallback(static function () use (&$locked): bool {
@@ -107,7 +121,9 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   private function assertMailerExceptionConsumesAttempt(string $adapter, string $bundle): void {
     $message = $this->message($bundle, 'pending', 0);
     $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
-    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field($state[$field]));
+    $message->method('get')->willReturnCallback(function (string $field) use (&$state): FieldItemListInterface {
+      return $this->field($state[$field]);
+    });
     $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
       $state[$field] = $value;
       return $message;
@@ -161,7 +177,6 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   private function assertPermanentMailerFailureIsTerminal(string $adapter, string $bundle): void {
     $message = $this->message($bundle, 'pending', 0);
     $state = ['field_aculta_msg_delivery' => 'pending', 'field_aculta_messenger_attempts' => 0];
-    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => $this->field($state[$field]));
     $message->expects(self::exactly(3))->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
       $state[$field] = $value;
       return $message;
@@ -199,7 +214,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
         ->processItem(['message_id' => 101]);
     });
     self::assertSame(1, $state['field_aculta_messenger_attempts']);
-    self::assertSame('failed', $state['field_aculta_msg_delivery']);
+    self::assertSame('failed_permanent', $state['field_aculta_msg_delivery']);
   }
 
   /**

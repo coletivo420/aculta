@@ -128,10 +128,11 @@ final class WikiNoticeEmailWorker extends QueueWorkerBase implements ContainerFa
       $this->finish($message, $result->sent ? 'sent' : 'cancelled');
       return;
     }
-    $this->finish($message, 'failed');
     if ($result->error === DeliveryError::Permanent) {
+      $this->finish($message, 'failed_permanent');
       return;
     }
+    $this->finish($message, 'failed');
     if ($attempts < self::MAX_ATTEMPTS) {
       throw new \RuntimeException('Wiki notice email delivery failed.');
     }
