@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -13,7 +14,7 @@ use Drupal\node\NodeInterface;
 final class MessageSubscribeHooks {
 
   /**
-   * Prevents Message Subscribe delivery for Forum topics (F-D21).
+   * Prevents Message Subscribe delivery for Forum topics and their Comments.
    *
    * The contrib subscriber hook combines recipients from all implementations;
    * returning an empty array from that hook does not suppress its Flag
@@ -27,7 +28,12 @@ final class MessageSubscribeHooks {
   #[Hook('message_subscribe_get_subscribers_alter')]
   public function suppressForumDelivery(array &$uids, array $values): void {
     $entity = $values['entity'] ?? NULL;
-    if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
+    $is_forum_topic = $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic';
+    if (!$is_forum_topic && $entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      $is_forum_topic = $host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic';
+    }
+    if ($is_forum_topic) {
       $uids = [];
     }
   }

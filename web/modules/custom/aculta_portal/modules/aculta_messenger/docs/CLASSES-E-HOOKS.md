@@ -117,7 +117,7 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 | `ForumAvisoHooks` | `src/Hook/ForumAvisoHooks.php` | Publica eventos compartilhados para respostas e primeira publicação de ForumPost (ACULTA Fórum, F-D21). |
 | `LifecycleHooks` | `src/Hook/LifecycleHooks.php` | Protects Messenger-owned notification records during module removal. */ |
 | `MessageSubscribeEventHooks` | `src/Hook/MessageSubscribeEventHooks.php` | Queues publication events for the forum's existing follow flag. */ |
-| `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Enforces F-D21 by suppressing Message Subscribe recipients only for ACULTA Forum topics. */ |
+| `MessageSubscribeHooks` | `src/Hook/MessageSubscribeHooks.php` | Enforces F-D21 for ACULTA Forum topics and hosted Comments while preserving other contexts. */ |
 | `MessengerBarHooks` | `src/Hook/MessengerBarHooks.php` | Supplies the neutral, per-member Messenger action to the global shell. */ |
 | `NoticeAdminHooks` | `src/Hook/NoticeAdminHooks.php` | Consolidates administrative notice entry points under ACULTA Avisos. |
 | `PrivacyFormHooks` | `src/Hook/PrivacyFormHooks.php` | Adds the Messenger's messaging privacy to Minha conta > Configurações > Privacidade. |

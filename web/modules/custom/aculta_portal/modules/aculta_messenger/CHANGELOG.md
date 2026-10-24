@@ -1012,3 +1012,11 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
   Drupal/DrupalPractice e PHP lint: PASS. Kernel e Runtime não executados nesta
   revisão.
 
+## 0.1.1-dev.92 — cobrir Comments hospedados em tópicos do Fórum — 2026-10-24
+
+- F-D21 agora também reconhece o contexto de Comment cujo host é um tópico
+  `aculta_forum_topic`. Isso impede que Flags do Node anfitrião adicionem
+  destinatários Message Subscribe quando a Message é enviada sobre um Comment.
+- Unit Messenger: 79 testes / 356 assertions, sem depreciações; PHPCS e PHP
+  lint: PASS. Kernel e Runtime não executados nesta revisão.
+

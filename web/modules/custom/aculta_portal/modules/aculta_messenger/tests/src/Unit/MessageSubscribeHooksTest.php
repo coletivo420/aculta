@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Hook\MessageSubscribeHooks;
+use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -26,6 +27,21 @@ final class MessageSubscribeHooksTest extends UnitTestCase {
     $uids = [17 => new \stdClass(), 23 => new \stdClass()];
 
     (new MessageSubscribeHooks())->suppressForumDelivery($uids, ['entity' => $topic]);
+
+    self::assertSame([], $uids);
+  }
+
+  /**
+   * F-D21 also suppresses Message Subscribe candidates for Forum Comments.
+   */
+  public function testCommentOnForumTopicRecipientsAreSuppressed(): void {
+    $topic = $this->createMock(NodeInterface::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getCommentedEntity')->willReturn($topic);
+    $uids = [17 => new \stdClass()];
+
+    (new MessageSubscribeHooks())->suppressForumDelivery($uids, ['entity' => $comment]);
 
     self::assertSame([], $uids);
   }
