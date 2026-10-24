@@ -1,3 +1,10 @@
+## Fila de moderação apenas no purpose main, 2026-10-24
+
+- `ForumPostModerationAccessKernelTest` (1 teste / 9 asserções, MariaDB):
+  `queueAccess()` é liberado em `main`, não é liberado em `forum`, e o purpose
+  anterior é restaurado após `runInPurpose`.
+- Suíte Kernel do Fórum 113/2.266; PHPCS limpo.
+
 ## Kernels monolíngues em pt-br, 2026-10-24
 
 - `PublicForumSearchAccessKernelTest`, `PublicForumListingAccessKernelTest` e

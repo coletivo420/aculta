@@ -1,3 +1,10 @@
+## `0.1.0-dev.291` — restringir a fila de moderação ao purpose main — 2026-10-24
+
+- Novo Kernel `ForumPostModerationAccessKernelTest`: a fila de revisões é
+  liberada no purpose `main`, não é liberada no purpose `forum`, e o purpose
+  anterior é restaurado após a checagem.
+- Testes: acesso 1/9; suíte Kernel do Fórum 113/2.266; PHPCS limpo.
+
 ## `0.1.0-dev.290` — remover rota de movimentação que só redirecionava — 2026-10-24
 
 - A rota antiga `aculta_forum.topic_move` (`/painel-administrativo/forum/{node}/mover-categoria`) apontava apenas para o painel e não executava movimentação. Foi removida; o serviço `ForumTopicMover` e os formulários funcionais de moderação permanecem.
