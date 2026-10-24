@@ -15,6 +15,15 @@ Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/
 
 ## Nova frente documental — Hub e Meu Espaço (STUDIO-P0, 2026-10-24)
 
+**Atualização de implementação P1-B (dev.9):** Marley agora também
+é exposto pelo registry de experiências, por um provider que consulta
+`MarleyPresenter` sem substituir suas abas. `/studio/inicio` apresenta
+uma prévia autorizada do hub, enquanto `/studio` permanece sob o
+controller legado do Marley. Testes Unit foram criados, mas os gates
+PHPUnit/Runtime deste incremento não foram executados.
+
+
+
 A expansão da plataforma para **todos os membros** foi definida como alvo de
 produto: `/studio` será o hub, `/studio/pessoal` será Meu Espaço, com menu
 unificado de experiências e seções contextuais. Minha Conta e Meu Perfil
