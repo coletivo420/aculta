@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.113 — Eventos de revisão/decisão na Queue API confiável; QueueWorker retém falhas após lease. Unit 18/73 e Kernel MariaDB 1/8 confirmaram fila transacional; update 10002 provisiona tabela antes das transações. Consumer Messenger/idempotência pendentes; Kernel abrangente de decisão encontrou serviço ausente no Studio paralelo."
-next_phase: 'Implementar consumer/API de aviso pessoal idempotente no aculta_messenger e retomar Kernel decisório após estabilização do Studio; depois Olivero e WCAG 2.2 AA ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.114 — Submódulo aculta_wiki_messenger consome eventos Wiki, persiste em Message com deduplicação, integra central/contagem, resumo e email direto. Unit adapter 3/20, WikiReviewHooks 10/56 e PHPCS PASS; Kernel/Runtime não executados. Notifiers legados são suprimidos quando o adapter está habilitado."
+next_phase: 'Kernel integrado de persistência/acesso e homologação do QueueWorker no Runtime isolado; depois Loja e consolidação do Fórum ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

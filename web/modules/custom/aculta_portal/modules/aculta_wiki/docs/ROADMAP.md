@@ -69,14 +69,15 @@ seguido por `drush cr`. Nenhuma configuração ou conteúdo foi importado.
 O contrato define dois eventos: entrada de revisão `wiki_entry` na fila, para
 contas `content_editor` com acesso atual, e decisão da proposta para sua autoria.
 O payload carrega UUID/revisão e os dados mínimos de destinatário/estado; a
-identificação e o acesso são revalidados pelo consumer. A decisão do responsável
-é manter e-mails transacionais e adicionar avisos pessoais no site, com fila
-persistente/retry e deduplicação. A especificação está em
+identificação e o acesso são revalidados pelo consumer. `aculta_wiki_messenger`
+consome o envelope compartilhado, persiste no Message e aplica email direto ou
+resumo conforme preferência/política Mailer. A especificação está em
 [`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor e o
-QueueWorker Wiki foram implementados em dev.113; o publisher de eventos do
-Messenger está disponível, mas falta o contrato público de registro genérico e
-o consumer que mapeie o evento a uma persistência suportada e revalide acesso.
-A revisão deve confirmar idempotência e elegibilidade antes de ativar entrega.
+QueueWorker Wiki foram implementados em dev.113; o consumer Wiki→Messenger foi
+adicionado em dev.114. Unit focais 3/20 e PHPCS passam. Kernel/Runtime e
+homologação do worker/fila ainda pendentes; integração direta não foi enviada a
+Runtime. O adapter suprime os notifiers legados quando habilitado para evitar
+duplicação, preservando fallback no Wiki sem o adapter.
 
 ### Incremento dev.110 — CTA para o início WE SATIVA
 

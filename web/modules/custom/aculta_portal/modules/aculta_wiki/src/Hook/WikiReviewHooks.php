@@ -10,6 +10,7 @@ use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -29,6 +30,7 @@ final class WikiReviewHooks {
   public function __construct(
     private readonly WikiReviewNotifier $notifier,
     private readonly WikiEditorialEventQueue $events,
+    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
@@ -76,7 +78,9 @@ final class WikiReviewHooks {
       return;
     }
     $this->events->enqueue(new WikiEntryReviewRequestedEvent($entity->uuid(), (int) $revisionId));
-    $this->notifier->notifyReview($entity);
+    if ($this->moduleHandler === NULL || !$this->moduleHandler->moduleExists('aculta_wiki_messenger')) {
+      $this->notifier->notifyReview($entity);
+    }
   }
 
   /**

@@ -1,0 +1,13 @@
+aculta_wiki_messenger.notice_open:
+  path: '/avisos/wiki/{message}/abrir'
+  defaults:
+    _controller: 'aculta_wiki_messenger.notice_open_controller:open'
+    _title: 'Aviso da Wiki'
+  requirements:
+    _custom_access: 'aculta_wiki_messenger.notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message

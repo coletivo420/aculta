@@ -1,0 +1,11 @@
+name: ACULTA Wiki Messenger
+type: module
+description: 'Integra avisos editoriais da Wiki ao ACULTA Messenger.'
+package: 'ACULTA Portal'
+version: '0.1.0-dev.1'
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_portal:aculta_wiki
+  - aculta_portal:aculta_messenger
+  - aculta_portal:aculta_mailer
+  - drupal:message

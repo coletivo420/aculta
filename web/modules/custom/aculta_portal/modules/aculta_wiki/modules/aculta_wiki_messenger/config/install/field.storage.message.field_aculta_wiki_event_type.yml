@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - options
+  enforced:
+    module:
+      - aculta_wiki_messenger
+id: message.field_aculta_wiki_event_type
+field_name: field_aculta_wiki_event_type
+entity_type: message
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: review_requested
+      label: 'Verbete enviado à revisão'
+    -
+      value: proposal_outcome
+      label: 'Resultado da proposta'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

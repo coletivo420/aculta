@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @file
+ * Bridges Wiki editorial events to ACULTA Messenger notices.
+ */

@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_wiki_read
+    - message.template.aculta_msg_wiki_notice
+  enforced:
+    module:
+      - aculta_wiki_messenger
+id: message.aculta_msg_wiki_notice.field_aculta_wiki_read
+field_name: field_aculta_wiki_read
+entity_type: message
+bundle: aculta_msg_wiki_notice
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings: {  }
+field_type: boolean

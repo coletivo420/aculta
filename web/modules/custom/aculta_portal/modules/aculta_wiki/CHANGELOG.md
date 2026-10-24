@@ -1567,3 +1567,16 @@
   retry após rebuild, compartilhamento/referências históricas e limpeza em lotes.
   Foram reportadas 304 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
   de código, Runtime ou filesystem instalado.
+## 0.1.0-dev.114 — consumir eventos editoriais pelo Messenger
+
+- Novo submódulo `aculta_wiki_messenger` consome eventos Wiki versionados,
+  valida editor/autoria e acesso atual, persiste aviso em Message com lock e
+  deduplicação, integra listagem/contagem/leitura, resumo diário e e-mail direto
+  via ACULTA Mailer. Preferências off/resumo/direto ficam na central; avisos no
+  site são obrigatórios.
+- Quando o adapter está habilitado, os notifiers de email legados são suprimidos;
+  a configuração continua como fallback quando o adapter não está instalado.
+- Unit adapter: 3 testes / 20 assertions PASS; WikiReviewHooks Unit: 10/56
+  PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Kernel (SIMPLETEST_DB) e
+  Runtime não executados. Nenhum e-mail real foi enviado.
+

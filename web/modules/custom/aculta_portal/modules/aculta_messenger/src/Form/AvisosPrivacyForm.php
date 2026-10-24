@@ -54,13 +54,27 @@ final class AvisosPrivacyForm {
       'email_aprendizagem' => [
         '#type' => 'select',
         '#title' => new TranslatableMarkup('E-mails de aprendizagem'),
-        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. Administradores podem limitar cada tipo pelo ACULTA Mailer.'),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. O resumo também exige o opt-in geral do Messenger; administradores podem limitar tipos no ACULTA Mailer.'),
         '#options' => [
           AvisoPreferencias::EMAIL_OFF => new TranslatableMarkup('Sem e-mail'),
           AvisoPreferencias::EMAIL_DIGEST => new TranslatableMarkup('Resumo diário'),
           AvisoPreferencias::EMAIL_IMMEDIATE => new TranslatableMarkup('Envio direto'),
         ],
         '#default_value' => $this->preferencias->emailMode($uid, 'aprendizagem'),
+      ],
+      'email_wiki' => [
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails da Wiki'),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto. O resumo também exige o opt-in geral do Messenger; administradores podem limitar tipos no ACULTA Mailer.'),
+        '#options' => $this->emailModeOptions(),
+        '#default_value' => $this->preferencias->emailMode($uid, 'wiki'),
+      ],
+      'email_loja' => [
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails da Loja'),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Escolha sem e-mail, resumo diário ou envio direto; administradores podem limitar cada tipo pelo ACULTA Mailer.'),
+        '#options' => $this->emailModeOptions(),
+        '#default_value' => $this->preferencias->emailMode($uid, 'loja'),
       ],
     ];
   }
@@ -79,6 +93,22 @@ final class AvisosPrivacyForm {
     if (is_string($mode)) {
       $this->preferencias->saveEmailMode((int) $this->currentUser->id(), 'aprendizagem', $mode);
     }
+    foreach (['wiki', 'loja'] as $category) {
+      $mode = $formState->getValue('email_' . $category);
+      if (is_string($mode)) {
+        $this->preferencias->saveEmailMode((int) $this->currentUser->id(), $category, $mode);
+      }
+    }
+  }
+
+  /**
+   * Returns the available e-mail modes shared across notice categories. */
+  private function emailModeOptions(): array {
+    return [
+      AvisoPreferencias::EMAIL_OFF => new TranslatableMarkup('Sem e-mail'),
+      AvisoPreferencias::EMAIL_DIGEST => new TranslatableMarkup('Resumo diário'),
+      AvisoPreferencias::EMAIL_IMMEDIATE => new TranslatableMarkup('Envio direto'),
+    ];
   }
 
 }

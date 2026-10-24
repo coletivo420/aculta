@@ -15,3 +15,26 @@ function aculta_messenger_schema(): array {
     ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
   ];
 }
+
+/**
+ * Adds a terminal cancelled state to the shared Message email delivery field.
+ */
+function aculta_messenger_update_10001(): void {
+  $field_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->load('message.field_aculta_msg_delivery');
+  if (!$field_storage) {
+    return;
+  }
+  $allowed_values = $field_storage->getSetting('allowed_values') ?? [];
+  foreach ($allowed_values as $option) {
+    if (($option['value'] ?? NULL) === 'cancelled') {
+      return;
+    }
+  }
+  $allowed_values[] = [
+    'value' => 'cancelled',
+    'label' => 'Cancelado',
+  ];
+  $field_storage->setSetting('allowed_values', $allowed_values)->save();
+}

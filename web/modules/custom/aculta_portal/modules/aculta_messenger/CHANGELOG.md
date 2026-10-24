@@ -1035,3 +1035,13 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Unit Messenger: 79 testes / 356 assertions, sem depreciações; PHPCS e PHP
   lint: PASS. Kernel e Runtime não executados nesta revisão.
 
+## 0.1.1-dev.94 — completar estados de entrega de e-mail — 2026-10-24
+
+- O campo compartilhado Message `field_aculta_msg_delivery` admite `cancelled`
+  para opt-out/restrição administrativa em workers de canal direto. Configuração
+  nova inclui o estado; update `10001` o adiciona de forma aditiva em instalações
+  existentes. Não altera avisos no site nem registros históricos.
+- O adapter Wiki e o LMS usam a preferência central off/resumo/direto; Kernel do
+  update não executado (SIMPLETEST_DB ausente). PHPCS/lint/YAML são registrados
+  no incremento que consome esse estado.
+

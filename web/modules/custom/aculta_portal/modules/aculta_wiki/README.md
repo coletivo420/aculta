@@ -15,10 +15,12 @@ pendentes, está em
   opcional direto ou por resumo/digest, conforme preferência e política do
   Mailer. Os dois value objects versionados
   validam UUID/revisão, allowlist e payload (Unit 4/5). Dev.113 adiciona
-  producers nas transições e QueueWorker com retry por lease; consumer Messenger
-  continua pendente. Os notifiers de e-mail legados ainda estão ativos e serão
-  removidos quando a migração compartilhada passar seus testes de paridade, sem
-  envio duplicado.
+  producers nas transições e QueueWorker com retry por lease. O submódulo
+  `aculta_wiki_messenger` agora consome os eventos, grava avisos no Message
+  existente e oferece email direto ou resumo segundo preferência e Mailer.
+  Unit 3/20 valida roteamento e persistência com email opcional. Kernel e Runtime
+  não foram executados. O adapter suprime os notifiers legados quando habilitado;
+  estes seguem como fallback em instalações que ainda não habilitaram o adapter.
 
 - `0.1.0-dev.113`: transições Wiki persistem envelopes v1 na Queue API
   confiável e o worker despacha somente para eventos que tenham consumer

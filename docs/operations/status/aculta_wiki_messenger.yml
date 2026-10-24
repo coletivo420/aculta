@@ -1,0 +1,3 @@
+# Status de componente para a tabela do README raiz (gerada).
+state: Dev
+next_phase: 'Dev.1: consumer Wiki→Messenger implementado; Unit 3/20 e PHPCS PASS. Kernel, replay concorrente, revogação entre fila/leitura e habilitação Runtime pendentes ([README](web/modules/custom/aculta_portal/modules/aculta_wiki/modules/aculta_wiki_messenger/README.md))'

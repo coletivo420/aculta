@@ -94,12 +94,16 @@ destinatário é `event name + source UUID + revision ID + recipient UID`.
 
 Os value objects dos dois eventos estão implementados em `src/Event/`, com
 payload v1 validado por Unit (4 testes / 5 asserções). Dev.113 adiciona enqueue
-nas transições de revisão/decisão e QueueWorker com Queue API confiável. O
+nas transições de revisão/decisão e QueueWorker com Queue API confiável. Dev.114
+adiciona `aculta_wiki_messenger`: consumer produtor valida revisão e destinatário,
+consumer Messenger persiste em Message com lock/deduplicação, Hook integra
+central/contador, acesso é revalidado na abertura e resumo; worker direto usa
+ACULTA Mailer e revalida preferência. Unit: 3 testes / 20 assertions PASS;
+PHPCS Drupal/DrupalPractice PASS. O
 install/update 10002 prepara a tabela Queue antes das transações; Kernel MariaDB
 isolado confirmou que rollback também remove o item (1/8). Uma
 exceção do consumer deixa o item reclamável após lease de 60 segundos; não há
 limite de tentativas nem retry imediato. Sem listener registrado, o worker lança
-exceção e conserva o item. Assim, o fluxo ainda não entrega avisos de site: o
-consumer Messenger e o armazenamento apropriado precisam ser implementados
-antes de habilitar processamento funcional. Os notifiers de e-mail atuais
-continuam legados temporariamente, até a migração testada.
+exceção e conserva o item. O submódulo ainda não foi habilitado em Runtime nem
+validado por Kernel completo. Ao habilitá-lo, ele suprime os dois notifiers
+legados; quando permanece desabilitado, os fluxos legados continuam ativos.

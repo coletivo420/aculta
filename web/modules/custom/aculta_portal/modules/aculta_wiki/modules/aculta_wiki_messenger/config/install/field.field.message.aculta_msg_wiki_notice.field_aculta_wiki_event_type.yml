@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_wiki_event_type
+    - message.template.aculta_msg_wiki_notice
+  enforced:
+    module:
+      - aculta_wiki_messenger
+id: message.aculta_msg_wiki_notice.field_aculta_wiki_event_type
+field_name: field_aculta_wiki_event_type
+entity_type: message
+bundle: aculta_msg_wiki_notice
+label: 'Tipo de aviso educacional'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: enrollment
+default_value_callback: ''
+settings: {  }
+field_type: list_string

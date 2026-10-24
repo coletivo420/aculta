@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -40,6 +41,7 @@ final class WikiProposalDecision {
     private readonly DomainPurposeManager $domainPurposes,
     private readonly StateTransitionValidationInterface $transitionValidation,
     private readonly ModerationInformationInterface $moderationInformation,
+    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
@@ -137,7 +139,9 @@ final class WikiProposalDecision {
           $decision,
         ));
       }
-      $this->notifier->notify($current);
+      if ($this->moduleHandler === NULL || !$this->moduleHandler->moduleExists('aculta_wiki_messenger')) {
+        $this->notifier->notify($current);
+      }
       unset($transaction);
 
       return $current;

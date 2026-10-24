@@ -1,0 +1,24 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_wiki_messenger
+template: aculta_msg_wiki_notice
+label: 'Aviso editorial da Wiki ACULTA'
+description: 'Aviso editorial mínimo sem conteúdo privado.'
+text:
+  -
+    value: 'Atualização editorial da Wiki ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }
