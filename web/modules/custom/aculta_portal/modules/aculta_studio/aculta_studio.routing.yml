@@ -86,7 +86,7 @@ aculta_studio.tab:
 aculta_studio.hub:
   path: /studio
   defaults:
-    _controller: 'aculta_studio.hub_preview_controller:page'
+    _controller: 'aculta_studio.hub_controller:page'
     _title: 'ACULTA Studio'
   requirements:
     _permission: access aculta portal
