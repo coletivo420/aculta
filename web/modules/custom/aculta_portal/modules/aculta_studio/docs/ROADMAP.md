@@ -1,5 +1,24 @@
 # ACULTA Studio — Roadmap multi-experiência
 
+## S-R3-A — composição de Conta por Portal, código dev.14
+
+**Implementado:** endereço, segurança/e-mail, senha/OAuth e conexões em
+rotas canônicas de `/studio/conta`. Controller Studio apenas compõe
+render arrays e navegação; dados e operações permanecem no Portal.
+A regra de Endereço da Conta legada foi estendida para a nova rota do
+Studio sem criar entidades ou lógica de endereço duplicadas. Submit
+volta à interface correspondente. Testes Unit e gate estático escritos.
+
+**Pendências reais antes de homologar:** PHPUnit, Kernel/Functional,
+testes HTTP e Firefox ESR/X11 no Domain ACCOUNT, submissão de CEP/Número/S-N,
+endereço refletido em checkout, e-mail/primeira senha OAuth e ausência
+de duplo shell. O cadastro em `/dados` e outros destinos ficam legados
+até se separar `field_nickname` e concluir S-R3-B.
+
+**Regra permanente:** o legado na raiz `/` não pode ser removido
+depois da comparação, e `/minha-conta` direto permanece 404.
+Não criar aliases, duplicar storage nem ampliar o escopo do Perfil.
+
 ## S-R2 concluído no código: experiências independentes (dev.13)
 
 - **Feito:** providers independentes `conta` e `perfil`, rotas
