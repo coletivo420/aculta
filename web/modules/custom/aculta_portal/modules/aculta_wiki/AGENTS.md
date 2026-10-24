@@ -30,6 +30,9 @@
 
 # Wiki — instruções locais
 
+- Dev.100: suíte Unit Wiki 71/400; expectativa de formulário sem imagem agora
+  preserva orientação de título e confirma ausência dos controles de imagem.
+
 - Dev.99: Unit garante truncamento de query longa da busca em `MAX_CHARS`
   antes do escape/Entity Query; `WikiControllerTest` 11/70.
 

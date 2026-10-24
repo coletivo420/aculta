@@ -1337,3 +1337,10 @@
 - `WikiControllerTest` garante o truncamento para `MAX_CHARS` antes de escapar
   e consultar; suite focal passou (11 testes / 70 asserções). Runtime intocado.
 
+## 0.1.0-dev.100 — alinhar regressão do formulário de imagem
+
+- O teste sem campo de imagem valida especificamente a ausência de widget/aba
+  de imagem, preservando a orientação do título incluída pelo formulário Wiki.
+- Suíte Unit completa: 71 testes / 400 asserções; 3 depreciações PHPUnit.
+  Runtime intocado.
+

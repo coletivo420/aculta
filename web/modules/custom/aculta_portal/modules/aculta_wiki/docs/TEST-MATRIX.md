@@ -198,6 +198,7 @@ depois da importação de configuração no servidor de testes.
 | Reenvio após erro de validação | Unit | reusa a mídia do mesmo `form_state` | aprovado |
 | Caixa de remoção marcada | Unit | `field_wiki_image` esvaziado | aprovado |
 | Formulário do verbete | Unit | aba no grupo `advanced`, `#tree`, validadores `wiki`, ganchos de validação e envio | aprovado |
+| Formulário sem campo de imagem | Unit | mantém campo de título autoral sem adicionar widget ou aba de imagem | aprovado (`WikiEntryImageHooksTest`) |
 | Política sem extensão de imagem | Unit | aba não aparece e o widget central continua visível | aprovado |
 | Consumidor `wiki` exportado | Unit | `consumers.wiki` no `config/sync` e no schema | aprovado |
 | Diretório privado é preparado pelo uploader | Unit | chamada ao serviço FileSystem com criação e permissões | aprovado |

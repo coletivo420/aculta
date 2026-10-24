@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.100`: suíte Unit completa aprovada (71/400). A regressão do
+  formulário sem campo de imagem agora preserva a orientação autoral sem criar
+  controles de imagem (3 depreciações PHPUnit; Runtime intocado).
+
 - `0.1.0-dev.99`: busca completa truncada para `MAX_CHARS` antes da consulta;
   `WikiControllerTest` passou (11/70), Runtime intocado.
 

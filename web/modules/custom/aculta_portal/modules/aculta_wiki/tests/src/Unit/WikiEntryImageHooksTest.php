@@ -137,15 +137,17 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
   }
 
   /**
-   * Formulários sem o campo de imagem não mudam.
+   * No image control is added when the form has no lead image field.
    */
-  public function testLeavesTheFormAloneWithoutTheLeadImageField(): void {
+  public function testDoesNotAddImageControlsWithoutTheLeadImageField(): void {
     $form = ['title' => ['#type' => 'textfield']];
-    $original = $form;
 
     $this->hooks('png jpg jpeg gif webp', 10)->formAlter($form, $this->formState());
 
-    self::assertSame($original, $form);
+    self::assertSame('textfield', $form['title']['#type']);
+    self::assertSame(0, $form['title']['#weight']);
+    self::assertArrayNotHasKey('field_wiki_image', $form);
+    self::assertArrayNotHasKey(WikiLeadImageUploader::TAB, $form);
   }
 
   /**
