@@ -1,3 +1,10 @@
+## `0.1.0-dev.304` — corrigir teste da configuração de tópicos — 2026-10-24
+
+- O Unit `ForumTopicDisplayConfigTest` ainda exigia a rota placeholder
+  `aculta_forum.topic_move`, removida em dev.290; o teste agora afirma a
+  ausência da rota e mantém as provas de mover comentário e do painel.
+- Testes: Unit do Fórum 181/1.014; PHPCS limpo.
+
 ## `0.1.0-dev.303` — provar as opções do Fórum — 2026-10-24
 
 - Novo Kernel `ForumSettingsFormKernelTest`: mover comentários continua

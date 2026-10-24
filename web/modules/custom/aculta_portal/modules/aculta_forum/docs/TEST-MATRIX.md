@@ -1,3 +1,10 @@
+## Configuração de tópicos — rota placeholder removida, 2026-10-24
+
+- `ForumTopicDisplayConfigTest` (Unit, suíte 181/1.014): afirma que
+  `aculta_forum.topic_move` não existe mais, preservando as provas da rota
+  canônica de mover comentário e das abas do painel.
+- PHPCS limpo.
+
 ## Opções do Fórum — padrões e limites, 2026-10-24
 
 - `ForumSettingsFormKernelTest` (2 testes / 8 asserções, MariaDB): mover

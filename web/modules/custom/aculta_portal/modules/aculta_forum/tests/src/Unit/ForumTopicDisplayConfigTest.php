@@ -87,13 +87,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('access content overview', $routes['aculta_forum.admin']['requirements']['_permission']);
     self::assertArrayNotHasKey('aculta_forum.admin_content_redirect', $routes);
     self::assertArrayNotHasKey('aculta_forum.admin_comments_redirect', $routes);
-    self::assertSame('/painel-administrativo/forum/{node}/mover-categoria', $routes['aculta_forum.topic_move']['path']);
+    // The placeholder topic-move redirect route was removed; moving a topic is
+    // a task tab of the administration overview.
+    self::assertArrayNotHasKey('aculta_forum.topic_move', $routes);
     self::assertSame('/painel-administrativo/forum/comentarios/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
     self::assertSame('Mover comentário do fórum', $routes['aculta_forum.comment_move']['defaults']['_title']);
-    self::assertSame('\Drupal\aculta_forum\Controller\ForumAdminOverviewController::redirectToOverview', $routes['aculta_forum.topic_move']['defaults']['_controller']);
     self::assertSame('\Drupal\aculta_forum\Form\ForumCommentMoveForm', $routes['aculta_forum.comment_move']['defaults']['_form']);
     self::assertSame('entity:comment', $routes['aculta_forum.comment_move']['options']['parameters']['comment']['type']);
-    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.topic_move']['methods']);
     // Temporary legacy aliases were removed by the route cleanup; only the
     // canonical administrative paths remain.
     foreach ([
