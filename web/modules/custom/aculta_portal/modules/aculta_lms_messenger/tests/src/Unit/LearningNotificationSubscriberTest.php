@@ -115,7 +115,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   public function testSubmissionNotifiesCurrentCourseEducators(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects($this->once())
-      ->method('recordSubmissionForEducators')
+      ->method('publishSubmissionNoticesForEducators')
       ->with('answer-uuid', str_repeat('b', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
@@ -128,7 +128,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   public function testContentReleaseNotifiesCurrentLearners(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects($this->once())
-      ->method('recordContentReleaseForLearners')
+      ->method('publishContentReleaseNoticesForLearners')
       ->with('lesson-uuid', 'lms_lesson', str_repeat('c', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
@@ -140,7 +140,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   public function testEducatorFeedbackNotifiesAnswerOwner(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects($this->once())
-      ->method('recordEducatorFeedbackForLearner')
+      ->method('publishEducatorFeedbackNoticeForLearner')
       ->with('comment-uuid', str_repeat('d', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
@@ -152,7 +152,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   public function testActivityDeadlineNotifiesCurrentClassLearners(): void {
     $manager = $this->createMock(LearningNoticeManagerInterface::class);
     $manager->expects($this->once())
-      ->method('recordActivityDeadlineForLearners')
+      ->method('publishActivityDeadlineNoticesForLearners')
       ->with('deadline-uuid', str_repeat('e', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());

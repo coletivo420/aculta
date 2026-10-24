@@ -2,7 +2,7 @@ services:
   Drupal\aculta_lms_messenger\LearningNoticeManagerInterface: '@aculta_lms_messenger.notice_manager'
   aculta_lms_messenger.notice_manager:
     class: Drupal\aculta_lms_messenger\LearningNoticeManager
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@queue', '@logger.channel.aculta_lms_messenger']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@queue', '@logger.channel.aculta_lms_messenger', '@aculta_messenger.notice_event_publisher']
     tags:
       - { name: aculta_messenger.aviso_digest_provider }
   aculta_lms_messenger.notice_access:

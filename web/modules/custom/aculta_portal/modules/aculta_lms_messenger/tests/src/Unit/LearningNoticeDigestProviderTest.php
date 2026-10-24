@@ -15,6 +15,7 @@ use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -81,6 +82,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
     );
 
     self::assertSame([], $manager->digestRowsFor(27));
@@ -141,6 +143,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
     );
 
     self::assertSame([], $manager->digestRowsFor(27));

@@ -7,11 +7,14 @@ usa Message Notify para e-mails transacionais.
 
 ## Estado
 
-Versão 0.1.0-dev.16. Matrícula, certificado, conclusão e avaliação publicada
-passam pelo contrato de evento do Messenger e o consumer LMS usa o
-LearningNoticeManager existente para persistência Message, deduplicação, fila e
-digest. Submissão, feedback, liberação e prazo ainda chamam o manager após
-resolver os destinatários elegíveis no LMS.
+Versão 0.1.0-dev.17. Todos os produtores LMS — matrícula, certificado,
+conclusão, avaliação, submissão, liberação de curso/aula/atividade, feedback e
+prazo — publicam `MessengerNoticeEvent`. O adapter educacional continua
+responsável por resolver destinatários conforme matrícula, publicação,
+permissões e contexto; o consumer encaminha os eventos ao
+`LearningNoticeManager`, que mantém a persistência Message, deduplicação, fila,
+digest e revalidação no acesso. Não existe caminho direto de gravação paralelo
+para os produtores migrados nem storage novo.
 
 Matrícula e certificado têm e-mail transacional mínimo; conclusão, avaliação e
 resposta pendente entram no resumo diário opt-in. Um link revalida acesso e
@@ -31,7 +34,10 @@ gera erro 500. A suíte Unit LMS/Messenger passou com 86 testes / 460 assertions
 (8 depreciações PHPUnit); Kernel MariaDB: 23 / 730 assertions PASS (95
 depreciações Core/contrib). PHPCS Drupal/DrupalPractice PASS.
 
-O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
+Unit LMS/Messenger: 22 testes / 119 assertions PASS; Kernel SQLite da
+persistência Message e do round-trip/replay do evento: 2 testes / 18 assertions
+PASS, com duas depreciações upstream de Message. PHPCS Drupal/DrupalPractice
+PASS. O módulo está em Dev e está habilitado no Runtime de teste. Kernel comprova
 persistência e deduplicação em Message real. Smoke com turma temporária no
 Runtime confirmou aviso persistido, aviso pessoal integrado, enqueue pelo hook
 de Cron e persistência do lembrete pelo worker; todos os dados temporários e as

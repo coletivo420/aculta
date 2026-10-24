@@ -18,27 +18,29 @@ interface LearningNoticeManagerInterface {
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1'): ?MessageInterface;
 
   /**
-   * Records a pending answer notice for current course graders.
+   * Publishes pending-answer events for current course graders.
    */
-  public function recordSubmissionForEducators(string $answerUuid, string $eventVersion): void;
+  public function publishSubmissionNoticesForEducators(string $answerUuid, string $eventVersion): void;
 
   /**
-   * Records the release of course content for currently enrolled learners.
+   * Publishes course-content release events for current learners.
    */
-  public function recordContentReleaseForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void;
+  public function publishContentReleaseNoticesForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void;
 
   /**
-   * Records published educator feedback for the learner who owns the answer. */
-  public function recordEducatorFeedbackForLearner(string $commentUuid, string $eventVersion): void;
-
-  /**
-   * Records a due date for current learners in the source class. */
-  public function recordActivityDeadlineForLearners(string $deadlineUuid, string $eventVersion): void;
-
-  /**
-   * Records an upcoming deadline reminder for current class learners.
+   * Publishes an educator-feedback event for the learner who owns the answer.
    */
-  public function recordActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void;
+  public function publishEducatorFeedbackNoticeForLearner(string $commentUuid, string $eventVersion): void;
+
+  /**
+   * Publishes a due-date event for current learners in the source class.
+   */
+  public function publishActivityDeadlineNoticesForLearners(string $deadlineUuid, string $eventVersion): void;
+
+  /**
+   * Publishes an upcoming-deadline reminder event for current class learners.
+   */
+  public function publishActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void;
 
   /**
    * Resolves the current target only when access is still valid.

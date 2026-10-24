@@ -31,6 +31,8 @@ use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Psr\Log\LoggerInterface;
@@ -83,6 +85,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     private readonly DateFormatterInterface $dateFormatter,
     private readonly QueueFactory $queueFactory,
     private readonly LoggerInterface $logger,
+    private readonly MessengerNoticePublisherInterface $noticePublisher,
   ) {}
 
   /**
@@ -173,7 +176,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Records one pending answer for current course graders.
    */
-  public function recordSubmissionForEducators(string $answerUuid, string $eventVersion): void {
+  public function publishSubmissionNoticesForEducators(string $answerUuid, string $eventVersion): void {
     $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $answerUuid]);
     $answer = reset($answers);
     if (!$answer instanceof AnswerInterface || $answer->isEvaluated() || $answer->getData() === []) {
@@ -197,14 +200,14 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->hasPermission('grade students', $educator)) {
         continue;
       }
-      $this->record($answerUuid, 'submission', (int) $educator->id(), FALSE, $eventVersion);
+      $this->publishNotice('submission', 'lms_answer', $answerUuid, (int) $educator->id(), $eventVersion);
     }
   }
 
   /**
-   * Records published course content for currently enrolled learners.
+   * Publishes course-content release events for currently enrolled learners.
    */
-  public function recordContentReleaseForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void {
+  public function publishContentReleaseNoticesForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void {
     if (!isset(CourseContentReleasedEvent::NOTICE_TYPES[$contentEntityType])) {
       return;
     }
@@ -236,11 +239,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
             || !$course->access('view', $learner, TRUE)->isAllowed()) {
             continue;
           }
-          $this->record(
-            $contentUuid,
+          $this->publishNotice(
             CourseContentReleasedEvent::NOTICE_TYPES[$contentEntityType],
+            $contentEntityType,
+            $contentUuid,
             (int) $learner->id(),
-            FALSE,
             $eventVersion,
           );
         }
@@ -249,9 +252,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   }
 
   /**
-   * Records published educator feedback for the answer owner.
+   * Publishes educator-feedback events for the answer owner.
    */
-  public function recordEducatorFeedbackForLearner(string $commentUuid, string $eventVersion): void {
+  public function publishEducatorFeedbackNoticeForLearner(string $commentUuid, string $eventVersion): void {
     $comments = $this->entityTypeManager->getStorage('comment')->loadByProperties([
       'uuid' => $commentUuid,
       'comment_type' => 'lms_answer_comment',
@@ -276,20 +279,20 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$answer->access('see_details', $learner, TRUE)->isAllowed()) {
       return;
     }
-    $this->record($commentUuid, 'feedback', (int) $learner->id(), FALSE, $eventVersion);
+    $this->publishNotice('feedback', 'comment', $commentUuid, (int) $learner->id(), $eventVersion);
   }
 
   /**
    * Records a new or changed activity deadline for current class learners.
    */
-  public function recordActivityDeadlineForLearners(string $deadlineUuid, string $eventVersion): void {
+  public function publishActivityDeadlineNoticesForLearners(string $deadlineUuid, string $eventVersion): void {
     $this->recordActivityDeadlineNotice($deadlineUuid, $eventVersion, 'deadline');
   }
 
   /**
    * Records a due-date reminder when the deadline remains in the future.
    */
-  public function recordActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void {
+  public function publishActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void {
     $this->recordActivityDeadlineNotice($deadlineUuid, $eventVersion, 'deadline_reminder');
   }
 
@@ -333,8 +336,27 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $learner, TRUE)->isAllowed()) {
         continue;
       }
-      $this->record($deadlineUuid, $type, (int) $learner->id(), FALSE, $eventVersion);
+      $this->publishNotice($type, 'group_relationship', $deadlineUuid, (int) $learner->id(), $eventVersion);
     }
+  }
+
+  /**
+   * Publishes one eligible LMS recipient through the shared Messenger API.
+   */
+  private function publishNotice(string $type, string $sourceEntityType, string $sourceUuid, int $uid, string $version): void {
+    $eventType = 'lms.' . $type;
+    $this->noticePublisher->publish(new MessengerNoticeEvent(
+      $eventType,
+      'aculta_lms',
+      $sourceEntityType,
+      $sourceUuid,
+      $version,
+      $uid,
+      'account',
+      new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+      implode(':', [$eventType, $sourceUuid, $version, $uid]),
+      ['notice_type' => $type, 'mail_policy' => 'site_digest'],
+    ));
   }
 
   /**

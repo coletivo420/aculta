@@ -14,6 +14,7 @@ use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\lms\Entity\AnswerInterface;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -56,9 +57,10 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
     );
 
-    $manager->recordSubmissionForEducators('stale-answer-uuid', 'version-one');
+    $manager->publishSubmissionNoticesForEducators('stale-answer-uuid', 'version-one');
   }
 
 }

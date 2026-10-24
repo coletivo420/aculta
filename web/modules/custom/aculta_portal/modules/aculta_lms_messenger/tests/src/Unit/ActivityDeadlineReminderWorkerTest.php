@@ -23,7 +23,7 @@ final class ActivityDeadlineReminderWorkerTest extends UnitTestCase {
   public function testValidQueueItemPublishesReminder(): void {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
     $notices->expects(self::once())
-      ->method('recordActivityDeadlineReminderForLearners')
+      ->method('publishActivityDeadlineReminderForLearners')
       ->with('deadline-uuid', str_repeat('a', 32));
     $worker = new ActivityDeadlineReminderWorker([], 'test', [], $notices);
 
@@ -38,7 +38,7 @@ final class ActivityDeadlineReminderWorkerTest extends UnitTestCase {
    */
   public function testMalformedQueueItemIsIgnored(): void {
     $notices = $this->createMock(LearningNoticeManagerInterface::class);
-    $notices->expects(self::never())->method('recordActivityDeadlineReminderForLearners');
+    $notices->expects(self::never())->method('publishActivityDeadlineReminderForLearners');
     $worker = new ActivityDeadlineReminderWorker([], 'test', [], $notices);
 
     $worker->processItem(['deadline_uuid' => 'deadline-uuid', 'event_version' => 'invalid']);

@@ -37,6 +37,49 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
   }
 
   /**
+   * Routes other LMS producers through the same existing storage adapter.
+   */
+  public function testRoutesSubmissionReleaseFeedbackAndDeadlineEvents(): void {
+    $routes = [
+      ['submission', 'lms_answer'],
+      ['course_release', 'group'],
+      ['lesson_release', 'lms_lesson'],
+      ['activity_release', 'lms_activity'],
+      ['feedback', 'comment'],
+      ['deadline', 'group_relationship'],
+      ['deadline_reminder', 'group_relationship'],
+    ];
+    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager->expects(self::exactly(count($routes)))
+      ->method('record')
+      ->willReturnCallback(static function (string $uuid, string $type, int $uid, bool $email, string $version) use (&$routes): void {
+        $expected = array_shift($routes);
+        self::assertSame('certificate-uuid', $uuid);
+        self::assertSame($expected[0], $type);
+        self::assertSame(27, $uid);
+        self::assertFalse($email);
+        self::assertSame('v1', $version);
+      });
+    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+
+    foreach ([
+      ['submission', 'lms_answer'],
+      ['course_release', 'group'],
+      ['lesson_release', 'lms_lesson'],
+      ['activity_release', 'lms_activity'],
+      ['feedback', 'comment'],
+      ['deadline', 'group_relationship'],
+      ['deadline_reminder', 'group_relationship'],
+    ] as [$type, $entityType]) {
+      $subscriber->consume($this->event(
+        'lms.' . $type,
+        $entityType,
+        ['notice_type' => $type, 'mail_policy' => 'site_digest'],
+      ));
+    }
+  }
+
+  /**
    * Ignores events owned by other producers.
    */
   public function testOtherModulesCannotUseTheLmsStorageAdapter(): void {

@@ -1,10 +1,23 @@
+## 0.1.0-dev.17 — centralizar todos os produtores de avisos LMS — 2026-10-24
+
+- Submissão, liberação de curso/aula/atividade, feedback e prazos agora
+  publicam `MessengerNoticeEvent` depois de o adapter LMS resolver os
+  destinatários elegíveis. O consumer encaminha todos os tipos suportados ao
+  `LearningNoticeManager`; a persistência Message, deduplicação, fila e digest
+  permanecem no fluxo central existente. Não há gravação direta paralela para
+  esses produtores nem novo storage.
+- Testes do consumer cobrem os sete tipos migrados; Kernel percorre publicação
+  do evento, persistência em Message e replay deduplicado. Unit LMS: 22 testes /
+  119 assertions PASS. Kernel SQLite: 2 testes / 18 assertions PASS, com 2
+  depreciações de annotations upstream em Message. PHPCS Drupal/DrupalPractice
+  PASS. Runtime não revalidado.
+
 ## 0.1.0-dev.16 — consumir eventos pelo contrato compartilhado — 2026-10-24
 
-- Matrícula, certificado, conclusão e avaliação agora publicam envelope mínimo
+- Matrícula, certificado, conclusão e avaliação publicam envelope mínimo
   MessengerNoticeEvent; o consumer LMS verifica módulo/tipo/origem declarados
   e entrega ao LearningNoticeManager, que mantém Message, idempotência, fila e
-  digest existentes. Submissão, feedback, liberação e prazo continuam no
-  caminho anterior enquanto resolvem conjuntos de destinatários no LMS.
+  digest existentes. Submissão, feedback, liberação e prazo migraram no dev.17.
 - Sem nova entidade ou storage. Unit LMS/Messenger: 21 testes / 83 assertions PASS; PHPCS Drupal/DrupalPractice PASS. YAML do serviço parseado. Kernel MariaDB não executado por falta de SIMPLETEST_DB; Runtime não revalidado.
 
 # Changelog — aculta_lms_messenger

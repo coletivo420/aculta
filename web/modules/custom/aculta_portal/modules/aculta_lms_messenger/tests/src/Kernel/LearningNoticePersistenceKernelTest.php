@@ -14,6 +14,9 @@ use Drupal\user\Entity\User;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
+use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_lms_messenger\EventSubscriber\LearningNoticeEventSubscriber;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\NullLogger;
@@ -81,6 +84,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
     );
 
     $first = $manager->record('source-uuid', 'deadline', (int) $learner->id(), FALSE, 'version-one');
@@ -95,6 +99,41 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     self::assertSame('version-one', $first->get('field_aculta_lms_event_version')->value);
     self::assertSame(2, (int) $this->container->get('entity_type.manager')
       ->getStorage('message')->getQuery()->accessCheck(FALSE)->count()->execute());
+  }
+
+  /**
+   * Shared LMS events use existing Message storage and remain deduplicated.
+   */
+  public function testSharedEventPersistsAndDeduplicates(): void {
+    $learner = User::create([
+      'name' => 'lms_event_learner',
+      'mail' => 'lms-event@example.invalid',
+      'status' => 1,
+    ]);
+    $learner->save();
+    $manager = new LearningNoticeManager(
+      $this->container->get('entity_type.manager'),
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DateFormatterInterface::class),
+      $this->createMock(QueueFactory::class),
+      new NullLogger(),
+      $this->createMock(MessengerNoticePublisherInterface::class),
+    );
+    $subscriber = new LearningNoticeEventSubscriber($manager, new NullLogger());
+    $event = new MessengerNoticeEvent(
+      'lms.deadline', 'aculta_lms', 'group_relationship', 'deadline-uuid', 'v1',
+      (int) $learner->id(), 'account', new \DateTimeImmutable('2026-10-24T12:00:00+00:00'),
+      'lms.deadline:deadline-uuid:v1:' . $learner->id(),
+      ['notice_type' => 'deadline', 'mail_policy' => 'site_digest'],
+    );
+
+    $subscriber->consume($event);
+    $subscriber->consume($event);
+
+    $messages = $this->container->get('entity_type.manager')
+      ->getStorage('message')->getQuery()->accessCheck(FALSE)->count()->execute();
+    self::assertSame(1, (int) $messages);
   }
 
   /**

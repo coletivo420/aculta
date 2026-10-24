@@ -1,3 +1,3 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-next_phase: 'F13: Runtime smoke passou; falta revisão visual/acessível com sessão autenticada após aceite do acordo pelo responsável; F16: referências LMS ausentes em respostas e conclusões suprimem avisos sem erro 500; provider real de digest descarta certificado removido e conclusão sem curso; Unit LMS/Messenger 89/482, Kernel 24/772 ([README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md))'
+next_phase: 'Dev.17 centraliza todos os produtores LMS no MessengerNoticeEvent: Unit 22/119, Kernel SQLite round-trip/replay 2/18, PHPCS PASS; Runtime não revalidado. F13: revisão visual/acessível autenticada pendente; F16: referências LMS ausentes e provider de digest seguem cobertos; histórico de validação no [README](web/modules/custom/aculta_portal/modules/aculta_lms_messenger/README.md)'

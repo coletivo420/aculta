@@ -53,7 +53,7 @@ final class ActivityDeadlineReminderWorker extends QueueWorkerBase implements Co
       || !preg_match('/^[a-f0-9]{32}$/', $data['event_version'])) {
       return;
     }
-    $this->notices->recordActivityDeadlineReminderForLearners(
+    $this->notices->publishActivityDeadlineReminderForLearners(
       $data['deadline_uuid'],
       $data['event_version'],
     );
