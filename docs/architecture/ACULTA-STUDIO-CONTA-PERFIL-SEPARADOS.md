@@ -67,6 +67,40 @@ funcionalmente, inclusive depois de aprovado o Studio.
 - `/studio/pessoal/*` não é rota válida, nem recebe redirect.
   A rota pública `/u/{apelido}` permanece inalterada.
 
+## Progresso S-R3-A — integração inicial dos formulários Conta (dev.14)
+
+Em código, `StudioAccountSectionController` compõe os render arrays
+**do mesmo `PortalController` original** nas rotas:
+
+- `/studio/conta/endereco` — edição do mesmo Profile Commerce
+  `authenticated.field_address`, incluindo país BR, Número/S-N e CEP;
+- `/studio/conta/seguranca` — e-mail e confirmação do Portal;
+- `/studio/conta/seguranca/senha` — senha e criação da primeira senha OAuth;
+- `/studio/conta/conexoes` — conexões de autenticação.
+
+O Studio oferece apenas navegação contextual própria; não envolve
+`AccountShellBuilder` nem modifica o shell, os handlers ou os forms
+originais. Os métodos do owner continuam responsáveis por ACL, CSRF,
+campos, submissions e estados de erro. Os formulários privados são
+reutilizados, não copiados.
+
+**A página `/dados` ainda está no Portal legado**: o Profile form atual
+inclui `field_nickname`, e sua cópia integral em Minha Conta Studio
+reintroduziria a mistura entre cadastro privado e perfil público.
+A separação funcional do campo é tarefa S-R3-B/S-R4.
+
+O Portal passou a reconhecer ambos os **route IDs** de endereço, para não
+perder `StreetNumberField`, os builders e o retorno contextual após
+salvar. A Conta legada permanece intocada na raiz `/`, e
+`/minha-conta` HTTP direto continua 404. Os demais destinos
+(Apoio, pedidos, preferências e cadastro) ainda apontam para os owners
+originais neste incremento, sem alegar migração concluída.
+
+**Testes escritos/atualizados, mas não executados**: Unit do controller
+de composição e redirect do endereço, rota/ACL e
+`scripts/validate-account-address.php`. Dev.14 ainda necessita
+PHPUnit/Kernel/Functional e homologação no Runtime/Firefox.
+
 ## Próximas entregas pequenas, sem retirar o legado
 
 1. **S-R3 — Conta Studio:** extrair composição de formulário e navegação
