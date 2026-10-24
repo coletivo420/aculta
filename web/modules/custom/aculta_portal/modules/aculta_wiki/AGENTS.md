@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.74: a prévia Wiki é região viva nomeada com links de navegação; o campo
+  mantém seu role nativo de busca e as setas não são interceptadas. A Unit do
+  builder passa (4/18), a fixture Firefox com o JS local passa (14/14) e o host
+  com código antigo falha 7/35; Runtime não atualizado.
+
 - Dev.73: nomes de input/submit agora vêm do comando WebDriver `computedlabel`
   do Firefox, não só da árvore heurística do script. Confirmado no host de teste:
   `Pesquisar na Wiki420` e `Buscar`; CSS candidato 22/22, agregado Runtime 18/20.

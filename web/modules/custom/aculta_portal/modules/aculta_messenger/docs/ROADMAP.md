@@ -5,6 +5,10 @@
 Documento de planejamento único do submódulo. O estado de execução pertence ao
 Git, aos commits e ao changelog; esta lista registra sequência e critérios de entrega.
 
+Atualização dev.77: a busca de membros usa uma região viva nomeada, com links
+percorridos por Tab e sem semântica combobox. Smoke autenticado do drawer e
+homologação no Runtime continuam pendentes.
+
 Integração com o Fórum: o evento `aculta_forum.comment_subtree_moved` transfere
 avisos agregados completos; testes específicos e smoke visual permanecem
 pendentes. A transferência intencional inclui contagens históricas de respostas

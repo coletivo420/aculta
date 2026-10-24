@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Formulário de busca da Wiki420: rota, limites e valor atual.
+ * Busca Wiki: rota, limites, valor atual e região acessível da prévia.
  */
 #[CoversClass(WikiSearchFormBuilder::class)]
 #[Group('aculta_wiki')]
@@ -80,6 +80,9 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame('/wiki/busca/previa', $build['q']['#attributes']['data-preview-url']);
     $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
     $this->assertSame('aculta-wiki-search-preview', $build['preview']['#attributes']['id']);
+    $this->assertSame('region', $build['preview']['#attributes']['role']);
+    $this->assertSame('Prévia dos resultados da busca', $build['preview']['#attributes']['aria-label']);
+    $this->assertSame('polite', $build['preview']['#attributes']['aria-live']);
     $this->assertTrue($build['preview']['#attributes']['hidden']);
   }
 

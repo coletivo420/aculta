@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.74`: prévia da busca usa região viva nomeada; o campo fica como
+  searchbox nativo e links são percorridos por Tab. Unit 4/18 e fixture Firefox
+  do JS local 14/14 passam. No Runtime antigo, o smoke integrado fez 28/35: ele
+  ainda serve a semântica combobox incorreta e submit fora da viewport; atualização
+  e homologação pendentes.
+
 - `0.1.0-dev.73`: nome acessível do campo e do submit é obtido via WebDriver
   `computedlabel` do Firefox; o host de teste reportou “Pesquisar na Wiki420” e
   “Buscar”. O candidato segue 22/22, agregado Runtime 18/20.

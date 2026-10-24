@@ -1,3 +1,10 @@
+## 0.1.1-dev.77 — busca de membros com região viva nomeada
+
+- Prévia de membros agora é uma região `aria-live` com rótulo; seus resultados
+  são links que se percorrem com Tab, não opções selecionáveis de combobox.
+- Runtime e smoke autenticado do drawer permanecem pendentes; nenhum dado ou
+  mensagem foi criado.
+
 ## 0.1.1-dev.76 — caracterizar idempotência dos avisos do Fórum — 2026-10-22
 
 - XK-C2: novo teste Kernel `ForumNoticeIdempotencyKernelTest` (8 testes / 148
@@ -851,4 +858,11 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Assina `aculta_forum.comment_subtree_moved` e transfere registros completos `forum_resposta` da origem para o tópico destino. Ao colidir com registro do mesmo usuário/tipo no destino, soma contadores e mantém o maior `ultimo_comentario`. Unit do assinante: 2 testes / 4 assertions PASS.
 - A transferência ocorre na transação do mover; tópicos de destino não publicados, incompatíveis ou inacessíveis não recebem os registros. A decisão funcional aceita que o agregado inclua respostas não movidas.
 - Dependência explícita de `aculta_forum`. Nenhum envio retroativo de e-mail é disparado.
+
+## 0.1.1-dev.77 — busca de membros com região viva nomeada
+
+- Prévia de membros agora é uma região `aria-live` com rótulo; seus resultados
+  são links que se percorrem com Tab, não opções selecionáveis de combobox.
+- Runtime e smoke autenticado do drawer permanecem pendentes; nenhum dado ou
+  mensagem foi criado.
 

@@ -38,6 +38,13 @@ ESR, em 1280 e 320 CSS px. Confere foco visível, alcance do campo e do botão d
 pesquisa; digita um termo sem enviar o formulário. Continua sendo somente GET,
 sem login ou escrita persistente.
 
+Antes do host, o script carrega o `search-preview.js` do worktree numa fixture
+DOM em ambas as larguras: verifica o role searchbox, a região live nomeada, as
+setas sem roubo de foco e a ordem Tab dos links ao submit. A fixture testa o
+comportamento local sem provar o render array/configuração completa do Drupal.
+Use `WIKI_CANDIDATE_ONLY=1` para executar apenas essa parte; o padrão também
+roda a integração pública no host definido por `WIKI_BASE_URL`.
+
 ```sh
 cd /home/piradopirata/projetos/aculta
 SUITE_OUT=/tmp/aculta-wiki-keyboard DISPLAY=:0 \

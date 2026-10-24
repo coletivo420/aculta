@@ -62,6 +62,8 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         '#attributes' => [
           'id' => 'aculta-wiki-search-preview',
           'data-portal-ui' => 'search-preview',
+          'role' => 'region',
+          'aria-label' => (string) $this->translation->translate('Prévia dos resultados da busca'),
           'aria-live' => 'polite',
           'hidden' => TRUE,
         ],

@@ -12,6 +12,17 @@ homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
+### Incremento dev.74 — semântica e teclado da prévia
+
+A prévia assíncrona é uma região `aria-live=polite` nomeada, controlada pelo
+searchbox nativo; seus itens são links que continuam na sequência Tab. O JS não
+atribui `role=combobox`/`aria-autocomplete` nem captura setas de edição. A Unit
+do builder passou (4/18); lint PHP/JS passou. A fixture do Firefox com o JS local
+passou 14/14. No Runtime anterior à mudança, a integração fez 28/35 e encontrou
+role combobox incorreto, região sem nome e submit fora da viewport; o novo
+markup/script não foram publicados. Referência
+de padrão: [WAI-ARIA APG Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).
+
 ### Incremento dev.73 — nome acessível do browser
 
 O smoke de teclado usa o comando WebDriver `computedlabel` do Firefox para o

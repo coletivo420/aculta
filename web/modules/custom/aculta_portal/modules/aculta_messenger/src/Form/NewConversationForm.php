@@ -91,7 +91,13 @@ final class NewConversationForm extends FormBase {
       $form['preview'] = [
         '#type' => 'container',
         '#weight' => -9,
-        '#attributes' => ['id' => 'aculta-new-conversation-preview', 'data-portal-ui' => 'search-preview', 'aria-live' => 'polite'],
+        '#attributes' => [
+          'id' => 'aculta-new-conversation-preview',
+          'data-portal-ui' => 'search-preview',
+          'role' => 'region',
+          'aria-label' => $this->t('Resultados de membros'),
+          'aria-live' => 'polite',
+        ],
         'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
       ];
     }

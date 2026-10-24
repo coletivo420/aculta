@@ -58,7 +58,13 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
     ];
     $form['preview'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => 'aculta-search-preview', 'data-portal-ui' => 'search-preview', 'aria-live' => 'polite'],
+      '#attributes' => [
+        'id' => 'aculta-search-preview',
+        'data-portal-ui' => 'search-preview',
+        'role' => 'region',
+        'aria-label' => $this->t('Prévia dos resultados da busca'),
+        'aria-live' => 'polite',
+      ],
       'hint' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']), '#value' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])],
     ];
     $form['actions'] = ['#type' => 'actions', 'submit' => ['#type' => 'submit', '#value' => $this->t('Buscar')]];

@@ -5,6 +5,13 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
+## Busca com prévia
+
+`aculta_portal/search-preview` atualiza uma região viva nomeada com links de
+navegação. O campo permanece um searchbox nativo; Tab percorre os resultados e
+as setas continuam disponíveis para edição do texto. Não declarar esses links
+como opções de combobox.
+
 ## Fronteira
 
 ```text

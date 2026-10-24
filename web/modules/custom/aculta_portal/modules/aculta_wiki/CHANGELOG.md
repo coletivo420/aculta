@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.74 — semântica da prévia de busca como navegação
+
+- O container da prévia recebe `role=region`, nome acessível e `aria-live`;
+  o input conserva seu papel nativo de searchbox.
+- `search-preview.js` não declara combobox nem captura setas: os resultados são
+  links de navegação percorridos com Tab; o formulário GET permanece o fallback.
+- Unit de `WikiSearchFormBuilderTest`: 4 testes / 18 assertions; PHP lint e
+  `node --check` passam. A fixture Firefox do JS do worktree passou 14/14. O
+  host com código antigo passou 28/35: role combobox, região sem nome e submit
+  fora da viewport seguem visíveis até atualizar o Runtime.
+
 ## 0.1.0-dev.73 — nome acessível computado pelo Firefox
 
 - O smoke consulta o nome acessível com WebDriver `computedlabel` para o campo

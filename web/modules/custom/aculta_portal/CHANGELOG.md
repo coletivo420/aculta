@@ -1,3 +1,15 @@
+## 0.4.1-dev.23 — prévias de busca como regiões de navegação
+
+- O comportamento compartilhado mantém o input search nativo e apresenta as
+  respostas em regiões `aria-live` nomeadas. Como as respostas são links de
+  navegação, remove a semântica combobox e a captura das setas de edição; Tab
+  percorre os links. Wiki, busca popup e busca de membros declaram os rótulos
+  de suas regiões.
+- JavaScript passou `node --check`; markup Wiki passou Unit 4/18; fixture Firefox
+  do JS local passou 14/14. Browser no Runtime antigo identificou semântica
+  combobox/região antiga e submit fora da viewport (28/35). Nenhum Runtime foi
+  alterado.
+
 ## 0.4.1-dev.22 — assumir o bundle compartilhado `remote_video`
 
 - `aculta_portal` fornece a configuração default do Media `remote_video`, seu
