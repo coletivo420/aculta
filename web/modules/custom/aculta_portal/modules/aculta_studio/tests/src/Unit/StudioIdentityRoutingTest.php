@@ -51,7 +51,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
-    self::assertSame('aculta_studio.hub_preview_controller:page',
+    self::assertSame('aculta_studio.hub_controller:page',
       $routes['aculta_studio.hub']['defaults']['_controller']);
     self::assertSame('aculta_studio.marley_controller:page',
       $routes['aculta_studio.home']['defaults']['_controller']);
