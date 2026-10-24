@@ -1,3 +1,12 @@
+## 0.1.1-dev.195 — carregar revisões da Wiki em lote no contador
+
+O contador não lido consulta UUIDs em lote e carrega as revisões referenciadas por revisão. Mantém a validação da fonte
+atual, revisão padrão, estado editorial, titularidade, permissões do revisor e acesso a cada revisão.
+
+Validação: Unit Messenger + Integration Unit LMS/Wiki/Loja/Doações **225/1.697 PASS**; `WikiNoticeManagerTest` **3/45 PASS**; `WikiNoticePersistenceKernelTest` **7/129 PASS** no MariaDB dedicado
+(2 deprecações de discovery Core/contrib e 3 notices PHPUnit preexistentes); PHPCS Drupal/DrupalPractice e PHP lint
+PASS. Runtime não executado.
+
 ## 0.1.1-dev.194 — carregar fontes de Doação em lote no contador
 
 O contador de avisos não lidos agrupa os pedidos e pagamentos aprovados referenciados pelas mensagens pendentes. Revalida

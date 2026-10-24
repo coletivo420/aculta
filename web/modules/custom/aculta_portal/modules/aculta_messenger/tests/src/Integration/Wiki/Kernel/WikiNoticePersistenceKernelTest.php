@@ -223,6 +223,28 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * Batch revision resolution counts only current, accessible review notices.
+   */
+  public function testUnreadCountBatchResolvesReviewRevisionsAndRevocation(): void {
+    $reviewer = $this->createReviewer('wiki_batch_reviewer');
+    $uid = (int) $reviewer->id();
+    $entryA = $this->createReviewEntry($reviewer);
+    $entryB = $this->createReviewEntry($reviewer);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
+    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    self::assertNotNull($manager->record($this->reviewEvent($uid, $entryA)));
+    self::assertNotNull($manager->record($this->reviewEvent($uid, $entryB)));
+
+    self::assertSame(2, $manager->unreadCount($uid));
+
+    $entryA->setNewRevision(TRUE);
+    $entryA->set('moderation_state', 'published');
+    $entryA->save();
+    self::assertSame(1, $manager->unreadCount($uid), 'A superseded review revision is not counted after access changes.');
+  }
+
+  /**
    * Digest includes and acknowledges a currently eligible review notice.
    */
   public function testReviewDigestIncludesAndAcknowledgesEligibleMessage(): void {

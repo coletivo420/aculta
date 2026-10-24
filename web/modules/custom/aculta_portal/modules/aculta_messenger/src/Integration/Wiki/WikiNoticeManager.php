@@ -12,6 +12,7 @@ use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
@@ -202,15 +203,169 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return 0;
     }
-    $ids = $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+    $messageStorage = $this->entityTypeManager->getStorage('message');
+    $ids = $messageStorage->getQuery()->accessCheck(FALSE)
       ->condition('template', self::TEMPLATE)->condition('uid', $uid)->condition(self::READ_FIELD, 0)->execute();
+    $messages = array_filter(
+      $messageStorage->loadMultiple($ids),
+      static fn(mixed $message): bool => $message instanceof MessageInterface,
+    );
+    $reviewTargets = [];
+    $proposalTargets = [];
+    $envelopes = [];
+    foreach ($messages as $message) {
+      $envelope = $this->noticeEnvelope($message, $account);
+      if ($envelope === NULL) {
+        continue;
+      }
+      $key = $envelope['uuid'] . ':' . $envelope['revision_id'];
+      $envelopes[] = [$envelope['type'], $key];
+      if ($envelope['type'] === 'review_requested') {
+        $reviewTargets[$key] = ['uuid' => $envelope['uuid'], 'revision_id' => $envelope['revision_id']];
+      }
+      else {
+        $proposalTargets[$key] = ['uuid' => $envelope['uuid'], 'revision_id' => $envelope['revision_id']];
+      }
+    }
+    if ($envelopes === []) {
+      return 0;
+    }
+
+    $resolvedReviews = $this->resolveReviewTargets($reviewTargets, $account);
+    $resolvedProposals = $this->resolveProposalTargets($proposalTargets, $account);
     $count = 0;
-    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
-      if ($message instanceof MessageInterface && $this->resolve($message, $account) !== NULL) {
+    foreach ($envelopes as [$type, $key]) {
+      if (($type === 'review_requested' && isset($resolvedReviews[$key]))
+        || ($type === 'proposal_outcome' && isset($resolvedProposals[$key]))) {
         $count++;
       }
     }
     return $count;
+  }
+
+  /**
+   * Extracts a valid Wiki Message source envelope for the current account.
+   *
+   * @return array{type: string, uuid: string, revision_id: int}|null
+   *   Source identifiers, or NULL when ownership or event data is invalid.
+   */
+  private function noticeEnvelope(MessageInterface $message, AccountInterface $account): ?array {
+    if (!$account->isAuthenticated() || (int) $message->getOwnerId() !== (int) $account->id()
+      || $message->bundle() !== self::TEMPLATE) {
+      return NULL;
+    }
+    $type = (string) $message->get(self::EVENT_FIELD)->value;
+    $uuid = (string) $message->get(self::SOURCE_FIELD)->value;
+    $revisionId = (int) $message->get(self::VERSION_FIELD)->value;
+    if (!in_array($type, ['review_requested', 'proposal_outcome'], TRUE) || $uuid === '' || $revisionId < 1) {
+      return NULL;
+    }
+    return ['type' => $type, 'uuid' => $uuid, 'revision_id' => $revisionId];
+  }
+
+  /**
+   * Batch-loads current Wiki nodes and their referenced revisions.
+   *
+   * @param array<string, array{uuid: string, revision_id: int}> $targets
+   *   Review targets keyed by UUID and revision ID.
+   * @param \Drupal\user\UserInterface $account
+   *   Active recipient whose reviewer permissions and access must be checked.
+   *
+   * @return array<string, bool>
+   *   Eligible target keys.
+   */
+  private function resolveReviewTargets(array $targets, UserInterface $account): array {
+    if ($targets === [] || !$account->hasPermission('edit any wiki_entry content')
+      || (!$account->hasPermission('use wiki_editorial transition review_to_draft')
+        && !$account->hasPermission('use wiki_editorial transition review_to_published'))) {
+      return [];
+    }
+    $resolved = $this->domainPurposes->runInPurpose('wiki', function () use ($targets, $account): array {
+      $storage = $this->entityTypeManager->getStorage('node');
+      if (!$storage instanceof RevisionableStorageInterface) {
+        return [];
+      }
+      $query = $storage->getQuery()->accessCheck(FALSE)
+        ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN')
+        ->condition('type', 'wiki_entry');
+      $currentNodes = $storage->loadMultiple($query->execute());
+      $currentUuids = [];
+      foreach ($currentNodes as $node) {
+        $currentUuids[$node->uuid()] = TRUE;
+      }
+      $revisionIds = [];
+      foreach ($targets as $target) {
+        if (isset($currentUuids[$target['uuid']])) {
+          $revisionIds[$target['revision_id']] = $target['revision_id'];
+        }
+      }
+      $revisions = $revisionIds === [] ? [] : $storage->loadMultipleRevisions(array_values($revisionIds));
+      $resolved = [];
+      foreach ($targets as $key => $target) {
+        $node = $revisions[$target['revision_id']] ?? NULL;
+        if (!$node || $node->uuid() !== $target['uuid'] || (int) $node->getRevisionId() !== $target['revision_id']
+          || !$node->isDefaultRevision() || !$node->hasField('moderation_state')
+          || $node->get('moderation_state')->value !== 'review'
+          || !$node->access('view', $account, TRUE)->isAllowed()
+          || !$node->access('view revision', $account, TRUE)->isAllowed()) {
+          continue;
+        }
+        if ($this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]) !== NULL) {
+          $resolved[$key] = TRUE;
+        }
+      }
+      return $resolved;
+    });
+    return is_array($resolved) ? $resolved : [];
+  }
+
+  /**
+   * Batch-loads current Wiki proposals and their referenced revisions.
+   *
+   * @param array<string, array{uuid: string, revision_id: int}> $targets
+   *   Proposal targets keyed by UUID and revision ID.
+   * @param \Drupal\user\UserInterface $account
+   *   Active recipient whose authorship and access must be checked.
+   *
+   * @return array<string, bool>
+   *   Eligible target keys.
+   */
+  private function resolveProposalTargets(array $targets, UserInterface $account): array {
+    if ($targets === []) {
+      return [];
+    }
+    $storage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return [];
+    }
+    $query = $storage->getQuery()->accessCheck(FALSE)
+      ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN');
+    $currentProposals = $storage->loadMultiple($query->execute());
+    $currentUuids = [];
+    foreach ($currentProposals as $proposal) {
+      $currentUuids[$proposal->uuid()] = TRUE;
+    }
+    $revisionIds = [];
+    foreach ($targets as $target) {
+      if (isset($currentUuids[$target['uuid']])) {
+        $revisionIds[$target['revision_id']] = $target['revision_id'];
+      }
+    }
+    $revisions = $revisionIds === [] ? [] : $storage->loadMultipleRevisions(array_values($revisionIds));
+    $resolved = [];
+    foreach ($targets as $key => $target) {
+      $proposal = $revisions[$target['revision_id']] ?? NULL;
+      if (!$account->isAuthenticated() || !$proposal || $proposal->uuid() !== $target['uuid']
+        || (int) $proposal->getRevisionId() !== $target['revision_id'] || !$proposal->isDefaultRevision()
+        || (int) $proposal->getOwnerId() !== (int) $account->id()
+        || !$proposal->access('view', $account, TRUE)->isAllowed()) {
+        continue;
+      }
+      if ($this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]) !== NULL) {
+        $resolved[$key] = TRUE;
+      }
+    }
+    return $resolved;
   }
 
   /**
