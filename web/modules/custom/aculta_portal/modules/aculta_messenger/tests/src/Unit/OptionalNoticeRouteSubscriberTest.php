@@ -31,6 +31,7 @@ final class OptionalNoticeRouteSubscriberTest extends TestCase {
       'aculta_messenger.lms_notice_open',
       'aculta_messenger.wiki_notice_open',
       'aculta_messenger.commerce_notice_open',
+      'aculta_messenger.donation_notice_open',
       'unrelated.route',
     ] as $routeName) {
       $routes->add($routeName, new Route('/' . $routeName));
@@ -42,6 +43,7 @@ final class OptionalNoticeRouteSubscriberTest extends TestCase {
     self::assertNull($routes->get('aculta_messenger.lms_notice_open'));
     self::assertTrue($routes->get('aculta_messenger.wiki_notice_open') instanceof Route);
     self::assertNull($routes->get('aculta_messenger.commerce_notice_open'));
+    self::assertNull($routes->get('aculta_messenger.donation_notice_open'));
     self::assertTrue($routes->get('unrelated.route') instanceof Route);
   }
 

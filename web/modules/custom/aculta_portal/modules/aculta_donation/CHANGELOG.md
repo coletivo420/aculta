@@ -19,6 +19,18 @@
 
 # Changelog — aculta_donation
 
+## 0.1.0-dev.25 — publicar avisos financeiros no Messenger — 2026-10-24
+
+- `DonationNoticeEventPublisher` publica o pedido criado e cada pagamento
+  aprovado como eventos separados no contrato central; recorrência produz um
+  evento por cobrança aprovada. Publicação requer conta ativa e pedido/item de
+  Doação reconhecidos. O evento de pedido não afirma que houve pagamento.
+- Recibo nativo de Commerce é suprimido para conta registrada apenas após a
+  publicação do aviso central; convidados e falha de publicação preservam o
+  recibo Commerce como fallback. Nenhum envio SMTP foi adicionado ao módulo.
+- Unit da ponte: 3 testes / 21 assertions PASS, incluindo exclusão de
+  pagamento pendente. Runtime e sandbox financeiro não executados; versão Dev.
+
 ## 0.1.0-dev.20 — limite superior do valor da doação rápida — 2026-10-19
 
 - `/donate/{amount}/now` aceita no máximo 9 dígitos (`[1-9]\d{0,8}`). Antes, qualquer inteiro positivo era aceito.

@@ -19,6 +19,7 @@ function aculta_messenger_queue_info_alter(array &$definitions): void {
     ],
     'aculta_wiki' => ['aculta_wiki_messenger_email'],
     'aculta_commerce' => ['aculta_commerce_messenger_email'],
+    'aculta_donation' => ['aculta_messenger_donation_email'],
   ];
   foreach ($optional_workers as $module => $worker_ids) {
     if (!$module_handler->moduleExists($module)) {

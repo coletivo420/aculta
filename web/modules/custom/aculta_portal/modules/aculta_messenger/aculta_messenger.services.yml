@@ -169,3 +169,9 @@ services:
   aculta_messenger.commerce_notice_open_controller:
     class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
     public: true
+  aculta_messenger.donation_notice_access:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true
+  aculta_messenger.donation_notice_open_controller:
+    class: Drupal\aculta_messenger\Integration\UnavailableNoticeAdapterRouteHandler
+    public: true

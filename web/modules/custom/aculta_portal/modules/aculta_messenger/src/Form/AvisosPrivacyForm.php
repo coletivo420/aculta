@@ -80,6 +80,13 @@ final class AvisosPrivacyForm {
         '#options' => $this->emailModeOptions(),
         '#default_value' => $this->preferencias->emailMode($uid, 'loja'),
       ],
+      'email_doacao' => [
+        '#type' => 'select',
+        '#title' => new TranslatableMarkup('E-mails de doações'),
+        '#description' => new TranslatableMarkup('Avisos no site continuam ativos. Você pode receber aviso quando o pedido for criado e quando cada pagamento for aprovado; escolha sem e-mail, resumo diário ou envio direto. O resumo diário também exige o opt-in geral do Messenger; administradores podem limitar a entrega pelo ACULTA Mailer.'),
+        '#options' => $this->emailModeOptions(),
+        '#default_value' => $this->preferencias->emailMode($uid, 'doacao'),
+      ],
     ];
   }
 
@@ -103,7 +110,7 @@ final class AvisosPrivacyForm {
     if (is_string($mode)) {
       $this->preferencias->saveEmailMode((int) $this->currentUser->id(), 'aprendizagem', $mode);
     }
-    foreach (['wiki', 'loja'] as $category) {
+    foreach (['wiki', 'loja', 'doacao'] as $category) {
       $mode = $formState->getValue('email_' . $category);
       if (is_string($mode)) {
         $this->preferencias->saveEmailMode((int) $this->currentUser->id(), $category, $mode);

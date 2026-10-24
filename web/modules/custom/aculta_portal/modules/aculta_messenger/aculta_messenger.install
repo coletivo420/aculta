@@ -65,3 +65,10 @@ function aculta_messenger_update_10002(): void {
 function aculta_messenger_update_10003(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+/**
+ * Installs defaults for the centralized ACULTA Donation adapter.
+ */
+function aculta_messenger_update_10004(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}

@@ -25,7 +25,7 @@ Princípios:
 | --- | --- | --- |
 | Core/contrib | `private_message`, `message*`, `flag`, `site_alert` | Threads, mensagens, bloqueio (`private_message.ban_manager`), notificações, avisos, leitura. |
 | `aculta_user` | `web/modules/custom/aculta_portal/modules/aculta_user/` | `FriendshipManager`, `aculta_friendship`, página `/u/`, hook `aculta_user_public_profile_actions`. |
-| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos e todos os consumers/adapters de LMS, Wiki, Fórum e Loja. |
+| `aculta_messenger` | `web/modules/custom/aculta_portal/modules/aculta_messenger/` | Rotas, controladores, formulários, serviços, validação, hooks, contadores, avisos administrativos e todos os consumers/adapters de LMS, Wiki, Fórum, Loja e Doações. |
 | `aculta420` | `web/themes/custom/aculta420/` | SDC `messenger-*`, `messenger-drawers.js`, `counters.js`, tokens `data-portal-ui`, CSS do painel. |
 
 Dependências declaradas do submódulo: `aculta_portal:aculta_portal`, `aculta_portal:aculta_user`, `private_message`, `message`, `message_notify`, `message_subscribe`.

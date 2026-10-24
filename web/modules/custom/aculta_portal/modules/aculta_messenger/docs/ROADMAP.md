@@ -12,6 +12,7 @@ A decisão normativa está em [ARCHITECTURE.md](ARCHITECTURE.md): Messenger cent
 | LMS | Matrícula, certificado, conclusão, avaliação/feedback, conteúdo e prazo | Entidades/Group LMS; Message | Site obrigatório; preferência off/direto/digest | Consumer central e publisher LMS; Kernel 2/18 PASS nesta revisão; Runtime pendente. |
 | Wiki | Revisão editorial e resultado de proposta, destinatários elegíveis do workflow | Workflow Wiki; Message | Site obrigatório; preferência off/direto/digest | Consumer central e publisher Wiki; Kernel 2/23 PASS nesta revisão; Runtime pendente. |
 | Loja | `store.order_placed` para cliente ativo conforme tipo de pedido Loja | Drupal Commerce Order; Message | Site obrigatório; categoria `loja` off/direto/digest | Consumer central e publisher Commerce; Kernel 2/23 nesta revisão; recibo para convidados/fallback. |
+| Doações | `donation.order_placed` e `donation.payment_approved`; o segundo ocorre uma vez para cada cobrança aprovada, inclusive recorrente | Commerce Order/Payment; Message | Site obrigatório; categoria `doacao` off/direto/digest | Consumer central; publisher `aculta_donation`; Kernel 2/22 PASS para persistência/dedupe e acesso; recibo Commerce suprimido apenas após publicar pedido para conta registrada, com fallback em falha/convidado. Runtime e sandbox pendentes. |
 | User | Pedido/aceite de amizade | Entidade/workflow `aculta_friendship`; Message | Message Notify e preferência existente; idempotência por transição | `FriendshipManager`; Kernel integrado pendente. |
 | Private Message | Nova mensagem privada; destinatários elegíveis exceto remetente | Private Message/Message | Notificação nativa e Mailer segundo preferência | Thread access, bloqueio e destinatário revalidados; Unit existente. |
 
@@ -37,9 +38,9 @@ Preservar `seguir_topico`, F-D21/F-D42, `aculta_aviso`, leitura, digest e amizad
 
 LMS publica eventos educacionais; Messenger persiste avisos e define canais. Aviso no site é obrigatório. Membro e administradores configuram e-mail desligado, direto ou digest/resumo, sujeito às regras do Mailer. Cursos, matrículas e Groups continuam no LMS; sem chat de turma ou inbox paralela. Unit integrada e Kernel LMS PASS; completar revogação e Runtime.
 
-## M5 — Wiki, Loja e demais (0.3.0)
+## M5 — Wiki, Loja, Doações e demais (0.3.0)
 
-Consumers Wiki/Loja centralizados em Message. Site obrigatório; e-mail off/direto/digest; Mailer transporta. Unit integrada 36/228 e Kernels LMS/Wiki/Loja 6/64 PASS nesta revisão. Recibo nativo permanece para convidados e fallback. Completar workflows completos, concorrência e Runtime. Revista segue após inventário de workflows/destinatários reais.
+Consumers Wiki/Loja/Doações centralizados em Message. Site obrigatório; e-mail off/direto/digest; Mailer transporta. Kernels LMS/Wiki/Loja anteriores 6/64 PASS; Donation Kernel 2/22 PASS, incluindo deduplicação, pagamentos distintos e rejeição de pedido inacessível. Donation direct Mailer worker 2/27 PASS, cobrindo envio imediato e opt-out revalidado. Recibo nativo permanece para convidados e fallback. Completar digest/revogação, concorrência, update/configuração instalada e Runtime. Revista segue após inventário de workflows/destinatários reais.
 
 ## M6 — Experiência e administração (0.3.0)
 
@@ -56,3 +57,4 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 - PHPCS Drupal/DrupalPractice e lint das classes migradas aprovados após fechamento.
 - Runtime Homelab (`toca`, Drupal 11.4.10, `aculta_runtime`): cache rebuild completo após correção dos handlers de rota e conflito de propriedades FormBase; smoke HTTP: principal, Fórum, cursos, Wiki e Loja 200; Conta 302 esperado. Sem update de banco/configuração, e-mail real ou alteração de dados.
 - Runtime é smoke de desenvolvimento, não homologação Alpha. PHP CLI é 8.4.27; não comprova ambiente PHP 8.5 exigido no desenvolvimento.
+- Doação: Unit ponte financeira 3/21, provider opcional (incluído em Units Messenger 92/455) e worker Mailer 2/27 PASS; Kernel MariaDB 2/22 PASS. Rodada Forum/Wiki/Donation 29/605 PASS com duas deprecações de discovery Message. PHPCS, lint, oito YAMLs de configuração e PROJECT-STATUS-INDEX PASS. Não houve Runtime, transporte real ou teste financeiro sandbox.

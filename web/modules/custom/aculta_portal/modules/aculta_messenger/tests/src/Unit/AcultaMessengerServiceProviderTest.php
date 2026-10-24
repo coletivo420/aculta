@@ -27,6 +27,7 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertFalse($container->hasDefinition('aculta_messenger.lms_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.wiki_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.commerce_notice_manager'));
+    self::assertFalse($container->hasDefinition('aculta_messenger.donation_notice_manager'));
   }
 
   /**
@@ -42,6 +43,19 @@ final class AcultaMessengerServiceProviderTest extends TestCase {
     self::assertTrue($container->hasDefinition('aculta_messenger.wiki_notice_event_subscriber'));
     self::assertFalse($container->hasDefinition('aculta_messenger.lms_notice_manager'));
     self::assertFalse($container->hasDefinition('aculta_messenger.commerce_notice_manager'));
+  }
+
+  /**
+   * Donation services register the shared kernel consumer only when enabled. */
+  public function testDonationAdapterFollowsProducerServicePresence(): void {
+    $container = new ContainerBuilder();
+    $container->setDefinition('Drupal\\aculta_donation\\Hook\\DonationNoticeEventPublisher', new Definition());
+
+    (new AcultaMessengerServiceProvider())->alter($container);
+
+    self::assertTrue($container->hasDefinition('aculta_messenger.donation_notice_manager'));
+    self::assertTrue($container->hasDefinition('aculta_messenger.donation_notice_event_consumer'));
+    self::assertFalse($container->hasDefinition('aculta_messenger.lms_notice_manager'));
   }
 
 }

@@ -11,6 +11,13 @@ use Drupal\aculta_messenger\Integration\Commerce\Controller\CommerceOrderNoticeO
 use Drupal\aculta_messenger\Integration\Commerce\EventSubscriber\CommerceOrderNoticeConsumer;
 use Drupal\aculta_messenger\Integration\Commerce\Hook\CommerceOrderNoticeHooks;
 use Drupal\aculta_messenger\Integration\Commerce\Mail\CommerceOrderNoticeMailType;
+use Drupal\aculta_messenger\Integration\Donation\AccessDonationNotice;
+use Drupal\aculta_messenger\Integration\Donation\Controller\DonationNoticeOpenController;
+use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
+use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
+use Drupal\aculta_messenger\Integration\Donation\Hook\DonationNoticeHooks;
+use Drupal\aculta_messenger\Integration\Donation\Mail\DonationNoticeMailType;
 use Drupal\aculta_messenger\Integration\Lms\Access\LearningNoticeAccessCheck;
 use Drupal\aculta_messenger\Integration\Lms\Controller\LearningNoticeOpenController;
 use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventSubscriber;
@@ -61,6 +68,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
 
     if ($container->hasDefinition('aculta_commerce.checkout_provider')) {
       $this->registerCommerceAdapter($container);
+    }
+
+    if ($container->hasDefinition('Drupal\\aculta_donation\\Hook\\DonationNoticeEventPublisher')) {
+      $this->registerDonationAdapter($container);
     }
   }
 
@@ -178,6 +189,43 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition(CommerceOrderNoticeMailType::class, new Definition(
       CommerceOrderNoticeMailType::class,
+      [new Reference('string_translation')],
+    ))->addTag('aculta_mailer.type');
+  }
+
+  /**
+   * Registers the optional ACULTA Donation adapter. */
+  private function registerDonationAdapter(ContainerBuilder $container): void {
+    $container->setDefinition('aculta_messenger.donation_notice_manager', new Definition(
+      DonationNoticeManager::class,
+      [
+        new Reference('entity_type.manager'),
+        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_messenger.aviso_preferencias'),
+        new Reference('queue'),
+        new Reference('lock.persistent'),
+        new Reference('logger.channel.aculta_messenger'),
+      ],
+    ))->addTag('aculta_messenger.aviso_digest_provider');
+    $container->setAlias(DonationNoticeManagerInterface::class, 'aculta_messenger.donation_notice_manager');
+    $container->setDefinition('aculta_messenger.donation_notice_event_consumer', new Definition(
+      DonationNoticeEventConsumer::class,
+      [new Reference('aculta_messenger.donation_notice_manager')],
+    ))->addTag('event_subscriber');
+    $container->setDefinition(DonationNoticeHooks::class, new Definition(
+      DonationNoticeHooks::class,
+      [new Reference('aculta_messenger.donation_notice_manager')],
+    ));
+    $container->setDefinition('aculta_messenger.donation_notice_access', new Definition(
+      AccessDonationNotice::class,
+      [new Reference('aculta_messenger.donation_notice_manager'), new Reference('current_user')],
+    ))->setPublic(TRUE);
+    $container->setDefinition('aculta_messenger.donation_notice_open_controller', new Definition(
+      DonationNoticeOpenController::class,
+      [new Reference('aculta_messenger.donation_notice_manager'), new Reference('current_user')],
+    ))->setPublic(TRUE);
+    $container->setDefinition(DonationNoticeMailType::class, new Definition(
+      DonationNoticeMailType::class,
       [new Reference('string_translation')],
     ))->addTag('aculta_mailer.type');
   }

@@ -1,4 +1,14 @@
 services:
+  Drupal\aculta_donation\Hook\DonationNoticeEventPublisher:
+    class: Drupal\aculta_donation\Hook\DonationNoticeEventPublisher
+    arguments: ['@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_donation']
+    tags:
+      - { name: event_subscriber }
+  aculta_donation.notice_event_publisher: '@Drupal\aculta_donation\Hook\DonationNoticeEventPublisher'
+  logger.channel.aculta_donation:
+    parent: logger.channel_base
+    arguments: ['aculta_donation']
+
   aculta_donation.campaigns:
     class: Drupal\aculta_donation\Campaign\DonationCampaignSelector
     arguments: ['@entity_type.manager', '@config.factory']

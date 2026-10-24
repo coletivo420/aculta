@@ -48,13 +48,16 @@ final class LifecycleHooks {
     if ($this->queueFactory->get('aculta_messenger_message_subscribe_event')->numberOfItems() > 0) {
       throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while subscription events remain queued. Process or clear the queue explicitly first.');
     }
+    if ($this->queueFactory->get('aculta_messenger_donation_email')->numberOfItems() > 0) {
+      throw new \RuntimeException('ACULTA Messenger cannot be uninstalled while Donation notice emails remain queued. Process or clear the queue explicitly first.');
+    }
 
     // A failed install can leave the module enabled before all upstream entity
     // storage definitions exist. Check each storage independently.
     if ($this->entityDefinitionUpdateManager->getEntityType('message') !== NULL) {
       $count = $this->entityTypeManager->getStorage('message')->getQuery()
         ->accessCheck(FALSE)
-        ->condition('template', ['aculta_msg_private_notification', 'aculta_msg_forum_published'], 'IN')
+        ->condition('template', ['aculta_msg_private_notification', 'aculta_msg_forum_published', 'aculta_msg_donation_notice'], 'IN')
         ->count()
         ->execute();
       if ($count > 0) {

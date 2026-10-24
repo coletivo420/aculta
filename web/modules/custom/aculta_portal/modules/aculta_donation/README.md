@@ -1,6 +1,6 @@
 # ACULTA Doações (`aculta_donation`)
 
-Submódulo do `aculta_portal` (versão 0.1.0-dev.18). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
+Submódulo do `aculta_portal` (versão 0.1.0-dev.25). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
 (port próprio do `commerce_donation_flow`, que saiu do Composer), blocos, painéis e configuração.
 
 ## O que entrega
@@ -23,11 +23,17 @@ plugins e campos continuam estáveis quando usados por configurações exportada
 porque a dependência de configuração Drupal é validada pelo módulo provider durante importações.
 - **Abas** da seção Doações: Campanhas, Valores padrão (`aculta_portal.support_settings`) e Fluxo de doação.
 
+## Avisos de pedidos e pagamentos
+
+O `aculta_donation` publica no contrato compartilhado `MessengerNoticeEvent` dois eventos distintos: `donation.order_placed` informa que o pedido foi criado e pode estar aguardando pagamento; `donation.payment_approved` confirma a aprovação financeira. Cada entidade Commerce Payment aprovada gera seu próprio evento, inclusive cada cobrança de assinatura recorrente. Os avisos do site permanecem obrigatórios; o Messenger aplica preferência individual off/direto/digest e o ACULTA Mailer aplica a política administrativa e realiza o transporte. Pedidos de convidados mantêm o recibo nativo do Commerce. Para contas, o recibo nativo é suprimido somente depois que o evento central do pedido foi publicado; em falha, o recibo Commerce segue como fallback.
+
+O publisher fica neste módulo porque conhece pedido, item, gateway e eventos financeiros; consumer, armazenamento Message, central, preferências, fila e e-mail ficam em `aculta_messenger`. Não são criadas conversas nem armazenamento paralelo. Ver contrato em [`aculta_messenger/docs/ARCHITECTURE.md`](../aculta_messenger/docs/ARCHITECTURE.md) e fase de integração em [`aculta_messenger/docs/ROADMAP.md`](../aculta_messenger/docs/ROADMAP.md).
+
 ## Regras de negócio
 
 - Doações e assinaturas não podem ser estornadas.
-- Assinatura recorrente: um tipo único de pedido, agrupando as cobranças (decisão do responsável, 2026-10-17). Ainda não
-  implementada; ver `docs/PORT-COMMERCE-DONATION-FLOW.md`, seção "Recorrência".
+- Assinatura recorrente: tipo `assinatura` próprio, agrupando cobranças confirmadas individualmente; cada pagamento
+  aprovado é uma confirmação financeira própria para avisos, conforme a decisão de produto de 2026-10-24.
 
 ## Fronteiras
 

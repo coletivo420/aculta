@@ -337,3 +337,17 @@ aculta_messenger.commerce_notice_open:
     parameters:
       message:
         type: entity:message
+
+aculta_messenger.donation_notice_open:
+  path: '/avisos/doacao/{message}/abrir'
+  defaults:
+    _controller: 'aculta_messenger.donation_notice_open_controller:open'
+    _title: 'Aviso de doação'
+  requirements:
+    _custom_access: 'aculta_messenger.donation_notice_access:access'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    parameters:
+      message:
+        type: entity:message

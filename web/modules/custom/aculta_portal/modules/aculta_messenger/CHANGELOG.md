@@ -1,3 +1,19 @@
+## 0.1.1-dev.99 — integrar eventos de doação ao núcleo — 2026-10-24
+
+- `aculta_messenger` registra o consumer opcional de Doações, persistindo
+  `donation.order_placed` e `donation.payment_approved` em Message compartilhada,
+  com dedupe, central, contador, leitura/revalidação e Mailer direto/digest.
+  Repetição do mesmo pagamento não cria segundo aviso; pagamentos recorrentes
+  distintos geram avisos próprios. A categoria de e-mail `doacao` permite
+  desligado, direto ou resumo, sem desligar avisos do site.
+- Worker direto usa o UUID v4 do Message como correlação exigida pelo Mailer e
+  revalida preferência, conta confirmada e acesso atual antes do envio.
+- Kernel MariaDB de Doações: 2 testes / 22 assertions PASS para ambos eventos,
+  dedupe, múltiplas cobranças e rejeição de pedido inacessível. Kernels Messenger (Forum/Wiki/Donation): 29/605
+PASS; 2 deprecações de discovery Message Core/contrib. Units Messenger 92/455,
+Donation 24/84 e worker direto 2/27 PASS. PHPCS, lint, YAML e status index
+  PASS. Sem operação no Runtime, envio real ou sandbox financeiro.
+
 ## 0.1.1-dev.98 — provar transferência persistente de avisos do Fórum — 2026-10-24
 
 - `ForumNoticeIdempotencyKernelTest` agora altera um Comment persistido para o

@@ -22,6 +22,7 @@ final class OptionalNoticeRouteSubscriber extends RouteSubscriberBase {
     'aculta_messenger.lms_notice_open' => 'aculta_lms',
     'aculta_messenger.wiki_notice_open' => 'aculta_wiki',
     'aculta_messenger.commerce_notice_open' => 'aculta_commerce',
+    'aculta_messenger.donation_notice_open' => 'aculta_donation',
   ];
 
   /**
