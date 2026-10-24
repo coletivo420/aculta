@@ -57,7 +57,7 @@ final class PrivateMessageReplyHooks {
     $build['#cache']['contexts'][] = 'user';
     $build['#cache']['max-age'] = 0;
 
-    // A blocked or friends-only conversation keeps its history and shows a notice in place of the reply box.
+    // A blocked conversation keeps its history and shows a notice in place of the reply box.
     $messagingState = $this->messagingState->stateFor($entity);
     if ($messagingState !== ConversationMessagingState::OPEN) {
       $build['aculta_messenger_notice'] = $this->notice($entity, $messagingState);
@@ -114,18 +114,14 @@ final class PrivateMessageReplyHooks {
    */
   private function notice(PrivateMessageThreadInterface $thread, string $state): array {
     $other = $this->messagingState->otherMember($thread);
-    $pending = $other !== NULL && $state === ConversationMessagingState::FRIENDS_ONLY ? $this->messagingState->pendingRequest($other) : NULL;
     $notice = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'messenger-notice', 'role' => 'status']];
     $text = match (TRUE) {
       $state === ConversationMessagingState::BLOCKED_BY_ME => 'Você bloqueou essa pessoa, ',
       $state === ConversationMessagingState::BLOCKED_BY_THEM => 'Essa pessoa bloqueou você, por isso não pode enviar ou receber mensagens.',
-      $pending === 'outgoing' => 'Essa pessoa só recebe mensagens de Amigos, você já enviou pedido de amizade, aguarde.',
-      $pending === 'incoming' => 'Essa pessoa só recebe mensagens de Amigos. Aceite o pedido de amizade nas Opções para conversar.',
-      default => 'Essa pessoa só recebe mensagens de Amigos, ',
+      default => 'Não é possível enviar mensagens nesta conversa.',
     };
     $notice['text'] = ['#plain_text' => $text];
-    $needsAction = $other !== NULL && ($state === ConversationMessagingState::BLOCKED_BY_ME
-      || ($state === ConversationMessagingState::FRIENDS_ONLY && $pending === NULL));
+    $needsAction = $other !== NULL && $state === ConversationMessagingState::BLOCKED_BY_ME;
     if ($needsAction) {
       $formState = new FormState();
       $formState->set('target', $other);

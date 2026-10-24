@@ -146,7 +146,7 @@ Gerado a partir do código em 2026-10-24 (`src/`). Cada classe aparece com a pri
 
 | Classe | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `ConversationMessagingState` | `src/Service/ConversationMessagingState.php` | Whether the current member can send in a one-to-one conversation, and why not. |
+| `ConversationMessagingState` | `src/Service/ConversationMessagingState.php` | Controls replies in existing threads from bilateral block state; friends-only is checked only when creating a thread. |
 | `ConversationPolicy` | `src/Service/ConversationPolicy.php` | The rules of the chat: how many people a conversation may have, how long it is kept and how much is sent. |
 | `MessengerCounts` | `src/Service/MessengerCounts.php` | The single definition of the alert and persistent-notice counts shown in the Messenger surfaces. |
 | `UnreadThreadCounter` | `src/Service/UnreadThreadCounter.php` | Counts unread conversations using Private Message's per-thread read state. */ |

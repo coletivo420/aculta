@@ -89,7 +89,7 @@ Todas as classes ficam em `src/`. O módulo não cria engine de mensagens nem tr
 
 - `Controller/MessagesController`, `NativePrivateMessageController`, `NewConversationController`: telas de conversa.
 - `Form/NewConversationForm`, `PrivateMessageFormValidator`, `FriendRequestsForm`: formulários de conversa e pedidos.
-- `Service/ConversationPolicy`, `ConversationMessagingState`: quem pode abrir conversa (privacidade e amizade).
+- `Service/ConversationPolicy`, `ConversationMessagingState`: política de novas conversas; bloqueio bilateral em threads existentes.
 - `Service/UnreadThreadCounter`: contagem de conversas não lidas.
 - `Hook/PrivateMessage*Hooks`: formulários, respostas, retenção e apresentação das mensagens.
 - `Plugin/QueueWorker/PrivateMessageNotificationWorker`: entrega, por e-mail, de mensagens privadas. Assim como os demais workers de e-mail direto, usa lease compartilhada de 180 s para cobrir o timeout de socket conhecido e a persistência do resultado.

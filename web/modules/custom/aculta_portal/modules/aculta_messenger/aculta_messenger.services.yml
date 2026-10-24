@@ -82,8 +82,6 @@ services:
     arguments:
       - '@current_user'
       - '@private_message.ban_manager'
-      - '@aculta_user.friendship_manager'
-      - '@user.data'
   aculta_messenger.aviso_service:
     class: Drupal\aculta_messenger\Aviso\AvisoService
     arguments: ['@entity_type.manager', '@flag', '@aculta_messenger.forum_notice_access_policy', '@database', '@datetime.time', '@lock', '@module_handler']

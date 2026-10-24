@@ -1,3 +1,13 @@
+## 0.1.1-dev.146 — manter respostas em threads existentes — 2026-10-24
+
+`Somente amigos` volta a valer somente para a criação de novas conversas. A visualização de threads existentes não
+oculta mais o compositor quando a amizade termina; o bloqueio bilateral continua impedindo respostas. Removido o
+estado visual de amizade que criava um bloqueio adicional fora do contrato.
+
+Validação: suíte Unit Messenger 140 testes/857 assertions PASS, incluindo estado aberto após fim da amizade e bloqueio
+por qualquer lado; testes existentes do formulário de nova conversa 11/39 PASS. PHPCS e PHP lint do serviço/teste
+novos PASS. Runtime e Kernel de interface não executados.
+
 ## 0.1.1-dev.145 — reconciliar manifesto aceito do digest — 2026-10-24
 
 Antes de enviar um digest, o Messenger persiste apenas correlação, instante e IDs/contadores da remessa, sem endereço ou

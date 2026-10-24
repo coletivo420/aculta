@@ -24,8 +24,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * A member's box: friendship and block with that member only (state "target", flag "member_box"). Friendship and block
  * are per person, so a conversation with several members has one box for each of them, and never acts on the thread.
- * The conversation's menu ("group" state): only "Limpar histórico", for the current member. The notice of a blocked or
- * friends-only one-to-one conversation uses "target" as well.
+ * The conversation's menu ("group" state): only "Limpar histórico", for the current member. A block notice in a
+ * one-to-one conversation uses "target" as well.
  *
  * Each button is a submit of this form. The drawer posts it with fetch and shows the conversation again, with the new
  * state; the profile posts it natively and goes back to the profile. Destructive actions ask first in a dialog.
@@ -76,17 +76,13 @@ final class ConversationRelationshipForm extends FormBase {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
     $form['actions'] = ['#type' => 'actions'];
 
-    // Notice mode: the one link that answers a blocked or friends-only conversation, shown in place of the reply box.
+    // Notice mode exposes the unblock action when this member blocked the other participant.
     if ($formState->get('mode') === 'notice') {
       // The hidden mode tells the POST answer which buttons the notice posted (their labels differ from the menu's).
       $form['mode'] = ['#type' => 'hidden', '#value' => 'notice'];
       $noticeTarget = (int) $target->id();
       if ($this->banManager->isBanned($noticeTarget)) {
         $form['actions']['unban'] = $this->button('unban', $this->t('Clique aqui para desbloquear'), 'conversation-notice-action');
-      }
-      elseif (!$this->friendshipManager->areFriendsWith($noticeTarget)
-        && $this->friendshipManager->getRelationshipWith($noticeTarget)?->getStatus() !== FriendshipStatus::Pending->value) {
-        $form['actions']['request'] = $this->button('request', $this->t('clique aqui para enviar um pedido de Amizade.'), 'conversation-notice-action');
       }
       return $form;
     }
