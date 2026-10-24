@@ -1,5 +1,21 @@
 # ACULTA User (`aculta_user`)
 
+## Atualização de ownership — Conta e Perfil separados (dev.72)
+
+`/studio/perfil` é a experiência independente de identidade comunitária.
+Bio, redes, foto/avatar, visibilidade e perfil público continuam controlados
+pelo ACULTA User. Suas rotas Studio de edição são
+`/studio/perfil/bio`, `/studio/perfil/privacidade` e
+`/studio/perfil/redes/{rede}`, com Form API original.
+
+`/studio/conta` pertence à administração de cadastro/segurança do Portal.
+**Minha Conta antiga em `/` permanece permanentemente e não deve perder
+seus formulários/modal/JS**. `/minha-conta` direto continua 404.
+Não há `/studio/pessoal/*` nem aliases. Testes Runtime pendentes.
+[Contrato](../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Registros P0/P2-A abaixo são históricos.
+
+
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
