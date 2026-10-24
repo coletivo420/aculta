@@ -32,6 +32,11 @@ site. Preferências aplicam-se por categoria/evento, e a entrega revalida polít
 momento do envio. A sequência de integração é LMS → Wiki → Fórum → Loja → Doações, sem
 duplicar o transporte nem manter fluxos de e-mail legados após migração.
 
+O catálogo de categorias de e-mail é fechado no Messenger: respostas e atualizações do
+Fórum, `aprendizagem`, `wiki`, `loja` e `doacao`. Categoria não registrada retorna somente
+opt-out (`off`) e não pode persistir preferência. Um produtor novo precisa entrar no
+contrato e nos testes antes de poder solicitar envio de e-mail.
+
 O digest combina as origens por destinatário sob lock. Sua correlação UUID v5 usa uma
 chave HMACada com `hash_salt` e o manifesto de IDs/tipos/quantidades, sem incluir títulos
 ou conteúdo. Após o Mailer aceitar o e-mail, o reconhecimento de todos os adapters e a

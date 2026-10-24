@@ -43,6 +43,9 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
   /**
    * Returns modes allowed by administrators; opting out is always available. */
   public function allowedEmailModes(string $category): array {
+    if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)) {
+      return [self::EMAIL_OFF];
+    }
     $configured = $this->configFactory?->get('aculta_messenger.settings')->get('email_modes.' . $category);
     $allowed = [self::EMAIL_OFF];
     if (!is_array($configured)) {
@@ -96,6 +99,9 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    * the global digest switch must still be enabled before digest delivery.
    */
   public function emailMode(int $uid, string $category): string {
+    if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)) {
+      return self::EMAIL_OFF;
+    }
     $mode = $this->userData->get(self::MODULO, $uid, 'avisos_email_mode_' . $category);
     if (!in_array($mode, [self::EMAIL_OFF, self::EMAIL_DIGEST, self::EMAIL_IMMEDIATE], TRUE)) {
       $mode = self::EMAIL_DIGEST;
@@ -121,7 +127,8 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
    *   One of the supported email modes.
    */
   public function saveEmailMode(int $uid, string $category, string $mode): void {
-    if (!in_array($mode, $this->allowedEmailModes($category), TRUE)) {
+    if (!in_array($category, self::EMAIL_CATEGORIES, TRUE)
+      || !in_array($mode, $this->allowedEmailModes($category), TRUE)) {
       throw new \InvalidArgumentException('Modo de e-mail inválido.');
     }
     $this->userData->set(self::MODULO, $uid, 'avisos_email_mode_' . $category, $mode);

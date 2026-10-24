@@ -29,6 +29,11 @@ podem restringir os modos disponíveis por categoria; não podem remover a opç�
 sem e-mail nem desligar a entrega no site. O ACULTA Mailer continua dono do
 transporte e pode suspender tipos de mensagem conforme sua política.
 
+O Messenger só permite preferências nas categorias registradas para Fórum,
+LMS (`aprendizagem`), Wiki, Loja e Doações. Categoria desconhecida falha fechada
+para e-mail e não é gravada em `user.data`; integrar uma nova origem exige
+adicionar explicitamente sua categoria e cobertura de teste.
+
 A aba Avisos da central da conta e a gaveta do cabeçalho filtram a lista
 compartilhada por origem e estado de leitura. A origem é marcada pelos
 produtores centralizados no Messenger depois de revalidar o acesso. Os links de

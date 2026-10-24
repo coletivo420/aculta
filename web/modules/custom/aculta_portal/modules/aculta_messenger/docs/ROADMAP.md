@@ -106,3 +106,5 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 - Dev.167, idempotência do digest: providers extensíveis podem devolver o mesmo `delivery_id` repetido por joins ou agregações; `AvisosResumo` normaliza esses resultados antes do corpo e manifesto, evitando repetir o aviso enquanto confirma o registro uma vez. `LearningNoticeDigestIntegrationTest` 15/118 e conjunto LMS Integration Unit + `AvisosResumoProviderPreferenceTest` 38/371 PASS; Kernel MariaDB focado em lease/recuperação 2/54 e Unit Messenger 150/932 PASS; PHPCS/PHP lint PASS. Runtime/Mailer real não testados.
 
 - Dev.168, CSRF das rotas de mensagens: além de confirmar os quatro requisitos `_csrf_token` no YAML, o teste invoca `CsrfAccessCheck` do Core e cobre token ausente, inválido e válido, incluindo parâmetros de rota; 2/10 PASS. Request HTTP funcional/Runtime continuam pendentes.
+
+- Dev.169, política de preferências: modo de e-mail agora falha fechado para categoria ausente do catálogo compartilhado, e gravação inválida é recusada. Preferências/formulários/digest 14/149 e Unit Messenger 152/941 PASS; PHPCS/PHP lint e gate Drupal 11+ passam após regenerar o índice.

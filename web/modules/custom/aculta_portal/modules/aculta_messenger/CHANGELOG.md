@@ -1789,3 +1789,9 @@ O Messenger agora remove linhas duplicadas emitidas pelo mesmo provider antes de
 
 Validação: `LearningNoticeDigestIntegrationTest` 15/118 PASS; suíte LMS Integration Unit + `AvisosResumoProviderPreferenceTest` 38/371 PASS; Kernel MariaDB de recuperação/lease 2/54 PASS; Unit Messenger 150/932 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. Sem Mailer real ou Runtime.
 
+## 0.1.1-dev.169 — falhar fechado em categoria de e-mail desconhecida — 2026-10-24
+
+`AvisoPreferencias` agora permite modos somente para o catálogo compartilhado Fórum, LMS, Wiki, Loja e Doações. Categoria desconhecida recebe apenas `off`, não lê nem grava preferência individual e não pode habilitar digest ou envio direto. Avisos no site e os contratos dos produtores válidos não mudam.
+
+Validação: preferências, formulário e digest focalizados 14/149 PASS; Unit Messenger 152/941 PASS; PHPCS Drupal/DrupalPractice e PHP lint PASS. O gate exigiu regenerar o índice após a atualização de versão.
+

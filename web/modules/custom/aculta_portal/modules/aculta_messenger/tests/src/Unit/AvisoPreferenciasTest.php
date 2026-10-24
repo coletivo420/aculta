@@ -79,4 +79,19 @@ final class AvisoPreferenciasTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Unknown notice categories fail closed and cannot persist email modes.
+   */
+  public function testUnknownCategoryCannotEnableEmail(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::never())->method('get');
+    $userData->expects(self::never())->method('set');
+    $preferences = new AvisoPreferencias($userData);
+
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], $preferences->allowedEmailModes('future_module'));
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, 'future_module'));
+    $this->expectException(\InvalidArgumentException::class);
+    $preferences->saveEmailMode(27, 'future_module', AvisoPreferencias::EMAIL_DIGEST);
+  }
+
 }
