@@ -15,19 +15,19 @@ histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,
 reabrir fases antigas ou fazer migração/deploy sem revisão do estado real.
 
-**Base inspecionada:** `aculta_forum 0.1.0-dev.279`, com Growroom420
+**Base inspecionada:** `aculta_forum 0.1.0-dev.281`, com Growroom420
 executável, `aculta_forum_post` revisionável e Comment legado/contextual em
 coexistência; Search API, categorias, moderação, anexos/galerias e ferramentas
-administrativas já possuem implementações e testes. `aculta_messenger 0.1.1-dev.85` agora publica pelo contrato compartilhado os avisos de Comment, primeira publicação de ForumPost e revisão de tópico; o consumer preserva o ledger/`aculta_aviso` e revalida acesso. A prova Kernel integrada cobre ForumPost; Comments e revisão de tópico têm cobertura de serviço/adapter Unit, ainda sem round-trip Kernel e Runtime. As fases técnicas
+administrativas já possuem implementações e testes. `aculta_messenger 0.1.1-dev.88` publica pelo contrato compartilhado os avisos de Comment, primeira publicação de ForumPost e revisão de tópico; o consumer preserva o ledger/`aculta_aviso` e revalida acesso. Kernel MariaDB cobre round-trip/replay dos três eventos, autor próprio e revogação de acesso entre publicação e consumo; Runtime e comparação de digest permanecem pendentes. As fases técnicas
 **F-GROUP 0.1–0.7** de fóruns restritos estão documentadas como concluídas,
 mas a funcionalidade permanece **desligada por padrão** e sem autorização de
-ativação produtiva. `aculta_messenger 0.1.1-dev.85` mantém os avisos existentes
+ativação produtiva. `aculta_messenger 0.1.1-dev.88` mantém os avisos existentes
 e publica Comments, primeira publicação de ForumPost e revisões de tópico por
 `MessengerNoticeEvent`/`MessengerNoticePublisherInterface`; o LMS consome quatro
-tipos. A prova do ciclo Fórum pelo publisher é Kernel apenas para ForumPost,
-com Comment e tópico em Unit; comparação completa e Runtime continuam
-pendentes. Verificar a versão do HEAD e o estado do Runtime antes de cada
-intervenção.
+tipos. A prova do ciclo Fórum pelo publisher cobre os três tipos em Kernel
+MariaDB e revalida a autorização no consumo; comparação de digest e Runtime
+continuam pendentes. Verificar a versão do HEAD e o estado do Runtime antes de
+cada intervenção.
 
 ### Diretrizes de produto e limites
 
@@ -82,30 +82,34 @@ os Comments de origem. O modo
 completa e homologação Runtime seguem pendentes.
 
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
-passou em MariaDB Simpletest, 16 testes / 310 assertions. Ledger por evento
+passou em MariaDB Simpletest, 21 testes / 462 assertions, sem depreciações.
+Ledger por evento
 cobre Comments, revisões de `ForumPost` e atualizações de tópico; os testes
 provam ordem inversa, replays, migração de chaves legadas e retenção de seis
 meses. O writer usa lock por agregado e a migração processa lotes de até 500
 chaves; o Kernel comprova a passagem do limite (501 registros em duas chamadas)
 e o writer espera/retenta após lock ocupado (via mock, sem concorrência entre
-processos), revogação de assinatura antes da entrega, que não produz aviso nem
-chave de ledger. Homologação Runtime segue pendente; F-M1 permanece parcial.
+processos), revogação de assinatura antes da entrega e revogação de acesso
+entre publicação e consumo do evento; nenhum dos casos persiste aviso ou chave
+de ledger. Homologação Runtime segue pendente; F-M1 permanece parcial.
 
 **Evidência recente de F-M2 (parcial):** o producer e consumer do Fórum usam
 `MessengerNoticeEvent` para Comment, ForumPost e revisão de tópico. O consumer
 resolve UUID/revisão, exige chave idempotente canônica e encaminha ao agregador
 existente, que revalida seguir/acesso. Kernel MariaDB prova round-trip e replay
-de ForumPost; Comments e revisão de tópico têm cobertura Unit de contrato e
-roteamento. Kernel completo dos três tipos, comparação em Runtime e validação
-do digest permanecem pendentes.
+dos três tipos, supressão de aviso ao autor, rejeição após revogação de acesso
+e compatibilidade do agregado: o registro direto existente seguido do evento
+compartilha uma linha, incrementa os contadores uma vez e atualiza o último
+Comment. Suíte: 22 testes / 489 assertions; Unit Messenger: 72 / 345; PHPCS e
+lint pertinentes: PASS. Comparação do digest e Runtime permanecem pendentes.
 
 ### Sequência recomendada e paralelismo
 
 - **Imediato:** F-M0 e F-M1; em paralelo, continuar provas restantes de
   Search API/Domain, anexos, concorrência da limpeza, migração e contagens
   já identificadas na linha atual do Fórum.
-- **Antes de completar F-M2:** acrescentar round-trip Kernel para Comment e
-  tópico e comparar entregas/digest com os fluxos anteriores. `aculta_aviso`
+- **Antes de completar F-M2:** provar o digest sem disparo duplicado e conferir
+  sua saída contra o agregado comparado em Kernel. `aculta_aviso`
   permanece como storage; o Fórum não implementa persistência ou entrega própria.
 - **Sequência:** concluir essas provas de F-M2; depois, F-M3 e F-M4
   (ou F-M4 antecipada se algum bloqueador de acesso for encontrado).
@@ -115,17 +119,18 @@ do digest permanecem pendentes.
   verbete, membership de thread derivada da Flag, transporte SMTP próprio,
   espelhamento universal de `aculta_aviso`, migrar dados reais automaticamente.
 
-### Contrato de evento do Fórum (adapter ainda não implementado)
+### Contrato de evento do Fórum (adapter implementado; homologação parcial)
 
 Os produtores informam evento tipado e dados mínimos: origem `aculta_forum`,
-entidade e UUID, versão/revisão publicada, tipo
-(`forum.reply_published` ou `forum.topic_updated`, nomes apenas propostos),
-purpose, momento e chave idempotente. O adapter/Messenger resolve os
-destinatários pela Flag existente e consulta acesso atual no contexto
-correto. **Nunca inserir título privado, texto de resposta, PII ou corpo
-de e-mail no envelope.** O destino de cada aviso mantém a rota canônica
-e depende de acesso atual. `aculta_aviso` segue fonte de verdade enquanto
-uma mudança explícita não for aprovada e testada.
+entidade e UUID, versão/revisão publicada, tipo (`forum.comment_published`,
+`forum.post_published` ou `forum.topic_updated`), purpose, momento e chave
+idempotente. `ForumNoticeEventProducer` resolve os destinatários pela Flag
+`seguir_topico` e verifica publicação/acesso antes de publicar; o
+`ForumNoticeEventSubscriber` resolve a origem por UUID/revisão e o agregador
+revalida acompanhamento e acesso no consumo. **Nunca inserir título privado,
+texto de resposta, PII ou corpo de e-mail no envelope.** O destino de cada aviso
+mantém a rota canônica e depende de acesso atual. `aculta_aviso` segue fonte de
+verdade enquanto uma mudança explícita não for aprovada e testada.
 
 ### Dívidas e dependências já confirmadas
 

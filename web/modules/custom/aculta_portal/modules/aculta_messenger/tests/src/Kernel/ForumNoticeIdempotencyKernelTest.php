@@ -17,13 +17,14 @@ use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_messenger\Hook\AvisoRetencaoHooks;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\comment\CommentInterface;
-use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
-use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\FlaggingInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -46,8 +47,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 #[RunTestsInSeparateProcesses]
 final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
-  use CommentTestTrait;
-
   /**
    * {@inheritdoc}
    */
@@ -68,7 +67,6 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
@@ -80,19 +78,31 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     ]);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment']);
     $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
     NodeType::create([
       'type' => 'aculta_forum_topic',
       'name' => 'ACULTA Forum topic',
       'new_revision' => TRUE,
     ])->save();
-    $this->addDefaultCommentField(
-      'node',
-      'aculta_forum_topic',
-      'field_aculta_discussion',
-      CommentingStatus::Open,
-      'aculta_discussion_post',
-    );
+    CommentType::create([
+      'id' => 'aculta_discussion_post',
+      'label' => 'ACULTA discussion post',
+      'target_entity_type_id' => 'node',
+    ])->save();
+    FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_aculta_discussion',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Comments',
+      'required' => TRUE,
+    ])->save();
   }
 
   /**
@@ -191,7 +201,6 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       'field_name' => 'field_aculta_discussion',
       'uid' => $author->id(),
       'subject' => 'Resposta publicada',
-      'comment_body' => ['value' => 'Texto público', 'format' => 'plain_text'],
       'status' => CommentInterface::PUBLISHED,
     ]);
     $comment->save();
@@ -208,6 +217,78 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
     self::assertSame((int) $comment->id(), (int) $notices[0]->get('ultimo_comentario')->value);
     self::assertCount(0, $this->loadNotices((int) $author->id(), (int) $topic->id()));
+  }
+
+  /**
+   * Access revoked after publication is rechecked by the event consumer.
+   */
+  public function testCommentAccessRevokedBeforeConsumptionDoesNotPersistNotice(): void {
+    $author = $this->createUser('autor_revogacao');
+    $follower = $this->createUser('seguidor_revogado');
+    $topic = $this->createTopic();
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author->id(),
+      'subject' => 'Resposta com acesso revogado',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
+    $policy->method('supportsTopic')->willReturn(TRUE);
+    $policy->method('canViewTopic')->willReturn(TRUE);
+    $policy->method('canViewPost')->willReturn(TRUE);
+    $policy->expects(self::exactly(2))
+      ->method('canViewComment')
+      ->with(
+        self::callback(fn(CommentInterface $candidate): bool => $candidate->uuid() === $comment->uuid()),
+        (int) $follower->id(),
+      )
+      ->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $producer = $this->createEventProducer([
+      (int) $author->id(),
+      (int) $follower->id(),
+    ], $policy);
+
+    self::assertSame(1, $producer->publishComment($comment));
+    self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
+    self::assertSame(0, (int) $this->container->get('database')
+      ->select(ForumNoticeEventSchema::TABLE)
+      ->condition('uid', (int) $follower->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
+  /**
+   * The shared event path preserves the existing Forum notice aggregation.
+   */
+  public function testEventAndDirectCommentRegistrationShareExistingAggregate(): void {
+    $author = $this->createUser('autor_equivalencia');
+    $follower = $this->createUser('seguidor_equivalencia');
+    $topic = $this->createTopic('Tópico equivalente');
+    $directComment = $this->createPersistedComment($topic, (int) $author->id());
+    $eventComment = $this->createPersistedComment($topic, (int) $author->id());
+    $policy = $this->createAccessPolicy(canViewComment: TRUE);
+
+    $direct = $this->createAvisoService([(int) $follower->id()], $policy);
+    self::assertSame(1, $direct->registrarResposta($directComment));
+    $directNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $directNotices);
+    self::assertSame(1, (int) $directNotices[0]->get('contador_site')->value);
+    self::assertSame(1, (int) $directNotices[0]->get('contador_email')->value);
+
+    $producer = $this->createEventProducer([(int) $follower->id()], $policy);
+    self::assertSame(1, $producer->publishComment($eventComment));
+
+    $eventNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertCount(1, $eventNotices);
+    self::assertSame(2, (int) $eventNotices[0]->get('contador_site')->value);
+    self::assertSame(2, (int) $eventNotices[0]->get('contador_email')->value);
+    self::assertSame('Tópico equivalente', $eventNotices[0]->get('titulo')->value);
+    self::assertSame((string) $eventComment->id(), $eventNotices[0]->get('ultimo_comentario')->value);
   }
 
   /**
@@ -769,6 +850,23 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     return $topic;
+  }
+
+  /**
+   * Creates a real published legacy Comment attached to a Forum topic.
+   */
+  private function createPersistedComment(NodeInterface $topic, int $author): CommentInterface {
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $author,
+      'subject' => 'Resposta de teste',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+    $comment->save();
+    return $comment;
   }
 
   /**

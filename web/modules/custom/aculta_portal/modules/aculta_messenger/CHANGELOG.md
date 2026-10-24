@@ -972,3 +972,14 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - Unit Messenger: 72 testes / 345 assertions; PHPCS Drupal/DrupalPractice:
   PASS. A prova Kernel do pipeline User e Runtime não foram executados.
 
+## 0.1.1-dev.88 — provar revogação no consumo de eventos do Fórum — 2026-10-24
+
+- Kernel cobre acesso revogado depois da publicação do envelope e antes do
+  consumo: o agregador não persiste aviso nem chave no ledger.
+- A fixture instala o schema de Comment antes da configuração que cria seu
+  campo de corpo, removendo a depreciação Core do Drupal 11.2. Kernel MariaDB:
+  22 testes / 489 assertions, sem depreciações. Comparação Kernel confirma que
+  o fluxo direto e o envelope compartilham o agregado existente sem duplicar
+  a linha; Unit Messenger: 72 / 345.
+- PHPCS Drupal/DrupalPractice, PHP lint e YAML dos serviços: PASS. Sem Runtime.
+
