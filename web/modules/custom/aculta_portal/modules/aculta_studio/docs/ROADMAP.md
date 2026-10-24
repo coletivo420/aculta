@@ -1,5 +1,23 @@
 # ACULTA Studio — Roadmap multi-experiência
 
+## Incremento STUDIO-P2-A — editor privado parcial (dev.12, 2026-10-24)
+
+**Implementado no código:** `/studio/pessoal/perfil` com leitura
+exclusiva da conta corrente, renderização reutilizada de
+`AccountBioCard`/`SocialLinksCard` do User, modal de foto atual, link
+ao formulário de apelido e serviço oficial de perfil público de
+`aculta_user`. Entrada `/studio/pessoal` inclui navegação ao editor.
+As operações continuam nos serviços/formulários proprietários; não
+há novos campos, entities, handlers, aliases nem copias de perfil.
+
+**P2-B pendente:** integrar apelido e privacidade no contexto Studio
+sem sobrepor o `AccountShellBuilder` e sem reescrever o User,
+melhorar fallback sem JavaScript (o acesso GET direto aos modais de
+bio/redes hoje é bloqueado pelo User), preservar erros, CSRF e uploads.
+**Gates P2-A pendentes:** Unit e Kernel/Functional, acesso entre contas,
+privacidade, nome inválido/perfil privado, ajax modal, foto/recorte,
+cache/Domain e Firefox ESR X11. Não declarar Runtime homologado.
+
 ## Incremento dev.11 — remover compatibilidade temporária (2026-10-24)
 
 A home canônica `/studio` conserva somente o route ID
