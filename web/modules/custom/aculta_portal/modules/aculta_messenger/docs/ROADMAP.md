@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.197: Kernel de integração liga `AvisosResumo` ao Mailer real e Mail Log MariaDB; após falha transacional de acknowledgement, o retry confirma o manifesto aceito sem segundo transporte. Um envio capturado, destino/corpo conferidos, acknowledgement concluído e um registro persistido; `AvisosResumoMailerKernelTest` **1/18 PASS**. Unit Messenger **166/1.138**, Integration Unit **36/300** e PHPCS/PHP lint PASS. SMTP e Runtime não executados.
 - Dev.196: o resultado de `enviarResumos()` conta somente novos transportes; a recuperação de um manifesto já aceito confirma os mesmos IDs sem inflar a contagem do cron. Unit Messenger **166/1.138 PASS**, Integration Unit **36/300 PASS** e Forum Kernel MariaDB **34/773 PASS**; PHPCS/PHP lint PASS. O ciclo concorrente entre dois boots Drupal completos continua pendente.
 - Dev.192: contagens negativas vindas de um adapter são rejeitadas e não reduzem o agregado central; o erro fica isolado e registrado sem dados pessoais. Unit Messenger + managers LMS/Wiki/Loja/Doações **223/1.644 PASS**, PHPCS/PHP lint PASS.
 - Dev.191: o ServiceProvider mantém o dispatcher registrado com locator vazio quando adapters estão ausentes e injeta o canal de log necessário à isolação; contrato **6/36 PASS**, conjunto Unit Messenger + managers **222/1.636 PASS**.

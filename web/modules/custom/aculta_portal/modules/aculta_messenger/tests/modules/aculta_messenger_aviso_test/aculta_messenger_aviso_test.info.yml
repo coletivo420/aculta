@@ -6,3 +6,4 @@ core_version_requirement: ^11.3
 dependencies:
   - drupal:field
   - drupal:user
+  - aculta_portal:aculta_mailer

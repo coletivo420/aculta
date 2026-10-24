@@ -1,0 +1,6 @@
+services:
+  aculta_messenger_aviso_test.digest_mail_type:
+    class: Drupal\aculta_messenger\Mail\AvisosResumoMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }

@@ -1,3 +1,12 @@
+## 0.1.1-dev.197 — integrar o digest ao Mailer real em Kernel
+
+Um Kernel de integração agora executa `AvisosResumo` e ACULTA Mailer reais no mesmo banco de teste: grava o envio
+aceito no Mail Log, força falha no acknowledgement transacional e recupera o manifesto original. O teste confirma um
+único transporte, destinatário e conteúdo esperados, acknowledgement final e nenhuma segunda linha de Mail Log.
+
+Validação: `AvisosResumoMailerKernelTest` **1/18 PASS** no MariaDB dedicado; Unit Messenger **166/1.138 PASS**;
+Integration Unit **36/300 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. SMTP e Runtime não executados.
+
 ## 0.1.1-dev.196 — contar somente novos envios de digest
 
 `AvisosResumo::enviarResumos()` agora distingue novo transporte de recuperação de um digest que o Mailer já aceitou.
