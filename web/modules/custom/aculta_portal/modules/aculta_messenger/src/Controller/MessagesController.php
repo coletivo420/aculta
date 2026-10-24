@@ -58,6 +58,8 @@ final class MessagesController extends ControllerBase {
 
   private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_msg_private_notification';
 
+  private const PERSONAL_NOTICE_PREVIEW_LIMIT = 5;
+
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly EntityTypeManagerInterface $entityTypes,
@@ -768,7 +770,14 @@ final class MessagesController extends ControllerBase {
     // Avisos por pessoa (respostas e atualizações de tópicos seguidos): só da própria pessoa, com link para a página.
     if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0)->addCacheTags(['aculta_aviso_list']);
-      $pessoais = $this->avisos->listarDaPessoa((int) $this->account->id(), 5, $filters['leitura']);
+      $personalNoticeLimit = $includeReadActions
+        ? AvisoService::PERSONAL_NOTICE_LIST_LIMIT
+        : self::PERSONAL_NOTICE_PREVIEW_LIMIT;
+      $pessoais = $this->avisos->listarDaPessoa(
+        (int) $this->account->id(),
+        $personalNoticeLimit,
+        $filters['leitura'],
+      );
       foreach ($pessoais as $aviso) {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;

@@ -29,6 +29,11 @@ use Drupal\user\UserInterface;
  */
 final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeRegistrarInterface, ForumNoticeReadInterface {
 
+  /**
+   * Maximum number of personal notice aggregates returned by default.
+   */
+  public const PERSONAL_NOTICE_LIST_LIMIT = 100;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FlagServiceInterface $flagService,
@@ -127,7 +132,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    * @return \Drupal\aculta_messenger\Entity\Aviso[]
    *   Accessible notices for the account.
    */
-  public function listarDaPessoa(int $uid, int $limite = 100, ?string $readState = NULL): array {
+  public function listarDaPessoa(int $uid, int $limite = self::PERSONAL_NOTICE_LIST_LIMIT, ?string $readState = NULL): array {
     $query = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $uid);

@@ -65,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.199` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.200` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
@@ -74,7 +74,7 @@ de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
 de membros mantém as sugestões como links normais alcançáveis por Tab.
 O resumo diário mantém lock persistente por destinatário; Dev.198 comprova dois boots Drupal independentes concorrendo sobre o mesmo MariaDB; Dev.199 reconstrói o worker após falha de confirmação e recupera snapshot/Mail Log persistidos sem novo transporte: um único transporte é aceito, o worker concorrente não adquire a lease e o primeiro confirma apenas seu lote; o Kernel MariaDB
 confirma contenção e liberação por processos PHP independentes. Recuperar um
-envio já aceito não aumenta a contagem de novos e-mails do cron. O transporte
+envio já aceito não aumenta a contagem de novos e-mails do cron. Dev.200 corrige o limite da central da Conta: a lista carrega até 100 avisos pessoais, enquanto a prévia da gaveta mantém cinco. Kernel focal do Fórum 1/29 PASS; suíte `ForumNoticeIdempotencyKernelTest` 35/802 PASS. A central segue limitada a 100 e precisa de paginação para históricos maiores. O transporte
 SMTP real e a homologação no Runtime continuam pendentes.
 O Kernel de integração exercita Messenger e ACULTA Mailer reais com transporte
 controlado: retry após falha de acknowledgement mantém um Mail Log e não envia

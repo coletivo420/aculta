@@ -192,6 +192,25 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
   }
 
   /**
+   * The account-center limit includes more than the five-item drawer preview.
+   */
+  public function testPersonalNoticeListDefaultSupportsAccountCenter(): void {
+    $author = $this->createUser('autor_lista_central');
+    $follower = $this->createUser('seguidor_lista_central');
+    $uid = (int) $follower->id();
+    $service = $this->createAvisoService([$uid], $this->createAccessPolicy(canViewTopic: TRUE, canViewComment: TRUE));
+
+    for ($index = 1; $index <= 6; $index++) {
+      $topic = $this->createTopic('Tópico central ' . $index);
+      self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
+    }
+
+    self::assertSame(100, AvisoService::PERSONAL_NOTICE_LIST_LIMIT);
+    self::assertCount(6, $service->listarDaPessoa($uid));
+    self::assertCount(5, $service->listarDaPessoa($uid, 5));
+  }
+
+  /**
    * The public event contract persists one idempotent ForumPost notice.
    */
   public function testForumPostEventRoundTripUsesTheSharedNoticeAggregate(): void {
