@@ -1,3 +1,9 @@
+## `0.1.0-dev.282` — provar o gate de purpose do anexo — 2026-10-24
+
+- Kernel confirma que o anexo do Fórum é negado fora do purpose `forum` e que,
+  dentro dele, a mídia não publicada volta à política do dono.
+- Testes: anexos 13/371; suíte Kernel do Fórum 107/2.189; PHPCS limpo.
+
 ## `0.1.0-dev.281` — provar grants antes da paginação na listagem — 2026-10-24
 
 - Kernel executa uma View pública baseada em nodes com pager de uma linha: o

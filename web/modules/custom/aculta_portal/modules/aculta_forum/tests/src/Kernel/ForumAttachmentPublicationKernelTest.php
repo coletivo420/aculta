@@ -371,6 +371,37 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
   }
 
   /**
+   * Forum attachments are only accessible inside the Forum purpose.
+   */
+  public function testAttachmentPurposeGate(): void {
+    $file = $this->createAttachmentFile('purpose.pdf');
+    $media = $this->createAttachmentMedia($file, 'purpose.pdf', $this->container->get('datetime.time')->getRequestTime());
+    $hooks = new ForumAttachmentAccessHooks($this->purpose, $this->publication);
+
+    if (Domain::load('aculta_org') === NULL) {
+      Domain::create([
+        'id' => 'aculta_org',
+        'hostname' => 'main.example.test',
+        'name' => 'Main test domain',
+        'scheme' => 'https',
+        'status' => TRUE,
+        'is_default' => TRUE,
+      ])->save();
+    }
+    $outside = $this->purpose->runInPurpose(
+      'main',
+      fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
+    );
+    self::assertTrue($outside?->isForbidden(), 'Fora do purpose Fórum o anexo é negado.');
+
+    $inside = $this->purpose->runInPurpose(
+      'forum',
+      fn () => $hooks->mediaAccess($media, 'view', new AnonymousUserSession()),
+    );
+    self::assertFalse($inside?->isForbidden(), 'No purpose Fórum a mídia não publicada volta à política do dono.');
+  }
+
+  /**
    * Removing an embed unpublishes its Media without Entity Usage tracking.
    */
   public function testRemovedCommentEmbedUnpublishesMediaDespiteStaleUsageRecord(): void {

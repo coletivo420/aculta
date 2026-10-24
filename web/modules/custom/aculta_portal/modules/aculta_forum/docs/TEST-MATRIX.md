@@ -143,7 +143,7 @@
 
 ## Limpeza de anexos pela API compartilhada — revisões, referências e falha, 2026-10-23
 
-- `ForumAttachmentPublicationKernelTest` (12 testes / 346 asserções, MariaDB):
+- `ForumAttachmentPublicationKernelTest` (13 testes / 371 asserções, MariaDB):
   Media embutida só na revisão antiga de ForumPost fica retida enquanto a
   revisão existir e é removida com o post; Media embutida em outro tipo de
   conteúdo é retida pelo `FileReferenceInspector` compartilhado; Media órfão
@@ -151,6 +151,8 @@
   incrementa a contagem; falha simulada em `hook_entity_predelete` mantém Media
   e File, não conta remoção e recupera no lote seguinte. Despublicar o tópico
   hospedeiro nega a Media na checagem seguinte; republicar devolve o acesso.
+  Fora do purpose `forum` o anexo é negado; dentro dele, a mídia não publicada
+  volta à política do dono.
 - A construção usa `ForumAttachmentCleanup` de produção sobre
   `UnusedMediaCleaner`/`UnusedFileCleaner`; nenhuma regra de exclusão foi
   duplicada.
