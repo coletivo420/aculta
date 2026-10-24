@@ -8,10 +8,10 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 
 | Área | Entrada canônica | Dono dos dados | O que apresenta |
 | --- | --- | --- | --- |
-| Hub Studio | `/studio` | `aculta_studio` | Catálogo de experiências acessíveis |
+| Hub Studio | **`/` no Domain ACCOUNT** | `aculta_studio` | Catálogo autorizado; route ID `aculta_studio.hub`, caminho técnico `/studio` (404 em acesso direto) |
 | **Minha Conta Studio** | `/studio/conta` | Portal, Core User/Profile, Commerce, Auth | Cadastro, endereço, documentos, segurança, conexões, apoio, pedidos e preferências da conta |
 | **Meu Perfil Studio** | `/studio/perfil` | `aculta_user`, User/Profile, `aculta_image` | Nome público/apelido, foto, avatar, biografia, redes e visibilidade pública |
-| **Minha Conta legada — PERMANENTE** | **`/` no Domain ACCOUNT** | `aculta_portal` e owners existentes | Shell, menus, AJAX e formulários atuais, sem alterações |
+| **Minha Conta legada — PERMANENTE** | **`/conta-legada` no Domain ACCOUNT** | `aculta_portal` e owners existentes | Shell, menus, AJAX e formulários atuais, sem alterações |
 | Perfil público | `/u/{apelido}` em MAIN | `aculta_user` e `PublicProfilePolicy` | Apenas informações autorizadas publicamente |
 | Marley | `/studio/marley` | Owners editoriais | Trabalho editorial |
 | Ganjalab | `/studio/ganjalab` | LMS | Aprendizagem |
@@ -20,7 +20,7 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 ### Garantia permanente do legado
 
 **Minha Conta não será removida ao fim do processo.** Continua acessível
-na raiz `/` do domínio de conta, incluindo `AccountShellBuilder`,
+em **`/conta-legada`** no domínio ACCOUNT, incluindo `AccountShellBuilder`,
 `PortalController`, `account-navigation.js`, formulários, hooks,
 integrações e estado de navegação. A rota técnica
 `aculta_portal.dashboard` foi movida para `/conta-legada` (versão 0.4.1-dev.26).
@@ -45,6 +45,21 @@ funcionalmente, inclusive depois de aprovado o Studio.
   de privacidade alternativas. Reutilizar os serviços do owner.
 - Nenhum alias transitório para `/studio/pessoal` será instalado:
   atualizar consumidores e testes diretamente para os nomes finais.
+
+## S-R3-B1 — Documentos privados no Studio (dev.17)
+
+- `/studio/conta/documentos` reaproveita o mesmo
+  `PortalController::otherData()` e `AccountOtherDataForm` do
+  legado `/dados/outros-dados`.
+- `aculta_id_cpf.account_document` é opcional e mantém exclusivamente
+  validação, cifra, máscara e gravação única de CPF/CNPJ. Os links só
+  aparecem quando `isAvailable()`; o owner ausente mantém 404.
+- O retorno sem checkout fica na interface que originou o envio, sem
+  alias de compatibilidade nem armazenamento duplicado.
+- O Perfil Studio não exibe CPF/CNPJ; a Conta legada segue permanente
+  em `/conta-legada`, enquanto `/` continua sendo o hub do Studio.
+- Testes Unit escritos, mas os novos testes dev.17 ainda não foram
+  executados nem homologados no Runtime/Firefox.
 
 ## Implementação inicial (S-R2 — no código Git; sem homologação)
 
