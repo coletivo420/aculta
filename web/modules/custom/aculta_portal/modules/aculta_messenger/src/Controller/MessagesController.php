@@ -821,7 +821,16 @@ final class MessagesController extends ControllerBase {
       $emptyMessage = $hasFilters
         ? $this->translation->translate('Nenhum aviso corresponde aos filtros selecionados.')
         : $this->translation->translate('Não há avisos ativos neste momento.');
-      $items[] = ['#plain_text' => (string) $emptyMessage];
+      $items[] = [
+        'value' => [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => ['aculta-messenger-state', 'aculta-messenger-state--empty'],
+            'role' => 'status',
+          ],
+          'message' => ['#plain_text' => (string) $emptyMessage],
+        ],
+      ];
     }
 
     $build = [

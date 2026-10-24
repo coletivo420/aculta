@@ -189,6 +189,8 @@ acessíveis não lidos pelo alter de contagem. O contador de conversas
     comunicados, avisos da pessoa e alertas do site, com os mesmos itens, links e ações de dispensa. Só lê os avisos da
     conta logada; a página não recebe parâmetro de usuário. Dentro da aba não há o link "Ver todos", porque a aba já é a
     lista completa; a gaveta da barra mantém o link (`alertsBuild(FALSE)` na aba).
+    Quando os filtros não retornam itens, a lista mantém um estado vazio no próprio resultado, com `role="status"` e
+    estilo neutro do contrato `messenger-state`; a mensagem é decidida pelo módulo segundo os filtros ativos.
   - **Mensagens** (`/avisos-mensagens/mensagens`): a **mesma lista de conversas da gaveta da barra**
     (`MessagesController::conversasBuild`), com o mesmo botão de nova conversa e os mesmos links. As conversas continuam
     no sistema de mensagens; a aba não cria nem altera conversas.

@@ -1,3 +1,11 @@
+## 0.1.1-dev.147 — estado vazio acessível na central — 2026-10-24
+
+Avisos filtrados sem resultados agora usam a apresentação neutra `messenger-state` com `role="status"`, preservando a
+mensagem orientada aos filtros. A central mantém decisão de vazio e consulta no módulo; tema mantém CSS e apresentação.
+
+Validação: script visual focado no Firefox ESR visível (Runtime de teste): **4/4 verificações PASS**; PHP lint PASS.
+MessagesController permanece no baseline PHPCS documentado (97 erros e 65 avisos preexistentes).
+
 ## 0.1.1-dev.146 — manter respostas em threads existentes — 2026-10-24
 
 `Somente amigos` volta a valer somente para a criação de novas conversas. A visualização de threads existentes não

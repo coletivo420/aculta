@@ -19,6 +19,7 @@ A preparação cria contas e uma conversa em grupo no banco de teste. As senhas 
 ```sh
 DISPLAY=:0 geckodriver --port 4444 &
 DISPLAY=:0 node tests/browser/aculta-messenger/suite.mjs
+DISPLAY=:0 node tests/browser/aculta-messenger/central-empty-state.mjs
 ```
 
 O script recusa qualquer display diferente de `:0` e só aceita `SUITE_BASE`/`SUITE_LOGIN_URI` nos hosts HTTPS do servidor
@@ -67,6 +68,10 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 | 12 | Conversa em grupo: menu só com "Limpar histórico", limpeza só para quem confirma |
 | 13 | Estado visual e anunciado de carregamento e erro recuperável na gaveta |
 
+`central-empty-state.mjs` é uma verificação focada da aba Avisos no host de Conta. Ela verifica filtros combinados ativos,
+estado vazio dentro da lista da conta (sem confundi-lo com a gaveta do cabeçalho), anúncio `role="status"` e espaçamento
+visual do tema.
+
 ## Limites
 
 - Não substitui o teste em dispositivo de toque real nem com leitor de tela. Os 390 px são uma aproximação de layout.
@@ -76,3 +81,5 @@ A conversa um-a-um entre `teste.c` (conta comum) e `teste.b` é zerada pela pró
 
 Em 2026-10-24, a suíte completa passou com **76/76 verificações** no Runtime de teste com Firefox ESR visível (`DISPLAY=:0`), incluindo estados loading/error e a preferência friends-only em conversa existente.
 O teste usa o diálogo do Drupal/jQuery UI para confirmar amizade e bloqueio, e comprova que Escape fecha o modal sem fechar a gaveta.
+
+Também em 2026-10-24, `central-empty-state.mjs` passou com **4/4 verificações** no host de Conta, confirmando os filtros ativos, o texto não vazio com `role="status"` na lista própria da central e o espaçamento visual.
