@@ -14,9 +14,11 @@ com submenus contextuais. Meu Perfil será **editado** no Studio, mas seu
 endereço público `/u/{apelido}` continuará no purpose `main`.
 [Contrato e roadmap P0–P7](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
 
-**Nada foi migrado neste documento.** O comportamento descrito nas seções
-seguintes é o **atual** e não deve ser retirado até haver equivalência de
-forms, acesso, AJAX e navegação. O Portal continuará dono de dados, endereço
+**P1-A criou apenas uma entrada independente em `/studio/pessoal` com links
+para as páginas atuais da Conta, sem migrar formulários ou shell e sem
+homologação Runtime.** O comportamento descrito nas seções seguintes permanece
+**atual** e não deve ser retirado até haver equivalência de forms, acesso,
+AJAX e navegação. O Portal continuará dono de dados, endereço
 e segurança. Um formulário renderizado no Studio não pode ser envolvido
 simultaneamente por `aculta_portal_shell` e shell Studio.
 
