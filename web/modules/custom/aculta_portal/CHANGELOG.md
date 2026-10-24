@@ -1,3 +1,16 @@
+## 0.4.1-dev.29 — retorno contextual do documento CPF/CNPJ no Studio (2026-10-24)
+
+- `AccountOtherDataForm` continua usando o mesmo
+  `AccountDocumentInterface` para validar, cifrar e salvar uma única
+  vez o CPF/CNPJ. Apenas o destino padrão após submit considera a
+  rota `aculta_studio.account_documents`; o legado segue voltando
+  para `aculta_portal.my_data_other`.
+- Destino de checkout internamente permitido mantém precedência e
+  proteção original; não foram criados novos redirect aliases,
+  entidades, campos ou acesso público a documentos.
+- Teste Unit `AccountOtherDataStudioReturnTest` criado; sem execução
+  PHPUnit/Kernel/Runtime nesta edição.
+
 ## 0.4.1-dev.28 — decisão da guarda do hub na raiz da Conta em FrontPathPolicy (2026-10-24)
 
 - A regra do hub do Studio na raiz do ACCOUNT (404 fora de `/`, login para anônimo) sai de
