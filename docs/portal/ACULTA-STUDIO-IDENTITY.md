@@ -20,6 +20,18 @@ descreve somente identidades/URLs **existentes**. Marley, Ganjalab e WE SATIVA
 não mudam de nome nem de URL nesta fase. O contrato detalhado e o plano P0–P7
 estão em [Hub e experiência pessoal](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
 
+## Implementação intermediária STUDIO-P1-B (2026-10-24)
+
+O registro compartilhado agora inclui também Marley, por provider que
+consulta o `MarleyPresenter` sem transferir seu ownership editorial. A
+prévia do futuro hub está em **`/studio/inicio`** (código dev.9, ainda sem
+homologação Runtime), com links apenas para experiências autorizadas.
+
+**A URL `/studio` não mudou de dono:** continua no controller histórico
+do Marley até a fase de corte validada. `/studio/pessoal` já existe como
+entrada mínima da Conta, mas não contém o editor de perfil. Nenhum alias,
+formulário, dado pessoal ou shell foi migrado.
+
 ## Identidades
 
 | Experiência | Nome público | Machine ID | Responsabilidade |
