@@ -49,6 +49,43 @@ final class NoticeReadStateManagerTest extends UnitTestCase {
   }
 
   /**
+   * A source adapter that revokes access keeps the central action denied.
+   */
+  public function testRevokedSourceAccessIsPropagatedToCentralAction(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn('aculta_msg_wiki_notice');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('load')->with(12)->willReturn($message);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('message')->willReturn($storage);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $adapter = $this->createMock(WikiNoticeManagerInterface::class);
+    $adapter->expects(self::once())->method('setRead')->with($message, $account, TRUE)->willReturn(FALSE);
+    $container = $this->createMock(ContainerInterface::class);
+    $container->method('has')->with('wiki')->willReturn(TRUE);
+    $container->method('get')->with('wiki')->willReturn($adapter);
+
+    self::assertFalse((new NoticeReadStateManager($entities, $container))->setRead(12, $account, TRUE));
+  }
+
+  /**
+   * Invalid notice IDs are rejected before entity storage is queried.
+   */
+  public function testInvalidMessageIdsAreRejectedBeforeLoading(): void {
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->expects(self::never())->method('getStorage');
+    $container = $this->createMock(ContainerInterface::class);
+    $container->expects(self::never())->method('has');
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $manager = new NoticeReadStateManager($entities, $container);
+
+    self::assertFalse($manager->setRead(0, $account, TRUE));
+    self::assertFalse($manager->setRead(-1, $account, TRUE));
+  }
+
+  /**
    * Optional or unsupported notice sources fail closed.
    */
   public function testDisabledAndUnsupportedAdaptersFailClosed(): void {
