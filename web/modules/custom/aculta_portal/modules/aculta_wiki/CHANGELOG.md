@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.55 — revalidar integração Wiki com Content Index
+
+- Reexecutados os dois testes Unit dos providers Wiki e categoria: 9 testes /
+  40 asserções. Três classes Kernel do Index, incluindo bootstrap real Wiki +
+  Portal + Index, passaram em MariaDB isolada: 10 testes / 343 asserções, 243
+  depreciações de Core/contrib/PHPUnit.
+- Nenhum código de projeção mudou; provider segue v4 e não exige rebuild por
+  esta entrega. Runtime, configuração e geração ativa não foram alterados.
+
 ## 0.1.0-dev.54 — compor Meu Trabalho com SDCs existentes
 
 - O workspace WE SATIVA usa `context-header`, `content-section`, `content-grid`,

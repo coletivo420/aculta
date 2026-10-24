@@ -4,13 +4,23 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.54**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.55**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.55 — revalidar R1 no HEAD atual
+
+Os Unit dos providers Wiki e categoria passaram (9 testes / 40 asserções). As
+classes Kernel `ContentIndexWikiProviderKernelTest`,
+`ContentIndexWikiAccessKernelTest` e `ContentIndexOwnerIntegrationKernelTest`
+passaram em MariaDB isolada (10 testes / 343 asserções; 243 depreciações de
+Core/contrib/PHPUnit). Incluem discovery de tags e bootstrap real da closure
+Wiki + Portal + Index. Provider segue v4; sem alteração semântica ou rebuild.
+O Index permanece desativado no Runtime de teste, que não foi alterado.
 
 ### Incremento dev.54 — composição SDC do Meu Trabalho
 

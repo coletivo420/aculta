@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.55: R1 revalidada no HEAD após mudanças de WE SATIVA. Unit dos providers
+  Wiki/categoria: 9/40; três Kernel do Index com bootstrap real: 10/343,
+  MariaDB isolada, 243 depreciações Core/contrib/PHPUnit. Provider permanece
+  v4; nenhum rebuild/Runtime.
+
 - Dev.54: workspace WE SATIVA usa SDCs existentes do ACULTA420 para cabeçalho,
   cards, seções, grade e estados vazios. O serviço Wiki preserva Entity Access,
   purpose/Domain e cursores independentes. Focal MariaDB: 2 testes / 89

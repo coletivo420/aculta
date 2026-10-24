@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.55`: revalidação R1 no HEAD atual: Unit dos providers Wiki e
+  categoria (9/40) e três classes Kernel relacionadas ao Index (10/343)
+  passaram em MariaDB isolada. O provider permanece v4; fingerprint/rebuild em
+  Runtime e ativação do Index continuam pendentes.
+
 - `0.1.0-dev.54`: Meu Trabalho da WE SATIVA compõe cabeçalho, cards, seções,
   grade e estados vazios com SDCs existentes do tema ACULTA420. A Wiki mantém
   autorização, Domain, cache e paginação. Kernel focal: 2 testes / 89

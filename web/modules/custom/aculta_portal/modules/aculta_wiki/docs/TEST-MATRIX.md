@@ -297,7 +297,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Provider de categoria Wiki | Unit | Só `taxonomy_term:wiki_category`, metadados mínimos e purpose `wiki` | aprovado |
 | Provider Wiki no ciclo do Index (harness) | Kernel | Classe de produção via tag fixture; backfill, relação deduplicada, update e delete | aprovado (1 teste / 17 assertions) |
 | Declaração/tag owner e bootstrap real | Kernel | Closure Wiki + Image + Portal + Index, providers tagueados descobertos e container compilado sem fixture | aprovado (dev.46; classe focal: 6 testes / 185 asserções) |
-| Projeção e filtro sob acesso real | Kernel | Provider v3, relação deduplicada, `EntityHooks` real, `main` nega, `wiki` autoriza, alvos privados filtrados e Domain restaurado | aprovado no teste owner real |
+| Projeção e filtro sob acesso real | Kernel | Provider v4, relação deduplicada, `EntityHooks` real, `main` nega, `wiki` autoriza, alvos privados filtrados e Domain restaurado | aprovado no teste owner real |
 | Consulta outgoing real sob acesso Wiki | Kernel | `ContentIndexRelationQuery` consulta `related_entry`, `wiki_category` e `wiki_image`; Entity Access filtra destinos por grants e Domain original restaura | aprovado (dev.46; geração semeada só com entidades necessárias; sem rebuild integral) |
 | Categoria sem provider de destino | Kernel | Destino não indexado não aparece na consulta outgoing | aprovado (dev.52; incluído na classe owner real) |
 | Media publicada ligada a verbete em rascunho | Kernel | A consulta não revela a relação se a origem não está autorizada | aprovado (dev.52; incluído na classe owner real) |
@@ -305,6 +305,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Domain Wiki ausente | Kernel | Access filter falha fechado sem recorrer ao Domain ativo | aprovado (dev.46) |
 | Regressão direcionada de providers e acesso Wiki | Kernel | Bootstrap owner, discovery real, providers Wiki e consulta de relações | aprovado (dev.46; 6 testes / 185 asserções; 201 depreciações upstream) |
 | Backfill, fingerprint, update e delete Wiki reais | Kernel | Geração real recebe projeção v4 sem UID; edição atualiza hash/rótulo e troca relações; exclusão remove entrada e outgoing | aprovado (dev.50; focal: 1 teste / 38 asserções; classe owner: 7/238; 201 depreciações upstream) |
+| Regressão R1 no HEAD dev.55 | Unit + Kernel | Providers Wiki/categoria, discovery e consulta autorizada de relações no bootstrap real | aprovado: Unit 9/40; três classes Kernel 10/343, MariaDB, 243 depreciações |
 
 
 | Ativação e reconstrução em Runtime | Runtime | Sem alteração de estado antes de homologação explicitamente agendada | pendente |
