@@ -1,3 +1,12 @@
+## 0.1.1-dev.161 — caracterizar Flood e lock de mensagens no Kernel — 2026-10-24
+
+O novo Kernel usa o Flood de banco do Drupal, contas reais e backends persistentes independentes. Confirma o limite
+configurado após dez submissões registradas e que uma segunda validação não alcança Flood enquanto a primeira mantém
+o lock; depois que a primeira registra e libera o lock, uma nova validação pode prosseguir.
+
+Validação: `PrivateMessageFloodKernelTest` **2/21 PASS**; PHPCS Drupal/DrupalPractice e PHP lint PASS. O teste exercita
+serviços Kernel, sem enviar HTTP, criar mensagens privadas ou validar CSRF da rota.
+
 ## 0.1.1-dev.157 — carregar tópicos seguidos em lote — 2026-10-24
 
 A lista de assinaturas e seu cancelamento múltiplo agora carregam os nodes com `loadMultiple()` da Entity API após
