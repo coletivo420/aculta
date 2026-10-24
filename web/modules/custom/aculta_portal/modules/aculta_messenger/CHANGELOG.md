@@ -1,3 +1,13 @@
+## 0.1.1-dev.196 — contar somente novos envios de digest
+
+`AvisosResumo::enviarResumos()` agora distingue novo transporte de recuperação de um digest que o Mailer já aceitou.
+Reconciliações continuam confirmando o manifesto original, mas não são contabilizadas como e-mails enviados nesta execução
+do cron.
+
+Validação: Unit Messenger **166/1.138 PASS**; Integration Unit **36/300 PASS**;
+`ForumNoticeIdempotencyKernelTest` **34/773 PASS** no MariaDB dedicado. PHPCS Drupal/DrupalPractice, PHP lint,
+índice de status e `git diff --check` PASS. Transporte externo e Runtime não executados.
+
 ## 0.1.1-dev.195 — carregar revisões da Wiki em lote no contador
 
 O contador não lido consulta UUIDs em lote e carrega as revisões referenciadas por revisão. Mantém a validação da fonte

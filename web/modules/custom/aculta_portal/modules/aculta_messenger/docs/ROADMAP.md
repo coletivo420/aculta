@@ -2,6 +2,7 @@
 
 ## Evolução recente
 
+- Dev.196: o resultado de `enviarResumos()` conta somente novos transportes; a recuperação de um manifesto já aceito confirma os mesmos IDs sem inflar a contagem do cron. Unit Messenger **166/1.138 PASS**, Integration Unit **36/300 PASS** e Forum Kernel MariaDB **34/773 PASS**; PHPCS/PHP lint PASS. O ciclo concorrente entre dois boots Drupal completos continua pendente.
 - Dev.192: contagens negativas vindas de um adapter são rejeitadas e não reduzem o agregado central; o erro fica isolado e registrado sem dados pessoais. Unit Messenger + managers LMS/Wiki/Loja/Doações **223/1.644 PASS**, PHPCS/PHP lint PASS.
 - Dev.191: o ServiceProvider mantém o dispatcher registrado com locator vazio quando adapters estão ausentes e injeta o canal de log necessário à isolação; contrato **6/36 PASS**, conjunto Unit Messenger + managers **222/1.636 PASS**.
 - Dev.190 amplia o isolamento da central para falha de inicialização lazy do serviço pelo locator, antes da chamada do adapter. A origem falha fechada e as demais seguem; **222/1.634 PASS** na suíte Unit Messenger + managers LMS/Wiki/Loja/Doações, PHPCS/PHP lint PASS.

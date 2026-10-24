@@ -501,7 +501,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
 
     self::assertSame(0, $summary->enviarResumos(), 'The stale worker defers acknowledgement after losing its lease.');
-    self::assertSame(1, $summary->enviarResumos(), 'The next run reconciles the exact batch accepted by the Mailer.');
+    self::assertSame(0, $summary->enviarResumos(), 'The next run reconciles the exact batch accepted by the Mailer without counting another email.');
     self::assertSame(1, $deliveries);
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
@@ -843,7 +843,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $this->container->get('lock.persistent'),
       [$replacementProvider],
     );
-    self::assertSame(1, $recoverySummary->enviarResumos());
+    self::assertSame(0, $recoverySummary->enviarResumos(), 'Recovery acknowledges the accepted snapshot without counting a new email.');
     self::assertCount(1, $correlations);
     $notice = $this->loadNotices($uid, (int) $topic->id())[0];
     self::assertSame(1, (int) $notice->get('contador_email')->value, 'The later Forum event stays pending after recovery of the accepted snapshot.');
@@ -896,7 +896,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       [],
     );
 
-    self::assertSame(1, $summary->enviarResumos());
+    self::assertSame(0, $summary->enviarResumos(), 'Recognizing acceptance without an enabled adapter is reconciliation, not a new email.');
     self::assertSame($snapshot, $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 

@@ -197,7 +197,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       'quantidade' => 1,
       'delivery_id' => 502,
     ];
-    $this->assertSame(1, $summary->enviarResumos());
+    $this->assertSame(0, $summary->enviarResumos(), 'The accepted batch is reconciled without another delivery or new-send count.');
     $this->assertTrue($failedTransaction->rolledBack);
     $this->assertFalse($failedTransaction->committed);
     $this->assertTrue($successfulTransaction->committed);
@@ -245,7 +245,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $activeProvider = new TestLearningDigestProvider([27]);
     $summary = $this->createSummary($activeProvider, $mailer, TRUE, NULL, NULL, $userData);
 
-    $this->assertSame(1, $summary->enviarResumos(), 'A previously accepted email is handled without another transport attempt.');
+    $this->assertSame(0, $summary->enviarResumos(), 'A previously accepted email is reconciled without another transport attempt or a new-send count.');
     $this->assertSame([], $activeProvider->marked, 'No unrelated provider rows are acknowledged as part of the unavailable adapter batch.');
   }
 

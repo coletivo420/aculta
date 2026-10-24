@@ -48,6 +48,21 @@ final class AvisosResumo {
    */
   private const LOCK_LEASE_SECONDS = 180.0;
 
+  /**
+   * The attempt did not send or reconcile a digest.
+   */
+  private const RESULT_SKIPPED = 0;
+
+  /**
+   * This invocation delivered a new digest email.
+   */
+  private const RESULT_SENT = 1;
+
+  /**
+   * A previously accepted digest was reconciled without sending email.
+   */
+  private const RESULT_RECONCILED = 2;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AvisoPreferencias $preferencias,
@@ -75,7 +90,7 @@ final class AvisosResumo {
   }
 
   /**
-   * Envia os resumos pendentes. Retorna quantos e-mails foram enviados.
+   * Envia os resumos pendentes. Retorna quantos novos e-mails foram enviados.
    */
   public function enviarResumos(): int {
     $storage = $this->entityTypeManager->getStorage('aculta_aviso');
@@ -117,7 +132,7 @@ final class AvisosResumo {
     $enviados = 0;
     foreach ($porUsuario as $uid => $_) {
       try {
-        if ($this->enviarPara((int) $uid)) {
+        if ($this->enviarPara((int) $uid) === self::RESULT_SENT) {
           $enviados++;
         }
       }
@@ -138,10 +153,10 @@ final class AvisosResumo {
    * @param int $uid
    *   Identificador da pessoa destinatária.
    */
-  private function enviarPara(int $uid): bool {
+  private function enviarPara(int $uid): int {
     $lockName = 'aculta_messenger.avisos_resumo.' . $uid;
     if (!$this->lock->acquire($lockName, self::LOCK_LEASE_SECONDS)) {
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     try {
       return $this->enviarParaComLock($uid, $lockName);
@@ -159,17 +174,17 @@ final class AvisosResumo {
    * @param string $lockName
    *   Recipient lock name held for this processing attempt.
    */
-  private function enviarParaComLock(int $uid, string $lockName): bool {
+  private function enviarParaComLock(int $uid, string $lockName): int {
     $conta = $this->entityTypeManager->getStorage('user')->load($uid);
     if ($conta === NULL) {
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     // Recover the exact batch if the Mailer accepted it but a later
     // acknowledgement failed. This prevents a newly grown pending batch from
     // receiving a different correlation and resending already delivered rows.
     $recuperacao = $this->recuperarDigestAceito($uid, (string) $conta->getEmail());
     if ($recuperacao !== NULL) {
-      return $recuperacao;
+      return $recuperacao ? self::RESULT_RECONCILED : self::RESULT_SKIPPED;
     }
     if (!$this->preferencias->resumoEmailLigado($uid)) {
       foreach ($this->forumAvisosPendentes($uid) as $aviso) {
@@ -184,14 +199,14 @@ final class AvisosResumo {
           $provider->discardDigest($uid);
         }
       }
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     if (!$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     $agora = $this->time->getRequestTime();
     if (!self::podeEnviar($agora, (int) $this->userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'))) {
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     // Re-read under the recipient lock so concurrent event aggregation cannot
     // be reset after its count was missed by this digest.
@@ -294,7 +309,7 @@ final class AvisosResumo {
       ];
     }
     if ($linhas === []) {
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     $entregasManifesto = [];
     foreach ($daFila as $aviso) {
@@ -350,7 +365,7 @@ final class AvisosResumo {
       $this->logger?->error('Daily notice digest delivery raised @exception; pending rows remain available for retry.', [
         '@exception' => get_class($exception),
       ]);
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     // A lock lease can expire during a stalled transport. Drupal's lock API
     // renews a lock held by this backend and returns FALSE if another worker
@@ -358,7 +373,7 @@ final class AvisosResumo {
     // losing ownership, even when its own transport returned successfully.
     if (!$this->lock->acquire($lockName, self::LOCK_LEASE_SECONDS)) {
       $this->logger?->warning('Daily notice digest lost its recipient lock during delivery; acknowledgement is deferred.');
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     if (!$resultado->sent) {
       if ($resultado->cancelled || $resultado->error === DeliveryError::Permanent) {
@@ -372,7 +387,7 @@ final class AvisosResumo {
         }
         $this->userData->delete('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       }
-      return FALSE;
+      return self::RESULT_SKIPPED;
     }
     // Every adapter uses Drupal's shared database connection. Commit all
     // acknowledgements together so a failed source leaves the exact same batch
@@ -400,7 +415,7 @@ final class AvisosResumo {
       $transaction->rollBack();
       throw $exception;
     }
-    return TRUE;
+    return self::RESULT_SENT;
   }
 
   /**
