@@ -1,7 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: RC
 next_phase: >-
-  Candidato RC 0.1.0-rc.1 aprovado para deploy em Alpha: escopo de código
+  Candidato RC 0.1.0-rc.1 concluído; o deploy em Alpha depende de autorização
+  operacional. Escopo de código
   fechado, Unit 184/1.333, Kernel 150/2.862, PHPCS sem erros, gates de
   rotas, Portal, slugs, Domain e status PASS, revisão de código com cinco
   correções (duas dívidas em DT-F01/DT-F02) e acessibilidade 49/49 em
