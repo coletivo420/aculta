@@ -13,7 +13,9 @@ A arquitetura normativa é [ARCHITECTURE.md](ARCHITECTURE.md). O roadmap anterio
 | User | Pedido/aceite de amizade; membro alvo da transição | `aculta_friendship` é fonte do workflow; Message para aviso | Message Notify em fila; política de e-mail/preferência existente; chave de transição | `FriendshipManager` valida transição/conta; Unit do subscriber e worker. |
 | Private Message | Nova mensagem privada; participantes elegíveis exceto remetente | Private Message + Message; fila carrega ID da mensagem | E-mail mínimo via Message Notify, conforme preferência; chave por mensagem/destinatário | Revalida thread, bloqueio, destinatário e acesso no worker; Unit existente. |
 | LMS adapter | Matrícula, certificado, conclusão, avaliação, feedback, conteúdo e prazo; titular/participantes elegíveis | Entidades/Group do LMS; Message como aviso | Drawer/contador por alter público; e-mail transacional ou digest segundo tipo; deduplicação por origem e versão | Adapter valida membership e permissões ao gerar/abrir; Unit e Kernel próprios; Runtime descrito no README LMS como smoke anterior. |
-| Wiki/Revista/Commerce | Nenhum produtor central registrado nesta auditoria inicial | Workflows permanecem com módulos proprietários | Não inferir canal nem preferência | Inventariar entidades/serviços antes de criar adapter; sem funcionalidade inventada. |
+| Wiki | `aculta_wiki_messenger` consome proposta/revisão editorial e outcome elegíveis; estado Dev.1 parcial | Workflow Wiki; aviso em Message | Site obrigatório; off/direto/resumo via preferência e Mailer | Unit 3/20; Kernel/Runtime pendentes; notifiers legados suprimidos com adapter ativo. |
+| Loja | `aculta_commerce_messenger` publica `store.order_placed` para cliente ativo do tipo Loja configurado; exclui LMS/doação | Drupal Commerce Order; aviso em Message | Site obrigatório; categoria `loja` off/direto/resumo via Mailer | Unit 5/36; Kernel/Runtime pendentes; recibo nativo suprimido após aceite; convidados e falha preservam fallback. |
+| Revista | Adapter futuro conforme workflows e destinatários reais | Conteúdo editorial proprietário | Mesmo contrato comum | Inventário antes de implementar. |
 
 A matriz é caracterização baseada em código, testes e evidências documentais, não homologação Runtime. O nome histórico da fila de atualização do Fórum não indica uso do dispatcher de destinatários Message Subscribe. Fechar a contagem de tipos Message, workers/filas, Flags/leitura e digest como parte do M0 antes de migrar outros produtores.
 
@@ -39,11 +41,11 @@ Fórum conserva `seguir_topico`, avisos atuais/agregação por usuário-tipo-tó
 
 ## M4 — LMS (0.2.0)
 
-Matrícula, certificado, conclusão, avaliação, feedback, submissão, liberação e prazos publicam pelo envelope compartilhado; o consumer mantém Message e revalida acesso. Canal de site obrigatório; e-mail selecionável por usuário entre off/direto/resumo e sujeito às políticas administrativas do Mailer. Concluir testes de armazenamento, idempotência, cada canal, revogação e remoção dos caminhos de entrega legados. Manter cursos, atividades, Groups e matrículas sob ownership LMS; sem chat de turma ou caixa paralela. A integração é a primeira da sequência LMS → Wiki → Fórum → Loja.
+Matrícula, certificado, conclusão, avaliação, feedback, submissão, liberação e prazos publicam pelo envelope compartilhado; o consumer mantém Message e revalida acesso. Canal de site obrigatório; e-mail selecionável por usuário entre off/direto/resumo e sujeito às políticas administrativas do Mailer. Concluir testes de armazenamento, idempotência, cada canal, revogação e remoção dos caminhos de entrega legados. Manter cursos, atividades, Groups e matrículas sob ownership LMS; sem chat de turma ou caixa paralela. A integração LMS precede Wiki, Fórum e Loja; manter a ordem de execução acordada LMS → Wiki → Fórum → Loja.
 
 ## M5 — Wiki, Revista e demais (0.3.0)
 
-Próxima integração depois do LMS: inventariar entidades e workflows reais da Wiki; ligar apenas eventos com destinatário e autorização determináveis ao contrato Messenger. Site obrigatório e e-mail off/direto/resumo, sujeito a preferências do usuário e restrições administrativas do Mailer. Desligar entrega legada correspondente quando migrada e comprovar ausência de duplicação. Depois consolidar o Fórum, preservando F-D21 e seu ledger; Loja e Revista seguem o mesmo contrato em incrementos posteriores.
+Wiki: consumer Dev.1 cobre revisão editorial e resultado de proposta, persiste em Message e alimenta central/contador, digest e entrega direta. Entrega Wiki legada é suprimida quando o adapter está habilitado. Kernel, concorrência, Runtime e prova de ausência de duplicação permanecem pendentes. Em seguida, consolidar o Fórum preservando F-D21 e seu ledger. Depois migrar o evento de pedido da Loja via `aculta_commerce_messenger`, mantendo aviso obrigatório no site, preferência off/direto/resumo e fallback do recibo nativo. Revista segue após inventário do workflow real.
 
 ## M6 — Experiência e administração (0.3.0)
 
@@ -69,6 +71,7 @@ Validar concorrência/idempotência, locks/retry, filas, retenção, paginação
 - M1: parcial; correção de amizade em respostas e remoção da retenção course implementadas; gates a executar.
 - M2: parcial; envelope/publisher e adapters Fórum/User/LMS implementados nos eventos descritos; Fórum tem Kernel round-trip dos três eventos, comparação do agregado e resumo combinado. Amizade ainda carece Kernel integrado, além dos eventos LMS restantes e da homologação Runtime.
 - M3 (LMS): parcial; todos os produtores conhecidos publicam eventos pelo contrato compartilhado e preservam Message; seleção off/resumo/direto implementada e coberta por Unit 27/165; PHPCS passa. Kernel desta sessão não executou por falta de `SIMPLETEST_DB`; Runtime não homologado. Remoção dos fluxos legados e gate Kernel ainda pendentes.
-- M4 (Wiki): contrato v1 e fila de eventos implementados no módulo proprietário; sem consumer Messenger funcional. Migração dos e-mails legados para canais comuns pendente; esta é a próxima frente.
-- M3 (Fórum/User), Loja e M6–M7: conforme gates e sequência descrita acima; não concluídas por atualização documental.
+- M5 (Wiki): consumer Dev.1 funcional em Unit e conectado a Message/central/digest/Mailer; Kernel e Runtime pendentes. Notifiers legados ficam suprimidos somente quando o adapter está habilitado.
+- Loja: submódulo `aculta_commerce_messenger` Dev.1 implementado para pedido registrado; Unit 5/36 e PHPCS/lint/YAML passaram, mas Kernel/configuração instalada/Runtime ainda não foram validados. Recibo de convidados permanece no Commerce; reenvio administrativo nativo continua explícito.
+- Fórum/User, M6–M7: permanecem nos gates documentados; não marcados como concluídos nesta execução.
 - Runtime: não homologado nesta execução.

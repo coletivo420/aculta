@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @file
+ * Integrates Commerce order notices with the shared ACULTA Messenger.
+ */

@@ -170,3 +170,20 @@ O registro de serviços preserva `aculta_commerce.checkout_provider` e os servi�
 Validação da conciliação (dev.3): a fixture do leitor foi atualizada para receber o resolvedor obrigatório de loja. Unit Commerce 20/116 (9 depreciações PHPUnit), Melhor Envio 29/78 e CEP 9/36 passaram. Foi registrado o status documental do novo submódulo Melhor Envio; nenhuma credencial, chamada à API logística ou operação de checkout foi executada.
 
 Gate módulo/tema após conciliação: removida a classe visual própria dos links Green Stash em favor de `data-portal-ui`. Permanecem cinco violações anteriores à integração em Studio, LMS e Wiki; o gate global não está aprovado. Gate estático de endereço PASS; nenhuma revisão visual foi executada nesta fase.
+
+## Integração de avisos com ACULTA Messenger (2026-10-24)
+
+`modules/aculta_commerce_messenger` é o consumer proprietário dos avisos da
+Loja. Apenas o tipo de pedido configurado em `CheckoutSettings::shopOrderType()`
+é publicado como `store.order_placed`; pedidos LMS/doação e fluxos não
+relacionados ficam fora. O aviso no site é obrigatório para clientes registrados
+ativos. E-mail usa a categoria `loja`, com modos off/direto/resumo diário e
+política administrativa via ACULTA Mailer. A transição substitui o recibo
+Commerce duplicado quando o evento foi aceito; pedidos de convidados preservam
+o recibo nativo, e falha de publicação mantém fallback nativo.
+
+Dev.1 implementa publisher/consumer, deduplicação pelo evento/Message existente,
+central, contador, abertura com revalidação de acesso e canais de e-mail. Unit e
+validação de container/Kernel, replay concorrente, Runtime, acessibilidade e
+compatibilidade de upgrade ainda são gates pendentes. Não executar migração nem
+ativar o adapter em Runtime nesta etapa.

@@ -1,0 +1,3 @@
+# Status de componente para a tabela do README raiz (gerada).
+state: Dev
+next_phase: 'Dev.1: consumer de pedido da Loja→Messenger com site obrigatório e e-mail off/direto/resumo; validar Unit/Kernel, container, replay, rotas e Runtime antes de habilitar ([README](web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_messenger/README.md))'
