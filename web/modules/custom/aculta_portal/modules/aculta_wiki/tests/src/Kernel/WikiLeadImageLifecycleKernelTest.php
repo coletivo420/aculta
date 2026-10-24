@@ -61,6 +61,8 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -708,11 +710,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_portal.wiki_search' => '/wiki/busca',
       'aculta_portal.wiki_search_preview' => '/wiki/busca/previa',
     ];
+    $purposeResolver = $this->container->get('aculta_portal.content_purpose_resolver');
     foreach ($routePaths as $routeName => $path) {
       $route = $routeProvider->getRouteByName($routeName);
       self::assertSame($path, $route->getPath());
       self::assertCount(1, $routeProvider->getRoutesByPattern($path), 'The Wiki path must have one route owner.');
       self::assertSame('access content', $route->getRequirement('_permission'));
+      self::assertSame('wiki', $route->getOption('_aculta_domain_purpose'));
+      self::assertSame('wiki', $purposeResolver->requiredPurpose($route, $routeName, Request::create($path)));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
 
@@ -730,6 +735,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('/wiki', $frontProcessor->processInbound('/wiki', $directRequest));
     self::assertFalse($directRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE));
     self::assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
+
+    // Public Wiki routes must not be served from the main Portal domain.
+    $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $searchRoute = $routeProvider->getRouteByName('aculta_portal.wiki_search');
+    $wrongPurposeRequest = Request::create('https://main.example.invalid/wiki/busca');
+    $wrongPurposeRequest->attributes->set('_route', 'aculta_portal.wiki_search');
+    $wrongPurposeRequest->attributes->set('_route_object', $searchRoute);
+    $wrongPurposeEvent = new RequestEvent(
+      $this->container->get('kernel'),
+      $wrongPurposeRequest,
+      HttpKernelInterface::MAIN_REQUEST,
+    );
+    $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequest($wrongPurposeEvent);
+    self::assertNotNull($wrongPurposeEvent->getResponse());
+    self::assertSame(404, $wrongPurposeEvent->getResponse()->getStatusCode());
+    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
 
     $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
     self::assertSame('/wiki/verbetes/{node}/contribuir', $proposalRoute->getPath());

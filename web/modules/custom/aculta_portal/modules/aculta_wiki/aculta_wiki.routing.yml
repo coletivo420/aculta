@@ -5,6 +5,8 @@ aculta_portal.wiki_home:
     _title: Wiki420
   requirements:
     _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
 
 aculta_portal.wiki_search:
   path: /wiki/busca
@@ -13,6 +15,8 @@ aculta_portal.wiki_search:
     _title: Buscar na Wiki420
   requirements:
     _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
 
 aculta_portal.wiki_search_preview:
   path: /wiki/busca/previa
@@ -20,6 +24,8 @@ aculta_portal.wiki_search_preview:
     _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
   requirements:
     _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
 
 aculta_wiki.proposal_submit:
   path: '/wiki/verbetes/{node}/contribuir'

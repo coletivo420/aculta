@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.65`: rotas home, busca e prévia agora declaram purpose `wiki`;
+  Kernel confirma 404 em busca no domínio `main` via subscriber real (1/73).
+  Lint/PHPCS passaram; Portal e Runtime não mudaram.
+
 - `0.1.0-dev.64`: Kernel integra a reescrita da raiz pública Wiki com o caminho
   interno `/wiki` e sua política 404 (1/65; 199 depreciações Core/contrib e 2
   PHPUnit). PHP lint e PHPCS passaram; código do Portal não mudou.

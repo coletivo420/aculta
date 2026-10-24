@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.64**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.65**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.65 — ownership de domínio nas rotas públicas
+
+As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` agora declaram purpose
+`wiki`. A omissão anterior permitia que o subscriber compartilhado não
+rejeitasse esses caminhos no domínio principal. Kernel chama o
+`DomainPurposeRequestSubscriber` real e confirma resposta 404 para busca Wiki
+em `main`, mantendo a raiz pública e o caminho interno da Wiki (1 teste / 73
+asserções). PHPCS/lint passaram; Portal e Runtime não mudaram.
 
 ### Incremento dev.64 — caminho público da Wiki em Kernel
 

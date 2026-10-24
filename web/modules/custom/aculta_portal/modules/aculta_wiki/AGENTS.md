@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.65: rotas públicas Wiki declaram `_aculta_domain_purpose: wiki`; Kernel
+  subscriber real comprova 404 em `main` (1/73), além da raiz `/` e caminho
+  interno `/wiki`. PHPCS/lint passaram; somente Wiki foi alterada.
+
 - Dev.64: Kernel caracteriza raiz pública `/` → `/wiki` com o processador de
   domínio real e mantém bloqueio do caminho interno direto (1/65; 199
   depreciações Core/contrib, 2 PHPUnit). Lint e PHPCS passam; Portal/Runtime

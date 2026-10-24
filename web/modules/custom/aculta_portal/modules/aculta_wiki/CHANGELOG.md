@@ -1,5 +1,16 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.65 — restringir rotas públicas ao purpose Wiki
+
+- `/wiki`, `/wiki/busca` e `/wiki/busca/previa` declaram
+  `_aculta_domain_purpose: wiki`. Antes, esses caminhos podiam escapar da
+  validação de finalidade no host principal.
+- Kernel usa o `DomainPurposeRequestSubscriber` real e comprova 404 para a
+  busca Wiki no domínio `main`, além dos contratos de raiz pública `/` e caminho
+  interno `/wiki`. Focal: 1 teste / 73 asserções; PHPCS e PHP lint passaram.
+- A mudança é somente no ownership de rota da Wiki; nenhum arquivo do Portal ou
+  Runtime foi alterado.
+
 ## 0.1.0-dev.64 — testar raiz pública e caminho interno em Kernel
 
 - O Kernel de rotas agora inicializa o `PurposeFrontPathProcessor` real: a raiz
