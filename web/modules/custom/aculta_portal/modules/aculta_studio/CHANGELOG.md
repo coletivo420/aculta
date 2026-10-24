@@ -1,3 +1,28 @@
+## 0.1.0-dev.17 — S-R3-B1: Documentos privados na Minha Conta Studio (2026-10-24)
+
+- Nova rota canônica `/studio/conta/documentos` (purpose `account`,
+  login e permissão Portal), delegada ao **mesmo**
+  `PortalController::otherData()` e `AccountOtherDataForm` já usados
+  no legado em `/dados/outros-dados`. O serviço
+  `aculta_id_cpf.account_document` mantém sozinho validação,
+  criptografia, leitura mascarada, gravação única e regras de CPF/CNPJ.
+- `AccountExperienceProvider` e a navegação contextual só exibem
+  Documentos se o serviço opcional responder `isAvailable()`. Sem
+  owner, a rota continua sujeita ao 404 original de `PortalController`.
+- O retorno pós-gravação em `AccountOtherDataForm` usa a rota de origem:
+  `aculta_studio.account_documents` no Studio, ou
+  `aculta_portal.my_data_other` no legado. A prioridade do destino
+  legítimo de checkout permanece inalterada; sem redirects temporários.
+- Testes Unit de controller, provider e retorno contextual adicionados/
+  estendidos, **ainda não executados para a dev.17**. É obrigatória a
+  verificação Kernel/Functional do serviço opcional habilitado/ausente,
+  documentação sensível, acesso, submit sem JS e checkout.
+- O hub geral continua em **`/` de ACCOUNT**; Minha Conta original
+  permanece permanentemente em **`/conta-legada`**, e `/studio`
+  é o caminho interno não público. Conta e Perfil seguem experiências
+  independentes. Nenhum schema, dado ou shell antigo foi modificado
+  por esta etapa.
+
 ## 0.1.0-dev.16 — testes Unit do hub e das seções da Conta com container de tradução (2026-10-24)
 
 - `StudioHubControllerTest` e `StudioAccountSectionControllerTest` registram `string_translation` no `setUp`.
