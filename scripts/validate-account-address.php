@@ -30,12 +30,23 @@ $cep = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/js/cep-
 $controller = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Controller/CepLookupController.php');
 $fieldConfig = $read('config/sync/field.field.profile.authenticated.field_address.yml');
 
-// 1. O bloco de papel não pode capturar /dados/endereco (authenticated é tipo de papel; isso sumiu número e país).
+// 1. O bloco de papel não pode capturar a edição de endereço do Portal
+// NEM a rota equivalente do Studio: ambas usam o mesmo Profile Commerce.
 $check(
-  (bool) preg_match("/ehTipoDePapel\\(\\\$entity\\)\\s*&&\\s*\\\$path !== '\\/dados\\/endereco'/", $hooks),
-  'PortalHooks: o bloco de papel exclui /dados/endereco',
+  str_contains($hooks, "'aculta_portal.my_data_address'")
+    && str_contains($hooks, "'aculta_studio.account_address'")
+    && str_contains($hooks, '&& !$isAddressRoute')
+    && str_contains($hooks, '&& $isAddressRoute')
+    && str_contains($hooks, 'AccountAddressForm::apply('),
+  'PortalHooks: ambos os editores de endereço preservam país, Número e S/N',
 );
-
+$callbacks = $read('web/modules/custom/aculta_portal/src/Form/PortalFormCallbacks.php');
+$check(
+  str_contains($callbacks, "'aculta_studio.account_address'")
+    && str_contains($callbacks, "'aculta_portal.my_data_address'")
+    && str_contains($callbacks, '$formState->setRedirect($route)'),
+  'PortalFormCallbacks: submissão retorna ao mesmo editor sem perder o legado',
+);
 // 2. País fixo em Brasil: campo oculto (não #access FALSE, que faz o módulo Address descartar a entrada inteira).
 //    O tratamento é único (AccountAddressForm) e usado por Minha conta, checkout, loja e perfis de equipe.
 $form = $read('web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
