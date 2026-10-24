@@ -266,8 +266,11 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
-| `conta.aculta` | `/studio` | Entrada legada da plataforma editorial, atende Marley | Declarada em `aculta_studio`; exige `access aculta portal`; mantém os links canônicos `/studio/marley`. Runtime não verificado nesta refatoração. |
-| `conta.aculta` | `/studio/marley` | Início editorial ACULTA Studio Marley | Declarada em `aculta_studio`; exige `access aculta portal`; purpose `account`. Runtime não verificado nesta refatoração. |
+| `conta.aculta` | `/studio` | **Hub geral ACULTA Studio** | Declarado em `aculta_studio`, route ID `aculta_studio.legacy_home` preservado; requer login e `access aculta portal`, lista somente experiências autorizadas; código dev.10, Runtime ainda não homologado. |
+| `conta.aculta` | `/studio/marley` | **Entrada inicial canônica de Marley (minúscula)** | Declarada por `aculta_studio.home`; mantém controlador, áreas e acesso editoriais; purpose `account`. Runtime da dev.10 ainda não homologado. |
+| `conta.aculta` | `/studio/Marley` | Alias histórico de capitalização do Marley | HTTP 302 apenas GET/HEAD para `/studio/marley`, via `aculta_studio.legacy_marley_capitalized`; não usar em novos links. |
+| `conta.aculta` | `/studio/inicio` | Prévia antiga do hub | HTTP 302 apenas GET/HEAD para `/studio`, via `aculta_studio.hub_preview`; não usar em novos links. |
+| `conta.aculta` | `/studio/pessoal` | Entrada mínima Meu Espaço | `aculta_studio.personal`, autenticado no purpose `account`; ainda usa links à Conta original, sem editor pessoal; Runtime não homologado. |
 | `conta.aculta` | `/studio/marley/{aba}` | Área editorial Marley, como Revista, Wiki, Cursos, Fórum ou Galerias | Declarada em `aculta_studio`; plugin, disponibilidade e permissão do módulo dono determinam acesso; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
