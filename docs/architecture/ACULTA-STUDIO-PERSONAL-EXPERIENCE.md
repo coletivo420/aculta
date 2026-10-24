@@ -2,9 +2,23 @@
 
 **Arquitetura-alvo, 2026-10-24.** A fase documental P0 foi concluída; a P1-A já possui implementação inicial em código (`0.1.0-dev.8`), ainda **sem homologação PHPUnit/Runtime**. As demais fases são planejamento; nenhum dado, formulário ou shell antigo foi migrado.
 
+## Atualização P1-C — hub real e entrada editorial minúscula (dev.10)
+
+O código atual apresenta o hub em **`/studio`** e a entrada do Marley
+em **`/studio/marley`**; o route ID `aculta_studio.home` mantém seu
+controller editorial. `/studio/Marley` e `/studio/inicio` respondem
+com 302 somente para GET/HEAD, respectivamente ao Marley minúsculo e ao
+hub. Essas decisões substituem as descrições históricas de `/studio` como
+entrada do Marley na P0/P1-A/P1-B.
+
+**Os códigos e testes Unit foram atualizados no Git, mas não executados
+no Drupal instalado.** A edição de perfil, incorporação de formulários
+da Conta e a navegação contextual unificada permanecem previstas para
+fases posteriores. Não confundir implementação de rotas com homologação.
+
 ## Direção e limites
 
-- `/studio` será futuramente o hub geral autenticado; hoje continua sendo entrada de compatibilidade do Marley.
+- `/studio` já está implementado no Git como hub autenticado (P1-C, ainda sem homologação Runtime); `/studio/marley` é a entrada inicial do Marley, totalmente minúscula.
 - `Meu Espaço`, provider `pessoal`, tem entrada mínima implementada em `/studio/pessoal` (purpose `account`, autenticação e permissão do Portal); não é ainda o hub unificado nem um editor de perfil.
 - Navegação única: seletor de experiências e seções contextuais, sem aninhar shells de Conta e Studio.
 - Editor de perfil dentro de Meu Espaço; perfil público independente em `/u/{apelido}`, no purpose `main`, sob `PublicProfilePolicy`.
