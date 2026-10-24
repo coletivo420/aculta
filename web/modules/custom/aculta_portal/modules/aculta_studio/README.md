@@ -2,15 +2,17 @@
 
 ACULTA Studio é a plataforma transversal de interfaces próprias na conta. O machine name do submódulo permanece `aculta_studio`.
 
-## Próxima evolução — Meu Espaço e Hub (STUDIO-P0, documentação)
+## STUDIO-P1-A — Meu Espaço: entrada mínima implementada (dev.8)
 
 Proposta de 2026-10-24: evoluir `/studio` para hub geral, criar a experiência
 autenticada **Meu Espaço** (`pessoal`), oferecer navegação global unificada
 com seções contextuais, e migrar a **edição** de Minha Conta/Meu Perfil para
 a interface do Studio. `/u/{apelido}` permanece página pública em `main`.
 
-**Nenhum desses caminhos ou providers novos foi implementado nesta fase.**
-`/studio` ainda é rota legada do Marley; a conta mantém seu shell e a home
+**A entrada `/studio/pessoal` e o provider `pessoal` já existem em código, mas
+não foram homologados no Runtime nesta entrega.** O hub geral, a navegação
+unificada e o editor de perfil continuam planejados. `/studio` ainda é rota
+legada do Marley; a conta mantém seu shell e a home
 na raiz `/` do purpose `account`. O Studio não se torna dono de Profile,
 dados pessoais, formulários, autenticação, inbox, e-mails ou regras de acesso.
 Reutilizar `StudioExperienceManager`, preparar ponte de metadados para Marley
@@ -23,6 +25,9 @@ Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
 
 - **ACULTA Studio Marley (`marley`)**: espaço editorial de criação, edição e moderação. Usa contratos exclusivos `MarleyTab`, `MarleyTabInterface`, `MarleyTabBase`, `MarleyTabManager`, `MarleyPresenter`, `MarleyListingBuilder` e `MarleyController`. Os IDs funcionais das áreas Revista, Wiki, Cursos, Fórum e Galerias não mudam.
 - **ACULTA Studio Ganjalab (`ganjalab`)**: entrada estudantil composta pelo `GanjalabExperienceProvider` e `GanjalabController`. `StudioExperienceManager` permanece registro compartilhado. `LearnerDashboardComposer`, `LearningDashboardManager` e `aculta_lms.student_dashboard` mantêm seus contratos neutros.
+- **Meu Espaço (`pessoal`)**: entrypoint inicial no purpose `account`, com
+  links para a Conta existente e autorização no registry; sem novos formulários
+  nem substituição do shell de Conta. A rota é `/studio/pessoal`.
 - **WE SATIVA**: experiência independente de contribuição Wiki, nas rotas `/studio/we-sativa` e `/studio/we-sativa/inicio`.
 
 A infraestrutura apresenta e encaminha. Os módulos proprietários continuam donos de entidades, formulários, workflow, permissões, matrículas, avaliações, progresso e cache de negócio.
@@ -31,6 +36,7 @@ A infraestrutura apresenta e encaminha. Os módulos proprietários continuam don
 
 Todas as experiências usam `_aculta_domain_purpose: account`, `access aculta portal` e o domínio resolvido pelo Portal.
 
+- Meu Espaço: `/studio/pessoal` (P1-A; Runtime ainda não homologado).
 - Marley: `/studio/marley`, `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab` (estudante autenticado; declarada pelo LMS).
 - WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
