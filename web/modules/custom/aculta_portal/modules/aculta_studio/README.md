@@ -2,6 +2,24 @@
 
 ACULTA Studio é a plataforma transversal de interfaces próprias na conta. O machine name do submódulo permanece `aculta_studio`.
 
+## STUDIO-P1-C — Hub e Marley com rota canônica (dev.10)
+
+**Entrada geral do Studio: `/studio`. Entrada inicial do Marley:
+`/studio/marley` (minúscula).** O hub apresenta links de experiências
+autorizadas, com filtro de módulo opcional e checagem de rota existente.
+Marley continua no `MarleyTabManager` e usa o mesmo controller e subrotas.
+
+Compatibilidade: `/studio/Marley` redireciona temporariamente para a
+entrada minúscula; `/studio/inicio`, antiga prévia, redireciona
+temporariamente para `/studio`, apenas em GET/HEAD. O route ID
+`aculta_studio.home` foi preservado. Meu Espaço, a Conta atual,
+Ganjalab, WE SATIVA e o perfil público seguem independentes.
+
+**Código implementado, homologação pendente:** testes PHPUnit, Kernel,
+Runtime e Firefox ESR/X11 desta fase ainda não foram executados. O corte
+da navegação antiga de Minha Conta e a edição do perfil ainda pertencem
+às fases posteriores P2–P7.
+
 ## STUDIO-P1-B — Marley no registry e prévia do hub (dev.9)
 
 O catálogo agora registra também `MarleyExperienceProvider`, que usa as
@@ -37,7 +55,7 @@ Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
 
 ## Experiências
 
-- **Prévia do hub geral**: `/studio/inicio` com descoberta e links autorizados; `/studio` ainda pertence ao legado Marley.
+- **Hub geral**: `/studio`, com descoberta e links autorizados; `/studio/inicio` é alias temporário seguro.
 - **ACULTA Studio Marley (`marley`)**: espaço editorial de criação, edição e moderação. Usa contratos exclusivos `MarleyTab`, `MarleyTabInterface`, `MarleyTabBase`, `MarleyTabManager`, `MarleyPresenter`, `MarleyListingBuilder` e `MarleyController`. Os IDs funcionais das áreas Revista, Wiki, Cursos, Fórum e Galerias não mudam.
 - **ACULTA Studio Ganjalab (`ganjalab`)**: entrada estudantil composta pelo `GanjalabExperienceProvider` e `GanjalabController`. `StudioExperienceManager` permanece registro compartilhado. `LearnerDashboardComposer`, `LearningDashboardManager` e `aculta_lms.student_dashboard` mantêm seus contratos neutros.
 - **Meu Espaço (`pessoal`)**: entrypoint inicial no purpose `account`, com
@@ -52,7 +70,7 @@ A infraestrutura apresenta e encaminha. Os módulos proprietários continuam don
 Todas as experiências usam `_aculta_domain_purpose: account`, `access aculta portal` e o domínio resolvido pelo Portal.
 
 - Meu Espaço: `/studio/pessoal` (P1-A; Runtime ainda não homologado).
-- Marley: `/studio/marley`, `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
+- Marley: `/studio/marley` (entrada canônica, minúscula), `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab` (estudante autenticado; declarada pelo LMS).
 - WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
 
