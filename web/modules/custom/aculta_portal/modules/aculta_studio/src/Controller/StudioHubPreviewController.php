@@ -9,11 +9,14 @@ use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
- * Safe preview of the future Studio hub; /studio still belongs to Marley.
+ * Studio hub backed by the authorized registry, plus safe preview redirect.
+ *
+ * Class name remains stable for existing service and test consumers.
  */
 final class StudioHubPreviewController {
 
@@ -58,9 +61,9 @@ final class StudioHubPreviewController {
 
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-hub-preview'],
+      '#attributes' => ['data-portal-ui' => 'studio-hub'],
       'intro' => [
-        '#plain_text' => new TranslatableMarkup('Esta é uma prévia do futuro início do ACULTA Studio. Suas áreas atuais continuam disponíveis nos mesmos endereços.'),
+        '#plain_text' => new TranslatableMarkup('Escolha uma experiência do ACULTA Studio para continuar seu trabalho ou acessar seu espaço pessoal.'),
       ],
       'experiences' => [
         '#theme' => 'item_list',
@@ -77,6 +80,18 @@ final class StudioHubPreviewController {
         'max-age' => 0,
       ],
     ];
+  }
+
+  /**
+   * Redirects the former hub preview to the canonical /studio page.
+   *
+   * The preview route only accepts safe GET/HEAD requests.
+   */
+  public function previewRedirect(): RedirectResponse {
+    if (!$this->account->isAuthenticated() || !$this->account->hasPermission('access aculta portal')) {
+      throw new AccessDeniedHttpException();
+    }
+    return new RedirectResponse(Url::fromRoute('aculta_studio.legacy_home')->toString(), 302);
   }
 
 }
