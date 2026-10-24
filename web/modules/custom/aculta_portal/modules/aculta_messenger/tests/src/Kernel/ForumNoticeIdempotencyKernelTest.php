@@ -736,7 +736,27 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     // acknowledge only the saved first batch and avoid a second email.
     $secondComment = $this->createPersistedComment($topic, (int) $author->id());
     self::assertSame(1, $avisos->registrarResposta($secondComment));
-    self::assertSame(1, $summary->enviarResumos());
+    // Simulate a deployment that renames the provider class between the
+    // accepted delivery and its acknowledgement recovery.
+    $replacementProvider = new RecoveredDigestAckProvider($uid, $database);
+    $recoverySummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$replacementProvider],
+    );
+    self::assertSame(1, $recoverySummary->enviarResumos());
     self::assertCount(1, $correlations);
     $notice = $this->loadNotices($uid, (int) $topic->id())[0];
     self::assertSame(1, (int) $notice->get('contador_email')->value, 'The later Forum event stays pending after recovery of the accepted snapshot.');
@@ -1741,6 +1761,64 @@ final class FailOnceDigestAckProvider implements AvisoDigestProviderInterface {
       $this->failed = TRUE;
       throw new \RuntimeException('Synthetic acknowledgement failure.');
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {}
+
+}
+
+/**
+ * Replacement implementation used to prove recovery across a PHP class rename.
+ */
+final class RecoveredDigestAckProvider implements AvisoDigestProviderInterface {
+
+  public function __construct(
+    private readonly int $uid,
+    private readonly Connection $database,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    return [$this->uid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    if ($uid !== $this->uid) {
+      return [];
+    }
+    return [
+      [
+        'tipo' => 'wiki',
+        'titulo' => 'Revisão publicada',
+        'quantidade' => 1,
+        'delivery_id' => 998,
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->database->update('aculta_messenger_digest_ack_test')
+      ->fields(['acknowledged' => 1])
+      ->condition('id', 1)
+      ->execute();
   }
 
   /**

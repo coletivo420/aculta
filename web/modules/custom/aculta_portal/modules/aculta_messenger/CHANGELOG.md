@@ -1,3 +1,11 @@
+## 0.1.1-dev.151 — provar recuperação após refactor do adapter — 2026-10-24
+
+O Kernel agora simula uma implantação entre o aceite do e-mail e a confirmação: a segunda execução usa outra classe
+PHP com o mesmo ID estável `wiki`, confirma o manifesto original sem reenvio e deixa o aviso posterior pendente.
+
+Validação: `ForumNoticeIdempotencyKernelTest` **32/725 PASS**; PHP lint, PHPCS Drupal/DrupalPractice e diff check PASS.
+Banco MariaDB dedicado de testes; Runtime e transporte real não usados.
+
 ## 0.1.1-dev.150 — identidade estável dos adapters no digest — 2026-10-24
 
 Manifestos e correlações do digest agora identificam adapters por chave estável de origem (`lms`, `wiki`, `commerce`,
