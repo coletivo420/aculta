@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_studio\Experience\GanjalabExperienceProvider;
+use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
@@ -35,15 +36,15 @@ final class StudioExperienceManagerTest extends UnitTestCase {
    */
   public function testProviderInventoryKeepsOrderAndDeniesOtherPurpose(): void {
     $manager = new StudioExperienceManager();
-    $pessoal = new \Drupal\aculta_studio\Experience\PersonalExperienceProvider();
+    $conta = new AccountExperienceProvider();
     $ganjalab = new GanjalabExperienceProvider(NULL);
-    $manager->addProvider($pessoal);
+    $manager->addProvider($conta);
     $manager->addProvider($ganjalab);
 
-    self::assertSame(['pessoal', 'ganjalab'], array_keys($manager->all()));
-    self::assertSame($pessoal, $manager->all()['pessoal']);
+    self::assertSame(['conta', 'ganjalab'], array_keys($manager->all()));
+    self::assertSame($conta, $manager->all()['conta']);
     $account = $this->createMock(AccountInterface::class);
-    self::assertFalse($manager->access('pessoal', 'forum', $account)->isAllowed());
+    self::assertFalse($manager->access('conta', 'forum', $account)->isAllowed());
     self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
   }
 
