@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Controller;
 
+use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Controller\PortalController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -25,6 +26,7 @@ final class StudioAccountSectionController {
   public function __construct(
     private readonly ClassResolverInterface $resolver,
     private readonly AccountInterface $account,
+    private readonly ?AccountDocumentInterface $documents = NULL,
   ) {}
 
   /**
@@ -128,6 +130,10 @@ final class StudioAccountSectionController {
       'senha' => ['Senha', 'aculta_studio.account_password'],
       'conexoes' => ['Contas conectadas', 'aculta_studio.account_connections'],
     ];
+
+    if (!$this->documents?->isAvailable()) {
+      unset($destinations['documentos']);
+    }
 
     $items = [];
     foreach ($destinations as $key => [$label, $route]) {
