@@ -27,7 +27,7 @@ use Drupal\user\UserInterface;
  * the last counted comment is stored on the notice. Authors do not receive
  * notices for their own replies. Notices do not appear in the message inbox.
  */
-final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeRegistrarInterface {
+final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeRegistrarInterface, ForumNoticeReadInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,

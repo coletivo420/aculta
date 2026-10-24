@@ -8,6 +8,7 @@ services:
   Drupal\aculta_user\Social\FriendshipManagerInterface: '@aculta_user.friendship_manager'
   Drupal\aculta_messenger\Service\UnreadThreadCounter: '@aculta_messenger.unread_thread_counter'
   Drupal\aculta_messenger\Aviso\AvisoService: '@aculta_messenger.aviso_service'
+  Drupal\aculta_messenger\Aviso\ForumNoticeReadInterface: '@aculta_messenger.aviso_service'
   Drupal\aculta_messenger\Aviso\ForumNoticeRegistrarInterface: '@aculta_messenger.aviso_service'
   Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface: '@aculta_messenger.forum_notice_event_producer'
   Drupal\aculta_messenger\Aviso\AvisoPreferencias: '@aculta_messenger.aviso_preferencias'

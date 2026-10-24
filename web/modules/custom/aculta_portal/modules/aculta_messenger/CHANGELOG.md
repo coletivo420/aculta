@@ -991,3 +991,12 @@ Classificação: PATCH (marcação de apresentação do módulo; sem mudança de
 - O fixture usa só o idioma padrão `pt-br`. Kernel MariaDB: 23 testes / 515
   assertions, sem depreciações.
 
+## 0.1.1-dev.90 — corrigir leitura dos avisos no tópico — 2026-10-24
+
+- O Router do Drupal converte o parâmetro canônico `node` em `NodeInterface`
+  antes do subscriber de requisição. `ForumAvisoReadSubscriber` agora aceita a
+  entidade convertida e o ID numérico legado, delegando a revalidação de acesso
+  ao `AvisoService` por um contrato mínimo de leitura.
+- Unit Messenger: 75 testes / 352 assertions; PHPCS Drupal/DrupalPractice e
+  PHP lint nos arquivos alterados: PASS. Runtime não homologado.
+
