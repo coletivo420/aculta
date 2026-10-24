@@ -1754,6 +1754,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame('needs_changes', $decidedProposal->get('state')->value);
     }
 
+    try {
+      $decisionService->decide(
+        $decidedProposal,
+        (int) $decidedProposal->getRevisionId(),
+        'declined',
+        str_repeat('x', 5001),
+      );
+      self::fail('An editorial decision note must not exceed 5,000 characters.');
+    }
+    catch (UnprocessableEntityHttpException) {
+      self::assertSame('needs_changes', $decidedProposal->get('state')->value);
+    }
+
     $this->container->get('current_user')->setAccount($other);
     try {
       $decisionService->decide($decidedProposal, (int) $decidedProposal->getRevisionId(), 'declined', 'Sem permissão.');
@@ -2150,6 +2163,20 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submitted', $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
       ->loadRevision($pendingProposal->getRevisionId())->get('state')->value);
 
+    $withdrawnRevisionId = (int) $withdrawnProposal->getRevisionId();
+    $this->container->get('current_user')->setAccount($reviewer);
+    try {
+      $decisionService->decide($withdrawnProposal, $withdrawnRevisionId, 'declined', 'A proposta foi retirada.');
+      self::fail('A withdrawn proposal must not be reopened by an editorial decision.');
+    }
+    catch (ConflictHttpException) {
+      $freshWithdrawnProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+        ->loadUnchanged($withdrawnProposal->id());
+      self::assertSame('withdrawn', $freshWithdrawnProposal->get('state')->value);
+      self::assertSame($withdrawnRevisionId, (int) $freshWithdrawnProposal->getRevisionId());
+    }
+
+    $this->container->get('current_user')->setAccount($submitter);
     $reopenedProposal = $submission->submit($target, 'reference', 'Incluir estudo recente.', 'Esta fonte amplia a cobertura.');
     $this->container->get('current_user')->setAccount($reviewer);
     $needsChangesProposal = $decisionService->decide(

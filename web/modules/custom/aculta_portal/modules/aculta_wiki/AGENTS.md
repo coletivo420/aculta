@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.66: Kernel caracteriza limite de 5.000 caracteres, bloqueio de proposta
+  retirada, conflito de revisão-base, subconjunto/modes e transição oficial
+  (1/159; 201 depreciações Core/contrib, 2 PHPUnit). PHPCS/lint passam; teste
+  multiprocesso segue pendente.
+
 - Dev.65: rotas públicas Wiki declaram `_aculta_domain_purpose: wiki`; Kernel
   subscriber real comprova 404 em `main` (1/73), além da raiz `/` e caminho
   interno `/wiki`. PHPCS/lint passaram; somente Wiki foi alterada.

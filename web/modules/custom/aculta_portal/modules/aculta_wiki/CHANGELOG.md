@@ -1,5 +1,17 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.66 — fechar limites de decisão de propostas
+
+- Kernel testa rejeição de nota editorial acima de 5.000 caracteres e que uma
+  proposta retirada não pode ser decidida/reaberta; os registros e revisões
+  existentes permanecem intactos.
+- A mesma cobertura confirma conflito quando a revisão-base do verbete ficou
+  obsoleta, aceitação pelo Form API com subconjunto aprovado, modos individuais
+  append/replace e transição oficial de publicação.
+- Focal MariaDB: 1 teste / 159 asserções, 201 depreciações Core/contrib e 2
+  PHPUnit. PHP lint, PHPCS Drupal/DrupalPractice passaram. Concorrência entre
+  processos PHP permanece como cobertura planejada.
+
 ## 0.1.0-dev.65 — restringir rotas públicas ao purpose Wiki
 
 - `/wiki`, `/wiki/busca` e `/wiki/busca/previa` declaram

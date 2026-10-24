@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.65**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.66**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.66 — limites do backend de propostas
+
+A cobertura Kernel do serviço/Form API confirma nota de decisão com limite
+máximo de 5.000 caracteres, tentativa de decidir proposta retirada sem reabrir
+seu estado, conflito por revisão-base obsoleta e aceitação de subconjunto de
+campos com modos de lista individuais e transição oficial do workflow. Focal:
+1 teste / 159 asserções, com 201 depreciações Core/contrib e 2 PHPUnit; PHPCS e
+PHP lint passaram. Concorrência multiprocesso permanece pendente.
 
 ### Incremento dev.65 — ownership de domínio nas rotas públicas
 

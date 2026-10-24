@@ -97,8 +97,8 @@ asserções, 291 depreciações Core/contrib e 22 PHPUnit; revalidada em dev.63.
 | Retirar estado `submitted` | Kernel | Form API confirma e grava nova revisão `withdrawn`; anterior permanece | aprovado (focal: 1 teste / 110 assertions; classe: 9 / 384) |
 | Retirar estado `needs_changes` | Kernel | Nova revisão encerra a proposta e preserva o retorno na revisão anterior | aprovado |
 | Outra pessoa autora | Kernel | Serviço nega retirada por Entity Access/ownership | aprovado |
-| Revisão-base obsoleta | Kernel | Conflito sem revisão extra | implementação; teste direto pendente |
-| Reabrir proposta retirada | Kernel | Estado final impede nova decisão editorial | coberto pelo gate de estado da decisão; teste específico pendente |
+| Revisão-base obsoleta | Kernel | Conflito sem revisão extra | aprovado (dev.66; no focal 1/159) |
+| Reabrir proposta retirada | Kernel | Estado final impede nova decisão editorial | aprovado (dev.66; verifica estado e VID preservados) |
 
 ## Fase 5 — busca e aviso de revisão
 
@@ -251,7 +251,7 @@ Kernel MariaDB da classe completa: 8 testes / 274 assertions, sem warnings;
 | Validação do formulário | Kernel | Texto/justificativa obrigatórios e fontes apenas HTTP(S), máximo dez | aprovado (válido exercitado; inválidos no serviço) |
 | Callback de submissão | Kernel | Persiste pela API proprietária, atualiza revisão-base e redireciona ao verbete | aprovado |
 | Autorização e purpose no serviço | Kernel | Mantém proteção contra conta sem permissão, domínio incorreto e alvo despublicado | aprovado na cobertura do serviço dev.14 |
-| Aplicar o conteúdo sugerido ao Node | Kernel | Exige decisão editorial explícita e revisão nova autorizada | pendente de definição do fluxo |
+| Aplicar o conteúdo selecionado ao Node | Kernel | Editor escolhe subconjunto; listas aceitam modo individual; publica pela transição oficial | aprovado (dev.66; fluxo decidido pelo responsável) |
 
 O módulo está desabilitado no Runtime; o endpoint só existe após ativação
 controlada.
@@ -278,8 +278,8 @@ Resultado da suíte Kernel da classe: 8 testes / 290 assertions, sem warnings;
 | Decisão com VID esperado obsoleto | Kernel | Conflito, sem gravar revisão extra | aprovado |
 | Conta colaboradora sem permissão editorial | Kernel | Decisão negada | aprovado |
 | Nota vazia | Kernel | Serviço rejeita antes de persistir | aprovado |
-| Nota maior que 5.000 caracteres | Kernel | Form/service rejeita antes de persistir | planejado |
-| Aceite e aplicação na revisão do verbete | Kernel | Só publica por workflow após aplicação editorial e conferência do VID-base | pendente de decisão de fluxo |
+| Nota maior que 5.000 caracteres | Kernel | Form/service rejeita antes de persistir | aprovado (dev.66) |
+| Aceite e aplicação na revisão do verbete | Kernel | Só publica por workflow após aplicação editorial e conferência do VID-base | aprovado (dev.66; subconjunto aprovado pelo editor) |
 | Concorrência real entre duas sessões MariaDB | Kernel | Lock serializa; segunda ação obsoleta recebe conflito | planejado; lock implementado, concorrência multiprocesso não executada |
 
 O formulário de decisão não tem rota nem integração no Studio; seu consumo fica

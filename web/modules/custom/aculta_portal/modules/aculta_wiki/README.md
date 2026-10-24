@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.66`: Kernel cobre nota acima de 5.000 caracteres, decisão de
+  proposta retirada, revisão-base obsoleta e aplicação editorial aprovada via
+  workflow/Form API (1/159; 201 depreciações Core/contrib e 2 PHPUnit).
+  Concorrência entre processos segue pendente.
+
 - `0.1.0-dev.65`: rotas home, busca e prévia agora declaram purpose `wiki`;
   Kernel confirma 404 em busca no domínio `main` via subscriber real (1/73).
   Lint/PHPCS passaram; Portal e Runtime não mudaram.
