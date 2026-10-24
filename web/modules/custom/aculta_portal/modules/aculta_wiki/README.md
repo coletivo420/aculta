@@ -7,6 +7,10 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.86`: Kernel R2 de rotas/acesso revalidado no HEAD `8896527e7`;
+  descoberta/uniquidade, purpose, raiz pública, acesso de criação e busca por
+  grants passaram em 3 testes / 141 asserções. Runtime intocado.
+
 - `0.1.0-dev.85`: falha ao salvar a Media agora tem regressão Unit para
   rollback da transação, invalidar caches de File/Media e limpar estado do
   formulário. Wiki Unit 67/360; Kernel de ciclo de imagem 24/1.142. PHPCS/lint

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.86 — revalidar rotas e acesso
+
+- Kernel atual reexecuta descoberta e unicidade das rotas Wiki, propósito por
+  Domain, raiz pública `/`, acesso do CTA via `createAccess()` e busca entre
+  usuários com grants distintos, inclusive buscas vazias, negativas e inválidas.
+- Três testes / 141 asserções passaram. Foram reportadas 283 depreciações
+  Core/contrib e 4 PHPUnit, mais uma depreciação PHP do Webform contrib. Runtime
+  intocado.
+
 ## 0.1.0-dev.85 — rollback quando a persistência da Media falha
 
 - Nova regressão Unit simula falha no `Media::save()` depois que o File foi

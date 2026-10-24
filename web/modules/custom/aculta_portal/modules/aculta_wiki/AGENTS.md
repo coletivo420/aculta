@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.86: R2 de rotas/acesso revalidada no HEAD `8896527e7`; Kernels 3/141
+  cobrem discovery, Domain/purpose, raiz, CTA por `createAccess()` e cache/grants.
+  Runtime intocado.
+
 - Dev.85: regressão Unit cobre falha de `Media::save()` depois de tornar o File
   permanente; rollback, reset de cache e estado do formulário passam. Wiki Unit
   67/360; Kernel imagem 24/1.142. PHPCS/lint passaram; Runtime intocado.
