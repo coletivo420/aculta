@@ -1,5 +1,18 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.75 — revalidar integração Content Index
+
+- No HEAD após dev.74, os Unit dos providers Wiki/categoria passaram (9 testes /
+  40 assertions; 3 depreciações PHPUnit).
+- Os Kernels MariaDB `ContentIndexWikiProviderKernelTest`,
+  `ContentIndexWikiAccessKernelTest` e `ContentIndexOwnerIntegrationKernelTest`
+  passaram em conjunto (10 testes / 343 assertions; 240 depreciações, em sua
+  maioria Core/contrib). O boot real continua descobrindo os providers Wiki e
+  Image, validando relações e Entity Access.
+- Nenhum provider/fingerprint mudou. O Index no Runtime não foi ativado e nenhum
+  rebuild do inventário foi executado; esses gates dependem de homologação
+  operacional separada.
+
 ## 0.1.0-dev.74 — semântica da prévia de busca como navegação
 
 - O container da prévia recebe `role=region`, nome acessível e `aria-live`;

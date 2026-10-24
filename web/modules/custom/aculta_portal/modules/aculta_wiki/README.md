@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.75`: R1 revalidada no HEAD. Unit dos providers Wiki/categoria:
+  9/40; três Kernels MariaDB combinados (provider, acesso/relações e owner
+  real): 10/343. O bootstrap real descobre Wiki + Image e revalida Entity
+  Access. Projeção v4 permanece inalterada; ativação do Index e rebuild integral
+  no Runtime seguem pendentes.
+
 - `0.1.0-dev.74`: prévia da busca usa região viva nomeada; o campo fica como
   searchbox nativo e links são percorridos por Tab. Unit 4/18 e fixture Firefox
   do JS local 14/14 passam. No Runtime antigo, o smoke integrado fez 28/35: ele

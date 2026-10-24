@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.75: R1 revalidada no HEAD: Unit dos providers 9/40; três Kernels MariaDB
+  10/343, 240 depreciações Core/contrib/PHPUnit. Provider v4 inalterado; Runtime
+  não foi ativado nem reconstruído.
+
 - Dev.74: a prévia Wiki é região viva nomeada com links de navegação; o campo
   mantém seu role nativo de busca e as setas não são interceptadas. A Unit do
   builder passa (4/18), a fixture Firefox com o JS local passa (14/14) e o host

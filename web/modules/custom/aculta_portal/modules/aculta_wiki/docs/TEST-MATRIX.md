@@ -45,7 +45,7 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | ContentIndexWikiProviderKernelTest | Kernel MariaDB | Provider e integração do Index | aprovado |
 | ContentIndexWikiAccessKernelTest | Kernel MariaDB | Domain, grants, revisões e relações | aprovado |
 | ContentIndexOwnerIntegrationKernelTest | Kernel MariaDB | Bootstrap real e descoberta de provider owner | aprovado |
-| Três Kernels combinados | Kernel MariaDB | Regressão R1 no HEAD dev.61 | aprovado (10 testes / 343 asserções; 243 depreciações Core/contrib/PHPUnit) |
+| Três Kernels combinados | Kernel MariaDB | Regressão R1 no HEAD dev.75: provider, acesso/relações e bootstrap owner real | aprovado (10 testes / 343 asserções; 240 depreciações Core/contrib/PHPUnit) |
 | Ativação/rebuild e inventário completo do Index | Runtime | Integração instalada | pendente; sem operação Runtime nesta entrega |
 
 ## R2 — ciclo de vida da imagem (dev.63; cobertura incremental até dev.53)
