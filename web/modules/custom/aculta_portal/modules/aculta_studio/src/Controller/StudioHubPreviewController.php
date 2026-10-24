@@ -9,12 +9,11 @@ use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
- * Studio hub backed by the authorized registry, plus safe preview redirect.
+ * Studio hub backed by the authorized experience registry.
  *
  * Class name remains stable for existing service and test consumers.
  */
@@ -80,18 +79,6 @@ final class StudioHubPreviewController {
         'max-age' => 0,
       ],
     ];
-  }
-
-  /**
-   * Redirects the former hub preview to the canonical /studio page.
-   *
-   * The preview route only accepts safe GET/HEAD requests.
-   */
-  public function previewRedirect(): RedirectResponse {
-    if (!$this->account->isAuthenticated() || !$this->account->hasPermission('access aculta portal')) {
-      throw new AccessDeniedHttpException();
-    }
-    return new RedirectResponse(Url::fromRoute('aculta_studio.legacy_home')->toString(), 302);
   }
 
 }
