@@ -72,9 +72,10 @@ final class AccountExperienceProviderTest extends UnitTestCase {
       $link['#url']->getRouteName(), $build['sections']['#items']);
     self::assertSame([
       'aculta_portal.my_data',
-      'aculta_portal.my_data_address',
-      'aculta_portal.security',
-      'aculta_portal.connections',
+      'aculta_studio.account_address',
+      'aculta_studio.account_security',
+      'aculta_studio.account_password',
+      'aculta_studio.account_connections',
       'aculta_portal.support_my',
       'aculta_portal.account_settings',
       '<front>',
