@@ -56,6 +56,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
   public function testDelegatesAndReplacesOnlyLegacyNavigation(): void {
     $methods = [
       'address' => 'address',
+      'documents' => 'otherData',
       'security' => 'security',
       'password' => 'securityPassword',
       'connections' => 'connections',
@@ -68,6 +69,11 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
         public function address(): array {
           $this->called[] = 'address';
           return $this->build('address');
+        }
+
+        public function otherData(): array {
+          $this->called[] = 'otherData';
+          return $this->build('documents');
         }
 
         public function security(): array {
@@ -104,18 +110,19 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
 
       self::assertSame([$ownerMethod], $owner->called);
       self::assertSame('studio-account-section', $page['#attributes']['data-portal-ui']);
-      self::assertSame($studioMethod === 'password' ? 'password' : $ownerMethod,
+      self::assertSame($studioMethod === 'password' ? 'password' : ($studioMethod === 'documents' ? 'documents' : $ownerMethod),
         $page['content']['content']['section']['#owner']);
       self::assertSame(['#type' => 'form'],
         $page['content']['content']['section']['form']);
       self::assertArrayNotHasKey('tabs', $page['content']['content']);
       self::assertSame('item_list', $page['navigation']['#theme']);
-      self::assertCount(5, $page['navigation']['#items']);
+      self::assertCount(6, $page['navigation']['#items']);
       $routes = array_map(static fn (array $link) => $link['#url']->getRouteName(),
         $page['navigation']['#items']);
       self::assertSame([
         'aculta_portal.my_data',
         'aculta_studio.account_address',
+        'aculta_studio.account_documents',
         'aculta_studio.account_security',
         'aculta_studio.account_password',
         'aculta_studio.account_connections',
