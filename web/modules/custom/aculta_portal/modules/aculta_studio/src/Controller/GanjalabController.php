@@ -6,8 +6,6 @@ namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -35,13 +33,6 @@ final class GanjalabController {
       throw new AccessDeniedHttpException();
     }
     return $provider->build();
-  }
-
-  /**
-   * Redirects a safe legacy request to the canonical learner dashboard.
-   */
-  public function legacy(): RedirectResponse {
-    return new RedirectResponse(Url::fromRoute('aculta_lms.student_dashboard')->toString(), 302);
   }
 
 }
