@@ -36,7 +36,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Três Kernels combinados | Kernel MariaDB | Regressão R1 no HEAD dev.61 | aprovado (10 testes / 343 asserções; 243 depreciações Core/contrib/PHPUnit) |
 | Ativação/rebuild e inventário completo do Index | Runtime | Integração instalada | pendente; sem operação Runtime nesta entrega |
 
-## R2 — ciclo de vida da imagem (dev.53)
+## R2 — ciclo de vida da imagem (dev.63; cobertura incremental até dev.53)
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
@@ -50,8 +50,8 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
 | Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
 
-Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 21 testes / 918
-asserções, 291 depreciações Core/contrib/PHPUnit; sem falhas.
+Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 21 testes / 941
+asserções, 291 depreciações Core/contrib e 22 PHPUnit; revalidada em dev.63.
 
 ## R2 — rotas, domínio e acesso (dev.62; cobertura inicial dev.30)
 

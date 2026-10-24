@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.63`: ciclo de vida da imagem revalidado no Kernel completo em
+  MariaDB isolada (21/941; 291 depreciações Core/contrib e 22 PHPUnit).
+  Privacidade acompanha a publicação do verbete e compartilhamento; regressões
+  de rollback, histórico e limpeza passaram. Runtime intocado.
+
 - `0.1.0-dev.62`: rotas, listing, CTA e busca com grants foram revalidados em
   Kernel no MariaDB isolado (3/127; 283 depreciações Core/contrib/PHPUnit).
   Código de rota/acesso e Runtime não mudaram.

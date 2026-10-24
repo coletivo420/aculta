@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.63: Kernel completo do ciclo de imagem passou em MariaDB (21/941; 291
+  depreciações Core/contrib e 22 PHPUnit); publicação da Media/download segue
+  estado e referências públicas do Node. Rollback, histórico e cleanup passam;
+  Runtime inalterado.
+
 - Dev.62: regressão Kernel de rotas/acesso no HEAD: discovery e listagem,
   CTA por `createAccess()` e busca entre grants (3/127; 283 depreciações
   Core/contrib/PHPUnit). Controller permanece sem alteração; Runtime intocado.

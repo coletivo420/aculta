@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.63 — revalidar ciclo de vida da imagem
+
+- A classe Kernel completa de imagens passou no MariaDB isolado: 21 testes /
+  941 asserções, 291 depreciações Core/contrib e 22 depreciações PHPUnit.
+- A cobertura confirma Media privada em verbete não publicado, publicação e
+  retirada sincronizadas com o Node, imagem compartilhada por outro verbete
+  publicado e bloqueio de download quando restam apenas referências históricas.
+  Rollback, retries e limpeza de órfãs também passaram.
+- Nenhum código ou estado Runtime mudou.
+
 ## 0.1.0-dev.62 — revalidar rotas e acesso em Kernel
 
 - Reexecutados os cenários Kernel de discovery das rotas/listagem, acesso ao
