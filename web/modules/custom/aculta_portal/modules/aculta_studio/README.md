@@ -1,5 +1,22 @@
 # ACULTA Studio (`aculta_studio`)
 
+## Estado vigente — dev.11 (sem aliases temporários)
+
+A única entrada global é **`/studio`** (route ID `aculta_studio.hub`).
+A entrada editorial é **`/studio/marley`**, mais as subrotas canônicas.
+Meu Espaço: `/studio/pessoal`. Ganjalab: `/studio/ganjalab`;
+WE SATIVA: `/studio/we-sativa`.
+
+Foram removidas as rotas transitórias `/studio/inicio`,
+`/studio/Marley`, `/ganjalab`, `/ganjalab420`,
+`/minha-aprendizagem` e suas árvores antigas. **Não redirecionam**.
+A documentação dev.8–10 abaixo é histórica e não autoriza restabelecer
+aliases. Código no Git; Unit/Kernel/Runtime/Firefox ainda requerem
+execução neste incremento. Política: `AGENTS.md` e
+`scripts/validate-no-temporary-route-aliases.php`.
+
+
+
 ACULTA Studio é a plataforma transversal de interfaces próprias na conta. O machine name do submódulo permanece `aculta_studio`.
 
 ## STUDIO-P1-C — Hub e Marley com rota canônica (dev.10)
