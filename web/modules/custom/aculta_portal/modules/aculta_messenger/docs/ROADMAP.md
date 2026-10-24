@@ -48,7 +48,7 @@ Evoluir central existente com filtros, agrupamentos, leitura, assinaturas, prefe
 
 ## M7 — Hardening e lançamento (1.0.0)
 
-Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache por usuário/contexto, revogação, logs sem PII, compatibilidade de módulos opcionais, schema/update, e-mails e acessibilidade. Sem serviço externo ou WebSocket sem necessidade comprovada.
+Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache por usuário/contexto, revogação, logs sem PII, compatibilidade de módulos opcionais, schema/update, e-mails e acessibilidade. O resumo combinado usa lock persistente por destinatário (lease de 120 s) além do intervalo mínimo de envio; a proteção entre processos/servidores e a recuperação após lease expirar continuam pendentes. Sem serviço externo ou WebSocket sem necessidade comprovada.
 
 ## Evidências desta revisão — 2026-10-24
 
@@ -58,3 +58,4 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 - Runtime Homelab (`toca`, Drupal 11.4.10, `aculta_runtime`): cache rebuild completo após correção dos handlers de rota e conflito de propriedades FormBase; smoke HTTP: principal, Fórum, cursos, Wiki e Loja 200; Conta 302 esperado. Sem update de banco/configuração, e-mail real ou alteração de dados.
 - Runtime é smoke de desenvolvimento, não homologação Alpha. PHP CLI é 8.4.27; não comprova ambiente PHP 8.5 exigido no desenvolvimento.
 - Doação: Unit ponte financeira 3/21, provider opcional (incluído em Units Messenger 92/455) e worker Mailer 2/27 PASS; Kernel MariaDB 2/22 PASS. Rodada Forum/Wiki/Donation 29/605 PASS com duas deprecações de discovery Message. PHPCS, lint, oito YAMLs de configuração e PROJECT-STATUS-INDEX PASS. Não houve Runtime, transporte real ou teste financeiro sandbox.
+- Digest combinado: lock persistente por UID adquirido antes de validar a janela e liberado em `finally`, evitando que dois cron jobs enviem simultaneamente o mesmo resumo durante a lease. Unit de preferência/contenda e integração LMS: 4 testes / 30 assertions PASS; Kernel MariaDB ForumNoticeIdempotency: 25 testes / 560 assertions PASS. Ainda falta prova com processos independentes e envio Mailer lento/falhando.

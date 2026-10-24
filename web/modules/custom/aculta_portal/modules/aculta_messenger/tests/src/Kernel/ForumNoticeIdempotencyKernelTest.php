@@ -355,6 +355,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $this->container->get('datetime.time'),
       $avisos,
       $this->container->get('uuid'),
+      $this->container->get('lock.persistent'),
     );
 
     self::assertSame(1, $summary->enviarResumos());

@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Component\Uuid\UuidInterface;
@@ -46,6 +47,7 @@ final class AvisosResumo {
     private readonly TimeInterface $time,
     private readonly AvisoService $avisos,
     private readonly UuidInterface $uuid,
+    private readonly LockBackendInterface $lock,
     iterable $digestProviders = [],
   ) {
     $this->digestProviders = is_array($digestProviders)
@@ -110,6 +112,27 @@ final class AvisosResumo {
    *   Avisos do Fórum pendentes.
    */
   private function enviarPara(int $uid, array $avisos): bool {
+    $lockName = 'aculta_messenger.avisos_resumo.' . $uid;
+    if (!$this->lock->acquire($lockName, 120.0)) {
+      return FALSE;
+    }
+    try {
+      return $this->enviarParaComLock($uid, $avisos);
+    }
+    finally {
+      $this->lock->release($lockName);
+    }
+  }
+
+  /**
+   * Sends one combined digest while holding the recipient lock.
+   *
+   * @param int $uid
+   *   Recipient account ID.
+   * @param \Drupal\aculta_messenger\Entity\Aviso[] $avisos
+   *   Pending Forum notice aggregates.
+   */
+  private function enviarParaComLock(int $uid, array $avisos): bool {
     $conta = $this->entityTypeManager->getStorage('user')->load($uid);
     if ($conta === NULL || !$conta->isActive() || $conta->getEmail() === '' || !$this->emailPolicy->isConfirmed($conta)) {
       return FALSE;

@@ -16,6 +16,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -23,7 +24,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Tests category opt-out revalidation for shared digest providers.
+ * Tests shared digest category preferences and per-recipient locking.
  */
 #[CoversClass(AvisosResumo::class)]
 #[Group('aculta_messenger')]
@@ -74,6 +75,9 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
 
     $time = $this->createMock(TimeInterface::class);
     $time->method("getRequestTime")->willReturn(1_792_800_000);
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::exactly(2))->method('acquire')->with('aculta_messenger.avisos_resumo.27', 120.0)->willReturnOnConsecutiveCalls(TRUE, FALSE);
+    $lock->expects(self::once())->method('release')->with('aculta_messenger.avisos_resumo.27');
     $summary = new AvisosResumo(
       $entities,
       new AvisoPreferencias($userData),
@@ -87,10 +91,12 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       $time,
       (new \ReflectionClass(AvisoService::class))->newInstanceWithoutConstructor(),
       $this->createMock(UuidInterface::class),
+      $lock,
       [$provider],
     );
 
     self::assertSame(0, $summary->enviarResumos());
+    self::assertSame(0, $summary->enviarResumos(), 'A concurrent digest run skips a recipient whose lock is held.');
   }
 
 }

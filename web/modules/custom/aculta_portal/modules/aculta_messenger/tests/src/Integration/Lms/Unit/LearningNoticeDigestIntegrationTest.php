@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -138,6 +139,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         ),
       ),
       $this->createConfiguredMock(UuidInterface::class, ['generate' => '00000000-0000-4000-8000-000000000001']),
+      $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       [$provider],
     );
   }

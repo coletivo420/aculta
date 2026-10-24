@@ -1,3 +1,15 @@
+## 0.1.1-dev.101 — serializar o resumo combinado por destinatário — 2026-10-24
+
+- `AvisosResumo` adquire um lock persistente individual antes de verificar a
+  janela de envio; uma execução concorrente ignora o UID já reivindicado. O
+  lock é liberado em `finally`, inclusive quando o Mailer falha. Lease de 120 s
+  reduz duplicação em cron concorrente; não prova exclusão entre servidores
+  após expiração da lease nem garante exactly-once no transporte.
+- Unit de preferência/contenda e integração LMS: 4 testes / 30 assertions
+  PASS. Kernel ForumNoticeIdempotency MariaDB: 25 testes / 560 assertions
+  PASS. PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check` e índice de
+  status PASS. Runtime e transporte real não executados.
+
 ## 0.1.1-dev.100 — endurecer valores do envelope de eventos — 2026-10-24
 
 - `MessengerNoticeEvent` agora rejeita caracteres ASCII de controle nos UUIDs
