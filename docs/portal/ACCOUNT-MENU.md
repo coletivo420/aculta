@@ -6,6 +6,27 @@ A visão geral é a raiz do Domain ACCOUNT (`/`). O caminho técnico `/minha-con
 
 O menu lateral da conta (`/` para a visão geral, `/dados`, `/seguranca`, `/conexoes`, `/meus-cursos`, `/meu-apoio`, `/configuracoes`) tem duas apresentações. As duas usam as mesmas rotas, a mesma ordem e o mesmo item ativo.
 
+## Migração planejada para o ACULTA Studio — P0 (2026-10-24)
+
+A direção aprovada para uma entrega futura é tornar `/studio` o hub,
+oferecer `Meu Espaço` em `/studio/pessoal` e unificar a navegação global
+com submenus contextuais. Meu Perfil será **editado** no Studio, mas seu
+endereço público `/u/{apelido}` continuará no purpose `main`.
+[Contrato e roadmap P0–P7](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+
+**Nada foi migrado neste documento.** O comportamento descrito nas seções
+seguintes é o **atual** e não deve ser retirado até haver equivalência de
+forms, acesso, AJAX e navegação. O Portal continuará dono de dados, endereço
+e segurança. Um formulário renderizado no Studio não pode ser envolvido
+simultaneamente por `aculta_portal_shell` e shell Studio.
+
+Durante a transição, preservar a raiz `/` do Domain ACCOUNT; a rota
+`/minha-conta` continua técnica e bloqueada, protegida pelo
+`validate-aculta-portal-conta-root.php`. Não introduzir redirects de POST
+nem reescrever `account-navigation.js` para operar como navegação
+universal antes de caracterizar uploads, senha, OAuth, CSRF e estados AJAX.
+O menu antigo somente será retirado na P7 após homologação P6.
+
 ## Desktop (a partir de 768px)
 
 Lista vertical de links com destaque no item atual. Ícones e setas ficam ocultos. Nada mudou no desktop.
