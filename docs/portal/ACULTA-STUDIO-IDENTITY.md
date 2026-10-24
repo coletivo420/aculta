@@ -12,8 +12,10 @@ perfil ocorrerá no Studio, enquanto `/u/{apelido}` permanece a página pública
 independente em `main`.
 
 **Não confundir o alvo com o estado instalado:** atualmente `/studio` atende
-à compatibilidade editorial do Marley; as rotas de Meu Espaço não existem e
-a raiz `/` do domínio `account` continua sendo Minha Conta. A tabela abaixo
+à compatibilidade editorial do Marley; a entrada `/studio/pessoal` foi criada
+na dev.8 apenas com links para a Conta, ainda sem homologação Runtime. O editor
+de perfil e o hub permanecem futuros; a raiz `/` do domínio `account`
+continua sendo Minha Conta. A tabela abaixo
 descreve somente identidades/URLs **existentes**. Marley, Ganjalab e WE SATIVA
 não mudam de nome nem de URL nesta fase. O contrato detalhado e o plano P0–P7
 estão em [Hub e experiência pessoal](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
