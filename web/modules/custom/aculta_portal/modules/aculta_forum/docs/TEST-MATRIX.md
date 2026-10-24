@@ -1,3 +1,12 @@
+## Fila de moderação — filtro de purpose e estado, 2026-10-24
+
+- `ForumPostModerationQueueControllerKernelTest` (2 testes / 39 asserções,
+  MariaDB): somente revisões em `review` de tópicos publicados no purpose
+  `forum` e visíveis ao moderador entram na fila; publicações do purpose
+  `main` e já publicadas são ignoradas; a linha liga revisão e histórico; sem
+  revisões a tabela fica vazia com a mensagem de fila limpa.
+- Suíte Kernel do Fórum 130/2.513; PHPCS limpo.
+
 ## Controlador de publicação — construção do rascunho, 2026-10-24
 
 - `ForumPostSubmissionControllerKernelTest` (2 testes / 41 asserções, MariaDB):

@@ -1,3 +1,11 @@
+## `0.1.0-dev.298` — provar a fila de moderação do Fórum — 2026-10-24
+
+- Novo Kernel `ForumPostModerationQueueControllerKernelTest`: a fila lista
+  apenas revisões em `review` de tópicos publicados no purpose `forum` que o
+  moderador pode ver; publicações do purpose `main` e já publicadas ficam de
+  fora; a linha aponta para revisão e histórico; sem revisões a fila fica vazia.
+- Testes: fila 2/39; suíte Kernel do Fórum 130/2.513; PHPCS limpo.
+
 ## `0.1.0-dev.297` — provar a construção do formulário público de publicação — 2026-10-24
 
 - Novo Kernel `ForumPostSubmissionControllerKernelTest`: tópico vazio ou
