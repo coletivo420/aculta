@@ -14,7 +14,8 @@ services:
   aculta_studio.experience_manager:
     class: Drupal\aculta_studio\Experience\StudioExperienceManager
     calls:
-      - [addProvider, ['@aculta_studio.experience.pessoal']]
+      - [addProvider, ['@aculta_studio.experience.conta']]
+      - [addProvider, ['@aculta_studio.experience.perfil']]
       - [addProvider, ['@aculta_studio.experience.marley']]
       - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
@@ -24,10 +25,13 @@ services:
   aculta_studio.hub_controller:
     class: Drupal\aculta_studio\Controller\StudioHubController
     arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
-  aculta_studio.experience.pessoal:
-    class: Drupal\aculta_studio\Experience\PersonalExperienceProvider
-  aculta_studio.personal_controller:
-    class: Drupal\aculta_studio\Controller\PersonalController
+  aculta_studio.experience.conta:
+    class: Drupal\aculta_studio\Experience\AccountExperienceProvider
+  aculta_studio.experience.perfil:
+    class: Drupal\aculta_studio\Experience\ProfileExperienceProvider
+    arguments: ['@module_handler']
+  aculta_studio.account_controller:
+    class: Drupal\aculta_studio\Controller\AccountController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
   aculta_studio.personal_profile_controller:
     class: Drupal\aculta_studio\Controller\PersonalProfileController
