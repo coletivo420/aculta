@@ -1,5 +1,15 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.56 — compor status de proposta com SDC
+
+- A página privada de status da proposta usa `context-header` e `content-section`
+  existentes. Situação, sugestão, justificativa, verbete relacionado, retorno,
+  fontes e histórico mantêm os dados e o acesso no módulo Wiki.
+- A ação de retirada aparece no slot de ações somente para a autoria em estado
+  `submitted` ou `needs_changes`; o Form API mantém a confirmação e revalidação.
+- Kernel focal passou: 1 teste / 148 asserções; PHPCS, PHP lint e diff check
+  passaram. Firefox visual e Runtime não foram homologados.
+
 ## 0.1.0-dev.55 — revalidar integração Wiki com Content Index
 
 - Reexecutados os dois testes Unit dos providers Wiki e categoria: 9 testes /

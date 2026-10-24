@@ -1,5 +1,10 @@
 # Wiki — instruções locais
 
+- Dev.56: status da proposta usa SDCs existentes (`context-header`,
+  `content-section`); retirada continua limitada à autoria e estados
+  submetido/devolvido e passa pelo Form API. Kernel focal 1/148; PHPCS e lint
+  passaram; visual pendente.
+
 - Dev.55: R1 revalidada no HEAD após mudanças de WE SATIVA. Unit dos providers
   Wiki/categoria: 9/40; três Kernel do Index com bootstrap real: 10/343,
   MariaDB isolada, 243 depreciações Core/contrib/PHPUnit. Provider permanece

@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.55**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.56**. Em preflight read-only de
 2026-10-23, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.56 — status de proposta na WE SATIVA
+
+A tela privada usa os SDCs existentes `context-header` e `content-section`.
+Dados da proposta e histórico continuam protegidos pelas permissões de entidade
+e de revisão; a retirada é apresentada no cabeçalho somente à autoria e nos
+estados permitidos. Kernel focal: 1 teste / 148 asserções; PHPCS e PHP lint
+passaram. Revisão visual Firefox/Olivero e homologação Runtime seguem pendentes.
 
 ### Incremento dev.55 — revalidar R1 no HEAD atual
 

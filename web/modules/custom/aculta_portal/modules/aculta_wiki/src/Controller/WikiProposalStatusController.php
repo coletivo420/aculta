@@ -48,26 +48,26 @@ final class WikiProposalStatusController extends ControllerBase {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-proposal-status'],
-      'title' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'h1',
-        '#value' => $this->t('Proposta: @subject', ['@subject' => $proposal->label()]),
+      'header' => [
+        '#type' => 'component',
+        '#component' => 'aculta420:context-header',
+        '#props' => [
+          'eyebrow' => (string) $this->t('WE SATIVA · Wiki420'),
+          'title' => (string) $this->t('Proposta: @subject', ['@subject' => $proposal->label()]),
+          'subtitle' => (string) $this->t('Acompanhe a análise editorial e o histórico da sua contribuição.'),
+        ],
       ],
-      'state' => [
-        '#type' => 'item',
-        '#title' => $this->t('Situação'),
+      'state' => $this->section($this->t('Situação'), [
         '#plain_text' => (string) ($proposal::STATES[$state] ?? $state),
-      ],
-      'proposed_text' => [
+      ]),
+      'proposed_text' => $this->section($this->t('Alteração sugerida'), [
         '#type' => 'container',
-        'label' => ['#plain_text' => $this->t('Alteração sugerida')],
         'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
-      ],
-      'rationale' => [
+      ]),
+      'rationale' => $this->section($this->t('Justificativa enviada'), [
         '#type' => 'container',
-        'label' => ['#plain_text' => $this->t('Justificativa enviada')],
         'text' => ['#plain_text' => (string) $proposal->get('rationale')->value],
-      ],
+      ]),
     ];
 
     $target = $proposal->get('target')->entity;
@@ -75,34 +75,34 @@ final class WikiProposalStatusController extends ControllerBase {
       $targetAccess = $target->access('view', $account, TRUE);
       $cacheability->addCacheableDependency($targetAccess);
       if ($targetAccess->isAllowed()) {
-        $build['target'] = [
+        $build['target'] = $this->section($this->t('Verbete relacionado'), [
           '#type' => 'link',
-          '#title' => $this->t('Abrir verbete relacionado: @title', ['@title' => $target->label()]),
+          '#title' => $this->t('Abrir verbete: @title', ['@title' => $target->label()]),
           '#url' => Url::fromRoute('entity.node.canonical', ['node' => $target->id()]),
-        ];
+        ]);
         $cacheability->addCacheableDependency($target);
       }
     }
 
     if (in_array($state, ['needs_changes', 'declined'], TRUE)) {
-      $build['decision_note'] = [
+      $build['decision_note'] = $this->section($this->t('Retorno editorial'), [
         '#type' => 'container',
-        'label' => ['#plain_text' => $this->t('Retorno editorial')],
         'text' => ['#plain_text' => (string) $proposal->get('decision_note')->value],
-      ];
+      ]);
     }
 
     if ((int) $proposal->getOwnerId() === (int) $account->id()
       && in_array($state, ['submitted', 'needs_changes'], TRUE)) {
-      $build['withdraw'] = [
+      $build['header']['#slots']['actions'] = [
         '#type' => 'link',
         '#title' => $this->t('Retirar proposta'),
         '#url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()]),
+        '#attributes' => ['class' => ['button', 'button--secondary']],
       ];
     }
 
     $history = $this->proposalHistory($proposal, $account, $request);
-    $build['history'] = $history;
+    $build['history'] = $this->section($this->t('Histórico da proposta'), $history);
     $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($history));
 
     $sourceLinks = [];
@@ -115,15 +115,34 @@ final class WikiProposalStatusController extends ControllerBase {
       $sourceLinks[] = Link::fromTextAndUrl($uri, Url::fromUri($uri))->toRenderable();
     }
     if ($sourceLinks !== []) {
-      $build['sources'] = [
+      $build['sources'] = $this->section($this->t('Fontes enviadas'), [
         '#theme' => 'item_list',
-        '#title' => $this->t('Fontes enviadas'),
         '#items' => $sourceLinks,
-      ];
+      ]);
     }
 
     $cacheability->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Wraps a proposal status block in the shared content section component.
+   *
+   * @param string $title
+   *   Accessible section heading.
+   * @param array<string, mixed> $body
+   *   Renderable section content.
+   *
+   * @return array<string, mixed>
+   *   SDC render array.
+   */
+  private function section(\Stringable|string $title, array $body): array {
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420:content-section',
+      '#props' => ['title' => (string) $title],
+      '#slots' => ['body' => $body],
+    ];
   }
 
   /**
@@ -229,7 +248,6 @@ final class WikiProposalStatusController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      'heading' => ['#plain_text' => $this->t('Histórico da proposta')],
       'table' => [
         '#type' => 'table',
         '#header' => [

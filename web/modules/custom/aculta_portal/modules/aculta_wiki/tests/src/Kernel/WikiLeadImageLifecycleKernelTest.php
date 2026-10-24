@@ -1949,15 +1949,17 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $historyProposal,
       Request::create('/wiki/propostas/' . $historyProposal->id()),
     );
-    self::assertCount(20, $historyBuild['history']['table']['#rows']);
-    self::assertNotEmpty($historyBuild['history']['pager']['#url']);
-    $historyCursor = $historyBuild['history']['pager']['#url']->getOption('query')['revision_cursor'];
+    self::assertSame('aculta420:context-header', $historyBuild['header']['#component']);
+    self::assertSame('aculta420:content-section', $historyBuild['history']['#component']);
+    self::assertCount(20, $historyBuild['history']['#slots']['body']['table']['#rows']);
+    self::assertNotEmpty($historyBuild['history']['#slots']['body']['pager']['#url']);
+    $historyCursor = $historyBuild['history']['#slots']['body']['pager']['#url']->getOption('query')['revision_cursor'];
     $historyNextPage = $statusController->view(
       $historyProposal,
       Request::create('/wiki/propostas/' . $historyProposal->id(), 'GET', ['revision_cursor' => $historyCursor]),
     );
-    self::assertCount(1, $historyNextPage['history']['table']['#rows']);
-    self::assertSame([], $historyNextPage['history']['pager']);
+    self::assertCount(1, $historyNextPage['history']['#slots']['body']['table']['#rows']);
+    self::assertSame([], $historyNextPage['history']['#slots']['body']['pager']);
 
     $statusBuild = $statusController->view(
       $declinedProposal,
@@ -1965,16 +1967,17 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     );
     self::assertSame(
       'A evidência apresentada não sustenta esta alteração.',
-      $statusBuild['decision_note']['text']['#plain_text'],
+      $statusBuild['decision_note']['#slots']['body']['text']['#plain_text'],
     );
     self::assertContains('user', $statusBuild['#cache']['contexts']);
-    self::assertCount(2, $statusBuild['history']['table']['#rows']);
-    self::assertSame('Recusada', $statusBuild['history']['table']['#rows'][0]['state']);
+    self::assertArrayNotHasKey('#slots', $statusBuild['header']);
+    self::assertCount(2, $statusBuild['history']['#slots']['body']['table']['#rows']);
+    self::assertSame('Recusada', $statusBuild['history']['#slots']['body']['table']['#rows'][0]['state']);
     self::assertSame(
       'A evidência apresentada não sustenta esta alteração.',
-      $statusBuild['history']['table']['#rows'][0]['feedback'],
+      $statusBuild['history']['#slots']['body']['table']['#rows'][0]['feedback'],
     );
-    self::assertSame('Enviada', $statusBuild['history']['table']['#rows'][1]['state']);
+    self::assertSame('Enviada', $statusBuild['history']['#slots']['body']['table']['#rows'][1]['state']);
     $memoryQueue = new class() {
 
       /** @var list<\Drupal\aculta_mailer\Message\MailMessage> */
@@ -2045,7 +2048,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $pendingProposal,
       Request::create('/wiki/propostas/' . $pendingProposal->id()),
     );
-    self::assertArrayHasKey('withdraw', $pendingStatus);
+    self::assertSame('aculta420:context-header', $pendingStatus['header']['#component']);
+    self::assertSame('Retirar proposta', (string) $pendingStatus['header']['#slots']['actions']['#title']);
     $withdrawalForm = WikiProposalWithdrawalForm::create($this->container);
     $withdrawalState = new FormState();
     $withdrawalBuild = $withdrawalForm->buildForm([], $withdrawalState, $pendingProposal);
