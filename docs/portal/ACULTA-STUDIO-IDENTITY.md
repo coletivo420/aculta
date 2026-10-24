@@ -1,5 +1,14 @@
 # ACULTA Studio — contrato de identidade e rotas
 
+## Acréscimo P2-A (dev.12): Meu Perfil privado
+
+`/studio/pessoal/perfil` foi criado como interface privada de edição
+composta a partir do ACULTA User. **Não é alias de `/u/{apelido}`**:
+a última permanece perfil público canônico apenas no purpose `main`,
+e o link só aparece quando `PublicProfileLink` o autoriza. Links de
+apelido e privacidade ainda usam os formulários atuais da Conta.
+Runtime/Firefox não homologados neste incremento.
+
 ## Contrato atual sem aliases (2026-10-24, dev.11)
 
 Somente URLs canônicas: `/studio` (hub, route ID `aculta_studio.hub`),
