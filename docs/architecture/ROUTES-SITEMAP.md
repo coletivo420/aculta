@@ -4,6 +4,16 @@ Este documento é o índice operacional dos caminhos HTTP do projeto: páginas
 públicas, conta, administração, endpoints técnicos, caminhos removidos e
 redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitui.
 
+## Decisão vigente: Conta e Perfil separados, legado mantido
+
+Minha Conta legada permanece na raiz `/` do Domain ACCOUNT, com
+`aculta_portal.dashboard` como route ID técnico. Acesso direto
+`/minha-conta` continua 404. O legado será conservado durante e
+**após** a comparação com `/studio/conta`. As duas experiências
+`/studio/conta` e `/studio/perfil` não possuem um agrupamento
+`/studio/pessoal` nem aliases. [Contrato](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Runtime ainda não homologado.
+
 ## Rotas canônicas sem compatibilidade transitória — 2026-10-24
 
 Durante o desenvolvimento não há aliases temporários de rota. Os caminhos
@@ -270,10 +280,13 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
-| `conta.aculta` | `/studio` | **Hub geral ACULTA Studio** | Declarado em `aculta_studio`, route ID `aculta_studio.legacy_home` preservado; requer login e `access aculta portal`, lista somente experiências autorizadas; código dev.10, Runtime ainda não homologado. |
+| `conta.aculta` | `/studio` | Hub geral ACULTA Studio | Route ID `aculta_studio.hub`, purpose `account`. Providers independentes Conta/Perfil/Marley/Ganjalab/WE SATIVA com acesso. |
+| `conta.aculta` | `/studio/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição inicial de serviços cadastrais privados. Não retira a Conta legada. |
+| `conta.aculta` | `/studio/perfil` | **Meu Perfil Studio** | `aculta_studio.profile`; apenas identidade pública editável por User; `/u/{apelido}` em MAIN preservado. |
+| `conta.aculta` | `/studio/perfil/bio` | Edição de bio | Form API original do ACULTA User, retorno contextual ao Studio. |
+| `conta.aculta` | `/studio/perfil/privacidade` | Visibilidade pública | Form API original do ACULTA User, permissões de autores/editores preservadas. |
+| `conta.aculta` | `/studio/perfil/redes/{rede}` | Redes sociais | Form API original do ACULTA User com validação proprietária. |
 | `conta.aculta` | `/studio/marley` | **Entrada inicial canônica de Marley (minúscula)** | Declarada por `aculta_studio.home`; mantém controlador, áreas e acesso editoriais; purpose `account`. Runtime da dev.10 ainda não homologado. |
-| `conta.aculta` | `/studio/pessoal` | Entrada mínima Meu Espaço | `aculta_studio.personal`, autenticado no purpose `account`; ainda usa links à Conta original, sem editor pessoal; Runtime não homologado. |
-| `conta.aculta` | `/studio/pessoal/perfil` | Editor privado de Meu Perfil (P2-A) | `aculta_studio.personal_profile`, propósito `account`; compõe caixas/editores existentes do User e usa `PublicProfileLink` para abrir `/u/{apelido}` quando público. PHPUnit/Runtime pendentes. |
 | `conta.aculta` | `/studio/marley/{aba}` | Área editorial Marley, como Revista, Wiki, Cursos, Fórum ou Galerias | Declarada em `aculta_studio`; plugin, disponibilidade e permissão do módulo dono determinam acesso; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
