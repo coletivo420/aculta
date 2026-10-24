@@ -1,0 +1,7 @@
+name: 'ACULTA Messenger friendship Kernel fixture'
+type: module
+description: 'Provides an isolated friendship entity for Messenger event-pipeline Kernel tests.'
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:user

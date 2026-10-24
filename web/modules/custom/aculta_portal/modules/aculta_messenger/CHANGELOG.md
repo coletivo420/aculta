@@ -1688,3 +1688,14 @@ A gaveta de avisos agora permite filtrar origem e leitura, preservando a combina
 
 Validação: PHP lint, JS syntax, `NoticeListFilterTest` 5/17 PASS, Firefox ESR/X11 no Runtime de teste: gaveta 6/6 em viewport real 1270 px e 6/6 em viewport real 500 px; central-empty-state 4/4 após migrar o estado vazio para tokens. O pedido de 390 px foi limitado pelo Firefox a 500 px. O primeiro smoke encontrou TypeError no rótulo traduzido e HTTP 500; conversão corrigida e o smoke subsequente passou. MessagesController ficou abaixo do baseline PHPCS (95 erros/65 avisos contra 97/65). Os atributos e tokens do Messenger desta fase foram incluídos no contrato visual; `validate-portal-ui-docs.php` passou de 70 para 62 gaps de outras frentes.
 
+## 0.1.1-dev.158 — caracterizar pipeline Kernel de avisos de amizade — 2026-10-24
+
+O Kernel MariaDB agora percorre o `FriendshipManager` real, despacha os eventos de pedido e aceite, executa o producer e
+subscriber do Messenger, persiste Messages e verifica o encaminhamento à fila. O replay de um pedido pendente permanece
+idempotente. O fixture registra a entidade de amizade pelo hook de teste, sem instalar nem assumir propriedade do
+workflow de `aculta_user`.
+
+Validação: `FriendshipNoticePipelineKernelTest` **1/14 PASS** em MariaDB dedicada; PHPCS Drupal/DrupalPractice e PHP
+lint PASS. PHPUnit reportou duas deprecações do Core/contrib para plugins Message baseados em annotations. Runtime,
+SMTP e transporte real não foram usados.
+
