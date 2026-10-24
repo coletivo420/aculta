@@ -54,7 +54,7 @@ final class ForumTopicMoveForm extends FormBase {
     $tree = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('aculta_forum_categories', 0, NULL, TRUE);
     $options = [];
     foreach ($tree as $term) {
-      if ($term->id() !== $current_term_id && $term->access('view', $this->account)) {
+      if ((int) $term->id() !== $current_term_id && $term->access('view', $this->account)) {
         $options[$term->id()] = str_repeat('— ', (int) $term->depth) . $term->label();
       }
     }

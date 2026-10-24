@@ -310,6 +310,51 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * The confirmation form offers the other categories and requires consent.
+   */
+  public function testMoveFormOffersOtherCategories(): void {
+    $source = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Origem']);
+    $source->save();
+    $destination = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Destino']);
+    $destination->save();
+    $node = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico com formulário',
+      'status' => 1,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+      'field_aculta_categories' => ['target_id' => $source->id()],
+      'field_autor_legado' => [],
+    ]);
+    $node->save();
+
+    $form = new ForumTopicMoveForm(
+      $this->mover,
+      $this->container->get('entity_type.manager'),
+      $this->account,
+    );
+    $state = new FormState();
+    $build = $form->buildForm([], $state, $node);
+
+    self::assertSame((int) $node->id(), $state->get('topic_id'));
+    self::assertSame('select', $build['destination']['#type']);
+    self::assertTrue($build['destination']['#required']);
+    self::assertArrayNotHasKey($source->id(), $build['destination']['#options'], 'A categoria atual não é destino.');
+    self::assertArrayHasKey($destination->id(), $build['destination']['#options']);
+    self::assertSame('Destino', $build['destination']['#options'][$destination->id()]);
+    self::assertSame('checkbox', $build['confirm_move']['#type']);
+    self::assertTrue($build['confirm_move']['#required']);
+    self::assertSame('aculta_forum.admin', $build['actions']['cancel']['#url']->getRouteName());
+    self::assertSame('Mover tópico', (string) $build['actions']['submit']['#value']);
+
+    // The move requires both a numeric destination and explicit consent.
+    $invalid = new FormState();
+    $invalid->setValue('destination', $destination->id());
+    $invalid->setValue('confirm_move', FALSE);
+    $form->validateForm($build, $invalid);
+    self::assertArrayHasKey('destination', $invalid->getErrors());
+  }
+
+  /**
    * Historical topics cannot be moved even with the operation permission.
    */
   public function testHistoricalTopicCannotBeMoved(): void {

@@ -1,3 +1,13 @@
+## Mover tópico — rota canônica e formulário, 2026-10-24
+
+- A rota `aculta_forum.topic_move` foi restaurada apontando ao
+  `ForumTopicMoveForm` (antes o link da entidade apontava para rota removida).
+- Defeito corrigido: a categoria atual aparecia como destino por comparação
+  string × int; agora é excluída.
+- Kernel `ForumTopicMoverKernelTest` (4/112): opções, `topic_id`, confirmação
+  obrigatória, cancelar no painel e erro sem consentimento.
+- Unit 181/1.019; Kernel do Fórum 147/2.807; PHPCS limpo.
+
 ## Migração de Comments — equivalência de árvore aninhada, 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` (4 testes / 144 asserções, MariaDB):

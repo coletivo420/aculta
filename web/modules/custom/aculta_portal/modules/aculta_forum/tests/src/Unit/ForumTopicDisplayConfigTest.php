@@ -87,9 +87,14 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('access content overview', $routes['aculta_forum.admin']['requirements']['_permission']);
     self::assertArrayNotHasKey('aculta_forum.admin_content_redirect', $routes);
     self::assertArrayNotHasKey('aculta_forum.admin_comments_redirect', $routes);
-    // The placeholder topic-move redirect route was removed; moving a topic is
-    // a task tab of the administration overview.
-    self::assertArrayNotHasKey('aculta_forum.topic_move', $routes);
+    // Moving a topic has a canonical confirmation form, linked from the topic
+    // operations; the former placeholder redirect is gone.
+    self::assertSame('/painel-administrativo/forum/{node}/mover-categoria', $routes['aculta_forum.topic_move']['path']);
+    self::assertSame('Mover tópico de categoria', $routes['aculta_forum.topic_move']['defaults']['_title']);
+    self::assertSame('\Drupal\aculta_forum\Form\ForumTopicMoveForm', $routes['aculta_forum.topic_move']['defaults']['_form']);
+    self::assertSame('move aculta forum topics', $routes['aculta_forum.topic_move']['requirements']['_permission']);
+    self::assertSame('entity:node', $routes['aculta_forum.topic_move']['options']['parameters']['node']['type']);
+    self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.topic_move']['methods']);
     self::assertSame('/painel-administrativo/forum/comentarios/{comment}/mover', $routes['aculta_forum.comment_move']['path']);
     self::assertSame('Mover comentário do fórum', $routes['aculta_forum.comment_move']['defaults']['_title']);
     self::assertSame('\Drupal\aculta_forum\Form\ForumCommentMoveForm', $routes['aculta_forum.comment_move']['defaults']['_form']);

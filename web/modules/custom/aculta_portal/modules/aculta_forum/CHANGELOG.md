@@ -1,3 +1,19 @@
+## `0.1.0-dev.311` — restaurar o formulário canônico de mover tópico — 2026-10-24
+
+- A operação “Mover de categoria” no tópico apontava para
+  `aculta_forum.topic_move`, removida no dev.290; o link quebraria ao ser
+  renderizado. A rota canônica volta com o `ForumTopicMoveForm` real (form,
+  título, permissão `move aculta forum topics`, upcast `entity:node`,
+  GET/HEAD/POST), em vez do redirecionamento placeholder anterior.
+- Corrigido defeito real no formulário: `$term->id()` vinha como string e a
+  categoria atual aparecia entre os destinos; a comparação passou a converter
+  para inteiro.
+- O Unit de configuração de tópicos volta a exigir a rota, agora com o form, e
+  o Kernel de mover tópicos cobre opções, estado, confirmação obrigatória e
+  recusa sem consentimento.
+- Testes: Unit 181/1.019; Kernel do Fórum 147/2.807; PHPCS limpo; gate de
+  aliases de rota PASS.
+
 ## `0.1.0-dev.310` — equivalência de árvore aninhada na migração — 2026-10-24
 
 - `ForumCommentMigrationBatchKernelTest` ganha o cenário de três níveis
