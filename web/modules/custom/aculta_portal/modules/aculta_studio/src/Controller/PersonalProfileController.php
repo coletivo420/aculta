@@ -77,7 +77,7 @@ final class PersonalProfileController {
           'library' => ['core/drupal.dialog.ajax', 'aculta_user/photo-flow'],
           'drupalSettings' => [
             'acultaUser' => [
-              'savedFid' => (int) ($user->get('user_picture')->target_id ?? 0),
+              'savedFid' => $user->hasField('user_picture') ? (int) ($user->get('user_picture')->target_id ?? 0) : 0,
             ],
           ],
         ],
