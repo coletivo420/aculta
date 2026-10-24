@@ -1,3 +1,18 @@
+## 0.1.1-dev.93 — usar relógio Drupal na fila de avisos do Fórum — 2026-10-24
+
+- `MessageSubscribeEventWorker` usa `datetime.time` para aplicar o limite de
+  uma semana de tópico sem alias, sem depender do relógio global do PHP. O
+  produtor é consumido pela interface pública, facilitando testes isolados.
+- Resumo diário envia sempre em `pt-br`, conforme o idioma único da plataforma;
+  o idioma preferido do perfil não seleciona outro locale.
+- Unit direcionado: 2 testes / 23 assertions cobrem requeue para item recente e
+  descarte/log de item vencido; suíte Unit Messenger: 81 testes / 379
+  assertions. PHPCS Drupal/DrupalPractice e PHP lint: PASS.
+- Kernel SQLite: 23 testes / 515 assertions PASS, incluindo o resumo combinado
+  pelo Mailer mockado em `pt-br`; essa execução local não substitui validação
+  MariaDB nem Runtime.
+  Nenhum item de fila foi processado no Runtime.
+
 ## 0.1.1-dev.85 — adaptar eventos do Fórum ao publisher Messenger — 2026-10-24
 
 - `ForumAvisoHooks` e o worker de revisões de tópico agora publicam eventos

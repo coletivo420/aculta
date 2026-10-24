@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
-use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducer;
+use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -39,8 +40,9 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     string $plugin_id,
     mixed $plugin_definition,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ForumNoticeEventProducer $events,
+    private readonly ForumNoticeEventProducerInterface $events,
     private readonly AliasManagerInterface $aliasManager,
+    private readonly TimeInterface $time,
     private readonly LockBackendInterface $lock,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {
@@ -58,6 +60,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
       $container->get('entity_type.manager'),
       $container->get('aculta_messenger.forum_notice_event_producer'),
       $container->get('path_alias.manager'),
+      $container->get('datetime.time'),
       $container->get('lock.persistent'),
       $container->get('logger.factory'),
     );
@@ -86,7 +89,7 @@ final class MessageSubscribeEventWorker extends QueueWorkerBase implements Conta
     if ($this->aliasManager->getAliasByPath($internalPath, $node->language()->getId()) === $internalPath) {
       // Sem alias o aviso não tem link público. Espera o pathauto por uma
       // semana; depois descarta com erro.
-      if ((int) $node->getCreatedTime() < time() - 7 * 86400) {
+      if ((int) $node->getCreatedTime() < $this->time->getRequestTime() - 7 * 86400) {
         $this->loggerFactory->get('aculta_messenger')->error(
           'Forum topic @id still has no public alias after a week; the update notice was dropped.',
           ['@id' => $node->id()],

@@ -21,6 +21,8 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
  */
 final class AvisosResumo {
 
+  private const LANGCODE = 'pt-br';
+
   /**
    * Digest extension services.
    *
@@ -150,7 +152,7 @@ final class AvisosResumo {
     if ($linhas === []) {
       return FALSE;
     }
-    $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), $conta->getPreferredLangcode(), [
+    $mensagem = new MailMessage(self::CHAVE_MAIL, (string) $conta->getEmail(), self::LANGCODE, [
       'resumo' => AvisosResumoMailType::formatLinhas($linhas),
     ], $this->uuid->generate());
     if (!$this->mailer->send($mensagem)) {

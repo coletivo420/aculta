@@ -32,13 +32,17 @@ contratos independentes.
 
 ## ACULTA Messenger 0.1.1
 
-A versão `0.1.1-dev.85` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão `0.1.1-dev.93` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação
 de `ForumPost` e revisão de tópico pelo publisher; o consumer preserva
 `aculta_aviso` e revalida assinatura/acesso antes do registro. A prévia de busca
 de membros mantém as sugestões como links normais alcançáveis por Tab.
+
+O worker de atualização de tópicos usa o relógio injetável do Drupal no prazo
+de espera por alias; o resumo diário sempre usa `pt-br`, idioma único da
+plataforma, independentemente da preferência por conta.
 
 A subfase 0.1.1 implementa pedidos/aceites de amizade e uma preferência de
 privacidade para novas conversas. Consulte [INTEGRATIONS.md](docs/INTEGRATIONS.md)
@@ -67,9 +71,8 @@ Mensagens são conversas entre pessoas. Avisos são comunicações do sistema. A
 - O adapter opcional `aculta_lms_messenger` adiciona avisos de matrícula,
   certificado e conclusão à lista/contador global; conclusão entra no resumo
   diário compartilhado por provider tagged. Não cria central ou storage próprio.
-- O resumo diário cria `MailMessage` no idioma preferido da conta, que segue o
-  contrato de idioma do Mailer; não usar `LanguageInterface::LANGCODE_DEFAULT`
-  (`und`) nesse transporte.
+- O resumo diário cria `MailMessage` em `pt-br`, o único idioma da plataforma.
+  Preferências de idioma por conta não alteram o idioma de entrega.
 - Flag `seguir_topico` mantém as assinaturas; assinar nunca concede acesso. O alter de destinatários aplica F-D21 a tópicos do ACULTA Fórum e Comments hospedados neles, sem afetar outros contextos; avisos seguem pelo fluxo compartilhado (`docs/AVISOS-E-MENSAGENS.md`).
 - Site Alert mantém alertas temporários globais.
 - Comunicados persistentes são Nodes `aculta_notice`, segmentados por papéis
