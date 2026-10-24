@@ -4,13 +4,22 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.84**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.85**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.85 — falha ao salvar Media
+
+O uploader agora tem uma regressão Unit específica para a exceção durante
+`Media::save()`, após o File tornar-se permanente. O teste comprova rollback da
+transação e reset dos caches/estado do formulário. A suíte Wiki Unit passou
+(67/360; 3 depreciações PHPUnit); o Kernel completo de ciclo de imagem passou
+(24/1.142; 291 depreciações Core/contrib e 25 PHPUnit). PHPCS e PHP lint
+passaram. Runtime intocado.
 
 ### Incremento dev.84 — revalidar WIKI-R1 no HEAD atual
 

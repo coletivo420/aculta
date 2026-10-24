@@ -76,7 +76,7 @@ identidades relevantes, não rebuild integral do inventário nem Runtime.
 | Retenção de uma hora | Kernel | Aguarda o grace period antes de considerar arquivo | aprovado (dev.53; incluído em 4 testes / 169 asserções) |
 | Limite de 25 e cursor rotativo | Kernel | Avança além dos primeiros 25 candidatos, inclusive se eles permanecerem em uso | aprovado (dev.53; teste alcança e remove o 26º arquivo liberado) |
 | Reuso por outro bundle e falha de inspeção global | Kernel | Mantém Media/File se Article referenciar a Media ou a inspeção falhar | aprovado (dev.53; incluído no focal) |
-| Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media | aprovado previamente |
+| Alt obrigatória, formatos/tamanho e validação central | Unit | Envio inválido recebe erro sem criar Media; exceção em `Media::save()` reverte transação e caches | aprovado (dev.85; Wiki Unit 67/360) |
 
 Classe `WikiLeadImageLifecycleKernelTest` completa: MariaDB, 24 testes / 1.137
 asserções, 291 depreciações Core/contrib e 25 PHPUnit; aprovada em dev.81.

@@ -1,5 +1,14 @@
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.85 — rollback quando a persistência da Media falha
+
+- Nova regressão Unit simula falha no `Media::save()` depois que o File foi
+  marcado permanente. Confirma rollback da transação, reset dos caches de File
+  e Media e remoção do estado/da referência de formulário.
+- Wiki Unit: 67 testes / 360 assertions, 3 depreciações PHPUnit. Kernel
+  `WikiLeadImageLifecycleKernelTest`: 24 / 1.142, 291 depreciações Core/contrib
+  e 25 PHPUnit. PHPCS e PHP lint passaram. Runtime intocado.
+
 ## 0.1.0-dev.84 — revalidar Content Index no HEAD atual
 
 - Reexecutados providers Wiki/categoria (Unit: 9 testes / 40 assertions) e

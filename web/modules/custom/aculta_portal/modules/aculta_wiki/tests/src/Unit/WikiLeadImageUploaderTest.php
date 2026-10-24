@@ -212,6 +212,63 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
   }
 
   /**
+   * A Media save failure rolls back the newly permanent File and cache state.
+   */
+  public function testMediaSaveFailureRollsBackUploadTransaction(): void {
+    $file = $this->file();
+    $file->expects(self::once())->method('isTemporary')->willReturn(TRUE);
+    $file->expects(self::once())->method('setPermanent');
+    $file->expects(self::once())->method('save');
+
+    $transaction = new class() extends Transaction {
+
+      /** Whether the test transaction was rolled back. */
+      public bool $rolledBack = FALSE;
+
+      /** Creates the transaction fixture without a database connection. */
+      public function __construct() {}
+
+      /** Keeps fixture teardown from accessing the unavailable connection. */
+      public function __destruct() {}
+
+      /** {@inheritdoc} */
+      public function rollBack() {
+        $this->rolledBack = TRUE;
+      }
+
+    };
+    $database = $this->createMock(Connection::class);
+    $database->expects(self::once())->method('startTransaction')->willReturn($transaction);
+
+    $media = $this->createMock(MediaInterface::class);
+    $media->method('id')->willReturn(12);
+    $media->method('set')->willReturnSelf();
+    $media->expects(self::once())->method('save')->willThrowException(new \RuntimeException('Media storage failed.'));
+    $media_storage = $this->createMock(EntityStorageInterface::class);
+    $media_storage->expects(self::once())->method('create')->willReturn($media);
+    $media_storage->expects(self::once())->method('resetCache')->with(NULL);
+
+    $file_storage = $this->createMock(EntityStorageInterface::class);
+    $file_storage->method('load')->with(5)->willReturn($file);
+    $file_storage->expects(self::once())->method('resetCache')->with([5]);
+
+    $form_state = $this->formState(['file' => [5], 'alt' => 'Gato malhado']);
+    $form = [];
+
+    try {
+      $this->uploader($file, $media_storage, $database, $file_storage)->applyUpload($form, $form_state);
+      self::fail('The Media storage failure should be rethrown.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertSame('Media storage failed.', $exception->getMessage());
+    }
+
+    self::assertTrue($transaction->rolledBack);
+    self::assertNull($form_state->get(WikiLeadImageUploader::STORAGE_KEY));
+    self::assertNull($form_state->getValue([WikiLeadImageUploader::FIELD]));
+  }
+
+  /**
    * Publication and failed-save cases for the shared image transaction.
    *
    * @return array<string, array{0: bool, 1: bool}>
@@ -270,8 +327,8 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
   /**
    * Builds an uploader over the real Portal policy and a fixed image mock.
    */
-  private function uploader(?FileInterface $file = NULL, ?EntityStorageInterface $media_storage = NULL, ?Connection $database = NULL): WikiLeadImageUploader {
-    $file_storage = $this->createMock(EntityStorageInterface::class);
+  private function uploader(?FileInterface $file = NULL, ?EntityStorageInterface $media_storage = NULL, ?Connection $database = NULL, ?EntityStorageInterface $file_storage = NULL): WikiLeadImageUploader {
+    $file_storage ??= $this->createMock(EntityStorageInterface::class);
     $file_storage->method('load')->with(5)->willReturn($file);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturnMap([

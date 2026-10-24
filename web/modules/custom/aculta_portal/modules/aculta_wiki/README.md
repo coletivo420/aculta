@@ -7,6 +7,11 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.85`: falha ao salvar a Media agora tem regressão Unit para
+  rollback da transação, invalidar caches de File/Media e limpar estado do
+  formulário. Wiki Unit 67/360; Kernel de ciclo de imagem 24/1.142. PHPCS/lint
+  passaram; Runtime intocado.
+
 - `0.1.0-dev.84`: revalidação WIKI-R1 no HEAD `bea9cc4c3`: providers Unit
   9/40; quatro Kernels MariaDB 11/385. Projeção v4, relações e fingerprint
   seguem estáveis. Foram emitidas 243 depreciações Core/contrib/PHPUnit; Runtime

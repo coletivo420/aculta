@@ -1,5 +1,9 @@
 # Wiki — instruções locais
 
+- Dev.85: regressão Unit cobre falha de `Media::save()` depois de tornar o File
+  permanente; rollback, reset de cache e estado do formulário passam. Wiki Unit
+  67/360; Kernel imagem 24/1.142. PHPCS/lint passaram; Runtime intocado.
+
 - Dev.84: WIKI-R1 revalidada no HEAD `bea9cc4c3`; providers Unit 9/40 e quatro
   Kernels MariaDB 11/385. Projeção v4/fingerprint sem mudança; 243
   depreciações Core/contrib/PHPUnit. Runtime e rebuild instalado intocados.
