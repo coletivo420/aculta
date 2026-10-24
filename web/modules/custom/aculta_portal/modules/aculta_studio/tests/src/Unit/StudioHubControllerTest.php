@@ -26,6 +26,16 @@ use Symfony\Component\Routing\Route;
 final class StudioHubControllerTest extends UnitTestCase {
 
   /**
+   * TranslatableMarkup do controlador precisa de um container com tradução.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
+  /**
    * The hub itself cannot be accessed by visitors or unauthorized members.
    */
   public function testHubRequiresAuthenticationAndPortalPermission(): void {

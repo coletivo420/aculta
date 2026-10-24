@@ -21,6 +21,16 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class StudioAccountSectionControllerTest extends UnitTestCase {
 
   /**
+   * TranslatableMarkup do controlador precisa de um container com tradução.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
+  /**
    * Authorization is checked before resolving an owner controller.
    */
   public function testVisitorCannotLoadAccountSections(): void {

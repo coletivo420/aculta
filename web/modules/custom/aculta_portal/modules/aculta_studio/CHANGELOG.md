@@ -1,3 +1,8 @@
+## 0.1.0-dev.16 — testes Unit do hub e das seções da Conta com container de tradução (2026-10-24)
+
+- `StudioHubControllerTest` e `StudioAccountSectionControllerTest` registram `string_translation` no `setUp`.
+  Os 4 erros `ContainerNotInitializedException` desapareceram. Suíte Unit do Studio: 48 testes OK.
+
 ## 0.1.0-dev.15 — hub do Studio na raiz da Conta; link para a Minha Conta original em /conta-legada (2026-10-24)
 
 - A raiz `/` do Domain ACCOUNT é o hub do Studio (`aculta_studio.hub`).
