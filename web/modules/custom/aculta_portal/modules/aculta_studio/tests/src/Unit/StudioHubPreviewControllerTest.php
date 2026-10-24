@@ -106,7 +106,12 @@ final class StudioHubPreviewControllerTest extends UnitTestCase {
       }
 
       public function routeName(): string {
-        return 'aculta_studio.' . $this->idValue;
+        return match ($this->idValue) {
+          'pessoal' => 'aculta_studio.personal',
+          'marley' => 'aculta_studio.home',
+          'ganjalab' => 'aculta_lms.student_dashboard',
+          default => 'aculta_studio.' . $this->idValue,
+        };
       }
 
       public function available(): bool {
