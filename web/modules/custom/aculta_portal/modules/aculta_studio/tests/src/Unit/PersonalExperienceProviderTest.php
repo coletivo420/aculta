@@ -72,6 +72,7 @@ final class PersonalExperienceProviderTest extends UnitTestCase {
       $link['#url']->getRouteName(), $build['links']['#items']);
     self::assertSame([
       '<front>',
+      'aculta_studio.personal_profile',
       'aculta_portal.my_data',
       'aculta_portal.security',
       'aculta_portal.account_settings',
