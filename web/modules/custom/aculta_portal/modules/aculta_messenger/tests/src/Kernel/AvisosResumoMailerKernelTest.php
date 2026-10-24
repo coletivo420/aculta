@@ -118,7 +118,26 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     self::assertSame('Resumo diário de avisos', $mails[0]['subject']);
     self::assertStringContainsString('Revisão publicada', (string) $mails[0]['body']);
 
-    self::assertSame(0, $summary->enviarResumos(), 'The retry reconciles the accepted manifest and does not make another transport call.');
+    // Rebuild the worker service so recovery must use the persisted snapshot
+    // and Mail Log, rather than state retained by the first service instance.
+    $restartedSummary = new AvisosResumo(
+      $this->container->get('entity_type.manager'),
+      $preferences,
+      $mailer,
+      new EmailConfirmationPolicy(
+        $userData,
+        $this->container->get('entity_type.manager'),
+        $this->container->get('module_handler'),
+      ),
+      $userData,
+      $this->container->get('datetime.time'),
+      $avisos,
+      $this->container->get('settings'),
+      $database,
+      $this->container->get('lock.persistent'),
+      [$provider],
+    );
+    self::assertSame(0, $restartedSummary->enviarResumos(), 'A restarted worker reconciles the accepted manifest without another transport call.');
     self::assertSame([[501]], $provider->acknowledged);
     self::assertCount(1, $this->collectedMails());
     self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
