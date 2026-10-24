@@ -19,6 +19,10 @@
   Preflight read-only em `toca` confirmou Drupal 11.4.10, Wiki ativa, Index
   desativado, `/` 200, `/wiki` 404 e listagem/busca/prévia 200; sem alteração
   persistente no Runtime.
+- Smoke Firefox ESR visível WE SATIVA adicionado. Execução no host foi bloqueada
+  porque a rota/provider e `aculta_wiki.contributor_workspace` não estão no
+  container ativo; 0/2 verificações. Sem `drush cr`/Runtime write, a interface
+  visual segue sem homologação. Script limita-se a GET e não envia formulários.
 
 ## 0.1.0-dev.76 — submissão real da imagem pelo Form API
 

@@ -50,6 +50,13 @@ pasta.
 | `multi-tab-checkout.py` | carrinho e checkout em múltiplas abas, cookies sem valor, LMS (`/group/1`) | servidor de testes |
 | `olivero-smoke.py` | tema Olivero no Portal, Fórum e Revista; assets do tema, erros visíveis, screenshot | ambiente local |
 
+### `aculta-wiki/`
+
+| Script | Cobre | Ambiente |
+|---|---|---|
+| `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de testes |
+| `we-sativa.py` | workspace autenticado, reflow 1280/390/320 px, ação nativa e retorno ao Studio | servidor de testes; login Drush da conta de teste |
+
 ### Fora da convenção de pasta
 
 Scripts de teste visual anteriores à regra, mantidos onde a frente dona os

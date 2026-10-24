@@ -30,7 +30,11 @@ Wiki dev.77, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
 acesso. Os formulários Wiki têm retorno cacheável ao workspace quando o
 provider/acesso estão disponíveis. A interface visual da experiência WE SATIVA ainda não foi homologada em
 Firefox ESR/X11, 320 px, Olivero ou Runtime; a suíte atual do browser Studio
-exercita principalmente GanjaLab.
+exercita principalmente GanjaLab. O smoke WE SATIVA foi adicionado em
+`tests/browser/aculta-wiki/we-sativa.py`; a execução de 2026-10-24 não encontrou
+rota/provider no container ativo do Runtime, apesar de Studio e Wiki constarem
+habilitados. Reconstrução do container segue pendente de autorização; não
+declarar a validação visual aprovada.
 
 ## Regras para agentes
 

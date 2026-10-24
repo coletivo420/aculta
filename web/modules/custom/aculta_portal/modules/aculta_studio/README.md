@@ -110,7 +110,11 @@ Os formulários Wiki agora oferecem retorno cacheável ao Meu Trabalho quando o
 provider e o acesso da conta estão ativos.
 O Kernel Wiki/Studio completo passou em MariaDB (Wiki dev.77: 23 testes / 1.039
 asserções na classe de ciclo da Wiki), cobrindo rota, propósito, autoria,
-paginação e acesso. Firefox/X11, 320 px, Olivero e Runtime continuam pendentes.
+paginação e acesso. O smoke Firefox/X11 está em
+`tests/browser/aculta-wiki/we-sativa.py`. Em 2026-10-24, a execução no Runtime
+de teste encontrou `aculta_studio` habilitado, mas a rota, provider e serviço
+Wiki ausentes do container ativo; rebuild de container aguarda autorização.
+Firefox/X11 320 px, Olivero e Runtime continuam sem homologação visual.
 
 ## Atualização STUDIO 0.1-B / D-A.2-T2
 

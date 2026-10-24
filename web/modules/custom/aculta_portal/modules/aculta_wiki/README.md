@@ -23,6 +23,13 @@ pendentes, está em
   ativo e `aculta_index` desativado. HTTP: `/` 200, `/wiki` 404, listagem/busca/
   prévia 200. Nenhuma configuração, cache ou dado foi alterado.
 
+- Smoke WE SATIVA no Firefox ESR visível: a suíte reutilizável está em
+  `tests/browser/aculta-wiki/we-sativa.py`. A execução chegou ao host, mas a
+  rota/provider não está registrado no container ativo (0/2 verificações); a
+  consulta Drush também não encontrou `aculta_wiki.contributor_workspace`.
+  Requer rebuild do container para validar a integração visual; não foi
+  executado sem autorização. Evidências temporárias em `/tmp/aculta-wiki-we-sativa`.
+
 - `0.1.0-dev.76`: envio de imagem pelo formulário Node/Form API real passou em
   Kernel MariaDB. Upload `managed_file` resulta em Media privada para Node
   `draft`; classe de ciclo da imagem: 23/1.036, PHP lint e PHPCS aprovados.

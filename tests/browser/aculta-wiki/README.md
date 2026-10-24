@@ -25,6 +25,30 @@ validar CSS recém-editado quando o Runtime ainda serve um agregado antigo. Isso
 valida a folha candidata sobre a página servida; não prova que o agregado ou a
 configuração do Runtime foi atualizado.
 
+## WE SATIVA autenticado
+
+`we-sativa.py` abre `/studio/we-sativa` no host de teste usando uma URL de login
+único gerada por Drush para a conta de teste `teste.comum`. Não envia formulários
+nem altera preferências ou conteúdo. Mede reflow em 1280/390/320 px, nome dos
+links, token visual do workspace e o retorno do formulário Node nativo; grava
+capturas e resumo fora do repositório.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+SUITE_OUT=/tmp/aculta-wiki-we-sativa DISPLAY=:0 \
+  python3 -I tests/browser/aculta-wiki/we-sativa.py
+```
+
+Variáveis: `WIKI_STUDIO_PAGE` (padrão
+`https://conta.aculta.toca.net.br/studio/we-sativa`), `WIKI_STUDIO_LOGIN_URI`
+(padrão `https://conta.aculta.toca.net.br`), `WIKI_STUDIO_USER` (padrão
+`teste.comum`) e `SUITE_OUT` (padrão `/tmp/aculta-wiki-we-sativa`). Requer
+Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail
+e acesso de criação Wiki. A rodada autentica e cria uma sessão de navegador;
+não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
+avalia somente o tema ativo no Runtime de teste, não Olivero nem WCAG 2.2 AA
+completa.
+
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
 caminho interno `/wiki` responde 404 por GET. Testa apenas o tema ativo no

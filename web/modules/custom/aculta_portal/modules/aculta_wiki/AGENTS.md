@@ -4,6 +4,9 @@
   (provider, acesso/relações, bootstrap owner e geração Wiki-owned) 11/385;
   243 depreciações Core/contrib/PHPUnit. Projeção v4/fingerprint sem alteração;
   ativação e rebuild do Runtime não executados.
+- Smoke visual WE SATIVA: script Firefox ESR visível adicionado. O Runtime de
+  teste não registra a rota/provider nem o serviço `aculta_wiki` no container;
+  rebuild necessário aguarda autorização. Não tente contornar via HTTP/cache.
 
 - Dev.77: formulário `wiki_entry` oferece retorno para o workspace somente com
   rota Studio disponível e `WikiContributorWorkspace::access()` permitido;

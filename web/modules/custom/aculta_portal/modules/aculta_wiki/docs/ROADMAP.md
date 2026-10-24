@@ -36,6 +36,14 @@ Revalidação R2 no HEAD: os Kernels de rotas, CTA e grants passaram em MariaDB
 ativa e Index desativado. GET read-only retornou `/` 200, `/wiki` 404 e
 listagem/busca/prévia 200. Nenhuma configuração, cache ou conteúdo foi alterado.
 
+O smoke WE SATIVA do Firefox ESR foi adicionado em
+`tests/browser/aculta-wiki/we-sativa.py`, mas a execução no host de teste não
+alcançou o workspace: Drush confirma `aculta_wiki` e `aculta_studio` habilitados,
+enquanto o container ativo não registra a rota `aculta_studio.we_sativa`, o
+provider `we_sativa` nem `aculta_wiki.contributor_workspace`. Resultado: 0/2
+checks. É necessário reconstruir o container Drupal para validar o código atual;
+isso continua pendente de autorização. Nenhuma alteração no Runtime foi feita.
+
 ### Incremento dev.76 — envio real da imagem no Form API
 
 O Kernel agora submete um verbete de autoria confirmada pelo formulário nativo
