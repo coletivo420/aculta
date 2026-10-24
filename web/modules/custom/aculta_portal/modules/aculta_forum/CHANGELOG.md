@@ -1,3 +1,12 @@
+## `0.1.0-dev.268` — provar a fonte das denúncias — 2026-10-23
+
+- Kernel cria o Flag `sinalizar_comentario` e duas Flaggings; a fonte
+  `aculta_forum_comment_flagging` devolve só a denúncia do Comment elegível,
+  com `fid`, `cid`, `uid`, `session_id` e `global` originais.
+- Denúncia em Comment de tópico fora do Domain `forum` é excluída. A migration
+  não foi executada e nenhum dado foi convertido.
+- Testes: fonte 6/88; suíte Kernel do Fórum 82/1.744; PHPCS limpo.
+
 ## `0.1.0-dev.267` — provar a relação pai/filho da migração — 2026-10-23
 
 - Kernel importa raiz e resposta, atualiza a resposta com o ID de destino da

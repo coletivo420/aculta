@@ -6,12 +6,15 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumComment;
+use Drupal\aculta_forum\Plugin\migrate\source\ForumCommentFlagging;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\flag\Entity\Flag;
+use Drupal\flag\Entity\Flagging;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\migrate\Plugin\MigrationInterface;
@@ -46,6 +49,7 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
     'comment',
     'language',
     'domain',
+    'flag',
   ];
 
   /**
@@ -68,6 +72,8 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
     $this->installEntitySchema('comment');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('flagging');
+    $this->installSchema('flag', ['flag_counts']);
     $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'comment', 'domain']);
 
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Tópico'])->save();
@@ -122,6 +128,17 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
     ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
+    Flag::create([
+      'id' => 'sinalizar_comentario',
+      'label' => 'Sinalizar comentário',
+      'entity_type' => 'comment',
+      'bundles' => ['aculta_discussion_post'],
+      'flag_type' => 'entity:comment',
+      'flag_short' => 'Sinalizar',
+      'unflag_short' => 'Remover',
+      'flag_long' => '',
+      'unflag_long' => '',
+    ])->save();
     $this->author = User::create(['name' => 'autora', 'status' => 1]);
     $this->author->save();
     $this->topic = Node::create([
@@ -215,6 +232,33 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
   }
 
   /**
+   * The flagging source yields only reports on eligible public Comments.
+   */
+  public function testFlaggingSourceYieldsOnlyEligibleComments(): void {
+    $eligible = $this->comment($this->topic, 'Resposta denunciada');
+    $other_topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Outro Domain',
+      'status' => 1,
+      'uid' => $this->author->id(),
+      'field_domain_source' => ['target_id' => 'aculta_org'],
+    ]);
+    $other_topic->save();
+    $outside = $this->comment($other_topic, 'Fora do Domain');
+
+    $eligible_flag = $this->flagging($eligible, 'session-abc', 0);
+    $this->flagging($outside, 'session-def', 1);
+
+    $rows = $this->flaggingSourceRows();
+    self::assertCount(1, $rows);
+    self::assertSame((int) $eligible_flag->id(), $rows[0]['fid']);
+    self::assertSame((int) $eligible->id(), $rows[0]['cid']);
+    self::assertSame((int) $this->author->id(), $rows[0]['uid']);
+    self::assertSame('session-abc', $rows[0]['session_id']);
+    self::assertSame(0, $rows[0]['global']);
+  }
+
+  /**
    * All translations of one Comment stay in a single source row.
    */
   public function testSourceGroupsTranslationsInOneRow(): void {
@@ -274,6 +318,47 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
     $method = new \ReflectionMethod($source, 'initializeIterator');
     $method->setAccessible(TRUE);
     return iterator_to_array($method->invoke($source), FALSE);
+  }
+
+  /**
+   * Instantiates the flagging source and collects its iterator.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Flagging source rows.
+   */
+  private function flaggingSourceRows(): array {
+    $source = new ForumCommentFlagging(
+      [],
+      'aculta_forum_comment_flagging',
+      [],
+      $this->createMock(MigrationInterface::class),
+      $this->container->get('entity_type.manager'),
+      new DomainPurposeManager(
+        $this->container->get('entity_type.manager'),
+        $this->container->get('domain.negotiator'),
+        $this->container->get('config.factory'),
+        new RequestStack(),
+      ),
+    );
+    $method = new \ReflectionMethod($source, 'initializeIterator');
+    $method->setAccessible(TRUE);
+    return iterator_to_array($method->invoke($source), FALSE);
+  }
+
+  /**
+   * Creates a report flagging on a comment.
+   */
+  private function flagging(CommentInterface $comment, string $session_id, int $global): Flagging {
+    $flagging = Flagging::create([
+      'flag_id' => 'sinalizar_comentario',
+      'entity_type' => 'comment',
+      'entity_id' => $comment->id(),
+      'uid' => $this->author->id(),
+      'session_id' => $session_id,
+      'global' => $global,
+    ]);
+    $flagging->save();
+    return $flagging;
   }
 
   /**
