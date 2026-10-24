@@ -1,3 +1,13 @@
+## 0.1.0-dev.94 — verificação opcional de títulos parecidos
+
+- A criação nativa oferece a ação Form API “Verificar títulos parecidos”. Ela
+  consulta somente títulos publicados no Domain Wiki, com Entity Query e Entity
+  Access, limita a seis resultados e revalida acesso ao renderizar. Resultados
+  são sugestões: não impedem salvar e a ação não persiste o Node em criação.
+- Kernel MariaDB cobre grants diferentes, rascunho e outro Domain; só o título
+  público autorizado aparece (1 teste / 34 asserções). PHPCS/lint passaram;
+  198 depreciações upstream e 2 PHPUnit. Runtime e visual intocados.
+
 ## Revalidação R2 — rotas e acesso no HEAD `c610030dd`
 
 - Três Kernels MariaDB passaram com 148 asserções: discovery das rotas e View,

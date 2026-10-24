@@ -4,13 +4,21 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.93**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.94**. Em preflight read-only de
 2026-10-24, `aculta_wiki` estava ativo e `aculta_index` desativado no Runtime de
 teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki` respondeu 404
 intencionalmente por ser o caminho interno da raiz. Runtime segue sem
 homologação integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.94 — verificação não bloqueante de títulos
+
+O formulário de criação pode consultar títulos semelhantes por uma ação própria.
+A consulta retorna no máximo seis verbetes publicados do Domain Wiki sujeitos
+a Entity Access; links são revalidados antes de exibir. A sugestão não bloqueia
+nem salva a criação. Kernel MariaDB focal passou (1/34; 198 depreciações
+upstream, 2 PHPUnit); PHPCS/lint passaram. Runtime e Firefox não executados.
 
 ### Revalidação R2 — rotas e acesso no HEAD `c610030dd`
 

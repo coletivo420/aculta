@@ -7,6 +7,8 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.94`: a criação oferece busca não bloqueante de até seis títulos publicados e visíveis no Domain Wiki; Entity Access é revalidado. Kernel MariaDB 1/34; PHPCS/lint passaram. Runtime e visual intocados.
+
 - R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB passaram (3/148), incluindo rotas, CTA por `createAccess()` e cache/grants da busca. Runtime não foi alterado nem homologado.
 
 - Revalidação R2 no HEAD `369db1537`: Kernel MariaDB completo do ciclo de imagem passou em 26 testes / 1.382 asserções; 291 depreciações Core/contrib e 27 PHPUnit. Nenhuma mudança no Runtime ou filesystem instalado.

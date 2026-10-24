@@ -52,6 +52,7 @@ use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm;
 use Drupal\aculta_wiki\Hook\WikiProposalLinkHooks;
+use Drupal\aculta_wiki\Hook\WikiEntryTitleSuggestions;
 use Drupal\aculta_wiki\Controller\WikiProposalStatusController;
 use Drupal\aculta_wiki\Controller\WikiContributionIntentController;
 use Drupal\aculta_wiki\Notifier\WikiProposalOutcomeNotifier;
@@ -2075,6 +2076,61 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $malformedBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => ['termo']]));
     self::assertArrayNotHasKey('results', $malformedBuild);
     self::assertContains('user.node_grants:view', $malformedBuild['#cache']['contexts']);
+  }
+
+  /**
+   * Title suggestions reveal only accessible published entries and never save.
+   */
+  public function testTitleSuggestionsAreOptionalAndRespectNodeAccess(): void {
+    $reader = new UserSession(['uid' => 2, 'roles' => ['authenticated']]);
+    $visibleId = $this->createSearchEntry('Cannabis medicinal e redução de danos', (int) $reader->id());
+    $hiddenGrantId = $this->createSearchEntry('Cannabis medicinal em pesquisa restrita', 3);
+    $unpublishedId = $this->createSearchEntry('Cannabis medicinal em rascunho', (int) $reader->id());
+    $unpublished = Node::load($unpublishedId);
+    $unpublished->setUnpublished();
+    $unpublished->save();
+    $foreignDomain = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Cannabis medicinal em outro domínio',
+      'uid' => $reader->id(),
+      'status' => TRUE,
+      'field_domain_source' => ['target_id' => 'aculta_org'],
+      'field_wiki_test_grant_uid' => $reader->id(),
+    ]);
+    $foreignDomain->save();
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    $this->container->get('current_user')->setAccount($reader);
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+
+    $newNode = Node::create(['type' => 'wiki_entry', 'uid' => $reader->id()]);
+    $formObject = $this->entityForm($newNode, static function (): void {
+      throw new \LogicException('The optional title check must never save the Node.');
+    });
+    $formState = new FormState();
+    $formState->setFormObject($formObject);
+    $formState->setValues(['title' => [0 => ['value' => 'Cannabis medicinal']]]);
+    $form = [
+      'title' => ['#type' => 'container', '#parents' => ['title']],
+      'actions' => ['submit' => ['#type' => 'submit']],
+    ];
+    $suggestions = $this->container->get(WikiEntryTitleSuggestions::class);
+    $suggestions->formAlter($form, $formState);
+    self::assertArrayHasKey('check_similar_titles', $form['actions']);
+    $suggestions->checkSimilarTitles($form, $formState);
+    self::assertTrue($formState->isRebuilding());
+    self::assertSame([], $formState->getErrors());
+
+    $suggestions->formAlter($form, $formState);
+    self::assertArrayHasKey('similar_titles', $form);
+    $items = $form['similar_titles']['list']['#items'];
+    self::assertCount(1, $items);
+    self::assertSame('Cannabis medicinal e redução de danos', (string) $items[0]['#title']);
+    self::assertSame($visibleId, (int) $items[0]['#url']->getRouteParameters()['node']);
+    self::assertNotSame($hiddenGrantId, (int) $items[0]['#url']->getRouteParameters()['node']);
+    self::assertNotSame($unpublishedId, (int) $items[0]['#url']->getRouteParameters()['node']);
+    self::assertNotSame((int) $foreignDomain->id(), (int) $items[0]['#url']->getRouteParameters()['node']);
+    self::assertNull($newNode->id());
   }
 
   /**

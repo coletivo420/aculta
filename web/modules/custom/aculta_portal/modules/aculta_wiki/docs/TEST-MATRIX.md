@@ -17,6 +17,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Regressão R2 de rotas e acesso | Kernel MariaDB | Rotas/View, CTA por `createAccess()` e busca/alterações recentes sob grants/cache | revalidado no HEAD `c610030dd` (3 testes / 148 asserções; Runtime intocado) |
 | Construção do formulário Node | Kernel | Form API Core, conta confirmada, estado `draft` selecionado, transição `draft_to_review` e sem opção de publicar | aprovado (dev.42) |
 | Criação guiada e ações distintas | Kernel MariaDB | Campos ordenados e instruídos; salvar rascunho mantém `draft`; enviar usa transição para `review`; `status=1` não publica o rascunho | aprovado (dev.93; focal 1/77; 203 depreciações Core/contrib, 2 PHPUnit) |
+| Títulos semelhantes opcionais | Kernel MariaDB | Sugestões limitadas a títulos publicados, visíveis por grants e do Domain Wiki; ação não salva e não bloqueia a criação | aprovado (dev.94; 1 teste / 34 asserções; 198 depreciações upstream, 2 PHPUnit) |
 | Edição própria e Domain | Kernel | Workspace só mostra edição após `update` Entity Access no purpose Wiki; link usa rota Core e Domain Wiki | aprovado (dev.44; incluso nos 2 focais) |
 | Prévia privada | Kernel | Handler Core salva formulário temporário no tempstore; autora acessa, outra conta não; sem nova revisão persistida | aprovado (dev.44; focal combinado: 2 testes / 111 asserções; handler testado sem requisição HTTP) |
 | Submissão inicial do Node | Kernel | FormBuilder nativo persiste verbete privado em `draft` | aprovado (dev.42; 1 teste / 54 asserções) |

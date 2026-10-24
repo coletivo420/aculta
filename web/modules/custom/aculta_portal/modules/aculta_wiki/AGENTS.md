@@ -1,3 +1,7 @@
+- Dev.94: criação tem verificação opcional de títulos públicos semelhantes,
+  limitada e filtrada por Domain/Entity Access; nenhum Node é salvo pela ação.
+  Kernel MariaDB 1/34; PHPCS/lint passaram; Runtime intocado.
+
 - R2 rotas/acesso revalidada no HEAD `c610030dd`: três Kernels MariaDB 3/148
   cobrem discovery, CTA via `createAccess()` e isolamento por grants/cache;
   Runtime intocado.
