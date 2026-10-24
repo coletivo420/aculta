@@ -63,7 +63,7 @@ final class AccountBioForm extends FormBase {
     $studio = $this->isStudioEditor();
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
-    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.personal_bio' : 'aculta_user.bio_form')->toString();
+    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form')->toString();
     $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
     if (!$studio) {
       $form['#attributes']['data-aculta-bio-form'] = '';
@@ -117,7 +117,7 @@ final class AccountBioForm extends FormBase {
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
     $form_state->setRedirect($this->isStudioEditor()
-      ? 'aculta_studio.personal_profile'
+      ? 'aculta_studio.profile'
       : 'aculta_portal.dashboard');
   }
 
@@ -125,7 +125,7 @@ final class AccountBioForm extends FormBase {
    * Returns whether this same owner form is serving the Studio editor.
    */
   private function isStudioEditor(): bool {
-    return $this->routeMatch?->getRouteName() === 'aculta_studio.personal_bio';
+    return $this->routeMatch?->getRouteName() === 'aculta_studio.profile_bio';
   }
 
   /**
