@@ -1,3 +1,12 @@
+## `0.1.0-dev.273` — provar a leitura de posts revisionáveis — 2026-10-23
+
+- Kernel exercita `ForumPostUnreadManager`: anônimo não recebe dados; post mais
+  novo que o recibo ou que o limite do History conta como não lido; o recibo
+  marca os anteriores como lidos; a página do primeiro não lido considera os
+  posts que o precedem e um recibo após o último post zera a pendência.
+- Testes: leitura 5/68; suíte Kernel do Fórum 98/2.007; PHPCS limpo. A View de
+  não lidas e o Runtime seguem como gate próprio.
+
 ## `0.1.0-dev.272` — provar a contagem combinada da listagem — 2026-10-23
 
 - Kernel exercita `PublicForumReplyCount` sobre o agregado real: dois Comments

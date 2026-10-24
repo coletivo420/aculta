@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
 next_phase: 'Index, F-GROUP 0.1–0.7, a limpeza compartilhada, a revisão visual de `/categorias`, o contador access-aware e a política do trigger Game estão cobertos; próxima evidência: provar o lote com map de migração e a equivalência de Comments, validar a contagem e o trigger Game no Runtime de testes, concorrência real na limpeza e a matriz MariaDB das demais Views. Também permanecem: zoom/aparelho real, Search API/grants, upload e previews Office, homologação PDF e concorrência HTTP/cache ([roadmap](web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md))'
-version_note: "0.1.0-dev.272 (agregação/contagem 4/64; migração: fonte 6/88, destino 9/216, denúncias 7/131; trigger Game 8/100; contadores 3/54 + visual 9/9 ACULTA420 e 9/9 Olivero; Kernel Fórum 93/1.939)"
+version_note: "0.1.0-dev.273 (leitura 5/68; agregação/contagem 4/64; migração: fonte 6/88, destino 9/216, denúncias 7/131; trigger Game 8/100; contadores 3/54 + visual 9/9 ACULTA420 e 9/9 Olivero; Kernel Fórum 98/2.007)"

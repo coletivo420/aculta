@@ -1,3 +1,12 @@
+## Leitura de ForumPosts — recibo do History, 2026-10-23
+
+- `ForumPostUnreadManagerKernelTest` (5 testes / 68 asserções, MariaDB):
+  anônimo sem dados; posts após o recibo ou o limite do History são não lidos;
+  posts anteriores ao recibo são lidos; a página do primeiro não lido usa a
+  contagem de posts que o precedem; recibo após o último post zera a pendência.
+- A View `/discussoes/nao-lidas` e o Runtime continuam pendentes.
+- Suíte Kernel do Fórum 98/2.007; PHPCS limpo.
+
 ## Agregação de ForumPosts na listagem — serviço, 2026-10-23
 
 - `ForumPublicPostStatisticsKernelTest` (4 testes / 64 asserções, MariaDB):
