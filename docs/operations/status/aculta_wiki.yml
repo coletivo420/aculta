@@ -1,4 +1,4 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 state: Dev
-version_note: "0.1.0-dev.106 — Kernel compõe a home Wiki sob purpose Wiki (1/88); HTTP renderizado aguarda bootstrap ACULTA420. Purpose da rota aceita raiz Wiki e devolve 404 no Domain principal. R1 mantém projeção v4; Runtime intocado."
-next_phase: 'Ativação e rebuild do Content Index em Runtime de teste após autorização operacional; homologar acesso, rotas e WE SATIVA com Firefox ESR/X11 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'
+version_note: "0.1.0-dev.108 — autoria confirmada recebe aviso privado quando proposta é aceita/publicada; Kernel focal 1/220. Content Index R1 v4 e rotas/acesso R2 revalidados; integração de avisos pessoais Messenger e Runtime seguem pendentes."
+next_phase: 'Definir contrato de avisos privados da Wiki com o owner Messenger; depois homologar rotas/WE SATIVA em Runtime autorizado com Firefox ESR/X11 ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

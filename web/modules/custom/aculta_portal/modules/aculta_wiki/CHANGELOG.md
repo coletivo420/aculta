@@ -1,3 +1,13 @@
+## 0.1.0-dev.108 — notificar aceite de proposta
+
+- A autoria confirmada agora recebe o mesmo e-mail privado de resultado quando
+  a proposta é aceita e publicada. O contexto não inclui os campos sugeridos;
+  preserva somente assunto, estado, nota editorial e URL protegida.
+- Kernel do fluxo completo confirma o aviso de `accepted` junto ao resultado
+  existente para `declined` (1 teste / 220 asserções; 202 depreciações
+  Core/contrib/PHPUnit). Integração com avisos pessoais do Messenger segue
+  pendente de contrato próprio.
+
 ## Revalidação R2 — rotas e acesso no HEAD `8d0bf703f` (2026-10-24)
 
 - Três Kernels cobriram discovery das rotas/View, CTA por `createAccess()` e

@@ -3188,6 +3188,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'decision_note',
       'proposal_url',
     ], array_keys($memoryQueue->items[0]->context));
+    self::assertTrue($outcomeNotifier->notify($acceptedProposal));
+    self::assertCount(2, $memoryQueue->items);
+    self::assertSame('Aceita e publicada', $memoryQueue->items[1]->context['state']);
+    self::assertSame(
+      ['subject', 'state', 'decision_note', 'proposal_url'],
+      array_keys($memoryQueue->items[1]->context),
+      'The acceptance notice links privately without copying proposed content or personal details.',
+    );
 
     $this->container->get('current_user')->setAccount($submitter);
     $formState = new FormState();

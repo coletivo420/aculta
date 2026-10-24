@@ -7,6 +7,12 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.108`: autoria confirmada recebe aviso privado quando sua proposta
+  é aceita e publicada, além de devolvida/recusada. O aviso contém apenas o
+  assunto, estado, nota e URL privada; integração com avisos pessoais do
+  Messenger segue em desenho. Kernel do fluxo passou em 1 teste / 220
+  asserções; 202 depreciações upstream/PHPUnit.
+
 - Revalidação R2 rotas/acesso no HEAD `8d0bf703f` (2026-10-24): Kernels de
   discovery/View, CTA via `createAccess()` e isolamento da busca por grants
   passaram em 3 testes / 167 asserções. 300 depreciações Core/contrib, 4 PHPUnit

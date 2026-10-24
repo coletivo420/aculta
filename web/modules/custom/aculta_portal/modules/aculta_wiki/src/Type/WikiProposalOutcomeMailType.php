@@ -36,7 +36,7 @@ final class WikiProposalOutcomeMailType implements MailTypeInterface {
       ],
       'state' => [
         'label' => (string) $this->translation->translate('Resultado editorial'),
-        'sample' => 'Precisa de ajustes',
+        'sample' => 'Aceita e publicada',
       ],
       'decision_note' => [
         'label' => (string) $this->translation->translate('Retorno editorial'),

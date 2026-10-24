@@ -46,7 +46,7 @@ final class WikiProposalOutcomeNotifier {
     if (!$owner instanceof UserInterface
       || !$owner->isActive()
       || !$this->emailConfirmation->isConfirmed($owner)
-      || !in_array($state, ['needs_changes', 'declined'], TRUE)
+      || !in_array($state, ['needs_changes', 'declined', 'accepted'], TRUE)
       || !filter_var((string) $owner->getEmail(), FILTER_VALIDATE_EMAIL)) {
       return FALSE;
     }
@@ -62,9 +62,11 @@ final class WikiProposalOutcomeNotifier {
       return FALSE;
     }
 
-    $stateLabel = $state === 'needs_changes'
-      ? $this->t('Precisa de ajustes')
-      : $this->t('Recusada');
+    $stateLabel = match ($state) {
+      'needs_changes' => $this->t('Precisa de ajustes'),
+      'accepted' => $this->t('Aceita e publicada'),
+      default => $this->t('Recusada'),
+    };
     $this->queue->enqueue(new MailMessage(
       WikiProposalOutcomeMailType::ID,
       $owner->getEmail(),

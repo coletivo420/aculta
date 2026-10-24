@@ -4,7 +4,7 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.107**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.108**. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -13,6 +13,16 @@ rota também não existem no container ativo. Runtime segue sem homologação
 integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.108 — avisar aceite da proposta
+
+O resultado privado enviado à autoria confirmada agora cobre também `accepted`,
+com rótulo “Aceita e publicada”. O corpo continua sem campos sugeridos ou dados
+de terceiros, levando apenas o estado, nota editorial e rota protegida da
+proposta. O Kernel do fluxo editorial verificou o aviso; o canal pessoal de
+Avisos/Messenger permanece dependente de definição com seu owner. Kernel focal
+passou em 1 teste / 220 asserções; PHPUnit reportou 202 depreciações
+Core/contrib/PHPUnit.
 
 ### Revalidação R2 — rotas e acesso no HEAD `8d0bf703f` (2026-10-24)
 
