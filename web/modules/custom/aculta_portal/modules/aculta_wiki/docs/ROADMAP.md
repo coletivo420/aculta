@@ -4,7 +4,9 @@
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.109**. Em preflight read-only de
+Linha do projeto `aculta_wiki`: **0.1.0-dev.110**. O Runtime de teste está em
+homologação WE SATIVA após autorização explícita para `drush cr`; a verificação
+de rotas/serviços instalada ainda será registrada abaixo. Em preflight read-only de
 2026-10-24, `aculta_wiki` e `aculta_studio` estavam ativos e `aculta_index`
 desativado no Runtime de teste. A raiz `/` respondeu 200 no domínio Wiki; `/wiki`
 respondeu 404 intencionalmente por ser o caminho interno da raiz. No domínio de
@@ -13,6 +15,16 @@ rota também não existem no container ativo. Runtime segue sem homologação
 integral.
 O plano aprovado e o inventário de referências ficam em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../../docs/modules/WIKI-SUBMODULO.md).
+
+### Incremento dev.110 — CTA para o início WE SATIVA
+
+A home Wiki encaminha para `/studio/we-sativa/inicio` no Domain `account`
+somente quando `createAccess()` e o acesso real à rota permitem; contas com
+criação permitida, mas sem a experiência acessível, recebem o formulário Core.
+Kernel MariaDB da classe de imagem: 27 testes / 1.504 asserções, com 304
+depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform. `drush cr` do Runtime de
+teste está autorizado; smoke de rotas e revisão Firefox ESR/X11 ainda não foram
+executados.
 
 ### Incremento dev.109 — início WE SATIVA
 

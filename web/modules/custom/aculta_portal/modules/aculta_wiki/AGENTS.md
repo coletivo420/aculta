@@ -39,6 +39,11 @@
 
 # Wiki — instruções locais
 
+# Dev.110: home Wiki aponta para `/studio/we-sativa/inicio` somente com
+# createAccess e acesso real no Domain account; fallback nativo permanece.
+# Classe Kernel MariaDB passou 27/1.504; Runtime aguardando verificação após
+# drush cr autorizado; sem importação de configuração.
+
 # R2 imagem revalidada no HEAD 9da043aeb: Kernel MariaDB completo passou em
 # 27 testes / 1.500 asserções. Runtime/filesystem instalado intocados.
 

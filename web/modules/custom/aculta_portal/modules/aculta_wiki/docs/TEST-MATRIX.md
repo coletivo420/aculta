@@ -7,6 +7,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
+| CTA da home Wiki para WE SATIVA | Kernel MariaDB | `createAccess()` e acesso da rota no Domain `account`; fallback nativo e cacheável; restaura purpose Wiki | aprovado dev.110; classe de ciclo de imagem 27/1.504, 304 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform |
 | Seletor contextual de contribuição | Kernel MariaDB | CTA usa rota Wiki; participantes confirmados veem quatro intenções allowlisted, edição direta vê somente formulário Core, pessoa não confirmada é bloqueada | aprovado (dev.89; 3 testes / 311 asserções) |
 | Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `account`; provider disponível só com Wiki | aprovado (focal: 1 teste / 37 asserções; classe: 15 / 612) |
 | Início `/studio/we-sativa/inicio` | Kernel + Unit Studio | Purpose `account`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace e render ACULTA420; controller delega ao owner e nega acesso rejeitado | Kernel aprovado (dev.109; 2/208, 300 depreciações Core/contrib, uma PHP/Webform contrib e 3 PHPUnit); controller Unit 3/3, suíte Studio 20/61 |

@@ -7,6 +7,14 @@ pendentes, está em
 
 ## Estado atual
 
+- `0.1.0-dev.110`: o CTA de colaboração da home Wiki leva ao início WE SATIVA
+  no Domain `account` quando a conta tem `createAccess()` e acesso real à rota;
+  sem essa rota/acesso, usa o formulário nativo de criação. O Kernel focal
+  verifica domínio, cache e restauração do purpose. Classe Kernel MariaDB:
+  27/1.504; 304 depreciações Core/contrib, 28 PHPUnit e 3 PHP/Webform.
+  Homologação Runtime autorizada está em andamento; não inferir disponibilidade
+  instalada antes da verificação pós-cache.
+
 - Revalidação do ciclo R2 no HEAD `9da043aeb` (2026-10-24): classe Kernel
   completa passou em MariaDB isolada, 27 testes / 1.500 asserções. Cobriu
   publicação/privacidade sincronizada com o verbete, revisão pendente, rollback,

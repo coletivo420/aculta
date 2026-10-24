@@ -1491,3 +1491,16 @@
   Foram reportadas 304 depreciações Core/contrib e 28 PHPUnit. Nenhuma alteração
   de código, Runtime ou filesystem instalado.
 
+## 0.1.0-dev.110 — ligar a home Wiki ao início WE SATIVA
+
+- A home Wiki direciona contas que podem criar `wiki_entry` e acessar a
+  experiência no Domain `account` para `/studio/we-sativa/inicio`; as demais
+  contas autorizadas para criação mantêm fallback ao formulário nativo. Acesso
+  de criação continua condicionado ao `createAccess()` real.
+- O Kernel da home verifica destino, Domain, cache de permissão e restauração do
+  purpose. A classe `WikiLeadImageLifecycleKernelTest` passou em MariaDB
+  isolada: 27 testes / 1.504 asserções; 304 depreciações Core/contrib e 28
+  PHPUnit, além de 3 depreciações PHP do Webform contrib.
+- Rebuild de cache do Runtime de teste autorizado pelo responsável está
+  pendente nesta entrega; não houve importação de configuração.
+

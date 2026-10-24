@@ -1039,6 +1039,32 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $readerBuild = $controller->home();
     self::assertFalse($readerBuild['collaboration']['#access']->isAllowed());
     self::assertContains('user.permissions', $readerBuild['collaboration']['#access']->getCacheContexts());
+
+    Role::create([
+      'id' => 'wiki_home_studio_creator_test',
+      'label' => 'Wiki home Studio creator test',
+      'permissions' => ['create wiki_entry content', 'access aculta portal'],
+    ])->save();
+    Domain::create([
+      'id' => 'conta_aculta_org',
+      'hostname' => 'account.example.invalid',
+      'name' => 'account',
+      'scheme' => 'https',
+      'status' => TRUE,
+      'is_default' => FALSE,
+      'weight' => 1,
+    ])->save();
+    $studioCreator = new UserSession([
+      'uid' => 16,
+      'roles' => ['authenticated', 'wiki_home_studio_creator_test'],
+    ]);
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $studioCreator->id());
+    $currentUser->setAccount($studioCreator);
+    $studioBuild = $controller->home();
+    self::assertSame('aculta_studio.we_sativa_start', $studioBuild['collaboration']['#url']->getRouteName());
+    self::assertSame('conta_aculta_org', $studioBuild['collaboration']['#url']->getOption('domain')->id());
+    self::assertContains('user.permissions', $studioBuild['collaboration']['#access']->getCacheContexts());
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
   }
 
   /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Controller;
 
-use Drupal\Core\Template\Attribute;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -12,6 +12,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -49,6 +50,19 @@ final class WikiController extends ControllerBase {
    * Builds the Wiki home from the editorial Views.
    */
   public function home(): array {
+    $collaborationAccess = $this->entities
+      ->getAccessControlHandler('node')
+      ->createAccess('wiki_entry', $this->account, [], TRUE);
+    $collaborationUrl = Url::fromRoute('node.add', ['node_type' => 'wiki_entry']);
+    $startUrl = $this->domainPurposeManager->routeUrl('account', 'aculta_studio.we_sativa_start');
+    if ($collaborationAccess instanceof AccessResultInterface && $collaborationAccess->isAllowed() && $startUrl !== NULL) {
+      $startAccess = $this->domainPurposeManager->runInPurpose('account', fn () => $startUrl->access($this->account, TRUE));
+      if ($startAccess instanceof AccessResultInterface && $startAccess->isAllowed()) {
+        $collaborationUrl = $startUrl;
+        $collaborationAccess = $collaborationAccess->andIf($startAccess);
+      }
+    }
+
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-home'],
@@ -70,11 +84,9 @@ final class WikiController extends ControllerBase {
       ],
       'collaboration' => [
         '#type' => 'link',
-        '#title' => $this->t('Quer colaborar? Proponha um verbete.'),
-        '#url' => Url::fromRoute('node.add', ['node_type' => 'wiki_entry']),
-        '#access' => $this->entities
-          ->getAccessControlHandler('node')
-          ->createAccess('wiki_entry', $this->account, [], TRUE),
+        '#title' => $this->t('Quer colaborar? Comece pela WE SATIVA.'),
+        '#url' => $collaborationUrl,
+        '#access' => $collaborationAccess,
       ],
       'categories_title' => [
         '#theme' => 'aculta_portal_element',
