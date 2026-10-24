@@ -1,5 +1,27 @@
 # ACULTA Studio — Roadmap multi-experiência
 
+
+## S-R3-B1 — Documentos da Conta, implementação dev.17
+
+- **Feito no código:** `/studio/conta/documentos` via o mesmo
+  Portal form proprietário de CPF/CNPJ, com disponibilidade opcional
+  e retorno contextual; nenhuma duplicação de armazenamento ou
+  exibição no Meu Perfil.
+- **Contrato da raiz:** hub público na raiz `/` do ACCOUNT; caminho
+  `/studio` interno e 404 em acesso direto; Minha Conta original
+  em `/conta-legada`, mantida permanentemente.
+- **Não validado nesta etapa:** novos Unit, Kernel/Functional, HTTP
+  autenticado/anônimo, serviço CPF/CNPJ disponível/ausente,
+  submit e retorno de checkout, navegador e no-JS.
+- **Próxima fase S-R3-B2:** separar dados cadastrais privados do campo
+  apelido público (owner Portal/User); integrar formulário Conta sem
+  carregar o campo de apelido; preparar editor isolado de apelido em
+  Perfil, sem mudar schema nem quebrar o form legado.
+- Após isso, avançar preferências, pedidos e apoio com os serviços
+  proprietários e comparar Conta Studio x `/conta-legada` antes
+  de aprovar a nova interface.
+
+
 ## S-R3-A — composição de Conta por Portal, código dev.14
 
 **Implementado:** endereço, segurança/e-mail, senha/OAuth e conexões em
