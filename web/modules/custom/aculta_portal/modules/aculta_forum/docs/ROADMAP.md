@@ -119,6 +119,17 @@ Kernel focado no ledger passou com 24 testes / 533 assertions. Essa prova não
 substitui a homologação Runtime nem valida a configuração real do Mailer; F-M2
 continua parcial.
 
+**Candidato RC `0.1.0-rc.1` (2026-10-24):** o pré-deploy de **F-M7** está
+fechado — Unit 184/1.333, Kernel 150/2.862 em MariaDB, PHPCS sem erros,
+gates de rotas/Portal/slugs/Domain/status, revisão de código com cinco
+correções e dois itens registrados como dívida (DT-F01/DT-F02), e revisão de
+acessibilidade 49/49 em ACULTA420 e 49/49 em Olivero. As parcelas “Runtime
+pendente” de F-M1/F-M2/F-M5 são validação de **Alpha**, por definição do fluxo
+vigente, e não pendência de código deste candidato. Permanecem fora do RC, por
+autorização operacional: migração sobre dados reais, ativação do F-GROUP,
+entrega de e-mail/digest e concorrência entre processos. Checklist de Alpha em
+[`RC.md`](RC.md).
+
 **Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
 publicação, fila de moderação, edição pública, formulário de moderação por
 revisão, histórico, comparação de revisões e opções do Fórum estão provados em

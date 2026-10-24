@@ -1,3 +1,23 @@
+## Candidato RC — gates e acessibilidade, 2026-10-24
+
+- Unit do Fórum 184/1.333 (inclui `ForumServiceDefinitionsTest` e
+  `RestrictedForumGroupResolverTest`); Kernel 150/2.862 no MariaDB
+  `aculta_simpletest`; PHPCS 0 erros e 1 aviso aceito (`version` no
+  `info.yml`).
+- Revisão de código corrigiu cinco achados: aridade do serviço do histórico,
+  consulta de Groups por plugin, publicação/acesso em denúncias, progresso do
+  "marcar tudo como lido" e alias do Comment na fila de moderação. Dois
+  achados de manutenção ficaram em DT-F01/DT-F02.
+- `accessibility-readonly.py` (Firefox ESR/X11, local simulado): 49/49 em
+  ACULTA420 e 49/49 em Olivero. Verifica `h1` único, hierarquia, nome
+  acessível, `alt`, texto de links, IDs únicos e foco por teclado no conteúdo
+  principal das páginas: início, categorias, pesquisar, painel, configurações
+  e mover tópico.
+- `/categorias` em Olivero passa a renderizar o título do grupo como `h2`
+  (`hook_theme` do módulo); o salto h1 → h3 do template genérico do Core não
+  ocorre mais.
+- Detalhe e limites: [`RC.md`](RC.md).
+
 ## Anexo e mover comentário — pré-visualização autenticada, 2026-10-24
 
 - `synthetic-preview-and-move.py` (Firefox ESR/X11, local): 4/4 — imagem

@@ -1,3 +1,39 @@
+## `0.1.0-rc.1` — candidato a RC — 2026-10-24
+
+- Promoção a candidato RC: escopo de código fechado, sem item funcional
+  obrigatório pendente antes do deploy. Os passos que dependem de operação
+  (migração sobre dados reais, ativação de F-GROUP, entrega de e-mail,
+  aparelho físico) estão registrados como limites de Alpha em
+  [`docs/RC.md`](docs/RC.md), não como pendência de código.
+- Gates: Unit 184/1.333; Kernel 150/2.862 em MariaDB `aculta_simpletest`;
+  PHPCS 0 erros (1 aviso aceito de `version`); rotas temporárias, Portal
+  Drupal 11+, slugs públicos, caminhos de Domain e índice de status PASS;
+  `updatedb:status` sem pendências. Os gates globais de documentação de UI,
+  de pacotes, de endereços de ambiente e de inventário de Views reprovam
+  apenas itens de outras frentes ou do ambiente local (zero do Fórum). O
+  inventário de `validate-admin-cleanup.php` recebeu a View
+  `aculta_forum_gallery_slides`, que faltava.
+- Revisão de código de esforço médio, sete achados. Corrigidos: definição de
+  serviço do controlador de histórico com argumento faltante (500 na rota);
+  consulta de Groups que cruzava nid e tid de plugins diferentes; denúncia de
+  tópico/comentário que aceitava conteúdo despublicado e não revalidava
+  acesso; progresso do "marcar tudo como lido" baseado em nid esparso; alias
+  fixo de Comment na fila de moderação. Novos testes cobrem os quatro
+  primeiros e a aridade geral dos serviços. Os achados de performance e de
+  predicado duplicado ficaram como DT-F01/DT-F02.
+- Acessibilidade pré-deploy: novo
+  `tests/browser/aculta-forum/accessibility-readonly.py` mede título único,
+  hierarquia, nome acessível, `alt`, texto de links, IDs e foco por teclado
+  em páginas públicas e administrativas. Resultado 49/49 em ACULTA420 e
+  49/49 em Olivero.
+- Olivero: a agrupação de `/categorias` passa a usar `h2` no título do grupo
+  por um `hook_theme` do módulo, eliminando o salto h1 → h3 do template
+  genérico do Core; ACULTA420 mantém seu template próprio.
+- Correção de infraestrutura local fora do módulo: o serviço do hook de
+  avisos pessoais do Messenger passou a público no container, pois era
+  descartado na compilação e fazia toda página falhar com
+  `ArgumentCountError`; commit separado.
+
 ## `0.1.0-dev.317` — homologar aviso de resposta no Runtime local — 2026-10-24
 
 - Runtime local (`127.0.0.1`): resposta publicada por uid 15 em tópico seguido

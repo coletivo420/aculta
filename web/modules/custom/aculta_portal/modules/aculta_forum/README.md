@@ -1,5 +1,9 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
+**Estado: candidato RC `0.1.0-rc.1` (2026-10-24).** Gates, revisão de código,
+revisão de acessibilidade, dependências, rollback e limites de Alpha em
+[docs/RC.md](docs/RC.md).
+
 Submódulo de `aculta_portal`. O direcionamento vigente, aprovado pelo
 responsável em 2026-10-19, é reconstruir
 as discussões ACULTA com APIs nativas; Forum contrib foi desinstalado do Runtime

@@ -298,3 +298,10 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | --- | --- | --- |
 | GS-SINGLE-STORE-01 | Validar resolucao da unica Commerce store e autorizacao | Testes Kernel/Functional no homelab; nenhuma escolha de loja e associacao correta |
 | GS-SINGLE-STORE-02 | Verificar segregacao de produtos LMS e Doacoes | Apenas produto_loja exibido; checkouts de LMS/Doacoes intocados |
+
+## ACULTA Forum — revisão de código do RC (2026-10-24)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-F01 | Painel administrativo do Fórum executa 21 consultas de estatística por render (7 dias × 3 métricas) mais duas contagens | `ForumAdminOverviewController::activitySeries()` chama `statisticsStorage->total()` para cada dia e métrica; a página tem cache de 60 s | Baixa | Não; agregar em uma consulta com intervalo e agrupamento quando o histórico crescer | Alpha/pós-RC | Aberta |
+| DT-F02 | O predicado de "ForumPost publicado" e a ordenação de thread são reimplementados em quatro consultas | `ForumPostUnreadManager`, `ForumPublicPostStatistics`, `ForumUnreadContent` e `ForumPostThreadBuilder::getPageForPost()` repetem status/langcode/`first_published` e o desempate | Média | Não; extrair uma definição compartilhada antes de alterar a semântica de publicação | Pós-RC | Aberta |
