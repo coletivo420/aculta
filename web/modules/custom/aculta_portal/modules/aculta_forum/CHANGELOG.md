@@ -1,3 +1,15 @@
+## `0.1.0-dev.275` — provar o lote da migração com mapa persistente — 2026-10-24
+
+- Kernel executa `aculta_forum_comment_posts` pelo `MigrateExecutable` com o
+  source/destination de produção e o map SQL persistente: duas Comments viram
+  dois ForumPosts, a reexecução não duplica e uma Comment nova entra na
+  execução seguinte, reutilizando o mesmo map.
+- Corrigido defeito real do destino: como o plugin ID não é `entity:*`, o trait
+  do Migrate não inferia o entity type e o map falhava em `getIds()`. O destino
+  passa a declarar `aculta_forum_post` explicitamente.
+- Testes: lote 1/26; suíte Kernel do Fórum 101/2.060; PHPCS limpo. A resolução
+  pai/filho com `migration_lookup`, dry-run e rollback seguem pendentes.
+
 ## `0.1.0-dev.274` — provar o link de não lidas — 2026-10-23
 
 - Kernel exercita `ForumUnreadPosts`: tópico com duas não lidas gera o link

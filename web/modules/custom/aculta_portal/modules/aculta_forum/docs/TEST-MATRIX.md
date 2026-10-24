@@ -1,3 +1,16 @@
+## Lote da migração de Comments — mapa persistente, 2026-10-24
+
+- `ForumCommentMigrationBatchKernelTest` (1 teste / 26 asserções, MariaDB):
+  `MigrateExecutable` com source/destination de produção e map SQL. Duas
+  Comments geram dois posts; a reexecução não duplica; uma Comment nova é
+  importada na execução seguinte no mesmo map.
+- Correção no destino `ForumCommentPost`: declara `aculta_forum_post` em
+  `getEntityTypeId()`, pois o trait do Migrate só infere o tipo de IDs
+  `entity:*`. Sem isso, o map falhava ao chamar `getIds()`.
+- Resolução pai/filho via `migration_lookup`, dry-run/rollback e equivalência
+  completa continuam pendentes.
+- Suíte Kernel do Fórum 101/2.060; PHPCS limpo.
+
 ## Leitura de ForumPosts — recibo do History, 2026-10-23
 
 - `ForumPostUnreadManagerKernelTest` (7 testes / 95 asserções, MariaDB):

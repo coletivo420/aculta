@@ -59,6 +59,17 @@ final class ForumCommentPost extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * The trait infers the entity type from an "entity:<type>" derivative, but
+   * this destination uses its own plugin ID. The Migrate id map calls getIds()
+   * during import, so the base entity type must be declared explicitly.
+   */
+  protected static function getEntityTypeId($plugin_id) {
+    return 'aculta_forum_post';
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
     $entity_type_id = 'aculta_forum_post';

@@ -68,6 +68,12 @@ Verificar a versão do HEAD e o estado do Runtime antes de cada intervenção.
 | **F-M6 — experiência e administração** | P2 | Consolidar moderação/revisão, fila administrativa, mover comentários com impactos em seguidores, notificações e anexos; completar busca e indexação access-aware, previews e responsividade. | Testes de acesso, edição, workflow, filas e ferramentas; Firefox ESR/X11 versionado, tema ACULTA420 e Olivero; sem regressão de conteúdos contextuais. |
 | **F-M7 — gates, RC e Alpha** | P1 após os bloqueadores | Corrigir regressões, validar configurações, atualização de schema, cache, filas, versionamento, checklist operacional e documentação do release. | Gates Unit/Kernel/Functional e revisão visual aplicável antes de RC; Alpha após deploy autorizado no servidor de teste, nunca inferido de evidências anteriores; produção só após aprovação separada. |
 
+**Evidência recente de F-M5 (parcial):** `ForumCommentMigrationBatchKernelTest`
+executa o lote real com map SQL persistente, reexecução idempotente e
+continuidade para novas Comments; a correção de `getEntityTypeId()` no destino
+evitou falha do map. Pai/filho via `migration_lookup`, dry-run/rollback e
+equivalência seguem pendentes.
+
 **Evidência recente de F-M1 (parcial):** `ForumNoticeIdempotencyKernelTest`
 passou em MariaDB Simpletest, 12 testes / 220 assertions. Os cenários provam
 que aprovação tardia fora de ordem de `ForumPost` e de Comments conta cada
