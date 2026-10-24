@@ -2,6 +2,22 @@
 
 **Estado:** contrato vigente da refatoração iniciada em 2026-10-24. Este arquivo é a fonte de verdade para nomes, IDs e URLs das experiências.
 
+## Evolução planejada — Hub geral e Meu Espaço (P0, 2026-10-24)
+
+**Decisão de produto para implementação futura, ainda não aplicada às rotas:** o
+Studio passará a ter hub geral em `/studio` e a experiência pessoal
+**Meu Espaço**, provider candidato `pessoal`, em `/studio/pessoal`.
+A navegação será global por experiências e contextual por seções; a edição do
+perfil ocorrerá no Studio, enquanto `/u/{apelido}` permanece a página pública
+independente em `main`.
+
+**Não confundir o alvo com o estado instalado:** atualmente `/studio` atende
+à compatibilidade editorial do Marley; as rotas de Meu Espaço não existem e
+a raiz `/` do domínio `account` continua sendo Minha Conta. A tabela abaixo
+descreve somente identidades/URLs **existentes**. Marley, Ganjalab e WE SATIVA
+não mudam de nome nem de URL nesta fase. O contrato detalhado e o plano P0–P7
+estão em [Hub e experiência pessoal](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
+
 ## Identidades
 
 | Experiência | Nome público | Machine ID | Responsabilidade |
