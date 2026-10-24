@@ -23,9 +23,7 @@ Messenger e outros owners. O perfil público `/u/{apelido}` permanece no
 purpose `main`.
 
 **Esta direção é planejamento, não estado do código nem autorização de corte
-das rotas atuais.** O `StudioExperienceManager` e os providers Ganjalab/
-WE SATIVA existem, mas o provider pessoal e a ponte Marley para o registry
-ainda são candidatos; `/studio` hoje funciona como entrada legada Marley.
+das rotas atuais.** O `StudioExperienceManager` e os providers Ganjalab/WE SATIVA existem. A fase **P1-A (dev.8)** acrescentou o provider `pessoal`, o controller e a rota explícita `/studio/pessoal`, com links para a Conta e testes Unit ainda não executados. A ponte Marley para o registry e o hub `/studio` continuam planejados; `/studio` hoje funciona como entrada legada Marley.
 Preservar `/` de account e `/minha-conta` técnico bloqueado. Não sobrepor o
 `AccountShellBuilder` e o shell próprio do Studio numa mesma rota.
 
