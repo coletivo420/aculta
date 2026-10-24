@@ -1,5 +1,14 @@
 # ACULTA Studio — Hub e Meu Espaço
 
+> **HISTÓRICO SUPERADO em dev.13 (2026-10-24).**
+> O agrupamento `pessoal`, a mistura de Conta/Perfil e a etapa de
+> retirada do shell antigo foram expressamente rejeitados.
+> **Minha Conta legada permanece em `/` permanentemente**; o
+> acesso técnico direto `/minha-conta` continua 404.
+> Documento atual:
+> [Conta e Perfil separados](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+
+
 ## STUDIO-P2-A — página de edição privada adicionada (dev.12)
 
 A nova rota `/studio/pessoal/perfil` abre um painel privado no
