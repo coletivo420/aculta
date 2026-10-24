@@ -1,3 +1,13 @@
+## Revisão visual local — ACULTA420 e Olivero, 2026-10-24
+
+- `tests/browser/aculta-forum/categorias-visual.py`: `/categorias` no Growroom
+  local simulado, 9/9 em ACULTA420 e 9/9 em Olivero; 12 categorias e 12
+  contadores, zero erros visíveis, zero overflow em 1024 e 500 CSS px.
+- `tests/browser/aculta-cpf-checkout/olivero-smoke.py`: índice de Discussões
+  sem erro visível nos dois temas; tema restaurado para ACULTA420.
+- Ambiente local (`127.0.0.1` com hosts no perfil do Firefox), não o servidor
+  de testes.
+
 ## Configuração de tópicos — rota placeholder removida, 2026-10-24
 
 - `ForumTopicDisplayConfigTest` (Unit, suíte 181/1.014): afirma que

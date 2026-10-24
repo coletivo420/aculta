@@ -1,3 +1,14 @@
+## `0.1.0-dev.306` — revisão visual local dos temas no Fórum — 2026-10-24
+
+- `/categorias` no Growroom local simulado (`growroom420.aculta.toca.net.br`
+  resolvido para `127.0.0.1` no perfil do Firefox): 9/9 verificações em
+  ACULTA420 e 9/9 em Olivero, com 12 categorias, 12 contadores, sem erro
+  visível e sem overflow em 1024 e 500 CSS px.
+- Índice de Discussões verificado no mesmo ambiente nos dois temas: sem erro
+  visível, contadores e categorias presentes. Tema restaurado para ACULTA420
+  após a rodada de Olivero.
+- Ambiente local simulado, não servidor de testes; capturas fora do checkout.
+
 ## `0.1.0-dev.305` — documentar tokens do Fórum no contrato do tema — 2026-10-24
 
 - `docs/portal/TOKENS-E-ATRIBUTOS.md` passa a registrar o token
