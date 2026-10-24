@@ -29,6 +29,12 @@ podem restringir os modos disponíveis por categoria; não podem remover a opç�
 sem e-mail nem desligar a entrega no site. O ACULTA Mailer continua dono do
 transporte e pode suspender tipos de mensagem conforme sua política.
 
+A aba Avisos da central da conta filtra a lista compartilhada por origem e
+estado de leitura. A origem é marcada pelos produtores centralizados no
+Messenger depois de revalidar o acesso. Os links de abertura e retorno mantêm os
+filtros selecionados. A gaveta do cabeçalho não recebe filtros
+por padrão e continua exibindo a lista agregada completa.
+
 ## 2. Avisos por pessoa (`aculta_aviso`)
 
 Um registro por **pessoa, tipo e tópico**. Tipos: `forum_resposta` (Comment ou post revisionável novo em tópico seguido) e

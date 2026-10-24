@@ -442,7 +442,11 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       ];
       $items[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-summary notice-summary-persistent'],
+        '#attributes' => [
+          'data-portal-ui' => 'notice-summary notice-summary-persistent',
+          'data-aculta-notice-origin' => 'aprendizagem',
+          'data-aculta-notice-read' => (bool) $message->get(self::READ_FIELD)->value ? 'read' : 'unread',
+        ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.lms_notice_open', [
           'message' => $message->id(),
         ]), ['data-portal-ui' => 'notice-summary-link']),

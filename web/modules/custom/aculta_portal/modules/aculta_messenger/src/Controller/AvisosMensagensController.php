@@ -12,10 +12,12 @@ use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Controller\MessagesController;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Central "Avisos/Mensagens" dentro de Minha conta (ACULTA Messenger, F5.2).
@@ -35,6 +37,8 @@ final class AvisosMensagensController extends ControllerBase {
     private readonly AccountInterface $usuarioAtual,
     private readonly MessagesController $mensagens,
     private readonly FriendshipManagerInterface $friendshipManager,
+    private readonly RequestStack $requestStack,
+    private readonly NoticeListFilter $noticeListFilter,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -44,6 +48,8 @@ final class AvisosMensagensController extends ControllerBase {
       $container->get('current_user'),
       $container->get('class_resolver')->getInstanceFromDefinition(MessagesController::class),
       $container->get('aculta_user.friendship_manager'),
+      $container->get('request_stack'),
+      $container->get('aculta_messenger.notice_list_filter'),
     );
   }
 
@@ -53,12 +59,14 @@ final class AvisosMensagensController extends ControllerBase {
       $aba = 'avisos';
     }
     $uid = (int) $this->usuarioAtual->id();
+    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $filterQuery = array_filter($filters, static fn(string $value): bool => $value !== '');
     $naoLidosAvisos = $this->avisos->naoLidosTotal($uid);
     $naoLidasConversas = $this->conversas->count();
 
     $conteudo = $aba === 'mensagens'
       ? $this->conteudoMensagens($naoLidasConversas)
-      : $this->conteudoAvisos($uid);
+      : $this->conteudoAvisos($filters);
 
     return [
       '#cache' => ['contexts' => ['user'], 'max-age' => 0, 'tags' => ['aculta_aviso_list']],
@@ -72,12 +80,13 @@ final class AvisosMensagensController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
         'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t(self::ABAS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        'filters' => $aba === 'avisos' ? $this->noticeFiltersBuild($filters) : [],
         // Mesmo comportamento da gaveta da barra: a área abaixo do cabeçalho é trocada pelo script da gaveta
         // (messenger-drawers.js), que busca o aviso ou a conversa e mostra no lugar, sem navegar para outra página.
         'list' => [
           '#type' => 'container',
           '#attributes' => [
-            'data-aculta-drawer-url' => Url::fromRoute('aculta_messenger.avisos', ['aba' => $aba])->toString(),
+            'data-aculta-drawer-url' => Url::fromRoute('aculta_messenger.avisos', ['aba' => $aba], ['query' => $aba === 'avisos' ? $filterQuery : []])->toString(),
             'data-aculta-account-list' => '',
           ],
           'conteudo' => [
@@ -113,9 +122,73 @@ final class AvisosMensagensController extends ControllerBase {
    * Aba Avisos: a mesma lista da gaveta da barra (comunicados, avisos da pessoa e alertas), com o mesmo
    * comportamento: os links abrem o detalhe e a dispensa segue a regra da gaveta.
    */
-  private function conteudoAvisos(int $uid): array {
+  private function conteudoAvisos(array $filters): array {
     // Dentro da própria aba a lista já é completa: sem o link Ver todos.
-    return $this->mensagens->alertsBuild()['build'];
+    return $this->mensagens->alertsBuild($filters)['build'];
+  }
+
+  /**
+   * Builds accessible source and read-state links for the notice list.
+   */
+  private function noticeFiltersBuild(array $filters): array {
+    $origins = [
+      '' => $this->t('Todas as origens'),
+      'comunicado' => $this->t('Comunicados'),
+      'forum' => $this->t('Fórum'),
+      'alerta' => $this->t('Alertas do site'),
+      'aprendizagem' => $this->t('Aprendizagem'),
+      'wiki' => $this->t('Wiki'),
+      'loja' => $this->t('Loja'),
+      'doacao' => $this->t('Doações'),
+      'conta' => $this->t('Conta'),
+    ];
+    $states = [
+      '' => $this->t('Todos os estados'),
+      'unread' => $this->t('Não lidos'),
+      'read' => $this->t('Lidos'),
+    ];
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-aculta-notice-filters' => '', 'aria-label' => $this->t('Filtros de avisos')],
+      'origins' => [
+        '#type' => 'container',
+        '#attributes' => ['role' => 'group', 'aria-label' => $this->t('Filtrar por origem')],
+        'links' => $this->filterLinksBuild($origins, 'origem', $filters),
+      ],
+      'read_state' => [
+        '#type' => 'container',
+        '#attributes' => ['role' => 'group', 'aria-label' => $this->t('Filtrar por leitura')],
+        'links' => $this->filterLinksBuild($states, 'leitura', $filters),
+      ],
+    ];
+  }
+
+  /**
+   * Builds one set of filter links while preserving the other filter.
+   */
+  private function filterLinksBuild(array $options, string $parameter, array $filters): array {
+    $links = [];
+    foreach ($options as $value => $label) {
+      $query = array_filter($filters, static fn(string $filter): bool => $filter !== '');
+      if ($value === '') {
+        unset($query[$parameter]);
+      }
+      else {
+        $query[$parameter] = $value;
+      }
+      $url = Url::fromRoute(
+        'aculta_messenger.avisos',
+        ['aba' => 'avisos'],
+        ['query' => $query],
+      );
+      $link = PortalLinkElement::build((string) $label, $url, ['data-portal-ui' => 'account-data-link']);
+      if (($filters[$parameter] ?? '') === $value) {
+        $link['#element_attributes']->setAttribute('aria-current', 'page');
+        $link['#element_attributes']->addClass('is-active');
+      }
+      $links[] = $link;
+    }
+    return ['#theme' => 'item_list', '#items' => $links];
   }
 
   /**

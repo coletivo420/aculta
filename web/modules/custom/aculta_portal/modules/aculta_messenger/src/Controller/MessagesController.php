@@ -39,6 +39,7 @@ use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Component\Utility\Crypt;
 use Drupal\aculta_messenger\Service\MessengerCounts;
+use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
@@ -72,6 +73,7 @@ final class MessagesController extends ControllerBase {
     private readonly CsrfTokenGenerator $csrfToken,
     private readonly AvisoService $avisos,
     private readonly EmailPendingAviso $emailPendingAviso,
+    private readonly NoticeListFilter $noticeListFilter,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -95,6 +97,7 @@ final class MessagesController extends ControllerBase {
       $container->get('csrf_token'),
       $container->get('aculta_messenger.aviso_service'),
       $container->get('aculta_messenger.email_pending_aviso'),
+      $container->get('aculta_messenger.notice_list_filter'),
       $container->get('module_handler'),
     );
   }
@@ -680,19 +683,24 @@ final class MessagesController extends ControllerBase {
 
   /** Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
-    $resultado = $this->alertsBuild();
+    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $resultado = $this->alertsBuild($filters);
     return $this->buildDrawerResponse($resultado['build'], [
       'X-Aculta-Alerts-Count' => (string) $resultado['contador'],
     ]);
   }
 
   /**
-   * Monta a lista de avisos da gaveta (comunicados, avisos da pessoa, alertas). Usada pela gaveta da barra e pela aba
-   * Avisos da conta, para que as duas mostrem a mesma coisa com o mesmo comportamento.
+   * Builds the shared notice list for the toolbar drawer and account page.
+   *
+   * @param array $filters
+   *   Optional origin and read-state filters from the account page.
    *
    * @return array{build: array, contador: int}
    */
-  public function alertsBuild(): array {
+  public function alertsBuild(array $filters = []): array {
+    $filters = $this->noticeListFilter->normalize($filters);
+    $hasFilters = $filters['origem'] !== '' || $filters['leitura'] !== '';
     $storage = $this->entityTypes->getStorage('site_alert');
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
@@ -715,7 +723,7 @@ final class MessagesController extends ControllerBase {
       $aviso = $this->emailPendingAviso->ensure((int) $this->account->id());
       $title = $this->emailPendingAviso->title($aviso);
       if ($title !== NULL) {
-        $items[] = $this->noticeSummary(
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
           $title,
           (string) $this->emailPendingAviso->body($aviso),
           Url::fromRoute('aculta_portal.email_resend'),
@@ -723,7 +731,7 @@ final class MessagesController extends ControllerBase {
           (string) $this->translation->translate('Confirmação pendente'),
           TRUE,
           NoticeType::WARNING,
-        );
+        ), 'conta', TRUE);
       }
     }
 
@@ -735,7 +743,7 @@ final class MessagesController extends ControllerBase {
         $nid = (int) $aviso->get('assunto_nid')->value;
         $contador = (int) $aviso->get('contador_site')->value;
         // Aviso do Fórum: rótulo Lido/Não lido no topo da caixa, sem cor de tipo. Ler o tópico zera o contador.
-        $items[] = $this->noticeSummary(
+        $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
           (string) $aviso->get('titulo')->value,
           '',
           Url::fromRoute('entity.node.canonical', ['node' => $nid]),
@@ -744,7 +752,7 @@ final class MessagesController extends ControllerBase {
           FALSE,
           NULL,
           $this->readLabel($contador > 0),
-        );
+        ), 'forum', $contador > 0);
       }
     }
 
@@ -770,7 +778,7 @@ final class MessagesController extends ControllerBase {
         $lido = $leituraFlag instanceof FlagInterface && $this->flagService->getFlagging($leituraFlag, $alert, $this->account) !== NULL;
         $rotulo = $this->readLabel(!$lido);
       }
-      $items[] = $this->noticeSummary(
+      $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
         (string) $alert->getLabel(),
         $this->excerpt((string) $alert->getMessage()),
         Url::fromRoute('aculta_messenger.alert_detail', ['site_alert' => $alert->id()]),
@@ -779,13 +787,32 @@ final class MessagesController extends ControllerBase {
         FALSE,
         NoticeType::fromSeverity($alert->getSeverity()),
         $rotulo,
-      );
+      ), 'alerta', $this->account->isAuthenticated() ? !$lido : NULL);
     }
 
     $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account);
 
+    if ($hasFilters) {
+      $items = $this->noticeListFilter->apply($items, $filters);
+      foreach ($items as &$item) {
+        $link = $item['link']['#element_attributes'] ?? NULL;
+        if (!$link instanceof Attribute) {
+          continue;
+        }
+        foreach (['href', 'data-aculta-conversation-url'] as $attribute) {
+          if ($link->hasAttribute($attribute)) {
+            $link->setAttribute($attribute, $this->noticeListFilter->appendToUrl((string) $link->offsetGet($attribute), $filters));
+          }
+        }
+      }
+      unset($item);
+    }
+
     if ($items === []) {
-      $items[] = ['#plain_text' => (string) $this->translation->translate('Não há avisos ativos neste momento.')];
+      $emptyMessage = $hasFilters
+        ? $this->translation->translate('Nenhum aviso corresponde aos filtros selecionados.')
+        : $this->translation->translate('Não há avisos ativos neste momento.');
+      $items[] = ['#plain_text' => (string) $emptyMessage];
     }
 
     $build = [
@@ -841,7 +868,7 @@ final class MessagesController extends ControllerBase {
       }
       // The drawer lists a summary; the full notice opens in the same drawer (noticeDetail).
       // A persistent notice is not dismissed (no "×"): it stays in the list, and its own kind of card tells it apart.
-      $items[] = $this->noticeSummary(
+      $items[] = $this->withNoticeFilterMetadata($this->noticeSummary(
         (string) $node->label(),
         $this->excerpt($this->noticeText($node)),
         Url::fromRoute('aculta_messenger.notice_detail', ['node' => $node->id()]),
@@ -849,7 +876,7 @@ final class MessagesController extends ControllerBase {
         $read ? (string) $this->translation->translate('Lido') : (string) $this->translation->translate('Não lido'),
         TRUE,
         NoticeType::normalize($node->hasField('field_aculta_notice_type') && !$node->get('field_aculta_notice_type')->isEmpty() ? (string) $node->get('field_aculta_notice_type')->value : NULL),
-      );
+      ), 'comunicado', !$read);
     }
     return $items;
   }
@@ -888,6 +915,17 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
+   * Adds neutral metadata consumed only by the central notice filters.
+   */
+  private function withNoticeFilterMetadata(array $item, string $origin, ?bool $unread): array {
+    $item['#attributes']['data-aculta-notice-origin'] = $origin;
+    if ($unread !== NULL) {
+      $item['#attributes']['data-aculta-notice-read'] = $unread ? 'unread' : 'read';
+    }
+    return $item;
+  }
+
+  /**
    * Rótulo "Lido" ou "Não lido" de uma caixa de conversa ou de aviso do Fórum. Substitui a marcação por cor: o texto é a
    * única indicação de estado. Os avisos persistentes não usam este rótulo.
    */
@@ -918,9 +956,11 @@ final class MessagesController extends ControllerBase {
 
   /** "← Todos os avisos": back to the notices list, in the same drawer. */
   private function backToNoticesLink(): array {
+    $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
+    $query = array_filter($filters, static fn(string $value): bool => $value !== '');
     return PortalLinkElement::build(
       $this->translation->translate('← Todos os avisos'),
-      Url::fromRoute('aculta_messenger.alerts_preview'),
+      Url::fromRoute('aculta_messenger.alerts_preview', [], ['query' => $query]),
       ['data-aculta-drawer-back' => '', 'data-portal-ui' => 'messenger-back-link'],
     ) + ['#weight' => -100];
   }

@@ -175,7 +175,11 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       ];
       $items[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-summary notice-summary-persistent'],
+        '#attributes' => [
+          'data-portal-ui' => 'notice-summary notice-summary-persistent',
+          'data-aculta-notice-origin' => 'loja',
+          'data-aculta-notice-read' => $unread ? 'unread' : 'read',
+        ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.commerce_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }

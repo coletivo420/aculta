@@ -172,7 +172,11 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       ];
       $items[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-summary notice-summary-persistent'],
+        '#attributes' => [
+          'data-portal-ui' => 'notice-summary notice-summary-persistent',
+          'data-aculta-notice-origin' => 'wiki',
+          'data-aculta-notice-read' => $unread ? 'unread' : 'read',
+        ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.wiki_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }

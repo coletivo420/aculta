@@ -50,6 +50,12 @@ removida; avisos no site continuam obrigatórios. Uma preferência individual
 temporariamente bloqueada pela política administrativa passa a valer novamente
 se o modo voltar a ser permitido.
 
+Na aba Avisos da central da conta, filtros GET permitem selecionar origem
+(Comunicados, Fórum, Alertas, Aprendizagem, Wiki, Loja, Doações ou Conta) e
+estado de leitura. A seleção roda no Messenger depois que os adapters contribuem;
+os links mantêm os filtros ao abrir um item e retornar. O fragmento padrão da
+gaveta continua sem filtros.
+
 Os módulos de domínio mantêm conteúdos, workflows e publishers de eventos. O
 Messenger aplica o contrato compartilhado e revalida acesso.
 `aculta_mailer` mantém transporte, templates, remetente, cabeçalhos/rodapés,
@@ -59,7 +65,7 @@ O recibo Commerce permanece para convidados e como fallback.
 
 ## ACULTA Messenger 0.1.1
 
-A versão em desenvolvimento `0.1.1-dev.109` inclui o envelope mínimo `MessengerNoticeEvent` e
+A versão em desenvolvimento `0.1.1-dev.110` inclui o envelope mínimo `MessengerNoticeEvent` e
 `MessengerNoticePublisherInterface` para adapters, além do ledger unificado de
 eventos do Fórum (Comment, `ForumPost` e revisões de tópico), com locks por
 agregado. Os produtores atuais do Fórum encaminham Comment, primeira publicação

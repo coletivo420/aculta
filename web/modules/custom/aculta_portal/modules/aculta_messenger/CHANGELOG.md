@@ -1,3 +1,14 @@
+## 0.1.1-dev.110 — filtros de origem e leitura na central — 2026-10-24
+
+- A aba Avisos oferece filtros GET de origem e estado de leitura sobre a lista
+  agregada; links preservam o outro filtro. O Messenger aplica-os depois dos
+  adapters, mantém todos os itens sem filtro na gaveta e informa resultado vazio
+  específico. LMS, Wiki, Loja e Doações marcam origem/leitura no render array.
+- Unit Messenger + adapters: 140 testes / 852 assertions PASS, incluindo 4 testes
+  / 6 assertions do filtro. PHPCS limpo para classes novas; controllers mantêm
+  baseline preexistente sem aumento de violações. PHP lint, YAML e status index
+  PASS. Sem Runtime visual.
+
 ## 0.1.1-dev.109 — política administrativa dos modos de e-mail — 2026-10-24
 
 - Configurações do Messenger agora permitem restringir por categoria os modos

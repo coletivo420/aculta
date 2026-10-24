@@ -31,6 +31,8 @@ services:
       - '@flag'
       - '@site_alert.get_alerts'
       - '@module_handler'
+  aculta_messenger.notice_list_filter:
+    class: Drupal\aculta_messenger\Service\NoticeListFilter
   aculta_messenger.unread_thread_counter:
     class: Drupal\aculta_messenger\Service\UnreadThreadCounter
     arguments:

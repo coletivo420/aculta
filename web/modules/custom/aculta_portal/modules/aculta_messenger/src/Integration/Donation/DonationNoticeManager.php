@@ -214,7 +214,11 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
       ];
       $items[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-summary notice-summary-persistent'],
+        '#attributes' => [
+          'data-portal-ui' => 'notice-summary notice-summary-persistent',
+          'data-aculta-notice-origin' => 'doacao',
+          'data-aculta-notice-read' => $unread ? 'unread' : 'read',
+        ],
         'link' => PortalLinkElement::build($heading, Url::fromRoute('aculta_messenger.donation_notice_open', ['message' => $message->id()]), ['data-portal-ui' => 'notice-summary-link']),
       ];
     }
