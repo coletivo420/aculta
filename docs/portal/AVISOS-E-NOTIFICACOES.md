@@ -1,58 +1,75 @@
-# Avisos e notificações
+# Avisos e notificações — contrato transversal ACULTA
 
-Status: **política aprovada pelo responsável (2026-10-16)**. Integração estática de posts revisionáveis registrada em 2026-10-22; validação Runtime pendente.
-Escopo: avisos dentro do site e e-mails de participação (respostas em tópicos seguidos). Não cria sistema novo.
+**Revisão:** 2026-10-24. **Decisões:** Fórum F-D21 e F-D41; arquitetura transversal ADR-XK-02.
+**Escopo:** avisos no site e e-mails vinculados à atividade de conteúdos acompanhados; não criar inbox, chat, SMTP nem armazenamento duplicado.
 
-O texto original foi definido para tópicos do Forum contrib. A reconstrução
-aprovada em 2026-10-19 mantém `aculta_messenger` como único dono de entrega e
-estende o contrato a contextos de comentário e aos posts revisionáveis que
-substituem os Comments nas discussões públicas. Destinatários, agrupamento e
-opt-in devem ser definidos por contexto; todo envio revalida publicação e acesso
-atual. Discussões LMS/Wiki não entram em avisos públicos. Ver
-`aculta_forum/docs/CONTEXTS.md`.
+## 1. Separação obrigatória: discussão, aviso e conversa
 
-## 1. Regra geral
+| Capacidade | Dono e fonte de verdade | Regra |
+| --- | --- | --- |
+| Tópicos, posts revisionáveis e Comments contextuais | `aculta_forum` + Node/Comment/Entity/Workflow | Resposta pública pertence ao conteúdo e à moderação da origem. |
+| Seguir/salvar conteúdo | Flag (`seguir_topico` para tópicos do Growroom) e política do módulo proprietário | Assinatura é preferência; nunca concede acesso. |
+| Aviso pessoal de tópico seguido | `aculta_messenger` / entidade `aculta_aviso` existente | Uma entrada agregada por pessoa, tipo e tópico; leitura e contador próprios. |
+| Comunicado persistente institucional | Node `aculta_notice` e Flag `aculta_notice_read` | Não confundir com `aculta_aviso` do Fórum. |
+| Alerta temporário do site | Site Alert, com Flags de dispensa/leitura quando aplicável | Mantém política nativa de validade e apresentação. |
+| Eventos pessoais de outros módulos | Message/Message Notify e adapters do Messenger | Reutilizar providers/serviços de avisos; não criar inbox paralela. |
+| Conversa privada entre pessoas | Private Message integrado ao `aculta_messenger` | Ação voluntária do membro; nunca surge automaticamente ao seguir, comentar ou matricular-se. |
+| E-mail de aviso ou resumo | `aculta_messenger` coordena; `aculta_mailer` transporta | Não criar SMTP, templates de transporte nem worker concorrente no Fórum. |
 
-- Toda notificação usa o **sistema existente**, nos dois canais: o **sistema de mensagens** do `aculta_messenger`
-  (caixa de mensagens, contadores do `MessengerCounts`, modelos `aculta_msg_*` com tentativas e estado de entrega) e os
-  **avisos do site** (`aculta_notice`, com flags de leitura). Não criar tabela, fila ou canal paralelo.
-- Notificações do mesmo tópico são **agrupadas**: uma entrada por tópico, com contador ("3 novas respostas"), em vez de
-  uma entrada por resposta. Isso economiza espaço na tela e no e-mail.
-- Avisos gerais do site com conteúdo semelhante também são agrupados, com contador, pela mesma regra de chave.
+**A central da conta pode apresentar Avisos e Mensagens lado a lado, mas elas são listas e fontes de verdade diferentes.** Um aviso de nova resposta não aparece como uma thread de Private Message.
 
-## 2. Aviso no site (obrigatório)
+Discussões contextuais de LMS, Wiki e Revista são Comments no conteúdo proprietário, **não** chats exclusivos nem conversas privadas geradas automaticamente. Um participante pode iniciar uma conversa privada com outro membro usando a ação normal do Messenger, sujeita a bloqueios, elegibilidade e privacidade.
 
-- Quem segue um tópico (flag `seguir_topico`) **recebe o aviso no site**, sem poder desligar. Uma resposta é um
-  Comment legado publicado ou um `aculta_forum_post` revisionável publicado/default. O aviso aparece na caixa
-  de mensagens e no contador da barra do site.
-- O aviso mostra o tópico, o número de respostas novas desde a última leitura e o link para o tópico.
-- Ao abrir o tópico, o contador do aviso é zerado para aquela conta (leitura por flag, como os avisos atuais).
-- Um aviso por tópico por conta. Respostas novas somam ao contador do mesmo aviso.
+## 2. Fórum: aviso no site obrigatório para seguidores elegíveis
 
-## 3. Resumo por e-mail (opt-in)
+- A Flag `seguir_topico` identifica contas interessadas no tópico do Growroom420.
+- A primeira publicação de Comment legado ou `aculta_forum_post` revisionável elegível gera **aviso**, não mensagem privada. Aprovação tardia conta quando a publicação se torna efetiva, não quando o rascunho é criado.
+- O autor da própria resposta não é destinatário dela; conteúdo histórico importado e ações de sincronização não criam novos avisos de participação.
+- Atualização de tópico seguido é um evento distinto da publicação de resposta.
+- `aculta_aviso` agrega por **destinatário + tipo + tópico**: `contador_site`, `contador_email` e marcadores de publicação permanecem independentes.
+- O marcador `ultimo_comentario` identifica Comments; `ultimo_post` acompanha o ID da revisão publicada dos ForumPosts, preservando idempotência sob aprovação fora de ordem.
+- Ler o tópico pela rota canônica zera `contador_site` dos avisos relevantes daquela conta. **Isto não equivale a acionar uma Flag de leitura de comunicado institucional.**
+- O contador da barra de Avisos e a lista da conta consideram apenas registros ainda elegíveis e visíveis; o contador de conversas não inclui avisos.
+- Deixar de seguir interrompe novos avisos decorrentes da assinatura. Não conceder nem manter visibilidade indevida por causa de registros antigos.
 
-- O e-mail é **opt-in**: a conta liga o recebimento na área de conta. Desligado por padrão.
-- Só entram contas com o e-mail confirmado (`EMAIL-CONFIRMATION-POLICY.md`).
-- O envio é um **resumo diário**, pela fila existente do messenger, e **só quando houve atualização** desde o último
-  resumo. Sem novidade, não há e-mail.
-- O resumo agrupa por tópico: uma linha por tópico seguido, com o número de respostas novas e o link. Nunca um e-mail
-  por resposta.
-- Cada resposta entra em no máximo um resumo por conta. Comments e posts usam watermarks independentes para deduplicar
-  seus identificadores sem colisão.
+A entrega por mensagem do Message Subscribe para publicação de tópicos do Fórum foi desligada pela F-D21. Não reativar o mecanismo antigo nem duplicar `aculta_aviso` com outro evento persistido para o mesmo aviso sem migração aprovada e testes de equivalência.
 
-## 4. Agrupamento geral: tipo + assunto
+## 3. Resumo por e-mail
 
-- Avisos e mensagens do sistema são agrupados pela chave **tipo + assunto**. Itens com a mesma chave viram uma entrada
-  com contador, e não várias.
-- Para respostas de fórum, o assunto é o tópico: é a chave "tipo = resposta de fórum, assunto = tópico".
-- O mesmo agrupamento vale para o resumo por e-mail, que segue a mesma chave.
+- O resumo diário de participação é **opt-in**, desligado por padrão.
+- Exige conta ativa, endereço confirmado e elegibilidade ao conteúdo no momento do processamento.
+- É enviado somente quando existe novidade pendente; a implementação atual aplica janela mínima de 20 horas entre envios por conta.
+- Agrega respostas e atualizações por tópico, sem um e-mail por resposta.
+- O registro pendente é confirmado somente após envio bem-sucedido por `aculta_mailer`.
+- Desligar o resumo não apaga o aviso no site; a preferência existente limpa pendências de e-mail conforme contrato do Messenger.
+- Eventos transacionais de outros módulos podem seguir políticas próprias aprovadas, sem alterar retroativamente o padrão do Fórum.
 
-## 5. Limites
+O Fórum não cria filas de envio nem chama transporte de e-mail diretamente.
 
-- Não há notificação para conteúdo que a conta não pode acessar; discussões do LMS revalidam matrícula e Group access.
-- Não há notificação para conteúdo histórico importado (autorias legadas não são contas).
-- Não há notificação de conquista por este caminho (`aculta_game` tem regras próprias).
+## 4. Contextos privados, moderação e Domain
 
-## 6. Dúvidas abertas
+O evento, a contagem, a apresentação, o link de abertura e a entrega revalidam o contexto autorizado: publicação, Entity Access, Domain/Purpose e, quando relevante, Group e matrícula/situação associativa.
 
-Nenhuma no momento.
+- Tópico, post ou Comment pendente/rejeitado não produz aviso público.
+- A revogação de acesso prevalece sobre a existência da Flag ou do aviso antigo.
+- Conteúdo do LMS é restrito ao contexto da turma/curso e não integra avisos públicos do Growroom.
+- Assinatura e payload enfileirado não são autorização.
+- O link deve usar rota canônica resolvida pelo propósito correto; não fixar host de ambiente.
+
+## 5. Integração futura com API de eventos
+
+`aculta_forum` publica informações mínimas sobre evento, entidade/revisão e contexto. A política de destinatários continua vinculada às assinaturas e ao acesso do conteúdo; `aculta_messenger` concentra agregação, idempotência, estado de leitura e coordenação de canais; `aculta_mailer` faz o envio.
+
+A ADR-XK-02 propõe um envelope com tipo de evento, módulo, UUID/revisão, destinatário, propósito, data e chave de idempotência. **É contrato planejado, não uma API já implementada.** Migrar os produtores gradualmente e comparar resultados lado a lado, sem disparo duplo.
+
+## 6. Critérios de aceite e referências
+
+- Seguir não cria thread nem concede leitura de conteúdo restrito.
+- Primeira resposta publicada conta uma vez; edições e republicações não a duplicam.
+- Aprovação de posts fora da ordem não perde avisos.
+- Autor, conta suspensa, ex-seguidor e destinatário sem acesso são tratados pela política vigente.
+- Avisos por pessoa não são mensagens privadas; contadores e preferências permanecem separados.
+- Resumo respeita opt-in, confirmação, conteúdo acessível e deduplicação.
+- Testes Unit/Kernel, casos de revogação e revisão visual autenticada precedem RC; Runtime e transporte controlado exigem evidências próprias.
+
+Referências: `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/AVISOS-E-MENSAGENS.md`, `web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md`, `docs/architecture/ACULTA-XK-0.1-B-SHARED-CONTRACTS.md`.
