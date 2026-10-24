@@ -17,9 +17,12 @@ A preparação cria contas e uma conversa em grupo no banco de teste. As senhas 
 ## Execução
 
 ```sh
-geckodriver --port 4444 &
-node tests/browser/aculta-messenger/suite.mjs
+DISPLAY=:0 geckodriver --port 4444 &
+DISPLAY=:0 node tests/browser/aculta-messenger/suite.mjs
 ```
+
+O script recusa qualquer display diferente de `:0` e só aceita `SUITE_BASE`/`SUITE_LOGIN_URI` nos hosts HTTPS do servidor
+de teste. A sessão usa Firefox ESR visível; o modo headless é proibido pelas regras locais.
 
 Variáveis opcionais:
 

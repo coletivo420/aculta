@@ -9,6 +9,13 @@ const C = 'teste.c';
 const MSG = 'Olá teste.b, mensagem do teste de navegador.';
 const GROUP_MSG = 'Mensagem de grupo de teste.';
 
+const baseUrl = new URL(BASE);
+const loginUrl = new URL(process.env.SUITE_LOGIN_URI || 'https://conta.aculta.toca.net.br');
+if (baseUrl.protocol !== 'https:' || (baseUrl.hostname !== 'aculta.toca.net.br' && !baseUrl.hostname.endsWith('.aculta.toca.net.br'))
+  || loginUrl.protocol !== 'https:' || loginUrl.hostname !== 'conta.aculta.toca.net.br') {
+  throw new Error('A suíte do Messenger só pode usar hosts HTTPS do servidor de teste ACULTA.');
+}
+
 // Preparation: test accounts and the group thread (idempotent, see setup-accounts.php).
 const setupOut = setup();
 const groupId = /group thread (\d+)/.exec(setupOut)?.[1];

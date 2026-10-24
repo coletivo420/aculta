@@ -1,4 +1,4 @@
-// Biblioteca da suíte de navegador do Messenger: Firefox headless pelo geckodriver (protocolo W3C WebDriver).
+// Biblioteca da suíte de navegador do Messenger: Firefox ESR visível pelo geckodriver (protocolo W3C WebDriver).
 // Sem dependências: usa fetch e child_process do Node 22.
 //
 // Variáveis de ambiente:
@@ -10,6 +10,10 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+
+if (process.env.DISPLAY !== ':0') {
+  throw new Error('A suíte do Messenger exige Firefox ESR visível em DISPLAY=:0.');
+}
 
 export const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
 export const BASE = process.env.SUITE_BASE || 'https://aculta.toca.net.br';
@@ -54,7 +58,7 @@ export class Browser {
     await this.close();
     this.width = width; this.height = height;
     const host = new URL(BASE).hostname;
-    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { args: ['-headless'], prefs: { 'network.dns.localDomains': `${host},conta.${host}` } } } } });
+    const { sessionId } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, 'moz:firefoxOptions': { prefs: { 'network.dns.localDomains': `${host},conta.${host}` } } } } });
     this.sid = sessionId;
     await wd('POST', this.p('/window/rect'), { width, height });
     await wd('POST', this.p('/url'), { url: oneTimeLogin(name) });
