@@ -109,10 +109,11 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Validates and registers one message submission in the Core flood backend.
+   * Validates one message submission against the Core flood backend.
    *
-   * Invalid submissions are not counted. Ten valid submissions are allowed
-   * per account in a rolling one-hour window; the next submission is rejected.
+   * Ten valid submissions are allowed per account in a rolling one-hour
+   * window; the next submission is rejected. Registration happens only after
+   * the message is persisted.
    */
   public function validateRateLimit(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -125,6 +126,13 @@ final class PrivateMessageFormValidator {
       return;
     }
 
+  }
+
+  /**
+   * Registers a successfully persisted message in the Core flood backend.
+   */
+  public function registerRateLimit(array &$form, FormStateInterface $formState): void {
+    $identifier = 'uid:' . $this->currentUser->id();
     $this->flood->register(self::EVENT, self::WINDOW, $identifier);
   }
 

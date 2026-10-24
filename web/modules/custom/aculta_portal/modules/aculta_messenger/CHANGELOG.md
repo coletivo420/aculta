@@ -1540,3 +1540,14 @@ Validação: teste focal `testOutboxCronRecoversExpiredQueueLeases` 1/23 e Kerne
 `ForumNoticeIdempotencyKernelTest` 31/700 PASS; PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Sem
 Runtime ou concorrência real entre processos.
 
+## 0.1.1-dev.141 — contar apenas mensagens privadas persistidas — 2026-10-24
+
+A verificação de flood continua na validação, mas o contador só é registrado depois do salvamento bem-sucedido da
+mensagem. O caminho nativo de resposta registra após os handlers nativos, a criação de conversa em grupo registra após
+salvar mensagem e thread, e a resposta pela gaveta registra após persistir ambos. Assim, rejeições de validações
+posteriores e falhas de persistência não consomem a cota horária.
+
+Validação: Unit focal de privacidade/hooks 12/41 e suíte Unit Messenger 135/794 PASS; PHP lint dos arquivos alterados
+PASS. PHPCS limpo nos validators e teste novo; classes maiores mantêm avisos/erros anteriores não relacionados.
+Kernel de persistência de conversa e Runtime não executados nesta microfase.
+

@@ -199,6 +199,7 @@ final class NewConversationForm extends FormBase {
     $message->save();
     $thread->addMessage($message);
     $thread->save();
+    $this->validator->registerRateLimit($form, $formState);
     $formState->set('thread', $thread);
     // The drawer receives the conversation as the answer to its POST (NewConversationController::compose).
     // A Form API redirect would send the drawer back to the compose step with a 303.

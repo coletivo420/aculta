@@ -232,6 +232,7 @@ final class MessagesController extends ControllerBase {
       $message->save();
       $private_message_thread->addMessage($message);
       $private_message_thread->save();
+      $this->replyValidator->registerRateLimit($form, $formState);
     }
     return $this->conversationResponse($private_message_thread, $access, $panel);
   }

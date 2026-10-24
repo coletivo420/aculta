@@ -29,21 +29,33 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
   /**
    * Tests the rate limit registers only valid submissions behavior.
    */
-  public function testRateLimitRegistersOnlyValidSubmissions(): void {
+  public function testRateLimitChecksValidSubmissionsWithoutRegisteringBeforeSave(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())
       ->method('isAllowed')
       ->with('aculta_messenger.private_message_send', 10, 3600, 'uid:42')
       ->willReturn(TRUE);
-    $flood->expects($this->once())
-      ->method('register')
-      ->with('aculta_messenger.private_message_send', 3600, 'uid:42');
+    $flood->expects($this->never())->method('register');
 
     $formState = $this->formState(FALSE);
 
     $validator = $this->validator($flood, 42);
     $form = [];
     $validator->validateRateLimit($form, $formState);
+  }
+
+  /**
+   * Successful persistence registers one send in the rolling flood window.
+   */
+  public function testPersistedSubmissionRegistersFloodLimit(): void {
+    $flood = $this->createMock(FloodInterface::class);
+    $flood->expects(self::once())
+      ->method('register')
+      ->with('aculta_messenger.private_message_send', 3600, 'uid:42');
+    $validator = $this->validator($flood, 42);
+    $form = [];
+
+    $validator->registerRateLimit($form, new FormState());
   }
 
   /**
