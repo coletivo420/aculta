@@ -1530,3 +1530,13 @@ Validação: `AcultaMailerKernelTest` 4/20 PASS, incluindo lock ocupado por back
 `ForumNoticeIdempotency` permanece coberto por Kernel MariaDB e retry com correlação estável. Sem Runtime, SMTP real ou
 processos independentes.
 
+## 0.1.1-dev.140 — revalidar lease na recuperação do outbox — 2026-10-24
+
+A recuperação cron do e-mail direto do Fórum agora revalida `email_updated` e os estados vencidos no próprio UPDATE,
+evitando que uma linha reclamada por um worker entre a consulta de IDs antigos e a gravação seja rebaixada para
+pendente. O comportamento mantém a fila existente e não adiciona schema.
+
+Validação: teste focal `testOutboxCronRecoversExpiredQueueLeases` 1/23 e Kernel completo
+`ForumNoticeIdempotencyKernelTest` 31/700 PASS; PHPCS Drupal/DrupalPractice, PHP lint e índice de status PASS. Sem
+Runtime ou concorrência real entre processos.
+

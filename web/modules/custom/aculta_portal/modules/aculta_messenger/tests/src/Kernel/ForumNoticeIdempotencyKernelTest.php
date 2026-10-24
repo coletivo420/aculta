@@ -35,6 +35,7 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Lock\PersistentDatabaseLockBackend;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\flag\FlagInterface;
@@ -1041,6 +1042,52 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertNotNull($retryClaim);
     self::assertSame($correlation, $retryClaim['email_correlation']);
     self::assertSame(2, (int) $retryClaim['email_attempts']);
+  }
+
+  /**
+   * Cron recovery requeues expired processing and queued outbox rows.
+   */
+  public function testOutboxCronRecoversExpiredQueueLeases(): void {
+    $database = $this->container->get('database');
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $ids = [];
+    foreach ([ForumNoticeEmailOutbox::STATUS_PROCESSING, ForumNoticeEmailOutbox::STATUS_QUEUED] as $index => $status) {
+      $ids[] = (int) $database->insert(ForumNoticeEventSchema::TABLE)
+        ->fields([
+          'uid' => 35,
+          'event_type' => 'comment',
+          'event_id' => 900 + $index,
+          'nid' => 72,
+          'created' => $now,
+          'email_status' => $status,
+          'email_attempts' => 1,
+          'email_correlation' => '',
+          'email_updated' => $now - 601,
+        ])
+        ->execute();
+    }
+    $queue = $this->createMock(QueueInterface::class);
+    $queue->expects(self::exactly(2))
+      ->method('createItem')
+      ->willReturnOnConsecutiveCalls(1, 2);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->method('get')->with(ForumNoticeEmailOutbox::QUEUE)->willReturn($queue);
+    $outbox = new ForumNoticeEmailOutbox(
+      $database,
+      $queueFactory,
+      $this->container->get('datetime.time'),
+      $this->createConfiguredMock(UuidInterface::class, ['generate' => '01234567-89ab-4cde-8fab-0123456789ab']),
+      $this->createMock(LoggerInterface::class),
+    );
+
+    $outbox->requeuePending();
+
+    foreach ($ids as $id) {
+      $row = $outbox->load($id);
+      self::assertNotNull($row);
+      self::assertSame(ForumNoticeEmailOutbox::STATUS_QUEUED, $row['email_status']);
+      self::assertSame($now, (int) $row['email_updated']);
+    }
   }
 
   /**

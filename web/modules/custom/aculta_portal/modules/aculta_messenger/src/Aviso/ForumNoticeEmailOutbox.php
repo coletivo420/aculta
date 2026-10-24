@@ -135,6 +135,9 @@ final class ForumNoticeEmailOutbox implements ForumNoticeEmailOutboxInterface {
         ->fields(['email_status' => self::STATUS_PENDING, 'email_updated' => $now])
         ->condition('id', $stale, 'IN')
         ->condition('email_status', [self::STATUS_PROCESSING, self::STATUS_QUEUED], 'IN')
+        // Revalidate the lease in the write. A worker may have reclaimed one
+        // of the selected rows after the stale-ID query completed.
+        ->condition('email_updated', $now - self::LEASE_SECONDS, '<=')
         ->execute();
     }
     $pending = $this->database->select($table, 'event')
