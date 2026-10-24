@@ -49,11 +49,16 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
    */
   public function testHubAccountAndProfileAccess(): void {
     $routes = $this->routes();
-    foreach (['aculta_studio.hub', 'aculta_studio.account', 'aculta_studio.profile', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
+    foreach (['aculta_studio.hub', 'aculta_studio.account'] as $id) {
       $route = $routes[$id];
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
+    }
+    foreach (['aculta_studio.profile', 'aculta_studio.profile_privacy', 'aculta_studio.profile_bio', 'aculta_studio.profile_social'] as $id) {
+      $route = $routes[$id];
+      self::assertSame('account', $route['options']['_aculta_domain_purpose']);
+      self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
     self::assertSame('aculta_studio.hub_controller:page',
       $routes['aculta_studio.hub']['defaults']['_controller']);
