@@ -9,6 +9,7 @@ use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\aculta_user\Event\FriendshipChangedEvent;
 use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -35,6 +36,7 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly QueueFactory $queueFactory,
+    private readonly LockBackendInterface $lock,
   ) {}
 
   /**
@@ -84,26 +86,38 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
     // notices created before this producer used the shared event envelope.
     $source = $friendship->id() . ':' . $transition . ':' . $event->sourceRevisionOrVersion();
     $storage = $this->entityTypeManager->getStorage('message');
-    $existing = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('template', self::TEMPLATE)
-      ->condition('uid', $recipientId)
-      ->condition(self::SOURCE_FIELD, $source)
-      ->range(0, 1)
-      ->execute();
-    if ($existing !== []) {
-      return;
+    $lockId = 'aculta_messenger:friendship_notice_record:' . hash('sha256', $event->idempotencyKey());
+    if (!$this->lock->acquire($lockId, 30.0)) {
+      $this->lock->wait($lockId, 30);
+      if (!$this->lock->acquire($lockId, 30.0)) {
+        throw new \RuntimeException('Friendship notice is currently being recorded.');
+      }
     }
+    try {
+      $existing = $storage->getQuery()->accessCheck(FALSE)
+        ->condition('template', self::TEMPLATE)
+        ->condition('uid', $recipientId)
+        ->condition(self::SOURCE_FIELD, $source)
+        ->range(0, 1)
+        ->execute();
+      if ($existing !== []) {
+        return;
+      }
 
-    $message = $storage->create([
-      'template' => self::TEMPLATE,
-      'uid' => $recipientId,
-      self::SOURCE_FIELD => $source,
-      self::EVENT_FIELD => $transition,
-      'field_aculta_msg_delivery' => 'pending',
-      'field_aculta_messenger_attempts' => 0,
-    ]);
-    $message->save();
-    $this->queueFactory->get(self::EMAIL_QUEUE)->createItem(['message_id' => (int) $message->id()]);
+      $message = $storage->create([
+        'template' => self::TEMPLATE,
+        'uid' => $recipientId,
+        self::SOURCE_FIELD => $source,
+        self::EVENT_FIELD => $transition,
+        'field_aculta_msg_delivery' => 'pending',
+        'field_aculta_messenger_attempts' => 0,
+      ]);
+      $message->save();
+      $this->queueFactory->get(self::EMAIL_QUEUE)->createItem(['message_id' => (int) $message->id()]);
+    }
+    finally {
+      $this->lock->release($lockId);
+    }
   }
 
   /**

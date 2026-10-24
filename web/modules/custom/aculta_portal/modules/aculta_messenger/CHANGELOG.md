@@ -1,3 +1,13 @@
+## 0.1.1-dev.108 — serializar criação dos avisos de amizade — 2026-10-24
+
+- `FriendshipNoticeSubscriber` usa lock pela chave idempotente antes da busca e
+  criação do Message. Replays simultâneos aguardam, adquirem o lock e observam
+  o registro criado pela primeira execução. O lock também é injetado pelo
+  serviço Drupal; Unit do subscriber: 5 testes / 53 assertions.
+- Unit Messenger + adapters: 132 testes / 837 assertions PASS. PHPCS
+  Drupal/DrupalPractice, PHP lint e `git diff --check` PASS. Runtime/fila não
+  homologados.
+
 ## 0.1.1-dev.107 — serializar persistência dos avisos LMS — 2026-10-24
 
 - `LearningNoticeManager::record()` adquire lock pela tupla destinatário, tipo,

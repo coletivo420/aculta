@@ -126,7 +126,7 @@ services:
       - { name: aculta_mailer.type }
   aculta_messenger.friendship_notice_subscriber:
     class: Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber
-    arguments: ['@entity_type.manager', '@queue']
+    arguments: ['@entity_type.manager', '@queue', '@lock.persistent']
     tags:
       - { name: event_subscriber }
   aculta_messenger.friendship_notice_event_producer:

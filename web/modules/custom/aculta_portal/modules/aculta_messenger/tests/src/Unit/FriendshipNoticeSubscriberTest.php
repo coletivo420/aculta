@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
@@ -73,7 +74,43 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
 
-    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory);
+    $subscriber = new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock());
+    $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
+  }
+
+  /**
+   * A concurrent replay waits and observes the persisted duplicate.
+   */
+  public function testConcurrentTransitionReplayDoesNotCreateAnotherMessage(): void {
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('isActive')->willReturn(TRUE);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('load')->with(20)->willReturn($recipient);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->with(FALSE)->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('range')->with(0, 1)->willReturnSelf();
+    $query->expects(self::once())->method('execute')->willReturn([83]);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('getQuery')->willReturn($query);
+    $messageStorage->expects(self::never())->method('create');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lockId = 'aculta_messenger:friendship_notice_record:' . hash('sha256', $this->event(FriendshipChangedEvent::REQUESTED)->idempotencyKey());
+    $lock->expects(self::exactly(2))->method('acquire')->with($lockId, 30.0)->willReturnOnConsecutiveCalls(FALSE, TRUE);
+    $lock->expects(self::once())->method('wait')->with($lockId, 30);
+    $lock->expects(self::once())->method('release')->with($lockId);
+    $queueFactory = $this->createMock(QueueFactory::class);
+    $queueFactory->expects(self::never())->method('get');
+    $subscriber = new FriendshipNoticeSubscriber(
+      $this->entityTypeManager(
+        $userStorage,
+        $messageStorage,
+        $this->friendshipStorage($this->friendship(FriendshipStatus::Pending->value)),
+      ),
+      $queueFactory,
+      $lock,
+    );
+
     $subscriber->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -98,7 +135,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
 
-    (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory))
+    (new FriendshipNoticeSubscriber($entityTypeManager, $queueFactory, $this->lock()))
       ->consume($this->event(FriendshipChangedEvent::REQUESTED));
   }
 
@@ -143,7 +180,7 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       $userStorage,
       $messageStorage,
       $this->friendshipStorage($this->friendship($status)),
-    ), $queueFactory);
+    ), $queueFactory, $this->lock());
     $subscriber->consume($this->event($transition, $requesterId, $recipientId));
   }
 
@@ -185,6 +222,13 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->with(['uuid' => 'friendship-uuid'])->willReturn([$friendship]);
     return $storage;
+  }
+
+  /**
+   * Returns a lock backend that grants the test's single record claim.
+   */
+  private function lock(): LockBackendInterface {
+    return $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]);
   }
 
   /**
