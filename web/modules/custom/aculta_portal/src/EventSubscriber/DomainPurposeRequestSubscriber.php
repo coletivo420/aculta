@@ -188,6 +188,21 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         return;
       }
     }
+    // A raiz da Conta serve o hub do Studio (`/` reescrito para `/studio`). O caminho técnico `/studio` responde 404,
+    // e o visitante anônimo vai ao login do host de conta, sem depender do 403 do roteador.
+    if ($matched['_route'] === 'aculta_studio.hub' && $this->domainPurposeManager->getCurrentPurpose() === 'account') {
+      if ($event->getRequest()->getPathInfo() !== '/') {
+        $event->setResponse($this->notFoundResponse());
+        return;
+      }
+      if (!$this->currentUser->isAuthenticated()) {
+        $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+        if ($login !== NULL) {
+          $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
+          return;
+        }
+      }
+    }
     $route = $this->routeProvider->getRouteByName($matched['_route']);
     $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
       $route,
