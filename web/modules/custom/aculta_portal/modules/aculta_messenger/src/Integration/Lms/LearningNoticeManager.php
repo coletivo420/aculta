@@ -53,6 +53,13 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   private const SOURCE_FIELD = 'field_aculta_lms_source_uuid';
   private const EVENT_VERSION_FIELD = 'field_aculta_lms_event_version';
 
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'lms';
+  }
+
   private const READ_FIELD = 'field_aculta_lms_read';
 
   private const DELIVERY_FIELD = 'field_aculta_msg_delivery';

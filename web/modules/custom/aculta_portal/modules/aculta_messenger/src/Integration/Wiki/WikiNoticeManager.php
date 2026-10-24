@@ -25,6 +25,13 @@ use Psr\Log\LoggerInterface;
  * Stores and resolves Wiki notices in Message, without a parallel inbox. */
 final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigestProviderInterface {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
   use StringTranslationTrait;
 
   public const TEMPLATE = 'aculta_msg_wiki_notice';

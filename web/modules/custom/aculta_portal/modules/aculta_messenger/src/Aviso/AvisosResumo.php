@@ -255,6 +255,7 @@ final class AvisosResumo {
       array_push($linhas, ...$eligibleRows);
       $providersWithRows[] = [
         'provider' => $provider,
+        'provider_id' => $provider->digestProviderId(),
         'manifest_rows' => array_map(static fn(array $row): array => [
           'tipo' => (string) ($row['tipo'] ?? ''),
           'delivery_id' => (int) $row['delivery_id'],
@@ -282,7 +283,7 @@ final class AvisosResumo {
     foreach ($providersWithRows as $providerRows) {
       foreach ($providerRows['manifest_rows'] as $manifestRow) {
         $entregasManifesto[] = [
-          'origem' => get_class($providerRows['provider']),
+          'origem' => $providerRows['provider_id'],
           'id' => $manifestRow['delivery_id'],
           'tipo' => $manifestRow['tipo'],
           'quantidade' => $manifestRow['quantidade'],
@@ -307,7 +308,7 @@ final class AvisosResumo {
       'provider_lookup_failed' => $providerLookupFailed,
       'forum' => $daFila,
       'providers' => array_map(static fn(array $providerRows): array => [
-        'class' => get_class($providerRows['provider']),
+        'provider_id' => $providerRows['provider_id'],
         'delivery_ids' => $providerRows['delivery_ids'],
       ], $providersWithRows),
     ];
@@ -389,15 +390,19 @@ final class AvisosResumo {
     $providers = [];
     foreach ($this->digestProviders as $provider) {
       if ($provider instanceof AvisoDigestProviderInterface) {
-        $providers[get_class($provider)] = $provider;
+        $providers[$provider->digestProviderId()] = $provider;
+        // Compatibility for accepted snapshots written before stable provider
+        // IDs were added. New snapshots never persist PHP class names.
+        $providers[get_class($provider)] ??= $provider;
       }
     }
     foreach (($snapshot['providers'] ?? []) as $providerSnapshot) {
-      if (!isset($providers[$providerSnapshot['class'] ?? ''])) {
+      $providerKey = $providerSnapshot['provider_id'] ?? $providerSnapshot['class'] ?? '';
+      if (!is_string($providerKey) || !isset($providers[$providerKey])) {
         // Keep the snapshot until its optional adapter is enabled again; a
         // second email would duplicate a batch the Mailer already accepted.
         $this->logger?->error('Accepted digest awaits unavailable adapter @provider acknowledgement.', [
-          '@provider' => (string) ($providerSnapshot['class'] ?? 'unknown'),
+          '@provider' => $providerKey ?: 'unknown',
         ]);
         return TRUE;
       }
@@ -416,7 +421,8 @@ final class AvisosResumo {
         }
       }
       foreach (($snapshot['providers'] ?? []) as $providerSnapshot) {
-        $provider = $providers[$providerSnapshot['class']];
+        $providerKey = $providerSnapshot['provider_id'] ?? $providerSnapshot['class'] ?? '';
+        $provider = $providers[$providerKey];
         $deliveryIds = array_values(array_filter(
           array_map('intval', $providerSnapshot['delivery_ids'] ?? []),
           static fn(int $id): bool => $id > 0,

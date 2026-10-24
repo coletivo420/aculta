@@ -1,3 +1,12 @@
+## 0.1.1-dev.150 — identidade estável dos adapters no digest — 2026-10-24
+
+Manifestos e correlações do digest agora identificam adapters por chave estável de origem (`lms`, `wiki`, `commerce`,
+`donation`), em vez do nome da classe PHP. Refatorar ou proxyar a implementação não muda a identidade do lote nem
+impede a recuperação de um aceite já registrado. A leitura ainda reconhece o campo `class` de snapshots já persistidos
+antes desta versão, enquanto novos snapshots gravam somente `provider_id`.
+
+Validação: Unit digest e Kernel MariaDB do Fórum/Mailer em conjunto, **46 testes / 886 assertions PASS**; PHPCS Drupal/DrupalPractice, PHP lint, `git diff --check` e índice de status PASS. Runtime/SMTP não usados.
+
 ## 0.1.1-dev.147 — estado vazio acessível na central — 2026-10-24
 
 Avisos filtrados sem resultados agora usam a apresentação neutra `messenger-state` com `role="status"`, preservando a

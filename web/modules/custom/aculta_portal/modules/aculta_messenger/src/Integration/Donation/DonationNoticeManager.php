@@ -29,6 +29,13 @@ use Psr\Log\LoggerInterface;
  * Stores Donation notices in the shared Message entity and digest pipeline. */
 final class DonationNoticeManager implements DonationNoticeManagerInterface, AvisoDigestProviderInterface {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'donation';
+  }
+
   use StringTranslationTrait;
 
   public const TEMPLATE = 'aculta_msg_donation_notice';

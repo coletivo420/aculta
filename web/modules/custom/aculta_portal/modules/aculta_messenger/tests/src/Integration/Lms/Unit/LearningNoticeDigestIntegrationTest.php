@@ -201,6 +201,26 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
+   * Provider refactors retain the correlation of an otherwise identical batch.
+   */
+  public function testDigestCorrelationUsesStableProviderIdInsteadOfPhpClass(): void {
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects($this->exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $message) use (&$correlations): SendResult {
+        $correlations[] = $message->correlationId;
+        return SendResult::sent();
+      });
+    $beforeRefactor = $this->createSummary(new TestLearningDigestProvider([27]), $mailer, TRUE);
+    $afterRefactor = $this->createSummary(new RefactoredTestLearningDigestProvider([27]), $mailer, TRUE);
+
+    $this->assertSame(1, $beforeRefactor->enviarResumos());
+    $this->assertSame(1, $afterRefactor->enviarResumos());
+    $this->assertSame($correlations[0], $correlations[1], 'A PHP class rename does not create a new digest identity.');
+  }
+
+  /**
    * A definitive failure discards only the e-mail copy of a digest entry.
    */
   public function testPermanentMailerFailureDiscardsProviderEmailRows(): void {
@@ -331,7 +351,14 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 /**
  * Minimal digest provider standing in for the LMS Message-backed provider.
  */
-final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
+class TestLearningDigestProvider implements AvisoDigestProviderInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'lms';
+  }
 
   /**
    * Number of acknowledgement attempts to fail before recording state.
@@ -426,6 +453,11 @@ final class TestLearningDigestProvider implements AvisoDigestProviderInterface {
   }
 
 }
+
+/**
+ * Simulates a class refactor while preserving the LMS digest provider identity.
+ */
+final class RefactoredTestLearningDigestProvider extends TestLearningDigestProvider {}
 
 /**
  * Transaction double that records explicit commit and rollback calls.

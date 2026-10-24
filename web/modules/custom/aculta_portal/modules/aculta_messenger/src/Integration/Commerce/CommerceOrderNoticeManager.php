@@ -28,6 +28,13 @@ use Psr\Log\LoggerInterface;
  * Stores and resolves Commerce order notices in Message, without a parallel inbox. */
 final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInterface, AvisoDigestProviderInterface {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'commerce';
+  }
+
   use StringTranslationTrait;
 
   public const TEMPLATE = 'aculta_msg_commerce_order_notice';

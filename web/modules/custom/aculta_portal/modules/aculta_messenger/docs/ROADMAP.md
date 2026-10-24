@@ -52,6 +52,8 @@ Validar retry/locks, concorrência, retenção, filas, N+1/paginação, cache po
 
 ## Evidências desta revisão — 2026-10-24
 
+- Digest/idempotência — Dev.150: manifestos e correlações usam IDs estáveis de adapter (`lms`, `wiki`, `commerce`, `donation`), não nomes de classes PHP. Snapshots antigos com `class` continuam recuperáveis; snapshots novos gravam `provider_id`. A troca de classe preserva a correlação; suíte focal Unit/Kernel MariaDB 46/886, PHPCS Drupal/DrupalPractice, PHP lint e índice PASS. Runtime/SMTP não usados.
+
 - Unit Messenger + integrações e publishers: 126 testes / 657 assertions PASS.
 - Kernels MariaDB LMS/Wiki/Loja: 6 testes / 64 assertions PASS; deprecações de descoberta de Message vieram de Core/contrib.
 - PHPCS Drupal/DrupalPractice e lint das classes migradas aprovados após fechamento.

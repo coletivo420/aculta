@@ -1689,6 +1689,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 final class FailOnceDigestAckProvider implements AvisoDigestProviderInterface {
 
   /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'wiki';
+  }
+
+  /**
    * Whether the synthetic first failure has happened.
    */
   private bool $failed = FALSE;
