@@ -1,3 +1,15 @@
+## `0.1.0-dev.314` — fechar o mapa das fases do Fórum — 2026-10-24
+
+- O roadmap passa a registrar o fechamento por fase com a evidência real
+  (dev.297–dev.313): F-M4 em Kernel, F-M5 sintético com árvore aninhada, F-M6
+  com controladores/anexo/mover tópico/dois temas/painel autenticado e F-M7 com
+  os gates executados.
+- Só permanecem abertos itens bloqueados por autorização ou ambiente:
+  homologação Runtime do Messenger, pré-visualização autenticada de anexo,
+  mover comentário pela UI sem Comments no dump, aparelho físico, migração
+  sobre dados reais, F-GROUP, RC/Alpha/deploy e testes de e-mail.
+- Sem alteração de Runtime nesta fase.
+
 ## `0.1.0-dev.313` — revisão autenticada somente leitura do painel — 2026-10-24
 
 - Novo teste de navegador `tests/browser/aculta-forum/authenticated-readonly.py`

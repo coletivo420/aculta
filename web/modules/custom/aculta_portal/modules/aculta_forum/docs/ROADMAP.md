@@ -134,6 +134,31 @@ com `FormBase`) e o acesso ao diálogo de anexo importava
 chamada. Ambos corrigidos e cobertos por Kernel; smoke de carregamento confirma
 todas as classes de `src/` e todos os imports de produção.
 
+**Fechamento por fase (dev.313, 2026-10-24):**
+
+- **F-M1/F-M2 — provado em código:** ledger, idempotência, round-trip dos três
+  eventos, supressão do autor, revogação e digest estão em Kernel/Unit do
+  Fórum e do Messenger. A homologação Runtime do envelope/digest pertence à
+  frente Messenger, que segue ativa em paralelo; testes de e-mail permanecem
+  excluídos por autorização.
+- **F-M4 — provado em Kernel:** contagens, listagem, busca, anexos/galeria,
+  moderação, submissão, edição, histórico, comparação e fila revalidam purpose,
+  grants e status; F-GROUP continua desligado por padrão.
+- **F-M5 (parcial, dados sintéticos):** source, destino, lote, pais, rollback e
+  árvore aninhada com conteúdo/ordem/datas/autoria/`first_published` estão
+  provados; embeds sem UUID ou entidade são rejeitados. Dry-run e migração
+  sobre dados reais **não estão autorizados**.
+- **F-M6 — provado localmente:** controladores e formulários em Kernel,
+  anexo do editor cria Media despublicada, mover tópico tem rota canônica e
+  formulário, `/categorias` passou 9/9 em ACULTA420 e 9/9 em Olivero, índice
+  sem erro nos dois temas e painel autenticado 12/12 em Firefox ESR/X11
+  (GET-only). Faltam pré-visualização renderizada de anexo autenticada,
+  mover comentário pela UI (o dump local não tem Comments) e aparelho físico.
+- **F-M7 — gates proporcionais executados:** Unit 181/1.019, Kernel
+  149/2.841, PHPCS do módulo limpo, carregamento de todas as classes em PHP
+  8.4, imports de produção resolvidos, gate de aliases e documentação de UI sem
+  achados do Fórum. RC/Alpha/deploy exigem autorização operacional separada.
+
 ### Sequência recomendada e paralelismo
 
 - **Imediato:** manter F-M1 parcial até a validação operacional autorizada; em paralelo, continuar provas restantes de
